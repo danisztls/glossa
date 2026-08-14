@@ -1,0 +1,15 @@
+# The corpus is never committed — copyrighted or scraped text stays out of the public repo.
+corpus/
+
+# Python
+__pycache__/
+.venv/
+
+# Node / SvelteKit
+node_modules/
+site/.svelte-kit/
+site/build/
+
+# Misc
+.DS_Store
+*.log
