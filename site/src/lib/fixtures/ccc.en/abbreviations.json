@@ -1,0 +1,16 @@
+[
+	{ "abbr": "GS", "expansion": "Gaudium et Spes", "kind": "document" },
+	{ "abbr": "LG", "expansion": "Lumen Gentium", "kind": "document" },
+	{
+		"abbr": "DS",
+		"expansion": "Denzinger-Schönmetzer, Enchiridion Symbolorum",
+		"kind": "document"
+	},
+	{ "abbr": "PL", "expansion": "Patrologia Latina", "kind": "document" },
+	{ "abbr": "Gen", "expansion": "Genesis", "kind": "scripture" },
+	{ "abbr": "Ps", "expansion": "Psalms", "kind": "scripture" },
+	{ "abbr": "Mt", "expansion": "Matthew", "kind": "scripture" },
+	{ "abbr": "Jn", "expansion": "John", "kind": "scripture" },
+	{ "abbr": "Jon", "expansion": "Jonah", "kind": "scripture" },
+	{ "abbr": "Acts", "expansion": "Acts of the Apostles", "kind": "scripture" }
+]

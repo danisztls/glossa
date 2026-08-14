@@ -1,0 +1,40 @@
+[
+	{
+		"kind": "part",
+		"n": 1,
+		"title": "The Profession of Faith",
+		"paragraphs": [27, 49],
+		"children": [
+			{
+				"kind": "section",
+				"n": 1,
+				"title": "“I Believe” – “We Believe”",
+				"paragraphs": [27, 49],
+				"children": [
+					{
+						"kind": "chapter",
+						"n": 1,
+						"title": "Man’s Capacity for God",
+						"paragraphs": [27, 49],
+						"children": [
+							{
+								"kind": "article",
+								"n": 1,
+								"title": "The Desire for God",
+								"paragraphs": [27, 30],
+								"children": []
+							},
+							{
+								"kind": "in-brief",
+								"n": null,
+								"title": "In Brief",
+								"paragraphs": [44, 49],
+								"children": []
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]

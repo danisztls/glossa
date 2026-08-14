@@ -1,0 +1,128 @@
+/*
+ * Global styles and theme tokens.
+ *
+ * Three themes (light / dark / sepia) toggled via `data-theme` on <html>,
+ * defaulting to `prefers-color-scheme` when no explicit choice is stored
+ * (see `src/lib/theme.svelte.ts`). Colors are placeholders — real palette
+ * and type choices land in the design pass (see docs/decisions.md).
+ */
+
+:root {
+	--font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+	--font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+	--content-width: 65ch;
+
+	/* Light theme (default) */
+	--color-bg: #ffffff;
+	--color-bg-elevated: #f6f5f1;
+	--color-border: #ddd9d0;
+	--color-text: #1c1a17;
+	--color-text-muted: #6b6559;
+	--color-accent: #7a1f2b;
+	--color-accent-contrast: #ffffff;
+	--color-link: #7a1f2b;
+	--color-focus-ring: #3a6ea5;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']):not([data-theme='sepia']) {
+		--color-bg: #16151a;
+		--color-bg-elevated: #201e24;
+		--color-border: #38353d;
+		--color-text: #e9e6de;
+		--color-text-muted: #9c968b;
+		--color-accent: #d98a92;
+		--color-accent-contrast: #16151a;
+		--color-link: #d98a92;
+		--color-focus-ring: #7fb0e0;
+	}
+}
+
+:root[data-theme='dark'] {
+	--color-bg: #16151a;
+	--color-bg-elevated: #201e24;
+	--color-border: #38353d;
+	--color-text: #e9e6de;
+	--color-text-muted: #9c968b;
+	--color-accent: #d98a92;
+	--color-accent-contrast: #16151a;
+	--color-link: #d98a92;
+	--color-focus-ring: #7fb0e0;
+}
+
+:root[data-theme='sepia'] {
+	--color-bg: #f4ecd8;
+	--color-bg-elevated: #ecdfc2;
+	--color-border: #d9c9a3;
+	--color-text: #3b2f22;
+	--color-text-muted: #7a6a51;
+	--color-accent: #7a1f2b;
+	--color-accent-contrast: #f4ecd8;
+	--color-link: #7a1f2b;
+	--color-focus-ring: #3a6ea5;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	color-scheme: light dark;
+}
+
+body {
+	margin: 0;
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-family: var(--font-sans);
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+a {
+	color: var(--color-link);
+}
+
+a:not(:hover) {
+	text-decoration-thickness: from-font;
+}
+
+:focus-visible {
+	outline: 2px solid var(--color-focus-ring);
+	outline-offset: 2px;
+}
+
+button,
+input {
+	font-family: inherit;
+	color: inherit;
+}
+
+/* Centered reading column, used by prose/reading views. */
+.content-column {
+	max-width: var(--content-width);
+	margin-inline: auto;
+	padding-inline: 1.25rem;
+}
+
+.reading-text {
+	font-family: var(--font-serif);
+	font-size: 1.15rem;
+	line-height: 1.7;
+}
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}

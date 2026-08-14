@@ -1,0 +1,21 @@
+{
+	"id": "bible.cpdv.en",
+	"type": "bible",
+	"title": "Catholic Public Domain Version",
+	"short_title": "CPDV",
+	"language": "en",
+	"edition": "2009, per errata of 2025-02-26 where stated",
+	"sources": [
+		{ "url": "https://sacredbible.org/catholic/NT-04_John.htm", "retrieved_at": "2026-08-14" },
+		{ "url": "https://sacredbible.org/catholic/OT-01_Genesis.htm", "retrieved_at": "2026-08-14" }
+	],
+	"copyright": {
+		"status": "public-domain",
+		"holder": null,
+		"notice": null
+	},
+	"notes": "SITE FIXTURE, not the full corpus: only Genesis 1:1-13 and John 1:1-18, 3:1-21 are populated, and `books` lists only the two present here instead of the full 73. Built for site/ development against docs/corpus-schema.md; pipeline/ will replace this with the real, complete corpus.",
+	"generated_at": "2026-08-14T00:00:00Z",
+	"psalm_numbering": "vulgate",
+	"books": ["gen", "john"]
+}

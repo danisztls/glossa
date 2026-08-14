@@ -1,0 +1,153 @@
+{
+	"osis": "john",
+	"name": "John",
+	"abbrevs": ["jn", "joh", "john"],
+	"order": 50,
+	"chapters": [
+		{
+			"n": 1,
+			"verses": [
+				{
+					"n": 1,
+					"text": "In the beginning was the Word, and the Word was with God, and God was the Word."
+				},
+				{ "n": 2, "text": "He was with God in the beginning." },
+				{
+					"n": 3,
+					"text": "All things were made through Him, and nothing that was made was made without Him."
+				},
+				{ "n": 4, "text": "Life was in Him, and Life was the light of men." },
+				{
+					"n": 5,
+					"text": "And the light shines in the darkness, and the darkness did not comprehend it."
+				},
+				{ "n": 6, "text": "There was a man sent by God, whose name was John." },
+				{
+					"n": 7,
+					"text": "He arrived as a witness to offer testimony about the Light, so that all would believe through him."
+				},
+				{ "n": 8, "text": "He was not the Light, but he was to offer testimony about the Light." },
+				{
+					"n": 9,
+					"text": "The true Light, which illuminates every man, was coming into this world."
+				},
+				{
+					"n": 10,
+					"text": "He was in the world, and the world was made through him, and the world did not recognize him."
+				},
+				{ "n": 11, "text": "He went to his own, and his own did not accept him." },
+				{
+					"n": 12,
+					"text": "Yet whoever did accept him, those who believed in his name, he gave them the power to become the sons of God."
+				},
+				{
+					"n": 13,
+					"text": "These are born, not of blood, nor of the will of flesh, nor of the will of man, but of God."
+				},
+				{
+					"n": 14,
+					"text": "And the Word became flesh, and he lived among us, and we saw his glory, glory like that of an only-begotten Son from the Father, full of grace and truth."
+				},
+				{
+					"n": 15,
+					"text": "John offers testimony about him, and he cries out, saying: “This is the one about whom I said: ‘He who is to come after me, has been placed ahead of me, because he existed before me.’”"
+				},
+				{ "n": 16, "text": "And from his fullness, we all have received, even grace for grace." },
+				{
+					"n": 17,
+					"text": "For the law was given through Moses, but grace and truth came through Jesus Christ."
+				},
+				{
+					"n": 18,
+					"text": "No one ever saw God; the only-begotten Son, who is in the bosom of the Father, he himself has described him."
+				}
+			]
+		},
+		{
+			"n": 3,
+			"verses": [
+				{
+					"n": 1,
+					"text": "Now there was a man among the Pharisees, named Nicodemus, a leader of the Jews."
+				},
+				{
+					"n": 2,
+					"text": "He went to Jesus at night, and he said to him: “Rabbi, we know that you have arrived as a teacher from God. For no one would be able to accomplish these signs, which you accomplish, unless God were with him.”"
+				},
+				{
+					"n": 3,
+					"text": "Jesus responded and said to him, “Amen, amen, I say to you, unless one has been reborn anew, he is not able to see the kingdom of God.”"
+				},
+				{
+					"n": 4,
+					"text": "Nicodemus said to him: “How could a man be born when he is old? Surely, he cannot enter a second time into his mother’s womb to be reborn?”"
+				},
+				{
+					"n": 5,
+					"text": "Jesus responded: “Amen, amen, I say to you, unless one has been reborn by water and the Holy Spirit, he is not able to enter into the kingdom of God."
+				},
+				{
+					"n": 6,
+					"text": "What is born of the flesh is flesh, and what is born of the Spirit is spirit."
+				},
+				{ "n": 7, "text": "You should not be amazed that I said to you: You must be born anew." },
+				{
+					"n": 8,
+					"text": "The Spirit inspires where he wills. And you hear his voice, but you do not know where he comes from, or where he is going. So it is with all who are born of the Spirit.”"
+				},
+				{
+					"n": 9,
+					"text": "Nicodemus responded and said to him, “How are these things able to be accomplished?”"
+				},
+				{
+					"n": 10,
+					"text": "Jesus responded and said to him: “You are a teacher in Israel, and you are ignorant of these things?"
+				},
+				{
+					"n": 11,
+					"text": "Amen, amen, I say to you, that we speak about what we know, and we testify about what we have seen. But you do not accept our testimony."
+				},
+				{
+					"n": 12,
+					"text": "If I have spoken to you about earthly things, and you have not believed, then how will you believe, if I will speak to you about heavenly things?"
+				},
+				{
+					"n": 13,
+					"text": "And no one has ascended to heaven, except the one who descended from heaven: the Son of man who is in heaven."
+				},
+				{
+					"n": 14,
+					"text": "And just as Moses lifted up the serpent in the desert, so also must the Son of man be lifted up,"
+				},
+				{
+					"n": 15,
+					"text": "so that whoever believes in him may not perish, but may have eternal life."
+				},
+				{
+					"n": 16,
+					"text": "For God so loved the world that he gave his only-begotten Son, so that all who believe in him may not perish, but may have eternal life."
+				},
+				{
+					"n": 17,
+					"text": "For God did not send his Son into the world, in order to judge the world, but in order that the world may be saved through him."
+				},
+				{
+					"n": 18,
+					"text": "Whoever believes in him is not judged. But whoever does not believe is already judged, because he does not believe in the name of the only-begotten Son of God."
+				},
+				{
+					"n": 19,
+					"text": "And this is the judgment: that the Light has come into the world, and men loved darkness more than light. For their works were evil."
+				},
+				{
+					"n": 20,
+					"text": "For everyone who does evil hates the Light and does not go toward the Light, so that his works may not be corrected."
+				},
+				{
+					"n": 21,
+					"text": "But whoever acts in truth goes toward the Light, so that his works may be manifested, because they have been accomplished in God.”"
+				}
+			]
+		}
+	]
+}

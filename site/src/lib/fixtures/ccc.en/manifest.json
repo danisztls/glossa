@@ -1,0 +1,18 @@
+{
+	"id": "ccc.en",
+	"type": "catechism",
+	"title": "Catechism of the Catholic Church",
+	"short_title": "CCC",
+	"language": "en",
+	"edition": "English translation for the United States of America, 2nd typical edition",
+	"sources": [
+		{ "url": "https://www.vatican.va/archive/ENG0015/_INDEX.HTM", "retrieved_at": "2026-08-14" }
+	],
+	"copyright": {
+		"status": "copyrighted",
+		"holder": "Libreria Editrice Vaticana / USCCB",
+		"notice": "Text of the Catechism of the Catholic Church for the United States of America, copyright © 1994, 1997 United States Catholic Conference, Inc. — Libreria Editrice Vaticana. English translation used with the site's stated posture on Church-owned texts (see colophon); comply promptly with any rights holder request."
+	},
+	"notes": "SITE FIXTURE, not the full corpus: only paragraphs 27-30 (Part One, Section One, Chapter One, Article 1 'The Desire for God') and 44-49 (that chapter's In Brief) are populated -- paragraphs 31-43 (Articles II-IV) are intentionally absent, demonstrating gap handling. `related` cross-reference numbers are illustrative placeholders for UI testing, not verified against the real CCC marginal notes. Built for site/ development against docs/corpus-schema.md; pipeline/ will replace this with the real 1-2865 corpus.",
+	"generated_at": "2026-08-14T00:00:00Z"
+}
