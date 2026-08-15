@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { getCccParagraph } from '$lib/corpus';
+	import { copyrightLabel } from '$lib/copyright';
 	import { setPosition } from '$lib/reading-position';
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
 	import { t } from '$lib/i18n.svelte';
@@ -43,7 +44,9 @@
 		CCC {data.n}
 	</h1>
 
-	<div class="reading-text ccc-body">
+	<p class="copyright-notice">{copyrightLabel(data.work)}</p>
+
+	<div class="reading-text ccc-body" lang={data.work.language}>
 		<CccParagraphText paragraph={data.paragraph} />
 	</div>
 
@@ -97,6 +100,12 @@
 		display: flex;
 		align-items: center;
 		gap: 0.6rem;
+	}
+
+	.copyright-notice {
+		margin: 0 0 1rem;
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
 	}
 
 	.in-brief-tag {

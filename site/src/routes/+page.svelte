@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { listBooks, listWorks, workIdToEdition } from '$lib/corpus';
+	import { copyrightLabel } from '$lib/copyright';
 	import { listPositions, type ReadingPosition } from '$lib/reading-position';
 	import { t } from '$lib/i18n.svelte';
 	import type { BibleManifest } from '$lib/types';
@@ -53,9 +54,10 @@
 					{#if work.type === 'bible'}
 						{@const manifest = work as BibleManifest}
 						<p class="work-note">
-							{manifest.books.length} book{manifest.books.length === 1 ? '' : 's'} in this fixture
+							{manifest.books.length} book{manifest.books.length === 1 ? '' : 's'}
 						</p>
 					{/if}
+					<p class="work-copyright">{copyrightLabel(work)}</p>
 				</li>
 			{/each}
 		</ul>
@@ -105,6 +107,12 @@
 	.work-note {
 		margin: 0.35rem 0 0;
 		font-size: 0.8rem;
+		color: var(--color-text-muted);
+	}
+
+	.work-copyright {
+		margin: 0.2rem 0 0;
+		font-size: 0.75rem;
 		color: var(--color-text-muted);
 	}
 </style>

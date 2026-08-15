@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { getAdjacentChapterAcrossBooks } from '$lib/corpus';
+	import { copyrightLabel } from '$lib/copyright';
 	import { setPosition } from '$lib/reading-position';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import { t } from '$lib/i18n.svelte';
@@ -31,6 +32,7 @@
 
 <article class="content-column">
 	<p class="edition-label">{data.work.title}</p>
+	<p class="copyright-notice">{copyrightLabel(data.work)}</p>
 	<h1>{data.book.name} {data.chapter.n}</h1>
 
 	<BookChapterPicker
@@ -39,7 +41,7 @@
 		currentChapter={data.chapterN}
 	/>
 
-	<div class="reading-text">
+	<div class="reading-text" lang={data.work.language}>
 		{#each data.chapter.verses as verse (verse.n)}
 			{@const heading = headingBefore(verse.n)}
 			{#if heading}
@@ -74,6 +76,12 @@
 		color: var(--color-text-muted);
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
+	}
+
+	.copyright-notice {
+		margin: 0.15rem 0 0;
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
 	}
 
 	h1 {

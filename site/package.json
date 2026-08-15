@@ -4,7 +4,10 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
+		"sync-corpus": "node scripts/sync-corpus.mjs",
+		"predev": "npm run sync-corpus",
 		"dev": "vite dev",
+		"prebuild": "npm run sync-corpus",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",

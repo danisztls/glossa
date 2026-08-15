@@ -1,14 +1,27 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { parseReference } from '$lib/refparse';
-	import { editionToWorkId, findBookByAbbrev, getCccParagraph, workIdToEdition } from '$lib/corpus';
+	import { findBookByAbbrev, getCccParagraph, listBibleWorks, workIdToEdition } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
 
-	// Scope for jump-box resolution. In v1 there's a single Bible edition and
-	// a single CCC language fixture; once multiple editions/languages exist,
+	// CCC scope for jump-box resolution: a single content language for now
+	// (see `ccc/[n]` route) — once the reading route carries a language,
 	// this should resolve against whichever the reader currently has open.
-	const DEFAULT_BIBLE_WORK_ID = 'bible.cpdv.en';
 	const DEFAULT_CCC_LANG = 'en';
+
+	/**
+	 * Bible resolution tries every Bible work present in the corpus and
+	 * returns the first whose abbrevs match, so e.g. `jo 3,16` (a
+	 * Matos Soares-only abbreviation) and `john 3:16` (a CPDV-only one) each
+	 * resolve against the edition that actually recognizes them.
+	 */
+	function resolveBibleBook(token: string) {
+		for (const work of listBibleWorks()) {
+			const book = findBookByAbbrev(work.id, token);
+			if (book) return { workId: work.id, book };
+		}
+		return undefined;
+	}
 
 	let open = $state(false);
 	let query = $state('');
@@ -61,15 +74,15 @@
 		}
 
 		if (ref.kind === 'bible') {
-			const book = findBookByAbbrev(DEFAULT_BIBLE_WORK_ID, ref.book);
-			if (!book) {
+			const resolved = resolveBibleBook(ref.book);
+			if (!resolved) {
 				notFound = true;
 				return;
 			}
-			const edition = workIdToEdition(DEFAULT_BIBLE_WORK_ID);
+			const edition = workIdToEdition(resolved.workId);
 			const hash = ref.verse ? `#v${ref.verse}` : '';
 			closeBox();
-			goto(`/bible/${edition}/${book.osis}/${ref.chapter}${hash}`);
+			goto(`/bible/${edition}/${resolved.book.osis}/${ref.chapter}${hash}`);
 			return;
 		}
 

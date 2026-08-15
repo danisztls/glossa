@@ -8,6 +8,10 @@ node_modules
 /.svelte-kit
 /build
 
+# Corpus data, synced from ../corpus by `npm run sync-corpus` (see
+# scripts/sync-corpus.mjs and README.md "Corpus data"). Never hand-edit.
+/src/lib/corpus-data
+
 # OS
 .DS_Store
 Thumbs.db

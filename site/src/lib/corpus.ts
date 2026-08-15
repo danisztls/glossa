@@ -2,22 +2,26 @@
  * Corpus access layer.
  *
  * This is the ONLY module that knows where corpus data physically comes
- * from. Right now that's the schema-conformant fixtures under
- * `src/lib/fixtures/`, imported statically so the whole site prerenders.
+ * from. It reads the real corpus (see `docs/corpus-schema.md`) when one has
+ * been synced into `src/lib/corpus-data/` by `npm run sync-corpus`
+ * (`scripts/sync-corpus.mjs`, wired as a `prebuild`/`predev` hook — see
+ * README.md "Corpus data"), and falls back to the schema-conformant
+ * fixtures under `src/lib/fixtures/` otherwise. `npm test` never runs the
+ * sync step, so vitest always exercises the fixtures, deterministically.
  *
- * To point this at the real corpus later (see `docs/corpus-schema.md`):
- *   - Replace the static JSON imports below with `fetch()` calls (or a
- *     build-time step that copies `corpus/works/**` into `static/corpus/`
- *     and fetches from there), keyed the same way: `{workId}/manifest.json`,
- *     `{workId}/books/{osis}.json`, `ccc.{lang}/structure.json`,
- *     `ccc.{lang}/paragraphs.json`.
- *   - Every exported function below is async-compatible in signature-shape
- *     already (they return plain values, not promises, but callers already
- *     go through `load()` functions in routes) — so switching the bodies to
- *     `await fetch(...)` and making these functions `async` is a
- *     single-module change; no route or component should need to change.
- *   - Keep the exported function names and return shapes stable; that's the
- *     contract the rest of the app is written against.
+ * Real data is read with `import.meta.glob(..., { eager: true })` rather
+ * than `fetch()`: adapter-static prerenders every route at build time (no
+ * server runtime, see docs/decisions.md), and `import.meta.glob` lets Vite
+ * inline the JSON into the prerendered output at build time with no extra
+ * network round-trip and no risk of the fetched data going stale relative
+ * to the page that embeds it.
+ *
+ * Every exported function below is async-compatible in signature-shape
+ * already (they return plain values, not promises, but callers already go
+ * through `load()` functions in routes) — so switching to `await fetch(...)`
+ * later, if ever needed, is a single-module change; no route or component
+ * should need to change. Keep the exported function names and return shapes
+ * stable; that's the contract the rest of the app is written against.
  */
 
 import type {
@@ -38,31 +42,104 @@ import cccEnStructure from './fixtures/ccc.en/structure.json';
 import cccEnParagraphs from './fixtures/ccc.en/paragraphs.json';
 import cccEnAbbreviations from './fixtures/ccc.en/abbreviations.json';
 
-// --- Fixture registry ------------------------------------------------
+// --- Real corpus, if `npm run sync-corpus` has populated corpus-data/ -----
+//
+// Glob paths are relative to this file and must be literal for Vite's
+// static analysis, so they can't be built from the CORPUS_DIR env var here
+// — that's why sync-corpus.mjs materializes real data at this fixed path
+// instead of corpus.ts reading `../../corpus` directly.
 
-const manifests: Record<string, WorkManifest> = {
-	'bible.cpdv.en': bibleCpdvEnManifest as BibleManifest,
-	'ccc.en': cccEnManifest as WorkManifest
-};
+const realManifestModules = import.meta.glob('./corpus-data/works/*/manifest.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, WorkManifest>;
 
-const bibleBooks: Record<string, Record<string, BibleBook>> = {
-	'bible.cpdv.en': {
-		gen: genJson as BibleBook,
-		john: johnJson as BibleBook
-	}
-};
+const realBibleBookModules = import.meta.glob('./corpus-data/works/bible.*/books/*.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, BibleBook>;
 
-const cccStructures: Record<string, CccNode[]> = {
-	en: cccEnStructure as unknown as CccNode[]
-};
+const realCccStructureModules = import.meta.glob('./corpus-data/works/ccc.*/structure.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, CccNode[]>;
 
-const cccParagraphsByLang: Record<string, CccParagraph[]> = {
-	en: cccEnParagraphs as CccParagraph[]
-};
+const realCccParagraphsModules = import.meta.glob('./corpus-data/works/ccc.*/paragraphs.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, CccParagraph[]>;
 
-const cccAbbreviationsByLang: Record<string, CccAbbreviation[]> = {
-	en: cccEnAbbreviations as CccAbbreviation[]
-};
+const realCccAbbreviationModules = import.meta.glob('./corpus-data/works/ccc.*/abbreviations.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, CccAbbreviation[]>;
+
+/** True once corpus-data/ has been synced from a real corpus checkout. */
+const USE_REAL_CORPUS = Object.keys(realManifestModules).length > 0;
+
+function workIdFromManifestPath(path: string): string | null {
+	return path.match(/works\/([^/]+)\/manifest\.json$/)?.[1] ?? null;
+}
+
+function cccLangFromPath(path: string): string | null {
+	return path.match(/works\/ccc\.([^/]+)\//)?.[1] ?? null;
+}
+
+// --- Registry (real corpus when present, fixtures otherwise) -------------
+
+const manifests: Record<string, WorkManifest> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(realManifestModules)
+				.map(([path, manifest]) => [workIdFromManifestPath(path), manifest] as const)
+				.filter((entry): entry is [string, WorkManifest] => entry[0] !== null)
+				.sort(([a], [b]) => a.localeCompare(b))
+		)
+	: {
+			'bible.cpdv.en': bibleCpdvEnManifest as BibleManifest,
+			'ccc.en': cccEnManifest as WorkManifest
+		};
+
+const bibleBooks: Record<string, Record<string, BibleBook>> = USE_REAL_CORPUS
+	? (() => {
+			const out: Record<string, Record<string, BibleBook>> = {};
+			for (const [path, book] of Object.entries(realBibleBookModules)) {
+				const match = path.match(/works\/([^/]+)\/books\/([^/]+)\.json$/);
+				if (!match) continue;
+				const [, workId, osis] = match;
+				(out[workId] ??= {})[osis] = book;
+			}
+			return out;
+		})()
+	: {
+			'bible.cpdv.en': {
+				gen: genJson as BibleBook,
+				john: johnJson as BibleBook
+			}
+		};
+
+const cccStructures: Record<string, CccNode[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(realCccStructureModules)
+				.map(([path, structure]) => [cccLangFromPath(path), structure] as const)
+				.filter((entry): entry is [string, CccNode[]] => entry[0] !== null)
+		)
+	: { en: cccEnStructure as unknown as CccNode[] };
+
+const cccParagraphsByLang: Record<string, CccParagraph[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(realCccParagraphsModules)
+				.map(([path, paragraphs]) => [cccLangFromPath(path), paragraphs] as const)
+				.filter((entry): entry is [string, CccParagraph[]] => entry[0] !== null)
+		)
+	: { en: cccEnParagraphs as CccParagraph[] };
+
+const cccAbbreviationsByLang: Record<string, CccAbbreviation[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(realCccAbbreviationModules)
+				.map(([path, abbrevs]) => [cccLangFromPath(path), abbrevs] as const)
+				.filter((entry): entry is [string, CccAbbreviation[]] => entry[0] !== null)
+		)
+	: { en: cccEnAbbreviations as CccAbbreviation[] };
 
 // --- Works -------------------------------------------------------------
 
@@ -99,9 +176,9 @@ export function getBook(workId: string, osis: string): BibleBook | undefined {
 	return bibleBooks[workId]?.[osis];
 }
 
-/** All books physically present for a work, in the fixture's own order. */
+/** All books physically present for a work, in canonical (`order`) order. */
 export function listBooks(workId: string): BibleBook[] {
-	return Object.values(bibleBooks[workId] ?? {});
+	return Object.values(bibleBooks[workId] ?? {}).sort((a, b) => a.order - b.order);
 }
 
 export function getChapter(
@@ -211,6 +288,13 @@ export function getCccBreadcrumb(lang: string, n: number): CccNode[] {
 	function walk(nodes: CccNode[]): boolean {
 		for (const node of nodes) {
 			const [first, last] = node.paragraphs;
+			// The schema (docs/corpus-schema.md) requires `paragraphs` to be a
+			// `[number, number]` tuple, but some real-corpus structure nodes
+			// carry a `null` first bound (unnumbered content, e.g. the Creed
+			// printed in full) — a documented mismatch (see site/README.md /
+			// final report). Treat such nodes as never containing anything
+			// rather than letting `n < null` (== `n < 0`) falsely match.
+			if (typeof first !== 'number' || typeof last !== 'number') continue;
 			if (n < first || n > last) continue;
 			path.push(node);
 			if (!walk(node.children)) {
