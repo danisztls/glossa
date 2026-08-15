@@ -132,7 +132,7 @@ def strip_tags(s: str) -> str:
     return s
 
 
-_BOLD_SPAN_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.DOTALL)
+_BOLD_SPAN_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.DOTALL | re.IGNORECASE)
 
 
 def is_full_bold(inner_html: str) -> bool:
@@ -187,6 +187,15 @@ def is_mini_header(text: str) -> bool:
     if len(t.split()) > 8:
         return False
     return not t.endswith((".", "!", ";", ":", '"', "”", "’"))
+
+
+def looks_like_number_typo(cand: int, expected: int) -> bool:
+    """True when `cand` differs from `expected` by exactly one digit at the
+    same string length (e.g. 2117 vs 2217) -- a plausible single-keystroke
+    misprint of the paragraph number, as opposed to an unrelated number that
+    happens to start a block."""
+    a, b = str(cand), str(expected)
+    return len(a) == len(b) and sum(x != y for x, y in zip(a, b)) == 1
 
 
 # --------------------------------------------------------------------------
@@ -282,7 +291,11 @@ class Paragraph:
         citations = []
         for tok in tokens:
             if tok in seen:
-                anomalies.append(f"paragraph {self.n}: duplicate footnote marker {tok}")
+                # The source itself sometimes cites the same footnote twice
+                # within one paragraph (verified against raw HTML, e.g. PT
+                # §460 quotes two parallel Latin/vernacular texts both
+                # attributed to footnote 84) -- one citations entry per
+                # distinct marker is correct; this is not an anomaly.
                 continue
             seen.add(tok)
             if tok not in footnote_table:
@@ -318,6 +331,7 @@ class ScrapeState:
         self.false_starts: list[str] = []
         self.anomalies: list[str] = []
         self.orphan_content: list[str] = []
+        self.fetch_failures: list[str] = []
         # The footnote table for whichever page is currently being processed.
         # A paragraph never spans two pages (verified across every mirror
         # inspected), so it's always safe to resolve citations against
@@ -336,8 +350,29 @@ class ScrapeState:
             level = LEVELS[kind]
             while self.stack and self.stack[-1].level >= level:
                 self.stack.pop()
+        parent_children = self.stack[-1].children if self.stack else self.root_children
+        # PT's coarser per-chapter pages re-print the running Part/Section
+        # banner verbatim at the top of every page within that part/section
+        # (e.g. "PRIMEIRA PARTE A PROFISSÃO DA FÉ" appears atop all 7 pages
+        # spanning §26-1065). Without this check each repeat would pop and
+        # re-push a fresh sibling, fragmenting one Part into many. Only
+        # merges into the immediately preceding sibling -- a coincidental
+        # match elsewhere in the tree is not affected. Matched by (kind, n)
+        # rather than exact title text: the running banner isn't always
+        # printed identically page to page (seen: one page appends a
+        # trailing "INTRODUÇÃO" that others omit), but the ordinal is
+        # consistent whenever the source numbers the heading at all.
+        prev = parent_children[-1] if parent_children else None
+        same_heading = (
+            prev is not None
+            and prev.kind == kind
+            and ((n is not None and prev.n == n) or (n is None and prev.title == title))
+        )
+        if same_heading:
+            self.stack.append(prev)
+            return
         node = Node(kind, n, title, level)
-        (self.stack[-1].children if self.stack else self.root_children).append(node)
+        parent_children.append(node)
         self.stack.append(node)
 
     # -- paragraphs ------------------------------------------------------
@@ -388,6 +423,45 @@ class Block:
     text: str
 
 
+_EMBEDDED_START_PUNCT_RE = r'[.!?:;"”’]'
+
+
+def split_embedded_paragraph_starts(
+    text: str, base_n: int | None
+) -> list[tuple[int | None, str]]:
+    """Some pages drop the <p> boundary between two numbered paragraphs
+    entirely -- the next paragraph's number just appears mid-sentence,
+    e.g. "...validity of the Decalogue. 2077 The gift..." (no tag at all
+    between "Decalogue." and "2077"), or "...common good. <br>\\n2436
+    Unemployment..." (a <br> instead of a real break; by the time this
+    function sees the text, <br> has already collapsed to a space so both
+    cases look identical). Only splits on the exact next-expected number,
+    preceded by sentence-ending punctuation, chained forward -- this keeps
+    the false-positive rate on ordinary in-prose numerals effectively zero.
+
+    Returns [(None, prefix), (n1, chunk1), (n2, chunk2), ...] where the
+    first element always carries the original (no new paragraph) owner and
+    subsequent elements mark where a new paragraph starts."""
+    if base_n is None:
+        return [(None, text)]
+    result: list[tuple[int | None, str]] = []
+    remaining = text
+    expected = base_n + 1
+    owner: int | None = None
+    while True:
+        m = re.search(
+            rf"(?<={_EMBEDDED_START_PUNCT_RE})\s+({expected})\b\s*", remaining
+        )
+        if not m:
+            result.append((owner, remaining))
+            break
+        result.append((owner, remaining[: m.start()]))
+        remaining = remaining[m.end() :]
+        owner = expected
+        expected += 1
+    return result
+
+
 def process_page(
     blocks: list[Block],
     footnote_table: dict[str, str],
@@ -424,28 +498,56 @@ def process_page(
         is_new = False
         rest_text = b.text
         if cand is not None:
-            if state.last_n is None or cand == state.last_n + 1:
+            expected = state.last_n + 1 if state.last_n is not None else cand
+            if state.last_n is None or cand == expected:
                 is_new = True
                 rest_text = b.text[m.end() :]
-            elif cand > state.last_n + 1:
+            elif cand > expected:
                 is_new = True
                 state.record_gap(state.last_n, cand)
                 rest_text = b.text[m.end() :]
-            # else: cand <= last_n -> false positive; fall through as continuation
+            elif looks_like_number_typo(cand, expected):
+                # A handful of pages misprint the paragraph number itself by
+                # one digit (verified against raw HTML: e.g. PT prints
+                # "2117." where content and position both make it §2217 --
+                # single-digit substitution, immediately after §2216). The
+                # printed digits are structural metadata, not body text, so
+                # correcting the boundary here doesn't violate verbatim-text
+                # capture; the typo is logged for transparency.
+                is_new = True
+                cand = expected
+                state.anomalies.append(
+                    f"paragraph {expected}: source printed {m.group(1)!r} "
+                    "(single-digit typo, corrected)"
+                )
+                rest_text = b.text[m.end() :]
+            # else: cand <= last_n and not a plausible typo -> false positive;
+            # fall through as continuation
+
+        base_n = cand if is_new else state.last_n
+        segments = split_embedded_paragraph_starts(rest_text, base_n)
+        first_text = segments[0][1]
 
         if is_new:
             state.finalize_open_paragraph()
-            state.start_paragraph(cand, b.kind, rest_text)
+            state.start_paragraph(cand, b.kind, first_text)
             state.last_n = cand
         elif state.open_paragraph is None:
-            if b.kind == "prose" and is_mini_header(b.text):
-                state.dropped.append(b.text)
+            if b.kind == "prose" and is_mini_header(first_text):
+                state.dropped.append(first_text)
             else:
-                state.orphan_content.append(b.text[:80])
-        elif b.kind == "prose" and is_mini_header(b.text):
-            state.dropped.append(b.text)
+                where = state.stack[-1].title if state.stack else "?"
+                state.orphan_content.append(f"[{where}] {first_text[:90]}")
+        elif b.kind == "prose" and is_mini_header(first_text):
+            state.dropped.append(first_text)
         else:
-            state.add_continuation(b.kind, b.text)
+            state.add_continuation(b.kind, first_text)
+
+        for owner, chunk in segments[1:]:
+            state.finalize_open_paragraph()
+            state.start_paragraph(owner, b.kind, chunk)
+            state.last_n = owner
+
         i += 1
     state.finalize_open_paragraph()
 
@@ -516,19 +618,42 @@ def match_label_en(text: str) -> tuple[str, int | None] | None:
 
 EN_NUMBER_RE = re.compile(r"^(\d{1,4})\s")
 
+_EN_IF = re.IGNORECASE | re.DOTALL
+
+# A small minority of pages (found: __P85.HTM) were re-saved through Internet
+# Explorer at some point on vatican.va's own end -- confirmed live on the
+# server, not a cache artifact: they carry a literal "saved from url=..."
+# comment and MSHTML generator meta tag. They differ from the standard pages
+# in three ways, all handled below: (1) tag names are uppercase, (2)
+# attributes are reordered (href before name, width before size, etc.), (3)
+# hrefs are absolute URLs instead of bare "#-CODE" fragments. All EN regexes
+# are therefore case-insensitive and attribute-order-independent; none rely
+# on href *values*, only on the "name=" attribute, which is present and
+# consistent in both variants.
 _EN_SUP_RE = re.compile(
-    r"<sup>.*?<a\s+name=-([0-9A-Za-z]+)[^>]*>(\d+)</a>.*?</sup>", re.DOTALL
+    r"<sup>.*?<a\s[^>]*?name=-([0-9A-Za-z]+)[^>]*>(\d+)</a>.*?</sup>", _EN_IF
 )
 
 
-_EN_STRAY_BOLD_RE = re.compile(r"^\s*<b([^>]*)>\s*<p([^>]*)>")
+_EN_STRAY_BOLD_RE = re.compile(r"^\s*<b([^>]*)>\s*<p([^>]*)>", re.IGNORECASE)
+
+# <hr> boundary markers, matched by the attribute combination that's unique
+# to that boundary regardless of tag-name case, attribute order, or
+# quoting -- e.g. both "<hr size=1 noshade>" and "<HR noShade SIZE=1>".
+_EN_HR_CONTENT_START_RE = re.compile(
+    r"<hr\b(?=[^>]*\bnoshade\b)(?=[^>]*\bsize=[\"']?1\b)[^>]*>", re.IGNORECASE
+)
+_EN_HR_FOOTNOTE_START_RE = re.compile(
+    r"<hr\b(?=[^>]*\bwidth=[\"']?30%)[^>]*>", re.IGNORECASE
+)
+_EN_HR_FOOTNOTE_END_RE = re.compile(
+    r"<hr\b(?=[^>]*\bwidth=[\"']?70%)[^>]*>", re.IGNORECASE
+)
 
 
 def _en_body_and_footnotes(html_text: str) -> tuple[str, str]:
-    hr_idx = html_text.find("<hr size=1 noshade>")
-    rest = (
-        html_text[hr_idx + len("<hr size=1 noshade>") :] if hr_idx != -1 else html_text
-    )
+    start_m = _EN_HR_CONTENT_START_RE.search(html_text)
+    rest = html_text[start_m.end() :] if start_m else html_text
     # The page's first heading is sometimes preceded by a stray <b> that opens
     # *before* the <p> tag and closes partway through its content (e.g.
     # "<hr...><b><p class=MsoNormal>CHAPTER ONE</b><b...></b></p>"). Reorder
@@ -536,19 +661,20 @@ def _en_body_and_footnotes(html_text: str) -> tuple[str, str]:
     # heading on the page -- otherwise these pages' first heading is invisible
     # to the bold-heading detector.
     rest = _EN_STRAY_BOLD_RE.sub(lambda m: f"<p{m.group(2)}><b{m.group(1)}>", rest)
-    foot_idx = rest.find("<hr size=1 width=30%")
-    if foot_idx == -1:
-        end_idx = rest.find("<center><br><br><hr size=1 width=70%")
-        return (rest[:end_idx] if end_idx != -1 else rest), ""
-    body = rest[:foot_idx]
-    tail_idx = rest.find("<center><br><br><hr size=1 width=70%", foot_idx)
-    foot = rest[foot_idx : tail_idx if tail_idx != -1 else None]
+    foot_m = _EN_HR_FOOTNOTE_START_RE.search(rest)
+    if foot_m is None:
+        end_m = _EN_HR_FOOTNOTE_END_RE.search(rest)
+        return (rest[: end_m.start()] if end_m else rest), ""
+    body = rest[: foot_m.start()]
+    end_m = _EN_HR_FOOTNOTE_END_RE.search(rest, foot_m.end())
+    foot = rest[foot_m.end() : (end_m.start() if end_m else None)]
     return body, foot
 
 
 _EN_FOOT_SPLIT_RE = re.compile(
-    r"<font size=3><b><a name=\$([0-9A-Za-z]+) href=#-\1>(\d+)</a></b></font>"
-    r"<font face=Verdana size=1>"
+    r"<font\s+size=[\"']?3[\"']?><b><a\s[^>]*?name=\$([0-9A-Za-z]+)[^>]*>(\d+)</a></b></font>"
+    r"\s*<font\s+face=[\"']?Verdana[\"']?\s+size=[\"']?1[\"']?>",
+    re.IGNORECASE,
 )
 
 
@@ -561,7 +687,7 @@ def _en_footnote_table(foot_html: str) -> dict[str, str]:
     return table
 
 
-_EN_P_RE = re.compile(r"<p([^>]*)>(.*?)</p>", re.DOTALL)
+_EN_P_RE = re.compile(r"<p([^>]*)>(.*?)</p>", _EN_IF)
 
 
 def parse_page_en(html_text: str) -> tuple[list[Block], dict[str, str]]:
@@ -569,7 +695,7 @@ def parse_page_en(html_text: str) -> tuple[list[Block], dict[str, str]]:
     footnote_table = _en_footnote_table(foot_html)
     blocks: list[Block] = []
     for attrs_m, inner in ((m.group(1), m.group(2)) for m in _EN_P_RE.finditer(body)):
-        is_quote = "margin-left" in attrs_m
+        is_quote = "margin-left" in attrs_m.lower()
         is_heading = is_full_bold(inner)
         marked = _EN_SUP_RE.sub(lambda m: f"{MARK_OPEN}{m.group(2)}{MARK_CLOSE}", inner)
         text = strip_tags(marked)
@@ -619,6 +745,26 @@ _PT_LABELS = [
 ]
 
 
+def is_bare_structural_label(text: str) -> bool:
+    """True when `text` is *just* a structural label (e.g. "CAPÍTULO
+    PRIMEIRO") with no trailing subtitle or other content glued on in the
+    same block. Used to decide whether a non-bold block can still count as
+    a heading: some chapter markers are printed plain, with only their
+    separate subtitle block bold (see parse_page_pt); but the Prologue also
+    *describes* the four Parts by name in ordinary running prose (e.g.
+    "PRIMEIRA PARTE: A Profissão da Fé ..."), which must not be mistaken for
+    the real heading. A bare label consumes (almost) the whole block;
+    prose mentioning a part name goes on for a full sentence afterwards."""
+    folded = fold(text)
+    for kind, pat in _PT_LABELS:
+        if kind == "roman":
+            continue
+        m = pat.match(folded)
+        if m and len(folded) - m.end() <= 3:
+            return True
+    return False
+
+
 def match_label_pt(original_text: str) -> tuple[str, int | None] | None:
     folded = fold(original_text)
     for kind, pat in _PT_LABELS:
@@ -653,31 +799,75 @@ def _pt_body(html_text: str) -> tuple[str, str]:
         )
     ]
     body = html_text[starts[0] : (ends[-1] if ends else len(html_text))]
-    # The footnote list starts right after the page's one <hr/>. Small
-    # front-matter pages (e.g. the Prologue) label it "<p><b>Notas</b></p>"
-    # first; most chapter pages have no label at all and go straight into
-    # "<p>1. ...</p>". Split on the <hr/> itself so both forms work, then
-    # drop the label if present.
-    hr_m = re.search(r"<hr\s*/?>", body)
-    if not hr_m:
+    # The footnote list starts right after the page's *last* <hr/> -- most
+    # pages have exactly one, but a couple (e.g. the pages embedding a
+    # reference table for the Credo or the Ten Commandments) have an extra
+    # <hr/> earlier, before that table; picking the first one would treat
+    # the table's markup as the footnote list and silently produce an empty
+    # footnote table. Some pages (e.g. the Prologue) label the real one
+    # "Notas" first; _pt_footnote_table strips that label at the flattened-
+    # text level rather than matching it as HTML here, since its wrapping
+    # <p> tag isn't always attribute-free.
+    hr_matches = list(re.finditer(r"<hr\s*/?>", body))
+    if not hr_matches:
         return body, ""
+    hr_m = hr_matches[-1]
     content, foot = body[: hr_m.start()], body[hr_m.end() :]
-    foot = re.sub(
-        r"^\s*<p>\s*<b>\s*Notas\s*</b>\s*</p>", "", foot, count=1, flags=re.IGNORECASE
-    )
     return content, foot
 
 
-_PT_FOOTNOTE_NUM_RE = re.compile(r"^(\d{1,3})\s*\.?\s*(.*)$", re.DOTALL)
+_PT_FOOTNOTE_NUM_RE = re.compile(r"^\s*(\d{1,3})\.?\s+")
+# Deliberately *not* requiring sentence-ending punctuation before the number
+# (unlike split_embedded_paragraph_starts): footnote text itself sometimes
+# ends on a bare citation with no terminal period (e.g. PT §226's footnote
+# text is "Cf. Mt 16, 25-26; Jo 15. 13" -- no period after "13"). And the
+# period after the number doesn't always get a following space either (seen:
+# "...1, 27. 135.Cf. 1 Sm 1." -- "135." runs straight into "Cf" with no
+# space). Whitespace before, and *either* a period or whitespace after, is
+# enough to rule out matching inside a longer number (e.g. "27" inside
+# "127") without over-constraining the punctuation.
+_PT_FOOTNOTE_NEXT_RE = r"\s({n})(?:\.|\s)"
+# This is a long sequential chain over the whole footnote list (up to ~600
+# entries on the longest pages) built from some of the sloppiest markup in
+# the corpus, so a bounded lookahead -- try n+1, then n+2, ... -- guards
+# against any one boundary this scanner still can't recognize silently
+# swallowing every subsequent footnote into the current one. Missed numbers
+# in between are recorded as empty entries (visible in validation, not
+# fabricated).
+_PT_FOOTNOTE_LOOKAHEAD = 5
 
 
 def _pt_footnote_table(foot_html: str) -> dict[str, str]:
+    # Each footnote is usually its own "<p>N. text</p>", but the source
+    # sometimes drops the <p> wrapper for a single entry (seen: PT §36's
+    # footnote 12 -- "...819.<p>13. Pio XII...</p>" with nothing wrapping
+    # "12." itself, so the per-<p> split silently skips it). Scanning the
+    # fully flattened text for sequential "N." boundaries is robust either
+    # way and doesn't depend on <p> tags being present at all.
+    text = strip_tags(foot_html)
+    text = re.sub(r"^\s*Notas\s*:?\s*", "", text, count=1, flags=re.IGNORECASE)
     table: dict[str, str] = {}
-    for m in _PT_INNER_P_RE.finditer(foot_html):
-        text = strip_tags(m.group(1))
-        num_m = _PT_FOOTNOTE_NUM_RE.match(text)
-        if num_m:
-            table[num_m.group(1)] = num_m.group(2).strip()
+    start_m = _PT_FOOTNOTE_NUM_RE.match(text)
+    if not start_m:
+        return table
+    expected = int(start_m.group(1))
+    pos = start_m.end()
+    while True:
+        m = nxt = None
+        for lookahead in range(1, _PT_FOOTNOTE_LOOKAHEAD + 1):
+            candidate = expected + lookahead
+            cm = re.search(_PT_FOOTNOTE_NEXT_RE.format(n=candidate), text[pos:])
+            if cm is not None:
+                m, nxt = cm, candidate
+                break
+        if m is None:
+            table[str(expected)] = text[pos:].strip()
+            break
+        for skipped in range(expected + 1, nxt):
+            table[str(skipped)] = ""
+        table[str(expected)] = text[pos : pos + m.start()].strip()
+        pos += m.end()
+        expected = nxt
     return table
 
 
@@ -722,10 +912,19 @@ def parse_page_pt(html_text: str) -> tuple[list[Block], dict[str, str]]:
                 if piece:
                     blocks.append(Block(False, "quote", _pt_mark(piece)))
             continue
-        is_heading = is_full_bold(p_inner)
         text = strip_tags(p_inner)
         if not text:
             continue
+        # Most headings are fully bold, but chapter markers are sometimes
+        # printed plain with only their subtitle bold (seen: "<p
+        # align="center">CAPÍTULO PRIMEIRO</p>" followed by a *separate*
+        # bold "<p align="center"><b>O HOMEM É «CAPAZ» DE DEUS</b></p>" --
+        # without this, "CAPÍTULO PRIMEIRO" reads as ordinary prose, gets
+        # dropped as a mini-header, and the chapter itself never gets
+        # created). Recognize a confident structural label even unbolded;
+        # roman-numeral subheadings are excluded since "I." et al. are too
+        # easily mistaken for ordinary prose without the bold signal.
+        is_heading = is_full_bold(p_inner) or is_bare_structural_label(text)
         blocks.append(Block(is_heading, "prose", _pt_mark(text)))
     return merge_quote_blocks(blocks), footnote_table
 
@@ -739,6 +938,12 @@ def discover_pages_pt(fetcher: Fetcher) -> list[tuple[str, str]]:
         if not h.endswith("_po.html"):
             continue
         if h.startswith("index-") or h == "indice_po.html":
+            continue
+        # Front-matter links (e.g. the Laetamur Magnopere apostolic letter)
+        # are absolute site paths and happen to also end in "_po.html";
+        # every real CCC content page href is a bare filename in this same
+        # directory, with no path separator.
+        if "/" in h:
             continue
         if h in seen:
             continue
@@ -823,7 +1028,14 @@ def run_scrape(
         state.last_n = None  # each sample chunk is validated independently
         state.stack = []
         for url, name in chunk:
-            html_text = fetcher.fetch(url, name)
+            try:
+                html_text = fetcher.fetch(url, name)
+            except RuntimeError as exc:
+                # A single missing/broken page must not kill the whole crawl:
+                # record it and let validation surface any paragraphs it
+                # would have contributed as genuinely missing.
+                state.fetch_failures.append(f"{name}: {exc}")
+                continue
             fetched_pages.append((url, name))
             blocks, footnote_table = cfg["parse"](html_text)
             process_page(
@@ -894,7 +1106,11 @@ def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[st
             " ".join(b.text for b in para.blocks),
         )
         markers = [c["marker"] for c in para.citations]
-        if sorted(tokens) != sorted(markers):
+        # A marker may appear more than once in text_marked (the source
+        # occasionally cites the same footnote twice in one paragraph) but
+        # gets exactly one citations entry -- so this is a set-membership
+        # check, not a multiset/count equality.
+        if set(tokens) != set(markers) or len(markers) != len(set(markers)):
             problems.append(
                 f"paragraph {n}: token/citation mismatch {tokens} vs {markers}"
             )
@@ -947,6 +1163,17 @@ def build_manifest(
     ]
     if state.gaps:
         notes.append(f"source paragraph-number gaps detected: {state.gaps}")
+    if state.fetch_failures:
+        notes.append(
+            f"page fetch failures (skipped, non-fatal): {state.fetch_failures}"
+        )
+    if state.orphan_content:
+        notes.append(
+            f"{len(state.orphan_content)} unnumbered content blocks (epigraphs opening "
+            "certain articles, e.g. the Decalogue commandment texts and creed texts) were "
+            "not attached to any paragraph -- a known v1 capture gap, logged not fabricated; "
+            "see scraper output for the per-article breakdown."
+        )
     if sample:
         notes.insert(
             0,
@@ -1027,13 +1254,27 @@ def print_summary(lang: str, state: ScrapeState, ok: bool, problems: list[str]) 
         "paragraphs with marginal 'related' refs: 0 (apparatus absent from source; see manifest notes)"
     )
     print(f"source gaps recorded: {state.gaps}")
-    print(f"dropped mini-headers: {len(state.dropped)} -> {state.dropped}")
+    print(f"dropped mini-headers: {len(state.dropped)}")
     if state.false_starts:
         print(f"false paragraph-number starts: {state.false_starts}")
+    if state.fetch_failures:
+        print(f"fetch failures ({len(state.fetch_failures)}): {state.fetch_failures}")
     if state.orphan_content:
-        print(f"orphan content (no open structure/paragraph): {state.orphan_content}")
+        by_article: dict[str, int] = {}
+        for entry in state.orphan_content:
+            where = entry.split("]", 1)[0].lstrip("[") if entry.startswith("[") else "?"
+            by_article[where] = by_article.get(where, 0) + 1
+        print(
+            f"orphan content (no open structure/paragraph): {len(state.orphan_content)} "
+            f"blocks across {len(by_article)} articles/sections"
+        )
+        for where, count in by_article.items():
+            print(f"  - {where}: {count}")
+        print("  sample:")
+        for entry in state.orphan_content[:10]:
+            print(f"    {entry}")
     if state.anomalies:
-        print(f"anomalies: {state.anomalies}")
+        print(f"anomalies ({len(state.anomalies)}): {state.anomalies}")
     print(f"VALIDATION: {'PASS' if ok else 'FAIL'}")
     for p in problems:
         print(f"  - {p}")
