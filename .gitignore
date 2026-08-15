@@ -10,6 +10,16 @@ node_modules/
 site/.svelte-kit/
 site/build/
 
+# Empty dotfiles recreated by Claude Code's sandbox shell init — not project files
+.bash_profile
+.bashrc
+.gitconfig
+.gitmodules
+.profile
+.ripgreprc
+.zprofile
+.zshrc
+
 # Misc
 .DS_Store
 *.log
