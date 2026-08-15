@@ -188,6 +188,29 @@ The Compendium of the CCC (2005) is Q&A-format: 598 numbered questions, each pri
 
 References are edition-independent (OSIS + chapter + verse); the site resolves them against whichever Bible edition the reader has open. Psalm references use Vulgate numbering (both v1 editions agree).
 
+## Corrections (auditable source-defect fixes)
+
+Verified source defects are fixed through a corrections layer, never by hand-editing output (see `decisions.md` §Source-defect corrections policy):
+
+- **Input**: `pipeline/corrections/{work_id}.json` (committed to the repo) — array of entries:
+
+```jsonc
+{
+  "id": "ccc.pt-679-fn660", // stable slug
+  "locator": { "paragraph": 679, "marker": "660" }, // or {"osis":"john","chapter":19,"verse":29}, or {"structure": …}
+  "field": "citation_text", // what is being corrected
+  "from": "600.", // must match the parsed source exactly, else the run FAILS (drift guard)
+  "to": "660.",
+  "reason": "footnote list prints 600./601. immediately after 659 — digit-substitution typo",
+  "evidence": "raw HTML corpus/raw/ccc-pt/…; EN parallel ¶679 footnotes 660-661",
+  "added": "2026-08-14"
+}
+```
+
+- **Application**: each scraper loads its corrections file (if present) and applies entries post-parse.
+- **Receipt**: the work's output gains `corrections-applied.json` — the exact list applied, with before/after — and the manifest gains `"corrections_applied": n`.
+- **Eligibility**: mechanical/typographic defects only (OCR artifacts, digit typos, marker mismatches, split words). Never wording changes, never modernization. Every entry needs evidence; a defect that can't be confidently resolved stays uncorrected and documented.
+
 ## Validation expectations (every scraper ships one)
 
 Each scraper ends with a self-check that prints a report and exits non-zero on failure:

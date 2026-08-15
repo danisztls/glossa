@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import json
 import re
 import sys
 import time
@@ -45,6 +46,8 @@ RATE_LIMIT_SECONDS = 1.0
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 RAW_DIR = REPO_ROOT / "corpus" / "raw" / "cpdv"
 WORK_DIR = REPO_ROOT / "corpus" / "works" / "bible.cpdv.en"
+CORRECTIONS_DIR = REPO_ROOT / "pipeline" / "corrections"
+WORK_ID = "bible.cpdv.en"
 
 # (osis, filename, display name) in the schema's canonical 73-book order.
 # docs/corpus-schema.md §"Canonical book order".
@@ -324,6 +327,99 @@ class Fetcher:
             self.client.close()
 
 
+# --------------------------------------------------------------------------
+# Corrections layer (docs/corpus-schema.md #Corrections, docs/decisions.md
+# #Source-defect corrections policy)
+#
+# Verified source defects are corrected via an auditable data file rather
+# than by hand-editing output. Entries live in
+# pipeline/corrections/bible.cpdv.en.json (committed to the repo, if/when
+# any defect is documented for this source -- CPDV is a clean, modern
+# public-domain translation with no known mechanical/typographic defects as
+# of this writing, so the file is typically absent and this layer applies
+# zero corrections). Each scraper implements this loading/application logic
+# independently (small duplication preferred over a shared module per
+# project convention) so the mechanism -- and its non-zero-exit drift guard
+# -- is present and provable even when the corrections list is empty.
+# --------------------------------------------------------------------------
+
+
+class CorrectionDriftError(RuntimeError):
+    pass
+
+
+def load_corrections(work_id: str) -> list[dict]:
+    path = CORRECTIONS_DIR / f"{work_id}.json"
+    if not path.exists():
+        return []
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def apply_corrections(
+    book_docs: list[dict], corrections: list[dict], full_run: bool
+) -> tuple[list[dict], set[str]]:
+    # Scope is tracked at (osis, chapter) granularity, not just osis: --sample
+    # keeps Philemon whole but truncates John to chapters 1-3, so a
+    # correction targeting a chapter the sample run never touched must be
+    # skipped as out-of-scope, not treated as source drift.
+    present_chapters = {
+        (b["osis"], chap["n"]) for b in book_docs for chap in b["chapters"]
+    }
+    verse_index: dict[tuple[str, int, int], dict] = {}
+    for b in book_docs:
+        for chap in b["chapters"]:
+            for v in chap["verses"]:
+                verse_index[(b["osis"], chap["n"], v["n"])] = v
+
+    applied: list[dict] = []
+    seen: set[str] = set()
+    for c in corrections:
+        if c.get("resolution"):
+            continue  # documented non-defect / unresolved -- never applied
+        loc = c["locator"]
+        key = (loc["osis"], loc["chapter"], loc["verse"])
+        if (loc["osis"], loc["chapter"]) not in present_chapters:
+            continue  # out of scope for this run (e.g. --sample)
+        verse = verse_index.get(key)
+        if verse is None or c["from"] not in verse["text"]:
+            raise CorrectionDriftError(
+                f"correction {c['id']!r}: expected text {c['from']!r} not found "
+                f"at {loc['osis']} {loc['chapter']}:{loc['verse']} (source drift -- "
+                "re-verify against corpus/raw/ and update or remove the entry)"
+            )
+        verse["text"] = verse["text"].replace(c["from"], c["to"], 1)
+        applied.append(dict(c))
+        seen.add(c["id"])
+
+    if full_run:
+        missing = [
+            c["id"] for c in corrections if not c.get("resolution") and c["id"] not in seen
+        ]
+        if missing:
+            raise CorrectionDriftError(
+                f"correction entries never matched during full run: {missing}"
+            )
+    return applied, seen
+
+
+def write_corrections_receipt(
+    work_dir: Path, applied: list[dict], corrections: list[dict], generated_at: str
+) -> int:
+    unresolved = [c for c in corrections if c.get("resolution")]
+    receipt = {
+        "work_id": WORK_ID,
+        "generated_at": generated_at,
+        "applied": applied,
+        "unresolved": unresolved,
+        "count": len(applied),
+    }
+    work_dir.mkdir(parents=True, exist_ok=True)
+    (work_dir / "corrections-applied.json").write_text(
+        json.dumps(receipt, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    return len(applied)
+
+
 def run_scrape(
     sample: bool, offline: bool, refresh: bool
 ) -> tuple[list[dict], list[str]]:
@@ -418,7 +514,13 @@ def print_summary(book_docs: list[dict]) -> int:
     return total_verses
 
 
-def write_output(book_docs: list[dict], sample: bool, total_verses: int) -> None:
+def write_output(
+    book_docs: list[dict],
+    sample: bool,
+    total_verses: int,
+    corrections_applied: int,
+    generated_at: str,
+) -> None:
     books_dir = WORK_DIR / "books"
     books_dir.mkdir(parents=True, exist_ok=True)
     for b in book_docs:
@@ -426,7 +528,6 @@ def write_output(book_docs: list[dict], sample: bool, total_verses: int) -> None
         write_json(out_path, b)
 
     today = datetime.now(timezone.utc).date().isoformat()
-    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     notes = (
         "Ronald L. Conte Jr. translation, 2004-2009, from the Clementine "
@@ -462,13 +563,12 @@ def write_output(book_docs: list[dict], sample: bool, total_verses: int) -> None
         "generated_at": generated_at,
         "psalm_numbering": "vulgate",
         "books": [b["osis"] for b in book_docs],
+        "corrections_applied": corrections_applied,
     }
     write_json(WORK_DIR / "manifest.json", manifest)
 
 
 def write_json(path: Path, obj) -> None:
-    import json
-
     path.write_text(
         json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
@@ -511,7 +611,27 @@ def main() -> int:
             print(line)
     print("VALIDATION: " + ("PASS" if ok else "FAIL"))
 
-    write_output(book_docs, sample=args.sample, total_verses=total_verses)
+    corrections = load_corrections(WORK_ID)
+    try:
+        applied, _seen = apply_corrections(book_docs, corrections, full_run=not args.sample)
+    except CorrectionDriftError as exc:
+        print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)
+        return 1
+    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    corrections_count = write_corrections_receipt(WORK_DIR, applied, corrections, generated_at)
+    print(
+        f"\nCorrections layer: {corrections_count} applied, "
+        f"{len([c for c in corrections if c.get('resolution')])} documented unresolved/"
+        "not-a-defect (see corrections-applied.json)"
+    )
+
+    write_output(
+        book_docs,
+        sample=args.sample,
+        total_verses=total_verses,
+        corrections_applied=corrections_count,
+        generated_at=generated_at,
+    )
     print(f"\nWrote {len(book_docs)} book file(s) to {WORK_DIR}")
 
     return 0 if ok else 1

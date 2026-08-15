@@ -1,0 +1,347 @@
+[
+  {
+    "id": "matos.pt-gen10.11-Ir",
+    "locator": { "osis": "gen", "chapter": 10, "verse": 11 },
+    "field": "verse_text",
+    "from": null,
+    "to": null,
+    "reason": "NOT A DEFECT (documented false positive of the mid-word-capital-I OCR detector). 'Rechoboth-Ir' is the correct printed reading: 'Ir' here transliterates the Hebrew element for 'city' (as in the place name), a legitimate capitalized proper-noun component after a hyphen, not a lowercase 'l' misread as capital 'I'.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/gen.json, gen 10:11: 'Daquela terra foi para Assur, e edificou Nínive, e Rechoboth-Ir, e Calé,' -- 'Rechoboth-Ir' (Rehoboth-Ir) is a standard rendering of the Genesis 10:11 place name across Portuguese Catholic Bible translations; there is no lowercase-l reading ('Rechoboth-Ir' vs. a hypothetical 'Rechoboth-lr') that would make sense.",
+    "resolution": "not-a-defect",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-exod1.10-Io",
+    "locator": { "osis": "exod", "chapter": 1, "verse": 10 },
+    "field": "verse_text",
+    "from": "oprimámo-Io",
+    "to": "oprimámo-lo",
+    "reason": "Mid-word OCR artifact: capital I stands in for lowercase l in the enclitic pronoun '-lo' (mesoclisis: 'oprimamos' + 'o' -> 'oprimámo-lo', 'let us oppress him').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/exod.json, exod 1:10: 'Vinde, oprimámo-Io com astúcia para que ele não se multiplique...' -- 'oprimámo-lo' is the only grammatical reading (1st person plural imperative/hortative 'oprimamos' + direct-object clitic 'o' referring to 'o povo de Israel').",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-exod25.37-Ias",
+    "locator": { "osis": "exod", "chapter": 25, "verse": 37 },
+    "field": "verse_text",
+    "from": "pô-Ias-ás",
+    "to": "pô-las-ás",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the enclitic pronoun '-las' (future mesoclisis: 'porás' + 'as' [as lâmpadas, fem. pl.] -> 'pô-las-ás', 'you shall put them').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/exod.json, exod 25:37: 'Farás, além disso, sete lâmpadas, e pô-Ias-ás sobre o candeeiro...' -- referent 'sete lâmpadas' is feminine plural, matching clitic '-las'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-lev8.19-imoIou",
+    "locator": { "osis": "lev", "chapter": 8, "verse": 19 },
+    "field": "verse_text",
+    "from": "imoIou",
+    "to": "imolou",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in 'imolou' (past tense of 'imolar', to immolate/sacrifice).",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/lev.json, lev 8:19: 'imoIou-o e derramou-lhe o sangue ao redor do altar.' -- 'imolou-o' (he sacrificed it) is the only sensible reading in a sacrificial-ritual context.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-lev19.17-Io",
+    "locator": { "osis": "lev", "chapter": 19, "verse": 17 },
+    "field": "verse_text",
+    "from": "repreendê-Io-ás",
+    "to": "repreendê-lo-ás",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the enclitic pronoun '-lo' (future mesoclisis: 'repreenderás' + 'o' [o teu irmão] -> 'repreendê-lo-ás', 'you shall reprove him').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/lev.json, lev 19:17: 'Não odiarás o teu irmão no teu coração, mas repreendê-Io-ás para que não incorras em pecado por sua causa.' -- referent 'o teu irmão' is masculine singular, matching clitic '-lo'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-num19.3-Ia",
+    "locator": { "osis": "num", "chapter": 19, "verse": 3 },
+    "field": "verse_text",
+    "from": "entregá-Ia-eis",
+    "to": "entregá-la-eis",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the enclitic pronoun '-la' (future mesoclisis: 'entregareis' + 'a' [a vaca] -> 'entregá-la-eis', 'you shall deliver her/it').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/num.json, num 19:3: 'entregá-Ia-eis ao sacerdote Eleázaro, o qual, depois de a ter tirado para fora do campo, a imolará à vista de todos;' -- referent is the red heifer ('a vaca ruiva', feminine), and the same sentence's later clitics ('a ter tirado', 'a imolará') are already feminine singular 'a', confirming the pattern.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-deut1.11-muItiplique",
+    "locator": { "osis": "deut", "chapter": 1, "verse": 11 },
+    "field": "verse_text",
+    "from": "muItiplique",
+    "to": "multiplique",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in 'multiplique' (subjunctive of 'multiplicar').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/deut.json, deut 1:11: 'O Senhor Deus de vossos maiores vos muItiplique mil vezes mais e vos abençoe como disse.' -- 'multiplique' is the only sensible reading (a blessing formula: 'may he multiply you').",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-deut1.19-Io",
+    "locator": { "osis": "deut", "chapter": 1, "verse": 19 },
+    "field": "verse_text",
+    "from": "no-Io",
+    "to": "no-lo",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the contracted double clitic 'no-lo' ('nos' + 'o', 'to us it/him').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/deut.json, deut 1:19: '...conforme o Senhor nosso Deus no-Io tinha mandado.' -- 'no-lo tinha mandado' ('as the Lord our God had commanded us [it/so]') is the standard construction.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-deut2.36-Ias",
+    "locator": { "osis": "deut", "chapter": 2, "verse": 36 },
+    "field": "verse_text",
+    "from": "no-Ias",
+    "to": "no-las",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the contracted double clitic 'no-las' ('nos' + 'as', 'to us them', fem. pl., referring to 'aldeia nem cidade').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/deut.json, deut 2:36: '...não houve aldeia nem cidade, que escapasse às nossas mãos: todas no-Ias entregou o Senhor nosso Deus,' -- referent 'aldeia'/'cidade' (fem.) matches clitic '-las'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-deut18.10-maIeficios",
+    "locator": { "osis": "deut", "chapter": 18, "verse": 10 },
+    "field": "verse_text",
+    "from": "maIefícios",
+    "to": "malefícios",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in 'malefícios' (witchcraft/sorcery).",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/deut.json, deut 18:10: '...nem quem consulte adivinhos ou observe sonhos e agouros, nem quem use maIefícios,' -- listed among divination/sorcery practices, confirming 'malefícios'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-deut26.17-escoIheste",
+    "locator": { "osis": "deut", "chapter": 26, "verse": 17 },
+    "field": "verse_text",
+    "from": "escoIheste",
+    "to": "escolheste",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in 'escolheste' (2nd person singular past of 'escolher', to choose).",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/deut.json, deut 26:17: 'Tu escoIheste hoje o Senhor, para ser o teu Deus...' -- 'escolheste' (you have chosen) is the only sensible reading.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-josh18.28-fiIhos",
+    "locator": { "osis": "josh", "chapter": 18, "verse": 28 },
+    "field": "verse_text",
+    "from": "fiIhos",
+    "to": "filhos",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in 'filhos' (sons/children).",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/josh.json, josh 18:28: '...Esta é a herança dos fiIhos de Benjamim, segundo as suas famílias.' -- 'filhos de Benjamim' (sons of Benjamin) is the standard tribal-inheritance formula used throughout Joshua.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-judg19.24-Ias",
+    "locator": { "osis": "judg", "chapter": 19, "verse": 24 },
+    "field": "verse_text",
+    "from": "vo-Ias",
+    "to": "vo-las",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the contracted double clitic 'vo-las' ('vos' + 'as', 'to you them', fem. pl., referring to the two women just mentioned).",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/judg.json, judg 19:24: 'Eu tenho uma filha virgem e este homem tem a sua mulher, eu vo-Ias tirarei cá para fora...' -- referents 'filha'/'mulher' (fem.) match clitic '-las'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-1sam30.8-esbuIharas",
+    "locator": { "osis": "1sam", "chapter": 30, "verse": 8 },
+    "field": "verse_text",
+    "from": "esbuIharás",
+    "to": "esbulharás",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in 'esbulharás' (future of 'esbulhar', to plunder/despoil).",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/1sam.json, 1sam 30:8: '...Persegue-os, porque indubitàvelmente os apanharás, e os esbuIharás da presa.' -- parallel to 'apanharás' (you will catch), 'esbulharás' (you will despoil) fits the sentence structure and sense.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-2sam15.19-dIsse",
+    "locator": { "osis": "2sam", "chapter": 15, "verse": 19 },
+    "field": "verse_text",
+    "from": "dIsse",
+    "to": "disse",
+    "reason": "Mid-word OCR artifact: capital I stands in for the word's own lowercase 'i' in 'disse' (said) -- the same capital-I-for-lowercase-letter misread class as the other entries in this file, here landing on 'i' rather than 'l'.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/2sam.json, 2sam 15:19: 'O rei dIsse a Etai Geteu: Por que vens tu conosco?' -- 'disse' (said) is the only reading; the verb introduces direct speech immediately following.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-2kgs16.17-Io",
+    "locator": { "osis": "2kgs", "chapter": 16, "verse": 17 },
+    "field": "verse_text",
+    "from": "pô-Io",
+    "to": "pô-lo",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the enclitic pronoun '-lo' ('pôs' + 'o' [o mar de bronze] -> 'pô-lo', 'he put it').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/2kgs.json, 2kgs 16:17: '...tirou o mar de bronze de cima dos bois de bronze, que o sustinham, e pô-Io sobre um suporte de pedra.' -- referent 'o mar de bronze' (masc.) matches clitic '-lo'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-1chr20.4-humiIhados",
+    "locator": { "osis": "1chr", "chapter": 20, "verse": 4 },
+    "field": "verse_text",
+    "from": "humiIhados",
+    "to": "humilhados",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in 'humilhados' (humbled/humiliated).",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/1chr.json, 1chr 20:4: '...Sobocai de Husat matou Safai da raça dos Refaim. Os Filisteus ficaram humiIhados.' -- 'humilhados' (humbled) is the only sensible reading after a battle defeat.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-2chr14.7-Ias",
+    "locator": { "osis": "2chr", "chapter": 14, "verse": 7 },
+    "field": "verse_text",
+    "from": "fortifiquemo-Ias",
+    "to": "fortifiquemo-las",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the enclitic pronoun '-las' ('fortifiquemos' + 'as' [estas cidades, fem. pl.] -> 'fortifiquemo-las').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/2chr.json, 2chr 14:7: 'Reparemos estas cidades, cinjamo-las de muros e fortifiquemo-Ias com torres, portas e fechaduras...' -- parallel clitic 'cinjamo-las' in the same sentence is already correctly spelled with lowercase l, confirming '-las' is intended for the parallel verb 'fortifiquemo-las'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-tob3.4-espaIhaste",
+    "locator": { "osis": "tob", "chapter": 3, "verse": 4 },
+    "field": "verse_text",
+    "from": "espaIhaste",
+    "to": "espalhaste",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in 'espalhaste' (2nd person singular past of 'espalhar', to scatter).",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/tob.json, tob 3:4: '...e tornamo-nos objecto de riso e opróbrio para todas as nações, por entre as quais nos espaIhaste.' -- 'espalhaste' (you scattered us) is the only sensible reading of this exile lament.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-1macc8.11-iIhas",
+    "locator": { "osis": "1macc", "chapter": 8, "verse": 11 },
+    "field": "verse_text",
+    "from": "iIhas",
+    "to": "ilhas",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in 'ilhas' (islands).",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/1macc.json, 1macc 8:11: 'Tinham arruinado e subjugado ao seu império os outros reinos e iIhas que lhes haviam resistido.' -- 'reinos e ilhas' (kingdoms and islands) is the standard phrase describing Roman conquest.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-bar2.34-Ios",
+    "locator": { "osis": "bar", "chapter": 2, "verse": 34 },
+    "field": "verse_text",
+    "from": "Multiplicá-Ios-ei",
+    "to": "Multiplicá-los-ei",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the enclitic pronoun '-los' (future mesoclisis: 'multiplicarei' + 'os' [os descendentes de Abraão, Isaac e Jacob] -> 'Multiplicá-los-ei').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/bar.json, bar 2:34: '...Abraão, Isaac e Jacob, e serão senhores dela. Multiplicá-Ios-ei, e não diminuirão.' -- referent is the (masc. pl.) descendants of the patriarchs just named, matching clitic '-los'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-john19.29-Iha",
+    "locator": { "osis": "john", "chapter": 19, "verse": 29 },
+    "field": "verse_text",
+    "from": "chegaram-Iha",
+    "to": "chegaram-lha",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the combined clitic '-lha' ('lhe' + 'a' [a esponja, fem.] -> 'chegaram-lha', 'they brought it [the sponge] to him').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/john.json, john 19:29: '...os soldados, ensopando no vinagre uma esponja e atando-a a uma cana de hissopo, chegaram-Iha à boca.' -- referent 'uma esponja' (fem.) plus indirect object 'lhe' (a Jesus) combine to the standard clitic 'lha'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-1john1.9-Ios",
+    "locator": { "osis": "1john", "chapter": 1, "verse": 9 },
+    "field": "verse_text",
+    "from": "no-Ios",
+    "to": "no-los",
+    "reason": "Mid-word OCR artifact: capital I for lowercase l in the contracted double clitic 'no-los' ('nos' + 'os' [os nossos pecados, masc. pl.] -> 'no-los perdoar').",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/1john.json, 1john 1:9: 'Porém se confessamos... os nossos pecados, (Deus) é fiel e justo para no-Ios perdoar e para nos purificar de toda a iniquidade.' -- referent 'os nossos pecados' (masc. pl.) matches clitic '-los'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-gen16.7-ao",
+    "locator": { "osis": "gen", "chapter": 16, "verse": 7 },
+    "field": "verse_text",
+    "from": null,
+    "to": null,
+    "reason": "NOT A DEFECT (documented false positive of the split-word detector). 'Tendo-a o anjo do Senhor achado no deserto' is legitimate inverted (VS) Portuguese syntax: '-a' is the enclitic direct-object pronoun (referring to Agar) attached to the gerund 'tendo', and 'o anjo do Senhor' is the separate subject that follows -- 'the angel of the Lord, having found her in the desert'. It is NOT the contraction 'ao'; 'tendo-ao anjo' would be ungrammatical nonsense.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/gen.json, gen 16:7: 'Tendo-a o anjo do Senhor achado no deserto junto da fonte, que está no caminho de Sur no deserto,' -- parses as [Tendo-a] [o anjo do Senhor] [achado] = 'The angel of the Lord having found her', not a split 'ao'.",
+    "resolution": "not-a-defect",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-josh7.3-Ao",
+    "locator": { "osis": "josh", "chapter": 7, "verse": 3 },
+    "field": "verse_text",
+    "from": "A o voltarem",
+    "to": "Ao voltarem",
+    "reason": "Split-word artifact: the contraction 'ao' (a+o) before the infinitive 'voltarem' is rendered as two whitespace-separated fragments. 'Ao voltarem, disseram-lhe' ('Upon returning, they said to him') is the standard 'ao + infinitivo' construction; there is no separate clitic or subject here that would make 'A o' two genuine words.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/josh.json, josh 7:3: 'A o voltarem disseram-lhe: Não suba todo o povo...' -- 'Ao voltarem' opens the sentence as a temporal clause, matching the messengers' report back to Joshua after scouting Ai.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-2sam24.22-a-o",
+    "locator": { "osis": "2sam", "chapter": 24, "verse": 22 },
+    "field": "verse_text",
+    "from": null,
+    "to": null,
+    "reason": "NOT A DEFECT (documented false positive of the split-word detector). 'Tome-a o rei meu senhor' is legitimate inverted (VS) Portuguese syntax: '-a' is the enclitic direct-object pronoun (referring to the threshing floor/oxen just offered) attached to the imperative 'tome', and 'o rei meu senhor' is the separate subject -- 'let the king my lord take it'. It is NOT the contraction 'ao'.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/2sam.json, 2sam 24:22: 'Areuna disse a Davide: Tome-a o rei meu senhor, e sacrifique como bem lhe parecer; eis aqui estão bois para o holocausto...' -- parses as [Tome-a] [o rei meu senhor] = 'let the king my lord take it', paralleling the same clitic+subject pattern as gen 16:7 and job 5:5.",
+    "resolution": "not-a-defect",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-1kgs8.65-ao",
+    "locator": { "osis": "1kgs", "chapter": 8, "verse": 65 },
+    "field": "verse_text",
+    "from": "até a o rio",
+    "to": "até ao rio",
+    "reason": "Split-word artifact: the contraction 'ao' (a+o) after the preposition 'até' is rendered as two whitespace-separated fragments. 'desde a entrada de Emat até ao rio do Egipto' ('from the entrance of Hamath to the river of Egypt') is a standard 'desde...até' parallel construction.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/1kgs.json, 1kgs 8:65: '...tendo concorrido gente em grande número desde a entrada de Emat até a o rio do Egipto, diante do Senhor, nosso Deus...' -- the 'desde X até Y' pairing requires 'até ao rio', not two bare words.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-2kgs23.2-ao",
+    "locator": { "osis": "2kgs", "chapter": 23, "verse": 2 },
+    "field": "verse_text",
+    "from": "foi a o templo",
+    "to": "foi ao templo",
+    "reason": "Split-word artifact: the contraction 'ao' (a+o) after the verb 'foi' (ir a, to go to) is rendered as two whitespace-separated fragments. 'e foi ao templo do Senhor' ('and he went to the temple of the Lord') is the standard construction; there is no clitic attached to 'foi' that would make 'a o' two genuine separate words here.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/2kgs.json, 2kgs 23:2: '...e foi a o templo do Senhor, com todos os homens de Judá...' -- 'ir a + article' contracts obligatorily in standard Portuguese.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-1chr2.6-ao",
+    "locator": { "osis": "1chr", "chapter": 2, "verse": 6 },
+    "field": "verse_text",
+    "from": "cinco a o todo",
+    "to": "cinco ao todo",
+    "reason": "Split-word artifact: the fixed expression 'ao todo' (in total/altogether) is rendered as two whitespace-separated fragments.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/1chr.json, 1chr 2:6: 'Filhos de Zara: Zamri, Etan, Eman, Calcai e Dara, cinco a o todo.' -- 'cinco ao todo' (five in total) is the standard idiom closing a list of five names just enumerated.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-job5.5-a-o",
+    "locator": { "osis": "job", "chapter": 5, "verse": 5 },
+    "field": "verse_text",
+    "from": null,
+    "to": null,
+    "reason": "NOT A DEFECT (documented false positive of the split-word detector). 'devora-a o faminto' is legitimate inverted (VS) Portuguese syntax: '-a' is the enclitic direct-object pronoun (referring to 'a sua messe', his harvest) attached to 'devora', and 'o faminto' is the separate subject -- 'the hungry one devours it'. It is NOT the contraction 'ao'; the same verse already uses the genuine word 'ao' correctly elsewhere ('para a arrebatar' / general pattern consistent with other clitic+subject verses in this corpus, e.g. gen 16:7, 2sam 24:22).",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/job.json, job 5:5: 'A sua messe devora-a o faminto, salta sobre os espinhos para a arrebatar, e os sequiosos bebem as suas riquezas.' -- parses as [devora-a] [o faminto] = 'the hungry one devours it', matching the same clitic+subject inversion pattern confirmed elsewhere in this corpus.",
+    "resolution": "not-a-defect",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-job21.13-ao",
+    "locator": { "osis": "job", "chapter": 21, "verse": 13 },
+    "field": "verse_text",
+    "from": "descem a o sepulcro",
+    "to": "descem ao sepulcro",
+    "reason": "Split-word artifact: the contraction 'ao' (a+o) after 'descem' (descer a, to descend to) is rendered as two whitespace-separated fragments. No clitic pronoun is attached to 'descem' here (unlike the '-a o [subject]' false positives elsewhere in this file), so this is a genuine preposition+article contraction.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/job.json, job 21:13: 'Passam os seus dias em delicias, e num momento descem a o sepulcro.' -- 'descem ao sepulcro' (they descend to the grave) is the standard construction.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-ezek47.18-a-o",
+    "locator": { "osis": "ezek", "chapter": 47, "verse": 18 },
+    "field": "verse_text",
+    "from": null,
+    "to": null,
+    "reason": "NOT A DEFECT (documented false positive of the split-word detector). 'limitando-a o Jordão' is legitimate inverted (VS) Portuguese syntax: '-a' is the enclitic direct-object pronoun (referring to the boundary line) attached to 'limitando', and 'o Jordão' is the separate subject -- 'the Jordan bordering it'. This is confirmed by the SAME verse correctly using the genuine contraction 'ao' twice elsewhere ('até ao mar oriental', twice), showing the scribe/OCR distinguishes the two cases correctly within one sentence.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/ezek.json, ezek 47:18: '...entre Galaad e a terra de Israel, limitando-a o Jordão até ao mar oriental. Medireis a partir da fronteira (norte) até ao mar oriental.' -- parses as [limitando-a] [o Jordão] = 'the Jordan bordering it', while the same verse's two 'até ao mar oriental' instances show the true contraction printed correctly.",
+    "resolution": "not-a-defect",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-mark6.10-Em",
+    "locator": { "osis": "mark", "chapter": 6, "verse": 10 },
+    "field": "verse_text",
+    "from": "E m qualquer casa",
+    "to": "Em qualquer casa",
+    "reason": "Split-word artifact: the single preposition 'Em' (in) is rendered as two whitespace-separated fragments 'E' + 'm'. 'Em qualquer casa onde entrardes' ('In whatever house you enter') is the standard construction opening Jesus's instruction to the disciples.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/mark.json, mark 6:10: 'E dizía-lhes: \"E m qualquer casa onde entrardes, ficai nela até sairdes daquele lugar.' -- the quoted saying must begin 'Em qualquer casa...', not a bare 'E' followed by a dangling 'm'.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-phlm1.22-Ao",
+    "locator": { "osis": "phlm", "chapter": 1, "verse": 22 },
+    "field": "verse_text",
+    "from": "A o mesmo tempo",
+    "to": "Ao mesmo tempo",
+    "reason": "Split-word artifact: the fixed expression 'Ao mesmo tempo' (at the same time) is rendered as two whitespace-separated fragments.",
+    "evidence": "corpus/works/bible.matos-soares.pt/books/phlm.json, phlm 1:22: 'A o mesmo tempo prepara-me pousada, pois pelas vossas orações, serei dado a vós.' -- 'Ao mesmo tempo' opening the sentence is the standard idiom.",
+    "added": "2026-08-14"
+  }
+]

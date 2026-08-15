@@ -51,6 +51,8 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 RAW_DIR = REPO_ROOT / "corpus" / "raw" / "matos-soares"
 WORK_DIR = REPO_ROOT / "corpus" / "works" / "bible.matos-soares.pt"
 BOOKS_DIR = WORK_DIR / "books"
+CORRECTIONS_DIR = REPO_ROOT / "pipeline" / "corrections"
+WORK_ID = "bible.matos-soares.pt"
 
 # ---------------------------------------------------------------------------
 # Slug -> OSIS mapping
@@ -272,6 +274,112 @@ def fetch(client: httpx.Client, url: str, cache_name: str, stats: FetchStats) ->
 
 
 _last_request_at: float = 0.0
+
+
+# ---------------------------------------------------------------------------
+# Corrections layer (docs/corpus-schema.md #Corrections, docs/decisions.md
+# #Source-defect corrections policy)
+#
+# Verified source defects (OCR artifacts, split words) are corrected here via
+# an auditable data file rather than by hand-editing output. Entries live in
+# pipeline/corrections/bible.matos-soares.pt.json (committed to the repo);
+# each carries a locator, exact before/after text, reason, and evidence. This
+# scraper applies them post-parse (after clean_text has already run its own
+# safe/ambiguous/split-word detection), verifying the "from" text still
+# matches exactly -- a mismatch means the source has drifted since the entry
+# was authored, and the run fails loudly rather than silently applying a
+# stale fix. Entries carrying a "resolution" field (e.g. "not-a-defect",
+# "unresolved") are documented but never applied; they're carried through to
+# the receipt's "unresolved" list instead.
+# ---------------------------------------------------------------------------
+
+
+class CorrectionDriftError(RuntimeError):
+    pass
+
+
+def load_corrections(work_id: str) -> list[dict]:
+    path = CORRECTIONS_DIR / f"{work_id}.json"
+    if not path.exists():
+        return []
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def apply_corrections(
+    books: list[BookResult], corrections: list[dict], full_run: bool
+) -> tuple[list[dict], set[str]]:
+    """Apply file-sourced corrections to already-parsed verse text, in place.
+    Returns (applied entries, applied ids). Entries whose locator book isn't
+    present in `books` at all (e.g. a --sample run touching only two books)
+    are silently skipped -- out of scope for this run, not a drift failure.
+    Entries whose book IS present but whose exact `from` text can't be found
+    at the locator's verse are a drift failure: the corpus changed since the
+    entry was authored, and re-verifying it is required before the run can
+    proceed. On a full run, any not-yet-applied (and not documented as a
+    non-defect/unresolved) entry is also a hard failure -- it means the
+    correction never found its target anywhere in the corpus."""
+    # Scope is tracked at (osis, chapter) granularity, not just osis: --sample
+    # keeps a whole book (e.g. Filémon) but truncates others to a single
+    # chapter (São João -> chapter 1 only), so a correction targeting a
+    # chapter the sample run never touched must be skipped as out-of-scope,
+    # not treated as source drift.
+    present_chapters = {(b.osis, chap["n"]) for b in books for chap in b.chapters}
+    verse_index: dict[tuple[str, int, int], dict] = {}
+    for b in books:
+        for chap in b.chapters:
+            for v in chap["verses"]:
+                verse_index[(b.osis, chap["n"], v["n"])] = v
+
+    applied: list[dict] = []
+    seen: set[str] = set()
+    for c in corrections:
+        if c.get("resolution"):
+            continue  # documented non-defect / unresolved -- never applied
+        loc = c["locator"]
+        key = (loc["osis"], loc["chapter"], loc["verse"])
+        if (loc["osis"], loc["chapter"]) not in present_chapters:
+            continue  # out of scope for this run (e.g. --sample)
+        verse = verse_index.get(key)
+        if verse is None or c["from"] not in verse["text"]:
+            raise CorrectionDriftError(
+                f"correction {c['id']!r}: expected text {c['from']!r} not found "
+                f"at {loc['osis']} {loc['chapter']}:{loc['verse']} (source drift -- "
+                "re-verify against corpus/raw/ and update or remove the entry)"
+            )
+        verse["text"] = verse["text"].replace(c["from"], c["to"], 1)
+        applied.append(dict(c))
+        seen.add(c["id"])
+
+    if full_run:
+        missing = [
+            c["id"] for c in corrections if not c.get("resolution") and c["id"] not in seen
+        ]
+        if missing:
+            raise CorrectionDriftError(
+                f"correction entries never matched during full run: {missing}"
+            )
+    return applied, seen
+
+
+def write_corrections_receipt(
+    work_dir: Path,
+    applied: list[dict],
+    corrections: list[dict],
+    generated_at: str,
+) -> int:
+    unresolved = [c for c in corrections if c.get("resolution")]
+    receipt = {
+        "work_id": WORK_ID,
+        "generated_at": generated_at,
+        "applied": applied,
+        "unresolved": unresolved,
+        "count": len(applied),
+    }
+    work_dir.mkdir(parents=True, exist_ok=True)
+    (work_dir / "corrections-applied.json").write_text(
+        json.dumps(receipt, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    return len(applied)
 
 
 def parse_index(html: str) -> list[dict]:
@@ -551,11 +659,10 @@ def write_manifest(
     fix_count: int,
     ambiguous_count: int,
     split_word_count: int,
+    corrections_applied: int,
+    generated_at: str,
 ) -> None:
     retrieved_at = datetime.now(timezone.utc).date().isoformat()
-    generated_at = (
-        datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
-    )
 
     notes = (
         "1956 edition (revised from the original languages with L. G. da Fonseca SJ, "
@@ -570,15 +677,22 @@ def write_manifest(
         "vulgata.online carries Matos Soares footnotes and could backfill notes[] by "
         "marker position in a later pass. "
         f'OCR artifact class (capital I for lowercase l, e.g. "Ihe"/"Ihes"): '
-        f"{fix_count} unambiguous instance(s) auto-corrected, {ambiguous_count} ambiguous "
-        "instance(s) detected and left as scraped for manual review (see scraper stdout "
-        "report). Split-word artifact class (a common short word rendered as two "
-        'whitespace-separated fragments, e.g. Filémon 22 "A o mesmo tempo" for "Ao mesmo '
-        f'tempo"): {split_word_count} instance(s) detected and left as scraped -- policy is '
-        "source-faithful either way (digitization artifact vs. genuine period spacing is "
-        "not adjudicated here), see scraper stdout report for the full list. Copyright "
-        "status: see docs/research/copyright.md -- accepted as a knowingly self-resolving "
-        "exposure until the work enters the public domain on 1 Jan 2028."
+        f"{fix_count} unambiguous instance(s) auto-corrected in code (widespread, "
+        f"never-a-valid-word tokens), plus {ambiguous_count} other mid-word-capital-I "
+        "instance(s) detected per verse -- most now fixed via the auditable "
+        "pipeline/corrections/bible.matos-soares.pt.json corrections layer (see "
+        "corrections-applied.json for the exact list, incl. the automatic Ihe/Ihes "
+        "fixes flagged rule=auto-Ihe), with any remaining false positives documented "
+        "there as resolution=not-a-defect rather than corrected. Split-word artifact "
+        "class (a common short word rendered as two whitespace-separated fragments, "
+        f'e.g. Filémon 22 "A o mesmo tempo" for "Ao mesmo tempo"): {split_word_count} '
+        "instance(s) detected per verse, individually adjudicated in the corrections "
+        "file (genuine contractions corrected; verified legitimate word sequences, "
+        "e.g. clitic-pronoun + subject inversions like Gen 16:7 'Tendo-a o anjo...', "
+        "documented as resolution=not-a-defect). See corrections-applied.json for the "
+        "full receipt. Copyright status: see docs/research/copyright.md -- accepted "
+        "as a knowingly self-resolving exposure until the work enters the public "
+        "domain on 1 Jan 2028."
     )
     if sample:
         notes = (
@@ -608,6 +722,7 @@ def write_manifest(
         "generated_at": generated_at,
         "psalm_numbering": "vulgate",
         "books": [b.osis for b in books],
+        "corrections_applied": corrections_applied,
     }
     WORK_DIR.mkdir(parents=True, exist_ok=True)
     (WORK_DIR / "manifest.json").write_text(
@@ -676,6 +791,41 @@ def main() -> int:
             books.append(book)
             print(f"fetched {slug} -> {osis}: {len(book.chapters)} chapter(s)")
 
+    corrections = load_corrections(WORK_ID)
+    try:
+        file_applied, _seen = apply_corrections(
+            books, corrections, full_run=not args.sample
+        )
+    except CorrectionDriftError as exc:
+        print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)
+        return 1
+
+    generated_at = (
+        datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    )
+    # The Ihe/Ihes auto-fix (SAFE_OCR_FIXES, applied inside clean_text during
+    # parsing) is unambiguous and widespread enough to run automatically --
+    # but it's still a source-defect correction and belongs in the same
+    # auditable receipt as the file-sourced ones, flagged by rule so the two
+    # provenances stay distinguishable.
+    auto_ihe_applied = [
+        {
+            "id": f"matos.pt-auto-ihe-{f.osis}.{f.chapter}.{f.verse}",
+            "rule": "auto-Ihe",
+            "locator": {"osis": f.osis, "chapter": f.chapter, "verse": f.verse},
+            "field": "verse_text",
+            "from": f.before,
+            "to": f.after,
+            "reason": "capital I for lowercase l in 'Ihe'/'Ihes' -- never a valid Portuguese "
+            "token, auto-corrected unconditionally.",
+        }
+        for f in fixes
+    ]
+    all_applied = auto_ihe_applied + file_applied
+    corrections_count = write_corrections_receipt(
+        WORK_DIR, all_applied, corrections, generated_at
+    )
+
     write_book_files(books)
     write_manifest(
         books,
@@ -683,6 +833,8 @@ def main() -> int:
         fix_count=len(fixes),
         ambiguous_count=len(ambiguous),
         split_word_count=len(split_words),
+        corrections_applied=corrections_count,
+        generated_at=generated_at,
     )
 
     ok, problems = validate_books(books, full_run=not args.sample)
@@ -696,7 +848,8 @@ def main() -> int:
         print(f"  {f.osis} {f.chapter}:{f.verse}  {f.before!r} -> {f.after!r}")
 
     print(
-        f"\nAmbiguous OCR-suspect occurrences, reported not fixed ({len(ambiguous)}):"
+        f"\nAmbiguous OCR-suspect occurrences detected at parse time ({len(ambiguous)}) "
+        "-- most now resolved via pipeline/corrections/, see corrections-applied.json:"
     )
     for a in ambiguous[:200]:
         print(f"  {a.osis} {a.chapter}:{a.verse}  word={a.word!r}")
@@ -704,7 +857,8 @@ def main() -> int:
         print(f"  ... and {len(ambiguous) - 200} more")
 
     print(
-        f"\nSplit-word artifact occurrences, reported not fixed ({len(split_words)}):"
+        f"\nSplit-word artifact occurrences detected at parse time ({len(split_words)}) "
+        "-- individually adjudicated via pipeline/corrections/, see corrections-applied.json:"
     )
     for s in split_words[:200]:
         print(
@@ -712,6 +866,11 @@ def main() -> int:
         )
     if len(split_words) > 200:
         print(f"  ... and {len(split_words) - 200} more")
+
+    print(f"\nCorrections layer: {len(all_applied)} applied "
+          f"({len(auto_ihe_applied)} auto-Ihe + {len(file_applied)} from corrections file), "
+          f"{len([c for c in corrections if c.get('resolution')])} documented unresolved/"
+          "not-a-defect (see corrections-applied.json)")
 
     books_with_headings = [
         b.osis for b in books if any(c.get("headings") for c in b.chapters)

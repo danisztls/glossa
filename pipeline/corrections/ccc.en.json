@@ -1,0 +1,54 @@
+[
+  {
+    "id": "ccc.en-1227-fn31",
+    "locator": {
+      "paragraph": 1227,
+      "marker": "31"
+    },
+    "field": "citation_text",
+    "from": " CE 1 Cor 6:11;\r\n12:13.",
+    "to": " Cf. 1 Cor 6:11;\r\n12:13.",
+    "reason": "Footnote 31 on the page containing paragraph 1227 prints the abbreviation \"CE\" where every sibling footnote uses \"Cf.\" -- a unique, unambiguous OCR/typo substitution (Cf. -> CE).",
+    "evidence": "raw HTML corpus/raw/ccc-en/__P3I.HTM, footnote 31: ' CE 1 Cor 6:11; 12:13.<br>'. Corpus-wide check: grep across all corpus/raw/ccc-en/*.HTM for the footnote-text lead-in pattern found exactly one occurrence of 'size=1> CE ' vs. 1315 occurrences of 'size=1> Cf.' -- confirming this is the sole outlier in the entire EN mirror.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "ccc.en-104-fn67",
+    "locator": {
+      "paragraph": 104,
+      "marker": "67"
+    },
+    "field": "citation_text",
+    "from": " Th 2:13;\r\ncf. DV 24.",
+    "to": " 1 Th 2:13;\r\ncf. DV 24.",
+    "reason": "Citation drops the book-number prefix \"1\" from \"1 Th\" (1 Thessalonians). The paragraph's own prose quotes the verse near-verbatim (\"...she welcomes it not as a human word, 'but as what it really is, the word of God'\"), which is 1 Thessalonians 2:13, not any other \"Th\"-abbreviated book -- there is no scripture book abbreviated bare \"Th\" in the CCC's citation conventions (only 1/2 Thessalonians, 1/2 Timothy, Titus).",
+    "evidence": "raw HTML corpus/raw/ccc-en/__PO.HTM: paragraph 104 footnote 67 reads ' Th 2:13;\\ncf. DV 24.'. Paragraph 104 prose: 'the Church constantly finds her nourishment and her strength, for she welcomes it not as a human word, \"but as what it really is, the word of God\"' -- matches 1 Thessalonians 2:13 (RSV: '...you accepted it not as the word of men but as what it really is, the word of God').",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "ccc.en-333-fn198",
+    "locator": {
+      "paragraph": 333,
+      "marker": "198"
+    },
+    "field": "citation_text",
+    "from": " Cf. Mt 1:20;\r\n2:13,19;\r\n4:11;\r\n26:53; Mk\r\n1:13; Lk 22:43;\r\nMacc 10:29-30; 11:8.",
+    "to": " Cf. Mt 1:20;\r\n2:13,19;\r\n4:11;\r\n26:53; Mk\r\n1:13; Lk 22:43;\r\n2 Macc 10:29-30; 11:8.",
+    "reason": "Citation drops the book-number prefix \"2\" from \"2 Macc\" (2 Maccabees). The verse numbers pin the book with high confidence: 2 Maccabees 10:29-30 and 11:8 are two well-known angelic-warrior apparitions during Judas Maccabeus's campaigns (armed horsemen defending the Jewish forces); 1 Maccabees, by contrast, is a deliberately secular history with no supernatural/angelic interventions anywhere in it, and its chapters 10-11 (Jonathan Maccabeus's diplomacy with Demetrius/Alexander Balas) contain no such episode at all. The paragraph's own subject -- angels protecting/serving in salvation history -- matches 2 Maccabees' content, not 1 Maccabees'.",
+    "evidence": "raw HTML corpus/raw/ccc-en/__P1A.HTM, footnote 198: ' Cf. Mt 1:20;\\n2:13,19;\\n4:11;\\n26:53; Mk\\n1:13; Lk 22:43;\\nMacc 10:29-30; 11:8.'. Paragraph 333 prose: 'the life of the Word incarnate is surrounded by the adoration and service of angels... They protect Jesus in his infancy, serve him in the desert...' -- thematically consistent only with 2 Maccabees' angelic-apparition passages at the cited verses.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "ccc.en-674-fn568",
+    "locator": {
+      "paragraph": 674,
+      "marker": "568"
+    },
+    "field": "citation_text",
+    "from": " Rom I 1:20-26; cf. Mt\r\n23:39.",
+    "to": " Rom 11:20-26; cf. Mt\r\n23:39.",
+    "reason": "\"Rom I 1:20-26\" is a corrupted rendering of \"Rom 11:20-26\" -- the chapter number 11 was split into a capital \"I\" plus \"1\" (visually near-identical to a scanned/misread \"11\"). Romans 1:20-26 (Gentile idolatry and its consequences) is thematically impossible for this paragraph, which is entirely about Israel's partial hardening and future salvation (Romans 11's subject). Romans 11:20-26 -- the olive-tree allegory culminating in 'a hardening has come upon part of Israel, until the full number of the Gentiles come in, and so all Israel will be saved' -- is exactly the passage the paragraph paraphrases two sentences later, and the two immediately following footnotes in the same list (570: Rom 11:15; 571: Rom 11:12,25) confirm the whole citation cluster is Romans 11.",
+    "evidence": "raw HTML corpus/raw/ccc-en/__P1V.HTM, footnote 568: ' Rom I 1:20-26; cf. Mt\\n23:39.'. Paragraph 674 prose: '...for \"a hardening has come upon part of Israel\" in their \"unbelief\" toward Jesus' -- quotes Romans 11:25 almost verbatim. Sibling footnotes on the same paragraph (570 Rom 11:15, 571 Rom 11:12,25) are all Romans 11 citations.",
+    "added": "2026-08-14"
+  }
+]

@@ -76,6 +76,7 @@ CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 ROOT = Path(__file__).resolve().parents[2]
 RAW_ROOT = ROOT / "corpus" / "raw"
 WORKS_ROOT = ROOT / "corpus" / "works"
+CORRECTIONS_DIR = ROOT / "pipeline" / "corrections"
 
 EN_BASE = "https://www.vatican.va/archive/ENG0015/"
 EN_TOC_HREF = "_INDEX.HTM"
@@ -196,6 +197,166 @@ def looks_like_number_typo(cand: int, expected: int) -> bool:
     happens to start a block."""
     a, b = str(cand), str(expected)
     return len(a) == len(b) and sum(x != y for x, y in zip(a, b)) == 1
+
+
+# --------------------------------------------------------------------------
+# Corrections layer (docs/corpus-schema.md #Corrections, docs/decisions.md
+# #Source-defect corrections policy)
+#
+# Verified source defects are corrected via an auditable data file
+# (pipeline/corrections/ccc.{lang}.json, committed to the repo) rather than
+# by hand-editing output or hardcoding silent fixes in the parser. Each
+# entry carries a locator, exact before/after text, reason, and evidence;
+# this scraper applies them post-parse and fails loudly (non-zero exit,
+# naming the stale entry) if the "from" text no longer matches the source --
+# a drift guard against a correction going stale as the raw HTML changes.
+# Entries carrying a "resolution" field (e.g. "unresolved") are documented
+# but never applied.
+#
+# Two correction "field" kinds are used, applied at two different points:
+#   - "citation_text": a footnote's own printed number is wrong, or its text
+#     is wrong. Applied as a RAW HTML substring replacement on the page's
+#     fetched text, BEFORE parsing -- not post-parse. This class was tried
+#     post-parse first (renaming/rewriting the parsed footnote_table entry
+#     directly) but that's unsafe for footnote-*number* typos: the PT
+#     footnote-list parser (_pt_footnote_table) segments entries by
+#     scanning for the next sequential number, so a misprinted number (e.g.
+#     "600." where "660." is meant) makes the parser's own boundary
+#     detection scan right past the real footnote and glom adjacent
+#     unrelated entries together -- corrupting neighbors that were never
+#     part of the defect. Fixing the misprint in the raw source text before
+#     that scan runs avoids the corruption entirely and is honest about
+#     what's actually being corrected (the source's printed digits, not an
+#     internal data structure). `from`/`to` are therefore exact raw HTML
+#     substrings (verified unique across the whole raw/ccc-{lang}/ corpus
+#     for the specific page in question), not the stripped/normalized text
+#     that ends up in citations[].text.
+#   - "marker": an inline footnote marker in the body text is a phantom/
+#     wrong digit sequence. Applied post-parse, against the paragraph's
+#     already-marked block text (⟦N⟧ tokens) at paragraph-finalize time --
+#     safe post-parse because it doesn't interact with any sequential
+#     boundary-detection scan, only a single isolated token.
+#   - "paragraph_number": the paragraph's own printed leading number is
+#     wrong. Consulted from inside the structural single-digit-typo
+#     heuristic in process_page(), replacing what used to be a silent,
+#     undocumented auto-correction.
+# --------------------------------------------------------------------------
+
+
+class CorrectionDriftError(RuntimeError):
+    pass
+
+
+def load_corrections(work_id: str) -> list[dict]:
+    path = CORRECTIONS_DIR / f"{work_id}.json"
+    if not path.exists():
+        return []
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def find_paragraph_number_correction(
+    corrections: list[dict], expected: int, cand: int
+) -> dict | None:
+    for c in corrections:
+        if c.get("resolution") or c["field"] != "paragraph_number":
+            continue
+        loc = c["locator"]
+        if loc.get("paragraph") == expected and c["from"] == str(cand):
+            return c
+    return None
+
+
+def apply_raw_text_corrections(
+    html_text: str,
+    page_name: str,
+    corrections: list[dict],
+    applied_log: list[dict],
+    seen_ids: set[str],
+) -> str:
+    """Apply citation_text corrections as raw-HTML substring replacements,
+    before the page is parsed. Each correction's `from` is searched for in
+    this page's raw fetched text; if found, replaced exactly once and
+    recorded applied. A correction not found on this particular page is
+    simply not-yet-applied here (it may belong to a different page, or --
+    on a --sample run -- to a page outside the crawled slice); the caller
+    checks after the full run that every non-unresolved entry was applied
+    somewhere."""
+    for c in corrections:
+        if c.get("resolution") or c["field"] != "citation_text":
+            continue
+        if c["id"] in seen_ids:
+            continue
+        frm = c["from"]
+        if frm in html_text:
+            html_text = html_text.replace(frm, c["to"], 1)
+            applied_log.append({**c, "page": page_name})
+            seen_ids.add(c["id"])
+    return html_text
+
+
+def apply_paragraph_corrections(
+    para: "Paragraph",
+    footnote_table: dict[str, str],
+    corrections: list[dict],
+    applied_log: list[dict],
+    seen_ids: set[str],
+) -> None:
+    """Apply marker corrections targeting this paragraph's already-marked
+    block text. Raises CorrectionDriftError if a correction's `from` no
+    longer matches what's actually present. (citation_text corrections are
+    applied earlier, pre-parse -- see apply_raw_text_corrections.)"""
+    for c in corrections:
+        if c.get("resolution"):
+            continue
+        loc = c["locator"]
+        if loc.get("paragraph") != para.n:
+            continue
+        field = c["field"]
+        if field == "citation_text":
+            continue  # applied pre-parse, see apply_raw_text_corrections()
+        elif field == "marker":
+            token_from = f"{MARK_OPEN}{c['from'].strip('()')}{MARK_CLOSE}"
+            token_to = f"{MARK_OPEN}{c['to'].strip('()')}{MARK_CLOSE}"
+            found = False
+            for block in para.blocks:
+                if token_from in block.text:
+                    block.text = block.text.replace(token_from, token_to)
+                    found = True
+            if not found:
+                raise CorrectionDriftError(
+                    f"correction {c['id']!r}: marker token {c['from']!r} not found "
+                    f"in paragraph {para.n}"
+                )
+            applied_log.append(dict(c))
+            seen_ids.add(c["id"])
+        elif field == "paragraph_number":
+            continue  # applied separately, inside process_page()
+        else:
+            raise CorrectionDriftError(
+                f"correction {c['id']!r}: unknown field {field!r}"
+            )
+
+
+def write_corrections_receipt(
+    work_dir: Path,
+    work_id: str,
+    applied: list[dict],
+    corrections: list[dict],
+    generated_at: str,
+) -> int:
+    unresolved = [c for c in corrections if c.get("resolution")]
+    receipt = {
+        "work_id": work_id,
+        "generated_at": generated_at,
+        "applied": applied,
+        "unresolved": unresolved,
+        "count": len(applied),
+    }
+    work_dir.mkdir(parents=True, exist_ok=True)
+    (work_dir / "corrections-applied.json").write_text(
+        json.dumps(receipt, ensure_ascii=False, indent=2) + "\n"
+    )
+    return len(applied)
 
 
 # --------------------------------------------------------------------------
@@ -320,7 +481,7 @@ class Paragraph:
 
 
 class ScrapeState:
-    def __init__(self):
+    def __init__(self, corrections: list[dict] | None = None):
         self.stack: list[Node] = []
         self.root_children: list[Node] = []
         self.paragraphs: dict[int, Paragraph] = {}
@@ -338,6 +499,10 @@ class ScrapeState:
         # whatever table is current at finalize time -- including when a
         # heading on the *same* page finalizes the paragraph that precedes it.
         self.current_footnote_table: dict[str, str] = {}
+        # Corrections layer (see "Corrections layer" section above).
+        self.corrections: list[dict] = corrections or []
+        self.corrections_applied: list[dict] = []
+        self.corrections_seen: set[str] = set()
 
     # -- structure -----------------------------------------------------
     def push_heading(self, kind: str, n: int | None, title: str) -> None:
@@ -403,6 +568,13 @@ class ScrapeState:
     def finalize_open_paragraph(self) -> None:
         if self.open_paragraph is None:
             return
+        apply_paragraph_corrections(
+            self.open_paragraph,
+            self.current_footnote_table,
+            self.corrections,
+            self.corrections_applied,
+            self.corrections_seen,
+        )
         self.open_paragraph.resolve(self.current_footnote_table, self.anomalies)
         self.paragraphs[self.open_paragraph.n] = self.open_paragraph
         self.open_paragraph = None
@@ -513,13 +685,31 @@ def process_page(
                 # single-digit substitution, immediately after §2216). The
                 # printed digits are structural metadata, not body text, so
                 # correcting the boundary here doesn't violate verbatim-text
-                # capture; the typo is logged for transparency.
+                # capture. This heuristic is a generic safety net; each
+                # *specific* instance it fires on should have a matching
+                # pipeline/corrections/ccc.{lang}.json entry (field
+                # "paragraph_number") so the fix is auditable data rather
+                # than a hardcoded, silent parser behavior -- consulted here
+                # instead of just logging an anomaly.
                 is_new = True
-                cand = expected
-                state.anomalies.append(
-                    f"paragraph {expected}: source printed {m.group(1)!r} "
-                    "(single-digit typo, corrected)"
+                entry = find_paragraph_number_correction(
+                    state.corrections, expected, cand
                 )
+                if entry is not None:
+                    if entry["id"] not in state.corrections_seen:
+                        state.corrections_applied.append(dict(entry))
+                        state.corrections_seen.add(entry["id"])
+                    state.anomalies.append(
+                        f"paragraph {expected}: source printed {m.group(1)!r} "
+                        f"(corrected via corrections entry {entry['id']!r})"
+                    )
+                else:
+                    state.anomalies.append(
+                        f"paragraph {expected}: source printed {m.group(1)!r} "
+                        "(single-digit typo, corrected; UNDOCUMENTED -- add a "
+                        "pipeline/corrections/ccc.{lang}.json paragraph_number entry)"
+                    )
+                cand = expected
                 rest_text = b.text[m.end() :]
             # else: cand <= last_n and not a plausible typo -> false positive;
             # fall through as continuation
@@ -1015,14 +1205,14 @@ LANG_CONFIG = {
 
 
 def run_scrape(
-    lang: str, sample: bool
+    lang: str, sample: bool, corrections: list[dict] | None = None
 ) -> tuple[ScrapeState, list[tuple[str, str]], Fetcher]:
     cfg = LANG_CONFIG[lang]
     fetcher = Fetcher(RAW_ROOT / cfg["raw_dir"])
     all_pages = cfg["discover"](fetcher)
     chunks = cfg["sample_chunks"](all_pages) if sample else [all_pages]
 
-    state = ScrapeState()
+    state = ScrapeState(corrections)
     fetched_pages: list[tuple[str, str]] = []
     for chunk in chunks:
         state.last_n = None  # each sample chunk is validated independently
@@ -1037,6 +1227,13 @@ def run_scrape(
                 state.fetch_failures.append(f"{name}: {exc}")
                 continue
             fetched_pages.append((url, name))
+            html_text = apply_raw_text_corrections(
+                html_text,
+                name,
+                state.corrections,
+                state.corrections_applied,
+                state.corrections_seen,
+            )
             blocks, footnote_table = cfg["parse"](html_text)
             process_page(
                 blocks, footnote_table, cfg["match_label"], cfg["number_re"], state
@@ -1139,7 +1336,11 @@ def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[st
 
 
 def build_manifest(
-    lang: str, state: ScrapeState, fetched_pages: list[tuple[str, str]], sample: bool
+    lang: str,
+    state: ScrapeState,
+    fetched_pages: list[tuple[str, str]],
+    sample: bool,
+    generated_at: str,
 ) -> dict:
     cfg = LANG_CONFIG[lang]
     notes = [
@@ -1199,7 +1400,8 @@ def build_manifest(
             "notice": cfg["copyright_notice"],
         },
         "notes": " ".join(notes),
-        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at": generated_at,
+        "corrections_applied": len(state.corrections_applied),
     }
     return manifest
 
@@ -1213,7 +1415,8 @@ def write_outputs(
         node.compute_span()
     structure = [n.to_dict() for n in state.root_children]
     paragraphs = [state.paragraphs[n].to_dict() for n in sorted(state.paragraphs)]
-    manifest = build_manifest(lang, state, fetched_pages, sample)
+    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    manifest = build_manifest(lang, state, fetched_pages, sample, generated_at)
 
     (out_dir / "manifest.json").write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
@@ -1226,6 +1429,13 @@ def write_outputs(
     )
     (out_dir / "abbreviations.json").write_text(
         json.dumps([], indent=2, ensure_ascii=False) + "\n"
+    )
+    write_corrections_receipt(
+        out_dir,
+        LANG_CONFIG[lang]["work_id"],
+        state.corrections_applied,
+        state.corrections,
+        generated_at,
     )
 
 
@@ -1298,11 +1508,39 @@ def main() -> int:
     langs = ["en", "pt"] if args.lang == "both" else [args.lang]
     overall_ok = True
     for lang in langs:
-        state, fetched_pages, fetcher = run_scrape(lang, args.sample)
+        corrections = load_corrections(LANG_CONFIG[lang]["work_id"])
+        try:
+            state, fetched_pages, fetcher = run_scrape(lang, args.sample, corrections)
+        except CorrectionDriftError as exc:
+            print(f"\nCORRECTIONS DRIFT GUARD FAILED ({lang}): {exc}", file=sys.stderr)
+            return 1
+
+        if not args.sample:
+            # Full run: every non-unresolved correction must have found and
+            # fixed its target somewhere in the crawl, or the source has
+            # drifted since the entry was authored -- fail loudly rather
+            # than silently shipping a corpus with a stale, unapplied entry.
+            missing = [
+                c["id"]
+                for c in corrections
+                if not c.get("resolution") and c["id"] not in state.corrections_seen
+            ]
+            if missing:
+                print(
+                    f"\nCORRECTIONS DRIFT GUARD FAILED ({lang}): entries never matched "
+                    f"during full run: {missing}",
+                    file=sys.stderr,
+                )
+                return 1
+
         write_outputs(lang, state, fetched_pages, args.sample)
         ok, problems = validate(lang, state, args.sample)
         print_summary(lang, state, ok, problems)
         print(f"(network fetches this run: {fetcher.network_fetches})")
+        print(
+            f"corrections applied: {len(state.corrections_applied)}, "
+            f"unresolved/documented: {len([c for c in corrections if c.get('resolution')])}"
+        )
         overall_ok = overall_ok and ok
 
     return 0 if overall_ok else 1

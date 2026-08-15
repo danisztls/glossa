@@ -68,6 +68,23 @@ full 2865-paragraph crawl lands and fold new patterns back in here):
     start) specifically so junk prefixes like this don't block matching the
     real book+chapter:verse that follows; the junk itself is silently
     dropped rather than guessed to mean "Cf." (i.e. this ref gets cf=False).
+  - Other confirmed transcription typos, folded into the book-variant table
+    after checking the raw citation string against the paragraph's actual
+    prose (full 2865-paragraph corpus): "PS"/"EX" (all-caps Ps/Exod), "In"
+    for "Jn"/"1 Jn" (J -> I), "Cal" for "Gal" (G -> C, confirmed against
+    ccc476/478's Christology), "l" for the digit "1" before a book name
+    ("l Cor", "l Pt", "l Tim").
+  - Three citations have a missing/garbled book-number that a human can
+    resolve from context but the parser deliberately does NOT guess (per
+    link-surface.md's "never store interpretations" principle) -- flagged
+    here for whoever next touches ccc.en's raw citations, not silently
+    fixed: ccc104 footnote 67 ("Th 2:13") is almost certainly 1 Thess 2:13
+    (the paragraph directly quotes it); ccc333 footnote 198 ("Macc
+    10:29-30; 11:8") is almost certainly 2 Macc (the angel-warrior verses;
+    1 Macc has no such narrative); ccc674 footnote 568 ("Rom I 1:20-26") is
+    likely Rom 11:20-26 with the chapter number corrupted into "I" + "1"
+    (paragraph discusses Israel's partial hardening/grafting-in, Rom 11's
+    theme, not Rom 1). None of these are auto-linked.
 """
 
 from __future__ import annotations
@@ -169,6 +186,35 @@ CANONICAL_73 = OT_ORDER + NT_ORDER
 assert len(CANONICAL_73) == 73
 CANONICAL_73_SET = frozenset(CANONICAL_73)
 
+# Chapter counts, standard versification -- used only to sanity-check parsed
+# chapter numbers against a dropped-colon typo class found in the full
+# corpus (e.g. "Eph 314" for "Eph 3:14", "Acts 913" for "Acts 9:13": the
+# colon vanished and the two numbers ran together into one implausible
+# "chapter"). A chapter above the book's real count is dropped rather than
+# guessed at -- see MAX_CHAPTER usage in parse_citation and the "dropped
+# implausible refs" report bucket.
+MAX_CHAPTER: dict[str, int] = {
+    "gen": 50, "exod": 40, "lev": 27, "num": 36, "deut": 34, "josh": 24, "judg": 21,
+    "ruth": 4, "1sam": 31, "2sam": 24, "1kgs": 22, "2kgs": 25, "1chr": 29, "2chr": 36,
+    "ezra": 10, "neh": 13, "tob": 14, "jdt": 16, "esth": 16, "1macc": 16, "2macc": 15,
+    "job": 42, "ps": 150, "prov": 31, "eccl": 12, "song": 8, "wis": 19, "sir": 51,
+    "isa": 66, "jer": 52, "lam": 5, "bar": 6, "ezek": 48, "dan": 14, "hos": 14,
+    "joel": 3, "amos": 9, "obad": 1, "jonah": 4, "mic": 7, "nah": 3, "hab": 3,
+    "zeph": 3, "hag": 2, "zech": 14, "mal": 4,
+    "matt": 28, "mark": 16, "luke": 24, "john": 21, "acts": 28, "rom": 16,
+    "1cor": 16, "2cor": 13, "gal": 6, "eph": 6, "phil": 4, "col": 4, "1thess": 5,
+    "2thess": 3, "1tim": 6, "2tim": 4, "titus": 3, "phlm": 1, "heb": 13, "jas": 5,
+    "1pet": 5, "2pet": 3, "1john": 5, "2john": 1, "3john": 1, "jude": 1, "rev": 22,
+}  # fmt: skip
+assert set(MAX_CHAPTER) == CANONICAL_73_SET
+
+# The Bible's five one-chapter books. In practice the CCC (like most
+# citation styles) cites these as "Jude 3", never "Jude 1:3" -- no chapter
+# number at all, since there's only one. That means the bare number is a
+# *verse*, not a chapter, even though it's shaped exactly like every other
+# book's "whole chapter" reference. See _parse_single_chapter_ref.
+SINGLE_CHAPTER_BOOKS = frozenset(osis for osis, mx in MAX_CHAPTER.items() if mx == 1)
+
 # --------------------------------------------------------------------------
 # Scripture abbreviation inventory. Keys are the exact (case-sensitive)
 # strings as they appear in CCC footnotes; matching requires a leading
@@ -184,7 +230,7 @@ CANONICAL_73_SET = frozenset(CANONICAL_73)
 # osis -> list of exact surface forms recognized as that book.
 BOOK_VARIANTS: dict[str, list[str]] = {
     "gen": ["Gn", "Gen", "Genesis"],
-    "exod": ["Ex", "Exod", "Exodus"],
+    "exod": ["Ex", "Exod", "Exodus", "EX"],  # EX: observed all-caps variant
     "lev": ["Lv", "Lev", "Leviticus"],
     "num": ["Nm", "Num", "Numbers"],
     "deut": ["Dt", "Deut", "Deuteronomy"],
@@ -197,7 +243,7 @@ BOOK_VARIANTS: dict[str, list[str]] = {
     "jdt": ["Jdt", "Judith"],
     "esth": ["Est", "Esth", "Esther"],
     "job": ["Job"],
-    "ps": ["Ps", "Pss", "Psalm", "Psalms"],
+    "ps": ["Ps", "Pss", "Psalm", "Psalms", "PS"],  # PS: observed all-caps variant
     "prov": ["Prv", "Prov", "Proverbs"],
     "eccl": ["Eccl", "Qo", "Qoh", "Ecclesiastes"],
     "song": ["Song", "SS", "Ct", "Song of Songs", "Song of Solomon"],
@@ -224,10 +270,18 @@ BOOK_VARIANTS: dict[str, list[str]] = {
     "matt": ["Mt", "Matt", "Matthew"],
     "mark": ["Mk", "Mark"],
     "luke": ["Lk", "Luke"],
-    "john": ["Jn", "John"],
+    "john": [
+        "Jn",
+        "John",
+        "In",
+    ],  # In: observed typo (J -> I), only fires with a chapter:verse after it
     "acts": ["Acts"],
     "rom": ["Rom", "Romans"],
-    "gal": ["Gal", "Galatians"],
+    "gal": [
+        "Gal",
+        "Galatians",
+        "Cal",
+    ],  # Cal: observed typo (G -> C), verified by content against ccc476/478
     "eph": ["Eph", "Ephesians"],
     "phil": ["Phil", "Philippians"],
     "col": ["Col", "Colossians"],
@@ -249,20 +303,31 @@ _NUMBERED_BASE: dict[str, list[str]] = {
     "2macc": ["Macc", "Maccabees"],
     "1cor": ["Cor", "Corinthians"],
     "2cor": ["Cor", "Corinthians"],
-    "1thess": ["Thess", "Thessalonians"],
-    "2thess": ["Thess", "Thessalonians"],
+    "1thess": [
+        "Thess",
+        "Thessalonians",
+        "Th",
+    ],  # Th: observed abbreviation, verified numbered-only
+    "2thess": ["Thess", "Thessalonians", "Th"],
     "1tim": ["Tim", "Timothy"],
     "2tim": ["Tim", "Timothy"],
     "1pet": ["Pet", "Pt", "Peter"],
     "2pet": ["Pet", "Pt", "Peter"],
-    "1john": ["Jn", "John"],
-    "2john": ["Jn", "John"],
-    "3john": ["Jn", "John"],
+    "1john": ["Jn", "John", "In"],  # In: same J -> I typo as the bare Gospel form
+    "2john": ["Jn", "John", "In"],
+    "3john": ["Jn", "John", "In"],
 }
 for osis, base in _NUMBERED_BASE.items():
     n = int(osis[0])
     roman = {1: "I", 2: "II", 3: "III"}[n]
-    BOOK_VARIANTS[osis] = [f"{n} {v}" for v in base] + [f"{roman} {v}" for v in base]
+    variants = [f"{n} {v}" for v in base] + [f"{roman} {v}" for v in base]
+    if n == 1:
+        # "l" (lowercase L) for "1" is a recurring transcription artifact in
+        # this corpus (observed: "l Cor", "l Pt", "l Tim") -- visually
+        # confusable with "1" in some renderings. Only added for n=1, since
+        # that's the only digit "l" is ever mistaken for.
+        variants += [f"l {v}" for v in base]
+    BOOK_VARIANTS[osis] = variants
 
 assert set(BOOK_VARIANTS) <= CANONICAL_73_SET, sorted(
     set(BOOK_VARIANTS) - CANONICAL_73_SET
@@ -316,6 +381,17 @@ NON_SCRIPTURE_ABBREVS = frozenset(
         "CD",
         "SD",
         "EP",
+        # Titles/section-numbering tokens from patristic and other spiritual
+        # writers, confirmed non-scripture by inspecting the full citation
+        # (see pipeline/build/xrefs.py report triage, full-corpus pass):
+        "Sermo",  # "St. Augustine, Sermo 241, 2" etc. -- a homily number
+        "Psal",  # "St. Ambrose, Psal 118:14:30" -- Ambrose's own commentary
+        # ON Psalm 118 (a work citation, not a Bible verse)
+        "Smyrn",  # "St. Ignatius of Antioch, Ad Smyrn. 8:1" -- Ignatius's
+        # Letter to the Smyrnaeans
+        "Jud",  # "St. John Chrysostom, prod. Jud. 1:6" -- "De proditione
+        # Judae" (On the Betrayal of Judas), a homily title -- not Jude/Judith
+        "Excl",  # "St. Teresa of Avila, Excl. 15:3" -- her "Exclamaciones"
     ]
 )
 
@@ -344,9 +420,12 @@ class CitationResult:
     text: str
     refs: list[Ref] = field(default_factory=list)
     classification: str = (
-        "non-scripture"  # "scripture" | "non-scripture" | "unparseable"
+        "non-scripture"  # "scripture" | "non-scripture" | "unparseable" | "empty"
     )
     unmapped: list[str] = field(default_factory=list)
+    dropped: list[str] = field(
+        default_factory=list
+    )  # implausible chapter numbers, see MAX_CHAPTER
 
 
 # --------------------------------------------------------------------------
@@ -421,18 +500,51 @@ def _parse_chapter_verses(s: str) -> tuple[int | None, list[int]]:
     return chapter, []
 
 
-def _find_book(clause: str) -> tuple[str, str] | None:
+def _parse_single_chapter_ref(rest: str) -> tuple[int | None, list[int]]:
+    """Parse a reference into one of the Bible's five single-chapter books
+    (SINGLE_CHAPTER_BOOKS). These are cited "Book <verse>" with no chapter
+    number ("Jude 3", "Phlm 16") -- so unlike every other book, a bare
+    leading number is a *verse*, not a chapter. Tolerates a redundant
+    explicit "1:" prefix if the source gives one. Always returns chapter 1
+    (or None if ``rest`` has no leading number at all).
+    """
+    if not rest[:1].isdigit():
+        return None, []
+    s = rest[2:] if rest[:2] == "1:" else rest
+    verses, _ = _parse_verse_list(s)
+    return (1, verses) if verses else (None, [])
+
+
+def _find_book(clause: str, start: int = 0) -> tuple[str, str, int, int] | None:
     """Search (not anchor) ``clause`` for a recognized scripture book name.
 
-    Returns (osis, remainder-after-match-lstripped) or None. Search (rather
-    than match-at-start) so junk prefixes like a stray "CE" (see module
-    docstring) or "Cf." leftovers don't block a real match later in the
-    clause.
+    Returns (osis, remainder-after-match-lstripped, match-start-index,
+    match-end-index) or None. Search (rather than match-at-start) so junk
+    prefixes like a stray "CE" (see module docstring) or "Cf." leftovers
+    don't block a real match later in the clause. ``start`` lets the caller
+    retry past a match that turned out not to be followed by a chapter
+    number.
     """
-    m = _BOOK_RE.search(clause)
+    m = _BOOK_RE.search(clause, start)
     if not m:
         return None
-    return VARIANT_TO_OSIS[m.group(0)], clause[m.end() :].lstrip()
+    return VARIANT_TO_OSIS[m.group(0)], clause[m.end() :].lstrip(), m.start(), m.end()
+
+
+_LOCAL_CF_RE = re.compile(r"\bcf\.?\s*$", re.IGNORECASE)
+
+
+def _preceded_by_cf(clause: str, match_start: int) -> bool:
+    """True if a "cf."/"Cf." token sits directly before ``match_start``.
+
+    Covers "cf." appearing *inside* a clause rather than at its very start
+    -- e.g. a clause that opens with a non-scripture citation and only
+    turns to "cf. <scripture ref>" partway through ("St. Ignatius..., Ad
+    Eph. 19, 1: AF 11/2 76-80: cf. I Cor 2:8." -- the leading-clause cf
+    strip only catches a "Cf." at position 0, so this is the fallback that
+    finds it later in the same clause).
+    """
+    return bool(_LOCAL_CF_RE.search(clause[:match_start]))
 
 
 def _split_clauses(text: str) -> list[str]:
@@ -447,7 +559,11 @@ def parse_citation(text: str) -> CitationResult:
     """
     text = text.strip()
     if not text:
-        return CitationResult(text=text, classification="unparseable")
+        # Known source defect: a handful of PT-mirror-derived footnotes
+        # carry an empty citations[].text. Not a parser failure -- kept in
+        # its own bucket so the report doesn't conflate "we couldn't read
+        # this" with "the source gave us nothing to read".
+        return CitationResult(text=text, classification="empty")
 
     result = CitationResult(text=text)
     current_book: str | None = None
@@ -465,29 +581,60 @@ def parse_citation(text: str) -> CitationResult:
             if not clause:
                 continue
 
-            book_match = _find_book(clause)
-            if book_match is not None:
-                osis, rest = book_match
-                chapter, verses = _parse_chapter_verses(rest)
-                if chapter is not None:
-                    result.refs.append(Ref(osis, chapter, verses, clause_cf))
-                    current_book = osis
-                    current_cf = clause_cf
+            # Try every book-shaped substring in the clause in turn, not
+            # just the first: a clause can contain an unrelated book-like
+            # word with no chapter after it before the real reference (e.g.
+            # "St. Ignatius..., Ad Eph. 19, 1: AF 11/2 76-80: cf. I Cor 2:8."
+            # -- "Eph." from "Ad Eph." matches first but has no chapter
+            # number after it; the real ref, "I Cor 2:8", is later in the
+            # same clause). Without this retry the whole clause would be
+            # abandoned after the first false match.
+            book_found_ref = False
+            search_pos = 0
+            while True:
+                book_match = _find_book(clause, search_pos)
+                if book_match is None:
+                    break
+                osis, rest, match_start, end_pos = book_match
+                if osis in SINGLE_CHAPTER_BOOKS:
+                    chapter, verses = _parse_single_chapter_ref(rest)
+                else:
+                    chapter, verses = _parse_chapter_verses(rest)
+                if chapter is not None and chapter > MAX_CHAPTER[osis]:
+                    # Almost always a dropped-colon typo running chapter and
+                    # verse together ("Eph 314" for "Eph 3:14", "Acts 913"
+                    # for "Acts 9:13") -- the digit split is ambiguous, so
+                    # this ref is dropped rather than guessed at. Reported,
+                    # not silently discarded.
+                    result.dropped.append(f"{osis} {chapter} (from clause {clause!r})")
+                    search_pos = end_pos
                     continue
-                # Book name present but no chapter number followed it --
-                # not a real scripture ref (e.g. a book-like word inside
-                # prose). Falls through to the unmapped/non-scripture check
-                # below.
+                if chapter is not None:
+                    ref_cf = clause_cf or _preceded_by_cf(clause, match_start)
+                    result.refs.append(Ref(osis, chapter, verses, ref_cf))
+                    current_book = osis
+                    current_cf = ref_cf
+                    book_found_ref = True
+                    break
+                search_pos = end_pos
 
-            elif current_book is not None and clause[:1].isdigit():
+            if book_found_ref:
+                continue
+
+            if current_book is not None and clause[:1].isdigit():
                 chapter, verses = _parse_chapter_verses(clause)
                 # Require an actual verse component: a bare number is too
                 # ambiguous to attach to the running book (see docstring).
                 if chapter is not None and verses:
-                    # A continuation clause inherits the establishing
-                    # clause's cf state unless it repeats "cf." itself.
-                    ref_cf = clause_cf or current_cf
-                    result.refs.append(Ref(current_book, chapter, verses, ref_cf))
+                    if chapter > MAX_CHAPTER[current_book]:
+                        result.dropped.append(
+                            f"{current_book} {chapter} (from clause {clause!r})"
+                        )
+                    else:
+                        # A continuation clause inherits the establishing
+                        # clause's cf state unless it repeats "cf." itself.
+                        ref_cf = clause_cf or current_cf
+                        result.refs.append(Ref(current_book, chapter, verses, ref_cf))
                     continue
 
             for um in _UNMAPPED_RE.finditer(clause):
@@ -530,6 +677,9 @@ def build(paragraphs: list[dict]) -> tuple[list[dict], list[CitationResult]]:
                 assert ref.osis in CANONICAL_73_SET, (
                     f"non-canonical osis {ref.osis!r} in ccc {n}"
                 )
+                assert 1 <= ref.chapter <= MAX_CHAPTER[ref.osis], (
+                    f"implausible chapter {ref.osis} {ref.chapter} in ccc {n}"
+                )
                 assert ref.verses == sorted(ref.verses), f"unsorted verses in ccc {n}"
             xrefs.append({"ccc": n, "refs": [r.to_json() for r in refs]})
     return xrefs, all_results
@@ -548,7 +698,12 @@ def write_xrefs(xrefs: list[dict], path: Path = OUTPUT_PATH) -> None:
 
 def print_report(results: list[CitationResult], seed: int = 42) -> None:
     total = len(results)
-    by_class: dict[str, int] = {"scripture": 0, "non-scripture": 0, "unparseable": 0}
+    by_class: dict[str, int] = {
+        "scripture": 0,
+        "non-scripture": 0,
+        "unparseable": 0,
+        "empty": 0,
+    }
     for r in results:
         by_class[r.classification] += 1
 
@@ -556,10 +711,11 @@ def print_report(results: list[CitationResult], seed: int = 42) -> None:
     print("CCC -> Bible citation parser report")
     print("=" * 72)
     print(f"total citation strings: {total}")
-    for cls in ("scripture", "non-scripture", "unparseable"):
+    for cls in ("scripture", "non-scripture", "unparseable", "empty"):
         n = by_class[cls]
         pct = 100 * n / total if total else 0
-        print(f"  {cls:14s} {n:5d}  ({pct:5.1f}%)")
+        label = cls if cls != "empty" else "empty (known source defect)"
+        print(f"  {label:28s} {n:5d}  ({pct:5.1f}%)")
 
     print()
     unparseable = [r.text for r in results if r.classification == "unparseable"]
@@ -578,6 +734,17 @@ def print_report(results: list[CitationResult], seed: int = 42) -> None:
     print(f"top unmapped abbreviations ({len(unmapped_counter)} distinct):")
     for tok, n in top_unmapped:
         print(f"  {n:4d}  {tok}")
+
+    print()
+    dropped = [d for r in results for d in r.dropped]
+    print(
+        f"dropped implausible refs ({len(dropped)}) -- chapter exceeds the "
+        "book's real length, almost always a dropped-colon typo (e.g. "
+        "'Eph 314' for 'Eph 3:14'); ambiguous to auto-split so dropped "
+        "rather than guessed:"
+    )
+    for d in dropped:
+        print(f"  - {d}")
 
     print()
     scripture_results = [r for r in results if r.classification == "scripture"]
@@ -717,9 +884,104 @@ def test_non_scripture_only() -> None:
     assert r.refs == []
 
 
-def test_empty_citation_is_unparseable() -> None:
+def test_empty_citation_is_flagged_as_empty() -> None:
+    # A handful of real footnotes in the full corpus have empty text (a
+    # known PT-mirror source defect) -- distinct from an actual parse
+    # failure, so it gets its own bucket rather than "unparseable".
     r = parse_citation("")
-    assert r.classification == "unparseable"
+    assert r.classification == "empty"
+    assert r.refs == []
+
+
+def test_book_like_prefix_does_not_block_later_real_ref() -> None:
+    # Real sample citation: "Ad Eph." (a patristic letter title) contains
+    # "Eph" with no chapter after it; the real ref, "I Cor 2:8", follows
+    # later in the same clause and must still be found.
+    r = parse_citation(
+        "St. Ignatius of Antioch, Ad Eph. 19, 1: AF 11/2 76-80: cf. I Cor 2:8."
+    )
+    assert r.classification == "scripture"
+    assert len(r.refs) == 1
+    ref = r.refs[0]
+    assert (ref.osis, ref.chapter, ref.verses, ref.cf) == ("1cor", 2, [8], True)
+
+
+def test_lowercase_l_as_one_prefix_typo() -> None:
+    # Real sample citation: "l Cor 13:12." -- lowercase L standing in for "1".
+    r = parse_citation("l Cor 13:12.")
+    ref = r.refs[0]
+    assert (ref.osis, ref.chapter, ref.verses) == ("1cor", 13, [12])
+
+
+def test_in_typo_for_jn() -> None:
+    # Real sample citation: "In 17:3." -- J misread/mistyped as I.
+    r = parse_citation("In 17:3.")
+    ref = r.refs[0]
+    assert (ref.osis, ref.chapter, ref.verses) == ("john", 17, [3])
+
+
+def test_all_caps_ps_and_ex() -> None:
+    r = parse_citation("PS 118:22.")
+    assert (r.refs[0].osis, r.refs[0].chapter, r.refs[0].verses) == ("ps", 118, [22])
+    r2 = parse_citation("EX 3:6.")
+    assert (r2.refs[0].osis, r2.refs[0].chapter, r2.refs[0].verses) == ("exod", 3, [6])
+
+
+def test_patristic_titles_stay_non_scripture() -> None:
+    # "Sermo", "Psal", "Smyrn" etc. look book-shaped but are patristic work
+    # titles/section numbers, not scripture -- must not produce refs.
+    for text in (
+        "St. Augustine, Sermo 241, 2: PL 38, 1134,",
+        "St. Ambrose, Psal 118:14:30: PL 15:1476.",
+        "St. Ignatius of Antioch, Ad Smyrn. 8:1; SCh 10, 138.",
+    ):
+        r = parse_citation(text)
+        assert r.refs == [], (text, r.refs)
+        assert r.classification == "non-scripture"
+
+
+def test_single_chapter_book_bare_number_is_a_verse() -> None:
+    # Real sample citations: single-chapter books are cited "Book <verse>",
+    # never "Book 1:<verse>" -- the bare number must land as chapter=1,
+    # verse=N, not be mistaken for a (nonexistent) chapter N.
+    cases = [
+        ("LG 12; cf. Jude 3.", "jude", 1, [3]),
+        ("I Tim 3:15; Jude 3.", "jude", 1, [3]),
+        ("Cf. I Jn 4:2-3; 2 Jn 7.", "2john", 1, [7]),
+        ("Cf. Jn 3:18; Acts 2:21; 5:41; 3 Jn 7; Rom 10:6-13.", "3john", 1, [7]),
+        ("Philem 16.", "phlm", 1, [16]),
+    ]
+    for text, osis, chapter, verses in cases:
+        r = parse_citation(text)
+        matches = [ref for ref in r.refs if ref.osis == osis]
+        assert len(matches) == 1, (text, r.refs)
+        assert (matches[0].chapter, matches[0].verses) == (chapter, verses), (
+            text,
+            matches[0],
+        )
+
+
+def test_single_chapter_book_range() -> None:
+    # "Jude 24-25" -- a verse range on a single-chapter book.
+    r = parse_citation("Cf. Eph 1:3-14; Rom 16:25-27; Eph 3:20-21; Jude 24-25.")
+    jude_refs = [ref for ref in r.refs if ref.osis == "jude"]
+    assert len(jude_refs) == 1
+    assert (jude_refs[0].chapter, jude_refs[0].verses) == (1, [24, 25])
+
+
+def test_dropped_colon_produces_implausible_chapter_is_dropped() -> None:
+    # Real sample citation: "Cf. Eph 314." -- "Eph 3:14" with the colon
+    # dropped, producing a nonexistent "chapter 314" (Ephesians has 6
+    # chapters). Ambiguous how to split "314" back into chapter:verse, so
+    # this must be dropped, not guessed, and surfaced in the report.
+    r = parse_citation("Cf. Eph 314.")
+    assert r.refs == []
+    assert r.classification == "non-scripture"
+    assert any("eph 314" in d for d in r.dropped)
+
+
+def test_max_chapter_covers_all_73_books() -> None:
+    assert set(MAX_CHAPTER) == CANONICAL_73_SET
 
 
 def test_all_book_variants_map_to_canonical_osis() -> None:

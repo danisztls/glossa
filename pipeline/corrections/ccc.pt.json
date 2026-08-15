@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ccc.pt-679-fn660",
+    "locator": { "paragraph": 679, "marker": "660" },
+    "field": "citation_text",
+    "from": "12, 48. </p><p>600. Cf. <i>1 Cor",
+    "to": "12, 48. </p><p>660. Cf. <i>1 Cor",
+    "reason": "Footnote list prints \"600.\" immediately after footnote 659 -- a digit-substitution typo (6 misread/mistyped as 0) that leaves marker 660, which the paragraph body already cites, unresolved. Paragraph body text is correct as printed; only the footnote list's own number is wrong. Corrected against the RAW HTML (a longer, uniquely-anchored substring, not just \"600.\") because \"600.\" alone is not unique on this page (3 occurrences: paragraph 600's own number marker, an unrelated genuine footnote 600 belonging to a later paragraph on this same page, and this defect) -- and because the underlying footnote-list parser scans sequentially for the next expected number, so leaving \"600.\" unfixed until after parsing lets the parser's own lookahead scan right past the real footnote 660 and corrupt unrelated neighboring entries while searching for a literal \"660\" that doesn't exist yet in the raw text.",
+    "evidence": "raw HTML corpus/raw/ccc-pt/p1s2cap2_422-682_po.html: footnote list reads '...659. Cf. Jo 3, 18: 12, 48.</p><p>600. Cf. 1 Cor 3, 12-15.</p><p>601. Cf. Mt 12, 32; Heb 6, 4-6; 10, 26-31.' -- sandwiched between real, correctly-numbered footnotes 659 and 662 (the next paragraph's own footnote, found later in the same file). PT paragraph 679 body already reads '...recebe segundo as suas obras (660) e pode, mesmo, condenar-se para a eternidade, recusando o Espírito de amor (661).' -- markers 660/661 are what the text expects. EN parallel corpus/raw/ccc-en/__P1W.HTM, paragraph 679's footnote 588 combines the identical citations verbatim: 'Cf. Jn 3:18; 12:48; Mt 12:32; I Cor 3:12-15; Heb 6:4-6; 10:26-31.' -- matching PT's 659 (Jo 3,18: 12,48) + 660 (1 Cor 3,12-15) + 661 (Mt 12,32; Heb 6,4-6; 10,26-31) content exactly, confirming both the split and the intended numbers. Anchor string \"12, 48. </p><p>600. Cf. <i>1 Cor\" verified unique (count=1) across the whole page.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "ccc.pt-679-fn661",
+    "locator": { "paragraph": 679, "marker": "661" },
+    "field": "citation_text",
+    "from": "12-15. </p><p>601. Cf. <i>Mt",
+    "to": "12-15. </p><p>661. Cf. <i>Mt",
+    "reason": "Same defect class as ccc.pt-679-fn660, one footnote later in the same list: \"601.\" should be \"661.\" (paragraph body already cites marker 661). Corrected against a uniquely-anchored raw HTML substring for the same reason as ccc.pt-679-fn660 -- \"601.\" alone is not unique on this page (5 occurrences).",
+    "evidence": "Same raw HTML and EN-parallel evidence as ccc.pt-679-fn660 -- see that entry. PT footnote list: '...600. Cf. 1 Cor 3, 12-15.</p><p>601. Cf. Mt 12, 32; Heb 6, 4-6; 10, 26-31.' immediately precedes the next real footnote, 662 (found later in the file, attached to paragraph 662). EN footnote 588 (paragraph 679) ends '...Mt 12:32; I Cor 3:12-15; Heb 6:4-6; 10:26-31.' matching this entry's content. Anchor string \"12-15. </p><p>601. Cf. <i>Mt\" verified unique (count=1) across the whole page. Applied in the same corrections file as ccc.pt-679-fn660 and after it in source order, so by the time this entry's raw substitution runs, the previous one has already turned the page's sole \"...48. </p><p>600. Cf...\" into \"...48. </p><p>660. Cf...\", which does not affect this entry's own distinct anchor.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "ccc.pt-1396-fn236",
+    "locator": { "paragraph": 1396, "marker": "236" },
+    "field": "marker",
+    "from": "(326)",
+    "to": "(236)",
+    "reason": "Inline footnote marker prints \"(326)\" at the end of the St. Augustine quotation closing paragraph 1396 -- no footnote numbered 326 exists anywhere in this page's footnote list (real footnotes run 233-241 here), so 326 is a phantom marker. Footnote 236 in this page's own list ('Santo Agostinho, Sermão 272: PL 38, 1247.') is never cited anywhere else on the page and sits at the expected sequential position (right after 235, which paragraph 1396 already cites correctly). Read as a digit transposition (236 -> 326).",
+    "evidence": "raw HTML corpus/raw/ccc-pt/p2s2cap1_1210-1419_po.html: paragraph 1396 body ends '...Então, sê um membro de Cristo, para que o teu «Amen» seja verdadeiro» (326).' -- verified zero other occurrences of the literal string '(236)' anywhere in this page's body content (only the footnote-list entry '236. Santo Agostinho, Sermão 272: PL 38, 1247.' exists, otherwise unused/unreferenced). EN parallel corpus/raw/ccc-en/__P42.HTM, paragraph 1396's third and final footnote (232) sits at the exact analogous sentence ('Be then a member of the Body of Christ that your Amen may be true.') and reads 'St. Augustine, Sermo 272: PL 38, 1247.' -- a verbatim match to PT footnote 236's text, confirming the phantom (326) was meant to be (236). PT's first two markers on this paragraph (235, and the inline '(1 Cor 10, 16-17)' citation) already correctly parallel EN's footnotes 230 (Cf. 1 Cor 12:13) and 231 (1 Cor 10:16-17), reinforcing that the third and final marker of the paragraph corresponds to EN's third footnote, 232.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "ccc.pt-2217-numprint",
+    "locator": { "paragraph": 2217, "structural": "paragraph_number" },
+    "field": "paragraph_number",
+    "from": "2117",
+    "to": "2217",
+    "reason": "Source misprints this paragraph's own leading number as 2117 -- a single-digit substitution (2->1 in the hundreds place). Content (filial obedience while living in the parental home) and sequential position (directly after paragraph 2216, before paragraph 2218) confirm paragraph 2217 is meant; 2117 is numerically impossible on this page, whose entire span is 2196-2557. Previously corrected silently inside the scraper's generic single-digit-typo heuristic (looks_like_number_typo); now routed through this corrections entry so the fix is auditable data rather than hardcoded, hidden logic. See docs/decisions.md 2026-08-14 Language symmetry principle.",
+    "evidence": "raw HTML corpus/raw/ccc-pt/p3s2cap2_2196-2557_po.html: '<p><b>2117.</b> Enquanto viver na casa dos pais, o filho deve obedecer a tudo o que eles lhe mandarem...' sits directly after paragraph 2216's text on filial docility/obedience (quoting Prov 6:20-22 and 13:1) and directly before paragraph 2218 continuing the same Fourth Commandment discussion of children's duties.",
+    "added": "2026-08-14"
+  },
+  {
+    "id": "ccc.pt-2439-numprint",
+    "locator": { "paragraph": 2439, "structural": "paragraph_number" },
+    "field": "paragraph_number",
+    "from": "1439",
+    "to": "2439",
+    "reason": "Source misprints this paragraph's own leading number as 1439 -- a single-digit substitution (2->1 in the thousands place). Content (rich nations' moral responsibility toward less-advanced countries) and sequential position confirm paragraph 2439 is meant; 1439 is numerically impossible on this page, whose entire span is 2196-2557. Previously corrected silently inside the scraper's generic single-digit-typo heuristic (looks_like_number_typo); now routed through this corrections entry.",
+    "evidence": "raw HTML corpus/raw/ccc-pt/p3s2cap2_2196-2557_po.html: '<p> <b>1439. </b>As nações ricas têm uma grave responsabilidade moral em relação aquelas que não podem, por si mesmas, assegurar os meios do seu desenvolvimento...' sits directly after prose on 'sistemas financeiros abusivos... relações comerciais iníquas entre as nações, a corrida aos armamentos' (international economic injustice) -- matching CCC paragraph 2438-2439's known subject matter (Seventh Commandment, international economic solidarity).",
+    "added": "2026-08-14"
+  }
+]
