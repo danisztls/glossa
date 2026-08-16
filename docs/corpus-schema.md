@@ -30,20 +30,29 @@ corpus/                      # gitignored, built locally
       questions.json
     compendium.pt/
       …
+    vatii.lumen-gentium.en/
+      manifest.json
+      structure.json
+      sections.json
+    vatii.lumen-gentium.pt/
+      …
+    encyclical.centesimus-annus.en/
+      …
   xrefs/
     ccc-bible.json           # generated later by the citation parser (phase 2)
+    ccc-documents.json       # future: CCC ¶ ↔ document section refs, same derivation (see docs/link-surface.md)
 ```
 
 ## Work IDs
 
-`{corpus}.{edition}.{lang}` for Bibles (`bible.cpdv.en`, `bible.matos-soares.pt`); `ccc.{lang}` for the Catechism.
+`{corpus}.{edition}.{lang}` for Bibles (`bible.cpdv.en`, `bible.matos-soares.pt`); `ccc.{lang}` for the Catechism; `compendium.{lang}` for the Compendium; `{family}.{slug}.{lang}` for documents (encyclicals, conciliar texts, curial documents) — e.g. `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `cdf.dominus-iesus.en`.
 
 ## manifest.json (all works)
 
 ```jsonc
 {
   "id": "bible.cpdv.en",
-  "type": "bible", // "bible" | "catechism"
+  "type": "bible", // "bible" | "catechism" | "compendium" | "document"
   "title": "Catholic Public Domain Version",
   "short_title": "CPDV",
   "language": "en", // BCP 47
@@ -106,10 +115,12 @@ The CCC hierarchy as a tree. Nodes:
   "kind": "part",                     // "prologue" | "part" | "section" | "chapter" | "article" | "sub" | "in-brief"
   "n": 1,                             // ordinal within parent, when the source numbers it
   "title": "The Profession of Faith",
-  "paragraphs": [26, 1065],           // [first, last] CCC paragraph numbers this node spans (inclusive)
+  "paragraphs": [26, 1065],           // [first, last] unit numbers this node spans (inclusive) — see note below
   "children": [ … ]
 }
 ```
+
+**`paragraphs` is generic unit-number-span vocabulary, not CCC-specific**, despite the name: it holds CCC paragraph numbers here, Compendium question numbers in `compendium.{lang}/structure.json`, and document section numbers in `{family}.{slug}.{lang}/structure.json`. The field keeps this one name across all work types rather than being renamed per type (e.g. to `sections` for documents) because the site's shared structure-tree walkers (`corpus.ts`'s `breadcrumbIn`/`flattenTree` over `StructureNode`) already operate on it across CCC and Compendium; a third name per work type would fork that code for no gain. Each work-type section below states what the span counts.
 
 The tree must cover paragraphs 1–2865 with no gaps at the top level. "In Brief" blocks are nodes of kind `in-brief` under their article.
 
@@ -171,9 +182,50 @@ The Compendium of the CCC (2005) is Q&A-format: 598 numbered questions, each pri
 ```
 
 - `ccc_refs` stays a **raw verbatim string** per the store-raw principle; the phase-2 parser expands ranges into links. Empty string if a question prints none.
-- `structure.json` uses the same node schema as the CCC (parts/sections/chapters), spanning questions 1–598 by number.
+- `structure.json` uses the same node schema as the CCC (parts/sections/chapters); the `paragraphs` field is the generic unit-number span described under "Catechism — `structure.json`" above and holds Compendium question numbers here, spanning questions 1–598 by number.
 - The Compendium's appendices (common prayers — some in Latin parallel — and doctrinal formulas) are optional in v1: capture if straightforwardly parseable into `notes`-style ancillary JSON, otherwise document their presence in `manifest.notes` and defer.
 - The print edition's sacred-art images and their commentary are out of scope for v1 (note their existence in `manifest.notes`).
+
+## Documents (encyclicals, conciliar texts, curial documents)
+
+v2, scoped 2026-08-15 — see `decisions.md` §Vatican documents in scope for what's in/out and why, and `research/vatican-documents.md` for the underlying survey (citation-frequency tables, per-pontificate EN/PT coverage audit, numbering tests — cited by locator below, not restated here). Covers Vatican II's 16 constitutions/decrees/declarations, papal encyclicals, apostolic exhortations, and CDF/DDF declarations — one schema shape for all of them, since every family sampled shares the same numbering/citation/quotation structure (`vatican-documents.md` §3).
+
+Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vatii` | `encyclical` | `apost-exhort` | `apost-const` | `cdf` (distinguishes publishing pipeline and future per-family styling without forking the schema). Examples: `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `cdf.dominus-iesus.en`.
+
+`manifest.json`: same shape as the Catechism/Compendium manifest, `"type": "document"`, plus document-only fields:
+
+```jsonc
+{
+  "id": "vatii.lumen-gentium.en",
+  "type": "document",
+  // ...bible-manifest-shared fields (title, language, edition, sources, copyright, notes, generated_at)...
+  // document-only:
+  "document_kind": "conciliar-constitution", // "conciliar-constitution" | "conciliar-decree" | "conciliar-declaration" | "encyclical" | "apostolic-exhortation" | "apostolic-constitution" | "cdf-declaration" | …
+  "pontiff_or_council": "Second Vatican Council", // e.g. "John Paul II", "Second Vatican Council", "Congregation for the Doctrine of the Faith"
+  "promulgated": "1964-11-21", // the document's own date, distinct from sources[].retrieved_at
+}
+```
+
+`structure.json`: reuse the Catechism/Compendium node schema verbatim (`kind`/`n`/`title`/`paragraphs`/`children` — `paragraphs` is the generic unit-number span from the note above, and holds document section numbers here). Chapter/Part headings for the longer documents (Gaudium et Spes has Parts and Chapters; Laudato Si' has numbered chapters and roman-numeral subsections, `vatican-documents.md` §3); a document with no internal headings (a short CDF declaration) gets a trivial single-node tree spanning its full section range, the same shape a short Compendium chapter would get.
+
+`sections.json` (not `paragraphs.json` — a document's numbered units are the print edition's own "sections," not CCC paragraphs; the _filename_ differs per work type even though the structure-tree _field_ stays `paragraphs`, per the note above): array ordered by `n`, same `blocks`/`text_marked`/`citations`/`text` shape as the CCC's `paragraphs.json`:
+
+```jsonc
+{
+  "n": 12,
+  "blocks": [
+    { "kind": "prose", "text_marked": "…prose with inline ⟦12⟧ markers…" },
+  ],
+  "text": "…derived: all blocks joined, markers stripped, spaces normalized…",
+  "citations": [{ "marker": "12", "text": "AAS 57 (1965) 12" }], // verbatim footnote content, keyed by marker
+}
+```
+
+No `related` and no `in_brief` fields: no marginal cross-reference apparatus (the CCC's print-margin "see also ¶¶…" numbers) was found in any document family sampled (`vatican-documents.md` §2), and "In Brief" is a CCC-only summarization device with no analogue in these texts. Both are dropped rather than carried as permanently-empty dead fields.
+
+`abbreviations.json`: not per-document — corpus-wide, still homed at `ccc.{lang}/abbreviations.json` (see above). The CCC's own front-matter table already covers the sigla (LG, GS, DS, …) these documents are cited by and cite each other by; see `link-surface.md` on how ingesting Vatican II resolves that file's sourcing problem.
+
+`xrefs/ccc-documents.json` (future, phase-2-style derived pass, not yet built): turns a `citations[].text` string like `"LG 12"` into `{ document: "vatii.lumen-gentium", section: 12 }`, the same derivation `ccc-bible.json` already does for scripture citations — a re-parse of already-captured raw citation text, not a re-scrape. See `link-surface.md` row #12.
 
 ## Cross-references — `xrefs/ccc-bible.json` (phase 2, generated)
 
@@ -203,7 +255,7 @@ Verified source defects are fixed through a corrections layer, never by hand-edi
   "to": "660.",
   "reason": "footnote list prints 600./601. immediately after 659 — digit-substitution typo",
   "evidence": "raw HTML corpus/raw/ccc-pt/…; EN parallel ¶679 footnotes 660-661",
-  "added": "2026-08-14"
+  "added": "2026-08-14",
 }
 ```
 

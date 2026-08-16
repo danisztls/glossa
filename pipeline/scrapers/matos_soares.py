@@ -715,7 +715,10 @@ def write_manifest(
         ],
         "copyright": {
             "status": "copyrighted",
-            "holder": "Herdeiros de Pe. Manuel de Matos Soares (domínio público em 1 Jan 2028)",
+            # The public-domain date is documented in `notes` above and in
+            # docs/research/copyright.md, not smuggled into the holder name —
+            # `holder` is a plain attribution string, not a status summary.
+            "holder": "Herdeiros de Pe. Manuel de Matos Soares",
             "notice": None,
         },
         "notes": notes,

@@ -20,6 +20,12 @@ site/build/
 .zprofile
 .zshrc
 
+# Editor / tooling state, not project files
+.claude/
+.idea/
+.vscode/
+.mcp.json
+
 # Misc
 .DS_Store
 *.log

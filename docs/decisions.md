@@ -33,7 +33,7 @@
 - _Lookup mode_: omnipresent jump box accepting references (`ccc 1324`, `john 3:16`, `jo 3,16`), full-text search (prebuilt client-side index), stable guessable deep links (`/ccc/1324`, `/bible/john/3#16`) for every paragraph and verse.
 - Parallel view: EN/PT side by side; Vulgate column later. Footnotes as sidenotes on desktop, tap-popovers on mobile.
 
-**Offline**: **offline-first PWA** — entire library (~10–15 MB) cached on device after first visit. Committed early because it constrains architecture favorably.
+**Offline**: **offline-first PWA** — entire library cached on device after first visit. Committed early because it constrains architecture favorably. (The "~10–15 MB" figure below was an early estimate made before any corpus existed; corrected to real measurements in the 2026-08-15 "Offline caching implementation" entry below — it was low by roughly 4x uncompressed, though close on the wire once gzipped.)
 
 **Design**: hybrid, leaning classical — liturgical/medieval aesthetics for the text (serif, drop caps, ornaments) with modern chrome where it makes sense. Light/dark/sepia themes; print stylesheets. Details decided with mockups.
 
@@ -42,7 +42,7 @@
 **Architecture**: two layers, cleanly separated.
 
 1. **Corpus pipeline**: scrapers → normalized canonical schema (work / division / unit, stable IDs, provenance metadata). Corpus lives outside the public repo (gitignored, fetched/built locally).
-2. **Site**: compiles whatever corpus it is given into prerendered static pages + JSON. i18n decouples UI language from content language (URL carries content choice, setting carries UI language).
+2. **Site**: compiles whatever corpus it is given into prerendered static pages + JSON. ~~i18n decouples UI language from content language (URL carries content choice, setting carries UI language)~~ — reversed 2026-08-15, see below.
 
 **Deferred**: name/domain, hosting provider, colophon text, analytics (default: none — strengthens the colophon's privacy statement).
 
@@ -53,3 +53,55 @@ Language switching anchors on **canonical, language-independent unit IDs**: CCC 
 ## 2026-08-14 — Source-defect corrections policy
 
 Amends pure-verbatim: **verified source defects are corrected, and every correction is auditable.** Corrections live as data in the repo (`pipeline/corrections/{work_id}.json` — committed, so git history is the audit log), each entry carrying locator, exact before/after, reason, and evidence (parallel-language reading, other-edition reading, or linguistic impossibility). Scrapers apply them post-parse and fail loudly if a correction's `from` text no longer matches the source (drift guard). Each work's output includes `corrections-applied.json` (the receipt) and the manifest counts applied corrections. Only mechanical/typographic defects qualify (OCR artifacts, digit typos, marker mismatches) — never wording, never modernization.
+
+## 2026-08-15 — Content language follows UI language
+
+**What**: reverses the 2026-08-14 line above ("i18n decouples UI language from content language"). One language switch now drives both chrome and default content edition (`$lib/content.svelte.ts`, `corpus.defaultWorkId`), with an explicit per-work-type edition override scoped to the UI language it was chosen under — a reader can read the Portuguese Bible under an English interface, but switching the interface language resets to that language's default edition rather than silently keeping a stale pick.
+
+**Why**: fewer surprising states, one primary "which language am I in" control, with the version/edition selector kept as the deliberate escape hatch for a reader who wants a specific edition regardless of interface language.
+
+**Consequence for URLs — CCC/Compendium vs. Bible differ, deliberately**: CCC and Compendium URLs stay edition-free (`/ccc/1234`, `/compendium/1`) and resolve the edition client-side from the stored preference, so every prerendered page embeds all languages of that item. The Bible keeps its edition in the URL (`/bible/{edition}/{book}/{chapter}`). The difference isn't arbitrary: for the CCC and Compendium, language and edition are the same axis — one canonical LEV/USCCB-equivalent translation per language, so leaving edition out of the URL loses no addressing information. The Bible lineup already has (or plans) more than one edition _per language_ (CPDV now, Douay-Rheims/Clementine Vulgate later for English; Matos Soares now, Figueiredo later for Portuguese — see `research/bible-texts.md`), so language alone doesn't determine which edition a bare `/bible/john/3` means. Edition has to stay an explicit URL segment for the Bible for as long as that's true.
+
+## 2026-08-15 — Vatican documents in scope
+
+**What**: scopes the "encyclicals and other Vatican documents with doctrinal value" item from the original brief (`2026-08-13/14 — Project scoping`) to **all encyclicals, across all pontificates, plus the 16 Vatican II documents** — broader than the ~90-encyclical figure assumed at scoping time.
+
+**Why / what the survey found** (`research/vatican-documents.md`, 2026-08-15): one parser family covers Vatican II's constitutions/decrees/declarations, encyclicals (tested 1891–2015), apostolic exhortations, and CDF/DDF declarations — the same inline-digit paragraph numbering `ccc.py` already parses defensively, needing only two more regex branches (survey §3). Numbering is reliably, completely addressable in every document family tested (survey §3). The corpus is materially larger than assumed: **~250–300 encyclicals** across all pontificates (survey §2, per-pontificate index audit), not ~90. Portuguese coverage collapses for older pontificates — **Leo XIII 17%, Pius XII 83%, John Paul II and Francis 100%** (survey §2) — so a substantial part of the corpus lands English-only. This bends the language-symmetry principle (2026-08-14 entry above) but is an accepted, documented exception: the existing "any work can be individually unpublished or degraded" architecture (2026-08-13/14 entry) already handles a work missing one language without rearchitecting.
+
+**Explicitly out of scope**, each for a reason the survey establishes:
+
+- **Code of Canon Law**: no Portuguese edition on vatican.va at all — Italian and Spanish exist, Portuguese doesn't (survey §2) — despite 264 CCC citations to CIC canons (survey §1c). A hard language-symmetry blocker, not a doctrinal-weight judgment.
+- **Denzinger**: 502 CCC citations, the single most-cited non-scripture, non-AAS siglum (survey §1d), but Herder-copyrighted and never a vatican.va publication (survey §2) — out of reach for a vatican.va-sourced pipeline regardless of citation weight.
+- **Roman Catechism and Vatican Council I**: not found on vatican.va under any URL pattern tried (survey §2); Vatican I's absence specifically is not conclusively confirmed (no sitemap search attempted), just not surfaced.
+- **General audiences**: confirmed to exist (per-pontificate, per-year index pages, survey §2) but excluded on volume (thousands of individual talks across decades) and lower doctrinal-citation density relative to encyclicals and conciliar documents.
+
+## 2026-08-15 — Deep-link format amendment
+
+**What**: amends the 2026-08-14 example `/bible/john/3#16` to match the implementation, `/bible/{edition}/{book}/{chapter}#v{n}` (e.g. `/bible/cpdv.en/john/3#v16`).
+
+**Why**: the original example predates the edition-in-URL decision above — editions need addressing, so the path needs an edition segment regardless. And a bare `#16` fragment is ambiguous (does it name a verse, a footnote marker, some other numbered anchor on the page?) and collides with the browser's native "scroll to the element whose `id` is `16`" behavior if more than one such id exists on a page; `#v16` makes the fragment self-describing and collision-free.
+
+## 2026-08-15 — Icon library: Lucide
+
+**What**: `@lucide/svelte` (MIT), inline tree-shaken SVG, wrapped behind `$lib/components/Icon.svelte` so the choice is reversible in one file.
+
+**Why, over Font Awesome Free**: MIT license vs. Font Awesome Free's CC-BY-4.0, which requires attribution the site would have to surface somewhere for every icon used. Inline SVG (~1KB/icon, only the icons actually used ship) vs. a 100KB+ webfont bundle loaded whole regardless of how many glyphs are drawn from it. No runtime network fetch for either the font file or the SVGs — which the offline-first PWA commitment (2026-08-14 entry above) effectively requires anyway, so this wasn't really a close call once that commitment was made.
+
+## 2026-08-15 — Offline caching implementation
+
+**What**: builds the offline-first PWA committed to in the 2026-08-14 entry above: `site/src/service-worker.ts` (SvelteKit's `$service-worker` module, auto-registered in production builds), `static/manifest.webmanifest`, generated app icons (`static/icons/`), and a standalone `static/offline.html` fallback. See `site/README.md` "Offline / service worker" for how to test this locally.
+
+**Corrected figures** (the 2026-08-14 entry's "~10–15 MB" was a pre-corpus estimate): against the real corpus (Bible × 2 editions, CCC × 2, Compendium × 2, plus the 16 Vatican II documents now in the corpus — see "Vatican documents in scope" above), a full build emits **6,134 prerendered HTML pages totalling ~216 MB**, and bundles all corpus data into **one ~17.9 MB raw / ~4.7 MB gzipped JS chunk** (`_app/immutable/chunks/*.js` — see `src/lib/corpus.ts`'s `import.meta.glob({ eager: true })`). Estimate was low by roughly 4x uncompressed; close to right once gzipped, which is what actually crosses the wire on first visit.
+
+**The caching strategy cannot precache the prerendered set** (216 MB blows past Cache Storage quotas on constrained browsers — iOS Safari evicts under pressure starting around 1 GB) **and deliberately doesn't try to**: those pages exist for first paint, SEO, and no-JS readers, not for the offline path. Instead the service worker precaches two things and nothing else:
+
+- **Content tier** (`depositum-content` cache, unversioned, never swept on deploy — evicted only by explicit user action): today, the one big corpus JS chunk, classified out of the SvelteKit build's `build` list at install time by measured response size (>1 MB — the next-largest legitimate chunk observed was ~52 KB, three orders of magnitude smaller). This is the tier the "entire library on device" commitment is actually about, and it's written to survive routine app updates the way a downloaded book should.
+- **Shell tier** (`depositum-shell-{version}` cache, versioned off SvelteKit's build `version`, swept on every `activate`): the rest of the build's JS/CSS, `static/`'s assets (manifest, icons, `offline.html`, `robots.txt`), and — the one deliberate exception to "never cache a prerendered page" — the home page's HTML, used purely as an offline navigation's boot document. A navigation to a URL that was never fetched before, made while offline, is served this cached home page; the app's own client-side router then renders the actually-requested page from the content tier already in memory, with no further network request (this is the same recovery mechanism `adapter-static`'s own SPA `fallback` option relies on — this project doesn't use that option, see `vite.config.ts`'s `fallback: undefined` and its "strict prerendering" rationale — applied here by hand, for exactly one page).
+
+**The assumption this rests on, stated once and pointed at from the code** (`site/src/service-worker.ts`'s "CONTENT TIER POLICY" comment block is the single place this lives): all corpus data is currently inlined into client JS by `corpus.ts`'s eager glob, so the content/shell split can be done by chunk size alone. When corpus data moves to per-work `fetch()`-loaded JSON under a `/data/` prefix (flagged as planned in `corpus.ts`'s own docblock — deliberately not done in this change), the size-sniffing classifier stops working and needs to be replaced with an explicit `/data/manifest.json` listing of per-work files; nothing else in the service worker needs to change.
+
+**Update/activation policy**: no `skipWaiting()` — a reader mid-chapter shouldn't have assets swapped under an open tab; a new version takes over only once every tab on the old version has closed or navigated away (browser default), then claims clients on `activate`.
+
+**Sketched, not built**: a `message` handler in the service worker (`CACHE_CONTENT` / `CLEAR_CONTENT`) is the hook a future per-work "make this work available offline" control would call — real per-work sizes (~1.6–1.7 MB gzipped per complete Bible edition, well under 1 MB for CCC or Compendium) become meaningful once the `/data/` split above lands; today "cache a work" and "cache everything" are the same operation. No UI was built for this in this change.
+
+**Verified**: `npm run check` and `npm test` pass; a real-corpus build (`CORPUS_DIR=../corpus npm run build`) completes with zero prerender errors and emits `build/service-worker.js`; `npm run preview` serves `service-worker.js` (`text/javascript`), `manifest.webmanifest` (`application/manifest+json`), and `offline.html` correctly, and the home page links the manifest and carries both light/dark `theme-color` meta tags. **Not verified** (no browser available in this environment): actual install/activate lifecycle, actual runtime classification of the content chunk into the right cache, and actual offline navigation/hydration-recovery behavior — these need a real browser (see `site/README.md`'s testing section for how to check them).

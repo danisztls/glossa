@@ -1,0 +1,22 @@
+[
+  {
+    "id": "vatii.ot.en-sec21-missing-number",
+    "locator": { "section": 21 },
+    "field": "raw_text",
+    "from": "everywhere.</p> <p>But since it is necessary",
+    "to": "everywhere.</p> <p>21. But since it is necessary",
+    "reason": "The EN source drops the '21.' paragraph number entirely -- the paragraph is printed as ordinary unnumbered prose immediately following section 20's own text, with no digit at the start at all. Not a plausible single-digit-substitution typo (there is no digit to compare against), so the paragraph-number typo heuristic cannot reach it; the missing digit has to be restored in the raw HTML before parsing, or the section boundary between 20 and 21 is invisible to the parser and this paragraph's text silently merges into section 20.",
+    "evidence": "corpus/raw/vatican-docs/vatii__optatam-totius__en.html: '...prepared in spirit to preach the Gospel everywhere.</p> <p>But since it is necessary for the students to learn the art of exercising the apostolate not only theoretically but also practically...</p> <center> <b>VII. </b> <p><b>TRAINING TO BE ACHIEVED AFTER THE COURSE OF STUDIES </b></p> </center> <p>21. Since priestly training...'. Parallel PT edition (corpus/raw/vatican-docs/vatii__optatam-totius__pt.html) prints '21.' at the equivalent position with matching content: '21. É necessário que os alunos aprendam a arte de exercer o apostolado não só de maneira teórica, mas também prática...' -- a verbatim-matching translation, confirming the missing number and that this is a genuine section 21, not incidental unnumbered commentary.",
+    "added": "2026-08-15"
+  },
+  {
+    "id": "vatii.ot.en-sec22-mislabeled-21",
+    "locator": { "section": 22 },
+    "field": "raw_text",
+    "from": "<p>21. Since priestly training,",
+    "to": "<p>22. Since priestly training,",
+    "reason": "Having already dropped the true section 21's own number (see companion correction vatii.ot.en-sec21-missing-number), the source's own running count falls one behind and the NEXT paragraph -- which is actually section 22 -- is also printed as '21.' instead of '22.'. Both misprints trace to the same underlying transcription slip (a dropped digit propagating into the following number), not two independent defects.",
+    "evidence": "corpus/raw/vatican-docs/vatii__optatam-totius__en.html: '<center> <b>VII. </b> <p><b>TRAINING TO BE ACHIEVED AFTER THE COURSE OF STUDIES </b></p> </center> <p>21. Since priestly training, because of the circumstances particularly of contemporary society, must be pursued and perfected even after the completion of the course of studies in seminaries...pastoral institutes...'. Parallel PT edition (corpus/raw/vatican-docs/vatii__optatam-totius__pt.html) prints '22.' at the equivalent position, under the matching heading 'VII. FORMAÇÃO COMPLEMENTAR DEPOIS DOS ESTUDOS' / 'Institutos pastorais, assembleias e exercícios apropriados': '22. Devendo a formação sacerdotal ser continuada e completada, mesmo depois de terminado o curso do Seminário...Institutos pastorais...' -- a verbatim-matching translation, confirming this paragraph is section 22, and that the EN document does contain 22 sections like its PT sibling, not 21.",
+    "added": "2026-08-15"
+  }
+]

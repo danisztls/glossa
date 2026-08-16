@@ -56,6 +56,15 @@ Host the current texts (CCC, encyclicals — Church-owned material) verbatim wit
 - Architecture makes takedown a config change: corpus out of the public git repo (fetched at build, gitignored — the [encyclicals-press](https://github.com/mggarofalo/encyclicals-press) model), per-document provenance metadata (source URL, retrieval date, edition), per-work unpublish/degrade-to-link-out fallback.
 - Scraping: respect `Crawl-delay: 2` (≤0.5 req/s).
 
+## 6. Encyclicals and conciliar documents (2026-08-15)
+
+Checked the rendered copyright notice on four documents spanning the widest possible date range (`Rerum Novarum` 1891, `Familiaris Consortio` 1981, `Centesimus Annus` 1991, `Laudato Si'` 2015) — full methodology and table in `vatican-documents.md` §4. Two findings, stated plainly:
+
+- **vatican.va serves the identical, generic "Copyright © Dicastery for Communication" notice on the 1891 encyclical as on the 2015 one.** There is no age-based signal in the notice itself — the Holy See's legal position (Vatican Law CXXXII (2011) Art. 4 §3, treating any reformat as a new publication) does not carve out older texts, and vatican.va's uniform notice reflects that. **There is therefore no copyright reason to prefer older documents when prioritizing what to ingest** — the "maybe Leo XIII is safer than John Paul II" intuition doesn't hold up against the site's own posture. Prioritization stays citation-driven (see `vatican-documents.md` §1), not risk-driven.
+- **Vatican II documents carry no visible copyright notice at all** in the older frameset template they're served under. Per this document's own stated principle above, silence is not a license under Berne — treat Vatican II texts as carrying the same LEV/Dicastery claim as everything else, not as differently- or un-postured.
+
+This matches, rather than diverges from, the CCC's existing posture (§5 above), so no new decision is needed — the adopted stance covers this material as written. One nuance worth naming: `papalencyclicals.net`, the precedent this document already cites (§2) as an existing risk-managed pattern, resolves the older-document question by holding **explicit written LEV permission**, not by relying on a public-domain-by-age theory. This project's posture (host without prior permission, comply if asked) is a different, more exposed risk posture for the same material — a deliberate choice already made in §5, not a gap this section surfaces, but worth restating now that the material in question has grown to include a 19th-century encyclical.
+
 ## Open questions
 
 - St. Charles Borromeo's (scborromeo.org) permission basis for hosting the full CCC — unverified; they are the de-facto upstream for much of the ecosystem.

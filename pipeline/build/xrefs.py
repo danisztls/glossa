@@ -97,6 +97,9 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from versification import is_divergent_book, to_vulgate_candidates  # noqa: E402
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 INPUT_PATH = REPO_ROOT / "corpus/works/ccc.en/paragraphs.json"
 OUTPUT_PATH = REPO_ROOT / "corpus/xrefs/ccc-bible.json"
@@ -446,14 +449,28 @@ def _strip_cf(clause: str) -> tuple[str, bool]:
 
 
 def _parse_verse_list(s: str) -> tuple[list[int], int]:
-    """Parse a verse list starting at position 0 of ``s`` (no leading separator).
+    """Parse a verse list starting at position 0 of ``s`` (no leading separator,
+    but a leading space IS tolerated -- see below).
 
     Handles ranges ("12-13"), comma/dot-separated additional verses
     ("15, 33", "16.21"), and verse-subdivision letters ("3a" -> 3).
     Returns (sorted deduplicated verses, chars consumed).
+
+    FIX (ported back from the TypeScript port, `site/src/lib/refs.ts`'s
+    `parseVerseList`): the original version of this function required a
+    digit at position 0 and did not skip a leading space, so a citation with
+    a stray space after the chapter/verse separator ("Dt 28: 10",
+    "Ex 33: 12-17", "Mal 3: 19") was recorded as a whole-chapter reference
+    (``verses: []``) even though it names a specific verse. The TS port
+    found this by cross-checking its output against this file's on a
+    corpus-wide smoke check: the two parsers agreed on 98.4% of paragraphs,
+    and *every* disagreement traced to exactly this case, with the TS side
+    correct. Confirmed live in the real corpus: CCC 678's "Mal 3: 19" is
+    exactly this pattern, and it's also the Hebrew-versification Malachi
+    citation that motivated `versification.py`.
     """
     verses: list[int] = []
-    pos = 0
+    pos = len(s) - len(s.lstrip(" "))
     while True:
         m = _VERSE_RE.match(s[pos:])
         if not m:
@@ -656,12 +673,74 @@ def parse_citation(text: str) -> CitationResult:
 
 
 # --------------------------------------------------------------------------
+# Versification
+#
+# `corpus/xrefs/ccc-bible.json`'s address space is the site's canonical
+# Vulgate address space (`docs/corpus-schema.md`, `docs/link-surface.md`),
+# but `parse_citation` above just transcribes whatever chapter/verse the raw
+# CCC footnote prints -- and the CCC cites some passages in Hebrew/Masoretic
+# versification (see `versification.py`'s docblock: confirmed live for
+# Malachi and Joel, and every Psalms citation this file's own report used to
+# flag as an "implausible chapter" or that silently pointed at the wrong
+# psalm was actually Hebrew-numbered). Every parsed `Ref` is converted here,
+# after parsing and before the file is written, so nothing downstream (the
+# generated JSON itself, and any future consumer of it) ever has to know two
+# numbering conventions exist.
+# --------------------------------------------------------------------------
+
+
+def _map_ref_to_vulgate(ref: Ref) -> list[Ref]:
+    """Convert one parsed `Ref` (osis/chapter/verses as printed in the raw
+    citation, which may be Hebrew-numbered) into one or more Vulgate-numbered
+    `Ref`s. Returns a list, not a single `Ref`, because:
+
+      - A whole-chapter reference (``verses == []``) to a Hebrew chapter
+        that splits across two Vulgate chapters (Ps 116, Ps 147, Malachi 3)
+        has no single correct Vulgate chapter -- both halves are genuinely
+        what the citation means, so both are emitted as separate
+        whole-chapter refs. (`site/src/lib/refs.ts`'s `refHref` instead
+        picks one, because it has to resolve to a single URL; this file has
+        no such constraint, so it's more accurate here.)
+      - A verse range can straddle a split point (e.g. a hypothetical
+        Ps 147:10-13 crosses into two Vulgate chapters at verse 12) -- each
+        verse is mapped individually and grouped by its resulting Vulgate
+        chapter, so a straddling range becomes two `Ref`s instead of one
+        with an impossible verse list.
+
+    For a non-divergent book, or a divergent book's chapter/verse outside
+    its Hebrew numbering range (already-Vulgate input -- see
+    `versification.py`), this is the identity: `[ref]` unchanged.
+    """
+    if not is_divergent_book(ref.osis):
+        return [ref]
+
+    if not ref.verses:
+        return [
+            Ref(osis=ref.osis, chapter=c.chapter, verses=[], cf=ref.cf)
+            for c in to_vulgate_candidates(ref.osis, ref.chapter, None)
+        ]
+
+    by_chapter: dict[int, list[int]] = {}
+    for v in ref.verses:
+        candidate = to_vulgate_candidates(ref.osis, ref.chapter, v)[0]
+        by_chapter.setdefault(candidate.chapter, []).append(candidate.verse)
+
+    return [
+        Ref(osis=ref.osis, chapter=chapter, verses=sorted(set(vs)), cf=ref.cf)
+        for chapter, vs in by_chapter.items()
+    ]
+
+
+# --------------------------------------------------------------------------
 # Build
 # --------------------------------------------------------------------------
 
 
 def build(paragraphs: list[dict]) -> tuple[list[dict], list[CitationResult]]:
-    """Parse every paragraph's citations. Returns (xrefs, all citation results)."""
+    """Parse every paragraph's citations, convert Hebrew-numbered refs to
+    the canonical Vulgate address space (`_map_ref_to_vulgate`), and return
+    (xrefs, all citation results).
+    """
     xrefs: list[dict] = []
     all_results: list[CitationResult] = []
     for p in sorted(paragraphs, key=lambda p: p["n"]):
@@ -671,7 +750,8 @@ def build(paragraphs: list[dict]) -> tuple[list[dict], list[CitationResult]]:
         for citation in p.get("citations", []):
             r = parse_citation(citation["text"])
             all_results.append(r)
-            refs.extend(r.refs)
+            for ref in r.refs:
+                refs.extend(_map_ref_to_vulgate(ref))
         if refs:
             for ref in refs:
                 assert ref.osis in CANONICAL_73_SET, (
@@ -1004,6 +1084,81 @@ def test_deterministic_build(tmp_path=None) -> None:
     xrefs2, _ = build(paragraphs)
     assert xrefs1 == xrefs2
     assert [x["ccc"] for x in xrefs1] == [3, 5]  # ascending by ccc n
+
+
+def test_leading_space_after_separator_is_tolerated() -> None:
+    # Real sample citations, all previously mis-parsed as whole-chapter refs
+    # (`verses: []`) because `_parse_verse_list` required a digit at
+    # position 0. ccc678's "Mal 3: 19" is the citation that triggered this
+    # entire task (see xrefs.py's module docstring and versification.py).
+    for text, osis, chapter, verses in [
+        ("Dt 28: 10.", "deut", 28, [10]),
+        ("Ex 33: 12-17.", "exod", 33, [12, 13, 14, 15, 16, 17]),
+        ("Gen 21: 17.", "gen", 21, [17]),
+    ]:
+        r = parse_citation(text)
+        assert len(r.refs) == 1, (text, r.refs)
+        ref = r.refs[0]
+        assert (ref.osis, ref.chapter, ref.verses) == (osis, chapter, verses)
+
+
+def test_malachi_3_19_is_hebrew_versification_and_parses_a_verse() -> None:
+    r = parse_citation("Cf. Dan 7:10; Joel 3-4; Mal 3: 19; Mt 3:7-12.")
+    mal_refs = [ref for ref in r.refs if ref.osis == "mal"]
+    assert len(mal_refs) == 1, r.refs
+    # Parsing alone (before versification) still reports Hebrew numbering --
+    # the conversion happens in `build()`, not `parse_citation`.
+    assert (mal_refs[0].chapter, mal_refs[0].verses) == (3, [19])
+
+
+def test_build_converts_malachi_to_vulgate() -> None:
+    # ccc678's real citation: Hebrew "Mal 3: 19" must land in the output as
+    # Vulgate 4:1, since `corpus/xrefs/ccc-bible.json`'s address space is
+    # canonical Vulgate (docs/link-surface.md).
+    paragraphs = [{"n": 678, "citations": [{"marker": "581", "text": "Mal 3: 19."}]}]
+    xrefs, _ = build(paragraphs)
+    assert xrefs == [{"ccc": 678, "refs": [{"osis": "mal", "chapter": 4, "verses": [1]}]}]
+
+
+def test_build_converts_joel_to_vulgate() -> None:
+    # A real citation shape from the corpus: "Joel 3:1-5" (Hebrew) must land
+    # as Vulgate 2:28-32, not the literal (wrong, but real) Vulgate chapter
+    # 3 -- see versification.py's docblock for why this can't be a
+    # try-then-fallback.
+    paragraphs = [{"n": 1, "citations": [{"marker": "1", "text": "Cf. Joel 3:1-5."}]}]
+    xrefs, _ = build(paragraphs)
+    assert xrefs == [
+        {"ccc": 1, "refs": [{"osis": "joel", "chapter": 2, "verses": [28, 29, 30, 31, 32], "cf": True}]}
+    ]
+
+
+def test_build_converts_psalms_to_vulgate() -> None:
+    # ccc298's real citation: Hebrew "Ps 51:12" must land as Vulgate 50:12.
+    paragraphs = [{"n": 298, "citations": [{"marker": "1", "text": "Ps 51:12."}]}]
+    xrefs, _ = build(paragraphs)
+    assert xrefs == [{"ccc": 298, "refs": [{"osis": "ps", "chapter": 50, "verses": [12]}]}]
+
+
+def test_build_leaves_non_divergent_books_unconverted() -> None:
+    paragraphs = [{"n": 1, "citations": [{"marker": "1", "text": "Jn 3:16."}]}]
+    xrefs, _ = build(paragraphs)
+    assert xrefs == [{"ccc": 1, "refs": [{"osis": "john", "chapter": 3, "verses": [16]}]}]
+
+
+def test_build_expands_a_whole_chapter_split_psalm_into_both_halves() -> None:
+    # "Ps 116" (whole chapter, no verse) genuinely spans two Vulgate
+    # chapters -- both are emitted, unlike the single-URL TS `refHref`.
+    paragraphs = [{"n": 1, "citations": [{"marker": "1", "text": "Ps 116."}]}]
+    xrefs, _ = build(paragraphs)
+    assert xrefs == [
+        {
+            "ccc": 1,
+            "refs": [
+                {"osis": "ps", "chapter": 114, "verses": []},
+                {"osis": "ps", "chapter": 115, "verses": []},
+            ],
+        }
+    ]
 
 
 if __name__ == "__main__":

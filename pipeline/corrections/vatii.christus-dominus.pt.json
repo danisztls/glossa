@@ -1,0 +1,12 @@
+[
+  {
+    "id": "vatii.cd.pt-fn21-missing-boundary",
+    "locator": { "section": 35, "marker": "21" },
+    "field": "raw_text",
+    "from": "AAS 56 (1964) p. 570-571. 21 Cfr. Pio XII, Alocu&ccedil;&atilde;o, 8 dez. 1950: 1. c.</span></p>",
+    "to": "AAS 56 (1964) p. 570-571.</span></p><p align=\"left\"><span lang=\"pt\">21. Cfr. Pio XII, Alocu&ccedil;&atilde;o, 8 dez. 1950: 1. c.</span></p>",
+    "reason": "Footnote 20 and footnote 21 (Capítulo II's own restart-scoped numbering) are printed inside the SAME <p> block, with no closing/opening tag boundary between them and no period after '21' either ('...570-571. 21 Cfr. Pio XII...') -- the source simply never gives footnote 21 its own paragraph. The footnote-list parser (one entry per <p>, per module docstring) reads the whole block as footnote 20's own text and never recognizes '21' as a new entry's leading marker, silently merging Pius XII's citation into footnote 20 and leaving every inline reference to marker 21 unresolved. Restoring the missing <p> boundary (and the missing period, matching the '<N>. ' convention every other entry in the list uses) is the only way to recover footnote 21 without fabricating text -- the citation text itself ('Cfr. Pio XII, Alocução, 8 dez. 1950: 1. c.') is verbatim from the source, not invented.",
+    "evidence": "corpus/raw/vatican-docs/vatii__christus-dominus__pt.html: '...<p align=\"left\"><span lang=\"pt\">20. Cfr. Paulo VI, Alocução, 23 maio 1964: AAS 56 (1964) p. 570-571. 21 Cfr. Pio XII, Alocução, 8 dez. 1950: 1. c.</span></p><p align=\"left\"><b>Capítulo III</b></p>...' -- '21' sits mid-paragraph with no anchor, no period, and no tag boundary; the EN sibling prints the equivalent two notes as separate, cleanly numbered entries ('20. cf. Paul VI's allocution...' / '21. cf. Pius XII's allocution of Dec. 8, 1950, 1. c.'), confirming footnote 21 is a genuine, distinct entry the PT source merely fails to typeset as its own paragraph.",
+    "added": "2026-08-15"
+  }
+]

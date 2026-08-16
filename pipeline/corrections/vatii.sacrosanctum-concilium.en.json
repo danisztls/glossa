@@ -1,0 +1,12 @@
+[
+  {
+    "id": "vatii.sc.en-sec87-81typo",
+    "locator": { "section": 87 },
+    "field": "paragraph_number",
+    "from": "81",
+    "to": "87",
+    "reason": "Single-digit-substitution typo: the paragraph that should open section 87 is printed with the leading number '81.' instead of '87.' (same digit count, one digit wrong -- '8' matches, '1' should be '7'). Content and document position both confirm it is section 87, not a genuine repeat/back-reference to section 81: it directly follows the paragraph numbered '86.' and directly precedes the paragraph numbered '88.', and its content (instituting norms for reciting the divine office) is the expected continuation of section 86's own subject (priests reciting the hours) and sets up section 88's opening ('Because the purpose of the office...').",
+    "evidence": "corpus/raw/vatican-docs/vatii__sacrosanctum-concilium__en.html: '...</p> <p>86. Priests who are engaged in the sacred pastoral ministry...</p> <p>81. In order that the divine office may be better and more perfectly prayed in existing circumstances...has seen fit to decree as follows concerning the office of the Roman rite.</p> <p>88. Because the purpose of the office...'. Parallel PT edition (corpus/raw/vatican-docs/vatii__sacrosanctum-concilium__pt.html) prints '87.' at the equivalent position with matching content: '87. Para permitir nas circunstâncias actuais...uma melhor e mais perfeita recitação do Ofício divino...estabelecer o seguinte sobre o Ofício do rito romano.' -- a verbatim-matching translation, confirming both the section number and that no section is genuinely missing from the source.",
+    "added": "2026-08-15"
+  }
+]
