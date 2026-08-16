@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { page } from '$app/state';
 	import { getAdjacentChapterAcrossBooks, getCccCitationsForChapter } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
@@ -39,6 +40,47 @@
 
 	function headingBefore(verseN: number) {
 		return current?.chapter.headings?.find((h) => h.before_verse === verseN);
+	}
+
+	/**
+	 * The passage a citation pointed at, as `?v=1-7`.
+	 *
+	 * A reference like "Jn 1:1-7" names a span, not a point. Linking only to
+	 * `#v1` drops half of what it said: the reader lands correctly and then
+	 * has no idea whether the citation covered one verse or twenty. This
+	 * marks the whole span so the extent is visible on arrival.
+	 *
+	 * Read from the URL rather than passed as page data because it is a
+	 * property of how the reader GOT here, not of the chapter — the same
+	 * prerendered page serves every citation that points into it. Reading
+	 * `page.url` reactively also means following a second citation to the
+	 * same chapter re-marks the new span without a reload.
+	 *
+	 * Deliberately tolerant: a malformed, reversed, or out-of-range `v` marks
+	 * nothing rather than throwing or guessing. It is a display hint, and a
+	 * reader who hand-edits it should get the chapter, not an error page.
+	 *
+	 * BROWSER-ONLY, and SvelteKit is right to insist: reading `searchParams`
+	 * during prerendering throws, because one prerendered file has to serve
+	 * every query string that points at it. That is exactly the property
+	 * being relied on here — `/bible/john/1` is built once and the highlight
+	 * is applied on top of it per-visit — so the guard states the design
+	 * rather than working around a restriction. The chapter renders complete
+	 * without JavaScript; only the passage marking needs it.
+	 */
+	const citedRange = $derived.by(() => {
+		if (!browser) return undefined;
+		const raw = page.url.searchParams.get('v');
+		if (!raw) return undefined;
+		const m = /^(\d{1,3})-(\d{1,3})$/.exec(raw);
+		if (!m) return undefined;
+		const from = Number(m[1]);
+		const to = Number(m[2]);
+		return to > from ? { from, to } : undefined;
+	});
+
+	function isCited(verseN: number): boolean {
+		return citedRange !== undefined && verseN >= citedRange.from && verseN <= citedRange.to;
 	}
 
 	/**
@@ -131,7 +173,7 @@
 			{#if heading}
 				<h2 class="section-heading">{heading.text}</h2>
 			{/if}
-			<span id={`v${verse.n}`} class="verse">
+			<span id={`v${verse.n}`} class="verse" class:cited={isCited(verse.n)}>
 				<sup class="verse-num">{verse.n}</sup
 				>{#if i === 0 && !heading}{@const cap = splitDropCap(verse.text)}{#if cap.first}<span
 							class="drop-cap-letter">{cap.first}</span
@@ -231,6 +273,35 @@
 		color: var(--color-text-muted);
 		margin-right: 0.15em;
 		user-select: none;
+	}
+
+	/* The passage a citation pointed at (`?v=1-7`). A wash rather than a
+	   border or a block: the verses run together as continuous prose, so
+	   anything with edges would break the paragraph into boxes. `box-decoration-
+	   break` keeps the wash continuous when a verse wraps across lines, which
+	   is most of them.
+
+	   Colour-mixed from the accent rather than hard-coded so it follows all
+	   four themes; at 12% it stays under the text rather than fighting it. */
+	.verse.cited {
+		background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
+		border-radius: 0.15em;
+		padding-block: 0.05em;
+	}
+
+	.verse.cited .verse-num {
+		color: var(--color-accent);
+	}
+
+	/* The highlight is information, not decoration — but a reader who has
+	   asked for less motion has not asked for less information, so only the
+	   transition goes. */
+	@media (prefers-reduced-motion: no-preference) {
+		.verse {
+			transition: background-color 300ms ease;
+		}
 	}
 
 	/* Set as apparatus, not as reading text: sans-serif, small, muted, and

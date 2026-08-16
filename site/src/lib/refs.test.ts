@@ -608,6 +608,59 @@ describe('refHref', () => {
 		).toBe('/bible/john/3');
 	});
 
+	describe('multi-verse passages carry their extent', () => {
+		it('emits ?v=from-to alongside the anchor', () => {
+			// "Jn 1:1-7" — the reader should arrive knowing where the citation
+			// ends, not just where it starts.
+			expect(
+				refHref(
+					{ kind: 'scripture', osis: 'john', chapter: 1, verses: [1, 2, 3, 4, 5, 6, 7], raw: 'Jn 1:1-7' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
+			).toBe('/bible/john/1?v=1-7#v1');
+		});
+
+		it('adds nothing for a single-verse reference', () => {
+			// Already fully described by its anchor.
+			expect(
+				refHref({ kind: 'scripture', osis: 'john', chapter: 1, verses: [5], raw: 'Jn 1:5' }, { bibleWorkId: 'bible.cpdv.en' })
+			).toBe('/bible/john/1#v5');
+		});
+
+		it('spans an unsorted verse list by its min and max', () => {
+			// Verse arrays arrive from range expansion AND comma lists, so they
+			// are not guaranteed ordered.
+			expect(
+				refHref(
+					{ kind: 'scripture', osis: 'john', chapter: 1, verses: [7, 1, 4], raw: 'Jn 1:7,1,4' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
+			).toBe('/bible/john/1?v=1-7#v7');
+		});
+
+		it('clamps the extent to verses that exist in this edition', () => {
+			// Genesis 1 has 13 verses in the fixture; a citation running past the
+			// end must not claim to highlight to verse 99.
+			expect(
+				refHref(
+					{ kind: 'scripture', osis: 'gen', chapter: 1, verses: [11, 12, 13, 99], raw: 'Gen 1:11-99' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
+			).toBe('/bible/gen/1?v=11-13#v11');
+		});
+
+		it('omits the extent for divergent books, whose range ends may land in another chapter', () => {
+			// Psalms/Malachi/Joel convert verse by verse through the
+			// versification table; refparse.ts refuses to represent a range that
+			// crosses a split, and so does this.
+			const href = refHref(
+				{ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14, 15, 16], raw: 'Ps 22:14-16' },
+				{ bibleWorkId: 'bible.cpdv.en' }
+			);
+			expect(href).not.toContain('?v=');
+		});
+	});
+
 	it('returns undefined when no Bible edition is given', () => {
 		expect(refHref({ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' }, {})).toBeUndefined();
 	});

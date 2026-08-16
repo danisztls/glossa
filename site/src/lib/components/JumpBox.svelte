@@ -84,9 +84,18 @@
 			// destination names only the book and chapter — which edition renders
 			// there is the reader's standing preference, not this lookup's to
 			// decide.
+			// `refparse` has always understood "john 1:1-7"; the range end used
+			// to be parsed and then dropped here. It now rides along as `?v=`,
+			// the same shape citation links use (see `refHref`), so a typed
+			// range highlights the passage instead of just landing on its
+			// first verse.
 			const hash = ref.verse ? `#v${ref.verse}` : '';
+			const query =
+				ref.verse !== undefined && ref.verseEnd !== undefined && ref.verseEnd > ref.verse
+					? `?v=${ref.verse}-${ref.verseEnd}`
+					: '';
 			closeBox();
-			goto(`/bible/${resolved.book.osis}/${ref.chapter}${hash}`);
+			goto(`/bible/${resolved.book.osis}/${ref.chapter}${query}${hash}`);
 			return;
 		}
 

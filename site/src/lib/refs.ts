@@ -1272,9 +1272,65 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 	}
 
 	const anchor = anchorVerse !== undefined ? `#v${anchorVerse}` : '';
+
+	/**
+	 * A multi-verse reference carries its whole extent, not just its first
+	 * verse: `Jn 1:1-7` links to `?v=1-7#v1`, so the reader arrives knowing
+	 * where the cited passage ENDS as well as where it starts. Landing on
+	 * verse 1 of a long chapter with no indication that the citation runs
+	 * through verse 7 is the single most common thing a scripture link can
+	 * get wrong.
+	 *
+	 * The extent goes in the QUERY and the scroll target stays in the hash,
+	 * rather than inventing a `#v1-7` fragment. Prerendering runs with
+	 * `handleMissingId: 'fail'`, which is a genuinely useful check — it is
+	 * what caught the Luke 2:61 citation — and a range fragment would either
+	 * defeat it or require an element per range, of which there are
+	 * thousands. `#v1` remains a real id on a real element, so the check
+	 * keeps working and browsers still scroll natively with no JavaScript.
+	 *
+	 * Bounded by min/max rather than by `verses[0]`/`verses.at(-1)`: the
+	 * corpus's verse arrays come from range expansion and comma lists alike
+	 * ("Jn 1:1-7" and "Jn 1:7,1" both land here), so they are not guaranteed
+	 * sorted. Only emitted when the range spans more than one verse — a
+	 * single-verse citation is fully described by its anchor already.
+	 */
+	const extent =
+		anchorVerse !== undefined && seg.verses.length > 1 && !isDivergentBook(seg.osis)
+			? verseExtent(seg.verses, chapterN, seg.osis, exists)
+			: undefined;
+	const query = extent ? `?v=${extent.from}-${extent.to}` : '';
+
 	// Edition-free (docs/decisions.md #2, which the Bible now follows too).
 	// `ctx.bibleWorkId` is still required above: it decides whether the
 	// book/chapter/verse EXISTS for this reader, which is what stops a dead
 	// link — it just no longer appears in the URL.
-	return `/bible/${seg.osis}/${chapterN}${anchor}`;
+	return `/bible/${seg.osis}/${chapterN}${query}${anchor}`;
+}
+
+/**
+ * The `{from, to}` span of a verse list, clamped to verses that actually
+ * exist in the reader's edition.
+ *
+ * Clamping matters for the same reason the anchor is checked: 19 references
+ * in `xrefs/ccc-bible.json` name a verse past the end of its chapter (see
+ * the Bible chapter route for the measurement), and a highlight running to
+ * verse 61 of a 52-verse chapter would simply highlight to the end while
+ * claiming otherwise. Returns undefined when fewer than two of the verses
+ * survive, since a one-verse span adds nothing to the anchor.
+ *
+ * Divergent books (Psalms/Malachi/Joel) are excluded by the caller: their
+ * verse numbers are converted one at a time through the versification
+ * table, and a range's endpoints can land in different Vulgate chapters —
+ * `refparse.ts` already refuses to represent that case, and so does this.
+ */
+function verseExtent(
+	verses: number[],
+	chapterN: number,
+	osis: string,
+	exists: (osis: string, chapterN: number, verseN?: number) => boolean
+): { from: number; to: number } | undefined {
+	const present = verses.filter((v) => exists(osis, chapterN, v));
+	if (present.length < 2) return undefined;
+	return { from: Math.min(...present), to: Math.max(...present) };
 }
