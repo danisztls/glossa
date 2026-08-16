@@ -141,22 +141,23 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'colophon.whatThisIs': 'What this is',
 		'colophon.whatThisIsBody':
 			'Depositum is a reading site for the Scriptures, the Catechism, the Compendium, and the documents of the Magisterium, in English and Portuguese. It exists to be read, and nothing else is asked of you for reading it:',
-		'colophon.pointFree': 'Free, and always free.',
+		'colophon.pointFree': 'Free, and always free. No paywall, no subscription, nothing to buy.',
 		'colophon.pointNoAds': 'No advertising, and no sponsored placement of any kind.',
 		'colophon.pointNoAccounts': 'No accounts. Nothing to sign up for, nothing to log in to.',
-		'colophon.pointNoTracking': 'No analytics and no third-party scripts. Nothing here reports on your reading.',
+		'colophon.pointNoTracking':
+			'No analytics, no tracking scripts, no third-party code. The server that sends you these pages keeps ordinary request logs, as any web server does; nothing beyond that watches what you read.',
 		'colophon.pointOffline':
-			'Works offline once visited, so a poor connection is not a barrier to reading.',
+			'Built to keep working offline once you have visited it, so a poor connection need not be a barrier to reading.',
 		'colophon.textsTitle': 'The texts',
 		'colophon.textsBody':
-			'Every text is reproduced in full and unaltered from a named source, and every work carries its own edition, its source page, and the date it was retrieved. Scripture uses public-domain translations. The Catechism, the Compendium and the magisterial documents are reproduced from the Holy See\u2019s own published texts.',
+			'Every text comes from a named source, and every work records its edition, its source page and the date it was retrieved. Scripture uses public-domain translations; the Catechism, the Compendium and the magisterial documents come from the Holy See\u2019s own published texts. We reproduce them unaltered \u2014 and where our copy of a work has turned out incomplete, we withhold it and link to the source instead, rather than show you a text with gaps you cannot see.',
 		'colophon.countBible': 'Bible editions',
 		'colophon.countDocuments': 'magisterial documents',
 		'colophon.copyrightTitle': 'Copyright',
 		'colophon.copyrightBody1':
 			'The Catechism, the Compendium and the magisterial documents are the property of their rights holders \u2014 principally the Libreria Editrice Vaticana and the Dicastery for Communication. We reproduce them here without having asked permission first. We say so plainly rather than leave it to be discovered: this is a deliberate choice, not an oversight.',
 		'colophon.copyrightBody2':
-			'We make that choice because these texts are the Church\u2019s teaching, addressed to everyone, and because the concern rights holders have stated is the integrity of the text. So the text is never abridged, never paraphrased, never edited, and never placed beside advertising. Each work displays its rights holder\u2019s own copyright notice, in their wording, and links to the page it was taken from.',
+			'We make that choice because these texts are the Church\u2019s teaching, addressed to everyone, and because the concern rights holders have stated is the integrity of the text. So the text is never abridged, never paraphrased, never rewritten, and never placed beside advertising. We do repair plain defects in the published pages \u2014 a dropped word, a mangled citation, markup that swallowed a paragraph \u2014 always toward what the source itself prints, never toward what we might think it should say. We do not change its meaning, do not substitute our own wording, and do not annotate or editorialise. Every correction is recorded on its own, with the original, the replacement and the reason; nothing is ever changed silently. Each work displays its rights holder\u2019s own copyright notice, in their wording, and links to the page it was taken from.',
 		'colophon.copyrightBody3':
 			'If you hold rights in any text here and would rather it were not published, write to us and we will take it down promptly. No argument, and no need to involve anyone else first.',
 		'colophon.contactTitle': 'Contact',
@@ -279,23 +280,23 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'colophon.whatThisIs': 'O que \u00e9 isto',
 		'colophon.whatThisIsBody':
 			'O Depositum \u00e9 um site de leitura das Escrituras, do Catecismo, do Compêndio e dos documentos do Magist\u00e9rio, em portugu\u00eas e em ingl\u00eas. Existe para ser lido, e nada mais lhe \u00e9 pedido para o ler:',
-		'colophon.pointFree': 'Gratuito, e sempre gratuito.',
+		'colophon.pointFree': 'Gratuito, e sempre gratuito. Sem barreira de pagamento, sem subscri\u00e7\u00e3o, nada para comprar.',
 		'colophon.pointNoAds': 'Sem publicidade nem qualquer conte\u00fado patrocinado.',
 		'colophon.pointNoAccounts': 'Sem contas. Nada para registar, nada para iniciar sess\u00e3o.',
 		'colophon.pointNoTracking':
-			'Sem an\u00e1lises de tr\u00e1fego e sem scripts de terceiros. Nada aqui relata a sua leitura.',
+			'Sem an\u00e1lises de tr\u00e1fego, sem scripts de rastreio, sem c\u00f3digo de terceiros. O servidor que lhe envia estas p\u00e1ginas guarda registos de pedidos, como qualquer servidor web; nada al\u00e9m disso observa o que l\u00ea.',
 		'colophon.pointOffline':
-			'Funciona sem liga\u00e7\u00e3o depois da primeira visita, para que uma liga\u00e7\u00e3o fraca n\u00e3o impe\u00e7a a leitura.',
+			'Feito para continuar a funcionar sem liga\u00e7\u00e3o depois da primeira visita, para que uma liga\u00e7\u00e3o fraca n\u00e3o tenha de impedir a leitura.',
 		'colophon.textsTitle': 'Os textos',
 		'colophon.textsBody':
-			'Cada texto \u00e9 reproduzido na \u00edntegra e sem altera\u00e7\u00f5es a partir de uma fonte identificada, e cada obra indica a sua edi\u00e7\u00e3o, a p\u00e1gina de origem e a data em que foi obtida. As Escrituras usam tradu\u00e7\u00f5es de dom\u00ednio p\u00fablico. O Catecismo, o Compêndio e os documentos do Magist\u00e9rio s\u00e3o reproduzidos a partir dos textos publicados pela Santa S\u00e9.',
+			'Cada texto prov\u00e9m de uma fonte identificada, e cada obra indica a sua edi\u00e7\u00e3o, a p\u00e1gina de origem e a data em que foi obtida. As Escrituras usam tradu\u00e7\u00f5es de dom\u00ednio p\u00fablico; o Catecismo, o Compêndio e os documentos do Magist\u00e9rio prov\u00eam dos textos publicados pela Santa S\u00e9. Reproduzimo-los sem altera\u00e7\u00f5es \u2014 e quando a nossa c\u00f3pia de uma obra ficou incompleta, retiramo-la e ligamos \u00e0 fonte, em vez de lhe mostrar um texto com falhas que n\u00e3o consegue ver.',
 		'colophon.countBible': 'edi\u00e7\u00f5es b\u00edblicas',
 		'colophon.countDocuments': 'documentos do Magist\u00e9rio',
 		'colophon.copyrightTitle': 'Direitos de autor',
 		'colophon.copyrightBody1':
 			'O Catecismo, o Compêndio e os documentos do Magist\u00e9rio pertencem aos seus titulares de direitos \u2014 principalmente a Libreria Editrice Vaticana e o Dicast\u00e9rio para a Comunica\u00e7\u00e3o. Reproduzimo-los aqui sem ter pedido autoriza\u00e7\u00e3o pr\u00e9via. Dizemo-lo com clareza em vez de o deixar por descobrir: \u00e9 uma escolha deliberada, n\u00e3o um descuido.',
 		'colophon.copyrightBody2':
-			'Fazemos essa escolha porque estes textos s\u00e3o o ensino da Igreja, dirigido a todos, e porque a preocupa\u00e7\u00e3o manifestada pelos titulares de direitos \u00e9 a integridade do texto. Por isso o texto nunca \u00e9 abreviado, nunca parafraseado, nunca editado e nunca colocado junto a publicidade. Cada obra apresenta o aviso de direitos do seu titular, nas palavras dele, e liga \u00e0 p\u00e1gina de onde foi retirada.',
+			'Fazemos essa escolha porque estes textos s\u00e3o o ensino da Igreja, dirigido a todos, e porque a preocupa\u00e7\u00e3o manifestada pelos titulares de direitos \u00e9 a integridade do texto. Por isso o texto nunca \u00e9 abreviado, nunca parafraseado, nunca reescrito e nunca colocado junto a publicidade. Corrigimos defeitos evidentes das p\u00e1ginas publicadas \u2014 uma palavra em falta, uma refer\u00eancia truncada, marca\u00e7\u00e3o que engoliu um par\u00e1grafo \u2014 sempre no sentido do que a pr\u00f3pria fonte imprime, nunca no sentido do que julgamos que deveria dizer. N\u00e3o alteramos o seu significado, n\u00e3o substitu\u00edmos as suas palavras pelas nossas e n\u00e3o anotamos nem comentamos. Cada corre\u00e7\u00e3o \u00e9 registada em separado, com o original, a substitui\u00e7\u00e3o e o motivo; nada \u00e9 alterado em sil\u00eancio. Cada obra apresenta o aviso de direitos do seu titular, nas palavras dele, e liga \u00e0 p\u00e1gina de onde foi retirada.',
 		'colophon.copyrightBody3':
 			'Se detiver direitos sobre algum texto aqui presente e preferir que n\u00e3o seja publicado, escreva-nos e retiramo-lo prontamente. Sem discuss\u00e3o, e sem necessidade de envolver mais ningu\u00e9m.',
 		'colophon.contactTitle': 'Contacto',

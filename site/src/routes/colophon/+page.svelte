@@ -18,13 +18,27 @@
 	 * the copy, so the page cannot drift from what the site actually serves
 	 * the way a hand-typed number would.
 	 */
-	import { listDocuments, listWorks } from '$lib/corpus';
+	import { isUnpublished, listDocuments, listWorks } from '$lib/corpus';
 	import { CONTACT_EMAIL, REPOSITORY_URL } from '$lib/colophon';
 	import { t } from '$lib/i18n.svelte';
 
 	const works = listWorks();
-	const documentCount = listDocuments().length;
 	const bibleEditions = works.filter((w) => w.type === 'bible').length;
+
+	/**
+	 * Documents you can actually READ, which is not the same as documents the
+	 * corpus contains. A withheld work still has a manifest and still has a
+	 * page, so counting registry entries would quote a number this page cannot
+	 * back up — on the one page whose entire job is to be believable.
+	 *
+	 * Counted per slug, and a slug survives if ANY of its editions is
+	 * published: a document whose Portuguese text was withheld for a bad parse
+	 * is still readable in English, and saying otherwise would understate the
+	 * library as badly as the other error overstates it.
+	 */
+	const documentCount = listDocuments().filter((group) =>
+		Object.values(group.manifests).some((m) => m && !isUnpublished(m.id))
+	).length;
 </script>
 
 <svelte:head>
