@@ -13,7 +13,7 @@ _Depositum fidei_ — the deposit of faith.
 | `site/`     | The SvelteKit site (static adapter, offline-first PWA)                                 |
 | `docs/`     | Decision log, research, corpus schema                                                  |
 
-Start with `docs/decisions.md` for what this is and why, and `docs/corpus-schema.md` for the data contract between pipeline and site.
+Start with `docs/decisions.md` for what this is and why, and `docs/corpus-schema.md` for the data contract between pipeline and site. See `PLAN.md` for the current development plan — what's done, in flight, and next, and why.
 
 ## Content and copyright
 
