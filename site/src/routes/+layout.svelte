@@ -1,12 +1,7 @@
 <script lang="ts">
 	import '../app.css';
-	import { untrack } from 'svelte';
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
-	import { content } from '$lib/content.svelte';
-	import { getBook, workIdToEdition } from '$lib/corpus';
-	import { i18n } from '$lib/i18n.svelte';
 	import JumpBox from '$lib/components/JumpBox.svelte';
 	import LanguageMenu from '$lib/components/LanguageMenu.svelte';
 	import ThemeMenu from '$lib/components/ThemeMenu.svelte';
@@ -44,62 +39,6 @@
 		return page.url.pathname === href || page.url.pathname.startsWith(href + '/');
 	}
 
-	/**
-	 * Switching the interface language switches the text on screen.
-	 *
-	 * Everywhere else this is already true for free: `/ccc/1234` and
-	 * `/documents/{slug}` carry no edition in the URL, so they re-render from
-	 * the content store the moment `i18n.lang` changes (content.svelte.ts).
-	 * The Bible's reading route is the exception — `/bible/{edition}/…` names
-	 * its edition in the path and `+page.ts` reads it from `params` — so
-	 * without this the reader switched to Portuguese chrome and went on
-	 * reading English scripture, which is precisely the surprising state the
-	 * "content language follows UI language" decision exists to prevent.
-	 *
-	 * Only fires on an actual change, never on mount. That matters for
-	 * deep links: someone opening a shared `/bible/cpdv.en/…` URL under a
-	 * Portuguese interface asked for that edition by clicking that link, and
-	 * silently bouncing them to the Matos Soares text would break the link's
-	 * meaning. `lastLang` seeds from the language already in effect so the
-	 * first run is always a no-op.
-	 *
-	 * OSIS book codes are stable across editions (docs/corpus-schema.md), so
-	 * the same book/chapter address carries over verbatim; the chapter is
-	 * still verified to exist in the target edition rather than assumed —
-	 * both v1 editions are 73/73 complete, but `listEditions` is generic over
-	 * a corpus that need not stay that way. If it doesn't exist we stay put:
-	 * a reader losing their place is worse than a reader whose chrome and
-	 * text briefly disagree.
-	 */
-	let lastLang = i18n.lang;
-
-	$effect(() => {
-		const lang = i18n.lang;
-		if (lang === lastLang) return;
-		lastLang = lang;
-
-		// Read the route without subscribing to it — this effect is about
-		// language changes, not navigation.
-		untrack(() => {
-			const { edition, book, chapter } = page.params;
-			if (!edition || !book || !chapter) return;
-
-			const targetWorkId = content.workIdFor('bible');
-			if (!targetWorkId) return;
-
-			const targetEdition = workIdToEdition(targetWorkId);
-			if (targetEdition === edition) return;
-
-			const chapterN = Number(chapter);
-			const exists = getBook(targetWorkId, book)?.chapters.some((c) => c.n === chapterN);
-			if (!exists) return;
-
-			// `replaceState`: a language switch is a change of view, not a
-			// destination, so Back should return to wherever the reader came
-			// from rather than to the same chapter in the other language.
-			goto(`/bible/${targetEdition}/${book}/${chapterN}`, { replaceState: true });
-		});
-	});
 </script>
 
 <svelte:head>
@@ -155,6 +94,17 @@
 	<main>
 		{@render children()}
 	</main>
+
+	<!--
+		The colophon is deliberately in a footer rather than the navbar: it is
+		not a reading section and shouldn't compete with the four that are.
+		But it does have to be reachable from every page — docs/research/
+		copyright.md §5's posture rests on the position being stated openly,
+		and a page nobody can find states it to nobody.
+	-->
+	<footer class="site-footer">
+		<a href="/colophon">{t('colophon.title')}</a>
+	</footer>
 </div>
 
 <style>
@@ -285,5 +235,22 @@
 	main {
 		flex: 1;
 		padding-block: 2rem 4rem;
+	}
+
+	.site-footer {
+		border-top: 1px solid var(--color-border);
+		padding: 1.25rem;
+		text-align: center;
+		font-size: 0.8rem;
+	}
+
+	.site-footer a {
+		color: var(--color-text-muted);
+		text-decoration: none;
+	}
+
+	.site-footer a:hover {
+		color: var(--color-text);
+		text-decoration: underline;
 	}
 </style>
