@@ -131,6 +131,7 @@ import {
 	cccAbbreviations,
 	cccBibleXrefsByCcc,
 	cccChunkLocation,
+	cccChunkStartFor,
 	cccParagraphNumbers,
 	cccStructures,
 	compendiumQuestionsLocation,
@@ -538,6 +539,67 @@ export function flattenCccStructure(lang: string): { node: CccNode; depth: numbe
 	return flattenTree(getCccStructure(lang));
 }
 
+/**
+ * The kinds that count as a "chapter" for whole-chapter reading, innermost
+ * first.
+ *
+ * `chapter` is the unit a reader means by the word, and the CCC's own
+ * structure uses it consistently — but not universally: the Prologue holds
+ * paragraphs 1-25 directly under itself with no chapter beneath, so it has
+ * to be its own unit. `section` and `part` are the fallbacks for any node
+ * arrangement neither covers (none exists in today's corpus; they are here
+ * so a structure change upstream degrades to a larger reading unit rather
+ * than to no link at all).
+ *
+ * Deliberately NOT including `article`: articles nest INSIDE chapters, so
+ * ranking them innermost would make "read the full chapter" silently mean
+ * "read this article" for the ~67 paragraphs that live under one.
+ */
+const CCC_CHAPTER_KINDS: CccNode['kind'][] = ['chapter', 'prologue', 'section', 'part'];
+
+/** True when a node can serve as a whole-chapter reading unit: a chapter-ish
+ *  kind AND a fully-numbered range to actually read (the corpus permits null
+ *  bounds, meaning "unaddressable" — docs/corpus-schema.md). */
+function isCccChapterNode(node: CccNode): boolean {
+	return (
+		CCC_CHAPTER_KINDS.includes(node.kind) &&
+		Number.isFinite(node.paragraphs[0]) &&
+		Number.isFinite(node.paragraphs[1])
+	);
+}
+
+/**
+ * The chapter-sized node containing paragraph `n`, or undefined if none
+ * does. Walks the breadcrumb from the inside out and takes the first
+ * qualifying ancestor, so a paragraph inside an article inside a chapter
+ * resolves to the chapter.
+ */
+export function getCccChapterFor(lang: string, n: number): CccNode | undefined {
+	const trail = getCccBreadcrumb(lang, n);
+	for (let i = trail.length - 1; i >= 0; i--) {
+		if (isCccChapterNode(trail[i])) return trail[i];
+	}
+	return undefined;
+}
+
+/**
+ * Every chapter-sized node in a language's structure — the entry list for
+ * prerendering `/ccc/chapter/[n]`, which is addressed by a chapter's FIRST
+ * paragraph number.
+ *
+ * That address is chosen over a slug or an index because it is the only
+ * identifier the corpus already guarantees: chapter titles differ by
+ * language and change with the case-normalization pass, and an ordinal
+ * position shifts if the structure is ever re-parsed, but "the chapter
+ * starting at paragraph 27" names the same text in every edition and needs
+ * nothing stored to resolve.
+ */
+export function listCccChapters(lang: string): CccNode[] {
+	return flattenCccStructure(lang)
+		.map(({ node }) => node)
+		.filter(isCccChapterNode);
+}
+
 // --- Catechism: content tier (async, read/fetched, memoized, chunked) -----
 
 async function fetchCccChunk(lang: string, n: number): Promise<CccParagraph[]> {
@@ -557,6 +619,45 @@ export async function getCccParagraphAsync(
 	if (!cccParagraphExists(lang, n)) return undefined;
 	const chunk = await fetchCccChunk(lang, n);
 	return chunk.find((p) => p.n === n);
+}
+
+/**
+ * Every paragraph from `from` to `to` inclusive — the whole-chapter reading
+ * view (`/ccc/chapter/[n]`).
+ *
+ * Fetches one chunk per 100-paragraph span the range touches, not one per
+ * paragraph: the CCC's largest chapter is ~90 paragraphs, so this is
+ * typically one or two reads regardless of range size, and each is the same
+ * immutable, already-cacheable file the single-paragraph route pulls. That's
+ * the "COARSE FETCH, NARROW RETURN" rule this module's docblock states,
+ * applied in the direction it was designed for — a reader who opens a
+ * chapter after reading one of its paragraphs usually needs no new request
+ * at all.
+ *
+ * Chunk boundaries do not align with chapter boundaries (chunks are a fixed
+ * arithmetic partition of the paragraph space, chapters are editorial), so
+ * the fetched chunks are filtered down to the requested range afterwards and
+ * re-sorted — a chapter spanning a boundary otherwise arrives in chunk
+ * order, which is only coincidentally paragraph order.
+ */
+export async function getCccParagraphRangeAsync(
+	lang: string,
+	from: number,
+	to: number
+): Promise<CccParagraph[]> {
+	if (!Number.isFinite(from) || !Number.isFinite(to) || to < from) return [];
+
+	// Step by chunk rather than by paragraph, then dedupe: `cccChunkStartFor`
+	// is a pure function of `n`, so the set of distinct chunk starts is all
+	// that decides how many reads happen.
+	const starts = new Set<number>();
+	for (let n = from; n <= to; n++) starts.add(cccChunkStartFor(n));
+
+	const chunks = await Promise.all([...starts].map((start) => fetchCccChunk(lang, start)));
+	return chunks
+		.flat()
+		.filter((p) => p.n >= from && p.n <= to)
+		.sort((a, b) => a.n - b.n);
 }
 
 // --- Compendium: index-backed (structure, sync) ----------------------------

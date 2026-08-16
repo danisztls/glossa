@@ -3,6 +3,7 @@ import {
 	cccLangs,
 	getAdjacentCccParagraphNumber,
 	getCccBreadcrumb,
+	getCccChapterFor,
 	getCccParagraphAsync,
 	getWork
 } from '$lib/corpus';
@@ -28,6 +29,15 @@ export interface CccLangData {
 	breadcrumb: CccNode[];
 	prev: { n: number } | undefined;
 	next: { n: number } | undefined;
+	/**
+	 * The chapter this paragraph sits in, for the "read the full chapter"
+	 * link. Carries only what the link needs — its start paragraph (the
+	 * `/ccc/chapter/[n]` address) and its title/range for the label — never
+	 * the chapter's text, which would multiply this page's payload by ~90x
+	 * to render one link (corpus.ts's "COARSE FETCH, NARROW RETURN").
+	 * Undefined for a paragraph no chapter-sized node contains.
+	 */
+	chapter: { start: number; end: number; node: CccNode } | undefined;
 }
 
 export const load: PageLoad = async ({ params }) => {
@@ -47,12 +57,20 @@ export const load: PageLoad = async ({ params }) => {
 		if (!paragraph) continue;
 		const prevN = getAdjacentCccParagraphNumber(lang, n, 'prev');
 		const nextN = getAdjacentCccParagraphNumber(lang, n, 'next');
+		const chapterNode = getCccChapterFor(lang, n);
 		byLang[lang] = {
 			paragraph,
 			work,
 			breadcrumb: getCccBreadcrumb(lang, n),
 			prev: prevN !== undefined ? { n: prevN } : undefined,
-			next: nextN !== undefined ? { n: nextN } : undefined
+			next: nextN !== undefined ? { n: nextN } : undefined,
+			chapter: chapterNode
+				? {
+						start: chapterNode.paragraphs[0] as number,
+						end: chapterNode.paragraphs[1] as number,
+						node: chapterNode
+					}
+				: undefined
 		};
 	}
 

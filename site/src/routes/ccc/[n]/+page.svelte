@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { cccParagraphExists } from '$lib/corpus';
-	import { copyrightLabel } from '$lib/copyright';
+	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
 	import { displayTitle } from '$lib/titles';
@@ -66,7 +66,7 @@
 			CCC {data.n}
 		</h1>
 
-		<p class="copyright-notice">{copyrightLabel(current.work)}</p>
+		<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 
 		<div class="reading-text ccc-body" lang={current.work.language}>
 			<CccParagraphText paragraph={current.paragraph} {lang} />
@@ -83,6 +83,27 @@
 						<span class="related-unresolved" title="Not in this fixture">¶{n}</span>
 					{/if}
 				{/each}
+			</p>
+		{/if}
+
+		{#if current.chapter}
+			{@const dt = displayTitle(current.chapter.node, lang)}
+			<!--
+				Reading a single paragraph is the citation case; this is the
+				escape hatch to the reading case. The hash carries this
+				paragraph's own number so the reader lands on the text they
+				were already looking at rather than at the chapter's top,
+				having lost their place as the price of getting context.
+			-->
+			<p class="read-chapter">
+				<a href={`/ccc/chapter/${current.chapter.start}#p${data.n}`}>
+					{t('ccc.readFullChapter')}
+					<span class="chapter-name">
+						{#if dt.ordinal}{dt.ordinal}{/if}
+						{dt.title}
+					</span>
+					<span class="chapter-range">¶{current.chapter.start}–{current.chapter.end}</span>
+				</a>
 			</p>
 		{/if}
 
@@ -159,6 +180,34 @@
 	.related-unresolved {
 		text-decoration: underline dotted;
 		text-decoration-color: var(--color-border);
+	}
+
+	.read-chapter {
+		margin: 2rem 0 0;
+		padding: 0.85rem 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.4rem;
+		background: var(--color-bg-elevated);
+	}
+
+	.read-chapter a {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.5rem;
+		text-decoration: none;
+	}
+
+	.read-chapter .chapter-name {
+		font-family: var(--font-serif);
+		color: var(--color-text);
+	}
+
+	.read-chapter .chapter-range {
+		margin-inline-start: auto;
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
 	}
 
 	.paragraph-nav {
