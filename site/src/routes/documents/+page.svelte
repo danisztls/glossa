@@ -16,6 +16,7 @@
 	import { isUnpublished, listDocuments } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
 	import { documentKindLabel } from '$lib/document-labels';
+	import { formatPromulgated } from '$lib/dates';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentManifest } from '$lib/types';
 
@@ -62,7 +63,9 @@
 		}
 		const out: PontiffGroup[] = [...byPontiff.entries()].map(([pontiff, groupRows]) => ({
 			pontiff,
-			rows: [...groupRows].sort((a, b) => b.manifest.promulgated.localeCompare(a.manifest.promulgated))
+			rows: [...groupRows].sort((a, b) =>
+				b.manifest.promulgated.localeCompare(a.manifest.promulgated)
+			)
 		}));
 		// Groups ranked by their most recent document. Because each group's rows
 		// are already newest-first, that document is `rows[0]` -- the same index
@@ -74,12 +77,6 @@
 		);
 		return out;
 	});
-
-	function formatDate(iso: string, lang: string): string {
-		const d = new Date(iso);
-		if (Number.isNaN(d.getTime())) return iso;
-		return new Intl.DateTimeFormat(lang.startsWith('pt') ? 'pt-PT' : 'en-US', { dateStyle: 'long' }).format(d);
-	}
 </script>
 
 <svelte:head>
@@ -139,7 +136,7 @@
 						-->
 						<p class="doc-meta">
 							<time datetime={row.manifest.promulgated}>
-								{formatDate(row.manifest.promulgated, row.manifest.language)}
+								{formatPromulgated(row.manifest.promulgated, row.manifest.language)}
 							</time>
 						</p>
 						{#if row.manifest.description}
