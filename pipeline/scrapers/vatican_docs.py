@@ -197,18 +197,28 @@ MAX_ATTEMPTS = 3  # survey measured ~1-in-6-to-8 transient failures, no 403s/CAP
 RETRY_BACKOFF = [3.0, 8.0]  # seconds, between attempts 1->2 and 2->3
 
 # See "NOTE ON THE TWO ROOTS" in the module docstring for why these differ.
-DATA_ROOT = Path("/home/dani/Dev/me/scriptura")  # gitignored output; shared, never worktree-local
-SOURCE_ROOT = Path(__file__).resolve().parents[2]  # tracked source; follows this file's checkout
+DATA_ROOT = Path(
+    "/home/dani/Dev/me/scriptura"
+)  # gitignored output; shared, never worktree-local
+SOURCE_ROOT = (
+    Path(__file__).resolve().parents[2]
+)  # tracked source; follows this file's checkout
 RAW_ROOT = DATA_ROOT / "corpus" / "raw" / "vatican-docs"
 WORKS_ROOT = DATA_ROOT / "corpus" / "works"
 CORRECTIONS_DIR = SOURCE_ROOT / "pipeline" / "corrections"
-CRAWL_LOCK_PATH = RAW_ROOT / ".crawl.lock"  # see acquire_crawl_lock/touch_crawl_lock below
+CRAWL_LOCK_PATH = (
+    RAW_ROOT / ".crawl.lock"
+)  # see acquire_crawl_lock/touch_crawl_lock below
 PROGRESS_PATH = RAW_ROOT / "_progress.json"
 
 MARK_OPEN, MARK_CLOSE = "⟦", "⟧"
 
-VATII_INDEX_URL = "https://www.vatican.va/archive/hist_councils/ii_vatican_council/index.htm"
-VATII_DOC_BASE = "https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/"
+VATII_INDEX_URL = (
+    "https://www.vatican.va/archive/hist_councils/ii_vatican_council/index.htm"
+)
+VATII_DOC_BASE = (
+    "https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/"
+)
 
 COPYRIGHT_HOLDER = "Libreria Editrice Vaticana / Dicastery for Communication"
 
@@ -484,11 +494,17 @@ def mark_footnotes(inner_html: str, template: str) -> str:
             # build_footnote_table_anchor's docstring for the full case.
             # code (m.group(1)) is the fallback only.
             inner_visible = strip_tags(m.group(2)).strip().strip("[]")
-            marker = inner_visible if inner_visible.isdigit() else (m.group(3) or m.group(4) or m.group(1))
+            marker = (
+                inner_visible
+                if inner_visible.isdigit()
+                else (m.group(3) or m.group(4) or m.group(1))
+            )
             return f"{MARK_OPEN}{marker}{MARK_CLOSE}"
 
         return _FTNREF_RE.sub(sub_ftnref, inner_html)
-    return _PAREN_MARKER_RE.sub(lambda m: f"{MARK_OPEN}{m.group(1)}{MARK_CLOSE}", inner_html)
+    return _PAREN_MARKER_RE.sub(
+        lambda m: f"{MARK_OPEN}{m.group(1)}{MARK_CLOSE}", inner_html
+    )
 
 
 # --------------------------------------------------------------------------
@@ -511,7 +527,8 @@ _FN_HEADING_RE = re.compile(
 # bibliographic year citations ("A.A.S. 54 (1962)") get swallowed as
 # ordinary body prose attached to the final numbered section.
 _FN_DEF_ANCHOR_RE = re.compile(
-    r'name=["\']?(?:_ftn(?!ref)[0-9A-Za-z]+|\$[0-9A-Za-z]+|%24[0-9A-Za-z]+)', re.IGNORECASE
+    r'name=["\']?(?:_ftn(?!ref)[0-9A-Za-z]+|\$[0-9A-Za-z]+|%24[0-9A-Za-z]+)',
+    re.IGNORECASE,
 )
 # (?!ref) matters: name="_ftnrefN" is the INLINE reference anchor, not a
 # footnote *definition* -- without excluding it, a widened alphanumeric
@@ -540,7 +557,9 @@ def find_footnote_region_start(html: str) -> tuple[int | None, str]:
         # with "<a" and the anchor-table builder's own tag-anchored regex
         # can't match it).
         tag_start = html.rfind("<a", max(0, m.start() - 200), m.start())
-        candidates.append((tag_start if tag_start != -1 else m.start(), "definition anchor"))
+        candidates.append(
+            (tag_start if tag_start != -1 else m.start(), "definition anchor")
+        )
     hrs = list(_HR_RE.finditer(html))
     if hrs:
         candidates.append((hrs[-1].start(), "last <hr>"))
@@ -586,14 +605,14 @@ def parse_footnote_entry(raw_inner_html: str) -> tuple[str | None, str]:
         code = m.group("ftn") or m.group("dollar") or m.group("pct")
         visible = strip_tags(m.group("inner")).strip().strip("[]")
         marker = visible if visible.isdigit() else code
-        return marker, strip_tags(raw_inner_html[m.end():]).strip()
+        return marker, strip_tags(raw_inner_html[m.end() :]).strip()
     stripped = strip_tags(raw_inner_html)
     m = _FN_PAREN_RE.match(stripped)
     if m:
-        return m.group(1), stripped[m.end():].strip()
+        return m.group(1), stripped[m.end() :].strip()
     m = _FN_BARE_RE.match(stripped)
     if m:
-        return m.group(1), stripped[m.end():].strip()
+        return m.group(1), stripped[m.end() :].strip()
     return None, stripped.strip()
 
 
@@ -696,18 +715,32 @@ def build_footnote_table_anchor(region_html: str) -> dict[str, str]:
             # flat dict by a later, wrong entry sharing that recycled
             # code -- corrupting even the early, correctly-keyed entries,
             # not just the late ones.
-            echo_m = re.match(r"^\s*(?:\((\d+)\)|\[(\d+)\]|(?:</?[a-z][^>]*>)*\s*(\d{1,4})\s*(?:</[a-z][^>]*>)?\s*\.)", chunk, re.IGNORECASE)
-            marker = (echo_m.group(1) or echo_m.group(2) or echo_m.group(3)) if echo_m else code
+            echo_m = re.match(
+                r"^\s*(?:\((\d+)\)|\[(\d+)\]|(?:</?[a-z][^>]*>)*\s*(\d{1,4})\s*(?:</[a-z][^>]*>)?\s*\.)",
+                chunk,
+                re.IGNORECASE,
+            )
+            marker = (
+                (echo_m.group(1) or echo_m.group(2) or echo_m.group(3))
+                if echo_m
+                else code
+            )
         chunk = re.sub(
             rf"^\s*(?:\({re.escape(marker)}\)|\[{re.escape(marker)}\]|(?:</?[a-z][^>]*>)*\s*{re.escape(marker)}\s*(?:</[a-z][^>]*>)?\s*\.)?\s*",
-            "", chunk, flags=re.IGNORECASE,
+            "",
+            chunk,
+            flags=re.IGNORECASE,
         )
         table[marker] = strip_tags(chunk).strip()
     return table
 
 
-_FN_CHAPTER_NUM_ALT = r"([IVXLCDM]+|\d{1,2}|ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)"
-_FN_CHAPTER_HEADING_RE = re.compile(rf"^(?:CHAPTER|CAPITULO)\s+{_FN_CHAPTER_NUM_ALT}\b", re.IGNORECASE)
+_FN_CHAPTER_NUM_ALT = (
+    r"([IVXLCDM]+|\d{1,2}|ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)"
+)
+_FN_CHAPTER_HEADING_RE = re.compile(
+    rf"^(?:CHAPTER|CAPITULO)\s+{_FN_CHAPTER_NUM_ALT}\b", re.IGNORECASE
+)
 
 
 def match_footnote_chapter_heading(text: str) -> int | None:
@@ -848,7 +881,9 @@ class Node:
         self.children: list[Node] = []
         self.own: set[int] = set()
         self.span: tuple[int | None, int | None] = (None, None)
-        self.has_unnumbered = False  # e.g. LG's APPENDIX -- structure present, no addressable span
+        self.has_unnumbered = (
+            False  # e.g. LG's APPENDIX -- structure present, no addressable span
+        )
 
     def compute_span(self) -> tuple[int | None, int | None]:
         lo, hi = (min(self.own), max(self.own)) if self.own else (None, None)
@@ -900,7 +935,9 @@ class Section:
     blocks: list[BlockOut] = field(default_factory=list)
     text: str = ""
     citations: list[dict] = field(default_factory=list)
-    chapter: int | None = None  # the structure-tree chapter this section sits under, if any --
+    chapter: int | None = (
+        None  # the structure-tree chapter this section sits under, if any --
+    )
     # used both for LG's star series (originally the only consumer, hence the
     # field's old name "star_chapter") and, generalized here, for ANY
     # document whose primary numeric footnote series restarts per chapter
@@ -926,7 +963,9 @@ class Section:
             if tok.endswith("*") and self.chapter is not None:
                 text = star_table.get((self.chapter, tok[:-1]))
                 if text is None:
-                    anomalies.append(f"section {self.n}: star marker {tok} has no supplementary note")
+                    anomalies.append(
+                        f"section {self.n}: star marker {tok} has no supplementary note"
+                    )
                 citations.append({"marker": tok, "text": text or ""})
                 continue
             # Chapter-scoped lookup first, keyed on THIS section's own
@@ -1029,7 +1068,9 @@ class ScrapeState:
         if self.stack:
             self.stack[-1].own.add(n)
         else:
-            self.orphan_content.append(f"section {n} started with no open structure node")
+            self.orphan_content.append(
+                f"section {n} started with no open structure node"
+            )
 
     def add_continuation(self, kind: str, text: str) -> None:
         sec = self.open_section
@@ -1044,7 +1085,10 @@ class ScrapeState:
         if self.open_section is None:
             return
         self.open_section.resolve(
-            self.current_footnote_table, self.current_chapter_footnote_table, self.current_star_table, self.anomalies
+            self.current_footnote_table,
+            self.current_chapter_footnote_table,
+            self.current_star_table,
+            self.anomalies,
         )
         self.sections[self.open_section.n] = self.open_section
         self.open_section = None
@@ -1082,7 +1126,7 @@ def mark_and_split(raw: str, marker_template: str) -> tuple[str, str]:
     text = strip_tags(marked)
     m = re.match(r"^(\d{1,4})\s*\.\s*", text)
     if m:
-        return text, text[m.end():]
+        return text, text[m.end() :]
     return text, text
 
 
@@ -1122,12 +1166,37 @@ def _gap_block(gap_html: str, marker_template: str) -> Block | None:
 # EN / PT structure labels
 # --------------------------------------------------------------------------
 
-_EN_WORD_NUM = {"ONE": 1, "TWO": 2, "THREE": 3, "FOUR": 4, "FIVE": 5, "SIX": 6, "SEVEN": 7, "EIGHT": 8, "NINE": 9, "TEN": 10}
+_EN_WORD_NUM = {
+    "ONE": 1,
+    "TWO": 2,
+    "THREE": 3,
+    "FOUR": 4,
+    "FIVE": 5,
+    "SIX": 6,
+    "SEVEN": 7,
+    "EIGHT": 8,
+    "NINE": 9,
+    "TEN": 10,
+}
 
 _EN_LABELS = [
-    ("part", re.compile(r"^PART\s+([IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE)\b", re.IGNORECASE)),
-    ("section", re.compile(r"^SECTION\s+([IVXLCDM]+|\d+|ONE|TWO|THREE|FOUR|FIVE)\b", re.IGNORECASE)),
-    ("chapter", re.compile(r"^CHAPTER\s+([IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)\b", re.IGNORECASE)),
+    (
+        "part",
+        re.compile(r"^PART\s+([IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE)\b", re.IGNORECASE),
+    ),
+    (
+        "section",
+        re.compile(
+            r"^SECTION\s+([IVXLCDM]+|\d+|ONE|TWO|THREE|FOUR|FIVE)\b", re.IGNORECASE
+        ),
+    ),
+    (
+        "chapter",
+        re.compile(
+            r"^CHAPTER\s+([IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)\b",
+            re.IGNORECASE,
+        ),
+    ),
     ("article", re.compile(r"^ARTICLE\s+([IVXLCDM]+|\d+)\b", re.IGNORECASE)),
 ]
 
@@ -1167,6 +1236,104 @@ def match_label_pt(text: str) -> tuple[str, int | None] | None:
 
 
 MATCH_LABEL = {"en": match_label_en, "pt": match_label_pt}
+
+
+def _norm_heading(text: str) -> str:
+    """Whitespace/case-normalized heading text, for comparing a table-of-
+    contents entry against the body heading it duplicates."""
+    return re.sub(r"\s+", " ", text).strip().casefold()
+
+
+def drop_table_of_contents(blocks: list[Block], match_label) -> list[str]:
+    """Remove the page's own table of contents from the block stream, in
+    place, and return the texts dropped (for the run summary -- this is
+    never silent).
+
+    THE DEFECT THIS FIXES, observed on `encyclical.magnifica-humanitas`
+    (both languages): the modern vatican.va shell prints a linked table of
+    contents ahead of the body, and every one of its entries is a fully-bold
+    <p> block -- indistinguishable, to `is_full_bold`, from the real heading
+    it points at. The walker therefore pushed each TOC entry as a structure
+    node, and because a heading stays open until the next one pops it, the
+    LAST TOC entry was still open when the body's first numbered section
+    arrived. Result: five phantom top-level nodes with null ranges, plus a
+    sixth phantom "CHAPTER FIVE" that swallowed the document's real
+    Introduction (sections 1-16) as its children. The body's own chapters
+    parsed correctly; only the front of the tree was wrong, which is exactly
+    the kind of defect that looks plausible until someone reads it.
+
+    `compendium.py` has the same problem and solves it by walking only
+    between two known anchors. That works for one hand-inspected page; this
+    scraper runs across ~450 documents in several templates, so the rule
+    here is structural instead of positional:
+
+        A heading that appears BEFORE the body's first numbered section is a
+        table-of-contents entry if a LATER heading duplicates it.
+
+    "Duplicates" is deliberately two-pronged, because a TOC entry is rarely
+    character-identical to its target. Where a heading carries a real label
+    (`CHAPTER ONE`), the label and its number are the identity, and the TOC's
+    trailing subtitle text ("CHAPTER ONE A DYNAMIC APPROACH FAITHFUL TO THE
+    GOSPEL" against the body's bare "CHAPTER ONE") is ignored. Where it does
+    not (`INTRODUCTION`, `CONCLUSION`), the body heading must be a
+    whole-word prefix of the TOC entry -- the TOC lists a section's
+    sub-headings after its title, so the TOC text is the longer of the two.
+
+    TWO GUARDS AGAINST EATING REAL STRUCTURE, since dropping a legitimate
+    heading would be a worse defect than the one being fixed:
+
+      - Only pre-body headings are ever candidates. A document's real
+        INTRODUCTION also sits before section 1, and survives precisely
+        because nothing later duplicates it.
+      - At least TWO duplicates are required before anything is dropped. One
+        repeated heading is a coincidence a real document can easily produce
+        (per-part introductions, a repeated ARTICLE label); a whole run of
+        them repeating in order is a table of contents.
+    """
+    first_numbered: int | None = None
+    for idx, blk in enumerate(blocks):
+        if not blk.is_heading and match_para_num(blk.raw):
+            first_numbered = idx
+            break
+    if first_numbered is None:
+        # No numbered section anywhere -- an unnumbered document (or a
+        # parse this function has no business second-guessing). Leave it be.
+        return []
+
+    heading_idx = [i for i, blk in enumerate(blocks) if blk.is_heading]
+    candidates = [i for i in heading_idx if i < first_numbered]
+    if not candidates:
+        return []
+
+    duplicated: list[int] = []
+    for i in candidates:
+        sig_i = match_label(blocks[i].text)
+        norm_i = _norm_heading(blocks[i].text)
+        for j in heading_idx:
+            if j <= i:
+                continue
+            if sig_i is not None:
+                # Labelled: identity is (kind, number), subtitle ignored.
+                if match_label(blocks[j].text) == sig_i:
+                    duplicated.append(i)
+                    break
+                continue
+            # Unlabelled: the body heading is a whole-word prefix of the
+            # TOC entry. The `+ " "` is what keeps a short later heading
+            # from prefix-matching an unrelated longer one.
+            norm_j = _norm_heading(blocks[j].text)
+            if norm_j and (norm_i == norm_j or norm_i.startswith(norm_j + " ")):
+                duplicated.append(i)
+                break
+
+    if len(duplicated) < 2:
+        return []
+
+    dropped = [blocks[i].text for i in duplicated]
+    for i in reversed(duplicated):
+        del blocks[i]
+    return dropped
+
 
 _SECTION_TITLE_HEADING_RE = re.compile(r"^(\d{1,4})\s*\.\s+")
 # Gravissimum Educationis EN's convention (see parse_document's heading
@@ -1262,7 +1429,9 @@ def looks_like_number_typo(cand: int, expected: int) -> bool:
     return len(a) == len(b) and sum(x != y for x, y in zip(a, b)) == 1
 
 
-def find_paragraph_number_correction(corrections: list[dict], expected: int, cand: int) -> dict | None:
+def find_paragraph_number_correction(
+    corrections: list[dict], expected: int, cand: int
+) -> dict | None:
     for c in corrections:
         if c.get("resolution") or c["field"] != "paragraph_number":
             continue
@@ -1272,7 +1441,13 @@ def find_paragraph_number_correction(corrections: list[dict], expected: int, can
     return None
 
 
-def write_corrections_receipt(work_dir: Path, work_id: str, applied: list[dict], corrections: list[dict], generated_at: str) -> int:
+def write_corrections_receipt(
+    work_dir: Path,
+    work_id: str,
+    applied: list[dict],
+    corrections: list[dict],
+    generated_at: str,
+) -> int:
     unresolved = [c for c in corrections if c.get("resolution")]
     receipt = {
         "work_id": work_id,
@@ -1282,7 +1457,9 @@ def write_corrections_receipt(work_dir: Path, work_id: str, applied: list[dict],
         "count": len(applied),
     }
     work_dir.mkdir(parents=True, exist_ok=True)
-    (work_dir / "corrections-applied.json").write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + "\n")
+    (work_dir / "corrections-applied.json").write_text(
+        json.dumps(receipt, ensure_ascii=False, indent=2) + "\n"
+    )
     return len(applied)
 
 
@@ -1340,7 +1517,9 @@ class DocRef:
     document_kind: str
     slug: str
     pontiff_or_council: str
-    date_digits: str  # 8 raw digits from the filename, format TBD (see parse_promulgation_date)
+    date_digits: (
+        str  # 8 raw digits from the filename, format TBD (see parse_promulgation_date)
+    )
     lang_urls: dict[str, str]  # {"en": url, "pt": url}
 
 
@@ -1378,7 +1557,9 @@ def discover_vatii(fetcher: Fetcher) -> tuple[list[DocRef], str | None]:
         _fname, kind, date8, slug, lang = m.groups()
         ref = by_slug.setdefault(
             slug,
-            DocRef("vatii", VATII_KIND_MAP[kind], slug, "Second Vatican Council", date8, {}),
+            DocRef(
+                "vatii", VATII_KIND_MAP[kind], slug, "Second Vatican Council", date8, {}
+            ),
         )
         ref.lang_urls[lang] = VATII_DOC_BASE + _fname
     return list(by_slug.values()), None
@@ -1432,14 +1613,18 @@ def parse_date_slug(fname: str) -> tuple[str, str] | None:
     return date8, _ENCICLICA_FILLER_RE.sub("", slug)
 
 
-def _index_links(fetcher: Fetcher, index_url: str, cache_name: str, link_re: re.Pattern) -> list[str]:
+def _index_links(
+    fetcher: Fetcher, index_url: str, cache_name: str, link_re: re.Pattern
+) -> list[str]:
     text, err = fetcher.fetch_text(index_url, cache_name)
     if text is None:
         return []
     return sorted({m.group(1) for m in link_re.finditer(text)})
 
 
-def discover_encyclicals(fetcher: Fetcher, pontiff_slug: str, display_name: str) -> tuple[list[DocRef], list[str]]:
+def discover_encyclicals(
+    fetcher: Fetcher, pontiff_slug: str, display_name: str
+) -> tuple[list[DocRef], list[str]]:
     """Enumerates from the pontiff's own EN encyclicals index -- not a
     hardcoded document list, per this task's brief. PT availability is
     then checked per-document (a 404 is expected, not an error -- see
@@ -1456,15 +1641,23 @@ def discover_encyclicals(fetcher: Fetcher, pontiff_slug: str, display_name: str)
     for fname in fnames:
         parsed = parse_date_slug(fname)
         if parsed is None:
-            notes.append(f"{pontiff_slug}: filename {fname!r} matches neither known convention -- skipped")
+            notes.append(
+                f"{pontiff_slug}: filename {fname!r} matches neither known convention -- skipped"
+            )
             continue
         date8, slug = parsed
         en_url = f"https://www.vatican.va/content/{pontiff_slug}/en/encyclicals/documents/{fname}.html"
-        refs.append(DocRef("encyclical", "encyclical", slug, display_name, date8, {"en": en_url}))
+        refs.append(
+            DocRef(
+                "encyclical", "encyclical", slug, display_name, date8, {"en": en_url}
+            )
+        )
     return refs, notes
 
 
-def discover_exhortations(fetcher: Fetcher, pontiff_slug: str, display_name: str) -> tuple[list[DocRef], list[str]]:
+def discover_exhortations(
+    fetcher: Fetcher, pontiff_slug: str, display_name: str
+) -> tuple[list[DocRef], list[str]]:
     notes: list[str] = []
     en_re = re.compile(_EXH_LINK_RE_TMPL.format(slug=pontiff_slug, lang="en"))
     fnames = _index_links(
@@ -1477,11 +1670,22 @@ def discover_exhortations(fetcher: Fetcher, pontiff_slug: str, display_name: str
     for fname in fnames:
         parsed = parse_date_slug(fname)
         if parsed is None:
-            notes.append(f"{pontiff_slug}: filename {fname!r} matches neither known convention -- skipped")
+            notes.append(
+                f"{pontiff_slug}: filename {fname!r} matches neither known convention -- skipped"
+            )
             continue
         date8, slug = parsed
         en_url = f"https://www.vatican.va/content/{pontiff_slug}/en/apost_exhortations/documents/{fname}.html"
-        refs.append(DocRef("exhortation", "apostolic-exhortation", slug, display_name, date8, {"en": en_url}))
+        refs.append(
+            DocRef(
+                "exhortation",
+                "apostolic-exhortation",
+                slug,
+                display_name,
+                date8,
+                {"en": en_url},
+            )
+        )
     return refs, notes
 
 
@@ -1558,13 +1762,19 @@ class StubPageError(Exception):
 STUB_CONTENT_MIN_CHARS = 300
 
 
-def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: str) -> ParseResult:
+def parse_document(
+    html: str, lang: str, corrections: list[dict], fetched_url: str
+) -> ParseResult:
     html = strip_transparent_spans(html)
     testo_m = re.search(r'class="testo"', html)
     if testo_m:
         shell = "modern"
-        end_m = re.search(r"/TESTO", html[testo_m.start():], re.IGNORECASE)
-        region = html[testo_m.start(): testo_m.start() + end_m.start()] if end_m else html[testo_m.start():]
+        end_m = re.search(r"/TESTO", html[testo_m.start() :], re.IGNORECASE)
+        region = (
+            html[testo_m.start() : testo_m.start() + end_m.start()]
+            if end_m
+            else html[testo_m.start() :]
+        )
         content_start = 0
     else:
         shell = "old"
@@ -1591,8 +1801,8 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
     star_table: dict[tuple[int, str], str] = {}
     star_m = re.search(r"SUPPLEMENTARY NOTES", foot_html, re.IGNORECASE)
     if star_m:
-        primary_foot = foot_html[:star_m.start()]
-        star_region = foot_html[star_m.start():]
+        primary_foot = foot_html[: star_m.start()]
+        star_region = foot_html[star_m.start() :]
         footnote_table, chapter_footnote_table = build_footnote_table(primary_foot)
         star_table = build_chapter_scoped_star_table(star_region)
 
@@ -1609,7 +1819,7 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
         # opening <p> is missing from the source, by checking the raw
         # text _BLOCK_RE stepped over between the previous match and this
         # one (or, on the first iteration, before the first match).
-        gap = _gap_block(body_html[prev_end:m.start()], marker_template)
+        gap = _gap_block(body_html[prev_end : m.start()], marker_template)
         if gap is not None:
             blocks.append(gap)
         prev_end = m.end()
@@ -1640,6 +1850,14 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
         blocks.append(tail_gap)
 
     match_label = MATCH_LABEL[lang]
+
+    # Strip the page's own table of contents before the walker sees it --
+    # its entries are fully-bold blocks indistinguishable from the headings
+    # they point at, and left in place the last one swallows the document's
+    # opening sections. See `drop_table_of_contents` for the detection rule
+    # and its guards. Reported, never silent.
+    for text in drop_table_of_contents(blocks, match_label):
+        state.anomalies.append(f"table-of-contents entry skipped: {text[:80]!r}")
 
     i, n = 0, len(blocks)
     while i < n:
@@ -1674,7 +1892,7 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
                 cand_title = int(title_m.group(1))
                 if state.last_n is None or cand_title == state.last_n + 1:
                     state.finalize_open_section()
-                    state.start_section(cand_title, b.kind, b.text[title_m.end():])
+                    state.start_section(cand_title, b.kind, b.text[title_m.end() :])
                     state.last_n = cand_title
                     state.pending_first_block = None
                     i += 1
@@ -1694,7 +1912,9 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
         cand = pm[0] if pm else None
         is_new = False
         rest_text = b.text
-        fills_gap_at: int | None = None  # set when a size-1 gap can be closed by pending_first_block
+        fills_gap_at: int | None = (
+            None  # set when a size-1 gap can be closed by pending_first_block
+        )
         if cand is not None:
             if state.last_n is None or cand == state.last_n + 1:
                 is_new = True
@@ -1704,7 +1924,9 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
                     fills_gap_at = state.last_n + 1
                 else:
                     state.record_gap(state.last_n, cand)
-            elif state.last_n is not None and looks_like_number_typo(cand, state.last_n + 1):
+            elif state.last_n is not None and looks_like_number_typo(
+                cand, state.last_n + 1
+            ):
                 # A single-digit-substitution misprint of the section's own
                 # leading number (verified live: Sacrosanctum Concilium EN
                 # prints "81." where position/content/the PT parallel all
@@ -1722,7 +1944,9 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
                 # process_page does for CCC paragraphs.
                 expected = state.last_n + 1
                 is_new = True
-                entry = find_paragraph_number_correction(state.corrections, expected, cand)
+                entry = find_paragraph_number_correction(
+                    state.corrections, expected, cand
+                )
                 if entry is not None:
                     if entry["id"] not in state.corrections_seen:
                         state.corrections_applied.append(dict(entry))
@@ -1758,14 +1982,20 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
                 state.finalize_open_section()
                 state.last_n = fills_gap_at
                 state.promoted_gap_fills.append(fills_gap_at)
-                if state.orphan_content and state.orphan_content[-1].endswith(state.pending_first_block[:90]):
+                if state.orphan_content and state.orphan_content[-1].endswith(
+                    state.pending_first_block[:90]
+                ):
                     state.orphan_content.pop()
                 state.anomalies.append(
                     f"section {fills_gap_at}: source prints no leading number at all "
                     f"(unnumbered text between the surrounding sections) -- promoted "
                     f"the preceding block to section {fills_gap_at}"
                 )
-            elif state.last_n is None and cand == 2 and state.pending_first_block is not None:
+            elif (
+                state.last_n is None
+                and cand == 2
+                and state.pending_first_block is not None
+            ):
                 state.start_section(1, "prose", state.pending_first_block)
                 state.finalize_open_section()
                 state.last_n = 1
@@ -1835,7 +2065,9 @@ def _dict_tree_has_real_span(nodes: list[dict]) -> bool:
     return False
 
 
-def validate_document(slug: str, state: ScrapeState, structure: list[dict]) -> tuple[bool, list[str]]:
+def validate_document(
+    slug: str, state: ScrapeState, structure: list[dict]
+) -> tuple[bool, list[str]]:
     problems: list[str] = []
     sections = state.sections
     if not sections:
@@ -1844,7 +2076,9 @@ def validate_document(slug: str, state: ScrapeState, structure: list[dict]) -> t
     lo, hi = numbers[0], numbers[-1]
     missing = [n for n in range(lo, hi + 1) if n not in sections]
     if missing:
-        problems.append(f"gaps in {lo}..{hi}: missing {missing[:20]}{'...' if len(missing) > 20 else ''}")
+        problems.append(
+            f"gaps in {lo}..{hi}: missing {missing[:20]}{'...' if len(missing) > 20 else ''}"
+        )
     if lo != 1:
         problems.append(f"numbering starts at {lo}, not 1")
     expected = EXPECTED_RANGES.get(slug)
@@ -1880,13 +2114,20 @@ def validate_document(slug: str, state: ScrapeState, structure: list[dict]) -> t
             for pat in _MOJIBAKE_PATTERNS:
                 if pat in block.text:
                     problems.append(f"section {n}: mojibake pattern {pat!r}")
-        tokens = re.findall(rf"{MARK_OPEN}([0-9A-Za-z*]+){MARK_CLOSE}", " ".join(b.text for b in sec.blocks))
+        tokens = re.findall(
+            rf"{MARK_OPEN}([0-9A-Za-z*]+){MARK_CLOSE}",
+            " ".join(b.text for b in sec.blocks),
+        )
         markers = [c["marker"] for c in sec.citations]
         if set(tokens) != set(markers) or len(markers) != len(set(markers)):
-            problems.append(f"section {n}: token/citation mismatch {tokens} vs {markers}")
+            problems.append(
+                f"section {n}: token/citation mismatch {tokens} vs {markers}"
+            )
         empty_citations = [c["marker"] for c in sec.citations if not c["text"]]
         if empty_citations:
-            problems.append(f"section {n}: citations with no resolved text: {empty_citations}")
+            problems.append(
+                f"section {n}: citations with no resolved text: {empty_citations}"
+            )
 
     # Orphan-ratio guard: a document whose captured sections happen to be
     # small and contiguous (e.g. 1..4) passes the contiguity check above
@@ -1906,7 +2147,9 @@ def validate_document(slug: str, state: ScrapeState, structure: list[dict]) -> t
     # sections). The absolute floor (>=10) keeps this from firing on small
     # documents where a low section count makes the ratio noisy by nature
     # (e.g. a real 2-section document with several sub-headings).
-    if len(state.orphan_content) >= 10 and len(state.orphan_content) > 5 * max(len(sections), 1):
+    if len(state.orphan_content) >= 10 and len(state.orphan_content) > 5 * max(
+        len(sections), 1
+    ):
         problems.append(
             f"{len(state.orphan_content)} unnumbered content blocks vs only {len(sections)} "
             "captured sections -- suspiciously high orphan ratio, almost certainly a "
@@ -1974,7 +2217,7 @@ PARSER_DEFEAT_NOTES: dict[str, str] = {
     "encyclical.vigilanti-cura.en": (
         "NOT a parser gap and not fixable by better parsing: this page's real, substantial "
         "content (27,679+ chars, Pius XI 1936) is organized entirely under bold, named-anchor "
-        "TOC-style subheadings (`<p><b><a name=\"The_Influence_of_the_Motion_Picture\"></a>The "
+        'TOC-style subheadings (`<p><b><a name="The_Influence_of_the_Motion_Picture"></a>The '
         "Influence of the Motion Picture</b></p>`, five more like it) with continuous unnumbered "
         "prose underneath each -- zero plain-digit paragraph numbers anywhere on the page. Its "
         "PT sibling parses cleanly to 44 bare-digit-numbered sections, so this is the mirror "
@@ -2086,7 +2329,7 @@ KNOWN_SOURCE_DEFECTS: dict[str, str] = {
         "encountered) -- so the real text is NOT lost (it is preserved, appended to the end of "
         "section 205's text field) but section 206 does not exist as its own addressable unit, "
         "and validate_document correctly reports it as a gap (`gaps in 1..220: missing [206]`) "
-        "rather than hiding it. Not fabricated: promoting the anchor's bare name=\"206\" to a "
+        'rather than hiding it. Not fabricated: promoting the anchor\'s bare name="206" to a '
         "printed section number the page itself never shows would be inventing content the "
         "source doesn't have."
     ),
@@ -2153,9 +2396,13 @@ def build_manifest(
             "single preceding unclaimed block to fill each; see anomalies."
         )
     if state.orphan_content:
-        notes.append(f"{len(state.orphan_content)} unnumbered content blocks not attached to any section (logged, not fabricated).")
+        notes.append(
+            f"{len(state.orphan_content)} unnumbered content blocks not attached to any section (logged, not fabricated)."
+        )
     if state.anomalies:
-        notes.append(f"{len(state.anomalies)} anomalies recorded; see corrections-applied.json / run log.")
+        notes.append(
+            f"{len(state.anomalies)} anomalies recorded; see corrections-applied.json / run log."
+        )
     if work_id in KNOWN_SOURCE_DEFECTS:
         notes.append(KNOWN_SOURCE_DEFECTS[work_id])
     manifest = {
@@ -2233,7 +2480,9 @@ def build_structure(state: ScrapeState, title: str) -> list[dict]:
     return [n.to_dict() for n in state.root_children]
 
 
-def write_document_outputs(work_id: str, manifest: dict, state: ScrapeState, structure: list[dict]) -> None:
+def write_document_outputs(
+    work_id: str, manifest: dict, state: ScrapeState, structure: list[dict]
+) -> None:
     out_dir = WORKS_ROOT / work_id
     out_dir.mkdir(parents=True, exist_ok=True)
     sections = [state.sections[n].to_dict() for n in sorted(state.sections)]
@@ -2253,11 +2502,20 @@ def write_document_outputs(work_id: str, manifest: dict, state: ScrapeState, str
             existing = {}
         if "translations" in existing:
             manifest["translations"] = existing["translations"]
-    (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
-    (out_dir / "structure.json").write_text(json.dumps(structure, indent=2, ensure_ascii=False) + "\n")
-    (out_dir / "sections.json").write_text(json.dumps(sections, indent=2, ensure_ascii=False) + "\n")
+    (out_dir / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
+    )
+    (out_dir / "structure.json").write_text(
+        json.dumps(structure, indent=2, ensure_ascii=False) + "\n"
+    )
+    (out_dir / "sections.json").write_text(
+        json.dumps(sections, indent=2, ensure_ascii=False) + "\n"
+    )
     write_corrections_receipt(
-        out_dir, work_id, state.corrections_applied, state.corrections,
+        out_dir,
+        work_id,
+        state.corrections_applied,
+        state.corrections,
         manifest["generated_at"],
     )
 
@@ -2283,7 +2541,9 @@ def url_lang_key(ref: DocRef, lang: str) -> str:
     return lang
 
 
-def scrape_one(fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, overwrite: bool) -> dict:
+def scrape_one(
+    fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, overwrite: bool
+) -> dict:
     """Returns a small result dict for progress/reporting; never raises."""
     url = ref.lang_urls.get(url_lang_key(ref, lang))
     result = {
@@ -2341,7 +2601,11 @@ def scrape_one(fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, overwr
     # page, or the raw HTML has drifted since the entry was authored --
     # fail loudly (a distinct result status, not a silent skip) rather
     # than shipping a corpus with a stale, unapplied correction.
-    missing = [c["id"] for c in corrections if not c.get("resolution") and c["id"] not in parse.state.corrections_seen]
+    missing = [
+        c["id"]
+        for c in corrections
+        if not c.get("resolution") and c["id"] not in parse.state.corrections_seen
+    ]
     if missing:
         result["status"] = "corrections-drift"
         result["error"] = f"correction entries never matched during parse: {missing}"
@@ -2352,16 +2616,27 @@ def scrape_one(fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, overwr
     ok, problems = validate_document(ref.slug, parse.state, structure)
     promulgated = parse_promulgation_date(ref.date_digits)
     manifest = build_manifest(
-        work_id, ref.document_kind, title,
-        lang, ref.pontiff_or_council, promulgated, url, parse.retrieved_at,
-        parse.state, parse,
+        work_id,
+        ref.document_kind,
+        title,
+        lang,
+        ref.pontiff_or_council,
+        promulgated,
+        url,
+        parse.retrieved_at,
+        parse.state,
+        parse,
     )
     write_document_outputs(work_id, manifest, parse.state, structure)
 
     result["status"] = "validated" if ok else "validation-failed"
     result["problems"] = problems
     result["sections"] = len(parse.state.sections)
-    result["range"] = (min(parse.state.sections), max(parse.state.sections)) if parse.state.sections else None
+    result["range"] = (
+        (min(parse.state.sections), max(parse.state.sections))
+        if parse.state.sections
+        else None
+    )
     result["shell"] = parse.shell
     result["marker_template"] = parse.marker_template
     return result
@@ -2372,10 +2647,22 @@ def scrape_one(fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, overwr
 # --------------------------------------------------------------------------
 
 VATII_ORDER = [
-    "sacrosanctum-concilium", "lumen-gentium", "dei-verbum", "gaudium-et-spes",  # constitutions first (task priority)
-    "unitatis-redintegratio", "ad-gentes", "dignitatis-humanae", "apostolicam-actuositatem",
-    "christus-dominus", "nostra-aetate", "perfectae-caritatis", "inter-mirifica",
-    "optatam-totius", "gravissimum-educationis", "presbyterorum-ordinis", "orientalium-ecclesiarum",
+    "sacrosanctum-concilium",
+    "lumen-gentium",
+    "dei-verbum",
+    "gaudium-et-spes",  # constitutions first (task priority)
+    "unitatis-redintegratio",
+    "ad-gentes",
+    "dignitatis-humanae",
+    "apostolicam-actuositatem",
+    "christus-dominus",
+    "nostra-aetate",
+    "perfectae-caritatis",
+    "inter-mirifica",
+    "optatam-totius",
+    "gravissimum-educationis",
+    "presbyterorum-ordinis",
+    "orientalium-ecclesiarum",
 ]
 
 VATII_TITLES = {
@@ -2398,7 +2685,9 @@ VATII_TITLES = {
 }
 
 
-def run_phase1(fetcher: Fetcher, langs: list[str], only: list[str] | None) -> list[dict]:
+def run_phase1(
+    fetcher: Fetcher, langs: list[str], only: list[str] | None
+) -> list[dict]:
     refs, err = discover_vatii(fetcher)
     if err:
         print(f"FATAL: could not fetch Vatican II index: {err}", file=sys.stderr)
@@ -2413,9 +2702,15 @@ def run_phase1(fetcher: Fetcher, langs: list[str], only: list[str] | None) -> li
             results.append({"family": "vatii", "slug": slug, "status": "not-in-index"})
             continue
         for lang in langs:
-            r = scrape_one(fetcher, ref, lang, VATII_TITLES.get(slug, slug), overwrite=True)
+            r = scrape_one(
+                fetcher, ref, lang, VATII_TITLES.get(slug, slug), overwrite=True
+            )
             results.append(r)
-            print(f"  {slug}.{lang}: {r['status']}" + (f" {r.get('range')}" if r.get("range") else "") + (f" ERR={r.get('error')}" if r.get("error") else ""))
+            print(
+                f"  {slug}.{lang}: {r['status']}"
+                + (f" {r.get('range')}" if r.get("range") else "")
+                + (f" ERR={r.get('error')}" if r.get("error") else "")
+            )
         touch_crawl_lock(CRAWL_LOCK_PATH)
     return results
 
@@ -2431,10 +2726,29 @@ def run_phase2(
     time_budget: float | None,
     limit: int | None,
     include_exhortations: bool,
+    overwrite: bool = False,
+    doc_slugs: list[str] | None = None,
 ) -> list[dict]:
+    """`overwrite` re-parses documents already written to corpus/works/ from
+    their CACHED raw HTML — the module docstring has promised this flag since
+    the scraper was written, but it was never actually wired into argparse, so
+    every parser fix so far had to be verified some other way. It costs no
+    network: `scrape_one` reads corpus/raw/ and only falls through to a fetch
+    for a page that isn't cached, which for an already-written document never
+    happens.
+
+    `doc_slugs` narrows a run to named documents. Without it the smallest unit
+    is a whole pontificate, which for Leo XIII is dozens of encyclicals — far
+    more re-parsing than checking one parser fix needs, and the per-document
+    review workflow (read a document, describe it, report what the parse got
+    wrong) wants exactly one document at a time."""
     start = time.monotonic()
     results: list[dict] = []
-    candidates = PONTIFF_CANDIDATES if not pontiff_slugs else [c for c in PONTIFF_CANDIDATES if c[0] in pontiff_slugs]
+    candidates = (
+        PONTIFF_CANDIDATES
+        if not pontiff_slugs
+        else [c for c in PONTIFF_CANDIDATES if c[0] in pontiff_slugs]
+    )
     n_done = 0
     for slug, display, _year in candidates:
         if time_budget is not None and time.monotonic() - start > time_budget:
@@ -2444,8 +2758,14 @@ def run_phase2(
         for note in notes:
             print(f"  [discover] {note}")
         if not refs:
-            print(f"{slug}: 0 encyclicals discovered (index missing or empty) -- skipping")
+            print(
+                f"{slug}: 0 encyclicals discovered (index missing or empty) -- skipping"
+            )
             continue
+        if doc_slugs is not None:
+            refs = [r for r in refs if r.slug in doc_slugs]
+            if not refs:
+                continue
         print(f"{slug}: {len(refs)} encyclicals discovered")
         for ref in refs:
             if time_budget is not None and time.monotonic() - start > time_budget:
@@ -2454,18 +2774,32 @@ def run_phase2(
             if limit is not None and n_done >= limit:
                 print(f"--limit {limit} reached; stopping")
                 return results
-            r_en = scrape_one(fetcher, ref, "en", ref.slug.replace("-", " ").title(), overwrite=False)
+            r_en = scrape_one(
+                fetcher,
+                ref,
+                "en",
+                ref.slug.replace("-", " ").title(),
+                overwrite=overwrite,
+            )
             results.append(r_en)
             n_done += 1
             pt_url = pt_url_for(ref)
             pt_status = "no-pt-url"
             if pt_url:
                 ref.lang_urls["pt"] = pt_url
-                r_pt = scrape_one(fetcher, ref, "pt", ref.slug.replace("-", " ").title(), overwrite=False)
+                r_pt = scrape_one(
+                    fetcher,
+                    ref,
+                    "pt",
+                    ref.slug.replace("-", " ").title(),
+                    overwrite=overwrite,
+                )
                 results.append(r_pt)
                 pt_status = r_pt["status"]
                 if r_pt["status"] in ("fetch-failed", "no-translation-stub"):
-                    pt_status = "pt-unavailable (expected for many pontificates, see survey)"
+                    pt_status = (
+                        "pt-unavailable (expected for many pontificates, see survey)"
+                    )
             print(f"  {ref.slug}: en={r_en['status']} pt={pt_status}")
             touch_crawl_lock(CRAWL_LOCK_PATH)
         if include_exhortations:
@@ -2475,12 +2809,26 @@ def run_phase2(
             for ref in exh_refs:
                 if time_budget is not None and time.monotonic() - start > time_budget:
                     return results
-                r_en = scrape_one(fetcher, ref, "en", ref.slug.replace("-", " ").title(), overwrite=False)
+                r_en = scrape_one(
+                    fetcher,
+                    ref,
+                    "en",
+                    ref.slug.replace("-", " ").title(),
+                    overwrite=overwrite,
+                )
                 results.append(r_en)
                 pt_url = pt_url_for(ref)
                 if pt_url:
                     ref.lang_urls["pt"] = pt_url
-                    results.append(scrape_one(fetcher, ref, "pt", ref.slug.replace("-", " ").title(), overwrite=False))
+                    results.append(
+                        scrape_one(
+                            fetcher,
+                            ref,
+                            "pt",
+                            ref.slug.replace("-", " ").title(),
+                            overwrite=overwrite,
+                        )
+                    )
                 touch_crawl_lock(CRAWL_LOCK_PATH)
     return results
 
@@ -2579,7 +2927,9 @@ def check_language_symmetry(works_root: Path = WORKS_ROOT) -> tuple[bool, list[s
 # part of the check depends on process visibility across invocations.
 # --------------------------------------------------------------------------
 
-LOCK_STALE_AFTER = 900  # seconds; no heartbeat within this window means abandoned (crashed)
+LOCK_STALE_AFTER = (
+    900  # seconds; no heartbeat within this window means abandoned (crashed)
+)
 
 
 class LockHeld(Exception):
@@ -2614,7 +2964,10 @@ def acquire_crawl_lock(lock_path: Path) -> None:
                 f"touch_crawl_lock), remove the lock file and retry."
             )
     now = time.time()
-    lock_path.write_text(json.dumps({"pid": os.getpid(), "started": now, "heartbeat": now}), encoding="utf-8")
+    lock_path.write_text(
+        json.dumps({"pid": os.getpid(), "started": now, "heartbeat": now}),
+        encoding="utf-8",
+    )
 
 
 def touch_crawl_lock(lock_path: Path) -> None:
@@ -2656,29 +3009,70 @@ def summarize(results: list[dict]) -> None:
     print("\n=== summary ===")
     for status, n in sorted(counts.items(), key=lambda kv: -kv[1]):
         print(f"  {status}: {n}")
-    failed = [r for r in results if r["status"] in ("fetch-failed", "parse-error", "validation-failed")]
+    failed = [
+        r
+        for r in results
+        if r["status"] in ("fetch-failed", "parse-error", "validation-failed")
+    ]
     if failed:
         print(f"\n{len(failed)} problem documents:")
         for r in failed:
-            print(f"  {r['family']}.{r['slug']}.{r.get('lang')}: {r['status']} {r.get('error', '')} {r.get('problems', '')}")
+            print(
+                f"  {r['family']}.{r['slug']}.{r.get('lang')}: {r['status']} {r.get('error', '')} {r.get('problems', '')}"
+            )
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p1 = sub.add_parser("phase1", help="Vatican II, all 16 documents")
     p1.add_argument("--lang", choices=["en", "pt", "both"], default="both")
-    p1.add_argument("--only", help="comma-separated slugs, for iterating on one document")
+    p1.add_argument(
+        "--only", help="comma-separated slugs, for iterating on one document"
+    )
 
-    p2 = sub.add_parser("phase2", help="encyclicals (+exhortations), per-pontificate discovery")
+    p2 = sub.add_parser(
+        "phase2", help="encyclicals (+exhortations), per-pontificate discovery"
+    )
     p2.add_argument("--pontiffs", help="comma-separated slugs; default: all candidates")
-    p2.add_argument("--time-budget", type=float, default=None, help="seconds; stop gracefully once exceeded")
-    p2.add_argument("--limit", type=int, default=None, help="max new documents (en+pt counted together) this run")
-    p2.add_argument("--exhortations", action="store_true", help="also crawl apostolic exhortations per pontificate")
+    p2.add_argument(
+        "--time-budget",
+        type=float,
+        default=None,
+        help="seconds; stop gracefully once exceeded",
+    )
+    p2.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="max new documents (en+pt counted together) this run",
+    )
+    p2.add_argument(
+        "--exhortations",
+        action="store_true",
+        help="also crawl apostolic exhortations per pontificate",
+    )
+    p2.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="re-parse already-written documents from cached raw HTML (no network)",
+    )
+    p2.add_argument(
+        "--slugs",
+        default=None,
+        help="comma-separated document slugs; default: every document discovered",
+    )
 
-    sub.add_parser("discover-encyclicals", help="index-only census, no document fetches")
-    sub.add_parser("check-symmetry", help="cross-language section-set check over already-written corpus/works/ (no fetches, no parsing)")
+    sub.add_parser(
+        "discover-encyclicals", help="index-only census, no document fetches"
+    )
+    sub.add_parser(
+        "check-symmetry",
+        help="cross-language section-set check over already-written corpus/works/ (no fetches, no parsing)",
+    )
 
     args = ap.parse_args()
     fetcher = Fetcher(RAW_ROOT)
@@ -2698,10 +3092,14 @@ def main() -> int:
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
-        print(f"\nnetwork fetches this run: {fetcher.network_fetches} (retried-then-ok: {fetcher.retried_ok})")
+        print(
+            f"\nnetwork fetches this run: {fetcher.network_fetches} (retried-then-ok: {fetcher.retried_ok})"
+        )
         ok = all(r["status"] in ("validated", "already-written") for r in results)
         sym_ok, sym_problems = check_language_symmetry()
-        print(f"\n=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}")
+        print(
+            f"\n=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}"
+        )
         for p in sym_problems:
             print(f"  - {p}")
         return 0 if (ok and sym_ok) else 1
@@ -2709,20 +3107,35 @@ def main() -> int:
     if args.cmd == "phase2":
         try:
             pontiffs = args.pontiffs.split(",") if args.pontiffs else None
-            results = run_phase2(fetcher, pontiffs, args.time_budget, args.limit, args.exhortations)
+            doc_slugs = args.slugs.split(",") if args.slugs else None
+            results = run_phase2(
+                fetcher,
+                pontiffs,
+                args.time_budget,
+                args.limit,
+                args.exhortations,
+                overwrite=args.overwrite,
+                doc_slugs=doc_slugs,
+            )
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
-        print(f"\nnetwork fetches this run: {fetcher.network_fetches} (retried-then-ok: {fetcher.retried_ok})")
+        print(
+            f"\nnetwork fetches this run: {fetcher.network_fetches} (retried-then-ok: {fetcher.retried_ok})"
+        )
         sym_ok, sym_problems = check_language_symmetry()
-        print(f"\n=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}")
+        print(
+            f"\n=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}"
+        )
         for p in sym_problems:
             print(f"  - {p}")
         return 0 if sym_ok else 1
 
     if args.cmd == "check-symmetry":
         sym_ok, sym_problems = check_language_symmetry()
-        print(f"=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}")
+        print(
+            f"=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}"
+        )
         for p in sym_problems:
             print(f"  - {p}")
         return 0 if sym_ok else 1
@@ -2736,7 +3149,9 @@ def main() -> int:
                 print(f"  [note] {note}")
             print(f"{slug} ({display}): {len(refs)} encyclicals")
             total += len(refs)
-        print(f"\ntotal encyclicals discovered across {len(PONTIFF_CANDIDATES)} candidate pontificates: {total}")
+        print(
+            f"\ntotal encyclicals discovered across {len(PONTIFF_CANDIDATES)} candidate pontificates: {total}"
+        )
         return 0
 
     return 1
