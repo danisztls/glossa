@@ -97,6 +97,15 @@
 
 <svelte:window onkeydown={onWindowKeydown} />
 
+<!--
+	The trigger shows a short label (`jumpbox.short` — "Search"), not the
+	full "Jump to… (e.g. john 3:16, ccc 1234)" placeholder. That long string
+	is a teaching aid: it belongs where the reader is about to type, not
+	sitting permanently in the header taking a third of the bar's width to
+	explain a control nobody has activated yet. `aria-label` keeps the long
+	form, since a screen-reader user gets no benefit from the visual brevity
+	and does benefit from the examples.
+-->
 <button
 	type="button"
 	class="trigger"
@@ -105,7 +114,7 @@
 	aria-label={t('jumpbox.placeholder')}
 >
 	<Icon name="search" />
-	<span class="trigger-text" aria-hidden="true">{t('jumpbox.placeholder')}</span>
+	<span class="trigger-text" aria-hidden="true">{t('jumpbox.short')}</span>
 	<kbd aria-hidden="true">/</kbd>
 </button>
 
@@ -160,10 +169,11 @@
 		font-size: 0.75rem;
 	}
 
-	/* On narrow screens the header has too many controls for a full-width
-	   "Jump to… (e.g. john 3:16, ccc 1234)" label — collapse the trigger to
-	   its icon + kbd hint, which is still enough to convey "search/jump" and
-	   keeps the same activation target. */
+	/* The label is short enough now to survive most widths, but on a phone the
+	   header still has five controls competing for one row — collapse to the
+	   icon alone there, which conveys "search" on its own and keeps the same
+	   activation target. The `/` hint goes too: there is no physical keyboard
+	   to press it on. */
 	@media (max-width: 640px) {
 		.trigger-text,
 		.trigger kbd {
