@@ -127,10 +127,13 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// document sections.
 		'citation.unavailable': 'No source text available for this note.',
 
-		'unpublished.tag': 'Not published here',
-		'unpublished.heading': 'This text is not published here',
-		'unpublished.explain':
-			'We reproduced this work until its rights holder asked us not to, and we stopped. The text below has been removed from this site; everything else about the work is unchanged.',
+		'unpublished.tag': 'Not shown here',
+		'unpublished.quality.heading': 'We are not showing this text yet',
+		'unpublished.quality.explain':
+			'Our copy of this work came out incomplete \u2014 parts of it are missing, and we would rather show you nothing than show you a text with gaps you cannot see. It will come back once we can render it properly.',
+		'unpublished.rights.heading': 'This text is not published here',
+		'unpublished.rights.explain':
+			'We reproduced this work until its rights holder asked us not to, and we stopped. The text has been removed from this site; everything else about the work is unchanged.',
 		'unpublished.readAt': 'Read it at',
 		'colophon.title': 'Colophon',
 		'colophon.lede':
@@ -262,9 +265,12 @@ const dictionaries: Record<UiLang, Dictionary> = {
 
 		'citation.unavailable': 'Sem texto de fonte disponível para esta nota.',
 
-		'unpublished.tag': 'N\u00e3o publicado aqui',
-		'unpublished.heading': 'Este texto n\u00e3o \u00e9 publicado aqui',
-		'unpublished.explain':
+		'unpublished.tag': 'N\u00e3o apresentado aqui',
+		'unpublished.quality.heading': 'Ainda n\u00e3o apresentamos este texto',
+		'unpublished.quality.explain':
+			'A nossa c\u00f3pia desta obra ficou incompleta \u2014 faltam-lhe partes, e preferimos n\u00e3o mostrar nada a mostrar um texto com falhas que n\u00e3o consegue ver. Voltar\u00e1 quando o conseguirmos apresentar corretamente.',
+		'unpublished.rights.heading': 'Este texto n\u00e3o \u00e9 publicado aqui',
+		'unpublished.rights.explain':
 			'Reproduzimos esta obra at\u00e9 que o seu titular de direitos nos pediu que n\u00e3o o fiz\u00e9ssemos, e par\u00e1mos. O texto foi removido deste site; tudo o resto sobre a obra permanece inalterado.',
 		'unpublished.readAt': 'Leia em',
 		'colophon.title': 'Colof\u00e3o',

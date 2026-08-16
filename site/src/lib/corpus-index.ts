@@ -219,9 +219,20 @@ const realUnpublished = import.meta.glob('./corpus-data/index/unpublished.json',
 	import: 'default'
 }) as Record<string, Record<string, UnpublishedWork>>;
 
-/** Why a work is unpublished, for the notice its pages render in place of the text. */
+/**
+ * Why a work is withheld, for the notice its pages render in place of the
+ * text.
+ *
+ * `kind` matters to the reader, not just to us. "We can't render this
+ * properly yet" and "the rights holder asked us to stop" are different
+ * statements about the same blank space, and a reader deciding whether to
+ * trust the rest of the site is owed the right one. Defaults to `quality`
+ * because that is what this mechanism is actually for (see
+ * `site/unpublished.json`).
+ */
 export interface UnpublishedWork {
-	/** ISO date the work was taken down. */
+	kind?: 'quality' | 'rights';
+	/** ISO date the work was withheld. */
 	date: string;
 	/** Free text, shown to the reader as given. */
 	reason: string;

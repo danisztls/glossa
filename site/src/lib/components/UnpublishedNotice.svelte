@@ -1,25 +1,29 @@
 <!--
-	What a reader sees where a taken-down work's text used to be.
+	What a reader sees where a withheld work's text would be.
 
-	docs/decisions.md's Architecture consequences require that any work can be
-	"degraded to a link-out to vatican.va without rearchitecting". This is the
-	link-out. The page still exists, still names the work, still carries the
-	rights holder's own copyright notice, and still says where the text can be
-	read — it simply no longer reproduces it.
+	TWO REASONS, TWO MESSAGES. Usually this is a QUALITY withholding: our parse
+	of the work is damaged — paragraphs swallowed by a source-HTML defect — and
+	publishing it would hand the reader an incomplete text with no way to tell.
+	Occasionally it is a RIGHTS request. Those are different statements about
+	the same blank space, and a reader deciding whether to trust the rest of
+	the site is owed the right one, so the copy branches on `info.kind` rather
+	than saying something vague enough to cover both.
 
-	WRITTEN TO BE READ BY SOMEONE WHO CAME FOR THE TEXT, not as an error. They
-	followed a working link and the thing they wanted is genuinely elsewhere,
-	so the useful content of this page is the link, which gets the emphasis. No
-	apology, no "oops", no suggestion that something broke: nothing did. The
-	stated reason is shown verbatim from `unpublished.json` rather than
-	summarised, because the whole posture (docs/research/copyright.md §5) rests
-	on saying plainly what we are doing and why.
+	The quality message admits fault plainly. Saying "this text is incomplete
+	because we could not parse it properly" costs nothing and is the only thing
+	that makes the rest of the corpus credible: a site that hides its failures
+	is asking to be trusted about the ones you cannot see. It also names the
+	remedy — read it at the source — which is what the reader actually wants.
 
-	Deliberately NOT styled as a warning or an error. Amber banners and red
-	borders would frame a rights holder exercising their rights as a fault, and
-	frame us as having been caught at something. The project's position is that
-	complying promptly is the normal, expected half of hosting without asking
-	first — so this reads as a normal part of the site.
+	WRITTEN TO BE READ BY SOMEONE WHO CAME FOR THE TEXT, not as an error page.
+	They followed a working link and the thing they wanted is elsewhere, so the
+	link gets the emphasis. The stated reason is shown verbatim from
+	`unpublished.json` rather than summarised.
+
+	Deliberately NOT styled as a warning. For the rights case, an amber banner
+	would frame a rights holder exercising their rights as a fault; for the
+	quality case, it would make a temporary, known, documented gap look like a
+	malfunction. Both are ordinary parts of running this site honestly.
 -->
 <script lang="ts">
 	import { sourceUrl, sourceHost, copyrightLabel } from '$lib/copyright';
@@ -34,13 +38,17 @@
 
 	let { manifest, info }: Props = $props();
 
+	// Defaults to `quality`: that is the common case, and an entry written
+	// without a `kind` is far likelier to be a hasty quality withholding than
+	// an unlabelled rights request.
+	const kind = $derived(info.kind ?? 'quality');
 	const url = $derived(sourceUrl(manifest));
 	const host = $derived(sourceHost(manifest));
 </script>
 
 <section class="unpublished">
-	<h2>{t('unpublished.heading')}</h2>
-	<p class="explain">{t('unpublished.explain')}</p>
+	<h2>{t(`unpublished.${kind}.heading`)}</h2>
+	<p class="explain">{t(`unpublished.${kind}.explain`)}</p>
 
 	{#if info.reason}
 		<p class="reason">{info.reason}</p>
