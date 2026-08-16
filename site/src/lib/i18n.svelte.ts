@@ -35,6 +35,11 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'home.tagline': 'The Bible and the Catechism of the Catholic Church, free to read.',
 		'home.continueReading': 'Continue reading',
 		'home.works': 'Library',
+		// Home page's Catechism/Compendium section — see routes/+page.svelte's
+		// module docblock for why this is ONE table of contents, not two.
+		'home.ccc.heading': 'Catechism & Compendium',
+		'home.ccc.noCounterpart': 'No counterpart in the other work',
+		'home.magisterium.mostRecent': 'Most recently added',
 		'jumpbox.placeholder': 'Jump to… (e.g. john 3:16, ccc 1234)',
 		'jumpbox.short': 'Search',
 		'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
@@ -103,6 +108,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 			'Encyclicals, conciliar constitutions, decrees, and declarations of the Magisterium.',
 		'document.tableOfContents': 'Table of Contents',
 		'document.startReading': 'Start reading',
+		'document.readFullDocument': 'Read the full document',
 		'document.section': 'Section',
 		'document.prevSection': 'Previous',
 		'document.nextSection': 'Next',
@@ -169,14 +175,24 @@ const dictionaries: Record<UiLang, Dictionary> = {
 			'The texts are collected from their published sources, parsed into a structured corpus, and rendered as static pages. Corrections to source defects are recorded individually, with the original wording, the corrected wording, and the reason \u2014 no text is ever silently changed.',
 		'bible.citedInCcc': 'Cited in the Catechism',
 		'bible.wholeChapter': 'This chapter',
-		'bible.verseNotInEdition': 'This verse number is not in this edition — see the note in the page source',
+		'bible.verseNotInEdition':
+			'This verse number is not in this edition — see the note in the page source',
 		'bible.verseAbbrev': 'v.',
 		'ccc.readFullChapter': 'Read the full chapter',
 		'ccc.showSubsections': 'Show subsections',
 		'ccc.hideSubsections': 'Hide subsections',
 		'ccc.noParagraphNumber': 'No paragraph number in this corpus',
 		'copyright.sourceTitle': 'Open the original source page',
-		'lang.label': 'Language'
+		'lang.label': 'Language',
+
+		// Compare mode (side-by-side, unit-aligned comparison) — CompareToggle.svelte
+		// and CompareGrid.svelte are the consumers.
+		'compare.enter': 'Compare editions',
+		'compare.exit': 'Exit comparison',
+		'compare.missing': 'Not present in this edition',
+		'compare.versificationNote':
+			'These two editions divide this chapter’s verses differently in places (a textual variant, not a translation choice) — the same verse number does not always mark the same sentence in both columns.',
+		'compare.loading': 'Loading the second language…'
 	},
 	pt: {
 		'nav.bible': 'Bíblia',
@@ -188,6 +204,9 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'home.tagline': 'A Bíblia e o Catecismo da Igreja Católica, livres para ler.',
 		'home.continueReading': 'Continuar lendo',
 		'home.works': 'Biblioteca',
+		'home.ccc.heading': 'Catecismo e Compêndio',
+		'home.ccc.noCounterpart': 'Sem correspondência na outra obra',
+		'home.magisterium.mostRecent': 'Adicionado mais recentemente',
 		'jumpbox.placeholder': 'Ir para… (ex: jo 3,16, ccc 1234)',
 		'jumpbox.short': 'Buscar',
 		'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
@@ -246,6 +265,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 			'Encíclicas, constituições conciliares, decretos e declarações do Magistério.',
 		'document.tableOfContents': 'Índice',
 		'document.startReading': 'Começar a leitura',
+		'document.readFullDocument': 'Ler o documento completo',
 		'document.section': 'Secção',
 		'document.prevSection': 'Anterior',
 		'document.nextSection': 'Próximo',
@@ -280,7 +300,8 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'colophon.whatThisIs': 'O que \u00e9 isto',
 		'colophon.whatThisIsBody':
 			'O Depositum \u00e9 um site de leitura das Escrituras, do Catecismo, do Compêndio e dos documentos do Magist\u00e9rio, em portugu\u00eas e em ingl\u00eas. Existe para ser lido, e nada mais lhe \u00e9 pedido para o ler:',
-		'colophon.pointFree': 'Gratuito, e sempre gratuito. Sem barreira de pagamento, sem subscri\u00e7\u00e3o, nada para comprar.',
+		'colophon.pointFree':
+			'Gratuito, e sempre gratuito. Sem barreira de pagamento, sem subscri\u00e7\u00e3o, nada para comprar.',
 		'colophon.pointNoAds': 'Sem publicidade nem qualquer conte\u00fado patrocinado.',
 		'colophon.pointNoAccounts': 'Sem contas. Nada para registar, nada para iniciar sess\u00e3o.',
 		'colophon.pointNoTracking':
@@ -315,7 +336,14 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ccc.hideSubsections': 'Ocultar subsecções',
 		'ccc.noParagraphNumber': 'Sem número de parágrafo neste corpus',
 		'copyright.sourceTitle': 'Abrir a página de origem',
-		'lang.label': 'Idioma'
+		'lang.label': 'Idioma',
+
+		'compare.enter': 'Comparar edições',
+		'compare.exit': 'Sair da comparação',
+		'compare.missing': 'Não presente nesta edição',
+		'compare.versificationNote':
+			'Estas duas edições dividem os versículos deste capítulo de forma diferente em alguns pontos (uma variante textual, não uma escolha de tradução) — o mesmo número de versículo nem sempre assinala a mesma frase nas duas colunas.',
+		'compare.loading': 'A carregar o segundo idioma…'
 	}
 };
 

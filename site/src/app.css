@@ -131,6 +131,68 @@ input {
 	padding-inline: 1.25rem;
 }
 
+/*
+ * Reading page with a persistent navigation column on the right.
+ *
+ * Shared primitive, not per-route CSS, because four reading views want the
+ * identical shape (Bible chapter, CCC paragraph, CCC chapter, document
+ * section) and Svelte's per-component scoping has no way to share a block.
+ *
+ * Markup contract:
+ *
+ *   <div class="reading-layout">
+ *     <article class="content-column"> …the text… </article>
+ *     <aside class="reading-aside"> …TOC / books & chapters… </aside>
+ *   </div>
+ *
+ * Below the breakpoint this is a no-op: the aside is a plain block after the
+ * text, which is where a collapsed picker already lived, so nothing about
+ * the phone layout changes. The two-column form only appears once there is
+ * genuinely room for the reading measure AND a sidebar side by side —
+ * 80rem, i.e. the content column at its full `--content-width` plus the
+ * aside plus gutters, rather than a width where one of them has to shrink.
+ *
+ * The pair is centred as a UNIT: the reading column sits left of centre when
+ * the aside is present. Centring the text and hanging the aside off the
+ * right edge instead was tried and reads as two unrelated pages.
+ */
+.reading-layout {
+	--aside-width: 17rem;
+}
+
+@media (min-width: 80rem) {
+	.reading-layout {
+		display: grid;
+		grid-template-columns: minmax(0, var(--content-width)) var(--aside-width);
+		justify-content: center;
+		align-items: start;
+		gap: 2.75rem;
+		padding-inline: 1.25rem;
+	}
+
+	/* `.content-column` still owns the measure everywhere else it's used; in
+	   here the grid track is doing that job, so its own centring margins and
+	   side padding would only add a second, competing set of gutters. */
+	.reading-layout > .content-column {
+		max-width: none;
+		margin-inline: 0;
+		padding-inline: 0;
+	}
+
+	/* Sticks alongside the text through a long chapter. `overflow-y: auto`
+	   makes the aside its own scroll container, so anything inside it that
+	   escapes its box (an absolutely-positioned popover, say) gets clipped —
+	   sidebar navigation should expand IN FLOW here rather than in a panel. */
+	.reading-aside {
+		position: sticky;
+		top: 1.5rem;
+		max-height: calc(100vh - 3rem);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		font-size: 0.9rem;
+	}
+}
+
 .reading-text {
 	font-family: var(--font-serif);
 	/* Multiplied by the reader's fine-adjustment (FontSizeMenu.svelte /
@@ -141,6 +203,148 @@ input {
 	   :root default above or the inline style has taken effect. */
 	font-size: calc(var(--reading-base) * var(--reading-scale, 1));
 	line-height: 1.65;
+}
+
+/*
+ * Compare mode — side-by-side, unit-aligned comparison (`CompareGrid.svelte`
+ * is the sole consumer; `$lib/compare.ts` is the alignment logic). Shared
+ * here rather than in that component's own `<style>` for the same reason
+ * `.reading-layout` lives here and not in one of its four callers: six
+ * routes (Bible, CCC paragraph, CCC chapter, Compendium, document section,
+ * document read) want the identical shape, and Svelte's per-component style
+ * scoping has no mechanism to share a block across files.
+ *
+ * THE SIDEBAR YIELDS TO COMPARE MODE, UNCONDITIONALLY, AT EVERY WIDTH — the
+ * decision this primitive encodes for the "three columns won't fit at 80rem"
+ * problem the task brief raises. A wider breakpoint for a genuine three-track
+ * grid was the other option on the table; rejected because it only helps
+ * above that new width and does nothing for the phone/tablet range where the
+ * sidebar was already the first thing to go. Hiding the aside instead works
+ * at every width with one rule, and a reader who wants the sidebar back has
+ * a one-click way to get it (turn compare mode off) that a width-dependent
+ * layout can't offer on a viewport that's simply too narrow regardless.
+ * `.reading-layout.compare` cancels the two-track grid `.reading-layout`
+ * normally sets up at >= 80rem (there is no `.reading-aside` for the second
+ * track to hold — every route omits it, not just hides it, while comparing),
+ * and restores `.content-column`'s own standalone centring, which the base
+ * `.reading-layout > .content-column` rule above otherwise overrides.
+ */
+@media (min-width: 80rem) {
+	.reading-layout.compare {
+		display: block;
+	}
+
+	.reading-layout.compare > .content-column {
+		max-width: var(--content-width);
+		margin-inline: auto;
+		padding-inline: 1.25rem;
+	}
+}
+
+.compare-toolbar {
+	display: flex;
+	justify-content: flex-end;
+	margin: 0 0 0.75rem;
+}
+
+.compare-note {
+	margin: 0 0 1rem;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+	font-style: italic;
+}
+
+/*
+ * One row per unit, two columns, default grid auto-placement (each unit
+ * contributes exactly two DOM children — see CompareGrid.svelte's docblock
+ * for why this is what keeps the two columns aligned unit-to-unit as line
+ * counts diverge between languages). `row-gap: 0` is deliberate: vertical
+ * spacing between rows lives INSIDE each cell as `padding-block` instead, so
+ * `.compare-cell-left`'s divider border runs as one continuous line down the
+ * whole grid rather than a dashed one broken at every row-gap.
+ */
+.compare-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 1.5rem;
+	row-gap: 0;
+	margin-top: 0.5rem;
+}
+
+.compare-header {
+	font-family: var(--font-sans);
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--color-text-muted);
+	padding-block-end: 0.5rem;
+	border-block-end: 1px solid var(--color-border);
+	margin-block-end: 0.5rem;
+}
+
+.compare-cell {
+	min-width: 0;
+	padding-block: 0.4rem;
+}
+
+.compare-cell-left {
+	border-inline-end: 1px solid var(--color-border);
+	padding-inline-end: 1.5rem;
+}
+
+/* Repeats each cell's edition label — redundant with `.compare-header` at
+   normal widths (hidden there, see below) but the only column identifier
+   left once the grid stacks to one column on a phone and the header has
+   long since scrolled out of view (see the max-width query below). */
+.compare-cell-tag {
+	display: none;
+	font-size: 0.7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--color-text-muted);
+	margin-bottom: 0.3rem;
+}
+
+.compare-missing {
+	margin: 0;
+	color: var(--color-text-muted);
+	font-style: italic;
+	font-size: 0.9em;
+}
+
+/*
+ * Mobile: two reading columns do not fit (task brief) — `.compare-grid`
+ * collapses to ONE column, which (because DOM order is left-cell-then-
+ * right-cell per unit, unchanged) turns into each unit's two texts stacked
+ * immediately next to each other rather than two long independent columns a
+ * phone would force the reader to scroll between. That's a stacked-pairs
+ * layout, not "compare mode unavailable" — the alignment still holds, it's
+ * just vertical instead of side-by-side, and `.compare-cell-tag` reappears
+ * per pair since `.compare-header`'s one-time label at the top has scrolled
+ * away long before the reader reaches later units.
+ */
+@media (max-width: 40rem) {
+	.compare-grid {
+		grid-template-columns: 1fr;
+		row-gap: 1rem;
+	}
+
+	.compare-header {
+		display: none;
+	}
+
+	.compare-cell-left {
+		border-inline-end: none;
+		padding-inline-end: 0;
+		border-block-end: 1px dashed var(--color-border);
+		padding-block-end: 1rem;
+	}
+
+	.compare-cell-tag {
+		display: block;
+	}
 }
 
 /* --- Drop caps --------------------------------------------------------- *

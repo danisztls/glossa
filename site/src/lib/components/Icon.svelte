@@ -29,6 +29,7 @@
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
 	import BookOpen from '@lucide/svelte/icons/book-open';
 	import Check from '@lucide/svelte/icons/check';
+	import Columns2 from '@lucide/svelte/icons/columns-2';
 
 	const ICONS = {
 		search: Search,
@@ -40,7 +41,8 @@
 		minus: Minus,
 		'rotate-ccw': RotateCcw,
 		'book-open': BookOpen,
-		check: Check
+		check: Check,
+		'columns-2': Columns2
 	};
 
 	export type IconName = keyof typeof ICONS;
