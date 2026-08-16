@@ -748,6 +748,77 @@ export function getCccBibleXrefs(cccN: number): ScriptureRef[] {
 	return cccBibleXrefsByCcc.get(cccN) ?? [];
 }
 
+/**
+ * The REVERSE direction of the same data: which CCC paragraphs cite a given
+ * chapter, grouped by verse.
+ *
+ * docs/decisions.md calls bidirectional CCC-Bible linking the flagship v1
+ * feature, and only the forward half (`getCccBibleXrefs`) ever shipped: a
+ * reader could go from a Catechism paragraph to the verse it cites, but a
+ * reader in the Bible had no way to learn that the verse in front of them is
+ * cited in the Catechism at all. This is the other half, and it needs no new
+ * corpus data -- the same `xrefs/ccc-bible.json` inverted.
+ *
+ * INVERTED LAZILY AND ONCE, on the first Bible chapter that asks. The
+ * forward file is ~3,800 refs over 1,198 paragraphs; building the reverse
+ * map eagerly at module load would put that work on every page in the site,
+ * including the ones that never open a Bible chapter. Building it per-call
+ * would put it on every chapter navigation. The memo is the obvious middle,
+ * and the data is immutable once loaded.
+ *
+ * A WHOLE-CHAPTER CITATION (`verses: []`, the corpus's convention -- see
+ * `ScriptureRef`) is recorded under the sentinel key 0 rather than being
+ * dropped or expanded across every verse in the chapter. Expanding it would
+ * claim the Catechism cites each verse individually, which is a different
+ * and stronger statement than what it actually did; dropping it would lose a
+ * real citation. Callers render key 0 as a chapter-level note.
+ */
+type CccCitationsByVerse = Map<number, number[]>;
+let cccBibleReverseIndex: Map<string, CccCitationsByVerse> | null = null;
+
+function reverseKey(osis: string, chapter: number): string {
+	return `${osis}:${chapter}`;
+}
+
+function buildCccBibleReverseIndex(): Map<string, CccCitationsByVerse> {
+	const index = new Map<string, CccCitationsByVerse>();
+	for (const [cccN, refs] of cccBibleXrefsByCcc) {
+		for (const ref of refs) {
+			const key = reverseKey(ref.osis, ref.chapter);
+			let byVerse = index.get(key);
+			if (!byVerse) index.set(key, (byVerse = new Map()));
+			// `[0]` rather than `ref.verses` when empty -- see the docblock.
+			for (const verse of ref.verses.length > 0 ? ref.verses : [0]) {
+				const list = byVerse.get(verse);
+				if (list) {
+					// The same paragraph can cite the same verse twice (a "cf."
+					// repeat in a long footnote); the reader wants one link.
+					if (!list.includes(cccN)) list.push(cccN);
+				} else {
+					byVerse.set(verse, [cccN]);
+				}
+			}
+		}
+	}
+	for (const byVerse of index.values()) {
+		for (const list of byVerse.values()) list.sort((a, b) => a - b);
+	}
+	return index;
+}
+
+/**
+ * CCC paragraph numbers citing each verse of one chapter, keyed by verse
+ * number (0 = the chapter as a whole). Empty map when nothing cites it.
+ *
+ * Scoped to a chapter rather than exposing the whole reverse index because
+ * that is exactly what a reading page needs, and it keeps the shape that
+ * callers iterate small enough to hand straight to a template.
+ */
+export function getCccCitationsForChapter(osis: string, chapter: number): CccCitationsByVerse {
+	cccBibleReverseIndex ??= buildCccBibleReverseIndex();
+	return cccBibleReverseIndex.get(reverseKey(osis, chapter)) ?? new Map();
+}
+
 // --- Documents: index-backed (registry, structure, existence, sync) -------
 //
 // docs/corpus-schema.md §Documents: encyclicals, conciliar constitutions/

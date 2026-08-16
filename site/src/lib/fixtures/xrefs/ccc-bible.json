@@ -14,5 +14,16 @@
 	{
 		"ccc": 30,
 		"refs": [{ "osis": "ps", "chapter": 105, "verses": [3] }]
+	},
+	{
+		"ccc": 31,
+		"refs": [
+			{ "osis": "gen", "chapter": 3, "verses": [9] },
+			{ "osis": "gen", "chapter": 1, "verses": [] }
+		]
+	},
+	{
+		"ccc": 32,
+		"refs": [{ "osis": "gen", "chapter": 1, "verses": [] }]
 	}
 ]
