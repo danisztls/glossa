@@ -8,6 +8,10 @@
 	import FontSizeMenu from '$lib/components/FontSizeMenu.svelte';
 	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import Icon from '$lib/components/Icon.svelte';
+	// Mounted once, globally: see the component's own docblock for why this is
+	// a single delegated listener rather than something every link-generating
+	// component (RefText, linkifyProse, route TOCs, ...) has to opt into.
+	import LinkPreview from '$lib/components/LinkPreview.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	let { children } = $props();
@@ -38,7 +42,6 @@
 	function isActive(href: string): boolean {
 		return page.url.pathname === href || page.url.pathname.startsWith(href + '/');
 	}
-
 </script>
 
 <svelte:head>
@@ -106,6 +109,8 @@
 		<a href="/colophon">{t('colophon.title')}</a>
 	</footer>
 </div>
+
+<LinkPreview />
 
 <style>
 	.app-shell {
