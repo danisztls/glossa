@@ -342,17 +342,15 @@
 
 		<!-- Omitted entirely in compare mode — see app.css's
 		     `.reading-layout.compare` docblock. -->
-		{#if !compareActive}
-			<aside class="reading-aside">
-				<StructureSidebarToc
-					structure={structureRows}
-					currentN={undefined}
-					{lang}
-					heading={t('document.tableOfContents')}
-					linkMode="anchor"
-				/>
-			</aside>
-		{/if}
+		<aside class="reading-aside">
+			<StructureSidebarToc
+				structure={structureRows}
+				currentN={undefined}
+				{lang}
+				heading={t('document.tableOfContents')}
+				linkMode="anchor"
+			/>
+		</aside>
 	</div>
 {/if}
 

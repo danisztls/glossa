@@ -229,15 +229,75 @@ input {
  * and restores `.content-column`'s own standalone centring, which the base
  * `.reading-layout > .content-column` rule above otherwise overrides.
  */
+/*
+ * TWO COLUMNS NEED TWICE THE MEASURE, NOT HALF OF IT.
+ *
+ * `--content-width` is one reading column: ~68ch, tuned so a line lands in
+ * the 55-65 characters-per-line range. Compare mode puts a `1fr 1fr` grid
+ * inside `.content-column`, so leaving that container at `--content-width`
+ * gave each column ~33ch — half the measure, and well under any readable
+ * one. This is the width the container has to be for the COLUMNS to come
+ * out at the measure the rest of the site is built around.
+ *
+ * Applied at every width rather than inside the 80rem query: below that
+ * breakpoint `.reading-layout` is not a grid, so `.content-column` kept its
+ * single-column 68ch and halved it just the same. `max-width` still lets the
+ * whole thing shrink on a narrow viewport, where the grid stacks to one
+ * column anyway (see `.compare-grid`'s own media query).
+ */
+.reading-layout.compare > .content-column {
+	max-width: calc(var(--content-width) * 2 + 3rem);
+}
+
 @media (min-width: 80rem) {
 	.reading-layout.compare {
 		display: block;
 	}
 
 	.reading-layout.compare > .content-column {
-		max-width: var(--content-width);
 		margin-inline: auto;
 		padding-inline: 1.25rem;
+	}
+}
+
+/*
+ * ...BUT ON A GENUINELY WIDE SCREEN, NOTHING HAS TO YIELD.
+ *
+ * The rule above drops the sidebar while comparing, which is right when two
+ * reading columns and a sidebar cannot all fit. On a wide display they fit
+ * easily, and dropping the table of contents there is a cost paid for no
+ * reason — the space is simply going unused.
+ *
+ * 100rem is where the arithmetic clears with room to spare: two columns at
+ * ~34rem each, a 1.5rem column gap, the 17rem aside, its 2.75rem gutter and
+ * the page's own padding come to ~92rem. Below this the sidebar still
+ * yields, because below this it genuinely has to.
+ */
+/* Below the three-column breakpoint the sidebar really does have to go, and
+   it goes in CSS rather than by the routes omitting the element: keeping it
+   in the markup is what lets the rule above place it once there IS room, and
+   it costs a hidden subtree, not a fetch — the tree is index tier and already
+   inlined on the page either way. */
+@media (max-width: 99.99rem) {
+	.reading-layout.compare > .reading-aside {
+		display: none;
+	}
+}
+
+@media (min-width: 100rem) {
+	.reading-layout.compare {
+		display: grid;
+		grid-template-columns: minmax(0, calc(var(--content-width) * 2 + 3rem)) var(--aside-width);
+		justify-content: center;
+		align-items: start;
+		gap: 2.75rem;
+		padding-inline: 1.25rem;
+	}
+
+	.reading-layout.compare > .content-column {
+		max-width: none;
+		margin-inline: 0;
+		padding-inline: 0;
 	}
 }
 

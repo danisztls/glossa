@@ -184,18 +184,16 @@
 	     the media query below) rather than shown as a plain block after
 	     the text. Omitted entirely in compare mode — see app.css's
 	     `.reading-layout.compare` docblock. -->
-	{#if !compareActive}
-		<aside class="reading-aside">
-			<StructureSidebarToc
-				{structure}
-				currentN={data.n}
-				{lang}
-				heading={t('compendium.tableOfContents')}
-				basePath="/compendium"
-				outlineKinds={OUTLINE_KINDS}
-			/>
-		</aside>
-	{/if}
+	<aside class="reading-aside">
+		<StructureSidebarToc
+			{structure}
+			currentN={data.n}
+			{lang}
+			heading={t('compendium.tableOfContents')}
+			basePath="/compendium"
+			outlineKinds={OUTLINE_KINDS}
+		/>
+	</aside>
 </div>
 
 <style>

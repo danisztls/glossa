@@ -209,18 +209,16 @@
 	     absent on narrow viewports rather than duplicated like the Bible
 	     picker. Omitted entirely in compare mode — see app.css's
 	     `.reading-layout.compare` docblock. -->
-		{#if !compareActive}
-			<aside class="reading-aside">
-				<StructureSidebarToc
-					{structure}
-					currentN={data.n}
-					{lang}
-					heading={t('ccc.tableOfContents')}
-					basePath="/ccc"
-					outlineKinds={OUTLINE_KINDS}
-				/>
-			</aside>
-		{/if}
+		<aside class="reading-aside">
+			<StructureSidebarToc
+				{structure}
+				currentN={data.n}
+				{lang}
+				heading={t('ccc.tableOfContents')}
+				basePath="/ccc"
+				outlineKinds={OUTLINE_KINDS}
+			/>
+		</aside>
 	</div>
 {/if}
 

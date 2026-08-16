@@ -186,17 +186,15 @@
 
 		<!-- Omitted entirely in compare mode — see app.css's
 		     `.reading-layout.compare` docblock. -->
-		{#if !compareActive}
-			<aside class="reading-aside">
-				<StructureSidebarToc
-					structure={structureRows}
-					currentN={data.n}
-					{lang}
-					heading={t('document.tableOfContents')}
-					basePath={`/documents/${data.slug}`}
-				/>
-			</aside>
-		{/if}
+		<aside class="reading-aside">
+			<StructureSidebarToc
+				structure={structureRows}
+				currentN={data.n}
+				{lang}
+				heading={t('document.tableOfContents')}
+				basePath={`/documents/${data.slug}`}
+			/>
+		</aside>
 	</div>
 {/if}
 

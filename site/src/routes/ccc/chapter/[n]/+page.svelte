@@ -176,18 +176,16 @@
 	     language's actual matched chapter start (`getCccChapterFor`,
 	     +page.ts), not the URL's `n`, which may fall mid-chapter in a
 	     language whose tree diverges from the one `n` was minted against. -->
-		{#if !compareActive}
-			<aside class="reading-aside">
-				<StructureSidebarToc
-					{structure}
-					currentN={from ?? undefined}
-					{lang}
-					heading={t('ccc.tableOfContents')}
-					basePath="/ccc"
-					outlineKinds={OUTLINE_KINDS}
-				/>
-			</aside>
-		{/if}
+		<aside class="reading-aside">
+			<StructureSidebarToc
+				{structure}
+				currentN={from ?? undefined}
+				{lang}
+				heading={t('ccc.tableOfContents')}
+				basePath="/ccc"
+				outlineKinds={OUTLINE_KINDS}
+			/>
+		</aside>
 	</div>
 {/if}
 

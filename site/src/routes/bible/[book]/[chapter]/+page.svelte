@@ -356,20 +356,14 @@
 	     `.reading-layout.compare` docblock: the second text column takes the
 	     room the sidebar would have used, at every width, rather than the
 	     other way around. -->
-		{#if !compareActive}
-			<aside
-				class="reading-aside desktop-picker"
-				aria-label={t('bible.pickBook')}
-				role="navigation"
-			>
-				<BookChapterPicker
-					currentWorkId={workId}
-					currentOsis={data.osis}
-					currentChapter={data.chapterN}
-					variant="sidebar"
-				/>
-			</aside>
-		{/if}
+		<aside class="reading-aside desktop-picker" aria-label={t('bible.pickBook')} role="navigation">
+			<BookChapterPicker
+				currentWorkId={workId}
+				currentOsis={data.osis}
+				currentChapter={data.chapterN}
+				variant="sidebar"
+			/>
+		</aside>
 	</div>
 {/if}
 
