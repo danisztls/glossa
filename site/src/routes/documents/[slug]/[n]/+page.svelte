@@ -11,7 +11,9 @@
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import { alignByNumber, isCompareRequested, withCompareParam } from '$lib/compare';
+	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
+	import { alignByNumber, withCompareParam } from '$lib/compare';
+	import { compare } from '$lib/compare-pref.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentSection } from '$lib/types';
 	import type { PageData } from './$types';
@@ -47,16 +49,43 @@
 	 * documents in scope"), so `secondary` is genuinely undefined more often
 	 * here, and the toggle simply doesn't render when it is (see markup).
 	 */
-	const secondaryLang = $derived(availableLangs.find((l) => l !== lang));
-	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
-
-	const compareRequested = $derived.by(() => (browser ? isCompareRequested(page.url) : false));
-	const compareActive = $derived(
-		compareRequested && current !== undefined && secondary !== undefined
+	/** See `/ccc/[n]`'s identical block for the reasoning. Unlike the CCC,
+	 *  `otherEditions` here is genuinely, routinely empty (a missing
+	 *  translation is legitimate and common for documents), which is exactly
+	 *  what already made `secondary` optional below. */
+	const otherEditions = $derived(
+		availableLangs.filter((l) => l !== lang).map((l) => ({ lang: l, work: data.byLang[l].work }))
 	);
+	const fallbackWorkId = $derived(otherEditions[0]?.work.id);
+
+	// BROWSER-ONLY side effect — see `bible/[book]/[chapter]/+page.svelte`'s
+	// `citedRange` docblock and `compare-pref.svelte.ts`'s `syncFromUrl`.
+	$effect(() => {
+		if (browser) compare.syncFromUrl(page.url);
+	});
+
+	const secondaryWorkId = $derived(
+		compare.resolveTarget(
+			otherEditions.map((e) => e.work.id),
+			fallbackWorkId
+		)
+	);
+	const secondaryLang = $derived(otherEditions.find((e) => e.work.id === secondaryWorkId)?.lang);
+	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
+	const compareActive = $derived(current !== undefined && secondary !== undefined);
 
 	function toggleCompare() {
-		goto(withCompareParam(page.url, !compareActive), {
+		compare.toggle();
+		goto(withCompareParam(page.url, compare.paramValue), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
+	}
+
+	function chooseComparisonEdition(id: string) {
+		compare.set(id);
+		goto(withCompareParam(page.url, compare.paramValue), {
 			replaceState: true,
 			noScroll: true,
 			keepFocus: true
@@ -108,7 +137,7 @@
 
 			<div class="title-row">
 				<h1>{current.work.short_title} {data.n}</h1>
-				{#if secondary}
+				{#if otherEditions.length > 0}
 					<div class="compare-toolbar">
 						<CompareToggle active={compareActive} onclick={toggleCompare} />
 					</div>
@@ -126,7 +155,15 @@
 					rightLabel={secondary.work.short_title}
 					left={leftCell}
 					right={rightCell}
-				/>
+				>
+					{#snippet rightHeaderExtra()}
+						<ComparisonEditionMenu
+							editions={otherEditions.map((e) => e.work)}
+							current={secondaryWorkId}
+							onselect={chooseComparisonEdition}
+						/>
+					{/snippet}
+				</CompareGrid>
 			{:else}
 				<div class="reading-text document-body" lang={current.work.language}>
 					<CccParagraphText paragraph={current.section} {lang} />

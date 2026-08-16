@@ -136,26 +136,35 @@ export function pickComparisonEdition<E extends { id: string; lang: string }>(
 // `page.url.searchParams` during prerendering throws (one prerendered file
 // serves every query string that points at it), so this is a pure string/URL
 // utility with NO dependency on `$app/state` or `$app/navigation` — every
-// caller is responsible for only invoking `isCompareRequested` from inside a
+// caller is responsible for only invoking these from inside a
 // `browser`-guarded read, the same discipline `citedRange` already
-// established. Kept here rather than duplicated per route so the one
-// `?compare=1` contract can't drift between the six routes that read it.
+// established.
+//
+// THIS IS NO LONGER THE ONLY PLACE `?compare=` GETS READ. Since
+// `compare-pref.svelte.ts` shipped, the URL is a SHARING mechanism layered on
+// top of a stored reading preference, not the sole source of truth — see
+// that module's docblock for the full contract, including why `?compare=1`
+// still has to parse (it predates the per-edition target this file now
+// carries) and why that mapping lives in `CompareStore.syncFromUrl`, not
+// here: this file only builds/writes addresses, it never decides what a
+// stored preference should become. `COMPARE_PARAM` is exported so the two
+// places that read/write the same query key (`syncFromUrl` here) can't drift
+// on the string itself even though the decoding logic they apply to it
+// differs.
 // --------------------------------------------------------------------------
 
-const COMPARE_PARAM = 'compare';
+export const COMPARE_PARAM = 'compare';
 
-/** Whether the URL asks for compare mode. Safe to call with any `URL`
- *  (including one built in a test); the caller owns the `browser` guard. */
-export function isCompareRequested(url: URL): boolean {
-	return url.searchParams.get(COMPARE_PARAM) === '1';
-}
-
-/** `url` with compare mode turned on/off — a new `URL`, `url` itself is never
- *  mutated. Used by `CompareToggle`'s click handler to build the address it
- *  navigates to. */
-export function withCompareParam(url: URL, active: boolean): URL {
+/** `url` with the compare target set/cleared — a new `URL`, `url` itself is
+ *  never mutated. `target` is whatever `CompareStore.paramValue` says a link
+ *  carrying the reader's current preference should look like: `undefined`
+ *  removes the param entirely, otherwise it's written verbatim (`'1'` for
+ *  "on, route's choice", or a work id for an explicit edition pick — see
+ *  compare-pref.svelte.ts). Used by every reading route's compare toggle and
+ *  by the comparison edition picker to build the address they navigate to. */
+export function withCompareParam(url: URL, target: string | undefined): URL {
 	const next = new URL(url);
-	if (active) next.searchParams.set(COMPARE_PARAM, '1');
-	else next.searchParams.delete(COMPARE_PARAM);
+	if (target === undefined) next.searchParams.delete(COMPARE_PARAM);
+	else next.searchParams.set(COMPARE_PARAM, target);
 	return next;
 }

@@ -12,7 +12,9 @@
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import { alignByNumber, isCompareRequested, withCompareParam } from '$lib/compare';
+	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
+	import { alignByNumber, withCompareParam } from '$lib/compare';
+	import { compare } from '$lib/compare-pref.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { CccParagraph } from '$lib/types';
 	import type { PageData } from './$types';
@@ -35,23 +37,61 @@
 	/**
 	 * Compare mode for a single paragraph: the CCC's own EN/PT language
 	 * symmetry guarantee (docs/decisions.md — paragraph NUMBER sets match
-	 * across languages) means `secondaryLang` is almost always present, and
+	 * across languages) means a second language is almost always present, and
 	 * `data.byLang` already embeds every language `+page.ts` found (its own
 	 * docblock) — so, like the Bible chapter route, comparing here is free:
 	 * no fetch, the second column's paragraph is already on the page.
 	 */
-	const secondaryLang = $derived(availableLangs.find((l) => l !== lang));
-	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
+
+	/** The other embedded language(s), paired with their `WorkManifest` — the
+	 *  manifests are what `ComparisonEditionMenu` picks between and what
+	 *  `compare.resolveTarget` checks a stored preference against (a work id,
+	 *  never a bare language — see that store's docblock for why). */
+	const otherEditions = $derived(
+		availableLangs
+			.filter((l) => l !== lang)
+			.flatMap((l) => {
+				const entry = data.byLang[l];
+				return entry ? [{ lang: l, work: entry.work }] : [];
+			})
+	);
+	/** Route's own choice with no reader override: the first other embedded
+	 *  language, same pick this route always made before the preference
+	 *  store existed. */
+	const fallbackWorkId = $derived(otherEditions[0]?.work.id);
 
 	// BROWSER-ONLY — see `bible/[book]/[chapter]/+page.svelte`'s `citedRange`
 	// docblock: reading `page.url.searchParams` during prerendering throws.
-	const compareRequested = $derived.by(() => (browser ? isCompareRequested(page.url) : false));
-	const compareActive = $derived(
-		compareRequested && current !== undefined && secondary !== undefined
+	// A side effect, not a derived read, because this ADOPTS `?compare=…` into
+	// the stored preference (`compare-pref.svelte.ts`) rather than answering
+	// "is compare requested" for this render alone — see that module's
+	// `syncFromUrl` docblock.
+	$effect(() => {
+		if (browser) compare.syncFromUrl(page.url);
+	});
+
+	const secondaryWorkId = $derived(
+		compare.resolveTarget(
+			otherEditions.map((e) => e.work.id),
+			fallbackWorkId
+		)
 	);
+	const secondaryLang = $derived(otherEditions.find((e) => e.work.id === secondaryWorkId)?.lang);
+	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
+	const compareActive = $derived(current !== undefined && secondary !== undefined);
 
 	function toggleCompare() {
-		goto(withCompareParam(page.url, !compareActive), {
+		compare.toggle();
+		goto(withCompareParam(page.url, compare.paramValue), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
+	}
+
+	function chooseComparisonEdition(id: string) {
+		compare.set(id);
+		goto(withCompareParam(page.url, compare.paramValue), {
 			replaceState: true,
 			noScroll: true,
 			keepFocus: true
@@ -126,7 +166,7 @@
 					{/if}
 					CCC {data.n}
 				</h1>
-				{#if secondary}
+				{#if otherEditions.length > 0}
 					<div class="compare-toolbar">
 						<CompareToggle active={compareActive} onclick={toggleCompare} />
 					</div>
@@ -144,7 +184,15 @@
 					rightLabel={secondary.work.short_title}
 					left={leftCell}
 					right={rightCell}
-				/>
+				>
+					{#snippet rightHeaderExtra()}
+						<ComparisonEditionMenu
+							editions={otherEditions.map((e) => e.work)}
+							current={secondaryWorkId}
+							onselect={chooseComparisonEdition}
+						/>
+					{/snippet}
+				</CompareGrid>
 			{:else}
 				<div class="reading-text ccc-body" lang={current.work.language}>
 					<CccParagraphText paragraph={current.paragraph} {lang} />

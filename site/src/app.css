@@ -351,6 +351,26 @@ input {
 	margin-block-end: 0.5rem;
 }
 
+/* Right column only: room for the comparison edition picker
+   (CompareGrid.svelte's `rightHeaderExtra`) beside the plain label every
+   other `.compare-header` is. A bare label still lays out fine under flex
+   with nothing to share the row with, so this doesn't need to be
+   conditional on the picker actually being present. */
+.compare-header-right {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+
+/* The picker's own trigger (`.menu-trigger`) must not inherit this header's
+   uppercase/letter-spacing treatment — that's typographic labelling for the
+   column title, not for a control sitting next to it. */
+.compare-header-right .comparison-edition-menu {
+	text-transform: none;
+	letter-spacing: normal;
+}
+
 .compare-cell {
 	min-width: 0;
 	padding-block: 0.4rem;

@@ -39,6 +39,8 @@
  * silently drop the reader's intent" posture as the rest of the site.
  */
 
+import { COMPARE_PARAM } from './compare';
+
 const STORAGE_KEY = 'depositum:compare';
 
 /** "Whichever edition this route picks on its own" — see the module docblock
@@ -88,13 +90,29 @@ class CompareStore {
 	 * reader whose stored preference has it on.
 	 */
 	syncFromUrl(url: URL) {
-		const raw = url.searchParams.get('compare');
+		const raw = url.searchParams.get(COMPARE_PARAM);
 		if (raw === null) return;
 		if (raw === '0') this.set(undefined);
 		// `1` was the original on/off-only spelling and still means "on,
 		// route's choice of edition" — links using it predate the target and
 		// must keep working.
 		else this.set(raw === '1' ? AUTO : raw);
+	}
+
+	/**
+	 * The `?compare=` value that reproduces this preference as a shareable
+	 * link — the encode side of `syncFromUrl` above. `undefined` when compare
+	 * is off (no param at all, never `compare=0`: a link with no param is the
+	 * common, unremarkable case — see `syncFromUrl`'s own reasoning for why
+	 * absence must stay silent rather than becoming a loud "off" marker).
+	 * `AUTO` encodes as the original `'1'` spelling rather than the literal
+	 * string `'auto'`, so the common "just compare, route's choice" case keeps
+	 * producing the short, already-familiar address instead of a newer,
+	 * longer one nothing about the reader's intent actually calls for.
+	 */
+	get paramValue(): string | undefined {
+		if (this.target === undefined) return undefined;
+		return this.target === AUTO ? '1' : this.target;
 	}
 
 	/**

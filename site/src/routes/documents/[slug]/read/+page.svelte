@@ -25,7 +25,9 @@
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import { alignByNumber, isCompareRequested, withCompareParam } from '$lib/compare';
+	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
+	import { alignByNumber, withCompareParam } from '$lib/compare';
+	import { compare } from '$lib/compare-pref.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { displayTitle } from '$lib/titles';
 	import { content } from '$lib/content.svelte';
@@ -164,14 +166,51 @@
 	 * already-fetched language's sections a second time resolves instantly
 	 * from that cache rather than issuing a second request.)
 	 */
-	const secondaryLang = $derived(Object.keys(data.manifestsByLang).find((l) => l !== lang));
-	const canCompare = $derived(secondaryLang !== undefined);
+	/** Every OTHER language this document has a manifest for at all (not just
+	 *  the one embedded on this page — see the module docblock above: this
+	 *  route only ever embeds one language's sections, so "available to
+	 *  compare against" has to be read from `data.manifestsByLang`, not from
+	 *  what's already on the page). Paired with the manifest itself, same
+	 *  shape as every other route's `otherEditions` — see `/ccc/[n]`'s
+	 *  identical block for the full reasoning. */
+	const otherEditions = $derived(
+		Object.keys(data.manifestsByLang)
+			.filter((l) => l !== lang)
+			.map((l) => ({ lang: l, work: data.manifestsByLang[l] }))
+	);
+	const fallbackWorkId = $derived(otherEditions[0]?.work.id);
 
-	const compareRequested = $derived.by(() => (browser ? isCompareRequested(page.url) : false));
-	const compareActive = $derived(compareRequested && canCompare);
+	// BROWSER-ONLY side effect — see `bible/[book]/[chapter]/+page.svelte`'s
+	// `citedRange` docblock and `compare-pref.svelte.ts`'s `syncFromUrl`.
+	$effect(() => {
+		if (browser) compare.syncFromUrl(page.url);
+	});
+
+	const secondaryWorkId = $derived(
+		compare.resolveTarget(
+			otherEditions.map((e) => e.work.id),
+			fallbackWorkId
+		)
+	);
+	/** Defined exactly when the reader's resolved preference names a language
+	 *  this document actually has — which is also exactly when compare mode
+	 *  should be on, so this doubles as `compareActive` below rather than
+	 *  needing a second, redundant flag. */
+	const secondaryLang = $derived(otherEditions.find((e) => e.work.id === secondaryWorkId)?.lang);
+	const compareActive = $derived(secondaryLang !== undefined);
 
 	function toggleCompare() {
-		goto(withCompareParam(page.url, !compareActive), {
+		compare.toggle();
+		goto(withCompareParam(page.url, compare.paramValue), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
+	}
+
+	function chooseComparisonEdition(id: string) {
+		compare.set(id);
+		goto(withCompareParam(page.url, compare.paramValue), {
 			replaceState: true,
 			noScroll: true,
 			keepFocus: true
@@ -185,7 +224,7 @@
 	$effect(() => {
 		const slug = data.slug;
 		const want = secondaryLang;
-		if (!compareActive || !want) return;
+		if (!want) return;
 		const manifest = data.manifestsByLang[want];
 		if (!manifest) return;
 		// `untrack`: depend on slug/want/manifest, not on this effect's own
@@ -274,7 +313,7 @@
 
 			<div class="title-row">
 				<h1>{current.work.title}</h1>
-				{#if secondaryManifest}
+				{#if otherEditions.length > 0}
 					<div class="compare-toolbar">
 						<CompareToggle active={compareActive} onclick={toggleCompare} />
 					</div>
@@ -302,7 +341,15 @@
 					rightLabel={secondaryManifest.short_title}
 					left={leftCell}
 					right={rightCell}
-				/>
+				>
+					{#snippet rightHeaderExtra()}
+						<ComparisonEditionMenu
+							editions={otherEditions.map((e) => e.work)}
+							current={secondaryWorkId}
+							onselect={chooseComparisonEdition}
+						/>
+					{/snippet}
+				</CompareGrid>
 			{:else}
 				{#if compareActive}
 					<p class="compare-note">{t('compare.loading')}</p>

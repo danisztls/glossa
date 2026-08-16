@@ -14,7 +14,9 @@
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import { alignByNumber, isCompareRequested, withCompareParam } from '$lib/compare';
+	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
+	import { alignByNumber, withCompareParam } from '$lib/compare';
+	import { compare } from '$lib/compare-pref.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { CompendiumQuestion } from '$lib/types';
 	import type { PageData } from './$types';
@@ -43,16 +45,40 @@
 	 *  (`+page.ts`), so — same as `/ccc/[n]` — comparing here costs nothing
 	 *  extra. */
 	const availableLangs = $derived(Object.keys(data.byLang));
-	const secondaryLang = $derived(availableLangs.find((l) => l !== lang));
-	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
-
-	const compareRequested = $derived.by(() => (browser ? isCompareRequested(page.url) : false));
-	const compareActive = $derived(
-		compareRequested && current !== undefined && secondary !== undefined
+	/** See `/ccc/[n]`'s identical block for the reasoning. */
+	const otherEditions = $derived(
+		availableLangs.filter((l) => l !== lang).map((l) => ({ lang: l, work: data.byLang[l].work }))
 	);
+	const fallbackWorkId = $derived(otherEditions[0]?.work.id);
+
+	// BROWSER-ONLY side effect — see `bible/[book]/[chapter]/+page.svelte`'s
+	// `citedRange` docblock and `compare-pref.svelte.ts`'s `syncFromUrl`.
+	$effect(() => {
+		if (browser) compare.syncFromUrl(page.url);
+	});
+
+	const secondaryWorkId = $derived(
+		compare.resolveTarget(
+			otherEditions.map((e) => e.work.id),
+			fallbackWorkId
+		)
+	);
+	const secondaryLang = $derived(otherEditions.find((e) => e.work.id === secondaryWorkId)?.lang);
+	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
+	const compareActive = $derived(current !== undefined && secondary !== undefined);
 
 	function toggleCompare() {
-		goto(withCompareParam(page.url, !compareActive), {
+		compare.toggle();
+		goto(withCompareParam(page.url, compare.paramValue), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
+	}
+
+	function chooseComparisonEdition(id: string) {
+		compare.set(id);
+		goto(withCompareParam(page.url, compare.paramValue), {
 			replaceState: true,
 			noScroll: true,
 			keepFocus: true
@@ -118,7 +144,7 @@
 			visible presentation instead (see the module's job #5).
 		-->
 			<h1 class="visually-hidden">{t('compendium.question')} {data.n}</h1>
-			{#if secondary}
+			{#if otherEditions.length > 0}
 				<div class="compare-toolbar">
 					<CompareToggle active={compareActive} onclick={toggleCompare} />
 				</div>
@@ -136,7 +162,15 @@
 				rightLabel={secondary.work.short_title}
 				left={leftCell}
 				right={rightCell}
-			/>
+			>
+				{#snippet rightHeaderExtra()}
+					<ComparisonEditionMenu
+						editions={otherEditions.map((e) => e.work)}
+						current={secondaryWorkId}
+						onselect={chooseComparisonEdition}
+					/>
+				{/snippet}
+			</CompareGrid>
 		{:else}
 			<div class="reading-text compendium-body" lang={current.work.language}>
 				<p class="qa-question">

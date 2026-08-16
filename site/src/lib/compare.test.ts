@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
 	alignByNumber,
-	isCompareRequested,
 	numberSetsDiffer,
 	pickComparisonEdition,
 	withCompareParam
@@ -119,34 +118,27 @@ describe('pickComparisonEdition', () => {
 	});
 });
 
-describe('compare URL param', () => {
-	it('isCompareRequested is false with no param', () => {
-		expect(isCompareRequested(new URL('https://example.test/bible/john/1'))).toBe(false);
-	});
-
-	it('isCompareRequested is true only for the exact value "1"', () => {
-		expect(isCompareRequested(new URL('https://example.test/ccc/1?compare=1'))).toBe(true);
-		expect(isCompareRequested(new URL('https://example.test/ccc/1?compare=true'))).toBe(false);
-		expect(isCompareRequested(new URL('https://example.test/ccc/1?compare='))).toBe(false);
-	});
-
-	it('withCompareParam adds the param without touching existing ones', () => {
+describe('withCompareParam', () => {
+	it('sets the param to the given target, without touching existing params', () => {
 		const url = new URL('https://example.test/bible/john/1?v=1-3');
-		const next = withCompareParam(url, true);
-		expect(next.searchParams.get('compare')).toBe('1');
+		const next = withCompareParam(url, 'bible.matos-soares.pt');
+		expect(next.searchParams.get('compare')).toBe('bible.matos-soares.pt');
 		expect(next.searchParams.get('v')).toBe('1-3');
 		// Original is untouched.
 		expect(url.searchParams.has('compare')).toBe(false);
 	});
 
-	it('withCompareParam(false) removes the param', () => {
+	it('removes the param when the target is undefined', () => {
 		const url = new URL('https://example.test/ccc/1?compare=1');
-		expect(withCompareParam(url, false).searchParams.has('compare')).toBe(false);
+		expect(withCompareParam(url, undefined).searchParams.has('compare')).toBe(false);
 	});
 
-	it('round-trips through isCompareRequested', () => {
+	it('writes the literal target string verbatim — no boolean/target translation happens here', () => {
+		// `'1'` (the AUTO spelling) is a caller decision (`CompareStore.paramValue`),
+		// not something this pure URL helper knows about — it just writes
+		// whatever string it's handed.
 		const url = new URL('https://example.test/compendium/1');
-		expect(isCompareRequested(withCompareParam(url, true))).toBe(true);
-		expect(isCompareRequested(withCompareParam(withCompareParam(url, true), false))).toBe(false);
+		expect(withCompareParam(url, '1').searchParams.get('compare')).toBe('1');
+		expect(withCompareParam(url, 'ccc.pt').searchParams.get('compare')).toBe('ccc.pt');
 	});
 });

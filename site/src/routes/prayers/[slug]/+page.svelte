@@ -31,7 +31,8 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { alignByNumber, isCompareRequested, withCompareParam } from '$lib/compare';
+	import { alignByNumber, withCompareParam } from '$lib/compare';
+	import { compare } from '$lib/compare-pref.svelte';
 	import { content } from '$lib/content.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
@@ -61,11 +62,28 @@
 		return alignByNumber([prayer], [{ n: prayer.n, title: latin.title, blocks: latin.blocks }]);
 	});
 
-	const compareRequested = $derived.by(() => (browser ? isCompareRequested(page.url) : false));
-	const compareActive = $derived(compareRequested && hasLatin);
+	/**
+	 * ON/OFF ONLY — NO EDITION TO PICK, AND SO NO `resolveTarget` CALL HERE.
+	 * Every other route resolves the store's target against a list of
+	 * alternative WORK ids (`otherEditions`, `compare.resolveTarget`) because
+	 * the second column there really is a choice between editions. This
+	 * route's second column is the prayer's own `latin` FIELD (see the module
+	 * docblock above), so there is nothing a stored work id could ever name
+	 * here — reading `compare.active` directly is what keeps this route
+	 * boolean, without teaching the store or `CompareGrid` a special case for
+	 * it: a reader whose *stored* preference happens to be a specific Bible
+	 * edition id (picked on some other page) still gets Latin shown here,
+	 * because `active` only asks "is compare mode on at all", never "is THIS
+	 * particular id available".
+	 */
+	$effect(() => {
+		if (browser) compare.syncFromUrl(page.url);
+	});
+	const compareActive = $derived(compare.active && hasLatin);
 
 	function toggleCompare() {
-		goto(withCompareParam(page.url, !compareActive), {
+		compare.toggle();
+		goto(withCompareParam(page.url, compare.paramValue), {
 			replaceState: true,
 			noScroll: true,
 			keepFocus: true

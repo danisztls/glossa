@@ -21,7 +21,9 @@
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import { alignByNumber, isCompareRequested, withCompareParam } from '$lib/compare';
+	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
+	import { alignByNumber, withCompareParam } from '$lib/compare';
+	import { compare } from '$lib/compare-pref.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
 	import { displayTitle } from '$lib/titles';
@@ -55,16 +57,47 @@
 	 * chapter reaches renders as a row with a gap on the other side, exactly
 	 * like a genuine missing-translation gap would.
 	 */
-	const secondaryLang = $derived(availableLangs.find((l) => l !== lang));
-	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
-
-	const compareRequested = $derived.by(() => (browser ? isCompareRequested(page.url) : false));
-	const compareActive = $derived(
-		compareRequested && current !== undefined && secondary !== undefined
+	/** See `/ccc/[n]`'s identical block for the reasoning — same shape here,
+	 *  paragraph-list-shaped `data.byLang` entries instead of single
+	 *  paragraphs. */
+	const otherEditions = $derived(
+		availableLangs
+			.filter((l) => l !== lang)
+			.flatMap((l) => {
+				const entry = data.byLang[l];
+				return entry ? [{ lang: l, work: entry.work }] : [];
+			})
 	);
+	const fallbackWorkId = $derived(otherEditions[0]?.work.id);
+
+	// BROWSER-ONLY side effect — see `bible/[book]/[chapter]/+page.svelte`'s
+	// `citedRange` docblock and `compare-pref.svelte.ts`'s `syncFromUrl`.
+	$effect(() => {
+		if (browser) compare.syncFromUrl(page.url);
+	});
+
+	const secondaryWorkId = $derived(
+		compare.resolveTarget(
+			otherEditions.map((e) => e.work.id),
+			fallbackWorkId
+		)
+	);
+	const secondaryLang = $derived(otherEditions.find((e) => e.work.id === secondaryWorkId)?.lang);
+	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
+	const compareActive = $derived(current !== undefined && secondary !== undefined);
 
 	function toggleCompare() {
-		goto(withCompareParam(page.url, !compareActive), {
+		compare.toggle();
+		goto(withCompareParam(page.url, compare.paramValue), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
+	}
+
+	function chooseComparisonEdition(id: string) {
+		compare.set(id);
+		goto(withCompareParam(page.url, compare.paramValue), {
 			replaceState: true,
 			noScroll: true,
 			keepFocus: true
@@ -125,7 +158,7 @@
 					{#if heading.ordinal}<span class="ordinal">{heading.ordinal}</span>{/if}
 					{heading.title}
 				</h1>
-				{#if secondary}
+				{#if otherEditions.length > 0}
 					<div class="compare-toolbar">
 						<CompareToggle active={compareActive} onclick={toggleCompare} />
 					</div>
@@ -144,7 +177,15 @@
 					rightLabel={secondary.work.short_title}
 					left={leftCell}
 					right={rightCell}
-				/>
+				>
+					{#snippet rightHeaderExtra()}
+						<ComparisonEditionMenu
+							editions={otherEditions.map((e) => e.work)}
+							current={secondaryWorkId}
+							onselect={chooseComparisonEdition}
+						/>
+					{/snippet}
+				</CompareGrid>
 			{:else}
 				<div class="reading-text ccc-body chapter-body" lang={current.work.language}>
 					{#each current.paragraphs as paragraph, i (paragraph.n)}

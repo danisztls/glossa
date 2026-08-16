@@ -18,13 +18,14 @@
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
+	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import {
 		alignByNumber,
-		isCompareRequested,
 		numberSetsDiffer,
 		pickComparisonEdition,
 		withCompareParam
 	} from '$lib/compare';
+	import { compare } from '$lib/compare-pref.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { Verse } from '$lib/types';
 	import type { PageData } from './$types';
@@ -63,31 +64,69 @@
 	 * `documents/[slug]/read`, comparing here costs nothing extra: no fetch,
 	 * no loading state, the second column's text is already on the page.
 	 */
-	const secondaryWorkId = $derived(
+
+	/** Every embedded edition except the one being read as the primary — what
+	 *  the picker in the comparison column's header (`ComparisonEditionMenu`)
+	 *  offers, and the universe `compare.resolveTarget` checks the reader's
+	 *  stored pick against. */
+	const otherEditions = $derived(
+		listEditions('bible').filter((w) => availableWorkIds.includes(w.id) && w.id !== workId)
+	);
+
+	/** What this chapter compares against with no reader override — preferring
+	 *  a different-language edition, same as every other route offering this
+	 *  feature (`pickComparisonEdition`'s own docblock). Feeds
+	 *  `compare.resolveTarget`'s `fallback`, which is what a stored `AUTO`
+	 *  preference — or a stored pick this chapter doesn't have — degrades to. */
+	const fallbackWorkId = $derived(
 		pickComparisonEdition(
 			workId,
-			listEditions('bible')
-				.filter((w) => availableWorkIds.includes(w.id))
-				.map((w) => ({ id: w.id, lang: baseLang(w.language) }))
+			otherEditions.map((w) => ({ id: w.id, lang: baseLang(w.language) }))
 		)?.id
 	);
-	const secondary = $derived(secondaryWorkId ? data.byWorkId[secondaryWorkId] : undefined);
 
 	/**
 	 * BROWSER-ONLY, same reasoning as `citedRange` below: reading
 	 * `page.url.searchParams` during prerendering throws, because one
 	 * prerendered file has to serve every query string that points at it.
-	 * `?compare=1` is therefore a pure enhancement layered on a chapter that
-	 * already renders complete (single column) without it — a no-JS reader
-	 * gets the ordinary reading view, never a half-built compare grid.
+	 * This is now a side effect rather than a derived read, because what it
+	 * does is ADOPT `?compare=…` into the stored reading preference
+	 * (`compare-pref.svelte.ts`'s `syncFromUrl`) rather than answer "is
+	 * compare requested" for this render alone — see that module's docblock
+	 * for why the preference, not the URL, is what makes compare mode survive
+	 * following a plain link to the next chapter. Re-runs on every navigation
+	 * this component is reused for (`page.url` changing chapter to chapter),
+	 * same as the effect's SvelteKit-idiomatic dependency tracking anywhere
+	 * else on the site.
 	 */
-	const compareRequested = $derived.by(() => (browser ? isCompareRequested(page.url) : false));
-	const compareActive = $derived(
-		compareRequested && current !== undefined && secondary !== undefined
+	$effect(() => {
+		if (browser) compare.syncFromUrl(page.url);
+	});
+
+	const secondaryWorkId = $derived(
+		compare.resolveTarget(
+			otherEditions.map((w) => w.id),
+			fallbackWorkId
+		)
 	);
+	const secondary = $derived(secondaryWorkId ? data.byWorkId[secondaryWorkId] : undefined);
+	const compareActive = $derived(current !== undefined && secondary !== undefined);
 
 	function toggleCompare() {
-		goto(withCompareParam(page.url, !compareActive), {
+		compare.toggle();
+		goto(withCompareParam(page.url, compare.paramValue), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
+	}
+
+	/** The picker's own choice handler — writes a SPECIFIC edition, not the
+	 *  `AUTO` sentinel `toggleCompare` uses, and shares via `?compare=<workId>`
+	 *  rather than `?compare=1` (`compare.paramValue`). */
+	function chooseComparisonEdition(id: string) {
+		compare.set(id);
+		goto(withCompareParam(page.url, compare.paramValue), {
 			replaceState: true,
 			noScroll: true,
 			keepFocus: true
@@ -245,7 +284,7 @@
 			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 			<div class="title-row">
 				<h1>{current.book.name} {current.chapter.n}</h1>
-				{#if secondary}
+				{#if otherEditions.length > 0}
 					<div class="compare-toolbar">
 						<CompareToggle active={compareActive} onclick={toggleCompare} />
 					</div>
@@ -277,7 +316,15 @@
 					left={verseCell}
 					right={verseCell}
 					note={compareVersesDiffer ? t('compare.versificationNote') : undefined}
-				/>
+				>
+					{#snippet rightHeaderExtra()}
+						<ComparisonEditionMenu
+							editions={otherEditions}
+							current={secondaryWorkId}
+							onselect={chooseComparisonEdition}
+						/>
+					{/snippet}
+				</CompareGrid>
 			{:else}
 				<div class="reading-text" lang={current.work.language}>
 					{#each current.chapter.verses as verse, i (verse.n)}

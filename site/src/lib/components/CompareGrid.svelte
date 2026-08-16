@@ -38,7 +38,21 @@
 	than a warning colour, matching the project's established posture that a
 	known, disclosed limitation is not styled as an error (see
 	`UnpublishedNotice.svelte`'s own reasoning for the same choice).
--->
+
+	`rightHeaderExtra`, when passed, renders inside the RIGHT column's header
+	cell — this is where every reading route except `/prayers` hangs its
+	comparison edition picker (task brief, defect 2: "a selector in the right
+	column's header"). An optional snippet rather than a dedicated `picker`
+	prop with its own `editions`/`onselect` shape: this component has no
+	business knowing what a "comparison edition" is (the prayers route's
+	right column is a Latin FIELD, not an edition at all — see that route's
+	own docblock), only that its caller sometimes has more to put in the
+	header than a label. Omitting the prop is how prayers stays picker-free
+	without this component branching on which route it's in.
+
+	NOT OFFERED FOR THE LEFT COLUMN: the primary reading edition is chosen by
+	the page's own `EditionMenu` in the page chrome, not by anything compare
+	mode owns — only the second column's edition is this feature's to pick. -->
 <script lang="ts" generics="TLeft extends { n: number }, TRight extends { n: number }">
 	import type { Snippet } from 'svelte';
 	import type { AlignedRow } from '$lib/compare';
@@ -53,9 +67,20 @@
 		left: Snippet<[TLeft]>;
 		right: Snippet<[TRight]>;
 		note?: string;
+		rightHeaderExtra?: Snippet;
 	}
 
-	let { rows, leftLang, rightLang, leftLabel, rightLabel, left, right, note }: Props = $props();
+	let {
+		rows,
+		leftLang,
+		rightLang,
+		leftLabel,
+		rightLabel,
+		left,
+		right,
+		note,
+		rightHeaderExtra
+	}: Props = $props();
 </script>
 
 {#if note}
@@ -66,9 +91,16 @@
 	<!-- Header row: identifies the two columns once, rather than tagging
 	     every single cell — see the per-cell `.compare-cell-tag` fallback
 	     below for the narrow-viewport case where the header has scrolled out
-	     of view. -->
+	     of view. Both headers vanish together below 40rem (app.css), which is
+	     also where `rightHeaderExtra`'s picker stops being reachable — same
+	     "the sidebar yields on a narrow viewport" posture app.css's
+	     `.reading-layout.compare` docblock already accepts elsewhere on this
+	     page, not a gap specific to the picker. -->
 	<div class="compare-header" lang={leftLang}>{leftLabel}</div>
-	<div class="compare-header" lang={rightLang}>{rightLabel}</div>
+	<div class="compare-header compare-header-right" lang={rightLang}>
+		<span class="compare-header-label">{rightLabel}</span>
+		{#if rightHeaderExtra}{@render rightHeaderExtra()}{/if}
+	</div>
 
 	{#each rows as row (row.n)}
 		<!-- `reading-text` on every cell (not just the wrapping grid): that's
