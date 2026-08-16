@@ -127,8 +127,44 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// document sections.
 		'citation.unavailable': 'No source text available for this note.',
 
+		'colophon.title': 'Colophon',
+		'colophon.lede':
+			'What this site is, where its texts come from, and where we stand on reproducing them.',
+		'colophon.whatThisIs': 'What this is',
+		'colophon.whatThisIsBody':
+			'Depositum is a reading site for the Scriptures, the Catechism, the Compendium, and the documents of the Magisterium, in English and Portuguese. It exists to be read, and nothing else is asked of you for reading it:',
+		'colophon.pointFree': 'Free, and always free.',
+		'colophon.pointNoAds': 'No advertising, and no sponsored placement of any kind.',
+		'colophon.pointNoAccounts': 'No accounts. Nothing to sign up for, nothing to log in to.',
+		'colophon.pointNoTracking': 'No analytics and no third-party scripts. Nothing here reports on your reading.',
+		'colophon.pointOffline':
+			'Works offline once visited, so a poor connection is not a barrier to reading.',
+		'colophon.textsTitle': 'The texts',
+		'colophon.textsBody':
+			'Every text is reproduced in full and unaltered from a named source, and every work carries its own edition, its source page, and the date it was retrieved. Scripture uses public-domain translations. The Catechism, the Compendium and the magisterial documents are reproduced from the Holy See\u2019s own published texts.',
+		'colophon.countBible': 'Bible editions',
+		'colophon.countDocuments': 'magisterial documents',
+		'colophon.copyrightTitle': 'Copyright',
+		'colophon.copyrightBody1':
+			'The Catechism, the Compendium and the magisterial documents are the property of their rights holders \u2014 principally the Libreria Editrice Vaticana and the Dicastery for Communication. We reproduce them here without having asked permission first. We say so plainly rather than leave it to be discovered: this is a deliberate choice, not an oversight.',
+		'colophon.copyrightBody2':
+			'We make that choice because these texts are the Church\u2019s teaching, addressed to everyone, and because the concern rights holders have stated is the integrity of the text. So the text is never abridged, never paraphrased, never edited, and never placed beside advertising. Each work displays its rights holder\u2019s own copyright notice, in their wording, and links to the page it was taken from.',
+		'colophon.copyrightBody3':
+			'If you hold rights in any text here and would rather it were not published, write to us and we will take it down promptly. No argument, and no need to involve anyone else first.',
+		'colophon.contactTitle': 'Contact',
+		'colophon.contactBody': 'For anything at all, including the above:',
+		'colophon.contactPending':
+			'A contact address has not been set yet. This site should not be made public until it has one \u2014 the commitment above is not meaningful without a way to reach us.',
+		'colophon.buildTitle': 'How it is made',
+		'colophon.buildBody':
+			'The texts are collected from their published sources, parsed into a structured corpus, and rendered as static pages. Corrections to source defects are recorded individually, with the original wording, the corrected wording, and the reason \u2014 no text is ever silently changed.',
+		'bible.citedInCcc': 'Cited in the Catechism',
+		'bible.wholeChapter': 'This chapter',
+		'bible.verseNotInEdition': 'This verse number is not in this edition — see the note in the page source',
+		'bible.verseAbbrev': 'v.',
 		'ccc.readFullChapter': 'Read the full chapter',
-		'ccc.subsections': 'subsections',
+		'ccc.showSubsections': 'Show subsections',
+		'ccc.hideSubsections': 'Hide subsections',
 		'ccc.noParagraphNumber': 'No paragraph number in this corpus',
 		'copyright.sourceTitle': 'Open the original source page',
 		'lang.label': 'Language'
@@ -221,8 +257,45 @@ const dictionaries: Record<UiLang, Dictionary> = {
 
 		'citation.unavailable': 'Sem texto de fonte disponível para esta nota.',
 
+		'colophon.title': 'Colof\u00e3o',
+		'colophon.lede':
+			'O que \u00e9 este site, de onde v\u00eam os seus textos e qual a nossa posi\u00e7\u00e3o quanto \u00e0 sua reprodu\u00e7\u00e3o.',
+		'colophon.whatThisIs': 'O que \u00e9 isto',
+		'colophon.whatThisIsBody':
+			'O Depositum \u00e9 um site de leitura das Escrituras, do Catecismo, do Compêndio e dos documentos do Magist\u00e9rio, em portugu\u00eas e em ingl\u00eas. Existe para ser lido, e nada mais lhe \u00e9 pedido para o ler:',
+		'colophon.pointFree': 'Gratuito, e sempre gratuito.',
+		'colophon.pointNoAds': 'Sem publicidade nem qualquer conte\u00fado patrocinado.',
+		'colophon.pointNoAccounts': 'Sem contas. Nada para registar, nada para iniciar sess\u00e3o.',
+		'colophon.pointNoTracking':
+			'Sem an\u00e1lises de tr\u00e1fego e sem scripts de terceiros. Nada aqui relata a sua leitura.',
+		'colophon.pointOffline':
+			'Funciona sem liga\u00e7\u00e3o depois da primeira visita, para que uma liga\u00e7\u00e3o fraca n\u00e3o impe\u00e7a a leitura.',
+		'colophon.textsTitle': 'Os textos',
+		'colophon.textsBody':
+			'Cada texto \u00e9 reproduzido na \u00edntegra e sem altera\u00e7\u00f5es a partir de uma fonte identificada, e cada obra indica a sua edi\u00e7\u00e3o, a p\u00e1gina de origem e a data em que foi obtida. As Escrituras usam tradu\u00e7\u00f5es de dom\u00ednio p\u00fablico. O Catecismo, o Compêndio e os documentos do Magist\u00e9rio s\u00e3o reproduzidos a partir dos textos publicados pela Santa S\u00e9.',
+		'colophon.countBible': 'edi\u00e7\u00f5es b\u00edblicas',
+		'colophon.countDocuments': 'documentos do Magist\u00e9rio',
+		'colophon.copyrightTitle': 'Direitos de autor',
+		'colophon.copyrightBody1':
+			'O Catecismo, o Compêndio e os documentos do Magist\u00e9rio pertencem aos seus titulares de direitos \u2014 principalmente a Libreria Editrice Vaticana e o Dicast\u00e9rio para a Comunica\u00e7\u00e3o. Reproduzimo-los aqui sem ter pedido autoriza\u00e7\u00e3o pr\u00e9via. Dizemo-lo com clareza em vez de o deixar por descobrir: \u00e9 uma escolha deliberada, n\u00e3o um descuido.',
+		'colophon.copyrightBody2':
+			'Fazemos essa escolha porque estes textos s\u00e3o o ensino da Igreja, dirigido a todos, e porque a preocupa\u00e7\u00e3o manifestada pelos titulares de direitos \u00e9 a integridade do texto. Por isso o texto nunca \u00e9 abreviado, nunca parafraseado, nunca editado e nunca colocado junto a publicidade. Cada obra apresenta o aviso de direitos do seu titular, nas palavras dele, e liga \u00e0 p\u00e1gina de onde foi retirada.',
+		'colophon.copyrightBody3':
+			'Se detiver direitos sobre algum texto aqui presente e preferir que n\u00e3o seja publicado, escreva-nos e retiramo-lo prontamente. Sem discuss\u00e3o, e sem necessidade de envolver mais ningu\u00e9m.',
+		'colophon.contactTitle': 'Contacto',
+		'colophon.contactBody': 'Para qualquer assunto, incluindo o acima:',
+		'colophon.contactPending':
+			'Ainda n\u00e3o foi definido um endere\u00e7o de contacto. Este site n\u00e3o deve ser tornado p\u00fablico enquanto n\u00e3o o tiver \u2014 o compromisso acima n\u00e3o tem sentido sem uma forma de nos contactar.',
+		'colophon.buildTitle': 'Como \u00e9 feito',
+		'colophon.buildBody':
+			'Os textos s\u00e3o recolhidos das suas fontes publicadas, analisados para um corpus estruturado e apresentados como p\u00e1ginas est\u00e1ticas. As corre\u00e7\u00f5es a defeitos das fontes s\u00e3o registadas uma a uma, com a reda\u00e7\u00e3o original, a corrigida e o motivo \u2014 nenhum texto \u00e9 alterado em sil\u00eancio.',
+		'bible.citedInCcc': 'Citado no Catecismo',
+		'bible.wholeChapter': 'Este capítulo',
+		'bible.verseNotInEdition': 'Este número de versículo não existe nesta edição',
+		'bible.verseAbbrev': 'v.',
 		'ccc.readFullChapter': 'Ler o capítulo completo',
-		'ccc.subsections': 'subsecções',
+		'ccc.showSubsections': 'Mostrar subsecções',
+		'ccc.hideSubsections': 'Ocultar subsecções',
 		'ccc.noParagraphNumber': 'Sem número de parágrafo neste corpus',
 		'copyright.sourceTitle': 'Abrir a página de origem',
 		'lang.label': 'Idioma'
