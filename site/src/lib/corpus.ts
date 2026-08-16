@@ -863,7 +863,9 @@ export interface DocumentGroup {
 
 const DOCUMENT_WORK_ID_RE = /^([a-z0-9-]+)\.([a-z0-9-]+)\.([a-z]{2,3})$/;
 
-function parseDocumentWorkId(workId: string): { family: string; slug: string; lang: string } | undefined {
+function parseDocumentWorkId(
+	workId: string
+): { family: string; slug: string; lang: string } | undefined {
 	const m = DOCUMENT_WORK_ID_RE.exec(workId);
 	return m ? { family: m[1], slug: m[2], lang: m[3] } : undefined;
 }
@@ -954,6 +956,19 @@ export function documentSectionExists(workId: string, n: number): boolean {
 	return documentSectionNumberSets[workId]?.has(n) ?? false;
 }
 
+/**
+ * Whether `workId` has ANY sections built at all — index-backed (no fetch),
+ * so a caller can tell a withheld/never-built edition (an entry in
+ * `DocumentGroup.manifests` whose `sections.json` `sync-corpus.mjs` never
+ * wrote — site/unpublished.json, or a v1 EN/PT asymmetry) apart from a real
+ * one WITHOUT paying for `getDocumentSectionsAsync`'s whole-file read just to
+ * find out. `documents/[slug]/read/+page.ts` uses this to pick which
+ * language's sections to embed without fetching every language's file first.
+ */
+export function documentHasSections(workId: string): boolean {
+	return (documentSectionNumberSets[workId]?.size ?? 0) > 0;
+}
+
 /** The section number immediately before/after `n` that actually exists,
  *  or undefined at either end. Index-backed — see `documentSectionExists`. */
 export function getAdjacentDocumentSectionNumber(
@@ -986,8 +1001,30 @@ async function fetchDocumentSections(workId: string): Promise<DocumentSection[]>
 	return readContent<DocumentSection[]>(location);
 }
 
-export async function getDocumentSectionAsync(workId: string, n: number): Promise<DocumentSection | undefined> {
+export async function getDocumentSectionAsync(
+	workId: string,
+	n: number
+): Promise<DocumentSection | undefined> {
 	if (!documentSectionExists(workId, n)) return undefined;
 	const sections = await fetchDocumentSections(workId);
 	return sections.find((s) => s.n === n);
+}
+
+/**
+ * Every section of a document, in corpus order — the whole-document
+ * counterpart to `getDocumentSectionAsync`'s one-at-a-time lookup, for the
+ * continuous "read the full document" view (`documents/[slug]/read`).
+ * `fetchDocumentSections` already reads and memoizes the sections file
+ * whole (a document ships ONE file per work, unlike the CCC's per-chapter
+ * chunking — see this section's docblock), so this is a thin export rather
+ * than a new fetch path: calling it after/before `getDocumentSectionAsync`
+ * for the same work never costs a second read.
+ *
+ * Returns `[]` for a work with nothing built for it — an unknown work id, or
+ * a withheld edition, whose `sections.json` `sync-corpus.mjs` never wrote
+ * (site/unpublished.json) — rather than throwing, same posture as
+ * `fetchDocumentSections` itself and as `getDocumentSectionAsync` above.
+ */
+export async function getDocumentSectionsAsync(workId: string): Promise<DocumentSection[]> {
+	return fetchDocumentSections(workId);
 }

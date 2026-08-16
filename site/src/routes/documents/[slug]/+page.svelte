@@ -20,6 +20,7 @@
 	import UnpublishedNotice from '$lib/components/UnpublishedNotice.svelte';
 	import { displayTitle } from '$lib/titles';
 	import { documentKindLabel } from '$lib/document-labels';
+	import { formatPromulgated } from '$lib/dates';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { PageData } from './$types';
@@ -58,11 +59,15 @@
 		!hasTocAnchor && manifest ? getAdjacentDocumentSectionNumber(manifest.id, 0, 'next') : undefined
 	);
 
-	function formatDate(iso: string, l: string): string {
-		const d = new Date(iso);
-		if (Number.isNaN(d.getTime())) return iso;
-		return new Intl.DateTimeFormat(l.startsWith('pt') ? 'pt-PT' : 'en-US', { dateStyle: 'long' }).format(d);
-	}
+	// Whether this edition has ANY readable section at all — `hasTocAnchor`
+	// covers the normal case (a real structure tree with numbered anchors);
+	// `firstSectionN` covers the trivial-single-node fallback above (no TOC
+	// anchor, but a first section still exists). A manifest with neither
+	// (nothing built yet, distinct from `takedown`'s "built then withheld")
+	// has nowhere for a full-document link to point, so the link is gated on
+	// this rather than on `!takedown` alone — `strict: true` prerendering
+	// would otherwise fail the build the moment such a document appeared.
+	const hasAnySection = $derived(hasTocAnchor || firstSectionN !== undefined);
 </script>
 
 <svelte:head>
@@ -85,7 +90,7 @@
 			     In a subtitle already reading "Encyclical · Francis · <date>",
 			     the only date a document has needs no naming. -->
 			<time class="promulgated" datetime={manifest.promulgated}>
-				{formatDate(manifest.promulgated, lang)}
+				{formatPromulgated(manifest.promulgated, lang)}
 			</time>
 		</p>
 		{#if takedown}
@@ -95,7 +100,7 @@
 			     there is nothing to hide. -->
 			<UnpublishedNotice {manifest} info={takedown} />
 		{:else}
-			<p class="copyright-notice"><CopyrightNotice manifest={manifest} /></p>
+			<p class="copyright-notice"><CopyrightNotice {manifest} /></p>
 		{/if}
 
 		{#if !takedown && firstSectionN !== undefined}
@@ -104,32 +109,50 @@
 			</p>
 		{/if}
 
+		{#if !takedown && hasAnySection}
+			<!-- The continuous-reading entry point (`documents/[slug]/read/
+			     +page.svelte`), alongside rather than instead of "start reading":
+			     that link is for a reader who wants section 1, this one is for a
+			     reader who wants the whole thing on one page from wherever it
+			     starts. Gated on `hasAnySection`, not just `!takedown` — a
+			     document with a real structure tree but nothing built for
+			     `sections.json` yet would otherwise link to a route this corpus
+			     can't actually serve, failing the `strict: true` prerender build. -->
+			<p class="read-full-document">
+				<a href={`/documents/${data.slug}/read`}>{t('document.readFullDocument')} &rarr;</a>
+			</p>
+		{/if}
+
 		{#if !takedown}
 			<h2 class="toc-heading">{t('document.tableOfContents')}</h2>
 			<ol class="toc">
-			{#each rows as { node, depth } (node.title + node.paragraphs.join('-'))}
-				{@const hasAnchor = Number.isFinite(node.paragraphs[0])}
-				{@const dt = displayTitle(node, lang)}
-				<li style={`--depth: ${depth}`} class={`kind-${node.kind}`}>
-					{#if hasAnchor}
-						<a href={`/documents/${data.slug}/${node.paragraphs[0]}`}>
-							{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-							{dt.title}
-						</a>
-					{:else}
-						<!-- Same null-bound convention as the CCC/Compendium structure
+				{#each rows as { node, depth } (node.title + node.paragraphs.join('-'))}
+					{@const hasAnchor = Number.isFinite(node.paragraphs[0])}
+					{@const dt = displayTitle(node, lang)}
+					<li style={`--depth: ${depth}`} class={`kind-${node.kind}`}>
+						{#if hasAnchor}
+							<a href={`/documents/${data.slug}/${node.paragraphs[0]}`}>
+								{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+								{dt.title}
+							</a>
+						{:else}
+							<!-- Same null-bound convention as the CCC/Compendium structure
 						     trees (docs/corpus-schema.md, "amended 2026-08-14"):
 						     unnumbered front/back matter the structure knows about but
 						     no section number addresses -- nothing to link to. -->
-						<span class="unlinked" title="No section number in this corpus">
-							{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-							{dt.title}
-						</span>
-					{/if}
-					{#if hasAnchor}
-						<span class="range">§{node.paragraphs[0]}{node.paragraphs[1] !== node.paragraphs[0] ? `–${node.paragraphs[1]}` : ''}</span>
-					{/if}
-				</li>
+							<span class="unlinked" title="No section number in this corpus">
+								{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+								{dt.title}
+							</span>
+						{/if}
+						{#if hasAnchor}
+							<span class="range"
+								>§{node.paragraphs[0]}{node.paragraphs[1] !== node.paragraphs[0]
+									? `–${node.paragraphs[1]}`
+									: ''}</span
+							>
+						{/if}
+					</li>
 				{/each}
 			</ol>
 		{/if}
@@ -193,6 +216,25 @@
 	.start-reading a {
 		font-family: var(--font-serif);
 		font-size: 1.05rem;
+	}
+
+	/* The more prominent of the two entry points: bordered like `ccc/[n]`'s
+	   `.read-chapter` callout, since a reader choosing between "start
+	   reading" (plain text link, section 1 only) and "read the full
+	   document" (everything, one page) should see the second as the bigger
+	   commitment it visually is, not a smaller sibling of the first. */
+	.read-full-document {
+		margin: 0 0 1.5rem;
+		padding: 0.85rem 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.4rem;
+		background: var(--color-bg-elevated);
+	}
+
+	.read-full-document a {
+		font-family: var(--font-serif);
+		font-size: 1.05rem;
+		text-decoration: none;
 	}
 
 	.toc-heading {
