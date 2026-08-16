@@ -831,13 +831,27 @@ def validate(en: list[Prayer], pt: list[Prayer]) -> tuple[bool, list[str]]:
 # appendix has no numbered units to span).
 # --------------------------------------------------------------------------
 
+# The grouping itself is EDITORIAL, not from the source. The Compendium's
+# appendix has exactly two parts ("A. Common Prayers", "B. Formulas of
+# Catholic Doctrine") and prints no thematic headings within Part A; these
+# five are ours, chosen so 24 prayers read as a browsable list instead of a
+# flat run. Kept here, in the generator, so a re-parse reproduces them and
+# nothing hand-written has to survive one.
+#
+# Titles are therefore OURS TO TRANSLATE — there is no source wording to be
+# faithful to. Each group carries one title per language; a language missing
+# from the mapping falls back to the English so a new language never renders
+# an empty heading.
 STRUCTURE_GROUPS = [
     (
-        "Basic Prayers",
+        {"en": "Basic Prayers", "pt": "Ora\u00e7\u00f5es fundamentais"},
         ["sign-of-the-cross", "glory-be", "hail-mary", "angel-of-god", "eternal-rest"],
     ),
     (
-        "Marian and Devotional Prayers",
+        {
+            "en": "Marian and Devotional Prayers",
+            "pt": "Ora\u00e7\u00f5es marianas e devocionais",
+        },
         [
             "angelus",
             "regina-caeli",
@@ -852,9 +866,12 @@ STRUCTURE_GROUPS = [
             "memorare",
         ],
     ),
-    ("The Rosary", ["rosary"]),
+    ({"en": "The Rosary", "pt": "O Ros\u00e1rio"}, ["rosary"]),
     (
-        "Prayers of the Eastern Churches",
+        {
+            "en": "Prayers of the Eastern Churches",
+            "pt": "Ora\u00e7\u00f5es das Igrejas orientais",
+        },
         [
             "coptic-incense-prayer",
             "syro-maronite-farewell-to-the-altar",
@@ -862,16 +879,20 @@ STRUCTURE_GROUPS = [
         ],
     ),
     (
-        "Acts of Faith, Hope, Love and Contrition",
+        {
+            "en": "Acts of Faith, Hope, Love and Contrition",
+            "pt": "Atos de f\u00e9, esperan\u00e7a, caridade e contri\u00e7\u00e3o",
+        },
         ["act-of-faith", "act-of-hope", "act-of-love", "act-of-contrition"],
     ),
 ]
 
 
-def build_structure(prayers: list[Prayer]) -> list[dict]:
+def build_structure(prayers: list[Prayer], lang: str) -> list[dict]:
     by_slug = {p.slug: p for p in prayers}
     nodes = []
-    for title, slugs in STRUCTURE_GROUPS:
+    for titles, slugs in STRUCTURE_GROUPS:
+        title = titles.get(lang, titles["en"])
         nodes.append(
             {
                 "kind": "section",
@@ -1021,7 +1042,7 @@ def write_outputs(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     manifest = build_manifest(lang, prayers, applied_corrections)
-    structure = build_structure(prayers)
+    structure = build_structure(prayers, lang)
     prayers_json = [p.to_dict() for p in prayers]
 
     (out_dir / "manifest.json").write_text(
