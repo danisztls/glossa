@@ -204,7 +204,26 @@
 						{dt.title}
 					</span>
 				{/if}
-				{#if kids.length > 0}
+				<!-- ONLY THE READER'S OWN BRANCH IS EXPANDED. A row's children
+				     render when that row contains the current position — which
+				     covers both the ancestors leading down to it and the current
+				     row itself, so the reader always sees the level they are on
+				     plus what is inside it, and nothing from branches they are
+				     not in.
+
+				     This replaces rendering the whole tree at every level. That
+				     was defensible for the CCC and Compendium, whose trees were
+				     measured at 32-33 rows, and wrong for documents, which carry
+				     no such floor: an unfiltered four-level encyclical tree ran
+				     to hundreds of rows in a 17rem column, burying the handful
+				     that say where the reader actually is.
+
+				     Collapsed branches are not hidden content — every one of
+				     them is still reachable, because its own top-level ancestor
+				     is still a link, and following it expands that branch in
+				     turn. Nothing needs client-side disclosure state, which is
+				     also why this keeps working with JavaScript off. -->
+				{#if kids.length > 0 && state.onPath}
 					{@render level(kids)}
 				{/if}
 			</li>

@@ -3,6 +3,7 @@ import {
 	OUTLINE_KINDS,
 	contains,
 	hrefFor,
+	isExpanded,
 	marker,
 	outlineChildren,
 	rowState
@@ -131,5 +132,72 @@ describe('hrefFor', () => {
 	it('anchor mode: an #s{n} fragment, ignoring basePath', () => {
 		expect(hrefFor(19, 'anchor', '/documents/gaudium-et-spes')).toBe('#s19');
 		expect(hrefFor(19, 'anchor', undefined)).toBe('#s19');
+	});
+});
+
+describe('isExpanded — only the reader’s own branch', () => {
+	// part 1 (¶1-100) > chapter A (¶1-50) > article (¶1-20)
+	//                 > chapter B (¶51-100)
+	// part 2 (¶101-200)
+	const tree: StructureNode[] = [
+		{
+			kind: 'part',
+			title: 'Part One',
+			paragraphs: [1, 100],
+			children: [
+				{
+					kind: 'chapter',
+					title: 'Chapter A',
+					paragraphs: [1, 50],
+					children: [{ kind: 'article', title: 'Article', paragraphs: [1, 20], children: [] }]
+				},
+				{ kind: 'chapter', title: 'Chapter B', paragraphs: [51, 100], children: [] }
+			]
+		},
+		{ kind: 'part', title: 'Part Two', paragraphs: [101, 200], children: [] }
+	] as unknown as StructureNode[];
+
+	const partOne = tree[0];
+	const partTwo = tree[1];
+	const chapterA = partOne.children![0];
+	const chapterB = partOne.children![1];
+
+	it('expands the ancestors of the reader’s position', () => {
+		// Reading ¶10: inside Part One > Chapter A > Article.
+		expect(isExpanded(partOne, 10, undefined)).toBe(true);
+		expect(isExpanded(chapterA, 10, undefined)).toBe(true);
+	});
+
+	it('leaves sibling branches collapsed', () => {
+		// The whole point: Chapter B and Part Two contribute no rows while the
+		// reader is at ¶10, which is what keeps a deep tree readable.
+		expect(isExpanded(chapterB, 10, undefined)).toBe(false);
+		expect(isExpanded(partTwo, 10, undefined)).toBe(false);
+	});
+
+	it('expands the reader’s own row, so they see what is under it', () => {
+		// ¶60 is in Chapter B, which has no children containing it — it is the
+		// current row, and it still expands (vacuously here, but the flag must
+		// be true or a current row with children would show none of them).
+		expect(isExpanded(chapterB, 60, undefined)).toBe(true);
+		expect(isExpanded(chapterA, 60, undefined)).toBe(false);
+	});
+
+	it('collapses everything when there is no current position', () => {
+		// linkMode="anchor" — the whole document is already on the page.
+		expect(isExpanded(partOne, undefined, undefined)).toBe(false);
+		expect(isExpanded(partTwo, undefined, undefined)).toBe(false);
+	});
+
+	it('never expands an unaddressable row', () => {
+		// Null bounds (docs/corpus-schema.md) contain nothing, so they cannot
+		// be on the path — `contains` guards this, and this pins it.
+		const unaddressable = {
+			kind: 'sub',
+			title: 'Front matter',
+			paragraphs: [null, null],
+			children: [{ kind: 'sub', title: 'Child', paragraphs: [1, 5], children: [] }]
+		} as unknown as StructureNode;
+		expect(isExpanded(unaddressable, 3, undefined)).toBe(false);
 	});
 });

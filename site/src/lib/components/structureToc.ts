@@ -93,6 +93,33 @@ export function rowState(
 }
 
 /**
+ * Whether a row's children should be rendered — i.e. whether this branch of
+ * the tree is expanded.
+ *
+ * Only the reader's own branch is. A row expands when it contains the
+ * current position, which is true of every ancestor down to the reader's row
+ * AND of that row itself, so what they see is the path they took, the level
+ * they are on, and what is inside it — never a sibling branch's interior.
+ *
+ * With no current position (`linkMode="anchor"`, where the whole document is
+ * already on one page and no single row is more current than another) nothing
+ * expands and the sidebar shows the document's top-level divisions. That is
+ * the right granularity for jumping around a page you are already on.
+ *
+ * NOT a collapse/expand CONTROL: there is no disclosure state anywhere, no
+ * toggle, and nothing to keep in sync. A collapsed branch opens by being
+ * navigated into. That keeps the sidebar working identically with JavaScript
+ * disabled, which a `<details>`-based or state-based version would not.
+ */
+export function isExpanded(
+	node: StructureNode,
+	currentN: number | undefined,
+	kinds: Set<StructureNode['kind']> | undefined
+): boolean {
+	return rowState(node, currentN, kinds).onPath;
+}
+
+/**
  * The leading marker shown before a row's title — `kindOrdinalLabel`'s
  * abbreviated, kind-disambiguated form ("Ch. 3", "Art. 2") when one exists
  * for this node's kind, falling back to `displayTitle`'s bare ordinal
