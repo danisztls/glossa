@@ -1,0 +1,94 @@
+# CLAUDE.md
+
+Operational notes for working on Depositum. Architecture and rationale live in
+`PLAN.md`, `docs/decisions.md`, `docs/corpus-schema.md` and
+`docs/link-surface.md` — read those first. This file is only the things that
+have actually bitten someone.
+
+## The corpus: two directories, very different value
+
+`corpus/` is gitignored and lives only in the main checkout.
+
+| Path | Value | Rule |
+| --- | --- | --- |
+| `corpus/works/` | Parsed output. Regenerable from cache in minutes, zero network. | Safe to rebuild. |
+| `corpus/raw/` | Every scraped source page. The **only** artifact that cost real fetches. | Treat as write-once. Never delete. |
+
+The project's stated insurance policy is that any capture regret is fixed by
+**re-parsing, never re-crawling** (`docs/link-surface.md`). That only holds while
+`raw/` is intact. When judging whether a deletion is safe, the question is never
+"is this corpus data" but *which of the two it is*.
+
+**Deleting generated works is a decision for the person directing the work, not
+a judgment call to make mid-task.** An agent once removed 105 empty work
+directories on its own stub-detection heuristic; nothing was lost, but nothing
+had authorized it either. If you are delegating, name the deletable set and the
+protected set explicitly — a brief that only says what to *fix* leaves deletion
+as an unstated judgment call, and it will get taken.
+
+## Scraping vatican.va
+
+- `robots.txt` says `Crawl-delay: 2`. This is a commitment in
+  `docs/decisions.md` about our conduct toward someone else's server, not a
+  tuning parameter.
+- **Never run two sweeps at once.** It doubles the request rate and races two
+  writers on the same work directory. `vatican_docs.py` holds a heartbeat lock;
+  don't work around it.
+- Expect ~1-in-6-to-8 transient failures (Azure edge flakiness, no 403s, no
+  CAPTCHA). Retry with backoff; a genuine failure belongs in the run summary,
+  never silently absent from the corpus.
+- Source defects go through `pipeline/corrections/` with locator, exact
+  before/after, reason and evidence — never a code special-case, and never
+  invented text. A defect with no known correct value gets documented, not
+  fixed (`docs/decisions.md` §Source-defect corrections policy).
+
+## Running the site
+
+Everything is prerendered with `strict: true`, so a broken link fails the build
+rather than shipping.
+
+```sh
+cd site
+CORPUS_DIR=/home/dani/Dev/me/scriptura/corpus npm run dev     # or npm run build
+```
+
+**Pass `CORPUS_DIR` when running from a git worktree.** The default `../corpus`
+resolves inside the worktree, where no corpus exists, and the site then silently
+falls back to the test fixtures — two Bible books and a few dozen paragraphs,
+which looks broken in a confusing way rather than an obvious one.
+
+`npm test` always uses fixtures, never a synced corpus: `corpus.ts` checks
+`import.meta.env.VITEST` explicitly. The absence of a `pretest` hook is *not*
+what guarantees this — `prebuild` syncs and that directory persists, so on any
+machine where a build has run the glob would otherwise pick up real data. The
+fixtures deliberately contain absent chapters and out-of-range cross-references
+to exercise the not-in-corpus paths.
+
+A real-corpus build emits ~6,100 pages and takes minutes. Don't run it casually.
+
+## Sandbox quirks that waste time
+
+- **`rm` is aliased to `trash`**, which cannot write `~/.local/share/Trash`
+  under the sandbox. It does not fail — it hangs forever at ~80% CPU and leaks
+  the process. Delete with `/usr/bin/rm`.
+- **Sandboxed `ps` cannot see processes from other tool calls** — each runs in
+  its own PID namespace, so a genuinely-alive background job reads as dead.
+  Don't use `ps` or `os.kill(pid, 0)` to decide whether a long job is running;
+  use a heartbeat file, or check with the sandbox disabled.
+- `git commit` needs `~/.gnupg` for signing, which the sandbox blocks.
+
+## Work that spans languages
+
+Both Bible editions and both CCC/Compendium editions cover the same canonical
+address space, and that symmetry is a free QA oracle: when a document exists in
+two languages, their unit-number sets must match, and any asymmetry is a defect.
+That check caught three parser bugs that each looked internally plausible in one
+language alone. It does **not** generalize to the encyclicals, where a missing
+translation is legitimate and common (Leo XIII is ~17% translated into
+Portuguese) — there the rule is "when both exist, they must agree".
+
+Citations may use Hebrew or Vulgate versification. The corpus canonicalizes on
+**Vulgate**; `versification.ts`/`versification.py` convert. Note that a wrong
+chapter does not fail an existence check — `Joel 3:1-5` resolves to real but
+wrong text — so conversion is applied unconditionally for divergent books rather
+than as a fallback.
