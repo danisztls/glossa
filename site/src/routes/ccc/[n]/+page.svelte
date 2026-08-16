@@ -1,12 +1,20 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { cccParagraphExists } from '$lib/corpus';
+	import { cccParagraphExists, flattenCccStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
 	import { displayTitle } from '$lib/titles';
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
+	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
+	import { OUTLINE_KINDS } from '$lib/components/structureToc';
+	import CompareToggle from '$lib/components/CompareToggle.svelte';
+	import CompareGrid from '$lib/components/CompareGrid.svelte';
+	import { alignByNumber, isCompareRequested, withCompareParam } from '$lib/compare';
 	import { t } from '$lib/i18n.svelte';
+	import type { CccParagraph } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -24,6 +32,43 @@
 	);
 	const current = $derived(data.byLang[lang]);
 
+	/**
+	 * Compare mode for a single paragraph: the CCC's own EN/PT language
+	 * symmetry guarantee (docs/decisions.md — paragraph NUMBER sets match
+	 * across languages) means `secondaryLang` is almost always present, and
+	 * `data.byLang` already embeds every language `+page.ts` found (its own
+	 * docblock) — so, like the Bible chapter route, comparing here is free:
+	 * no fetch, the second column's paragraph is already on the page.
+	 */
+	const secondaryLang = $derived(availableLangs.find((l) => l !== lang));
+	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
+
+	// BROWSER-ONLY — see `bible/[book]/[chapter]/+page.svelte`'s `citedRange`
+	// docblock: reading `page.url.searchParams` during prerendering throws.
+	const compareRequested = $derived.by(() => (browser ? isCompareRequested(page.url) : false));
+	const compareActive = $derived(
+		compareRequested && current !== undefined && secondary !== undefined
+	);
+
+	function toggleCompare() {
+		goto(withCompareParam(page.url, !compareActive), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
+	}
+
+	// A single-paragraph comparison is still an `alignByNumber` call, not a
+	// bespoke two-column special case: both sides carry the SAME paragraph
+	// number `data.n` by construction (each is looked up by it in +page.ts),
+	// so the result is always exactly one row when both languages exist —
+	// but going through the shared function keeps this route consistent with
+	// the chapter/multi-row callers rather than hand-rolling a degenerate
+	// case that happens to look the same today.
+	const compareRows = $derived(
+		current && secondary ? alignByNumber([current.paragraph], [secondary.paragraph]) : []
+	);
+
 	// `related` cross-references may point outside whatever slice of the
 	// corpus is actually present (always true for this fixture; possible
 	// even for the real corpus if it's ever built/served partially) — only
@@ -32,6 +77,12 @@
 	function relatedExists(n: number): boolean {
 		return cccParagraphExists(lang, n);
 	}
+
+	// The sidebar's own tree, recomputed whenever the reader switches content
+	// language mid-read — same index-backed, no-fetch call `/ccc/+page.svelte`
+	// makes for the full table of contents (`getCccStructure`'s flattened
+	// sibling), just for whichever language is active here.
+	const structure = $derived(flattenCccStructure(lang));
 
 	// Reactive rather than `onMount`: re-records the position whenever the
 	// reader toggles content language mid-read too, so "continue reading"
@@ -45,83 +96,132 @@
 	<title>CCC {data.n} — {t('home.title')}</title>
 </svelte:head>
 
+{#snippet leftCell(paragraph: CccParagraph)}
+	<CccParagraphText {paragraph} {lang} />
+{/snippet}
+
+{#snippet rightCell(paragraph: CccParagraph)}
+	<CccParagraphText {paragraph} lang={secondaryLang ?? lang} />
+{/snippet}
+
 {#if current}
-	<article class="content-column">
-		<nav class="breadcrumb" aria-label="Breadcrumb">
-			<a href="/ccc">{t('nav.ccc')}</a>
-			{#each current.breadcrumb as node (node.title)}
-				{@const dt = displayTitle(node, lang)}
-				<span class="sep">›</span>
-				<a href={`/ccc/${node.paragraphs[0]}`}>
-					{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-					{dt.title}
-				</a>
-			{/each}
-		</nav>
-
-		<h1>
-			{#if current.paragraph.in_brief}
-				<span class="in-brief-tag">{t('ccc.inBrief')}</span>
-			{/if}
-			CCC {data.n}
-		</h1>
-
-		<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
-
-		<div class="reading-text ccc-body" lang={current.work.language}>
-			<CccParagraphText paragraph={current.paragraph} {lang} />
-		</div>
-
-		{#if current.paragraph.related.length > 0}
-			<p class="related">
-				{t('ccc.related')}:
-				{#each current.paragraph.related as n, i (n)}
-					{#if i > 0}·{/if}
-					{#if relatedExists(n)}
-						<a href={`/ccc/${n}`}>¶{n}</a>
-					{:else}
-						<span class="related-unresolved" title="Not in this fixture">¶{n}</span>
-					{/if}
+	<div class="reading-layout" class:compare={compareActive}>
+		<article class="content-column">
+			<nav class="breadcrumb" aria-label="Breadcrumb">
+				<a href="/ccc">{t('nav.ccc')}</a>
+				{#each current.breadcrumb as node (node.title)}
+					{@const dt = displayTitle(node, lang)}
+					<span class="sep">›</span>
+					<a href={`/ccc/${node.paragraphs[0]}`}>
+						{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+						{dt.title}
+					</a>
 				{/each}
-			</p>
-		{/if}
+			</nav>
 
-		{#if current.chapter}
-			{@const dt = displayTitle(current.chapter.node, lang)}
-			<!--
+			<div class="title-row">
+				<h1>
+					{#if current.paragraph.in_brief}
+						<span class="in-brief-tag">{t('ccc.inBrief')}</span>
+					{/if}
+					CCC {data.n}
+				</h1>
+				{#if secondary}
+					<div class="compare-toolbar">
+						<CompareToggle active={compareActive} onclick={toggleCompare} />
+					</div>
+				{/if}
+			</div>
+
+			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+
+			{#if compareActive && secondary}
+				<CompareGrid
+					rows={compareRows}
+					leftLang={current.work.language}
+					rightLang={secondary.work.language}
+					leftLabel={current.work.short_title}
+					rightLabel={secondary.work.short_title}
+					left={leftCell}
+					right={rightCell}
+				/>
+			{:else}
+				<div class="reading-text ccc-body" lang={current.work.language}>
+					<CccParagraphText paragraph={current.paragraph} {lang} />
+				</div>
+			{/if}
+
+			{#if current.paragraph.related.length > 0}
+				<p class="related">
+					{t('ccc.related')}:
+					{#each current.paragraph.related as n, i (n)}
+						{#if i > 0}·{/if}
+						{#if relatedExists(n)}
+							<a href={`/ccc/${n}`}>¶{n}</a>
+						{:else}
+							<span class="related-unresolved" title="Not in this fixture">¶{n}</span>
+						{/if}
+					{/each}
+				</p>
+			{/if}
+
+			{#if current.chapter}
+				{@const dt = displayTitle(current.chapter.node, lang)}
+				<!--
 				Reading a single paragraph is the citation case; this is the
 				escape hatch to the reading case. The hash carries this
 				paragraph's own number so the reader lands on the text they
 				were already looking at rather than at the chapter's top,
 				having lost their place as the price of getting context.
 			-->
-			<p class="read-chapter">
-				<a href={`/ccc/chapter/${current.chapter.start}#p${data.n}`}>
-					{t('ccc.readFullChapter')}
-					<span class="chapter-name">
-						{#if dt.ordinal}{dt.ordinal}{/if}
-						{dt.title}
-					</span>
-					<span class="chapter-range">¶{current.chapter.start}–{current.chapter.end}</span>
-				</a>
-			</p>
-		{/if}
+				<p class="read-chapter">
+					<a href={`/ccc/chapter/${current.chapter.start}#p${data.n}`}>
+						{t('ccc.readFullChapter')}
+						<span class="chapter-name">
+							{#if dt.ordinal}{dt.ordinal}{/if}
+							{dt.title}
+						</span>
+						<span class="chapter-range">¶{current.chapter.start}–{current.chapter.end}</span>
+					</a>
+				</p>
+			{/if}
 
-		<nav class="paragraph-nav" aria-label="Paragraph navigation">
-			{#if current.prev}
-				<a href={`/ccc/${current.prev.n}`} rel="prev"
-					>&larr; {t('ccc.prevParagraph')} · ¶{current.prev.n}</a
-				>
-			{:else}
-				<span></span>
-			{/if}
-			{#if current.next}
-				<a href={`/ccc/${current.next.n}`} rel="next"
-					>{t('ccc.nextParagraph')} · ¶{current.next.n} &rarr;</a
-				>
-			{/if}
-		</nav>
-	</article>
+			<nav class="paragraph-nav" aria-label="Paragraph navigation">
+				{#if current.prev}
+					<a href={`/ccc/${current.prev.n}`} rel="prev"
+						>&larr; {t('ccc.prevParagraph')} · ¶{current.prev.n}</a
+					>
+				{:else}
+					<span></span>
+				{/if}
+				{#if current.next}
+					<a href={`/ccc/${current.next.n}`} rel="next"
+						>{t('ccc.nextParagraph')} · ¶{current.next.n} &rarr;</a
+					>
+				{/if}
+			</nav>
+		</article>
+
+		<!-- Hidden below 80rem, alongside `.reading-layout`'s own breakpoint
+	     (app.css) — there is no pre-existing mobile presentation to preserve
+	     here (this route had no chapter/TOC navigation in the reading view
+	     before this sidebar existed), so the desktop-only addition is simply
+	     absent on narrow viewports rather than duplicated like the Bible
+	     picker. Omitted entirely in compare mode — see app.css's
+	     `.reading-layout.compare` docblock. -->
+		{#if !compareActive}
+			<aside class="reading-aside">
+				<StructureSidebarToc
+					{structure}
+					currentN={data.n}
+					{lang}
+					heading={t('ccc.tableOfContents')}
+					basePath="/ccc"
+					outlineKinds={OUTLINE_KINDS}
+				/>
+			</aside>
+		{/if}
+	</div>
 {/if}
 
 <style>
@@ -150,6 +250,21 @@
 		display: flex;
 		align-items: center;
 		gap: 0.6rem;
+	}
+
+	.title-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.title-row h1 {
+		margin: 0;
+	}
+
+	.title-row .compare-toolbar {
+		margin: 0;
 	}
 
 	.copyright-notice {
@@ -221,5 +336,15 @@
 
 	.paragraph-nav a {
 		text-decoration: none;
+	}
+
+	/* No mobile counterpart exists to preserve (see the markup comment above
+	   the aside) — below `.reading-layout`'s own breakpoint (app.css) this
+	   simply isn't shown, rather than falling back to a plain block after
+	   the text. */
+	@media (max-width: 79.9375rem) {
+		.reading-aside {
+			display: none;
+		}
 	}
 </style>

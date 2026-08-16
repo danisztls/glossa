@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { getAdjacentChapterAcrossBooks, getCccCitationsForChapter } from '$lib/corpus';
+	import {
+		baseLang,
+		getAdjacentChapterAcrossBooks,
+		getCccCitationsForChapter,
+		listEditions
+	} from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { setPosition } from '$lib/reading-position';
@@ -10,7 +16,17 @@
 	// it, and the heading is already doing the work of marking the opening.
 	import { splitDropCap } from '$lib/dropcap';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
+	import CompareToggle from '$lib/components/CompareToggle.svelte';
+	import CompareGrid from '$lib/components/CompareGrid.svelte';
+	import {
+		alignByNumber,
+		isCompareRequested,
+		numberSetsDiffer,
+		pickComparisonEdition,
+		withCompareParam
+	} from '$lib/compare';
 	import { t } from '$lib/i18n.svelte';
+	import type { Verse } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -34,6 +50,67 @@
 		})()
 	);
 	const current = $derived(data.byWorkId[workId]);
+
+	/**
+	 * Compare mode: the same chapter, a second edition, aligned verse by
+	 * verse — see `$lib/compare.ts`'s module docblock for why alignment is by
+	 * verse NUMBER and for what the real corpus measurement found about how
+	 * often these two editions actually disagree on what a verse number
+	 * means (30 of 1,333 common chapters, three distinct causes).
+	 *
+	 * `data.byWorkId` already embeds EVERY edition (`+page.ts`'s own
+	 * docblock) precisely because this route is prerendered — so, unlike
+	 * `documents/[slug]/read`, comparing here costs nothing extra: no fetch,
+	 * no loading state, the second column's text is already on the page.
+	 */
+	const secondaryWorkId = $derived(
+		pickComparisonEdition(
+			workId,
+			listEditions('bible')
+				.filter((w) => availableWorkIds.includes(w.id))
+				.map((w) => ({ id: w.id, lang: baseLang(w.language) }))
+		)?.id
+	);
+	const secondary = $derived(secondaryWorkId ? data.byWorkId[secondaryWorkId] : undefined);
+
+	/**
+	 * BROWSER-ONLY, same reasoning as `citedRange` below: reading
+	 * `page.url.searchParams` during prerendering throws, because one
+	 * prerendered file has to serve every query string that points at it.
+	 * `?compare=1` is therefore a pure enhancement layered on a chapter that
+	 * already renders complete (single column) without it — a no-JS reader
+	 * gets the ordinary reading view, never a half-built compare grid.
+	 */
+	const compareRequested = $derived.by(() => (browser ? isCompareRequested(page.url) : false));
+	const compareActive = $derived(
+		compareRequested && current !== undefined && secondary !== undefined
+	);
+
+	function toggleCompare() {
+		goto(withCompareParam(page.url, !compareActive), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
+	}
+
+	const compareRows = $derived(
+		current && secondary ? alignByNumber(current.chapter.verses, secondary.chapter.verses) : []
+	);
+
+	/** See `$lib/compare.ts`'s `numberSetsDiffer` — surfaced as a plain
+	 *  advisory note rather than silently trusted, because a verse number
+	 *  present on both sides is not a guarantee its two editions printed the
+	 *  same sentence at it (Psalm 13 is the clean example — see module
+	 *  docblock). */
+	const compareVersesDiffer = $derived(
+		current && secondary
+			? numberSetsDiffer(
+					current.chapter.verses.map((v) => v.n),
+					secondary.chapter.verses.map((v) => v.n)
+				)
+			: false
+	);
 
 	const prev = $derived(getAdjacentChapterAcrossBooks(workId, data.osis, data.chapterN, 'prev'));
 	const next = $derived(getAdjacentChapterAcrossBooks(workId, data.osis, data.chapterN, 'next'));
@@ -140,9 +217,7 @@
 			}))
 	);
 
-	const cccCitationTotal = $derived(
-		new Set(cccCitationRows.flatMap((row) => row.paragraphs)).size
-	);
+	const cccCitationTotal = $derived(new Set(cccCitationRows.flatMap((row) => row.paragraphs)).size);
 
 	// Reactive rather than onMount: the edition can now change without a
 	// navigation (the URL no longer names one), so "continue reading" has to
@@ -159,80 +234,143 @@
 	<title>{current?.book.name} {data.chapterN} — {current?.work.short_title}</title>
 </svelte:head>
 
+{#snippet verseCell(verse: Verse)}
+	<p class="compare-verse"><sup class="verse-num">{verse.n}</sup>{verse.text}</p>
+{/snippet}
+
 {#if current}
-	<article class="content-column">
-		<p class="edition-label">{current.work.title}</p>
-		<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
-		<h1>{current.book.name} {current.chapter.n}</h1>
+	<div class="reading-layout" class:compare={compareActive}>
+		<article class="content-column">
+			<p class="edition-label">{current.work.title}</p>
+			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+			<div class="title-row">
+				<h1>{current.book.name} {current.chapter.n}</h1>
+				{#if secondary}
+					<div class="compare-toolbar">
+						<CompareToggle active={compareActive} onclick={toggleCompare} />
+					</div>
+				{/if}
+			</div>
 
-		<BookChapterPicker currentWorkId={workId} currentOsis={data.osis} currentChapter={data.chapterN} />
+			<!-- Kept exactly as it was before the sidebar existed — collapsed
+		     behind `<summary>`, right under the heading. Hidden at >= 80rem
+		     (see `.mobile-picker` below) in favour of the always-open copy in
+		     `.reading-aside`, but below that width nothing here changes: a
+		     reader on a narrow viewport gets the identical picker in the
+		     identical place they always have. Shown in compare mode too —
+		     navigation isn't a compare-mode concern. -->
+			<div class="mobile-picker">
+				<BookChapterPicker
+					currentWorkId={workId}
+					currentOsis={data.osis}
+					currentChapter={data.chapterN}
+				/>
+			</div>
 
-		<div class="reading-text" lang={current.work.language}>
-			{#each current.chapter.verses as verse, i (verse.n)}
-			{@const heading = headingBefore(verse.n)}
-			{#if heading}
-				<h2 class="section-heading">{heading.text}</h2>
+			{#if compareActive && secondary}
+				<CompareGrid
+					rows={compareRows}
+					leftLang={current.work.language}
+					rightLang={secondary.work.language}
+					leftLabel={current.work.short_title}
+					rightLabel={secondary.work.short_title}
+					left={verseCell}
+					right={verseCell}
+					note={compareVersesDiffer ? t('compare.versificationNote') : undefined}
+				/>
+			{:else}
+				<div class="reading-text" lang={current.work.language}>
+					{#each current.chapter.verses as verse, i (verse.n)}
+						{@const heading = headingBefore(verse.n)}
+						{#if heading}
+							<h2 class="section-heading">{heading.text}</h2>
+						{/if}
+						<span id={`v${verse.n}`} class="verse" class:cited={isCited(verse.n)}>
+							<sup class="verse-num">{verse.n}</sup>{#if i === 0 && !heading}{@const cap =
+									splitDropCap(verse.text)}{#if cap.first}<span class="drop-cap-letter"
+										>{cap.first}</span
+									>{cap.rest}{:else}{verse.text}{/if}{:else}{verse.text}{/if}
+						</span>
+					{/each}
+				</div>
 			{/if}
-			<span id={`v${verse.n}`} class="verse" class:cited={isCited(verse.n)}>
-				<sup class="verse-num">{verse.n}</sup
-				>{#if i === 0 && !heading}{@const cap = splitDropCap(verse.text)}{#if cap.first}<span
-							class="drop-cap-letter">{cap.first}</span
-						>{cap.rest}{:else}{verse.text}{/if}{:else}{verse.text}{/if}
-			</span>
-		{/each}
-	</div>
 
-	{#if cccCitationRows.length > 0}
-		<section class="ccc-citations" aria-labelledby="ccc-citations-heading">
-			<h2 id="ccc-citations-heading">
-				{t('bible.citedInCcc')}
-				<span class="count">{cccCitationTotal}</span>
-			</h2>
-			<ul>
-				{#each cccCitationRows as row (row.verse)}
-					<li>
-						<!-- Verse 0 is the corpus's whole-chapter citation sentinel
+			{#if cccCitationRows.length > 0}
+				<section class="ccc-citations" aria-labelledby="ccc-citations-heading">
+					<h2 id="ccc-citations-heading">
+						{t('bible.citedInCcc')}
+						<span class="count">{cccCitationTotal}</span>
+					</h2>
+					<ul>
+						{#each cccCitationRows as row (row.verse)}
+							<li>
+								<!-- Verse 0 is the corpus's whole-chapter citation sentinel
 						     (`verses: []`) — the Catechism cited the chapter, not a
 						     verse in it, and saying so is more honest than picking a
 						     verse or expanding across all of them. -->
-						<span class="verse-ref">
-							{#if row.verse === 0}
-								{t('bible.wholeChapter')}
-							{:else if row.present}
-								<a href={`#v${row.verse}`}>{t('bible.verseAbbrev')}&nbsp;{row.verse}</a>
-							{:else}
-								<span class="verse-absent" title={t('bible.verseNotInEdition')}>
-									{t('bible.verseAbbrev')}&nbsp;{row.verse}
+								<span class="verse-ref">
+									{#if row.verse === 0}
+										{t('bible.wholeChapter')}
+									{:else if row.present}
+										<a href={`#v${row.verse}`}>{t('bible.verseAbbrev')}&nbsp;{row.verse}</a>
+									{:else}
+										<span class="verse-absent" title={t('bible.verseNotInEdition')}>
+											{t('bible.verseAbbrev')}&nbsp;{row.verse}
+										</span>
+									{/if}
 								</span>
-							{/if}
-						</span>
-						<span class="paragraphs">
-							{#each row.paragraphs as n, i (n)}
-								{#if i > 0}<span class="sep" aria-hidden="true">·</span>{/if}
-								<a href={`/ccc/${n}`}>¶{n}</a>
-							{/each}
-						</span>
-					</li>
-				{/each}
-			</ul>
-		</section>
-	{/if}
+								<span class="paragraphs">
+									{#each row.paragraphs as n, i (n)}
+										{#if i > 0}<span class="sep" aria-hidden="true">·</span>{/if}
+										<a href={`/ccc/${n}`}>¶{n}</a>
+									{/each}
+								</span>
+							</li>
+						{/each}
+					</ul>
+				</section>
+			{/if}
 
-	<nav class="chapter-nav" aria-label="Chapter navigation">
-		{#if prev}
-			<a href={`/bible/${prev.osis}/${prev.chapter}`} rel="prev">
-				&larr; {t('bible.prevChapter')}
-			</a>
-		{:else}
-			<span></span>
+			<nav class="chapter-nav" aria-label="Chapter navigation">
+				{#if prev}
+					<a href={`/bible/${prev.osis}/${prev.chapter}`} rel="prev">
+						&larr; {t('bible.prevChapter')}
+					</a>
+				{:else}
+					<span></span>
+				{/if}
+				{#if next}
+					<a href={`/bible/${next.osis}/${next.chapter}`} rel="next">
+						{t('bible.nextChapter')} &rarr;
+					</a>
+				{/if}
+			</nav>
+		</article>
+
+		<!-- Hidden below 80rem — `.mobile-picker` above is this component's
+	     mobile-unchanged counterpart. `variant="sidebar"` lays books out as a
+	     vertical list with in-flow chapter panels (BookChapterPicker's own
+	     docblock) rather than the wrapped grid + popover the mobile copy
+	     still uses, since a 17rem sticky column can neither fit nor safely
+	     clip that popover. Omitted entirely in compare mode — see app.css's
+	     `.reading-layout.compare` docblock: the second text column takes the
+	     room the sidebar would have used, at every width, rather than the
+	     other way around. -->
+		{#if !compareActive}
+			<aside
+				class="reading-aside desktop-picker"
+				aria-label={t('bible.pickBook')}
+				role="navigation"
+			>
+				<BookChapterPicker
+					currentWorkId={workId}
+					currentOsis={data.osis}
+					currentChapter={data.chapterN}
+					variant="sidebar"
+				/>
+			</aside>
 		{/if}
-		{#if next}
-			<a href={`/bible/${next.osis}/${next.chapter}`} rel="next">
-				{t('bible.nextChapter')} &rarr;
-			</a>
-		{/if}
-	</nav>
-	</article>
+	</div>
 {/if}
 
 <style>
@@ -253,6 +391,30 @@
 	h1 {
 		font-family: var(--font-serif);
 		margin-top: 0.25rem;
+	}
+
+	.title-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	/* `.compare-toolbar` (app.css) is itself flex/justify-end, so nesting it
+	   in `.title-row`'s flex row just needs it to not stretch — the h1 above
+	   already keeps its own margin-top, this only cancels the toolbar's. */
+	.title-row .compare-toolbar {
+		margin: 0;
+	}
+
+	/* Compare-mode verse cell (`verseCell` snippet, CompareGrid) — the
+	   `.reading-text .verse` treatment doesn't apply here (no cited-range
+	   highlight, no drop cap in compare mode; see the snippet's own
+	   reasoning), so this is deliberately a plainer rule than `.verse`.
+	   Font/size/line-height come from `.reading-text` on the cell itself
+	   (CompareGrid.svelte) — this only resets the paragraph margin. */
+	.compare-verse {
+		margin: 0;
 	}
 
 	.section-heading {
@@ -387,5 +549,26 @@
 
 	.chapter-nav a {
 		text-decoration: none;
+	}
+
+	/* Two BookChapterPicker instances, CSS-swapped by breakpoint rather than
+	   one instance whose variant is decided in JS: a JS-decided swap would
+	   have to pick a default for the pre-hydration/prerendered HTML (this
+	   whole site renders with no JS required — see `citedRange`'s docblock
+	   above), then possibly relocate the picker across the page once
+	   hydration resolves the real viewport, which is both a layout jump and
+	   a NOOP on a viewport where the guess was already right. Two static
+	   instances plus a boundary that exactly matches `.reading-layout`'s own
+	   80rem (app.css) cost one extra hidden DOM subtree instead. */
+	@media (min-width: 80rem) {
+		.mobile-picker {
+			display: none;
+		}
+	}
+
+	@media (max-width: 79.9375rem) {
+		.desktop-picker {
+			display: none;
+		}
 	}
 </style>

@@ -19,18 +19,20 @@
 	 * page ever renders more than one book's worth of chapter links.
 	 *
 	 * The chapter grid is an ABSOLUTELY-POSITIONED panel anchored to its book
-	 * button, not an in-flow block. In flow it was a wrapped flex item, so
-	 * opening a book mid-grid pushed every later book onto new lines and the
-	 * whole list jumped under the reader's cursor — the book they were aiming
-	 * at moved before they clicked it. Out of flow, opening a panel changes
-	 * nothing about the grid behind it.
+	 * button, not an in-flow block — but ONLY in the `'grid'` variant (see
+	 * `variant` below). In flow, on a wrapped flex grid, opening a book
+	 * mid-grid pushed every later book onto new lines and the whole list
+	 * jumped under the reader's cursor — the book they were aiming at moved
+	 * before they clicked it. Out of flow, opening a panel changes nothing
+	 * about the grid behind it.
 	 *
-	 * Two consequences of leaving the flow, both handled below: the panel can
-	 * overhang the viewport's right edge for books near it (hence `align`,
-	 * measured at open time rather than guessed from column position, since
-	 * the grid wraps at a width nobody here knows statically), and it no
-	 * longer dismisses by re-clicking alone, so it takes the same
-	 * outside-click/Escape handling as the header menus.
+	 * Two consequences of leaving the flow, both handled below and BOTH
+	 * SCOPED TO THE GRID VARIANT ONLY: the panel can overhang the viewport's
+	 * right edge for books near it (hence `align`, measured at open time
+	 * rather than guessed from column position, since the grid wraps at a
+	 * width nobody here knows statically), and it no longer dismisses by
+	 * re-clicking alone, so it takes the same outside-click/Escape handling
+	 * as the header menus.
 	 *
 	 * There are deliberately NO chevron indicators on the book buttons.
 	 * `aria-expanded` carries the state for assistive tech, and sighted
@@ -39,10 +41,35 @@
 	 * it is redundant, and at 73 buttons the glyphs were most of the grid's
 	 * visual noise.
 	 *
-	 * Used two ways: `collapsible` (default) wraps the whole thing in a
-	 * `<details>` for the reading view, where the picker is a secondary
-	 * affordance; the `/bible` landing route sets `collapsible={false}` to
-	 * render it inline as the page's actual content.
+	 * TWO VARIANTS, because the reflow problem above only exists in ONE of
+	 * the two places this component is used. `'grid'` (default) is
+	 * everything described so far — a wrapped flex grid of book buttons with
+	 * an absolutely-positioned popover — used by the `/bible` landing route
+	 * and by the reading view's mobile/collapsed picker. `'sidebar'` is for
+	 * the reading view's desktop right column (`.reading-aside`, app.css):
+	 * books render as a single-column vertical list instead, and the chapter
+	 * grid for an open book expands IN FLOW directly beneath it. That would
+	 * have been wrong for the grid variant (that's the whole reason the
+	 * popover exists), but it's exactly right here for two reasons the grid
+	 * variant doesn't have: a single column never wraps, so opening a book
+	 * only ever pushes the (already vertical) list straight down instead of
+	 * reflowing it sideways under the cursor; and `.reading-aside` is itself
+	 * `overflow-y: auto` (a scroll container, so it clips anything that
+	 * escapes its box) and only 17rem wide (so the popover's own 22rem
+	 * `PANEL_WIDTH_REM` wouldn't fit even if it weren't clipped). The
+	 * `align`/outside-click/Escape machinery above is therefore skipped
+	 * entirely for `'sidebar'` — nothing needs measuring or force-dismissing
+	 * when there's no popover to overhang the viewport or fail to
+	 * self-dismiss.
+	 *
+	 * `collapsible` is ignored when `variant === 'sidebar'`: the sidebar is
+	 * the reading view's persistent nav column, so it always renders open
+	 * and browsable rather than behind a `<summary>` — the reading route
+	 * that uses it renders TWO instances (one `'grid'`/collapsible, hidden
+	 * above the desktop breakpoint; one `'sidebar'`, hidden below it) rather
+	 * than switching one instance's variant at runtime, so a reader with no
+	 * JavaScript still gets the right one on first paint and nothing ever
+	 * has to relocate itself across the page after the fact.
 	 */
 	import { untrack } from 'svelte';
 	import { getBook, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
@@ -55,9 +82,18 @@
 		currentOsis?: string;
 		currentChapter?: number;
 		collapsible?: boolean;
+		/** `'grid'` (default): wrapped flex grid + popover, as documented above.
+		    `'sidebar'`: vertical list + in-flow chapter panel, for `.reading-aside`. */
+		variant?: 'grid' | 'sidebar';
 	}
 
-	let { currentWorkId, currentOsis, currentChapter, collapsible = true }: Props = $props();
+	let {
+		currentWorkId,
+		currentOsis,
+		currentChapter,
+		collapsible = true,
+		variant = 'grid'
+	}: Props = $props();
 
 	const workId = $derived(currentWorkId);
 	const books = listCanonicalBooks();
@@ -95,14 +131,19 @@
 			openOsis = undefined;
 			return;
 		}
-		const btn = e.currentTarget;
-		if (btn instanceof HTMLElement) {
-			const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-			const rect = btn.getBoundingClientRect();
-			// Flip to end-anchored only when start-anchored would actually
-			// overflow, so the common case keeps the panel's left edge lined up
-			// with the button the reader just pressed.
-			align = rect.left + PANEL_WIDTH_REM * rem > window.innerWidth ? 'end' : 'start';
+		// Edge-overhang measurement only matters for the popover — the
+		// sidebar's in-flow panel is always the same width as the column it
+		// already lives in, so there's nothing to measure or flip.
+		if (variant === 'grid') {
+			const btn = e.currentTarget;
+			if (btn instanceof HTMLElement) {
+				const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+				const rect = btn.getBoundingClientRect();
+				// Flip to end-anchored only when start-anchored would actually
+				// overflow, so the common case keeps the panel's left edge lined up
+				// with the button the reader just pressed.
+				align = rect.left + PANEL_WIDTH_REM * rem > window.innerWidth ? 'end' : 'start';
+			}
 		}
 		openOsis = osis;
 	}
@@ -116,15 +157,23 @@
 	// Escape handling as the header menus (ThemeMenu et al.). Clicks inside
 	// `.book-item` are ignored: that covers both the panel and its own book
 	// button, whose click handler already toggles.
+	//
+	// GRID VARIANT ONLY, guarded inside the handlers rather than by
+	// conditionally rendering `<svelte:window>` — Svelte doesn't allow that
+	// tag inside a block, so it's always mounted and opts itself out instead.
+	// The sidebar's panel is in flow, so re-clicking its own book (or
+	// clicking a different one, which reassigns `openOsis`) is already
+	// sufficient to close it; there's no popover sitting over other content
+	// that needs a forced dismiss.
 	function onWindowClick(e: MouseEvent) {
-		if (!openOsis) return;
+		if (variant !== 'grid' || !openOsis) return;
 		const target = e.target;
 		if (target instanceof Node && (target as Element).closest?.('.book-item')) return;
 		closePanel();
 	}
 
 	function onWindowKeydown(e: KeyboardEvent) {
-		if (openOsis && e.key === 'Escape') closePanel();
+		if (variant === 'grid' && openOsis && e.key === 'Escape') closePanel();
 	}
 
 	function bookName(book: CanonicalBook): string {
@@ -145,13 +194,14 @@
 	{#each testaments as group (group.key)}
 		<section class="testament">
 			<h3>{t(`bible.testament.${group.key}`)}</h3>
-			<ul class="book-grid">
+			<ul class="book-grid" class:sidebar={variant === 'sidebar'}>
 				{#each group.books as book (book.osis)}
 					{@const isOpen = openOsis === book.osis}
 					<li class="book-item">
 						<button
 							type="button"
 							class="book-btn"
+							class:sidebar={variant === 'sidebar'}
 							class:current={book.osis === currentOsis}
 							class:open={isOpen}
 							aria-expanded={isOpen}
@@ -165,7 +215,8 @@
 							<div
 								id={`chapters-${book.osis}`}
 								class="chapters"
-								class:align-end={align === 'end'}
+								class:sidebar={variant === 'sidebar'}
+								class:align-end={variant === 'grid' && align === 'end'}
 								role="group"
 								aria-label={bookName(book)}
 							>
@@ -192,7 +243,12 @@
 	{/each}
 {/snippet}
 
-{#if collapsible}
+{#if variant === 'sidebar'}
+	<!-- Always open — see the docblock's "collapsible is ignored" note. -->
+	<div class="picker-body sidebar">
+		{@render groups()}
+	</div>
+{:else if collapsible}
 	<details class="picker">
 		<summary>{t('bible.pickBook')}</summary>
 		<div class="picker-body">
@@ -224,6 +280,10 @@
 		font-size: 0.95rem;
 	}
 
+	/* The sidebar copy lives inside `.reading-aside`, already at 0.9rem
+	   (app.css) — no further size change needed here, only the layout
+	   changes below. */
+
 	.testament + .testament {
 		margin-top: 1.5rem;
 	}
@@ -246,7 +306,19 @@
 		align-items: flex-start;
 	}
 
-	/* Positioning context for the absolutely-positioned `.chapters` panel. */
+	/* Single column, no wrapping — this is what makes it safe for `.chapters`
+	   to expand in flow below (see that rule's own comment): with nothing to
+	   its side, opening a book can only ever push what's below it straight
+	   down, never sideways under the reader's cursor. */
+	.book-grid.sidebar {
+		flex-direction: column;
+		flex-wrap: nowrap;
+		gap: 0.15rem;
+	}
+
+	/* Positioning context for the absolutely-positioned `.chapters` panel
+	   (grid variant only — the sidebar's panel is in flow and needs no
+	   positioning context from its parent). */
 	.book-item {
 		position: relative;
 		display: flex;
@@ -268,6 +340,14 @@
 		min-height: 2.1rem;
 	}
 
+	/* Full-width row instead of an inline chip, to match the rest of a
+	   vertical list — a chip-sized button floating at the list's inline
+	   start would leave the rest of the row dead space. */
+	.book-btn.sidebar {
+		width: 100%;
+		justify-content: flex-start;
+	}
+
 	.book-btn.current {
 		border-color: var(--color-accent);
 		color: var(--color-accent);
@@ -286,7 +366,9 @@
 	/* Out of flow: opening a book must not move the 73-button grid behind it.
 	   `min-inline-size` keeps single-chapter books (Obadiah, Jude) from
 	   collapsing to a sliver; `max-inline-size` matches PANEL_WIDTH_REM in the
-	   script, which is what the overflow measurement assumes. */
+	   script, which is what the overflow measurement assumes. GRID VARIANT
+	   ONLY — `.chapters.sidebar` below overrides every positioning property
+	   back to in-flow. */
 	.chapters {
 		position: absolute;
 		top: calc(100% + 0.35rem);
@@ -307,6 +389,22 @@
 	.chapters.align-end {
 		inset-inline-start: auto;
 		inset-inline-end: 0;
+	}
+
+	/* In-flow instead of a floating panel: no positioning, no shadow (nothing
+	   to lift off the page), no width clamp (the column itself already fits
+	   17rem — see the component docblock for why the popover's own
+	   PANEL_WIDTH_REM doesn't). A small start indent ties it visually to the
+	   book button it belongs to, the way a nested list would. */
+	.chapters.sidebar {
+		position: static;
+		top: auto;
+		inset-inline-start: auto;
+		z-index: auto;
+		margin: 0.3rem 0 0.5rem 0.6rem;
+		box-shadow: none;
+		min-inline-size: 0;
+		max-inline-size: none;
 	}
 
 	.chapters a,
