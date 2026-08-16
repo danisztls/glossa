@@ -22,13 +22,24 @@
  *   chunks/language — shipping the 3.5 MB/language `paragraphs.json` whole
  *   would put a >500 KB gzipped file behind a single `¶1` visit), the
  *   Compendium kept whole per language (only ~90 KB gzipped total, no split
- *   needed), and documents (docs/corpus-schema.md §Documents) also kept
- *   whole per work — the largest is ~200 KB raw (Gaudium et Spes), well
- *   under the Compendium's own no-split precedent, so one `sections.json`
- *   per work is the whole content file rather than a chunk. Globbed with
- *   Vite's `{ query: '?url' }` by `corpus.ts` — each file becomes its own
- *   content-hashed build asset, `fetch()`-ed only by the page(s) that need
- *   it, cacheable forever (immutable content).
+ *   needed), documents (docs/corpus-schema.md §Documents) also kept whole
+ *   per work — the largest is ~200 KB raw (Gaudium et Spes), well under the
+ *   Compendium's own no-split precedent, so one `sections.json` per work is
+ *   the whole content file rather than a chunk — and prayers
+ *   (docs/corpus-schema.md §Prayers) kept whole per language too, same as
+ *   the Compendium and for the same reason: `prayers.json` measures ~40 KB
+ *   RAW per language in the real corpus, smaller by an order of magnitude
+ *   than the Compendium's already-established no-split threshold, so there
+ *   is nothing here that would ever justify chunking it. It belongs in the
+ *   content tier at all — rather than being small enough to just inline
+ *   into the index — because it holds actual reading TEXT (prayer wording,
+ *   Latin companions), and that is what decides the tier, not size alone:
+ *   the index tier is existence/structure metadata ONLY (see
+ *   `prayer-index.json` below), the same line already drawn between
+ *   `bible-index.json` (chapter/verse NUMBERS) and each Bible book's actual
+ *   verse text. Globbed with Vite's `{ query: '?url' }` by `corpus.ts` —
+ *   each file becomes its own content-hashed build asset, `fetch()`-ed only
+ *   by the page(s) that need it, cacheable forever (immutable content).
  *
  * See `docs/corpus-schema.md` for the *source* shapes this reads, and
  * `corpus.ts`'s docblock for how the site consumes what this script writes.
@@ -150,6 +161,14 @@ const documentIndex = {}; // workId -> { structure, sectionNumbers } -- keyed by
 // (`{family}.{slug}.{lang}`) is its own independent work with its own section
 // count and its own structure tree -- there is no single "the document tree
 // for English" the way there's a single CCC tree for English.
+const prayerIndex = {}; // lang -> { structure, prayers } -- keyed by bare LANG, matching the Compendium
+// (one canonical work per language), per the task brief's own instruction to
+// follow that shape rather than the Documents one above: today there is
+// exactly one prayer collection (`prayer.common.{lang}`), so `workId.split('.').pop()`
+// safely recovers the language. `prayers` here is a COMPACT per-prayer summary
+// (slug/n/title/kind/hasLatin/hasVariants/hasGroups) -- existence metadata for
+// `entries()`/list pages/adjacency, never `blocks`/`latin` text, mirroring
+// `bible-index.json`'s "numbers, never verse text" rule one type over.
 /** [{ workId, kind, relPath, bytes }] — relPath matches the key `corpus.ts`
  *  derives from Vite's glob path (see `contentKeyFromGlobPath`), so the two
  *  can be joined at runtime without a second copy of the byte counts. */
@@ -271,7 +290,54 @@ for (const workId of workIds) {
 		const questions = readJson(path.join(workDir, 'questions.json'));
 		const relPath = `content/${workId}/questions.json`;
 		writeJson(path.join(destDir, relPath), questions);
-		contentManifest.push({ workId, kind: 'compendium-questions', relPath, bytes: byteLength(questions) });
+		contentManifest.push({
+			workId,
+			kind: 'compendium-questions',
+			relPath,
+			bytes: byteLength(questions)
+		});
+		continue;
+	}
+
+	// Prayers (docs/corpus-schema.md §Prayers: `prayer.{collection-slug}.{lang}`
+	// work ids — currently one collection, `prayer.common.{lang}`). Branches on
+	// `manifest.type`, not a `workId.startsWith(...)` prefix list like the
+	// three cases above, for the same reason the document branch below does:
+	// the middle segment (`common` today) is meant to vary once a second
+	// collection ships, and `type: "prayer"` is what's actually invariant.
+	if (manifest.type === 'prayer') {
+		const lang = workId.split('.').pop();
+		const structure = readJson(path.join(workDir, 'structure.json'));
+		const prayers = readJson(path.join(workDir, 'prayers.json'));
+		prayerIndex[lang] = {
+			structure,
+			// Existence/metadata only -- see this file's `prayerIndex` docblock
+			// above. `n` is kept here (not just used to sort) because
+			// `listPrayerGroups`/adjacency both need it at the index tier
+			// without a content fetch.
+			prayers: prayers.map((p) => ({
+				slug: p.slug,
+				n: p.n,
+				title: p.title,
+				kind: p.kind,
+				hasLatin: Boolean(p.latin),
+				hasVariants: Boolean(p.variants && p.variants.length > 0),
+				hasGroups: Boolean(p.groups && p.groups.length > 0)
+			}))
+		};
+
+		// Kept WHOLE per language (see this module's docblock) -- ~40 KB raw
+		// per language in the real corpus, an order of magnitude under the
+		// Compendium's own no-split precedent, so there is no chunk boundary
+		// to draw here at all.
+		const relPath = `content/${workId}/prayers.json`;
+		writeJson(path.join(destDir, relPath), prayers);
+		contentManifest.push({
+			workId,
+			kind: 'prayer-collection',
+			relPath,
+			bytes: byteLength(prayers)
+		});
 		continue;
 	}
 
@@ -288,7 +354,10 @@ for (const workId of workIds) {
 		// Section EXISTENCE only, mirroring `cccParagraphNumbers` — the index
 		// tier never carries section TEXT, so `documentSectionExists`/
 		// adjacency in corpus.ts stay synchronous.
-		documentIndex[workId] = { structure, sectionNumbers: sections.map((s) => s.n).sort((a, b) => a - b) };
+		documentIndex[workId] = {
+			structure,
+			sectionNumbers: sections.map((s) => s.n).sort((a, b) => a - b)
+		};
 
 		// Kept WHOLE per work rather than chunked (see this module's docblock)
 		// — at ~200 KB raw worst-case this is comfortably inside the
@@ -298,7 +367,12 @@ for (const workId of workIds) {
 		// reason to split) doesn't apply here.
 		const relPath = `content/${workId}/sections.json`;
 		writeJson(path.join(destDir, relPath), sections);
-		contentManifest.push({ workId, kind: 'document-sections', relPath, bytes: byteLength(sections) });
+		contentManifest.push({
+			workId,
+			kind: 'document-sections',
+			relPath,
+			bytes: byteLength(sections)
+		});
 		continue;
 	}
 
@@ -313,6 +387,7 @@ writeJson(path.join(indexDir, 'bible-index.json'), bibleIndex);
 writeJson(path.join(indexDir, 'ccc-index.json'), cccIndex);
 writeJson(path.join(indexDir, 'compendium-index.json'), compendiumIndex);
 writeJson(path.join(indexDir, 'document-index.json'), documentIndex);
+writeJson(path.join(indexDir, 'prayer-index.json'), prayerIndex);
 
 let xrefsSynced = false;
 if (existsSync(xrefsSrc)) {
@@ -337,6 +412,7 @@ const indexBytes = [
 	'ccc-index.json',
 	'compendium-index.json',
 	'document-index.json',
+	'prayer-index.json',
 	'xrefs.json'
 ]
 	.map((f) => path.join(indexDir, f))

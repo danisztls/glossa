@@ -4,10 +4,11 @@
 	from the UI language switch, `LanguageMenu`; see content.svelte.ts).
 
 	Contextual by route: lists Bible editions under `/bible`, Catechism
-	editions under `/ccc`, Compendium editions under `/compendium`, this ONE
-	document's editions under `/documents/{slug}`, and renders nothing
-	anywhere else (`context()` below returns undefined for e.g. the home
-	page, where no work is in view).
+	editions under `/ccc`, Compendium editions under `/compendium`, prayer
+	collection editions under `/prayers` (same one-canonical-work-per-language
+	shape as the Compendium), this ONE document's editions under
+	`/documents/{slug}`, and renders nothing anywhere else (`context()` below
+	returns undefined for e.g. the home page, where no work is in view).
 
 	DOCUMENTS ARE A THIRD SHAPE OF CONTEXT, NOT A FOURTH `WorkTypeKey`: the
 	Bible/CCC/Compendium branches all resolve editions through
@@ -52,6 +53,9 @@
 		if (pathname === '/compendium' || pathname.startsWith('/compendium/')) {
 			return { kind: 'type', type: 'compendium' };
 		}
+		if (pathname === '/prayers' || pathname.startsWith('/prayers/')) {
+			return { kind: 'type', type: 'prayer' };
+		}
 		// `/documents` itself (the library) has no single document in view —
 		// same "renders nothing" behavior as the home page, hence `startsWith`
 		// with the trailing slash rather than a bare prefix check. Both
@@ -75,7 +79,10 @@
 		documentGroup
 			? Object.values(documentGroup.manifests)
 					.filter((m): m is DocumentManifest => m !== undefined)
-					.sort((a, b) => baseLang(a.language).localeCompare(baseLang(b.language)) || a.id.localeCompare(b.id))
+					.sort(
+						(a, b) =>
+							baseLang(a.language).localeCompare(baseLang(b.language)) || a.id.localeCompare(b.id)
+					)
 			: []
 	);
 	const editions = $derived(ctx?.kind === 'document' ? documentEditions : typeEditions);

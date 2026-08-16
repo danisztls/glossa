@@ -119,6 +119,7 @@ import type {
 	CompendiumQuestion,
 	DocumentManifest,
 	DocumentSection,
+	Prayer,
 	ScriptureRef,
 	StructureNode,
 	WorkManifest,
@@ -147,10 +148,16 @@ import {
 	bibleBookLocation,
 	manifests,
 	listContentAssets,
+	prayerContentLocation,
+	prayerMetasByLang,
+	prayerStructures,
 	type BibleBookMeta,
 	type ContentAsset,
-	type ContentLocation
+	type ContentLocation,
+	type PrayerMeta
 } from './corpus-index';
+
+export type { PrayerMeta };
 
 export type { BibleBookMeta, ContentAsset };
 export { USE_REAL_CORPUS, listContentAssets };
@@ -1027,4 +1034,130 @@ export async function getDocumentSectionAsync(
  */
 export async function getDocumentSectionsAsync(workId: string): Promise<DocumentSection[]> {
 	return fetchDocumentSections(workId);
+}
+
+// --- Prayers: index-backed (structure, metadata, existence, adjacency, sync) --
+//
+// docs/corpus-schema.md §Prayers: one canonical collection per language
+// (`prayer.common.{lang}`) -- modeled on the Compendium section above, not
+// the Documents one, per this task's own brief. The one real difference
+// from the Compendium: prayers address by `slug`, never by a number, so
+// there is no `breadcrumbIn`/`flattenTree` walk here (`structure.json`'s
+// ranges are `[null, null]` throughout -- nothing numeric to walk into) and
+// no `StructureSidebarToc` reuse either (that component keys `hrefFor`/
+// `rowState` on a numeric range every prayer section lacks). `/prayers`
+// instead gets a flat, two-level grouping (`listPrayerGroups`) built by
+// matching `structure.json`'s section children to `PrayerMeta` by TITLE --
+// verified against the real corpus (both languages) to print in identical
+// order, so this is a safe, self-checking join: a title that doesn't match
+// anything is silently dropped rather than mis-paired, never a crash.
+
+/** Languages the prayer collection is available in. */
+export function prayerLangs(): string[] {
+	return Object.keys(prayerStructures).sort();
+}
+
+export function getPrayerStructure(lang: string): StructureNode[] {
+	return prayerStructures[lang] ?? [];
+}
+
+/** Every prayer's metadata for `lang`, in PRINT order (`n`) -- the order
+ *  `/prayers`' groups and the prev/next nav both want. Index-backed, no
+ *  fetch: this is existence/metadata, never `blocks`/`latin`/`groups`
+ *  themselves (see `PrayerMeta`'s docblock in corpus-index.ts). */
+export function listPrayerMeta(lang: string): PrayerMeta[] {
+	return [...(prayerMetasByLang[lang] ?? [])].sort((a, b) => a.n - b.n);
+}
+
+export function getPrayerMeta(lang: string, slug: string): PrayerMeta | undefined {
+	return prayerMetasByLang[lang]?.find((p) => p.slug === slug);
+}
+
+/** Whether `slug` exists in this corpus for `lang` -- index-backed (no
+ *  fetch), same role as `cccParagraphExists`/`documentSectionExists`. */
+export function prayerExists(lang: string, slug: string): boolean {
+	return getPrayerMeta(lang, slug) !== undefined;
+}
+
+/** The prayer immediately before/after `slug` in PRINT order, or undefined
+ *  at either end. `n` is ordering-only (see `Prayer.n`'s docblock), which is
+ *  exactly the role it plays here -- this never addresses by it, only walks
+ *  it. */
+export function getAdjacentPrayer(
+	lang: string,
+	slug: string,
+	direction: 'prev' | 'next'
+): PrayerMeta | undefined {
+	const metas = listPrayerMeta(lang);
+	const idx = metas.findIndex((p) => p.slug === slug);
+	if (idx === -1) return undefined;
+	return direction === 'next' ? metas[idx + 1] : metas[idx - 1];
+}
+
+/** One `/prayers` listing group -- `structure.json`'s section title, plus
+ *  the prayers matched into it (see this section's docblock for how the
+ *  match is made). `id` is a stable anchor id derived from the title, computed
+ *  once here so `/prayers` and the home page's Prayers section link to the
+ *  IDENTICAL anchor without deriving the same string twice in two files --
+ *  presentation, not addressing (the id that actually ADDRESSES a prayer is
+ *  `PrayerMeta.slug`, per-item, never per-group). */
+export interface PrayerGroupSummary {
+	id: string;
+	title: string;
+	prayers: PrayerMeta[];
+}
+
+function prayerGroupAnchorId(title: string): string {
+	return (
+		'prayers-' +
+		title
+			.toLowerCase()
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '') // strip accents, so a future PT-translated section title still yields a plain ASCII anchor
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-+|-+$/g, '')
+	);
+}
+
+/** Groups the 24 prayers into `structure.json`'s five titled sections, for
+ *  `/prayers`' listing and the home page's compact Prayers section. A
+ *  structure child whose title doesn't match any `PrayerMeta` (a future
+ *  corpus regen breaking the print-order/title correspondence this join
+ *  relies on) is dropped from its group rather than crashing the page --
+ *  the same "degrade, don't assume the parallel holds" posture
+ *  `routes/+page.svelte`'s CCC/Compendium pairing already takes. */
+export function listPrayerGroups(lang: string): PrayerGroupSummary[] {
+	const metaByTitle = new Map(listPrayerMeta(lang).map((m) => [m.title, m]));
+	return getPrayerStructure(lang).map((section) => ({
+		id: prayerGroupAnchorId(section.title),
+		title: section.title,
+		prayers: section.children
+			.map((child) => metaByTitle.get(child.title))
+			.filter((m): m is PrayerMeta => m !== undefined)
+	}));
+}
+
+// --- Prayers: content tier (async, read/fetched, memoized, whole) ---------
+//
+// Kept whole per language, like the Compendium (~40 KB raw per language in
+// the real corpus -- see `scripts/sync-corpus.mjs`'s docblock).
+//
+// No fixture branch, same posture as documents: prayers have no hand-
+// authored fixtures yet, so `prayerStructures`/`prayerMetasByLang` are
+// already `{}` under vitest/no-corpus (corpus-index.ts), meaning
+// `prayerExists` always answers false there and `getPrayerAsync` never
+// reaches a real fetch in a test run. Returning `undefined`/`[]` rather than
+// throwing keeps that graceful if a test ever does call this directly.
+
+async function fetchPrayers(lang: string): Promise<Prayer[]> {
+	if (!USE_REAL_CORPUS) return [];
+	const location = prayerContentLocation(`prayer.common.${lang}`);
+	if (!location) return [];
+	return readContent<Prayer[]>(location);
+}
+
+export async function getPrayerAsync(lang: string, slug: string): Promise<Prayer | undefined> {
+	if (!prayerExists(lang, slug)) return undefined;
+	const prayers = await fetchPrayers(lang);
+	return prayers.find((p) => p.slug === slug);
 }

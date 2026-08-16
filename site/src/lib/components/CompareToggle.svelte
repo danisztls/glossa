@@ -11,6 +11,15 @@
 	posture `EditionMenu` already takes when there's nothing to offer
 	(`{#if ctx && editions.length > 0}`), so this component doesn't need a
 	`disabled` prop of its own: if it's on the page, comparing is possible.
+
+	`enterLabel`/`exitLabel` default to the generic "Compare editions"/"Exit
+	comparison" copy every other caller wants, but are overridable: the
+	prayer route's second column is a Latin FIELD on the same work, not a
+	second edition (docs/corpus-schema.md "Prayers" — "Latin is a field, not
+	an edition"), so calling it a compared "edition" there would be
+	inaccurate, not just imprecise. Read reactively inside the template
+	(never captured into a plain variable at init) so the label still updates
+	if the reader switches UI language while the button is on screen.
 -->
 <script lang="ts">
 	import Icon from './Icon.svelte';
@@ -19,9 +28,15 @@
 	interface Props {
 		active: boolean;
 		onclick: () => void;
+		enterLabel?: string;
+		exitLabel?: string;
 	}
 
-	let { active, onclick }: Props = $props();
+	let { active, onclick, enterLabel, exitLabel }: Props = $props();
+
+	const label = $derived(
+		active ? (exitLabel ?? t('compare.exit')) : (enterLabel ?? t('compare.enter'))
+	);
 </script>
 
 <button
@@ -29,8 +44,8 @@
 	class="menu-trigger compare-toggle"
 	class:active
 	aria-pressed={active}
-	aria-label={active ? t('compare.exit') : t('compare.enter')}
-	title={active ? t('compare.exit') : t('compare.enter')}
+	aria-label={label}
+	title={label}
 	{onclick}
 >
 	<Icon name="columns-2" />

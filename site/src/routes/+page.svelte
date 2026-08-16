@@ -22,7 +22,13 @@
 	 */
 	import { onMount } from 'svelte';
 	import { content } from '$lib/content.svelte';
-	import { getCccStructure, getCompendiumStructure, getWork, listDocuments } from '$lib/corpus';
+	import {
+		getCccStructure,
+		getCompendiumStructure,
+		getWork,
+		listDocuments,
+		listPrayerGroups
+	} from '$lib/corpus';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { displayTitle } from '$lib/titles';
@@ -41,6 +47,10 @@
 	});
 	const compendiumWork = $derived.by(() => {
 		const id = content.workIdFor('compendium');
+		return id ? getWork(id) : undefined;
+	});
+	const prayerWork = $derived.by(() => {
+		const id = content.workIdFor('prayer');
 		return id ? getWork(id) : undefined;
 	});
 
@@ -95,6 +105,17 @@
 
 	const cccLang = $derived(content.langFor('catechism'));
 	const compendiumLang = $derived(content.langFor('compendium'));
+
+	// --- Prayers: a compact pointer, not a sixth table of contents --------------
+	//
+	// 24 prayers across 5 sections is not a fifth pillar next to the Bible,
+	// Catechism, Compendium and Magisterium — each of those runs to hundreds or
+	// thousands of pages, this to two dozen. So this section is deliberately
+	// small: a tagline, the 5 section names as chips (the same visual language
+	// as the CCC/Compendium row's chips above), and one link into the full
+	// listing — not a repeat of `/prayers`' own grouped list of every prayer.
+	const prayerLang = $derived(content.langFor('prayer'));
+	const prayerGroups = $derived(prayerWork ? listPrayerGroups(prayerLang) : []);
 
 	// Gated on the work actually existing in this corpus — a partial build
 	// or the vitest fixtures may have one of the two and not the other; an
@@ -382,6 +403,24 @@
 			</ul>
 		</section>
 	{/if}
+
+	{#if prayerGroups.length > 0}
+		<section aria-labelledby="prayers-heading">
+			<h2 id="prayers-heading">{t('home.prayers.heading')}</h2>
+			<p class="prayers-tagline">{t('home.prayers.tagline')}</p>
+			<ul class="prayers-groups">
+				{#each prayerGroups as group (group.id)}
+					<li>
+						<a class="prayers-chip" href={`/prayers#${group.id}`}>{group.title}</a>
+					</li>
+				{/each}
+			</ul>
+			<a class="prayers-browse-all" href="/prayers">{t('home.prayers.browseAll')} &rarr;</a>
+			{#if prayerWork}
+				<p class="edition-note">{prayerWork.title} — <CopyrightNotice manifest={prayerWork} /></p>
+			{/if}
+		</section>
+	{/if}
 </div>
 
 <style>
@@ -572,6 +611,47 @@
 		border: 1px solid var(--color-border);
 		border-radius: 0.25rem;
 		padding: 0 0.35rem;
+	}
+
+	/* --- Prayers --------------------------------------------------------- */
+
+	.prayers-tagline {
+		color: var(--color-text-muted);
+		font-size: 0.95rem;
+		margin: 0 0 0.9rem;
+	}
+
+	.prayers-groups {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: 0 0 0.9rem;
+		padding: 0;
+	}
+
+	/* Same chip language as `.ccc-link` above -- a bordered tag reads as "one
+	   of several entry points" more clearly than a bare inline link list
+	   would for 5 section names sitting side by side. */
+	.prayers-chip {
+		display: inline-flex;
+		font-size: 0.85rem;
+		text-decoration: none;
+		color: var(--color-text);
+		border: 1px solid var(--color-border);
+		border-radius: 0.3rem;
+		padding: 0.3rem 0.65rem;
+	}
+
+	a.prayers-chip:hover {
+		border-color: var(--color-accent);
+		color: var(--color-accent);
+	}
+
+	.prayers-browse-all {
+		display: inline-block;
+		font-size: 0.9rem;
+		text-decoration: none;
 	}
 
 	/* Mobile: chip links wrap onto their own line under a long title rather

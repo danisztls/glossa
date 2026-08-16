@@ -35,9 +35,23 @@
  */
 
 import { i18n } from './i18n.svelte';
-import { baseLang, defaultDocumentWorkId, defaultWorkId, getDocumentGroup, listEditions } from './corpus';
+import {
+	baseLang,
+	defaultDocumentWorkId,
+	defaultWorkId,
+	getDocumentGroup,
+	listEditions
+} from './corpus';
 
-export type WorkTypeKey = 'bible' | 'catechism' | 'compendium';
+/**
+ * `'prayer'` joins this union rather than getting a fourth `#documentOverrides`-
+ * style side map: prayers are one canonical work per language, same as the
+ * Compendium, so `workIdFor('prayer')`/`langFor('prayer')` already do the
+ * right thing with no new code below -- unlike documents, which genuinely
+ * need a per-slug override map because there's no single "the document
+ * edition" (see this file's docblock).
+ */
+export type WorkTypeKey = 'bible' | 'catechism' | 'compendium' | 'prayer';
 
 interface Override {
 	workId: string;

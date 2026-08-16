@@ -22,7 +22,7 @@ export interface Copyright {
 	notice: string | null;
 }
 
-export type WorkType = 'bible' | 'catechism' | 'compendium' | 'document';
+export type WorkType = 'bible' | 'catechism' | 'compendium' | 'document' | 'prayer';
 
 /** Bare language subtag the corpus ships content in (see `baseLang` in corpus.ts). */
 export type ContentLang = 'en' | 'pt';
@@ -71,6 +71,18 @@ export type DocumentKind =
 	// document, not force a corpus-wide manifest cast at the ingestion site.
 	| (string & {});
 
+/**
+ * A prayer collection's manifest -- currently one work, `prayer.common.
+ * {lang}` (docs/corpus-schema.md "Prayers"): the Compendium of the CCC's
+ * Appendix A, re-parsed from the same cached raw HTML `compendium.{lang}`
+ * already scrapes, not a second fetch. `{slug}` in the work id (`common`
+ * today) leaves room for a later, larger collection to ship as its own work
+ * without growing this one unboundedly -- see that section for why.
+ */
+export interface PrayerManifest extends WorkManifestBase {
+	type: 'prayer';
+}
+
 export interface DocumentManifest extends WorkManifestBase {
 	type: 'document';
 	document_kind: DocumentKind;
@@ -90,7 +102,8 @@ export interface DocumentManifest extends WorkManifestBase {
 	description?: string;
 }
 
-export type WorkManifest = BibleManifest | CatechismManifest | CompendiumManifest | DocumentManifest;
+export type WorkManifest =
+	BibleManifest | CatechismManifest | CompendiumManifest | DocumentManifest | PrayerManifest;
 
 export interface VerseNote {
 	marker: string;
@@ -255,4 +268,98 @@ export interface DocumentSection {
 	// family sampled) and no `in_brief` (a CCC-only summarization device) --
 	// both deliberately absent rather than carried as permanently-empty
 	// fields, per corpus-schema.md's own note on this shape.
+}
+
+// --- Prayers (docs/corpus-schema.md §Prayers) -------------------------------
+//
+// A prayer collection has no numbered units at all -- unlike every other
+// work type above, none of which this schema invents a number for either,
+// but all of which at least have ONE the source itself prints (a CCC
+// paragraph, a Compendium question, a document section). Here the source
+// prints nothing to capture, so addressing runs on `Prayer.slug` --
+// language-invariant, kebab-case, English-derived -- never on `n`, which is
+// kept only as the print-order integer (docs/corpus-schema.md: "the actual
+// address"). `structure.json` reuses `StructureNode` (types.ts, above)
+// purely for grouping, same as the CCC/Compendium -- every prayer section's
+// `paragraphs` is `[null, null]` throughout, since there is no number range
+// to carry, not even an unaddressable one.
+
+export type PrayerKind = 'simple' | 'dialogic' | 'group';
+
+/** Beyond the CCC/Compendium's `prose`/`quote` pair (types.ts, above):
+ *  `versicle`/`response` are the leader/assembly halves of a dialogic
+ *  prayer (the Angelus's V./R.). */
+export type PrayerBlockKind = 'prose' | 'versicle' | 'response';
+
+export interface PrayerBlock {
+	kind: PrayerBlockKind;
+	text: string;
+	/** Verbatim printed prefix on a versicle/response line -- `"V."`/`"R."`
+	 *  in most sources, PT's own Angelus and Rosary-closing dialogue use
+	 *  `"D."`/`"C."` instead. Kept exactly as printed, never normalized to a
+	 *  canonical V./R. (docs/corpus-schema.md "Prayers"). Present only on
+	 *  `versicle`/`response` blocks -- absent on `prose`. */
+	label?: string;
+}
+
+/** A full alternate wording the source prints under the SAME title
+ *  (regional adaptations -- EN's Regina Caeli UK/USA split is the only
+ *  instance in v1). Not to be confused with a translation difference
+ *  between language editions, which is just two separate top-level works --
+ *  see docs/corpus-schema.md "Prayers". */
+export interface PrayerVariant {
+	label: string;
+	blocks: PrayerBlock[];
+}
+
+/** A prayer's Latin companion text -- a FIELD on the prayer, not a third
+ *  edition/work (docs/corpus-schema.md "Prayers": "Latin is a field, not an
+ *  edition"). Present on 21 of 24 prayers in the real corpus; genuinely
+ *  absent (not a capture gap) for the three Eastern-rite prayers, which the
+ *  source prints with no Latin text in either language. */
+export interface PrayerLatin {
+	title: string;
+	blocks: PrayerBlock[];
+}
+
+/** One named group of items -- the Rosary's four mystery groups, each with
+ *  a weekday rubric and five items -- captured directly rather than
+ *  flattened into `blocks`, because that flattening would destroy the one
+ *  thing this shape exists to keep (docs/corpus-schema.md "Prayers"). */
+export interface PrayerGroupEntry {
+	name: string;
+	/** Free text attached to this GROUP specifically (e.g. "(recited Monday
+	 *  and Saturday)") -- distinct from `Prayer.rubric`, which attaches to
+	 *  the whole prayer. */
+	rubric: string | null;
+	items: string[];
+}
+
+export interface Prayer {
+	/** Print order -- ordering only, never addressing. See `slug`. */
+	n: number;
+	/** Stable, language-invariant identifier -- the actual address
+	 *  (`/prayers/{slug}`), unrelated to and never derived from `title`
+	 *  (e.g. "Under Your Protection" addresses as `sub-tuum-praesidium`, the
+	 *  Latin incipit, not a slugified English title). */
+	slug: string;
+	title: string;
+	/** Derived from what was actually parsed, not asserted per prayer:
+	 *  `"group"` whenever `groups` is present, `"dialogic"` whenever any
+	 *  block is a versicle/response, `"simple"` otherwise. Can legitimately
+	 *  differ between this work's two language editions for the same slug --
+	 *  source-faithful, the same way structure trees are per-language. */
+	kind: PrayerKind;
+	blocks: PrayerBlock[];
+	/** Present only when the source prints more than one full wording under
+	 *  this title -- absent (not `[]`) otherwise. */
+	variants?: PrayerVariant[];
+	/** Present only when the source prints Latin for this prayer -- absent
+	 *  (not `null`) otherwise, so `!!prayer.latin` alone answers "does this
+	 *  prayer have a Latin companion." */
+	latin?: PrayerLatin;
+	rubric: string | null;
+	/** Present only on prayers structured as named groups of items rather
+	 *  than flowing text (today: the Rosary alone). */
+	groups?: PrayerGroupEntry[];
 }

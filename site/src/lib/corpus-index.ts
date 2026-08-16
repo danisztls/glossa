@@ -162,9 +162,36 @@ interface CompendiumIndexFile {
 interface DocumentIndexFile {
 	[workId: string]: { structure: StructureNode[]; sectionNumbers: number[] };
 }
+/**
+ * Existence/metadata for one prayer -- the index-tier projection of `Prayer`
+ * (types.ts), analogous to `BibleBookMeta` a few sections up: enough to
+ * build `/prayers`' list, an `entries()` crawl target, and prev/next
+ * adjacency, WITHOUT a content-tier fetch. Never `blocks`/`variants`/
+ * `latin`/`groups` themselves -- those are the actual reading text, and
+ * that's what decides the tier (see `scripts/sync-corpus.mjs`'s docblock).
+ */
+export interface PrayerMeta {
+	slug: string;
+	/** Print order -- see `Prayer.n` (types.ts): ordering only, never addressing. */
+	n: number;
+	title: string;
+	kind: 'simple' | 'dialogic' | 'group';
+	hasLatin: boolean;
+	hasVariants: boolean;
+	hasGroups: boolean;
+}
+/** Keyed by bare LANG, matching `CccIndexFile`/`CompendiumIndexFile` above --
+ *  not by work id like `DocumentIndexFile`: today's corpus has exactly one
+ *  prayer collection per language, and the task this shipped under is
+ *  explicit that prayers should follow the Compendium's shape (one
+ *  canonical work per language), not the Documents one. */
+interface PrayerIndexFile {
+	[lang: string]: { structure: StructureNode[]; prayers: PrayerMeta[] };
+}
 export interface ContentManifestEntry {
 	workId: string;
-	kind: 'bible-book' | 'ccc-chunk' | 'compendium-questions' | 'document-sections';
+	kind:
+		'bible-book' | 'ccc-chunk' | 'compendium-questions' | 'document-sections' | 'prayer-collection';
 	relPath: string;
 	bytes: number;
 }
@@ -193,6 +220,11 @@ const realIndexDocuments = import.meta.glob('./corpus-data/index/document-index.
 	eager: true,
 	import: 'default'
 }) as Record<string, DocumentIndexFile>;
+
+const realIndexPrayers = import.meta.glob('./corpus-data/index/prayer-index.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, PrayerIndexFile>;
 
 const realIndexXrefs = import.meta.glob('./corpus-data/index/xrefs.json', {
 	eager: true,
@@ -379,7 +411,31 @@ export const documentStructures: Record<string, StructureNode[]> = USE_REAL_CORP
  *  `cccParagraphNumbers` above, keyed by work id instead of language. */
 export const documentSectionNumbers: Record<string, number[]> = USE_REAL_CORPUS
 	? Object.fromEntries(
-			Object.entries(single(realIndexDocuments) ?? {}).map(([workId, v]) => [workId, v.sectionNumbers])
+			Object.entries(single(realIndexDocuments) ?? {}).map(([workId, v]) => [
+				workId,
+				v.sectionNumbers
+			])
+		)
+	: {};
+
+/**
+ * Prayer structure trees, keyed by bare LANG (see `PrayerIndexFile`'s
+ * docblock). No fixture branch -- prayers have no hand-authored fixtures
+ * (same posture as `documentStructures` above: `corpus.ts`'s prayer content-
+ * tier functions degrade to empty under vitest for the same reason), so
+ * this is `{}` under vitest/no-corpus.
+ */
+export const prayerStructures: Record<string, StructureNode[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexPrayers) ?? {}).map(([lang, v]) => [lang, v.structure])
+		)
+	: {};
+
+/** Per-prayer existence/metadata, keyed by bare LANG -- same role as
+ *  `cccParagraphNumbers`/`documentSectionNumbers`, one type up. */
+export const prayerMetasByLang: Record<string, PrayerMeta[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexPrayers) ?? {}).map(([lang, v]) => [lang, v.prayers])
 		)
 	: {};
 
@@ -460,6 +516,10 @@ const bibleBookLocations: Record<string, Record<string, ContentLocation>> = {};
 const cccChunkLocations: Record<string, Record<number, ContentLocation>> = {};
 const compendiumQuestionsLocations: Record<string, ContentLocation> = {};
 const documentSectionsLocations: Record<string, ContentLocation> = {};
+/** Keyed by WORK ID (`prayer.common.en`), not bare lang -- matches how every
+ *  other content-tier location map here is keyed (the lang-vs-workid choice
+ *  in the INDEX registries above is a different, index-only concern). */
+const prayerLocations: Record<string, ContentLocation> = {};
 /** relPath (`content-manifest.json`'s shape) -> hashed URL, built once so
  *  `listContentAssets()` doesn't rescan every glob entry per manifest row. */
 const contentUrlByRelPath: Record<string, string> = {};
@@ -488,6 +548,11 @@ for (const [globPath, url] of Object.entries(realContentUrls)) {
 	const documentMatch = relPath.match(/^content\/([^/]+)\/sections\.json$/);
 	if (documentMatch) {
 		documentSectionsLocations[documentMatch[1]] = location;
+		continue;
+	}
+	const prayerMatch = relPath.match(/^content\/([^/]+)\/prayers\.json$/);
+	if (prayerMatch) {
+		prayerLocations[prayerMatch[1]] = location;
 	}
 }
 
@@ -505,6 +570,10 @@ export function compendiumQuestionsLocation(workId: string): ContentLocation | u
 
 export function documentSectionsLocation(workId: string): ContentLocation | undefined {
 	return documentSectionsLocations[workId];
+}
+
+export function prayerContentLocation(workId: string): ContentLocation | undefined {
+	return prayerLocations[workId];
 }
 
 /**

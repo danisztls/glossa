@@ -30,6 +30,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// and `/documents` stays accurate as encyclicals/exhortations/CDF
 		// documents join the 16 Vatican II texts already here).
 		'nav.magisterium': 'Magisterium',
+		'nav.prayers': 'Prayers',
 		'nav.menu': 'Menu',
 		'home.title': 'Depositum',
 		'home.tagline': 'The Bible and the Catechism of the Catholic Church, free to read.',
@@ -93,6 +94,20 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'compendium.prevQuestion': 'Previous question',
 		'compendium.nextQuestion': 'Next question',
 		'compendium.condenses': 'Condenses CCC ¶¶',
+
+		// Common Prayers (docs/corpus-schema.md §Prayers) — routes/prayers/**
+		// is the consumer, plus the home page's compact Prayers section.
+		'prayers.landing.title': 'Common Prayers',
+		'prayers.landing.tagline':
+			'Twenty-four prayers every Catholic should know, from the Compendium of the Catechism’s appendix — with the Latin text alongside wherever the source prints one.',
+		'prayers.latin': 'Latin',
+		'prayers.showLatin': 'Show Latin text',
+		'prayers.hideLatin': 'Hide Latin text',
+		'prayers.prevPrayer': 'Previous prayer',
+		'prayers.nextPrayer': 'Next prayer',
+		'home.prayers.heading': 'Prayers',
+		'home.prayers.tagline': 'Two dozen prayers every Catholic should know, by heart.',
+		'home.prayers.browseAll': 'Browse all prayers',
 
 		// Reference tooltips/popovers — RefText.svelte is the consumer.
 		'ref.tooltip.loading': 'Loading…',
@@ -199,6 +214,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'nav.ccc': 'Catecismo',
 		'nav.compendium': 'Compêndio',
 		'nav.magisterium': 'Magistério',
+		'nav.prayers': 'Orações',
 		'nav.menu': 'Menu',
 		'home.title': 'Depositum',
 		'home.tagline': 'A Bíblia e o Catecismo da Igreja Católica, livres para ler.',
@@ -254,6 +270,18 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'compendium.prevQuestion': 'Pergunta anterior',
 		'compendium.nextQuestion': 'Próxima pergunta',
 		'compendium.condenses': 'Condensa os §§',
+
+		'prayers.landing.title': 'Orações Comuns',
+		'prayers.landing.tagline':
+			'Vinte e quatro orações que todo católico deveria conhecer, do apêndice do Compêndio do Catecismo — com o texto em latim ao lado onde a fonte o imprime.',
+		'prayers.latin': 'Latim',
+		'prayers.showLatin': 'Mostrar texto em latim',
+		'prayers.hideLatin': 'Ocultar texto em latim',
+		'prayers.prevPrayer': 'Oração anterior',
+		'prayers.nextPrayer': 'Próxima oração',
+		'home.prayers.heading': 'Orações',
+		'home.prayers.tagline': 'Duas dezenas de orações que todo católico deveria saber de cor.',
+		'home.prayers.browseAll': 'Ver todas as orações',
 
 		'ref.tooltip.loading': 'Carregando…',
 		'ref.tooltip.openCcc': 'Abrir no Catecismo',
