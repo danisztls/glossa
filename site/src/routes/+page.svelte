@@ -1,23 +1,36 @@
 <script lang="ts">
+	/**
+	 * Home page. Rewritten 2026-08-16 to lead with the TEXT's structure —
+	 * books & chapters, parts & sections, pontificates & councils — rather
+	 * than with editions and copyright, which is what it showed before (one
+	 * row per work, titled by its short title/language/copyright label). A
+	 * reader arriving here should see what there is to read and be able to
+	 * click straight into it; which edition they're reading is now a quiet
+	 * footnote under each section (`CopyrightNotice`), not the subject.
+	 *
+	 * Every section below shows the reader's EFFECTIVE edition only — one
+	 * entry per work, never one per language (2026-08-15 decision: with
+	 * ~460 works across languages once the encyclical sweep finishes,
+	 * listing every language for every work would roughly double this page
+	 * and make it unusable). "Effective" is resolved the same way every
+	 * reading route resolves it — through the content store
+	 * (`content.workIdFor`/`content.documentLangFor`), never by filtering on
+	 * `i18n.lang` directly — so a reader who has explicitly overridden an
+	 * edition (e.g. reading the Portuguese Bible under an English interface)
+	 * sees the edition they actually chose here too, not whatever the
+	 * interface language implies.
+	 */
 	import { onMount } from 'svelte';
 	import { content } from '$lib/content.svelte';
-	import { getWork, listBooks, listDocuments } from '$lib/corpus';
-	import { copyrightLabel } from '$lib/copyright';
-	import { documentKindPluralLabel } from '$lib/document-labels';
+	import { getCccStructure, getCompendiumStructure, getWork, listDocuments } from '$lib/corpus';
+	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
+	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import { displayTitle } from '$lib/titles';
+	import { formatPromulgated } from '$lib/dates';
 	import { listPositions, type ReadingPosition } from '$lib/reading-position';
 	import { t } from '$lib/i18n.svelte';
-	import type { DocumentManifest, WorkManifest, WorkType } from '$lib/types';
+	import type { CccNode, DocumentManifest, WorkType } from '$lib/types';
 
-	// Every group below shows the reader's EFFECTIVE edition only — one entry
-	// per work, never one per language (2026-08-15 decision: with ~460 works
-	// across languages once the encyclical sweep finishes, listing every
-	// language for every work would roughly double this page and make it
-	// unusable). "Effective" is resolved the same way every reading route
-	// resolves it — through the content store (`content.workIdFor`/
-	// `content.documentLangFor`), never by filtering on `i18n.lang` directly —
-	// so a reader who has explicitly overridden an edition (e.g. reading the
-	// Portuguese Bible under an English interface) sees the edition they
-	// actually chose here too, not whatever the interface language implies.
 	const bibleWork = $derived.by(() => {
 		const id = content.workIdFor('bible');
 		return id ? getWork(id) : undefined;
@@ -31,71 +44,178 @@
 		return id ? getWork(id) : undefined;
 	});
 
-	function bibleHref(work: WorkManifest): string {
-		const books = listBooks(work.id);
-		const firstBook = books[0];
-		const firstChapter = firstBook?.chapters[0]?.n ?? 1;
-		// Edition-free (docs/decisions.md #2). `work` still picks WHICH edition's
-		// book list to read the first book from, since editions need not agree on
-		// it — it just no longer appears in the URL.
-		return `/bible/${firstBook?.osis ?? ''}/${firstChapter}`;
+	// --- Bible: books & chapters -----------------------------------------------
+	//
+	// `BookChapterPicker` already IS the Bible's table of contents (the
+	// `/bible` landing route renders the identical component the identical
+	// way) — every book/chapter link goes straight to the reading page, so
+	// there is nothing left for this section to add beyond the picker and a
+	// quiet edition note.
+
+	// --- Catechism & Compendium: one shared table of contents ------------------
+	//
+	// The CCC and its Compendium are not presented as two parallel trees.
+	// The real corpus (checked against every `structure.json`, both `en` and
+	// `pt`) shows they share a top level: both split into exactly FOUR Parts
+	// of the same name, and both Parts split into exactly the same TWO
+	// Sections, in the same order — because the Compendium's own structure
+	// literally condenses the CCC's, part-by-part and section-by-section.
+	// That is not a coincidence to work around; it is the corpus telling us
+	// this is one table of contents wearing two bindings, so each row below
+	// offers two entry points (the full Catechism, the Compendium's shorter
+	// treatment) into the same doctrinal ground instead of forcing the
+	// reader to pick a tree first.
+	//
+	// PAIRED BY ORDINAL POSITION, NEVER BY TITLE TEXT. The printed titles
+	// are close but not identical between the two works — different quote
+	// characters, different casing, the Compendium prints extra subtitle
+	// text where the CCC's own heading is a bare "SECTION TWO" — and they
+	// diverge again in Portuguese. Matching on title strings would be
+	// fragile and would break silently the moment either source's wording
+	// drifts. Position within the tree is the invariant that actually
+	// holds: "the Nth part" and "the Nth section of that part" name the same
+	// ground in either work by construction.
+	//
+	// DEGRADE, DON'T ASSUME THE PARALLEL HOLDS. `pairByPosition` zips
+	// whatever length the two arrays actually are — not a hardcoded 4 or 8 —
+	// so a future edition, or a partial build missing one of the two works,
+	// produces a row with only the side that exists rather than a wrong
+	// pairing. The CCC's Prologue (¶1–25) is exactly this case TODAY: it has
+	// no Compendium counterpart, so it renders CCC-only rather than being
+	// paired with whatever the Compendium's first Part happens to be.
+	interface CccCompendiumRow {
+		ccc?: CccNode;
+		compendium?: CccNode;
 	}
 
-	// Magisterium: one row per document FAMILY (docs/corpus-schema.md
-	// §Documents), not one row per document — 16 Vatican II texts today, with
-	// several hundred encyclicals already landing behind them
-	// (docs/research/vatican-documents.md §5's phased plan). A flat list at
-	// that size would swamp this page the same way one row per language
-	// would (see the note above) — instead each family collapses to one row
-	// with a count, linking into `/documents` where the full library actually
-	// lists them. The set of families shown is read off the corpus itself via
-	// `listDocuments()`, not a hardcoded list, so a new family appears here
-	// the moment its scrape lands, with no code change required.
-	interface MagisteriumRow {
-		family: string;
-		label: string;
-		count: number;
+	function pairByPosition(cccNodes: CccNode[], compendiumNodes: CccNode[]): CccCompendiumRow[] {
+		const length = Math.max(cccNodes.length, compendiumNodes.length);
+		return Array.from({ length }, (_, i) => ({ ccc: cccNodes[i], compendium: compendiumNodes[i] }));
+	}
+
+	const cccLang = $derived(content.langFor('catechism'));
+	const compendiumLang = $derived(content.langFor('compendium'));
+
+	// Gated on the work actually existing in this corpus — a partial build
+	// or the vitest fixtures may have one of the two and not the other; an
+	// absent work's tree degrades to `[]`, which flows through
+	// `pairByPosition` as "this side is always the shorter one," never a
+	// crash.
+	const cccRoot = $derived(cccWork ? getCccStructure(cccLang) : []);
+	const compendiumRoot = $derived(compendiumWork ? getCompendiumStructure(compendiumLang) : []);
+
+	const cccPrologue = $derived(cccRoot.find((n) => n.kind === 'prologue'));
+	const partRows = $derived(
+		pairByPosition(
+			cccRoot.filter((n) => n.kind === 'part'),
+			compendiumRoot.filter((n) => n.kind === 'part')
+		)
+	);
+
+	/** Section-level pairing within one already-paired Part — the same
+	 *  position rule, one level down. */
+	function sectionRows(part: CccCompendiumRow): CccCompendiumRow[] {
+		return pairByPosition(
+			(part.ccc?.children ?? []).filter((n) => n.kind === 'section'),
+			(part.compendium?.children ?? []).filter((n) => n.kind === 'section')
+		);
 	}
 
 	/**
-	 * A family-level display label. `vatii`'s 16 works all share one
-	 * `pontiff_or_council` ("Second Vatican Council") — when a family's
-	 * promulgator is uniform like that, using it verbatim gives a more
-	 * specific, more useful label than any generic kind name could. Once a
-	 * family's promulgators genuinely vary (every pontificate's encyclicals,
-	 * all under `family: "encyclical"`), there's no single name to borrow, so
-	 * this falls back to a pluralized `document_kind` label instead
-	 * ("Encyclicals") — see `$lib/document-labels.ts`.
+	 * The row's own heading text. Prefers the CCC's title whenever the CCC
+	 * side of the pair exists: the CCC is the work being condensed, so its
+	 * title is the doctrinally primary one, and `displayTitle` already
+	 * normalizes its ALL-CAPS source casing to match the Compendium's
+	 * already-mixed-case titles — so both sides land in the same visual
+	 * register with no extra normalization needed here. Falls back to the
+	 * Compendium's own title only for a row with no CCC side at all (not
+	 * something today's corpus produces, but the pairing is positional and
+	 * must not assume that never changes).
 	 */
-	function familyLabel(docs: DocumentManifest[]): string {
-		const pontiffs = new Set(docs.map((d) => d.pontiff_or_council));
-		if (pontiffs.size === 1) return docs[0].pontiff_or_council;
-		return documentKindPluralLabel(docs[0].document_kind);
+	function rowTitleText(row: CccCompendiumRow): string | undefined {
+		if (row.ccc) return displayTitle(row.ccc, cccLang).title;
+		if (row.compendium) return displayTitle(row.compendium, compendiumLang).title;
+		return undefined;
 	}
 
-	const magisteriumRows = $derived.by(() => {
-		const byFamily = new Map<string, DocumentManifest[]>();
+	function rangeLabel(node: CccNode | undefined, prefix: string): string | undefined {
+		if (!node) return undefined;
+		const [from, to] = node.paragraphs;
+		if (!Number.isFinite(from)) return undefined;
+		return from === to ? `${prefix}${from}` : `${prefix}${from}–${to}`;
+	}
+
+	// --- Magisterium: grouped by pontiff/council --------------------------------
+	//
+	// Mirrors `routes/documents/+page.svelte`'s grouping (by
+	// `pontiff_or_council`, reverse chronological) at summary depth rather
+	// than importing it: that route groups to build a full nested list (doc
+	// rows inside collapsible groups); this one only ever needs the GROUPS
+	// themselves — name, count, most recent date — to link into `/documents`,
+	// which is little enough logic that sharing it would mean exporting a
+	// bespoke type from a route module. The one number this page adds beyond
+	// what documents/+page.svelte computes is `mostRecent`, used only to sort
+	// groups and to find the single newest document below.
+	interface MagisteriumDocRow {
+		slug: string;
+		manifest: DocumentManifest;
+	}
+
+	const magisteriumDocs = $derived.by(() => {
+		const out: MagisteriumDocRow[] = [];
 		for (const group of listDocuments()) {
-			// Effective-language filter, same principle as Bible/Catechism above:
-			// a document this reader has no edition of in their current
-			// (per-slug) effective language isn't counted here.
-			const manifest = group.manifests[content.documentLangFor(group.slug)];
-			if (!manifest) continue;
-			const list = byFamily.get(group.family);
-			if (list) list.push(manifest);
-			else byFamily.set(group.family, [manifest]);
+			const lang = content.documentLangFor(group.slug);
+			const manifest = group.manifests[lang];
+			if (manifest) out.push({ slug: group.slug, manifest });
 		}
-		return [...byFamily.entries()]
-			.map(([family, docs]) => ({ family, label: familyLabel(docs), count: docs.length }))
-			.sort((a, b) => b.count - a.count);
+		return out;
 	});
 
-	let positions: ReadingPosition[] = $state([]);
+	interface PontiffSummary {
+		pontiff: string;
+		count: number;
+		mostRecent: string;
+	}
 
-	onMount(() => {
-		positions = listPositions();
+	// REVERSE chronological, same reasoning as documents/+page.svelte: a
+	// library that opens on Leo XIII is ordered for the archivist, not the
+	// reader — recent documents are both the most-sought and the
+	// most-linked.
+	const magisteriumGroups = $derived.by(() => {
+		const byPontiff = new Map<string, MagisteriumDocRow[]>();
+		for (const row of magisteriumDocs) {
+			const list = byPontiff.get(row.manifest.pontiff_or_council);
+			if (list) list.push(row);
+			else byPontiff.set(row.manifest.pontiff_or_council, [row]);
+		}
+		const out: PontiffSummary[] = [...byPontiff.entries()].map(([pontiff, rows]) => ({
+			pontiff,
+			count: rows.length,
+			mostRecent: rows.reduce(
+				(max, r) => (r.manifest.promulgated > max ? r.manifest.promulgated : max),
+				rows[0].manifest.promulgated
+			)
+		}));
+		out.sort((a, b) => b.mostRecent.localeCompare(a.mostRecent));
+		return out;
 	});
 
+	// The single most recently promulgated document across every group,
+	// named directly rather than left buried inside its group's bare count.
+	// A reader landing here has no way to tell from a count alone whether a
+	// pontificate's group includes something from last month or from 1891 —
+	// naming just the newest document gives the section one concrete, timely
+	// foothold without turning it into a second `/documents` listing (the
+	// groups below stay groups, not an excerpt of the full library).
+	const mostRecentDoc = $derived.by(() => {
+		if (magisteriumDocs.length === 0) return undefined;
+		return [...magisteriumDocs].sort((a, b) =>
+			b.manifest.promulgated.localeCompare(a.manifest.promulgated)
+		)[0];
+	});
+
+	// --- Continue reading --------------------------------------------------------
+	//
 	// One "continue reading" row per work TYPE (most recently touched
 	// edition/document of it), not one per exact edition or exact document: a
 	// reader who has opened both the English and Portuguese Bible would
@@ -104,11 +224,17 @@
 	// documents collapse the same way, to whichever one was read most
 	// recently. `positions` is already sorted most-recent-first, so `.find`
 	// picks the latest.
+	let positions: ReadingPosition[] = $state([]);
+
+	onMount(() => {
+		positions = listPositions();
+	});
+
 	const CONTINUE_TYPES: WorkType[] = ['bible', 'catechism', 'compendium', 'document'];
 	const continueItems = $derived(
-		CONTINUE_TYPES.map((type) => positions.find((pos) => getWork(pos.workId)?.type === type)).filter(
-			(pos): pos is ReadingPosition => pos !== undefined
-		)
+		CONTINUE_TYPES.map((type) =>
+			positions.find((pos) => getWork(pos.workId)?.type === type)
+		).filter((pos): pos is ReadingPosition => pos !== undefined)
 	);
 </script>
 
@@ -127,83 +253,135 @@
 		</section>
 	{/if}
 
-	<section aria-labelledby="library-heading">
-		<h2 id="library-heading">{t('home.works')}</h2>
+	{#if bibleWork}
+		<section aria-labelledby="bible-heading">
+			<h2 id="bible-heading">{t('nav.bible')}</h2>
+			<BookChapterPicker currentWorkId={bibleWork.id} collapsible={false} />
+			<p class="edition-note">{bibleWork.title} — <CopyrightNotice manifest={bibleWork} /></p>
+		</section>
+	{/if}
 
-		<!-- Bible: a single row, the reader's effective edition — see module
-		     docblock. Nested one level under its own group heading like
-		     Catechism/Magisterium below, even though it only ever has one row
-		     today, so a second Bible edition landing later (docs/decisions.md
-		     already anticipates more) doesn't need a structural change here. -->
-		{#if bibleWork}
-			<div class="work-group" aria-labelledby="group-bible">
-				<h3 id="group-bible">{t('nav.bible')}</h3>
-				<ul class="works">
-					<li>
-						<a href={bibleHref(bibleWork)} class="work-link">
-							<span class="work-title">{bibleWork.title}</span>
-							<span class="work-meta">{bibleWork.short_title} · {bibleWork.language}</span>
-						</a>
-						{#if bibleWork.type === 'bible'}
-							<p class="work-note">
-								{bibleWork.books.length} book{bibleWork.books.length === 1 ? '' : 's'}
-							</p>
-						{/if}
-						<p class="work-copyright">{copyrightLabel(bibleWork)}</p>
+	{#if partRows.length > 0 || cccPrologue}
+		<section aria-labelledby="ccc-heading">
+			<h2 id="ccc-heading">{t('home.ccc.heading')}</h2>
+			<ol class="ccc-toc">
+				{#if cccPrologue}
+					{@const dt = displayTitle(cccPrologue, cccLang)}
+					{@const anchor = cccPrologue.paragraphs[0]}
+					<li class="ccc-row">
+						<div class="ccc-row-title">{dt.title}</div>
+						<div class="ccc-row-links">
+							{#if Number.isFinite(anchor)}
+								<a class="ccc-link" href={`/ccc/${anchor}`}>
+									{t('nav.ccc')} <span class="ccc-range">{rangeLabel(cccPrologue, '¶')}</span>
+								</a>
+							{/if}
+							<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
+						</div>
 					</li>
-				</ul>
-			</div>
-		{/if}
+				{/if}
+				{#each partRows as part, i (i)}
+					{@const title = rowTitleText(part)}
+					{@const cccAnchor = part.ccc?.paragraphs[0]}
+					{@const compendiumAnchor = part.compendium?.paragraphs[0]}
+					<li class="ccc-row ccc-row-part">
+						{#if title}<div class="ccc-row-title">{title}</div>{/if}
+						<div class="ccc-row-links">
+							{#if part.ccc && Number.isFinite(cccAnchor)}
+								<a class="ccc-link" href={`/ccc/${cccAnchor}`}>
+									{t('nav.ccc')} <span class="ccc-range">{rangeLabel(part.ccc, '¶')}</span>
+								</a>
+							{:else}
+								<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
+							{/if}
+							{#if part.compendium && Number.isFinite(compendiumAnchor)}
+								<a class="ccc-link" href={`/compendium/${compendiumAnchor}`}>
+									{t('nav.compendium')}
+									<span class="ccc-range">{rangeLabel(part.compendium, 'Q')}</span>
+								</a>
+							{:else}
+								<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
+							{/if}
+						</div>
 
-		<!-- Catechism: two distinct WORKS (CCC and its Compendium) nested under
-		     one group heading — they're separate work types in the schema, but
-		     belong together conceptually, the way a book and its study guide
-		     would share a library shelf. -->
-		{#if cccWork || compendiumWork}
-			<div class="work-group" aria-labelledby="group-catechism">
-				<h3 id="group-catechism">{t('nav.ccc')}</h3>
-				<ul class="works">
-					{#if cccWork}
-						<li>
-							<a href="/ccc" class="work-link">
-								<span class="work-title">{cccWork.title}</span>
-								<span class="work-meta">{cccWork.short_title} · {cccWork.language}</span>
-							</a>
-							<p class="work-copyright">{copyrightLabel(cccWork)}</p>
-						</li>
-					{/if}
-					{#if compendiumWork}
-						<li>
-							<a href="/compendium" class="work-link">
-								<span class="work-title">{compendiumWork.title}</span>
-								<span class="work-meta">{compendiumWork.short_title} · {compendiumWork.language}</span>
-							</a>
-							<p class="work-copyright">{copyrightLabel(compendiumWork)}</p>
-						</li>
-					{/if}
-				</ul>
-			</div>
-		{/if}
+						{#if sectionRows(part).length > 0}
+							<ol class="ccc-sections">
+								{#each sectionRows(part) as section, j (j)}
+									{@const stitle = rowTitleText(section)}
+									{@const sCccAnchor = section.ccc?.paragraphs[0]}
+									{@const sCompendiumAnchor = section.compendium?.paragraphs[0]}
+									<li class="ccc-row ccc-row-section">
+										{#if stitle}<div class="ccc-row-title">{stitle}</div>{/if}
+										<div class="ccc-row-links">
+											{#if section.ccc && Number.isFinite(sCccAnchor)}
+												<a class="ccc-link" href={`/ccc/${sCccAnchor}`}>
+													{t('nav.ccc')}
+													<span class="ccc-range">{rangeLabel(section.ccc, '¶')}</span>
+												</a>
+											{:else}
+												<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
+											{/if}
+											{#if section.compendium && Number.isFinite(sCompendiumAnchor)}
+												<a class="ccc-link" href={`/compendium/${sCompendiumAnchor}`}>
+													{t('nav.compendium')}
+													<span class="ccc-range">{rangeLabel(section.compendium, 'Q')}</span>
+												</a>
+											{:else}
+												<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
+											{/if}
+										</div>
+									</li>
+								{/each}
+							</ol>
+						{/if}
+					</li>
+				{/each}
+			</ol>
 
-		<!-- Magisterium: one row per document FAMILY, not per document — see
-		     module docblock. Every row links into `/documents`, where the
-		     library actually breaks each family down. -->
-		{#if magisteriumRows.length > 0}
-			<div class="work-group" aria-labelledby="group-magisterium">
-				<h3 id="group-magisterium">{t('nav.magisterium')}</h3>
-				<ul class="works">
-					{#each magisteriumRows as row (row.family)}
-						<li>
-							<a href="/documents" class="work-link">
-								<span class="work-title">{row.label}</span>
-								<span class="work-meta">{row.count}</span>
-							</a>
-						</li>
-					{/each}
-				</ul>
-			</div>
-		{/if}
-	</section>
+			{#if cccWork}
+				<p class="edition-note">{cccWork.title} — <CopyrightNotice manifest={cccWork} /></p>
+			{/if}
+			{#if compendiumWork}
+				<p class="edition-note">
+					{compendiumWork.title} — <CopyrightNotice manifest={compendiumWork} />
+				</p>
+			{/if}
+		</section>
+	{/if}
+
+	{#if magisteriumGroups.length > 0}
+		<section aria-labelledby="magisterium-heading">
+			<h2 id="magisterium-heading">{t('nav.magisterium')}</h2>
+
+			{#if mostRecentDoc}
+				<p class="magisterium-recent">
+					<span class="magisterium-recent-label">{t('home.magisterium.mostRecent')}</span>
+					<a href={`/documents/${mostRecentDoc.slug}`}>{mostRecentDoc.manifest.title}</a>
+					<span class="magisterium-recent-meta">
+						{mostRecentDoc.manifest.pontiff_or_council}
+						<span aria-hidden="true">·</span>
+						<time datetime={mostRecentDoc.manifest.promulgated}>
+							{formatPromulgated(
+								mostRecentDoc.manifest.promulgated,
+								mostRecentDoc.manifest.language
+							)}
+						</time>
+					</span>
+				</p>
+			{/if}
+
+			<ul class="magisterium-groups">
+				{#each magisteriumGroups as group (group.pontiff)}
+					<li>
+						<a href="/documents" class="magisterium-group-link">
+							<span class="magisterium-pontiff">{group.pontiff}</span>
+							<span class="magisterium-count">{group.count}</span>
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</section>
+	{/if}
 </div>
 
 <style>
@@ -212,64 +390,197 @@
 		font-size: 1.05rem;
 	}
 
-	.positions,
-	.works {
+	section {
+		margin: 2.25rem 0;
+	}
+
+	section h2 {
+		font-family: var(--font-serif);
+		font-size: 1.3rem;
+		border-bottom: 1px solid var(--color-border);
+		padding-bottom: 0.4rem;
+		margin: 0 0 1rem;
+	}
+
+	.positions {
 		list-style: none;
 		padding: 0;
-		margin: 0 0 2rem;
+		margin: 0;
 	}
 
 	.positions li {
 		padding: 0.35rem 0;
 	}
 
-	.work-group {
-		margin-bottom: 1.75rem;
-	}
-
-	.work-group h3 {
-		font-family: var(--font-serif);
-		font-size: 1.05rem;
+	/* Quiet edition/copyright line under a section — the reader can still
+	   tell which edition they're looking at, but it no longer heads the
+	   page the way a per-row metadata line used to (see this route's
+	   module docblock). `CopyrightNotice` still reproduces the rights
+	   holder's exact required wording; only its PLACEMENT changed. */
+	.edition-note {
+		margin: 0.75rem 0 0;
+		font-size: 0.78rem;
 		color: var(--color-text-muted);
-		margin: 0 0 0.25rem;
 	}
 
-	.work-group .works {
-		margin-bottom: 0;
+	/* --- Catechism & Compendium ------------------------------------------- */
+
+	.ccc-toc {
+		list-style: none;
+		margin: 0;
+		padding: 0;
 	}
 
-	.works li {
+	.ccc-row {
 		padding: 0.75rem 0;
 		border-bottom: 1px solid var(--color-border);
 	}
 
-	.work-link {
+	.ccc-row-part > .ccc-row-title {
+		font-size: 1.1rem;
+		font-weight: 700;
+	}
+
+	.ccc-row-title {
+		font-family: var(--font-serif);
+		color: var(--color-text);
+		margin-bottom: 0.4rem;
+	}
+
+	.ccc-row-links {
 		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	/* Chip-styled links, same visual language as the Magisterium kind/count
+	   badges below and `documents/+page.svelte`'s `.doc-kind` — a small
+	   bordered tag reads as "pick one of these" more clearly than a bare
+	   inline link would when there are two of them side by side. */
+	.ccc-link {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.3rem;
+		font-size: 0.85rem;
+		text-decoration: none;
+		color: var(--color-text);
+		border: 1px solid var(--color-border);
+		border-radius: 0.3rem;
+		padding: 0.2rem 0.55rem;
+	}
+
+	a.ccc-link:hover {
+		border-color: var(--color-accent);
+		color: var(--color-accent);
+	}
+
+	/* A row whose pairing has no counterpart on this side — the CCC's
+	   Prologue today, and degradation ground for anything similar in a
+	   future edition (see module docblock). Dashed border + muted text
+	   matches the site's existing "marked, not hidden" convention for an
+	   intentionally-absent link (`documents/+page.svelte`'s
+	   `.doc-unpublished`, `ccc/+page.svelte`'s `.unlinked`). */
+	.ccc-link-empty {
+		border-style: dashed;
+		color: var(--color-text-muted);
+	}
+
+	.ccc-range {
+		font-variant-numeric: tabular-nums;
+		color: var(--color-text-muted);
+	}
+
+	.ccc-sections {
+		list-style: none;
+		margin: 0.6rem 0 0;
+		padding-inline-start: 1rem;
+		border-inline-start: 1px solid var(--color-border);
+	}
+
+	.ccc-row-section {
+		padding: 0.5rem 0;
+	}
+
+	.ccc-row-section:last-child {
+		border-bottom: none;
+	}
+
+	.ccc-row-section > .ccc-row-title {
+		font-size: 0.95rem;
+		font-weight: 600;
+	}
+
+	/* --- Magisterium -------------------------------------------------------- */
+
+	.magisterium-recent {
+		margin: 0 0 1.25rem;
+		padding-bottom: 1.1rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.magisterium-recent-label {
+		display: block;
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--color-text-muted);
+		margin-bottom: 0.2rem;
+	}
+
+	.magisterium-recent a {
+		font-family: var(--font-serif);
+		font-size: 1.1rem;
+	}
+
+	.magisterium-recent-meta {
+		display: block;
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
+		margin-top: 0.15rem;
+	}
+
+	.magisterium-groups {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.magisterium-groups li {
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.magisterium-group-link {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.65rem 0;
 		text-decoration: none;
 	}
 
-	.work-title {
+	.magisterium-pontiff {
 		font-family: var(--font-serif);
-		font-size: 1.2rem;
+		font-size: 1.05rem;
 		color: var(--color-text);
 	}
 
-	.work-meta {
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-	}
-
-	.work-note {
-		margin: 0.35rem 0 0;
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
-	}
-
-	.work-copyright {
-		margin: 0.2rem 0 0;
+	.magisterium-count {
+		flex-shrink: 0;
 		font-size: 0.75rem;
 		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
+		border: 1px solid var(--color-border);
+		border-radius: 0.25rem;
+		padding: 0 0.35rem;
+	}
+
+	/* Mobile: chip links wrap onto their own line under a long title rather
+	   than squeezing, and the two chips stack full-width so the tap target
+	   stays a comfortable size instead of shrinking to fit two per row. */
+	@media (max-width: 30rem) {
+		.ccc-link {
+			flex: 1 1 auto;
+			justify-content: space-between;
+		}
 	}
 </style>
