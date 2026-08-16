@@ -73,9 +73,37 @@ const mockDocumentSections: Record<string, Partial<Record<string, number[]>>> = 
 	'dei-verbum': { en: [1, 2, 3] }
 };
 
+/**
+ * Titles for the by-title document matcher. Deliberately mirrors the real
+ * corpus's exclusion rules so the tests exercise them: "Humani Generis" is
+ * multi-word and unambiguous (so it resolves), while "Mysterium" is
+ * single-word (so it must NOT, even though a citation naming "Mysterium
+ * Fidei" would otherwise match it — that was a real false positive found
+ * against the corpus).
+ */
+const mockDocumentTitles: Record<string, string> = {
+	'gaudium-et-spes': 'Gaudium et Spes',
+	'dei-verbum': 'Dei Verbum',
+	'humani-generis': 'Humani Generis',
+	mysterium: 'Mysterium'
+};
+
 vi.mock('./corpus', () => ({
 	findBookByAbbrev: (workId: string, abbrev: string) => mockBibleBooks[workId]?.[abbrev.toLowerCase()],
 	workIdToEdition: (workId: string) => workId.replace(/^bible\./, ''),
+	listDocuments: () =>
+		Object.entries(mockDocumentTitles).map(([slug, title]) => {
+			const byLang = mockDocumentSections[slug] ?? { en: [] };
+			const manifests: Record<string, { id: string; title: string }> = {};
+			for (const lang of Object.keys(byLang)) {
+				manifests[lang] = { id: `vatii.${slug}.${lang}`, title };
+			}
+			// A document with no sections entry still needs a manifest, or the
+			// title index would silently skip it and the exclusion tests below
+			// would pass for the wrong reason.
+			if (Object.keys(manifests).length === 0) manifests.en = { id: `vatii.${slug}.en`, title };
+			return { slug, family: 'vatii', manifests };
+		}),
 	getDocumentGroup: (slug: string) => {
 		const byLang = mockDocumentSections[slug];
 		if (!byLang) return undefined;
@@ -660,5 +688,95 @@ describe('refHref', () => {
 				refHref({ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14], raw: 'Ps 22:14' }, { bibleWorkId: 'bible.nonexistent' })
 			).toBeUndefined();
 		});
+	});
+});
+
+/**
+ * Documents cited by TITLE rather than by siglum. Every case here is drawn
+ * from a real citation string in `ccc.en`/`ccc.pt`, including the false
+ * positives that motivated the single-word exclusion — see refs.ts's
+ * "Documents named by TITLE" section for the measurements behind them.
+ */
+describe('parseRefs — documents named by title', () => {
+	it('links a papal document cited by its incipit', () => {
+		const segs = parseRefs('Pius XII, Enc. Humani Generis 3.');
+		expect(segs.find((s) => s.kind === 'documentTitle')).toMatchObject({
+			slug: 'humani-generis',
+			locus: '3'
+		});
+	});
+
+	it('reproduces the original string exactly', () => {
+		// The whole point of the segment model: rendering must be lossless.
+		const raw = 'Pius XII, Enc. Humani Generis 3.';
+		const rebuilt = parseRefs(raw)
+			.map((s) => (s.kind === 'text' ? s.text : s.raw))
+			.join('');
+		expect(rebuilt).toBe(raw);
+	});
+
+	it('resolves the spelled-out conciliar titles the Portuguese Catechism uses', () => {
+		// PT never abbreviates, which is why it previously resolved no document
+		// links at all (DOCUMENT_SLUGS_EN's docblock).
+		const segs = parseRefs('II Concílio do Vaticano, Const. dogm. Dei Verbum, 2: AAS 58 (1966) 818.', {
+			lang: 'pt'
+		});
+		expect(segs.find((s) => s.kind === 'documentTitle')).toMatchObject({
+			slug: 'dei-verbum',
+			locus: '2'
+		});
+	});
+
+	it('does NOT match a single-word title inside a longer document name', () => {
+		// "Paul VI, Mysterium Fidei" names a document we do not have; matching
+		// the bare "Mysterium" would link confidently to the wrong one.
+		const segs = parseRefs('Paul VI, Mysterium Fidei: AAS (1965) 771.');
+		expect(segs.every((s) => s.kind !== 'documentTitle')).toBe(true);
+	});
+
+	it('does NOT match a single-word title appearing in ordinary Latin prose', () => {
+		const segs = parseRefs('Roman Missal, Embolism after the Lord’s Prayer: da propitius pacem.');
+		expect(segs.every((s) => s.kind !== 'documentTitle')).toBe(true);
+	});
+
+	it('prefers a siglum over a title when a clause offers both', () => {
+		const segs = parseRefs('GS 19');
+		expect(segs.find((s) => s.kind === 'document')).toBeDefined();
+		expect(segs.every((s) => s.kind !== 'documentTitle')).toBe(true);
+	});
+
+	it('is not shadowed by an unlinkable siglum appearing LATER in the clause', () => {
+		// Regression: nearly every PT citation ends in an "AAS 58 (1966) 818"
+		// volume reference, and AAS is recognized but never linkable. Matching
+		// sigla first let that trailing AAS beat the linkable title earlier in
+		// the same clause — for most of the Portuguese corpus, silently.
+		const segs = parseRefs('Const. dogm. Dei Verbum, 2: AAS 58 (1966) 818.', { lang: 'pt' });
+		expect(segs.find((s) => s.kind === 'documentTitle')).toMatchObject({ slug: 'dei-verbum' });
+	});
+});
+
+describe('refHref — documents named by title', () => {
+	const seg = (locus: string | null, slug = 'gaudium-et-spes') =>
+		({ kind: 'documentTitle', slug, title: 'Gaudium et Spes', locus, raw: 'x' }) as const;
+
+	it('links to the section when the number really is one', () => {
+		expect(refHref(seg('19'), { lang: 'en' })).toBe('/documents/gaudium-et-spes/19');
+	});
+
+	it('falls back to the landing page when the number is not a section', () => {
+		// "Humani generis 561" cites an AAS page; that document has 44 sections.
+		// Linking to /561 would be a confident 404, so the title alone wins.
+		expect(refHref(seg('561'), { lang: 'en' })).toBe('/documents/gaudium-et-spes');
+	});
+
+	it('falls back to the landing page when there is no number at all', () => {
+		// Unlike a bare siglum, which links nowhere: a title still names one
+		// specific document even with no locus.
+		expect(refHref(seg(null), { lang: 'en' })).toBe('/documents/gaudium-et-spes');
+	});
+
+	it('respects the reader language rather than falling back to another edition', () => {
+		expect(refHref(seg('2', 'dei-verbum'), { lang: 'pt' })).toBeUndefined();
+		expect(refHref(seg('2', 'dei-verbum'), { lang: 'en' })).toBe('/documents/dei-verbum/2');
 	});
 });

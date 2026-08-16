@@ -73,7 +73,13 @@
  * as text".
  */
 
-import { documentSectionExists, findBookByAbbrev, getDocumentGroup, workIdToEdition } from './corpus';
+import {
+	documentSectionExists,
+	findBookByAbbrev,
+	getDocumentGroup,
+	listDocuments,
+	workIdToEdition
+} from './corpus';
 import { isDivergentBook, resolveVulgate } from './versification';
 
 // --------------------------------------------------------------------------
@@ -85,6 +91,25 @@ export type RefSegment =
 	| { kind: 'scripture'; osis: string; chapter: number; verses: number[]; cf?: boolean; raw: string }
 	| { kind: 'ccc'; n: number; raw: string }
 	| { kind: 'compendium'; n: number; raw: string }
+	| {
+			/**
+			 * A document named by its TITLE rather than by a siglum — "Pius XII,
+			 * Humani generis 561", "Const. dogm. Dei Verbum, 2". Distinct from
+			 * `document` because the two resolve differently: a siglum without a
+			 * section number links nowhere (a bare "cf. GS" has no destination
+			 * worth guessing), whereas a title without a usable section number
+			 * still names one specific document and links to its landing page.
+			 * See `findDocumentTitleAt` for why titles are matched at all.
+			 */
+			kind: 'documentTitle';
+			/** The ingested document's slug — always set; an unresolvable title never becomes this segment. */
+			slug: string;
+			/** The manifest title that matched, for tooltips. */
+			title: string;
+			/** Trailing number(s) after the title, if any — validated against the document in `refHref`, never trusted. */
+			locus: string | null;
+			raw: string;
+	  }
 	| {
 			kind: 'document';
 			sigla: string;
@@ -544,6 +569,126 @@ function configFor(lang?: string): LangConfig {
 }
 
 // --------------------------------------------------------------------------
+// Documents named by TITLE rather than by siglum.
+//
+// The sigla tables above cover how the ENGLISH Catechism cites magisterial
+// documents ("LG 12", "GS 19 # 1"). They do not cover how it cites papal
+// documents, which it names by their italicised incipit — "Pius XII, Humani
+// generis 561", "Pius XI, encyclical, Casti connubii" — and, far more
+// consequentially, they do not cover the PORTUGUESE Catechism at all, which
+// spells conciliar documents out in full ("Const. dogm. Dei Verbum, 2")
+// rather than abbreviating them. DOCUMENT_SLUGS_EN's docblock records that
+// asymmetry as the reason PT resolved no document links whatsoever; this is
+// what closes it. Measured against the real corpus: 20 additional links in
+// `ccc.en` and 830 in `ccc.pt`, across 12 and 33 distinct documents.
+//
+// The index is derived from the corpus itself — every document manifest's
+// own title — rather than hand-maintained like the sigla tables. There is no
+// judgment to encode here (a title either is a work we ingested or it
+// isn't), and a hand-written table would silently rot as the Magisterium
+// corpus grows past its current 232 works.
+//
+// TWO EXCLUSIONS, both measured, both failing closed:
+//
+//   Single-word titles are dropped (24 of 232). Encyclical incipits are
+//   Latin, and one-word ones collide with ordinary Latin prose in the very
+//   citations being scanned: "Pacem" matched the Roman Missal's "da
+//   propitius pacem", "Paternae" matched a hymn's "digitus paternae
+//   dexterae", "Mater" matched "Provida Mater" (a different document), and
+//   "Mysterium" matched "Mysterium Fidei" (likewise). Each would have been a
+//   confidently wrong link into a 232-document corpus, which is worse than
+//   no link — the standing rule for DS, CIC, PL and PG. The cost is real and
+//   accepted: "Libertas praestantissimum" now goes unlinked because the
+//   corpus stores its title as the single word "Libertas".
+//
+//   Titles mapping to more than one slug are dropped. None do today; this
+//   exists so that a future collision degrades to no link rather than to an
+//   arbitrary one.
+
+/** Lazily built so it costs nothing on pages that never parse a citation. */
+let documentTitleIndex: Map<string, string> | null = null;
+let documentTitleRe: RegExp | null = null;
+
+function normalizeTitleKey(title: string): string {
+	return title.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function buildDocumentTitleIndex(): void {
+	const slugsByTitle = new Map<string, Set<string>>();
+	for (const group of listDocuments()) {
+		for (const manifest of Object.values(group.manifests)) {
+			if (!manifest) continue;
+			const key = normalizeTitleKey(manifest.title);
+			// Both exclusions, in one place — see the section comment above.
+			if (key.split(' ').length < 2) continue;
+			let slugs = slugsByTitle.get(key);
+			if (!slugs) slugsByTitle.set(key, (slugs = new Set()));
+			slugs.add(group.slug);
+		}
+	}
+
+	const index = new Map<string, string>();
+	for (const [key, slugs] of slugsByTitle) {
+		if (slugs.size === 1) index.set(key, [...slugs][0]);
+	}
+	documentTitleIndex = index;
+
+	// Longest first: JS alternation takes the first branch that matches, so
+	// without this "Dei Verbum" could lose to a shorter title sharing its
+	// opening words. Empty index (fixtures with no documents) yields a regex
+	// that can never match rather than an always-matching empty alternation.
+	const keys = [...index.keys()].sort((a, b) => b.length - a.length);
+	documentTitleRe = keys.length
+		? new RegExp(`\\b(${keys.map(escapeRe).join('|')})\\b`, 'gi')
+		: /(?!)/g;
+}
+
+/**
+ * The first document title occurring at or after `pos` in `clause`, with any
+ * trailing section number.
+ *
+ * Unlike the siglum matcher this is a SEARCH rather than an anchored match:
+ * a title is preceded by attribution prose of wildly varying shape ("Pius
+ * XII, Enc.", "II Concílio do Vaticano, Const. dogm.", "Cf. Leão XIII,"),
+ * and enumerating those prefixes in two languages would be a worse-founded
+ * guess than trusting the title itself. A multi-word Latin incipit is
+ * distinctive enough to carry the match on its own — that is exactly what
+ * the single-word exclusion above buys.
+ *
+ * The trailing number is captured but NOT trusted: `refHref` validates it
+ * against the document's real section list, because these numbers are often
+ * not section numbers at all ("Humani generis 561" is an AAS page — the
+ * document has 44 sections).
+ */
+function findDocumentTitleAt(
+	clause: string,
+	pos: number
+): { slug: string; title: string; locus: string | null; matchStart: number; consumedEnd: number } | null {
+	if (!documentTitleIndex || !documentTitleRe) buildDocumentTitleIndex();
+	const index = documentTitleIndex!;
+	const re = documentTitleRe!;
+
+	re.lastIndex = pos;
+	const m = re.exec(clause);
+	if (!m) return null;
+
+	const slug = index.get(normalizeTitleKey(m[0]));
+	if (!slug) return null; // case/whitespace variant that didn't round-trip; skip rather than guess
+
+	// Optional separator then digits, e.g. " 2", ", 19", " 48 # 4". Stops at
+	// the first number; ranges and lists beyond it stay as plain text, matching
+	// how the siglum path treats a locus.
+	const tail = /^[\s,.:]*(\d{1,4})/.exec(clause.slice(m.index + m[0].length));
+	return {
+		slug,
+		title: m[0],
+		locus: tail ? tail[1] : null,
+		matchStart: m.index,
+		consumedEnd: m.index + m[0].length + (tail ? tail[0].length : 0)
+	};
+}
+
+// --------------------------------------------------------------------------
 // Low-level number parsing — language-agnostic once the separator is fixed.
 // Ported from xrefs.py's _parse_verse_list / _parse_chapter_verses /
 // _parse_single_chapter_ref.
@@ -807,8 +952,38 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 		}
 	}
 
-	// 3. Document sigla.
+	// 3. A document, named either by siglum or by title — WHICHEVER COMES
+	//    FIRST in the clause.
+	//
+	//    Both matchers search rather than anchor, so "leftmost wins" is the
+	//    only ordering that doesn't let one shadow the other by accident. It
+	//    is not a hypothetical: nearly every Portuguese citation ends in an
+	//    "AAS 58 (1966) 818" volume reference, and AAS is a recognized (but
+	//    never linkable, `slug: null`) siglum. Trying sigla first meant that
+	//    trailing AAS beat the spelled-out "Const. dogm. Dei Verbum, 2"
+	//    earlier in the same clause, so the segment that CAN link lost to one
+	//    that never can — silently, and for most of the PT corpus.
+	//
+	//    Ties go to the siglum: at the same offset it is the more precise
+	//    match, and a title only reaches that offset by being a prefix of it.
 	const dm = findDocumentAt(cfg, rawClause, pos);
+	const tm = findDocumentTitleAt(rawClause, pos);
+	const useTitle = tm !== null && (dm === null || tm.matchStart < dm.matchStart);
+
+	if (useTitle) {
+		const segs: RefSegment[] = [];
+		if (tm.matchStart > 0) segs.push(textSeg(rawClause.slice(0, tm.matchStart)));
+		segs.push({
+			kind: 'documentTitle',
+			slug: tm.slug,
+			title: tm.title,
+			locus: tm.locus,
+			raw: rawClause.slice(tm.matchStart, tm.consumedEnd)
+		});
+		if (tm.consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(tm.consumedEnd)));
+		return segs;
+	}
+
 	if (dm) {
 		const segs: RefSegment[] = [];
 		if (dm.matchStart > 0) segs.push(textSeg(rawClause.slice(0, dm.matchStart)));
@@ -1016,6 +1191,23 @@ function firstLocusSection(locus: string | null): number | undefined {
 export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: string }): string | undefined {
 	if (seg.kind === 'ccc') return `/ccc/${seg.n}`;
 	if (seg.kind === 'compendium') return `/compendium/${seg.n}`;
+	if (seg.kind === 'documentTitle') {
+		// The reader's own language edition, for the same reason the siglum
+		// branch below uses it: a citation link must not silently move them to
+		// a different-language edition than the one they are reading.
+		const targetLang = (ctx.lang ?? 'en').split('-')[0].toLowerCase();
+		const workId = getDocumentGroup(seg.slug)?.manifests[targetLang]?.id;
+		if (!workId) return undefined;
+		// Unlike a siglum, a title with no usable section number still names one
+		// specific document, so it degrades to that document's landing page
+		// rather than to no link. The number is validated, never trusted: "Humani
+		// generis 561" cites an AAS page, and that document has 44 sections.
+		const n = firstLocusSection(seg.locus);
+		if (n !== undefined && documentSectionExists(workId, n)) {
+			return `/documents/${seg.slug}/${n}`;
+		}
+		return `/documents/${seg.slug}`;
+	}
 	if (seg.kind === 'document') {
 		if (!seg.slug) return undefined; // recognized siglum, but not an ingested document (or PT, which never resolves one)
 		const n = firstLocusSection(seg.locus);
