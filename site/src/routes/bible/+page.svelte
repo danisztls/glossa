@@ -10,7 +10,7 @@
 	 * book/chapter structure via `BookChapterPicker`.
 	 */
 	import { content } from '$lib/content.svelte';
-	import { copyrightLabel } from '$lib/copyright';
+	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { getWork, listBooks, workIdToEdition } from '$lib/corpus';
 	import { getPosition, type ReadingPosition } from '$lib/reading-position';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
@@ -48,7 +48,7 @@
 
 	{#if work}
 		<p class="edition-label">{work.title}</p>
-		<p class="copyright-notice">{copyrightLabel(work)}</p>
+		<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
 	{/if}
 
 	<p class="entry-point">

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { copyrightLabel } from '$lib/copyright';
+	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { content } from '$lib/content.svelte';
 	import { displayTitle } from '$lib/titles';
 	import { setPosition } from '$lib/reading-position';
@@ -52,7 +52,7 @@
 	-->
 	<h1 class="visually-hidden">{t('compendium.question')} {data.n}</h1>
 
-	<p class="copyright-notice">{copyrightLabel(current.work)}</p>
+	<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 
 	<div class="reading-text compendium-body" lang={current.work.language}>
 		<p class="qa-question">

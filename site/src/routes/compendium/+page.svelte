@@ -12,7 +12,7 @@
 	 * is needed.
 	 */
 	import { flattenCompendiumStructure, getWork } from '$lib/corpus';
-	import { copyrightLabel } from '$lib/copyright';
+	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { displayTitle } from '$lib/titles';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
@@ -30,7 +30,7 @@
 	<h1>{t('compendium.landing.title')}</h1>
 	<p class="tagline">{t('compendium.landing.tagline')}</p>
 	{#if work}
-		<p class="copyright-notice">{copyrightLabel(work)}</p>
+		<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
 	{/if}
 
 	<h2 class="toc-heading">{t('compendium.tableOfContents')}</h2>

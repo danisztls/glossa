@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { copyrightLabel } from '$lib/copyright';
+	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
 	import { displayTitle } from '$lib/titles';
@@ -54,7 +54,7 @@
 
 		<h1>{current.work.short_title} {data.n}</h1>
 
-		<p class="copyright-notice">{copyrightLabel(current.work)}</p>
+		<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 
 		<div class="reading-text document-body" lang={current.work.language}>
 			<CccParagraphText paragraph={current.section} {lang} />

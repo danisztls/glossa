@@ -28,6 +28,40 @@ function stripTrailingParenthetical(holder: string): string {
 	return holder.replace(/\s*\([^()]*\)\s*$/, '');
 }
 
+/**
+ * The page this work's text was actually taken from, for the "source" link
+ * beside its copyright notice (`CopyrightNotice.svelte`).
+ *
+ * `sources[0]` rather than a search for a "primary" one: the array is written
+ * by the scrapers in the order they fetched, so the first entry is the work's
+ * entry point in every case the corpus currently has — the single document
+ * page for a Bible book or a Magisterium document, and `__P1.HTM` (part one,
+ * the CCC's own first page) for the seven-page Catechism mirror. A work with
+ * no sources at all is possible per the schema, so this returns undefined
+ * rather than assuming.
+ */
+export function sourceUrl(manifest: WorkManifest): string | undefined {
+	return manifest.sources?.[0]?.url;
+}
+
+/**
+ * Display text for that link — the bare hostname ("vatican.va"), not the full
+ * URL. The URLs run to 120+ characters of path and would swamp the notice
+ * they're attached to; the host is what tells a reader whether this text came
+ * from the Holy See's own servers, which is the question the link exists to
+ * answer. `www.` is stripped as noise.
+ */
+export function sourceHost(manifest: WorkManifest): string | undefined {
+	const url = sourceUrl(manifest);
+	if (!url) return undefined;
+	try {
+		return new URL(url).hostname.replace(/^www\./, '');
+	} catch {
+		// A malformed URL in a manifest shouldn't take a reading page down.
+		return undefined;
+	}
+}
+
 export function copyrightLabel(manifest: WorkManifest): string {
 	if (manifest.copyright.status === 'public-domain') return 'Public domain';
 	return (
