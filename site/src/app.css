@@ -143,6 +143,68 @@ input {
 	line-height: 1.65;
 }
 
+/* --- Drop caps --------------------------------------------------------- *
+ *
+ * Promised in docs/decisions.md's original design decision, alongside
+ * ornaments and a print stylesheet.
+ *
+ * TWO MECHANISMS, because the reading views have two different shapes of
+ * first line and neither one covers both:
+ *
+ *   `.drop-cap` uses `::first-letter` and is for blocks whose first inline
+ *   content is genuinely the first letter of the prose — the CCC chapter
+ *   view, whose paragraph numbers hang in the margin via `position:
+ *   absolute` and so are not in the inline flow at all.
+ *
+ *   `.drop-cap-letter` is an explicit span the component wraps the first
+ *   character in, for blocks where something else comes first inline — the
+ *   Bible reader, where every verse opens with a `<sup>` verse number.
+ *   `::first-letter` would enlarge the numeral "1" there, which is why the
+ *   split is done in the template instead of in CSS.
+ *
+ * Both resolve to the same visual rule, kept in one declaration list so the
+ * two can never drift apart.
+ *
+ * `initial-letter` is deliberately not used: Firefox still doesn't support
+ * it (as of this writing), and its absence degrades to a normal-size letter
+ * rather than to the float fallback below, so the float IS the
+ * implementation rather than a progressive enhancement on top of it. */
+.drop-cap::first-letter,
+.drop-cap-letter {
+	float: inline-start;
+	font-family: var(--font-serif);
+	font-size: 3.1em;
+	/* Tuned against the serif stack's cap height so the cap's top aligns with
+	   the first line's ascender and its baseline sits on the third line. */
+	line-height: 0.82;
+	padding-inline-end: 0.08em;
+	padding-block-start: 0.06em;
+	color: var(--color-accent);
+	font-weight: 600;
+}
+
+/* A floated cap inside a `<span>` (the Bible's verse markup) needs the span
+   to establish nothing of its own — the float has to escape into the
+   surrounding block for the text to wrap around it. */
+.drop-cap-letter {
+	display: inline-block;
+}
+
+/* Drop caps are a typographic flourish for continuous reading; at phone
+   width the measure is too narrow for text to wrap around three lines of
+   letter without the result looking broken rather than deliberate. */
+@media (max-width: 30rem) {
+	.drop-cap::first-letter,
+	.drop-cap-letter {
+		float: none;
+		font-size: inherit;
+		line-height: inherit;
+		padding: 0;
+		color: inherit;
+		font-weight: inherit;
+	}
+}
+
 .visually-hidden {
 	position: absolute;
 	width: 1px;

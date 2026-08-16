@@ -2,8 +2,12 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { getAdjacentChapterAcrossBooks } from '$lib/corpus';
-	import { copyrightLabel } from '$lib/copyright';
+	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { setPosition } from '$lib/reading-position';
+	// Drop cap on the chapter's opening verse only, and only when no section
+	// heading precedes it — a cap immediately under a heading collides with
+	// it, and the heading is already doing the work of marking the opening.
+	import { splitDropCap } from '$lib/dropcap';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { PageData } from './$types';
@@ -32,7 +36,7 @@
 
 <article class="content-column">
 	<p class="edition-label">{data.work.title}</p>
-	<p class="copyright-notice">{copyrightLabel(data.work)}</p>
+	<p class="copyright-notice"><CopyrightNotice manifest={data.work} /></p>
 	<h1>{data.book.name} {data.chapter.n}</h1>
 
 	<BookChapterPicker
@@ -42,13 +46,16 @@
 	/>
 
 	<div class="reading-text" lang={data.work.language}>
-		{#each data.chapter.verses as verse (verse.n)}
+		{#each data.chapter.verses as verse, i (verse.n)}
 			{@const heading = headingBefore(verse.n)}
 			{#if heading}
 				<h2 class="section-heading">{heading.text}</h2>
 			{/if}
 			<span id={`v${verse.n}`} class="verse">
-				<sup class="verse-num">{verse.n}</sup>{verse.text}
+				<sup class="verse-num">{verse.n}</sup
+				>{#if i === 0 && !heading}{@const cap = splitDropCap(verse.text)}{#if cap.first}<span
+							class="drop-cap-letter">{cap.first}</span
+						>{cap.rest}{:else}{verse.text}{/if}{:else}{verse.text}{/if}
 			</span>
 		{/each}
 	</div>
