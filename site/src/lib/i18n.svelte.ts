@@ -21,7 +21,6 @@ type Dictionary = Record<string, string>;
 
 const dictionaries: Record<UiLang, Dictionary> = {
 	en: {
-		'nav.home': 'Home',
 		'nav.bible': 'Bible',
 		'nav.ccc': 'Catechism',
 		'nav.compendium': 'Compendium',
@@ -37,6 +36,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'home.continueReading': 'Continue reading',
 		'home.works': 'Library',
 		'jumpbox.placeholder': 'Jump to… (e.g. john 3:16, ccc 1234)',
+		'jumpbox.short': 'Search',
 		'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
 		'jumpbox.noMatch': 'No match',
 
@@ -106,7 +106,6 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'document.section': 'Section',
 		'document.prevSection': 'Previous',
 		'document.nextSection': 'Next',
-		'document.promulgated': 'Promulgated',
 		'document.kind.conciliarConstitution': 'Constitution',
 		'document.kind.conciliarDecree': 'Decree',
 		'document.kind.conciliarDeclaration': 'Declaration',
@@ -128,10 +127,13 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// document sections.
 		'citation.unavailable': 'No source text available for this note.',
 
+		'ccc.readFullChapter': 'Read the full chapter',
+		'ccc.subsections': 'subsections',
+		'ccc.noParagraphNumber': 'No paragraph number in this corpus',
+		'copyright.sourceTitle': 'Open the original source page',
 		'lang.label': 'Language'
 	},
 	pt: {
-		'nav.home': 'Início',
 		'nav.bible': 'Bíblia',
 		'nav.ccc': 'Catecismo',
 		'nav.compendium': 'Compêndio',
@@ -142,6 +144,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'home.continueReading': 'Continuar lendo',
 		'home.works': 'Biblioteca',
 		'jumpbox.placeholder': 'Ir para… (ex: jo 3,16, ccc 1234)',
+		'jumpbox.short': 'Buscar',
 		'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
 		'jumpbox.noMatch': 'Nenhum resultado',
 
@@ -201,7 +204,6 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'document.section': 'Secção',
 		'document.prevSection': 'Anterior',
 		'document.nextSection': 'Próximo',
-		'document.promulgated': 'Promulgado em',
 		'document.kind.conciliarConstitution': 'Constituição',
 		'document.kind.conciliarDecree': 'Decreto',
 		'document.kind.conciliarDeclaration': 'Declaração',
@@ -219,6 +221,10 @@ const dictionaries: Record<UiLang, Dictionary> = {
 
 		'citation.unavailable': 'Sem texto de fonte disponível para esta nota.',
 
+		'ccc.readFullChapter': 'Ler o capítulo completo',
+		'ccc.subsections': 'subsecções',
+		'ccc.noParagraphNumber': 'Sem número de parágrafo neste corpus',
+		'copyright.sourceTitle': 'Abrir a página de origem',
 		'lang.label': 'Idioma'
 	}
 };
