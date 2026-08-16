@@ -1,0 +1,92 @@
+[
+  {
+    "id": "prayer.common.pt-sign-of-the-cross-sancii",
+    "locator": { "prayer": "sign-of-the-cross" },
+    "field": "latin_text",
+    "from": "Sancii. Amen.",
+    "to": "Sancti. Amen.",
+    "reason": "'Sancii' is not a Latin word; 't' misread/mistyped as 'i' (classic OCR/keying confusion) in 'Spíritus Sancti' (Holy Spirit).",
+    "evidence": "corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html Appendix A Latin block, Signum Crucis: 'In nómine Patris et Filii et Spíritus Sancii. Amen.'; compendium-en's parallel Latin column for the same prayer reads 'et Spíritus Sancti. Amen.' -- same universal Latin text, unambiguous reading.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "prayer.common.pt-regina-caeli-quelli",
+    "locator": { "prayer": "regina-caeli" },
+    "field": "latin_text",
+    "from": "Quia quelli merúisti portáre",
+    "to": "Quia quem merúisti portáre",
+    "reason": "'quelli' is not a Latin word (reads as Italian 'those'); the line is the Regina Caeli's opening antiphon, whose text is fixed across the entire Latin rite -- 'quem' (relative pronoun, accusative, referring to Christ) is the only reading that makes the sentence grammatical.",
+    "evidence": "corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html Appendix A Latin block, Regina Cæli: 'Quia quelli merúisti portáre, allelúia.'; compendium-en's parallel Latin column reads 'Quia quem meruísti portáre, allelúia.' -- same universal Marian antiphon text, unambiguous reading.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "prayer.common.pt-hail-holy-queen-posi",
+    "locator": { "prayer": "hail-holy-queen" },
+    "field": "latin_text",
+    "from": "nobis, posi hoc exsílium, osténde",
+    "to": "nobis, post hoc exsílium, osténde",
+    "reason": "'posi' is not a Latin word; 't' dropped/misread as 'i' in 'post hoc exsilium' ('after this exile'), the Salve Regina's own fixed, universally sung text.",
+    "evidence": "corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html Appendix A Latin block, Salve Regina: 'nobis, posi hoc exsílium, osténde.'; compendium-en's parallel Latin column reads 'nobis, post hoc exsílium, osténde.' -- same universal Marian antiphon text, unambiguous reading.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "prayer.common.pt-benedictus-sieut",
+    "locator": { "prayer": "benedictus" },
+    "field": "latin_text",
+    "from": "sieut locútus est",
+    "to": "sicut locútus est",
+    "reason": "'sieut' is not a Latin word; digit/letter-shape typo for 'sicut' ('as/just as') in the Benedictus's fixed liturgical text.",
+    "evidence": "corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html Appendix A Latin block, Benedictus: 'sieut locútus est per os sanctórum'; compendium-en's parallel Latin column reads 'sicut locútus est per os sanctórum eius' -- same canticle text, unambiguous reading.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "prayer.common.pt-benedictus-eum-cum",
+    "locator": { "prayer": "benedictus" },
+    "field": "latin_text",
+    "from": "ad faciéndam misericórdiam eum pátribus nostris",
+    "to": "ad faciéndam misericórdiam cum pátribus nostris",
+    "reason": "'eum' (accusative 'him') does not fit grammatically; the fixed liturgical text reads 'cum pátribus nostris' ('with our fathers') -- a one-letter typo (c misread/mistyped as e).",
+    "evidence": "corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html Appendix A Latin block, Benedictus: 'ad faciéndam misericórdiam eum pátribus nostris'; compendium-en's parallel Latin column reads 'ad faciéndam misericórdiam cum pátribus nostris' -- same canticle text, unambiguous reading.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "prayer.common.pt-benedictus-sanetitate",
+    "locator": { "prayer": "benedictus" },
+    "field": "latin_text",
+    "from": "in sanetitáte et iustítia",
+    "to": "in sanctitáte et iustítia",
+    "reason": "'sanetitáte' is not a Latin word; 'c' misread/mistyped as 'e' in 'sanctitáte' ('holiness'), the Benedictus's fixed liturgical text.",
+    "evidence": "corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html Appendix A Latin block, Benedictus: 'serviámus illi in sanetitáte et iustítia'; compendium-en's parallel Latin column reads 'serviámus illi in sanctitáte et iustítia' -- same canticle text, unambiguous reading.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "prayer.common.pt-veni-creator-paraclito",
+    "locator": { "prayer": "veni-creator-spiritus" },
+    "field": "latin_text",
+    "from": "ac Parác1ito, in sæculórum",
+    "to": "ac Paráclito, in sæculórum",
+    "reason": "Digit '1' substituted for letter 'l' in 'Paráclito' (Paraclete) -- the exact digit-substitution typo class docs/decisions.md's corrections policy names as eligible.",
+    "evidence": "corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html Appendix A Latin block, Veni Creator Spiritus: 'ac Parác1ito, in sæculórum sǽcula.'; compendium-en's parallel Latin column reads 'ac Paráclito, in sæculórum sæcula.' -- same hymn text, unambiguous reading.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "prayer.common.pt-veni-sancte-saucium",
+    "locator": { "prayer": "veni-sancte-spiritus" },
+    "field": "latin_text",
+    "from": "sana quod est sáueium.",
+    "to": "sana quod est sáucium.",
+    "reason": "'sáueium' is not a Latin word; 'c' misread/mistyped as 'e' in 'sáucium' ('wounded'), completing the hymn's rhyme scheme (sórdidum/áridum/sáucium).",
+    "evidence": "corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html Appendix A Latin block, Veni Sancte Spiritus: 'Lava quod est sórdidum, riga quod est áridum, sana quod est sáueium.'; compendium-en's parallel Latin column reads 'sana quod est sáucium.' -- same sequence text, unambiguous reading.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "prayer.common.pt-te-deum-curo-cum",
+    "locator": { "prayer": "te-deum" },
+    "field": "latin_text",
+    "from": "Ætérna fac curo sanctis tuis",
+    "to": "Ætérna fac cum sanctis tuis",
+    "reason": "'curo' ('I care for/heal', 1st person singular) does not fit grammatically here; the fixed liturgical text reads 'cum sanctis tuis' ('with your saints') -- a letter-substitution typo (m misread/mistyped as ro).",
+    "evidence": "corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html Appendix A Latin block, Te Deum: 'Ætérna fac curo sanctis tuis in glória numerári.'; compendium-en's parallel Latin column reads 'Ætérna fac cum sanctis tuis in glória numerári.' -- same hymn text, unambiguous reading.",
+    "added": "2026-08-16"
+  }
+]

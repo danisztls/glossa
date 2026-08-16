@@ -43,15 +43,26 @@ total), small enough to run in full every time; re-runs are offline-capable
 via corpus/raw/compendium-{lang}/.
 
 Known source limitations (see manifest notes / final report):
-  - The Appendix (Part A: common prayers, Part B: formulas of Catholic
-    doctrine) is NOT captured. Part B is simple (title/body pairs) but Part
-    A is materially more complex than a title/body table: multi-paragraph
-    cells, dialogic (V./R.) prayers, regional variants (UK/USA wording of
-    the Regina Caeli), and a Latin parallel column in EN only -- PT's
-    Appendix A has no Latin column, and PT alone also carries a bonus
-    "Biblical Abbreviations" table that EN lacks entirely. None of this is
-    part of the 598-question schema; deferred per corpus-schema.md's
-    explicit allowance ("if straightforward, else document and defer").
+  - The Appendix's Part A (common prayers) is now parsed separately by
+    pipeline/scrapers/prayers.py into prayer.common.{en,pt} -- a re-parse
+    of this same cached raw HTML, not a re-fetch. It was NOT captured here
+    because it is materially more complex than a title/body table:
+    multi-paragraph cells, dialogic (V./R.) prayers, regional variants
+    (UK/USA wording of five prayers, EN only), and Latin text -- present
+    in BOTH languages, contrary to what an earlier version of this note
+    claimed ("a Latin parallel column in EN only"): EN prints Latin as a
+    side-by-side table column, PT prints the same 21 Latin texts as a
+    second sequential pass after its vernacular prayers, which is why an
+    earlier reading of PT's raw HTML missed them. See
+    docs/research/prayers.md for the survey that found this, and
+    prayers.py's own docstring for the parsing details. PT alone also
+    carries a bonus "Biblical Abbreviations" table that EN lacks
+    entirely; still unparsed, still not prayers. Part B (formulas of
+    Catholic doctrine) is also still unparsed -- simple title/body pairs
+    in both languages, but not prayers, deliberately out of scope for
+    prayers.py too. None of this is part of the 598-question schema;
+    deferred per corpus-schema.md's explicit allowance ("if
+    straightforward, else document and defer").
   - Sacred-art images and their commentary: out of scope per project spec,
     not investigated.
   - A single decorative epigraph (a set-off quotation attributed to Saint
@@ -665,14 +676,23 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
     cfg = LANG_CONFIG[lang]
     notes = [
         (
-            "The Appendix (A: common prayers, incl. a Latin parallel column in EN only; "
-            "B: formulas of Catholic doctrine) is not captured in v1. Part B is a simple "
-            "title/body list in both languages, but Part A is materially more complex -- "
+            "The Appendix's Part A (common prayers) is now parsed separately, from this "
+            "same cached raw HTML, into prayer.common." + lang + " (pipeline/scrapers/"
+            "prayers.py) -- see that work's own manifest for its scope. It doesn't live "
+            "here because it is materially more complex than a title/body table -- "
             "multi-paragraph cells, dialogic (versicle/response) prayers, regional "
-            "wording variants (the Regina Caeli prints separate UK and USA texts), and a "
-            "PT-only bonus 'Biblical Abbreviations' table with no EN equivalent. None of "
-            "this is part of the 598-question schema; deferred per corpus-schema.md's "
-            "explicit allowance. Raw HTML is cached in full, so nothing is lost."
+            "wording variants (five prayers print separate UK and USA texts, EN only), "
+            "and Latin text, which -- CORRECTING an earlier version of this note that "
+            "claimed it was 'EN only' -- is present in BOTH languages: EN prints it as a "
+            "side-by-side table column, PT prints the same 21 Latin texts as a second "
+            "sequential pass after its vernacular prayers, easy to miss on a first read "
+            "of the raw HTML (see docs/research/prayers.md). PT alone also carries a "
+            "bonus 'Biblical Abbreviations' table with no EN equivalent, still unparsed. "
+            "Part B (formulas of Catholic doctrine) is also still unparsed here -- a "
+            "simple title/body list in both languages, but not prayers, so out of scope "
+            "for prayer.common." + lang + " too. None of this is part of the "
+            "598-question schema; deferred per corpus-schema.md's explicit allowance. "
+            "Raw HTML is cached in full, so nothing was ever lost."
         ),
         (
             "Sacred-art images and their commentary (out of scope per project spec) were "
