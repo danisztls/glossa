@@ -158,6 +158,14 @@ input {
  */
 .reading-layout {
 	--aside-width: 17rem;
+	/* The gutter between the reading column and the navigation column.
+	   Deliberately wider than a normal layout gap: the two are different
+	   KINDS of thing — continuous prose on one side, a dense list of links
+	   on the other — and set too close they read as one crowded column with
+	   a ragged edge rather than as text with navigation beside it. Held as a
+	   token because both the plain and the compare grid use it, and two
+	   copies of the same number drift. */
+	--aside-gap: 4.5rem;
 }
 
 @media (min-width: 80rem) {
@@ -166,7 +174,7 @@ input {
 		grid-template-columns: minmax(0, var(--content-width)) var(--aside-width);
 		justify-content: center;
 		align-items: start;
-		gap: 2.75rem;
+		gap: var(--aside-gap);
 		padding-inline: 1.25rem;
 	}
 
@@ -290,7 +298,7 @@ input {
 		grid-template-columns: minmax(0, calc(var(--content-width) * 2 + 3rem)) var(--aside-width);
 		justify-content: center;
 		align-items: start;
-		gap: 2.75rem;
+		gap: var(--aside-gap);
 		padding-inline: 1.25rem;
 	}
 
