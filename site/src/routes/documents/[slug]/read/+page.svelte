@@ -28,6 +28,7 @@
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import { alignByNumber, withCompareParam } from '$lib/compare';
 	import { compare } from '$lib/compare-pref.svelte';
+	import { useScrollSpy } from '$lib/scroll-spy.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { displayTitle } from '$lib/titles';
 	import { content } from '$lib/content.svelte';
@@ -281,6 +282,24 @@
 		}
 	}
 
+	/**
+	 * Which section the reader has scrolled to. The whole document is one
+	 * page here, so unlike every single-section route there is no `n` in the
+	 * URL to tell the sidebar where they are — without this the table of
+	 * contents can only show the document's top-level divisions and never
+	 * marks or expands the one being read (see `structureToc.ts`'s
+	 * `isExpanded`, which keys entirely off a current position).
+	 *
+	 * Fed the same `id="s{n}"` anchors the sections already carry for
+	 * `#s{n}` deep links, in corpus order — so the spy needs no separate
+	 * registry and cannot disagree with what is actually on the page.
+	 * Browser-only by construction (`useScrollSpy` runs inside `$effect`),
+	 * so this changes nothing about the prerendered page.
+	 */
+	const spy = useScrollSpy(() =>
+		(current?.sections ?? []).map((section) => [`s${section.n}`, section.n] as const)
+	);
+
 	// Reactive rather than `onMount`: re-records the position whenever the
 	// reader toggles the document's language mid-read too, same as
 	// `ccc/chapter/[n]` and `documents/[slug]/[n]`.
@@ -392,7 +411,7 @@
 		<aside class="reading-aside">
 			<StructureSidebarToc
 				structure={structureRows}
-				currentN={undefined}
+				currentN={spy.current}
 				{lang}
 				heading={t('document.tableOfContents')}
 				linkMode="anchor"

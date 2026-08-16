@@ -24,6 +24,7 @@
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import { alignByNumber, withCompareParam } from '$lib/compare';
 	import { compare } from '$lib/compare-pref.svelte';
+	import { useScrollSpy } from '$lib/scroll-spy.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
 	import { displayTitle } from '$lib/titles';
@@ -72,6 +73,21 @@
 
 	// BROWSER-ONLY side effect — see `bible/[book]/[chapter]/+page.svelte`'s
 	// `citedRange` docblock and `compare-pref.svelte.ts`'s `syncFromUrl`.
+	/**
+	 * Which paragraph the reader has scrolled to. This view is a whole
+	 * chapter on one page, so the sidebar's position cannot come from the
+	 * URL — `currentN` was the chapter's FIRST paragraph, fixed, which meant
+	 * the table of contents marked the chapter's opening no matter how far
+	 * into it the reader had read.
+	 *
+	 * Fed the `id="p{n}"` anchors the paragraphs already carry for `#p{n}`
+	 * deep links, so the spy cannot disagree with the page. Browser-only —
+	 * `useScrollSpy` runs inside `$effect` — so the prerendered page is
+	 * unchanged, and falls back to the chapter's first paragraph before the
+	 * first measurement.
+	 */
+	const spy = useScrollSpy(() => (current?.paragraphs ?? []).map((p) => [`p${p.n}`, p.n] as const));
+
 	$effect(() => {
 		if (browser) compare.syncFromUrl(page.url);
 	});
@@ -220,7 +236,7 @@
 		<aside class="reading-aside">
 			<StructureSidebarToc
 				{structure}
-				currentN={from ?? undefined}
+				currentN={spy.current ?? from ?? undefined}
 				{lang}
 				heading={t('ccc.tableOfContents')}
 				basePath="/ccc"
