@@ -46,21 +46,34 @@
 	 * everything described so far — a wrapped flex grid of book buttons with
 	 * an absolutely-positioned popover — used by the `/bible` landing route
 	 * and by the reading view's mobile/collapsed picker. `'sidebar'` is for
-	 * the reading view's desktop right column (`.reading-aside`, app.css):
-	 * books render as a single-column vertical list instead, and the chapter
-	 * grid for an open book expands IN FLOW directly beneath it. That would
-	 * have been wrong for the grid variant (that's the whole reason the
-	 * popover exists), but it's exactly right here for two reasons the grid
-	 * variant doesn't have: a single column never wraps, so opening a book
-	 * only ever pushes the (already vertical) list straight down instead of
-	 * reflowing it sideways under the cursor; and `.reading-aside` is itself
-	 * `overflow-y: auto` (a scroll container, so it clips anything that
-	 * escapes its box) and only 17rem wide (so the popover's own 22rem
-	 * `PANEL_WIDTH_REM` wouldn't fit even if it weren't clipped). The
-	 * `align`/outside-click/Escape machinery above is therefore skipped
-	 * entirely for `'sidebar'` — nothing needs measuring or force-dismissing
-	 * when there's no popover to overhang the viewport or fail to
-	 * self-dismiss.
+	 * the reading view's desktop right column (`.reading-aside`, app.css).
+	 * It keeps the wrapped grid of books — 73 books as chips wrap into a few
+	 * scannable rows, where a single column of 73 is a long scroll to find
+	 * anything — and moves the chapter panel OUT of the open book's list item
+	 * to sit in flow AFTER the whole grid.
+	 *
+	 * That placement is what makes the two changes compatible. An in-flow
+	 * panel inside a wrapped grid would re-create exactly the defect the
+	 * popover was invented for (opening a book mid-grid reflows every later
+	 * book, and the one the reader was aiming at moves out from under the
+	 * cursor). Hanging it off the end of the grid instead means nothing is
+	 * inserted into the grid at all, so the grid cannot reflow — while the
+	 * panel itself is an ordinary block that needs none of the popover's
+	 * machinery. It does have to name its own book, since it is no longer
+	 * adjacent to the button that opened it.
+	 *
+	 * The popover would not have worked here anyway: `.reading-aside` is
+	 * `overflow-y: auto` (a scroll container, so it clips anything escaping
+	 * its box) and 17rem wide, against the popover's 22rem
+	 * `PANEL_WIDTH_REM`. The `align`/outside-click/Escape machinery above is
+	 * therefore skipped entirely for `'sidebar'` — nothing needs measuring or
+	 * force-dismissing when there is no popover to overhang the viewport or
+	 * fail to self-dismiss.
+	 *
+	 * (The sidebar variant was briefly a single-column vertical list, which
+	 * is what made an in-flow panel trivially safe. It was worse to use, and
+	 * this is the version that keeps the grid's scannability without giving
+	 * the reflow back.)
 	 *
 	 * `collapsible` is ignored when `variant === 'sidebar'`: the sidebar is
 	 * the reading view's persistent nav column, so it always renders open
@@ -82,8 +95,9 @@
 		currentOsis?: string;
 		currentChapter?: number;
 		collapsible?: boolean;
-		/** `'grid'` (default): wrapped flex grid + popover, as documented above.
-		    `'sidebar'`: vertical list + in-flow chapter panel, for `.reading-aside`. */
+		/** `'grid'` (default): wrapped flex grid + anchored popover, as
+		    documented above. `'sidebar'`: wrapped grid too, but with the
+		    chapter panel in flow after the grid, for `.reading-aside`. */
 		variant?: 'grid' | 'sidebar';
 	}
 
@@ -210,37 +224,71 @@
 						>
 							<span>{bookName(book)}</span>
 						</button>
-						{#if isOpen}
-							{@const present = chaptersInEdition(book.osis)}
-							<div
-								id={`chapters-${book.osis}`}
-								class="chapters"
-								class:sidebar={variant === 'sidebar'}
-								class:align-end={variant === 'grid' && align === 'end'}
-								role="group"
-								aria-label={bookName(book)}
-							>
-								{#each book.chapters as chapterN (chapterN)}
-									{#if present.has(chapterN)}
-										<a
-											href={`/bible/${book.osis}/${chapterN}`}
-											class:current={book.osis === currentOsis && chapterN === currentChapter}
-										>
-											{chapterN}
-										</a>
-									{:else}
-										<span class="unavailable" title={t('bible.chapterUnavailable')}>
-											{chapterN}
-										</span>
-									{/if}
-								{/each}
-							</div>
+						{#if isOpen && variant === 'grid'}
+							{@render chapterPanel(book)}
 						{/if}
 					</li>
 				{/each}
 			</ul>
+			<!-- SIDEBAR VARIANT: the open book's chapters render BELOW the whole
+			     grid, not inside the book's own list item.
+
+			     This is what lets the sidebar keep the wrapped grid of books
+			     rather than the vertical list it used to have. A grid of 73
+			     books is far quicker to scan than a 73-row column, but an
+			     in-flow panel inside a wrapped grid re-runs the original
+			     problem the popover was invented for: opening a book mid-grid
+			     pushes every later book onto a new line, and the book someone
+			     was aiming at moves out from under their cursor.
+
+			     Hanging the panel off the end of the grid resolves both at
+			     once — the grid above it never reflows, because nothing was
+			     inserted into it, and the panel is a plain block in normal
+			     flow, so it needs none of the popover's measuring, clipping
+			     or outside-click machinery inside a scrolling aside. -->
+			{#if variant === 'sidebar'}
+				{@const openBook = group.books.find((b) => b.osis === openOsis)}
+				{#if openBook}
+					{@render chapterPanel(openBook)}
+				{/if}
+			{/if}
 		</section>
 	{/each}
+{/snippet}
+
+{#snippet chapterPanel(book: CanonicalBook)}
+	{@const present = chaptersInEdition(book.osis)}
+	<div
+		id={`chapters-${book.osis}`}
+		class="chapters"
+		class:sidebar={variant === 'sidebar'}
+		class:align-end={variant === 'grid' && align === 'end'}
+		role="group"
+		aria-label={bookName(book)}
+	>
+		<!-- The sidebar's panel is detached from the button that opened it, so
+		     it names its own book; the grid variant's popover is anchored to
+		     that button and would only be repeating it. -->
+		{#if variant === 'sidebar'}
+			<p class="chapters-book">{bookName(book)}</p>
+		{/if}
+		<div class="chapters-nums">
+			{#each book.chapters as chapterN (chapterN)}
+				{#if present.has(chapterN)}
+					<a
+						href={`/bible/${book.osis}/${chapterN}`}
+						class:current={book.osis === currentOsis && chapterN === currentChapter}
+					>
+						{chapterN}
+					</a>
+				{:else}
+					<span class="unavailable" title={t('bible.chapterUnavailable')}>
+						{chapterN}
+					</span>
+				{/if}
+			{/each}
+		</div>
+	</div>
 {/snippet}
 
 {#if variant === 'sidebar'}
@@ -306,14 +354,21 @@
 		align-items: flex-start;
 	}
 
-	/* Single column, no wrapping — this is what makes it safe for `.chapters`
-	   to expand in flow below (see that rule's own comment): with nothing to
-	   its side, opening a book can only ever push what's below it straight
-	   down, never sideways under the reader's cursor. */
+	/* A WRAPPED GRID, not the single column this used to be. 73 books in one
+	   column is a long scroll to find anything; the same 73 as chips wrap
+	   into a handful of rows the eye can scan at once, which is the whole
+	   reason the non-sidebar picker has always been a grid.
+
+	   Safe here only because the chapter panel now renders after the whole
+	   grid rather than inside a book's list item (see the template) — so
+	   opening a book cannot reflow the books around it. `auto-fill` with a
+	   `minmax` floor rather than a fixed column count: the aside is 17rem at
+	   most widths but wider layouts exist, and the right number of columns is
+	   whatever fits. */
 	.book-grid.sidebar {
-		flex-direction: column;
-		flex-wrap: nowrap;
-		gap: 0.15rem;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+		gap: 0.25rem;
 	}
 
 	/* Positioning context for the absolutely-positioned `.chapters` panel
@@ -343,9 +398,21 @@
 	/* Full-width row instead of an inline chip, to match the rest of a
 	   vertical list — a chip-sized button floating at the list's inline
 	   start would leave the rest of the row dead space. */
+	/* Fills its grid cell and centres, rather than the full-width row this
+	   was when the sidebar list ran vertically. Long names (1 Thessalonians)
+	   are clipped rather than allowed to widen the whole track — the button
+	   carries a `title` for the full name. */
 	.book-btn.sidebar {
 		width: 100%;
-		justify-content: flex-start;
+		justify-content: center;
+		padding: 0.3rem 0.35rem;
+		font-size: 0.8rem;
+		min-height: 1.9rem;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		display: block;
+		text-align: center;
 	}
 
 	.book-btn.current {
@@ -374,9 +441,6 @@
 		top: calc(100% + 0.35rem);
 		inset-inline-start: 0;
 		z-index: 20;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.35rem;
 		padding: 0.5rem;
 		background: var(--color-bg-elevated);
 		border: 1px solid var(--color-border);
@@ -401,10 +465,31 @@
 		top: auto;
 		inset-inline-start: auto;
 		z-index: auto;
-		margin: 0.3rem 0 0.5rem 0.6rem;
+		margin: 0.5rem 0 0.75rem;
 		box-shadow: none;
 		min-inline-size: 0;
 		max-inline-size: none;
+	}
+
+	/* The wrapping row of chapter numbers. This used to be `.chapters`
+	   itself; it moved down a level when the panel gained a heading in the
+	   sidebar variant, so the heading isn't laid out as if it were a
+	   chapter chip. */
+	.chapters-nums {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+
+	/* Names the book whose chapters these are — needed only in the sidebar,
+	   where the panel is detached from the button that opened it. */
+	.chapters-book {
+		margin: 0 0 0.4rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--color-text-muted);
 	}
 
 	.chapters a,
