@@ -1086,6 +1086,38 @@ def mark_and_split(raw: str, marker_template: str) -> tuple[str, str]:
     return text, text
 
 
+def _gap_block(gap_html: str, marker_template: str) -> Block | None:
+    """Recovers a numbered paragraph whose opening <p> tag is missing from
+    the source. Confirmed live (docs/research/vatican-documents.md §7.1,
+    encyclical.aeterna-dei.pt): `<p align="center"><b>TITLE</b></p> 3. À
+    vida...` -- the heading's own </p> closes normally right after </b>,
+    but paragraph 3 never gets an opening <p> of its own, so its entire
+    text runs as bare markup between that </p> and the next block's <p>.
+    _BLOCK_RE only ever yields text strictly INSIDE a <p>/<blockquote>/
+    <center> pair, so `finditer` simply steps over this span without
+    matching it at all -- it isn't merged into the heading's own captured
+    group, it's dropped on the floor, taking the paragraph's number and
+    content with it.
+
+    parse_document calls this on the text sitting between every pair of
+    consecutive _BLOCK_RE matches (and before the first / after the
+    last), gated on the exact same match_para_num every ordinary block
+    already has to pass to be recognized as a numbered paragraph -- not a
+    new heuristic, just applying the existing one to a span of body_html
+    that used to be skipped outright. A whitespace-only gap (the
+    overwhelming majority -- ordinary inter-block newlines/indentation in
+    every one of the other 328 works) fails match_para_num immediately
+    and yields nothing, so this is a pure addition: no existing block's
+    classification changes, and nothing that couldn't already open a
+    section elsewhere in the corpus can suddenly open one here."""
+    if match_para_num(gap_html) is None:
+        return None
+    text = strip_tags(mark_footnotes(gap_html, marker_template))
+    if not text:
+        return None
+    return Block(False, "prose", text, gap_html)
+
+
 # --------------------------------------------------------------------------
 # EN / PT structure labels
 # --------------------------------------------------------------------------
@@ -1570,7 +1602,18 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
     state.current_star_table = star_table
 
     blocks: list[Block] = []
-    for m in _BLOCK_RE.finditer(body_html):
+    prev_end = 0
+    block_matches = list(_BLOCK_RE.finditer(body_html))
+    for m in block_matches:
+        # See _gap_block's docstring: recovers a numbered paragraph whose
+        # opening <p> is missing from the source, by checking the raw
+        # text _BLOCK_RE stepped over between the previous match and this
+        # one (or, on the first iteration, before the first match).
+        gap = _gap_block(body_html[prev_end:m.start()], marker_template)
+        if gap is not None:
+            blocks.append(gap)
+        prev_end = m.end()
+
         inner, kind = block_kind(m)
         is_bq = kind == "blockquote"
         if kind == "center":
@@ -1590,6 +1633,11 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
         if not text:
             continue
         blocks.append(Block(is_heading, "quote" if is_bq else "prose", text, inner))
+    # Trailing gap after the last block match (or the whole region, if
+    # _BLOCK_RE matched nothing at all) -- same recovery, same gate.
+    tail_gap = _gap_block(body_html[prev_end:], marker_template)
+    if tail_gap is not None:
+        blocks.append(tail_gap)
 
     match_label = MATCH_LABEL[lang]
 
@@ -1972,33 +2020,29 @@ PARSER_DEFEAT_NOTES: dict[str, str] = {
         "continuous unnumbered prose underneath, the same shape as Pascendi/Mense Maio/Quae Ad "
         "Nos. No number to recover; inventing one would be fabrication."
     ),
-    "encyclical.mortalium-animos.pt": (
-        "Distinct failure mode from the zero-section cases: this page (Pius XI "
-        "1928) mixes two conventions in the SAME document -- some numbered items are printed as "
-        "Gravissimum-Educationis-style bold 'N. Title' headings (e.g. '<p><b>2. <i>A Fraternidade "
-        "na Religião. Congressos Ecuménicos</i></b></p>', its body prose in a SEPARATE following "
-        "<p> with no number of its own), but the heading-to-heading numbering is NOT contiguous "
-        "(2, 3, then jumps straight to 8 with no 4/5/6/7 heading anywhere) -- and this parser's "
-        "GE-style branch only fires when the found number is exactly last+1, by design (to avoid "
-        "misreading an unrelated bold block that merely starts with a digit as a new section). "
-        "Sections 2 and 3 captured correctly; '8. A única religião revelada é a Igreja Católica' "
-        "and its considerable following prose (11 orphan blocks logged under it) never became a "
-        "section at all -- the gate correctly declined to guess, but nothing else claimed it "
-        "either. A real fix needs this document's numbering scheme characterized in full "
-        "(is 4-7 skipped in the source, or numbered some other way not yet identified?) before "
-        "loosening the gate; not attempted here rather than guessing at cost of a false positive "
-        "on some other document."
-    ),
+    # encyclical.mortalium-animos.pt's former entry here (a "2, 3, then jumps
+    # straight to 8 with no 4/5/6/7 heading anywhere" diagnosis) is now
+    # obsolete and was factually wrong about the source: headings 4-7 DO
+    # exist in the raw HTML (confirmed live), each missing its own opening
+    # <p> the same way the numbered paragraph in _gap_block's docstring is --
+    # they were invisible to the old parser, not absent from the page. The
+    # gap-recovery fix now captures all of 1..19 contiguously; removed
+    # rather than left to mislead the next reader into thinking this
+    # document is still defeated or that 4-7 are genuinely unnumbered in
+    # the source.
     "encyclical.quadragesimo-anno.pt": (
-        "Same family as Mortalium Animos PT: this page (Pius XI 1931, the "
-        "Rerum Novarum 40th-anniversary encyclical) opens with a long unnumbered historical "
-        "recap organized under bold/italic topic labels ('A Encíclica «Rerum novarum»', 'Sua "
-        "ocasião', 'Tópicos principais', ...) before its real numbered content begins -- only "
-        "sections 1-5 were captured (133 blocks logged as orphan content, a 26.6x ratio -- see "
-        "validate_document's orphan-ratio guard) against an EN sibling running to 148 sections. "
-        "Not investigated past confirming the shape (unlike Mortalium Animos, the exact point "
-        "where numbering resumes/breaks down after section 5 was not traced in detail) -- "
-        "flagged rather than guessed at."
+        "This page (Pius XI 1931, the Rerum Novarum 40th-anniversary encyclical) opens with a "
+        "long unnumbered historical recap organized under bold/italic topic labels ('A Encíclica "
+        "«Rerum novarum»', 'Sua ocasião', 'Tópicos principais', ...) before its real numbered "
+        "content begins -- only sections 1-5 were captured (133 blocks logged as orphan content, "
+        "a 26.6x ratio -- see validate_document's orphan-ratio guard) against an EN sibling "
+        "running to 148 sections. Checked against the missing-<p>-after-a-block family fixed for "
+        "the 11 PT encyclicals in docs/research/vatican-documents.md §7.1 (and, discovered "
+        "alongside them, Mortalium Animos PT -- no longer a PARSER_DEFEAT_NOTES entry, see the "
+        "comment above this one): that fix's own re-parse left this document's section "
+        "count/range completely unchanged, so whatever breaks numbering resumption after section "
+        "5 here is a genuinely different, not-yet-characterized shape, not the same defect. Not "
+        "investigated past confirming that -- flagged rather than guessed at."
     ),
 }
 

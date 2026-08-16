@@ -89,61 +89,6 @@
 			"kind": "quality",
 			"date": "2026-08-16",
 			"reason": "Our parse of this edition captured no paragraphs at all — the source page's markup defeated it. Diagnosed per work in the corpus manifest's own notes."
-		},
-		"encyclical.lumen-fidei.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 24 of about 60 paragraphs — roughly 60% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
-		},
-		"encyclical.aeterna-dei.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 15 of about 33 paragraphs — roughly 55% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
-		},
-		"encyclical.princeps.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 29 of about 54 paragraphs — roughly 46% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
-		},
-		"encyclical.auspicia-quaedam.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 7 of about 13 paragraphs — roughly 46% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
-		},
-		"encyclical.grata-recordatio.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 10 of about 18 paragraphs — roughly 44% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
-		},
-		"encyclical.in-multiplicibus-curis.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 4 of about 7 paragraphs — roughly 43% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
-		},
-		"encyclical.anni-sacri.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 7 of about 12 paragraphs — roughly 42% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
-		},
-		"encyclical.humanae-vitae.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 17 of about 29 paragraphs — roughly 41% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
-		},
-		"encyclical.quemadmodum.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 5 of about 8 paragraphs — roughly 38% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
-		},
-		"encyclical.summi-maeroris.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 5 of about 8 paragraphs — roughly 38% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
-		},
-		"encyclical.deiparae-virginis-mariae.pt": {
-			"kind": "quality",
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured 3 of about 4 paragraphs — roughly 25% of the text is missing, to the source-HTML defect described in docs/research/vatican-documents.md §7.1."
 		}
 	}
 }

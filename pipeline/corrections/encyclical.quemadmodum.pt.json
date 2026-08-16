@@ -1,0 +1,12 @@
+[
+  {
+    "id": "encyclical.quemadmodum.pt-sec5-comma-for-period",
+    "locator": { "section": 5 },
+    "field": "raw_text",
+    "from": "5, Cremos",
+    "to": "5. Cremos",
+    "reason": "The paragraph opening section 5 prints its number as '5,' (comma) instead of '5.' (period) -- every other paragraph number in this document uses a period. Because the parser's paragraph-number pattern requires a period, this one paragraph was invisible to it entirely (not merely misnumbered): it directly follows the paragraph closing with '...santos e caridosos empreendimentos.</p>' (the tail of section 4) and directly precedes the paragraph opening '6. Parece evidente, veneráveis irmãos...', and its own content ('Cremos oportuno aqui recordar que a Igreja sempre esteve atenta, com cuidado materno à tenra idade...') is a natural continuation of section 4's subject (aid to children) and sets up section 6's own opening reference to 'esses luminosos ensinamentos' (these enlightening teachings) just stated -- confirmed against the EN sibling's section 5, which opens with the equivalent 'This is a problem, of course, which touches all citizens...' at the same document position between EN sections 4 and 6.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__quemadmodum__pt.html: '...estimulando-a a santos e caridosos empreendimentos.</p> 5, Cremos oportuno aqui recordar que a Igreja sempre esteve atenta, com cuidado materno à tenra idade...(cf. Serm. 37, c. 3: PL 54, 2580).\\n<p>6. Parece evidente, veneráveis irmãos, que desses luminosos ensinamentos...'. This paragraph also lacks its own opening <p> tag (same missing-<p>-after-a-preceding-block family documented in docs/research/vatican-documents.md §7.1 for the other 10 PT encyclicals fixed alongside this one) -- the comma-for-period typo is a second, independent defect on the same paragraph, exposed only once the missing-<p> recovery let the parser see this paragraph's leading digits at all.",
+    "added": "2026-08-16"
+  }
+]
