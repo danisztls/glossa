@@ -10,8 +10,14 @@
 	 * show, and recomputes with no reload when the reader switches it via
 	 * `EditionMenu`.
 	 */
-	import { flattenDocumentStructure, getAdjacentDocumentSectionNumber, getDocumentGroup } from '$lib/corpus';
+	import {
+		flattenDocumentStructure,
+		getAdjacentDocumentSectionNumber,
+		getDocumentGroup,
+		unpublishedInfo
+	} from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import UnpublishedNotice from '$lib/components/UnpublishedNotice.svelte';
 	import { displayTitle } from '$lib/titles';
 	import { documentKindLabel } from '$lib/document-labels';
 	import { content } from '$lib/content.svelte';
@@ -41,6 +47,12 @@
 	// itself offers no anchor at all — `getAdjacentDocumentSectionNumber`
 	// (already exported for prev/next nav) doubles as "first section number"
 	// when asked for whatever comes after 0, so this needs no new accessor.
+	// Takedown state for the edition actually on screen. Checked per WORK, not
+	// per slug: a request may concern the English edition and not the
+	// Portuguese one, so a reader whose language edition is still published
+	// should still see it (see site/unpublished.json).
+	const takedown = $derived(manifest ? unpublishedInfo(manifest.id) : undefined);
+
 	const hasTocAnchor = $derived(rows.some(({ node }) => Number.isFinite(node.paragraphs[0])));
 	const firstSectionN = $derived(
 		!hasTocAnchor && manifest ? getAdjacentDocumentSectionNumber(manifest.id, 0, 'next') : undefined
@@ -76,16 +88,25 @@
 				{formatDate(manifest.promulgated, lang)}
 			</time>
 		</p>
-		<p class="copyright-notice"><CopyrightNotice manifest={manifest} /></p>
+		{#if takedown}
+			<!-- Replaces the table of contents and the reading entry point
+			     entirely. The structure tree is not withheld from the UI here —
+			     it was never built (sync-corpus.mjs), so `rows` is empty and
+			     there is nothing to hide. -->
+			<UnpublishedNotice {manifest} info={takedown} />
+		{:else}
+			<p class="copyright-notice"><CopyrightNotice manifest={manifest} /></p>
+		{/if}
 
-		{#if firstSectionN !== undefined}
+		{#if !takedown && firstSectionN !== undefined}
 			<p class="start-reading">
 				<a href={`/documents/${data.slug}/${firstSectionN}`}>{t('document.startReading')} &rarr;</a>
 			</p>
 		{/if}
 
-		<h2 class="toc-heading">{t('document.tableOfContents')}</h2>
-		<ol class="toc">
+		{#if !takedown}
+			<h2 class="toc-heading">{t('document.tableOfContents')}</h2>
+			<ol class="toc">
 			{#each rows as { node, depth } (node.title + node.paragraphs.join('-'))}
 				{@const hasAnchor = Number.isFinite(node.paragraphs[0])}
 				{@const dt = displayTitle(node, lang)}
@@ -109,8 +130,9 @@
 						<span class="range">§{node.paragraphs[0]}{node.paragraphs[1] !== node.paragraphs[0] ? `–${node.paragraphs[1]}` : ''}</span>
 					{/if}
 				</li>
-			{/each}
-		</ol>
+				{/each}
+			</ol>
+		{/if}
 	</div>
 {/if}
 

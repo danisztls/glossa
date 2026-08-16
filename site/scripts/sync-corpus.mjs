@@ -97,6 +97,27 @@ const workIds = readdirSync(worksSrc, { withFileTypes: true })
 	.map((e) => e.name)
 	.sort();
 
+/**
+ * Works taken down — see `site/unpublished.json`, which documents the
+ * mechanism and the reasoning.
+ *
+ * Read here, at the point where content is written, because that is what
+ * makes a takedown real: an unpublished work's TEXT is never written into
+ * `corpus-data/content/` at all, so it is absent from the server rather
+ * than hidden by the client. Its manifest still goes into the index, which
+ * is what lets the reading routes render an honest link-out instead of a
+ * 404 (see `unpublished.json` for why the pages are kept).
+ *
+ * A missing or malformed file is a hard error rather than an empty default.
+ * Every other input here degrades quietly when absent, and that is right for
+ * a corpus that may be partially built — but silently publishing a work
+ * somebody asked us to take down is the one failure this script must never
+ * produce.
+ */
+const unpublishedPath = path.join(siteRoot, 'unpublished.json');
+const unpublishedWorks = readJson(unpublishedPath).works ?? {};
+const unpublishedIds = new Set(Object.keys(unpublishedWorks));
+
 const manifests = {}; // workId -> manifest.json, verbatim (every work type, incl. future document families)
 const bibleIndex = {}; // workId -> { books: BibleBookMeta[] }
 const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
@@ -125,6 +146,22 @@ for (const workId of workIds) {
 	// rather than removing the key so `WorkManifest`'s shape stays intact for
 	// any future reader of `getWork()` that does start using it.
 	manifests[workId] = { ...manifest, notes: '' };
+
+	// The takedown. Everything above this line still happens — the manifest
+	// goes into the index, so the work keeps its title, its rights holder's
+	// notice and its source URL, and its reading pages can render an honest
+	// link-out. Everything BELOW writes reading text, and for an unpublished
+	// work none of it runs: no content file is produced, so the text is not
+	// on the server at all rather than merely unreachable from the UI.
+	//
+	// Structure trees are skipped with the text. A table of contents is a
+	// map of a work's internal divisions, which is less than the text but
+	// more than nothing, and a takedown request is not an invitation to
+	// negotiate over how much we keep.
+	if (unpublishedIds.has(workId)) {
+		console.warn(`[sync-corpus] ${workId}: UNPUBLISHED — content withheld from the build`);
+		continue;
+	}
 
 	if (workId.startsWith('bible.')) {
 		const booksDir = path.join(workDir, 'books');
@@ -255,6 +292,13 @@ if (existsSync(xrefsSrc)) {
 }
 
 writeJson(path.join(indexDir, 'content-manifest.json'), contentManifest);
+
+// Copied into the index tier so the SITE knows which works are unpublished,
+// not merely that their content files are missing. The distinction matters:
+// "content absent" is also what a partially-built corpus looks like, and the
+// two want opposite treatment — a missing chunk should fail loudly during
+// development, a taken-down work should render a calm, deliberate notice.
+writeJson(path.join(indexDir, 'unpublished.json'), unpublishedWorks);
 
 const indexBytes = [
 	'manifests.json',

@@ -127,6 +127,11 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// document sections.
 		'citation.unavailable': 'No source text available for this note.',
 
+		'unpublished.tag': 'Not published here',
+		'unpublished.heading': 'This text is not published here',
+		'unpublished.explain':
+			'We reproduced this work until its rights holder asked us not to, and we stopped. The text below has been removed from this site; everything else about the work is unchanged.',
+		'unpublished.readAt': 'Read it at',
 		'colophon.title': 'Colophon',
 		'colophon.lede':
 			'What this site is, where its texts come from, and where we stand on reproducing them.',
@@ -257,6 +262,11 @@ const dictionaries: Record<UiLang, Dictionary> = {
 
 		'citation.unavailable': 'Sem texto de fonte disponível para esta nota.',
 
+		'unpublished.tag': 'N\u00e3o publicado aqui',
+		'unpublished.heading': 'Este texto n\u00e3o \u00e9 publicado aqui',
+		'unpublished.explain':
+			'Reproduzimos esta obra at\u00e9 que o seu titular de direitos nos pediu que n\u00e3o o fiz\u00e9ssemos, e par\u00e1mos. O texto foi removido deste site; tudo o resto sobre a obra permanece inalterado.',
+		'unpublished.readAt': 'Leia em',
 		'colophon.title': 'Colof\u00e3o',
 		'colophon.lede':
 			'O que \u00e9 este site, de onde v\u00eam os seus textos e qual a nossa posi\u00e7\u00e3o quanto \u00e0 sua reprodu\u00e7\u00e3o.',

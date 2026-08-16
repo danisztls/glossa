@@ -13,7 +13,7 @@
 	 * load — the registry (`listDocuments()`) is index-tier and already
 	 * eager-inlined, so there's nothing to fetch here.
 	 */
-	import { listDocuments } from '$lib/corpus';
+	import { isUnpublished, listDocuments } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
 	import { documentKindLabel } from '$lib/document-labels';
 	import { t } from '$lib/i18n.svelte';
@@ -114,6 +114,13 @@
 					<li>
 						<a href={`/documents/${row.slug}`} class="doc-link">
 							<span class="doc-title">{row.manifest.title}</span>
+							<!-- Marked, not hidden: a document that silently vanishes from
+							     the library looks like a bug and invites someone to "fix"
+							     it. The row still links to the work's page, which explains
+							     the takedown and links to the source. -->
+							{#if isUnpublished(row.manifest.id)}
+								<span class="doc-unpublished">{t('unpublished.tag')}</span>
+							{/if}
 							<span class="doc-kind">{documentKindLabel(row.manifest.document_kind)}</span>
 						</a>
 						<!--
@@ -233,6 +240,18 @@
 		font-family: var(--font-serif);
 		font-size: 1.15rem;
 		color: var(--color-text);
+	}
+
+	.doc-unpublished {
+		flex-shrink: 0;
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--color-text-muted);
+		border: 1px dashed var(--color-border);
+		border-radius: 0.25rem;
+		padding: 0.1rem 0.4rem;
+		white-space: nowrap;
 	}
 
 	.doc-kind {
