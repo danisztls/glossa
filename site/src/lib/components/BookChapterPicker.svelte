@@ -7,7 +7,8 @@
 	 * `listCanonicalBooks()` — the union of books/chapters across every Bible
 	 * edition — rather than looping over each Bible work and duplicating the
 	 * whole grid per edition. Only the book *names* and the link *targets* are
-	 * edition-specific, drawn from `namesByWorkId`/`currentEdition`.
+	 * edition-specific — and only the NAMES now, since the hrefs became
+	 * edition-free (`/bible/{book}/{chapter}`, see that route's `+page.ts`).
 	 *
 	 * Interaction: book-first, then chapters. 73 books x up to 150 chapters
 	 * is too much to lay flat, so books are grouped into Old/New Testament
@@ -44,20 +45,21 @@
 	 * render it inline as the page's actual content.
 	 */
 	import { untrack } from 'svelte';
-	import { editionToWorkId, getBook, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
+	import { getBook, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
-		currentEdition: string;
+		/** Which edition's book NAMES to show. No longer affects link targets — those are edition-free. */
+		currentWorkId: string;
 		/** Omit on the landing route, where there is no "current" chapter to highlight. */
 		currentOsis?: string;
 		currentChapter?: number;
 		collapsible?: boolean;
 	}
 
-	let { currentEdition, currentOsis, currentChapter, collapsible = true }: Props = $props();
+	let { currentWorkId, currentOsis, currentChapter, collapsible = true }: Props = $props();
 
-	const workId = $derived(editionToWorkId(currentEdition));
+	const workId = $derived(currentWorkId);
 	const books = listCanonicalBooks();
 
 	/** 46 OT + 27 NT = 73, in that fixed order — docs/corpus-schema.md "Canonical book order". */
@@ -170,7 +172,7 @@
 								{#each book.chapters as chapterN (chapterN)}
 									{#if present.has(chapterN)}
 										<a
-											href={`/bible/${currentEdition}/${book.osis}/${chapterN}`}
+											href={`/bible/${book.osis}/${chapterN}`}
 											class:current={book.osis === currentOsis && chapterN === currentChapter}
 										>
 											{chapterN}

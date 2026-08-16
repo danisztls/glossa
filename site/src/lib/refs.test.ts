@@ -595,17 +595,17 @@ describe('refHref', () => {
 	it('links a scripture segment present in the given Bible edition (fixture: bible.cpdv.en has gen ch.1, john ch.1+3)', () => {
 		expect(
 			refHref({ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' }, { bibleWorkId: 'bible.cpdv.en' })
-		).toBe('/bible/cpdv.en/gen/1#v1');
+		).toBe('/bible/gen/1#v1');
 
 		expect(
 			refHref({ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' }, { bibleWorkId: 'bible.cpdv.en' })
-		).toBe('/bible/cpdv.en/john/3#v16');
+		).toBe('/bible/john/3#v16');
 	});
 
 	it('omits the verse anchor for a whole-chapter reference', () => {
 		expect(
 			refHref({ kind: 'scripture', osis: 'john', chapter: 3, verses: [], raw: 'John 3' }, { bibleWorkId: 'bible.cpdv.en' })
-		).toBe('/bible/cpdv.en/john/3');
+		).toBe('/bible/john/3');
 	});
 
 	it('returns undefined when no Bible edition is given', () => {
@@ -634,19 +634,19 @@ describe('refHref', () => {
 		it('converts a Hebrew Psalm chapter+verse to its Vulgate address (ccc112: "Ps 22:14" -> Vulgate 21:14)', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14], raw: 'Ps 22:14' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/cpdv.en/ps/21#v14');
+			).toBe('/bible/ps/21#v14');
 		});
 
 		it('converts Malachi across the chapter 3/4 split (ccc678: "Mal 3: 19" -> Vulgate 4:1)', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'mal', chapter: 3, verses: [19], raw: 'Mal 3: 19' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/cpdv.en/mal/4#v1');
+			).toBe('/bible/mal/4#v1');
 		});
 
 		it('converts Joel across the chapter 2/3 fold ("Joel 3:1-5" -> Vulgate 2:28)', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'joel', chapter: 3, verses: [1, 2, 3, 4, 5], raw: 'Joel 3:1-5' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/cpdv.en/joel/2#v28');
+			).toBe('/bible/joel/2#v28');
 		});
 
 		it('never leaves a whole-chapter Joel 3 pointing at the literal (unconverted, WRONG) Vulgate chapter 3, which trivially "exists" but means Hebrew Joel 4', () => {
@@ -654,7 +654,7 @@ describe('refHref', () => {
 				{ kind: 'scripture', osis: 'joel', chapter: 3, verses: [], raw: 'Joel 3' },
 				{ bibleWorkId: 'bible.cpdv.en' }
 			);
-			expect(href).toBe('/bible/cpdv.en/joel/2');
+			expect(href).toBe('/bible/joel/2');
 			expect(href).not.toContain('/joel/3');
 		});
 
@@ -662,25 +662,25 @@ describe('refHref', () => {
 			// Ps 22 (Hebrew) -> Vulg 21, which only has 32 verses in the fixture.
 			expect(
 				refHref({ kind: 'scripture', osis: 'ps', chapter: 22, verses: [9999], raw: 'Ps 22:9999' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/cpdv.en/ps/21');
+			).toBe('/bible/ps/21');
 		});
 
 		it('omits the anchor for a whole-chapter Psalm reference that is not a split psalm', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'ps', chapter: 51, verses: [], raw: 'Ps 51' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/cpdv.en/ps/50');
+			).toBe('/bible/ps/50');
 		});
 
 		it('picks the first half for a whole-chapter reference to a split psalm (Ps 116 -> Vulg 114)', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'ps', chapter: 116, verses: [], raw: 'Ps 116' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/cpdv.en/ps/114');
+			).toBe('/bible/ps/114');
 		});
 
 		it('leaves non-divergent books unaffected by the versification path', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/cpdv.en/john/3#v16');
+			).toBe('/bible/john/3#v16');
 		});
 
 		it('returns undefined rather than a wrong link when the divergent book is absent from the edition', () => {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { content } from '$lib/content.svelte';
-	import { getWork, listBooks, listDocuments, workIdToEdition } from '$lib/corpus';
+	import { getWork, listBooks, listDocuments } from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
 	import { documentKindPluralLabel } from '$lib/document-labels';
 	import { listPositions, type ReadingPosition } from '$lib/reading-position';
@@ -35,7 +35,10 @@
 		const books = listBooks(work.id);
 		const firstBook = books[0];
 		const firstChapter = firstBook?.chapters[0]?.n ?? 1;
-		return `/bible/${workIdToEdition(work.id)}/${firstBook?.osis ?? ''}/${firstChapter}`;
+		// Edition-free (docs/decisions.md #2). `work` still picks WHICH edition's
+		// book list to read the first book from, since editions need not agree on
+		// it — it just no longer appears in the URL.
+		return `/bible/${firstBook?.osis ?? ''}/${firstChapter}`;
 	}
 
 	// Magisterium: one row per document FAMILY (docs/corpus-schema.md

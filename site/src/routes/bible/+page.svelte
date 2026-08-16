@@ -11,14 +11,14 @@
 	 */
 	import { content } from '$lib/content.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
-	import { getWork, listBooks, workIdToEdition } from '$lib/corpus';
+	import { getWork, listBooks } from '$lib/corpus';
 	import { getPosition, type ReadingPosition } from '$lib/reading-position';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	const workId = $derived(content.workIdFor('bible'));
 	const work = $derived(workId ? getWork(workId) : undefined);
-	const edition = $derived(workId ? workIdToEdition(workId) : undefined);
+
 
 	// The reading position is read on mount, not eagerly, because localStorage
 	// doesn't exist during prerendering (see reading-position.ts) — matches
@@ -30,11 +30,11 @@
 	});
 
 	const firstChapterHref = $derived.by(() => {
-		if (!workId || !edition) return undefined;
+		if (!workId) return undefined;
 		const firstBook = listBooks(workId)[0];
 		if (!firstBook) return undefined;
 		const firstChapterN = firstBook.chapters[0]?.n ?? 1;
-		return `/bible/${edition}/${firstBook.osis}/${firstChapterN}`;
+		return `/bible/${firstBook.osis}/${firstChapterN}`;
 	});
 </script>
 
@@ -60,10 +60,10 @@
 		{/if}
 	</p>
 
-	{#if edition}
+	{#if workId}
 		<section aria-labelledby="books-heading">
 			<h2 id="books-heading">{t('bible.landing.books')}</h2>
-			<BookChapterPicker currentEdition={edition} collapsible={false} />
+			<BookChapterPicker currentWorkId={workId} collapsible={false} />
 		</section>
 	{/if}
 </div>

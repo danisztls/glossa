@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { parseReference } from '$lib/refparse';
-	import { cccParagraphExists, findBookByAbbrev, listBibleWorks, workIdToEdition } from '$lib/corpus';
+	import { cccParagraphExists, findBookByAbbrev, listBibleWorks } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
 
@@ -79,10 +79,14 @@
 				notFound = true;
 				return;
 			}
-			const edition = workIdToEdition(resolved.workId);
+			// Edition-free target: `resolveBibleBook` still tries every edition's
+			// abbreviations (so "jo 3,16" and "john 3:16" both resolve), but the
+			// destination names only the book and chapter — which edition renders
+			// there is the reader's standing preference, not this lookup's to
+			// decide.
 			const hash = ref.verse ? `#v${ref.verse}` : '';
 			closeBox();
-			goto(`/bible/${edition}/${resolved.book.osis}/${ref.chapter}${hash}`);
+			goto(`/bible/${resolved.book.osis}/${ref.chapter}${hash}`);
 			return;
 		}
 

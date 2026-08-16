@@ -1272,6 +1272,9 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 	}
 
 	const anchor = anchorVerse !== undefined ? `#v${anchorVerse}` : '';
-	const edition = workIdToEdition(ctx.bibleWorkId);
-	return `/bible/${edition}/${seg.osis}/${chapterN}${anchor}`;
+	// Edition-free (docs/decisions.md #2, which the Bible now follows too).
+	// `ctx.bibleWorkId` is still required above: it decides whether the
+	// book/chapter/verse EXISTS for this reader, which is what stops a dead
+	// link — it just no longer appears in the URL.
+	return `/bible/${seg.osis}/${chapterN}${anchor}`;
 }
