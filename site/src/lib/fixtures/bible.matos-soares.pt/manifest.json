@@ -1,0 +1,23 @@
+{
+	"id": "bible.matos-soares.pt",
+	"type": "bible",
+	"title": "Bíblia Sagrada (Matos Soares)",
+	"short_title": "Matos Soares",
+	"language": "pt",
+	"edition": "1956 (revised from the original languages)",
+	"sources": [
+		{
+			"url": "https://www.liriocatolico.com.br/biblia_online/biblia_matos_soares/",
+			"retrieved_at": "2026-08-15"
+		}
+	],
+	"copyright": {
+		"status": "copyrighted",
+		"holder": "Herdeiros de Pe. Manuel de Matos Soares (domínio público em 1 Jan 2028)",
+		"notice": null
+	},
+	"notes": "SITE FIXTURE, not the full corpus: only Genesis 1:1-13 and John 1:1-18, 3:1-21 are populated, and `books` lists only the two present here instead of the full 73 -- mirrors the range covered by the bible.cpdv.en fixture so the two editions can be exercised side by side. Pre-1990-Agreement Portuguese orthography preserved as printed, per the real corpus. Built for site/ development against docs/corpus-schema.md; pipeline/ will replace this with the real, complete corpus.",
+	"generated_at": "2026-08-15T00:00:00Z",
+	"psalm_numbering": "vulgate",
+	"books": ["gen", "john"]
+}

@@ -20,10 +20,11 @@ site/build/
 .zprofile
 .zshrc
 
-# Editor / tooling state, not project files
-.claude/
-.idea/
-.vscode/
+# Editor / tooling state, not project files. No trailing slashes: the
+# sandbox shell init recreates .idea/.vscode as empty *files*, not dirs.
+.claude
+.idea
+.vscode
 .mcp.json
 
 # Misc

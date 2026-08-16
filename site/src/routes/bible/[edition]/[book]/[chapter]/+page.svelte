@@ -91,7 +91,9 @@
 
 	.section-heading {
 		font-family: var(--font-serif);
-		font-size: 1.05rem;
+		/* em, not rem: scales with .reading-text's own font-size (which
+		   carries --reading-scale, owned by app.css) instead of fighting it. */
+		font-size: 1.1em;
 		font-weight: 600;
 		margin: 1.5rem 0 0.5rem;
 	}

@@ -1,0 +1,62 @@
+[
+	{
+		"kind": "part",
+		"n": 1,
+		"title": "PRIMEIRA PARTE A PROFISSÃO DA FÉ",
+		"paragraphs": [1, 217],
+		"children": [
+			{
+				"kind": "section",
+				"n": 1,
+				"title": "PRIMEIRA SECÇÃO «EU CREIO» – «NÓS CREMOS»",
+				"paragraphs": [1, 32],
+				"children": [
+					{
+						"kind": "chapter",
+						"n": 1,
+						"title": "CAPÍTULO PRIMEIRO O HOMEM É «CAPAZ» DE DEUS",
+						"paragraphs": [2, 5],
+						"children": []
+					},
+					{
+						"kind": "chapter",
+						"n": 2,
+						"title": "CAPÍTULO SEGUNDO DEUS VEM AO ENCONTRO DO HOMEM A REVELAÇÃO DE DEUS",
+						"paragraphs": [6, 24],
+						"children": [
+							{
+								"kind": "sub",
+								"n": null,
+								"title": "A TRANSMISSÃO DA REVELAÇÃO DIVINA",
+								"paragraphs": [11, 17],
+								"children": []
+							},
+							{
+								"kind": "sub",
+								"n": null,
+								"title": "A SAGRADA ESCRITURA",
+								"paragraphs": [18, 24],
+								"children": []
+							}
+						]
+					},
+					{
+						"kind": "chapter",
+						"n": 3,
+						"title": "CAPÍTULO TERCEIRO A RESPOSTA DO HOMEM A DEUS EU CREIO",
+						"paragraphs": [25, 32],
+						"children": [
+							{
+								"kind": "sub",
+								"n": null,
+								"title": "NÓS CREMOS",
+								"paragraphs": [30, 32],
+								"children": []
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]

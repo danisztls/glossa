@@ -1,0 +1,56 @@
+import { error } from '@sveltejs/kit';
+import {
+	compendiumLangs,
+	getAdjacentCompendiumQuestionNumber,
+	getCompendiumBreadcrumb,
+	getCompendiumQuestionAsync,
+	getWork
+} from '$lib/corpus';
+import type { CompendiumQuestion, StructureNode, WorkManifest } from '$lib/types';
+import type { PageLoad } from './$types';
+
+export interface CompendiumQuestionByLang {
+	question: CompendiumQuestion;
+	work: WorkManifest;
+	breadcrumb: StructureNode[];
+	prev?: { n: number };
+	next?: { n: number };
+}
+
+export const load: PageLoad = async ({ params }) => {
+	const n = Number(params.n);
+
+	// Compendium URLs stay edition-free (docs/decisions.md #2: `/compendium/1`,
+	// never `/compendium/en/1`) — the edition comes from a stored preference
+	// applied client-side, and the whole site is prerendered with no server
+	// to consult that preference at request time. So this embeds EVERY
+	// language's copy of question `n` up front; the component picks which
+	// one to show reactively from `content.langFor('compendium')`. That's
+	// what makes the "language symmetry principle" true: switching the UI
+	// language swaps the words on screen but keeps the reader on the same
+	// question number, because both languages' copies of it are already
+	// sitting in this page's data. `prev`/`next` carry only `{ n }` — see
+	// `ccc/[n]/+page.ts`'s docblock on why, same reasoning here.
+	const byLang: Record<string, CompendiumQuestionByLang> = {};
+	for (const lang of compendiumLangs()) {
+		const work = getWork(`compendium.${lang}`);
+		if (!work) continue;
+		const question = await getCompendiumQuestionAsync(lang, n);
+		if (!question) continue; // this language's corpus doesn't have question `n` (gappy fixtures)
+		const prevN = await getAdjacentCompendiumQuestionNumber(lang, n, 'prev');
+		const nextN = await getAdjacentCompendiumQuestionNumber(lang, n, 'next');
+		byLang[lang] = {
+			question,
+			work,
+			breadcrumb: getCompendiumBreadcrumb(lang, n),
+			prev: prevN !== undefined ? { n: prevN } : undefined,
+			next: nextN !== undefined ? { n: nextN } : undefined
+		};
+	}
+
+	if (Object.keys(byLang).length === 0) {
+		error(404, 'Compendium question not found in this corpus');
+	}
+
+	return { n, byLang };
+};

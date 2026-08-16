@@ -1,0 +1,21 @@
+{
+	"id": "ccc.pt",
+	"type": "catechism",
+	"title": "Catecismo da Igreja Católica",
+	"short_title": "CCC",
+	"language": "pt",
+	"edition": "vatican.va archive mirror, 1993/1997 second typical edition text",
+	"sources": [
+		{
+			"url": "https://www.vatican.va/archive/cathechism_po/index_new/p1s1c1_26-49_po.html",
+			"retrieved_at": "2026-08-15"
+		}
+	],
+	"copyright": {
+		"status": "copyrighted",
+		"holder": "Libreria Editrice Vaticana",
+		"notice": "Copyright © Libreria Editrice Vaticana"
+	},
+	"notes": "SITE FIXTURE, not the full corpus: only paragraphs 27-30 (Primeira Parte, Primeira Secção, Capítulo Primeiro, sub I 'O desejo de Deus') and 44-49 ('Resumindo') are populated, mirroring the range covered by the ccc.en fixture -- paragraphs 31-43 are intentionally absent, demonstrating gap handling. Kinds/titles are copied verbatim from the real corpus (unlike ccc.en's fixture, which predates it and uses illustrative placeholders), so `kind: \"sub\"` here for the 'O desejo de Deus' node is correct per source, not a simplification. `related` is genuinely empty in the real ccc.pt corpus (the vatican.va PT mirror carries no marginal apparatus either, see docs/link-surface.md #2) -- not a fixture omission. Built for site/ development against docs/corpus-schema.md.",
+	"generated_at": "2026-08-15T00:00:00Z"
+}

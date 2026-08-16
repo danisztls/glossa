@@ -1,0 +1,21 @@
+{
+	"id": "compendium.en",
+	"type": "compendium",
+	"title": "Compendium of the Catechism of the Catholic Church",
+	"short_title": "Compendium",
+	"language": "en",
+	"edition": "2005, vatican.va HTML mirror",
+	"sources": [
+		{
+			"url": "https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_en.html",
+			"retrieved_at": "2026-08-14"
+		}
+	],
+	"copyright": {
+		"status": "copyrighted",
+		"holder": "Libreria Editrice Vaticana",
+		"notice": "© Copyright 2005 - Libreria Editrice Vaticana"
+	},
+	"notes": "SITE FIXTURE, not the full corpus: only questions 1-6 are populated, though `structure.json` here (verbatim from the real corpus) spans the full Part One / Section One tree, questions 1-32 -- questions 7-32 are intentionally absent, demonstrating gap handling the same way the ccc.en fixture does. Note `structure.json`'s `paragraphs` field holds Compendium QUESTION ranges here, not CCC paragraph numbers (see `StructureNode` in types.ts). Built for site/ development against docs/corpus-schema.md; pipeline/ will replace this with the real 598-question corpus.",
+	"generated_at": "2026-08-15T00:00:00Z"
+}

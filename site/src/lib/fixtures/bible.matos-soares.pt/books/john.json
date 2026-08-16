@@ -1,0 +1,147 @@
+{
+	"osis": "john",
+	"name": "São João",
+	"abbrevs": ["jo"],
+	"order": 50,
+	"chapters": [
+		{
+			"n": 1,
+			"verses": [
+				{
+					"n": 1,
+					"text": "No principio existia o Verbo, e o Verbo estava junto de Deus, e o Verbo era Deus."
+				},
+				{ "n": 2, "text": "Estava no princípio junto de Deus," },
+				{ "n": 3, "text": "Todas as coisas foram feitas por ele; e sem ele nada foi feito." },
+				{ "n": 4, "text": "Nele estava a vida, e a vida era a luz dos homens," },
+				{ "n": 5, "text": "e a luz resplandece nas trevas, e as trevas não o receberam." },
+				{ "n": 6, "text": "Apareceu um homem enviado por Deus que se chamava João." },
+				{
+					"n": 7,
+					"text": "Veio como testemunha para dar testemunho da luz, a fim de que todos crêssem por meio dele."
+				},
+				{ "n": 8, "text": "Não era a luz, mas veio para dar testemunho da luz," },
+				{
+					"n": 9,
+					"text": "O Verbo era a luz verdadeira, que ilumina todo o homem que vem a este mundo."
+				},
+				{
+					"n": 10,
+					"text": "Estava no mundo, e o mundo foi feito por ele, e o mundo não o conheceu."
+				},
+				{ "n": 11, "text": "Veio para o que era seu, e os seus não o receberam." },
+				{
+					"n": 12,
+					"text": "Mas a todos os que o receberam, deu poder de se tornarem filhos de Deus, àqueles que crêem no seu nome;"
+				},
+				{
+					"n": 13,
+					"text": "os quais não nasceram do sangue, nem da vontade da carne, nem da vontade do homem, mas de Deus."
+				},
+				{
+					"n": 14,
+					"text": "E o Verbo se fez carne, e habitou entre nós; e nós vimos a sua glória, glória como de Filho Unigénito do Pai, cheio de graça e de verdade."
+				},
+				{
+					"n": 15,
+					"text": "João dá testemunho dele e clama: Este era aquele de quem eu disse: O que há-de vir depois de mim, é mais do que eu, porque existia antes de mim."
+				},
+				{
+					"n": 16,
+					"text": "Todos nós participamos da sua plenitude, e recebemos graça sobre graça;"
+				},
+				{
+					"n": 17,
+					"text": "porque a lei foi dada por Moisés, mas a graça e a verdade foi trazida por Jesus Cristo."
+				},
+				{
+					"n": 18,
+					"text": "Ninguém jamais viu Deus; o Filho Unigénito, que está no seio do Pai, ele mesmo é que o deu a conhecer."
+				}
+			]
+		},
+		{
+			"n": 3,
+			"verses": [
+				{
+					"n": 1,
+					"text": "Havia um homem da seita dos fariseus, chamado Nicodemos; um dos principais entre os Judeus."
+				},
+				{
+					"n": 2,
+					"text": "Este foi ter com Jesus, de noite, e disse-lhe: \"Mestre, sabemos que foste enviado por Deus como mestre, porque ninguém pode fazer estes milagres que tu fazes, se Deus não estiver com ele.\""
+				},
+				{
+					"n": 3,
+					"text": "Jesus respondeu-lhe: \"Em verdade, em verdade te digo que não pode ver o reino de Deus, senão aquele que nascer de novo.\""
+				},
+				{
+					"n": 4,
+					"text": "Nicodemos disse-lhe: \"Como pode um homem nascer, sendo velho? Porventura pode tornar a entrar no ventre de sua mãe e renascer?\""
+				},
+				{
+					"n": 5,
+					"text": "Jesus respondeu-lhe: \"Em verdade, em verdade te digo que quem não renascer da água e do Espirito Santo, não pode entrar no reino de Deus."
+				},
+				{
+					"n": 6,
+					"text": "O que nasceu da carne, é carne, o que nasceu do Espírito, é espírito."
+				},
+				{
+					"n": 7,
+					"text": "Não te maravilhes de eu te dizer: É preciso que vós nasçais de novo."
+				},
+				{
+					"n": 8,
+					"text": "O vento sopra onde quer, e tu ouves a sua voz, mas não sabes donde ele vem, nem para onde vai, assim é todo aquele que nasceu do Espírito."
+				},
+				{ "n": 9, "text": "Nicodemos disse-lhe: \"Com se pode isto fazer?\"" },
+				{
+					"n": 10,
+					"text": "Jesus respondeu: \"Tu és mestre em Israel, e não sabes estas coisas?\""
+				},
+				{
+					"n": 11,
+					"text": "Em verdade, em verdade te digo que nós dizemos o que sabemos, e damos testemunho do que vimos, mas vós não recebeis o nosso testemunho."
+				},
+				{
+					"n": 12,
+					"text": "Se, quando vos falo das coisas terrenas, não me acreditais, como me acreditareis, se vos falar das celestes?"
+				},
+				{
+					"n": 13,
+					"text": "Ninguém subiu ao céu, senão aquele que desceu do céu, o Filho do homem, que está no céu."
+				},
+				{
+					"n": 14,
+					"text": "E como Moisés levantou no deserto a serpente, assim também importa que seja levantado o Filho do homem,"
+				},
+				{ "n": 15, "text": "a fim de que todo o que crê nele tenha a vida eterna." },
+				{
+					"n": 16,
+					"text": "Porque Deus amou de tal modo o mundo, que lhe deu seu Filho unigênito, para que todo o que crê nele não pereça, mas tenha a vida eterna."
+				},
+				{
+					"n": 17,
+					"text": "Porque Deus não enviou seu Filho ao mundo, para condenar o mundo, mas para que o mundo seja salvo por ele."
+				},
+				{
+					"n": 18,
+					"text": "Quem nele crê, não é condenado, mas quem não crê, já está condenado, porque não crê no nome do Filho unigênito de Deus."
+				},
+				{
+					"n": 19,
+					"text": "A condenação está nisto: A luz veio ao mundo, e os homens amaram mais as trevas do que a luz, porque as suas obras eram más."
+				},
+				{
+					"n": 20,
+					"text": "Porque todo aquele que faz o mal, aborrece a luz, e não se chega para a luz, a fim de que não sejam reprovadas as suas obras;"
+				},
+				{
+					"n": 21,
+					"text": "mas aquele que procede segundo a verdade, chega-se para a luz, a fim de que seja manifesto que as suas obras são feitas segundo Deus."
+				}
+			]
+		}
+	]
+}

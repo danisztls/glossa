@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { parseReference } from '$lib/refparse';
-	import { findBookByAbbrev, getCccParagraph, listBibleWorks, workIdToEdition } from '$lib/corpus';
+	import { cccParagraphExists, findBookByAbbrev, listBibleWorks, workIdToEdition } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
+	import Icon from './Icon.svelte';
 
 	// CCC scope for jump-box resolution: a single content language for now
 	// (see `ccc/[n]` route) — once the reading route carries a language,
@@ -63,8 +64,7 @@
 		notFound = false;
 
 		if (ref.kind === 'ccc') {
-			const paragraph = getCccParagraph(DEFAULT_CCC_LANG, ref.n);
-			if (!paragraph) {
+			if (!cccParagraphExists(DEFAULT_CCC_LANG, ref.n)) {
 				notFound = true;
 				return;
 			}
@@ -97,10 +97,16 @@
 
 <svelte:window onkeydown={onWindowKeydown} />
 
-<button type="button" class="trigger" onclick={openBox} aria-haspopup="dialog">
-	<span aria-hidden="true">🔎</span>
-	<span>{t('jumpbox.placeholder')}</span>
-	<kbd>/</kbd>
+<button
+	type="button"
+	class="trigger"
+	onclick={openBox}
+	aria-haspopup="dialog"
+	aria-label={t('jumpbox.placeholder')}
+>
+	<Icon name="search" />
+	<span class="trigger-text" aria-hidden="true">{t('jumpbox.placeholder')}</span>
+	<kbd aria-hidden="true">/</kbd>
 </button>
 
 {#if open}
@@ -152,6 +158,17 @@
 		border-radius: 0.25rem;
 		padding: 0 0.35rem;
 		font-size: 0.75rem;
+	}
+
+	/* On narrow screens the header has too many controls for a full-width
+	   "Jump to… (e.g. john 3:16, ccc 1234)" label — collapse the trigger to
+	   its icon + kbd hint, which is still enough to convey "search/jump" and
+	   keeps the same activation target. */
+	@media (max-width: 640px) {
+		.trigger-text,
+		.trigger kbd {
+			display: none;
+		}
 	}
 
 	.backdrop {

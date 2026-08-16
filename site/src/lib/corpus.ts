@@ -1,147 +1,153 @@
 /**
- * Corpus access layer.
+ * Corpus access layer — public API. `corpus-index.ts` builds the boot
+ * index (registries + content-tier URL maps, see that file's docblock);
+ * this module is what every route/component actually imports, and it's
+ * responsible for two things the index alone doesn't give you: the
+ * structure-tree walkers shared by the CCC and Compendium, and — the part
+ * that changed on 2026-08-15 — fetching the actual reading text.
  *
- * This is the ONLY module that knows where corpus data physically comes
- * from. It reads the real corpus (see `docs/corpus-schema.md`) when one has
- * been synced into `src/lib/corpus-data/` by `npm run sync-corpus`
- * (`scripts/sync-corpus.mjs`, wired as a `prebuild`/`predev` hook — see
- * README.md "Corpus data"), and falls back to the schema-conformant
- * fixtures under `src/lib/fixtures/` otherwise. `npm test` never runs the
- * sync step, so vitest always exercises the fixtures, deterministically.
+ * WHY FETCH, NOW, WHEN THIS FILE USED TO ARGUE THE OPPOSITE: until
+ * 2026-08-15 this module `import.meta.glob(..., { eager: true })`-ed the
+ * ENTIRE corpus (every Bible verse, every CCC paragraph, every Compendium
+ * answer, both languages) straight into the client JS graph, on the
+ * reasoning that adapter-static prerenders every route at build time (no
+ * server runtime, docs/decisions.md) so inlining avoided a network
+ * round-trip and any risk of drift between what a page fetched and what
+ * got embedded in it. That reasoning is correct as far as it goes — it just
+ * doesn't scale. Measured against the real corpus: one chunk file, 18 MB
+ * raw / 4.6 MB gzipped, `modulepreload`-ed on every page including the
+ * home page, because "inline everything" doesn't distinguish between "the
+ * page needs this" and "this exists somewhere in the corpus." A phone
+ * doesn't just download that chunk once; it PARSES 18 MB of JS and holds
+ * it on the heap for the lifetime of every tab, on every visit, to read
+ * one Bible chapter. Content here is immutable (a published CCC paragraph
+ * or Bible verse doesn't change once stable) — which is precisely the
+ * property that makes per-file `fetch()` + long-lived caching strictly
+ * better than eager-inlining once the corpus is real-sized: a
+ * content-hashed file fetched once is cached forever (`immutable`
+ * Cache-Control, wired at the host), and adding a work invalidates only
+ * that work's files, never the whole library.
  *
- * Real data is read with `import.meta.glob(..., { eager: true })` rather
- * than `fetch()`: adapter-static prerenders every route at build time (no
- * server runtime, see docs/decisions.md), and `import.meta.glob` lets Vite
- * inline the JSON into the prerendered output at build time with no extra
- * network round-trip and no risk of the fetched data going stale relative
- * to the page that embeds it.
+ * THE SPLIT THIS LEADS TO (see `corpus-index.ts`'s docblock for the physical
+ * layout `scripts/sync-corpus.mjs` produces):
+ *   - INDEX tier (`corpus-data/index/`): manifests, canonical book/chapter
+ *     NUMBERS, CCC/Compendium TOC trees, abbreviations, xrefs — small
+ *     (kilobytes, not megabytes) and needed SYNCHRONOUSLY by components
+ *     that read it outside any `load()` (the book/chapter picker, the jump
+ *     box, both TOC pages). Still eager-glob-inlined — at this size that's
+ *     the right call, not the mistake the content tier was.
+ *   - CONTENT tier (`corpus-data/content/`): the actual reading text —
+ *     Bible books (73/edition), CCC paragraphs (chunked, 100/file), the
+ *     Compendium (whole per language). Globbed with `{ query: '?url' }`,
+ *     which makes Vite emit each file as its own content-hashed build
+ *     asset and hand back its URL as a plain string — the client bundle
+ *     ends up with a few hundred URL strings, not 21 MB of JSON.
  *
- * Every exported function below is async-compatible in signature-shape
- * already (they return plain values, not promises, but callers already go
- * through `load()` functions in routes) — so switching to `await fetch(...)`
- * later, if ever needed, is a single-module change; no route or component
- * should need to change. Keep the exported function names and return shapes
- * stable; that's the contract the rest of the app is written against.
+ * HOW CONTENT ACTUALLY GETS READ IS NOT "fetch() everywhere" — that was
+ * the first attempt, and it broke twice, both times because SvelteKit's
+ * `load`-time `fetch` is doing more than moving bytes:
+ *   1. A plain global `fetch()` with a relative URL fails outright during
+ *      prerendering ("Failed to parse URL from /_app/immutable/...") —
+ *      Node's `fetch` has no origin to resolve a relative URL against.
+ *      SvelteKit's `load(event)` hands `load` a special `fetch` that
+ *      SOLVES this (it resolves same-origin URLs by invoking the request
+ *      in-process) — but reaching for it walks straight into the next
+ *      problem.
+ *   2. That special `fetch` also INLINES the full response of every
+ *      request it makes into the prerendered page, so a client-side
+ *      `load()` re-run can replay it without a network round-trip — a real
+ *      feature, useful for dynamic routes, but one that applies to the raw
+ *      response, not to whatever slice `load()` returns. Fetching a whole
+ *      book that way to read one chapter measured out to a ~300 KB
+ *      Genesis-1 page — the entire book, re-embedded, once per chapter:
+ *      exactly the per-page bloat this rewrite exists to remove, just
+ *      relocated from the JS bundle into the HTML.
+ * So content is read two different ways depending on where the code runs,
+ * and the split is SSR vs browser, not "prerender vs runtime" as it might
+ * look: during SSR (`import.meta.env.SSR`, true for every prerendered
+ * page), `readContentFromDisk` reads the file straight off disk with
+ * `node:fs` — no `fetch` involved, so nothing auto-inlines anything; in the
+ * browser, `readContentFromNetwork` is a normal `fetch()` against the
+ * content-hashed URL, immutable-cached from the second read on. Both
+ * branches share one memoization cache and one public function
+ * (`getChapter`, `getCccParagraphAsync`, …) — this is what makes "one call
+ * shape, not a server/client branch" true at every call site; only
+ * `readContent` itself knows the two paths differ, and why.
+ *
+ * COARSE READ, NARROW RETURN: reading is per-BOOK / per-CHUNK /
+ * per-LANGUAGE-WHOLE (the granularity a service worker should cache), never
+ * per-page — but a `load()` must not then embed the whole read object into
+ * that page's data (see point 2 above — this discipline matters even
+ * MORE now that content isn't fetched through SvelteKit's auto-inlining
+ * fetch, because there's no framework backstop catching an oversized
+ * return value either; it's on this module alone to keep the cut narrow).
+ * `getChapter` reads an entire book but returns only the one requested
+ * `Chapter` (verses) alongside book *metadata* (name/osis/abbrevs — no
+ * other chapter's verses); the CCC/Compendium neighbor helpers return bare
+ * `{ n }` for prev/next rather than the neighboring paragraph's/question's
+ * full content, since every caller only ever links to it by number.
+ *
+ * FUNCTIONS THAT STAYED SYNCHRONOUS ARE BACKED BY THE INDEX, NOT CONTENT:
+ * `findBookByAbbrev`/`workIdToEdition` (depended on synchronously by
+ * `refs.ts`, which this restructuring must not require editing) only ever
+ * needed book metadata (name/osis/abbrevs/order/chapter EXISTENCE) — never
+ * verse text — so they're unaffected by the content tier moving to fetch:
+ * they still read straight out of `corpus-index.ts`'s `bibleIndex`, still
+ * synchronous, still returning immediately. Same story for the book/chapter
+ * picker, the CCC/Compendium TOC trees, and paragraph-number existence
+ * checks (`cccParagraphExists`, used by the jump box and the "related
+ * paragraphs" links) — all index-backed, all still plain synchronous calls.
+ * Only the functions that need actual reading TEXT (`getChapter`,
+ * `getCccParagraphAsync`, `getCompendiumQuestionAsync` and friends) became
+ * `async`; every caller of those is a route `load()`, which was already the
+ * right place for async work.
+ *
+ * FIXTURES (`src/lib/fixtures/`, always used under vitest — see the
+ * `USE_REAL_CORPUS` guard re-exported from `corpus-index.ts`, and that
+ * file's docblock for why the guard exists) never had a content tier to
+ * fetch from — they're two hand-authored books and a couple dozen
+ * paragraphs, already in memory. The `async` functions below still return
+ * `Promise`s under fixtures (for one call shape regardless of branch); they
+ * just resolve immediately from the already-imported fixture data instead
+ * of issuing a `fetch()`.
  */
 
 import type {
-	BibleBook,
-	BibleManifest,
-	CccAbbreviation,
 	CccNode,
 	CccParagraph,
-	WorkManifest
+	Chapter,
+	CompendiumQuestion,
+	ScriptureRef,
+	StructureNode,
+	WorkManifest,
+	WorkType
 } from './types';
 
-import bibleCpdvEnManifest from './fixtures/bible.cpdv.en/manifest.json';
-import genJson from './fixtures/bible.cpdv.en/books/gen.json';
-import johnJson from './fixtures/bible.cpdv.en/books/john.json';
+import {
+	USE_REAL_CORPUS,
+	bibleIndex,
+	cccAbbreviations,
+	cccBibleXrefsByCcc,
+	cccChunkLocation,
+	cccParagraphNumbers,
+	cccStructures,
+	compendiumQuestionsLocation,
+	compendiumStructures,
+	fixtureBibleBooks,
+	fixtureCccParagraphsByLang,
+	fixtureCompendiumQuestionsByLang,
+	bibleBookLocation,
+	manifests,
+	listContentAssets,
+	type BibleBookMeta,
+	type ContentAsset,
+	type ContentLocation
+} from './corpus-index';
 
-import cccEnManifest from './fixtures/ccc.en/manifest.json';
-import cccEnStructure from './fixtures/ccc.en/structure.json';
-import cccEnParagraphs from './fixtures/ccc.en/paragraphs.json';
-import cccEnAbbreviations from './fixtures/ccc.en/abbreviations.json';
+export type { BibleBookMeta, ContentAsset };
+export { USE_REAL_CORPUS, listContentAssets };
 
-// --- Real corpus, if `npm run sync-corpus` has populated corpus-data/ -----
-//
-// Glob paths are relative to this file and must be literal for Vite's
-// static analysis, so they can't be built from the CORPUS_DIR env var here
-// — that's why sync-corpus.mjs materializes real data at this fixed path
-// instead of corpus.ts reading `../../corpus` directly.
-
-const realManifestModules = import.meta.glob('./corpus-data/works/*/manifest.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, WorkManifest>;
-
-const realBibleBookModules = import.meta.glob('./corpus-data/works/bible.*/books/*.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, BibleBook>;
-
-const realCccStructureModules = import.meta.glob('./corpus-data/works/ccc.*/structure.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, CccNode[]>;
-
-const realCccParagraphsModules = import.meta.glob('./corpus-data/works/ccc.*/paragraphs.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, CccParagraph[]>;
-
-const realCccAbbreviationModules = import.meta.glob('./corpus-data/works/ccc.*/abbreviations.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, CccAbbreviation[]>;
-
-/** True once corpus-data/ has been synced from a real corpus checkout. */
-const USE_REAL_CORPUS = Object.keys(realManifestModules).length > 0;
-
-function workIdFromManifestPath(path: string): string | null {
-	return path.match(/works\/([^/]+)\/manifest\.json$/)?.[1] ?? null;
-}
-
-function cccLangFromPath(path: string): string | null {
-	return path.match(/works\/ccc\.([^/]+)\//)?.[1] ?? null;
-}
-
-// --- Registry (real corpus when present, fixtures otherwise) -------------
-
-const manifests: Record<string, WorkManifest> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(realManifestModules)
-				.map(([path, manifest]) => [workIdFromManifestPath(path), manifest] as const)
-				.filter((entry): entry is [string, WorkManifest] => entry[0] !== null)
-				.sort(([a], [b]) => a.localeCompare(b))
-		)
-	: {
-			'bible.cpdv.en': bibleCpdvEnManifest as BibleManifest,
-			'ccc.en': cccEnManifest as WorkManifest
-		};
-
-const bibleBooks: Record<string, Record<string, BibleBook>> = USE_REAL_CORPUS
-	? (() => {
-			const out: Record<string, Record<string, BibleBook>> = {};
-			for (const [path, book] of Object.entries(realBibleBookModules)) {
-				const match = path.match(/works\/([^/]+)\/books\/([^/]+)\.json$/);
-				if (!match) continue;
-				const [, workId, osis] = match;
-				(out[workId] ??= {})[osis] = book;
-			}
-			return out;
-		})()
-	: {
-			'bible.cpdv.en': {
-				gen: genJson as BibleBook,
-				john: johnJson as BibleBook
-			}
-		};
-
-const cccStructures: Record<string, CccNode[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(realCccStructureModules)
-				.map(([path, structure]) => [cccLangFromPath(path), structure] as const)
-				.filter((entry): entry is [string, CccNode[]] => entry[0] !== null)
-		)
-	: { en: cccEnStructure as unknown as CccNode[] };
-
-const cccParagraphsByLang: Record<string, CccParagraph[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(realCccParagraphsModules)
-				.map(([path, paragraphs]) => [cccLangFromPath(path), paragraphs] as const)
-				.filter((entry): entry is [string, CccParagraph[]] => entry[0] !== null)
-		)
-	: { en: cccEnParagraphs as CccParagraph[] };
-
-const cccAbbreviationsByLang: Record<string, CccAbbreviation[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(realCccAbbreviationModules)
-				.map(([path, abbrevs]) => [cccLangFromPath(path), abbrevs] as const)
-				.filter((entry): entry is [string, CccAbbreviation[]] => entry[0] !== null)
-		)
-	: { en: cccEnAbbreviations as CccAbbreviation[] };
-
-// --- Works -------------------------------------------------------------
+// --- Works -----------------------------------------------------------------
 
 /** All work manifests available in this corpus, in registry order. */
 export function listWorks(): WorkManifest[] {
@@ -153,8 +159,41 @@ export function getWork(workId: string): WorkManifest | undefined {
 }
 
 /** Convenience: just the Bible works. */
-export function listBibleWorks(): BibleManifest[] {
-	return listWorks().filter((w): w is BibleManifest => w.type === 'bible');
+export function listBibleWorks(): WorkManifest[] {
+	return listWorks().filter((w) => w.type === 'bible');
+}
+
+/** All works of a given type, in registry order (unsorted — see `listEditions`). */
+export function listWorksOfType(type: WorkType): WorkManifest[] {
+	return listWorks().filter((w) => w.type === type);
+}
+
+/**
+ * Editions of a work type, sorted by language then id — the order the
+ * edition/version selector (docs/decisions.md #1) lists them in. Distinct
+ * from `listWorksOfType`, which returns registry order.
+ */
+export function listEditions(type: WorkType): WorkManifest[] {
+	return listWorksOfType(type).sort(
+		(a, b) => baseLang(a.language).localeCompare(baseLang(b.language)) || a.id.localeCompare(b.id)
+	);
+}
+
+/**
+ * Preferred work id for a type at a UI language (docs/decisions.md #1:
+ * content language follows UI language by default) — the first edition
+ * whose language matches, or any edition if none does.
+ */
+export function defaultWorkId(type: WorkType, lang: string): string | undefined {
+	const target = baseLang(lang);
+	const editions = listEditions(type);
+	const match = editions.find((w) => baseLang(w.language) === target);
+	return (match ?? editions[0])?.id;
+}
+
+/** BCP-47 language tag -> bare language subtag, e.g. "pt-PT" -> "pt". */
+export function baseLang(tag: string): string {
+	return tag.split('-')[0].toLowerCase();
 }
 
 /**
@@ -170,26 +209,17 @@ export function workIdToEdition(workId: string): string {
 	return workId.replace(/^bible\./, '');
 }
 
-// --- Bible ---------------------------------------------------------------
+// --- Bible: index-backed (metadata + chapter existence, sync) -------------
 
-export function getBook(workId: string, osis: string): BibleBook | undefined {
-	return bibleBooks[workId]?.[osis];
+export function getBook(workId: string, osis: string): BibleBookMeta | undefined {
+	return bibleIndex[workId]?.find((b) => b.osis === osis);
 }
 
-/** All books physically present for a work, in canonical (`order`) order. */
-export function listBooks(workId: string): BibleBook[] {
-	return Object.values(bibleBooks[workId] ?? {}).sort((a, b) => a.order - b.order);
-}
-
-export function getChapter(
-	workId: string,
-	osis: string,
-	chapterN: number
-): { book: BibleBook; chapter: BibleBook['chapters'][number] } | undefined {
-	const book = getBook(workId, osis);
-	const chapter = book?.chapters.find((c) => c.n === chapterN);
-	if (!book || !chapter) return undefined;
-	return { book, chapter };
+/** All books physically present for a work, in canonical (`order`) order —
+ *  already sorted by `scripts/sync-corpus.mjs` / `corpus-index.ts`'s fixture
+ *  branch. */
+export function listBooks(workId: string): BibleBookMeta[] {
+	return bibleIndex[workId] ?? [];
 }
 
 /** The chapter immediately before/after the given one, among chapters present. */
@@ -237,87 +267,377 @@ export function getAdjacentChapterAcrossBooks(
 }
 
 /** Find a book by one of its jump-box abbreviations (case-insensitive). */
-export function findBookByAbbrev(workId: string, abbrev: string): BibleBook | undefined {
+export function findBookByAbbrev(workId: string, abbrev: string): BibleBookMeta | undefined {
 	const needle = abbrev.trim().toLowerCase();
 	return listBooks(workId).find(
 		(b) => b.osis === needle || b.abbrevs.some((a) => a.toLowerCase() === needle)
 	);
 }
 
-// --- Catechism -------------------------------------------------------------
+// --- Canonical (edition-independent) Bible structure ---------------------
+//
+// Tables of contents and the book/chapter picker describe the *work*, not
+// whichever edition is currently selected (docs/decisions.md #4): a reader
+// picking "Genesis 12" shouldn't see the picker change shape when they
+// switch editions. `CanonicalBook` is the union of a book's presence across
+// every Bible work — every osis code and chapter number seen in ANY
+// edition — with `namesByWorkId` carrying each edition's own display name
+// so callers can still label the book in the reader's chosen edition.
+//
+// Computed once at module load (not per call): with up to 73 books x ~150
+// chapters x every Bible edition, re-walking this on every render would be
+// wasteful for something that never changes at runtime. Index-backed (chapter
+// NUMBERS only), same as everything else in this section — no content fetch.
 
-export function getCccStructure(lang: string): CccNode[] {
-	return cccStructures[lang] ?? [];
+export interface CanonicalBook {
+	osis: string;
+	order: number;
+	/** Chapter numbers present in at least one edition, ascending. */
+	chapters: number[];
+	/** Display name per bible work id, for labelling in the reader's own edition. */
+	namesByWorkId: Record<string, string>;
 }
 
-export function listCccParagraphs(lang: string): CccParagraph[] {
-	return cccParagraphsByLang[lang] ?? [];
-}
-
-export function getCccParagraph(lang: string, n: number): CccParagraph | undefined {
-	return listCccParagraphs(lang).find((p) => p.n === n);
-}
-
-/** The CCC's own abbreviations table (document sigla, scripture book abbrevs). Not surfaced in the UI yet. */
-export function listCccAbbreviations(lang: string): CccAbbreviation[] {
-	return cccAbbreviationsByLang[lang] ?? [];
-}
-
-/** Paragraphs in the fixture whose `n` is nearest to (but not equal to) the given one. */
-export function getAdjacentCccParagraph(
-	lang: string,
-	n: number,
-	direction: 'prev' | 'next'
-): CccParagraph | undefined {
-	const ns = listCccParagraphs(lang)
-		.map((p) => p.n)
-		.sort((a, b) => a - b);
-	if (direction === 'next') {
-		const next = ns.find((x) => x > n);
-		return next !== undefined ? getCccParagraph(lang, next) : undefined;
+const canonicalBooksByOsis: Map<string, CanonicalBook> = (() => {
+	const out = new Map<string, CanonicalBook>();
+	// Sorted for determinism: iteration order otherwise depends on
+	// filesystem/glob enumeration order, which isn't guaranteed stable.
+	const works = [...listBibleWorks()].sort((a, b) => a.id.localeCompare(b.id));
+	for (const work of works) {
+		for (const book of listBooks(work.id)) {
+			let entry = out.get(book.osis);
+			if (!entry) {
+				entry = { osis: book.osis, order: book.order, chapters: [], namesByWorkId: {} };
+				out.set(book.osis, entry);
+			}
+			entry.namesByWorkId[work.id] = book.name;
+			const chapters = new Set(entry.chapters);
+			for (const chapter of book.chapters) chapters.add(chapter.n);
+			entry.chapters = [...chapters].sort((a, b) => a - b);
+		}
 	}
-	const prev = [...ns].reverse().find((x) => x < n);
-	return prev !== undefined ? getCccParagraph(lang, prev) : undefined;
+	return out;
+})();
+
+export function listCanonicalBooks(): CanonicalBook[] {
+	return [...canonicalBooksByOsis.values()].sort((a, b) => a.order - b.order);
 }
 
-/** Walk the structure tree and return the path of nodes from root to the
- * deepest node whose range contains paragraph `n` (a breadcrumb trail). */
-export function getCccBreadcrumb(lang: string, n: number): CccNode[] {
-	const path: CccNode[] = [];
+export function getCanonicalBook(osis: string): CanonicalBook | undefined {
+	return canonicalBooksByOsis.get(osis);
+}
 
-	function walk(nodes: CccNode[]): boolean {
+// --- Bible: content tier (async, read/fetched, memoized) -------------------
+
+/**
+ * `__CORPUS_DATA_DIR__`: the absolute path to `src/lib/corpus-data/`,
+ * baked in at build time by `vite.config.ts` (`define`) — see that file's
+ * comment for why it's injected there rather than derived from
+ * `import.meta.url` here (Vite's SSR build bundles this module into a
+ * chunk that doesn't live in `src/lib/`, so a self-relative path would
+ * resolve against the wrong directory).
+ */
+declare const __CORPUS_DATA_DIR__: string;
+
+/**
+ * Content is read two different ways depending on where this code runs,
+ * and the split is NOT the obvious "prerender vs runtime" one:
+ *
+ *   - SSR (`import.meta.env.SSR`, true during prerendering): reads the
+ *     file straight off disk with `node:fs`. This is NOT primarily an
+ *     optimization — it's required for correctness. SvelteKit's `load`-time
+ *     `fetch` inlines the FULL response of every request it makes into the
+ *     prerendered page's hydration payload, so a future client-side
+ *     `load()` re-run can replay it without a network round-trip — a real
+ *     feature, but one that applies to the raw response, not to whatever
+ *     slice `load()` actually returns. Tried first, measured: fetching a
+ *     whole book that way to read one chapter produced a ~300 KB page for
+ *     Genesis 1 (the entire book, re-embedded, once per chapter — the
+ *     exact per-page re-bloat this whole restructuring exists to remove,
+ *     just relocated). A plain `fs.readFile` has no such side effect —
+ *     nothing inlines a value into the page except `load`'s own return.
+ *   - Browser (post-hydration, client-side navigation): a normal `fetch()`
+ *     against the content-hashed URL, cached by the HTTP cache and (once
+ *     wired) the service worker.
+ *
+ * Both branches share the same in-memory memoization below, so this is
+ * still "one call shape, not a server/client branch" at every call site —
+ * only this one function knows the two paths differ.
+ */
+/** relPath -> in-flight/resolved read, so N pages needing the same book
+ *  (every chapter of Genesis wants Genesis's one file) issue exactly one
+ *  disk read / fetch. */
+const contentCache = new Map<string, Promise<unknown>>();
+
+async function readContent<T>(location: ContentLocation): Promise<T> {
+	let pending = contentCache.get(location.relPath) as Promise<T> | undefined;
+	if (!pending) {
+		pending = import.meta.env.SSR
+			? readContentFromDisk<T>(location.relPath)
+			: readContentFromNetwork<T>(location.url);
+		contentCache.set(location.relPath, pending);
+	}
+	return pending;
+}
+
+async function readContentFromDisk<T>(relPath: string): Promise<T> {
+	const { readFile } = await import('node:fs/promises');
+	const path = await import('node:path');
+	const raw = await readFile(path.join(__CORPUS_DATA_DIR__, relPath), 'utf8');
+	return JSON.parse(raw) as T;
+}
+
+async function readContentFromNetwork<T>(url: string): Promise<T> {
+	const res = await fetch(url);
+	if (!res.ok) throw new Error(`corpus.ts: failed to fetch ${url} (${res.status})`);
+	return res.json() as Promise<T>;
+}
+
+async function fetchBookContent(
+	workId: string,
+	osis: string
+): Promise<{ chapters: Chapter[] } | undefined> {
+	if (!USE_REAL_CORPUS) return fixtureBibleBooks[workId]?.[osis];
+	const location = bibleBookLocation(workId, osis);
+	if (!location) return undefined;
+	return readContent(location);
+}
+
+/**
+ * Reads the whole book (content tier) but returns only book METADATA
+ * (already had it, from the index — no need to wait on the read for it)
+ * plus the ONE requested `Chapter` (verses). See this module's docblock,
+ * "COARSE FETCH, NARROW RETURN": returning the full book here would
+ * re-embed an entire book's text into every one of its chapter pages'
+ * prerendered data, exactly the bloat this rewrite removes.
+ */
+export async function getChapter(
+	workId: string,
+	osis: string,
+	chapterN: number
+): Promise<{ book: BibleBookMeta; chapter: Chapter } | undefined> {
+	const book = getBook(workId, osis);
+	if (!book || !book.chapters.some((c) => c.n === chapterN)) return undefined;
+	const full = await fetchBookContent(workId, osis);
+	const chapter = full?.chapters.find((c) => c.n === chapterN);
+	if (!chapter) return undefined;
+	return { book, chapter };
+}
+
+// --- Structure trees (shared: CCC and Compendium) -------------------------
+//
+// The CCC and Compendium both model their table of contents as the same
+// tree shape (`StructureNode`, see types.ts — Compendium's `.paragraphs`
+// holds QUESTION ranges there, not CCC paragraph numbers). Both trees use
+// the same null-bound convention for unaddressable content
+// (docs/corpus-schema.md, "amended 2026-08-14"). Shared here so that
+// convention is handled in exactly one place instead of two copies drifting
+// apart. Index-backed (structure trees are index tier, not content) — no
+// fetch involved anywhere in this section.
+
+/**
+ * Walk a structure tree and return the path of nodes from root to the
+ * deepest node whose range contains `n` (a breadcrumb trail).
+ */
+function breadcrumbIn(tree: StructureNode[], n: number): StructureNode[] {
+	const path: StructureNode[] = [];
+
+	function walk(nodes: StructureNode[]): boolean {
 		for (const node of nodes) {
 			const [first, last] = node.paragraphs;
-			// The schema (docs/corpus-schema.md) requires `paragraphs` to be a
-			// `[number, number]` tuple, but some real-corpus structure nodes
-			// carry a `null` first bound (unnumbered content, e.g. the Creed
-			// printed in full) — a documented mismatch (see site/README.md /
-			// final report). Treat such nodes as never containing anything
-			// rather than letting `n < null` (== `n < 0`) falsely match.
+			// A `null` bound marks unnumbered content the structure knows
+			// about but no number addresses (creed texts, epigraphs, ...).
+			// Treat it as never containing anything rather than letting
+			// `n < null` (== `n < 0` via JS coercion) falsely match.
 			if (typeof first !== 'number' || typeof last !== 'number') continue;
 			if (n < first || n > last) continue;
 			path.push(node);
-			if (!walk(node.children)) {
-				// no child covers it more precisely; this node is the leaf
-			}
+			walk(node.children);
 			return true;
 		}
 		return false;
 	}
 
-	walk(getCccStructure(lang));
+	walk(tree);
 	return path;
 }
 
-/** Flatten the structure tree into a depth-first list, for building a TOC. */
-export function flattenCccStructure(lang: string): { node: CccNode; depth: number }[] {
-	const out: { node: CccNode; depth: number }[] = [];
-	function walk(nodes: CccNode[], depth: number) {
+/** Flatten a structure tree into a depth-first list, for building a TOC. */
+function flattenTree(tree: StructureNode[]): { node: StructureNode; depth: number }[] {
+	const out: { node: StructureNode; depth: number }[] = [];
+	function walk(nodes: StructureNode[], depth: number) {
 		for (const node of nodes) {
 			out.push({ node, depth });
 			walk(node.children, depth + 1);
 		}
 	}
-	walk(getCccStructure(lang), 0);
+	walk(tree, 0);
 	return out;
+}
+
+// --- Catechism: index-backed (structure, abbreviations, existence, sync) --
+
+/** Languages the CCC is available in. */
+export function cccLangs(): string[] {
+	return Object.keys(cccStructures).sort();
+}
+
+export function getCccStructure(lang: string): CccNode[] {
+	return cccStructures[lang] ?? [];
+}
+
+/** The CCC's own abbreviations table (document sigla, scripture book abbrevs). Not surfaced in the UI yet. */
+export function listCccAbbreviations(lang: string) {
+	return cccAbbreviations[lang] ?? [];
+}
+
+const cccParagraphNumberSets: Record<string, Set<number>> = Object.fromEntries(
+	Object.entries(cccParagraphNumbers).map(([lang, ns]) => [lang, new Set(ns)])
+);
+
+/** Whether paragraph `n` exists in this corpus for `lang` — index-backed
+ *  (no fetch), so the jump box and "related paragraphs" links can check
+ *  existence without pulling in that paragraph's content. Never assume a
+ *  contiguous range: the fixtures are deliberately gappy (see
+ *  `corpus-index.ts`'s docblock). */
+export function cccParagraphExists(lang: string, n: number): boolean {
+	return cccParagraphNumberSets[lang]?.has(n) ?? false;
+}
+
+/** The paragraph number immediately before/after `n` that actually exists,
+ *  or undefined at either end. Index-backed — see `cccParagraphExists`. */
+export function getAdjacentCccParagraphNumber(
+	lang: string,
+	n: number,
+	direction: 'prev' | 'next'
+): number | undefined {
+	const ns = cccParagraphNumbers[lang] ?? [];
+	if (direction === 'next') return ns.find((x) => x > n);
+	return [...ns].reverse().find((x) => x < n);
+}
+
+/**
+ * Walk the structure tree and return the path of nodes from root to the
+ * deepest node whose range contains paragraph `n` (a breadcrumb trail).
+ * Shared implementation: see `breadcrumbIn` above.
+ */
+export function getCccBreadcrumb(lang: string, n: number): CccNode[] {
+	return breadcrumbIn(getCccStructure(lang), n);
+}
+
+/**
+ * Flatten the structure tree into a depth-first list, for building a TOC.
+ * Shared implementation: see `flattenTree` above.
+ */
+export function flattenCccStructure(lang: string): { node: CccNode; depth: number }[] {
+	return flattenTree(getCccStructure(lang));
+}
+
+// --- Catechism: content tier (async, read/fetched, memoized, chunked) -----
+
+async function fetchCccChunk(lang: string, n: number): Promise<CccParagraph[]> {
+	if (!USE_REAL_CORPUS) return fixtureCccParagraphsByLang[lang] ?? [];
+	const location = cccChunkLocation(`ccc.${lang}`, n);
+	if (!location) return [];
+	return readContent<CccParagraph[]>(location);
+}
+
+/** Reads the 100-paragraph chunk `n` lives in (content tier), returns only
+ *  paragraph `n` itself. Checks `cccParagraphExists` first so a
+ *  not-in-this-corpus number never triggers a read. */
+export async function getCccParagraphAsync(
+	lang: string,
+	n: number
+): Promise<CccParagraph | undefined> {
+	if (!cccParagraphExists(lang, n)) return undefined;
+	const chunk = await fetchCccChunk(lang, n);
+	return chunk.find((p) => p.n === n);
+}
+
+// --- Compendium: index-backed (structure, sync) ----------------------------
+//
+// The Compendium of the CCC (docs/corpus-schema.md "Compendium —
+// questions.json"): 598 Q&A pairs, each printing the CCC paragraph range it
+// condenses (`ccc_refs`, a raw string — see docs/link-surface.md #11). Its
+// `structure.json` reuses the CCC's tree shape (see `StructureNode` in
+// types.ts) but addresses QUESTION numbers via `.paragraphs`, not CCC
+// paragraph numbers — every accessor below is careful to say "question",
+// never "paragraph", so that distinction stays visible at the call site.
+
+/** Languages the Compendium is available in. */
+export function compendiumLangs(): string[] {
+	return Object.keys(compendiumStructures).sort();
+}
+
+export function getCompendiumStructure(lang: string): StructureNode[] {
+	return compendiumStructures[lang] ?? [];
+}
+
+/**
+ * Walk the structure tree and return the path of nodes from root to the
+ * deepest node whose QUESTION range contains `n` (a breadcrumb trail).
+ * Shared implementation: see `breadcrumbIn` above.
+ */
+export function getCompendiumBreadcrumb(lang: string, n: number): StructureNode[] {
+	return breadcrumbIn(getCompendiumStructure(lang), n);
+}
+
+/**
+ * Flatten the structure tree into a depth-first list, for building a TOC.
+ * Shared implementation: see `flattenTree` above.
+ */
+export function flattenCompendiumStructure(lang: string): { node: StructureNode; depth: number }[] {
+	return flattenTree(getCompendiumStructure(lang));
+}
+
+// --- Compendium: content tier (async, read/fetched, memoized, whole) ------
+//
+// Unlike the Bible (per book) and the CCC (100-paragraph chunks), the
+// Compendium is read WHOLE per language: ~90 KB gzipped total for BOTH
+// languages combined (measured against the real corpus 2026-08-15) — well
+// under the size that would justify splitting it further (docs/corpus-
+// schema.md's own framing: "598 numbered questions" is already a small
+// work compared to the Bible or CCC).
+
+async function fetchCompendiumQuestions(lang: string): Promise<CompendiumQuestion[]> {
+	if (!USE_REAL_CORPUS) return fixtureCompendiumQuestionsByLang[lang] ?? [];
+	const location = compendiumQuestionsLocation(`compendium.${lang}`);
+	if (!location) return [];
+	return readContent<CompendiumQuestion[]>(location);
+}
+
+export async function getCompendiumQuestionAsync(
+	lang: string,
+	n: number
+): Promise<CompendiumQuestion | undefined> {
+	const questions = await fetchCompendiumQuestions(lang);
+	return questions.find((q) => q.n === n);
+}
+
+/** The question number immediately before/after `n` that actually exists.
+ *  Operates on the same whole-language read `getCompendiumQuestionAsync`
+ *  uses (memoized — this doesn't cost a second read). */
+export async function getAdjacentCompendiumQuestionNumber(
+	lang: string,
+	n: number,
+	direction: 'prev' | 'next'
+): Promise<number | undefined> {
+	const questions = await fetchCompendiumQuestions(lang);
+	const ns = questions.map((q) => q.n).sort((a, b) => a - b);
+	if (direction === 'next') return ns.find((x) => x > n);
+	return [...ns].reverse().find((x) => x < n);
+}
+
+// --- Cross-references -------------------------------------------------
+
+/**
+ * Scripture references for a CCC paragraph (xrefs/ccc-bible.json, derived —
+ * see docs/corpus-schema.md). References are edition-independent (OSIS +
+ * chapter + verse); resolve against whichever Bible edition the reader has
+ * open. Index-backed (small — see corpus-index.ts): empty array when the
+ * paragraph has none, or the xrefs file itself is absent (fixtures without
+ * one).
+ */
+export function getCccBibleXrefs(cccN: number): ScriptureRef[] {
+	return cccBibleXrefsByCcc.get(cccN) ?? [];
 }

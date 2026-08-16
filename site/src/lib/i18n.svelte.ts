@@ -1,9 +1,16 @@
 /**
- * UI string dictionary — deliberately tiny in v1 ("a handful of strings
- * only" per the brief). UI language is independent of content language
- * (see docs/decisions.md: "the URL carries content choice, setting
- * carries UI language"): switching this does not change which Bible
- * edition or CCC translation you're reading, only the site's own chrome.
+ * UI string dictionary.
+ *
+ * UI language now DRIVES content language (reversing the original "the URL
+ * carries content choice, setting carries UI language" decision recorded in
+ * docs/decisions.md — see the entry this change adds there). Switching this
+ * switches both the site's chrome AND, by default, which edition of the
+ * Bible/CCC/Compendium is shown (see `$lib/content.svelte.ts`). A reader who
+ * wants to read a different edition than their interface language implies
+ * still can — the edition/version selector lets them override it — but that
+ * override is scoped to the UI language it was made under, so changing the
+ * interface language changes the content language too unless the reader
+ * re-picks an edition after switching.
  */
 
 export type UiLang = 'en' | 'pt';
@@ -17,6 +24,8 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'nav.home': 'Home',
 		'nav.bible': 'Bible',
 		'nav.ccc': 'Catechism',
+		'nav.compendium': 'Compendium',
+		'nav.menu': 'Menu',
 		'home.title': 'Depositum',
 		'home.tagline': 'The Bible and the Catechism of the Catholic Church, free to read.',
 		'home.continueReading': 'Continue reading',
@@ -24,24 +33,71 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'jumpbox.placeholder': 'Jump to… (e.g. john 3:16, ccc 1234)',
 		'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
 		'jumpbox.noMatch': 'No match',
+
+		// Theme menu (auto/light/dark/sepia) — ThemeMenu.svelte is the consumer.
 		'theme.label': 'Theme',
+		'theme.auto': 'Auto',
 		'theme.light': 'Light',
 		'theme.dark': 'Dark',
 		'theme.sepia': 'Sepia',
+
+		// Font size menu — FontSizeMenu.svelte is the consumer; store is prefs.svelte.ts.
+		'fontSize.label': 'Text size',
+		'fontSize.larger': 'Larger text',
+		'fontSize.smaller': 'Smaller text',
+		'fontSize.reset': 'Reset text size',
+
+		// Edition/version selector — EditionMenu.svelte is the consumer; store is content.svelte.ts.
+		'edition.label': 'Edition',
+		'edition.select': 'Choose edition',
+		'edition.current': 'Current edition',
+
 		'bible.prevChapter': 'Previous chapter',
 		'bible.nextChapter': 'Next chapter',
 		'bible.pickBook': 'Books & chapters',
+		'bible.landing.title': 'The Bible',
+		'bible.landing.tagline': 'Read the whole Bible, book by book, chapter by chapter.',
+		'bible.landing.continue': 'Continue where you left off',
+		'bible.landing.start': 'Start reading',
+		'bible.landing.books': 'Books',
+		// The canonical book/chapter structure is edition-independent, so the
+		// picker can offer a chapter the reader's current edition lacks.
+		'bible.chapterUnavailable': 'Not available in this edition',
+		'bible.testament.ot': 'Old Testament',
+		'bible.testament.nt': 'New Testament',
+
 		'ccc.prevParagraph': 'Previous',
 		'ccc.nextParagraph': 'Next',
 		'ccc.inBrief': 'In Brief',
 		'ccc.tableOfContents': 'Table of Contents',
 		'ccc.related': 'See also',
+
+		// Compendium of the CCC — routes/compendium/** is the consumer.
+		'compendium.landing.title': 'Compendium of the Catechism',
+		'compendium.landing.tagline':
+			'598 questions and answers summarizing the Catechism of the Catholic Church.',
+		'compendium.question': 'Question',
+		'compendium.answer': 'Answer',
+		'compendium.tableOfContents': 'Table of Contents',
+		'compendium.prevQuestion': 'Previous question',
+		'compendium.nextQuestion': 'Next question',
+		'compendium.condenses': 'Condenses CCC ¶¶',
+
+		// Reference tooltips/popovers — RefText.svelte is the consumer.
+		'ref.tooltip.loading': 'Loading…',
+		'ref.tooltip.openCcc': 'Open in Catechism',
+		'ref.tooltip.openBible': 'Open in Bible',
+		'ref.tooltip.openCompendium': 'Open in Compendium',
+		'ref.cf': 'cf.',
+
 		'lang.label': 'Language'
 	},
 	pt: {
 		'nav.home': 'Início',
 		'nav.bible': 'Bíblia',
 		'nav.ccc': 'Catecismo',
+		'nav.compendium': 'Compêndio',
+		'nav.menu': 'Menu',
 		'home.title': 'Depositum',
 		'home.tagline': 'A Bíblia e o Catecismo da Igreja Católica, livres para ler.',
 		'home.continueReading': 'Continuar lendo',
@@ -49,18 +105,56 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'jumpbox.placeholder': 'Ir para… (ex: jo 3,16, ccc 1234)',
 		'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
 		'jumpbox.noMatch': 'Nenhum resultado',
+
 		'theme.label': 'Tema',
+		'theme.auto': 'Automático',
 		'theme.light': 'Claro',
 		'theme.dark': 'Escuro',
 		'theme.sepia': 'Sépia',
+
+		'fontSize.label': 'Tamanho do texto',
+		'fontSize.larger': 'Aumentar texto',
+		'fontSize.smaller': 'Diminuir texto',
+		'fontSize.reset': 'Repor tamanho do texto',
+
+		'edition.label': 'Edição',
+		'edition.select': 'Escolher edição',
+		'edition.current': 'Edição atual',
+
 		'bible.prevChapter': 'Capítulo anterior',
 		'bible.nextChapter': 'Próximo capítulo',
 		'bible.pickBook': 'Livros e capítulos',
+		'bible.landing.title': 'A Bíblia',
+		'bible.landing.tagline': 'Leia toda a Bíblia, livro por livro, capítulo por capítulo.',
+		'bible.landing.continue': 'Continuar de onde parou',
+		'bible.landing.start': 'Começar a leitura',
+		'bible.landing.books': 'Livros',
+		'bible.chapterUnavailable': 'Não disponível nesta edição',
+		'bible.testament.ot': 'Antigo Testamento',
+		'bible.testament.nt': 'Novo Testamento',
+
 		'ccc.prevParagraph': 'Anterior',
 		'ccc.nextParagraph': 'Próximo',
 		'ccc.inBrief': 'Resumindo',
 		'ccc.tableOfContents': 'Índice',
 		'ccc.related': 'Veja também',
+
+		'compendium.landing.title': 'Compêndio do Catecismo',
+		'compendium.landing.tagline':
+			'598 perguntas e respostas que resumem o Catecismo da Igreja Católica.',
+		'compendium.question': 'Pergunta',
+		'compendium.answer': 'Resposta',
+		'compendium.tableOfContents': 'Índice',
+		'compendium.prevQuestion': 'Pergunta anterior',
+		'compendium.nextQuestion': 'Próxima pergunta',
+		'compendium.condenses': 'Condensa os §§',
+
+		'ref.tooltip.loading': 'Carregando…',
+		'ref.tooltip.openCcc': 'Abrir no Catecismo',
+		'ref.tooltip.openBible': 'Abrir na Bíblia',
+		'ref.tooltip.openCompendium': 'Abrir no Compêndio',
+		'ref.cf': 'cf.',
+
 		'lang.label': 'Idioma'
 	}
 };

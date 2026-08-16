@@ -1,0 +1,40 @@
+[
+	{
+		"kind": "part",
+		"n": 1,
+		"title": "PRIMEIRA PARTE A PROFISSÃO DA FÉ",
+		"paragraphs": [26, 1065],
+		"children": [
+			{
+				"kind": "section",
+				"n": 1,
+				"title": "PRIMEIRA SECÇÃO «EU CREIO» – «NÓS CREMOS»",
+				"paragraphs": [26, 184],
+				"children": [
+					{
+						"kind": "chapter",
+						"n": 1,
+						"title": "CAPÍTULO PRIMEIRO O HOMEM É «CAPAZ» DE DEUS",
+						"paragraphs": [27, 49],
+						"children": [
+							{
+								"kind": "sub",
+								"n": 1,
+								"title": "I. O desejo de Deus",
+								"paragraphs": [27, 30],
+								"children": []
+							},
+							{
+								"kind": "in-brief",
+								"n": null,
+								"title": "Resumindo:",
+								"paragraphs": [44, 49],
+								"children": []
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]

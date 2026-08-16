@@ -1,0 +1,18 @@
+[
+	{
+		"ccc": 28,
+		"refs": [{ "osis": "acts", "chapter": 17, "verses": [26, 27, 28] }]
+	},
+	{
+		"ccc": 29,
+		"refs": [
+			{ "osis": "matt", "chapter": 13, "verses": [22] },
+			{ "osis": "gen", "chapter": 3, "verses": [8, 9, 10] },
+			{ "osis": "jonah", "chapter": 1, "verses": [3] }
+		]
+	},
+	{
+		"ccc": 30,
+		"refs": [{ "osis": "ps", "chapter": 105, "verses": [3] }]
+	}
+]

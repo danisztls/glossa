@@ -3,14 +3,30 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="text-scale" content="scale" />
+		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
+		<!-- Matches src/app.css's --color-bg-elevated (the header's background)
+		     in each theme; the manifest itself only carries one theme_color
+		     (its light value — see static/manifest.webmanifest), so the dark
+		     variant lives here where prefers-color-scheme can pick it. -->
+		<meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#201e24" media="(prefers-color-scheme: dark)" />
 		<script>
-			// Apply any stored theme before first paint, to avoid a flash of
-			// the wrong theme. Kept in sync with src/lib/theme.svelte.ts.
+			// Apply the stored theme and reading font scale before first paint,
+			// to avoid a flash of the wrong theme/size. Kept in sync with
+			// src/lib/theme.svelte.ts and src/lib/prefs.svelte.ts.
 			try {
+				// 'auto' (the default) means "no data-theme attribute" — CSS
+				// prefers-color-scheme decides — which is already the markup's
+				// resting state, so there's nothing to apply for it.
 				var t = localStorage.getItem('depositum:theme');
 				if (t === 'light' || t === 'dark' || t === 'sepia') {
 					document.documentElement.setAttribute('data-theme', t);
+				}
+			} catch (e) {}
+			try {
+				var s = Number(localStorage.getItem('depositum:font-scale'));
+				if (s >= 0.8 && s <= 1.8) {
+					document.documentElement.style.setProperty('--reading-scale', String(s));
 				}
 			} catch (e) {}
 		</script>

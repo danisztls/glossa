@@ -22,7 +22,10 @@ export interface Copyright {
 	notice: string | null;
 }
 
-export type WorkType = 'bible' | 'catechism';
+export type WorkType = 'bible' | 'catechism' | 'compendium';
+
+/** Bare language subtag the corpus ships content in (see `baseLang` in corpus.ts). */
+export type ContentLang = 'en' | 'pt';
 
 interface WorkManifestBase {
 	id: string;
@@ -50,7 +53,11 @@ export interface CatechismManifest extends WorkManifestBase {
 	type: 'catechism';
 }
 
-export type WorkManifest = BibleManifest | CatechismManifest;
+export interface CompendiumManifest extends WorkManifestBase {
+	type: 'compendium';
+}
+
+export type WorkManifest = BibleManifest | CatechismManifest | CompendiumManifest;
 
 export interface VerseNote {
 	marker: string;
@@ -95,10 +102,27 @@ export interface CccNode {
 	/** Ordinal within its parent, when the source numbers it. */
 	n: number | null;
 	title: string;
-	/** [first, last] CCC paragraph numbers this node spans, inclusive. */
-	paragraphs: [number, number];
+	/**
+	 * [first, last] paragraph numbers this node spans, inclusive. Either bound
+	 * may be `null` (docs/corpus-schema.md, amended 2026-08-14): this marks
+	 * unnumbered content the structure knows about but no paragraph number
+	 * addresses (creed texts, Decalogue epigraphs, catechetical formulas).
+	 * Treat a non-finite bound as unaddressable — never as `n < null` (which
+	 * JS coerces to `n < 0` and would falsely match).
+	 */
+	paragraphs: [number | null, number | null];
 	children: CccNode[];
 }
+
+/**
+ * Structure nodes are the same shape for the Catechism and the Compendium
+ * (docs/corpus-schema.md "Compendium — questions.json": "`structure.json`
+ * uses the same node schema as the CCC"). For a Compendium tree, `paragraphs`
+ * is a misnomer inherited from that shared shape — it holds first/last
+ * **Compendium question numbers**, not CCC paragraph numbers. Callers walking
+ * a Compendium `StructureNode[]` must read `.paragraphs` as a question range.
+ */
+export type StructureNode = CccNode;
 
 export interface CccCitation {
 	/** Marker key, matches a `⟦marker⟧` token in the paragraph's `text_marked` blocks. */
@@ -135,4 +159,43 @@ export interface CccAbbreviation {
 	abbr: string;
 	expansion: string;
 	kind?: CccAbbreviationKind;
+}
+
+// --- Compendium ------------------------------------------------------------
+
+export type CompendiumBlockKind = 'prose' | 'quote';
+
+export interface CompendiumBlock {
+	kind: CompendiumBlockKind;
+	text: string;
+	/** Set-off byline under a quote block; only when the source prints one. */
+	attribution?: string;
+}
+
+export interface CompendiumQuestion {
+	n: number;
+	question: string;
+	answer_blocks: CompendiumBlock[];
+	/**
+	 * RAW reference string to the CCC paragraphs this question condenses, as
+	 * printed (e.g. "279-289, 296-298"). Store-raw principle (docs/link-surface.md):
+	 * never pre-parsed in the corpus — expand ranges in a derived pass.
+	 */
+	ccc_refs: string;
+}
+
+// --- Cross-references (xrefs/ccc-bible.json, generated) --------------------
+
+export interface ScriptureRef {
+	osis: string;
+	chapter: number;
+	/** Empty array means "whole chapter". */
+	verses: number[];
+	/** True when the source prints this as a "cf." (comparative) reference. */
+	cf?: boolean;
+}
+
+export interface CccBibleXref {
+	ccc: number;
+	refs: ScriptureRef[];
 }

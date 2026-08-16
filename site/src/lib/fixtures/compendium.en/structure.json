@@ -1,0 +1,62 @@
+[
+	{
+		"kind": "part",
+		"n": 1,
+		"title": "Part One The Profession of Faith",
+		"paragraphs": [1, 217],
+		"children": [
+			{
+				"kind": "section",
+				"n": 1,
+				"title": "Section One “I believe” – “We believe”",
+				"paragraphs": [1, 32],
+				"children": [
+					{
+						"kind": "chapter",
+						"n": 1,
+						"title": "CHAPTER ONE Man's Capacity for God",
+						"paragraphs": [2, 5],
+						"children": []
+					},
+					{
+						"kind": "chapter",
+						"n": 2,
+						"title": "CHAPTER TWO God Comes to Meet Man The Revelation of God",
+						"paragraphs": [6, 24],
+						"children": [
+							{
+								"kind": "sub",
+								"n": null,
+								"title": "The Transmission of Divine Revelation",
+								"paragraphs": [11, 17],
+								"children": []
+							},
+							{
+								"kind": "sub",
+								"n": null,
+								"title": "Sacred Scripture",
+								"paragraphs": [18, 24],
+								"children": []
+							}
+						]
+					},
+					{
+						"kind": "chapter",
+						"n": 3,
+						"title": "CHAPTER THREE Man's Response to God I Believe",
+						"paragraphs": [25, 32],
+						"children": [
+							{
+								"kind": "sub",
+								"n": null,
+								"title": "We Believe",
+								"paragraphs": [30, 32],
+								"children": []
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]

@@ -1,7 +1,8 @@
 # Depositum — site
 
 The SvelteKit + `adapter-static` frontend for Depositum: a free reading/reference
-site for the Bible and the Catechism of the Catholic Church. See
+site for the Bible, the Catechism of the Catholic Church, and the Compendium of
+the Catechism (encyclicals and conciliar documents next). See
 `../docs/decisions.md` and `../docs/corpus-schema.md` for the project-level
 architecture and data contract this app is built against.
 
@@ -9,23 +10,40 @@ architecture and data contract this app is built against.
 
 The corpus (`../corpus/`) is gitignored and lives outside this package — it's
 scraped/built separately by `../pipeline/` (see `docs/corpus-schema.md`).
-This site never commits corpus data; it only knows how to *read* it.
+This site never commits corpus data; it only knows how to _read_ it.
 
-- `src/lib/corpus.ts` is the **only** module that knows where corpus data
-  physically comes from. It reads real data through
-  `import.meta.glob('./corpus-data/works/**/*.json', { eager: true })`, and
-  falls back to the bundled fixtures under `src/lib/fixtures/` whenever
-  `src/lib/corpus-data/` is empty (e.g. no corpus has been synced yet).
-- `import.meta.glob` was chosen over `fetch()` because the whole site is
-  prerendered by `adapter-static` (no server runtime, see
-  `../docs/decisions.md`): a build-time glob import lets Vite inline the
-  JSON straight into the prerendered pages, with no extra network
-  round-trip and no risk of drift between what a route fetched and what
-  actually got embedded in its HTML.
+- `src/lib/corpus.ts` (public API) and `src/lib/corpus-index.ts` (the
+  registries it's backed by) are the **only** modules that know where
+  corpus data physically comes from — see their docblocks for the full
+  design. Short version: `scripts/sync-corpus.mjs` doesn't just copy the
+  corpus, it splits each work into two tiers on disk —
+  `src/lib/corpus-data/index/` (manifests, canonical book/chapter
+  _numbers_, TOC trees, abbreviations, xrefs — small, `import.meta.glob(...,
+  { eager: true })`-inlined) and `src/lib/corpus-data/content/` (the actual
+  reading text — Bible books, CCC paragraph chunks, the Compendium — globbed
+  with `{ query: '?url' }` so Vite emits each as its own content-hashed
+  build asset instead of inlining it). `corpus.ts` reads the content tier
+  straight off disk during prerendering and via `fetch()` in the browser
+  (see its docblock's "HOW CONTENT ACTUALLY GETS READ" for why it's not the
+  same code path both times). Both fall back to the bundled fixtures under
+  `src/lib/fixtures/` whenever `src/lib/corpus-data/` is empty (e.g. no
+  corpus has been synced yet).
+- Why the split (2026-08-15, replacing an earlier version that
+  eager-globbed the WHOLE corpus into one client chunk): measured against
+  the real corpus, that chunk was 18 MB raw / 4.6 MB gzipped, preloaded on
+  every page including the home page, to read one Bible chapter. Content
+  here is immutable — a published CCC paragraph or Bible verse doesn't
+  change once stable — which is exactly the property that makes per-file
+  `fetch()` + long-lived caching better than eager-inlining at real-corpus
+  scale: a content-hashed file fetched once is cached forever, and adding a
+  work (the ~300 Vatican documents queued behind the 16 already landed,
+  `../docs/corpus-schema.md` §Documents) invalidates only that work's
+  files, never the whole library.
 - `import.meta.glob` patterns must be static string literals, so they can't
   be built from an env var directly. Instead, `scripts/sync-corpus.mjs`
-  copies `../corpus/works/` (and `../corpus/xrefs/`, if present) into the
-  fixed, gitignored path `src/lib/corpus-data/` that the glob targets.
+  reads `../corpus/works/` (and `../corpus/xrefs/`, if present) and writes
+  the two-tier layout above into the fixed, gitignored path
+  `src/lib/corpus-data/` that the globs target.
   - Configurable via the **`CORPUS_DIR`** env var (default: `../corpus`,
     resolved relative to this `site/` package).
   - Wired as an npm `prebuild` / `predev` hook, so `npm run build` and
@@ -33,9 +51,16 @@ This site never commits corpus data; it only knows how to *read* it.
     `npm run sync-corpus`.
   - If no corpus is found at `CORPUS_DIR`, the script warns and exits 0 —
     the build still succeeds, using the bundled fixtures instead.
-  - **`npm test` never triggers a sync** (no `pretest` hook), so vitest is
-    deterministic and always exercises the fixtures regardless of whether
-    a corpus checkout happens to be present.
+  - **`npm test` always exercises the fixtures**, never a synced corpus, so
+    vitest is deterministic. Note that the absence of a `pretest` hook is not
+    what guarantees this: `prebuild`/`predev` sync into `src/lib/corpus-data/`
+    and that directory _persists_, so on any machine where `npm run build` has
+    ever run, the glob would otherwise pick up real data. `corpus-index.ts`
+    therefore checks `import.meta.env.VITEST` explicitly and forces the
+    fixture registry under test. The fixtures deliberately contain absent
+    chapters and out-of-range cross-references to exercise the
+    not-in-this-corpus code paths, which real data does not reproduce — so
+    this is a correctness guarantee, not just a speed one.
 
 ```sh
 # sync ../corpus/ into src/lib/corpus-data/ (also runs automatically before
@@ -47,13 +72,75 @@ CORPUS_DIR=/path/to/corpus npm run build
 ```
 
 Works currently available in the real corpus: `bible.cpdv.en` and
-`bible.matos-soares.pt` (both complete, 73/73 books), plus `ccc.en` and
-`ccc.pt` (sample data — a few hundred paragraphs each, gaps expected until
-the full crawl lands). The site is designed to build correctly from
-whatever subset of works/paragraphs is actually present — gaps degrade
-gracefully rather than failing the build (see `getAdjacentCccParagraph`,
+`bible.matos-soares.pt` (both complete, 73/73 books); `ccc.en` and `ccc.pt`
+(both complete, 2865/2865 paragraphs); `compendium.en` and `compendium.pt`
+(both complete, 598/598 questions); 16 `vatii.*` Vatican II documents (in
+both languages where available) — not yet surfaced by any route, so their
+manifests ride along inertly in the index tier (see `+page.svelte`'s
+`GROUP_TYPES` comment on the home page for why they don't show up in the
+library list yet). The site now surfaces Bible, Catechism, and Compendium
+sections. The site is still designed to build correctly from whatever
+subset of works is actually present — gaps degrade gracefully rather than
+failing the build (see `getAdjacentCccParagraphNumber`,
 `getAdjacentChapterAcrossBooks`, and the `related`-link resolution in
-`routes/ccc/[n]/+page.svelte`).
+`routes/ccc/[n]/+page.svelte`) — this matters for the encyclicals/conciliar
+documents work now underway (`../docs/corpus-schema.md` §Documents), which
+will ship works incrementally rather than all at once.
+
+## Offline / service worker
+
+Depositum is an offline-first PWA (`../docs/decisions.md`): `src/service-worker.ts`
+(SvelteKit's `$service-worker` module, auto-registered in production builds —
+see `svelte-kit`'s default `kit.serviceWorker.register`) caches the app in two
+tiers with different lifecycles. See the "CONTENT TIER POLICY" comment block
+at the top of that file for exactly what's cached and why, and
+`../docs/decisions.md`'s 2026-08-15 "Offline caching implementation" entry
+for the numbers behind it. In short: the corpus-data JS chunk (~18 MB raw /
+~4.7 MB gzipped) is precached indefinitely; the 6,134 prerendered HTML pages
+(~216 MB) are never precached — they exist for first paint, SEO, and no-JS
+readers, not the offline path.
+
+The service worker only runs against a **production build** — `npm run dev`
+never registers one, and `vite dev` doesn't emit `service-worker.js` at all.
+
+To test offline behaviour locally:
+
+```sh
+CORPUS_DIR=/path/to/corpus npm run build   # or omit CORPUS_DIR to use fixtures
+npm run preview
+```
+
+Then, in a real browser (not just curl — the install/activate lifecycle and
+runtime cache classification only run in an actual service worker context):
+
+1. Open `http://localhost:4173` and confirm DevTools → Application →
+   Service Workers shows it activated, and → Cache Storage shows two
+   caches: `depositum-content` (one large entry, the corpus chunk) and
+   `depositum-shell-{version}` (everything else this file precaches,
+   including the home page).
+2. DevTools → Network → set "Offline", then reload and navigate to a few
+   different pages (Bible chapters, CCC paragraphs) you have **not**
+   necessarily visited before this session — they should still render,
+   because the content chunk (not a per-page cache) is what serves them.
+3. Navigate directly to a URL via the address bar while offline (a real,
+   uncached navigation, not a client-side link click) — it should still
+   render the correct page, not the offline fallback, because the cached
+   home page boots the app and the router takes it from there. Only if
+   Cache Storage itself is empty (e.g. a failed install) should you see
+   `offline.html`'s plain notice instead.
+4. Application → Manifest should show "Depositum", `standalone` display, and
+   the generated icons (`static/icons/`); "Add to home screen" / install
+   prompts exercise this.
+
+`curl`-based checks (no browser needed, but only confirm the files are
+_served correctly_ — not that the service worker actually installs, caches,
+or serves offline responses):
+
+```sh
+curl -I http://localhost:4173/service-worker.js    # text/javascript
+curl -I http://localhost:4173/manifest.webmanifest # application/manifest+json
+curl -I http://localhost:4173/offline.html
+```
 
 ## Developing
 

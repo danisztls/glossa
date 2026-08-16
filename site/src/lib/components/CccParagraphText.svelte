@@ -1,11 +1,16 @@
 <script lang="ts">
 	import type { CccParagraph } from '$lib/types';
+	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
+	import { content } from '$lib/content.svelte';
+	import RefText from '$lib/components/RefText.svelte';
 
 	interface Props {
 		paragraph: CccParagraph;
+		/** Bare content language ('en' | 'pt') the paragraph is being read in — picks the citation grammar in `$lib/refs.ts` (e.g. PT's ':'-vs-','  chapter/verse separator, its own book-abbreviation table). */
+		lang: string;
 	}
 
-	let { paragraph }: Props = $props();
+	let { paragraph, lang }: Props = $props();
 
 	const MARKER_RE = /⟦([^⟧]+)⟧/g;
 
@@ -34,46 +39,70 @@
 	function citationFor(marker: string) {
 		return paragraph.citations.find((c) => c.marker === marker);
 	}
+
+	/**
+	 * In-prose "cf. 1212" / "cf. Jn 3:16" mentions inside the CCC's own body
+	 * text (docs/link-surface.md #3) are a different grammar from a footnote
+	 * citation string: `linkifyProse` scans conservatively for an explicit
+	 * "cf." trigger inside otherwise-ordinary running prose, whereas
+	 * `parseRefs` (what `RefText` renders — see `$lib/refs.ts`'s module
+	 * docblock) assumes the *whole* string is citation-shaped, which real
+	 * paragraph prose is not. Rendered by hand below rather than through
+	 * `RefText` for that reason; `refHref` (the same link-resolution
+	 * `RefText` uses internally) keeps the actual URL logic in one place.
+	 */
+	function proseSegments(text: string): RefSegment[] {
+		return linkifyProse(text, { lang });
+	}
 </script>
+
+{#snippet prose(text: string)}
+	{#each proseSegments(text) as seg}
+		{#if seg.kind === 'text'}
+			{seg.text}
+		{:else}
+			{@const href = refHref(seg, { bibleWorkId: content.workIdFor('bible') })}
+			{#if href}
+				<a class="inline-ref" {href}>{seg.raw}</a>
+			{:else}
+				{seg.raw}
+			{/if}
+		{/if}
+	{/each}
+{/snippet}
+
+{#snippet markedText(textMarked: string)}
+	{#each splitMarked(textMarked) as seg}
+		{#if seg.marker}
+			{@const citation = citationFor(seg.marker)}
+			<sup class="citation-marker">
+				<details>
+					<summary>{seg.marker}</summary>
+					<span class="citation-text">
+						{#if citation}
+							<RefText text={citation.text} {lang} />
+						{:else}
+							{seg.marker}
+						{/if}
+					</span>
+				</details>
+			</sup>
+		{:else}
+			{@render prose(seg.text)}
+		{/if}
+	{/each}
+{/snippet}
 
 {#each paragraph.blocks as block (block.text_marked)}
 	{#if block.kind === 'quote'}
 		<blockquote class="ccc-quote">
-			<p>
-				{#each splitMarked(block.text_marked) as seg}
-					{#if seg.marker}
-						{@const citation = citationFor(seg.marker)}
-						<sup class="citation-marker">
-							<details>
-								<summary>{seg.marker}</summary>
-								<span class="citation-text">{citation?.text ?? seg.marker}</span>
-							</details>
-						</sup>
-					{:else}
-						{seg.text}
-					{/if}
-				{/each}
-			</p>
+			<p>{@render markedText(block.text_marked)}</p>
 			{#if block.attribution}
 				<footer>{block.attribution}</footer>
 			{/if}
 		</blockquote>
 	{:else}
-		<p class="ccc-prose">
-			{#each splitMarked(block.text_marked) as seg}
-				{#if seg.marker}
-					{@const citation = citationFor(seg.marker)}
-					<sup class="citation-marker">
-						<details>
-							<summary>{seg.marker}</summary>
-							<span class="citation-text">{citation?.text ?? seg.marker}</span>
-						</details>
-					</sup>
-				{:else}
-					{seg.text}
-				{/if}
-			{/each}
-		</p>
+		<p class="ccc-prose">{@render markedText(block.text_marked)}</p>
 	{/if}
 {/each}
 
@@ -98,6 +127,13 @@
 		margin-top: 0.35rem;
 		font-style: normal;
 		font-size: 0.85rem;
+	}
+
+	.inline-ref {
+		color: inherit;
+		text-decoration: underline;
+		text-decoration-color: var(--color-border);
+		text-underline-offset: 0.15em;
 	}
 
 	.citation-marker {

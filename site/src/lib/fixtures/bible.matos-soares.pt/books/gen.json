@@ -1,0 +1,53 @@
+{
+	"osis": "gen",
+	"name": "Gênesis",
+	"abbrevs": ["gn"],
+	"order": 1,
+	"chapters": [
+		{
+			"n": 1,
+			"verses": [
+				{ "n": 1, "text": "No princípio criou Deus o céu e a terra." },
+				{
+					"n": 2,
+					"text": "A terra, porém, estava informe e vazia, e as trevas cobriam a face do abismo, e o Espírito de Deus movia-Se sobre as águas."
+				},
+				{ "n": 3, "text": "E Deus disse: Exista a luz. E a luz existiu." },
+				{ "n": 4, "text": "E Deus viu que a luz era boa, e separou a luz das trevas." },
+				{
+					"n": 5,
+					"text": "Chamou à luz dia, e às trevas noite. E fez-se tarde e manhã, (foi) o primeiro dia."
+				},
+				{
+					"n": 6,
+					"text": "Disse também Deus: Faça-se o firmamento no meio das águas, e separe umas águas das outras águas."
+				},
+				{
+					"n": 7,
+					"text": "E fez Deus o firmamento, e separou as águas que estavam por baixo, das águas que estavam por cima do firmamento. E assim se fez."
+				},
+				{
+					"n": 8,
+					"text": "E Deus chamou ao firmamento céu. E fez-se tarde e manhã, (foi) o segundo dia."
+				},
+				{
+					"n": 9,
+					"text": "Disse também Deus: As águas, que estão debaixo do céu, juntem-se num só lugar, e apareça o (elemento) árido. E assim se fez."
+				},
+				{
+					"n": 10,
+					"text": "E Deus chamou ao (elemento) árido terra, e ao conjunto das águas chamou mares. E Deus viu que isto era bom."
+				},
+				{
+					"n": 11,
+					"text": "Deus disse: produza a terra verdura, plantas germinadoras de semente e árvores frutíferas, que dêem fruto segundo a sua espécie, cuja semente esteja nelas mesmas (para se reproduzirem) sobre a terra. E assim se fez."
+				},
+				{
+					"n": 12,
+					"text": "E a terra produziu verdura, plantas germinadoras de semente e árvores que dão fruto, e cada uma das quais tem semente segundo a sua espécie. E viu Deus que isto era bom."
+				},
+				{ "n": 13, "text": "E fez-se tarde e manhã, (foi) o terceiro dia." }
+			]
+		}
+	]
+}

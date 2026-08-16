@@ -1,40 +1,78 @@
 #!/usr/bin/env node
 /**
- * Syncs `corpus/works/` (+ `corpus/xrefs/`, if present) from the corpus
- * repo location into a site-local, gitignored data directory that
- * `src/lib/corpus.ts` reads at build time via `import.meta.glob`. See
- * site/README.md ("Corpus data") for the full contract.
+ * Builds `src/lib/corpus-data/` from a real corpus checkout — not a plain
+ * copy (see git history before 2026-08-15 for that version). `corpus.ts`
+ * used to `import.meta.glob(..., { eager: true })` the corpus verbatim,
+ * which inlined the whole library (~18 MB / ~4.6 MB gz) into one client JS
+ * chunk that every page preloaded, home page included. This script instead
+ * splits each work into two tiers on disk, so `corpus.ts`/`corpus-index.ts`
+ * can glob them differently:
  *
- * Runs automatically before `npm run build` / `npm run dev` (see the
- * `prebuild` / `predev` npm scripts) — not before `npm test`, so vitest
- * always exercises the bundled fixtures regardless of whether a corpus
- * checkout is present.
+ *   `corpus-data/index/*.json` — small, structural: manifests, canonical
+ *   book/chapter numbers (NOT verse text), CCC/Compendium TOC trees,
+ *   abbreviations, the xrefs table, and `content-manifest.json` (byte size
+ *   per content file, for the service worker's future per-work download
+ *   UI). Globbed eagerly and inlined — this is the site's boot index, and
+ *   at real-corpus scale it's well under 500 KB total, so inlining it once
+ *   costs less than a network round-trip would.
+ *
+ *   `corpus-data/content/**` — the actual reading text: Bible books split
+ *   one-file-per-book (73/edition, matching the print volume's own
+ *   granularity), CCC paragraphs split into fixed 100-paragraph chunks (29
+ *   chunks/language — shipping the 3.5 MB/language `paragraphs.json` whole
+ *   would put a >500 KB gzipped file behind a single `¶1` visit), and the
+ *   Compendium kept whole per language (only ~90 KB gzipped total, no split
+ *   needed). Globbed with Vite's `{ query: '?url' }` by `corpus.ts` — each
+ *   file becomes its own content-hashed build asset, `fetch()`-ed only by
+ *   the page(s) that need it, cacheable forever (immutable content).
+ *
+ * See `docs/corpus-schema.md` for the *source* shapes this reads, and
+ * `corpus.ts`'s docblock for how the site consumes what this script writes.
+ *
+ * Runs automatically before `npm run build` / `npm run dev` (`prebuild` /
+ * `predev` in package.json) — not before `npm test`, so vitest always
+ * exercises the bundled fixtures under `src/lib/fixtures/` regardless of
+ * whether a corpus checkout is present (`corpus.ts`'s `VITEST` guard).
  *
  * Configurable via the `CORPUS_DIR` env var (default: `../corpus`,
- * resolved relative to this `site/` package — i.e. the `corpus/` dir
- * documented in docs/corpus-schema.md, a sibling of `site/`).
- *
- * If no corpus is found, this is a no-op (with a warning): `corpus.ts`
- * falls back to its bundled fixtures, so the site still builds.
+ * resolved relative to this `site/` package). If no corpus is found, this
+ * is a no-op (with a warning): `corpus.ts` falls back to its fixtures, so
+ * the site still builds.
  */
 
-import { existsSync, rmSync, cpSync, readdirSync } from 'node:fs';
+import { existsSync, rmSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const siteRoot = path.resolve(fileURLToPath(import.meta.url), '../..');
 const corpusDir = path.resolve(siteRoot, process.env.CORPUS_DIR ?? '../corpus');
 const destDir = path.join(siteRoot, 'src/lib/corpus-data');
+const indexDir = path.join(destDir, 'index');
+const contentDir = path.join(destDir, 'content');
 
-function countFiles(dir) {
-	if (!existsSync(dir)) return 0;
-	let n = 0;
-	for (const entry of readdirSync(dir, { withFileTypes: true })) {
-		const p = path.join(dir, entry.name);
-		if (entry.isDirectory()) n += countFiles(p);
-		else n += 1;
-	}
-	return n;
+/** CCC/Compendium `paragraphs.json`/`questions.json` are per-language single
+ *  arrays ordered by `n`; Bible books split naturally along the print
+ *  volume's own chapter boundaries, but the CCC's 2865 paragraphs don't —
+ *  this is the fixed range size chunked into (see module docblock). Not
+ *  derived from `structure.json`'s part/section boundaries on purpose: a
+ *  fixed stride keeps chunk membership a pure function of `n`
+ *  (`chunkStartFor` in `corpus-index.ts`) with no extra lookup table to
+ *  ship or keep in sync, and 100 lands every chunk at 15-28 KB gzipped
+ *  (measured against the real corpus 2026-08-15) — comfortably inside the
+ *  same budget as a Bible book file. */
+const CCC_CHUNK_SIZE = 100;
+
+function readJson(p) {
+	return JSON.parse(readFileSync(p, 'utf8'));
+}
+
+function writeJson(p, data) {
+	mkdirSync(path.dirname(p), { recursive: true });
+	writeFileSync(p, JSON.stringify(data));
+}
+
+function byteLength(data) {
+	return Buffer.byteLength(JSON.stringify(data));
 }
 
 rmSync(destDir, { recursive: true, force: true });
@@ -50,21 +88,145 @@ if (!existsSync(worksSrc)) {
 	process.exit(0);
 }
 
-cpSync(worksSrc, path.join(destDir, 'works'), { recursive: true });
-
-let xrefsSynced = false;
-if (existsSync(xrefsSrc)) {
-	cpSync(xrefsSrc, path.join(destDir, 'xrefs'), { recursive: true });
-	xrefsSynced = true;
-}
-
-const works = readdirSync(path.join(destDir, 'works'), { withFileTypes: true })
+const workIds = readdirSync(worksSrc, { withFileTypes: true })
 	.filter((e) => e.isDirectory())
 	.map((e) => e.name)
 	.sort();
 
+const manifests = {}; // workId -> manifest.json, verbatim (every work type, incl. future document families)
+const bibleIndex = {}; // workId -> { books: BibleBookMeta[] }
+const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
+const compendiumIndex = {}; // lang -> { structure }
+/** [{ workId, kind, relPath, bytes }] — relPath matches the key `corpus.ts`
+ *  derives from Vite's glob path (see `contentKeyFromGlobPath`), so the two
+ *  can be joined at runtime without a second copy of the byte counts. */
+const contentManifest = [];
+
+for (const workId of workIds) {
+	const workDir = path.join(worksSrc, workId);
+	const manifestPath = path.join(workDir, 'manifest.json');
+	if (!existsSync(manifestPath)) continue; // not a real work dir
+	const manifest = readJson(manifestPath);
+	// `notes` is free-text scraper/provenance diagnostics — sometimes several
+	// paragraphs (observed: the Vatican-document manifests, which can run to
+	// a page of scraper notes) — and no route renders it (only `copyright`,
+	// `title`/`short_title`, `language`, bible's `books`). Dropped from the
+	// INDEX copy (eagerly inlined into every page) for that reason; still
+	// sitting in the source corpus for anyone reading it there. Kept as `''`
+	// rather than removing the key so `WorkManifest`'s shape stays intact for
+	// any future reader of `getWork()` that does start using it.
+	manifests[workId] = { ...manifest, notes: '' };
+
+	if (workId.startsWith('bible.')) {
+		const booksDir = path.join(workDir, 'books');
+		const books = [];
+		for (const entry of readdirSync(booksDir).sort()) {
+			if (!entry.endsWith('.json')) continue;
+			const book = readJson(path.join(booksDir, entry));
+			books.push({
+				osis: book.osis,
+				name: book.name,
+				abbrevs: book.abbrevs,
+				order: book.order,
+				// Metadata tier carries chapter/verse EXISTENCE only — `{ n,
+				// verses: [n, …] }`, never verse `text` — for the book/
+				// chapter picker, chapter-adjacency nav, and (the reason verse
+				// NUMBERS are here at all, not just chapter numbers)
+				// `refs.ts`'s `refHref`, which checks a cited verse actually
+				// exists in the reader's edition before linking to it — a
+				// file this restructuring must not require editing.
+				// `verses` is a PLAIN number array on disk/on the wire (not
+				// `{n}` objects — `corpus-index.ts` expands each into `{n}`
+				// when building the runtime registry, which is the shape
+				// `refs.ts` actually needs): wrapping ~72,000 verse numbers
+				// in objects here was most of this client chunk's weight
+				// (measured 2026-08-15: ~1.2 MB raw / ~430 KB of that from
+				// object-wrapping alone), for zero benefit since the wrapping
+				// only needs to exist in memory, not on the wire. Explicit
+				// numbers (not e.g. a max-verse-number bound) specifically so
+				// a future critical-text verse gap (docs/corpus-schema.md
+				// explicitly allows those) can't silently mislink — the
+				// opposite of `refs.ts`'s own "under-link rather than
+				// over-link" principle. Verse TEXT is the content tier,
+				// fetched per-chapter-page.
+				chapters: book.chapters.map((c) => ({
+					n: c.n,
+					verses: c.verses.map((v) => v.n)
+				}))
+			});
+			const relPath = `content/${workId}/books/${book.osis}.json`;
+			writeJson(path.join(destDir, relPath), book);
+			contentManifest.push({ workId, kind: 'bible-book', relPath, bytes: byteLength(book) });
+		}
+		books.sort((a, b) => a.order - b.order);
+		bibleIndex[workId] = { books };
+		continue;
+	}
+
+	if (workId.startsWith('ccc.')) {
+		const lang = workId.slice('ccc.'.length);
+		const structure = readJson(path.join(workDir, 'structure.json'));
+		const abbreviations = existsSync(path.join(workDir, 'abbreviations.json'))
+			? readJson(path.join(workDir, 'abbreviations.json'))
+			: [];
+		const paragraphs = readJson(path.join(workDir, 'paragraphs.json'));
+		const paragraphNumbers = paragraphs.map((p) => p.n).sort((a, b) => a - b);
+		cccIndex[lang] = { structure, abbreviations, paragraphNumbers };
+
+		const maxN = paragraphNumbers[paragraphNumbers.length - 1] ?? 0;
+		for (let start = 1; start <= maxN; start += CCC_CHUNK_SIZE) {
+			const end = start + CCC_CHUNK_SIZE - 1;
+			const chunk = paragraphs.filter((p) => p.n >= start && p.n <= end);
+			if (chunk.length === 0) continue;
+			const chunkName = `${String(start).padStart(4, '0')}-${String(end).padStart(4, '0')}`;
+			const relPath = `content/${workId}/paragraphs/${chunkName}.json`;
+			writeJson(path.join(destDir, relPath), chunk);
+			contentManifest.push({ workId, kind: 'ccc-chunk', relPath, bytes: byteLength(chunk) });
+		}
+		continue;
+	}
+
+	if (workId.startsWith('compendium.')) {
+		const lang = workId.slice('compendium.'.length);
+		const structure = readJson(path.join(workDir, 'structure.json'));
+		compendiumIndex[lang] = { structure };
+
+		const questions = readJson(path.join(workDir, 'questions.json'));
+		const relPath = `content/${workId}/questions.json`;
+		writeJson(path.join(destDir, relPath), questions);
+		contentManifest.push({ workId, kind: 'compendium-questions', relPath, bytes: byteLength(questions) });
+		continue;
+	}
+
+	// Any other work family (e.g. `vatii.*` documents, docs/corpus-schema.md
+	// §Documents — not yet consumed by any route): manifest only, so
+	// `listWorks()` keeps seeing it without this script needing to know its
+	// content shape. Matches the pre-2026-08-15 glob-everything behaviour,
+	// which never filtered by work type either.
+}
+
+writeJson(path.join(indexDir, 'manifests.json'), manifests);
+writeJson(path.join(indexDir, 'bible-index.json'), bibleIndex);
+writeJson(path.join(indexDir, 'ccc-index.json'), cccIndex);
+writeJson(path.join(indexDir, 'compendium-index.json'), compendiumIndex);
+
+let xrefsSynced = false;
+if (existsSync(xrefsSrc)) {
+	const xrefFiles = readdirSync(xrefsSrc).filter((f) => f.endsWith('.json'));
+	const xrefs = xrefFiles.flatMap((f) => readJson(path.join(xrefsSrc, f)));
+	writeJson(path.join(indexDir, 'xrefs.json'), xrefs);
+	xrefsSynced = xrefFiles.length > 0;
+}
+
+writeJson(path.join(indexDir, 'content-manifest.json'), contentManifest);
+
+const indexBytes = ['manifests.json', 'bible-index.json', 'ccc-index.json', 'compendium-index.json', 'xrefs.json']
+	.map((f) => path.join(indexDir, f))
+	.filter(existsSync)
+	.reduce((sum, p) => sum + readFileSync(p).length, 0);
+
 console.log(
-	`[sync-corpus] Synced ${works.length} work(s) from ${worksSrc} ` +
-		`(${countFiles(path.join(destDir, 'works'))} files)${xrefsSynced ? ', plus xrefs/' : ''}: ` +
-		works.join(', ')
+	`[sync-corpus] Built corpus-data/ from ${worksSrc}: ${workIds.length} work(s), ` +
+		`${contentManifest.length} content file(s)${xrefsSynced ? ', plus xrefs/' : ''}. ` +
+		`Index tier: ${(indexBytes / 1000).toFixed(0)} KB raw. Works: ${workIds.join(', ')}`
 );

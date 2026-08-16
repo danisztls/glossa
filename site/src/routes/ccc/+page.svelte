@@ -1,11 +1,22 @@
 <script lang="ts">
 	import { flattenCccStructure, getWork } from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
+	import { content } from '$lib/content.svelte';
+	import { displayTitle } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
 
-	const LANG = 'en';
-	const rows = flattenCccStructure(LANG);
-	const work = getWork(`ccc.${LANG}`);
+	// The TOC is one static tree per language baked into the client bundle
+	// (see corpus.ts's module docblock — `import.meta.glob(..., { eager:
+	// true })` inlines every language at build time), so there is no per-page
+	// `load` to embed data through here: reading `content.langFor` directly
+	// keeps the page in sync with the reader's content-language preference
+	// without a route param or reload. EN and PT structure trees genuinely
+	// diverge in places (docs/decisions.md language symmetry principle) —
+	// `rows` is always that language's own real tree, not a forced-symmetric
+	// merge of the two.
+	const lang = $derived(content.langFor('catechism'));
+	const rows = $derived(flattenCccStructure(lang));
+	const work = $derived(getWork(`ccc.${lang}`));
 </script>
 
 <svelte:head>
@@ -21,19 +32,20 @@
 	<ol class="toc">
 		{#each rows as { node, depth } (node.title + node.paragraphs.join('-'))}
 			{@const hasAnchor = Number.isFinite(node.paragraphs[0])}
+			{@const dt = displayTitle(node, lang)}
 			<li style={`--depth: ${depth}`} class={`kind-${node.kind}`}>
 				{#if hasAnchor}
 					<a href={`/ccc/${node.paragraphs[0]}`}>
-						{#if node.n}<span class="ordinal">{node.n}.</span>{/if}
-						{node.title}
+						{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+						{dt.title}
 					</a>
 				{:else}
 					<!-- Corpus defect (see site/README.md): this node's `paragraphs[0]`
 					     is null in the source data, not the schema-required number --
 					     unnumbered content with nothing to link to. -->
 					<span class="unlinked" title="No paragraph number in this corpus">
-						{#if node.n}<span class="ordinal">{node.n}.</span>{/if}
-						{node.title}
+						{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+						{dt.title}
 					</span>
 				{/if}
 				<span class="range">§{node.paragraphs[0] ?? '?'}–{node.paragraphs[1] ?? '?'}</span>

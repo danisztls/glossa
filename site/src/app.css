@@ -1,17 +1,39 @@
 /*
  * Global styles and theme tokens.
  *
- * Three themes (light / dark / sepia) toggled via `data-theme` on <html>,
- * defaulting to `prefers-color-scheme` when no explicit choice is stored
- * (see `src/lib/theme.svelte.ts`). Colors are placeholders — real palette
- * and type choices land in the design pass (see docs/decisions.md).
+ * Four themes (auto / light / dark / sepia) toggled via `data-theme` on
+ * <html> — 'auto' removes the attribute entirely so `prefers-color-scheme`
+ * decides (see `src/lib/theme.svelte.ts`). Colors are placeholders — real
+ * palette and type choices land in the design pass (see docs/decisions.md).
  */
 
 :root {
 	--font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
 	--font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
-	--content-width: 65ch;
+	/*
+	 * 68ch, not 65: characters-per-line is what actually governs
+	 * readability, and `ch` here is measured in `.content-column`'s own
+	 * (sans, body-size) font — NOT `.reading-text`'s serif font, since the
+	 * two live on different elements and `ch` doesn't inherit across that
+	 * boundary. Raising `--reading-base` below (1.15rem -> 1.3rem) shrinks
+	 * the reading font's characters-per-line at a fixed column width,
+	 * because bigger glyphs in the same physical width means fewer of them
+	 * fit; widening the column a few `ch` compensates so the measure lands
+	 * back in the ~55-65 cpl range instead of drifting narrow.
+	 */
+	--content-width: 68ch;
+
+	/* Base reading size before the reader's fine adjustment is applied —
+	   see `.reading-text` below and `$lib/prefs.svelte.ts`. */
+	--reading-base: 1.3rem;
+	/* Reading font-size multiplier, written directly onto <html> by
+	   `$lib/prefs.svelte.ts` (and by `app.html`'s pre-hydration script from
+	   the persisted value, to avoid a flash of the wrong size). Defaulted
+	   here too so `.reading-text` has a defined multiplier even before any
+	   JS has run on a first-ever visit (inline style on <html> always wins
+	   over this once it's set, regardless of specificity). */
+	--reading-scale: 1;
 
 	/* Light theme (default) */
 	--color-bg: #ffffff;
@@ -111,8 +133,14 @@ input {
 
 .reading-text {
 	font-family: var(--font-serif);
-	font-size: 1.15rem;
-	line-height: 1.7;
+	/* Multiplied by the reader's fine-adjustment (FontSizeMenu.svelte /
+	   prefs.svelte.ts), never applied to chrome — this custom property is
+	   only ever read here, so nothing outside the reading column resizes
+	   when the reader adjusts text size. The `, 1` fallback covers the
+	   (vanishingly rare) case of this rule evaluating before either the
+	   :root default above or the inline style has taken effect. */
+	font-size: calc(var(--reading-base) * var(--reading-scale, 1));
+	line-height: 1.65;
 }
 
 .visually-hidden {
@@ -125,4 +153,101 @@ input {
 	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 	border: 0;
+}
+
+/*
+ * Icon-button + dropdown-panel primitive shared by ThemeMenu, FontSizeMenu
+ * and EditionMenu (and reused by the header's nav toggle in +layout.svelte)
+ * — defined globally once here rather than duplicated in each component's
+ * scoped <style>, since Svelte's per-component style scoping has no
+ * mechanism to share a block across files. Each component still owns its
+ * own open/close state, outside-click handling and Escape handling; this
+ * only standardizes how the trigger and panel look.
+ */
+.menu {
+	position: relative;
+	display: inline-flex;
+}
+
+.menu-trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	border: 1px solid var(--color-border);
+	border-radius: 0.4rem;
+	background: var(--color-bg-elevated);
+	color: var(--color-text);
+	font-size: 1rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.menu-trigger:hover {
+	color: var(--color-accent);
+	border-color: var(--color-accent);
+}
+
+/* EditionMenu's trigger also carries a text label (the current edition's
+   short title), so it can't be the fixed icon-button square the others are. */
+.menu-trigger.wide {
+	width: auto;
+	padding-inline: 0.6rem;
+}
+
+.menu-panel {
+	position: absolute;
+	inset-block-start: calc(100% + 0.4rem);
+	inset-inline-end: 0;
+	z-index: 50;
+	min-width: 14rem;
+	max-width: min(22rem, 90vw);
+	max-height: min(24rem, 70vh);
+	overflow-y: auto;
+	background: var(--color-bg);
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+	padding: 0.35rem;
+	list-style: none;
+	margin: 0;
+}
+
+.menu-item {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.1rem;
+	width: 100%;
+	padding: 0.45rem 0.6rem;
+	border: none;
+	border-radius: 0.35rem;
+	background: transparent;
+	color: var(--color-text);
+	font-size: 0.9rem;
+	text-align: start;
+	cursor: pointer;
+}
+
+.menu-item:hover {
+	background: var(--color-bg-elevated);
+}
+
+.menu-item.current {
+	background: var(--color-bg-elevated);
+	color: var(--color-accent);
+}
+
+.menu-item-main {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.menu-item-meta {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
 }

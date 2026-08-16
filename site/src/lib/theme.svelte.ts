@@ -1,47 +1,52 @@
 /**
- * Theme (light / dark / sepia) selection, persisted to localStorage.
- * When nothing is stored, `data-theme` is left unset and CSS falls back
- * to `prefers-color-scheme` (see `src/app.css`) — "respecting
+ * Theme (auto / light / dark / sepia) selection, persisted to localStorage.
+ * `'auto'` is the default and removes `data-theme` from `<html>` so CSS
+ * falls back to `prefers-color-scheme` (see `src/app.css`) — "respecting
  * prefers-color-scheme by default" per docs/decisions.md.
  *
+ * `'auto'` is persisted explicitly, the same as any other value, rather
+ * than treating "nothing in localStorage" as the only way to be in auto
+ * mode. That's deliberate: a reader who picked 'light' and wants to go
+ * back to following the system needs a real, storable choice to return
+ * to — not just "clear your storage".
+ *
  * `app.html` also runs a tiny inline script that applies any stored theme
- * before the app hydrates, to avoid a flash of the wrong theme.
+ * (and font scale, see `prefs.svelte.ts`) before the app hydrates, to
+ * avoid a flash of the wrong theme.
  */
 
-export type Theme = 'light' | 'dark' | 'sepia';
+export type Theme = 'auto' | 'light' | 'dark' | 'sepia';
 
 const STORAGE_KEY = 'depositum:theme';
-const THEMES: Theme[] = ['light', 'dark', 'sepia'];
+const THEMES: Theme[] = ['auto', 'light', 'dark', 'sepia'];
+const DEFAULT_THEME: Theme = 'auto';
 
-function readStored(): Theme | null {
-	if (typeof localStorage === 'undefined') return null;
+function readStored(): Theme {
+	if (typeof localStorage === 'undefined') return DEFAULT_THEME;
 	const value = localStorage.getItem(STORAGE_KEY);
-	return THEMES.includes(value as Theme) ? (value as Theme) : null;
+	return THEMES.includes(value as Theme) ? (value as Theme) : DEFAULT_THEME;
 }
 
 class ThemeStore {
-	/** `null` means "follow system preference". */
-	current: Theme | null = $state(readStored());
+	current: Theme = $state(readStored());
 
-	set(theme: Theme | null) {
+	set(theme: Theme) {
 		this.current = theme;
 		if (typeof document !== 'undefined') {
-			if (theme) {
-				document.documentElement.setAttribute('data-theme', theme);
-			} else {
+			if (theme === 'auto') {
 				document.documentElement.removeAttribute('data-theme');
+			} else {
+				document.documentElement.setAttribute('data-theme', theme);
 			}
 		}
 		if (typeof localStorage !== 'undefined') {
-			if (theme) localStorage.setItem(STORAGE_KEY, theme);
-			else localStorage.removeItem(STORAGE_KEY);
+			localStorage.setItem(STORAGE_KEY, theme);
 		}
 	}
 
-	/** Cycle light → dark → sepia → light, starting from whatever is active now. */
+	/** Cycle auto → light → dark → sepia → auto, starting from whatever is active now. */
 	cycle() {
-		const from = this.current ?? 'light';
-		const idx = THEMES.indexOf(from);
+		const idx = THEMES.indexOf(this.current);
 		this.set(THEMES[(idx + 1) % THEMES.length]);
 	}
 }
