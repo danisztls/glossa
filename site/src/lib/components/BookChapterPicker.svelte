@@ -17,14 +17,33 @@
 	 * (Enter/Space, Tab order) with no custom key handling needed, and no
 	 * page ever renders more than one book's worth of chapter links.
 	 *
+	 * The chapter grid is an ABSOLUTELY-POSITIONED panel anchored to its book
+	 * button, not an in-flow block. In flow it was a wrapped flex item, so
+	 * opening a book mid-grid pushed every later book onto new lines and the
+	 * whole list jumped under the reader's cursor — the book they were aiming
+	 * at moved before they clicked it. Out of flow, opening a panel changes
+	 * nothing about the grid behind it.
+	 *
+	 * Two consequences of leaving the flow, both handled below: the panel can
+	 * overhang the viewport's right edge for books near it (hence `align`,
+	 * measured at open time rather than guessed from column position, since
+	 * the grid wraps at a width nobody here knows statically), and it no
+	 * longer dismisses by re-clicking alone, so it takes the same
+	 * outside-click/Escape handling as the header menus.
+	 *
+	 * There are deliberately NO chevron indicators on the book buttons.
+	 * `aria-expanded` carries the state for assistive tech, and sighted
+	 * readers get it from the open panel itself plus the button's own active
+	 * styling — a caret pointing at a panel already occupying the space below
+	 * it is redundant, and at 73 buttons the glyphs were most of the grid's
+	 * visual noise.
+	 *
 	 * Used two ways: `collapsible` (default) wraps the whole thing in a
 	 * `<details>` for the reading view, where the picker is a secondary
 	 * affordance; the `/bible` landing route sets `collapsible={false}` to
 	 * render it inline as the page's actual content.
 	 */
 	import { untrack } from 'svelte';
-	import ChevronDown from '@lucide/svelte/icons/chevron-down';
-	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import { editionToWorkId, getBook, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
 
@@ -56,8 +75,54 @@
 	// same book shouldn't collapse an unrelated book the reader opened).
 	let openOsis: string | undefined = $state(untrack(() => currentOsis));
 
-	function toggleBook(osis: string) {
-		openOsis = openOsis === osis ? undefined : osis;
+	/**
+	 * Which edge of the book button the open panel is anchored to. The panel
+	 * is ~22rem wide and the book grid runs the full content column, so a book
+	 * in the last column would push a start-anchored panel off-screen.
+	 * Measured from the real button rect when the panel opens — the grid wraps
+	 * at whatever the viewport allows, so "is this book near the right edge"
+	 * has no static answer.
+	 */
+	let align: 'start' | 'end' = $state('start');
+
+	/** Matches `.chapters`' `max-inline-size` below; keep the two in step. */
+	const PANEL_WIDTH_REM = 22;
+
+	function toggleBook(osis: string, e: MouseEvent) {
+		if (openOsis === osis) {
+			openOsis = undefined;
+			return;
+		}
+		const btn = e.currentTarget;
+		if (btn instanceof HTMLElement) {
+			const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+			const rect = btn.getBoundingClientRect();
+			// Flip to end-anchored only when start-anchored would actually
+			// overflow, so the common case keeps the panel's left edge lined up
+			// with the button the reader just pressed.
+			align = rect.left + PANEL_WIDTH_REM * rem > window.innerWidth ? 'end' : 'start';
+		}
+		openOsis = osis;
+	}
+
+	function closePanel() {
+		openOsis = undefined;
+	}
+
+	// Out-of-flow panels don't dismiss by themselves the way an in-flow
+	// disclosure did, so this takes the same window-level outside-click and
+	// Escape handling as the header menus (ThemeMenu et al.). Clicks inside
+	// `.book-item` are ignored: that covers both the panel and its own book
+	// button, whose click handler already toggles.
+	function onWindowClick(e: MouseEvent) {
+		if (!openOsis) return;
+		const target = e.target;
+		if (target instanceof Node && (target as Element).closest?.('.book-item')) return;
+		closePanel();
+	}
+
+	function onWindowKeydown(e: KeyboardEvent) {
+		if (openOsis && e.key === 'Escape') closePanel();
 	}
 
 	function bookName(book: CanonicalBook): string {
@@ -72,6 +137,8 @@
 	}
 </script>
 
+<svelte:window onclick={onWindowClick} onkeydown={onWindowKeydown} />
+
 {#snippet groups()}
 	{#each testaments as group (group.key)}
 		<section class="testament">
@@ -84,15 +151,11 @@
 							type="button"
 							class="book-btn"
 							class:current={book.osis === currentOsis}
+							class:open={isOpen}
 							aria-expanded={isOpen}
 							aria-controls={`chapters-${book.osis}`}
-							onclick={() => toggleBook(book.osis)}
+							onclick={(e) => toggleBook(book.osis, e)}
 						>
-							{#if isOpen}
-								<ChevronDown size={14} aria-hidden="true" />
-							{:else}
-								<ChevronRight size={14} aria-hidden="true" />
-							{/if}
 							<span>{bookName(book)}</span>
 						</button>
 						{#if isOpen}
@@ -100,6 +163,7 @@
 							<div
 								id={`chapters-${book.osis}`}
 								class="chapters"
+								class:align-end={align === 'end'}
 								role="group"
 								aria-label={bookName(book)}
 							>
@@ -180,7 +244,9 @@
 		align-items: flex-start;
 	}
 
+	/* Positioning context for the absolutely-positioned `.chapters` panel. */
 	.book-item {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 	}
@@ -206,15 +272,39 @@
 		font-weight: 600;
 	}
 
+	/* Carries the open state that the chevrons used to. Filled rather than
+	   merely outlined so it reads as "this is the one the panel belongs to"
+	   even against `.current`'s accent border on a neighbouring book. */
+	.book-btn.open {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-accent-contrast);
+	}
+
+	/* Out of flow: opening a book must not move the 73-button grid behind it.
+	   `min-inline-size` keeps single-chapter books (Obadiah, Jude) from
+	   collapsing to a sliver; `max-inline-size` matches PANEL_WIDTH_REM in the
+	   script, which is what the overflow measurement assumes. */
 	.chapters {
+		position: absolute;
+		top: calc(100% + 0.35rem);
+		inset-inline-start: 0;
+		z-index: 20;
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.35rem;
-		margin: 0.5rem 0 0.75rem;
 		padding: 0.5rem;
 		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-border);
 		border-radius: 0.35rem;
-		max-width: 22rem;
+		box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
+		min-inline-size: 12rem;
+		max-inline-size: min(22rem, calc(100vw - 2rem));
+	}
+
+	.chapters.align-end {
+		inset-inline-start: auto;
+		inset-inline-end: 0;
 	}
 
 	.chapters a,
