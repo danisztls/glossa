@@ -78,6 +78,16 @@ export interface DocumentManifest extends WorkManifestBase {
 	pontiff_or_council: string;
 	/** The document's own promulgation date (ISO 8601 date) -- distinct from `sources[].retrieved_at`. */
 	promulgated: IsoDate;
+	/**
+	 * One-line summary of what the document is about, shown in the
+	 * `/documents` list. Optional and currently absent from every manifest in
+	 * the corpus: the pipeline has no source for it (vatican.va publishes no
+	 * abstract), so these are expected to be written or generated separately
+	 * and backfilled. Consumers must render nothing rather than a placeholder
+	 * when it is missing -- an empty line is honest, "No description" is
+	 * noise repeated 345 times.
+	 */
+	description?: string;
 }
 
 export type WorkManifest = BibleManifest | CatechismManifest | CompendiumManifest | DocumentManifest;

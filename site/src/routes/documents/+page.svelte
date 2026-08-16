@@ -15,7 +15,6 @@
 	 */
 	import { listDocuments } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
-	import { copyrightLabel } from '$lib/copyright';
 	import { documentKindLabel } from '$lib/document-labels';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentManifest } from '$lib/types';
@@ -49,6 +48,11 @@
 		rows: Row[];
 	}
 
+	// REVERSE chronological throughout, at both levels. A library that opens on
+	// Leo XIII and needs ~450 rows of scrolling to reach anything a reader is
+	// likely to have heard of is ordered for the archivist, not the reader;
+	// recent documents are both the most-sought and the most-linked. Note the
+	// comparator argument order below is deliberately b-then-a at both levels.
 	const groups = $derived.by(() => {
 		const byPontiff = new Map<string, Row[]>();
 		for (const row of rows) {
@@ -58,13 +62,15 @@
 		}
 		const out: PontiffGroup[] = [...byPontiff.entries()].map(([pontiff, groupRows]) => ({
 			pontiff,
-			rows: [...groupRows].sort((a, b) => a.manifest.promulgated.localeCompare(b.manifest.promulgated))
+			rows: [...groupRows].sort((a, b) => b.manifest.promulgated.localeCompare(a.manifest.promulgated))
 		}));
-		// Groups sorted chronologically by their earliest document, so scanning
-		// top-to-bottom moves roughly forward in time (Leo XIII, ..., Second
-		// Vatican Council, ..., whoever promulgated most recently).
+		// Groups ranked by their most recent document. Because each group's rows
+		// are already newest-first, that document is `rows[0]` -- the same index
+		// the old ascending sort used for the *earliest*, so this line looks
+		// unchanged but now compares a different document. Keep the two sorts in
+		// step if either direction is ever revisited.
 		out.sort((a, b) =>
-			(a.rows[0]?.manifest.promulgated ?? '').localeCompare(b.rows[0]?.manifest.promulgated ?? '')
+			(b.rows[0]?.manifest.promulgated ?? '').localeCompare(a.rows[0]?.manifest.promulgated ?? '')
 		);
 		return out;
 	});
@@ -94,11 +100,28 @@
 							<span class="doc-title">{row.manifest.title}</span>
 							<span class="doc-kind">{documentKindLabel(row.manifest.document_kind)}</span>
 						</a>
+						<!--
+							Date alone, no "Promulgated" label: in a list where every
+							row carries one, the label is 345 repetitions of a word
+							that the date's own format already implies.
+
+							No copyright line either. Every document in this corpus
+							is under the identical Libreria Editrice Vaticana notice,
+							so repeating it per row is pure noise — it stays on the
+							reading pages, where it is attached to the text it
+							actually governs. The description takes its place, when
+							one exists (see `DocumentManifest.description`); today
+							none do, so this renders nothing rather than a
+							placeholder.
+						-->
 						<p class="doc-meta">
-							{t('document.promulgated')}
-							{formatDate(row.manifest.promulgated, row.manifest.language)}
-							· {copyrightLabel(row.manifest)}
+							<time datetime={row.manifest.promulgated}>
+								{formatDate(row.manifest.promulgated, row.manifest.language)}
+							</time>
 						</p>
+						{#if row.manifest.description}
+							<p class="doc-description">{row.manifest.description}</p>
+						{/if}
 					</li>
 				{/each}
 			</ul>
@@ -161,9 +184,23 @@
 		white-space: nowrap;
 	}
 
+	/* The date is the row's only metadata now, so it gets to carry a little
+	   weight of its own rather than reading as a trailing footnote: tabular
+	   figures so dates align down the column, and letter-spacing to set it
+	   apart from the serif title above it. */
 	.doc-meta {
 		margin: 0.3rem 0 0;
-		font-size: 0.8rem;
+		font-size: 0.75rem;
 		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.doc-description {
+		margin: 0.35rem 0 0;
+		font-size: 0.9rem;
+		color: var(--color-text-muted);
+		max-width: 60ch;
 	}
 </style>

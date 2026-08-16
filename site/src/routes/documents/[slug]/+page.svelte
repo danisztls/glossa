@@ -11,7 +11,7 @@
 	 * `EditionMenu`.
 	 */
 	import { flattenDocumentStructure, getAdjacentDocumentSectionNumber, getDocumentGroup } from '$lib/corpus';
-	import { copyrightLabel } from '$lib/copyright';
+	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { displayTitle } from '$lib/titles';
 	import { documentKindLabel } from '$lib/document-labels';
 	import { content } from '$lib/content.svelte';
@@ -69,10 +69,14 @@
 			<span class="sep">·</span>
 			{manifest.pontiff_or_council}
 			<span class="sep">·</span>
-			{t('document.promulgated')}
-			{formatDate(manifest.promulgated, lang)}
+			<!-- Bare date, no "Promulgated" label — matching the /documents list.
+			     In a subtitle already reading "Encyclical · Francis · <date>",
+			     the only date a document has needs no naming. -->
+			<time class="promulgated" datetime={manifest.promulgated}>
+				{formatDate(manifest.promulgated, lang)}
+			</time>
 		</p>
-		<p class="copyright-notice">{copyrightLabel(manifest)}</p>
+		<p class="copyright-notice"><CopyrightNotice manifest={manifest} /></p>
 
 		{#if firstSectionN !== undefined}
 			<p class="start-reading">
@@ -135,6 +139,13 @@
 
 	.subtitle .sep {
 		margin: 0 0.4em;
+	}
+
+	.promulgated {
+		font-variant-numeric: tabular-nums;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		font-size: 0.85em;
 	}
 
 	.doc-kind {
