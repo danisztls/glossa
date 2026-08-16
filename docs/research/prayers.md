@@ -1,0 +1,155 @@
+# A prayers corpus: research proposal
+
+Research conducted 2026-08-16 (Claude, read-only survey: `corpus/works/`, `corpus/raw/`, `docs/`, and two live vatican.va page checks — no scraping, no ingestion, no code changes). Companion to `corpus-schema.md` (§Compendium already flags the appendix as deferred), `link-surface.md`, `copyright.md`, and `vatican-documents.md`/`latin-sources.md` (methodology precedent for the "checked live, cite the exact URL" survey style this document follows).
+
+## TL;DR
+
+**v1 costs zero fetches.** The Compendium of the CCC's own Appendix A — the Church's standard list of common prayers — is already sitting in `corpus/raw/compendium-en/` and `corpus/raw/compendium-pt/`, captured back on 2026-08-14 as a side effect of scraping the Compendium's Q&A body, and explicitly *not* parsed into `corpus/works/` at the time (`compendium.{en,pt}/manifest.json`'s own `notes` field says so: "The Appendix … is not captured in v1 … Raw HTML is cached in full, so nothing is lost"). This is the textbook case `link-surface.md`'s insurance policy describes: **re-parse, never re-crawl**. Recommend shipping a new `prayer.common.en` / `prayer.common.pt` work, sourced entirely from those two already-cached files, as the entire v1 scope.
+
+**The single most important correction this research turned up**: the existing manifest note, copy-pasted identically onto both `compendium.en` and `compendium.pt`, says the appendix's Latin parallel column exists "in EN only." That's wrong. PT's raw HTML carries the same 21 Latin texts — not as a side-by-side column (EN's layout) but as a second, sequential vernacular-then-Latin block later in the same page. Whoever eventually writes the parser needs to handle two different HTML shapes for the same data, but the Latin **is** there in both languages. This should be corrected in the Compendium manifests when the appendix is parsed (see §7).
+
+**Everything else in this proposal is smaller and more provisional**: a genuinely free half-step (recovering the Apostles' Creed's full text, also already cached, from the CCC's own raw HTML) worth bundling into the same pass; a v2 candidate that needs a handful of new, low-volume fetches (the Litany of Loreto, from vatican.va's `special/rosary/` micro-site); and one popular candidate — the Stations of the Cross — that this proposal recommends **against**, because vatican.va has no fixed canonical text for it (see §2).
+
+## 1. What's already on disk
+
+### 1.1 The Compendium's Appendix A ("Common Prayers") — the whole v1 payload
+
+`corpus/raw/compendium-en/archive_2005_compendium-ccc_en.html` (379 KB) and `corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html` (412 KB) are the full vatican.va pages, fetched 2026-08-14, already governed by the existing `compendium.{en,pt}` manifests' copyright metadata. Read directly (not re-fetched), the appendix contains **24 prayers**, structurally identical between languages once the layout difference above is accounted for:
+
+| # | English title | Latin title | Portuguese title | Latin text present? |
+|---|---|---|---|---|
+| 1 | The Sign of the Cross | Signum Crucis | Sinal da Cruz | yes |
+| 2 | Glory be to the Father | Gloria Patri | Glória ao Pai | yes |
+| 3 | The Hail Mary | Ave, Maria | Avé Maria | yes |
+| 4 | Angel of God | Angele Dei | Ao Anjo da Guarda | yes |
+| 5 | Eternal Rest | Requiem Æternam | Dai-lhes, Senhor, o eterno descanso | yes |
+| 6 | The Angelus (dialogic, V./R.) | Angelus Domini | Angelus (À Trindade) | yes |
+| 7 | The Regina Caeli | Regina Cæli | Rainha do Céu | yes |
+| 8 | Hail Holy Queen | Salve, Regina | Salve Rainha | yes |
+| 9 | The Magnificat | Magnificat | Magnificat | yes |
+| 10 | Under Your Protection | Sub tuum præsidium | Sob a Tua Protecção | yes |
+| 11 | The Benedictus | Benedictus | Benedictus | yes |
+| 12 | The Te Deum | Te Deum | Te Deum | yes |
+| 13 | Come, Creator Spirit | Veni, Creator Spiritus | Veni Creator Spiritus | yes |
+| 14 | Come, Holy Spirit | Veni, Sancte Spiritus | Vem, Espírito Santo | yes |
+| 15 | The Anima Christi | Anima Christi | Alma de Cristo | yes |
+| 16 | The Memorare | Memorare | Lembrai-vos | yes |
+| 17 | The Rosary — 4 groups of 5 mysteries (Joyful/Luminous/Sorrowful/Glorious) + weekday rubric + opening/closing prayers | Rosarium | Rosário (+ Mistérios Gozosos/da Luz/Dolorosos/Gloriosos) | yes |
+| 18 | Act of Faith | Actus fidei | Acto de Fé | yes |
+| 19 | Act of Hope | Actus spei | Acto de Esperança | yes |
+| 20 | Act of Love | Actus caritatis | Acto de Caridade | yes |
+| 21 | Act of Contrition | Actus contritionis | Acto de Contrição | yes |
+| 22 | Coptic Incense Prayer | — (none printed) | Oração do Incenso *(Tradição Copta)* | **no** |
+| 23 | Syro-Maronite Farewell to the Altar | — (none printed) | Oração de «Adeus ao Altar» *(Tradição Siro-Maronita)* | **no** |
+| 24 | Byzantine Prayer for the Deceased | — (none printed) | Oração pelos Defuntos | **no** |
+
+Verified directly against both raw files (`grep`/`python3` over the cached HTML, not a live fetch). Rows 1–21 are laid out as an EN two-column HTML table (`<td>`English<td>Latin, one row per prayer) but as three sequential blocks in PT (Portuguese prayers, then a second pass through the same 21 in Latin, using the identical Latin wording as the EN column — spot-checked on *Signum Crucis*, *Gloria Patri*, *Ave Maria* byte-for-byte). Rows 22–24 are the three Eastern-rite prayers, present with **no Latin text in either language file** — this isn't a capture gap, vatican.va simply doesn't print one (EN's table has an explicit empty `&nbsp;` cell in the Latin column for these three).
+
+Appendix B ("Formulas of Catholic Doctrine" — the two commandments of love, three theological virtues, four cardinal virtues, seven gifts of the Holy Spirit, twelve fruits, five precepts of the Church, corporal/spiritual works of mercy, seven capital sins, four last things) is also cached and also unparsed, but it is **not prayers** — short catechetical lists, closer in kind to the CCC's own numbered enumerations than to devotional text. Recommend treating it as a separate future item, not folded into this proposal's scope (see §7).
+
+### 1.2 CCC §2759–2865 ("The Lord's Prayer") — already fully in the corpus
+
+`ccc.en/paragraphs.json` and `ccc.pt/paragraphs.json` both already contain all 107 paragraphs of CCC Part Four, Section Two (verified: `[p for p in paragraphs if 2759<=p['n']<=2865]` returns exactly 107 in `ccc.en`). This is the Church's own extended commentary on the Our Father, already published on the site at `/ccc/2759` through `/ccc/2865`. Nothing to build here except the cross-link (§5).
+
+### 1.3 A pre-existing data curiosity, found in passing (not this proposal's job to fix)
+
+`ccc.en/structure.json` has a `sub` node under Part Four §2 whose **title field holds the entire text of the Our Father** ("Our Father who art in heaven, hallowed be thy name. Thy kingdom come. …"), attached to a mis-scoped span `[2760, 2760]` — paragraph 2760's actual text is unrelated (it's about the doxology's liturgical history). `ccc.pt/structure.json` has no equivalent node at all; Section 2 goes straight from the heading to Article 1. This looks like a parser quirk from the original CCC scrape — vatican.va prints the prayer's full text as an unnumbered epigraph before Article 1, and the EN parser captured it (oddly, as a node title) while the PT parser didn't. It's flagged here because it surfaced during this research and is a genuine EN/PT asymmetry; it is **not** a usable source for a prayers work (a full-text-as-title node is not a place to build on) and fixing it is out of scope for this proposal.
+
+### 1.4 The Apostles' Creed — also already cached, also unparsed, a natural companion tranche
+
+The Compendium's appendix does **not** include the Creed (checked directly: zero occurrences of "Creed"/"Credo"/"Confiteor" in the appendix's raw HTML). But `corpus-schema.md`'s own "unnumbered content" allowance (`structure.json` nodes with `paragraphs: [null, null]`) already exists specifically for exactly this: "creed texts, Decalogue epigraphs, catechetical formulas … the future schema home for the currently-dropped epigraph text." `ccc.en/structure.json` already has a `"The Credo"` placeholder node (title only, `[null, null]` span) at the right location in Part One; `ccc.pt/structure.json` has the equivalent `"CREDO"` node. The Creed's actual full text isn't in either language's `structure.json` or `paragraphs.json` — but it **is** in the raw cache: `grep -ril "believe in God" corpus/raw/ccc-en/` finds it in `__P1A.HTM` and others. Recovering it is the same re-parse-not-re-crawl move as the Compendium appendix, just against a different already-cached source. Recommend bundling it into the same v1 pass if the parsing effort is small; otherwise it's the natural first v1.5 item.
+
+## 2. Scope — candidate tranches, ranked
+
+| Rank | Tranche | Content | Already on disk? | New fetches needed | Recommendation |
+|---|---|---|---|---|---|
+| 1 | Compendium Appendix A, rows 1–21 | 17 named prayers + the Rosary (4 mystery groups) + 4 Acts, EN/PT/Latin | Yes (§1.1) | 0 | **v1** |
+| 2 | Compendium Appendix A, rows 22–24 | 3 Eastern-rite prayers (Coptic, Syro-Maronite, Byzantine), EN/PT, no Latin | Yes (§1.1) | 0 | **v1** — same file, same pass, no reason to split them out |
+| 3 | Apostles' Creed | Full text, EN/PT | Yes, in `corpus/raw/ccc-{en,pt}/` (§1.4) | 0 | v1.5 — bundle if cheap, else first v2 item |
+| 4 | CCC §2759–2865 cross-link | No new content — link the existing CCC pages from the new Our Father prayer page | Already published | 0 | v1 (it's a link, not content) |
+| 5 | Litany of Loreto | Full text, EN/PT confirmed present | No | ~1–2 (see §3) | v2 |
+| 6 | Compendium Appendix B | Doctrinal formula lists (virtues, precepts, capital sins, …) | Yes | 0 | Explicitly **not prayers** — separate future item, don't fold in |
+| 7 | Remaining two Marian seasonal antiphons (*Alma Redemptoris Mater*, *Ave Regina Caelorum*) | Not checked | Unknown | Unresearched | Open item — no source identified in this pass |
+| 8 | Divine Mercy Chaplet | Not checked | Unknown | Unresearched | Open item — no source identified in this pass |
+| 9 | Stations of the Cross | Would-be text | N/A | N/A | **Rejected** — see below |
+
+**Why the Stations of the Cross is rejected outright, not just deferred.** vatican.va does not publish a single canonical Via Crucis text the way it publishes one fixed 2005 Compendium. The pope's own Good Friday Way of the Cross at the Colosseum uses a different set of meditations every year, commissioned from a different author (John Paul II wrote his own for 2000; Benedict XVI, Francis, and guest authors have all supplied different texts in different years) — there is no stable URL that means "the Stations of the Cross" the way `/prayers/rosary` would mean the Compendium's fixed Rosary text. A "prayers" work needs a source that prints one settled text, not an annually-rotating homily; nothing checked in this survey satisfies that for the Stations. If a future pass wants to include a *traditional* (non-papal, e.g. Alphonsus Liguori's) set of station prayers, that would need its own separate copyright and source investigation — it is not a vatican.va item at all, and this proposal does not attempt that research.
+
+## 3. Bilingual (and Latin) coverage
+
+**The Compendium Appendix A is symmetric EN/PT, confirmed** (§1.1's table — all 24 rows exist in both, same Latin availability pattern for both). This is the good case: unlike encyclicals, where the project's own rule is "when both exist, they must agree" because absence is common and legitimate, the prayers appendix comes from a single bilingual source document scraped on the same day, so the stricter Bible/CCC-style symmetry check (`CLAUDE.md`'s "free QA oracle" — matching unit-key sets between languages) is the right one to apply here, keyed by the stable slug (§4) rather than a paragraph number. If a future parse finds a slug present in one language and not the other, that's a parser bug to fix, not an expected gap to document.
+
+**Latin exists for 21 of the 24 prayers, in both language sources, contradicting the current manifest note.** As corrected in the TL;DR: the note on both `compendium.en/manifest.json` and `compendium.pt/manifest.json` ("a Latin parallel column in EN only") is wrong for the underlying data, right only about the *EN page's layout* (a genuine parallel column) versus PT's (sequential blocks, same text). Recommend the note get corrected — not by this proposal, since it isn't touching code, but flagged here so whoever parses the appendix doesn't inherit the wrong assumption and skip re-checking PT's Latin block.
+
+**Recommendation: carry Latin as a field, not a third edition — deliberately, to avoid reopening `PLAN.md`'s open Architecture question.** `PLAN.md`'s "Architecture: UI language vs. content language, once Latin exists" section is explicit that Latin as a genuine third *edition* (a `WorkManifest` with `language: "la"`, selectable via the edition override) surfaces a real, currently-unresolved problem: `ContentStore`'s override-reset-on-UI-switch logic is built for a world where every content language is also a UI language, and Latin breaks that assumption. That question is scoped in `PLAN.md` as "not scheduled ahead of" everything else, pending a `decisions.md` entry nobody has written yet. This proposal doesn't need to force that decision: since the *only* source of Latin text here (the Compendium appendix) already prints it as a bound companion to the vernacular, not as an independently addressable work, the natural schema shape is an optional `latin: { title, blocks }` field on each EN/PT prayer item (§4) — present wherever the source prints it, absent for the three Eastern-rite prayers, never its own work id, never touching `UiLang`/`ContentLang`/`listEditions`. A reader gets the Latin text sitting right next to the vernacular on the same page, with zero interaction with the edition-selection machinery. If Latin later becomes a real site-wide content language (Bible, CCC, Vatican II per `latin-sources.md`), the prayers' Latin field can be migrated into that system then; nothing here forecloses it.
+
+## 4. Sources, with URLs
+
+**v1 source — already fetched, no new URL to visit:**
+
+- `https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_en.html` (English, cached 2026-08-14, `corpus/raw/compendium-en/`)
+- `https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_po.html` (Portuguese, cached 2026-08-14, `corpus/raw/compendium-pt/`)
+
+Both already carry the compendium's own copyright notice ("© Copyright 2005 - Libreria Editrice Vaticana"), already recorded in `compendium.{en,pt}/manifest.json`. No new copyright decision is needed: the appendix is part of the same document the site is already hosting under the posture `copyright.md` §5 states — verbatim, attributed, LEV-owned, hosted without prior permission per the project's adopted political stance. A new `prayer.common.{en,pt}` work would carry the identical `copyright` block, sourced from the identical page, just parsed into a second work id from the same raw file. This is not a new exposure, just a second work drawn from a source already in scope.
+
+**v2 candidate, checked live 2026-08-16 (one fetch, read-only):** `https://www.vatican.va/special/rosary/documents/misteri_en.html` — a small vatican.va "Holy Rosary" micro-site with per-language pages (`misteri_en.html`, `misteri_po.html` [Portuguese], plus DE/ES/FR/IT — no Latin edition of this particular micro-site). It links to `litanie-lauretane_en.html`, the Litany of Loreto, which is genuinely new content not in the Compendium appendix. This page does not show a distinct copyright notice in the fetched excerpt; before ingesting, the same live-notice check `vatican-documents.md` §4 / `copyright.md` §6 already ran for encyclicals and Vatican II ("check the rendered notice, don't assume it matches the main site") should be repeated here rather than assumed. Not fetched further in this pass, per the brief's "keep it to a handful of requests, don't crawl."
+
+**No non-vatican.va source is proposed.** The task brief asks that any source falling outside vatican.va state its licence position explicitly and fit `copyright.md`'s posture, or be rejected rather than listed with a caveat. This proposal does not identify a need to leave vatican.va for v1 or the named v2 candidate, so no such source is proposed here. If a future pass pursues the two missing Marian antiphons or the Divine Mercy Chaplet (§2, rows 7–8) and vatican.va doesn't carry them, that pass owes its own source-and-rights research before naming a URL — this document doesn't do that work preemptively, since guessing at a source's licence without checking it is exactly the caveat-laden listing the brief asks to avoid.
+
+## 5. Corpus shape
+
+**New work type: `"prayer"`.** Work id follows the existing `{family}.{slug}.{lang}` convention with no changes to the ID grammar itself: `prayer.common.en`, `prayer.common.pt` (`family` = `prayer`, `slug` = `common`, matching the Compendium's own "Common Prayers" heading — leaves room for a later `prayer.{something-else}.{lang}` work, e.g. if the Litany of Loreto tranche ever grows large enough to want its own work rather than living inside `common`).
+
+**`structure.json`: reuse the existing generic node schema verbatim**, exactly as `corpus-schema.md` already asks of every work type (`kind`/`n`/`title`/`paragraphs`/`children`, walked by the same `breadcrumbIn`/`flattenTree` code the CCC and Compendium already share). Used here purely for grouping — e.g. a flat or lightly-grouped tree ("Basic Prayers," "Marian Prayers," "The Rosary") — not for numeric addressing. `paragraphs` is expected to be `[null, null]` throughout, the same allowance `corpus-schema.md` already documents for the Creed/Decalogue case; there is no numbered-unit standard in the source to record a span against, and inventing one would be exactly the kind of unsourced data the store-raw principle forbids.
+
+**New content file, `prayers.json`** (parallel to `sections.json`/`questions.json`/`paragraphs.json`, not reusing any of them — see below for why):
+
+```jsonc
+{
+  "n": 1, // sequential print order, stable within this work — for ordering, not addressing
+  "slug": "sign-of-the-cross", // stable, language-invariant identifier — see below for why this replaces a unit number
+  "title": "The Sign of the Cross",
+  "kind": "simple", // "simple" | "dialogic" | "group" — group is the Rosary's shape
+  "blocks": [{ "kind": "prose", "text": "In the name of the Father…" }],
+  "latin": { "title": "Signum Crucis", "blocks": [{ "kind": "prose", "text": "In nómine Patris…" }] }, // optional — absent for the 3 Eastern-rite prayers
+  "rubric": null, // free text the source attaches, e.g. "(recited Monday and Saturday)" on a Rosary mystery group
+}
+```
+
+**Why a stable `slug`, not a unit number.** Every existing content type in this schema that uses a bare integer for addressing (CCC paragraphs 1–2865, Compendium questions 1–598, document sections) is numbering something the *source itself* numbers — the number is captured, not invented. The Compendium's prayer appendix prints no numbers at all; assigning `n: 1, 2, 3…` for print order is fine as an ordering convenience (and is what the table above already does) but using it as the *address* — the thing a URL or a cross-reference points at — would mean inventing an identifier the source never gave, which is exactly what the corpus's other slug-based identifiers (Bible OSIS codes `gen`/`exod`, document family slugs `lumen-gentium`/`centesimus-annus`) already exist to avoid doing for content instead of prose. `slug` plays that role here: `sign-of-the-cross`, `hail-mary`, `our-father` — English-derived, kebab-case, language-invariant across `prayer.common.en` and `prayer.common.pt` (the same prayer carries the same slug in both), the same shape `refs.ts`/`corpus.ts` already handle for document slugs.
+
+**Genuinely new pieces, kept to the minimum this content shape needs, listed explicitly per the brief's request to flag extensions and keep them few:**
+
+1. `"type": "prayer"` — new manifest type value.
+2. `prayers.json` — new content filename (the schema already varies this per work type: `paragraphs.json`, `questions.json`, `sections.json`; this is a fourth, not a new *pattern*).
+3. Two new block kinds for dialogic text (`"versicle"` / `"response"`), needed for the Angelus and the Rosary's closing dialogue — neither the CCC's `prose`/`quote` pair nor the document schema's plain `prose` covers a V./R. exchange.
+4. An optional `latin` field, mirroring `title`/`blocks`, present only where the source prints it (§3).
+5. An optional `groups` array on the Rosary's single entry, since "4 named groups × 5 named mysteries × a weekday rubric" is real structured data in the source (§1.1), not flowing prose — the one place in this proposal where `blocks` genuinely doesn't fit and something new is needed. Not fully speced here; left for whoever implements it to shape against the actual parsed HTML.
+
+**Explicitly not new**: work-id grammar, the `structure.json` node schema, the `blocks`/`prose` concept generally, the manifest's provenance/copyright shape, or anything about how the site resolves editions. The corpus-wide `abbreviations.json` and `xrefs/` mechanisms are untouched — a prayers work has no footnote apparatus to decode and (for v1) no derived cross-reference file, only the direct links named in §6.
+
+## 6. URL / link surface
+
+Consistent with `decisions.md`'s existing pattern for CCC/Compendium — same reasoning the 2026-08-15 "Content language follows UI language" entry already gives for those two ("language and edition are the same axis… leaving edition out of the URL loses no addressing information") applies identically here: one prayer text per language, no competing editions.
+
+- `/prayers` — index, listing all prayers (grouped the way the source groups them if that reads well; otherwise flat — a UX call, not a data one)
+- `/prayers/{slug}` — e.g. `/prayers/our-father` *(if the Creed tranche lands, this would actually be `/prayers/sign-of-the-cross`, `/prayers/hail-mary`, `/prayers/rosary`, `/prayers/apostles-creed`, …)*, edition-free, resolving language client-side from the stored preference exactly like `/ccc/{n}` and `/compendium/{n}` do today.
+
+**Cross-links, concrete:**
+
+- A dedicated Our Father prayer page ↔ CCC §2759–2865 (already-published content, §1.2) — bidirectional, the same shape as the existing CCC↔Bible reverse-citation summary (`getCccCitationsForChapter`): the prayer page gets a "the Catechism's commentary on this prayer" block, and CCC §2759 itself could gain a forward link to `/prayers/our-father`. Both directions are cheap since the CCC content already exists; nothing here is a new xrefs derivation pass, just two hand-placed links.
+- `/prayers/hail-mary` → Luke 1:28 and 1:42 (the verses the prayer quotes almost verbatim).
+- `/prayers/magnificat` → Luke 1:46–55 (verbatim Scripture, already a full Bible chapter in the corpus).
+- `/prayers/benedictus` (if/when added — not in the Compendium appendix under that exact heading, but see the Compendium's own row 11 above, which the appendix does include) → Luke 1:68–79.
+- The Rosary's 20 individual mysteries → their corresponding Gospel passages (the Annunciation → Luke 1:26–38, and so on for all 20) is real, valuable linking — and a genuine derived-mapping project on the scale of a small `xrefs/prayers-bible.json`, not something to hand-write into v1. Flag as a natural v2/v3 follow-on, explicitly deferred here rather than attempted partially.
+- CCC's own `"The Credo"`/`"CREDO"` placeholder structure nodes (§1.3) → once/if the Creed tranche (§1.4) ships, these could gain a forward link to `/prayers/apostles-creed`. Not v1.
+
+## 7. Open questions and risks
+
+- **Is a single `prayer.common` work the right shape, or should the Rosary / Marian prayers / basic prayers be split into separate works?** This proposal recommends one work — it mirrors how the Compendium itself prints them as a single appendix, and 24 items is small enough that one work's `structure.json` grouping already gives readers the organizational cues a split into multiple works would otherwise provide. This is a real design call for whoever scopes implementation, not a mechanical consequence of anything found here.
+- **The manifest-note correction (§1.1, §3) needs to actually happen** when the appendix is parsed — both `compendium.en/manifest.json` and `compendium.pt/manifest.json` currently assert something this research found to be inaccurate (Latin "in EN only"). Whoever writes the parser should fix both notes as part of that work, not leave the incorrect claim standing once the corrected understanding exists.
+- **The CCC's mis-scoped `[2760, 2760]` Our Father node (§1.3)** is a small pre-existing data quirk this research surfaced incidentally. It doesn't block anything here — the prayers work doesn't depend on that node — but it's worth a note for whoever next touches `ccc.py`'s structure-tree parsing.
+- **The Litany of Loreto (and any other `special/rosary/` page)** needs its own live copyright-notice check before ingesting, per the `vatican-documents.md`/`copyright.md` §6 methodology — not yet done here, and not safe to assume clean just because the domain is vatican.va (the CCC and Compendium each needed their own explicit notice check at the time).
+- **Two of the four traditional Marian seasonal antiphons** (*Alma Redemptoris Mater*, *Ave Regina Caelorum*) and the **Divine Mercy Chaplet** have no source identified in this pass — not confirmed absent from vatican.va, just not looked for. A future research pass would need to do that work before either could be scoped, the same way this document did for what it does cover.
+- **Whether Latin should ever grow beyond a per-prayer field into a real site-wide content language** is explicitly out of this proposal's scope — it depends on the `PLAN.md` Architecture question, which depends on a `decisions.md` entry only the project owner can make. §3's field-level recommendation is designed to deliver Latin text to readers now without that decision being forced by this feature; it should not be read as answering the larger question.
+- **Appendix B (doctrinal formulas)** is real, cached, unparsed content directly adjacent to the prayers appendix in the same source files — genuinely tempting to fold in for free, and explicitly recommended against in §2: it isn't prayers, and stretching this proposal's scope to cover it risks blurring what "a prayers corpus" means. Worth naming as its own future item if wanted.
