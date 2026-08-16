@@ -118,6 +118,29 @@ const unpublishedPath = path.join(siteRoot, 'unpublished.json');
 const unpublishedWorks = readJson(unpublishedPath).works ?? {};
 const unpublishedIds = new Set(Object.keys(unpublishedWorks));
 
+/**
+ * Editorial descriptions — see `site/descriptions.json` for the format and
+ * for why they are curated here instead of in the corpus.
+ *
+ * The short version: `corpus/works/*​/manifest.json` is generated output, and
+ * this project fixes parse defects by re-parsing (CLAUDE.md's "re-parse,
+ * never re-crawl"), so anything hand-written into a manifest survives only
+ * until the next fix. Merging at sync time keeps the corpus purely generated
+ * and keeps `manifest.description` populated for every route that already
+ * reads it — no component changes, no second lookup path.
+ *
+ * Unlike `unpublished.json`, a missing file here is NOT an error: a corpus
+ * with no descriptions yet is a perfectly good corpus, and the failure mode
+ * (a document shows no summary) is cosmetic. The takedown file's hard error
+ * exists because ITS failure mode is publishing something we were asked to
+ * withdraw; these two files look alike and are deliberately strict in
+ * different degrees.
+ */
+const descriptionsPath = path.join(siteRoot, 'descriptions.json');
+const descriptions = existsSync(descriptionsPath)
+	? (readJson(descriptionsPath).descriptions ?? {})
+	: {};
+
 const manifests = {}; // workId -> manifest.json, verbatim (every work type, incl. future document families)
 const bibleIndex = {}; // workId -> { books: BibleBookMeta[] }
 const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
@@ -145,7 +168,15 @@ for (const workId of workIds) {
 	// sitting in the source corpus for anyone reading it there. Kept as `''`
 	// rather than removing the key so `WorkManifest`'s shape stays intact for
 	// any future reader of `getWork()` that does start using it.
-	manifests[workId] = { ...manifest, notes: '' };
+	// `descriptions` wins over whatever the scraper left in `description`
+	// (today: always null — no scraper writes one, and none should: a
+	// description is editorial). Falls back to the manifest's own value so
+	// that stays true rather than assumed.
+	manifests[workId] = {
+		...manifest,
+		notes: '',
+		description: descriptions[workId] ?? manifest.description ?? null
+	};
 
 	// The takedown. Everything above this line still happens — the manifest
 	// goes into the index, so the work keeps its title, its rights holder's

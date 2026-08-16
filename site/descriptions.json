@@ -1,0 +1,28 @@
+{
+	"$comment": [
+		"Editorial one-line descriptions of works, merged into each work's manifest at sync time",
+		"by scripts/sync-corpus.mjs, and rendered by /documents (and anywhere else reading",
+		"`manifest.description`).",
+		"",
+		"WHY THIS FILE EXISTS RATHER THAN A FIELD IN corpus/works/*/manifest.json: those manifests",
+		"are GENERATED. A re-parse rewrites them, so a description written there survives exactly",
+		"until the next parser fix — and this project fixes parsers by re-parsing (see CLAUDE.md's",
+		"'re-parse, never re-crawl'). Descriptions are editorial, not scraped, so they live in",
+		"tracked source and are merged in on the way to the site. The corpus stays purely generated",
+		"and re-parsing stays free of consequences. Same posture, same reasoning, and the same place",
+		"as unpublished.json.",
+		"",
+		"HOW A DESCRIPTION IS WRITTEN — the rule is not negotiable, and it is the whole point:",
+		"a description is derived from READING THE DOCUMENT IN THE CORPUS, never from recollection",
+		"of what a document with that title probably says. See docs/writing-descriptions.md for the",
+		"procedure and for why a plausible-sounding wrong description is worse than none.",
+		"",
+		"Keyed by work id, so the two language editions of one document are described separately —",
+		"a description is prose in a particular language, not a translated label. A work with no",
+		"entry here simply has no description; nothing renders a placeholder."
+	],
+	"descriptions": {
+		"encyclical.magnifica-humanitas.en": "Leo XIV's encyclical on artificial intelligence and the social doctrine of the Church. Framed by two biblical images of collective building — the Tower of Babel and Nehemiah's rebuilding of Jerusalem — it argues that AI is not one more subject for social doctrine to address but a development that challenges its categories from within, and takes up human dignity and the common good, truth, work and freedom, and the growing place of autonomous systems in war.",
+		"encyclical.magnifica-humanitas.pt": "Carta encíclica de Leão XIV sobre a inteligência artificial e a doutrina social da Igreja. Estruturada em torno de duas imagens bíblicas da construção comum — a Torre de Babel e a reconstrução de Jerusalém por Neemias —, sustenta que a IA não é mais um tema a tratar pela doutrina social, mas um desenvolvimento que desafia as suas próprias categorias, e aborda a dignidade humana e o bem comum, a verdade, o trabalho e a liberdade, e o lugar crescente dos sistemas autónomos na guerra."
+	}
+}
