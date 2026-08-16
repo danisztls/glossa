@@ -131,6 +131,51 @@ export function normalizeCase(text: string, lang: string): string {
 	});
 }
 
+// --- Kind labels -----------------------------------------------------------
+
+/**
+ * Short kind label for a numbered structure node — "Part 1", "Ch. 3",
+ * "Art. 2" — replacing the bare `"1."` that `displayTitle` returns as its
+ * `ordinal`.
+ *
+ * WHY THE BARE ORDINAL WASN'T ENOUGH. `displayTitle` strips the source's
+ * printed prefix precisely because it is redundant with `n` and
+ * inconsistently cased ("PART ONE: ...", "CAPÍTULO PRIMEIRO"). But dropping
+ * it entirely left every level rendering the identical "1.", so a table of
+ * contents four levels deep showed "1." for a Part, "1." for the Section
+ * inside it, "1." for the Chapter inside that, and "1." again for the
+ * Article — four different things wearing the same badge, and the numbers
+ * restart at every level so they don't disambiguate each other either.
+ *
+ * This puts the kind back, but on our terms rather than the source's:
+ * uniform, abbreviated, derived from structured data, and translated. So
+ * `displayTitle` still does the right thing by stripping, and callers that
+ * want a label ask for one.
+ *
+ * Abbreviated rather than spelled out for the two deep kinds (there are 19
+ * chapters and 67 articles in the CCC, and "Chapter"/"Article" repeated at
+ * that density is more column than information), spelled out for the two
+ * shallow ones (4 parts, 8 sections — they head the page and can afford it).
+ */
+const KIND_LABELS: Record<Lang, Partial<Record<StructureNode['kind'], string>>> = {
+	en: { part: 'Part', section: 'Section', chapter: 'Ch.', article: 'Art.' },
+	pt: { part: 'Parte', section: 'Secção', chapter: 'Cap.', article: 'Art.' }
+};
+
+/**
+ * `"Ch. 3"`, or null when the node has no number or no label for its kind
+ * (`prologue`, `in-brief` and `sub` are all unnumbered headings whose titles
+ * already say what they are).
+ */
+export function kindOrdinalLabel(
+	node: Pick<StructureNode, 'kind' | 'n'>,
+	lang: string
+): string | null {
+	if (node.n === null) return null;
+	const label = KIND_LABELS[normLang(lang)][node.kind];
+	return label ? `${label} ${node.n}` : null;
+}
+
 // --- Redundant prefix stripping --------------------------------------------
 
 const EN_CARDINAL: Record<number, string> = {

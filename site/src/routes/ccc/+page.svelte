@@ -27,10 +27,12 @@
 	 * padding variable on a flat list, so the hierarchy is in the document
 	 * structure where a screen reader can use it, not only in the left margin.
 	 */
+	import ChevronRight from '@lucide/svelte/icons/chevron-right';
+	import { SvelteSet } from 'svelte/reactivity';
 	import { getCccStructure, getWork } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { content } from '$lib/content.svelte';
-	import { displayTitle } from '$lib/titles';
+	import { displayTitle, kindOrdinalLabel } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
 	import type { CccNode } from '$lib/types';
 
@@ -73,6 +75,32 @@
 		if (!Number.isFinite(from)) return '';
 		return from === to ? `¶${from}` : `¶${from}–${to ?? '?'}`;
 	}
+
+	/**
+	 * Which rows have their subsections showing.
+	 *
+	 * Replaces the `<details>`/"N subsections" summary line each row used to
+	 * carry. That line was itself a row — so a tree built to cut 396 rows down
+	 * to 99 was quietly adding one back for every article that had subsections,
+	 * and each said nothing but a count. The disclosure now lives in a button
+	 * in the row's own left gutter, where it costs no vertical space at all and
+	 * reads as part of the row rather than as an extra entry beneath it.
+	 *
+	 * Keyed by the same identity the `{#each}` uses, so two nodes that happen
+	 * to share a title (the CCC has several "In Brief"-adjacent repeats) can't
+	 * toggle each other.
+	 */
+	let expanded = $state(new SvelteSet<string>());
+
+	function nodeKey(node: CccNode): string {
+		return `${node.title}|${node.paragraphs.join('-')}`;
+	}
+
+	function toggle(node: CccNode) {
+		const key = nodeKey(node);
+		if (expanded.has(key)) expanded.delete(key);
+		else expanded.add(key);
+	}
 </script>
 
 <svelte:head>
@@ -92,11 +120,38 @@
 			{@const anchor = node.paragraphs[0]}
 			{@const details = detailChildren(node)}
 			{@const kids = outlineChildren(node)}
+			{@const label = kindOrdinalLabel(node, lang)}
+			{@const isOpen = expanded.has(nodeKey(node))}
 			<li class={`kind-${node.kind}`}>
 				<div class="row">
+					<!--
+						The gutter always occupies its width, whether or not this row
+						has a toggle, so every title in the tree starts at the same
+						x-position. Rows that jog left and right depending on whether
+						they happen to have subsections are harder to scan than the
+						empty space costs.
+					-->
+					{#if details.length > 0}
+						<button
+							type="button"
+							class="toggle"
+							class:open={isOpen}
+							aria-expanded={isOpen}
+							aria-label={`${isOpen ? t('ccc.hideSubsections') : t('ccc.showSubsections')}: ${dt.title}`}
+							onclick={() => toggle(node)}
+						>
+							<ChevronRight size={14} aria-hidden="true" />
+						</button>
+					{:else}
+						<span class="toggle-spacer" aria-hidden="true"></span>
+					{/if}
+
 					{#if Number.isFinite(anchor)}
 						<a class="row-title" href={`/ccc/${anchor}`}>
-							{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+							<!-- "Ch. 3" rather than a bare "3." — see kindOrdinalLabel's
+							     docblock for why four levels of identical ordinals was
+							     the problem worth spending a few characters on. -->
+							{#if label}<span class="kind-label">{label}</span>{/if}
 							{dt.title}
 						</a>
 					{:else}
@@ -104,29 +159,29 @@
 						     (docs/corpus-schema.md) — there is genuinely no paragraph
 						     number to link to, so this stays text. -->
 						<span class="row-title unlinked" title={t('ccc.noParagraphNumber')}>
-							{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+							{#if label}<span class="kind-label">{label}</span>{/if}
 							{dt.title}
 						</span>
 					{/if}
 					<span class="range">{rangeLabel(node)}</span>
 				</div>
 
-				{#if details.length > 0}
-					<details class="subs">
-						<summary>{details.length}&nbsp;{t('ccc.subsections')}</summary>
-						<ul>
-							{#each details as sub (sub.title + sub.paragraphs.join('-'))}
-								{@const sdt = displayTitle(sub, lang)}
-								<li>
-									<a href={`/ccc/${sub.paragraphs[0]}`}>
-										{#if sdt.ordinal}<span class="ordinal">{sdt.ordinal}</span>{/if}
-										{sdt.title}
-									</a>
-									<span class="range">{rangeLabel(sub)}</span>
-								</li>
-							{/each}
-						</ul>
-					</details>
+				{#if details.length > 0 && isOpen}
+					<ul class="subs">
+						{#each details as sub (sub.title + sub.paragraphs.join('-'))}
+							{@const sdt = displayTitle(sub, lang)}
+							<li>
+								<a href={`/ccc/${sub.paragraphs[0]}`}>
+									<!-- `sub` nodes carry roman-numeral list markers in their
+									     own titles ("I. The Desire for God"), which is why they
+									     get no kind label: they already number themselves. -->
+									{#if sdt.ordinal}<span class="kind-label">{sdt.ordinal}</span>{/if}
+									{sdt.title}
+								</a>
+								<span class="range">{rangeLabel(sub)}</span>
+							</li>
+						{/each}
+					</ul>
 				{/if}
 
 				{#if kids.length > 0}
@@ -171,9 +226,53 @@
 	.row {
 		display: flex;
 		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
+		gap: 0.4rem;
 		padding: 0.3rem 0;
+	}
+
+	/* Both are 1.15rem wide so titles line up whether or not a row can be
+	   expanded — see the markup comment on the gutter. */
+	.toggle,
+	.toggle-spacer {
+		flex: 0 0 1.15rem;
+		width: 1.15rem;
+		height: 1.15rem;
+	}
+
+	.toggle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		border: none;
+		background: transparent;
+		color: var(--color-text-muted);
+		cursor: pointer;
+		border-radius: 0.2rem;
+		/* Rotation rather than two icons: the transition makes the open/closed
+		   relationship visible instead of leaving the reader to notice that one
+		   glyph swapped for another. */
+		transition: transform 120ms ease;
+	}
+
+	.toggle:hover {
+		color: var(--color-accent);
+	}
+
+	.toggle.open {
+		transform: rotate(90deg);
+		color: var(--color-accent);
+	}
+
+	.toggle:focus-visible {
+		outline: 2px solid var(--color-focus-ring);
+		outline-offset: 1px;
+	}
+
+	/* Pushes the paragraph range to the row's end now that `.row` no longer
+	   uses space-between (the toggle gutter took the first slot). */
+	.range {
+		margin-inline-start: auto;
 	}
 
 	.row-title {
@@ -213,9 +312,16 @@
 		font-size: 0.95rem;
 	}
 
-	.ordinal {
+	/* Set in the sans face at a smaller size so it reads as a label attached
+	   to the title rather than as the title's first word. */
+	.kind-label {
+		font-family: var(--font-sans);
+		font-size: 0.72em;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
 		color: var(--color-text-muted);
-		margin-right: 0.35em;
+		margin-right: 0.45em;
+		white-space: nowrap;
 	}
 
 	.range {
@@ -225,27 +331,15 @@
 		font-variant-numeric: tabular-nums;
 	}
 
+	/* Indented to sit under the parent title, past the toggle gutter, so the
+	   subsections visibly belong to the row whose button revealed them. */
 	.subs {
-		margin: 0 0 0.35rem 0.2rem;
-		font-size: 0.9rem;
-	}
-
-	.subs summary {
-		cursor: pointer;
-		color: var(--color-text-muted);
-		font-size: 0.78rem;
-		list-style-position: outside;
-	}
-
-	.subs summary:hover {
-		color: var(--color-accent);
-	}
-
-	.subs ul {
 		list-style: none;
-		margin: 0.35rem 0 0;
+		margin: 0.1rem 0 0.5rem;
 		padding-inline-start: 0.9rem;
+		margin-inline-start: 1.5rem;
 		border-inline-start: 1px solid var(--color-border);
+		font-size: 0.9rem;
 	}
 
 	.subs li {

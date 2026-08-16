@@ -90,9 +90,25 @@
 	<h1>{t('nav.magisterium')}</h1>
 	<p class="tagline">{t('document.library.tagline')}</p>
 
+	<!--
+		Each pontificate collapses, and every one starts OPEN. Default-open
+		rather than default-closed because this is a library index: a reader
+		arriving here is browsing, and a page of nothing but closed headings
+		makes them work to see anything at all. The value is in being able to
+		fold away the pontificates you are not reading — Leo XIII alone runs to
+		dozens of encyclicals — not in hiding everything by default.
+
+		`<details open>` rather than component state: it needs no JavaScript,
+		it is keyboard- and screen-reader-correct for free, and browser
+		find-in-page can open a closed section to reveal a match. A page whose
+		whole purpose is finding a document should not break Ctrl+F.
+	-->
 	{#each groups as group (group.pontiff)}
-		<div class="doc-group">
-			<h2>{group.pontiff}</h2>
+		<details class="doc-group" open>
+			<summary>
+				<h2>{group.pontiff}</h2>
+				<span class="group-count">{group.rows.length}</span>
+			</summary>
 			<ul class="docs">
 				{#each group.rows as row (row.slug)}
 					<li>
@@ -125,7 +141,7 @@
 					</li>
 				{/each}
 			</ul>
-		</div>
+		</details>
 	{/each}
 </div>
 
@@ -140,13 +156,58 @@
 		margin-bottom: 1.75rem;
 	}
 
+	.doc-group summary {
+		display: flex;
+		align-items: baseline;
+		gap: 0.6rem;
+		cursor: pointer;
+		border-bottom: 1px solid var(--color-border);
+		padding-bottom: 0.4rem;
+		margin-bottom: 0.25rem;
+		/* The default triangle sits awkwardly against a serif heading and can't
+		   be styled consistently across browsers; `::before` below draws one
+		   that matches the rest of the site's disclosure affordances. */
+		list-style: none;
+	}
+
+	.doc-group summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.doc-group summary::before {
+		content: '▸';
+		color: var(--color-text-muted);
+		font-size: 0.8em;
+		transition: transform 120ms ease;
+		display: inline-block;
+	}
+
+	.doc-group[open] summary::before {
+		transform: rotate(90deg);
+	}
+
+	.doc-group summary:hover h2 {
+		color: var(--color-text);
+	}
+
 	.doc-group h2 {
 		font-family: var(--font-serif);
 		font-size: 1.05rem;
 		color: var(--color-text-muted);
-		border-bottom: 1px solid var(--color-border);
-		padding-bottom: 0.4rem;
-		margin: 0 0 0.25rem;
+		margin: 0;
+		display: inline;
+	}
+
+	/* How many documents are folded away when the section is closed — the one
+	   piece of information a collapsed heading can't otherwise give. */
+	.group-count {
+		margin-inline-start: auto;
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
+		border: 1px solid var(--color-border);
+		border-radius: 0.25rem;
+		padding: 0 0.35rem;
 	}
 
 	.docs {
