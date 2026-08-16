@@ -250,7 +250,67 @@ const DIVERGENT_MAPPERS: Record<string, (chapter: number, verse?: number) => { c
 		joel: mapJoel
 	};
 
-/** True for the OSIS codes this module has a real, corpus-verified divergence table for. */
+/**
+ * Late-merge point mappings — mirror of `versification.py`'s `_LATE_MERGE`;
+ * keep the two in step.
+ *
+ * The three books above diverge WHOLESALE: chapter boundaries move, so every
+ * reference into them needs converting and each has a mapper. A second, much
+ * narrower divergence exists too, and it does not deserve a mapper: a handful
+ * of individual chapters where the Vulgate MERGES two verses modern editions
+ * print separately, so the tail of that one chapter runs one or two ahead
+ * while the rest of the book agrees exactly.
+ *
+ * Recorded as explicit point mappings rather than per-chapter offset rules,
+ * because a point mapping cannot extrapolate. Every entry was verified by
+ * reading BOTH shipped editions at the target address and confirming the text
+ * is the passage the modern number names; `bible.cpdv.en` and
+ * `bible.matos-soares.pt` agree on all of them. Nothing is inferred from
+ * verse counts — a chapter being two verses short tells you an offset exists
+ * somewhere, never where it starts.
+ *
+ * WHY THIS MATTERS MORE THAN THE OUT-OF-RANGE VERSES THAT EXPOSED IT: these
+ * were found because CCC citations pointed past the end of a chapter (Acts
+ * 7:60 in a 59-verse Acts 7), which fails loudly. But the same offset means
+ * the verses just BEFORE it resolve to real, existing, wrong text — "Mt
+ * 17:24-27" was landing on Vulgate 17:24-26, one verse off for its whole
+ * length, and nothing would have complained. Hence an entry per cited verse,
+ * not only the one that overflowed.
+ */
+const LATE_MERGE = new Map<string, { chapter: number; verse: number }>([
+	// 2 Cor 13: the Vulgate joins modern 13:12/13, so the Trinitarian blessing
+	// closing the letter is 13:13 here. Cited by CCC 249, 734 and 2627.
+	['2cor:13:14', { chapter: 13, verse: 13 }],
+	// Zechariah 2: modern editions move Hebrew 2:1-4 up into chapter 1, so the
+	// chapter runs four verses ahead.
+	['zech:2:14', { chapter: 2, verse: 10 }],
+	// Exodus 40: offset by two across the chapter's tail.
+	['exod:40:34', { chapter: 40, verse: 32 }],
+	['exod:40:35', { chapter: 40, verse: 33 }],
+	['exod:40:36', { chapter: 40, verse: 34 }],
+	['exod:40:37', { chapter: 40, verse: 35 }],
+	['exod:40:38', { chapter: 40, verse: 36 }],
+	// Matthew 17: offset by one from the temple-tax episode onward.
+	['matt:17:24', { chapter: 17, verse: 23 }],
+	['matt:17:25', { chapter: 17, verse: 24 }],
+	['matt:17:26', { chapter: 17, verse: 25 }],
+	['matt:17:27', { chapter: 17, verse: 26 }],
+	// Acts 7: offset by one through the stoning of Stephen.
+	['acts:7:57', { chapter: 7, verse: 56 }],
+	['acts:7:58', { chapter: 7, verse: 57 }],
+	['acts:7:59', { chapter: 7, verse: 58 }],
+	['acts:7:60', { chapter: 7, verse: 59 }]
+]);
+
+/**
+ * True for the OSIS codes this module has a real, corpus-verified
+ * wholesale-divergence table for.
+ *
+ * Late-merge chapters are deliberately excluded: Matthew and Acts agree with
+ * modern numbering everywhere except one chapter's tail, and calling the whole
+ * book "divergent" would invite callers to treat every reference into them as
+ * needing conversion — `refs.ts` uses this predicate to decide exactly that.
+ */
 export function isDivergentBook(osis: string): boolean {
 	return osis in DIVERGENT_MAPPERS;
 }
@@ -273,7 +333,13 @@ export function isDivergentBook(osis: string): boolean {
 export function toVulgateCandidates(osis: string, chapter: number, verse?: number): VulgateAddress[] {
 	const mapper = DIVERGENT_MAPPERS[osis];
 	const candidates = mapper ? mapper(chapter, verse) : [{ chapter, verse }];
-	return candidates.map((c) => ({ osis, chapter: c.chapter, verse: c.verse }));
+	// Late merges apply AFTER the book mappers, and never to a whole-chapter
+	// reference (no verse to move). No book has both, so the ordering is a
+	// formality — stated so it stays one if a book ever acquires both.
+	return candidates.map((c) => {
+		const merged = c.verse !== undefined ? LATE_MERGE.get(`${osis}:${c.chapter}:${c.verse}`) : undefined;
+		return merged ? { osis, ...merged } : { osis, chapter: c.chapter, verse: c.verse };
+	});
 }
 
 /**

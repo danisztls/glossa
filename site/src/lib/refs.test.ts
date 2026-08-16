@@ -649,15 +649,16 @@ describe('refHref', () => {
 			).toBe('/bible/gen/1?v=11-13#v11');
 		});
 
-		it('omits the extent for divergent books, whose range ends may land in another chapter', () => {
-			// Psalms/Malachi/Joel convert verse by verse through the
-			// versification table; refparse.ts refuses to represent a range that
-			// crosses a split, and so does this.
-			const href = refHref(
-				{ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14, 15, 16], raw: 'Ps 22:14-16' },
-				{ bibleWorkId: 'bible.cpdv.en' }
-			);
-			expect(href).not.toContain('?v=');
+		it('converts the extent for a divergent book rather than dropping it', () => {
+			// Ps 22 is Vulgate Ps 21 with verse numbers unchanged, so the span
+			// survives conversion intact. Every verse is converted individually
+			// (not offset from the anchor), which is what makes this safe.
+			expect(
+				refHref(
+					{ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14, 15, 16], raw: 'Ps 22:14-16' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
+			).toBe('/bible/ps/21?v=14-16#v14');
 		});
 	});
 
@@ -699,7 +700,7 @@ describe('refHref', () => {
 		it('converts Joel across the chapter 2/3 fold ("Joel 3:1-5" -> Vulgate 2:28)', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'joel', chapter: 3, verses: [1, 2, 3, 4, 5], raw: 'Joel 3:1-5' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/joel/2#v28');
+			).toBe('/bible/joel/2?v=28-32#v28');
 		});
 
 		it('never leaves a whole-chapter Joel 3 pointing at the literal (unconverted, WRONG) Vulgate chapter 3, which trivially "exists" but means Hebrew Joel 4', () => {

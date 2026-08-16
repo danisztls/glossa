@@ -1247,10 +1247,24 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 	// not (see the module docblock's design principle) — so for these books
 	// the converted address IS "the reference as given", and the raw literal
 	// number is never tried on its own.
+	// Applied to EVERY book, not only the wholesale-divergent ones. It used to
+	// be gated on `isDivergentBook`, which was correct while conversion meant
+	// only the Psalms/Malachi/Joel chapter shifts — but versification.ts also
+	// carries LATE_MERGE, a table of individual chapters (Matthew 17, Acts 7,
+	// Exodus 40, Zechariah 2, 2 Corinthians 13) whose tails run one or two
+	// verses ahead of the Vulgate's. Those books are deliberately NOT
+	// "divergent", so gating here skipped them entirely and "Mt 17:24-27"
+	// linked to Vulgate 17:24-26 — one verse off for its whole length, and
+	// silently, since those verses all exist.
+	//
+	// Calling it unconditionally is safe by construction: for any address the
+	// module has no data for, conversion is the identity, and a no-op can
+	// never turn a correct address into a wrong one (see
+	// `toVulgateCandidates`' docblock, which says exactly this).
 	let chapterN = seg.chapter;
 	let anchorVerse: number | undefined;
 
-	if (isDivergentBook(seg.osis)) {
+	{
 		const firstVerse = seg.verses[0];
 		const withVerse =
 			firstVerse !== undefined ? resolveVulgate(seg.osis, seg.chapter, firstVerse, exists) : undefined;
@@ -1258,17 +1272,14 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 			chapterN = withVerse.chapter;
 			anchorVerse = withVerse.verse;
 		} else {
-			// Either no verse was given, or the mapped verse doesn't exist in
-			// this edition (e.g. a malformed source citation) — fall back to
-			// just placing the chapter, same "degrade rather than emit a dead
-			// anchor" behavior as the non-divergent path below.
+			// Either no verse was given, or the verse doesn't exist in this
+			// edition even after conversion (a malformed source citation, of
+			// which the CCC has a documented handful) — fall back to placing
+			// the chapter alone rather than emitting a dead anchor.
 			const chapterOnly = resolveVulgate(seg.osis, seg.chapter, undefined, exists);
-			if (!chapterOnly) return undefined; // the mapped chapter doesn't exist in this edition at all
+			if (!chapterOnly) return undefined; // the chapter doesn't exist in this edition at all
 			chapterN = chapterOnly.chapter;
 		}
-	} else {
-		if (!exists(seg.osis, chapterN)) return undefined;
-		anchorVerse = seg.verses[0] !== undefined && exists(seg.osis, chapterN, seg.verses[0]) ? seg.verses[0] : undefined;
 	}
 
 	const anchor = anchorVerse !== undefined ? `#v${anchorVerse}` : '';
@@ -1296,8 +1307,8 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 	 * single-verse citation is fully described by its anchor already.
 	 */
 	const extent =
-		anchorVerse !== undefined && seg.verses.length > 1 && !isDivergentBook(seg.osis)
-			? verseExtent(seg.verses, chapterN, seg.osis, exists)
+		anchorVerse !== undefined && seg.verses.length > 1
+			? verseExtent(seg.osis, seg.chapter, seg.verses, chapterN, exists)
 			: undefined;
 	const query = extent ? `?v=${extent.from}-${extent.to}` : '';
 
@@ -1309,28 +1320,43 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 }
 
 /**
- * The `{from, to}` span of a verse list, clamped to verses that actually
- * exist in the reader's edition.
+ * The `{from, to}` span of a verse list, CONVERTED to Vulgate numbering and
+ * clamped to verses that actually exist in the reader's edition.
  *
- * Clamping matters for the same reason the anchor is checked: 19 references
- * in `xrefs/ccc-bible.json` name a verse past the end of its chapter (see
- * the Bible chapter route for the measurement), and a highlight running to
- * verse 61 of a 52-verse chapter would simply highlight to the end while
- * claiming otherwise. Returns undefined when fewer than two of the verses
- * survive, since a one-verse span adds nothing to the anchor.
+ * Every verse is converted individually rather than the span's endpoints
+ * being offset by whatever the anchor moved: the late-merge tables
+ * (`versification.ts`) shift a chapter's tail but not its head, so a range
+ * straddling the merge point moves by different amounts at each end. "Mt
+ * 17:24-27" converts to 17:23-26; offsetting from the anchor alone would
+ * have produced 17:23-26 here by luck and the wrong answer for any range
+ * beginning before the merge.
  *
- * Divergent books (Psalms/Malachi/Joel) are excluded by the caller: their
- * verse numbers are converted one at a time through the versification
- * table, and a range's endpoints can land in different Vulgate chapters —
- * `refparse.ts` already refuses to represent that case, and so does this.
+ * Verses that don't survive conversion are dropped rather than guessed at,
+ * which is also what clamps the span: a handful of CCC citations name a
+ * verse past the end of its chapter (see the Bible chapter route for the
+ * measurement), and a highlight running to verse 61 of a 52-verse chapter
+ * would silently highlight to the end while claiming otherwise.
+ *
+ * A converted verse landing in a DIFFERENT chapter than the anchor is
+ * dropped too — a range crossing a Psalms/Malachi chapter split cannot be
+ * expressed as one span, and `refparse.ts` already refuses the same case
+ * rather than pointing at the wrong half.
+ *
+ * Returns undefined when fewer than two verses survive: a one-verse span
+ * adds nothing the anchor doesn't already say.
  */
 function verseExtent(
+	osis: string,
+	sourceChapter: number,
 	verses: number[],
 	chapterN: number,
-	osis: string,
 	exists: (osis: string, chapterN: number, verseN?: number) => boolean
 ): { from: number; to: number } | undefined {
-	const present = verses.filter((v) => exists(osis, chapterN, v));
+	const present: number[] = [];
+	for (const v of verses) {
+		const resolved = resolveVulgate(osis, sourceChapter, v, exists);
+		if (resolved?.verse !== undefined && resolved.chapter === chapterN) present.push(resolved.verse);
+	}
 	if (present.length < 2) return undefined;
 	return { from: Math.min(...present), to: Math.max(...present) };
 }

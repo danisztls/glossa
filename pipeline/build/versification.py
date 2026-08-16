@@ -149,8 +149,78 @@ _DIVERGENT_MAPPERS = {
 }
 
 
+# --------------------------------------------------------------------------
+# Late-merge point mappings
+# --------------------------------------------------------------------------
+#
+# The three books above diverge WHOLESALE: their chapter boundaries move, so
+# every reference into them needs converting and each has a mapper that knows
+# the shape of the shift. A second, much narrower kind of divergence exists
+# too, and it does not deserve a mapper: a handful of individual chapters
+# where the Vulgate MERGES two verses that modern editions print separately,
+# so the tail of that one chapter is offset by one or two and the rest of the
+# book agrees exactly.
+#
+# Those are recorded here as explicit point mappings rather than as
+# per-chapter offset rules, because a point mapping cannot extrapolate. Every
+# entry below was verified by reading BOTH shipped editions at the target
+# address and confirming the text is the passage the modern number names --
+# `bible.cpdv.en` and `bible.matos-soares.pt` agree on all of them, which is
+# the cross-language check docs/decisions.md relies on elsewhere. Nothing is
+# inferred from verse COUNTS: a chapter being two verses short tells you an
+# offset exists somewhere, never where it starts.
+#
+# WHY THIS MATTERS MORE THAN THE OUT-OF-RANGE VERSES THAT EXPOSED IT. These
+# were found because CCC citations pointed past the end of a chapter (Acts
+# 7:60 in a 59-verse Acts 7), which fails loudly. But the same offset means
+# the verses just BEFORE it resolve to real, existing, wrong text -- CCC's
+# "Mt 17:24-27" was landing on Vulgate 17:24-26, one verse off for its whole
+# length, and nothing anywhere would have complained. That is exactly the
+# failure docs/decisions.md's versification entry describes for the Psalms,
+# and it is why each cited verse gets its own verified entry rather than only
+# the one that happened to overflow.
+#
+# Applied unconditionally, like the mappers above, precisely BECAUSE the
+# literal address usually exists and is wrong. Restricting this to a fallback
+# for missing verses would fix only the loud half.
+_LATE_MERGE: dict[tuple[str, int, int], tuple[int, int]] = {
+    # 2 Cor 13: the Vulgate joins the modern 13:12/13, so the Trinitarian
+    # blessing that closes the letter is 13:13 here, not 13:14. Cited three
+    # times by the CCC (249, 734, 2627).
+    ("2cor", 13, 14): (13, 13),
+    # Zechariah 2: modern editions move Hebrew 2:1-4 up into chapter 1, so
+    # the whole chapter runs four verses ahead. "Sing praise and rejoice,
+    # daughter of Zion" is 2:10 here.
+    ("zech", 2, 14): (2, 10),
+    # Exodus 40: offset by two across the chapter's tail. Verified across the
+    # whole cited range and two verses beyond it in each direction.
+    ("exod", 40, 34): (40, 32),
+    ("exod", 40, 35): (40, 33),
+    ("exod", 40, 36): (40, 34),
+    ("exod", 40, 37): (40, 35),
+    ("exod", 40, 38): (40, 36),
+    # Matthew 17: offset by one from the temple-tax episode onward.
+    ("matt", 17, 24): (17, 23),
+    ("matt", 17, 25): (17, 24),
+    ("matt", 17, 26): (17, 25),
+    ("matt", 17, 27): (17, 26),
+    # Acts 7: offset by one through the stoning of Stephen.
+    ("acts", 7, 57): (7, 56),
+    ("acts", 7, 58): (7, 57),
+    ("acts", 7, 59): (7, 58),
+    ("acts", 7, 60): (7, 59),
+}
+
+
 def is_divergent_book(osis: str) -> bool:
-    """True for the OSIS codes this module has a real, corpus-verified divergence table for."""
+    """True for the OSIS codes this module has a real, corpus-verified divergence table for.
+
+    Covers the wholesale-divergence books only. The late-merge chapters are
+    deliberately excluded: Matthew and Acts agree with modern numbering
+    everywhere except one chapter's tail, and calling the whole book
+    "divergent" would invite callers to treat every reference into them as
+    needing conversion.
+    """
     return osis in _DIVERGENT_MAPPERS
 
 
@@ -163,6 +233,14 @@ def to_vulgate_candidates(osis: str, chapter: int, verse: int | None = None) -> 
     """
     mapper = _DIVERGENT_MAPPERS.get(osis)
     pairs = mapper(chapter, verse) if mapper else [(chapter, verse)]
+    # Late merges are applied AFTER the book mappers, and never to a
+    # whole-chapter reference (no verse to move). No book has both, so the
+    # ordering is a formality rather than a precedence rule -- stated here so
+    # it stays one if a book ever acquires both.
+    pairs = [
+        _LATE_MERGE.get((osis, c, v), (c, v)) if v is not None else (c, v)
+        for c, v in pairs
+    ]
     return [VulgateAddress(osis=osis, chapter=c, verse=v) for c, v in pairs]
 
 
@@ -268,3 +346,49 @@ def test_is_divergent_book() -> None:
     assert is_divergent_book("mal") is True
     assert is_divergent_book("joel") is True
     assert is_divergent_book("gen") is False
+
+
+# --- Late merges -----------------------------------------------------------
+#
+# Mirror of versification.test.ts's "late-merge chapters" suite; keep the two
+# in step. Every expectation was verified by reading the passage at the target
+# address in BOTH shipped editions, which agree on all of them.
+
+
+def test_late_merge_2cor_trinitarian_blessing() -> None:
+    # 2 Cor 13 has 13 verses in the Vulgate, 14 in modern editions.
+    assert to_vulgate_candidates("2cor", 13, 14) == [_addr("2cor", 13, 13)]
+
+
+def test_late_merge_zechariah_runs_four_ahead() -> None:
+    assert to_vulgate_candidates("zech", 2, 14) == [_addr("zech", 2, 10)]
+
+
+def test_late_merge_exodus_40_whole_cited_range() -> None:
+    assert to_vulgate_candidates("exod", 40, 36) == [_addr("exod", 40, 34)]
+    assert to_vulgate_candidates("exod", 40, 37) == [_addr("exod", 40, 35)]
+    assert to_vulgate_candidates("exod", 40, 38) == [_addr("exod", 40, 36)]
+
+
+def test_late_merge_covers_verses_that_exist_but_are_wrong() -> None:
+    # The point of the table. Acts 7:60 overflows a 59-verse chapter and fails
+    # loudly; 7:57-59 all exist and were silently resolving one verse early.
+    assert to_vulgate_candidates("acts", 7, 57) == [_addr("acts", 7, 56)]
+    assert to_vulgate_candidates("acts", 7, 60) == [_addr("acts", 7, 59)]
+    assert to_vulgate_candidates("matt", 17, 24) == [_addr("matt", 17, 23)]
+    assert to_vulgate_candidates("matt", 17, 27) == [_addr("matt", 17, 26)]
+
+
+def test_late_merge_leaves_the_rest_of_those_books_alone() -> None:
+    # The merge is confined to one chapter's tail; Matthew and Acts are not
+    # divergent books and must not be treated as such.
+    assert to_vulgate_candidates("matt", 5, 3) == [_addr("matt", 5, 3)]
+    assert to_vulgate_candidates("matt", 17, 1) == [_addr("matt", 17, 1)]
+    assert to_vulgate_candidates("acts", 2, 38) == [_addr("acts", 2, 38)]
+    assert to_vulgate_candidates("2cor", 13, 13) == [_addr("2cor", 13, 13)]
+    assert is_divergent_book("matt") is False
+    assert is_divergent_book("acts") is False
+
+
+def test_late_merge_leaves_whole_chapter_references_untouched() -> None:
+    assert to_vulgate_candidates("acts", 7) == [_addr("acts", 7, None)]

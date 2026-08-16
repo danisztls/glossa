@@ -297,3 +297,56 @@ describe('invariant: every mapped Psalm/Malachi/Joel address is within the real 
 		}
 	});
 });
+
+/**
+ * Late merges: individual chapters whose tails run ahead of the Vulgate's
+ * because the Vulgate joins two verses modern editions print separately.
+ *
+ * Every expectation here was verified by reading the passage at the target
+ * address in BOTH shipped editions — `bible.cpdv.en` and
+ * `bible.matos-soares.pt` agree on all of them. The table's own comments in
+ * `versification.ts` name the passage each mapping lands on.
+ */
+describe('toVulgateCandidates — late-merge chapters', () => {
+	it('maps the Trinitarian blessing closing 2 Corinthians', () => {
+		// 2 Cor 13 has 13 verses in the Vulgate, 14 in modern editions.
+		expect(toVulgateCandidates('2cor', 13, 14)).toEqual([{ osis: '2cor', chapter: 13, verse: 13 }]);
+	});
+
+	it('maps Zechariah 2, which modern editions run four verses ahead', () => {
+		expect(toVulgateCandidates('zech', 2, 14)).toEqual([{ osis: 'zech', chapter: 2, verse: 10 }]);
+	});
+
+	it('maps the whole cited range in Exodus 40', () => {
+		expect(toVulgateCandidates('exod', 40, 36)).toEqual([{ osis: 'exod', chapter: 40, verse: 34 }]);
+		expect(toVulgateCandidates('exod', 40, 37)).toEqual([{ osis: 'exod', chapter: 40, verse: 35 }]);
+		expect(toVulgateCandidates('exod', 40, 38)).toEqual([{ osis: 'exod', chapter: 40, verse: 36 }]);
+	});
+
+	it('maps verses that EXIST but are wrong, not only the one that overflowed', () => {
+		// This is the point of the table. Acts 7:60 overflows a 59-verse chapter
+		// and fails loudly; 7:57-59 all exist and were silently resolving one
+		// verse early. Same for Matthew 17:24-26 against 17:27.
+		expect(toVulgateCandidates('acts', 7, 57)).toEqual([{ osis: 'acts', chapter: 7, verse: 56 }]);
+		expect(toVulgateCandidates('acts', 7, 60)).toEqual([{ osis: 'acts', chapter: 7, verse: 59 }]);
+		expect(toVulgateCandidates('matt', 17, 24)).toEqual([{ osis: 'matt', chapter: 17, verse: 23 }]);
+		expect(toVulgateCandidates('matt', 17, 27)).toEqual([{ osis: 'matt', chapter: 17, verse: 26 }]);
+	});
+
+	it('leaves the rest of those books alone', () => {
+		// The merge is confined to one chapter's tail. Matthew and Acts are NOT
+		// divergent books, and treating them as such would corrupt every other
+		// reference into them.
+		expect(toVulgateCandidates('matt', 5, 3)).toEqual([{ osis: 'matt', chapter: 5, verse: 3 }]);
+		expect(toVulgateCandidates('matt', 17, 1)).toEqual([{ osis: 'matt', chapter: 17, verse: 1 }]);
+		expect(toVulgateCandidates('acts', 2, 38)).toEqual([{ osis: 'acts', chapter: 2, verse: 38 }]);
+		expect(toVulgateCandidates('2cor', 13, 13)).toEqual([{ osis: '2cor', chapter: 13, verse: 13 }]);
+		expect(isDivergentBook('matt')).toBe(false);
+		expect(isDivergentBook('acts')).toBe(false);
+	});
+
+	it('leaves whole-chapter references untouched', () => {
+		// No verse to move.
+		expect(toVulgateCandidates('acts', 7)).toEqual([{ osis: 'acts', chapter: 7, verse: undefined }]);
+	});
+});

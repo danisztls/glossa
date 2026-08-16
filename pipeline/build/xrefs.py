@@ -91,6 +91,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
 import re
 import sys
@@ -98,11 +99,21 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from versification import is_divergent_book, to_vulgate_candidates  # noqa: E402
+from versification import to_vulgate_candidates  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-INPUT_PATH = REPO_ROOT / "corpus/works/ccc.en/paragraphs.json"
-OUTPUT_PATH = REPO_ROOT / "corpus/xrefs/ccc-bible.json"
+
+# The corpus is gitignored and lives in ONE place (the main checkout), while
+# this script's own path follows whichever checkout is running it. Deriving
+# the corpus location from `__file__` therefore breaks the moment the script
+# runs from a git worktree, where `<worktree>/corpus` does not exist -- the
+# same trap `pipeline/scrapers/vatican_docs.py` hit and CLAUDE.md documents.
+#
+# `CORPUS_DIR` is the same override the site build already takes, so one
+# variable covers both halves of the pipeline.
+CORPUS_DIR = Path(os.environ.get("CORPUS_DIR") or REPO_ROOT / "corpus")
+INPUT_PATH = CORPUS_DIR / "works/ccc.en/paragraphs.json"
+OUTPUT_PATH = CORPUS_DIR / "xrefs/ccc-bible.json"
 
 # --------------------------------------------------------------------------
 # Canonical 73-book OSIS order (corpus-schema.md sec.Canonical book order).
@@ -711,9 +722,19 @@ def _map_ref_to_vulgate(ref: Ref) -> list[Ref]:
     its Hebrew numbering range (already-Vulgate input -- see
     `versification.py`), this is the identity: `[ref]` unchanged.
     """
-    if not is_divergent_book(ref.osis):
-        return [ref]
-
+    # No `is_divergent_book` gate. It used to short-circuit here, which was
+    # right while conversion meant only the Psalms/Malachi/Joel chapter
+    # shifts -- but versification.py also carries `_LATE_MERGE`, covering
+    # individual chapters (Matthew 17, Acts 7, Exodus 40, Zechariah 2,
+    # 2 Corinthians 13) whose tails run ahead of the Vulgate's. Those books
+    # are deliberately NOT "divergent", so the gate skipped them and this
+    # file emitted, for example, Acts 7:60 into a corpus whose Acts 7 ends
+    # at 59 -- and, worse, Acts 7:57-59 pointing one verse early at text
+    # that does exist, where nothing would ever complain.
+    #
+    # Removing the gate is safe by construction: for any address the module
+    # has no data for, `to_vulgate_candidates` is the identity, and a no-op
+    # cannot turn a correct address into a wrong one.
     if not ref.verses:
         return [
             Ref(osis=ref.osis, chapter=c.chapter, verses=[], cf=ref.cf)
@@ -847,6 +868,67 @@ def print_report(results: list[CitationResult], seed: int = 42) -> None:
 # --------------------------------------------------------------------------
 
 
+def check_against_corpus(xrefs: list[dict], edition: str = "bible.cpdv.en") -> list[str]:
+    """Every emitted reference that names a verse the corpus does not have.
+
+    THIS EXISTS BECAUSE THE CLASS IT CATCHES IS INVISIBLE OTHERWISE. A
+    citation pointing past the end of a chapter produces a dead anchor that
+    only surfaces when something downstream happens to check -- here, a
+    SvelteKit prerender with ``handleMissingId: 'fail'``, which is a long way
+    from the parser that emitted it and only runs against a full corpus
+    build. Sixteen such references shipped unnoticed until that build ran.
+
+    Seven of them turned out not to be defects at all but late-merge
+    versification (see versification.py's ``_LATE_MERGE``), which is now
+    handled. What remains is genuine source damage in the CCC's own printed
+    citations, and this reports rather than repairs it: per
+    docs/decisions.md's source-defect policy, a defect with no confidently
+    known correct value gets documented, never guessed at. "Dt 6:45" is
+    almost certainly the Shema at 6:4-5 with a lost hyphen -- but "almost
+    certainly" is not the standard for silently rewriting scripture
+    references, so it stays reported and unlinked.
+
+    Checked against one edition because both v1 editions share the Vulgate
+    versification this corpus canonicalizes on; a reference out of range in
+    CPDV is out of range in Matos Soares too.
+    """
+    books_dir = CORPUS_DIR / "works" / edition / "books"
+    if not books_dir.is_dir():
+        return []
+
+    problems: list[str] = []
+    cache: dict[str, dict[int, set[int]]] = {}
+
+    def chapters(osis: str) -> dict[int, set[int]]:
+        if osis not in cache:
+            path = books_dir / f"{osis}.json"
+            if not path.exists():
+                cache[osis] = {}
+            else:
+                book = json.loads(path.read_text(encoding="utf-8"))
+                cache[osis] = {
+                    c["n"]: {v["n"] for v in c["verses"]} for c in book.get("chapters", [])
+                }
+        return cache[osis]
+
+    for entry in xrefs:
+        for ref in entry["refs"]:
+            by_chapter = chapters(ref["osis"])
+            if not by_chapter:
+                continue  # book absent from this edition; not this check's business
+            verses = by_chapter.get(ref["chapter"])
+            if verses is None:
+                problems.append(f"CCC {entry['ccc']}: {ref['osis']} {ref['chapter']} — no such chapter")
+                continue
+            missing = [v for v in ref["verses"] if v not in verses]
+            if missing:
+                problems.append(
+                    f"CCC {entry['ccc']}: {ref['osis']} {ref['chapter']}:"
+                    f"{','.join(str(v) for v in missing)} — chapter ends at {max(verses)}"
+                )
+    return problems
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--report", action="store_true", help="print the QA report")
@@ -870,6 +952,23 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.report:
         print_report(results, seed=args.seed)
+
+    # Always run, report-mode or not, and always to stderr: this is the check
+    # whose absence let sixteen dead references ship. Deliberately does NOT
+    # fail the build — every survivor is a known source defect documented in
+    # docs/research/ccc-citation-defects.md, and a pipeline that refuses to
+    # run until someone fixes the Vatican's typesetting is a pipeline nobody
+    # can run. Loud and non-fatal is the right shape for "the source is
+    # wrong and we know it".
+    problems = check_against_corpus(xrefs)
+    if problems:
+        print(
+            f"\n{len(problems)} reference(s) point outside the corpus "
+            f"(known source defects — see docs/research/ccc-citation-defects.md):",
+            file=sys.stderr,
+        )
+        for p in problems:
+            print(f"  {p}", file=sys.stderr)
 
     return 0
 
