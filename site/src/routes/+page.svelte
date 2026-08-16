@@ -1,58 +1,91 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getWork, listBooks, listWorks, workIdToEdition } from '$lib/corpus';
+	import { content } from '$lib/content.svelte';
+	import { getWork, listBooks, listDocuments, workIdToEdition } from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
+	import { documentKindPluralLabel } from '$lib/document-labels';
 	import { listPositions, type ReadingPosition } from '$lib/reading-position';
 	import { t } from '$lib/i18n.svelte';
-	import type { WorkManifest, WorkType } from '$lib/types';
+	import type { DocumentManifest, WorkManifest, WorkType } from '$lib/types';
 
-	const works = listWorks();
+	// Every group below shows the reader's EFFECTIVE edition only — one entry
+	// per work, never one per language (2026-08-15 decision: with ~460 works
+	// across languages once the encyclical sweep finishes, listing every
+	// language for every work would roughly double this page and make it
+	// unusable). "Effective" is resolved the same way every reading route
+	// resolves it — through the content store (`content.workIdFor`/
+	// `content.documentLangFor`), never by filtering on `i18n.lang` directly —
+	// so a reader who has explicitly overridden an edition (e.g. reading the
+	// Portuguese Bible under an English interface) sees the edition they
+	// actually chose here too, not whatever the interface language implies.
+	const bibleWork = $derived.by(() => {
+		const id = content.workIdFor('bible');
+		return id ? getWork(id) : undefined;
+	});
+	const cccWork = $derived.by(() => {
+		const id = content.workIdFor('catechism');
+		return id ? getWork(id) : undefined;
+	});
+	const compendiumWork = $derived.by(() => {
+		const id = content.workIdFor('compendium');
+		return id ? getWork(id) : undefined;
+	});
 
-	// Library groups, in the same order as the header nav (Home is implicit
-	// — this page IS home) — six works across three types now instead of a
-	// flat two-work list, so the library reads as three shelves, not one.
-	//
-	// Deliberately NOT `[...new Set(works.map(w => w.type))]` or similar:
-	// the real corpus now also carries `vatii.*` (Vatican II documents,
-	// docs/corpus-schema.md §Documents, ~300 more encyclicals queued behind
-	// them) with `type: "document"` manifests — `listWorks()` returns those
-	// too. This fixed 3-type list is what keeps them off the home page
-	// until they have routes to open (no `/document/...` route exists yet);
-	// `workHref` below only handles the three types here, and `WorkType`
-	// itself doesn't include `"document"` (that manifest's `type` field
-	// only round-trips through the loose `as WorkManifest` cast in
-	// corpus-index.ts, same as before this corpus grew documents). Revisit
-	// this list, not the filtering approach, when documents get a route.
-	const GROUP_TYPES: WorkType[] = ['bible', 'catechism', 'compendium'];
-
-	function worksOfType(type: WorkType): WorkManifest[] {
-		return works.filter((w) => w.type === type);
+	function bibleHref(work: WorkManifest): string {
+		const books = listBooks(work.id);
+		const firstBook = books[0];
+		const firstChapter = firstBook?.chapters[0]?.n ?? 1;
+		return `/bible/${workIdToEdition(work.id)}/${firstBook?.osis ?? ''}/${firstChapter}`;
 	}
 
-	function groupHeading(type: WorkType): string {
-		if (type === 'bible') return t('nav.bible');
-		if (type === 'catechism') return t('nav.ccc');
-		return t('nav.compendium');
+	// Magisterium: one row per document FAMILY (docs/corpus-schema.md
+	// §Documents), not one row per document — 16 Vatican II texts today, with
+	// several hundred encyclicals already landing behind them
+	// (docs/research/vatican-documents.md §5's phased plan). A flat list at
+	// that size would swamp this page the same way one row per language
+	// would (see the note above) — instead each family collapses to one row
+	// with a count, linking into `/documents` where the full library actually
+	// lists them. The set of families shown is read off the corpus itself via
+	// `listDocuments()`, not a hardcoded list, so a new family appears here
+	// the moment its scrape lands, with no code change required.
+	interface MagisteriumRow {
+		family: string;
+		label: string;
+		count: number;
 	}
 
-	// Routed by work type, not by an if/else-with-fallback: a fallback here
-	// would silently misroute the next work type added (this bit Compendium
-	// when it first landed — it fell through the old `bible ? … : '/ccc'`
-	// check straight into the Catechism's landing page).
-	function workHref(work: WorkManifest): string {
-		switch (work.type) {
-			case 'bible': {
-				const books = listBooks(work.id);
-				const firstBook = books[0];
-				const firstChapter = firstBook?.chapters[0]?.n ?? 1;
-				return `/bible/${workIdToEdition(work.id)}/${firstBook?.osis ?? ''}/${firstChapter}`;
-			}
-			case 'catechism':
-				return '/ccc';
-			case 'compendium':
-				return '/compendium';
+	/**
+	 * A family-level display label. `vatii`'s 16 works all share one
+	 * `pontiff_or_council` ("Second Vatican Council") — when a family's
+	 * promulgator is uniform like that, using it verbatim gives a more
+	 * specific, more useful label than any generic kind name could. Once a
+	 * family's promulgators genuinely vary (every pontificate's encyclicals,
+	 * all under `family: "encyclical"`), there's no single name to borrow, so
+	 * this falls back to a pluralized `document_kind` label instead
+	 * ("Encyclicals") — see `$lib/document-labels.ts`.
+	 */
+	function familyLabel(docs: DocumentManifest[]): string {
+		const pontiffs = new Set(docs.map((d) => d.pontiff_or_council));
+		if (pontiffs.size === 1) return docs[0].pontiff_or_council;
+		return documentKindPluralLabel(docs[0].document_kind);
+	}
+
+	const magisteriumRows = $derived.by(() => {
+		const byFamily = new Map<string, DocumentManifest[]>();
+		for (const group of listDocuments()) {
+			// Effective-language filter, same principle as Bible/Catechism above:
+			// a document this reader has no edition of in their current
+			// (per-slug) effective language isn't counted here.
+			const manifest = group.manifests[content.documentLangFor(group.slug)];
+			if (!manifest) continue;
+			const list = byFamily.get(group.family);
+			if (list) list.push(manifest);
+			else byFamily.set(group.family, [manifest]);
 		}
-	}
+		return [...byFamily.entries()]
+			.map(([family, docs]) => ({ family, label: familyLabel(docs), count: docs.length }))
+			.sort((a, b) => b.count - a.count);
+	});
 
 	let positions: ReadingPosition[] = $state([]);
 
@@ -61,15 +94,18 @@
 	});
 
 	// One "continue reading" row per work TYPE (most recently touched
-	// edition of it), not one per exact edition: with two editions per type
-	// now on offer, a reader who has opened both the English and Portuguese
-	// Bible would otherwise get two separate Bible rows here, which reads as
-	// clutter rather than as two genuinely different shortcuts. `positions`
-	// is already sorted most-recent-first, so `.find` picks the latest.
+	// edition/document of it), not one per exact edition or exact document: a
+	// reader who has opened both the English and Portuguese Bible would
+	// otherwise get two separate Bible rows here, which reads as clutter
+	// rather than as two genuinely different shortcuts — the ~450 individual
+	// documents collapse the same way, to whichever one was read most
+	// recently. `positions` is already sorted most-recent-first, so `.find`
+	// picks the latest.
+	const CONTINUE_TYPES: WorkType[] = ['bible', 'catechism', 'compendium', 'document'];
 	const continueItems = $derived(
-		GROUP_TYPES.map((type) =>
-			positions.find((pos) => getWork(pos.workId)?.type === type)
-		).filter((pos): pos is ReadingPosition => pos !== undefined)
+		CONTINUE_TYPES.map((type) => positions.find((pos) => getWork(pos.workId)?.type === type)).filter(
+			(pos): pos is ReadingPosition => pos !== undefined
+		)
 	);
 </script>
 
@@ -91,30 +127,79 @@
 	<section aria-labelledby="library-heading">
 		<h2 id="library-heading">{t('home.works')}</h2>
 
-		{#each GROUP_TYPES as type (type)}
-			{@const groupWorks = worksOfType(type)}
-			{#if groupWorks.length > 0}
-				<div class="work-group" aria-labelledby={`group-${type}`}>
-					<h3 id={`group-${type}`}>{groupHeading(type)}</h3>
-					<ul class="works">
-						{#each groupWorks as work (work.id)}
-							<li>
-								<a href={workHref(work)} class="work-link">
-									<span class="work-title">{work.title}</span>
-									<span class="work-meta">{work.short_title} · {work.language}</span>
-								</a>
-								{#if work.type === 'bible'}
-									<p class="work-note">
-										{work.books.length} book{work.books.length === 1 ? '' : 's'}
-									</p>
-								{/if}
-								<p class="work-copyright">{copyrightLabel(work)}</p>
-							</li>
-						{/each}
-					</ul>
-				</div>
-			{/if}
-		{/each}
+		<!-- Bible: a single row, the reader's effective edition — see module
+		     docblock. Nested one level under its own group heading like
+		     Catechism/Magisterium below, even though it only ever has one row
+		     today, so a second Bible edition landing later (docs/decisions.md
+		     already anticipates more) doesn't need a structural change here. -->
+		{#if bibleWork}
+			<div class="work-group" aria-labelledby="group-bible">
+				<h3 id="group-bible">{t('nav.bible')}</h3>
+				<ul class="works">
+					<li>
+						<a href={bibleHref(bibleWork)} class="work-link">
+							<span class="work-title">{bibleWork.title}</span>
+							<span class="work-meta">{bibleWork.short_title} · {bibleWork.language}</span>
+						</a>
+						{#if bibleWork.type === 'bible'}
+							<p class="work-note">
+								{bibleWork.books.length} book{bibleWork.books.length === 1 ? '' : 's'}
+							</p>
+						{/if}
+						<p class="work-copyright">{copyrightLabel(bibleWork)}</p>
+					</li>
+				</ul>
+			</div>
+		{/if}
+
+		<!-- Catechism: two distinct WORKS (CCC and its Compendium) nested under
+		     one group heading — they're separate work types in the schema, but
+		     belong together conceptually, the way a book and its study guide
+		     would share a library shelf. -->
+		{#if cccWork || compendiumWork}
+			<div class="work-group" aria-labelledby="group-catechism">
+				<h3 id="group-catechism">{t('nav.ccc')}</h3>
+				<ul class="works">
+					{#if cccWork}
+						<li>
+							<a href="/ccc" class="work-link">
+								<span class="work-title">{cccWork.title}</span>
+								<span class="work-meta">{cccWork.short_title} · {cccWork.language}</span>
+							</a>
+							<p class="work-copyright">{copyrightLabel(cccWork)}</p>
+						</li>
+					{/if}
+					{#if compendiumWork}
+						<li>
+							<a href="/compendium" class="work-link">
+								<span class="work-title">{compendiumWork.title}</span>
+								<span class="work-meta">{compendiumWork.short_title} · {compendiumWork.language}</span>
+							</a>
+							<p class="work-copyright">{copyrightLabel(compendiumWork)}</p>
+						</li>
+					{/if}
+				</ul>
+			</div>
+		{/if}
+
+		<!-- Magisterium: one row per document FAMILY, not per document — see
+		     module docblock. Every row links into `/documents`, where the
+		     library actually breaks each family down. -->
+		{#if magisteriumRows.length > 0}
+			<div class="work-group" aria-labelledby="group-magisterium">
+				<h3 id="group-magisterium">{t('nav.magisterium')}</h3>
+				<ul class="works">
+					{#each magisteriumRows as row (row.family)}
+						<li>
+							<a href="/documents" class="work-link">
+								<span class="work-title">{row.label}</span>
+								<span class="work-meta">{row.count}</span>
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		{/if}
 	</section>
 </div>
 

@@ -44,7 +44,7 @@
 <span class={className}>
 	{#each segments as seg, i (i)}
 		{#if seg.kind === 'text'}{seg.text}{:else}
-			{@const href = refHref(seg, { bibleWorkId })}
+			{@const href = refHref(seg, { bibleWorkId, lang: effectiveLang })}
 			{#if href}
 				<a class="ref-link" {href}>{seg.raw}</a>
 			{:else}

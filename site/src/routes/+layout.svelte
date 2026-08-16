@@ -22,7 +22,11 @@
 		{ href: '/', key: 'nav.home' },
 		{ href: '/bible', key: 'nav.bible' },
 		{ href: '/ccc', key: 'nav.ccc' },
-		{ href: '/compendium', key: 'nav.compendium' }
+		{ href: '/compendium', key: 'nav.compendium' },
+		// Route path stays `/documents` (docs/corpus-schema.md §Documents'
+		// naming); the displayed label is "Magisterium" — see the
+		// `nav.magisterium` dictionary entry for why they're allowed to differ.
+		{ href: '/documents', key: 'nav.magisterium' }
 	] as const;
 
 	// A section is "active" for its whole subtree (`/bible/...` counts as

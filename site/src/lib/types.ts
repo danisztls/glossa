@@ -22,7 +22,7 @@ export interface Copyright {
 	notice: string | null;
 }
 
-export type WorkType = 'bible' | 'catechism' | 'compendium';
+export type WorkType = 'bible' | 'catechism' | 'compendium' | 'document';
 
 /** Bare language subtag the corpus ships content in (see `baseLang` in corpus.ts). */
 export type ContentLang = 'en' | 'pt';
@@ -57,7 +57,30 @@ export interface CompendiumManifest extends WorkManifestBase {
 	type: 'compendium';
 }
 
-export type WorkManifest = BibleManifest | CatechismManifest | CompendiumManifest;
+export type DocumentKind =
+	| 'conciliar-constitution'
+	| 'conciliar-decree'
+	| 'conciliar-declaration'
+	| 'encyclical'
+	| 'apostolic-exhortation'
+	| 'apostolic-constitution'
+	| 'cdf-declaration'
+	// The schema (docs/corpus-schema.md §Documents) deliberately leaves this
+	// open-ended ("…") rather than a closed enum -- a future family this
+	// union hasn't been extended for yet should still type-check as a valid
+	// document, not force a corpus-wide manifest cast at the ingestion site.
+	| (string & {});
+
+export interface DocumentManifest extends WorkManifestBase {
+	type: 'document';
+	document_kind: DocumentKind;
+	/** e.g. "Second Vatican Council", "John Paul II", "Congregation for the Doctrine of the Faith". */
+	pontiff_or_council: string;
+	/** The document's own promulgation date (ISO 8601 date) -- distinct from `sources[].retrieved_at`. */
+	promulgated: IsoDate;
+}
+
+export type WorkManifest = BibleManifest | CatechismManifest | CompendiumManifest | DocumentManifest;
 
 export interface VerseNote {
 	marker: string;
@@ -198,4 +221,28 @@ export interface ScriptureRef {
 export interface CccBibleXref {
 	ccc: number;
 	refs: ScriptureRef[];
+}
+
+// --- Documents (encyclicals, conciliar texts, curial documents) ------------
+//
+// docs/corpus-schema.md §Documents: `structure.json` reuses `StructureNode`
+// (the CCC/Compendium tree shape) verbatim -- `.paragraphs` holds document
+// SECTION numbers here, a third meaning for that one generic field name (CCC
+// paragraph numbers, Compendium question numbers, now document section
+// numbers). `sections.json` reuses the CCC's `blocks`/`text_marked`/
+// `citations`/`text` block model exactly (`CccBlock`/`CccCitation` below are
+// literally the same wire shape, not just similar), which is what lets
+// `CccParagraphText.svelte` render a `DocumentSection` with no changes to
+// its own type beyond the widened prop signature it already documents.
+
+export interface DocumentSection {
+	n: number;
+	blocks: CccBlock[];
+	/** Derived: all blocks joined, markers stripped, spaces normalized. */
+	text: string;
+	citations: CccCitation[];
+	// No `related` (no marginal cross-reference apparatus in any document
+	// family sampled) and no `in_brief` (a CCC-only summarization device) --
+	// both deliberately absent rather than carried as permanently-empty
+	// fields, per corpus-schema.md's own note on this shape.
 }

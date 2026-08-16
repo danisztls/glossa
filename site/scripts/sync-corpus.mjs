@@ -20,11 +20,15 @@
  *   one-file-per-book (73/edition, matching the print volume's own
  *   granularity), CCC paragraphs split into fixed 100-paragraph chunks (29
  *   chunks/language — shipping the 3.5 MB/language `paragraphs.json` whole
- *   would put a >500 KB gzipped file behind a single `¶1` visit), and the
+ *   would put a >500 KB gzipped file behind a single `¶1` visit), the
  *   Compendium kept whole per language (only ~90 KB gzipped total, no split
- *   needed). Globbed with Vite's `{ query: '?url' }` by `corpus.ts` — each
- *   file becomes its own content-hashed build asset, `fetch()`-ed only by
- *   the page(s) that need it, cacheable forever (immutable content).
+ *   needed), and documents (docs/corpus-schema.md §Documents) also kept
+ *   whole per work — the largest is ~200 KB raw (Gaudium et Spes), well
+ *   under the Compendium's own no-split precedent, so one `sections.json`
+ *   per work is the whole content file rather than a chunk. Globbed with
+ *   Vite's `{ query: '?url' }` by `corpus.ts` — each file becomes its own
+ *   content-hashed build asset, `fetch()`-ed only by the page(s) that need
+ *   it, cacheable forever (immutable content).
  *
  * See `docs/corpus-schema.md` for the *source* shapes this reads, and
  * `corpus.ts`'s docblock for how the site consumes what this script writes.
@@ -97,6 +101,11 @@ const manifests = {}; // workId -> manifest.json, verbatim (every work type, inc
 const bibleIndex = {}; // workId -> { books: BibleBookMeta[] }
 const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
 const compendiumIndex = {}; // lang -> { structure }
+const documentIndex = {}; // workId -> { structure, sectionNumbers } -- keyed by WORK ID, not lang: unlike
+// the CCC/Compendium (one canonical work per language), each document work id
+// (`{family}.{slug}.{lang}`) is its own independent work with its own section
+// count and its own structure tree -- there is no single "the document tree
+// for English" the way there's a single CCC tree for English.
 /** [{ workId, kind, relPath, bytes }] — relPath matches the key `corpus.ts`
  *  derives from Vite's glob path (see `contentKeyFromGlobPath`), so the two
  *  can be joined at runtime without a second copy of the byte counts. */
@@ -198,17 +207,44 @@ for (const workId of workIds) {
 		continue;
 	}
 
-	// Any other work family (e.g. `vatii.*` documents, docs/corpus-schema.md
-	// §Documents — not yet consumed by any route): manifest only, so
-	// `listWorks()` keeps seeing it without this script needing to know its
-	// content shape. Matches the pre-2026-08-15 glob-everything behaviour,
-	// which never filtered by work type either.
+	// Documents (docs/corpus-schema.md §Documents: `{family}.{slug}.{lang}`
+	// work ids — `vatii.lumen-gentium.en`, future `encyclical.*`/`cdf.*`/…).
+	// Branches on `manifest.type`, not a `workId.startsWith(...)` prefix list
+	// like the three cases above: the family segment varies (vatii today,
+	// encyclical/apost-exhort/apost-const/cdf later per the schema), but
+	// every one of them is `type: "document"` and shares one content shape,
+	// so there's exactly one branch to maintain as more families land.
+	if (manifest.type === 'document') {
+		const structure = readJson(path.join(workDir, 'structure.json'));
+		const sections = readJson(path.join(workDir, 'sections.json'));
+		// Section EXISTENCE only, mirroring `cccParagraphNumbers` — the index
+		// tier never carries section TEXT, so `documentSectionExists`/
+		// adjacency in corpus.ts stay synchronous.
+		documentIndex[workId] = { structure, sectionNumbers: sections.map((s) => s.n).sort((a, b) => a - b) };
+
+		// Kept WHOLE per work rather than chunked (see this module's docblock)
+		// — at ~200 KB raw worst-case this is comfortably inside the
+		// Compendium's own no-split precedent, and a document's own internal
+		// structure (chapters/parts) already gives the reader a TOC to jump
+		// through instead of a flat 1..N list, so chunk-boundary UX (the CCC's
+		// reason to split) doesn't apply here.
+		const relPath = `content/${workId}/sections.json`;
+		writeJson(path.join(destDir, relPath), sections);
+		contentManifest.push({ workId, kind: 'document-sections', relPath, bytes: byteLength(sections) });
+		continue;
+	}
+
+	// Any other work type this script doesn't yet know the content shape of:
+	// manifest only, so `listWorks()` keeps seeing it without this script
+	// needing to know its content shape. Matches the pre-2026-08-15
+	// glob-everything behaviour, which never filtered by work type either.
 }
 
 writeJson(path.join(indexDir, 'manifests.json'), manifests);
 writeJson(path.join(indexDir, 'bible-index.json'), bibleIndex);
 writeJson(path.join(indexDir, 'ccc-index.json'), cccIndex);
 writeJson(path.join(indexDir, 'compendium-index.json'), compendiumIndex);
+writeJson(path.join(indexDir, 'document-index.json'), documentIndex);
 
 let xrefsSynced = false;
 if (existsSync(xrefsSrc)) {
@@ -220,7 +256,14 @@ if (existsSync(xrefsSrc)) {
 
 writeJson(path.join(indexDir, 'content-manifest.json'), contentManifest);
 
-const indexBytes = ['manifests.json', 'bible-index.json', 'ccc-index.json', 'compendium-index.json', 'xrefs.json']
+const indexBytes = [
+	'manifests.json',
+	'bible-index.json',
+	'ccc-index.json',
+	'compendium-index.json',
+	'document-index.json',
+	'xrefs.json'
+]
 	.map((f) => path.join(indexDir, f))
 	.filter(existsSync)
 	.reduce((sum, p) => sum + readFileSync(p).length, 0);

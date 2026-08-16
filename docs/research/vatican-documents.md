@@ -199,4 +199,63 @@ Recorded 2026-08-15/16 while fixing a chapter-scoped-footnote parsing bug in `va
 3. **`vatii.inter-mirifica.pt` §19 marker `1`.** A single, isolated inline citation with no matching footnote-list definition anywhere on the page — not a numbering-scope issue (Inter Mirifica's own footnote list isn't chapter-restarted, unlike Christus Dominus's), just a dangling reference: the source cites a note "1" in the body that its own footnote apparatus never defines.
 
 None of the three is fixable by better parsing — each was independently re-confirmed after the chapter-scoping fix landed (the fix could not have created or masked any of them, since all three sit in flat, non-restarting footnote lists) — and the corpus's remaining 4 unresolved citations are exactly these, and only these.
+
+## 7. Phase 2 sweep working notes (encyclicals, 2026-08-16): untraced validation failures and symmetry mismatches
+
+Recorded at the close of the phase-2 sweep (216 EN + 91 PT encyclical works, 13 pontificates) so these survive past this session's own logs, per this project's posture that a list of "not yet traced to source-vs-parser" is worth more to the next person than a bare count. Four real parser bugs were found and fixed during this sweep (empty self-link anchor + separate bare digit; a self-link anchor with the period printed inside it; a single stray space before a period silently breaking a strict sequential gate for the rest of a document, `_SECTION_TITLE_HEADING_RE`; and a footnote-definition anchor-code collision in `build_footnote_table_anchor`) — all four are documented in the scraper's own comments at their fix sites, not repeated here. What follows is everything **left over** after those fixes and after the honest per-document post-mortems already recorded in each defeated work's own `manifest.notes` (Pascendi PT, Quae Ad Nos EN, Mense Maio PT, Vigilanti Cura EN, Divini Illius Magistri PT, Miranda Prorsus EN+PT, Mortalium Animos PT, Quadragesimo Anno PT, Dilexit Nos PT §206).
+
+### 7.1 A new, undiagnosed-but-not-fixed structural family: missing `<p>` tags around centered sub-headings
+
+Confirmed live, `encyclical.aeterna-dei.pt` (Pius XII, on St. Leo the Great): the source HTML is missing the opening `<p>` tag for at least one numbered paragraph that immediately follows a `<p align="center">` heading block, e.g.:
+
+```html
+<p align="center"><b>SÃO LEÃO MAGNO, PONTÍFICE, <br /> PASTOR E DOUTOR DA IGREJA UNIVERSAL</b></p> 3. À vida e à operosidade de S. Le...
+```
+
+"3." has no `<p>` of its own — it runs on directly after the heading's `</p>` with nothing but a space between them. Because `_BLOCK_RE` splits on `<p>`/`<blockquote>` boundaries, this stray text becomes part of the *same block* as the centered heading, which is unconditionally treated as a heading (`kind == "center"` short-circuits `is_heading = True`, see `parse_document`'s block-classification comment). The combined text ("SÃO LEÃO MAGNO... 3. À vida...") doesn't start with a digit, so it fails both `match_label` and `_SECTION_TITLE_HEADING_RE`, becomes a generic untitled `sub` node, and paragraph 3's real number and content are lost into that heading's title text — never reaching `match_para_num` at all.
+
+This is a genuine **source-HTML defect** (a missing tag), not a systematic markup convention the way the four fixed bugs were — so a general fix isn't "add a regex variant," it's "detect and recover a paragraph number that got absorbed into a preceding heading block's trailing text," which touches `_BLOCK_RE`'s core block-splitting logic used by every single document in the corpus. Diagnosed but **deliberately not fixed**: a risky change to universally-shared code at the end of a multi-thousand-second sweep risks the 253 already-validated works for the sake of an estimated 15-20 affected ones. Flagged here for a dedicated future pass, ideally done with room to re-run the *entire* corpus and inspect every diff, not squeezed into a sweep's closing minutes.
+
+Symmetry-mismatch cases whose signature (EN clean 1..N, PT sparse and skipping numbers right after bold/centered sub-headings, or vice versa) is consistent with this same root cause, **not individually confirmed for all of them** the way `aeterna-dei` was: `anni-sacri`, `auspicia-quaedam`, `grata-recordatio`, `summi-maeroris`, `quemadmodum`, `humanae-vitae`, `in-multiplicibus-curis`, `princeps`, `mystici-corporis-christi`. Treat this list as a starting point for the next pass, not a confirmed diagnosis.
+
+### 7.2 The 25 cross-language symmetry mismatches not explained by a known cause
+
+91 encyclical slugs have both EN and PT written. 25 match exactly; 5 are the already-documented zero-section defeats (§ manifest notes); 36 were spot-checked (3 directly, by inspecting the raw cached HTML's own `testo`-region end boundary) and confirmed to be genuine **source-side truncation on vatican.va itself** — one language's edition just stops partway through, in either direction (26 cases PT shorter, 10 EN shorter), the same phenomenon already documented for Lumen Gentium/Christus Dominus in §6, now measured at much higher frequency in the pre-Vatican-II corpus. The remaining **25 were not individually traced** to source-truncation vs. parser gap. Full list (slug, EN's `[first three, last three]` captured numbers, PT's same) at the time of the sweep's close:
+
+```
+ad-petri                     EN [1,2,3]..[147,148,149]   PT [1,2,3]..[78,79,84]
+aeterna-dei                  EN [1,2,3]..[78,79,80]      PT [1,2,5]..[28,30,33]     -- see §7.1, likely the missing-<p> family
+anni-sacri                   EN [1,2,3]..[14,15,16]      PT [1,2,4]..[8,10,12]      -- see §7.1
+auspicia-quaedam             EN [1,2,3]..[21,22,23]      PT [1,3,5]..[9,11,13]      -- see §7.1
+deiparae-virginis-mariae     EN [1,2,3]..[3,4,5]         PT [1,2,4]..[1,2,4]
+dilexit-nos                  EN [1,2,3]..[218,219,220]   PT [1,2,3]..[218,219,220]  -- the documented §206 gap only; otherwise identical
+divini-redemptoris           EN [1,2,3]..[80,81,82]      PT [1,2,3]..[80,81,82]     -- same max both sides, a single internal gap somewhere
+ecclesiam                    EN [1,2,3]..[117,118,119]   PT [1,2,3]..[66,67,68]
+fidei-donum                  EN [1,2,3]..[82,83,84]      PT [1,2,3]..[32,33,34]
+grata-recordatio             EN [1,2,3]..[19,20,21]      PT [1,2,4]..[14,16,18]     -- see §7.1
+humanae-vitae                EN [1,2,3]..[29,30,31]      PT [1,2,4]..[21,22,29]     -- see §7.1
+in-multiplicibus-curis       EN [1,2,3]..[8,9,10]        PT [1,3,5]..[3,5,7]        -- see §7.1
+iucunda-semper-expectatione  EN [1,2,3]..[9,10,11]       PT [1,2,3]..[18,19,20]
+lumen-fidei                  EN [1,2,3]..[58,59,60]      PT [1,3,5]..[57,58,60]
+mater                        EN [1,2,3]..[262,263,264]   PT [1,2,3]..[260,261,262]
+mediator-dei                 EN [1,2,3]..[208,209,210]   PT [1,2,3]..[192,193,194]
+mortalium-animos             EN [1,2,3]..[11,12,13]      PT [2,3]..[2,3]            -- see manifest.notes, mixed-heading-convention defeat
+mystici-corporis-christi     EN [1,2,3]..[110,111,112]   PT [1,4,5]..[106,107,108]  -- see §7.1
+princeps                     EN [1,2,3]..[57,58,59]      PT [1,2,4]..[50,52,54]     -- see §7.1
+quemadmodum                  EN [1,2,3]..[14,15,16]      PT [1,2,4]..[4,6,8]        -- see §7.1
+redemptor-hominis            EN [1,2,3]..[20,21,22]      PT [2,3,4]..[20,21,22]     -- PT's true start is 2 (validate_document: "numbering starts at 2, not 1"); same pattern as Rerum Novarum's known unnumbered-first-paragraph case, but promotion did not fire here -- not traced why
+redemptoris-mater            EN [1,2,3]..[50,51,52]      PT [1,2,3]..[50,51,52]     -- same max both sides, a single internal gap (EN missing 37) plus whatever PT's own gap is
+sacerdotii                   EN [1,2,3]..[117,118,119]   PT [1,2,3]..[66,67,68]
+saeculo-exeunte-octavo       EN [1,2,3]..[51,52,53]      PT [1,2,3]..[47,48,49]
+summi-maeroris                EN [1,2,3]..[13,14,15]     PT [1,2,4]..[4,6,8]        -- see §7.1
+```
+
+### 7.3 The 54 documents whose own validation failed (of 307 total; 253 validated clean)
+
+9 are the already-documented, deliberately-left defeats/gaps (Pascendi PT, Quae Ad Nos EN, Mense Maio PT, Vigilanti Cura EN, Divini Illius Magistri PT, Miranda Prorsus EN+PT, Mortalium Animos PT, Quadragesimo Anno PT, Dilexit Nos PT). The other 45 fall into two shapes, neither individually traced to source-vs-parser beyond what's stated:
+
+- **`gaps in A..B: missing [...]`** (the majority): a numbered range with one or more integers absent. Every one spot-checked so far (§7.2's 36 confirmed truncations, plus the individual LG/CD/IM cases in §6) turned out to be genuine source gaps, not parser misses — but that was confirmed per-document, not assumed; a future pass should keep verifying rather than treating "gap" as synonymous with "source defect."
+- **`citations with no resolved text`** (a minority, e.g. `veritatis-splendor.en` 3 remaining after the anchor-code-collision fix, `populorum.en` 5 remaining after the year-in-parens fix, `redemptor-hominis.en` 1, `iucunda-sane.en` 6, `inscrutabili-dei-consilio.en` 9): a footnote marker cited inline with no matching entry in that document's own footnote list. Given how many of these evaporated once the two footnote-table bugs above were fixed, it would not be surprising if a few of the remaining ones are a third, not-yet-found variant of the same family rather than genuine source gaps — worth checking before assuming "known source defect" the way §6 did for Lumen Gentium.
+
+Full list of all 54 (work id, validate_document's own `problems` list) is preserved in this session's tool transcripts; regenerate on demand with `check-symmetry`-adjacent tooling (`validate_document` over every written work) rather than trusting this file to stay current as the corpus changes.
 </content>

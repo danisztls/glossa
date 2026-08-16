@@ -59,9 +59,36 @@ const { mockBibleBooks } = vi.hoisted(() => {
 	return { mockBibleBooks: books };
 });
 
+/**
+ * Fake document registry for `refHref`'s document-linking tests: two slugs,
+ * one available in both EN/PT ("gaudium-et-spes", mirroring the real
+ * `vatii.gaudium-et-spes.{en,pt}` pair — section 19 stands in for the real
+ * corpus's own GS §19, the CCC 27 citation `docs/link-surface.md` predicted
+ * this feature would resolve) and one EN-only ("dei-verbum") to exercise the
+ * "target section doesn't exist in the reader's effective language" path
+ * without needing the real corpus.
+ */
+const mockDocumentSections: Record<string, Partial<Record<string, number[]>>> = {
+	'gaudium-et-spes': { en: [1, 2, 19, 20], pt: [1, 2, 19, 20] },
+	'dei-verbum': { en: [1, 2, 3] }
+};
+
 vi.mock('./corpus', () => ({
 	findBookByAbbrev: (workId: string, abbrev: string) => mockBibleBooks[workId]?.[abbrev.toLowerCase()],
-	workIdToEdition: (workId: string) => workId.replace(/^bible\./, '')
+	workIdToEdition: (workId: string) => workId.replace(/^bible\./, ''),
+	getDocumentGroup: (slug: string) => {
+		const byLang = mockDocumentSections[slug];
+		if (!byLang) return undefined;
+		const manifests: Record<string, { id: string }> = {};
+		for (const lang of Object.keys(byLang)) manifests[lang] = { id: `vatii.${slug}.${lang}` };
+		return { slug, family: 'vatii', manifests };
+	},
+	documentSectionExists: (workId: string, n: number) => {
+		const m = /^vatii\.([a-z-]+)\.([a-z]+)$/.exec(workId);
+		if (!m) return false;
+		const [, slug, lang] = m;
+		return mockDocumentSections[slug]?.[lang]?.includes(n) ?? false;
+	}
 }));
 
 /** Convenience: just the non-text segments, dropping `raw`/`text` noise for terse assertions. */
@@ -78,7 +105,14 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 			{ kind: 'text', text: '; ' },
 			{ kind: 'scripture', osis: 'luke', chapter: 21, verses: [24], raw: 'Lk 21:24' },
 			{ kind: 'text', text: '; ' },
-			{ kind: 'document', sigla: 'DV', locus: '3', expansion: expect.stringContaining('Dei Verbum'), raw: 'DV 3' },
+			{
+				kind: 'document',
+				sigla: 'DV',
+				locus: '3',
+				expansion: expect.stringContaining('Dei Verbum'),
+				slug: 'dei-verbum',
+				raw: 'DV 3'
+			},
 			{ kind: 'text', text: '.' }
 		]);
 	});
@@ -209,11 +243,23 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 		expect(jude).toMatchObject({ chapter: 1, verses: [24, 25] });
 	});
 
-	it('parses a document siglum with a locus and expansion', () => {
+	it('parses a document siglum with a locus and expansion, resolved to its ingested slug', () => {
 		const segs = parseRefs('GS 19 # 1.');
 		expect(segs).toContainEqual(
-			expect.objectContaining({ kind: 'document', sigla: 'GS', locus: '19 # 1', raw: 'GS 19 # 1' })
+			expect.objectContaining({
+				kind: 'document',
+				sigla: 'GS',
+				locus: '19 # 1',
+				slug: 'gaudium-et-spes',
+				raw: 'GS 19 # 1'
+			})
 		);
+	});
+
+	it('recognizes a document siglum with no ingested slug behind it (DS is not in the corpus)', () => {
+		const segs = parseRefs('Cf. Council of Trent (1546): DS 1514; cf. Col 1:12-14.');
+		const ds = segs.find((s) => s.kind === 'document' && s.sigla === 'DS');
+		expect(ds).toMatchObject({ slug: null });
 	});
 
 	it('keeps unrecognized document-shaped prose entirely as text, no data lost', () => {
@@ -306,11 +352,20 @@ describe('parseRefs — citation-clause grammar (PT)', () => {
 		expect(segs.some((s) => s.kind === 'scripture' && s.osis === 'rom')).toBe(false);
 	});
 
-	it('recognizes the PT-specific document siglum meaning (SC = Sources Chrétiennes, not Sacrosanctum Concilium)', () => {
+	it('recognizes the PT-specific document siglum meaning (SC = Sources Chrétiennes, not Sacrosanctum Concilium) and never resolves it to a slug', () => {
 		const segs = parseRefs('Santo Ireneu de Lião, Adversus haereses I. 10, 1-2: SC 264, 154-158.', { lang: 'pt' });
-		const doc = segs.find((s) => s.kind === 'document' && s.sigla === 'SC');
+		const doc = segs.find((s) => s.kind === 'document' && s.sigla === 'SC') as
+			| Extract<RefSegment, { kind: 'document' }>
+			| undefined;
 		expect(doc).toBeTruthy();
-		expect((doc as Extract<RefSegment, { kind: 'document' }>).expansion).toContain('Sources Chrétiennes');
+		expect(doc?.expansion).toContain('Sources Chrétiennes');
+		// PT's config never maps ANY siglum to a slug (DOCUMENT_SLUGS_EN's own
+		// docblock) — critically including "SC", which in EN IS a linkable
+		// document (Sacrosanctum Concilium). A shared/leaky slug table here
+		// would silently mislink this PT patristics citation into the
+		// conciliar constitution; `slug: null` (and, in the `refHref` describe
+		// block below, an actually-unlinked href) is what proves it doesn't.
+		expect(doc?.slug).toBeNull();
 	});
 });
 
@@ -415,9 +470,93 @@ describe('refHref', () => {
 		expect(refHref({ kind: 'compendium', n: 42, raw: '42' }, {})).toBe('/compendium/42');
 	});
 
-	it('never links a document segment', () => {
+	it('never links a document segment with no ingested slug (DS 1514 must stay unlinked)', () => {
 		expect(
-			refHref({ kind: 'document', sigla: 'DV', locus: '3', expansion: 'Dei Verbum', raw: 'DV 3' }, {})
+			refHref(
+				{ kind: 'document', sigla: 'DS', locus: '1514', expansion: 'Denzinger', slug: null, raw: 'DS 1514' },
+				{ lang: 'en' }
+			)
+		).toBeUndefined();
+	});
+
+	it('links a document segment whose slug + section exist in the reader\'s effective language', () => {
+		expect(
+			refHref(
+				{
+					kind: 'document',
+					sigla: 'GS',
+					locus: '19',
+					expansion: 'Gaudium et Spes',
+					slug: 'gaudium-et-spes',
+					raw: 'GS 19'
+				},
+				{ lang: 'en' }
+			)
+		).toBe('/documents/gaudium-et-spes/19');
+	});
+
+	it('drops the "# N" subsection and links to the section alone ("GS 19 # 1" -> §19)', () => {
+		expect(
+			refHref(
+				{
+					kind: 'document',
+					sigla: 'GS',
+					locus: '19 # 1',
+					expansion: 'Gaudium et Spes',
+					slug: 'gaudium-et-spes',
+					raw: 'GS 19 # 1'
+				},
+				{ lang: 'en' }
+			)
+		).toBe('/documents/gaudium-et-spes/19');
+	});
+
+	it('resolves a document link against the reader\'s PT effective language, not EN', () => {
+		expect(
+			refHref(
+				{
+					kind: 'document',
+					sigla: 'GS',
+					locus: '19',
+					expansion: 'Gaudium et Spes',
+					slug: 'gaudium-et-spes',
+					raw: 'GS 19'
+				},
+				{ lang: 'pt' }
+			)
+		).toBe('/documents/gaudium-et-spes/19');
+	});
+
+	it('never links a document whose section is absent from the reader\'s effective language (dei-verbum is EN-only in the mock registry)', () => {
+		expect(
+			refHref(
+				{
+					kind: 'document',
+					sigla: 'DV',
+					locus: '2',
+					expansion: 'Dei Verbum',
+					slug: 'dei-verbum',
+					raw: 'DV 2'
+				},
+				{ lang: 'pt' }
+			)
+		).toBeUndefined();
+	});
+
+	it('never links a PT SC segment, even though its EN counterpart (Sacrosanctum Concilium) does — the language-dependent siglum guard', () => {
+		const [doc] = parseRefs('SC 264.', { lang: 'pt' }).filter(
+			(s): s is Extract<RefSegment, { kind: 'document' }> => s.kind === 'document'
+		);
+		expect(doc.slug).toBeNull();
+		expect(refHref(doc, { lang: 'pt' })).toBeUndefined();
+	});
+
+	it('never links a document segment with no section number in its locus', () => {
+		expect(
+			refHref(
+				{ kind: 'document', sigla: 'GS', locus: null, expansion: 'Gaudium et Spes', slug: 'gaudium-et-spes', raw: 'GS' },
+				{ lang: 'en' }
+			)
 		).toBeUndefined();
 	});
 

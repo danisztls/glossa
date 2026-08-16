@@ -117,6 +117,8 @@ import type {
 	CccParagraph,
 	Chapter,
 	CompendiumQuestion,
+	DocumentManifest,
+	DocumentSection,
 	ScriptureRef,
 	StructureNode,
 	WorkManifest,
@@ -133,6 +135,9 @@ import {
 	cccStructures,
 	compendiumQuestionsLocation,
 	compendiumStructures,
+	documentSectionsLocation,
+	documentSectionNumbers,
+	documentStructures,
 	fixtureBibleBooks,
 	fixtureCccParagraphsByLang,
 	fixtureCompendiumQuestionsByLang,
@@ -640,4 +645,164 @@ export async function getAdjacentCompendiumQuestionNumber(
  */
 export function getCccBibleXrefs(cccN: number): ScriptureRef[] {
 	return cccBibleXrefsByCcc.get(cccN) ?? [];
+}
+
+// --- Documents: index-backed (registry, structure, existence, sync) -------
+//
+// docs/corpus-schema.md §Documents: encyclicals, conciliar constitutions/
+// decrees/declarations, CDF declarations, .... Unlike the CCC and Compendium
+// — one canonical work per language, so their accessors above are keyed by
+// bare LANGUAGE — a "document" work type is really N independent works, one
+// per {family, slug} pair, each with its own EN/PT editions (work ids
+// `{family}.{slug}.{lang}`, e.g. `vatii.lumen-gentium.en`). There is no
+// single "the document structure for English" the way there's a single CCC
+// tree for English, so every document accessor below is keyed by WORK ID,
+// and `DocumentGroup` — the one new grouping concept this needs — is what
+// gives a language-independent handle (`slug`) to address a document's
+// editions together, the same job `listEditions('bible')` does for Bible
+// work ids, just scoped to one document instead of the whole work type.
+
+export interface DocumentGroup {
+	/** Language-independent id, e.g. "lumen-gentium" — the segment between
+	 *  `family` and `lang` in every edition's work id, and what edition-free
+	 *  `/documents/{slug}` URLs address (docs/decisions.md #2's URL
+	 *  convention, extended to documents). */
+	slug: string;
+	/** Publishing family (`vatii`, `encyclical`, future `apost-exhort`/
+	 *  `apost-const`/`cdf`, docs/corpus-schema.md §Documents) — carried for
+	 *  grouping/future per-family styling, not otherwise interpreted here. */
+	family: string;
+	/** This document's manifest per bare language it's available in. */
+	manifests: Partial<Record<string, DocumentManifest>>;
+}
+
+const DOCUMENT_WORK_ID_RE = /^([a-z0-9-]+)\.([a-z0-9-]+)\.([a-z]{2,3})$/;
+
+function parseDocumentWorkId(workId: string): { family: string; slug: string; lang: string } | undefined {
+	const m = DOCUMENT_WORK_ID_RE.exec(workId);
+	return m ? { family: m[1], slug: m[2], lang: m[3] } : undefined;
+}
+
+/** Computed once at module load, same reasoning as `canonicalBooksByOsis`
+ *  above: re-grouping ~450 document works (16 Vatican II + ~430 encyclicals
+ *  and counting) on every `listDocuments()`/`getDocumentGroup()` call would
+ *  be wasted work for something that never changes at runtime. */
+const documentGroupsBySlug: Map<string, DocumentGroup> = (() => {
+	const out = new Map<string, DocumentGroup>();
+	// Sorted for determinism, same reasoning as `canonicalBooksByOsis`.
+	const works = [...listWorksOfType('document')].sort((a, b) => a.id.localeCompare(b.id));
+	for (const work of works) {
+		const parsed = parseDocumentWorkId(work.id);
+		if (!parsed) continue; // malformed work id -- skip rather than guess at its grouping
+		let group = out.get(parsed.slug);
+		if (!group) {
+			group = { slug: parsed.slug, family: parsed.family, manifests: {} };
+			out.set(parsed.slug, group);
+		}
+		group.manifests[parsed.lang] = work as DocumentManifest;
+	}
+	return out;
+})();
+
+/** All documents in this corpus, one entry per {family, slug} regardless of
+ *  how many languages it has — the granularity the `/documents` library and
+ *  the home page's Magisterium group both want (docs/corpus-schema.md
+ *  §Documents). */
+export function listDocuments(): DocumentGroup[] {
+	return [...documentGroupsBySlug.values()];
+}
+
+export function getDocumentGroup(slug: string): DocumentGroup | undefined {
+	return documentGroupsBySlug.get(slug);
+}
+
+/**
+ * Preferred work id for a document slug at a UI language — same "content
+ * language follows UI language by default" rule as `defaultWorkId`
+ * (docs/decisions.md #1), scoped to one document's own editions rather than
+ * a whole work type's edition list (see `DocumentGroup`'s docblock on why
+ * documents need their own version of this instead of reusing
+ * `defaultWorkId('document', lang)`, which would only tell you *a* document
+ * exists in that language, not which one).
+ */
+export function defaultDocumentWorkId(slug: string, lang: string): string | undefined {
+	const group = getDocumentGroup(slug);
+	if (!group) return undefined;
+	const target = baseLang(lang);
+	return (group.manifests[target] ?? Object.values(group.manifests)[0])?.id;
+}
+
+export function getDocumentManifest(workId: string): DocumentManifest | undefined {
+	const manifest = manifests[workId];
+	return manifest?.type === 'document' ? manifest : undefined;
+}
+
+// --- Documents: structure trees (index-backed, sync) ------------------------
+//
+// Reuses `breadcrumbIn`/`flattenTree` — the same walkers the CCC/Compendium
+// section above shares — rather than a third copy, per this module's own
+// "Structure trees (shared: CCC and Compendium)" docblock; a document's
+// `structure.json` is the identical `StructureNode` shape (docs/corpus-
+// schema.md §Documents: "reuse the Catechism/Compendium node schema
+// verbatim"), just addressing SECTION numbers via `.paragraphs` instead of
+// CCC paragraphs or Compendium questions.
+
+export function getDocumentStructure(workId: string): StructureNode[] {
+	return documentStructures[workId] ?? [];
+}
+
+export function getDocumentBreadcrumb(workId: string, n: number): StructureNode[] {
+	return breadcrumbIn(getDocumentStructure(workId), n);
+}
+
+export function flattenDocumentStructure(workId: string): { node: StructureNode; depth: number }[] {
+	return flattenTree(getDocumentStructure(workId));
+}
+
+const documentSectionNumberSets: Record<string, Set<number>> = Object.fromEntries(
+	Object.entries(documentSectionNumbers).map(([workId, ns]) => [workId, new Set(ns)])
+);
+
+/** Whether section `n` exists in this corpus for `workId` — index-backed
+ *  (no fetch), same role as `cccParagraphExists`. */
+export function documentSectionExists(workId: string, n: number): boolean {
+	return documentSectionNumberSets[workId]?.has(n) ?? false;
+}
+
+/** The section number immediately before/after `n` that actually exists,
+ *  or undefined at either end. Index-backed — see `documentSectionExists`. */
+export function getAdjacentDocumentSectionNumber(
+	workId: string,
+	n: number,
+	direction: 'prev' | 'next'
+): number | undefined {
+	const ns = documentSectionNumbers[workId] ?? [];
+	if (direction === 'next') return ns.find((x) => x > n);
+	return [...ns].reverse().find((x) => x < n);
+}
+
+// --- Documents: content tier (async, read/fetched, memoized, whole) --------
+//
+// Kept whole per work, like the Compendium (~200 KB raw worst-case — see
+// `scripts/sync-corpus.mjs`'s docblock) rather than chunked like the CCC.
+//
+// No fixture branch: documents have no hand-authored fixtures yet (unlike
+// the Bible/CCC/Compendium, which all ship a `src/lib/fixtures/` copy) —
+// `documentStructures`/`documentSectionNumbers` are already `{}` under
+// vitest/no-corpus (see `corpus-index.ts`), so `documentSectionExists`
+// always answers false there and this never gets called under a fixture
+// run. Returning `[]` rather than throwing keeps that graceful if a test
+// ever does call it directly.
+
+async function fetchDocumentSections(workId: string): Promise<DocumentSection[]> {
+	if (!USE_REAL_CORPUS) return [];
+	const location = documentSectionsLocation(workId);
+	if (!location) return [];
+	return readContent<DocumentSection[]>(location);
+}
+
+export async function getDocumentSectionAsync(workId: string, n: number): Promise<DocumentSection | undefined> {
+	if (!documentSectionExists(workId, n)) return undefined;
+	const sections = await fetchDocumentSections(workId);
+	return sections.find((s) => s.n === n);
 }

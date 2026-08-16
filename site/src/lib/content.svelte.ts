@@ -21,10 +21,21 @@
  * so reads inside components stay reactive both to the override changing
  * and to `i18n.lang` changing underneath it — every getter below reads
  * `i18n.lang` itself rather than caching it, which is what makes that work.
+ *
+ * DOCUMENTS GET A SECOND, PARALLEL OVERRIDE MAP (`#documentOverrides`),
+ * NOT A FOURTH `WorkTypeKey`: the three keys above each name a work TYPE
+ * with a small, fixed edition list (`listEditions('bible')` etc.) — but a
+ * document "type" is really N independent works, one per slug
+ * (`corpus.ts`'s `DocumentGroup`), each with its own EN/PT pair. There's no
+ * single "the document edition" to remember; there's one per slug a reader
+ * might have opened. So the override key here is the document's `slug`,
+ * not a `WorkTypeKey`, and `documentWorkIdFor`/`documentLangFor`/
+ * `setDocument` are `WorkTypeKey`'s siblings, not implemented in terms of
+ * it — but same shape, same staleness rule, same reasoning throughout.
  */
 
 import { i18n } from './i18n.svelte';
-import { baseLang, defaultWorkId, listEditions } from './corpus';
+import { baseLang, defaultDocumentWorkId, defaultWorkId, getDocumentGroup, listEditions } from './corpus';
 
 export type WorkTypeKey = 'bible' | 'catechism' | 'compendium';
 
@@ -35,8 +46,11 @@ interface Override {
 }
 
 type OverrideMap = Partial<Record<WorkTypeKey, Override>>;
+/** Slug -> override, the document analogue of `OverrideMap` (see module docblock). */
+type DocumentOverrideMap = Record<string, Override>;
 
 const STORAGE_KEY = 'depositum:content-override';
+const DOCUMENT_STORAGE_KEY = 'depositum:content-override-documents';
 
 function readStored(): OverrideMap {
 	if (typeof localStorage === 'undefined') return {};
@@ -57,8 +71,26 @@ function writeStored(overrides: OverrideMap) {
 	localStorage.setItem(STORAGE_KEY, JSON.stringify(overrides));
 }
 
+function readDocumentStored(): DocumentOverrideMap {
+	if (typeof localStorage === 'undefined') return {};
+	try {
+		const raw = localStorage.getItem(DOCUMENT_STORAGE_KEY);
+		if (!raw) return {};
+		const parsed: unknown = JSON.parse(raw);
+		return parsed && typeof parsed === 'object' ? (parsed as DocumentOverrideMap) : {};
+	} catch {
+		return {};
+	}
+}
+
+function writeDocumentStored(overrides: DocumentOverrideMap) {
+	if (typeof localStorage === 'undefined') return;
+	localStorage.setItem(DOCUMENT_STORAGE_KEY, JSON.stringify(overrides));
+}
+
 class ContentStore {
 	#overrides: OverrideMap = $state(readStored());
+	#documentOverrides: DocumentOverrideMap = $state(readDocumentStored());
 
 	/** The stored override for `type`, or undefined if there is none or it's stale (see module docblock). */
 	#activeOverride(type: WorkTypeKey): Override | undefined {
@@ -88,6 +120,33 @@ class ContentStore {
 		}
 		this.#overrides = next;
 		writeStored(next);
+	}
+
+	/** Document analogue of `workIdFor`, keyed by the document's `slug` rather than a `WorkTypeKey` — see module docblock. */
+	documentWorkIdFor(slug: string): string | undefined {
+		const override = this.#documentOverrides[slug];
+		const active = override && override.forUiLang === i18n.lang ? override : undefined;
+		return active?.workId ?? defaultDocumentWorkId(slug, i18n.lang);
+	}
+
+	/** Document analogue of `langFor`. */
+	documentLangFor(slug: string): string {
+		const workId = this.documentWorkIdFor(slug);
+		const group = workId ? getDocumentGroup(slug) : undefined;
+		const manifest = group && Object.values(group.manifests).find((m) => m?.id === workId);
+		return manifest ? baseLang(manifest.language) : i18n.lang;
+	}
+
+	/** Document analogue of `set`. */
+	setDocument(slug: string, workId: string | null) {
+		const next: DocumentOverrideMap = { ...this.#documentOverrides };
+		if (workId === null) {
+			delete next[slug];
+		} else {
+			next[slug] = { workId, forUiLang: i18n.lang };
+		}
+		this.#documentOverrides = next;
+		writeDocumentStored(next);
 	}
 }
 

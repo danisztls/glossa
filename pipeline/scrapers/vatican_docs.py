@@ -180,6 +180,7 @@ from __future__ import annotations
 import argparse
 import html as ihtml
 import json
+import os
 import re
 import sys
 import time
@@ -201,6 +202,7 @@ SOURCE_ROOT = Path(__file__).resolve().parents[2]  # tracked source; follows thi
 RAW_ROOT = DATA_ROOT / "corpus" / "raw" / "vatican-docs"
 WORKS_ROOT = DATA_ROOT / "corpus" / "works"
 CORRECTIONS_DIR = SOURCE_ROOT / "pipeline" / "corrections"
+CRAWL_LOCK_PATH = RAW_ROOT / ".crawl.lock"  # see acquire_crawl_lock/touch_crawl_lock below
 PROGRESS_PATH = RAW_ROOT / "_progress.json"
 
 MARK_OPEN, MARK_CLOSE = "⟦", "⟧"
@@ -367,9 +369,13 @@ def is_mini_header(text: str) -> bool:
 PARA_NUM_RE = re.compile(
     r"^(?:\s|&nbsp;)*"
     r"(?:<(?!a[\s>])[^>]+>(?:\s|&nbsp;)*)*"  # skip a leading transparent wrapper tag, e.g. <span lang="pt">
-    r"(?:<a\s[^>]*?name=[\"']?(?P<anchor_n>\d{1,4})[\"']?[^>]*>\s*(?P=anchor_n)\s*</a>"
-    r"|(?P<bare_n>\d{1,4}))"
-    r"\s*\.\s*(?:&nbsp;\s*)*",
+    r"(?:<a\s[^>]*?name=[\"']?\d{1,4}[\"']?[^>]*>\s*</a>\s*)?"  # skip a leading EMPTY self-link anchor, e.g. <a name="1"></a>1.
+    r"(?:"
+    r"<a\s[^>]*?name=[\"']?(?P<anchor_dot_n>\d{1,4})\.[\"']?[^>]*>\s*(?P=anchor_dot_n)\.\s*</a>"  # <a name="3.">3.</a> -- period INSIDE both the name attr and the anchor text (Caritas in Veritate EN)
+    r"|<a\s[^>]*?name=[\"']?(?P<anchor_n>\d{1,4})[\"']?[^>]*>\s*(?P=anchor_n)\s*</a>\s*\."  # <a name="18">18</a>. -- period OUTSIDE (Lumen Gentium)
+    r"|(?P<bare_n>\d{1,4})\s*\."  # bare "N."
+    r")"
+    r"\s*(?:&nbsp;\s*)*",
     re.IGNORECASE | re.DOTALL,
 )
 # The leading-wrapper-tag skip (Christus Dominus PT, Presbyterorum Ordinis
@@ -379,6 +385,41 @@ PARA_NUM_RE = re.compile(
 # alternation below instead, which needs the digit to reappear as the
 # anchor's own name attribute; a generic wrapper skip would swallow it
 # without checking that constraint.
+#
+# The EMPTY-self-link-anchor skip (added after the full phase-2 sweep,
+# confirmed live: Dilexit Nos PT, 2024 -- `<a name="1"></a>1. «Amou-nos»,
+# diz São Paulo...`) is a THIRD, distinct anchor convention: unlike
+# Lumen Gentium's self-link anchor (`<a name="18">18</a>.`, digit repeated
+# as the anchor's own text content, matched by the anchor_n branch above)
+# or the plain bare-digit case (no anchor at all), this page's anchor is a
+# pure empty deep-link target -- nothing between its open and close tags --
+# immediately followed by the real, separately-printed bare digit. Every
+# one of this document's 219 paragraphs used this convention; before this
+# fix the anchor_n branch failed (nothing to match `(?P=anchor_n)` against
+# inside an empty anchor) and the bare_n branch never got a chance to run
+# (the empty anchor tag sat unconsumed at the match position, since the
+# leading-wrapper-tag skip explicitly excludes <a...>) -- so EVERY
+# paragraph missed, and the whole document silently produced zero
+# sections despite having complete, correctly-numbered content on the
+# page. Deliberately not required to double-check the skipped anchor's
+# own digit against the bare digit that follows (no backreference here,
+# unlike the anchor_n branch) -- the bare digit immediately after is the
+# one actually printed on the page and is what CCC/vatii's own posture
+# already trusts as authoritative; the anchor is only ever a same-page
+# navigation target, not a second source of truth to reconcile against.
+#
+# The FOURTH variant, `anchor_dot_n` (confirmed live: Caritas in Veritate
+# EN, 2009 -- `<a name="3.">3.</a> Through this close link...`), is a
+# self-link anchor like Lumen Gentium's, except the period that ends every
+# paragraph number is printed INSIDE the anchor, in both the `name`
+# attribute value and the anchor's own text ("3." rather than "3" in
+# both places) -- not after `</a>` where the LG-style branch and the
+# outer `\s*\.` expect it. Handled as its own alternative rather than
+# folded into the anchor_n branch because the *outer* trailing `\.` that
+# every other branch relies on has nothing left to match here (the period
+# was already consumed inside the anchor); each of the three alternatives
+# therefore owns its own trailing-period consumption instead of sharing
+# one after the alternation closes.
 
 
 def match_para_num(inner_html: str) -> tuple[int, int] | None:
@@ -386,7 +427,7 @@ def match_para_num(inner_html: str) -> tuple[int, int] | None:
     m = PARA_NUM_RE.match(inner_html)
     if not m:
         return None
-    n = m.group("anchor_n") or m.group("bare_n")
+    n = m.group("anchor_dot_n") or m.group("anchor_n") or m.group("bare_n")
     return int(n), m.end()
 
 
@@ -400,7 +441,16 @@ _FTNREF_RE = re.compile(
     r"\s*(?:\((\d+)\)|\[(\d+)\])?\.?",
     re.IGNORECASE | re.DOTALL,
 )
-_PAREN_MARKER_RE = re.compile(r"\((\d{1,4}\*?)\)")
+_PAREN_MARKER_RE = re.compile(r"\((\d{1,3}\*?)\)")
+# Capped at 3 digits, not 4 (confirmed live: Populorum Progressio EN --
+# "...We traveled to Latin America (1960) and Africa (1962)..." -- ordinary
+# prose parenthetically citing a YEAR, not a footnote marker at all, was
+# being marked as citations "1960"/"1962" with no matching footnote-list
+# entry, i.e. two guaranteed-unresolved citations on every document using
+# this template that happens to parenthesize a year anywhere in its prose).
+# 3 digits safely covers every real footnote count seen in the whole
+# phase-2 sweep (Mediator Dei's 213 footnotes is the highest found) while
+# excluding every plausible year (1000-2999) a papal document could cite.
 
 
 def detect_marker_template(body_html: str) -> str:
@@ -630,11 +680,28 @@ def build_footnote_table_anchor(region_html: str) -> dict[str, str]:
         if visible.isdigit():
             marker = visible
         else:
-            # Empty anchor (RN-style): the visible number is echoed as
-            # plain "(N)"/"[N]" text immediately after the anchor closes.
-            echo_m = re.match(r"^\s*(?:\((\d+)\)|\[(\d+)\])", chunk)
-            marker = (echo_m.group(1) or echo_m.group(2)) if echo_m else code
-        chunk = re.sub(rf"^\s*(?:\({re.escape(marker)}\)|\[{re.escape(marker)}\])?\s*\.?\s*", "", chunk)
+            # Empty anchor: the visible number is echoed as plain text
+            # immediately after the anchor closes -- either "(N)"/"[N]"
+            # (RN-style) or a bare "N." label (confirmed live: Veritatis
+            # Splendor EN, `<b><a name="%2454"></a>184</b>. <i>Ibid</i>...`
+            # -- an empty anchor whose internal per-fragment code, "54",
+            # has nothing to do with the real, 130-higher printed number
+            # "184" once the document has passed some internal per-
+            # fragment count; see this function's own docstring on why
+            # the code is never trustworthy once a visible number exists).
+            # Without the third alternative here, EVERY footnote whose
+            # code had already been used earlier in the SAME document
+            # (a near-certainty once codes wrap back into a smaller range
+            # for a new page fragment) got silently overwritten in this
+            # flat dict by a later, wrong entry sharing that recycled
+            # code -- corrupting even the early, correctly-keyed entries,
+            # not just the late ones.
+            echo_m = re.match(r"^\s*(?:\((\d+)\)|\[(\d+)\]|(?:</?[a-z][^>]*>)*\s*(\d{1,4})\s*(?:</[a-z][^>]*>)?\s*\.)", chunk, re.IGNORECASE)
+            marker = (echo_m.group(1) or echo_m.group(2) or echo_m.group(3)) if echo_m else code
+        chunk = re.sub(
+            rf"^\s*(?:\({re.escape(marker)}\)|\[{re.escape(marker)}\]|(?:</?[a-z][^>]*>)*\s*{re.escape(marker)}\s*(?:</[a-z][^>]*>)?\s*\.)?\s*",
+            "", chunk, flags=re.IGNORECASE,
+        )
         table[marker] = strip_tags(chunk).strip()
     return table
 
@@ -1069,13 +1136,28 @@ def match_label_pt(text: str) -> tuple[str, int | None] | None:
 
 MATCH_LABEL = {"en": match_label_en, "pt": match_label_pt}
 
-_SECTION_TITLE_HEADING_RE = re.compile(r"^(\d{1,4})\.\s+")
+_SECTION_TITLE_HEADING_RE = re.compile(r"^(\d{1,4})\s*\.\s+")
 # Gravissimum Educationis EN's convention (see parse_document's heading
 # branch): a fully-bold block whose text is itself "N. Title" -- checked
 # only against blocks that already failed match_label (a real PART/
 # SECTION/CHAPTER/ARTICLE label), and only opens a section when N is
 # already the legitimate next number, so an ordinary bold heading that
 # happens to start with a digit for unrelated reasons can't misfire.
+#
+# The optional `\s*` before the period (added after the full phase-2
+# sweep, confirmed live: Redemptor Hominis EN -- `<p><b><i>10 . The human
+# dimension of the mystery of the Redemption</i></b></p>`, a lone stray
+# space between "10" and its period, nowhere else in the document) matters
+# far more than one heading: this branch's own "N must be exactly
+# last_n+1" gate (see the comment above) never recovers once a single
+# expected heading is missed -- section 10 silently became a generic
+# untitled "sub" node instead of a section, which meant every subsequent
+# "11.", "12.", ... heading in the rest of the document also failed the
+# now-permanently-broken continuity check and fell through the same way.
+# One extra space, unnoticed, was costing this document sections 10-22
+# (13 of the whole document's ~22), not just section 10 -- confirmed by
+# reparsing after this fix: 1..22 captured cleanly, matching the EN
+# footnote apparatus's own highest citation number.
 
 
 # --------------------------------------------------------------------------
@@ -1274,7 +1356,7 @@ _ENCYC_LINK_RE_TMPL = r'href="(?:https?://www\.vatican\.va)?/content/{slug}/{lan
 _EXH_LINK_RE_TMPL = r'href="(?:https?://www\.vatican\.va)?/content/{slug}/{lang}/apost_exhortations/documents/([a-z0-9_.-]+)\.html"'
 
 _DATE_SLUG_RE = re.compile(r"_(\d{8})_([a-z0-9-]+)$")
-_DATE_SLUG_RE_MODERN = re.compile(r"^(\d{8})-(?:enciclica-|encyclical-)?([a-z0-9-]+)$")
+_DATE_SLUG_RE_MODERN = re.compile(r"^(\d{8})-([a-z0-9-]+)$")
 _ENCICLICA_FILLER_RE = re.compile(r"^(?:enciclica|encyclical)-")
 
 
@@ -1288,14 +1370,34 @@ def parse_date_slug(fname: str) -> tuple[str, str] | None:
     "encyclical-" word before the real slug. Without both, the most
     recent documents from the two most recent pontificates -- arguably
     the most relevant to a live reading site -- would silently vanish
-    from discovery."""
+    from discovery.
+
+    The filler word is NOT unique to the date-first convention, though --
+    confirmed live (fixed after the full phase-2 sweep, when the census
+    turned up three wrong slugs: `enciclica-fratelli-tutti`,
+    `enciclica-laudato-si`, `enciclica-lumen-fidei`, all Francis) that
+    vatican.va's OWN filenames for these three use `papa-francesco_
+    {DDMMYYYY}_enciclica-{slug}.html` -- the long-standing DATE_SLUG_RE
+    shape (date embedded mid-name, underscore-separated), which _DATE_SLUG_RE
+    matches and returns FIRST, before the modern-pattern branch (the only
+    one that used to strip the filler) is ever reached. Stripping is
+    therefore applied once, uniformly, to whichever branch matched --
+    not baked into either regex individually -- so a future third
+    filename convention can't reintroduce the same class of leak. Kept
+    conservative (`_ENCICLICA_FILLER_RE` requires a trailing "-", i.e.
+    more slug content after the filler word) so a document that somehow
+    really were titled bare "Enciclica"/"Encyclical" alone -- not
+    observed anywhere in this corpus -- would be left untouched rather
+    than stripped to an empty slug."""
     m = _DATE_SLUG_RE.search(fname)
     if m:
-        return m.group(1), m.group(2)
-    m = _DATE_SLUG_RE_MODERN.match(fname)
-    if m:
-        return m.group(1), _ENCICLICA_FILLER_RE.sub("", m.group(2))
-    return None
+        date8, slug = m.group(1), m.group(2)
+    else:
+        m = _DATE_SLUG_RE_MODERN.match(fname)
+        if not m:
+            return None
+        date8, slug = m.group(1), m.group(2)
+    return date8, _ENCICLICA_FILLER_RE.sub("", slug)
 
 
 def _index_links(fetcher: Fetcher, index_url: str, cache_name: str, link_re: re.Pattern) -> list[str]:
@@ -1397,6 +1499,33 @@ def strip_transparent_spans(html: str) -> str:
     return _TRANSPARENT_SPAN_RE.sub("", html)
 
 
+class StubPageError(Exception):
+    """Raised when the fetched page's content region carries essentially no
+    text. Found live, systematically, on Leo XIII-era Portuguese encyclical
+    URLs (77 of the first ~130 PT documents attempted in the phase-2
+    sweep): the URL 200s and the page shell renders in full (copyright
+    footer, breadcrumbs, a language-availability strip), but `div.testo`
+    itself is empty or contains only that language strip (e.g. "EN -
+    FR - IT - LA" -- Portuguese conspicuously absent from its own list).
+    vatican.va's CMS evidently generates a PT URL slot for every
+    pontiff/document combination regardless of whether a translator ever
+    supplied Portuguese text, so a 200 response is not evidence of a real
+    translation the way it is for every other family this scraper
+    handles. This is NOT a parser defeat -- there is no structure to
+    recover, the page has zero body prose -- and must not be reported or
+    written as one (see STUB_CONTENT_MIN_CHARS for the threshold and how
+    it was picked)."""
+
+
+# The shortest genuine document found in the whole phase-2 sweep (Vi E Ben
+# Noto, Leo XIII, 3 sections) strips to 7,106 chars of body text; the
+# largest stub-page sample found strips to ~90 chars (a bare language
+# strip). 300 sits with wide margin on both sides -- it will never
+# misclassify a real, however-short, encyclical, and every stub sampled
+# clears it by 3x or more.
+STUB_CONTENT_MIN_CHARS = 300
+
+
 def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: str) -> ParseResult:
     html = strip_transparent_spans(html)
     testo_m = re.search(r'class="testo"', html)
@@ -1410,6 +1539,13 @@ def parse_document(html: str, lang: str, corrections: list[dict], fetched_url: s
         region = html
         content_start = find_content_start_old_shell(html)
         region = region[content_start:]
+
+    region_text_len = len(strip_tags(region))
+    if region_text_len < STUB_CONTENT_MIN_CHARS:
+        raise StubPageError(
+            f"content region has only {region_text_len} chars of text (threshold "
+            f"{STUB_CONTENT_MIN_CHARS}) -- translation stub, not a real document page"
+        )
 
     fn_start, evidence = find_footnote_region_start(region)
     if fn_start is None:
@@ -1636,7 +1772,22 @@ EXPECTED_RANGES = {
 }
 
 
-def validate_document(slug: str, state: ScrapeState) -> tuple[bool, list[str]]:
+def _dict_tree_has_real_span(nodes: list[dict]) -> bool:
+    """Same check as _tree_has_real_span, over the finalized structure.json
+    dict shape rather than live Node objects -- validate_document checks
+    the actual artifact about to be written, not an intermediate
+    representation, so this stays honest even if build_structure's
+    fallback logic itself is ever changed incorrectly."""
+    for node in nodes:
+        p = node.get("paragraphs", [None, None])
+        if p[0] is not None:
+            return True
+        if _dict_tree_has_real_span(node.get("children", [])):
+            return True
+    return False
+
+
+def validate_document(slug: str, state: ScrapeState, structure: list[dict]) -> tuple[bool, list[str]]:
     problems: list[str] = []
     sections = state.sections
     if not sections:
@@ -1651,6 +1802,23 @@ def validate_document(slug: str, state: ScrapeState) -> tuple[bool, list[str]]:
     expected = EXPECTED_RANGES.get(slug)
     if expected and (lo, hi) != expected:
         problems.append(f"expected range {expected}, got ({lo}, {hi})")
+
+    # Schema-conformance guard (docs/corpus-schema.md #Documents): a
+    # document with real, addressable sections must have at least one
+    # structure node with usable (non-null) paragraph bounds -- null bounds
+    # mean "this content is genuinely unaddressable" (LG's APPENDIX) and
+    # every consumer treats a null-bounded node as unlinkable, so a
+    # numbered document with none is corpus data that misrepresents its
+    # own addressability. build_structure's trivial-node fallback should
+    # make this unreachable; checking the actual finalized structure here
+    # (not just trusting the fallback ran) turns that invariant into a
+    # regression guard instead of an assumption.
+    if sections and not _dict_tree_has_real_span(structure):
+        problems.append(
+            f"{len(sections)} sections captured but structure.json has no node with usable "
+            "paragraph bounds -- see build_structure; every node in the tree is null-bounded "
+            "despite real, addressable content existing"
+        )
 
     for node in state.root_children:
         node.compute_span()
@@ -1672,6 +1840,33 @@ def validate_document(slug: str, state: ScrapeState) -> tuple[bool, list[str]]:
         if empty_citations:
             problems.append(f"section {n}: citations with no resolved text: {empty_citations}")
 
+    # Orphan-ratio guard: a document whose captured sections happen to be
+    # small and contiguous (e.g. 1..4) passes the contiguity check above
+    # trivially even if the parser only recognized a tiny fraction of the
+    # page's real structure and dumped the rest as unnumbered orphan
+    # content -- a silent near-total under-capture that would otherwise
+    # read as "validated". Surveyed empirically across the full phase-2
+    # sweep (~250 works, encyclicals + Vatican II): a normal document has
+    # roughly one heading/title block per numbered section (orphan/section
+    # ratio ~0.0-2.0 -- headings and section-title blocks are exactly what
+    # legitimately end up as orphan content); three genuine parser-defeat
+    # cases found live sit at 16x, 27x, and 35x that ratio (Mortalium
+    # Animos PT: 32 orphan/2 sections; Quadragesimo Anno PT: 133/5;
+    # Miranda Prorsus EN: 139/4 -- each confirmed by inspection to use a
+    # heading/numbering convention this parser doesn't recognize, silently
+    # dropping nearly the whole document into the orphan bucket instead of
+    # sections). The absolute floor (>=10) keeps this from firing on small
+    # documents where a low section count makes the ratio noisy by nature
+    # (e.g. a real 2-section document with several sub-headings).
+    if len(state.orphan_content) >= 10 and len(state.orphan_content) > 5 * max(len(sections), 1):
+        problems.append(
+            f"{len(state.orphan_content)} unnumbered content blocks vs only {len(sections)} "
+            "captured sections -- suspiciously high orphan ratio, almost certainly a "
+            "numbering/heading convention this parser doesn't recognize on this page "
+            "(not just a few stray section-title blocks); do not trust this document's "
+            "captured range as complete."
+        )
+
     return (len(problems) == 0), problems
 
 
@@ -1685,6 +1880,128 @@ def validate_document(slug: str, state: ScrapeState) -> tuple[bool, list[str]]:
 # honest register as every other note -- NOT as pipeline/corrections/
 # entries, which are reserved for defects with a known correct value.
 # --------------------------------------------------------------------------
+
+PARSER_DEFEAT_NOTES: dict[str, str] = {
+    "vatii.gravissimum-educationis.en": (
+        "This document's numbered items are printed as bold 'N. Title' headings with "
+        "unnumbered prose underneath, not vatii's usual sequential 'N. body text' "
+        "paragraphs (confirmed live: Gravissimum Educationis EN specifically; its own PT "
+        "translation does NOT share this convention and parses cleanly). This is fixable "
+        "without re-crawling -- raw HTML is cached in corpus/raw/ -- but needs a "
+        "section-title-aware pass this parser does not yet have."
+    ),
+    "encyclical.pascendi-dominici-gregis.pt": (
+        "NOT a parser gap and not fixable by better parsing: confirmed by direct "
+        "inspection of the cached raw HTML that this page's whole content region "
+        "contains zero digit-leading paragraph openings and zero anchor markers of any "
+        "kind -- the Portuguese edition of this encyclical was typeset as continuous "
+        "prose under 'PARTE'/'CAPÍTULO' headings with no inline paragraph numbering "
+        "at all, unlike its own EN sibling (57 numbered paragraphs, parses cleanly to 58 "
+        "sections after the usual unnumbered-first-paragraph promotion). There is no "
+        "number to recover from the source; inventing one would be fabrication."
+    ),
+    "encyclical.quae-ad-nos.en": (
+        "NOT a parser gap and not fixable by better parsing: confirmed by direct "
+        "inspection of the cached raw HTML that this page's whole content region "
+        "(2,396 chars of real prose -- a short pastoral letter to the bishops of "
+        "Bohemia and Moravia, not a numbered treatise) contains zero digit-leading "
+        "paragraph openings and zero anchor markers of any kind. A second confirmed "
+        "instance of the same source characteristic as "
+        "encyclical.pascendi-dominici-gregis.pt (see that entry): some short/pastoral "
+        "encyclicals were simply never typeset with inline paragraph numbers on "
+        "vatican.va, in either language. There is no number to recover from the "
+        "source; inventing one would be fabrication. (This document's PT edition is "
+        "a translation stub -- see StubPageError -- so there is no numbered sibling "
+        "to cross-check against here, unlike Pascendi.)"
+    ),
+    "encyclical.mense-maio.pt": (
+        "NOT a parser gap and not fixable by better parsing: same source characteristic as "
+        "encyclical.pascendi-dominici-gregis.pt and encyclical.quae-ad-nos.en -- confirmed by "
+        "direct inspection that this page's whole content region (12,731 chars of real prose, "
+        "Paul VI 1965) contains zero digit-leading paragraph openings and zero anchor markers. "
+        "Its EN sibling has 16 cleanly bare-digit-numbered sections; the PT edition was simply "
+        "never typeset with inline numbers on vatican.va. No number to recover; inventing one "
+        "would be fabrication."
+    ),
+    "encyclical.vigilanti-cura.en": (
+        "NOT a parser gap and not fixable by better parsing: this page's real, substantial "
+        "content (27,679+ chars, Pius XI 1936) is organized entirely under bold, named-anchor "
+        "TOC-style subheadings (`<p><b><a name=\"The_Influence_of_the_Motion_Picture\"></a>The "
+        "Influence of the Motion Picture</b></p>`, five more like it) with continuous unnumbered "
+        "prose underneath each -- zero plain-digit paragraph numbers anywhere on the page. Its "
+        "PT sibling parses cleanly to 44 bare-digit-numbered sections, so this is the mirror "
+        "image of Pascendi (there the EN was numbered and PT wasn't; here PT is numbered and EN "
+        "isn't). No number to recover from the EN source; inventing one would be fabrication."
+    ),
+    "encyclical.divini-illius-magistri.pt": (
+        "NOT a parser gap and not fixable by better parsing: confirmed by direct inspection "
+        "that this page's real content (105,673 chars, Pius XI 1929) is organized as a lettered/"
+        "roman outline -- bold headings like 'A) Em geral', 'a) De modo sobreeminente', 'b) "
+        "Essência, importância e excelência da Educação Cristã', nested under bold ALL-CAPS "
+        "part titles like 'A QUEM PERTENCE A EDUCAÇÃO' -- with zero plain-digit paragraph "
+        "numbers anywhere; the only anchors present are unrelated footnote-reference anchors "
+        "('fnref1', 'fnref2', ... -- note: NO underscore prefix, a footnote-marker naming "
+        "variant not otherwise seen in this corpus, though moot here since the document has no "
+        "numbered paragraphs to attach footnotes to via this parser's model). Its EN sibling "
+        "parses cleanly to 102 bare-digit sections. Addressing this PT edition would need a "
+        "wholly different addressing scheme (lettered-outline position, not paragraph number) -- "
+        "a schema question, not a parser bug -- so it is left undone rather than fabricating "
+        "arabic numbers the source never printed."
+    ),
+    "encyclical.miranda-prorsus.en": (
+        "Not a total failure -- worth distinguishing from the zero-section "
+        "cases above: this page (Pius XII 1957, ~80K chars of real prose) captured only 4 of "
+        "what should be a much longer sequence (139 blocks logged as unnumbered orphan content, "
+        "a 35x orphan/section ratio -- see validate_document's orphan-ratio guard, which is what "
+        "flagged this as invalid rather than letting it pass as a deceptively small 'clean' "
+        "4-section document). The page is organized under a mix of italic mini-headings "
+        "('Motivos do interesse da Igreja', 'Precedentes da Encíclica', ...) and continuous "
+        "prose; footnotes use the standard `_ftnrefN` convention (so footnote resolution itself "
+        "is fine), but paragraph numbering is sparse/inconsistent rather than absent outright, "
+        "unlike the fully-unnumbered cases. A real fix would need this specific page's actual "
+        "numbering convention characterized paragraph-by-paragraph, not assumed from the 4 "
+        "matches found by accident -- not attempted here; left flagged rather than shipped as a "
+        "falsely-clean 4-section document."
+    ),
+    "encyclical.miranda-prorsus.pt": (
+        "NOT a parser gap and not fixable by better parsing: same document as "
+        "encyclical.miranda-prorsus.en (see that entry for the EN side's different, partial "
+        "failure mode); the PT edition (80,088 chars of real prose) has zero digit-leading "
+        "paragraph openings at all despite using the standard `_ftnrefN` footnote convention "
+        "(footnotes alone would resolve fine). Organized under italic mini-headings with "
+        "continuous unnumbered prose underneath, the same shape as Pascendi/Mense Maio/Quae Ad "
+        "Nos. No number to recover; inventing one would be fabrication."
+    ),
+    "encyclical.mortalium-animos.pt": (
+        "Distinct failure mode from the zero-section cases: this page (Pius XI "
+        "1928) mixes two conventions in the SAME document -- some numbered items are printed as "
+        "Gravissimum-Educationis-style bold 'N. Title' headings (e.g. '<p><b>2. <i>A Fraternidade "
+        "na Religião. Congressos Ecuménicos</i></b></p>', its body prose in a SEPARATE following "
+        "<p> with no number of its own), but the heading-to-heading numbering is NOT contiguous "
+        "(2, 3, then jumps straight to 8 with no 4/5/6/7 heading anywhere) -- and this parser's "
+        "GE-style branch only fires when the found number is exactly last+1, by design (to avoid "
+        "misreading an unrelated bold block that merely starts with a digit as a new section). "
+        "Sections 2 and 3 captured correctly; '8. A única religião revelada é a Igreja Católica' "
+        "and its considerable following prose (11 orphan blocks logged under it) never became a "
+        "section at all -- the gate correctly declined to guess, but nothing else claimed it "
+        "either. A real fix needs this document's numbering scheme characterized in full "
+        "(is 4-7 skipped in the source, or numbered some other way not yet identified?) before "
+        "loosening the gate; not attempted here rather than guessing at cost of a false positive "
+        "on some other document."
+    ),
+    "encyclical.quadragesimo-anno.pt": (
+        "Same family as Mortalium Animos PT: this page (Pius XI 1931, the "
+        "Rerum Novarum 40th-anniversary encyclical) opens with a long unnumbered historical "
+        "recap organized under bold/italic topic labels ('A Encíclica «Rerum novarum»', 'Sua "
+        "ocasião', 'Tópicos principais', ...) before its real numbered content begins -- only "
+        "sections 1-5 were captured (133 blocks logged as orphan content, a 26.6x ratio -- see "
+        "validate_document's orphan-ratio guard) against an EN sibling running to 148 sections. "
+        "Not investigated past confirming the shape (unlike Mortalium Animos, the exact point "
+        "where numbering resumes/breaks down after section 5 was not traced in detail) -- "
+        "flagged rather than guessed at."
+    ),
+}
+
 
 KNOWN_SOURCE_DEFECTS: dict[str, str] = {
     "vatii.lumen-gentium.en": (
@@ -1711,6 +2028,23 @@ KNOWN_SOURCE_DEFECTS: dict[str, str] = {
         "list isn't chapter-restarted), just a dangling reference in the source itself. "
         "Left with empty text rather than fabricated content; see "
         "docs/research/vatican-documents.md's Known source defects section."
+    ),
+    "encyclical.dilexit-nos.pt": (
+        "KNOWN SOURCE DEFECT (undocumented, not correctable): section 206 has an anchor "
+        "bookmark (`<a name=\"206\"></a>`) but the source never prints the visible '206.' "
+        "paragraph number that every sibling paragraph has (204, 205, 207, 208 all print their "
+        "number normally) -- confirmed by direct comparison with the EN edition, which prints "
+        "'206.' as a plain bare digit at the equivalent point. Because no number is printed, "
+        "this parser's normal 'unnumbered paragraph between two numbered ones' promotion never "
+        "triggers here (that path requires the content to be sitting as unclaimed orphan content "
+        "when the following number is found; here it silently became a continuation of section "
+        "205's own text instead, since section 205 was still open when this paragraph was "
+        "encountered) -- so the real text is NOT lost (it is preserved, appended to the end of "
+        "section 205's text field) but section 206 does not exist as its own addressable unit, "
+        "and validate_document correctly reports it as a gap (`gaps in 1..220: missing [206]`) "
+        "rather than hiding it. Not fabricated: promoting the anchor's bare name=\"206\" to a "
+        "printed section number the page itself never shows would be inventing content the "
+        "source doesn't have."
     ),
 }
 
@@ -1741,16 +2075,26 @@ def build_manifest(
     if not state.sections:
         notes.insert(
             0,
-            "PARSER DEFEATED -- zero sections captured. This document's numbered "
-            "items are printed as bold 'N. Title' headings with unnumbered prose "
-            "underneath, not vatii's usual sequential 'N. body text' paragraphs "
-            "(confirmed live: Gravissimum Educationis EN specifically; its own PT "
-            "translation does NOT share this convention and parses cleanly). "
-            "structure.json/sections.json are empty; do not treat this as a "
-            "published work until re-parsed with a section-title-aware pass -- "
-            "raw HTML is cached in corpus/raw/, so this is fixable without "
-            "re-crawling.",
+            "PARSER DEFEATED -- zero sections captured. "
+            + PARSER_DEFEAT_NOTES.get(
+                work_id,
+                "Cause not auto-diagnosed for this specific document -- inspect the cached "
+                "raw HTML in corpus/raw/ to determine whether this is a recoverable parser "
+                "gap (a numbering convention this parser doesn't yet handle) or a genuine "
+                "source characteristic (e.g. an edition with no inline paragraph numbers at "
+                "all) before assuming either. structure.json/sections.json are empty; do "
+                "not treat this as a published work until diagnosed.",
+            ),
         )
+    elif work_id in PARSER_DEFEAT_NOTES:
+        # A non-zero-section document can still be a real parser defeat --
+        # e.g. one caught by validate_document's orphan-ratio guard, where
+        # a handful of sections were captured but the vast bulk of real
+        # content silently fell into the orphan bucket instead. The
+        # zero-section branch above only fires on total failure; this
+        # covers a documented partial one instead of leaving it to the
+        # generic gaps/orphan-count notes below to explain on their own.
+        notes.insert(0, "PARSER DEFEATED (partial) -- " + PARSER_DEFEAT_NOTES[work_id])
     if state.gaps:
         notes.append(f"source section-number gaps detected: {state.gaps}")
     if state.promoted_first_paragraph:
@@ -1793,13 +2137,78 @@ def build_manifest(
     return manifest
 
 
-def write_document_outputs(work_id: str, manifest: dict, state: ScrapeState) -> None:
-    out_dir = WORKS_ROOT / work_id
-    out_dir.mkdir(parents=True, exist_ok=True)
+def _tree_has_real_span(nodes: list[Node]) -> bool:
+    """True if any node in this (sub)tree owns a non-null span. Used to
+    distinguish a document with genuine internal heading structure (Vatican
+    II's Parts/Chapters, LG's chapter nodes -- where SOME nodes carry real
+    bounds even if one sibling, like LG's APPENDIX, is deliberately
+    null-bounded for its own documented reason) from a document where
+    heading detection produced nothing structurally useful at all."""
+    for node in nodes:
+        if node.span[0] is not None:
+            return True
+        if _tree_has_real_span(node.children):
+            return True
+    return False
+
+
+def build_structure(state: ScrapeState, title: str) -> list[dict]:
+    """Finalizes state.root_children into the structure.json shape.
+
+    Most flat documents (the overwhelming majority of the encyclical corpus:
+    no PART/CHAPTER apparatus, just sequentially numbered paragraphs) have
+    no real internal heading to own those numbers -- push_heading only ever
+    fires here for incidental bold blocks that aren't real containers (a
+    document's own byline, a trailing "PIUS XI" signature block), which
+    means state.sections gets populated with the stack empty (see
+    start_section's "no open structure node" branch) and whatever
+    incidental heading nodes exist end up with an empty `own` and a null
+    span from compute_span -- even though the document has perfectly
+    addressable sections 1..N. That silently violates corpus-schema.md's
+    contract for a heading-less document ("gets a trivial single-node tree
+    spanning its full section range"): null bounds are supposed to mean
+    "this structure node's content is genuinely unaddressable" (LG's
+    APPENDIX), not "the document has no headings" -- and every consumer
+    treats a null-bounded node as unlinkable/unaddressable, so a numbered
+    document coming out this way is corpus data that lies about its own
+    addressability, not a cosmetic gap. Confirmed live across the sweep
+    (e.g. Acerba Animi EN: 23 cleanly-numbered sections, root_children a
+    single childless "PIUS XI" node -- its own closing signature line,
+    the only bold block on the whole page -- with paragraphs: [null,
+    null]). Fixed by falling back to one trivial node spanning
+    [min(n), max(n)] whenever NO node anywhere in the tree ended up with a
+    real span despite real sections existing; a document with genuine
+    heading structure (even one with a deliberately null-bounded sibling
+    like LG's APPENDIX) is untouched, since in that case other nodes DO
+    carry real bounds and this condition never fires."""
     for node in state.root_children:
         node.compute_span()
-    structure = [n.to_dict() for n in state.root_children]
+    if state.sections and not _tree_has_real_span(state.root_children):
+        lo, hi = min(state.sections), max(state.sections)
+        return [{"kind": "sub", "title": title, "paragraphs": [lo, hi], "children": []}]
+    return [n.to_dict() for n in state.root_children]
+
+
+def write_document_outputs(work_id: str, manifest: dict, state: ScrapeState, structure: list[dict]) -> None:
+    out_dir = WORKS_ROOT / work_id
+    out_dir.mkdir(parents=True, exist_ok=True)
     sections = [state.sections[n].to_dict() for n in sorted(state.sections)]
+    # build_manifest constructs a fresh dict every call, with no knowledge
+    # of what was already on disk -- fine for every field it owns, but
+    # `translations` (docs/corpus-schema.md #Documents) is recorded by a
+    # SEPARATE post-hoc reconciliation pass, not by this scrape itself, so
+    # a --overwrite re-parse of this exact document (a routine, expected
+    # operation -- e.g. after a parser fix) would otherwise silently wipe
+    # it. Preserved here rather than trusting every future caller to
+    # remember to re-run reconciliation afterward.
+    existing_path = out_dir / "manifest.json"
+    if existing_path.exists() and "translations" not in manifest:
+        try:
+            existing = json.loads(existing_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            existing = {}
+        if "translations" in existing:
+            manifest["translations"] = existing["translations"]
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
     (out_dir / "structure.json").write_text(json.dumps(structure, indent=2, ensure_ascii=False) + "\n")
     (out_dir / "sections.json").write_text(json.dumps(sections, indent=2, ensure_ascii=False) + "\n")
@@ -1861,6 +2270,18 @@ def scrape_one(fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, overwr
     html = apply_raw_text_corrections(html, corrections, pre_applied, pre_seen)
     try:
         parse = parse_document(html, lang, corrections, url)
+    except StubPageError as exc:
+        # Not a parser defeat -- the page has no real content to parse (see
+        # StubPageError's docstring). Bucketed with fetch-failed/no-pt-url
+        # in reporting: a translation that does not exist, not a document
+        # this scraper failed to read. Deliberately nothing is written to
+        # corpus/works/ -- writing an empty/degraded work here would be
+        # exactly the "silent gap dressed as data" this project's posture
+        # rules out, and it would also permanently wedge future re-runs
+        # via the already-written short-circuit above.
+        result["status"] = "no-translation-stub"
+        result["error"] = str(exc)
+        return result
     except Exception as exc:  # noqa: BLE001 -- a parser crash on one document must not kill the crawl
         result["status"] = "parse-error"
         result["error"] = f"{type(exc).__name__}: {exc}"
@@ -1882,14 +2303,16 @@ def scrape_one(fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, overwr
         result["error"] = f"correction entries never matched during parse: {missing}"
         return result
 
-    ok, problems = validate_document(ref.slug, parse.state)
+    title = title_hint or ref.slug.replace("-", " ").title()
+    structure = build_structure(parse.state, title)
+    ok, problems = validate_document(ref.slug, parse.state, structure)
     promulgated = parse_promulgation_date(ref.date_digits)
     manifest = build_manifest(
-        work_id, ref.document_kind, title_hint or ref.slug.replace("-", " ").title(),
+        work_id, ref.document_kind, title,
         lang, ref.pontiff_or_council, promulgated, url, parse.retrieved_at,
         parse.state, parse,
     )
-    write_document_outputs(work_id, manifest, parse.state)
+    write_document_outputs(work_id, manifest, parse.state, structure)
 
     result["status"] = "validated" if ok else "validation-failed"
     result["problems"] = problems
@@ -1949,6 +2372,7 @@ def run_phase1(fetcher: Fetcher, langs: list[str], only: list[str] | None) -> li
             r = scrape_one(fetcher, ref, lang, VATII_TITLES.get(slug, slug), overwrite=True)
             results.append(r)
             print(f"  {slug}.{lang}: {r['status']}" + (f" {r.get('range')}" if r.get("range") else "") + (f" ERR={r.get('error')}" if r.get("error") else ""))
+        touch_crawl_lock(CRAWL_LOCK_PATH)
     return results
 
 
@@ -1996,9 +2420,10 @@ def run_phase2(
                 r_pt = scrape_one(fetcher, ref, "pt", ref.slug.replace("-", " ").title(), overwrite=False)
                 results.append(r_pt)
                 pt_status = r_pt["status"]
-                if r_pt["status"] == "fetch-failed":
+                if r_pt["status"] in ("fetch-failed", "no-translation-stub"):
                     pt_status = "pt-unavailable (expected for many pontificates, see survey)"
             print(f"  {ref.slug}: en={r_en['status']} pt={pt_status}")
+            touch_crawl_lock(CRAWL_LOCK_PATH)
         if include_exhortations:
             exh_refs, exh_notes = discover_exhortations(fetcher, slug, display)
             for note in exh_notes:
@@ -2012,6 +2437,7 @@ def run_phase2(
                 if pt_url:
                     ref.lang_urls["pt"] = pt_url
                     results.append(scrape_one(fetcher, ref, "pt", ref.slug.replace("-", " ").title(), overwrite=False))
+                touch_crawl_lock(CRAWL_LOCK_PATH)
     return results
 
 
@@ -2086,6 +2512,95 @@ def check_language_symmetry(works_root: Path = WORKS_ROOT) -> tuple[bool, list[s
 
 
 # --------------------------------------------------------------------------
+# Single-instance lock (phase1/phase2 -- both write into the shared
+# corpus/works/ tree and both make real network requests against
+# vatican.va's Crawl-delay: 2 commitment). Added after a real incident: an
+# operator's second invocation was launched believing a first one had died,
+# based on `ps` showing nothing -- but in the runtime this actually ran
+# under, a detached/backgrounded process started by one shell invocation is
+# genuinely alive yet invisible to `ps`/`ps aux` (and to `os.kill(pid, 0)`)
+# run from a *later*, separately-sandboxed invocation -- each such
+# invocation appears to get its own process/PID-namespace view, where even
+# PIDs are renumbered from a low base. That means pid-liveness checks
+# (`os.kill(pid, 0)`) are actively misleading here: a genuinely-alive
+# process's pid, checked from a different invocation, reads back as
+# ProcessLookupError ("dead") every time -- the opposite of a false
+# negative, a *guaranteed* false negative. So this lock deliberately does
+# NOT use pid liveness to decide staleness (recorded in the file only for
+# human diagnostics). It uses a heartbeat instead: the holder re-touches
+# the lock file periodically (see touch_crawl_lock, called from inside the
+# per-document scrape loops) and a lock is only considered abandoned once
+# its heartbeat is older than LOCK_STALE_AFTER -- a real crash stops the
+# heartbeat immediately, a real multi-hour run keeps refreshing it, and no
+# part of the check depends on process visibility across invocations.
+# --------------------------------------------------------------------------
+
+LOCK_STALE_AFTER = 900  # seconds; no heartbeat within this window means abandoned (crashed)
+
+
+class LockHeld(Exception):
+    pass
+
+
+def _lock_heartbeat_age(lock_path: Path) -> tuple[float, dict]:
+    info: dict = {}
+    try:
+        info = json.loads(lock_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        pass
+    heartbeat = 0.0
+    try:
+        heartbeat = float(info.get("heartbeat", info.get("started", 0)) or 0)
+    except (TypeError, ValueError):
+        pass
+    return time.time() - heartbeat, info
+
+
+def acquire_crawl_lock(lock_path: Path) -> None:
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    if lock_path.exists():
+        age, info = _lock_heartbeat_age(lock_path)
+        if age < LOCK_STALE_AFTER:
+            raise LockHeld(
+                f"a crawl already appears to be running (pid {info.get('pid')}, last "
+                f"heartbeat {age:.0f}s ago; lock file {lock_path}). Not starting a second "
+                f"one -- it would race the same corpus/works/ output and double the request "
+                f"rate against vatican.va. If you are certain that process is dead (a "
+                f"heartbeat this recent should only happen on an active run -- see "
+                f"touch_crawl_lock), remove the lock file and retry."
+            )
+    now = time.time()
+    lock_path.write_text(json.dumps({"pid": os.getpid(), "started": now, "heartbeat": now}), encoding="utf-8")
+
+
+def touch_crawl_lock(lock_path: Path) -> None:
+    """Refresh the heartbeat so a genuinely long-running crawl doesn't look
+    abandoned to acquire_crawl_lock's staleness check. Best-effort: called
+    frequently (per document) from inside the phase1/phase2 loops; a
+    missing/unreadable lock file is not fatal here, since a lock is
+    advisory infrastructure for *other* invocations, not something this
+    process depends on to keep working."""
+    if not lock_path.exists():
+        return
+    try:
+        info = json.loads(lock_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        info = {"pid": os.getpid(), "started": time.time()}
+    info["heartbeat"] = time.time()
+    try:
+        lock_path.write_text(json.dumps(info), encoding="utf-8")
+    except OSError:
+        pass
+
+
+def release_crawl_lock(lock_path: Path) -> None:
+    try:
+        lock_path.unlink()
+    except FileNotFoundError:
+        pass
+
+
+# --------------------------------------------------------------------------
 # CLI
 # --------------------------------------------------------------------------
 
@@ -2124,10 +2639,20 @@ def main() -> int:
     args = ap.parse_args()
     fetcher = Fetcher(RAW_ROOT)
 
+    if args.cmd in ("phase1", "phase2"):
+        try:
+            acquire_crawl_lock(CRAWL_LOCK_PATH)
+        except LockHeld as e:
+            print(f"ERROR: {e}")
+            return 1
+
     if args.cmd == "phase1":
-        langs = ["en", "pt"] if args.lang == "both" else [args.lang]
-        only = args.only.split(",") if args.only else None
-        results = run_phase1(fetcher, langs, only)
+        try:
+            langs = ["en", "pt"] if args.lang == "both" else [args.lang]
+            only = args.only.split(",") if args.only else None
+            results = run_phase1(fetcher, langs, only)
+        finally:
+            release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
         print(f"\nnetwork fetches this run: {fetcher.network_fetches} (retried-then-ok: {fetcher.retried_ok})")
         ok = all(r["status"] in ("validated", "already-written") for r in results)
@@ -2138,8 +2663,11 @@ def main() -> int:
         return 0 if (ok and sym_ok) else 1
 
     if args.cmd == "phase2":
-        pontiffs = args.pontiffs.split(",") if args.pontiffs else None
-        results = run_phase2(fetcher, pontiffs, args.time_budget, args.limit, args.exhortations)
+        try:
+            pontiffs = args.pontiffs.split(",") if args.pontiffs else None
+            results = run_phase2(fetcher, pontiffs, args.time_budget, args.limit, args.exhortations)
+        finally:
+            release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
         print(f"\nnetwork fetches this run: {fetcher.network_fetches} (retried-then-ok: {fetcher.retried_ok})")
         sym_ok, sym_problems = check_language_symmetry()

@@ -4,9 +4,22 @@
 	from the UI language switch, `LanguageMenu`; see content.svelte.ts).
 
 	Contextual by route: lists Bible editions under `/bible`, Catechism
-	editions under `/ccc`, Compendium editions under `/compendium`, and
-	renders nothing anywhere else (`context()` below returns undefined for
-	e.g. the home page, where no work is in view).
+	editions under `/ccc`, Compendium editions under `/compendium`, this ONE
+	document's editions under `/documents/{slug}`, and renders nothing
+	anywhere else (`context()` below returns undefined for e.g. the home
+	page, where no work is in view).
+
+	DOCUMENTS ARE A THIRD SHAPE OF CONTEXT, NOT A FOURTH `WorkTypeKey`: the
+	Bible/CCC/Compendium branches all resolve editions through
+	`content.workIdFor(type)`/`listEditions(type)`, keyed by a fixed
+	`WorkTypeKey` with a small, corpus-wide edition list. A document doesn't
+	have "the" edition list — `/documents/lumen-gentium` and
+	`/documents/gaudium-et-spes` each have their OWN EN/PT pair — so
+	`context()` returns a `{ kind: 'document', slug }` variant instead, and
+	every branch below that touches editions/the content store forks on
+	`ctx.kind` to reach `getDocumentGroup(slug)`/`content.documentWorkIdFor`/
+	`content.setDocument` instead (see `content.svelte.ts`'s docblock for why
+	those are separate methods, not `workIdFor('document')`).
 
 	THE URL-VS-STORE SPLIT (docs/decisions.md #2 + the language-symmetry
 	entry): CCC and Compendium URLs are edition-free (`/ccc/1234`) — the
@@ -30,34 +43,60 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { content, type WorkTypeKey } from '$lib/content.svelte';
-	import { listEditions, baseLang, editionToWorkId, workIdToEdition } from '$lib/corpus';
+	import { getDocumentGroup, listEditions, baseLang, editionToWorkId, workIdToEdition } from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
 	import Icon from './Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
+	import type { DocumentManifest } from '$lib/types';
 
-	interface Context {
-		type: WorkTypeKey;
-		/** True on the Bible's edition-in-URL reading route — see module docblock. */
-		navigable: boolean;
-	}
+	type Context =
+		| {
+				kind: 'type';
+				type: WorkTypeKey;
+				/** True on the Bible's edition-in-URL reading route — see module docblock. */
+				navigable: boolean;
+			}
+		| { kind: 'document'; slug: string };
 
 	function context(pathname: string): Context | undefined {
 		if (pathname === '/bible' || pathname.startsWith('/bible/')) {
 			const params = page.params;
 			const hasLocation = Boolean(params.edition && params.book && params.chapter);
-			return { type: 'bible', navigable: hasLocation };
+			return { kind: 'type', type: 'bible', navigable: hasLocation };
 		}
 		if (pathname === '/ccc' || pathname.startsWith('/ccc/')) {
-			return { type: 'catechism', navigable: false };
+			return { kind: 'type', type: 'catechism', navigable: false };
 		}
 		if (pathname === '/compendium' || pathname.startsWith('/compendium/')) {
-			return { type: 'compendium', navigable: false };
+			return { kind: 'type', type: 'compendium', navigable: false };
+		}
+		// `/documents` itself (the library) has no single document in view —
+		// same "renders nothing" behavior as the home page, hence `startsWith`
+		// with the trailing slash rather than a bare prefix check. Both
+		// `/documents/[slug]` and its nested `/documents/[slug]/[n]` set
+		// `page.params.slug`, so one check covers both.
+		if (pathname.startsWith('/documents/') && page.params.slug) {
+			return { kind: 'document', slug: page.params.slug };
 		}
 		return undefined;
 	}
 
 	const ctx = $derived(context(page.url.pathname));
-	const editions = $derived(ctx ? listEditions(ctx.type) : []);
+
+	const typeEditions = $derived(ctx?.kind === 'type' ? listEditions(ctx.type) : []);
+	const documentGroup = $derived(ctx?.kind === 'document' ? getDocumentGroup(ctx.slug) : undefined);
+	// A document's editions, sorted like `listEditions` (docs/decisions.md #1:
+	// language then id) rather than however `Object.values` happens to order
+	// the manifest map — with only two languages this rarely matters, but
+	// staying consistent with the Bible/CCC/Compendium menus costs nothing.
+	const documentEditions = $derived(
+		documentGroup
+			? Object.values(documentGroup.manifests)
+					.filter((m): m is DocumentManifest => m !== undefined)
+					.sort((a, b) => baseLang(a.language).localeCompare(baseLang(b.language)) || a.id.localeCompare(b.id))
+			: []
+	);
+	const editions = $derived(ctx?.kind === 'document' ? documentEditions : typeEditions);
 
 	// On the Bible reading route the URL is the source of truth for which
 	// edition is actually on screen (it may disagree with the stored
@@ -65,11 +104,13 @@
 	// edition); everywhere else the content store is the only source of
 	// truth there is, since the URL carries no edition.
 	const currentWorkId = $derived(
-		ctx?.type === 'bible' && ctx.navigable && page.params.edition
+		ctx?.kind === 'type' && ctx.type === 'bible' && ctx.navigable && page.params.edition
 			? editionToWorkId(page.params.edition)
-			: ctx
+			: ctx?.kind === 'type'
 				? content.workIdFor(ctx.type)
-				: undefined
+				: ctx?.kind === 'document'
+					? content.documentWorkIdFor(ctx.slug)
+					: undefined
 	);
 
 	const currentEdition = $derived(editions.find((w) => w.id === currentWorkId));
@@ -84,10 +125,14 @@
 
 	function choose(workId: string) {
 		if (!ctx) return;
-		content.set(ctx.type, workId);
-		if (ctx.type === 'bible' && ctx.navigable) {
-			const edition = workIdToEdition(workId);
-			goto(`/bible/${edition}/${page.params.book}/${page.params.chapter}`);
+		if (ctx.kind === 'document') {
+			content.setDocument(ctx.slug, workId);
+		} else {
+			content.set(ctx.type, workId);
+			if (ctx.type === 'bible' && ctx.navigable) {
+				const edition = workIdToEdition(workId);
+				goto(`/bible/${edition}/${page.params.book}/${page.params.chapter}`);
+			}
 		}
 		close();
 		triggerEl?.focus();

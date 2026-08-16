@@ -25,6 +25,12 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'nav.bible': 'Bible',
 		'nav.ccc': 'Catechism',
 		'nav.compendium': 'Compendium',
+		// "Magisterium" over "Documents"/"Magisterial Documents" — the name
+		// shown in the navbar and the home-page Library group; the route path
+		// stays `/documents` regardless (URL and display name needn't match,
+		// and `/documents` stays accurate as encyclicals/exhortations/CDF
+		// documents join the 16 Vatican II texts already here).
+		'nav.magisterium': 'Magisterium',
 		'nav.menu': 'Menu',
 		'home.title': 'Depositum',
 		'home.tagline': 'The Bible and the Catechism of the Catholic Church, free to read.',
@@ -90,6 +96,38 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ref.tooltip.openCompendium': 'Open in Compendium',
 		'ref.cf': 'cf.',
 
+		// Documents (encyclicals, conciliar constitutions/decrees/declarations,
+		// docs/corpus-schema.md §Documents) — routes/documents/** is the
+		// consumer, plus the home page's Magisterium group.
+		'document.library.tagline':
+			'Encyclicals, conciliar constitutions, decrees, and declarations of the Magisterium.',
+		'document.tableOfContents': 'Table of Contents',
+		'document.startReading': 'Start reading',
+		'document.section': 'Section',
+		'document.prevSection': 'Previous',
+		'document.nextSection': 'Next',
+		'document.promulgated': 'Promulgated',
+		'document.kind.conciliarConstitution': 'Constitution',
+		'document.kind.conciliarDecree': 'Decree',
+		'document.kind.conciliarDeclaration': 'Declaration',
+		'document.kind.encyclical': 'Encyclical',
+		'document.kind.apostolicExhortation': 'Apostolic Exhortation',
+		'document.kind.apostolicConstitution': 'Apostolic Constitution',
+		'document.kind.cdfDeclaration': 'CDF Declaration',
+		'document.kindPlural.conciliarConstitution': 'Constitutions',
+		'document.kindPlural.conciliarDecree': 'Decrees',
+		'document.kindPlural.conciliarDeclaration': 'Declarations',
+		'document.kindPlural.encyclical': 'Encyclicals',
+		'document.kindPlural.apostolicExhortation': 'Apostolic Exhortations',
+		'document.kindPlural.apostolicConstitution': 'Apostolic Constitutions',
+		'document.kindPlural.cdfDeclaration': 'CDF Declarations',
+
+		// A citation whose source text is a confirmed gap in the source page
+		// itself, not a parsing failure (docs/research/vatican-documents.md §6)
+		// — CccParagraphText.svelte's citation disclosure, shared by CCC and
+		// document sections.
+		'citation.unavailable': 'No source text available for this note.',
+
 		'lang.label': 'Language'
 	},
 	pt: {
@@ -97,6 +135,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'nav.bible': 'Bíblia',
 		'nav.ccc': 'Catecismo',
 		'nav.compendium': 'Compêndio',
+		'nav.magisterium': 'Magistério',
 		'nav.menu': 'Menu',
 		'home.title': 'Depositum',
 		'home.tagline': 'A Bíblia e o Catecismo da Igreja Católica, livres para ler.',
@@ -154,6 +193,31 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ref.tooltip.openBible': 'Abrir na Bíblia',
 		'ref.tooltip.openCompendium': 'Abrir no Compêndio',
 		'ref.cf': 'cf.',
+
+		'document.library.tagline':
+			'Encíclicas, constituições conciliares, decretos e declarações do Magistério.',
+		'document.tableOfContents': 'Índice',
+		'document.startReading': 'Começar a leitura',
+		'document.section': 'Secção',
+		'document.prevSection': 'Anterior',
+		'document.nextSection': 'Próximo',
+		'document.promulgated': 'Promulgado em',
+		'document.kind.conciliarConstitution': 'Constituição',
+		'document.kind.conciliarDecree': 'Decreto',
+		'document.kind.conciliarDeclaration': 'Declaração',
+		'document.kind.encyclical': 'Encíclica',
+		'document.kind.apostolicExhortation': 'Exortação Apostólica',
+		'document.kind.apostolicConstitution': 'Constituição Apostólica',
+		'document.kind.cdfDeclaration': 'Declaração da CDF',
+		'document.kindPlural.conciliarConstitution': 'Constituições',
+		'document.kindPlural.conciliarDecree': 'Decretos',
+		'document.kindPlural.conciliarDeclaration': 'Declarações',
+		'document.kindPlural.encyclical': 'Encíclicas',
+		'document.kindPlural.apostolicExhortation': 'Exortações Apostólicas',
+		'document.kindPlural.apostolicConstitution': 'Constituições Apostólicas',
+		'document.kindPlural.cdfDeclaration': 'Declarações da CDF',
+
+		'citation.unavailable': 'Sem texto de fonte disponível para esta nota.',
 
 		'lang.label': 'Idioma'
 	}

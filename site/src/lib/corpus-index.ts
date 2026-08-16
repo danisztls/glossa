@@ -2,13 +2,13 @@
  * The corpus boot index: every registry `corpus.ts`'s public API is backed
  * by, built once at module load and read synchronously ever after. This is
  * the "small index the app boots from" — work manifests, the canonical
- * Bible book/chapter *numbers* (never verse text), the CCC/Compendium TOC
- * trees, CCC abbreviations, and the scripture cross-reference table — never
- * the heavy reading text itself (Bible chapters, CCC paragraph prose,
- * Compendium answers), which `corpus.ts` fetches separately, on demand, per
- * page (see that file's docblock for why the split, and the two-tier
- * `corpus-data/index/` vs `corpus-data/content/` layout `scripts/
- * sync-corpus.mjs` produces).
+ * Bible book/chapter *numbers* (never verse text), the CCC/Compendium/
+ * Document TOC trees, CCC abbreviations, and the scripture cross-reference
+ * table — never the heavy reading text itself (Bible chapters, CCC
+ * paragraph prose, Compendium answers, document sections), which
+ * `corpus.ts` fetches separately, on demand, per page (see that file's
+ * docblock for why the split, and the two-tier `corpus-data/index/` vs
+ * `corpus-data/content/` layout `scripts/sync-corpus.mjs` produces).
  *
  * Two sources, chosen the same way `corpus.ts` always has:
  *   - Real corpus: `import.meta.glob(..., { eager: true })` over
@@ -152,9 +152,19 @@ interface CccIndexFile {
 interface CompendiumIndexFile {
 	[lang: string]: { structure: StructureNode[] };
 }
+/**
+ * Keyed by WORK ID (`vatii.lumen-gentium.en`), not by bare language like
+ * `CccIndexFile`/`CompendiumIndexFile` above -- see `corpus.ts`'s "Documents"
+ * section docblock for why: a document work type is really N independent
+ * works (one per {family, slug} pair, each with its own EN/PT editions),
+ * not one canonical work per language.
+ */
+interface DocumentIndexFile {
+	[workId: string]: { structure: StructureNode[]; sectionNumbers: number[] };
+}
 export interface ContentManifestEntry {
 	workId: string;
-	kind: 'bible-book' | 'ccc-chunk' | 'compendium-questions';
+	kind: 'bible-book' | 'ccc-chunk' | 'compendium-questions' | 'document-sections';
 	relPath: string;
 	bytes: number;
 }
@@ -178,6 +188,11 @@ const realIndexCompendium = import.meta.glob('./corpus-data/index/compendium-ind
 	eager: true,
 	import: 'default'
 }) as Record<string, CompendiumIndexFile>;
+
+const realIndexDocuments = import.meta.glob('./corpus-data/index/document-index.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, DocumentIndexFile>;
 
 const realIndexXrefs = import.meta.glob('./corpus-data/index/xrefs.json', {
 	eager: true,
@@ -294,6 +309,27 @@ export const compendiumStructures: Record<string, StructureNode[]> = USE_REAL_CO
 			pt: compendiumPtStructure as unknown as StructureNode[]
 		};
 
+/**
+ * Document structure trees, keyed by WORK ID (not language — see
+ * `DocumentIndexFile`'s docblock). No fixture branch: documents have no
+ * hand-authored fixtures yet (`corpus.ts`'s content-tier functions return
+ * empty results under fixtures for the same reason — see that file's
+ * "Documents" section), so this is `{}` under vitest/no-corpus.
+ */
+export const documentStructures: Record<string, StructureNode[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexDocuments) ?? {}).map(([workId, v]) => [workId, v.structure])
+		)
+	: {};
+
+/** Section numbers actually present per document work id — same role as
+ *  `cccParagraphNumbers` above, keyed by work id instead of language. */
+export const documentSectionNumbers: Record<string, number[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexDocuments) ?? {}).map(([workId, v]) => [workId, v.sectionNumbers])
+		)
+	: {};
+
 // xrefs/ccc-bible.json has thousands of entries but compresses to ~30 KB
 // gzipped (measured against the real corpus 2026-08-15) — small enough to
 // stay in the eager index tier rather than fetched/chunked, and several
@@ -370,6 +406,7 @@ export interface ContentLocation {
 const bibleBookLocations: Record<string, Record<string, ContentLocation>> = {};
 const cccChunkLocations: Record<string, Record<number, ContentLocation>> = {};
 const compendiumQuestionsLocations: Record<string, ContentLocation> = {};
+const documentSectionsLocations: Record<string, ContentLocation> = {};
 /** relPath (`content-manifest.json`'s shape) -> hashed URL, built once so
  *  `listContentAssets()` doesn't rescan every glob entry per manifest row. */
 const contentUrlByRelPath: Record<string, string> = {};
@@ -393,6 +430,11 @@ for (const [globPath, url] of Object.entries(realContentUrls)) {
 	const compendiumMatch = relPath.match(/^content\/([^/]+)\/questions\.json$/);
 	if (compendiumMatch) {
 		compendiumQuestionsLocations[compendiumMatch[1]] = location;
+		continue;
+	}
+	const documentMatch = relPath.match(/^content\/([^/]+)\/sections\.json$/);
+	if (documentMatch) {
+		documentSectionsLocations[documentMatch[1]] = location;
 	}
 }
 
@@ -406,6 +448,10 @@ export function cccChunkLocation(workId: string, n: number): ContentLocation | u
 
 export function compendiumQuestionsLocation(workId: string): ContentLocation | undefined {
 	return compendiumQuestionsLocations[workId];
+}
+
+export function documentSectionsLocation(workId: string): ContentLocation | undefined {
+	return documentSectionsLocations[workId];
 }
 
 /**

@@ -203,8 +203,24 @@ Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vatii` | `encyclical` |
   "document_kind": "conciliar-constitution", // "conciliar-constitution" | "conciliar-decree" | "conciliar-declaration" | "encyclical" | "apostolic-exhortation" | "apostolic-constitution" | "cdf-declaration" | …
   "pontiff_or_council": "Second Vatican Council", // e.g. "John Paul II", "Second Vatican Council", "Congregation for the Doctrine of the Faith"
   "promulgated": "1964-11-21", // the document's own date, distinct from sources[].retrieved_at
+  "translations": { // optional; present only when a sibling-language edition is known and NOT written as its own work — never present alongside a real sibling work, which is provenance enough on its own
+    "pt": {
+      "status": "stub-page", // "stub-page" | "no-url" | "not-found" | "fetch-failed"
+      "checked_at": "2026-08-16", // when this status was established, not necessarily today
+      "note": "…", // optional, freeform; used e.g. to record that a retry reproduced the same result
+    },
+  },
 }
 ```
+
+Absence of a sibling-language work (e.g. no `encyclical.rerum-novarum.pt` directory) is expected and common — coverage collapses for older pontificates (`vatican-documents.md` §2) — but bare absence on disk is provenance-free: it can't be told apart from "never checked" without re-crawling. `translations` on the surviving work closes that gap, recorded once the absent language's status is established, from whichever of these it turns out to be (checked from cache, no network needed once the crawl has already visited the URL once):
+
+- `"stub-page"`: a URL was fetched (200) but its content region carried no real translation, only vatican.va's page shell (see the scraper's `StubPageError`) — confirmed live to be the dominant case for pre-1960s Portuguese encyclical URLs.
+- `"no-url"`: no URL for that language could even be derived/discovered (distinct from a URL existing and failing).
+- `"not-found"`: a derived URL was attempted and consistently returned HTTP 404 across a full retry cycle (3 attempts with backoff) — a measured, repeatable absence, not a guess. Confirmed live for 10 Pius XI/XII-era documents: the original crawl recorded them as failed, and an explicit post-sweep retry (once concurrent crawling was no longer a politeness concern) reproduced the same 404 on every one of 10/10, with none resolving — i.e. the earlier failure was never transient flakiness for these, it was vatican.va correctly reporting "no such page."
+- `"fetch-failed"`: a URL was derived and a fetch was attempted but never resolved to a definite answer (connection/timeout error, not a clean 404) — genuinely transient network flakiness (the survey's ~1-in-6–8 Azure edge rate), worth a retry on a future crawl, unlike `"not-found"`.
+
+Never fabricated or inferred without evidence: each status is derived from what's actually on disk or from a direct, logged HTTP response (an absent raw-cache file, a cached-but-stub one, or a reproduced 404), the same "auditable from cache/evidence" posture as everything else in this pipeline.
 
 `structure.json`: reuse the Catechism/Compendium node schema verbatim (`kind`/`n`/`title`/`paragraphs`/`children` — `paragraphs` is the generic unit-number span from the note above, and holds document section numbers here). Chapter/Part headings for the longer documents (Gaudium et Spes has Parts and Chapters; Laudato Si' has numbered chapters and roman-numeral subsections, `vatican-documents.md` §3); a document with no internal headings (a short CDF declaration) gets a trivial single-node tree spanning its full section range, the same shape a short Compendium chapter would get.
 

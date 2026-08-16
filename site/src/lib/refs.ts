@@ -30,16 +30,22 @@
  *      grepping every `Cf. X 1, 2` — shaped token out of the real
  *      `ccc.pt/paragraphs.json`, not guessed.)
  *   2. Document sigla (DV, LG, GS, CIC, DS, PL, PG, AAS, …) — non-scripture
- *      but nameable, so they render as a quiet non-link with a tooltip
- *      instead of disappearing into plain text. `xrefs.py` only needed a
- *      *non*-scripture allowlist (to silence its "unmapped abbreviation"
- *      report); this module needs the sigla's expansions too. The table
- *      below is a stopgap — `docs/link-surface.md` records that neither
- *      language's `abbreviations.json` carries a real one (the vatican.va
- *      mirrors omit the front-matter table) — built by counting sigla
- *      occurrences in both `paragraphs.json` files with `jq` and confirming
- *      each one's meaning against its citation context. Replace this table
- *      wholesale once the corpus carries a real abbreviations source.
+ *      but nameable. Sigla naming a document the corpus has actually
+ *      ingested (currently the 16 Vatican II texts, see
+ *      `DOCUMENT_SLUGS_EN`) resolve to a real `/documents/{slug}/{n}` link
+ *      through `refHref`, same as a scripture reference; everything else
+ *      (DS, CIC, PL, PG, AAS, and any PT conciliar mention — PT never maps
+ *      sigla to slugs, see that table's docblock) renders as a quiet
+ *      non-link with an expansion tooltip instead of disappearing into
+ *      plain text. `xrefs.py` only needed a *non*-scripture allowlist (to
+ *      silence its "unmapped abbreviation" report); this module needs the
+ *      sigla's expansions too. The table below is a stopgap —
+ *      `docs/link-surface.md` records that neither language's
+ *      `abbreviations.json` carries a real one (the vatican.va mirrors omit
+ *      the front-matter table) — built by counting sigla occurrences in
+ *      both `paragraphs.json` files with `jq` and confirming each one's
+ *      meaning against its citation context. Replace this table wholesale
+ *      once the corpus carries a real abbreviations source.
  *   3. Two grammars `xrefs.py` never had to parse at all: a bare
  *      comma/dash-separated CCC-paragraph number list (the Compendium's
  *      `ccc_refs`, e.g. "279-289, 296-298", and the CCC's own `related`
@@ -67,7 +73,7 @@
  * as text".
  */
 
-import { findBookByAbbrev, workIdToEdition } from './corpus';
+import { documentSectionExists, findBookByAbbrev, getDocumentGroup, workIdToEdition } from './corpus';
 import { isDivergentBook, resolveVulgate } from './versification';
 
 // --------------------------------------------------------------------------
@@ -79,7 +85,20 @@ export type RefSegment =
 	| { kind: 'scripture'; osis: string; chapter: number; verses: number[]; cf?: boolean; raw: string }
 	| { kind: 'ccc'; n: number; raw: string }
 	| { kind: 'compendium'; n: number; raw: string }
-	| { kind: 'document'; sigla: string; locus: string | null; expansion: string | null; raw: string };
+	| {
+			kind: 'document';
+			sigla: string;
+			locus: string | null;
+			expansion: string | null;
+			/** The ingested document this siglum names, or `null` for a
+			 *  recognized-but-not-ingested siglum (DS, CIC, PL, PG, AAS, ...) or
+			 *  a language whose config never maps sigla to slugs at all (PT —
+			 *  see `DOCUMENT_SLUGS_EN`'s docblock). Resolved at PARSE time, not
+			 *  re-derived in `refHref`, so there's one place that decides "is
+			 *  this siglum a document we have," not two that could drift. */
+			slug: string | null;
+			raw: string;
+	  };
 
 export interface RefsOpts {
 	/** BCP-47 or bare language tag; only the `pt`/non-`pt` distinction matters. Defaults to `en`. */
@@ -311,10 +330,13 @@ const BOOK_VARIANTS_PT: Record<string, string[]> = {
 
 // --------------------------------------------------------------------------
 // Document sigla (non-scripture: councils, encyclicals, canon law, patrology
-// series, magisterial document collections). Nothing in the corpus links to
-// these yet (`docs/link-surface.md`: no encyclicals ingested) — the point of
-// recognizing them is a quiet, informative non-link (sigla + locus +
-// expansion tooltip) instead of the sigla vanishing into unstyled text.
+// series, magisterial document collections). The 16 Vatican II sigla now
+// resolve to a real `/documents/{slug}/{n}` link via `DOCUMENT_SLUGS_EN` +
+// `refHref` below — everything else here (DS, CIC, PL, PG, AAS, canon law,
+// patrology series, and every siglum's PT appearance) still has nothing in
+// the corpus to link to, so the point of recognizing THOSE is a quiet,
+// informative non-link (sigla + locus + expansion tooltip) instead of the
+// sigla vanishing into unstyled text.
 //
 // This table is a STOPGAP. `docs/link-surface.md` records that neither
 // language's `abbreviations.json` carries a real one (the vatican.va
@@ -356,6 +378,7 @@ const DOCUMENT_SIGLA_EN: Record<string, string> = {
 	OT: 'Optatam Totius (Vatican II, Decree on Priestly Training)',
 	PO: 'Presbyterorum Ordinis (Vatican II, Decree on the Ministry and Life of Priests)',
 	CD: 'Christus Dominus (Vatican II, Decree on the Pastoral Office of Bishops)',
+	OE: 'Orientalium Ecclesiarum (Vatican II, Decree on the Eastern Catholic Churches)',
 	EP: 'Eucharistic Prayer (Roman Missal)',
 	PC: 'Perfectae Caritatis (Vatican II, Decree on the Renewal of Religious Life)',
 	AA: 'Apostolicam Actuositatem (Vatican II, Decree on the Apostolate of the Laity)',
@@ -386,6 +409,55 @@ const DOCUMENT_SIGLA_EN: Record<string, string> = {
 	ND: 'Neuner–Dupuis, The Christian Faith (doctrinal sourcebook)'
 };
 
+/**
+ * Siglum -> document SLUG (docs/corpus-schema.md §Documents work ids,
+ * `{family}.{slug}.{lang}`) for sigla that are BOTH recognized above AND
+ * actually ingested into the corpus — currently the 16 Vatican II
+ * constitutions/decrees/declarations, the one document family both fully
+ * ingested and cited by siglum anywhere in the CCC
+ * (docs/research/vatican-documents.md §1a). `refHref` below consults this to
+ * turn e.g. `GS 19` into `/documents/gaudium-et-spes/19` — see
+ * `docs/link-surface.md`'s "once ingested, the raw citations + abbreviations
+ * let the parser resolve 'LG 12' to an actual paragraph link" prediction,
+ * which this table is what makes true.
+ *
+ * Encyclicals are NOT in this table even though ~60+ are already in the
+ * corpus: the CCC cites them by spelled-out title ("Familiaris Consortio"),
+ * never by siglum (`vatican-documents.md` §1b), so there is no siglum ->
+ * encyclical-slug mapping for the citation grammar to need — this table maps
+ * what the grammar can actually encounter, not everything the corpus has.
+ *
+ * EN-ONLY, DELIBERATELY: `DOCUMENT_SIGLA_PT` below doesn't carry any of
+ * these sigla at all (ccc.pt spells conciliar documents out in full rather
+ * than abbreviating them — see that table's own docblock), so there's
+ * nothing to map for PT. Critically, `SC` must NEVER appear in a PT version
+ * of this table: in `DOCUMENT_SIGLA_EN` it's Sacrosanctum Concilium, but the
+ * identical siglum in `DOCUMENT_SIGLA_PT` means Sources Chrétiennes — a
+ * shared slug table would silently mislink a PT patristics citation into a
+ * conciliar constitution. `buildConfig`'s `documentSlugs` parameter defaults
+ * to `{}` for exactly this reason: PT's config simply never resolves any
+ * siglum to a slug, so `RefSegment.slug` is always `null` there and
+ * `refHref` never links a PT document segment (see its own docblock).
+ */
+const DOCUMENT_SLUGS_EN: Record<string, string> = {
+	LG: 'lumen-gentium',
+	SC: 'sacrosanctum-concilium',
+	GS: 'gaudium-et-spes',
+	DV: 'dei-verbum',
+	UR: 'unitatis-redintegratio',
+	AG: 'ad-gentes',
+	DH: 'dignitatis-humanae',
+	AA: 'apostolicam-actuositatem',
+	CD: 'christus-dominus',
+	OE: 'orientalium-ecclesiarum',
+	NA: 'nostra-aetate',
+	PC: 'perfectae-caritatis',
+	IM: 'inter-mirifica',
+	OT: 'optatam-totius',
+	GE: 'gravissimum-educationis',
+	PO: 'presbyterorum-ordinis'
+};
+
 const DOCUMENT_SIGLA_PT: Record<string, string> = {
 	// SC deliberately means something different here than in EN — see the
 	// table-group docblock above.
@@ -411,6 +483,8 @@ interface LangConfig {
 	bookRe: RegExp;
 	documentSigla: Map<string, string>;
 	documentRe: RegExp;
+	/** Siglum -> ingested document slug, e.g. "GS" -> "gaudium-et-spes"; empty for PT (see `DOCUMENT_SLUGS_EN`'s docblock). */
+	documentSlugs: Map<string, string>;
 	/** Primary chapter/verse separator: ":" (EN) or "," (PT, "Act 2, 42"). */
 	primarySep: string;
 	/** EN-only: a bare space or "." also separates chapter from verse when
@@ -442,7 +516,8 @@ function buildConfig(
 	bookVariants: Record<string, string[]>,
 	documentSigla: Record<string, string>,
 	primarySep: string,
-	allowBareSeparators: boolean
+	allowBareSeparators: boolean,
+	documentSlugs: Record<string, string> = {}
 ): LangConfig {
 	const variantToOsis = new Map<string, string>();
 	for (const [osis, variants] of Object.entries(bookVariants)) {
@@ -453,12 +528,15 @@ function buildConfig(
 		bookRe: buildVariantRe([...variantToOsis.keys()]),
 		documentSigla: new Map(Object.entries(documentSigla)),
 		documentRe: buildVariantRe(Object.keys(documentSigla)),
+		documentSlugs: new Map(Object.entries(documentSlugs)),
 		primarySep,
 		allowBareSeparators
 	};
 }
 
-const CONFIG_EN = buildConfig(BOOK_VARIANTS_EN, DOCUMENT_SIGLA_EN, ':', true);
+const CONFIG_EN = buildConfig(BOOK_VARIANTS_EN, DOCUMENT_SIGLA_EN, ':', true, DOCUMENT_SLUGS_EN);
+// No fifth argument -- PT's document segments always parse with `slug: null`
+// (DOCUMENT_SLUGS_EN's docblock explains why that's correct, not a gap).
 const CONFIG_PT = buildConfig(BOOK_VARIANTS_PT, DOCUMENT_SIGLA_PT, ',', false);
 
 function configFor(lang?: string): LangConfig {
@@ -601,6 +679,7 @@ interface DocumentMatch {
 	matchStart: number;
 	consumedEnd: number;
 	locus: string | null;
+	slug: string | null;
 }
 
 /** A locus is digits, comma/dot-chained and dash-ranged, plus an optional "# N" subsection — display-only text, not parsed further (document segments never resolve to a link). */
@@ -615,7 +694,7 @@ function findDocumentAt(cfg: LangConfig, s: string, start: number): DocumentMatc
 	const locusMatch = LOCUS_RE.exec(after.slice(spaceSkip.length));
 	const locus = locusMatch ? locusMatch[0] : null;
 	const consumedEnd = m.index + m[0].length + (locusMatch ? spaceSkip.length + locusMatch[0].length : 0);
-	return { sigla: m[0], matchStart: m.index, consumedEnd, locus };
+	return { sigla: m[0], matchStart: m.index, consumedEnd, locus, slug: cfg.documentSlugs.get(m[0]) ?? null };
 }
 
 /** True if a "cf."/"Cf." token sits directly before `pos` — the fallback for `Cf.` appearing mid-clause rather than at its start (ported from xrefs.py's `_preceded_by_cf`). */
@@ -738,6 +817,7 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 			sigla: dm.sigla,
 			locus: dm.locus,
 			expansion: cfg.documentSigla.get(dm.sigla) ?? null,
+			slug: dm.slug,
 			raw: rawClause.slice(dm.matchStart, dm.consumedEnd)
 		});
 		if (dm.consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(dm.consumedEnd)));
@@ -885,21 +965,67 @@ export function linkifyProse(text: string, opts?: RefsOpts): RefSegment[] {
 }
 
 /**
+ * The leading section number off a document locus string ("19", "19 # 1",
+ * "12-13", "12, 15") — `LOCUS_RE`'s own match already keeps the whole
+ * range/subsection string together for DISPLAY (the raw citation text is
+ * reproduced verbatim, per this module's store-raw principle), but a link
+ * target needs exactly one section number. "GS 19 # 1" means Gaudium et
+ * Spes §19, subsection 1 — link to §19 and drop the subsection rather than
+ * failing the whole reference (documents have no sub-section-level
+ * addressability in the corpus, docs/corpus-schema.md §Documents); a range
+ * ("12-13") links to its first section, same "pick the first address"
+ * convention `refHref`'s divergent-Psalm handling already uses for a
+ * whole-chapter reference to a split psalm.
+ */
+function firstLocusSection(locus: string | null): number | undefined {
+	if (!locus) return undefined;
+	const m = /^\d+/.exec(locus);
+	return m ? Number(m[0]) : undefined;
+}
+
+/**
  * Where a segment points, given the reader's current editions. `undefined`
- * means "not linkable" — a `text`/`document` segment (documents have
- * nothing to link to yet, see the module docblock), or a scripture segment
- * whose book/chapter isn't present in the reader's current Bible edition.
- * Never returns a dead link.
+ * means "not linkable" — a `text` segment, a `document` segment whose
+ * siglum isn't an ingested document (`seg.slug === null`: DS, CIC, PL, PG,
+ * AAS, and — for PT specifically — every conciliar siglum, since PT never
+ * maps sigla to slugs at all, see `DOCUMENT_SLUGS_EN`'s docblock) or whose
+ * target section doesn't exist in the reader's effective language, or a
+ * scripture segment whose book/chapter isn't present in the reader's
+ * current Bible edition. Never returns a dead link.
  *
  * CCC and Compendium URLs are edition-free (docs: "URLs for CCC and
  * Compendium stay edition-free") and their paragraph/question numbering is
  * a single fixed canonical range, so those two cases don't need to consult
- * the corpus at all — only scripture depends on which edition is open.
+ * the corpus at all. Document URLs are edition-free too (`/documents/
+ * {slug}/{n}`, docs/corpus-schema.md §Documents extending docs/decisions.md
+ * #2's convention) — but unlike CCC/Compendium, a document has TWO editions
+ * whose section counts can genuinely differ (a source defect can leave one
+ * language short a section or two, docs/research/vatican-documents.md §6),
+ * so `ctx.lang` (the reader's EFFECTIVE content language for this document,
+ * `content.documentLangFor(slug)`-equivalent at the call site — never the
+ * raw UI language) picks which language's edition to check the section
+ * against. Deliberately NOT `corpus.defaultDocumentWorkId`, which falls back
+ * to "any edition, if the reader's language has none" — the right behavior
+ * for OPENING a document page (better to show it in some language than
+ * 404), but the wrong one here: a citation link that silently lands the
+ * reader on a different-language edition than the one they're reading would
+ * violate "respect the reader's language" in the one case it's meant to
+ * cover, so this looks up the exact-language edition directly and emits no
+ * link at all if that specific edition doesn't have the section.
  */
-export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string }): string | undefined {
+export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: string }): string | undefined {
 	if (seg.kind === 'ccc') return `/ccc/${seg.n}`;
 	if (seg.kind === 'compendium') return `/compendium/${seg.n}`;
-	if (seg.kind !== 'scripture') return undefined; // 'text' and 'document' never link
+	if (seg.kind === 'document') {
+		if (!seg.slug) return undefined; // recognized siglum, but not an ingested document (or PT, which never resolves one)
+		const n = firstLocusSection(seg.locus);
+		if (n === undefined) return undefined; // e.g. a bare "cf. GS" with no section number at all
+		const targetLang = (ctx.lang ?? 'en').split('-')[0].toLowerCase();
+		const workId = getDocumentGroup(seg.slug)?.manifests[targetLang]?.id;
+		if (!workId || !documentSectionExists(workId, n)) return undefined;
+		return `/documents/${seg.slug}/${n}`;
+	}
+	if (seg.kind !== 'scripture') return undefined; // 'text' never links
 
 	if (!ctx.bibleWorkId) return undefined;
 	const book = findBookByAbbrev(ctx.bibleWorkId, seg.osis);

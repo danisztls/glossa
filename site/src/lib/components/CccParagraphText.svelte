@@ -1,11 +1,21 @@
 <script lang="ts">
-	import type { CccParagraph } from '$lib/types';
+	import type { CccBlock, CccCitation } from '$lib/types';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
 	import RefText from '$lib/components/RefText.svelte';
+	import { t } from '$lib/i18n.svelte';
 
+	/**
+	 * Deliberately narrower than `CccParagraph`: only `blocks`/`citations` are
+	 * read below, and both a CCC paragraph and a document's `DocumentSection`
+	 * (docs/corpus-schema.md §Documents) carry the identical wire shape for
+	 * both fields — a document's `sections.json` reuses the CCC's block model
+	 * verbatim. Structural typing means both satisfy this without a cast:
+	 * this component is genuinely shared between `/ccc/[n]` and
+	 * `/documents/{slug}/{n}`, not merely similar-looking duplicated markup.
+	 */
 	interface Props {
-		paragraph: CccParagraph;
+		paragraph: { blocks: CccBlock[]; citations: CccCitation[] };
 		/** Bare content language ('en' | 'pt') the paragraph is being read in — picks the citation grammar in `$lib/refs.ts` (e.g. PT's ':'-vs-','  chapter/verse separator, its own book-abbreviation table). */
 		lang: string;
 	}
@@ -61,7 +71,7 @@
 		{#if seg.kind === 'text'}
 			{seg.text}
 		{:else}
-			{@const href = refHref(seg, { bibleWorkId: content.workIdFor('bible') })}
+			{@const href = refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang })}
 			{#if href}
 				<a class="inline-ref" {href}>{seg.raw}</a>
 			{:else}
@@ -79,8 +89,17 @@
 				<details>
 					<summary>{seg.marker}</summary>
 					<span class="citation-text">
-						{#if citation}
+						{#if citation && citation.text.trim() !== ''}
 							<RefText text={citation.text} {lang} />
+						{:else if citation}
+							<!-- Deliberately empty source: a handful of citations in the
+							     Vatican II corpus point at a footnote-list entry that is
+							     itself missing/truncated in the source page, not a parsing
+							     failure (docs/research/vatican-documents.md §6, "Known
+							     source defects" — 4 confirmed cases). No fabricated text
+							     to show, so say so rather than rendering a dead-looking
+							     empty box. -->
+							<span class="citation-empty">{t('citation.unavailable')}</span>
 						{:else}
 							{seg.marker}
 						{/if}
@@ -153,6 +172,10 @@
 
 	.citation-marker summary::-webkit-details-marker {
 		display: none;
+	}
+
+	.citation-empty {
+		font-style: italic;
 	}
 
 	.citation-marker .citation-text {
