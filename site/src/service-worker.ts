@@ -150,13 +150,17 @@ const PRECACHE_BUILD_URLS = build.filter((url) => !CONTENT_URLS.has(contentPath(
  * static/ assets (manifest, icons, offline.html, robots.txt, …) — always shell
  * tier.
  *
- * `_headers` is dropped: it ships in static/ because Cloudflare only reads it
- * from the deployed asset directory, but the host treats it as configuration
- * and never serves it. Precaching it would spend an install-time request to be
- * told 404 — harmless (precacheShell ignores non-ok responses) but pointless,
- * and the miss would otherwise look like a real asset failing on every install.
+ * `_headers` and `_redirects` are dropped: they ship in static/ because
+ * Cloudflare only reads them from the deployed asset directory, but the host
+ * treats both as configuration and never serves them. Precaching them would
+ * spend install-time requests to be told 404 — harmless (precacheShell ignores
+ * non-ok responses) but pointless, and the misses would otherwise look like
+ * real assets failing on every install.
  */
-const PRECACHE_FILE_URLS = files.filter((url) => !url.endsWith('/_headers'));
+const HOST_CONFIG_FILES = ['/_headers', '/_redirects'];
+const PRECACHE_FILE_URLS = files.filter(
+	(url) => !HOST_CONFIG_FILES.some((name) => url.endsWith(name))
+);
 
 // One prerendered page, deliberately, used as the offline "boot" document —
 // see the file header and handleNavigate. NOT sourced from

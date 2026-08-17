@@ -1203,8 +1203,12 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 		// rather than to no link. The number is validated, never trusted: "Humani
 		// generis 561" cites an AAS page, and that document has 44 sections.
 		const n = firstLocusSection(seg.locus);
+		// A section is a FRAGMENT on the document's one page, not a page of its
+		// own — `documents/[slug]/[n]` was retired 2026-08-17 (docs/decisions.md;
+		// 9,315 prerendered files for one section of text each). `#s{n}` is the
+		// same anchor the reading view has always carried.
 		if (n !== undefined && documentSectionExists(workId, n)) {
-			return `/documents/${seg.slug}/${n}`;
+			return `/documents/${seg.slug}#s${n}`;
 		}
 		return `/documents/${seg.slug}`;
 	}
@@ -1215,7 +1219,8 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 		const targetLang = (ctx.lang ?? 'en').split('-')[0].toLowerCase();
 		const workId = getDocumentGroup(seg.slug)?.manifests[targetLang]?.id;
 		if (!workId || !documentSectionExists(workId, n)) return undefined;
-		return `/documents/${seg.slug}/${n}`;
+		// Fragment, not a path segment — see the `documentTitle` branch above.
+		return `/documents/${seg.slug}#s${n}`;
 	}
 	if (seg.kind !== 'scripture') return undefined; // 'text' never links
 

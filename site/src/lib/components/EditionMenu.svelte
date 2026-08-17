@@ -58,9 +58,9 @@
 		}
 		// `/documents` itself (the library) has no single document in view —
 		// same "renders nothing" behavior as the home page, hence `startsWith`
-		// with the trailing slash rather than a bare prefix check. Both
-		// `/documents/[slug]` and its nested `/documents/[slug]/[n]` set
-		// `page.params.slug`, so one check covers both.
+		// with the trailing slash rather than a bare prefix check.
+		// `/documents/[slug]` is the only route below it, and it sets
+		// `page.params.slug`.
 		if (pathname.startsWith('/documents/') && page.params.slug) {
 			return { kind: 'document', slug: page.params.slug };
 		}

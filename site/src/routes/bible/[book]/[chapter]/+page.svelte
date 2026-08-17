@@ -61,7 +61,7 @@
 	 *
 	 * `data.byWorkId` already embeds EVERY edition (`+page.ts`'s own
 	 * docblock) precisely because this route is prerendered — so, unlike
-	 * `documents/[slug]/read`, comparing here costs nothing extra: no fetch,
+	 * `documents/[slug]`, comparing here costs nothing extra: no fetch,
 	 * no loading state, the second column's text is already on the page.
 	 */
 

@@ -24,7 +24,7 @@
 	brief rules out outright.
 
 	A MISSING UNIT (`row.left`/`row.right` undefined — either a genuine
-	source asymmetry, an in-flight fetch on `documents/[slug]/read`, or one
+	source asymmetry, an in-flight fetch on `documents/[slug]`, or one
 	of the corpus's own known gaps) renders as an explicit placeholder cell,
 	never as a collapsed/skipped row: skipping it would silently reintroduce
 	the position-based misalignment `alignByNumber`'s docblock explains this

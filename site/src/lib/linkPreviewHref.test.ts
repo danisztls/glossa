@@ -112,19 +112,23 @@ describe('parsePreviewHref', () => {
 
 	describe('documents', () => {
 		it('parses a section link', () => {
-			expect(parsePreviewHref('/documents/gaudium-et-spes/19')).toEqual({
+			expect(parsePreviewHref('/documents/gaudium-et-spes#s19')).toEqual({
 				kind: 'document',
 				slug: 'gaudium-et-spes',
 				n: 19
 			});
 		});
 
-		it('does not treat the document landing page as a section', () => {
+		it('does not treat the whole document as a section', () => {
 			expect(parsePreviewHref('/documents/gaudium-et-spes')).toBeUndefined();
 		});
 
-		it('does not treat the continuous-reading view as a section', () => {
-			expect(parsePreviewHref('/documents/gaudium-et-spes/read')).toBeUndefined();
+		// The shape this route used to have, before a document became one page
+		// (docs/decisions.md, 2026-08-17). Nothing generates it now, and a
+		// stale link from anywhere should degrade to no preview rather than to
+		// a preview of the wrong thing.
+		it('does not parse the retired per-section path', () => {
+			expect(parsePreviewHref('/documents/gaudium-et-spes/19')).toBeUndefined();
 		});
 
 		it('does not treat the documents library as a section', () => {

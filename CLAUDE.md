@@ -89,8 +89,10 @@ wrangler deploy
 - **Deploys are not sandboxed** — `wrangler` needs the Cloudflare API, which the
   sandbox blocks. Same for `git commit` (GPG).
 - **Watch the file count.** Cloudflare caps a deployment at 20,000 files; this
-  build is ~15,250. See `docs/decisions.md` for what to do when it gets close —
-  the answer is not "stop prerendering".
+  build is ~5,700, down from ~15,250 before documents collapsed to one page each
+  (`docs/decisions.md`, 2026-08-17). The remaining per-unit routes are
+  `/ccc/[n]` (2,865) and `/compendium/[n]` (598); that entry records why each
+  was left alone and what collapsing them would cost.
 
 A real-corpus build emits ~6,100 pages and takes minutes. Don't run it casually.
 

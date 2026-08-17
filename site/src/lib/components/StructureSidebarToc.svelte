@@ -2,8 +2,8 @@
 	/**
 	 * Table of contents for the reading sidebar (`.reading-aside`, app.css),
 	 * shared by every route that has one: `/ccc/[n]`, `/ccc/chapter/[n]`,
-	 * `/compendium/[n]`, `/documents/[slug]/[n]`, `/documents/[slug]/read`.
-	 * All five walk the same node shape — `CccNode`/`StructureNode` are
+	 * `/compendium/[n]`, `/documents/[slug]`.
+	 * All four walk the same node shape — `CccNode`/`StructureNode` are
 	 * literally the same type (`$lib/types.ts`) — parametrized by which
 	 * flattened structure, which routing scheme, and (CCC/Compendium only)
 	 * which kind-floor the caller passes in.
@@ -14,7 +14,7 @@
 	 * strict subset of the other; merging meant picking a winner on each
 	 * point where they'd actually diverged, not just deleting one file:
 	 *
-	 *  - ANCHOR MODE. `/documents/[slug]/read` is the whole document on one
+	 *  - ANCHOR MODE. `/documents/[slug]` is the whole document on one
 	 *    page, so its TOC has to link to `#s{n}` fragments instead of a
 	 *    separate route. Genuine requirement, kept as `linkMode="anchor"`
 	 *    below — `hrefFor` (structureToc.ts) is the one place that decides

@@ -969,7 +969,7 @@ export function documentSectionExists(workId: string, n: number): boolean {
  * `DocumentGroup.manifests` whose `sections.json` `sync-corpus.mjs` never
  * wrote — site/unpublished.json, or a v1 EN/PT asymmetry) apart from a real
  * one WITHOUT paying for `getDocumentSectionsAsync`'s whole-file read just to
- * find out. `documents/[slug]/read/+page.ts` uses this to pick which
+ * find out. `documents/[slug]/+page.ts` uses this to pick which
  * language's sections to embed without fetching every language's file first.
  */
 export function documentHasSections(workId: string): boolean {
@@ -1020,7 +1020,7 @@ export async function getDocumentSectionAsync(
 /**
  * Every section of a document, in corpus order — the whole-document
  * counterpart to `getDocumentSectionAsync`'s one-at-a-time lookup, for the
- * continuous "read the full document" view (`documents/[slug]/read`).
+ * continuous "read the full document" view (`documents/[slug]`).
  * `fetchDocumentSections` already reads and memoizes the sections file
  * whole (a document ships ONE file per work, unlike the CCC's per-chapter
  * chunking — see this section's docblock), so this is a thin export rather

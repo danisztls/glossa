@@ -148,7 +148,7 @@ export type LinkMode = 'route' | 'anchor';
  * `'route'` (default): `${basePath}/{n}` — the CCC/Compendium/per-section
  * document routes, where each row is its own page.
  *
- * `'anchor'`: `#s{n}` — `/documents/[slug]/read`, where the whole document
+ * `'anchor'`: `#s{n}` — `/documents/[slug]`, where the whole document
  * is already one page and a row navigates within it instead of away from
  * it. `basePath` is unused in this mode.
  */

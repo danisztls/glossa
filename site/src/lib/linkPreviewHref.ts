@@ -51,19 +51,21 @@ const BIBLE_RE = /^\/bible\/([a-z0-9]+)\/(\d+)$/;
 const CCC_CHAPTER_RE = /^\/ccc\/chapter\/(\d+)$/;
 const CCC_RE = /^\/ccc\/(\d+)$/;
 const COMPENDIUM_RE = /^\/compendium\/(\d+)$/;
-// Requires a trailing NUMBER, which is what keeps this from matching the
-// document's own landing page (`/documents/{slug}`, chrome — a table of
-// contents, not content) or its continuous-reading view
-// (`/documents/{slug}/read`, "read" isn't `\d+`) — both correctly fall
-// through to `undefined` rather than needing an explicit exclusion.
-const DOCUMENT_RE = /^\/documents\/([a-z0-9-]+)\/(\d+)$/;
+// A document is ONE page and a section is a fragment on it (`/documents/
+// {slug}#s{n}`) — `documents/[slug]/[n]` was retired 2026-08-17, see
+// docs/decisions.md. So unlike the CCC/Compendium shapes above, the section
+// number is not in the path: matching the path alone means "this document",
+// which is a whole encyclical rather than a previewable unit, and only the
+// `#s{n}` anchor names something small enough to show in a popover.
+const DOCUMENT_RE = /^\/documents\/([a-z0-9-]+)$/;
 const VERSE_SPAN_RE = /^(\d+)-(\d+)$/;
 const VERSE_ANCHOR_RE = /^#v(\d+)$/;
+const SECTION_ANCHOR_RE = /^#s(\d+)$/;
 
 /**
  * Parse an anchor's `href` attribute into a preview target, or `undefined`
  * for anything that isn't one of the five content-link shapes this feature
- * covers (nav chrome, external links, `/documents/{slug}/read`, TOC pages,
+ * covers (nav chrome, external links, an unanchored `/documents/{slug}`,
  * ...) — see the module docblock and each kind's route in `+layout.svelte`'s
  * caller.
  *
@@ -121,7 +123,12 @@ export function parsePreviewHref(href: string | null | undefined): PreviewTarget
 	if (compendium) return { kind: 'compendium', n: Number(compendium[1]) };
 
 	const document = DOCUMENT_RE.exec(path);
-	if (document) return { kind: 'document', slug: document[1], n: Number(document[2]) };
+	if (document) {
+		const anchor = SECTION_ANCHOR_RE.exec(url.hash);
+		// No anchor means the document as a whole — a link to the top of an
+		// entire encyclical, which is navigation rather than a quotable unit.
+		if (anchor) return { kind: 'document', slug: document[1], n: Number(anchor[1]) };
+	}
 
 	return undefined;
 }

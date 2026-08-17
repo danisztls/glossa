@@ -520,7 +520,7 @@ describe('refHref', () => {
 				},
 				{ lang: 'en' }
 			)
-		).toBe('/documents/gaudium-et-spes/19');
+		).toBe('/documents/gaudium-et-spes#s19');
 	});
 
 	it('drops the "# N" subsection and links to the section alone ("GS 19 # 1" -> §19)', () => {
@@ -536,7 +536,7 @@ describe('refHref', () => {
 				},
 				{ lang: 'en' }
 			)
-		).toBe('/documents/gaudium-et-spes/19');
+		).toBe('/documents/gaudium-et-spes#s19');
 	});
 
 	it('resolves a document link against the reader\'s PT effective language, not EN', () => {
@@ -552,7 +552,7 @@ describe('refHref', () => {
 				},
 				{ lang: 'pt' }
 			)
-		).toBe('/documents/gaudium-et-spes/19');
+		).toBe('/documents/gaudium-et-spes#s19');
 	});
 
 	it('never links a document whose section is absent from the reader\'s effective language (dei-verbum is EN-only in the mock registry)', () => {
@@ -814,7 +814,7 @@ describe('refHref — documents named by title', () => {
 		({ kind: 'documentTitle', slug, title: 'Gaudium et Spes', locus, raw: 'x' }) as const;
 
 	it('links to the section when the number really is one', () => {
-		expect(refHref(seg('19'), { lang: 'en' })).toBe('/documents/gaudium-et-spes/19');
+		expect(refHref(seg('19'), { lang: 'en' })).toBe('/documents/gaudium-et-spes#s19');
 	});
 
 	it('falls back to the landing page when the number is not a section', () => {
@@ -831,6 +831,6 @@ describe('refHref — documents named by title', () => {
 
 	it('respects the reader language rather than falling back to another edition', () => {
 		expect(refHref(seg('2', 'dei-verbum'), { lang: 'pt' })).toBeUndefined();
-		expect(refHref(seg('2', 'dei-verbum'), { lang: 'en' })).toBe('/documents/dei-verbum/2');
+		expect(refHref(seg('2', 'dei-verbum'), { lang: 'en' })).toBe('/documents/dei-verbum#s2');
 	});
 });
