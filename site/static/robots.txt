@@ -1,3 +1,19 @@
-# allow crawling everything by default
+# PRE-LAUNCH BLOCK — temporary, see docs/decisions.md (2026-08-17).
+#
+# The site is live on its Cloudflare subdomain for verification only. Left
+# crawlable, that hostname gets indexed and then competes with the real domain
+# for the same pages once one is attached — and every page here is a verbatim
+# reproduction that already has a canonical home on vatican.va, so a duplicate
+# under a throwaway hostname is worth nothing and costs something.
+#
+# TO UNDO, at launch: restore the two lines commented out below and remove the
+# blanket Disallow. There is a second half to this in site/static/_headers —
+# `rg 'PRE-LAUNCH BLOCK'` finds both. Undoing only one of them leaves the site
+# invisible to search with nothing on the surface to show why.
+
 User-agent: *
-Disallow:
+Disallow: /
+
+# The launch state:
+# User-agent: *
+# Disallow:
