@@ -1,5 +1,7 @@
-# The corpus is never committed — copyrighted or scraped text stays out of the public repo.
-corpus/
+# The corpus IS committed, reversing the rule that used to stand here. The
+# copyright position, and what a takedown costs now that the texts are in git
+# history rather than only in a build, are stated in corpus/README.md; the
+# reasoning is in docs/decisions.md.
 
 # Python
 __pycache__/
