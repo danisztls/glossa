@@ -114,6 +114,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ref.tooltip.openCcc': 'Open in Catechism',
 		'ref.tooltip.openBible': 'Open in Bible',
 		'ref.tooltip.openCompendium': 'Open in Compendium',
+		'ref.preview.open': 'Open',
 		'ref.cf': 'cf.',
 
 		// Documents (encyclicals, conciliar constitutions/decrees/declarations,
@@ -301,6 +302,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ref.tooltip.openCcc': 'Abrir no Catecismo',
 		'ref.tooltip.openBible': 'Abrir na Bíblia',
 		'ref.tooltip.openCompendium': 'Abrir no Compêndio',
+		'ref.preview.open': 'Abrir',
 		'ref.cf': 'cf.',
 
 		'document.library.tagline':

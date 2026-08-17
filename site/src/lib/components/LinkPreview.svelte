@@ -36,6 +36,7 @@
 	 * normal navigation flow, per the task's "must read perfectly with
 	 * JavaScript disabled" constraint.
 	 */
+	import { goto } from '$app/navigation';
 	import { parsePreviewHref, type PreviewTarget } from '$lib/linkPreviewHref';
 	import { resolvePreview, type ResolvedPreview } from '$lib/linkPreviewContent';
 	import { t } from '$lib/i18n.svelte';
@@ -51,6 +52,18 @@
 	// separated by a comma and a space), not a real pause to read.
 	const HIDE_GRACE_MS = 200;
 	const TOOLTIP_ID = 'link-preview-tooltip';
+
+	// The one place this component knows anything about a specific link, and
+	// the reason is that the touch path is not free the way the hover path is.
+	// Hovering costs the reader nothing, so it previews every internal content
+	// link the site emits; tapping costs a tap, so it previews only the links
+	// where a glance is the likely intent — inline citations inside prose
+	// (`RefText.svelte`'s `.ref-link`, `CccParagraphText.svelte`'s
+	// `.inline-ref`). Table-of-contents entries, prev/next nav and jump-box
+	// results are the opposite case: the reader picked them in order to GO
+	// there, and taxing that with a peek would be an obstacle, not a feature.
+	// They keep their plain one-tap navigation, and still preview on hover.
+	const TAP_PREVIEW_SELECTOR = 'a.ref-link, a.inline-ref';
 
 	// The tracked anchor IS the state machine's key: `undefined` means nothing
 	// is being previewed, and comparing a newly-hovered element against this
@@ -68,6 +81,17 @@
 	let phase: 'pending' | 'loading' | 'shown' = $state('pending');
 	let resolved: ResolvedPreview | undefined = $state();
 	let coords: { top: number; left: number } | undefined = $state();
+	// Set only on the touch path (see `onClickCapture`). It changes what the
+	// overlay IS, not merely how it was opened: a tap preview is a thing the
+	// reader deliberately asked for and can act on — it stays until dismissed,
+	// it takes pointer events, and it wraps its content in a real anchor. A
+	// hover preview is none of those.
+	let openedByTap = $state(false);
+	// Captured at open time rather than read back off `anchorEl` in the
+	// template: the overlay's own anchor must point at exactly the href that
+	// was tapped, and reading it lazily would resolve against whatever
+	// `anchorEl` happens to be by render time.
+	let tapHref: string | undefined = $state();
 
 	let overlayEl: HTMLDivElement | undefined = $state();
 
@@ -116,6 +140,8 @@
 		phase = 'pending';
 		resolved = undefined;
 		coords = undefined;
+		openedByTap = false;
+		tapHref = undefined;
 	}
 
 	function findMatch(
@@ -128,6 +154,32 @@
 		return parsed ? { el: a, target: parsed } : undefined;
 	}
 
+	/**
+	 * Flip to 'loading' and fetch. `onMissing` is what to do when the href
+	 * looked previewable but resolved to nothing (withheld work, missing
+	 * verse, ... — see `linkPreviewContent.ts`): on hover that's simply
+	 * `dismiss`, but on tap it must be a real navigation, because the reader
+	 * already spent the tap that would otherwise have taken them there and a
+	 * tap that does nothing at all reads as a broken link.
+	 */
+	function load(el: HTMLAnchorElement, matchedTarget: PreviewTarget, onMissing: () => void) {
+		phase = 'loading';
+		// Only the hover/focus card is a tooltip describing the link it hangs
+		// off; the tap card is a thing in its own right, with its own link
+		// inside it, and pointing `aria-describedby` at it would both be a lie
+		// and put interactive content inside a `role="tooltip"`.
+		if (!openedByTap) attachDescribedBy(el);
+		resolvePreview(matchedTarget).then((r) => {
+			if (anchorEl !== el) return; // the pointer moved on while this was in flight
+			if (!r) {
+				onMissing();
+				return;
+			}
+			resolved = r;
+			phase = 'shown';
+		});
+	}
+
 	function beginShow(el: HTMLAnchorElement, matchedTarget: PreviewTarget) {
 		if (anchorEl === el) return; // already tracking this exact link (pending, loading, or shown)
 		dismiss();
@@ -137,17 +189,7 @@
 			// Re-check identity: `dismiss()` may have run (a later hover, an
 			// Escape, a scroll) between this timer being scheduled and firing.
 			if (anchorEl !== el) return;
-			phase = 'loading';
-			attachDescribedBy(el);
-			resolvePreview(matchedTarget).then((r) => {
-				if (anchorEl !== el) return; // the pointer moved on while this was in flight
-				if (!r) {
-					dismiss(); // resolvable-looking href, but nothing to show (withheld work, missing verse, ...) — see linkPreviewContent.ts
-					return;
-				}
-				resolved = r;
-				phase = 'shown';
-			});
+			load(el, matchedTarget, dismiss);
 		}, SHOW_DELAY_MS);
 	}
 
@@ -194,15 +236,91 @@
 		scheduleHide(anchorEl);
 	}
 
+	// --- Touch path — the mirror image, gated on NOT having hover ------------
+	//
+	// A hover preview is free: the pointer was passing over the link anyway,
+	// and the click still does what a click does. There is no equivalent on a
+	// touch screen — no state between "not touching" and "activated" — so the
+	// preview can only come out of the tap itself, which means the first tap
+	// on a citation peeks and a second tap follows through. That trade is
+	// worth taking for THIS content specifically: these links are dense
+	// inline citations ("cf. 1212", "Jn 3:5") inside something the reader is
+	// in the middle of, and the common intent is to glance, not to leave. The
+	// costs are paid down deliberately below — the peek is instant (no hover
+	// delay to sit through), the whole card is the follow-through target (not
+	// a second precise tap on a four-character link), and the card says so.
+	//
+	// Escape hatches, so a reader who wanted to navigate is never trapped:
+	// tapping the same link again goes there, and so does a tap on a link
+	// whose content turns out not to be previewable.
+
+	function onClickCapture(e: MouseEvent) {
+		// A click inside the overlay is the follow-through: the card's own
+		// anchor handles it (real link, real SvelteKit navigation), this just
+		// gets the preview out of the way first. Checked before anything else
+		// because that anchor's href is itself previewable and would otherwise
+		// match below and re-open the preview it was dismissing.
+		if (overlayEl && e.target instanceof Node && overlayEl.contains(e.target)) {
+			dismiss();
+			return;
+		}
+		if (supportsHoverPreview()) return;
+		// `detail === 0` is a synthetic activation — Enter/Space on a focused
+		// link, or a screen reader's activate gesture. Those users are on the
+		// keyboard/focus path already (which has its own preview) and are
+		// expecting activation to activate; only a real tap gets intercepted.
+		if (e.detail === 0) return;
+		// Open-in-new-tab and friends. Rare on touch, free to honour.
+		if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+		const match = findMatch(e.target);
+		if (!match || !match.el.matches(TAP_PREVIEW_SELECTOR)) {
+			dismiss(); // a tap anywhere else closes the peek
+			return;
+		}
+		// Second tap on the same link: they've seen the preview (or waited
+		// through it) and tapped again anyway. Let it navigate.
+		if (anchorEl === match.el && openedByTap) {
+			dismiss();
+			return;
+		}
+
+		e.preventDefault();
+		e.stopPropagation(); // before SvelteKit's own delegated link handler sees it
+
+		const href = match.el.getAttribute('href');
+		dismiss();
+		anchorEl = match.el;
+		target = match.target;
+		openedByTap = true;
+		tapHref = href ?? undefined;
+		// No SHOW_DELAY_MS: a tap is a deliberate request, and the delay
+		// exists only to keep a travelling cursor from strobing popups.
+		load(match.el, match.target, () => {
+			// Nothing to preview after all — honour the tap as the navigation
+			// it originally was.
+			const to = tapHref;
+			dismiss();
+			if (to) goto(to);
+		});
+	}
+
 	// --- Keyboard path — always on, no pointer-capability gate ---------------
+	//
+	// Both handlers stand down while a tap preview is open: tapping a link
+	// focuses it, so an unguarded `focusin` would race the tap path for the
+	// same anchor, and the `focusout` fired by tapping the card itself would
+	// grace-period the card away underneath the tap that was following it.
 
 	function onFocusIn(e: FocusEvent) {
+		if (openedByTap) return;
 		const match = findMatch(e.target);
 		if (!match) return;
 		beginShow(match.el, match.target);
 	}
 
 	function onFocusOut(e: FocusEvent) {
+		if (openedByTap) return;
 		if (!anchorEl || e.target !== anchorEl) return;
 		scheduleHide(anchorEl);
 	}
@@ -264,6 +382,7 @@
 	onfocusin={onFocusIn}
 	onfocusout={onFocusOut}
 	onkeydown={onKeyDown}
+	onclickcapture={onClickCapture}
 	onscrollcapture={onScrollCapture}
 	onresize={onResize}
 />
@@ -294,23 +413,46 @@
 	interactive elements" actually true rather than merely asserted — nothing
 	inside can ever receive a click or a hover of its own, so there is no
 	separate mechanism needed to keep it non-interactive.
+
+	ALL OF WHICH APPLIES TO THE HOVER CARD ONLY. The tap card is the same box
+	wearing a different hat: an ordinary `<a>` filling it, no tooltip role, no
+	`aria-describedby`, pointer events back on. It is a real link, not a
+	div with a handler, so it navigates through SvelteKit's own router, works
+	under a long-press "open in new tab", and announces itself as a link — none
+	of which a synthetic click handler would have given us.
 -->
 <div
 	bind:this={overlayEl}
 	id={TOOLTIP_ID}
 	class="link-preview"
 	class:visible={coords !== undefined}
-	role="tooltip"
+	class:tappable={openedByTap}
+	role={openedByTap ? undefined : 'tooltip'}
 	style={coords ? `top:${coords.top}px; left:${coords.left}px;` : undefined}
 >
-	<div class="link-preview-content" aria-live="polite">
-		{#if phase === 'shown' && resolved}
-			<p class="link-preview-title">{resolved.title}</p>
-			<p class="link-preview-body">{resolved.body}</p>
-		{:else if phase === 'loading'}
-			<p class="link-preview-body">{t('ref.tooltip.loading')}</p>
-		{/if}
-	</div>
+	{#if openedByTap && tapHref}
+		<a class="link-preview-content link-preview-link" href={tapHref}>
+			{#if phase === 'shown' && resolved}
+				<p class="link-preview-title">{resolved.title}</p>
+				<p class="link-preview-body">{resolved.body}</p>
+			{:else if phase === 'loading'}
+				<p class="link-preview-body">{t('ref.tooltip.loading')}</p>
+			{/if}
+			<!-- The card has to SAY it is a way through, or the second tap is a
+			     thing the reader has to guess at. Decorative arrow only — the
+			     word carries the meaning. -->
+			<p class="link-preview-open">{t('ref.preview.open')} <span aria-hidden="true">→</span></p>
+		</a>
+	{:else}
+		<div class="link-preview-content" aria-live="polite">
+			{#if phase === 'shown' && resolved}
+				<p class="link-preview-title">{resolved.title}</p>
+				<p class="link-preview-body">{resolved.body}</p>
+			{:else if phase === 'loading'}
+				<p class="link-preview-body">{t('ref.tooltip.loading')}</p>
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -382,5 +524,36 @@
 		margin: 0;
 		color: var(--color-text);
 		overflow-wrap: break-word;
+	}
+
+	/* Tap card only. `pointer-events` goes back to `auto` on exactly the
+	   variant whose whole point is being touchable — the hover card keeps the
+	   `none` above, so it still cannot intercept a cursor. */
+	.link-preview.tappable {
+		pointer-events: auto;
+		/* A card the reader is meant to hit deserves to be hittable: the
+		   anchored width above can collapse to a few characters around a short
+		   Bible verse, which is fine to read and awkward to aim at. */
+		min-width: min(16rem, calc(100vw - 1rem));
+	}
+
+	.link-preview-link {
+		display: block;
+		color: inherit;
+		text-decoration: none;
+		/* Compensates the container's own padding so the tap target reaches the
+		   card's edges rather than stopping short of them. */
+		margin: -0.6rem -0.8rem;
+		padding: 0.6rem 0.8rem;
+		border-radius: inherit;
+	}
+
+	.link-preview-open {
+		margin: 0.5rem 0 0;
+		padding-top: 0.4rem;
+		border-top: 1px solid var(--color-border);
+		color: var(--color-link);
+		font-weight: 600;
+		font-size: 0.8rem;
 	}
 </style>
