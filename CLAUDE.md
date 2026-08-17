@@ -7,23 +7,26 @@ have actually bitten someone.
 
 ## The corpus: two directories, very different value
 
-`corpus/` is gitignored and lives only in the main checkout.
+`corpus/` is tracked in git as of 2026-08-16 (it used to be gitignored — see
+`docs/decisions.md`, and `corpus/README.md` for the copyright position). Version
+control is now the backstop for `raw/`, but the distinction below still governs
+what may be deleted.
 
-| Path | Value | Rule |
-| --- | --- | --- |
-| `corpus/works/` | Parsed output. Regenerable from cache in minutes, zero network. | Safe to rebuild. |
-| `corpus/raw/` | Every scraped source page. The **only** artifact that cost real fetches. | Treat as write-once. Never delete. |
+| Path            | Value                                                                    | Rule                               |
+| --------------- | ------------------------------------------------------------------------ | ---------------------------------- |
+| `corpus/works/` | Parsed output. Regenerable from cache in minutes, zero network.          | Safe to rebuild.                   |
+| `corpus/raw/`   | Every scraped source page. The **only** artifact that cost real fetches. | Treat as write-once. Never delete. |
 
 The project's stated insurance policy is that any capture regret is fixed by
 **re-parsing, never re-crawling** (`docs/link-surface.md`). That only holds while
 `raw/` is intact. When judging whether a deletion is safe, the question is never
-"is this corpus data" but *which of the two it is*.
+"is this corpus data" but _which of the two it is_.
 
 **Deleting generated works is a decision for the person directing the work, not
 a judgment call to make mid-task.** An agent once removed 105 empty work
 directories on its own stub-detection heuristic; nothing was lost, but nothing
 had authorized it either. If you are delegating, name the deletable set and the
-protected set explicitly — a brief that only says what to *fix* leaves deletion
+protected set explicitly — a brief that only says what to _fix_ leaves deletion
 as an unstated judgment call, and it will get taken.
 
 ## Scraping vatican.va
@@ -58,11 +61,36 @@ falls back to the test fixtures — two Bible books and a few dozen paragraphs,
 which looks broken in a confusing way rather than an obvious one.
 
 `npm test` always uses fixtures, never a synced corpus: `corpus.ts` checks
-`import.meta.env.VITEST` explicitly. The absence of a `pretest` hook is *not*
+`import.meta.env.VITEST` explicitly. The absence of a `pretest` hook is _not_
 what guarantees this — `prebuild` syncs and that directory persists, so on any
 machine where a build has run the glob would otherwise pick up real data. The
 fixtures deliberately contain absent chapters and out-of-range cross-references
 to exercise the not-in-corpus paths.
+
+## Deploying
+
+Live at <https://glossa.me-f65.workers.dev>, on Cloudflare Workers static assets
+(`site/wrangler.jsonc`; rationale in `docs/decisions.md`).
+
+```sh
+cd site
+CORPUS_DIR=/home/dani/Dev/me/scriptura/corpus npm run build
+wrangler deploy
+```
+
+- **Always build first.** `wrangler deploy` uploads whatever is in `build/`; it
+  has no idea whether that is current, or whether it was built against the real
+  corpus or the fixtures. There is no CI build — a deploy ships one person's
+  working tree.
+- **Budget the time.** ~16 min for a first upload, ~5 min for a redeploy.
+  Wrangler dedupes by content hash, but a rebuild changes SvelteKit's `version`,
+  which is embedded in every page, so nearly every HTML file re-uploads whether
+  or not its text changed.
+- **Deploys are not sandboxed** — `wrangler` needs the Cloudflare API, which the
+  sandbox blocks. Same for `git commit` (GPG).
+- **Watch the file count.** Cloudflare caps a deployment at 20,000 files; this
+  build is ~15,250. See `docs/decisions.md` for what to do when it gets close —
+  the answer is not "stop prerendering".
 
 A real-corpus build emits ~6,100 pages and takes minutes. Don't run it casually.
 

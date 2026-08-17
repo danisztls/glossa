@@ -1,0 +1,22 @@
+# Cache policy for the static host (Cloudflare Workers static assets reads this
+# file out of the deployed asset directory and does not serve it).
+#
+# Cloudflare's default for every asset is `max-age=0, must-revalidate`, which is
+# correct for anything whose URL can outlive its contents — every prerendered
+# HTML page, the service worker, the manifest. The rules below are the
+# exceptions: paths where the URL changes whenever the bytes do, or where the
+# bytes effectively never change.
+
+# Content-hashed by the build. A given URL here can never mean different bytes,
+# which is the entire precondition for `immutable`.
+/_app/immutable/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts are copied from static/ with stable, UNHASHED names, so `immutable` would
+# be a year-long commitment to bytes we can no longer change. Long, but
+# revalidated, so replacing a font file is still a deploy and not a stuck cache.
+/fonts/*
+  Cache-Control: public, max-age=2592000
+
+/icons/*
+  Cache-Control: public, max-age=2592000

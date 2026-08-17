@@ -203,6 +203,17 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'copyright.sourceTitle': 'Open the original source page',
 		'lang.label': 'Language',
 
+		// Static 404 — routes/404/+page.svelte, prerendered to build/404.html
+		// and served by the host for unmatched paths. See that file's docblock.
+		'notFound.title': 'Nothing at this address',
+		'notFound.lede': 'The page you asked for is not here.',
+		'notFound.body':
+			'The link may be mistyped or out of date, or it may point to a text this site does not carry. Nothing here is behind a login or a paywall, so if a page exists, it can be reached.',
+		'notFound.searchHint':
+			'If you know the reference you want — a book and chapter, a paragraph of the Catechism — type it into the search box at the top of this page.',
+		'notFound.elsewhere': 'Or start from one of these:',
+		'notFound.home': 'Home',
+
 		// Compare mode (side-by-side, unit-aligned comparison) — CompareToggle.svelte
 		// and CompareGrid.svelte are the consumers.
 		'compare.enter': 'Compare editions',
@@ -371,6 +382,15 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ccc.noParagraphNumber': 'Sem número de parágrafo neste corpus',
 		'copyright.sourceTitle': 'Abrir a página de origem',
 		'lang.label': 'Idioma',
+
+		'notFound.title': 'Nada neste endereço',
+		'notFound.lede': 'A página que pediu não está aqui.',
+		'notFound.body':
+			'A ligação pode estar mal escrita ou desatualizada, ou pode apontar para um texto que este sítio não contém. Nada aqui exige conta nem pagamento, por isso, se uma página existe, é acessível.',
+		'notFound.searchHint':
+			'Se souber a referência que procura — um livro e capítulo, um parágrafo do Catecismo — escreva-a na caixa de pesquisa no topo desta página.',
+		'notFound.elsewhere': 'Ou comece por uma destas:',
+		'notFound.home': 'Início',
 
 		'compare.enter': 'Comparar edições',
 		'compare.exit': 'Sair da comparação',

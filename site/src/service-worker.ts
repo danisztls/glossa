@@ -146,8 +146,17 @@ const CONTENT_URLS = new Set(CONTENT_ENTRIES.map((entry) => entry.path));
  */
 const PRECACHE_BUILD_URLS = build.filter((url) => !CONTENT_URLS.has(contentPath(url)));
 
-/** static/ assets (manifest, icons, offline.html, robots.txt, …) — always shell tier. */
-const PRECACHE_FILE_URLS = files;
+/**
+ * static/ assets (manifest, icons, offline.html, robots.txt, …) — always shell
+ * tier.
+ *
+ * `_headers` is dropped: it ships in static/ because Cloudflare only reads it
+ * from the deployed asset directory, but the host treats it as configuration
+ * and never serves it. Precaching it would spend an install-time request to be
+ * told 404 — harmless (precacheShell ignores non-ok responses) but pointless,
+ * and the miss would otherwise look like a real asset failing on every install.
+ */
+const PRECACHE_FILE_URLS = files.filter((url) => !url.endsWith('/_headers'));
 
 // One prerendered page, deliberately, used as the offline "boot" document —
 // see the file header and handleNavigate. NOT sourced from
@@ -155,6 +164,32 @@ const PRECACHE_FILE_URLS = files;
 // file goes out of its way to avoid touching.
 const SHELL_DOCUMENT_URL = `${base}/`;
 const OFFLINE_FALLBACK_URL = `${base}/offline.html`;
+
+/**
+ * A response that is still legal to hand back for a NAVIGATION later.
+ *
+ * The host canonicalises `.html` URLs by redirecting: `/offline.html` answers
+ * 307 to `/offline` (site/wrangler.jsonc's `html_handling:
+ * "auto-trailing-slash"`). `fetch` follows that transparently and the result
+ * is a perfectly good 200 — but it carries `redirected: true`, and browsers
+ * reject a redirected response passed to `respondWith` for a navigation
+ * request. `handleNavigate` serves the cached `/offline.html` for exactly
+ * that, so caching the response as-fetched would arm a failure that only fires
+ * on the emergency path: offline, with no cached shell, which is the one
+ * moment this fallback exists for.
+ *
+ * Copying the body into a fresh Response drops the flag. A no-op for every
+ * asset the host serves without redirecting, which is all of them but this
+ * one.
+ */
+async function navigable(response: Response): Promise<Response> {
+	if (!response.redirected) return response;
+	return new Response(await response.blob(), {
+		status: response.status,
+		statusText: response.statusText,
+		headers: response.headers
+	});
+}
 
 /**
  * Precache the shell tier: `build` (app code — the corpus is no longer in
@@ -175,7 +210,7 @@ async function precacheShell(): Promise<{ count: number; bytes: number }> {
 				const response = await fetch(url);
 				if (!response.ok) return;
 				const cache = await caches.open(SHELL_CACHE);
-				await cache.put(url, response.clone());
+				await cache.put(url, await navigable(response.clone()));
 				shell.count++;
 				shell.bytes += Number(response.headers.get('content-length')) || 0;
 			} catch (err) {

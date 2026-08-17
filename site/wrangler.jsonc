@@ -1,0 +1,36 @@
+{
+	// Cloudflare deploy config for the static site.
+	//
+	// Workers static assets rather than Cloudflare Pages: Pages' one real
+	// advantage here would be Git-integrated builds, and those cannot work for
+	// this project — `corpus/` is gitignored and lives only in a local
+	// checkout, so a build triggered from the repo would find no corpus and
+	// fall back to the two-book test fixtures (see site/README.md and
+	// CLAUDE.md's warning about exactly this failure mode, which looks
+	// confusing rather than obviously broken). Deploys come from a local
+	// `npm run build` either way, which leaves Workers — the platform
+	// Cloudflare is still developing — with no cost against it.
+	//
+	// There is no `main`: this is an assets-only Worker. Nothing here runs
+	// server-side code, and the project's offline-first PWA design
+	// (docs/decisions.md) depends on it staying that way.
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "glossa",
+	"compatibility_date": "2026-08-16",
+	"assets": {
+		"directory": "./build",
+
+		// SvelteKit's `trailingSlash` is its default 'never', so the build
+		// writes `bible.html`, not `bible/index.html`. "auto-trailing-slash"
+		// matches that: `/bible` serves `bible.html`, and `/bible/` redirects
+		// to the canonical form rather than 404ing.
+		"html_handling": "auto-trailing-slash",
+
+		// Serves build/404.html — prerendered from src/routes/404/+page.svelte —
+		// with a real 404 status. Explicitly NOT "single-page-application":
+		// that would answer every unknown URL with 200 and the app shell,
+		// which for a site whose whole point is being a citable reference
+		// would tell crawlers that every typo'd citation is a real page.
+		"not_found_handling": "404-page"
+	}
+}
