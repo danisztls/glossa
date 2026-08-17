@@ -224,14 +224,50 @@
 		padding: 1rem;
 	}
 
+	/* `--color-bg-elevated`, not `--color-bg`: the dialog is already `--color-bg`,
+	   so a field painted the same colour sits on the panel's own plane and is
+	   held apart from it by nothing but a 1px border. The elevated token moves
+	   in the right direction in every theme without needing a per-theme value —
+	   warmer and slightly darker on light and sepia, lighter on dark — so the
+	   field reads as a distinct surface either way. */
 	input {
 		width: 100%;
 		font-size: 1.1rem;
 		padding: 0.5rem 0.6rem;
 		border: 1px solid var(--color-border);
 		border-radius: 0.35rem;
-		background: var(--color-bg);
+		background: var(--color-bg-elevated);
 		color: var(--color-text);
+	}
+
+	/*
+	 * THE FOCUS INDICATOR MOVES INTO THE BORDER HERE, and this is the one place
+	 * on the site where overriding the global ring is right.
+	 *
+	 * `app.css`'s `:focus-visible` is a 2px outline at a 2px offset. That is
+	 * correct for buttons and links, which are focused in RESPONSE to the
+	 * reader. This input is autofocused the moment the dialog opens, so the
+	 * ring is the modal's resting state rather than a response to anything —
+	 * and an offset rectangle drawn around an already-bordered rounded field
+	 * stacks into a double frame that reads as an OS dialog rather than as part
+	 * of the page.
+	 *
+	 * The indicator is NOT removed, it is relocated: the border itself turns
+	 * ultramarine and gains a soft halo of the same colour. That still clears
+	 * 1.4.11's 3:1 against the surfaces it edges by a wide margin (8.49:1 on
+	 * light, 7.01:1 on sepia, 7.02:1 on dark, measured against the field
+	 * background rather than the page).
+	 *
+	 * `outline: 2px solid transparent` rather than `outline: none` — under
+	 * forced-colors the transparent outline is repainted in the user's own
+	 * focus colour, so high-contrast mode keeps a real ring even though the
+	 * halo below is dropped there.
+	 */
+	input:focus-visible {
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+		border-color: var(--color-apparatus);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
 	}
 
 	.hint {
