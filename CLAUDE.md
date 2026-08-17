@@ -74,14 +74,18 @@ Live at <https://glossa.me-f65.workers.dev>, on Cloudflare Workers static assets
 
 ```sh
 cd site
-CORPUS_DIR=/home/dani/Dev/me/scriptura/corpus npm run build
-wrangler deploy
+npm run deploy      # build -> preflight -> wrangler deploy
 ```
 
-- **Always build first.** `wrangler deploy` uploads whatever is in `build/`; it
-  has no idea whether that is current, or whether it was built against the real
-  corpus or the fixtures. There is no CI build — a deploy ships one person's
-  working tree.
+- **`npm run deploy` is the whole thing.** It builds (which syncs the corpus),
+  runs `scripts/preflight-deploy.mjs`, and only then uploads. Running
+  `wrangler deploy` by hand skips both and ships whatever is already in
+  `build/` — it has no idea whether that is current, or whether it came from
+  the real corpus or the fixtures. There is no CI build; a deploy ships one
+  person's working tree.
+- **From a worktree, pass `CORPUS_DIR`**: `CORPUS_DIR=/path/to/corpus npm run
+deploy`. Preflight refuses a fixture-sized build, so the worst case is a
+  refusal rather than a two-book site going live.
 - **Budget the time.** ~16 min for a first upload, ~5 min for a redeploy.
   Wrangler dedupes by content hash, but a rebuild changes SvelteKit's `version`,
   which is embedded in every page, so nearly every HTML file re-uploads whether
