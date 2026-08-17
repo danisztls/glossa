@@ -97,6 +97,13 @@
 	{#if REPOSITORY_URL}
 		<p><a href={REPOSITORY_URL} rel="external noopener" target="_blank">{REPOSITORY_URL}</a></p>
 	{/if}
+
+	<!-- Both faces are OFL, which requires the copyright notice and licence to
+	     travel with them; the licence texts ship as static/fonts/OFL-*.txt and
+	     this is the human-readable half of that obligation. It also belongs on
+	     a colophon in the older sense of the word. -->
+	<h2>{t('colophon.typeTitle')}</h2>
+	<p>{t('colophon.typeBody')}</p>
 </article>
 
 <style>

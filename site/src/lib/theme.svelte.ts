@@ -17,7 +17,7 @@
 
 export type Theme = 'auto' | 'light' | 'dark' | 'sepia';
 
-const STORAGE_KEY = 'depositum:theme';
+const STORAGE_KEY = 'glossa:theme';
 const THEMES: Theme[] = ['auto', 'light', 'dark', 'sepia'];
 const DEFAULT_THEME: Theme = 'auto';
 

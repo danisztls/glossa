@@ -1,9 +1,9 @@
 {
 	"$comment": "Colors match src/app.css's light palette (--color-bg, --color-bg-elevated) — the manifest spec has no light/dark pair, so app.html carries the dark variant separately via <meta name=\"theme-color\" media=\"(prefers-color-scheme: dark)\">.",
 	"id": "/",
-	"name": "Depositum",
-	"short_name": "Depositum",
-	"description": "The Bible and the Catechism of the Catholic Church, free to read — offline-first.",
+	"name": "Glossa Catholica",
+	"short_name": "Glossa",
+	"description": "Scripture and the Magisterium — the Bible, the Catechism, the Compendium, and the documents of the Church. Free to read, offline-first.",
 	"start_url": "/",
 	"scope": "/",
 	"display": "standalone",

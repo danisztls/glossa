@@ -121,7 +121,7 @@
 -->
 <button
 	type="button"
-	class="trigger"
+	class="menu-trigger wide trigger"
 	onclick={openBox}
 	aria-haspopup="dialog"
 	aria-label={t('jumpbox.placeholder')}
@@ -161,17 +161,20 @@
 {/if}
 
 <style>
+	/*
+	 * The box comes from `.menu-trigger` (app.css) — same height, border, radius
+	 * and background as every other control in the header — plus `.wide`, since
+	 * this one carries a label and cannot be the fixed square the icon-only
+	 * triggers are. This rule keeps ONLY what is specific to search.
+	 *
+	 * It used to redeclare the whole box with its own padding, which computed to
+	 * about 32px tall against the others' 36px: the four-pixel step that made the
+	 * header row look assembled rather than designed.
+	 */
 	.trigger {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.4rem 0.75rem;
-		border: 1px solid var(--color-border);
-		border-radius: 0.4rem;
-		background: var(--color-bg-elevated);
+		gap: 0.45rem;
 		color: var(--color-text-muted);
 		font-size: 0.9rem;
-		cursor: pointer;
 	}
 
 	.trigger kbd {
@@ -191,6 +194,13 @@
 		.trigger-text,
 		.trigger kbd {
 			display: none;
+		}
+
+		/* With the label gone this is an icon button like the others, so it drops
+		   `.wide`'s auto width and becomes the identical 2.25rem square. */
+		.trigger {
+			width: 2.25rem;
+			padding-inline: 0;
 		}
 	}
 

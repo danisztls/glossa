@@ -63,8 +63,8 @@ type OverrideMap = Partial<Record<WorkTypeKey, Override>>;
 /** Slug -> override, the document analogue of `OverrideMap` (see module docblock). */
 type DocumentOverrideMap = Record<string, Override>;
 
-const STORAGE_KEY = 'depositum:content-override';
-const DOCUMENT_STORAGE_KEY = 'depositum:content-override-documents';
+const STORAGE_KEY = 'glossa:content-override';
+const DOCUMENT_STORAGE_KEY = 'glossa:content-override-documents';
 
 function readStored(): OverrideMap {
 	if (typeof localStorage === 'undefined') return {};

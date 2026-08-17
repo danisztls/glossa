@@ -92,7 +92,7 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-USER_AGENT = "Depositum corpus builder"
+USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 
 ROOT = Path(__file__).resolve().parents[2]

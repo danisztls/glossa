@@ -31,6 +31,7 @@
 	} from '$lib/corpus';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import Wordmark from '$lib/components/Wordmark.svelte';
 	import { displayTitle } from '$lib/titles';
 	import { formatPromulgated } from '$lib/dates';
 	import { listPositions, type ReadingPosition } from '$lib/reading-position';
@@ -260,7 +261,9 @@
 </script>
 
 <div class="content-column">
-	<h1>{t('home.title')}</h1>
+	<!-- The wordmark IS the h1's text — see Wordmark.svelte. `home.title` stays
+	     the plain-text form of the same name, used in every page's <title>. -->
+	<h1 class="site-title"><Wordmark /></h1>
 	<p class="tagline">{t('home.tagline')}</p>
 
 	{#if continueItems.length > 0}
@@ -424,9 +427,31 @@
 </div>
 
 <style>
+	/*
+	 * The h1 is a container for the wordmark, so it carries none of its own
+	 * type: size and leading live in Wordmark.svelte, where the two lines are
+	 * proportioned against each other. Only the block spacing belongs here —
+	 * the mark's own line-height is under 1, so the default h1 margin would
+	 * leave the tagline sitting too close under "Catholica".
+	 */
+	.site-title {
+		margin-block: 0 0.8rem;
+		font-size: inherit;
+		line-height: inherit;
+	}
+
+	/*
+	 * Sized up alongside the mark. This is the one line that says what the site
+	 * holds, to a reader who has just met a name in blackletter and has no idea
+	 * yet — at the old 1.05rem it read as a caption under a logo rather than as
+	 * the answer to "what is this".
+	 */
 	.tagline {
 		color: var(--color-text-muted);
-		font-size: 1.05rem;
+		font-size: 1.35rem;
+		line-height: 1.4;
+		margin-block: 0 2rem;
+		text-wrap: balance;
 	}
 
 	section {

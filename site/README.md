@@ -1,6 +1,6 @@
-# Depositum — site
+# Glossa Catholica — site
 
-The SvelteKit + `adapter-static` frontend for Depositum: a free reading/reference
+The SvelteKit + `adapter-static` frontend for Glossa Catholica: a free reading/reference
 site for the Bible, the Catechism of the Catholic Church, and the Compendium of
 the Catechism (encyclicals and conciliar documents next). See
 `../docs/decisions.md` and `../docs/corpus-schema.md` for the project-level
@@ -89,7 +89,7 @@ will ship works incrementally rather than all at once.
 
 ## Offline / service worker
 
-Depositum is an offline-first PWA (`../docs/decisions.md`): `src/service-worker.ts`
+Glossa Catholica is an offline-first PWA (`../docs/decisions.md`): `src/service-worker.ts`
 (SvelteKit's `$service-worker` module, auto-registered in production builds —
 see `svelte-kit`'s default `kit.serviceWorker.register`) caches the app in two
 tiers with different lifecycles. See the "CONTENT TIER POLICY" comment block
@@ -115,8 +115,8 @@ runtime cache classification only run in an actual service worker context):
 
 1. Open `http://localhost:4173` and confirm DevTools → Application →
    Service Workers shows it activated, and → Cache Storage shows two
-   caches: `depositum-content` (one large entry, the corpus chunk) and
-   `depositum-shell-{version}` (everything else this file precaches,
+   caches: `glossa-content` (one large entry, the corpus chunk) and
+   `glossa-shell-{version}` (everything else this file precaches,
    including the home page).
 2. DevTools → Network → set "Offline", then reload and navigate to a few
    different pages (Bible chapters, CCC paragraphs) you have **not**
@@ -128,7 +128,7 @@ runtime cache classification only run in an actual service worker context):
    home page boots the app and the router takes it from there. Only if
    Cache Storage itself is empty (e.g. a failed install) should you see
    `offline.html`'s plain notice instead.
-4. Application → Manifest should show "Depositum", `standalone` display, and
+4. Application → Manifest should show "Glossa Catholica", `standalone` display, and
    the generated icons (`static/icons/`); "Add to home screen" / install
    prompts exercise this.
 

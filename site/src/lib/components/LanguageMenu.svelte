@@ -8,9 +8,12 @@
 	(i18n.svelte.ts) and so deserved to look different from the "reading
 	settings" controls — but being the odd one out in a row of otherwise
 	identical dropdowns reads as an inconsistency to fix, not as emphasis.
-	Prominence now comes from sitting outside the `.reading-controls` group,
-	which is the distinction that actually matters: this control changes
-	*content*, those change *appearance*.
+	It used to take its prominence from sitting outside the `.reading-controls`
+	pill, on the grounds that this control changes *content* while those change
+	*appearance*. That pill is gone — the header is one row of identical
+	triggers now — so the distinction is no longer carried by chrome. It does
+	not need to be: the label reads "EN", which says what the control is more
+	plainly than any grouping did.
 
 	The trigger shows the current language's own code (EN / PT) as text. No
 	icon: a globe or speech-bubble glyph next to two letters that already
@@ -101,12 +104,18 @@
 </div>
 
 <style>
-	/* `.menu-trigger` is sized for a single icon glyph; this one holds two
-	   letters instead, so it needs its own horizontal padding and a tabular
-	   font so EN and PT occupy the same width and the header doesn't shift
-	   by a pixel when the language changes. */
+	/*
+	 * `.menu-trigger` is sized for a single icon glyph; this one holds two
+	 * letters instead. The fix is to size the label to the square, NOT to give
+	 * the square its own padding: it is a fixed 2.25rem with `box-sizing:
+	 * border-box`, so the `padding-inline: 0.55rem` that used to sit here left a
+	 * ~16px content box for a ~20px word and squeezed "EN" against its own
+	 * border. The square already centres what is inside it.
+	 *
+	 * Tabular figures so EN and PT occupy the same width and the header does not
+	 * shift by a pixel when the language changes.
+	 */
 	.lang-trigger {
-		padding-inline: 0.55rem;
 		font-size: 0.85rem;
 		font-weight: 600;
 		font-variant-numeric: tabular-nums;

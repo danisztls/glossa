@@ -40,7 +40,7 @@ from pathlib import Path
 import httpx
 
 BASE_URL = "https://sacredbible.org/catholic/"
-USER_AGENT = "Depositum corpus builder (+contact via repo)"
+USER_AGENT = "Glossa Catholica corpus builder (+contact via repo)"
 RATE_LIMIT_SECONDS = 1.0
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -393,7 +393,9 @@ def apply_corrections(
 
     if full_run:
         missing = [
-            c["id"] for c in corrections if not c.get("resolution") and c["id"] not in seen
+            c["id"]
+            for c in corrections
+            if not c.get("resolution") and c["id"] not in seen
         ]
         if missing:
             raise CorrectionDriftError(
@@ -449,6 +451,27 @@ def run_scrape(
     return book_docs, fetched_files
 
 
+# Punctuation that can legitimately stand before a chapter's first letter.
+# Duplicated rather than shared: the scrapers are standalone PEP 723 scripts
+# with no common import path. The twin lives in matos_soares.py, and
+# LEADING_PUNCT in site/src/lib/dropcap.ts makes the identical split to build
+# the drop cap -- change one, change all three.
+CHAPTER_OPENING_PUNCT = "\"'“”‘’«»¿¡([{—–- \t"
+
+
+def chapter_opening_letter(text: str) -> str | None:
+    """The character a chapter's first verse actually opens on, skipping up to
+    three units of leading punctuation. Returns None if the verse opens on
+    something that is neither punctuation nor a letter/digit."""
+    units = text.lstrip()
+    taken = 0
+    while taken < len(units) and taken < 3 and units[taken] in CHAPTER_OPENING_PUNCT:
+        taken += 1
+    if taken >= len(units) or not units[taken].isalnum():
+        return None
+    return units[taken]
+
+
 def validate(book_docs: list[dict], sample: bool) -> tuple[bool, list[str]]:
     ok = True
     report: list[str] = []
@@ -479,6 +502,21 @@ def validate(book_docs: list[dict], sample: bool) -> tuple[bool, list[str]]:
         for ch in b["chapters"]:
             if not ch["verses"]:
                 fail(f"{osis} chapter {ch['n']}: no verses")
+            else:
+                # A chapter's first verse begins a sentence, so its first letter
+                # must be capitalized. The same check on the Portuguese edition
+                # found five lost capitals in that source (see
+                # pipeline/corrections/bible.matos-soares.pt.json); this edition
+                # currently has none, which is exactly why it belongs here --
+                # the check is cheap and its value is catching the sixth.
+                opening = chapter_opening_letter(ch["verses"][0]["text"])
+                if opening is not None and opening.islower():
+                    fail(
+                        f"{osis} {ch['n']}:{ch['verses'][0]['n']}: chapter opens on "
+                        f"lowercase {opening!r} -- likely a lost capital in the source; "
+                        "adjudicate into pipeline/corrections/ rather than editing text"
+                    )
+
             for v in ch["verses"]:
                 t = v["text"]
                 if "<" in t:
@@ -613,12 +651,16 @@ def main() -> int:
 
     corrections = load_corrections(WORK_ID)
     try:
-        applied, _seen = apply_corrections(book_docs, corrections, full_run=not args.sample)
+        applied, _seen = apply_corrections(
+            book_docs, corrections, full_run=not args.sample
+        )
     except CorrectionDriftError as exc:
         print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)
         return 1
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    corrections_count = write_corrections_receipt(WORK_DIR, applied, corrections, generated_at)
+    corrections_count = write_corrections_receipt(
+        WORK_DIR, applied, corrections, generated_at
+    )
     print(
         f"\nCorrections layer: {corrections_count} applied, "
         f"{len([c for c in corrections if c.get('resolution')])} documented unresolved/"

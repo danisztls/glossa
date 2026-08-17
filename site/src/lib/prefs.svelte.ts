@@ -17,7 +17,7 @@ export const MAX_FONT_SCALE = 1.8;
 export const FONT_SCALE_STEP = 0.1;
 export const DEFAULT_FONT_SCALE = 1;
 
-const STORAGE_KEY = 'depositum:font-scale';
+const STORAGE_KEY = 'glossa:font-scale';
 
 /** Round to the same precision as `FONT_SCALE_STEP` to avoid float drift (0.1 + 0.1 + 0.1 …). */
 function roundToStep(value: number): number {

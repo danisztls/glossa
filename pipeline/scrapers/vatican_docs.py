@@ -191,7 +191,7 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-USER_AGENT = "Depositum corpus builder"
+USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 MAX_ATTEMPTS = 3  # survey measured ~1-in-6-to-8 transient failures, no 403s/CAPTCHA
 RETRY_BACKOFF = [3.0, 8.0]  # seconds, between attempts 1->2 and 2->3

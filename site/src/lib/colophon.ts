@@ -13,7 +13,7 @@
  * is its only consumer, and the page degrades to a visible "not set yet"
  * notice rather than a silent gap if it is ever set back to null.
  */
-export const CONTACT_EMAIL: string | null = 'depositum@posix.dev.br';
+export const CONTACT_EMAIL: string | null = 'glossa@posix.dev.br';
 
 /** Where the source lives, for the "how this was built" section. */
 export const REPOSITORY_URL: string | null = null;

@@ -41,7 +41,7 @@
 
 import { COMPARE_PARAM } from './compare';
 
-const STORAGE_KEY = 'depositum:compare';
+const STORAGE_KEY = 'glossa:compare';
 
 /** "Whichever edition this route picks on its own" — see the module docblock
  *  on why a stored work id alone would not survive navigating between works. */

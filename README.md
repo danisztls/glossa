@@ -1,8 +1,8 @@
-# Depositum
+# Glossa Catholica
 
 A free, ad-free, account-free site for reading and consulting the deposit of faith: the Bible, the Catechism of the Catholic Church, the Compendium of the Catechism, and (next) encyclicals and other magisterial documents. English and Portuguese. Desktop, mobile, and offline-first PWA.
 
-_Depositum fidei_ — the deposit of faith.
+_Glossa_ — the apparatus of cross-references and commentary that medieval scribes set around the sacred page. The *Glossa Ordinaria* was not its compiler's opinions; it was the Fathers, gathered and attributed, arranged so the page could be read with everything it pointed at. That is what this is meant to be.
 
 ## Structure
 

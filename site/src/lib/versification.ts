@@ -1,7 +1,7 @@
 /**
  * Hebrew/Masoretic ("modern") ↔ Vulgate versification mapping.
  *
- * Depositum's canonical Bible address space is the **Vulgate** (both v1
+ * Glossa Catholica's canonical Bible address space is the **Vulgate** (both v1
  * editions — `bible.cpdv.en`, `bible.matos-soares.pt` — print Vulgate
  * chapter/verse numbering; see `docs/corpus-schema.md`'s
  * `psalm_numbering: "vulgate"`). But the CCC's own footnote citations, and

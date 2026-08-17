@@ -103,10 +103,44 @@ if (!existsSync(worksSrc)) {
 	process.exit(0);
 }
 
-const workIds = readdirSync(worksSrc, { withFileTypes: true })
+/*
+ * A work IS its manifest: `corpus/works/<id>/manifest.json` is what every
+ * consumer below reads, so a directory without one is not a work no matter
+ * what it is named. Deciding that here rather than mid-loop keeps the run
+ * summary honest — this list is what gets counted and printed, and it used to
+ * include anything that happened to be a directory.
+ *
+ * The two rejected cases are deliberately NOT treated alike:
+ *
+ *  - Dot-prefixed directories are ignored in silence. Work IDs are
+ *    `type.slug.lang`, never leading-dot, so these are always something else's
+ *    scratch space — `.claude/.cc-writes`, an editor's swap dir — and warning
+ *    about them every run trains people to ignore the warnings that matter.
+ *
+ *  - Anything else without a manifest is REPORTED. That is the dangerous
+ *    shape: a real work whose manifest failed to write looks exactly like this,
+ *    and skipping it quietly would drop it from the build with no signal, which
+ *    is the thing `CLAUDE.md` says must never happen ("a genuine failure belongs
+ *    in the run summary, never silently absent from the corpus").
+ */
+const workDirs = readdirSync(worksSrc, { withFileTypes: true })
 	.filter((e) => e.isDirectory())
 	.map((e) => e.name)
+	.filter((name) => !name.startsWith('.'))
 	.sort();
+
+const manifestless = workDirs.filter(
+	(name) => !existsSync(path.join(worksSrc, name, 'manifest.json'))
+);
+if (manifestless.length > 0) {
+	console.warn(
+		`[sync-corpus] WARNING: ${manifestless.length} director(ies) under ${worksSrc} have no ` +
+			`manifest.json and were NOT built: ${manifestless.join(', ')}. A work without a manifest ` +
+			`is invisible to the site — if any of these is a real work, its scrape did not finish.`
+	);
+}
+
+const workIds = workDirs.filter((name) => !manifestless.includes(name));
 
 /**
  * Works taken down — see `site/unpublished.json`, which documents the
@@ -177,7 +211,9 @@ const contentManifest = [];
 for (const workId of workIds) {
 	const workDir = path.join(worksSrc, workId);
 	const manifestPath = path.join(workDir, 'manifest.json');
-	if (!existsSync(manifestPath)) continue; // not a real work dir
+	// No existence check here: `workIds` is already filtered to directories that
+	// have a manifest, and the ones that don't were reported up there rather
+	// than skipped in silence.
 	const manifest = readJson(manifestPath);
 	// `notes` is free-text scraper/provenance diagnostics — sometimes several
 	// paragraphs (observed: the Vatican-document manifests, which can run to

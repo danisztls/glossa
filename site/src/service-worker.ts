@@ -1,5 +1,5 @@
 /**
- * Service worker: offline caching for Depositum.
+ * Service worker: offline caching for Glossa Catholica.
  *
  * Two cache tiers, each with a different lifecycle — this split is the
  * organizing idea of the whole file, so it's worth stating up front rather
@@ -51,8 +51,8 @@ import { listContentAssets } from '$lib/corpus-index';
 
 const sw = self as unknown as ServiceWorkerGlobalScope;
 
-const CONTENT_CACHE = 'depositum-content';
-const SHELL_CACHE = `depositum-shell-${version}`;
+const CONTENT_CACHE = 'glossa-content';
+const SHELL_CACHE = `glossa-shell-${version}`;
 
 // ============================================================================
 // CONTENT TIER POLICY — read this before changing what goes in CONTENT_CACHE
@@ -269,7 +269,7 @@ sw.addEventListener('activate', (event) => {
 				const names = await caches.keys();
 				await Promise.all(
 					names
-						.filter((name) => name.startsWith('depositum-shell-') && name !== SHELL_CACHE)
+						.filter((name) => name.startsWith('glossa-shell-') && name !== SHELL_CACHE)
 						.map((name) => caches.delete(name))
 				);
 				// CONTENT_CACHE is deliberately excluded from this sweep — see
@@ -350,7 +350,7 @@ async function handleNavigate(request: Request): Promise<Response> {
 		// Both precache candidates missing (a badly failed install) — this is
 		// the only place this file constructs a response by hand rather than
 		// serving a cached one.
-		return new Response('Offline, and no cached copy of Depositum is available.', {
+		return new Response('Offline, and no cached copy of Glossa Catholica is available.', {
 			status: 503,
 			headers: { 'Content-Type': 'text/plain; charset=utf-8' }
 		});

@@ -15,7 +15,7 @@
 
 export type UiLang = 'en' | 'pt';
 
-const STORAGE_KEY = 'depositum:ui-lang';
+const STORAGE_KEY = 'glossa:ui-lang';
 
 type Dictionary = Record<string, string>;
 
@@ -32,8 +32,8 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'nav.magisterium': 'Magisterium',
 		'nav.prayers': 'Prayers',
 		'nav.menu': 'Menu',
-		'home.title': 'Depositum',
-		'home.tagline': 'The Bible and the Catechism of the Catholic Church, free to read.',
+		'home.title': 'Glossa Catholica',
+		'home.tagline': 'Scripture and the Magisterium, free to read.',
 		'home.continueReading': 'Continue reading',
 		'home.works': 'Library',
 		// Home page's Catechism/Compendium section — see routes/+page.svelte's
@@ -161,7 +161,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 			'What this site is, where its texts come from, and where we stand on reproducing them.',
 		'colophon.whatThisIs': 'What this is',
 		'colophon.whatThisIsBody':
-			'Depositum is a reading site for the Scriptures, the Catechism, the Compendium, and the documents of the Magisterium, in English and Portuguese. It exists to be read, and nothing else is asked of you for reading it:',
+			'Glossa Catholica is a reading site for the Scriptures, the Catechism, the Compendium, and the documents of the Magisterium, in English and Portuguese. It exists to be read, and nothing else is asked of you for reading it:',
 		'colophon.pointFree': 'Free, and always free. No paywall, no subscription, nothing to buy.',
 		'colophon.pointNoAds': 'No advertising, and no sponsored placement of any kind.',
 		'colophon.pointNoAccounts': 'No accounts. Nothing to sign up for, nothing to log in to.',
@@ -188,6 +188,9 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'colophon.buildTitle': 'How it is made',
 		'colophon.buildBody':
 			'The texts are collected from their published sources, parsed into a structured corpus, and rendered as static pages. Corrections to source defects are recorded individually, with the original wording, the corrected wording, and the reason \u2014 no text is ever silently changed.',
+		'colophon.typeTitle': 'The type',
+		'colophon.typeBody':
+			'Set in EB Garamond, Georg Duffner and Octavio Pardo\u2019s revival of the types Claude Garamont cut in the 1590s \u2014 the humanist tradition the Church has printed in since the Renaissance. The opening initials are Pirata One, a blackletter whose capitals stay legible at the size a drop cap demands. Both are licensed under the SIL Open Font License and served from this site rather than from a third party, so reading a page asks nothing of anyone else\u2019s server.',
 		'bible.citedInCcc': 'Cited in the Catechism',
 		'bible.wholeChapter': 'This chapter',
 		'bible.verseNotInEdition':
@@ -216,8 +219,8 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'nav.magisterium': 'Magistério',
 		'nav.prayers': 'Orações',
 		'nav.menu': 'Menu',
-		'home.title': 'Depositum',
-		'home.tagline': 'A Bíblia e o Catecismo da Igreja Católica, livres para ler.',
+		'home.title': 'Glossa Catholica',
+		'home.tagline': 'Escritura e Magistério, livres para ler.',
 		'home.continueReading': 'Continuar lendo',
 		'home.works': 'Biblioteca',
 		'home.ccc.heading': 'Catecismo e Compêndio',
@@ -327,7 +330,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 			'O que \u00e9 este site, de onde v\u00eam os seus textos e qual a nossa posi\u00e7\u00e3o quanto \u00e0 sua reprodu\u00e7\u00e3o.',
 		'colophon.whatThisIs': 'O que \u00e9 isto',
 		'colophon.whatThisIsBody':
-			'O Depositum \u00e9 um site de leitura das Escrituras, do Catecismo, do Compêndio e dos documentos do Magist\u00e9rio, em portugu\u00eas e em ingl\u00eas. Existe para ser lido, e nada mais lhe \u00e9 pedido para o ler:',
+			'A Glossa Catholica \u00e9 um site de leitura das Escrituras, do Catecismo, do Compêndio e dos documentos do Magist\u00e9rio, em portugu\u00eas e em ingl\u00eas. Existe para ser lido, e nada mais lhe \u00e9 pedido para o ler:',
 		'colophon.pointFree':
 			'Gratuito, e sempre gratuito. Sem barreira de pagamento, sem subscri\u00e7\u00e3o, nada para comprar.',
 		'colophon.pointNoAds': 'Sem publicidade nem qualquer conte\u00fado patrocinado.',
@@ -355,6 +358,9 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'colophon.buildTitle': 'Como \u00e9 feito',
 		'colophon.buildBody':
 			'Os textos s\u00e3o recolhidos das suas fontes publicadas, analisados para um corpus estruturado e apresentados como p\u00e1ginas est\u00e1ticas. As corre\u00e7\u00f5es a defeitos das fontes s\u00e3o registadas uma a uma, com a reda\u00e7\u00e3o original, a corrigida e o motivo \u2014 nenhum texto \u00e9 alterado em sil\u00eancio.',
+		'colophon.typeTitle': 'Os tipos',
+		'colophon.typeBody':
+			'Composto em EB Garamond, o renascimento por Georg Duffner e Octavio Pardo dos tipos que Claude Garamont gravou na d\u00e9cada de 1590 \u2014 a tradi\u00e7\u00e3o humanista em que a Igreja imprime desde o Renascimento. As iniciais s\u00e3o Pirata One, uma letra g\u00f3tica cujas mai\u00fasculas permanecem leg\u00edveis no tamanho que uma capitular exige. Ambas as fontes t\u00eam licen\u00e7a SIL Open Font License e s\u00e3o servidas a partir deste s\u00edtio e n\u00e3o de terceiros, de modo que ler uma p\u00e1gina nada exige do servidor de outrem.',
 		'bible.citedInCcc': 'Citado no Catecismo',
 		'bible.wholeChapter': 'Este capítulo',
 		'bible.verseNotInEdition': 'Este número de versículo não existe nesta edição',

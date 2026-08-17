@@ -4,25 +4,246 @@
  * Four themes (auto / light / dark / sepia) toggled via `data-theme` on
  * <html> — 'auto' removes the attribute entirely so `prefers-color-scheme`
  * decides (see `src/lib/theme.svelte.ts`). Colors are placeholders — real
- * palette and type choices land in the design pass (see docs/decisions.md).
+ * palette lands in the design pass (see docs/decisions.md); the type below
+ * is no longer a placeholder.
  */
 
+/*
+ * EB Garamond (Duffner/Pardo's revival of Garamont's 1590s types), self-hosted
+ * from `static/fonts/` rather than imported from the `@fontsource-variable`
+ * package. The package's own CSS would work, but Vite hashes assets it
+ * references from `url()`, and SvelteKit's `preload` filter only sees its own
+ * module graph — neither can produce the stable path `app.html`'s explicit
+ * <link rel="preload"> needs. So the files are copied in and declared here.
+ *
+ * Four subsets are declared, not seven. Which ones is an empirical question,
+ * and the corpus answers it:
+ *
+ *   latin       every page. Covers ALL Portuguese on its own — the accents
+ *               Portuguese uses are Latin-1 Supplement, inside U+0000-00FF.
+ *   latin-ext   `ǽ` (U+01FD, 19x in Latin liturgical text) and the Polish /
+ *               Czech letters in saints' names (ł ć ż š).
+ *   greek       ~80 chars, all monotonic — so `greek-ext` (polytonic) is
+ *               deliberately absent.
+ *   vietnamese  `ễ ậ` in "Nguyễn Văn Thuận" (encyclical.magnifica-humanitas,
+ *               both editions). U+1EA0-1EF9 is NOT covered by latin-ext, so
+ *               without this subset that name renders as tofu.
+ *
+ * `cyrillic`/`cyrillic-ext` are omitted — nothing in the corpus needs them.
+ *
+ * Declaring a subset is close to free: `unicode-range` means the browser only
+ * downloads a file when a character in its range is actually on the page. A
+ * plain English chapter pulls the 43k latin file and nothing else, even though
+ * 347k is on disk. The ranges below are copied verbatim from the package's
+ * `wght.css` / `wght-italic.css` — do not hand-edit them.
+ *
+ * One family name covers both styles and the whole 400-800 axis; `font-weight:
+ * 400 800` on each block is what makes a variable font work through the
+ * `@font-face` route.
+ */
+
+/* latin */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-latin-wght-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-latin-wght-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin-ext */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-latin-ext-wght-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+		U+A720-A7FF;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-latin-ext-wght-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+		U+A720-A7FF;
+}
+
+/* greek */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-greek-wght-normal.woff2') format('woff2-variations');
+	unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-greek-wght-italic.woff2') format('woff2-variations');
+	unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+/* vietnamese */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-vietnamese-wght-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+		U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-vietnamese-wght-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+		U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+/*
+ * The illuminated initial, and the only place on the site set in anything but
+ * the text face. Pirata One is a blackletter with roman-derived capitals.
+ *
+ * It replaced UnifrakturMaguntia, and the reason is worth recording because it
+ * is not a matter of taste. Maguntia is a true Mainz fraktur, and fraktur
+ * MAJUSCULES are only decipherable from surrounding context — set one alone at
+ * 5em and its D reads as a spiral, its O as a D, its A as a U, its M as a W.
+ * A drop cap has no context by construction: the rest of the word is a
+ * different face at a different size. Judges 1 opened as "⟨spiral⟩epois"
+ * instead of "Depois". Pirata One keeps the blackletter texture while its
+ * capitals stay unambiguous, which is the whole job here.
+ *
+ * Subset hard, because a drop cap needs a vanishingly small part of a font:
+ * 137 codepoints, 5.9 KB, down from 40 KB. The inventory is A-Z, a-z, 0-9, the
+ * Latin-1 letter block, and the opening punctuation from `dropcap.ts`'s
+ * LEADING_PUNCT. It is deliberately wider than what the corpus exhibits today
+ * (which needs only ÀÁÂÉÓÚ of the accents) so that a newly-parsed work opening
+ * on Ç or Ñ does not ship a tofu box; `dropcap.test.ts` asserts the inventory
+ * still covers the corpus.
+ *
+ * Digits are in the subset and are NOT decorative: splitDropCap's LETTER test
+ * is `\p{L}|\p{N}`, and the corpus contains passages opening "1", "(1", "(8".
+ *
+ * LOWERCASE IS IN THE SUBSET DELIBERATELY, and the reason is worth keeping.
+ * Five chapter openings in bible.matos-soares.pt begin with a lowercase letter
+ * (Exod 14:1, Exod 25:1, Num 18:1, Num 34:1 — all "o Senhor..." — and Sir 41:1,
+ * "ó morte"). Those are defects in the transcription, not in the parser: the
+ * raw HTML has them lowercase while the other eleven "O Senhor falou a Moisés"
+ * in the same book are capitalised.
+ *
+ * The tempting fix is `text-transform: uppercase` on the cap, which would both
+ * guarantee coverage and make the five read correctly. It is NOT used, because
+ * that silently corrects the corpus in the presentation layer — exactly what
+ * the colophon promises this project does not do ("no text is ever silently
+ * changed"). Source defects belong in `pipeline/corrections/` with a locator
+ * and evidence. So the font carries lowercase, the five render as the corpus
+ * actually has them, and the defect stays visible until it is corrected at the
+ * source. Once it is, these glyphs simply go unused.
+ *
+ * Regenerate with:
+ *   uv run --with "fonttools[woff]" pyftsubset \
+ *     node_modules/@fontsource/pirata-one/files/pirata-one-latin-400-normal.woff2 \
+ *     --output-file=static/fonts/pirata-one-dropcap.woff2 --flavor=woff2 \
+ *     --layout-features='' --no-hinting --desubroutinize \
+ *     --unicodes='U+0020,U+0022,U+0027,U+0028,U+002D,U+0030-0039,U+0041-005A,U+005B,U+007B,U+00A1,U+00AB,U+00BB,U+00BF,U+00C0-00D6,U+00D8-00F6,U+00F8-00FF,U+0061-007A,U+2013,U+2014,U+2018,U+2019,U+201C,U+201D'
+ *
+ * `font-display: block` rather than `swap`: this is one large glyph in an
+ * accent colour, and swapping it in late produces a visible lurch at the top
+ * of the passage. Blocking briefly on 5.9 KB is the better trade, and the
+ * fallback below keeps it legible if the file never arrives.
+ */
+@font-face {
+	font-family: 'Pirata One Subset';
+	font-style: normal;
+	font-weight: 400;
+	font-display: block;
+	src: url('/fonts/pirata-one-dropcap.woff2') format('woff2');
+	unicode-range:
+		U+0020, U+0022, U+0027, U+0028, U+002D, U+0030-0039, U+0041-005A, U+005B, U+0061-007A, U+007B,
+		U+00A1, U+00AB, U+00BB, U+00BF, U+00C0-00D6, U+00D8-00F6, U+00F8-00FF, U+2013, U+2014, U+2018,
+		U+2019, U+201C, U+201D;
+}
+
 :root {
-	--font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-	--font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	--font-serif:
+		'EB Garamond Variable', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+	/* Two call sites, and only two: the `.drop-cap` rule near the bottom of this
+	   file, and the wordmark (`components/Wordmark.svelte`). Both are single
+	   large glyphs or a short display lockup in the one weight the subset
+	   ships; neither is safe to use for running text, and the subset's
+	   `unicode-range` is scoped to what those two need. */
+	--font-display: 'Pirata One Subset', var(--font-serif);
+	/*
+	 * The site sets no sans anywhere. `--font-sans`'s nine call sites are
+	 * almost all small uppercase letterspaced labels already set at weight
+	 * 600, which is exactly where EB Garamond's 400-800 axis stops being
+	 * delicate — running heads set in the text face is what a printed book
+	 * does, and it is the right register for a site that is only ever read.
+	 *
+	 * Kept as an alias rather than deleted so those call sites don't have to
+	 * change (several of their files have unrelated work in flight), and so
+	 * reintroducing a UI sans is a one-line edit here. Renaming the pair to
+	 * --font-text / --font-ui is the real cleanup, once the tree is quiet.
+	 */
+	--font-sans: var(--font-serif);
 
 	/*
-	 * 68ch, not 65: characters-per-line is what actually governs
-	 * readability, and `ch` here is measured in `.content-column`'s own
-	 * (sans, body-size) font — NOT `.reading-text`'s serif font, since the
-	 * two live on different elements and `ch` doesn't inherit across that
-	 * boundary. Raising `--reading-base` below (1.15rem -> 1.3rem) shrinks
-	 * the reading font's characters-per-line at a fixed column width,
-	 * because bigger glyphs in the same physical width means fewer of them
-	 * fit; widening the column a few `ch` compensates so the measure lands
-	 * back in the ~55-65 cpl range instead of drifting narrow.
+	 * Characters-per-line is what actually governs readability, and `ch` here
+	 * is measured in `.content-column`'s own body-size font — NOT
+	 * `.reading-text`'s larger reading size, since the two live on different
+	 * elements and `ch` doesn't inherit across that boundary.
+	 *
+	 * Re-derived from 68ch when the type stopped being a system stack. Until
+	 * then `ch` meant whatever sans the OS happened to supply, so the column
+	 * was ~605px on macOS (Helvetica's "0" is 0.556em) and ~692px on Linux
+	 * (DejaVu Sans, 0.636em) — the measure was never actually pinned, it just
+	 * looked pinned in the source. EB Garamond's "0" is 0.480em, so the unit
+	 * itself is now fixed for every visitor.
+	 *
+	 * 64, not 68, because the numbers moved: measured against 288k characters
+	 * of real corpus prose, EB Garamond averages 0.376em per character, which
+	 * puts 68ch at 66.7 cpl — just outside the target. 64ch lands at 62.8.
+	 *
+	 *   N x 0.480em x 16px = column px;  cpl = column px / (0.376 x 1.3 x 16)
+	 *
+	 * Raising `--reading-base` below shrinks cpl at a fixed column width
+	 * (bigger glyphs in the same physical width means fewer of them fit), so
+	 * widening the column a few `ch` is what compensates. Recompute both
+	 * together, and keep the result in the ~55-65 range.
 	 */
-	--content-width: 68ch;
+	--content-width: 64ch;
 
 	/* Base reading size before the reader's fine adjustment is applied —
 	   see `.reading-text` below and `$lib/prefs.svelte.ts`. */
@@ -240,12 +461,16 @@ input {
 /*
  * TWO COLUMNS NEED TWICE THE MEASURE, NOT HALF OF IT.
  *
- * `--content-width` is one reading column: ~68ch, tuned so a line lands in
+ * `--content-width` is one reading column: 64ch, tuned so a line lands in
  * the 55-65 characters-per-line range. Compare mode puts a `1fr 1fr` grid
  * inside `.content-column`, so leaving that container at `--content-width`
- * gave each column ~33ch — half the measure, and well under any readable
+ * gave each column ~32ch — half the measure, and well under any readable
  * one. This is the width the container has to be for the COLUMNS to come
  * out at the measure the rest of the site is built around.
+ *
+ * Deriving from the token rather than hard-coding a width is also what keeps
+ * this correct across a type change: retuning `--content-width` for a new
+ * face moves both the single and the two-up measure by the same factor.
  *
  * Applied at every width rather than inside the 80rem query: below that
  * breakpoint `.reading-layout` is not a grid, so `.content-column` kept its
@@ -464,11 +689,40 @@ input {
 .drop-cap::first-letter,
 .drop-cap-letter {
 	float: inline-start;
-	font-family: var(--font-serif);
-	font-size: 3.1em;
-	/* Tuned against the serif stack's cap height so the cap's top aligns with
-	   the first line's ascender and its baseline sits on the third line. */
-	line-height: 0.82;
+	font-family: var(--font-display);
+	/*
+	 * A three-line drop cap, with both numbers derived from font metrics rather
+	 * than eyeballed. Everything below is in units of body text em.
+	 *
+	 * The old values (3.1em / 0.82, inherited from the system-serif placeholder)
+	 * produced a float box of 3.1 x 0.82 = 2.542em against `.reading-text`'s
+	 * 1.65 line-height — barely 1.5 lines. That is why the cap read as an odd
+	 * ornament rather than a drop cap, and it never matched the comment that
+	 * used to sit here claiming a baseline on the third line.
+	 *
+	 * Sizing. For the cap to span three lines, its cap height must reach from
+	 * line 3's baseline up to line 1's cap height: two line-heights plus one
+	 * body cap height = 2 x 1.65 + 0.650 = 3.950em. Pirata One's cap height is
+	 * 0.793em, so font-size = 3.950 / 0.793 = 4.98em.
+	 *
+	 * Wrapping. Text wraps around a float's margin BOX, not around its glyph, so
+	 * the box governs how many lines indent. Sizing it to exactly three lines
+	 * (line-height 0.994 -> 4.950em) is a trap: that equals 3 x 1.65 precisely,
+	 * and any padding on top spills into the fourth line box and indents it too.
+	 * A 0.02em block-start padding was enough to do it — 2px against a 102.96px
+	 * budget — and the cap wrapped four lines instead of three.
+	 *
+	 * So the box is deliberately a shade UNDER three lines, with no block-start
+	 * padding to eat the margin: 4.98 x 0.98 = 4.880em against a 4.950em budget,
+	 * about 1.5px of clearance at the default reading size. The glyph's size is
+	 * unaffected — font-size governs that, line-height only governs the box.
+	 *
+	 * All of it depends on `.reading-text`'s 1.65 line-height and on the text
+	 * face's cap height. Change either and recompute — these are not independent
+	 * constants, and the failure mode is subtle (one extra indented line).
+	 */
+	font-size: 4.98em;
+	line-height: 0.98;
 	padding-inline-end: 0.08em;
 	padding-block-start: 0.06em;
 	color: var(--color-accent);
@@ -550,6 +804,36 @@ input {
 .menu-trigger.wide {
 	width: auto;
 	padding-inline: 0.6rem;
+}
+
+/*
+ * Header dropdowns at phone width.
+ *
+ * `.menu-panel` anchors its RIGHT edge to its trigger and grows leftward by at
+ * least `min-width` (14rem). That is fine for a trigger near the right edge and
+ * broken for one that is not: on a 380px viewport the language trigger's right
+ * edge sits around x=140, so a 224px panel would start at x=-84 and hang off
+ * the side of the screen. Nothing in the rule could notice — CSS cannot measure
+ * the distance from an element to the viewport edge.
+ *
+ * So at phone width the header's menus stop being the containing block, and the
+ * panels resolve against `.header-bar` instead: every one of them drops from the
+ * bottom-right of the header, lined up with the bar's own 1rem gutter, wherever
+ * its trigger happens to be. `position: static` on `.menu` is what hands the
+ * job over.
+ *
+ * Deliberately scoped to `.site-header`. The same `.menu` primitives are used
+ * in the page body (ComparisonEditionMenu), where the trigger is the correct
+ * anchor and this would be wrong.
+ */
+@media (max-width: 30rem) {
+	.site-header .menu {
+		position: static;
+	}
+
+	.site-header .menu-panel {
+		inset-inline-end: 1rem;
+	}
 }
 
 .menu-panel {

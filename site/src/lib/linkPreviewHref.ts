@@ -45,7 +45,7 @@ export type PreviewTarget =
 // (i.e. was itself absolute, and thus external — `https://vatican.va/...`
 // parses fine against this base but keeps its own origin, which is exactly
 // the signal used to reject it two lines down).
-const INTERNAL_BASE = 'https://depositum.internal.invalid';
+const INTERNAL_BASE = 'https://glossa.internal.invalid';
 
 const BIBLE_RE = /^\/bible\/([a-z0-9]+)\/(\d+)$/;
 const CCC_CHAPTER_RE = /^\/ccc\/chapter\/(\d+)$/;

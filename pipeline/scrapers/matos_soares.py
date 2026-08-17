@@ -42,7 +42,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://www.liriocatolico.com.br/biblia_online/biblia_matos_soares/"
-USER_AGENT = "Depositum corpus builder"
+USER_AGENT = "Glossa Catholica corpus builder"
 MIN_REQUEST_INTERVAL = (
     2.0  # seconds, politeness floor (source has no robots.txt Crawl-delay)
 )
@@ -352,7 +352,9 @@ def apply_corrections(
 
     if full_run:
         missing = [
-            c["id"] for c in corrections if not c.get("resolution") and c["id"] not in seen
+            c["id"]
+            for c in corrections
+            if not c.get("resolution") and c["id"] not in seen
         ]
         if missing:
             raise CorrectionDriftError(
@@ -589,6 +591,25 @@ def build_book(
 
 BAD_CONTENT_RE = re.compile(r"\[[ivxlcdm]{1,7}\]|<|�|  ", re.IGNORECASE)
 
+# Punctuation that can legitimately stand before a chapter's first letter, so
+# that a chapter opening on a quotation or a parenthesis is not mistaken for a
+# lost capital. Kept in step with LEADING_PUNCT in site/src/lib/dropcap.ts,
+# which makes the identical split to build the drop cap.
+CHAPTER_OPENING_PUNCT = "\"'“”‘’«»¿¡([{—–- \t"
+
+
+def chapter_opening_letter(text: str) -> str | None:
+    """The character a chapter's first verse actually opens on, skipping up to
+    three units of leading punctuation. Returns None if the verse opens on
+    something that is neither punctuation nor a letter/digit."""
+    units = text.lstrip()
+    taken = 0
+    while taken < len(units) and taken < 3 and units[taken] in CHAPTER_OPENING_PUNCT:
+        taken += 1
+    if taken >= len(units) or not units[taken].isalnum():
+        return None
+    return units[taken]
+
 
 def validate_books(books: list[BookResult], full_run: bool) -> tuple[bool, list[str]]:
     problems: list[str] = []
@@ -608,6 +629,32 @@ def validate_books(books: list[BookResult], full_run: bool) -> tuple[bool, list[
         for chap in b.chapters:
             if not chap["verses"]:
                 problems.append(f"{b.osis} ch.{chap['n']}: has zero verses")
+            else:
+                # A chapter's first verse begins a sentence, so its first letter
+                # must be capitalized. This is a genuine oracle rather than a
+                # style preference: across all 73 books there are 1,300-odd
+                # chapter openings and, once the entries below were authored,
+                # exactly zero exceptions -- so a lowercase opening is always a
+                # defect, never a legitimate reading.
+                #
+                # It found five, all lost capitals in the source HTML rather
+                # than parser damage: exod 14:1, exod 25:1, num 18:1, num 34:1
+                # ("o Senhor...") and sir 41:1 ("ó morte"). Each is corrected via
+                # pipeline/corrections/ and evidenced there.
+                #
+                # This runs AFTER apply_corrections, which is what makes it
+                # useful: the five above pass, and a newly-scraped sixth fails
+                # the run until someone adjudicates it into the corrections file.
+                # Digits are exempt (isalnum but never cased), as are chapters
+                # opening on punctuation, which chapter_opening_letter skips.
+                opening = chapter_opening_letter(chap["verses"][0]["text"])
+                if opening is not None and opening.islower():
+                    problems.append(
+                        f"{b.osis} {chap['n']}:{chap['verses'][0]['n']}: chapter opens on "
+                        f"lowercase {opening!r} -- likely a lost capital in the source; "
+                        "adjudicate into pipeline/corrections/ rather than editing text"
+                    )
+
             for v in chap["verses"]:
                 if BAD_CONTENT_RE.search(v["text"]):
                     problems.append(
@@ -870,10 +917,12 @@ def main() -> int:
     if len(split_words) > 200:
         print(f"  ... and {len(split_words) - 200} more")
 
-    print(f"\nCorrections layer: {len(all_applied)} applied "
-          f"({len(auto_ihe_applied)} auto-Ihe + {len(file_applied)} from corrections file), "
-          f"{len([c for c in corrections if c.get('resolution')])} documented unresolved/"
-          "not-a-defect (see corrections-applied.json)")
+    print(
+        f"\nCorrections layer: {len(all_applied)} applied "
+        f"({len(auto_ihe_applied)} auto-Ihe + {len(file_applied)} from corrections file), "
+        f"{len([c for c in corrections if c.get('resolution')])} documented unresolved/"
+        "not-a-defect (see corrections-applied.json)"
+    )
 
     books_with_headings = [
         b.osis for b in books if any(c.get("headings") for c in b.chapters)

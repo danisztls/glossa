@@ -343,5 +343,55 @@
     "reason": "Split-word artifact: the fixed expression 'Ao mesmo tempo' (at the same time) is rendered as two whitespace-separated fragments.",
     "evidence": "corpus/works/bible.matos-soares.pt/books/phlm.json, phlm 1:22: 'A o mesmo tempo prepara-me pousada, pois pelas vossas orações, serei dado a vós.' -- 'Ao mesmo tempo' opening the sentence is the standard idiom.",
     "added": "2026-08-14"
+  },
+  {
+    "id": "matos.pt-exod14.1-oSenhor",
+    "locator": { "osis": "exod", "chapter": 14, "verse": 1 },
+    "field": "verse_text",
+    "from": "o Senhor falou a Moisés",
+    "to": "O Senhor falou a Moisés",
+    "reason": "Lost sentence-initial capital: the chapter's opening word is printed lowercase. Purely typographic -- no wording changes, only the case of the first letter of a sentence that begins a chapter, which Portuguese orthography requires to be capitalized.",
+    "evidence": "corpus/raw/matos-soares/exodo__completo.html: this exact formula appears eight times in Exodus and is capitalized in every instance except this one -- 'Capítulo 13 Ver capítulo 1 O Senhor falou a Moisés, dizendo:' against 'Capítulo 14 Ver capítulo 1 o Senhor falou a Moisés, dizendo:'. Parallel edition agrees: bible.cpdv.en exod 14:1 reads 'Then the Lord spoke to Moses, saying:'. The defect is in the source HTML, not in the parser.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "matos.pt-exod25.1-oSenhor",
+    "locator": { "osis": "exod", "chapter": 25, "verse": 1 },
+    "field": "verse_text",
+    "from": "o Senhor falou a Moisés",
+    "to": "O Senhor falou a Moisés",
+    "reason": "Lost sentence-initial capital: the chapter's opening word is printed lowercase. Purely typographic, as above.",
+    "evidence": "corpus/raw/matos-soares/exodo__completo.html: the same 'Senhor falou a Moisés assim' formula is capitalized at exod 24:11 ('11 O Senhor falou a Moisés assim: 12 Eu') and lowercase only here ('Capítulo 25 Ver capítulo 1 o Senhor falou a Moisés assim; 2 Diz'). Parallel edition agrees: bible.cpdv.en exod 25:1 reads 'And the Lord spoke to Moses, saying:'.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "matos.pt-num18.1-oSenhor",
+    "locator": { "osis": "num", "chapter": 18, "verse": 1 },
+    "field": "verse_text",
+    "from": "o Senhor disse a Aarão",
+    "to": "O Senhor disse a Aarão",
+    "reason": "Lost sentence-initial capital: the chapter's opening word is printed lowercase. Purely typographic, as above.",
+    "evidence": "corpus/raw/matos-soares/numeros__completo.html: the identical formula is capitalized nineteen verses later in the SAME chapter -- 'Capítulo 18 Ver capítulo 1 o Senhor disse a Aarão' against '20 O Senhor disse a Aarão: Tu não possu'. Parallel edition agrees: bible.cpdv.en num 18:1 reads 'And the Lord said to Aaron:'.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "matos.pt-num34.1-oSenhor",
+    "locator": { "osis": "num", "chapter": 34, "verse": 1 },
+    "field": "verse_text",
+    "from": "o Senhor falou a Moisés",
+    "to": "O Senhor falou a Moisés",
+    "reason": "Lost sentence-initial capital: the chapter's opening word is printed lowercase. Purely typographic, as above.",
+    "evidence": "corpus/raw/matos-soares/numeros__completo.html: 'O Senhor falou a Moisés' occurs capitalized roughly two dozen times across Numbers, including at every other chapter opening that uses it (Capítulos 6, 8, 10, 15, 17, 31); chapter 34's opening is the sole lowercase instance. Parallel edition agrees: bible.cpdv.en num 34:1 reads 'And the Lord spoke to Moses, saying:'.",
+    "added": "2026-08-16"
+  },
+  {
+    "id": "matos.pt-sir41.1-oMorte",
+    "locator": { "osis": "sir", "chapter": 41, "verse": 1 },
+    "field": "verse_text",
+    "from": "ó morte, quão amarga",
+    "to": "Ó morte, quão amarga",
+    "reason": "Lost sentence-initial capital on the vocative particle opening the chapter. Purely typographic: 'ó' is correct lowercase mid-sentence, but here it is the first word of the chapter and must be capitalized.",
+    "evidence": "corpus/raw/matos-soares/eclesiastico__completo.html: 'Capítulo 41 Ver capítulo 1 ó morte, quão amarga é a tua memória' -- the chapter opens on the particle, so no preceding clause could license the lowercase form. Parallel edition agrees: bible.cpdv.en sir 41:1 reads 'O death, how bitter is the memory of you'.",
+    "added": "2026-08-16"
   }
 ]

@@ -16,7 +16,7 @@ export interface ReadingPosition {
 	updatedAt: string;
 }
 
-const STORAGE_KEY = 'depositum:positions';
+const STORAGE_KEY = 'glossa:positions';
 
 function readAll(): Record<string, ReadingPosition> {
 	if (typeof localStorage === 'undefined') return {};

@@ -1,7 +1,7 @@
 /**
  * Universal reference system.
  *
- * Depositum's raw citation strings — CCC footnotes, the CCC's `related`
+ * Glossa Catholica's raw citation strings — CCC footnotes, the CCC's `related`
  * marginal-number list, the Compendium's `ccc_refs` — are never pre-parsed
  * in the corpus (`docs/link-surface.md`'s "the corpus stores raw strings,
  * never interpretations" principle). This module is the derived pass that

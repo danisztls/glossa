@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Operational notes for working on Depositum. Architecture and rationale live in
+Operational notes for working on Glossa Catholica. Architecture and rationale live in
 `PLAN.md`, `docs/decisions.md`, `docs/corpus-schema.md` and
 `docs/link-surface.md` — read those first. This file is only the things that
 have actually bitten someone.

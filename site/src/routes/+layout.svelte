@@ -8,6 +8,7 @@
 	import FontSizeMenu from '$lib/components/FontSizeMenu.svelte';
 	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import Icon from '$lib/components/Icon.svelte';
+	import Wordmark from '$lib/components/Wordmark.svelte';
 	// Mounted once, globally: see the component's own docblock for why this is
 	// a single delegated listener rather than something every link-generating
 	// component (RefText, linkifyProse, route TOCs, ...) has to opt into.
@@ -58,18 +59,7 @@
 <div class="app-shell">
 	<header class="site-header">
 		<div class="header-bar">
-			<a class="brand" href="/">{t('home.title')}</a>
-
-			<button
-				type="button"
-				class="menu-trigger nav-toggle"
-				aria-expanded={navOpen}
-				aria-controls="primary-nav"
-				aria-label={t('nav.menu')}
-				onclick={() => (navOpen = !navOpen)}
-			>
-				<Icon name="menu" />
-			</button>
+			<a class="brand" href="/"><Wordmark variant="brand" /></a>
 
 			<nav id="primary-nav" class="primary-nav" class:open={navOpen} aria-label={t('nav.menu')}>
 				{#each NAV_ITEMS as item (item.href)}
@@ -83,19 +73,36 @@
 				{/each}
 			</nav>
 
+			<!--
+				One row of peers. These were grouped into a bordered "reading settings"
+				pill (edition + size + theme) on the theory that it stopped the header
+				reading as five staple-gunned buttons. In practice the pill had to strip
+				its children's border and background to avoid a button-in-a-button look,
+				so the group read as two classes of control — three chrome-less icons in
+				a box beside two bordered ones — a louder difference than the one it was
+				hiding. They are all the same kind of thing: one tap, one popover. They
+				now look it.
+			-->
 			<div class="controls">
 				<JumpBox />
 				<LanguageMenu />
-				<!-- The three per-work "reading settings" controls (appearance,
-				     not content) grouped visually into one pill so the header
-				     doesn't read as five staple-gunned buttons. Grouped visually
-				     rather than nested into one dropdown so each control stays
-				     one click away and independently keyboard-reachable. -->
-				<div class="reading-controls">
-					<EditionMenu />
-					<FontSizeMenu />
-					<ThemeMenu />
-				</div>
+				<EditionMenu />
+				<FontSizeMenu />
+				<ThemeMenu />
+				<!-- Last, and inside `.controls` rather than beside it: as a sibling of
+				     the group it picked up `.header-bar`'s 0.75rem gap while its
+				     neighbours shared `.controls`' 0.4rem, so the one button that
+				     looked deliberately set apart was set apart by accident. -->
+				<button
+					type="button"
+					class="menu-trigger nav-toggle"
+					aria-expanded={navOpen}
+					aria-controls="primary-nav"
+					aria-label={t('nav.menu')}
+					onclick={() => (navOpen = !navOpen)}
+				>
+					<Icon name="menu" />
+				</button>
 			</div>
 		</div>
 	</header>
@@ -135,57 +142,47 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.6rem 0.75rem;
-		padding: 0.6rem 1rem;
+		/* A little more block padding than the old single-line brand needed: the
+		   wordmark is two lines now, and letting it sit tight against the rule
+		   makes the header read as cramped rather than as compact. */
+		padding: 0.75rem 1rem;
 		max-width: 90rem;
 		margin-inline: auto;
+		/* Containing block for header dropdowns at phone width — see app.css's
+		   `.site-header .menu` rule, which re-anchors the panels here so a
+		   trigger sitting well left of the edge cannot throw its panel off
+		   the side of the screen. */
+		position: relative;
 	}
 
 	.brand {
 		order: 1;
-		font-family: var(--font-serif);
-		font-weight: 700;
-		font-size: 1.2rem;
+		/* Type lives in Wordmark.svelte — the two words are proportioned against
+		   each other there, and the blackletter must not be given a weight (the
+		   subset is a single 400 master; 700 would synthesize a bold and clot
+		   it). This rule keeps only what belongs to the link itself. */
+		display: inline-flex;
 		text-decoration: none;
 		color: var(--color-text);
-		/* Pushes nav-toggle/controls to the row's end on mobile, where
-		   .primary-nav isn't inline (see @media below); canceled on desktop,
-		   where .primary-nav's own auto margin takes over that job instead. */
-		margin-inline-end: auto;
 	}
 
-	.nav-toggle {
-		order: 2;
-	}
-
+	/*
+	 * Narrow layout is two rows: [brand ... controls] and, when open, the nav
+	 * panel below. The hamburger is the last child of `.controls`, not a sibling
+	 * of it, so every button in the row shares one gap — and it sits last
+	 * because it is the control that opens the row beneath it.
+	 *
+	 * Exactly one auto margin does the pushing, on `.controls`. There were two
+	 * before (here and on `.brand`), which split the free space into two
+	 * adjacent gaps — same rendering, twice the things to reason about.
+	 */
 	.controls {
-		order: 3;
+		order: 2;
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.4rem;
 		flex-wrap: wrap;
 		margin-inline-start: auto;
-	}
-
-	.reading-controls {
-		display: flex;
-		align-items: center;
-		gap: 0.2rem;
-		border: 1px solid var(--color-border);
-		border-radius: 0.4rem;
-		padding: 0.15rem;
-		background: var(--color-bg);
-	}
-
-	/* The individual menu triggers already carry their own border/background
-	   (app.css `.menu-trigger`); inside this group that would double up into
-	   a button-in-a-button look, so strip it back to just the icon here. */
-	.reading-controls :global(.menu-trigger) {
-		border-color: transparent;
-		background: transparent;
-	}
-
-	.reading-controls :global(.menu-trigger:hover) {
-		border-color: var(--color-accent);
 	}
 
 	.primary-nav {
@@ -224,9 +221,16 @@
 		}
 
 		.brand {
-			margin-inline-end: 0;
+			/* Not 0: the wordmark's own right edge is the blackletter's, which has
+			   no side bearing to speak of, so at the bar's 0.75rem gap it reads as
+			   touching the first nav link. */
+			margin-inline-end: 1.75rem;
 		}
 
+		/* Wide layout is a single row: brand, nav, controls. The nav stops being
+		   a wrapped panel and slots between the other two, so it takes order 2
+		   and the controls move to 3 — stated explicitly rather than left to
+		   tie-break on DOM order, which is what happened when both were 2. */
 		.primary-nav {
 			order: 2;
 			flex-basis: auto;
@@ -235,7 +239,10 @@
 			gap: 1.25rem;
 			border-top: none;
 			padding-top: 0;
-			margin-inline-end: auto;
+		}
+
+		.controls {
+			order: 3;
 		}
 
 		.primary-nav a {

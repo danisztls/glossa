@@ -1,6 +1,6 @@
 # The link surface
 
-Depositum's value is dense internal linking. This document inventories **every reference apparatus in the source texts**, what the corpus captures for each, and why the deferred ones are safe to defer. Companion to `corpus-schema.md` (the how); this is the what and why.
+Glossa Catholica's value is dense internal linking. This document inventories **every reference apparatus in the source texts**, what the corpus captures for each, and why the deferred ones are safe to defer. Companion to `corpus-schema.md` (the how); this is the what and why.
 
 ## Principle
 
@@ -39,7 +39,7 @@ The schema's per-verse `notes` field already exists, so adding footnotes later �
 
 ## Versification: Vulgate is canonical, Hebrew/Masoretic is converted on the way in
 
-Both v1 Bible editions print **Vulgate** chapter/verse numbering (`psalm_numbering: "vulgate"` in every Bible manifest) — this is Depositum's canonical Bible address space. An incoming reference may be phrased in **Hebrew/Masoretic** numbering instead — the convention most modern translations (NAB, RSV, NIV, …) use where it diverges from the Vulgate — and needs converting before it can resolve against the corpus.
+Both v1 Bible editions print **Vulgate** chapter/verse numbering (`psalm_numbering: "vulgate"` in every Bible manifest) — this is Glossa Catholica's canonical Bible address space. An incoming reference may be phrased in **Hebrew/Masoretic** numbering instead — the convention most modern translations (NAB, RSV, NIV, …) use where it diverges from the Vulgate — and needs converting before it can resolve against the corpus.
 
 This was originally scoped here as Psalms-only, jump-box-only ("both v1 editions use Vulgate numbering, so 'Psalm 23' opening Psalm 22 is jump-box logic, not corpus data"). That scoping was wrong on both axes, found by a real prerender failure (a dead link from `/ccc/678` to `/bible/cpdv.en/mal/3#v19` — Malachi 3 stops at verse 18 in the Vulgate; Hebrew 3:19 is Vulgate 4:1):
 
