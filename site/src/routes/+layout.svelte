@@ -31,16 +31,16 @@
 		{ href: '/bible', key: 'nav.bible' },
 		{ href: '/ccc', key: 'nav.ccc' },
 		{ href: '/compendium', key: 'nav.compendium' },
-		// Route path stays `/documents` (docs/corpus-schema.md §Documents'
-		// naming); the displayed label is "Magisterium" — see the
-		// `nav.magisterium` dictionary entry for why they're allowed to differ.
-		{ href: '/documents', key: 'nav.magisterium' },
 		// 24 prayers is not a fifth pillar alongside four works running to
 		// thousands of pages each — but a corpus nobody can find from the nav
 		// is a corpus nobody reads, so it gets the same one-click-away
 		// treatment as everything else rather than being reachable only from
 		// the home page's own Prayers section.
-		{ href: '/prayers', key: 'nav.prayers' }
+		{ href: '/prayers', key: 'nav.prayers' },
+		// Route path stays `/documents` (docs/corpus-schema.md §Documents'
+		// naming); the displayed label is "Magisterium" — see the
+		// `nav.magisterium` dictionary entry for why they're allowed to differ.
+		{ href: '/documents', key: 'nav.magisterium' }
 	] as const;
 
 	// A section is "active" for its whole subtree (`/bible/...` counts as

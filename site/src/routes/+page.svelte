@@ -373,6 +373,24 @@
 		</section>
 	{/if}
 
+	{#if prayerGroups.length > 0}
+		<section aria-labelledby="prayers-heading">
+			<h2 id="prayers-heading">{t('home.prayers.heading')}</h2>
+			<p class="prayers-tagline">{t('home.prayers.tagline')}</p>
+			<ul class="prayers-groups">
+				{#each prayerGroups as group (group.id)}
+					<li>
+						<a class="prayers-chip" href={`/prayers#${group.id}`}>{group.title}</a>
+					</li>
+				{/each}
+			</ul>
+			<a class="prayers-browse-all" href="/prayers">{t('home.prayers.browseAll')} &rarr;</a>
+			{#if prayerWork}
+				<p class="edition-note">{prayerWork.title} — <CopyrightNotice manifest={prayerWork} /></p>
+			{/if}
+		</section>
+	{/if}
+
 	{#if magisteriumGroups.length > 0}
 		<section aria-labelledby="magisterium-heading">
 			<h2 id="magisterium-heading">{t('nav.magisterium')}</h2>
@@ -404,24 +422,6 @@
 					</li>
 				{/each}
 			</ul>
-		</section>
-	{/if}
-
-	{#if prayerGroups.length > 0}
-		<section aria-labelledby="prayers-heading">
-			<h2 id="prayers-heading">{t('home.prayers.heading')}</h2>
-			<p class="prayers-tagline">{t('home.prayers.tagline')}</p>
-			<ul class="prayers-groups">
-				{#each prayerGroups as group (group.id)}
-					<li>
-						<a class="prayers-chip" href={`/prayers#${group.id}`}>{group.title}</a>
-					</li>
-				{/each}
-			</ul>
-			<a class="prayers-browse-all" href="/prayers">{t('home.prayers.browseAll')} &rarr;</a>
-			{#if prayerWork}
-				<p class="edition-note">{prayerWork.title} — <CopyrightNotice manifest={prayerWork} /></p>
-			{/if}
 		</section>
 	{/if}
 </div>

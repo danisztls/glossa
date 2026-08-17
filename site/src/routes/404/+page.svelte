@@ -39,8 +39,8 @@
 		{ href: '/bible', key: 'nav.bible' },
 		{ href: '/ccc', key: 'nav.ccc' },
 		{ href: '/compendium', key: 'nav.compendium' },
-		{ href: '/documents', key: 'nav.magisterium' },
-		{ href: '/prayers', key: 'nav.prayers' }
+		{ href: '/prayers', key: 'nav.prayers' },
+		{ href: '/documents', key: 'nav.magisterium' }
 	] as const;
 </script>
 
