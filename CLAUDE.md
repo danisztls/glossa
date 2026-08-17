@@ -83,13 +83,15 @@ npm run deploy      # build -> preflight -> wrangler deploy
   `build/` — it has no idea whether that is current, or whether it came from
   the real corpus or the fixtures. There is no CI build; a deploy ships one
   person's working tree.
-- **From a worktree, pass `CORPUS_DIR`**: `CORPUS_DIR=/path/to/corpus npm run
-deploy`. Preflight refuses a fixture-sized build, so the worst case is a
+- **From a worktree, set `CORPUS_DIR`** the same way `npm run build` needs it
+  above — the default `../corpus` resolves inside the worktree, where there is
+  none. Preflight refuses a fixture-sized build, so the worst case there is a
   refusal rather than a two-book site going live.
-- **Budget the time.** ~16 min for a first upload, ~5 min for a redeploy.
-  Wrangler dedupes by content hash, but a rebuild changes SvelteKit's `version`,
-  which is embedded in every page, so nearly every HTML file re-uploads whether
-  or not its text changed.
+- **Budget the time.** Measured: ~16 min for the very first upload of ~15,000
+  assets, ~60 s for a redeploy of the current ~5,700. Wrangler dedupes by
+  content hash, but a rebuild changes SvelteKit's `version`, which is embedded
+  in every page, so nearly every HTML file re-uploads whether or not its text
+  changed.
 - **Deploys are not sandboxed** — `wrangler` needs the Cloudflare API, which the
   sandbox blocks. Same for `git commit` (GPG).
 - **Watch the file count.** Cloudflare caps a deployment at 20,000 files; this
