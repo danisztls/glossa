@@ -775,18 +775,40 @@ input {
 	display: inline-block;
 }
 
-/* Drop caps are a typographic flourish for continuous reading; at phone
-   width the measure is too narrow for text to wrap around three lines of
-   letter without the result looking broken rather than deliberate. */
+/*
+ * TWO LINES ON A PHONE, not three, and not none.
+ *
+ * The measure is the constraint, and it constrains the cap's SIZE rather than
+ * its existence. At 375px the reading column is 335px (`.content-column`'s
+ * 1.25rem gutters), which is about 36 characters at the 1.3rem reading base.
+ * A three-line cap renders about 104px wide there — nearly a third of the
+ * measure — so the three indented lines carry ~24 characters each and read as
+ * damage. A two-line cap is ~60px, leaves ~29, and is what a typesetter would
+ * have set in a narrow column anyway. Dropping the cap entirely (what this
+ * rule used to do) throws away the flourish to solve a sizing problem.
+ *
+ * Same derivation as the block above, with two lines instead of three, and it
+ * has the same dependency on `.reading-text`'s 1.65 line-height — recompute
+ * both together.
+ *
+ * Sizing. Cap height must reach from line 2's baseline to line 1's cap
+ * height: one line-height plus one body cap height = 1.65 + 0.650 = 2.300em.
+ * Pirata One's cap height is 0.793em, so font-size = 2.300 / 0.793 = 2.90em.
+ *
+ * Wrapping. Budget is 2 x 1.65 = 3.300em of body text. The box is 2.90 x 1.11
+ * = 3.219em, keeping the same ~0.08em (about 1.7px at the default reading
+ * size) of clearance the three-line rule leaves — enough that the box cannot
+ * spill into the third line, which is the failure mode the block above
+ * documents.
+ *
+ * Everything else — colour, family, the padding that keeps the glyph off the
+ * text — inherits from the rule above unchanged.
+ */
 @media (max-width: 30rem) {
 	.drop-cap::first-letter,
 	.drop-cap-letter {
-		float: none;
-		font-size: inherit;
-		line-height: inherit;
-		padding: 0;
-		color: inherit;
-		font-weight: inherit;
+		font-size: 2.9em;
+		line-height: 1.11;
 	}
 }
 
