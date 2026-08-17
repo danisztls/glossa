@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { parseReference } from '$lib/refparse';
-	import { cccParagraphExists, findBookByAbbrev, listBibleWorks } from '$lib/corpus';
+	import { parseReference, type ParsedBibleReference } from '$lib/refparse';
+	import { resolveBookToken } from '$lib/book-token';
+	import { cccParagraphExists, getCanonicalBook } from '$lib/corpus';
+	import type { BibleBookMeta } from '$lib/corpus-index';
+	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
 
@@ -9,20 +12,6 @@
 	// (see `ccc/[n]` route) — once the reading route carries a language,
 	// this should resolve against whichever the reader currently has open.
 	const DEFAULT_CCC_LANG = 'en';
-
-	/**
-	 * Bible resolution tries every Bible work present in the corpus and
-	 * returns the first whose abbrevs match, so e.g. `jo 3,16` (a
-	 * Matos Soares-only abbreviation) and `john 3:16` (a CPDV-only one) each
-	 * resolve against the edition that actually recognizes them.
-	 */
-	function resolveBibleBook(token: string) {
-		for (const work of listBibleWorks()) {
-			const book = findBookByAbbrev(work.id, token);
-			if (book) return { workId: work.id, book };
-		}
-		return undefined;
-	}
 
 	let open = $state(false);
 	let query = $state('');
@@ -59,6 +48,38 @@
 		}
 	}
 
+	/**
+	 * Read `Jd 3` / `Philem 6` as a VERSE of a one-chapter book.
+	 *
+	 * Jude, Philemon, Obadiah, 2 and 3 John have no chapter to cite, so both
+	 * languages cite them "Book <verse>" — `refs.ts` encodes the same
+	 * convention for citation strings (`SINGLE_CHAPTER_BOOKS`). `refparse`
+	 * can't apply it, being corpus-agnostic; here the resolved book says how
+	 * many chapters it actually has, so a bare number that can't be a chapter
+	 * is read as the verse it must be. A range typed without a verse
+	 * separator (`jude 3-5`) rides along the same way — that is what
+	 * `chapterEnd` exists for.
+	 */
+	function singleChapterFixup(book: BibleBookMeta, ref: ParsedBibleReference) {
+		const only = book.chapters.length === 1 ? book.chapters[0].n : undefined;
+		if (only !== undefined && ref.verse === undefined && ref.chapter !== only) {
+			return { chapter: only, verse: ref.chapter, verseEnd: ref.chapterEnd };
+		}
+		return { chapter: ref.chapter, verse: ref.verse, verseEnd: ref.verseEnd };
+	}
+
+	/**
+	 * Checked against the CANONICAL chapter union, not the matched edition:
+	 * the destination is edition-free, so `gen 50` must be reachable when any
+	 * edition has it. Without this, a plausible-but-wrong chapter (`gen 99`,
+	 * or a Psalm the reader's numbering doesn't have) navigated to a
+	 * prerendered page that doesn't exist — a 404 where the box could simply
+	 * have said no match, and stayed open with the query still typed.
+	 */
+	function chapterExists(osis: string, chapter: number): boolean {
+		return getCanonicalBook(osis)?.chapters.includes(chapter) ?? false;
+	}
+
 	function submit() {
 		const ref = parseReference(query);
 		notFound = false;
@@ -74,28 +95,39 @@
 		}
 
 		if (ref.kind === 'bible') {
-			const resolved = resolveBibleBook(ref.book);
+			// Edition-free target: `resolveBookToken` reads the token against
+			// every edition (so "jo 3,16", "john 3:16" and "são joão 3,16" all
+			// resolve), preferring the reader's own where two editions disagree
+			// about what an abbreviation means — "jn" is John in English and
+			// Jonas in Portuguese. The destination still names only the book and
+			// chapter: which edition renders there is the reader's standing
+			// preference, not this lookup's to decide.
+			const resolved = resolveBookToken(ref.book, { preferWorkId: content.workIdFor('bible') });
 			if (!resolved) {
 				notFound = true;
 				return;
 			}
-			// Edition-free target: `resolveBibleBook` still tries every edition's
-			// abbreviations (so "jo 3,16" and "john 3:16" both resolve), but the
-			// destination names only the book and chapter — which edition renders
-			// there is the reader's standing preference, not this lookup's to
-			// decide.
+
+			const target = singleChapterFixup(resolved.book, ref);
+			if (!chapterExists(resolved.book.osis, target.chapter)) {
+				notFound = true;
+				return;
+			}
+
 			// `refparse` has always understood "john 1:1-7"; the range end used
 			// to be parsed and then dropped here. It now rides along as `?v=`,
 			// the same shape citation links use (see `refHref`), so a typed
 			// range highlights the passage instead of just landing on its
 			// first verse.
-			const hash = ref.verse ? `#v${ref.verse}` : '';
+			const hash = target.verse ? `#v${target.verse}` : '';
 			const query =
-				ref.verse !== undefined && ref.verseEnd !== undefined && ref.verseEnd > ref.verse
-					? `?v=${ref.verse}-${ref.verseEnd}`
+				target.verse !== undefined &&
+				target.verseEnd !== undefined &&
+				target.verseEnd > target.verse
+					? `?v=${target.verse}-${target.verseEnd}`
 					: '';
 			closeBox();
-			goto(`/bible/${resolved.book.osis}/${ref.chapter}${query}${hash}`);
+			goto(`/bible/${resolved.book.osis}/${target.chapter}${query}${hash}`);
 			return;
 		}
 
