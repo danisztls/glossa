@@ -313,7 +313,12 @@
 		text-align: end;
 		font-size: 0.8rem;
 		font-variant-numeric: tabular-nums;
-		color: var(--color-text-muted);
+		/* Ultramarine, not muted grey: this is the reference apparatus, and
+		   blue is the colour the manuscript tradition gave that job (see the
+		   palette docblock in app.css). Hover still resolves to the accent,
+		   which is the site-wide interactive signal — a transient red against
+		   the resting blue, which is the pairing rather than a break from it. */
+		color: var(--color-apparatus);
 		text-decoration: none;
 	}
 

@@ -256,16 +256,46 @@
 	   over this once it's set, regardless of specificity). */
 	--reading-scale: 1;
 
+	/*
+	 * THREE REDS AND A BLUE, and the split is the point.
+	 *
+	 * A rubricator did not use one red for everything, and neither does this
+	 * palette. `--color-accent` / `--color-link` carry small text, so they are
+	 * the deep, sober red: high contrast, easy on the eye at 0.9rem, and close
+	 * (dE2000 ~5) to red ochre and to the darkened state surviving vermilion
+	 * rubrics have actually aged into. `--color-initial` is the opposite job —
+	 * one large decorative glyph per chapter — and gets fresh vermilion, which
+	 * is what that pigment was ground for. An illuminated initial was never
+	 * muted, and inheriting the link colour made it so.
+	 *
+	 * `--color-apparatus` is ground lapis. Red-and-ultramarine is the
+	 * high-status manuscript pairing, and the blue's traditional job is the
+	 * reference apparatus (paraph marks, alternating initials) rather than the
+	 * text — hence the Catechism's marginal paragraph numbers, which sit once
+	 * per paragraph and are structurally the closest thing this site has to a
+	 * paraph mark. It is deliberately NOT put on Bible verse numbers: those
+	 * recur every few words at 0.65em, and the convention was never to colour
+	 * an apparatus that dense.
+	 *
+	 * Same value as `--color-focus-ring` in every theme today, and still a
+	 * separate token: one is a decorative choice, the other an accessibility
+	 * affordance bound by WCAG 1.4.11, and they should be free to diverge
+	 * without one silently dragging the other along (`--color-accent` and
+	 * `--color-link` are held apart for the same reason).
+	 */
+
 	/* Light theme (default) */
 	--color-bg: #ffffff;
 	--color-bg-elevated: #f6f5f1;
 	--color-border: #ddd9d0;
 	--color-text: #1c1a17;
 	--color-text-muted: #6b6559;
-	--color-accent: #7a1f2b;
+	--color-accent: #8f2119;
 	--color-accent-contrast: #ffffff;
-	--color-link: #7a1f2b;
-	--color-focus-ring: #3a6ea5;
+	--color-link: #8f2119;
+	--color-initial: #b03024;
+	--color-apparatus: #22409a;
+	--color-focus-ring: #22409a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -275,10 +305,12 @@
 		--color-border: #38353d;
 		--color-text: #e9e6de;
 		--color-text-muted: #9c968b;
-		--color-accent: #d98a92;
+		--color-accent: #ef8a5c;
 		--color-accent-contrast: #16151a;
-		--color-link: #d98a92;
-		--color-focus-ring: #7fb0e0;
+		--color-link: #ef8a5c;
+		--color-initial: #f2694a;
+		--color-apparatus: #8fa8e8;
+		--color-focus-ring: #8fa8e8;
 	}
 }
 
@@ -288,10 +320,12 @@
 	--color-border: #38353d;
 	--color-text: #e9e6de;
 	--color-text-muted: #9c968b;
-	--color-accent: #d98a92;
+	--color-accent: #ef8a5c;
 	--color-accent-contrast: #16151a;
-	--color-link: #d98a92;
-	--color-focus-ring: #7fb0e0;
+	--color-link: #ef8a5c;
+	--color-initial: #f2694a;
+	--color-apparatus: #8fa8e8;
+	--color-focus-ring: #8fa8e8;
 }
 
 :root[data-theme='sepia'] {
@@ -300,10 +334,12 @@
 	--color-border: #d9c9a3;
 	--color-text: #3b2f22;
 	--color-text-muted: #7a6a51;
-	--color-accent: #7a1f2b;
+	--color-accent: #8f2119;
 	--color-accent-contrast: #f4ecd8;
-	--color-link: #7a1f2b;
-	--color-focus-ring: #3a6ea5;
+	--color-link: #8f2119;
+	--color-initial: #b03024;
+	--color-apparatus: #22409a;
+	--color-focus-ring: #22409a;
 }
 
 *,
@@ -724,9 +760,12 @@ input {
 	font-size: 4.98em;
 	line-height: 0.98;
 	padding-inline-end: 0.08em;
-	padding-block-start: 0.06em;
-	color: var(--color-accent);
-	font-weight: 600;
+	/* Fresh vermilion, NOT the link red — see the palette docblock above. */
+	color: var(--color-initial);
+	/* No `font-weight` — the subset is a single 400 master, so 600 would get a
+	   synthesized bold that thickens an already-heavy blackletter into an
+	   inkblot. The previous rule's `font-weight: 600` was meaningful only
+	   because the cap was then set in the variable text face. */
 }
 
 /* A floated cap inside a `<span>` (the Bible's verse markup) needs the span
