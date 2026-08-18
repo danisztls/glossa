@@ -314,7 +314,7 @@
 	.para.in-brief .para-text {
 		border-inline-start: 2px solid var(--color-border);
 		padding-inline-start: 0.9rem;
-		font-size: 0.95em;
+		font-size: max(var(--font-size-min), 0.95em);
 		color: var(--color-text-muted);
 	}
 

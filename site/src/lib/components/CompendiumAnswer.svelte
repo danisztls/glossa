@@ -49,6 +49,6 @@
 	.compendium-quote footer {
 		margin-top: 0.35rem;
 		font-style: normal;
-		font-size: 0.85em;
+		font-size: max(var(--font-size-min), 0.85em);
 	}
 </style>

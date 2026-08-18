@@ -541,7 +541,7 @@
 		font-variant-numeric: tabular-nums;
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
-		font-size: 0.85em;
+		font-size: max(var(--font-size-min), 0.85em);
 	}
 
 	.doc-kind {

@@ -127,7 +127,7 @@
 	}
 
 	.edition-lang {
-		font-size: 0.65rem;
+		font-size: var(--font-size-min);
 		color: var(--color-text-muted);
 		text-transform: uppercase;
 		border: 1px solid var(--color-border);

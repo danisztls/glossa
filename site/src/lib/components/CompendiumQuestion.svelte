@@ -84,7 +84,7 @@
 		background: var(--color-bg-elevated);
 		color: var(--color-accent);
 		font-family: var(--font-sans);
-		font-size: 0.8em;
+		font-size: max(var(--font-size-min), 0.8em);
 		font-style: normal;
 		font-weight: 700;
 	}

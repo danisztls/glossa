@@ -200,7 +200,7 @@
 	.doc-group summary::before {
 		content: '▸';
 		color: var(--color-text-muted);
-		font-size: 0.8em;
+		font-size: max(var(--font-size-min), 0.8em);
 		transition: transform 120ms ease;
 		display: inline-block;
 	}
@@ -260,7 +260,7 @@
 
 	.doc-unpublished {
 		flex-shrink: 0;
-		font-size: 0.7rem;
+		font-size: var(--font-size-min);
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		color: var(--color-text-muted);

@@ -33,7 +33,7 @@
 	.reference-number {
 		color: var(--color-apparatus);
 		font-family: var(--font-sans);
-		font-size: 0.75em;
+		font-size: max(var(--font-size-min), 0.75em);
 		font-weight: 650;
 		font-variant-numeric: tabular-nums;
 		font-feature-settings: 'tnum';

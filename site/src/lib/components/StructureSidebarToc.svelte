@@ -316,7 +316,7 @@
 	   "Ch. 3" gets everywhere else rather than looking like stray text. */
 	.kind-label {
 		font-family: var(--font-sans);
-		font-size: 0.72em;
+		font-size: max(var(--font-size-min), 0.72em);
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		color: var(--color-text-muted);

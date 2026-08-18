@@ -218,6 +218,10 @@
 	 * --font-text / --font-ui is the real cleanup, once the tree is quiet.
 	 */
 	--font-sans: var(--font-serif);
+	/* Compact metadata may be smaller than body text, but never below 13.5px
+	   at the site's 18px root size. Use this in any relative reduction so a
+	   nested label cannot become illegibly small. */
+	--font-size-min: 0.75rem;
 
 	/*
 	 * Characters-per-line is what actually governs readability, and `ch` here
@@ -349,6 +353,9 @@
 }
 
 html {
+	/* Global lift from the browser default (typically 16px → 18px).
+	   Percentage keeps visitors' chosen default font size intact. */
+	font-size: 112.5%;
 	color-scheme: light dark;
 }
 
@@ -666,7 +673,7 @@ input {
    long since scrolled out of view (see the max-width query below). */
 .compare-cell-tag {
 	display: none;
-	font-size: 0.7rem;
+	font-size: var(--font-size-min);
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
@@ -678,7 +685,7 @@ input {
 	margin: 0;
 	color: var(--color-text-muted);
 	font-style: italic;
-	font-size: 0.9em;
+	font-size: max(var(--font-size-min), 0.9em);
 }
 
 /*

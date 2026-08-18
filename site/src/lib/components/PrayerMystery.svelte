@@ -51,7 +51,7 @@
 	}
 
 	.citation-marker {
-		font-size: 0.7em;
+		font-size: max(var(--font-size-min), 0.7em);
 	}
 
 	.citation-trigger {
@@ -72,7 +72,7 @@
 
 	.citation-text {
 		margin-left: 0.35em;
-		font-size: 0.9em;
+		font-size: max(var(--font-size-min), 0.9em);
 		color: var(--color-text-muted);
 	}
 </style>
