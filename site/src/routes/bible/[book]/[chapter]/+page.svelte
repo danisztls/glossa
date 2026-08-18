@@ -196,8 +196,29 @@
 		return to > from ? { from, to } : undefined;
 	});
 
+	/**
+	 * A direct verse link (`#v5`) is a highlight too, but it must be derived
+	 * from SvelteKit's current URL rather than CSS's `:target` pseudo-class.
+	 *
+	 * The reader component is reused while navigating between chapters. In
+	 * that case the router replaces its verse spans in place, and browsers can
+	 * leave `:target` matched on the reused `#v5` element even after the new,
+	 * hashless chapter URL has been installed. Making the fragment an ordinary
+	 * reactive input scopes the mark to the current URL: navigating from a
+	 * linked verse to another book has no fragment and therefore no highlight.
+	 */
+	const directVerse = $derived.by(() => {
+		if (!browser) return undefined;
+		const match = /^#v(\d{1,3})$/.exec(page.url.hash);
+		return match ? Number(match[1]) : undefined;
+	});
+
 	function isCited(verseN: number): boolean {
 		return citedRange !== undefined && verseN >= citedRange.from && verseN <= citedRange.to;
+	}
+
+	function isHighlighted(verseN: number): boolean {
+		return isCited(verseN) || verseN === directVerse;
 	}
 
 	/**
@@ -341,13 +362,13 @@
 						{#if heading}
 							<h2 class="section-heading">{heading.text}</h2>
 						{/if}
-						<span id={`v${verse.n}`} class="verse" class:cited={isCited(verse.n)}>
+						<span id={`v${verse.n}`} class="verse" class:highlighted={isHighlighted(verse.n)}>
 							<ReferenceNumber
 								n={verse.n}
 								href={`#v${verse.n}`}
 								label={`${t('bible.verseAbbrev')} ${verse.n}`}
 								placement="inline"
-								emphasized={isCited(verse.n)}
+								emphasized={isHighlighted(verse.n)}
 							/>{#if i === 0 && !heading}{@const cap = splitDropCap(verse.text)}{#if cap.first}<span
 										class="drop-cap-letter">{cap.first}</span
 									>{cap.rest}{:else}{verse.text}{/if}{:else}{verse.text}{/if}
@@ -493,8 +514,7 @@
 
 	   Colour-mixed from the accent rather than hard-coded so it follows all
 	   four themes; at 12% it stays under the text rather than fighting it. */
-	.verse.cited,
-	.verse:target {
+	.verse.highlighted {
 		background: color-mix(in srgb, var(--color-accent) 12%, transparent);
 		box-decoration-break: clone;
 		-webkit-box-decoration-break: clone;
