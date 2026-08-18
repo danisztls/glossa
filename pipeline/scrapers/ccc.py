@@ -423,6 +423,107 @@ class Node:
 # Paragraph assembly
 # --------------------------------------------------------------------------
 
+# The Portuguese archive types many Scripture citations directly into the
+# paragraph, while the English edition puts the equivalent references in
+# numbered footnotes (CCC 147 is a representative paired example).  These
+# parenthesized strings are still a citation apparatus, not ordinary prose.
+# This deliberately narrow grammar accepts only a whole parenthesis that is
+# Scripture-reference syntax: a PT book form + chapter, optional verse(s),
+# and semicolon-separated continuations.  It therefore cannot turn an aside
+# that merely mentions a biblical book into a synthetic citation.
+_PT_INLINE_BOOK = (
+    r"(?:[1-3]\s*)?(?:Gn|Ex|Lv|Nm|Dt|Dr|Js|Jz|Rt|Tb|Jt|Est|Job|Jó|Sl|Pr|"
+    r"Ecl|Ec|Ct|Sb|Sir|Is|Jr|Lm|Br|Ez|Esd|Ne|Dn|Os|Jl|Am|Ab|Jn|Mq|Na|Hab|"
+    r"Sf|Ag|Zc|Ml|Mt|Mc|Mr|Lc|Jo|Act|At|Rm|Gl|Ef|Fl|Cl|Tt|Flm|Fm|Heb|Hb|Tg|Jd|Ap|"
+    r"Cr|Cor|Rs|Mac|Pe|Sm|Ts|Tm)"
+)
+_PT_INLINE_CF = r"(?:(?:Cf|Cfr)\.?\s*)?"
+# The PT mirror is inconsistent enough that a full parenthesis cannot always
+# satisfy a tidy chapter/verse grammar: it has copied comments ("segundo a
+# Vulgata"), a second reference after a colon, and several spacing/OCR
+# defects. A parenthesis whose *opening* is unmistakably a book + numeric
+# locus is still safely a citation apparatus. Capture the complete raw string
+# for the footnote and let the later reference parser link every portion it
+# understands; never discard the unparseable remainder.
+_PT_INLINE_REF_START_SEPARATOR = r"(?:\s+|,\s*|\s*\.\s*|;\s*|(?=\d))"
+_PT_INLINE_SCRIPTURE_RE = re.compile(
+    rf"\((?P<leading>\s*)(?P<ref>{_PT_INLINE_CF}{_PT_INLINE_BOOK}"
+    rf"{_PT_INLINE_REF_START_SEPARATOR}(?=\d)[^()]*)\)",
+    re.IGNORECASE,
+)
+
+
+def mark_pt_inline_scripture_citations(
+    text: str, start: int
+) -> tuple[str, dict[str, tuple[str, str]]]:
+    """Replace source-faithful PT inline Scripture locators with internal
+    citation tokens, returning the token -> original locator map.
+
+    The renderer restores each ``label`` exactly where this token sits and
+    opens the same local citation disclosure used by ordinary footnotes. Raw
+    source remains untouched in ``corpus/raw``; this is a reversible parse.
+    """
+
+    citations: dict[str, tuple[str, str]] = {}
+    next_marker = start
+
+    def replace(match: re.Match[str]) -> str:
+        nonlocal next_marker
+        marker = f"inline{next_marker}"
+        next_marker += 1
+        # `text` is the parseable citation string; `label` restores every
+        # source character, including the irregular leading space in
+        # "( Rm 4, 18)", to the derived searchable text.
+        citations[marker] = (match.group("ref"), match.group(0))
+        return f"{MARK_OPEN}{marker}{MARK_CLOSE}"
+
+    return _PT_INLINE_SCRIPTURE_RE.sub(replace, text), citations
+
+
+def test_pt_inline_scripture_citations_become_location_preserving_tokens() -> None:
+    marked, citations = mark_pt_inline_scripture_citations(
+        "A fé chega à perfeição (Heb 11, 40; 12, 2).", 1
+    )
+    assert marked == "A fé chega à perfeição ⟦inline1⟧."
+    assert citations == {"inline1": ("Heb 11, 40; 12, 2", "(Heb 11, 40; 12, 2)")}
+
+
+def test_pt_inline_scripture_accepts_source_spacing_and_post_book_commas() -> None:
+    marked, citations = mark_pt_inline_scripture_citations(
+        "( Rm 4, 18); (1 Cor, 13, 12); ( Lc 1, 45)", 1
+    )
+    assert marked == "⟦inline1⟧; ⟦inline2⟧; ⟦inline3⟧"
+    assert citations == {
+        "inline1": ("Rm 4, 18", "( Rm 4, 18)"),
+        "inline2": ("1 Cor, 13, 12", "(1 Cor, 13, 12)"),
+        "inline3": ("Lc 1, 45", "( Lc 1, 45)"),
+    }
+
+
+def test_pt_inline_scripture_keeps_source_comments_and_irregular_continuations() -> None:
+    marked, citations = mark_pt_inline_scripture_citations(
+        "(Gl 5, 22-23 segundo a Vulgata); (Ex 25, 16: 40, 1-2)", 1
+    )
+    assert marked == "⟦inline1⟧; ⟦inline2⟧"
+    assert citations == {
+        "inline1": ("Gl 5, 22-23 segundo a Vulgata", "(Gl 5, 22-23 segundo a Vulgata)"),
+        "inline2": ("Ex 25, 16: 40, 1-2", "(Ex 25, 16: 40, 1-2)"),
+    }
+
+
+def test_pt_inline_scripture_accepts_the_source_flm_variant() -> None:
+    marked, citations = mark_pt_inline_scripture_citations("(Flm 16)", 1)
+    assert marked == "⟦inline1⟧"
+    assert citations == {"inline1": ("Flm 16", "(Flm 16)")}
+
+
+def test_pt_inline_scripture_does_not_capture_an_ordinary_parenthetical_aside() -> None:
+    marked, citations = mark_pt_inline_scripture_citations(
+        "A autora comenta (ver Heb 11, 2) a fé.", 1
+    )
+    assert marked == "A autora comenta (ver Heb 11, 2) a fé."
+    assert citations == {}
+
 
 @dataclass
 class BlockOut:
@@ -445,9 +546,22 @@ class Paragraph:
     text: str = ""
     citations: list[dict] = field(default_factory=list)
 
-    def resolve(self, footnote_table: dict[str, str], anomalies: list[str]) -> None:
+    def resolve(
+        self,
+        footnote_table: dict[str, str],
+        anomalies: list[str],
+        normalize_pt_inline_scripture: bool = False,
+    ) -> None:
+        inline_citations: dict[str, tuple[str, str]] = {}
+        if normalize_pt_inline_scripture:
+            for block in self.blocks:
+                block.text, found = mark_pt_inline_scripture_citations(
+                    block.text, len(inline_citations) + 1
+                )
+                inline_citations.update(found)
+
         all_marked = " ".join(b.text for b in self.blocks)
-        tokens = re.findall(rf"{MARK_OPEN}([0-9A-Za-z]+){MARK_CLOSE}", all_marked)
+        tokens = re.findall(rf"{MARK_OPEN}([^ {MARK_CLOSE}]+){MARK_CLOSE}", all_marked)
         seen: set[str] = set()
         citations = []
         for tok in tokens:
@@ -459,13 +573,28 @@ class Paragraph:
                 # distinct marker is correct; this is not an anomaly.
                 continue
             seen.add(tok)
+            if tok in inline_citations:
+                citations.append(
+                    {
+                        "marker": tok,
+                        "text": inline_citations[tok][0],
+                        "label": inline_citations[tok][1],
+                    }
+                )
+                continue
             if tok not in footnote_table:
                 anomalies.append(
                     f"paragraph {self.n}: marker {tok} has no footnote text"
                 )
             citations.append({"marker": tok, "text": footnote_table.get(tok, "")})
         self.citations = citations
-        flat = re.sub(rf"{MARK_OPEN}[0-9A-Za-z]+{MARK_CLOSE}", "", all_marked)
+        flat = re.sub(
+            rf"{MARK_OPEN}([^ {MARK_CLOSE}]+){MARK_CLOSE}",
+            lambda m: inline_citations[m.group(1)][1]
+            if m.group(1) in inline_citations
+            else "",
+            all_marked,
+        )
         self.text = re.sub(r"\s+", " ", flat).strip()
 
     def to_dict(self) -> dict:
@@ -481,7 +610,11 @@ class Paragraph:
 
 
 class ScrapeState:
-    def __init__(self, corrections: list[dict] | None = None):
+    def __init__(
+        self,
+        corrections: list[dict] | None = None,
+        normalize_pt_inline_scripture: bool = False,
+    ):
         self.stack: list[Node] = []
         self.root_children: list[Node] = []
         self.paragraphs: dict[int, Paragraph] = {}
@@ -503,6 +636,7 @@ class ScrapeState:
         self.corrections: list[dict] = corrections or []
         self.corrections_applied: list[dict] = []
         self.corrections_seen: set[str] = set()
+        self.normalize_pt_inline_scripture = normalize_pt_inline_scripture
 
     # -- structure -----------------------------------------------------
     def push_heading(self, kind: str, n: int | None, title: str) -> None:
@@ -575,12 +709,33 @@ class ScrapeState:
             self.corrections_applied,
             self.corrections_seen,
         )
-        self.open_paragraph.resolve(self.current_footnote_table, self.anomalies)
+        self.open_paragraph.resolve(
+            self.current_footnote_table,
+            self.anomalies,
+            self.normalize_pt_inline_scripture,
+        )
         self.paragraphs[self.open_paragraph.n] = self.open_paragraph
         self.open_paragraph = None
 
     def record_gap(self, prev: int, cand: int) -> None:
         self.gaps.append((prev + 1, cand - 1))
+
+
+def assign_pt_display_citation_numbers(state: ScrapeState) -> None:
+    """Number PT's original and extracted citation apparatus as one ordered
+    reader-facing sequence.
+
+    The archive's original number stays in ``marker``; it is deliberately
+    not used for display because an extracted inline citation can sit between
+    two source notes. Without this pass the reader would show an independent
+    1/2 sequence for the new citations beside the source's 4/5/6 sequence.
+    """
+
+    number = 1
+    for para in (state.paragraphs[n] for n in sorted(state.paragraphs)):
+        for citation in para.citations:
+            citation["number"] = str(number)
+            number += 1
 
 
 # --------------------------------------------------------------------------
@@ -1212,7 +1367,7 @@ def run_scrape(
     all_pages = cfg["discover"](fetcher)
     chunks = cfg["sample_chunks"](all_pages) if sample else [all_pages]
 
-    state = ScrapeState(corrections)
+    state = ScrapeState(corrections, normalize_pt_inline_scripture=(lang == "pt"))
     fetched_pages: list[tuple[str, str]] = []
     for chunk in chunks:
         state.last_n = None  # each sample chunk is validated independently
@@ -1241,6 +1396,8 @@ def run_scrape(
         state.finalize_open_paragraph()
         # close remaining open structure nodes at end of chunk
         state.stack = []
+    if lang == "pt":
+        assign_pt_display_citation_numbers(state)
     return state, fetched_pages, fetcher
 
 
@@ -1299,7 +1456,7 @@ def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[st
         if "  " in para.text:
             problems.append(f"paragraph {n}: double space in flat text")
         tokens = re.findall(
-            rf"{MARK_OPEN}([0-9A-Za-z]+){MARK_CLOSE}",
+            rf"{MARK_OPEN}([^ {MARK_CLOSE}]+){MARK_CLOSE}",
             " ".join(b.text for b in para.blocks),
         )
         markers = [c["marker"] for c in para.citations]
@@ -1311,9 +1468,10 @@ def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[st
             problems.append(
                 f"paragraph {n}: token/citation mismatch {tokens} vs {markers}"
             )
+        citation_labels = {c["marker"]: c.get("label", "") for c in para.citations}
         recombined = re.sub(
-            rf"{MARK_OPEN}[0-9A-Za-z]+{MARK_CLOSE}",
-            "",
+            rf"{MARK_OPEN}([^ {MARK_CLOSE}]+){MARK_CLOSE}",
+            lambda m: citation_labels.get(m.group(1), ""),
             " ".join(b.text for b in para.blocks),
         )
         recombined = re.sub(r"\s+", " ", recombined).strip()
@@ -1343,6 +1501,20 @@ def build_manifest(
     generated_at: str,
 ) -> dict:
     cfg = LANG_CONFIG[lang]
+    # A cache-only reparse is not a new retrieval. Preserve each source's
+    # original capture date when an existing manifest knows it; otherwise a
+    # harmless parser change would falsely claim every raw page was fetched
+    # again today, undermining the raw/works distinction.
+    previous_dates: dict[str, str] = {}
+    previous_manifest = WORKS_ROOT / cfg["work_id"] / "manifest.json"
+    if previous_manifest.exists():
+        old = json.loads(previous_manifest.read_text(encoding="utf-8"))
+        previous_dates = {
+            source["url"]: source["retrieved_at"]
+            for source in old.get("sources", [])
+            if "url" in source and "retrieved_at" in source
+        }
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     notes = [
         (
             "Marginal cross-reference apparatus ('related' field) is absent from this "
@@ -1390,7 +1562,7 @@ def build_manifest(
         "sources": [
             {
                 "url": url,
-                "retrieved_at": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                "retrieved_at": previous_dates.get(url, today),
             }
             for url, _ in fetched_pages
         ],

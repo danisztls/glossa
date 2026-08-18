@@ -175,6 +175,16 @@ export interface CccCitation {
 	marker: string;
 	/** Raw footnote text as printed, verbatim — unparsed in v1. */
 	text: string;
+	/**
+	 * A Portuguese source may print a Scripture citation directly in the prose
+	 * where English prints a numbered footnote. Preserve the exact source
+	 * locator in data while rendering its location as a generated numeric
+	 * footnote marker.
+	 */
+	label?: string;
+	/** Reader-facing sequence number; differs from `marker` only when PT's
+	 * source-inline Scripture citations are interleaved with its printed notes. */
+	number?: string;
 }
 
 export type CccBlockKind = 'prose' | 'quote';

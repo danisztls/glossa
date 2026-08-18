@@ -336,7 +336,7 @@ const BOOK_VARIANTS_PT: Record<string, string[]> = {
 	phil: ['Fl'],
 	col: ['Cl'],
 	titus: ['Tt'],
-	phlm: ['Fm'], // fallback
+	phlm: ['Fm', 'Flm'], // Flm observed in an inline PT citation
 	heb: ['Heb', 'Hb'],
 	jas: ['Tg'],
 	jude: ['Jd'], // fallback
@@ -729,7 +729,7 @@ function parseVerseList(s: string): { verses: number[]; consumed: number } {
 		if (!m) break;
 		const start = Number(m[1]);
 		pos += m[0].length;
-		if (s[pos] === '-' || s[pos] === '–') {
+		if (s[pos] === '-' || s[pos] === '–' || s[pos] === '‑') {
 			const m2 = LEAD_NUM_RE.exec(s.slice(pos + 1));
 			if (m2) {
 				const end = Number(m2[1]);
@@ -798,7 +798,16 @@ function parseRefNumbers(
 	cfg: LangConfig,
 	osis: string
 ): { chapter: number | null; verses: number[]; consumed: number } {
-	return SINGLE_CHAPTER_BOOKS.has(osis) ? parseSingleChapterRef(s, cfg) : parseChapterVerses(s, cfg);
+	// PT's archive occasionally writes a comma after the book abbreviation
+	// ("1 Cor, 13, 12") or an isolated period ("Fl . 3, 8"). Those marks
+	// separate the book from the locus, not the locus's chapter from verse,
+	// so discard just this leading punctuation before the normal PT grammar.
+	const bookPunctuation = cfg.primarySep === ',' ? /^(?:,\s*|\.\s*)/.exec(s)?.[0] ?? '' : '';
+	const body = s.slice(bookPunctuation.length);
+	const parsed = SINGLE_CHAPTER_BOOKS.has(osis)
+		? parseSingleChapterRef(body, cfg)
+		: parseChapterVerses(body, cfg);
+	return { ...parsed, consumed: parsed.consumed + bookPunctuation.length };
 }
 
 // --------------------------------------------------------------------------

@@ -375,6 +375,15 @@ describe('parseRefs — citation-clause grammar (PT)', () => {
 		);
 	});
 
+	it('handles PT archive punctuation around an otherwise ordinary biblical locus', () => {
+		expect(parseRefs('1 Cor, 13, 12.', { lang: 'pt' })).toContainEqual(
+			expect.objectContaining({ kind: 'scripture', osis: '1cor', chapter: 13, verses: [12], raw: '1 Cor, 13, 12' })
+		);
+		expect(parseRefs('Fl . 3, 8.', { lang: 'pt' })).toContainEqual(
+			expect.objectContaining({ kind: 'scripture', osis: 'phil', chapter: 3, verses: [8], raw: 'Fl . 3, 8' })
+		);
+	});
+
 	it('does not treat "Cat Rom" (Catechismus Romanus) as the Letter to the Romans', () => {
 		const segs = parseRefs('Cat Rom 1, 10, 24, p. 119.', { lang: 'pt' });
 		expect(segs.some((s) => s.kind === 'scripture' && s.osis === 'rom')).toBe(false);

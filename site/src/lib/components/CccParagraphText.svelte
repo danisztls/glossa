@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CccBlock, CccCitation } from '$lib/types';
+	import { SvelteSet } from 'svelte/reactivity';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
 	import RefText from '$lib/components/RefText.svelte';
@@ -21,6 +22,13 @@
 	}
 
 	let { paragraph, lang }: Props = $props();
+	// A marker has to stay phrasing content: this component is rendered inside
+	// prose <p>s.  The previous <sup><details>...</details></sup> looked inline
+	// in CSS but was invalid HTML (`details` is flow content), so browsers
+	// repaired the DOM by ending the surrounding paragraph at a footnote.
+	// Keeping the disclosure state here lets the citation remain a real inline
+	// part of the sentence in both the source DOM and the rendered layout.
+	let openMarkers = $state(new SvelteSet<string>());
 
 	const MARKER_RE = /⟦([^⟧]+)⟧/g;
 
@@ -48,6 +56,11 @@
 
 	function citationFor(marker: string) {
 		return paragraph.citations.find((c) => c.marker === marker);
+	}
+
+	function toggleCitation(marker: string) {
+		if (openMarkers.has(marker)) openMarkers.delete(marker);
+		else openMarkers.add(marker);
 	}
 
 	/**
@@ -81,47 +94,58 @@
 	{/each}
 {/snippet}
 
-{#snippet markedText(textMarked: string)}
-	{#each splitMarked(textMarked) as seg}
+{#snippet markedText(textMarked: string, blockIndex: number)}
+	{#each splitMarked(textMarked) as seg, markerIndex}
 		{#if seg.marker}
-			{@const citation = citationFor(seg.marker)}
+			{@const marker = seg.marker}
+			<!-- The source can cite the same numbered footnote twice in one
+			     paragraph. Keep each disclosure independent, as <details> did. -->
+			{@const disclosureKey = `${blockIndex}:${markerIndex}`}
+			{@const citation = citationFor(marker)}
 			<sup class="citation-marker">
-				<details>
-					<summary>{seg.marker}</summary>
-					<span class="citation-text">
-						{#if citation && citation.text.trim() !== ''}
-							<RefText text={citation.text} {lang} />
-						{:else if citation}
-							<!-- Deliberately empty source: a handful of citations in the
-							     Vatican II corpus point at a footnote-list entry that is
-							     itself missing/truncated in the source page, not a parsing
-							     failure (docs/research/vatican-documents.md §6, "Known
-							     source defects" — 4 confirmed cases). No fabricated text
-							     to show, so say so rather than rendering a dead-looking
-							     empty box. -->
-							<span class="citation-empty">{t('citation.unavailable')}</span>
-						{:else}
-							{seg.marker}
-						{/if}
-					</span>
-				</details>
+				<button
+					type="button"
+					class="citation-trigger"
+					aria-expanded={openMarkers.has(disclosureKey)}
+					onclick={() => toggleCitation(disclosureKey)}
+				>
+					{citation?.number ?? marker}
+				</button>
 			</sup>
+			{#if openMarkers.has(disclosureKey)}
+				<span class="citation-text">
+					{#if citation && citation.text.trim() !== ''}
+						<RefText text={citation.text} {lang} />
+					{:else if citation}
+						<!-- Deliberately empty source: a handful of citations in the
+						     Vatican II corpus point at a footnote-list entry that is
+						     itself missing/truncated in the source page, not a parsing
+						     failure (docs/research/vatican-documents.md §6, "Known
+						     source defects" — 4 confirmed cases). No fabricated text
+						     to show, so say so rather than rendering a dead-looking
+						     empty box. -->
+						<span class="citation-empty">{t('citation.unavailable')}</span>
+					{:else}
+						{marker}
+					{/if}
+				</span>
+			{/if}
 		{:else}
 			{@render prose(seg.text)}
 		{/if}
 	{/each}
 {/snippet}
 
-{#each paragraph.blocks as block (block.text_marked)}
+{#each paragraph.blocks as block, blockIndex (block.text_marked)}
 	{#if block.kind === 'quote'}
 		<blockquote class="ccc-quote">
-			<p>{@render markedText(block.text_marked)}</p>
+			<p>{@render markedText(block.text_marked, blockIndex)}</p>
 			{#if block.attribution}
 				<footer>{block.attribution}</footer>
 			{/if}
 		</blockquote>
 	{:else}
-		<p class="ccc-prose">{@render markedText(block.text_marked)}</p>
+		<p class="ccc-prose">{@render markedText(block.text_marked, blockIndex)}</p>
 	{/if}
 {/each}
 
@@ -159,34 +183,34 @@
 		font-size: 0.7em;
 	}
 
-	.citation-marker details {
-		display: inline;
-	}
-
-	.citation-marker summary {
-		display: inline;
+	.citation-trigger {
+		appearance: none;
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
 		cursor: pointer;
 		color: var(--color-accent);
-		list-style: none;
 	}
 
-	.citation-marker summary::-webkit-details-marker {
-		display: none;
+	.citation-trigger:focus-visible {
+		outline: 2px solid var(--color-focus-ring);
+		outline-offset: 2px;
+		border-radius: 2px;
 	}
 
 	.citation-empty {
 		font-style: italic;
 	}
 
-	.citation-marker .citation-text {
-		display: block;
-		font-size: 1.1em;
+	.citation-text {
+		font-size: 0.9em;
 		font-style: normal;
 		color: var(--color-text-muted);
 		background: var(--color-bg-elevated);
 		border: 1px solid var(--color-border);
 		border-radius: 0.3rem;
 		padding: 0.35rem 0.5rem;
-		margin-top: 0.25rem;
+		margin-inline-start: 0.25rem;
 	}
 </style>
