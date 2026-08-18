@@ -31,6 +31,7 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import { getCccStructure, getWork } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
 	import { displayTitle, kindOrdinalLabel } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
@@ -52,6 +53,15 @@
 	function isOutline(node: CccNode): boolean {
 		return OUTLINE_KINDS.has(node.kind);
 	}
+
+	const sidebarItems = $derived(
+		tree
+			.filter((node) => isOutline(node) && Number.isFinite(node.paragraphs[0]))
+			.map((node) => ({
+				href: `#toc-${node.paragraphs[0]}`,
+				label: `${kindOrdinalLabel(node, lang) ?? ''} ${displayTitle(node, lang).title}`.trim()
+			}))
+	);
 
 	/** Children that get their own row. */
 	function outlineChildren(node: CccNode): CccNode[] {
@@ -122,7 +132,10 @@
 			{@const kids = outlineChildren(node)}
 			{@const label = kindOrdinalLabel(node, lang)}
 			{@const isOpen = expanded.has(nodeKey(node))}
-			<li class={`kind-${node.kind}`}>
+			<li
+				class={`kind-${node.kind}`}
+				id={depth === 0 && Number.isFinite(anchor) ? `toc-${anchor}` : undefined}
+			>
 				<div class="row">
 					<!--
 						The gutter always occupies its width, whether or not this row
@@ -192,13 +205,18 @@
 	</ol>
 {/snippet}
 
-<div class="content-column">
-	<h1>{t('ccc.tableOfContents')}</h1>
-	{#if work}
-		<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
-	{/if}
+<div class="reading-layout">
+	<div class="content-column">
+		<h1>{t('ccc.tableOfContents')}</h1>
+		{#if work}
+			<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
+		{/if}
 
-	{@render branch(tree.filter(isOutline), 0)}
+		{@render branch(tree.filter(isOutline), 0)}
+	</div>
+	<aside class="index-aside">
+		<IndexSidebarToc heading={t('ccc.tableOfContents')} items={sidebarItems} />
+	</aside>
 </div>
 
 <style>

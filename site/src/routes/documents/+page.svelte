@@ -14,6 +14,7 @@
 	 * eager-inlined, so there's nothing to fetch here.
 	 */
 	import { isUnpublished, listDocuments } from '$lib/corpus';
+	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
 	import { documentKindLabel } from '$lib/document-labels';
 	import { formatPromulgated } from '$lib/dates';
@@ -49,6 +50,15 @@
 		rows: Row[];
 	}
 
+	function groupAnchor(pontiff: string): string {
+		return `pontiff-${pontiff
+			.normalize('NFD')
+			.replace(/\p{Diacritic}/gu, '')
+			.toLowerCase()
+			.replace(/[^\p{Letter}\p{Number}]+/gu, '-')
+			.replace(/^-|-$/g, '')}`;
+	}
+
 	// REVERSE chronological throughout, at both levels. A library that opens on
 	// Leo XIII and needs ~450 rows of scrolling to reach anything a reader is
 	// likely to have heard of is ordered for the archivist, not the reader;
@@ -77,15 +87,20 @@
 		);
 		return out;
 	});
+
+	const sidebarItems = $derived(
+		groups.map((group) => ({ href: `#${groupAnchor(group.pontiff)}`, label: group.pontiff }))
+	);
 </script>
 
 <svelte:head>
 	<title>{t('nav.magisterium')} — {t('home.title')}</title>
 </svelte:head>
 
-<div class="content-column">
-	<h1>{t('nav.magisterium')}</h1>
-	<p class="tagline">{t('document.library.tagline')}</p>
+<div class="reading-layout">
+	<div class="content-column">
+		<h1>{t('nav.magisterium')}</h1>
+		<p class="tagline">{t('document.library.tagline')}</p>
 
 	<!--
 		Each pontificate collapses, and every one starts OPEN. Default-open
@@ -101,7 +116,7 @@
 		whole purpose is finding a document should not break Ctrl+F.
 	-->
 	{#each groups as group (group.pontiff)}
-		<details class="doc-group" open>
+		<details class="doc-group" id={groupAnchor(group.pontiff)} open>
 			<summary>
 				<h2>{group.pontiff}</h2>
 				<span class="group-count">{group.rows.length}</span>
@@ -147,6 +162,10 @@
 			</ul>
 		</details>
 	{/each}
+	</div>
+	<aside class="index-aside">
+		<IndexSidebarToc heading={t('nav.magisterium')} items={sidebarItems} />
+	</aside>
 </div>
 
 <style>

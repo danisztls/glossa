@@ -18,37 +18,44 @@
 	 */
 	import { getWork, listPrayerGroups } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	let lang = $derived(content.langFor('prayer'));
 	let groups = $derived(listPrayerGroups(lang));
 	let work = $derived(getWork(`prayer.common.${lang}`));
+	let sidebarItems = $derived(groups.map((group) => ({ href: `#${group.id}`, label: group.title })));
 </script>
 
 <svelte:head>
 	<title>{t('prayers.landing.title')} — {t('home.title')}</title>
 </svelte:head>
 
-<div class="content-column">
-	<h1>{t('prayers.landing.title')}</h1>
-	<p class="tagline">{t('prayers.landing.tagline')}</p>
-	{#if work}
-		<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
-	{/if}
+<div class="reading-layout">
+	<div class="content-column">
+		<h1>{t('prayers.landing.title')}</h1>
+		<p class="tagline">{t('prayers.landing.tagline')}</p>
+		{#if work}
+			<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
+		{/if}
 
-	{#each groups as group (group.id)}
-		<section class="prayer-group" id={group.id} aria-labelledby={`${group.id}-heading`}>
-			<h2 id={`${group.id}-heading`}>{group.title}</h2>
-			<ul class="prayer-list">
-				{#each group.prayers as meta (meta.slug)}
-					<li>
-						<a class="prayer-link" href={`/preces/${meta.slug}`}>{meta.title}</a>
-					</li>
-				{/each}
-			</ul>
-		</section>
-	{/each}
+		{#each groups as group (group.id)}
+			<section class="prayer-group" id={group.id} aria-labelledby={`${group.id}-heading`}>
+				<h2 id={`${group.id}-heading`}>{group.title}</h2>
+				<ul class="prayer-list">
+					{#each group.prayers as meta (meta.slug)}
+						<li>
+							<a class="prayer-link" href={`/preces/${meta.slug}`}>{meta.title}</a>
+						</li>
+					{/each}
+				</ul>
+			</section>
+		{/each}
+	</div>
+	<aside class="index-aside">
+		<IndexSidebarToc heading={t('prayers.landing.title')} items={sidebarItems} />
+	</aside>
 </div>
 
 <style>

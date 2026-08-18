@@ -13,6 +13,7 @@
 	 */
 	import { flattenCompendiumStructure, getWork } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { displayTitle } from '$lib/titles';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
@@ -20,44 +21,60 @@
 	let lang = $derived(content.langFor('compendium'));
 	let rows = $derived(flattenCompendiumStructure(lang));
 	let work = $derived(getWork(`compendium.${lang}`));
+	let sidebarItems = $derived(
+		rows
+			.filter(({ depth, node }) => depth === 0 && Number.isFinite(node.paragraphs[0]))
+			.map(({ node }) => {
+				const title = displayTitle(node, lang);
+				return {
+					href: `#toc-${node.paragraphs[0]}`,
+					label: [title.ordinal, title.title].filter(Boolean).join(' ')
+				};
+			})
+	);
 </script>
 
 <svelte:head>
 	<title>{t('compendium.tableOfContents')} — {t('home.title')}</title>
 </svelte:head>
 
-<div class="content-column">
-	<h1>{t('compendium.landing.title')}</h1>
-	<p class="tagline">{t('compendium.landing.tagline')}</p>
-	{#if work}
-		<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
-	{/if}
+<div class="reading-layout">
+	<div class="content-column">
+		<h1>{t('compendium.landing.title')}</h1>
+		<p class="tagline">{t('compendium.landing.tagline')}</p>
+		{#if work}
+			<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
+		{/if}
 
-	<h2 class="toc-heading">{t('compendium.tableOfContents')}</h2>
-	<ol class="toc">
-		{#each rows as { node, depth } (node.title + node.paragraphs.join('-'))}
-			{@const hasAnchor = Number.isFinite(node.paragraphs[0])}
-			{@const dt = displayTitle(node, lang)}
-			<li style={`--depth: ${depth}`} class={`kind-${node.kind}`}>
-				{#if hasAnchor}
-					<a href={`/compendium/${node.paragraphs[0]}`}>
-						{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-						{dt.title}
-					</a>
-				{:else}
-					<!-- Same null-bound convention as the CCC structure tree
-					     (docs/corpus-schema.md, "amended 2026-08-14"): unnumbered
-					     content the structure knows about but no question number
-					     addresses -- nothing to link to. -->
-					<span class="unlinked" title="No question number in this corpus">
-						{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-						{dt.title}
-					</span>
-				{/if}
-				<span class="range">Q{node.paragraphs[0] ?? '?'}–{node.paragraphs[1] ?? '?'}</span>
-			</li>
-		{/each}
-	</ol>
+		<h2 class="toc-heading">{t('compendium.tableOfContents')}</h2>
+		<ol class="toc">
+			{#each rows as { node, depth } (node.title + node.paragraphs.join('-'))}
+				{@const hasAnchor = Number.isFinite(node.paragraphs[0])}
+				{@const dt = displayTitle(node, lang)}
+				<li
+					style={`--depth: ${depth}`}
+					class={`kind-${node.kind}`}
+					id={depth === 0 && hasAnchor ? `toc-${node.paragraphs[0]}` : undefined}
+				>
+					{#if hasAnchor}
+						<a href={`/compendium/${node.paragraphs[0]}`}>
+							{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+							{dt.title}
+						</a>
+					{:else}
+						<span class="unlinked" title="No question number in this corpus">
+							{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+							{dt.title}
+						</span>
+					{/if}
+					<span class="range">Q{node.paragraphs[0] ?? '?'}–{node.paragraphs[1] ?? '?'}</span>
+				</li>
+			{/each}
+		</ol>
+	</div>
+	<aside class="index-aside">
+		<IndexSidebarToc heading={t('compendium.tableOfContents')} items={sidebarItems} />
+	</aside>
 </div>
 
 <style>

@@ -425,6 +425,14 @@ input {
 	--aside-gap: 4.5rem;
 }
 
+/* Index pages use the same wide-screen grid as readers, but their full
+   contents are already navigation. Hiding this compact secondary TOC below
+   the grid breakpoint avoids appending a redundant second list after a long
+   index on phones and tablets. */
+.index-aside {
+	display: none;
+}
+
 @media (min-width: 80rem) {
 	.reading-layout {
 		display: grid;
@@ -449,6 +457,16 @@ input {
 	   escapes its box (an absolutely-positioned popover, say) gets clipped —
 	   sidebar navigation should expand IN FLOW here rather than in a panel. */
 	.reading-aside {
+		position: sticky;
+		top: 1.5rem;
+		max-height: calc(100vh - 3rem);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		font-size: 0.9rem;
+	}
+
+	.index-aside {
+		display: block;
 		position: sticky;
 		top: 1.5rem;
 		max-height: calc(100vh - 3rem);
