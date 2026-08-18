@@ -34,14 +34,13 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'nav.prayers': 'Prayers',
 		'nav.menu': 'Menu',
 		'home.title': 'Glossa Catholica',
-		'home.tagline': 'Scripture and the Magisterium, free to read.',
 		'home.continueReading': 'Continue reading',
 		'home.works': 'Library',
 		// Home page's Catechism/Compendium section — see routes/+page.svelte's
 		// module docblock for why this is ONE table of contents, not two.
 		'home.ccc.heading': 'Catechism & Compendium',
 		'home.ccc.noCounterpart': 'No counterpart in the other work',
-		'home.magisterium.mostRecent': 'Most recently added',
+		'home.magisterium.mostRecent': 'Latest',
 		'jumpbox.placeholder': 'Jump to… (e.g. john 3:16, ccc 1234)',
 		'jumpbox.short': 'Search',
 		'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
@@ -83,14 +82,14 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ccc.nextParagraph': 'Next',
 		'ccc.inBrief': 'In Brief',
 		'ccc.landing.title': 'Catechism of the Catholic Church',
-		'ccc.landing.tagline': 'The complete text, arranged by its four parts.',
+		'ccc.landing.tagline': 'The complete Catechism.',
 		'ccc.tableOfContents': 'Table of Contents',
 		'ccc.related': 'See also',
 
 		// Compendium of the CCC — routes/compendium/** is the consumer.
 		'compendium.landing.title': 'Compendium of the Catechism',
 		'compendium.landing.tagline':
-			'598 questions and answers summarizing the Catechism of the Catholic Church.',
+			'Questions and answers summarizing the Catechism of the Catholic Church.',
 		'compendium.question': 'Question',
 		'compendium.answer': 'Answer',
 		'compendium.tableOfContents': 'Table of Contents',
@@ -105,14 +104,13 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// is the consumer, plus the home page's compact Prayers section.
 		'prayers.landing.title': 'Common Prayers',
 		'prayers.landing.tagline':
-			'Twenty-four prayers every Catholic should know, from the Compendium of the Catechism’s appendix — with the Latin text alongside wherever the source prints one.',
+			'Prayers with the Latin text alongside.',
 		'prayers.latin': 'Latin',
 		'prayers.showLatin': 'Show Latin text',
 		'prayers.hideLatin': 'Hide Latin text',
 		'prayers.prevPrayer': 'Previous prayer',
 		'prayers.nextPrayer': 'Next prayer',
 		'home.prayers.heading': 'Prayers',
-		'home.prayers.tagline': 'Two dozen prayers every Catholic should know, by heart.',
 		'home.prayers.browseAll': 'Browse all prayers',
 
 		// Reference tooltips/popovers — RefText.svelte is the consumer.
@@ -236,12 +234,11 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'nav.prayers': 'Orações',
 		'nav.menu': 'Menu',
 		'home.title': 'Glossa Catholica',
-		'home.tagline': 'Escritura e Magistério, livres para ler.',
 		'home.continueReading': 'Continuar lendo',
 		'home.works': 'Biblioteca',
 		'home.ccc.heading': 'Catecismo e Compêndio',
 		'home.ccc.noCounterpart': 'Sem correspondência na outra obra',
-		'home.magisterium.mostRecent': 'Adicionado mais recentemente',
+		'home.magisterium.mostRecent': 'Mais recente',
 		'jumpbox.placeholder': 'Ir para… (ex: jo 3,16, ccc 1234)',
 		'jumpbox.short': 'Buscar',
 		'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
@@ -278,13 +275,13 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ccc.nextParagraph': 'Próximo',
 		'ccc.inBrief': 'Resumindo',
 		'ccc.landing.title': 'Catecismo da Igreja Católica',
-		'ccc.landing.tagline': 'O texto completo, organizado nas suas quatro partes.',
+		'ccc.landing.tagline': 'O Catecismo completo.',
 		'ccc.tableOfContents': 'Índice',
 		'ccc.related': 'Veja também',
 
 		'compendium.landing.title': 'Compêndio do Catecismo',
 		'compendium.landing.tagline':
-			'598 perguntas e respostas que resumem o Catecismo da Igreja Católica.',
+			'Perguntas e respostas que resumem o Catecismo da Igreja Católica.',
 		'compendium.question': 'Pergunta',
 		'compendium.answer': 'Resposta',
 		'compendium.tableOfContents': 'Índice',
@@ -297,14 +294,13 @@ const dictionaries: Record<UiLang, Dictionary> = {
 
 		'prayers.landing.title': 'Orações Comuns',
 		'prayers.landing.tagline':
-			'Vinte e quatro orações que todo católico deveria conhecer, do apêndice do Compêndio do Catecismo — com o texto em latim ao lado onde a fonte o imprime.',
+			'Orações com o texto em latim ao lado.',
 		'prayers.latin': 'Latim',
 		'prayers.showLatin': 'Mostrar texto em latim',
 		'prayers.hideLatin': 'Ocultar texto em latim',
 		'prayers.prevPrayer': 'Oração anterior',
 		'prayers.nextPrayer': 'Próxima oração',
 		'home.prayers.heading': 'Orações',
-		'home.prayers.tagline': 'Duas dezenas de orações que todo católico deveria saber de cor.',
 		'home.prayers.browseAll': 'Ver todas as orações',
 
 		'ref.tooltip.loading': 'Carregando…',

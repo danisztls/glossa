@@ -264,7 +264,6 @@
 	<!-- The wordmark IS the h1's text — see Wordmark.svelte. `home.title` stays
 	     the plain-text form of the same name, used in every page's <title>. -->
 	<h1 class="site-title"><Wordmark /></h1>
-	<p class="tagline">{t('home.tagline')}</p>
 
 	{#if continueItems.length > 0}
 		<section aria-labelledby="continue-heading">
@@ -376,7 +375,6 @@
 	{#if prayerGroups.length > 0}
 		<section aria-labelledby="prayers-heading">
 			<h2 id="prayers-heading">{t('home.prayers.heading')}</h2>
-			<p class="prayers-tagline">{t('home.prayers.tagline')}</p>
 			<ul class="prayers-groups">
 				{#each prayerGroups as group (group.id)}
 					<li>
@@ -438,20 +436,6 @@
 		margin-block: 0 0.8rem;
 		font-size: inherit;
 		line-height: inherit;
-	}
-
-	/*
-	 * Sized up alongside the mark. This is the one line that says what the site
-	 * holds, to a reader who has just met a name in blackletter and has no idea
-	 * yet — at the old 1.05rem it read as a caption under a logo rather than as
-	 * the answer to "what is this".
-	 */
-	.tagline {
-		color: var(--color-text-muted);
-		font-size: 1.35rem;
-		line-height: 1.4;
-		margin-block: 0 2rem;
-		text-wrap: balance;
 	}
 
 	section {
@@ -639,12 +623,6 @@
 	}
 
 	/* --- Prayers --------------------------------------------------------- */
-
-	.prayers-tagline {
-		color: var(--color-text-muted);
-		font-size: 0.95rem;
-		margin: 0 0 0.9rem;
-	}
 
 	.prayers-groups {
 		list-style: none;
