@@ -485,15 +485,16 @@
 		margin-right: 0.25em;
 	}
 
-	/* The passage a citation pointed at (`?v=1-7`). A wash rather than a
-	   border or a block: the verses run together as continuous prose, so
-	   anything with edges would break the paragraph into boxes. `box-decoration-
-	   break` keeps the wash continuous when a verse wraps across lines, which
-	   is most of them.
+	/* A passage a citation pointed at (`?v=1-7`), or a single verse opened by
+	   its `#v{n}` address. A wash rather than a border or a block: the verses
+	   run together as continuous prose, so anything with edges would break the
+	   paragraph into boxes. `box-decoration-break` keeps the wash continuous
+	   when a verse wraps across lines, which is most of them.
 
 	   Colour-mixed from the accent rather than hard-coded so it follows all
 	   four themes; at 12% it stays under the text rather than fighting it. */
-	.verse.cited {
+	.verse.cited,
+	.verse:target {
 		background: color-mix(in srgb, var(--color-accent) 12%, transparent);
 		box-decoration-break: clone;
 		-webkit-box-decoration-break: clone;
