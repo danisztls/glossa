@@ -123,14 +123,14 @@ describe('marker', () => {
 
 describe('hrefFor', () => {
 	it('route mode: basePath + the anchor number', () => {
-		expect(hrefFor(27, 'route', '/ccc')).toBe('/ccc/27');
-		expect(hrefFor(19, 'route', '/documents/gaudium-et-spes')).toBe(
-			'/documents/gaudium-et-spes/19'
+		expect(hrefFor(27, 'route', '/catechismus')).toBe('/catechismus/27');
+		expect(hrefFor(19, 'route', '/documenta/gaudium-et-spes')).toBe(
+			'/documenta/gaudium-et-spes/19'
 		);
 	});
 
 	it('anchor mode: an #s{n} fragment, ignoring basePath', () => {
-		expect(hrefFor(19, 'anchor', '/documents/gaudium-et-spes')).toBe('#s19');
+		expect(hrefFor(19, 'anchor', '/documenta/gaudium-et-spes')).toBe('#s19');
 		expect(hrefFor(19, 'anchor', undefined)).toBe('#s19');
 	});
 });

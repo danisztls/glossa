@@ -5,40 +5,29 @@
  * organizing idea of the whole file, so it's worth stating up front rather
  * than letting it emerge implicitly from the code below.
  *
- * CONTENT_CACHE — the readable text itself: ~200 content-hashed per-work
+ * CONTENT_CACHE — the readable text itself: content-hashed per-work
  * files (Bible per book, CCC in 100-paragraph chunks, Compendium whole),
  * 16.9 MB raw / ~4.6 MB gzipped in total, filled on demand rather than at
  * install — see the "CONTENT TIER POLICY" block below.
- * Unversioned cache name, never swept by `activate`, evicted only by
- * explicit user action (the browser's own "clear site data", or the
- * CACHE_CONTENT/CLEAR_CONTENT messages at the bottom of this file). This
+ * Unversioned cache name, never swept by `activate`, evicted only by the
+ * browser's own "clear site data" or `CLEAR_CONTENT`. The layout requests a
+ * deferred full fill after first render; ordinary reads fill it sooner. This
  * is the tier the "offline-first PWA, entire library on device" commitment
- * (docs/decisions.md, 2026-08-14) is actually about: it should survive
- * routine app updates untouched, the same way a reader expects a book
- * they've downloaded to stay put across app updates rather than needing a
- * re-download every release.
+ * is actually about: it should survive routine app updates untouched, the
+ * same way a reader expects a book they've downloaded to stay put across an
+ * app update rather than needing a re-download.
  *
  * SHELL_CACHE — everything needed to boot the app and route around it: the
  * SvelteKit client runtime, route components, CSS, this project's static/
- * assets (manifest, icons, the offline fallback document), plus one
- * deliberate, single prerendered page (the home page) used as the boot
- * document for an offline navigation to a URL that was never fetched before
- * — see `handleNavigate`. Versioned off `$service-worker`'s `version`,
+ * assets (manifest, icons, the offline fallback document), plus the SPA
+ * shell used as the boot document for any offline navigation — see
+ * `handleNavigate`. Versioned off `$service-worker`'s `version`,
  * wiped and rebuilt on every deploy by `activate`, because none of it is
  * meaningful to keep once a newer copy exists.
  *
- * What's never cached, on purpose: the 6,135 individual prerendered HTML
- * pages this build emits (207 MB of the 240 MB build — see site/README.md
- * "Testing offline behaviour"). They exist for first paint, SEO,
- * and readers with JS disabled — not for the offline path. A reader who
- * goes offline gets the cached shell plus whatever's in CONTENT_CACHE, and
- * the app's own client-side router (which, per src/lib/corpus.ts's
- * docblock, never needs a network round-trip to render a page once that
- * page's data is in memory) renders the actual requested page from there,
- * with no further network request. Precaching the prerendered set would
- * also blow past Cache Storage's quota on constrained browsers for no
- * benefit — iOS Safari evicts caches under pressure starting around 1 GB —
- * since nothing above needs it.
+ * There is no separate page tier: the SPA has one shell. A reader who goes
+ * offline gets that cached shell plus whatever is in CONTENT_CACHE, and the
+ * client router renders the requested canonical path from there.
  */
 
 /// <reference types="@sveltejs/kit" />
@@ -75,19 +64,17 @@ const SHELL_CACHE = `glossa-shell-${version}`;
 // beats inferred here precisely because the failure mode is invisible.)
 //
 // WHAT GOES WHERE, AND WHY NOT EVERYTHING AT INSTALL: content is *not*
-// precached wholesale. The library is ~4.6 MB gzipped across both
-// languages, and downloading all of it uninvited on a first visit is the
-// cost the corpus split exists to eliminate. Instead:
+// precached wholesale at install. The initial route stays small; instead:
 //   - install  → shell only (~157 KB gzipped): boot fast, work offline for
 //                anything already read.
 //   - runtime  → each content file the reader actually opens is stored in
 //                CONTENT_CACHE on first read, permanently. Safe to keep
 //                forever without revalidation because these URLs are
 //                content-hashed: a changed file is a different URL.
-//   - explicit → the reader asks for a work (or all of them) via the
-//                CACHE_CONTENT message below, which is what makes "the
-//                entire library on device" (docs/decisions.md) a deliberate
-//                choice rather than a surprise download.
+//   - deferred → after first render, the layout asks for all content through
+//                CACHE_CONTENT (unless data saver is active). This does not
+//                promise completion after the browser closes; later visits
+//                repeat the request and immutable cache hits are skipped.
 const CONTENT_ASSETS = listContentAssets();
 
 /**
@@ -135,14 +122,14 @@ const CONTENT_URLS = new Set(CONTENT_ENTRIES.map((entry) => entry.path));
  * Build output MINUS the corpus.
  *
  * `$service-worker`'s `build` list is *every* emitted build asset, and
- * since the corpus split that includes all ~200 content-hashed corpus JSON
+ * since the corpus split that includes content-hashed corpus JSON
  * files — Vite emits them as ordinary build assets, indistinguishable from
  * app code by URL shape alone. Precaching `build` wholesale would therefore
  * pull the entire ~4.6 MB library at install, into SHELL_CACHE, which
  * `activate` wipes on every deploy: it would undo both of this file's
  * decisions at once (don't download uninvited; content outlives deploys).
  * Verified against a real build — `build` and CONTENT_ASSETS overlap on
- * exactly the 198 content files.
+ * all content files.
  */
 const PRECACHE_BUILD_URLS = build.filter((url) => !CONTENT_URLS.has(contentPath(url)));
 
@@ -162,10 +149,7 @@ const PRECACHE_FILE_URLS = files.filter(
 	(url) => !HOST_CONFIG_FILES.some((name) => url.endsWith(name))
 );
 
-// One prerendered page, deliberately, used as the offline "boot" document —
-// see the file header and handleNavigate. NOT sourced from
-// `$service-worker`'s `prerendered` list; that list is exactly what this
-// file goes out of its way to avoid touching.
+// The single SPA shell, used as the offline boot document.
 const SHELL_DOCUMENT_URL = `${base}/`;
 const OFFLINE_FALLBACK_URL = `${base}/offline.html`;
 
@@ -198,8 +182,8 @@ async function navigable(response: Response): Promise<Response> {
 /**
  * Precache the shell tier: `build` (app code — the corpus is no longer in
  * here, see the policy block) plus `files` plus the one boot document.
- * Content is deliberately not touched; it arrives via `cacheContent` below,
- * either on demand as the reader reads or in bulk when they ask for it.
+ * Content is deliberately not touched at install; it arrives on demand, then
+ * via the deferred cache request from the root layout.
  *
  * Never throws: every failure is caught and logged so one bad asset can't
  * abort the rest of the pass (see `install`'s comment on why an install
@@ -227,15 +211,14 @@ async function precacheShell(): Promise<{ count: number; bytes: number }> {
 }
 
 /**
- * Fetch content files into CONTENT_CACHE — the explicit "make this
- * available offline" operation. `workId` scopes it to one work (the
+ * Fetch content files into CONTENT_CACHE. `workId` scopes it to one work (the
  * granularity a reader actually thinks in: "the Catechism", "the CPDV
  * Bible"); omitting it takes the whole library.
  *
  * Byte counts come from the inventory rather than from response headers, so
  * a caller can show the real size *before* committing to the download —
- * `content-length` is only knowable after fetching, which is too late to
- * ask "this is 1.6 MB, continue?".
+ * `content-length` is only knowable after fetching, which is too late for a
+ * future per-work UI to ask "this is 1.6 MB, continue?".
  *
  * Concurrency is capped: the Bible is 73 files per edition, and firing all
  * of them at once on a phone on mobile data is a worse experience than a
@@ -445,14 +428,11 @@ sw.addEventListener('fetch', (event) => {
 });
 
 /**
- * Sketch of a future explicit "make this work available offline" control
- * (docs/decisions.md, 2026-08-15 offline entry) — not wired to any UI yet.
- * The contract: a page posts `{ type: 'CACHE_CONTENT' }` or
- * `{ type: 'CLEAR_CONTENT' }` via
- * `navigator.serviceWorker.controller?.postMessage(...)`; this worker does
- * the caching/eviction and, for CACHE_CONTENT, posts a
- * `{ type: 'CACHE_CONTENT:done', count, bytes }` message back to every open
- * client so a picker UI can update its state without polling.
+ * The root layout posts `{ type: 'CACHE_CONTENT' }` after first render, which
+ * begins the deferred full-library fill. Future offline controls can scope it
+ * with `workId`, and can clear the whole content cache with `CLEAR_CONTENT`.
+ * The worker posts `{ type: 'CACHE_CONTENT:done', count, bytes }` back to
+ * every open client, so that future UI need not poll for progress.
  *
  * Per-work granularity is real now that the corpus is split: pass a
  * `workId` to take just that work (~1.6-1.7 MB gzipped for a complete Bible

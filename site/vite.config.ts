@@ -30,22 +30,23 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
-			// Fully static output: the whole site is prerendered at build
-			// time. See docs/decisions.md — offline-first PWA, no server
-			// runtime.
+			// Fully static SPA output. `index.html` is the one application shell;
+			// `src/worker.ts` validates canonical reader URLs and serves that shell
+			// only for routes present in the generated corpus manifest. See
+			// docs/decisions.md for why a plain host-wide SPA fallback is not enough
+			// for a citable reference site.
 			adapter: adapter({
 				pages: 'build',
 				assets: 'build',
-				fallback: undefined,
+				fallback: 'index.html',
 				precompress: false,
-				strict: true
+				strict: false
 			}),
 			prerender: {
-				// Every route in this app is prerenderable; fail the build
-				// loudly if that ever stops being true instead of silently
-				// skipping pages.
-				handleHttpError: 'fail',
-				handleMissingId: 'fail'
+				// The fallback is intentionally the only generated page. Route
+				// completeness is checked against the corpus-generated route manifest
+				// in the edge worker instead of by crawling thousands of HTML files.
+				entries: []
 			}
 		})
 	]

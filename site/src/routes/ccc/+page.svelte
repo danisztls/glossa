@@ -147,7 +147,7 @@
 					{/if}
 
 					{#if Number.isFinite(anchor)}
-						<a class="row-title" href={`/ccc/${anchor}`}>
+						<a class="row-title" href={`/catechismus/${anchor}`}>
 							<!-- "Ch. 3" rather than a bare "3." — see kindOrdinalLabel's
 							     docblock for why four levels of identical ordinals was
 							     the problem worth spending a few characters on. -->
@@ -171,7 +171,7 @@
 						{#each details as sub (sub.title + sub.paragraphs.join('-'))}
 							{@const sdt = displayTitle(sub, lang)}
 							<li>
-								<a href={`/ccc/${sub.paragraphs[0]}`}>
+								<a href={`/catechismus/${sub.paragraphs[0]}`}>
 									<!-- `sub` nodes carry roman-numeral list markers in their
 									     own titles ("I. The Desire for God"), which is why they
 									     get no kind label: they already number themselves. -->

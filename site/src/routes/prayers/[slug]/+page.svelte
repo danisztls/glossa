@@ -157,10 +157,10 @@
 {#if current}
 	<div class="content-column" class:compare={compareActive}>
 		<nav class="breadcrumb" aria-label="Breadcrumb">
-			<a href="/prayers">{t('nav.prayers')}</a>
+			<a href="/preces">{t('nav.prayers')}</a>
 			{#if current.group}
 				<span class="sep">›</span>
-				<a href={`/prayers#${current.group.id}`}>{current.group.title}</a>
+				<a href={`/preces#${current.group.id}`}>{current.group.title}</a>
 			{/if}
 		</nav>
 
@@ -198,14 +198,14 @@
 
 		<nav class="prayer-nav" aria-label="Prayer navigation">
 			{#if current.prev}
-				<a href={`/prayers/${current.prev.slug}`} rel="prev"
+					<a href={`/preces/${current.prev.slug}`} rel="prev"
 					>&larr; {t('prayers.prevPrayer')} · {current.prev.title}</a
 				>
 			{:else}
 				<span></span>
 			{/if}
 			{#if current.next}
-				<a href={`/prayers/${current.next.slug}`} rel="next"
+					<a href={`/preces/${current.next.slug}`} rel="next"
 					>{t('prayers.nextPrayer')} · {current.next.title} &rarr;</a
 				>
 			{/if}

@@ -12,6 +12,11 @@ node_modules
 # scripts/sync-corpus.mjs and README.md "Corpus data"). Never hand-edit.
 /src/lib/corpus-data
 
+# Generated alongside corpus-data by sync-corpus. The edge worker reads this
+# compact route manifest before serving the SPA shell; it is deploy output,
+# not an editorial source file.
+/static/corpus-routes.json
+
 # OS
 .DS_Store
 Thumbs.db

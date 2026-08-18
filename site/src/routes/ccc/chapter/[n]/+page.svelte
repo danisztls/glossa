@@ -166,7 +166,7 @@
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
 			<nav class="breadcrumb" aria-label="Breadcrumb">
-				<a href="/ccc">{t('nav.ccc')}</a>
+				<a href="/catechismus">{t('nav.ccc')}</a>
 			</nav>
 
 			<div class="title-row">
@@ -210,7 +210,7 @@
 						     view is for reading, that one for citing and cross-linking,
 						     and a reader who wants the second from inside the first
 						     should not have to go back through the TOC. -->
-							<a class="para-n" href={`/ccc/${paragraph.n}`} aria-label={`CCC ${paragraph.n}`}>
+							<a class="para-n" href={`/catechismus/${paragraph.n}`} aria-label={`CCC ${paragraph.n}`}>
 								{paragraph.n}
 							</a>
 							<!-- The CSS `::first-letter` drop cap works here (unlike in the
@@ -239,7 +239,7 @@
 				currentN={spy.current ?? from ?? undefined}
 				{lang}
 				heading={t('ccc.tableOfContents')}
-				basePath="/ccc"
+				basePath="/catechismus"
 				outlineKinds={OUTLINE_KINDS}
 			/>
 		</aside>

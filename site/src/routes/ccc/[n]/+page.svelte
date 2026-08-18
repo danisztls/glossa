@@ -148,11 +148,11 @@
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
 			<nav class="breadcrumb" aria-label="Breadcrumb">
-				<a href="/ccc">{t('nav.ccc')}</a>
+				<a href="/catechismus">{t('nav.ccc')}</a>
 				{#each current.breadcrumb as node (node.title)}
 					{@const dt = displayTitle(node, lang)}
 					<span class="sep">›</span>
-					<a href={`/ccc/${node.paragraphs[0]}`}>
+					<a href={`/catechismus/${node.paragraphs[0]}`}>
 						{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
 						{dt.title}
 					</a>
@@ -205,7 +205,7 @@
 					{#each current.paragraph.related as n, i (n)}
 						{#if i > 0}·{/if}
 						{#if relatedExists(n)}
-							<a href={`/ccc/${n}`}>¶{n}</a>
+							<a href={`/catechismus/${n}`}>¶{n}</a>
 						{:else}
 							<span class="related-unresolved" title="Not in this fixture">¶{n}</span>
 						{/if}
@@ -223,7 +223,7 @@
 				having lost their place as the price of getting context.
 			-->
 				<p class="read-chapter">
-					<a href={`/ccc/chapter/${current.chapter.start}#p${data.n}`}>
+					<a href={`/catechismus/caput/${current.chapter.start}#p${data.n}`}>
 						{t('ccc.readFullChapter')}
 						<span class="chapter-name">
 							{#if dt.ordinal}{dt.ordinal}{/if}
@@ -236,14 +236,14 @@
 
 			<nav class="paragraph-nav" aria-label="Paragraph navigation">
 				{#if current.prev}
-					<a href={`/ccc/${current.prev.n}`} rel="prev"
+					<a href={`/catechismus/${current.prev.n}`} rel="prev"
 						>&larr; {t('ccc.prevParagraph')} · ¶{current.prev.n}</a
 					>
 				{:else}
 					<span></span>
 				{/if}
 				{#if current.next}
-					<a href={`/ccc/${current.next.n}`} rel="next"
+					<a href={`/catechismus/${current.next.n}`} rel="next"
 						>{t('ccc.nextParagraph')} · ¶{current.next.n} &rarr;</a
 					>
 				{/if}
@@ -263,7 +263,7 @@
 				currentN={data.n}
 				{lang}
 				heading={t('ccc.tableOfContents')}
-				basePath="/ccc"
+				basePath="/catechismus"
 				outlineKinds={OUTLINE_KINDS}
 			/>
 		</aside>

@@ -491,7 +491,7 @@ describe('linkifyProse', () => {
 
 describe('refHref', () => {
 	it('links a CCC segment without needing any corpus context', () => {
-		expect(refHref({ kind: 'ccc', n: 1212, raw: '1212' }, {})).toBe('/ccc/1212');
+		expect(refHref({ kind: 'ccc', n: 1212, raw: '1212' }, {})).toBe('/catechismus/1212');
 	});
 
 	it('links a Compendium segment without needing any corpus context', () => {
@@ -520,7 +520,7 @@ describe('refHref', () => {
 				},
 				{ lang: 'en' }
 			)
-		).toBe('/documents/gaudium-et-spes#s19');
+		).toBe('/documenta/gaudium-et-spes#s19');
 	});
 
 	it('drops the "# N" subsection and links to the section alone ("GS 19 # 1" -> §19)', () => {
@@ -536,7 +536,7 @@ describe('refHref', () => {
 				},
 				{ lang: 'en' }
 			)
-		).toBe('/documents/gaudium-et-spes#s19');
+		).toBe('/documenta/gaudium-et-spes#s19');
 	});
 
 	it('resolves a document link against the reader\'s PT effective language, not EN', () => {
@@ -552,7 +552,7 @@ describe('refHref', () => {
 				},
 				{ lang: 'pt' }
 			)
-		).toBe('/documents/gaudium-et-spes#s19');
+		).toBe('/documenta/gaudium-et-spes#s19');
 	});
 
 	it('never links a document whose section is absent from the reader\'s effective language (dei-verbum is EN-only in the mock registry)', () => {
@@ -595,17 +595,17 @@ describe('refHref', () => {
 	it('links a scripture segment present in the given Bible edition (fixture: bible.cpdv.en has gen ch.1, john ch.1+3)', () => {
 		expect(
 			refHref({ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' }, { bibleWorkId: 'bible.cpdv.en' })
-		).toBe('/bible/gen/1#v1');
+		).toBe('/scriptura/gen/1#v1');
 
 		expect(
 			refHref({ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' }, { bibleWorkId: 'bible.cpdv.en' })
-		).toBe('/bible/john/3#v16');
+		).toBe('/scriptura/john/3#v16');
 	});
 
 	it('omits the verse anchor for a whole-chapter reference', () => {
 		expect(
 			refHref({ kind: 'scripture', osis: 'john', chapter: 3, verses: [], raw: 'John 3' }, { bibleWorkId: 'bible.cpdv.en' })
-		).toBe('/bible/john/3');
+		).toBe('/scriptura/john/3');
 	});
 
 	describe('multi-verse passages carry their extent', () => {
@@ -617,14 +617,14 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'john', chapter: 1, verses: [1, 2, 3, 4, 5, 6, 7], raw: 'Jn 1:1-7' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/bible/john/1?v=1-7#v1');
+			).toBe('/scriptura/john/1?v=1-7#v1');
 		});
 
 		it('adds nothing for a single-verse reference', () => {
 			// Already fully described by its anchor.
 			expect(
 				refHref({ kind: 'scripture', osis: 'john', chapter: 1, verses: [5], raw: 'Jn 1:5' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/john/1#v5');
+			).toBe('/scriptura/john/1#v5');
 		});
 
 		it('spans an unsorted verse list by its min and max', () => {
@@ -635,7 +635,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'john', chapter: 1, verses: [7, 1, 4], raw: 'Jn 1:7,1,4' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/bible/john/1?v=1-7#v7');
+			).toBe('/scriptura/john/1?v=1-7#v7');
 		});
 
 		it('clamps the extent to verses that exist in this edition', () => {
@@ -646,7 +646,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'gen', chapter: 1, verses: [11, 12, 13, 99], raw: 'Gen 1:11-99' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/bible/gen/1?v=11-13#v11');
+			).toBe('/scriptura/gen/1?v=11-13#v11');
 		});
 
 		it('converts the extent for a divergent book rather than dropping it', () => {
@@ -658,7 +658,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14, 15, 16], raw: 'Ps 22:14-16' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/bible/ps/21?v=14-16#v14');
+			).toBe('/scriptura/ps/21?v=14-16#v14');
 		});
 	});
 
@@ -688,19 +688,19 @@ describe('refHref', () => {
 		it('converts a Hebrew Psalm chapter+verse to its Vulgate address (ccc112: "Ps 22:14" -> Vulgate 21:14)', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14], raw: 'Ps 22:14' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/ps/21#v14');
+			).toBe('/scriptura/ps/21#v14');
 		});
 
 		it('converts Malachi across the chapter 3/4 split (ccc678: "Mal 3: 19" -> Vulgate 4:1)', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'mal', chapter: 3, verses: [19], raw: 'Mal 3: 19' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/mal/4#v1');
+			).toBe('/scriptura/mal/4#v1');
 		});
 
 		it('converts Joel across the chapter 2/3 fold ("Joel 3:1-5" -> Vulgate 2:28)', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'joel', chapter: 3, verses: [1, 2, 3, 4, 5], raw: 'Joel 3:1-5' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/joel/2?v=28-32#v28');
+			).toBe('/scriptura/joel/2?v=28-32#v28');
 		});
 
 		it('never leaves a whole-chapter Joel 3 pointing at the literal (unconverted, WRONG) Vulgate chapter 3, which trivially "exists" but means Hebrew Joel 4', () => {
@@ -708,7 +708,7 @@ describe('refHref', () => {
 				{ kind: 'scripture', osis: 'joel', chapter: 3, verses: [], raw: 'Joel 3' },
 				{ bibleWorkId: 'bible.cpdv.en' }
 			);
-			expect(href).toBe('/bible/joel/2');
+			expect(href).toBe('/scriptura/joel/2');
 			expect(href).not.toContain('/joel/3');
 		});
 
@@ -716,25 +716,25 @@ describe('refHref', () => {
 			// Ps 22 (Hebrew) -> Vulg 21, which only has 32 verses in the fixture.
 			expect(
 				refHref({ kind: 'scripture', osis: 'ps', chapter: 22, verses: [9999], raw: 'Ps 22:9999' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/ps/21');
+			).toBe('/scriptura/ps/21');
 		});
 
 		it('omits the anchor for a whole-chapter Psalm reference that is not a split psalm', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'ps', chapter: 51, verses: [], raw: 'Ps 51' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/ps/50');
+			).toBe('/scriptura/ps/50');
 		});
 
 		it('picks the first half for a whole-chapter reference to a split psalm (Ps 116 -> Vulg 114)', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'ps', chapter: 116, verses: [], raw: 'Ps 116' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/ps/114');
+			).toBe('/scriptura/ps/114');
 		});
 
 		it('leaves non-divergent books unaffected by the versification path', () => {
 			expect(
 				refHref({ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' }, { bibleWorkId: 'bible.cpdv.en' })
-			).toBe('/bible/john/3#v16');
+			).toBe('/scriptura/john/3#v16');
 		});
 
 		it('returns undefined rather than a wrong link when the divergent book is absent from the edition', () => {
@@ -814,23 +814,23 @@ describe('refHref — documents named by title', () => {
 		({ kind: 'documentTitle', slug, title: 'Gaudium et Spes', locus, raw: 'x' }) as const;
 
 	it('links to the section when the number really is one', () => {
-		expect(refHref(seg('19'), { lang: 'en' })).toBe('/documents/gaudium-et-spes#s19');
+		expect(refHref(seg('19'), { lang: 'en' })).toBe('/documenta/gaudium-et-spes#s19');
 	});
 
 	it('falls back to the landing page when the number is not a section', () => {
 		// "Humani generis 561" cites an AAS page; that document has 44 sections.
 		// Linking to /561 would be a confident 404, so the title alone wins.
-		expect(refHref(seg('561'), { lang: 'en' })).toBe('/documents/gaudium-et-spes');
+		expect(refHref(seg('561'), { lang: 'en' })).toBe('/documenta/gaudium-et-spes');
 	});
 
 	it('falls back to the landing page when there is no number at all', () => {
 		// Unlike a bare siglum, which links nowhere: a title still names one
 		// specific document even with no locus.
-		expect(refHref(seg(null), { lang: 'en' })).toBe('/documents/gaudium-et-spes');
+		expect(refHref(seg(null), { lang: 'en' })).toBe('/documenta/gaudium-et-spes');
 	});
 
 	it('respects the reader language rather than falling back to another edition', () => {
 		expect(refHref(seg('2', 'dei-verbum'), { lang: 'pt' })).toBeUndefined();
-		expect(refHref(seg('2', 'dei-verbum'), { lang: 'en' })).toBe('/documents/dei-verbum#s2');
+		expect(refHref(seg('2', 'dei-verbum'), { lang: 'en' })).toBe('/documenta/dei-verbum#s2');
 	});
 });

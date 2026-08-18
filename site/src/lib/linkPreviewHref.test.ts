@@ -4,7 +4,7 @@ import { parsePreviewHref } from './linkPreviewHref';
 describe('parsePreviewHref', () => {
 	describe('bible', () => {
 		it('parses a bare chapter link with no verse', () => {
-			expect(parsePreviewHref('/bible/john/1')).toEqual({
+			expect(parsePreviewHref('/scriptura/john/1')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1
@@ -12,7 +12,7 @@ describe('parsePreviewHref', () => {
 		});
 
 		it('parses a single-verse anchor (#v{n}, no ?v=)', () => {
-			expect(parsePreviewHref('/bible/john/1#v1')).toEqual({
+			expect(parsePreviewHref('/scriptura/john/1#v1')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1,
@@ -22,7 +22,7 @@ describe('parsePreviewHref', () => {
 		});
 
 		it('parses a cited span (?v=from-to#v{first})', () => {
-			expect(parsePreviewHref('/bible/john/1?v=1-7#v1')).toEqual({
+			expect(parsePreviewHref('/scriptura/john/1?v=1-7#v1')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1,
@@ -36,7 +36,7 @@ describe('parsePreviewHref', () => {
 			// hand-edited URL might not -- the span is the more informative of
 			// the two, so it should win rather than the parser picking whichever
 			// happens to be checked first for no principled reason.
-			expect(parsePreviewHref('/bible/gen/1?v=3-9#v1')).toEqual({
+			expect(parsePreviewHref('/scriptura/gen/1?v=3-9#v1')).toEqual({
 				kind: 'bible',
 				osis: 'gen',
 				chapter: 1,
@@ -46,7 +46,7 @@ describe('parsePreviewHref', () => {
 		});
 
 		it('supports multi-character OSIS codes (numbered books)', () => {
-			expect(parsePreviewHref('/bible/1cor/13')).toEqual({
+			expect(parsePreviewHref('/scriptura/1cor/13')).toEqual({
 				kind: 'bible',
 				osis: '1cor',
 				chapter: 13
@@ -54,7 +54,7 @@ describe('parsePreviewHref', () => {
 		});
 
 		it('falls back to the anchor when ?v= is malformed', () => {
-			expect(parsePreviewHref('/bible/john/1?v=nonsense#v3')).toEqual({
+			expect(parsePreviewHref('/scriptura/john/1?v=nonsense#v3')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1,
@@ -64,7 +64,7 @@ describe('parsePreviewHref', () => {
 		});
 
 		it('falls back to the anchor when ?v= is reversed (to <= from)', () => {
-			expect(parsePreviewHref('/bible/john/1?v=7-1#v7')).toEqual({
+			expect(parsePreviewHref('/scriptura/john/1?v=7-1#v7')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1,
@@ -74,7 +74,7 @@ describe('parsePreviewHref', () => {
 		});
 
 		it('ignores an unrelated query string / hash', () => {
-			expect(parsePreviewHref('/bible/john/1?utm=x#somewhere-else')).toEqual({
+			expect(parsePreviewHref('/scriptura/john/1?utm=x#somewhere-else')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1
@@ -84,19 +84,19 @@ describe('parsePreviewHref', () => {
 
 	describe('ccc', () => {
 		it('parses a paragraph link', () => {
-			expect(parsePreviewHref('/ccc/1234')).toEqual({ kind: 'ccc', n: 1234 });
+			expect(parsePreviewHref('/catechismus/1234')).toEqual({ kind: 'ccc', n: 1234 });
 		});
 
 		it('parses a whole-chapter link', () => {
-			expect(parsePreviewHref('/ccc/chapter/27')).toEqual({ kind: 'cccChapter', n: 27 });
+			expect(parsePreviewHref('/catechismus/caput/27')).toEqual({ kind: 'cccChapter', n: 27 });
 		});
 
 		it('does not treat the CCC landing page as a paragraph', () => {
-			expect(parsePreviewHref('/ccc')).toBeUndefined();
+			expect(parsePreviewHref('/catechismus')).toBeUndefined();
 		});
 
 		it('does not treat the chapter index as a chapter link', () => {
-			expect(parsePreviewHref('/ccc/chapter')).toBeUndefined();
+			expect(parsePreviewHref('/catechismus/caput')).toBeUndefined();
 		});
 	});
 
@@ -112,7 +112,7 @@ describe('parsePreviewHref', () => {
 
 	describe('documents', () => {
 		it('parses a section link', () => {
-			expect(parsePreviewHref('/documents/gaudium-et-spes#s19')).toEqual({
+			expect(parsePreviewHref('/documenta/gaudium-et-spes#s19')).toEqual({
 				kind: 'document',
 				slug: 'gaudium-et-spes',
 				n: 19
@@ -120,7 +120,7 @@ describe('parsePreviewHref', () => {
 		});
 
 		it('does not treat the whole document as a section', () => {
-			expect(parsePreviewHref('/documents/gaudium-et-spes')).toBeUndefined();
+			expect(parsePreviewHref('/documenta/gaudium-et-spes')).toBeUndefined();
 		});
 
 		// The shape this route used to have, before a document became one page
@@ -128,17 +128,17 @@ describe('parsePreviewHref', () => {
 		// stale link from anywhere should degrade to no preview rather than to
 		// a preview of the wrong thing.
 		it('does not parse the retired per-section path', () => {
-			expect(parsePreviewHref('/documents/gaudium-et-spes/19')).toBeUndefined();
+			expect(parsePreviewHref('/documenta/gaudium-et-spes/19')).toBeUndefined();
 		});
 
 		it('does not treat the documents library as a section', () => {
-			expect(parsePreviewHref('/documents')).toBeUndefined();
+			expect(parsePreviewHref('/documenta')).toBeUndefined();
 		});
 	});
 
 	describe('chrome and non-content links', () => {
 		it('rejects the header nav targets', () => {
-			for (const href of ['/bible', '/ccc', '/compendium', '/documents', '/colophon', '/']) {
+			for (const href of ['/scriptura', '/catechismus', '/compendium', '/documenta', '/colophon', '/']) {
 				expect(parsePreviewHref(href)).toBeUndefined();
 			}
 		});

@@ -8,9 +8,9 @@ architecture and data contract this app is built against.
 
 ## Corpus data
 
-The corpus (`../corpus/`) is gitignored and lives outside this package — it's
-scraped/built separately by `../pipeline/` (see `docs/corpus-schema.md`).
-This site never commits corpus data; it only knows how to _read_ it.
+The corpus (`../corpus/`) is tracked at the repository root and is
+scraped/built separately by `../pipeline/` (see `docs/corpus-schema.md`). The
+site never commits its synced build copy; it only knows how to _read_ it.
 
 - `src/lib/corpus.ts` (public API) and `src/lib/corpus-index.ts` (the
   registries it's backed by) are the **only** modules that know where
@@ -22,10 +22,12 @@ This site never commits corpus data; it only knows how to _read_ it.
   { eager: true })`-inlined) and `src/lib/corpus-data/content/` (the actual
   reading text — Bible books, CCC paragraph chunks, the Compendium — globbed
   with `{ query: '?url' }` so Vite emits each as its own content-hashed
-  build asset instead of inlining it). `corpus.ts` reads the content tier
-  straight off disk during prerendering and via `fetch()` in the browser
-  (see its docblock's "HOW CONTENT ACTUALLY GETS READ" for why it's not the
-  same code path both times). Both fall back to the bundled fixtures under
+  build asset instead of inlining it). `corpus.ts` reads the content tier via
+  `fetch()` in the browser. The app is an SPA, so the static build emits one
+  shell rather than a rendered document for every reference. A generated
+  `static/corpus-routes.json` contains addresses only; the Cloudflare worker
+  uses it to give valid deep links the shell and invalid citations a true 404.
+  Both data tiers fall back to the bundled fixtures under
   `src/lib/fixtures/` whenever `src/lib/corpus-data/` is empty (e.g. no
   corpus has been synced yet).
 - Why the split (2026-08-15, replacing an earlier version that
@@ -74,12 +76,9 @@ CORPUS_DIR=/path/to/corpus npm run build
 Works currently available in the real corpus: `bible.cpdv.en` and
 `bible.matos-soares.pt` (both complete, 73/73 books); `ccc.en` and `ccc.pt`
 (both complete, 2865/2865 paragraphs); `compendium.en` and `compendium.pt`
-(both complete, 598/598 questions); 16 `vatii.*` Vatican II documents (in
-both languages where available) — not yet surfaced by any route, so their
-manifests ride along inertly in the index tier (see `+page.svelte`'s
-`GROUP_TYPES` comment on the home page for why they don't show up in the
-library list yet). The site now surfaces Bible, Catechism, and Compendium
-sections. The site is still designed to build correctly from whatever
+(both complete, 598/598 questions); and Vatican II plus encyclical documents
+in every available language, surfaced under Magisterium. The site is still
+designed to build correctly from whatever
 subset of works is actually present — gaps degrade gracefully rather than
 failing the build (see `getAdjacentCccParagraphNumber`,
 `getAdjacentChapterAcrossBooks`, and the `related`-link resolution in
@@ -92,13 +91,11 @@ will ship works incrementally rather than all at once.
 Glossa Catholica is an offline-first PWA (`../docs/decisions.md`): `src/service-worker.ts`
 (SvelteKit's `$service-worker` module, auto-registered in production builds —
 see `svelte-kit`'s default `kit.serviceWorker.register`) caches the app in two
-tiers with different lifecycles. See the "CONTENT TIER POLICY" comment block
-at the top of that file for exactly what's cached and why, and
-`../docs/decisions.md`'s 2026-08-15 "Offline caching implementation" entry
-for the numbers behind it. In short: the corpus-data JS chunk (~18 MB raw /
-~4.7 MB gzipped) is precached indefinitely; the 6,134 prerendered HTML pages
-(~216 MB) are never precached — they exist for first paint, SEO, and no-JS
-readers, not the offline path.
+tiers with different lifecycles. The shell is precached on install; immutable
+corpus JSON is cached as it is read, then the root layout asks the worker to
+finish the whole content tier after first render (unless the browser declares
+data saver). A later visit safely resumes an interrupted fill. See the
+"CONTENT TIER POLICY" block in that file for the precise behavior.
 
 The service worker only runs against a **production build** — `npm run dev`
 never registers one, and `vite dev` doesn't emit `service-worker.js` at all.
@@ -115,13 +112,11 @@ runtime cache classification only run in an actual service worker context):
 
 1. Open `http://localhost:4173` and confirm DevTools → Application →
    Service Workers shows it activated, and → Cache Storage shows two
-   caches: `glossa-content` (one large entry, the corpus chunk) and
-   `glossa-shell-{version}` (everything else this file precaches,
-   including the home page).
-2. DevTools → Network → set "Offline", then reload and navigate to a few
-   different pages (Bible chapters, CCC paragraphs) you have **not**
-   necessarily visited before this session — they should still render,
-   because the content chunk (not a per-page cache) is what serves them.
+   caches: `glossa-content` (immutable corpus JSON, progressively filled)
+   and `glossa-shell-{version}` (the application shell and its assets).
+2. Let the background cache fill finish, then DevTools → Network → set
+   "Offline" and reload/navigate to several Bible, CCC, and document routes.
+   They should still render from the shell plus `glossa-content`.
 3. Navigate directly to a URL via the address bar while offline (a real,
    uncached navigation, not a client-side link click) — it should still
    render the correct page, not the offline fallback, because the cached

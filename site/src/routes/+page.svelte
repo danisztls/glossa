@@ -58,7 +58,7 @@
 	// --- Bible: books & chapters -----------------------------------------------
 	//
 	// `BookChapterPicker` already IS the Bible's table of contents (the
-	// `/bible` landing route renders the identical component the identical
+	// `/scriptura` landing route renders the identical component the identical
 	// way) — every book/chapter link goes straight to the reading page, so
 	// there is nothing left for this section to add beyond the picker and a
 	// quiet edition note.
@@ -114,7 +114,7 @@
 	// thousands of pages, this to two dozen. So this section is deliberately
 	// small: a tagline, the 5 section names as chips (the same visual language
 	// as the CCC/Compendium row's chips above), and one link into the full
-	// listing — not a repeat of `/prayers`' own grouped list of every prayer.
+	// listing — not a repeat of `/preces`' own grouped list of every prayer.
 	const prayerLang = $derived(content.langFor('prayer'));
 	const prayerGroups = $derived(prayerWork ? listPrayerGroups(prayerLang) : []);
 
@@ -169,11 +169,11 @@
 
 	// --- Magisterium: grouped by pontiff/council --------------------------------
 	//
-	// Mirrors `routes/documents/+page.svelte`'s grouping (by
+	// Mirrors `routes/documenta/+page.svelte`'s grouping (by
 	// `pontiff_or_council`, reverse chronological) at summary depth rather
 	// than importing it: that route groups to build a full nested list (doc
 	// rows inside collapsible groups); this one only ever needs the GROUPS
-	// themselves — name, count, most recent date — to link into `/documents`,
+	// themselves — name, count, most recent date — to link into `/documenta`,
 	// which is little enough logic that sharing it would mean exporting a
 	// bespoke type from a route module. The one number this page adds beyond
 	// what documents/+page.svelte computes is `mostRecent`, used only to sort
@@ -227,7 +227,7 @@
 	// A reader landing here has no way to tell from a count alone whether a
 	// pontificate's group includes something from last month or from 1891 —
 	// naming just the newest document gives the section one concrete, timely
-	// foothold without turning it into a second `/documents` listing (the
+	// foothold without turning it into a second `/documenta` listing (the
 	// groups below stay groups, not an excerpt of the full library).
 	const mostRecentDoc = $derived.by(() => {
 		if (magisteriumDocs.length === 0) return undefined;
@@ -296,7 +296,7 @@
 						<div class="ccc-row-title">{dt.title}</div>
 						<div class="ccc-row-links">
 							{#if Number.isFinite(anchor)}
-								<a class="ccc-link" href={`/ccc/${anchor}`}>
+								<a class="ccc-link" href={`/catechismus/${anchor}`}>
 									{t('nav.ccc')} <span class="ccc-range">{rangeLabel(cccPrologue, '¶')}</span>
 								</a>
 							{/if}
@@ -312,7 +312,7 @@
 						{#if title}<div class="ccc-row-title">{title}</div>{/if}
 						<div class="ccc-row-links">
 							{#if part.ccc && Number.isFinite(cccAnchor)}
-								<a class="ccc-link" href={`/ccc/${cccAnchor}`}>
+								<a class="ccc-link" href={`/catechismus/${cccAnchor}`}>
 									{t('nav.ccc')} <span class="ccc-range">{rangeLabel(part.ccc, '¶')}</span>
 								</a>
 							{:else}
@@ -338,7 +338,7 @@
 										{#if stitle}<div class="ccc-row-title">{stitle}</div>{/if}
 										<div class="ccc-row-links">
 											{#if section.ccc && Number.isFinite(sCccAnchor)}
-												<a class="ccc-link" href={`/ccc/${sCccAnchor}`}>
+												<a class="ccc-link" href={`/catechismus/${sCccAnchor}`}>
 													{t('nav.ccc')}
 													<span class="ccc-range">{rangeLabel(section.ccc, '¶')}</span>
 												</a>
@@ -380,11 +380,11 @@
 			<ul class="prayers-groups">
 				{#each prayerGroups as group (group.id)}
 					<li>
-						<a class="prayers-chip" href={`/prayers#${group.id}`}>{group.title}</a>
+						<a class="prayers-chip" href={`/preces#${group.id}`}>{group.title}</a>
 					</li>
 				{/each}
 			</ul>
-			<a class="prayers-browse-all" href="/prayers">{t('home.prayers.browseAll')} &rarr;</a>
+			<a class="prayers-browse-all" href="/preces">{t('home.prayers.browseAll')} &rarr;</a>
 			{#if prayerWork}
 				<p class="edition-note">{prayerWork.title} — <CopyrightNotice manifest={prayerWork} /></p>
 			{/if}
@@ -398,7 +398,7 @@
 			{#if mostRecentDoc}
 				<p class="magisterium-recent">
 					<span class="magisterium-recent-label">{t('home.magisterium.mostRecent')}</span>
-					<a href={`/documents/${mostRecentDoc.slug}`}>{mostRecentDoc.manifest.title}</a>
+					<a href={`/documenta/${mostRecentDoc.slug}`}>{mostRecentDoc.manifest.title}</a>
 					<span class="magisterium-recent-meta">
 						{mostRecentDoc.manifest.pontiff_or_council}
 						<span aria-hidden="true">·</span>
@@ -415,7 +415,7 @@
 			<ul class="magisterium-groups">
 				{#each magisteriumGroups as group (group.pontiff)}
 					<li>
-						<a href="/documents" class="magisterium-group-link">
+						<a href="/documenta" class="magisterium-group-link">
 							<span class="magisterium-pontiff">{group.pontiff}</span>
 							<span class="magisterium-count">{group.count}</span>
 						</a>

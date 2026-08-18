@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * Bible landing route (`/bible`). No dynamic params — the reader's
+	 * Scripture landing route (`/scriptura`). No dynamic params — the reader's
 	 * current edition comes entirely client-side from `content.workIdFor`
 	 * (see `$lib/content.svelte.ts`), same as any other stored-preference
 	 * read on a prerendered page. Offers the reader's edition + its
@@ -34,7 +34,7 @@
 		const firstBook = listBooks(workId)[0];
 		if (!firstBook) return undefined;
 		const firstChapterN = firstBook.chapters[0]?.n ?? 1;
-		return `/bible/${firstBook.osis}/${firstChapterN}`;
+		return `/scriptura/${firstBook.osis}/${firstChapterN}`;
 	});
 </script>
 

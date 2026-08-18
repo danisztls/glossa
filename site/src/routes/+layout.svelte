@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
@@ -28,27 +29,68 @@
 	// redundancy-as-safety. Removing it also lets `isActive` drop its special
 	// case (see below).
 	const NAV_ITEMS = [
-		{ href: '/bible', key: 'nav.bible' },
-		{ href: '/ccc', key: 'nav.ccc' },
+		{ href: '/scriptura', key: 'nav.bible' },
+		{ href: '/catechismus', key: 'nav.ccc' },
 		{ href: '/compendium', key: 'nav.compendium' },
 		// 24 prayers is not a fifth pillar alongside four works running to
 		// thousands of pages each — but a corpus nobody can find from the nav
 		// is a corpus nobody reads, so it gets the same one-click-away
 		// treatment as everything else rather than being reachable only from
 		// the home page's own Prayers section.
-		{ href: '/prayers', key: 'nav.prayers' },
-		// Route path stays `/documents` (docs/corpus-schema.md §Documents'
-		// naming); the displayed label is "Magisterium" — see the
-		// `nav.magisterium` dictionary entry for why they're allowed to differ.
-		{ href: '/documents', key: 'nav.magisterium' }
+		{ href: '/preces', key: 'nav.prayers' },
+		// The canonical route is Latin while the displayed label is
+		// "Magisterium" — URL identity and localised display language are
+		// intentionally independent.
+		{ href: '/documenta', key: 'nav.magisterium' }
 	] as const;
 
-	// A section is "active" for its whole subtree (`/bible/...` counts as
+	// A section is "active" for its whole subtree (`/scriptura/...` counts as
 	// Bible). No `'/'` special case is needed now that Home isn't a nav item —
 	// every href here is a real section prefix.
 	function isActive(href: string): boolean {
 		return page.url.pathname === href || page.url.pathname.startsWith(href + '/');
 	}
+
+	/**
+	 * First paint fetches only the route's own content. Once that work is out
+	 * of the way, ask the service worker to fill its immutable content cache in
+	 * the background. This is intentionally a request, not an install-time
+	 * precache: it leaves the initial visit small and lets the worker resume any
+	 * interrupted library download on a later visit.
+	 *
+	 * Honour the browser's explicit data-saver signal. The ordinary Cache
+	 * Storage quota remains the browser's authority; the worker already treats
+	 * every asset independently and logs failed entries rather than breaking
+	 * reading when storage is tight.
+	 */
+	onMount(() => {
+		if (!('serviceWorker' in navigator)) return;
+
+		const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+		if (connection?.saveData) return;
+
+		let cancelled = false;
+		const requestPreload = () => {
+			if (!cancelled) navigator.serviceWorker.controller?.postMessage({ type: 'CACHE_CONTENT' });
+		};
+
+		// Give route loading and the first interaction a clear head start. A
+		// reload deliberately asks again: cacheContent skips what it already has
+		// and thereby resumes if the browser previously stopped the worker.
+		const timer = window.setTimeout(() => {
+			if (navigator.serviceWorker.controller) {
+				requestPreload();
+			} else {
+				navigator.serviceWorker.addEventListener('controllerchange', requestPreload, { once: true });
+			}
+		}, 1_500);
+
+		return () => {
+			cancelled = true;
+			window.clearTimeout(timer);
+			navigator.serviceWorker.removeEventListener('controllerchange', requestPreload);
+		};
+	});
 </script>
 
 <svelte:head>

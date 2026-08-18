@@ -8,7 +8,7 @@
 	 * edition — rather than looping over each Bible work and duplicating the
 	 * whole grid per edition. Only the book *names* and the link *targets* are
 	 * edition-specific — and only the NAMES now, since the hrefs became
-	 * edition-free (`/bible/{book}/{chapter}`, see that route's `+page.ts`).
+	 * edition-free (`/scriptura/{book}/{chapter}`, see that route's `+page.ts`).
 	 *
 	 * Interaction: book-first, then chapters. 73 books x up to 150 chapters
 	 * is too much to lay flat, so books are grouped into Old/New Testament
@@ -44,7 +44,7 @@
 	 * TWO VARIANTS, because the reflow problem above only exists in ONE of
 	 * the two places this component is used. `'grid'` (default) is
 	 * everything described so far — a wrapped flex grid of book buttons with
-	 * an absolutely-positioned popover — used by the `/bible` landing route
+	 * an absolutely-positioned popover — used by the `/scriptura` landing route
 	 * and by the reading view's mobile/collapsed picker. `'sidebar'` is for
 	 * the reading view's desktop right column (`.reading-aside`, app.css).
 	 * It keeps the wrapped grid of books — 73 books as chips wrap into a few
@@ -276,7 +276,7 @@
 			{#each book.chapters as chapterN (chapterN)}
 				{#if present.has(chapterN)}
 					<a
-						href={`/bible/${book.osis}/${chapterN}`}
+						href={`/scriptura/${book.osis}/${chapterN}`}
 						class:current={book.osis === currentOsis && chapterN === currentChapter}
 					>
 						{chapterN}

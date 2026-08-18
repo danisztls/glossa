@@ -3,19 +3,19 @@
 	reader is reading — including an edition in another language (distinct
 	from the UI language switch, `LanguageMenu`; see content.svelte.ts).
 
-	Contextual by route: lists Bible editions under `/bible`, Catechism
-	editions under `/ccc`, Compendium editions under `/compendium`, prayer
-	collection editions under `/prayers` (same one-canonical-work-per-language
+	Contextual by route: lists Bible editions under `/scriptura`, Catechism
+	editions under `/catechismus`, Compendium editions under `/compendium`, prayer
+	collection editions under `/preces` (same one-canonical-work-per-language
 	shape as the Compendium), this ONE document's editions under
-	`/documents/{slug}`, and renders nothing anywhere else (`context()` below
+	`/documenta/{slug}`, and renders nothing anywhere else (`context()` below
 	returns undefined for e.g. the home page, where no work is in view).
 
 	DOCUMENTS ARE A THIRD SHAPE OF CONTEXT, NOT A FOURTH `WorkTypeKey`: the
 	Bible/CCC/Compendium branches all resolve editions through
 	`content.workIdFor(type)`/`listEditions(type)`, keyed by a fixed
 	`WorkTypeKey` with a small, corpus-wide edition list. A document doesn't
-	have "the" edition list — `/documents/lumen-gentium` and
-	`/documents/gaudium-et-spes` each have their OWN EN/PT pair — so
+	have "the" edition list — `/documenta/lumen-gentium` and
+	`/documenta/gaudium-et-spes` each have their OWN EN/PT pair — so
 	`context()` returns a `{ kind: 'document', slug }` variant instead, and
 	every branch below that touches editions/the content store forks on
 	`ctx.kind` to reach `getDocumentGroup(slug)`/`content.documentWorkIdFor`/
@@ -25,7 +25,7 @@
 	EVERY URL IS EDITION-FREE NOW (docs/decisions.md #2). This used to be the
 	one place with a fork in it: CCC and Compendium URLs named no edition, so
 	picking one was a pure store write, while the Bible's reading route
-	carried `/bible/{edition}/{book}/{chapter}` and had to *navigate* on a
+	carried `/scriptura/{edition}/{book}/{chapter}` and had to *navigate* on a
 	pick or the URL and the reader's choice would disagree. The Bible now
 	embeds every edition at an edition-free address and renders whichever the
 	store says, so that fork is gone and all four contexts behave alike:
@@ -44,24 +44,24 @@
 	type Context = { kind: 'type'; type: WorkTypeKey } | { kind: 'document'; slug: string };
 
 	function context(pathname: string): Context | undefined {
-		if (pathname === '/bible' || pathname.startsWith('/bible/')) {
+		if (pathname === '/scriptura' || pathname.startsWith('/scriptura/')) {
 			return { kind: 'type', type: 'bible' };
 		}
-		if (pathname === '/ccc' || pathname.startsWith('/ccc/')) {
+		if (pathname === '/catechismus' || pathname.startsWith('/catechismus/')) {
 			return { kind: 'type', type: 'catechism' };
 		}
 		if (pathname === '/compendium' || pathname.startsWith('/compendium/')) {
 			return { kind: 'type', type: 'compendium' };
 		}
-		if (pathname === '/prayers' || pathname.startsWith('/prayers/')) {
+		if (pathname === '/preces' || pathname.startsWith('/preces/')) {
 			return { kind: 'type', type: 'prayer' };
 		}
-		// `/documents` itself (the library) has no single document in view —
+		// `/documenta` itself (the library) has no single document in view —
 		// same "renders nothing" behavior as the home page, hence `startsWith`
 		// with the trailing slash rather than a bare prefix check.
-		// `/documents/[slug]` is the only route below it, and it sets
+		// `/documenta/[slug]` is the only route below it, and it sets
 		// `page.params.slug`.
-		if (pathname.startsWith('/documents/') && page.params.slug) {
+		if (pathname.startsWith('/documenta/') && page.params.slug) {
 			return { kind: 'document', slug: page.params.slug };
 		}
 		return undefined;

@@ -109,7 +109,7 @@
 			<ul class="docs">
 				{#each group.rows as row (row.slug)}
 					<li>
-						<a href={`/documents/${row.slug}`} class="doc-link">
+						<a href={`/documenta/${row.slug}`} class="doc-link">
 							<span class="doc-title">{row.manifest.title}</span>
 							<!-- Marked, not hidden: a document that silently vanishes from
 							     the library looks like a bug and invites someone to "fix"

@@ -335,7 +335,7 @@
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
 			<nav class="breadcrumb" aria-label="Breadcrumb">
-				<a href="/documents">{t('nav.magisterium')}</a>
+				<a href="/documenta">{t('nav.magisterium')}</a>
 			</nav>
 
 			<div class="title-row">

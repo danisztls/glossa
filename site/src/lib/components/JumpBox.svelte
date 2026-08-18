@@ -90,7 +90,7 @@
 				return;
 			}
 			closeBox();
-			goto(`/ccc/${ref.n}`);
+			goto(`/catechismus/${ref.n}`);
 			return;
 		}
 
@@ -127,7 +127,7 @@
 					? `?v=${target.verse}-${target.verseEnd}`
 					: '';
 			closeBox();
-			goto(`/bible/${resolved.book.osis}/${target.chapter}${query}${hash}`);
+			goto(`/scriptura/${resolved.book.osis}/${target.chapter}${query}${hash}`);
 			return;
 		}
 

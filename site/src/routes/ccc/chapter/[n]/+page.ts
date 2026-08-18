@@ -3,47 +3,24 @@ import {
 	cccLangs,
 	getCccChapterFor,
 	getCccParagraphRangeAsync,
-	getWork,
-	listCccChapters
+	getWork
 } from '$lib/corpus';
 import type { CccNode, CccParagraph, WorkManifest } from '$lib/types';
-import type { EntryGenerator, PageLoad } from './$types';
+import type { PageLoad } from './$types';
 
 /**
  * Whole-chapter reading view, addressed by the chapter's first paragraph
  * number (`corpus.ts`'s `listCccChapters` explains why that address and not
  * a slug or ordinal).
  *
- * Same per-language embedding shape as the single-paragraph route
- * (`ccc/[n]/+page.ts`) and for the same reason: content language is a
- * client-side preference and this route is prerendered, so there is no
- * request in which to resolve it. The cost is higher here — a chapter's full
- * text per language rather than one paragraph — but still bounded by the
- * CCC's largest chapter, and it buys instant language switching mid-chapter
- * with no refetch.
+ * The SPA requests the language editions needed for this reading view rather
+ * than serialising a separate HTML document for every chapter start.
  */
 export interface CccChapterLangData {
 	chapter: CccNode;
 	paragraphs: CccParagraph[];
 	work: WorkManifest;
 }
-
-/**
- * Chapters are enumerated across EVERY language, not just one, and unioned
- * by start paragraph. EN and PT structure trees genuinely diverge
- * (docs/decisions.md's language symmetry principle — ccc.pt has 480
- * structure nodes to ccc.en's 396), so a chapter boundary present in only
- * one language still needs its page: with `prerender.handleHttpError:
- * 'fail'`, a link the PT tree emits to a page the EN tree never generated
- * would fail the whole build.
- */
-export const entries: EntryGenerator = () => {
-	const starts = new Set<number>();
-	for (const lang of cccLangs()) {
-		for (const chapter of listCccChapters(lang)) starts.add(chapter.paragraphs[0] as number);
-	}
-	return [...starts].sort((a, b) => a - b).map((n) => ({ n: String(n) }));
-};
 
 export const load: PageLoad = async ({ params }) => {
 	const n = Number(params.n);

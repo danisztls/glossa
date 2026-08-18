@@ -43,7 +43,7 @@
 			<ul class="prayer-list">
 				{#each group.prayers as meta (meta.slug)}
 					<li>
-						<a class="prayer-link" href={`/prayers/${meta.slug}`}>{meta.title}</a>
+						<a class="prayer-link" href={`/preces/${meta.slug}`}>{meta.title}</a>
 					</li>
 				{/each}
 			</ul>

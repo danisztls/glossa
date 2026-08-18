@@ -13,7 +13,7 @@
  * content href on the site is generated in exactly one place (`refs.ts`'s
  * `refHref`, plus a handful of direct template literals in route
  * components — the book/chapter picker, prev/next chapter nav — that all
- * emit the identical `/bible/{osis}/{chapter}` shape with no query/hash).
+ * emit the identical `/scriptura/{osis}/{chapter}` shape with no query/hash).
  * `refHref` already canonicalizes chapter/verse numbers to this corpus's
  * Vulgate address space before the href is ever written to the DOM (see its
  * own docblock on `resolveVulgate`) — so a link's `chapter`/`verse` numbers
@@ -47,17 +47,17 @@ export type PreviewTarget =
 // the signal used to reject it two lines down).
 const INTERNAL_BASE = 'https://glossa.internal.invalid';
 
-const BIBLE_RE = /^\/bible\/([a-z0-9]+)\/(\d+)$/;
-const CCC_CHAPTER_RE = /^\/ccc\/chapter\/(\d+)$/;
-const CCC_RE = /^\/ccc\/(\d+)$/;
+const BIBLE_RE = /^\/scriptura\/([a-z0-9]+)\/(\d+)$/;
+const CCC_CHAPTER_RE = /^\/catechismus\/caput\/(\d+)$/;
+const CCC_RE = /^\/catechismus\/(\d+)$/;
 const COMPENDIUM_RE = /^\/compendium\/(\d+)$/;
-// A document is ONE page and a section is a fragment on it (`/documents/
+// A document is ONE page and a section is a fragment on it (`/documenta/
 // {slug}#s{n}`) — `documents/[slug]/[n]` was retired 2026-08-17, see
 // docs/decisions.md. So unlike the CCC/Compendium shapes above, the section
 // number is not in the path: matching the path alone means "this document",
 // which is a whole encyclical rather than a previewable unit, and only the
 // `#s{n}` anchor names something small enough to show in a popover.
-const DOCUMENT_RE = /^\/documents\/([a-z0-9-]+)$/;
+const DOCUMENT_RE = /^\/documenta\/([a-z0-9-]+)$/;
 const VERSE_SPAN_RE = /^(\d+)-(\d+)$/;
 const VERSE_ANCHOR_RE = /^#v(\d+)$/;
 const SECTION_ANCHOR_RE = /^#s(\d+)$/;
@@ -65,7 +65,7 @@ const SECTION_ANCHOR_RE = /^#s(\d+)$/;
 /**
  * Parse an anchor's `href` attribute into a preview target, or `undefined`
  * for anything that isn't one of the five content-link shapes this feature
- * covers (nav chrome, external links, an unanchored `/documents/{slug}`,
+ * covers (nav chrome, external links, an unanchored `/documenta/{slug}`,
  * ...) — see the module docblock and each kind's route in `+layout.svelte`'s
  * caller.
  *

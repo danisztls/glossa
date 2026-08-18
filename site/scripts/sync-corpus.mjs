@@ -64,6 +64,10 @@ const corpusDir = path.resolve(siteRoot, process.env.CORPUS_DIR ?? '../corpus');
 const destDir = path.join(siteRoot, 'src/lib/corpus-data');
 const indexDir = path.join(destDir, 'index');
 const contentDir = path.join(destDir, 'content');
+// Public but address-only: the Cloudflare edge worker reads this before it
+// serves the SPA shell, so an existing citation receives 200 while a typo
+// remains a real 404. It is generated alongside corpus-data, never edited.
+const routeManifestPath = path.join(siteRoot, 'static/corpus-routes.json');
 
 /** CCC/Compendium `paragraphs.json`/`questions.json` are per-language single
  *  arrays ordered by `n`; Bible books split naturally along the print
@@ -96,6 +100,11 @@ const worksSrc = path.join(corpusDir, 'works');
 const xrefsSrc = path.join(corpusDir, 'xrefs');
 
 if (!existsSync(worksSrc)) {
+	// A fixture build must never inherit a real corpus's route manifest from a
+	// previous build. Without this, preflight would see a plausible work count
+	// beside fixture client assets and could approve exactly the deploy it is
+	// meant to stop. This is generated site output, never corpus/raw.
+	rmSync(routeManifestPath, { force: true });
 	console.warn(
 		`[sync-corpus] No corpus found at ${worksSrc} -- corpus.ts will fall back to its bundled ` +
 			`fixtures. Set CORPUS_DIR to point at a real corpus/ checkout to build with real data.`
@@ -190,6 +199,7 @@ const manifests = {}; // workId -> manifest.json, verbatim (every work type, inc
 const bibleIndex = {}; // workId -> { books: BibleBookMeta[] }
 const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
 const compendiumIndex = {}; // lang -> { structure }
+const compendiumQuestionNumbers = []; // canonical URL existence, across languages
 const documentIndex = {}; // workId -> { structure, sectionNumbers } -- keyed by WORK ID, not lang: unlike
 // the CCC/Compendium (one canonical work per language), each document work id
 // (`{family}.{slug}.{lang}`) is its own independent work with its own section
@@ -324,6 +334,7 @@ for (const workId of workIds) {
 		compendiumIndex[lang] = { structure };
 
 		const questions = readJson(path.join(workDir, 'questions.json'));
+		compendiumQuestionNumbers.push(...questions.map((question) => question.n));
 		const relPath = `content/${workId}/questions.json`;
 		writeJson(path.join(destDir, relPath), questions);
 		contentManifest.push({
@@ -434,6 +445,71 @@ if (existsSync(xrefsSrc)) {
 }
 
 writeJson(path.join(indexDir, 'content-manifest.json'), contentManifest);
+
+/** The chapter route is addressed by a chapter's first paragraph. Keep this
+ * in sync with `corpus.ts`'s `CCC_CHAPTER_KINDS`/`listCccChapters`: the edge
+ * may only bless canonical addresses the client reader can actually resolve.
+ */
+const CCC_CHAPTER_KINDS = new Set(['chapter', 'prologue', 'section', 'part']);
+
+function cccChapterStarts(nodes) {
+	const starts = [];
+	function walk(items) {
+		for (const node of items) {
+			const [from, to] = node.paragraphs ?? [];
+			if (CCC_CHAPTER_KINDS.has(node.kind) && Number.isFinite(from) && Number.isFinite(to)) {
+				starts.push(from);
+			}
+			walk(node.children ?? []);
+		}
+	}
+	walk(nodes);
+	return starts;
+}
+
+/**
+ * Route-only output for `src/worker.ts`. The client has richer index data;
+ * the worker needs only enough to answer the binary question "is this a
+ * canonical address?", and keeping text out is intentional.
+ */
+const routeManifest = {
+	version: 1,
+	workCount: workIds.length,
+	contentAssetCount: contentManifest.length,
+	bible: (() => {
+		const byBook = new Map();
+		for (const { books } of Object.values(bibleIndex)) {
+			for (const book of books) {
+				const chapters = byBook.get(book.osis) ?? new Set();
+				for (const chapter of book.chapters) chapters.add(chapter.n);
+				byBook.set(book.osis, chapters);
+			}
+		}
+		return Object.fromEntries(
+			[...byBook.entries()].map(([osis, chapters]) => [osis, [...chapters].sort((a, b) => a - b)])
+		);
+	})(),
+	ccc: [
+		...new Set(Object.values(cccIndex).flatMap((value) => value.paragraphNumbers))
+	].sort((a, b) => a - b),
+	cccChapters: [
+		...new Set(Object.values(cccIndex).flatMap((value) => cccChapterStarts(value.structure)))
+	].sort((a, b) => a - b),
+	compendium: [...new Set(compendiumQuestionNumbers)].sort((a, b) => a - b),
+	documents: [
+		...new Set(
+			Object.entries(manifests)
+				.filter(([, manifest]) => manifest.type === 'document')
+				.map(([workId]) => /^([a-z0-9-]+)\.([a-z0-9-]+)\.([a-z]{2,3})$/.exec(workId)?.[2])
+				.filter(Boolean)
+		)
+	].sort(),
+	prayers: [
+		...new Set(Object.values(prayerIndex).flatMap((value) => value.prayers.map((prayer) => prayer.slug)))
+	].sort()
+};
+
+writeJson(routeManifestPath, routeManifest);
 
 // Copied into the index tier so the SITE knows which works are unpublished,
 // not merely that their content files are missing. The distinction matters:

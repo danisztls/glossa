@@ -1189,7 +1189,7 @@ function firstLocusSection(locus: string | null): number | undefined {
  * link at all if that specific edition doesn't have the section.
  */
 export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: string }): string | undefined {
-	if (seg.kind === 'ccc') return `/ccc/${seg.n}`;
+	if (seg.kind === 'ccc') return `/catechismus/${seg.n}`;
 	if (seg.kind === 'compendium') return `/compendium/${seg.n}`;
 	if (seg.kind === 'documentTitle') {
 		// The reader's own language edition, for the same reason the siglum
@@ -1208,9 +1208,9 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 		// 9,315 prerendered files for one section of text each). `#s{n}` is the
 		// same anchor the reading view has always carried.
 		if (n !== undefined && documentSectionExists(workId, n)) {
-			return `/documents/${seg.slug}#s${n}`;
+			return `/documenta/${seg.slug}#s${n}`;
 		}
-		return `/documents/${seg.slug}`;
+		return `/documenta/${seg.slug}`;
 	}
 	if (seg.kind === 'document') {
 		if (!seg.slug) return undefined; // recognized siglum, but not an ingested document (or PT, which never resolves one)
@@ -1220,7 +1220,7 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 		const workId = getDocumentGroup(seg.slug)?.manifests[targetLang]?.id;
 		if (!workId || !documentSectionExists(workId, n)) return undefined;
 		// Fragment, not a path segment — see the `documentTitle` branch above.
-		return `/documents/${seg.slug}#s${n}`;
+		return `/documenta/${seg.slug}#s${n}`;
 	}
 	if (seg.kind !== 'scripture') return undefined; // 'text' never links
 
@@ -1321,7 +1321,7 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 	// `ctx.bibleWorkId` is still required above: it decides whether the
 	// book/chapter/verse EXISTS for this reader, which is what stops a dead
 	// link — it just no longer appears in the URL.
-	return `/bible/${seg.osis}/${chapterN}${query}${anchor}`;
+	return `/scriptura/${seg.osis}/${chapterN}${query}${anchor}`;
 }
 
 /**

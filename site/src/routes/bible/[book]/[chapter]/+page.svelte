@@ -179,7 +179,7 @@
 	 * BROWSER-ONLY, and SvelteKit is right to insist: reading `searchParams`
 	 * during prerendering throws, because one prerendered file has to serve
 	 * every query string that points at it. That is exactly the property
-	 * being relied on here — `/bible/john/1` is built once and the highlight
+	 * being relied on here — `/scriptura/john/1` is built once and the highlight
 	 * is applied on top of it per-visit — so the guard states the design
 	 * rather than working around a restriction. The chapter renders complete
 	 * without JavaScript; only the passage marking needs it.
@@ -224,7 +224,7 @@
 	 * exists in the edition being rendered.
 	 *
 	 * IT SOMETIMES DOESN'T, and the flag is load-bearing rather than
-	 * defensive: prerendering caught `/bible/luke/2#v61` pointing at a
+	 * defensive: validation caught `/scriptura/luke/2#v61` pointing at a
 	 * chapter that ends at verse 52. Measured across the corpus, 19 of the
 	 * ~3,800 references in `xrefs/ccc-bible.json` name a verse outside its
 	 * chapter, from two unrelated causes —
@@ -369,7 +369,7 @@
 								<span class="paragraphs">
 									{#each row.paragraphs as n, i (n)}
 										{#if i > 0}<span class="sep" aria-hidden="true">·</span>{/if}
-										<a href={`/ccc/${n}`}>¶{n}</a>
+										<a href={`/catechismus/${n}`}>¶{n}</a>
 									{/each}
 								</span>
 							</li>
@@ -380,14 +380,14 @@
 
 			<nav class="chapter-nav" aria-label="Chapter navigation">
 				{#if prev}
-					<a href={`/bible/${prev.osis}/${prev.chapter}`} rel="prev">
+					<a href={`/scriptura/${prev.osis}/${prev.chapter}`} rel="prev">
 						&larr; {t('bible.prevChapter')}
 					</a>
 				{:else}
 					<span></span>
 				{/if}
 				{#if next}
-					<a href={`/bible/${next.osis}/${next.chapter}`} rel="next">
+					<a href={`/scriptura/${next.osis}/${next.chapter}`} rel="next">
 						{t('bible.nextChapter')} &rarr;
 					</a>
 				{/if}
