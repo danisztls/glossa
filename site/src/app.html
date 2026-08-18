@@ -47,6 +47,29 @@
 					document.documentElement.style.setProperty('--reading-scale', String(s));
 				}
 			} catch (e) {}
+			// The static shell is authored in English, but a reader with no saved
+			// choice should still get the document language matching their browser
+			// as early as possible. The app store performs the same negotiation and
+			// persists the result during hydration; this only keeps the outer
+			// document semantically correct before then.
+			try {
+				var l = localStorage.getItem('glossa:ui-lang');
+				if (l !== 'en' && l !== 'pt') {
+					var ls =
+						navigator.languages && navigator.languages.length
+							? navigator.languages
+							: [navigator.language];
+					l = 'en';
+					for (var i = 0; i < ls.length; i++) {
+						var p = String(ls[i]).trim().toLowerCase().split('-', 1)[0];
+						if (p === 'en' || p === 'pt') {
+							l = p;
+							break;
+						}
+					}
+				}
+				document.documentElement.lang = l;
+			} catch (e) {}
 		</script>
 		%sveltekit.head%
 	</head>

@@ -16,6 +16,7 @@
 export type UiLang = 'en' | 'pt';
 
 const STORAGE_KEY = 'glossa:ui-lang';
+const DEFAULT_LANG: UiLang = 'en';
 
 type Dictionary = Record<string, string>;
 
@@ -415,8 +416,47 @@ function readStored(): UiLang | null {
 	return value === 'en' || value === 'pt' ? value : null;
 }
 
+/**
+ * Pick the first browser-preferred language that the interface supports.
+ *
+ * Browser locale tags are normally regional (`pt-BR`, `en-US`), while the
+ * interface deliberately has one Portuguese and one English locale. Matching
+ * the primary subtag gives both variants the right UI without pretending that
+ * we have separate regional translations. Unknown locales fall back to
+ * English, the site's existing no-preference default.
+ */
+export function detectUiLang(languages: readonly string[] | undefined): UiLang {
+	for (const language of languages ?? []) {
+		const primary = language.trim().toLowerCase().split('-', 1)[0];
+		if (primary === 'en' || primary === 'pt') return primary;
+	}
+	return DEFAULT_LANG;
+}
+
+function browserLanguage(): UiLang {
+	if (typeof navigator === 'undefined') return DEFAULT_LANG;
+	const languages = navigator.languages?.length ? navigator.languages : [navigator.language];
+	return detectUiLang(languages);
+}
+
+/**
+ * A saved choice is always authoritative. Only a reader with no valid saved
+ * choice is language-negotiated, and that initial result is saved so later
+ * visits remain stable even if the browser's language list changes.
+ */
+function initialLang(): UiLang {
+	const stored = readStored();
+	if (stored) return stored;
+
+	const detected = browserLanguage();
+	if (typeof localStorage !== 'undefined') {
+		localStorage.setItem(STORAGE_KEY, detected);
+	}
+	return detected;
+}
+
 class I18nStore {
-	lang: UiLang = $state(readStored() ?? 'en');
+	lang: UiLang = $state(initialLang());
 
 	set(lang: UiLang) {
 		this.lang = lang;

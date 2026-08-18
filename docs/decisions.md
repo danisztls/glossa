@@ -254,3 +254,11 @@ Amends pure-verbatim: **verified source defects are corrected, and every correct
 **Deployment guard**: `preflight-deploy.mjs` now checks the generated manifest's work and content-file counts rather than a minimum number of HTML files; the old prerender-count guard would reject a correct SPA build and could not distinguish it from fixtures.
 
 **Verified**: the real corpus sync generated **347 works / 541 content assets** and its route manifest; `npm test` passes (**303 tests**), `npm run check` passes with zero diagnostics, `npm run build` produces the two-shell / 635-file output, and `npm run preflight` accepts it. Local Worker requests verified canonical `200` responses for `/scriptura/gen/1`, `/catechismus/1234`, and `/documenta/lumen-gentium`; former English roots return `404`; and a trailing slash returns `308`. `wrangler deploy --dry-run` compiled the worker and recognized the `ASSETS` binding (the sandbox could not write Wrangler's optional home-directory debug log). A browser-level Cloudflare request and service-worker lifecycle test still belongs to deployment verification.
+
+## 2026-08-18 — Detect interface language on a reader's first visit
+
+**What**: when `glossa:ui-lang` is absent or invalid, the client examines the browser's ordered language preferences and selects the first supported primary language: `pt-*` selects Portuguese, `en-*` selects English. It falls back to English when neither appears. That detected value is immediately stored under the existing preference key; an explicit choice made from the language menu always remains authoritative.
+
+**Why**: the interface language also selects the default content edition. Starting a Portuguese-speaking reader in English made both the chrome and their first Bible/Catechism text unnecessarily wrong, while changing an existing preference from the browser on every visit would be equally surprising. Persisting the initial negotiation gives first-time readers the right default without taking a later choice away.
+
+**Static-shell consequence**: the app HTML uses the same small primary-subtag check before hydration to set the document's `lang` attribute. The reader UI still changes when the client hydrates; this early step preserves the correct document language for assistive technology during that interval.
