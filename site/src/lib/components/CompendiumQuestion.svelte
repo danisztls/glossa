@@ -8,6 +8,7 @@
 	import type { CompendiumQuestion } from '$lib/types';
 	import CompendiumAnswer from './CompendiumAnswer.svelte';
 	import RefText from './RefText.svelte';
+	import ReferenceNumber from './ReferenceNumber.svelte';
 
 	interface Props {
 		question: CompendiumQuestion;
@@ -42,14 +43,12 @@
 
 {#if href}
 	<section class="question" id={`q${question.n}`}>
-		<a
-			class="question-n"
+		<ReferenceNumber
+			n={question.n}
 			{href}
-			aria-label={`${t('compendium.question')} ${question.n}`}
-			data-link-preview="off"
-		>
-			{question.n}
-		</a>
+			label={`${t('compendium.question')} ${question.n}`}
+			placement="margin"
+		/>
 		{@render qa()}
 	</section>
 {:else}
@@ -109,32 +108,5 @@
 	.question {
 		position: relative;
 		margin-bottom: 2rem;
-	}
-
-	.question-n {
-		position: absolute;
-		inset-inline-start: -3.25rem;
-		top: 0.15em;
-		width: 2.75rem;
-		text-align: end;
-		font-size: 0.8rem;
-		font-variant-numeric: tabular-nums;
-		color: var(--color-apparatus);
-		text-decoration: none;
-	}
-
-	.question-n:hover {
-		color: var(--color-accent);
-		text-decoration: underline;
-	}
-
-	@media (max-width: 60rem) {
-		.question-n {
-			position: static;
-			display: block;
-			width: auto;
-			margin-bottom: 0.15rem;
-			text-align: start;
-		}
 	}
 </style>

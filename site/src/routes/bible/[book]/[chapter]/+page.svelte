@@ -16,6 +16,7 @@
 	// it, and the heading is already doing the work of marking the opening.
 	import { splitDropCap } from '$lib/dropcap';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
+	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
@@ -274,7 +275,15 @@
 </svelte:head>
 
 {#snippet verseCell(verse: Verse)}
-	<p class="compare-verse"><sup class="verse-num">{verse.n}</sup>{verse.text}</p>
+	<p class="compare-verse">
+		<ReferenceNumber
+			n={verse.n}
+			href={`#v${verse.n}`}
+			label={`${t('bible.verseAbbrev')} ${verse.n}`}
+			placement="inline"
+		/>
+		{verse.text}
+	</p>
 {/snippet}
 
 {#if current}
@@ -333,9 +342,14 @@
 							<h2 class="section-heading">{heading.text}</h2>
 						{/if}
 						<span id={`v${verse.n}`} class="verse" class:cited={isCited(verse.n)}>
-							<sup class="verse-num">{verse.n}</sup>{#if i === 0 && !heading}{@const cap =
-									splitDropCap(verse.text)}{#if cap.first}<span class="drop-cap-letter"
-										>{cap.first}</span
+							<ReferenceNumber
+								n={verse.n}
+								href={`#v${verse.n}`}
+								label={`${t('bible.verseAbbrev')} ${verse.n}`}
+								placement="inline"
+								emphasized={isCited(verse.n)}
+							/>{#if i === 0 && !heading}{@const cap = splitDropCap(verse.text)}{#if cap.first}<span
+										class="drop-cap-letter">{cap.first}</span
 									>{cap.rest}{:else}{verse.text}{/if}{:else}{verse.text}{/if}
 						</span>
 					{/each}
@@ -471,13 +485,6 @@
 		margin-right: 0.25em;
 	}
 
-	.verse-num {
-		font-size: 0.65em;
-		color: var(--color-text-muted);
-		margin-right: 0.15em;
-		user-select: none;
-	}
-
 	/* The passage a citation pointed at (`?v=1-7`). A wash rather than a
 	   border or a block: the verses run together as continuous prose, so
 	   anything with edges would break the paragraph into boxes. `box-decoration-
@@ -492,10 +499,6 @@
 		-webkit-box-decoration-break: clone;
 		border-radius: 0.15em;
 		padding-block: 0.05em;
-	}
-
-	.verse.cited .verse-num {
-		color: var(--color-accent);
 	}
 
 	/* The highlight is information, not decoration — but a reader who has

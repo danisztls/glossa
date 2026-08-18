@@ -650,7 +650,7 @@
 	}
 
 	/* Section numbers hang in the left margin where there's room for them,
-	   exactly `ccc/chapter/[n]`'s `.para`/`.para-n` treatment. */
+	   exactly the CCC chapter reader's paragraph-reference treatment. */
 	.section {
 		position: relative;
 		margin-bottom: 1.1rem;

@@ -17,6 +17,7 @@
 	import { flattenCccStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
+	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
@@ -210,16 +211,14 @@
 						     view is for reading, that one for citing and cross-linking,
 						     and a reader who wants the second from inside the first
 						     should not have to go back through the TOC. -->
-							<a
-								class="para-n"
+							<ReferenceNumber
+								n={paragraph.n}
 								href={`/catechismus/${paragraph.n}`}
-								aria-label={`CCC ${paragraph.n}`}
-								data-link-preview="off"
-							>
-								{paragraph.n}
-							</a>
+								label={`CCC ${paragraph.n}`}
+								placement="margin"
+							/>
 							<!-- The CSS `::first-letter` drop cap works here (unlike in the
-						     Bible reader) precisely because `.para-n` is absolutely
+							     Bible reader) precisely because the margin reference is absolutely
 						     positioned: the first inline content of `.para-text` really
 						     is the first letter of the prose. Opening paragraph only,
 						     and never on an "in brief" summary block. -->
@@ -310,28 +309,6 @@
 		margin-bottom: 1.1rem;
 	}
 
-	.para-n {
-		position: absolute;
-		inset-inline-start: -3.25rem;
-		top: 0.15em;
-		width: 2.75rem;
-		text-align: end;
-		font-size: 0.8rem;
-		font-variant-numeric: tabular-nums;
-		/* Ultramarine, not muted grey: this is the reference apparatus, and
-		   blue is the colour the manuscript tradition gave that job (see the
-		   palette docblock in app.css). Hover still resolves to the accent,
-		   which is the site-wide interactive signal — a transient red against
-		   the resting blue, which is the pairing rather than a break from it. */
-		color: var(--color-apparatus);
-		text-decoration: none;
-	}
-
-	.para-n:hover {
-		color: var(--color-accent);
-		text-decoration: underline;
-	}
-
 	/* "In brief" summary blocks are set apart in the printed text too; without
 	   this they read as just more prose in a wall of it. */
 	.para.in-brief .para-text {
@@ -339,16 +316,6 @@
 		padding-inline-start: 0.9rem;
 		font-size: 0.95em;
 		color: var(--color-text-muted);
-	}
-
-	@media (max-width: 60rem) {
-		.para-n {
-			position: static;
-			display: block;
-			width: auto;
-			text-align: start;
-			margin-bottom: 0.15rem;
-		}
 	}
 
 	/* No mobile counterpart exists to preserve — below `.reading-layout`'s
