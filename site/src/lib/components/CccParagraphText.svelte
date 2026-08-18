@@ -11,7 +11,7 @@
 	 * (docs/corpus-schema.md §Documents) carry the identical wire shape for
 	 * both fields — a document's `sections.json` reuses the CCC's block model
 	 * verbatim. Structural typing means both satisfy this without a cast:
-	 * this component is genuinely shared between `/ccc/[n]` and
+	 * this component is genuinely shared between `/catechismus/[n]` and
 	 * `/documents/{slug}/{n}`, not merely similar-looking duplicated markup.
 	 */
 	interface Props {

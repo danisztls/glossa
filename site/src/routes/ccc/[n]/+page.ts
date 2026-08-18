@@ -32,7 +32,7 @@ export interface CccLangData {
 	/**
 	 * The chapter this paragraph sits in, for the "read the full chapter"
 	 * link. Carries only what the link needs — its start paragraph (the
-	 * `/ccc/chapter/[n]` address) and its title/range for the label — never
+	 * `/catechismus/caput/[n]` address) and its title/range for the label — never
 	 * the chapter's text, which would multiply this page's payload by ~90x
 	 * to render one link (corpus.ts's "COARSE FETCH, NARROW RETURN").
 	 * Undefined for a paragraph no chapter-sized node contains.

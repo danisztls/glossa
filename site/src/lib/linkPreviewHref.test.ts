@@ -105,6 +105,13 @@ describe('parsePreviewHref', () => {
 			expect(parsePreviewHref('/compendium/12')).toEqual({ kind: 'compendium', n: 12 });
 		});
 
+		it('parses a whole-chapter link', () => {
+			expect(parsePreviewHref('/compendium/caput/1')).toEqual({
+				kind: 'compendiumChapter',
+				n: 1
+			});
+		});
+
 		it('does not treat the landing page as a question', () => {
 			expect(parsePreviewHref('/compendium')).toBeUndefined();
 		});
@@ -138,7 +145,14 @@ describe('parsePreviewHref', () => {
 
 	describe('chrome and non-content links', () => {
 		it('rejects the header nav targets', () => {
-			for (const href of ['/scriptura', '/catechismus', '/compendium', '/documenta', '/colophon', '/']) {
+			for (const href of [
+				'/scriptura',
+				'/catechismus',
+				'/compendium',
+				'/documenta',
+				'/colophon',
+				'/'
+			]) {
 				expect(parsePreviewHref(href)).toBeUndefined();
 			}
 		});

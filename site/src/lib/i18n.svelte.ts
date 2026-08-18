@@ -81,6 +81,8 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ccc.prevParagraph': 'Previous',
 		'ccc.nextParagraph': 'Next',
 		'ccc.inBrief': 'In Brief',
+		'ccc.landing.title': 'Catechism of the Catholic Church',
+		'ccc.landing.tagline': 'The complete text, arranged by its four parts.',
 		'ccc.tableOfContents': 'Table of Contents',
 		'ccc.related': 'See also',
 
@@ -94,6 +96,9 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'compendium.prevQuestion': 'Previous question',
 		'compendium.nextQuestion': 'Next question',
 		'compendium.condenses': 'Condenses CCC ¶¶',
+		'compendium.noQuestionNumber': 'No question number in this corpus',
+		'index.showSubsections': 'Show subsections',
+		'index.hideSubsections': 'Hide subsections',
 
 		// Common Prayers (docs/corpus-schema.md §Prayers) — routes/prayers/**
 		// is the consumer, plus the home page's compact Prayers section.
@@ -198,8 +203,6 @@ const dictionaries: Record<UiLang, Dictionary> = {
 			'This verse number is not in this edition — see the note in the page source',
 		'bible.verseAbbrev': 'v.',
 		'ccc.readFullChapter': 'Read the full chapter',
-		'ccc.showSubsections': 'Show subsections',
-		'ccc.hideSubsections': 'Hide subsections',
 		'ccc.noParagraphNumber': 'No paragraph number in this corpus',
 		'copyright.sourceTitle': 'Open the original source page',
 		'lang.label': 'Language',
@@ -273,6 +276,8 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ccc.prevParagraph': 'Anterior',
 		'ccc.nextParagraph': 'Próximo',
 		'ccc.inBrief': 'Resumindo',
+		'ccc.landing.title': 'Catecismo da Igreja Católica',
+		'ccc.landing.tagline': 'O texto completo, organizado nas suas quatro partes.',
 		'ccc.tableOfContents': 'Índice',
 		'ccc.related': 'Veja também',
 
@@ -285,6 +290,9 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'compendium.prevQuestion': 'Pergunta anterior',
 		'compendium.nextQuestion': 'Próxima pergunta',
 		'compendium.condenses': 'Condensa os §§',
+		'compendium.noQuestionNumber': 'Sem número de pergunta neste corpus',
+		'index.showSubsections': 'Mostrar subsecções',
+		'index.hideSubsections': 'Ocultar subsecções',
 
 		'prayers.landing.title': 'Orações Comuns',
 		'prayers.landing.tagline':
@@ -379,8 +387,6 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'bible.verseNotInEdition': 'Este número de versículo não existe nesta edição',
 		'bible.verseAbbrev': 'v.',
 		'ccc.readFullChapter': 'Ler o capítulo completo',
-		'ccc.showSubsections': 'Mostrar subsecções',
-		'ccc.hideSubsections': 'Ocultar subsecções',
 		'ccc.noParagraphNumber': 'Sem número de parágrafo neste corpus',
 		'copyright.sourceTitle': 'Abrir a página de origem',
 		'lang.label': 'Idioma',

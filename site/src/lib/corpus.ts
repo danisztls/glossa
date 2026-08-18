@@ -604,7 +604,7 @@ export function getCccChapterFor(lang: string, n: number): CccNode | undefined {
 
 /**
  * Every chapter-sized node in a language's structure — the entry list for
- * prerendering `/ccc/chapter/[n]`, which is addressed by a chapter's FIRST
+ * prerendering `/catechismus/caput/[n]`, which is addressed by a chapter's FIRST
  * paragraph number.
  *
  * That address is chosen over a slug or an index because it is the only
@@ -643,7 +643,7 @@ export async function getCccParagraphAsync(
 
 /**
  * Every paragraph from `from` to `to` inclusive — the whole-chapter reading
- * view (`/ccc/chapter/[n]`).
+ * view (`/catechismus/caput/[n]`).
  *
  * Fetches one chunk per 100-paragraph span the range touches, not one per
  * paragraph: the CCC's largest chapter is ~90 paragraphs, so this is
@@ -709,6 +709,38 @@ export function getCompendiumBreadcrumb(lang: string, n: number): StructureNode[
 }
 
 /**
+ * The Compendium's equivalent of a CCC whole-chapter unit. A chapter is the
+ * usual answer; the outer section/part fallbacks cover headings which begin
+ * before their first child chapter, so every outline destination can open a
+ * continuous reading page rather than one isolated question.
+ */
+const COMPENDIUM_CHAPTER_KINDS: StructureNode['kind'][] = ['chapter', 'section', 'part'];
+
+function isCompendiumChapterNode(node: StructureNode): boolean {
+	return (
+		COMPENDIUM_CHAPTER_KINDS.includes(node.kind) &&
+		Number.isFinite(node.paragraphs[0]) &&
+		Number.isFinite(node.paragraphs[1])
+	);
+}
+
+/** The innermost whole-reading unit containing question `n`. */
+export function getCompendiumChapterFor(lang: string, n: number): StructureNode | undefined {
+	const trail = getCompendiumBreadcrumb(lang, n);
+	for (let i = trail.length - 1; i >= 0; i--) {
+		if (isCompendiumChapterNode(trail[i])) return trail[i];
+	}
+	return undefined;
+}
+
+/** Every canonical Compendium whole-reading start in one language. */
+export function listCompendiumChapters(lang: string): StructureNode[] {
+	return flattenCompendiumStructure(lang)
+		.map(({ node }) => node)
+		.filter(isCompendiumChapterNode);
+}
+
+/**
  * Flatten the structure tree into a depth-first list, for building a TOC.
  * Shared implementation: see `flattenTree` above.
  */
@@ -738,6 +770,18 @@ export async function getCompendiumQuestionAsync(
 ): Promise<CompendiumQuestion | undefined> {
 	const questions = await fetchCompendiumQuestions(lang);
 	return questions.find((q) => q.n === n);
+}
+
+/** Every question in an inclusive structural range, for `/compendium/caput/[n]`.
+ * The source file is already fetched as one small, memoized language asset. */
+export async function getCompendiumQuestionRangeAsync(
+	lang: string,
+	from: number,
+	to: number
+): Promise<CompendiumQuestion[]> {
+	if (!Number.isFinite(from) || !Number.isFinite(to) || to < from) return [];
+	const questions = await fetchCompendiumQuestions(lang);
+	return questions.filter((question) => question.n >= from && question.n <= to);
 }
 
 /** The question number immediately before/after `n` that actually exists.

@@ -37,6 +37,7 @@ export type PreviewTarget =
 	| { kind: 'ccc'; n: number }
 	| { kind: 'cccChapter'; n: number }
 	| { kind: 'compendium'; n: number }
+	| { kind: 'compendiumChapter'; n: number }
 	| { kind: 'document'; slug: string; n: number };
 
 // A fixed, obviously-fake origin: `URL`'s relative-reference constructor
@@ -50,6 +51,7 @@ const INTERNAL_BASE = 'https://glossa.internal.invalid';
 const BIBLE_RE = /^\/scriptura\/([a-z0-9]+)\/(\d+)$/;
 const CCC_CHAPTER_RE = /^\/catechismus\/caput\/(\d+)$/;
 const CCC_RE = /^\/catechismus\/(\d+)$/;
+const COMPENDIUM_CHAPTER_RE = /^\/compendium\/caput\/(\d+)$/;
 const COMPENDIUM_RE = /^\/compendium\/(\d+)$/;
 // A document is ONE page and a section is a fragment on it (`/documenta/
 // {slug}#s{n}`) — `documents/[slug]/[n]` was retired 2026-08-17, see
@@ -121,6 +123,9 @@ export function parsePreviewHref(href: string | null | undefined): PreviewTarget
 
 	const compendium = COMPENDIUM_RE.exec(path);
 	if (compendium) return { kind: 'compendium', n: Number(compendium[1]) };
+
+	const compendiumChapter = COMPENDIUM_CHAPTER_RE.exec(path);
+	if (compendiumChapter) return { kind: 'compendiumChapter', n: Number(compendiumChapter[1]) };
 
 	const document = DOCUMENT_RE.exec(path);
 	if (document) {

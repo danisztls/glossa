@@ -37,6 +37,7 @@ import {
 	getDocumentManifest,
 	getDocumentSectionAsync,
 	documentSectionExists,
+	getCompendiumChapterFor,
 	isUnpublished,
 	listCccChapters
 } from './corpus';
@@ -99,6 +100,8 @@ function cacheKey(target: PreviewTarget): string | undefined {
 			return `cccChapter:${content.langFor('catechism')}:${target.n}`;
 		case 'compendium':
 			return `compendium:${content.langFor('compendium')}:${target.n}`;
+		case 'compendiumChapter':
+			return `compendiumChapter:${content.langFor('compendium')}:${target.n}`;
 		case 'document': {
 			const workId = content.documentWorkIdFor(target.slug);
 			if (!workId) return undefined;
@@ -162,7 +165,7 @@ async function resolveCccChapter(n: number): Promise<ResolvedPreview | undefined
 	const lang = content.langFor('catechism');
 	if (isUnpublished(`ccc.${lang}`)) return undefined;
 
-	// `/ccc/chapter/{n}` addresses a chapter by its FIRST paragraph number
+	// `/catechismus/caput/{n}` addresses a chapter by its FIRST paragraph number
 	// (corpus.ts's `listCccChapters` docblock) -- there is no direct
 	// "chapter node by first paragraph" lookup, so this is the same
 	// linear scan that route's own `+page.ts` already does to resolve the
@@ -190,6 +193,23 @@ async function resolveCompendium(n: number): Promise<ResolvedPreview | undefined
 	return {
 		title: `${i18n.t('compendium.question')} ${n}`,
 		body: truncate(`${question.question} ${answer}`)
+	};
+}
+
+async function resolveCompendiumChapter(n: number): Promise<ResolvedPreview | undefined> {
+	const lang = content.langFor('compendium');
+	if (isUnpublished(`compendium.${lang}`)) return undefined;
+	const chapter = getCompendiumChapterFor(lang, n);
+	if (!chapter) return undefined;
+	const dt = displayTitle(chapter, lang);
+	const question = await getCompendiumQuestionAsync(lang, n);
+	return {
+		title: dt.ordinal ? `${dt.ordinal} ${dt.title}` : dt.title,
+		body: question
+			? truncate(
+					`${question.question} ${question.answer_blocks.map((block) => block.text).join(' ')}`
+				)
+			: ''
 	};
 }
 
@@ -223,6 +243,8 @@ async function resolveUncached(target: PreviewTarget): Promise<ResolvedPreview |
 			return resolveCccChapter(target.n);
 		case 'compendium':
 			return resolveCompendium(target.n);
+		case 'compendiumChapter':
+			return resolveCompendiumChapter(target.n);
 		case 'document':
 			return resolveDocument(target);
 	}

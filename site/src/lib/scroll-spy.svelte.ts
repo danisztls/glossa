@@ -2,11 +2,11 @@
  * Which numbered unit the reader is currently looking at, on a page that
  * holds many of them.
  *
- * The single-unit routes (`/ccc/[n]`, `/compendium/[n]`) already know their
+ * The single-unit routes (`/catechismus/[n]`, `/compendium/[n]`) already know their
  * own position: the URL names it, and it cannot change without a
  * navigation. The CONTINUOUS views do
  * not — `/documents/[slug]` is a whole encyclical on one page and
- * `/ccc/chapter/[n]` a whole chapter — so their sidebar had no way to say
+ * `/catechismus/caput/[n]` a whole chapter — so their sidebar had no way to say
  * where the reader is, and (since the table of contents expands only the
  * branch containing the current position) nothing to expand either. This
  * supplies that missing number from scroll position.

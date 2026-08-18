@@ -1,13 +1,13 @@
 <script lang="ts">
 	/**
 	 * A whole CCC chapter in one page — the destination of the
-	 * "read the full chapter" link on `/ccc/[n]`.
+	 * "read the full chapter" link on `/catechismus/[n]`.
 	 *
 	 * Continuous prose rather than the single-paragraph route's card: no
 	 * per-paragraph headings, no prev/next paragraph nav, just the text with
 	 * its numbers set in the margin, which is how the Catechism is actually
 	 * printed and how anyone reading more than one paragraph at a time wants
-	 * it. Each paragraph keeps an `id` so `/ccc/chapter/27#p31` addresses a
+	 * it. Each paragraph keeps an `id` so `/catechismus/caput/27#p31` addresses a
 	 * specific paragraph within the chapter, and so the link back from a
 	 * single paragraph can land the reader where they already were.
 	 */
@@ -46,7 +46,7 @@
 	 * Compare mode, paragraph by paragraph across the whole chapter. Both
 	 * languages' full paragraph lists are already embedded (`+page.ts`'s own
 	 * docblock — same reasoning as the single-paragraph route), so, like
-	 * `/ccc/[n]`, this costs no fetch.
+	 * `/catechismus/[n]`, this costs no fetch.
 	 *
 	 * Chapter BOUNDARIES can genuinely diverge between EN and PT
 	 * (docs/decisions.md: "the vatican.va editions genuinely diverge in a few
@@ -58,7 +58,7 @@
 	 * chapter reaches renders as a row with a gap on the other side, exactly
 	 * like a genuine missing-translation gap would.
 	 */
-	/** See `/ccc/[n]`'s identical block for the reasoning — same shape here,
+	/** See `/catechismus/[n]`'s identical block for the reasoning — same shape here,
 	 *  paragraph-list-shaped `data.byLang` entries instead of single
 	 *  paragraphs. */
 	const otherEditions = $derived(
@@ -210,7 +210,11 @@
 						     view is for reading, that one for citing and cross-linking,
 						     and a reader who wants the second from inside the first
 						     should not have to go back through the TOC. -->
-							<a class="para-n" href={`/catechismus/${paragraph.n}`} aria-label={`CCC ${paragraph.n}`}>
+							<a
+								class="para-n"
+								href={`/catechismus/${paragraph.n}`}
+								aria-label={`CCC ${paragraph.n}`}
+							>
 								{paragraph.n}
 							</a>
 							<!-- The CSS `::first-letter` drop cap works here (unlike in the
@@ -227,7 +231,7 @@
 			{/if}
 		</article>
 
-		<!-- Same treatment as `/ccc/[n]` — hidden below 80rem, no mobile
+		<!-- Same treatment as `/catechismus/[n]` — hidden below 80rem, no mobile
 	     counterpart to preserve, and omitted entirely in compare mode (see
 	     app.css's `.reading-layout.compare` docblock). `from` is this
 	     language's actual matched chapter start (`getCccChapterFor`,

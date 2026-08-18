@@ -1,8 +1,9 @@
 <script lang="ts">
 	/**
 	 * Table of contents for the reading sidebar (`.reading-aside`, app.css),
-	 * shared by every route that has one: `/ccc/[n]`, `/ccc/chapter/[n]`,
-	 * `/compendium/[n]`, `/documents/[slug]`.
+	 * shared by every route that has one: `/catechismus/[n]`,
+	 * `/catechismus/caput/[n]`, `/compendium/[n]`,
+	 * `/compendium/caput/[n]`, `/documenta/[slug]`.
 	 * All four walk the same node shape — `CccNode`/`StructureNode` are
 	 * literally the same type (`$lib/types.ts`) — parametrized by which
 	 * flattened structure, which routing scheme, and (CCC/Compendium only)

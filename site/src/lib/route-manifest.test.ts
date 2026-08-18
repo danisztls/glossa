@@ -9,6 +9,7 @@ const manifest: RouteManifest = {
 	ccc: [1, 2, 10],
 	cccChapters: [1, 10],
 	compendium: [1, 2],
+	compendiumChapters: [1],
 	documents: ['lumen-gentium'],
 	prayers: ['our-father']
 };
@@ -21,6 +22,7 @@ describe('isCanonicalPath', () => {
 		'/catechismus/10',
 		'/catechismus/caput/10',
 		'/compendium/2',
+		'/compendium/caput/1',
 		'/documenta/lumen-gentium',
 		'/preces/our-father',
 		'/colophon'
@@ -35,6 +37,7 @@ describe('isCanonicalPath', () => {
 		'/catechismus/01',
 		'/catechismus/caput/2',
 		'/compendium/3',
+		'/compendium/caput/2',
 		'/documenta/made-up',
 		'/preces/made-up',
 		'/catechismus/10/extra',

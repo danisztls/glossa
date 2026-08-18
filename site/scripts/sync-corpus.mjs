@@ -446,18 +446,19 @@ if (existsSync(xrefsSrc)) {
 
 writeJson(path.join(indexDir, 'content-manifest.json'), contentManifest);
 
-/** The chapter route is addressed by a chapter's first paragraph. Keep this
- * in sync with `corpus.ts`'s `CCC_CHAPTER_KINDS`/`listCccChapters`: the edge
+/** Whole-reading routes are addressed by their unit's first number. Keep
+ * these kind sets in sync with the corresponding corpus helpers: the edge
  * may only bless canonical addresses the client reader can actually resolve.
  */
 const CCC_CHAPTER_KINDS = new Set(['chapter', 'prologue', 'section', 'part']);
+const COMPENDIUM_CHAPTER_KINDS = new Set(['chapter', 'section', 'part']);
 
-function cccChapterStarts(nodes) {
+function chapterStarts(nodes, kinds) {
 	const starts = [];
 	function walk(items) {
 		for (const node of items) {
 			const [from, to] = node.paragraphs ?? [];
-			if (CCC_CHAPTER_KINDS.has(node.kind) && Number.isFinite(from) && Number.isFinite(to)) {
+			if (kinds.has(node.kind) && Number.isFinite(from) && Number.isFinite(to)) {
 				starts.push(from);
 			}
 			walk(node.children ?? []);
@@ -489,13 +490,22 @@ const routeManifest = {
 			[...byBook.entries()].map(([osis, chapters]) => [osis, [...chapters].sort((a, b) => a - b)])
 		);
 	})(),
-	ccc: [
-		...new Set(Object.values(cccIndex).flatMap((value) => value.paragraphNumbers))
-	].sort((a, b) => a - b),
+	ccc: [...new Set(Object.values(cccIndex).flatMap((value) => value.paragraphNumbers))].sort(
+		(a, b) => a - b
+	),
 	cccChapters: [
-		...new Set(Object.values(cccIndex).flatMap((value) => cccChapterStarts(value.structure)))
+		...new Set(
+			Object.values(cccIndex).flatMap((value) => chapterStarts(value.structure, CCC_CHAPTER_KINDS))
+		)
 	].sort((a, b) => a - b),
 	compendium: [...new Set(compendiumQuestionNumbers)].sort((a, b) => a - b),
+	compendiumChapters: [
+		...new Set(
+			Object.values(compendiumIndex).flatMap((value) =>
+				chapterStarts(value.structure, COMPENDIUM_CHAPTER_KINDS)
+			)
+		)
+	].sort((a, b) => a - b),
 	documents: [
 		...new Set(
 			Object.entries(manifests)
@@ -505,7 +515,9 @@ const routeManifest = {
 		)
 	].sort(),
 	prayers: [
-		...new Set(Object.values(prayerIndex).flatMap((value) => value.prayers.map((prayer) => prayer.slug)))
+		...new Set(
+			Object.values(prayerIndex).flatMap((value) => value.prayers.map((prayer) => prayer.slug))
+		)
 	].sort()
 };
 

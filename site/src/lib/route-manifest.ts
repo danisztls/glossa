@@ -18,6 +18,7 @@ export interface RouteManifest {
 	ccc: number[];
 	cccChapters: number[];
 	compendium: number[];
+	compendiumChapters: number[];
 	documents: string[];
 	prayers: string[];
 }
@@ -62,8 +63,12 @@ export function isCanonicalPath(pathname: string, manifest: RouteManifest): bool
 		}
 		return false;
 	}
-	if (parts[0] === 'compendium' && parts.length === 2) {
-		return hasNumber(manifest.compendium, parts[1]);
+	if (parts[0] === 'compendium') {
+		if (parts.length === 2) return hasNumber(manifest.compendium, parts[1]);
+		if (parts.length === 3 && parts[1] === 'caput') {
+			return hasNumber(manifest.compendiumChapters, parts[2]);
+		}
+		return false;
 	}
 	if (parts[0] === 'documenta' && parts.length === 2) {
 		return manifest.documents.includes(parts[1]);
