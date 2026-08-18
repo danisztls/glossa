@@ -201,6 +201,16 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 		expect(segs).toContainEqual({ kind: 'scripture', osis: 'mark', chapter: 10, verses: [14], raw: 'Mk 10 14' });
 	});
 
+	it('accepts the verified comma separator in Vatican’s English Rosary citation', () => {
+		expect(parseRefs('Mt 27,26.')).toContainEqual({
+			kind: 'scripture',
+			osis: 'matt',
+			chapter: 27,
+			verses: [26],
+			raw: 'Mt 27,26'
+		});
+	});
+
 	it('recognizes a roman-numeral book-number prefix', () => {
 		const segs = parseRefs('cf. I Cor 9:22; I Pt 2:2');
 		const refs = segs.filter((s) => s.kind === 'scripture');

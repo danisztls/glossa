@@ -74,8 +74,8 @@ export type DocumentKind =
 /**
  * A prayer collection's manifest -- currently one work, `prayer.common.
  * {lang}` (docs/corpus-schema.md "Prayers"): the Compendium of the CCC's
- * Appendix A, re-parsed from the same cached raw HTML `compendium.{lang}`
- * already scrapes, not a second fetch. `{slug}` in the work id (`common`
+ * Appendix A plus three already-cached CCC texts, all re-parsed without a
+ * second fetch. `{slug}` in the work id (`common`
  * today) leaves room for a later, larger collection to ship as its own work
  * without growing this one unboundedly -- see that section for why.
  */
@@ -324,7 +324,7 @@ export interface PrayerVariant {
 
 /** A prayer's Latin companion text -- a FIELD on the prayer, not a third
  *  edition/work (docs/corpus-schema.md "Prayers": "Latin is a field, not an
- *  edition"). Present on 21 of 24 prayers in the real corpus; genuinely
+ *  edition"). Present on 21 of 28 prayers in the real corpus; genuinely
  *  absent (not a capture gap) for the three Eastern-rite prayers, which the
  *  source prints with no Latin text in either language. */
 export interface PrayerLatin {
@@ -332,8 +332,19 @@ export interface PrayerLatin {
 	blocks: PrayerBlock[];
 }
 
+/** One Rosary mystery: its printed title and the Scripture meditation that
+ * accompanies it on Vatican's mystery page. */
+export interface PrayerMysteryItem {
+	title: string;
+	meditation: string;
+	/** Verbatim terminal Scripture locator from the Vatican meditation page;
+	 * rendered as the site's inline citation/footnote rather than repeated
+	 * in the meditation prose. */
+	citation?: { marker: string; text: string };
+}
+
 /** One named group of items -- the Rosary's four mystery groups, each with
- *  a weekday rubric and five items -- captured directly rather than
+ *  a weekday rubric and five full mysteries -- captured directly rather than
  *  flattened into `blocks`, because that flattening would destroy the one
  *  thing this shape exists to keep (docs/corpus-schema.md "Prayers"). */
 export interface PrayerGroupEntry {
@@ -342,7 +353,15 @@ export interface PrayerGroupEntry {
 	 *  and Saturday)") -- distinct from `Prayer.rubric`, which attaches to
 	 *  the whole prayer. */
 	rubric: string | null;
-	items: string[];
+	items: PrayerMysteryItem[];
+}
+
+/** Source-provided directions attached to a prayer. Present for the Rosary,
+ * whose Vatican mystery pages give the opening invocation and each decade's
+ * order after the twenty meditations. */
+export interface PrayerInstructions {
+	title: string;
+	blocks: PrayerBlock[];
 }
 
 export interface Prayer {
@@ -372,4 +391,6 @@ export interface Prayer {
 	/** Present only on prayers structured as named groups of items rather
 	 *  than flowing text (today: the Rosary alone). */
 	groups?: PrayerGroupEntry[];
+	/** Optional source-provided directions for praying this prayer. */
+	instructions?: PrayerInstructions;
 }

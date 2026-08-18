@@ -109,7 +109,7 @@
 
 	// --- Prayers: a compact pointer, not a sixth table of contents --------------
 	//
-	// 24 prayers across 5 sections is not a fifth pillar next to the Bible,
+	// 28 prayers across 7 sections is not a fifth pillar next to the Bible,
 	// Catechism, Compendium and Magisterium — each of those runs to hundreds or
 	// thousands of pages, this to two dozen. So this section is deliberately
 	// small: a tagline, the 5 section names as chips (the same visual language

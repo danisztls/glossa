@@ -1,9 +1,8 @@
 <script lang="ts">
 	/**
-	 * One prayer's reading page. No `.reading-layout`/`StructureSidebarToc`
-	 * (see `/prayers/+page.svelte`'s docblock for why a sidebar TOC doesn't
-	 * fit prayers at all) — just `.content-column` alone, the same primitive
-	 * `/compendium`'s landing page already uses standalone.
+	 * One prayer's reading page. Most prayers remain a standalone
+	 * `.content-column`; the Rosary is the one exception, using the shared
+	 * `.reading-layout` so its four-part table of contents has a right sidebar.
 	 *
 	 * COMPARE MODE HERE IS LATIN, NOT A SECOND EDITION. Every other route
 	 * `CompareGrid` serves pairs the SAME unit across two language editions
@@ -38,6 +37,7 @@
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import PrayerBlocks from '$lib/components/PrayerBlocks.svelte';
+	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { t } from '$lib/i18n.svelte';
 	import type { Prayer } from '$lib/types';
@@ -80,6 +80,7 @@
 		if (browser) compare.syncFromUrl(page.url);
 	});
 	const compareActive = $derived(compare.active && hasLatin);
+	const hasToc = $derived((current?.prayer.groups?.length ?? 0) > 0);
 
 	function toggleCompare() {
 		compare.toggle();
@@ -88,6 +89,22 @@
 			noScroll: true,
 			keepFocus: true
 		});
+	}
+
+	/** Stable in-page destinations for a grouped prayer's sourced divisions.
+	 * The Rosary is currently the only such prayer; deriving these from each
+	 * printed group name keeps EN/PT headings and their ToC aligned without
+	 * inventing a second set of identifiers in the corpus. */
+	function groupAnchorId(name: string) {
+		return (
+			'prayer-group-' +
+			name
+				.toLowerCase()
+				.normalize('NFD')
+				.replace(/[\u0300-\u036f]/g, '')
+				.replace(/[^a-z0-9]+/g, '-')
+				.replace(/^-+|-+$/g, '')
+		);
 	}
 
 	onMount(() => {
@@ -128,21 +145,44 @@
 	     themselves. -->
 	{#if p.groups && p.groups.length > 0}
 		{#each p.groups as group (group.name)}
-			<section class="prayer-mystery-group">
+			<section class="prayer-mystery-group" id={groupAnchorId(group.name)}>
 				<h2 class="prayer-mystery-name">
 					{group.name}
 					{#if group.rubric}<span class="prayer-mystery-rubric">{group.rubric}</span>{/if}
 				</h2>
 				<ol class="prayer-mystery-items">
 					{#each group.items as item, i (i)}
-						<li>{item}</li>
+						<li>
+							<PrayerMystery {item} lang={current?.work.language ?? 'en'} />
+						</li>
 					{/each}
 				</ol>
 			</section>
 		{/each}
 	{/if}
 
+	{#if p.instructions}
+		<section class="prayer-instructions" id="prayer-instructions">
+			<h2>{p.instructions.title}</h2>
+			<PrayerBlocks blocks={p.instructions.blocks} />
+		</section>
+	{/if}
+
 	<PrayerBlocks blocks={p.blocks} />
+{/snippet}
+
+{#snippet prayerToc(p: Prayer)}
+	<nav class="prayer-toc" aria-label={t('prayers.tableOfContents')} data-link-preview="off">
+		<h2>{t('prayers.tableOfContents')}</h2>
+		<ol>
+			{#each p.groups ?? [] as group (group.name)}
+				<li><a href={`#${groupAnchorId(group.name)}`}>{group.name}</a></li>
+			{/each}
+			{#if p.instructions}
+				<li><a href="#prayer-instructions">{p.instructions.title}</a></li>
+			{/if}
+		</ol>
+	</nav>
 {/snippet}
 
 {#snippet leftCell(p: Prayer)}
@@ -155,7 +195,16 @@
 {/snippet}
 
 {#if current}
-	<div class="content-column" class:compare={compareActive}>
+	<div class:reading-layout={hasToc} class="prayer-reading-layout" class:compare={compareActive}>
+		{#if hasToc}
+			<!-- On wide screens this is the right sidebar; source order keeps it
+			     ahead of the long Rosary text on a narrow screen. -->
+			<aside class="reading-aside">
+				{@render prayerToc(current.prayer)}
+			</aside>
+		{/if}
+
+		<div class="content-column" class:compare={compareActive}>
 		<nav class="breadcrumb" aria-label="Breadcrumb">
 			<a href="/preces">{t('nav.prayers')}</a>
 			{#if current.group}
@@ -210,6 +259,7 @@
 				>
 			{/if}
 		</nav>
+		</div>
 	</div>
 {/if}
 
@@ -276,6 +326,58 @@
 
 	.prayer-mystery-group {
 		margin: 0 0 1.5rem;
+		scroll-margin-top: 1rem;
+	}
+
+	.prayer-toc {
+		padding-bottom: 0.75rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.prayer-toc h2 {
+		margin: 0 0 0.4rem;
+		font-family: var(--font-sans);
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--color-text-muted);
+	}
+
+	.prayer-toc ol {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.prayer-toc li {
+		margin: 0.15rem 0;
+	}
+
+	.prayer-toc a {
+		display: block;
+		padding: 0.2rem 0.35rem;
+		border-radius: 0.3rem;
+		color: var(--color-text);
+		text-decoration: none;
+	}
+
+	.prayer-toc a:hover {
+		color: var(--color-accent);
+		background: var(--color-bg-elevated);
+	}
+
+	/* Source order makes the mobile TOC useful; the shared reading-layout's
+	   grid puts it into its requested right sidebar from 80rem upward. */
+	@media (min-width: 80rem) {
+		.prayer-reading-layout > .content-column {
+			grid-column: 1;
+			grid-row: 1;
+		}
+
+		.prayer-reading-layout > .reading-aside {
+			grid-column: 2;
+			grid-row: 1;
+		}
 	}
 
 	.prayer-mystery-name {
@@ -298,7 +400,19 @@
 	}
 
 	.prayer-mystery-items li {
-		margin: 0.2rem 0;
+		margin: 0 0 0.9rem;
+	}
+
+	.prayer-instructions {
+		margin: 1.75rem 0;
+		padding-top: 1rem;
+		border-top: 1px solid var(--color-border);
+		scroll-margin-top: 1rem;
+	}
+
+	.prayer-instructions h2 {
+		font-size: 1.05rem;
+		margin: 0 0 0.75rem;
 	}
 
 	.prayer-latin-title {
@@ -320,12 +434,11 @@
 		text-decoration: none;
 	}
 
-	/* TWO COLUMNS NEED TWICE THE MEASURE, NOT HALF OF IT -- same reasoning as
-	   app.css's `.reading-layout.compare > .content-column` rule, reproduced
-	   locally because this page has no `.reading-layout` wrapper to hang it
-	   off (there is no sidebar to yield here — see this file's own
-	   docblock). */
+	/* Non-Rosary prayers do not need a sidebar or a reading-layout, but their
+	   Latin comparison still needs two full reading measures. Rosary compare
+	   gets the equivalent shared app.css rule through `.reading-layout`. */
 	.content-column.compare {
 		max-width: calc(var(--content-width) * 2 + 3rem);
 	}
+
 </style>

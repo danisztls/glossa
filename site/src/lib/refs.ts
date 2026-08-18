@@ -517,6 +517,9 @@ interface LangConfig {
 	 * dropped-colon/dotted-style pattern in the EN corpus. Not extended to
 	 * PT without direct evidence of the same drift. */
 	allowBareSeparators: boolean;
+	/** Other accepted chapter/verse separators. Used only for a verified
+	 * source-specific punctuation drift, never to guess a locator. */
+	extraChapterVerseSeparators: string[];
 }
 
 function escapeRe(s: string): string {
@@ -542,7 +545,8 @@ function buildConfig(
 	documentSigla: Record<string, string>,
 	primarySep: string,
 	allowBareSeparators: boolean,
-	documentSlugs: Record<string, string> = {}
+	documentSlugs: Record<string, string> = {},
+	extraChapterVerseSeparators: string[] = []
 ): LangConfig {
 	const variantToOsis = new Map<string, string>();
 	for (const [osis, variants] of Object.entries(bookVariants)) {
@@ -555,11 +559,16 @@ function buildConfig(
 		documentRe: buildVariantRe(Object.keys(documentSigla)),
 		documentSlugs: new Map(Object.entries(documentSlugs)),
 		primarySep,
-		allowBareSeparators
+		allowBareSeparators,
+		extraChapterVerseSeparators
 	};
 }
 
-const CONFIG_EN = buildConfig(BOOK_VARIANTS_EN, DOCUMENT_SIGLA_EN, ':', true, DOCUMENT_SLUGS_EN);
+// The English Vatican Rosary page has one `Mt 27,26` locator amid otherwise
+// colon-separated English references. A comma immediately after a chapter is
+// unambiguously a verse separator there, so accept it while retaining the
+// source's printed spelling in the corpus.
+const CONFIG_EN = buildConfig(BOOK_VARIANTS_EN, DOCUMENT_SIGLA_EN, ':', true, DOCUMENT_SLUGS_EN, [',']);
 // No fifth argument -- PT's document segments always parse with `slug: null`
 // (DOCUMENT_SLUGS_EN's docblock explains why that's correct, not a gap).
 const CONFIG_PT = buildConfig(BOOK_VARIANTS_PT, DOCUMENT_SIGLA_PT, ',', false);
@@ -764,7 +773,7 @@ function parseChapterVerses(
 	const chapter = Number(m[1]);
 	const pos = m[0].length;
 	const rest = s.slice(pos);
-	if (rest[0] === cfg.primarySep) {
+	if (rest[0] === cfg.primarySep || cfg.extraChapterVerseSeparators.includes(rest[0])) {
 		const { verses, consumed } = parseVerseList(rest.slice(1));
 		return { chapter, verses, consumed: pos + 1 + consumed };
 	}

@@ -1163,7 +1163,7 @@ function prayerGroupAnchorId(title: string): string {
 	);
 }
 
-/** Groups the 24 prayers into `structure.json`'s five titled sections, for
+/** Groups the 28 prayers into `structure.json`'s seven titled sections, for
  *  `/prayers`' listing and the home page's compact Prayers section. A
  *  structure child whose title doesn't match any `PrayerMeta` (a future
  *  corpus regen breaking the print-order/title correspondence this join

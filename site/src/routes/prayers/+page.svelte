@@ -6,7 +6,7 @@
 	 * by number — docs/corpus-schema.md "Prayers"), so that component's
 	 * `hrefFor`/`rowState` would have nothing numeric to key on and every row
 	 * would render unlinked. A plain, flat, two-level grouped list is the
-	 * honestly-simpler alternative the task brief itself names — 24 prayers
+	 * honestly-simpler alternative the task brief itself names — 28 prayers
 	 * across 5 sections doesn't need a persistent sidebar tree to stay
 	 * navigable on one page.
 	 *
