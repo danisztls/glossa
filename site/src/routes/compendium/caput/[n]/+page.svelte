@@ -4,13 +4,12 @@
 	import { page } from '$app/state';
 	import { flattenCompendiumStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
-	import CompendiumAnswer from '$lib/components/CompendiumAnswer.svelte';
+	import CompendiumQa from '$lib/components/CompendiumQuestion.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
-	import RefText from '$lib/components/RefText.svelte';
 	import { alignByNumber, withCompareParam } from '$lib/compare';
 	import { compare } from '$lib/compare-pref.svelte';
 	import { content } from '$lib/content.svelte';
@@ -94,29 +93,12 @@
 	<title>{headingText()} — {t('home.title')}</title>
 </svelte:head>
 
-{#snippet qa(question: CompendiumQuestion, questionLang: string)}
-	<p class="qa-question">
-		<span class="qa-label" aria-hidden="true">Q</span>
-		{question.question}
-	</p>
-	<div class="qa-answer">
-		<span class="qa-label" aria-hidden="true">A</span>
-		<div class="qa-answer-body"><CompendiumAnswer blocks={question.answer_blocks} /></div>
-	</div>
-	{#if question.ccc_refs}
-		<p class="ccc-refs">
-			<span class="refs-label">{t('compendium.condenses')}</span>
-			<RefText text={question.ccc_refs} lang={questionLang} />
-		</p>
-	{/if}
-{/snippet}
-
 {#snippet leftCell(question: CompendiumQuestion)}
-	{@render qa(question, lang)}
+	<CompendiumQa {question} {lang} />
 {/snippet}
 
 {#snippet rightCell(question: CompendiumQuestion)}
-	{@render qa(question, secondaryLang ?? lang)}
+	<CompendiumQa {question} lang={secondaryLang ?? lang} />
 {/snippet}
 
 {#if current && heading}
@@ -160,14 +142,7 @@
 			{:else}
 				<div class="reading-text compendium-body chapter-body" lang={current.work.language}>
 					{#each current.questions as item (item.n)}
-						<section class="question" id={`q${item.n}`}>
-							<a
-								class="question-n"
-								href={`/compendium/${item.n}`}
-								aria-label={`${t('compendium.question')} ${item.n}`}>{item.n}</a
-							>
-							{@render qa(item, lang)}
-						</section>
+						<CompendiumQa question={item} {lang} href={`/compendium/${item.n}`} />
 					{/each}
 				</div>
 			{/if}
@@ -216,34 +191,6 @@
 		margin: 0 0 2rem;
 		font-size: 0.75rem;
 		color: var(--color-text-muted);
-	}
-	.question {
-		position: relative;
-		margin-bottom: 2rem;
-	}
-	.question-n {
-		position: absolute;
-		inset-inline-start: -3.25rem;
-		top: 0.15em;
-		width: 2.75rem;
-		text-align: end;
-		font-size: 0.8rem;
-		font-variant-numeric: tabular-nums;
-		color: var(--color-apparatus);
-		text-decoration: none;
-	}
-	.question-n:hover {
-		color: var(--color-accent);
-		text-decoration: underline;
-	}
-	@media (max-width: 60rem) {
-		.question-n {
-			position: static;
-			display: block;
-			width: auto;
-			text-align: start;
-			margin-bottom: 0.15rem;
-		}
 	}
 	@media (max-width: 79.9375rem) {
 		.reading-aside {

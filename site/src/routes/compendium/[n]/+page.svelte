@@ -8,8 +8,7 @@
 	import { content } from '$lib/content.svelte';
 	import { displayTitle } from '$lib/titles';
 	import { setPosition } from '$lib/reading-position';
-	import CompendiumAnswer from '$lib/components/CompendiumAnswer.svelte';
-	import RefText from '$lib/components/RefText.svelte';
+	import CompendiumQa from '$lib/components/CompendiumQuestion.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
@@ -98,31 +97,12 @@
 	<title>{t('compendium.question')} {data.n} — {t('home.title')}</title>
 </svelte:head>
 
-{#snippet questionCell(question: CompendiumQuestion, cellLang: string)}
-	<p class="qa-question">
-		<span class="qa-label" aria-hidden="true">Q</span>
-		{question.question}
-	</p>
-	<div class="qa-answer">
-		<span class="qa-label" aria-hidden="true">A</span>
-		<div class="qa-answer-body">
-			<CompendiumAnswer blocks={question.answer_blocks} />
-		</div>
-	</div>
-	{#if question.ccc_refs}
-		<p class="ccc-refs">
-			<span class="refs-label">{t('compendium.condenses')}</span>
-			<RefText text={question.ccc_refs} lang={cellLang} />
-		</p>
-	{/if}
-{/snippet}
-
 {#snippet leftCell(question: CompendiumQuestion)}
-	{@render questionCell(question, lang)}
+	<CompendiumQa {question} {lang} />
 {/snippet}
 
 {#snippet rightCell(question: CompendiumQuestion)}
-	{@render questionCell(question, secondaryLang ?? lang)}
+	<CompendiumQa {question} lang={secondaryLang ?? lang} />
 {/snippet}
 
 <div class="reading-layout" class:compare={compareActive}>
@@ -173,26 +153,7 @@
 			</CompareGrid>
 		{:else}
 			<div class="reading-text compendium-body" lang={current.work.language}>
-				<p class="qa-question">
-					<span class="qa-label" aria-hidden="true">Q</span>
-					<span class="visually-hidden">{t('compendium.question')} {data.n}</span>
-					{current.question.question}
-				</p>
-
-				<div class="qa-answer">
-					<span class="qa-label" aria-hidden="true">A</span>
-					<span class="visually-hidden">{t('compendium.answer')}</span>
-					<div class="qa-answer-body">
-						<CompendiumAnswer blocks={current.question.answer_blocks} />
-					</div>
-				</div>
-
-				{#if current.question.ccc_refs}
-					<p class="ccc-refs">
-						<span class="refs-label">{t('compendium.condenses')}</span>
-						<RefText text={current.question.ccc_refs} {lang} />
-					</p>
-				{/if}
+				<CompendiumQa question={current.question} {lang} />
 			</div>
 		{/if}
 
@@ -260,63 +221,6 @@
 		margin: 0 0 1.25rem;
 		font-size: 0.75rem;
 		color: var(--color-text-muted);
-	}
-
-	/*
-	 * Q&A rhythm: a lettered badge (Q/A) sits in its own column so the
-	 * question reads as a question and the answer as a reply beneath it,
-	 * rather than as a numbered heading over a plain paragraph. Sizes stay
-	 * relative (em) to the inherited `.reading-text` size so this scales
-	 * along with the reader's font-size preference (--reading-scale) instead
-	 * of competing with it.
-	 */
-	.qa-question {
-		display: flex;
-		gap: 0.75em;
-		align-items: baseline;
-		margin: 0 0 1.25em;
-		font-weight: 600;
-		font-style: italic;
-	}
-
-	.qa-answer {
-		display: flex;
-		gap: 0.75em;
-		align-items: flex-start;
-		margin: 0 0 1.5em;
-	}
-
-	.qa-label {
-		flex-shrink: 0;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 1.6em;
-		height: 1.6em;
-		border-radius: 50%;
-		background: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
-		color: var(--color-accent);
-		font-family: var(--font-sans);
-		font-style: normal;
-		font-weight: 700;
-		font-size: 0.8em;
-	}
-
-	.qa-answer-body {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.ccc-refs {
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-		border-top: 1px solid var(--color-border);
-		padding-top: 0.75rem;
-	}
-
-	.refs-label {
-		margin-right: 0.4em;
 	}
 
 	.question-nav {
