@@ -58,6 +58,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'fontSize.larger': 'Larger text',
 		'fontSize.smaller': 'Smaller text',
 		'fontSize.reset': 'Reset text size',
+		'print.label': 'Print this page',
 
 		// Edition/version selector — EditionMenu.svelte is the consumer; store is content.svelte.ts.
 		'edition.label': 'Edition',
@@ -103,8 +104,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// Common Prayers (docs/corpus-schema.md §Prayers) — routes/prayers/**
 		// is the consumer, plus the home page's compact Prayers section.
 		'prayers.landing.title': 'Common Prayers',
-		'prayers.landing.tagline':
-			'Prayers with the Latin text alongside.',
+		'prayers.landing.tagline': 'Prayers with the Latin text alongside.',
 		'prayers.latin': 'Latin',
 		'prayers.showLatin': 'Show Latin text',
 		'prayers.hideLatin': 'Hide Latin text',
@@ -255,6 +255,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'fontSize.larger': 'Aumentar texto',
 		'fontSize.smaller': 'Diminuir texto',
 		'fontSize.reset': 'Repor tamanho do texto',
+		'print.label': 'Imprimir esta página',
 
 		'edition.label': 'Edição',
 		'edition.select': 'Escolher edição',
@@ -294,8 +295,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'index.hideSubsections': 'Ocultar subsecções',
 
 		'prayers.landing.title': 'Orações Comuns',
-		'prayers.landing.tagline':
-			'Orações com o texto em latim ao lado.',
+		'prayers.landing.tagline': 'Orações com o texto em latim ao lado.',
 		'prayers.latin': 'Latim',
 		'prayers.showLatin': 'Mostrar texto em latim',
 		'prayers.hideLatin': 'Ocultar texto em latim',

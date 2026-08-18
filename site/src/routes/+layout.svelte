@@ -8,6 +8,7 @@
 	import ThemeMenu from '$lib/components/ThemeMenu.svelte';
 	import FontSizeMenu from '$lib/components/FontSizeMenu.svelte';
 	import EditionMenu from '$lib/components/EditionMenu.svelte';
+	import PrintButton from '$lib/components/PrintButton.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
 	// Mounted once, globally: see the component's own docblock for why this is
@@ -19,7 +20,7 @@
 	let { children } = $props();
 
 	// Collapsible on narrow screens only (see .nav-toggle / .primary-nav
-	// below) — the header grew from 3 controls to 5 plus a 4th nav link, so
+	// below) — the header grew from 3 controls to 6 plus a 4th nav link, so
 	// something has to give on a phone-width viewport. Desktop CSS forces
 	// the nav open regardless of this flag.
 	let navOpen = $state(false);
@@ -66,7 +67,8 @@
 	onMount(() => {
 		if (!('serviceWorker' in navigator)) return;
 
-		const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+		const connection = (navigator as Navigator & { connection?: { saveData?: boolean } })
+			.connection;
 		if (connection?.saveData) return;
 
 		let cancelled = false;
@@ -81,7 +83,9 @@
 			if (navigator.serviceWorker.controller) {
 				requestPreload();
 			} else {
-				navigator.serviceWorker.addEventListener('controllerchange', requestPreload, { once: true });
+				navigator.serviceWorker.addEventListener('controllerchange', requestPreload, {
+					once: true
+				});
 			}
 		}, 1_500);
 
@@ -122,8 +126,7 @@
 				its children's border and background to avoid a button-in-a-button look,
 				so the group read as two classes of control — three chrome-less icons in
 				a box beside two bordered ones — a louder difference than the one it was
-				hiding. They are all the same kind of thing: one tap, one popover. They
-				now look it.
+				hiding. They are all compact, one-tap reading controls. They now look it.
 			-->
 			<div class="controls">
 				<JumpBox />
@@ -131,6 +134,7 @@
 				<EditionMenu />
 				<FontSizeMenu />
 				<ThemeMenu />
+				<PrintButton />
 				<!-- Last, and inside `.controls` rather than beside it: as a sibling of
 				     the group it picked up `.header-bar`'s 0.75rem gap while its
 				     neighbours shared `.controls`' 0.4rem, so the one button that

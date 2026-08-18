@@ -842,6 +842,75 @@ input {
 	border: 0;
 }
 
+/* --- Print ------------------------------------------------------------- */
+
+/*
+ * Printing is a view of the page already being read, not a separate export
+ * format: the browser supplies its own destination picker while this sheet
+ * removes the controls and wayfinding that are useful on screen but only
+ * consume paper. The reader's text, including a deliberately selected
+ * comparison, remains in normal flow.
+ */
+@media print {
+	@page {
+		margin: 1.5cm;
+	}
+
+	html,
+	body {
+		color-scheme: light;
+		background: #fff !important;
+		color: #000 !important;
+	}
+
+	.site-header,
+	.site-footer,
+	.reading-aside,
+	.index-aside,
+	.breadcrumb,
+	.mobile-picker,
+	.chapter-nav,
+	.paragraph-nav,
+	.question-nav,
+	.prayer-nav,
+	.compare-toolbar,
+	.comparison-edition-menu,
+	.toc-inline {
+		display: none !important;
+	}
+
+	main {
+		padding: 0 !important;
+	}
+
+	.content-column,
+	.reading-layout,
+	.reading-layout.compare > .content-column {
+		max-width: none !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	.reading-layout,
+	.reading-layout.compare,
+	.compare-grid {
+		display: block !important;
+	}
+
+	.compare-cell {
+		break-inside: avoid;
+	}
+
+	.compare-cell-left {
+		border-inline-end: 0;
+		padding-inline-end: 0;
+	}
+
+	a {
+		color: inherit;
+	}
+}
+
 /*
  * Icon-button + dropdown-panel primitive shared by ThemeMenu, FontSizeMenu
  * and EditionMenu (and reused by the header's nav toggle in +layout.svelte)
