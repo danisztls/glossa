@@ -17,7 +17,10 @@
 	 * (`Element.closest('a[href]')`), and asks `linkPreviewHref.ts` whether
 	 * that href names previewable content. Every existing internal link gets a
 	 * preview for free, and so does every link any future page adds — nobody
-	 * has to remember this feature exists to get it.
+	 * has to remember this feature exists to get it. Navigation contexts can
+	 * opt out with `data-link-preview="off"` on the link OR any ancestor. That
+	 * keeps a TOC from previewing every destination and lets chapter readers
+	 * exempt a unit-number link when the very same unit is already on screen.
 	 *
 	 * ONE REUSABLE OVERLAY, not one instance per link: at most one preview is
 	 * ever relevant (the reader has one pointer and one focus), so a single
@@ -150,6 +153,10 @@
 		if (!(start instanceof Element)) return undefined;
 		const a = start.closest('a[href]');
 		if (!(a instanceof HTMLAnchorElement)) return undefined;
+		// A preview is supplementary reading context, not navigation chrome.
+		// The marker is intentionally inherited: a TOC can opt out once on its
+		// `<nav>` rather than making every row remember this global feature.
+		if (a.closest('[data-link-preview="off"]')) return undefined;
 		const parsed = parsePreviewHref(a.getAttribute('href'));
 		return parsed ? { el: a, target: parsed } : undefined;
 	}

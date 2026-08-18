@@ -117,7 +117,9 @@
 	</ol>
 {/snippet}
 
-{@render branch(tree.filter(isIndexOutline), 0)}
+<div data-link-preview="off">
+	{@render branch(tree.filter(isIndexOutline), 0)}
+</div>
 
 <style>
 	.toc-level {

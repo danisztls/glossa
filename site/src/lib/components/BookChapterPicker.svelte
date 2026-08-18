@@ -265,6 +265,7 @@
 		class:align-end={variant === 'grid' && align === 'end'}
 		role="group"
 		aria-label={bookName(book)}
+		data-link-preview="off"
 	>
 		<!-- The sidebar's panel is detached from the button that opened it, so
 		     it names its own book; the grid variant's popover is anchored to
@@ -293,18 +294,18 @@
 
 {#if variant === 'sidebar'}
 	<!-- Always open — see the docblock's "collapsible is ignored" note. -->
-	<div class="picker-body sidebar">
+	<div class="picker-body sidebar" data-link-preview="off">
 		{@render groups()}
 	</div>
 {:else if collapsible}
 	<details class="picker">
 		<summary>{t('bible.pickBook')}</summary>
-		<div class="picker-body">
+		<div class="picker-body" data-link-preview="off">
 			{@render groups()}
 		</div>
 	</details>
 {:else}
-	<div class="picker-body standalone">
+	<div class="picker-body standalone" data-link-preview="off">
 		{@render groups()}
 	</div>
 {/if}

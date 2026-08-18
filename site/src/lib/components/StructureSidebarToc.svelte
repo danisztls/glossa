@@ -232,7 +232,7 @@
 	</ol>
 {/snippet}
 
-<nav aria-labelledby={HEADING_ID}>
+<nav aria-labelledby={HEADING_ID} data-link-preview="off">
 	<h2 id={HEADING_ID} class="toc-heading">{heading}</h2>
 	{@render level(roots)}
 </nav>

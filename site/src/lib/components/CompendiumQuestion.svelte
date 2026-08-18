@@ -42,7 +42,12 @@
 
 {#if href}
 	<section class="question" id={`q${question.n}`}>
-		<a class="question-n" {href} aria-label={`${t('compendium.question')} ${question.n}`}>
+		<a
+			class="question-n"
+			{href}
+			aria-label={`${t('compendium.question')} ${question.n}`}
+			data-link-preview="off"
+		>
 			{question.n}
 		</a>
 		{@render qa()}

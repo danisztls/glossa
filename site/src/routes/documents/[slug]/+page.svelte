@@ -379,7 +379,11 @@
 				     (`reading-toc-heading`) and rendering it twice would duplicate
 				     them in one document. -->
 				{#if structureRows.length > 0}
-					<nav class="toc-inline" aria-label={t('document.tableOfContents')}>
+					<nav
+						class="toc-inline"
+						aria-label={t('document.tableOfContents')}
+						data-link-preview="off"
+					>
 						<h2 class="toc-inline-heading">{t('document.tableOfContents')}</h2>
 						<ol>
 							{#each structureRows as { node, depth } (node.title + node.paragraphs.join('-'))}
@@ -456,7 +460,12 @@
 								     copies to cite the section, and it is now the section's
 								     only address — the per-section route it used to point at
 								     is gone (see this file's header). -->
-								<a class="section-n" href={`#s${section.n}`} aria-label={`§${section.n}`}>
+								<a
+									class="section-n"
+									href={`#s${section.n}`}
+									aria-label={`§${section.n}`}
+									data-link-preview="off"
+								>
 									{section.n}
 								</a>
 								<div class="section-text" class:drop-cap={i === 0}>

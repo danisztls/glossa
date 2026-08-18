@@ -288,7 +288,7 @@
 	{#if partRows.length > 0 || cccPrologue}
 		<section aria-labelledby="ccc-heading">
 			<h2 id="ccc-heading">{t('home.ccc.heading')}</h2>
-			<ol class="ccc-toc">
+			<ol class="ccc-toc" data-link-preview="off">
 				{#if cccPrologue}
 					{@const dt = displayTitle(cccPrologue, cccLang)}
 					{@const anchor = cccPrologue.paragraphs[0]}

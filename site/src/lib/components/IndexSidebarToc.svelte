@@ -13,7 +13,7 @@
 	let { heading, items }: Props = $props();
 </script>
 
-<nav class="index-sidebar-toc" aria-label={heading}>
+<nav class="index-sidebar-toc" aria-label={heading} data-link-preview="off">
 	<h2>{heading}</h2>
 	<ol>
 		{#each items as item (item.href)}

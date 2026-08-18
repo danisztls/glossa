@@ -214,6 +214,7 @@
 								class="para-n"
 								href={`/catechismus/${paragraph.n}`}
 								aria-label={`CCC ${paragraph.n}`}
+								data-link-preview="off"
 							>
 								{paragraph.n}
 							</a>
