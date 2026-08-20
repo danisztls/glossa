@@ -31,7 +31,10 @@ export const load: PageLoad = async ({ params }) => {
 	// question number, because both languages' copies of it are already
 	// sitting in this page's data. `prev`/`next` carry only `{ n }` — see
 	// `ccc/[n]/+page.ts`'s docblock on why, same reasoning here.
-	const byLang: Record<string, CompendiumQuestionByLang> = {};
+	// `Partial<Record<…>>`, and not merely as a formality: both `continue`s
+	// below skip a language, so a key's absence is a real, reachable state —
+	// the same one `/ccc/[n]` and `/compendium/caput/[n]` already declare.
+	const byLang: Partial<Record<string, CompendiumQuestionByLang>> = {};
 	for (const lang of compendiumLangs()) {
 		const work = getWork(`compendium.${lang}`);
 		if (!work) continue;

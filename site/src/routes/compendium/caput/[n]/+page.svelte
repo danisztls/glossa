@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { flattenCompendiumStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
@@ -10,8 +8,13 @@
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
-	import { alignByNumber, withCompareParam } from '$lib/compare';
-	import { compare } from '$lib/compare-pref.svelte';
+	import { alignByNumber } from '$lib/compare';
+	import {
+		adoptCompareFromUrl,
+		chooseComparisonEdition,
+		toggleCompare
+	} from '$lib/compare-nav.svelte';
+	import { useEditionCompare } from '$lib/edition-compare.svelte';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { setPosition } from '$lib/reading-position';
@@ -22,70 +25,39 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const availableLangs = $derived(Object.keys(data.byLang));
-	const lang = $derived(
-		data.byLang[content.langFor('compendium')] ? content.langFor('compendium') : availableLangs[0]
+	// `useEditionCompare` — see its docblock, and `/catechismus/caput/[n]`'s
+	// identical call, for the shared reasoning (why comparing here is free of
+	// any fetch, the `availableLangs[0]` fallback, why an absent language is
+	// skipped rather than indexed blind, work id vs. bare language tag).
+	// Chapter boundaries can diverge between EN and PT the same way the CCC's
+	// do; `alignByNumber` in `compareRows` below already handles that.
+	const editions = useEditionCompare(
+		() => data.byLang,
+		() => content.langFor('compendium')
 	);
-	const current = $derived(data.byLang[lang]);
-	const heading = $derived(current ? displayTitle(current.chapter, lang) : undefined);
-	const structure = $derived(flattenCompendiumStructure(lang));
-	const otherEditions = $derived(
-		availableLangs
-			.filter((language) => language !== lang)
-			.flatMap((language) => {
-				const entry = data.byLang[language];
-				return entry ? [{ lang: language, work: entry.work }] : [];
-			})
+	const heading = $derived(
+		editions.current ? displayTitle(editions.current.chapter, editions.lang) : undefined
 	);
-	const fallbackWorkId = $derived(otherEditions[0]?.work.id);
+	const structure = $derived(flattenCompendiumStructure(editions.lang));
 
-	$effect(() => {
-		if (browser) compare.syncFromUrl(page.url);
-	});
+	adoptCompareFromUrl();
 
-	const secondaryWorkId = $derived(
-		compare.resolveTarget(
-			otherEditions.map((edition) => edition.work.id),
-			fallbackWorkId
-		)
-	);
-	const secondaryLang = $derived(
-		otherEditions.find((edition) => edition.work.id === secondaryWorkId)?.lang
-	);
-	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
-	const compareActive = $derived(current !== undefined && secondary !== undefined);
 	const compareRows = $derived(
-		current && secondary ? alignByNumber(current.questions, secondary.questions) : []
+		editions.current && editions.secondary
+			? alignByNumber(editions.current.questions, editions.secondary.questions)
+			: []
 	);
 	const spy = useScrollSpy(() =>
-		(current?.questions ?? []).map((question) => [`q${question.n}`, question.n] as const)
+		(editions.current?.questions ?? []).map((question) => [`q${question.n}`, question.n] as const)
 	);
 
-	function toggleCompare() {
-		compare.toggle();
-		goto(withCompareParam(page.url, compare.paramValue), {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-	}
-
-	function chooseComparisonEdition(id: string) {
-		compare.set(id);
-		goto(withCompareParam(page.url, compare.paramValue), {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-	}
-
 	function headingText(): string {
-		if (!current || !heading) return '';
+		if (!editions.current || !heading) return '';
 		return heading.ordinal ? `${heading.ordinal} ${heading.title}` : heading.title;
 	}
 
 	$effect(() => {
-		if (current) setPosition(current.work.id, headingText(), page.url.pathname);
+		if (editions.current) setPosition(editions.current.work.id, headingText(), page.url.pathname);
 	});
 </script>
 
@@ -94,17 +66,17 @@
 </svelte:head>
 
 {#snippet leftCell(question: CompendiumQuestion)}
-	<CompendiumQa {question} {lang} />
+	<CompendiumQa {question} lang={editions.lang} />
 {/snippet}
 
 {#snippet rightCell(question: CompendiumQuestion)}
-	<CompendiumQa {question} lang={secondaryLang ?? lang} />
+	<CompendiumQa {question} lang={editions.secondaryLang ?? editions.lang} />
 {/snippet}
 
-{#if current && heading}
-	{@const from = current.chapter.paragraphs[0]}
-	{@const to = current.chapter.paragraphs[1]}
-	<div class="reading-layout" class:compare={compareActive}>
+{#if editions.current && heading}
+	{@const from = editions.current.chapter.paragraphs[0]}
+	{@const to = editions.current.chapter.paragraphs[1]}
+	<div class="reading-layout" class:compare={editions.compareActive}>
 		<article class="content-column">
 			<nav class="breadcrumb" aria-label="Breadcrumb">
 				<a href="/compendium">{t('nav.compendium')}</a>
@@ -112,37 +84,40 @@
 
 			<div class="title-row">
 				<h1>{headingText()}</h1>
-				{#if otherEditions.length > 0}
+				{#if editions.others.length > 0}
 					<div class="compare-toolbar">
-						<CompareToggle active={compareActive} onclick={toggleCompare} />
+						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
 					</div>
 				{/if}
 			</div>
 			<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
-			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+			<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
 
-			{#if compareActive && secondary}
+			{#if editions.compareActive && editions.secondary}
 				<CompareGrid
 					rows={compareRows}
-					leftLang={current.work.language}
-					rightLang={secondary.work.language}
-					leftLabel={current.work.short_title}
-					rightLabel={secondary.work.short_title}
+					leftLang={editions.current.work.language}
+					rightLang={editions.secondary.work.language}
+					leftLabel={editions.current.work.short_title}
+					rightLabel={editions.secondary.work.short_title}
 					left={leftCell}
 					right={rightCell}
 				>
 					{#snippet rightHeaderExtra()}
 						<ComparisonEditionMenu
-							editions={otherEditions.map((edition) => edition.work)}
-							current={secondaryWorkId}
+							editions={editions.others.map((edition) => edition.work)}
+							current={editions.secondaryWorkId}
 							onselect={chooseComparisonEdition}
 						/>
 					{/snippet}
 				</CompareGrid>
 			{:else}
-				<div class="reading-text compendium-body chapter-body" lang={current.work.language}>
-					{#each current.questions as item (item.n)}
-						<CompendiumQa question={item} {lang} href={`/compendium/${item.n}`} />
+				<div
+					class="reading-text compendium-body chapter-body"
+					lang={editions.current.work.language}
+				>
+					{#each editions.current.questions as item (item.n)}
+						<CompendiumQa question={item} lang={editions.lang} href={`/compendium/${item.n}`} />
 					{/each}
 				</div>
 			{/if}
@@ -152,7 +127,7 @@
 			<StructureSidebarToc
 				{structure}
 				currentN={spy.current ?? from ?? undefined}
-				{lang}
+				lang={editions.lang}
 				heading={t('compendium.tableOfContents')}
 				basePath="/compendium/caput"
 				outlineKinds={OUTLINE_KINDS}
@@ -162,15 +137,6 @@
 {/if}
 
 <style>
-	.breadcrumb {
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-		margin-bottom: 0.75rem;
-	}
-	.breadcrumb a {
-		text-decoration: none;
-		color: var(--color-text-muted);
-	}
 	.title-row {
 		display: flex;
 		align-items: baseline;

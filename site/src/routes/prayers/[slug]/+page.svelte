@@ -27,11 +27,14 @@
 	 * own natural flow, inside one aligned row, is what stays honest.
 	 */
 	import { onMount } from 'svelte';
-	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { alignByNumber, withCompareParam } from '$lib/compare';
+	import { alignByNumber } from '$lib/compare';
 	import { compare } from '$lib/compare-pref.svelte';
+	import {
+		adoptCompareFromUrl,
+		chooseComparisonEdition,
+		toggleCompare
+	} from '$lib/compare-nav.svelte';
 	import { content } from '$lib/content.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
@@ -62,6 +65,8 @@
 		return alignByNumber([prayer], [{ n: prayer.n, title: latin.title, blocks: latin.blocks }]);
 	});
 
+	adoptCompareFromUrl();
+
 	/**
 	 * ON/OFF ONLY — NO EDITION TO PICK, AND SO NO `resolveTarget` CALL HERE.
 	 * Every other route resolves the store's target against a list of
@@ -76,20 +81,8 @@
 	 * because `active` only asks "is compare mode on at all", never "is THIS
 	 * particular id available".
 	 */
-	$effect(() => {
-		if (browser) compare.syncFromUrl(page.url);
-	});
 	const compareActive = $derived(compare.active && hasLatin);
 	const hasToc = $derived((current?.prayer.groups?.length ?? 0) > 0);
-
-	function toggleCompare() {
-		compare.toggle();
-		goto(withCompareParam(page.url, compare.paramValue), {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-	}
 
 	/** Stable in-page destinations for a grouped prayer's sourced divisions.
 	 * The Rosary is currently the only such prayer; deriving these from each
@@ -205,80 +198,65 @@
 		{/if}
 
 		<div class="content-column" class:compare={compareActive}>
-		<nav class="breadcrumb" aria-label="Breadcrumb">
-			<a href="/preces">{t('nav.prayers')}</a>
-			{#if current.group}
-				<span class="sep">›</span>
-				<a href={`/preces#${current.group.id}`}>{current.group.title}</a>
-			{/if}
-		</nav>
+			<nav class="breadcrumb" aria-label="Breadcrumb">
+				<a href="/preces">{t('nav.prayers')}</a>
+				{#if current.group}
+					<span class="sep">›</span>
+					<a href={`/preces#${current.group.id}`}>{current.group.title}</a>
+				{/if}
+			</nav>
 
-		<div class="title-row">
-			<h1>{current.prayer.title}</h1>
-			{#if hasLatin}
-				<div class="compare-toolbar">
-					<CompareToggle
-						active={compareActive}
-						onclick={toggleCompare}
-						enterLabel={t('prayers.showLatin')}
-						exitLabel={t('prayers.hideLatin')}
-					/>
+			<div class="title-row">
+				<h1>{current.prayer.title}</h1>
+				{#if hasLatin}
+					<div class="compare-toolbar">
+						<CompareToggle
+							active={compareActive}
+							onclick={toggleCompare}
+							enterLabel={t('prayers.showLatin')}
+							exitLabel={t('prayers.hideLatin')}
+						/>
+					</div>
+				{/if}
+			</div>
+
+			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+
+			{#if compareActive}
+				<CompareGrid
+					rows={compareRows}
+					leftLang={current.work.language}
+					rightLang="la"
+					leftLabel={current.work.short_title}
+					rightLabel={t('prayers.latin')}
+					left={leftCell}
+					right={rightCell}
+				/>
+			{:else}
+				<div class="reading-text prayer-body" lang={current.work.language}>
+					{@render prayerBody(current.prayer)}
 				</div>
 			{/if}
-		</div>
 
-		<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
-
-		{#if compareActive}
-			<CompareGrid
-				rows={compareRows}
-				leftLang={current.work.language}
-				rightLang="la"
-				leftLabel={current.work.short_title}
-				rightLabel={t('prayers.latin')}
-				left={leftCell}
-				right={rightCell}
-			/>
-		{:else}
-			<div class="reading-text prayer-body" lang={current.work.language}>
-				{@render prayerBody(current.prayer)}
-			</div>
-		{/if}
-
-		<nav class="prayer-nav" aria-label="Prayer navigation">
-			{#if current.prev}
+			<nav class="unit-nav" aria-label="Prayer navigation">
+				{#if current.prev}
 					<a href={`/preces/${current.prev.slug}`} rel="prev"
-					>&larr; {t('prayers.prevPrayer')} · {current.prev.title}</a
-				>
-			{:else}
-				<span></span>
-			{/if}
-			{#if current.next}
+						>&larr; {t('prayers.prevPrayer')} · {current.prev.title}</a
+					>
+				{:else}
+					<span></span>
+				{/if}
+				{#if current.next}
 					<a href={`/preces/${current.next.slug}`} rel="next"
-					>{t('prayers.nextPrayer')} · {current.next.title} &rarr;</a
-				>
-			{/if}
-		</nav>
+						>{t('prayers.nextPrayer')} · {current.next.title} &rarr;</a
+					>
+				{/if}
+			</nav>
 		</div>
 	</div>
 {/if}
 
 <style>
-	.breadcrumb {
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-		margin-bottom: 0.75rem;
-	}
-
-	.breadcrumb a {
-		text-decoration: none;
-		color: var(--color-text-muted);
-	}
-
-	.breadcrumb .sep {
-		margin: 0 0.35em;
-	}
-
 	.title-row {
 		display: flex;
 		align-items: baseline;

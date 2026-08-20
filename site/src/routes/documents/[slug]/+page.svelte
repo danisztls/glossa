@@ -25,8 +25,6 @@
 	 * divisions intact instead of as an undifferentiated wall of prose.
 	 */
 	import { untrack } from 'svelte';
-	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import UnpublishedNotice from '$lib/components/UnpublishedNotice.svelte';
@@ -35,8 +33,13 @@
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
-	import { alignByNumber, withCompareParam } from '$lib/compare';
+	import { alignByNumber } from '$lib/compare';
 	import { compare } from '$lib/compare-pref.svelte';
+	import {
+		adoptCompareFromUrl,
+		chooseComparisonEdition,
+		toggleCompare
+	} from '$lib/compare-nav.svelte';
 	import { useScrollSpy } from '$lib/scroll-spy.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { displayTitle } from '$lib/titles';
@@ -197,11 +200,7 @@
 	);
 	const fallbackWorkId = $derived(otherEditions[0]?.work.id);
 
-	// BROWSER-ONLY side effect — see `bible/[book]/[chapter]/+page.svelte`'s
-	// `citedRange` docblock and `compare-pref.svelte.ts`'s `syncFromUrl`.
-	$effect(() => {
-		if (browser) compare.syncFromUrl(page.url);
-	});
+	adoptCompareFromUrl();
 
 	const secondaryWorkId = $derived(
 		compare.resolveTarget(
@@ -214,24 +213,6 @@
 	 *  should be on, so this doubles as `compareActive` below. */
 	const secondaryLang = $derived(otherEditions.find((e) => e.work.id === secondaryWorkId)?.lang);
 	const compareActive = $derived(secondaryLang !== undefined);
-
-	function toggleCompare() {
-		compare.toggle();
-		goto(withCompareParam(page.url, compare.paramValue), {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-	}
-
-	function chooseComparisonEdition(id: string) {
-		compare.set(id);
-		goto(withCompareParam(page.url, compare.paramValue), {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-	}
 
 	let compareFetched = $state<
 		{ slug: string; lang: string; sections: DocumentSection[] } | undefined
@@ -299,7 +280,7 @@
 	 * so there is no `n` in the URL to tell the sidebar where they are —
 	 * without this the table of contents can only show top-level divisions and
 	 * never marks or expands the one being read (see `structureToc.ts`'s
-	 * `isExpanded`, which keys entirely off a current position).
+	 * `rowState`, whose `onPath` flag keys entirely off a current position).
 	 *
 	 * Fed the same `id="s{n}"` anchors the sections carry for `#s{n}` deep
 	 * links, in corpus order — so the spy needs no separate registry and cannot
@@ -496,17 +477,6 @@
 {/if}
 
 <style>
-	.breadcrumb {
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-		margin-bottom: 0.75rem;
-	}
-
-	.breadcrumb a {
-		text-decoration: none;
-		color: var(--color-text-muted);
-	}
-
 	h1 {
 		font-family: var(--font-serif);
 		margin: 0 0 0.5rem;

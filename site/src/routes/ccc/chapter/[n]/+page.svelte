@@ -11,8 +11,6 @@
 	 * specific paragraph within the chapter, and so the link back from a
 	 * single paragraph can land the reader where they already were.
 	 */
-	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { flattenCccStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
@@ -23,8 +21,13 @@
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
-	import { alignByNumber, withCompareParam } from '$lib/compare';
-	import { compare } from '$lib/compare-pref.svelte';
+	import { alignByNumber } from '$lib/compare';
+	import {
+		adoptCompareFromUrl,
+		chooseComparisonEdition,
+		toggleCompare
+	} from '$lib/compare-nav.svelte';
+	import { useEditionCompare } from '$lib/edition-compare.svelte';
 	import { useScrollSpy } from '$lib/scroll-spy.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
@@ -35,19 +38,23 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const availableLangs = $derived(Object.keys(data.byLang));
-	const lang = $derived(
-		data.byLang[content.langFor('catechism')] ? content.langFor('catechism') : availableLangs[0]
+	// `useEditionCompare` picks which embedded language is active from
+	// `content.langFor`, reactively, and resolves compare mode's second
+	// edition against it — see that module's docblock for the shared
+	// reasoning (why this is free of any fetch, the `availableLangs[0]`
+	// fallback, why an absent language is skipped rather than indexed blind,
+	// work id vs. bare language tag).
+	const editions = useEditionCompare(
+		() => data.byLang,
+		() => content.langFor('catechism')
 	);
-	const current = $derived(data.byLang[lang]);
-	const heading = $derived(current ? displayTitle(current.chapter, lang) : undefined);
-	const structure = $derived(flattenCccStructure(lang));
+	const heading = $derived(
+		editions.current ? displayTitle(editions.current.chapter, editions.lang) : undefined
+	);
+	const structure = $derived(flattenCccStructure(editions.lang));
 
 	/**
-	 * Compare mode, paragraph by paragraph across the whole chapter. Both
-	 * languages' full paragraph lists are already embedded (`+page.ts`'s own
-	 * docblock — same reasoning as the single-paragraph route), so, like
-	 * `/catechismus/[n]`, this costs no fetch.
+	 * Compare mode, paragraph by paragraph across the whole chapter.
 	 *
 	 * Chapter BOUNDARIES can genuinely diverge between EN and PT
 	 * (docs/decisions.md: "the vatican.va editions genuinely diverge in a few
@@ -59,18 +66,6 @@
 	 * chapter reaches renders as a row with a gap on the other side, exactly
 	 * like a genuine missing-translation gap would.
 	 */
-	/** See `/catechismus/[n]`'s identical block for the reasoning — same shape here,
-	 *  paragraph-list-shaped `data.byLang` entries instead of single
-	 *  paragraphs. */
-	const otherEditions = $derived(
-		availableLangs
-			.filter((l) => l !== lang)
-			.flatMap((l) => {
-				const entry = data.byLang[l];
-				return entry ? [{ lang: l, work: entry.work }] : [];
-			})
-	);
-	const fallbackWorkId = $derived(otherEditions[0]?.work.id);
 
 	// BROWSER-ONLY side effect — see `bible/[book]/[chapter]/+page.svelte`'s
 	// `citedRange` docblock and `compare-pref.svelte.ts`'s `syncFromUrl`.
@@ -87,42 +82,16 @@
 	 * unchanged, and falls back to the chapter's first paragraph before the
 	 * first measurement.
 	 */
-	const spy = useScrollSpy(() => (current?.paragraphs ?? []).map((p) => [`p${p.n}`, p.n] as const));
-
-	$effect(() => {
-		if (browser) compare.syncFromUrl(page.url);
-	});
-
-	const secondaryWorkId = $derived(
-		compare.resolveTarget(
-			otherEditions.map((e) => e.work.id),
-			fallbackWorkId
-		)
+	const spy = useScrollSpy(() =>
+		(editions.current?.paragraphs ?? []).map((p) => [`p${p.n}`, p.n] as const)
 	);
-	const secondaryLang = $derived(otherEditions.find((e) => e.work.id === secondaryWorkId)?.lang);
-	const secondary = $derived(secondaryLang ? data.byLang[secondaryLang] : undefined);
-	const compareActive = $derived(current !== undefined && secondary !== undefined);
 
-	function toggleCompare() {
-		compare.toggle();
-		goto(withCompareParam(page.url, compare.paramValue), {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-	}
-
-	function chooseComparisonEdition(id: string) {
-		compare.set(id);
-		goto(withCompareParam(page.url, compare.paramValue), {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-	}
+	adoptCompareFromUrl();
 
 	const compareRows = $derived(
-		current && secondary ? alignByNumber(current.paragraphs, secondary.paragraphs) : []
+		editions.current && editions.secondary
+			? alignByNumber(editions.current.paragraphs, editions.secondary.paragraphs)
+			: []
 	);
 
 	// Scroll the reader to the paragraph they arrived from. SvelteKit restores
@@ -131,12 +100,12 @@
 	// hash precisely so this works, and this effect covers the case where the
 	// element only exists after the language-dependent render.
 	$effect(() => {
-		if (current) setPosition(current.work.id, headingText(), page.url.pathname);
+		if (editions.current) setPosition(editions.current.work.id, headingText(), page.url.pathname);
 	});
 
 	function headingText(): string {
-		if (!current) return '';
-		const dt = displayTitle(current.chapter, lang);
+		if (!editions.current) return '';
+		const dt = displayTitle(editions.current.chapter, editions.lang);
 		return dt.ordinal ? `${dt.ordinal} ${dt.title}` : dt.title;
 	}
 </script>
@@ -148,7 +117,7 @@
 {#snippet leftCell(paragraph: CccParagraph)}
 	<div class="para" class:in-brief={paragraph.in_brief}>
 		<div class="para-text">
-			<CccParagraphText {paragraph} {lang} />
+			<CccParagraphText {paragraph} lang={editions.lang} />
 		</div>
 	</div>
 {/snippet}
@@ -156,15 +125,15 @@
 {#snippet rightCell(paragraph: CccParagraph)}
 	<div class="para" class:in-brief={paragraph.in_brief}>
 		<div class="para-text">
-			<CccParagraphText {paragraph} lang={secondaryLang ?? lang} />
+			<CccParagraphText {paragraph} lang={editions.secondaryLang ?? editions.lang} />
 		</div>
 	</div>
 {/snippet}
 
-{#if current && heading}
-	{@const from = current.chapter.paragraphs[0]}
-	{@const to = current.chapter.paragraphs[1]}
-	<div class="reading-layout" class:compare={compareActive}>
+{#if editions.current && heading}
+	{@const from = editions.current.chapter.paragraphs[0]}
+	{@const to = editions.current.chapter.paragraphs[1]}
+	<div class="reading-layout" class:compare={editions.compareActive}>
 		<article class="content-column">
 			<nav class="breadcrumb" aria-label="Breadcrumb">
 				<a href="/catechismus">{t('nav.ccc')}</a>
@@ -175,37 +144,37 @@
 					{#if heading.ordinal}<span class="ordinal">{heading.ordinal}</span>{/if}
 					{heading.title}
 				</h1>
-				{#if otherEditions.length > 0}
+				{#if editions.others.length > 0}
 					<div class="compare-toolbar">
-						<CompareToggle active={compareActive} onclick={toggleCompare} />
+						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
 					</div>
 				{/if}
 			</div>
 			<p class="range">¶{from}–{to}</p>
 
-			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+			<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
 
-			{#if compareActive && secondary}
+			{#if editions.compareActive && editions.secondary}
 				<CompareGrid
 					rows={compareRows}
-					leftLang={current.work.language}
-					rightLang={secondary.work.language}
-					leftLabel={current.work.short_title}
-					rightLabel={secondary.work.short_title}
+					leftLang={editions.current.work.language}
+					rightLang={editions.secondary.work.language}
+					leftLabel={editions.current.work.short_title}
+					rightLabel={editions.secondary.work.short_title}
 					left={leftCell}
 					right={rightCell}
 				>
 					{#snippet rightHeaderExtra()}
 						<ComparisonEditionMenu
-							editions={otherEditions.map((e) => e.work)}
-							current={secondaryWorkId}
+							editions={editions.others.map((e) => e.work)}
+							current={editions.secondaryWorkId}
 							onselect={chooseComparisonEdition}
 						/>
 					{/snippet}
 				</CompareGrid>
 			{:else}
-				<div class="reading-text ccc-body chapter-body" lang={current.work.language}>
-					{#each current.paragraphs as paragraph, i (paragraph.n)}
+				<div class="reading-text ccc-body chapter-body" lang={editions.current.work.language}>
+					{#each editions.current.paragraphs as paragraph, i (paragraph.n)}
 						<section class="para" id={`p${paragraph.n}`} class:in-brief={paragraph.in_brief}>
 							<!-- The number is a link back to the paragraph's own page: this
 						     view is for reading, that one for citing and cross-linking,
@@ -223,7 +192,7 @@
 						     is the first letter of the prose. Opening paragraph only,
 						     and never on an "in brief" summary block. -->
 							<div class="para-text" class:drop-cap={i === 0 && !paragraph.in_brief}>
-								<CccParagraphText {paragraph} {lang} />
+								<CccParagraphText {paragraph} lang={editions.lang} />
 							</div>
 						</section>
 					{/each}
@@ -241,7 +210,7 @@
 			<StructureSidebarToc
 				{structure}
 				currentN={spy.current ?? from ?? undefined}
-				{lang}
+				lang={editions.lang}
 				heading={t('ccc.tableOfContents')}
 				basePath="/catechismus"
 				outlineKinds={OUTLINE_KINDS}
@@ -251,17 +220,6 @@
 {/if}
 
 <style>
-	.breadcrumb {
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-		margin-bottom: 0.75rem;
-	}
-
-	.breadcrumb a {
-		text-decoration: none;
-		color: var(--color-text-muted);
-	}
-
 	h1 {
 		font-family: var(--font-serif);
 		margin: 0 0 0.25rem;

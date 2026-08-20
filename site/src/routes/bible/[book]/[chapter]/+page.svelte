@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import {
 		baseLang,
@@ -20,13 +19,13 @@
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
-	import {
-		alignByNumber,
-		numberSetsDiffer,
-		pickComparisonEdition,
-		withCompareParam
-	} from '$lib/compare';
+	import { alignByNumber, numberSetsDiffer, pickComparisonEdition } from '$lib/compare';
 	import { compare } from '$lib/compare-pref.svelte';
+	import {
+		adoptCompareFromUrl,
+		chooseComparisonEdition,
+		toggleCompare
+	} from '$lib/compare-nav.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { Verse } from '$lib/types';
 	import type { PageData } from './$types';
@@ -86,23 +85,11 @@
 		)?.id
 	);
 
-	/**
-	 * BROWSER-ONLY, same reasoning as `citedRange` below: reading
-	 * `page.url.searchParams` during prerendering throws, because one
-	 * prerendered file has to serve every query string that points at it.
-	 * This is now a side effect rather than a derived read, because what it
-	 * does is ADOPT `?compare=…` into the stored reading preference
-	 * (`compare-pref.svelte.ts`'s `syncFromUrl`) rather than answer "is
-	 * compare requested" for this render alone — see that module's docblock
-	 * for why the preference, not the URL, is what makes compare mode survive
-	 * following a plain link to the next chapter. Re-runs on every navigation
-	 * this component is reused for (`page.url` changing chapter to chapter),
-	 * same as the effect's SvelteKit-idiomatic dependency tracking anywhere
-	 * else on the site.
-	 */
-	$effect(() => {
-		if (browser) compare.syncFromUrl(page.url);
-	});
+	/** Adopts an incoming `?compare=…` into the stored reading preference —
+	 *  browser-only for the same reason `citedRange` below is, and the reason
+	 *  the preference rather than the URL is what makes compare mode survive a
+	 *  plain link to the next chapter. See `compare-nav.svelte.ts`. */
+	adoptCompareFromUrl();
 
 	const secondaryWorkId = $derived(
 		compare.resolveTarget(
@@ -112,27 +99,6 @@
 	);
 	const secondary = $derived(secondaryWorkId ? data.byWorkId[secondaryWorkId] : undefined);
 	const compareActive = $derived(current !== undefined && secondary !== undefined);
-
-	function toggleCompare() {
-		compare.toggle();
-		goto(withCompareParam(page.url, compare.paramValue), {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-	}
-
-	/** The picker's own choice handler — writes a SPECIFIC edition, not the
-	 *  `AUTO` sentinel `toggleCompare` uses, and shares via `?compare=<workId>`
-	 *  rather than `?compare=1` (`compare.paramValue`). */
-	function chooseComparisonEdition(id: string) {
-		compare.set(id);
-		goto(withCompareParam(page.url, compare.paramValue), {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
-	}
 
 	const compareRows = $derived(
 		current && secondary ? alignByNumber(current.chapter.verses, secondary.chapter.verses) : []
