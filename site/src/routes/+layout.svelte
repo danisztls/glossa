@@ -28,6 +28,39 @@
 	// the nav open regardless of this flag.
 	let navOpen = $state(false);
 
+	// Streamlines the header once the reader has actually left the top of the
+	// page — the wordmark drops to the "GC" monogram (same swap Wordmark.svelte
+	// already does at phone width, here driven by `compact` instead of a media
+	// query) and the bar's padding shrinks. It only reacts to distance from the
+	// top, not scroll direction — a reader paging back up mid-chapter to reread
+	// a verse shouldn't make the header resize under their thumb; it only grows
+	// back once they're actually back at the top.
+	let scrolled = $state(false);
+
+	onMount(() => {
+		// Two thresholds, not one. Going compact shrinks the header's own
+		// padding, which shrinks the page's content height, which nudges
+		// `scrollY` down a few pixels — enough to cross a single threshold right
+		// back the other way. That flips `scrolled` again, which grows the
+		// header again, which nudges `scrollY` back up, forever, right at the
+		// boundary. The gap between EXPAND and COLLAPSE has to clear that
+		// self-inflicted jump (the padding-block delta, ~14px) with room to
+		// spare; COLLAPSE additionally sits at 0 so the header only re-expands
+		// once the reader is genuinely back at the top, not just near it.
+		const EXPAND_THRESHOLD = 64;
+		const COLLAPSE_THRESHOLD = 0;
+		function updateScrolled() {
+			if (!scrolled && window.scrollY > EXPAND_THRESHOLD) {
+				scrolled = true;
+			} else if (scrolled && window.scrollY <= COLLAPSE_THRESHOLD) {
+				scrolled = false;
+			}
+		}
+		updateScrolled();
+		window.addEventListener('scroll', updateScrolled, { passive: true });
+		return () => window.removeEventListener('scroll', updateScrolled);
+	});
+
 	// No "Home" entry: the brand link above is already a link to `/`, and two
 	// controls one tab-stop apart doing the identical thing is redundancy, not
 	// redundancy-as-safety. Removing it also lets `isActive` drop its special
@@ -121,9 +154,9 @@
 </svelte:head>
 
 <div class="app-shell">
-	<header class="site-header">
+	<header class="site-header" class:compact={scrolled}>
 		<div class="header-bar">
-			<a class="brand" href="/"><Wordmark variant="brand" /></a>
+			<a class="brand" href="/"><Wordmark variant="brand" compact={scrolled} /></a>
 
 			<nav id="primary-nav" class="primary-nav" class:open={navOpen} aria-label={t('nav.menu')}>
 				{#each NAV_ITEMS as item (item.href)}
@@ -201,8 +234,18 @@
 	}
 
 	.site-header {
+		/* Above `.reading-aside`/`.index-aside`'s own `position: sticky` (z-index
+		   50 is `.menu-panel`'s, which must still win over both). */
+		position: sticky;
+		top: 0;
+		z-index: 40;
 		border-bottom: 1px solid var(--color-border);
 		background: var(--color-bg-elevated);
+		/* The compact state shrinks this element's own height. Without this the
+		   browser's scroll anchoring "corrects" for that shrink by nudging
+		   `scrollY`, which is exactly the feedback loop the two-threshold logic
+		   above already has to defend against — don't feed it a second cause. */
+		overflow-anchor: none;
 	}
 
 	.header-bar {
@@ -214,6 +257,10 @@
 		   wordmark is two lines now, and letting it sit tight against the rule
 		   makes the header read as cramped rather than as compact. */
 		padding: 0.75rem 1rem;
+		/* Only block padding animates — the compact state changes height, not
+		   width, and transitioning the shorthand would also (harmlessly, but
+		   pointlessly) tween the inline value that never moves. */
+		transition: padding-block 150ms ease;
 		max-width: 90rem;
 		margin-inline: auto;
 		/* Containing block for header dropdowns at phone width — see app.css's
@@ -221,6 +268,12 @@
 		   trigger sitting well left of the edge cannot throw its panel off
 		   the side of the screen. */
 		position: relative;
+	}
+
+	/* The scroll-compact state — see `scrolled` above. Same idea as the phone
+	   layout's shrink, applied at any width: less air around a shorter mark. */
+	.site-header.compact .header-bar {
+		padding-block: 0.35rem;
 	}
 
 	.brand {

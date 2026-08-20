@@ -5,7 +5,9 @@
 	  - `hero` (default) — the home page's h1.
 	  - `brand` — the header. Below 30rem this swaps to a "GC" monogram, the same
 	    two initials in the same two colours as the favicon, so the tab and the
-	    phone header carry one mark.
+	    phone header carry one mark. The header also forces the same swap at any
+	    width via the `compact` prop, once the reader scrolls away from the top
+	    (see `+layout.svelte`'s `scrolled` state) — two triggers, one mark.
 
 	The variants differ by exactly one declaration each: the wrapper's
 	`font-size`. Everything inside is expressed in `em`, so the lockup is one
@@ -47,10 +49,13 @@
 -->
 
 <script lang="ts">
-	let { variant = 'hero' }: { variant?: 'hero' | 'brand' } = $props();
+	let {
+		variant = 'hero',
+		compact = false
+	}: { variant?: 'hero' | 'brand'; compact?: boolean } = $props();
 </script>
 
-<span class="wordmark is-{variant}">
+<span class="wordmark is-{variant}" class:is-compact={compact}>
 	<span class="lockup">
 		<span class="word-glossa"><span class="initial">G</span>lossa</span>
 		<span class="word-catholica">Catholica</span>
@@ -169,5 +174,26 @@
 			display: block;
 			font-size: 1.15em;
 		}
+	}
+
+	/*
+	 * The scroll-triggered equivalent of the media query above — same swap,
+	 * same declarations, but keyed on the `compact` prop instead of viewport
+	 * width, so it fires at any screen size once `+layout.svelte` decides the
+	 * reader has scrolled. A plain selector can't be OR'd into that `@media`
+	 * block, so this is a second copy of the two rules rather than a shared one.
+	 */
+	.is-brand.is-compact .lockup {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.is-brand.is-compact .monogram {
+		display: block;
+		font-size: 1.15em;
 	}
 </style>
