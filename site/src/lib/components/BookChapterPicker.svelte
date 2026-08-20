@@ -27,11 +27,12 @@
 	 * about the grid behind it.
 	 *
 	 * Two consequences of leaving the flow, both handled below and BOTH
-	 * SCOPED TO THE GRID VARIANT ONLY: the panel can overhang the viewport's
-	 * right edge for books near it (hence `align`, measured at open time
-	 * rather than guessed from column position, since the grid wraps at a
-	 * width nobody here knows statically), and it no longer dismisses by
-	 * re-clicking alone, so it takes the same outside-click/Escape handling
+	 * SCOPED TO THE GRID VARIANT ONLY: the panel can overhang either
+	 * viewport edge for books near it (hence `panelOffsetPx`, measured from
+	 * the real DOM at open time rather than guessed from column position,
+	 * since the grid wraps at a width nobody here knows statically), and it
+	 * no longer dismisses by re-clicking alone, so it takes the same
+	 * outside-click/Escape handling
 	 * as the header menus.
 	 *
 	 * There are deliberately NO chevron indicators on the book buttons.
@@ -128,38 +129,54 @@
 	let openOsis: string | undefined = $state(untrack(() => currentOsis));
 
 	/**
-	 * Which edge of the book button the open panel is anchored to. The panel
-	 * is ~22rem wide and the book grid runs the full content column, so a book
-	 * in the last column would push a start-anchored panel off-screen.
-	 * Measured from the real button rect when the panel opens — the grid wraps
-	 * at whatever the viewport allows, so "is this book near the right edge"
-	 * has no static answer.
+	 * Horizontal offset (px) applied to the popover's `inset-inline-start`,
+	 * relative to its own `.book-item`'s left edge — 0 keeps the panel's left
+	 * edge lined up with the button, same as before this existed. Anything
+	 * else shifts it left/right by that many pixels to keep the whole panel
+	 * on screen.
+	 *
+	 * This used to be a binary start/end anchor flipped only when a
+	 * start-anchored panel would overflow the RIGHT edge. On a narrow phone
+	 * that flip fires for nearly every book — the panel (~22rem) is close to
+	 * the full viewport width, so `rect.left + panelWidth > innerWidth` is
+	 * true even for buttons near the LEFT edge. End-anchoring one of those
+	 * then hangs most of the panel off to the left of x=0, which is the
+	 * "showing partially outside the viewport from the left" bug: the flip
+	 * fixed a right overflow only to create a worse left one. A continuous
+	 * pixel offset, clamped against BOTH edges, has no such blind spot.
 	 */
-	let align: 'start' | 'end' = $state('start');
+	let panelOffsetPx = $state(0);
 
 	/** Matches `.chapters`' `max-inline-size` below; keep the two in step. */
 	const PANEL_WIDTH_REM = 22;
 
-	function toggleBook(osis: string, e: MouseEvent) {
-		if (openOsis === osis) {
-			openOsis = undefined;
-			return;
-		}
-		// Edge-overhang measurement only matters for the popover — the
-		// sidebar's in-flow panel is always the same width as the column it
-		// already lives in, so there's nothing to measure or flip.
-		if (variant === 'grid') {
-			const btn = e.currentTarget;
-			if (btn instanceof HTMLElement) {
-				const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-				const rect = btn.getBoundingClientRect();
-				// Flip to end-anchored only when start-anchored would actually
-				// overflow, so the common case keeps the panel's left edge lined up
-				// with the button the reader just pressed.
-				align = rect.left + PANEL_WIDTH_REM * rem > window.innerWidth ? 'end' : 'start';
-			}
-		}
-		openOsis = osis;
+	/** Matches `.chapters`' `max-inline-size` margin (`calc(100vw - 2rem)`,
+	 * i.e. 1rem clearance on each side) — kept as one constant so the JS
+	 * clamp and the CSS clamp can't drift apart. */
+	function viewportMarginPx(rem: number): number {
+		return rem;
+	}
+
+	// Runs for BOTH click-opens and the default-open-current-book case
+	// (`openOsis`'s initial value, set with no click event to measure) —
+	// a DOM lookup by id rather than the triggering event, so there is one
+	// code path instead of two that can fall out of sync.
+	$effect(() => {
+		if (variant !== 'grid' || !openOsis) return;
+		const btn = document.getElementById(`book-btn-${openOsis}`);
+		const item = btn?.closest('.book-item');
+		if (!(item instanceof HTMLElement)) return;
+		const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+		const margin = viewportMarginPx(rem);
+		const panelWidth = Math.min(PANEL_WIDTH_REM * rem, window.innerWidth - margin * 2);
+		const itemLeft = item.getBoundingClientRect().left;
+		const maxLeft = window.innerWidth - margin - panelWidth;
+		const desiredLeft = Math.max(margin, Math.min(itemLeft, maxLeft));
+		panelOffsetPx = desiredLeft - itemLeft;
+	});
+
+	function toggleBook(osis: string) {
+		openOsis = openOsis === osis ? undefined : osis;
 	}
 
 	function closePanel() {
@@ -214,13 +231,14 @@
 					<li class="book-item">
 						<button
 							type="button"
+							id={`book-btn-${book.osis}`}
 							class="book-btn"
 							class:sidebar={variant === 'sidebar'}
 							class:current={book.osis === currentOsis}
 							class:open={isOpen}
 							aria-expanded={isOpen}
 							aria-controls={`chapters-${book.osis}`}
-							onclick={(e) => toggleBook(book.osis, e)}
+							onclick={() => toggleBook(book.osis)}
 						>
 							<span>{bookName(book)}</span>
 						</button>
@@ -262,7 +280,7 @@
 		id={`chapters-${book.osis}`}
 		class="chapters"
 		class:sidebar={variant === 'sidebar'}
-		class:align-end={variant === 'grid' && align === 'end'}
+		style={variant === 'grid' ? `inset-inline-start: ${panelOffsetPx}px` : undefined}
 		role="group"
 		aria-label={bookName(book)}
 		data-link-preview="off"
@@ -449,11 +467,6 @@
 		box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
 		min-inline-size: 12rem;
 		max-inline-size: min(22rem, calc(100vw - 2rem));
-	}
-
-	.chapters.align-end {
-		inset-inline-start: auto;
-		inset-inline-end: 0;
 	}
 
 	/* In-flow instead of a floating panel: no positioning, no shadow (nothing

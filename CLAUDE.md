@@ -67,6 +67,12 @@ machine where a build has run the glob would otherwise pick up real data. The
 fixtures deliberately contain absent chapters and out-of-range cross-references
 to exercise the not-in-corpus paths.
 
+**Don't drive the site with Playwright/browser automation to verify UI
+changes.** The user does that verification themselves. Only reach for it in
+very special cases (e.g. the user explicitly asks for an automated check) —
+default to describing the change and letting them look at it in a real
+browser.
+
 ## Deploying
 
 Live at <https://glossa.me-f65.workers.dev>, on Cloudflare Workers static assets
