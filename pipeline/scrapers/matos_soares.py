@@ -41,6 +41,11 @@ from urllib.parse import urljoin
 import httpx
 from bs4 import BeautifulSoup
 
+# Sibling module in this directory -- a script's own directory is on sys.path,
+# so this resolves regardless of the working directory. See common.py's
+# docblock for what does and does not belong there.
+from common import CorrectionDriftError, chapter_opening_letter, load_corrections
+
 BASE_URL = "https://www.liriocatolico.com.br/biblia_online/biblia_matos_soares/"
 USER_AGENT = "Glossa Catholica corpus builder"
 MIN_REQUEST_INTERVAL = (
@@ -51,7 +56,6 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 RAW_DIR = REPO_ROOT / "corpus" / "raw" / "matos-soares"
 WORK_DIR = REPO_ROOT / "corpus" / "works" / "bible.matos-soares.pt"
 BOOKS_DIR = WORK_DIR / "books"
-CORRECTIONS_DIR = REPO_ROOT / "pipeline" / "corrections"
 WORK_ID = "bible.matos-soares.pt"
 
 # ---------------------------------------------------------------------------
@@ -292,17 +296,6 @@ _last_request_at: float = 0.0
 # "unresolved") are documented but never applied; they're carried through to
 # the receipt's "unresolved" list instead.
 # ---------------------------------------------------------------------------
-
-
-class CorrectionDriftError(RuntimeError):
-    pass
-
-
-def load_corrections(work_id: str) -> list[dict]:
-    path = CORRECTIONS_DIR / f"{work_id}.json"
-    if not path.exists():
-        return []
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def apply_corrections(
@@ -590,25 +583,6 @@ def build_book(
 # ---------------------------------------------------------------------------
 
 BAD_CONTENT_RE = re.compile(r"\[[ivxlcdm]{1,7}\]|<|�|  ", re.IGNORECASE)
-
-# Punctuation that can legitimately stand before a chapter's first letter, so
-# that a chapter opening on a quotation or a parenthesis is not mistaken for a
-# lost capital. Kept in step with LEADING_PUNCT in site/src/lib/dropcap.ts,
-# which makes the identical split to build the drop cap.
-CHAPTER_OPENING_PUNCT = "\"'“”‘’«»¿¡([{—–- \t"
-
-
-def chapter_opening_letter(text: str) -> str | None:
-    """The character a chapter's first verse actually opens on, skipping up to
-    three units of leading punctuation. Returns None if the verse opens on
-    something that is neither punctuation nor a letter/digit."""
-    units = text.lstrip()
-    taken = 0
-    while taken < len(units) and taken < 3 and units[taken] in CHAPTER_OPENING_PUNCT:
-        taken += 1
-    if taken >= len(units) or not units[taken].isalnum():
-        return None
-    return units[taken]
 
 
 def validate_books(books: list[BookResult], full_run: bool) -> tuple[bool, list[str]]:

@@ -191,6 +191,11 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+# Sibling module in this directory -- a script's own directory is on sys.path,
+# so this resolves regardless of the working directory. See common.py's
+# docblock for what does and does not belong there.
+from common import load_corrections
+
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 MAX_ATTEMPTS = 3  # survey measured ~1-in-6-to-8 transient failures, no 403s/CAPTCHA
@@ -205,7 +210,6 @@ SOURCE_ROOT = (
 )  # tracked source; follows this file's checkout
 RAW_ROOT = DATA_ROOT / "corpus" / "raw" / "vatican-docs"
 WORKS_ROOT = DATA_ROOT / "corpus" / "works"
-CORRECTIONS_DIR = SOURCE_ROOT / "pipeline" / "corrections"
 CRAWL_LOCK_PATH = (
     RAW_ROOT / ".crawl.lock"
 )  # see acquire_crawl_lock/touch_crawl_lock below
@@ -1414,13 +1418,6 @@ def find_content_start_old_shell(html: str) -> int:
 # never to raise (see its docstring) so that one bad document can't kill a crawl
 # of many. Drift is reported instead as `status="corrections-drift"` on the
 # result dict -- see the `missing` check at the end of `scrape_one`.
-
-
-def load_corrections(work_id: str) -> list[dict]:
-    path = CORRECTIONS_DIR / f"{work_id}.json"
-    if not path.exists():
-        return []
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def looks_like_number_typo(cand: int, expected: int) -> bool:

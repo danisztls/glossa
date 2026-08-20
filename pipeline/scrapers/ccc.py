@@ -70,13 +70,17 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+# Sibling module in this directory -- a script's own directory is on sys.path,
+# so this resolves regardless of the working directory. See common.py's
+# docblock for what does and does not belong there.
+from common import CorrectionDriftError, load_corrections
+
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 
 ROOT = Path(__file__).resolve().parents[2]
 RAW_ROOT = ROOT / "corpus" / "raw"
 WORKS_ROOT = ROOT / "corpus" / "works"
-CORRECTIONS_DIR = ROOT / "pipeline" / "corrections"
 
 EN_BASE = "https://www.vatican.va/archive/ENG0015/"
 EN_TOC_HREF = "_INDEX.HTM"
@@ -241,17 +245,6 @@ def looks_like_number_typo(cand: int, expected: int) -> bool:
 #     heuristic in process_page(), replacing what used to be a silent,
 #     undocumented auto-correction.
 # --------------------------------------------------------------------------
-
-
-class CorrectionDriftError(RuntimeError):
-    pass
-
-
-def load_corrections(work_id: str) -> list[dict]:
-    path = CORRECTIONS_DIR / f"{work_id}.json"
-    if not path.exists():
-        return []
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def find_paragraph_number_correction(

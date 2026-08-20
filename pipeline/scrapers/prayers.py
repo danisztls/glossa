@@ -118,10 +118,14 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+# Sibling module in this directory -- a script's own directory is on sys.path,
+# so this resolves regardless of the working directory. See common.py's
+# docblock for what does and does not belong there.
+from common import load_corrections
+
 ROOT = Path(__file__).resolve().parents[2]
 RAW_ROOT = ROOT / "corpus" / "raw"
 WORKS_ROOT = ROOT / "corpus" / "works"
-CORRECTIONS_ROOT = ROOT / "pipeline" / "corrections"
 
 EN_RAW = RAW_ROOT / "compendium-en" / "archive_2005_compendium-ccc_en.html"
 PT_RAW = RAW_ROOT / "compendium-pt" / "archive_2005_compendium-ccc_po.html"
@@ -1031,13 +1035,6 @@ def enrich_rosary_with_full_mysteries(rosary: Prayer, lang: str) -> None:
 # --------------------------------------------------------------------------
 # Corrections (docs/decisions.md §Source-defect corrections policy)
 # --------------------------------------------------------------------------
-
-
-def load_corrections(work_id: str) -> list[dict]:
-    path = CORRECTIONS_ROOT / f"{work_id}.json"
-    if not path.exists():
-        return []
-    return json.loads(path.read_text())
 
 
 def apply_corrections(prayers: list[Prayer], corrections: list[dict]) -> list[dict]:

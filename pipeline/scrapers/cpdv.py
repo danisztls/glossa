@@ -39,6 +39,11 @@ from pathlib import Path
 
 import httpx
 
+# Sibling module in this directory -- a script's own directory is on sys.path,
+# so this resolves regardless of the working directory. See common.py's
+# docblock for what does and does not belong there.
+from common import CorrectionDriftError, chapter_opening_letter, load_corrections
+
 BASE_URL = "https://sacredbible.org/catholic/"
 USER_AGENT = "Glossa Catholica corpus builder (+contact via repo)"
 RATE_LIMIT_SECONDS = 1.0
@@ -46,7 +51,6 @@ RATE_LIMIT_SECONDS = 1.0
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 RAW_DIR = REPO_ROOT / "corpus" / "raw" / "cpdv"
 WORK_DIR = REPO_ROOT / "corpus" / "works" / "bible.cpdv.en"
-CORRECTIONS_DIR = REPO_ROOT / "pipeline" / "corrections"
 WORK_ID = "bible.cpdv.en"
 
 # (osis, filename, display name) in the schema's canonical 73-book order.
@@ -337,22 +341,10 @@ class Fetcher:
 # any defect is documented for this source -- CPDV is a clean, modern
 # public-domain translation with no known mechanical/typographic defects as
 # of this writing, so the file is typically absent and this layer applies
-# zero corrections). Each scraper implements this loading/application logic
-# independently (small duplication preferred over a shared module per
-# project convention) so the mechanism -- and its non-zero-exit drift guard
-# -- is present and provable even when the corrections list is empty.
+# zero corrections). Loading comes from common.py; APPLYING it stays here,
+# because what a correction means is per-source -- this scraper's own
+# non-zero-exit drift guard is below.
 # --------------------------------------------------------------------------
-
-
-class CorrectionDriftError(RuntimeError):
-    pass
-
-
-def load_corrections(work_id: str) -> list[dict]:
-    path = CORRECTIONS_DIR / f"{work_id}.json"
-    if not path.exists():
-        return []
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def apply_corrections(
@@ -449,27 +441,6 @@ def run_scrape(
     finally:
         fetcher.close()
     return book_docs, fetched_files
-
-
-# Punctuation that can legitimately stand before a chapter's first letter.
-# Duplicated rather than shared: the scrapers are standalone PEP 723 scripts
-# with no common import path. The twin lives in matos_soares.py, and
-# LEADING_PUNCT in site/src/lib/dropcap.ts makes the identical split to build
-# the drop cap -- change one, change all three.
-CHAPTER_OPENING_PUNCT = "\"'“”‘’«»¿¡([{—–- \t"
-
-
-def chapter_opening_letter(text: str) -> str | None:
-    """The character a chapter's first verse actually opens on, skipping up to
-    three units of leading punctuation. Returns None if the verse opens on
-    something that is neither punctuation nor a letter/digit."""
-    units = text.lstrip()
-    taken = 0
-    while taken < len(units) and taken < 3 and units[taken] in CHAPTER_OPENING_PUNCT:
-        taken += 1
-    if taken >= len(units) or not units[taken].isalnum():
-        return None
-    return units[taken]
 
 
 def validate(book_docs: list[dict], sample: bool) -> tuple[bool, list[str]]:
