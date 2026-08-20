@@ -176,7 +176,7 @@
 </script>
 
 {#snippet level(nodes: StructureNode[])}
-	<ol class="toc-level">
+	<ol class="sidebar-toc-list toc-level">
 		{#each nodes as node (node.title + node.paragraphs.join('-'))}
 			{@const dt = displayTitle(node, lang)}
 			{@const label = marker(node, lang)}
@@ -233,29 +233,13 @@
 {/snippet}
 
 <nav aria-labelledby={HEADING_ID} data-link-preview="off">
-	<h2 id={HEADING_ID} class="toc-heading">{heading}</h2>
+	<h2 id={HEADING_ID} class="sidebar-toc-heading">{heading}</h2>
 	{@render level(roots)}
 </nav>
 
 <style>
 	nav {
 		font-size: 0.85rem;
-	}
-
-	.toc-heading {
-		margin: 0 0 0.5rem;
-		font-size: 0.85rem;
-		text-transform: uppercase;
-		letter-spacing: 0.03em;
-		color: var(--color-text-muted);
-		border-bottom: 1px solid var(--color-border);
-		padding-bottom: 0.4rem;
-	}
-
-	.toc-level {
-		list-style: none;
-		margin: 0;
-		padding: 0;
 	}
 
 	/* Compounds naturally with each level of real DOM nesting (`.toc-level`
@@ -266,10 +250,6 @@
 		margin-inline-start: 0.6rem;
 		padding-inline-start: 0.65rem;
 		border-inline-start: 1px solid var(--color-border);
-	}
-
-	li {
-		margin: 0.1rem 0;
 	}
 
 	a,

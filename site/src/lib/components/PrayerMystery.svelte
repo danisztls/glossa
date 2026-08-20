@@ -50,26 +50,6 @@
 		margin: 0.25rem 0 0;
 	}
 
-	.citation-marker {
-		font-size: max(var(--font-size-min), 0.7em);
-	}
-
-	.citation-trigger {
-		appearance: none;
-		padding: 0;
-		border: 0;
-		background: none;
-		font: inherit;
-		cursor: pointer;
-		color: var(--color-accent);
-	}
-
-	.citation-trigger:focus-visible {
-		outline: 2px solid var(--color-focus-ring);
-		outline-offset: 2px;
-		border-radius: 2px;
-	}
-
 	.citation-text {
 		margin-left: 0.35em;
 		font-size: max(var(--font-size-min), 0.9em);

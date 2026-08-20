@@ -170,13 +170,4 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
-
-	.edition-lang {
-		font-size: var(--font-size-min);
-		color: var(--color-text-muted);
-		text-transform: uppercase;
-		border: 1px solid var(--color-border);
-		border-radius: 0.25rem;
-		padding: 0 0.3rem;
-	}
 </style>

@@ -19,7 +19,6 @@
 	const workId = $derived(content.workIdFor('bible'));
 	const work = $derived(workId ? getWork(workId) : undefined);
 
-
 	// The reading position is read on mount, not eagerly, because localStorage
 	// doesn't exist during prerendering (see reading-position.ts) — matches
 	// the pattern the home page (`routes/+page.svelte`) already uses.
@@ -84,8 +83,6 @@
 
 	.copyright-notice {
 		margin: 0.15rem 0 0;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
 	}
 
 	.entry-point {

@@ -172,21 +172,6 @@
 
 	.copyright-notice {
 		margin: 0 0 1.25rem;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
-	}
-
-	.question-nav {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 2rem;
-		padding-top: 1rem;
-		border-top: 1px solid var(--color-border);
-		font-size: 0.95rem;
-	}
-
-	.question-nav a {
-		text-decoration: none;
 	}
 
 	@media (max-width: 79.9375rem) {

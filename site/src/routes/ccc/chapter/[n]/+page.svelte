@@ -254,8 +254,6 @@
 
 	.copyright-notice {
 		margin: 0 0 2rem;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
 	}
 
 	/* Paragraph numbers hang in the left margin where there's room for them,

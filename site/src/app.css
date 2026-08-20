@@ -876,10 +876,7 @@ input {
 	.reading-aside,
 	.index-aside,
 	.mobile-picker,
-	.chapter-nav,
-	.paragraph-nav,
-	.question-nav,
-	.prayer-nav,
+	.unit-nav,
 	.compare-toolbar,
 	.comparison-edition-menu,
 	.toc-inline,
@@ -949,6 +946,124 @@ input {
 	a {
 		color: inherit;
 	}
+}
+
+/*
+ * Breadcrumb trail atop a reading page — identical across every route that
+ * has one (CCC paragraph/chapter, Compendium question/chapter, documents,
+ * prayers), for the same reason `.reading-layout` lives here and not in any
+ * one of its six callers: Svelte's per-component style scoping has no
+ * mechanism to share a block across files. `.breadcrumb .sep` is only
+ * rendered by three of the six routes (the others have nothing to
+ * separate), and `.breadcrumb .ordinal` (ccc/[n] only) stays scoped there as
+ * a genuine per-route addition. See the print media query above for why
+ * `.breadcrumb` itself is deliberately never hidden.
+ */
+.breadcrumb {
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+	margin-bottom: 0.75rem;
+}
+
+.breadcrumb a {
+	text-decoration: none;
+	color: var(--color-text-muted);
+}
+
+.breadcrumb .sep {
+	margin: 0 0.35em;
+}
+
+/*
+ * Prev/next unit navigation at the foot of a reading page — same shape for
+ * the Bible chapter, CCC paragraph, Compendium question and prayer routes,
+ * shared here for the same reason as `.breadcrumb` just above. `margin-top`
+ * is the one property that isn't actually uniform: the Bible chapter route
+ * keeps 2.5rem instead of 2rem as a scoped override.
+ */
+.unit-nav {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 2rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--color-border);
+	font-size: 0.95rem;
+}
+
+.unit-nav a {
+	text-decoration: none;
+}
+
+/*
+ * Copyright/license line under a work's title. `font-size` and `color` are
+ * uniform across every route that shows one; `margin` genuinely varies per
+ * page (context above and below the notice differs route to route), so it
+ * stays as a scoped override in each caller. 0.75rem is the size used by
+ * eight of the eleven routes; the three library-index pages (ccc, compendium,
+ * prayers landing) keep 0.8rem as an explicit scoped override rather than
+ * being silently resized to match.
+ */
+.copyright-notice {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+}
+
+/*
+ * Inline citation marker + trigger button, shared verbatim by
+ * CccParagraphText and PrayerMystery. Their citation *behavior* differs on
+ * purpose (a Set of open markers vs. a single boolean) and stays in each
+ * component; only this purely visual shell is identical.
+ */
+.citation-marker {
+	font-size: max(var(--font-size-min), 0.7em);
+}
+
+.citation-trigger {
+	appearance: none;
+	padding: 0;
+	border: 0;
+	background: none;
+	font: inherit;
+	cursor: pointer;
+	color: var(--color-accent);
+}
+
+.citation-trigger:focus-visible {
+	outline: 2px solid var(--color-focus-ring);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+/*
+ * Reading-sidebar table-of-contents shell — the heading treatment and list
+ * reset that IndexSidebarToc (index pages) and StructureSidebarToc (reading
+ * pages) render identically. Deliberately NOT named `.toc-heading` /
+ * `.toc-level`: those names are already taken by unrelated, differently-
+ * styled elements (the page-body ToC heading in ccc/+page.svelte and
+ * compendium/+page.svelte; the list reset in StructureIndex.svelte, whose
+ * own nested-indent values differ from this one) — reusing them here would
+ * have silently restyled elements outside this task's scope. Everything
+ * beyond heading + list reset (on-path/current row states, etc.) is real
+ * divergence between the two components and stays where it is.
+ */
+.sidebar-toc-heading {
+	margin: 0 0 0.5rem;
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: var(--color-text-muted);
+	border-bottom: 1px solid var(--color-border);
+	padding-bottom: 0.4rem;
+}
+
+.sidebar-toc-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.sidebar-toc-list li {
+	margin: 0.1rem 0;
 }
 
 /*
@@ -1076,4 +1191,17 @@ input {
 .menu-item-meta {
 	font-size: 0.75rem;
 	color: var(--color-text-muted);
+}
+
+/* The small language-code badge ("EN", "PT") beside an edition's title in a
+   `.menu-item` row — shared by EditionMenu and ComparisonEditionMenu, which
+   each listed editions this way while carrying a character-for-character
+   identical scoped copy of this rule. */
+.edition-lang {
+	font-size: var(--font-size-min);
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+	border: 1px solid var(--color-border);
+	border-radius: 0.25rem;
+	padding: 0 0.3rem;
 }

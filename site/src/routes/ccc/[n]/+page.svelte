@@ -250,8 +250,6 @@
 
 	.copyright-notice {
 		margin: 0 0 1rem;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
 	}
 
 	.in-brief-tag {
@@ -304,19 +302,6 @@
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
 		font-variant-numeric: tabular-nums;
-	}
-
-	.paragraph-nav {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 2rem;
-		padding-top: 1rem;
-		border-top: 1px solid var(--color-border);
-		font-size: 0.95rem;
-	}
-
-	.paragraph-nav a {
-		text-decoration: none;
 	}
 
 	/* No mobile counterpart exists to preserve (see the markup comment above

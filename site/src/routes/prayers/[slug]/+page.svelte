@@ -275,8 +275,6 @@
 
 	.copyright-notice {
 		margin: 0.5rem 0 1.25rem;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
 	}
 
 	.prayer-rubric {
@@ -399,24 +397,10 @@
 		margin: 0 0 0.75rem;
 	}
 
-	.prayer-nav {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 2rem;
-		padding-top: 1rem;
-		border-top: 1px solid var(--color-border);
-		font-size: 0.95rem;
-	}
-
-	.prayer-nav a {
-		text-decoration: none;
-	}
-
 	/* Non-Rosary prayers do not need a sidebar or a reading-layout, but their
 	   Latin comparison still needs two full reading measures. Rosary compare
 	   gets the equivalent shared app.css rule through `.reading-layout`. */
 	.content-column.compare {
 		max-width: calc(var(--content-width) * 2 + 3rem);
 	}
-
 </style>

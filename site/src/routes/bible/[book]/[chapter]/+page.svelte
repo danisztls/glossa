@@ -379,7 +379,7 @@
 				</section>
 			{/if}
 
-			<nav class="chapter-nav" aria-label="Chapter navigation">
+			<nav class="unit-nav" aria-label="Chapter navigation">
 				{#if prev}
 					<a href={`/scriptura/${prev.osis}/${prev.chapter}`} rel="prev">
 						&larr; {t('bible.prevChapter')}
@@ -426,8 +426,6 @@
 
 	.copyright-notice {
 		margin: 0.15rem 0 0;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
 	}
 
 	h1 {
@@ -576,17 +574,10 @@
 		text-underline-offset: 0.15em;
 	}
 
-	.chapter-nav {
-		display: flex;
-		justify-content: space-between;
+	/* `.unit-nav` (app.css) covers everything else; this route alone keeps a
+	   larger top margin than the other three unit-nav callers. */
+	.unit-nav {
 		margin-top: 2.5rem;
-		padding-top: 1rem;
-		border-top: 1px solid var(--color-border);
-		font-size: 0.95rem;
-	}
-
-	.chapter-nav a {
-		text-decoration: none;
 	}
 
 	/* Two BookChapterPicker instances, CSS-swapped by breakpoint rather than

@@ -45,10 +45,10 @@
 		font-size: 1.05rem;
 		margin-top: 0;
 	}
+	/* 0.8rem, not the app.css base's 0.75rem — this index page's own outlier. */
 	.copyright-notice {
 		margin: 0 0 1.5rem;
 		font-size: 0.8rem;
-		color: var(--color-text-muted);
 	}
 	.toc-heading {
 		font-size: 1.1rem;

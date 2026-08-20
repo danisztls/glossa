@@ -25,7 +25,9 @@
 	let lang = $derived(content.langFor('prayer'));
 	let groups = $derived(listPrayerGroups(lang));
 	let work = $derived(getWork(`prayer.common.${lang}`));
-	let sidebarItems = $derived(groups.map((group) => ({ href: `#${group.id}`, label: group.title })));
+	let sidebarItems = $derived(
+		groups.map((group) => ({ href: `#${group.id}`, label: group.title }))
+	);
 </script>
 
 <svelte:head>
@@ -65,10 +67,10 @@
 		margin-top: 0;
 	}
 
+	/* 0.8rem, not the app.css base's 0.75rem — this index page's own outlier. */
 	.copyright-notice {
 		margin: 0 0 1.5rem;
 		font-size: 0.8rem;
-		color: var(--color-text-muted);
 	}
 
 	.prayer-group {

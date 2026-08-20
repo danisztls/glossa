@@ -14,8 +14,8 @@
 </script>
 
 <nav class="index-sidebar-toc" aria-label={heading} data-link-preview="off">
-	<h2>{heading}</h2>
-	<ol>
+	<h2 class="sidebar-toc-heading">{heading}</h2>
+	<ol class="sidebar-toc-list">
 		{#each items as item (item.href)}
 			<li><a href={item.href}>{item.label}</a></li>
 		{/each}
@@ -25,26 +25,6 @@
 <style>
 	.index-sidebar-toc {
 		font-size: 0.85rem;
-	}
-
-	h2 {
-		margin: 0 0 0.5rem;
-		font-size: 0.85rem;
-		text-transform: uppercase;
-		letter-spacing: 0.03em;
-		color: var(--color-text-muted);
-		border-bottom: 1px solid var(--color-border);
-		padding-bottom: 0.4rem;
-	}
-
-	ol {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	li {
-		margin: 0.1rem 0;
 	}
 
 	a {

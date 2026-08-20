@@ -526,8 +526,6 @@
 
 	.copyright-notice {
 		margin: 0 0 2rem;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
 	}
 
 	/* See the markup comment: this replaces the sidebar below the grid
