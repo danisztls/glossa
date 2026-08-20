@@ -31,6 +31,13 @@
 	import Check from '@lucide/svelte/icons/check';
 	import Columns2 from '@lucide/svelte/icons/columns-2';
 	import Printer from '@lucide/svelte/icons/printer';
+	import Download from '@lucide/svelte/icons/download';
+	// Lucide's `share` is the iOS glyph (a box with an arrow leaving the top),
+	// not the three-node graph — that one is `share-2`. The distinction matters
+	// here: InstallHint tells the reader to tap a specific button on their own
+	// screen, so the icon in the sentence has to be the one they are looking at.
+	import Share from '@lucide/svelte/icons/share';
+	import X from '@lucide/svelte/icons/x';
 
 	const ICONS = {
 		search: Search,
@@ -44,7 +51,10 @@
 		'book-open': BookOpen,
 		check: Check,
 		'columns-2': Columns2,
-		printer: Printer
+		printer: Printer,
+		download: Download,
+		share: Share,
+		x: X
 	};
 
 	export type IconName = keyof typeof ICONS;

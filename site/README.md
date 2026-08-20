@@ -137,6 +137,42 @@ curl -I http://localhost:4173/manifest.webmanifest # application/manifest+json
 curl -I http://localhost:4173/offline.html
 ```
 
+## Install prompts ("Add to Home Screen")
+
+Being installable and _telling anyone so_ are separate problems, and the second
+one splits along platform lines that share no mechanism. Both halves live in
+`src/lib/install.svelte.ts`, which is where the reasoning is written down.
+
+| Platform        | Mechanism                                                | Component              |
+| --------------- | -------------------------------------------------------- | ---------------------- |
+| Chromium / Edge | `beforeinstallprompt`, stashed and replayed from a click | `InstallButton.svelte` |
+| iOS / iPadOS    | No API exists. Written instructions only                 | `InstallHint.svelte`   |
+| Firefox desktop | Not installable; nothing is shown                        | —                      |
+
+The button is ungated: it appears only when the browser has said the site is
+installable, and does nothing until pressed. The iOS hint is proactive, so it
+is gated on **15 minutes of visible reading time** (counted by timer firings
+while `visibilityState === 'visible'`, so a sleeping laptop banks nothing), and
+appears at the reader's next navigation rather than mid-paragraph. Dismissal is
+permanent. Counters are `glossa:engaged-ms` and `glossa:install-dismissed`,
+alongside the other `glossa:` preferences — nothing leaves the device.
+
+Fifteen minutes is a long time to earn by hand, so two query parameters work on
+any page, in `dev` and in production alike:
+
+```
+?install-hint         show the bar now, on any browser, ignoring every gate
+?install-hint=reset   clear the dismissal and the banked time
+```
+
+`?install-hint` is the only way to see the bar on a desktop at all, since the
+platform check is otherwise fatal. Closing a forced bar records nothing.
+
+Testing the _button_ needs a production build, same as the service worker —
+Chromium only fires `beforeinstallprompt` for a page it considers installable,
+which requires the worker. Testing the hint does not; `?install-hint` works
+under `npm run dev`.
+
 ## Developing
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:

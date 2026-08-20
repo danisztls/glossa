@@ -60,6 +60,19 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'fontSize.reset': 'Reset text size',
 		'print.label': 'Print this page',
 
+		// Home-screen install — InstallButton.svelte (Chromium) and
+		// InstallHint.svelte (iOS); the gating lives in install.svelte.ts.
+		// The hint's instruction is split around the Share glyph because the
+		// icon sits mid-sentence and names a button on the reader's own screen.
+		// Both halves must be translated as one sentence, and the wording
+		// tracks Apple's own: iOS spells the entry "Add to Home Screen".
+		'install.label': 'Install Glossa',
+		'install.hint.label': 'Add to Home Screen',
+		'install.hint.title': 'Add Glossa to your Home Screen',
+		'install.hint.stepBefore': 'It opens like an app and reads offline. Tap',
+		'install.hint.stepAfter': 'then “Add to Home Screen”.',
+		'install.hint.dismiss': 'Dismiss',
+
 		// Edition/version selector — EditionMenu.svelte is the consumer; store is content.svelte.ts.
 		'edition.label': 'Edition',
 		'edition.select': 'Choose edition',
@@ -256,6 +269,17 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'fontSize.smaller': 'Diminuir texto',
 		'fontSize.reset': 'Repor tamanho do texto',
 		'print.label': 'Imprimir esta página',
+
+		// "Ecrã Principal" and "Adicionar ao Ecrã Principal" are iOS's own
+		// pt-PT wording — the reader is being told to find that exact entry in
+		// their share sheet, so the string has to match what Apple prints
+		// there rather than read as a natural translation of the English.
+		'install.label': 'Instalar a Glossa',
+		'install.hint.label': 'Adicionar ao Ecrã Principal',
+		'install.hint.title': 'Adicione a Glossa ao seu Ecrã Principal',
+		'install.hint.stepBefore': 'Abre como uma aplicação e lê-se sem ligação. Toque em',
+		'install.hint.stepAfter': 'e depois em «Adicionar ao Ecrã Principal».',
+		'install.hint.dismiss': 'Dispensar',
 
 		'edition.label': 'Edição',
 		'edition.select': 'Escolher edição',

@@ -9,6 +9,9 @@
 	import FontSizeMenu from '$lib/components/FontSizeMenu.svelte';
 	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import PrintButton from '$lib/components/PrintButton.svelte';
+	import InstallButton from '$lib/components/InstallButton.svelte';
+	import InstallHint from '$lib/components/InstallHint.svelte';
+	import { install } from '$lib/install.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
 	// Mounted once, globally: see the component's own docblock for why this is
@@ -95,6 +98,21 @@
 			navigator.serviceWorker.removeEventListener('controllerchange', requestPreload);
 		};
 	});
+
+	/**
+	 * Accumulate visible reading time, which is the gate on the iOS
+	 * "Add to Home Screen" hint — see `$lib/install.svelte` for why that hint
+	 * is gated and the install button isn't. Kept out of the block above
+	 * because that one gives up early on a browser with no service worker,
+	 * and separately because the two have nothing to do with each other.
+	 *
+	 * This belongs in the root layout precisely because the layout mounts once
+	 * for the whole session: anywhere else the counter would be torn down and
+	 * restarted on every navigation, which in a book read chapter by chapter
+	 * is constantly. On any platform that can't show the hint, `track()`
+	 * returns a no-op without starting a timer.
+	 */
+	onMount(() => install.track());
 </script>
 
 <svelte:head>
@@ -135,6 +153,9 @@
 				<FontSizeMenu />
 				<ThemeMenu />
 				<PrintButton />
+				<!-- Renders nothing unless the browser has actually offered an
+				     install, so on most visits the row is unchanged. -->
+				<InstallButton />
 				<!-- Last, and inside `.controls` rather than beside it: as a sibling of
 				     the group it picked up `.header-bar`'s 0.75rem gap while its
 				     neighbours shared `.controls`' 0.4rem, so the one button that
@@ -170,6 +191,7 @@
 </div>
 
 <LinkPreview />
+<InstallHint />
 
 <style>
 	.app-shell {
