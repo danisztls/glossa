@@ -262,3 +262,17 @@ Amends pure-verbatim: **verified source defects are corrected, and every correct
 **Why**: the interface language also selects the default content edition. Starting a Portuguese-speaking reader in English made both the chrome and their first Bible/Catechism text unnecessarily wrong, while changing an existing preference from the browser on every visit would be equally surprising. Persisting the initial negotiation gives first-time readers the right default without taking a later choice away.
 
 **Static-shell consequence**: the app HTML uses the same small primary-subtag check before hydration to set the document's `lang` attribute. The reader UI still changes when the client hydrates; this early step preserves the correct document language for assistive technology during that interval.
+
+## 2026-08-20 — There is no "prefer duplication" convention in the scrapers
+
+**What**: `pipeline/scrapers/common.py` now holds `load_corrections`, `CorrectionDriftError`, and `chapter_opening_letter`/`CHAPTER_OPENING_PUNCT`. Five scrapers had their own copy of the corrections loader — all resolving the same `pipeline/corrections` path under four different local names — three had the same drift exception, and both Bible scrapers had a byte-identical drop-cap helper.
+
+**Why this needs an entry rather than just a commit**: the duplication was defended in code by two claims, and both were false. `cpdv.py` stated that each scraper reimplements the corrections layer "(small duplication preferred over a shared module per project convention)". No such convention exists — nothing in `CLAUDE.md`, this log, or `corpus-schema.md` ever stated one, and it appears to have been invented and then cited as though already settled. The same file also called the scrapers "standalone PEP 723 scripts with no common import path"; Python puts a script's own directory on `sys.path`, so a sibling `import common` resolves from any working directory (verified directly before relying on it), and PEP 723 governs third-party dependencies, not local imports.
+
+**What stays duplicated, deliberately** — recorded in `common.py` so the question does not get reopened by whoever next greps for repetition:
+
+- **Per-host rate limits.** vatican.va's 2.0s comes from its own `robots.txt` and is a commitment about someone else's server; sacredbible.org and liriocatolico.com.br are different hosts with independently chosen floors. One shared constant would either loosen a self-imposed limit or read as a pretext to speed up the vatican.va crawl.
+- **`Fetcher`.** The four implementations differ in retry policy, raise-versus-return error handling, and even HTTP library. Unifying them is a decision about behaviour, not a mechanical merge, and the scrapers have no tests to catch a regression.
+- **`strip_tags`.** `compendium.py`'s copy turns `<br/>` into a space before dropping other tags and `ccc.py`'s does not — a documented difference that a consistency-motivated merge would silently lose.
+
+**Verified**: all six scrapers byte-compile and import cleanly with the shared module resolving to the same objects (checked from an unrelated working directory); `ruff format --check` is no worse than before. No scraper was run — this change is verifiable by reading and importing, which is the standard anything in `common.py` has to meet, since there are no scraper tests and re-crawling to check a refactor is not acceptable.
