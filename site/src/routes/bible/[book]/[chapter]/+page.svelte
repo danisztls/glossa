@@ -520,6 +520,13 @@
 		-webkit-box-decoration-break: clone;
 		border-radius: 0.15em;
 		padding-block: 0.05em;
+		/* Browsers drop background colour from print output by default (the
+		   "background graphics" checkbox, off by default) — without this the
+		   whole point of a printed citation, showing WHICH verses it covers,
+		   disappears silently. `exact` forces the wash through regardless of
+		   that setting; it has no effect on screen. */
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
 	}
 
 	/* The highlight is information, not decoration — but a reader who has

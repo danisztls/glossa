@@ -875,7 +875,6 @@ input {
 	.install-hint,
 	.reading-aside,
 	.index-aside,
-	.breadcrumb,
 	.mobile-picker,
 	.chapter-nav,
 	.paragraph-nav,
@@ -883,7 +882,15 @@ input {
 	.prayer-nav,
 	.compare-toolbar,
 	.comparison-edition-menu,
-	.toc-inline {
+	.toc-inline,
+	/* "Read the full chapter" (ccc/[n]/+page.svelte) exists to send a reader
+	   who followed a single-paragraph link onward to more context online — a
+	   printed page can't be followed anywhere, so it prints as a dead
+	   instruction rather than a link. `.breadcrumb` is deliberately NOT in
+	   this list: unlike the rest, it's where a printed single-paragraph page
+	   states what it actually is (which chapter, which work), and that
+	   context is worth the two lines of paper it costs. */
+	.read-chapter {
 		display: none !important;
 	}
 
@@ -905,13 +912,38 @@ input {
 		display: block !important;
 	}
 
-	.compare-cell {
-		break-inside: avoid;
+	/*
+	 * Compare mode gets the SAME "doesn't fit side by side" fallback the
+	 * 40rem mobile breakpoint already uses (`.compare-grid`'s own rules
+	 * above), not a bespoke print treatment: a printed page is narrower than
+	 * two reading measures for the same reason a phone screen is, and the
+	 * stacked-pairs layout that solves it there solves it here too. Forcing
+	 * `.compare-grid` to `display: block` above also means `row-gap` no
+	 * longer does anything (`gap` has no effect outside flex/grid), which is
+	 * why cell spacing is redone as margin below rather than left to that
+	 * rule to (silently) stop working on paper.
+	 */
+	.compare-header {
+		display: none !important;
+	}
+
+	.compare-cell-tag {
+		display: block !important;
 	}
 
 	.compare-cell-left {
 		border-inline-end: 0;
 		padding-inline-end: 0;
+		border-block-end: 1px dashed #000;
+		padding-block-end: 0.75rem;
+	}
+
+	.compare-cell-right {
+		margin-block-end: 1rem;
+	}
+
+	.compare-cell {
+		break-inside: avoid;
 	}
 
 	a {
