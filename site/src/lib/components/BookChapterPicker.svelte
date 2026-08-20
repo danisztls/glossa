@@ -28,12 +28,12 @@
 	 *
 	 * Two consequences of leaving the flow, both handled below and BOTH
 	 * SCOPED TO THE GRID VARIANT ONLY: the panel can overhang either
-	 * viewport edge for books near it (hence `panelOffsetPx`, measured from
-	 * the real DOM at open time rather than guessed from column position,
-	 * since the grid wraps at a width nobody here knows statically), and it
-	 * no longer dismisses by re-clicking alone, so it takes the same
-	 * outside-click/Escape handling
-	 * as the header menus.
+	 * viewport edge for books near it (hence `align`, measured from the
+	 * real DOM at open time — both the button's position AND the panel's
+	 * own content-driven width, since the grid wraps at a width nobody here
+	 * knows statically and different books need very different widths), and
+	 * it no longer dismisses by re-clicking alone, so it takes the same
+	 * outside-click/Escape handling as the header menus.
 	 *
 	 * There are deliberately NO chevron indicators on the book buttons.
 	 * `aria-expanded` carries the state for assistive tech, and sighted
@@ -129,30 +129,35 @@
 	let openOsis: string | undefined = $state(untrack(() => currentOsis));
 
 	/**
-	 * Horizontal offset (px) applied to the popover's `inset-inline-start`,
-	 * relative to its own `.book-item`'s left edge — 0 keeps the panel's left
-	 * edge lined up with the button, same as before this existed. Anything
-	 * else shifts it left/right by that many pixels to keep the whole panel
-	 * on screen.
+	 * Which edge of the book button the open panel is anchored to — flush
+	 * against the button's left edge by default, or its right edge when
+	 * left-anchoring would run the panel off the viewport's right side.
 	 *
-	 * This used to be a binary start/end anchor flipped only when a
-	 * start-anchored panel would overflow the RIGHT edge. On a narrow phone
-	 * that flip fires for nearly every book — the panel (~22rem) is close to
-	 * the full viewport width, so `rect.left + panelWidth > innerWidth` is
-	 * true even for buttons near the LEFT edge. End-anchoring one of those
-	 * then hangs most of the panel off to the left of x=0, which is the
-	 * "showing partially outside the viewport from the left" bug: the flip
-	 * fixed a right overflow only to create a worse left one. A continuous
-	 * pixel offset, clamped against BOTH edges, has no such blind spot.
+	 * Getting this right depends on the panel's ACTUAL width, which is now
+	 * content-sized (a 1-chapter book like 2/3 John renders far narrower
+	 * than a 150-chapter one like Psalms — see `.chapters` below, which no
+	 * longer imposes a fixed floor). A hardcoded width guess would make the
+	 * wrong call for anything narrower than that guess: a 3-chapter book's
+	 * popover fits fine flush against a button near the right edge, but a
+	 * guess of "assume it's as wide as the widest possible panel" flips it
+	 * to right-anchored anyway, which is what produced the very first bug
+	 * here (a right-anchored panel overshooting the LEFT edge instead). So
+	 * this measures the real rendered panel via the DOM rather than
+	 * guessing — the panel is already mounted by the time this effect runs
+	 * (Svelte flushes effects after the DOM update), so `getBoundingClientRect`
+	 * reflects its true content-driven width.
 	 */
+	let align: 'start' | 'end' = $state('start');
+
+	/** Extra pixel nudge on top of `align`, used only in the rare case where
+	 * NEITHER edge-anchor keeps the whole panel on screen (a very wide panel,
+	 * e.g. Psalms, opened from a button in the middle of a narrow phone's
+	 * row) — 0 the rest of the time. */
 	let panelOffsetPx = $state(0);
 
-	/** Matches `.chapters`' `max-inline-size` below; keep the two in step. */
-	const PANEL_WIDTH_REM = 22;
-
-	/** Matches `.chapters`' `max-inline-size` margin (`calc(100vw - 2rem)`,
-	 * i.e. 1rem clearance on each side) — kept as one constant so the JS
-	 * clamp and the CSS clamp can't drift apart. */
+	/** ~1rem clearance from the viewport edge, matching `.chapters`' own
+	 * `max-inline-size: calc(100vw - 2rem)` clamp so the two can't drift
+	 * out of step. */
 	function viewportMarginPx(rem: number): number {
 		return rem;
 	}
@@ -165,14 +170,27 @@
 		if (variant !== 'grid' || !openOsis) return;
 		const btn = document.getElementById(`book-btn-${openOsis}`);
 		const item = btn?.closest('.book-item');
-		if (!(item instanceof HTMLElement)) return;
+		const panel = document.getElementById(`chapters-${openOsis}`);
+		if (!(item instanceof HTMLElement) || !(panel instanceof HTMLElement)) return;
 		const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 		const margin = viewportMarginPx(rem);
-		const panelWidth = Math.min(PANEL_WIDTH_REM * rem, window.innerWidth - margin * 2);
-		const itemLeft = item.getBoundingClientRect().left;
-		const maxLeft = window.innerWidth - margin - panelWidth;
-		const desiredLeft = Math.max(margin, Math.min(itemLeft, maxLeft));
-		panelOffsetPx = desiredLeft - itemLeft;
+		const itemRect = item.getBoundingClientRect();
+		const panelWidth = panel.getBoundingClientRect().width;
+		const fitsStart = itemRect.left + panelWidth <= window.innerWidth - margin;
+		const fitsEnd = itemRect.right - panelWidth >= margin;
+		if (fitsStart) {
+			align = 'start';
+			panelOffsetPx = 0;
+		} else if (fitsEnd) {
+			align = 'end';
+			panelOffsetPx = 0;
+		} else {
+			// Neither edge keeps it fully on screen (the panel is wider than
+			// the viewport has room for on either side of this button) —
+			// clamp the start-anchored position as a last resort.
+			align = 'start';
+			panelOffsetPx = Math.min(0, window.innerWidth - margin - itemRect.left - panelWidth);
+		}
 	});
 
 	function toggleBook(osis: string) {
@@ -280,7 +298,8 @@
 		id={`chapters-${book.osis}`}
 		class="chapters"
 		class:sidebar={variant === 'sidebar'}
-		style={variant === 'grid' ? `inset-inline-start: ${panelOffsetPx}px` : undefined}
+		class:align-end={variant === 'grid' && align === 'end'}
+		style={variant === 'grid' && align === 'start' ? `inset-inline-start: ${panelOffsetPx}px` : undefined}
 		role="group"
 		aria-label={bookName(book)}
 		data-link-preview="off"
@@ -450,11 +469,13 @@
 	}
 
 	/* Out of flow: opening a book must not move the 73-button grid behind it.
-	   `min-inline-size` keeps single-chapter books (Obadiah, Jude) from
-	   collapsing to a sliver; `max-inline-size` matches PANEL_WIDTH_REM in the
-	   script, which is what the overflow measurement assumes. GRID VARIANT
-	   ONLY — `.chapters.sidebar` below overrides every positioning property
-	   back to in-flow. */
+	   Sized to its own content (a 1-chapter book like 2/3 John should render
+	   narrow, not force-padded to some arbitrary floor) with only an upper
+	   bound: `max-inline-size` keeps a huge book (Psalms, 150 chapters) from
+	   ever exceeding the viewport width, which is what guarantees the
+	   start/end anchor math in the script always has at least one edge that
+	   fits. GRID VARIANT ONLY — `.chapters.sidebar` below overrides every
+	   positioning property back to in-flow. */
 	.chapters {
 		position: absolute;
 		top: calc(100% + 0.35rem);
@@ -465,14 +486,18 @@
 		border: 1px solid var(--color-border);
 		border-radius: 0.35rem;
 		box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
-		min-inline-size: 12rem;
 		max-inline-size: min(22rem, calc(100vw - 2rem));
+	}
+
+	.chapters.align-end {
+		inset-inline-start: auto;
+		inset-inline-end: 0;
 	}
 
 	/* In-flow instead of a floating panel: no positioning, no shadow (nothing
 	   to lift off the page), no width clamp (the column itself already fits
-	   17rem — see the component docblock for why the popover's own
-	   PANEL_WIDTH_REM doesn't). A small start indent ties it visually to the
+	   17rem — see the component docblock for why the popover's own width
+	   bound doesn't apply here). A small start indent ties it visually to the
 	   book button it belongs to, the way a nested list would. */
 	.chapters.sidebar {
 		position: static;
@@ -481,7 +506,6 @@
 		z-index: auto;
 		margin: 0.5rem 0 0.75rem;
 		box-shadow: none;
-		min-inline-size: 0;
 		max-inline-size: none;
 	}
 
