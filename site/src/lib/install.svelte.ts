@@ -36,6 +36,7 @@
  */
 
 import { browser } from '$app/environment';
+import { readStoredString, writeStoredString } from './storage';
 
 /** Visible reading time a reader must accumulate before the iOS hint appears. */
 export const ENGAGEMENT_THRESHOLD_MS = 15 * 60 * 1000;
@@ -104,15 +105,13 @@ export function shouldOfferIosHint(state: {
 
 /** Parse the stored counter defensively — it is user-editable, like any localStorage value. */
 function readEngagement(): number {
-	if (typeof localStorage === 'undefined') return 0;
-	const parsed = Number(localStorage.getItem(ENGAGEMENT_KEY));
+	const parsed = Number(readStoredString(ENGAGEMENT_KEY));
 	if (!Number.isFinite(parsed) || parsed < 0) return 0;
 	return Math.min(parsed, ENGAGEMENT_THRESHOLD_MS);
 }
 
 function readDismissed(): boolean {
-	if (typeof localStorage === 'undefined') return false;
-	return localStorage.getItem(DISMISSED_KEY) === '1';
+	return readStoredString(DISMISSED_KEY) === '1';
 }
 
 function isStandalone(): boolean {
@@ -171,7 +170,7 @@ class InstallStore {
 
 	dismissHint() {
 		this.hintDismissed = true;
-		if (typeof localStorage !== 'undefined') localStorage.setItem(DISMISSED_KEY, '1');
+		writeStoredString(DISMISSED_KEY, '1');
 	}
 
 	/**
@@ -187,9 +186,8 @@ class InstallStore {
 	resetHint() {
 		this.hintDismissed = false;
 		this.engagedMs = 0;
-		if (typeof localStorage === 'undefined') return;
-		localStorage.removeItem(DISMISSED_KEY);
-		localStorage.removeItem(ENGAGEMENT_KEY);
+		writeStoredString(DISMISSED_KEY, undefined);
+		writeStoredString(ENGAGEMENT_KEY, undefined);
 	}
 
 	/**
@@ -216,9 +214,7 @@ class InstallStore {
 
 		const tick = () => {
 			this.engagedMs = Math.min(this.engagedMs + ENGAGEMENT_TICK_MS, ENGAGEMENT_THRESHOLD_MS);
-			if (typeof localStorage !== 'undefined') {
-				localStorage.setItem(ENGAGEMENT_KEY, String(this.engagedMs));
-			}
+			writeStoredString(ENGAGEMENT_KEY, String(this.engagedMs));
 			if (this.engagedMs >= ENGAGEMENT_THRESHOLD_MS) stop();
 		};
 

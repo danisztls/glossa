@@ -7,6 +7,8 @@
  * used for auto-redirects — the home screen only ever offers a link.
  */
 
+import { readStoredJson, writeStoredJson } from './storage';
+
 export interface ReadingPosition {
 	workId: string;
 	/** Human-readable label, e.g. "John 3" or "CCC 1234". */
@@ -18,37 +20,26 @@ export interface ReadingPosition {
 
 const STORAGE_KEY = 'glossa:positions';
 
-function readAll(): Record<string, ReadingPosition> {
-	if (typeof localStorage === 'undefined') return {};
-	try {
-		const raw = localStorage.getItem(STORAGE_KEY);
-		return raw ? (JSON.parse(raw) as Record<string, ReadingPosition>) : {};
-	} catch {
-		return {};
-	}
-}
-
-function writeAll(positions: Record<string, ReadingPosition>) {
-	if (typeof localStorage === 'undefined') return;
-	localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
-}
+type Positions = Record<string, ReadingPosition>;
 
 export function setPosition(workId: string, label: string, href: string): void {
-	const positions = readAll();
+	const positions = readStoredJson<Positions>(STORAGE_KEY, {});
 	positions[workId] = {
 		workId,
 		label,
 		href,
 		updatedAt: new Date().toISOString()
 	};
-	writeAll(positions);
+	writeStoredJson(STORAGE_KEY, positions);
 }
 
 export function getPosition(workId: string): ReadingPosition | undefined {
-	return readAll()[workId];
+	return readStoredJson<Positions>(STORAGE_KEY, {})[workId];
 }
 
 /** All remembered positions, most recently updated first. */
 export function listPositions(): ReadingPosition[] {
-	return Object.values(readAll()).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+	return Object.values(readStoredJson<Positions>(STORAGE_KEY, {})).sort((a, b) =>
+		b.updatedAt.localeCompare(a.updatedAt)
+	);
 }

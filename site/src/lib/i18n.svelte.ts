@@ -13,6 +13,8 @@
  * re-picks an edition after switching.
  */
 
+import { readStoredString, writeStoredString } from './storage';
+
 export type UiLang = 'en' | 'pt';
 
 const STORAGE_KEY = 'glossa:ui-lang';
@@ -433,8 +435,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 };
 
 function readStored(): UiLang | null {
-	if (typeof localStorage === 'undefined') return null;
-	const value = localStorage.getItem(STORAGE_KEY);
+	const value = readStoredString(STORAGE_KEY);
 	return value === 'en' || value === 'pt' ? value : null;
 }
 
@@ -471,9 +472,7 @@ function initialLang(): UiLang {
 	if (stored) return stored;
 
 	const detected = browserLanguage();
-	if (typeof localStorage !== 'undefined') {
-		localStorage.setItem(STORAGE_KEY, detected);
-	}
+	writeStoredString(STORAGE_KEY, detected);
 	return detected;
 }
 
@@ -482,9 +481,7 @@ class I18nStore {
 
 	set(lang: UiLang) {
 		this.lang = lang;
-		if (typeof localStorage !== 'undefined') {
-			localStorage.setItem(STORAGE_KEY, lang);
-		}
+		writeStoredString(STORAGE_KEY, lang);
 	}
 
 	t(key: string): string {

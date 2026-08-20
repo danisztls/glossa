@@ -15,6 +15,8 @@
  * avoid a flash of the wrong theme.
  */
 
+import { readStoredString, writeStoredString } from './storage';
+
 export type Theme = 'auto' | 'light' | 'dark' | 'sepia';
 
 const STORAGE_KEY = 'glossa:theme';
@@ -22,8 +24,7 @@ const THEMES: Theme[] = ['auto', 'light', 'dark', 'sepia'];
 const DEFAULT_THEME: Theme = 'auto';
 
 function readStored(): Theme {
-	if (typeof localStorage === 'undefined') return DEFAULT_THEME;
-	const value = localStorage.getItem(STORAGE_KEY);
+	const value = readStoredString(STORAGE_KEY);
 	return THEMES.includes(value as Theme) ? (value as Theme) : DEFAULT_THEME;
 }
 
@@ -39,9 +40,7 @@ class ThemeStore {
 				document.documentElement.setAttribute('data-theme', theme);
 			}
 		}
-		if (typeof localStorage !== 'undefined') {
-			localStorage.setItem(STORAGE_KEY, theme);
-		}
+		writeStoredString(STORAGE_KEY, theme);
 	}
 
 	/** Cycle auto → light → dark → sepia → auto, starting from whatever is active now. */

@@ -42,6 +42,7 @@ import {
 	getDocumentGroup,
 	listEditions
 } from './corpus';
+import { readStoredJson, writeStoredJson } from './storage';
 
 /**
  * `'prayer'` joins this union rather than getting a fourth `#documentOverrides`-
@@ -66,40 +67,21 @@ type DocumentOverrideMap = Record<string, Override>;
 const STORAGE_KEY = 'glossa:content-override';
 const DOCUMENT_STORAGE_KEY = 'glossa:content-override-documents';
 
+/**
+ * `readStoredJson` already returns the `{}` fallback for "unavailable",
+ * "absent" and "malformed JSON" — what it can't know is our shape, so a
+ * stored value that parsed fine but isn't an override map (e.g. foreign
+ * localStorage content that happens to be valid JSON) still needs this
+ * extra check rather than being cast and trusted.
+ */
 function readStored(): OverrideMap {
-	if (typeof localStorage === 'undefined') return {};
-	try {
-		const raw = localStorage.getItem(STORAGE_KEY);
-		if (!raw) return {};
-		const parsed: unknown = JSON.parse(raw);
-		return parsed && typeof parsed === 'object' ? (parsed as OverrideMap) : {};
-	} catch {
-		// Corrupt/foreign localStorage value — behave as if nothing were stored
-		// rather than throwing during module init.
-		return {};
-	}
-}
-
-function writeStored(overrides: OverrideMap) {
-	if (typeof localStorage === 'undefined') return;
-	localStorage.setItem(STORAGE_KEY, JSON.stringify(overrides));
+	const parsed = readStoredJson<unknown>(STORAGE_KEY, {});
+	return parsed && typeof parsed === 'object' ? (parsed as OverrideMap) : {};
 }
 
 function readDocumentStored(): DocumentOverrideMap {
-	if (typeof localStorage === 'undefined') return {};
-	try {
-		const raw = localStorage.getItem(DOCUMENT_STORAGE_KEY);
-		if (!raw) return {};
-		const parsed: unknown = JSON.parse(raw);
-		return parsed && typeof parsed === 'object' ? (parsed as DocumentOverrideMap) : {};
-	} catch {
-		return {};
-	}
-}
-
-function writeDocumentStored(overrides: DocumentOverrideMap) {
-	if (typeof localStorage === 'undefined') return;
-	localStorage.setItem(DOCUMENT_STORAGE_KEY, JSON.stringify(overrides));
+	const parsed = readStoredJson<unknown>(DOCUMENT_STORAGE_KEY, {});
+	return parsed && typeof parsed === 'object' ? (parsed as DocumentOverrideMap) : {};
 }
 
 class ContentStore {
@@ -133,7 +115,7 @@ class ContentStore {
 			next[type] = { workId, forUiLang: i18n.lang };
 		}
 		this.#overrides = next;
-		writeStored(next);
+		writeStoredJson(STORAGE_KEY, next);
 	}
 
 	/** Document analogue of `workIdFor`, keyed by the document's `slug` rather than a `WorkTypeKey` — see module docblock. */
@@ -160,7 +142,7 @@ class ContentStore {
 			next[slug] = { workId, forUiLang: i18n.lang };
 		}
 		this.#documentOverrides = next;
-		writeDocumentStored(next);
+		writeStoredJson(DOCUMENT_STORAGE_KEY, next);
 	}
 }
 

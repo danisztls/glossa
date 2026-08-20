@@ -40,6 +40,7 @@
  */
 
 import { COMPARE_PARAM } from './compare';
+import { readStoredString, writeStoredString } from './storage';
 
 const STORAGE_KEY = 'glossa:compare';
 
@@ -47,15 +48,9 @@ const STORAGE_KEY = 'glossa:compare';
  *  on why a stored work id alone would not survive navigating between works. */
 export const AUTO = 'auto';
 
-function readStored(): string | undefined {
-	if (typeof localStorage === 'undefined') return undefined;
-	const raw = localStorage.getItem(STORAGE_KEY);
-	return raw === null || raw === '' ? undefined : raw;
-}
-
 class CompareStore {
 	/** `undefined` = compare off. Otherwise `AUTO` or a specific work id. */
-	target: string | undefined = $state(readStored());
+	target: string | undefined = $state(readStoredString(STORAGE_KEY));
 
 	get active(): boolean {
 		return this.target !== undefined;
@@ -63,9 +58,7 @@ class CompareStore {
 
 	set(target: string | undefined) {
 		this.target = target;
-		if (typeof localStorage === 'undefined') return;
-		if (target === undefined) localStorage.removeItem(STORAGE_KEY);
-		else localStorage.setItem(STORAGE_KEY, target);
+		writeStoredString(STORAGE_KEY, target);
 	}
 
 	/** Turn compare on (defaulting to `AUTO`) or off. */
