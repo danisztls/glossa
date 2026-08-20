@@ -27,11 +27,9 @@
 	 * about the grid behind it.
 	 *
 	 * Two consequences of leaving the flow, both handled below and BOTH
-	 * SCOPED TO THE GRID VARIANT ONLY: the panel can overhang either
-	 * viewport edge for books near it (hence `align`, measured from the
-	 * real DOM at open time — both the button's position AND the panel's
-	 * own content-driven width, since the grid wraps at a width nobody here
-	 * knows statically and different books need very different widths), and
+	 * SCOPED TO THE GRID VARIANT ONLY: nothing in CSS knows where on the
+	 * screen the button it is anchored to sits, so the panel's size and
+	 * offset are measured from the real DOM instead (`Placement` below); and
 	 * it no longer dismisses by re-clicking alone, so it takes the same
 	 * outside-click/Escape handling as the header menus.
 	 *
@@ -65,8 +63,8 @@
 	 *
 	 * The popover would not have worked here anyway: `.reading-aside` is
 	 * `overflow-y: auto` (a scroll container, so it clips anything escaping
-	 * its box) and 17rem wide, against the popover's 22rem
-	 * `PANEL_WIDTH_REM`. The `align`/outside-click/Escape machinery above is
+	 * its box) and 17rem wide, narrower than the chapter panel wants to be
+	 * for most books. The placement/outside-click/Escape machinery above is
 	 * therefore skipped entirely for `'sidebar'` — nothing needs measuring or
 	 * force-dismissing when there is no popover to overhang the viewport or
 	 * fail to self-dismiss.
@@ -115,6 +113,21 @@
 
 	/** 46 OT + 27 NT = 73, in that fixed order — docs/corpus-schema.md "Canonical book order". */
 	const OT_BOOK_COUNT = 46;
+
+	/**
+	 * How many columns the chapter grid ASKS for. What it gets is this or
+	 * whatever the viewport can spare, whichever is smaller — see
+	 * `.chapters`' `inline-size` below, which is where the two meet.
+	 *
+	 * Ten, because chapter numbers are read in tens: rows that start at 1,
+	 * 11, 21, 31 put chapter 27 where the eye already expects it, and a
+	 * reader hunting a chapter is doing arithmetic on the number, not
+	 * scanning left to right. Wider rows scan worse, not better, which is
+	 * why this is capped at all rather than filling every pixel available
+	 * on a desktop — a 36-chapter book laid out 30-across would be one
+	 * long strip to search.
+	 */
+	const MAX_CHAPTER_COLS = 10;
 	const testaments = $derived([
 		{ key: 'ot', books: books.filter((b) => b.order <= OT_BOOK_COUNT) },
 		{ key: 'nt', books: books.filter((b) => b.order > OT_BOOK_COUNT) }
@@ -129,68 +142,110 @@
 	let openOsis: string | undefined = $state(untrack(() => currentOsis));
 
 	/**
-	 * Which edge of the book button the open panel is anchored to — flush
-	 * against the button's left edge by default, or its right edge when
-	 * left-anchoring would run the panel off the viewport's right side.
-	 *
-	 * Getting this right depends on the panel's ACTUAL width, which is now
-	 * content-sized (a 1-chapter book like 2/3 John renders far narrower
-	 * than a 150-chapter one like Psalms — see `.chapters` below, which no
-	 * longer imposes a fixed floor). A hardcoded width guess would make the
-	 * wrong call for anything narrower than that guess: a 3-chapter book's
-	 * popover fits fine flush against a button near the right edge, but a
-	 * guess of "assume it's as wide as the widest possible panel" flips it
-	 * to right-anchored anyway, which is what produced the very first bug
-	 * here (a right-anchored panel overshooting the LEFT edge instead). So
-	 * this measures the real rendered panel via the DOM rather than
-	 * guessing — the panel is already mounted by the time this effect runs
-	 * (Svelte flushes effects after the DOM update), so `getBoundingClientRect`
-	 * reflects its true content-driven width.
+	 * The three lengths the chapter grid is laid out with, in rem, mirrored
+	 * from the custom properties `.chapters` declares. Both sides need them:
+	 * CSS to place the columns, this file to work out how wide a given number
+	 * of columns would be — which is what decides the panel's width, and
+	 * which CSS cannot do on its own because it cannot count a book's
+	 * chapters. Change one, change the other.
 	 */
-	let align: 'start' | 'end' = $state('start');
+	const CHIP_REM = 2;
+	const GAP_REM = 0.35;
+	const PAD_REM = 0.5;
 
-	/** Extra pixel nudge on top of `align`, used only in the rare case where
-	 * NEITHER edge-anchor keeps the whole panel on screen (a very wide panel,
-	 * e.g. Psalms, opened from a button in the middle of a narrow phone's
-	 * row) — 0 the rest of the time. */
-	let panelOffsetPx = $state(0);
+	/** Clearance kept between the panel and the viewport edge, on every side. */
+	const MARGIN_REM = 1;
 
-	/** ~1rem clearance from the viewport edge, matching `.chapters`' own
-	 * `max-inline-size: calc(100vw - 2rem)` clamp so the two can't drift
-	 * out of step. */
-	function viewportMarginPx(rem: number): number {
-		return rem;
+	/**
+	 * Floor on the panel's height. A book near the bottom of a short viewport
+	 * may leave less room than this; it gets this much anyway and runs past
+	 * the fold, which the page scrolls to. A letterbox two rows tall would be
+	 * worse than a panel you have to scroll the page for.
+	 */
+	const MIN_BLOCK_REM = 9;
+
+	/**
+	 * Where the open panel goes: its size and its offset from the book
+	 * button, in pixels, decided from the DOM.
+	 *
+	 * Every number here comes from things that DO NOT depend on the panel —
+	 * the button's position, the viewport, and the book's chapter count.
+	 * That is the whole point of the rewrite. The previous version measured
+	 * the RENDERED panel and then nudged it, which is only correct for as
+	 * long as the width it measured stays true: the width was `100vw`-based
+	 * and so recomputed itself on every resize, while the offset, measured
+	 * once at open time, did not. A panel opened in a 574px window and left
+	 * open while the window narrowed to 432px kept its old offset against its
+	 * new width and hung off the right edge — two columns of chapters
+	 * unreachable, and the document scrolling sideways. Deciding the width
+	 * here means the offset can never be out of step with it, and `onresize`
+	 * below redoes both together.
+	 */
+	interface Placement {
+		/** Panel width, border-box — `box-sizing` is global (app.css). */
+		inlinePx: number;
+		/** How far to slide the panel back from the button's inline start to keep it on screen. Never positive. */
+		offsetPx: number;
+		/** Height cap. The panel scrolls internally past it. */
+		blockPx: number;
+		/** Open upward rather than downward, when that is where the room is. */
+		flip: boolean;
+	}
+
+	let placement: Placement | null = $state(null);
+
+	function measurePlacement(osis: string): Placement | null {
+		const item = document.getElementById(`book-btn-${osis}`)?.closest('.book-item');
+		if (!(item instanceof HTMLElement)) return null;
+		const root = document.documentElement;
+		const rem = parseFloat(getComputedStyle(root).fontSize) || 16;
+		// `clientWidth`/`clientHeight`, not `window.innerWidth`/`innerHeight`:
+		// the window's numbers include the scrollbars. Sizing against those
+		// (or against `100vw`, which has the same flaw) makes the panel a
+		// scrollbar wider than the space it is trying to fit into — enough on
+		// its own to put the page into horizontal scrolling.
+		const viewW = root.clientWidth;
+		const viewH = root.clientHeight;
+		const margin = MARGIN_REM * rem;
+		const rect = item.getBoundingClientRect();
+		const cols = Math.min(MAX_CHAPTER_COLS, chapterCount(osis));
+
+		// What `cols` columns would take, against what there is to give. The
+		// trailing gap (`cols` gaps for `cols` columns, one more than sits
+		// between them) is slack against sub-pixel rounding — see
+		// `.chapters`' width comment.
+		const wanted = (cols * (CHIP_REM + GAP_REM) + 2 * PAD_REM) * rem + 2;
+		const inlinePx = Math.min(wanted, viewW - 2 * margin);
+
+		// Anchored to the button's inline start, slid back only as far as
+		// staying inside the margin requires — which is nothing at all for
+		// most books, and the whole panel width for one opened from the far
+		// right of a phone.
+		const offsetPx = Math.min(0, viewW - margin - inlinePx - rect.left);
+
+		const below = viewH - rect.bottom - margin;
+		const above = rect.top - margin;
+		const flip = below < above && below < MIN_BLOCK_REM * rem;
+		return {
+			inlinePx: Math.round(inlinePx),
+			offsetPx: Math.round(offsetPx),
+			blockPx: Math.round(Math.max(flip ? above : below, MIN_BLOCK_REM * rem)),
+			flip
+		};
 	}
 
 	// Runs for BOTH click-opens and the default-open-current-book case
-	// (`openOsis`'s initial value, set with no click event to measure) —
-	// a DOM lookup by id rather than the triggering event, so there is one
-	// code path instead of two that can fall out of sync.
+	// (`openOsis`'s initial value, set with no click event to measure) — a
+	// DOM lookup by id rather than the triggering event, so there is one code
+	// path instead of two that can fall out of sync. Nothing here reads the
+	// panel, so it does not matter that this runs before the panel has
+	// settled — or, for that matter, whether the panel exists yet.
 	$effect(() => {
-		if (variant !== 'grid' || !openOsis) return;
-		const btn = document.getElementById(`book-btn-${openOsis}`);
-		const item = btn?.closest('.book-item');
-		const panel = document.getElementById(`chapters-${openOsis}`);
-		if (!(item instanceof HTMLElement) || !(panel instanceof HTMLElement)) return;
-		const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-		const margin = viewportMarginPx(rem);
-		const itemRect = item.getBoundingClientRect();
-		const panelWidth = panel.getBoundingClientRect().width;
-		const fitsStart = itemRect.left + panelWidth <= window.innerWidth - margin;
-		const fitsEnd = itemRect.right - panelWidth >= margin;
-		if (fitsStart) {
-			align = 'start';
-			panelOffsetPx = 0;
-		} else if (fitsEnd) {
-			align = 'end';
-			panelOffsetPx = 0;
-		} else {
-			// Neither edge keeps it fully on screen (the panel is wider than
-			// the viewport has room for on either side of this button) —
-			// clamp the start-anchored position as a last resort.
-			align = 'start';
-			panelOffsetPx = Math.min(0, window.innerWidth - margin - itemRect.left - panelWidth);
+		if (variant !== 'grid' || !openOsis) {
+			placement = null;
+			return;
 		}
+		placement = measurePlacement(openOsis);
 	});
 
 	function toggleBook(osis: string) {
@@ -225,6 +280,41 @@
 		if (variant === 'grid' && openOsis && e.key === 'Escape') closePanel();
 	}
 
+	// A resize (or a phone rotating, or a browser zoom step) changes every
+	// input to `measurePlacement`. Redo it rather than leave a panel placed
+	// for a viewport that no longer exists — the failure this replaces was
+	// exactly that, a panel still anchored for a window 140px wider than the
+	// one it was now hanging out of.
+	function onWindowResize() {
+		if (variant !== 'grid' || !openOsis) return;
+		placement = measurePlacement(openOsis);
+	}
+
+	/**
+	 * The panel's inline styles.
+	 *
+	 * `--chapter-cols` is the column count this book is worth asking for; the
+	 * CSS turns it into a width, and is the only thing that applies before
+	 * `placement` exists — during SSR, on the first frame, and for a reader
+	 * with no JavaScript. Everything else here is `placement`, which supersedes
+	 * that CSS with numbers measured against the real viewport.
+	 */
+	function panelStyle(book: CanonicalBook): string {
+		const decls = [`--chapter-cols: ${Math.min(MAX_CHAPTER_COLS, book.chapters.length)}`];
+		if (variant === 'grid' && placement) {
+			decls.push(
+				`inline-size: ${placement.inlinePx}px`,
+				`max-block-size: ${placement.blockPx}px`,
+				`inset-inline-start: ${placement.offsetPx}px`
+			);
+		}
+		return decls.join('; ');
+	}
+
+	function chapterCount(osis: string): number {
+		return books.find((b) => b.osis === osis)?.chapters.length ?? MAX_CHAPTER_COLS;
+	}
+
 	function bookName(book: CanonicalBook): string {
 		return book.namesByWorkId[workId] ?? Object.values(book.namesByWorkId)[0] ?? book.osis;
 	}
@@ -237,7 +327,7 @@
 	}
 </script>
 
-<svelte:window onclick={onWindowClick} onkeydown={onWindowKeydown} />
+<svelte:window onclick={onWindowClick} onkeydown={onWindowKeydown} onresize={onWindowResize} />
 
 {#snippet groups()}
 	{#each testaments as group (group.key)}
@@ -298,8 +388,8 @@
 		id={`chapters-${book.osis}`}
 		class="chapters"
 		class:sidebar={variant === 'sidebar'}
-		class:align-end={variant === 'grid' && align === 'end'}
-		style={variant === 'grid' && align === 'start' ? `inset-inline-start: ${panelOffsetPx}px` : undefined}
+		class:flip={variant === 'grid' && placement?.flip}
+		style={panelStyle(book)}
 		role="group"
 		aria-label={bookName(book)}
 		data-link-preview="off"
@@ -469,41 +559,81 @@
 	}
 
 	/* Out of flow: opening a book must not move the 73-button grid behind it.
-	   Sized to its own content (a 1-chapter book like 2/3 John should render
-	   narrow, not force-padded to some arbitrary floor) with only an upper
-	   bound: `max-inline-size` keeps a huge book (Psalms, 150 chapters) from
-	   ever exceeding the viewport width, which is what guarantees the
-	   start/end anchor math in the script always has at least one edge that
-	   fits. GRID VARIANT ONLY — `.chapters.sidebar` below overrides every
-	   positioning property back to in-flow.
+	   A 1-chapter book like 2/3 John renders narrow, not force-padded to some
+	   arbitrary floor, and no book ever exceeds the viewport width — which is
+	   what guarantees the start/end anchor math in the script always has at
+	   least one edge that fits. GRID VARIANT ONLY — `.chapters.sidebar` below
+	   overrides every positioning property back to in-flow.
 
-	   `inline-size: max-content` is load-bearing, not decorative: an
-	   absolutely-positioned element with no explicit width falls back to
-	   CSS's "shrink-to-fit" sizing against its CONTAINING BLOCK, which for
-	   this panel is `.book-item` — the `<li>`, sized to nothing wider than
-	   the button itself. Without `max-content` the panel shrinks toward
-	   that narrow button width instead of its own chapter numbers, so
-	   `.chapters-nums` (flex-wrap) has no room to fit more than one chip per
-	   row and every chapter ends up in a single column. `max-content` sizes
-	   the box to what its OWN content wants (all chips in one row) before
-	   `max-inline-size` clamps a big book back down to wrapping. */
+	   WIDTH COMES FROM THE SPACE AVAILABLE, not from a constant. The fixed
+	   `22rem` cap this replaces was the reason a 36-chapter book like Numbers
+	   rendered seven narrow columns and six rows on a screen with room for
+	   ten and four: the cap had no idea how much room there was, so it
+	   imposed the same ceiling on a phone and a desktop.
+
+	   The `min()` below is the STARTING POINT, not the final answer: it is
+	   what applies during SSR, on the first frame, and for a reader with no
+	   JavaScript — `--chapter-cols` columns or the viewport, whichever is
+	   smaller. `measurePlacement` then overrides `inline-size`,
+	   `max-block-size` and `inset-inline-start` together, with numbers that
+	   also account for WHERE the button is, which CSS cannot see. (Note that
+	   `100vw` here counts the scrollbar and the measured version does not;
+	   the 1rem margin absorbs the difference.)
+
+	   A DEFINITE `inline-size` is also load-bearing for two separate reasons,
+	   both of which end in the same one-chapter-per-row collapse:
+
+	   1. An absolutely-positioned box with `width: auto` shrink-fits against
+	      its CONTAINING BLOCK — here `.book-item`, the `<li>`, no wider than
+	      the button itself. (This is what `inline-size: max-content` used to
+	      work around; a definite width sidesteps it, since the containing
+	      block never enters the calculation.)
+	   2. `auto-fit` in `.chapters-nums` below resolves to a SINGLE track when
+	      the available inline size is indefinite — which `max-content` is.
+
+	   So the two rules are a pair: the panel resolves a real width against
+	   the viewport, and the grid inside it fills that width. */
 	.chapters {
+		/* Mirrors of the chip's minimum box, the grid gap and this panel's own
+		   padding, so the width arithmetic cannot drift from the thing it is
+		   sizing. Each is used by exactly one other rule below. */
+		--chapter-chip: 2rem;
+		--chapter-gap: 0.35rem;
+		--chapter-pad: 0.5rem;
 		position: absolute;
 		top: calc(100% + 0.35rem);
 		inset-inline-start: 0;
 		z-index: 20;
-		padding: 0.5rem;
+		padding: var(--chapter-pad);
 		background: var(--color-bg-elevated);
 		border: 1px solid var(--color-border);
 		border-radius: 0.35rem;
 		box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
-		inline-size: max-content;
-		max-inline-size: min(22rem, calc(100vw - 2rem));
+		/* One gap MORE than the columns strictly need (n chips have n-1 gaps
+		   between them), as slack: it guarantees `auto-fit` resolves to
+		   exactly `--chapter-cols` tracks rather than losing the last one to
+		   sub-pixel rounding, and is too little — one gap — to let an extra
+		   track in. */
+		inline-size: min(
+			calc(
+				var(--chapter-cols, 10) * (var(--chapter-chip) + var(--chapter-gap)) + 2 *
+					var(--chapter-pad)
+			),
+			calc(100vw - 2rem)
+		);
+		/* Psalms is 150 chapters — 15 rows even at the full column count, far
+		   taller than a phone. Scroll inside the panel rather than run it off
+		   the bottom of the screen. */
+		max-block-size: 60vh;
+		overflow-y: auto;
 	}
 
-	.chapters.align-end {
-		inset-inline-start: auto;
-		inset-inline-end: 0;
+	/* Opens upward instead of downward, for a book low enough on the screen
+	   that there is more room above it than below. Which way round is
+	   `measurePlacement`'s call — this is only the two anchors. */
+	.chapters.flip {
+		top: auto;
+		bottom: calc(100% + 0.35rem);
 	}
 
 	/* In-flow instead of a floating panel: no positioning, no shadow (nothing
@@ -518,18 +648,32 @@
 		z-index: auto;
 		margin: 0.5rem 0 0.75rem;
 		box-shadow: none;
+		/* `auto` on an in-flow block means "fill the aside", which is a
+		   definite width — so the grid inside still gets a real number to fit
+		   columns against, just one that comes from the column rather than the
+		   viewport. */
 		inline-size: auto;
-		max-inline-size: none;
+		max-block-size: none;
+		overflow: visible;
+		bottom: auto;
 	}
 
-	/* The wrapping row of chapter numbers. This used to be `.chapters`
-	   itself; it moved down a level when the panel gained a heading in the
-	   sidebar variant, so the heading isn't laid out as if it were a
-	   chapter chip. */
+	/* The chapter numbers. This used to be `.chapters` itself; it moved down
+	   a level when the panel gained a heading in the sidebar variant, so the
+	   heading isn't laid out as if it were a chapter chip.
+
+	   A GRID rather than the wrapped flex row it was, because a wrapped row
+	   only lines its chips up by accident — as soon as one chip is wider than
+	   the rest (a three-digit Psalm), every row below it stops aligning, and
+	   a reader scanning down a column of tens loses the column. `auto-fit`
+	   also puts the column count where it belongs: however many fit the width
+	   `.chapters` resolved, so a narrow phone quietly gets fewer without a
+	   media query or a second pass of measuring in JS. `1fr` then shares the
+	   slack out evenly instead of leaving it all at the end of each row. */
 	.chapters-nums {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.35rem;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(var(--chapter-chip, 2rem), 1fr));
+		gap: var(--chapter-gap, 0.35rem);
 	}
 
 	/* Names the book whose chapters these are — needed only in the sidebar,
@@ -548,7 +692,7 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		min-width: 2rem;
+		min-width: var(--chapter-chip, 2rem);
 		min-height: 2rem;
 		padding: 0.1rem 0.3rem;
 		border-radius: 0.25rem;
