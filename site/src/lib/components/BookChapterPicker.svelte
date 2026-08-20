@@ -475,7 +475,18 @@
 	   ever exceeding the viewport width, which is what guarantees the
 	   start/end anchor math in the script always has at least one edge that
 	   fits. GRID VARIANT ONLY — `.chapters.sidebar` below overrides every
-	   positioning property back to in-flow. */
+	   positioning property back to in-flow.
+
+	   `inline-size: max-content` is load-bearing, not decorative: an
+	   absolutely-positioned element with no explicit width falls back to
+	   CSS's "shrink-to-fit" sizing against its CONTAINING BLOCK, which for
+	   this panel is `.book-item` — the `<li>`, sized to nothing wider than
+	   the button itself. Without `max-content` the panel shrinks toward
+	   that narrow button width instead of its own chapter numbers, so
+	   `.chapters-nums` (flex-wrap) has no room to fit more than one chip per
+	   row and every chapter ends up in a single column. `max-content` sizes
+	   the box to what its OWN content wants (all chips in one row) before
+	   `max-inline-size` clamps a big book back down to wrapping. */
 	.chapters {
 		position: absolute;
 		top: calc(100% + 0.35rem);
@@ -486,6 +497,7 @@
 		border: 1px solid var(--color-border);
 		border-radius: 0.35rem;
 		box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
+		inline-size: max-content;
 		max-inline-size: min(22rem, calc(100vw - 2rem));
 	}
 
@@ -506,6 +518,7 @@
 		z-index: auto;
 		margin: 0.5rem 0 0.75rem;
 		box-shadow: none;
+		inline-size: auto;
 		max-inline-size: none;
 	}
 
