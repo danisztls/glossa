@@ -12,29 +12,19 @@
 <script lang="ts">
 	import { fontScale, MIN_FONT_SCALE, MAX_FONT_SCALE, DEFAULT_FONT_SCALE } from '$lib/prefs.svelte';
 	import Icon from './Icon.svelte';
+	import { Menu } from './menu.svelte';
 	import { t } from '$lib/i18n.svelte';
 
-	let open = $state(false);
-	let menuEl: HTMLDivElement | undefined = $state();
-	let triggerEl: HTMLButtonElement | undefined = $state();
+	const menu = new Menu();
 
 	const percent = $derived(Math.round(fontScale.value * 100));
 
-	function close() {
-		open = false;
-	}
-
-	function onWindowClick(e: MouseEvent) {
-		if (!open) return;
-		if (menuEl && e.target instanceof Node && !menuEl.contains(e.target)) close();
-	}
-
+	// Escape/outside-click come from the shared `Menu`; the arrow keys are
+	// this menu's own, and step the size without closing the panel — the same
+	// reason clicking +/- doesn't close it (see the docblock above).
 	function onPanelKeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape') {
-			e.preventDefault();
-			close();
-			triggerEl?.focus();
-		} else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+		menu.onPanelKeydown(e);
+		if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
 			e.preventDefault();
 			fontScale.increase();
 		} else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
@@ -44,22 +34,22 @@
 	}
 </script>
 
-<svelte:window onclick={onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} />
 
-<div class="menu" bind:this={menuEl}>
+<div class="menu" bind:this={menu.containerEl}>
 	<button
 		type="button"
-		bind:this={triggerEl}
+		bind:this={menu.triggerEl}
 		class="menu-trigger"
 		aria-haspopup="menu"
-		aria-expanded={open}
+		aria-expanded={menu.open}
 		aria-label={`${t('fontSize.label')}: ${percent}%`}
 		title={t('fontSize.label')}
-		onclick={() => (open = !open)}
+		onclick={menu.toggle}
 	>
 		<Icon name="type" />
 	</button>
-	{#if open}
+	{#if menu.open}
 		<div
 			class="menu-panel font-size-panel"
 			role="menu"

@@ -38,6 +38,7 @@
 	import { getDocumentGroup, listEditions, baseLang } from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
 	import Icon from './Icon.svelte';
+	import { Menu } from './menu.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentManifest } from '$lib/types';
 
@@ -100,55 +101,40 @@
 
 	const currentEdition = $derived(editions.find((w) => w.id === currentWorkId));
 
-	let open = $state(false);
-	let menuEl: HTMLDivElement | undefined = $state();
-	let triggerEl: HTMLButtonElement | undefined = $state();
-
-	function close() {
-		open = false;
-	}
+	const menu = new Menu();
 
 	function choose(workId: string) {
 		if (!ctx) return;
 		if (ctx.kind === 'document') content.setDocument(ctx.slug, workId);
 		else content.set(ctx.type, workId);
-		close();
-		triggerEl?.focus();
-	}
-
-	function onWindowClick(e: MouseEvent) {
-		if (!open) return;
-		if (menuEl && e.target instanceof Node && !menuEl.contains(e.target)) close();
-	}
-
-	function onPanelKeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape') {
-			e.preventDefault();
-			close();
-			triggerEl?.focus();
-		}
+		menu.closeAndRefocus();
 	}
 </script>
 
-<svelte:window onclick={onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} />
 
 {#if ctx && editions.length > 0}
-	<div class="menu" bind:this={menuEl}>
+	<div class="menu" bind:this={menu.containerEl}>
 		<button
 			type="button"
-			bind:this={triggerEl}
+			bind:this={menu.triggerEl}
 			class="menu-trigger wide"
 			aria-haspopup="menu"
-			aria-expanded={open}
+			aria-expanded={menu.open}
 			aria-label={`${t('edition.label')}: ${currentEdition?.short_title ?? t('edition.select')}`}
 			title={t('edition.label')}
-			onclick={() => (open = !open)}
+			onclick={menu.toggle}
 		>
 			<Icon name="book-open" />
 			<span class="trigger-label">{currentEdition?.short_title ?? t('edition.select')}</span>
 		</button>
-		{#if open}
-			<ul class="menu-panel" role="menu" aria-label={t('edition.label')} onkeydown={onPanelKeydown}>
+		{#if menu.open}
+			<ul
+				class="menu-panel"
+				role="menu"
+				aria-label={t('edition.label')}
+				onkeydown={menu.onPanelKeydown}
+			>
 				{#each editions as edition (edition.id)}
 					{@const current = edition.id === currentWorkId}
 					<li role="none">

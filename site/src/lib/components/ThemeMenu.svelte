@@ -7,66 +7,48 @@
 
 	Dropdown shape (trigger button + `.menu-panel` of `.menu-item`s) is shared
 	with `FontSizeMenu`/`EditionMenu` via the `.menu*` primitives in
-	`app.css`; each component still owns its own open/close state and
-	keyboard/outside-click handling since Svelte has no cross-file scoped
-	style or behavior sharing below a full component.
+	`app.css`, and the open/close, outside-click and Escape handling comes
+	from the shared `Menu` in `./menu.svelte.ts` — see that module on why the
+	behavior half could finally be shared once runes arrived.
 -->
 <script lang="ts">
 	import { themeStore, type Theme } from '$lib/theme.svelte';
 	import Icon from './Icon.svelte';
+	import { Menu } from './menu.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	const THEMES: Theme[] = ['auto', 'light', 'dark', 'sepia'];
 
-	let open = $state(false);
-	let menuEl: HTMLDivElement | undefined = $state();
-	let triggerEl: HTMLButtonElement | undefined = $state();
-
-	function close() {
-		open = false;
-	}
+	const menu = new Menu();
 
 	function choose(theme: Theme) {
 		themeStore.set(theme);
-		close();
-		triggerEl?.focus();
-	}
-
-	// Closes on any click outside the trigger+panel — attached to the window
-	// rather than a backdrop element so the rest of the page stays clickable
-	// (unlike JumpBox's modal dialog, this is a lightweight menu, not a
-	// dialog that should block interaction with the page behind it).
-	function onWindowClick(e: MouseEvent) {
-		if (!open) return;
-		if (menuEl && e.target instanceof Node && !menuEl.contains(e.target)) close();
-	}
-
-	function onPanelKeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape') {
-			e.preventDefault();
-			close();
-			triggerEl?.focus();
-		}
+		menu.closeAndRefocus();
 	}
 </script>
 
-<svelte:window onclick={onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} />
 
-<div class="menu" bind:this={menuEl}>
+<div class="menu" bind:this={menu.containerEl}>
 	<button
 		type="button"
-		bind:this={triggerEl}
+		bind:this={menu.triggerEl}
 		class="menu-trigger"
 		aria-haspopup="menu"
-		aria-expanded={open}
+		aria-expanded={menu.open}
 		aria-label={`${t('theme.label')}: ${t(`theme.${themeStore.current}`)}`}
 		title={t('theme.label')}
-		onclick={() => (open = !open)}
+		onclick={menu.toggle}
 	>
 		<Icon name="palette" />
 	</button>
-	{#if open}
-		<ul class="menu-panel" role="menu" aria-label={t('theme.label')} onkeydown={onPanelKeydown}>
+	{#if menu.open}
+		<ul
+			class="menu-panel"
+			role="menu"
+			aria-label={t('theme.label')}
+			onkeydown={menu.onPanelKeydown}
+		>
 			{#each THEMES as theme (theme)}
 				{@const current = themeStore.current === theme}
 				<li role="none">

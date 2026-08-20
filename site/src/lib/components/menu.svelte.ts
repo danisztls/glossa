@@ -1,0 +1,95 @@
+/**
+ * The behavior half of the site's dropdown menus.
+ *
+ * `app.css` has long carried the LOOK of these menus as shared `.menu` /
+ * `.menu-trigger` / `.menu-panel` / `.menu-item` primitives. This carries the
+ * matching BEHAVIOR — open state, close-on-outside-click, close-on-Escape,
+ * and returning focus to the trigger — which until now was hand-rolled,
+ * identically, in all five menu components (theme, font size, edition,
+ * comparison edition, language).
+ *
+ * WHY IT WAS DUPLICATED, AND WHY THAT NO LONGER APPLIES. `ThemeMenu`'s
+ * docblock recorded the reason: "Svelte has no cross-file scoped style or
+ * behavior sharing below a full component." That was true of the Svelte 4
+ * component model, where the only unit of reuse was a component, and wrapping
+ * five different panels (two `<ul>`s, a stepper `<div>`, differing ARIA and
+ * differing keyboard handling) in one would have meant a prop for every
+ * difference. Runes changed the unit: `$state` works in a `.svelte.ts` module,
+ * so a plain object can own reactive state on a component's behalf while the
+ * component keeps its own markup. Each menu still writes its own panel, its
+ * own ARIA and its own `choose`; only the parts that were genuinely identical
+ * moved here.
+ *
+ * WHAT DELIBERATELY DID NOT MOVE: the `choose` handlers. Every menu closes and
+ * refocuses after a pick — that shared step is `closeAndRefocus` below — but
+ * WHAT a pick does differs per menu (a theme, a font scale, a reading edition,
+ * a compare target), and `FontSizeMenu` deliberately does not close on a pick
+ * at all, because a reader stepping the size up wants to keep clicking. A
+ * shared "choose" would have had to take that behavior as a flag, which is the
+ * shape this module exists to avoid.
+ *
+ * `BookChapterPicker` is NOT a user of this and shouldn't become one, despite
+ * running visibly similar outside-click and Escape handling. Its open state is
+ * WHICH BOOK is expanded (`openOsis`, a book id) rather than a boolean, only
+ * one of its two variants is a popover at all, and it re-measures panel
+ * placement on open and on resize. Nothing here would fit it without growing a
+ * second, parallel set of semantics.
+ */
+
+/**
+ * One dropdown's open/close state and the handlers that maintain it.
+ *
+ * Handlers are arrow properties, not methods, so a component can pass them
+ * straight to `onclick`/`onkeydown` without them losing `this` on the way.
+ */
+export class Menu {
+	open = $state(false);
+
+	/** The `.menu` wrapper — what an outside click is measured against, so the
+	 *  trigger and the panel both count as "inside". Bound with `bind:this`. */
+	containerEl: HTMLElement | undefined = $state();
+
+	/** The trigger button, so focus can return to it on Escape or after a
+	 *  pick — otherwise closing the panel drops focus to `<body>` and a
+	 *  keyboard reader has to tab back through the page to where they were. */
+	triggerEl: HTMLButtonElement | undefined = $state();
+
+	toggle = () => {
+		this.open = !this.open;
+	};
+
+	close = () => {
+		this.open = false;
+	};
+
+	/** Close and hand focus back to the trigger — every menu does this on
+	 *  Escape, and each one that closes on a pick does it there too. */
+	closeAndRefocus = () => {
+		this.open = false;
+		this.triggerEl?.focus();
+	};
+
+	/**
+	 * Closes on any click outside the trigger+panel. Attached to the WINDOW
+	 * rather than to a backdrop element, so the rest of the page stays
+	 * clickable: unlike `JumpBox`'s modal dialog, these are lightweight menus,
+	 * not dialogs that should block interaction with the page behind them.
+	 */
+	onWindowClick = (e: MouseEvent) => {
+		if (!this.open) return;
+		if (this.containerEl && e.target instanceof Node && !this.containerEl.contains(e.target)) {
+			this.close();
+		}
+	};
+
+	/**
+	 * Escape closes the panel and restores focus. Menus with their own
+	 * additional keys (`FontSizeMenu`'s arrows) call this first and then handle
+	 * the rest — this only ever acts on Escape, so it composes.
+	 */
+	onPanelKeydown = (e: KeyboardEvent) => {
+		if (e.key !== 'Escape') return;
+		e.preventDefault();
+		this.closeAndRefocus();
+	};
+}

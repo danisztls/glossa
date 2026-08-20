@@ -24,6 +24,7 @@
 	import { i18n, t } from '$lib/i18n.svelte';
 	import type { UiLang } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
+	import { Menu } from './menu.svelte';
 
 	// Each label is written in its OWN language, not translated into the
 	// current one: a reader who has landed on the wrong interface language
@@ -34,53 +35,33 @@
 		{ code: 'pt', short: 'PT', label: 'Português' }
 	];
 
-	let open = $state(false);
-	let menuEl: HTMLDivElement | undefined = $state();
-	let triggerEl: HTMLButtonElement | undefined = $state();
+	const menu = new Menu();
 
 	const current = $derived(OPTIONS.find((o) => o.code === i18n.lang) ?? OPTIONS[0]);
 
-	function close() {
-		open = false;
-	}
-
 	function choose(code: UiLang) {
 		i18n.set(code);
-		close();
-		triggerEl?.focus();
-	}
-
-	function onWindowClick(e: MouseEvent) {
-		if (!open) return;
-		if (menuEl && e.target instanceof Node && !menuEl.contains(e.target)) close();
-	}
-
-	function onPanelKeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape') {
-			e.preventDefault();
-			close();
-			triggerEl?.focus();
-		}
+		menu.closeAndRefocus();
 	}
 </script>
 
-<svelte:window onclick={onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} />
 
-<div class="menu" bind:this={menuEl}>
+<div class="menu" bind:this={menu.containerEl}>
 	<button
 		type="button"
-		bind:this={triggerEl}
+		bind:this={menu.triggerEl}
 		class="menu-trigger lang-trigger"
 		aria-haspopup="menu"
-		aria-expanded={open}
+		aria-expanded={menu.open}
 		aria-label={`${t('lang.label')}: ${current.label}`}
 		title={t('lang.label')}
-		onclick={() => (open = !open)}
+		onclick={menu.toggle}
 	>
 		{current.short}
 	</button>
-	{#if open}
-		<ul class="menu-panel" role="menu" aria-label={t('lang.label')} onkeydown={onPanelKeydown}>
+	{#if menu.open}
+		<ul class="menu-panel" role="menu" aria-label={t('lang.label')} onkeydown={menu.onPanelKeydown}>
 			{#each OPTIONS as opt (opt.code)}
 				{@const isCurrent = i18n.lang === opt.code}
 				<li role="none">
