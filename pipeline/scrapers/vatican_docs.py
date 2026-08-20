@@ -1409,8 +1409,11 @@ def find_content_start_old_shell(html: str) -> int:
 # --------------------------------------------------------------------------
 
 
-class CorrectionDriftError(RuntimeError):
-    pass
+# NOTE: no `CorrectionDriftError` here, unlike ccc.py/cpdv.py/matos_soares.py.
+# Those scrapers raise on drift; this one cannot, because `scrape_one` promises
+# never to raise (see its docstring) so that one bad document can't kill a crawl
+# of many. Drift is reported instead as `status="corrections-drift"` on the
+# result dict -- see the `missing` check at the end of `scrape_one`.
 
 
 def load_corrections(work_id: str) -> list[dict]:
