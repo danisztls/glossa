@@ -29,19 +29,25 @@ import type { PageLoad } from './$types';
  * copyright notice, no section text) so the component can still offer every
  * edition and notice when the reader's differs from what got built in.
  *
- * WHICH LANGUAGE, AND WHY IT CANNOT BE "the reader's": this route is
- * prerendered with no server (adapter-static — see CLAUDE.md), so `load` runs
- * once at build time with no request to read a preference from. Content
- * language is a client-side preference (`$lib/content.svelte.ts`) and
- * `i18n.svelte.ts` defaults to `'en'` when nothing is stored — which is also
- * every prerendered page's condition, since there is no `localStorage` during
- * a build. Picking `'en'` here (falling back to whichever language DOES have
- * sections, for an all-PT document) means the embedded language matches what
- * `content.documentLangFor` resolves to for a reader with no override, so the
- * common case needs no client-side fetch at all.
+ * WHICH LANGUAGE, AND WHY IT CANNOT BE "the reader's": content language is a
+ * client-side preference (`$lib/content.svelte.ts`), and `load` only
+ * re-runs on navigation, not when that preference changes on its own — this
+ * route renders only in the browser now (`ssr = false`, `+layout.ts`,
+ * docs/decisions.md 2026-08-18), so `load` COULD technically read
+ * `localStorage`, but doing so wouldn't keep the page honest once the
+ * reader flips languages without navigating. `i18n.svelte.ts` defaults to
+ * `'en'` when nothing is stored; picking `'en'` here too (falling back to
+ * whichever language DOES have sections, for an all-PT document) means the
+ * embedded language matches what `content.documentLangFor` resolves to for
+ * a reader with no override, so the common case needs no client-side fetch
+ * at all.
  *
- * WHAT A NO-JAVASCRIPT READER GETS: exactly `embeddedLang`'s text, always.
- * There is no server here to content-negotiate against.
+ * WHAT A READER WITHOUT JAVASCRIPT GETS: nothing — this used to name exactly
+ * `embeddedLang`'s text, back when the route was prerendered and a no-JS
+ * visitor got that HTML directly from the server. Since the site became one
+ * SPA shell with `ssr = false`, no route (this one included) has any
+ * content until the client hydrates, so there is no server here to
+ * content-negotiate against, and no fallback content either.
  *
  * A DOCUMENT WITH NOTHING READABLE STILL RENDERS. `embeddedLang` and
  * `embeddedSections` are absent when no edition has sections built — a rights

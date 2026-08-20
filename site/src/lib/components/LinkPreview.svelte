@@ -27,17 +27,27 @@
 	 * fixed-position node reused across every hover avoids mounting/unmounting
 	 * a component on every pointer move.
 	 *
-	 * SSR / no-JS: this component's `<script>` runs during prerendering (every
-	 * Svelte component's does), but every `window`/`document` read below either
-	 * lives inside an event handler (never invoked server-side — there is no
-	 * event loop) or inside `$effect` (Svelte 5: effects only run in the
-	 * browser). The template renders one static, empty, invisible root div
-	 * unconditionally — present in the prerendered HTML so hydration has
-	 * nothing to attach that wasn't already there, but inert until a real
-	 * pointer or keyboard event fires. No link's href, target, or click
-	 * behaviour changes: this only ever ADDS an overlay that isn't part of the
-	 * normal navigation flow, per the task's "must read perfectly with
-	 * JavaScript disabled" constraint.
+	 * SSR / no-JS: this dates from when every route was prerendered, when
+	 * this component's `<script>` ran during that pass too (every Svelte
+	 * component's did), so every `window`/`document` read below had to
+	 * either live inside an event handler (never invoked server-side — there
+	 * is no event loop) or inside `$effect` (Svelte 5: effects only run in
+	 * the browser) to avoid throwing during the build. The template renders
+	 * one static, empty, invisible root div unconditionally, which used to
+	 * matter doubly: present in the prerendered HTML, hydration had nothing
+	 * to attach that wasn't already there. Since the site became one SPA
+	 * shell with `ssr = false` (`+layout.ts`, docs/decisions.md 2026-08-18)
+	 * this component's `<script>` never runs outside the browser at all, so
+	 * neither guard is load-bearing against a build-time throw any more —
+	 * they are kept because the discipline (touch `window`/`document` only
+	 * from an event handler or `$effect`) is still the right one regardless.
+	 * No link's href, target, or click behaviour changes: this only ever
+	 * ADDS an overlay that isn't part of the normal navigation flow, which
+	 * was originally required so the site would still read perfectly with
+	 * JavaScript disabled — a constraint the SPA shell no longer meets site
+	 * wide (the shell's HTML carries no content until the client hydrates),
+	 * but this component still costs nothing extra if that constraint is
+	 * ever true again for some part of the site.
 	 */
 	import { goto } from '$app/navigation';
 	import { parsePreviewHref, type PreviewTarget } from '$lib/linkPreviewHref';

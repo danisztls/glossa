@@ -22,8 +22,10 @@ export const load: PageLoad = async ({ params }) => {
 
 	// Compendium URLs stay edition-free (docs/decisions.md #2: `/compendium/1`,
 	// never `/compendium/en/1`) — the edition comes from a stored preference
-	// applied client-side, and the whole site is prerendered with no server
-	// to consult that preference at request time. So this embeds EVERY
+	// applied client-side, and this route renders only in the browser
+	// (`ssr = false`, `+layout.ts`) — but `load` only re-runs on navigation,
+	// not when a stored preference changes on its own, so reading it there
+	// wouldn't keep the page honest anyway. So this embeds EVERY
 	// language's copy of question `n` up front; the component picks which
 	// one to show reactively from `content.langFor('compendium')`. That's
 	// what makes the "language symmetry principle" true: switching the UI

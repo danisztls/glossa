@@ -348,18 +348,31 @@ async function cacheFirstAndStore(request: Request, cacheName: string): Promise<
 
 /**
  * Full-page navigations: try the network first — while online this is the
- * normal, freshest path, and the one search engines and no-JS readers use
- * (see the file header on why prerendered pages aren't precached). Only on
- * network failure does this reach for the cached shell: the app boots from
- * it, and its client-side router (see src/lib/corpus.ts) renders the
- * actually-requested page from CONTENT_CACHE with no further network
- * request. Svelte recovers from the shell's markup not matching the
- * requested route the same way adapter-static's own SPA `fallback` option
- * would — this app doesn't use that option (see vite.config.ts's
- * `fallback: undefined` and its "fully static output" comment: every route
- * is meant to prerender for real, loudly, or fail the build) — so this is
- * the same fallback mechanism applied by hand, for exactly one page,
- * instead of enabled site-wide.
+ * normal, freshest path. This sentence used to add "and the one search
+ * engines and no-JS readers use," pointing at the file header for why
+ * prerendered pages weren't precached; the header no longer says that (see
+ * its current SHELL_CACHE/CONTENT_CACHE split, above) because there are no
+ * prerendered pages any more. Since the site became one SPA shell with
+ * `ssr = false` (`+layout.ts`, docs/decisions.md 2026-08-18), the
+ * network-first HTML carries no route content until the client hydrates —
+ * true for a crawler or a no-JS reader exactly as it is for anyone else.
+ * Only on network failure does this reach for the cached shell: the app
+ * boots from it, and its client-side router (see src/lib/corpus.ts) renders
+ * the actually-requested page from CONTENT_CACHE with no further network
+ * request.
+ *
+ * `vite.config.ts` DOES configure adapter-static's `fallback: 'index.html'`
+ * now (it has to, to emit a single shell artifact from a build with no
+ * per-route pages) — but the host never serves that fallback automatically:
+ * `src/worker.ts` intercepts every navigation and serves the shell only for
+ * a path `corpus-routes.json` recognizes, an HTTP 404 shell otherwise (see
+ * docs/decisions.md, "One SPA shell, corpus-validated deep links", on why a
+ * plain host-wide SPA fallback isn't enough for a citable reference site).
+ * This handler is that same idea's OFFLINE counterpart: with no network to
+ * reach the edge worker or its manifest, it serves the cached shell
+ * unconditionally and lets the client-side router decide what the address
+ * means, rather than refuse a genuinely-cached page just because it can't
+ * re-validate it.
  */
 async function handleNavigate(request: Request): Promise<Response> {
 	try {

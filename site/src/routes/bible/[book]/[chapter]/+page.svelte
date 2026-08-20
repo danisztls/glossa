@@ -60,9 +60,10 @@
 	 * means (30 of 1,333 common chapters, three distinct causes).
 	 *
 	 * `data.byWorkId` already embeds EVERY edition (`+page.ts`'s own
-	 * docblock) precisely because this route is prerendered — so, unlike
+	 * docblock) because `load` fetches every edition up front — so, unlike
 	 * `documents/[slug]`, comparing here costs nothing extra: no fetch,
-	 * no loading state, the second column's text is already on the page.
+	 * no loading state, the second column's text is already resolved by the
+	 * time this component renders.
 	 */
 
 	/** Every embedded edition except the one being read as the primary — what
@@ -134,22 +135,30 @@
 	 * marks the whole span so the extent is visible on arrival.
 	 *
 	 * Read from the URL rather than passed as page data because it is a
-	 * property of how the reader GOT here, not of the chapter — the same
-	 * prerendered page serves every citation that points into it. Reading
-	 * `page.url` reactively also means following a second citation to the
-	 * same chapter re-marks the new span without a reload.
+	 * property of how the reader GOT here, not of the chapter — one route
+	 * instance for `/scriptura/{book}/{chapter}` serves every citation that
+	 * points into it, whatever `?v=` it carries. Reading `page.url`
+	 * reactively also means following a second citation to the same chapter
+	 * re-marks the new span without a reload.
 	 *
 	 * Deliberately tolerant: a malformed, reversed, or out-of-range `v` marks
 	 * nothing rather than throwing or guessing. It is a display hint, and a
 	 * reader who hand-edits it should get the chapter, not an error page.
 	 *
-	 * BROWSER-ONLY, and SvelteKit is right to insist: reading `searchParams`
-	 * during prerendering throws, because one prerendered file has to serve
-	 * every query string that points at it. That is exactly the property
-	 * being relied on here — `/scriptura/john/1` is built once and the highlight
-	 * is applied on top of it per-visit — so the guard states the design
-	 * rather than working around a restriction. The chapter renders complete
-	 * without JavaScript; only the passage marking needs it.
+	 * BROWSER-ONLY. This dates from when every route was prerendered, when
+	 * SvelteKit was right to insist on it: reading `searchParams` during
+	 * prerendering threw, because one prerendered file had to serve every
+	 * query string that points at it. `/scriptura/john/1` was built once and
+	 * the highlight was applied on top of it per-visit, so the guard stated
+	 * the design rather than working around a restriction, and the chapter
+	 * rendered complete without JavaScript, with only the passage marking
+	 * needing it. Since the site became one SPA shell with `ssr = false`
+	 * (`+layout.ts`, docs/decisions.md 2026-08-18) no route component runs
+	 * during the build at all — the whole chapter now needs JavaScript to
+	 * render, not just the highlight — so the guard is no longer load-bearing
+	 * against a prerendering throw; it stays because it still states the
+	 * actual requirement, reading the address bar, which only exists in a
+	 * browser.
 	 */
 	const citedRange = $derived.by(() => {
 		if (!browser) return undefined;
@@ -201,8 +210,10 @@
 	 * wants the concordance gets all of it, and the reader who wants the
 	 * chapter never has it in their way.
 	 *
-	 * Derived from the corpus, not the page data, so it costs nothing in the
-	 * prerendered payload: the xrefs index is already inlined for every page.
+	 * Derived from the corpus, not the page data, so it costs nothing in this
+	 * route's data: the xrefs index is part of the INDEX tier, eager-inlined
+	 * into the client bundle already (`corpus.ts`'s docblock, "THE SPLIT THIS
+	 * LEADS TO") rather than fetched per page.
 	 */
 	const cccCitations = $derived(getCccCitationsForChapter(data.osis, data.chapterN));
 
@@ -582,10 +593,12 @@
 
 	/* Two BookChapterPicker instances, CSS-swapped by breakpoint rather than
 	   one instance whose variant is decided in JS: a JS-decided swap would
-	   have to pick a default for the pre-hydration/prerendered HTML (this
-	   whole site renders with no JS required — see `citedRange`'s docblock
-	   above), then possibly relocate the picker across the page once
-	   hydration resolves the real viewport, which is both a layout jump and
+	   have to pick a default before hydration resolves the real viewport,
+	   then possibly relocate the picker across the page once it does — this
+	   used to also matter for reading without JavaScript at all, back when
+	   every route was prerendered (see `citedRange`'s docblock above, which
+	   no longer makes that claim now that `ssr = false` means the whole
+	   chapter needs JavaScript to render), which is both a layout jump and
 	   a NOOP on a viewport where the guess was already right. Two static
 	   instances plus a boundary that exactly matches `.reading-layout`'s own
 	   80rem (app.css) cost one extra hidden DOM subtree instead. */

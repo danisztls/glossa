@@ -8,11 +8,14 @@
  * second edition goes beside it.
  *
  * WHY THIS IS FREE (no fetch) on all four routes: each route's `+page.ts`
- * embeds every language the corpus has for this address up front, precisely
- * because these pages are prerendered and content language is a client-side
- * preference (`content.svelte.ts`) with no server request to resolve it
- * against at load time. Comparing two editions here is just reading a
- * second already-embedded key out of the same map, never a second request.
+ * embeds every language the corpus has for this address up front, because
+ * content language is a client-side preference (`content.svelte.ts`) and
+ * `load` only re-runs on navigation, not when that preference changes on
+ * its own — reading it inside `load` (these routes render only in the
+ * browser now, `ssr = false` in `+layout.ts`) wouldn't keep the page honest
+ * once the reader flips languages without navigating. Comparing two
+ * editions here is just reading a second already-embedded key out of the
+ * same map, never a second request.
  *
  * WHY `lang` FALLS BACK TO `availableLangs[0]` rather than the preferred
  * language unconditionally: the real corpus has every language complete for

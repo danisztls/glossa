@@ -222,8 +222,11 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'copyright.sourceTitle': 'Open the original source page',
 		'lang.label': 'Language',
 
-		// Static 404 — routes/404/+page.svelte, prerendered to build/404.html
-		// and served by the host for unmatched paths. See that file's docblock.
+		// Static 404 — routes/404/+page.svelte, an ordinary SPA route (there is
+		// no build/404.html any more — the build emits only index.html and the
+		// offline fallback) reached directly or via +error.svelte for an
+		// invalid deep link, with src/worker.ts preserving the HTTP 404 status
+		// before the SPA starts. See that route file's own docblock.
 		'notFound.title': 'Nothing at this address',
 		'notFound.lede': 'The page you asked for is not here.',
 		'notFound.body':

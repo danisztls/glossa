@@ -496,16 +496,20 @@ function contentKey(globPath: string): string {
  * `corpus-data/`, e.g. `content/bible.cpdv.en/books/gen.json`) and `url`
  * (its hashed build-asset URL, e.g.
  * `/_app/immutable/assets/gen.C3N1U3Ir.json`). `corpus.ts` uses `relPath`
- * to read the file straight off disk during prerendering, and `url` to
- * `fetch()` it in the browser — see that file's docblock on why prerender
- * time needs the former: SvelteKit's `load`-time `fetch` inlines every
- * response it reads into the prerendered page (so hydration can replay it
- * without a second request) REGARDLESS of how little of that response
+ * to read the file straight off disk under SSR, and `url` to `fetch()` it
+ * in the browser — see that file's docblock on why the SSR path needs the
+ * former: SvelteKit's `load`-time `fetch` inlines every response it reads
+ * into the SSR-rendered page's hydration payload (so hydration can replay
+ * it without a second request) REGARDLESS of how little of that response
  * `load` actually returns, which is exactly the per-page re-bloat this
  * whole restructuring exists to remove. A plain `fs` read has no such
  * side effect: nothing inlines a value into the page except `load`'s own
  * return, which already only carries the coarse-fetch's requested slice
- * (see corpus.ts's "COARSE FETCH, NARROW RETURN").
+ * (see corpus.ts's "COARSE FETCH, NARROW RETURN"). That SSR path dates from
+ * when every route was prerendered; since the site became one SPA shell
+ * with `ssr = false` (`+layout.ts`, docs/decisions.md 2026-08-18) no
+ * route's `load()` runs on the server at all, so `relPath` has nothing left
+ * to read against today — `corpus.ts`'s docblock covers why it stays.
  */
 export interface ContentLocation {
 	relPath: string;

@@ -28,8 +28,10 @@ export const load: PageLoad = async ({ params }) => {
 
 	// Prayer URLs stay edition-free (docs/decisions.md #2, same as CCC/
 	// Compendium) — the edition comes from a stored preference applied
-	// client-side, and the whole site is prerendered with no server to
-	// consult that preference at request time. So this embeds EVERY
+	// client-side, and this route renders only in the browser (`ssr = false`,
+	// `+layout.ts`) — but `load` only re-runs on navigation, not when a
+	// stored preference changes on its own, so reading it there wouldn't
+	// keep the page honest anyway. So this embeds EVERY
 	// language's copy of this slug up front; the component picks which one
 	// to show reactively from `content.langFor('prayer')`.
 	const byLang: Record<string, PrayerByLang> = {};

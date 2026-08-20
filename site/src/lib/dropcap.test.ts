@@ -12,8 +12,8 @@ import { splitDropCap } from './dropcap';
  * That makes the subset a standing liability: `splitDropCap` decides at runtime
  * which character gets promoted, and if it ever promotes one the subset lacks,
  * the reader gets a tofu box at 4.98em in the accent colour, at the top of a
- * passage. Nothing else in the build would catch it — the page renders fine,
- * prerendering succeeds, only the glyph is missing.
+ * passage. Nothing else in the build would catch it — the page renders fine
+ * in the browser, the build succeeds, only the glyph is missing.
  *
  * So the `unicode-range` is parsed out of app.css rather than copied here. A
  * copy would drift; this fails if someone narrows the subset without widening

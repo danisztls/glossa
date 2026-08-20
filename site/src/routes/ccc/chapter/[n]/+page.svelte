@@ -78,8 +78,8 @@
 	 *
 	 * Fed the `id="p{n}"` anchors the paragraphs already carry for `#p{n}`
 	 * deep links, so the spy cannot disagree with the page. Browser-only —
-	 * `useScrollSpy` runs inside `$effect` — so the prerendered page is
-	 * unchanged, and falls back to the chapter's first paragraph before the
+	 * `useScrollSpy` runs inside `$effect` — so the initial render is
+	 * unaffected, and falls back to the chapter's first paragraph before the
 	 * first measurement.
 	 */
 	const spy = useScrollSpy(() =>

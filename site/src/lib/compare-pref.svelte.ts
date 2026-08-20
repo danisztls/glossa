@@ -69,11 +69,16 @@ class CompareStore {
 	/**
 	 * Adopt a `?compare=` parameter as the preference.
 	 *
-	 * Called from reading routes on navigation, browser-only — reading
-	 * `searchParams` during prerendering throws, because one prerendered file
-	 * serves every query string that points at it (see
-	 * `bible/[book]/[chapter]/+page.svelte`'s `citedRange` docblock, which
-	 * documents that trap for `?v=`).
+	 * Called from reading routes on navigation, guarded by `browser` in
+	 * `compare-nav.svelte.ts`. That guard dates from the era when every
+	 * route was prerendered and reading `searchParams` server-side threw,
+	 * because one prerendered file served every query string that points at
+	 * it (see `bible/[book]/[chapter]/+page.svelte`'s `citedRange` docblock,
+	 * which documents that trap for `?v=`). Since the site became one SPA
+	 * shell with `ssr = false` (`+layout.ts`, docs/decisions.md 2026-08-18)
+	 * no route component runs during the build at all, so the guard is now
+	 * belt-and-braces rather than load-bearing — kept because it states the
+	 * requirement, not because this can run server-side.
 	 *
 	 * Absence of the parameter is NOT "turn compare off": almost every page
 	 * the reader reaches has no parameter, because internal links don't carry

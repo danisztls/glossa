@@ -3,7 +3,8 @@
 	 * Scripture landing route (`/scriptura`). No dynamic params — the reader's
 	 * current edition comes entirely client-side from `content.workIdFor`
 	 * (see `$lib/content.svelte.ts`), same as any other stored-preference
-	 * read on a prerendered page. Offers the reader's edition + its
+	 * read anywhere on the site now that `ssr = false` (`+layout.ts`) makes
+	 * every route client-rendered. Offers the reader's edition + its
 	 * copyright notice, a single entry point (continue reading if a
 	 * position is stored for this edition, else the edition's first
 	 * chapter — Genesis 1 for both v1 editions), and the canonical
@@ -20,8 +21,12 @@
 	const work = $derived(workId ? getWork(workId) : undefined);
 
 	// The reading position is read on mount, not eagerly, because localStorage
-	// doesn't exist during prerendering (see reading-position.ts) — matches
-	// the pattern the home page (`routes/+page.svelte`) already uses.
+	// doesn't exist outside a browser (see reading-position.ts). That guarded
+	// against a prerendering throw; since `ssr = false` (`+layout.ts`,
+	// docs/decisions.md 2026-08-18) no route ever runs server-side at all, so
+	// the guard is now belt-and-braces rather than load-bearing — kept
+	// because it still states the actual requirement, and matches the
+	// pattern the home page (`routes/+page.svelte`) already uses.
 	let position: ReadingPosition | undefined = $state(undefined);
 
 	$effect(() => {

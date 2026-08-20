@@ -15,8 +15,11 @@ import type { PageLoad } from './$types';
  * page embeds one of these per language the corpus ships (see module
  * docblock below) rather than picking a language at load time, because
  * content language now follows a client-side preference
- * (`$lib/content.svelte.ts`) and this route is prerendered — there is no
- * server request to resolve that preference against. Cheap to embed: one
+ * (`$lib/content.svelte.ts`) and this route renders only in the browser
+ * (`ssr = false`, `+layout.ts`, docs/decisions.md 2026-08-18) — but `load`
+ * only re-runs on navigation, not when a stored preference changes on its
+ * own, so reading it there wouldn't keep the page honest anyway. Cheap to
+ * embed: one
  * paragraph of text and a handful of structure nodes per extra language —
  * `prev`/`next` deliberately carry only `{ n }`, never the neighboring
  * paragraph's own text (corpus.ts's "COARSE FETCH, NARROW RETURN"): the

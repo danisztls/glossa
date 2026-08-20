@@ -40,8 +40,11 @@
  * of them. A third down tracks roughly where attention actually sits.
  *
  * Browser-only by construction: it touches `window` and `document`, runs
- * inside `$effect` (which never runs during prerendering), and every view
- * using it renders complete and navigable without it. There is deliberately
+ * inside `$effect` (which never runs server-side — doubly so now that
+ * `ssr = false` in `+layout.ts` means no route renders on the server at
+ * all, where "during prerendering" used to be the operative case), and
+ * every view using it renders complete and navigable without it. There is
+ * deliberately
  * no fallback guess before the first measurement — the position is
  * `undefined`, which the sidebar already handles as "no position known".
  */

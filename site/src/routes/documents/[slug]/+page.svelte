@@ -286,7 +286,7 @@
 	 * links, in corpus order — so the spy needs no separate registry and cannot
 	 * disagree with what is actually on the page. Browser-only by construction
 	 * (`useScrollSpy` runs inside `$effect`), so this changes nothing about the
-	 * prerendered page.
+	 * initial render.
 	 */
 	const spy = useScrollSpy(() =>
 		(current?.sections ?? []).map((section) => [`s${section.n}`, section.n] as const)

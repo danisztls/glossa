@@ -39,7 +39,13 @@ export interface DropCapSplit {
 /**
  * Grapheme-aware where the runtime supports it, code-point-aware otherwise.
  * `Intl.Segmenter` is in every browser this site targets, but is guarded
- * because this module is also imported under Node during prerendering.
+ * because this module also runs under Node: `dropcap.test.ts` calls
+ * `splitDropCap` directly under vitest's Node test environment
+ * (`environment: 'node'`, vitest.config.ts). It used to run under Node
+ * during the build's prerendering pass too, before the site became one SPA
+ * shell with `ssr = false` (`+layout.ts`, docs/decisions.md 2026-08-18) —
+ * but the guard was never only about that, and stays regardless of which
+ * Node context reaches it.
  */
 function graphemes(text: string): string[] {
 	if (typeof Intl !== 'undefined' && 'Segmenter' in Intl) {

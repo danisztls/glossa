@@ -10,11 +10,11 @@
  * 2026-08-15 this module `import.meta.glob(..., { eager: true })`-ed the
  * ENTIRE corpus (every Bible verse, every CCC paragraph, every Compendium
  * answer, both languages) straight into the client JS graph, on the
- * reasoning that adapter-static prerenders every route at build time (no
- * server runtime, docs/decisions.md) so inlining avoided a network
+ * reasoning that adapter-static prerendered every route at build time back
+ * then (no server runtime, docs/decisions.md) so inlining avoided a network
  * round-trip and any risk of drift between what a page fetched and what
- * got embedded in it. That reasoning is correct as far as it goes — it just
- * doesn't scale. Measured against the real corpus: one chunk file, 18 MB
+ * got embedded in it. That reasoning was correct as far as it went — it
+ * just didn't scale. Measured against the real corpus: one chunk file, 18 MB
  * raw / 4.6 MB gzipped, `modulepreload`-ed on every page including the
  * home page, because "inline everything" doesn't distinguish between "the
  * page needs this" and "this exists somewhere in the corpus." A phone
@@ -46,16 +46,17 @@
  * HOW CONTENT ACTUALLY GETS READ IS NOT "fetch() everywhere" — that was
  * the first attempt, and it broke twice, both times because SvelteKit's
  * `load`-time `fetch` is doing more than moving bytes:
- *   1. A plain global `fetch()` with a relative URL fails outright during
+ *   1. A plain global `fetch()` with a relative URL failed outright during
  *      prerendering ("Failed to parse URL from /_app/immutable/...") —
  *      Node's `fetch` has no origin to resolve a relative URL against.
  *      SvelteKit's `load(event)` hands `load` a special `fetch` that
  *      SOLVES this (it resolves same-origin URLs by invoking the request
  *      in-process) — but reaching for it walks straight into the next
  *      problem.
- *   2. That special `fetch` also INLINES the full response of every
- *      request it makes into the prerendered page, so a client-side
- *      `load()` re-run can replay it without a network round-trip — a real
+ *   2. That special `fetch` also INLINED the full response of every
+ *      request it made into the prerendered page — the site still
+ *      prerendered every route at the time — so a client-side `load()`
+ *      re-run could replay it without a network round-trip — a real
  *      feature, useful for dynamic routes, but one that applies to the raw
  *      response, not to whatever slice `load()` returns. Fetching a whole
  *      book that way to read one chapter measured out to a ~300 KB
@@ -64,15 +65,23 @@
  *      relocated from the JS bundle into the HTML.
  * So content is read two different ways depending on where the code runs,
  * and the split is SSR vs browser, not "prerender vs runtime" as it might
- * look: during SSR (`import.meta.env.SSR`, true for every prerendered
- * page), `readContentFromDisk` reads the file straight off disk with
- * `node:fs` — no `fetch` involved, so nothing auto-inlines anything; in the
- * browser, `readContentFromNetwork` is a normal `fetch()` against the
- * content-hashed URL, immutable-cached from the second read on. Both
- * branches share one memoization cache and one public function
- * (`getChapter`, `getCccParagraphAsync`, …) — this is what makes "one call
- * shape, not a server/client branch" true at every call site; only
- * `readContent` itself knows the two paths differ, and why.
+ * look: `import.meta.env.SSR` is true whenever this module runs in
+ * SvelteKit's server build, not whenever a route is prerendered — those
+ * used to be the same thing, back when every route was prerendered, but
+ * since the site became one SPA shell with `ssr = false` (`+layout.ts`,
+ * docs/decisions.md 2026-08-18) no route's `load()` executes on the server
+ * for a real visit any more, so `readContentFromDisk`'s branch has nothing
+ * left to run against in production — it stays correct and in place
+ * because the split was never actually about prerendering, only about
+ * where the code executes, and `import.meta.env.SSR` still answers that
+ * question precisely. When it IS true, `readContentFromDisk` reads the
+ * file straight off disk with `node:fs` — no `fetch` involved, so nothing
+ * auto-inlines anything; in the browser, `readContentFromNetwork` is a
+ * normal `fetch()` against the content-hashed URL, immutable-cached from
+ * the second read on. Both branches share one memoization cache and one
+ * public function (`getChapter`, `getCccParagraphAsync`, …) — this is what
+ * makes "one call shape, not a server/client branch" true at every call
+ * site; only `readContent` itself knows the two paths differ, and why.
  *
  * COARSE READ, NARROW RETURN: reading is per-BOOK / per-CHUNK /
  * per-LANGUAGE-WHOLE (the granularity a service worker should cache), never
@@ -364,19 +373,27 @@ declare const __CORPUS_DATA_DIR__: string;
  * Content is read two different ways depending on where this code runs,
  * and the split is NOT the obvious "prerender vs runtime" one:
  *
- *   - SSR (`import.meta.env.SSR`, true during prerendering): reads the
- *     file straight off disk with `node:fs`. This is NOT primarily an
- *     optimization — it's required for correctness. SvelteKit's `load`-time
- *     `fetch` inlines the FULL response of every request it makes into the
- *     prerendered page's hydration payload, so a future client-side
- *     `load()` re-run can replay it without a network round-trip — a real
- *     feature, but one that applies to the raw response, not to whatever
- *     slice `load()` actually returns. Tried first, measured: fetching a
- *     whole book that way to read one chapter produced a ~300 KB page for
- *     Genesis 1 (the entire book, re-embedded, once per chapter — the
- *     exact per-page re-bloat this whole restructuring exists to remove,
- *     just relocated). A plain `fs.readFile` has no such side effect —
- *     nothing inlines a value into the page except `load`'s own return.
+ *   - SSR (`import.meta.env.SSR`) reads the file straight off disk with
+ *     `node:fs`. This is NOT primarily an optimization — it's required for
+ *     correctness, because SvelteKit's `load`-time `fetch` inlines the FULL
+ *     response of every request it makes into the page's hydration
+ *     payload, so a future client-side `load()` re-run can replay it
+ *     without a network round-trip — a real feature, but one that applies
+ *     to the raw response, not to whatever slice `load()` actually
+ *     returns. Tried first, measured, back when the site still prerendered
+ *     every route: fetching a whole book that way to read one chapter
+ *     produced a ~300 KB page for Genesis 1 (the entire book, re-embedded,
+ *     once per chapter — the exact per-page re-bloat this whole
+ *     restructuring exists to remove, just relocated). A plain
+ *     `fs.readFile` has no such side effect — nothing inlines a value into
+ *     the page except `load`'s own return. `import.meta.env.SSR` is true
+ *     whenever this module runs in SvelteKit's server build; since the site
+ *     became one SPA shell with `ssr = false` (`+layout.ts`,
+ *     docs/decisions.md 2026-08-18) no route's `load()` runs there for a
+ *     real visit any more, so this branch has nothing left to run against
+ *     today — it is kept because the split was never really "prerender vs
+ *     runtime", only "server vs browser", and `import.meta.env.SSR` still
+ *     answers that correctly if SSR is ever reinstated for a route.
  *   - Browser (post-hydration, client-side navigation): a normal `fetch()`
  *     against the content-hashed URL, cached by the HTTP cache and (once
  *     wired) the service worker.
@@ -449,7 +466,7 @@ async function fetchBookContent(
  * plus the ONE requested `Chapter` (verses). See this module's docblock,
  * "COARSE FETCH, NARROW RETURN": returning the full book here would
  * re-embed an entire book's text into every one of its chapter pages'
- * prerendered data, exactly the bloat this rewrite removes.
+ * route data, exactly the bloat this rewrite removes.
  */
 export async function getChapter(
 	workId: string,
@@ -634,9 +651,16 @@ export function getCccChapterFor(lang: string, n: number): CccNode | undefined {
 }
 
 /**
- * Every chapter-sized node in a language's structure — the entry list for
- * prerendering `/catechismus/caput/[n]`, which is addressed by a chapter's FIRST
- * paragraph number.
+ * Every chapter-sized node in a language's structure — this used to be the
+ * entry list handed to `adapter-static`'s prerendering for
+ * `/catechismus/caput/[n]`, back when every route was prerendered
+ * individually. Since the site became one SPA shell with `ssr = false`
+ * (`+layout.ts`, docs/decisions.md 2026-08-18) there is no such entry list
+ * to prerender any more; this now resolves a chapter address to its
+ * structure node instead (`linkPreviewContent.ts` uses it to find the
+ * chapter starting at a given paragraph number), and it still defines which
+ * `/catechismus/caput/[n]` addresses are canonical at all — a chapter,
+ * addressed by its FIRST paragraph number.
  *
  * That address is chosen over a slug or an index because it is the only
  * identifier the corpus already guarantees: chapter titles differ by

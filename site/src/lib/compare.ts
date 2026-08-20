@@ -131,14 +131,19 @@ export function pickComparisonEdition<E extends { id: string; lang: string }>(
 
 // --------------------------------------------------------------------------
 // URL addressing — see `bible/[book]/[chapter]/+page.svelte`'s `citedRange`
-// docblock for why a query param is the only safe way to carry UI state on a
-// page that has to prerender complete without it: reading
-// `page.url.searchParams` during prerendering throws (one prerendered file
-// serves every query string that points at it), so this is a pure string/URL
-// utility with NO dependency on `$app/state` or `$app/navigation` — every
-// caller is responsible for only invoking these from inside a
-// `browser`-guarded read, the same discipline `citedRange` already
-// established.
+// docblock for why a query param was the only safe way to carry UI state on
+// a page that had to prerender complete without it: reading
+// `page.url.searchParams` during prerendering threw (one prerendered file
+// served every query string that points at it). That trap is gone since the
+// site became one SPA shell with `ssr = false` (`+layout.ts`,
+// docs/decisions.md 2026-08-18) and no route component runs on the server
+// at all — but this stays a pure string/URL utility with NO dependency on
+// `$app/state` or `$app/navigation` regardless, so it stays callable from
+// anywhere (`compare-nav.svelte.ts`'s docblock makes the same case for why
+// this module is pure). Every caller is still responsible for only invoking
+// these from inside a `browser`-guarded read, the same discipline
+// `citedRange` already established (now belt-and-braces there too — see its
+// docblock).
 //
 // THIS IS NO LONGER THE ONLY PLACE `?compare=` GETS READ. Since
 // `compare-pref.svelte.ts` shipped, the URL is a SHARING mechanism layered on

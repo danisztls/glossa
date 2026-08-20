@@ -25,8 +25,10 @@
 	let { data }: { data: PageData } = $props();
 
 	// `data.byLang` embeds every language the corpus has this paragraph in
-	// (see +page.ts — the page is prerendered, so this can't be resolved
-	// against a client preference at request time). `useEditionCompare`
+	// (see +page.ts — this route renders only in the browser, `ssr = false`
+	// in `+layout.ts`, but `load` only re-runs on navigation, so this can't
+	// be resolved against a client preference at load time either).
+	// `useEditionCompare`
 	// (see its docblock for the shared reasoning: why this is free of any
 	// fetch, the `availableLangs[0]` fallback, why an absent language is
 	// skipped rather than indexed blind, work id vs. bare language tag)

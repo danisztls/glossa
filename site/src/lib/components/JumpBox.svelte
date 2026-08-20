@@ -72,9 +72,10 @@
 	 * Checked against the CANONICAL chapter union, not the matched edition:
 	 * the destination is edition-free, so `gen 50` must be reachable when any
 	 * edition has it. Without this, a plausible-but-wrong chapter (`gen 99`,
-	 * or a Psalm the reader's numbering doesn't have) navigated to a
-	 * prerendered page that doesn't exist — a 404 where the box could simply
-	 * have said no match, and stayed open with the query still typed.
+	 * or a Psalm the reader's numbering doesn't have) navigated to an address
+	 * the edge worker's route manifest doesn't recognize (`src/worker.ts`,
+	 * `route-manifest.ts`) — a 404 where the box could simply have said no
+	 * match, and stayed open with the query still typed.
 	 */
 	function chapterExists(osis: string, chapter: number): boolean {
 		return getCanonicalBook(osis)?.chapters.includes(chapter) ?? false;
