@@ -30,16 +30,6 @@ const KIND_KEYS: Record<string, string> = {
 	'cdf-declaration': 'document.kind.cdfDeclaration'
 };
 
-const KIND_PLURAL_KEYS: Record<string, string> = {
-	'conciliar-constitution': 'document.kindPlural.conciliarConstitution',
-	'conciliar-decree': 'document.kindPlural.conciliarDecree',
-	'conciliar-declaration': 'document.kindPlural.conciliarDeclaration',
-	encyclical: 'document.kindPlural.encyclical',
-	'apostolic-exhortation': 'document.kindPlural.apostolicExhortation',
-	'apostolic-constitution': 'document.kindPlural.apostolicConstitution',
-	'cdf-declaration': 'document.kindPlural.cdfDeclaration'
-};
-
 /** Singular label for one document's kind — falls back to the raw
  *  `document_kind` string for a kind this table doesn't recognize yet
  *  (a new family landing ahead of a UI update), same "leave it untouched
@@ -47,10 +37,4 @@ const KIND_PLURAL_KEYS: Record<string, string> = {
 export function documentKindLabel(kind: string): string {
 	const key = KIND_KEYS[kind];
 	return key ? t(key) : kind;
-}
-
-/** Plural label for a document kind, e.g. "encyclical" -> "Encyclicals". */
-export function documentKindPluralLabel(kind: string): string {
-	const key = KIND_PLURAL_KEYS[kind];
-	return key ? t(key) : documentKindLabel(kind);
 }

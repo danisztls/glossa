@@ -129,7 +129,6 @@ import type {
 import {
 	USE_REAL_CORPUS,
 	bibleIndex,
-	cccAbbreviations,
 	cccBibleXrefsByCcc,
 	cccChunkLocation,
 	cccChunkStartFor,
@@ -227,10 +226,6 @@ export function baseLang(tag: string): string {
  * use just the `{edition}` part (e.g. `cpdv.en`) to avoid the `bible/bible.`
  * stutter in URLs like `/bible/cpdv.en/john/3`.
  */
-export function editionToWorkId(edition: string): string {
-	return `bible.${edition}`;
-}
-
 export function workIdToEdition(workId: string): string {
 	return workId.replace(/^bible\./, '');
 }
@@ -249,7 +244,7 @@ export function listBooks(workId: string): BibleBookMeta[] {
 }
 
 /** The chapter immediately before/after the given one, among chapters present. */
-export function getAdjacentChapter(
+function getAdjacentChapter(
 	workId: string,
 	osis: string,
 	chapterN: number,
@@ -419,14 +414,33 @@ async function readContentFromNetwork<T>(url: string): Promise<T> {
 	return res.json() as Promise<T>;
 }
 
+/**
+ * Shared shape behind every content-tier fetch (Bible books, CCC chunks,
+ * Compendium/document/prayer whole-language files): under fixtures
+ * (`!USE_REAL_CORPUS`, always true under vitest — see this module's
+ * docblock, "FIXTURES") return `fixture` outright, never touching the index
+ * or issuing a read. Otherwise an absent `location` means the corpus simply
+ * has nothing built at that address — an unbuilt/withheld work, a chunk past
+ * the end, a language with no file (`sync-corpus.mjs` never wrote it) — so
+ * return `empty` rather than attempting a read; a present `location` defers
+ * to `readContent`, which does the actual disk read / fetch and owns the
+ * memoization, so callers never pay for the same file twice.
+ */
+async function fetchTier<T>(
+	fixture: T,
+	location: ContentLocation | undefined,
+	empty: T
+): Promise<T> {
+	if (!USE_REAL_CORPUS) return fixture;
+	if (!location) return empty;
+	return readContent<T>(location);
+}
+
 async function fetchBookContent(
 	workId: string,
 	osis: string
 ): Promise<{ chapters: Chapter[] } | undefined> {
-	if (!USE_REAL_CORPUS) return fixtureBibleBooks[workId]?.[osis];
-	const location = bibleBookLocation(workId, osis);
-	if (!location) return undefined;
-	return readContent(location);
+	return fetchTier(fixtureBibleBooks[workId]?.[osis], bibleBookLocation(workId, osis), undefined);
 }
 
 /**
@@ -501,6 +515,41 @@ function flattenTree(tree: StructureNode[]): { node: StructureNode; depth: numbe
 	return out;
 }
 
+/**
+ * True when a node can serve as a whole-chapter reading unit: one of
+ * `kinds` (the caller's own chapter-ish kind list — CCC and Compendium each
+ * have their own, see `CCC_CHAPTER_KINDS`/`COMPENDIUM_CHAPTER_KINDS`) AND a
+ * fully-numbered range to actually read (the corpus permits null bounds,
+ * meaning "unaddressable" — docs/corpus-schema.md). Shared because the CCC
+ * and Compendium disagree on which kinds count but agree on everything else
+ * about the test.
+ */
+function isChapterNode(node: StructureNode, kinds: readonly StructureNode['kind'][]): boolean {
+	return (
+		kinds.includes(node.kind) &&
+		Number.isFinite(node.paragraphs[0]) &&
+		Number.isFinite(node.paragraphs[1])
+	);
+}
+
+/**
+ * The value in a sorted, ascending, gap-tolerant number list immediately
+ * before/after `n` — shared by the CCC's and Compendium's "adjacent
+ * paragraph/question that actually exists" accessors, which both need this
+ * over a possibly-gappy list (fixtures deliberately are, see
+ * `cccParagraphExists`'s docblock) rather than simple `n - 1`/`n + 1`
+ * arithmetic. Doesn't assume `ns` excludes `n` itself — `find`/`reverse+find`
+ * only ever look strictly past it in the requested direction.
+ */
+function adjacentInSorted(
+	ns: readonly number[],
+	n: number,
+	direction: 'prev' | 'next'
+): number | undefined {
+	if (direction === 'next') return ns.find((x) => x > n);
+	return [...ns].reverse().find((x) => x < n);
+}
+
 // --- Catechism: index-backed (structure, abbreviations, existence, sync) --
 
 /** Languages the CCC is available in. */
@@ -510,11 +559,6 @@ export function cccLangs(): string[] {
 
 export function getCccStructure(lang: string): CccNode[] {
 	return cccStructures[lang] ?? [];
-}
-
-/** The CCC's own abbreviations table (document sigla, scripture book abbrevs). Not surfaced in the UI yet. */
-export function listCccAbbreviations(lang: string) {
-	return cccAbbreviations[lang] ?? [];
 }
 
 const cccParagraphNumberSets: Record<string, Set<number>> = Object.fromEntries(
@@ -537,9 +581,7 @@ export function getAdjacentCccParagraphNumber(
 	n: number,
 	direction: 'prev' | 'next'
 ): number | undefined {
-	const ns = cccParagraphNumbers[lang] ?? [];
-	if (direction === 'next') return ns.find((x) => x > n);
-	return [...ns].reverse().find((x) => x < n);
+	return adjacentInSorted(cccParagraphNumbers[lang] ?? [], n, direction);
 }
 
 /**
@@ -577,17 +619,6 @@ export function flattenCccStructure(lang: string): { node: CccNode; depth: numbe
  */
 const CCC_CHAPTER_KINDS: CccNode['kind'][] = ['chapter', 'prologue', 'section', 'part'];
 
-/** True when a node can serve as a whole-chapter reading unit: a chapter-ish
- *  kind AND a fully-numbered range to actually read (the corpus permits null
- *  bounds, meaning "unaddressable" — docs/corpus-schema.md). */
-function isCccChapterNode(node: CccNode): boolean {
-	return (
-		CCC_CHAPTER_KINDS.includes(node.kind) &&
-		Number.isFinite(node.paragraphs[0]) &&
-		Number.isFinite(node.paragraphs[1])
-	);
-}
-
 /**
  * The chapter-sized node containing paragraph `n`, or undefined if none
  * does. Walks the breadcrumb from the inside out and takes the first
@@ -597,7 +628,7 @@ function isCccChapterNode(node: CccNode): boolean {
 export function getCccChapterFor(lang: string, n: number): CccNode | undefined {
 	const trail = getCccBreadcrumb(lang, n);
 	for (let i = trail.length - 1; i >= 0; i--) {
-		if (isCccChapterNode(trail[i])) return trail[i];
+		if (isChapterNode(trail[i], CCC_CHAPTER_KINDS)) return trail[i];
 	}
 	return undefined;
 }
@@ -617,16 +648,13 @@ export function getCccChapterFor(lang: string, n: number): CccNode | undefined {
 export function listCccChapters(lang: string): CccNode[] {
 	return flattenCccStructure(lang)
 		.map(({ node }) => node)
-		.filter(isCccChapterNode);
+		.filter((node) => isChapterNode(node, CCC_CHAPTER_KINDS));
 }
 
 // --- Catechism: content tier (async, read/fetched, memoized, chunked) -----
 
 async function fetchCccChunk(lang: string, n: number): Promise<CccParagraph[]> {
-	if (!USE_REAL_CORPUS) return fixtureCccParagraphsByLang[lang] ?? [];
-	const location = cccChunkLocation(`ccc.${lang}`, n);
-	if (!location) return [];
-	return readContent<CccParagraph[]>(location);
+	return fetchTier(fixtureCccParagraphsByLang[lang] ?? [], cccChunkLocation(`ccc.${lang}`, n), []);
 }
 
 /** Reads the 100-paragraph chunk `n` lives in (content tier), returns only
@@ -716,19 +744,11 @@ export function getCompendiumBreadcrumb(lang: string, n: number): StructureNode[
  */
 const COMPENDIUM_CHAPTER_KINDS: StructureNode['kind'][] = ['chapter', 'section', 'part'];
 
-function isCompendiumChapterNode(node: StructureNode): boolean {
-	return (
-		COMPENDIUM_CHAPTER_KINDS.includes(node.kind) &&
-		Number.isFinite(node.paragraphs[0]) &&
-		Number.isFinite(node.paragraphs[1])
-	);
-}
-
 /** The innermost whole-reading unit containing question `n`. */
 export function getCompendiumChapterFor(lang: string, n: number): StructureNode | undefined {
 	const trail = getCompendiumBreadcrumb(lang, n);
 	for (let i = trail.length - 1; i >= 0; i--) {
-		if (isCompendiumChapterNode(trail[i])) return trail[i];
+		if (isChapterNode(trail[i], COMPENDIUM_CHAPTER_KINDS)) return trail[i];
 	}
 	return undefined;
 }
@@ -737,7 +757,7 @@ export function getCompendiumChapterFor(lang: string, n: number): StructureNode 
 export function listCompendiumChapters(lang: string): StructureNode[] {
 	return flattenCompendiumStructure(lang)
 		.map(({ node }) => node)
-		.filter(isCompendiumChapterNode);
+		.filter((node) => isChapterNode(node, COMPENDIUM_CHAPTER_KINDS));
 }
 
 /**
@@ -758,10 +778,11 @@ export function flattenCompendiumStructure(lang: string): { node: StructureNode;
 // work compared to the Bible or CCC).
 
 async function fetchCompendiumQuestions(lang: string): Promise<CompendiumQuestion[]> {
-	if (!USE_REAL_CORPUS) return fixtureCompendiumQuestionsByLang[lang] ?? [];
-	const location = compendiumQuestionsLocation(`compendium.${lang}`);
-	if (!location) return [];
-	return readContent<CompendiumQuestion[]>(location);
+	return fetchTier(
+		fixtureCompendiumQuestionsByLang[lang] ?? [],
+		compendiumQuestionsLocation(`compendium.${lang}`),
+		[]
+	);
 }
 
 export async function getCompendiumQuestionAsync(
@@ -794,8 +815,7 @@ export async function getAdjacentCompendiumQuestionNumber(
 ): Promise<number | undefined> {
 	const questions = await fetchCompendiumQuestions(lang);
 	const ns = questions.map((q) => q.n).sort((a, b) => a - b);
-	if (direction === 'next') return ns.find((x) => x > n);
-	return [...ns].reverse().find((x) => x < n);
+	return adjacentInSorted(ns, n, direction);
 }
 
 // --- Cross-references -------------------------------------------------
@@ -989,10 +1009,6 @@ export function getDocumentStructure(workId: string): StructureNode[] {
 	return documentStructures[workId] ?? [];
 }
 
-export function getDocumentBreadcrumb(workId: string, n: number): StructureNode[] {
-	return breadcrumbIn(getDocumentStructure(workId), n);
-}
-
 export function flattenDocumentStructure(workId: string): { node: StructureNode; depth: number }[] {
 	return flattenTree(getDocumentStructure(workId));
 }
@@ -1020,18 +1036,6 @@ export function documentHasSections(workId: string): boolean {
 	return (documentSectionNumberSets[workId]?.size ?? 0) > 0;
 }
 
-/** The section number immediately before/after `n` that actually exists,
- *  or undefined at either end. Index-backed — see `documentSectionExists`. */
-export function getAdjacentDocumentSectionNumber(
-	workId: string,
-	n: number,
-	direction: 'prev' | 'next'
-): number | undefined {
-	const ns = documentSectionNumbers[workId] ?? [];
-	if (direction === 'next') return ns.find((x) => x > n);
-	return [...ns].reverse().find((x) => x < n);
-}
-
 // --- Documents: content tier (async, read/fetched, memoized, whole) --------
 //
 // Kept whole per work, like the Compendium (~200 KB raw worst-case — see
@@ -1046,10 +1050,7 @@ export function getAdjacentDocumentSectionNumber(
 // ever does call it directly.
 
 async function fetchDocumentSections(workId: string): Promise<DocumentSection[]> {
-	if (!USE_REAL_CORPUS) return [];
-	const location = documentSectionsLocation(workId);
-	if (!location) return [];
-	return readContent<DocumentSection[]>(location);
+	return fetchTier([], documentSectionsLocation(workId), []);
 }
 
 export async function getDocumentSectionAsync(
@@ -1194,10 +1195,7 @@ export function listPrayerGroups(lang: string): PrayerGroupSummary[] {
 // throwing keeps that graceful if a test ever does call this directly.
 
 async function fetchPrayers(lang: string): Promise<Prayer[]> {
-	if (!USE_REAL_CORPUS) return [];
-	const location = prayerContentLocation(`prayer.common.${lang}`);
-	if (!location) return [];
-	return readContent<Prayer[]>(location);
+	return fetchTier([], prayerContentLocation(`prayer.common.${lang}`), []);
 }
 
 export async function getPrayerAsync(lang: string, slug: string): Promise<Prayer | undefined> {

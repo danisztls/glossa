@@ -32,6 +32,7 @@
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
+	import { rangeLabel as structureRangeLabel } from '$lib/components/indexToc';
 	import { displayTitle } from '$lib/titles';
 	import { formatPromulgated } from '$lib/dates';
 	import { listPositions, type ReadingPosition } from '$lib/reading-position';
@@ -160,11 +161,12 @@
 		return undefined;
 	}
 
+	// Wraps `indexToc.ts`'s shared formula (also used by the CCC/Compendium
+	// landing pages) rather than reimplementing it: this page's rows carry an
+	// optional CCC/Compendium side (`CccCompendiumRow`), so the wrapper only
+	// adds the `undefined`-node guard the shared version doesn't need.
 	function rangeLabel(node: CccNode | undefined, prefix: string): string | undefined {
-		if (!node) return undefined;
-		const [from, to] = node.paragraphs;
-		if (!Number.isFinite(from)) return undefined;
-		return from === to ? `${prefix}${from}` : `${prefix}${from}–${to}`;
+		return node ? structureRangeLabel(node, prefix) : undefined;
 	}
 
 	// --- Magisterium: grouped by pontiff/council --------------------------------

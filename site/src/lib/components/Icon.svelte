@@ -21,7 +21,6 @@
 <script lang="ts" module>
 	import Search from '@lucide/svelte/icons/search';
 	import Menu from '@lucide/svelte/icons/menu';
-	import Languages from '@lucide/svelte/icons/languages';
 	import Palette from '@lucide/svelte/icons/palette';
 	import Type from '@lucide/svelte/icons/type';
 	import Plus from '@lucide/svelte/icons/plus';
@@ -42,7 +41,6 @@
 	const ICONS = {
 		search: Search,
 		menu: Menu,
-		languages: Languages,
 		palette: Palette,
 		type: Type,
 		plus: Plus,
