@@ -5,9 +5,9 @@
 	  - `hero` (default) — the home page's h1.
 	  - `brand` — the header. Below 30rem this swaps to a "GC" monogram, the same
 	    two initials in the same two colours as the favicon, so the tab and the
-	    phone header carry one mark. The header also forces the same swap at any
-	    width via the `compact` prop, once the reader scrolls away from the top
-	    (see `+layout.svelte`'s `scrolled` state) — two triggers, one mark.
+	    phone header carry one mark. The same swap also fires at any width once
+	    the reader scrolls away from the top of the page — a scroll-driven CSS
+	    animation, not a media query; see the rule below the phone breakpoint.
 
 	The variants differ by exactly one declaration each: the wrapper's
 	`font-size`. Everything inside is expressed in `em`, so the lockup is one
@@ -49,13 +49,10 @@
 -->
 
 <script lang="ts">
-	let {
-		variant = 'hero',
-		compact = false
-	}: { variant?: 'hero' | 'brand'; compact?: boolean } = $props();
+	let { variant = 'hero' }: { variant?: 'hero' | 'brand' } = $props();
 </script>
 
-<span class="wordmark is-{variant}" class:is-compact={compact}>
+<span class="wordmark is-{variant}">
 	<span class="lockup">
 		<span class="word-glossa"><span class="initial">G</span>lossa</span>
 		<span class="word-catholica">Catholica</span>
@@ -178,22 +175,90 @@
 
 	/*
 	 * The scroll-triggered equivalent of the media query above — same swap,
-	 * same declarations, but keyed on the `compact` prop instead of viewport
-	 * width, so it fires at any screen size once `+layout.svelte` decides the
-	 * reader has scrolled. A plain selector can't be OR'd into that `@media`
-	 * block, so this is a second copy of the two rules rather than a shared one.
+	 * same declarations, driven by scroll position instead of viewport width
+	 * (see +layout.svelte's matching `.header-bar` rule, which explains the
+	 * mechanism and the @supports guard in full).
+	 *
+	 * Nested inside `(min-width: 30.0625rem)` — one pixel past the phone
+	 * breakpoint above — so the two triggers stay mutually exclusive. A
+	 * running CSS animation's value always wins over a plain rule, regardless
+	 * of specificity or source order, so an unguarded copy of this animation
+	 * would override the phone breakpoint's permanent monogram with a visible
+	 * lockup for the instant before any scrolling happens.
+	 *
+	 * The `0 96px` range must match `.header-bar`'s exactly (search
+	 * +layout.svelte for "96px") — the mark and the bar should finish
+	 * shrinking at the same scroll offset.
 	 */
-	.is-brand.is-compact .lockup {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
-	}
+	@supports (animation-timeline: scroll()) {
+		@media (min-width: 30.0625rem) {
+			@keyframes brand-monogram-swap-lockup {
+				from {
+					position: static;
+					width: auto;
+					height: auto;
+					overflow: visible;
+					clip-path: none;
+					white-space: normal;
+				}
+				to {
+					position: absolute;
+					width: 1px;
+					height: 1px;
+					overflow: hidden;
+					clip-path: inset(50%);
+					white-space: nowrap;
+				}
+			}
 
-	.is-brand.is-compact .monogram {
-		display: block;
-		font-size: 1.15em;
+			/*
+			 * Mirrors the lockup's animation exactly — visually-hidden and
+			 * clipped at rest, static and full-size once compact — rather than
+			 * toggling `display` the way the phone breakpoint above does. A
+			 * scroll-driven animation cannot bring an element out of
+			 * `display: none`: unlike a time-based animation kicked off by a
+			 * class toggle, there's no discrete "start" event, so an element
+			 * whose resting style is `display: none` never gets laid out and
+			 * the browser never evaluates its scroll-linked animation at all
+			 * (verified: with `display: none` here, the monogram's computed
+			 * style never changed at any scroll offset). Giving it the same
+			 * "visually hidden, not display:none" treatment the lockup already
+			 * uses keeps it in the render tree — and therefore keeps its
+			 * animation actually running.
+			 */
+			@keyframes brand-monogram-swap-monogram {
+				from {
+					position: absolute;
+					width: 1px;
+					height: 1px;
+					overflow: hidden;
+					clip-path: inset(50%);
+					white-space: nowrap;
+				}
+				to {
+					position: static;
+					width: auto;
+					height: auto;
+					overflow: visible;
+					clip-path: none;
+					white-space: normal;
+				}
+			}
+
+			.is-brand .lockup {
+				animation: brand-monogram-swap-lockup linear both;
+				animation-timeline: scroll(root block);
+				animation-range: 0 96px;
+			}
+
+			.is-brand .monogram {
+				/* Constant, not animated — see the comment above. */
+				display: block;
+				font-size: 1.15em;
+				animation: brand-monogram-swap-monogram linear both;
+				animation-timeline: scroll(root block);
+				animation-range: 0 96px;
+			}
+		}
 	}
 </style>

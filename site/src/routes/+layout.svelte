@@ -28,39 +28,6 @@
 	// the nav open regardless of this flag.
 	let navOpen = $state(false);
 
-	// Streamlines the header once the reader has actually left the top of the
-	// page — the wordmark drops to the "GC" monogram (same swap Wordmark.svelte
-	// already does at phone width, here driven by `compact` instead of a media
-	// query) and the bar's padding shrinks. It only reacts to distance from the
-	// top, not scroll direction — a reader paging back up mid-chapter to reread
-	// a verse shouldn't make the header resize under their thumb; it only grows
-	// back once they're actually back at the top.
-	let scrolled = $state(false);
-
-	onMount(() => {
-		// Two thresholds, not one. Going compact shrinks the header's own
-		// padding, which shrinks the page's content height, which nudges
-		// `scrollY` down a few pixels — enough to cross a single threshold right
-		// back the other way. That flips `scrolled` again, which grows the
-		// header again, which nudges `scrollY` back up, forever, right at the
-		// boundary. The gap between EXPAND and COLLAPSE has to clear that
-		// self-inflicted jump (the padding-block delta, ~14px) with room to
-		// spare; COLLAPSE additionally sits at 0 so the header only re-expands
-		// once the reader is genuinely back at the top, not just near it.
-		const EXPAND_THRESHOLD = 64;
-		const COLLAPSE_THRESHOLD = 0;
-		function updateScrolled() {
-			if (!scrolled && window.scrollY > EXPAND_THRESHOLD) {
-				scrolled = true;
-			} else if (scrolled && window.scrollY <= COLLAPSE_THRESHOLD) {
-				scrolled = false;
-			}
-		}
-		updateScrolled();
-		window.addEventListener('scroll', updateScrolled, { passive: true });
-		return () => window.removeEventListener('scroll', updateScrolled);
-	});
-
 	// No "Home" entry: the brand link above is already a link to `/`, and two
 	// controls one tab-stop apart doing the identical thing is redundancy, not
 	// redundancy-as-safety. Removing it also lets `isActive` drop its special
@@ -154,9 +121,9 @@
 </svelte:head>
 
 <div class="app-shell">
-	<header class="site-header" class:compact={scrolled}>
+	<header class="site-header">
 		<div class="header-bar">
-			<a class="brand" href="/"><Wordmark variant="brand" compact={scrolled} /></a>
+			<a class="brand" href="/"><Wordmark variant="brand" /></a>
 
 			<nav id="primary-nav" class="primary-nav" class:open={navOpen} aria-label={t('nav.menu')}>
 				{#each NAV_ITEMS as item (item.href)}
@@ -241,10 +208,10 @@
 		z-index: 40;
 		border-bottom: 1px solid var(--color-border);
 		background: var(--color-bg-elevated);
-		/* The compact state shrinks this element's own height. Without this the
-		   browser's scroll anchoring "corrects" for that shrink by nudging
-		   `scrollY`, which is exactly the feedback loop the two-threshold logic
-		   above already has to defend against — don't feed it a second cause. */
+		/* A scroll-linked animation changes this element's own height below
+		   (`.header-bar`'s shrink) — without this the browser's scroll
+		   anchoring "corrects" for that shrink by nudging `scrollY`, which
+		   would then feed back into the very animation causing the nudge. */
 		overflow-anchor: none;
 	}
 
@@ -255,12 +222,10 @@
 		gap: 0.6rem 0.75rem;
 		/* A little more block padding than the old single-line brand needed: the
 		   wordmark is two lines now, and letting it sit tight against the rule
-		   makes the header read as cramped rather than as compact. */
+		   makes the header read as cramped rather than as compact. Also the
+		   unanimated fallback: browsers without scroll-driven animation support
+		   (see below) just keep this value at every scroll position. */
 		padding: 0.75rem 1rem;
-		/* Only block padding animates — the compact state changes height, not
-		   width, and transitioning the shorthand would also (harmlessly, but
-		   pointlessly) tween the inline value that never moves. */
-		transition: padding-block 150ms ease;
 		max-width: 90rem;
 		margin-inline: auto;
 		/* Containing block for header dropdowns at phone width — see app.css's
@@ -270,10 +235,47 @@
 		position: relative;
 	}
 
-	/* The scroll-compact state — see `scrolled` above. Same idea as the phone
-	   layout's shrink, applied at any width: less air around a shorter mark. */
-	.site-header.compact .header-bar {
-		padding-block: 0.35rem;
+	/*
+	 * Streamlines the header once the reader has actually left the top of the
+	 * page: the bar's padding shrinks, and Wordmark.svelte's own rule (see
+	 * `.is-brand .lockup`/`.monogram` there) drops the wordmark to the "GC"
+	 * monogram over the same range, at any width — the mobile header's
+	 * proportions, triggered by scroll instead of viewport width.
+	 *
+	 * `animation-timeline: scroll()` reads scroll position as the animation's
+	 * clock directly, so the state is just a function of the current scroll
+	 * offset — no listener, no stored "am I compact" flag, and so nothing that
+	 * can desync from the actual scroll position or flicker between two states
+	 * at a boundary the way a JS-computed threshold could.
+	 *
+	 * Guarded by `@supports`: a browser that doesn't understand
+	 * `animation-timeline: scroll()` would otherwise still run the `animation`
+	 * shorthand against the default document timeline, and with no duration
+	 * set that plays out instantly to the `to` keyframe — i.e. the header
+	 * would render permanently compact, at the very top of the page, on any
+	 * browser that hasn't shipped this yet. The guard keeps that case at
+	 * today's plain, unanimated header instead.
+	 *
+	 * The `0 96px` range is duplicated in Wordmark.svelte's matching rule
+	 * (search that file for "96px") — the bar and the mark have to finish
+	 * shrinking at the same scroll offset or the two visibly disagree partway
+	 * through.
+	 */
+	@supports (animation-timeline: scroll()) {
+		@keyframes shrink-header-bar {
+			from {
+				padding-block: 0.75rem;
+			}
+			to {
+				padding-block: 0.35rem;
+			}
+		}
+
+		.header-bar {
+			animation: shrink-header-bar linear both;
+			animation-timeline: scroll(root block);
+			animation-range: 0 96px;
+		}
 	}
 
 	.brand {
