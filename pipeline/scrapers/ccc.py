@@ -1122,8 +1122,45 @@ def match_label_pt(original_text: str) -> tuple[str, int | None] | None:
     return None
 
 
-PT_NUMBER_RE = re.compile(r"^(\d{1,4})\.?\s+")
+# The `\s*` before the period is load-bearing, not defensive. The PT mirror
+# marks up a paragraph's leading number in two shapes -- "<b>1663. </b>" and
+# "<b>1662<i>. </i></b>", the period living inside a *nested* tag -- and
+# strip_tags turns every tag boundary into a space, so the second shape
+# reaches here as "1662 . Text" rather than "1662. Text". Without the `\s*`
+# the match ended after "1662 ", leaving a stray ". " at the head of the
+# paragraph's body text: 126 PT paragraphs (33, 45, 46, 49, 96, ...) opened
+# with a lone period, against zero in EN. The asymmetry is what identified
+# it -- both editions number the same 2,865 paragraphs, so a defect present
+# in one alone is a parser defect (CLAUDE.md, "Work that spans languages").
+# `split_embedded_paragraph_starts`'s own _LOOKS_LIKE_PARA_START_RE already
+# allowed the space; this regex was the one that did not.
+PT_NUMBER_RE = re.compile(r"^(\d{1,4})\s*\.?\s+")
 _PT_MARKER_RE = re.compile(r"\((\d{1,3})\)")
+
+
+def test_pt_paragraph_number_strips_a_period_left_behind_by_a_nested_tag() -> None:
+    # Both shapes are real, from the same mirror: §1663 prints the period
+    # inside the <b>, §33 and §1662 print it inside an <i> nested in the <b>.
+    # strip_tags turns the tag boundary into a space, so only the second shape
+    # arrives with the number and its period separated.
+    for html in (
+        "<b>1663. </b>Uma vez que o Matrim&oacute;nio",
+        "<b>1662<i>. </i></b>O Matrim&oacute;nio assenta",
+        "<b>33<i>. </i></b>O<i> homem: </i>Com a sua abertura",
+    ):
+        text = strip_tags(html)
+        m = PT_NUMBER_RE.match(text)
+        assert m is not None, html
+        assert not text[m.end() :].startswith("."), html
+
+
+def test_pt_paragraph_number_does_not_run_past_the_number_it_matched() -> None:
+    # The `\s*\.?` must not let the match wander into body text that merely
+    # starts with a period-shaped token.
+    assert PT_NUMBER_RE.match("33 . O homem").end() == len("33 . ")
+    assert PT_NUMBER_RE.match("1216. Este banho").end() == len("1216. ")
+    assert PT_NUMBER_RE.match("2117 Comparar") is not None
+    assert PT_NUMBER_RE.match("50.000 fi&eacute;is") is None
 
 
 def _pt_body(html_text: str) -> tuple[str, str]:
