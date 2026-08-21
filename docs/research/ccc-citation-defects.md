@@ -1,6 +1,6 @@
 # CCC scripture citations that point outside the corpus
 
-Nine of the ~3,800 scripture references `pipeline/build/xrefs.py` derives from
+Nine of the ~3,800 scripture references the citation parser derives from
 `ccc.en`'s footnotes name a verse that does not exist in the chapter they name.
 Every one is damage in the **CCC's own printed citation string** on the
 vatican.va mirror — not a parser bug, and not a versification difference.
@@ -21,7 +21,7 @@ verse label just isn't a link (`bible/[book]/[chapter]/+page.svelte`).
 It was **sixteen**. Seven were not defects at all but a second, narrower kind of
 versification divergence — individual chapters whose tails run one or two verses
 ahead of the Vulgate's because the Vulgate merges two verses modern editions
-print separately. Those are now handled by `versification.py`'s `_LATE_MERGE`
+print separately. Those are now handled by `versification.ts`'s `LATE_MERGE`
 (2 Cor 13, Zech 2, Exod 40, Matt 17, Acts 7), verified against both shipped
 editions.
 

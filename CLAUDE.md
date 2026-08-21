@@ -144,7 +144,7 @@ translation is legitimate and common (Leo XIII is ~17% translated into
 Portuguese) — there the rule is "when both exist, they must agree".
 
 Citations may use Hebrew or Vulgate versification. The corpus canonicalizes on
-**Vulgate**; `versification.ts`/`versification.py` convert. Note that a wrong
+**Vulgate**; `site/src/lib/versification.ts` converts — the only implementation, since its Python twin went with `pipeline/build/` (see `docs/decisions.md`, 2026-08-21). Note that a wrong
 chapter does not fail an existence check — `Joel 3:1-5` resolves to real but
 wrong text — so conversion is applied unconditionally for divergent books rather
 than as a fallback.

@@ -391,3 +391,214 @@ inline-style-bold variants) are independent of storage and still needed — no
 storage change recovers a heading the parser never saw. The `LEVELS` reorder and
 the stored-range repairs are dropped, since this schema removes both problems
 rather than fixing them.
+
+## 2026-08-21 — PT's inline Scripture citations stay inline
+
+**What**: the Portuguese Catechism prints many Scripture locators directly in
+the sentence — `«...até ao fim do mundo» (Mt 28, 19-20)` — where the English
+edition footnotes the same reference. The parser extracts those into
+`⟦inlineN⟧` tokens with a verbatim `label`, and the reader used to render each
+one as a superscript number opening a disclosure. That replaced something the
+source actually prints with an apparatus it does not have: 1,255 parentheses
+became footnotes, and PT's real notes were renumbered into one work-wide 1–4,853
+display sequence to make room for them. Both are reverted. A citation carrying
+a `label` is now printed back exactly where it stands, parentheses and all,
+with links woven through it; a citation without one is a numbered note and
+keeps the source's own printed number, as EN always did. `citations[].number`
+is gone from the schema — its only justification was the interleaving.
+
+**Why the token stays**: tokenizing is not the same decision as footnoting. The
+token isolates the citation apparatus from the sentence around it, so the
+reference parser is handed a citation-shaped string instead of having to find
+one inside running prose (`linkifyProse`'s deliberately narrow "cf."-triggered
+grammar would not, and should not, link a bare parenthesis). `label` stores
+every source character, so the extraction is reversible in the data and
+invisible to the reader — the only thing render changes is the source's loose
+spacing, below.
+
+**The typos**: the PT mirror's citation punctuation is pervasively OCR-drifted.
+Two rules decide where each defect is fixed, following what the corpus already
+did with `Dr`-for-`Dt` and `Fl . 3, 8`:
+
+- _Punctuation and spacing drift is grammar tolerance_, in `site/src/lib/refs.ts`
+  — a space before the separator (`Rm 8 , 15`), `.` for `,` between chapter and
+  verse (`Sl 40. 7-9`), `:` for `;` between clauses (`Ex 34, 28: Dt 4, 13`), a
+  book glued to its chapter (`Jo14`, `DS1511`), and a lowercase `l` for the
+  digit `1` inside a locus (`Act 4, l2`). Nothing is rewritten; the source
+  string still renders verbatim, it just resolves now. Measured against every
+  citation in both editions, old parser vs new: **+345 references linked in
+  `ccc.pt` and +19 in `ccc.en`, with not one citation losing a link it had.**
+- _A wrong character with a known right value is a correction_, in
+  `pipeline/corrections/ccc.pt.json` with the usual locator/evidence — `(Ts; 5,
+14-15)` for James 5:14-15 (the paragraph's own prose names São Tiago), `Lc 1 ,
+3 1` for Lk 1:31, `Is 1 l, 2` for Isa 11:2. These name a different book or a
+  different verse; no tolerance rule may guess them, and each is confirmed
+  against the EN parallel.
+
+**Loose spacing is tidied at render, for every work**: the same mirrors print
+a stray space after "(", before ")", or before a comma or period — `( Sl 105,
+3)`, `(2 Cor 5, 17 )`, `Cf . Lc 1, 38`, `Catechesi tradendae , 1`. Across the
+whole corpus **4,916 of 18,077 citation strings carry one**, so this is a
+typesetting habit of the source, not a handful of defects, and 4,916
+corrections entries would be absurd. `normalizeCitationSpacing` in `refs.ts`
+handles it, applied by `RefText.svelte` — the one presentation layer every
+work's citations pass through, so the Catechism, the Compendium, the council
+documents and the encyclicals all get it from the same rule. It is
+**whitespace-only**: no mark is added, removed or replaced, verified over the
+whole corpus (0 non-whitespace changes, 0 citations losing a link). The corpus
+and `corpus/raw/` keep the source's own spelling; this is the presentation
+layer deciding presentation, which is why it is not a corrections-file matter.
+
+The tidy removes whitespace and never adds it, so a book glued to its chapter
+is out of its reach. There are 19 of those corpus-wide; 18 sit inside footnote
+text (`DS1511`, `PL16`, `CSEL73`) and all of them resolve, so they are left as
+printed. The one in a paragraph's running sentence — `(Jo14, 16-17)`, CCC 2615
+— gets a corrections entry, because that one a reader actually reads.
+
+**Also fixed while in there**: an EN cross-chapter range (`Isa 52:13-53:12`) was
+expanding to 41 verses of a 15-verse chapter — it now links its opening verse
+and leaves the rest as text. `parseClause` keeps scanning after a match instead
+of dropping the clause's tail, which is what lets a comma-joined second
+reference link. And the scraper now accepts a Roman book number in an inline
+locator (`(I Jo 4, 9)`) and no longer swallows a footnote marker the source
+printed inside the same parenthesis (CCC 857's `(Ef 2, 20 (368))`).
+
+## 2026-08-21 — One grammar: the xref index is derived, not stored
+
+**What**: `corpus/xrefs/ccc-bible.json` is gone from the repository, and so is
+`pipeline/build/xrefs.py`. The CCC → Bible index is now built by
+`site/scripts/build-xrefs.mjs` on every corpus sync, straight into the site's
+generated `corpus-data/index/`.
+
+**Why it was wrong to store it**. Three separate problems, one cause:
+
+- It was a **derived interpretation living in the corpus**, next to `raw/`
+  (irreplaceable) and `works/` (parsed source). `link-surface.md` says the
+  corpus stores raw strings and never interpretations; an index of what cites
+  what is exactly an interpretation. Committed, it could drift from the
+  `works/` it describes, and nothing checked that it hadn't.
+- It required a **second implementation of the citation grammar**, in Python,
+  because the renderer's grammar lives in TypeScript. The two drifted, and we
+  knew: `refs.ts`'s own docblock recorded that they agreed on 98.4% of
+  paragraphs, that every disagreement traced to one bug, and that the Python
+  was the wrong one each time. That sat as "tracked follow-up" because fixing
+  it meant fixing it twice and re-committing a 543 KB artifact.
+- It covered **`ccc.en` only** — not the Portuguese edition, whose inline
+  locators are references the English edition footnotes, and not the prose of
+  either.
+
+**How it works now**. `src/lib/refs.ts` was split. The grammar — every table,
+`parseRefs`, `linkifyProse`, `normalizeCitationSpacing` — moved to
+`src/lib/refs-grammar.ts`, which imports nothing. `refs.ts` keeps the half that
+genuinely needs the corpus (`refHref`, and the document-title table it injects
+into the grammar) and re-exports the rest, so no caller changed. Because the
+grammar module is dependency-free, plain Node imports it directly — no bundler,
+no new dependency, Node's native type stripping and the `tsconfig` setting
+already present are enough. The builder and the reader therefore run the _same
+parser over the same strings_, and the index cannot drift from the corpus
+because it does not outlive the build.
+
+**Result**: 1,198 → 1,303 paragraphs with references; 7,870 → 8,764
+(paragraph, verse) pairs, of which 6 disappeared and all 6 were wrong (the
+Python read John 17 as Luke 17, and "Moralia in Job 31" as the book of Job).
+The index is also smaller — 543 KB stored → 210 KB generated, 22 KB gzipped.
+The QA pass that reports references pointing outside the corpus moved into the
+builder and still runs on every sync, still loud and still non-fatal.
+
+**What is NOT done**: the documents (232 works) are parsed by the same grammar
+and their references now render as links, but they do not yet feed a reverse
+index — "cited in Lumen Gentium §22" needs an index shape with a work
+dimension and a Bible-page section to show it. That is the obvious next step,
+not a gap in this one.
+
+`pipeline/build/` is gone entirely. `versification.py` had no caller left once
+`xrefs.py` was deleted, and it was a hand-maintained twin of
+`versification.ts`'s tables — the same duplication, one layer down, waiting to
+drift the same way. Its content is in git if a future Python consumer ever
+needs it back.
+
+## 2026-08-21 — References link in prose, with no trigger and no brackets
+
+**What**: `linkifyProse` used to require an explicit "cf." before it would look
+for anything. It now scans for a Scripture locator anywhere in a paragraph's
+own text. The case that forced it: `(«Eu estarei contigo» – Ex 3, 12)`, where
+the parenthesis holds a quotation AND its locator, so neither the citation
+grammar (which assumes the whole string is apparatus) nor the old prose rule
+(which needs "cf.") could see the reference.
+
+**Why it matters well beyond that**: the encyclicals cite Scripture almost
+entirely this way — in parentheses, inside the argument, with no apparatus at
+all. The corpus holds **5,932 such locators**, 336 in Evangelium Vitae alone,
+every one of them previously plain text.
+
+**What keeps it from over-linking** (the standing rule: under-linking is
+acceptable, a wrong link is not). It is a dedicated scan, deliberately NOT
+`parseRefs` over prose — that function splits on `;` and `:`, which in prose
+are ordinary punctuation, and carries a book across clauses, which in prose
+would turn page numbers and dates into verses. Instead every match must carry
+its own book name, matched **case-sensitively** on the exact printed surface
+form, followed immediately by its own locus within that book's real chapter
+count. Case sensitivity is what makes short Portuguese abbreviations safe:
+"na" and "at" are a common preposition and a common word, "Na" (Nahum) and
+"At" (Acts) are not.
+
+**Two over-links found by measuring, and fixed**:
+
+- A patristic commentary title names the book it comments on — "Moralia in
+  Job 31, 45", "Origenes, In Mt. 16, 21" — and the numbers after it are the
+  commentary's own divisions. Scanning all 347 works for a match preceded by
+  "in" found ten: nine titles and one real English "quoted in Mt 1:23". The
+  guard separates them exactly.
+- A bare "cf. 1212" as a CCC PARAGRAPH reference is now opt-in and off. The
+  apparatus it targets is absent from both vatican.va mirrors, so the corpus
+  contains zero of them in either Catechism or either Compendium — while the
+  rule produced 104 wrong links in the encyclicals, where a bare number after
+  "cf." is a Scripture chapter continuing an earlier reference ("cf. 22:32")
+  or a book number ("cf. 1 Ped 2, 21").
+
+**Book tables extended to the older translations**, by the same method the
+tables were originally built with — scan the real corpus for scripture-shaped
+prose that produced no link, read the sentence around each one, add only what
+is confirmed. That is where "Gén", "Sal", "Apoc", "Hebr", "Luc", "Fil", "Col",
+"Eclo", "1 Ped", "2 Tess" came from, and it is why English now tolerates the
+abbreviating full stop ("Lk. 1:28", "Matt. 16, 18"), worth ~200 references on
+its own. "Rom" returns to the Portuguese table too: it had been dropped
+wholesale to avoid mislinking "Cat Rom" (Catechismus Romanus), at the cost of
+153 real references to Romans — the collision is now blocked by its prefix,
+which is where it actually occurs.
+
+## 2026-08-21 — One "Cited in" panel, every work that cites the verse
+
+**What**: the Bible chapter page's "Cited in the Catechism" section becomes
+"Cited in", and carries the magisterial documents beside the Catechism. A row
+is a verse; inside it, each citing work names itself once and lists its
+references: `v. 16 — CCC (¶219 · ¶444 · ¶454) Deus Caritas Est (§19) Dominum
+et Vivificantem (§8 · §23 · §49)`.
+
+**Why one panel and not two**: the reader looks up a verse, not a work. Two
+sections would build the whole verse scaffold twice — the same verse number,
+the same present/absent handling, the same anchor — and force a reader
+following one verse to find it in two places. One panel says each verse once.
+
+**Why grouped, not one chip per reference**: naming the work per reference is
+unreadable where it matters most. Matthew 25 draws 237 document references
+across its verses and John 3:16 alone is cited by a dozen documents; the work's
+name said once with its sections in parentheses is what keeps those rows
+scannable. Each number is its own link — `/catechismus/{n}` and
+`/documenta/{slug}#s{n}`, the same targets the citation renderer uses.
+
+**The index**: `document-xrefs.json`, built by the same pass as the CCC one and
+sharing its shape — `{ work, n, refs }` keyed by the document's edition-free
+slug, unioned across that document's editions. 1,926 entries over 232 works;
+327 KB raw, **31 KB gzipped**, against an eager index tier already at ~227 KB
+gzipped. It goes in that tier for the same reason the CCC index did: inlining
+costs less than the round trip. It is also the entry most likely to outgrow the
+tier first, and `corpus-index.ts` says so where a future reader will look.
+
+**A defect this surfaces, deliberately unfixed**: many encyclical manifests
+carry a title derived from the slug — "Dominum Et Vivificantem" with a
+capitalised "Et", "Populorum" for _Populorum Progressio_, "Ecclesiam" for
+_Ecclesiam Suam_. That is wrong in the corpus, not in this panel, and it
+already shows in the document library and the home page. Correcting it in the
+view would be inventing text; it belongs in the scraper's title derivation,
+with a source for the real titles.

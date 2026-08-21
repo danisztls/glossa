@@ -54,8 +54,8 @@ EN v16 is PT v17.
 
 ### c. Numbering tradition — Psalms
 
-The Hebrew/Greek-Vulgate offset that `versification.ts`/`versification.py`
-already exist for. The corpus canonicalizes on Vulgate and converts citations.
+The Hebrew/Greek-Vulgate offset that `versification.ts` already exists for.
+The corpus canonicalizes on Vulgate and converts citations.
 This is the one kind that *is* formulaic, and it is already handled — the
 Psalms entries here are the residue that the table does not yet cover.
 

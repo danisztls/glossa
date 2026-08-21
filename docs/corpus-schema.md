@@ -44,10 +44,10 @@ corpus/                      # gitignored, built locally
       …
     encyclical.centesimus-annus.en/
       …
-  xrefs/
-    ccc-bible.json           # generated later by the citation parser (phase 2)
-    ccc-documents.json       # future: CCC ¶ ↔ document section refs, same derivation (see docs/link-surface.md)
 ```
+
+There is no `xrefs/` directory. Cross-reference indexes are DERIVED, not
+stored — see "Cross-references" below.
 
 ## Work IDs
 
@@ -149,14 +149,14 @@ Array ordered by `n`:
   ],
   "text": "…derived: all blocks joined, markers stripped, spaces normalized…", // for search
   "in_brief": false,
-  "citations": [{ "marker": "12", "text": "Jn 3:16" }], // verbatim footnote content, keyed by marker
+  "citations": [{ "marker": "12", "text": "Jn 3:16" }], // verbatim footnote content, keyed by marker; a "label" marks one the source printed inline
   "related": [1094, 2179], // marginal cross-reference numbers: other CCC paragraphs on the same theme
   "notes": [], // any other footnote text
 }
 ```
 
 - **Block structure is preserved**: a CCC paragraph is a sequence of `blocks` — `prose` for running text, `quote` for the indented quotations the print edition sets in smaller type. Do not flatten quotes into prose. Line breaks inside a block collapse to single spaces.
-- **Inline reference positions are preserved**: `text_marked` keeps each footnote marker exactly where the source prints it, encoded as `⟦marker⟧` (e.g. `⟦12⟧`). Portuguese's archive sometimes types a Scripture locator directly in the prose where English uses a numbered footnote; the parser turns that locator into an `⟦inlineN⟧` token with `{ "label": "(Heb 11, 2. 39)" }`, rendered at the identical location as a generated numeric footnote marker. PT's `citations[].number` is a derived display sequence across both source and extracted citations; the source marker remains in `marker`. The raw source remains the authoritative original.
+- **Inline reference positions are preserved**: `text_marked` keeps each footnote marker exactly where the source prints it, encoded as `⟦marker⟧` (e.g. `⟦12⟧`). Portuguese's archive sometimes types a Scripture locator directly in the prose where English uses a numbered footnote; the parser turns that locator into an `⟦inlineN⟧` token carrying `{ "label": "(Heb 11, 2. 39)" }` — the source's parenthesis verbatim, leading-space irregularities and all. **`label` is the discriminator**: a citation that has one is printed back where it stands, exactly as the source sets it, with links woven through; a citation without one is a numbered note and renders as a marker. The token exists to isolate the citation apparatus from the sentence around it (so the reference parser is handed a citation-shaped string, not running prose), not to convert it into a footnote. The raw source remains the authoritative original.
 - Every `citations[].marker` appears exactly once across the paragraph's `text_marked` fields, and every `⟦⟧` token has a matching `citations` entry (validated). `text` = all blocks joined in order with ordinary markers stripped and an inline citation's source locator restored.
 - Inline emphasis (italics for titles/Latin terms) is a **known, deliberate v1 loss** — recoverable later from `corpus/raw/` without re-crawling.
 - Keep citation `text` **raw and verbatim** as printed in the source footnote — the phase-2 citation parser consumes it; do not normalize.
@@ -217,7 +217,7 @@ A prayer collection has no numbered units in its source at all — unlike CCC pa
 ```
 
 - **`slug`, not `n`, is the address.** `n` is kept alongside solely as a collection-order integer, but it is never what a URL or a cross-reference points at. It preserves source print order within a sourced tranche; where `prayer.common` combines the three CCC texts with the Compendium appendix, it supplies the deliberately displayed order between tranches. `slug` is English-derived, kebab-case, and — like Bible OSIS codes and document family slugs — language-invariant: the same prayer carries the same slug in every language edition of the work.
-- **Latin is a field, not an edition.** A prayer's `latin` sits beside its vernacular `blocks` on the same array entry rather than living in a `prayer.common.la` work, deliberately: a real Latin *edition* would need to answer `PLAN.md`'s open "UI language vs. content language" question (nobody wants a Latin UI, but Latin would be the first *content* language that isn't also one), and the source itself only ever prints Latin as a bound companion to the vernacular text, never as independently addressable content. See `decisions.md`'s 2026-08-15 "Latin as next source language" entry and `research/prayers.md` §3.
+- **Latin is a field, not an edition.** A prayer's `latin` sits beside its vernacular `blocks` on the same array entry rather than living in a `prayer.common.la` work, deliberately: a real Latin _edition_ would need to answer `PLAN.md`'s open "UI language vs. content language" question (nobody wants a Latin UI, but Latin would be the first _content_ language that isn't also one), and the source itself only ever prints Latin as a bound companion to the vernacular text, never as independently addressable content. See `decisions.md`'s 2026-08-15 "Latin as next source language" entry and `research/prayers.md` §3.
 - **`versicle`/`response`** are block kinds beyond the CCC/Compendium's `prose`/`quote` pair, for dialogic (V./R.) prayers such as the Angelus. Each such block carries an additional `"label"` field holding the verbatim printed prefix (e.g. `"V."`, `"R."`, or — a source uses this too, for the same leader/assembly roles under different initials — `"D."`, `"C."`); the prefix is kept, not normalized to a canonical V./R., since it's exactly what's printed.
 - **`variants`** exists for prayers the source prints more than once under one title with genuinely different wording (regional adaptations, e.g. UK vs. USA text) — not to be confused with a translation difference between language editions, which is just two separate top-level works. A prayer with no such split has no `variants` field at all, not an empty array.
 - **`groups`** is the one schema piece here that isn't a variant of `blocks`: a prayer whose source structure is fundamentally a list of named items (the Rosary's four mystery groups, each with a weekday rubric and five items) gets that structure captured directly rather than flattened into prose. Each Rosary item keeps its printed title and full Scripture meditation; its terminal source-printed locator is captured as a raw `citation` and rendered as the site’s inline footnote. The shared decade prayer is expressed once in the source-derived `instructions` rather than copied twenty times.
@@ -242,7 +242,8 @@ Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vatii` | `encyclical` |
   "document_kind": "conciliar-constitution", // "conciliar-constitution" | "conciliar-decree" | "conciliar-declaration" | "encyclical" | "apostolic-exhortation" | "apostolic-constitution" | "cdf-declaration" | …
   "pontiff_or_council": "Second Vatican Council", // e.g. "John Paul II", "Second Vatican Council", "Congregation for the Doctrine of the Faith"
   "promulgated": "1964-11-21", // the document's own date, distinct from sources[].retrieved_at
-  "translations": { // optional; present only when a sibling-language edition is known and NOT written as its own work — never present alongside a real sibling work, which is provenance enough on its own
+  "translations": {
+    // optional; present only when a sibling-language edition is known and NOT written as its own work — never present alongside a real sibling work, which is provenance enough on its own
     "pt": {
       "status": "stub-page", // "stub-page" | "no-url" | "not-found" | "fetch-failed"
       "checked_at": "2026-08-16", // when this status was established, not necessarily today
@@ -280,9 +281,9 @@ No `related` and no `in_brief` fields: no marginal cross-reference apparatus (th
 
 `abbreviations.json`: not per-document — corpus-wide, still homed at `ccc.{lang}/abbreviations.json` (see above). The CCC's own front-matter table already covers the sigla (LG, GS, DS, …) these documents are cited by and cite each other by; see `link-surface.md` on how ingesting Vatican II resolves that file's sourcing problem.
 
-`xrefs/ccc-documents.json` (future, phase-2-style derived pass, not yet built): turns a `citations[].text` string like `"LG 12"` into `{ document: "vatii.lumen-gentium", section: 12 }`, the same derivation `ccc-bible.json` already does for scripture citations — a re-parse of already-captured raw citation text, not a re-scrape. See `link-surface.md` row #12.
+CCC ¶ ↔ document section references (future, not yet built): turns a `citations[].text` string like `"LG 12"` into `{ document: "vatii.lumen-gentium", section: 12 }`, the same derivation the CCC → Bible index already does for scripture citations — a re-parse of already-captured raw citation text, not a re-scrape. Derived at build time like that one, and likewise not stored in the corpus. See `link-surface.md` row #12.
 
-## Cross-references — `xrefs/ccc-bible.json` (phase 2, generated)
+## Cross-references — derived, never stored
 
 ```jsonc
 [
@@ -293,7 +294,11 @@ No `related` and no `in_brief` fields: no marginal cross-reference apparatus (th
 ]
 ```
 
-References are edition-independent (OSIS + chapter + verse); the site resolves them against whichever Bible edition the reader has open. Psalm references use Vulgate numbering (both v1 editions agree).
+Two indexes share this shape: the Catechism's (`{ ccc, refs }`, above) and the magisterial documents' (`{ work, n, refs }`, where `work` is the document's edition-free slug and `n` a section number).
+
+**These are build artifacts, not corpus data.** `site/scripts/build-xrefs.mjs` produces it from `works/` on every build and writes it into the site's generated `corpus-data/index/`; nothing is committed and there is no `corpus/xrefs/`. It used to be a stored file built by a separate Python parser, which drifted from the one that renders the pages — see `decisions.md`, 2026-08-21, for why one derivation beats two.
+
+An entry's `refs` are the union across every edition of the work, drawn from all three places a reference appears: numbered footnotes, the inline locators Portuguese prints in the sentence (`citations[].label`), and the body prose itself. References are edition-independent (OSIS + chapter + verse); the site resolves them against whichever Bible edition the reader has open. Psalm references use Vulgate numbering — conversion happens in the builder, so nothing downstream sees two conventions. A whole-chapter reference is `"verses": []` and is kept distinct from a verse-level reference to the same chapter.
 
 ## Corrections (auditable source-defect fixes)
 
@@ -326,6 +331,6 @@ Each scraper ends with a self-check that prints a report and exits non-zero on f
 - No leftover markup: `<`, `{`, `}`, `[i]`-style markers, `�`, mojibake sequences (`Ã©`, `â€™`), double spaces.
 - Matos Soares: scan for the known OCR artifact classes (`Ihe`, `Iá`, `Ies` — capital I for l) and report counts and locations.
 - CCC: paragraphs 1–2865 present, structure tree spans them without top-level gaps; `text_marked` tokens ↔ `citations` markers match 1:1; `text` = `text_marked` minus tokens.
-- Prayers: both language editions produce the same `slug` set (the cross-language symmetry oracle — see "Prayers" above); every Rosary `groups` entry has exactly 5 `items`; each language's Latin-present slug set matches the other's (a prayer missing Latin in one language but not the other is a parser bug, not an expected gap — the three CCC texts, the Litany, and the three Eastern-rite prayers genuinely lack Latin in *both*).
+- Prayers: both language editions produce the same `slug` set (the cross-language symmetry oracle — see "Prayers" above); every Rosary `groups` entry has exactly 5 `items`; each language's Latin-present slug set matches the other's (a prayer missing Latin in one language but not the other is a parser bug, not an expected gap — the three CCC texts, the Litany, and the three Eastern-rite prayers genuinely lack Latin in _both_).
 - **Sample-first protocol**: every scraper must support a `--sample` mode that processes a small representative slice, and the full crawl runs only after the sample output has been reviewed and approved. (`prayers.py` is the one documented exception: its 24 Appendix A entries, three short cached CCC texts, and one Litany are parsed in well under a second, so there is no meaningfully smaller slice to sample — see its docstring.)
 - Provenance: manifest `sources[].retrieved_at` set, `generated_at` set.
