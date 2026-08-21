@@ -156,14 +156,9 @@ document already written to corpus/works/ is left untouched (use
 --overwrite to force a re-parse of an already-written document from its
 cached raw HTML, no network needed).
 
-NOTE ON THE TWO ROOTS: this file may run from a git worktree
-(.claude/worktrees/*/), and the two things it touches want opposite
-answers, so they are deliberately separate constants:
-
-  DATA_ROOT -- where corpus/ lives. Hardcoded to the main checkout,
-  because corpus/ is gitignored and therefore NOT shared between
-  worktrees: a worktree-local copy would be an orphaned duplicate that
-  no other tool reads. This is scraped output, not source.
+NOTE ON THE ROOTS: this file may run from a git worktree
+(.claude/worktrees/*/). Both roots are now derived from __file__, so both
+follow whichever checkout the code being run lives in.
 
   SOURCE_ROOT -- where pipeline/corrections/ lives. Derived from
   __file__, the way ccc.py/compendium.py do it, because corrections ARE
@@ -173,6 +168,21 @@ answers, so they are deliberately separate constants:
   wrote correction files into the main checkout while their scraper code
   sat on a worktree branch -- splitting the audit trail from the code it
   documents, and needing a sandbox escape to do it.
+
+  DATA_ROOT -- where corpus/ lives. This was hardcoded to one absolute
+  path on the reasoning that corpus/ was gitignored, so a worktree-local
+  copy would be an orphaned duplicate no other tool reads. That stopped
+  being true on 2026-08-16, when corpus/ became tracked (CLAUDE.md,
+  docs/decisions.md). A tracked corpus/ IS present in a worktree, and the
+  hardcoded path had by then drifted into a near-empty directory. Two
+  things went wrong while it pointed there, both silent: re-parsed output
+  landed outside the tracked corpus, reaching neither the site build nor
+  git; and because the raw cache it read was empty, `--overwrite`
+  RE-CRAWLED vatican.va instead of re-parsing -- the precise failure
+  "re-parse, never re-crawl" (docs/link-surface.md) exists to prevent, and
+  one that reports itself only as a nonzero fetch count in the run
+  summary. Deriving it from __file__ keeps the raw cache and the parser in
+  the same checkout, which is what makes a re-parse provably zero-network.
 """
 
 from __future__ import annotations
@@ -201,10 +211,9 @@ CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 MAX_ATTEMPTS = 3  # survey measured ~1-in-6-to-8 transient failures, no 403s/CAPTCHA
 RETRY_BACKOFF = [3.0, 8.0]  # seconds, between attempts 1->2 and 2->3
 
-# See "NOTE ON THE TWO ROOTS" in the module docstring for why these differ.
-DATA_ROOT = Path(
-    "/home/dani/Dev/me/scriptura"
-)  # gitignored output; shared, never worktree-local
+# See "NOTE ON THE ROOTS" in the module docstring. Both now follow this
+# file's checkout: corpus/ is tracked, so a worktree has one.
+DATA_ROOT = Path(__file__).resolve().parents[2]  # corpus/, tracked since 2026-08-16
 SOURCE_ROOT = (
     Path(__file__).resolve().parents[2]
 )  # tracked source; follows this file's checkout
@@ -343,6 +352,22 @@ def is_full_bold(inner_html: str) -> bool:
         return False
     bold_text = strip_tags(" ".join(_BOLD_SPAN_RE.findall(inner_html)))
     return bool(bold_text) and bold_text == full_text
+
+
+_ITALIC_SPAN_RE = re.compile(r"<(i|em)\b[^>]*>(.*?)</\1>", re.IGNORECASE | re.DOTALL)
+
+
+def is_full_italic(inner_html: str) -> bool:
+    """True when the block's entire visible text sits inside <i>/<em>, the
+    italic counterpart of `is_full_bold`.
+
+    Not a heading test on its own -- see `promote_italic_heading_run` for
+    why a single italic block is presumed NOT to be a heading."""
+    full_text = strip_tags(inner_html)
+    if not full_text:
+        return False
+    ital = strip_tags(" ".join(m.group(0) for m in _ITALIC_SPAN_RE.finditer(inner_html)))
+    return bool(ital) and ital == full_text
 
 
 def fold(s: str) -> str:
@@ -1030,6 +1055,7 @@ class ScrapeState:
         # reported gap rather than guessed at.
         self.pending_first_block: str | None = None
         self.content_started = False
+        self.empty_nest_depth = 0
         self.current_footnote_table: dict[str, str] = {}
         self.current_chapter_footnote_table: dict[tuple[int | None, str], str] = {}
         self.current_star_table: dict[tuple[int, str], str] = {}
@@ -1048,7 +1074,30 @@ class ScrapeState:
     def push_heading(self, kind: str, n: int | None, title: str) -> None:
         self.finalize_open_section()
         level = LEVELS[kind]
+        # A heading that has taken no content yet is the PARENT of the
+        # heading that immediately follows it, not its sibling.
+        #
+        # Every generic heading is `sub`, so the pop rule below (>= level)
+        # made two adjacent headings siblings, and the first was sealed
+        # holding nothing -- a node with a [null, null] range. That is ~70
+        # of the 513 null-range nodes measured in the 2026-08 description
+        # pass (§2): real divisions (`PRIMEIRA PARTE`, `PROEMIO`,
+        # `CONCLUSAO`) emptied by the walker rather than by the source.
+        # It fires wherever a page prints a part title, then its subtitle,
+        # then a sub-heading, before any numbered paragraph -- Deus
+        # Caritas Est PT and Dignitatis Humanae PT both do exactly that.
+        #
+        # Nesting is capped so a run of empty headings (a post-body
+        # appendix, say) cannot build an arbitrarily deep spine. The
+        # counter has to live on the walker, not in this call: nesting B
+        # under A gives A a child, so A stops looking empty and a
+        # per-call check would re-arm on every heading and never cap.
         while self.stack and self.stack[-1].level >= level:
+            top = self.stack[-1]
+            if not top.own and not top.children and self.empty_nest_depth < 2:
+                self.empty_nest_depth += 1
+                break
+            self.empty_nest_depth = 0
             self.stack.pop()
         parent_children = self.stack[-1].children if self.stack else self.root_children
         prev = parent_children[-1] if parent_children else None
@@ -1066,6 +1115,7 @@ class ScrapeState:
 
     def start_section(self, n: int, kind: str, text: str) -> None:
         self.content_started = True
+        self.empty_nest_depth = 0
         sec = Section(n=n, chapter=self.current_chapter())
         sec.blocks.append(BlockOut(kind, text))
         self.open_section = sec
@@ -1335,6 +1385,116 @@ def drop_table_of_contents(blocks: list[Block], match_label) -> list[str]:
 
     dropped = [blocks[i].text for i in duplicated]
     for i in reversed(duplicated):
+        del blocks[i]
+    return dropped
+
+
+# Longest italic block still plausibly a heading. Sub-headings in this
+# corpus run well under this; the salutations and datelines that share the
+# markup are comparable in length, so length alone does NOT separate them
+# -- the run rule below is what does.
+_ITALIC_HEADING_MAX_CHARS = 90
+_ITALIC_HEADING_MIN_RUN = 3
+
+
+def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
+    """Mark italic-only blocks as headings where a RUN of them appears, and
+    return the texts promoted (for the run summary -- never silent).
+
+    THE DEFECT THIS FIXES (description pass 2026-08, docs/research/
+    description-pass-2026-08.md §1): `is_full_bold` recognises a heading
+    only when the block's whole text sits inside <b>. vatican.va marks
+    sub-headings up three ways, and only one of them is bold:
+
+        <p align="left"><b><i>Title</i></b></p>   -> detected
+        <p><i>Title</i></p>                       -> MISSED
+        <p align="CENTER"><i>Title</i></p>        -> MISSED
+
+    A missed heading is not merely left unstructured. It is not a numbered
+    paragraph either, so nothing downstream claims it and the text is
+    discarded outright. `fratelli-tutti.pt` is the controlled case: all 17
+    of its bold-only blocks were captured and all 78 of its italic
+    sub-headings vanished. `ad-petri.en` lost 47 of 48. Across
+    corpus/raw/vatican-docs this markup appears ~1,000 times, and on a
+    random 40-page sample 30 of 32 such blocks were absent from the parse.
+    This is the main reason ~300 works have no usable chapter division.
+
+    WHY A RUN, AND NOT SIMPLY "ITALIC MEANS HEADING": the same markup
+    carries a document's opening salutation ("Venerable Brethren, Health
+    and Apostolic Benediction.") and its closing dateline. Promoting those
+    would put furniture in the table of contents -- the exact defect class
+    `drop_table_of_contents` exists to undo. A document that titles its
+    sub-sections does so throughout; a salutation occurs once. So the rule
+    is the same shape as that function's: a lone occurrence is a
+    coincidence a real document produces, a run of them is a convention.
+
+    Numbered paragraphs are excluded explicitly: italic is also how some
+    pages wrap an ordinary numbered paragraph (Redemptor Hominis EN's
+    `<p><b><i>10 . The human dimension...`), and turning one into a
+    heading would cost a section rather than gain a heading."""
+    candidates = [
+        i
+        for i, blk in enumerate(blocks)
+        if not blk.is_heading
+        and blk.kind != "quote"
+        and len(blk.text) <= _ITALIC_HEADING_MAX_CHARS
+        and match_para_num(blk.raw) is None
+        and _SECTION_TITLE_HEADING_RE.match(blk.text) is None
+        and is_full_italic(blk.raw)
+    ]
+    if len(candidates) < _ITALIC_HEADING_MIN_RUN:
+        return []
+    for i in candidates:
+        blocks[i].is_heading = True
+    return [blocks[i].text for i in candidates]
+
+
+_LANG_BAR_RE = re.compile(r"^\[\s*[A-Z]{2}\s*(?:-\s*[A-Z]{2}\s*)+\]$")
+_PAPAL_SIGNATURE_RE = re.compile(
+    r"^(?:PAPA\s+)?"
+    r"(?:PIUS|PIO|LEO|LEAO|IOANNES|JOANNES|JOAO|JOHN|PAULUS|PAUL|PAULO"
+    r"|BENEDICTUS|BENEDICT|BENTO|FRANCISCUS|FRANCIS|GREGORIUS|GREGORY)"
+    r"(?:\s+(?:PAULUS|PAULO|PAUL|XXIII))?"
+    r"(?:\s+PP\.?)?"
+    r"(?:\s+[IVXLC]+)?"
+    r"(?:\s+PAPA)?\.?$"
+)
+
+
+def drop_page_furniture(blocks: list[Block]) -> list[str]:
+    """Remove non-content blocks that `is_full_bold` cannot tell from a
+    chapter title, and return the texts dropped (never silent).
+
+    Two kinds, both measured across the corpus in the 2026-08 description
+    pass (§2): of 513 structure nodes carrying a [null, null] range, ~168
+    are furniture -- 153 papal signature lines (`PIUS XII`, `PIO PP. XII`,
+    `IOANNES PAULUS PP. II`, ...) and 15 copies of vatican.va's own
+    language navigation bar, `[ AR - BE - CS - DE - EN - ES - ... ]`. Both
+    are bold and centered, so they read as headings and surface in a
+    reader's table of contents as entries with nothing under them.
+
+    The signature test is POSITIONAL as well as textual: a papal name is
+    dropped only after the last numbered paragraph, which is the only place
+    a signature occurs. A pope's name is perfectly legitimate as a heading
+    inside a document's body (a section about a predecessor), and that case
+    must survive."""
+    last_numbered = -1
+    for idx, blk in enumerate(blocks):
+        if not blk.is_heading and match_para_num(blk.raw):
+            last_numbered = idx
+
+    doomed: list[int] = []
+    for i, blk in enumerate(blocks):
+        if not blk.is_heading:
+            continue
+        text = " ".join(blk.text.split())
+        if _LANG_BAR_RE.match(text):
+            doomed.append(i)
+        elif i > last_numbered and _PAPAL_SIGNATURE_RE.match(fold(text)):
+            doomed.append(i)
+
+    dropped = [blocks[i].text for i in doomed]
+    for i in reversed(doomed):
         del blocks[i]
     return dropped
 
@@ -1856,8 +2016,24 @@ def parse_document(
     # they point at, and left in place the last one swallows the document's
     # opening sections. See `drop_table_of_contents` for the detection rule
     # and its guards. Reported, never silent.
+    # Recover sub-headings the source marks with italics rather than bold.
+    # Runs BEFORE the table-of-contents strip so that a TOC printed in that
+    # style is still a candidate for it. See promote_italic_heading_run.
+    promoted = promote_italic_heading_run(blocks)
+    if promoted:
+        state.anomalies.append(
+            f"italic heading run promoted ({len(promoted)}): "
+            + ", ".join(repr(t[:40]) for t in promoted[:5])
+            + (" ..." if len(promoted) > 5 else "")
+        )
+
     for text in drop_table_of_contents(blocks, match_label):
         state.anomalies.append(f"table-of-contents entry skipped: {text[:80]!r}")
+
+    # Signature lines and the language navigation bar are bold and centered,
+    # so they read as chapter titles. See drop_page_furniture.
+    for text in drop_page_furniture(blocks):
+        state.anomalies.append(f"page furniture skipped: {text[:80]!r}")
 
     i, n = 0, len(blocks)
     while i < n:
