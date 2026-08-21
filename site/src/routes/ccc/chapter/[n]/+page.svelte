@@ -186,13 +186,17 @@
 								label={`CCC ${paragraph.n}`}
 								placement="margin"
 							/>
-							<!-- The CSS `::first-letter` drop cap works here (unlike in the
-							     Bible reader) precisely because the margin reference is absolutely
-						     positioned: the first inline content of `.para-text` really
-						     is the first letter of the prose. Opening paragraph only,
-						     and never on an "in brief" summary block. -->
-							<div class="para-text" class:drop-cap={i === 0 && !paragraph.in_brief}>
-								<CccParagraphText {paragraph} lang={editions.lang} />
+							<!-- Opening paragraph only, and never on an "in brief" summary
+						     block. The component does the splitting: `::first-letter`
+						     used to do this job here, and could not stop swallowing the
+						     opening `«` — which four of the PT catechism's twenty
+						     chapters begin with (see app.css). -->
+							<div class="para-text">
+								<CccParagraphText
+									{paragraph}
+									lang={editions.lang}
+									dropCap={i === 0 && !paragraph.in_brief}
+								/>
 							</div>
 						</section>
 					{/each}

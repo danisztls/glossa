@@ -36,9 +36,9 @@
 
 	No `font-weight` anywhere below. The subset is a single 400 master, so any
 	heavier value gets a synthesized bold, and synthesizing bold on an already
-	dense blackletter produces an inkblot — the same reason `.drop-cap` carries
-	that warning. This is also why the header brand's old `font-weight: 700` had
-	to be deleted rather than inherited.
+	dense blackletter produces an inkblot — the same reason `.drop-cap-letter`
+	carries that warning. This is also why the header brand's old
+	`font-weight: 700` had to be deleted rather than inherited.
 
 	The two words are separate elements with real whitespace between them in the
 	source, which is what keeps a screen reader saying "Glossa Catholica" rather
@@ -153,8 +153,9 @@
 	 * the previous answer: it left "Catholica" at about 8px, which is texture,
 	 * not a word.
 	 *
-	 * 30rem is `app.css`'s own phone breakpoint (the one that turns drop caps
-	 * off), reused rather than invented so the site has one idea of "narrow".
+	 * 30rem is `app.css`'s own phone breakpoint (the one that drops the cap
+	 * from three lines to two), reused rather than invented so the site has one
+	 * idea of "narrow".
 	 */
 	@media (max-width: 30rem) {
 		.is-brand .lockup {

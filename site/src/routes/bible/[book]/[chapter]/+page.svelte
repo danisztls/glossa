@@ -347,7 +347,9 @@
 								placement="inline"
 								emphasized={isHighlighted(verse.n)}
 							/>{#if i === 0 && !heading}{@const cap = splitDropCap(verse.text)}{#if cap.first}<span
-										class="drop-cap-letter">{cap.first}</span
+										class="drop-cap-letter"
+										>{#if cap.lead}<span class="drop-cap-lead">{cap.lead}</span
+											>{/if}{cap.first}</span
 									>{cap.rest}{:else}{verse.text}{/if}{:else}{verse.text}{/if}
 						</span>
 					{/each}

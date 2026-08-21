@@ -1,36 +1,68 @@
 /**
- * Splitting the opening character off a passage, for the explicit drop-cap
- * mechanism (`.drop-cap-letter` in app.css — see that rule's comment for why
- * `::first-letter` can't do this job in the Bible reader).
+ * Splitting the opening of a passage into the three pieces a drop cap needs:
+ * the punctuation that leads into it, the one letter that gets set large, and
+ * the body text that wraps around it (`.drop-cap-letter` / `.drop-cap-lead`
+ * in app.css).
  *
- * "First character" is not `text[0]`, for three reasons the corpus actually
- * exhibits:
+ * WHY THE PUNCTUATION IS ITS OWN PIECE. It used to go *inside* the cap, on the
+ * reasoning that a typesetter would take `"` and `A` together rather than
+ * strand `And` at body size. That reasoning holds for the pairing; it does not
+ * survive the size. Set in the display face at 4.98em, a `«` is two chevrons
+ * about as wide as the letter beside it, so `«Ninguém` opened with a red mark
+ * the reader had to parse past before reaching the initial — the ornament
+ * announcing a quotation mark instead of a chapter. 322 PT and 335 EN
+ * drop-cap positions in the corpus open on a quotation mark, so this is the
+ * common case, not an edge one. The mark now sets at body size at the cap's
+ * shoulder, which is what the printed editions do.
  *
- *   - Passages open with punctuation. `"And the Lord said…"` should set the
- *     quotation mark AND the A in the cap, the way a typesetter would;
- *     dropping only the `"` and leaving `And` at body size is worse than no
- *     drop cap at all.
+ * "First letter" is still not `text[0]`, for the reasons the corpus exhibits:
+ *
  *   - Portuguese is accented. `Ó`, `É`, `À` may arrive decomposed (a base
  *     letter followed by a combining mark), where slicing at index 1 splits
  *     the accent off its letter and renders a bare diacritic in the cap.
  *     Iterating by grapheme rather than by code unit keeps them together.
- *   - Some blocks start with a marker or whitespace from the parser; leading
- *     whitespace in the cap would push the float away from the margin.
+ *   - Blocks arrive with leading whitespace from the parser; whitespace in
+ *     the cap would push the float away from the margin.
+ *   - Openings exist that no cap suits at all (see NOT EVERY OPENING below).
  *
- * Returns the text unchanged in `rest` (and an empty `first`) when there is
- * nothing sensible to promote — the caller then renders it plainly, which is
- * the correct degradation for an empty or punctuation-only passage.
+ * When there is nothing sensible to promote this returns an empty `first` and
+ * the text unchanged in `rest`; the caller then renders it plainly, which is
+ * the correct degradation — a passage without an initial, not a broken one.
  */
 
-/** Opening punctuation that belongs *with* the first letter in the cap. */
+/** Opening punctuation that leads into the cap, set at body size beside it. */
 const LEADING_PUNCT = /[\s"'“”‘’«»¿¡([{—–-]/u;
 
-/** What actually counts as the cap's letter. Tested on the grapheme's first
- *  code point, so a base letter plus combining marks still qualifies. */
-const LETTER = /\p{L}|\p{N}/u;
+/*
+ * NOT EVERY OPENING GETS A CAP, and the two exclusions are deliberate.
+ *
+ * Digits. `LETTER` used to be `\p{L}|\p{N}`, so a passage opening "1." set a
+ * five-em blackletter "1" — which reads as a list numeral rendered by mistake,
+ * not as an initial. The corpus has 19 such positions, all of them genuinely
+ * enumerations: "1. Regulation of the sacred liturgy…" (Sacrosanctum
+ * Concilium), "1) Conferência episcopal…" (Christus Dominus).
+ *
+ * Lowercase. 14 positions, of two kinds. Some are legitimate — "(a) To
+ * bishops…" in Christus Dominus, and CCC 1353-1354, which open mid-sentence
+ * by design. The rest are transcription defects in bible.matos-soares.pt
+ * (Exod 14:1, Exod 25:1, Num 18:1, Num 34:1 all read "o Senhor…"; Sir 41:1
+ * reads "ó morte"), where the raw HTML has a lowercase letter that the other
+ * eleven identical openings in the same book capitalise.
+ *
+ * Suppressing the cap is NOT the same move as `text-transform: uppercase`,
+ * which app.css's @font-face docblock rejects and still rejects: that would
+ * silently print a letter the corpus does not contain, while this leaves
+ * every character exactly as the source has it and merely declines to
+ * ornament it. The defect stays as visible as it was — an opening without an
+ * initial, where every neighbouring chapter has one.
+ */
+const CAP_LETTER = /\p{L}/u;
+const LOWERCASE = /\p{Ll}/u;
 
 export interface DropCapSplit {
-	/** The character(s) to set as the drop cap — may be empty. */
+	/** Opening punctuation, set at body size ahead of the cap — may be empty. */
+	lead: string;
+	/** The single letter set as the drop cap — empty when no cap is warranted. */
 	first: string;
 	/** Everything after them, to be rendered at body size. */
 	rest: string;
@@ -58,22 +90,33 @@ function graphemes(text: string): string[] {
 	return [...text];
 }
 
+/** No cap: the caller renders `rest` as ordinary text. */
+const NO_CAP = (text: string): DropCapSplit => ({ lead: '', first: '', rest: text });
+
 export function splitDropCap(text: string): DropCapSplit {
 	const units = graphemes(text.trimStart());
-	if (units.length === 0) return { first: '', rest: text };
+	if (units.length === 0) return NO_CAP(text);
 
-	// Take leading punctuation, then exactly one letter. Bounded at 3 units so
-	// a passage opening with a run of punctuation ("«— ...") can't swallow
-	// half a word into the cap.
+	// Take the leading punctuation, then exactly one letter. Bounded at 3 units
+	// so a passage opening with a run of punctuation ("«— ...") can't push the
+	// cap arbitrarily far into the line. Interior whitespace stays in the lead
+	// rather than being dropped — `« Caritas in veritate »` is how the source
+	// spaces its guillemets, and `lead + first + rest` has to reproduce the
+	// passage character for character.
 	let taken = 0;
 	while (taken < units.length && taken < 3 && LEADING_PUNCT.test(units[taken])) taken++;
 
-	// The unit after the punctuation run must actually be a letter. Without
-	// this check a passage opening "..." promotes a lone period into a
-	// three-line drop cap — punctuation that is neither opening punctuation
-	// nor a letter has nothing to lead into.
-	if (taken >= units.length || !LETTER.test(units[taken])) return { first: '', rest: text };
-	taken++; // the letter itself
+	// The unit after the punctuation run must be a letter this file is willing
+	// to set large. Without this check a passage opening "..." promotes a lone
+	// period into a three-line drop cap — punctuation that is neither opening
+	// punctuation nor a letter has nothing to lead into.
+	const candidate = units[taken];
+	if (candidate === undefined) return NO_CAP(text);
+	if (!CAP_LETTER.test(candidate) || LOWERCASE.test(candidate)) return NO_CAP(text);
 
-	return { first: units.slice(0, taken).join(''), rest: units.slice(taken).join('') };
+	return {
+		lead: units.slice(0, taken).join(''),
+		first: candidate,
+		rest: units.slice(taken + 1).join('')
+	};
 }

@@ -183,6 +183,31 @@
 		return map;
 	});
 
+	/*
+	 * Which sections open a division big enough to earn an illuminated
+	 * initial. A document is one page, so unlike the CCC's chapter view — one
+	 * chapter per page, one cap at the top — capping only `sections[0]` gives
+	 * a nine-chapter constitution a single initial on page one and nothing at
+	 * any chapter after it.
+	 *
+	 * The tier is `headingTag`'s: the kinds it sets as h2 or h3 (part,
+	 * section, chapter, and the prologue that falls through to h3) open a
+	 * division; article and sub do not. Deriving it from the same function
+	 * keeps the two from drifting — a cap marks exactly what the document
+	 * prints as a major heading. Measured against the corpus, that is one cap
+	 * for 301 of 339 documents (they have no chapter-level structure at all),
+	 * up to 18 for Gaudium et Spes, which really does have two parts, nine
+	 * chapters and seven sections.
+	 */
+	const DIVISION_TAGS = new Set(['h2', 'h3']);
+	const divisionStarts = $derived.by(() => {
+		const out = new Set<number>();
+		for (const [start, rows] of headingsByStart) {
+			if (rows.some((row) => DIVISION_TAGS.has(headingTag(row.node.kind)))) out.add(start);
+		}
+		return out;
+	});
+
 	/**
 	 * COMPARE MODE'S SECOND COLUMN — UNLIKE EVERY OTHER ROUTE THIS FEATURE
 	 * TOUCHES, IT COSTS A REAL FETCH HERE, because this route embeds only ONE
@@ -449,8 +474,12 @@
 								>
 									{section.n}
 								</a>
-								<div class="section-text" class:drop-cap={i === 0}>
-									<CccParagraphText paragraph={section} {lang} />
+								<div class="section-text">
+									<CccParagraphText
+										paragraph={section}
+										{lang}
+										dropCap={i === 0 || divisionStarts.has(section.n)}
+									/>
 								</div>
 							</section>
 						{/each}

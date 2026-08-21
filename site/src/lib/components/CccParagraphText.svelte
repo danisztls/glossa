@@ -2,6 +2,7 @@
 	import type { CccBlock, CccCitation } from '$lib/types';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
+	import { splitDropCap } from '$lib/dropcap';
 	import { content } from '$lib/content.svelte';
 	import RefText from '$lib/components/RefText.svelte';
 	import { t } from '$lib/i18n.svelte';
@@ -19,9 +20,26 @@
 		paragraph: { blocks: CccBlock[]; citations: CccCitation[] };
 		/** Bare content language ('en' | 'pt') the paragraph is being read in — picks the citation grammar in `$lib/refs.ts` (e.g. PT's ':'-vs-','  chapter/verse separator, its own book-abbreviation table). */
 		lang: string;
+		/** Set an illuminated initial on the opening block. The caller decides — it is the one that knows this paragraph opens a chapter or a document, which this component cannot see. */
+		dropCap?: boolean;
 	}
 
-	let { paragraph, lang }: Props = $props();
+	let { paragraph, lang, dropCap = false }: Props = $props();
+
+	/**
+	 * The opening of the first block, split into the pieces app.css's
+	 * `.drop-cap-letter` / `.drop-cap-lead` need. Null whenever no cap is
+	 * warranted, which `splitDropCap` decides for the text and this decides for
+	 * the block: a `quote` block is already set off in its own indented,
+	 * italic blockquote, and a drop cap inside that reads as a second opening
+	 * rather than the paragraph's. Three CCC paragraphs open on one.
+	 */
+	const cap = $derived.by(() => {
+		const opening = paragraph.blocks[0];
+		if (!dropCap || !opening || opening.kind === 'quote') return null;
+		const split = splitDropCap(opening.text_marked);
+		return split.first === '' ? null : split;
+	});
 	// A marker has to stay phrasing content: this component is rendered inside
 	// prose <p>s.  The previous <sup><details>...</details></sup> looked inline
 	// in CSS but was invalid HTML (`details` is flow content), so browsers
@@ -145,7 +163,14 @@
 			{/if}
 		</blockquote>
 	{:else}
-		<p class="ccc-prose">{@render markedText(block.text_marked, blockIndex)}</p>
+		<p class="ccc-prose">
+			{#if blockIndex === 0 && cap}<span class="drop-cap-letter"
+					>{#if cap.lead}<span class="drop-cap-lead">{cap.lead}</span>{/if}{cap.first}</span
+				>{@render markedText(cap.rest, blockIndex)}{:else}{@render markedText(
+					block.text_marked,
+					blockIndex
+				)}{/if}
+		</p>
 	{/if}
 {/each}
 

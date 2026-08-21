@@ -15,6 +15,9 @@ import { splitDropCap } from './dropcap';
  * passage. Nothing else in the build would catch it — the page renders fine
  * in the browser, the build succeeds, only the glyph is missing.
  *
+ * Only `first` is at risk. The `lead` punctuation is set in the *text* face
+ * beside the cap (`.drop-cap-lead`), so it never asks the subset for a glyph.
+ *
  * So the `unicode-range` is parsed out of app.css rather than copied here. A
  * copy would drift; this fails if someone narrows the subset without widening
  * the font, or adds a fixture whose opening character falls outside it.
@@ -46,7 +49,7 @@ const covered = (cp: number) => RANGES.some(([lo, hi]) => cp >= lo && cp <= hi);
 /*
  * The strings the fixtures actually hand to `splitDropCap` — which is a much
  * narrower set than "every block". A drop cap is only ever set on the FIRST
- * block of a chapter or section (see the three routes that use `.drop-cap`), so
+ * block of a chapter or section (see the three routes that set a drop cap), so
  * walking every `text` field instead sweeps up mid-chapter verses that open
  * lowercase and demands the subset carry a-z it will never render.
  */
@@ -89,50 +92,104 @@ function dropCapPositions(): string[] {
 
 describe('splitDropCap', () => {
 	it('promotes a single opening letter', () => {
-		expect(splitDropCap('In the beginning')).toEqual({ first: 'I', rest: 'n the beginning' });
+		expect(splitDropCap('In the beginning')).toEqual({
+			lead: '',
+			first: 'I',
+			rest: 'n the beginning'
+		});
 	});
 
-	it('keeps opening punctuation with the letter it belongs to', () => {
-		// Setting only the quote mark in the cap and leaving "And" at body size
-		// is worse than no cap; a typesetter would take both.
-		expect(splitDropCap('“And the Lord said')).toEqual({ first: '“A', rest: 'nd the Lord said' });
+	it('sets opening punctuation beside the cap rather than inside it', () => {
+		// The mark leads into the initial at body size; the initial is the
+		// letter alone. Setting `“A` in the display face put a 4.98em quotation
+		// mark where the ornament should be — see the module docblock.
+		expect(splitDropCap('“And the Lord said')).toEqual({
+			lead: '“',
+			first: 'A',
+			rest: 'nd the Lord said'
+		});
+		expect(splitDropCap('«Ninguém pode dizer')).toEqual({
+			lead: '«',
+			first: 'N',
+			rest: 'inguém pode dizer'
+		});
+	});
+
+	it('keeps the source’s own spacing inside the lead', () => {
+		// encyclical.pt spaces its guillemets: "« Caritas in veritate »". The
+		// space is the corpus's, so it stays in the lead (where it collapses
+		// against the cap) rather than being quietly dropped.
+		expect(splitDropCap('« Caritas in veritate »')).toEqual({
+			lead: '« ',
+			first: 'C',
+			rest: 'aritas in veritate »'
+		});
 	});
 
 	it('trims leading whitespace rather than capping it', () => {
-		expect(splitDropCap('   Therefore')).toEqual({ first: 'T', rest: 'herefore' });
+		expect(splitDropCap('   Therefore')).toEqual({ lead: '', first: 'T', rest: 'herefore' });
 	});
 
 	it('keeps a combining accent attached to its base letter', () => {
 		// Decomposed "Ó" (O + U+0301). Slicing at index 1 would strand the
 		// accent in the cap and render a bare diacritic.
-		const decomposed = 'Ótimo';
+		const decomposed = 'Ótimo';
 		const { first, rest } = splitDropCap(decomposed);
 		expect(first.normalize('NFC')).toBe('Ó');
 		expect(rest).toBe('timo');
 	});
 
 	it('handles a precomposed accented capital', () => {
-		expect(splitDropCap('Édito')).toEqual({ first: 'É', rest: 'dito' });
+		expect(splitDropCap('Édito')).toEqual({ lead: '', first: 'É', rest: 'dito' });
 	});
 
-	it('stops taking punctuation before it swallows a word', () => {
+	it('stops taking punctuation before it pushes the cap off the margin', () => {
 		// Bounded at three punctuation units, so a run of dashes and quotes
-		// can't absorb the opening word into the cap.
-		const { first } = splitDropCap('«—— "Assim');
-		expect(first.length).toBeLessThanOrEqual(4);
+		// can't drive the initial arbitrarily far into the line.
+		const { lead } = splitDropCap('«—— \"Assim');
+		expect(lead.length).toBeLessThanOrEqual(3);
+	});
+
+	it('declines to cap a digit', () => {
+		// Real openings, from Sacrosanctum Concilium and Christus Dominus. A
+		// five-em blackletter "1" reads as a list numeral set by mistake.
+		for (const text of ['1. Regulation of the sacred liturgy', '1) Conferência episcopal']) {
+			expect(splitDropCap(text)).toEqual({ lead: '', first: '', rest: text });
+		}
+	});
+
+	it('declines to cap a lowercase letter, without altering it', () => {
+		// "(a) To bishops" is a legitimate list label; "o Senhor falou a Moisés"
+		// (Exod 14:1, matos-soares) is a transcription defect. Both render as
+		// the corpus has them, just without an initial — the module docblock
+		// explains why suppressing the cap is not the same as uppercasing it.
+		for (const text of ['(a) To bishops, as successors', 'o Senhor falou a Moisés']) {
+			const split = splitDropCap(text);
+			expect(split).toEqual({ lead: '', first: '', rest: text });
+			expect(split.rest).toBe(text);
+		}
 	});
 
 	it('degrades to no cap for empty or punctuation-only text', () => {
-		expect(splitDropCap('')).toEqual({ first: '', rest: '' });
-		expect(splitDropCap('...')).toEqual({ first: '', rest: '...' });
+		expect(splitDropCap('')).toEqual({ lead: '', first: '', rest: '' });
+		expect(splitDropCap('...')).toEqual({ lead: '', first: '', rest: '...' });
+		// 126 PT CCC paragraphs used to open on a stray "." left behind by the
+		// paragraph-number markup (fixed in pipeline/scrapers/ccc.py). The
+		// degradation that covered for it stays covered.
+		expect(splitDropCap('. O homem: Com a sua abertura')).toEqual({
+			lead: '',
+			first: '',
+			rest: '. O homem: Com a sua abertura'
+		});
 	});
 
 	it('leaves the original text recoverable by concatenation', () => {
-		// The rendered output is `first + rest`; if that isn't the input (modulo
-		// the deliberate leading-whitespace trim), the reader loses characters.
-		for (const text of ['In the beginning', '“And', 'Ódio', 'a', '¿Quién']) {
-			const { first, rest } = splitDropCap(text);
-			expect(first + rest).toBe(text.trimStart());
+		// The rendered output is `lead + first + rest`; if that isn't the input
+		// (modulo the deliberate leading-whitespace trim), the reader loses
+		// characters — the one thing a presentation-layer split must never do.
+		for (const text of ['In the beginning', '“And', 'Ódio', 'A', '¿Quién', '« Caritas »']) {
+			const { lead, first, rest } = splitDropCap(text);
+			expect(lead + first + rest).toBe(text.trimStart());
 		}
 	});
 });
@@ -167,18 +224,14 @@ describe('drop-cap font coverage', () => {
 
 	it('covers the openings the real corpus is known to contain', () => {
 		// Regression cases from a scan of corpus/works, which the fixtures are
-		// too small to exercise. Digits are the load-bearing ones: LETTER is
-		// `\p{L}|\p{N}`, and passages do open "1", "(1", "(8" — an A-Z subset
-		// would have shipped tofu on those.
-		for (const text of ['1 The book', '(1 Kings', '(8 verses', '«Assim', '“And', 'Ódio']) {
+		// too small to exercise.
+		for (const text of ['«Assim', '“And', 'Ódio', '(Em seguida) levantei', '- ACÇÃO DA IGREJA']) {
 			const { first } = splitDropCap(text);
 			expect(first.length).toBeGreaterThan(0);
-			for (const ch of first) {
-				expect({ char: ch, covered: covered(ch.codePointAt(0)!) }).toEqual({
-					char: ch,
-					covered: true
-				});
-			}
+			expect({ char: first, covered: covered(first.codePointAt(0)!) }).toEqual({
+				char: first,
+				covered: true
+			});
 		}
 	});
 

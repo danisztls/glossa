@@ -153,24 +153,33 @@
  * on Ç or Ñ does not ship a tofu box; `dropcap.test.ts` asserts the inventory
  * still covers the corpus.
  *
- * Digits are in the subset and are NOT decorative: splitDropCap's LETTER test
- * is `\p{L}|\p{N}`, and the corpus contains passages opening "1", "(1", "(8".
+ * PART OF THAT INVENTORY IS NO LONGER REACHABLE FROM A CAP, and is kept
+ * anyway. `splitDropCap` stopped promoting digits and lowercase letters, and
+ * the punctuation that leads into a cap is now set in the TEXT face beside it
+ * (`.drop-cap-lead`), so 0-9, a-z and the quote/bracket/dash codepoints below
+ * are all dead weight as far as drop caps are concerned. Narrowing the range
+ * would save nothing worth having — the file is 5.9 KB and only actually
+ * shrinks if it is regenerated — and a-z is load-bearing for the OTHER call
+ * site: the wordmark sets "Glossa Catholica" in this same subset
+ * (`components/Wordmark.svelte`), which is the reason U+0061-007A is here.
  *
- * LOWERCASE IS IN THE SUBSET DELIBERATELY, and the reason is worth keeping.
- * Five chapter openings in bible.matos-soares.pt begin with a lowercase letter
- * (Exod 14:1, Exod 25:1, Num 18:1, Num 34:1 — all "o Senhor..." — and Sir 41:1,
- * "ó morte"). Those are defects in the transcription, not in the parser: the
- * raw HTML has them lowercase while the other eleven "O Senhor falou a Moisés"
- * in the same book are capitalised.
+ * WHY A LOWERCASE OPENING IS NOT UPPERCASED. Five chapter openings in
+ * bible.matos-soares.pt begin with a lowercase letter (Exod 14:1, Exod 25:1,
+ * Num 18:1, Num 34:1 — all "o Senhor..." — and Sir 41:1, "ó morte"). Those are
+ * defects in the transcription, not in the parser: the raw HTML has them
+ * lowercase while the other eleven "O Senhor falou a Moisés" in the same book
+ * are capitalised.
  *
- * The tempting fix is `text-transform: uppercase` on the cap, which would both
- * guarantee coverage and make the five read correctly. It is NOT used, because
- * that silently corrects the corpus in the presentation layer — exactly what
- * the colophon promises this project does not do ("no text is ever silently
- * changed"). Source defects belong in `pipeline/corrections/` with a locator
- * and evidence. So the font carries lowercase, the five render as the corpus
- * actually has them, and the defect stays visible until it is corrected at the
- * source. Once it is, these glyphs simply go unused.
+ * The tempting fix is `text-transform: uppercase` on the cap, which would make
+ * the five read correctly. It is NOT used, because that silently corrects the
+ * corpus in the presentation layer — exactly what the colophon promises this
+ * project does not do ("no text is ever silently changed"). Source defects
+ * belong in `pipeline/corrections/` with a locator and evidence. `splitDropCap`
+ * declines to set a cap at all on a lowercase opening instead: the letter
+ * renders exactly as the corpus has it, at body size, and an opening with no
+ * initial where every neighbouring chapter has one leaves the defect as
+ * visible as a giant lowercase blackletter did — without printing a letterform
+ * the source never had.
  *
  * Regenerate with:
  *   uv run --with "fonttools[woff]" pyftsubset \
@@ -199,8 +208,8 @@
 :root {
 	--font-serif:
 		'EB Garamond Variable', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-	/* Two call sites, and only two: the `.drop-cap` rule near the bottom of this
-	   file, and the wordmark (`components/Wordmark.svelte`). Both are single
+	/* Two call sites, and only two: the `.drop-cap-letter` rule near the bottom
+	   of this file, and the wordmark (`components/Wordmark.svelte`). Both are single
 	   large glyphs or a short display lockup in the one weight the subset
 	   ships; neither is safe to use for running text, and the subset's
 	   `unicode-range` is scoped to what those two need. */
@@ -726,30 +735,38 @@ input {
  * Promised in docs/decisions.md's original design decision, alongside
  * ornaments and a print stylesheet.
  *
- * TWO MECHANISMS, because the reading views have two different shapes of
- * first line and neither one covers both:
+ * ONE MECHANISM: `.drop-cap-letter` and `.drop-cap-lead`, two explicit spans
+ * the template wraps the opening of the passage in, filled by `splitDropCap`
+ * ($lib/dropcap.ts). Every reading view uses it — the Bible reader, the CCC
+ * chapter view, the document view.
  *
- *   `.drop-cap` uses `::first-letter` and is for blocks whose first inline
- *   content is genuinely the first letter of the prose — the CCC chapter
- *   view, whose paragraph numbers hang in the margin via `position:
- *   absolute` and so are not in the inline flow at all.
- *
- *   `.drop-cap-letter` is an explicit span the component wraps the first
- *   character in, for blocks where something else comes first inline — the
- *   Bible reader, where every verse opens with a `<sup>` verse number.
- *   `::first-letter` would enlarge the numeral "1" there, which is why the
- *   split is done in the template instead of in CSS.
- *
- * Both resolve to the same visual rule, kept in one declaration list so the
- * two can never drift apart.
+ * There used to be a second one: `.drop-cap` with `::first-letter`, for the
+ * views whose paragraph numbers hang in the margin via `position: absolute`
+ * and so leave the prose's first letter genuinely first in the inline flow.
+ * It is gone, and not for tidiness. CSS defines the first letter as including
+ * any punctuation that PRECEDES it (css-pseudo-4 §3.2: categories Ps, Pe, Pi,
+ * Pf, Po), with no property to opt out. So every passage opening `«Ninguém…`
+ * — 322 of them in the PT catechism alone — dragged the chevrons into the
+ * 4.98em cap, and no stylesheet could separate them. Deciding what the cap
+ * contains has to happen in the template, which is what the Bible reader's
+ * span already did; the other two views now do it too.
  *
  * `initial-letter` is deliberately not used: Firefox still doesn't support
  * it (as of this writing), and its absence degrades to a normal-size letter
  * rather than to the float fallback below, so the float IS the
  * implementation rather than a progressive enhancement on top of it. */
-.drop-cap::first-letter,
 .drop-cap-letter {
+	/*
+	 * ONE NUMBER GOVERNS THE CAP: the letter's size, the box the text wraps
+	 * around, and — by dividing back out — the lead punctuation's return to
+	 * body size. The phone breakpoint at the bottom changes only this.
+	 */
+	--drop-cap-scale: 4.98;
 	float: inline-start;
+	/* A floated cap inside a `<span>` (the Bible's verse markup) needs the span
+	   to establish nothing of its own — the float has to escape into the
+	   surrounding block for the text to wrap around it. */
+	display: inline-block;
 	font-family: var(--font-display);
 	/*
 	 * A three-line drop cap, with both numbers derived from font metrics rather
@@ -782,7 +799,7 @@ input {
 	 * face's cap height. Change either and recompute — these are not independent
 	 * constants, and the failure mode is subtle (one extra indented line).
 	 */
-	font-size: 4.98em;
+	font-size: calc(1em * var(--drop-cap-scale));
 	line-height: 0.98;
 	padding-inline-end: 0.08em;
 	/* Fresh vermilion, NOT the link red — see the palette docblock above. */
@@ -793,11 +810,38 @@ input {
 	   because the cap was then set in the variable text face. */
 }
 
-/* A floated cap inside a `<span>` (the Bible's verse markup) needs the span
-   to establish nothing of its own — the float has to escape into the
-   surrounding block for the text to wrap around it. */
-.drop-cap-letter {
+/*
+ * THE PUNCTUATION THAT LEADS INTO THE CAP, and why it is not part of it.
+ *
+ * A passage opening on a quotation mark is the common case, not an edge one:
+ * 322 PT and 335 EN drop-cap positions in the corpus start with one. Set in
+ * the display face at cap size, a `«` is two chevrons about as wide as the
+ * letter beside it, and the opening read as an enormous quotation mark with a
+ * letter after it rather than as an initial. So the mark sets at body size, in
+ * the text face, at the cap's shoulder — which is what the printed editions
+ * do. `$lib/dropcap.ts` decides what lands here.
+ *
+ * Inside the float rather than hanging in the margin beside it, deliberately.
+ * Hanging would align the letter itself flush to the measure, which is the
+ * finer setting, but both gutters are already occupied: the CCC and document
+ * views hang their paragraph number there (`position: absolute`), and the
+ * Bible reader's verse number is inline immediately before the float, so a
+ * mark pulled left would land on top of it. In the flow the cap starts about
+ * a third of an em further in and nothing can collide.
+ */
+.drop-cap-lead {
+	/* Back to exactly body size. This element's `em` is the cap's font-size,
+	   which is `--drop-cap-scale` body ems, so dividing by the same number
+	   lands on one body em at either breakpoint — no second set of numbers to
+	   keep in step with the block above. */
+	font-size: calc(1em / var(--drop-cap-scale));
+	font-family: var(--font-serif);
+	/* Top of the cap, not the baseline of the cap's line box — that baseline
+	   is three lines down, which would drop the mark to the cap's foot. This
+	   is the knob if the mark ever needs nudging against a different face. */
 	display: inline-block;
+	vertical-align: top;
+	padding-inline-end: 0.1em;
 }
 
 /*
@@ -830,9 +874,10 @@ input {
  * text — inherits from the rule above unchanged.
  */
 @media (max-width: 30rem) {
-	.drop-cap::first-letter,
 	.drop-cap-letter {
-		font-size: 2.9em;
+		/* The lead punctuation follows from this on its own — see the rule
+		   above, which divides by the same variable. */
+		--drop-cap-scale: 2.9;
 		line-height: 1.11;
 	}
 }
