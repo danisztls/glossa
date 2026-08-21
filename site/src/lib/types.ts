@@ -176,15 +176,15 @@ export interface CccCitation {
 	/** Raw footnote text as printed, verbatim — unparsed in v1. */
 	text: string;
 	/**
-	 * A Portuguese source may print a Scripture citation directly in the prose
-	 * where English prints a numbered footnote. Preserve the exact source
-	 * locator in data while rendering its location as a generated numeric
-	 * footnote marker.
+	 * Set only on a citation the source printed INLINE, in the running text,
+	 * instead of as a numbered note — the Portuguese Catechism types Scripture
+	 * locators straight into the sentence where English footnotes them. Holds
+	 * the source's parenthesis verbatim, "(Mt 28, 19-20)", leading-space
+	 * irregularities and all; `text` is the same locator with the parentheses
+	 * off, for the citation parser. Its presence is what tells a renderer to
+	 * print the citation where it stands rather than as a footnote marker.
 	 */
 	label?: string;
-	/** Reader-facing sequence number; differs from `marker` only when PT's
-	 * source-inline Scripture citations are interleaved with its printed notes. */
-	number?: string;
 }
 
 export type CccBlockKind = 'prose' | 'quote';
@@ -253,6 +253,21 @@ export interface ScriptureRef {
 
 export interface CccBibleXref {
 	ccc: number;
+	refs: ScriptureRef[];
+}
+
+/**
+ * The same relation for magisterial documents: which SECTION of which
+ * document cites which verses.
+ *
+ * Keyed by the document's edition-free `slug` (`"lumen-gentium"`), not a work
+ * id, because that is what a link addresses and because the two language
+ * editions of one document are unioned into a single entry — see
+ * `scripts/build-xrefs.mjs`.
+ */
+export interface DocumentBibleXref {
+	work: string;
+	n: number;
 	refs: ScriptureRef[];
 }
 

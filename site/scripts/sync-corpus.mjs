@@ -58,6 +58,11 @@
 import { existsSync, rmSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import {
+	buildCccBibleXrefs,
+	buildDocumentBibleXrefs,
+	checkXrefsAgainstCorpus
+} from './build-xrefs.mjs';
 
 const siteRoot = path.resolve(fileURLToPath(import.meta.url), '../..');
 const corpusDir = path.resolve(siteRoot, process.env.CORPUS_DIR ?? '../corpus');
@@ -97,7 +102,6 @@ function byteLength(data) {
 rmSync(destDir, { recursive: true, force: true });
 
 const worksSrc = path.join(corpusDir, 'works');
-const xrefsSrc = path.join(corpusDir, 'xrefs');
 
 if (!existsSync(worksSrc)) {
 	// A fixture build must never inherit a real corpus's route manifest from a
@@ -198,6 +202,8 @@ const descriptions = existsSync(descriptionsPath)
 const manifests = {}; // workId -> manifest.json, verbatim (every work type, incl. future document families)
 const bibleIndex = {}; // workId -> { books: BibleBookMeta[] }
 const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
+const cccEditions = []; // [{ lang, paragraphs }] -- input to the xref pass
+const documentEditions = []; // [{ slug, lang, sections }] -- ditto, per document edition
 const compendiumIndex = {}; // lang -> { structure }
 const compendiumQuestionNumbers = []; // canonical URL existence, across languages
 const documentIndex = {}; // workId -> { structure, sectionNumbers } -- keyed by WORK ID, not lang: unlike
@@ -314,6 +320,13 @@ for (const workId of workIds) {
 		const paragraphs = readJson(path.join(workDir, 'paragraphs.json'));
 		const paragraphNumbers = paragraphs.map((p) => p.n).sort((a, b) => a - b);
 		cccIndex[lang] = { structure, abbreviations, paragraphNumbers };
+		// Held for the xref pass below, which needs every edition at once —
+		// the two editions' Scripture references are unioned per paragraph
+		// (see build-xrefs.mjs). Not read from the chunks written just below:
+		// those are already filtered by `unpublished`, and taking a work down
+		// should not silently rewrite what the Catechism is recorded as
+		// citing.
+		cccEditions.push({ lang, paragraphs });
 
 		const maxN = paragraphNumbers[paragraphNumbers.length - 1] ?? 0;
 		for (let start = 1; start <= maxN; start += CCC_CHUNK_SIZE) {
@@ -405,6 +418,12 @@ for (const workId of workIds) {
 			structure,
 			sectionNumbers: sections.map((s) => s.n).sort((a, b) => a - b)
 		};
+		// Held for the xref pass, keyed by SLUG: the two language editions of
+		// one document are unioned into a single entry, the same way the two
+		// Catechism editions are, because they are one document citing one
+		// verse. `{family}.{slug}.{lang}` -> slug, lang.
+		const [, slug, docLang] = workId.split('.');
+		documentEditions.push({ slug, lang: docLang, sections });
 
 		// Kept WHOLE per work rather than chunked (see this module's docblock)
 		// — at ~200 KB raw worst-case this is comfortably inside the
@@ -436,12 +455,40 @@ writeJson(path.join(indexDir, 'compendium-index.json'), compendiumIndex);
 writeJson(path.join(indexDir, 'document-index.json'), documentIndex);
 writeJson(path.join(indexDir, 'prayer-index.json'), prayerIndex);
 
-let xrefsSynced = false;
-if (existsSync(xrefsSrc)) {
-	const xrefFiles = readdirSync(xrefsSrc).filter((f) => f.endsWith('.json'));
-	const xrefs = xrefFiles.flatMap((f) => readJson(path.join(xrefsSrc, f)));
-	writeJson(path.join(indexDir, 'xrefs.json'), xrefs);
-	xrefsSynced = xrefFiles.length > 0;
+/**
+ * CCC -> Bible cross-references, DERIVED here rather than read from the
+ * corpus. `corpus/xrefs/ccc-bible.json` used to be a committed file built by
+ * a separate Python parser; it is now computed from `corpus/works/` on every
+ * build by the site's own citation grammar. See `build-xrefs.mjs` for why,
+ * and docs/decisions.md (2026-08-21).
+ */
+const xrefs = buildCccBibleXrefs(cccEditions);
+writeJson(path.join(indexDir, 'xrefs.json'), xrefs);
+const documentXrefs = buildDocumentBibleXrefs(documentEditions);
+writeJson(path.join(indexDir, 'document-xrefs.json'), documentXrefs);
+const xrefsSynced = xrefs.length > 0;
+
+if (xrefsSynced) {
+	// Loud, non-fatal, and always on — not behind a flag. See
+	// `checkXrefsAgainstCorpus`.
+	const chapterVerses = new Map();
+	for (const { books } of Object.values(bibleIndex)) {
+		for (const book of books) {
+			for (const chapter of book.chapters) {
+				const key = `${book.osis}:${chapter.n}`;
+				const max = Math.max(0, ...chapter.verses);
+				chapterVerses.set(key, Math.max(chapterVerses.get(key) ?? 0, max));
+			}
+		}
+	}
+	const problems = checkXrefsAgainstCorpus([...xrefs, ...documentXrefs], chapterVerses);
+	if (problems.length > 0) {
+		console.warn(
+			`[sync-corpus] ${problems.length} scripture reference(s) point outside the corpus ` +
+				`(known source defects — see docs/research/ccc-citation-defects.md):`
+		);
+		for (const p of problems) console.warn(`  ${p}`);
+	}
 }
 
 writeJson(path.join(indexDir, 'content-manifest.json'), contentManifest);
@@ -537,7 +584,8 @@ const indexBytes = [
 	'compendium-index.json',
 	'document-index.json',
 	'prayer-index.json',
-	'xrefs.json'
+	'xrefs.json',
+	'document-xrefs.json'
 ]
 	.map((f) => path.join(indexDir, f))
 	.filter(existsSync)
@@ -545,6 +593,6 @@ const indexBytes = [
 
 console.log(
 	`[sync-corpus] Built corpus-data/ from ${worksSrc}: ${workIds.length} work(s), ` +
-		`${contentManifest.length} content file(s)${xrefsSynced ? ', plus xrefs/' : ''}. ` +
+		`${contentManifest.length} content file(s)${xrefsSynced ? `, plus ${xrefs.length} CCC and ${documentXrefs.length} document xref entries` : ''}. ` +
 		`Index tier: ${(indexBytes / 1000).toFixed(0)} KB raw. Works: ${workIds.join(', ')}`
 );
