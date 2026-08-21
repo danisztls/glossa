@@ -219,8 +219,11 @@ def looks_like_number_typo(cand: int, expected: int) -> bool:
 #
 # Two correction "field" kinds are used, applied at two different points:
 #   - "citation_text": a footnote's own printed number is wrong, or its text
-#     is wrong. Applied as a RAW HTML substring replacement on the page's
-#     fetched text, BEFORE parsing -- not post-parse. This class was tried
+#     is wrong. Also covers PT's inline Scripture locators, which are
+#     citation text that happens to be printed in the body rather than in
+#     the note list (locator marker "inline"). Applied as a RAW HTML
+#     substring replacement on the page's fetched text, BEFORE parsing --
+#     not post-parse. This class was tried
 #     post-parse first (renaming/rewriting the parsed footnote_table entry
 #     directly) but that's unsafe for footnote-*number* typos: the PT
 #     footnote-list parser (_pt_footnote_table) segments entries by
@@ -424,8 +427,13 @@ class Node:
 # Scripture-reference syntax: a PT book form + chapter, optional verse(s),
 # and semicolon-separated continuations.  It therefore cannot turn an aside
 # that merely mentions a biblical book into a synthetic citation.
+# The book-number prefix accepts a Roman numeral as well as a digit: the
+# mirror prints "(I Jo 4, 9)" and "(I Cor 15, 28)" beside its usual "(1 Jo ...)"
+# form, the same typesetting artifact `refs.ts`'s `numberedVariants` already
+# folds into both language tables. Without it those two parentheses stayed
+# ordinary prose while every neighbouring one became a citation.
 _PT_INLINE_BOOK = (
-    r"(?:[1-3]\s*)?(?:Gn|Ex|Lv|Nm|Dt|Dr|Js|Jz|Rt|Tb|Jt|Est|Job|Jó|Sl|Pr|"
+    r"(?:[1-3]\s*|I{1,3}\s+)?(?:Gn|Ex|Lv|Nm|Dt|Dr|Js|Jz|Rt|Tb|Jt|Est|Job|Jó|Sl|Pr|"
     r"Ecl|Ec|Ct|Sb|Sir|Is|Jr|Lm|Br|Ez|Esd|Ne|Dn|Os|Jl|Am|Ab|Jn|Mq|Na|Hab|"
     r"Sf|Ag|Zc|Ml|Mt|Mc|Mr|Lc|Jo|Act|At|Rm|Gl|Ef|Fl|Cl|Tt|Flm|Fm|Heb|Hb|Tg|Jd|Ap|"
     r"Cr|Cor|Rs|Mac|Pe|Sm|Ts|Tm)"
@@ -439,9 +447,17 @@ _PT_INLINE_CF = r"(?:(?:Cf|Cfr)\.?\s*)?"
 # for the footnote and let the later reference parser link every portion it
 # understands; never discard the unparseable remainder.
 _PT_INLINE_REF_START_SEPARATOR = r"(?:\s+|,\s*|\s*\.\s*|;\s*|(?=\d))"
+# `tail` is a footnote marker the source printed INSIDE the same parenthesis:
+# CCC 857 reads "(Ef 2, 20 (368))", one inline locator and one numbered note
+# sharing a bracket. By the time this runs the note is already a ⟦368⟧ token,
+# so excluding the token characters from `ref` and capturing the token
+# separately keeps two distinct pieces of apparatus distinct -- the locator
+# renders as itself and the note keeps its own marker, instead of the note
+# being swallowed into the locator's label as literal "⟦368⟧" text.
 _PT_INLINE_SCRIPTURE_RE = re.compile(
     rf"\((?P<leading>\s*)(?P<ref>{_PT_INLINE_CF}{_PT_INLINE_BOOK}"
-    rf"{_PT_INLINE_REF_START_SEPARATOR}(?=\d)[^()]*)\)",
+    rf"{_PT_INLINE_REF_START_SEPARATOR}(?=\d)[^(){MARK_OPEN}{MARK_CLOSE}]*)"
+    rf"(?P<tail>\s*{MARK_OPEN}[^{MARK_CLOSE}]*{MARK_CLOSE})?\)",
     re.IGNORECASE,
 )
 
@@ -452,9 +468,14 @@ def mark_pt_inline_scripture_citations(
     """Replace source-faithful PT inline Scripture locators with internal
     citation tokens, returning the token -> original locator map.
 
-    The renderer restores each ``label`` exactly where this token sits and
-    opens the same local citation disclosure used by ordinary footnotes. Raw
-    source remains untouched in ``corpus/raw``; this is a reversible parse.
+    The token marks WHERE the locator stands, not that it is a footnote: the
+    renderer prints each ``label`` back at exactly this position, verbatim
+    parentheses and all, and only weaves links through it. Tokenizing rather
+    than leaving the parenthesis in the prose is what isolates the citation
+    apparatus from the surrounding sentence, so the reference parser is handed
+    a citation-shaped string instead of having to guess where one starts
+    inside running text. Raw source remains untouched in ``corpus/raw``; this
+    is a reversible parse.
     """
 
     citations: dict[str, tuple[str, str]] = {}
@@ -467,8 +488,13 @@ def mark_pt_inline_scripture_citations(
         # `text` is the parseable citation string; `label` restores every
         # source character, including the irregular leading space in
         # "( Rm 4, 18)", to the derived searchable text.
-        citations[marker] = (match.group("ref"), match.group(0))
-        return f"{MARK_OPEN}{marker}{MARK_CLOSE}"
+        tail = match.group("tail") or ""
+        # With a footnote token pulled out of the parenthesis, the space that
+        # separated the two goes with it -- otherwise the locator's label
+        # would close on a space the source never printed before ")".
+        ref = match.group("ref").rstrip() if tail else match.group("ref")
+        citations[marker] = (ref, f"({match.group('leading')}{ref})")
+        return f"{MARK_OPEN}{marker}{MARK_CLOSE}{tail.strip()}"
 
     return _PT_INLINE_SCRIPTURE_RE.sub(replace, text), citations
 
@@ -508,6 +534,18 @@ def test_pt_inline_scripture_accepts_the_source_flm_variant() -> None:
     marked, citations = mark_pt_inline_scripture_citations("(Flm 16)", 1)
     assert marked == "⟦inline1⟧"
     assert citations == {"inline1": ("Flm 16", "(Flm 16)")}
+
+
+def test_pt_inline_scripture_accepts_a_roman_book_number() -> None:
+    marked, citations = mark_pt_inline_scripture_citations("(I Jo 4, 9)", 1)
+    assert marked == "⟦inline1⟧"
+    assert citations == {"inline1": ("I Jo 4, 9", "(I Jo 4, 9)")}
+
+
+def test_pt_inline_scripture_keeps_an_enclosed_footnote_marker_separate() -> None:
+    marked, citations = mark_pt_inline_scripture_citations("«alicerce» ( Ef 2, 20 ⟦368⟧),", 1)
+    assert marked == "«alicerce» ⟦inline1⟧⟦368⟧,"
+    assert citations == {"inline1": ("Ef 2, 20", "( Ef 2, 20)")}
 
 
 def test_pt_inline_scripture_does_not_capture_an_ordinary_parenthetical_aside() -> None:
@@ -712,23 +750,6 @@ class ScrapeState:
 
     def record_gap(self, prev: int, cand: int) -> None:
         self.gaps.append((prev + 1, cand - 1))
-
-
-def assign_pt_display_citation_numbers(state: ScrapeState) -> None:
-    """Number PT's original and extracted citation apparatus as one ordered
-    reader-facing sequence.
-
-    The archive's original number stays in ``marker``; it is deliberately
-    not used for display because an extracted inline citation can sit between
-    two source notes. Without this pass the reader would show an independent
-    1/2 sequence for the new citations beside the source's 4/5/6 sequence.
-    """
-
-    number = 1
-    for para in (state.paragraphs[n] for n in sorted(state.paragraphs)):
-        for citation in para.citations:
-            citation["number"] = str(number)
-            number += 1
 
 
 # --------------------------------------------------------------------------
@@ -1426,8 +1447,6 @@ def run_scrape(
         state.finalize_open_paragraph()
         # close remaining open structure nodes at end of chunk
         state.stack = []
-    if lang == "pt":
-        assign_pt_display_citation_numbers(state)
     return state, fetched_pages, fetcher
 
 

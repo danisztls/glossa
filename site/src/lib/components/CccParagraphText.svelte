@@ -76,6 +76,21 @@
 		return paragraph.citations.find((c) => c.marker === marker);
 	}
 
+	/**
+	 * A citation the SOURCE printed inline, in the running text, rather than
+	 * as a numbered note — the Portuguese Catechism types Scripture locators
+	 * straight into the sentence ("...até ao fim do mundo» (Mt 28, 19-20).")
+	 * where the English edition puts a footnote. `label` carries that
+	 * parenthesis verbatim, and it is what the reader sees: turning it into a
+	 * superscript number would replace something the source actually prints
+	 * with an apparatus it does not have. See `docs/corpus-schema.md` §CCC.
+	 */
+	function isInline(
+		citation: CccCitation | undefined
+	): citation is CccCitation & { label: string } {
+		return typeof citation?.label === 'string';
+	}
+
 	function toggleCitation(marker: string) {
 		if (openMarkers.has(marker)) openMarkers.delete(marker);
 		else openMarkers.add(marker);
@@ -120,34 +135,36 @@
 			     paragraph. Keep each disclosure independent, as <details> did. -->
 			{@const disclosureKey = `${blockIndex}:${markerIndex}`}
 			{@const citation = citationFor(marker)}
-			<sup class="citation-marker">
-				<button
-					type="button"
-					class="citation-trigger"
-					aria-expanded={openMarkers.has(disclosureKey)}
-					onclick={() => toggleCitation(disclosureKey)}
+			{#if isInline(citation)}<RefText text={citation.label} {lang} />{:else}<sup
+					class="citation-marker"
 				>
-					{citation?.number ?? marker}
-				</button>
-			</sup>
-			{#if openMarkers.has(disclosureKey)}
-				<span class="citation-text">
-					{#if citation && citation.text.trim() !== ''}
-						<RefText text={citation.text} {lang} />
-					{:else if citation}
-						<!-- Deliberately empty source: a handful of citations in the
-						     Vatican II corpus point at a footnote-list entry that is
-						     itself missing/truncated in the source page, not a parsing
-						     failure (docs/research/vatican-documents.md §6, "Known
-						     source defects" — 4 confirmed cases). No fabricated text
-						     to show, so say so rather than rendering a dead-looking
-						     empty box. -->
-						<span class="citation-empty">{t('citation.unavailable')}</span>
-					{:else}
+					<button
+						type="button"
+						class="citation-trigger"
+						aria-expanded={openMarkers.has(disclosureKey)}
+						onclick={() => toggleCitation(disclosureKey)}
+					>
 						{marker}
-					{/if}
-				</span>
-			{/if}
+					</button>
+				</sup>
+				{#if openMarkers.has(disclosureKey)}
+					<span class="citation-text">
+						{#if citation && citation.text.trim() !== ''}
+							<RefText text={citation.text} {lang} />
+						{:else if citation}
+							<!-- Deliberately empty source: a handful of citations in the
+							     Vatican II corpus point at a footnote-list entry that is
+							     itself missing/truncated in the source page, not a parsing
+							     failure (docs/research/vatican-documents.md §6, "Known
+							     source defects" — 4 confirmed cases). No fabricated text
+							     to show, so say so rather than rendering a dead-looking
+							     empty box. -->
+							<span class="citation-empty">{t('citation.unavailable')}</span>
+						{:else}
+							{marker}
+						{/if}
+					</span>
+				{/if}{/if}
 		{:else}
 			{@render prose(seg.text)}
 		{/if}

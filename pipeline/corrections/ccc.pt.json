@@ -1,7 +1,10 @@
 [
   {
     "id": "ccc.pt-679-fn660",
-    "locator": { "paragraph": 679, "marker": "660" },
+    "locator": {
+      "paragraph": 679,
+      "marker": "660"
+    },
     "field": "citation_text",
     "from": "12, 48. </p><p>600. Cf. <i>1 Cor",
     "to": "12, 48. </p><p>660. Cf. <i>1 Cor",
@@ -11,7 +14,10 @@
   },
   {
     "id": "ccc.pt-679-fn661",
-    "locator": { "paragraph": 679, "marker": "661" },
+    "locator": {
+      "paragraph": 679,
+      "marker": "661"
+    },
     "field": "citation_text",
     "from": "12-15. </p><p>601. Cf. <i>Mt",
     "to": "12-15. </p><p>661. Cf. <i>Mt",
@@ -21,7 +27,10 @@
   },
   {
     "id": "ccc.pt-1396-fn236",
-    "locator": { "paragraph": 1396, "marker": "236" },
+    "locator": {
+      "paragraph": 1396,
+      "marker": "236"
+    },
     "field": "marker",
     "from": "(326)",
     "to": "(236)",
@@ -31,7 +40,10 @@
   },
   {
     "id": "ccc.pt-2217-numprint",
-    "locator": { "paragraph": 2217, "structural": "paragraph_number" },
+    "locator": {
+      "paragraph": 2217,
+      "structural": "paragraph_number"
+    },
     "field": "paragraph_number",
     "from": "2117",
     "to": "2217",
@@ -41,12 +53,67 @@
   },
   {
     "id": "ccc.pt-2439-numprint",
-    "locator": { "paragraph": 2439, "structural": "paragraph_number" },
+    "locator": {
+      "paragraph": 2439,
+      "structural": "paragraph_number"
+    },
     "field": "paragraph_number",
     "from": "1439",
     "to": "2439",
     "reason": "Source misprints this paragraph's own leading number as 1439 -- a single-digit substitution (2->1 in the thousands place). Content (rich nations' moral responsibility toward less-advanced countries) and sequential position confirm paragraph 2439 is meant; 1439 is numerically impossible on this page, whose entire span is 2196-2557. Previously corrected silently inside the scraper's generic single-digit-typo heuristic (looks_like_number_typo); now routed through this corrections entry.",
     "evidence": "raw HTML corpus/raw/ccc-pt/p3s2cap2_2196-2557_po.html: '<p> <b>1439. </b>As nações ricas têm uma grave responsabilidade moral em relação aquelas que não podem, por si mesmas, assegurar os meios do seu desenvolvimento...' sits directly after prose on 'sistemas financeiros abusivos... relações comerciais iníquas entre as nações, a corrida aos armamentos' (international economic injustice) -- matching CCC paragraph 2438-2439's known subject matter (Seventh Commandment, international economic solidarity).",
     "added": "2026-08-14"
+  },
+  {
+    "id": "ccc.pt-430-fn10",
+    "locator": {
+      "paragraph": 430,
+      "marker": "10"
+    },
+    "field": "citation_text",
+    "from": "10. Cf. <i>Lc</i> 1 , 3 1 . ",
+    "to": "10. Cf. <i>Lc</i> 1, 31. ",
+    "reason": "Footnote 10 prints the verse number with a space inside it -- \"Lc 1 , 3 1 .\" for Lc 1, 31 -- one of a cluster of loose-spacing defects on this page (footnotes 11 and 13 print \"Sl 51 , 6\" and \"Mc 1 , 11\" with the same stray space before the comma). The reference parser tolerates the space BEFORE the separator, so \"Lc 1 , 31\" would resolve on its own; the space INSIDE \"3 1\" cannot be tolerated in the grammar without reading any two adjacent numbers as one, so it is corrected here in the source text instead. Left uncorrected it is worse than unlinked: the parser reads verse 3, a real but wrong verse of Luke 1.",
+    "evidence": "raw HTML corpus/raw/ccc-pt/p1s2cap2_422-682_po.html: footnote list reads '...9. Joao Paulo II. Ex. Ap. Catechesi tradendae, 6: AAS 71 (1979). 1281-1282.</p><p>10. Cf. Lc 1 , 3 1 .</p> <p>11. Cf. Sl 51 , 6.</p>'. PT paragraph 430 is the Catechism's exposition of the name Jesus, whose whole point is the angel's instruction to name the child -- Lc 1, 31. EN parallel ccc.en paragraph 430's first footnote reads 'Cf. Lk 1:31.' verbatim. Anchor string '10. Cf. <i>Lc</i> 1 , 3 1 . ' verified unique (count=1) across the whole page.",
+    "added": "2026-08-21"
+  },
+  {
+    "id": "ccc.pt-536-fn260",
+    "locator": {
+      "paragraph": 536,
+      "marker": "260"
+    },
+    "field": "citation_text",
+    "from": "<i>Is</i> 1 l, 2.",
+    "to": "<i>Is</i> 11, 2.",
+    "reason": "Footnote 260 prints Isaiah's chapter as \"1 l\" -- a space plus a lowercase L standing in for the digit 1, i.e. 11. Both halves of that defect are known artifacts of this mirror (the l-for-1 substitution also appears as \"Act 4, l2\" and \"Heb 5, l0\"), but combined they read as a complete, plausible reference to Isaiah 1, so the parser cannot be made to reject it. Corrected in the source text rather than in the grammar: no tolerance rule can turn \"1 l\" into 11 without also fusing genuinely separate numbers elsewhere.",
+    "evidence": "raw HTML corpus/raw/ccc-pt/p1s2cap2_422-682_po.html: '260. Cf. Jo 1 , 32-33; Is 1 l, 2.' EN parallel ccc.en paragraph 536's fifth footnote reads 'Jn 1:32-33; cf. Is 11:2.' -- same paragraph, same position in the note sequence, same first reference, confirming the second is Isaiah 11:2 (the seven gifts of the Spirit resting on the shoot of Jesse, which is what the paragraph is about). Anchor string '<i>Is</i> 1 l, 2.' verified unique (count=1) across the whole page.",
+    "added": "2026-08-21"
+  },
+  {
+    "id": "ccc.pt-1510-inline-tg",
+    "locator": {
+      "paragraph": 1510,
+      "marker": "inline"
+    },
+    "field": "citation_text",
+    "from": "(Ts; 5, 14-15)",
+    "to": "(Tg 5, 14-15)",
+    "reason": "The inline Scripture locator closing paragraph 1510 prints \"(Ts; 5, 14-15)\" where the book is Tiago (James), abbreviated \"Tg\". Two characters are wrong: the \"g\" is set as \";\", and \"Ts\" is 1/2 Thessalonians, a book that has no bearing on the anointing of the sick. Read as printed the reference resolves to nothing at all, since \"Ts\" without a book number is not a citation form the grammar accepts. Applied to the raw page text, like every other citation_text correction, so the inline-locator pass sees the corrected string.",
+    "evidence": "raw HTML corpus/raw/ccc-pt/p2s2cap1_1420-1532_po.html: paragraph 1510 reads 'Entretanto, a Igreja dos Apostolos conhece um rito proprio em favor dos enfermos, atestado por Sao Tiago: <<Alguem de vos esta doente? Chame os presbiteros da Igreja para que orem sobre ele, ungindo-o com oleo em nome do Senhor...>> (Ts; 5, 14-15).' -- the paragraph's own prose names Sao Tiago as the source two clauses earlier, and the quotation is Tg 5, 14-15 verbatim. EN parallel ccc.en paragraph 1510's first citation reads 'Jas 5:14-15.' Anchor string '(Ts; 5, 14-15)' verified unique (count=1) across the whole page.",
+    "added": "2026-08-21"
+  },
+  {
+    "id": "ccc.pt-2615-inline-jo14",
+    "locator": {
+      "paragraph": 2615,
+      "marker": "inline"
+    },
+    "field": "citation_text",
+    "from": "(Jo14, 16-17)",
+    "to": "(Jo 14, 16-17)",
+    "reason": "The inline locator in paragraph 2615's body prints the book abbreviation glued to its chapter, \"Jo14\". A missing space is not something the render-time whitespace tidy can repair -- normalizeCitationSpacing only removes whitespace, never adds a mark -- and unlike the 18 other glued abbreviations in the corpus (DS1511, PL16, CSEL73, ...), which sit inside footnote-disclosure text, this one is printed in the running sentence a reader is actually reading. The reference parser resolves \"Jo14\" correctly either way; this is about what the page shows.",
+    "evidence": "raw HTML corpus/raw/ccc-pt/p4s1cap1_2566-2649_po.html: '...e o outro Paraclito, [...] para ficar convosco para sempre, o Espirito de verdade>> (Jo14, 16-17).' The same page's own footnote 104 spells the identical reference with the space -- 'Cf. Jo 14, 16-17.26; 15. 26; 16, 7-15; 17, 26.' -- and every other inline locator in ccc.pt separates book from chapter. EN parallel ccc.en paragraph 2615's first citation reads 'Jn 14:16-17.' Anchor string '(Jo14, 16-17)' verified unique (count=1) across the whole page.",
+    "added": "2026-08-21"
   }
 ]
