@@ -188,6 +188,7 @@ follow whichever checkout the code being run lives in.
 from __future__ import annotations
 
 import argparse
+import collections
 import html as ihtml
 import json
 import os
@@ -339,6 +340,96 @@ def strip_tags(s: str) -> str:
     return s
 
 
+# --------------------------------------------------------------------------
+# Narrowed inline HTML (docs/decisions.md, 2026-08-21)
+# --------------------------------------------------------------------------
+#
+# A unit's text is stored as HTML restricted to a closed allowlist, rather
+# than as tag-stripped plain text plus a parallel ⟦n⟧-marked copy. The
+# allowlist was derived by counting tags inside numbered body paragraphs
+# across all 465 raw pages, not by assumption -- see the decision entry for
+# the table. Two results worth restating here, because both contradict what
+# a reader would guess: `<small>` never occurs, and `span[lang]` does (263
+# times), marking Latin inside vernacular text.
+#
+# `em` folds to `i` and `strong` to `b`. HTML5's `<i>` means idiomatic text
+# -- foreign phrases and work titles -- which is exactly what this corpus
+# italicises; `<em>` would assert stress emphasis the source never claimed.
+#
+# THE INVARIANT, and why disallowed tags become a space rather than nothing:
+# `strip_tags` substitutes " " for every tag, so `a<font>b</font>c` has
+# always produced "a b c". Dropping a disallowed tag to "" instead would
+# silently reflow text that has been in the corpus since the first crawl.
+# Emitting a space keeps `html_to_text(html) == <the stored text>` exact,
+# which is what makes the migration checkable rather than merely plausible.
+_HTML_ALLOWED_SIMPLE = {"i": "i", "em": "i", "b": "b", "strong": "b"}
+_TAG_RE = re.compile(r"<\s*(/?)\s*([a-zA-Z][a-zA-Z0-9]*)\b([^>]*?)(/?)\s*>")
+_LANG_ATTR_RE = re.compile(r"\blang\s*=\s*[\"']?([A-Za-z-]{2,8})[\"']?")
+_FN_EL_RE = re.compile(r"<sup\s+data-fn=\"[^\"]*\"\s*></sup>")
+
+
+def narrow_html(marked_html: str, dropped: collections.Counter | None = None) -> str:
+    """Reduce already-footnote-marked inner HTML to the stored allowlist.
+
+    Input is the output of `mark_footnotes` (⟦n⟧ tokens embedded); those
+    become `<sup data-fn="n"></sup>` so the stored payload is one syntax
+    rather than two. Unknown tags are dropped but their TEXT is kept, and
+    counted into `dropped` for anomaly reporting -- logged, never silently
+    absent, the same posture as everything else in this scraper."""
+    out: list[str] = []
+    span_kept: list[bool] = []
+    pos = 0
+    for m in _TAG_RE.finditer(marked_html):
+        out.append(marked_html[pos : m.start()])
+        pos = m.end()
+        closing, name, attrs = bool(m.group(1)), m.group(2).lower(), m.group(3)
+        if name in _HTML_ALLOWED_SIMPLE:
+            tag = _HTML_ALLOWED_SIMPLE[name]
+            out.append(f"</{tag}>" if closing else f"<{tag}>")
+        elif name == "br" and not closing:
+            out.append("<br/>")
+        elif name == "blockquote":
+            out.append("</blockquote>" if closing else "<blockquote>")
+        elif name == "sup":
+            # A <sup> still standing after mark_footnotes is not a footnote
+            # reference -- 106 of them across 11 files, and roughly half are
+            # real typography inside bibliographic citations ("Paris 1960²",
+            # "2ª"), which dropping would flatten to "1960 2". Keeping it is
+            # invariant-neutral: an unattributed <sup> strips to a space
+            # exactly as dropping it would. The renderer tells the two apart
+            # by the data-fn attribute, which only marker elements carry.
+            out.append("</sup>" if closing else "<sup>")
+        elif name == "span":
+            if closing:
+                out.append(
+                    "</span>" if (span_kept.pop() if span_kept else False) else " "
+                )
+            else:
+                lang = _LANG_ATTR_RE.search(attrs)
+                span_kept.append(bool(lang))
+                out.append(f'<span lang="{lang.group(1)}">' if lang else " ")
+        else:
+            if dropped is not None and not closing:
+                dropped[name] += 1
+            out.append(" ")
+    out.append(marked_html[pos:])
+    html = "".join(out)
+    html = re.sub(
+        rf"{MARK_OPEN}([0-9A-Za-z*]+){MARK_CLOSE}", r'<sup data-fn="\1"></sup>', html
+    )
+    return re.sub(r"\s+", " ", html).strip()
+
+
+def html_to_text(html: str) -> str:
+    """The stored `text` a narrowed html string must reproduce exactly.
+
+    Footnote elements vanish without leaving a space -- `Section.resolve`
+    removes ⟦n⟧ with "" -- so `word<sup data-fn="12"></sup>.` reads back as
+    "word." and not "word ." . Every other tag becomes a space, matching
+    `strip_tags`."""
+    return strip_tags(_FN_EL_RE.sub("", html))
+
+
 _BOLD_SPAN_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.DOTALL | re.IGNORECASE)
 
 
@@ -366,7 +457,9 @@ def is_full_italic(inner_html: str) -> bool:
     full_text = strip_tags(inner_html)
     if not full_text:
         return False
-    ital = strip_tags(" ".join(m.group(0) for m in _ITALIC_SPAN_RE.finditer(inner_html)))
+    ital = strip_tags(
+        " ".join(m.group(0) for m in _ITALIC_SPAN_RE.finditer(inner_html))
+    )
     return bool(ital) and ital == full_text
 
 

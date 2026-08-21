@@ -335,16 +335,24 @@ double-stored, JSON-escaped pair, `<i>Rerum Novarum</i>` versus
 **The allowlist, derived by measurement rather than assumption** — tag counts
 inside numbered body paragraphs across 465 raw pages:
 
-| keep                   | why                                                                | drop           | why                                                   |
-| ---------------------- | ------------------------------------------------------------------ | -------------- | ----------------------------------------------------- |
-| `i` (9,901 + 794 `em`) | the documented v1 italics loss, recovered                          | `a` (7,206)    | footnote apparatus, already modelled as `citations[]` |
-| `b` (352)              | real inline bold                                                   | `font` (3,408) | legacy presentation (`size`/`face`/`color`)           |
-| `span[lang]` (263)     | marks Latin inside vernacular; free semantics we currently discard | `sup` (739)    | the footnote marker template, becomes `<sup data-fn>` |
-| `br` (149)             | meaningful line breaks                                             | `u` (1)        | single occurrence                                     |
-| `blockquote`           | block-level, covers the 11 quote cases                             |                |                                                       |
+| keep                   | why                                                                                                          | drop           | why                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------ | -------------- | ----------------------------------------------------- |
+| `i` (9,901 + 794 `em`) | the documented v1 italics loss, recovered                                                                    | `a` (7,206)    | footnote apparatus, already modelled as `citations[]` |
+| `b` (352)              | real inline bold                                                                                             | `font` (3,408) | legacy presentation (`size`/`face`/`color`)           |
+| `span[lang]` (263)     | marks Latin inside vernacular; free semantics we currently discard                                           | `a` attrs      | anchors carry only footnote plumbing                  |
+| `sup` (739)            | footnote refs become `<sup data-fn>`; the 106 that survive marking are real typography (`Paris 1960²`, `2ª`) |                |                                                       |
+| `br` (149)             | meaningful line breaks                                                                                       | `u` (1)        | single occurrence                                     |
+| `blockquote`           | block-level, covers the 11 quote cases                                                                       |                |                                                       |
 
 Measuring corrected two guesses: `<small>` does not occur anywhere and would
 have been allowlisted on assumption, and `span[lang]` would have been missed.
+A third correction came from the round-trip run itself: `sup` was first written
+down here as dropped, on the assumption it was purely the footnote-marker
+template. 106 of them across 11 files survive `mark_footnotes`, and about half
+are genuine superscripts inside bibliographic citations, which dropping would
+flatten (`1960²` to `1960 2`). Keeping bare `<sup>` is invariant-neutral — it
+strips to a space either way — so it is allowlisted, and the renderer
+distinguishes a footnote from typography by the `data-fn` attribute.
 `em` normalises to `i` — HTML5's `<i>` means idiomatic text (foreign phrases,
 work titles), which is what this corpus italicises, while `<em>` means stress
 emphasis.
