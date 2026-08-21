@@ -36,6 +36,7 @@ import type {
 	BibleBook,
 	CccAbbreviation,
 	CccBibleXref,
+	DocumentBibleXref,
 	CccNode,
 	CccParagraph,
 	CompendiumQuestion,
@@ -230,6 +231,11 @@ const realIndexXrefs = import.meta.glob('./corpus-data/index/xrefs.json', {
 	eager: true,
 	import: 'default'
 }) as Record<string, CccBibleXref[]>;
+
+const realIndexDocumentXrefs = import.meta.glob('./corpus-data/index/document-xrefs.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, DocumentBibleXref[]>;
 
 const realContentManifest = import.meta.glob('./corpus-data/index/content-manifest.json', {
 	eager: true,
@@ -452,6 +458,22 @@ const xrefsList: CccBibleXref[] = USE_REAL_CORPUS
 export const cccBibleXrefsByCcc: Map<number, CccBibleXref['refs']> = new Map(
 	xrefsList.map((entry) => [entry.ccc, entry.refs])
 );
+
+/**
+ * The document → Bible index, same tier and same reasoning as the CCC one
+ * above: 327 KB raw but 31 KB gzipped (measured against the real corpus
+ * 2026-08-21), against an index tier already at ~227 KB gzipped, so inlining
+ * it costs less than the round-trip to fetch it would. Revisit if the
+ * Magisterium corpus grows several times over — this is the entry most likely
+ * to outgrow the eager tier first.
+ *
+ * `[]` under fixtures, deliberately: the fixture corpus has no documents at
+ * all (`documentStructures` is `{}` for the same reason), so a citation index
+ * over them would have nothing to point at.
+ */
+export const documentBibleXrefs: DocumentBibleXref[] = USE_REAL_CORPUS
+	? (single(realIndexDocumentXrefs) ?? [])
+	: [];
 
 // --- Content tier: fixtures (whole, in-memory) vs. real (URL + fetch) -----
 

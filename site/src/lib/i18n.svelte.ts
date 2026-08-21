@@ -212,7 +212,12 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'colophon.typeTitle': 'The type',
 		'colophon.typeBody':
 			'Set in EB Garamond, Georg Duffner and Octavio Pardo\u2019s revival of the types Claude Garamont cut in the 1590s \u2014 the humanist tradition the Church has printed in since the Renaissance. The opening initials are Pirata One, a blackletter whose capitals stay legible at the size a drop cap demands. Both are licensed under the SIL Open Font License and served from this site rather than from a third party, so reading a page asks nothing of anyone else\u2019s server.',
-		'bible.citedInCcc': 'Cited in the Catechism',
+		// One panel for every work that cites a verse — the Catechism and the
+		// magisterial documents together, so the verse is named once and
+		// everything citing it sits beside it. Each entry carries its own
+		// work's name, so the heading names no work at all.
+		'bible.citedIn': 'Cited in',
+		'bible.cccAbbrev': 'CCC',
 		'bible.wholeChapter': 'This chapter',
 		'bible.verseNotInEdition':
 			'This verse number is not in this edition — see the note in the page source',
@@ -410,7 +415,8 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'colophon.typeTitle': 'Os tipos',
 		'colophon.typeBody':
 			'Composto em EB Garamond, o renascimento por Georg Duffner e Octavio Pardo dos tipos que Claude Garamont gravou na d\u00e9cada de 1590 \u2014 a tradi\u00e7\u00e3o humanista em que a Igreja imprime desde o Renascimento. As iniciais s\u00e3o Pirata One, uma letra g\u00f3tica cujas mai\u00fasculas permanecem leg\u00edveis no tamanho que uma capitular exige. Ambas as fontes t\u00eam licen\u00e7a SIL Open Font License e s\u00e3o servidas a partir deste s\u00edtio e n\u00e3o de terceiros, de modo que ler uma p\u00e1gina nada exige do servidor de outrem.',
-		'bible.citedInCcc': 'Citado no Catecismo',
+		'bible.citedIn': 'Citado em',
+		'bible.cccAbbrev': 'CIC',
 		'bible.wholeChapter': 'Este capítulo',
 		'bible.verseNotInEdition': 'Este número de versículo não existe nesta edição',
 		'bible.verseAbbrev': 'v.',

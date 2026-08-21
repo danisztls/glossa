@@ -139,6 +139,7 @@ import {
 	USE_REAL_CORPUS,
 	bibleIndex,
 	cccBibleXrefsByCcc,
+	documentBibleXrefs,
 	cccChunkLocation,
 	cccChunkStartFor,
 	isUnpublished,
@@ -925,6 +926,68 @@ function buildCccBibleReverseIndex(): Map<string, CccCitationsByVerse> {
 export function getCccCitationsForChapter(osis: string, chapter: number): CccCitationsByVerse {
 	cccBibleReverseIndex ??= buildCccBibleReverseIndex();
 	return cccBibleReverseIndex.get(reverseKey(osis, chapter)) ?? new Map();
+}
+
+/**
+ * The same relation for the magisterial documents: which SECTION of which
+ * document cites each verse of one chapter.
+ *
+ * Grouped by document here rather than left as a flat list, because that is
+ * the shape the reader wants and the shape the page renders — one label per
+ * work with its section numbers beside it ("Lumen Gentium §8 §22"), not the
+ * work's name repeated once per section. Sections within a document come out
+ * ascending; the documents themselves are left in the index's own order,
+ * which is alphabetical by slug, and the page re-sorts by display title since
+ * the title is what a reader actually scans.
+ *
+ * Same lazy-once inversion as the CCC index above, and for the same reason:
+ * ~1,900 entries is real work to invert, and no page outside a Bible chapter
+ * ever asks for it. `verses: []` (a whole-chapter citation) lands under the
+ * sentinel key 0, identically.
+ */
+export interface DocumentCitation {
+	slug: string;
+	sections: number[];
+}
+type DocumentCitationsByVerse = Map<number, DocumentCitation[]>;
+
+let documentBibleReverseIndex: Map<string, DocumentCitationsByVerse> | null = null;
+
+function buildDocumentBibleReverseIndex(): Map<string, DocumentCitationsByVerse> {
+	const index = new Map<string, DocumentCitationsByVerse>();
+	for (const entry of documentBibleXrefs) {
+		for (const ref of entry.refs) {
+			const key = reverseKey(ref.osis, ref.chapter);
+			let byVerse = index.get(key);
+			if (!byVerse) index.set(key, (byVerse = new Map()));
+			for (const verse of ref.verses.length > 0 ? ref.verses : [0]) {
+				let works = byVerse.get(verse);
+				if (!works) byVerse.set(verse, (works = []));
+				const existing = works.find((w) => w.slug === entry.work);
+				if (existing) {
+					// One section can cite the same verse from two of its
+					// citations; the reader wants one link.
+					if (!existing.sections.includes(entry.n)) existing.sections.push(entry.n);
+				} else {
+					works.push({ slug: entry.work, sections: [entry.n] });
+				}
+			}
+		}
+	}
+	for (const byVerse of index.values()) {
+		for (const works of byVerse.values()) {
+			for (const work of works) work.sections.sort((a, b) => a - b);
+		}
+	}
+	return index;
+}
+
+export function getDocumentCitationsForChapter(
+	osis: string,
+	chapter: number
+): DocumentCitationsByVerse {
+	documentBibleReverseIndex ??= buildDocumentBibleReverseIndex();
+	return documentBibleReverseIndex.get(reverseKey(osis, chapter)) ?? new Map();
 }
 
 // --- Documents: index-backed (registry, structure, existence, sync) -------

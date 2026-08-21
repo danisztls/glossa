@@ -5,6 +5,8 @@
 		baseLang,
 		getAdjacentChapterAcrossBooks,
 		getCccCitationsForChapter,
+		getDocumentCitationsForChapter,
+		getDocumentGroup,
 		listEditions
 	} from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
@@ -245,17 +247,96 @@
 	 */
 	const chapterVerseNumbers = $derived(new Set(current?.chapter.verses.map((v) => v.n) ?? []));
 
-	const cccCitationRows = $derived(
-		[...cccCitations.entries()]
-			.sort(([a], [b]) => a - b)
-			.map(([verse, paragraphs]) => ({
-				verse,
-				paragraphs,
-				present: verse === 0 || chapterVerseNumbers.has(verse)
-			}))
+	const documentCitations = $derived(getDocumentCitationsForChapter(data.osis, data.chapterN));
+
+	/**
+	 * A source group inside one verse's row: the work's name once, then every
+	 * place in it that cites this verse — "CCC (¶425 · ¶1108)", "Lumen Gentium
+	 * (§8 · §22)". Grouping rather than repeating the name per reference is
+	 * what keeps a heavily-cited verse readable; Matthew 25 draws on 237
+	 * document references across its verses, and naming each one's work
+	 * separately would be most of the panel.
+	 */
+	interface CitingSource {
+		key: string;
+		/** The short name shown in the row — "CCC", "Lumen Gentium". */
+		label: string;
+		/** The work's full name, shown on hover; null when it adds nothing. */
+		fullTitle: string | null;
+		refs: { n: number; label: string; href: string }[];
+	}
+
+	/**
+	 * The document's name in the edition this reader would actually open, and
+	 * its short title where the manifest has one — "Lumen Gentium" rather than
+	 * "Dogmatic Constitution on the Church Lumen Gentium". A slug with no
+	 * manifest at all is skipped rather than shown raw: it can only mean the
+	 * index outlived the work (a takedown between builds), and a bare slug is
+	 * not something to put in front of a reader.
+	 */
+	function documentSource(slug: string, sections: number[]): CitingSource | null {
+		const group = getDocumentGroup(slug);
+		if (!group) return null;
+		const lang = content.documentLangFor(slug);
+		const manifest = group.manifests[lang] ?? Object.values(group.manifests)[0];
+		if (!manifest) return null;
+		const label = manifest.short_title || manifest.title;
+		return {
+			key: `doc:${slug}`,
+			label,
+			fullTitle: manifest.title !== label ? manifest.title : null,
+			// A section is an anchor on the document's single page, not a page
+			// of its own — the same `#s{n}` target `refs.ts` links to. It is
+			// also a previewable address (`linkPreviewHref.ts`), so hovering a
+			// section number shows the text itself, not just its number.
+			refs: sections.map((n) => ({ n, label: `§${n}`, href: `/documenta/${slug}#s${n}` }))
+		};
+	}
+
+	/**
+	 * One row per cited verse, carrying every work that cites it — the
+	 * Catechism first, then the documents by display title. The verse scaffold
+	 * is built once and shared, which is the whole point of a single panel:
+	 * the reader looks up a verse, not a work.
+	 */
+	const citedInRows = $derived(
+		[...new Set([...cccCitations.keys(), ...documentCitations.keys()])]
+			.sort((a, b) => a - b)
+			.map((verse) => {
+				const paragraphs = cccCitations.get(verse) ?? [];
+				const ccc: CitingSource[] = paragraphs.length
+					? [
+							{
+								key: 'ccc',
+								label: t('bible.cccAbbrev'),
+								fullTitle: t('ccc.landing.title'),
+								refs: paragraphs.map((n) => ({
+									n,
+									label: `¶${n}`,
+									href: `/catechismus/${n}`
+								}))
+							}
+						]
+					: [];
+				const documents = (documentCitations.get(verse) ?? [])
+					.map((entry) => documentSource(entry.slug, entry.sections))
+					.filter((source): source is CitingSource => source !== null)
+					.sort((a, b) => a.label.localeCompare(b.label));
+				return {
+					verse,
+					present: verse === 0 || chapterVerseNumbers.has(verse),
+					sources: [...ccc, ...documents]
+				};
+			})
+			.filter((row) => row.sources.length > 0)
 	);
 
-	const cccCitationTotal = $derived(new Set(cccCitationRows.flatMap((row) => row.paragraphs)).size);
+	const citedInTotal = $derived(
+		citedInRows.reduce(
+			(sum, row) => sum + row.sources.reduce((n, source) => n + source.refs.length, 0),
+			0
+		)
+	);
 
 	// Reactive rather than onMount: the edition can now change without a
 	// navigation (the URL no longer names one), so "continue reading" has to
@@ -356,19 +437,19 @@
 				</div>
 			{/if}
 
-			{#if cccCitationRows.length > 0}
-				<section class="ccc-citations" aria-labelledby="ccc-citations-heading">
-					<h2 id="ccc-citations-heading">
-						{t('bible.citedInCcc')}
-						<span class="count">{cccCitationTotal}</span>
+			{#if citedInRows.length > 0}
+				<section class="cited-in" aria-labelledby="cited-in-heading">
+					<h2 id="cited-in-heading">
+						{t('bible.citedIn')}
+						<span class="count">{citedInTotal}</span>
 					</h2>
 					<ul>
-						{#each cccCitationRows as row (row.verse)}
+						{#each citedInRows as row (row.verse)}
 							<li>
 								<!-- Verse 0 is the corpus's whole-chapter citation sentinel
-						     (`verses: []`) — the Catechism cited the chapter, not a
-						     verse in it, and saying so is more honest than picking a
-						     verse or expanding across all of them. -->
+						     (`verses: []`) — the work cited the chapter, not a verse
+						     in it, and saying so is more honest than picking a verse
+						     or expanding across all of them. -->
 								<span class="verse-ref">
 									{#if row.verse === 0}
 										{t('bible.wholeChapter')}
@@ -380,10 +461,20 @@
 										</span>
 									{/if}
 								</span>
-								<span class="paragraphs">
-									{#each row.paragraphs as n, i (n)}
-										{#if i > 0}<span class="sep" aria-hidden="true">·</span>{/if}
-										<a href={`/catechismus/${n}`}>¶{n}</a>
+								<span class="sources">
+									{#each row.sources as source (source.key)}
+										<span class="source">
+											<span
+												class="source-label"
+												class:named={source.fullTitle !== null}
+												title={source.fullTitle ?? undefined}>{source.label}</span
+											><span class="refs"
+												>({#each source.refs as ref, i (ref.n)}{#if i > 0}<span
+															class="sep"
+															aria-hidden="true">·</span
+														>{/if}<a href={ref.href}>{ref.label}</a>{/each})</span
+											>
+										</span>
 									{/each}
 								</span>
 							</li>
@@ -518,15 +609,18 @@
 	/* Set as apparatus, not as reading text: sans-serif, small, muted, and
 	   below the chapter — deliberately not competing with the text it
 	   annotates (see the cccCitations docblock for why this is a footer
-	   summary rather than per-verse markers). */
-	.ccc-citations {
+	   summary rather than per-verse markers). One panel for every work that
+	   cites the chapter, not one per work type: the reader looks up a verse,
+	   so the verse scaffold is built once and each work names itself inside
+	   the row. */
+	.cited-in {
 		margin-top: 2.5rem;
 		padding-top: 1rem;
 		border-top: 1px solid var(--color-border);
 		font-size: 0.85rem;
 	}
 
-	.ccc-citations h2 {
+	.cited-in h2 {
 		margin: 0 0 0.6rem;
 		font-size: 0.75rem;
 		font-weight: 600;
@@ -538,7 +632,7 @@
 		gap: 0.5rem;
 	}
 
-	.ccc-citations .count {
+	.cited-in .count {
 		font-variant-numeric: tabular-nums;
 		border: 1px solid var(--color-border);
 		border-radius: 0.25rem;
@@ -546,7 +640,7 @@
 		letter-spacing: 0;
 	}
 
-	.ccc-citations ul {
+	.cited-in ul {
 		list-style: none;
 		margin: 0;
 		padding: 0;
@@ -557,32 +651,63 @@
 		gap: 0.3rem 0.9rem;
 	}
 
-	.ccc-citations li {
+	.cited-in li {
 		display: contents;
 	}
 
-	.ccc-citations .verse-ref {
+	.cited-in .verse-ref {
 		color: var(--color-text-muted);
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
 	}
 
-	.ccc-citations .verse-absent {
+	.cited-in .verse-absent {
 		cursor: help;
 		text-decoration: underline dotted;
 		text-decoration-color: var(--color-border);
 	}
 
-	.ccc-citations .paragraphs {
+	/* Groups wrap as a unit — a work's name must never end a line with its
+	   own references orphaned onto the next one. */
+	.cited-in .sources {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.15rem 0.7rem;
+	}
+
+	.cited-in .source {
+		white-space: nowrap;
 		font-variant-numeric: tabular-nums;
 	}
 
-	.ccc-citations .sep {
+	/* The work's name, said once per group. Quiet relative to the numbers
+	   beside it: those are the links, this is the label that tells you what
+	   they are. */
+	.cited-in .source-label {
+		color: var(--color-text-muted);
+	}
+
+	/* Only labels that actually shorten something get the affordance, so the
+	   dotted underline means "there is more to read here" rather than
+	   decorating every row. Same signal as `.verse-absent` above and
+	   `RefText`'s `.ref-unresolved`. */
+	.cited-in .source-label.named {
+		cursor: help;
+		text-decoration: underline dotted;
+		text-decoration-color: var(--color-border);
+		text-underline-offset: 0.15em;
+	}
+
+	.cited-in .refs {
+		margin-inline-start: 0.3em;
+	}
+
+	.cited-in .sep {
 		margin-inline: 0.3em;
 		color: var(--color-text-muted);
 	}
 
-	.ccc-citations a {
+	.cited-in a {
 		text-decoration-color: var(--color-border);
 		text-underline-offset: 0.15em;
 	}
