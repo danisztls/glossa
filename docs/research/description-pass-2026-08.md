@@ -18,33 +18,24 @@ fix. The corpus uses exactly two page shells: all 32 `vatii` works are the
 
 ## STATE AS OF 2026-08-21 — read this first
 
-**The schema migration is HALF LANDED. Do not run the scraper against the
-corpus until the site half is done.** `sections.json`'s `html` is committed and
-live; `structure.json`'s new shape is committed in the PARSER but the corpus on
-disk still holds the OLD shape, because the site still reads it. Re-parsing now
-would emit `{level, title, before}` into a tree the site expects to have
-`kind`/`paragraphs`/`children`, and every document page would break.
+**The schema migration is COMPLETE for the document works.** `sections.json`
+carries `html`; `structure.json` is the flat `{level, title, before}` array;
+`manifest.header` carries the masthead; the site reads all three. Corpus
+re-parsed (zero network fetches in phase 1; phase 2's 36 are translation
+probes, not re-crawls), `svelte-check` clean, 363 tests passing, build green.
 
-Done and committed:
+Still to do, in order:
 
-- `sections.json` blocks carry `html` (narrowed inline HTML, closed allowlist).
-  Round-trip verified on all 14,907 sections: `strip_tags(html)` reproduces the
-  stored `text` exactly. Corpus re-parsed and committed.
-- Parser emits the new flat `structure.json` (`level`/`title`/`before`),
-  extracts `manifest.header`, recovers plain-centered headings, and gates
-  italic promotion to the document body. **Not yet re-parsed into the corpus.**
-
-Next, in order:
-
-1. Site half — `site/src/lib/types.ts` (fork the document node off `CccNode`,
-   which is shared with CCC/Compendium/prayers and must not change yet),
-   `corpus.ts` (`getDocumentStructure`/`flattenDocumentStructure`),
-   `routes/documents/[slug]/+page.svelte` (`headingTag`, `displayTitle`,
-   `kind-${…}` classes, `node.paragraphs[0]` → `before`, `DIVISION_TAGS`),
-   `StructureSidebarToc.svelte`, fixtures and tests. Add a header element for
-   `manifest.header`.
-2. Re-parse the corpus, then commit corpus and site together.
-3. CCC and Compendium follow the same migration afterwards.
+1. **CCC and Compendium** have NOT been migrated — they still use
+   `CccNode` (`kind`/`n`/`paragraphs`/`children`) and `text_marked` without
+   `html`. `StructureNode` is deliberately unchanged for them, and
+   `DocumentNode` is a separate type. `ccc.py` and `compendium.py` need the
+   same treatment.
+2. **Resume the description sweep** — see the section below. 26 of 333 done.
+3. **The outstanding input-side parser fixes**, which are unrelated to storage
+   and still open: see "Parser fixes decided but NOT applied" below. The
+   footnote-capture defect (item 5) is the largest thing found in this pass and
+   outranks the heading variants.
 
 ### Known residuals in the new structure (accepted, not bugs to re-derive)
 
@@ -53,122 +44,13 @@ Next, in order:
   but collapses all 47 of Ad Petri Cathedram's headings onto one level,
   destroying the I/II part tier. Keeping the styling rank costs one awkward
   opening; forcing h1 costs a whole tier. Reasoning is in the code.
-- **`span[lang]` never survives.** `strip_transparent_spans` removes every span
-  before blocks are built, so the allowlist entry is currently inert and the
-  stored html contains zero. Recovering it means narrowing that function.
+- **`span[lang]` was dropped from the allowlist.** All 486 instances are
+  `lang="pt"` inside Portuguese documents — export noise, not semantics. No
+  follow-up needed; do not "restore" it.
 - Heading levels are a best-effort reading of loose source formatting. The
   intended cross-check is a **Sonnet pass that outputs each document's table of
   contents from `corpus/raw/`**, compared against the parser's — parsing alone
-  is not expected to be sufficient. Fold this into the resumed description
-  sweep's agent brief.
-
-## SUSPENDED 2026-08-21 — how to resume the description sweep
-
-**The sweep is paused after batch 2, deliberately, to migrate the corpus schema
-first** (`docs/decisions.md`, 2026-08-21 — storing paragraph HTML in JSON with a
-closed tag allowlist, and recording heading depth instead of a `kind`
-taxonomy). Resume after that lands, not before: several things the batch briefs
-ask agents to check stop existing under the new schema.
-
-**Progress: 26 of 333.** The ledger is `site/descriptions.json` itself — it is
-keyed by work id, so the remaining set is always every document work minus its
-keys, and no separate tracking file exists or should be created:
-
-```sh
-comm -23 \
-  <(ls corpus/works | grep -E '^(encyclical|vatii)\.' | sort) \
-  <(jq -r '.descriptions | keys[]' site/descriptions.json | sort)
-```
-
-Subtract the 6 zero-section works in `site/unpublished.json`, which cannot be
-described (nothing to read) and are not candidates.
-
-### What must change in the agent brief before resuming
-
-The batch-2 brief is written against the old schema and will mislead agents:
-
-- It asks for **`[null, null]` ranges**, **overlapping/skipped sibling ranges**,
-  and **parent ranges that do not span their children**. Under the new schema
-  ranges are derived, not stored, so all of these become unaskable. Drop them.
-- It says **"every node has `kind: sub`"** and asks whether the markup
-  distinguishes tiers. That question is answered and closed: it does, and the
-  new schema records observed depth. Replace with a check that the recorded
-  depth matches what the raw markup shows.
-- Keep, unchanged, the instruction that **`sections.json` greps prove nothing**
-  and that every structural claim must be verified against `corpus/raw/`. That
-  correction is what makes the reports trustworthy; batch 1 produced a confident
-  false negative without it (`adiutricem.en`, §5).
-
-### What has not changed
-
-- One agent per work per language, **Sonnet**, read-only. Agents return JSON and
-  never write: the coordinator applies `descriptions.json` in one batch, because
-  concurrent agents editing one file collide.
-- PT descriptions are written **from the PT text**, never translated from EN.
-- Batches are stratified across page shell and pontificate, not alphabetical, so
-  that defects surface while batches remain to benefit from a fix.
-- Every clause of a description must be quotable from a section the agent
-  actually opened.
-
-### Batch 3 candidates (selected, not yet run)
-
-Chosen to continue the stratification and to re-check the works this pass
-identified as damaged: `encyclical.ut-unum-sint.en`,
-`encyclical.redemptoris-missio.en`, `encyclical.redemptoris-mater.en` (all three
-carry the separator-split `CHAPTER` headings), `encyclical.dilexit-nos.en` (42
-plain-centered blocks, the largest such run), `encyclical.fratelli-tutti.en`
-(18), `encyclical.pergrata.en` and `encyclical.paenitentiam.en` (large italic
-recoveries, never described), plus unexamined Leo XIII and Pius XII works, which
-remain the two largest pontificates.
-
-### Parser fixes decided but NOT applied
-
-Carried into the migration work, still outstanding — see "Four more heading
-markup variants" below for evidence and counts:
-
-1. **Separator-tolerant bold** — `<b>CHAPTER I</b> - <b>Title</b>`. 8 blocks, 6
-   files. Currently _corrupts_ text by appending the heading to the preceding
-   section. Approved.
-2. **Keep dropped salutations** — lone italic blocks are discarded rather than
-   retained as content. 57+ files, both languages. Approved.
-3. Inline-style bold (`<span style="font-weight: 700">`) and number-outside-bold
-   (`N.<b> Title</b>`) — 4 blocks, `laudato-si.pt` only. Not yet decided.
-4. Plain-centered headings — 386 blocks / 199 files, but mostly furniture
-   (copyright lines, title blocks); only 24 files carry a run of >= 3. Real
-   damage where it bites (`evangelium-vitae.pt` loses three top-level chapters).
-   Not yet decided; needs a run-gated rule and its own diff review.
-
-5. **Footnote references are not captured for most works — the largest defect
-   found so far, and it outranks the heading variants.** Only **136 of 332**
-   works have any `citations` at all. For **43 works / 1,134 sections** the
-   source demonstrably has footnotes, because the references are still sitting
-   in the reading text as literal `[1]`, `[2]`: `mediator-dei.en` (107
-   sections), `casti-connubii.en` (67), `caritas-in-veritate.{en,pt}` (59
-   each), `divini-illius-magistri.en` (53). Not yet decided.
-
-   Cause: `detect_marker_template` is first-match, not best-match — `_ftnref`
-   gives `ftn`, any `<sup>` gives `sup`, and everything else falls back to
-   `paren`, which looks for `(N)`. A document whose references are plain `[N]`
-   matches no branch and silently gets `paren`, capturing nothing.
-   `caritas-in-veritate.pt` shows the other half of the problem: it was
-   detected as `sup` on the strength of a `<sup>` somewhere on the page and
-   still captured nothing. A `bracket` template plus scoring each candidate by
-   how many references it actually matches would address both.
-
-   Three smaller artifacts share this area and should be judged with it, since
-   all three leave debris in the reading text (275 sections, 46 works):
-   `dilexit-nos.en` duplicates each reference through a malformed nested
-   `<sup>`, leaving the marker's trailing digits (`⟦17⟧ [7]`, `⟦9⟧ []`);
-   `spe-salvi.en` and `sacrosanctum-concilium.en` wrap references in literal
-   brackets, so removing the marker leaves an empty `[]`; and both are distinct
-   from the unconverted-reference case above. Editorial ellipses `[...]` (64)
-   and `[…]` (41) are legitimate and must not be swept up by any fix.
-
-   **This was invisible to both batches** because the agent brief never asked
-   about citations. Add it to the brief when the sweep resumes.
-
-`LEVELS` reordering and the stored-range repairs are **deliberately dropped** —
-the new schema removes both problems rather than fixing them.
+  is not expected to be sufficient. Fold this into the resumed sweep's brief.
 
 ## Batch 1 (12 works)
 

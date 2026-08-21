@@ -41,6 +41,7 @@ import type {
 	CccParagraph,
 	CompendiumQuestion,
 	StructureNode,
+	DocumentNode,
 	WorkManifest
 } from './types';
 
@@ -161,7 +162,7 @@ interface CompendiumIndexFile {
  * not one canonical work per language.
  */
 interface DocumentIndexFile {
-	[workId: string]: { structure: StructureNode[]; sectionNumbers: number[] };
+	[workId: string]: { structure: DocumentNode[]; sectionNumbers: number[] };
 }
 /**
  * Existence/metadata for one prayer -- the index-tier projection of `Prayer`
@@ -407,7 +408,7 @@ export const compendiumStructures: Record<string, StructureNode[]> = USE_REAL_CO
  * empty results under fixtures for the same reason — see that file's
  * "Documents" section), so this is `{}` under vitest/no-corpus.
  */
-export const documentStructures: Record<string, StructureNode[]> = USE_REAL_CORPUS
+export const documentStructures: Record<string, DocumentNode[]> = USE_REAL_CORPUS
 	? Object.fromEntries(
 			Object.entries(single(realIndexDocuments) ?? {}).map(([workId, v]) => [workId, v.structure])
 		)

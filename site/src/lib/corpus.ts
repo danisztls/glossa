@@ -131,6 +131,7 @@ import type {
 	Prayer,
 	ScriptureRef,
 	StructureNode,
+	DocumentNode,
 	WorkManifest,
 	WorkType
 } from './types';
@@ -1092,12 +1093,77 @@ export function getDocumentManifest(workId: string): DocumentManifest | undefine
 // verbatim"), just addressing SECTION numbers via `.paragraphs` instead of
 // CCC paragraphs or Compendium questions.
 
-export function getDocumentStructure(workId: string): StructureNode[] {
+export function getDocumentStructure(workId: string): DocumentNode[] {
 	return documentStructures[workId] ?? [];
 }
 
-export function flattenDocumentStructure(workId: string): { node: StructureNode; depth: number }[] {
-	return flattenTree(getDocumentStructure(workId));
+/**
+ * Document structure is already flat and in document order
+ * (`docs/corpus-schema.md`, amended 2026-08-21), so unlike the CCC/Compendium
+ * this does not walk a tree: `depth` is just `level - 1`. Kept returning the
+ * same `{ node, depth }` row shape its callers already render.
+ */
+export function flattenDocumentStructure(workId: string): { node: DocumentNode; depth: number }[] {
+	return getDocumentStructure(workId).map((node) => ({ node, depth: node.level - 1 }));
+}
+
+/**
+ * The document outline as a NESTED tree with derived ranges, for the shared
+ * sidebar TOC — which walks `children` and reads `paragraphs`, and is also
+ * serving the CCC and Compendium, whose node shape has not changed.
+ *
+ * This is the derivation `docs/corpus-schema.md` specifies rather than a
+ * compatibility shim: a heading owns sections from its own anchor until the
+ * next heading of equal or shallower `level`, and nesting follows `level`
+ * directly. Deriving it here, once, is the point of not storing it — the
+ * stored ranges were what drifted from the text.
+ *
+ * `kind` is reported as `sub` throughout because a document node no longer
+ * claims one; the sidebar uses it only for a CSS hook, and indents from tree
+ * position.
+ */
+export function documentOutline(workId: string): StructureNode[] {
+	const sectionNs = documentSectionNumbers[workId] ?? [];
+	return buildDocumentOutline(
+		getDocumentStructure(workId),
+		sectionNs.length > 0 ? sectionNs[sectionNs.length - 1] : null
+	);
+}
+
+/** `documentOutline`'s derivation, split out so it is testable without a
+ *  corpus: documents have no fixtures, so `documentStructures` is `{}` under
+ *  vitest and the workId-taking wrapper can never exercise this. */
+export function buildDocumentOutline(rows: DocumentNode[], lastN: number | null): StructureNode[] {
+	const nodes: StructureNode[] = rows.map((row, i) => {
+		// Ends just before the next heading at this level or shallower; if
+		// none follows, it runs to the document's last section.
+		let end: number | null = lastN;
+		for (let j = i + 1; j < rows.length; j++) {
+			if (rows[j].level <= row.level) {
+				const nextStart = rows[j].before;
+				end = nextStart === null ? end : nextStart - 1;
+				break;
+			}
+		}
+		const start = row.before;
+		return {
+			kind: 'sub',
+			n: null,
+			title: row.title,
+			paragraphs: [start, start === null ? null : end],
+			children: []
+		} as StructureNode;
+	});
+
+	const roots: StructureNode[] = [];
+	const stack: { level: number; node: StructureNode }[] = [];
+	rows.forEach((row, i) => {
+		while (stack.length > 0 && stack[stack.length - 1].level >= row.level) stack.pop();
+		if (stack.length === 0) roots.push(nodes[i]);
+		else stack[stack.length - 1].node.children.push(nodes[i]);
+		stack.push({ level: row.level, node: nodes[i] });
+	});
+	return roots;
 }
 
 const documentSectionNumberSets: Record<string, Set<number>> = Object.fromEntries(

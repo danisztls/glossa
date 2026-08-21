@@ -275,7 +275,12 @@ function stripPrefixMatch(title: string, re: RegExp): string | null {
 	return rest.length > 0 ? rest : null;
 }
 
-function stripKindPrefix(title: string, kind: StructureNode['kind'], n: number, lang: Lang): string | null {
+function stripKindPrefix(
+	title: string,
+	kind: StructureNode['kind'],
+	n: number,
+	lang: Lang
+): string | null {
 	const tokens = kindPrefixTokens(kind, n, lang);
 	if (!tokens) return null;
 	// `\b` after a digit token (article) is what stops n=1's prefix from
@@ -312,6 +317,17 @@ function stripSubOrdinalPrefix(title: string, n: number, lang: Lang): string | n
  * unsplit-but-correctly-cased title over a guessed split matches the
  * "leave it untouched over mangling it" rule from the contract.
  */
+/**
+ * A DOCUMENT heading's display form. Unlike `displayTitle`, there is no
+ * ordinal to split off: a document node carries no `kind`/`n` to reconstruct
+ * one from, and its label ("PART I", "CHAPTER I") is part of the title text
+ * the source printed. Casing normalisation still applies, since vatican.va
+ * sets most headings in full caps.
+ */
+export function displayDocumentTitle(title: string, lang: string): DisplayTitle {
+	return { ordinal: null, title: finalize(normalizeCase(title, normLang(lang))) };
+}
+
 export function displayTitle(
 	node: Pick<StructureNode, 'kind' | 'n' | 'title'>,
 	lang: string
@@ -319,7 +335,10 @@ export function displayTitle(
 	const L = normLang(lang);
 	const { kind, n, title } = node;
 
-	if (n !== null && (kind === 'part' || kind === 'section' || kind === 'chapter' || kind === 'article')) {
+	if (
+		n !== null &&
+		(kind === 'part' || kind === 'section' || kind === 'chapter' || kind === 'article')
+	) {
 		const rest = stripKindPrefix(title, kind, n, L);
 		if (rest !== null) {
 			return { ordinal: `${n}.`, title: finalize(normalizeCase(rest, L)) };

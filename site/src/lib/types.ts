@@ -91,6 +91,18 @@ export interface DocumentManifest extends WorkManifestBase {
 	/** The document's own promulgation date (ISO 8601 date) -- distinct from `sources[].retrieved_at`. */
 	promulgated: IsoDate;
 	/**
+	 * The masthead the source page itself prints above the text -- the kind of
+	 * document, its title, the promulgating pontiff, the date -- as narrowed
+	 * html (`docs/corpus-schema.md`, amended 2026-08-21), with vatican.va's
+	 * language selector stripped. This is real content, not chrome: it is what
+	 * the printed edition puts on its first page. Kept out of `structure.json`
+	 * because it is not a heading -- left in the block stream it became a
+	 * phantom top-level node, and Rerum Novarum's entire two-node "outline"
+	 * was its own title and subtitle. Absent for a work whose page prints
+	 * none; render nothing rather than a placeholder.
+	 */
+	header?: string;
+	/**
 	 * One-line summary of what the document is about, shown in the
 	 * `/documents` list. Optional and currently absent from every manifest in
 	 * the corpus: the pipeline has no source for it (vatican.va publishes no
@@ -169,6 +181,29 @@ export interface CccNode {
  * a Compendium `StructureNode[]` must read `.paragraphs` as a question range.
  */
 export type StructureNode = CccNode;
+
+/**
+ * A heading in a DOCUMENT's structure (`docs/corpus-schema.md`, amended
+ * 2026-08-21). Deliberately NOT `StructureNode`: documents record what the
+ * source shows rather than what it means.
+ *
+ * - `level` is observed depth, 1-based and contiguous within the document. It
+ *   is not a taxonomy. The old `kind` made the scraper judge whether a heading
+ *   *meant* "chapter" or "section", which the sources do not reliably encode,
+ *   and that judgement is what nested chapters inside sections in Gaudium et
+ *   Spes.
+ * - `before` is the section number this heading precedes — its anchor. `null`
+ *   is trailing matter the numbered flow never reaches, and is unlinkable, the
+ *   same posture as a null `paragraphs` bound on a `CccNode`.
+ * - The array is FLAT and in document order. Nesting and ranges are derived:
+ *   a heading owns sections from its anchor until the next heading of equal or
+ *   shallower `level`. Storing ranges is what let them drift from the text.
+ */
+export interface DocumentNode {
+	level: number;
+	title: string;
+	before: number | null;
+}
 
 export interface CccCitation {
 	/** Marker key, matches a `⟦marker⟧` token in the paragraph's `text_marked` blocks. */

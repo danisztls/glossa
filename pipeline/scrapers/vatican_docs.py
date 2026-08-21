@@ -364,7 +364,6 @@ def strip_tags(s: str) -> str:
 # which is what makes the migration checkable rather than merely plausible.
 _HTML_ALLOWED_SIMPLE = {"i": "i", "em": "i", "b": "b", "strong": "b"}
 _TAG_RE = re.compile(r"<\s*(/?)\s*([a-zA-Z][a-zA-Z0-9]*)\b([^>]*?)(/?)\s*>")
-_LANG_ATTR_RE = re.compile(r"\blang\s*=\s*[\"']?([A-Za-z-]{2,8})[\"']?")
 _FN_EL_RE = re.compile(r"<sup\s+data-fn=\"[^\"]*\"\s*></sup>")
 
 
@@ -377,7 +376,6 @@ def narrow_html(marked_html: str, dropped: collections.Counter | None = None) ->
     counted into `dropped` for anomaly reporting -- logged, never silently
     absent, the same posture as everything else in this scraper."""
     out: list[str] = []
-    span_kept: list[bool] = []
     pos = 0
     for m in _TAG_RE.finditer(marked_html):
         out.append(marked_html[pos : m.start()])
@@ -400,14 +398,11 @@ def narrow_html(marked_html: str, dropped: collections.Counter | None = None) ->
             # by the data-fn attribute, which only marker elements carry.
             out.append("</sup>" if closing else "<sup>")
         elif name == "span":
-            if closing:
-                out.append(
-                    "</span>" if (span_kept.pop() if span_kept else False) else " "
-                )
-            else:
-                lang = _LANG_ATTR_RE.search(attrs)
-                span_kept.append(bool(lang))
-                out.append(f'<span lang="{lang.group(1)}">' if lang else " ")
+            # Not allowlisted. `span[lang]` looked like semantics worth keeping
+            # until its values were read: all 486 occurrences are lang="pt"
+            # inside Portuguese documents, wrapping Portuguese headings. Export
+            # noise. The text is kept; the wrapper is not.
+            out.append(" ")
         else:
             if dropped is not None and not closing:
                 dropped[name] += 1

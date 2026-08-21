@@ -339,13 +339,14 @@ inside numbered body paragraphs across 465 raw pages:
 | ---------------------- | ------------------------------------------------------------------------------------------------------------ | -------------- | ----------------------------------------------------- |
 | `i` (9,901 + 794 `em`) | the documented v1 italics loss, recovered                                                                    | `a` (7,206)    | footnote apparatus, already modelled as `citations[]` |
 | `b` (352)              | real inline bold                                                                                             | `font` (3,408) | legacy presentation (`size`/`face`/`color`)           |
-| `span[lang]` (263)     | marks Latin inside vernacular; free semantics we currently discard                                           | `a` attrs      | anchors carry only footnote plumbing                  |
+| —                      |                                                                                                              | `span[lang]`   | export noise — see the correction below               |
 | `sup` (739)            | footnote refs become `<sup data-fn>`; the 106 that survive marking are real typography (`Paris 1960²`, `2ª`) |                |                                                       |
 | `br` (149)             | meaningful line breaks                                                                                       | `u` (1)        | single occurrence                                     |
 | `blockquote`           | block-level, covers the 11 quote cases                                                                       |                |                                                       |
 
 Measuring corrected two guesses: `<small>` does not occur anywhere and would
 have been allowlisted on assumption, and `span[lang]` would have been missed.
+(`span[lang]` was then dropped again — see the fourth correction below.)
 A third correction came from the round-trip run itself: `sup` was first written
 down here as dropped, on the assumption it was purely the footnote-marker
 template. 106 of them across 11 files survive `mark_footnotes`, and about half
@@ -353,6 +354,17 @@ are genuine superscripts inside bibliographic citations, which dropping would
 flatten (`1960²` to `1960 2`). Keeping bare `<sup>` is invariant-neutral — it
 strips to a space either way — so it is allowlisted, and the renderer
 distinguishes a footnote from typography by the `data-fn` attribute.
+
+A fourth correction, and the sharpest: `span[lang]` was allowlisted on the
+reasoning that it "marks Latin inside vernacular text". It does not. All 486
+instances are `lang="pt"` inside Portuguese documents — three `__pt.html`
+files — wrapping ordinary Portuguese headings (`<span lang="pt">Normas
+concretas</span>`). It is word-processor export noise, and the justification
+was inferred from the attribute's NAME without reading its values, which is
+exactly the error a measured allowlist exists to prevent. Dropped: the text
+inside is kept regardless, only the redundant wrapper goes. It was inert in any
+case, since `strip_transparent_spans` removes every span before blocks are
+built.
 `em` normalises to `i` — HTML5's `<i>` means idiomatic text (foreign phrases,
 work titles), which is what this corpus italicises, while `<em>` means stress
 emphasis.
@@ -633,7 +645,16 @@ the implementation record):
   > Si's chapter markers — and italic promotion now gated to the body too, which
   > stops salutations being promoted in documents that also have a heading run.
 
-**Not done**: the site half. The corpus on disk still holds the OLD
-`structure.json` shape deliberately, because the site reads it; do not re-parse
-until `site/` is migrated. See `docs/research/description-pass-2026-08.md` for
-the ordered next steps and the accepted residuals.
+**Site half, landed the same day**: `DocumentNode` is a new type in
+`types.ts` rather than a change to `CccNode`, which the CCC, Compendium and
+prayers still share and which is deliberately untouched. `documentOutline`
+(corpus.ts) derives the nesting and the ranges the schema specifies -- a
+heading owns sections from its anchor until the next heading of equal or
+shallower level -- so the shared sidebar TOC, which walks `children` and reads
+`paragraphs` for three work types, needed no fork. That derivation is the one
+place the risk now lives, so it is split into a pure `buildDocumentOutline` and
+unit-tested against the shapes the stored ranges used to get wrong.
+`manifest.header` renders as a masthead element above the text.
+
+**Still on the old shape**: the CCC and the Compendium. They need the same
+migration, and until then `StructureNode` must keep its current meaning.

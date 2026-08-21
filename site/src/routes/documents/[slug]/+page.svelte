@@ -42,18 +42,19 @@
 	} from '$lib/compare-nav.svelte';
 	import { useScrollSpy } from '$lib/scroll-spy.svelte';
 	import { setPosition } from '$lib/reading-position';
-	import { displayTitle } from '$lib/titles';
+	import { displayDocumentTitle } from '$lib/titles';
 	import { documentKindLabel } from '$lib/document-labels';
 	import { formatPromulgated } from '$lib/dates';
 	import { content } from '$lib/content.svelte';
 	import {
 		flattenDocumentStructure,
+		documentOutline,
 		getDocumentGroup,
 		getDocumentSectionsAsync,
 		unpublishedInfo
 	} from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
-	import type { DocumentSection, StructureNode } from '$lib/types';
+	import type { DocumentSection, DocumentNode } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -161,6 +162,13 @@
 	// `+page.ts` load step: it's read reactively here.
 	const structureRows = $derived(current ? flattenDocumentStructure(current.work.id) : []);
 
+	// The shared sidebar walks `children` and reads `paragraphs`, so it gets
+	// the derived nested outline rather than the flat corpus rows the inline
+	// table of contents renders. See `documentOutline` in corpus.ts.
+	const sidebarRows = $derived(
+		current ? documentOutline(current.work.id).map((node) => ({ node, depth: 0 })) : []
+	);
+
 	// Index structure rows by the section number they open at, so the template
 	// can ask "which headings belong right before section N" in O(1) while it
 	// walks `current.sections` in corpus order below. A single section number
@@ -169,9 +177,9 @@
 	// them in pre-order (ancestor before descendant), so appending to each
 	// bucket in iteration order keeps them correctly nested without a sort.
 	const headingsByStart = $derived.by(() => {
-		const map = new Map<number, { node: StructureNode; depth: number }[]>();
+		const map = new Map<number, { node: DocumentNode; depth: number }[]>();
 		for (const row of structureRows) {
-			const start = row.node.paragraphs[0];
+			const start = row.node.before;
 			// Unnumbered front/back matter (docs/corpus-schema.md's null-bound
 			// convention) has no section to anchor itself before — nothing wrong
 			// with the node, just nowhere in the numbered flow it belongs.
@@ -203,7 +211,7 @@
 	const divisionStarts = $derived.by(() => {
 		const out = new Set<number>();
 		for (const [start, rows] of headingsByStart) {
-			if (rows.some((row) => DIVISION_TAGS.has(headingTag(row.node.kind)))) out.add(start);
+			if (rows.some((row) => DIVISION_TAGS.has(headingTag(row.node.level)))) out.add(start);
 		}
 		return out;
 	});
@@ -282,22 +290,12 @@
 	// title above, so this starts at `h2` rather than mirroring `kind` depth
 	// 1-for-1 (a document's tree can run four levels deep, and HTML only has
 	// five heading levels below `h1` to spend on it).
-	function headingTag(kind: StructureNode['kind']): string {
-		switch (kind) {
-			case 'part':
-			case 'section':
-				return 'h2';
-			case 'chapter':
-				return 'h3';
-			case 'article':
-				return 'h4';
-			case 'sub':
-				return 'h5';
-			default:
-				// `prologue`/`in-brief` — the latter never appears in a document
-				// tree (a CCC-only summarization device), the former rarely.
-				return 'h3';
-		}
+	function headingTag(level: number): string {
+		// The document's own <h1> is its title, so a level-1 heading is an h2
+		// and so on, clamped at h6. `level` is contiguous per document
+		// (docs/corpus-schema.md, amended 2026-08-21), so this no longer has
+		// to map a taxonomy onto a depth — the depth is what was recorded.
+		return `h${Math.min(level + 1, 6)}`;
 	}
 
 	/**
@@ -366,6 +364,17 @@
 				</time>
 			</p>
 
+			{#if metaManifest.header}
+				<!-- The source page's own masthead, verbatim. `{@html}` is safe
+				     here specifically: this string is produced by the scraper's
+				     closed tag allowlist (i/b/br/sup/blockquote), not passed
+				     through from the source -- see `narrow_html` in
+				     pipeline/scrapers/vatican_docs.py. -->
+				<div class="document-masthead" lang={metaManifest.language}>
+					{@html metaManifest.header}
+				</div>
+			{/if}
+
 			{#if takedown}
 				<UnpublishedNotice manifest={metaManifest} info={takedown} />
 			{:else}
@@ -392,10 +401,10 @@
 					>
 						<h2 class="toc-inline-heading">{t('document.tableOfContents')}</h2>
 						<ol>
-							{#each structureRows as { node, depth } (node.title + node.paragraphs.join('-'))}
-								{@const anchor = node.paragraphs[0]}
-								{@const dt = displayTitle(node, lang)}
-								<li style={`--depth: ${depth}`} class={`kind-${node.kind}`}>
+							{#each structureRows as { node, depth } (node.title + node.before)}
+								{@const anchor = node.before}
+								{@const dt = displayDocumentTitle(node.title, lang)}
+								<li style={`--depth: ${depth}`} class={`level-${node.level}`}>
 									{#if Number.isFinite(anchor)}
 										<a href={`#s${anchor}`}>
 											{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
@@ -450,10 +459,10 @@
 					{/if}
 					<div class="reading-text document-body" lang={current.work.language}>
 						{#each current.sections as section, i (section.n)}
-							{#each headingsByStart.get(section.n) ?? [] as { node, depth } (node.title + node.paragraphs.join('-'))}
-								{@const dt = displayTitle(node, lang)}
+							{#each headingsByStart.get(section.n) ?? [] as { node, depth } (node.title + node.before)}
+								{@const dt = displayDocumentTitle(node.title, lang)}
 								<svelte:element
-									this={headingTag(node.kind)}
+									this={headingTag(node.level)}
 									class="structure-heading"
 									style={`--depth: ${depth}`}
 								>
@@ -494,7 +503,7 @@
 			     `.toc-inline` above does this job instead. -->
 			<aside class="reading-aside">
 				<StructureSidebarToc
-					structure={structureRows}
+					structure={sidebarRows}
 					currentN={spy.current}
 					{lang}
 					heading={t('document.tableOfContents')}
@@ -530,6 +539,18 @@
 		color: var(--color-text-muted);
 		font-size: 0.95rem;
 		margin: 0 0 0.5rem;
+	}
+
+	/* The source's own masthead. Set quieter than the reading text and
+	   centred the way the printed page sets it, so it reads as the
+	   document's title page rather than as its first paragraph. */
+	.document-masthead {
+		color: var(--color-text-muted);
+		font-size: 0.95rem;
+		line-height: 1.5;
+		text-align: center;
+		text-wrap: balance;
+		margin: 1.25rem 0 1.5rem;
 	}
 
 	.subtitle .sep {
