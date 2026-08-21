@@ -602,3 +602,38 @@ _Ecclesiam Suam_. That is wrong in the corpus, not in this panel, and it
 already shows in the document library and the home page. Correcting it in the
 view would be inventing text; it belongs in the scraper's title derivation,
 with a source for the real titles.
+
+**What actually landed, 2026-08-21** (the entry above is the design; this is
+the implementation record):
+
+- `sections.json` carries `html` per block. Verified over all 14,907 sections.
+  The oracle earned its keep immediately, catching two bugs that reading the
+  code would not have: a paragraph number padded with `&nbsp;` passed the text
+  gate while the html strip silently no-opped, leaving "9." in nine
+  paragraphs; widening the padding to any named entity then swallowed a leading
+  `&quot;` from 359 sections. Both would have shipped looking like source
+  defects.
+- `sup` was allowlisted after all — see the correction note above.
+- `structure.json` becomes a flat `{level, title, before}` array. Levels are
+  assigned by walking the document, not by a per-heading rank: a heading
+  directly after another with no section between is its subtitle and sits one
+  level under it; a heading whose styling was seen before keeps its first
+  level, so siblings stay siblings; otherwise the global rank applies but never
+  descends more than one level. The result is compacted to contiguous `1..N`.
+  Labelled headings outrank unlabelled, because styling alone inverts —
+  vatican.va wraps Gaudium et Spes's chapters in `<center>` and prints `PART I`
+  as an ordinary left-aligned paragraph.
+- `manifest.header` captures the document's own masthead, with the language
+  selector stripped. Leaving it in the block stream made it a phantom
+  top-level structure node; Rerum Novarum's entire two-node "outline" was its
+  own title and subtitle.
+- Two more input-side heading recoveries: plain-centered runs (gated to runs of
+  > = 3 inside the numbered body, which is where page furniture never is) —
+  > this is what restores Ad Petri Cathedram's I/II/III/IV part tier and Laudato
+  > Si's chapter markers — and italic promotion now gated to the body too, which
+  > stops salutations being promoted in documents that also have a heading run.
+
+**Not done**: the site half. The corpus on disk still holds the OLD
+`structure.json` shape deliberately, because the site reads it; do not re-parse
+until `site/` is migrated. See `docs/research/description-pass-2026-08.md` for
+the ordered next steps and the accepted residuals.

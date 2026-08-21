@@ -16,7 +16,53 @@ alphabetical, so that defects surface while batches remain to benefit from a
 fix. The corpus uses exactly two page shells: all 32 `vatii` works are the
 **old** shell, all 307 encyclicals the **modern** one.
 
-## SUSPENDED 2026-08-21 — how to resume
+## STATE AS OF 2026-08-21 — read this first
+
+**The schema migration is HALF LANDED. Do not run the scraper against the
+corpus until the site half is done.** `sections.json`'s `html` is committed and
+live; `structure.json`'s new shape is committed in the PARSER but the corpus on
+disk still holds the OLD shape, because the site still reads it. Re-parsing now
+would emit `{level, title, before}` into a tree the site expects to have
+`kind`/`paragraphs`/`children`, and every document page would break.
+
+Done and committed:
+
+- `sections.json` blocks carry `html` (narrowed inline HTML, closed allowlist).
+  Round-trip verified on all 14,907 sections: `strip_tags(html)` reproduces the
+  stored `text` exactly. Corpus re-parsed and committed.
+- Parser emits the new flat `structure.json` (`level`/`title`/`before`),
+  extracts `manifest.header`, recovers plain-centered headings, and gates
+  italic promotion to the document body. **Not yet re-parsed into the corpus.**
+
+Next, in order:
+
+1. Site half — `site/src/lib/types.ts` (fork the document node off `CccNode`,
+   which is shared with CCC/Compendium/prayers and must not change yet),
+   `corpus.ts` (`getDocumentStructure`/`flattenDocumentStructure`),
+   `routes/documents/[slug]/+page.svelte` (`headingTag`, `displayTitle`,
+   `kind-${…}` classes, `node.paragraphs[0]` → `before`, `DIVISION_TAGS`),
+   `StructureSidebarToc.svelte`, fixtures and tests. Add a header element for
+   `manifest.header`.
+2. Re-parse the corpus, then commit corpus and site together.
+3. CCC and Compendium follow the same migration afterwards.
+
+### Known residuals in the new structure (accepted, not bugs to re-derive)
+
+- **Laudato Si' opens at h4.** Its introduction has four sub-headings and no
+  heading of its own. Anchoring every document's first heading at h1 fixes it
+  but collapses all 47 of Ad Petri Cathedram's headings onto one level,
+  destroying the I/II part tier. Keeping the styling rank costs one awkward
+  opening; forcing h1 costs a whole tier. Reasoning is in the code.
+- **`span[lang]` never survives.** `strip_transparent_spans` removes every span
+  before blocks are built, so the allowlist entry is currently inert and the
+  stored html contains zero. Recovering it means narrowing that function.
+- Heading levels are a best-effort reading of loose source formatting. The
+  intended cross-check is a **Sonnet pass that outputs each document's table of
+  contents from `corpus/raw/`**, compared against the parser's — parsing alone
+  is not expected to be sufficient. Fold this into the resumed description
+  sweep's agent brief.
+
+## SUSPENDED 2026-08-21 — how to resume the description sweep
 
 **The sweep is paused after batch 2, deliberately, to migrate the corpus schema
 first** (`docs/decisions.md`, 2026-08-21 — storing paragraph HTML in JSON with a

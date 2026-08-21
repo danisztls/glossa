@@ -463,6 +463,30 @@ def is_full_italic(inner_html: str) -> bool:
     return bool(ital) and ital == full_text
 
 
+_CENTERED_RE = re.compile(
+    r'align\s*=\s*["\']?center|text-align:\s*center', re.IGNORECASE
+)
+
+
+def heading_style_rank(outer_html: str, inner_html: str, is_center_tag: bool) -> int:
+    """Rank a heading block by how it LOOKS, not by what it means.
+
+    The corpus distinguishes heading tiers visually and does so consistently
+    (docs/research/description-pass-2026-08.md): centered headings outrank
+    left-aligned ones, and within either, a plain-bold heading outranks a
+    bold-italic one. `haurietis-aquas.pt` splits 7 centered against 21 left
+    bold-italic, `sacrosanctum-concilium.pt` 16 against 83,
+    `deus-caritas-est.pt` 5 against 13.
+
+    Ranks are compared only WITHIN one document and then compacted to
+    contiguous levels, so the absolute numbers carry no meaning across works
+    -- a document using only centered and left-italic headings gets levels 1
+    and 2, not 1 and 4."""
+    centered = is_center_tag or bool(_CENTERED_RE.search(outer_html))
+    italic = bool(re.search(r"<(i|em)\b", inner_html, re.IGNORECASE))
+    return (0 if centered else 2) + (1 if italic else 0)
+
+
 def fold(s: str) -> str:
     s = unicodedata.normalize("NFKD", s.upper())
     return "".join(c for c in s if not unicodedata.combining(c))
@@ -1001,6 +1025,8 @@ class Node:
         self.title = title
         self.level = level
         self.children: list[Node] = []
+        self.depth: int = 1  # observed heading level, compacted per document
+        self.before: int | None = None  # the section this heading precedes
         self.own: set[int] = set()
         self.span: tuple[int | None, int | None] = (None, None)
         self.has_unnumbered = (
@@ -1149,6 +1175,7 @@ class ScrapeState:
         # reported gap rather than guessed at.
         self.pending_first_block: str | None = None
         self.pending_first_html: str | None = None
+        self.pending_headings: list[Node] = []
         self.content_started = False
         self.empty_nest_depth = 0
         self.current_footnote_table: dict[str, str] = {}
@@ -1166,7 +1193,9 @@ class ScrapeState:
                 return node.n
         return None
 
-    def push_heading(self, kind: str, n: int | None, title: str) -> None:
+    def push_heading(
+        self, kind: str, n: int | None, title: str, depth: int = 1
+    ) -> None:
         self.finalize_open_section()
         level = LEVELS[kind]
         # A heading that has taken no content yet is the PARENT of the
@@ -1205,10 +1234,19 @@ class ScrapeState:
             self.stack.append(prev)
             return
         node = Node(kind, n, title, level)
+        node.depth = depth
         parent_children.append(node)
         self.stack.append(node)
+        self.pending_headings.append(node)
 
     def start_section(self, n: int, kind: str, text: str, html: str = "") -> None:
+        # Every heading seen since the last section began anchors here: this
+        # is the section it precedes, which is what `before` means. Headings
+        # with no following section keep `before = None` -- trailing matter
+        # the numbered flow never reaches.
+        for node in self.pending_headings:
+            node.before = n
+        self.pending_headings.clear()
         self.content_started = True
         self.empty_nest_depth = 0
         sec = Section(n=n, chapter=self.current_chapter())
@@ -1267,6 +1305,7 @@ class Block:
     text: str  # marked text (⟦n⟧ tokens embedded), tags stripped
     raw: str  # raw inner html, for paragraph-number detection
     html: str = ""  # narrowed inline html (docs/decisions.md, 2026-08-21)
+    style: int = 9  # observed heading style rank; see heading_style_rank
 
 
 def mark_and_split(raw: str, marker_template: str) -> tuple[str, str, str]:
@@ -1559,15 +1598,109 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
     pages wrap an ordinary numbered paragraph (Redemptor Hominis EN's
     `<p><b><i>10 . The human dimension...`), and turning one into a
     heading would cost a section rather than gain a heading."""
+    numbered = [
+        i for i, b in enumerate(blocks) if not b.is_heading and match_para_num(b.raw)
+    ]
+    body_start = numbered[0] if numbered else -1
     candidates = [
         i
         for i, blk in enumerate(blocks)
-        if not blk.is_heading
+        if i > body_start
+        and not blk.is_heading
         and blk.kind != "quote"
         and len(blk.text) <= _ITALIC_HEADING_MAX_CHARS
         and match_para_num(blk.raw) is None
         and _SECTION_TITLE_HEADING_RE.match(blk.text) is None
         and is_full_italic(blk.raw)
+    ]
+    if len(candidates) < _ITALIC_HEADING_MIN_RUN:
+        return []
+    for i in candidates:
+        blocks[i].is_heading = True
+    return [blocks[i].text for i in candidates]
+
+
+_LANG_BAR_PREFIX_RE = re.compile(r"^\s*\[\s*[A-Za-z]{2}\s*(?:-\s*[A-Za-z]{2}\s*)+\]\s*")
+
+
+def extract_document_header(
+    blocks: list[Block], slug: str, pontiff: str
+) -> tuple[str, int]:
+    """Split the document's own printed masthead off the front of the stream.
+
+    Every page opens with one -- "CONSTITUIÇÃO CONCILIAR SACROSANCTUM
+    CONCILIUM SOBRE A SAGRADA LITURGIA", "ENCYCLICAL OF POPE LEO XIII ON
+    CAPITAL AND LABOR" -- and it is real content worth showing, not furniture
+    to discard. What it is NOT is a heading: left in the block stream it
+    becomes a phantom top-level structure node, which is how Rerum Novarum
+    ended up with a two-node "outline" consisting of its own title and
+    subtitle.
+
+    vatican.va prints its language selector in the same region, sometimes as
+    its own block and sometimes run together with the masthead, so the bar is
+    stripped wherever it appears.
+
+    The boundary cannot be styling: Sacrosanctum Concilium's masthead is not
+    bold while Rerum Novarum's title is. It is identity instead -- a leading
+    block belongs to the header while it names the document (every
+    significant word of the slug) or names its author. The first block that
+    does neither is the document's first real heading, and the scan stops
+    there rather than running to the first numbered section, which would
+    swallow a genuine PREFACE or PROÉMIO."""
+    slug_words = [w for w in fold(slug.replace("-", " ")).split() if len(w) > 2]
+    pont = fold(pontiff or "").strip()
+    taken = 0
+    kept: list[str] = []
+    for b in blocks:
+        if match_para_num(b.raw):
+            break
+        flat = " ".join(b.text.split())
+        bar_only = bool(_LANG_BAR_RE.match(flat))
+        folded = fold(_LANG_BAR_PREFIX_RE.sub("", flat))
+        names_doc = bool(slug_words) and all(w in folded for w in slug_words)
+        names_author = bool(pont) and pont in folded
+        if not (bar_only or names_doc or names_author):
+            break
+        taken += 1
+        if not bar_only:
+            html = _LANG_BAR_PREFIX_RE.sub("", b.html).strip()
+            if html:
+                kept.append(html)
+    if not taken:
+        return "", 0
+    del blocks[:taken]
+    return " ".join(kept).strip(), taken
+
+
+def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
+    """Recover headings the source centres but never emphasises.
+
+    `Ad Petri Cathedram` marks its four parts as bare `<p align="CENTER">I</p>`
+    and `Laudato Si'` its chapters the same way -- no bold, no italic, nothing
+    for `is_full_bold` or the italic run to catch. The result is not merely a
+    missing heading: the tier ABOVE the titled headings vanishes, so a
+    45-heading document flattens to one level.
+
+    Gated twice, because this shape is mostly page furniture across the corpus
+    (386 blocks in 199 files, dominated by copyright lines and title blocks):
+    only runs of >= 3 count, and only blocks sitting INSIDE the numbered body,
+    which is where furniture never is."""
+    numbered = [
+        i for i, b in enumerate(blocks) if not b.is_heading and match_para_num(b.raw)
+    ]
+    if not numbered:
+        return []
+    lo, hi = numbered[0], numbered[-1]
+    candidates = [
+        i
+        for i, b in enumerate(blocks)
+        if lo < i < hi
+        and not b.is_heading
+        and b.kind != "quote"
+        and b.style == 0  # centred, no italic, and not bold or it would be a heading
+        and len(b.text) <= _ITALIC_HEADING_MAX_CHARS
+        and match_para_num(b.raw) is None
+        and _SECTION_TITLE_HEADING_RE.match(b.text) is None
     ]
     if len(candidates) < _ITALIC_HEADING_MIN_RUN:
         return []
@@ -1998,6 +2131,7 @@ class ParseResult:
     footnote_evidence: str
     fetched_url: str
     retrieved_at: str
+    header: str = ""  # the document's own printed masthead, as narrowed html
 
 
 _TRANSPARENT_SPAN_RE = re.compile(r"</?span(?:\s[^>]*)?>", re.IGNORECASE)
@@ -2050,7 +2184,12 @@ STUB_CONTENT_MIN_CHARS = 300
 
 
 def parse_document(
-    html: str, lang: str, corrections: list[dict], fetched_url: str
+    html: str,
+    lang: str,
+    corrections: list[dict],
+    fetched_url: str,
+    slug: str = "",
+    pontiff: str = "",
 ) -> ParseResult:
     html = strip_transparent_spans(html)
     testo_m = re.search(r'class="testo"', html)
@@ -2137,6 +2276,7 @@ def parse_document(
                 text,
                 inner,
                 narrow_html(marked, dropped_tags),
+                heading_style_rank(m.group(0), inner, kind == "center"),
             )
         )
     # Trailing gap after the last block match (or the whole region, if
@@ -2155,12 +2295,31 @@ def parse_document(
     # Recover sub-headings the source marks with italics rather than bold.
     # Runs BEFORE the table-of-contents strip so that a TOC printed in that
     # style is still a candidate for it. See promote_italic_heading_run.
+    # Compact observed heading styles to contiguous levels 1..N for THIS
+    # document (see heading_style_rank). Done before the walker so every
+    # push_heading can record the level the source actually showed.
     promoted = promote_italic_heading_run(blocks)
     if promoted:
         state.anomalies.append(
             f"italic heading run promoted ({len(promoted)}): "
             + ", ".join(repr(t[:40]) for t in promoted[:5])
             + (" ..." if len(promoted) > 5 else "")
+        )
+
+    # Take the masthead off the front before anything can mistake it for a
+    # heading. See extract_document_header.
+    header_html, header_blocks = extract_document_header(blocks, slug, pontiff)
+    if header_blocks:
+        state.anomalies.append(
+            f"document header captured ({header_blocks} block(s)): {header_html[:80]!r}"
+        )
+
+    plain = promote_plain_centered_run(blocks)
+    if plain:
+        state.anomalies.append(
+            f"plain centered heading run promoted ({len(plain)}): "
+            + ", ".join(repr(t[:40]) for t in plain[:5])
+            + (" ..." if len(plain) > 5 else "")
         )
 
     for text in drop_table_of_contents(blocks, match_label):
@@ -2179,6 +2338,113 @@ def parse_document(
         summary = ", ".join(f"{t}x{c}" for t, c in dropped_tags.most_common(8))
         state.anomalies.append(f"html tags outside allowlist, text kept: {summary}")
 
+    # Depth key per heading, compacted to contiguous levels 1..N below.
+    #
+    # A LABEL beats appearance. Styling alone inverts Gaudium et Spes: it
+    # wraps each CHAPTER in <center> but prints "PART I" as an ordinary
+    # left-aligned bold paragraph, so a purely visual rank puts chapters
+    # ABOVE parts -- the same inversion the old `kind` taxonomy produced,
+    # arrived at from the other direction. Where the source names its own
+    # divisions, that naming is the most direct statement of depth it
+    # makes, so labelled headings sort by label and unlabelled ones sort
+    # by appearance strictly beneath them (docs/decisions.md, 2026-08-21).
+    _LABEL_DEPTH = {"part": 1, "chapter": 2, "section": 3, "article": 4}
+    _FRONT_BACK_MATTER = {
+        "PREFACE",
+        "PREFACIO",
+        "PROEMIO",
+        "PROEMIUM",
+        "PROLOGO",
+        "PROLOGUE",
+        "INTRODUCTION",
+        "INTRODUCAO",
+        "INTRODUZIONE",
+        "CONCLUSION",
+        "CONCLUSAO",
+        "CONCLUSIONE",
+        "EPILOGUE",
+        "EPILOGO",
+        "APPENDIX",
+        "APENDICE",
+        "BLESSING",
+    }
+
+    def depth_key(b: Block) -> tuple[int, int]:
+        matched = match_label(b.text)
+        if matched is not None and matched[0] in _LABEL_DEPTH:
+            return (0, _LABEL_DEPTH[matched[0]])
+        # Front and back matter is unlabelled but top-level: a PREFACE is a
+        # peer of PART I, not something beneath its sections. Ranking it by
+        # appearance alone buried it under SECTION in Gaudium et Spes.
+        if fold(b.text).strip(" .:;-") in _FRONT_BACK_MATTER:
+            return (0, _LABEL_DEPTH["part"])
+        return (1, b.style)
+
+    keys = sorted({depth_key(b) for b in blocks if b.is_heading})
+    level_of = {k: i + 1 for i, k in enumerate(keys)}
+
+    # Levels are assigned by walking the document, not by the global rank
+    # alone. vatican.va's formatting is too loose for a per-heading rank to
+    # produce a usable outline on its own, so three rules apply in order:
+    #
+    #   1. A heading directly following another heading, with no section
+    #      between, is that heading's SUBTITLE ("PART I" / "THE CHURCH AND
+    #      MAN'S CALLING") and sits exactly one level under it.
+    #   2. A style already seen keeps the level it was first given, so
+    #      headings playing the same role stay siblings. Sacrosanctum
+    #      Concilium otherwise put "Fim do Concílio" at h2 and its sibling
+    #      "Aplicação aos diversos ritos" at h4.
+    #   3. Otherwise take the global rank, but never descend more than one
+    #      level at a time. Gaudium et Spes jumped h1 -> h4 because its
+    #      "INTRODUCTORY STATEMENT" is unlabelled and bottom-ranked by
+    #      styling alone.
+    #
+    # A final pass compacts whatever survives to contiguous 1..N, which is
+    # what turns a document using h1/h2/h4 into one using h1/h2/h3.
+    heading_level: dict[int, int] = {}
+    assigned: dict[tuple[int, int], int] = {}
+    prev_heading_idx: int | None = None
+    prev_was_subtitle = False
+    last_level: int | None = None
+    for idx, blk in enumerate(blocks):
+        if not blk.is_heading:
+            if match_para_num(blk.raw):
+                prev_heading_idx = None
+                prev_was_subtitle = False
+            continue
+        key = depth_key(blk)
+        prelim = level_of.get(key, 1)
+        if prev_heading_idx is not None and not prev_was_subtitle:
+            lvl = heading_level[prev_heading_idx] + 1
+            prev_was_subtitle = True
+        elif prev_heading_idx is not None:
+            # A run of headings with no section between them is a title and
+            # its subtitle, then siblings -- not a staircase. Chaining +1 per
+            # heading sent Evangelium Vitae's chapter openings to h5.
+            lvl = heading_level[prev_heading_idx]
+        elif key in assigned:
+            lvl = assigned[key]
+        elif last_level is None:
+            # Deliberately the styling rank, not 1. Anchoring the first
+            # heading at h1 reads better for Laudato Si', whose introduction
+            # carries four sub-headings and no heading of its own -- but it
+            # pins Ad Petri Cathedram's deep-styled opening at h1, and the
+            # same-style rule then flattens all 47 of its headings onto one
+            # level, losing the I/II part tier entirely. Keeping the rank
+            # costs a document-initial run of deep headings; forcing 1 costs
+            # a whole tier. See docs/research/description-pass-2026-08.md.
+            lvl = prelim
+        else:
+            lvl = min(prelim, last_level + 1)
+        assigned.setdefault(key, lvl)
+        heading_level[idx] = lvl
+        prev_heading_idx = idx
+        last_level = lvl
+
+    used = sorted(set(heading_level.values()))
+    compact = {lvl: i + 1 for i, lvl in enumerate(used)}
+    heading_level = {k: compact[v] for k, v in heading_level.items()}
+
     i, n = 0, len(blocks)
     while i < n:
         b = blocks[i]
@@ -2186,7 +2452,7 @@ def parse_document(
             matched = match_label(b.text)
             if matched is not None:
                 kind, num = matched
-                state.push_heading(kind, num, b.text)
+                state.push_heading(kind, num, b.text, heading_level.get(i, 1))
                 i += 1
                 continue
             title_m = _SECTION_TITLE_HEADING_RE.match(b.text)
@@ -2230,7 +2496,7 @@ def parse_document(
             # title) -- not front-matter chrome, so no content_started
             # gate: an unrecognized heading appearing before section 1
             # (e.g. INTRODUCTION) must still become a node.
-            state.push_heading("sub", None, b.text)
+            state.push_heading("sub", None, b.text, heading_level.get(i, 1))
             i += 1
             continue
 
@@ -2367,6 +2633,7 @@ def parse_document(
         footnote_evidence=evidence,
         fetched_url=fetched_url,
         retrieved_at=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        header=header_html,
     )
 
 
@@ -2389,18 +2656,15 @@ EXPECTED_RANGES = {
 
 
 def _dict_tree_has_real_span(nodes: list[dict]) -> bool:
-    """Same check as _tree_has_real_span, over the finalized structure.json
-    dict shape rather than live Node objects -- validate_document checks
-    the actual artifact about to be written, not an intermediate
-    representation, so this stays honest even if build_structure's
-    fallback logic itself is ever changed incorrectly."""
-    for node in nodes:
-        p = node.get("paragraphs", [None, None])
-        if p[0] is not None:
-            return True
-        if _dict_tree_has_real_span(node.get("children", [])):
-            return True
-    return False
+    """Whether any heading in the finalized structure.json anchors to a real
+    section. validate_document checks the artifact about to be written, not
+    an intermediate representation, so this stays honest even if
+    build_structure's fallback logic is ever changed incorrectly.
+
+    The structure is a flat, document-ordered list since 2026-08-21
+    (docs/decisions.md), so this no longer recurses -- a heading's `before`
+    is its anchor, and nesting is derived by consumers from `level`."""
+    return any(node.get("before") is not None for node in nodes)
 
 
 def validate_document(
@@ -2760,6 +3024,11 @@ def build_manifest(
             "notice": "Copyright © Dicastery for Communication – Libreria Editrice Vaticana",
         },
         "notes": " ".join(notes),
+        # The document's own printed masthead, as narrowed html. Real content
+        # the page shows above its first heading, kept out of the structure
+        # tree where it used to masquerade as a top-level node. See
+        # extract_document_header.
+        "header": parse.header,
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "corrections_applied": len(state.corrections_applied),
     }
@@ -2812,10 +3081,19 @@ def build_structure(state: ScrapeState, title: str) -> list[dict]:
     carry real bounds and this condition never fires."""
     for node in state.root_children:
         node.compute_span()
-    if state.sections and not _tree_has_real_span(state.root_children):
-        lo, hi = min(state.sections), max(state.sections)
-        return [{"kind": "sub", "title": title, "paragraphs": [lo, hi], "children": []}]
-    return [n.to_dict() for n in state.root_children]
+
+    def walk(nodes: list[Node]):
+        for nd in nodes:
+            yield nd
+            yield from walk(nd.children)
+
+    flat = [
+        {"level": nd.depth, "title": nd.title, "before": nd.before}
+        for nd in walk(state.root_children)
+    ]
+    if state.sections and not any(r["before"] is not None for r in flat):
+        return [{"level": 1, "title": title, "before": min(state.sections)}]
+    return flat
 
 
 def write_document_outputs(
@@ -2911,7 +3189,9 @@ def scrape_one(
     pre_seen: set[str] = set()
     html = apply_raw_text_corrections(html, corrections, pre_applied, pre_seen)
     try:
-        parse = parse_document(html, lang, corrections, url)
+        parse = parse_document(
+            html, lang, corrections, url, ref.slug, ref.pontiff_or_council
+        )
     except StubPageError as exc:
         # Not a parser defeat -- the page has no real content to parse (see
         # StubPageError's docstring). Bucketed with fetch-failed/no-pt-url

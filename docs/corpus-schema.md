@@ -262,7 +262,26 @@ Absence of a sibling-language work (e.g. no `encyclical.rerum-novarum.pt` direct
 
 Never fabricated or inferred without evidence: each status is derived from what's actually on disk or from a direct, logged HTTP response (an absent raw-cache file, a cached-but-stub one, or a reproduced 404), the same "auditable from cache/evidence" posture as everything else in this pipeline.
 
-`structure.json`: reuse the Catechism/Compendium node schema verbatim (`kind`/`n`/`title`/`paragraphs`/`children` — `paragraphs` is the generic unit-number span from the note above, and holds document section numbers here). Chapter/Part headings for the longer documents (Gaudium et Spes has Parts and Chapters; Laudato Si' has numbered chapters and roman-numeral subsections, `vatican-documents.md` §3); a document with no internal headings (a short CDF declaration) gets a trivial single-node tree spanning its full section range, the same shape a short Compendium chapter would get.
+`structure.json` **(amended 2026-08-21, documents only — see `decisions.md`)**: a FLAT, document-ordered array of `{ level, title, before }`. It no longer reuses the CCC/Compendium node schema, and `kind`/`n`/`paragraphs`/`children` are gone.
+
+```jsonc
+[
+  { "level": 1, "title": "PART I", "before": 11 },
+  {
+    "level": 2,
+    "title": "CHAPTER I THE DIGNITY OF THE HUMAN PERSON",
+    "before": 12,
+  },
+]
+```
+
+- `level` is the heading's **observed depth**, 1-based and contiguous per document. It is not a taxonomy: the old `kind` forced the scraper to judge whether a heading _meant_ "chapter" or "section", which the sources do not reliably encode, and that judgement is what put chapters inside sections in Gaudium et Spes. Levels are assigned by walking the document — a heading directly following another with no section between is its subtitle and sits one level under it; a heading whose styling was seen before keeps the level it was first given, so siblings stay siblings; otherwise the global rank applies but never descends more than one level at a time — and are then compacted to contiguous `1..N`. Labelled headings (PART/CHAPTER/SECTION/ARTICLE) outrank unlabelled ones, because styling alone inverts: vatican.va wraps Gaudium et Spes's chapters in `<center>` while printing `PART I` as an ordinary left-aligned paragraph.
+- `before` is the section number the heading precedes — its anchor. `null` means trailing matter the numbered flow never reaches. **Ranges are derived, not stored**: a heading owns sections from its anchor until the next heading of equal or shallower level. Nearly every structural defect found in the 2026-08 description pass was a stored span drifting from the text (680 `[null, null]` nodes, `CHAPTER II` at `[53,53]`, `SECTION 2` overreaching into two other chapters). Nothing stored is nothing to drift.
+- `title` may carry the same narrowed inline html as body text.
+
+A document with no internal headings gets a single node spanning from its first section.
+
+**Amended 2026-08-21**: each block also carries `html` — the block's text as HTML restricted to a closed allowlist (`i`, `b`, `br`, `span[lang]`, `sup`, `blockquote`; `em`→`i`, `strong`→`b`), with footnote markers as `<sup data-fn="N"></sup>` instead of `⟦N⟧`. This recovers the inline italics the manifests have always described as "a deliberate v1 loss". Tags outside the allowlist keep their text and lose their markup, reported per run as an anomaly. The invariant, checked over all 14,907 sections: `strip_tags(html)` reproduces the stored `text` exactly. `manifest.json` also gains `header` — the document's own printed masthead as narrowed html (title, author, promulgation line), with vatican.va's language selector stripped; it is real content the page shows above its first heading, and leaving it in the block stream made it a phantom top-level structure node.
 
 `sections.json` (not `paragraphs.json` — a document's numbered units are the print edition's own "sections," not CCC paragraphs; the _filename_ differs per work type even though the structure-tree _field_ stays `paragraphs`, per the note above): array ordered by `n`, same `blocks`/`text_marked`/`citations`/`text` shape as the CCC's `paragraphs.json`:
 
@@ -270,7 +289,11 @@ Never fabricated or inferred without evidence: each status is derived from what'
 {
   "n": 12,
   "blocks": [
-    { "kind": "prose", "text_marked": "…prose with inline ⟦12⟧ markers…" },
+    {
+      "kind": "prose",
+      "text_marked": "…prose with inline ⟦12⟧ markers…",
+      "html": "…same text as narrowed html, markers as <sup data-fn=\"12\"></sup>…",
+    },
   ],
   "text": "…derived: all blocks joined, markers stripped, spaces normalized…",
   "citations": [{ "marker": "12", "text": "AAS 57 (1965) 12" }], // verbatim footnote content, keyed by marker
