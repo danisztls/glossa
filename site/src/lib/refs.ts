@@ -2,11 +2,15 @@
  * Corpus-bound half of the reference system: turning a parsed `RefSegment`
  * into a URL the reader can follow.
  *
- * The GRAMMAR — every table, every parsing rule, `parseRefs`, `linkifyProse` —
- * lives in `./refs-grammar`, which imports nothing and therefore runs outside
- * the browser too. This module is the part that genuinely needs the corpus:
- * whether a book, chapter, verse or document section actually exists in the
- * edition the reader has open.
+ * The GRAMMAR — every table, every parsing rule, `parseRefs`, `linkifyProse`,
+ * `normalizeCitationSpacing` — lives in `./refs-grammar`, which imports
+ * nothing and therefore runs outside the browser too. That split is what lets
+ * `scripts/sync-corpus.mjs` build the scripture cross-reference index with the
+ * exact parser that renders the page, instead of the second, separately
+ * maintained Python implementation the corpus used to ship (see
+ * docs/decisions.md, 2026-08-21). This module is the part that genuinely needs
+ * the corpus: whether a book, chapter, verse or document section actually
+ * exists in the edition the reader has open.
  *
  * Everything the grammar exports is re-exported here, so `$lib/refs` remains
  * the single import for callers that want both halves.
@@ -79,7 +83,10 @@ function firstLocusSection(locus: string | null): number | undefined {
  * cover, so this looks up the exact-language edition directly and emits no
  * link at all if that specific edition doesn't have the section.
  */
-export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: string }): string | undefined {
+export function refHref(
+	seg: RefSegment,
+	ctx: { bibleWorkId?: string; lang?: string }
+): string | undefined {
 	if (seg.kind === 'ccc') return `/catechismus/${seg.n}`;
 	if (seg.kind === 'compendium') return `/compendium/${seg.n}`;
 	if (seg.kind === 'documentTitle') {
@@ -163,7 +170,9 @@ export function refHref(seg: RefSegment, ctx: { bibleWorkId?: string; lang?: str
 	{
 		const firstVerse = seg.verses[0];
 		const withVerse =
-			firstVerse !== undefined ? resolveVulgate(seg.osis, seg.chapter, firstVerse, exists) : undefined;
+			firstVerse !== undefined
+				? resolveVulgate(seg.osis, seg.chapter, firstVerse, exists)
+				: undefined;
 		if (withVerse) {
 			chapterN = withVerse.chapter;
 			anchorVerse = withVerse.verse;
@@ -251,7 +260,8 @@ function verseExtent(
 	const present: number[] = [];
 	for (const v of verses) {
 		const resolved = resolveVulgate(osis, sourceChapter, v, exists);
-		if (resolved?.verse !== undefined && resolved.chapter === chapterN) present.push(resolved.verse);
+		if (resolved?.verse !== undefined && resolved.chapter === chapterN)
+			present.push(resolved.verse);
 	}
 	if (present.length < 2) return undefined;
 	return { from: Math.min(...present), to: Math.max(...present) };
