@@ -1042,10 +1042,11 @@ LEVELS = {"part": 0, "section": 1, "chapter": 2, "article": 3, "sub": 4}
 class BlockOut:
     kind: str  # "prose" | "quote"
     text: str
+    html: str = ""
     attribution: str | None = None
 
     def to_dict(self) -> dict:
-        d = {"kind": self.kind, "text_marked": self.text}
+        d = {"kind": self.kind, "text_marked": self.text, "html": self.html}
         if self.attribution:
             d["attribution"] = self.attribution
         return d
@@ -1147,6 +1148,7 @@ class ScrapeState:
         # exactly-one-wide gap; a wider gap is left as a genuine,
         # reported gap rather than guessed at.
         self.pending_first_block: str | None = None
+        self.pending_first_html: str | None = None
         self.content_started = False
         self.empty_nest_depth = 0
         self.current_footnote_table: dict[str, str] = {}
@@ -1206,11 +1208,11 @@ class ScrapeState:
         parent_children.append(node)
         self.stack.append(node)
 
-    def start_section(self, n: int, kind: str, text: str) -> None:
+    def start_section(self, n: int, kind: str, text: str, html: str = "") -> None:
         self.content_started = True
         self.empty_nest_depth = 0
         sec = Section(n=n, chapter=self.current_chapter())
-        sec.blocks.append(BlockOut(kind, text))
+        sec.blocks.append(BlockOut(kind, text, html))
         self.open_section = sec
         if self.stack:
             self.stack[-1].own.add(n)
@@ -1219,14 +1221,15 @@ class ScrapeState:
                 f"section {n} started with no open structure node"
             )
 
-    def add_continuation(self, kind: str, text: str) -> None:
+    def add_continuation(self, kind: str, text: str, html: str = "") -> None:
         sec = self.open_section
         assert sec is not None
         last = sec.blocks[-1]
         if last.kind == kind:
             last.text = last.text + " " + text
+            last.html = (last.html + " " + html).strip() if html else last.html
         else:
-            sec.blocks.append(BlockOut(kind, text))
+            sec.blocks.append(BlockOut(kind, text, html))
 
     def finalize_open_section(self) -> None:
         if self.open_section is None:
@@ -1263,18 +1266,48 @@ class Block:
     kind: str  # "prose" | "quote"
     text: str  # marked text (⟦n⟧ tokens embedded), tags stripped
     raw: str  # raw inner html, for paragraph-number detection
+    html: str = ""  # narrowed inline html (docs/decisions.md, 2026-08-21)
 
 
-def mark_and_split(raw: str, marker_template: str) -> tuple[str, str]:
+def mark_and_split(raw: str, marker_template: str) -> tuple[str, str, str]:
     """Marks footnotes in raw, then strips the block's own leading
-    paragraph-number prefix from the marked+stripped text. Returns
-    (full_marked_stripped_text, rest_after_number)."""
+    paragraph-number prefix. Returns (full_marked_stripped_text,
+    rest_after_number, rest_html_after_number)."""
     marked = mark_footnotes(raw, marker_template)
     text = strip_tags(marked)
-    m = re.match(r"^(\d{1,4})\s*\.\s*", text)
+    html = narrow_html(marked)
+    m = _NUM_PREFIX_TEXT_RE.match(text)
     if m:
-        return text, text[m.end() :]
-    return text, text
+        return text, text[m.end() :], strip_leading_number_html(html)
+    return text, text, html
+
+
+_NUM_PREFIX_TEXT_RE = re.compile(r"^(\d{1,4})\s*\.\s*")
+# The prefix can be padded with entities as well as tags and whitespace --
+# `&nbsp;9. ` occurs 9 times across the corpus. `html_to_text` unescapes, so
+# the text gate matches while a tags-and-space-only pattern would not, and
+# the number would survive into the stored html. Only WHITESPACE entities
+# qualify: an earlier version allowed any `&name;`, and the padding after the
+# period then swallowed a leading `&quot;` -- 359 sections lost an opening
+# quotation mark, caught by the round-trip check.
+_PREFIX_FILLER = r"(?:<[^>]+>|\s|&nbsp;|&#160;|&#[xX]0*[aA]0;)*"
+_NUM_PREFIX_HTML_RE = re.compile(
+    rf"^{_PREFIX_FILLER}\d{{1,4}}{_PREFIX_FILLER}\.{_PREFIX_FILLER}"
+)
+
+
+def strip_leading_number_html(html: str) -> str:
+    """Drop a block's own leading paragraph number from the narrowed html.
+
+    `mark_and_split` does this on tag-stripped text, where the prefix is a
+    plain `27. `. In html the number can be wrapped or split across tags --
+    `27<i>. </i>`, `<font>27</font>. ` -- so the prefix is matched allowing
+    interleaved tags rather than by counting characters, which whitespace
+    collapsing would misalign. Gated on the text form matching first, so a
+    paragraph that merely opens with a numeral is never truncated."""
+    if _NUM_PREFIX_TEXT_RE.match(html_to_text(html)) is None:
+        return html
+    return _NUM_PREFIX_HTML_RE.sub("", html, count=1)
 
 
 def _gap_block(gap_html: str, marker_template: str) -> Block | None:
@@ -1303,10 +1336,11 @@ def _gap_block(gap_html: str, marker_template: str) -> Block | None:
     section elsewhere in the corpus can suddenly open one here."""
     if match_para_num(gap_html) is None:
         return None
-    text = strip_tags(mark_footnotes(gap_html, marker_template))
+    marked = mark_footnotes(gap_html, marker_template)
+    text = strip_tags(marked)
     if not text:
         return None
-    return Block(False, "prose", text, gap_html)
+    return Block(False, "prose", text, gap_html, narrow_html(marked))
 
 
 # --------------------------------------------------------------------------
@@ -2065,6 +2099,7 @@ def parse_document(
     state.current_star_table = star_table
 
     blocks: list[Block] = []
+    dropped_tags: collections.Counter = collections.Counter()
     prev_end = 0
     block_matches = list(_BLOCK_RE.finditer(body_html))
     for m in block_matches:
@@ -2095,7 +2130,15 @@ def parse_document(
         text = strip_tags(marked)
         if not text:
             continue
-        blocks.append(Block(is_heading, "quote" if is_bq else "prose", text, inner))
+        blocks.append(
+            Block(
+                is_heading,
+                "quote" if is_bq else "prose",
+                text,
+                inner,
+                narrow_html(marked, dropped_tags),
+            )
+        )
     # Trailing gap after the last block match (or the whole region, if
     # _BLOCK_RE matched nothing at all) -- same recovery, same gate.
     tail_gap = _gap_block(body_html[prev_end:], marker_template)
@@ -2127,6 +2170,14 @@ def parse_document(
     # so they read as chapter titles. See drop_page_furniture.
     for text in drop_page_furniture(blocks):
         state.anomalies.append(f"page furniture skipped: {text[:80]!r}")
+
+    # Tags outside the stored allowlist keep their text and lose their markup
+    # (docs/decisions.md, 2026-08-21). Reported per run so the allowlist can be
+    # revisited against evidence rather than assumption -- which is how `sup`
+    # and `span[lang]` earned their places.
+    if dropped_tags:
+        summary = ", ".join(f"{t}x{c}" for t, c in dropped_tags.most_common(8))
+        state.anomalies.append(f"html tags outside allowlist, text kept: {summary}")
 
     i, n = 0, len(blocks)
     while i < n:
@@ -2161,9 +2212,15 @@ def parse_document(
                 cand_title = int(title_m.group(1))
                 if state.last_n is None or cand_title == state.last_n + 1:
                     state.finalize_open_section()
-                    state.start_section(cand_title, b.kind, b.text[title_m.end() :])
+                    state.start_section(
+                        cand_title,
+                        b.kind,
+                        b.text[title_m.end() :],
+                        strip_leading_number_html(b.html),
+                    )
                     state.last_n = cand_title
                     state.pending_first_block = None
+                    state.pending_first_html = None
                     i += 1
                     continue
             # body_html is already trimmed to real content (see
@@ -2234,7 +2291,7 @@ def parse_document(
             # else: cand <= last_n and not a plausible typo -> false positive;
             # fall through as continuation
             if is_new:
-                _, rest_text = mark_and_split(b.raw, marker_template)
+                _, rest_text, rest_html = mark_and_split(b.raw, marker_template)
 
         if is_new:
             state.finalize_open_section()
@@ -2247,7 +2304,12 @@ def parse_document(
                 # subtitle and §71) rather than being dropped as an
                 # unrecoverable gap or silently merged into the previous
                 # section's text.
-                state.start_section(fills_gap_at, "prose", state.pending_first_block)
+                state.start_section(
+                    fills_gap_at,
+                    "prose",
+                    state.pending_first_block,
+                    state.pending_first_html or "",
+                )
                 state.finalize_open_section()
                 state.last_n = fills_gap_at
                 state.promoted_gap_fills.append(fills_gap_at)
@@ -2265,7 +2327,12 @@ def parse_document(
                 and cand == 2
                 and state.pending_first_block is not None
             ):
-                state.start_section(1, "prose", state.pending_first_block)
+                state.start_section(
+                    1,
+                    "prose",
+                    state.pending_first_block,
+                    state.pending_first_html or "",
+                )
                 state.finalize_open_section()
                 state.last_n = 1
                 state.promoted_first_paragraph = True
@@ -2273,21 +2340,23 @@ def parse_document(
                     "section 1: source prints no leading number (unnumbered framing "
                     "text before '2.') -- promoted the preceding block to section 1"
                 )
-            state.start_section(cand, b.kind, rest_text)
+            state.start_section(cand, b.kind, rest_text, rest_html)
             state.last_n = cand
             state.pending_first_block = None
+            state.pending_first_html = None
         elif state.open_section is None:
             if b.kind == "prose" and is_mini_header(b.text):
                 state.dropped.append(b.text)
             else:
                 if b.kind == "prose":
                     state.pending_first_block = b.text
+                    state.pending_first_html = b.html
                 where = state.stack[-1].title if state.stack else "?"
                 state.orphan_content.append(f"[{where}] {b.text[:90]}")
         elif b.kind == "prose" and is_mini_header(b.text):
             state.dropped.append(b.text)
         else:
-            state.add_continuation(b.kind, b.text)
+            state.add_continuation(b.kind, b.text, b.html)
         i += 1
     state.finalize_open_section()
 

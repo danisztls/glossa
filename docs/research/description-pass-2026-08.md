@@ -92,6 +92,35 @@ markup variants" below for evidence and counts:
    damage where it bites (`evangelium-vitae.pt` loses three top-level chapters).
    Not yet decided; needs a run-gated rule and its own diff review.
 
+5. **Footnote references are not captured for most works — the largest defect
+   found so far, and it outranks the heading variants.** Only **136 of 332**
+   works have any `citations` at all. For **43 works / 1,134 sections** the
+   source demonstrably has footnotes, because the references are still sitting
+   in the reading text as literal `[1]`, `[2]`: `mediator-dei.en` (107
+   sections), `casti-connubii.en` (67), `caritas-in-veritate.{en,pt}` (59
+   each), `divini-illius-magistri.en` (53). Not yet decided.
+
+   Cause: `detect_marker_template` is first-match, not best-match — `_ftnref`
+   gives `ftn`, any `<sup>` gives `sup`, and everything else falls back to
+   `paren`, which looks for `(N)`. A document whose references are plain `[N]`
+   matches no branch and silently gets `paren`, capturing nothing.
+   `caritas-in-veritate.pt` shows the other half of the problem: it was
+   detected as `sup` on the strength of a `<sup>` somewhere on the page and
+   still captured nothing. A `bracket` template plus scoring each candidate by
+   how many references it actually matches would address both.
+
+   Three smaller artifacts share this area and should be judged with it, since
+   all three leave debris in the reading text (275 sections, 46 works):
+   `dilexit-nos.en` duplicates each reference through a malformed nested
+   `<sup>`, leaving the marker's trailing digits (`⟦17⟧ [7]`, `⟦9⟧ []`);
+   `spe-salvi.en` and `sacrosanctum-concilium.en` wrap references in literal
+   brackets, so removing the marker leaves an empty `[]`; and both are distinct
+   from the unconverted-reference case above. Editorial ellipses `[...]` (64)
+   and `[…]` (41) are legitimate and must not be swept up by any fix.
+
+   **This was invisible to both batches** because the agent brief never asked
+   about citations. Add it to the brief when the sweep resumes.
+
 `LEVELS` reordering and the stored-range repairs are **deliberately dropped** —
 the new schema removes both problems rather than fixing them.
 
