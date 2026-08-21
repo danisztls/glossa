@@ -276,3 +276,110 @@ Amends pure-verbatim: **verified source defects are corrected, and every correct
 - **`strip_tags`.** `compendium.py`'s copy turns `<br/>` into a space before dropping other tags and `ccc.py`'s does not — a documented difference that a consistency-motivated merge would silently lose.
 
 **Verified**: all six scrapers byte-compile and import cleanly with the shared module resolving to the same objects (checked from an unrelated working directory); `ruff format --check` is no worse than before. No scraper was run — this change is verifiable by reading and importing, which is the standard anything in `common.py` has to meet, since there are no scraper tests and re-crawling to check a refactor is not acceptable.
+
+## 2026-08-21 — Paragraph text is HTML in JSON; headings record depth, not a taxonomy
+
+**What**: two changes to the corpus schema for the numbered-unit works
+(documents, CCC, Compendium — not the Bible, which is verse-addressed and stays
+as it is).
+
+1. A unit stores one `html` string instead of `blocks[]` + `text_marked` +
+   `text`. The container stays JSON; only the text encoding changes.
+2. `structure.json` records a heading's **observed depth** (`level: 1|2|3`) and
+   an anchor (`before`: the unit number it precedes), instead of a semantic
+   `kind` and a stored `[lo, hi]` range. Nesting and ranges are derived by the
+   consumer from depth and order.
+
+```jsonc
+// sections.json
+{
+  "n": 35,
+  "html": "…meets God's law in <i>Veritatis Splendor</i>…<sup data-fn=\"12\"></sup>",
+  "citations": [{ "marker": "12", "text": "Cf. <i>Gaudium et Spes</i>, 22." }]
+}
+// structure.json
+[{ "level": 1, "title": "CHAPTER I — “Teacher, what good must I do…?”", "before": 28 }]
+```
+
+**Why the block model goes**: it is elaborate machinery for a case that barely
+occurs. Across every document work there are 14,896 single-block units against
+11 that have more, and 14,913 `prose` blocks against 11 `quote`. A quote is
+`<blockquote>` in the html string. Separately, every word was stored twice —
+`text_marked` with `⟦n⟧` tokens, and a derived `text` with them stripped.
+
+**Why HTML and not Markdown**, having seriously considered Markdown first: the
+source is HTML and the render target is HTML, so Markdown is a detour that
+expresses strictly less than either end, with a hand-rolled escaping layer in
+between. The decisive points:
+
+- The escape hatch was needed immediately. `<sup>`, `<br>`, `span[lang]` and
+  Lumen Gentium's `(N*)` star notes all need passthrough, and an abstraction
+  that needs its escape hatch on day one is not abstracting much.
+- Nobody authors this. Markdown's value is comfortable hand-writing; the corpus
+  is generated and hand-edits are forbidden (a re-parse eats them), so we would
+  pay Markdown's ambiguity costs for a benefit never collected.
+- CommonMark emphasis is underspecified around punctuation-adjacent delimiters,
+  and this corpus is wall-to-wall `«…»`, `[…]`, `(N*)` and italicised Latin.
+  Escaping bugs there would be silent and would look exactly like source
+  defects — the most expensive failure mode this project has.
+- Storing a _narrowed subset of HTML_ is a restriction, not a translation.
+- It dissolves the dependency question: `DOMParser` is built in and
+  spec-compliant, and the site walks its node tree into Svelte snippets the same
+  way it would have walked a Markdown AST. No package added.
+
+Most of the git-readability motivation was really "store prose as one string
+with inline markup", which either format delivers; against today's
+double-stored, JSON-escaped pair, `<i>Rerum Novarum</i>` versus
+`*Rerum Novarum*` is the whole difference.
+
+**The allowlist, derived by measurement rather than assumption** — tag counts
+inside numbered body paragraphs across 465 raw pages:
+
+| keep                   | why                                                                | drop           | why                                                   |
+| ---------------------- | ------------------------------------------------------------------ | -------------- | ----------------------------------------------------- |
+| `i` (9,901 + 794 `em`) | the documented v1 italics loss, recovered                          | `a` (7,206)    | footnote apparatus, already modelled as `citations[]` |
+| `b` (352)              | real inline bold                                                   | `font` (3,408) | legacy presentation (`size`/`face`/`color`)           |
+| `span[lang]` (263)     | marks Latin inside vernacular; free semantics we currently discard | `sup` (739)    | the footnote marker template, becomes `<sup data-fn>` |
+| `br` (149)             | meaningful line breaks                                             | `u` (1)        | single occurrence                                     |
+| `blockquote`           | block-level, covers the 11 quote cases                             |                |                                                       |
+
+Measuring corrected two guesses: `<small>` does not occur anywhere and would
+have been allowlisted on assumption, and `span[lang]` would have been missed.
+`em` normalises to `i` — HTML5's `<i>` means idiomatic text (foreign phrases,
+work titles), which is what this corpus italicises, while `<em>` means stress
+emphasis.
+
+**Why depth and not `kind`**: the taxonomy forced the scraper to judge whether a
+heading _means_ "chapter" or "section", which the sources do not reliably
+encode. That judgement is the direct cause of `LEVELS` ranking `section` above
+`chapter` (so in `gaudium-et-spes.en` chapters nest under sections, chapter
+ranges truncate to one paragraph, and section ranges overreach into the next
+chapter's text), and of `CONCLUSION` landing inside `CHAPTER SIX` in
+`caritas-in-veritate.en`. Depth is observable in the markup; semantics is
+inferred from it. Recording the observable thing and deriving nothing is the
+same posture as the source-defect policy: document, don't invent.
+
+**Why ranges are derived**: nearly every structural defect found in the 2026-08
+description pass was a stored span drifting from the text — 680 `[null, null]`
+nodes before the August 20 fix, `CHAPTER II` at `[53,53]`, `SECTION 2` at
+`[67,78]` swallowing two other chapters, parents collapsing to their first
+child's range. Nothing stored is nothing to drift.
+
+**Enforcement**: the allowlist is validated at emit. An unexpected tag has its
+markup stripped and its **text kept**, and an anomaly is recorded with a
+locator — logged, never silently absent, matching every other scraper
+behaviour. A `--strict` flag makes it fatal for CI. One stray `<u>` in 465 pages
+must not kill a document.
+
+**Migration oracle**: `strip_tags(html)` must equal the current `text` for all
+14,907 units. That is an exact, cheap, corpus-wide check, and it separates a
+format bug from a parser bug — which matters because the input-side parser
+fixes from the description pass are still outstanding and would otherwise be
+confounded with the migration.
+
+**Not affected**: the description sweep's outstanding _input-side_ fixes
+(separator-split bold, dropped salutations, and the undecided plain-centered and
+inline-style-bold variants) are independent of storage and still needed — no
+storage change recovers a heading the parser never saw. The `LEVELS` reorder and
+the stored-range repairs are dropped, since this schema removes both problems
+rather than fixing them.
