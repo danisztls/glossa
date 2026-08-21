@@ -10,6 +10,14 @@
 	 * "resolvable" means and why some segments (document sigla) never
 	 * resolve to a link at all.
 	 *
+	 * The one thing it does not reproduce byte for byte is the source's loose
+	 * spacing: `normalizeCitationSpacing` tidies a stray space after "(",
+	 * before ")", or before a comma/period ("( Sl 105, 3)", "Cf . Lc 1, 38")
+	 * first. Those are typesetting defects, common across every vatican.va
+	 * mirror the corpus is built from, and they read as errors on the page.
+	 * Whitespace only — see that function's docblock for why the corpus still
+	 * stores the source's own spelling and this is the layer that adjusts it.
+	 *
 	 * Deliberately NOT the right tool for in-prose text (a CCC paragraph's
 	 * own body, which mixes real prose with the occasional "cf. 1212") —
 	 * that's `linkifyProse`, meant to be rendered by hand alongside the
@@ -18,7 +26,7 @@
 	 * is citation-shaped, which is true for a footnote or a `ccc_refs`
 	 * string but not for running prose.
 	 */
-	import { parseRefs, refHref, type RefSegment } from '$lib/refs';
+	import { normalizeCitationSpacing, parseRefs, refHref, type RefSegment } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
 	import { i18n } from '$lib/i18n.svelte';
 
@@ -32,12 +40,16 @@
 	let { text, lang, class: className }: Props = $props();
 
 	const effectiveLang = $derived(lang ?? i18n.lang);
-	const segments = $derived(parseRefs(text, { lang: effectiveLang }));
+	const segments = $derived(parseRefs(normalizeCitationSpacing(text), { lang: effectiveLang }));
 	const bibleWorkId = $derived(content.workIdFor('bible'));
 
 	/** Tooltip for an unresolved segment: the document expansion when we have one, otherwise just the raw citation text (better than nothing, no worse than the plain text it sits next to). */
 	function tooltipFor(seg: RefSegment): string {
-		return seg.kind === 'document' && seg.expansion ? `${seg.sigla} — ${seg.expansion}` : seg.kind === 'text' ? '' : seg.raw;
+		return seg.kind === 'document' && seg.expansion
+			? `${seg.sigla} — ${seg.expansion}`
+			: seg.kind === 'text'
+				? ''
+				: seg.raw;
 	}
 </script>
 

@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-import { linkifyProse, parseRefs, refHref, type RefSegment } from './refs';
+import {
+	linkifyProse,
+	normalizeCitationSpacing,
+	parseRefs,
+	refHref,
+	type RefSegment
+} from './refs';
 
 /**
  * `refHref`'s divergent-book tests (Psalms/Malachi/Joel) below need Bible
@@ -25,7 +31,13 @@ const { mockBibleBooks } = vi.hoisted(() => {
 	}
 	const books: Record<string, Record<string, unknown>> = {
 		'bible.cpdv.en': {
-			gen: { osis: 'gen', name: 'Genesis', abbrevs: ['gen'], order: 1, chapters: makeChapters({ 1: 13 }) },
+			gen: {
+				osis: 'gen',
+				name: 'Genesis',
+				abbrevs: ['gen'],
+				order: 1,
+				chapters: makeChapters({ 1: 13 })
+			},
 			john: {
 				osis: 'john',
 				name: 'John',
@@ -38,7 +50,17 @@ const { mockBibleBooks } = vi.hoisted(() => {
 				name: 'Psalms',
 				abbrevs: ['ps', 'psalm', 'psalms'],
 				order: 23,
-				chapters: makeChapters({ 1: 6, 9: 39, 21: 32, 50: 21, 113: 26, 114: 9, 115: 10, 146: 11, 147: 9 })
+				chapters: makeChapters({
+					1: 6,
+					9: 39,
+					21: 32,
+					50: 21,
+					113: 26,
+					114: 9,
+					115: 10,
+					146: 11,
+					147: 9
+				})
 			},
 			mal: {
 				osis: 'mal',
@@ -89,7 +111,8 @@ const mockDocumentTitles: Record<string, string> = {
 };
 
 vi.mock('./corpus', () => ({
-	findBookByAbbrev: (workId: string, abbrev: string) => mockBibleBooks[workId]?.[abbrev.toLowerCase()],
+	findBookByAbbrev: (workId: string, abbrev: string) =>
+		mockBibleBooks[workId]?.[abbrev.toLowerCase()],
 	workIdToEdition: (workId: string) => workId.replace(/^bible\./, ''),
 	listDocuments: () =>
 		Object.entries(mockDocumentTitles).map(([slug, title]) => {
@@ -170,19 +193,33 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 		// grammar only extends it to the clause it's attached to plus bookless
 		// continuations — see the module docblock and xrefs.py's docstring.
 		const segs = parseRefs('Cf. Gen 9:16; Lk 21:24.');
-		const refs = segs.filter((s): s is Extract<RefSegment, { kind: 'scripture' }> => s.kind === 'scripture');
+		const refs = segs.filter(
+			(s): s is Extract<RefSegment, { kind: 'scripture' }> => s.kind === 'scripture'
+		);
 		expect(refs[0].cf).toBe(true);
 		expect(refs[1].cf).toBeUndefined();
 	});
 
 	it('emits an empty-array whole-chapter reference', () => {
 		const segs = parseRefs('Ps 22.');
-		expect(segs).toContainEqual({ kind: 'scripture', osis: 'ps', chapter: 22, verses: [], raw: 'Ps 22' });
+		expect(segs).toContainEqual({
+			kind: 'scripture',
+			osis: 'ps',
+			chapter: 22,
+			verses: [],
+			raw: 'Ps 22'
+		});
 	});
 
 	it('strips a verse-subdivision letter', () => {
 		const segs = parseRefs('Mt 5:3a.');
-		expect(segs).toContainEqual({ kind: 'scripture', osis: 'matt', chapter: 5, verses: [3], raw: 'Mt 5:3a' });
+		expect(segs).toContainEqual({
+			kind: 'scripture',
+			osis: 'matt',
+			chapter: 5,
+			verses: [3],
+			raw: 'Mt 5:3a'
+		});
 	});
 
 	it('chains dot-separated additional verses', () => {
@@ -198,7 +235,13 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 
 	it('accepts a bare-space chapter/verse split (dropped colon)', () => {
 		const segs = parseRefs('Mk 10 14.');
-		expect(segs).toContainEqual({ kind: 'scripture', osis: 'mark', chapter: 10, verses: [14], raw: 'Mk 10 14' });
+		expect(segs).toContainEqual({
+			kind: 'scripture',
+			osis: 'mark',
+			chapter: 10,
+			verses: [14],
+			raw: 'Mk 10 14'
+		});
 	});
 
 	it('accepts the verified comma separator in Vatican’s English Rosary citation', () => {
@@ -229,12 +272,24 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 
 	it('recognizes the lowercase-L-for-1 typo', () => {
 		const segs = parseRefs('l Cor 13:12.');
-		expect(segs).toContainEqual({ kind: 'scripture', osis: '1cor', chapter: 13, verses: [12], raw: 'l Cor 13:12' });
+		expect(segs).toContainEqual({
+			kind: 'scripture',
+			osis: '1cor',
+			chapter: 13,
+			verses: [12],
+			raw: 'l Cor 13:12'
+		});
 	});
 
 	it('recognizes the "In" typo for "Jn"', () => {
 		const segs = parseRefs('In 17:3.');
-		expect(segs).toContainEqual({ kind: 'scripture', osis: 'john', chapter: 17, verses: [3], raw: 'In 17:3' });
+		expect(segs).toContainEqual({
+			kind: 'scripture',
+			osis: 'john',
+			chapter: 17,
+			verses: [3],
+			raw: 'In 17:3'
+		});
 	});
 
 	it('recognizes all-caps PS/EX variants', () => {
@@ -257,10 +312,12 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 	it('a book-shaped false lead does not block a later real ref in the same clause', () => {
 		const segs = parseRefs('St. Ignatius of Antioch, Ad Eph. 19, 1: AF 11/2 76-80: cf. I Cor 2:8.');
 		const refs = segs.filter((s) => s.kind === 'scripture');
-		expect(refs).toEqual([{ kind: 'scripture', osis: '1cor', chapter: 2, verses: [8], cf: true, raw: 'I Cor 2:8' }]);
+		expect(refs).toEqual([
+			{ kind: 'scripture', osis: '1cor', chapter: 2, verses: [8], cf: true, raw: 'I Cor 2:8' }
+		]);
 	});
 
-	it('treats a single-chapter book\'s bare number as a verse, not a chapter', () => {
+	it("treats a single-chapter book's bare number as a verse, not a chapter", () => {
 		for (const [text, osis, chapter, verses] of [
 			['LG 12; cf. Jude 3.', 'jude', 1, [3]],
 			['I Tim 3:15; Jude 3.', 'jude', 1, [3]],
@@ -268,7 +325,9 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 			['Cf. Jn 3:18; Acts 2:21; 5:41; 3 Jn 7; Rom 10:6-13.', '3john', 1, [7]],
 			['Philem 16.', 'phlm', 1, [16]]
 		] as const) {
-			const refs = parseRefs(text).filter((s): s is Extract<RefSegment, { kind: 'scripture' }> => s.kind === 'scripture');
+			const refs = parseRefs(text).filter(
+				(s): s is Extract<RefSegment, { kind: 'scripture' }> => s.kind === 'scripture'
+			);
 			const match = refs.find((r) => r.osis === osis);
 			expect(match, text).toBeTruthy();
 			expect([match!.chapter, match!.verses]).toEqual([chapter, verses]);
@@ -328,7 +387,14 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 describe('parseRefs — citation-clause grammar (PT)', () => {
 	it('parses the PT comma chapter/verse separator', () => {
 		const segs = parseRefs('Cf. Act 2, 42.', { lang: 'pt' });
-		expect(segs).toContainEqual({ kind: 'scripture', osis: 'acts', chapter: 2, verses: [42], cf: true, raw: 'Act 2, 42' });
+		expect(segs).toContainEqual({
+			kind: 'scripture',
+			osis: 'acts',
+			chapter: 2,
+			verses: [42],
+			cf: true,
+			raw: 'Act 2, 42'
+		});
 	});
 
 	it('resolves "Jn" to Jonah and "Jo" to John — the reverse of the English convention', () => {
@@ -387,11 +453,103 @@ describe('parseRefs — citation-clause grammar (PT)', () => {
 
 	it('handles PT archive punctuation around an otherwise ordinary biblical locus', () => {
 		expect(parseRefs('1 Cor, 13, 12.', { lang: 'pt' })).toContainEqual(
-			expect.objectContaining({ kind: 'scripture', osis: '1cor', chapter: 13, verses: [12], raw: '1 Cor, 13, 12' })
+			expect.objectContaining({
+				kind: 'scripture',
+				osis: '1cor',
+				chapter: 13,
+				verses: [12],
+				raw: '1 Cor, 13, 12'
+			})
 		);
 		expect(parseRefs('Fl . 3, 8.', { lang: 'pt' })).toContainEqual(
-			expect.objectContaining({ kind: 'scripture', osis: 'phil', chapter: 3, verses: [8], raw: 'Fl . 3, 8' })
+			expect.objectContaining({
+				kind: 'scripture',
+				osis: 'phil',
+				chapter: 3,
+				verses: [8],
+				raw: 'Fl . 3, 8'
+			})
 		);
+	});
+
+	it('tolerates a space before the chapter/verse separator', () => {
+		expect(parseRefs('Cf. Mc 1 , 11.', { lang: 'pt' })).toContainEqual(
+			expect.objectContaining({
+				kind: 'scripture',
+				osis: 'mark',
+				chapter: 1,
+				verses: [11],
+				raw: 'Mc 1 , 11'
+			})
+		);
+	});
+
+	it('reads the archive\'s "." for "," as a chapter/verse separator', () => {
+		expect(parseRefs('Cf. Sl 19. 2.', { lang: 'pt' })).toContainEqual(
+			expect.objectContaining({
+				kind: 'scripture',
+				osis: 'ps',
+				chapter: 19,
+				verses: [2],
+				raw: 'Sl 19. 2'
+			})
+		);
+	});
+
+	it('leaves a trailing full stop outside the reference rather than reading it as an empty separator', () => {
+		const segs = parseRefs('Cf. Ez 36.', { lang: 'pt' });
+		expect(segs).toContainEqual(
+			expect.objectContaining({
+				kind: 'scripture',
+				osis: 'ezek',
+				chapter: 36,
+				verses: [],
+				raw: 'Ez 36'
+			})
+		);
+		expect(segs).toContainEqual({ kind: 'text', text: '.' });
+	});
+
+	it('reads a lowercase "l" standing in for the digit 1 inside a locus', () => {
+		expect(parseRefs('Cf. Act 4, l2.', { lang: 'pt' })).toContainEqual(
+			expect.objectContaining({ kind: 'scripture', osis: 'acts', chapter: 4, verses: [12] })
+		);
+	});
+
+	it('matches a book abbreviation glued to its chapter number', () => {
+		expect(parseRefs('Jo14, 16-17', { lang: 'pt' })).toContainEqual(
+			expect.objectContaining({
+				kind: 'scripture',
+				osis: 'john',
+				chapter: 14,
+				verses: [16, 17],
+				raw: 'Jo14, 16-17'
+			})
+		);
+		expect(parseRefs('canon 1: DS1511.', { lang: 'pt' })).toContainEqual(
+			expect.objectContaining({ kind: 'document', sigla: 'DS', locus: '1511' })
+		);
+	});
+
+	it('splits clauses on ":" as well as ";" — the archive drifts between the two', () => {
+		const refs = parseRefs('Cf. Ex 34, 28: Dt 4, 13: 10, 4.', { lang: 'pt' }).filter(
+			(s) => s.kind === 'scripture'
+		);
+		expect(refs).toEqual([
+			{ kind: 'scripture', osis: 'exod', chapter: 34, verses: [28], cf: true, raw: 'Ex 34, 28' },
+			{ kind: 'scripture', osis: 'deut', chapter: 4, verses: [13], raw: 'Dt 4, 13' },
+			{ kind: 'scripture', osis: 'deut', chapter: 10, verses: [4], raw: '10, 4' }
+		]);
+	});
+
+	it('keeps scanning a clause after a matched reference, so a comma-joined second one still links', () => {
+		const refs = parseRefs('Heb 10, 5-7, citando o Sl 40. 7-9, segundo os LXX', {
+			lang: 'pt'
+		}).filter((s) => s.kind === 'scripture');
+		expect(refs).toEqual([
+			{ kind: 'scripture', osis: 'heb', chapter: 10, verses: [5, 6, 7], raw: 'Heb 10, 5-7' },
+			{ kind: 'scripture', osis: 'ps', chapter: 40, verses: [7, 8, 9], raw: 'Sl 40. 7-9' }
+		]);
 	});
 
 	it('does not treat "Cat Rom" (Catechismus Romanus) as the Letter to the Romans', () => {
@@ -400,10 +558,11 @@ describe('parseRefs — citation-clause grammar (PT)', () => {
 	});
 
 	it('recognizes the PT-specific document siglum meaning (SC = Sources Chrétiennes, not Sacrosanctum Concilium) and never resolves it to a slug', () => {
-		const segs = parseRefs('Santo Ireneu de Lião, Adversus haereses I. 10, 1-2: SC 264, 154-158.', { lang: 'pt' });
+		const segs = parseRefs('Santo Ireneu de Lião, Adversus haereses I. 10, 1-2: SC 264, 154-158.', {
+			lang: 'pt'
+		});
 		const doc = segs.find((s) => s.kind === 'document' && s.sigla === 'SC') as
-			| Extract<RefSegment, { kind: 'document' }>
-			| undefined;
+			Extract<RefSegment, { kind: 'document' }> | undefined;
 		expect(doc).toBeTruthy();
 		expect(doc?.expansion).toContain('Sources Chrétiennes');
 		// PT's config never maps ANY siglum to a slug (DOCUMENT_SLUGS_EN's own
@@ -416,20 +575,82 @@ describe('parseRefs — citation-clause grammar (PT)', () => {
 	});
 });
 
+describe('normalizeCitationSpacing', () => {
+	it("tidies the vatican.va mirrors' loose spacing around a citation", () => {
+		expect(normalizeCitationSpacing('( Sl 105, 3)')).toBe('(Sl 105, 3)');
+		expect(normalizeCitationSpacing('(2 Cor 5, 17 )')).toBe('(2 Cor 5, 17)');
+		expect(normalizeCitationSpacing('Cf . Lc 1, 38.')).toBe('Cf. Lc 1, 38.');
+		expect(normalizeCitationSpacing('Cf. Mc 1 , 11.')).toBe('Cf. Mc 1, 11.');
+		expect(normalizeCitationSpacing('Catechesi tradendae , 1: AAS 71 (1979) 1277.')).toBe(
+			'Catechesi tradendae, 1: AAS 71 (1979) 1277.'
+		);
+		expect(normalizeCitationSpacing('  Cf.  Ez  36. ')).toBe('Cf. Ez 36.');
+	});
+
+	it('changes nothing but whitespace — no mark is added, removed or replaced', () => {
+		const samples = [
+			'Cf. Gen 9:16; Lk 21:24; DV 3.',
+			'Heb 10, 5-7, citando o Sl 40. 7-9, segundo os LXX',
+			'Santo Ambrósio, De sacramentis 2, 2, 6: CSEL 73, 27-28 (PL 16, 425-426).'
+		];
+		for (const s of samples) {
+			expect(normalizeCitationSpacing(s)).toBe(s);
+			expect(normalizeCitationSpacing(s).replace(/\s/g, '')).toBe(s.replace(/\s/g, ''));
+		}
+		expect(normalizeCitationSpacing('( Fl . 3, 8 )').replace(/\s/g, '')).toBe(
+			'( Fl . 3, 8 )'.replace(/\s/g, '')
+		);
+	});
+
+	it('leaves a reference resolvable after tidying', () => {
+		expect(parseRefs(normalizeCitationSpacing('( Sl 105, 3)'), { lang: 'pt' })).toContainEqual(
+			expect.objectContaining({
+				kind: 'scripture',
+				osis: 'ps',
+				chapter: 105,
+				verses: [3],
+				raw: 'Sl 105, 3'
+			})
+		);
+	});
+});
+
+describe('parseRefs — cross-chapter ranges (EN)', () => {
+	it("links a cross-chapter range's opening verse instead of expanding across the chapter break", () => {
+		const segs = parseRefs('Cf. Isa 52:13-53:12.', { lang: 'en' });
+		expect(segs).toContainEqual(
+			expect.objectContaining({
+				kind: 'scripture',
+				osis: 'isa',
+				chapter: 52,
+				verses: [13],
+				raw: 'Isa 52:13'
+			})
+		);
+		expect(segs).toContainEqual({ kind: 'text', text: '-53:12.' });
+	});
+
+	it('still expands an ordinary within-chapter range', () => {
+		expect(parseRefs('Cf. Isa 52:13-15.', { lang: 'en' })).toContainEqual(
+			expect.objectContaining({ kind: 'scripture', osis: 'isa', chapter: 52, verses: [13, 14, 15] })
+		);
+	});
+});
+
 describe('parseRefs — bare CCC-paragraph-number lists (Compendium ccc_refs, CCC related)', () => {
 	it('parses a comma/space-separated list of single numbers and ranges', () => {
 		const segs = parseRefs('279-289, 296-298');
 		expect(kinds(segs)).toEqual(['ccc', 'text', 'ccc', 'text', 'ccc', 'text', 'ccc']);
-		expect(segs.filter((s) => s.kind === 'ccc').map((s) => (s as Extract<RefSegment, { kind: 'ccc' }>).n)).toEqual([
-			279, 289, 296, 298
-		]);
+		expect(
+			segs.filter((s) => s.kind === 'ccc').map((s) => (s as Extract<RefSegment, { kind: 'ccc' }>).n)
+		).toEqual([279, 289, 296, 298]);
 	});
 
-	it('parses the real corpus\'s space-separated ccc_refs shape', () => {
+	it("parses the real corpus's space-separated ccc_refs shape", () => {
 		const segs = parseRefs('27-30 44-45');
-		expect(segs.filter((s) => s.kind === 'ccc').map((s) => (s as Extract<RefSegment, { kind: 'ccc' }>).n)).toEqual([
-			27, 30, 44, 45
-		]);
+		expect(
+			segs.filter((s) => s.kind === 'ccc').map((s) => (s as Extract<RefSegment, { kind: 'ccc' }>).n)
+		).toEqual([27, 30, 44, 45]);
 	});
 
 	it('parses a single bare number', () => {
@@ -460,7 +681,9 @@ describe('parseRefs — must-not-link / degenerate input', () => {
 
 describe('linkifyProse', () => {
 	it('links "cf. 1212" to a CCC paragraph, leaving "cf. " as text', () => {
-		const segs = linkifyProse('As explained in cf. 1212, the Church teaches...');
+		const segs = linkifyProse('As explained in cf. 1212, the Church teaches...', {
+			cccParagraphRefs: true
+		});
 		expect(segs).toEqual([
 			{ kind: 'text', text: 'As explained in cf. ' },
 			{ kind: 'ccc', n: 1212, raw: '1212' },
@@ -468,17 +691,65 @@ describe('linkifyProse', () => {
 		]);
 	});
 
-	it('links "Cf. Jn 3:16" to a scripture reference', () => {
+	it('links "Cf. Jn 3:16" to a scripture reference, marked comparative', () => {
 		const segs = linkifyProse('Cf. Jn 3:16 makes this explicit.');
 		expect(segs).toEqual([
 			{ kind: 'text', text: 'Cf. ' },
-			{ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' },
+			{ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], cf: true, raw: 'Jn 3:16' },
 			{ kind: 'text', text: ' makes this explicit.' }
 		]);
 	});
 
+	it('links a locator with no "cf." trigger and no brackets around it', () => {
+		// The shape that motivated dropping the trigger: PT prints a quotation
+		// and its locator inside one parenthesis, with prose between them.
+		const segs = linkifyProse('(«Eu estarei contigo» – Ex 3, 12)', { lang: 'pt' });
+		expect(segs).toEqual([
+			{ kind: 'text', text: '(«Eu estarei contigo» – ' },
+			{ kind: 'scripture', osis: 'exod', chapter: 3, verses: [12], raw: 'Ex 3, 12' },
+			{ kind: 'text', text: ')' }
+		]);
+	});
+
+	it('links a bare locator in ordinary running prose', () => {
+		expect(linkifyProse('The account of the fall in Genesis 3 uses figurative language.')).toEqual([
+			{ kind: 'text', text: 'The account of the fall in ' },
+			{ kind: 'scripture', osis: 'gen', chapter: 3, verses: [], raw: 'Genesis 3' },
+			{ kind: 'text', text: ' uses figurative language.' }
+		]);
+	});
+
+	it('never carries a book across a sentence the way the citation grammar does', () => {
+		// `parseRefs` would read ", 12, 4" as a bookless continuation of Mt.
+		// Prose has no clauses to continue, so nothing but a real book name
+		// starts a reference.
+		const segs = linkifyProse('Cf. Mt 5, 3. Depois, 12, 4 pontos ficaram por tratar.', {
+			lang: 'pt'
+		});
+		expect(segs.filter((s) => s.kind === 'scripture')).toEqual([
+			{ kind: 'scripture', osis: 'matt', chapter: 5, verses: [3], cf: true, raw: 'Mt 5, 3' }
+		]);
+	});
+
+	it('does not read a patristic commentary title as a reference to the book it comments on', () => {
+		for (const [text, lang] of [
+			['St. Gregory the Great, Moralia in Job 31, 45: PL 76, 621.', 'en'],
+			['Origenes, In Mt. 16, 21.', 'en'],
+			['S. Aug. in Ps 32.', 'en']
+		] as const) {
+			expect(parseRefs(text, { lang }).some((s) => s.kind === 'scripture')).toBe(false);
+			expect(linkifyProse(text, { lang }).some((s) => s.kind === 'scripture')).toBe(false);
+		}
+		// ...but ordinary English "quoted in" is still a real reference.
+		expect(
+			parseRefs('Is 7:14 (LXX), quoted in Mt 1:23 (Greek).', { lang: 'en' }).filter(
+				(s) => s.kind === 'scripture'
+			)
+		).toHaveLength(2);
+	});
+
 	it('links "cf. nn. 1212-1215" as a CCC paragraph range', () => {
-		const segs = linkifyProse('cf. nn. 1212-1215 for more.');
+		const segs = linkifyProse('cf. nn. 1212-1215 for more.', { cccParagraphRefs: true });
 		expect(kinds(segs)).toEqual(['text', 'ccc', 'text', 'ccc', 'text']);
 		expect(segs[0]).toEqual({ kind: 'text', text: 'cf. nn. ' });
 	});
@@ -499,7 +770,7 @@ describe('linkifyProse', () => {
 	});
 
 	it('finds a second "cf." after a non-matching first one', () => {
-		const segs = linkifyProse('See cf. above and cf. 1212 below.');
+		const segs = linkifyProse('See cf. above and cf. 1212 below.', { cccParagraphRefs: true });
 		expect(segs).toEqual([
 			{ kind: 'text', text: 'See cf. above and cf. ' },
 			{ kind: 'ccc', n: 1212, raw: '1212' },
@@ -520,13 +791,20 @@ describe('refHref', () => {
 	it('never links a document segment with no ingested slug (DS 1514 must stay unlinked)', () => {
 		expect(
 			refHref(
-				{ kind: 'document', sigla: 'DS', locus: '1514', expansion: 'Denzinger', slug: null, raw: 'DS 1514' },
+				{
+					kind: 'document',
+					sigla: 'DS',
+					locus: '1514',
+					expansion: 'Denzinger',
+					slug: null,
+					raw: 'DS 1514'
+				},
 				{ lang: 'en' }
 			)
 		).toBeUndefined();
 	});
 
-	it('links a document segment whose slug + section exist in the reader\'s effective language', () => {
+	it("links a document segment whose slug + section exist in the reader's effective language", () => {
 		expect(
 			refHref(
 				{
@@ -558,7 +836,7 @@ describe('refHref', () => {
 		).toBe('/documenta/gaudium-et-spes#s19');
 	});
 
-	it('resolves a document link against the reader\'s PT effective language, not EN', () => {
+	it("resolves a document link against the reader's PT effective language, not EN", () => {
 		expect(
 			refHref(
 				{
@@ -574,7 +852,7 @@ describe('refHref', () => {
 		).toBe('/documenta/gaudium-et-spes#s19');
 	});
 
-	it('never links a document whose section is absent from the reader\'s effective language (dei-verbum is EN-only in the mock registry)', () => {
+	it("never links a document whose section is absent from the reader's effective language (dei-verbum is EN-only in the mock registry)", () => {
 		expect(
 			refHref(
 				{
@@ -601,7 +879,14 @@ describe('refHref', () => {
 	it('never links a document segment with no section number in its locus', () => {
 		expect(
 			refHref(
-				{ kind: 'document', sigla: 'GS', locus: null, expansion: 'Gaudium et Spes', slug: 'gaudium-et-spes', raw: 'GS' },
+				{
+					kind: 'document',
+					sigla: 'GS',
+					locus: null,
+					expansion: 'Gaudium et Spes',
+					slug: 'gaudium-et-spes',
+					raw: 'GS'
+				},
 				{ lang: 'en' }
 			)
 		).toBeUndefined();
@@ -613,17 +898,26 @@ describe('refHref', () => {
 
 	it('links a scripture segment present in the given Bible edition (fixture: bible.cpdv.en has gen ch.1, john ch.1+3)', () => {
 		expect(
-			refHref({ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' }, { bibleWorkId: 'bible.cpdv.en' })
+			refHref(
+				{ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' },
+				{ bibleWorkId: 'bible.cpdv.en' }
+			)
 		).toBe('/scriptura/gen/1#v1');
 
 		expect(
-			refHref({ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' }, { bibleWorkId: 'bible.cpdv.en' })
+			refHref(
+				{ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' },
+				{ bibleWorkId: 'bible.cpdv.en' }
+			)
 		).toBe('/scriptura/john/3#v16');
 	});
 
 	it('omits the verse anchor for a whole-chapter reference', () => {
 		expect(
-			refHref({ kind: 'scripture', osis: 'john', chapter: 3, verses: [], raw: 'John 3' }, { bibleWorkId: 'bible.cpdv.en' })
+			refHref(
+				{ kind: 'scripture', osis: 'john', chapter: 3, verses: [], raw: 'John 3' },
+				{ bibleWorkId: 'bible.cpdv.en' }
+			)
 		).toBe('/scriptura/john/3');
 	});
 
@@ -633,7 +927,13 @@ describe('refHref', () => {
 			// ends, not just where it starts.
 			expect(
 				refHref(
-					{ kind: 'scripture', osis: 'john', chapter: 1, verses: [1, 2, 3, 4, 5, 6, 7], raw: 'Jn 1:1-7' },
+					{
+						kind: 'scripture',
+						osis: 'john',
+						chapter: 1,
+						verses: [1, 2, 3, 4, 5, 6, 7],
+						raw: 'Jn 1:1-7'
+					},
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
 			).toBe('/scriptura/john/1?v=1-7#v1');
@@ -642,7 +942,10 @@ describe('refHref', () => {
 		it('adds nothing for a single-verse reference', () => {
 			// Already fully described by its anchor.
 			expect(
-				refHref({ kind: 'scripture', osis: 'john', chapter: 1, verses: [5], raw: 'Jn 1:5' }, { bibleWorkId: 'bible.cpdv.en' })
+				refHref(
+					{ kind: 'scripture', osis: 'john', chapter: 1, verses: [5], raw: 'Jn 1:5' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
 			).toBe('/scriptura/john/1#v5');
 		});
 
@@ -662,7 +965,13 @@ describe('refHref', () => {
 			// end must not claim to highlight to verse 99.
 			expect(
 				refHref(
-					{ kind: 'scripture', osis: 'gen', chapter: 1, verses: [11, 12, 13, 99], raw: 'Gen 1:11-99' },
+					{
+						kind: 'scripture',
+						osis: 'gen',
+						chapter: 1,
+						verses: [11, 12, 13, 99],
+						raw: 'Gen 1:11-99'
+					},
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
 			).toBe('/scriptura/gen/1?v=11-13#v11');
@@ -682,43 +991,69 @@ describe('refHref', () => {
 	});
 
 	it('returns undefined when no Bible edition is given', () => {
-		expect(refHref({ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' }, {})).toBeUndefined();
+		expect(
+			refHref({ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' }, {})
+		).toBeUndefined();
 	});
 
 	it('returns undefined for a book absent from the given edition (fixture only has gen + john)', () => {
 		expect(
-			refHref({ kind: 'scripture', osis: 'exod', chapter: 3, verses: [6], raw: 'Ex 3:6' }, { bibleWorkId: 'bible.cpdv.en' })
+			refHref(
+				{ kind: 'scripture', osis: 'exod', chapter: 3, verses: [6], raw: 'Ex 3:6' },
+				{ bibleWorkId: 'bible.cpdv.en' }
+			)
 		).toBeUndefined();
 	});
 
 	it('returns undefined for a chapter absent from the given edition (fixture gen only has chapter 1)', () => {
 		expect(
-			refHref({ kind: 'scripture', osis: 'gen', chapter: 9, verses: [16], raw: 'Gen 9:16' }, { bibleWorkId: 'bible.cpdv.en' })
+			refHref(
+				{ kind: 'scripture', osis: 'gen', chapter: 9, verses: [16], raw: 'Gen 9:16' },
+				{ bibleWorkId: 'bible.cpdv.en' }
+			)
 		).toBeUndefined();
 	});
 
 	it('returns undefined for an unknown work id (never throws)', () => {
 		expect(
-			refHref({ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' }, { bibleWorkId: 'bible.nonexistent' })
+			refHref(
+				{ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' },
+				{ bibleWorkId: 'bible.nonexistent' }
+			)
 		).toBeUndefined();
 	});
 
 	describe('Hebrew/Masoretic versification (Psalms, Malachi, Joel)', () => {
 		it('converts a Hebrew Psalm chapter+verse to its Vulgate address (ccc112: "Ps 22:14" -> Vulgate 21:14)', () => {
 			expect(
-				refHref({ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14], raw: 'Ps 22:14' }, { bibleWorkId: 'bible.cpdv.en' })
+				refHref(
+					{ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14], raw: 'Ps 22:14' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
 			).toBe('/scriptura/ps/21#v14');
 		});
 
 		it('converts Malachi across the chapter 3/4 split (ccc678: "Mal 3: 19" -> Vulgate 4:1)', () => {
 			expect(
-				refHref({ kind: 'scripture', osis: 'mal', chapter: 3, verses: [19], raw: 'Mal 3: 19' }, { bibleWorkId: 'bible.cpdv.en' })
+				refHref(
+					{ kind: 'scripture', osis: 'mal', chapter: 3, verses: [19], raw: 'Mal 3: 19' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
 			).toBe('/scriptura/mal/4#v1');
 		});
 
 		it('converts Joel across the chapter 2/3 fold ("Joel 3:1-5" -> Vulgate 2:28)', () => {
 			expect(
-				refHref({ kind: 'scripture', osis: 'joel', chapter: 3, verses: [1, 2, 3, 4, 5], raw: 'Joel 3:1-5' }, { bibleWorkId: 'bible.cpdv.en' })
+				refHref(
+					{
+						kind: 'scripture',
+						osis: 'joel',
+						chapter: 3,
+						verses: [1, 2, 3, 4, 5],
+						raw: 'Joel 3:1-5'
+					},
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
 			).toBe('/scriptura/joel/2?v=28-32#v28');
 		});
 
@@ -734,31 +1069,46 @@ describe('refHref', () => {
 		it('degrades to a chapter-only link when the mapped verse does not exist, same guarantee as the non-divergent path', () => {
 			// Ps 22 (Hebrew) -> Vulg 21, which only has 32 verses in the fixture.
 			expect(
-				refHref({ kind: 'scripture', osis: 'ps', chapter: 22, verses: [9999], raw: 'Ps 22:9999' }, { bibleWorkId: 'bible.cpdv.en' })
+				refHref(
+					{ kind: 'scripture', osis: 'ps', chapter: 22, verses: [9999], raw: 'Ps 22:9999' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
 			).toBe('/scriptura/ps/21');
 		});
 
 		it('omits the anchor for a whole-chapter Psalm reference that is not a split psalm', () => {
 			expect(
-				refHref({ kind: 'scripture', osis: 'ps', chapter: 51, verses: [], raw: 'Ps 51' }, { bibleWorkId: 'bible.cpdv.en' })
+				refHref(
+					{ kind: 'scripture', osis: 'ps', chapter: 51, verses: [], raw: 'Ps 51' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
 			).toBe('/scriptura/ps/50');
 		});
 
 		it('picks the first half for a whole-chapter reference to a split psalm (Ps 116 -> Vulg 114)', () => {
 			expect(
-				refHref({ kind: 'scripture', osis: 'ps', chapter: 116, verses: [], raw: 'Ps 116' }, { bibleWorkId: 'bible.cpdv.en' })
+				refHref(
+					{ kind: 'scripture', osis: 'ps', chapter: 116, verses: [], raw: 'Ps 116' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
 			).toBe('/scriptura/ps/114');
 		});
 
 		it('leaves non-divergent books unaffected by the versification path', () => {
 			expect(
-				refHref({ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' }, { bibleWorkId: 'bible.cpdv.en' })
+				refHref(
+					{ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' },
+					{ bibleWorkId: 'bible.cpdv.en' }
+				)
 			).toBe('/scriptura/john/3#v16');
 		});
 
 		it('returns undefined rather than a wrong link when the divergent book is absent from the edition', () => {
 			expect(
-				refHref({ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14], raw: 'Ps 22:14' }, { bibleWorkId: 'bible.nonexistent' })
+				refHref(
+					{ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14], raw: 'Ps 22:14' },
+					{ bibleWorkId: 'bible.nonexistent' }
+				)
 			).toBeUndefined();
 		});
 	});
@@ -791,9 +1141,12 @@ describe('parseRefs — documents named by title', () => {
 	it('resolves the spelled-out conciliar titles the Portuguese Catechism uses', () => {
 		// PT never abbreviates, which is why it previously resolved no document
 		// links at all (DOCUMENT_SLUGS_EN's docblock).
-		const segs = parseRefs('II Concílio do Vaticano, Const. dogm. Dei Verbum, 2: AAS 58 (1966) 818.', {
-			lang: 'pt'
-		});
+		const segs = parseRefs(
+			'II Concílio do Vaticano, Const. dogm. Dei Verbum, 2: AAS 58 (1966) 818.',
+			{
+				lang: 'pt'
+			}
+		);
 		expect(segs.find((s) => s.kind === 'documentTitle')).toMatchObject({
 			slug: 'dei-verbum',
 			locus: '2'

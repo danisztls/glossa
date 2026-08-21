@@ -208,7 +208,9 @@ function mapMalachi(chapter: number, verse?: number): { chapter: number; verse?:
 	if (chapter === 1 || chapter === 2) return [{ chapter, verse }];
 	if (chapter === 3) {
 		if (verse === undefined) return [{ chapter: 3 }, { chapter: 4 }]; // ambiguous: whole chapter spans both
-		return verse <= MAL_SPLIT_AT ? [{ chapter: 3, verse }] : [{ chapter: 4, verse: verse - MAL_SPLIT_AT }];
+		return verse <= MAL_SPLIT_AT
+			? [{ chapter: 3, verse }]
+			: [{ chapter: 4, verse: verse - MAL_SPLIT_AT }];
 	}
 	return [{ chapter, verse }]; // chapter >= 4: no Hebrew equivalent, already-Vulgate input
 }
@@ -243,15 +245,18 @@ function mapJoel(chapter: number, verse?: number): { chapter: number; verse?: nu
 // Public API
 // --------------------------------------------------------------------------
 
-const DIVERGENT_MAPPERS: Record<string, (chapter: number, verse?: number) => { chapter: number; verse?: number }[]> =
-	{
-		ps: mapPsalm,
-		mal: mapMalachi,
-		joel: mapJoel
-	};
+const DIVERGENT_MAPPERS: Record<
+	string,
+	(chapter: number, verse?: number) => { chapter: number; verse?: number }[]
+> = {
+	ps: mapPsalm,
+	mal: mapMalachi,
+	joel: mapJoel
+};
 
 /**
- * Late-merge point mappings — mirror of `versification.py`'s `_LATE_MERGE`;
+ * Late-merge point mappings (a Python twin of this table existed until
+ * 2026-08-21, when it was deleted with the rest of `pipeline/build/`);
  * keep the two in step.
  *
  * The three books above diverge WHOLESALE: chapter boundaries move, so every
@@ -330,14 +335,19 @@ export function isDivergentBook(osis: string): boolean {
  * there's no way to know which half a whole-chapter reference means, so
  * both are offered, larger/first-part first.
  */
-export function toVulgateCandidates(osis: string, chapter: number, verse?: number): VulgateAddress[] {
+export function toVulgateCandidates(
+	osis: string,
+	chapter: number,
+	verse?: number
+): VulgateAddress[] {
 	const mapper = DIVERGENT_MAPPERS[osis];
 	const candidates = mapper ? mapper(chapter, verse) : [{ chapter, verse }];
 	// Late merges apply AFTER the book mappers, and never to a whole-chapter
 	// reference (no verse to move). No book has both, so the ordering is a
 	// formality — stated so it stays one if a book ever acquires both.
 	return candidates.map((c) => {
-		const merged = c.verse !== undefined ? LATE_MERGE.get(`${osis}:${c.chapter}:${c.verse}`) : undefined;
+		const merged =
+			c.verse !== undefined ? LATE_MERGE.get(`${osis}:${c.chapter}:${c.verse}`) : undefined;
 		return merged ? { osis, ...merged } : { osis, chapter: c.chapter, verse: c.verse };
 	});
 }

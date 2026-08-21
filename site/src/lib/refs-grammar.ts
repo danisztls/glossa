@@ -11,14 +11,20 @@
  * segment, text "; ", a scripture segment, text "; ", a document segment,
  * text ".". `RefText.svelte` is the presentation layer over this.
  *
- * The scripture grammar (clause splitting on `;`, `Cf.` scope, bookless
- * continuation clauses that inherit the previous clause's book, `:`/space/
- * `.` chapter-verse separators, range expansion, verse-subdivision letters,
- * the single-chapter-book exception, the dropped-colon-typo guard, the
- * known transcription typos) is ported from `pipeline/build/xrefs.py`,
- * which derived it empirically against the full 2865-paragraph EN corpus —
- * read that module's docstring for the primary source of truth. This file
- * extends it in three ways that module doesn't need to cover:
+ * The scripture grammar — clause splitting on `;` (and, for Portuguese, `:`),
+ * `Cf.` scope, bookless continuation clauses that inherit the previous
+ * clause's book, `:`/space/`.`/`,` chapter-verse separators, range expansion,
+ * verse-subdivision letters, the single-chapter-book exception, the
+ * dropped-colon-typo guard, the known transcription typos — was derived
+ * empirically, rule by rule, against the whole corpus; every table in it was
+ * built by grepping real citations rather than from a specification. It had a
+ * second home until 2026-08-21, `pipeline/build/xrefs.py`, which produced the
+ * committed `corpus/xrefs/ccc-bible.json`; the two drifted, this one was
+ * right wherever they disagreed, and the Python is gone (docs/decisions.md).
+ * `scripts/build-xrefs.mjs` now derives that index from this module, so there
+ * is exactly one grammar again.
+ *
+ * Three parts of it never existed in the Python at all:
  *
  *   1. A second, independently-derived book-abbreviation table for
  *      `ccc.pt`'s citations (Portuguese uses "," where English uses ":" as
@@ -37,16 +43,16 @@
  *      (DS, CIC, PL, PG, AAS, and any PT conciliar mention — PT never maps
  *      sigla to slugs, see that table's docblock) renders as a quiet
  *      non-link with an expansion tooltip instead of disappearing into
- *      plain text. `xrefs.py` only needed a *non*-scripture allowlist (to
- *      silence its "unmapped abbreviation" report); this module needs the
- *      sigla's expansions too. The table below is a stopgap —
+ *      plain text. A parser that only builds an index needs a
+ *      *non*-scripture allowlist; one that renders needs the sigla's
+ *      expansions too. The table below is a stopgap —
  *      `docs/link-surface.md` records that neither language's
  *      `abbreviations.json` carries a real one (the vatican.va mirrors omit
  *      the front-matter table) — built by counting sigla occurrences in
  *      both `paragraphs.json` files with `jq` and confirming each one's
  *      meaning against its citation context. Replace this table wholesale
  *      once the corpus carries a real abbreviations source.
- *   3. Two grammars `xrefs.py` never had to parse at all: a bare
+ *   3. Two grammars an index-only parser never had to touch: a bare
  *      comma/dash-separated CCC-paragraph number list (the Compendium's
  *      `ccc_refs`, e.g. "279-289, 296-298", and the CCC's own `related`
  *      field once a caller stringifies it) and a conservative in-prose
@@ -59,27 +65,29 @@
  * `parseRefs` tells them apart up front by checking whether the whole
  * string contains any letters, rather than threading a "what do bare
  * digits mean here" flag through the clause grammar. This also sidesteps a
- * real ambiguity `xrefs.py` deliberately leaves unresolved (see its
- * docstring: "a genuine bare-verse continuation... this will under-link
- * it") — a bare trailing clause after an established book is a dangling
+ * real ambiguity the grammar deliberately leaves unresolved (a genuine
+ * bare-verse continuation is under-linked rather than guessed at) — a bare
+ * trailing clause after an established book is a dangling
  * verse-continuation candidate in citation grammar, not a CCC paragraph
  * number, and treating it as the latter would be a *wrong* link, worse
- * than the under-linking `xrefs.py` accepts.
+ * than that under-linking.
  *
- * Design principle carried over verbatim from `xrefs.py`: under-linking
+ * Design principle, and the one that decides every ambiguous case:
+ * under-linking
  * (leaving a real reference as plain text) is an acceptable, expected
  * outcome; over-linking (a citation surface-form that isn't really that
  * reference) is not. Every ambiguous case below resolves toward "leave it
  * as text".
  */
 
-// No import from './corpus'. That is the point of this module: the grammar is
-// pure, so it runs outside the browser too — which is what lets a build script
-// derive cross-reference data with the SAME parser that renders the page,
-// instead of a second implementation of the same rules. `refs.ts` keeps the
-// half that does need the corpus: `refHref`, which turns a segment into a URL,
-// and the document-title table below, which it feeds in through
-// `setDocumentTitleSource`.
+// No import from './corpus'. That is the point of this module: the grammar
+// is pure, so it runs anywhere — in the browser, in a unit test, and in
+// `scripts/sync-corpus.mjs`, which builds the scripture cross-reference
+// index with the SAME parser that renders every link on the page (Node
+// strips the types natively; see that script's `buildXrefs`). `refs.ts`
+// keeps the half that does need the corpus — `refHref`, which turns a
+// segment into a URL, and the document-title table below, which it feeds in
+// through `setDocumentTitleSource`.
 
 // --------------------------------------------------------------------------
 // Public types
@@ -87,7 +95,14 @@
 
 export type RefSegment =
 	| { kind: 'text'; text: string }
-	| { kind: 'scripture'; osis: string; chapter: number; verses: number[]; cf?: boolean; raw: string }
+	| {
+			kind: 'scripture';
+			osis: string;
+			chapter: number;
+			verses: number[];
+			cf?: boolean;
+			raw: string;
+	  }
 	| { kind: 'ccc'; n: number; raw: string }
 	| { kind: 'compendium'; n: number; raw: string }
 	| {
@@ -127,11 +142,27 @@ export type RefSegment =
 export interface RefsOpts {
 	/** BCP-47 or bare language tag; only the `pt`/non-`pt` distinction matters. Defaults to `en`. */
 	lang?: string;
+	/**
+	 * `linkifyProse` only: read a bare "cf. 1212" as a CCC PARAGRAPH reference.
+	 *
+	 * Off by default, and deliberately. The grammar is real — the Catechism's
+	 * print edition does cross-reference its own paragraphs in running text
+	 * (docs/link-surface.md #3) — but that apparatus is absent from both
+	 * vatican.va archive mirrors, a documented source gap, so the corpus
+	 * contains ZERO in-prose "cf. <number>" mentions in either CCC edition or
+	 * either Compendium (verified across all four). What a default-on rule
+	 * actually produced was 104 wrong links, all of them in the encyclicals,
+	 * where a bare number after "cf." is a Scripture chapter continuing an
+	 * earlier reference ("cf. 22:32") or a book number the tables don't know
+	 * ("cf. 1 Ped 2, 21") — never a Catechism paragraph. Turn this on for a
+	 * work that genuinely prints them; until one is ingested, nothing does.
+	 */
+	cccParagraphRefs?: boolean;
 }
 
 // --------------------------------------------------------------------------
 // Canonical chapter counts (docs/corpus-schema.md canonical 73-book order).
-// Ported from xrefs.py's MAX_CHAPTER — used two ways: (1) a chapter number
+// Used two ways: (1) a chapter number
 // above the book's real length is almost always a dropped-colon typo
 // running chapter and verse together ("Eph 314" for "Eph 3:14") and is
 // dropped rather than guessed at, same as the Python parser; (2) its
@@ -140,17 +171,79 @@ export interface RefsOpts {
 // --------------------------------------------------------------------------
 
 const MAX_CHAPTER: Record<string, number> = {
-	gen: 50, exod: 40, lev: 27, num: 36, deut: 34, josh: 24, judg: 21,
-	ruth: 4, '1sam': 31, '2sam': 24, '1kgs': 22, '2kgs': 25, '1chr': 29, '2chr': 36,
-	ezra: 10, neh: 13, tob: 14, jdt: 16, esth: 16, '1macc': 16, '2macc': 15,
-	job: 42, ps: 150, prov: 31, eccl: 12, song: 8, wis: 19, sir: 51,
-	isa: 66, jer: 52, lam: 5, bar: 6, ezek: 48, dan: 14, hos: 14,
-	joel: 3, amos: 9, obad: 1, jonah: 4, mic: 7, nah: 3, hab: 3,
-	zeph: 3, hag: 2, zech: 14, mal: 4,
-	matt: 28, mark: 16, luke: 24, john: 21, acts: 28, rom: 16,
-	'1cor': 16, '2cor': 13, gal: 6, eph: 6, phil: 4, col: 4, '1thess': 5,
-	'2thess': 3, '1tim': 6, '2tim': 4, titus: 3, phlm: 1, heb: 13, jas: 5,
-	'1pet': 5, '2pet': 3, '1john': 5, '2john': 1, '3john': 1, jude: 1, rev: 22
+	gen: 50,
+	exod: 40,
+	lev: 27,
+	num: 36,
+	deut: 34,
+	josh: 24,
+	judg: 21,
+	ruth: 4,
+	'1sam': 31,
+	'2sam': 24,
+	'1kgs': 22,
+	'2kgs': 25,
+	'1chr': 29,
+	'2chr': 36,
+	ezra: 10,
+	neh: 13,
+	tob: 14,
+	jdt: 16,
+	esth: 16,
+	'1macc': 16,
+	'2macc': 15,
+	job: 42,
+	ps: 150,
+	prov: 31,
+	eccl: 12,
+	song: 8,
+	wis: 19,
+	sir: 51,
+	isa: 66,
+	jer: 52,
+	lam: 5,
+	bar: 6,
+	ezek: 48,
+	dan: 14,
+	hos: 14,
+	joel: 3,
+	amos: 9,
+	obad: 1,
+	jonah: 4,
+	mic: 7,
+	nah: 3,
+	hab: 3,
+	zeph: 3,
+	hag: 2,
+	zech: 14,
+	mal: 4,
+	matt: 28,
+	mark: 16,
+	luke: 24,
+	john: 21,
+	acts: 28,
+	rom: 16,
+	'1cor': 16,
+	'2cor': 13,
+	gal: 6,
+	eph: 6,
+	phil: 4,
+	col: 4,
+	'1thess': 5,
+	'2thess': 3,
+	'1tim': 6,
+	'2tim': 4,
+	titus: 3,
+	phlm: 1,
+	heb: 13,
+	jas: 5,
+	'1pet': 5,
+	'2pet': 3,
+	'1john': 5,
+	'2john': 1,
+	'3john': 1,
+	jude: 1,
+	rev: 22
 }; // fmt: skip
 
 /** Books the corpus/citations cite as "Book <verse>" with no chapter — see MAX_CHAPTER. */
@@ -165,7 +258,7 @@ const SINGLE_CHAPTER_BOOKS = new Set(
 //
 // Keys are exact, case-sensitive surface forms as printed in citations —
 // matching a lowercase word never risks colliding with ordinary prose
-// (ported from xrefs.py's BOOK_VARIANTS/VARIANT_TO_OSIS design). Unlike
+// Unlike
 // `corpus.findBookByAbbrev` (lowercase, one canonical set per edition, used
 // to resolve a *typed* jump-box token against whichever Bible edition is
 // open), this table is fixed and languageshaped: it exists to recognize
@@ -247,22 +340,20 @@ const BOOK_VARIANTS_EN: Record<string, string[]> = {
 	eph: ['Eph', 'Ephesians'],
 	phil: ['Phil', 'Philippians'],
 	col: ['Col', 'Colossians'],
-	titus: ['Ti', 'Titus'],
+	titus: ['Ti', 'Tit', 'Titus'],
 	phlm: ['Philem', 'Phlm', 'Philemon'],
 	heb: ['Heb', 'Hebrews'],
 	jas: ['Jas', 'James'],
 	jude: ['Jude'],
 	rev: ['Rev', 'Rv', 'Revelation', 'Apoc'],
-	...numberedVariants(
-		{ 1: '1sam', 2: '2sam' },
-		['Sam', 'Samuel'],
-		{ lTypo: true }
-	),
+	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sam', 'Samuel'], { lTypo: true }),
 	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['Kings', 'Kgs'], { lTypo: true }),
 	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Chr', 'Chronicles'], { lTypo: true }),
 	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Macc', 'Maccabees'], { lTypo: true }),
 	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor', 'Corinthians'], { lTypo: true }),
-	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Thess', 'Thessalonians', 'Th'], { lTypo: true }),
+	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Thess', 'Thessalonians', 'Th'], {
+		lTypo: true
+	}),
 	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tim', 'Timothy'], { lTypo: true }),
 	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pet', 'Pt', 'Peter'], { lTypo: true }),
 	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jn', 'John', 'In'], { lTypo: true })
@@ -279,12 +370,19 @@ const BOOK_VARIANTS_EN: Record<string, string[]> = {
  * so those fall back to the jump box's own lowercase abbreviation,
  * title-cased — unverified against a real citation, flagged inline.
  */
+// Beyond the Catechism's own forms, this table carries the fuller
+// abbreviations the older Portuguese translations of the encyclicals and
+// council documents use — "Gén", "Sal", "Apoc", "Hebr", "Luc", "Fil", "Col",
+// "Eclo", "1 Ped", "2 Tess". Same method as the rest of the table: every
+// entry below was found by scanning the real corpus for scripture-shaped
+// prose that produced no link, then reading the surrounding sentence to
+// confirm which book it names. None was guessed.
 const BOOK_VARIANTS_PT: Record<string, string[]> = {
-	gen: ['Gn'],
-	exod: ['Ex'],
+	gen: ['Gn', 'Gén', 'Gen'],
+	exod: ['Ex', 'Éx'],
 	lev: ['Lv'],
-	num: ['Nm'],
-	deut: ['Dt', 'Dr'], // Dr: observed typo (t -> r), "Cf. Dr 18, 10" = Dt 18:10
+	num: ['Nm', 'Núm'],
+	deut: ['Dt', 'Dr', 'Deut'], // Dr: observed typo (t -> r), "Cf. Dr 18, 10" = Dt 18:10
 	josh: ['Js'],
 	judg: ['Jz'],
 	ruth: ['Rt'], // fallback: not observed in a ccc.pt citation
@@ -292,16 +390,16 @@ const BOOK_VARIANTS_PT: Record<string, string[]> = {
 	jdt: ['Jt'],
 	esth: ['Est'], // fallback
 	job: ['Job', 'Jó'],
-	ps: ['Sl'],
-	prov: ['Pr'],
+	ps: ['Sl', 'Sal', 'Salm'],
+	prov: ['Pr', 'Prov'],
 	eccl: ['Ecl', 'Ec'],
-	song: ['Ct'],
-	wis: ['Sb'],
-	sir: ['Sir'],
+	song: ['Ct', 'Cânt'],
+	wis: ['Sb', 'Sab'],
+	sir: ['Sir', 'Eclo', 'Ecli'],
 	isa: ['Is'],
-	jer: ['Jr'],
+	jer: ['Jr', 'Jer'],
 	lam: ['Lm'], // fallback
-	bar: ['Br'], // fallback
+	bar: ['Br', 'Bar'],
 	ezek: ['Ez'],
 	ezra: ['Esd'],
 	neh: ['Ne'],
@@ -320,35 +418,35 @@ const BOOK_VARIANTS_PT: Record<string, string[]> = {
 	mal: ['Ml'],
 	matt: ['Mt'],
 	mark: ['Mc', 'Mr'], // Mr: observed one-off typo for Mc
-	luke: ['Lc'],
+	luke: ['Lc', 'Luc'],
 	john: ['Jo'],
 	acts: ['Act', 'At'],
-	// "Rom" (unabbreviated) is deliberately NOT included: the corpus also
-	// abbreviates "Catechismus Romanus" as "Cat Rom"/"CatRom", which shapes
-	// identically to a chapter:verse citation ("Cat Rom 1, 10, 24") — "Rm"
-	// is the unambiguous, dominant citation form, so this trades a little
-	// under-linking of the rarer full-word form for never mislinking the
-	// Roman Catechism as the Letter to the Romans.
-	rom: ['Rm'],
-	gal: ['Gl'],
+	// "Rom" is included despite colliding with "Cat Rom"/"CatRom"
+	// (Catechismus Romanus), whose locus shapes identically to a
+	// chapter:verse. The collision is handled where it actually occurs — by
+	// prefix, in `precededByFalseLead` — rather than by dropping the book,
+	// which used to cost 153 real references to Romans in the older
+	// encyclical translations that spell it out this way.
+	rom: ['Rm', 'Rom'],
+	gal: ['Gl', 'Gál', 'Gal'],
 	eph: ['Ef'],
-	phil: ['Fl'],
-	col: ['Cl'],
-	titus: ['Tt'],
+	phil: ['Fl', 'Fil'],
+	col: ['Cl', 'Col'],
+	titus: ['Tt', 'Tit'],
 	phlm: ['Fm', 'Flm'], // Flm observed in an inline PT citation
-	heb: ['Heb', 'Hb'],
+	heb: ['Heb', 'Hb', 'Hebr'],
 	jas: ['Tg'],
 	jude: ['Jd'], // fallback
-	rev: ['Ap'],
+	rev: ['Ap', 'Apoc'],
 	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Cr'], { unspaced: true }),
-	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor'], { unspaced: true }),
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor'], { unspaced: true, lTypo: true }),
 	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['Rs'], { unspaced: true }),
 	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Mac'], { unspaced: true }),
-	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pe'], { unspaced: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pe', 'Ped', 'Pd'], { unspaced: true }),
 	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sm'], { unspaced: true }),
 	// Observed unspaced once ("1Ts 4, 7") alongside the normal spaced form.
-	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Ts'], { unspaced: true }),
-	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tm'], { unspaced: true }),
+	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Ts', 'Tess'], { unspaced: true }),
+	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tm', 'Tim'], { unspaced: true }),
 	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jo'], { unspaced: true })
 };
 
@@ -519,6 +617,9 @@ interface LangConfig {
 	/** Other accepted chapter/verse separators. Used only for a verified
 	 * source-specific punctuation drift, never to guess a locator. */
 	extraChapterVerseSeparators: string[];
+	/** Marks that delimit one citation clause from the next. ";" everywhere;
+	 * PT adds ":" (see `CONFIG_PT`). */
+	clauseSepRe: RegExp;
 }
 
 function escapeRe(s: string): string {
@@ -532,7 +633,7 @@ function escapeRe(s: string): string {
 // surface forms and full book names can start or end on an accented
 // letter, so every matcher below uses this instead.
 const LEFT_BOUND = '(?<![\\p{L}\\p{N}])';
-const RIGHT_BOUND = '(?![\\p{L}\\p{N}])';
+const RIGHT_BOUND = '(?![\\p{L}])';
 
 function buildVariantRe(variants: string[]): RegExp {
 	const sorted = [...variants].sort((a, b) => b.length - a.length);
@@ -545,7 +646,8 @@ function buildConfig(
 	primarySep: string,
 	allowBareSeparators: boolean,
 	documentSlugs: Record<string, string> = {},
-	extraChapterVerseSeparators: string[] = []
+	extraChapterVerseSeparators: string[] = [],
+	clauseSeparators: string[] = [';']
 ): LangConfig {
 	const variantToOsis = new Map<string, string>();
 	for (const [osis, variants] of Object.entries(bookVariants)) {
@@ -559,7 +661,8 @@ function buildConfig(
 		documentSlugs: new Map(Object.entries(documentSlugs)),
 		primarySep,
 		allowBareSeparators,
-		extraChapterVerseSeparators
+		extraChapterVerseSeparators,
+		clauseSepRe: new RegExp('([' + clauseSeparators.map(escapeRe).join('') + '])')
 	};
 }
 
@@ -567,10 +670,27 @@ function buildConfig(
 // colon-separated English references. A comma immediately after a chapter is
 // unambiguously a verse separator there, so accept it while retaining the
 // source's printed spelling in the corpus.
-const CONFIG_EN = buildConfig(BOOK_VARIANTS_EN, DOCUMENT_SIGLA_EN, ':', true, DOCUMENT_SLUGS_EN, [',']);
-// No fifth argument -- PT's document segments always parse with `slug: null`
-// (DOCUMENT_SLUGS_EN's docblock explains why that's correct, not a gap).
-const CONFIG_PT = buildConfig(BOOK_VARIANTS_PT, DOCUMENT_SIGLA_PT, ',', false);
+const CONFIG_EN = buildConfig(BOOK_VARIANTS_EN, DOCUMENT_SIGLA_EN, ':', true, DOCUMENT_SLUGS_EN, [
+	','
+]);
+// Fourth argument stays `false`: PT never uses a bare SPACE as a
+// chapter/verse separator, so `allowBareSeparators` (which would enable both
+// " " and ".") is still the wrong knob for it. What PT does drift to is "."
+// where it means "," -- "Sl 40. 7-9" for Ps 40:7-9, "Mc 14. 25" for Mk 14:25
+// -- so that one mark goes in via `extraChapterVerseSeparators`, the knob
+// meant for exactly this kind of verified, source-specific punctuation
+// drift. Fifth argument empty: PT's document segments always parse with
+// `slug: null` (DOCUMENT_SLUGS_EN's docblock explains why that's correct,
+// not a gap).
+const CONFIG_PT = buildConfig(
+	BOOK_VARIANTS_PT,
+	DOCUMENT_SIGLA_PT,
+	',',
+	false,
+	{},
+	['.'],
+	[';', ':']
+);
 
 function configFor(lang?: string): LangConfig {
 	return lang?.toLowerCase().startsWith('pt') ? CONFIG_PT : CONFIG_EN;
@@ -616,10 +736,10 @@ function configFor(lang?: string): LangConfig {
 /**
  * Where the ingested documents come from. Injected rather than imported so
  * this module stays corpus-free (see the top of the file): `refs.ts` calls
- * this with `listDocuments` at import time, and a caller that only needs the
- * scripture grammar simply never does, and gets no `documentTitle` segments.
- * Scripture is matched before documents in `parseClause`, so an absent table
- * costs such a caller nothing.
+ * this with `listDocuments` at import time, and anything that only needs the
+ * scripture grammar — the xref builder — simply never does, and gets no
+ * `documentTitle` segments. Scripture is matched before documents in
+ * `parseClause`, so an absent table costs those callers nothing.
  */
 let documentTitleSource: () => DocumentTitleGroup[] = () => [];
 
@@ -692,7 +812,13 @@ function buildDocumentTitleIndex(): void {
 function findDocumentTitleAt(
 	clause: string,
 	pos: number
-): { slug: string; title: string; locus: string | null; matchStart: number; consumedEnd: number } | null {
+): {
+	slug: string;
+	title: string;
+	locus: string | null;
+	matchStart: number;
+	consumedEnd: number;
+} | null {
 	if (!documentTitleIndex || !documentTitleRe) buildDocumentTitleIndex();
 	const index = documentTitleIndex!;
 	const re = documentTitleRe!;
@@ -719,12 +845,26 @@ function findDocumentTitleAt(
 
 // --------------------------------------------------------------------------
 // Low-level number parsing — language-agnostic once the separator is fixed.
-// Ported from xrefs.py's _parse_verse_list / _parse_chapter_verses /
-// _parse_single_chapter_ref.
 // --------------------------------------------------------------------------
 
-/** A leading run of digits, with an optional single trailing subdivision letter ("3a" -> 3, letter dropped). */
-const LEAD_NUM_RE = /^(\d+)[a-zA-Z]?/;
+/**
+ * A leading run of digits, with an optional single trailing subdivision
+ * letter ("3a" -> 3, letter dropped).
+ *
+ * A lowercase "l" standing in for the digit "1" is accepted when a digit
+ * follows it ("l2" -> 12, "l0" -> 10). This is the same 1/l confusion
+ * `numberedVariants`' `lTypo` option already folds into the EN book table
+ * ("l Cor", "l Pt"), observed inside a locus rather than before a book name:
+ * ccc.pt cites "Act 4, l2" where EN has Acts 4:12, and "Heb 5, l0" where EN
+ * has Heb 5:10. The digit lookahead is what keeps it safe -- a bare "l" is
+ * still a letter, so no ordinary word can be read as a number.
+ */
+const LEAD_NUM_RE = /^(?:l(?=\d)|\d)\d*[a-zA-Z]?/;
+
+/** `LEAD_NUM_RE`'s match as a number, with a leading "l" read as the "1" it stands for. */
+function leadNum(match: string): number {
+	return Number(match.replace(/[a-zA-Z]+$/, '').replace(/^l/, '1'));
+}
 
 /**
  * Parse a verse list from the start of `s` (no leading separator expected —
@@ -733,37 +873,51 @@ const LEAD_NUM_RE = /^(\d+)[a-zA-Z]?/;
  * "16.21"), and verse-subdivision letters ("3a" -> 3). Returns
  * (sorted deduplicated verses, chars consumed).
  *
- * DELIBERATE DIVERGENCE from xrefs.py's `_parse_verse_list`, which does not
- * skip a leading space here (its regex requires a digit at position 0).
- * Added primarily so PT's "Act 2, 42" — a space after the primary
- * chapter/verse separator is the norm there, not a typo — parses at all.
- * It turns out to also fix a real EN transcription pattern the Python
- * parser doesn't handle: a stray space after the colon ("Dt 28: 10",
- * "Ex 33: 12-17", "Gen 21: 17") makes `corpus/xrefs/ccc-bible.json` record
- * these as whole-chapter refs (`verses: []`) when the citation actually
- * names a verse. Confirmed by a corpus-wide smoke check: of ~1200 CCC
- * paragraphs with scripture refs, this file agrees with the Python-built
- * `ccc-bible.json` on 98.4% verbatim, and *every one* of the disagreements
- * traces to exactly this space-after-separator case — this parser is more
- * correct on those, not wrong. That makes `corpus/xrefs/ccc-bible.json`
- * itself slightly wrong: `xrefs.py` needs the same fix and the file needs
- * rebuilding. Tracked as follow-up work, not done here.
+ * A leading space is skipped, which the long-gone Python parser did not do.
+ * Needed so PT's "Act 2, 42" — a space after the primary chapter/verse
+ * separator is the norm there, not a typo — parses at all; it also fixes a
+ * real EN transcription pattern, a stray space after the colon ("Dt 28: 10",
+ * "Ex 33: 12-17", "Gen 21: 17"), which the Python recorded as a whole-chapter
+ * ref when the citation actually named a verse. That divergence is what
+ * settled which of the two parsers should survive: they agreed on 98.4% of
+ * CCC paragraphs, and every disagreement traced to this case, with this one
+ * correct each time.
  */
-function parseVerseList(s: string): { verses: number[]; consumed: number } {
+function parseVerseList(s: string, primarySep: string): { verses: number[]; consumed: number } {
 	const lead = /^ */.exec(s)![0];
 	let pos = lead.length;
 	const verses: number[] = [];
 	while (true) {
 		const m = LEAD_NUM_RE.exec(s.slice(pos));
 		if (!m) break;
-		const start = Number(m[1]);
+		const start = leadNum(m[0]);
 		pos += m[0].length;
 		if (s[pos] === '-' || s[pos] === '–' || s[pos] === '‑') {
 			const m2 = LEAD_NUM_RE.exec(s.slice(pos + 1));
-			if (m2) {
-				const end = Number(m2[1]);
+			// A ":" right after the range's far end means the range crosses
+			// chapters ("Isa 52:13-53:12"): "53" is the second chapter, not a
+			// verse of the first, and expanding 13..53 would invent 41 verses
+			// of a 15-verse chapter. `RefSegment` holds one chapter, so link
+			// the range's opening verse and leave the rest as text — the
+			// under-link this module prefers over a wrong link.
+			//
+			// EN only, keyed off ":" being ITS primary separator. Every mark
+			// PT could use here is load-bearing twice over — its "," and "."
+			// both also chain the next verse of a list ("Rm 11, 17-18. 24"),
+			// and its ":" is a clause separator ("Mt 5, 29-30: 16. 24") — so
+			// there is no PT mark that identifies a chapter crossing without
+			// misreading commoner shapes. PT's one cross-chapter range
+			// ("Ap 21, 1-22, 5") keeps its existing over-expansion rather
+			// than trading it for a wide regression.
+			const crossesChapters =
+				m2 !== null && primarySep === ':' && s[pos + 1 + m2[0].length] === ':';
+			if (m2 && !crossesChapters) {
+				const end = leadNum(m2[0]);
 				pos += 1 + m2[0].length;
 				for (let v = start; v <= end; v++) verses.push(v);
+			} else if (crossesChapters) {
+				verses.push(start);
+				break;
 			} else {
 				verses.push(start);
 			}
@@ -793,12 +947,25 @@ function parseChapterVerses(
 	const chapter = Number(m[1]);
 	const pos = m[0].length;
 	const rest = s.slice(pos);
-	if (rest[0] === cfg.primarySep || cfg.extraChapterVerseSeparators.includes(rest[0])) {
-		const { verses, consumed } = parseVerseList(rest.slice(1));
-		return { chapter, verses, consumed: pos + 1 + consumed };
+	// A space before the separator ("Rm 8 , 15", "Mt 28 , 19") is a spacing
+	// defect in the PT archive, not a different locator: 9 ccc.pt citations
+	// print one, and without this each links as a whole-chapter reference
+	// with its verse left dangling as plain text. An EXPLICIT separator still
+	// has to follow, so this never competes with `allowBareSeparators`'
+	// space-as-separator reading below.
+	const gap = /^ */.exec(rest)![0];
+	const afterGap = rest.slice(gap.length);
+	if (afterGap[0] === cfg.primarySep || cfg.extraChapterVerseSeparators.includes(afterGap[0])) {
+		const { verses, consumed } = parseVerseList(afterGap.slice(1), cfg.primarySep);
+		// A separator with no verse after it is punctuation, not a locator:
+		// the "." ending "Cf. Ez 36." is the sentence's full stop, and
+		// consuming it would pull the period inside the rendered link.
+		if (verses.length > 0) {
+			return { chapter, verses, consumed: pos + gap.length + 1 + consumed };
+		}
 	}
 	if (cfg.allowBareSeparators && (rest[0] === '.' || rest[0] === ' ') && /\d/.test(rest[1] ?? '')) {
-		const { verses, consumed } = parseVerseList(rest.slice(1));
+		const { verses, consumed } = parseVerseList(rest.slice(1), cfg.primarySep);
 		return { chapter, verses, consumed: pos + 1 + consumed };
 	}
 	return { chapter, verses: [], consumed: pos };
@@ -817,7 +984,7 @@ function parseSingleChapterRef(
 	const redundantPrefix = '1' + cfg.primarySep;
 	const body = s.startsWith(redundantPrefix) ? s.slice(redundantPrefix.length) : s;
 	const prefixLen = s.startsWith(redundantPrefix) ? redundantPrefix.length : 0;
-	const { verses, consumed } = parseVerseList(body);
+	const { verses, consumed } = parseVerseList(body, cfg.primarySep);
 	if (verses.length === 0) return { chapter: null, verses: [], consumed: 0 };
 	return { chapter: 1, verses, consumed: prefixLen + consumed };
 }
@@ -827,11 +994,18 @@ function parseRefNumbers(
 	cfg: LangConfig,
 	osis: string
 ): { chapter: number | null; verses: number[]; consumed: number } {
-	// PT's archive occasionally writes a comma after the book abbreviation
-	// ("1 Cor, 13, 12") or an isolated period ("Fl . 3, 8"). Those marks
-	// separate the book from the locus, not the locus's chapter from verse,
-	// so discard just this leading punctuation before the normal PT grammar.
-	const bookPunctuation = cfg.primarySep === ',' ? /^(?:,\s*|\.\s*)/.exec(s)?.[0] ?? '' : '';
+	// A mark between the book abbreviation and its locus separates those two,
+	// not the locus's chapter from its verse, so discard it before the normal
+	// grammar runs. PT's archive writes a comma ("1 Cor, 13, 12") or a stray
+	// period ("Fl . 3, 8"); the abbreviating full stop ("Lk. 1:28", "Matt. 16,
+	// 18", "Hebr. 4,12") is the ordinary typographic form in the older
+	// translations of BOTH languages, and accounts for ~200 English references
+	// that otherwise fail to resolve at all.
+	//
+	// The comma is accepted only where "," is not itself the chapter/verse
+	// separator: in English "Rom, 5" would be indistinguishable from a locus.
+	const bookPunctuation =
+		(cfg.primarySep === ',' ? /^(?:,\s*|\.\s*)/.exec(s)?.[0] : /^\.\s*/.exec(s)?.[0]) ?? '';
 	const body = s.slice(bookPunctuation.length);
 	const parsed = SINGLE_CHAPTER_BOOKS.has(osis)
 		? parseSingleChapterRef(body, cfg)
@@ -849,12 +1023,16 @@ interface BookMatch {
 	matchEnd: number;
 }
 
-/** Search (not anchor) `s` for a recognized book, starting at `start` — a stray prefix before the real match doesn't block it (ported from xrefs.py's `_find_book`). */
+/** Search (not anchor) `s` for a recognized book, starting at `start` — a stray prefix before the real match doesn't block it. */
 function findBookAt(cfg: LangConfig, s: string, start: number): BookMatch | null {
 	cfg.bookRe.lastIndex = start;
 	const m = cfg.bookRe.exec(s);
 	if (!m) return null;
-	return { osis: cfg.variantToOsis.get(m[0])!, matchStart: m.index, matchEnd: m.index + m[0].length };
+	return {
+		osis: cfg.variantToOsis.get(m[0])!,
+		matchStart: m.index,
+		matchEnd: m.index + m[0].length
+	};
 }
 
 interface DocumentMatch {
@@ -876,11 +1054,58 @@ function findDocumentAt(cfg: LangConfig, s: string, start: number): DocumentMatc
 	const spaceSkip = /^ */.exec(after)![0];
 	const locusMatch = LOCUS_RE.exec(after.slice(spaceSkip.length));
 	const locus = locusMatch ? locusMatch[0] : null;
-	const consumedEnd = m.index + m[0].length + (locusMatch ? spaceSkip.length + locusMatch[0].length : 0);
-	return { sigla: m[0], matchStart: m.index, consumedEnd, locus, slug: cfg.documentSlugs.get(m[0]) ?? null };
+	const consumedEnd =
+		m.index + m[0].length + (locusMatch ? spaceSkip.length + locusMatch[0].length : 0);
+	return {
+		sigla: m[0],
+		matchStart: m.index,
+		consumedEnd,
+		locus,
+		slug: cfg.documentSlugs.get(m[0]) ?? null
+	};
 }
 
-/** True if a "cf."/"Cf." token sits directly before `pos` — the fallback for `Cf.` appearing mid-clause rather than at its start (ported from xrefs.py's `_preceded_by_cf`). */
+/**
+ * True when a book name is the OBJECT OF A LATIN COMMENTARY TITLE rather than
+ * a reference — "St. Gregory the Great, Moralia in Job, 31, 45", "Origenes,
+ * In Mt. 16, 21", "S. Aug. in Ps 32". Those name a Father's commentary ON a
+ * book, and the numbers after them are the commentary's own divisions, so
+ * reading them as chapter and verse invents a citation the text never made
+ * (it put "Job 31 is cited in the Catechism" into the cross-reference index,
+ * where it is simply false).
+ *
+ * Derived from the corpus, not guessed: scanning every citation in all 347
+ * works for a scripture match directly preceded by "in" turns up ten, of
+ * which nine are commentary titles and one — "Is 7:14 (LXX), quoted in
+ * Mt 1:23" — is a real reference in English prose. The three shapes below
+ * separate them exactly: a capitalised "In" (4 cases, always Latin), an
+ * abbreviation's full stop before a lowercase "in" (1, "S. Aug. in"), and the
+ * literal title word "Moralia" (4). Ordinary English "quoted in" matches none
+ * of them and keeps its link. Same posture as the `Cat Rom` exclusion in
+ * `BOOK_VARIANTS_PT`: a narrow, evidence-backed block on a form the corpus
+ * demonstrably uses for something else.
+ */
+const COMMENTARY_TITLE_RE = /(?:\bIn|\.\s*in|\bMoralia\s+in)\s*$/;
+
+/**
+ * "Cat Rom"/"CatRom" is the Catechismus Romanus, and its locus is shaped
+ * exactly like a chapter and verse ("CatRom 1, 10, 24"). The Portuguese book
+ * table used to drop "Rom" entirely to avoid mislinking that as the Letter to
+ * the Romans — at the cost of every real reference to Romans in the older
+ * encyclical translations, which spell the book out that way. Blocking the
+ * prefix instead keeps both: all 25 occurrences of the Roman Catechism in the
+ * corpus are spelled "Cat"/"Cat." immediately before, and none of them occur
+ * in running prose at all.
+ */
+const ROMAN_CATECHISM_RE = /\bCat\.?\s*$/;
+
+/** A book match that is really part of a longer title — see the two patterns above. */
+function precededByFalseLead(prefix: string, osis: string): boolean {
+	if (COMMENTARY_TITLE_RE.test(prefix)) return true;
+	return osis === 'rom' && ROMAN_CATECHISM_RE.test(prefix);
+}
+
+/** True if a "cf."/"Cf." token sits directly before `pos` — the fallback for `Cf.` appearing mid-clause rather than at its start. */
 function precededByCf(prefix: string): boolean {
 	return /\bcf\.?\s*$/i.test(prefix);
 }
@@ -915,8 +1140,7 @@ interface ClauseState {
 }
 
 /**
- * Parse one `;`-delimited clause (ported from xrefs.py's `parse_citation`
- * loop body) into segments that reproduce the clause's exact original text
+ * Parse one clause into segments that reproduce the clause's exact original text
  * with any recognized reference woven in as a non-text segment.
  */
 function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): RefSegment[] {
@@ -927,8 +1151,7 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 	const clauseCf = Boolean(cfMatch);
 
 	// 1. Scripture book search, retrying past a book-shaped false lead (e.g.
-	//    "Ad Eph." with no chapter after it — see xrefs.py's
-	//    test_book_like_prefix_does_not_block_later_real_ref).
+	//    "Ad Eph." with no chapter after it).
 	let searchPos = pos;
 	while (true) {
 		const bm = findBookAt(cfg, rawClause, searchPos);
@@ -938,6 +1161,10 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 		const cv = parseRefNumbers(rawClause.slice(afterBook), cfg, bm.osis);
 		if (cv.chapter === null) {
 			searchPos = bm.matchEnd; // book-shaped, but nothing ref-shaped follows it
+			continue;
+		}
+		if (precededByFalseLead(rawClause.slice(0, bm.matchStart), bm.osis)) {
+			searchPos = bm.matchEnd; // a Father's commentary ON the book, not a reference
 			continue;
 		}
 		if (cv.chapter > MAX_CHAPTER[bm.osis]) {
@@ -958,20 +1185,32 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 		});
 		state.currentBook = bm.osis;
 		state.currentCf = cf;
-		if (consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(consumedEnd)));
+		// Keep scanning the REST of this clause rather than dropping it to
+		// text: PT's archive drifts between ";" and "," as the mark between
+		// two references, so one comma-joined clause can carry two of them
+		// ("Heb 10, 5-7, citando o Sl 40. 7-9, segundo os LXX" — Ps 40 is a
+		// second real reference, not prose). Recursion always consumes at
+		// least the matched book, so it terminates.
+		if (consumedEnd < rawClause.length) {
+			segs.push(...parseClause(rawClause.slice(consumedEnd), cfg, state));
+		}
 		return segs;
 	}
 
 	// 2. Bookless continuation of the previously established book — requires
 	//    an actual verse component (a bare chapter-shaped number is too
-	//    ambiguous to attach to the running book; see xrefs.py's docstring
-	//    on the known bare-verse-continuation gap).
+	//    ambiguous to attach to the running book — a known, accepted
+	//    under-linking gap).
 	if (state.currentBook) {
 		const leadSpace = /^ */.exec(rawClause.slice(pos))![0];
 		const digitsStart = pos + leadSpace.length;
 		if (/^\d/.test(rawClause.slice(digitsStart))) {
 			const cv = parseRefNumbers(rawClause.slice(digitsStart), cfg, state.currentBook);
-			if (cv.chapter !== null && cv.verses.length > 0 && cv.chapter <= MAX_CHAPTER[state.currentBook]) {
+			if (
+				cv.chapter !== null &&
+				cv.verses.length > 0 &&
+				cv.chapter <= MAX_CHAPTER[state.currentBook]
+			) {
 				const consumedEnd = digitsStart + cv.consumed;
 				const cf = clauseCf || state.currentCf;
 				const segs: RefSegment[] = [];
@@ -984,7 +1223,9 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 					...(cf ? { cf: true as const } : {}),
 					raw: rawClause.slice(digitsStart, consumedEnd)
 				});
-				if (consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(consumedEnd)));
+				if (consumedEnd < rawClause.length) {
+					segs.push(...parseClause(rawClause.slice(consumedEnd), cfg, state));
+				}
 				return segs;
 			}
 		}
@@ -1047,8 +1288,8 @@ function parseCitationClauses(text: string, cfg: LangConfig): RefSegment[] {
 	const segs: RefSegment[] = [];
 	// Splitting with a capturing group keeps every ";" as its own array
 	// element, so no character of the original string is ever dropped.
-	for (const part of text.split(/(;)/)) {
-		if (part === ';') segs.push(textSeg(';'));
+	for (const part of text.split(cfg.clauseSepRe)) {
+		if (part.length === 1 && cfg.clauseSepRe.test(part)) segs.push(textSeg(part));
 		else segs.push(...parseClause(part, cfg, state));
 	}
 	return mergeText(segs);
@@ -1098,6 +1339,36 @@ function parseBareCccList(text: string): RefSegment[] {
  * bare CCC-paragraph-number list (Compendium `ccc_refs`, a stringified CCC
  * `related`).
  */
+/**
+ * A citation string with the source's loose typesetting spacing tidied —
+ * NOT a rewrite of the citation, only of the whitespace around it.
+ *
+ * Every mirror the corpus is built from carries the same defect class, and it
+ * is not rare: 367 of ccc.pt's 1,255 inline locators and 387 of its 3,601
+ * footnote strings print a stray space, and the Vatican II and encyclical
+ * pages do the same. It shows up as a space after "(" or before ")"
+ * ("( Sl 105, 3)", "(2 Cor 5, 17 )"), a space before a comma or period
+ * ("Mc 1 , 11", "Cf . Lc 1, 38", "Catechesi tradendae , 1"), or a doubled
+ * space mid-string. All three read as typography errors rather than as
+ * anything the citation means.
+ *
+ * Applied at RENDER time, by `RefText.svelte`, not stored: `corpus/raw/` and
+ * the parsed corpus both keep exactly what the page prints, per
+ * `docs/link-surface.md`'s "the corpus stores raw strings, never
+ * interpretations". This is the presentation layer deciding presentation, and
+ * it is deliberately whitespace-only — no mark is added, removed or replaced,
+ * so a citation that says something wrong still says it, and the fix stays
+ * safe to apply blind to every work in the corpus.
+ */
+export function normalizeCitationSpacing(text: string): string {
+	return text
+		.replace(/\s+/g, ' ')
+		.replace(/\(\s+/g, '(')
+		.replace(/\s+\)/g, ')')
+		.replace(/\s+([,.;:])/g, '$1')
+		.trim();
+}
+
 export function parseRefs(text: string, opts?: RefsOpts): RefSegment[] {
 	if (!text) return [];
 	if (isBareNumberList(text)) return parseBareCccList(text);
@@ -1105,15 +1376,42 @@ export function parseRefs(text: string, opts?: RefsOpts): RefSegment[] {
 }
 
 /**
- * Linkify references appearing inside running prose ("cf. 1212",
- * "Cf. Jn 3:16", "cf. nn. 1212-1215"). Deliberately conservative: a bare
- * number in prose is a false positive waiting to happen (chapter numbers,
- * years, footnote markers, ordinary counting all look identical to a CCC
- * paragraph number), so this only fires immediately after an explicit
- * "cf."/"Cf." token, never on a bare number by itself. Under-linking here
- * is far cheaper than a wrong link — same principle as the rest of this
- * module, just with a narrower trigger since prose has no `;`-clause
- * structure to lean on.
+ * Link references inside RUNNING PROSE — a Catechism paragraph's own body, an
+ * encyclical's argument — as opposed to a citation string, which is what
+ * `parseRefs` is for.
+ *
+ * Two grammars, scanned together and merged in document order:
+ *
+ *   1. A "cf."-triggered CCC PARAGRAPH reference — "cf. 1212", "cf. nn.
+ *      1212-1215". Bare numbers mean nothing without the trigger, so this one
+ *      stays anchored to it.
+ *   2. A SCRIPTURE locator anywhere — "«Eu estarei contigo» – Ex 3, 12",
+ *      "(cf. Mt 5, 3)", "the account of the fall in Genesis 3". No trigger
+ *      and no bracket required. That matters far beyond the odd Catechism
+ *      paragraph: the encyclicals cite Scripture almost entirely this way,
+ *      in parentheses inside the running text, and the corpus holds ~4,400
+ *      such locators that were previously plain text — 334 in Evangelium
+ *      Vitae alone.
+ *
+ * Deliberately NOT `parseRefs` over prose. That function assumes the whole
+ * string is citation apparatus, and two of its rules are actively wrong here:
+ * it splits on ";" and ":", which in prose are ordinary punctuation, and it
+ * carries a book across clauses so a later bare "12, 4" inherits it — in a
+ * paragraph of prose that turns page numbers and dates into verses. This scan
+ * has neither: every match must carry its own book name, immediately followed
+ * by its own locus.
+ *
+ * What keeps it from over-linking (the principle in this module's docblock —
+ * under-linking is acceptable, a wrong link is not):
+ *
+ *   - Book tables are matched CASE-SENSITIVELY, on the exact surface forms
+ *     the corpus prints. This is what makes short abbreviations safe in
+ *     Portuguese, where "Na" (Nahum) and "At" (Acts) are otherwise a common
+ *     preposition and a common word — "na" and "at" never match "Na"/"At".
+ *   - A parseable chapter must follow immediately, within the plausible
+ *     chapter count for that book.
+ *   - A commentary title ("Moralia in Job 31, 45") is excluded — see
+ *     `precededByCommentaryTitle`.
  */
 export function linkifyProse(text: string, opts?: RefsOpts): RefSegment[] {
 	if (!text) return [];
@@ -1122,56 +1420,82 @@ export function linkifyProse(text: string, opts?: RefsOpts): RefSegment[] {
 	const NUM_LIST_RE = /^\d+(?:\s*[-–]\s*\d+)?(?:\s*,\s*\d+(?:\s*[-–]\s*\d+)?)*/;
 	const LABEL_RE = /^nn?\.\s*/i;
 
-	const segs: RefSegment[] = [];
-	let last = 0;
-	let m: RegExpExecArray | null;
-	while ((m = CF_RE.exec(text))) {
-		const cfStart = m.index;
-		let pos = m.index + m[0].length;
+	/** One accepted match: [start, end) of the source text plus what it becomes. */
+	interface Hit {
+		start: number;
+		end: number;
+		segs: RefSegment[];
+	}
+	const hits: Hit[] = [];
 
+	// --- 1. "cf." + a bare CCC paragraph-number list ----------------------
+	// Opt-in; see `RefsOpts.cccParagraphRefs` for why it is off by default.
+	let m: RegExpExecArray | null;
+	while (opts?.cccParagraphRefs && (m = CF_RE.exec(text))) {
+		let pos = m.index + m[0].length;
 		const label = LABEL_RE.exec(text.slice(pos));
 		if (label) pos += label[0].length;
-
-		let ref: RefSegment[] | null = null;
-		let refEnd = pos;
-
 		const numMatch = NUM_LIST_RE.exec(text.slice(pos));
-		if (numMatch) {
-			ref = parseBareCccList(numMatch[0]);
-			refEnd = pos + numMatch[0].length;
-		} else {
-			// A scripture ref must immediately follow "cf. " (or its "nn."
-			// label) — a search-anywhere here would risk linking an unrelated
-			// book-shaped word later in the sentence.
-			const bm = findBookAt(cfg, text, pos);
-			if (bm && bm.matchStart === pos) {
-				const spaceAfter = /^ */.exec(text.slice(bm.matchEnd))![0];
-				const afterBook = bm.matchEnd + spaceAfter.length;
-				const cv = parseRefNumbers(text.slice(afterBook), cfg, bm.osis);
-				if (cv.chapter !== null && cv.chapter <= MAX_CHAPTER[bm.osis]) {
-					refEnd = afterBook + cv.consumed;
-					ref = [
-						{
-							kind: 'scripture',
-							osis: bm.osis,
-							chapter: cv.chapter,
-							verses: cv.verses,
-							raw: text.slice(pos, refEnd)
-						}
-					];
-				}
-			}
-		}
+		if (!numMatch) continue;
+		// "cf. 1 Jo 3,2" opens on a digit, but that digit is the BOOK NUMBER of
+		// 1 John, not a Catechism paragraph. Scan 2 will claim the whole
+		// reference; bail out here so this one doesn't claim the "1" first and
+		// win the overlap by starting further left.
+		const bookHere = findBookAt(cfg, text, pos);
+		if (bookHere?.matchStart === pos) continue;
+		hits.push({
+			start: m.index,
+			end: pos + numMatch[0].length,
+			// The trigger itself is reproduced as text, the numbers become links.
+			segs: [textSeg(text.slice(m.index, pos)), ...parseBareCccList(numMatch[0])]
+		});
+		CF_RE.lastIndex = pos + numMatch[0].length;
+	}
 
-		if (ref) {
-			if (cfStart > last) segs.push(textSeg(text.slice(last, cfStart)));
-			segs.push(textSeg(text.slice(cfStart, pos)));
-			segs.push(...ref);
-			last = refEnd;
-			CF_RE.lastIndex = refEnd;
-		}
-		// Else: this "cf." isn't followed by anything ref-shaped — leave it as
-		// plain text and keep scanning for the next occurrence.
+	// --- 2. Scripture locators, anywhere ----------------------------------
+	let searchPos = 0;
+	while (searchPos < text.length) {
+		const bm = findBookAt(cfg, text, searchPos);
+		if (!bm) break;
+		searchPos = bm.matchEnd;
+		if (precededByFalseLead(text.slice(0, bm.matchStart), bm.osis)) continue;
+		const spaceAfter = /^ */.exec(text.slice(bm.matchEnd))![0];
+		const afterBook = bm.matchEnd + spaceAfter.length;
+		const cv = parseRefNumbers(text.slice(afterBook), cfg, bm.osis);
+		if (cv.chapter === null || cv.chapter > MAX_CHAPTER[bm.osis]) continue;
+		const end = afterBook + cv.consumed;
+		hits.push({
+			start: bm.matchStart,
+			end,
+			segs: [
+				{
+					kind: 'scripture',
+					osis: bm.osis,
+					chapter: cv.chapter,
+					verses: cv.verses,
+					// "cf."/"Cf." immediately before makes it a comparative
+					// reference, the same rule the citation grammar applies.
+					...(precededByCf(text.slice(0, bm.matchStart)) ? { cf: true as const } : {}),
+					raw: text.slice(bm.matchStart, end)
+				}
+			]
+		});
+		searchPos = end;
+	}
+
+	// --- Merge, earliest first, dropping anything that overlaps a kept hit -
+	// The two scans can claim the same characters ("cf. Jn 3:16" is a scripture
+	// hit starting mid-way through nothing the first scan matched, but "cf.
+	// 1212" style overlaps do occur in mixed strings). First hit wins, which
+	// with this ordering is always the leftmost.
+	hits.sort((a, b) => a.start - b.start || b.end - a.end);
+	const segs: RefSegment[] = [];
+	let last = 0;
+	for (const hit of hits) {
+		if (hit.start < last) continue;
+		if (hit.start > last) segs.push(textSeg(text.slice(last, hit.start)));
+		segs.push(...hit.segs);
+		last = hit.end;
 	}
 	if (last < text.length) segs.push(textSeg(text.slice(last)));
 	return mergeText(segs);
