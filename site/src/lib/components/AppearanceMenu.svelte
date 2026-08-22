@@ -160,7 +160,7 @@
 
 <style>
 	.appearance-panel {
-		min-width: 13rem;
+		min-width: 11rem;
 		/* Tight, because the controls are meant to run the full width of the
 		   panel — the padding is a hairline margin around a stack of bars, not
 		   a frame around a list of items. The titles take their own small
@@ -185,6 +185,7 @@
 	.field-label {
 		padding-inline: 0.2rem;
 		font-size: 0.68rem;
+		font-weight: 500;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
 		line-height: 1.2;
@@ -269,8 +270,8 @@
 	.switch {
 		position: relative;
 		display: block;
-		width: 1.9rem;
-		height: 1.1rem;
+		width: 2.4rem;
+		height: 1.4rem;
 		border: 1px solid var(--color-border);
 		border-radius: 999px;
 		background: var(--color-bg-elevated);
@@ -282,8 +283,8 @@
 		position: absolute;
 		inset-block-start: 0.15rem;
 		inset-inline-start: 0.15rem;
-		width: 0.7rem;
-		height: 0.7rem;
+		width: 1rem;
+		height: 1rem;
 		border-radius: 50%;
 		background: var(--color-text-muted);
 		transition:
@@ -299,8 +300,8 @@
 	.switch.on::after {
 		background: var(--color-accent-contrast);
 		/* Logical, so the knob still travels toward the switch's "on" end
-		   under an RTL interface language. */
-		translate: 0.8rem 0;
+		   under an RTL interface language. Width less knob less both insets. */
+		translate: 1rem 0;
 	}
 
 	/* No wrapping: the row has a fixed height, so a second line would spill
