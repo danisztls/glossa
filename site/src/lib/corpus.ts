@@ -1155,6 +1155,13 @@ export function buildDocumentOutline(rows: DocumentNode[], lastN: number | null)
 		// none follows, it runs to the document's last section.
 		let end: number | null = lastN;
 		for (let j = i + 1; j < rows.length; j++) {
+			// A heading anchored to the SAME section is the same heading
+			// printed on more than one line, not a boundary. Magnifica
+			// Humanitas prints "CHAPTER THREE", "TECHNOLOGY AND DOMINANCE."
+			// and "THE GRANDEUR OF HUMANITY..." as three lines all standing
+			// before section 90; treating the second as the first's end
+			// yields the inverted range [90, 89].
+			if (rows[j].before !== null && rows[j].before === row.before) continue;
 			if (rows[j].level <= row.level) {
 				const nextStart = rows[j].before;
 				end = nextStart === null ? end : nextStart - 1;

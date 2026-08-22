@@ -67,4 +67,39 @@ describe('buildDocumentOutline', () => {
 	it('returns nothing for a document with no headings', () => {
 		expect(buildDocumentOutline([], 40)).toEqual([]);
 	});
+
+	it('treats headings sharing one anchor as one heading, not a boundary', () => {
+		// Magnifica Humanitas prints "CHAPTER THREE", "TECHNOLOGY AND
+		// DOMINANCE." and "THE GRANDEUR OF HUMANITY..." as three lines all
+		// standing before section 90, and its own table of contents gives
+		// all three the same level. Ending each at the next one yields the
+		// inverted range [90, 89] and an empty chapter.
+		const out = buildDocumentOutline(
+			[
+				row(1, 'CHAPTER THREE', 90),
+				row(1, 'TECHNOLOGY AND DOMINANCE.', 90),
+				row(1, 'THE GRANDEUR OF HUMANITY', 90),
+				row(2, 'The technocratic paradigm', 92),
+				row(1, 'CHAPTER FOUR', 131)
+			],
+			200
+		);
+		expect(out.map((n) => n.paragraphs)).toEqual([
+			[90, 130],
+			[90, 130],
+			[90, 130],
+			[131, 200]
+		]);
+		expect(out[2].children.map((c) => c.title)).toEqual(['The technocratic paradigm']);
+	});
+
+	it('still ends a heading at a later one that shares no anchor', () => {
+		// The skip above is keyed on the anchor, not on the level, so an
+		// ordinary same-level sibling must still close the previous run.
+		const out = buildDocumentOutline([row(1, 'A', 1), row(1, 'B', 5)], 9);
+		expect(out.map((n) => n.paragraphs)).toEqual([
+			[1, 4],
+			[5, 9]
+		]);
+	});
 });
