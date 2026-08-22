@@ -31,6 +31,7 @@
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
+	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import { alignByNumber } from '$lib/compare';
@@ -344,11 +345,12 @@
 
 			<div class="title-row">
 				<h1>{metaManifest.title}</h1>
-				{#if current && otherEditions.length > 0}
-					<div class="compare-toolbar">
+				<div class="compare-toolbar">
+					<EditionMenu />
+					{#if current && otherEditions.length > 0}
 						<CompareToggle active={compareActive} onclick={toggleCompare} />
-					</div>
-				{/if}
+					{/if}
+				</div>
 			</div>
 
 			<p class="subtitle">

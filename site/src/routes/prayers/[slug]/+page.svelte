@@ -38,6 +38,7 @@
 	import { content } from '$lib/content.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
+	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import PrayerBlocks from '$lib/components/PrayerBlocks.svelte';
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
@@ -208,16 +209,17 @@
 
 			<div class="title-row">
 				<h1>{current.prayer.title}</h1>
-				{#if hasLatin}
-					<div class="compare-toolbar">
+				<div class="compare-toolbar">
+					<EditionMenu />
+					{#if hasLatin}
 						<CompareToggle
 							active={compareActive}
 							onclick={toggleCompare}
 							enterLabel={t('prayers.showLatin')}
 							exitLabel={t('prayers.hideLatin')}
 						/>
-					</div>
-				{/if}
+					{/if}
+				</div>
 			</div>
 
 			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>

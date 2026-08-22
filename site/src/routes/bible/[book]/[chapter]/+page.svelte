@@ -19,6 +19,7 @@
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
+	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import { alignByNumber, numberSetsDiffer, pickComparisonEdition } from '$lib/compare';
@@ -372,11 +373,12 @@
 			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 			<div class="title-row">
 				<h1>{current.book.name} {current.chapter.n}</h1>
-				{#if otherEditions.length > 0}
-					<div class="compare-toolbar">
+				<div class="compare-toolbar">
+					<EditionMenu />
+					{#if otherEditions.length > 0}
 						<CompareToggle active={compareActive} onclick={toggleCompare} />
-					</div>
-				{/if}
+					{/if}
+				</div>
 			</div>
 
 			<!-- Kept exactly as it was before the sidebar existed — collapsed

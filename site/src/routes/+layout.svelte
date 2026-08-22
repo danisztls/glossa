@@ -7,7 +7,6 @@
 	import LanguageMenu from '$lib/components/LanguageMenu.svelte';
 	import ThemeMenu from '$lib/components/ThemeMenu.svelte';
 	import FontSizeMenu from '$lib/components/FontSizeMenu.svelte';
-	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import PrintButton from '$lib/components/PrintButton.svelte';
 	import InstallButton from '$lib/components/InstallButton.svelte';
 	import InstallHint from '$lib/components/InstallHint.svelte';
@@ -149,7 +148,6 @@
 			<div class="controls">
 				<JumpBox />
 				<LanguageMenu />
-				<EditionMenu />
 				<FontSizeMenu />
 				<ThemeMenu />
 				<PrintButton />

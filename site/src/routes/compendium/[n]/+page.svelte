@@ -10,6 +10,7 @@
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
+	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import { alignByNumber } from '$lib/compare';
@@ -91,11 +92,12 @@
 				visible presentation instead (see the module's job #5).
 			-->
 				<h1 class="visually-hidden">{t('compendium.question')} {data.n}</h1>
-				{#if editions.others.length > 0}
-					<div class="compare-toolbar">
+				<div class="compare-toolbar">
+					<EditionMenu />
+					{#if editions.others.length > 0}
 						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
-					</div>
-				{/if}
+					{/if}
+				</div>
 			</div>
 
 			<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
