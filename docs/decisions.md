@@ -796,3 +796,40 @@ section number itself copies.
 This covers **both** tables of contents the route renders — the sidebar aside
 and the inline one that replaces it below 80rem. Two lists addressing the same
 document differently is the same incoherence one level down.
+
+## 2026-08-22 — Theme is two questions, not one list, and both live in one popover
+
+The header carried two triggers for one question ("how does this page look to
+me?"): a palette icon opening a four-item theme list, and an `Aa` icon opening
+the reading-size stepper. They are now a single **Appearance** popover holding
+dark mode, sepia and text size.
+
+**The four-item list was hiding a second axis.** `auto / light / dark / sepia`
+made one value answer two independent questions — _do I want dark?_ and _do I
+want warm paper?_ — and the collapse cost the reader a real combination:
+picking sepia silently meant opting out of `prefers-color-scheme`, so a reader
+who liked warm paper by day could not also follow the system into dark at
+night. Nothing in the UI said so. Split, they are a tri-state **dark mode**
+(auto / on / off) and a boolean **sepia** toggle.
+
+**Sepia yields to dark rather than combining with it.** There is no dark-sepia
+palette, and a warm dark would be a new design rather than a composition of two
+existing ones — so while dark is showing, the sepia row goes inert and says
+why. It is _suspended, not cleared_: the stored preference survives, and
+turning dark back off restores the tint. The alternative — letting sepia win
+over dark — was rejected because a dark control that silently does nothing is
+the more surprising of the two inert cases.
+
+**In the DOM this is two attributes, and their order in `app.css` is the
+rule.** `data-theme` now carries only `light` / `dark` (absent = auto);
+`data-sepia` is presence-only. The three palette blocks are written light →
+sepia → dark at equal specificity, so cascade order alone encodes "dark beats
+sepia". `color-scheme` is now pinned per block as well, so an explicit choice
+also governs the browser's own scrollbars and form controls.
+
+**Migration is carried in two places, on purpose.** `theme.svelte.ts` maps the
+old `glossa:theme` value onto the two new keys, and `app.html`'s pre-hydration
+script repeats the mapping by hand because it cannot import anything — without
+that copy a returning reader would flash the default theme on every load until
+they next touched the setting. `sepia` migrates to dark mode `off`, not `auto`,
+which is what leaves that reader's screen exactly as they left it.

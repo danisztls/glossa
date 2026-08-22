@@ -48,18 +48,20 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
 		'jumpbox.noMatch': 'No match',
 
-		// Theme menu (auto/light/dark/sepia) — ThemeMenu.svelte is the consumer.
-		'theme.label': 'Theme',
-		'theme.auto': 'Auto',
-		'theme.light': 'Light',
-		'theme.dark': 'Dark',
-		'theme.sepia': 'Sepia',
-
-		// Font size menu — FontSizeMenu.svelte is the consumer; store is prefs.svelte.ts.
+		// Appearance menu — AppearanceMenu.svelte is the consumer; the dark-mode
+		// and sepia stores are theme.svelte.ts, the text size is prefs.svelte.ts.
+		// `sepia.lightOnly` is shown only while dark mode is actually active, to
+		// explain why the sepia switch beside it is greyed out.
+		'appearance.label': 'Appearance',
+		'darkMode.label': 'Dark mode',
+		'darkMode.auto': 'Auto',
+		'darkMode.on': 'On',
+		'darkMode.off': 'Off',
+		'sepia.label': 'Sepia',
+		'sepia.lightOnly': 'Applies in light mode.',
 		'fontSize.label': 'Text size',
 		'fontSize.larger': 'Larger text',
 		'fontSize.smaller': 'Smaller text',
-		'fontSize.reset': 'Reset text size',
 		'print.label': 'Print this page',
 
 		// Home-screen install — InstallButton.svelte (Chromium) and
@@ -268,16 +270,17 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
 		'jumpbox.noMatch': 'Nenhum resultado',
 
-		'theme.label': 'Tema',
-		'theme.auto': 'Automático',
-		'theme.light': 'Claro',
-		'theme.dark': 'Escuro',
-		'theme.sepia': 'Sépia',
+		'appearance.label': 'Aparência',
+		'darkMode.label': 'Modo escuro',
+		'darkMode.auto': 'Automático',
+		'darkMode.on': 'Ligado',
+		'darkMode.off': 'Desligado',
+		'sepia.label': 'Sépia',
+		'sepia.lightOnly': 'Aplica-se ao modo claro.',
 
 		'fontSize.label': 'Tamanho do texto',
 		'fontSize.larger': 'Aumentar texto',
 		'fontSize.smaller': 'Diminuir texto',
-		'fontSize.reset': 'Repor tamanho do texto',
 		'print.label': 'Imprimir esta página',
 
 		// "Ecrã Principal" and "Adicionar ao Ecrã Principal" are iOS's own

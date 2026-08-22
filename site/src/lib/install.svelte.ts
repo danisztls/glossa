@@ -31,7 +31,7 @@
  * (`isStandalone`), and the hint's dismissal is permanent.
  *
  * No part of this reports anything anywhere: the counter is a single integer
- * in localStorage, alongside `glossa:theme` and `glossa:font-scale`, and the
+ * in localStorage, alongside `glossa:dark-mode` and `glossa:font-scale`, and the
  * colophon's "no analytics, no tracking scripts" promise stays true.
  */
 

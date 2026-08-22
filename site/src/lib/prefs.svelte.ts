@@ -69,10 +69,6 @@ class FontScaleStore {
 	decrease() {
 		this.set(this.value - FONT_SCALE_STEP);
 	}
-
-	reset() {
-		this.set(DEFAULT_FONT_SCALE);
-	}
 }
 
 export const fontScale = new FontScaleStore();

@@ -21,11 +21,9 @@
 <script lang="ts" module>
 	import Search from '@lucide/svelte/icons/search';
 	import Menu from '@lucide/svelte/icons/menu';
-	import Palette from '@lucide/svelte/icons/palette';
-	import Type from '@lucide/svelte/icons/type';
+	import SlidersHorizontal from '@lucide/svelte/icons/sliders-horizontal';
 	import Plus from '@lucide/svelte/icons/plus';
 	import Minus from '@lucide/svelte/icons/minus';
-	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
 	import BookOpen from '@lucide/svelte/icons/book-open';
 	import Check from '@lucide/svelte/icons/check';
 	import Columns2 from '@lucide/svelte/icons/columns-2';
@@ -41,11 +39,9 @@
 	const ICONS = {
 		search: Search,
 		menu: Menu,
-		palette: Palette,
-		type: Type,
+		'sliders-horizontal': SlidersHorizontal,
 		plus: Plus,
 		minus: Minus,
-		'rotate-ccw': RotateCcw,
 		'book-open': BookOpen,
 		check: Check,
 		'columns-2': Columns2,

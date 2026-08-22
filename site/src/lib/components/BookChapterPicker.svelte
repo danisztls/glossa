@@ -258,7 +258,7 @@
 
 	// Out-of-flow panels don't dismiss by themselves the way an in-flow
 	// disclosure did, so this takes the same window-level outside-click and
-	// Escape handling as the header menus (ThemeMenu et al.). Clicks inside
+	// Escape handling as the header menus (AppearanceMenu et al.). Clicks inside
 	// `.book-item` are ignored: that covers both the panel and its own book
 	// button, whose click handler already toggles.
 	//

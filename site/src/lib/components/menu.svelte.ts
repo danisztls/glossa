@@ -6,12 +6,14 @@
  * matching BEHAVIOR — open state, close-on-outside-click, close-on-Escape,
  * and returning focus to the trigger — which until now was hand-rolled,
  * identically, in all five menu components (theme, font size, edition,
- * comparison edition, language).
+ * comparison edition, language). Theme and font size have since merged into
+ * one `AppearanceMenu`, so there are four.
  *
  * WHY IT WAS DUPLICATED, AND WHY THAT NO LONGER APPLIES. `ThemeMenu`'s
- * docblock recorded the reason: "Svelte has no cross-file scoped style or
- * behavior sharing below a full component." That was true of the Svelte 4
- * component model, where the only unit of reuse was a component, and wrapping
+ * docblock (now `AppearanceMenu`'s) recorded the reason: "Svelte has no
+ * cross-file scoped style or behavior sharing below a full component." That
+ * was true of the Svelte 4 component model, where the only unit of reuse was
+ * a component, and wrapping
  * five different panels (two `<ul>`s, a stepper `<div>`, differing ARIA and
  * differing keyboard handling) in one would have meant a prop for every
  * difference. Runes changed the unit: `$state` works in a `.svelte.ts` module,
@@ -23,10 +25,10 @@
  * WHAT DELIBERATELY DID NOT MOVE: the `choose` handlers. Every menu closes and
  * refocuses after a pick — that shared step is `closeAndRefocus` below — but
  * WHAT a pick does differs per menu (a theme, a font scale, a reading edition,
- * a compare target), and `FontSizeMenu` deliberately does not close on a pick
- * at all, because a reader stepping the size up wants to keep clicking. A
- * shared "choose" would have had to take that behavior as a flag, which is the
- * shape this module exists to avoid.
+ * a compare target), and `AppearanceMenu` deliberately does not close on a
+ * pick at all, because a reader adjusting how the page looks wants to keep
+ * clicking and watching it change. A shared "choose" would have had to take
+ * that behavior as a flag, which is the shape this module exists to avoid.
  *
  * `BookChapterPicker` is NOT a user of this and shouldn't become one, despite
  * running visibly similar outside-click and Escape handling. Its open state is
@@ -84,8 +86,8 @@ export class Menu {
 
 	/**
 	 * Escape closes the panel and restores focus. Menus with their own
-	 * additional keys (`FontSizeMenu`'s arrows) call this first and then handle
-	 * the rest — this only ever acts on Escape, so it composes.
+	 * additional keys (`AppearanceMenu`'s arrows) call this first and then
+	 * handle the rest — this only ever acts on Escape, so it composes.
 	 */
 	onPanelKeydown = (e: KeyboardEvent) => {
 		if (e.key !== 'Escape') return;

@@ -5,8 +5,7 @@
 	import { page } from '$app/state';
 	import JumpBox from '$lib/components/JumpBox.svelte';
 	import LanguageMenu from '$lib/components/LanguageMenu.svelte';
-	import ThemeMenu from '$lib/components/ThemeMenu.svelte';
-	import FontSizeMenu from '$lib/components/FontSizeMenu.svelte';
+	import AppearanceMenu from '$lib/components/AppearanceMenu.svelte';
 	import PrintButton from '$lib/components/PrintButton.svelte';
 	import InstallButton from '$lib/components/InstallButton.svelte';
 	import InstallHint from '$lib/components/InstallHint.svelte';
@@ -148,8 +147,7 @@
 			<div class="controls">
 				<JumpBox />
 				<LanguageMenu />
-				<FontSizeMenu />
-				<ThemeMenu />
+				<AppearanceMenu />
 				<PrintButton />
 				<!-- Renders nothing unless the browser has actually offered an
 				     install, so on most visits the row is unchanged. -->

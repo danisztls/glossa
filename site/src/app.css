@@ -1,9 +1,10 @@
 /*
  * Global styles and theme tokens.
  *
- * Four themes (auto / light / dark / sepia) toggled via `data-theme` on
- * <html> — 'auto' removes the attribute entirely so `prefers-color-scheme`
- * decides (see `src/lib/theme.svelte.ts`). Colors are placeholders — real
+ * Two independent appearance axes on <html>: `data-theme` (absent = auto,
+ * so `prefers-color-scheme` decides; else 'light' / 'dark') and `data-sepia`
+ * (a presence-only paper tint that yields to dark). See
+ * `src/lib/theme.svelte.ts`. Colors are placeholders — real
  * palette lands in the design pass (see docs/decisions.md); the type below
  * is no longer a placeholder.
  */
@@ -311,8 +312,53 @@
 	--color-focus-ring: #22409a;
 }
 
+/*
+ * THE THREE PALETTE BLOCKS BELOW ARE ORDERED, AND THE ORDER IS THE RULE.
+ *
+ * Light is the base above. Sepia comes next, then dark — and every one of
+ * these selectors has the same specificity (0,2,0), so what resolves a
+ * conflict between them is source order alone. That is deliberate: it
+ * encodes "sepia is a light-mode paper tint, and anything resolving to dark
+ * beats it", which is exactly the semantics `theme.svelte.ts` documents.
+ * Moving the sepia block below the dark ones would silently give a reader
+ * with dark on and sepia left enabled a light screen at night.
+ *
+ * `color-scheme` is pinned per block rather than left at `html`'s
+ * `light dark`: once the reader has made an explicit choice, the browser's
+ * own furniture (scrollbars, form controls, the canvas behind the page)
+ * has to follow it, or `data-theme='light'` on a dark-preferring OS gets
+ * dark scrollbars framing a white page. `:root` outranks `html`, so these
+ * win over that declaration regardless of where it sits in the file.
+ */
+
+/* Sepia paper. Presence-only attribute, independent of `data-theme` —
+   see `theme.svelte.ts` on why the two axes are separate. */
+:root[data-sepia] {
+	color-scheme: light;
+	--color-bg: #f4ecd8;
+	--color-bg-elevated: #ecdfc2;
+	--color-border: #d9c9a3;
+	--color-text: #3b2f22;
+	--color-text-muted: #7a6a51;
+	--color-accent: #8f2119;
+	--color-accent-contrast: #f4ecd8;
+	--color-link: #8f2119;
+	--color-initial: #b03024;
+	--color-apparatus: #22409a;
+	--color-focus-ring: #22409a;
+}
+
+/* Explicit light: nothing to restate but the scheme, since light is the
+   base — this exists only to stop a dark-preferring OS from styling the
+   browser furniture around it. Sepia above may still tint it. */
+:root[data-theme='light'] {
+	color-scheme: light;
+}
+
+/* Auto (no `data-theme`) under a dark system. */
 @media (prefers-color-scheme: dark) {
-	:root:not([data-theme='light']):not([data-theme='sepia']) {
+	:root:not([data-theme='light']) {
+		color-scheme: dark;
 		--color-bg: #16151a;
 		--color-bg-elevated: #201e24;
 		--color-border: #38353d;
@@ -327,7 +373,9 @@
 	}
 }
 
+/* Explicit dark, regardless of what the system prefers. */
 :root[data-theme='dark'] {
+	color-scheme: dark;
 	--color-bg: #16151a;
 	--color-bg-elevated: #201e24;
 	--color-border: #38353d;
@@ -339,20 +387,6 @@
 	--color-initial: #f2694a;
 	--color-apparatus: #8fa8e8;
 	--color-focus-ring: #8fa8e8;
-}
-
-:root[data-theme='sepia'] {
-	--color-bg: #f4ecd8;
-	--color-bg-elevated: #ecdfc2;
-	--color-border: #d9c9a3;
-	--color-text: #3b2f22;
-	--color-text-muted: #7a6a51;
-	--color-accent: #8f2119;
-	--color-accent-contrast: #f4ecd8;
-	--color-link: #8f2119;
-	--color-initial: #b03024;
-	--color-apparatus: #22409a;
-	--color-focus-ring: #22409a;
 }
 
 *,
@@ -494,7 +528,7 @@ input {
 
 .reading-text {
 	font-family: var(--font-serif);
-	/* Multiplied by the reader's fine-adjustment (FontSizeMenu.svelte /
+	/* Multiplied by the reader's fine-adjustment (AppearanceMenu.svelte /
 	   prefs.svelte.ts), never applied to chrome — this custom property is
 	   only ever read here, so nothing outside the reading column resizes
 	   when the reader adjusts text size. The `, 1` fallback covers the
@@ -1120,7 +1154,7 @@ input {
 }
 
 /*
- * Icon-button + dropdown-panel primitive shared by ThemeMenu, FontSizeMenu
+ * Icon-button + dropdown-panel primitive shared by AppearanceMenu, LanguageMenu
  * and EditionMenu (and reused by the header's nav toggle in +layout.svelte)
  * — defined globally once here rather than duplicated in each component's
  * scoped <style>, since Svelte's per-component style scoping has no
