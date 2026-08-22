@@ -346,7 +346,11 @@
 			<div class="title-row">
 				<h1>{metaManifest.title}</h1>
 				<div class="compare-toolbar">
-					<EditionMenu />
+					<!-- While comparing, EditionMenu moves into the left column's own
+					     header (`leftHeaderExtra` below) next to the comparison
+					     picker on the right — there's only one column for it up here
+					     once compare mode is off. -->
+					{#if !compareActive}<EditionMenu />{/if}
 					{#if current && otherEditions.length > 0}
 						<CompareToggle active={compareActive} onclick={toggleCompare} />
 					{/if}
@@ -366,17 +370,6 @@
 				</time>
 			</p>
 
-			{#if metaManifest.header}
-				<!-- The source page's own masthead, verbatim. `{@html}` is safe
-				     here specifically: this string is produced by the scraper's
-				     closed tag allowlist (i/b/br/sup/blockquote), not passed
-				     through from the source -- see `narrow_html` in
-				     pipeline/scrapers/vatican_docs.py. -->
-				<div class="document-masthead" lang={metaManifest.language}>
-					{@html metaManifest.header}
-				</div>
-			{/if}
-
 			{#if takedown}
 				<UnpublishedNotice manifest={metaManifest} info={takedown} />
 			{:else}
@@ -384,6 +377,36 @@
 			{/if}
 
 			{#if current}
+				<!-- The source page's own masthead, verbatim, per language rather
+				     than page-level chrome: it lives in the content column(s) it
+				     actually belongs to, and in compare mode BOTH columns get their
+				     own — this text differs by language (`ENCYCLICAL LETTER` vs.
+				     `CARTA ENCÍCLICA`), so a single copy above the columns was
+				     always just the primary language's masthead mislabelling the
+				     second column too. `{@html}` is safe here specifically: this
+				     string is produced by the scraper's closed tag allowlist
+				     (i/b/br/sup/blockquote), not passed through from the source --
+				     see `narrow_html` in pipeline/scrapers/vatican_docs.py. -->
+				{#if compareActive && secondaryManifest}
+					{#if current.work.header || secondaryManifest.header}
+						<div class="document-masthead-row">
+							<div lang={current.work.language}>
+								{#if current.work.header}
+									<div class="document-masthead">{@html current.work.header}</div>
+								{/if}
+							</div>
+							<div lang={secondaryManifest.language}>
+								{#if secondaryManifest.header}
+									<div class="document-masthead">{@html secondaryManifest.header}</div>
+								{/if}
+							</div>
+						</div>
+					{/if}
+				{:else if current.work.header}
+					<div class="document-masthead" lang={current.work.language}>
+						{@html current.work.header}
+					</div>
+				{/if}
 				<!-- NARROW-SCREEN TABLE OF CONTENTS. Below 80rem `.reading-layout`
 				     stops being a grid (app.css) and `.reading-aside` falls to the
 				     bottom of the document — which on a 287-section encyclical is
@@ -447,6 +470,9 @@
 						left={leftCell}
 						right={rightCell}
 					>
+						{#snippet leftHeaderExtra()}
+							<EditionMenu />
+						{/snippet}
 						{#snippet rightHeaderExtra()}
 							<ComparisonEditionMenu
 								editions={otherEditions.map((e) => e.work)}
@@ -553,6 +579,23 @@
 		text-align: center;
 		text-wrap: balance;
 		margin: 1.25rem 0 1.5rem;
+	}
+
+	/* Compare mode's two mastheads, side by side above the aligned text --
+	   same column widths/gap as `.compare-grid` (app.css) so the two rows
+	   line up, but not that class itself: this row has no per-unit alignment
+	   to keep, just two independent blocks. */
+	.document-masthead-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: 1.5rem;
+	}
+
+	@media (max-width: 40rem) {
+		.document-masthead-row {
+			grid-template-columns: 1fr;
+			row-gap: 1rem;
+		}
 	}
 
 	.subtitle .sep {
