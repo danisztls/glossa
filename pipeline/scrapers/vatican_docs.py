@@ -1021,6 +1021,8 @@ class Node:
         self.n = n
         self.title = title
         self.level = level
+        self.ident: str = ""  # bare division label above the title
+        self.subtitle: str = ""  # further printed lines below it
         self.children: list[Node] = []
         self.depth: int = 1  # observed heading level, compacted per document
         self.before: int | None = None  # the section this heading precedes
@@ -1191,7 +1193,13 @@ class ScrapeState:
         return None
 
     def push_heading(
-        self, kind: str, n: int | None, title: str, depth: int = 1
+        self,
+        kind: str,
+        n: int | None,
+        title: str,
+        depth: int = 1,
+        ident: str = "",
+        subtitle: str = "",
     ) -> None:
         self.finalize_open_section()
         level = LEVELS[kind]
@@ -1232,6 +1240,8 @@ class ScrapeState:
             return
         node = Node(kind, n, title, level)
         node.depth = depth
+        node.ident = ident
+        node.subtitle = subtitle
         parent_children.append(node)
         self.stack.append(node)
         self.pending_headings.append(node)
@@ -1303,6 +1313,11 @@ class Block:
     raw: str  # raw inner html, for paragraph-number detection
     html: str = ""  # narrowed inline html (docs/decisions.md, 2026-08-21)
     style: int = 9  # observed heading style rank; see heading_style_rank
+    # A heading printed on several lines: the bare division label above the
+    # name ("CHAPTER THREE"), and any further lines below it. Both empty for
+    # the ordinary one-line heading. See merge_heading_lines.
+    ident: str = ""
+    subtitle: str = ""
 
 
 def mark_and_split(raw: str, marker_template: str) -> tuple[str, str, str]:
@@ -1453,6 +1468,130 @@ def match_label_pt(text: str) -> tuple[str, int | None] | None:
 
 
 MATCH_LABEL = {"en": match_label_en, "pt": match_label_pt}
+LABEL_PATTERNS = {"en": _EN_LABELS, "pt": _PT_LABELS}
+
+# PT also writes its divisions with the ordinal spelled out and leading --
+# "PRIMEIRA PARTE", "SEGUNDA PARTE" -- which the _PT_LABELS patterns, all
+# anchored on the noun, do not match. Only needed to recognise a BARE label
+# (below); the depth ranking still goes through MATCH_LABEL.
+_PT_ORDINAL_LABEL_RE = re.compile(
+    r"^(?:PRIMEIR|SEGUND|TERCEIR|QUART|QUINT|SEXT|SETIM|OITAV|NON|DECIM)[AO]\s+"
+    r"(?:PARTE|SEC[CS][AC]O|CAPITULO)$"
+)
+
+
+def bare_division_label(text: str, lang: str) -> bool:
+    """True when `text` is a division label AND NOTHING ELSE -- "CHAPTER
+    THREE", "CAPITULO IV", "PRIMEIRA PARTE".
+
+    This is the discriminator `merge_heading_lines` runs on, and it is
+    deliberately narrow. A bare label is never a complete heading: the
+    document that prints one always prints the division's name on the next
+    line. A label that already carries its name ("III OS ARGUMENTOS
+    TEOLOGICOS") is complete on its own, and whatever follows it is a real
+    sub-heading, not a continuation -- which is exactly the distinction that
+    keeps the merge off `ad-caeli-reginam.pt` and on `caritas-in-veritate`."""
+    stripped = " ".join(text.split()).strip(" .:;-")
+    probe = stripped if lang == "en" else fold(stripped)
+    for _kind, pat in LABEL_PATTERNS[lang]:
+        m = pat.match(probe)
+        if m:
+            return probe[m.end() :].strip(" .:;-\u2014\u2013") == ""
+    return bool(_PT_ORDINAL_LABEL_RE.match(fold(stripped)))
+
+
+def merge_heading_lines(
+    blocks: list[Block], lang: str, toc_level: dict[int, int]
+) -> tuple[dict[int, int], list[str]]:
+    """Fold a heading printed on several lines into ONE heading block, and
+    return the remapped `toc_level` plus a report of what was merged.
+
+    THE DEFECT THIS FIXES. vatican.va prints a division's identifier, its
+    name and sometimes a subtitle as separate paragraphs:
+
+        <p><b>CHAPTER THREE</b></p>
+        <p><b>TECHNOLOGY AND DOMINANCE.</b></p>
+        <p><b>THE GRANDEUR OF HUMANITY IN LIGHT OF THE PROMISES OF AI</b></p>
+
+    Three blocks, one heading. Kept as three structure nodes they are three
+    rows in the reader's table of contents, all anchored to the same section
+    -- so they all derive the SAME range, and a table of contents that
+    highlights the reader's position highlights three rows at once. Before
+    the levels came from the page's own TOC they were merely inconsistent
+    instead: the levelling walk's subtitle rule put the identifier one tier
+    above its own name, inventing a level that is not in the document.
+
+    Neither is a rendering problem to paper over downstream. `CHAPTER THREE`
+    is an identifier, `TECHNOLOGY AND DOMINANCE.` is the name and `THE
+    GRANDEUR OF HUMANITY...` is the subtitle, so the node carries all three
+    and the consumer decides how to print them.
+
+    WHAT IS ABSORBED, and why not more. The run must open with a BARE
+    division label (see `bare_division_label`) -- that is the only
+    unambiguous evidence in the source that a heading continues on the next
+    line. Then exactly ONE following heading is taken as the name, because
+    the third line of a run is genuinely ambiguous: Ad Petri Cathedram
+    prints `QUARTA PARTE` / `EXORTACOES PATERNAIS` / `Aos bispos`, and `Aos
+    bispos` is the part's first sub-section, not its subtitle. Further lines
+    are absorbed ONLY where the page's own table of contents assigns them
+    the same level as the label -- a statement, not an inference, and the
+    only reason Magnifica Humanitas' three-line chapter openings merge while
+    Ad Petri's three-line one does not.
+
+    Measured before it was written: 154 runs in 33 works open with a bare
+    label, every one of them an identifier followed by a name."""
+    merged: list[str] = []
+    dropped: set[int] = set()
+    i = 0
+    while i < len(blocks):
+        if (
+            not blocks[i].is_heading
+            or blocks[i].ident
+            or not bare_division_label(blocks[i].text, lang)
+            or i + 1 >= len(blocks)
+            or not blocks[i + 1].is_heading
+            # Two bare labels in a row are two divisions opening together
+            # ("PART I" then "CHAPTER I"), not a label and its name. No
+            # document in the corpus does this today -- the guard is here so
+            # that one arriving later loses a level rather than a heading.
+            or bare_division_label(blocks[i + 1].text, lang)
+        ):
+            i += 1
+            continue
+        head = blocks[i]
+        absorbed = [i + 1]
+        j = i + 2
+        while (
+            j < len(blocks)
+            and blocks[j].is_heading
+            and toc_level.get(i) is not None
+            and toc_level.get(j) == toc_level.get(i)
+        ):
+            absorbed.append(j)
+            j += 1
+        head.ident = head.text
+        head.text = blocks[absorbed[0]].text
+        head.html = blocks[absorbed[0]].html
+        head.style = blocks[absorbed[0]].style
+        head.subtitle = " ".join(blocks[k].text for k in absorbed[1:]).strip()
+        merged.append(
+            f"{head.ident} / {head.text}"
+            + (f" / {head.subtitle}" if head.subtitle else "")
+        )
+        dropped.update(absorbed)
+        i = j
+
+    if not dropped:
+        return toc_level, merged
+    shift = {}
+    out = 0
+    for idx in range(len(blocks)):
+        if idx in dropped:
+            continue
+        shift[idx] = out
+        out += 1
+    blocks[:] = [b for k, b in enumerate(blocks) if k not in dropped]
+    return {shift[k]: v for k, v in toc_level.items() if k in shift}, merged
 
 
 def _norm_heading(text: str) -> str:
@@ -2584,6 +2723,16 @@ def parse_document(
                 + (" ..." if len(toc_promoted) > 5 else "")
             )
 
+    # A division's identifier, name and subtitle are printed as separate
+    # paragraphs; they are one heading. See merge_heading_lines.
+    toc_level, merged_headings = merge_heading_lines(blocks, lang, toc_level)
+    if merged_headings:
+        state.anomalies.append(
+            f"heading lines merged ({len(merged_headings)}): "
+            + ", ".join(repr(t[:60]) for t in merged_headings[:5])
+            + (" ..." if len(merged_headings) > 5 else "")
+        )
+
     # Signature lines and the language navigation bar are bold and centered,
     # so they read as chapter titles. See drop_page_furniture.
     for text in drop_page_furniture(blocks):
@@ -2630,7 +2779,9 @@ def parse_document(
     }
 
     def depth_key(b: Block) -> tuple[int, int]:
-        matched = match_label(b.text)
+        # `ident` when the heading has one: after merge_heading_lines, `text`
+        # is the division's NAME and the label that ranks it is in `ident`.
+        matched = match_label(b.ident or b.text)
         if matched is not None and matched[0] in _LABEL_DEPTH:
             return (0, _LABEL_DEPTH[matched[0]])
         # Front and back matter is unlabelled but top-level: a PREFACE is a
@@ -2745,10 +2896,19 @@ def parse_document(
     while i < n:
         b = blocks[i]
         if b.is_heading:
-            matched = match_label(b.text)
+            # `ident` first: a merged heading keeps its label there and its
+            # name in `text` (see merge_heading_lines).
+            matched = match_label(b.ident or b.text)
             if matched is not None:
                 kind, num = matched
-                state.push_heading(kind, num, b.text, heading_level.get(i, 1))
+                state.push_heading(
+                    kind,
+                    num,
+                    b.text,
+                    heading_level.get(i, 1),
+                    ident=b.ident,
+                    subtitle=b.subtitle,
+                )
                 i += 1
                 continue
             title_m = _SECTION_TITLE_HEADING_RE.match(b.text)
@@ -2792,7 +2952,14 @@ def parse_document(
             # title) -- not front-matter chrome, so no content_started
             # gate: an unrecognized heading appearing before section 1
             # (e.g. INTRODUCTION) must still become a node.
-            state.push_heading("sub", None, b.text, heading_level.get(i, 1))
+            state.push_heading(
+                "sub",
+                None,
+                b.text,
+                heading_level.get(i, 1),
+                ident=b.ident,
+                subtitle=b.subtitle,
+            )
             i += 1
             continue
 
@@ -3384,10 +3551,16 @@ def build_structure(state: ScrapeState, title: str) -> list[dict]:
             yield nd
             yield from walk(nd.children)
 
-    flat = [
-        {"level": nd.depth, "title": nd.title, "before": nd.before}
-        for nd in walk(state.root_children)
-    ]
+    flat = []
+    for nd in walk(state.root_children):
+        row = {"level": nd.depth, "title": nd.title, "before": nd.before}
+        # Optional and omitted when absent, so the common one-line heading
+        # stays a three-key object (docs/corpus-schema.md).
+        if nd.ident:
+            row["ident"] = nd.ident
+        if nd.subtitle:
+            row["subtitle"] = nd.subtitle
+        flat.append(row)
     if state.sections and not any(r["before"] is not None for r in flat):
         return [{"level": 1, "title": title, "before": min(state.sections)}]
     return flat

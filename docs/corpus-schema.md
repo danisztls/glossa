@@ -262,7 +262,7 @@ Absence of a sibling-language work (e.g. no `encyclical.rerum-novarum.pt` direct
 
 Never fabricated or inferred without evidence: each status is derived from what's actually on disk or from a direct, logged HTTP response (an absent raw-cache file, a cached-but-stub one, or a reproduced 404), the same "auditable from cache/evidence" posture as everything else in this pipeline.
 
-`structure.json` **(amended 2026-08-21, documents only — see `decisions.md`)**: a FLAT, document-ordered array of `{ level, title, before }`. It no longer reuses the CCC/Compendium node schema, and `kind`/`n`/`paragraphs`/`children` are gone.
+`structure.json` **(amended 2026-08-21, documents only — see `decisions.md`)**: a FLAT, document-ordered array of `{ level, title, before }`, plus the optional `ident` and `subtitle` added 2026-08-22. It no longer reuses the CCC/Compendium node schema, and `kind`/`n`/`paragraphs`/`children` are gone.
 
 ```jsonc
 [
@@ -272,11 +272,19 @@ Never fabricated or inferred without evidence: each status is derived from what'
     "title": "CHAPTER I THE DIGNITY OF THE HUMAN PERSON",
     "before": 12,
   },
+  {
+    "level": 1,
+    "ident": "CHAPTER THREE",
+    "title": "TECHNOLOGY AND DOMINANCE.",
+    "subtitle": "THE GRANDEUR OF HUMANITY IN LIGHT OF THE PROMISES OF AI",
+    "before": 90,
+  },
 ]
 ```
 
 - `level` is the heading's **observed depth**, 1-based and contiguous per document. It is not a taxonomy: the old `kind` forced the scraper to judge whether a heading _meant_ "chapter" or "section", which the sources do not reliably encode, and that judgement is what put chapters inside sections in Gaudium et Spes. Levels are assigned by walking the document — a heading directly following another with no section between is its subtitle and sits one level under it; a heading whose styling was seen before keeps the level it was first given, so siblings stay siblings; otherwise the global rank applies but never descends more than one level at a time — and are then compacted to contiguous `1..N`. Labelled headings (PART/CHAPTER/SECTION/ARTICLE) outrank unlabelled ones, because styling alone inverts: vatican.va wraps Gaudium et Spes's chapters in `<center>` while printing `PART I` as an ordinary left-aligned paragraph. **Amended 2026-08-21**: all of that is inference from how a heading is painted, and it is overridden outright on the three pages that print a linked table of contents (`magnifica-humanitas` in both languages, `divini-redemptoris.pt`) — there the levels come from the TOC's own indentation and emphasis, and blocks the style rules missed but the TOC names are promoted to headings. A TOC states the outline instead of implying it; see `decisions.md`.
 - `before` is the section number the heading precedes — its anchor. `null` means trailing matter the numbered flow never reaches. **Ranges are derived, not stored**: a heading owns sections from its anchor until the next heading of equal or shallower level. Nearly every structural defect found in the 2026-08 description pass was a stored span drifting from the text (680 `[null, null]` nodes, `CHAPTER II` at `[53,53]`, `SECTION 2` overreaching into two other chapters). Nothing stored is nothing to drift.
+- `ident` and `subtitle` are **optional and omitted when absent**, so the ordinary one-line heading stays a three-key object. They exist because vatican.va prints a division's identifier, its name and sometimes a second title line as _separate paragraphs_ — three blocks, one heading. Kept as three nodes they became three table-of-contents rows all anchored to the same section, deriving the same range, so a position-tracking TOC highlighted three rows at once. `ident` is the bare label line above the title (`CHAPTER THREE`, `PRIMEIRA PARTE`); `subtitle` is whatever further lines belong to the same heading. They are stored apart from `title` rather than folded into it because they are different things — the identifier names the division's place in a sequence, the title names its subject — and a renderer wants them typeset apart. The scraper merges only when the first line is a **bare** label and never absorbs more than one following line without the page's own TOC vouching for it; see `merge_heading_lines`.
 - `title` may carry the same narrowed inline html as body text.
 
 A document with no internal headings gets a single node spanning from its first section.
