@@ -11,6 +11,12 @@
 # minutes; see corpus/README.md for how to rebuild it.
 /corpus/works/
 
+# Runtime state of a crawl in progress, not a project file. `vatican_docs.py`
+# holds a heartbeat lock here so two sweeps cannot race the same work
+# directory (CLAUDE.md); committing one would ship a stale lock that reads as
+# a live crawl to the next run.
+corpus/raw/*/.crawl.lock
+
 # Python
 __pycache__/
 .venv/
