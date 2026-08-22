@@ -32,15 +32,16 @@
 	choosing an edition writes the preference and the open page re-renders in
 	place, with no navigation at all.
 
-	THE TRIGGER LABEL FORKS ON `editionStyle`, THE REST OF THE MENU DOESN'T:
-	only the Bible is expected to ever carry more than one edition in the same
-	language, so everywhere else "choosing an edition" is functionally
-	choosing a language — the button shows that language's own name (e.g.
-	"English") rather than an edition's `short_title`, which for a document is
-	its own Latin-incipit-style title and says nothing about what got picked.
-	The dropdown panel itself is untouched: it still lists full edition
-	titles/copyright per language, which stays useful even when there's only
-	one edition to a language today.
+	`editionStyle` FORKS BOTH THE TRIGGER AND THE PANEL ROWS: only the Bible is
+	expected to ever carry more than one edition in the same language, so
+	everywhere else "choosing an edition" is functionally choosing a language.
+	The trigger shows that language's own name (e.g. "English") rather than an
+	edition's `short_title`, which for a document is its own Latin-incipit-style
+	title and says nothing about what got picked. Each panel row collapses the
+	same way, to just the language name and its code badge ("English EN") with
+	no title/copyright line — a document's title and copyright are already on
+	the page itself once read, so repeating them per row here was noise, not
+	information, when there's only one edition per language to begin with.
 -->
 <script lang="ts">
 	import { page } from '$app/state';
@@ -172,12 +173,14 @@
 						>
 							<span class="menu-item-main">
 								{#if current}<Icon name="check" />{/if}
-								<span>{edition.title}</span>
+								<span>{editionStyle ? edition.title : languageDisplayName(edition.language)}</span>
 								<span class="edition-lang">{baseLang(edition.language).toUpperCase()}</span>
 							</span>
-							<span class="menu-item-meta"
-								>{edition.short_title} &middot; {copyrightLabel(edition)}</span
-							>
+							{#if editionStyle}
+								<span class="menu-item-meta"
+									>{edition.short_title} &middot; {copyrightLabel(edition)}</span
+								>
+							{/if}
 						</button>
 					</li>
 				{/each}
