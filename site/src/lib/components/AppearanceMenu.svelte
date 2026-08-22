@@ -161,7 +161,11 @@
 <style>
 	.appearance-panel {
 		min-width: 13rem;
-		padding: 0.5rem;
+		/* Tight, because the controls are meant to run the full width of the
+		   panel — the padding is a hairline margin around a stack of bars, not
+		   a frame around a list of items. The titles take their own small
+		   inset back below, so they sit in from the edge the bars reach. */
+		padding: 0.4rem;
 		/* One height for every control row, so the three fields are the same
 		   height and the panel reads as one list rather than three widgets. */
 		--control-height: 1.7rem;
@@ -174,9 +178,15 @@
 	}
 
 	/* Every row's title, the sepia switch's own label included: all three name
-	   a setting of the same rank, so all three are set alike. */
+	   a setting of the same rank, so all three are set alike. Uppercase and
+	   tracked, at the same size as the segmented control's own text — these
+	   are labels on a panel of bars, and at this size mixed case reads as
+	   prose that got small rather than as a heading. */
 	.field-label {
-		font-size: 0.8rem;
+		padding-inline: 0.2rem;
+		font-size: 0.68rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
 		line-height: 1.2;
 		color: var(--color-text-muted);
 	}
@@ -216,7 +226,7 @@
 		/* Small caps-height text with a little tracking: at three cells across
 		   a 12rem panel the words are chips, not prose, and uppercase keeps
 		   them legible at a size where mixed case would not be. */
-		font-size: 0.68rem;
+		font-size: 0.72rem;
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
 		line-height: 1;
