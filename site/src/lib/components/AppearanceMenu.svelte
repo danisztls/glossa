@@ -12,8 +12,17 @@
 	tri-state dark mode and a sepia toggle — makes three controls, which is
 	exactly the point at which they want a panel rather than a row of icons.
 
+	THREE ROWS BUILT TO ONE TEMPLATE: a `.field-label` over a `.field-control`
+	of fixed height, and the control fills the panel's width. That is what
+	makes the panel read as balanced rather than as three unrelated widgets —
+	the segmented dark-mode control and the size stepper are both a full-width
+	bar of three cells, and the sepia switch shares their row height. The
+	sepia note sits BESIDE the switch, in the same row, rather than under it,
+	so that turning dark mode on doesn't make one row taller than the other
+	two.
+
 	Sepia yields to dark and its row goes inert while dark is showing; the
-	store (`$lib/theme.svelte.ts`) owns that rule and the note under the
+	store (`$lib/theme.svelte.ts`) owns that rule and the note beside the
 	switch is what says so out loud. The switch keeps showing the reader's
 	stored preference while inert rather than snapping to off — it is
 	suspended, not cleared.
@@ -80,7 +89,7 @@
 			     menus' `<li role="none">` does. -->
 			<div class="field" role="none">
 				<span class="field-label">{t('darkMode.label')}</span>
-				<div class="segmented" role="group" aria-label={t('darkMode.label')}>
+				<div class="field-control segmented" role="group" aria-label={t('darkMode.label')}>
 					{#each DARK_MODES as mode (mode)}
 						{@const current = appearance.mode === mode}
 						<button
@@ -98,27 +107,30 @@
 			</div>
 
 			<div class="field" role="none">
-				<button
-					type="button"
-					role="menuitemcheckbox"
-					aria-checked={appearance.sepia}
-					class="switch-row"
-					disabled={appearance.dark}
-					onclick={() => appearance.toggleSepia()}
-				>
-					<span class="field-label">{t('sepia.label')}</span>
-					<span class="switch" class:on={appearance.sepia}></span>
-				</button>
-				{#if appearance.dark}
-					<p class="note">{t('sepia.lightOnly')}</p>
-				{/if}
+				<span class="field-label">{t('sepia.label')}</span>
+				<div class="field-control" role="none">
+					<!-- The visible name is the label above, so the button carries the
+					     same string as its accessible name rather than wrapping it. -->
+					<button
+						type="button"
+						role="menuitemcheckbox"
+						aria-checked={appearance.sepia}
+						aria-label={t('sepia.label')}
+						class="switch-btn"
+						disabled={appearance.dark}
+						onclick={() => appearance.toggleSepia()}
+					>
+						<span class="switch" class:on={appearance.sepia}></span>
+					</button>
+					{#if appearance.dark}
+						<span class="note">{t('sepia.lightOnly')}</span>
+					{/if}
+				</div>
 			</div>
-
-			<hr class="divider" />
 
 			<div class="field" role="none">
 				<span class="field-label">{t('fontSize.label')}</span>
-				<div class="stepper" role="none">
+				<div class="field-control stepper" role="none">
 					<button
 						type="button"
 						role="menuitem"
@@ -150,49 +162,64 @@
 	.appearance-panel {
 		min-width: 13rem;
 		padding: 0.5rem;
+		/* One height for every control row, so the three fields are the same
+		   height and the panel reads as one list rather than three widgets. */
+		--control-height: 1.7rem;
 	}
 
 	.field {
 		display: flex;
 		flex-direction: column;
-		gap: 0.3rem;
+		gap: 0.2rem;
 	}
 
 	/* Every row's title, the sepia switch's own label included: all three name
 	   a setting of the same rank, so all three are set alike. */
 	.field-label {
 		font-size: 0.8rem;
+		line-height: 1.2;
 		color: var(--color-text-muted);
 	}
 
+	/* Even spacing between the fields, and no rule between the theme pair and
+	   the size stepper: a divider would have made one of the two gaps larger
+	   than the other, which is the imbalance it was meant to organize. */
 	.field + .field {
-		margin-block-start: 0.5rem;
+		margin-block-start: 0.55rem;
 	}
 
-	.divider {
-		margin-block: 0.5rem;
-		border: 0;
-		border-block-start: 1px solid var(--color-border);
+	.field-control {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		height: var(--control-height);
 	}
 
 	/* One control, three cells: a single bordered box divided by hairlines,
 	   rather than three separate buttons, so the group reads as "pick one of
 	   these" the way a radio set should. */
 	.segmented {
-		display: flex;
 		border: 1px solid var(--color-border);
-		border-radius: 0.4rem;
+		border-radius: 0.35rem;
 		overflow: hidden;
+		gap: 0;
 	}
 
 	.segment {
 		flex: 1;
-		padding: 0.3rem 0.4rem;
+		min-width: 0;
+		height: 100%;
+		padding: 0 0.2rem;
 		border: 0;
 		background: var(--color-bg-elevated);
 		color: var(--color-text);
-		font-size: 0.85rem;
-		line-height: 1.2;
+		/* Small caps-height text with a little tracking: at three cells across
+		   a 12rem panel the words are chips, not prose, and uppercase keeps
+		   them legible at a size where mixed case would not be. */
+		font-size: 0.68rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		line-height: 1;
 		cursor: pointer;
 	}
 
@@ -209,22 +236,19 @@
 		color: var(--color-accent-contrast);
 	}
 
-	.switch-row {
-		display: flex;
+	.switch-btn {
+		display: inline-flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 0.6rem;
-		width: 100%;
+		height: 100%;
 		padding: 0;
 		border: 0;
 		background: transparent;
-		text-align: start;
 		cursor: pointer;
 	}
 
-	/* Dimmed whole, rather than by recolouring the label: the label is now a
-	   `.field-label` and already muted, so there was no colour left to shift. */
-	.switch-row:disabled {
+	/* Dimmed whole, rather than by recolouring the label: the label sits
+	   outside the button now, and is already muted. */
+	.switch-btn:disabled {
 		opacity: 0.55;
 		cursor: not-allowed;
 	}
@@ -234,7 +258,7 @@
 	   `role="menuitemcheckbox"` + `aria-checked`. Decorative, so no ARIA. */
 	.switch {
 		position: relative;
-		flex: none;
+		display: block;
 		width: 1.9rem;
 		height: 1.1rem;
 		border: 1px solid var(--color-border);
@@ -269,23 +293,36 @@
 		translate: 0.8rem 0;
 	}
 
+	/* No wrapping: the row has a fixed height, so a second line would spill
+	   out of it. If a translation ever outgrows the space the panel widens
+	   (up to `.menu-panel`'s max-width) instead, which is the visible
+	   failure rather than the silent one. */
+	.note {
+		font-size: 0.7rem;
+		line-height: 1.2;
+		white-space: nowrap;
+		color: var(--color-text-muted);
+	}
+
+	/* Laid out like the segmented control above it — the two ends of a
+	   full-width bar with the reading between them — so the panel's two
+	   multi-part controls have the same silhouette. */
 	.stepper {
-		display: flex;
-		align-items: center;
-		gap: 0.3rem;
+		justify-content: space-between;
 	}
 
 	.step-btn {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 1.75rem;
-		height: 1.75rem;
+		width: var(--control-height);
+		height: 100%;
 		padding: 0;
 		border: 1px solid var(--color-border);
 		border-radius: 0.35rem;
 		background: var(--color-bg-elevated);
 		color: var(--color-text);
+		font-size: 0.8rem;
 		cursor: pointer;
 	}
 
@@ -295,17 +332,10 @@
 	}
 
 	.value {
-		min-width: 3em;
+		flex: 1;
 		text-align: center;
 		font-variant-numeric: tabular-nums;
-		font-size: 0.85rem;
+		font-size: 0.8rem;
 		color: var(--color-text);
-	}
-
-	.note {
-		margin: 0;
-		font-size: 0.75rem;
-		line-height: 1.3;
-		color: var(--color-text-muted);
 	}
 </style>

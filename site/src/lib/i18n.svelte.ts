@@ -51,14 +51,18 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// Appearance menu — AppearanceMenu.svelte is the consumer; the dark-mode
 		// and sepia stores are theme.svelte.ts, the text size is prefs.svelte.ts.
 		// `sepia.lightOnly` is shown only while dark mode is actually active, to
-		// explain why the sepia switch beside it is greyed out.
+		// explain why the sepia switch beside it is greyed out — it shares that
+		// switch's row, so it has to stay to about fifteen characters.
+		// KEEP THE THREE `darkMode` OPTIONS SHORT. They are three cells of one
+		// full-width segmented control inside a ~13rem panel, set uppercase at
+		// 0.68rem, so a long word in any language pushes the panel wider.
 		'appearance.label': 'Appearance',
 		'darkMode.label': 'Dark mode',
 		'darkMode.auto': 'Auto',
 		'darkMode.on': 'On',
 		'darkMode.off': 'Off',
 		'sepia.label': 'Sepia',
-		'sepia.lightOnly': 'Applies in light mode.',
+		'sepia.lightOnly': 'Light mode only',
 		'fontSize.label': 'Text size',
 		'fontSize.larger': 'Larger text',
 		'fontSize.smaller': 'Smaller text',
@@ -272,11 +276,14 @@ const dictionaries: Record<UiLang, Dictionary> = {
 
 		'appearance.label': 'Aparência',
 		'darkMode.label': 'Modo escuro',
-		'darkMode.auto': 'Automático',
+		// 'Auto', not 'Automático': see the note in the English dictionary — the
+		// three share one segmented control, and 'AUTOMÁTICO' set uppercase is
+		// wider than the cell that holds it.
+		'darkMode.auto': 'Auto',
 		'darkMode.on': 'Ligado',
 		'darkMode.off': 'Desligado',
 		'sepia.label': 'Sépia',
-		'sepia.lightOnly': 'Aplica-se ao modo claro.',
+		'sepia.lightOnly': 'Só no modo claro',
 
 		'fontSize.label': 'Tamanho do texto',
 		'fontSize.larger': 'Aumentar texto',
