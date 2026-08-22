@@ -112,7 +112,27 @@ export function rowState(
  * all show the same bare "1.".
  */
 export function marker(node: StructureNode, lang: string): string | null {
-	return kindOrdinalLabel(node, lang) ?? displayTitle(node, lang).ordinal;
+	// A document heading whose source printed its own identifier line
+	// ("CHAPTER THREE") uses that verbatim: it is what the page says, so
+	// there is nothing to reconstruct or translate.
+	return node.label ?? kindOrdinalLabel(node, lang) ?? displayTitle(node, lang).ordinal;
+}
+
+/**
+ * The index of the ONE row among `nodes` that marks the reader's position,
+ * or -1. Siblings can legitimately share a range — a document heading
+ * immediately followed by its first sub-heading, with no numbered section
+ * between them, derives the same span for both — and `rowState` alone would
+ * then report every one of them as current, duplicating the `id` the aside
+ * scrolls to and putting `aria-current="page"` on several links at once.
+ * First match wins, which is the row a reader scrolling down reaches first.
+ */
+export function currentIndex(
+	nodes: StructureNode[],
+	currentN: number | undefined,
+	kinds: Set<StructureNode['kind']> | undefined
+): number {
+	return nodes.findIndex((node) => rowState(node, currentN, kinds).isCurrent);
 }
 
 export type LinkMode = 'route' | 'anchor';
@@ -125,6 +145,17 @@ export type LinkMode = 'route' | 'anchor';
  * is already one page and a row navigates within it instead of away from
  * it. `basePath` is unused in this mode.
  */
-export function hrefFor(n: number, linkMode: LinkMode, basePath: string | undefined): string {
+export function hrefFor(
+	node: StructureNode,
+	n: number,
+	linkMode: LinkMode,
+	basePath: string | undefined
+): string {
+	// A row carrying its own `anchor` addresses the heading it names. Only
+	// documents set one, and only they need it: `#s{n}` lands on the SECTION
+	// after the heading, which puts the heading itself off the top of the
+	// viewport and makes a TOC row and the text it points at disagree about
+	// where the division starts.
+	if (linkMode === 'anchor' && node.anchor) return `#${node.anchor}`;
 	return linkMode === 'anchor' ? `#s${n}` : `${basePath}/${n}`;
 }

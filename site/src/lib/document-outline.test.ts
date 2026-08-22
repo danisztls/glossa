@@ -93,6 +93,32 @@ describe('buildDocumentOutline', () => {
 		expect(out[2].children.map((c) => c.title)).toEqual(['The technocratic paradigm']);
 	});
 
+	it('anchors each row to the heading it names, by its index in the flat list', () => {
+		// The document route puts these same ids on the headings it renders
+		// (`flattenDocumentStructure`), so a TOC row and the text it points at
+		// address one heading rather than a row addressing the section behind
+		// it. Both sides read the index off the same corpus array.
+		const out = buildDocumentOutline([row(1, 'A', 1), row(2, 'A.1', 3), row(1, 'B', 8)], 12);
+		expect(out.map((n) => n.anchor)).toEqual(['h0', 'h2']);
+		expect(out[0].children[0].anchor).toBe('h1');
+	});
+
+	it("carries a heading's printed identifier through as the row's label", () => {
+		const withIdent: DocumentNode = {
+			level: 1,
+			title: 'TECHNOLOGY AND DOMINANCE.',
+			before: 90,
+			ident: 'CHAPTER THREE',
+			subtitle: 'THE GRANDEUR OF HUMANITY'
+		};
+		const out = buildDocumentOutline([withIdent], 130);
+		expect(out[0].label).toBe('CHAPTER THREE');
+		expect(out[0].title).toBe('TECHNOLOGY AND DOMINANCE.');
+		// One row, one range — the three printed lines are one heading.
+		expect(out).toHaveLength(1);
+		expect(out[0].paragraphs).toEqual([90, 130]);
+	});
+
 	it('still ends a heading at a later one that shares no anchor', () => {
 		// The skip above is keyed on the anchor, not on the level, so an
 		// ordinary same-level sibling must still close the previous run.

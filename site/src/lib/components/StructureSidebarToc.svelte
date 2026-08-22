@@ -109,7 +109,14 @@
 	import { browser } from '$app/environment';
 	import type { StructureNode } from '$lib/types';
 	import { displayTitle } from '$lib/titles';
-	import { hrefFor, marker, outlineChildren, rowState, type LinkMode } from './structureToc';
+	import {
+		currentIndex,
+		hrefFor,
+		marker,
+		outlineChildren,
+		rowState,
+		type LinkMode
+	} from './structureToc';
 
 	interface Props {
 		/** `flattenCccStructure`/`flattenCompendiumStructure`/
@@ -180,18 +187,20 @@
 </script>
 
 {#snippet level(nodes: StructureNode[])}
+	{@const cur = currentIndex(nodes, currentN, outlineKinds)}
 	<ol class="sidebar-toc-list toc-level">
-		{#each nodes as node (node.title + node.paragraphs.join('-'))}
+		{#each nodes as node, i (node.anchor ?? node.title + node.paragraphs.join('-'))}
 			{@const dt = displayTitle(node, lang)}
 			{@const label = marker(node, lang)}
 			{@const anchor = node.paragraphs[0]}
 			{@const kids = outlineChildren(node, outlineKinds)}
-			{@const state = rowState(node, currentN, outlineKinds)}
+			{@const raw = rowState(node, currentN, outlineKinds)}
+			{@const state = { onPath: raw.onPath, isCurrent: raw.isCurrent && i === cur }}
 			<li class={`kind-${node.kind}`} class:on-path={state.onPath}>
 				{#if Number.isFinite(anchor)}
 					<a
 						id={state.isCurrent ? CURRENT_ID : undefined}
-						href={hrefFor(anchor as number, linkMode, basePath)}
+						href={hrefFor(node, anchor as number, linkMode, basePath)}
 						class:current={state.isCurrent}
 						aria-current={state.isCurrent ? 'page' : undefined}
 					>

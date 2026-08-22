@@ -178,7 +178,7 @@
 	// them in pre-order (ancestor before descendant), so appending to each
 	// bucket in iteration order keeps them correctly nested without a sort.
 	const headingsByStart = $derived.by(() => {
-		const map = new Map<number, { node: DocumentNode; depth: number }[]>();
+		const map = new Map<number, { node: DocumentNode; depth: number; anchor: string }[]>();
 		for (const row of structureRows) {
 			const start = row.node.before;
 			// Unnumbered front/back matter (docs/corpus-schema.md's null-bound
@@ -426,12 +426,17 @@
 					>
 						<h2 class="toc-inline-heading">{t('document.tableOfContents')}</h2>
 						<ol>
-							{#each structureRows as { node, depth } (node.title + node.before)}
-								{@const anchor = node.before}
+							{#each structureRows as { node, depth, anchor } (anchor)}
 								{@const dt = displayDocumentTitle(node.title, lang)}
 								<li style={`--depth: ${depth}`} class={`level-${node.level}`}>
-									{#if Number.isFinite(anchor)}
-										<a href={`#s${anchor}`}>
+									<!-- `before` decides whether this heading is RENDERED at all
+									     (`headingsByStart` drops the unanchored ones), but the link
+									     goes to the heading's own id, not to `#s{before}` — the
+									     section behind it. Same rule as the sidebar; the two tables
+									     of contents on this page must not address differently. -->
+									{#if Number.isFinite(node.before)}
+										<a href={`#${anchor}`}>
+											{#if node.ident}<span class="ordinal">{node.ident}</span>{/if}
 											{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
 											{dt.title}
 										</a>
@@ -487,15 +492,25 @@
 					{/if}
 					<div class="reading-text document-body" lang={current.work.language}>
 						{#each current.sections as section, i (section.n)}
-							{#each headingsByStart.get(section.n) ?? [] as { node, depth } (node.title + node.before)}
+							{#each headingsByStart.get(section.n) ?? [] as { node, depth, anchor } (anchor)}
 								{@const dt = displayDocumentTitle(node.title, lang)}
 								<svelte:element
 									this={headingTag(node.level)}
+									id={anchor}
 									class="structure-heading"
 									style={`--depth: ${depth}`}
 								>
+									<!-- Identifier, name and subtitle are three printed lines of
+									     ONE heading (docs/corpus-schema.md). The corpus keeps them
+									     apart precisely so they can be typeset apart here; folding
+									     them into one string is what a reader's table of contents
+									     used to show as three separate rows. -->
+									{#if node.ident}<span class="heading-ident">{node.ident}</span>{/if}
 									{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-									{dt.title}
+									<span class="heading-name">{dt.title}</span>
+									{#if node.subtitle}<span class="heading-subtitle"
+											>{displayDocumentTitle(node.subtitle, lang).title}</span
+										>{/if}
 								</svelte:element>
 							{/each}
 							<section class="section" id={`s${section.n}`}>
@@ -694,6 +709,28 @@
 	.structure-heading .ordinal {
 		color: var(--color-text-muted);
 		margin-right: 0.4em;
+	}
+
+	/* The identifier sits ABOVE the name, smaller and quieter, the way the
+	   source prints it — it names the division's place in a sequence, not its
+	   subject, and reading it inline with the title makes one long shout. The
+	   subtitle sits below on its own line for the mirror reason. */
+	.structure-heading .heading-ident {
+		display: block;
+		font-size: 0.75em;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+		margin-bottom: 0.35rem;
+	}
+
+	.structure-heading .heading-subtitle {
+		display: block;
+		font-size: 0.85em;
+		font-weight: 600;
+		color: var(--color-text-muted);
+		margin-top: 0.3rem;
 	}
 
 	:global(h2.structure-heading) {

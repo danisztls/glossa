@@ -170,6 +170,25 @@ export interface CccNode {
 	 */
 	paragraphs: [number | null, number | null];
 	children: CccNode[];
+	/**
+	 * DOCUMENTS ONLY, and the reason it lives on the shared node rather than
+	 * beside it: the sidebar TOC is one component across the CCC, the
+	 * Compendium and documents, and a document's rows must address the
+	 * HEADING they name, not the section that happens to follow it.
+	 *
+	 * An in-page fragment id (`h12`) matching the `id` the document route
+	 * puts on that same heading. Both come from one indexed list, so the
+	 * table of contents and the text it describes cannot disagree. Absent
+	 * for the CCC and Compendium, whose rows address a unit number and are
+	 * their own pages.
+	 */
+	anchor?: string;
+	/**
+	 * DOCUMENTS ONLY. The division identifier printed above the title
+	 * ("CHAPTER THREE"), shown as the row's marker. See `DocumentNode.ident`
+	 * for why the two are stored apart.
+	 */
+	label?: string;
 }
 
 /**
@@ -203,6 +222,21 @@ export interface DocumentNode {
 	level: number;
 	title: string;
 	before: number | null;
+	/**
+	 * The division identifier the source prints on its own line above the
+	 * title — "CHAPTER THREE", "PRIMEIRA PARTE" — when it prints one.
+	 *
+	 * Stored apart from `title` rather than folded into it because they are
+	 * different things: the identifier names the division's place in a
+	 * sequence, the title names its subject, and a renderer wants them
+	 * typeset differently (and a table of contents may want only one). The
+	 * scraper merges the two printed paragraphs into one heading; keeping
+	 * three nodes made them three TOC rows all anchored to the same section.
+	 */
+	ident?: string;
+	/** Further heading lines below the title, joined — the second title line
+	 *  a chapter opening sometimes carries. Same merge, same reasoning. */
+	subtitle?: string;
 }
 
 export interface CccCitation {

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	OUTLINE_KINDS,
 	contains,
+	currentIndex,
 	hrefFor,
 	marker,
 	outlineChildren,
@@ -121,15 +122,60 @@ describe('marker', () => {
 });
 
 describe('hrefFor', () => {
+	const plain = node('chapter', 1, 'X', [1, 9]);
+
 	it('route mode: basePath + the anchor number', () => {
-		expect(hrefFor(27, 'route', '/catechismus')).toBe('/catechismus/27');
-		expect(hrefFor(19, 'route', '/documenta/gaudium-et-spes')).toBe(
+		expect(hrefFor(plain, 27, 'route', '/catechismus')).toBe('/catechismus/27');
+		expect(hrefFor(plain, 19, 'route', '/documenta/gaudium-et-spes')).toBe(
 			'/documenta/gaudium-et-spes/19'
 		);
 	});
 
 	it('anchor mode: an #s{n} fragment, ignoring basePath', () => {
-		expect(hrefFor(19, 'anchor', '/documenta/gaudium-et-spes')).toBe('#s19');
-		expect(hrefFor(19, 'anchor', undefined)).toBe('#s19');
+		expect(hrefFor(plain, 19, 'anchor', '/documenta/gaudium-et-spes')).toBe('#s19');
+		expect(hrefFor(plain, 19, 'anchor', undefined)).toBe('#s19');
+	});
+
+	// The heading and the section after it are different places on the page.
+	// A document row addresses the heading it names; `#s{n}` would scroll
+	// past it to the first paragraph underneath.
+	it('anchor mode: a row carrying its own heading anchor uses that instead', () => {
+		const withAnchor = { ...node('sub', null, 'CHAPTER THREE', [90, 130]), anchor: 'h12' };
+		expect(hrefFor(withAnchor, 90, 'anchor', undefined)).toBe('#h12');
+	});
+
+	it('route mode ignores the heading anchor — those rows are their own pages', () => {
+		const withAnchor = { ...node('sub', null, 'CHAPTER THREE', [90, 130]), anchor: 'h12' };
+		expect(hrefFor(withAnchor, 90, 'route', '/documenta/x')).toBe('/documenta/x/90');
+	});
+});
+
+describe('currentIndex', () => {
+	// Two siblings sharing a range is legitimate — a document heading
+	// immediately followed by its first sub-heading, no numbered section
+	// between them. Marking both current duplicates the id the aside scrolls
+	// to and puts aria-current on two links at once.
+	it('picks only the first of several siblings sharing a range', () => {
+		const nodes = [
+			node('sub', null, 'A', [10, 20]),
+			node('sub', null, 'B', [10, 20]),
+			node('sub', null, 'C', [21, 30])
+		];
+		expect(currentIndex(nodes, 12, undefined)).toBe(0);
+		// rowState on its own still reports the second as current — which is
+		// exactly why the caller needs this.
+		expect(rowState(nodes[1], 12, undefined).isCurrent).toBe(true);
+	});
+
+	it('is -1 when the reader is outside every row, or has no position', () => {
+		expect(currentIndex([node('sub', null, 'A', [10, 20])], 99, undefined)).toBe(-1);
+		expect(currentIndex([node('sub', null, 'A', [10, 20])], undefined, undefined)).toBe(-1);
+	});
+});
+
+describe('marker', () => {
+	it("prefers a document's own printed identifier line", () => {
+		const withLabel = { ...node('sub', null, 'TECHNOLOGY AND DOMINANCE.', [90, 130]), label: 'CHAPTER THREE' };
+		expect(marker(withLabel, 'en')).toBe('CHAPTER THREE');
 	});
 });

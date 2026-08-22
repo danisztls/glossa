@@ -1119,8 +1119,24 @@ export function getDocumentStructure(workId: string): DocumentNode[] {
  * this does not walk a tree: `depth` is just `level - 1`. Kept returning the
  * same `{ node, depth }` row shape its callers already render.
  */
-export function flattenDocumentStructure(workId: string): { node: DocumentNode; depth: number }[] {
-	return getDocumentStructure(workId).map((node) => ({ node, depth: node.level - 1 }));
+export function flattenDocumentStructure(
+	workId: string
+): { node: DocumentNode; depth: number; anchor: string }[] {
+	return getDocumentStructure(workId).map((node, i) => ({
+		node,
+		depth: node.level - 1,
+		// The id the route puts on this heading, and the fragment the sidebar
+		// row for it links to. Index into the one flat corpus array, so both
+		// sides are addressing the same heading by construction.
+		anchor: documentHeadingAnchor(i)
+	}));
+}
+
+/** The in-page id for the heading at index `i` of a document's flat
+ *  structure. One function so the route that renders the id and the outline
+ *  that links to it cannot drift apart. */
+export function documentHeadingAnchor(i: number): string {
+	return `h${i}`;
 }
 
 /**
@@ -1174,7 +1190,12 @@ export function buildDocumentOutline(rows: DocumentNode[], lastN: number | null)
 			n: null,
 			title: row.title,
 			paragraphs: [start, start === null ? null : end],
-			children: []
+			children: [],
+			// Same index, same id as the heading the document route renders
+			// (`flattenDocumentStructure`), so a TOC row navigates to the
+			// heading it names instead of to the section behind it.
+			anchor: documentHeadingAnchor(i),
+			label: row.ident
 		} as StructureNode;
 	});
 

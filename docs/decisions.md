@@ -739,3 +739,60 @@ Across the whole emitted corpus only three structure titles match the signature
 pattern at all, and the third — `Gregory XIII` in `insignes.en` — is anchored
 to section 10, so the existing "only after the last numbered paragraph" guard
 keeps it.
+
+## 2026-08-22 — A heading printed on three lines is one heading, and the sidebar addresses headings
+
+Two corrections to the day before, both from reading the rendered result.
+
+**1. Identifier, name and subtitle are one heading.** vatican.va prints a
+division's opening as separate paragraphs:
+
+```html
+<p><b>CHAPTER THREE</b></p>
+<p><b>TECHNOLOGY AND DOMINANCE.</b></p>
+<p><b>THE GRANDEUR OF HUMANITY IN LIGHT OF THE PROMISES OF AI</b></p>
+```
+
+Three blocks, one heading. Stored as three nodes they render as three `h2`s in
+a row and three table-of-contents rows, all anchored to the same section — so
+all three derive the _same_ range and a position-tracking TOC highlights three
+rows at once. Reading the levels off the page's own TOC exposed this; before
+that the levelling walk's subtitle rule merely hid it behind an invented tier,
+putting the identifier one level _above_ its own name.
+
+So `structure.json` gains optional `ident` and `subtitle` and the scraper folds
+the run into one node. They are stored apart from `title`, not concatenated
+into it, because they are different things: the identifier names the division's
+place in a sequence, the title names its subject, and a renderer wants them
+typeset apart — the reader page prints the identifier small and quiet above the
+name, and the sidebar shows it as the row's marker.
+
+**What is absorbed, and why not more.** The run must open with a **bare**
+division label (`CHAPTER THREE`, `CAPÍTULO IV`, `PRIMEIRA PARTE`) — the only
+unambiguous evidence in the source that a heading continues on the next line. A
+label that already carries its name (`III OS ARGUMENTOS TEOLÓGICOS`) is
+complete, and what follows it is a real sub-heading. Then exactly **one**
+following heading is taken as the name, because the third line is genuinely
+ambiguous: Ad Petri Cathedram prints `QUARTA PARTE` / `EXORTAÇÕES PATERNAIS` /
+`Aos bispos`, and `Aos bispos` is the part's first sub-section, not its
+subtitle. Further lines merge only where the page's own TOC assigns them the
+same level as the label — a statement, not an inference, and the only reason
+Magnifica Humanitas' three-line chapter openings merge while Ad Petri's does
+not.
+
+Measured before it was written: **154 runs in 33 works** open with a bare
+label, every one an identifier followed by a name.
+
+**2. A table-of-contents row addresses the heading it names, not the section
+behind it.** Rows linked `#s{n}` — `before`, the section the heading precedes —
+so clicking a chapter scrolled _past_ its title to the first paragraph
+underneath. Each heading now carries an id, each row links to that id, and both
+come from one indexed list (`documentHeadingAnchor(i)` over the flat corpus
+array): the table of contents and the text it describes cannot disagree about
+which heading is which, or about where a division starts. `#s{n}` deep links to
+sections are untouched — they are the documented address and still what the
+section number itself copies.
+
+This covers **both** tables of contents the route renders — the sidebar aside
+and the inline one that replaces it below 80rem. Two lists addressing the same
+document differently is the same incoherence one level down.

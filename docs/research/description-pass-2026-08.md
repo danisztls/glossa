@@ -72,17 +72,47 @@ this narrows the problem by three documents, it does not replace the pass.
 
 What it bought, per document:
 
-| Work                     | Before                                                                                                                 | After                                                   |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `magnifica-humanitas.en` | chapter numbers and their titles at different levels; sub-sections promoted to siblings of the chapters they belong to | 82 nodes matching the printed TOC exactly               |
-| `magnifica-humanitas.pt` | 79 nodes, two headings missing entirely (one only partly italic, one only centred)                                     | 81 nodes, both recovered on TOC evidence                |
-| `divini-redemptoris.pt`  | 60 nodes, flat, no part tier                                                                                           | 7 parts at h1 with their sub-sections nested under them |
+| Work                     | Before                                                                                                                 | After                                                                               |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `magnifica-humanitas.en` | chapter numbers and their titles at different levels; sub-sections promoted to siblings of the chapters they belong to | 75 nodes matching the printed TOC exactly (82 before the merge below folded 7 away) |
+| `magnifica-humanitas.pt` | 79 nodes, two headings missing entirely (one only partly italic, one only centred)                                     | both recovered on TOC evidence                                                      |
+| `divini-redemptoris.pt`  | 60 nodes, flat, no part tier                                                                                           | 7 parts at h1 with their sub-sections nested under them                             |
 
 Also fixed in passing: `PIO XI PP.` was signing `divini-redemptoris.pt` as a
 top-level heading, because `_PAPAL_SIGNATURE_RE` allowed `PP.` only _before_
 the numeral. Only three structure titles in the whole corpus match the
 signature pattern; the third, `Gregory XIII` in `insignes.en`, is anchored to
 section 10 and stays, protected by the existing positional guard.
+
+### Heading lines merged; the TOC addresses headings (2026-08-22)
+
+Two corrections found by looking at the rendered result, both recorded in
+`decisions.md`. `structure.json` gained optional `ident`/`subtitle`, and a
+division's identifier, name and subtitle are now one node instead of three:
+**150 headings merged across 32 works**, 2 of them carrying a subtitle. And a
+table-of-contents row now links to the heading's own id rather than to `#s{n}`,
+the section behind it — both the sidebar and the inline TOC, from one indexed
+list shared with the body.
+
+**Known defect this did NOT fix — 104 same-anchor, same-level sibling pairs
+remain**, in works like `deus-caritas-est` (`THE PRACTICE OF LOVE BY THE
+CHURCH...` / `The Church's charitable activity as...`). These are not
+identifier/name pairs and must not be merged: they are a heading and its first
+sub-heading with no numbered section between them, wrongly given the _same_
+level. The cause is the levelling walk's run rule — the first heading after
+another is its subtitle at parent+1, and every heading after _that_ repeats the
+previous level ("title, subtitle, then siblings"), so the third heading in a run
+lands as a sibling of the second. Fixing it means revisiting that rule, which
+touches far more than these 104 rows.
+
+The visible symptom is contained for now: a sidebar row is marked current only
+if no earlier sibling already claims the position (`currentIndex` in
+`structureToc.ts`), so identical ranges no longer duplicate the `id` the aside
+scrolls to or put `aria-current` on several links at once.
+
+Two unrelated defects surfaced in that same census, both worth their own fix:
+`dilexit-nos.en` has lines of quoted Dante verse promoted to headings, and
+`divino-afflante-spiritu.pt` has `1. Leão XIII` read as one.
 
 ## Batch 1 (12 works)
 
