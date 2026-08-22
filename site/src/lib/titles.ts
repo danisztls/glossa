@@ -176,6 +176,20 @@ export function kindOrdinalLabel(
 	return label ? `${label} ${node.n}` : null;
 }
 
+/**
+ * The bare kind word `kindOrdinalLabel` prints before a number ("Ch.",
+ * "Part"…), with no number attached — for callers that have a `kind` but no
+ * `n` to hand `kindOrdinalLabel`. Document headings are the case: they carry
+ * no structured `n` (`types.ts`'s `DocumentNode` docblock — the scraper
+ * deliberately doesn't judge what a heading *means*), but a document's own
+ * printed label ("CHAPTER TWO") still names one of these same four kinds,
+ * and a caller that derives its own number from heading position wants the
+ * matching abbreviated word from the one table both forms share.
+ */
+export function kindLabelWord(kind: StructureNode['kind'], lang: string): string | null {
+	return KIND_LABELS[normLang(lang)][kind] ?? null;
+}
+
 // --- Redundant prefix stripping --------------------------------------------
 
 const EN_CARDINAL: Record<number, string> = {

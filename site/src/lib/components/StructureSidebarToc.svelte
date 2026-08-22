@@ -67,6 +67,14 @@
 	 *    no "Sub" entry. `marker()` (structureToc.ts) keeps both: the label
 	 *    where one exists, the bare ordinal where it doesn't.
 	 *
+	 *    Since then, a document heading's own printed marker ("CHAPTER TWO")
+	 *    has also picked up a sidebar-only abbreviated form ("Ch. 2"), for
+	 *    the same column-width reason `kindOrdinalLabel` abbreviates in the
+	 *    first place — passing this snippet's own `nodes` and `i` into
+	 *    `marker()` below is what lets it derive that form from the row's
+	 *    position among its siblings rather than parsing the source text
+	 *    (see `marker()`'s own docblock, structureToc.ts).
+	 *
 	 *  - VISIBLE HEADING vs. ARIA-ONLY LABEL. The document version rendered
 	 *    a visible "Table of Contents" heading above the list; the
 	 *    CCC/Compendium version had no visible label at all, only an
@@ -191,7 +199,7 @@
 	<ol class="sidebar-toc-list toc-level">
 		{#each nodes as node, i (node.anchor ?? node.title + node.paragraphs.join('-'))}
 			{@const dt = displayTitle(node, lang)}
-			{@const label = marker(node, lang)}
+			{@const label = marker(node, lang, nodes, i)}
 			{@const anchor = node.paragraphs[0]}
 			{@const kids = outlineChildren(node, outlineKinds)}
 			{@const raw = rowState(node, currentN, outlineKinds)}
@@ -295,9 +303,23 @@
 		font-weight: 600;
 	}
 
-	.kind-sub > a,
-	.kind-sub > .unlinked {
-		color: var(--color-text-muted);
+	/* Every document heading renders as `kind-sub` (`corpus.ts`'s
+	   `buildDocumentOutline` — a document node carries no real `kind`), so
+	   this component can't lean on `--color-text-muted` to demote a genuine
+	   sub-bullet the way the CCC/Compendium version could: there is no
+	   separate `kind-chapter`/`kind-part` left to contrast it against, and
+	   `--color-text-muted` reads as too faint once it's carrying the WHOLE
+	   sidebar's body text rather than just the occasional secondary row.
+	   Every row keeps full `--color-text` contrast; hierarchy comes from
+	   weight and indentation instead. `:has(.kind-label)` — whether a row
+	   got a marker at all, checked the same way a reader would rather than
+	   by depth, which a document's nesting doesn't reliably track (see the
+	   marker() docblock, structureToc.ts) — is what tells an actual chapter
+	   heading ("Ch. 2") from a plain nested bullet, and earns it the same
+	   bold treatment `.kind-chapter` gets on the CCC/Compendium. */
+	.kind-sub:has(.kind-label) > a,
+	.kind-sub:has(.kind-label) > .unlinked {
+		font-weight: 600;
 	}
 
 	/* Set in the sans face at a smaller size, matching `/ccc/+page.svelte`'s

@@ -178,4 +178,40 @@ describe('marker', () => {
 		const withLabel = { ...node('sub', null, 'TECHNOLOGY AND DOMINANCE.', [90, 130]), label: 'CHAPTER THREE' };
 		expect(marker(withLabel, 'en')).toBe('CHAPTER THREE');
 	});
+
+	function labeled(label: string, paragraphs: [number | null, number | null] = [1, 1]): StructureNode {
+		return { ...node('sub', null, label, paragraphs), label };
+	}
+
+	it('abbreviates a recognized kind word to a position-derived number, given siblings', () => {
+		const siblings = [labeled('CHAPTER ONE'), labeled('CHAPTER TWO'), labeled('CHAPTER THREE')];
+		expect(marker(siblings[0], 'en', siblings, 0)).toBe('Ch. 1');
+		expect(marker(siblings[1], 'en', siblings, 1)).toBe('Ch. 2');
+		expect(marker(siblings[2], 'en', siblings, 2)).toBe('Ch. 3');
+	});
+
+	it('only counts recognized siblings toward the position, not every row', () => {
+		const siblings = [labeled('Introduction'), labeled('CHAPTER ONE'), labeled('CHAPTER TWO')];
+		expect(marker(siblings[2], 'en', siblings, 2)).toBe('Ch. 2');
+	});
+
+	it('reads the kind word from either end, for Portuguese part/section\'s reversed order', () => {
+		const siblings = [labeled('PRIMEIRA PARTE'), labeled('SEGUNDA PARTE')];
+		expect(marker(siblings[0], 'pt', siblings, 0)).toBe('Parte 1');
+		expect(marker(siblings[1], 'pt', siblings, 1)).toBe('Parte 2');
+	});
+
+	it('counts a scrape typo by its recognized kind word, not the mangled numeral', () => {
+		const siblings = [labeled('CAPÍTULO I'), labeled('CAPÍTULO IlII')];
+		expect(marker(siblings[1], 'pt', siblings, 1)).toBe('Cap. 2');
+	});
+
+	it('falls back to the verbatim label when the kind word is not recognized', () => {
+		const siblings = [labeled('TECHNOLOGY AND DOMINANCE.')];
+		expect(marker(siblings[0], 'en', siblings, 0)).toBe('TECHNOLOGY AND DOMINANCE.');
+	});
+
+	it('leaves the label untouched when siblings/index are omitted', () => {
+		expect(marker(labeled('CHAPTER TWO'), 'en')).toBe('CHAPTER TWO');
+	});
 });

@@ -7,7 +7,7 @@
  * here talks to the DOM or to Svelte.
  */
 import type { StructureNode } from '../types';
-import { displayTitle, kindOrdinalLabel } from '../titles';
+import { displayTitle, kindLabelWord, kindOrdinalLabel } from '../titles';
 
 /**
  * The granularity `/ccc/+page.svelte`'s "chapter-sized" reasoning already
@@ -93,6 +93,45 @@ export function rowState(
 }
 
 /**
+ * `label`'s first-or-last alphabetic word, normalized (accents stripped,
+ * upper-cased), matched against the same four kinds `KIND_LABELS`
+ * (`titles.ts`) carries a printed word for — or `null` when neither end
+ * matches, which is the common case (`"INTRODUÇÃO"`, a nested sub-heading's
+ * own title with no printed identifier line at all).
+ *
+ * Checking BOTH ends, not just the first word, is what `kindPrefixTokens`
+ * (`titles.ts`) already found true of the real corpus: chapter puts the kind
+ * word first ("CHAPTER TWO", "CAPÍTULO I") but Portuguese part/section put
+ * it last ("PRIMEIRA PARTE") — both attested in `structure.json`, not a typo
+ * to normalize away. This only ever feeds a display abbreviation and a
+ * same-kind sibling count, never the tree shape itself (`DocumentNode`'s own
+ * docblock in `types.ts` is the reason the scraper stopped attaching a
+ * `kind` to documents at all — that judgment call is what mis-nested
+ * chapters inside sections in Gaudium et Spes), so a wrong or missing match
+ * here degrades to the plain verbatim label, not a structural error.
+ */
+const LABEL_KIND_WORDS: Partial<Record<string, StructureNode['kind']>> = {
+	CHAPTER: 'chapter',
+	CAPITULO: 'chapter',
+	PART: 'part',
+	PARTE: 'part',
+	ARTICLE: 'article',
+	ARTIGO: 'article',
+	SECTION: 'section',
+	SECCAO: 'section'
+};
+
+function documentLabelKind(label: string): StructureNode['kind'] | null {
+	const words = label
+		.normalize('NFD')
+		.replace(/\p{M}/gu, '')
+		.toUpperCase()
+		.match(/[A-Z]+/g);
+	if (!words || words.length === 0) return null;
+	return LABEL_KIND_WORDS[words[0]] ?? LABEL_KIND_WORDS[words[words.length - 1]] ?? null;
+}
+
+/**
  * The leading marker shown before a row's title — `kindOrdinalLabel`'s
  * abbreviated, kind-disambiguated form ("Ch. 3", "Art. 2") when one exists
  * for this node's kind, falling back to `displayTitle`'s bare ordinal
@@ -110,12 +149,42 @@ export function rowState(
  * having on a document tree for the identical reason `kindOrdinalLabel`'s
  * own docblock gives for the CCC: four levels of numbered heading otherwise
  * all show the same bare "1.".
+ *
+ * A document heading whose source printed its own identifier line
+ * ("CHAPTER THREE") normally uses that verbatim — it is what the page says,
+ * so there is nothing to reconstruct or translate. The sidebar TOC is the
+ * one exception: a column 17rem wide has no room for "CHAPTER THREE" spelled
+ * out at every row, the way it does for a full-width heading, so callers
+ * that pass `siblings`/`index` (this node's own position among its actual
+ * tree siblings) get `kindLabelWord`'s abbreviated word ("Ch.") plus a
+ * number DERIVED from position — the count of earlier siblings recognized as
+ * the same kind — rather than parsed out of the source text. Deriving from
+ * position, not parsing the printed ordinal, is what stays robust against
+ * the real corpus's inconsistent numbering style (spelled-out cardinals,
+ * roman numerals, and at least one scrape typo — "CAPÍTULO IlII" — none of
+ * which this ever has to read). Omitting `siblings`/`index`, or a label
+ * whose kind word isn't recognized, falls back to the verbatim label
+ * unchanged.
  */
-export function marker(node: StructureNode, lang: string): string | null {
-	// A document heading whose source printed its own identifier line
-	// ("CHAPTER THREE") uses that verbatim: it is what the page says, so
-	// there is nothing to reconstruct or translate.
-	return node.label ?? kindOrdinalLabel(node, lang) ?? displayTitle(node, lang).ordinal;
+export function marker(
+	node: StructureNode,
+	lang: string,
+	siblings?: StructureNode[],
+	index?: number
+): string | null {
+	if (node.label) {
+		const kind = documentLabelKind(node.label);
+		const word = kind ? kindLabelWord(kind, lang) : null;
+		if (word && siblings && index !== undefined) {
+			const position =
+				siblings
+					.slice(0, index)
+					.filter((sib) => sib.label && documentLabelKind(sib.label) === kind).length + 1;
+			return `${word} ${position}`;
+		}
+		return node.label;
+	}
+	return kindOrdinalLabel(node, lang) ?? displayTitle(node, lang).ordinal;
 }
 
 /**
