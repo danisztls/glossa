@@ -52,6 +52,38 @@ Still to do, in order:
   contents from `corpus/raw/`**, compared against the parser's — parsing alone
   is not expected to be sufficient. Fold this into the resumed sweep's brief.
 
+### Where the page prints its own TOC, it is now used (2026-08-21)
+
+Prompted by the observation that Magnifica Humanitas' outline was poor while
+the page itself prints a perfectly good one. It does, and the parser now reads
+it: levels come from the TOC's typography, and blocks the style rules missed
+but the TOC names are promoted to headings. Full reasoning in `decisions.md`.
+
+**This does not generalise, and that was measured, not assumed.** Of the 466
+pages in `corpus/raw/vatican-docs`, exactly **three** carry a linked TOC:
+`magnifica-humanitas.{en,pt}` (82 entries each) and `divini-redemptoris.pt` (7
+entries, top level only). A first count that looked for in-page links without
+checking their _direction_ said 47 — those were footnote back-references
+(`dominum-et-vivificantem` alone has 594). The discriminator is that a TOC
+entry points _forward_.
+
+So the Sonnet ToC cross-check above is still needed for the other 463 pages —
+this narrows the problem by three documents, it does not replace the pass.
+
+What it bought, per document:
+
+| Work                     | Before                                                                                                                 | After                                                   |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `magnifica-humanitas.en` | chapter numbers and their titles at different levels; sub-sections promoted to siblings of the chapters they belong to | 82 nodes matching the printed TOC exactly               |
+| `magnifica-humanitas.pt` | 79 nodes, two headings missing entirely (one only partly italic, one only centred)                                     | 81 nodes, both recovered on TOC evidence                |
+| `divini-redemptoris.pt`  | 60 nodes, flat, no part tier                                                                                           | 7 parts at h1 with their sub-sections nested under them |
+
+Also fixed in passing: `PIO XI PP.` was signing `divini-redemptoris.pt` as a
+top-level heading, because `_PAPAL_SIGNATURE_RE` allowed `PP.` only _before_
+the numeral. Only three structure titles in the whole corpus match the
+signature pattern; the third, `Gregory XIII` in `insignes.en`, is anchored to
+section 10 and stays, protected by the existing positional guard.
+
 ## Batch 1 (12 works)
 
 `vatii.dignitatis-humanae.{en,pt}`, `vatii.lumen-gentium.en`,

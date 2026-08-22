@@ -189,6 +189,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+import difflib
 import html as ihtml
 import json
 import os
@@ -196,6 +197,7 @@ import re
 import sys
 import time
 import unicodedata
+import urllib.parse
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -1459,6 +1461,243 @@ def _norm_heading(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip().casefold()
 
 
+_TOC_MIN_ENTRIES = 3
+_TOC_MIN_TITLE_CHARS = 6
+_TOC_INDENT_MIN = 4
+_TOC_FUZZY_RATIO = 0.9
+_INPAGE_LINK_RE = re.compile(
+    r'<a[^>]*\bhref="#([^"]+)"[^>]*>(.*?)</a>', re.DOTALL | re.IGNORECASE
+)
+_ANCHOR_TARGET_RE = re.compile(r'<a[^>]*\bname="([^"]+)"|\bid="([^"]+)"', re.IGNORECASE)
+_TOC_PARA_RE = re.compile(
+    r"<p(?=[\s>])([^>]*)>((?:(?!</p>).)*?)</p>", re.DOTALL | re.IGNORECASE
+)
+_BR_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
+_MARGIN_LEFT_RE = re.compile(r"margin-left:\s*(\d+)", re.IGNORECASE)
+
+
+def extract_toc_outline(body_html: str) -> list[tuple[str, int]]:
+    """Read the page's own linked table of contents and return its entries as
+    (title, level), in document order. Empty when the page has no such TOC.
+
+    WHY THIS EXISTS. Every other level signal in this file is inferred from
+    how a heading is *painted* in the body -- bold, italic, centered, its
+    rank among the styles the document happens to use. That inference is
+    what `heading_style_rank` and the levelling walk in `parse_document` do,
+    and it is guesswork, because vatican.va's markup carries no heading
+    semantics at all: a chapter title and a sub-section title are both just
+    a <p> with some emphasis on it.
+
+    A linked table of contents is different in kind. It is the document
+    *stating its own outline*: which headings exist, in what order, and --
+    through the TOC's own indentation and emphasis -- at what depth. Where a
+    page ships one, it outranks anything inferred from the body, and the
+    inference should defer to it rather than average with it.
+
+    HOW WIDESPREAD, measured over all 466 pages in corpus/raw/vatican-docs:
+    exactly three carry a linked TOC -- magnifica-humanitas in both
+    languages (82 entries each, complete) and divini-redemptoris.pt (7
+    entries, top level only). Nothing else has one. So this is not a general
+    replacement for the style heuristics; it is an override that fires on
+    the documents that earned it, and its blast radius is those three pages.
+    The count is worth re-measuring as new documents arrive: Magnifica
+    Humanitas (2026) is the newest encyclical in the corpus and the only one
+    produced with this markup, so the modern template may well keep it.
+
+    DETECTION. A TOC entry is an in-page link whose target is defined LATER
+    in the document. That forward direction is the whole discriminator, and
+    it is what separates a TOC from the far more common footnote
+    back-reference: `dominum-et-vivificantem` has 594 in-page links and
+    `quadragesimo-anno.pt` 161, all of them pointing BACKWARD from a note to
+    its marker. Requiring the link text to be more than a bare number rules
+    out the marker links themselves.
+
+    LEVELS come from the TOC's own typography, which -- unlike the body's --
+    is internally consistent, because a TOC is written as a unit:
+
+        bold                   -> 1   (INTRODUCTION, CHAPTER TWO)
+        italic, or indented    -> 3   (sub-section titles)
+        neither                -> 2   (section titles)
+
+    Both languages agree on the scheme without using the same cues: the
+    English TOC indents its level-3 entries by eight &nbsp; AND italicises
+    them, the Portuguese one only italicises, and indents with a
+    `margin-left` style. Either signal alone is taken as sufficient, so
+    neither page depends on the other's convention. Emphasis is counted
+    within the entry's own <p>, not from the top of the document, because
+    these are Word exports and their <b>/<i> nesting does not survive being
+    read as a global stack.
+
+    The levels are then shifted to a base of 1 and clamped so that no entry
+    sits more than one level below the one before it -- see the comment at
+    the foot of the function for what each of those two steps is for."""
+    targets: dict[str, int] = {}
+    for m in _ANCHOR_TARGET_RE.finditer(body_html):
+        name = m.group(1) or m.group(2)
+        targets.setdefault(name, m.start())
+        targets.setdefault(urllib.parse.unquote(name), m.start())
+
+    def entry_title(m: re.Match) -> str:
+        return strip_tags(m.group(2))
+
+    links = list(_INPAGE_LINK_RE.finditer(body_html))
+    forward = [
+        m
+        for m in links
+        if len(entry_title(m)) >= _TOC_MIN_TITLE_CHARS
+        and (
+            targets.get(m.group(1), targets.get(urllib.parse.unquote(m.group(1)))) or -1
+        )
+        > m.start()
+    ]
+    if len(forward) < _TOC_MIN_ENTRIES:
+        return []
+
+    span_start, span_end = forward[0].start(), forward[-1].end()
+    entries: list[tuple[str, int]] = []
+    for para in _TOC_PARA_RE.finditer(body_html):
+        if para.end() <= span_start or para.start() >= span_end:
+            continue
+        attrs, inner = para.group(1), para.group(2)
+        margin = _MARGIN_LEFT_RE.search(attrs)
+        para_indented = bool(margin) and int(margin.group(1)) > 0
+        # One entry per printed LINE, not per link. The two languages break
+        # their entries differently -- the English page puts <br> between the
+        # anchors, the Portuguese one puts it INSIDE them -- and neither
+        # keeps one anchor per line: "The song of hope: the <i>Magnificat</i>"
+        # is two anchors on one line, while "CAPITULO I / UM PENSAMENTO
+        # DINAMICO FIEL AO EVANGELHO" is one anchor and one unlinked line.
+        # Splitting the paragraph on <br> is the only cut that agrees with
+        # what the page prints, and it picks up the unlinked lines that
+        # per-anchor iteration drops on the floor.
+        # Emphasis is inherited across the breaks and left unbalanced on both
+        # sides of them -- `<b><a>CHAPTER ONE</a><br/> A DYNAMIC APPROACH</b>`
+        # opens <b> on the first line and closes it on the second. So each
+        # line is re-balanced against the tags still open when it starts
+        # before is_full_bold/is_full_italic sees it; testing the raw slice
+        # reads every emphasised run one line late.
+        bold_open = italic_open = 0
+        for line in _BR_RE.split(inner):
+            delta_b = len(re.findall(r"<b(?=[\s>])", line, re.IGNORECASE)) - len(
+                re.findall(r"</b>", line, re.IGNORECASE)
+            )
+            delta_i = len(re.findall(r"<i(?=[\s>])", line, re.IGNORECASE)) - len(
+                re.findall(r"</i>", line, re.IGNORECASE)
+            )
+            balanced_b = "<b>" * bold_open + line + "</b>" * max(0, bold_open + delta_b)
+            balanced_i = (
+                "<i>" * italic_open + line + "</i>" * max(0, italic_open + delta_i)
+            )
+            bold_open = max(0, bold_open + delta_b)
+            italic_open = max(0, italic_open + delta_i)
+            title = strip_tags(line)
+            if len(title) < _TOC_MIN_TITLE_CHARS:
+                continue
+            indent = len(re.findall(r"&nbsp;|&#160;|\xa0", line.split("<a")[0]))
+            deeper = (
+                is_full_italic(balanced_i) or para_indented or indent >= _TOC_INDENT_MIN
+            )
+            entries.append(
+                (title, 1 if is_full_bold(balanced_b) else (3 if deeper else 2))
+            )
+
+    # No entry may sit more than one level below the one before it. The
+    # three levels above are read off typography a human compositor applied
+    # by hand, and it is applied inconsistently: magnifica-humanitas.en
+    # italicises three of CONCLUSION's four sub-headings and not the fourth,
+    # which would otherwise print CONCLUSION at h1, three children at h3 and
+    # their sibling at h2. Clamping is the same normalisation the styling
+    # path already does one level down, applied to the TOC's own gaps.
+    # Shift to a base of 1 BEFORE clamping, or the clamp mistakes a flat TOC
+    # for a nested one: divini-redemptoris.pt emphasises none of its seven
+    # entries, so all seven read as 2, and clamping first would pull only
+    # the first of them to 1 and leave its six peers a level below it.
+    if not entries:
+        return []
+    base = min(level for _, level in entries) - 1
+    clamped: list[tuple[str, int]] = []
+    prev = 0
+    for title, level in entries:
+        level = min(level - base, prev + 1)
+        clamped.append((title, level))
+        prev = level
+    return clamped
+
+
+def apply_toc_outline(
+    blocks: list[Block], entries: list[tuple[str, int]]
+) -> tuple[dict[int, int], list[str]]:
+    """Match TOC entries to body blocks. Returns (block index -> level) and
+    the texts of blocks PROMOTED to headings because the TOC named them.
+
+    Matched in document order against the block stream, never by the TOC's
+    own anchors. The anchors look like the obvious key and are not usable:
+    magnifica-humanitas.en points both "FOUNDATIONS AND PRINCIPLES OF THE
+    SOCIAL DOCTRINE OF THE CHURCH" and "The foundations of Social Doctrine"
+    at the same `#The_foundations`, so keying on them silently merges a
+    chapter title with its first section.
+
+    For a block the style rules ALREADY read as a heading, matching is
+    generous: exact normalized, then whole-word prefix either way (a body
+    heading may carry a subtitle the TOC omits), then fuzzy, for the case
+    where the two disagree in wording -- the same page prints "The limit,
+    the heart, the grandeur of the human person" in its TOC and "The limit,
+    the heart and the grandeur of the human person" in the body. The BODY
+    text is kept as the title in every case: the TOC supplies depth, not
+    wording.
+
+    PROMOTION, for a block the style rules missed. A TOC entry is the
+    document asserting that a heading exists, which is better evidence than
+    any amount of emphasis-reading, and it recovers headings no style rule
+    can reach. magnifica-humanitas.pt prints two of its headings with no
+    usable styling at all -- `<p><i>As </i>res novae<i> do nosso tempo</i></p>`
+    is only partly italic, and `<p style="text-align: center;">UM PENSAMENTO
+    DINAMICO FIEL AO EVANGELHO</p>` carries nothing but centring -- and both
+    were absent from the outline until the TOC vouched for them.
+
+    Promotion is held to a stricter match than levelling: exact or fuzzy
+    only, never prefix, and never a numbered paragraph. A prefix match here
+    would let a short TOC entry claim the opening words of a long paragraph
+    and delete it from the text, which is the failure mode
+    `promote_italic_heading_run` is careful about for the same reason."""
+    levels: dict[int, int] = {}
+    promoted: list[str] = []
+    cursor = 0
+    for title, level in entries:
+        want = _norm_heading(title)
+        found = None
+        for pos in range(cursor, len(blocks)):
+            blk = blocks[pos]
+            have = _norm_heading(blk.text)
+            if not have:
+                continue
+            if blk.is_heading:
+                hit = (
+                    have == want
+                    or have.startswith(want + " ")
+                    or want.startswith(have + " ")
+                    or difflib.SequenceMatcher(None, have, want).ratio()
+                    >= _TOC_FUZZY_RATIO
+                )
+            else:
+                hit = not match_para_num(blk.raw) and (
+                    have == want
+                    or difflib.SequenceMatcher(None, have, want).ratio()
+                    >= _TOC_FUZZY_RATIO
+                )
+            if hit:
+                found = pos
+                break
+        if found is None:
+            continue
+        if not blocks[found].is_heading:
+            blocks[found].is_heading = True
+            promoted.append(blocks[found].text)
+        levels[found] = level
+        cursor = found + 1
+    return levels, promoted
+
+
 def drop_table_of_contents(blocks: list[Block], match_label) -> list[str]:
     """Remove the page's own table of contents from the block stream, in
     place, and return the texts dropped (for the run summary -- this is
@@ -2325,6 +2564,26 @@ def parse_document(
     for text in drop_table_of_contents(blocks, match_label):
         state.anomalies.append(f"table-of-contents entry skipped: {text[:80]!r}")
 
+    # The page's own outline, where it prints one, outranks anything the
+    # levelling walk below can infer from styling. See extract_toc_outline.
+    # Read from the raw region rather than from `blocks`, so it survives the
+    # entries having just been dropped from the stream.
+    toc_entries = extract_toc_outline(body_html)
+    toc_level: dict[int, int] = {}
+    if toc_entries:
+        toc_level, toc_promoted = apply_toc_outline(blocks, toc_entries)
+        state.anomalies.append(
+            f"table of contents read: {len(toc_entries)} entries, "
+            f"{len(toc_level)} matched to a body block"
+        )
+        if toc_promoted:
+            state.anomalies.append(
+                f"heading promoted on table-of-contents evidence "
+                f"({len(toc_promoted)}): "
+                + ", ".join(repr(t[:40]) for t in toc_promoted[:5])
+                + (" ..." if len(toc_promoted) > 5 else "")
+            )
+
     # Signature lines and the language navigation bar are bold and centered,
     # so they read as chapter titles. See drop_page_furniture.
     for text in drop_page_furniture(blocks):
@@ -2386,7 +2645,13 @@ def parse_document(
 
     # Levels are assigned by walking the document, not by the global rank
     # alone. vatican.va's formatting is too loose for a per-heading rank to
-    # produce a usable outline on its own, so three rules apply in order:
+    # produce a usable outline on its own.
+    #
+    # Rule 0, where it applies at all, is that the document's own linked
+    # table of contents wins outright: it states the outline instead of
+    # implying it, so once one is in play the styling rules below stop
+    # (see extract_toc_outline). Three pages in the corpus have one. For
+    # every other page the following apply in order:
     #
     #   1. A heading directly following another heading, with no section
     #      between, is that heading's SUBTITLE ("PART I" / "THE CHURCH AND
@@ -2407,6 +2672,15 @@ def parse_document(
     prev_heading_idx: int | None = None
     prev_was_subtitle = False
     last_level: int | None = None
+    toc_floor: int | None = None
+    # The TOC floor governs the body only. A dateline or signature trailing
+    # the last numbered paragraph is back matter, not a sub-section of
+    # whatever the TOC listed last, and pushing it under one sends
+    # magnifica-humanitas.pt's "Dado em Roma..." from h2 to h4.
+    numbered_idx = [
+        i for i, b in enumerate(blocks) if not b.is_heading and match_para_num(b.raw)
+    ]
+    body_end = numbered_idx[-1] if numbered_idx else len(blocks)
     for idx, blk in enumerate(blocks):
         if not blk.is_heading:
             if match_para_num(blk.raw):
@@ -2415,7 +2689,28 @@ def parse_document(
             continue
         key = depth_key(blk)
         prelim = level_of.get(key, 1)
-        if prev_heading_idx is not None and not prev_was_subtitle:
+        if idx in toc_level:
+            # The document said so. Taken verbatim, including where two
+            # consecutive entries share a level: magnifica-humanitas prints
+            # "CHAPTER ONE" and "A DYNAMIC APPROACH FAITHFUL TO THE GOSPEL"
+            # as two bold TOC lines, and they are two headings at the same
+            # depth over the same section, not a title and a subtitle one
+            # level down. Rendering them as a pair is the site's business.
+            # Clamped the same way the styling path is: a TOC entry with no
+            # block to match it leaves a hole, and taking the next entry's
+            # level literally would step over it. magnifica-humanitas.pt
+            # lists "As res novae do nosso tempo" at 2 and its three
+            # sub-headings at 3; if the 2 finds no block, the 3s must not
+            # print as h3 directly under INTRODUCAO's h1.
+            lvl = min(toc_level[idx], (last_level or 0) + 1)
+            toc_floor = lvl
+            prev_was_subtitle = True
+        elif toc_floor is not None and idx < body_end:
+            # A heading the TOC does not list sits UNDER the last one it
+            # did. divini-redemptoris.pt lists only its seven parts, so its
+            # ~50 unlisted headings are their sub-sections by construction.
+            lvl = max(prelim, toc_floor + 1)
+        elif prev_heading_idx is not None and not prev_was_subtitle:
             lvl = heading_level[prev_heading_idx] + 1
             prev_was_subtitle = True
         elif prev_heading_idx is not None:

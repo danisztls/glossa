@@ -658,3 +658,84 @@ unit-tested against the shapes the stored ranges used to get wrong.
 
 **Still on the old shape**: the CCC and the Compendium. They need the same
 migration, and until then `StructureNode` must keep its current meaning.
+
+## 2026-08-21 — Where a page prints its own table of contents, that outline wins
+
+**What**: `vatican_docs.py` reads the linked table of contents a page prints
+ahead of its body, and takes heading levels from it instead of inferring them
+from the body's styling. Where a TOC is present it also **promotes** blocks the
+style rules missed but the TOC names, and the styling rules stop applying to
+that document entirely.
+
+**Why**: every other level signal in the scraper is inferred from how a heading
+is _painted_ — bold, italic, centered, and that heading's rank among whichever
+styles the document happens to use. That is guesswork, because vatican.va's
+markup carries no heading semantics at all: a chapter title and a sub-section
+title are both a `<p>` with some emphasis on it. A table of contents is
+different in kind. It is the document stating its own outline — which headings
+exist, in what order, and, through the TOC's own indentation and emphasis, at
+what depth. Inference should defer to a statement, not average with it.
+
+**How widespread — measured, not assumed**: across all 466 pages in
+`corpus/raw/vatican-docs`, exactly **three** carry a linked TOC —
+`magnifica-humanitas` in both languages (82 entries each, complete) and
+`divini-redemptoris.pt` (7 entries, top level only). Nothing else has one. So
+this is not a general replacement for the style heuristics; it is an override
+that fires on the pages that earned it, and its blast radius is those three.
+Worth re-measuring as new documents arrive: Magnifica Humanitas (2026) is the
+newest encyclical in the corpus and the only one produced with this markup.
+
+**Detection rule**: a TOC entry is an in-page link whose target is defined
+_later_ in the document. That forward direction is the whole discriminator, and
+it is what separates a TOC from the far more common footnote back-reference —
+`dominum-et-vivificantem` has 594 in-page links and `quadragesimo-anno.pt` 161,
+every one of them pointing backward from a note to its marker. A first pass
+that counted in-page links without checking direction reported 47 pages with a
+"TOC"; the real number is 3.
+
+**Levels come from the TOC's own typography**: bold → 1, italic or indented →
+3, neither → 2. The two languages agree on the scheme without using the same
+cues — the English page indents its level-3 entries by eight `&nbsp;` _and_
+italicises them, the Portuguese one only italicises, and indents with
+`margin-left` — so either signal alone is taken as sufficient and neither page
+depends on the other's convention.
+
+**Three things this got wrong on the way, all worth keeping written down**:
+
+- _Entries are lines, not links._ Iterating anchors drops the unlinked ones:
+  `magnifica-humanitas.pt` prints `CAPÍTULO I` as a link and its title line
+  `UM PENSAMENTO DINÂMICO FIEL AO EVANGELHO` as plain text inside the same
+  `<b>`. It also over-merges, because that page puts its `<br>` _inside_ the
+  anchors. Splitting each TOC paragraph on `<br>` is the only cut that agrees
+  with what the page prints.
+- _Emphasis must be re-balanced per line._ `<b><a>CHAPTER ONE</a><br/> A
+DYNAMIC APPROACH</b>` opens `<b>` on one line and closes it on the next, so
+  testing the raw slice reads every emphasised run exactly one line late — the
+  chapter number came out a level below its own subtitle.
+- _Shift to base 1 before clamping descents, not after._ `divini-redemptoris.pt`
+  emphasises none of its seven entries, so all seven read as level 2; clamping
+  first pulled only the first of them to 1 and left its six peers a level below
+  it.
+
+**The anchors are not usable as the join key**, though they look like the
+obvious one: `magnifica-humanitas.en` points both `FOUNDATIONS AND PRINCIPLES
+OF THE SOCIAL DOCTRINE OF THE CHURCH` and `The foundations of Social Doctrine`
+at the same `#The_foundations`, so keying on them silently merges a chapter
+title with its first section. Matching is on text, in document order, and the
+**body** text is always kept as the title — the TOC supplies depth, not
+wording. The same page prints `The limit, the heart, the grandeur of the human
+person` in its TOC and `…the heart and the grandeur…` in the body.
+
+**Promotion is held to a stricter match than levelling** — exact or fuzzy only,
+never prefix, and never a numbered paragraph. A prefix match would let a short
+TOC entry claim the opening words of a long paragraph and delete it from the
+text, which is the failure mode `promote_italic_heading_run` is careful about
+for the same reason.
+
+**Also fixed here**, because it surfaced in the same outline: `PIO XI PP.` was
+signing `divini-redemptoris.pt` as a top-level heading, because
+`_PAPAL_SIGNATURE_RE` allowed `PP.` only _before_ the numeral (`PIO PP. XII`).
+Across the whole emitted corpus only three structure titles match the signature
+pattern at all, and the third — `Gregory XIII` in `insignes.en` — is anchored
+to section 10, so the existing "only after the last numbered paragraph" guard
+keeps it.
