@@ -1,7 +1,15 @@
-# The corpus IS committed, reversing the rule that used to stand here. The
-# copyright position, and what a takedown costs now that the texts are in git
-# history rather than only in a build, are stated in corpus/README.md; the
-# reasoning is in docs/decisions.md.
+# The corpus IS committed, reversing the rule that used to stand here — with
+# one exception, corpus/works/, excluded below. The copyright position, and
+# what a takedown costs now that the texts are in git history rather than only
+# in a build, are stated in corpus/README.md; the reasoning is in
+# docs/decisions.md.
+
+# Corpus: parsed output only. corpus/raw/ stays tracked — it is the only
+# artifact that cost requests against someone else's server, and a re-crawl is
+# the sole way back to it. corpus/works/ is a pure function of raw/ plus
+# pipeline/, verified byte-for-byte reproducible offline in under three
+# minutes; see corpus/README.md for how to rebuild it.
+/corpus/works/
 
 # Python
 __pycache__/
