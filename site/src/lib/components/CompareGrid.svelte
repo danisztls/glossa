@@ -50,9 +50,13 @@
 	header than a label. Omitting the prop is how prayers stays picker-free
 	without this component branching on which route it's in.
 
-	NOT OFFERED FOR THE LEFT COLUMN: the primary reading edition is chosen by
-	the page's own `EditionMenu` in the page chrome, not by anything compare
-	mode owns — only the second column's edition is this feature's to pick. -->
+	`leftHeaderExtra` is the same slot for the LEFT column: the primary
+	reading edition used to be chosen only from the page's own `EditionMenu`
+	up in the page chrome, but once compare mode is on the reader already has
+	a per-column picker on the right — leaving the left one up in the title
+	row read as asymmetric rather than deliberate. Callers now render
+	`EditionMenu` here while comparing (and back up in the page chrome
+	otherwise, where there is only one column for it to belong to). -->
 <script lang="ts" generics="TLeft extends { n: number }, TRight extends { n: number }">
 	import type { Snippet } from 'svelte';
 	import type { AlignedRow } from '$lib/compare';
@@ -67,6 +71,7 @@
 		left: Snippet<[TLeft]>;
 		right: Snippet<[TRight]>;
 		note?: string;
+		leftHeaderExtra?: Snippet;
 		rightHeaderExtra?: Snippet;
 	}
 
@@ -79,6 +84,7 @@
 		left,
 		right,
 		note,
+		leftHeaderExtra,
 		rightHeaderExtra
 	}: Props = $props();
 </script>
@@ -92,11 +98,14 @@
 	     every single cell — see the per-cell `.compare-cell-tag` fallback
 	     below for the narrow-viewport case where the header has scrolled out
 	     of view. Both headers vanish together below 40rem (app.css), which is
-	     also where `rightHeaderExtra`'s picker stops being reachable — same
-	     "the sidebar yields on a narrow viewport" posture app.css's
-	     `.reading-layout.compare` docblock already accepts elsewhere on this
-	     page, not a gap specific to the picker. -->
-	<div class="compare-header" lang={leftLang}>{leftLabel}</div>
+	     also where the pickers stop being reachable — same "the sidebar
+	     yields on a narrow viewport" posture app.css's `.reading-layout.
+	     compare` docblock already accepts elsewhere on this page, not a gap
+	     specific to either picker. -->
+	<div class="compare-header compare-header-left" lang={leftLang}>
+		<span class="compare-header-label">{leftLabel}</span>
+		{#if leftHeaderExtra}{@render leftHeaderExtra()}{/if}
+	</div>
 	<div class="compare-header compare-header-right" lang={rightLang}>
 		<span class="compare-header-label">{rightLabel}</span>
 		{#if rightHeaderExtra}{@render rightHeaderExtra()}{/if}

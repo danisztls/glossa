@@ -93,7 +93,11 @@
 			-->
 				<h1 class="visually-hidden">{t('compendium.question')} {data.n}</h1>
 				<div class="compare-toolbar">
-					<EditionMenu />
+					<!-- While comparing, EditionMenu moves into the left column's own
+					     header (`leftHeaderExtra` below) next to the comparison
+					     picker on the right — there's only one column for it up here
+					     once compare mode is off. -->
+					{#if !editions.compareActive}<EditionMenu />{/if}
 					{#if editions.others.length > 0}
 						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
 					{/if}
@@ -112,6 +116,9 @@
 					left={leftCell}
 					right={rightCell}
 				>
+					{#snippet leftHeaderExtra()}
+						<EditionMenu />
+					{/snippet}
 					{#snippet rightHeaderExtra()}
 						<ComparisonEditionMenu
 							editions={editions.others.map((e) => e.work)}
