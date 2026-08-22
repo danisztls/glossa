@@ -355,4 +355,16 @@
 		color: var(--color-accent-contrast);
 		font-weight: 600;
 	}
+
+	/* `.kind-label` sets its OWN color, so it doesn't just inherit `a.current`'s
+	   contrast color the way the rest of the row's text does — left alone,
+	   "CH. 4" renders in `--color-text-muted` on top of the solid accent
+	   background, which is a dark-on-dark (or, in some themes, light-on-light)
+	   near-miss rather than an actual contrast pair, since that token was
+	   never chosen against this background. Inheriting the row's own
+	   already-correct contrast color is simpler than picking a second color
+	   that happens to also work here. */
+	a.current .kind-label {
+		color: inherit;
+	}
 </style>
