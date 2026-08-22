@@ -233,6 +233,22 @@ export function baseLang(tag: string): string {
 }
 
 /**
+ * A content language's own name, written in that language ("Português", not
+ * "Portuguese") — same convention LanguageMenu.svelte uses for the UI
+ * language switch. The corpus ships English and Portuguese content only
+ * (docs/decisions.md), so this is a closed set for now; an unrecognized tag
+ * falls back to the tag itself.
+ */
+const LANGUAGE_NAMES: Record<string, string> = {
+	en: 'English',
+	pt: 'Português'
+};
+
+export function languageDisplayName(tag: string): string {
+	return LANGUAGE_NAMES[baseLang(tag)] ?? tag;
+}
+
+/**
  * Bible work IDs are `bible.{edition}` (see docs/corpus-schema.md); routes
  * use just the `{edition}` part (e.g. `cpdv.en`) to avoid the `bible/bible.`
  * stutter in URLs like `/bible/cpdv.en/john/3`.

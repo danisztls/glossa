@@ -31,11 +31,21 @@
 	store says, so that fork is gone and all four contexts behave alike:
 	choosing an edition writes the preference and the open page re-renders in
 	place, with no navigation at all.
+
+	THE TRIGGER LABEL FORKS ON `editionStyle`, THE REST OF THE MENU DOESN'T:
+	only the Bible is expected to ever carry more than one edition in the same
+	language, so everywhere else "choosing an edition" is functionally
+	choosing a language — the button shows that language's own name (e.g.
+	"English") rather than an edition's `short_title`, which for a document is
+	its own Latin-incipit-style title and says nothing about what got picked.
+	The dropdown panel itself is untouched: it still lists full edition
+	titles/copyright per language, which stays useful even when there's only
+	one edition to a language today.
 -->
 <script lang="ts">
 	import { page } from '$app/state';
 	import { content, type WorkTypeKey } from '$lib/content.svelte';
-	import { getDocumentGroup, listEditions, baseLang } from '$lib/corpus';
+	import { getDocumentGroup, listEditions, baseLang, languageDisplayName } from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
@@ -101,6 +111,20 @@
 
 	const currentEdition = $derived(editions.find((w) => w.id === currentWorkId));
 
+	// Only the Bible is expected to ever carry more than one edition per
+	// language — every other type has exactly one edition per language today,
+	// which makes picking an "edition" there functionally picking a language.
+	// The trigger reflects that: "English", not a document's own Latin-incipit
+	// short title, which names the work rather than the reader's choice.
+	const editionStyle = $derived(ctx?.kind === 'type' && ctx.type === 'bible');
+	const triggerLabel = $derived(
+		currentEdition
+			? editionStyle
+				? currentEdition.short_title
+				: languageDisplayName(currentEdition.language)
+			: t('edition.select')
+	);
+
 	const menu = new Menu();
 
 	function choose(workId: string) {
@@ -121,12 +145,12 @@
 			class="menu-trigger wide"
 			aria-haspopup="menu"
 			aria-expanded={menu.open}
-			aria-label={`${t('edition.label')}: ${currentEdition?.short_title ?? t('edition.select')}`}
+			aria-label={`${t('edition.label')}: ${triggerLabel}`}
 			title={t('edition.label')}
 			onclick={menu.toggle}
 		>
 			<Icon name="book-open" />
-			<span class="trigger-label">{currentEdition?.short_title ?? t('edition.select')}</span>
+			<span class="trigger-label">{triggerLabel}</span>
 		</button>
 		{#if menu.open}
 			<ul
