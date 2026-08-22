@@ -2333,7 +2333,8 @@ def parse_document(
     # Tags outside the stored allowlist keep their text and lose their markup
     # (docs/decisions.md, 2026-08-21). Reported per run so the allowlist can be
     # revisited against evidence rather than assumption -- which is how `sup`
-    # and `span[lang]` earned their places.
+    # earned its place, and how `span[lang]` lost the one it was wrongly
+    # given (all 486 instances were lang="pt" inside Portuguese pages).
     if dropped_tags:
         summary = ", ".join(f"{t}x{c}" for t, c in dropped_tags.most_common(8))
         state.anomalies.append(f"html tags outside allowlist, text kept: {summary}")
@@ -2958,8 +2959,9 @@ def build_manifest(
     notes = [
         f"page shell: {parse.shell}; footnote-marker template: {parse.marker_template}; "
         f"footnote-region boundary evidence: {parse.footnote_evidence}.",
-        "Inline italics (titles, Latin terms) are not captured -- a deliberate v1 loss, "
-        "recoverable later from corpus/raw/ without re-crawling (same posture as ccc.py).",
+        "Inline markup is stored per block in `html`, restricted to a closed "
+        "allowlist (i, b, br, sup, blockquote); tags outside it keep their text "
+        "and lose their markup (docs/decisions.md, 2026-08-21).",
     ]
     if not state.sections:
         notes.insert(
