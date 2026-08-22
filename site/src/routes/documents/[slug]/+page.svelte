@@ -43,7 +43,8 @@
 	} from '$lib/compare-nav.svelte';
 	import { useScrollSpy } from '$lib/scroll-spy.svelte';
 	import { setPosition } from '$lib/reading-position';
-	import { displayDocumentTitle } from '$lib/titles';
+	import { displayDocumentTitle, inlineTitleNodes } from '$lib/titles';
+	import InlineText from '$lib/components/InlineText.svelte';
 	import { documentKindLabel } from '$lib/document-labels';
 	import { formatPromulgated } from '$lib/dates';
 	import { content } from '$lib/content.svelte';
@@ -428,6 +429,7 @@
 						<ol>
 							{#each structureRows as { node, depth, anchor } (anchor)}
 								{@const dt = displayDocumentTitle(node.title, lang)}
+								{@const titleNodes = inlineTitleNodes(node.title, node.title_html, lang)}
 								<li style={`--depth: ${depth}`} class={`level-${node.level}`}>
 									<!-- `before` decides whether this heading is RENDERED at all
 									     (`headingsByStart` drops the unanchored ones), but the link
@@ -438,7 +440,7 @@
 										<a href={`#${anchor}`}>
 											{#if node.ident}<span class="ordinal">{node.ident}</span>{/if}
 											{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-											{dt.title}
+											<InlineText nodes={titleNodes} />
 										</a>
 									{:else}
 										<!-- Same null-bound convention as the CCC/Compendium
@@ -447,7 +449,7 @@
 										     addresses — nothing to link to. -->
 										<span class="unlinked" title="No section number in this corpus">
 											{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-											{dt.title}
+											<InlineText nodes={titleNodes} />
 										</span>
 									{/if}
 								</li>
@@ -507,7 +509,15 @@
 									     used to show as three separate rows. -->
 									{#if node.ident}<span class="heading-ident">{node.ident}</span>{/if}
 									{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-									<span class="heading-name">{dt.title}</span>
+									<!-- `title_html` keeps the emphasis the source set inside the
+									     heading — an encyclical name, a scripture reference, a
+									     Latin phrase. Absent on the great majority, where this
+									     renders the plain title unchanged. -->
+									<span class="heading-name"
+										><InlineText
+											nodes={inlineTitleNodes(node.title, node.title_html, lang)}
+										/></span
+									>
 									{#if node.subtitle}<span class="heading-subtitle"
 											>{displayDocumentTitle(node.subtitle, lang).title}</span
 										>{/if}

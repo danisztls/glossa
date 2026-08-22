@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { displayTitle, normalizeCase } from './titles';
+import { displayTitle, normalizeCase, normalizeCaseRuns } from './titles';
 import type { StructureNode } from './types';
 
 function node(kind: StructureNode['kind'], n: number | null, title: string) {
@@ -181,11 +181,7 @@ describe('displayTitle — real-corpus edge cases beyond the table', () => {
 	it('compendium: all-caps glued chapter heading still gets a sane split + casing', () => {
 		expect(
 			displayTitle(
-				node(
-					'chapter',
-					1,
-					'CAPÍTULO PRIMEIRO A DIGNIDADE DA PESSOA HUMANA O HOMEM IMAGEM DE DEUS'
-				),
+				node('chapter', 1, 'CAPÍTULO PRIMEIRO A DIGNIDADE DA PESSOA HUMANA O HOMEM IMAGEM DE DEUS'),
 				'pt'
 			)
 		).toEqual({
@@ -241,5 +237,53 @@ describe('normalizeCase', () => {
 
 	it('is a no-op on a string with no letters at all', () => {
 		expect(normalizeCase('20:2-17', 'en')).toBe('20:2-17');
+	});
+});
+
+describe('normalizeCase — numerals and acronyms', () => {
+	// 325 occurrences across the corpus's ALL-CAPS headings were being
+	// title-cased into Iii / Xiv / Vii.
+	it('leaves a roman numeral alone instead of title-casing it', () => {
+		expect(normalizeCase('III OS ARGUMENTOS TEOLÓGICOS', 'pt')).toBe(
+			'III Os Argumentos Teológicos'
+		);
+		expect(normalizeCase('CHAPTER VIII', 'en')).toBe('Chapter VIII');
+	});
+
+	it("does not let the numeral take the first word's capital", () => {
+		// A numeral is a marker, so the word after it is the title's first —
+		// "os" is a Portuguese small word and would otherwise be lowercased.
+		expect(normalizeCase('IV OS FRUTOS', 'pt')).toBe('IV Os Frutos');
+	});
+
+	it('leaves a lone I alone — it is the pronoun far more often than the number', () => {
+		expect(normalizeCase('I AM THE WAY', 'en')).toBe('I Am the Way');
+	});
+
+	it('keeps an acronym in capitals', () => {
+		expect(normalizeCase('THE PROMISES OF AI', 'en')).toBe('The Promises of AI');
+		expect(normalizeCase('AS PROMESSAS DA IA', 'pt')).toBe('As Promessas da IA');
+	});
+
+	it("lets an acronym take the first word's slot, unlike a numeral", () => {
+		expect(normalizeCase('AI AND THE HUMAN PERSON', 'en')).toBe('AI and the Human Person');
+	});
+});
+
+describe('normalizeCaseRuns', () => {
+	it('treats runs of one title as one title', () => {
+		// Split across a <br/>: casing the runs separately would capitalise
+		// "THE" as a second first-word.
+		expect(
+			normalizeCaseRuns(['FOUNDATIONS AND PRINCIPLES OF', ' THE SOCIAL DOCTRINE'], 'en')
+		).toEqual(['Foundations and Principles of', ' the Social Doctrine']);
+	});
+
+	it('returns mixed-case runs untouched', () => {
+		expect(normalizeCaseRuns(['The ', 'res novae', ' of our time'], 'en')).toEqual([
+			'The ',
+			'res novae',
+			' of our time'
+		]);
 	});
 });

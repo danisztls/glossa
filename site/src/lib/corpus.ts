@@ -1195,7 +1195,8 @@ export function buildDocumentOutline(rows: DocumentNode[], lastN: number | null)
 			// (`flattenDocumentStructure`), so a TOC row navigates to the
 			// heading it names instead of to the section behind it.
 			anchor: documentHeadingAnchor(i),
-			label: row.ident
+			label: row.ident,
+			titleHtml: row.title_html
 		} as StructureNode;
 	});
 

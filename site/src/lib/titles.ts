@@ -21,6 +21,7 @@
  */
 
 import type { StructureNode } from './types';
+import { parseInlineHtml, textRuns, withTextRuns, type InlineNode } from './inline-html';
 
 export interface DisplayTitle {
 	ordinal: string | null;
@@ -88,6 +89,43 @@ const PT_SMALL_WORDS = new Set([
 /** Roman-numeral list marker at the very start of a string (`I.`, `IV.`, `XI.` …). */
 const ROMAN_MARKER = /^([IVXLCDM]{1,6})\.(?=\s|$)/;
 
+/**
+ * A whole token that is a well-formed roman numeral of two letters or more.
+ *
+ * Title-casing these produced `Iii`, `Xiv`, `Vii` — 325 occurrences across
+ * the corpus's ALL-CAPS headings (`II` ×107, `III` ×88, `IV` ×62, and nine
+ * more forms), so this is not an edge case, it is the second most common
+ * token shape in the corpus's headings after ordinary words.
+ *
+ * Two letters minimum, because a lone `I` is the English pronoun far more
+ * often than it is the number, and `V`/`X`/`C`/`D`/`M` alone are initials.
+ * The ordering rules matter too — a bare `[IVXLCDM]+` would also preserve
+ * `MMII`-shaped nonsense — though they are not airtight in the other
+ * direction: `MIX` is a valid numeral by these rules and also a word, and
+ * would be left as `MIX` rather than `Mix`. That is a cosmetic risk on a
+ * word that does not occur in the corpus's headings, taken knowingly.
+ */
+const ROMAN_TOKEN = /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
+
+/**
+ * Tokens to leave in capitals because they are acronyms, not words.
+ *
+ * Inside an ALL-CAPS title nothing about `AI` distinguishes it from `AS` by
+ * shape, so this cannot be inferred and has to be listed. The list is
+ * derived rather than guessed: these are the tokens the corpus itself writes
+ * in capitals inside ordinary MIXED-CASE prose, which is the source telling
+ * us they are acronyms — `AI` appears that way 59 times and `IA` (its
+ * Portuguese equivalent) 57.
+ *
+ * Only `AI` and `IA` currently reach an ALL-CAPS heading, both in Magnifica
+ * Humanitas' third chapter. The rest are attested in prose and listed so a
+ * future heading carrying one is right the first time. To extend it, look
+ * for capitalised tokens in mixed-case `text_marked` rather than adding a
+ * plausible-looking one — an entry that is also a word would freeze that
+ * word in capitals wherever it appears in a title.
+ */
+const ACRONYMS = new Set(['AI', 'IA', 'DNA', 'ONU', 'UNESCO', 'FAO']);
+
 /** Runs of letters (plus in-word apostrophes, so `MAN'S` is one token, not two). */
 const WORD = /[\p{L}][\p{L}'’]*/gu;
 
@@ -110,25 +148,84 @@ const WORD = /[\p{L}][\p{L}'’]*/gu;
  * mixed-case examples of this pattern.
  */
 export function normalizeCase(text: string, lang: string): string {
-	const hasLower = /\p{Ll}/u.test(text);
-	const hasUpper = /\p{Lu}/u.test(text);
-	if (!hasUpper || hasLower) return text;
+	return normalizeCaseRuns([text], lang)[0];
+}
+
+/**
+ * `normalizeCase` over a title split into text runs — the pieces of a
+ * heading that carries inline markup, as `textRuns` yields them.
+ *
+ * The decision ("is this ALL-CAPS?") and the state that walks it (the
+ * leading roman marker, which word is the title's first) belong to the whole
+ * title, not to any one run: `FOUNDATIONS AND PRINCIPLES OF<br/> THE SOCIAL
+ * DOCTRINE OF THE CHURCH` is one ALL-CAPS heading in two runs, and casing
+ * them independently would capitalise `THE` as a second first-word. So the
+ * runs are joined for the test and walked with shared state for the rewrite.
+ *
+ * A preserved roman numeral does NOT consume the first-word slot — it is a
+ * marker, and the word after it is the title's real first word, which is the
+ * convention the corpus's own mixed-case examples already show. An acronym
+ * does consume it: it is a word, so `AI AND THE HUMAN PERSON` should read
+ * `AI and the Human Person`, not `AI And the Human Person`.
+ */
+export function normalizeCaseRuns(runs: string[], lang: string): string[] {
+	const joined = runs.join('');
+	const hasLower = /\p{Ll}/u.test(joined);
+	const hasUpper = /\p{Lu}/u.test(joined);
+	if (!hasUpper || hasLower) return runs;
 
 	const smallWords = normLang(lang) === 'pt' ? PT_SMALL_WORDS : EN_SMALL_WORDS;
-	const marker = text.match(ROMAN_MARKER);
+	const marker = joined.match(ROMAN_MARKER);
 	const markerEnd = marker ? marker[0].length : 0;
 
 	let sawFirstContentWord = false;
-	return text.replace(WORD, (word, offset: number) => {
-		if (offset < markerEnd) return word; // part of the preserved roman-numeral marker itself
+	let base = 0;
+	return runs.map((run) => {
+		const runStart = base;
+		base += run.length;
+		return run.replace(WORD, (word, offset: number) => {
+			// part of the preserved roman-numeral marker itself
+			if (runStart + offset < markerEnd) return word;
 
-		const lower = word.toLowerCase();
-		const isFirst = !sawFirstContentWord;
-		sawFirstContentWord = true;
+			if (word.length >= 2 && ROMAN_TOKEN.test(word)) return word;
 
-		if (!isFirst && smallWords.has(lower)) return lower;
-		return lower.charAt(0).toUpperCase() + lower.slice(1);
+			const isFirst = !sawFirstContentWord;
+			sawFirstContentWord = true;
+
+			if (ACRONYMS.has(word)) return word;
+
+			const lower = word.toLowerCase();
+			if (!isFirst && smallWords.has(lower)) return lower;
+			return lower.charAt(0).toUpperCase() + lower.slice(1);
+		});
 	});
+}
+
+/**
+ * A document heading as inline nodes, case-normalized.
+ *
+ * Falls back to a single text node when the heading carries no markup, so a
+ * caller renders one way regardless. The normalization runs over the text
+ * runs rather than the markup string: `FOUNDATIONS AND PRINCIPLES OF<br/>
+ * THE SOCIAL DOCTRINE` is one ALL-CAPS title whose words are split across
+ * two runs, and lower-casing the tag names would be the other outcome.
+ */
+export function inlineTitleNodes(
+	title: string,
+	titleHtml: string | undefined,
+	lang: string
+): InlineNode[] {
+	const nodes = titleHtml ? parseInlineHtml(titleHtml) : [{ kind: 'text' as const, text: title }];
+	const cased = withTextRuns(nodes, normalizeCaseRuns(textRuns(nodes), normLang(lang)));
+	// Same trailing-colon trim `displayDocumentTitle` applies, on the last
+	// text run so the two forms of a title cannot render differently.
+	for (let i = cased.length - 1; i >= 0; i--) {
+		const node = cased[i];
+		if (node.kind !== 'text') continue;
+		cased[i] = { kind: 'text', text: finalize(node.text) };
+		break;
+	}
+	return cased;
 }
 
 // --- Kind labels -----------------------------------------------------------

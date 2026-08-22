@@ -116,7 +116,8 @@
 	 */
 	import { browser } from '$app/environment';
 	import type { StructureNode } from '$lib/types';
-	import { displayTitle } from '$lib/titles';
+	import { displayTitle, inlineTitleNodes } from '$lib/titles';
+	import InlineText from './InlineText.svelte';
 	import {
 		currentIndex,
 		hrefFor,
@@ -213,7 +214,7 @@
 						aria-current={state.isCurrent ? 'page' : undefined}
 					>
 						{#if label}<span class="kind-label">{label}</span>{/if}
-						{dt.title}
+						<InlineText nodes={inlineTitleNodes(dt.title, node.titleHtml, lang)} />
 					</a>
 				{:else}
 					<!-- Null bounds: real structure the corpus knows about but no
@@ -223,7 +224,7 @@
 					     own tables of contents. -->
 					<span class="row-title unlinked" title="No section number in this corpus">
 						{#if label}<span class="kind-label">{label}</span>{/if}
-						{dt.title}
+						<InlineText nodes={inlineTitleNodes(dt.title, node.titleHtml, lang)} />
 					</span>
 				{/if}
 				<!-- ONLY THE READER'S OWN BRANCH IS EXPANDED. A row's children

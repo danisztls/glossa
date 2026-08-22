@@ -380,7 +380,7 @@ def narrow_html(marked_html: str, dropped: collections.Counter | None = None) ->
     out: list[str] = []
     pos = 0
     for m in _TAG_RE.finditer(marked_html):
-        out.append(marked_html[pos : m.start()])
+        out.append(escape_text_run(marked_html[pos : m.start()]))
         pos = m.end()
         closing, name, attrs = bool(m.group(1)), m.group(2).lower(), m.group(3)
         if name in _HTML_ALLOWED_SIMPLE:
@@ -409,12 +409,82 @@ def narrow_html(marked_html: str, dropped: collections.Counter | None = None) ->
             if dropped is not None and not closing:
                 dropped[name] += 1
             out.append(" ")
-    out.append(marked_html[pos:])
+    out.append(escape_text_run(marked_html[pos:]))
     html = "".join(out)
     html = re.sub(
         rf"{MARK_OPEN}([0-9A-Za-z*]+){MARK_CLOSE}", r'<sup data-fn="\1"></sup>', html
     )
     return re.sub(r"\s+", " ", html).strip()
+
+
+def escape_text_run(s: str) -> str:
+    """Re-encode one run of text content between tags: decode whatever entity
+    form the source used, then escape only the three characters that would
+    otherwise be structural.
+
+    WHY, rather than passing the source's entities through. vatican.va's
+    export writes accented characters as named entities -- `&atilde;` 47,570
+    times, `&ccedil;` 34,693, and a long tail after that. A browser decodes
+    them for free, and the site could simply hand the string to one: the
+    payload is not untrusted input, since `narrow_html` above rebuilt it
+    from a closed five-tag allowlist. It is handed to {@html} elsewhere for
+    exactly that reason (`manifest.header`, an inert masthead).
+
+    Body and heading text is not inert, though. Three features have to reach
+    INSIDE the markup: `<sup data-fn>` has to become the footnote disclosure
+    button (past {@html} it renders as an empty superscript and the citation
+    apparatus silently disappears), `linkifyProse` has to find "cf. Jn 3:16"
+    in the text but not inside a tag, and the drop cap needs the first letter
+    of the first text run. Any of those means walking the markup rather than
+    pasting it, and once the renderer is walking it, it is decoding the text
+    too. Against the source's entity vocabulary that means shipping an HTML
+    entity table to the client and keeping it complete forever; against
+    `&amp;`/`&lt;`/`&gt;` it means three cases that cannot grow.
+
+    So the decoding happens here, once, where Python's own table is already
+    complete and correct. `&nbsp;` decodes to U+00A0 and is then collapsed
+    by the caller's whitespace pass, which is what `strip_tags` does to it
+    as well -- the round-trip invariant is unaffected, and 1,301 stored
+    non-breaking spaces stop rendering as a stray double space."""
+    return (
+        ihtml.unescape(s)
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+    )
+
+
+def heading_inner_html(html: str) -> str:
+    """A heading's narrowed html with its OWN emphasis stripped, or "" when
+    nothing meaningful is left.
+
+    A heading is recognised BY its emphasis -- `is_full_bold` is the whole
+    detector -- so the `<b>` wrapping the entire title is our own detection
+    signal showing through, not something the document is saying about the
+    words. Storing it would make every heading bold twice and tell a
+    renderer nothing. Emphasis covering only PART of the title is different:
+    that is the source distinguishing words inside the heading, and it is
+    lost today.
+
+    Measured over all 3,656 heading blocks in corpus/raw/vatican-docs: 3,648
+    carry `<i>`/`<b>`, but only 153 (in 51 pages) carry any once the
+    full-coverage wrappers come off -- encyclical titles inside a heading
+    (`THE MESSAGE OF <i>POPULORUM PROGRESSIO</i>`), scripture references
+    (`QUEM ME VÊ, VÊ O PAI (CF. <i>JO</i> 14, 9)`), and the Latin phrase in
+    Magnifica Humanitas' `The <i>res novae</i> of our time`. Those 153 are
+    what this returns; the other 3,503 come back "" and store nothing.
+
+    Applied repeatedly, because both wrappers can cover the whole title
+    (`<i><b>Title</b></i>`) and removing one exposes the other."""
+    prev = None
+    while prev != html:
+        prev = html
+        if is_full_bold(html):
+            html = re.sub(r"</?b>", "", html)
+        if is_full_italic(html):
+            html = re.sub(r"</?i>", "", html)
+    html = re.sub(r"\s+", " ", html).strip()
+    return html if re.search(r"<(?:i|b|br|sup)\b", html) else ""
 
 
 def html_to_text(html: str) -> str:
@@ -1022,6 +1092,7 @@ class Node:
         self.title = title
         self.level = level
         self.ident: str = ""  # bare division label above the title
+        self.title_html: str = ""  # title with partial inline emphasis kept
         self.subtitle: str = ""  # further printed lines below it
         self.children: list[Node] = []
         self.depth: int = 1  # observed heading level, compacted per document
@@ -1200,6 +1271,7 @@ class ScrapeState:
         depth: int = 1,
         ident: str = "",
         subtitle: str = "",
+        title_html: str = "",
     ) -> None:
         self.finalize_open_section()
         level = LEVELS[kind]
@@ -1241,6 +1313,7 @@ class ScrapeState:
         node = Node(kind, n, title, level)
         node.depth = depth
         node.ident = ident
+        node.title_html = title_html
         node.subtitle = subtitle
         parent_children.append(node)
         self.stack.append(node)
@@ -2908,6 +2981,7 @@ def parse_document(
                     heading_level.get(i, 1),
                     ident=b.ident,
                     subtitle=b.subtitle,
+                    title_html=heading_inner_html(b.html),
                 )
                 i += 1
                 continue
@@ -2959,6 +3033,7 @@ def parse_document(
                 heading_level.get(i, 1),
                 ident=b.ident,
                 subtitle=b.subtitle,
+                title_html=heading_inner_html(b.html),
             )
             i += 1
             continue
@@ -3560,6 +3635,8 @@ def build_structure(state: ScrapeState, title: str) -> list[dict]:
             row["ident"] = nd.ident
         if nd.subtitle:
             row["subtitle"] = nd.subtitle
+        if nd.title_html:
+            row["title_html"] = nd.title_html
         flat.append(row)
     if state.sections and not any(r["before"] is not None for r in flat):
         return [{"level": 1, "title": title, "before": min(state.sections)}]

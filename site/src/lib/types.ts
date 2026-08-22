@@ -189,6 +189,9 @@ export interface CccNode {
 	 * for why the two are stored apart.
 	 */
 	label?: string;
+	/** DOCUMENTS ONLY. `title` with the source's partial inline emphasis kept
+	 *  — see `DocumentNode.title_html`. Absent means `title` is already plain. */
+	titleHtml?: string;
 }
 
 /**
@@ -237,6 +240,16 @@ export interface DocumentNode {
 	/** Further heading lines below the title, joined — the second title line
 	 *  a chapter opening sometimes carries. Same merge, same reasoning. */
 	subtitle?: string;
+	/**
+	 * `title` with the source's PARTIAL inline emphasis kept — present on the
+	 * 275 headings that carry any. The emphasis wrapping a whole heading is
+	 * the scraper's own detection signal and is not stored, so this appears
+	 * only where the source distinguished words *within* the title: an
+	 * encyclical name (`THE MESSAGE OF <i>POPULORUM PROGRESSIO</i>`), a
+	 * scripture reference, or a Latin phrase (`The <i>res novae</i> of our
+	 * time`). `title` stays the plain form and the two must agree.
+	 */
+	title_html?: string;
 }
 
 export interface CccCitation {
@@ -262,6 +275,17 @@ export interface CccBlock {
 	kind: CccBlockKind;
 	/** Block text with inline footnote markers preserved as `⟦marker⟧` tokens. */
 	text_marked: string;
+	/**
+	 * The same text with the source's inline markup kept, restricted to the
+	 * stored allowlist and with footnote markers as `<sup data-fn="N"></sup>`
+	 * (docs/corpus-schema.md, amended 2026-08-21). `text_marked` remains the
+	 * plain form and the two are required to agree.
+	 *
+	 * Optional because the CCC and Compendium have not been migrated: their
+	 * blocks carry `text_marked` only, so a renderer must fall back to it
+	 * rather than assume this is present.
+	 */
+	html?: string;
 	/** Set-off byline under an indented quote (e.g. "St. Augustine, Conf. 1, 1"); only when the source prints one. */
 	attribution?: string;
 }

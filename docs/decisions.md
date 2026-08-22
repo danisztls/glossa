@@ -833,3 +833,50 @@ script repeats the mapping by hand because it cannot import anything — without
 that copy a returning reader would flash the default theme on every load until
 they next touched the setting. `sepia` migrates to dark mode `off`, not `auto`,
 which is what leaves that reader's screen exactly as they left it.
+
+## 2026-08-22 — The stored markup is finally rendered, and casing stops mangling numerals
+
+Three defects reported against Magnifica Humanitas, all of which turned out to
+be corpus-wide.
+
+**1. Inline markup was stored and never rendered.** The HTML-in-JSON migration
+landed `html` on every block, and `CccParagraphText` still read `text_marked`,
+so _no_ italics reached a reader anywhere on the site — `the <i>grandeur of
+humanity</i> that shines a light` printed flat. The renderer now walks the
+markup into nodes and prints those.
+
+**Walked, not pasted into `{@html}`** — and not for safety. `narrow_html`
+rebuilds every stored string from a closed five-tag allowlist, so the payload
+cannot contain anything else, and the site does hand inert corpus markup to
+`{@html}` already (`manifest.header`). Body text is not inert: `<sup
+data-fn="12">` is where the footnote disclosure button goes and would render as
+an empty superscript, `linkifyProse` must find "cf. Jn 3:16" in the text and
+not inside a tag, and the drop cap needs the first letter of the first text
+run. Any one of those means walking it.
+
+**2. Headings never stored their markup at all.** `The <i>res novae</i> of our
+time` was flattened at parse time. `structure.json` gains optional `title_html`
+on the 275 headings that carry _partial_ emphasis. The emphasis around a whole
+heading is not stored, because `is_full_bold` IS the heading detector — that
+markup is our own signal showing through, not the document distinguishing
+words.
+
+**3. Title-casing mangled roman numerals and acronyms.** `III` became `Iii` —
+**325 occurrences** across the corpus's ALL-CAPS headings, the second most
+common token shape after ordinary words — and `AI` became `Ai`. Numerals are
+now recognised by shape (two letters minimum: a lone `I` is the pronoun more
+often than the number) and skipped; acronyms need a list, since nothing
+distinguishes `AI` from `AS` inside an ALL-CAPS title. That list is derived,
+not guessed: it holds the tokens the corpus itself writes in capitals inside
+ordinary mixed-case prose (`AI` 59 times, `IA` 57).
+
+A numeral does not consume the title's first-word slot and an acronym does —
+`IV OS FRUTOS` is `IV Os Frutos`, while `AI AND THE HUMAN PERSON` is `AI and
+the Human Person`.
+
+**Entities moved to parse time.** The renderer decodes text itself now, so the
+choice was an HTML entity table on the client, kept complete forever, against
+`&amp;`/`&lt;`/`&gt;` — three cases that cannot grow. The scraper decodes the
+source's vocabulary once. A side effect worth having: `&nbsp;` now collapses
+like the whitespace it is, so 1,301 stored non-breaking spaces stop printing as
+a stray double space.

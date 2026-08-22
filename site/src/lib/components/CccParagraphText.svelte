@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CccBlock, CccCitation } from '$lib/types';
+	import { parseInlineHtml, type InlineNode } from '$lib/inline-html';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
 	import { splitDropCap } from '$lib/dropcap';
@@ -37,8 +38,16 @@
 	const cap = $derived.by(() => {
 		const opening = paragraph.blocks[0];
 		if (!dropCap || !opening || opening.kind === 'quote') return null;
-		const split = splitDropCap(opening.text_marked);
-		return split.first === '' ? null : split;
+		// The cap comes off the first TEXT run, not off the block's string:
+		// with markup in play the opening may be `<i>Rerum Novarum</i>...`,
+		// and slicing the raw markup would put a tag inside the initial.
+		const nodes = nodesFor(opening);
+		const first = nodes[0];
+		if (first?.kind !== 'text') return null;
+		const split = splitDropCap(first.text);
+		if (split.first === '') return null;
+		const rest: InlineNode[] = [{ kind: 'text', text: split.rest }, ...nodes.slice(1)];
+		return { ...split, restNodes: rest };
 	});
 	// A marker has to stay phrasing content: this component is rendered inside
 	// prose <p>s.  The previous <sup><details>...</details></sup> looked inline
@@ -50,26 +59,32 @@
 
 	const MARKER_RE = /⟦([^⟧]+)⟧/g;
 
-	interface Segment {
-		text: string;
-		marker?: string;
-	}
-
-	function splitMarked(textMarked: string): Segment[] {
-		const segments: Segment[] = [];
+	/**
+	 * The block as inline nodes.
+	 *
+	 * `html` is the document corpus's form and carries the source's italics;
+	 * `text_marked` is the CCC's and the Compendium's, which have not been
+	 * migrated (docs/corpus-schema.md) and have no markup to carry. Both end
+	 * up as the same node list so there is ONE render path below rather than
+	 * a markup-aware branch and a plain one drifting apart.
+	 */
+	function nodesFor(block: CccBlock): InlineNode[] {
+		if (block.html) return parseInlineHtml(block.html);
+		const nodes: InlineNode[] = [];
 		let lastIndex = 0;
-		for (const match of textMarked.matchAll(MARKER_RE)) {
+		let seq = 0;
+		for (const match of block.text_marked.matchAll(MARKER_RE)) {
 			const index = match.index ?? 0;
 			if (index > lastIndex) {
-				segments.push({ text: textMarked.slice(lastIndex, index) });
+				nodes.push({ kind: 'text', text: block.text_marked.slice(lastIndex, index) });
 			}
-			segments.push({ text: '', marker: match[1] });
+			nodes.push({ kind: 'marker', marker: match[1], seq: seq++ });
 			lastIndex = index + match[0].length;
 		}
-		if (lastIndex < textMarked.length) {
-			segments.push({ text: textMarked.slice(lastIndex) });
+		if (lastIndex < block.text_marked.length) {
+			nodes.push({ kind: 'text', text: block.text_marked.slice(lastIndex) });
 		}
-		return segments;
+		return nodes;
 	}
 
 	function citationFor(marker: string) {
@@ -127,13 +142,27 @@
 	{/each}
 {/snippet}
 
-{#snippet markedText(textMarked: string, blockIndex: number)}
-	{#each splitMarked(textMarked) as seg, markerIndex}
-		{#if seg.marker}
-			{@const marker = seg.marker}
+<!--
+  One recursive walk over the block's inline nodes. Emphasis nests, so the
+  snippet calls itself; everything else is a leaf. Nothing here emits an HTML
+  string — see `$lib/inline-html.ts` for why the markup is walked rather than
+  pasted into {@html}.
+-->
+{#snippet inline(nodes: InlineNode[], blockIndex: number)}
+	{#each nodes as node}
+		{#if node.kind === 'text'}
+			{@render prose(node.text)}
+		{:else if node.kind === 'break'}
+			<br />
+		{:else if node.kind === 'emphasis'}
+			{#if node.tag === 'i'}<em>{@render inline(node.children, blockIndex)}</em
+				>{:else if node.tag === 'b'}<strong>{@render inline(node.children, blockIndex)}</strong
+				>{:else}<sup>{@render inline(node.children, blockIndex)}</sup>{/if}
+		{:else}
+			{@const marker = node.marker}
 			<!-- The source can cite the same numbered footnote twice in one
 			     paragraph. Keep each disclosure independent, as <details> did. -->
-			{@const disclosureKey = `${blockIndex}:${markerIndex}`}
+			{@const disclosureKey = `${blockIndex}:${node.seq}`}
 			{@const citation = citationFor(marker)}
 			{#if isInline(citation)}<RefText text={citation.label} {lang} />{:else}<sup
 					class="citation-marker"
@@ -165,8 +194,6 @@
 						{/if}
 					</span>
 				{/if}{/if}
-		{:else}
-			{@render prose(seg.text)}
 		{/if}
 	{/each}
 {/snippet}
@@ -174,7 +201,7 @@
 {#each paragraph.blocks as block, blockIndex (block.text_marked)}
 	{#if block.kind === 'quote'}
 		<blockquote class="ccc-quote">
-			<p>{@render markedText(block.text_marked, blockIndex)}</p>
+			<p>{@render inline(nodesFor(block), blockIndex)}</p>
 			{#if block.attribution}
 				<footer>{block.attribution}</footer>
 			{/if}
@@ -183,8 +210,8 @@
 		<p class="ccc-prose">
 			{#if blockIndex === 0 && cap}<span class="drop-cap-letter"
 					>{#if cap.lead}<span class="drop-cap-lead">{cap.lead}</span>{/if}{cap.first}</span
-				>{@render markedText(cap.rest, blockIndex)}{:else}{@render markedText(
-					block.text_marked,
+				>{@render inline(cap.restNodes, blockIndex)}{:else}{@render inline(
+					nodesFor(block),
 					blockIndex
 				)}{/if}
 		</p>
