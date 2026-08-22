@@ -44,6 +44,14 @@ as an unstated judgment call, and it will get taken.
   before/after, reason and evidence — never a code special-case, and never
   invented text. A defect with no known correct value gets documented, not
   fixed (`docs/decisions.md` §Source-defect corrections policy).
+- **`pipeline/corrections/` and `pipeline/overrides/` are different layers.**
+  A correction says the _source_ is wrong and edits the fetched HTML before
+  parsing; an override says the source is fine and our _derivation_ is not,
+  and edits the parsed output. Keeping them apart is what lets `corpus/raw/`
+  stay the record of what the source actually said. Overrides are the
+  exception: before filing one, ask whether the defect belongs to one document
+  or to a class of them — it has been a class every time so far. See
+  `pipeline/overrides/README.md`.
 
 ## Running the site
 

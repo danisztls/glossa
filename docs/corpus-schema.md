@@ -262,6 +262,8 @@ Absence of a sibling-language work (e.g. no `encyclical.rerum-novarum.pt` direct
 
 Never fabricated or inferred without evidence: each status is derived from what's actually on disk or from a direct, logged HTTP response (an absent raw-cache file, a cached-but-stub one, or a reproduced 404), the same "auditable from cache/evidence" posture as everything else in this pipeline.
 
+**Two fix layers, and they are not the same** (`decisions.md`, 2026-08-22). `pipeline/corrections/` claims the _source_ is wrong and edits the fetched HTML before parsing; `pipeline/overrides/` claims the source is fine and our _derivation_ is not, and edits `structure.json`/`sections.json` after parsing. Keeping them apart is what lets `corpus/raw/` remain the record of what the source actually said. A work with overrides gets an `overrides-applied.json` receipt, written only when there are any; the layer ships empty on purpose, and the bar for filing an entry is that the defect belongs to one document rather than to a class of them. See `pipeline/overrides/README.md`.
+
 `structure.json` **(amended 2026-08-21, documents only — see `decisions.md`)**: a FLAT, document-ordered array of `{ level, title, before }`, plus the optional `ident` and `subtitle` added 2026-08-22. It no longer reuses the CCC/Compendium node schema, and `kind`/`n`/`paragraphs`/`children` are gone.
 
 ```jsonc

@@ -207,7 +207,12 @@ from urllib.request import Request, urlopen
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
-from common import load_corrections
+from common import (
+    OverrideDriftError,
+    apply_overrides,
+    load_corrections,
+    load_overrides,
+)
 
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
@@ -3644,11 +3649,15 @@ def build_structure(state: ScrapeState, title: str) -> list[dict]:
 
 
 def write_document_outputs(
-    work_id: str, manifest: dict, state: ScrapeState, structure: list[dict]
+    work_id: str,
+    manifest: dict,
+    state: ScrapeState,
+    structure: list[dict],
+    sections: list[dict],
+    overrides_applied: list[dict],
 ) -> None:
     out_dir = WORKS_ROOT / work_id
     out_dir.mkdir(parents=True, exist_ok=True)
-    sections = [state.sections[n].to_dict() for n in sorted(state.sections)]
     # build_manifest constructs a fresh dict every call, with no knowledge
     # of what was already on disk -- fine for every field it owns, but
     # `translations` (docs/corpus-schema.md #Documents) is recorded by a
@@ -3681,6 +3690,26 @@ def write_document_outputs(
         state.corrections,
         manifest["generated_at"],
     )
+    # Written only when there are overrides, so the file's presence is itself
+    # the signal that this work needed hand-holding -- `ls corpus/works/*/
+    # overrides-applied.json` is the census of where the parser gave up.
+    receipt_path = out_dir / "overrides-applied.json"
+    if overrides_applied:
+        receipt_path.write_text(
+            json.dumps(
+                {
+                    "work_id": work_id,
+                    "generated_at": manifest["generated_at"],
+                    "applied": overrides_applied,
+                    "count": len(overrides_applied),
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+            + "\n"
+        )
+    elif receipt_path.exists():
+        receipt_path.unlink()
 
 
 # --------------------------------------------------------------------------
@@ -3778,6 +3807,33 @@ def scrape_one(
 
     title = title_hint or ref.slug.replace("-", " ").title()
     structure = build_structure(parse.state, title)
+
+    # Post-parse overrides. Applied before `validate_document`, which reads
+    # the structure list this mutates -- so a structure override IS judged by
+    # validation, while a section override is not (validation reads
+    # `parse.state`, which overrides deliberately do not touch: the state is
+    # the parse, and rewriting it would erase the distinction between what
+    # the parser produced and what we overrode). Drift gets its own status
+    # for the same reason corrections drift does -- `scrape_one` must not
+    # raise and kill a crawl of many, but an override that stopped matching
+    # cannot pass silently. See common.apply_overrides.
+    sections_out = [
+        parse.state.sections[n].to_dict() for n in sorted(parse.state.sections)
+    ]
+    overrides = load_overrides(work_id)
+    try:
+        overrides_applied = apply_overrides(work_id, structure, sections_out, overrides)
+    except OverrideDriftError as exc:
+        result["status"] = "overrides-drift"
+        result["error"] = str(exc)
+        return result
+    if overrides_applied:
+        parse.state.anomalies.append(
+            f"post-parse overrides applied ({len(overrides_applied)}): "
+            + ", ".join(a["id"] for a in overrides_applied[:5])
+            + (" ..." if len(overrides_applied) > 5 else "")
+        )
+
     ok, problems = validate_document(ref.slug, parse.state, structure)
     promulgated = parse_promulgation_date(ref.date_digits)
     manifest = build_manifest(
@@ -3792,7 +3848,9 @@ def scrape_one(
         parse.state,
         parse,
     )
-    write_document_outputs(work_id, manifest, parse.state, structure)
+    write_document_outputs(
+        work_id, manifest, parse.state, structure, sections_out, overrides_applied
+    )
 
     result["status"] = "validated" if ok else "validation-failed"
     result["problems"] = problems
@@ -4174,10 +4232,21 @@ def summarize(results: list[dict]) -> None:
     print("\n=== summary ===")
     for status, n in sorted(counts.items(), key=lambda kv: -kv[1]):
         print(f"  {status}: {n}")
+    # Drift statuses belong here too. Both were being counted in the tally
+    # above and then omitted from the detail below, so a run reported
+    # "corrections-drift: 1" and never said which entry stopped matching or
+    # why -- the one thing a loud failure exists to tell you.
     failed = [
         r
         for r in results
-        if r["status"] in ("fetch-failed", "parse-error", "validation-failed")
+        if r["status"]
+        in (
+            "fetch-failed",
+            "parse-error",
+            "validation-failed",
+            "corrections-drift",
+            "overrides-drift",
+        )
     ]
     if failed:
         print(f"\n{len(failed)} problem documents:")

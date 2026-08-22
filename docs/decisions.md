@@ -880,3 +880,54 @@ choice was an HTML entity table on the client, kept complete forever, against
 source's vocabulary once. A side effect worth having: `&nbsp;` now collapses
 like the whitespace it is, so 1,301 stored non-breaking spaces stop printing as
 a stray double space.
+
+## 2026-08-22 — Post-parse overrides, kept separate from source corrections
+
+**What**: a second fix layer, `pipeline/overrides/`, applied to parsed output
+after parsing and before the corpus is written. Same per-work JSON shape as
+`pipeline/corrections/`, a different claim, a different directory.
+
+**Why separate.** The two answer different questions and only look alike:
+
+- `pipeline/corrections/` says **the source is wrong**. It edits the fetched
+  page before parsing; its evidence argues what vatican.va should have
+  printed.
+- `pipeline/overrides/` says **the source is fine and our derivation is not**.
+  It edits `structure.json`/`sections.json`; its evidence quotes what the
+  source actually prints — the thing we failed to reproduce.
+
+Merging them would cost the question `corpus/raw/` exists to answer. The
+project's insurance policy is that capture regret is fixed by re-parsing,
+never re-crawling (`docs/link-surface.md`), and that holds only while the
+record of what the source said stays distinct from the record of how we read
+it. Filing a parser defect as a correction puts a change to _our reading_ into
+the record of what the Church published.
+
+**Overrides are the exception, not the rule**, and the bar is one question:
+does this defect belong to one document or to a class of them? That test has
+been decisive every time it has been applied. `III` rendering as `Iii` looked
+like a Magnifica Humanitas quirk and was 325 occurrences corpus-wide; a
+heading losing its italics looked like one heading and turned out to be every
+heading on the site; a tag boundary inserting a space the source does not
+render (`R esponsibility`) looked like one title and is 65. Each was a parser
+fix repairing hundreds to thousands of units. An override would have repaired
+one and left the rest broken while claiming the defect was handled.
+
+So the layer shipped **empty**, deliberately, and
+`ls corpus/works/*/overrides-applied.json` is the census of where the parser
+gave up.
+
+**Everything fails loudly.** `from` must equal the current value and a locator
+must match exactly one unit; anything else is `OverrideDriftError`, surfacing
+as `status="overrides-drift"` with the entry id and reason in the run summary.
+The reasoning is sharper than for corrections: an override exists _because_ the
+parser is wrong, so the parser improving is the expected way for one to stop
+matching — the good case, meaning it is now redundant and should be deleted.
+That is indistinguishable from the bad case (aimed at the wrong unit) unless
+the run says so. An override that silently no-ops is worse than none: the
+defect is back and the file still claims it is handled.
+
+**Fixed in passing**: neither drift status was in the run summary's problem
+list, so a run printed `corrections-drift: 1` and never said which entry
+stopped matching or why — the one thing a loud failure exists to report. Both
+now print the entry id and the reason.
