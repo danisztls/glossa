@@ -23,9 +23,18 @@
 	`otherEditions`. Rendered only when the caller has something to offer
 	(`editions.length > 0` at the call site), the same "hide, don't disable"
 	posture `EditionMenu` and `CompareToggle` already take.
+
+	`editionStyle` MIRRORS `EditionMenu`'s FORK (see that component's
+	docblock): only the Bible is expected to ever carry more than one edition
+	per language, so everywhere else this picker is functionally a language
+	switch and collapses to the language name plus its code badge, with no
+	title/copyright line. Passed down rather than re-derived from the route,
+	because this component already takes no other route-shaped input — the
+	caller (which knows its own `WorkTypeKey`) is a cheaper source of truth
+	than teaching this component to inspect `page.url.pathname` itself.
 -->
 <script lang="ts">
-	import { baseLang } from '$lib/corpus';
+	import { baseLang, languageDisplayName } from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
 	import { t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
@@ -37,11 +46,21 @@
 		/** The work id currently shown in the second column, if any. */
 		current: string | undefined;
 		onselect: (workId: string) => void;
+		/** Default false: every caller except the Bible route is a language
+		 *  switch in disguise, not a true multi-edition picker. */
+		editionStyle?: boolean;
 	}
 
-	let { editions, current, onselect }: Props = $props();
+	let { editions, current, onselect, editionStyle = false }: Props = $props();
 
 	const currentEdition = $derived(editions.find((e) => e.id === current));
+	const triggerLabel = $derived(
+		currentEdition
+			? editionStyle
+				? currentEdition.short_title
+				: languageDisplayName(currentEdition.language)
+			: t('edition.select')
+	);
 
 	const menu = new Menu();
 
@@ -60,12 +79,12 @@
 		class="menu-trigger wide"
 		aria-haspopup="menu"
 		aria-expanded={menu.open}
-		aria-label={`${t('edition.label')}: ${currentEdition?.short_title ?? t('edition.select')}`}
+		aria-label={`${t('edition.label')}: ${triggerLabel}`}
 		title={t('edition.label')}
 		onclick={menu.toggle}
 	>
 		<Icon name="book-open" />
-		<span class="trigger-label">{currentEdition?.short_title ?? t('edition.select')}</span>
+		<span class="trigger-label">{triggerLabel}</span>
 	</button>
 	{#if menu.open}
 		<ul
@@ -87,12 +106,14 @@
 					>
 						<span class="menu-item-main">
 							{#if isCurrent}<Icon name="check" />{/if}
-							<span>{edition.title}</span>
+							<span>{editionStyle ? edition.title : languageDisplayName(edition.language)}</span>
 							<span class="edition-lang">{baseLang(edition.language).toUpperCase()}</span>
 						</span>
-						<span class="menu-item-meta">
-							{edition.short_title} &middot; {copyrightLabel(edition)}
-						</span>
+						{#if editionStyle}
+							<span class="menu-item-meta">
+								{edition.short_title} &middot; {copyrightLabel(edition)}
+							</span>
+						{/if}
 					</button>
 				</li>
 			{/each}

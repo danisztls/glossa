@@ -374,7 +374,11 @@
 			<div class="title-row">
 				<h1>{current.book.name} {current.chapter.n}</h1>
 				<div class="compare-toolbar">
-					<EditionMenu />
+					<!-- While comparing, EditionMenu moves into the left column's own
+					     header (`leftHeaderExtra` below) next to the comparison
+					     picker on the right — there's only one column for it up here
+					     once compare mode is off. -->
+					{#if !compareActive}<EditionMenu />{/if}
 					{#if otherEditions.length > 0}
 						<CompareToggle active={compareActive} onclick={toggleCompare} />
 					{/if}
@@ -407,11 +411,15 @@
 					right={verseCell}
 					note={compareVersesDiffer ? t('compare.versificationNote') : undefined}
 				>
+					{#snippet leftHeaderExtra()}
+						<EditionMenu />
+					{/snippet}
 					{#snippet rightHeaderExtra()}
 						<ComparisonEditionMenu
 							editions={otherEditions}
 							current={secondaryWorkId}
 							onselect={chooseComparisonEdition}
+							editionStyle
 						/>
 					{/snippet}
 				</CompareGrid>
