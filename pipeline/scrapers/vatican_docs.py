@@ -1710,8 +1710,13 @@ _PAPAL_SIGNATURE_RE = re.compile(
     r"(?:PIUS|PIO|LEO|LEAO|IOANNES|JOANNES|JOAO|JOHN|PAULUS|PAUL|PAULO"
     r"|BENEDICTUS|BENEDICT|BENTO|FRANCISCUS|FRANCIS|GREGORIUS|GREGORY)"
     r"(?:\s+(?:PAULUS|PAULO|PAUL|XXIII))?"
+    # `PP.` sits on either side of the numeral. `PIO PP. XII` is the common
+    # form; divini-redemptoris.pt signs `PIO XI PP.`, which the fixed order
+    # missed, leaving the signature in the outline as a top-level heading
+    # with nothing under it.
     r"(?:\s+PP\.?)?"
     r"(?:\s+[IVXLC]+)?"
+    r"(?:\s+PP\.?)?"
     r"(?:\s+PAPA)?\.?$"
 )
 
