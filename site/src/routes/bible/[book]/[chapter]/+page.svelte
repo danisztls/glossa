@@ -510,14 +510,15 @@
 		</article>
 
 		<!-- Hidden below 80rem — `.mobile-picker` above is this component's
-	     mobile-unchanged counterpart. `variant="sidebar"` lays books out as a
-	     vertical list with in-flow chapter panels (BookChapterPicker's own
-	     docblock) rather than the wrapped grid + popover the mobile copy
-	     still uses, since a 17rem sticky column can neither fit nor safely
-	     clip that popover. Omitted entirely in compare mode — see app.css's
-	     `.reading-layout.compare` docblock: the second text column takes the
-	     room the sidebar would have used, at every width, rather than the
-	     other way around. -->
+	     mobile-unchanged counterpart. `variant="sidebar"` still wraps books
+	     into the same grid as the mobile copy, but its open chapter panel is
+	     `position: fixed` rather than `'grid'`'s `absolute` (BookChapterPicker's
+	     own docblock) — the 17rem sticky column here is its own
+	     `overflow-y: auto` scroll container, which would clip an `absolute`
+	     panel, so this variant escapes to the viewport instead. Omitted
+	     entirely in compare mode — see app.css's `.reading-layout.compare`
+	     docblock: the second text column takes the room the sidebar would
+	     have used, at every width, rather than the other way around. -->
 		<aside class="reading-aside desktop-picker" aria-label={t('bible.pickBook')} role="navigation">
 			<BookChapterPicker
 				currentWorkId={workId}

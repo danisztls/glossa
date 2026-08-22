@@ -404,6 +404,17 @@ html {
 
 body {
 	margin: 0;
+	/* `.reading-aside`/`.index-aside` below can render as tall as
+	   `calc(100vh - 3rem)`. `.app-shell` (+layout.svelte) already carries a
+	   `min-height: 100vh` that's numerically taller than that, but nothing
+	   ties the two together — a page whose article is shorter than the
+	   sidebar let the reading-layout grid row size to the sidebar's height
+	   while body itself had no floor of its own beyond what its flex child
+	   happened to need, which is where an unwanted scrollbar crept in.
+	   Stating the same floor here directly, on the element the viewport
+	   actually scrolls, keeps body from ever coming out shorter than the
+	   sidebar it contains. */
+	min-height: 100vh;
 	background: var(--color-bg);
 	color: var(--color-text);
 	font-family: var(--font-sans);
@@ -503,9 +514,12 @@ input {
 	}
 
 	/* Sticks alongside the text through a long chapter. `overflow-y: auto`
-	   makes the aside its own scroll container, so anything inside it that
-	   escapes its box (an absolutely-positioned popover, say) gets clipped —
-	   sidebar navigation should expand IN FLOW here rather than in a panel. */
+	   makes the aside its own scroll container, so an `absolute`ly-positioned
+	   popover nested inside it would get clipped the moment it grew past the
+	   aside's own box — which is why the Bible reader's sidebar book/chapter
+	   picker (`BookChapterPicker.svelte`) anchors its open panel with
+	   `position: fixed` instead, escaping this element's clipping rather than
+	   expanding in flow within it. */
 	.reading-aside {
 		position: sticky;
 		top: 1.5rem;

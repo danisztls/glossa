@@ -32,10 +32,10 @@
  *
  * `BookChapterPicker` is NOT a user of this and shouldn't become one, despite
  * running visibly similar outside-click and Escape handling. Its open state is
- * WHICH BOOK is expanded (`openOsis`, a book id) rather than a boolean, only
- * one of its two variants is a popover at all, and it re-measures panel
- * placement on open and on resize. Nothing here would fit it without growing a
- * second, parallel set of semantics.
+ * WHICH BOOK is expanded (`openOsis`, a book id) rather than a boolean, its two
+ * variants anchor their popover two different ways (`absolute` vs `fixed`),
+ * and it re-measures panel placement on open and on resize. Nothing here would
+ * fit it without growing a second, parallel set of semantics.
  */
 
 /**

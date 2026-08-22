@@ -18,20 +18,21 @@
 	 * (Enter/Space, Tab order) with no custom key handling needed, and no
 	 * page ever renders more than one book's worth of chapter links.
 	 *
-	 * The chapter grid is an ABSOLUTELY-POSITIONED panel anchored to its book
-	 * button, not an in-flow block — but ONLY in the `'grid'` variant (see
-	 * `variant` below). In flow, on a wrapped flex grid, opening a book
-	 * mid-grid pushed every later book onto new lines and the whole list
-	 * jumped under the reader's cursor — the book they were aiming at moved
-	 * before they clicked it. Out of flow, opening a panel changes nothing
-	 * about the grid behind it.
+	 * The chapter grid is an OUT-OF-FLOW panel anchored to its book button,
+	 * not an in-flow block, in BOTH variants (see `variant` below). In flow,
+	 * on a wrapped grid of book chips, opening a book mid-grid pushed every
+	 * later book onto a new row (or further down a column) and the whole
+	 * list jumped under the reader's cursor — the book they were aiming at
+	 * moved before they clicked it. Out of flow, opening a panel changes
+	 * nothing about the grid behind it, in the sidebar exactly as much as
+	 * anywhere else.
 	 *
-	 * Two consequences of leaving the flow, both handled below and BOTH
-	 * SCOPED TO THE GRID VARIANT ONLY: nothing in CSS knows where on the
-	 * screen the button it is anchored to sits, so the panel's size and
-	 * offset are measured from the real DOM instead (`Placement` below); and
-	 * it no longer dismisses by re-clicking alone, so it takes the same
-	 * outside-click/Escape handling as the header menus.
+	 * Leaving the flow has two consequences, both handled below: nothing in
+	 * CSS knows where on the screen the button it is anchored to sits, so
+	 * the panel's size and offset are measured from the real DOM instead
+	 * (`Placement` below); and it no longer dismisses by re-clicking alone,
+	 * so it takes the same outside-click/Escape handling as the header
+	 * menus.
 	 *
 	 * There are deliberately NO chevron indicators on the book buttons.
 	 * `aria-expanded` carries the state for assistive tech, and sighted
@@ -40,39 +41,27 @@
 	 * it is redundant, and at 73 buttons the glyphs were most of the grid's
 	 * visual noise.
 	 *
-	 * TWO VARIANTS, because the reflow problem above only exists in ONE of
-	 * the two places this component is used. `'grid'` (default) is
-	 * everything described so far — a wrapped flex grid of book buttons with
-	 * an absolutely-positioned popover — used by the `/scriptura` landing route
-	 * and by the reading view's mobile/collapsed picker. `'sidebar'` is for
-	 * the reading view's desktop right column (`.reading-aside`, app.css).
-	 * It keeps the wrapped grid of books — 73 books as chips wrap into a few
-	 * scannable rows, where a single column of 73 is a long scroll to find
-	 * anything — and moves the chapter panel OUT of the open book's list item
-	 * to sit in flow AFTER the whole grid.
+	 * TWO VARIANTS, because the two places this component is used differ in
+	 * one thing: what the panel has to escape INTO. `'grid'` (default) is
+	 * the `/scriptura` landing route and the reading view's mobile/collapsed
+	 * picker — both sit in ordinary document flow, so the panel is
+	 * `position: absolute`, anchored to its own `.book-item` and scrolling
+	 * with the page exactly as the button does. `'sidebar'` is the reading
+	 * view's desktop right column (`.reading-aside`, app.css) — its own
+	 * `overflow-y: auto` scroll container, which would clip an `absolute`
+	 * panel the moment it needed to be wider or taller than the 17rem column
+	 * it lives in. `position: fixed` escapes that: nothing between the
+	 * button and the viewport sets `transform`, `filter`, `contain` or
+	 * `will-change` (any of which would re-capture a fixed descendant into
+	 * its own containing block instead), so the sidebar's panel floats over
+	 * the page next to the aside rather than being cut off at its edge, and
+	 * opening it cannot resize the aside itself either.
 	 *
-	 * That placement is what makes the two changes compatible. An in-flow
-	 * panel inside a wrapped grid would re-create exactly the defect the
-	 * popover was invented for (opening a book mid-grid reflows every later
-	 * book, and the one the reader was aiming at moves out from under the
-	 * cursor). Hanging it off the end of the grid instead means nothing is
-	 * inserted into the grid at all, so the grid cannot reflow — while the
-	 * panel itself is an ordinary block that needs none of the popover's
-	 * machinery. It does have to name its own book, since it is no longer
-	 * adjacent to the button that opened it.
-	 *
-	 * The popover would not have worked here anyway: `.reading-aside` is
-	 * `overflow-y: auto` (a scroll container, so it clips anything escaping
-	 * its box) and 17rem wide, narrower than the chapter panel wants to be
-	 * for most books. The placement/outside-click/Escape machinery above is
-	 * therefore skipped entirely for `'sidebar'` — nothing needs measuring or
-	 * force-dismissing when there is no popover to overhang the viewport or
-	 * fail to self-dismiss.
-	 *
-	 * (The sidebar variant was briefly a single-column vertical list, which
-	 * is what made an in-flow panel trivially safe. It was worse to use, and
-	 * this is the version that keeps the grid's scannability without giving
-	 * the reflow back.)
+	 * Both variants share the same `Placement` measurement and dismiss
+	 * machinery; only the positioning mode and the coordinate space differ —
+	 * `offsetPx`, relative to `.book-item`'s own box, for `'grid'`'s
+	 * `absolute`; `leftPx`/`topPx`/`bottomPx`, measured against the viewport,
+	 * for `'sidebar'`'s `fixed`. See `measurePlacement`.
 	 *
 	 * `collapsible` is ignored when `variant === 'sidebar'`: the sidebar is
 	 * the reading view's persistent nav column, so it always renders open
@@ -94,9 +83,9 @@
 		currentOsis?: string;
 		currentChapter?: number;
 		collapsible?: boolean;
-		/** `'grid'` (default): wrapped flex grid + anchored popover, as
-		    documented above. `'sidebar'`: wrapped grid too, but with the
-		    chapter panel in flow after the grid, for `.reading-aside`. */
+		/** `'grid'` (default): wrapped flex grid + `absolute` popover anchored
+		    to `.book-item`. `'sidebar'`: wrapped grid too, but a `fixed`
+		    popover anchored to the viewport, for `.reading-aside`. */
 		variant?: 'grid' | 'sidebar';
 	}
 
@@ -157,6 +146,14 @@
 	const MARGIN_REM = 1;
 
 	/**
+	 * Gap kept between the panel and the button it hangs off, matching the
+	 * grid variant's own `top: calc(100% + 0.35rem)` / `bottom: calc(100% +
+	 * 0.35rem)` — mirrored here because the sidebar variant's `fixed`
+	 * coordinates are computed in JS rather than left to that CSS calc.
+	 */
+	const BUTTON_GAP_REM = 0.35;
+
+	/**
 	 * Floor on the panel's height. A book near the bottom of a short viewport
 	 * may leave less room than this; it gets this much anyway and runs past
 	 * the fold, which the page scrolls to. A letterbox two rows tall would be
@@ -180,22 +177,44 @@
 	 * unreachable, and the document scrolling sideways. Deciding the width
 	 * here means the offset can never be out of step with it, and `onresize`
 	 * below redoes both together.
+	 *
+	 * `offsetPx` is `'grid'`'s coordinate — relative to `.book-item`'s own
+	 * inline start, since that element is the `absolute` panel's containing
+	 * block. `leftPx`/`topPx`/`bottomPx` are `'sidebar'`'s — measured against
+	 * the viewport directly, since a `fixed` panel's containing block is the
+	 * viewport regardless of where in the DOM it sits. Both variants share
+	 * `inlinePx`/`blockPx`/`flip`, which don't depend on the positioning mode.
 	 */
 	interface Placement {
 		/** Panel width, border-box — `box-sizing` is global (app.css). */
 		inlinePx: number;
-		/** How far to slide the panel back from the button's inline start to keep it on screen. Never positive. */
+		/** Grid: how far to slide the panel back from the button's inline start to keep it on screen. Never positive. */
 		offsetPx: number;
+		/** Sidebar: the panel's left edge, in viewport pixels. */
+		leftPx: number;
 		/** Height cap. The panel scrolls internally past it. */
 		blockPx: number;
 		/** Open upward rather than downward, when that is where the room is. */
 		flip: boolean;
+		/** Sidebar, not flipped: the panel's top edge, in viewport pixels. */
+		topPx: number;
+		/** Sidebar, flipped: the panel's distance from the viewport's bottom edge, in pixels. */
+		bottomPx: number;
 	}
 
 	let placement: Placement | null = $state(null);
 
+	// `variant` is part of the id: the reading route mounts a `'grid'` and a
+	// `'sidebar'` instance of this component AT THE SAME TIME, one hidden by
+	// a CSS breakpoint rather than unmounted (see that route's own comment on
+	// `.mobile-picker`/`.desktop-picker`), so a plain `book-btn-${osis}` would
+	// exist twice in the DOM — and `getElementById` returns whichever comes
+	// first in source order, hidden or not. On desktop that was the mobile
+	// instance's (CSS-`display:none`) button, whose `getBoundingClientRect()`
+	// is all zeros — every sidebar panel opened anchored to the viewport's
+	// top-left corner instead of its own button.
 	function measurePlacement(osis: string): Placement | null {
-		const item = document.getElementById(`book-btn-${osis}`)?.closest('.book-item');
+		const item = document.getElementById(`book-btn-${variant}-${osis}`)?.closest('.book-item');
 		if (!(item instanceof HTMLElement)) return null;
 		const root = document.documentElement;
 		const rem = parseFloat(getComputedStyle(root).fontSize) || 16;
@@ -207,6 +226,7 @@
 		const viewW = root.clientWidth;
 		const viewH = root.clientHeight;
 		const margin = MARGIN_REM * rem;
+		const gap = BUTTON_GAP_REM * rem;
 		const rect = item.getBoundingClientRect();
 		const cols = Math.min(MAX_CHAPTER_COLS, chapterCount(osis));
 
@@ -222,6 +242,11 @@
 		// most books, and the whole panel width for one opened from the far
 		// right of a phone.
 		const offsetPx = Math.min(0, viewW - margin - inlinePx - rect.left);
+		// Same idea, but as an absolute viewport coordinate rather than an
+		// offset from the button: clamped on both edges, since a `fixed`
+		// panel has no containing block of its own to inherit a safe left
+		// bound from the way `'grid'`'s does.
+		const leftPx = Math.max(margin, Math.min(rect.left, viewW - margin - inlinePx));
 
 		const below = viewH - rect.bottom - margin;
 		const above = rect.top - margin;
@@ -229,8 +254,11 @@
 		return {
 			inlinePx: Math.round(inlinePx),
 			offsetPx: Math.round(offsetPx),
+			leftPx: Math.round(leftPx),
 			blockPx: Math.round(Math.max(flip ? above : below, MIN_BLOCK_REM * rem)),
-			flip
+			flip,
+			topPx: Math.round(rect.bottom + gap),
+			bottomPx: Math.round(viewH - rect.top + gap)
 		};
 	}
 
@@ -241,7 +269,7 @@
 	// panel, so it does not matter that this runs before the panel has
 	// settled — or, for that matter, whether the panel exists yet.
 	$effect(() => {
-		if (variant !== 'grid' || !openOsis) {
+		if (!openOsis) {
 			placement = null;
 			return;
 		}
@@ -258,26 +286,20 @@
 
 	// Out-of-flow panels don't dismiss by themselves the way an in-flow
 	// disclosure did, so this takes the same window-level outside-click and
-	// Escape handling as the header menus (AppearanceMenu et al.). Clicks inside
-	// `.book-item` are ignored: that covers both the panel and its own book
-	// button, whose click handler already toggles.
-	//
-	// GRID VARIANT ONLY, guarded inside the handlers rather than by
-	// conditionally rendering `<svelte:window>` — Svelte doesn't allow that
-	// tag inside a block, so it's always mounted and opts itself out instead.
-	// The sidebar's panel is in flow, so re-clicking its own book (or
-	// clicking a different one, which reassigns `openOsis`) is already
-	// sufficient to close it; there's no popover sitting over other content
-	// that needs a forced dismiss.
+	// Escape handling as the header menus (AppearanceMenu et al.), in both
+	// variants. Clicks inside `.book-item` are ignored: that covers both the
+	// panel and its own book button, whose click handler already toggles —
+	// true regardless of whether the panel renders `absolute` or `fixed`,
+	// since both stay nested in the DOM under their `.book-item`.
 	function onWindowClick(e: MouseEvent) {
-		if (variant !== 'grid' || !openOsis) return;
+		if (!openOsis) return;
 		const target = e.target;
 		if (target instanceof Node && (target as Element).closest?.('.book-item')) return;
 		closePanel();
 	}
 
 	function onWindowKeydown(e: KeyboardEvent) {
-		if (variant === 'grid' && openOsis && e.key === 'Escape') closePanel();
+		if (openOsis && e.key === 'Escape') closePanel();
 	}
 
 	// A resize (or a phone rotating, or a browser zoom step) changes every
@@ -286,7 +308,7 @@
 	// exactly that, a panel still anchored for a window 140px wider than the
 	// one it was now hanging out of.
 	function onWindowResize() {
-		if (variant !== 'grid' || !openOsis) return;
+		if (!openOsis) return;
 		placement = measurePlacement(openOsis);
 	}
 
@@ -296,17 +318,27 @@
 	 * `--chapter-cols` is the column count this book is worth asking for; the
 	 * CSS turns it into a width, and is the only thing that applies before
 	 * `placement` exists — during SSR, on the first frame, and for a reader
-	 * with no JavaScript. Everything else here is `placement`, which supersedes
-	 * that CSS with numbers measured against the real viewport.
+	 * with no JavaScript. Everything else here is `placement`, which
+	 * supersedes that CSS with numbers measured against the real viewport.
+	 *
+	 * The two variants diverge only in WHICH coordinates they emit:
+	 * `'grid'`'s `absolute` panel takes `inset-inline-start` relative to
+	 * `.book-item`; `'sidebar'`'s `fixed` panel takes an absolute
+	 * `inset-inline-start` plus a `top` or `bottom`, since it has no
+	 * containing block of its own to measure against.
 	 */
 	function panelStyle(book: CanonicalBook): string {
 		const decls = [`--chapter-cols: ${Math.min(MAX_CHAPTER_COLS, book.chapters.length)}`];
-		if (variant === 'grid' && placement) {
-			decls.push(
-				`inline-size: ${placement.inlinePx}px`,
-				`max-block-size: ${placement.blockPx}px`,
-				`inset-inline-start: ${placement.offsetPx}px`
-			);
+		if (placement) {
+			decls.push(`inline-size: ${placement.inlinePx}px`, `max-block-size: ${placement.blockPx}px`);
+			if (variant === 'grid') {
+				decls.push(`inset-inline-start: ${placement.offsetPx}px`);
+			} else {
+				decls.push(`inset-inline-start: ${placement.leftPx}px`);
+				decls.push(
+					placement.flip ? `bottom: ${placement.bottomPx}px` : `top: ${placement.topPx}px`
+				);
+			}
 		}
 		return decls.join('; ');
 	}
@@ -339,45 +371,23 @@
 					<li class="book-item">
 						<button
 							type="button"
-							id={`book-btn-${book.osis}`}
+							id={`book-btn-${variant}-${book.osis}`}
 							class="book-btn"
 							class:sidebar={variant === 'sidebar'}
 							class:current={book.osis === currentOsis}
 							class:open={isOpen}
 							aria-expanded={isOpen}
-							aria-controls={`chapters-${book.osis}`}
+							aria-controls={`chapters-${variant}-${book.osis}`}
 							onclick={() => toggleBook(book.osis)}
 						>
 							<span>{bookName(book)}</span>
 						</button>
-						{#if isOpen && variant === 'grid'}
+						{#if isOpen}
 							{@render chapterPanel(book)}
 						{/if}
 					</li>
 				{/each}
 			</ul>
-			<!-- SIDEBAR VARIANT: the open book's chapters render BELOW the whole
-			     grid, not inside the book's own list item.
-
-			     This is what lets the sidebar keep the wrapped grid of books
-			     rather than the vertical list it used to have. A grid of 73
-			     books is far quicker to scan than a 73-row column, but an
-			     in-flow panel inside a wrapped grid re-runs the original
-			     problem the popover was invented for: opening a book mid-grid
-			     pushes every later book onto a new line, and the book someone
-			     was aiming at moves out from under their cursor.
-
-			     Hanging the panel off the end of the grid resolves both at
-			     once — the grid above it never reflows, because nothing was
-			     inserted into it, and the panel is a plain block in normal
-			     flow, so it needs none of the popover's measuring, clipping
-			     or outside-click machinery inside a scrolling aside. -->
-			{#if variant === 'sidebar'}
-				{@const openBook = group.books.find((b) => b.osis === openOsis)}
-				{#if openBook}
-					{@render chapterPanel(openBook)}
-				{/if}
-			{/if}
 		</section>
 	{/each}
 {/snippet}
@@ -385,21 +395,15 @@
 {#snippet chapterPanel(book: CanonicalBook)}
 	{@const present = chaptersInEdition(book.osis)}
 	<div
-		id={`chapters-${book.osis}`}
+		id={`chapters-${variant}-${book.osis}`}
 		class="chapters"
 		class:sidebar={variant === 'sidebar'}
-		class:flip={variant === 'grid' && placement?.flip}
+		class:flip={placement?.flip}
 		style={panelStyle(book)}
 		role="group"
 		aria-label={bookName(book)}
 		data-link-preview="off"
 	>
-		<!-- The sidebar's panel is detached from the button that opened it, so
-		     it names its own book; the grid variant's popover is anchored to
-		     that button and would only be repeating it. -->
-		{#if variant === 'sidebar'}
-			<p class="chapters-book">{bookName(book)}</p>
-		{/if}
 		<div class="chapters-nums">
 			{#each book.chapters as chapterN (chapterN)}
 				{#if present.has(chapterN)}
@@ -487,21 +491,24 @@
 	   into a handful of rows the eye can scan at once, which is the whole
 	   reason the non-sidebar picker has always been a grid.
 
-	   Safe here only because the chapter panel now renders after the whole
-	   grid rather than inside a book's list item (see the template) — so
-	   opening a book cannot reflow the books around it. `auto-fill` with a
-	   `minmax` floor rather than a fixed column count: the aside is 17rem at
-	   most widths but wider layouts exist, and the right number of columns is
-	   whatever fits. */
+	   Safe with an in-DOM chapter panel per book because that panel is OUT OF
+	   FLOW (`position: fixed`, below) regardless of where in the grid it
+	   lives — opening a book cannot push its siblings around when nothing is
+	   inserted into the grid's own layout. `auto-fill` with a `minmax` floor
+	   rather than a fixed column count: the aside is 17rem at most widths but
+	   wider layouts exist, and the right number of columns is whatever
+	   fits. */
 	.book-grid.sidebar {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
 		gap: 0.25rem;
 	}
 
-	/* Positioning context for the absolutely-positioned `.chapters` panel
-	   (grid variant only — the sidebar's panel is in flow and needs no
-	   positioning context from its parent). */
+	/* Positioning context for the `absolute` `.chapters` panel in the `'grid'`
+	   variant. Irrelevant to `'sidebar'`'s `fixed` panel, which is positioned
+	   against the viewport regardless of this — harmless to share the class
+	   between both rather than needing a second one that only differs by
+	   this line. */
 	.book-item {
 		position: relative;
 		display: flex;
@@ -523,9 +530,6 @@
 		min-height: 2.1rem;
 	}
 
-	/* Full-width row instead of an inline chip, to match the rest of a
-	   vertical list — a chip-sized button floating at the list's inline
-	   start would leave the rest of the row dead space. */
 	/* Fills its grid cell and centres, rather than the full-width row this
 	   was when the sidebar list ran vertically. Long names (1 Thessalonians)
 	   are clipped rather than allowed to widen the whole track — the button
@@ -562,8 +566,7 @@
 	   A 1-chapter book like 2/3 John renders narrow, not force-padded to some
 	   arbitrary floor, and no book ever exceeds the viewport width — which is
 	   what guarantees the start/end anchor math in the script always has at
-	   least one edge that fits. GRID VARIANT ONLY — `.chapters.sidebar` below
-	   overrides every positioning property back to in-flow.
+	   least one edge that fits.
 
 	   WIDTH COMES FROM THE SPACE AVAILABLE, not from a constant. The fixed
 	   `22rem` cap this replaces was the reason a 36-chapter book like Numbers
@@ -575,7 +578,7 @@
 	   what applies during SSR, on the first frame, and for a reader with no
 	   JavaScript — `--chapter-cols` columns or the viewport, whichever is
 	   smaller. `measurePlacement` then overrides `inline-size`,
-	   `max-block-size` and `inset-inline-start` together, with numbers that
+	   `max-block-size` and the panel's offset together, with numbers that
 	   also account for WHERE the button is, which CSS cannot see. (Note that
 	   `100vw` here counts the scrollbar and the measured version does not;
 	   the 1rem margin absorbs the difference.)
@@ -583,16 +586,20 @@
 	   A DEFINITE `inline-size` is also load-bearing for two separate reasons,
 	   both of which end in the same one-chapter-per-row collapse:
 
-	   1. An absolutely-positioned box with `width: auto` shrink-fits against
-	      its CONTAINING BLOCK — here `.book-item`, the `<li>`, no wider than
-	      the button itself. (This is what `inline-size: max-content` used to
-	      work around; a definite width sidesteps it, since the containing
-	      block never enters the calculation.)
+	   1. An out-of-flow box with `width: auto` shrink-fits against its
+	      CONTAINING BLOCK — for `'grid'`'s `absolute` panel that's
+	      `.book-item`, the `<li>`, no wider than the button itself; for
+	      `'sidebar'`'s `fixed` panel it's the viewport, which is wide but
+	      still not the number this formula wants to reach. (This is what
+	      `inline-size: max-content` used to work around; a definite width
+	      sidesteps it either way, since the containing block never enters
+	      the calculation.)
 	   2. `auto-fit` in `.chapters-nums` below resolves to a SINGLE track when
 	      the available inline size is indefinite — which `max-content` is.
 
 	   So the two rules are a pair: the panel resolves a real width against
-	   the viewport, and the grid inside it fills that width. */
+	   the viewport, and the grid inside it fills that width. Shared by both
+	   variants — only the POSITIONING properties below differ. */
 	.chapters {
 		/* Mirrors of the chip's minimum box, the grid gap and this panel's own
 		   padding, so the width arithmetic cannot drift from the thing it is
@@ -630,37 +637,53 @@
 
 	/* Opens upward instead of downward, for a book low enough on the screen
 	   that there is more room above it than below. Which way round is
-	   `measurePlacement`'s call — this is only the two anchors. */
+	   `measurePlacement`'s call — this is only the two anchors, and only
+	   applies to `'grid'`: `'sidebar'` sets `top`/`bottom` directly as an
+	   inline style instead (`panelStyle`), since a `fixed` panel's flip has
+	   no shared `100%` reference to offset from. */
 	.chapters.flip {
 		top: auto;
 		bottom: calc(100% + 0.35rem);
 	}
 
-	/* In-flow instead of a floating panel: no positioning, no shadow (nothing
-	   to lift off the page), no width clamp (the column itself already fits
-	   17rem — see the component docblock for why the popover's own width
-	   bound doesn't apply here). A small start indent ties it visually to the
-	   book button it belongs to, the way a nested list would. */
+	/* `position: fixed` instead of `'grid'`'s `absolute`, and a viewport-
+	   absolute `top`/`bottom`/`inset-inline-start` (set inline by
+	   `panelStyle`, from `measurePlacement`'s `leftPx`/`topPx`/`bottomPx`)
+	   instead of an offset from `.book-item`.
+
+	   `.reading-aside` (app.css) is its own `overflow-y: auto` scroll
+	   container, which clips anything `absolute` the moment it escapes the
+	   aside's own box — exactly what a chapter panel wider than the 17rem
+	   column needs to do for most books. `fixed` doesn't have that problem:
+	   its containing block is the viewport, not the nearest scrolling
+	   ancestor, so the panel floats over the page next to the aside instead
+	   of being cut off at its edge. (Confirmed nothing between here and the
+	   viewport sets `transform`, `filter`, `contain` or `will-change` — any
+	   of those would re-capture a `fixed` descendant into a containing block
+	   of their own instead of the viewport, and quietly reintroduce the
+	   clipping this is meant to avoid.)
+
+	   `top`/`bottom`/`inset-inline-start` are left `auto` here rather than
+	   given a CSS fallback the way `'grid'`'s are: a `fixed` box with no
+	   inset properties renders at its normal in-flow ("static") position, so
+	   for the brief span before `measurePlacement` has run the panel sits
+	   where it always used to — anchored under its own button — rather than
+	   at some nonsensical position computed from a `calc(100%, …)` that
+	   would resolve against the viewport instead of `.book-item` once
+	   `position` is `fixed`. */
 	.chapters.sidebar {
-		position: static;
+		position: fixed;
 		top: auto;
-		inset-inline-start: auto;
-		z-index: auto;
-		margin: 0.5rem 0 0.75rem;
-		box-shadow: none;
-		/* `auto` on an in-flow block means "fill the aside", which is a
-		   definite width — so the grid inside still gets a real number to fit
-		   columns against, just one that comes from the column rather than the
-		   viewport. */
-		inline-size: auto;
-		max-block-size: none;
-		overflow: visible;
 		bottom: auto;
+		inset-inline-start: auto;
+		z-index: 50;
 	}
 
 	/* The chapter numbers. This used to be `.chapters` itself; it moved down
-	   a level when the panel gained a heading in the sidebar variant, so the
-	   heading isn't laid out as if it were a chapter chip.
+	   a level when the panel briefly had a heading in the sidebar variant, so
+	   the heading wasn't laid out as if it were a chapter chip. Now shared
+	   unchanged by both variants — the button each panel hangs off already
+	   says which book it belongs to, so neither needs to restate it.
 
 	   A GRID rather than the wrapped flex row it was, because a wrapped row
 	   only lines its chips up by accident — as soon as one chip is wider than
@@ -674,17 +697,6 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(var(--chapter-chip, 2rem), 1fr));
 		gap: var(--chapter-gap, 0.35rem);
-	}
-
-	/* Names the book whose chapters these are — needed only in the sidebar,
-	   where the panel is detached from the button that opened it. */
-	.chapters-book {
-		margin: 0 0 0.4rem;
-		font-size: 0.75rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--color-text-muted);
 	}
 
 	.chapters a,
