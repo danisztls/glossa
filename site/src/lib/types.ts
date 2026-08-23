@@ -395,15 +395,6 @@ export interface DocumentBibleXref {
 export interface DocumentSection {
 	n: number;
 	blocks: CccBlock[];
-	/**
-	 * Derived: all blocks joined, markers stripped, spaces normalized.
-	 *
-	 * Absent on a SHIPPED section — being derived is exactly why it can be
-	 * dropped (`thinDocumentSections` in scripts/sync-corpus.mjs). Read it
-	 * through `documentSectionText()` in corpus.ts, which returns this field
-	 * when present and reproduces the pipeline's derivation when it is not.
-	 */
-	text?: string;
 	citations: CccCitation[];
 	// No `related` (no marginal cross-reference apparatus in any document
 	// family sampled) and no `in_brief` (a CCC-only summarization device) --

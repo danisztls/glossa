@@ -1303,33 +1303,23 @@ export async function getDocumentSectionsAsync(workId: string): Promise<Document
 }
 
 /**
- * A section's plain text, derived rather than read.
+ * A section's plain text, derived from its blocks.
  *
- * The corpus stores this as `text` on every section; the shipped copy drops
- * it (see this section's docblock) because it is a pure function of the
- * blocks — joined by a single space, footnote markers contributing nothing,
- * whitespace collapsed, mirroring `Section.resolve` in `vatican_docs.py`.
+ * The corpus stores `html` and nothing derived from it (docs/corpus-schema.md,
+ * amended 2026-08-22), so there is no stored `text` to read and no branch on
+ * whether one is present. This IS the definition: blocks joined by a single
+ * space, footnote markers contributing nothing, whitespace collapsed —
+ * mirroring `Section.resolve` in `vatican_docs.py`, which derives the same
+ * string in the same way for the round-trip check.
  *
- * NOT byte-identical to the stored `text`, and deliberately so: 2,567 of the
- * corpus's 14,907 sections (17.2%) differ, every one of them by whitespace
- * alone and none by a single other character (measured 2026-08-22). The
- * difference is the pipeline's, not this function's — `html_to_text` turns
- * every tag into a space "matching `strip_tags`", so the source's
- * `Constitution <i>Esti minime</i>.` is stored as `Esti minime .` while the
- * raw page has no space there. Deriving from `html` reproduces the source;
- * reading the stored field reproduces the defect. The round-trip oracle
- * cannot see it because both sides of `html_to_text(html) == text_marked`
- * insert the same space.
- *
- * Returns the stored field when one is present, so a corpus section (which
- * still carries it) and a shipped one behave the same at the call site.
+ * `text_marked` is the fallback for a CCC/Compendium block, which has no
+ * `html` yet; a document block always takes the first branch.
  *
  * Derived per call rather than cached: the only caller is the link-preview
  * excerpt, which needs one section and truncates it immediately, so caching
- * whole-document text would cost more memory than the field it replaced.
+ * whole-document text would cost more than it saves.
  */
 export function documentSectionText(section: DocumentSection): string {
-	if (section.text !== undefined) return section.text;
 	return section.blocks
 		.map((block) =>
 			block.html ? inlineText(parseInlineHtml(block.html)) : (block.text_marked ?? '')

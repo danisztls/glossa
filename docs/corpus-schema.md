@@ -296,19 +296,17 @@ A document with no internal headings gets a single node spanning from its first 
 
 **Amended 2026-08-21**: each block also carries `html` — the block's text as HTML restricted to a closed allowlist (`i`, `b`, `br`, `sup`, `blockquote`; `em`→`i`, `strong`→`b`), with footnote markers as `<sup data-fn="N"></sup>` instead of `⟦N⟧`. This recovers the inline italics the manifests have always described as "a deliberate v1 loss". Tags outside the allowlist keep their text and lose their markup, reported per run as an anomaly. **Amended 2026-08-22**: text runs are stored with the source's entities already decoded and only `&`/`<`/`>` re-escaped. vatican.va writes accented characters as named entities (`&atilde;` 47,570 times, and a long tail), and the site walks this markup rather than handing it to `{@html}` — three features have to reach inside it (the footnote disclosure, scripture linkification, the drop cap) — so decoding once here saves shipping an HTML entity table to the client and keeping it complete forever. The invariant, checked over all 14,907 sections: `strip_tags(html)` reproduces the stored `text` exactly. `manifest.json` also gains `header` — the document's own printed masthead as narrowed html (title, author, promulgation line), with vatican.va's language selector stripped; it is real content the page shows above its first heading, and leaving it in the block stream made it a phantom top-level structure node.
 
-`sections.json` (not `paragraphs.json` — a document's numbered units are the print edition's own "sections," not CCC paragraphs; the _filename_ differs per work type even though the structure-tree _field_ stays `paragraphs`, per the note above): array ordered by `n`, same `blocks`/`text_marked`/`citations`/`text` shape as the CCC's `paragraphs.json`:
+`sections.json` (not `paragraphs.json` — a document's numbered units are the print edition's own "sections," not CCC paragraphs; the _filename_ differs per work type even though the structure-tree _field_ stays `paragraphs`, per the note above): array ordered by `n`. **Amended 2026-08-22: a document block stores `html` and nothing derived from it.** `text_marked` and the section's `text` are gone — both were pure functions of `html`, and they were kept only as the round-trip oracle's expected value. That argument ended when the check moved into `validate_document` (`decisions.md`): both sides are now derived in-process from the same source string, so the oracle is exactly as strong with nothing on disk, and the corpus lost 33 MB, a fat/thin shipping split and a second format every reader had to branch on. The CCC, Compendium and prayers still store `text_marked`/`text` and no `html`, and keep the shape below until they are migrated.
 
 ```jsonc
 {
   "n": 12,
   "blocks": [
     {
-      "kind": "prose",
-      "text_marked": "…prose with inline ⟦12⟧ markers…",
-      "html": "…same text as narrowed html, markers as <sup data-fn=\"12\"></sup>…",
+      // `kind` omitted when "prose"; `html` is the only text field.
+      "html": "…narrowed html, markers as <sup data-fn=\"12\"></sup>…",
     },
   ],
-  "text": "…derived: all blocks joined, markers stripped, spaces normalized…",
   "citations": [{ "marker": "12", "text": "AAS 57 (1965) 12" }], // verbatim footnote content, keyed by marker
 }
 ```

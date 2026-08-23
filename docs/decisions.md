@@ -1050,3 +1050,41 @@ Corpus-wide effect: stored `text` and text derived from `html` now agree on
 **14,907 of 14,907 sections** (0 differ, was 2,567), and the site's
 `documentSectionText` reproduces the corpus exactly rather than approximately.
 Validation is unchanged from baseline: 29/3 in phase 1, 266/41/10 in phase 2.
+
+## 2026-08-22 — One representation: html, and nothing derived from it
+
+`text_marked` and the section's `text` are no longer stored. A document block
+is `html` plus an optional `kind`/`attribution`; a section is `n`, `blocks`,
+`citations`.
+
+The argument for keeping them was that `text_marked` is the round-trip
+oracle's expected value, and an oracle whose expected value is derived from
+the thing under test checks nothing. That was true while the check compared a
+fresh derivation against a recorded one. It stopped being true the moment the
+check moved into `validate_document` (entry above): both sides are now
+computed in the same process from the same source string, so the oracle is
+exactly as strong with nothing on disk. Storing the copy was never what made
+the check work — computing both was.
+
+What the stored copies were actually buying, once that is seen clearly:
+33 MB of corpus, a fat-corpus/thin-shipped split with a `thinDocumentSections`
+pass and a guard for blocks it could not strip, a second text format every
+reader had to branch on, and two more optional fields in the types. Removed
+together, including the 47-line stripping helper written earlier the same day
+— it existed only to undo a duplication that should not have been created.
+
+**One real consumer had to change.** `build-xrefs.mjs` reads block prose to
+find Scripture references in running text, and read `text_marked`. It now
+derives from `html`, which makes it the third implementation of the
+tag-to-text rule (after the pipeline's `strip_tags` and the site's
+`inlineText`) — a genuine cost, paid because a build script run by bare
+`node` cannot import the TypeScript one. It is kept small and cross-referenced
+in all three places. Verified equivalent rather than assumed: the rebuilt
+index is byte-identical in shape to the baseline, 1,925 document entries /
+5,358 refs and 1,303 CCC entries / 3,812 refs before and after.
+
+Corpus 80 MB → 47 MB, build 42 MB, validation unchanged (29/3 phase 1,
+266/41/10 phase 2). The CCC, Compendium and prayers are untouched: they store
+`text_marked`/`text` and have no `html` at all, so they keep both fields until
+that migration lands. `CccBlock.text_marked` stays optional for exactly that
+reason, and `documentSectionText` keeps the fallback branch for them.

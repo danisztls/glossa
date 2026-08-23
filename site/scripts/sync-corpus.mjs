@@ -120,54 +120,6 @@ function byteLength(data) {
 	return Buffer.byteLength(JSON.stringify(data));
 }
 
-/**
- * A document's sections with the two DERIVABLE copies of the prose removed:
- * each block's `text_marked` and each section's `text`.
- *
- * KEEP THE CORPUS FAT, SHIP THIN. `corpus/works/` stores the same prose three
- * times — `html`, `text_marked` and `text` are 33%/32%/32% of a document's
- * payload, 97% between them — and that redundancy is load-bearing where it
- * lives: `html_to_text(html) == text_marked` is the round-trip oracle the
- * scraper checks over all ~14,900 sections on every run, and an oracle whose
- * expected value is derived from the thing under test checks nothing. The
- * SITE runs no such check, so shipping the copies buys it nothing: `html` is
- * a strict superset, and `inlineHtml.inlineText()` is the same derivation in
- * TypeScript.
- *
- * Worth doing even though brotli already collapses most of the duplication
- * (a whole file goes 827 → 292 KB raw but only 95 → 84 KB compressed, ~12%):
- * the win is on the client, where it is the raw bytes that are parsed and
- * held — roughly a third of the `JSON.parse` cost and of the retained heap
- * per open document, on a payload the memoizing content tier keeps for the
- * session.
- *
- * Returns a COPY. The caller's array is still referenced by
- * `documentEditions` for the Scripture cross-reference pass, which reads
- * `block.text_marked` (`build-xrefs.mjs`).
- */
-function thinDocumentSections(workId, sections) {
-	return sections.map((section) => {
-		const blocks = section.blocks.map((block) => {
-			// `html` is what the reader is derived FROM, so a block without it
-			// would lose its words entirely rather than degrade. Every one of
-			// the corpus's document blocks has it; this fails the build rather
-			// than trusting that to stay true, because the failure it guards
-			// against is silent and only visible as missing text on a page.
-			if (!block.html) {
-				throw new Error(
-					`sync-corpus: ${workId} has a block with no \`html\`; refusing to drop ` +
-						`\`text_marked\`, which is the only other copy of its text. ` +
-						`(text_marked: ${JSON.stringify((block.text_marked ?? '').slice(0, 80))})`
-				);
-			}
-			const { text_marked: _dropped, ...rest } = block;
-			return rest;
-		});
-		const { text: _alsoDropped, ...restOfSection } = section;
-		return { ...restOfSection, blocks };
-	});
-}
-
 rmSync(destDir, { recursive: true, force: true });
 
 const worksSrc = path.join(corpusDir, 'works');
@@ -494,21 +446,19 @@ for (const workId of workIds) {
 		const [, slug, docLang] = workId.split('.');
 		documentEditions.push({ slug, lang: docLang, sections });
 
-		// SHIPPED THIN, and chunked. `thinDocumentSections` drops the two
-		// derivable copies of the prose; the loop below splits what's left the
-		// way the CCC is split. Both are done on a COPY: `documentEditions`
-		// above still holds the fat array, and `build-xrefs.mjs` reads
-		// `block.text_marked` out of it — stripping in place would silently
-		// empty the Scripture cross-reference table.
-		const thin = thinDocumentSections(workId, sections);
-		// From the already-sorted index above rather than from `thin`'s last
-		// element: nothing guarantees `sections.json` is written in `n` order,
-		// and a single out-of-order row would silently truncate the last chunk.
+		// Chunked, and shipped verbatim: there is nothing to strip. The corpus
+		// stores `html` and nothing derived from it (docs/corpus-schema.md),
+		// so what is written here is what was read. The fat-corpus/thin-shipped
+		// split this used to perform went away with the derived fields.
+		//
+		// From the already-sorted index rather than from the last element:
+		// nothing guarantees `sections.json` is written in `n` order, and a
+		// single out-of-order row would silently truncate the last chunk.
 		const sorted = documentIndex[workId].sectionNumbers;
 		const maxN = sorted.length ? sorted[sorted.length - 1] : 0;
 		for (let start = 1; start <= maxN; start += DOCUMENT_CHUNK_SIZE) {
 			const end = start + DOCUMENT_CHUNK_SIZE - 1;
-			const chunk = thin.filter((s) => s.n >= start && s.n <= end);
+			const chunk = sections.filter((s) => s.n >= start && s.n <= end);
 			if (chunk.length === 0) continue;
 			const chunkName = `${String(start).padStart(4, '0')}-${String(end).padStart(4, '0')}`;
 			const relPath = `content/${workId}/sections/${chunkName}.json`;

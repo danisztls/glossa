@@ -39,7 +39,7 @@ import { toVulgateCandidates } from '../src/lib/versification.ts';
  *
  * Any numbered unit carrying an apparatus — a CCC paragraph, a document
  * section. Only the two fields read here are named.
- * @typedef {{ n: number, citations?: Citation[], blocks?: { text_marked?: string }[] }} Unit
+ * @typedef {{ n: number, citations?: Citation[], blocks?: { text_marked?: string, html?: string }[] }} Unit
  */
 
 /**
@@ -148,6 +148,44 @@ function mergeRefs(refs) {
  * normalized first for the same reason — the renderer does it too.
  */
 /**
+ * A block's plain prose, from whichever form it carries.
+ *
+ * Documents store `html` ONLY (docs/corpus-schema.md); the CCC and Compendium
+ * still store `text_marked` and have no `html` yet. This reads either, so the
+ * one call site below does not branch on work type.
+ *
+ * THIS IS THE THIRD IMPLEMENTATION of one rule -- `strip_tags`/`html_to_text`
+ * in `pipeline/scrapers/vatican_docs.py` and `inlineText` in
+ * `src/lib/inline-html.ts` are the other two -- and that is a real cost, paid
+ * because a build script run by bare `node` cannot import the TypeScript one.
+ * It is kept honest by being tiny and by the corpus's own round-trip check;
+ * if it ever needs to grow past this, extract the TS version to plain JS and
+ * import it in all three places rather than editing a fourth copy.
+ *
+ * The rules, matching those two: an emphasis tag leaves NOTHING behind (a
+ * tag is not a word boundary -- decisions.md, 2026-08-22), `<br>` and every
+ * other tag leave a space, footnote markers contribute nothing whether they
+ * arrive as `<sup data-fn>` elements or as bare ⟦n⟧ tokens.
+ *
+ * @param {{ text_marked?: string, html?: string }} block
+ * @returns {string}
+ */
+function blockProse(block) {
+	if (block.html) {
+		return block.html
+			.replace(/<sup\s+data-fn="[^"]*"><\/sup>/g, '')
+			.replace(/<\/?(?:i|b|sup)\b[^>]*>/g, '')
+			.replace(/<[^>]+>/g, ' ')
+			.replace(/&lt;/g, '<')
+			.replace(/&gt;/g, '>')
+			.replace(/&amp;/g, '&')
+			.replace(/\s+/g, ' ')
+			.trim();
+	}
+	return (block.text_marked ?? '').replace(/⟦[^⟧]*⟧/g, '');
+}
+
+/**
  * @param {Unit} unit
  * @param {string} lang
  * @returns {ScriptureRef[]}
@@ -169,7 +207,7 @@ function refsForUnit(unit, lang) {
 	// first: they mark where the numbered notes and the inline locators stood,
 	// and both were already read from `citations` above.
 	for (const block of unit.blocks ?? []) {
-		const prose = (block.text_marked ?? '').replace(/⟦[^⟧]*⟧/g, '');
+		const prose = blockProse(block);
 		for (const seg of linkifyProse(prose, { lang })) {
 			if (seg.kind === 'scripture') out.push(...toVulgateRefs(seg));
 		}

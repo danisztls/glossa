@@ -1215,10 +1215,22 @@ class BlockOut:
         # the rule. Now every `"kind"` in a document marks a real one, and
         # `grep -c '"kind"'` is the census of them. The field stays worth
         # carrying: it is 11% of CCC blocks and 4% of the Compendium's.
+        #
+        # ONE REPRESENTATION: `html`, and nothing derived from it. `text_marked`
+        # used to be stored beside it as the round-trip oracle's expected
+        # value, which was a real argument while the check compared a fresh
+        # derivation against a recorded one. It stopped being one when the
+        # check moved into `validate_document`: both sides are now computed
+        # in this process from the same source string, so the oracle is
+        # exactly as strong with nothing on disk. What the stored copy was
+        # actually buying was 32 MB, a fat-corpus/thin-shipped split, and a
+        # second format every reader had to branch on.
+        #
+        # `self.text` stays alive in memory -- `Section.resolve` reads it to
+        # find ⟦n⟧ markers, and the round-trip check compares against it.
         d: dict = {}
         if self.kind != "prose":
             d["kind"] = self.kind
-        d["text_marked"] = self.text
         d["html"] = self.html
         if self.attribution:
             d["attribution"] = self.attribution
@@ -1291,10 +1303,14 @@ class Section:
         self.text = re.sub(r"\s+", " ", flat).strip()
 
     def to_dict(self) -> dict:
+        # No `text` either -- same reasoning as `BlockOut.to_dict`. It was the
+        # blocks joined with markers stripped, so it is derivable from them
+        # twice over; the site's `documentSectionText` is that derivation, and
+        # it now matches this section for section rather than approximately
+        # (docs/decisions.md, 2026-08-22).
         return {
             "n": self.n,
             "blocks": [b.to_dict() for b in self.blocks],
-            "text": self.text,
             "citations": self.citations,
         }
 

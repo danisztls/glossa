@@ -56,17 +56,7 @@ describe('document chunking', () => {
 });
 
 describe('documentSectionText', () => {
-	it('returns the stored text when the section still carries one', () => {
-		const section = {
-			n: 1,
-			blocks: [{ html: 'ignored' }],
-			text: 'the stored value',
-			citations: []
-		};
-		expect(documentSectionText(section)).toBe('the stored value');
-	});
-
-	it('derives from html when the shipped section has no text', () => {
+	it('derives from html — the corpus stores no `text` to read', () => {
 		const section = {
 			n: 1,
 			blocks: [{ html: 'Constitution <i>Esti minime</i>.' }, { html: 'A second block.' }],
