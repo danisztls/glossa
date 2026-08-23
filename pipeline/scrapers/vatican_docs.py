@@ -1554,9 +1554,34 @@ def _gap_block(gap_html: str, marker_template: str) -> Block | None:
     every one of the other 328 works) fails match_para_num immediately
     and yields nothing, so this is a pure addition: no existing block's
     classification changes, and nothing that couldn't already open a
-    section elsewhere in the corpus can suddenly open one here."""
-    if match_para_num(gap_html) is None:
-        return None
+    section elsewhere in the corpus can suddenly open one here.
+
+    UNNUMBERED GAPS ARE KEPT TOO, as of 2026-08-23, and that is the larger
+    half. The original gate above required the gap itself to open with a
+    paragraph number, which recovered `aeterna-dei.pt`'s case and dropped
+    every other kind of unwrapped text on the floor exactly as before. Two
+    Portuguese editions turn out to be built almost entirely that way --
+    alternating a <p>-wrapped sentence with a bare text node sitting directly
+    in the parent <div> -- and lost half their prose to it:
+
+        mortalium-animos.pt   50.1% coverage, ~36 prose blocks gone
+        humanae-vitae.pt      78.9% coverage, 18 continuation sentences gone
+
+    `humanae-vitae.pt` is why this went unnoticed for so long: 31 sections
+    against the English edition's 31, so cross-language symmetry passes, and
+    the loss is *inside* the sections where the round-trip check cannot look.
+    Corpus-wide the recoverable text is 216,671 characters, 1.24% of all body
+    text, concentrated in 43 files (`audit.py coverage`).
+
+    DELIBERATELY TEXT ONLY. A bare `<i><b>Title</b></i>` between two blocks is
+    a heading in the source, and this returns it as prose. Promoting it would
+    change heading detection for the whole corpus, which is a separate
+    decision needing its own blast-radius measurement -- and losing a
+    heading's rank is a much smaller harm than losing the paragraph's words.
+    A whitespace-only gap -- the overwhelming majority, ordinary inter-block
+    newlines in every one of the other works -- still yields nothing, because
+    it has no text.
+    """
     marked = mark_footnotes(gap_html, marker_template)
     text = strip_tags(marked)
     if not text:

@@ -1256,3 +1256,62 @@ exists, and is a hard error: either withhold the work or repair the parse.
 `gravissimum-educationis.en` shows why the marker is worth gating on
 independently of coverage — at 85.7% it passes any text-volume floor, and is
 still divided wrongly enough that a citation points at the wrong paragraph.
+
+## 2026-08-23 — `_gap_block` keeps unnumbered text too
+
+**What**: the gate in `_gap_block` (`vatican_docs.py`) no longer requires a
+recovered gap to open with a paragraph number.
+
+**Why.** The parser already walked the text between consecutive `_BLOCK_RE`
+matches — that infrastructure was added for `aeterna-dei.pt` — but returned
+nothing unless the gap itself began `N.`, so a bare continuation sentence or a
+bare `<i><b>` heading was dropped exactly as before. Corpus-wide that was
+**216,671 characters, 1.24% of all body text, in 43 files**.
+
+This was considered against migrating block enumeration to a DOM parse. The
+DOM's real advantage is *addressability* — HTML5 parsing does not wrap stray
+text in `<p>`, it just makes the text node reachable — and the gap walk
+already provides that. Migrating would also have put four documented
+behaviours at risk, all encoded in `_BLOCK_RE`: the `<p(?=[\s>])` guard
+against inline SVG `<path>`, `<center>` as one block wrapping label plus
+subtitle (a Vatican II finding), `<blockquote>` as `kind: "quote"`, and
+non-overlapping `finditer`. Relaxing one gate risks none of them.
+
+**Deliberately text only.** A bare `<i><b>Title</b></i>` is returned as prose,
+not promoted to a heading, because promotion would change heading detection
+corpus-wide and needs its own measurement. Losing a heading's rank is a much
+smaller harm than losing the paragraph's words.
+
+**Measured, per `writing-descriptions.md`'s procedure**: `phase1` +
+`phase2 --overwrite`, **zero network fetches in phase 2** and `raw/` untouched
+(phase 1's 36 are translation probes). Against the pre-change snapshot of all
+684 artifacts:
+
+|                                | result           |
+| ------------------------------ | ---------------- |
+| median coverage                | 98.06% → 98.20%  |
+| works improving > 0.5pp        | 20               |
+| **coverage regressions**       | **0**            |
+| `mortalium-animos.pt`          | 50.1% → **98.4%** |
+| `humanae-vitae.pt`             | 78.9% → **97.9%** |
+| `sections.json` changed        | 6                |
+| `structure.json` changed       | 80               |
+
+**The 80 structure changes are the interesting part**, and they are why the
+ToC oracle was built first. Recovered blocks feed `promote_italic_heading_run`,
+which then finds heading runs that were never visible to it — so structure
+improves without any change to heading detection itself. The oracle judged it:
+across the 12 works with a recorded ToC, differences fell **79 → 67**,
+`humanae-vitae.pt` went from 12 disagreements to **full agreement** (its 12
+lost sub-headings are back), and **no work gained a disagreement**. That is
+the check that a change touching 80 files it did not target is an improvement
+rather than a drift.
+
+`mortalium-animos.pt` is the honest limit: its text is recovered but its 19
+inline mini-headings still do not reach the structure tree, because their
+markup varies across three variants and the run rule does not catch them.
+Text yes, headings no — exactly the scope chosen above.
+
+**Also fixed**: `--overwrite`'s help says "no network", and phase 2 measured
+0 — but a phase-2 run still fetches pontiff index pages during discovery (6 on
+a single-slug run). The flag governs document re-parsing, not discovery.

@@ -203,7 +203,15 @@ def compare_toc(read: list[dict], parsed: list[dict], masthead: set[str] = froze
         # top node. It is a masthead, not a division, and the oracle records
         # divisions -- so counting it as EXTRA would make every genuinely
         # undivided work disagree with its own correct oracle, forever.
-        if title in masthead:
+        if title in masthead or (
+            not parsed_by
+            and any(m and title.startswith(m + " ") for m in masthead)
+        ):
+            # The manifest title comes from the URL slug and is often a
+            # truncation of what the page actually prints: `ecclesiam.en` is
+            # titled "Ecclesiam" and its masthead reads "ECCLESIAM SUAM". The
+            # prefix rule applies only to the FIRST parsed node, where a
+            # masthead is the only thing that can sit.
             continue
         parsed_by.setdefault(title, []).append(node)
 
