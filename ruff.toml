@@ -1,0 +1,48 @@
+# Ruff configuration for `pipeline/`, which is all the Python in this
+# repository. The scrapers are standalone PEP 723 `uv run --script` files, so
+# there is no package to declare and no `pyproject.toml` for a `[tool.ruff]`
+# table to live in; this file is the whole Python tooling surface.
+#
+# `.githooks/pre-commit` runs `ruff format --check` and `ruff check` over the
+# staged content of every touched `.py` file. Enable it once per clone with
+# `git config core.hooksPath .githooks`.
+
+# The oldest `requires-python` among the scripts (bible/cpdv.py and
+# bible/vulgate.py say 3.11; everything else says 3.12). Keep this at the
+# floor, or the UP rules will start suggesting syntax those two cannot run.
+target-version = "py311"
+line-length = 88
+
+[lint]
+# Ruff's default selection is E4/E7/E9 + F, and it has widened between
+# releases; pinning the set here means an upgrade does not silently change
+# what a commit is checked against.
+select = [
+  "E",    # pycodestyle errors
+  "W",    # pycodestyle warnings
+  "F",    # pyflakes
+  "I",    # import sorting
+  "UP",   # pyupgrade
+  "B",    # bugbear
+  "SIM",  # flake8-simplify
+  "C4",   # comprehensions
+  "PIE",  # misc lints
+  "RET",  # return statements
+  "PTH",  # prefer pathlib over os.path -- the scrapers already do; this holds the line
+  "DTZ",  # naive datetimes: provenance timestamps must carry a timezone
+  "ISC",  # implicit string concatenation, i.e. the missing comma in a list of literals
+  "RUF",  # ruff's own
+  "FURB", # refurb
+]
+ignore = [
+  # Wrapping belongs to the formatter, and the formatter cannot split a long
+  # string. Source URLs, XPath-ish selectors and verbatim excerpts run past 88
+  # and there is nothing useful to do about it.
+  "E501",
+  # Ambiguous-unicode. The corpus is Latin, Portuguese and Greek prose;
+  # curly quotes, accents and Greek letters in string literals are the point
+  # of this project, not a homoglyph attack.
+  "RUF001",
+  "RUF002",
+  "RUF003",
+]

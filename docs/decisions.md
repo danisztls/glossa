@@ -1773,3 +1773,60 @@ baseline, run offline from a copy of the corpus, with the 1,606-file `works/`
 tree unchanged; a no-change re-run still rewrites 0 files; the three analysis
 tools still start; and the site's 448 tests pass after the path references in
 its comments were updated.
+
+## 2026-08-23 — Ruff, and a git hook rather than npm scripts
+
+**What**: `ruff.toml` at the repo root, and `.githooks/pre-commit` running ruff
+over staged Python. Enabled per clone with `git config core.hooksPath
+.githooks`; bypassed with `git commit --no-verify`.
+
+**Config in `ruff.toml`, not `pyproject.toml`.** There is no Python package
+here — every scraper is a standalone PEP 723 `uv run --script` file with its
+own `requires-python` and `dependencies`. A `pyproject.toml` would exist only
+to carry a `[tool.ruff]` table, and would imply a distribution that does not
+exist. `target-version = "py311"` is the floor across the scripts (`bible/cpdv.py`
+and `bible/vulgate.py` say 3.11), not the median: set higher, the UP rules
+start proposing syntax those two cannot run.
+
+**The rule set is pinned, not defaulted.** Ruff's default selection has widened
+across releases — the same tree reported 12 findings under 0.16's defaults and
+40 under the set chosen here — so relying on the default means an upgrade
+silently changes what a commit is checked against. Selected: E, W, F, I, UP, B,
+SIM, C4, PIE, RET, PTH, DTZ, ISC, RUF, FURB. Two deliberate exclusions, both
+about this corpus rather than about taste: **E501**, because the formatter owns
+wrapping and cannot split a long string literal, and source URLs and verbatim
+excerpts run past 88; and **RUF001/2/3** (ambiguous unicode), because Latin,
+Portuguese and Greek prose with curly quotes and accents is the content, not a
+homoglyph attack. DTZ and ISC earn their place here specifically: provenance
+timestamps must carry a timezone, and a list of string literals missing a comma
+is exactly how a scraper's notes silently lose an entry.
+
+**A hook rather than npm scripts.** They answer different questions — an npm
+script says _how_ to invoke a check, a hook says _when it runs_. There is no CI
+(a deploy ships one person's working tree), so the alternative to a hook is not
+"npm runs it instead", it is nothing running it. And the repo root has no
+`package.json`; adding one whose job is to lint Python would put Node tooling in
+front of a `uv` pipeline that has no other Node dependency, while `site/` already
+owns `format`/`check`/`test` for itself. The hook is therefore Python-only.
+
+**The hook checks the index, not the working tree.** Each staged file is piped
+from `git show :path` into `ruff ... --stdin-filename`, so an unstaged fix
+cannot make a broken commit pass and an unstaged breakage cannot fail a clean
+one. `ruff format --check` on stdin prints nothing and only sets an exit status,
+so the hook names the offending files itself.
+
+**The cleanup that came with it**: 3 files reformatted and 57 findings resolved
+— 37 autofixed, 20 by hand. Nothing was configured around. The only two worth
+naming: a `lambda` in `ccc.py`'s validator closed over the loop variable
+`citation_labels` (B023), safe today because `re.sub` calls it within the same
+iteration, and now bound as a default argument; and both `zip()` calls gained
+`strict=True`, where the surrounding code already asserts the lengths match, so
+a future mismatch raises instead of silently truncating.
+
+**Verified**: all 19 files byte-compile, all 10 entry points still start, and
+`check-symmetry`, `audit all` and `census --headings` over 25 encyclical/council
+works produce output byte-identical to the same commands run from a worktree at
+the previous commit. The corpus was not re-parsed; every change is
+output-neutral by construction (inlined returns, `contextlib.suppress`,
+`unlink(missing_ok=True)`, `date()` for a calendar-validity test, and
+re-wrapped f-strings whose concatenations were checked to be character-identical).

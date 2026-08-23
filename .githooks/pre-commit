@@ -1,0 +1,54 @@
+#!/bin/sh
+# Ruff over the Python being committed. Rules live in ../ruff.toml.
+#
+#   enable (once per clone):  git config core.hooksPath .githooks
+#   bypass (once):            git commit --no-verify
+#
+# This checks the INDEX, not the working tree: each file is piped from
+# `git show :path`, so an unstaged fix cannot make a broken commit pass and an
+# unstaged breakage cannot fail a clean one. That is why the checks run per
+# file over stdin rather than as one `ruff check pipeline/`.
+
+set -eu
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR -z -- '*.py' | tr '\0' '\n')
+[ -n "$staged" ] || exit 0
+
+if command -v ruff >/dev/null 2>&1; then
+	RUFF="ruff"
+elif command -v uvx >/dev/null 2>&1; then
+	RUFF="uvx ruff"
+else
+	echo "pre-commit: no ruff on PATH, and no uvx to borrow one from." >&2
+	echo "            install ruff, or commit with --no-verify." >&2
+	exit 1
+fi
+
+# Split on newlines only, so a path with spaces survives, and so the loop runs
+# in this shell rather than a pipeline subshell where the tallies would vanish.
+IFS='
+'
+unformatted=""
+lint_failed=0
+
+for f in $staged; do
+	# `ruff format --check` on stdin says nothing and only sets its exit
+	# status, so the file name has to be reported here.
+	git show ":$f" | $RUFF format --check --stdin-filename "$f" - >/dev/null 2>&1 ||
+		unformatted="$unformatted  $f
+"
+	git show ":$f" | $RUFF check -q --no-cache --stdin-filename "$f" - || lint_failed=1
+done
+
+if [ -n "$unformatted" ]; then
+	echo "pre-commit: not formatted:" >&2
+	printf '%s' "$unformatted" >&2
+fi
+
+if [ -n "$unformatted" ] || [ "$lint_failed" -ne 0 ]; then
+	echo >&2
+	echo "pre-commit: staged Python did not pass ruff." >&2
+	echo "  fix:    ruff format pipeline && ruff check --fix pipeline   (then git add)" >&2
+	echo "  bypass: git commit --no-verify" >&2
+	exit 1
+fi

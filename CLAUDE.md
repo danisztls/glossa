@@ -80,6 +80,36 @@ wrong yields paths that are merely _absent_ rather than obviously wrong --
 `load_corrections` reads a missing directory as "no corrections filed", which
 is a silent, corpus-wide no-op.
 
+## Linting the pipeline: ruff, and a hook that is not installed for you
+
+Rules live in `ruff.toml` at the repo root -- not a `pyproject.toml`, because
+the scrapers are standalone PEP 723 `uv run --script` files and there is no
+package to declare. The selection is pinned rather than left to ruff's
+defaults, which have widened between releases.
+
+```sh
+ruff format pipeline && ruff check --fix pipeline
+```
+
+**A fresh clone has no hook until you enable it**, because git will not run
+anything from a tracked directory by itself:
+
+```sh
+git config core.hooksPath .githooks     # once per clone
+```
+
+`.githooks/pre-commit` then runs `ruff format --check` and `ruff check` over
+the **staged content** of every touched `.py` file -- piped from `git show
+:path`, so an unstaged fix cannot make a broken commit pass, and an unstaged
+breakage cannot fail a clean one. It uses `ruff` from `PATH`, falls back to
+`uvx ruff`, and `git commit --no-verify` bypasses it. Note that `git config`
+writes `.git/config`, which the sandbox masks with `/dev/null`; run that one
+line with the sandbox off.
+
+The site is not in the hook's scope. It has its own `npm run format` /
+`check` / `test`, and reaching up out of `site/` to gate Python on Node
+tooling buys nothing (`docs/decisions.md`, 2026-08-23).
+
 ## Scraping vatican.va
 
 - `robots.txt` says `Crawl-delay: 2`. This is a commitment in

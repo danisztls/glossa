@@ -11,6 +11,8 @@
 # Python
 __pycache__/
 .venv/
+.ruff_cache/
+.pytest_cache/
 
 # Node / SvelteKit
 node_modules/
