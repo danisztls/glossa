@@ -114,6 +114,87 @@ def require_corpus() -> Path:
     return path
 
 
+_dir_indexes: dict[Path, frozenset[str]] = {}
+
+
+def filed_work_ids(directory: Path) -> frozenset[str]:
+    """Which work_ids have a `.json` filed in `directory`, listed once.
+
+    `load_corrections` and `load_overrides` run once per document, and both
+    began by asking the filesystem whether one specific file existed. Over a
+    full run that was 717 `exists()` calls to locate the 12 files that are
+    actually there -- 422 for corrections against 18 filed, 307 for overrides
+    against 5. One `iterdir()` answers all of them from memory.
+
+    Cached for the life of the process, which is the life of a run. A
+    corrections file appearing *while* a run is in flight is not a case this
+    pipeline has, and treating the layer as a snapshot for the duration is the
+    same posture the drift guards already take -- they compare against what
+    was filed when the run started, not against a moving target.
+
+    A missing directory reads as empty rather than raising: `pipeline/overrides/`
+    being absent is a legitimate state (no override has ever been needed), and
+    the emptiness of that layer is documented as a feature."""
+    idx = _dir_indexes.get(directory)
+    if idx is None:
+        try:
+            idx = frozenset(
+                entry.stem for entry in directory.iterdir() if entry.suffix == ".json"
+            )
+        except (FileNotFoundError, NotADirectoryError):
+            idx = frozenset()
+        _dir_indexes[directory] = idx
+    return idx
+
+
+def read_text_or_none(path: Path) -> str | None:
+    """The file's text, or None if it is not there or not readable as UTF-8.
+
+    One syscall where `path.exists()` followed by `path.read_text()` was two,
+    and without the race between them. Used wherever an absent file is an
+    ordinary outcome rather than an error."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+
+
+def file_has_text(path: Path, text: str) -> bool:
+    """Is `path` exactly `text` already?
+
+    Checks the SIZE first, which is one `stat` against a full read. JSON that
+    has genuinely changed almost never lands on the same byte count, so the
+    common changed case is settled without reading the file at all -- which
+    matters because the caller is about to overwrite it anyway. Only a
+    size match pays for the read that decides it."""
+    encoded = text.encode("utf-8")
+    try:
+        if path.stat().st_size != len(encoded):
+            return False
+        return path.read_bytes() == encoded
+    except OSError:
+        return False
+
+
+def write_if_changed(path: Path, text: str) -> bool:
+    """Write `text` to `path` only when that is not already its content.
+
+    A re-parse rewrote every file in `works/` on every run -- 18.1 MB of
+    sections.json and structure.json alone -- whether or not the parser had
+    changed its mind about a single byte. Now that `works/` is tracked in git
+    (docs/decisions.md, 2026-08-23) the second cost is the one that bites: a
+    diff in which all 1,229 files look touched cannot show which document a
+    parser fix actually moved, which is the entire reason for tracking it.
+
+    A trade rather than a pure saving -- it reads on every document to skip a
+    write on the unchanged ones. That is the right way round here, because the
+    expected case after a parser fix is that most documents are unaffected."""
+    if file_has_text(path, text):
+        return False
+    path.write_text(text, encoding="utf-8")
+    return True
+
+
 class AbsentSources:
     """URLs the source answered 404/410 for, so a re-run stops asking.
 
@@ -152,8 +233,9 @@ class AbsentSources:
     def __init__(self, path: Path = ABSENT_SOURCES_PATH):
         self.path = path
         self.entries: dict[str, dict] = {}
-        if path.exists():
-            for entry in json.loads(path.read_text(encoding="utf-8")):
+        raw = read_text_or_none(path)
+        if raw:
+            for entry in json.loads(raw):
                 self.entries[entry["url"]] = entry
         self._loaded = dict(self.entries)
         self.skipped = 0  # requests this ledger prevented
@@ -263,9 +345,9 @@ def load_overrides(work_id: str) -> list[dict]:
     latter, and each was fixed in the parser where it repaired between 275
     and 14,924 units at once. The layer exists for what genuinely does not
     generalise, and its emptiness is a feature."""
-    path = OVERRIDES_DIR / f"{work_id}.json"
-    if not path.exists():
+    if work_id not in filed_work_ids(OVERRIDES_DIR):
         return []
+    path = OVERRIDES_DIR / f"{work_id}.json"
     return json.loads(path.read_text(encoding="utf-8"))
 
 
@@ -425,9 +507,9 @@ def load_corrections(work_id: str) -> list[dict]:
     documented defect, and the layer is expected to apply zero corrections
     while still proving it ran (each scraper's own drift guard).
     """
-    path = CORRECTIONS_DIR / f"{work_id}.json"
-    if not path.exists():
+    if work_id not in filed_work_ids(CORRECTIONS_DIR):
         return []
+    path = CORRECTIONS_DIR / f"{work_id}.json"
     entries = json.loads(path.read_text(encoding="utf-8"))
     # Ids must be unique within a file: `apply_raw_text_corrections` records
     # each applied id in a `seen_ids` set and skips anything already there,

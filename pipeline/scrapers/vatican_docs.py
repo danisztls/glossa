@@ -240,9 +240,12 @@ from common import (
     OverrideDriftError,
     apply_overrides,
     corpus_dir,
+    file_has_text,
     load_corrections,
     load_overrides,
+    read_text_or_none,
     require_corpus,
+    write_if_changed,
 )
 
 USER_AGENT = "Glossa Catholica corpus builder"
@@ -358,8 +361,13 @@ class Fetcher:
         docstring claims it is -- it was making 36 requests per run, all of
         them to URLs that 404, until this existed."""
         cache_path = self.cache_dir / cache_name
-        if cache_path.exists():
+        try:
+            # One syscall rather than exists()-then-read: 445 of the former per
+            # full run, every one of them immediately followed by the read it
+            # had just proved possible.
             return cache_path.read_bytes(), None
+        except OSError:
+            pass
         if not self.recheck_absent:
             known = self.absent.knows(url)
             if known is not None:
@@ -2529,26 +2537,27 @@ def find_paragraph_number_correction(
     return None
 
 
-def write_corrections_receipt(
-    work_dir: Path,
+def _json_text(value) -> str:
+    """The corpus's one JSON spelling: indent 2, real UTF-8, trailing newline."""
+    return json.dumps(value, indent=2, ensure_ascii=False) + "\n"
+
+
+def corrections_receipt(
     work_id: str,
     applied: list[dict],
     corrections: list[dict],
     generated_at: str,
-) -> int:
-    unresolved = [c for c in corrections if c.get("resolution")]
-    receipt = {
+) -> dict:
+    """The corrections receipt as a value. Split from writing it so the same
+    payload can be built twice with two different timestamps -- once to compare
+    against what is on disk, once to write -- see write_document_outputs."""
+    return {
         "work_id": work_id,
         "generated_at": generated_at,
         "applied": applied,
-        "unresolved": unresolved,
+        "unresolved": [c for c in corrections if c.get("resolution")],
         "count": len(applied),
     }
-    work_dir.mkdir(parents=True, exist_ok=True)
-    (work_dir / "corrections-applied.json").write_text(
-        json.dumps(receipt, ensure_ascii=False, indent=2) + "\n"
-    )
-    return len(applied)
 
 
 def apply_raw_text_corrections(
@@ -3939,50 +3948,68 @@ def write_document_outputs(
     # operation -- e.g. after a parser fix) would otherwise silently wipe
     # it. Preserved here rather than trusting every future caller to
     # remember to re-run reconciliation afterward.
-    existing_path = out_dir / "manifest.json"
-    if existing_path.exists() and "translations" not in manifest:
-        try:
-            existing = json.loads(existing_path.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
-            existing = {}
-        if "translations" in existing:
-            manifest["translations"] = existing["translations"]
-    (out_dir / "manifest.json").write_text(
-        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
-    )
-    (out_dir / "structure.json").write_text(
-        json.dumps(structure, indent=2, ensure_ascii=False) + "\n"
-    )
-    (out_dir / "sections.json").write_text(
-        json.dumps(sections, indent=2, ensure_ascii=False) + "\n"
-    )
-    write_corrections_receipt(
-        out_dir,
-        work_id,
-        state.corrections_applied,
-        state.corrections,
-        manifest["generated_at"],
-    )
-    # Written only when there are overrides, so the file's presence is itself
-    # the signal that this work needed hand-holding -- `ls corpus/works/*/
-    # overrides-applied.json` is the census of where the parser gave up.
-    receipt_path = out_dir / "overrides-applied.json"
-    if overrides_applied:
-        receipt_path.write_text(
-            json.dumps(
+    raw_manifest = read_text_or_none(out_dir / "manifest.json")
+    try:
+        existing = json.loads(raw_manifest) if raw_manifest else None
+    except json.JSONDecodeError:
+        existing = None
+    if existing and "translations" not in manifest and "translations" in existing:
+        manifest["translations"] = existing["translations"]
+
+    def payloads(stamp: str) -> dict[str, str]:
+        """Every file this document owns, serialised, stamped `stamp`."""
+        out = {
+            "manifest.json": _json_text({**manifest, "generated_at": stamp}),
+            "structure.json": _json_text(structure),
+            "sections.json": _json_text(sections),
+            "corrections-applied.json": _json_text(
+                corrections_receipt(
+                    work_id, state.corrections_applied, state.corrections, stamp
+                )
+            ),
+        }
+        # Written only when there are overrides, so the file's presence is
+        # itself the signal that this work needed hand-holding -- `ls
+        # corpus/works/*/overrides-applied.json` is the census of where the
+        # parser gave up.
+        if overrides_applied:
+            out["overrides-applied.json"] = _json_text(
                 {
                     "work_id": work_id,
-                    "generated_at": manifest["generated_at"],
+                    "generated_at": stamp,
                     "applied": overrides_applied,
                     "count": len(overrides_applied),
-                },
-                ensure_ascii=False,
-                indent=2,
+                }
             )
-            + "\n"
-        )
-    elif receipt_path.exists():
-        receipt_path.unlink()
+        return out
+
+    # DID ANYTHING BUT THE CLOCK MOVE? `generated_at` is regenerated every run
+    # by construction, so comparing the text as written would make every file
+    # that carries one differ every time, and a re-parse would rewrite the
+    # whole corpus to record that a run happened. Compared with the STORED
+    # timestamp substituted in instead: if nothing else moved, the document
+    # keeps the timestamp it had, and `generated_at` comes to mean "when this
+    # content was generated" rather than "when a run last touched the file" --
+    # the former is what makes it worth anything in a git diff.
+    #
+    # All-or-nothing across the document's files: keeping the old timestamp on
+    # a manifest while sections.json changed underneath it would be worse than
+    # rewriting both.
+    stored = (existing or {}).get("generated_at")
+    if stored:
+        probe = payloads(stored)
+        # manifest.json is already in hand from the `translations` lookup
+        # above; re-reading it to compare would be the second read of the same
+        # file in the same function.
+        if probe.pop("manifest.json") == raw_manifest and all(
+            file_has_text(out_dir / name, text) for name, text in probe.items()
+        ):
+            return
+
+    for name, text in payloads(manifest["generated_at"]).items():
+        write_if_changed(out_dir / name, text)
+    if not overrides_applied:
+        (out_dir / "overrides-applied.json").unlink(missing_ok=True)
 
 
 # --------------------------------------------------------------------------
@@ -4183,6 +4210,10 @@ def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
     result["status"] = "validated" if ok else "validation-failed"
     result["problems"] = problems
     result["sections"] = len(parse.state.sections)
+    # Carried so `check_language_symmetry` can answer from memory for the
+    # documents this run parsed, instead of re-reading their sections.json
+    # off disk seconds after writing it -- 14.4 MB per full run.
+    result["section_numbers"] = sorted(parse.state.sections)
     result["range"] = (
         (min(parse.state.sections), max(parse.state.sections))
         if parse.state.sections
@@ -4590,7 +4621,22 @@ def run_phase2(
 _WORK_ID_RE = re.compile(r"^([a-z][a-z-]*)\.(.+)\.(en|pt)$")
 
 
-def check_language_symmetry(works_root: Path = WORKS_ROOT) -> tuple[bool, list[str]]:
+def sections_from_results(results: list[dict]) -> dict[str, list[int]]:
+    """`work_id -> section numbers` for every document a run actually parsed.
+
+    Only the parsed ones: a `no-url`/`already-written`/`fetch-failed` result
+    never saw a section, and inventing an empty set for it would make the
+    symmetry check report a defect where there is only an absence."""
+    return {
+        f"{r['family']}.{r['slug']}.{r['lang']}": r["section_numbers"]
+        for r in results
+        if r.get("section_numbers") is not None
+    }
+
+
+def check_language_symmetry(
+    works_root: Path = WORKS_ROOT, known: dict[str, list[int]] | None = None
+) -> tuple[bool, list[str]]:
     """For every (family, slug) that has a WRITTEN sections.json in BOTH
     "en" and "pt" under works_root, checks that the two languages' sets of
     section numbers are identical -- exactly the check that would have
@@ -4614,7 +4660,16 @@ def check_language_symmetry(works_root: Path = WORKS_ROOT) -> tuple[bool, list[s
     written -- see build_manifest) is treated the same as absent, not as
     an empty section set that would trivially "disagree" with everything.
 
+    `known` is `work_id -> section numbers` for documents the caller has just
+    parsed and still holds in memory. It is a CACHE, not a substitute for the
+    scan: the sweep over works_root still decides which pairs exist, so a run
+    narrowed by --slugs or --pontiffs is still checked against the whole
+    corpus rather than quietly against its own slice. All `known` changes is
+    where the numbers come from for the documents this run produced -- which
+    was 14.4 MB of sections.json re-read seconds after being written.
+
     Returns (ok, problems)."""
+    known = known or {}
     by_pair: dict[tuple[str, str], dict[str, Path]] = {}
     if not works_root.exists():
         return True, []
@@ -4626,16 +4681,24 @@ def check_language_symmetry(works_root: Path = WORKS_ROOT) -> tuple[bool, list[s
             continue
         family, slug, lang = m.groups()
         sections_path = entry / "sections.json"
-        if not sections_path.exists():
+        # A work_id in `known` was written by this run, so its file is there
+        # without asking; anything else has to be checked for.
+        if entry.name not in known and not sections_path.exists():
             continue
         by_pair.setdefault((family, slug), {})[lang] = sections_path
+
+    def numbers(family: str, slug: str, lang: str, path: Path) -> set[int]:
+        cached = known.get(f"{family}.{slug}.{lang}")
+        if cached is not None:
+            return set(cached)
+        return {s["n"] for s in json.loads(path.read_text(encoding="utf-8"))}
 
     problems: list[str] = []
     for (family, slug), langs in sorted(by_pair.items()):
         if "en" not in langs or "pt" not in langs:
             continue  # one language legitimately absent -- not a defect, see docstring
-        en_nums = {s["n"] for s in json.loads(langs["en"].read_text(encoding="utf-8"))}
-        pt_nums = {s["n"] for s in json.loads(langs["pt"].read_text(encoding="utf-8"))}
+        en_nums = numbers(family, slug, "en", langs["en"])
+        pt_nums = numbers(family, slug, "pt", langs["pt"])
         if en_nums != pt_nums:
             only_en = sorted(en_nums - pt_nums)
             only_pt = sorted(pt_nums - en_nums)
@@ -4902,7 +4965,9 @@ def main() -> int:
         summarize(results)
         report_fetching(fetcher)
         ok = all(r["status"] in ("validated", "already-written") for r in results)
-        sym_ok, sym_problems = check_language_symmetry()
+        sym_ok, sym_problems = check_language_symmetry(
+            known=sections_from_results(results)
+        )
         print(
             f"\n=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}"
         )
@@ -4928,7 +4993,9 @@ def main() -> int:
             release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
         report_fetching(fetcher)
-        sym_ok, sym_problems = check_language_symmetry()
+        sym_ok, sym_problems = check_language_symmetry(
+            known=sections_from_results(results)
+        )
         print(
             f"\n=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}"
         )
@@ -4937,6 +5004,8 @@ def main() -> int:
         return 0 if sym_ok else 1
 
     if args.cmd == "check-symmetry":
+        # No `known` here by definition: this subcommand exists to check a
+        # corpus produced by an earlier run, so every number comes off disk.
         sym_ok, sym_problems = check_language_symmetry()
         print(
             f"=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}"
