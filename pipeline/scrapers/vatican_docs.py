@@ -157,6 +157,16 @@ document already written to corpus/works/ is left untouched (use
 --overwrite to force a re-parse of an already-written document from its
 cached raw HTML, no network needed).
 
+"What's still missing" has to include what is missing AT THE SOURCE, or the
+resumption is not free. Ten Pius XI/XII encyclicals have no Portuguese
+translation and two pontificate indexes do not exist; each 404 was retried
+MAX_ATTEMPTS times with backoff on EVERY run, and nothing recorded the
+outcome. That made a supposedly zero-network `--overwrite` cost 36 requests
+and 2m59s of wall clock against 6.5s of CPU. `pipeline/absent-sources.json`
+(common.AbsentSources) now remembers a definitive 404/410 so the next run
+does not ask again, and `--recheck-absent` re-asks when you want to know
+whether a translation has appeared.
+
 NOTE ON THE ROOTS: this file may run from a git worktree
 (.claude/worktrees/*/). Both roots are now derived from __file__, so both
 follow whichever checkout the code being run lives in.
@@ -209,6 +219,7 @@ from urllib.request import Request, urlopen
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
 from common import (
+    AbsentSources,
     OverrideDriftError,
     apply_overrides,
     corpus_dir,
@@ -221,6 +232,10 @@ USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 MAX_ATTEMPTS = 3  # survey measured ~1-in-6-to-8 transient failures, no 403s/CAPTCHA
 RETRY_BACKOFF = [3.0, 8.0]  # seconds, between attempts 1->2 and 2->3
+# Statuses that mean the origin ANSWERED and the answer is "there is no such
+# page". Retrying one cannot change it, and MAX_ATTEMPTS/RETRY_BACKOFF exist
+# for the transient edge failures above, not for these. See AbsentSources.
+DEFINITIVE_ABSENCE = frozenset({404, 410})
 
 # See "NOTE ON THE ROOTS" in the module docstring. The two roots diverged
 # again on 2026-08-23: the corpus moved to its own private repository, so
@@ -292,12 +307,22 @@ def decode_page(data: bytes) -> str:
 
 
 class Fetcher:
-    def __init__(self, cache_dir: Path):
+    def __init__(
+        self,
+        cache_dir: Path,
+        absent: AbsentSources | None = None,
+        recheck_absent: bool = False,
+    ):
         self.cache_dir = cache_dir
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self._last_request = 0.0
         self.network_fetches = 0
         self.retried_ok = 0  # count of fetches that failed once then succeeded
+        # Two caches, and they answer different questions. `cache_dir` holds
+        # what the source said; `absent` holds which URLs it has no page for.
+        # Only the first is the corpus -- see common.AbsentSources.
+        self.absent = absent if absent is not None else AbsentSources()
+        self.recheck_absent = recheck_absent
 
     def _sleep_for_crawl_delay(self) -> None:
         elapsed = time.monotonic() - self._last_request
@@ -307,10 +332,24 @@ class Fetcher:
     def try_fetch(self, url: str, cache_name: str) -> tuple[bytes | None, str | None]:
         """Cached, rate-limited, retrying fetch. Returns (data, error) --
         exactly one is None. Never raises: a document family running into
-        a genuinely dead URL must not kill an otherwise-long crawl."""
+        a genuinely dead URL must not kill an otherwise-long crawl.
+
+        TWO KINDS OF "we already know this". A cached page short-circuits
+        because we have the bytes; a ledgered absence short-circuits because
+        the origin has already told us there are none. Skipping the second
+        is what makes `--overwrite` the zero-network re-parse this module's
+        docstring claims it is -- it was making 36 requests per run, all of
+        them to URLs that 404, until this existed."""
         cache_path = self.cache_dir / cache_name
         if cache_path.exists():
             return cache_path.read_bytes(), None
+        if not self.recheck_absent:
+            known = self.absent.knows(url)
+            if known is not None:
+                return None, (
+                    f"{url}: HTTP Error {known['status']} (recorded absent "
+                    f"{known.get('observed', 'previously')}; --recheck-absent to re-ask)"
+                )
         last_exc: Exception | None = None
         for attempt in range(MAX_ATTEMPTS):
             self._sleep_for_crawl_delay()
@@ -323,11 +362,18 @@ class Fetcher:
                 if attempt > 0:
                     self.retried_ok += 1
                 cache_path.write_bytes(data)
+                # A page that used to 404 and now fetches is the one event
+                # that clears a ledger entry. Unconditional, so a --recheck
+                # run and an ordinary run that reaches a new URL both heal it.
+                self.absent.forget(url)
                 return data, None
             except (HTTPError, URLError) as exc:
                 last_exc = exc
                 self._last_request = time.monotonic()
                 self.network_fetches += 1
+                if isinstance(exc, HTTPError) and exc.code in DEFINITIVE_ABSENCE:
+                    self.absent.record(url, exc.code, context=cache_name)
+                    break
                 if attempt < MAX_ATTEMPTS - 1:
                     time.sleep(RETRY_BACKOFF[attempt])
         return None, f"{url}: {last_exc}"
@@ -4466,20 +4512,55 @@ def summarize(results: list[dict]) -> None:
             )
 
 
+def report_fetching(fetcher: Fetcher) -> None:
+    """The run's network receipt, including what it did NOT have to ask.
+
+    The skipped count is the point: `--overwrite` is supposed to be a
+    zero-network re-parse, and printing only the fetches it made left the 36
+    requests it was making to permanently-absent URLs looking like normal
+    crawl traffic. A run that reports "0 fetches, 12 skipped" says plainly
+    which it was."""
+    absent = fetcher.absent
+    print(
+        f"\nnetwork fetches this run: {fetcher.network_fetches} "
+        f"(retried-then-ok: {fetcher.retried_ok}; "
+        f"requests skipped as known-absent: {absent.skipped})"
+    )
+    for url in absent.added:
+        print(f"  [absent] recorded 404/410, will not re-ask: {url}")
+    for url in absent.forgotten:
+        print(f"  [absent] now exists, dropped from the ledger: {url}")
+    if absent.save():
+        print(f"  [absent] ledger updated: {absent.path}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     sub = ap.add_subparsers(dest="cmd", required=True)
 
-    p1 = sub.add_parser("phase1", help="Vatican II, all 16 documents")
+    # Shared by every subcommand that can reach the network. An absence is
+    # not permanent -- a translation can appear years after we first asked --
+    # so the ledger needs a way to be re-tested; see common.AbsentSources.
+    net = argparse.ArgumentParser(add_help=False)
+    net.add_argument(
+        "--recheck-absent",
+        action="store_true",
+        help="re-fetch URLs recorded in pipeline/absent-sources.json; "
+        "drop the ones that now exist",
+    )
+
+    p1 = sub.add_parser("phase1", parents=[net], help="Vatican II, all 16 documents")
     p1.add_argument("--lang", choices=["en", "pt", "both"], default="both")
     p1.add_argument(
         "--only", help="comma-separated slugs, for iterating on one document"
     )
 
     p2 = sub.add_parser(
-        "phase2", help="encyclicals (+exhortations), per-pontificate discovery"
+        "phase2",
+        parents=[net],
+        help="encyclicals (+exhortations), per-pontificate discovery",
     )
     p2.add_argument("--pontiffs", help="comma-separated slugs; default: all candidates")
     p2.add_argument(
@@ -4511,7 +4592,9 @@ def main() -> int:
     )
 
     sub.add_parser(
-        "discover-encyclicals", help="index-only census, no document fetches"
+        "discover-encyclicals",
+        parents=[net],
+        help="index-only census, no document fetches",
     )
     sub.add_parser(
         "check-symmetry",
@@ -4521,7 +4604,9 @@ def main() -> int:
     args = ap.parse_args()
     # Fail before any directory is created; see common.require_corpus().
     require_corpus()
-    fetcher = Fetcher(RAW_ROOT)
+    fetcher = Fetcher(
+        RAW_ROOT, recheck_absent=getattr(args, "recheck_absent", False)
+    )
 
     if args.cmd in ("phase1", "phase2"):
         try:
@@ -4538,9 +4623,7 @@ def main() -> int:
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
-        print(
-            f"\nnetwork fetches this run: {fetcher.network_fetches} (retried-then-ok: {fetcher.retried_ok})"
-        )
+        report_fetching(fetcher)
         ok = all(r["status"] in ("validated", "already-written") for r in results)
         sym_ok, sym_problems = check_language_symmetry()
         print(
@@ -4566,9 +4649,7 @@ def main() -> int:
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
-        print(
-            f"\nnetwork fetches this run: {fetcher.network_fetches} (retried-then-ok: {fetcher.retried_ok})"
-        )
+        report_fetching(fetcher)
         sym_ok, sym_problems = check_language_symmetry()
         print(
             f"\n=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}"
@@ -4598,6 +4679,7 @@ def main() -> int:
         print(
             f"\ntotal encyclicals discovered across {len(PONTIFF_CANDIDATES)} candidate pontificates: {total}"
         )
+        report_fetching(fetcher)
         return 0
 
     return 1

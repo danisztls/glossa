@@ -1,0 +1,86 @@
+[
+  {
+    "url": "https://www.vatican.va/content/john-paul-i/en/encyclicals.index.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "index__encyclicals__john-paul-i.html",
+    "note": "vatican.va publishes no encyclicals index for this pontificate; discovery reports 0 and skips it"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-ix/en/encyclicals.index.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "index__encyclicals__pius-ix.html",
+    "note": "vatican.va publishes no encyclicals index for this pontificate; discovery reports 0 and skips it"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_02101931_nova-impendet.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "encyclical__nova-impendet__pt.html",
+    "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_03051932_caritate-christi-compulsi.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "encyclical__caritate-christi-compulsi__pt.html",
+    "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_18111926_iniquis-afflictisque.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "encyclical__iniquis-afflictisque__pt.html",
+    "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_28021926_rerum-ecclesiae.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "encyclical__rerum-ecclesiae__pt.html",
+    "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_28031937_nos-es-muy-conocida.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "encyclical__nos-es-muy-conocida__pt.html",
+    "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_29061931_non-abbiamo-bisogno.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "encyclical__non-abbiamo-bisogno__pt.html",
+    "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_29091932_acerba-animi.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "encyclical__acerba-animi__pt.html",
+    "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_29091937_ingravescentibus-malis.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "encyclical__ingravescentibus-malis__pt.html",
+    "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_30041926_rite-expiatis.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "encyclical__rite-expiatis__pt.html",
+    "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xii/pt/encyclicals/documents/hf_p-xii_enc_15041949_redemptoris-nostri-cruciatus.html",
+    "status": 404,
+    "observed": "2026-08-23",
+    "context": "encyclical__redemptoris-nostri-cruciatus__pt.html",
+    "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  }
+]
