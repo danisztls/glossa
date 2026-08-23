@@ -1935,11 +1935,56 @@ Article 12, and in PT the Decalogue texts inside one too. An in-brief is a
 summary box closing a division, not a division; it now takes the deepest
 level, so the next heading of any kind closes it.
 
-**Measured and deferred**: `strip_tags` substitutes a space for every tag, and
-this mirror's Word export splits words across tag boundaries — hence a space
-before some footnote markers and closing punctuation, and one heading reading
-"VII. T he Eucharist" (source: `<b>VII. T</b><b>he Eucharist`). Dropping tags
-instead, the way `compendium.py` already does, was measured at 2,150 EN and 568
-PT blocks changed, every one a spurious space removed. That is a corpus-wide
-verbatim-text change and wants its own pass, not a ride along a structure fix.
-Recorded in both manifests' notes.
+**Measured, then done in the entry below**: `strip_tags` substituted a space
+for every tag, which cost more than spacing.
+
+## 2026-08-23 — `strip_tags` (CCC): inline tags are not whitespace
+
+`ccc.py` flattened HTML by turning **every** tag into a space. That is right at
+a block boundary and wrong at an inline one, and both mirrors are Word exports
+that open and close inline tags mid-word. It looked cosmetic and was not.
+
+**What it cost, measured against the cached `raw/`:**
+
+- **58 PT citations, lost outright.** The PT mirror marks a footnote reference
+  as `(N)` in running text and `_PT_MARKER_RE` looks for exactly that. Where
+  the digits sat in their own tag the injected spaces made it `( 219)`, the
+  regex missed it, and the reference stayed in the body as literal text with no
+  `citations` entry. One of them, `(4 24)` in §889, had the _number itself_
+  split across a tag.
+- **5 PT footnotes wrong.** The same spaces broke `_pt_footnote_table`'s
+  sequential-number scan — `279.` arriving as `2 79.` — leaving footnotes 264,
+  279 and 291 empty and making 278 and 290 swallow the next one's text.
+- **30 PT footnotes** opened with a stray `. ` (the period lived in a nested
+  tag, so the number scan stopped before it).
+- **Three headings and a scattering of proper nouns broken mid-word**:
+  `VII. T he Eucharist` (source: `<b>VII. T</b><b>he Eucharist`), `S. Nicolau
+de Fl üe`, `Erg ä nzungsband`, `Ed. Leon. 4, 2 5.`
+
+**The rule now**: an explicit `_INLINE_TAGS` set (b, i, font, a, sup, sub,
+span, and the other inline elements by definition) is dropped with no
+replacement; everything else — br, p, td, tr, center, div, table, hr,
+blockquote, and anything unforeseen — still becomes a space. Not the
+Compendium's blanket "drop everything but `<br>`", because several CCC callers
+flatten HTML spanning _many_ blocks (`_pt_footnote_table`, `parse_page_pt`'s
+gap recovery) where the tag is the only separator between one block's last word
+and the next block's first. Unknown tags default to a space, which is what they
+did before — the safe direction.
+
+**`is_full_bold` had to change with it.** It re-joins the block's `<b>` spans
+with a space of its own and compares that to the whole block's text; once
+`strip_tags` stopped inserting one at the inline boundary, the two sides
+disagreed and the split-word heading stopped being recognised as a heading at
+all — the structure oracle caught this immediately. Both sides are now compared
+with whitespace removed, which is what the predicate actually means: whether
+any _visible_ character sits outside the bold. Checked against the Compendium
+too; there, zero blocks change under either rule.
+
+**Verified**: 2,150 EN and 568 PT blocks changed, all spacing. EN paragraph
+text is character-identical once spaces are ignored, EN citations unchanged at
+3,698, PT up 4,856 → 4,888. Both editions still validate, and the declared-
+structure oracle is clean. One behaviour change worth naming: PT's unbolded
+sub-heading `«FAZ TUDO QUANTO LHE APRAZ» (Sl 115, 3)` loses a word to the
+respacing, falls under `is_mini_header`'s eight-word cap, and is now dropped
+and logged instead of being appended to the end of §268, where it never
+belonged.

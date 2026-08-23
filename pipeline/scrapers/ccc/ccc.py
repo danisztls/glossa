@@ -139,8 +139,68 @@ def make_fetcher(cache_dir: Path) -> Fetcher:
 # --------------------------------------------------------------------------
 
 
+#: Tags that never stand for whitespace, and so are dropped with no
+#: replacement rather than replaced by a space.
+#:
+#: WHY THIS SET EXISTS. Every tag used to become a space. That is right for a
+#: block boundary and wrong for an inline one, and both mirrors are Word
+#: exports that open and close inline tags mid-word and mid-token -- a heading
+#: reached us as "VII. T he Eucharist" (source: "<b>VII. T</b><b>he
+#: Eucharist"), an accented name as "S. Nicolau de Fl ue" (the umlaut letter
+#: in a <font> of its own), a footnote reference as "Ed. Leon. 4, 2 5.".
+#:
+#: It was not only cosmetic. The PT mirror marks a footnote reference as
+#: "(N)" in running text and `_PT_MARKER_RE` looks for exactly that: where the
+#: digits sat in their own tag, the injected spaces made it "( 219)", the
+#: regex missed it, and the citation was lost -- 58 of them. The same spaces
+#: broke `_pt_footnote_table`'s sequential-number scan ("279." arriving as
+#: "2 79."), which left three footnotes empty and made two others swallow the
+#: next footnote's text.
+#:
+#: The seven attested in these two mirrors are b/i/font/a/sup/sub/span
+#: (counted over every string this function is called with: 25,822 <i>,
+#: 19,724 <font>, 19,624 <b>, 7,952 <a>, 7,466 <sup>, 90 <span>, 8 <sub>).
+#: The rest are inline by definition and listed so that a re-crawl which
+#: starts using one does not silently reintroduce the defect. Everything not
+#: named here -- br, p, td, tr, center, div, table, hr, blockquote, and
+#: anything unforeseen -- still becomes a space, which several callers need:
+#: `_pt_footnote_table` and `parse_page_pt`'s gap recovery flatten HTML
+#: spanning MANY blocks, where the tag is the only thing separating one
+#: block's last word from the next block's first.
+_INLINE_TAGS = frozenset(
+    {
+        "a",
+        "b",
+        "big",
+        "em",
+        "font",
+        "i",
+        "nobr",
+        "o:p",
+        "small",
+        "span",
+        "strong",
+        "sub",
+        "sup",
+        "u",
+    }
+)
+
+#: Group 1 is the tag name when there is one. The bare `<[^>]*>` alternative
+#: catches comments and other non-element markup, which fall through to a
+#: space -- the conservative direction, since it is what every tag did before.
+_ANY_TAG_RE = re.compile(r"<\s*/?\s*([A-Za-z][-A-Za-z0-9:]*)[^>]*>|<[^>]*>")
+
+
+def _tag_to_space_or_nothing(m: re.Match[str]) -> str:
+    name = m.group(1)
+    return "" if name is not None and name.lower() in _INLINE_TAGS else " "
+
+
 def strip_tags(s: str) -> str:
-    s = re.sub(r"<[^>]+>", " ", s)
+    """Flatten HTML to plain text: inline tags vanish, everything else becomes
+    a space. See `_INLINE_TAGS` for why the two are not treated alike."""
+    s = _ANY_TAG_RE.sub(_tag_to_space_or_nothing, s)
     s = ihtml.unescape(s)
     return re.sub(r"\s+", " ", s).strip()
 
@@ -148,17 +208,57 @@ def strip_tags(s: str) -> str:
 _BOLD_SPAN_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.DOTALL | re.IGNORECASE)
 
 
+def _visible(text: str) -> str:
+    return re.sub(r"\s+", "", text)
+
+
 def is_full_bold(inner_html: str) -> bool:
     """True when the block's entire visible text sits inside <b>...</b> —
     the CCC's heading style. Not just "starts with <b": both mirrors also
     bold a short *prefix* of ordinary paragraphs (PT bolds just the
     paragraph number, e.g. "<b>1216.</b> Este banho..."), which must NOT
-    be treated as a heading."""
+    be treated as a heading.
+
+    COMPARED WITH WHITESPACE REMOVED, because the two sides cannot agree on
+    it. The bold spans are re-joined here with a space that the source did not
+    print, and `strip_tags` (correctly) does not put one back at the inline
+    boundary the source did print — so a heading split mid-word across two
+    <b>s, "<b>VII. T</b><b>he Eucharist ...</b>", compared "VII. T he ..."
+    against "VII. The ..." and stopped being recognised as a heading at all.
+    Whether the whitespace between two bold spans is itself bold is not a
+    question this predicate is asking; whether any VISIBLE character sits
+    outside the bold is."""
     full_text = strip_tags(inner_html)
     if not full_text:
         return False
     bold_text = strip_tags(" ".join(_BOLD_SPAN_RE.findall(inner_html)))
-    return bool(bold_text) and bold_text == full_text
+    return bool(bold_text) and _visible(bold_text) == _visible(full_text)
+
+
+def test_strip_tags_drops_inline_tags_and_spaces_block_ones() -> None:
+    # All four left-hand strings are verbatim from the mirrors. The first
+    # three are inline tags splitting a word or token; the fourth is a real
+    # block boundary, where the tag is the only separator there is.
+    assert strip_tags("<b>VII. T</b><b>he Eucharist</b>") == "VII. The Eucharist"
+    assert strip_tags("Fl<font size=2>&uuml;</font>e") == "Flüe"
+    assert strip_tags("Ed. Leon. 4, 2<i>5</i>.") == "Ed. Leon. 4, 25."
+    assert strip_tags("<p>Cf. Lc 9, 58.</p><p>279. Cf. Mt 25, 31-46.</p>") == (
+        "Cf. Lc 9, 58. 279. Cf. Mt 25, 31-46."
+    )
+
+
+def test_is_full_bold_accepts_a_heading_the_source_split_across_two_bolds() -> None:
+    # Verbatim from __P43.HTM. The word "The" straddles the tag boundary.
+    assert is_full_bold('<b>VII. T</b><b>he Eucharist - "Pledge of the Glory"</b>')
+    # Still not fooled by a bolded paragraph number, which is the case this
+    # predicate exists to reject.
+    assert not is_full_bold("<b>1216.</b> Este banho &eacute; chamado")
+
+
+def test_strip_tags_recovers_a_pt_footnote_marker_the_source_split() -> None:
+    # "(219)" with the digits in their own tag used to flatten to "( 219)",
+    # which _PT_MARKER_RE does not match -- so the citation was dropped.
+    assert _PT_MARKER_RE.search(strip_tags("a verdade <font size=2>(219)</font>."))
 
 
 def looks_like_attribution(text: str) -> bool:
@@ -1163,18 +1263,20 @@ def match_label_pt(original_text: str) -> tuple[str, int | None] | None:
     return None
 
 
-# The `\s*` before the period is load-bearing, not defensive. The PT mirror
-# marks up a paragraph's leading number in two shapes -- "<b>1663. </b>" and
-# "<b>1662<i>. </i></b>", the period living inside a *nested* tag -- and
-# strip_tags turns every tag boundary into a space, so the second shape
-# reaches here as "1662 . Text" rather than "1662. Text". Without the `\s*`
+# The `\s*` before the period WAS load-bearing, and is now defence in depth.
+# The PT mirror marks up a paragraph's leading number in two shapes --
+# "<b>1663. </b>" and "<b>1662<i>. </i></b>", the period living inside a
+# *nested* tag -- and `strip_tags` used to turn every tag boundary into a
+# space, so the second shape reached here as "1662 . Text". Without the `\s*`
 # the match ended after "1662 ", leaving a stray ". " at the head of the
 # paragraph's body text: 126 PT paragraphs (33, 45, 46, 49, 96, ...) opened
 # with a lone period, against zero in EN. The asymmetry is what identified
 # it -- both editions number the same 2,865 paragraphs, so a defect present
 # in one alone is a parser defect (CLAUDE.md, "Work that spans languages").
-# `split_embedded_paragraph_starts`'s own _LOOKS_LIKE_PARA_START_RE already
-# allowed the space; this regex was the one that did not.
+# `strip_tags` no longer inserts that space (see `_INLINE_TAGS`), so both
+# shapes now arrive as "1662. Text" and the `\s*` matches nothing. Kept
+# because the source, not this parser, is what decides where its spaces go,
+# and the tests below pin both shapes either way.
 PT_NUMBER_RE = re.compile(r"^(\d{1,4})\s*\.?\s+")
 _PT_MARKER_RE = re.compile(r"\((\d{1,3})\)")
 
@@ -1182,8 +1284,9 @@ _PT_MARKER_RE = re.compile(r"\((\d{1,3})\)")
 def test_pt_paragraph_number_strips_a_period_left_behind_by_a_nested_tag() -> None:
     # Both shapes are real, from the same mirror: §1663 prints the period
     # inside the <b>, §33 and §1662 print it inside an <i> nested in the <b>.
-    # strip_tags turns the tag boundary into a space, so only the second shape
-    # arrives with the number and its period separated.
+    # The nested shape used to arrive with the number and its period separated
+    # by the space strip_tags put at every tag boundary; it no longer does
+    # (see _INLINE_TAGS), and this pins the outcome under either rule.
     for html in (
         "<b>1663. </b>Uma vez que o Matrim&oacute;nio",
         "<b>1662<i>. </i></b>O Matrim&oacute;nio assenta",
@@ -1531,13 +1634,14 @@ def declared_chain(html_text: str) -> tuple[str, ...] | None:
 def _title_key(title: str) -> str:
     """A heading title reduced to its letters and digits, upper-cased.
 
-    WHITESPACE-INSENSITIVE ON PURPOSE. `strip_tags` puts a space at every tag
-    boundary, and this mirror's Word export splits words across tags -- one
-    heading reaches us as "VII. T he Eucharist ..." against the meta's
-    "VII. The Eucharist ...". That is a real defect, but a spacing one, and
-    letting it fail this check would bury the structural findings the check
-    exists for. Footnote markers are dropped for the same reason: three
-    headings carry one and the meta never does."""
+    WHITESPACE-INSENSITIVE, which is now belt-and-braces rather than the
+    workaround it started as: `strip_tags` used to put a space at every tag
+    boundary, and this mirror's Word export splits words across tags, so one
+    heading arrived as "VII. T he Eucharist ..." against the meta's
+    "VII. The Eucharist ...". `_INLINE_TAGS` fixed that at the source. The
+    tolerance stays because a heading's spacing is not what this check is
+    about. Footnote markers ARE still dropped out of necessity: three headings
+    carry one and the meta never does."""
     without_markers = re.sub(rf"{MARK_OPEN}[^{MARK_CLOSE}]*{MARK_CLOSE}", "", title)
     folded = unicodedata.normalize("NFKD", without_markers)
     return re.sub(r"[^A-Za-z0-9]+", "", folded).upper()
@@ -1745,17 +1849,30 @@ def build_manifest(
             "corroborated by the PT mirror, which prints both."
         ),
         (
-            "KNOWN, UNCORRECTED: strip_tags substitutes a space for every tag, and this "
-            "mirror's Word export splits words and punctuation across tag boundaries -- so "
-            "a space appears before some footnote markers and closing punctuation, and one "
-            "heading reads 'VII. T he Eucharist - \"Pledge of the Glory To Come\"' "
-            "(source: '<b>VII. T</b><b>he Eucharist'). Dropping tags instead of "
-            "space-substituting them was measured to change 2,150 EN and 568 PT blocks, "
-            "every one of them a spurious space removed; deferred as a separate, "
-            "corpus-wide text change rather than folded into a structure fix. Three "
-            "headings also carry a footnote marker captured into the title (e.g. "
-            "'III. Christ Jesus -- \"Mediator and Fullness of All Revelation\"'), since "
-            "the schema has nowhere to hang a heading's own footnote."
+            "Tag flattening distinguishes inline tags (b/i/font/a/sup/sub/span -- dropped) "
+            "from everything else (dropped and replaced with a space). Every tag used to "
+            "become a space, which is right at a block boundary and wrong at an inline one: "
+            "both mirrors are Word exports that open and close inline tags mid-word, so a "
+            "space appeared before some footnote markers and closing punctuation, one "
+            "heading read 'VII. T he Eucharist' (source: '<b>VII. T</b><b>he Eucharist'), "
+            "and an accented name read 'S. Nicolau de Fl ue'. It was not only cosmetic: in "
+            "PT it hid 58 footnote references from the '(N)' marker regex ('( 219)'), which "
+            "were simply lost, and broke the footnote table's sequential-number scan ('279.' "
+            "arriving as '2 79.'), leaving three footnotes empty and making two others "
+            "swallow the next one's text. Fixing it changed 2,150 EN and 568 PT blocks, all "
+            "spacing; EN paragraph text is character-identical once spaces are ignored. One "
+            "consequence worth naming: PT's unbolded sub-heading '<<FAZ TUDO QUANTO LHE "
+            "APRAZ>> (Sl 115, 3)' now falls under the mini-header word cap and is dropped "
+            "(logged) instead of being appended to the end of paragraph 268, where it did "
+            "not belong."
+        ),
+        (
+            "KNOWN, UNCORRECTED: two EN headings carry a footnote marker captured into "
+            'their title (III. Christ Jesus -- "Mediator and Fullness of All Revelation" '
+            'and II. "I Know Whom I Have Believed"), because the source prints a <sup> '
+            "reference inside the heading and the schema has nowhere to hang a heading's "
+            "own footnote. The marker token is preserved rather than deleted, so the "
+            "reference is not silently lost."
         ),
     ]
     if state.gaps:
