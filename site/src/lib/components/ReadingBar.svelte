@@ -16,9 +16,10 @@
 	ONE FLAT ROW, IN A FIXED ORDER: bookmark, print, edition, compare, second
 	edition. The two page-level buttons come first and the text-level controls
 	follow, so the row runs from what is being read to how it is being read.
-	They deliberately share one container rather than being split into a
-	page-tools group and an editions group pinned to opposite ends — the split
-	made the bar read as two bars, and put the widest, most-changed control (an
+	Evenly spaced throughout — the three edition controls share a wrapper, but
+	only so they wrap as a unit (see `.reading-bar-editions`), not to set them
+	apart. An earlier version DID pin them to opposite ends of the bar; that
+	made it read as two bars, and put the widest, most-changed control (an
 	edition name that can be "Bíblia Sagrada (Matos Soares)") at the end of a
 	line whose left half was empty.
 
@@ -81,13 +82,15 @@
 <div class="reading-bar">
 	<BookmarkButton href={bookmarkHref} />
 	<PrintButton />
-	<EditionMenu />
-	{#if canCompare}
-		<CompareToggle active={compareActive} onclick={onToggleCompare} {enterLabel} {exitLabel} />
-	{/if}
-	{#if compareActive && comparison}
-		{@render comparison()}
-	{/if}
+	<div class="reading-bar-editions">
+		<EditionMenu />
+		{#if canCompare}
+			<CompareToggle active={compareActive} onclick={onToggleCompare} {enterLabel} {exitLabel} />
+		{/if}
+		{#if compareActive && comparison}
+			{@render comparison()}
+		{/if}
+	</div>
 </div>
 
 <style>
@@ -109,5 +112,25 @@
 		border-block-end: 1px solid var(--color-border);
 		padding-block: 0.5rem;
 		margin-block-end: 1.25rem;
+	}
+
+	/*
+	 * The three edition controls wrap as ONE THING or not at all. They read as
+	 * a sentence — "this edition, compared with, that edition" — and letting
+	 * the row break it wherever it ran out of width stranded a lone toggle, or
+	 * a lone second edition, on a line of its own, where neither says what it
+	 * is. The outer row still wraps, so on a narrow viewport the whole group
+	 * drops beneath the bookmark and print buttons intact.
+	 *
+	 * Same `gap` as the parent: the wrapper is here for the wrap behaviour, not
+	 * to set this part of the row apart visually — the bar is still one flat
+	 * sequence of evenly spaced controls.
+	 */
+	.reading-bar-editions {
+		display: flex;
+		align-items: center;
+		flex-wrap: nowrap;
+		gap: 0.5rem;
+		min-width: 0;
 	}
 </style>
