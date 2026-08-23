@@ -83,7 +83,10 @@
 		title={t('edition.label')}
 		onclick={menu.toggle}
 	>
-		<Icon name="book-open" />
+		<!-- Text only, for the reason `EditionMenu`'s matching trigger records:
+		     the label names the edition and the glyph added nothing to it. The
+		     `check` below stays — that one marks which row is chosen, which is
+		     information the panel has no other way to show. -->
 		<span class="trigger-label">{triggerLabel}</span>
 	</button>
 	{#if menu.open}

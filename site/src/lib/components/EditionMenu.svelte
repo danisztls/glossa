@@ -150,7 +150,12 @@
 			title={t('edition.label')}
 			onclick={menu.toggle}
 		>
-			<Icon name="book-open" />
+			<!-- Text only, no glyph. The label already names the edition, and a
+			     book icon in front of it said nothing the word "English" didn't —
+			     while making the widest control in `ReadingBar` wider still, next
+			     to three neighbours (bookmark, print, compare) whose icons ARE
+			     their whole content. Those keep theirs; this is the one control in
+			     the row that has something to spell out. -->
 			<span class="trigger-label">{triggerLabel}</span>
 		</button>
 		{#if menu.open}
