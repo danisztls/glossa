@@ -1649,3 +1649,71 @@ tree for the rest, same 64 cross-language symmetry findings from the in-memory
 path as from disk. A no-change re-run rewrites nothing; tampering with one
 book rewrites exactly that book, its manifest and its receipt. `stat` 2,745 →
 1,572, bytes moved 67.0 MB → 52.4 MB, writes 1,446 ops/18.6 MB → 217 ops/0 MB.
+
+## 2026-08-23 — The fetchers unify; the policies become data
+
+**What**: `common.py` now holds one `Fetcher`, and each scraper declares a
+`FetchPolicy` for its own source. This reverses that module's own docblock,
+which had listed `Fetcher` among the things that only _look_ duplicated.
+
+**Why the old position was right, and why it stopped being the answer**: what
+it actually said was that the implementations "genuinely differ — retry policy,
+raise-vs-return-status error handling, even the HTTP library — and unifying
+them is a design decision about behavior, not a mechanical merge." Every word
+of that is still true. But it is a reason to _wait for someone to take that
+decision_, not a reason never to take it, and read as the latter for long
+enough that the same skeleton was written six times: look in the cache; on a
+miss, wait out the politeness floor, make one request, store the bytes
+verbatim. The differences were never that sequence.
+
+**What survived as policy, deliberately**:
+
+- **Retries, or none.** `vatican_docs.py` crawls hundreds of documents and must
+  outlive one dead URL, so it retries transient failures three times with
+  backoff. The others crawl one work each, where a failed page means the output
+  would be wrong and stopping is correct.
+- **Raise or report** — and this is two methods rather than a knob, because it
+  is a property of the call site, not a configuration: `try_fetch` never
+  raises, `fetch_bytes` does.
+- **`delay_before`.** sacredbible.org's floor has always been spent _after_ a
+  request completes rather than before the next one starts. Moving it to the
+  shared "before" mode looks like tidying and is not: waiting beforehand counts
+  parsing time toward the delay, so the identical number would make its
+  requests come sooner than they do today. That is a loosening of a
+  self-imposed limit, and this change had no business making it.
+
+**Rate limits are still not shared, and the guarantee is now stronger.**
+`FetchPolicy` has no default for `delay` or `user_agent`, so a new scraper
+cannot inherit another source's floor by forgetting to state one — it does not
+compile without an answer. Four copies of `CRAWL_DELAY = 2.0` never provided
+that, and they left vatican.va's `robots.txt` commitment reading like an
+implementation detail in each file rather than the commitment this document
+says it is.
+
+**`common.py` stays stdlib-only**, because `vatican_docs.py`, `ccc.py`,
+`compendium.py` and `prayers.py` are PEP 723 scripts declaring
+`dependencies = []`. `transport` is a callable, `urllib_transport` is the
+default, and `httpx_transport` defers its own import to the call — so only the
+two scrapers that already depend on httpx ever pay for it, and they hand in a
+live client, so it is installed by definition by then.
+
+**Also moved, as duplication with nothing to preserve**: `corrections_receipt`
+(five byte-identical bodies, once the receipts became values rather than
+writes), and `fold`, `roman_to_int`, `looks_like_number_typo` — which make
+claims about roman numerals, combining marks and digit strings rather than
+about any source.
+
+**Deliberately not moved**, and now recorded in `common.py` so the next reader
+does not have to re-derive it: `strip_tags`, whose copies differ on `<br/>`;
+decoding, since cp1252-always and sniff-the-`<meta>`-charset are claims about
+particular servers; the heading heuristics, same category; and `cpdv.py` /
+`vulgate.py`'s `validate`, which is **byte-identical today** and must stay
+separable — `sacredbible.py` records that those assert things about _an
+edition_, not about a template, and being equal right now is not a reason to
+make them unable to diverge. `apply_corrections` is byte-identical between the
+same two and is left alone for the same reason, pending a decision of its own.
+
+**Verified**: after each migration, not only at the end — all eleven entry
+points run offline and diffed byte for byte, the 1,606-file corpus unchanged,
+a no-change re-run still rewriting 0 files, and the lint profile matching the
+previous commit exactly.
