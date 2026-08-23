@@ -1147,7 +1147,20 @@ class BlockOut:
     attribution: str | None = None
 
     def to_dict(self) -> dict:
-        d = {"kind": self.kind, "text_marked": self.text, "html": self.html}
+        # `kind` is OMITTED when it is "prose", the same "absent means the
+        # ordinary case" rule `attribution` below already follows, and
+        # `ident`/`subtitle`/`title_html` follow in structure.json. Documents
+        # are 99.93% prose -- 11 blocks of 14,924 are not -- so writing it
+        # every time spent the field's whole budget saying "nothing to see",
+        # and a reader scanning a section could not tell the exception from
+        # the rule. Now every `"kind"` in a document marks a real one, and
+        # `grep -c '"kind"'` is the census of them. The field stays worth
+        # carrying: it is 11% of CCC blocks and 4% of the Compendium's.
+        d: dict = {}
+        if self.kind != "prose":
+            d["kind"] = self.kind
+        d["text_marked"] = self.text
+        d["html"] = self.html
         if self.attribution:
             d["attribution"] = self.attribution
         return d

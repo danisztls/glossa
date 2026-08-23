@@ -563,7 +563,15 @@ class BlockOut:
     attribution: str | None = None
 
     def to_dict(self) -> dict:
-        d = {"kind": self.kind, "text_marked": self.text}
+        # Omitted when "prose" -- absence means the ordinary case, as with
+        # `attribution` below. See docs/corpus-schema.md and the fuller note
+        # in vatican_docs.py's BlockOut. Quotations are 11% of CCC blocks,
+        # the highest share of any work type, so this is where the field
+        # earns its place rather than where it is nearly always noise.
+        d: dict = {}
+        if self.kind != "prose":
+            d["kind"] = self.kind
+        d["text_marked"] = self.text
         if self.attribution:
             d["attribution"] = self.attribution
         return d

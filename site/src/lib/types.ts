@@ -272,7 +272,12 @@ export interface CccCitation {
 export type CccBlockKind = 'prose' | 'quote';
 
 export interface CccBlock {
-	kind: CccBlockKind;
+	/** Absent means `'prose'` — the corpus omits the default so that every
+	 *  stored `kind` marks a real exception (docs/corpus-schema.md; the
+	 *  scrapers' `BlockOut.to_dict`). Read it by comparing against the
+	 *  exception you care about (`kind === 'quote'`), never against
+	 *  `'prose'`, which an ordinary block no longer carries. */
+	kind?: CccBlockKind;
 	/** Block text with inline footnote markers preserved as `⟦marker⟧` tokens. */
 	text_marked: string;
 	/**
@@ -315,7 +320,8 @@ export interface CccAbbreviation {
 export type CompendiumBlockKind = 'prose' | 'quote';
 
 export interface CompendiumBlock {
-	kind: CompendiumBlockKind;
+	/** Absent means `'prose'` — see `CccBlock.kind`. */
+	kind?: CompendiumBlockKind;
 	text: string;
 	/** Set-off byline under a quote block; only when the source prints one. */
 	attribution?: string;
@@ -379,7 +385,7 @@ export interface DocumentBibleXref {
 export interface DocumentSection {
 	n: number;
 	blocks: CccBlock[];
-	/** Derived: all blocks joined, markers stripped, spaces normalized. */
+	/** Derived: all blocks joined, markers stripped, spaces normalized — for search and plain rendering. */
 	text: string;
 	citations: CccCitation[];
 	// No `related` (no marginal cross-reference apparatus in any document
@@ -410,7 +416,8 @@ export type PrayerKind = 'simple' | 'dialogic' | 'group';
 export type PrayerBlockKind = 'prose' | 'versicle' | 'response';
 
 export interface PrayerBlock {
-	kind: PrayerBlockKind;
+	/** Absent means `'prose'` — see `CccBlock.kind`. */
+	kind?: PrayerBlockKind;
 	text: string;
 	/** Verbatim printed prefix on a versicle/response line -- `"V."`/`"R."`
 	 *  in most sources, PT's own Angelus and Rosary-closing dialogue use

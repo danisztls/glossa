@@ -278,7 +278,12 @@ class BlockOut:
     attribution: str | None = None
 
     def to_dict(self) -> dict:
-        d = {"kind": self.kind, "text": self.text}
+        # Omitted when "prose" -- see vatican_docs.py's BlockOut for why, and
+        # docs/corpus-schema.md for the schema statement.
+        d: dict = {}
+        if self.kind != "prose":
+            d["kind"] = self.kind
+        d["text"] = self.text
         if self.attribution:
             d["attribution"] = self.attribution
         return d

@@ -346,7 +346,13 @@ class BlockOut:
     label: str | None = None  # verbatim printed prefix: "V." | "R." | "D." | "C."
 
     def to_dict(self) -> dict:
-        d = {"kind": self.kind, "text": self.text}
+        # Omitted when "prose" -- see vatican_docs.py's BlockOut for why, and
+        # docs/corpus-schema.md for the schema statement. Here the exceptions
+        # are "versicle"/"response", which carry a `label` too.
+        d: dict = {}
+        if self.kind != "prose":
+            d["kind"] = self.kind
+        d["text"] = self.text
         if self.label:
             d["label"] = self.label
         return d
