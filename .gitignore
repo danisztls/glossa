@@ -1,21 +1,12 @@
-# The corpus IS committed, reversing the rule that used to stand here — with
-# one exception, corpus/works/, excluded below. The copyright position, and
-# what a takedown costs now that the texts are in git history rather than only
-# in a build, are stated in corpus/README.md; the reasoning is in
-# docs/decisions.md.
-
-# Corpus: parsed output only. corpus/raw/ stays tracked — it is the only
-# artifact that cost requests against someone else's server, and a re-crawl is
-# the sole way back to it. corpus/works/ is a pure function of raw/ plus
-# pipeline/, verified byte-for-byte reproducible offline in under three
-# minutes; see corpus/README.md for how to rebuild it.
-/corpus/works/
-
-# Runtime state of a crawl in progress, not a project file. `vatican_docs.py`
-# holds a heartbeat lock here so two sweeps cannot race the same work
-# directory (CLAUDE.md); committing one would ship a stale lock that reads as
-# a live crawl to the next run.
-corpus/raw/*/.crawl.lock
+# The corpus is NOT in this repository (docs/decisions.md, 2026-08-23). It
+# holds verbatim reproductions of texts other people hold rights in, and this
+# repository is public; it lives in the private `glossa-corpus` repository,
+# expected on disk as a sibling of this one. Both `pipeline/` and `site/`
+# resolve it through CORPUS_DIR, defaulting to that sibling.
+#
+# This rule is a guard, not a policy: nothing should create `corpus/` here
+# any more, and if something does, it must not be committed back.
+/corpus/
 
 # Python
 __pycache__/

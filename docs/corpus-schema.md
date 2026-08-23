@@ -5,7 +5,7 @@ The data contract between `pipeline/` (producers) and `site/` (consumer). This d
 ## Layout
 
 ```
-corpus/                      # gitignored, built locally
+glossa-corpus/               # a separate PRIVATE repository, sibling of this one
   raw/                       # cached raw fetches, one subdir per scraper (re-runs must be offline-capable)
     cpdv/ ...
     matos-soares/ ...

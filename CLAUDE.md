@@ -5,17 +5,34 @@ Operational notes for working on Glossa Catholica. Architecture and rationale li
 `docs/link-surface.md` — read those first. This file is only the things that
 have actually bitten someone.
 
-## The corpus: two directories, very different value
+## The corpus: a separate repository, and two directories inside it
 
-`corpus/` is tracked in git as of 2026-08-16 (it used to be gitignored — see
-`docs/decisions.md`, and `corpus/README.md` for the copyright position). Version
-control is now the backstop for `raw/`, but the distinction below still governs
-what may be deleted.
+**The corpus is not in this repository.** As of 2026-08-23 it lives in
+`glossa-corpus`, a **private** repository expected on disk as a sibling of
+this one (`~/Dev/me/glossa` and `~/Dev/me/glossa-corpus`) — it holds verbatim
+reproductions of texts other people hold rights in, and this repository is
+public. See `docs/decisions.md` for the reversal of the 2026-08-16 entry that
+put it here, and the corpus repo's own `README.md` for the copyright position.
 
-| Path            | Value                                                                    | Rule                               |
-| --------------- | ------------------------------------------------------------------------ | ---------------------------------- |
-| `corpus/works/` | Parsed output. Regenerable from cache in minutes, zero network.          | Safe to rebuild.                   |
-| `corpus/raw/`   | Every scraped source page. The **only** artifact that cost real fetches. | Treat as write-once. Never delete. |
+Both halves resolve it the same way, so one exported variable moves both:
+
+| Consumer    | Resolver                  | Default               |
+| ----------- | ------------------------- | --------------------- |
+| `pipeline/` | `common.corpus_dir()`     | `../glossa-corpus`    |
+| `site/`     | `scripts/sync-corpus.mjs` | `../../glossa-corpus` |
+
+Both honour **`CORPUS_DIR`**. The pipeline calls `common.require_corpus()` at
+the top of each scraper's `main()` and dies with the path it tried, because
+every scraper creates its output with `parents=True` and would otherwise
+write a whole phantom corpus somewhere nobody looks. The site keeps its older
+behaviour of warning and falling back to fixtures.
+
+Inside the corpus repo, the old distinction still governs what may be deleted:
+
+| Path     | Value                                                                    | Rule                               |
+| -------- | ------------------------------------------------------------------------ | ---------------------------------- |
+| `works/` | Parsed output. Regenerable from cache in minutes, zero network.          | Safe to rebuild.                   |
+| `raw/`   | Every scraped source page. The **only** artifact that cost real fetches. | Treat as write-once. Never delete. |
 
 The project's stated insurance policy is that any capture regret is fixed by
 **re-parsing, never re-crawling** (`docs/link-surface.md`). That only holds while
@@ -47,7 +64,7 @@ as an unstated judgment call, and it will get taken.
 - **`pipeline/corrections/` and `pipeline/overrides/` are different layers.**
   A correction says the _source_ is wrong and edits the fetched HTML before
   parsing; an override says the source is fine and our _derivation_ is not,
-  and edits the parsed output. Keeping them apart is what lets `corpus/raw/`
+  and edits the parsed output. Keeping them apart is what lets `raw/`
   stay the record of what the source actually said. Overrides are the
   exception: before filing one, ask whether the defect belongs to one document
   or to a class of them. It has been a class nearly every time — the layer
@@ -78,13 +95,17 @@ and the directory name do not match.
 
 ```sh
 cd site
-CORPUS_DIR=/home/dani/Dev/me/scriptura/corpus npm run dev     # or npm run build
+npm run dev                                          # or npm run build
+CORPUS_DIR=/path/to/glossa-corpus npm run dev        # corpus kept elsewhere
 ```
 
-**Pass `CORPUS_DIR` when running from a git worktree.** The default `../corpus`
-resolves inside the worktree, where no corpus exists, and the site then silently
-falls back to the test fixtures — two Bible books and a few dozen paragraphs,
-which looks broken in a confusing way rather than an obvious one.
+**The worktree trap shrank but did not vanish** (see the corpus section
+above). The default is now `../../glossa-corpus`, resolved from `site/`, so a
+worktree created _beside_ the main checkout finds the corpus without help. A
+worktree anywhere else resolves to a `glossa-corpus` sibling that does not
+exist, and the site then silently falls back to the test fixtures — two Bible
+books and a few dozen paragraphs, which looks broken in a confusing way rather
+than an obvious one. Set `CORPUS_DIR` there.
 
 `npm test` always uses fixtures, never a synced corpus: `corpus.ts` checks
 `import.meta.env.VITEST` explicitly. The absence of a `pretest` hook is _not_
@@ -115,10 +136,10 @@ npm run deploy      # build -> preflight -> wrangler deploy
   `build/` — it has no idea whether that is current, or whether it came from
   the real corpus or the fixtures. There is no CI build; a deploy ships one
   person's working tree.
-- **From a worktree, set `CORPUS_DIR`** the same way `npm run build` needs it
-  above — the default `../corpus` resolves inside the worktree, where there is
-  none. Preflight refuses a fixture-sized build, so the worst case there is a
-  refusal rather than a two-book site going live.
+- **From a worktree that is not beside the main checkout, set `CORPUS_DIR`**
+  the same way `npm run build` needs it above. Preflight refuses a
+  fixture-sized build, so the worst case there is a refusal rather than a
+  two-book site going live.
 - **Deploys are not sandboxed** — `wrangler` needs the Cloudflare API, which the
   sandbox blocks. Same for `git commit` (GPG).
 - **The file count is no longer the thing to watch.** Cloudflare still caps a

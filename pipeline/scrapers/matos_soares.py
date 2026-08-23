@@ -44,7 +44,14 @@ from bs4 import BeautifulSoup
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
-from common import CorrectionDriftError, chapter_opening_letter, load_corrections
+from common import (
+    CorrectionDriftError,
+    chapter_opening_letter,
+    load_corrections,
+    raw_root,
+    require_corpus,
+    works_root,
+)
 
 BASE_URL = "https://www.liriocatolico.com.br/biblia_online/biblia_matos_soares/"
 USER_AGENT = "Glossa Catholica corpus builder"
@@ -52,10 +59,29 @@ MIN_REQUEST_INTERVAL = (
     2.0  # seconds, politeness floor (source has no robots.txt Crawl-delay)
 )
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = REPO_ROOT / "corpus" / "raw" / "matos-soares"
-WORK_DIR = REPO_ROOT / "corpus" / "works" / "bible.matos-soares.pt"
-BOOKS_DIR = WORK_DIR / "books"
+RAW_SUBDIR = "matos-soares"
+
+
+def raw_dir() -> Path:
+    """This scraper's fetch cache inside the corpus checkout.
+
+    A function, not a module constant: `common.corpus_dir()` raises when the
+    corpus is missing, and doing that at import time would break `--help` and
+    any tooling that merely imports this module.
+    """
+    return raw_root() / RAW_SUBDIR
+
+
+def work_dir() -> Path:
+    """This scraper's output directory inside the corpus checkout."""
+    return works_root() / WORK_ID
+
+
+def books_dir() -> Path:
+    """Where the per-book JSON files go."""
+    return work_dir() / "books"
+
+
 WORK_ID = "bible.matos-soares.pt"
 
 # ---------------------------------------------------------------------------
@@ -257,8 +283,8 @@ def slugify_cache_name(slug: str, part: str) -> str:
 def fetch(client: httpx.Client, url: str, cache_name: str, stats: FetchStats) -> str:
     """Fetch `url`, using and populating the on-disk cache. Politeness delay
     only applies to actual network fetches, never to cache hits."""
-    RAW_DIR.mkdir(parents=True, exist_ok=True)
-    cache_path = RAW_DIR / cache_name
+    raw_dir().mkdir(parents=True, exist_ok=True)
+    cache_path = raw_dir() / cache_name
     if cache_path.exists():
         stats.cache_hits += 1
         return cache_path.read_text(encoding="utf-8")
@@ -659,7 +685,7 @@ def print_summary_table(books: list[BookResult]) -> None:
 
 
 def write_book_files(books: list[BookResult]) -> None:
-    BOOKS_DIR.mkdir(parents=True, exist_ok=True)
+    books_dir().mkdir(parents=True, exist_ok=True)
     for b in books:
         payload = {
             "osis": b.osis,
@@ -668,7 +694,7 @@ def write_book_files(books: list[BookResult]) -> None:
             "order": b.order,
             "chapters": b.chapters,
         }
-        out_path = BOOKS_DIR / f"{b.osis}.json"
+        out_path = books_dir() / f"{b.osis}.json"
         out_path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
@@ -748,8 +774,8 @@ def write_manifest(
         "books": [b.osis for b in books],
         "corrections_applied": corrections_applied,
     }
-    WORK_DIR.mkdir(parents=True, exist_ok=True)
-    (WORK_DIR / "manifest.json").write_text(
+    work_dir().mkdir(parents=True, exist_ok=True)
+    (work_dir() / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
 
@@ -767,6 +793,8 @@ def main() -> int:
         help="Process only Filémon (full) and São João chapter 1. For review before the full crawl.",
     )
     args = parser.parse_args()
+    # Fail before any directory is created; see common.require_corpus().
+    require_corpus()
 
     fixes: list[OcrFix] = []
     ambiguous: list[OcrAmbiguous] = []
@@ -847,7 +875,7 @@ def main() -> int:
     ]
     all_applied = auto_ihe_applied + file_applied
     corrections_count = write_corrections_receipt(
-        WORK_DIR, all_applied, corrections, generated_at
+        work_dir(), all_applied, corrections, generated_at
     )
 
     write_book_files(books)

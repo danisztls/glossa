@@ -121,11 +121,12 @@ from urllib.request import Request, urlopen
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
-from common import load_corrections
+from common import load_corrections, raw_root, require_corpus, works_root
 
-ROOT = Path(__file__).resolve().parents[2]
-RAW_ROOT = ROOT / "corpus" / "raw"
-WORKS_ROOT = ROOT / "corpus" / "works"
+# The corpus is a separate, private repository (docs/decisions.md,
+# 2026-08-23); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
+RAW_ROOT = raw_root()
+WORKS_ROOT = works_root()
 
 EN_RAW = RAW_ROOT / "compendium-en" / "archive_2005_compendium-ccc_en.html"
 PT_RAW = RAW_ROOT / "compendium-pt" / "archive_2005_compendium-ccc_po.html"
@@ -135,18 +136,34 @@ CCC_EN_OUR_FATHER_RAW = RAW_ROOT / "ccc-en" / "__P9V.HTM"
 CCC_PT_OUR_FATHER_RAW = RAW_ROOT / "ccc-pt" / "p4s2_2759-2865_po.html"
 LITANY_EN_RAW = RAW_ROOT / "rosary-en" / "litanie-lauretane_en.html"
 LITANY_PT_RAW = RAW_ROOT / "rosary-pt" / "litanie-lauretane_po.html"
-ROSARY_MYSTERY_FILES = ("misteri_gaudiosi", "misteri_luminosi", "misteri_dolorosi", "misteri_gloriosi")
+ROSARY_MYSTERY_FILES = (
+    "misteri_gaudiosi",
+    "misteri_luminosi",
+    "misteri_dolorosi",
+    "misteri_gloriosi",
+)
 
 EN_URL = "https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_en.html"
 PT_URL = "https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_po.html"
 CCC_EN_CREDO_URL = "https://www.vatican.va/archive/ENG0015/__P13.HTM"
-CCC_PT_CREDO_URL = "https://www.vatican.va/archive/cathechism_po/index_new/p1s1c3_142-184_po.html"
+CCC_PT_CREDO_URL = (
+    "https://www.vatican.va/archive/cathechism_po/index_new/p1s1c3_142-184_po.html"
+)
 CCC_EN_OUR_FATHER_URL = "https://www.vatican.va/archive/ENG0015/__P9V.HTM"
-CCC_PT_OUR_FATHER_URL = "https://www.vatican.va/archive/cathechism_po/index_new/p4s2_2759-2865_po.html"
-LITANY_EN_URL = "https://www.vatican.va/special/rosary/documents/litanie-lauretane_en.html"
-LITANY_PT_URL = "https://www.vatican.va/special/rosary/documents/litanie-lauretane_po.html"
+CCC_PT_OUR_FATHER_URL = (
+    "https://www.vatican.va/archive/cathechism_po/index_new/p4s2_2759-2865_po.html"
+)
+LITANY_EN_URL = (
+    "https://www.vatican.va/special/rosary/documents/litanie-lauretane_en.html"
+)
+LITANY_PT_URL = (
+    "https://www.vatican.va/special/rosary/documents/litanie-lauretane_po.html"
+)
 ROSARY_MYSTERY_URLS = {
-    lang: [f"https://www.vatican.va/special/rosary/documents/{name}_{lang}.html" for name in ROSARY_MYSTERY_FILES]
+    lang: [
+        f"https://www.vatican.va/special/rosary/documents/{name}_{lang}.html"
+        for name in ROSARY_MYSTERY_FILES
+    ]
     for lang in ("en", "po")
 }
 
@@ -282,7 +299,9 @@ def capture_raw_pages(pages: list[tuple[str, Path]]) -> None:
             time.sleep(CRAWL_DELAY - elapsed)
         path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            with urlopen(Request(url, headers={"User-Agent": USER_AGENT}), timeout=30) as response:
+            with urlopen(
+                Request(url, headers={"User-Agent": USER_AGENT}), timeout=30
+            ) as response:
                 data = response.read()
         except (HTTPError, URLError) as exc:
             raise RuntimeError(f"Vatican fetch failed: {url}: {exc}") from exc
@@ -297,7 +316,10 @@ def capture_litany_raw() -> None:
 
 def rosary_mystery_raw(lang: str) -> list[Path]:
     source_lang = "en" if lang == "en" else "po"
-    return [RAW_ROOT / f"rosary-{lang}" / f"{name}_{source_lang}.html" for name in ROSARY_MYSTERY_FILES]
+    return [
+        RAW_ROOT / f"rosary-{lang}" / f"{name}_{source_lang}.html"
+        for name in ROSARY_MYSTERY_FILES
+    ]
 
 
 def capture_rosary_mysteries_raw() -> None:
@@ -305,7 +327,11 @@ def capture_rosary_mysteries_raw() -> None:
     pages = [
         (url, path)
         for lang in ("en", "pt")
-        for url, path in zip(ROSARY_MYSTERY_URLS["en" if lang == "en" else "po"], rosary_mystery_raw(lang), strict=True)
+        for url, path in zip(
+            ROSARY_MYSTERY_URLS["en" if lang == "en" else "po"],
+            rosary_mystery_raw(lang),
+            strict=True,
+        )
     ]
     capture_raw_pages(pages)
 
@@ -417,7 +443,10 @@ class PrayerInstructions:
     blocks: list[BlockOut]
 
     def to_dict(self) -> dict:
-        return {"title": self.title, "blocks": [block.to_dict() for block in self.blocks]}
+        return {
+            "title": self.title,
+            "blocks": [block.to_dict() for block in self.blocks],
+        }
 
 
 @dataclass
@@ -819,7 +848,9 @@ def build_prayers_pt(html_text: str) -> list[Prayer]:
         )
 
     latin_by_slug: dict[str, LatinText] = {}
-    for slug, raw in zip([s for s in APPENDIX_SLUGS if s not in NO_LATIN_SLUGS], latin_paragraphs):
+    for slug, raw in zip(
+        [s for s in APPENDIX_SLUGS if s not in NO_LATIN_SLUGS], latin_paragraphs
+    ):
         latin_title, latin_body = split_title(raw)
         latin_by_slug[slug] = LatinText(latin_title, latin_blocks_pt(latin_body))
 
@@ -853,6 +884,7 @@ def build_prayers_pt(html_text: str) -> list[Prayer]:
 # appendix parser have each reproduced their own source order.
 # --------------------------------------------------------------------------
 
+
 def _only_paragraph_after(paragraphs: list[str], title: str) -> str:
     """Return the one non-empty source paragraph immediately following
     ``title``. The exact title match and one-next-paragraph rule make source
@@ -860,7 +892,9 @@ def _only_paragraph_after(paragraphs: list[str], title: str) -> str:
     in the Catechism page."""
     matches = [i for i, raw in enumerate(paragraphs) if flatten(raw) == title]
     if len(matches) != 1:
-        raise RuntimeError(f"expected exactly one CCC heading {title!r}, found {len(matches)}")
+        raise RuntimeError(
+            f"expected exactly one CCC heading {title!r}, found {len(matches)}"
+        )
     for raw in paragraphs[matches[0] + 1 :]:
         if flatten(raw):
             return raw
@@ -872,8 +906,15 @@ def build_creeds_en(html_text: str) -> list[Prayer]:
     apostles = _only_paragraph_after(paragraphs, "The Apostles Creed")
     nicene = _only_paragraph_after(paragraphs, "The Nicene Creed")
     return [
-        Prayer(0, "apostles-creed", "The Apostles Creed", [BlockOut("prose", flatten(apostles))]),
-        Prayer(0, "nicene-creed", "The Nicene Creed", [BlockOut("prose", flatten(nicene))]),
+        Prayer(
+            0,
+            "apostles-creed",
+            "The Apostles Creed",
+            [BlockOut("prose", flatten(apostles))],
+        ),
+        Prayer(
+            0, "nicene-creed", "The Nicene Creed", [BlockOut("prose", flatten(nicene))]
+        ),
     ]
 
 
@@ -893,37 +934,74 @@ def build_creeds_pt(html_text: str) -> list[Prayer]:
     if len(rows) != 8:
         raise RuntimeError(f"PT: expected 8 Credo table rows, found {len(rows)}")
     titles = [flatten(cell) for cell in rows[0]]
-    expected_titles = ["SÍMBOLO DOS APÓSTOLOS (58)", "CREDO DE NICEIA–CONSTANTINOPLA (59)"]
+    expected_titles = [
+        "SÍMBOLO DOS APÓSTOLOS (58)",
+        "CREDO DE NICEIA–CONSTANTINOPLA (59)",
+    ]
     if titles != expected_titles:
         raise RuntimeError(f"PT: unexpected Credo table titles: {titles!r}")
-    columns = [" ".join(flatten(row[column]) for row in rows[1:]) for column in range(2)]
+    columns = [
+        " ".join(flatten(row[column]) for row in rows[1:]) for column in range(2)
+    ]
     return [
-        Prayer(0, "apostles-creed", "Símbolo dos Apóstolos", [BlockOut("prose", columns[0])]),
-        Prayer(0, "nicene-creed", "Credo de Niceia–Constantinopla", [BlockOut("prose", columns[1])]),
+        Prayer(
+            0,
+            "apostles-creed",
+            "Símbolo dos Apóstolos",
+            [BlockOut("prose", columns[0])],
+        ),
+        Prayer(
+            0,
+            "nicene-creed",
+            "Credo de Niceia–Constantinopla",
+            [BlockOut("prose", columns[1])],
+        ),
     ]
 
 
 def build_our_father_en(html_text: str) -> Prayer:
     paragraphs = top_paragraphs(html_text)
-    matches = [raw for raw in paragraphs if flatten(raw).startswith("Our Father who art in heaven,")]
+    matches = [
+        raw
+        for raw in paragraphs
+        if flatten(raw).startswith("Our Father who art in heaven,")
+    ]
     if len(matches) != 1:
-        raise RuntimeError(f"EN: expected one Our Father text at CCC 2759, found {len(matches)}")
-    return Prayer(0, "our-father", "The Our Father", [BlockOut("prose", flatten(matches[0]))])
+        raise RuntimeError(
+            f"EN: expected one Our Father text at CCC 2759, found {len(matches)}"
+        )
+    return Prayer(
+        0, "our-father", "The Our Father", [BlockOut("prose", flatten(matches[0]))]
+    )
 
 
 def build_our_father_pt(html_text: str) -> Prayer:
-    matches = re.findall(r"<blockquote[^>]*>\s*(<p[^>]*>.*?</p>)\s*</blockquote>", html_text, re.I | re.S)
-    prayers = [raw for raw in matches if flatten(raw).startswith("Pai Nosso que estais nos céus,")]
+    matches = re.findall(
+        r"<blockquote[^>]*>\s*(<p[^>]*>.*?</p>)\s*</blockquote>", html_text, re.I | re.S
+    )
+    prayers = [
+        raw
+        for raw in matches
+        if flatten(raw).startswith("Pai Nosso que estais nos céus,")
+    ]
     if len(prayers) != 1:
-        raise RuntimeError(f"PT: expected one Our Father text at CCC 2759, found {len(prayers)}")
-    return Prayer(0, "our-father", "Pai Nosso", [BlockOut("prose", flatten(prayers[0]))])
+        raise RuntimeError(
+            f"PT: expected one Our Father text at CCC 2759, found {len(prayers)}"
+        )
+    return Prayer(
+        0, "our-father", "Pai Nosso", [BlockOut("prose", flatten(prayers[0]))]
+    )
 
 
-def _litany_paragraphs(html_text: str, first: str, last: str, lang: str) -> list[BlockOut]:
+def _litany_paragraphs(
+    html_text: str, first: str, last: str, lang: str
+) -> list[BlockOut]:
     paragraphs = top_paragraphs(html_text)
     starts = [i for i, raw in enumerate(paragraphs) if flatten(raw).startswith(first)]
     if len(starts) != 1:
-        raise RuntimeError(f"{lang}: expected one Litany opening paragraph, found {len(starts)}")
+        raise RuntimeError(
+            f"{lang}: expected one Litany opening paragraph, found {len(starts)}"
+        )
     blocks: list[BlockOut] = []
     for raw in paragraphs[starts[0] :]:
         text = flatten(raw)
@@ -969,14 +1047,18 @@ _ROSARY_MYSTERY_TITLE_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.IGNORECASE | re.D
 _ROSARY_SCRIPTURE_CITATION_RE = re.compile(r"\s*\(([^()]*)\)([.!])?\s*$")
 
 
-def split_rosary_meditation_citation(text: str, lang: str, filename: str) -> tuple[str, PrayerCitation]:
+def split_rosary_meditation_citation(
+    text: str, lang: str, filename: str
+) -> tuple[str, PrayerCitation]:
     """Split the terminal parenthetical Scripture locator from a Vatican
     meditation. It is a citation, not prose: retaining it in the quotation
     would duplicate it once the reader renders the normal inline footnote.
     """
     match = _ROSARY_SCRIPTURE_CITATION_RE.search(text)
     if match is None or not match.group(1).strip():
-        raise RuntimeError(f"{lang} {filename}: mystery has no terminal Scripture citation")
+        raise RuntimeError(
+            f"{lang} {filename}: mystery has no terminal Scripture citation"
+        )
     meditation = text[: match.start()].rstrip()
     if match.group(2):
         meditation += match.group(2)
@@ -985,7 +1067,9 @@ def split_rosary_meditation_citation(text: str, lang: str, filename: str) -> tup
     return meditation, PrayerCitation("1", match.group(1).strip())
 
 
-def parse_rosary_mystery_page(html_text: str, lang: str, expected_filename: str) -> list[MysteryItem]:
+def parse_rosary_mystery_page(
+    html_text: str, lang: str, expected_filename: str
+) -> list[MysteryItem]:
     cells = _ROSARY_MYSTERY_CELL_RE.findall(html_text)
     if len(cells) != 5:
         raise RuntimeError(
@@ -999,7 +1083,9 @@ def parse_rosary_mystery_page(html_text: str, lang: str, expected_filename: str)
             raise RuntimeError(
                 f"{lang} {expected_filename}: incomplete Rosary mystery cell"
             )
-        meditation, citation = split_rosary_meditation_citation(paragraphs[0], lang, expected_filename)
+        meditation, citation = split_rosary_meditation_citation(
+            paragraphs[0], lang, expected_filename
+        )
         items.append(MysteryItem(flatten(title_match.group(1)), meditation, citation))
     return items
 
@@ -1009,12 +1095,18 @@ def parse_rosary_instructions(html_text: str, lang: str) -> PrayerInstructions:
     paragraphs = top_paragraphs(html_text)
     matches = [i for i, raw in enumerate(paragraphs) if flatten(raw) == heading]
     if len(matches) != 1:
-        raise RuntimeError(f"{lang}: expected one Rosary instructions heading, found {len(matches)}")
+        raise RuntimeError(
+            f"{lang}: expected one Rosary instructions heading, found {len(matches)}"
+        )
     # Invocation, then four numbered-source prose paragraphs. The later
     # Our Father/Hail Mary/Glory Be/Hail Holy Queen texts are already
     # independently present in this work, so retain the actual instructions
     # without duplicating those prayer texts on the same page.
-    blocks = [BlockOut("prose", flatten(raw)) for raw in paragraphs[matches[0] + 1 :] if flatten(raw)]
+    blocks = [
+        BlockOut("prose", flatten(raw))
+        for raw in paragraphs[matches[0] + 1 :]
+        if flatten(raw)
+    ]
     if len(blocks) < 5:
         raise RuntimeError(f"{lang}: expected invocation and four Rosary instructions")
     return PrayerInstructions(heading, blocks[:5])
@@ -1023,7 +1115,9 @@ def parse_rosary_instructions(html_text: str, lang: str) -> PrayerInstructions:
 def enrich_rosary_with_full_mysteries(rosary: Prayer, lang: str) -> None:
     paths = rosary_mystery_raw(lang)
     if len(rosary.groups) != 4:
-        raise RuntimeError(f"{lang}: expected 4 existing Rosary groups, found {len(rosary.groups)}")
+        raise RuntimeError(
+            f"{lang}: expected 4 existing Rosary groups, found {len(rosary.groups)}"
+        )
     for group, path in zip(rosary.groups, paths, strict=True):
         if not path.exists():
             raise RuntimeError(
@@ -1494,10 +1588,20 @@ def run(lang: str) -> tuple[list[Prayer], list[dict]]:
     credo_html = credo_path.read_text(encoding="cp1252", errors="replace")
     our_father_html = our_father_path.read_text(encoding="cp1252", errors="replace")
     litany_html = litany_path.read_text(encoding="cp1252", errors="replace")
-    creeds = build_creeds_en(credo_html) if lang == "en" else build_creeds_pt(credo_html)
-    our_father = build_our_father_en(our_father_html) if lang == "en" else build_our_father_pt(our_father_html)
-    litany = build_litany_en(litany_html) if lang == "en" else build_litany_pt(litany_html)
-    rosary = next((prayer for prayer in appendix_prayers if prayer.slug == "rosary"), None)
+    creeds = (
+        build_creeds_en(credo_html) if lang == "en" else build_creeds_pt(credo_html)
+    )
+    our_father = (
+        build_our_father_en(our_father_html)
+        if lang == "en"
+        else build_our_father_pt(our_father_html)
+    )
+    litany = (
+        build_litany_en(litany_html) if lang == "en" else build_litany_pt(litany_html)
+    )
+    rosary = next(
+        (prayer for prayer in appendix_prayers if prayer.slug == "rosary"), None
+    )
     if rosary is None:
         raise RuntimeError(f"{lang}: Appendix A parser produced no Rosary entry")
     enrich_rosary_with_full_mysteries(rosary, lang)
@@ -1523,6 +1627,8 @@ def main() -> int:
         help="capture the full Vatican Rosary-mystery pages EN/PT into the write-once raw cache",
     )
     args = ap.parse_args()
+    # Fail before any directory is created; see common.require_corpus().
+    require_corpus()
     if args.fetch_litany:
         capture_litany_raw()
     if args.fetch_rosary_mysteries:

@@ -210,8 +210,10 @@ from urllib.request import Request, urlopen
 from common import (
     OverrideDriftError,
     apply_overrides,
+    corpus_dir,
     load_corrections,
     load_overrides,
+    require_corpus,
 )
 
 USER_AGENT = "Glossa Catholica corpus builder"
@@ -219,14 +221,16 @@ CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 MAX_ATTEMPTS = 3  # survey measured ~1-in-6-to-8 transient failures, no 403s/CAPTCHA
 RETRY_BACKOFF = [3.0, 8.0]  # seconds, between attempts 1->2 and 2->3
 
-# See "NOTE ON THE ROOTS" in the module docstring. Both now follow this
-# file's checkout: corpus/ is tracked, so a worktree has one.
-DATA_ROOT = Path(__file__).resolve().parents[2]  # corpus/, tracked since 2026-08-16
+# See "NOTE ON THE ROOTS" in the module docstring. The two roots diverged
+# again on 2026-08-23: the corpus moved to its own private repository, so
+# DATA_ROOT is resolved by `common.corpus_dir()` ($CORPUS_DIR, else a
+# `glossa-corpus/` sibling) while SOURCE_ROOT still follows this checkout.
+DATA_ROOT = corpus_dir()
 SOURCE_ROOT = (
     Path(__file__).resolve().parents[2]
 )  # tracked source; follows this file's checkout
-RAW_ROOT = DATA_ROOT / "corpus" / "raw" / "vatican-docs"
-WORKS_ROOT = DATA_ROOT / "corpus" / "works"
+RAW_ROOT = DATA_ROOT / "raw" / "vatican-docs"
+WORKS_ROOT = DATA_ROOT / "works"
 CRAWL_LOCK_PATH = (
     RAW_ROOT / ".crawl.lock"
 )  # see acquire_crawl_lock/touch_crawl_lock below
@@ -4428,6 +4432,8 @@ def main() -> int:
     )
 
     args = ap.parse_args()
+    # Fail before any directory is created; see common.require_corpus().
+    require_corpus()
     fetcher = Fetcher(RAW_ROOT)
 
     if args.cmd in ("phase1", "phase2"):

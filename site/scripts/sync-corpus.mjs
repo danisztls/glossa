@@ -47,10 +47,14 @@
  * exercises the bundled fixtures under `src/lib/fixtures/` regardless of
  * whether a corpus checkout is present (`corpus.ts`'s `VITEST` guard).
  *
- * Configurable via the `CORPUS_DIR` env var (default: `../corpus`,
- * resolved relative to this `site/` package). If no corpus is found, this
- * is a no-op (with a warning): `corpus.ts` falls back to its fixtures, so
- * the site still builds.
+ * Configurable via the `CORPUS_DIR` env var (default: `../../glossa-corpus`,
+ * resolved relative to this `site/` package — the corpus is a separate,
+ * private repository expected as a sibling checkout of this one, see
+ * docs/decisions.md, 2026-08-23). Spelled the same way as
+ * `pipeline/scrapers/common.py`'s `corpus_dir()`, so one exported variable
+ * moves both halves of the project. If no corpus is found, this is a no-op
+ * (with a warning): `corpus.ts` falls back to its fixtures, so the site
+ * still builds.
  */
 
 import { existsSync, rmSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -63,7 +67,7 @@ import {
 } from './build-xrefs.mjs';
 
 const siteRoot = path.resolve(fileURLToPath(import.meta.url), '../..');
-const corpusDir = path.resolve(siteRoot, process.env.CORPUS_DIR ?? '../corpus');
+const corpusDir = path.resolve(siteRoot, process.env.CORPUS_DIR ?? '../../glossa-corpus');
 const destDir = path.join(siteRoot, 'src/lib/corpus-data');
 const indexDir = path.join(destDir, 'index');
 const contentDir = path.join(destDir, 'content');
@@ -132,7 +136,8 @@ if (!existsSync(worksSrc)) {
 	rmSync(routeManifestPath, { force: true });
 	console.warn(
 		`[sync-corpus] No corpus found at ${worksSrc} -- corpus.ts will fall back to its bundled ` +
-			`fixtures. Set CORPUS_DIR to point at a real corpus/ checkout to build with real data.`
+			`fixtures. The corpus is a separate, private repository (docs/decisions.md, ` +
+			`2026-08-23): clone it beside this one as glossa-corpus/, or set CORPUS_DIR.`
 	);
 	process.exit(0);
 }

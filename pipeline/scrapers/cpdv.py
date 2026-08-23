@@ -36,7 +36,14 @@ from pathlib import Path
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
-from common import CorrectionDriftError, chapter_opening_letter, load_corrections
+from common import (
+    CorrectionDriftError,
+    chapter_opening_letter,
+    load_corrections,
+    raw_root,
+    require_corpus,
+    works_root,
+)
 
 # The page format itself lives in sacredbible.py, shared with vulgate.py --
 # same operator, same hand-built template. See that module's docblock for
@@ -47,9 +54,25 @@ BASE_URL = "https://sacredbible.org/catholic/"
 USER_AGENT = "Glossa Catholica corpus builder (+contact via repo)"
 RATE_LIMIT_SECONDS = 1.0
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-RAW_DIR = REPO_ROOT / "corpus" / "raw" / "cpdv"
-WORK_DIR = REPO_ROOT / "corpus" / "works" / "bible.cpdv.en"
+RAW_SUBDIR = "cpdv"
+WORK_ID = "bible.cpdv.en"
+
+
+def raw_dir() -> Path:
+    """This scraper's fetch cache inside the corpus checkout.
+
+    A function, not a module constant: `common.corpus_dir()` raises when the
+    corpus is missing, and doing that at import time would break `--help` and
+    any tooling that merely imports this module.
+    """
+    return raw_root() / RAW_SUBDIR
+
+
+def work_dir() -> Path:
+    """This scraper's output directory inside the corpus checkout."""
+    return works_root() / WORK_ID
+
+
 WORK_ID = "bible.cpdv.en"
 
 # (osis, filename, display name) in the schema's canonical 73-book order.
@@ -293,7 +316,7 @@ def run_scrape(
 ) -> tuple[list[dict], list[str]]:
     fetcher = Fetcher(
         base_url=BASE_URL,
-        raw_dir=RAW_DIR,
+        raw_dir=raw_dir(),
         user_agent=USER_AGENT,
         rate_limit_seconds=RATE_LIMIT_SECONDS,
         offline=offline,
@@ -398,7 +421,7 @@ def write_output(
     corrections_applied: int,
     generated_at: str,
 ) -> None:
-    books_dir = WORK_DIR / "books"
+    books_dir = work_dir() / "books"
     books_dir.mkdir(parents=True, exist_ok=True)
     for b in book_docs:
         out_path = books_dir / f"{b['osis']}.json"
@@ -442,7 +465,7 @@ def write_output(
         "books": [b["osis"] for b in book_docs],
         "corrections_applied": corrections_applied,
     }
-    write_json(WORK_DIR / "manifest.json", manifest)
+    write_json(work_dir() / "manifest.json", manifest)
 
 
 def write_json(path: Path, obj) -> None:
@@ -469,6 +492,8 @@ def main() -> int:
         help="Bypass the cache and re-fetch every page from the network.",
     )
     args = parser.parse_args()
+    # Fail before any directory is created; see common.require_corpus().
+    require_corpus()
 
     book_docs, _ = run_scrape(
         sample=args.sample, offline=args.offline, refresh=args.refresh
@@ -498,7 +523,7 @@ def main() -> int:
         return 1
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     corrections_count = write_corrections_receipt(
-        WORK_DIR, applied, corrections, generated_at
+        work_dir(), applied, corrections, generated_at
     )
     print(
         f"\nCorrections layer: {corrections_count} applied, "
@@ -513,7 +538,7 @@ def main() -> int:
         corrections_applied=corrections_count,
         generated_at=generated_at,
     )
-    print(f"\nWrote {len(book_docs)} book file(s) to {WORK_DIR}")
+    print(f"\nWrote {len(book_docs)} book file(s) to {work_dir()}")
 
     return 0 if ok else 1
 

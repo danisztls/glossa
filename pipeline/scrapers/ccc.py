@@ -73,14 +73,21 @@ from urllib.request import Request, urlopen
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
-from common import CorrectionDriftError, load_corrections
+from common import (
+    CorrectionDriftError,
+    load_corrections,
+    raw_root,
+    require_corpus,
+    works_root,
+)
 
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 
-ROOT = Path(__file__).resolve().parents[2]
-RAW_ROOT = ROOT / "corpus" / "raw"
-WORKS_ROOT = ROOT / "corpus" / "works"
+# The corpus is a separate, private repository (docs/decisions.md,
+# 2026-08-23); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
+RAW_ROOT = raw_root()
+WORKS_ROOT = works_root()
 
 EN_BASE = "https://www.vatican.va/archive/ENG0015/"
 EN_TOC_HREF = "_INDEX.HTM"
@@ -519,7 +526,9 @@ def test_pt_inline_scripture_accepts_source_spacing_and_post_book_commas() -> No
     }
 
 
-def test_pt_inline_scripture_keeps_source_comments_and_irregular_continuations() -> None:
+def test_pt_inline_scripture_keeps_source_comments_and_irregular_continuations() -> (
+    None
+):
     marked, citations = mark_pt_inline_scripture_citations(
         "(Gl 5, 22-23 segundo a Vulgata); (Ex 25, 16: 40, 1-2)", 1
     )
@@ -543,7 +552,9 @@ def test_pt_inline_scripture_accepts_a_roman_book_number() -> None:
 
 
 def test_pt_inline_scripture_keeps_an_enclosed_footnote_marker_separate() -> None:
-    marked, citations = mark_pt_inline_scripture_citations("«alicerce» ( Ef 2, 20 ⟦368⟧),", 1)
+    marked, citations = mark_pt_inline_scripture_citations(
+        "«alicerce» ( Ef 2, 20 ⟦368⟧),", 1
+    )
     assert marked == "«alicerce» ⟦inline1⟧⟦368⟧,"
     assert citations == {"inline1": ("Ef 2, 20", "( Ef 2, 20)")}
 
@@ -629,9 +640,11 @@ class Paragraph:
         self.citations = citations
         flat = re.sub(
             rf"{MARK_OPEN}([^ {MARK_CLOSE}]+){MARK_CLOSE}",
-            lambda m: inline_citations[m.group(1)][1]
-            if m.group(1) in inline_citations
-            else "",
+            lambda m: (
+                inline_citations[m.group(1)][1]
+                if m.group(1) in inline_citations
+                else ""
+            ),
             all_marked,
         )
         self.text = re.sub(r"\s+", " ", flat).strip()
@@ -1733,6 +1746,8 @@ def main() -> int:
         help="process only the Prologue + Baptism article slices",
     )
     args = ap.parse_args()
+    # Fail before any directory is created; see common.require_corpus().
+    require_corpus()
 
     langs = ["en", "pt"] if args.lang == "both" else [args.lang]
     overall_ok = True

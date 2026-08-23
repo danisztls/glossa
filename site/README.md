@@ -8,7 +8,10 @@ architecture and data contract this app is built against.
 
 ## Corpus data
 
-The corpus (`../corpus/`) is tracked at the repository root and is
+The corpus lives in **its own private repository**, `glossa-corpus`, expected
+on disk as a sibling of this one — `~/Dev/me/glossa` and
+`~/Dev/me/glossa-corpus` (docs/decisions.md, 2026-08-23; it holds verbatim
+reproductions of copyrighted texts and this repository is public). It is
 scraped/built separately by `../pipeline/` (see `docs/corpus-schema.md`). The
 site never commits its synced build copy; it only knows how to _read_ it.
 
@@ -19,7 +22,7 @@ site never commits its synced build copy; it only knows how to _read_ it.
   corpus, it splits each work into two tiers on disk —
   `src/lib/corpus-data/index/` (manifests, canonical book/chapter
   _numbers_, TOC trees, abbreviations, xrefs — small, `import.meta.glob(...,
-  { eager: true })`-inlined) and `src/lib/corpus-data/content/` (the actual
+{ eager: true })`-inlined) and `src/lib/corpus-data/content/` (the actual
   reading text — Bible books, CCC paragraph chunks, the Compendium — globbed
   with `{ query: '?url' }` so Vite emits each as its own content-hashed
   build asset instead of inlining it). `corpus.ts` reads the content tier via
@@ -43,11 +46,13 @@ site never commits its synced build copy; it only knows how to _read_ it.
   files, never the whole library.
 - `import.meta.glob` patterns must be static string literals, so they can't
   be built from an env var directly. Instead, `scripts/sync-corpus.mjs`
-  reads `../corpus/works/` (and `../corpus/xrefs/`, if present) and writes
-  the two-tier layout above into the fixed, gitignored path
+  reads `works/` (and `xrefs/`, if present) from the corpus checkout and
+  writes the two-tier layout above into the fixed, gitignored path
   `src/lib/corpus-data/` that the globs target.
-  - Configurable via the **`CORPUS_DIR`** env var (default: `../corpus`,
-    resolved relative to this `site/` package).
+  - Configurable via the **`CORPUS_DIR`** env var (default:
+    `../../glossa-corpus`, resolved relative to this `site/` package —
+    spelled the same way as `pipeline/scrapers/common.py`'s `corpus_dir()`,
+    so one exported variable moves both halves of the project).
   - Wired as an npm `prebuild` / `predev` hook, so `npm run build` and
     `npm run dev` always sync first. Run it manually with
     `npm run sync-corpus`.
@@ -65,12 +70,12 @@ site never commits its synced build copy; it only knows how to _read_ it.
     this is a correctness guarantee, not just a speed one.
 
 ```sh
-# sync ../corpus/ into src/lib/corpus-data/ (also runs automatically before
+# sync the corpus checkout into src/lib/corpus-data/ (also runs automatically before
 # `dev` and `build`)
 npm run sync-corpus
 
 # point at a corpus checkout elsewhere
-CORPUS_DIR=/path/to/corpus npm run build
+CORPUS_DIR=/path/to/glossa-corpus npm run build
 ```
 
 Works currently available in the real corpus: `bible.cpdv.en` and
@@ -103,7 +108,7 @@ never registers one, and `vite dev` doesn't emit `service-worker.js` at all.
 To test offline behaviour locally:
 
 ```sh
-CORPUS_DIR=/path/to/corpus npm run build   # or omit CORPUS_DIR to use fixtures
+CORPUS_DIR=/path/to/glossa-corpus npm run build   # or omit CORPUS_DIR to use fixtures
 npm run preview
 ```
 

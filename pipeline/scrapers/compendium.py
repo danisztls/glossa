@@ -92,12 +92,18 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+# Sibling module in this directory -- a script's own directory is on sys.path,
+# so this resolves regardless of the working directory. See common.py's
+# docblock for what does and does not belong there.
+from common import raw_root, require_corpus, works_root
+
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 
-ROOT = Path(__file__).resolve().parents[2]
-RAW_ROOT = ROOT / "corpus" / "raw"
-WORKS_ROOT = ROOT / "corpus" / "works"
+# The corpus is a separate, private repository (docs/decisions.md,
+# 2026-08-23); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
+RAW_ROOT = raw_root()
+WORKS_ROOT = works_root()
 
 EN_URL = "https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_en.html"
 PT_URL = "https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_po.html"
@@ -819,6 +825,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--lang", choices=["en", "pt", "both"], default="both")
     args = ap.parse_args()
+    # Fail before any directory is created; see common.require_corpus().
+    require_corpus()
 
     langs = ["en", "pt"] if args.lang == "both" else [args.lang]
     overall_ok = True
