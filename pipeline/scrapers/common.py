@@ -148,7 +148,8 @@ def apply_overrides(
     Operations:
 
       - `set` (default) replaces `field` on the located unit. `from` must
-        equal the current value; use `null` to add a field that is absent.
+        equal the current value; use `null` to add a field that is absent,
+        and `to: null` to delete one back to its omitted default.
       - `remove` deletes the located structure node entirely, for a block
         the parser promoted to a heading that is not one. `from` must equal
         its `title`.
@@ -220,13 +221,29 @@ def apply_overrides(
         field = ov.get("field")
         if not field:
             raise OverrideDriftError(f"{work_id}: override {ident!r} names no field")
+        if "to" not in ov:
+            raise OverrideDriftError(
+                f"{work_id}: override {ident!r} sets {field!r} but names no 'to'"
+            )
         current = unit.get(field)
         if current != ov.get("from"):
             raise OverrideDriftError(
                 f"{work_id}: override {ident!r} expected {field}="
                 f"{ov.get('from')!r}, found {current!r}"
             )
-        unit[field] = ov["to"]
+        # `to: null` DELETES the key rather than storing a null, mirroring
+        # `from: null`, which already means "the key is absent". The corpus
+        # omits defaults -- `kind` when the block is prose, `ident`/`subtitle`/
+        # `title_html` when a heading has none -- so "make this an ordinary
+        # block" has to be expressible as removing the key. Writing
+        # `"kind": null` instead would invent a third state no reader knows:
+        # `kind === 'quote'` is false for it, so it would happen to render
+        # correctly while leaving a value in the corpus that the schema does
+        # not define and the next round of tooling would have to special-case.
+        if ov["to"] is None:
+            unit.pop(field, None)
+        else:
+            unit[field] = ov["to"]
         applied.append(
             {
                 "id": ident,

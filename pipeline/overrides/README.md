@@ -1,7 +1,8 @@
 # Post-parse overrides
 
 Fixes applied to **parsed output**, after parsing and before the corpus is
-written. This directory is expected to stay nearly empty.
+written. This directory is expected to stay nearly empty: as of 2026-08-22 it
+holds **5 entries across 2 works**, out of a corpus of 339.
 
 ## Not the same thing as `pipeline/corrections/`
 
@@ -37,6 +38,28 @@ once. An override would have repaired one and left the rest broken while
 _claiming_ the defect was handled. Reach for this directory only when the
 defect genuinely does not generalise — a quirk of one document's own markup
 that no rule could state without naming that document.
+
+### What passing that test looks like
+
+The five entries filed on 2026-08-22 are the first that did. The PT editions
+of Sacrosanctum Concilium and Slavorum Apostoli wrap five passages in
+`<blockquote>`, which the parser reads as `kind: "quote"` — correctly, in the
+sense that the tag really is there in the source. But the passages are the
+document's own voice: four are the lettered norms that the preceding block
+introduces (`observem-se as seguintes normas:`), and the fifth is a dash-led
+list of the places the Pope wishes to visit. The tag is doing indentation,
+not quotation, and setting them as citations attributes the Council's own
+legislation to someone else.
+
+Why no parser rule fixes this: the same tag in the same corpus marks six
+genuine quotations (the closing prayers of Deus Caritas Est, Lumen Fidei and
+Ecclesia de Eucharistia), and nothing inside a single document separates the
+two uses. The one discriminator is cross-language — the EN editions of both
+documents use no `<blockquote>` at all and set the identical passages as
+ordinary paragraphs — and the parser sees one document at a time, by design,
+since a missing translation is legitimate and common. So the evidence is
+real and citable, and the rule that would encode it does not exist. That is
+exactly the shape of defect this directory is for.
 
 ## Format
 
@@ -94,3 +117,15 @@ ls corpus/works/*/overrides-applied.json
 ```
 
 is the census of where the parser gave up. Keep that list short.
+
+## `to: null` deletes the field
+
+The corpus omits defaults — `kind` when a block is prose, `ident`/`subtitle`/
+`title_html` when a heading has none — so "make this an ordinary block" is
+expressed by removing the key, not by writing the default into it. `to: null`
+does that, mirroring `from: null`, which already means "the key is absent".
+
+Writing `"kind": "prose"` instead would contradict the schema, and writing
+`"kind": null` would invent a third state: `kind === 'quote'` is false for it,
+so the page would happen to render correctly while leaving a value in the
+corpus that nothing defines and the next reader has to special-case.

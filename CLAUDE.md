@@ -50,8 +50,11 @@ as an unstated judgment call, and it will get taken.
   and edits the parsed output. Keeping them apart is what lets `corpus/raw/`
   stay the record of what the source actually said. Overrides are the
   exception: before filing one, ask whether the defect belongs to one document
-  or to a class of them — it has been a class every time so far. See
-  `pipeline/overrides/README.md`.
+  or to a class of them. It has been a class nearly every time — the layer
+  holds 5 entries against a corpus of 339 works, all of them the same defect
+  (a PT edition using `<blockquote>` to indent the document's own words),
+  filed only because the sole discriminator is cross-language and the parser
+  reads one document at a time. See `pipeline/overrides/README.md`.
 
 ## Running the site
 

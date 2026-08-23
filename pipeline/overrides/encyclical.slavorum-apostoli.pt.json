@@ -1,0 +1,16 @@
+[
+  {
+    "id": "slavorum-pt-29-papal-voice-not-a-quotation",
+    "target": "section",
+    "locator": {
+      "section": 29,
+      "block": 1
+    },
+    "field": "kind",
+    "from": "quote",
+    "to": null,
+    "reason": "The block is the Pope's own continuing sentence -- a dash-led list of the places he wishes to pause at ('-- desejo tambem deter-me na basilica de Sao Clemente em Roma ...') -- not a quotation from another source. Section 29 does quote Metodius, but that is block 0, which the source marks as ordinary prose and which stays prose here.",
+    "evidence": "The PT source has exactly one <blockquote> (corpus/raw/vatican-docs/encyclical__slavorum-apostoli__pt.html); the EN edition has none and sets the same passage as an ordinary paragraph. Note the inversion the tag produces: the block it marks is the papal voice, while the actual quotation beside it is unmarked.",
+    "added": "2026-08-22"
+  }
+]

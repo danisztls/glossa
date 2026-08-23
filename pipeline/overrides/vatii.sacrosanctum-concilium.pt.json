@@ -1,0 +1,58 @@
+[
+  {
+    "id": "sc-pt-89-norms-not-a-quotation",
+    "target": "section",
+    "locator": {
+      "section": 89,
+      "block": 1
+    },
+    "field": "kind",
+    "from": "quote",
+    "to": null,
+    "reason": "The lettered norms are the Council's own legislative text, not a quotation. Block 0 introduces them in the same voice and sentence ('observem-se as seguintes normas:' -- 'the following norms are to be observed:') and block 1 is its continuation, so setting it apart as a citation misattributes the Council's own words to someone else.",
+    "evidence": "The PT source wraps these four passages in <blockquote> (corpus/raw/vatican-docs/vatii__sacrosanctum-concilium__pt.html, 4 occurrences); the EN edition of the same document uses none at all and renders the identical passages as ordinary paragraphs. The tag is doing indentation here, which is how the print edition sets an enumerated sub-clause, not quotation.",
+    "added": "2026-08-22"
+  },
+  {
+    "id": "sc-pt-92-norms-not-a-quotation",
+    "target": "section",
+    "locator": {
+      "section": 92,
+      "block": 1
+    },
+    "field": "kind",
+    "from": "quote",
+    "to": null,
+    "reason": "Same defect as sc-pt-89: block 0 reads 'Quanto as leituras, sigam-se estas normas:' and block 1 is the lettered list it introduces.",
+    "evidence": "See sc-pt-89-norms-not-a-quotation.",
+    "added": "2026-08-22"
+  },
+  {
+    "id": "sc-pt-95-norms-not-a-quotation",
+    "target": "section",
+    "locator": {
+      "section": 95,
+      "block": 1
+    },
+    "field": "kind",
+    "from": "quote",
+    "to": null,
+    "reason": "Same defect as sc-pt-89: block 0 ends 'celebrar ... o Oficio divino, ou seja;' and block 1 is the lettered enumeration completing that sentence.",
+    "evidence": "See sc-pt-89-norms-not-a-quotation.",
+    "added": "2026-08-22"
+  },
+  {
+    "id": "sc-pt-109-norms-not-a-quotation",
+    "target": "section",
+    "locator": {
+      "section": 109,
+      "block": 1
+    },
+    "field": "kind",
+    "from": "quote",
+    "to": null,
+    "reason": "Same defect as sc-pt-89: block 1 is the lettered directives ('a) utilizem-se com mais abundancia os elementos baptismais...') the preceding block introduces.",
+    "evidence": "See sc-pt-89-norms-not-a-quotation.",
+    "added": "2026-08-22"
+  }
+]
