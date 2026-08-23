@@ -1,0 +1,34 @@
+[
+  {
+    "id": "summa.en-ss172a1-p11-reply2",
+    "locator": {
+      "part": "II-II",
+      "question": 172,
+      "article": 1,
+      "division": "reply",
+      "n": 2
+    },
+    "field": "raw_text",
+    "from": "<p id=\"SS_Q172_A1-p11\"><b>Objection 2:</b>",
+    "to": "<p id=\"SS_Q172_A1-p11\"><b>Reply to Objection 2:</b>",
+    "reason": "The source drops the \"Reply to \" prefix, printing the second reply as if it were a second objection. Purely typographic: the paragraph's own text answers the objection rather than raising one, and it stands between Reply to Objection 1 and Reply to Objection 3.",
+    "evidence": "corpus/raw/summa-en/summa.xml, SS_Q172_A1: the article's paragraph sequence is Objection 1-4, On the contrary, I answer that, Reply 1, [Objection 2], Reply 3, Reply 4 -- reply 2 is otherwise absent and objection 2 otherwise duplicated (the genuine one is at SS_Q172_A1-p3). Independently confirmed against summa.la, which prints II-II q. 172 a. 1 with replies ad 1, ad 2, ad 3 and ad 4.",
+    "added": "2026-08-23"
+  },
+  {
+    "id": "summa.en-xp77a4-p11-reply3",
+    "locator": {
+      "part": "Suppl",
+      "question": 77,
+      "article": 4,
+      "division": "reply",
+      "n": 3
+    },
+    "field": "raw_text",
+    "from": "<p id=\"XP_Q77_A4-p11\"><b>Objection 3:</b>",
+    "to": "<p id=\"XP_Q77_A4-p11\"><b>Reply to Objection 3:</b>",
+    "reason": "Same dropped \"Reply to \" prefix as summa.en-ss172a1-p11-reply2, in the Supplement.",
+    "evidence": "corpus/raw/summa-en/summa.xml, XP_Q77_A4: sequence is Objection 1-4, On the contrary, I answer that, Reply 1, Reply 2, [Objection 3], Reply 4 -- reply 3 is otherwise absent, objection 3 otherwise duplicated (the genuine one is at XP_Q77_A4-p4), and the surrounding replies run 1, 2, _, 4. No Latin witness is available here: the Corpus Thomisticum publishes no Supplementum, so the evidence is the sequence alone, which is nonetheless unambiguous.",
+    "added": "2026-08-23"
+  }
+]
