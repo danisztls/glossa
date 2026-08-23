@@ -203,6 +203,26 @@ const unpublishedWorks = readJson(unpublishedPath).works ?? {};
 const unpublishedIds = new Set(Object.keys(unpublishedWorks));
 
 /**
+ * Works whose own parser reported that it had failed on them, and which are
+ * not withheld — collected in the loop below and a hard error after it.
+ *
+ * `vatican_docs.py` writes `PARSER DEFEATED` into `manifest.notes` when a
+ * document's markup beat it. That is the parser's own verdict on its own
+ * output, and it is the strongest quality signal the corpus produces. But
+ * `notes` is dropped from the shipped index a few lines down (it is scraper
+ * diagnostics, not reader-facing), so nothing downstream — `preflight-deploy`
+ * included — can ever see it. Three works drifted into production that way:
+ * `quadragesimo-anno.pt` was shipping 5 of its 148 paragraphs, about 9% of the
+ * page's text, with the marker sitting unread in its manifest the whole time.
+ *
+ * Checked here because this is the last place the marker still exists. The
+ * fix for a failure is a one-line entry in `unpublished.json`, or repairing
+ * the parse and re-parsing; it is deliberately not skippable, because the
+ * thing it prevents is silently publishing a document we know is broken.
+ */
+const publishedDefeats = [];
+
+/**
  * Editorial descriptions — see `site/descriptions.json` for the format and
  * for why they are curated here instead of in the corpus.
  *
@@ -274,6 +294,10 @@ for (const workId of workIds) {
 		notes: '',
 		description: descriptions[workId] ?? manifest.description ?? null
 	};
+
+	if (typeof manifest.notes === 'string' && manifest.notes.includes('PARSER DEFEATED')) {
+		if (!unpublishedIds.has(workId)) publishedDefeats.push(workId);
+	}
 
 	// The takedown. Everything above this line still happens — the manifest
 	// goes into the index, so the work keeps its title, its rights holder's
@@ -482,6 +506,18 @@ for (const workId of workIds) {
 	// manifest only, so `listWorks()` keeps seeing it without this script
 	// needing to know its content shape. Matches the pre-2026-08-15
 	// glob-everything behaviour, which never filtered by work type either.
+}
+
+if (publishedDefeats.length > 0) {
+	console.error(
+		`[sync-corpus] ${publishedDefeats.length} work(s) report a defeated parse in ` +
+			`manifest.notes and are not withheld:\n` +
+			publishedDefeats.map((id) => `  ${id}`).join('\n') +
+			`\n\nEither withhold them in site/unpublished.json (see its header for the ` +
+			`reasoning and the field meanings) or repair the parse and re-parse. ` +
+			`Run pipeline/scrapers/audit.py for how much text each one is actually losing.`
+	);
+	process.exit(1);
 }
 
 writeJson(path.join(indexDir, 'manifests.json'), manifests);

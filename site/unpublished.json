@@ -60,6 +60,21 @@
 		"  }"
 	],
 	"works": {
+		"encyclical.quadragesimo-anno.pt": {
+			"kind": "quality",
+			"date": "2026-08-23",
+			"reason": "Our parse of this edition captured only 5 numbered paragraphs \u2014 about 9% of the page's text \u2014 against 148 in the English edition, leaving 132 blocks of real prose attached to no section. The page opens with a long unnumbered recap under topic labels, and our parser never picks the numbering back up. Diagnosed in the corpus manifest's own notes."
+		},
+		"encyclical.miranda-prorsus.en": {
+			"kind": "quality",
+			"date": "2026-08-23",
+			"reason": "Our parse of this edition captured only 4 numbered paragraphs \u2014 about 10% of the page's text \u2014 leaving 139 blocks of real prose attached to no section. The source numbers its paragraphs sparsely and inconsistently rather than not at all. Diagnosed in the corpus manifest's own notes."
+		},
+		"vatii.gravissimum-educationis.en": {
+			"kind": "quality",
+			"date": "2026-08-23",
+			"reason": "This edition prints its numbered items as bold headings with unnumbered prose beneath, instead of as numbered paragraphs, so our parse divides it wrongly. Most of the text is present, but the paragraph numbers a citation would point at are not the ones the document itself uses. Its Portuguese translation does not share the convention and parses correctly. Diagnosed in the corpus manifest's own notes."
+		},
 		"encyclical.pascendi-dominici-gregis.pt": {
 			"kind": "quality",
 			"date": "2026-08-16",

@@ -1197,3 +1197,62 @@ are already in the corpus.
 **What this does NOT remove, stated so nobody reads the above as more than it is.** `site/src/lib/fixtures/` is still tracked here and still holds real text: 52 verses of the Portuguese Bible, 21 English and 11 Portuguese CCC paragraphs, 7 Compendium questions per language — about 46 KB of copyrighted excerpt, alongside the public-domain CPDV and Vulgate fixtures which carry no exposure at all. `pipeline/corrections/` and `pipeline/overrides/` quote roughly 2,800 characters across 87 entries, mostly single words, and cannot not quote: a correction is meaningless without naming what it replaces. Several `docs/research/` files print verses side by side to make an argument about them.
 
 That is quotation, and the thing this move was about was **reproduction** — `raw/` was the complete original pages, everything the parser discards included, mirrored verbatim for anyone who cloned. The distinction is the whole point of the change, and it is why the fixtures were left alone rather than swept up with the rest. If they are ever revisited, note that `CLAUDE.md` records them as deliberately encoding absent chapters and out-of-range cross-references to exercise the not-in-corpus paths; a replacement has to keep those properties or it silently stops testing them.
+
+## 2026-08-23 — Coverage as a third oracle, and the three works it caught in production
+
+**What**: `pipeline/scrapers/audit.py`, two corpus audits comparing `raw/`
+against `works/`; three works withheld; a hard gate in `sync-corpus.mjs`.
+
+**Why a third oracle.** The project had two, and neither can see a block that
+was dropped:
+
+- the **round-trip** check compares a block's `html` against its own text. It
+  is a statement about one block, so a block that never became a block is
+  outside its universe.
+- **cross-language symmetry** compares section-number _sets_. It is blind to
+  loss _inside_ the sections.
+
+`humanae-vitae.pt` is the case that proves the gap: 31 sections against the
+English edition's 31, no manifest warning, symmetry clean — and **21% of its
+text absent**. `mortalium-animos.pt` is worse, because the signal points the
+wrong way: 19 sections against English's 13, so the asymmetry suggests the
+Portuguese has _more_, while half its text is missing.
+
+The new check is deliberately crude and therefore hard to fool: text of the
+page's body region, divided by text of everything we stored from it. It cannot
+say what was lost or why. It says how much.
+
+**Calibration, not a guess**: all six works withheld by hand back in August
+measure 0.0%. The metric agrees with the judgment already made, which is what
+makes the rest of its readings worth believing.
+
+**Why coverage is not a clean pass/fail.** It never reaches 100% legitimately —
+the body/footnote boundary is sniffed, and where the sniff misses, footnote
+text counts against the body. So a 90%-band reading is a research lead, not a
+verdict, and only a 50% floor is gated, where no boundary error explains the
+gap. Median across the 339 document works is 98.1%.
+
+**The three works.** `vatican_docs.py` writes `PARSER DEFEATED` into
+`manifest.notes` when a document's markup beats it — the parser's own verdict
+on its own output, and the strongest quality signal the corpus produces. Nine
+works carry it. **Six were withheld and three were being published:**
+
+| work                              | coverage | sections   |
+| --------------------------------- | -------- | ---------- |
+| `encyclical.quadragesimo-anno.pt` | 8.7%     | 5, EN 148  |
+| `encyclical.miranda-prorsus.en`   | 10.0%    | 4          |
+| `vatii.gravissimum-educationis.en`| 85.7%    | 12, mis-divided |
+
+All three are now in `unpublished.json` with their coverage figure in the
+reader-facing reason. `unpublished.json`'s own header sets the standard —
+"shipping a document with 40% of its paragraphs silently absent is not
+[honest]" — and `quadragesimo-anno.pt` was shipping with 91% absent.
+
+**Why it drifted.** `sync-corpus.mjs` sets `notes: ''` on the way into the
+build, deliberately: it is scraper diagnostics, not reader-facing. So nothing
+downstream — `preflight-deploy.mjs` included — could ever see the marker. The
+gate therefore lives **in the sync step**, the last place the marker still
+exists, and is a hard error: either withhold the work or repair the parse.
+`gravissimum-educationis.en` shows why the marker is worth gating on
+independently of coverage — at 85.7% it passes any text-volume floor, and is
+still divided wrongly enough that a citation points at the wrong paragraph.
