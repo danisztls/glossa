@@ -149,6 +149,12 @@ Usage:
                                                    [--limit N]
   uv run pipeline/scrapers/vatican_docs.py discover-encyclicals   # index-only, no document fetches
 
+`--jobs N` (phase1/phase2) sets how many worker processes PARSE. It does not
+and cannot affect how fast this crawls: fetching stays serial in the parent
+behind the 2s crawl delay, and only the work after the bytes arrive fans out.
+`--jobs 1` runs everything inline, which is what to use when a parser crash
+needs a real traceback.
+
 Every fetched page (index pages and document pages alike) is cached under
 corpus/raw/vatican-docs/ and reused offline on re-run -- phase 2 in
 particular is designed to be interrupted and resumed: re-running the same
@@ -166,6 +172,15 @@ and 2m59s of wall clock against 6.5s of CPU. `pipeline/absent-sources.json`
 (common.AbsentSources) now remembers a definitive 404/410 so the next run
 does not ask again, and `--recheck-absent` re-asks when you want to know
 whether a translation has appeared.
+
+Removing that sleep left the run CPU-bound for the first time -- 6.25s pinned
+to one core, 61% of it inside re.Pattern.sub -- so `scrape_one` was split into
+`fetch_for_parse` (serial, the network) and `parse_and_write` (a pure function
+of bytes already fetched, run in a worker pool). A full re-parse is now ~1.3s.
+The two are driven apart rather than back to back, so on a REAL crawl a
+document parses inside the 2s the parent is already obliged to spend sleeping
+before the next request: parsing stops adding to a crawl's wall clock instead
+of being made to go faster.
 
 NOTE ON THE ROOTS: this file may run from a git worktree
 (.claude/worktrees/*/). Both roots are now derived from __file__, so both
@@ -203,12 +218,14 @@ import collections
 import difflib
 import html as ihtml
 import json
+import multiprocessing
 import os
 import re
 import sys
 import time
 import unicodedata
 import urllib.parse
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -3989,32 +4006,87 @@ def url_lang_key(ref: DocRef, lang: str) -> str:
     return lang
 
 
-def scrape_one(
-    fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, overwrite: bool
-) -> dict:
-    """Returns a small result dict for progress/reporting; never raises."""
-    url = ref.lang_urls.get(url_lang_key(ref, lang))
-    result = {
+# --------------------------------------------------------------------------
+# Per-document work, split on the one line that matters: the network.
+#
+# `scrape_one` used to be a single function running fetch-then-parse. It is
+# now the serial composition of two halves that can be driven separately,
+# because they have opposite constraints:
+#
+#   fetch_for_parse -- touches vatican.va. Must stay strictly serial, one
+#     request at a time, behind `_sleep_for_crawl_delay`. robots.txt asks for
+#     a 2s Crawl-delay and docs/decisions.md treats that as a commitment about
+#     someone else's server, not a tuning parameter. Nothing here may ever run
+#     concurrently.
+#
+#   parse_and_write -- touches nobody's server. Pure CPU over bytes already in
+#     hand, plus a write to `works/{work_id}/`, a directory no other document
+#     shares. Safe to run in a worker process, and worth it: with the absent
+#     ledger in place a re-parse makes zero requests, so the run became
+#     CPU-bound for the first time -- 6.25s pinned to ONE core with 15 idle,
+#     61% of it inside re.Pattern.sub under strip_tags/narrow_html.
+#
+# The distinction is between concurrent REQUESTS, which are forbidden here,
+# and concurrent WORK, which was simply being left on the floor.
+# --------------------------------------------------------------------------
+
+
+def _result_base(ref: DocRef, lang: str, url: str | None) -> dict:
+    """The progress/reporting skeleton both halves fill in."""
+    return {
         "family": ref.family,
         "slug": ref.slug,
         "lang": lang,
         "status": None,
         "url": url,
     }
-    work_id = f"{ref.family}.{ref.slug}.{lang}"
+
+
+def fetch_for_parse(
+    fetcher: Fetcher, ref: DocRef, lang: str, overwrite: bool
+) -> tuple[dict | None, str | None]:
+    """The serial half: everything up to and including the network.
+
+    Returns `(result, None)` when the document is already finished -- no URL,
+    already written, or the fetch failed -- and `(None, html)` when there is a
+    page to hand to `parse_and_write`. Exactly one of the two is not None."""
+    url = ref.lang_urls.get(url_lang_key(ref, lang))
+    result = _result_base(ref, lang, url)
     if url is None:
         result["status"] = "no-url"
-        return result
+        return result, None
+    work_id = f"{ref.family}.{ref.slug}.{lang}"
     out_dir = WORKS_ROOT / work_id
     if (out_dir / "sections.json").exists() and not overwrite:
         result["status"] = "already-written"
-        return result
+        return result, None
 
     html, err = fetcher.fetch_text(url, cache_name_for(ref, lang))
     if html is None:
         result["status"] = "fetch-failed"
         result["error"] = err
-        return result
+        return result, None
+    return None, html
+
+
+def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
+    """The parallel half: everything after the bytes are in hand.
+
+    RUNS IN A WORKER PROCESS, so it has to be a pure function of its arguments
+    plus read-only files, and it is. Its inputs are the page text and a
+    `DocRef` of plain strings; the files it reads are this document's own
+    `pipeline/corrections/{work_id}.json` and `pipeline/overrides/{work_id}.json`;
+    the only thing it writes is `works/{work_id}/`, which belongs to this
+    document alone. No shared mutable state, so a parallel run and a serial
+    one produce the same bytes -- checked by diffing the whole `works/` tree
+    between `--jobs 1` and `--jobs 16`.
+
+    Keeps `scrape_one`'s contract of not raising for a parse defeat: a crash
+    on one document is reported as `parse-error`, never allowed to kill a
+    crawl of many."""
+    url = ref.lang_urls.get(url_lang_key(ref, lang))
+    result = _result_base(ref, lang, url)
+    work_id = f"{ref.family}.{ref.slug}.{lang}"
 
     corrections = load_corrections(work_id)
     pre_applied: list[dict] = []
@@ -4121,6 +4193,136 @@ def scrape_one(
     return result
 
 
+def _pool_context():
+    """The multiprocessing start method for the parse pool: `fork`.
+
+    NOT THE DEFAULT, and deliberately so. Python 3.14 made `forkserver` the
+    default on Linux because `fork` is unsafe in a process that has threads;
+    this scraper has none -- it is one synchronous loop from `main()` down --
+    so the hazard the new default guards against does not exist here, and
+    `fork` is the better fit for what the workers need. They inherit an
+    already-imported module and its compiled regexes copy-on-write, instead of
+    re-importing a 4,900-line file (and re-resolving `corpus_dir()` from the
+    environment) once per worker.
+
+    Falls back to the platform default if `fork` is unavailable, so the pool
+    degrades rather than failing on a platform that has no fork."""
+    try:
+        return multiprocessing.get_context("fork")
+    except ValueError:
+        return multiprocessing.get_context()
+
+
+def default_jobs() -> int:
+    """How many parse workers to use when `--jobs` is not given.
+
+    `process_cpu_count()` rather than `cpu_count()` because it honours CPU
+    affinity, which is what a cgroup or a `taskset` actually grants us; the
+    machine's core count is not ours to assume. Capped at 16 because the
+    parent still has to fetch, and past that the pickling of page text costs
+    more than the parse it buys."""
+    n = getattr(os, "process_cpu_count", os.cpu_count)() or 1
+    return max(1, min(n, 16))
+
+
+class _Done:
+    """A job that was finished without a worker, for the inline path.
+
+    Gives `OrderedParsePool.collect` one shape to call `.result()` on whether
+    a job ran in a pool, ran inline under `--jobs 1`, or never needed to run
+    at all (a document `fetch_for_parse` already settled as `no-url`,
+    `already-written` or `fetch-failed`)."""
+
+    __slots__ = ("_value",)
+
+    def __init__(self, value: dict):
+        self._value = value
+
+    def result(self) -> dict:
+        return self._value
+
+
+class OrderedParsePool:
+    """Fan parse jobs out to worker processes; report results IN ORDER.
+
+    IN ORDER because the per-document progress lines are how a long crawl is
+    followed, and an as-completed ordering would shuffle them differently on
+    every run for nothing -- the work is already overlapped, only the printing
+    waits. It also keeps the returned `results` list, and so the run summary
+    and every problem report built from it, identical to a serial run's.
+
+    BOUNDED because during a re-parse the parent submits far faster than the
+    workers drain (a cached fetch is a disk read), and an unbounded queue would
+    hold every document's HTML in memory at once. `collect()` blocks on the
+    oldest job once more than `lookahead` are outstanding.
+
+    `workers <= 1` runs every job inline, with no pool and no pickling, so
+    `--jobs 1` is a genuinely serial run rather than a one-worker pool. That is
+    the configuration to reach for when a parser crash needs a real traceback,
+    and the baseline to diff against when checking that parallel output matches
+    serial."""
+
+    def __init__(self, workers: int):
+        self.workers = max(1, workers)
+        self._ex = (
+            ProcessPoolExecutor(max_workers=self.workers, mp_context=_pool_context())
+            if self.workers > 1
+            else None
+        )
+        self._pending: collections.deque = collections.deque()
+        # Four jobs per worker: deep enough that no worker idles waiting for
+        # the parent to come back from a 2s crawl delay, shallow enough that
+        # in-flight HTML stays a few MB rather than the whole corpus.
+        self._lookahead = self.workers * 4
+
+    def submit(self, tag, fn, *args) -> None:
+        if self._ex is None:
+            self._pending.append((tag, _Done(fn(*args))))
+        else:
+            self._pending.append((tag, self._ex.submit(fn, *args)))
+
+    def submit_done(self, tag, value: dict) -> None:
+        """Queue an already-decided result, so that a document settled before
+        parsing still holds its place in the reporting order."""
+        self._pending.append((tag, _Done(value)))
+
+    def collect(self, keep: int | None = None):
+        """Yield `(tag, result)` in submission order until at most `keep` jobs
+        are still outstanding. `keep=None` uses the lookahead; `keep=0` drains
+        everything.
+
+        A worker exception propagates out of `.result()` here, which is the
+        same thing that would have happened in a serial run: `scrape_one`
+        absorbs a *parse* defeat into a `parse-error` status, but a failure
+        outside that -- `write_document_outputs` hitting a full disk, say --
+        has always been fatal, and quietly swallowing it because the work
+        happened in another process would be a real change in behaviour."""
+        limit = self._lookahead if keep is None else keep
+        while len(self._pending) > limit:
+            tag, job = self._pending.popleft()
+            yield tag, job.result()
+
+    def close(self) -> None:
+        if self._ex is not None:
+            self._ex.shutdown(wait=True)
+
+
+def scrape_one(
+    fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, overwrite: bool
+) -> dict:
+    """Fetch then parse one document, serially. Returns a small result dict
+    for progress/reporting; never raises.
+
+    The two halves run back to back here. `run_phase1`/`run_phase2` drive them
+    apart instead, so that parsing overlaps the crawl delay -- but this
+    composition is the definition of what that overlap must produce, and the
+    `--jobs 1` path still goes through it."""
+    early, html = fetch_for_parse(fetcher, ref, lang, overwrite)
+    if early is not None:
+        return early
+    return parse_and_write(ref, lang, title_hint, html)
+
+
 # --------------------------------------------------------------------------
 # Phase 1: Vatican II
 # --------------------------------------------------------------------------
@@ -4165,7 +4367,7 @@ VATII_TITLES = {
 
 
 def run_phase1(
-    fetcher: Fetcher, langs: list[str], only: list[str] | None
+    fetcher: Fetcher, langs: list[str], only: list[str] | None, jobs: int = 1
 ) -> list[dict]:
     refs, err = discover_vatii(fetcher)
     if err:
@@ -4175,22 +4377,48 @@ def run_phase1(
     print(f"discovered {len(refs)} Vatican II documents from index (expected 16)")
     order = only or VATII_ORDER
     results = []
-    for slug in order:
-        ref = by_slug.get(slug)
-        if ref is None:
-            results.append({"family": "vatii", "slug": slug, "status": "not-in-index"})
-            continue
-        for lang in langs:
-            r = scrape_one(
-                fetcher, ref, lang, VATII_TITLES.get(slug, slug), overwrite=True
-            )
-            results.append(r)
-            print(
-                f"  {slug}.{lang}: {r['status']}"
-                + (f" {r.get('range')}" if r.get("range") else "")
-                + (f" ERR={r.get('error')}" if r.get("error") else "")
-            )
-        touch_crawl_lock(CRAWL_LOCK_PATH)
+    pool = OrderedParsePool(jobs)
+
+    def report(tag, r: dict) -> None:
+        slug, lang = tag
+        results.append(r)
+        if lang is None:  # not-in-index; queued only to hold its place
+            return
+        print(
+            f"  {slug}.{lang}: {r['status']}"
+            + (f" {r.get('range')}" if r.get("range") else "")
+            + (f" ERR={r.get('error')}" if r.get("error") else "")
+        )
+
+    try:
+        for slug in order:
+            ref = by_slug.get(slug)
+            if ref is None:
+                pool.submit_done(
+                    (slug, None),
+                    {"family": "vatii", "slug": slug, "status": "not-in-index"},
+                )
+                continue
+            for lang in langs:
+                early, html = fetch_for_parse(fetcher, ref, lang, overwrite=True)
+                if early is not None:
+                    pool.submit_done((slug, lang), early)
+                else:
+                    pool.submit(
+                        (slug, lang),
+                        parse_and_write,
+                        ref,
+                        lang,
+                        VATII_TITLES.get(slug, slug),
+                        html,
+                    )
+            touch_crawl_lock(CRAWL_LOCK_PATH)
+            for tag, r in pool.collect():
+                report(tag, r)
+        for tag, r in pool.collect(0):
+            report(tag, r)
+    finally:
+        pool.close()
     return results
 
 
@@ -4207,6 +4435,7 @@ def run_phase2(
     include_exhortations: bool,
     overwrite: bool = False,
     doc_slugs: list[str] | None = None,
+    jobs: int = 1,
 ) -> list[dict]:
     """`overwrite` re-parses documents already written to corpus/works/ from
     their CACHED raw HTML — the module docstring has promised this flag since
@@ -4229,87 +4458,123 @@ def run_phase2(
         else [c for c in PONTIFF_CANDIDATES if c[0] in pontiff_slugs]
     )
     n_done = 0
-    for slug, display, _year in candidates:
-        if time_budget is not None and time.monotonic() - start > time_budget:
-            print(f"time budget ({time_budget}s) reached before {slug}; stopping")
-            break
-        refs, notes = discover_encyclicals(fetcher, slug, display)
-        for note in notes:
-            print(f"  [discover] {note}")
-        if not refs:
-            print(
-                f"{slug}: 0 encyclicals discovered (index missing or empty) -- skipping"
-            )
-            continue
-        if doc_slugs is not None:
-            refs = [r for r in refs if r.slug in doc_slugs]
-            if not refs:
-                continue
-        print(f"{slug}: {len(refs)} encyclicals discovered")
-        for ref in refs:
-            if time_budget is not None and time.monotonic() - start > time_budget:
-                print(f"time budget reached mid-pontificate ({slug}); stopping")
-                return results
-            if limit is not None and n_done >= limit:
-                print(f"--limit {limit} reached; stopping")
-                return results
-            r_en = scrape_one(
-                fetcher,
-                ref,
-                "en",
-                ref.slug.replace("-", " ").title(),
-                overwrite=overwrite,
-            )
-            results.append(r_en)
-            n_done += 1
-            pt_url = pt_url_for(ref)
+    pool = OrderedParsePool(jobs)
+    # A document's progress line names both languages at once, so it can only
+    # be printed when both have come back. Keyed by submission index rather
+    # than slug: a slug is not unique across pontificates, and reusing one as
+    # a key would merge two documents' lines.
+    awaiting: dict[int, dict] = {}
+    n_submitted = 0
+
+    def report(tag, r: dict) -> None:
+        idx, lang = tag
+        results.append(r)
+        entry = awaiting[idx]
+        entry["have"][lang] = r
+        if len(entry["have"]) < entry["want"]:
+            return
+        del awaiting[idx]
+        if entry["quiet"]:
+            return
+        en = entry["have"].get("en", {})
+        pt = entry["have"].get("pt")
+        if pt is None:
             pt_status = "no-pt-url"
-            if pt_url:
-                ref.lang_urls["pt"] = pt_url
-                r_pt = scrape_one(
-                    fetcher,
-                    ref,
-                    "pt",
-                    ref.slug.replace("-", " ").title(),
-                    overwrite=overwrite,
+        else:
+            pt_status = pt["status"]
+            if pt_status in ("fetch-failed", "no-translation-stub"):
+                pt_status = (
+                    "pt-unavailable (expected for many pontificates, see survey)"
                 )
-                results.append(r_pt)
-                pt_status = r_pt["status"]
-                if r_pt["status"] in ("fetch-failed", "no-translation-stub"):
-                    pt_status = (
-                        "pt-unavailable (expected for many pontificates, see survey)"
-                    )
-            print(f"  {ref.slug}: en={r_en['status']} pt={pt_status}")
-            touch_crawl_lock(CRAWL_LOCK_PATH)
-        if include_exhortations:
-            exh_refs, exh_notes = discover_exhortations(fetcher, slug, display)
-            for note in exh_notes:
-                print(f"  [discover-exh] {note}")
-            for ref in exh_refs:
+        print(f"  {entry['slug']}: en={en.get('status')} pt={pt_status}")
+
+    def submit_doc(ref: DocRef, quiet: bool) -> None:
+        """Fetch this document's languages serially, queue their parses."""
+        nonlocal n_submitted
+        idx = n_submitted
+        n_submitted += 1
+        langs = ["en"]
+        pt_url = pt_url_for(ref)
+        if pt_url:
+            ref.lang_urls["pt"] = pt_url
+            langs.append("pt")
+        awaiting[idx] = {
+            "slug": ref.slug,
+            "want": len(langs),
+            "have": {},
+            "quiet": quiet,
+        }
+        title = ref.slug.replace("-", " ").title()
+        for lang in langs:
+            early, html = fetch_for_parse(fetcher, ref, lang, overwrite)
+            if early is not None:
+                pool.submit_done((idx, lang), early)
+            else:
+                pool.submit((idx, lang), parse_and_write, ref, lang, title, html)
+
+    def drain(keep: int | None = None) -> None:
+        for tag, r in pool.collect(keep):
+            report(tag, r)
+
+    try:
+        for slug, display, _year in candidates:
+            if time_budget is not None and time.monotonic() - start > time_budget:
+                print(f"time budget ({time_budget}s) reached before {slug}; stopping")
+                break
+            # Finish reporting the previous pontificate before announcing this
+            # one. Fetching is instant during a re-parse, so without this the
+            # parent runs ahead and prints "pius-x: 16 encyclicals discovered"
+            # in the middle of Leo XIII's per-document lines. The barrier costs
+            # one pool drain per pontificate -- thirteen in a full run, against
+            # a 14ms parse -- and is what keeps the output grouped the way a
+            # serial run groups it.
+            drain(0)
+            refs, notes = discover_encyclicals(fetcher, slug, display)
+            for note in notes:
+                print(f"  [discover] {note}")
+            if not refs:
+                print(
+                    f"{slug}: 0 encyclicals discovered (index missing or empty) -- skipping"
+                )
+                continue
+            if doc_slugs is not None:
+                refs = [r for r in refs if r.slug in doc_slugs]
+                if not refs:
+                    continue
+            print(f"{slug}: {len(refs)} encyclicals discovered")
+            for ref in refs:
                 if time_budget is not None and time.monotonic() - start > time_budget:
+                    print(f"time budget reached mid-pontificate ({slug}); stopping")
                     return results
-                r_en = scrape_one(
-                    fetcher,
-                    ref,
-                    "en",
-                    ref.slug.replace("-", " ").title(),
-                    overwrite=overwrite,
-                )
-                results.append(r_en)
-                pt_url = pt_url_for(ref)
-                if pt_url:
-                    ref.lang_urls["pt"] = pt_url
-                    results.append(
-                        scrape_one(
-                            fetcher,
-                            ref,
-                            "pt",
-                            ref.slug.replace("-", " ").title(),
-                            overwrite=overwrite,
-                        )
-                    )
+                if limit is not None and n_done >= limit:
+                    print(f"--limit {limit} reached; stopping")
+                    return results
+                submit_doc(ref, quiet=False)
+                n_done += 1
                 touch_crawl_lock(CRAWL_LOCK_PATH)
-    return results
+                drain()
+            if include_exhortations:
+                drain(0)  # same grouping guarantee as above
+                exh_refs, exh_notes = discover_exhortations(fetcher, slug, display)
+                for note in exh_notes:
+                    print(f"  [discover-exh] {note}")
+                for ref in exh_refs:
+                    if (
+                        time_budget is not None
+                        and time.monotonic() - start > time_budget
+                    ):
+                        return results
+                    submit_doc(ref, quiet=True)
+                    touch_crawl_lock(CRAWL_LOCK_PATH)
+                    drain()
+        return results
+    finally:
+        # Every early `return` above lands here first. Work whose page is
+        # already fetched and whose parse is already running must still be
+        # collected, or a --time-budget/--limit stop would throw away
+        # documents it had paid the crawl delay for.
+        drain(0)
+        pool.close()
 
 
 # --------------------------------------------------------------------------
@@ -4551,7 +4816,21 @@ def main() -> int:
         "drop the ones that now exist",
     )
 
-    p1 = sub.add_parser("phase1", parents=[net], help="Vatican II, all 16 documents")
+    # Parsing only. Fetching is serial at any --jobs; see fetch_for_parse.
+    par = argparse.ArgumentParser(add_help=False)
+    par.add_argument(
+        "--jobs",
+        "-j",
+        type=int,
+        default=default_jobs(),
+        help=f"parse worker processes (default: {default_jobs()}); "
+        "1 runs inline, which is what to use for a real traceback. "
+        "Never affects the request rate",
+    )
+
+    p1 = sub.add_parser(
+        "phase1", parents=[net, par], help="Vatican II, all 16 documents"
+    )
     p1.add_argument("--lang", choices=["en", "pt", "both"], default="both")
     p1.add_argument(
         "--only", help="comma-separated slugs, for iterating on one document"
@@ -4559,7 +4838,7 @@ def main() -> int:
 
     p2 = sub.add_parser(
         "phase2",
-        parents=[net],
+        parents=[net, par],
         help="encyclicals (+exhortations), per-pontificate discovery",
     )
     p2.add_argument("--pontiffs", help="comma-separated slugs; default: all candidates")
@@ -4604,9 +4883,7 @@ def main() -> int:
     args = ap.parse_args()
     # Fail before any directory is created; see common.require_corpus().
     require_corpus()
-    fetcher = Fetcher(
-        RAW_ROOT, recheck_absent=getattr(args, "recheck_absent", False)
-    )
+    fetcher = Fetcher(RAW_ROOT, recheck_absent=getattr(args, "recheck_absent", False))
 
     if args.cmd in ("phase1", "phase2"):
         try:
@@ -4619,7 +4896,7 @@ def main() -> int:
         try:
             langs = ["en", "pt"] if args.lang == "both" else [args.lang]
             only = args.only.split(",") if args.only else None
-            results = run_phase1(fetcher, langs, only)
+            results = run_phase1(fetcher, langs, only, jobs=args.jobs)
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
@@ -4645,6 +4922,7 @@ def main() -> int:
                 args.exhortations,
                 overwrite=args.overwrite,
                 doc_slugs=doc_slugs,
+                jobs=args.jobs,
             )
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)
