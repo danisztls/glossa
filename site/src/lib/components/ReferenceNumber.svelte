@@ -5,7 +5,15 @@
 	it, not decoration.
 
 	`placement="margin"` is for independently-addressable blocks in a continuous
-	reader; `placement="inline"` keeps Bible verse numbers in the prose flow.
+	reader; `placement="inline"` keeps Bible verse numbers in the prose flow;
+	`placement="gutter"` is compare mode's, where the number sits in the track
+	BETWEEN the two columns and rides the divider running down it (see
+	`.compare-gutter` in app.css, and `CompareUnit` in `$lib/compare.ts` for why
+	a comparison row gets one number rather than one per column). Its opaque
+	background is what punches the number through that rule; it is the page
+	background rather than the row's because a saved row's wash is painted on
+	the two text cells only, exactly as the margin number in the single-column
+	reader hangs outside the `.section` the wash covers.
 	The component owns the interaction and responsive treatment so the four
 	readers cannot slowly acquire different conventions for the same affordance.
 
@@ -32,7 +40,7 @@
 		 *  depends on which of the parallel route trees rendered it. */
 		canonicalHref: string;
 		label: string;
-		placement: 'inline' | 'margin';
+		placement: 'inline' | 'margin' | 'gutter';
 		/** A verse named by the arriving citation receives the same emphasis as its passage. */
 		emphasized?: boolean;
 	}
@@ -128,6 +136,21 @@
 		top: 0.2em;
 		width: 2.75rem;
 		text-align: end;
+	}
+
+	/*
+	 * `position: relative` is load-bearing, not incidental: the divider it sits
+	 * on is `.compare-gutter::before`, an absolutely-positioned pseudo that
+	 * paints above ordinary in-flow content. Making the number positioned puts
+	 * it in the same layer, where tree order (the pseudo comes first) settles it
+	 * in the number's favour and the opaque background can do its job.
+	 */
+	.reference-number.gutter {
+		position: relative;
+		display: inline-block;
+		padding-inline: 0.3rem;
+		padding-block: 0.15rem;
+		background: var(--color-bg);
 	}
 
 	.reference-number.emphasized {

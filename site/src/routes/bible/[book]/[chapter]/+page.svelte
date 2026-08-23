@@ -367,17 +367,14 @@
 	<title>{current?.book.name} {data.chapterN} — {current?.work.short_title}</title>
 </svelte:head>
 
+<!-- No verse number in here any more: it used to be rendered once per cell,
+     which meant two triggers opening two popovers built from the same
+     `verseHref` and offering byte-identical actions. The number is the ROW's
+     now, printed once in the gutter between the columns — see `CompareUnit`
+     in `$lib/compare.ts`, and the `unit` prop passed to `CompareGrid` below
+     for this route's addresses. -->
 {#snippet verseCell(verse: Verse)}
-	<p class="compare-verse">
-		<ReferenceNumber
-			n={verse.n}
-			href={`#v${verse.n}`}
-			canonicalHref={verseHref(verse.n)}
-			label={`${t('bible.verseAbbrev')} ${verse.n}`}
-			placement="inline"
-		/>
-		{verse.text}
-	</p>
+	<p class="compare-verse">{verse.text}</p>
 {/snippet}
 
 {#if current}
@@ -396,17 +393,38 @@
 					<BookmarkButton href={chapterHref} />
 					<CompareToggle active={compareActive} onclick={toggleCompare} />
 				</div>
+				<!-- One row per field (`.compare-unit-header`, app.css). Nothing here
+				     ever collapses, and that is the right outcome rather than an
+				     oversight: two editions have different titles and different
+				     copyright notices by definition, and the book name is translated
+				     ("Genesis 1" against "Génesis 1"). This is the route that shows the
+				     collapse rule correctly declining to fire. -->
 				<div class="compare-unit-header">
-					<div class="compare-unit-header-col" lang={current.work.language}>
+					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
 						<p class="edition-label">{current.work.title}</p>
+					</div>
+					<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
+						<p class="edition-label">{secondary.work.title}</p>
+					</div>
+
+					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
 						<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+					</div>
+					<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
+						<p class="copyright-notice"><CopyrightNotice manifest={secondary.work} /></p>
+					</div>
+
+					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
 						<h1>{current.book.name} {current.chapter.n}</h1>
+					</div>
+					<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
+						<h1>{secondary.book.name} {secondary.chapter.n}</h1>
+					</div>
+
+					<div class="compare-unit-field compare-unit-field-left">
 						<EditionMenu />
 					</div>
-					<div class="compare-unit-header-col" lang={secondary.work.language}>
-						<p class="edition-label">{secondary.work.title}</p>
-						<p class="copyright-notice"><CopyrightNotice manifest={secondary.work} /></p>
-						<h1>{secondary.book.name} {secondary.chapter.n}</h1>
+					<div class="compare-unit-field compare-unit-field-right">
 						<ComparisonEditionMenu
 							editions={otherEditions}
 							current={secondaryWorkId}
@@ -463,6 +481,17 @@
 					rightLabel={secondary.work.short_title}
 					left={verseCell}
 					right={verseCell}
+					unit={(n) => ({
+						href: `#v${n}`,
+						canonicalHref: verseHref(n),
+						label: `${t('bible.verseAbbrev')} ${n}`,
+						anchorId: `v${n}`,
+						// An arriving citation (`?v=1-7`) marked its passage in the
+						// single-column reader and marked nothing at all here, so a
+						// link INTO a comparison landed with no indication of which
+						// verses it had named. Same wash, one row at a time.
+						emphasized: isHighlighted(n)
+					})}
 					note={compareVersesDiffer ? t('compare.versificationNote') : undefined}
 					showHeader={false}
 				/>
@@ -615,19 +644,20 @@
 		gap: 1rem;
 	}
 
-	/* Two-column compare header (`.compare-unit-header`, app.css): the
+	/* Field-major compare header (`.compare-unit-header`, app.css): the
 	   edition picker sits right under each column's own heading, so it
 	   needs a little room before whatever follows (the mobile picker, or
 	   the grid) that `.title-row`'s single-column layout doesn't. */
-	.compare-unit-header-col :global(.menu) {
+	.compare-unit-field :global(.menu) {
 		margin-top: 0.5rem;
 	}
 
-	/* Compare-mode verse cell (`verseCell` snippet, CompareGrid) — the
-	   `.reading-text .verse` treatment doesn't apply here (no cited-range
-	   highlight, no drop cap in compare mode; see the snippet's own
-	   reasoning), so this is deliberately a plainer rule than `.verse`.
-	   Font/size/line-height come from `.reading-text` on the cell itself
+	/* Compare-mode verse cell (`verseCell` snippet, CompareGrid) — plainer
+	   than `.verse` because everything that used to make it richer now
+	   belongs to the row rather than to the cell: the number lives in the
+	   gutter and the cited-range wash is `.compare-row.highlighted`'s
+	   (app.css). There is still no drop cap while comparing. Font, size and
+	   line-height come from `.reading-text` on the cell itself
 	   (CompareGrid.svelte) — this only resets the paragraph margin. */
 	.compare-verse {
 		margin: 0;

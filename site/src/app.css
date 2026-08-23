@@ -259,6 +259,16 @@
 	 */
 	--content-width: 64ch;
 
+	/* The track BETWEEN compare mode's two reading measures: the divider runs
+	   down its centre and each row's unit number rides it (`.compare-gutter`
+	   below). Wide enough that the corpus's longest address — CCC ¶2865, four
+	   tabular digits plus the number's own padding — clears the text on both
+	   sides. It was 3rem of pure whitespace before the number moved in, split
+	   between the left cell's padding and a column gap; keeping it one named
+	   track is what lets the header block above the grid line its own divider
+	   up with the one below without restating the arithmetic. */
+	--compare-gutter: 3.5rem;
+
 	/* Base reading size before the reader's fine adjustment is applied —
 	   see `.reading-text` below and `$lib/prefs.svelte.ts`. */
 	--reading-base: 1.3rem;
@@ -598,16 +608,18 @@ input {
  *
  * Deriving from the token rather than hard-coding a width is also what keeps
  * this correct across a type change: retuning `--content-width` for a new
- * face moves both the single and the two-up measure by the same factor.
+ * face moves both the single and the two-up measure by the same factor. The
+ * `+ var(--compare-gutter)` is the middle track the two measures are
+ * separated by, added rather than taken out of them for the same reason.
  *
  * Applied at every width rather than inside the 80rem query: below that
  * breakpoint `.reading-layout` is not a grid, so `.content-column` kept its
  * single-column 68ch and halved it just the same. `max-width` still lets the
  * whole thing shrink on a narrow viewport, where the grid stacks to one
- * column anyway (see `.compare-grid`'s own media query).
+ * column anyway (see `.compare-row`'s own media query).
  */
 .reading-layout.compare > .content-column {
-	max-width: calc(var(--content-width) * 2 + 3rem);
+	max-width: calc(var(--content-width) * 2 + var(--compare-gutter));
 }
 
 @media (min-width: 80rem) {
@@ -648,7 +660,9 @@ input {
 @media (min-width: 100rem) {
 	.reading-layout.compare {
 		display: grid;
-		grid-template-columns: minmax(0, calc(var(--content-width) * 2 + 3rem)) var(--aside-width);
+		grid-template-columns:
+			minmax(0, calc(var(--content-width) * 2 + var(--compare-gutter)))
+			var(--aside-width);
 		justify-content: center;
 		align-items: start;
 		gap: var(--aside-gap);
@@ -678,20 +692,113 @@ input {
 }
 
 /*
- * One row per unit, two columns, default grid auto-placement (each unit
- * contributes exactly two DOM children — see CompareGrid.svelte's docblock
- * for why this is what keeps the two columns aligned unit-to-unit as line
- * counts diverge between languages). `row-gap: 0` is deliberate: vertical
- * spacing between rows lives INSIDE each cell as `padding-block` instead, so
- * `.compare-cell-left`'s divider border runs as one continuous line down the
- * whole grid rather than a dashed one broken at every row-gap.
+ * One GRID PER ROW rather than one grid for the whole view — see
+ * CompareGrid.svelte's docblock for the full reasoning, in short: every track
+ * here is a fixed width or an equal `1fr`, so per-row grids come out with
+ * identical columns anyway, and a row that is a real element is what an `id`,
+ * a saved-state wash and a phone-friendly source order all need.
+ *
+ * There is no row gap: vertical spacing between rows lives INSIDE each cell
+ * as `padding-block`, so the divider running down the gutter meets the next
+ * row's flush and reads as one continuous line rather than a dashed one
+ * broken at every gap.
  */
 .compare-grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	column-gap: 1.5rem;
-	row-gap: 0;
 	margin-top: 0.5rem;
+}
+
+.compare-row {
+	display: grid;
+	grid-template-columns: 1fr var(--compare-gutter) 1fr;
+	column-gap: 0;
+	/* So a `#s12` landing here doesn't put the row's first line hard against
+	   the top of the viewport — same allowance `.prayer-mystery-group` and
+	   `.prayer-instructions` already make for their own fragment addresses. */
+	scroll-margin-top: 1rem;
+}
+
+/*
+ * EVERY CELL IS PLACED EXPLICITLY, including its row. The gutter comes first
+ * in the markup (CompareGrid.svelte's docblock: source order is what survives
+ * the phone stack) and belongs in the middle column, and auto-placement
+ * cannot express that — its cursor never moves backwards within a row, so the
+ * left cell that follows a column-2 item would be pushed onto a second row.
+ */
+.compare-row > .compare-gutter {
+	grid-column: 2;
+	grid-row: 1;
+}
+
+.compare-row > .compare-cell-left,
+.compare-row > .compare-header-left {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+.compare-row > .compare-cell-right,
+.compare-row > .compare-header-right {
+	grid-column: 3;
+	grid-row: 1;
+}
+
+/*
+ * The divider, and the seat for the row's unit number. The rule is drawn by
+ * the pseudo rather than as a border on either neighbour so it lands on the
+ * gutter's CENTRE LINE, equidistant from both measures; `inset-block: 0` with
+ * no row gap is what joins each row's segment to the next into one line.
+ *
+ * `align-items: start` keeps the number level with the first line of the
+ * taller cell's text instead of floating down the middle of a long row.
+ */
+.compare-gutter {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: start;
+	padding-block: 0.4rem;
+}
+
+.compare-gutter::before {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: calc(50% - 0.5px);
+	width: 1px;
+	background: var(--color-border);
+}
+
+/*
+ * A row the reader has saved, and a row an arriving citation named. Washes on
+ * the two TEXT cells only, never on the row: the gutter has to stay page
+ * background for the number's own background to punch cleanly through the
+ * divider (see `.reference-number.gutter`), and this is also exactly where
+ * the single-column readers put it — `.section.bookmarked` and
+ * `.verse.bookmarked` cover the text, while the margin number hangs outside
+ * at `-3.25rem` on the page's own ground.
+ *
+ * `.highlighted` is written AFTER `.bookmarked` so an arriving citation wins
+ * the background when a unit is both, matching the order the Bible chapter
+ * reader already settled on. Nothing is lost when it does: the number itself
+ * stays gold, because `ReferenceNumber`'s `.bookmarked` is written after its
+ * own `.emphasized` for exactly this reason.
+ */
+.compare-row.bookmarked > .compare-cell {
+	background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
+	print-color-adjust: exact;
+	-webkit-print-color-adjust: exact;
+}
+
+/* A dividing band (`CompareGrid`'s `interlude`) brings its own vertical
+   rhythm — a `.structure-heading`'s margins, in the one caller that uses it —
+   so the per-row padding that spaces units apart would only add to it. */
+.compare-row-interlude > .compare-cell {
+	padding-block: 0;
+}
+
+.compare-row.highlighted > .compare-cell {
+	background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+	print-color-adjust: exact;
+	-webkit-print-color-adjust: exact;
 }
 
 .compare-header {
@@ -714,57 +821,126 @@ input {
 }
 
 /*
- * The per-language header block above a `CompareGrid` — title, whatever
- * subtitle/range line the unit has, copyright notice, edition picker, all
- * duplicated one column per language — shared across every route that
- * compares (documents, Bible, CCC paragraph/chapter, Compendium
- * question/chapter; not `/preces`, whose second column is a Latin FIELD on
- * the one work, not a second `WorkManifest` with its own title/copyright to
- * show). Lives here rather than in each route's own `<style>` for the same
- * reason `.breadcrumb` does (see that rule's docblock) — Svelte's
- * per-component scoping can't share a block across files, and six near-
- * identical copies of a two-column grid is exactly the drift that invites.
- * Column widths/gap match `.compare-grid`'s so the divider running down the
- * first column here continues, unbroken, as the same divider down
- * `.compare-cell-left` in the grid beneath it — one line, not two that
- * happen to match. Each ROUTE's own `<style>` still owns the vertical
- * spacing between what it stacks inside a column (a title's margin, a
- * range line's) — this only owns the two-column shape and the divider.
+ * The header row's gutter carries the underline and NOT the vertical rule, so
+ * the label rule reads as one unbroken line and the divider starts where the
+ * text it divides does. Running both through this cell would either notch a
+ * `--compare-gutter`-wide hole in the underline or leave the rule with a
+ * margin-sized gap under it; neither reads as deliberate.
+ */
+.compare-row-header > .compare-gutter {
+	padding-block: 0;
+	margin-block-end: 0.5rem;
+	border-block-end: 1px solid var(--color-border);
+}
+
+.compare-row-header > .compare-gutter::before {
+	display: none;
+}
+
+/*
+ * The header block above a `CompareGrid` — title, whatever subtitle/range line
+ * the unit has, copyright notice, edition picker, source masthead — shared
+ * across every route that compares (documents, Bible, CCC paragraph/chapter,
+ * Compendium question/chapter; not `/preces`, whose second column is a Latin
+ * FIELD on the one work, not a second `WorkManifest` with its own
+ * title/copyright to show). Lives here rather than in each route's own
+ * `<style>` for the same reason `.breadcrumb` does (see that rule's docblock)
+ * — Svelte's per-component scoping can't share a block across files, and six
+ * near-identical copies of a two-column grid is exactly the drift that
+ * invites. Its tracks are `.compare-row`'s, `--compare-gutter` and all, so the
+ * divider running down it continues, unbroken, into the aligned rows beneath.
+ *
+ * IT IS LAID OUT FIELD BY FIELD, NOT COLUMN BY COLUMN, and that is the whole
+ * point of the rewrite. It used to be two `.compare-unit-header-col` blocks,
+ * each stacking every field for one language, which meant a field whose two
+ * languages print the SAME STRING was printed twice side by side — an
+ * encyclical is addressed by its Latin incipit, so `Magnifica Humanitas` was
+ * set as an `<h1>` twice, and `CCC 12`, `¶1–25` and `Q1–Q25` fared the same.
+ * One row per field lets an identical pair collapse into a single cell
+ * spanning both columns (`.compare-unit-field-shared`), while a genuinely
+ * differing pair still splits. The routes decide, per field, with a plain
+ * equality test; nothing here guesses.
+ *
+ * WHAT DELIBERATELY DOES NOT COLLAPSE: the copyright notice, whose two
+ * editions print the same words and link to DIFFERENT source pages. Collapsing
+ * on the visible text would silently drop one edition's provenance link, which
+ * `CopyrightNotice.svelte`'s docblock is explicit is the part that matters.
+ * The rule is "the same thing", not "the same string".
+ *
+ * Each ROUTE's own `<style>` still owns the vertical spacing inside a field (a
+ * title's margin, a range line's) — this only owns the row shape and the
+ * divider.
  */
 .compare-unit-header {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	column-gap: 1.5rem;
+	grid-template-columns: 1fr var(--compare-gutter) 1fr;
+	column-gap: 0;
 	margin-top: 0.5rem;
 }
 
-.compare-unit-header-col:first-child {
-	border-inline-end: 1px solid var(--color-border);
-	padding-inline-end: 1.5rem;
+.compare-unit-field {
+	min-width: 0;
 }
 
+.compare-unit-field-shared {
+	grid-column: 1 / -1;
+}
+
+.compare-unit-field-left {
+	position: relative;
+	grid-column: 1;
+}
+
+.compare-unit-field-right {
+	grid-column: 3;
+}
+
+/*
+ * The divider, drawn per SPLIT field rather than once down the whole block,
+ * because a shared field spans the gutter and a rule through it would cut its
+ * title in half. Consecutive split fields stretch to their row's height and so
+ * butt together into one continuous line — and into `.compare-gutter`'s below,
+ * which is drawn at the same offset from the same track.
+ */
+.compare-unit-field-left::after {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-end: calc(var(--compare-gutter) * -0.5);
+	width: 1px;
+	background: var(--color-border);
+}
+
+/*
+ * Mobile: one column, so each field's two languages stack as a PAIR — title
+ * then title, range then range — rather than one language's entire header
+ * followed by the other's, which is what the old column-major block collapsed
+ * to. Same stacked-pairs shape `.compare-row` takes at this width, and it
+ * needs no separator rule to stay legible because a field is short and its two
+ * halves are adjacent.
+ */
 @media (max-width: 40rem) {
 	.compare-unit-header {
 		grid-template-columns: 1fr;
-		row-gap: 1.5rem;
 	}
 
-	.compare-unit-header-col:first-child {
-		border-inline-end: none;
-		padding-inline-end: 0;
-		border-block-end: 1px dashed var(--color-border);
-		padding-block-end: 1.5rem;
+	.compare-unit-field-left,
+	.compare-unit-field-right,
+	.compare-unit-field-shared {
+		grid-column: 1;
+	}
+
+	.compare-unit-field-left::after {
+		display: none;
 	}
 }
 
+/* The gutter track supplies the space that used to be `padding-inline-end`
+   here, and `.compare-gutter::before` the rule that used to be this cell's
+   `border-inline-end` — see `.compare-row` above. */
 .compare-cell {
 	min-width: 0;
 	padding-block: 0.4rem;
-}
-
-.compare-cell-left {
-	border-inline-end: 1px solid var(--color-border);
-	padding-inline-end: 1.5rem;
 }
 
 /* Repeats each cell's edition label — redundant with `.compare-header` at
@@ -789,29 +965,55 @@ input {
 }
 
 /*
- * Mobile: two reading columns do not fit (task brief) — `.compare-grid`
- * collapses to ONE column, which (because DOM order is left-cell-then-
- * right-cell per unit, unchanged) turns into each unit's two texts stacked
- * immediately next to each other rather than two long independent columns a
- * phone would force the reader to scroll between. That's a stacked-pairs
- * layout, not "compare mode unavailable" — the alignment still holds, it's
- * just vertical instead of side-by-side, and `.compare-cell-tag` reappears
- * per pair since `.compare-header`'s one-time label at the top has scrolled
- * away long before the reader reaches later units.
+ * Mobile: two reading columns do not fit (task brief) — each `.compare-row`
+ * stops being a grid, so its three children stack in SOURCE order, which is
+ * gutter-then-left-then-right: the unit's number heads its own pair, and the
+ * pair's two texts sit immediately next to each other rather than in two long
+ * independent columns a phone would force the reader to scroll between. That
+ * source order is the whole reason the gutter is written first in
+ * `CompareGrid.svelte` and placed into column 2 explicitly above; a
+ * visual-order markup would strand the number BETWEEN the two texts here,
+ * where it reads as belonging to neither.
+ *
+ * This is a stacked-pairs layout, not "compare mode unavailable" — the
+ * alignment still holds, it's just vertical instead of side-by-side, and
+ * `.compare-cell-tag` reappears per pair since `.compare-header`'s one-time
+ * label at the top has scrolled away long before the reader reaches later
+ * units.
  */
 @media (max-width: 40rem) {
-	.compare-grid {
-		grid-template-columns: 1fr;
-		row-gap: 1rem;
+	.compare-row {
+		display: block;
+	}
+
+	/* `gap` does nothing outside grid/flex, so the spacing between pairs is
+	   redone as a margin rather than left to silently stop working. */
+	.compare-row + .compare-row {
+		margin-top: 1rem;
 	}
 
 	.compare-header {
 		display: none;
 	}
 
+	/* No rule to punch through and nothing to centre on: the number becomes an
+	   ordinary line above the pair, flush with the text it heads. The negative
+	   margin cancels the number's own `padding-inline`, which exists to clear
+	   the divider and has nothing left to clear here — done from this side
+	   rather than by overriding the number's padding, since that property
+	   belongs to a scoped component style this sheet shouldn't be racing on
+	   specificity. */
+	.compare-gutter {
+		justify-content: start;
+		padding-block: 0 0.25rem;
+		margin-inline-start: -0.3rem;
+	}
+
+	.compare-gutter::before {
+		display: none;
+	}
+
 	.compare-cell-left {
-		border-inline-end: none;
-		padding-inline-end: 0;
 		border-block-end: 1px dashed var(--color-border);
 		padding-block-end: 1rem;
 	}
@@ -1017,7 +1219,7 @@ input {
 	/* Every edition/comparison picker trigger (`EditionMenu`,
 	   `ComparisonEditionMenu`), wherever it's placed — used to be caught for
 	   free by `.compare-header`'s own `display: none` below when a picker's
-	   only home was inside that row, but `.compare-unit-header-col` (app.css,
+	   only home was inside that row, but `.compare-unit-field` (app.css,
 	   below) now hangs one in the reading chrome itself on several routes, so
 	   this needs its own rule rather than relying on a container it may not
 	   be inside any more. */
@@ -1048,26 +1250,38 @@ input {
 
 	.reading-layout,
 	.reading-layout.compare,
-	.compare-grid,
+	.compare-row,
 	.compare-unit-header {
 		display: block !important;
 	}
 
-	.compare-unit-header-col:first-child {
-		border-inline-end: 0;
-		padding-inline-end: 0;
+	.compare-unit-field-left::after,
+	.compare-gutter::before {
+		display: none !important;
+	}
+
+	.compare-unit-field-left {
 		border-block-end: 1px dashed #000;
 		padding-block-end: 0.75rem;
 		margin-block-end: 0.75rem;
 	}
 
+	/* The unit number stays — on paper it is the citation, the one thing a
+	   reader can carry off the page — but as a plain line heading its pair,
+	   the same shape the 40rem breakpoint gives it. */
+	.compare-gutter {
+		justify-content: start !important;
+		padding-block: 0 0.25rem !important;
+		margin-inline-start: -0.3rem;
+	}
+
 	/*
 	 * Compare mode gets the SAME "doesn't fit side by side" fallback the
-	 * 40rem mobile breakpoint already uses (`.compare-grid`'s own rules
+	 * 40rem mobile breakpoint already uses (`.compare-row`'s own rules
 	 * above), not a bespoke print treatment: a printed page is narrower than
 	 * two reading measures for the same reason a phone screen is, and the
 	 * stacked-pairs layout that solves it there solves it here too. Forcing
-	 * `.compare-grid` to `display: block` above also means `row-gap` no
+	 * `.compare-row` to `display: block` above also means its `column-gap` no
 	 * longer does anything (`gap` has no effect outside flex/grid), which is
 	 * why cell spacing is redone as margin below rather than left to that
 	 * rule to (silently) stop working on paper.
@@ -1081,8 +1295,6 @@ input {
 	}
 
 	.compare-cell-left {
-		border-inline-end: 0;
-		padding-inline-end: 0;
 		border-block-end: 1px dashed #000;
 		padding-block-end: 0.75rem;
 	}

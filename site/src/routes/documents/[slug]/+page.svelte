@@ -181,9 +181,11 @@
 	// commonly share a start), and `flattenDocumentStructure` already yields
 	// them in pre-order (ancestor before descendant), so appending to each
 	// bucket in iteration order keeps them correctly nested without a sort.
-	const headingsByStart = $derived.by(() => {
-		const map = new Map<number, { node: DocumentNode; depth: number; anchor: string }[]>();
-		for (const row of structureRows) {
+	type StructureRow = { node: DocumentNode; depth: number; anchor: string };
+
+	function indexByStart(rows: StructureRow[]): Map<number, StructureRow[]> {
+		const map = new Map<number, StructureRow[]>();
+		for (const row of rows) {
 			const start = row.node.before;
 			// Unnumbered front/back matter (docs/corpus-schema.md's null-bound
 			// convention) has no section to anchor itself before — nothing wrong
@@ -194,7 +196,9 @@
 			else map.set(start as number, [row]);
 		}
 		return map;
-	});
+	}
+
+	const headingsByStart = $derived(indexByStart(structureRows));
 
 	/*
 	 * Which sections open a division big enough to earn an illuminated
@@ -290,6 +294,31 @@
 			: []
 	);
 
+	/**
+	 * THE SECOND COLUMN'S OWN DIVISIONS. Compare mode used to render sections
+	 * only, dropping every Part/Chapter/Article heading on the grounds that a
+	 * heading is not a number `alignByNumber` can align. That was true of the
+	 * heading and false of the document: a nine-chapter constitution became one
+	 * undifferentiated run of prose, which is the state the single-column
+	 * reader's `headingsByStart` exists to prevent.
+	 *
+	 * A heading does carry a number — `before`, the section it opens at — and
+	 * that is a perfectly good key. So each language's structure tree is
+	 * indexed on it independently and a band is emitted wherever EITHER has
+	 * one, which is the same union-and-leave-a-gap rule `alignByNumber` applies
+	 * to the sections themselves. That matters because the two trees genuinely
+	 * do diverge in where they fall (docs/decisions.md): a band with one side
+	 * empty says so honestly, where forcing the pair to agree would have to
+	 * invent a heading or hide one.
+	 *
+	 * Structure is INDEX tier, so the second language's tree is read
+	 * synchronously here — unlike its SECTIONS, which cost the fetch above.
+	 */
+	const secondaryStructureRows = $derived(
+		secondaryWorkId && compareActive ? flattenDocumentStructure(secondaryWorkId) : []
+	);
+	const secondaryHeadingsByStart = $derived(indexByStart(secondaryStructureRows));
+
 	// Part/Section headings read as the document's own top-level divisions;
 	// Chapter/Article/Sub nest progressively smaller. `h1` is the document
 	// title above, so this starts at `h2` rather than mirroring `kind` depth
@@ -339,6 +368,58 @@
 	<CccParagraphText paragraph={section} lang={secondaryLang ?? lang} />
 {/snippet}
 
+<!--
+	The document's own divisions, threaded into the reading flow immediately
+	before the section each one starts at. One snippet for all three callers —
+	the single-column reader and compare mode's two columns — so a heading is
+	typeset the same wherever it appears.
+
+	`withIds` is false for the SECOND column only, and the reason is that
+	`documentHeadingAnchor` numbers headings by their index into one flat
+	structure array (corpus.ts): the Portuguese tree's fourth heading is `h3`
+	just as the English tree's is, so emitting both would put a duplicate id on
+	the page. The primary edition keeps them, which is what the inline table of
+	contents and the sidebar — both built from the primary work's rows — link
+	into.
+-->
+{#snippet structureHeadings(rows: StructureRow[], hlang: string, withIds: boolean)}
+	{#each rows as { node, depth, anchor } (anchor)}
+		{@const dt = displayDocumentTitle(node.title, hlang)}
+		<svelte:element
+			this={headingTag(node.level)}
+			id={withIds ? anchor : undefined}
+			class="structure-heading"
+			style={`--depth: ${depth}`}
+		>
+			<!-- Identifier, name and subtitle are three printed lines of ONE
+			     heading (docs/corpus-schema.md). The corpus keeps them apart
+			     precisely so they can be typeset apart here; folding them into one
+			     string is what a reader's table of contents used to show as three
+			     separate rows. -->
+			{#if node.ident}<span class="heading-ident">{node.ident}</span>{/if}
+			{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+			<!-- `title_html` keeps the emphasis the source set inside the heading —
+			     an encyclical name, a scripture reference, a Latin phrase. Absent
+			     on the great majority, where this renders the plain title
+			     unchanged. -->
+			<span class="heading-name"
+				><InlineText nodes={inlineTitleNodes(node.title, node.title_html, hlang)} /></span
+			>
+			{#if node.subtitle}<span class="heading-subtitle"
+					>{displayDocumentTitle(node.subtitle, hlang).title}</span
+				>{/if}
+		</svelte:element>
+	{/each}
+{/snippet}
+
+{#snippet compareHeadingsLeft(n: number)}
+	{@render structureHeadings(headingsByStart.get(n) ?? [], lang, true)}
+{/snippet}
+
+{#snippet compareHeadingsRight(n: number)}
+	{@render structureHeadings(secondaryHeadingsByStart.get(n) ?? [], secondaryLang ?? lang, false)}
+{/snippet}
+
 {#if metaManifest}
 	{@const secondaryManifest = secondaryLang ? data.manifestsByLang[secondaryLang] : undefined}
 	<div class="reading-layout" class:compare={compareActive}>
@@ -356,21 +437,51 @@
 			</div>
 
 			{#if current && compareActive && secondaryManifest}
-				<!-- Compare mode's WHOLE header is per-language now, not just the
-				     masthead: title, subtitle, copyright notice, edition picker and
-				     source masthead all differ by language (a document's own title
-				     is translated, its masthead reads "ENCYCLICAL LETTER" vs.
-				     "CARTA ENCÍCLICA"), so folding them into one shared,
-				     primary-language-only block above the grid was always showing
-				     the second column a header that wasn't its own. This replaces
-				     that block AND `CompareGrid`'s own header row (`showHeader`
-				     below) with one merged two-column block, column widths/gap
-				     matching `.compare-grid` so it lines up with the aligned rows
-				     beneath it. The bookmark/compare-toggle controls are up in
-				     `.breadcrumb-row` now, not repeated here. -->
+				<!-- Compare mode's WHOLE header is per-language, not just the
+				     masthead: subtitle, copyright notice, edition picker and source
+				     masthead all differ by language (a document's masthead reads
+				     "ENCYCLICAL LETTER" vs. "CARTA ENCÍCLICA"), so folding them into
+				     one shared, primary-language-only block above the grid was always
+				     showing the second column a header that wasn't its own. This
+				     replaces that block AND `CompareGrid`'s own header row
+				     (`showHeader` below), tracks matching `.compare-row` so it lines
+				     up with the aligned rows beneath it. The bookmark/compare-toggle
+				     controls are up in `.breadcrumb-row` now, not repeated here.
+
+				     ONE ROW PER FIELD, not one column per language — see
+				     `.compare-unit-header` in app.css. The TITLE is why: an
+				     encyclical is addressed by its Latin incipit, which is the same
+				     string in every language, so this used to set `Magnifica
+				     Humanitas` as an `<h1>` twice, side by side, above a subtitle
+				     that genuinely did differ. Nothing here decides that centrally;
+				     the field simply asks whether the two strings match. -->
 				<div class="compare-unit-header">
-					<div class="compare-unit-header-col" lang={current.work.language}>
-						<h1>{current.work.title}</h1>
+					{#if current.work.title === secondaryManifest.title}
+						<!-- No `lang`: an identical pair has no one language to claim,
+						     and asserting the primary edition's would be a small lie
+						     about a Latin incipit in particular. -->
+						<div class="compare-unit-field compare-unit-field-shared">
+							<h1>{current.work.title}</h1>
+						</div>
+					{:else}
+						<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
+							<h1>{current.work.title}</h1>
+						</div>
+						<div
+							class="compare-unit-field compare-unit-field-right"
+							lang={secondaryManifest.language}
+						>
+							<h1>{secondaryManifest.title}</h1>
+						</div>
+					{/if}
+
+					<!-- The subtitle is compared as a whole and always splits in
+					     practice: the kind badge is an interface-language label and so
+					     matches, but the pontiff's name and the promulgation date are
+					     both translated. Splitting the line further to collapse the
+					     badge alone would turn one line into two and cost more height
+					     than the duplicate badge does. -->
+					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
 						<p class="subtitle">
 							<span class="doc-kind">{documentKindLabel(current.work.document_kind)}</span>
 							<span class="sep">·</span>
@@ -380,14 +491,11 @@
 								{formatPromulgated(current.work.promulgated, current.work.language)}
 							</time>
 						</p>
-						<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
-						<EditionMenu />
-						{#if current.work.header}
-							<div class="document-masthead">{@html current.work.header}</div>
-						{/if}
 					</div>
-					<div class="compare-unit-header-col" lang={secondaryManifest.language}>
-						<h1>{secondaryManifest.title}</h1>
+					<div
+						class="compare-unit-field compare-unit-field-right"
+						lang={secondaryManifest.language}
+					>
 						<p class="subtitle">
 							<span class="doc-kind">{documentKindLabel(secondaryManifest.document_kind)}</span>
 							<span class="sep">·</span>
@@ -397,12 +505,41 @@
 								{formatPromulgated(secondaryManifest.promulgated, secondaryManifest.language)}
 							</time>
 						</p>
+					</div>
+
+					<!-- Never collapsed, even though both editions print the same
+					     words: the two notices link to DIFFERENT vatican.va pages, and
+					     that link is the checkable part (`CopyrightNotice.svelte`). -->
+					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
+						<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+					</div>
+					<div
+						class="compare-unit-field compare-unit-field-right"
+						lang={secondaryManifest.language}
+					>
 						<p class="copyright-notice"><CopyrightNotice manifest={secondaryManifest} /></p>
+					</div>
+
+					<div class="compare-unit-field compare-unit-field-left">
+						<EditionMenu />
+					</div>
+					<div class="compare-unit-field compare-unit-field-right">
 						<ComparisonEditionMenu
 							editions={otherEditions.map((e) => e.work)}
 							current={secondaryWorkId}
 							onselect={chooseComparisonEdition}
 						/>
+					</div>
+
+					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
+						{#if current.work.header}
+							<div class="document-masthead">{@html current.work.header}</div>
+						{/if}
+					</div>
+					<div
+						class="compare-unit-field compare-unit-field-right"
+						lang={secondaryManifest.language}
+					>
 						{#if secondaryManifest.header}
 							<div class="document-masthead">{@html secondaryManifest.header}</div>
 						{/if}
@@ -497,18 +634,25 @@
 				{/if}
 
 				{#if compareActive && secondaryManifest && compareSecondarySections}
-					<!-- Whole-document compare is section-by-section only — the
-					     structure headings (`headingsByStart`) threaded through the
-					     single-column view below are left out here rather than forced
-					     into a two-column grid row of their own: a Part/Chapter title
-					     is not a numbered unit `alignByNumber` can align, and the two
-					     languages' structure trees can genuinely diverge in where they
-					     fall (docs/decisions.md), so a heading row would need its own
-					     alignment story this view doesn't need to solve today. The
-					     section numbers in the margin still orient the reader. -->
+					<!-- `interlude` carries the structure headings across into compare
+					     mode. They used to be dropped here, on the grounds that a
+					     Part/Chapter title is not a numbered unit `alignByNumber` can
+					     align — true of the heading, false of the document: a
+					     nine-chapter constitution read as one undifferentiated run of
+					     prose, exactly what `headingsByStart` exists to prevent in the
+					     single-column view below. A heading does carry `before`, the
+					     section it opens at, and that aligns fine; the two languages'
+					     trees genuinely diverging (docs/decisions.md) is handled the
+					     same way a diverging section is, by emitting the band wherever
+					     EITHER side has one and leaving the other column empty. -->
 					<!-- `showHeader={false}`: the label + picker this header would
 					     otherwise print are already up in `.compare-unit-header`
 					     above, merged with the title/copyright/masthead. -->
+					<!-- `anchorId` restores the `s{n}` addresses the single-column
+					     branch below carries: a `#s42` deep link, and the scroll spy
+					     driving the sidebar at >= 100rem, both had nothing to find
+					     while comparing. Same `§{n}` label and same canonical address
+					     as the margin number down there, from one place. -->
 					<CompareGrid
 						rows={compareRows}
 						leftLang={current.work.language}
@@ -517,6 +661,17 @@
 						rightLabel={secondaryManifest.short_title}
 						left={leftCell}
 						right={rightCell}
+						unit={(n) => ({
+							href: `#s${n}`,
+							canonicalHref: `/documenta/${data.slug}#s${n}`,
+							label: `§${n}`,
+							anchorId: `s${n}`
+						})}
+						interlude={{
+							has: (n) => headingsByStart.has(n) || secondaryHeadingsByStart.has(n),
+							left: compareHeadingsLeft,
+							right: compareHeadingsRight
+						}}
 						showHeader={false}
 					/>
 				{:else}
@@ -525,35 +680,7 @@
 					{/if}
 					<div class="reading-text document-body" lang={current.work.language}>
 						{#each current.sections as section, i (section.n)}
-							{#each headingsByStart.get(section.n) ?? [] as { node, depth, anchor } (anchor)}
-								{@const dt = displayDocumentTitle(node.title, lang)}
-								<svelte:element
-									this={headingTag(node.level)}
-									id={anchor}
-									class="structure-heading"
-									style={`--depth: ${depth}`}
-								>
-									<!-- Identifier, name and subtitle are three printed lines of
-									     ONE heading (docs/corpus-schema.md). The corpus keeps them
-									     apart precisely so they can be typeset apart here; folding
-									     them into one string is what a reader's table of contents
-									     used to show as three separate rows. -->
-									{#if node.ident}<span class="heading-ident">{node.ident}</span>{/if}
-									{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-									<!-- `title_html` keeps the emphasis the source set inside the
-									     heading — an encyclical name, a scripture reference, a
-									     Latin phrase. Absent on the great majority, where this
-									     renders the plain title unchanged. -->
-									<span class="heading-name"
-										><InlineText
-											nodes={inlineTitleNodes(node.title, node.title_html, lang)}
-										/></span
-									>
-									{#if node.subtitle}<span class="heading-subtitle"
-											>{displayDocumentTitle(node.subtitle, lang).title}</span
-										>{/if}
-								</svelte:element>
-							{/each}
+							{@render structureHeadings(headingsByStart.get(section.n) ?? [], lang, true)}
 							{@const sectionHref = `/documenta/${data.slug}#s${section.n}`}
 							<section
 								class="section"
@@ -641,27 +768,27 @@
 		margin: 1.25rem 0 1.5rem;
 	}
 
-	/* The two-column grid and its divider are `.compare-unit-header`/
-	   `.compare-unit-header-col` (app.css) — shared with every other route
-	   that merges a compare header the same way. This only tunes the
-	   vertical spacing between what THIS route stacks inside a column. */
-	.compare-unit-header-col h1 {
+	/* The grid, its tracks and its divider are `.compare-unit-header`/
+	   `.compare-unit-field` (app.css) — shared with every other route that
+	   merges a compare header the same way. This only tunes the vertical
+	   spacing of what THIS route puts in each field. */
+	.compare-unit-field h1 {
 		margin: 0 0 0.5rem;
 	}
 
-	.compare-unit-header-col .subtitle {
+	.compare-unit-field .subtitle {
 		margin: 0 0 0.5rem;
 	}
 
-	.compare-unit-header-col .copyright-notice {
+	.compare-unit-field .copyright-notice {
 		margin: 0 0 0.75rem;
 	}
 
-	.compare-unit-header-col :global(.menu) {
+	.compare-unit-field :global(.menu) {
 		margin-bottom: 0.5rem;
 	}
 
-	.compare-unit-header-col .document-masthead {
+	.compare-unit-field .document-masthead {
 		margin-top: 1rem;
 		margin-bottom: 0;
 	}
@@ -736,7 +863,23 @@
 		margin-right: 0.35em;
 	}
 
+	/*
+	 * The inline table of contents stands in for the sidebar wherever the
+	 * sidebar isn't, and compare mode moves that boundary. Normally the aside
+	 * arrives at 80rem and this yields to it; while comparing, the aside is
+	 * suppressed until 100rem (app.css, `.reading-layout.compare >
+	 * .reading-aside`), and hiding this at 80rem regardless left a 20rem band
+	 * where a 287-section encyclical had NO navigation at all — no sidebar, no
+	 * inline list. So the handover width follows whichever one is actually
+	 * coming back.
+	 */
 	@media (min-width: 80rem) {
+		.reading-layout:not(.compare) .toc-inline {
+			display: none;
+		}
+	}
+
+	@media (min-width: 100rem) {
 		.toc-inline {
 			display: none;
 		}

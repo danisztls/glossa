@@ -109,21 +109,61 @@
 					: secondaryHeading.title}
 				{@const secondaryFrom = editions.secondary.chapter.paragraphs[0]}
 				{@const secondaryTo = editions.secondary.chapter.paragraphs[1]}
+				<!-- One row per field (`.compare-unit-header`, app.css). The chapter
+				     TITLE is translated and always splits; the RANGE is a pair of
+				     question numbers, which the Compendium's EN/PT symmetry guarantee
+				     (CLAUDE.md) says match — so it collapses, and a split there is
+				     itself the finding. -->
 				<div class="compare-unit-header">
-					<div class="compare-unit-header-col" lang={editions.current.work.language}>
+					<div
+						class="compare-unit-field compare-unit-field-left"
+						lang={editions.current.work.language}
+					>
 						<h1>{headingText()}</h1>
-						<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
+					</div>
+					<div
+						class="compare-unit-field compare-unit-field-right"
+						lang={editions.secondary.work.language}
+					>
+						<h1>{secondaryHeadingText}</h1>
+					</div>
+
+					{#if from === secondaryFrom && to === secondaryTo}
+						<div class="compare-unit-field compare-unit-field-shared">
+							<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
+						</div>
+					{:else}
+						<div class="compare-unit-field compare-unit-field-left">
+							<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
+						</div>
+						<div class="compare-unit-field compare-unit-field-right">
+							<p class="range">
+								{secondaryFrom === secondaryTo
+									? `Q${secondaryFrom}`
+									: `Q${secondaryFrom}–${secondaryTo}`}
+							</p>
+						</div>
+					{/if}
+
+					<!-- Never collapsed: the two notices read alike and link to
+					     different source pages (see `documents/[slug]`). -->
+					<div
+						class="compare-unit-field compare-unit-field-left"
+						lang={editions.current.work.language}
+					>
 						<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
+					</div>
+					<div
+						class="compare-unit-field compare-unit-field-right"
+						lang={editions.secondary.work.language}
+					>
+						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
+					</div>
+
+					<div class="compare-unit-field compare-unit-field-left">
 						<EditionMenu />
 					</div>
-					<div class="compare-unit-header-col" lang={editions.secondary.work.language}>
-						<h1>{secondaryHeadingText}</h1>
-						<p class="range">
-							{secondaryFrom === secondaryTo
-								? `Q${secondaryFrom}`
-								: `Q${secondaryFrom}–${secondaryTo}`}
-						</p>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
+					<div class="compare-unit-field compare-unit-field-right">
 						<ComparisonEditionMenu
 							editions={editions.others.map((edition) => edition.work)}
 							current={editions.secondaryWorkId}
@@ -152,6 +192,12 @@
 					rightLabel={editions.secondary.work.short_title}
 					left={leftCell}
 					right={rightCell}
+					unit={(n) => ({
+						href: `/compendium/${n}`,
+						canonicalHref: `/compendium/${n}`,
+						label: `${t('compendium.question')} ${n}`,
+						anchorId: `q${n}`
+					})}
 					showHeader={false}
 				/>
 			{:else}
@@ -200,15 +246,15 @@
 		margin: 0 0 2rem;
 	}
 
-	.compare-unit-header-col h1 {
+	.compare-unit-field h1 {
 		margin: 0 0 0.25rem;
 	}
 
-	.compare-unit-header-col .copyright-notice {
+	.compare-unit-field .copyright-notice {
 		margin: 0 0 0.5rem;
 	}
 
-	.compare-unit-header-col :global(.menu) {
+	.compare-unit-field :global(.menu) {
 		margin-bottom: 0.5rem;
 	}
 	@media (max-width: 79.9375rem) {

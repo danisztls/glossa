@@ -131,25 +131,68 @@
 				     column a header that wasn't its own. `showHeader={false}` below
 				     drops that row in favour of this one. The bookmark/compare-toggle
 				     controls are up in `.breadcrumb-row` now, not repeated here. -->
+				<!-- One row per field (`.compare-unit-header`, app.css). The heading
+				     collapses whenever it would print twice, which is almost always:
+				     `CCC {n}` is the same address in every language by construction,
+				     and the "in brief" tag beside it is an interface-language label
+				     that the CCC's own EN/PT symmetry guarantee (CLAUDE.md) says is
+				     set on the same paragraph numbers in both. It splits only when
+				     the two editions genuinely disagree about that flag, which is a
+				     defect worth seeing rather than smoothing over. -->
 				<div class="compare-unit-header">
-					<div class="compare-unit-header-col" lang={editions.current.work.language}>
-						<h1>
-							{#if editions.current.paragraph.in_brief}
-								<span class="in-brief-tag">{t('ccc.inBrief')}</span>
-							{/if}
-							CCC {data.n}
-						</h1>
+					{#if editions.current.paragraph.in_brief === editions.secondary.paragraph.in_brief}
+						<div class="compare-unit-field compare-unit-field-shared">
+							<h1>
+								{#if editions.current.paragraph.in_brief}
+									<span class="in-brief-tag">{t('ccc.inBrief')}</span>
+								{/if}
+								CCC {data.n}
+							</h1>
+						</div>
+					{:else}
+						<div
+							class="compare-unit-field compare-unit-field-left"
+							lang={editions.current.work.language}
+						>
+							<h1>
+								{#if editions.current.paragraph.in_brief}
+									<span class="in-brief-tag">{t('ccc.inBrief')}</span>
+								{/if}
+								CCC {data.n}
+							</h1>
+						</div>
+						<div
+							class="compare-unit-field compare-unit-field-right"
+							lang={editions.secondary.work.language}
+						>
+							<h1>
+								{#if editions.secondary.paragraph.in_brief}
+									<span class="in-brief-tag">{t('ccc.inBrief')}</span>
+								{/if}
+								CCC {data.n}
+							</h1>
+						</div>
+					{/if}
+
+					<!-- Never collapsed: the two notices read alike and link to
+					     different source pages (see `documents/[slug]`). -->
+					<div
+						class="compare-unit-field compare-unit-field-left"
+						lang={editions.current.work.language}
+					>
 						<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
+					</div>
+					<div
+						class="compare-unit-field compare-unit-field-right"
+						lang={editions.secondary.work.language}
+					>
+						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
+					</div>
+
+					<div class="compare-unit-field compare-unit-field-left">
 						<EditionMenu />
 					</div>
-					<div class="compare-unit-header-col" lang={editions.secondary.work.language}>
-						<h1>
-							{#if editions.secondary.paragraph.in_brief}
-								<span class="in-brief-tag">{t('ccc.inBrief')}</span>
-							{/if}
-							CCC {data.n}
-						</h1>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
+					<div class="compare-unit-field compare-unit-field-right">
 						<ComparisonEditionMenu
 							editions={editions.others.map((e) => e.work)}
 							current={editions.secondaryWorkId}
@@ -183,6 +226,16 @@
 					rightLabel={editions.secondary.work.short_title}
 					left={leftCell}
 					right={rightCell}
+					unit={(n) => ({
+						// `href` is the canonical address, i.e. this very page: a
+						// single-paragraph route has no in-page unit to view, and no
+						// `anchorId` either. What the popover is worth here is its
+						// other three actions — copy, copy link, bookmark — which
+						// compare mode had no way to reach at all.
+						href: `/catechismus/${n}`,
+						canonicalHref: `/catechismus/${n}`,
+						label: `CCC ${n}`
+					})}
 					showHeader={false}
 				/>
 			{:else}
@@ -292,11 +345,11 @@
 		margin: 0 0 1rem;
 	}
 
-	.compare-unit-header-col h1 {
+	.compare-unit-field h1 {
 		margin: 0 0 0.5rem;
 	}
 
-	.compare-unit-header-col :global(.menu) {
+	.compare-unit-field :global(.menu) {
 		margin-top: 0.25rem;
 	}
 

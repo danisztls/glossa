@@ -70,6 +70,45 @@ export interface AlignedRow<L, R> {
 }
 
 /**
+ * What the comparison grid's shared gutter needs to render ONE row's anchor.
+ *
+ * THE ADDRESS BELONGS TO THE ROW, NOT TO EITHER COLUMN. A row is one unit in
+ * two editions, and canonical reader URLs are Latin and do not vary with
+ * language (`CLAUDE.md`): `/catechismus/12` and `/documenta/{slug}#s12` name
+ * the unit, never the edition showing it. So the number is printed once,
+ * between the columns, rather than once per cell — the Bible chapter reader
+ * used to print it twice, which was two triggers opening two popovers whose
+ * every action (copy, copy link, view, bookmark) was byte-identical because
+ * both were built from the same `canonicalHref`.
+ *
+ * Routes hand this over as data rather than as a snippet because the
+ * treatment — the number, its popover, the saved and arrived-at states it
+ * colours — is precisely what must not drift between the five readers; that
+ * is the argument `ReferenceNumber.svelte`'s own docblock already makes for
+ * owning it. What genuinely differs per route is only the two addresses and
+ * the label, which is all this carries.
+ */
+export interface CompareUnit {
+	/** Where the number's `View` goes — an in-page `#s{n}` for a unit already
+	 *  on screen, the unit's own page for a CCC ¶. */
+	href: string;
+	/** The unit's full canonical address, fragment and all: what gets copied
+	 *  and bookmarked, and the key the row's saved state is read from. */
+	canonicalHref: string;
+	/** Accessible name for the number. */
+	label: string;
+	/** `id` for the ROW, so that `#v12`/`#s12` still arrives somewhere while
+	 *  comparing — the single-column branch carries these ids on its own
+	 *  `<section>`/`<span>`, and compare mode used to carry none at all, which
+	 *  left every fragment address on the page pointing at nothing. Omitted by
+	 *  routes whose units have no in-page address of their own. */
+	anchorId?: string;
+	/** This unit was named by the arriving citation (`?v=1-7`) and takes the
+	 *  same emphasis the single-column reader gives it. */
+	emphasized?: boolean;
+}
+
+/**
  * Align two lists of numbered units by their `n`, over the UNION of numbers
  * either side has, ascending. Neither list needs to be sorted or gapless —
  * whichever number is missing on a side simply produces `undefined` there.

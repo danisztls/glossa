@@ -114,13 +114,27 @@
 				     a single visually-hidden label (it's an a11y-only "Question 12"
 				     landmark, not visible content, so duplicating it per column
 				     would add nothing a screen reader wants twice). -->
+				<!-- One row per field (`.compare-unit-header`, app.css). Neither
+				     field can collapse: the copyright notices link to different
+				     source pages, and the two pickers are different controls. -->
 				<div class="compare-unit-header">
-					<div class="compare-unit-header-col" lang={editions.current.work.language}>
+					<div
+						class="compare-unit-field compare-unit-field-left"
+						lang={editions.current.work.language}
+					>
 						<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
+					</div>
+					<div
+						class="compare-unit-field compare-unit-field-right"
+						lang={editions.secondary.work.language}
+					>
+						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
+					</div>
+
+					<div class="compare-unit-field compare-unit-field-left">
 						<EditionMenu />
 					</div>
-					<div class="compare-unit-header-col" lang={editions.secondary.work.language}>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
+					<div class="compare-unit-field compare-unit-field-right">
 						<ComparisonEditionMenu
 							editions={editions.others.map((e) => e.work)}
 							current={editions.secondaryWorkId}
@@ -144,6 +158,13 @@
 					rightLabel={editions.secondary.work.short_title}
 					left={leftCell}
 					right={rightCell}
+					unit={(n) => ({
+						// Its own page, and no `anchorId` — same single-unit case as
+						// `catechismus/[n]`, see that route for the reasoning.
+						href: `/compendium/${n}`,
+						canonicalHref: `/compendium/${n}`,
+						label: `${t('compendium.question')} ${n}`
+					})}
 					showHeader={false}
 				/>
 			{:else}

@@ -405,6 +405,6 @@
 	   Latin comparison still needs two full reading measures. Rosary compare
 	   gets the equivalent shared app.css rule through `.reading-layout`. */
 	.content-column.compare {
-		max-width: calc(var(--content-width) * 2 + 3rem);
+		max-width: calc(var(--content-width) * 2 + var(--compare-gutter));
 	}
 </style>
