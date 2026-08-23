@@ -1237,11 +1237,11 @@ gap. Median across the 339 document works is 98.1%.
 on its own output, and the strongest quality signal the corpus produces. Nine
 works carry it. **Six were withheld and three were being published:**
 
-| work                              | coverage | sections   |
-| --------------------------------- | -------- | ---------- |
-| `encyclical.quadragesimo-anno.pt` | 8.7%     | 5, EN 148  |
-| `encyclical.miranda-prorsus.en`   | 10.0%    | 4          |
-| `vatii.gravissimum-educationis.en`| 85.7%    | 12, mis-divided |
+| work                               | coverage | sections        |
+| ---------------------------------- | -------- | --------------- |
+| `encyclical.quadragesimo-anno.pt`  | 8.7%     | 5, EN 148       |
+| `encyclical.miranda-prorsus.en`    | 10.0%    | 4               |
+| `vatii.gravissimum-educationis.en` | 85.7%    | 12, mis-divided |
 
 All three are now in `unpublished.json` with their coverage figure in the
 reader-facing reason. `unpublished.json`'s own header sets the standard —
@@ -1269,7 +1269,7 @@ bare `<i><b>` heading was dropped exactly as before. Corpus-wide that was
 **216,671 characters, 1.24% of all body text, in 43 files**.
 
 This was considered against migrating block enumeration to a DOM parse. The
-DOM's real advantage is *addressability* — HTML5 parsing does not wrap stray
+DOM's real advantage is _addressability_ — HTML5 parsing does not wrap stray
 text in `<p>`, it just makes the text node reachable — and the gap walk
 already provides that. Migrating would also have put four documented
 behaviours at risk, all encoded in `_BLOCK_RE`: the `<p(?=[\s>])` guard
@@ -1287,15 +1287,15 @@ smaller harm than losing the paragraph's words.
 (phase 1's 36 are translation probes). Against the pre-change snapshot of all
 684 artifacts:
 
-|                                | result           |
-| ------------------------------ | ---------------- |
-| median coverage                | 98.06% → 98.20%  |
-| works improving > 0.5pp        | 20               |
-| **coverage regressions**       | **0**            |
-| `mortalium-animos.pt`          | 50.1% → **98.4%** |
-| `humanae-vitae.pt`             | 78.9% → **97.9%** |
-| `sections.json` changed        | 6                |
-| `structure.json` changed       | 80               |
+|                          | result            |
+| ------------------------ | ----------------- |
+| median coverage          | 98.06% → 98.20%   |
+| works improving > 0.5pp  | 20                |
+| **coverage regressions** | **0**             |
+| `mortalium-animos.pt`    | 50.1% → **98.4%** |
+| `humanae-vitae.pt`       | 78.9% → **97.9%** |
+| `sections.json` changed  | 6                 |
+| `structure.json` changed | 80                |
 
 **The 80 structure changes are the interesting part**, and they are why the
 ToC oracle was built first. Recovered blocks feed `promote_italic_heading_run`,
@@ -1316,6 +1316,35 @@ Text yes, headings no — exactly the scope chosen above.
 0 — but a phase-2 run still fetches pontiff index pages during discovery (6 on
 a single-slug run). The flag governs document re-parsing, not discovery.
 
+## 2026-08-23 — `works/` is tracked in git too, not just `raw/`
+
+**What**: `glossa-corpus/.gitignore` no longer excludes `/works/`. The parsed
+corpus — 1,606 files, 54 MB — is now committed alongside `raw/`, reversing the
+"Not tracked in git" standing the 2026-08-23 corpus-split entry above gave it.
+
+**Why**: `works/` being a pure, byte-for-byte-reproducible function of `raw/`
+was the reason it was gitignored, but reproducibility was never the question —
+it answers "can I get back to _a_ correct state," not "can I see what changed
+between two states." A pipeline fix, a correction, or an override edits
+`works/` and the only way to inspect the effect was re-running the parser
+against a stashed copy or trusting the run summary's own numbers. Git history
+answers both questions git already exists to answer: diff two states, and
+revert to one, for free.
+
+**Why this doesn't reopen the size or reproducibility argument**: the
+2026-08-23 split entry's growth case was about `raw/` specifically, because it
+is write-once (cache-first fetches never rewrite a file) and git's binary-churn
+problem doesn't apply to it. `works/` is regenerated wholesale on every rebuild,
+so every commit here _is_ churn — but 54 MB of JSON/text compresses well, and
+this repository's whole reason to exist privately is to hold exactly this kind
+of size. Reproducibility is unaffected either way: `works/` is still derived,
+still safe to `rm -rf` and rebuild (`glossa/CLAUDE.md`'s "safe to rebuild" row
+is about deletion safety, not git status), and committing it doesn't make it
+authoritative — `raw/` still is.
+
+**Verified**: `.gitignore` and `README.md` updated to describe `works/` as
+tracked; nothing else in either repository asserted the old gitignored status.
+
 ## 2026-08-23 — Three defects Mortalium Animos exposed
 
 Reported from reading the rendered page: footnotes absent, masthead absent,
@@ -1329,7 +1358,7 @@ markers as plain **`[N]` attached to the preceding character** — `"one."[1]`,
 `head,[4]` — with no `<sup>` and no anchor of any kind, so detection fell
 through to `paren`, which matches `(N)` only, and nothing was marked.
 
-The note *lists* were never the problem: `build_footnote_table` parsed
+The note _lists_ were never the problem: `build_footnote_table` parsed
 Mortalium Animos' 30 entries correctly all along, with nothing in the body
 pointing at them.
 
@@ -1349,7 +1378,7 @@ apparatus. That is a gap in the brief, not only in the parser.
 Where a document prints no explicit `1.` and jumps to `2.`, the parser
 promotes the preceding unnumbered text into section 1. That field was a scalar
 overwritten by every unnumbered block before the first numbered one, so a page
-opening with a salutation *and* a real first paragraph kept whichever came
+opening with a salutation _and_ a real first paragraph kept whichever came
 last. `singulari-quadam.en` lost its 1,747-character opening paragraph this
 way; `mortalium-animos.en` lost its salutation.
 
@@ -1387,7 +1416,7 @@ rather than to ask where it came from. The guard is gone.
 Applying fix 3 produced 14 apparent regressions of up to 2.6pp. None was real:
 the masthead had moved out of `structure.json` (counted by `stored_text_len`)
 into `manifest.header` (not counted). A coverage metric that ignores one of
-the three places body text is stored reports *relocation* as loss. `header`
+the three places body text is stored reports _relocation_ as loss. `header`
 now counts.
 
 After that correction: **median coverage 98.20% → 99.04%, 187 works improved,
@@ -1507,3 +1536,116 @@ three abstract ones looked like it named the work rather than the act.
 toolbar, so the row now reads bookmark, compare, edition — the two controls
 that change what is on the page sit together at the end, and the mark the
 reader can make sits with the heading it belongs to.
+
+## 2026-08-23 — The pipeline was sleeping, then single-threaded, then rewriting a corpus that had not changed
+
+**What**: a full `phase2 --overwrite` — the loop a parser fix is checked in —
+went from **2m59s to 1.3s**, and a re-run over the whole pipeline that changes
+nothing now writes **0 of 1,477 files** instead of all of them. Four changes,
+each of which only became visible once the one before it was out of the way.
+
+**1. A 404 is an answer, not a failure to retry.** The run was making 36
+requests while claiming to be a zero-network re-parse, and spending 2m59s of
+wall clock against 6.5s of CPU. Every one of those requests was a retry storm
+against 12 URLs that return a hard 404 — ten Pius XI/XII encyclicals with no
+Portuguese translation, two pontificate indexes that do not exist. Nothing
+recorded a failure, so every run rediscovered the same twelve absences at
+`MAX_ATTEMPTS` requests and two backoff sleeps each, ~17s apiece.
+
+`MAX_ATTEMPTS`/`RETRY_BACKOFF` exist for the ~1-in-6-to-8 _transient_ edge
+failures the 2026-08-15 survey measured. 404 and 410 are the origin answering,
+and two more identical requests cannot change the answer, so they now break out
+of the loop and land in `pipeline/absent-sources.json`. **Only definitive
+statuses go in**: caching a timeout or a 5xx as an absence would silently drop a
+real document from the corpus, and that distinction is the whole safety
+argument for the layer. An absence is not permanent either — a translation can
+appear years later — so `--recheck-absent` re-asks and drops whatever now
+exists.
+
+**Why a ledger in `pipeline/` and not a marker in `raw/`**: both were on the
+table. `raw/` is the record of what the source said and a 404 is something the
+source said — but it is also the one artifact this project treats as write-once,
+and a list of what is _missing_ is knowledge we derived rather than a page we
+fetched. Kept in `pipeline/` it sits next to `corrections/` and `overrides/`,
+the other two places where this pipeline writes down what it has learned about
+its sources, and it is reviewable in the public repository.
+
+**2. Only the requests have to be serial.** Removing the sleep left the run
+CPU-bound for the first time: 6.25s pinned to one core with fifteen idle, 61% of
+it inside `re.Pattern.sub` under `strip_tags`/`narrow_html`. The initial reading
+— that parallelism was the wrong lever here — was wrong, and the correction is
+worth recording because the distinction is easy to collapse: **concurrent
+requests are forbidden, concurrent work was simply being left on the floor.**
+vatican.va's 2s `Crawl-delay` is a commitment about someone else's server; it
+says nothing about what we do with bytes already in hand.
+
+So `scrape_one` split on exactly that line. `fetch_for_parse` touches the
+network and stays strictly serial behind the same delay. `parse_and_write` is a
+pure function of the page text plus this document's own corrections/overrides,
+writing only its own `works/{work_id}/`, and fans out to a worker pool. 6.25s →
+1.33s (2 jobs 1.9×, 4 3.1×, 8 4.5×, 16 4.7×). `--jobs 1` runs inline, which is
+what to use when a parser crash needs a real traceback.
+
+Driving the two halves apart has a second effect that matters more on a real
+crawl than on a re-parse: a document parses _inside_ the 2s the parent is
+already obliged to spend sleeping before the next request. Parsing stops adding
+to a crawl's wall clock, rather than the crawl being made faster.
+
+`fork` is requested explicitly rather than taking Python 3.14's new
+`forkserver` default: that default guards against fork in a threaded process,
+and this scraper has no threads, so workers can inherit an already-imported
+module and its compiled regexes copy-on-write instead of re-importing a
+4,900-line file per worker.
+
+**3. Answer from memory.** What was left was work the run already knew the
+answer to: 717 `exists()` calls per run to find the 12 corrections/overrides
+files that are filed; 445 more on the page cache, each immediately followed by
+the read it had just proved possible; and 14.4 MB of `sections.json` re-read by
+`check_language_symmetry` seconds after being written. The symmetry check now
+takes this run's section numbers as a **cache, not a substitute** — it still
+sweeps `works/` to decide which pairs exist, so a `--slugs` run is still checked
+against the whole corpus rather than quietly against its own slice.
+
+**4. One write guard, shared, because `generated_at` defeats the obvious fix.**
+Every scraper rewrote its whole output every run: 18.6 MB for vatican_docs, and
+248 of 248 files / 28.5 MB across the other eight. That was tolerable while
+`works/` was gitignored and stopped being so the same day it became tracked (see
+the entry above) — a diff in which everything looks touched cannot show which
+document a parser fix actually moved, which is the entire reason for tracking
+it.
+
+Skip-identical-files does not survive being copied eight times, because
+`generated_at` is regenerated every run by construction and so defeats the check
+on exactly the files that carry one. The scraper that forgot to handle that
+would quietly put the churn back. So the rule is `common.write_stamped_json` and
+all output goes through it: the comparison substitutes the **stored** stamp,
+**all-or-nothing across a work's files**, and an unchanged work keeps the time
+it had. Keeping an old stamp on a manifest while a sibling changed underneath it
+would be a worse lie than the churn.
+
+That makes `generated_at` mean _when this content was generated_ rather than
+_when a run last touched the file_ — the former is the only one worth reading in
+a diff.
+
+Payload names may be nested, which is what lets a Bible be judged as the one
+unit it is: 73 book files, a manifest counting them, and a corrections receipt,
+where a book changing is a reason to restamp the manifest. That required folding
+each receipt into the same call, built as a value rather than written separately
+ahead of the rest.
+
+**What stayed unshared**: the `Fetcher`s. `common.py`'s docblock rules them out
+— different retry policies, different HTTP libraries, different self-chosen rate
+limits — and only one line of them was ever the same (`exists()`-then-read, now
+`read_bytes_or_none`). A claim that `ccc.py`/`compendium.py`/`prayers.py` shared
+the retry-a-404 defect was **wrong and is retracted here**: none of them retry
+at all, they raise on first failure, so there is no storm to stop and no absence
+worth recording. The grep that suggested otherwise had matched the exception
+clause, which is the shape, not the defect.
+
+**Verified**: all ten entry points produce output byte-identical to before,
+run offline against a copy of the corpus — same run text at `--jobs 1` and
+`--jobs 16`, same 1,229-file `works/` tree for vatican_docs and same 248-file
+tree for the rest, same 64 cross-language symmetry findings from the in-memory
+path as from disk. A no-change re-run rewrites nothing; tampering with one
+book rewrites exactly that book, its manifest and its receipt. `stat` 2,745 →
+1,572, bytes moved 67.0 MB → 52.4 MB, writes 1,446 ops/18.6 MB → 217 ops/0 MB.
