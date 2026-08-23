@@ -10,15 +10,26 @@ import type { StructureNode } from '../types';
 import { displayTitle, kindLabelWord, kindOrdinalLabel } from '../titles';
 
 /**
- * The granularity `/ccc/+page.svelte`'s "chapter-sized" reasoning already
- * uses (`getCccChapterFor`) and this sidebar cuts the CCC/Compendium tree
- * down to: prologue/part/section/chapter, no `article` and nothing below
- * it. Counted against the real corpus that floor is 32-33 nodes for the CCC
- * and 32 for the Compendium, in EN and PT alike (`structure.json` for all
- * four work/lang combinations was counted directly, not assumed) — small
- * enough to render fully expanded, permanently, in a 17rem column, so there
- * is no expand/collapse state to manage anywhere in this module or the
- * component that uses it.
+ * The floor this sidebar cuts the CCC/Compendium tree down to:
+ * prologue/part/section/chapter/article, nothing below.
+ *
+ * `article` was outside it until a reader pointed out what that costs: the
+ * CCC's ten commandments are its articles, and with the floor at `chapter`
+ * there was no way to reach one from the table of contents — Part Three,
+ * Section Two stopped at two chapter rows ("You Shall Love the Lord Your
+ * God…", "You Shall Love Your Neighbor…") and the ten headings a reader
+ * actually navigates by were simply absent. It costs nothing on the
+ * Compendium, whose tree has no `article` nodes at all (counted: 0 in both
+ * languages), and it is affordable on the CCC only because a row's children
+ * render just when the reader is inside it (see the component's ONLY THE
+ * READER'S OWN BRANCH IS EXPANDED note) — the 67 EN / 65 PT articles never
+ * appear at once, only the handful under the chapter being read.
+ *
+ * The floor stays above `sub`, which is a different call rather than the
+ * same one deferred: the CCC carries 238 EN / 301 PT of them, they are the
+ * roman-numeral subdivisions inside an article rather than a division a
+ * citation ever names, and `in-brief` beside them is a summary block, not a
+ * place.
  *
  * A document's tree gets no such floor (`outlineChildren` below renders
  * every kind when the caller passes `undefined` instead of this set): a
@@ -30,7 +41,8 @@ export const OUTLINE_KINDS = new Set<StructureNode['kind']>([
 	'prologue',
 	'part',
 	'section',
-	'chapter'
+	'chapter',
+	'article'
 ]);
 
 /**
@@ -177,9 +189,8 @@ export function marker(
 		const word = kind ? kindLabelWord(kind, lang) : null;
 		if (word && siblings && index !== undefined) {
 			const position =
-				siblings
-					.slice(0, index)
-					.filter((sib) => sib.label && documentLabelKind(sib.label) === kind).length + 1;
+				siblings.slice(0, index).filter((sib) => sib.label && documentLabelKind(sib.label) === kind)
+					.length + 1;
 			return `${word} ${position}`;
 		}
 		return node.label;
@@ -218,7 +229,8 @@ export function hrefFor(
 	node: StructureNode,
 	n: number,
 	linkMode: LinkMode,
-	basePath: string | undefined
+	basePath: string | undefined,
+	routeAnchor?: string
 ): string {
 	// A row carrying its own `anchor` addresses the heading it names. Only
 	// documents set one, and only they need it: `#s{n}` lands on the SECTION
@@ -226,5 +238,11 @@ export function hrefFor(
 	// viewport and makes a TOC row and the text it points at disagree about
 	// where the division starts.
 	if (linkMode === 'anchor' && node.anchor) return `#${node.anchor}`;
-	return linkMode === 'anchor' ? `#s${n}` : `${basePath}/${n}`;
+	if (linkMode === 'anchor') return `#s${n}`;
+	// `routeAnchor` is the same idea for a route whose PAGE is bigger than one
+	// row — the CCC's whole-chapter view, where every article in the chapter
+	// is already on screen and `${basePath}/${n}` alone would send all of them
+	// to the same page top. The caller supplies it (`anchorFor`) because only
+	// the caller knows which of its own rows it renders a heading for.
+	return routeAnchor ? `${basePath}/${n}#${routeAnchor}` : `${basePath}/${n}`;
 }

@@ -52,7 +52,8 @@ describe('outlineChildren', () => {
 		[1, 100],
 		[
 			node('chapter', 1, 'Ch1', [1, 50]),
-			node('article', 1, 'Art1', [1, 20]),
+			node('sub', 1, 'Sub1', [1, 20]),
+			node('article', 1, 'Art1', [21, 50]),
 			node('section', 1, 'Sec1', [51, 100])
 		]
 	);
@@ -60,23 +61,34 @@ describe('outlineChildren', () => {
 	it('renders every child kind when no filter is given (document mode)', () => {
 		expect(outlineChildren(tree, undefined).map((c) => c.kind)).toEqual([
 			'chapter',
+			'sub',
 			'article',
 			'section'
 		]);
 	});
 
 	it('prunes to the given kind set (CCC/Compendium mode)', () => {
-		expect(outlineChildren(tree, OUTLINE_KINDS).map((c) => c.kind)).toEqual(['chapter', 'section']);
+		expect(outlineChildren(tree, OUTLINE_KINDS).map((c) => c.kind)).toEqual([
+			'chapter',
+			'article',
+			'section'
+		]);
+	});
+
+	it("keeps `article` — the CCC's ten commandments are articles", () => {
+		expect(OUTLINE_KINDS.has('article')).toBe(true);
+		expect(OUTLINE_KINDS.has('sub')).toBe(false);
+		expect(OUTLINE_KINDS.has('in-brief')).toBe(false);
 	});
 });
 
 describe('rowState', () => {
-	// part[1-100] > chapter[1-50] > sub[1-20], with an article[21-50] sibling
-	// of the sub that OUTLINE_KINDS prunes away — exercises the "deepest
-	// match within the RENDERED tree" rule, not the full corpus tree.
+	// part[1-100] > chapter[1-50] > sub[1-20] + sub[21-50], both of which
+	// OUTLINE_KINDS prunes away — exercises the "deepest match within the
+	// RENDERED tree" rule, not the full corpus tree.
 	const sub = node('sub', 1, 'Sub', [1, 20]);
-	const article = node('article', 1, 'Art', [21, 50]);
-	const chapter = node('chapter', 1, 'Ch', [1, 50], [sub, article]);
+	const laterSub = node('sub', 2, 'Sub2', [21, 50]);
+	const chapter = node('chapter', 1, 'Ch', [1, 50], [sub, laterSub]);
 	const part = node('part', 1, 'Part', [1, 100], [chapter]);
 
 	it('is neither on-path nor current when currentN is undefined', () => {
@@ -94,8 +106,8 @@ describe('rowState', () => {
 	});
 
 	it('filtered (CCC/Compendium mode): a node whose only matching child is pruned away becomes current itself', () => {
-		// n=30 falls in `article`'s range, but OUTLINE_KINDS prunes `article`
-		// out of the rendered tree entirely — so within the tree that's
+		// n=30 falls in the later `sub`'s range, but OUTLINE_KINDS prunes
+		// `sub` out of the rendered tree entirely — so within the tree that's
 		// actually shown, `chapter` has no rendered child containing 30, and
 		// must be marked current rather than merely on-path.
 		expect(rowState(chapter, 30, OUTLINE_KINDS)).toEqual({ onPath: true, isCurrent: true });
@@ -148,6 +160,16 @@ describe('hrefFor', () => {
 		const withAnchor = { ...node('sub', null, 'CHAPTER THREE', [90, 130]), anchor: 'h12' };
 		expect(hrefFor(withAnchor, 90, 'route', '/documenta/x')).toBe('/documenta/x/90');
 	});
+
+	// The CCC's whole-chapter route: every article in the chapter loads the
+	// same page, so without a fragment they would all be the same address.
+	it("route mode appends the caller's fragment when it supplies one", () => {
+		const article = node('article', 1, 'ARTICLE 1', [2084, 2141]);
+		expect(hrefFor(article, 2084, 'route', '/catechismus/caput', 's2084')).toBe(
+			'/catechismus/caput/2084#s2084'
+		);
+		expect(hrefFor(article, 2084, 'route', '/catechismus/caput')).toBe('/catechismus/caput/2084');
+	});
 });
 
 describe('currentIndex', () => {
@@ -175,11 +197,17 @@ describe('currentIndex', () => {
 
 describe('marker', () => {
 	it("prefers a document's own printed identifier line", () => {
-		const withLabel = { ...node('sub', null, 'TECHNOLOGY AND DOMINANCE.', [90, 130]), label: 'CHAPTER THREE' };
+		const withLabel = {
+			...node('sub', null, 'TECHNOLOGY AND DOMINANCE.', [90, 130]),
+			label: 'CHAPTER THREE'
+		};
 		expect(marker(withLabel, 'en')).toBe('CHAPTER THREE');
 	});
 
-	function labeled(label: string, paragraphs: [number | null, number | null] = [1, 1]): StructureNode {
+	function labeled(
+		label: string,
+		paragraphs: [number | null, number | null] = [1, 1]
+	): StructureNode {
 		return { ...node('sub', null, label, paragraphs), label };
 	}
 
@@ -195,7 +223,7 @@ describe('marker', () => {
 		expect(marker(siblings[2], 'en', siblings, 2)).toBe('Ch. 2');
 	});
 
-	it('reads the kind word from either end, for Portuguese part/section\'s reversed order', () => {
+	it("reads the kind word from either end, for Portuguese part/section's reversed order", () => {
 		const siblings = [labeled('PRIMEIRA PARTE'), labeled('SEGUNDA PARTE')];
 		expect(marker(siblings[0], 'pt', siblings, 0)).toBe('Parte 1');
 		expect(marker(siblings[1], 'pt', siblings, 1)).toBe('Parte 2');

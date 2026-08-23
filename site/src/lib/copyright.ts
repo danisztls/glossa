@@ -35,10 +35,15 @@ function stripTrailingParenthetical(holder: string): string {
  * `sources[0]` rather than a search for a "primary" one: the array is written
  * by the scrapers in the order they fetched, so the first entry is the work's
  * entry point in every case the corpus currently has — the single document
- * page for a Bible book or a Magisterium document, and `__P1.HTM` (part one,
- * the CCC's own first page) for the seven-page Catechism mirror. A work with
- * no sources at all is possible per the schema, so this returns undefined
- * rather than assuming.
+ * page for a Bible book or a Magisterium document, and, for the CCC's
+ * hundreds-of-pages mirror, the mirror's own table of contents
+ * (`_INDEX.HTM`), which `ccc.py` now puts at the head of the list precisely
+ * because it is what this link wants. It used to be `__P1.HTM`, the crawl's
+ * first CONTENT page — the Prologue — which is a true source of the text and
+ * a useless place to send a reader looking for "the original".
+ *
+ * A work with no sources at all is possible per the schema, so this returns
+ * undefined rather than assuming.
  */
 export function sourceUrl(manifest: WorkManifest): string | undefined {
 	return manifest.sources?.[0]?.url;

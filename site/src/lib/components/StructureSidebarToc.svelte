@@ -163,6 +163,13 @@
 		    what a document wants (see the docblock's WHICH NODE KINDS
 		    RENDER note). */
 		outlineKinds?: Set<StructureNode['kind']>;
+		/** In `"route"` mode, the in-page fragment (no `#`) a row should land
+		    on once its route has loaded, or `undefined` for the page top.
+		    Only a route whose page holds MORE than one row needs this — the
+		    CCC's whole-chapter view, where the chapter's articles are all on
+		    the same page and would otherwise share one address. Left unset,
+		    every row links to the page top exactly as before. */
+		anchorFor?: (node: StructureNode) => string | undefined;
 	}
 
 	let {
@@ -172,7 +179,8 @@
 		heading,
 		basePath,
 		linkMode = 'route',
-		outlineKinds
+		outlineKinds,
+		anchorFor
 	}: Props = $props();
 
 	const roots = $derived(structure.filter((row) => row.depth === 0).map((row) => row.node));
@@ -209,7 +217,7 @@
 				{#if Number.isFinite(anchor)}
 					<a
 						id={state.isCurrent ? CURRENT_ID : undefined}
-						href={hrefFor(node, anchor as number, linkMode, basePath)}
+						href={hrefFor(node, anchor as number, linkMode, basePath, anchorFor?.(node))}
 						class:current={state.isCurrent}
 						aria-current={state.isCurrent ? 'page' : undefined}
 					>
