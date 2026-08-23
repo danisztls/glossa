@@ -70,19 +70,25 @@
 	 */
 	function nodesFor(block: CccBlock): InlineNode[] {
 		if (block.html) return parseInlineHtml(block.html);
+		// Exactly one of the two is present (types.ts, `CccBlock.text_marked`):
+		// a shipped document block has `html` and no `text_marked`, the CCC and
+		// Compendium the reverse. `?? ''` is the unreachable third case, kept
+		// so a block that somehow arrives with neither renders empty instead
+		// of throwing inside the render.
+		const marked = block.text_marked ?? '';
 		const nodes: InlineNode[] = [];
 		let lastIndex = 0;
 		let seq = 0;
-		for (const match of block.text_marked.matchAll(MARKER_RE)) {
+		for (const match of marked.matchAll(MARKER_RE)) {
 			const index = match.index ?? 0;
 			if (index > lastIndex) {
-				nodes.push({ kind: 'text', text: block.text_marked.slice(lastIndex, index) });
+				nodes.push({ kind: 'text', text: marked.slice(lastIndex, index) });
 			}
 			nodes.push({ kind: 'marker', marker: match[1], seq: seq++ });
 			lastIndex = index + match[0].length;
 		}
-		if (lastIndex < block.text_marked.length) {
-			nodes.push({ kind: 'text', text: block.text_marked.slice(lastIndex) });
+		if (lastIndex < marked.length) {
+			nodes.push({ kind: 'text', text: marked.slice(lastIndex) });
 		}
 		return nodes;
 	}
@@ -198,7 +204,13 @@
 	{/each}
 {/snippet}
 
-{#each paragraph.blocks as block, blockIndex (block.text_marked)}
+<!-- Keyed by POSITION, not by text. `text_marked` was the key until documents
+     started shipping without it (types.ts) — every document block would have
+     keyed on `undefined`, and Svelte rejects a duplicate key at runtime, so a
+     two-block section would have thrown rather than rendered. Position is the
+     right key regardless: a paragraph's blocks are a fixed ordered list that
+     is never reordered, inserted into, or filtered. -->
+{#each paragraph.blocks as block, blockIndex (blockIndex)}
 	{#if block.kind === 'quote'}
 		<blockquote class="ccc-quote">
 			<p>{@render inline(nodesFor(block), blockIndex)}</p>

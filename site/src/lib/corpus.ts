@@ -136,6 +136,7 @@ import type {
 	WorkType
 } from './types';
 
+import { inlineText, parseInlineHtml } from './inline-html';
 import {
 	USE_REAL_CORPUS,
 	bibleIndex,
@@ -149,7 +150,8 @@ import {
 	cccStructures,
 	compendiumQuestionsLocation,
 	compendiumStructures,
-	documentSectionsLocation,
+	documentChunkLocation,
+	documentChunkLocations,
 	documentSectionNumbers,
 	documentStructures,
 	fixtureBibleBooks,
@@ -1234,10 +1236,14 @@ export function documentHasSections(workId: string): boolean {
 	return (documentSectionNumberSets[workId]?.size ?? 0) > 0;
 }
 
-// --- Documents: content tier (async, read/fetched, memoized, whole) --------
+// --- Documents: content tier (async, read/fetched, memoized, chunked) ------
 //
-// Kept whole per work, like the Compendium (~200 KB raw worst-case — see
-// `scripts/sync-corpus.mjs`'s docblock) rather than chunked like the CCC.
+// Chunked by section, like the CCC is by paragraph (`DOCUMENT_CHUNK_SIZE` in
+// `scripts/sync-corpus.mjs` argues the stride). These files are also SHIPPED
+// THIN: `text_marked` and the section's `text` are dropped at sync time
+// because both are derivable from `html`, so anything here that wants plain
+// text derives it (`sectionText` below) rather than reading a stored copy.
+// The corpus on disk keeps all three — see `thinDocumentSections`.
 //
 // No fixture branch: documents have no hand-authored fixtures yet (unlike
 // the Bible/CCC/Compendium, which all ship a `src/lib/fixtures/` copy) —
@@ -1247,8 +1253,21 @@ export function documentHasSections(workId: string): boolean {
 // run. Returning `[]` rather than throwing keeps that graceful if a test
 // ever does call it directly.
 
+/** The one chunk section `n` lives in. Each chunk memoizes independently in
+ *  `readContent`, so a reader who opens the document after following a
+ *  preview re-fetches only the chunks the preview did not already pull. */
+async function fetchDocumentChunk(workId: string, n: number): Promise<DocumentSection[]> {
+	return fetchTier([], documentChunkLocation(workId, n), []);
+}
+
+/** Every chunk, concatenated in section order — the whole-document read.
+ *  Ordered by `documentChunkLocations`, so no re-sort is needed. */
 async function fetchDocumentSections(workId: string): Promise<DocumentSection[]> {
-	return fetchTier([], documentSectionsLocation(workId), []);
+	if (!USE_REAL_CORPUS) return [];
+	const chunks = await Promise.all(
+		documentChunkLocations(workId).map((location) => readContent<DocumentSection[]>(location))
+	);
+	return chunks.flat();
 }
 
 export async function getDocumentSectionAsync(
@@ -1256,8 +1275,12 @@ export async function getDocumentSectionAsync(
 	n: number
 ): Promise<DocumentSection | undefined> {
 	if (!documentSectionExists(workId, n)) return undefined;
-	const sections = await fetchDocumentSections(workId);
-	return sections.find((s) => s.n === n);
+	// COARSE FETCH, NARROW RETURN (this module's docblock) — one chunk, not
+	// the whole document. This is the path a hover link preview takes, and
+	// before documents were chunked it pulled an entire encyclical (up to
+	// 827 KB raw) to render one paragraph.
+	const chunk = await fetchDocumentChunk(workId, n);
+	return chunk.find((s) => s.n === n);
 }
 
 /**
@@ -1277,6 +1300,44 @@ export async function getDocumentSectionAsync(
  */
 export async function getDocumentSectionsAsync(workId: string): Promise<DocumentSection[]> {
 	return fetchDocumentSections(workId);
+}
+
+/**
+ * A section's plain text, derived rather than read.
+ *
+ * The corpus stores this as `text` on every section; the shipped copy drops
+ * it (see this section's docblock) because it is a pure function of the
+ * blocks — joined by a single space, footnote markers contributing nothing,
+ * whitespace collapsed, mirroring `Section.resolve` in `vatican_docs.py`.
+ *
+ * NOT byte-identical to the stored `text`, and deliberately so: 2,567 of the
+ * corpus's 14,907 sections (17.2%) differ, every one of them by whitespace
+ * alone and none by a single other character (measured 2026-08-22). The
+ * difference is the pipeline's, not this function's — `html_to_text` turns
+ * every tag into a space "matching `strip_tags`", so the source's
+ * `Constitution <i>Esti minime</i>.` is stored as `Esti minime .` while the
+ * raw page has no space there. Deriving from `html` reproduces the source;
+ * reading the stored field reproduces the defect. The round-trip oracle
+ * cannot see it because both sides of `html_to_text(html) == text_marked`
+ * insert the same space.
+ *
+ * Returns the stored field when one is present, so a corpus section (which
+ * still carries it) and a shipped one behave the same at the call site.
+ *
+ * Derived per call rather than cached: the only caller is the link-preview
+ * excerpt, which needs one section and truncates it immediately, so caching
+ * whole-document text would cost more memory than the field it replaced.
+ */
+export function documentSectionText(section: DocumentSection): string {
+	if (section.text !== undefined) return section.text;
+	return section.blocks
+		.map((block) =>
+			block.html ? inlineText(parseInlineHtml(block.html)) : (block.text_marked ?? '')
+		)
+		.join(' ')
+		.replace(/⟦[^⟧]*⟧/g, '')
+		.replace(/\s+/g, ' ')
+		.trim();
 }
 
 // --- Prayers: index-backed (structure, metadata, existence, adjacency, sync) --

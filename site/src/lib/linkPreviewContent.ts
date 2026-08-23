@@ -36,6 +36,7 @@ import {
 	getCompendiumQuestionAsync,
 	getDocumentManifest,
 	getDocumentSectionAsync,
+	documentSectionText,
 	documentSectionExists,
 	getCompendiumChapterFor,
 	isUnpublished,
@@ -230,7 +231,7 @@ async function resolveDocument(
 
 	const manifest = getDocumentManifest(workId);
 	const title = manifest ? `${manifest.short_title} §${target.n}` : `§${target.n}`;
-	return { title, body: truncate(section.text) };
+	return { title, body: truncate(documentSectionText(section)) };
 }
 
 async function resolveUncached(target: PreviewTarget): Promise<ResolvedPreview | undefined> {

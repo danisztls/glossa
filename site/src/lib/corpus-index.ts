@@ -507,6 +507,19 @@ export function cccChunkStartFor(n: number): number {
 	return Math.floor((n - 1) / CCC_CHUNK_SIZE) * CCC_CHUNK_SIZE + 1;
 }
 
+/** Must equal `DOCUMENT_CHUNK_SIZE` in scripts/sync-corpus.mjs, which is
+ *  where the choice of 50 is argued. The two are separate literals because
+ *  this module cannot import from a build script; `documentChunkLocation`
+ *  returning `undefined` for a chunk the sync did write is what a mismatch
+ *  would look like, and `corpus.test.ts` pins them together. */
+const DOCUMENT_CHUNK_SIZE = 50;
+
+/** The fixed-range chunk a document SECTION number lives in — same pure
+ *  function of `n` as `cccChunkStartFor`, applied to a different stride. */
+export function documentChunkStartFor(n: number): number {
+	return Math.floor((n - 1) / DOCUMENT_CHUNK_SIZE) * DOCUMENT_CHUNK_SIZE + 1;
+}
+
 /** `./corpus-data/content/...` glob key -> the `relPath` shape
  *  `content-manifest.json` entries use (`content/...`), so the two can be
  *  joined without a second copy of the path. */
@@ -542,7 +555,7 @@ export interface ContentLocation {
 const bibleBookLocations: Record<string, Record<string, ContentLocation>> = {};
 const cccChunkLocations: Record<string, Record<number, ContentLocation>> = {};
 const compendiumQuestionsLocations: Record<string, ContentLocation> = {};
-const documentSectionsLocations: Record<string, ContentLocation> = {};
+const documentChunkLocationsByWork: Record<string, Record<number, ContentLocation>> = {};
 /** Keyed by WORK ID (`prayer.common.en`), not bare lang -- matches how every
  *  other content-tier location map here is keyed (the lang-vs-workid choice
  *  in the INDEX registries above is a different, index-only concern). */
@@ -572,9 +585,10 @@ for (const [globPath, url] of Object.entries(realContentUrls)) {
 		compendiumQuestionsLocations[compendiumMatch[1]] = location;
 		continue;
 	}
-	const documentMatch = relPath.match(/^content\/([^/]+)\/sections\.json$/);
+	const documentMatch = relPath.match(/^content\/([^/]+)\/sections\/(\d+)-(\d+)\.json$/);
 	if (documentMatch) {
-		documentSectionsLocations[documentMatch[1]] = location;
+		const [, workId, startStr] = documentMatch;
+		(documentChunkLocationsByWork[workId] ??= {})[Number(startStr)] = location;
 		continue;
 	}
 	const prayerMatch = relPath.match(/^content\/([^/]+)\/prayers\.json$/);
@@ -595,8 +609,23 @@ export function compendiumQuestionsLocation(workId: string): ContentLocation | u
 	return compendiumQuestionsLocations[workId];
 }
 
-export function documentSectionsLocation(workId: string): ContentLocation | undefined {
-	return documentSectionsLocations[workId];
+/** The one chunk section `n` lives in — for a single-section read (a link
+ *  preview), which must not pay for the whole document. */
+export function documentChunkLocation(workId: string, n: number): ContentLocation | undefined {
+	return documentChunkLocationsByWork[workId]?.[documentChunkStartFor(n)];
+}
+
+/** Every chunk of a document, in section order — for the continuous reading
+ *  view, which needs all of them. Ordered by chunk start rather than by the
+ *  object's own key order so the fetched pieces concatenate into a
+ *  document-ordered array without re-sorting the sections themselves. */
+export function documentChunkLocations(workId: string): ContentLocation[] {
+	const byStart = documentChunkLocationsByWork[workId];
+	if (!byStart) return [];
+	return Object.keys(byStart)
+		.map(Number)
+		.sort((a, b) => a - b)
+		.map((start) => byStart[start]);
 }
 
 export function prayerContentLocation(workId: string): ContentLocation | undefined {

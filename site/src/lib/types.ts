@@ -278,8 +278,18 @@ export interface CccBlock {
 	 *  exception you care about (`kind === 'quote'`), never against
 	 *  `'prose'`, which an ordinary block no longer carries. */
 	kind?: CccBlockKind;
-	/** Block text with inline footnote markers preserved as `⟦marker⟧` tokens. */
-	text_marked: string;
+	/**
+	 * Block text with inline footnote markers preserved as `⟦marker⟧` tokens.
+	 *
+	 * Optional because a DOCUMENT block ships without it: it is derivable
+	 * from `html`, so `sync-corpus.mjs` drops it from the shipped copy
+	 * (`thinDocumentSections`) while the corpus on disk keeps it as the
+	 * round-trip oracle's expected value. Exactly one of `text_marked` and
+	 * `html` is guaranteed present — the CCC and Compendium have the former
+	 * and not the latter, shipped documents the reverse — so a renderer must
+	 * handle both; `CccParagraphText`'s `nodesFor` is the one place that does.
+	 */
+	text_marked?: string;
 	/**
 	 * The same text with the source's inline markup kept, restricted to the
 	 * stored allowlist and with footnote markers as `<sup data-fn="N"></sup>`
@@ -385,8 +395,15 @@ export interface DocumentBibleXref {
 export interface DocumentSection {
 	n: number;
 	blocks: CccBlock[];
-	/** Derived: all blocks joined, markers stripped, spaces normalized — for search and plain rendering. */
-	text: string;
+	/**
+	 * Derived: all blocks joined, markers stripped, spaces normalized.
+	 *
+	 * Absent on a SHIPPED section — being derived is exactly why it can be
+	 * dropped (`thinDocumentSections` in scripts/sync-corpus.mjs). Read it
+	 * through `documentSectionText()` in corpus.ts, which returns this field
+	 * when present and reproduces the pipeline's derivation when it is not.
+	 */
+	text?: string;
 	citations: CccCitation[];
 	// No `related` (no marginal cross-reference apparatus in any document
 	// family sampled) and no `in_brief` (a CCC-only summarization device) --

@@ -22,10 +22,8 @@
  *   chunks/language — shipping the 3.5 MB/language `paragraphs.json` whole
  *   would put a >500 KB gzipped file behind a single `¶1` visit), the
  *   Compendium kept whole per language (only ~90 KB gzipped total, no split
- *   needed), documents (docs/corpus-schema.md §Documents) also kept whole
- *   per work — the largest is ~200 KB raw (Gaudium et Spes), well under the
- *   Compendium's own no-split precedent, so one `sections.json` per work is
- *   the whole content file rather than a chunk — and prayers
+ *   needed), documents (docs/corpus-schema.md §Documents) split into fixed
+ *   section chunks the same way — see `DOCUMENT_CHUNK_SIZE` — and prayers
  *   (docs/corpus-schema.md §Prayers) kept whole per language too, same as
  *   the Compendium and for the same reason: `prayers.json` measures ~40 KB
  *   RAW per language in the real corpus, smaller by an order of magnitude
@@ -86,6 +84,29 @@ const routeManifestPath = path.join(siteRoot, 'static/corpus-routes.json');
  *  same budget as a Bible book file. */
 const CCC_CHUNK_SIZE = 100;
 
+/** Documents are chunked by SECTION, the same fixed-stride way the CCC is
+ *  chunked by paragraph and for the same "pure function of `n`, no lookup
+ *  table" reason (`documentChunkStartFor` in `corpus-index.ts`).
+ *
+ *  This replaces a whole-file-per-work rule whose stated premise —
+ *  "~200 KB raw worst-case (Gaudium et Spes)" — had gone stale by 4×: Gaudium
+ *  et Spes measures 623 KB today and the real worst case is Evangelium Vitae
+ *  at 827 KB. The claim was written 2026-08-16 and `html` landed on
+ *  2026-08-21 (docs/decisions.md), which is most of the gap; nobody re-measured
+ *  after. What made it matter is that a hover LINK PREVIEW of a single cited
+ *  section (`linkPreviewContent.ts`) pays for the whole file, so citing one
+ *  paragraph of an encyclical downloaded the encyclical.
+ *
+ *  50 rather than the CCC's 100 because a document's sections are much
+ *  longer and far more variable than a catechism paragraph — a median 1.1 KB
+ *  but a p90 of 2.3 KB and a worst of 7.6 KB — so the same stride would span
+ *  a much wider range of chunk sizes. At 50 the worst chunk is ~161 KB raw
+ *  (~48 KB brotli) against a whole-file 827 KB (95 KB brotli), and since the
+ *  median document is 27 sections most works remain a single chunk anyway.
+ *  It also bounds the continuous reading view (`/documenta/{slug}`, which
+ *  needs every chunk) at 3 parallel fetches for the longest document. */
+const DOCUMENT_CHUNK_SIZE = 50;
+
 function readJson(p) {
 	return JSON.parse(readFileSync(p, 'utf8'));
 }
@@ -97,6 +118,54 @@ function writeJson(p, data) {
 
 function byteLength(data) {
 	return Buffer.byteLength(JSON.stringify(data));
+}
+
+/**
+ * A document's sections with the two DERIVABLE copies of the prose removed:
+ * each block's `text_marked` and each section's `text`.
+ *
+ * KEEP THE CORPUS FAT, SHIP THIN. `corpus/works/` stores the same prose three
+ * times — `html`, `text_marked` and `text` are 33%/32%/32% of a document's
+ * payload, 97% between them — and that redundancy is load-bearing where it
+ * lives: `html_to_text(html) == text_marked` is the round-trip oracle the
+ * scraper checks over all ~14,900 sections on every run, and an oracle whose
+ * expected value is derived from the thing under test checks nothing. The
+ * SITE runs no such check, so shipping the copies buys it nothing: `html` is
+ * a strict superset, and `inlineHtml.inlineText()` is the same derivation in
+ * TypeScript.
+ *
+ * Worth doing even though brotli already collapses most of the duplication
+ * (a whole file goes 827 → 292 KB raw but only 95 → 84 KB compressed, ~12%):
+ * the win is on the client, where it is the raw bytes that are parsed and
+ * held — roughly a third of the `JSON.parse` cost and of the retained heap
+ * per open document, on a payload the memoizing content tier keeps for the
+ * session.
+ *
+ * Returns a COPY. The caller's array is still referenced by
+ * `documentEditions` for the Scripture cross-reference pass, which reads
+ * `block.text_marked` (`build-xrefs.mjs`).
+ */
+function thinDocumentSections(workId, sections) {
+	return sections.map((section) => {
+		const blocks = section.blocks.map((block) => {
+			// `html` is what the reader is derived FROM, so a block without it
+			// would lose its words entirely rather than degrade. Every one of
+			// the corpus's document blocks has it; this fails the build rather
+			// than trusting that to stay true, because the failure it guards
+			// against is silent and only visible as missing text on a page.
+			if (!block.html) {
+				throw new Error(
+					`sync-corpus: ${workId} has a block with no \`html\`; refusing to drop ` +
+						`\`text_marked\`, which is the only other copy of its text. ` +
+						`(text_marked: ${JSON.stringify((block.text_marked ?? '').slice(0, 80))})`
+				);
+			}
+			const { text_marked: _dropped, ...rest } = block;
+			return rest;
+		});
+		const { text: _alsoDropped, ...restOfSection } = section;
+		return { ...restOfSection, blocks };
+	});
 }
 
 rmSync(destDir, { recursive: true, force: true });
@@ -425,20 +494,32 @@ for (const workId of workIds) {
 		const [, slug, docLang] = workId.split('.');
 		documentEditions.push({ slug, lang: docLang, sections });
 
-		// Kept WHOLE per work rather than chunked (see this module's docblock)
-		// — at ~200 KB raw worst-case this is comfortably inside the
-		// Compendium's own no-split precedent, and a document's own internal
-		// structure (chapters/parts) already gives the reader a TOC to jump
-		// through instead of a flat 1..N list, so chunk-boundary UX (the CCC's
-		// reason to split) doesn't apply here.
-		const relPath = `content/${workId}/sections.json`;
-		writeJson(path.join(destDir, relPath), sections);
-		contentManifest.push({
-			workId,
-			kind: 'document-sections',
-			relPath,
-			bytes: byteLength(sections)
-		});
+		// SHIPPED THIN, and chunked. `thinDocumentSections` drops the two
+		// derivable copies of the prose; the loop below splits what's left the
+		// way the CCC is split. Both are done on a COPY: `documentEditions`
+		// above still holds the fat array, and `build-xrefs.mjs` reads
+		// `block.text_marked` out of it — stripping in place would silently
+		// empty the Scripture cross-reference table.
+		const thin = thinDocumentSections(workId, sections);
+		// From the already-sorted index above rather than from `thin`'s last
+		// element: nothing guarantees `sections.json` is written in `n` order,
+		// and a single out-of-order row would silently truncate the last chunk.
+		const sorted = documentIndex[workId].sectionNumbers;
+		const maxN = sorted.length ? sorted[sorted.length - 1] : 0;
+		for (let start = 1; start <= maxN; start += DOCUMENT_CHUNK_SIZE) {
+			const end = start + DOCUMENT_CHUNK_SIZE - 1;
+			const chunk = thin.filter((s) => s.n >= start && s.n <= end);
+			if (chunk.length === 0) continue;
+			const chunkName = `${String(start).padStart(4, '0')}-${String(end).padStart(4, '0')}`;
+			const relPath = `content/${workId}/sections/${chunkName}.json`;
+			writeJson(path.join(destDir, relPath), chunk);
+			contentManifest.push({
+				workId,
+				kind: 'document-chunk',
+				relPath,
+				bytes: byteLength(chunk)
+			});
+		}
 		continue;
 	}
 
