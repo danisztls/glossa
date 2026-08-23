@@ -1,0 +1,14 @@
+[
+  {
+    "id": "ut-unum-sint.pt-missing-space-da",
+    "locator": {
+      "raw_substring": "da<i>oikoumene"
+    },
+    "field": "raw_text",
+    "from": "da<i>oikoumene",
+    "to": "da <i>oikoumene",
+    "reason": "The source omits the space between the contraction 'da' and the italic Greek term 'oikoumene'. A browser renders the two flush ('daoikoumene'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__ut-unum-sint__pt.html: '...rejas</i>, nos diversos continentes e nos v&aacute;rios pa&iacute;ses da<i>oikoumene</i> contempor&acirc;nea. Estou ciente de que...'",
+    "added": "2026-08-22"
+  }
+]

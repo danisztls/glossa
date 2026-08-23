@@ -1,0 +1,14 @@
+[
+  {
+    "id": "acerba-animi.en-missing-space-vivendi",
+    "locator": {
+      "raw_substring": "vivendi</i>had"
+    },
+    "field": "raw_text",
+    "from": "vivendi</i>had",
+    "to": "vivendi</i> had",
+    "reason": "The source omits the space between the italic phrase 'modus vivendi' and the verb that follows it. A browser renders the two flush ('vivendihad'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__acerba-animi__en.html: '...enalized and imprisoned, contrary to the spirit in which the <i>modus vivendi</i>had been established. To Our great distress We s...'",
+    "added": "2026-08-22"
+  }
+]

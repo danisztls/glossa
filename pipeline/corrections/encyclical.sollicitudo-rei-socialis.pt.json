@@ -1,0 +1,14 @@
+[
+  {
+    "id": "sollicitudo-rei-socialis.pt-missing-space-uma",
+    "locator": {
+      "raw_substring": "uma<i>nova"
+    },
+    "field": "raw_text",
+    "from": "uma<i>nova",
+    "to": "uma <i>nova",
+    "reason": "The source omits the space between the article 'uma' and the italic phrase 'nova maneira'. A browser renders the two flush ('umanova'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__sollicitudo-rei-socialis__pt.html: '... cat&oacute;lica, em particular na Am&eacute;rica Latina, difundiu-se uma<i>nova maneira</i> de enfrentar os problemas da mis...'",
+    "added": "2026-08-22"
+  }
+]

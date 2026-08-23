@@ -1,0 +1,14 @@
+[
+  {
+    "id": "laborem-exercens.en-missing-space-importance",
+    "locator": {
+      "raw_substring": "importance</i>for"
+    },
+    "field": "raw_text",
+    "from": "importance</i>for",
+    "to": "importance</i> for",
+    "reason": "The source omits the space between the italic clause and the preposition 'for' that continues the sentence. A browser renders the two flush ('importancefor'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__laborem-exercens__en.html: '... the present consideration, it seems that <i>economism had a decisive importance</i>for the fundamental issue of human work, in part...'",
+    "added": "2026-08-22"
+  }
+]

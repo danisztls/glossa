@@ -1,0 +1,14 @@
+[
+  {
+    "id": "redemptor-hominis.en-missing-space-regale",
+    "locator": {
+      "raw_substring": "regale</i>of"
+    },
+    "field": "raw_text",
+    "from": "regale</i>of",
+    "to": "regale</i> of",
+    "reason": "The source omits the space between the italic phrase 'munus regale' and the preposition 'of'. A browser renders the two flush ('regaleof'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__redemptor-hominis__en.html: '... that is to say his call to share in the kingly function-the <i>munus regale</i>of Christ himself<font face=\"Verdana\" size=\"2\">...'",
+    "added": "2026-08-22"
+  }
+]

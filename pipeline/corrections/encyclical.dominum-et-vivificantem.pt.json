@@ -1,0 +1,14 @@
+[
+  {
+    "id": "dominum-et-vivificantem.pt-missing-space-os",
+    "locator": {
+      "raw_substring": "os<i>limites"
+    },
+    "field": "raw_text",
+    "from": "os<i>limites",
+    "to": "os <i>limites",
+    "reason": "The source omits the space between the article 'os' and the italic noun 'limites' it governs. A browser renders the two flush ('oslimites'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__dominum-et-vivificantem__pt.html: '... verdade do homem: de quem &eacute; o homem e</i> de quais s&atilde;o os<i>limites intranspon&iacute;veis</i> do seu ser e da s...'",
+    "added": "2026-08-22"
+  }
+]

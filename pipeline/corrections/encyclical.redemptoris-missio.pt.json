@@ -1,0 +1,26 @@
+[
+  {
+    "id": "redemptoris-missio.pt-missing-space-Act17",
+    "locator": {
+      "raw_substring": "Ac</i>t17, 22-31"
+    },
+    "field": "raw_text",
+    "from": "Ac</i>t17, 22-31",
+    "to": "Ac</i>t 17, 22-31",
+    "reason": "The source omits the space between the book abbreviation 'Act' and its chapter/verse locator (the italic closes mid-abbreviation, after 'Ac', so the missing space falls after the 't'). A browser renders the two flush ('Act17, 22-31'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__redemptoris-missio__pt.html: '...inguagem adaptada e compreens&iacute;vel para aquele ambiente (Cf. <i>Ac</i>t17, 22-31). O are&oacute;pago representava, ent&atilde...'",
+    "added": "2026-08-22"
+  },
+  {
+    "id": "redemptoris-missio.pt-missing-space-Act5",
+    "locator": {
+      "raw_substring": "Ac</i>t5, 32"
+    },
+    "field": "raw_text",
+    "from": "Ac</i>t5, 32",
+    "to": "Ac</i>t 5, 32",
+    "reason": "The source omits the space between the book abbreviation 'Act' and its chapter/verse locator (as above). A browser renders the two flush ('Act5, 32'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__redemptoris-missio__pt.html: '...has destas coisas, juntamente com o Esp&iacute;rito Santo &raquo; (<i>Ac</i>t5, 32). Est&aacute; ciente de que n&atilde;o anunc...'",
+    "added": "2026-08-22"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "veritatis-splendor.en-missing-space-the",
+    "locator": {
+      "raw_substring": "the<i>reaffirmation"
+    },
+    "field": "raw_text",
+    "from": "the<i>reaffirmation",
+    "to": "the <i>reaffirmation",
+    "reason": "The source omits the space between the article 'the' and the italic noun 'reaffirmation'. A browser renders the two flush ('thereaffirmation'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__veritatis-splendor__en.html: '...ved, not only for individuals but also for the whole of society, with the<i>reaffirmation of the universality and immutability of the ...'",
+    "added": "2026-08-22"
+  }
+]

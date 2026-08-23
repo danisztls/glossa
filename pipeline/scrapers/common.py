@@ -249,7 +249,23 @@ def load_corrections(work_id: str) -> list[dict]:
     path = CORRECTIONS_DIR / f"{work_id}.json"
     if not path.exists():
         return []
-    return json.loads(path.read_text(encoding="utf-8"))
+    entries = json.loads(path.read_text(encoding="utf-8"))
+    # Ids must be unique within a file: `apply_raw_text_corrections` records
+    # each applied id in a `seen_ids` set and skips anything already there,
+    # so two entries sharing an id means the second SILENTLY does not apply.
+    # Caught live -- two Redemptoris Missio entries both derived the id
+    # `...-missing-space-Ac` from their own `from` text, and only the first
+    # was applied while the receipt still reported success. Nothing else
+    # would have noticed: the layer's drift guard checks that a filed
+    # correction MATCHED, not that every filed correction was reached.
+    ids = [e.get("id") for e in entries]
+    dupes = sorted({i for i in ids if ids.count(i) > 1})
+    if dupes:
+        raise ValueError(
+            f"{path}: duplicate correction id(s) {dupes} -- ids must be unique "
+            "within a file or all but the first are skipped without a word"
+        )
+    return entries
 
 
 # Punctuation that can legitimately stand before a chapter's first letter, so

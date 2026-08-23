@@ -1,0 +1,62 @@
+[
+  {
+    "id": "laudato-si.pt-missing-space-reais",
+    "locator": {
+      "raw_substring": "reais</i>impedem"
+    },
+    "field": "raw_text",
+    "from": "reais</i>impedem",
+    "to": "reais</i> impedem",
+    "reason": "The source omits the space between the italic adjective 'reais' and the verb 'impedem'. A browser renders the two flush ('reaisimpedem'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__laudato-si__pt.html: '...da liberdade econ&oacute;mica, enquanto as condi&ccedil;&otilde;es<i> reais</i>impedem que muitos possam efectivamente ter acesso a...'",
+    "added": "2026-08-22"
+  },
+  {
+    "id": "laudato-si.pt-missing-space-Rm",
+    "locator": {
+      "raw_substring": "Rm</i>12, 1"
+    },
+    "field": "raw_text",
+    "from": "Rm</i>12, 1",
+    "to": "Rm</i> 12, 1",
+    "reason": "The source omits the space between the italic book abbreviation 'Rm' and its chapter/verse locator. A browser renders the two flush ('Rm12, 1'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__laudato-si__pt.html: '...aquo;como sacrif&iacute;cio vivo, santo e agrad&aacute;vel&raquo; (<i>Rm</i>12, 1). N&atilde;o v&ecirc; a sua superioridade co...'",
+    "added": "2026-08-22"
+  },
+  {
+    "id": "laudato-si.pt-missing-space-Lc",
+    "locator": {
+      "raw_substring": "Lc</i>12, 6"
+    },
+    "field": "raw_text",
+    "from": "Lc</i>12, 6",
+    "to": "Lc</i> 12, 6",
+    "reason": "The source omits the space between the italic book abbreviation 'Lc' and its chapter/verse locator. A browser renders the two flush ('Lc12, 6'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__laudato-si__pt.html: '... que &laquo;nenhum deles passa despercebido diante de Deus&raquo; (<i>Lc</i>12, 6), ser&aacute; capaz de os maltratar ou causa...'",
+    "added": "2026-08-22"
+  },
+  {
+    "id": "laudato-si.pt-missing-space-Ap",
+    "locator": {
+      "raw_substring": "Ap</i>12, 1"
+    },
+    "field": "raw_text",
+    "from": "Ap</i>12, 1",
+    "to": "Ap</i> 12, 1",
+    "reason": "The source omits the space between the italic book abbreviation 'Ap' and its chapter/verse locator. A browser renders the two flush ('Ap12, 1'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__laudato-si__pt.html: '...eacute;s e com uma coroa de doze estrelas na cabe&ccedil;a&raquo; (<i>Ap</i>12, 1). Elevada ao c&eacute;u, &eacute; M&atilde;e...'",
+    "added": "2026-08-22"
+  },
+  {
+    "id": "laudato-si.pt-missing-space-Cor",
+    "locator": {
+      "raw_substring": "Cor</i>13, 12"
+    },
+    "field": "raw_text",
+    "from": "Cor</i>13, 12",
+    "to": "Cor</i> 13, 12",
+    "reason": "The source omits the space between the italic book abbreviation '1 Cor' and its chapter/verse locator. A browser renders the two flush ('Cor13, 12'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__laudato-si__pt.html: '...encontrar-nos-emos face a face com a beleza infinita de Deus (cf.<i>1 Cor</i>13, 12) e poderemos ler, com jubilosa admira&ccedil...'",
+    "added": "2026-08-22"
+  }
+]
