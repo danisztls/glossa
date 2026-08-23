@@ -122,14 +122,71 @@ where otherwise noted", with per-page copyright notes governing and a stated
 preference that content be linked rather than republished elsewhere. Recorded
 for completeness; it is not what decides anything here.
 
-## 7. What would change the verdict
+## 7. The coverage question, measured — it does not fill the gap
 
-Only coverage: a work or language IntraText has that vatican.va lacks.
-Portuguese encyclical coverage is the corpus's real gap (Leo XIII ~17%
-translated — `CLAUDE.md`), so if IntraText holds PT editions vatican.va does
-not, that is worth a targeted look. Not investigated here. It would justify
-fetching specific missing documents — each one checked against its own credits
-page per §5 — rather than migrating anything.
+Coverage was the one thing left open as able to change the verdict (§8).
+It was measured on 2026-08-23 and the answer is **no**.
+
+**Our gap**: 128 of 216 encyclical slugs have English text and no Portuguese —
+Leo XIII 70, Pius XI 21, Pius X 16, Benedict XV 12, Pius XII 8, Paul VI 1.
+
+**Their Portuguese catalogue** (`/POR/`, 174 works, of which 109 are dated
+works by a pope we ingest), matched against ours on promulgation date:
+
+| outcome                                         | count |
+| ----------------------------------------------- | ----- |
+| we already hold the Portuguese edition          | 53    |
+| other genres (exhortations, apostolic letters…) | 53    |
+| **nominally fills a gap**                       | **3** |
+
+The 53 in the middle row — _Pastores dabo vobis_, _Rosarium Virginis Mariae_,
+_Ordinatio sacerdotalis_ and kin — are document families this corpus does not
+ingest at all. vatican.va publishes them too, so they are a scope decision
+about genres, not something IntraText uniquely offers.
+
+**The three, and why they are not really three.** All are works where
+vatican.va _has_ the Portuguese and our parser was defeated by it, not works
+vatican.va lacks:
+
+| work                     | our EN                     | why our PT is empty                                               |
+| ------------------------ | -------------------------- | ----------------------------------------------------------------- |
+| Pascendi dominici gregis | 58 sections                | PT typeset as continuous prose, **no paragraph numbering at all** |
+| Miranda prorsus          | 4 sections (also defeated) | same                                                              |
+| Mense maio               | 15 sections                | same                                                              |
+
+Fetching IntraText's `POR0243` (Pascendi) settles it: **their Portuguese
+edition is unnumbered too** — an 83 KB text page yields two numbered openers,
+against the 57 the English edition carries. It is the same translation with
+the same absence, so it cannot be addressed by section number any better than
+vatican.va's can. The corpus's problem there is the Portuguese edition itself,
+not where it is fetched from.
+
+_Verified for Pascendi only; Miranda prorsus and Mense maio were not fetched,
+and Miranda prorsus's English side is independently defeated, so it would not
+pair with a working sibling regardless._
+
+**The structural reason it was never likely.** IntraText's Portuguese holdings
+sit where our coverage is already good and are nearly absent where our gap is:
+
+| pope         | our PT gap | IntraText PT |
+| ------------ | ---------- | ------------ |
+| Leo XIII     | 70         | **2**        |
+| Pius XI      | 21         | **2**        |
+| Pius X       | 16         | **1**        |
+| Benedict XV  | 12         | **0**        |
+| Pius XII     | 8          | 39           |
+| John Paul II | 0          | 46           |
+
+Both of Leo XIII's Portuguese works there (_Humanum genus_,
+_Dall'alto dell'Apostolico Seggio_ — our `apostolico-seggio`) are already in
+the corpus.
+
+## 8. What would change the verdict
+
+Nothing now identified. Coverage was the one open candidate and §7 closed it.
+A genre expansion (apostolic exhortations and letters) would add real
+documents, but vatican.va publishes those as well, so it is a decision about
+scope rather than a reason to change source.
 
 ## Honest gaps
 
@@ -138,4 +195,7 @@ page per §5 — rather than migrating anything.
   measurement, and by §5's own argument it does not generalize to other works.
 - Whether IntraText's copies carry the same missing-space source defects was
   not tested.
-- Coverage overlap with our 339 works was not measured.
+- Coverage overlap was measured for Portuguese only (§7), matching on
+  promulgation date; other languages were not surveyed.
+- Of the three nominal gap-fillers, only Pascendi's numbering was checked
+  directly.

@@ -1139,3 +1139,33 @@ Full evidence, costs and the one thing that would change the verdict
 **Orthography is preserved as printed and folded only in lookup keys.** The edition prints `i` for `j` throughout (`Iesus`, `iudicium`; not one `j` in the body text) and uses the ae/oe ligatures (1,073 `æ` in the Psalms alone), while its own index inconsistently titles books `Josue`/`Joannes`. Normalising on the way in would make the Latin a silent modernisation of a 1914 critical printing, in the one place it could not be undone without re-parsing. So the text keeps what was printed, and each book carries both spellings as abbreviations so a reader can type either. **Full-text search will need the same folding** when it lands (`PLAN.md` #2) — a reader searching `caelum` against a text that prints `cælum` finds nothing otherwise.
 
 **Verified**: full 73-book crawl at the same 1-second floor `cpdv.py` uses against that host, `robots.txt` re-read first (only page-scan directories are disallowed); validation passes with the two source anomalies reported; `npm run check` and `npm test` clean (412 tests, including a new `content.test.ts` covering the override rule against a real-text Latin fixture); a real-corpus build ships 348 works with all 73 Latin books as content, and preflight passes. **Not verified**: how any of it looks in a browser — no screenshots, per `CLAUDE.md`.
+
+## 2026-08-23 — IntraText does not fill the Portuguese gap either
+
+The one open candidate from the day before (`intratext-2026-08.md` §8:
+"coverage vatican.va lacks") was measured and closed.
+
+Our gap is 128 of 216 encyclical slugs with English text and no Portuguese,
+concentrated in Leo XIII (70), Pius XI (21), Pius X (16) and Benedict XV (12).
+IntraText's Portuguese catalogue holds 109 dated works by those popes and
+their successors; matched on promulgation date, 53 are editions we already
+have, 53 are genres this corpus does not ingest at all (exhortations,
+apostolic letters — which vatican.va publishes too, so a scope decision rather
+than a source one), and **3 nominally fill a gap**.
+
+Those 3 collapse on inspection. All are works where vatican.va _has_ the
+Portuguese and our parser was defeated by it: the PT editions of Pascendi
+Dominici Gregis, Miranda Prorsus and Mense Maio are typeset as continuous
+prose with **no paragraph numbering at all**, so there is no address to
+capture. Fetching IntraText's own Pascendi PT confirms it is the same
+unnumbered translation — two numbered openers on an 83 KB page against the
+English edition's 57. The defect is in the Portuguese edition itself, not in
+where it is fetched from.
+
+Structurally it was never likely: IntraText's Portuguese holdings sit with
+John Paul II (46) and Pius XII (39), where our coverage is already good, and
+are almost absent for Leo XIII (2), Pius X (1), Pius XI (2) and Benedict XV
+(0) — exactly the pontificates our gap is made of. Both Leo XIII works there
+are already in the corpus.
+
+**No open candidate remains for changing the IntraText verdict.**
