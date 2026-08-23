@@ -801,6 +801,36 @@ input {
 	-webkit-print-color-adjust: exact;
 }
 
+/*
+ * THE STICKY EDITION BAR (`CompareGrid.svelte`'s header row — its docblock has
+ * the reasoning for what moved in here and why).
+ *
+ * `top` is the site header's measured height, not 0: that header is itself
+ * `position: sticky; top: 0` at this same z-index, so a bar at 0 would slide
+ * underneath it and disappear. `--site-header-height` is published by
+ * `+layout.svelte` from a ResizeObserver, since the header's height is
+ * scroll-animated and wraps at phone width; the `0px` fallback covers the
+ * first frame before that observer has fired.
+ *
+ * Below `.menu-panel`'s z-index 50, so a picker opened FROM this bar still
+ * draws over it, and level with `.site-header`'s 40 — they never overlap, and
+ * the reading asides that also sit at 40 are omitted entirely while comparing.
+ *
+ * The background is opaque because reading text scrolls under it.
+ */
+.compare-row-header {
+	position: sticky;
+	top: var(--site-header-height, 0px);
+	z-index: 40;
+	background: var(--color-bg);
+	/* The rule under the bar, drawn once across all three tracks rather than
+	   per cell, so the gutter can't notch a `--compare-gutter`-wide hole in
+	   it. The vertical divider is suppressed through this row for the same
+	   reason: it should start where the text it divides does. */
+	border-block-end: 1px solid var(--color-border);
+	margin-block-end: 0.5rem;
+}
+
 .compare-header {
 	font-family: var(--font-sans);
 	font-size: 0.75rem;
@@ -808,9 +838,7 @@ input {
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	color: var(--color-text-muted);
-	padding-block-end: 0.5rem;
-	border-block-end: 1px solid var(--color-border);
-	margin-block-end: 0.5rem;
+	padding-block: 0.4rem;
 }
 
 .compare-header-left,
@@ -818,23 +846,58 @@ input {
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
+	min-height: 2rem;
 }
 
-/*
- * The header row's gutter carries the underline and NOT the vertical rule, so
- * the label rule reads as one unbroken line and the divider starts where the
- * text it divides does. Running both through this cell would either notch a
- * `--compare-gutter`-wide hole in the underline or leave the rule with a
- * margin-sized gap under it; neither reads as deliberate.
- */
+/* The page-level controls (bookmark, compare toggle) belong to the page and
+   not to the right-hand edition, so they push to the far end of the bar
+   instead of sitting beside that column's picker. */
+.compare-header-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	margin-inline-start: auto;
+}
+
 .compare-row-header > .compare-gutter {
 	padding-block: 0;
-	margin-block-end: 0.5rem;
-	border-block-end: 1px solid var(--color-border);
 }
 
 .compare-row-header > .compare-gutter::before {
 	display: none;
+}
+
+/*
+ * A line both editions state identically, printed once beneath the pair
+ * (`CompareGrid`'s `apparatus`). One cell across all three tracks, which is
+ * also what stops the divider through it — correctly, since the line is about
+ * the unit above rather than divided between the two columns.
+ */
+.compare-row-apparatus > .compare-cell-shared {
+	grid-column: 1 / -1;
+	grid-row: 1;
+	padding-block: 0 0.4rem;
+}
+
+/*
+ * The Compendium's "Condenses CCC ¶¶..." in its shared form. Deliberately a
+ * near-copy of `.ccc-refs` in `CompendiumQuestion.svelte` rather than a reuse
+ * of it: that rule is scoped to the component, this line is rendered by the
+ * ROUTE (it has to be, since it stands outside both columns), and Svelte's
+ * per-component scoping has no way to lend one to the other. Keeping the two
+ * looking identical is the point — a reader should not be able to tell that
+ * the shared line and the per-column line come from different files.
+ */
+.ccc-refs-shared {
+	margin: 0;
+	border-block-start: 1px solid var(--color-border);
+	padding-block-start: 0.75rem;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+}
+
+.ccc-refs-shared .refs-label {
+	margin-inline-end: 0.4em;
 }
 
 /*
@@ -912,14 +975,14 @@ input {
 }
 
 /*
- * Mobile: one column, so each field's two languages stack as a PAIR — title
+ * Narrow: one column, so each field's two languages stack as a PAIR — title
  * then title, range then range — rather than one language's entire header
  * followed by the other's, which is what the old column-major block collapsed
  * to. Same stacked-pairs shape `.compare-row` takes at this width, and it
  * needs no separator rule to stay legible because a field is short and its two
  * halves are adjacent.
  */
-@media (max-width: 40rem) {
+@media (max-width: 59.99rem) {
 	.compare-unit-header {
 		grid-template-columns: 1fr;
 	}
@@ -965,8 +1028,8 @@ input {
 }
 
 /*
- * Mobile: two reading columns do not fit (task brief) — each `.compare-row`
- * stops being a grid, so its three children stack in SOURCE order, which is
+ * Narrow: two reading columns do not fit — each `.compare-row` stops being a
+ * grid, so its three children stack in SOURCE order, which is
  * gutter-then-left-then-right: the unit's number heads its own pair, and the
  * pair's two texts sit immediately next to each other rather than in two long
  * independent columns a phone would force the reader to scroll between. That
@@ -977,11 +1040,18 @@ input {
  *
  * This is a stacked-pairs layout, not "compare mode unavailable" — the
  * alignment still holds, it's just vertical instead of side-by-side, and
- * `.compare-cell-tag` reappears per pair since `.compare-header`'s one-time
- * label at the top has scrolled away long before the reader reaches later
- * units.
+ * `.compare-cell-tag` reappears per pair since the sticky bar names the
+ * columns positionally, which means nothing once they are stacked.
+ *
+ * IT HANDS OVER AT 60rem, NOT 40rem, AND THAT IS A READING-MEASURE DECISION.
+ * `--content-width` is 64ch precisely because 55-65 characters per line is
+ * where this type sets well. Two columns inside a 40rem viewport are about 35
+ * characters each — nowhere near it, and worse than the stacked pairs that
+ * were already available below. 60rem is roughly where each column clears the
+ * low 40s and side-by-side starts being the better of the two, so that is
+ * where the switch belongs.
  */
-@media (max-width: 40rem) {
+@media (max-width: 59.99rem) {
 	.compare-row {
 		display: block;
 	}
@@ -992,8 +1062,29 @@ input {
 		margin-top: 1rem;
 	}
 
-	.compare-header {
+	/* The bar identifies the columns by POSITION, which says nothing once they
+	   are stacked — `.compare-cell-tag` takes over per pair, so the labels go.
+	   The CONTROLS it carries have to survive (they are the only copy now), so
+	   the row itself stays and just becomes one wrapping line of them. */
+	.compare-row-header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.compare-header-label,
+	.compare-row-header > .compare-gutter {
 		display: none;
+	}
+
+	.compare-row-header > .compare-header-right {
+		flex: 1;
+	}
+
+	/* Apparatus belongs to the pair right above it, not to the next one. */
+	.compare-row.compare-row-apparatus {
+		margin-top: 0;
 	}
 
 	/* No rule to punch through and nothing to centre on: the number becomes an
@@ -1216,13 +1307,16 @@ input {
 	.mobile-picker,
 	.unit-nav,
 	.compare-toolbar,
+	/* Compare mode's sticky bar is a screen affordance end to end: two edition
+	   pickers, a bookmark button and a toggle out of the mode, none of which
+	   mean anything on paper. The editions it names are already stated by the
+	   two copyright notices in the block above it. */
+	.compare-row-header,
 	/* Every edition/comparison picker trigger (`EditionMenu`,
-	   `ComparisonEditionMenu`), wherever it's placed — used to be caught for
-	   free by `.compare-header`'s own `display: none` below when a picker's
-	   only home was inside that row, but `.compare-unit-field` (app.css,
-	   below) now hangs one in the reading chrome itself on several routes, so
-	   this needs its own rule rather than relying on a container it may not
-	   be inside any more. */
+	   `ComparisonEditionMenu`), wherever it's placed — the bar above is not
+	   their only home, since `.compare-unit-field` may still hang one in the
+	   reading chrome, so this needs its own rule rather than relying on a
+	   container they may not be inside any more. */
 	.menu,
 	.toc-inline,
 	/* "Read the full chapter" (ccc/[n]/+page.svelte) exists to send a reader
@@ -1268,7 +1362,7 @@ input {
 
 	/* The unit number stays — on paper it is the citation, the one thing a
 	   reader can carry off the page — but as a plain line heading its pair,
-	   the same shape the 40rem breakpoint gives it. */
+	   the same shape the narrow breakpoint gives it. */
 	.compare-gutter {
 		justify-content: start !important;
 		padding-block: 0 0.25rem !important;
@@ -1277,7 +1371,7 @@ input {
 
 	/*
 	 * Compare mode gets the SAME "doesn't fit side by side" fallback the
-	 * 40rem mobile breakpoint already uses (`.compare-row`'s own rules
+	 * narrow breakpoint already uses (`.compare-row`'s own rules
 	 * above), not a bespoke print treatment: a printed page is narrower than
 	 * two reading measures for the same reason a phone screen is, and the
 	 * stacked-pairs layout that solves it there solves it here too. Forcing
@@ -1286,10 +1380,8 @@ input {
 	 * why cell spacing is redone as margin below rather than left to that
 	 * rule to (silently) stop working on paper.
 	 */
-	.compare-header {
-		display: none !important;
-	}
-
+	/* The bar that used to be hidden here is gone from paper entirely now —
+	   see `.compare-row-header` in the block-level hide list above. */
 	.compare-cell-tag {
 		display: block !important;
 	}

@@ -15,9 +15,16 @@
 		question: CompendiumQuestion;
 		lang: string;
 		href?: string;
+		/** False in compare mode when both editions cite the SAME CCC
+		 *  paragraphs, because the grid then prints that line once beneath the
+		 *  pair instead of once inside each column — the reference set belongs
+		 *  to the question, not to either translation of it. See
+		 *  `CompareGrid`'s `apparatus`. Left true when the two disagree, since
+		 *  then each column really is saying something of its own. */
+		showRefs?: boolean;
 	}
 
-	let { question, lang, href }: Props = $props();
+	let { question, lang, href, showRefs = true }: Props = $props();
 
 	/** The question's own page — its canonical address, and what `href` points
 	 *  at in the chapter reader. Derived rather than taken as a prop so the
@@ -39,7 +46,7 @@
 		</div>
 	</div>
 
-	{#if question.ccc_refs}
+	{#if question.ccc_refs && showRefs}
 		<p class="ccc-refs">
 			<span class="refs-label">{t('compendium.condenses')}</span>
 			<RefText text={question.ccc_refs} {lang} />

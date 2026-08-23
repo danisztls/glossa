@@ -62,17 +62,20 @@
 	known, disclosed limitation is not styled as an error (see
 	`UnpublishedNotice.svelte`'s own reasoning for the same choice).
 
-	`showHeader`, when false, omits this component's own header row entirely.
-	Every caller but `/prayers` needs this: their title, copyright notice and
-	edition picker are ALL per-language already, so each folds them into one
-	merged two-column block above the grid (`.compare-unit-header`, app.css)
-	rather than repeating a plain label a second time right under a header
-	that already named the edition — that block is also where `EditionMenu`
-	and the comparison picker now live while comparing, not in this
-	component. `/prayers` has no such block (its right column is a Latin
-	FIELD, not a second edition — see that route's own docblock) and keeps
-	the default: this component's own label row is the only per-column
-	identification it has. -->
+	THE HEADER ROW IS ALWAYS RENDERED, AND STICKS. It used to be suppressed by
+	five of six callers (`showHeader={false}`, now gone) because each had
+	folded a per-language block above the grid that already named the edition,
+	which made a plain label underneath pure repetition. Turning it into the
+	sticky control bar reverses that: the pickers, the bookmark button and the
+	compare toggle all MOVED here out of blocks that scrolled away, so the row
+	is now the only place they live and the header block above it got shorter
+	for it. `/preces` passes no `controls` and keeps plain labels — its right
+	column is a Latin FIELD, not a second edition with a picker of its own (see
+	that route's docblock). -->
+<!--
+	`apparatus` is the collapse rule from `.compare-unit-header` (app.css)
+	applied one level down, to the units themselves: something both editions
+	state identically belongs to the row, not to either column. -->
 <script lang="ts" generics="TLeft extends { n: number }, TRight extends { n: number }">
 	import type { Snippet } from 'svelte';
 	import type { AlignedRow, CompareUnit } from '$lib/compare';
@@ -104,8 +107,29 @@
 			left: Snippet<[number]>;
 			right: Snippet<[number]>;
 		};
+		/** A band rendered BELOW the row for `n`, ONE cell spanning both
+		 *  columns, for apparatus the two editions state identically — the
+		 *  Compendium's "Condenses CCC ¶¶..." is the case it was built for: a
+		 *  question's cross-references belong to the question, not to either
+		 *  translation of it, and printing them twice said otherwise. `has` is
+		 *  what decides, so a route that finds the two sides DISAGREEING simply
+		 *  answers false and lets each column keep its own. */
+		apparatus?: {
+			has: (n: number) => boolean;
+			render: Snippet<[number]>;
+		};
+		/** The sticky bar's two controls, plus the page-level toolbar. Given
+		 *  these, the bar carries the edition pickers themselves rather than
+		 *  plain labels — the picker already prints the edition's name, so a
+		 *  label beside it would say the same word twice. `/preces` passes
+		 *  nothing and keeps the labels: its right column is a Latin FIELD with
+		 *  no picker to hang there. */
+		controls?: {
+			left: Snippet;
+			right: Snippet;
+			toolbar?: Snippet;
+		};
 		note?: string;
-		showHeader?: boolean;
 	}
 
 	let {
@@ -118,8 +142,9 @@
 		right,
 		unit,
 		interlude,
-		note,
-		showHeader = true
+		apparatus,
+		controls,
+		note
 	}: Props = $props();
 </script>
 
@@ -128,27 +153,49 @@
 {/if}
 
 <div class="compare-grid">
-	<!-- Header row: identifies the two columns once, rather than tagging
-	     every single cell — see the per-cell `.compare-cell-tag` fallback
-	     below for the narrow-viewport case where the header has scrolled out
-	     of view. Both headers vanish together below 40rem (app.css), which is
-	     also where the pickers stop being reachable — same "the sidebar
-	     yields on a narrow viewport" posture app.css's `.reading-layout.
-	     compare` docblock already accepts elsewhere on this page, not a gap
-	     specific to either picker. The empty gutter cell keeps this row's
-	     tracks identical to every row beneath it, so the divider runs through
-	     it unbroken. -->
-	{#if showHeader}
-		<div class="compare-row compare-row-header">
-			<div class="compare-gutter" aria-hidden="true"></div>
-			<div class="compare-header compare-header-left" lang={leftLang}>
+	<!--
+		THE STICKY BAR. It identifies the two columns once instead of tagging
+		every cell, and it does so at every scroll depth — which is the point,
+		because thirty sections into an encyclical nothing else on screen says
+		which side is which. It sticks BELOW the site header rather than at the
+		viewport top, using `--site-header-height` (published by `+layout.svelte`
+		from a ResizeObserver, because that header's height is animated and
+		wraps).
+
+		IT CARRIES THE CONTROLS, NOT JUST THE NAMES. Every picker used to live
+		in the per-language header block above the grid and scroll away with it;
+		so did the bookmark and compare-toggle buttons, up in `.breadcrumb-row`.
+		All four want to be reachable at depth for the same reason the labels
+		do, and the compare toggle most of all — a reader who has decided they
+		only want one language should not have to scroll back to the top to say
+		so. Gathering them here also shortens the header block, which was the
+		other complaint about this view.
+
+		The page-level toolbar rides at the FAR RIGHT of the right column rather
+		than in a track of its own: it belongs to the page, not to either
+		edition, and the top-right corner is where it already was. The empty
+		gutter cell keeps this row's tracks identical to every row beneath it.
+	-->
+	<div class="compare-row compare-row-header">
+		<div class="compare-gutter" aria-hidden="true"></div>
+		<div class="compare-header compare-header-left" lang={controls ? undefined : leftLang}>
+			{#if controls}
+				{@render controls.left()}
+			{:else}
 				<span class="compare-header-label">{leftLabel}</span>
-			</div>
-			<div class="compare-header compare-header-right" lang={rightLang}>
-				<span class="compare-header-label">{rightLabel}</span>
-			</div>
+			{/if}
 		</div>
-	{/if}
+		<div class="compare-header compare-header-right" lang={controls ? undefined : rightLang}>
+			{#if controls}
+				{@render controls.right()}
+			{:else}
+				<span class="compare-header-label">{rightLabel}</span>
+			{/if}
+			{#if controls?.toolbar}
+				<div class="compare-header-toolbar">{@render controls.toolbar()}</div>
+			{/if}
+		</div>
+	</div>
 
 	{#each rows as row (row.n)}
 		{@const u = unit?.(row.n)}
@@ -210,5 +257,17 @@
 				{/if}
 			</div>
 		</div>
+		<!-- Apparatus both editions state identically, printed once under the
+		     pair instead of twice inside it. One cell across all three tracks,
+		     so the divider stops here — which is the correct thing for it to
+		     say: this line is not divided between the two columns, it is about
+		     the unit above them both. -->
+		{#if apparatus?.has(row.n)}
+			<div class="compare-row compare-row-apparatus">
+				<div class="compare-cell compare-cell-shared reading-text">
+					{@render apparatus.render(row.n)}
+				</div>
+			</div>
+		{/if}
 	{/each}
 </div>

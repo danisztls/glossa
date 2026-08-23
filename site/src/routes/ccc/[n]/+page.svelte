@@ -88,6 +88,26 @@
 	<title>CCC {data.n} — {t('home.title')}</title>
 </svelte:head>
 
+<!-- The sticky bar's slots (`CompareGrid`'s `controls`): both pickers moved
+     here out of the header block, and the page-level buttons out of the
+     breadcrumb row, so all four stay reachable at any scroll depth. -->
+{#snippet compareLeftControl()}
+	<EditionMenu />
+{/snippet}
+
+{#snippet compareRightControl()}
+	<ComparisonEditionMenu
+		editions={editions.others.map((e) => e.work)}
+		current={editions.secondaryWorkId}
+		onselect={chooseComparisonEdition}
+	/>
+{/snippet}
+
+{#snippet compareToolbar()}
+	<BookmarkButton href={`/catechismus/${data.n}`} />
+	<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
+{/snippet}
+
 {#snippet leftCell(paragraph: CccParagraph)}
 	<CccParagraphText {paragraph} lang={editions.lang} />
 {/snippet}
@@ -111,15 +131,20 @@
 						</a>
 					{/each}
 				</nav>
-				<div class="compare-toolbar">
-					<!-- This page prints no unit number to hang the anchor popover off —
-					     the URL already names the paragraph — so the bookmark is its own
-					     control here. -->
-					<BookmarkButton href={`/catechismus/${data.n}`} />
-					{#if editions.others.length > 0}
-						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
-					{/if}
-				</div>
+				<!-- Only outside compare mode: while comparing, both of these live in
+				     the sticky bar instead, where they stay reachable at any scroll
+				     depth (`CompareGrid`'s `controls`). -->
+				{#if !editions.compareActive}
+					<div class="compare-toolbar">
+						<!-- This page prints no unit number to hang the anchor popover off —
+						     the URL already names the paragraph — so the bookmark is its own
+						     control here. -->
+						<BookmarkButton href={`/catechismus/${data.n}`} />
+						{#if editions.others.length > 0}
+							<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
+						{/if}
+					</div>
+				{/if}
 			</div>
 
 			{#if editions.compareActive && editions.secondary}
@@ -188,17 +213,6 @@
 					>
 						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
 					</div>
-
-					<div class="compare-unit-field compare-unit-field-left">
-						<EditionMenu />
-					</div>
-					<div class="compare-unit-field compare-unit-field-right">
-						<ComparisonEditionMenu
-							editions={editions.others.map((e) => e.work)}
-							current={editions.secondaryWorkId}
-							onselect={chooseComparisonEdition}
-						/>
-					</div>
 				</div>
 			{:else}
 				<div class="title-row">
@@ -215,9 +229,6 @@
 			{/if}
 
 			{#if editions.compareActive && editions.secondary}
-				<!-- `showHeader={false}`: the label + picker this header would
-				     otherwise print are already up in `.compare-unit-header`
-				     above. -->
 				<CompareGrid
 					rows={compareRows}
 					leftLang={editions.current.work.language}
@@ -236,7 +247,11 @@
 						canonicalHref: `/catechismus/${n}`,
 						label: `CCC ${n}`
 					})}
-					showHeader={false}
+					controls={{
+						left: compareLeftControl,
+						right: compareRightControl,
+						toolbar: compareToolbar
+					}}
 				/>
 			{:else}
 				<div class="reading-text ccc-body" lang={editions.current.work.language}>

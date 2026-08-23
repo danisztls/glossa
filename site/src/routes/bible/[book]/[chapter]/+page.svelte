@@ -373,6 +373,27 @@
      now, printed once in the gutter between the columns — see `CompareUnit`
      in `$lib/compare.ts`, and the `unit` prop passed to `CompareGrid` below
      for this route's addresses. -->
+<!-- The sticky bar's slots (`CompareGrid`'s `controls`): both pickers moved
+     here out of the header block, and the page-level buttons out of the
+     breadcrumb row, so all four stay reachable at any scroll depth. -->
+{#snippet compareLeftControl()}
+	<EditionMenu />
+{/snippet}
+
+{#snippet compareRightControl()}
+	<ComparisonEditionMenu
+		editions={otherEditions}
+		current={secondaryWorkId}
+		onselect={chooseComparisonEdition}
+		editionStyle
+	/>
+{/snippet}
+
+{#snippet compareToolbar()}
+	<BookmarkButton href={chapterHref} />
+	<CompareToggle active={compareActive} onclick={toggleCompare} />
+{/snippet}
+
 {#snippet verseCell(verse: Verse)}
 	<p class="compare-verse">{verse.text}</p>
 {/snippet}
@@ -389,10 +410,15 @@
 				     was always showing the second column a header that wasn't its
 				     own. `showHeader={false}` below drops that row in favour of
 				     this one. -->
-				<div class="compare-toolbar">
-					<BookmarkButton href={chapterHref} />
-					<CompareToggle active={compareActive} onclick={toggleCompare} />
-				</div>
+				<!-- Only outside compare mode: while comparing, both of these live in
+				     the sticky bar instead, where they stay reachable at any scroll
+				     depth (`CompareGrid`'s `controls`). -->
+				{#if !compareActive}
+					<div class="compare-toolbar">
+						<BookmarkButton href={chapterHref} />
+						<CompareToggle active={compareActive} onclick={toggleCompare} />
+					</div>
+				{/if}
 				<!-- One row per field (`.compare-unit-header`, app.css). Nothing here
 				     ever collapses, and that is the right outcome rather than an
 				     oversight: two editions have different titles and different
@@ -419,18 +445,6 @@
 					</div>
 					<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
 						<h1>{secondary.book.name} {secondary.chapter.n}</h1>
-					</div>
-
-					<div class="compare-unit-field compare-unit-field-left">
-						<EditionMenu />
-					</div>
-					<div class="compare-unit-field compare-unit-field-right">
-						<ComparisonEditionMenu
-							editions={otherEditions}
-							current={secondaryWorkId}
-							onselect={chooseComparisonEdition}
-							editionStyle
-						/>
 					</div>
 				</div>
 			{:else}
@@ -470,9 +484,6 @@
 			</div>
 
 			{#if compareActive && secondary}
-				<!-- `showHeader={false}`: the label + picker this header would
-				     otherwise print are already up in `.compare-unit-header`
-				     above. -->
 				<CompareGrid
 					rows={compareRows}
 					leftLang={current.work.language}
@@ -493,7 +504,11 @@
 						emphasized: isHighlighted(n)
 					})}
 					note={compareVersesDiffer ? t('compare.versificationNote') : undefined}
-					showHeader={false}
+					controls={{
+						left: compareLeftControl,
+						right: compareRightControl,
+						toolbar: compareToolbar
+					}}
 				/>
 			{:else}
 				<div class="reading-text" lang={current.work.language}>

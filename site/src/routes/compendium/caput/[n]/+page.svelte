@@ -3,6 +3,7 @@
 	import { flattenCompendiumStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import CompendiumQa from '$lib/components/CompendiumQuestion.svelte';
+	import RefText from '$lib/components/RefText.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
@@ -44,6 +45,38 @@
 
 	adoptCompareFromUrl();
 
+	/**
+	 * Which questions the two editions cite the SAME CCC paragraphs for — and
+	 * so which of them print that line ONCE beneath the pair instead of once
+	 * inside each column (`CompareGrid`'s `apparatus`). A question's
+	 * cross-references are a property of the question, not of either
+	 * translation of it, which is why printing them twice said something
+	 * untrue; it is the same rule `.compare-unit-header` applies to a title or
+	 * a range, one level further down.
+	 *
+	 * Compared as raw strings rather than parsed reference sets: the two
+	 * editions transcribe the same list, so anything that is not
+	 * character-identical is a difference worth showing rather than
+	 * normalising away — and a normaliser here would be the second
+	 * implementation of one `RefText` already owns.
+	 */
+	const sharedRefs = $derived.by(() => {
+		const out = new Map<number, string>();
+		if (!(editions.current && editions.secondary)) return out;
+		const right = new Map(editions.secondary.questions.map((q) => [q.n, q.ccc_refs]));
+		for (const q of editions.current.questions) {
+			if (q.ccc_refs && right.get(q.n) === q.ccc_refs) out.set(q.n, q.ccc_refs);
+		}
+		return out;
+	});
+
+	/** This chapter's canonical address. Derived at script scope rather than
+	 *  from the `from` const in the template, because the sticky bar's
+	 *  toolbar snippet is declared outside that block. */
+	const chapterHref = $derived(
+		editions.current ? `/compendium/caput/${editions.current.chapter.paragraphs[0]}` : ''
+	);
+
 	const compareRows = $derived(
 		editions.current && editions.secondary
 			? alignByNumber(editions.current.questions, editions.secondary.questions)
@@ -67,12 +100,43 @@
 	<title>{headingText()} — {t('home.title')}</title>
 </svelte:head>
 
+<!-- The sticky bar's slots (`CompareGrid`'s `controls`): both pickers moved
+     here out of the header block, and the page-level buttons out of the
+     breadcrumb row, so all four stay reachable at any scroll depth. -->
+{#snippet compareLeftControl()}
+	<EditionMenu />
+{/snippet}
+
+{#snippet compareRightControl()}
+	<ComparisonEditionMenu
+		editions={editions.others.map((edition) => edition.work)}
+		current={editions.secondaryWorkId}
+		onselect={chooseComparisonEdition}
+	/>
+{/snippet}
+
+{#snippet compareToolbar()}
+	<BookmarkButton href={chapterHref} />
+	<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
+{/snippet}
+
+{#snippet sharedCccRefs(n: number)}
+	<p class="ccc-refs-shared">
+		<span class="refs-label">{t('compendium.condenses')}</span>
+		<RefText text={sharedRefs.get(n) ?? ''} lang={editions.lang} />
+	</p>
+{/snippet}
+
 {#snippet leftCell(question: CompendiumQuestion)}
-	<CompendiumQa {question} lang={editions.lang} />
+	<CompendiumQa {question} lang={editions.lang} showRefs={!sharedRefs.has(question.n)} />
 {/snippet}
 
 {#snippet rightCell(question: CompendiumQuestion)}
-	<CompendiumQa {question} lang={editions.secondaryLang ?? editions.lang} />
+	<CompendiumQa
+		{question}
+		lang={editions.secondaryLang ?? editions.lang}
+		showRefs={!sharedRefs.has(question.n)}
+	/>
 {/snippet}
 
 {#if editions.current && heading}
@@ -84,12 +148,17 @@
 				<nav class="breadcrumb" aria-label="Breadcrumb">
 					<a href="/compendium">{t('nav.compendium')}</a>
 				</nav>
-				<div class="compare-toolbar">
-					<BookmarkButton href={`/compendium/caput/${from}`} />
-					{#if editions.others.length > 0}
-						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
-					{/if}
-				</div>
+				<!-- Only outside compare mode: while comparing, both of these live in
+				     the sticky bar instead, where they stay reachable at any scroll
+				     depth (`CompareGrid`'s `controls`). -->
+				{#if !editions.compareActive}
+					<div class="compare-toolbar">
+						<BookmarkButton href={`/compendium/caput/${from}`} />
+						{#if editions.others.length > 0}
+							<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
+						{/if}
+					</div>
+				{/if}
 			</div>
 
 			{#if editions.compareActive && editions.secondary}
@@ -159,17 +228,6 @@
 					>
 						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
 					</div>
-
-					<div class="compare-unit-field compare-unit-field-left">
-						<EditionMenu />
-					</div>
-					<div class="compare-unit-field compare-unit-field-right">
-						<ComparisonEditionMenu
-							editions={editions.others.map((edition) => edition.work)}
-							current={editions.secondaryWorkId}
-							onselect={chooseComparisonEdition}
-						/>
-					</div>
 				</div>
 			{:else}
 				<div class="title-row">
@@ -181,9 +239,6 @@
 			{/if}
 
 			{#if editions.compareActive && editions.secondary}
-				<!-- `showHeader={false}`: the label + picker this header would
-				     otherwise print are already up in `.compare-unit-header`
-				     above. -->
 				<CompareGrid
 					rows={compareRows}
 					leftLang={editions.current.work.language}
@@ -198,7 +253,12 @@
 						label: `${t('compendium.question')} ${n}`,
 						anchorId: `q${n}`
 					})}
-					showHeader={false}
+					apparatus={{ has: (n) => sharedRefs.has(n), render: sharedCccRefs }}
+					controls={{
+						left: compareLeftControl,
+						right: compareRightControl,
+						toolbar: compareToolbar
+					}}
 				/>
 			{:else}
 				<div

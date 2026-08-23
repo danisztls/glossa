@@ -34,9 +34,9 @@
 	import { useScrollSpy } from '$lib/scroll-spy.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
-	import { displayTitle } from '$lib/titles';
+	import { displayTitle, type DisplayTitle } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
-	import type { CccParagraph } from '$lib/types';
+	import type { CccNode, CccParagraph, StructureNode } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -91,6 +91,60 @@
 
 	adoptCompareFromUrl();
 
+	/** This chapter's canonical address. Derived at script scope rather than
+	 *  from the `from` const in the template, because the sticky bar's
+	 *  toolbar snippet is declared outside that block. */
+	const chapterHref = $derived(
+		editions.current ? `/catechismus/caput/${editions.current.chapter.paragraphs[0]}` : ''
+	);
+
+	/**
+	 * The chapter's own ARTICLE headings, keyed by the paragraph each one
+	 * opens at, so the continuous body can print them where the source does.
+	 *
+	 * Without them this view ran a whole chapter — 113 paragraphs, for the
+	 * first chapter of the Decalogue — as one undivided column, with the ten
+	 * commandments' own headings nowhere on the page. That was tolerable only
+	 * while the sidebar stopped at chapter level too; now that it lists
+	 * articles (`OUTLINE_KINDS`), a row has to have something to land on, and
+	 * a bare paragraph number is not it.
+	 *
+	 * ARTICLES ONLY, matching the sidebar's floor exactly. The `sub` level
+	 * below them (the roman-numeral subdivisions) is left out on purpose: it
+	 * is 238 EN / 301 PT nodes, no sidebar row points at one, and printing all
+	 * of them would replace one extreme with the other.
+	 *
+	 * Keyed by first paragraph rather than by index, because the two editions'
+	 * chapter boundaries genuinely diverge (see the compare docblock above) —
+	 * a paragraph number is the one address both languages agree on.
+	 */
+	const articleHeadings = $derived.by(() => {
+		const byParagraph = new Map<number, DisplayTitle>();
+		const walk = (nodes: CccNode[]) => {
+			for (const node of nodes) {
+				const at = node.paragraphs[0];
+				if (node.kind === 'article' && Number.isFinite(at)) {
+					byParagraph.set(at as number, displayTitle(node, editions.lang));
+				}
+				walk(node.children ?? []);
+			}
+		};
+		walk(editions.current?.chapter.children ?? []);
+		return byParagraph;
+	});
+
+	/**
+	 * Where a sidebar row lands once this route has loaded. Article rows get
+	 * the heading `articleHeadings` prints above their first paragraph;
+	 * everything at chapter level and above is the page top already, so it
+	 * gets no fragment at all.
+	 */
+	function anchorFor(node: StructureNode): string | undefined {
+		if (node.kind !== 'article') return undefined;
+		const at = node.paragraphs[0];
+		return Number.isFinite(at) ? `s${at}` : undefined;
+	}
+
 	const compareRows = $derived(
 		editions.current && editions.secondary
 			? alignByNumber(editions.current.paragraphs, editions.secondary.paragraphs)
@@ -117,6 +171,26 @@
 	<title>{headingText()} — {t('home.title')}</title>
 </svelte:head>
 
+<!-- The sticky bar's slots (`CompareGrid`'s `controls`): both pickers moved
+     here out of the header block, and the page-level buttons out of the
+     breadcrumb row, so all four stay reachable at any scroll depth. -->
+{#snippet compareLeftControl()}
+	<EditionMenu />
+{/snippet}
+
+{#snippet compareRightControl()}
+	<ComparisonEditionMenu
+		editions={editions.others.map((e) => e.work)}
+		current={editions.secondaryWorkId}
+		onselect={chooseComparisonEdition}
+	/>
+{/snippet}
+
+{#snippet compareToolbar()}
+	<BookmarkButton href={chapterHref} />
+	<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
+{/snippet}
+
 {#snippet leftCell(paragraph: CccParagraph)}
 	<div class="para" class:in-brief={paragraph.in_brief}>
 		<div class="para-text">
@@ -142,12 +216,17 @@
 				<nav class="breadcrumb" aria-label="Breadcrumb">
 					<a href="/catechismus">{t('nav.ccc')}</a>
 				</nav>
-				<div class="compare-toolbar">
-					<BookmarkButton href={`/catechismus/caput/${from}`} />
-					{#if editions.others.length > 0}
-						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
-					{/if}
-				</div>
+				<!-- Only outside compare mode: while comparing, both of these live in
+				     the sticky bar instead, where they stay reachable at any scroll
+				     depth (`CompareGrid`'s `controls`). -->
+				{#if !editions.compareActive}
+					<div class="compare-toolbar">
+						<BookmarkButton href={`/catechismus/caput/${from}`} />
+						{#if editions.others.length > 0}
+							<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
+						{/if}
+					</div>
+				{/if}
 			</div>
 
 			{#if editions.compareActive && editions.secondary}
@@ -217,17 +296,6 @@
 					>
 						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
 					</div>
-
-					<div class="compare-unit-field compare-unit-field-left">
-						<EditionMenu />
-					</div>
-					<div class="compare-unit-field compare-unit-field-right">
-						<ComparisonEditionMenu
-							editions={editions.others.map((e) => e.work)}
-							current={editions.secondaryWorkId}
-							onselect={chooseComparisonEdition}
-						/>
-					</div>
 				</div>
 			{:else}
 				<div class="title-row">
@@ -243,9 +311,6 @@
 			{/if}
 
 			{#if editions.compareActive && editions.secondary}
-				<!-- `showHeader={false}`: the label + picker this header would
-				     otherwise print are already up in `.compare-unit-header`
-				     above. -->
 				<CompareGrid
 					rows={compareRows}
 					leftLang={editions.current.work.language}
@@ -260,11 +325,22 @@
 						label: `CCC ${n}`,
 						anchorId: `p${n}`
 					})}
-					showHeader={false}
+					controls={{
+						left: compareLeftControl,
+						right: compareRightControl,
+						toolbar: compareToolbar
+					}}
 				/>
 			{:else}
 				<div class="reading-text ccc-body chapter-body" lang={editions.current.work.language}>
 					{#each editions.current.paragraphs as paragraph, i (paragraph.n)}
+						{@const articleHeading = articleHeadings.get(paragraph.n)}
+						{#if articleHeading}
+							<h2 class="article-heading" id={`s${paragraph.n}`}>
+								{#if articleHeading.ordinal}<span class="ordinal">{articleHeading.ordinal}</span
+									>{/if}{articleHeading.title}
+							</h2>
+						{/if}
 						<section
 							class="para"
 							id={`p${paragraph.n}`}
@@ -314,8 +390,9 @@
 				currentN={spy.current ?? from ?? undefined}
 				lang={editions.lang}
 				heading={t('ccc.tableOfContents')}
-				basePath="/catechismus"
+				basePath="/catechismus/caput"
 				outlineKinds={OUTLINE_KINDS}
+				{anchorFor}
 			/>
 		</aside>
 	</div>
@@ -360,6 +437,35 @@
 
 	.compare-unit-field :global(.menu) {
 		margin-bottom: 0.5rem;
+	}
+
+	/* An article's own heading, printed inside the chapter's continuous body
+	   where the source prints it. Set well below the chapter's `h1` in weight
+	   and size — this is a division WITHIN the page, not a second title for it
+	   — and given generous space above so it reads as a break in the column
+	   rather than as a bolded first line of the paragraph beneath it.
+
+	   `scroll-margin-top` is what makes the sidebar's `#s{n}` land on the
+	   heading with room to breathe instead of flush against the viewport
+	   edge. */
+	.article-heading .ordinal {
+		color: var(--color-text-muted);
+		margin-right: 0.35em;
+	}
+
+	.article-heading {
+		font-family: var(--font-serif);
+		font-size: max(var(--font-size-min), 1.05em);
+		font-weight: 600;
+		margin: 2.25rem 0 1rem;
+		scroll-margin-top: 1.5rem;
+	}
+
+	/* Never above the chapter's opening paragraph: the `h1` is already right
+	   there, and the gap would read as a missing heading rather than as
+	   space. */
+	.article-heading:first-child {
+		margin-top: 0;
 	}
 
 	/* Paragraph numbers hang in the left margin where there's room for them,

@@ -111,6 +111,41 @@
 	 * returns a no-op without starting a timer.
 	 */
 	onMount(() => install.track());
+
+	/**
+	 * Publish the site header's height as `--site-header-height` on <html>, so
+	 * a SECOND sticky element can sit directly beneath it instead of sliding
+	 * underneath (compare mode's edition bar, `.compare-row-header` in
+	 * app.css, is the first).
+	 *
+	 * Measured rather than declared, because this header has no fixed height
+	 * to declare: the wordmark is two lines and drops to a monogram on scroll,
+	 * `.header-bar`'s block padding is animated over the first 96px by a
+	 * scroll-driven animation, and the whole bar wraps to two rows at phone
+	 * width. A `ResizeObserver` is the only thing that sees all three, and it
+	 * sees the shrink continuously rather than at a threshold — the same
+	 * reason that animation is scroll-timeline-driven and not a JS flag.
+	 *
+	 * Written to the document element, not to a wrapper, so it is in scope for
+	 * anything on the page regardless of which route rendered it.
+	 */
+	let headerEl: HTMLElement | undefined = $state();
+
+	$effect(() => {
+		const el = headerEl;
+		if (!el) return;
+		const observer = new ResizeObserver(([entry]) => {
+			document.documentElement.style.setProperty(
+				'--site-header-height',
+				`${entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height}px`
+			);
+		});
+		observer.observe(el);
+		return () => {
+			observer.disconnect();
+			document.documentElement.style.removeProperty('--site-header-height');
+		};
+	});
 </script>
 
 <svelte:head>
@@ -119,7 +154,7 @@
 </svelte:head>
 
 <div class="app-shell">
-	<header class="site-header">
+	<header class="site-header" bind:this={headerEl}>
 		<div class="header-bar">
 			<a class="brand" href="/"><Wordmark variant="brand" /></a>
 

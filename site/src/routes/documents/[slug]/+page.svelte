@@ -319,6 +319,17 @@
 	);
 	const secondaryHeadingsByStart = $derived(indexByStart(secondaryStructureRows));
 
+	/** Where the masthead band rides — see `compareHeadingsLeft`. `undefined`
+	 *  for a document with no sections, which is also a document with no grid
+	 *  to put a band in. */
+	const firstSectionN = $derived(current?.sections[0]?.n);
+	const hasMasthead = $derived(
+		Boolean(
+			current?.work.header ||
+			(secondaryLang ? data.manifestsByLang[secondaryLang]?.header : undefined)
+		)
+	);
+
 	// Part/Section headings read as the document's own top-level divisions;
 	// Chapter/Article/Sub nest progressively smaller. `h1` is the document
 	// title above, so this starts at `h2` rather than mirroring `kind` depth
@@ -412,12 +423,62 @@
 	{/each}
 {/snippet}
 
+<!--
+	THE MASTHEAD RIDES IN THE GRID, NOT IN THE HEADER BLOCK.
+
+	It used to be the last field of `.compare-unit-header`, stacked under the
+	title, subtitle, copyright and picker, and between them they put roughly
+	440px of chrome between the top of the page and the document's first word.
+	But the masthead is not chrome: it is TEXT FROM THE SOURCE, scraped
+	verbatim (`narrow_html` in pipeline/scrapers/vatican_docs.py) and
+	translated — "ENCYCLICAL LETTER" against "CARTA ENCÍCLICA" is precisely the
+	kind of divergence compare mode exists to show. Everything above it is our
+	metadata ABOUT the document.
+
+	So it moves across the boundary those two categories should be separated
+	by: it now opens the first band of the aligned grid, under the same
+	divider, in the same two columns, as the text it introduces. The header
+	block shrinks to title, one metadata line and the copyright notices, and
+	the page reaches its first word far sooner.
+
+	It rides the first section's band rather than getting a row of its own,
+	because that band already means "everything that precedes this section" —
+	which the document's own title page does, ahead of any Part or Chapter
+	heading that also opens there.
+-->
 {#snippet compareHeadingsLeft(n: number)}
+	{#if current?.work.header && n === firstSectionN}
+		<div class="document-masthead">{@html current.work.header}</div>
+	{/if}
 	{@render structureHeadings(headingsByStart.get(n) ?? [], lang, true)}
 {/snippet}
 
 {#snippet compareHeadingsRight(n: number)}
+	{@const secondaryHeader = secondaryLang ? data.manifestsByLang[secondaryLang]?.header : undefined}
+	{#if secondaryHeader && n === firstSectionN}
+		<div class="document-masthead">{@html secondaryHeader}</div>
+	{/if}
 	{@render structureHeadings(secondaryHeadingsByStart.get(n) ?? [], secondaryLang ?? lang, false)}
+{/snippet}
+
+<!-- The sticky bar's three slots (`CompareGrid`'s `controls`). Both pickers
+     and both page-level buttons moved here out of the header block and the
+     breadcrumb row respectively — see that component's docblock. -->
+{#snippet compareLeftControl()}
+	<EditionMenu />
+{/snippet}
+
+{#snippet compareRightControl()}
+	<ComparisonEditionMenu
+		editions={otherEditions.map((e) => e.work)}
+		current={secondaryWorkId}
+		onselect={chooseComparisonEdition}
+	/>
+{/snippet}
+
+{#snippet compareToolbar()}
+	<BookmarkButton href={`/documenta/${data.slug}`} />
+	<CompareToggle active={compareActive} onclick={toggleCompare} />
 {/snippet}
 
 {#if metaManifest}
@@ -428,25 +489,31 @@
 				<nav class="breadcrumb" aria-label="Breadcrumb">
 					<a href="/documenta">{t('nav.magisterium')}</a>
 				</nav>
-				<div class="compare-toolbar">
-					<BookmarkButton href={`/documenta/${data.slug}`} />
-					{#if current && otherEditions.length > 0}
-						<CompareToggle active={compareActive} onclick={toggleCompare} />
-					{/if}
-				</div>
+				<!-- Only outside compare mode: while comparing, both of these live
+				     in the sticky bar instead, where they stay reachable at any
+				     scroll depth (`CompareGrid`'s `controls`). -->
+				{#if !compareActive}
+					<div class="compare-toolbar">
+						<BookmarkButton href={`/documenta/${data.slug}`} />
+						{#if current && otherEditions.length > 0}
+							<CompareToggle active={compareActive} onclick={toggleCompare} />
+						{/if}
+					</div>
+				{/if}
 			</div>
 
 			{#if current && compareActive && secondaryManifest}
-				<!-- Compare mode's WHOLE header is per-language, not just the
-				     masthead: subtitle, copyright notice, edition picker and source
-				     masthead all differ by language (a document's masthead reads
-				     "ENCYCLICAL LETTER" vs. "CARTA ENCÍCLICA"), so folding them into
-				     one shared, primary-language-only block above the grid was always
-				     showing the second column a header that wasn't its own. This
-				     replaces that block AND `CompareGrid`'s own header row
-				     (`showHeader` below), tracks matching `.compare-row` so it lines
-				     up with the aligned rows beneath it. The bookmark/compare-toggle
-				     controls are up in `.breadcrumb-row` now, not repeated here.
+				<!-- Compare mode's header is per-language: the subtitle and the
+				     copyright notice both differ by edition, so a single
+				     primary-language-only block was always showing the second column
+				     a header that wasn't its own. Tracks match `.compare-row` so it
+				     lines up with the aligned rows beneath it.
+
+				     WHAT IS NO LONGER HERE: the two edition pickers, which moved to
+				     the sticky bar, and the source masthead, which moved into the
+				     grid (see `compareHeadingsLeft` above for why it belongs on the
+				     content side of that boundary). Between them they were most of
+				     this block's height.
 
 				     ONE ROW PER FIELD, not one column per language — see
 				     `.compare-unit-header` in app.css. The TITLE is why: an
@@ -518,31 +585,6 @@
 						lang={secondaryManifest.language}
 					>
 						<p class="copyright-notice"><CopyrightNotice manifest={secondaryManifest} /></p>
-					</div>
-
-					<div class="compare-unit-field compare-unit-field-left">
-						<EditionMenu />
-					</div>
-					<div class="compare-unit-field compare-unit-field-right">
-						<ComparisonEditionMenu
-							editions={otherEditions.map((e) => e.work)}
-							current={secondaryWorkId}
-							onselect={chooseComparisonEdition}
-						/>
-					</div>
-
-					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
-						{#if current.work.header}
-							<div class="document-masthead">{@html current.work.header}</div>
-						{/if}
-					</div>
-					<div
-						class="compare-unit-field compare-unit-field-right"
-						lang={secondaryManifest.language}
-					>
-						{#if secondaryManifest.header}
-							<div class="document-masthead">{@html secondaryManifest.header}</div>
-						{/if}
 					</div>
 				</div>
 			{:else}
@@ -645,9 +687,6 @@
 					     trees genuinely diverging (docs/decisions.md) is handled the
 					     same way a diverging section is, by emitting the band wherever
 					     EITHER side has one and leaving the other column empty. -->
-					<!-- `showHeader={false}`: the label + picker this header would
-					     otherwise print are already up in `.compare-unit-header`
-					     above, merged with the title/copyright/masthead. -->
 					<!-- `anchorId` restores the `s{n}` addresses the single-column
 					     branch below carries: a `#s42` deep link, and the scroll spy
 					     driving the sidebar at >= 100rem, both had nothing to find
@@ -668,11 +707,18 @@
 							anchorId: `s${n}`
 						})}
 						interlude={{
-							has: (n) => headingsByStart.has(n) || secondaryHeadingsByStart.has(n),
+							has: (n) =>
+								(hasMasthead && n === firstSectionN) ||
+								headingsByStart.has(n) ||
+								secondaryHeadingsByStart.has(n),
 							left: compareHeadingsLeft,
 							right: compareHeadingsRight
 						}}
-						showHeader={false}
+						controls={{
+							left: compareLeftControl,
+							right: compareRightControl,
+							toolbar: compareToolbar
+						}}
 					/>
 				{:else}
 					{#if compareActive}
