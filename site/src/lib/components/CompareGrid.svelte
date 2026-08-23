@@ -39,24 +39,17 @@
 	known, disclosed limitation is not styled as an error (see
 	`UnpublishedNotice.svelte`'s own reasoning for the same choice).
 
-	`rightHeaderExtra`, when passed, renders inside the RIGHT column's header
-	cell — this is where every reading route except `/prayers` hangs its
-	comparison edition picker (task brief, defect 2: "a selector in the right
-	column's header"). An optional snippet rather than a dedicated `picker`
-	prop with its own `editions`/`onselect` shape: this component has no
-	business knowing what a "comparison edition" is (the prayers route's
-	right column is a Latin FIELD, not an edition at all — see that route's
-	own docblock), only that its caller sometimes has more to put in the
-	header than a label. Omitting the prop is how prayers stays picker-free
-	without this component branching on which route it's in.
-
-	`leftHeaderExtra` is the same slot for the LEFT column: the primary
-	reading edition used to be chosen only from the page's own `EditionMenu`
-	up in the page chrome, but once compare mode is on the reader already has
-	a per-column picker on the right — leaving the left one up in the title
-	row read as asymmetric rather than deliberate. Callers now render
-	`EditionMenu` here while comparing (and back up in the page chrome
-	otherwise, where there is only one column for it to belong to). -->
+	`showHeader`, when false, omits this component's own header row entirely.
+	Every caller but `/prayers` needs this: their title, copyright notice and
+	edition picker are ALL per-language already, so each folds them into one
+	merged two-column block above the grid (`.compare-unit-header`, app.css)
+	rather than repeating a plain label a second time right under a header
+	that already named the edition — that block is also where `EditionMenu`
+	and the comparison picker now live while comparing, not in this
+	component. `/prayers` has no such block (its right column is a Latin
+	FIELD, not a second edition — see that route's own docblock) and keeps
+	the default: this component's own label row is the only per-column
+	identification it has. -->
 <script lang="ts" generics="TLeft extends { n: number }, TRight extends { n: number }">
 	import type { Snippet } from 'svelte';
 	import type { AlignedRow } from '$lib/compare';
@@ -71,8 +64,7 @@
 		left: Snippet<[TLeft]>;
 		right: Snippet<[TRight]>;
 		note?: string;
-		leftHeaderExtra?: Snippet;
-		rightHeaderExtra?: Snippet;
+		showHeader?: boolean;
 	}
 
 	let {
@@ -84,8 +76,7 @@
 		left,
 		right,
 		note,
-		leftHeaderExtra,
-		rightHeaderExtra
+		showHeader = true
 	}: Props = $props();
 </script>
 
@@ -102,14 +93,14 @@
 	     yields on a narrow viewport" posture app.css's `.reading-layout.
 	     compare` docblock already accepts elsewhere on this page, not a gap
 	     specific to either picker. -->
-	<div class="compare-header compare-header-left" lang={leftLang}>
-		<span class="compare-header-label">{leftLabel}</span>
-		{#if leftHeaderExtra}{@render leftHeaderExtra()}{/if}
-	</div>
-	<div class="compare-header compare-header-right" lang={rightLang}>
-		<span class="compare-header-label">{rightLabel}</span>
-		{#if rightHeaderExtra}{@render rightHeaderExtra()}{/if}
-	</div>
+	{#if showHeader}
+		<div class="compare-header compare-header-left" lang={leftLang}>
+			<span class="compare-header-label">{leftLabel}</span>
+		</div>
+		<div class="compare-header compare-header-right" lang={rightLang}>
+			<span class="compare-header-label">{rightLabel}</span>
+		</div>
+	{/if}
 
 	{#each rows as row (row.n)}
 		<!-- `reading-text` on every cell (not just the wrapping grid): that's

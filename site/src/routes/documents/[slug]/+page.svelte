@@ -343,75 +343,109 @@
 	{@const secondaryManifest = secondaryLang ? data.manifestsByLang[secondaryLang] : undefined}
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
-			<nav class="breadcrumb" aria-label="Breadcrumb">
-				<a href="/documenta">{t('nav.magisterium')}</a>
-			</nav>
-
-			<div class="title-row">
-				<h1>{metaManifest.title}</h1>
+			<div class="breadcrumb-row">
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="/documenta">{t('nav.magisterium')}</a>
+				</nav>
 				<div class="compare-toolbar">
 					<BookmarkButton href={`/documenta/${data.slug}`} />
 					{#if current && otherEditions.length > 0}
 						<CompareToggle active={compareActive} onclick={toggleCompare} />
 					{/if}
-					<!-- While comparing, EditionMenu moves into the left column's own
-					     header (`leftHeaderExtra` below) next to the comparison
-					     picker on the right — there's only one column for it up here
-					     once compare mode is off. -->
-					{#if !compareActive}<EditionMenu />{/if}
 				</div>
 			</div>
 
-			<p class="subtitle">
-				<span class="doc-kind">{documentKindLabel(metaManifest.document_kind)}</span>
-				<span class="sep">·</span>
-				{metaManifest.pontiff_or_council}
-				<span class="sep">·</span>
-				<!-- Bare date, no "Promulgated" label — matching the /documents list.
-				     In a subtitle already reading "Encyclical · Francis · <date>",
-				     the only date a document has needs no naming. -->
-				<time class="promulgated" datetime={metaManifest.promulgated}>
-					{formatPromulgated(metaManifest.promulgated, lang)}
-				</time>
-			</p>
-
-			{#if takedown}
-				<UnpublishedNotice manifest={metaManifest} info={takedown} />
+			{#if current && compareActive && secondaryManifest}
+				<!-- Compare mode's WHOLE header is per-language now, not just the
+				     masthead: title, subtitle, copyright notice, edition picker and
+				     source masthead all differ by language (a document's own title
+				     is translated, its masthead reads "ENCYCLICAL LETTER" vs.
+				     "CARTA ENCÍCLICA"), so folding them into one shared,
+				     primary-language-only block above the grid was always showing
+				     the second column a header that wasn't its own. This replaces
+				     that block AND `CompareGrid`'s own header row (`showHeader`
+				     below) with one merged two-column block, column widths/gap
+				     matching `.compare-grid` so it lines up with the aligned rows
+				     beneath it. The bookmark/compare-toggle controls are up in
+				     `.breadcrumb-row` now, not repeated here. -->
+				<div class="compare-unit-header">
+					<div class="compare-unit-header-col" lang={current.work.language}>
+						<h1>{current.work.title}</h1>
+						<p class="subtitle">
+							<span class="doc-kind">{documentKindLabel(current.work.document_kind)}</span>
+							<span class="sep">·</span>
+							{current.work.pontiff_or_council}
+							<span class="sep">·</span>
+							<time class="promulgated" datetime={current.work.promulgated}>
+								{formatPromulgated(current.work.promulgated, current.work.language)}
+							</time>
+						</p>
+						<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+						<EditionMenu />
+						{#if current.work.header}
+							<div class="document-masthead">{@html current.work.header}</div>
+						{/if}
+					</div>
+					<div class="compare-unit-header-col" lang={secondaryManifest.language}>
+						<h1>{secondaryManifest.title}</h1>
+						<p class="subtitle">
+							<span class="doc-kind">{documentKindLabel(secondaryManifest.document_kind)}</span>
+							<span class="sep">·</span>
+							{secondaryManifest.pontiff_or_council}
+							<span class="sep">·</span>
+							<time class="promulgated" datetime={secondaryManifest.promulgated}>
+								{formatPromulgated(secondaryManifest.promulgated, secondaryManifest.language)}
+							</time>
+						</p>
+						<p class="copyright-notice"><CopyrightNotice manifest={secondaryManifest} /></p>
+						<ComparisonEditionMenu
+							editions={otherEditions.map((e) => e.work)}
+							current={secondaryWorkId}
+							onselect={chooseComparisonEdition}
+						/>
+						{#if secondaryManifest.header}
+							<div class="document-masthead">{@html secondaryManifest.header}</div>
+						{/if}
+					</div>
+				</div>
 			{:else}
-				<p class="copyright-notice"><CopyrightNotice manifest={metaManifest} /></p>
-			{/if}
+				<div class="title-row">
+					<h1>{metaManifest.title}</h1>
+					<EditionMenu />
+				</div>
 
-			{#if current}
-				<!-- The source page's own masthead, verbatim, per language rather
-				     than page-level chrome: it lives in the content column(s) it
-				     actually belongs to, and in compare mode BOTH columns get their
-				     own — this text differs by language (`ENCYCLICAL LETTER` vs.
-				     `CARTA ENCÍCLICA`), so a single copy above the columns was
-				     always just the primary language's masthead mislabelling the
-				     second column too. `{@html}` is safe here specifically: this
-				     string is produced by the scraper's closed tag allowlist
-				     (i/b/br/sup/blockquote), not passed through from the source --
-				     see `narrow_html` in pipeline/scrapers/vatican_docs.py. -->
-				{#if compareActive && secondaryManifest}
-					{#if current.work.header || secondaryManifest.header}
-						<div class="document-masthead-row">
-							<div lang={current.work.language}>
-								{#if current.work.header}
-									<div class="document-masthead">{@html current.work.header}</div>
-								{/if}
-							</div>
-							<div lang={secondaryManifest.language}>
-								{#if secondaryManifest.header}
-									<div class="document-masthead">{@html secondaryManifest.header}</div>
-								{/if}
-							</div>
-						</div>
-					{/if}
-				{:else if current.work.header}
+				<p class="subtitle">
+					<span class="doc-kind">{documentKindLabel(metaManifest.document_kind)}</span>
+					<span class="sep">·</span>
+					{metaManifest.pontiff_or_council}
+					<span class="sep">·</span>
+					<!-- Bare date, no "Promulgated" label — matching the /documents list.
+					     In a subtitle already reading "Encyclical · Francis · <date>",
+					     the only date a document has needs no naming. -->
+					<time class="promulgated" datetime={metaManifest.promulgated}>
+						{formatPromulgated(metaManifest.promulgated, lang)}
+					</time>
+				</p>
+
+				{#if takedown}
+					<UnpublishedNotice manifest={metaManifest} info={takedown} />
+				{:else}
+					<p class="copyright-notice"><CopyrightNotice manifest={metaManifest} /></p>
+				{/if}
+
+				<!-- The source page's own masthead, verbatim per language.
+				     `{@html}` is safe here specifically: this string is produced by
+				     the scraper's closed tag allowlist (i/b/br/sup/blockquote), not
+				     passed through from the source -- see `narrow_html` in
+				     pipeline/scrapers/vatican_docs.py. -->
+				{#if current?.work.header}
 					<div class="document-masthead" lang={current.work.language}>
 						{@html current.work.header}
 					</div>
 				{/if}
+			{/if}
+
+			{#if current}
 				<!-- NARROW-SCREEN TABLE OF CONTENTS. Below 80rem `.reading-layout`
 				     stops being a grid (app.css) and `.reading-aside` falls to the
 				     bottom of the document — which on a 287-section encyclical is
@@ -472,6 +506,9 @@
 					     fall (docs/decisions.md), so a heading row would need its own
 					     alignment story this view doesn't need to solve today. The
 					     section numbers in the margin still orient the reader. -->
+					<!-- `showHeader={false}`: the label + picker this header would
+					     otherwise print are already up in `.compare-unit-header`
+					     above, merged with the title/copyright/masthead. -->
 					<CompareGrid
 						rows={compareRows}
 						leftLang={current.work.language}
@@ -480,18 +517,8 @@
 						rightLabel={secondaryManifest.short_title}
 						left={leftCell}
 						right={rightCell}
-					>
-						{#snippet leftHeaderExtra()}
-							<EditionMenu />
-						{/snippet}
-						{#snippet rightHeaderExtra()}
-							<ComparisonEditionMenu
-								editions={otherEditions.map((e) => e.work)}
-								current={secondaryWorkId}
-								onselect={chooseComparisonEdition}
-							/>
-						{/snippet}
-					</CompareGrid>
+						showHeader={false}
+					/>
 				{:else}
 					{#if compareActive}
 						<p class="compare-note">{t('compare.loading')}</p>
@@ -596,10 +623,6 @@
 		margin: 0 0 0.5rem;
 	}
 
-	.title-row .compare-toolbar {
-		margin: 0;
-	}
-
 	.subtitle {
 		color: var(--color-text-muted);
 		font-size: 0.95rem;
@@ -618,21 +641,29 @@
 		margin: 1.25rem 0 1.5rem;
 	}
 
-	/* Compare mode's two mastheads, side by side above the aligned text --
-	   same column widths/gap as `.compare-grid` (app.css) so the two rows
-	   line up, but not that class itself: this row has no per-unit alignment
-	   to keep, just two independent blocks. */
-	.document-masthead-row {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		column-gap: 1.5rem;
+	/* The two-column grid and its divider are `.compare-unit-header`/
+	   `.compare-unit-header-col` (app.css) — shared with every other route
+	   that merges a compare header the same way. This only tunes the
+	   vertical spacing between what THIS route stacks inside a column. */
+	.compare-unit-header-col h1 {
+		margin: 0 0 0.5rem;
 	}
 
-	@media (max-width: 40rem) {
-		.document-masthead-row {
-			grid-template-columns: 1fr;
-			row-gap: 1rem;
-		}
+	.compare-unit-header-col .subtitle {
+		margin: 0 0 0.5rem;
+	}
+
+	.compare-unit-header-col .copyright-notice {
+		margin: 0 0 0.75rem;
+	}
+
+	.compare-unit-header-col :global(.menu) {
+		margin-bottom: 0.5rem;
+	}
+
+	.compare-unit-header-col .document-masthead {
+		margin-top: 1rem;
+		margin-bottom: 0;
 	}
 
 	.subtitle .sep {

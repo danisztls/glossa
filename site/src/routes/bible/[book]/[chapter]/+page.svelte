@@ -383,22 +383,58 @@
 {#if current}
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
-			<p class="edition-label">{current.work.title}</p>
-			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
-			<div class="title-row">
-				<h1>{current.book.name} {current.chapter.n}</h1>
+			{#if compareActive && secondary}
+				<!-- Compare mode's WHOLE header is per-edition, merged into one
+				     two-column block, same reasoning as `documents/[slug]`: the
+				     edition label, copyright notice, book/chapter heading and
+				     edition picker all differ by edition, so a single
+				     primary-edition-only copy above `CompareGrid`'s own label row
+				     was always showing the second column a header that wasn't its
+				     own. `showHeader={false}` below drops that row in favour of
+				     this one. -->
 				<div class="compare-toolbar">
 					<BookmarkButton href={chapterHref} />
-					{#if otherEditions.length > 0}
-						<CompareToggle active={compareActive} onclick={toggleCompare} />
-					{/if}
-					<!-- While comparing, EditionMenu moves into the left column's own
-					     header (`leftHeaderExtra` below) next to the comparison
-					     picker on the right — there's only one column for it up here
-					     once compare mode is off. -->
-					{#if !compareActive}<EditionMenu />{/if}
+					<CompareToggle active={compareActive} onclick={toggleCompare} />
 				</div>
-			</div>
+				<div class="compare-unit-header">
+					<div class="compare-unit-header-col" lang={current.work.language}>
+						<p class="edition-label">{current.work.title}</p>
+						<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+						<h1>{current.book.name} {current.chapter.n}</h1>
+						<EditionMenu />
+					</div>
+					<div class="compare-unit-header-col" lang={secondary.work.language}>
+						<p class="edition-label">{secondary.work.title}</p>
+						<p class="copyright-notice"><CopyrightNotice manifest={secondary.work} /></p>
+						<h1>{secondary.book.name} {secondary.chapter.n}</h1>
+						<ComparisonEditionMenu
+							editions={otherEditions}
+							current={secondaryWorkId}
+							onselect={chooseComparisonEdition}
+							editionStyle
+						/>
+					</div>
+				</div>
+			{:else}
+				<!-- No breadcrumb on this route to share a line with (unlike
+				     documents/CCC/Compendium/prayers) — the edition label is the
+				     topmost line here, so the bookmark/compare-toggle controls join
+				     it instead of taking a row of their own. -->
+				<div class="edition-label-row">
+					<p class="edition-label">{current.work.title}</p>
+					<div class="compare-toolbar">
+						<BookmarkButton href={chapterHref} />
+						{#if otherEditions.length > 0}
+							<CompareToggle active={compareActive} onclick={toggleCompare} />
+						{/if}
+					</div>
+				</div>
+				<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+				<div class="title-row">
+					<h1>{current.book.name} {current.chapter.n}</h1>
+					<EditionMenu />
+				</div>
+			{/if}
 
 			<!-- Kept exactly as it was before the sidebar existed — collapsed
 		     behind `<summary>`, right under the heading. Hidden at >= 80rem
@@ -416,6 +452,9 @@
 			</div>
 
 			{#if compareActive && secondary}
+				<!-- `showHeader={false}`: the label + picker this header would
+				     otherwise print are already up in `.compare-unit-header`
+				     above. -->
 				<CompareGrid
 					rows={compareRows}
 					leftLang={current.work.language}
@@ -425,19 +464,8 @@
 					left={verseCell}
 					right={verseCell}
 					note={compareVersesDiffer ? t('compare.versificationNote') : undefined}
-				>
-					{#snippet leftHeaderExtra()}
-						<EditionMenu />
-					{/snippet}
-					{#snippet rightHeaderExtra()}
-						<ComparisonEditionMenu
-							editions={otherEditions}
-							current={secondaryWorkId}
-							onselect={chooseComparisonEdition}
-							editionStyle
-						/>
-					{/snippet}
-				</CompareGrid>
+					showHeader={false}
+				/>
 			{:else}
 				<div class="reading-text" lang={current.work.language}>
 					{#each current.chapter.verses as verse, i (verse.n)}
@@ -560,6 +588,17 @@
 		letter-spacing: 0.04em;
 	}
 
+	.edition-label-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.edition-label-row .compare-toolbar {
+		margin: 0;
+	}
+
 	.copyright-notice {
 		margin: 0.15rem 0 0;
 	}
@@ -576,11 +615,12 @@
 		gap: 1rem;
 	}
 
-	/* `.compare-toolbar` (app.css) is itself flex/justify-end, so nesting it
-	   in `.title-row`'s flex row just needs it to not stretch — the h1 above
-	   already keeps its own margin-top, this only cancels the toolbar's. */
-	.title-row .compare-toolbar {
-		margin: 0;
+	/* Two-column compare header (`.compare-unit-header`, app.css): the
+	   edition picker sits right under each column's own heading, so it
+	   needs a little room before whatever follows (the mobile picker, or
+	   the grid) that `.title-row`'s single-column layout doesn't. */
+	.compare-unit-header-col :global(.menu) {
+		margin-top: 0.5rem;
 	}
 
 	/* Compare-mode verse cell (`verseCell` snippet, CompareGrid) — the

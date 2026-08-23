@@ -76,14 +76,22 @@
 {#if editions.current}
 	<div class="reading-layout" class:compare={editions.compareActive}>
 		<article class="content-column">
-			<nav class="breadcrumb" aria-label="Breadcrumb">
-				<a href="/compendium">{t('nav.compendium')}</a>
-				{#each editions.current.breadcrumb as node (node.title + node.paragraphs.join('-'))}
-					{@const dt = displayTitle(node, editions.lang)}
-					<span class="sep">›</span>
-					<a href={`/compendium/${node.paragraphs[0]}`}>{dt.title}</a>
-				{/each}
-			</nav>
+			<div class="breadcrumb-row">
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="/compendium">{t('nav.compendium')}</a>
+					{#each editions.current.breadcrumb as node (node.title + node.paragraphs.join('-'))}
+						{@const dt = displayTitle(node, editions.lang)}
+						<span class="sep">›</span>
+						<a href={`/compendium/${node.paragraphs[0]}`}>{dt.title}</a>
+					{/each}
+				</nav>
+				<div class="compare-toolbar">
+					<BookmarkButton href={`/compendium/${data.n}`} />
+					{#if editions.others.length > 0}
+						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
+					{/if}
+				</div>
+			</div>
 
 			<div class="title-row">
 				<!--
@@ -93,22 +101,41 @@
 				visible presentation instead (see the module's job #5).
 			-->
 				<h1 class="visually-hidden">{t('compendium.question')} {data.n}</h1>
-				<div class="compare-toolbar">
-					<BookmarkButton href={`/compendium/${data.n}`} />
-					{#if editions.others.length > 0}
-						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
-					{/if}
-					<!-- While comparing, EditionMenu moves into the left column's own
-					     header (`leftHeaderExtra` below) next to the comparison
-					     picker on the right — there's only one column for it up here
-					     once compare mode is off. -->
-					{#if !editions.compareActive}<EditionMenu />{/if}
-				</div>
+				<!-- While comparing, EditionMenu moves into the left column's own
+				     header (`.compare-unit-header` below) next to the comparison
+				     picker on the right — there's only one column for it up here
+				     once compare mode is off. -->
+				{#if !editions.compareActive}<EditionMenu />{/if}
 			</div>
 
-			<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
+			{#if editions.compareActive && editions.secondary}
+				<!-- The visible header for compare mode: copyright notice and
+				     edition picker, per edition, side by side — the h1 above stays
+				     a single visually-hidden label (it's an a11y-only "Question 12"
+				     landmark, not visible content, so duplicating it per column
+				     would add nothing a screen reader wants twice). -->
+				<div class="compare-unit-header">
+					<div class="compare-unit-header-col" lang={editions.current.work.language}>
+						<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
+						<EditionMenu />
+					</div>
+					<div class="compare-unit-header-col" lang={editions.secondary.work.language}>
+						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
+						<ComparisonEditionMenu
+							editions={editions.others.map((e) => e.work)}
+							current={editions.secondaryWorkId}
+							onselect={chooseComparisonEdition}
+						/>
+					</div>
+				</div>
+			{:else}
+				<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
+			{/if}
 
 			{#if editions.compareActive && editions.secondary}
+				<!-- `showHeader={false}`: the label + picker this header would
+				     otherwise print are already up in `.compare-unit-header`
+				     above. -->
 				<CompareGrid
 					rows={compareRows}
 					leftLang={editions.current.work.language}
@@ -117,18 +144,8 @@
 					rightLabel={editions.secondary.work.short_title}
 					left={leftCell}
 					right={rightCell}
-				>
-					{#snippet leftHeaderExtra()}
-						<EditionMenu />
-					{/snippet}
-					{#snippet rightHeaderExtra()}
-						<ComparisonEditionMenu
-							editions={editions.others.map((e) => e.work)}
-							current={editions.secondaryWorkId}
-							onselect={chooseComparisonEdition}
-						/>
-					{/snippet}
-				</CompareGrid>
+					showHeader={false}
+				/>
 			{:else}
 				<div class="reading-text compendium-body" lang={editions.current.work.language}>
 					<CompendiumQa question={editions.current.question} lang={editions.lang} />
@@ -175,10 +192,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-	}
-
-	.title-row .compare-toolbar {
-		margin: 0;
 	}
 
 	.copyright-notice {

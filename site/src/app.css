@@ -706,30 +706,55 @@ input {
 	margin-block-end: 0.5rem;
 }
 
-/* Both columns: room for a picker (CompareGrid.svelte's `leftHeaderExtra`/
-   `rightHeaderExtra`) beside the plain label every other `.compare-header`
-   is. A bare label still lays out fine under flex with nothing to share the
-   row with, so this doesn't need to be conditional on a picker actually
-   being present. */
 .compare-header-left,
 .compare-header-right {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	gap: 0.5rem;
 }
 
-/* The picker's own trigger must not inherit this header's uppercase/
-   letter-spacing treatment — that's typographic labelling for the column
-   title, not for a control sitting next to it. Selects the menu's own
-   container (`.menu`, shared by `EditionMenu` and `ComparisonEditionMenu`)
-   rather than `.menu-trigger` alone so nothing inside the dropdown panel
-   picks up the header's styling either, if it were ever opened while
-   inheriting it. */
-.compare-header-left .menu,
-.compare-header-right .menu {
-	text-transform: none;
-	letter-spacing: normal;
+/*
+ * The per-language header block above a `CompareGrid` — title, whatever
+ * subtitle/range line the unit has, copyright notice, edition picker, all
+ * duplicated one column per language — shared across every route that
+ * compares (documents, Bible, CCC paragraph/chapter, Compendium
+ * question/chapter; not `/preces`, whose second column is a Latin FIELD on
+ * the one work, not a second `WorkManifest` with its own title/copyright to
+ * show). Lives here rather than in each route's own `<style>` for the same
+ * reason `.breadcrumb` does (see that rule's docblock) — Svelte's
+ * per-component scoping can't share a block across files, and six near-
+ * identical copies of a two-column grid is exactly the drift that invites.
+ * Column widths/gap match `.compare-grid`'s so the divider running down the
+ * first column here continues, unbroken, as the same divider down
+ * `.compare-cell-left` in the grid beneath it — one line, not two that
+ * happen to match. Each ROUTE's own `<style>` still owns the vertical
+ * spacing between what it stacks inside a column (a title's margin, a
+ * range line's) — this only owns the two-column shape and the divider.
+ */
+.compare-unit-header {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 1.5rem;
+	margin-top: 0.5rem;
+}
+
+.compare-unit-header-col:first-child {
+	border-inline-end: 1px solid var(--color-border);
+	padding-inline-end: 1.5rem;
+}
+
+@media (max-width: 40rem) {
+	.compare-unit-header {
+		grid-template-columns: 1fr;
+		row-gap: 1.5rem;
+	}
+
+	.compare-unit-header-col:first-child {
+		border-inline-end: none;
+		padding-inline-end: 0;
+		border-block-end: 1px dashed var(--color-border);
+		padding-block-end: 1.5rem;
+	}
 }
 
 .compare-cell {
@@ -989,7 +1014,14 @@ input {
 	.mobile-picker,
 	.unit-nav,
 	.compare-toolbar,
-	.comparison-edition-menu,
+	/* Every edition/comparison picker trigger (`EditionMenu`,
+	   `ComparisonEditionMenu`), wherever it's placed — used to be caught for
+	   free by `.compare-header`'s own `display: none` below when a picker's
+	   only home was inside that row, but `.compare-unit-header-col` (app.css,
+	   below) now hangs one in the reading chrome itself on several routes, so
+	   this needs its own rule rather than relying on a container it may not
+	   be inside any more. */
+	.menu,
 	.toc-inline,
 	/* "Read the full chapter" (ccc/[n]/+page.svelte) exists to send a reader
 	   who followed a single-paragraph link onward to more context online — a
@@ -1016,8 +1048,17 @@ input {
 
 	.reading-layout,
 	.reading-layout.compare,
-	.compare-grid {
+	.compare-grid,
+	.compare-unit-header {
 		display: block !important;
+	}
+
+	.compare-unit-header-col:first-child {
+		border-inline-end: 0;
+		padding-inline-end: 0;
+		border-block-end: 1px dashed #000;
+		padding-block-end: 0.75rem;
+		margin-block-end: 0.75rem;
 	}
 
 	/*
@@ -1083,6 +1124,33 @@ input {
 
 .breadcrumb .sep {
 	margin: 0 0.35em;
+}
+
+/*
+ * The breadcrumb's own row also carries the bookmark and compare-toggle
+ * controls, on the same line rather than a second row above the title —
+ * two small buttons don't need a whole row of their own. Unlike
+ * `.title-row`'s toolbar (still per-route, since what else shares that row
+ * varies — an edition menu, nothing at all), this one is identical
+ * everywhere it appears, so it lives here with `.breadcrumb` itself.
+ * `.breadcrumb`'s own `margin-bottom` is cancelled in favour of the row's,
+ * so the space below is set once, not doubled.
+ */
+.breadcrumb-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 0.75rem;
+}
+
+.breadcrumb-row .breadcrumb {
+	margin-bottom: 0;
+}
+
+.breadcrumb-row .compare-toolbar {
+	margin: 0;
+	flex-shrink: 0;
 }
 
 /*

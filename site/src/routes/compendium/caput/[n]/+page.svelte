@@ -80,28 +80,70 @@
 	{@const to = editions.current.chapter.paragraphs[1]}
 	<div class="reading-layout" class:compare={editions.compareActive}>
 		<article class="content-column">
-			<nav class="breadcrumb" aria-label="Breadcrumb">
-				<a href="/compendium">{t('nav.compendium')}</a>
-			</nav>
-
-			<div class="title-row">
-				<h1>{headingText()}</h1>
+			<div class="breadcrumb-row">
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="/compendium">{t('nav.compendium')}</a>
+				</nav>
 				<div class="compare-toolbar">
 					<BookmarkButton href={`/compendium/caput/${from}`} />
 					{#if editions.others.length > 0}
 						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
 					{/if}
-					<!-- While comparing, EditionMenu moves into the left column's own
-					     header (`leftHeaderExtra` below) next to the comparison
-					     picker on the right — there's only one column for it up here
-					     once compare mode is off. -->
-					{#if !editions.compareActive}<EditionMenu />{/if}
 				</div>
 			</div>
-			<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
-			<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
 
 			{#if editions.compareActive && editions.secondary}
+				<!-- Compare mode's WHOLE header, merged into one two-column block —
+				     same reasoning as `documents/[slug]` and the Bible chapter
+				     route: heading, range, copyright notice and edition picker all
+				     differ by edition. `showHeader={false}` below drops
+				     `CompareGrid`'s own label row in favour of this one. The
+				     bookmark/compare-toggle controls are up in `.breadcrumb-row`
+				     now, not repeated here. -->
+				{@const secondaryHeading = displayTitle(
+					editions.secondary.chapter,
+					editions.secondaryLang ?? editions.lang
+				)}
+				{@const secondaryHeadingText = secondaryHeading.ordinal
+					? `${secondaryHeading.ordinal} ${secondaryHeading.title}`
+					: secondaryHeading.title}
+				{@const secondaryFrom = editions.secondary.chapter.paragraphs[0]}
+				{@const secondaryTo = editions.secondary.chapter.paragraphs[1]}
+				<div class="compare-unit-header">
+					<div class="compare-unit-header-col" lang={editions.current.work.language}>
+						<h1>{headingText()}</h1>
+						<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
+						<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
+						<EditionMenu />
+					</div>
+					<div class="compare-unit-header-col" lang={editions.secondary.work.language}>
+						<h1>{secondaryHeadingText}</h1>
+						<p class="range">
+							{secondaryFrom === secondaryTo
+								? `Q${secondaryFrom}`
+								: `Q${secondaryFrom}–${secondaryTo}`}
+						</p>
+						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
+						<ComparisonEditionMenu
+							editions={editions.others.map((edition) => edition.work)}
+							current={editions.secondaryWorkId}
+							onselect={chooseComparisonEdition}
+						/>
+					</div>
+				</div>
+			{:else}
+				<div class="title-row">
+					<h1>{headingText()}</h1>
+					<EditionMenu />
+				</div>
+				<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
+				<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
+			{/if}
+
+			{#if editions.compareActive && editions.secondary}
+				<!-- `showHeader={false}`: the label + picker this header would
+				     otherwise print are already up in `.compare-unit-header`
+				     above. -->
 				<CompareGrid
 					rows={compareRows}
 					leftLang={editions.current.work.language}
@@ -110,18 +152,8 @@
 					rightLabel={editions.secondary.work.short_title}
 					left={leftCell}
 					right={rightCell}
-				>
-					{#snippet leftHeaderExtra()}
-						<EditionMenu />
-					{/snippet}
-					{#snippet rightHeaderExtra()}
-						<ComparisonEditionMenu
-							editions={editions.others.map((edition) => edition.work)}
-							current={editions.secondaryWorkId}
-							onselect={chooseComparisonEdition}
-						/>
-					{/snippet}
-				</CompareGrid>
+					showHeader={false}
+				/>
 			{:else}
 				<div
 					class="reading-text compendium-body chapter-body"
@@ -166,6 +198,18 @@
 	}
 	.copyright-notice {
 		margin: 0 0 2rem;
+	}
+
+	.compare-unit-header-col h1 {
+		margin: 0 0 0.25rem;
+	}
+
+	.compare-unit-header-col .copyright-notice {
+		margin: 0 0 0.5rem;
+	}
+
+	.compare-unit-header-col :global(.menu) {
+		margin-bottom: 0.5rem;
 	}
 	@media (max-width: 79.9375rem) {
 		.reading-aside {

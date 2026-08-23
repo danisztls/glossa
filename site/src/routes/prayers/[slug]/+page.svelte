@@ -200,16 +200,14 @@
 		{/if}
 
 		<div class="content-column" class:compare={compareActive}>
-			<nav class="breadcrumb" aria-label="Breadcrumb">
-				<a href="/preces">{t('nav.prayers')}</a>
-				{#if current.group}
-					<span class="sep">›</span>
-					<a href={`/preces#${current.group.id}`}>{current.group.title}</a>
-				{/if}
-			</nav>
-
-			<div class="title-row">
-				<h1>{current.prayer.title}</h1>
+			<div class="breadcrumb-row">
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="/preces">{t('nav.prayers')}</a>
+					{#if current.group}
+						<span class="sep">›</span>
+						<a href={`/preces#${current.group.id}`}>{current.group.title}</a>
+					{/if}
+				</nav>
 				<div class="compare-toolbar">
 					<!-- A prayer has no numbered sub-unit to hang the anchor popover off
 					     (PrayerBlocks renders no anchors at all), so the whole prayer is
@@ -223,8 +221,12 @@
 							exitLabel={t('prayers.hideLatin')}
 						/>
 					{/if}
-					<EditionMenu />
 				</div>
+			</div>
+
+			<div class="title-row">
+				<h1>{current.prayer.title}</h1>
+				<EditionMenu />
 			</div>
 
 			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
@@ -273,11 +275,6 @@
 
 	.title-row h1 {
 		margin: 0;
-	}
-
-	.title-row .compare-toolbar {
-		margin: 0;
-		flex-shrink: 0;
 	}
 
 	.copyright-notice {
