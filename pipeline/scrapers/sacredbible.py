@@ -31,19 +31,24 @@ list of things that only look duplicated:
 
 `Fetcher` IS shared here, unlike across the four unrelated scrapers, because
 these two have no differences to preserve: same encoding hazard, same
-cache-first policy, same absence of retry logic.
+cache-first policy, same absence of retry logic. It is now a thin adapter over
+`common.Fetcher` -- what stayed here is the base-URL prefixing and the httpx
+client's lifetime, and what moved into `FetchPolicy` is this host's floor,
+including the fact that it is spent after a request rather than before one.
 """
 
 from __future__ import annotations
 
 import html
 import re
-import time
 from dataclasses import dataclass
 from pathlib import Path
 
+# Imported as a module, not by name: this file's own public class is called
+# `Fetcher` (cpdv.py and vulgate.py import it as such), and `common.Fetcher`
+# is a different thing that it wraps.
+import common
 import httpx
-from common import read_bytes_or_none
 
 # A chapter heading, e.g.
 #   [<A NAME=1><A HREF=#top class=chapter>John 1</A></A>]
@@ -194,16 +199,25 @@ def verse_text_faults(text: str) -> list[str]:
     return faults
 
 
+def decode_cp1252(data: bytes) -> str:
+    """Pages are served as cp1252 with no reliable charset declaration in the
+    HTTP headers, so decoding is forced rather than sniffed -- trusting the
+    transport produces mojibake on curly quotes, apostrophes and (in the
+    Latin) the ae/oe ligatures."""
+    return data.decode("cp1252")
+
+
 class Fetcher:
     """Cache-first page fetcher for one sacredbible.org edition directory.
 
-    Pages are served as cp1252 ("Windows-1252") without a reliable charset
-    declaration in the HTTP headers, so decoding is forced to cp1252
-    unconditionally -- trusting the transport would produce mojibake on
-    curly quotes, apostrophes and (in the Latin) the ae/oe ligatures.
+    An adapter over `common.Fetcher` rather than a fetcher of its own: it owns
+    the httpx client that has to be closed, prefixes the base URL, and passes a
+    filename where the shared fetcher wants a cache name. The conduct is
+    declared as `FetchPolicy` -- including, importantly, that this host's floor
+    is spent AFTER a request rather than before it.
 
-    Raw bytes are cached verbatim, so `corpus/raw/` stays a record of what
-    the server sent rather than of what we made of it.
+    Raw bytes are cached verbatim, so `raw/` stays a record of what the server
+    sent rather than of what we made of it.
     """
 
     def __init__(
@@ -217,41 +231,31 @@ class Fetcher:
         refresh: bool,
     ):
         self.base_url = base_url
-        self.raw_dir = raw_dir
-        self.rate_limit_seconds = rate_limit_seconds
-        self.offline = offline
-        self.refresh = refresh
-        self.client = (
-            None
-            if offline
-            else httpx.Client(
-                headers={"User-Agent": user_agent}, timeout=30, follow_redirects=True
-            )
+        self.client = None if offline else httpx.Client(follow_redirects=True)
+        self.fetcher = common.Fetcher(
+            raw_dir,
+            common.FetchPolicy(
+                user_agent=user_agent,
+                delay=rate_limit_seconds,
+                # This host's floor has always been spent after the request
+                # completes, not before it starts. Kept that way: the other
+                # mode counts parsing toward the delay, so the same number
+                # would make requests come sooner than they do today -- a
+                # loosening of a self-imposed limit, and not this change's to
+                # make.
+                delay_before=False,
+            ),
+            transport=(
+                common.httpx_transport(self.client) if self.client is not None else None
+            ),
+            decode=decode_cp1252,
+            offline=offline,
+            refresh=refresh,
         )
 
     def fetch(self, filename: str) -> str:
         """Return decoded (cp1252) HTML for a source page, cache-first."""
-        cache_path = self.raw_dir / filename
-        if not self.refresh:
-            # One syscall, not exists()-then-read; see common.read_bytes_or_none
-            # for why every fetcher in this directory had the same two.
-            raw = read_bytes_or_none(cache_path)
-            if raw is not None:
-                return raw.decode("cp1252")
-
-        if self.offline:
-            raise RuntimeError(
-                f"--offline set but {filename} is not cached at {cache_path}"
-            )
-
-        url = self.base_url + filename
-        resp = self.client.get(url)
-        resp.raise_for_status()
-        raw = resp.content
-        self.raw_dir.mkdir(parents=True, exist_ok=True)
-        cache_path.write_bytes(raw)
-        time.sleep(self.rate_limit_seconds)
-        return raw.decode("cp1252")
+        return self.fetcher.fetch_str(self.base_url + filename, filename)
 
     def close(self):
         if self.client is not None:

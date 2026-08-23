@@ -12,36 +12,74 @@ module imports with a plain `import common` no matter what the working
 directory is. PEP 723 metadata governs third-party DEPENDENCIES; it does not
 prevent a script from importing a local module that has none.
 
-WHAT BELONGS HERE is deliberately narrow: code that is byte-identical across
-scrapers AND has no per-source behavior. That is a real distinction, because
-several things in these files only LOOK duplicated:
+WHAT BELONGS HERE is code with no per-source behaviour -- or code whose
+per-source behaviour can be DECLARED rather than open-coded. That second
+clause is newer than this module, and it is the whole of the difference
+between the two lists below.
 
-  - **Rate limits are not shared and must not be.** vatican.va's 2.0s comes
-    from its robots.txt `Crawl-delay` and is a commitment about someone else's
-    server (docs/decisions.md); sacredbible.org and liriocatolico.com.br are
-    different hosts with their own self-chosen floors. One shared constant
-    would either loosen a self-imposed limit or read as a pretext to speed up
-    the vatican.va crawl.
-  - **`Fetcher` is not shared.** The four implementations genuinely differ --
-    retry policy, raise-vs-return-status error handling, even the HTTP library
-    -- and unifying them is a design decision about behavior, not a mechanical
-    merge.
-  - **`strip_tags` is not shared.** compendium.py's copy deliberately turns
-    `<br/>` into a space before dropping other tags, which ccc.py's does not;
-    that difference is documented at its call site and would be silently lost
-    in a "consistency" merge.
+WHAT IS SHARED, and why sharing it costs nothing:
+
+  - **The fetching skeleton** (`Fetcher`, `FetchPolicy`). This module used to
+    say the four `Fetcher`s could not be shared, because they "genuinely
+    differ -- retry policy, raise-vs-return-status error handling, even the
+    HTTP library -- and unifying them is a design decision about behavior, not
+    a mechanical merge". Every word of that stayed true; what changed is that
+    the design decision was taken. The differences are now `FetchPolicy`, a
+    value each scraper declares for its own source, and the identical part --
+    look in the cache, wait out the floor, make one request, store the bytes
+    verbatim -- is written once.
+  - **Rate limits, as declared values.** Still not shared, and the guarantee
+    is stronger than before: `FetchPolicy` has no default for `delay` or
+    `user_agent`, so a new scraper cannot inherit another source's floor by
+    forgetting to state one. Four copies of `CRAWL_DELAY = 2.0` never provided
+    that. vatican.va's 2.0s is a commitment from its robots.txt
+    (docs/decisions.md); sacredbible.org and liriocatolico.com.br chose their
+    own, and sacredbible.org spends its floor AFTER a request rather than
+    before -- a difference `delay_before` preserves precisely because it is
+    the kind of thing a "consistency" merge would quietly erase.
+  - **Output writing** (`write_stamped_json`, `write_if_changed`,
+    `json_text`). Not merely duplicated: the `generated_at` trap that defeats
+    the naive version is a thing each scraper would have to rediscover, and
+    the one that forgot would silently rewrite the corpus every run.
+  - **The corrections receipt** (`corrections_receipt`) and the **text
+    utilities** below (`fold`, `roman_to_int`, `looks_like_number_typo`).
+    Character-for-character identical across the scrapers that had them, and
+    making claims about roman numerals and digit strings rather than about
+    any source.
+
+WHAT IS STILL NOT SHARED, because the duplication is only apparent:
+
+  - **`strip_tags`.** compendium.py's copy deliberately turns `<br/>` into a
+    space before dropping other tags, which ccc.py's does not; that difference
+    is documented at its call site and would be silently lost in a merge.
+  - **Decoding.** cp1252-always and sniff-the-`<meta>`-charset are claims
+    about particular servers, so `Fetcher` takes a `decode` callable and each
+    scraper supplies its own.
+  - **Validation, and per-edition oracles.** `cpdv.py` and `vulgate.py` have
+    byte-identical `validate` functions today and must keep them apart:
+    `sacredbible.py`'s docblock records that these assert things about *an
+    edition*, not about a template, and being equal right now is not a reason
+    to make them unable to diverge.
+  - **Heading heuristics** (`is_mini_header`, `is_full_bold` and friends).
+    Same category as `strip_tags`: they encode what a heading looks like in
+    one source's markup.
 
 None of these scrapers has tests, so anything moved here has to be verifiable
-by reading. The pieces below qualify: they are pure, short, and were already
-identical character for character.
+by reading -- and every migration into this module has been checked by running
+all eleven entry points offline and diffing the corpus byte for byte.
 """
 
 from __future__ import annotations
 
 import json
 import os
+import time
+import unicodedata
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 # This file lives at <repo>/pipeline/scrapers/common.py, so parents[2] is the
 # repo root -- the same expression every scraper already used to locate its
@@ -218,6 +256,33 @@ def write_if_changed(path: Path, text: str) -> bool:
     return True
 
 
+def corrections_receipt(
+    work_id: str,
+    applied: list[dict],
+    corrections: list[dict],
+    generated_at: str,
+) -> dict:
+    """The corrections receipt as a value (docs/corpus-schema.md #Corrections).
+
+    Five scrapers had built this dict, and after the receipts became values
+    rather than writes the five bodies were character for character the same.
+    Nothing here is per-source: `applied` and `corrections` are already this
+    work's own, and an entry carrying a `resolution` is documented-but-not-
+    applied by the policy in docs/decisions.md, not by any one source's
+    reading of it.
+
+    Written by `write_stamped_json` along with the rest of the work, which is
+    why it is built rather than written: the same payload is rendered twice,
+    once with the stored stamp to compare and once with this run's to save."""
+    return {
+        "work_id": work_id,
+        "generated_at": generated_at,
+        "applied": applied,
+        "unresolved": [c for c in corrections if c.get("resolution")],
+        "count": len(applied),
+    }
+
+
 def _restamp(value, field: str, stamp):
     """`value` with its top-level `field` replaced, if it has one."""
     if isinstance(value, dict) and field in value:
@@ -305,6 +370,321 @@ def write_stamped_json(
             path.unlink()
             wrote = True
     return wrote
+
+
+# --------------------------------------------------------------------------
+# Fetching
+#
+# THIS MODULE'S DOCBLOCK USED TO SAY `Fetcher` WAS NOT SHARED, because the
+# implementations "genuinely differ -- retry policy, raise-vs-return-status
+# error handling, even the HTTP library -- and unifying them is a design
+# decision about behavior, not a mechanical merge". The first half was true and
+# stays true. The second half was a reason to WAIT for that decision, not a
+# reason never to take it, and it has now been taken: unify the skeleton, keep
+# every policy.
+#
+# What was duplicated six times was the shape, and it was the same shape every
+# time: look in the cache; on a miss, wait out the politeness floor, make one
+# request, store the bytes verbatim. What differed was never that sequence --
+# it was a handful of knobs, open-coded, which is how vatican.va's `Crawl-delay`
+# ended up asserted in four separate files where it reads like an
+# implementation detail instead of the commitment docs/decisions.md says it is.
+#
+# A RATE LIMIT IS STILL NOT SHARED. It is DECLARED -- `FetchPolicy` has no
+# default for `delay` or `user_agent`, so a new scraper cannot inherit another
+# source's floor by forgetting to state one, and each declaration sits next to
+# the reason for it. That is a stronger guarantee than four copies of the same
+# literal, which is what the old arrangement actually provided.
+#
+# WHAT IS NOT HERE, deliberately: the HTTP library. `vatican_docs.py`, `ccc.py`
+# and `compendium.py` are PEP 723 scripts with `dependencies = []`, so this
+# module must stay stdlib-only; `transport` is a callable, `urllib_transport`
+# is the default, and the two httpx-based scrapers pass their own. Decoding is
+# also the caller's: cp1252-always and sniff-the-meta-charset are claims about
+# a specific source, not about fetching.
+# --------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------
+# Text utilities that are about text, not about a source
+#
+# The bar `strip_tags` failed is the bar these clear. That one looks duplicated
+# and is not: compendium.py's copy turns `<br/>` into a space and ccc.py's does
+# not, and the difference is a claim about how one source marks up a line
+# break. Nothing below makes a claim about any source -- roman numerals,
+# Unicode combining marks and digit strings are the same everywhere -- so there
+# is no divergence to preserve and no coupling created by sharing them.
+# --------------------------------------------------------------------------
+
+
+def fold(s: str) -> str:
+    """Uppercase + strip accents, for robust (typo/accent-insensitive) label
+    matching.
+
+    Length-preserving for every character these labels use (single precomposed
+    accented Latin letters), so a match offset in the folded string is safe to
+    reuse against the original -- compendium.py depends on that and it is worth
+    keeping written down."""
+    s = unicodedata.normalize("NFKD", s.upper())
+    return "".join(c for c in s if not unicodedata.combining(c))
+
+
+_ROMAN_VALUES = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+
+
+def roman_to_int(s: str) -> int | None:
+    """The value of a roman numeral, or None if it is not one."""
+    s = s.upper()
+    if not s or any(c not in _ROMAN_VALUES for c in s):
+        return None
+    total, prev = 0, 0
+    for ch in reversed(s):
+        v = _ROMAN_VALUES[ch]
+        total += -v if v < prev else v
+        prev = max(prev, v)
+    return total or None
+
+
+def looks_like_number_typo(cand: int, expected: int) -> bool:
+    """True when `cand` differs from `expected` by exactly one digit at the
+    same string length (e.g. 2117 vs 2217, or 81 vs 87) -- a plausible
+    single-keystroke misprint of a unit number, as opposed to an unrelated
+    number that happens to start a block."""
+    a, b = str(cand), str(expected)
+    return len(a) == len(b) and sum(x != y for x, y in zip(a, b)) == 1
+
+
+#: Statuses that mean the origin ANSWERED, and the answer is "no such page".
+#: Retrying one cannot change it; see AbsentSources for what is done instead.
+DEFINITIVE_ABSENCE = frozenset({404, 410})
+
+
+class FetchError(Exception):
+    """A transport failure. `status` is the HTTP status, when there was one.
+
+    A transport must raise this rather than its library's own exception, which
+    is what keeps `Fetcher` from having to know whether it is talking to
+    urllib or httpx."""
+
+    def __init__(self, message: str, status: int | None = None):
+        super().__init__(message)
+        self.status = status
+
+
+@dataclass(frozen=True)
+class FetchPolicy:
+    """One source's fetching conduct, as data rather than as code.
+
+    `delay` and `user_agent` have NO DEFAULTS on purpose -- see the note above.
+
+    `delay_before` says whether the floor is spent before a request or after
+    it, and the difference is real rather than stylistic. Waiting beforehand
+    counts whatever the scraper did in between (parsing, writing) toward the
+    delay; sleeping afterwards does not, so the same number is a slower crawl.
+    sacredbible.org's scrapers sleep afterwards and keep doing so: switching
+    them to the other mode would make their requests come sooner than they do
+    today, which is a loosening of a self-imposed floor and not this change's
+    to make.
+
+    `attempts` above 1 needs a `backoff` entry per gap between attempts. The
+    retries exist for transient failures; a status in `definitive` breaks out
+    of the loop, because the origin has already answered."""
+
+    user_agent: str
+    delay: float
+    delay_before: bool = True
+    attempts: int = 1
+    backoff: tuple[float, ...] = ()
+    timeout: float = 30.0
+    definitive: frozenset[int] = DEFINITIVE_ABSENCE
+
+    def __post_init__(self):
+        if self.attempts < 1:
+            raise ValueError(f"attempts must be >= 1, got {self.attempts}")
+        if len(self.backoff) < self.attempts - 1:
+            raise ValueError(
+                f"attempts={self.attempts} needs {self.attempts - 1} backoff "
+                f"value(s), got {len(self.backoff)}"
+            )
+
+
+def urllib_transport(url: str, *, user_agent: str, timeout: float) -> bytes:
+    """The stdlib transport. Raises FetchError, carrying the status if any."""
+    req = Request(url, headers={"User-Agent": user_agent})
+    try:
+        with urlopen(req, timeout=timeout) as resp:
+            return resp.read()
+    except HTTPError as exc:
+        raise FetchError(f"{url}: {exc}", status=exc.code) from exc
+    except URLError as exc:
+        raise FetchError(f"{url}: {exc}") from exc
+
+
+def httpx_transport(client):
+    """A `Fetcher` transport backed by an httpx client.
+
+    THE LAZY IMPORT IS THE POINT. This module is imported by PEP 723 scripts
+    declaring `dependencies = []` (`vatican_docs.py`, `ccc.py`,
+    `compendium.py`, `prayers.py`), so it must not import httpx at module
+    load. Deferring it to the call means only the two scrapers that already
+    depend on httpx ever pay for it -- and they hand in a live client, so it
+    is installed by definition by the time this runs.
+
+    The whole job is turning one library's exceptions into `FetchError`, which
+    is what keeps `Fetcher` from having to know which library it is talking
+    to. It is here rather than in `sacredbible.py` because that module is a
+    page FORMAT shared by one host's two editions and says so; an HTTP error
+    taxonomy is not a coincidence of that host."""
+    import httpx
+
+    def transport(url: str, *, user_agent: str, timeout: float) -> bytes:
+        try:
+            resp = client.get(url, headers={"User-Agent": user_agent}, timeout=timeout)
+            resp.raise_for_status()
+        except httpx.HTTPStatusError as exc:
+            raise FetchError(f"{url}: {exc}", status=exc.response.status_code) from exc
+        except httpx.HTTPError as exc:
+            raise FetchError(f"{url}: {exc}") from exc
+        return resp.content
+
+    return transport
+
+
+@dataclass
+class Fetcher:
+    """Cache-first, rate-limited fetching, with the conduct supplied as policy.
+
+    Two ways to ask, because the callers genuinely want different things and
+    that is a property of the call rather than a knob to configure:
+
+      - `try_fetch` returns `(bytes, None)` or `(None, error)` and NEVER
+        raises. `vatican_docs.py` crawls hundreds of documents and one dead URL
+        must not kill the run.
+      - `fetch_bytes` raises `FetchError`. The single-work scrapers crawl one
+        document each, where a failed page means the output would be wrong and
+        stopping is the correct response.
+
+    `cache_name` may contain subdirectories; parents are created as needed."""
+
+    cache_dir: Path
+    policy: FetchPolicy
+    transport: object = urllib_transport
+    #: bytes -> str for this source. cp1252-always and sniff-the-meta-charset
+    #: are claims about a particular server's pages, so the choice is declared
+    #: per scraper; only the "decode what was just fetched" wrapper is shared.
+    decode: object = None
+    # Unquoted despite AbsentSources being defined below: `from __future__
+    # import annotations` makes every annotation a string at runtime.
+    absent: AbsentSources | None = None
+    #: Ask again for URLs already recorded absent (`--recheck-absent`).
+    recheck_absent: bool = False
+    #: Never touch the network; a cache miss is an error.
+    offline: bool = False
+    #: Ignore the cache on read, refetching and overwriting it.
+    refresh: bool = False
+    network_fetches: int = field(default=0, init=False)
+    retried_ok: int = field(default=0, init=False)
+    cache_hits: int = field(default=0, init=False)
+    _last_request: float = field(default=0.0, init=False)
+
+    def __post_init__(self):
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        if self.absent is None:
+            self.absent = AbsentSources()
+
+    def _wait(self) -> None:
+        elapsed = time.monotonic() - self._last_request
+        if elapsed < self.policy.delay:
+            time.sleep(self.policy.delay - elapsed)
+
+    def cached(self, cache_name: str) -> bytes | None:
+        """The cached bytes for `cache_name`, honouring `refresh`."""
+        if self.refresh:
+            return None
+        data = read_bytes_or_none(self.cache_dir / cache_name)
+        if data is not None:
+            self.cache_hits += 1
+        return data
+
+    def try_fetch(self, url: str, cache_name: str) -> tuple[bytes | None, str | None]:
+        """Cached, rate-limited, retrying fetch. Exactly one of the pair is
+        None. Never raises."""
+        data = self.cached(cache_name)
+        if data is not None:
+            return data, None
+        if not self.recheck_absent:
+            known = self.absent.knows(url)
+            if known is not None:
+                return None, (
+                    f"{url}: HTTP Error {known['status']} (recorded absent "
+                    f"{known.get('observed', 'previously')}; --recheck-absent "
+                    "to re-ask)"
+                )
+        if self.offline:
+            return (
+                None,
+                f"{url}: offline and not cached at {self.cache_dir / cache_name}",
+            )
+
+        last: str | None = None
+        for attempt in range(self.policy.attempts):
+            if self.policy.delay_before:
+                self._wait()
+            try:
+                data = self.transport(
+                    url,
+                    user_agent=self.policy.user_agent,
+                    timeout=self.policy.timeout,
+                )
+            except FetchError as exc:
+                last = str(exc)
+                self._last_request = time.monotonic()
+                self.network_fetches += 1
+                if exc.status in self.policy.definitive:
+                    self.absent.record(url, exc.status, context=cache_name)
+                    break
+                if attempt < self.policy.attempts - 1:
+                    time.sleep(self.policy.backoff[attempt])
+                continue
+            self._last_request = time.monotonic()
+            self.network_fetches += 1
+            if attempt > 0:
+                self.retried_ok += 1
+            path = self.cache_dir / cache_name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+            # A page that used to 404 and now fetches is the one event that
+            # clears a ledger entry.
+            self.absent.forget(url)
+            if not self.policy.delay_before:
+                time.sleep(self.policy.delay)
+            return data, None
+        return None, last
+
+    def fetch_bytes(self, url: str, cache_name: str) -> bytes:
+        """As `try_fetch`, but raising `FetchError` instead of reporting."""
+        data, err = self.try_fetch(url, cache_name)
+        if data is None:
+            raise FetchError(err or f"{url}: fetch failed")
+        return data
+
+    def fetch_text(self, url: str, cache_name: str) -> tuple[str | None, str | None]:
+        """`try_fetch` decoded through this fetcher's `decode`. Never raises."""
+        data, err = self.try_fetch(url, cache_name)
+        if data is None:
+            return None, err
+        return self._decode(data), None
+
+    def fetch_str(self, url: str, cache_name: str) -> str:
+        """`fetch_bytes` decoded through this fetcher's `decode`. Raises."""
+        return self._decode(self.fetch_bytes(url, cache_name))
+
+    def _decode(self, data: bytes) -> str:
+        if self.decode is None:
+            raise ValueError(
+                "this Fetcher was built without a `decode`; use fetch_bytes, "
+                "or declare how this source's pages are encoded"
+            )
+        return self.decode(data)
 
 
 class AbsentSources:

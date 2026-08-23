@@ -44,7 +44,6 @@ prints a summary table and exits non-zero on failure.
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -54,6 +53,7 @@ from pathlib import Path
 from common import (
     CorrectionDriftError,
     chapter_opening_letter,
+    corrections_receipt,
     load_corrections,
     raw_root,
     require_corpus,
@@ -382,21 +382,6 @@ def apply_corrections(
     return applied, seen
 
 
-def corrections_receipt(
-    applied: list[dict], corrections: list[dict], generated_at: str
-) -> dict:
-    """The corrections receipt as a value. Written by common.write_stamped_json
-    together with the books and the manifest, so the whole work is judged as
-    one unit and an unchanged run touches none of it."""
-    return {
-        "work_id": WORK_ID,
-        "generated_at": generated_at,
-        "applied": applied,
-        "unresolved": [c for c in corrections if c.get("resolution")],
-        "count": len(applied),
-    }
-
-
 def run_scrape(
     sample: bool, offline: bool, refresh: bool
 ) -> tuple[list[dict], list[str]]:
@@ -562,12 +547,6 @@ def write_output(
     )
 
 
-def write_json(path: Path, obj) -> None:
-    path.write_text(
-        json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -616,7 +595,7 @@ def main() -> int:
         print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)
         return 1
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    receipt = corrections_receipt(applied, corrections, generated_at)
+    receipt = corrections_receipt(WORK_ID, applied, corrections, generated_at)
     corrections_count = receipt["count"]
     print(
         f"\nCorrections layer: {corrections_count} applied, "

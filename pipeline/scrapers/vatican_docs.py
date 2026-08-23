@@ -223,38 +223,42 @@ import os
 import re
 import sys
 import time
-import unicodedata
 import urllib.parse
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
 from common import (
-    AbsentSources,
+    Fetcher,
+    FetchPolicy,
     OverrideDriftError,
     apply_overrides,
     corpus_dir,
+    corrections_receipt,
+    fold,
     load_corrections,
     load_overrides,
+    looks_like_number_typo,
     read_text_or_none,
     require_corpus,
+    roman_to_int,
     write_stamped_json,
 )
 
-USER_AGENT = "Glossa Catholica corpus builder"
-CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
-MAX_ATTEMPTS = 3  # survey measured ~1-in-6-to-8 transient failures, no 403s/CAPTCHA
-RETRY_BACKOFF = [3.0, 8.0]  # seconds, between attempts 1->2 and 2->3
-# Statuses that mean the origin ANSWERED and the answer is "there is no such
-# page". Retrying one cannot change it, and MAX_ATTEMPTS/RETRY_BACKOFF exist
-# for the transient edge failures above, not for these. See AbsentSources.
-DEFINITIVE_ABSENCE = frozenset({404, 410})
+#: How this scraper conducts itself toward vatican.va. The 2.0s is from that
+#: host's robots.txt `Crawl-delay` and is a commitment (docs/decisions.md),
+#: not a tuning parameter; the retries are for the ~1-in-6-to-8 transient edge
+#: failures the 2026-08-15 survey measured (no 403s, no CAPTCHA).
+VATICAN_POLICY = FetchPolicy(
+    user_agent="Glossa Catholica corpus builder",
+    delay=2.0,
+    attempts=3,
+    backoff=(3.0, 8.0),
+)
 
 # See "NOTE ON THE ROOTS" in the module docstring. The two roots diverged
 # again on 2026-08-23: the corpus moved to its own private repository, so
@@ -325,88 +329,19 @@ def decode_page(data: bytes) -> str:
     return data.decode("cp1252", errors="replace")
 
 
-class Fetcher:
-    def __init__(
-        self,
-        cache_dir: Path,
-        absent: AbsentSources | None = None,
-        recheck_absent: bool = False,
-    ):
-        self.cache_dir = cache_dir
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self._last_request = 0.0
-        self.network_fetches = 0
-        self.retried_ok = 0  # count of fetches that failed once then succeeded
-        # Two caches, and they answer different questions. `cache_dir` holds
-        # what the source said; `absent` holds which URLs it has no page for.
-        # Only the first is the corpus -- see common.AbsentSources.
-        self.absent = absent if absent is not None else AbsentSources()
-        self.recheck_absent = recheck_absent
+def make_fetcher(recheck_absent: bool = False) -> Fetcher:
+    """This scraper's fetcher: the shared skeleton, VATICAN_POLICY's conduct.
 
-    def _sleep_for_crawl_delay(self) -> None:
-        elapsed = time.monotonic() - self._last_request
-        if elapsed < CRAWL_DELAY:
-            time.sleep(CRAWL_DELAY - elapsed)
-
-    def try_fetch(self, url: str, cache_name: str) -> tuple[bytes | None, str | None]:
-        """Cached, rate-limited, retrying fetch. Returns (data, error) --
-        exactly one is None. Never raises: a document family running into
-        a genuinely dead URL must not kill an otherwise-long crawl.
-
-        TWO KINDS OF "we already know this". A cached page short-circuits
-        because we have the bytes; a ledgered absence short-circuits because
-        the origin has already told us there are none. Skipping the second
-        is what makes `--overwrite` the zero-network re-parse this module's
-        docstring claims it is -- it was making 36 requests per run, all of
-        them to URLs that 404, until this existed."""
-        cache_path = self.cache_dir / cache_name
-        try:
-            # One syscall rather than exists()-then-read: 445 of the former per
-            # full run, every one of them immediately followed by the read it
-            # had just proved possible.
-            return cache_path.read_bytes(), None
-        except OSError:
-            pass
-        if not self.recheck_absent:
-            known = self.absent.knows(url)
-            if known is not None:
-                return None, (
-                    f"{url}: HTTP Error {known['status']} (recorded absent "
-                    f"{known.get('observed', 'previously')}; --recheck-absent to re-ask)"
-                )
-        last_exc: Exception | None = None
-        for attempt in range(MAX_ATTEMPTS):
-            self._sleep_for_crawl_delay()
-            req = Request(url, headers={"User-Agent": USER_AGENT})
-            try:
-                with urlopen(req, timeout=30) as resp:
-                    data = resp.read()
-                self._last_request = time.monotonic()
-                self.network_fetches += 1
-                if attempt > 0:
-                    self.retried_ok += 1
-                cache_path.write_bytes(data)
-                # A page that used to 404 and now fetches is the one event
-                # that clears a ledger entry. Unconditional, so a --recheck
-                # run and an ordinary run that reaches a new URL both heal it.
-                self.absent.forget(url)
-                return data, None
-            except (HTTPError, URLError) as exc:
-                last_exc = exc
-                self._last_request = time.monotonic()
-                self.network_fetches += 1
-                if isinstance(exc, HTTPError) and exc.code in DEFINITIVE_ABSENCE:
-                    self.absent.record(url, exc.code, context=cache_name)
-                    break
-                if attempt < MAX_ATTEMPTS - 1:
-                    time.sleep(RETRY_BACKOFF[attempt])
-        return None, f"{url}: {last_exc}"
-
-    def fetch_text(self, url: str, cache_name: str) -> tuple[str | None, str | None]:
-        data, err = self.try_fetch(url, cache_name)
-        if data is None:
-            return None, err
-        return decode_page(data), None
+    The retry/absence behaviour that used to live in a local `Fetcher` class is
+    now `VATICAN_POLICY` plus `common.Fetcher`; what stayed here is the part
+    that is about this source rather than about fetching -- the charset sniff
+    in `decode_page`, and the cache directory."""
+    return Fetcher(
+        RAW_ROOT,
+        VATICAN_POLICY,
+        decode=decode_page,
+        recheck_absent=recheck_absent,
+    )
 
 
 # --------------------------------------------------------------------------
@@ -676,26 +611,6 @@ def heading_style_rank(outer_html: str, inner_html: str, is_center_tag: bool) ->
     centered = is_center_tag or bool(_CENTERED_RE.search(outer_html))
     italic = bool(re.search(r"<(i|em)\b", inner_html, re.IGNORECASE))
     return (0 if centered else 2) + (1 if italic else 0)
-
-
-def fold(s: str) -> str:
-    s = unicodedata.normalize("NFKD", s.upper())
-    return "".join(c for c in s if not unicodedata.combining(c))
-
-
-_ROMAN_VALUES = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
-
-
-def roman_to_int(s: str) -> int | None:
-    s = s.upper()
-    if not s or any(c not in _ROMAN_VALUES for c in s):
-        return None
-    total, prev = 0, 0
-    for ch in reversed(s):
-        v = _ROMAN_VALUES[ch]
-        total += -v if v < prev else v
-        prev = max(prev, v)
-    return total or None
 
 
 def is_mini_header(text: str) -> bool:
@@ -2515,15 +2430,6 @@ def find_content_start_old_shell(html: str) -> int:
 # result dict -- see the `missing` check at the end of `scrape_one`.
 
 
-def looks_like_number_typo(cand: int, expected: int) -> bool:
-    """True when `cand` differs from `expected` by exactly one digit at the
-    same string length (e.g. 81 vs 87) -- a plausible single-keystroke
-    misprint of the section number, as opposed to an unrelated number that
-    happens to start a block. Ported unchanged from ccc.py."""
-    a, b = str(cand), str(expected)
-    return len(a) == len(b) and sum(x != y for x, y in zip(a, b)) == 1
-
-
 def find_paragraph_number_correction(
     corrections: list[dict], expected: int, cand: int
 ) -> dict | None:
@@ -2534,24 +2440,6 @@ def find_paragraph_number_correction(
         if loc.get("section") == expected and c["from"] == str(cand):
             return c
     return None
-
-
-def corrections_receipt(
-    work_id: str,
-    applied: list[dict],
-    corrections: list[dict],
-    generated_at: str,
-) -> dict:
-    """The corrections receipt as a value. Split from writing it so the same
-    payload can be built twice with two different timestamps -- once to compare
-    against what is on disk, once to write -- see write_document_outputs."""
-    return {
-        "work_id": work_id,
-        "generated_at": generated_at,
-        "applied": applied,
-        "unresolved": [c for c in corrections if c.get("resolution")],
-        "count": len(applied),
-    }
 
 
 def apply_raw_text_corrections(
@@ -4913,7 +4801,7 @@ def main() -> int:
     args = ap.parse_args()
     # Fail before any directory is created; see common.require_corpus().
     require_corpus()
-    fetcher = Fetcher(RAW_ROOT, recheck_absent=getattr(args, "recheck_absent", False))
+    fetcher = make_fetcher(getattr(args, "recheck_absent", False))
 
     if args.cmd in ("phase1", "phase2"):
         try:

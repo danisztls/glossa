@@ -83,20 +83,18 @@ import argparse
 import html as ihtml
 import re
 import sys
-import time
-import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
 from common import (
+    Fetcher,
+    FetchPolicy,
+    fold,
     raw_root,
-    read_bytes_or_none,
     require_corpus,
     works_root,
     write_stamped_json,
@@ -125,30 +123,25 @@ COPYRIGHT_HOLDER = "Libreria Editrice Vaticana"
 # --------------------------------------------------------------------------
 
 
-class Fetcher:
-    def __init__(self, cache_dir: Path):
-        self.cache_dir = cache_dir
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self._last_request = 0.0
-        self.network_fetches = 0
+#: How these scrapers conduct themselves toward vatican.va. The 2.0s is that
+#: host's robots.txt `Crawl-delay` and is a commitment (docs/decisions.md).
+#: No retry: this is a single-work crawl of a handful of pages, where a failed
+#: page means the output would be wrong and stopping is the right answer --
+#: unlike vatican_docs.py, which crawls hundreds and must survive one bad URL.
+VATICAN_POLICY = FetchPolicy(
+    user_agent=USER_AGENT,
+    delay=2.0,
+)
 
-    def fetch(self, url: str, cache_name: str) -> str:
-        cache_path = self.cache_dir / cache_name
-        data = read_bytes_or_none(cache_path)
-        if data is None:
-            elapsed = time.monotonic() - self._last_request
-            if elapsed < CRAWL_DELAY:
-                time.sleep(CRAWL_DELAY - elapsed)
-            req = Request(url, headers={"User-Agent": USER_AGENT})
-            try:
-                with urlopen(req, timeout=30) as resp:
-                    data = resp.read()
-            except (HTTPError, URLError) as exc:
-                raise RuntimeError(f"fetch failed: {url}: {exc}") from exc
-            self._last_request = time.monotonic()
-            self.network_fetches += 1
-            cache_path.write_bytes(data)
-        return data.decode("cp1252", errors="replace")
+
+def decode_cp1252(data: bytes) -> str:
+    """These pages are the old IntraText shell and declare iso-8859-1/cp1252;
+    a claim about this source, which is why it is not in common."""
+    return data.decode("cp1252", errors="replace")
+
+
+def make_fetcher(cache_dir: Path) -> Fetcher:
+    return Fetcher(cache_dir, VATICAN_POLICY, decode=decode_cp1252)
 
 
 # --------------------------------------------------------------------------
@@ -189,15 +182,6 @@ def is_full_bold(inner: str) -> bool:
         return False
     bold_text = strip_tags(" ".join(_BOLD_SPAN_RE.findall(inner)))
     return bool(bold_text) and bold_text == full_text
-
-
-def fold(s: str) -> str:
-    """Uppercase + strip accents, for robust (case/diacritic-insensitive)
-    label matching. Length-preserving for every character used in these
-    labels (single precomposed accented Latin letters), so a match end
-    offset in the folded string is safe to reuse against the original."""
-    s = unicodedata.normalize("NFKD", s.upper())
-    return "".join(c for c in s if not unicodedata.combining(c))
 
 
 _QUESTION_START_RE = re.compile(r"^(\d{1,3})\.\s+(.*)$", re.DOTALL)
@@ -592,8 +576,8 @@ LANG_CONFIG = {
 
 def run_scrape(lang: str) -> tuple[ScrapeState, Fetcher]:
     cfg = LANG_CONFIG[lang]
-    fetcher = Fetcher(RAW_ROOT / cfg["raw_dir"])
-    html_text = fetcher.fetch(cfg["url"], cfg["cache_name"])
+    fetcher = make_fetcher(RAW_ROOT / cfg["raw_dir"])
+    html_text = fetcher.fetch_str(cfg["url"], cfg["cache_name"])
 
     start_idx = html_text.find(cfg["start_anchor"])
     end_idx = html_text.find(cfg["end_anchor"])

@@ -110,17 +110,17 @@ import argparse
 import html as ihtml
 import re
 import sys
-import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
 from common import (
+    Fetcher,
+    FetchError,
+    FetchPolicy,
     load_corrections,
     raw_root,
     require_corpus,
@@ -288,30 +288,32 @@ def top_paragraphs(body_html: str) -> list[str]:
     return [m.group(1) for m in _P_RE.finditer(body_html)]
 
 
+#: How this scraper conducts itself toward vatican.va. The 2.0s is that host's
+#: robots.txt `Crawl-delay` and is a commitment (docs/decisions.md). No retry:
+#: this captures a handful of named pages, and a failure means the prayer text
+#: would be missing, which is a reason to stop rather than to carry on.
+VATICAN_POLICY = FetchPolicy(user_agent=USER_AGENT, delay=2.0)
+
+
 def capture_raw_pages(pages: list[tuple[str, Path]]) -> None:
     """Capture explicitly requested Vatican pages once.
 
     The raw cache is write-once: an existing file is reused, never refreshed
     or overwritten. Requests are deliberately sequential and respect the
     Vatican's two-second crawl delay.
-    """
-    last_request = 0.0
+
+    Paths are absolute and scattered across `raw/`, so each page is fetched
+    through a `Fetcher` rooted at its own directory rather than one rooted at
+    a shared cache -- the politeness clock is per-fetcher, which is why they
+    are threaded through `state` below rather than made fresh per page."""
+    fetcher = Fetcher(RAW_ROOT, VATICAN_POLICY)
     for url, path in pages:
         if path.exists():
             continue
-        elapsed = time.monotonic() - last_request
-        if elapsed < CRAWL_DELAY:
-            time.sleep(CRAWL_DELAY - elapsed)
-        path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            with urlopen(
-                Request(url, headers={"User-Agent": USER_AGENT}), timeout=30
-            ) as response:
-                data = response.read()
-        except (HTTPError, URLError) as exc:
-            raise RuntimeError(f"Vatican fetch failed: {url}: {exc}") from exc
-        path.write_bytes(data)
-        last_request = time.monotonic()
+            fetcher.fetch_bytes(url, str(path.relative_to(RAW_ROOT)))
+        except FetchError as exc:
+            raise RuntimeError(f"Vatican fetch failed: {exc}") from exc
 
 
 def capture_litany_raw() -> None:

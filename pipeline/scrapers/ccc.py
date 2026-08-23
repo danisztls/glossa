@@ -62,23 +62,24 @@ import html as ihtml
 import json
 import re
 import sys
-import time
-import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
 from common import (
     CorrectionDriftError,
+    Fetcher,
+    FetchPolicy,
+    corrections_receipt,
+    fold,
     load_corrections,
+    looks_like_number_typo,
     raw_root,
-    read_bytes_or_none,
     require_corpus,
+    roman_to_int,
     works_root,
     write_stamped_json,
 )
@@ -107,30 +108,25 @@ MARK_OPEN, MARK_CLOSE = "⟦", "⟧"  # ⟦ ⟧
 # --------------------------------------------------------------------------
 
 
-class Fetcher:
-    def __init__(self, cache_dir: Path):
-        self.cache_dir = cache_dir
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self._last_request = 0.0
-        self.network_fetches = 0
+#: How these scrapers conduct themselves toward vatican.va. The 2.0s is that
+#: host's robots.txt `Crawl-delay` and is a commitment (docs/decisions.md).
+#: No retry: this is a single-work crawl of a handful of pages, where a failed
+#: page means the output would be wrong and stopping is the right answer --
+#: unlike vatican_docs.py, which crawls hundreds and must survive one bad URL.
+VATICAN_POLICY = FetchPolicy(
+    user_agent=USER_AGENT,
+    delay=2.0,
+)
 
-    def fetch(self, url: str, cache_name: str) -> str:
-        cache_path = self.cache_dir / cache_name
-        data = read_bytes_or_none(cache_path)
-        if data is None:
-            elapsed = time.monotonic() - self._last_request
-            if elapsed < CRAWL_DELAY:
-                time.sleep(CRAWL_DELAY - elapsed)
-            req = Request(url, headers={"User-Agent": USER_AGENT})
-            try:
-                with urlopen(req, timeout=30) as resp:
-                    data = resp.read()
-            except (HTTPError, URLError) as exc:
-                raise RuntimeError(f"fetch failed: {url}: {exc}") from exc
-            self._last_request = time.monotonic()
-            self.network_fetches += 1
-            cache_path.write_bytes(data)
-        return data.decode("cp1252", errors="replace")
+
+def decode_cp1252(data: bytes) -> str:
+    """These pages are the old IntraText shell and declare iso-8859-1/cp1252;
+    a claim about this source, which is why it is not in common."""
+    return data.decode("cp1252", errors="replace")
+
+
+def make_fetcher(cache_dir: Path) -> Fetcher:
+    return Fetcher(cache_dir, VATICAN_POLICY, decode=decode_cp1252)
 
 
 # --------------------------------------------------------------------------
@@ -161,27 +157,6 @@ def is_full_bold(inner_html: str) -> bool:
     return bool(bold_text) and bold_text == full_text
 
 
-def fold(s: str) -> str:
-    """Uppercase + strip accents, for robust (typo/accent-insensitive) label matching."""
-    s = unicodedata.normalize("NFKD", s.upper())
-    return "".join(c for c in s if not unicodedata.combining(c))
-
-
-_ROMAN_VALUES = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
-
-
-def roman_to_int(s: str) -> int | None:
-    s = s.upper()
-    if not s or any(c not in _ROMAN_VALUES for c in s):
-        return None
-    total, prev = 0, 0
-    for ch in reversed(s):
-        v = _ROMAN_VALUES[ch]
-        total += -v if v < prev else v
-        prev = max(prev, v)
-    return total or None
-
-
 def looks_like_attribution(text: str) -> bool:
     t = text.strip()
     if MARK_OPEN in t or not (t.startswith("(") and t.endswith(")")):
@@ -200,15 +175,6 @@ def is_mini_header(text: str) -> bool:
     if len(t.split()) > 8:
         return False
     return not t.endswith((".", "!", ";", ":", '"', "”", "’"))
-
-
-def looks_like_number_typo(cand: int, expected: int) -> bool:
-    """True when `cand` differs from `expected` by exactly one digit at the
-    same string length (e.g. 2117 vs 2217) -- a plausible single-keystroke
-    misprint of the paragraph number, as opposed to an unrelated number that
-    happens to start a block."""
-    a, b = str(cand), str(expected)
-    return len(a) == len(b) and sum(x != y for x, y in zip(a, b)) == 1
 
 
 # --------------------------------------------------------------------------
@@ -339,23 +305,6 @@ def apply_paragraph_corrections(
             raise CorrectionDriftError(
                 f"correction {c['id']!r}: unknown field {field!r}"
             )
-
-
-def corrections_receipt(
-    work_id: str,
-    applied: list[dict],
-    corrections: list[dict],
-    generated_at: str,
-) -> dict:
-    """The corrections receipt as a value; written by common.write_stamped_json
-    along with the rest of the work, so it is skipped when nothing moved."""
-    return {
-        "work_id": work_id,
-        "generated_at": generated_at,
-        "applied": applied,
-        "unresolved": [c for c in corrections if c.get("resolution")],
-        "count": len(applied),
-    }
 
 
 # --------------------------------------------------------------------------
@@ -1082,7 +1031,7 @@ def parse_page_en(html_text: str) -> tuple[list[Block], dict[str, str]]:
 
 
 def discover_pages_en(fetcher: Fetcher) -> list[tuple[str, str]]:
-    text = fetcher.fetch(EN_BASE + EN_TOC_HREF, EN_TOC_HREF)
+    text = fetcher.fetch_str(EN_BASE + EN_TOC_HREF, EN_TOC_HREF)
     hrefs = re.findall(r"href=(__P\w+\.HTM)", text)
     seen: set[str] = set()
     ordered = [h for h in hrefs if not (h in seen or seen.add(h))]
@@ -1343,7 +1292,7 @@ def parse_page_pt(html_text: str) -> tuple[list[Block], dict[str, str]]:
 
 
 def discover_pages_pt(fetcher: Fetcher) -> list[tuple[str, str]]:
-    text = fetcher.fetch(PT_BASE + PT_TOC_HREF, PT_TOC_HREF)
+    text = fetcher.fetch_str(PT_BASE + PT_TOC_HREF, PT_TOC_HREF)
     hrefs = re.findall(r'href="([^"]+)"', text)
     ordered: list[str] = []
     seen: set[str] = set()
@@ -1431,7 +1380,7 @@ def run_scrape(
     lang: str, sample: bool, corrections: list[dict] | None = None
 ) -> tuple[ScrapeState, list[tuple[str, str]], Fetcher]:
     cfg = LANG_CONFIG[lang]
-    fetcher = Fetcher(RAW_ROOT / cfg["raw_dir"])
+    fetcher = make_fetcher(RAW_ROOT / cfg["raw_dir"])
     all_pages = cfg["discover"](fetcher)
     chunks = cfg["sample_chunks"](all_pages) if sample else [all_pages]
 
@@ -1442,7 +1391,7 @@ def run_scrape(
         state.stack = []
         for url, name in chunk:
             try:
-                html_text = fetcher.fetch(url, name)
+                html_text = fetcher.fetch_str(url, name)
             except RuntimeError as exc:
                 # A single missing/broken page must not kill the whole crawl:
                 # record it and let validation surface any paragraphs it

@@ -31,7 +31,6 @@ from __future__ import annotations
 import argparse
 import re
 import sys
-import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -45,7 +44,11 @@ from bs4 import BeautifulSoup
 # docblock for what does and does not belong there.
 from common import (
     CorrectionDriftError,
+    Fetcher,
+    FetchPolicy,
     chapter_opening_letter,
+    corrections_receipt,
+    httpx_transport,
     load_corrections,
     raw_root,
     require_corpus,
@@ -260,12 +263,6 @@ class SplitWordAnomaly:
 
 
 @dataclass
-class FetchStats:
-    network_requests: int = 0
-    cache_hits: int = 0
-
-
-@dataclass
 class BookResult:
     slug: str
     osis: str
@@ -280,30 +277,29 @@ def slugify_cache_name(slug: str, part: str) -> str:
     return f"{slug}__{part}.html"
 
 
-def fetch(client: httpx.Client, url: str, cache_name: str, stats: FetchStats) -> str:
-    """Fetch `url`, using and populating the on-disk cache. Politeness delay
-    only applies to actual network fetches, never to cache hits."""
-    raw_dir().mkdir(parents=True, exist_ok=True)
-    cache_path = raw_dir() / cache_name
-    if cache_path.exists():
-        stats.cache_hits += 1
-        return cache_path.read_text(encoding="utf-8")
-
-    global _last_request_at
-    elapsed = time.monotonic() - _last_request_at
-    if elapsed < MIN_REQUEST_INTERVAL:
-        time.sleep(MIN_REQUEST_INTERVAL - elapsed)
-    resp = client.get(url, headers={"User-Agent": USER_AGENT}, timeout=30.0)
-    resp.raise_for_status()
-    _last_request_at = time.monotonic()
-    stats.network_requests += 1
-
-    html = resp.text
-    cache_path.write_text(html, encoding="utf-8")
-    return html
+#: How this scraper conducts itself toward liriocatolico.com.br. The source
+#: publishes no robots.txt and so states no Crawl-delay; 2.0s is a floor we
+#: chose, and it is declared here rather than shared so that it cannot drift
+#: into meaning the same thing as vatican.va's, which is a commitment.
+#: No retry: one book per request, and a failed book is a reason to stop.
+SOURCE_POLICY = FetchPolicy(user_agent=USER_AGENT, delay=MIN_REQUEST_INTERVAL)
 
 
-_last_request_at: float = 0.0
+def make_fetcher(client: httpx.Client) -> Fetcher:
+    """This scraper's fetcher: the shared skeleton, SOURCE_POLICY's conduct.
+
+    The cache holds this source's pages as UTF-8 text, which the shared
+    fetcher stores as the bytes it received -- the same bytes, since `decode`
+    below is where they become a string. What used to be a module-level
+    `_last_request_at` is now the fetcher's own clock, so the politeness floor
+    travels with the thing that does the requesting instead of with the
+    module."""
+    return Fetcher(
+        raw_dir(),
+        SOURCE_POLICY,
+        transport=httpx_transport(client),
+        decode=lambda data: data.decode("utf-8"),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -380,23 +376,6 @@ def apply_corrections(
                 f"correction entries never matched during full run: {missing}"
             )
     return applied, seen
-
-
-def corrections_receipt(
-    applied: list[dict],
-    corrections: list[dict],
-    generated_at: str,
-) -> dict:
-    """The corrections receipt as a value. Written by common.write_stamped_json
-    together with the books and the manifest, so the whole work is judged as
-    one unit and an unchanged run touches none of it."""
-    return {
-        "work_id": WORK_ID,
-        "generated_at": generated_at,
-        "applied": applied,
-        "unresolved": [c for c in corrections if c.get("resolution")],
-        "count": len(applied),
-    }
 
 
 def parse_index(html: str) -> list[dict]:
@@ -536,8 +515,7 @@ def clean_text(
 
 
 def build_book(
-    client: httpx.Client,
-    stats: FetchStats,
+    fetcher: Fetcher,
     slug: str,
     name: str,
     site_abbrev: str,
@@ -559,7 +537,7 @@ def build_book(
     url = urljoin(BASE_URL, f"{slug}/completo/")
     cache_name = slugify_cache_name(slug, "completo")
 
-    html = fetch(client, url, cache_name, stats)
+    html = fetcher.fetch_str(url, cache_name)
     parsed = parse_chapters(html)
 
     chapters_out = []
@@ -797,10 +775,9 @@ def main() -> int:
     fixes: list[OcrFix] = []
     ambiguous: list[OcrAmbiguous] = []
     split_words: list[SplitWordAnomaly] = []
-    stats = FetchStats()
-
     with httpx.Client(follow_redirects=True) as client:
-        index_html = fetch(client, BASE_URL, "index.html", stats)
+        fetcher = make_fetcher(client)
+        index_html = fetcher.fetch_str(BASE_URL, "index.html")
         index_books = parse_index(index_html)
         index_by_slug = {b["slug"]: b for b in index_books}
 
@@ -827,8 +804,7 @@ def main() -> int:
             info = index_by_slug.get(slug, {"name": slug, "abbrev": osis})
             only_chapter = 1 if (args.sample and slug == "sao-joao") else None
             book = build_book(
-                client,
-                stats,
+                fetcher,
                 slug,
                 info["name"],
                 info["abbrev"],
@@ -872,7 +848,7 @@ def main() -> int:
         for f in fixes
     ]
     all_applied = auto_ihe_applied + file_applied
-    receipt = corrections_receipt(all_applied, corrections, generated_at)
+    receipt = corrections_receipt(WORK_ID, all_applied, corrections, generated_at)
     corrections_count = receipt["count"]
 
     write_manifest(
@@ -891,7 +867,9 @@ def main() -> int:
 
     print_summary_table(books)
 
-    print(f"Network requests: {stats.network_requests}, cache hits: {stats.cache_hits}")
+    print(
+        f"Network requests: {fetcher.network_fetches}, cache hits: {fetcher.cache_hits}"
+    )
 
     print(f"\nOCR auto-fixes applied ({len(fixes)}):")
     for f in fixes:
