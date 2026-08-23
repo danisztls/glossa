@@ -51,7 +51,7 @@
  * resolved relative to this `site/` package — the corpus is a separate,
  * private repository expected as a sibling checkout of this one, see
  * docs/decisions.md, 2026-08-23). Spelled the same way as
- * `pipeline/scrapers/common.py`'s `corpus_dir()`, so one exported variable
+ * `pipeline/scrapers/common/`'s `corpus_dir()`, so one exported variable
  * moves both halves of the project. If no corpus is found, this is a no-op
  * (with a warning): `corpus.ts` falls back to its fixtures, so the site
  * still builds.

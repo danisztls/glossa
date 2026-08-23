@@ -18,7 +18,7 @@ import type { WorkManifest } from './types';
  * The already-built `bible.matos-soares.pt` corpus still carries a holder
  * string with the public-domain date parenthesized onto the end
  * (`"...Matos Soares (domínio público em 1 Jan 2028)"` — a v1 scraper
- * artifact, fixed at the source in pipeline/scrapers/matos_soares.py so
+ * artifact, fixed at the source in pipeline/scrapers/bible/matos_soares.py so
  * future scrapes come out clean). Re-scraping the existing corpus isn't on
  * the table, so strip that trailing parenthetical here too. The PD date
  * itself isn't lost: it stays documented in the manifest's `notes` and in

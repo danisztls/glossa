@@ -31,7 +31,7 @@ build the structure tree, and attaches each numbered paragraph to whichever
 node is deepest-open at the moment it starts.
 
 Usage:
-  uv run pipeline/scrapers/ccc.py --lang en|pt|both [--sample]
+  uv run pipeline/scrapers/ccc/ccc.py --lang en|pt|both [--sample]
 
 --sample restricts the crawl to two small, representative slices (the
 Prologue, and the Baptism article) instead of the full 1-2865 run, per the
@@ -66,9 +66,13 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Sibling module in this directory -- a script's own directory is on sys.path,
-# so this resolves regardless of the working directory. See common.py's
-# docblock for what does and does not belong there.
+# `common` is a package one directory up. Python puts a script's own directory
+# on sys.path at startup -- which is what made a bare `import common` work while
+# these files sat beside it -- and since the move into bible/ and ccc/ that
+# directory is no longer the one holding it. Hence this, and hence the imports
+# below it being the only ones not at the top of the file.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from common import (
     CorrectionDriftError,
     Fetcher,

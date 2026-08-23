@@ -36,7 +36,7 @@ page's own table of contents (which repeats every heading as a same-text
 the unnumbered front matter.
 
 Usage:
-  uv run pipeline/scrapers/compendium.py --lang en|pt|both
+  uv run pipeline/scrapers/ccc/compendium.py --lang en|pt|both
 
 No --sample mode: the source is one page per language (598 questions
 total), small enough to run in full every time; re-runs are offline-capable
@@ -87,9 +87,13 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Sibling module in this directory -- a script's own directory is on sys.path,
-# so this resolves regardless of the working directory. See common.py's
-# docblock for what does and does not belong there.
+# `common` is a package one directory up. Python puts a script's own directory
+# on sys.path at startup -- which is what made a bare `import common` work while
+# these files sat beside it -- and since the move into bible/ and ccc/ that
+# directory is no longer the one holding it. Hence this, and hence the imports
+# below it being the only ones not at the top of the file.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from common import (
     Fetcher,
     FetchPolicy,

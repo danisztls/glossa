@@ -15,10 +15,10 @@ unconditionally — trusting the transport would produce mojibake on curly
 quotes/apostrophes.
 
 Usage:
-    uv run pipeline/scrapers/cpdv.py              # full 73-book run
-    uv run pipeline/scrapers/cpdv.py --sample      # Philemon + John 1-3 only
-    uv run pipeline/scrapers/cpdv.py --offline     # cache-only, no network
-    uv run pipeline/scrapers/cpdv.py --refresh     # bypass cache, re-fetch
+    uv run pipeline/scrapers/bible/cpdv.py              # full 73-book run
+    uv run pipeline/scrapers/bible/cpdv.py --sample      # Philemon + John 1-3 only
+    uv run pipeline/scrapers/bible/cpdv.py --offline     # cache-only, no network
+    uv run pipeline/scrapers/bible/cpdv.py --refresh     # bypass cache, re-fetch
 
 Caches every raw fetched page under corpus/raw/cpdv/ and is fully
 offline-capable from that cache on re-runs. Ends with a validation pass
@@ -32,12 +32,16 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Sibling module in this directory -- a script's own directory is on sys.path,
-# so this resolves regardless of the working directory. See common.py's
-# docblock for what does and does not belong there.
+# `common` is a package one directory up. Python puts a script's own directory
+# on sys.path at startup -- which is what made a bare `import common` work while
+# these files sat beside it -- and since the move into bible/ and ccc/ that
+# directory is no longer the one holding it. Hence this, and hence the imports
+# below it being the only ones not at the top of the file.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from common import (
-    apply_verse_corrections,
     CorrectionDriftError,
+    apply_verse_corrections,
     chapter_opening_letter,
     corrections_receipt,
     load_corrections,

@@ -41,14 +41,23 @@ from __future__ import annotations
 
 import html
 import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
+
+import httpx
+
+# `common` is a package one directory up. Python puts a script's own directory
+# on sys.path at startup -- which is what made a bare `import common` work while
+# these files sat beside it -- and since the move into bible/ and ccc/ that
+# directory is no longer the one holding it. Hence this, and hence the imports
+# below it being the only ones not at the top of the file.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # Imported as a module, not by name: this file's own public class is called
 # `Fetcher` (cpdv.py and vulgate.py import it as such), and `common.Fetcher`
 # is a different thing that it wraps.
 import common
-import httpx
 
 # A chapter heading, e.g.
 #   [<A NAME=1><A HREF=#top class=chapter>John 1</A></A>]

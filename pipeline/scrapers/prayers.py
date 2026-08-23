@@ -114,8 +114,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Sibling module in this directory -- a script's own directory is on sys.path,
-# so this resolves regardless of the working directory. See common.py's
+# Sibling package in this directory -- a script's own directory is on sys.path,
+# so this resolves regardless of the working directory. See common/__init__.py's
 # docblock for what does and does not belong there.
 from common import (
     Fetcher,

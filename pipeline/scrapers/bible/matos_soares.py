@@ -16,8 +16,8 @@ request count; --sample mode fetches the same completo pages and simply
 keeps only chapter 1 of São João in the output.
 
 Usage:
-    uv run pipeline/scrapers/matos_soares.py --sample   # small slice, for review
-    uv run pipeline/scrapers/matos_soares.py            # full 73-book crawl
+    uv run pipeline/scrapers/bible/matos_soares.py --sample   # small slice, for review
+    uv run pipeline/scrapers/bible/matos_soares.py            # full 73-book crawl
 
 Re-runs are offline-capable: every fetched page is cached under
 corpus/raw/matos-soares/ and reused without hitting the network.
@@ -39,14 +39,18 @@ from urllib.parse import urljoin
 import httpx
 from bs4 import BeautifulSoup
 
-# Sibling module in this directory -- a script's own directory is on sys.path,
-# so this resolves regardless of the working directory. See common.py's
-# docblock for what does and does not belong there.
+# `common` is a package one directory up. Python puts a script's own directory
+# on sys.path at startup -- which is what made a bare `import common` work while
+# these files sat beside it -- and since the move into bible/ and ccc/ that
+# directory is no longer the one holding it. Hence this, and hence the imports
+# below it being the only ones not at the top of the file.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from common import (
-    apply_verse_corrections,
     CorrectionDriftError,
     Fetcher,
     FetchPolicy,
+    apply_verse_corrections,
     chapter_opening_letter,
     corrections_receipt,
     httpx_transport,

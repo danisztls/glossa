@@ -31,10 +31,10 @@ of a 1914 critical printing, and would do it in the one place -- the corpus --
 where it could not be undone without re-parsing.
 
 Usage:
-    uv run pipeline/scrapers/vulgate.py              # full 73-book run
-    uv run pipeline/scrapers/vulgate.py --sample     # Philemon + Joannes 1-3
-    uv run pipeline/scrapers/vulgate.py --offline    # cache-only, no network
-    uv run pipeline/scrapers/vulgate.py --refresh    # bypass cache, re-fetch
+    uv run pipeline/scrapers/bible/vulgate.py              # full 73-book run
+    uv run pipeline/scrapers/bible/vulgate.py --sample     # Philemon + Joannes 1-3
+    uv run pipeline/scrapers/bible/vulgate.py --offline    # cache-only, no network
+    uv run pipeline/scrapers/bible/vulgate.py --refresh    # bypass cache, re-fetch
 
 Caches every raw fetched page under corpus/raw/vulgate1914/ and is fully
 offline-capable from that cache on re-runs. Ends with a validation pass that
@@ -50,9 +50,16 @@ from pathlib import Path
 
 # Sibling modules in this directory -- a script's own directory is on
 # sys.path, so this resolves regardless of the working directory.
+# `common` is a package one directory up. Python puts a script's own directory
+# on sys.path at startup -- which is what made a bare `import common` work while
+# these files sat beside it -- and since the move into bible/ and ccc/ that
+# directory is no longer the one holding it. Hence this, and hence the imports
+# below it being the only ones not at the top of the file.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from common import (
-    apply_verse_corrections,
     CorrectionDriftError,
+    apply_verse_corrections,
     chapter_opening_letter,
     corrections_receipt,
     load_corrections,

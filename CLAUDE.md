@@ -46,6 +46,40 @@ had authorized it either. If you are delegating, name the deletable set and the
 protected set explicitly — a brief that only says what to _fix_ leaves deletion
 as an unstated judgment call, and it will get taken.
 
+## The scrapers' layout
+
+```
+pipeline/scrapers/
+  common/            shared machinery -- paths, files, fetch, absent,
+                     corrections, overrides, text. Import it as `common`;
+                     `__init__.py` re-exports the whole surface.
+  bible/             cpdv, vulgate, matos_soares, and the sacredbible page
+                     format the first two share
+  ccc/               ccc, compendium
+  vatican_docs.py    encyclicals, Vatican II, exhortations
+  prayers.py
+  audit.py census.py apply_sweep.py   tools over already-written output
+```
+
+**A scraper in a subdirectory needs the `sys.path` line above its imports.**
+Python puts a script's own directory on `sys.path` at startup, which is the
+entire mechanism behind a bare `import common`; for `bible/` and `ccc/` that
+directory is no longer the one holding the package. Each of those six files
+inserts its parent before importing `common`, so the `common` import (and, in
+the two Bible scrapers, the `sacredbible` one that itself imports `common`)
+sits below that line rather than at the very top. Ruff does not object — it
+exempts imports that follow `sys.path` manipulation from E402, so no `noqa` is
+needed and one added "for safety" is reported as unused. Copying one of these
+scrapers to start a new one and dropping the "odd" lines at the top gets you
+`ModuleNotFoundError: common`.
+
+**`common/paths.py` computes the repo root as `parents[3]`** and asserts the
+result contains `pipeline/scrapers`. It was `parents[2]` while `common` was a
+single module beside the scrapers, and the assert is there because getting it
+wrong yields paths that are merely _absent_ rather than obviously wrong --
+`load_corrections` reads a missing directory as "no corrections filed", which
+is a silent, corpus-wide no-op.
+
 ## Scraping vatican.va
 
 - `robots.txt` says `Crawl-delay: 2`. This is a commitment in

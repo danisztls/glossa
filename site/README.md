@@ -51,7 +51,7 @@ site never commits its synced build copy; it only knows how to _read_ it.
   `src/lib/corpus-data/` that the globs target.
   - Configurable via the **`CORPUS_DIR`** env var (default:
     `../../glossa-corpus`, resolved relative to this `site/` package —
-    spelled the same way as `pipeline/scrapers/common.py`'s `corpus_dir()`,
+    spelled the same way as `pipeline/scrapers/common/`'s `corpus_dir()`,
     so one exported variable moves both halves of the project).
   - Wired as an npm `prebuild` / `predev` hook, so `npm run build` and
     `npm run dev` always sync first. Run it manually with

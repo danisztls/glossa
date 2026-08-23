@@ -1717,3 +1717,59 @@ same two and is left alone for the same reason, pending a decision of its own.
 points run offline and diffed byte for byte, the 1,606-file corpus unchanged,
 a no-change re-run still rewriting 0 files, and the lint profile matching the
 previous commit exactly.
+
+## 2026-08-23 — `apply_corrections` moves, `validate` does not, and the tree gets folders
+
+**What**: three related changes to `pipeline/scrapers/`. The verse-corrections
+applier is now shared by all three Bible scrapers; `common.py` became a
+`common/` package of seven modules; and the scrapers moved into `bible/` and
+`ccc/`.
+
+**The applier, and the line it draws.** `cpdv.py` and `vulgate.py` had
+`apply_corrections` identically, and `matos_soares.py` differed only in
+reaching a book's fields by attribute rather than by key. It moved, and
+`validate` — also byte-identical between the first two — did not. The
+distinction is the useful part of this entry, because the two look the same
+from the outside: **identical bodies were never the test; whether the source
+is entitled to differ is.** Everything in the applier comes from above the
+edition: the drift guard and the never-apply-a-`resolution` rule are this
+document's source-defect corrections policy, and the `{osis, chapter, verse}`
+locator and `{"n", "text"}` verse are `docs/corpus-schema.md`. An edition has
+no standing to disagree with either. `validate` is exactly where an edition's
+own claims about its own text live — CPDV's chapter counts are not the
+Vulgate's — so it stays in three places and is expected to diverge.
+
+Callers pass `(osis, chapters)` pairs, which is the one line that knows a
+book's shape and the only thing that was ever genuinely per-source.
+
+**The package.** `common.py` had reached 1,124 lines covering paths, file
+I/O, fetching, the absent ledger, corrections, overrides and text utilities.
+It is now `common/` with a module each, and `__init__.py` re-exports the whole
+surface — so every `from common import X` in the scrapers is untouched and the
+split is invisible from outside. `paths.py` is the one that must not import
+sideways; everything else may depend on it.
+
+**The folders.** `bible/` holds cpdv, vulgate, matos_soares and the
+sacredbible page format the first two share; `ccc/` holds ccc and compendium;
+`vatican_docs.py`, `prayers.py` and the three analysis tools stay at the top.
+
+**The cost, which is real and worth stating**: a bare `import common` worked
+because Python puts a script's own directory on `sys.path` at startup, and for
+a file in `bible/` that directory no longer holds the package. Each moved file
+now inserts its parent before importing `common`, which pushes that import
+below the top of the file. That is the price of the folders, and it is
+recorded in `CLAUDE.md` because the failure mode when someone "tidies" those
+lines away is a `ModuleNotFoundError` in a file that otherwise looks fine.
+(Ruff exempts imports following `sys.path` manipulation from E402, so this
+costs no `noqa`; one added anyway is reported as unused.)
+
+`common/paths.py` also moved a level deeper, so the repo root is `parents[3]`
+rather than `parents[2]`. That one is asserted rather than trusted: a wrong
+depth yields paths that are merely absent, and `load_corrections` reads an
+absent directory as "no corrections filed" — a silent, corpus-wide no-op.
+
+**Verified**: all eleven entry points byte-identical against the pre-change
+baseline, run offline from a copy of the corpus, with the 1,606-file `works/`
+tree unchanged; a no-change re-run still rewrites 0 files; the three analysis
+tools still start; and the site's 448 tests pass after the path references in
+its comments were updated.

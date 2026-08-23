@@ -174,7 +174,7 @@ describe('splitDropCap', () => {
 		expect(splitDropCap('')).toEqual({ lead: '', first: '', rest: '' });
 		expect(splitDropCap('...')).toEqual({ lead: '', first: '', rest: '...' });
 		// 126 PT CCC paragraphs used to open on a stray "." left behind by the
-		// paragraph-number markup (fixed in pipeline/scrapers/ccc.py). The
+		// paragraph-number markup (fixed in pipeline/scrapers/ccc/ccc.py). The
 		// degradation that covered for it stays covered.
 		expect(splitDropCap('. O homem: Com a sua abertura')).toEqual({
 			lead: '',
