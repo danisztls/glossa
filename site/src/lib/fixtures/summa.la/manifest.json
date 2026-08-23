@@ -1,0 +1,25 @@
+{
+	"id": "summa.la",
+	"type": "summa",
+	"title": "Summa Theologiae",
+	"short_title": "Summa (LA)",
+	"language": "la",
+	"edition": "Corpus Thomisticum, ed. Enrique Alarcon (Univ. of Navarre), Leonine-based",
+	"sources": [
+		{
+			"url": "https://www.corpusthomisticum.org/iopera.html",
+			"retrieved_at": "2026-08-23"
+		}
+	],
+	"copyright": {
+		"status": "public-domain",
+		"holder": null,
+		"notice": "Latin text of St Thomas Aquinas (d. 1274); the Leonine edition (1888-1906) it follows is public domain by age. Electronic transcription by the Corpus Thomisticum, Fundacion Tomas de Aquino, which reserves rights over its own edition."
+	},
+	"notes": "FIXTURE: a deliberately awkward slice -- a plain question, the article-less I q. 71, and (EN only) a Supplement question the Latin can never have. Divisions are trimmed; article NUMBERS are complete, because addresses are what the tests assert on.",
+	"generated_at": "2026-08-23T20:42:17Z",
+	"parts": ["I", "I-II", "II-II", "III"],
+	"question_count": 3,
+	"article_count": 18,
+	"corrections_applied": 0
+}

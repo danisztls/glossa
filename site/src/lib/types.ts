@@ -22,7 +22,8 @@ export interface Copyright {
 	notice: string | null;
 }
 
-export type WorkType = 'bible' | 'bible-intro' | 'catechism' | 'compendium' | 'document' | 'prayer';
+export type WorkType =
+	'bible' | 'bible-intro' | 'catechism' | 'compendium' | 'document' | 'prayer' | 'summa';
 
 /**
  * Bare language subtag the corpus ships content in (see `baseLang` in
@@ -75,6 +76,92 @@ export interface CatechismManifest extends WorkManifestBase {
 
 export interface CompendiumManifest extends WorkManifestBase {
 	type: 'compendium';
+}
+
+/**
+ * The five parts of the Summa, as the work's own citations spell them.
+ *
+ * Roman, because that is the form every citation in this corpus resolves to
+ * — including the Portuguese Catechism's, which prints Arabic (`Summa
+ * theologiae, 1-2, q. 79, a. 1`) and is normalized to `I-II` on the way in
+ * (see the scraper). `Suppl` is the Supplementum, which `summa.en` carries
+ * and `summa.la` does not: the Corpus Thomisticum publishes no Latin
+ * Supplement, it being a posthumous compilation rather than Aquinas's own
+ * text for this work.
+ */
+export type SummaPart = 'I' | 'I-II' | 'II-II' | 'III' | 'Suppl';
+
+export interface SummaManifest extends WorkManifestBase {
+	type: 'summa';
+	/** The parts this edition actually carries, in order. */
+	parts: SummaPart[];
+	question_count: number;
+	article_count: number;
+	corrections_applied?: number;
+}
+
+/**
+ * The divisions of a scholastic article, which are an ADDRESS SPACE and not
+ * a rendering hint: this corpus's own footnotes cite `co.` (the body) and
+ * `ad 3` (the third reply) as locators, so they are stored as structure
+ * rather than flattened into prose.
+ *
+ * `preamble` is the one member that is not Aquinas's: it holds prose the
+ * English edition prints before the first objection — a translator's
+ * bracketed note, on 2 articles of 3,113 — and is deliberately outside the
+ * citable set. Nothing may cite it, and it exists only so that text is
+ * neither dropped nor mis-filed as the body.
+ */
+export type SummaDivisionKind = 'preamble' | 'objection' | 'sed-contra' | 'corpus' | 'reply';
+
+export interface SummaDivision {
+	kind: SummaDivisionKind;
+	/** The ordinal of an objection or reply; absent on the body and the sed contra. */
+	n?: number;
+	blocks: { html: string }[];
+}
+
+export interface SummaArticle {
+	n: number;
+	/** Empty in `summa.la`, which prints no article titles — only addressed text. */
+	title: string;
+	divisions: SummaDivision[];
+}
+
+export interface SummaQuestion {
+	part: SummaPart;
+	n: number;
+	/** Empty in `summa.la`, which prints no question titles. */
+	title: string;
+	/** The question's own preamble, before its first article. */
+	prologue: { html: string }[];
+	articles: SummaArticle[];
+	/**
+	 * Divisions hanging off the QUESTION rather than an article. Present only
+	 * for the article-less questions (I q. 71 and I q. 72), which both sources
+	 * agree have no articles at all — their objections, body and replies
+	 * belong to the question itself. Absent everywhere else, rather than an
+	 * empty array, so its presence is the signal.
+	 */
+	divisions?: SummaDivision[];
+}
+
+/**
+ * A heading in the Summa's table of contents. Flat and document-ordered,
+ * with ranges DERIVED rather than stored — the same shape and the same
+ * reasoning as the documents' `DocumentNode` (docs/decisions.md,
+ * 2026-08-21: "Nothing stored is nothing to drift").
+ *
+ * `part` is the extra field the documents' node does not need: question
+ * numbering restarts at 1 in each part, so `before` alone does not identify
+ * a position in the work.
+ */
+export interface SummaNode {
+	level: number;
+	part: SummaPart;
+	title: string;
+	/** The question number this heading precedes; `null` for trailing matter. */
+	before: number | null;
 }
 
 export type DocumentKind =
@@ -140,7 +227,8 @@ export type WorkManifest =
 	| CatechismManifest
 	| CompendiumManifest
 	| DocumentManifest
-	| PrayerManifest;
+	| PrayerManifest
+	| SummaManifest;
 
 export interface VerseNote {
 	marker: string;

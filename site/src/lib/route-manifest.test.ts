@@ -11,7 +11,8 @@ const manifest: RouteManifest = {
 	compendium: [1, 2],
 	compendiumChapters: [1],
 	documents: ['lumen-gentium'],
-	prayers: ['our-father']
+	prayers: ['our-father'],
+	summa: { i: [1, 71], 'ii-ii': [184], suppl: [77] }
 };
 
 describe('isCanonicalPath', () => {

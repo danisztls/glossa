@@ -42,7 +42,10 @@
 		// The canonical route is Latin while the displayed label is
 		// "Magisterium" — URL identity and localised display language are
 		// intentionally independent.
-		{ href: '/documenta', key: 'nav.magisterium' }
+		{ href: '/documenta', key: 'nav.magisterium' },
+		// `/summa` is already Latin, so there is no English directory to
+		// re-export from here the way the four above have.
+		{ href: '/summa', key: 'nav.summa' }
 	] as const;
 
 	// A section is "active" for its whole subtree (`/scriptura/...` counts as

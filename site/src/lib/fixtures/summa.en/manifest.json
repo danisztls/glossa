@@ -1,0 +1,25 @@
+{
+	"id": "summa.en",
+	"type": "summa",
+	"title": "Summa Theologica",
+	"short_title": "Summa (EN)",
+	"language": "en",
+	"edition": "Fathers of the English Dominican Province, second and revised edition 1920 (Benziger Brothers, 1947), from CCEL's ThML text",
+	"sources": [
+		{
+			"url": "https://ccel.org/ccel/aquinas/summa.xml",
+			"retrieved_at": "2026-08-23"
+		}
+	],
+	"copyright": {
+		"status": "public-domain",
+		"holder": null,
+		"notice": "Translation by the Fathers of the English Dominican Province (1920); public domain by age. Electronic text from the Christian Classics Ethereal Library."
+	},
+	"notes": "FIXTURE: a deliberately awkward slice -- a plain question, the article-less I q. 71, and (EN only) a Supplement question the Latin can never have. Divisions are trimmed; article NUMBERS are complete, because addresses are what the tests assert on.",
+	"generated_at": "2026-08-23T20:42:16Z",
+	"parts": ["I", "I-II", "II-II", "III", "Suppl"],
+	"question_count": 4,
+	"article_count": 22,
+	"corrections_applied": 2
+}

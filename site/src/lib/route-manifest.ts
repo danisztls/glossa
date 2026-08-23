@@ -21,6 +21,37 @@ export interface RouteManifest {
 	compendiumChapters: number[];
 	documents: string[];
 	prayers: string[];
+	/** Part slug -> question numbers, unioned across editions. */
+	summa: Record<string, number[]>;
+}
+
+/**
+ * The Summa's parts, as they appear in a URL.
+ *
+ * Lower-cased Roman, which is what the work's own citations already use
+ * (`STh I-II, 79, 1`) and therefore the least surprising thing to see in an
+ * address. Defined here, in the module that imports nothing, because
+ * `scripts/sync-corpus.mjs` needs the same mapping to lay out the content
+ * files and the worker needs it to validate an address — the same
+ * one-grammar-two-consumers arrangement this file already exists for.
+ */
+const SUMMA_PART_SLUGS: Record<string, string> = {
+	I: 'i',
+	'I-II': 'i-ii',
+	'II-II': 'ii-ii',
+	III: 'iii',
+	Suppl: 'suppl'
+};
+
+export function summaPartSlug(part: string): string {
+	const slug = SUMMA_PART_SLUGS[part];
+	if (!slug) throw new Error(`unknown Summa part ${JSON.stringify(part)}`);
+	return slug;
+}
+
+/** The inverse of `summaPartSlug`; `undefined` for anything not a part. */
+export function summaPartFromSlug(slug: string): string | undefined {
+	return Object.keys(SUMMA_PART_SLUGS).find((part) => SUMMA_PART_SLUGS[part] === slug);
 }
 
 const STATIC_PATHS = new Set([
@@ -29,6 +60,7 @@ const STATIC_PATHS = new Set([
 	'/catechismus',
 	'/compendium',
 	'/documenta',
+	'/summa',
 	'/preces',
 	// The reader's own bookmark library. Static and corpus-free, like
 	// `/colophon`: what it lists lives in this browser's localStorage, so
@@ -87,6 +119,13 @@ export function isCanonicalPath(pathname: string, manifest: RouteManifest): bool
 	}
 	if (parts[0] === 'preces' && parts.length === 2) {
 		return manifest.prayers.includes(parts[1]);
+	}
+	// `/summa/{part}/{question}` — an article is a FRAGMENT on the question's
+	// page (`#a3`), not a page of its own, following the documents' 2026-08-17
+	// decision rather than minting 3,113 addresses for one article of text
+	// each.
+	if (parts[0] === 'summa' && parts.length === 3) {
+		return hasNumber(manifest.summa[parts[1]] ?? [], parts[2]);
 	}
 
 	return false;

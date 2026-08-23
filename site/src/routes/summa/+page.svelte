@@ -1,0 +1,139 @@
+<script lang="ts">
+	/**
+	 * The Summa's table of contents: its parts, the treatise headings inside
+	 * each, and every question.
+	 *
+	 * Index-tier only — no content fetch. `summaQuestionMetas` carries the
+	 * titles and article numbers precisely so this page costs nothing, the
+	 * same split `/compendium` and the CCC TOC already use.
+	 *
+	 * Built from the READER'S edition, falling back the usual way, and the
+	 * consequence is visible rather than hidden: under Latin there are four
+	 * parts instead of five and no question titles at all, because the Corpus
+	 * Thomisticum prints neither a Supplement nor titles. Showing the English
+	 * edition's titles beside Latin text would be asserting that this source
+	 * says something it does not.
+	 */
+	import { content } from '$lib/content.svelte';
+	import {
+		getWork,
+		listSummaQuestions,
+		summaHeadingsForPart,
+		defaultSummaWorkId,
+		baseLang
+	} from '$lib/corpus';
+	import { summaPartSlug } from '$lib/route-manifest';
+	import { t } from '$lib/i18n.svelte';
+	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import type { SummaManifest } from '$lib/types';
+
+	const workId = $derived(defaultSummaWorkId(content.langFor('summa')));
+	const work = $derived(workId ? (getWork(workId) as SummaManifest | undefined) : undefined);
+	const lang = $derived(work ? baseLang(work.language) : 'en');
+	const questions = $derived(listSummaQuestions(lang));
+
+	/** The parts this edition has, each with its headings and questions. */
+	const parts = $derived.by(() =>
+		(work?.parts ?? []).map((part) => ({
+			part,
+			slug: summaPartSlug(part),
+			headings: summaHeadingsForPart(lang, part).filter((row) => row.level > 1),
+			questions: questions.filter((q) => q.part === part)
+		}))
+	);
+</script>
+
+<svelte:head>
+	<title>{t('summa.landing.title')} — {t('home.title')}</title>
+</svelte:head>
+
+<div class="reading-layout">
+	<article class="content-column">
+		<header>
+			<h1>{t('summa.landing.title')}</h1>
+			<p class="tagline">{t('summa.landing.tagline')}</p>
+		</header>
+
+		{#each parts as { part, slug, headings, questions: partQuestions } (part)}
+			<section class="part">
+				<h2>{t('summa.part')} {part}</h2>
+
+				{#if headings.length > 0}
+					<ul class="treatises">
+						{#each headings as heading (heading.title + heading.before)}
+							<li>
+								{#if heading.before !== null}
+									<a href={`/summa/${slug}/${heading.before}`}>{heading.title}</a>
+								{:else}
+									<span>{heading.title}</span>
+								{/if}
+							</li>
+						{/each}
+					</ul>
+				{/if}
+
+				<ol class="questions">
+					{#each partQuestions as question (question.n)}
+						<li>
+							<a href={`/summa/${slug}/${question.n}`}>
+								<span class="q-number">{question.n}</span>
+								{#if question.title}<span class="q-title">{question.title}</span>{/if}
+							</a>
+						</li>
+					{/each}
+				</ol>
+			</section>
+		{/each}
+
+		{#if work}
+			<CopyrightNotice manifest={work} />
+		{/if}
+	</article>
+</div>
+
+<style>
+	.tagline {
+		color: var(--color-text-muted);
+	}
+
+	.part {
+		margin-top: 2.5rem;
+	}
+
+	.treatises {
+		list-style: none;
+		padding: 0;
+		margin: 0 0 1rem;
+		color: var(--color-text-muted);
+		font-size: 0.9rem;
+	}
+
+	.questions {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+		gap: 0.15rem 1.5rem;
+	}
+
+	.questions a {
+		display: flex;
+		gap: 0.6rem;
+		padding: 0.2rem 0;
+		text-decoration: none;
+	}
+
+	.q-number {
+		flex: 0 0 2.5rem;
+		text-align: right;
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.q-title {
+		text-decoration: underline;
+		text-decoration-color: var(--color-border);
+		text-underline-offset: 0.15em;
+	}
+</style>

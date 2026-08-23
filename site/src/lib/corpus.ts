@@ -133,11 +133,14 @@ import type {
 	ScriptureRef,
 	StructureNode,
 	DocumentNode,
+	SummaNode,
+	SummaQuestion,
 	WorkManifest,
 	WorkType
 } from './types';
 
 import { inlineText, parseInlineHtml } from './inline-html';
+import { summaPartSlug } from './route-manifest';
 import {
 	USE_REAL_CORPUS,
 	bibleIndex,
@@ -161,6 +164,11 @@ import {
 	fixtureBibleBooks,
 	fixtureCccParagraphsByLang,
 	fixtureCompendiumQuestionsByLang,
+	fixtureSummaQuestionsByLang,
+	summaQuestionLocation,
+	summaQuestionMetas,
+	summaStructures,
+	type SummaQuestionMeta,
 	bibleBookLocation,
 	manifests,
 	listContentAssets,
@@ -222,15 +230,53 @@ export function listEditions(type: WorkType): WorkManifest[] {
 }
 
 /**
+ * The order a content language is fallen back to when the reader's own has
+ * no edition of a work: English first, then Latin.
+ *
+ * ENGLISH BEFORE LATIN, and stated rather than left to sort order. Every
+ * work type used to have an edition in both interface languages, so this
+ * question never arose — `defaultWorkId` took "the first edition" and the
+ * answer happened to be English because `en` sorts before `la` and `pt`.
+ * The Summa breaks that: it ships EN + LA and no Portuguese, and will not
+ * have one before 2055 (docs/decisions.md, 2026-08-23). A Portuguese reader
+ * following a citation to `STh I-II, 79, 1` must land somewhere, and which
+ * somewhere should not be a property of how work ids happen to alphabetize.
+ *
+ * English before Latin because it is the one more readers can read; Latin
+ * before nothing because it is the normative text and always complete where
+ * it exists.
+ */
+const CONTENT_LANG_FALLBACK = ['en', 'la'];
+
+/**
  * Preferred work id for a type at a UI language (docs/decisions.md #1:
- * content language follows UI language by default) — the first edition
- * whose language matches, or any edition if none does.
+ * content language follows UI language by default) — the edition in the
+ * reader's own language, else the first one `CONTENT_LANG_FALLBACK` finds,
+ * else any edition at all.
  */
 export function defaultWorkId(type: WorkType, lang: string): string | undefined {
-	const target = baseLang(lang);
 	const editions = listEditions(type);
-	const match = editions.find((w) => baseLang(w.language) === target);
-	return (match ?? editions[0])?.id;
+	return editionInLang(editions, lang)?.id ?? editions[0]?.id;
+}
+
+/**
+ * The edition of `editions` a reader of `lang` should get, following the
+ * fallback chain. `undefined` only when `editions` is empty or carries none
+ * of the chain's languages — callers decide whether that means "no link" or
+ * "show anything", and they differ (see `refHref` vs. `defaultWorkId`).
+ *
+ * Exported because the reference system needs exactly this decision without
+ * `defaultWorkId`'s last-resort "any edition": a citation must not silently
+ * land a reader on an edition in a language nobody asked for, but it must
+ * still resolve when the reader's own language has no edition — which is the
+ * whole of the Summa's situation.
+ */
+export function editionInLang(editions: WorkManifest[], lang: string): WorkManifest | undefined {
+	for (const candidate of [baseLang(lang), ...CONTENT_LANG_FALLBACK]) {
+		const match = editions.find((w) => baseLang(w.language) === candidate);
+		if (match) return match;
+	}
+	return undefined;
 }
 
 /** BCP-47 language tag -> bare language subtag, e.g. "pt-PT" -> "pt". */
@@ -1515,4 +1561,104 @@ export async function getPrayerAsync(lang: string, slug: string): Promise<Prayer
 	if (!prayerExists(lang, slug)) return undefined;
 	const prayers = await fetchPrayers(lang);
 	return prayers.find((p) => p.slug === slug);
+}
+
+
+// --- Summa: index tier (sync) ---------------------------------------------
+//
+// Addressed by (part, question, article), which is three levels rather than
+// the CCC's one, and the question number RESTARTS in each part -- so nothing
+// here takes a bare number the way `cccParagraphExists` can. An article is a
+// FRAGMENT on its question's page (`/summa/ii-ii/184#a3`), not a page of its
+// own: 3,113 articles would be 3,113 addresses for one article of text each,
+// which is the trade documents already made and reversed (docs/decisions.md,
+// 2026-08-17).
+
+export function summaLangs(): string[] {
+	return Object.keys(summaStructures).sort();
+}
+
+export function getSummaStructure(lang: string): SummaNode[] {
+	return summaStructures[lang] ?? [];
+}
+
+/**
+ * The work id a reader of `lang` should read the Summa in: their own
+ * language, else English, else Latin (`editionInLang`). Distinct from
+ * `defaultWorkId('summa', lang)` only in that it cannot fall through to "any
+ * edition at all" -- with two editions and a stated chain there is nothing
+ * left for that to mean.
+ */
+export function defaultSummaWorkId(lang: string): string | undefined {
+	return editionInLang(listEditions('summa'), lang)?.id;
+}
+
+export function listSummaQuestions(lang: string): SummaQuestionMeta[] {
+	return summaQuestionMetas[lang] ?? [];
+}
+
+function summaQuestionMeta(
+	lang: string,
+	part: string,
+	n: number
+): SummaQuestionMeta | undefined {
+	return listSummaQuestions(lang).find((q) => q.part === part && q.n === n);
+}
+
+/** Does this address exist in ANY edition? The question a route asks. */
+export function summaQuestionExists(part: string, n: number): boolean {
+	return summaLangs().some((lang) => summaQuestionMeta(lang, part, n) !== undefined);
+}
+
+/**
+ * The first edition that HAS `(part, n)`, following the reader's fallback
+ * chain. This is what a citation link resolves against, and why it is not
+ * simply `defaultSummaWorkId`: the Latin has no Supplement, so a reference to
+ * `Suppl q. 77` must reach English even for a reader whose chain would
+ * otherwise have picked Latin -- and, symmetrically, a Latin-preferring
+ * reader keeps Latin everywhere it exists.
+ */
+export function summaWorkIdFor(lang: string, part: string, n: number): string | undefined {
+	for (const edition of orderedSummaEditions(lang)) {
+		const editionLang = baseLang(edition.language);
+		if (summaQuestionMeta(editionLang, part, n)) return edition.id;
+	}
+	return undefined;
+}
+
+/** The reader's editions in preference order: their own, then the chain. */
+function orderedSummaEditions(lang: string): WorkManifest[] {
+	const editions = listEditions('summa');
+	const preferred = editionInLang(editions, lang);
+	return preferred ? [preferred, ...editions.filter((w) => w.id !== preferred.id)] : editions;
+}
+
+/** Does `(part, n, article)` exist in any edition? Validates a `#a{n}` anchor. */
+export function summaArticleExists(part: string, n: number, article: number): boolean {
+	return summaLangs().some((lang) =>
+		summaQuestionMeta(lang, part, n)?.articles.includes(article)
+	);
+}
+
+/** Headings that apply to one part, in document order — that part's TOC. */
+export function summaHeadingsForPart(lang: string, part: string): SummaNode[] {
+	return getSummaStructure(lang).filter((row) => row.part === part);
+}
+
+// --- Summa: content tier (async, one file per question) -------------------
+
+export async function getSummaQuestionAsync(
+	workId: string,
+	part: string,
+	n: number
+): Promise<SummaQuestion | undefined> {
+	const lang = workId.slice('summa.'.length);
+	const fixture = (fixtureSummaQuestionsByLang[lang] ?? []).find(
+		(q) => q.part === part && q.n === n
+	);
+	return fetchTier(
+		fixture,
+		summaQuestionLocation(workId, summaPartSlug(part), n),
+		undefined
+	);
 }

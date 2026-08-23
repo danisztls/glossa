@@ -1,0 +1,26 @@
+[
+	{
+		"level": 1,
+		"part": "I",
+		"title": "FIRST PART (FP: QQ 1-119)",
+		"before": 1
+	},
+	{
+		"level": 2,
+		"part": "I",
+		"title": "TREATISE ON SACRED DOCTRINE (Q[1])",
+		"before": 1
+	},
+	{
+		"level": 2,
+		"part": "I",
+		"title": "TREATISE ON THE ONE GOD (QQ[2]-26)",
+		"before": 2
+	},
+	{
+		"level": 2,
+		"part": "I",
+		"title": "TREATISE ON THE MOST HOLY TRINITY (QQ[27]-43)",
+		"before": 27
+	}
+]

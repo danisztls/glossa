@@ -43,6 +43,9 @@ import type {
 	CompendiumQuestion,
 	StructureNode,
 	DocumentNode,
+	SummaNode,
+	SummaPart,
+	SummaQuestion,
 	WorkManifest
 } from './types';
 
@@ -74,6 +77,20 @@ import cccPtManifest from './fixtures/ccc.pt/manifest.json';
 import cccPtStructure from './fixtures/ccc.pt/structure.json';
 import fixtureCccPtParagraphs from './fixtures/ccc.pt/paragraphs.json';
 import cccPtAbbreviations from './fixtures/ccc.pt/abbreviations.json';
+
+import summaEnManifest from './fixtures/summa.en/manifest.json';
+import summaEnStructure from './fixtures/summa.en/structure.json';
+import fixtureSummaEnQuestions from './fixtures/summa.en/questions.json';
+
+// The Summa is the corpus's only work with no Portuguese edition, and the
+// only one whose two editions cover different PARTS (the Latin has no
+// Supplement). These fixtures carry that asymmetry deliberately: `summa.en`
+// includes a Supplement question and `summa.la` cannot, which is what
+// exercises the EN-then-LA fallback in `defaultWorkId`/`editionInLang`.
+// They also both carry I q. 71, the article-less question.
+import summaLaManifest from './fixtures/summa.la/manifest.json';
+import summaLaStructure from './fixtures/summa.la/structure.json';
+import fixtureSummaLaQuestions from './fixtures/summa.la/questions.json';
 
 import compendiumEnManifest from './fixtures/compendium.en/manifest.json';
 import compendiumEnStructure from './fixtures/compendium.en/structure.json';
@@ -207,6 +224,27 @@ export interface PrayerMeta {
 interface PrayerIndexFile {
 	[lang: string]: { structure: StructureNode[]; prayers: PrayerMeta[] };
 }
+/**
+ * Existence/metadata for one Summa question -- the index-tier projection of
+ * `SummaQuestion` (types.ts), the same shape of thing `PrayerMeta` is one
+ * section up: enough to build a table of contents, validate an address and
+ * answer adjacency without a content fetch, and never a division's `html`.
+ * At 611 questions this is ~40 KB per language against 19 MB of text.
+ */
+export interface SummaQuestionMeta {
+	part: SummaPart;
+	n: number;
+	title: string;
+	/** Article numbers, in order. Empty for an article-less question. */
+	articles: number[];
+	/** Set only on the article-less questions (I q. 71, q. 72) -- see `SummaQuestion.divisions`. */
+	hasOwnDivisions?: boolean;
+}
+/** Keyed by bare LANG, matching `CccIndexFile`/`CompendiumIndexFile`: one
+ *  canonical Summa per language, not N works sharing a type. */
+interface SummaIndexFile {
+	[lang: string]: { structure: SummaNode[]; questions: SummaQuestionMeta[] };
+}
 export interface ContentManifestEntry {
 	workId: string;
 	kind:
@@ -215,7 +253,8 @@ export interface ContentManifestEntry {
 		| 'ccc-chunk'
 		| 'compendium-questions'
 		| 'document-sections'
-		| 'prayer-collection';
+		| 'prayer-collection'
+		| 'summa-question';
 	relPath: string;
 	bytes: number;
 }
@@ -244,6 +283,11 @@ const realIndexCompendium = import.meta.glob('./corpus-data/index/compendium-ind
 	eager: true,
 	import: 'default'
 }) as Record<string, CompendiumIndexFile>;
+
+const realIndexSumma = import.meta.glob('./corpus-data/index/summa-index.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, SummaIndexFile>;
 
 const realIndexDocuments = import.meta.glob('./corpus-data/index/document-index.json', {
 	eager: true,
@@ -374,7 +418,9 @@ export const manifests: Record<string, WorkManifest> = USE_REAL_CORPUS
 			'ccc.en': cccEnManifest as WorkManifest,
 			'ccc.pt': cccPtManifest as WorkManifest,
 			'compendium.en': compendiumEnManifest as WorkManifest,
-			'compendium.pt': compendiumPtManifest as WorkManifest
+			'compendium.pt': compendiumPtManifest as WorkManifest,
+			'summa.en': summaEnManifest as WorkManifest,
+			'summa.la': summaLaManifest as WorkManifest
 		};
 
 export const bibleIndex: Record<string, BibleBookMeta[]> = USE_REAL_CORPUS
@@ -446,6 +492,38 @@ export const cccParagraphNumbers: Record<string, number[]> = USE_REAL_CORPUS
 			en: (fixtureCccEnParagraphs as CccParagraph[]).map((p) => p.n).sort((a, b) => a - b),
 			pt: (fixtureCccPtParagraphs as CccParagraph[]).map((p) => p.n).sort((a, b) => a - b)
 		};
+
+/** Summa headings per language. Latin carries only its four parts -- the
+ *  Corpus Thomisticum prints no treatise groupings and no question titles. */
+export const summaStructures: Record<string, SummaNode[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexSumma) ?? {}).map(([lang, v]) => [lang, v.structure])
+		)
+	: {
+			en: summaEnStructure as unknown as SummaNode[],
+			la: summaLaStructure as unknown as SummaNode[]
+		};
+
+/** Question existence/metadata per language -- see `SummaQuestionMeta`. */
+export const summaQuestionMetas: Record<string, SummaQuestionMeta[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexSumma) ?? {}).map(([lang, v]) => [lang, v.questions])
+		)
+	: Object.fromEntries(
+			Object.entries({
+				en: fixtureSummaEnQuestions as unknown as SummaQuestion[],
+				la: fixtureSummaLaQuestions as unknown as SummaQuestion[]
+			}).map(([lang, questions]) => [
+				lang,
+				questions.map((q) => ({
+					part: q.part,
+					n: q.n,
+					title: q.title,
+					articles: q.articles.map((a) => a.n),
+					...(q.divisions ? { hasOwnDivisions: true as const } : {})
+				}))
+			])
+		);
 
 export const compendiumStructures: Record<string, StructureNode[]> = USE_REAL_CORPUS
 	? Object.fromEntries(
@@ -555,6 +633,16 @@ export const fixtureCccParagraphsByLang: Record<string, CccParagraph[]> = {
 	en: fixtureCccEnParagraphs as CccParagraph[],
 	pt: fixtureCccPtParagraphs as CccParagraph[]
 };
+/** Fixture Summa content, keyed by bare lang -- the content-tier counterpart
+ *  of `summaQuestionMetas`, read by `corpus.ts` under vitest instead of a
+ *  fetch. `summaQuestionMetas` derives its fixture branch from the same two
+ *  imports rather than from this registry: it is declared earlier in the
+ *  file, and a `const` cannot be read before its initializer runs. */
+export const fixtureSummaQuestionsByLang: Record<string, SummaQuestion[]> = {
+	en: fixtureSummaEnQuestions as unknown as SummaQuestion[],
+	la: fixtureSummaLaQuestions as unknown as SummaQuestion[]
+};
+
 export const fixtureCompendiumQuestionsByLang: Record<string, CompendiumQuestion[]> = {
 	en: fixtureCompendiumEnQuestions as CompendiumQuestion[],
 	pt: fixtureCompendiumPtQuestions as CompendiumQuestion[]
@@ -622,6 +710,13 @@ const documentChunkLocationsByWork: Record<string, Record<number, ContentLocatio
  *  other content-tier location map here is keyed (the lang-vs-workid choice
  *  in the INDEX registries above is a different, index-only concern). */
 const prayerLocations: Record<string, ContentLocation> = {};
+/** workId -> part slug -> question number -> file. Three levels because a
+ *  question number is only unique WITHIN a part: numbering restarts at 1 in
+ *  each of the five. */
+const summaQuestionLocations: Record<
+	string,
+	Record<string, Record<number, ContentLocation>>
+> = {};
 /** Keyed by WORK ID (`bible-intro.en`), matching every other location map. */
 const bibleIntroLocations: Record<string, ContentLocation> = {};
 /** relPath (`content-manifest.json`'s shape) -> hashed URL, built once so
@@ -663,6 +758,13 @@ for (const [globPath, url] of Object.entries(realContentUrls)) {
 	const prayerMatch = relPath.match(/^content\/([^/]+)\/prayers\.json$/);
 	if (prayerMatch) {
 		prayerLocations[prayerMatch[1]] = location;
+		continue;
+	}
+	// One file per question, which is one reader page -- `{part-slug}/{n}`.
+	const summaMatch = relPath.match(/^content\/([^/]+)\/questions\/([^/]+)\/(\d+)\.json$/);
+	if (summaMatch) {
+		const [, workId, partSlug, nStr] = summaMatch;
+		((summaQuestionLocations[workId] ??= {})[partSlug] ??= {})[Number(nStr)] = location;
 	}
 }
 
@@ -676,6 +778,14 @@ export function cccChunkLocation(workId: string, n: number): ContentLocation | u
 
 export function compendiumQuestionsLocation(workId: string): ContentLocation | undefined {
 	return compendiumQuestionsLocations[workId];
+}
+
+export function summaQuestionLocation(
+	workId: string,
+	partSlug: string,
+	n: number
+): ContentLocation | undefined {
+	return summaQuestionLocations[workId]?.[partSlug]?.[n];
 }
 
 /** The one chunk section `n` lives in — for a single-section read (a link

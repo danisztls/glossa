@@ -137,6 +137,28 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'compendium.nextQuestion': 'Next question',
 		'compendium.condenses': 'Condenses CCC ¶¶',
 		'compendium.noQuestionNumber': 'No question number in this corpus',
+		'nav.summa': 'Summa',
+		'summa.landing.title': 'Summa Theologiae',
+		'summa.landing.tagline': 'Thomas Aquinas, in English and in the Latin he wrote.',
+		'summa.tableOfContents': 'Table of Contents',
+		'summa.part': 'Part',
+		'summa.question': 'Question',
+		'summa.article': 'Article',
+		'summa.prologue': 'Prologue',
+		// The division names are kept in the Latin every citation uses: a
+		// footnote reads `ad 3` and `co.`, and translating the heading would
+		// leave the reader to guess which paragraph the reference means.
+		'summa.objection': 'Objection',
+		'summa.sedContra': 'On the contrary',
+		'summa.corpus': 'I answer that',
+		'summa.reply': 'Reply to Objection',
+		'summa.preamble': 'Note',
+		'summa.prevQuestion': 'Previous question',
+		'summa.nextQuestion': 'Next question',
+		'summa.noEditionInYourLanguage':
+			'The Summa has no Portuguese edition. Shown in {lang}.',
+		'summa.noLatinSupplement':
+			'The Supplement exists in English only — it was compiled after Aquinas’ death.',
 		'index.showSubsections': 'Show subsections',
 		'index.hideSubsections': 'Hide subsections',
 
@@ -378,6 +400,25 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'compendium.nextQuestion': 'Próxima pergunta',
 		'compendium.condenses': 'Condensa os §§',
 		'compendium.noQuestionNumber': 'Sem número de pergunta neste corpus',
+		'nav.summa': 'Suma',
+		'summa.landing.title': 'Suma Teológica',
+		'summa.landing.tagline': 'Tomás de Aquino, em inglês e no latim em que escreveu.',
+		'summa.tableOfContents': 'Índice',
+		'summa.part': 'Parte',
+		'summa.question': 'Questão',
+		'summa.article': 'Artigo',
+		'summa.prologue': 'Prólogo',
+		'summa.objection': 'Objecção',
+		'summa.sedContra': 'Em sentido contrário',
+		'summa.corpus': 'Respondo que',
+		'summa.reply': 'Resposta à objecção',
+		'summa.preamble': 'Nota',
+		'summa.prevQuestion': 'Questão anterior',
+		'summa.nextQuestion': 'Questão seguinte',
+		'summa.noEditionInYourLanguage':
+			'A Suma não tem edição portuguesa. Apresentada em {lang}.',
+		'summa.noLatinSupplement':
+			'O Suplemento existe apenas em inglês — foi compilado após a morte de Tomás de Aquino.',
 		'index.showSubsections': 'Mostrar subsecções',
 		'index.hideSubsections': 'Ocultar subsecções',
 

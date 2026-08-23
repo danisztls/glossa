@@ -125,6 +125,22 @@ export type RefSegment =
 			raw: string;
 	  }
 	| {
+			/**
+			 * A Summa Theologiae locus. Its own kind rather than a `document`
+			 * with a slug because its address is three levels deep (part,
+			 * question, article) where a document's is one section number, and
+			 * because the part is not a number at all.
+			 */
+			kind: 'summa';
+			part: SummaPartLabel;
+			question: number;
+			/** Absent when the citation names only a question, or names an
+			 *  article the parser could not read (`a. l`, `q. I` -- the PT
+			 *  Catechism's OCR). Under-linking beats a plausible wrong link. */
+			article: number | null;
+			raw: string;
+	  }
+	| {
 			kind: 'document';
 			sigla: string;
 			locus: string | null;
@@ -138,6 +154,151 @@ export type RefSegment =
 			slug: string | null;
 			raw: string;
 	  };
+
+/** The five parts, in the Roman form every citation normalizes to. */
+export type SummaPartLabel = 'I' | 'I-II' | 'II-II' | 'III' | 'Suppl';
+
+/**
+ * Both numbering conventions this corpus actually prints, mapped to one.
+ *
+ * The English Catechism and the encyclicals write Roman (`STh I-II, 79, 1`);
+ * the Portuguese Catechism writes Arabic (`Summa theologiae, 1-2, q. 79,
+ * a. 1`). `11-II` and `1-II` are not typos of ours -- they are what the PT
+ * archive's OCR produced for `II-II` and `I-II`, and they appear in the
+ * corpus often enough to be worth reading rather than dropping. Anything not
+ * in this table is left unlinked.
+ */
+const SUMMA_PARTS: Record<string, SummaPartLabel> = {
+	I: 'I',
+	II: 'II-II',
+	III: 'III',
+	'I-II': 'I-II',
+	'II-II': 'II-II',
+	'1': 'I',
+	'2': 'II-II',
+	'3': 'III',
+	'1-2': 'I-II',
+	'2-2': 'II-II',
+	'11-II': 'II-II',
+	'1-II': 'I-II',
+	'2-II': 'II-II',
+	SUPPL: 'Suppl',
+	SUPPLEM: 'Suppl',
+	SUPPLEMENTUM: 'Suppl'
+};
+
+/**
+ * `S Th`, `STh`, `S. Th.`, `Summa Theologica/theologiae`, `Suma Teológica`,
+ * followed by a part and a question, optionally an article.
+ *
+ * Word-bounded on the left, and that is not cosmetic: an unbounded `S\.?\s*Th`
+ * matches the `sth` inside `Esth` (Esther), which silently turned a Scripture
+ * citation into a Summa one across the corpus the first time this was
+ * measured.
+ *
+ * The separator between the title and the part is `[.,\s]*` rather than one
+ * optional mark: `Summa Theol., I, q. 25` prints BOTH an abbreviating period
+ * and a separating comma, and allowing only one silently dropped every
+ * citation written that way.
+ *
+ * The trailing article number tolerates `l` and `I` for `1` because the
+ * Portuguese archive's OCR prints them that way (`a. l`, `a. I`); a part or
+ * question number it cannot read is left unlinked rather than guessed.
+ */
+const SUMMA_RE =
+	/(?<![A-Za-zÀ-ÿ])(?:S\.?\s*Th\.?|STh|Summa\s+[Tt]heol\w*|Suma\s+[Tt]eol\w*|Summa\s+Theologica)[.,\s]*(?:p\.\s*)?(?:q\.\s*)?(Suppl\w*|[IVXl123]{1,3}[ªaе]?e?³?(?:\s*[-–]\s*|\s+)[IVXl123]{1,3}[ªa]?e?³?|[IVXl123]{1,3}[ªa]?e?³?)[.,\s]+(?:Supplem\w*\s*\d*[.,\s]*)?(?:q(?:uaest)?\.?\s*|p\.\s*)?([0-9]{1,3}|[IVXLCl]{1,7})(?![0-9])(?:[.,\s]+(?:a(?:rt)?\.?\s*)?([0-9]{1,2}|[IVXl]{1,6})(?![0-9]))?/gi;
+
+/** Roman numeral -> integer; `null` for anything that is not one. */
+function romanToInt(token: string): number | null {
+	const values: Record<string, number> = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+	// `l` is the Portuguese/older archives' OCR of `1` and of `I` alike; both
+	// readings agree here, since we are already parsing this as a numeral.
+	const upper = token.toUpperCase().replace(/L(?=$|[^IVXLCDM])/g, 'I');
+	let total = 0;
+	let previous = 0;
+	for (let i = upper.length - 1; i >= 0; i--) {
+		const value = values[upper[i]];
+		if (value === undefined) return null;
+		total += value < previous ? -value : value;
+		previous = Math.max(previous, value);
+	}
+	return total > 0 ? total : null;
+}
+
+/** A question or article number, written either way. */
+function summaNumber(token: string | undefined): number | null {
+	if (!token) return null;
+	const arabic = /^[0-9]+$/.test(token) ? Number(token) : null;
+	if (arabic !== null) return Number.isSafeInteger(arabic) && arabic > 0 ? arabic : null;
+	if (/^l$/i.test(token)) return 1; // bare OCR `l` for `1`
+	return romanToInt(token);
+}
+
+/**
+ * A part token as printed, reduced to one of the five labels.
+ *
+ * Four notations are live in this corpus and all four mean the same five
+ * things: Roman (`II-II`), Arabic (`2-2`, the Portuguese Catechism), the
+ * classical ordinal abbreviations the older encyclicals use (`IIa-IIae`,
+ * `Ia`), and OCR damage on any of them (`11-II`, `la` for `Ia`). Rather than
+ * enumerate the cross product, the token is normalized: drop the ordinal
+ * `a`/`ae` suffixes, read `l` as `1`, map Arabic to Roman, and look the
+ * result up.
+ */
+function normalizeSummaPart(token: string): SummaPartLabel | null {
+	const upper = token.toUpperCase();
+	if (upper.startsWith('SUPPL')) return 'Suppl';
+
+	// Split on a hyphen OR whitespace: `Ia-IIae` and `IIª IIª³` are the same
+	// notation, and one encyclical prints each.
+	const sides = upper.split(/\s*[-–]\s*|\s+/).map((side) => {
+		// Drop the ordinal suffixes (`Ia`, `IIae`) and the superscript
+		// ordinal marks vatican.va's typesetting leaves behind (`IIª`, `³`),
+		// then read `L` as the OCR of `1` that it is.
+		const bare = side
+			.replace(/[ª³]/g, '')
+			.replace(/AE$|A$/g, '')
+			.replace(/L/g, 'I');
+		if (/^[123]$/.test(bare)) return 'I'.repeat(Number(bare));
+		if (bare === '11') return 'II';
+		return bare;
+	});
+	if (sides.some((side) => !/^I{1,3}$/.test(side))) return null;
+
+	const label = sides.length === 1 ? sides[0] : `${sides[0]}-${sides[1]}`;
+	// `II` alone is not a part: the Summa's second part is always cited as
+	// `I-II` or `II-II`, so a bare `II` is a mis-parse rather than an address.
+	return label === 'II' ? null : ((label as SummaPartLabel) satisfies SummaPartLabel);
+}
+
+function findSummaAt(
+	clause: string,
+	pos: number
+): {
+	part: SummaPartLabel;
+	question: number;
+	article: number | null;
+	matchStart: number;
+	consumedEnd: number;
+} | null {
+	SUMMA_RE.lastIndex = pos;
+	const m = SUMMA_RE.exec(clause);
+	if (!m) return null;
+
+	const part = normalizeSummaPart(m[1]);
+	if (!part) return null;
+
+	const question = summaNumber(m[2]);
+	if (question === null) return null;
+
+	return {
+		part,
+		question,
+		article: summaNumber(m[3]),
+		matchStart: m.index,
+		consumedEnd: m.index + m[0].length
+	};
+}
 
 export interface RefsOpts {
 	/** BCP-47 or bare language tag; only the `pt`/non-`pt` distinction matters. Defaults to `en`. */
@@ -1245,8 +1406,31 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 	//
 	//    Ties go to the siglum: at the same offset it is the more precise
 	//    match, and a title only reaches that offset by being a prefix of it.
+	//    The Summa joins the same leftmost-wins race, and needs to: a
+	//    Portuguese Summa citation ends in `Ed. Leon. 8, 11`, an edition
+	//    reference, and the English ones often sit in a clause that also names
+	//    a document ("...DS 3005; DV 6; St. Thomas Aquinas, S Th I, I, I").
+	//    Whichever starts earliest is the one the clause is actually about.
 	const dm = findDocumentAt(cfg, rawClause, pos);
 	const tm = findDocumentTitleAt(rawClause, pos);
+	const sm = findSummaAt(rawClause, pos);
+	if (
+		sm !== null &&
+		(dm === null || sm.matchStart < dm.matchStart) &&
+		(tm === null || sm.matchStart < tm.matchStart)
+	) {
+		const segs: RefSegment[] = [];
+		if (sm.matchStart > 0) segs.push(textSeg(rawClause.slice(0, sm.matchStart)));
+		segs.push({
+			kind: 'summa',
+			part: sm.part,
+			question: sm.question,
+			article: sm.article,
+			raw: rawClause.slice(sm.matchStart, sm.consumedEnd)
+		});
+		if (sm.consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(sm.consumedEnd)));
+		return segs;
+	}
 	const useTitle = tm !== null && (dm === null || tm.matchStart < dm.matchStart);
 
 	if (useTitle) {

@@ -1,0 +1,26 @@
+[
+	{
+		"level": 1,
+		"part": "I",
+		"title": "Pars I",
+		"before": 1
+	},
+	{
+		"level": 1,
+		"part": "I-II",
+		"title": "Pars I-II",
+		"before": 1
+	},
+	{
+		"level": 1,
+		"part": "II-II",
+		"title": "Pars II-II",
+		"before": 1
+	},
+	{
+		"level": 1,
+		"part": "III",
+		"title": "Pars III",
+		"before": 1
+	}
+]

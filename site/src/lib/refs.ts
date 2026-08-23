@@ -21,8 +21,11 @@ import {
 	findBookByAbbrev,
 	getDocumentGroup,
 	listDocuments,
+	summaArticleExists,
+	summaQuestionExists,
 	workIdToEdition
 } from './corpus';
+import { summaPartSlug } from './route-manifest';
 import { setDocumentTitleSource, type RefSegment } from './refs-grammar';
 import { isDivergentBook, resolveVulgate } from './versification';
 
@@ -89,6 +92,34 @@ export function refHref(
 ): string | undefined {
 	if (seg.kind === 'ccc') return `/catechismus/${seg.n}`;
 	if (seg.kind === 'compendium') return `/compendium/${seg.n}`;
+	if (seg.kind === 'summa') {
+		// EDITION-FREE, and it has to be. Every other work type here either has
+		// an edition in each interface language (CCC, Compendium) or checks the
+		// reader's own before linking (documents). The Summa has neither: it
+		// ships EN + LA and no Portuguese, and will not have one before 2055
+		// (docs/decisions.md, 2026-08-23). Refusing to link for a Portuguese
+		// reader — which is what the documents' "their own language or no
+		// link" rule would do here — would leave every Summa citation in the
+		// Portuguese Catechism dead, which is most of them.
+		//
+		// So the address is checked against the corpus as a whole and the
+		// EDITION is resolved when the page opens, by the reader's own
+		// fallback chain (their language, then English, then Latin — see
+		// `editionInLang`). That is the same reasoning that already makes CCC
+		// and Compendium URLs edition-free, arriving at the same answer from a
+		// different direction.
+		if (!summaQuestionExists(seg.part, seg.question)) return undefined;
+		const base = `/summa/${summaPartSlug(seg.part)}/${seg.question}`;
+		// The article is validated, never trusted: the Portuguese archive's
+		// OCR produces article numbers that do not exist ("a. l" read as 1
+		// where the article is 4), and a citation naming only a question is
+		// ordinary. Either way the question page is a correct destination, so
+		// an unusable article degrades to it rather than to no link at all.
+		if (seg.article !== null && summaArticleExists(seg.part, seg.question, seg.article)) {
+			return `${base}#a${seg.article}`;
+		}
+		return base;
+	}
 	if (seg.kind === 'documentTitle') {
 		// The reader's own language edition, for the same reason the siglum
 		// branch below uses it: a citation link must not silently move them to

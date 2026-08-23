@@ -65,6 +65,7 @@ import {
 	buildDocumentBibleXrefs,
 	checkXrefsAgainstCorpus
 } from './build-xrefs.mjs';
+import { summaPartSlug } from '../src/lib/route-manifest.ts';
 
 const siteRoot = path.resolve(fileURLToPath(import.meta.url), '../..');
 const corpusDir = path.resolve(siteRoot, process.env.CORPUS_DIR ?? '../../glossa-corpus');
@@ -265,6 +266,8 @@ const cccEditions = []; // [{ lang, paragraphs }] -- input to the xref pass
 const documentEditions = []; // [{ slug, lang, sections }] -- ditto, per document edition
 const compendiumIndex = {}; // lang -> { structure }
 const compendiumQuestionNumbers = []; // canonical URL existence, across languages
+const summaIndex = {}; // lang -> { structure, questions } -- metadata only, never article text
+const summaAddresses = {}; // partSlug -> Set(question numbers), unioned across editions
 const documentIndex = {}; // workId -> { structure, sectionNumbers } -- keyed by WORK ID, not lang: unlike
 // the CCC/Compendium (one canonical work per language), each document work id
 // (`{family}.{slug}.{lang}`) is its own independent work with its own section
@@ -497,6 +500,54 @@ for (const workId of workIds) {
 	// work ids — `vatii.lumen-gentium.en`, future `encyclical.*`/`cdf.*`/…).
 	// Branches on `manifest.type`, not a `workId.startsWith(...)` prefix list
 	// like the three cases above: the family segment varies (vatii today,
+	// The Summa (docs/corpus-schema.md §Summa). Keyed by bare LANG like the
+	// Catechism, not by work id like the documents: there is one canonical
+	// Summa per language, not N independent works sharing a type.
+	if (manifest.type === 'summa') {
+		const lang = workId.slice('summa.'.length);
+		const structure = readJson(path.join(workDir, 'structure.json'));
+		const questions = readJson(path.join(workDir, 'questions.json'));
+
+		// EXISTENCE AND TITLES ONLY -- never a division's html. Same rule as
+		// `bible-index.json`'s "numbers, never verse text": what the index
+		// tier owes the client is enough to render a table of contents,
+		// validate an address and answer adjacency synchronously. At 611
+		// questions this is ~40 KB per language; the text it leaves behind is
+		// 19 MB.
+		summaIndex[lang] = {
+			structure,
+			questions: questions.map((q) => ({
+				part: q.part,
+				n: q.n,
+				title: q.title,
+				articles: q.articles.map((a) => a.n),
+				// The article-less questions (I q. 71, q. 72) carry their
+				// divisions on the question itself, and a reader route has to
+				// know that before fetching anything.
+				...(q.divisions ? { hasOwnDivisions: true } : {})
+			}))
+		};
+
+		// One file per question, which is exactly one reader page. Averages
+		// ~31 KB, so a reader opening II-II q. 64 fetches that and nothing
+		// else -- the alternative, chunking by number range like the CCC,
+		// would drag in four unrelated questions per read for no gain, since
+		// question numbers restart per part and a range spans no natural unit.
+		for (const question of questions) {
+			const slug = summaPartSlug(question.part);
+			(summaAddresses[slug] ??= new Set()).add(question.n);
+			const relPath = `content/${workId}/questions/${slug}/${question.n}.json`;
+			writeJson(path.join(destDir, relPath), question);
+			contentManifest.push({
+				workId,
+				kind: 'summa-question',
+				relPath,
+				bytes: byteLength(question)
+			});
+		}
+		continue;
+	}
+
 	// encyclical/apost-exhort/apost-const/cdf later per the schema), but
 	// every one of them is `type: "document"` and shares one content shape,
 	// so there's exactly one branch to maintain as more families land.
@@ -569,6 +620,7 @@ writeJson(path.join(indexDir, 'ccc-index.json'), cccIndex);
 writeJson(path.join(indexDir, 'compendium-index.json'), compendiumIndex);
 writeJson(path.join(indexDir, 'document-index.json'), documentIndex);
 writeJson(path.join(indexDir, 'prayer-index.json'), prayerIndex);
+writeJson(path.join(indexDir, 'summa-index.json'), summaIndex);
 
 /**
  * CCC -> Bible cross-references, DERIVED here rather than read from the
@@ -693,7 +745,17 @@ const routeManifest = {
 		...new Set(
 			Object.values(prayerIndex).flatMap((value) => value.prayers.map((prayer) => prayer.slug))
 		)
-	].sort()
+	].sort(),
+	// Unioned across editions, like `bible` above and for the same reason:
+	// the edge answers "is this an address?", and which edition has text for
+	// it is the reader's own language fallback to decide. The Supplement
+	// exists in English only, and `/summa/suppl/77` is a real address on that
+	// basis alone.
+	summa: Object.fromEntries(
+		Object.entries(summaAddresses)
+			.map(([slug, numbers]) => [slug, [...numbers].sort((a, b) => a - b)])
+			.sort(([a], [b]) => a.localeCompare(b))
+	)
 };
 
 writeJson(routeManifestPath, routeManifest);
@@ -711,6 +773,7 @@ const indexBytes = [
 	'bible-intro-index.json',
 	'ccc-index.json',
 	'compendium-index.json',
+	'summa-index.json',
 	'document-index.json',
 	'prayer-index.json',
 	'xrefs.json',

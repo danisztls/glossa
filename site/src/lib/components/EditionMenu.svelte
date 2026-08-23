@@ -68,6 +68,13 @@
 		if (pathname === '/preces' || pathname.startsWith('/preces/')) {
 			return { kind: 'type', type: 'prayer' };
 		}
+		// The Summa's menu offers English and Latin and no Portuguese, which
+		// is the work's permanent shape rather than a gap (docs/decisions.md,
+		// 2026-08-23). `listEditions` is already language-agnostic, so the
+		// menu needs nothing beyond being told this route has a work type.
+		if (pathname === '/summa' || pathname.startsWith('/summa/')) {
+			return { kind: 'type', type: 'summa' };
+		}
 		// `/documenta` itself (the library) has no single document in view —
 		// same "renders nothing" behavior as the home page, hence `startsWith`
 		// with the trailing slash rather than a bare prefix check.

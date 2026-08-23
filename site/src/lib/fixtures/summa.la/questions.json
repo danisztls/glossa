@@ -1,0 +1,649 @@
+[
+	{
+		"part": "I",
+		"n": 1,
+		"title": "",
+		"prologue": [
+			{
+				"html": "Et ut intentio nostra sub aliquibus certis limitibus comprehendatur, necessarium est primo investigare de ipsa sacra doctrina, qualis sit, et ad quae se extendat. Circa quae quaerenda sunt decem. Primo, de necessitate huius doctrinae. Secundo, utrum sit scientia. Tertio, utrum sit una vel plures. Quarto, utrum sit speculativa vel practica. Quinto, de comparatione eius ad alias scientias. Sexto, utrum sit sapientia. Septimo, quid sit subiectum eius. Octavo, utrum sit argumentativa. Nono, utrum uti debeat metaphoricis vel symbolicis locutionibus. Decimo, utrum Scriptura sacra huius doctrinae sit secundum plures sensus exponenda."
+			}
+		],
+		"articles": [
+			{
+				"n": 1,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad primum sic proceditur. Videtur quod non sit necessarium, praeter philosophicas disciplinas, aliam doctrinam haberi. Ad ea enim quae supra rationem sunt, homo non debet conari, secundum illud Eccli. III, <i>altiora te ne quaesieris</i>. Sed ea quae rationi subduntur, sufficienter traduntur in philosophicis disciplinis. Superfluum igitur videtur, praeter philosophicas disciplinas, aliam doctrinam haberi."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, doctrina non potest esse nisi de ente, nihil enim scitur nisi verum, quod cum ente convertitur. Sed de omnibus entibus tractatur in philosophicis disciplinis, et etiam de Deo, unde quaedam pars philosophiae dicitur theologia, sive scientia divina, ut patet per philosophum in VI Metaphys. Non fuit igitur necessarium, praeter philosophicas disciplinas, aliam doctrinam haberi."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Sed contra est quod dicitur II ad Tim. III, <i>omnis Scriptura divinitus inspirata utilis est ad docendum, ad arguendum, ad corripiendum, ad erudiendum ad iustitiam</i>. Scriptura autem divinitus inspirata non pertinet ad philosophicas disciplinas, quae sunt secundum rationem humanam inventae. Utile igitur est, praeter philosophicas disciplinas, esse aliam scientiam divinitus inspiratam."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 2,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad secundum sic proceditur. Videtur quod sacra doctrina non sit scientia. Omnis enim scientia procedit ex principiis per se notis. Sed sacra doctrina procedit ex articulis fidei, qui non sunt per se noti, cum non ab omnibus concedantur, <i>non enim omnium est fides</i>, ut dicitur II Thessalon. III. Non igitur sacra doctrina est scientia."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, scientia non est singularium. Sed sacra doctrina tractat de singularibus, puta de gestis Abrahae, Isaac et Iacob, et similibus. Ergo sacra doctrina non est scientia."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Sed contra est quod Augustinus dicit, XIV de Trinitate, <i>huic scientiae attribuitur illud tantummodo quo fides saluberrima gignitur, nutritur, defenditur, roboratur</i>. Hoc autem ad nullam scientiam pertinet nisi ad sacram doctrinam. Ergo sacra doctrina est scientia."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 3,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad tertium sic proceditur. Videtur quod sacra doctrina non sit una scientia. Quia secundum philosophum in I Poster., <i>una scientia est quae est unius generis subiecti</i>. Creator autem et creatura, de quibus in sacra doctrina tractatur, non continentur sub uno genere subiecti. Ergo sacra doctrina non est una scientia."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, in sacra doctrina tractatur de Angelis, de creaturis corporalibus, de moribus hominum. Huiusmodi autem ad diversas scientias philosophicas pertinent. Igitur sacra doctrina non est una scientia."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Sed contra est quod sacra Scriptura de ea loquitur sicut de una scientia, dicitur enim Sap. X, <i>dedit illi scientiam sanctorum</i>."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 4,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad quartum sic proceditur. Videtur quod sacra doctrina sit scientia practica. Finis enim practicae est operatio, secundum philosophum in II Metaphys. Sacra autem doctrina ad operationem ordinatur, secundum illud Iac. I, <i>estote factores verbi, et non auditores tantum</i>. Ergo sacra doctrina est practica scientia."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, sacra doctrina dividitur per legem veterem et novam. Lex autem pertinet ad scientiam moralem, quae est scientia practica. Ergo sacra doctrina est scientia practica."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Sed contra, omnis scientia practica est de rebus operabilibus ab homine; ut moralis de actibus hominum, et aedificativa de aedificiis. Sacra autem doctrina est principaliter de Deo, cuius magis homines sunt opera. Non ergo est scientia practica, sed magis speculativa."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 5,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad quintum sic proceditur. Videtur quod sacra doctrina non sit dignior aliis scientiis. Certitudo enim pertinet ad dignitatem scientiae. Sed aliae scientiae, de quarum principiis dubitari non potest, videntur esse certiores sacra doctrina, cuius principia, scilicet articuli fidei, dubitationem recipiunt. Aliae igitur scientiae videntur ista digniores."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, inferioris scientiae est a superiori accipere, sicut musicus ab arithmetico. Sed sacra doctrina accipit aliquid a philosophicis disciplinis, dicit enim Hieronymus in epistola ad magnum oratorem urbis Romae, quod <i>doctores antiqui intantum philosophorum doctrinis atque sententiis suos resperserunt libros, ut nescias quid in illis prius admirari debeas, eruditionem saeculi, an scientiam Scripturarum</i>. Ergo sacra doctrina est inferior aliis scientiis."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Sed contra est quod aliae scientiae dicuntur ancillae huius, Prov. IX, <i>misit ancillas suas vocare ad arcem</i>."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 6,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad sextum sic proceditur. Videtur quod haec doctrina non sit sapientia. Nulla enim doctrina quae supponit sua principia aliunde, digna est nomine sapientiae, <i>quia sapientis est ordinare, et non ordinari</i> (I Metaphys.). Sed haec doctrina supponit principia sua aliunde, ut ex dictis patet. Ergo haec doctrina non est sapientia."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, ad sapientiam pertinet probare principia aliarum scientiarum, unde ut caput dicitur scientiarum, ut VI Ethic. patet. Sed haec doctrina non probat principia aliarum scientiarum. Ergo non est sapientia."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, haec doctrina per studium acquiritur. Sapientia autem per infusionem habetur, unde inter septem dona spiritus sancti connumeratur, ut patet Isaiae XI. Ergo haec doctrina non est sapientia."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 7,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad septimum sic proceditur. Videtur quod Deus non sit subiectum huius scientiae. In qualibet enim scientia oportet supponere de subiecto quid est, secundum philosophum in I Poster. Sed haec scientia non supponit de Deo quid est, dicit enim Damascenus, <i>in Deo quid est, dicere impossibile est</i>. Ergo Deus non est subiectum huius scientiae."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, omnia quae determinantur in aliqua scientia, comprehenduntur sub subiecto illius scientiae. Sed in sacra Scriptura determinatur de multis aliis quam de Deo, puta de creaturis, et de moribus hominum. Ergo Deus non est subiectum huius scientiae."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Sed contra, illud est subiectum scientiae, de quo est sermo in scientia. Sed in hac scientia fit sermo de Deo, dicitur enim theologia, quasi sermo de Deo. Ergo Deus est subiectum huius scientiae."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 8,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad octavum sic proceditur. Videtur quod haec doctrina non sit argumentativa. Dicit enim Ambrosius in libro I de fide Catholica, <i>tolle argumenta, ubi fides quaeritur</i>. Sed in hac doctrina praecipue fides quaeritur, unde dicitur Ioan. XX, <i>haec scripta sunt ut credatis</i>. Ergo sacra doctrina non est argumentativa."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, si sit argumentativa, aut argumentatur ex auctoritate, aut ex ratione. Si ex auctoritate, non videtur hoc congruere eius dignitati, nam locus ab auctoritate est infirmissimus, secundum Boetium. Si etiam ex ratione, hoc non congruit eius fini, quia secundum Gregorium in homilia, <i>fides non habet meritum, ubi humana ratio praebet experimentum</i>. Ergo sacra doctrina non est argumentativa."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Sed contra est quod dicitur ad Titum I, de episcopo, <i>amplectentem eum qui secundum doctrinam est, fidelem sermonem, ut potens sit exhortari in doctrina sana, et eos qui contradicunt arguere</i>."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 9,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad nonum sic proceditur. Videtur quod sacra Scriptura non debeat uti metaphoris. Illud enim quod est proprium infimae doctrinae, non videtur competere huic scientiae, quae inter alias tenet locum supremum, ut iam dictum est. Procedere autem per similitudines varias et repraesentationes, est proprium poeticae, quae est infima inter omnes doctrinas. Ergo huiusmodi similitudinibus uti, non est conveniens huic scientiae."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, haec doctrina videtur esse ordinata ad veritatis manifestationem, unde et manifestatoribus eius praemium promittitur, Eccli. XXIV, <i>qui elucidant me, vitam aeternam habebunt</i>. Sed per huiusmodi similitudines veritas occultatur. Non ergo competit huic doctrinae divina tradere sub similitudine corporalium rerum."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, quanto aliquae creaturae sunt sublimiores, tanto magis ad divinam similitudinem accedunt. Si igitur aliquae ex creaturis transumerentur ad Deum, tunc oporteret talem transumptionem maxime fieri ex sublimioribus creaturis, et non ex infimis. Quod tamen in Scripturis frequenter invenitur."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 10,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad decimum sic proceditur. Videtur quod sacra Scriptura sub una littera non habeat plures sensus, qui sunt historicus vel litteralis, allegoricus, tropologicus sive moralis, et anagogicus. Multiplicitas enim sensuum in una Scriptura parit confusionem et deceptionem, et tollit arguendi firmitatem, unde ex multiplicibus propositionibus non procedit argumentatio, sed secundum hoc aliquae fallaciae assignantur. Sacra autem Scriptura debet esse efficax ad ostendendam veritatem absque omni fallacia. Ergo non debent in ea sub una littera plures sensus tradi."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, Augustinus dicit in libro de utilitate credendi, quod <i>Scriptura quae testamentum vetus vocatur, quadrifariam traditur, scilicet, secundum historiam, secundum aetiologiam, secundum analogiam, secundum allegoriam</i>. Quae quidem quatuor a quatuor praedictis videntur esse aliena omnino. Non igitur conveniens videtur quod eadem littera sacrae Scripturae secundum quatuor sensus praedictos exponatur."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, praeter praedictos sensus, invenitur sensus parabolicus, qui inter illos sensus quatuor non continetur."
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"part": "I",
+		"n": 71,
+		"title": "",
+		"prologue": [],
+		"articles": [],
+		"divisions": [
+			{
+				"kind": "objection",
+				"n": 1,
+				"blocks": [
+					{
+						"html": "Deinde considerandum est de opere quintae diei. Et videtur quod inconvenienter hoc opus describatur. Illud enim aquae producunt, ad cuius productionem sufficit virtus aquae. Sed virtus aquae non sufficit ad productionem omnium piscium et avium, cum videamus plura eorum generari ex semine. Non ergo convenienter dicitur, <i>producant aquae reptile animae viventis, et volatile super terram</i>."
+					}
+				]
+			},
+			{
+				"kind": "objection",
+				"n": 2,
+				"blocks": [
+					{
+						"html": "Praeterea, pisces et aves non tantum producuntur ex aqua, sed in eorum compositione videtur magis terra dominari quam aqua, quia corpora eorum naturaliter moventur ad terram; unde et in terra quiescunt. Non ergo convenienter dicitur pisces et aves ex aqua produci."
+					}
+				]
+			},
+			{
+				"kind": "objection",
+				"n": 3,
+				"blocks": [
+					{
+						"html": "Praeterea, sicut pisces habent motum in aquis, ita et aves in aere. Si ergo pisces ex aquis producuntur, aves non deberent produci ex aquis, sed ex aere."
+					}
+				]
+			}
+		]
+	},
+	{
+		"part": "II-II",
+		"n": 184,
+		"title": "",
+		"prologue": [
+			{
+				"html": "Deinde considerandum est de his quae pertinent ad statum perfectionis, ad quem alii status ordinantur. Nam consideratio officiorum, quantum quidem ad alios actus, pertinet ad legispositores; quantum autem ad sacra ministeria, pertinet ad considerationem ordinum, de quibus in tertia parte agetur. Circa statum autem perfectorum triplex consideratio occurrit, primo quidem, de statu perfectionis in communi; secundo, de his quae pertinent ad perfectionem episcoporum; tertio, de his quae pertinent ad perfectionem religiosorum. Circa primum quaeruntur octo. Primo, utrum perfectio attendatur secundum caritatem. Secundo, utrum aliquis possit esse perfectus in hac vita. Tertio, utrum perfectio huius vitae consistat principaliter in consiliis, vel in praeceptis. Quarto, utrum quicumque est perfectus, sit in statu perfectionis. Quinto, utrum praelati et religiosi specialiter sint in statu perfectionis. Sexto, utrum omnes praelati sint in statu perfectionis. Septimo, quis status sit perfectior, utrum religiosorum vel episcoporum. Octavo, de comparatione religiosorum ad plebanos et archidiaconos."
+			}
+		],
+		"articles": [
+			{
+				"n": 1,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad primum sic proceditur. Videtur quod perfectio Christianae vitae non attendatur specialiter secundum caritatem. Dicit enim apostolus, I ad Cor. XIV, <i>malitia autem parvuli estote, sensibus autem perfecti</i>. Sed caritas non pertinet ad sensum, sed magis ad affectum. Ergo videtur quod perfectio Christianae vitae non consistat principaliter in caritate."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, ad Ephes. ult. dicitur, <i>accipite armaturam Dei, ut possitis resistere in die malo, et in omnibus perfecti stare</i>. De armatura autem Dei subiungit dicens, <i>state succincti lumbos vestros in veritate, et induite loricam iustitiae, in omnibus sumentes scutum fidei</i>. Ergo perfectio Christianae vitae non solum attenditur secundum caritatem, sed etiam secundum alias virtutes."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, virtutes specificantur per actus, sicut et alii habitus. Sed Iac. I dicitur quod patientia opus perfectum habet. Ergo videtur quod status perfectionis attendatur magis secundum patientiam."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 2,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad secundum sic proceditur. Videtur quod nullus in hac vita possit esse perfectus. Dicit enim apostolus, I ad Cor. XIII, <i>cum venerit quod perfectum est, evacuabitur quod ex parte est</i>. Sed in hac vita non evacuatur quod ex parte est, manet enim in hac vita fides et spes, quae sunt ex parte. Ergo nullus in hac vita est perfectus."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "<i>Praeterea, perfectum est cui nihil deest</i>, ut dicitur in III Physic. Sed nullus est in hac vita cui non desit aliquid, dicitur enim Iac. III, in multis offendimus omnes; et in Psalmo dicitur, imperfectum meum viderunt oculi tui. Ergo nullus est in hac vita perfectus."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, perfectio vitae Christianae, sicut dictum est, attenditur secundum caritatem, quae sub se comprehendit dilectionem Dei et proximi. Sed quantum ad dilectionem Dei, non potest aliquis perfectam caritatem in hac vita habere, quia, ut Gregorius dicit, super Ezech., <i>amoris ignis, qui hic ardere inchoat, cum ipsum quem amat viderit, in amorem ipsius amplius ignescit</i>. Neque etiam quantum ad dilectionem proximi, quia non possumus in hac vita omnes proximos actualiter diligere, etsi habitualiter eos diligamus; dilectio autem habitualis imperfecta est. Ergo videtur quod nullus in hac vita possit esse perfectus."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 3,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad tertium sic proceditur. Videtur quod perfectio viae non consistit in praeceptis, sed in consiliis. Dicit enim dominus, Matth. XIX, <i>si vis perfectus esse, vade et vende omnia quae habes et da pauperibus, et veni, sequere me</i>. Sed istud est consilium. Ergo perfectio attenditur secundum consilia, et non secundum praecepta."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, ad observantiam praeceptorum omnes tenentur, cum sint de necessitate salutis. Si ergo perfectio Christianae vitae consistat in praeceptis, sequitur quod perfectio sit de necessitate salutis, et quod omnes ad eam teneantur. Quod patet esse falsum."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, perfectio Christianae vitae attenditur secundum caritatem, ut dictum est. Sed perfectio caritatis non videtur consistere in observantia praeceptorum, quia perfectionem caritatis praecedit et augmentum et inchoatio ipsius, ut patet per Augustinum, super canonicam Ioan.; non autem potest caritas inchoari ante observationem praeceptorum, quia, ut dicitur Ioan. XIV, si quis diligit me, sermonem meum servabit. Ergo perfectio vitae non attenditur secundum praecepta, sed secundum consilia."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 4,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad quartum sic proceditur. Videtur quod quicumque est perfectus, sit in statu perfectionis. Sicut enim per augmentum corporale pervenitur ad perfectionem corporalem, ita per augmentum spirituale pervenitur ad perfectionem spiritualem, ut dictum est. Sed post augmentum corporale aliquis dicitur esse in statu perfectae aetatis. Ergo etiam videtur quod post augmentum spirituale, cum quis iam adeptus est perfectionem, sit in statu perfectionis."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, eadem ratione qua aliquid movetur de contrario in contrarium, movetur etiam aliquid de minori ad maius, ut dicitur in V Physic. Sed quando aliquis transmutatur de peccato ad gratiam, dicitur mutare statum, prout distinguitur status culpae et status gratiae. Ergo videtur quod, pari ratione, cum aliquis proficit de minori gratia ad maiorem quousque perveniat ad perfectum, quod adipiscatur perfectionis statum."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, statum adipiscitur aliquis ex hoc quod a servitute liberatur. Sed per caritatem aliquis liberatur a servitute peccati, quia universa delicta operit caritas, ut dicitur Prov. X. Sed perfectus dicitur aliquis secundum caritatem, ut dictum est. Ergo videtur quod quicumque habeat perfectionem, ex hoc ipso habeat perfectionis statum."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 5,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad quintum sic proceditur. Videtur quod praelati et religiosi non sint in statu perfectionis. Status enim perfectionis distinguitur contra statum incipientium et proficientium. Sed non sunt aliqua genera hominum deputata specialiter statui proficientium vel incipientium. Ergo videtur quod nec etiam debeant esse aliqua genera hominum deputata statui perfectionis."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, status exterior debet interiori statui respondere, alioquin incurritur mendacium, quod <i>non solum est in falsis verbis, sed etiam in simulatis operibus</i>, ut Ambrosius dicit, in quodam sermone. Sed multi sunt praelati vel religiosi qui non habent interiorem perfectionem caritatis. Si ergo omnes religiosi et praelati sunt in statu perfectionis, sequeretur quod quicumque eorum non sunt perfecti, sint in peccato mortali, tanquam simulatores et mendaces."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, perfectio secundum caritatem attenditur, ut supra habitum est. Sed perfectissima caritas videtur esse in martyribus, secundum illud Ioan. XV, <i>maiorem dilectionem nemo habet quam ut animam suam ponat quis pro amicis suis</i>. Et super illud Heb. XII, nondum enim usque ad sanguinem etc., dicit Glossa, <i>perfectior in hac vita dilectio nulla est ea ad quam sancti martyres pervenerunt, qui contra peccatum usque ad sanguinem certaverunt</i>. Ergo videtur quod magis debeat attribui perfectionis status martyribus quam religiosis et episcopis."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 6,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad sextum sic proceditur. Videtur quod omnes praelati ecclesiastici sint in statu perfectionis. Dicit enim Hieronymus, super Epist. ad Tit., olim idem presbyter qui et episcopus, et postea subdit, <i>sicut ergo presbyteri sciunt se Ecclesiae consuetudine ei qui sibi praepositus fuerit, esse subiectos; ita episcopi noverint se magis consuetudine quam dispensationis dominicae veritate presbyteris esse maiores, et in communi debere Ecclesiam regere</i>. Sed episcopi sunt in statu perfectionis. Ergo et presbyteri habentes curam animarum."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, sicut episcopi suscipiunt curam animarum cum consecratione, ita etiam et presbyteri curati, et etiam archidiaconi, de quibus, super illud Act. VI, considerate, fratres, viros boni testimonii septem etc., dicit Glossa, <i>hic decernebant apostoli per Ecclesiam constitui septem diacones, qui essent sublimioris gradus, et quasi columnae proximi circa aram</i>. Ergo videtur quod ipsi etiam sint in statu perfectionis."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, sicut episcopi obligantur ad hoc quod animam suam ponant pro ovibus suis, ita et presbyteri curati et archidiaconi. Sed hoc pertinet ad perfectionem caritatis, ut dictum est. Ergo videtur quod etiam presbyteri curati et archidiaconi sint in statu perfectionis."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 7,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad septimum sic proceditur. Videtur quod status religiosorum sit perfectior quam status praelatorum. Dominus enim dicit, Matth. XIX, si vis <i>perfectus esse, vade et vende omnia quae habes et da pauperibus</i>, quod faciunt religiosi. Non autem ad hoc tenentur episcopi, dicitur enim XII, qu. I, <i>episcopi de rebus propriis vel acquisitis, vel quidquid de proprio habent, heredibus suis derelinquant</i>. Ergo religiosi sunt in perfectiori statu quam episcopi."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, perfectio principalius consistit in dilectione Dei quam in dilectione proximi. Sed status religiosorum directe ordinatur ad dilectionem Dei, unde et ex Dei servitio et famulatu nominantur, ut Dionysius dicit, VI cap. Eccles. Hier. Status autem episcoporum videtur ordinari ad dilectionem proximi, cuius curae superintendunt, unde et nominantur, ut patet per Augustinum, XIX de Civ. Dei. Ergo videtur quod status religiosorum sit perfectior quam status episcoporum."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, status religiosorum ordinatur ad vitam contemplativam, quae potior est quam vita activa, ad quam ordinatur status episcoporum, dicit enim Gregorius, in Pastoral., quod <i>per activam vitam prodesse proximis cupiens Isaias officium praedicationis appetiit, per contemplationem vero Ieremias, amori conditoris sedulo inhaerere desiderans, ne mitti ad praedicandum debeat, contradicit</i>. Ergo videtur quod status religiosorum sit perfectior quam status episcoporum."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 8,
+				"title": "",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "Ad octavum sic proceditur. Videtur quod etiam presbyteri curati et archidiaconi sint maioris perfectionis quam religiosi. Dicit enim Chrysostomus, in suo dialogo, <i>si talem mihi aliquem adducas monachum qualis, ut secundum exaggerationem dicam, Elias fuit, non tamen illi comparandus est qui, traditus populis et multorum peccata ferre compulsus, immobilis perseverat et fortis</i>. Et parum post dicit, <i>si quis mihi proponeret optionem ubi mallem placere, in officio sacerdotali an in solitudine monachorum, sine comparatione eligerem illud quod prius dixi</i>. Et in eodem libro dicit, <i>si quis bene administrato sacerdotio illius propositi, scilicet monachalis, sudores conferat, tantum eos distare reperiet quantum inter privatum distat et regem</i>. Ergo videtur quod sacerdotes habentes curam animarum sint perfectiores religiosis."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Praeterea, Augustinus dicit, in epistola ad Valerium, <i>cogitet religiosa prudentia tua nihil esse in hac vita, maxime hoc tempore, difficilius, laboriosius, periculosius episcopi aut presbyteri aut diaconi officio, sed apud Deum nihil beatius, si eo modo militetur quo noster imperator iubet</i>. Non ergo religiosi sunt perfectiores presbyteris aut diaconibus."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Praeterea, Augustinus dicit, ad Aurelium, <i>nimis dolendum est, si ad tam ruinosam superbiam monachos subrigimus, et tam gravi contumelia clericos dignos putamus</i>, ut scilicet dicatur quod malus monachus bonus clericus est, <i>cum aliquando bonus etiam monachus vix bonum clericum faciat</i>. Et paulo ante praemittit, non esse viam dandam servis Dei, idest monachis, ut se facilius putent eligi ad aliquid melius, scilicet clericatum, si facti fuerint deteriores, scilicet abiecto monachatu. Ergo videtur quod illi qui sunt in statu clericali, sint perfectiores religiosis."
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]

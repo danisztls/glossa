@@ -52,8 +52,18 @@ import type { WorkManifest } from './types';
  * right thing with no new code below -- unlike documents, which genuinely
  * need a per-slug override map because there's no single "the document
  * edition" (see this file's docblock).
+ *
+ * `'summa'` joins on the same terms, and is the first member for which
+ * `defaultWorkId` cannot return the reader's own language: the work ships
+ * EN + LA and no Portuguese. That is handled entirely inside `defaultWorkId`
+ * (see `corpus.ts`'s `CONTENT_LANG_FALLBACK`), so nothing here changes --
+ * but note the consequence for `#stillApplies`: a Portuguese reader's
+ * effective Summa edition is English, English IS a UI language, so an
+ * explicit pick of the Latin Summa persists across UI switches while a pick
+ * of the English one does not. That is the intended reading of the Latin
+ * rule, not an accident of this work having no Portuguese.
  */
-export type WorkTypeKey = 'bible' | 'catechism' | 'compendium' | 'prayer';
+export type WorkTypeKey = 'bible' | 'catechism' | 'compendium' | 'prayer' | 'summa';
 
 interface Override {
 	workId: string;

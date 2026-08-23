@@ -1,0 +1,797 @@
+[
+	{
+		"part": "I",
+		"n": 1,
+		"title": "THE NATURE AND EXTENT OF SACRED DOCTRINE (TEN ARTICLES)",
+		"prologue": [
+			{
+				"html": "To place our purpose within proper limits, we first endeavor to investigate the nature and extent of this sacred doctrine. Concerning this there are ten points of inquiry:"
+			}
+		],
+		"articles": [
+			{
+				"n": 1,
+				"title": "Whether, besides philosophy, any further doctrine is required?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It seems that, besides philosophical science, we have no need of any further knowledge. For man should not seek to know what is above reason: \"Seek not the things that are too high for thee\" (Ecclus. 3:22). But whatever is not above reason is fully treated of in philosophical science. Therefore any other knowledge besides philosophical science is superfluous."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, knowledge can be concerned only with being, for nothing can be known, save what is true; and all that is, is true. But everything that is, is treated of in philosophical science---even God Himself; so that there is a part of philosophy called theology, or the divine science, as Aristotle has proved (Metaph. vi). Therefore, besides philosophical science, there is no need of any further knowledge."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "It is written (2 Tim. 3:16): \"All Scripture, inspired of God is profitable to teach, to reprove, to correct, to instruct in justice.\" Now Scripture, inspired of God, is no part of philosophical science, which has been built up by human reason. Therefore it is useful that besides philosophical science, there should be other knowledge, i.e. inspired of God."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 2,
+				"title": "Whether sacred doctrine is a science?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It seems that sacred doctrine is not a science. For every science proceeds from self-evident principles. But sacred doctrine proceeds from articles of faith which are not self-evident, since their truth is not admitted by all: \"For all men have not faith\" (2 Thess. 3:2). Therefore sacred doctrine is not a science."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, no science deals with individual facts. But this sacred science treats of individual facts, such as the deeds of Abraham, Isaac and Jacob and such like. Therefore sacred doctrine is not a science."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Augustine says (De Trin. xiv, 1) \"to this science alone belongs that whereby saving faith is begotten, nourished, protected and strengthened.\" But this can be said of no science except sacred doctrine. Therefore sacred doctrine is a science."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 3,
+				"title": "Whether sacred doctrine is one science?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It seems that sacred doctrine is not one science; for according to the Philosopher (Poster. i) \"that science is one which treats only of one class of subjects.\" But the creator and the creature, both of whom are treated of in sacred doctrine, cannot be grouped together under one class of subjects. Therefore sacred doctrine is not one science."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, in sacred doctrine we treat of angels, corporeal creatures and human morality. But these belong to separate philosophical sciences. Therefore sacred doctrine cannot be one science."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Holy Scripture speaks of it as one science: \"Wisdom gave him the knowledge [scientiam] of holy things\" (Wis. 10:10)."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 4,
+				"title": "Whether sacred doctrine is a practical science?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It seems that sacred doctrine is a practical science; for a practical science is that which ends in action according to the Philosopher (Metaph. ii). But sacred doctrine is ordained to action: \"Be ye doers of the word, and not hearers only\" (James 1:22). Therefore sacred doctrine is a practical science."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, sacred doctrine is divided into the Old and the New Law. But law implies a moral science which is a practical science. Therefore sacred doctrine is a practical science."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Every practical science is concerned with human operations; as moral science is concerned with human acts, and architecture with buildings. But sacred doctrine is chiefly concerned with God, whose handiwork is especially man. Therefore it is not a practical but a speculative science."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 5,
+				"title": "Whether sacred doctrine is nobler than other sciences?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It seems that sacred doctrine is not nobler than other sciences; for the nobility of a science depends on the certitude it establishes. But other sciences, the principles of which cannot be doubted, seem to be more certain than sacred doctrine; for its principles---namely, articles of faith---can be doubted. Therefore other sciences seem to be nobler."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, it is the sign of a lower science to depend upon a higher; as music depends on arithmetic. But sacred doctrine does in a sense depend upon philosophical sciences; for Jerome observes, in his Epistle to Magnus, that \"the ancient doctors so enriched their books with the ideas and phrases of the philosophers, that thou knowest not what more to admire in them, their profane erudition or their scriptural learning.\" Therefore sacred doctrine is inferior to other sciences."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "Other sciences are called the handmaidens of this one: \"Wisdom sent her maids to invite to the tower\" (Prov. 9:3)."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 6,
+				"title": "Whether this doctrine is the same as wisdom?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It seems that this doctrine is not the same as wisdom. For no doctrine which borrows its principles is worthy of the name of wisdom; seeing that the wise man directs, and is not directed (Metaph. i). But this doctrine borrows its principles. Therefore this science is not wisdom."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, it is a part of wisdom to prove the principles of other sciences. Hence it is called the chief of sciences, as is clear in Ethic. vi. But this doctrine does not prove the principles of other sciences. Therefore it is not the same as wisdom."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, this doctrine is acquired by study, whereas wisdom is acquired by God's inspiration; so that it is numbered among the gifts of the Holy Spirit (Is. 11:2). Therefore this doctrine is not the same as wisdom."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 7,
+				"title": "Whether God is the object of this science?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It seems that God is not the object of this science. For in every science, the nature of its object is presupposed. But this science cannot presuppose the essence of God, for Damascene says (De Fide Orth. i, iv): \"It is impossible to define the essence of God.\" Therefore God is not the object of this science."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, whatever conclusions are reached in any science must be comprehended under the object of the science. But in Holy Writ we reach conclusions not only concerning God, but concerning many other things, such as creatures and human morality. Therefore God is not the object of this science."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "The object of the science is that of which it principally treats. But in this science, the treatment is mainly about God; for it is called theology, as treating of God. Therefore God is the object of this science."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 8,
+				"title": "Whether sacred doctrine is a matter of argument?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It seems this doctrine is not a matter of argument. For Ambrose says (De Fide 1): \"Put arguments aside where faith is sought.\" But in this doctrine, faith especially is sought: \"But these things are written that you may believe\" (Jn. 20:31). Therefore sacred doctrine is not a matter of argument."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, if it is a matter of argument, the argument is either from authority or from reason. If it is from authority, it seems unbefitting its dignity, for the proof from authority is the weakest form of proof. But if it is from reason, this is unbefitting its end, because, according to Gregory (Hom. 26), \"faith has no merit in those things of which human reason brings its own experience.\" Therefore sacred doctrine is not a matter of argument."
+							}
+						]
+					},
+					{
+						"kind": "sed-contra",
+						"blocks": [
+							{
+								"html": "The Scripture says that a bishop should \"embrace that faithful word which is according to doctrine, that he may be able to exhort in sound doctrine and to convince the gainsayers\" (Titus 1:9)."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 9,
+				"title": "Whether Holy Scripture should use metaphors?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It seems that Holy Scripture should not use metaphors. For that which is proper to the lowest science seems not to befit this science, which holds the highest place of all. But to proceed by the aid of various similitudes and figures is proper to poetry, the least of all the sciences. Therefore it is not fitting that this science should make use of such similitudes."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, this doctrine seems to be intended to make truth clear. Hence a reward is held out to those who manifest it: \"They that explain me shall have life everlasting\" (Ecclus. 24:31). But by such similitudes truth is obscured. Therefore, to put forward divine truths by likening them to corporeal things does not befit this science."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, the higher creatures are, the nearer they approach to the divine likeness. If therefore any creature be taken to represent God, this representation ought chiefly to be taken from the higher creatures, and not from the lower; yet this is often found in Scriptures."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 10,
+				"title": "Whether in Holy Scripture a word may have several senses?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It seems that in Holy Writ a word cannot have several senses, historical or literal, allegorical, tropological or moral, and anagogical. For many different senses in one text produce confusion and deception and destroy all force of argument. Hence no argument, but only fallacies, can be deduced from a multiplicity of propositions. But Holy Writ ought to be able to state the truth without any fallacy. Therefore in it there cannot be several senses to a word."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, Augustine says (De util. cred. iii) that \"the Old Testament has a fourfold division as to history, etiology, analogy and allegory.\" Now these four seem altogether different from the four divisions mentioned in the first objection. Therefore it does not seem fitting to explain the same word of Holy Writ according to the four different senses mentioned above."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, besides these senses, there is the parabolical, which is not one of these four."
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"part": "I",
+		"n": 71,
+		"title": "ON THE WORK OF THE FIFTH DAY (ONE ARTICLE)",
+		"prologue": [
+			{
+				"html": "We must next consider the work of the fifth day."
+			}
+		],
+		"articles": [],
+		"divisions": [
+			{
+				"kind": "objection",
+				"n": 1,
+				"blocks": [
+					{
+						"html": "It would seem that this work is not fittingly described. For the waters produce that which the power of water suffices to produce. But the power of water does not suffice for the production of every kind of fishes and birds since we find that many of them are generated from seed. Therefore the words, \"Let the waters bring forth the creeping creature having life, and the fowl that may fly over the earth,\" do not fittingly describe this work."
+					}
+				]
+			},
+			{
+				"kind": "objection",
+				"n": 2,
+				"blocks": [
+					{
+						"html": "Further, fishes and birds are not produced from water only, but earth seems to predominate over water in their composition, as is shown by the fact that their bodies tend naturally to the earth and rest upon it. It is not, then, fittingly that fishes and birds are produced from water."
+					}
+				]
+			},
+			{
+				"kind": "objection",
+				"n": 3,
+				"blocks": [
+					{
+						"html": "Further, fishes move in the waters, and birds in the air. If, then, fishes are produced from the waters, birds ought to be produced from the air, and not from the waters."
+					}
+				]
+			}
+		]
+	},
+	{
+		"part": "II-II",
+		"n": 184,
+		"title": "OF THE STATE OF PERFECTION IN GENERAL (EIGHT ARTICLES)",
+		"prologue": [
+			{
+				"html": "We must now consider those things that pertain to the state of perfection whereto the other states are directed. For the consideration of offices in relation to other acts belongs to the legislator; and in relation to the sacred ministry it comes under the consideration of orders of which we shall treat in the Third Part [*XP, Q[34]]."
+			}
+		],
+		"articles": [
+			{
+				"n": 1,
+				"title": "Whether the perfection of the Christian life consists chiefly in charity?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that the perfection of the Christian life does not consist chiefly in charity. For the Apostle says (1 Cor. 14:20): \"In malice be children, but in sense be perfect.\" But charity regards not the senses but the affections. Therefore it would seem that the perfection of the Christian life does not chiefly consist in charity."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further,'it is written (Eph. 6:13): \"Take unto you the armor of God, that you may be able to resist in the evil day, and to stand in all things perfect\"; and the text continues (Eph. 6:14, 16), speaking of the armor of God: \"Stand therefore having your loins girt about with truth, and having on the breast-plate of justice . . . in all things taking the shield of faith.\" Therefore the perfection of the Christian life consists not only in charity, but also in other virtues."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, virtues like other habits, are specified by their acts. Now it is written (James 1:4) that \"patience hath a perfect work.\" Therefore seemingly the state of perfection consists more specially in patience."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 2,
+				"title": "Whether any one can be perfect in this life?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that none can be perfect in this life. For the Apostle says (1 Cor. 13:10): \"When that which is perfect is come, that which is in part shall be done away.\" Now in this life that which is in part is not done away; for in this life faith and hope, which are in part, remain. Therefore none can be perfect in this life."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, \"The perfect is that which lacks nothing\" (Phys. iii, 6). Now there is no one in this life who lacks nothing; for it is written (James 3:2): \"In many things we all offend\"; and (Ps. 138:16): \"Thy eyes did see my imperfect being.\" Therefore none is perfect in this life."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, the perfection of the Christian life, as stated (A[1]), relates to charity, which comprises the love of God and of our neighbor. Now, neither as to the love of God can one have perfect charity in this life, since according to Gregory (Hom. xiv in Ezech.) \"the furnace of love which begins to burn here, will burn more fiercely when we see Him Whom we love\"; nor as to the love of our neighbor, since in this life we cannot love all our neighbors actually, even though we love them habitually; and habitual love is imperfect. Therefore it seems that no one can be perfect in this life."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 3,
+				"title": "Whether, in this life, perfection consists in the observance of the commandments or of the counsels?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that, in this life, perfection consists in the observance not of the commandments but of the counsels. For our Lord said (Mat. 19:21): \"If thou wilt be perfect, go sell all [Vulg.: 'what'] thou hast, and give to the poor . . . and come, follow Me.\" Now this is a counsel. Therefore perfection regards the counsels and not the precepts."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, all are bound to the observance of the commandments, since this is necessary for salvation. Therefore, if the perfection of the Christian life consists in observing the commandments, it follows that perfection is necessary for salvation, and that all are bound thereto; and this is evidently false."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, the perfection of the Christian life is gauged according to charity, as stated above (A[1]). Now the perfection of charity, seemingly, does not consist in the observance of the commandments, since the perfection of charity is preceded both by its increase and by its beginning, as Augustine says (Super Canonic. Joan. Tract. ix). But the beginning of charity cannot precede the observance of the commandments, since according to Jn. 14:23, \"If any one love Me, he will keep My word.\" Therefore the perfection of life regards not the commandments but the counsels."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 4,
+				"title": "Whether whoever is perfect is in the state of perfection?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that whoever is perfect is in the state of perfection. For, as stated above (A[3], ad 3), just as bodily perfection is reached by bodily growth, so spiritual perfection is acquired by spiritual growth. Now after bodily growth one is said to have reached the state of perfect age. Therefore seemingly also after spiritual growth, when one has already reached spiritual perfection, one is in the state of perfection."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, according to Phys. v, 2, movement \"from one contrary to another\" has the same aspect as \"movement from less to more.\" Now when a man is changed from sin to grace, he is said to change his state, in so far as the state of sin differs from the state of grace. Therefore it would seem that in the same manner, when one progresses from a lesser to a greater grace, so as to reach the perfect degree, one is in the state of perfection."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, a man acquires a state by being freed from servitude. But one is freed from the servitude of sin by charity, because \"charity covereth all sins\" (Prov. 10:12). Now one is said to be perfect on account of charity, as stated above (A[1]). Therefore, seemingly, whoever has perfection, for this very reason has the state of perfection."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 5,
+				"title": "Whether religious and prelates are in the state of perfection?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that prelates and religious are not in the state of perfection. For the state of perfection differs from the state of the beginners and the proficient. Now no class of men is specially assigned to the state of the proficient or of the beginners. Therefore it would seem that neither should any class of men be assigned to the state of perfection."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, the outward state should answer to the inward, else one is guilty of lying, \"which consists not only in false words, but also in deceitful deeds,\" according to Ambrose in one of his sermons (xxx de Tempore). Now there are many prelates and religious who have not the inward perfection of charity. Therefore, if all religious and prelates are in the state of perfection, it would follow that all of them that are not perfect are in mortal sin, as deceivers and liars."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, as stated above (A[1]), perfection is measured according to charity. Now the most perfect charity would seem to be in the martyrs, according to Jn. 15:13, \"Greater love than this no man hath, that a man lay down his life for his friends\": and a gloss on Heb. 12:4, \"For you have not yet resisted unto blood,\" says: \"In this life no love is more perfect than that to which the holy martyrs attained, who strove against sin even unto blood.\" Therefore it would seem that the state of perfection should be ascribed to the martyrs rather than to religious and bishops."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 6,
+				"title": "Whether all ecclesiastical prelates are in the state of perfection?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that all ecclesiastical prelates are in a state of perfection. For Jerome commenting on Titus 1:5, \"Ordain . . . in every city,\" etc. says: \"Formerly priest was the same as bishop,\" and afterwards he adds: \"Just as priests know that by the custom of the Church they are subject to the one who is placed over them, so too, bishops should recognize that, by custom rather than by the very ordinance of our Lord, they are above the priests, and are together the rightful governors of the Church.\" Now bishops are in the state of perfection. Therefore those priests also are who have the cure of souls."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, just as bishops together with their consecration receive the cure of souls, so also do parish priests and archdeacons, of whom a gloss on Acts 6:3, \"Brethren, look ye out . . . seven men of good reputation,\" says: \"The apostles decided here to appoint throughout the Church seven deacons, who were to be of a higher degree, and as it were the supports of that which is nearest to the altar.\" Therefore it would seem that these also are in the state of perfection."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, just as bishops are bound to \"lay down their life for their sheep,\" so too are parish priests and archdeacons. But this belongs to the perfection of charity, as stated above (A[2], ad 3). Therefore it would seem that parish priests and archdeacons also are in the state of perfection."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 7,
+				"title": "Whether the religious state is more perfect than that of prelates?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that the religious state is more perfect than that of prelates. For our Lord said (Mat. 19:21): \"If thou wilt be perfect, go\" and \"sell\" all [Vulg.: 'what'] \"thou hast, and give to the poor\"; and religious do this. But bishops are not bound to do so; for it is said (XII, qu. i, can. Episcopi de rebus): \"Bishops, if they wish, may bequeath to their heirs their personal or acquired property, and whatever belongs to them personally.\" Therefore religious are in a more perfect state than bishops."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, perfection consists more especially in the love of God than in the love of our neighbor. Now the religious state is directly ordered to the love of God, wherefore it takes its name from \"service and homage to God,\" as Dionysius says (Eccl. Hier. vi); [*Quoted above A[5]] whereas the bishop's state would seem to be ordered to the love of our neighbor, of whose cure he is the \"warden,\" and from this he takes his name, as Augustine observes (De Civ. Dei. xix, 19). Therefore it would seem that the religious state is more perfect than that of bishops."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, the religious state is directed to the contemplative life, which is more excellent than the active life to which the episcopal state is directed. For Gregory says (Pastor. i, 7) that \"Isaias wishing to be of profit to his neighbor by means of the active life desired the office of preaching, whereas Jeremias, who was fain to hold fast to the love of his Creator, exclaimed against being sent to preach.\" Therefore it would seem that the religious state is more perfect than the episcopal state."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 8,
+				"title": "Whether parish priests and archdeacons are more perfect than religious?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that also parish priests and archdeacons are more perfect than religious. For Chrysostom says in his Dialogue (De Sacerdot. vi): \"Take for example a monk, such as Elias, if I may exaggerate somewhat, he is not to be compared with one who, cast among the people and compelled to carry the sins of many, remains firm and strong.\" A little further on he says: \"If I were given the choice, where would I prefer to please, in the priestly office, or in the monastic solitude, without hesitation I should choose the former.\" Again in the same book (ch. 5) he says: \"If you compare the toils of this project, namely of the monastic life, with a well-employed priesthood, you will find them as far distant from one another as a common citizen is from a king.\" Therefore it would seem that priests who have the cure of souls are more perfect than religious."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, Augustine says (ad Valerium, Ep. xxi): \"Let thy religious prudence observe that in this life, and especially at these times, there is nothing so difficult, so onerous, so perilous as the office of bishop, priest, or deacon; while in God's sight there is no greater blessing, if one engage in the fight as ordered by our Commander-in-chief.\" Therefore religious are not more perfect than priests or deacons."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, Augustine says (Ep. lx, ad Aurel.): \"It would be most regrettable, were we to exalt monks to such a disastrous degree of pride, and deem the clergy deserving of such a grievous insult,\" as to assert that 'a bad monk is a good clerk,' \"since sometimes even a good monk makes a bad clerk.\" And a little before this he says that \"God's servants,\" i.e. monks, \"must not be allowed to think that they may easily be chosen for something better,\" namely the clerical state, \"if they should become worse thereby,\" namely by leaving the monastic state. Therefore it would seem that those who are in the clerical state are more perfect than religious."
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"part": "Suppl",
+		"n": 77,
+		"title": "OF THE TIME AND MANNER OF THE RESURRECTION (FOUR ARTICLES)",
+		"prologue": [
+			{
+				"html": "We must now consider the time and manner of the resurrection. Under this head there are four points of inquiry:"
+			}
+		],
+		"articles": [
+			{
+				"n": 1,
+				"title": "Whether the time of our resurrection should be delayed till the end of the world?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that the time of the resurrection ought not to be delayed till the end of the world, so that all may rise together. For there is more conformity between head and members than between one member and another, as there is more between cause and effect than between one effect and another. Now Christ, Who is our Head, did not delay His resurrection until the end of the world, so as to rise again together with all men. Therefore there is no need for the resurrection of the early saints to be deferred until the end of the world, so that they may rise again together with the others."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, the resurrection of the Head is the cause of the resurrection of the members. But the resurrection of certain members that desire nobility from their being closely connected with the Head was not delayed till the end of the world, but followed immediately after Christ's resurrection, as is piously believed concerning the Blessed Virgin and John the Evangelist [*Ep. de Assump. B.V., cap. ii, among St. Jerome's works]. Therefore the resurrection of others will be so much nearer Christ's resurrection, according as they have been more conformed to Him by grace and merit."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, the state of the New Testament is more perfect, and bears a closer resemblance to Christ, than the state of the Old Testament. Yet some of the fathers of the Old Testament rose again when Christ rose, according to Mat. 27:52: \"Many of the bodies of the saints, that had slept, arose.\" Therefore it would seem that the resurrection of the Old Testament saints should not be delayed till the end of the world, so that all may rise together."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 2,
+				"title": "Whether the time of our resurrection is hidden?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that this time is not hidden. Because when we know exactly the beginning of a thing, we can know its end exactly, since \"all things are measured by a certain period\" (De Generat. ii). Now the beginning of the world is known exactly. Therefore its end can also be known exactly. But this will be the time of the resurrection and judgment. Therefore that time is not hidden."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, it is stated (Apoc. 12:6) that \"the woman who represents the Church had a place prepared by God, that there she might feed [Vulg.: 'they should feed her'] a thousand two hundred sixty days.\" Again (Dan. 12:11), a certain fixed number of days is mentioned, which apparently signify years, according to Ezech. 4:6: \"A day for a year, yea a day for a year I have appointed to thee.\" Therefore the time of the end of the world and of the resurrection can be known exactly from Holy Writ."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, the state of the New Testament was foreshadowed in the Old Testament. Now we know exactly the time wherein the state of the Old Testament endured. Therefore we can also know exactly the time wherein the state of the New Testament will endure. But the state of the New Testament will last to the end of the world, wherefore it is said (Mat. 28:20): \"Behold I am with you . . . to the consummation of the world.\" Therefore the time of the end of the world and of the resurrection can be known exactly."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 3,
+				"title": "Whether the resurrection will take place at night-time?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that the resurrection will not be at night-time. For the resurrection will not be \"till the heavens be broken\" (Job 14:12). Now when the heavenly movement ceases, which is signified by its breaking, there will be no time, neither night nor day. Therefore the resurrection will not be at night-time."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, the end of a thing ought to be most perfect. Now the end of time will be then: wherefore it is said (Apoc. 10:6) that \"time shall be no longer.\" Therefore time ought to be then in its most perfect disposition and consequently it should be the daytime."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, the time should be such as to be adapted to what is done therein: wherefore (Jn. 13:30) the night is mentioned as being the time when Judas went out from the fellowship of the light. Now, all things that are hidden at the present time will then be made most manifest, because when the Lord shall come He \"will bring to light the hidden things of darkness, and will make manifest the counsels of the hearts\" (1 Cor. 4:5). Therefore it ought to be during the day."
+							}
+						]
+					}
+				]
+			},
+			{
+				"n": 4,
+				"title": "Whether the resurrection will happen suddenly or by degrees?",
+				"divisions": [
+					{
+						"kind": "objection",
+						"n": 1,
+						"blocks": [
+							{
+								"html": "It would seem that the resurrection will not happen suddenly but by degrees. For the resurrection of the dead is foretold (Ezech. 37:7,8) where it is written: \"The bones came together . . . and I saw and behold the sinews and the flesh came up upon them, and the skin was stretched out over them, but there was no spirit in them.\" Therefore the restoration of the bodies will precede in time their reunion with the souls, and thus the resurrection will not be sudden."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 2,
+						"blocks": [
+							{
+								"html": "Further, a thing does not happen suddenly if it require several actions following one another. Now the resurrection requires several actions following one another, namely the gathering of the ashes, the refashioning of the body, the infusion of the soul. Therefore the resurrection will not be sudden."
+							}
+						]
+					},
+					{
+						"kind": "objection",
+						"n": 3,
+						"blocks": [
+							{
+								"html": "Further, all sound is measured by time. Now the sound of the trumpet will be the cause of the resurrection, as stated above (Q[76], A[2]). Therefore the resurrection will take time and will not happen suddenly."
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]
