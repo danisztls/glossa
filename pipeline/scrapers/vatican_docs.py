@@ -339,7 +339,47 @@ class Fetcher:
 # --------------------------------------------------------------------------
 
 
+# The tags that mark up a RUN OF TEXT rather than separate two of them, and
+# so leave no space behind when removed. Exactly the set `narrow_html` keeps
+# as inline emphasis (`_HTML_ALLOWED_SIMPLE` plus a bare `<sup>`); `br` and
+# `blockquote` survive narrowing too but ARE separators and stay a space,
+# as does every tag narrowing drops.
+#
+# Keeping this set in step with what `narrow_html` keeps is what holds the
+# round-trip invariant `html_to_text(html) == text_marked` exact: both sides
+# must agree on every tag, and they only see the same tags because one is
+# derived from the other's input.
+_INLINE_TEXT_TAGS = frozenset({"i", "em", "b", "strong", "sup"})
+_TEXT_TAG_RE = re.compile(r"<\s*(/?)\s*([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>")
+
+
 def strip_tags(s: str) -> str:
+    """Plain text from markup: a separator tag becomes a space, an emphasis
+    tag becomes nothing.
+
+    Every tag used to become a space, which was wrong in one direction and
+    accidentally right in another, and the two had to be separated before
+    either could be fixed. Wrong: `Constitution <i>Esti minime</i>.` read
+    back as `Esti minime .`, and `Sh<sup>e</sup>ma` as `Sh e ma` -- 6,436
+    spurious spaces over 17.2% of sections, none of them in the source.
+    Accidentally right: where the SOURCE omits a space around a tag
+    (`<i>modus vivendi</i>had`, `with the<i>reaffirmation`), the substituted
+    space papered over the gap. That is a source defect and belongs in
+    `pipeline/corrections/` with evidence, not in a text rule that has to
+    corrupt 6,436 correct passages to hide 33 broken ones.
+
+    Emphasis cannot be stripped by a whitespace pass afterwards, either: the
+    corpus's own text prints spaced punctuation on purpose -- 2,450 `« x »`,
+    960 `( 1 )`, 2,300 `. . .` -- so a rule keyed on the CHARACTERS could not
+    tell the source's spacing from ours. Only the tag boundary can, and this
+    is where it is still known."""
+
+    def one(m: re.Match[str]) -> str:
+        return "" if m.group(2).lower() in _INLINE_TEXT_TAGS else " "
+
+    s = _TEXT_TAG_RE.sub(one, s)
+    # Comments, doctypes and anything else angle-bracketed that isn't a tag:
+    # unchanged behaviour, and never an emphasis run.
     s = re.sub(r"<[^>]+>", " ", s)
     s = ihtml.unescape(s)
     s = s.replace("\xa0", " ")  # &nbsp; after unescape
@@ -497,8 +537,12 @@ def html_to_text(html: str) -> str:
 
     Footnote elements vanish without leaving a space -- `Section.resolve`
     removes ⟦n⟧ with "" -- so `word<sup data-fn="12"></sup>.` reads back as
-    "word." and not "word ." . Every other tag becomes a space, matching
-    `strip_tags`."""
+    "word." and not "word ." . The remaining tags follow `strip_tags`:
+    emphasis (`i`/`b`/`sup`) leaves nothing behind, `br` and `blockquote`
+    leave a space. Removing the marker element here first is therefore no
+    longer a special case so much as the same rule applied early -- it has
+    to happen before `strip_tags` only because a `<sup>` WITHOUT `data-fn`
+    is real typography (`1960²`) that the corpus keeps."""
     return strip_tags(_FN_EL_RE.sub("", html))
 
 
@@ -794,6 +838,10 @@ _FN_ANCHOR_DEF_RE = re.compile(
 )
 _FN_PAREN_RE = re.compile(r"^\s*\((\d{1,4}\*?)\)\.?\s*")
 _FN_BARE_RE = re.compile(r"^\s*(\d{1,4})(?:\.+\s*|\s+)")
+# The superscript-label form, matched before tags are stripped -- see
+# `parse_footnote_entry`. Deliberately anchored and digits-only: a note
+# opening with an italic word must not be mistaken for a labelled entry.
+_FN_SUP_DEF_RE = re.compile(r"^\s*<sup[^>]*>\s*(\d{1,4})\s*</sup>", re.IGNORECASE)
 # (?:\.+\s*|\s+) (not \.*\s+): a handful of entries in the "NOTES" list
 # print a doubled period after the number (confirmed live, Lumen Gentium
 # PT footnote 174: "174.. Cfr. Paulo VI...") -- handled by \.+ (one or
@@ -824,6 +872,17 @@ def parse_footnote_entry(raw_inner_html: str) -> tuple[str | None, str]:
         visible = strip_tags(m.group("inner")).strip().strip("[]")
         marker = visible if visible.isdigit() else code
         return marker, strip_tags(raw_inner_html[m.end() :]).strip()
+    # `<sup>98</sup>Cf. Second Vatican...` -- the superscript IS the entry's
+    # label and the source prints no space after it (Ecclesia de Eucharistia
+    # EN, all 104 notes). Matched on the RAW markup, like the anchor form
+    # above and for the same reason: the split is structural. `strip_tags`
+    # no longer leaves a space where an emphasis tag was (see its
+    # docstring), so by the time this is text the label and the note are
+    # flush -- "98Cf." -- and no rule over the characters can tell that from
+    # a note whose text simply begins with a number.
+    m = _FN_SUP_DEF_RE.match(raw_inner_html)
+    if m:
+        return m.group(1), strip_tags(raw_inner_html[m.end() :]).strip()
     stripped = strip_tags(raw_inner_html)
     m = _FN_PAREN_RE.match(stripped)
     if m:
@@ -3262,6 +3321,37 @@ def validate_document(
 
     for node in state.root_children:
         node.compute_span()
+
+    # THE ROUND-TRIP INVARIANT, checked rather than asserted. `text_marked`
+    # and `html` are two derivations of the same source string by two
+    # independent code paths (`strip_tags` and `narrow_html`), so their
+    # disagreeing means one of them is wrong -- which is the whole reason
+    # the corpus stores both.
+    #
+    # It had been stated in five comments across this file and enforced in
+    # none of them: the only thing that ever ran it was an ad-hoc script
+    # somebody remembered to write. That is a check in name only, and it
+    # matters more now that `strip_tags` distinguishes emphasis from
+    # separators (see its docstring) -- the two paths have to agree about
+    # every tag, and nothing but this would notice if they stopped.
+    # Compared with the ⟦n⟧ tokens removed on BOTH sides: `html_to_text`
+    # drops the `<sup data-fn>` marker elements (leaving no space, see
+    # there), while `text_marked` keeps the tokens. Stripping them here is
+    # what makes the two comparable -- and matches `Section.resolve`, which
+    # derives the section's `text` by removing them with "" the same way.
+    for n, sec in sorted(sections.items()):
+        for i, block in enumerate(sec.blocks):
+            if not block.html:
+                continue
+            expected = re.sub(rf"{MARK_OPEN}[0-9A-Za-z*]+{MARK_CLOSE}", "", block.text)
+            expected = re.sub(r"\s+", " ", expected).strip()
+            actual = html_to_text(block.html)
+            if actual != expected:
+                problems.append(
+                    f"section {n} block {i}: html/text round-trip mismatch\n"
+                    f"      text: {expected[:140]!r}\n"
+                    f"      html: {actual[:140]!r}"
+                )
 
     for n, sec in sorted(sections.items()):
         for block in sec.blocks:
