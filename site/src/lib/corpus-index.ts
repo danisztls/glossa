@@ -53,6 +53,15 @@ import bibleMatosSoaresPtManifest from './fixtures/bible.matos-soares.pt/manifes
 import fixtureMatosSoaresGenJson from './fixtures/bible.matos-soares.pt/books/gen.json';
 import fixtureMatosSoaresJohnJson from './fixtures/bible.matos-soares.pt/books/john.json';
 
+// The Latin Bible is the corpus's only content language that is not also an
+// interface language, so it is the only fixture that can exercise
+// `content.svelte.ts`'s "an override the UI can never default to is never
+// cleared by a UI event" rule. It carries the same two books as the other
+// two editions.
+import bibleClementinaLaManifest from './fixtures/bible.clementina.la/manifest.json';
+import fixtureClementinaGenJson from './fixtures/bible.clementina.la/books/gen.json';
+import fixtureClementinaJohnJson from './fixtures/bible.clementina.la/books/john.json';
+
 import cccEnManifest from './fixtures/ccc.en/manifest.json';
 import cccEnStructure from './fixtures/ccc.en/structure.json';
 import fixtureCccEnParagraphs from './fixtures/ccc.en/paragraphs.json';
@@ -335,6 +344,7 @@ export const manifests: Record<string, WorkManifest> = USE_REAL_CORPUS
 	: {
 			'bible.cpdv.en': bibleCpdvEnManifest as WorkManifest,
 			'bible.matos-soares.pt': bibleMatosSoaresPtManifest as WorkManifest,
+			'bible.clementina.la': bibleClementinaLaManifest as WorkManifest,
 			'ccc.en': cccEnManifest as WorkManifest,
 			'ccc.pt': cccPtManifest as WorkManifest,
 			'compendium.en': compendiumEnManifest as WorkManifest,
@@ -356,6 +366,10 @@ export const bibleIndex: Record<string, BibleBookMeta[]> = USE_REAL_CORPUS
 			'bible.matos-soares.pt': [
 				metaFromFullBook(fixtureMatosSoaresGenJson as BibleBook),
 				metaFromFullBook(fixtureMatosSoaresJohnJson as BibleBook)
+			],
+			'bible.clementina.la': [
+				metaFromFullBook(fixtureClementinaGenJson as BibleBook),
+				metaFromFullBook(fixtureClementinaJohnJson as BibleBook)
 			]
 		};
 
@@ -487,6 +501,10 @@ export const fixtureBibleBooks: Record<string, Record<string, BibleBook>> = {
 	'bible.matos-soares.pt': {
 		gen: fixtureMatosSoaresGenJson as BibleBook,
 		john: fixtureMatosSoaresJohnJson as BibleBook
+	},
+	'bible.clementina.la': {
+		gen: fixtureClementinaGenJson as BibleBook,
+		john: fixtureClementinaJohnJson as BibleBook
 	}
 };
 export const fixtureCccParagraphsByLang: Record<string, CccParagraph[]> = {

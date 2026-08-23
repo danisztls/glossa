@@ -15,7 +15,21 @@
 
 import { readStoredString, writeStoredString } from './storage';
 
-export type UiLang = 'en' | 'pt';
+/**
+ * The languages the INTERFACE is available in — deliberately not the same set
+ * as the languages the corpus ships CONTENT in. The Latin Bible
+ * (`bible.clementina.la`) is a content language nobody wants chrome in, and
+ * `content.svelte.ts` depends on being able to tell the two apart: an edition
+ * pick whose language is not a UI language has no interface event that should
+ * ever supersede it. See `docs/decisions.md`.
+ */
+export const UI_LANGS = ['en', 'pt'] as const;
+
+export type UiLang = (typeof UI_LANGS)[number];
+
+export function isUiLang(tag: string): tag is UiLang {
+	return (UI_LANGS as readonly string[]).includes(tag);
+}
 
 const STORAGE_KEY = 'glossa:ui-lang';
 const DEFAULT_LANG: UiLang = 'en';
@@ -455,7 +469,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 
 function readStored(): UiLang | null {
 	const value = readStoredString(STORAGE_KEY);
-	return value === 'en' || value === 'pt' ? value : null;
+	return value != null && isUiLang(value) ? value : null;
 }
 
 /**
@@ -469,8 +483,8 @@ function readStored(): UiLang | null {
  */
 export function detectUiLang(languages: readonly string[] | undefined): UiLang {
 	for (const language of languages ?? []) {
-		const primary = language.trim().toLowerCase().split('-', 1)[0];
-		if (primary === 'en' || primary === 'pt') return primary;
+		const primary = language.trim().toLowerCase().split('-', 1)[0] ?? '';
+		if (isUiLang(primary)) return primary;
 	}
 	return DEFAULT_LANG;
 }

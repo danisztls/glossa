@@ -24,8 +24,13 @@ export interface Copyright {
 
 export type WorkType = 'bible' | 'catechism' | 'compendium' | 'document' | 'prayer';
 
-/** Bare language subtag the corpus ships content in (see `baseLang` in corpus.ts). */
-export type ContentLang = 'en' | 'pt';
+/**
+ * Bare language subtag the corpus ships content in (see `baseLang` in
+ * corpus.ts). Deliberately a wider set than `UiLang` in i18n.svelte.ts:
+ * `la` is a language readers want the TEXT in (the Clementine Vulgate) and
+ * nobody wants the interface in.
+ */
+export type ContentLang = 'en' | 'pt' | 'la';
 
 interface WorkManifestBase {
 	id: string;

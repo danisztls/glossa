@@ -211,6 +211,19 @@ Verse-number sets compared for the two books fetched:
 | Philemon         | identical                                | identical                  |
 | Psalms (150 ch.) | **4 chapters differ** (13, 92, 125, 135) | **1 chapter differs** (43) |
 
+**Measured corpus-wide after ingestion (2026-08-23)** — what the "honest
+limit" below called for. The sample held, and more sharply than it predicted:
+LA vs EN diverges in **25** chapters, LA vs PT in **6**, against the **31**
+`bible-edition-divergence.md` already measured for EN vs PT. And across those
+31 chapters where the two vernacular editions disagree, the Latin base takes
+a side in **every one of them**: with Portuguese in 25, with English in 6,
+with neither in **0**.
+
+That last figure is the useful one. There is no chapter where the base text
+fails to adjudicate, so the divergence table that document proposes can carry
+a documented base reading for all 31 entries rather than a "both faithful,
+no formula" verdict for any.
+
 Psalm 13: **the Latin has 7 verses. Matos Soares has 7. CPDV has 10.** The
 interpolation CPDV prints is not in its own stated base text. Psalms 92, 125
 and 135 are the same shape — Latin agrees with the Portuguese, CPDV stands
@@ -226,9 +239,11 @@ currently classified as "both faithful, no formula" into entries with a
 documented base reading. That is a corpus-integrity argument for ingesting
 Latin, independent of anyone wanting to read it.
 
-**Honest limit on this**: two books, chosen for size and for the known Psalms
-divergence — not a corpus-wide measurement. It justifies running the full
-comparison after ingestion; it does not pre-empt its result.
+**How the sample was framed at the time**, left standing rather than
+rewritten: "two books, chosen for size and for the known Psalms divergence —
+not a corpus-wide measurement. It justifies running the full comparison after
+ingestion; it does not pre-empt its result." That comparison has since been
+run, and is the paragraph above.
 
 ## 6. "Follow the original Vulgata order"
 

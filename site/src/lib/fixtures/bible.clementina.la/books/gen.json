@@ -1,0 +1,65 @@
+{
+	"osis": "gen",
+	"name": "Genesis",
+	"abbrevs": ["gen", "gn"],
+	"order": 1,
+	"chapters": [
+		{
+			"n": 1,
+			"verses": [
+				{
+					"n": 1,
+					"text": "In principio creavit Deus cælum, et terram."
+				},
+				{
+					"n": 2,
+					"text": "Terra autem erat inanis et vacua, et tenebræ erant super faciem abyssi: et Spiritus Dei ferebatur super aquas."
+				},
+				{
+					"n": 3,
+					"text": "Dixitque Deus: Fiat lux. Et facta est lux."
+				},
+				{
+					"n": 4,
+					"text": "Et vidit Deus lucem quod esset bona: et divisit lucem a tenebris."
+				},
+				{
+					"n": 5,
+					"text": "Appellavitque lucem Diem, et tenebras Noctem: factumque est vespere et mane, dies unus."
+				},
+				{
+					"n": 6,
+					"text": "Dixit quoque Deus: Fiat firmamentum in medio aquarum: et dividat aquas ab aquis."
+				},
+				{
+					"n": 7,
+					"text": "Et fecit Deus firmamentum, divisitque aquas, quæ erant sub firmamento, ab his, quæ erant super firmamentum. Et factum est ita."
+				},
+				{
+					"n": 8,
+					"text": "Vocavitque Deus firmamentum, Cælum: et factum est vespere et mane, dies secundus."
+				},
+				{
+					"n": 9,
+					"text": "Dixit vero Deus: Congregentur aquæ, quæ sub cælo sunt, in locum unum: et appareat arida. Et factum est ita."
+				},
+				{
+					"n": 10,
+					"text": "Et vocavit Deus aridam, Terram, congregationesque aquarum appellavit Maria. Et vidit Deus quod esset bonum."
+				},
+				{
+					"n": 11,
+					"text": "Et ait: Germinet terra herbam virentem, et facientem semen, et lignum pomiferum faciens fructum iuxta genus suum, cuius semen in semetipso sit super terram. Et factum est ita."
+				},
+				{
+					"n": 12,
+					"text": "Et protulit terra herbam virentem, et facientem semen iuxta genus suum, lignumque faciens fructum, et habens unumquodque sementem secundum speciem suam. Et vidit Deus quod esset bonum."
+				},
+				{
+					"n": 13,
+					"text": "Et factum est vespere et mane, dies tertius."
+				}
+			]
+		}
+	]
+}

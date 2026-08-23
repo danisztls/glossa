@@ -34,7 +34,7 @@
  * it — but same shape, same staleness rule, same reasoning throughout.
  */
 
-import { i18n } from './i18n.svelte';
+import { i18n, isUiLang } from './i18n.svelte';
 import {
 	baseLang,
 	defaultDocumentWorkId,
@@ -43,6 +43,7 @@ import {
 	listEditions
 } from './corpus';
 import { readStoredJson, writeStoredJson } from './storage';
+import type { WorkManifest } from './types';
 
 /**
  * `'prayer'` joins this union rather than getting a fourth `#documentOverrides`-
@@ -88,10 +89,35 @@ class ContentStore {
 	#overrides: OverrideMap = $state(readStored());
 	#documentOverrides: DocumentOverrideMap = $state(readDocumentStored());
 
+	/**
+	 * Whether an override still applies, given the language of the edition it
+	 * names.
+	 *
+	 * The reset-on-UI-switch rule (module docblock) exists so that a reader
+	 * who picked the Portuguese Bible under an English interface, then
+	 * deliberately switches the interface to Portuguese, gets Portuguese
+	 * content throughout rather than a stale pick. That reasoning holds only
+	 * while the picked language is one the interface *has*.
+	 *
+	 * Latin breaks that premise rather than the mechanism. No UI language
+	 * will ever default to the Latin Bible, so for a reader who wants it the
+	 * override is not an escape hatch from a sensible default — it is the
+	 * only path to the text they came for, and there is no interface event
+	 * that should be read as "they changed their mind about Latin." So an
+	 * override whose own language is not a UI language persists until the
+	 * reader changes it, and everything else keeps the old rule exactly.
+	 */
+	#stillApplies(override: Override, editions: WorkManifest[]): boolean {
+		const picked = editions.find((w) => w.id === override.workId);
+		if (picked && !isUiLang(baseLang(picked.language))) return true;
+		return override.forUiLang === i18n.lang;
+	}
+
 	/** The stored override for `type`, or undefined if there is none or it's stale (see module docblock). */
 	#activeOverride(type: WorkTypeKey): Override | undefined {
 		const override = this.#overrides[type];
-		return override && override.forUiLang === i18n.lang ? override : undefined;
+		if (!override) return undefined;
+		return this.#stillApplies(override, listEditions(type)) ? override : undefined;
 	}
 
 	/** Effective work id, e.g. "bible.matos-soares.pt" / "ccc.en". undefined if none. */
@@ -121,7 +147,16 @@ class ContentStore {
 	/** Document analogue of `workIdFor`, keyed by the document's `slug` rather than a `WorkTypeKey` — see module docblock. */
 	documentWorkIdFor(slug: string): string | undefined {
 		const override = this.#documentOverrides[slug];
-		const active = override && override.forUiLang === i18n.lang ? override : undefined;
+		// Same staleness rule as `#activeOverride`, for the same reason. No
+		// document has a Latin edition yet, but the rule belongs to the
+		// override rather than to the work type, and two rules that differ
+		// only by which map they read is how they drift apart.
+		const editions = override
+			? (Object.values(getDocumentGroup(slug)?.manifests ?? {}).filter(
+					(m) => m !== undefined
+				) as WorkManifest[])
+			: [];
+		const active = override && this.#stillApplies(override, editions) ? override : undefined;
 		return active?.workId ?? defaultDocumentWorkId(slug, i18n.lang);
 	}
 

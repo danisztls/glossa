@@ -146,13 +146,31 @@ npm run deploy      # build -> preflight -> wrangler deploy
 
 ## Work that spans languages
 
-Both Bible editions and both CCC/Compendium editions cover the same canonical
-address space, and that symmetry is a free QA oracle: when a document exists in
-two languages, their unit-number sets must match, and any asymmetry is a defect.
-That check caught three parser bugs that each looked internally plausible in one
-language alone. It does **not** generalize to the encyclicals, where a missing
-translation is legitimate and common (Leo XIII is ~17% translated into
-Portuguese) — there the rule is "when both exist, they must agree".
+All three Bible editions and both CCC/Compendium editions cover the same
+canonical address space, and that symmetry is a free QA oracle: when a document
+exists in two languages, their unit-number sets must match, and any asymmetry is
+a defect. That check caught three parser bugs that each looked internally
+plausible in one language alone. It does **not** generalize to the encyclicals,
+where a missing translation is legitimate and common (Leo XIII is ~17%
+translated into Portuguese) — there the rule is "when both exist, they must
+agree".
+
+**The Bible is the exception to reading asymmetry as a defect**, and adding the
+Latin sharpened rather than blurred that. `bible.clementina.la` is the text
+`bible.cpdv.en` was translated from, so where the three disagree about verse
+shape the Latin is evidence, not a third opinion: it takes a side in all 31
+chapters where EN and PT disagree (PT 25, EN 6, neither 0). Those disagreements
+are **edition divergence, not defects** — see `docs/research/bible-edition-divergence.md`
+for the four kinds and why calling them defects invites someone to "fix" a
+faithful text.
+
+**Latin is a content language and not an interface language**, and the
+distinction is load-bearing rather than cosmetic. `UiLang` in
+`site/src/lib/i18n.svelte.ts` stays `'en' | 'pt'` (use `isUiLang`/`UI_LANGS`);
+`ContentLang` in `types.ts` is the wider set. `content.svelte.ts` keeps an
+edition override forever when its language is not a UI language, because no
+interface event can mean "the reader changed their mind about Latin" — see
+`docs/decisions.md`, 2026-08-23.
 
 Citations may use Hebrew or Vulgate versification. The corpus canonicalizes on
 **Vulgate**; `site/src/lib/versification.ts` converts — the only implementation, since its Python twin went with `pipeline/build/` (see `docs/decisions.md`, 2026-08-21). Note that a wrong

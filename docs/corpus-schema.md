@@ -9,12 +9,16 @@ corpus/                      # gitignored, built locally
   raw/                       # cached raw fetches, one subdir per scraper (re-runs must be offline-capable)
     cpdv/ ...
     matos-soares/ ...
+    vulgate1914/ ...
     ccc-en/ ...
   works/
     bible.cpdv.en/
       manifest.json
       books/gen.json … rev.json     # one file per book, lowercase OSIS code
     bible.matos-soares.pt/
+      manifest.json
+      books/…
+    bible.clementina.la/
       manifest.json
       books/…
     ccc.en/
@@ -77,7 +81,7 @@ stored — see "Cross-references" below.
   "notes": "free text: edition diagnostics, known issues",
   "generated_at": "2026-08-14T12:00:00Z",
   // bible-only:
-  "psalm_numbering": "vulgate", // both v1 editions use Vulgate/Septuagint numbering
+  "psalm_numbering": "vulgate", // all three editions use Vulgate/Septuagint numbering
   "books": ["gen", "exod", "…"], // the 73 lowercase OSIS codes in this work's canonical order
 }
 ```

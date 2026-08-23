@@ -237,13 +237,14 @@ export function baseLang(tag: string): string {
 /**
  * A content language's own name, written in that language ("Português", not
  * "Portuguese") — same convention LanguageMenu.svelte uses for the UI
- * language switch. The corpus ships English and Portuguese content only
- * (docs/decisions.md), so this is a closed set for now; an unrecognized tag
- * falls back to the tag itself.
+ * language switch. Keyed on CONTENT language, which since the Clementine
+ * Vulgate landed is a wider set than the interface languages; an
+ * unrecognized tag falls back to the tag itself.
  */
 const LANGUAGE_NAMES: Record<string, string> = {
 	en: 'English',
-	pt: 'Português'
+	pt: 'Português',
+	la: 'Latina'
 };
 
 export function languageDisplayName(tag: string): string {

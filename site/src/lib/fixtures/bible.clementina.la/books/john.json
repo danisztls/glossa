@@ -1,0 +1,174 @@
+{
+	"osis": "john",
+	"name": "Joannes",
+	"abbrevs": ["john", "ioannes", "io", "jo", "ioan", "joan"],
+	"order": 50,
+	"chapters": [
+		{
+			"n": 1,
+			"verses": [
+				{
+					"n": 1,
+					"text": "In principio erat verbum, et verbum erat apud Deum, et Deus erat verbum."
+				},
+				{
+					"n": 2,
+					"text": "Hoc erat in principio apud Deum."
+				},
+				{
+					"n": 3,
+					"text": "Omnia per ipsum facta sunt: et sine ipso factum est nihil, quod factum est,"
+				},
+				{
+					"n": 4,
+					"text": "in ipso vita erat, et vita erat lux hominum:"
+				},
+				{
+					"n": 5,
+					"text": "et lux in tenebris lucet, et tenebræ eam non comprehenderunt."
+				},
+				{
+					"n": 6,
+					"text": "Fuit homo missus a Deo, cui nomen erat Ioannes."
+				},
+				{
+					"n": 7,
+					"text": "Hic venit in testimonium ut testimonium perhiberet de lumine, ut omnes crederent per illum."
+				},
+				{
+					"n": 8,
+					"text": "non erat ille lux, sed ut testimonium perhiberet de lumine."
+				},
+				{
+					"n": 9,
+					"text": "Erat lux vera, quæ illuminat omnem hominem venientem in hunc mundum."
+				},
+				{
+					"n": 10,
+					"text": "in mundo erat, et mundus per ipsum factus est, et mundus eum non cognovit."
+				},
+				{
+					"n": 11,
+					"text": "In propria venit, et sui eum non receperunt."
+				},
+				{
+					"n": 12,
+					"text": "quotquot autem receperunt eum, dedit eis potestatem filios Dei fieri, his, qui credunt in nomine eius:"
+				},
+				{
+					"n": 13,
+					"text": "qui non ex sanguinibus, neque ex voluntate carnis, neque ex voluntate viri, sed ex Deo nati sunt."
+				},
+				{
+					"n": 14,
+					"text": "Et verbum caro factum est, et habitavit in nobis: et vidimus gloriam eius, gloriam quasi unigeniti a patre plenum gratiæ et veritatis."
+				},
+				{
+					"n": 15,
+					"text": "Ioannes testimonium perhibet de ipso, et clamat dicens: Hic erat, quem dixi: Qui post me venturus est, ante me factus est: quia prior me erat."
+				},
+				{
+					"n": 16,
+					"text": "Et de plenitudine eius nos omnes accepimus, et gratiam pro gratia."
+				},
+				{
+					"n": 17,
+					"text": "quia lex per Moysen data est, gratia, et veritas per Iesum Christum facta est."
+				},
+				{
+					"n": 18,
+					"text": "Deum nemo vidit umquam: unigenitus filius, qui est in sinu patris, ipse enarravit."
+				}
+			]
+		},
+		{
+			"n": 3,
+			"verses": [
+				{
+					"n": 1,
+					"text": "Erat autem homo ex Pharisæis, Nicodemus nomine, princeps Iudæorum."
+				},
+				{
+					"n": 2,
+					"text": "Hic venit ad Iesum nocte, et dixit ei: Rabbi, scimus quia a Deo venisti magister, nemo enim potest hæc signa facere, quæ tu facis, nisi fuerit Deus cum eo."
+				},
+				{
+					"n": 3,
+					"text": "Respondit Iesus, et dixit ei: Amen, amen dico tibi, nisi quis renatus fuerit denuo, non potest videre regnum Dei."
+				},
+				{
+					"n": 4,
+					"text": "Dicit ad eum Nicodemus: Quomodo potest homo nasci, cum sit senex? numquid potest in ventrem matris suæ iterato introire, et renasci?"
+				},
+				{
+					"n": 5,
+					"text": "Respondit Iesus: Amen, amen dico tibi, nisi quis renatus fuerit ex aqua, et Spiritu sancto, non potest introire in regnum Dei."
+				},
+				{
+					"n": 6,
+					"text": "Quod natum est ex carne, caro est: et quod natum est ex spiritu, spiritus est."
+				},
+				{
+					"n": 7,
+					"text": "Non mireris quia dixi tibi: oportet vos nasci denuo."
+				},
+				{
+					"n": 8,
+					"text": "Spiritus ubi vult spirat: et vocem eius audis, sed nescis unde veniat, aut quo vadat: sic est omnis, qui natus est ex spiritu."
+				},
+				{
+					"n": 9,
+					"text": "Respondit Nicodemus, et dixit ei: Quomodo possunt hæc fieri?"
+				},
+				{
+					"n": 10,
+					"text": "Respondit Iesus, et dixit ei: Tu es magister in Israel, et hæc ignoras?"
+				},
+				{
+					"n": 11,
+					"text": "Amen, amen dico tibi, quia quod scimus loquimur, et quod vidimus testamur, et testimonium nostrum non accipitis."
+				},
+				{
+					"n": 12,
+					"text": "Si terrena dixi vobis, et non creditis: quomodo, si dixero vobis cælestia, credetis?"
+				},
+				{
+					"n": 13,
+					"text": "Et nemo ascendit in cælum, nisi qui descendit de cælo, Filius hominis, qui est in cælo."
+				},
+				{
+					"n": 14,
+					"text": "Et sicut Moyses exaltavit serpentem in deserto; ita exaltari oportet Filium hominis:"
+				},
+				{
+					"n": 15,
+					"text": "ut omnis, qui credit in ipsum, non pereat, sed habeat vitam æternam."
+				},
+				{
+					"n": 16,
+					"text": "Sic enim Deus dilexit mundum, ut Filium suum unigenitum daret: ut omnis, qui credit in eum, non pereat, sed habeat vitam æternam."
+				},
+				{
+					"n": 17,
+					"text": "Non enim misit Deus Filium suum in mundum, ut iudicet mundum, sed ut salvetur mundus per ipsum."
+				},
+				{
+					"n": 18,
+					"text": "Qui credit in eum, non iudicatur: qui autem non credit, iam iudicatus est: quia non credit in nomine unigeniti Filii Dei."
+				},
+				{
+					"n": 19,
+					"text": "Hoc est autem iudicium: quia lux venit in mundum, et dilexerunt homines magis tenebras, quam lucem: erant enim eorum mala opera."
+				},
+				{
+					"n": 20,
+					"text": "Omnis enim, qui male agit, odit lucem, et non venit ad lucem, ut non arguantur opera eius:"
+				},
+				{
+					"n": 21,
+					"text": "qui autem facit veritatem, venit ad lucem, ut manifestentur opera eius, quia in Deo sunt facta."
+				}
+			]
+		}
+	]
+}

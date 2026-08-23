@@ -28,21 +28,20 @@ that prints a summary table and exits non-zero on failure.
 from __future__ import annotations
 
 import argparse
-import html
 import json
-import re
 import sys
-import time
-from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-
-import httpx
 
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
 from common import CorrectionDriftError, chapter_opening_letter, load_corrections
+
+# The page format itself lives in sacredbible.py, shared with vulgate.py --
+# same operator, same hand-built template. See that module's docblock for
+# where the boundary between "the template" and "this edition" is drawn.
+from sacredbible import Anomaly, Fetcher, parse_book, verse_text_faults
 
 BASE_URL = "https://sacredbible.org/catholic/"
 USER_AGENT = "Glossa Catholica corpus builder (+contact via repo)"
@@ -192,16 +191,6 @@ KNOWN_CHAPTER_COUNTS = {"gen": 50, "ps": 150, "matt": 28, "rev": 22, "john": 21}
 SAMPLE_BOOKS = {"phlm", "john"}
 SAMPLE_JOHN_CHAPTERS = {1, 2, 3}
 
-CHAPTER_RE = re.compile(
-    r"^\[<A NAME=(\d+)><A HREF=#top class=chapter>([^<]*)</A></A>\]$", re.IGNORECASE
-)
-VERSE_RE = re.compile(r"^\{(\d+):(\d+)\}\s*(.*)$", re.DOTALL)
-TAG_RE = re.compile(r"<[^>]*>")
-WS_RE = re.compile(r"\s+")
-
-# Substrings that must never appear in cleaned verse text.
-MOJIBAKE_MARKERS = ["�", "\N{REPLACEMENT CHARACTER}", "Ã©", "â€™", "â€œ", "â€"]
-
 
 def abbrevs_for(osis: str, name: str) -> list[str]:
     base = [osis, name.lower().replace(" ", "")]
@@ -213,122 +202,7 @@ def abbrevs_for(osis: str, name: str) -> list[str]:
     return seen
 
 
-def clean_text(raw: str) -> str:
-    """Strip HTML tags/entities from a verse's raw text and normalize whitespace."""
-    no_tags = TAG_RE.sub("", raw)
-    unescaped = html.unescape(no_tags)
-    # cp1252 has no NBSP glyph issue after decode, but entities may still
-    # introduce \xa0; fold it into a normal space before collapsing.
-    unescaped = unescaped.replace("\xa0", " ")
-    collapsed = WS_RE.sub(" ", unescaped).strip()
-    return collapsed
-
-
-@dataclass
-class Anomaly:
-    osis: str
-    detail: str
-
-
 ANOMALIES: list[Anomaly] = []
-
-
-def parse_book(osis: str, raw_html: str) -> list[dict]:
-    """Parse a decoded book page into a list of {n, verses:[{n,text}]} chapters."""
-    begin = raw_html.find("<!-- begin -->")
-    end = raw_html.find("<!-- end -->")
-    body = raw_html[begin:end] if begin != -1 and end != -1 else raw_html
-
-    segments = re.split(r"<BR>", body, flags=re.IGNORECASE)
-
-    chapters: dict[int, list[tuple[int, str]]] = {}
-    chapter_order: list[int] = []
-    seen_verses: dict[int, set[int]] = {}
-
-    for raw_seg in segments:
-        seg = raw_seg.strip().replace("\r", "").replace("\n", " ").strip()
-        if not seg:
-            continue
-
-        m_ch = CHAPTER_RE.match(seg)
-        if m_ch:
-            n = int(m_ch.group(1))
-            if n not in chapters:
-                chapters[n] = []
-                chapter_order.append(n)
-                seen_verses[n] = set()
-            continue
-
-        m_v = VERSE_RE.match(seg)
-        if m_v:
-            c, v, raw_text = int(m_v.group(1)), int(m_v.group(2)), m_v.group(3)
-            text = clean_text(raw_text)
-            if not text:
-                ANOMALIES.append(Anomaly(osis, f"empty verse text at {c}:{v}, dropped"))
-                continue
-            if c not in chapters:
-                chapters[c] = []
-                chapter_order.append(c)
-                seen_verses[c] = set()
-            if v in seen_verses[c]:
-                ANOMALIES.append(
-                    Anomaly(
-                        osis,
-                        f"duplicate verse {c}:{v} in source, kept first occurrence",
-                    )
-                )
-                continue
-            seen_verses[c].add(v)
-            chapters[c].append((v, text))
-            continue
-
-        # Editorial asides (e.g. Esther 9's "<i>Alternate text from the
-        # Hebrew...</i>" heading) or blank noise between verses — ignored,
-        # they carry no {c:v} marker so nothing is lost from the text.
-
-    result = []
-    for n in sorted(chapter_order):
-        verses = sorted(chapters[n], key=lambda t: t[0])
-        result.append({"n": n, "verses": [{"n": v, "text": t} for v, t in verses]})
-    return result
-
-
-class Fetcher:
-    def __init__(self, offline: bool, refresh: bool):
-        self.offline = offline
-        self.refresh = refresh
-        self.client = (
-            None
-            if offline
-            else httpx.Client(
-                headers={"User-Agent": USER_AGENT}, timeout=30, follow_redirects=True
-            )
-        )
-
-    def fetch(self, filename: str) -> str:
-        """Return decoded (cp1252) HTML for a source page, cache-first."""
-        cache_path = RAW_DIR / filename
-        if not self.refresh and cache_path.exists():
-            raw = cache_path.read_bytes()
-            return raw.decode("cp1252")
-
-        if self.offline:
-            raise RuntimeError(
-                f"--offline set but {filename} is not cached at {cache_path}"
-            )
-
-        url = BASE_URL + filename
-        resp = self.client.get(url)
-        resp.raise_for_status()
-        raw = resp.content
-        RAW_DIR.mkdir(parents=True, exist_ok=True)
-        cache_path.write_bytes(raw)
-        time.sleep(RATE_LIMIT_SECONDS)
-        return raw.decode("cp1252")
-
-    def close(self):
-        if self.client is not None:
-            self.client.close()
 
 
 # --------------------------------------------------------------------------
@@ -417,7 +291,14 @@ def write_corrections_receipt(
 def run_scrape(
     sample: bool, offline: bool, refresh: bool
 ) -> tuple[list[dict], list[str]]:
-    fetcher = Fetcher(offline=offline, refresh=refresh)
+    fetcher = Fetcher(
+        base_url=BASE_URL,
+        raw_dir=RAW_DIR,
+        user_agent=USER_AGENT,
+        rate_limit_seconds=RATE_LIMIT_SECONDS,
+        offline=offline,
+        refresh=refresh,
+    )
     book_docs: list[dict] = []
     fetched_files: list[str] = []
     try:
@@ -426,7 +307,8 @@ def run_scrape(
                 continue
             raw_html = fetcher.fetch(filename)
             fetched_files.append(filename)
-            chapters = parse_book(osis, raw_html)
+            chapters, anomalies = parse_book(osis, raw_html)
+            ANOMALIES.extend(anomalies)
             if sample and osis == "john":
                 chapters = [c for c in chapters if c["n"] in SAMPLE_JOHN_CHAPTERS]
             book_docs.append(
@@ -489,22 +371,8 @@ def validate(book_docs: list[dict], sample: bool) -> tuple[bool, list[str]]:
                     )
 
             for v in ch["verses"]:
-                t = v["text"]
-                if "<" in t:
-                    fail(f"{osis} {ch['n']}:{v['n']}: leftover '<' in text")
-                if "{" in t or "}" in t:
-                    fail(
-                        f"{osis} {ch['n']}:{v['n']}: leftover verse marker braces in text"
-                    )
-                if "  " in t:
-                    fail(f"{osis} {ch['n']}:{v['n']}: double space in text")
-                if t != t.strip():
-                    fail(f"{osis} {ch['n']}:{v['n']}: leading/trailing whitespace")
-                for marker in MOJIBAKE_MARKERS:
-                    if marker in t:
-                        fail(
-                            f"{osis} {ch['n']}:{v['n']}: mojibake marker {marker!r} in text"
-                        )
+                for fault in verse_text_faults(v["text"]):
+                    fail(f"{osis} {ch['n']}:{v['n']}: {fault}")
 
     return ok, report
 

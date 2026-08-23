@@ -1,0 +1,27 @@
+{
+	"id": "bible.clementina.la",
+	"type": "bible",
+	"title": "Biblia Sacra Vulgatæ Editionis",
+	"short_title": "Vulgata Clementina",
+	"language": "la",
+	"edition": "Clementine recension, Hetzenauer's 1914 printing",
+	"sources": [
+		{
+			"url": "https://sacredbible.org/vulgate1914/VT-01_Genesis.htm",
+			"retrieved_at": "2026-08-23"
+		},
+		{
+			"url": "https://sacredbible.org/vulgate1914/NT-04_Joannes.htm",
+			"retrieved_at": "2026-08-23"
+		}
+	],
+	"copyright": {
+		"status": "public-domain",
+		"holder": null,
+		"notice": "Entire text, including all html and css code, is in the public domain. No copyright."
+	},
+	"notes": "SITE FIXTURE, not the full corpus: only Genesis 1:1-13 and John 1:1-18, 3:1-21 are populated, and `books` lists only the two present here instead of the full 73. Text is the real Clementine Vulgate (Hetzenauer 1914) output, sliced -- not invented. This is the corpus's only content language that is not also an interface language, which is what content.test.ts uses it for.",
+	"generated_at": "2026-08-23T00:00:00Z",
+	"psalm_numbering": "vulgate",
+	"books": ["gen", "john"]
+}
