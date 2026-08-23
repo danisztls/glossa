@@ -34,22 +34,35 @@ Reading five more sections gives a description that is checkable line by line.
 
 ## Procedure
 
+**The corpus is a separate repository.** As of 2026-08-23 it is `glossa-corpus`,
+a private checkout beside this one (`CLAUDE.md`). Every path below is relative
+to it, and `$CORPUS` stands for it:
+
+```sh
+CORPUS=${CORPUS_DIR:-$HOME/Dev/me/glossa-corpus}
+```
+
 ### 1. Read the document
 
 ```sh
-cd corpus/works/encyclical.<slug>.en
+cd $CORPUS/works/encyclical.<slug>.en
 
-jq 'length' sections.json                         # how long is it
-jq -r '.[] | "\(.kind)|\(.title)|\(.paragraphs|tostring)"' structure.json
+jq 'length' sections.json                                  # how long is it
+jq -r '.[] | "\(.level)  before \u00a7\(.before)  \(.ident // "")\(.title)"' structure.json
 ```
 
-Then read actual text — the opening, the first section of each chapter, and
-the closing:
+Note both shapes changed in August 2026 and older recipes are wrong:
+`structure.json` is a **flat array** of `{level, title, before}` (plus optional
+`ident`/`subtitle`), not a tree with `kind`/`paragraphs`; and a section's
+blocks carry **`html` only** — `text` and `text_marked` were removed
+(`docs/decisions.md`, 2026-08-22). A recipe asking for `.text` returns empty
+strings rather than failing, which reads as an empty document.
 
 ```sh
 for n in 1 17 46 90 131 182; do
-  echo "=== §$n ==="
-  jq -r --argjson n $n '.[] | select(.n==$n) | .text' sections.json | head -c 700
+  echo "=== \u00a7$n ==="
+  jq -r --argjson n $n '.[] | select(.n==$n) | .blocks[].html' sections.json \
+    | sed -e 's/<[^>]*>//g' | head -c 700
 done
 ```
 
@@ -57,24 +70,94 @@ Chapter-opening sections are disproportionately informative: this genre
 announces what each chapter will do ("In this first chapter, I intend to…").
 The final sections carry the appeal the document is actually making.
 
-### 2. Read the structure tree critically
+### 2. Read the raw page, with `census.py`
 
-You are the first person to look closely at this document since it was
-scraped. **Treat every oddity in `structure.json` as a suspected parse
-defect**, and report it. The tells:
+**Never judge a document's headings from `sections.json`.** The corpus's
+largest structural defect is headings that the parser dropped, so they are
+missing from exactly the file you would be searching. A negative from parsed
+output means "no headings survived the parse", never "no headings exist". This
+produced a confident false negative in batch 1 (`adiutricem.en`, reported as
+genuinely flat, actually holding 18 real sub-headings).
 
-- nodes with `[null, null]` ranges
-- a heading whose range doesn't fit its position (a "CHAPTER FIVE" holding
-  §1–16)
-- duplicate titles at the same level
-- a range that overlaps or skips its siblings'
+`pipeline/scrapers/census.py` puts the raw page and the parser's verdict side
+by side, one line per block, so you do not have to read 400 KB of HTML:
 
-This is why describing documents is worth doing by hand at all: it is the only
-pass over the corpus where a human-shaped reading meets each document
-individually. The description is half the value; the defects found are the
-other half.
+```sh
+python3 pipeline/scrapers/census.py encyclical.<slug>.en --headings
+python3 pipeline/scrapers/census.py encyclical.<slug>.en --dropped   # lost outright
+```
 
-### 3. Write it
+Each row gives the block's index, its paragraph number if it has one, the
+parser's verdict (`heading` — in the structure tree; `kept` — in a section;
+`DROPPED` — in neither), the source's own markup (`all-bold`, `all-italic`,
+`center`, `css-bold`, `part-bold`), and the text.
+
+The markup column is where the defects live. `is_full_bold` requires a block's
+**entire** text inside `<b>`, and vatican.va defeats that in at least six
+documented ways — italic-only headings, `<b>CHAPTER I</b> - <b>Title</b>` split
+by a plain separator, `N.<b> Title</b>` with the number outside the bold run,
+`font-weight: 700` instead of `<b>`, and plain centered `<p>` with no emphasis
+at all. `evangelium-vitae.pt` prints `CAPÍTULO II/III/IV` with **no markup
+whatsoever** while `CAPÍTULO I` is bold.
+
+Treat every oddity as a suspected parse defect and report it. The tells:
+
+- a `DROPPED` block that is real document text, not page furniture
+- a heading in the source that the census scores `kept` (it was absorbed into
+  a paragraph's body instead of lifted into the structure tree)
+- duplicate titles at the same level, or a level that contradicts the source's
+  own typography
+- a `before` that does not match where the heading actually sits
+
+Page furniture is *expected* to be dropped: the language bar
+(`AR - BE - CS - DE - …`), the title block, `© Copyright — Libreria Editrice
+Vaticana`, and the papal signature. Those are not findings.
+
+### 3. Write the table of contents
+
+Read from the census what headings the page actually prints, and record them
+as the work's ToC oracle:
+
+```sh
+$CORPUS/oracles/toc/encyclical.<slug>.en.json
+```
+
+```json
+{
+  "work": "encyclical.<slug>.en",
+  "read_on": "2026-08-23",
+  "source": "raw/vatican-docs/encyclical__<slug>__en.html",
+  "headings": [
+    { "level": 1, "title": "INTRODUÇÃO", "before": 1 },
+    { "level": 2, "ident": "CAPÍTULO I", "title": "A VOZ DO SANGUE…", "before": 7 }
+  ]
+}
+```
+
+`level` is 1 for the document's top divisions and increases with nesting, read
+from the source's own typography — centered bold is the major tier,
+left-aligned bold-italic the minor one, and a `<center>` wrapper distinguishes
+CHAPTER from PART in the old shell. `before` is the number of the first
+numbered paragraph *after* the heading, which is what the census's `§` column
+gives you. Split a heading into `ident`/`title` only where the source really
+prints two lines; the comparison flattens them anyway.
+
+**A document with no divisions gets `"headings": []`.** That is a real and
+common finding, not a failure — `rerum-novarum.en` (64 sections),
+`quadragesimo-anno.en` (148) and `mystici-corporis-christi.en` (112) are
+genuinely undivided numbered prose, verified at raw level. Recording the empty
+result is what stops the next person re-deriving it.
+
+Then check it against the parse:
+
+```sh
+python3 pipeline/scrapers/audit.py toc
+```
+
+Disagreements are reported, not gated. Most resolve into a parser fix covering
+a whole class of documents; see the next section for what that costs.
+
+### 4. Write the description
 
 - One paragraph, roughly 40–70 words. It is a library-card summary, not an
   abstract.
@@ -95,9 +178,10 @@ translating the English one. They are separate works with separate texts, and
 document has no Portuguese edition (common — Leo XIII is ~17% translated),
 there is simply no `.pt` entry.
 
-### 4. Record it
+### 5. Record the description
 
-Add entries to `site/descriptions.json`, keyed by full work id:
+Add entries to `site/descriptions.json` — in **this** repository, not the
+corpus one — keyed by full work id:
 
 ```json
 "descriptions": {
@@ -106,7 +190,7 @@ Add entries to `site/descriptions.json`, keyed by full work id:
 }
 ```
 
-**Not** into `corpus/works/*/manifest.json`. Those are generated; a re-parse
+**Not** into `$CORPUS/works/*/manifest.json`. Those are generated; a re-parse
 rewrites them, and this project fixes parsers by re-parsing. `sync-corpus.mjs`
 merges `descriptions.json` into each manifest on the way into the site, so
 `manifest.description` is populated for every route that reads it and the
@@ -118,11 +202,11 @@ Then:
 
 ```sh
 cd site
-CORPUS_DIR=/home/dani/Dev/me/scriptura/corpus node scripts/sync-corpus.mjs
+node scripts/sync-corpus.mjs        # CORPUS_DIR only if the corpus is not the sibling
 jq -r '.["encyclical.<slug>.en"].description' src/lib/corpus-data/index/manifests.json
 ```
 
-### 5. Report defects; fix parsers only deliberately
+### 6. Report defects; fix parsers only deliberately
 
 A defect found in step 2 is reported with the description. Fixing it means
 changing a parser shared by every document in its family, which is a separate
@@ -132,7 +216,7 @@ decision — see the next section for what that costs.
 
 When a defect does get fixed, the fix is in the parser and the document is
 **re-parsed, never re-crawled** (`CLAUDE.md`, `docs/link-surface.md`). That
-insurance only holds because `corpus/raw/` is intact, which is why it is
+insurance only holds because `$CORPUS/raw/` is intact, which is why it is
 treated as write-once.
 
 ```sh
@@ -149,14 +233,14 @@ assuming it:
 
 ```sh
 # 1. snapshot every generated artifact
-cd corpus/works
+cd $CORPUS/works
 find . -name 'structure.json' -o -name 'sections.json' | sort | xargs md5sum > /tmp/before.md5
 
 # 2. re-parse broadly (phase1 = the 16 Vatican II texts; phase2 --overwrite = everything)
 uv run pipeline/scrapers/vatican_docs.py phase1
 
 # 3. diff — anything changed that you did not intend to change is the finding
-cd corpus/works
+cd $CORPUS/works
 find . -name 'structure.json' -o -name 'sections.json' | sort | xargs md5sum > /tmp/after.md5
 diff /tmp/before.md5 /tmp/after.md5
 ```
@@ -200,12 +284,27 @@ re-parse unit is a whole pontificate.
 
 ## Doing this at scale
 
-The intended workflow is one agent per document, in parallel, each returning a
-description **and** a defect report. Two things make that safe:
+The intended workflow is one agent per work, in parallel, each returning a
+description, a table of contents **and** a defect report. Three things make
+that safe:
 
-- Descriptions land in one shared file (`site/descriptions.json`). Concurrent
-  agents editing it will collide — either serialize the writes, or have each
-  agent return its entry and let the coordinator apply them.
-- No agent should change a parser on its own initiative. A parser fix affects
+- **Descriptions land in one shared file** (`site/descriptions.json`).
+  Concurrent agents editing it will collide — have each agent return its entry
+  and let the coordinator apply them.
+- **ToC oracles do not collide**: one file per work under
+  `$CORPUS/oracles/toc/`, so agents may write their own directly.
+- **No agent changes a parser on its own initiative.** A parser fix affects
   every document in the family; it needs the blast-radius measurement above
   and a decision from whoever is directing the work.
+
+Batches are stratified across page shell and pontificate rather than
+alphabetical, so a defect surfaces while batches remain to benefit from the
+fix. Both previous batches ended by correcting the brief, which is the reason
+to keep them small.
+
+Before spawning a batch, run the mechanical audits — they cost nothing and
+retire questions an agent would answer slowly and less reliably:
+
+```sh
+python3 pipeline/scrapers/audit.py all
+```
