@@ -88,8 +88,7 @@ def clean_text(raw: str) -> str:
     # cp1252 has no NBSP glyph issue after decode, but entities may still
     # introduce \xa0; fold it into a normal space before collapsing.
     unescaped = unescaped.replace("\xa0", " ")
-    collapsed = WS_RE.sub(" ", unescaped).strip()
-    return collapsed
+    return WS_RE.sub(" ", unescaped).strip()
 
 
 @dataclass

@@ -85,7 +85,7 @@ def looks_like_number_typo(cand: int, expected: int) -> bool:
     single-keystroke misprint of a unit number, as opposed to an unrelated
     number that happens to start a block."""
     a, b = str(cand), str(expected)
-    return len(a) == len(b) and sum(x != y for x, y in zip(a, b)) == 1
+    return len(a) == len(b) and sum(x != y for x, y in zip(a, b, strict=True)) == 1
 
 
 # Punctuation that can legitimately stand before a chapter's first letter, so

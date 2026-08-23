@@ -63,7 +63,7 @@ import json
 import re
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # `common` is a package one directory up. Python puts a script's own directory
@@ -141,8 +141,7 @@ def make_fetcher(cache_dir: Path) -> Fetcher:
 def strip_tags(s: str) -> str:
     s = re.sub(r"<[^>]+>", " ", s)
     s = ihtml.unescape(s)
-    s = re.sub(r"\s+", " ", s).strip()
-    return s
+    return re.sub(r"\s+", " ", s).strip()
 
 
 _BOLD_SPAN_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.DOTALL | re.IGNORECASE)
@@ -269,7 +268,7 @@ def apply_raw_text_corrections(
 
 
 def apply_paragraph_corrections(
-    para: "Paragraph",
+    para: Paragraph,
     footnote_table: dict[str, str],
     corrections: list[dict],
     applied_log: list[dict],
@@ -288,7 +287,7 @@ def apply_paragraph_corrections(
         field = c["field"]
         if field == "citation_text":
             continue  # applied pre-parse, see apply_raw_text_corrections()
-        elif field == "marker":
+        if field == "marker":
             token_from = f"{MARK_OPEN}{c['from'].strip('()')}{MARK_CLOSE}"
             token_to = f"{MARK_OPEN}{c['to'].strip('()')}{MARK_CLOSE}"
             found = False
@@ -1490,7 +1489,7 @@ def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[st
         citation_labels = {c["marker"]: c.get("label", "") for c in para.citations}
         recombined = re.sub(
             rf"{MARK_OPEN}([^ {MARK_CLOSE}]+){MARK_CLOSE}",
-            lambda m: citation_labels.get(m.group(1), ""),
+            lambda m, labels=citation_labels: labels.get(m.group(1), ""),
             " ".join(b.text for b in para.blocks),
         )
         recombined = re.sub(r"\s+", " ", recombined).strip()
@@ -1533,7 +1532,7 @@ def build_manifest(
             for source in old.get("sources", [])
             if "url" in source and "retrieved_at" in source
         }
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today = datetime.now(UTC).strftime("%Y-%m-%d")
     notes = [
         (
             "Marginal cross-reference apparatus ('related' field) is absent from this "
@@ -1571,7 +1570,7 @@ def build_manifest(
             0,
             "SAMPLE RUN -- partial corpus, for review only. Not the full 1-2865 crawl.",
         )
-    manifest = {
+    return {
         "id": cfg["work_id"],
         "type": "catechism",
         "title": cfg["title"],
@@ -1594,7 +1593,6 @@ def build_manifest(
         "generated_at": generated_at,
         "corrections_applied": len(state.corrections_applied),
     }
-    return manifest
 
 
 def write_outputs(
@@ -1606,7 +1604,7 @@ def write_outputs(
         node.compute_span()
     structure = [n.to_dict() for n in state.root_children]
     paragraphs = [state.paragraphs[n].to_dict() for n in sorted(state.paragraphs)]
-    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    generated_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     manifest = build_manifest(lang, state, fetched_pages, sample, generated_at)
 
     write_stamped_json(

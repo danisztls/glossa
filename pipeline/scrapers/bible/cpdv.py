@@ -29,7 +29,7 @@ from __future__ import annotations
 
 import argparse
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # `common` is a package one directory up. Python puts a script's own directory
@@ -362,7 +362,7 @@ def write_output(
     receipt: dict,
 ) -> None:
 
-    today = datetime.now(timezone.utc).date().isoformat()
+    today = datetime.now(UTC).date().isoformat()
 
     notes = (
         "Ronald L. Conte Jr. translation, 2004-2009, from the Clementine "
@@ -460,7 +460,7 @@ def main() -> int:
     except CorrectionDriftError as exc:
         print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)
         return 1
-    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    generated_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     receipt = corrections_receipt(WORK_ID, applied, corrections, generated_at)
     corrections_count = receipt["count"]
     print(

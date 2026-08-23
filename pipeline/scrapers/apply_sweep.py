@@ -55,22 +55,30 @@ def validate(entry: dict, corpus: Path) -> list[str]:
     else:
         words = len(description.split())
         if not 25 <= words <= 110:
-            problems.append(f"{work}: description is {words} words (expected roughly 40-70)")
+            problems.append(
+                f"{work}: description is {words} words (expected roughly 40-70)"
+            )
     headings = entry.get("headings")
     if headings is None:
-        problems.append(f"{work}: no headings key (an empty list is the valid 'no divisions' answer)")
+        problems.append(
+            f"{work}: no headings key (an empty list is the valid 'no divisions' answer)"
+        )
     else:
         for node in headings:
             if not node.get("title"):
                 problems.append(f"{work}: a heading has no title")
             if node.get("before") is not None and not isinstance(node["before"], int):
-                problems.append(f"{work}: heading {node.get('title')!r} has non-integer `before`")
+                problems.append(
+                    f"{work}: heading {node.get('title')!r} has non-integer `before`"
+                )
     return problems
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("batch", nargs="?", help="JSON array of agent returns; default stdin")
+    ap.add_argument(
+        "batch", nargs="?", help="JSON array of agent returns; default stdin"
+    )
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--read-on", default="", help="ISO date the batch was read")
     args = ap.parse_args()
@@ -114,9 +122,7 @@ def main() -> int:
         )
 
     if not args.dry_run:
-        DESCRIPTIONS.write_text(
-            json.dumps(doc, indent="\t", ensure_ascii=False) + "\n"
-        )
+        DESCRIPTIONS.write_text(json.dumps(doc, indent="\t", ensure_ascii=False) + "\n")
     print(f"\n{len(descriptions)} descriptions total.")
     return 0
 

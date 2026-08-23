@@ -92,9 +92,7 @@ def body_region(html: str) -> str:
         # there on why starting at the attribute mattered.
         tag_end = html.find(">", testo.start())
         start = tag_end + 1 if tag_end != -1 else testo.start()
-        region = (
-            html[start : testo.start() + end.start()] if end else html[start:]
-        )
+        region = html[start : testo.start() + end.start()] if end else html[start:]
     else:
         region = html[V.find_content_start_old_shell(html) :]
     fn_start, _evidence = V.find_footnote_region_start(region)
@@ -171,7 +169,9 @@ def measure(corpus: Path) -> list[dict]:
                 "sections": len(json.loads((work / "sections.json").read_text())),
                 "nodes": len(json.loads((work / "structure.json").read_text())),
                 "defeated": DEFEAT_MARKER
-                in (json.loads((work / "manifest.json").read_text()).get("notes") or ""),
+                in (
+                    json.loads((work / "manifest.json").read_text()).get("notes") or ""
+                ),
             }
         )
     rows.sort(key=lambda r: r["coverage"])
@@ -194,13 +194,16 @@ def read_toc_oracles(corpus: Path) -> dict[str, list[dict]]:
     return out
 
 
-def compare_toc(read: list[dict], parsed: list[dict], masthead: set[str] = frozenset()) -> list[str]:
+def compare_toc(
+    read: list[dict], parsed: list[dict], masthead: set[str] = frozenset()
+) -> list[str]:
     """Differences between a read ToC and the parsed structure tree.
 
     Titles are compared on normalized text: the parser splits a heading into
     `ident`/`title`/`subtitle` where it can, and a reader writing the oracle
     should not have to guess that split, so both sides are flattened first.
     """
+
     def flat(node):
         joined = " ".join(
             (node.get(f) or "").strip() for f in ("ident", "title", "subtitle")
@@ -218,8 +221,7 @@ def compare_toc(read: list[dict], parsed: list[dict], masthead: set[str] = froze
         # divisions -- so counting it as EXTRA would make every genuinely
         # undivided work disagree with its own correct oracle, forever.
         if title in masthead or (
-            not parsed_by
-            and any(m and title.startswith(m + " ") for m in masthead)
+            not parsed_by and any(m and title.startswith(m + " ") for m in masthead)
         ):
             # The manifest title comes from the URL slug and is often a
             # truncation of what the page actually prints: `ecclesiam.en` is
@@ -232,11 +234,15 @@ def compare_toc(read: list[dict], parsed: list[dict], masthead: set[str] = froze
     for title in read_by:
         if title not in parsed_by:
             node = read_by[title][0]
-            problems.append(f"MISSING  before={node.get('before')}  {node.get('title')!r}")
+            problems.append(
+                f"MISSING  before={node.get('before')}  {node.get('title')!r}"
+            )
     for title in parsed_by:
         if title not in read_by:
             node = parsed_by[title][0]
-            problems.append(f"EXTRA    before={node.get('before')}  {node.get('title')!r}")
+            problems.append(
+                f"EXTRA    before={node.get('before')}  {node.get('title')!r}"
+            )
     # A WHOLE-TREE OFFSET IS ONE FINDING, NOT FIFTY. A reader numbers the
     # document's top division 1; the parser ranks by observed typography and
     # may start at 2, so every level differs by a constant. Reporting each
@@ -251,9 +257,13 @@ def compare_toc(read: list[dict], parsed: list[dict], masthead: set[str] = froze
                 deltas[got_level - nodes[0]["level"]] += 1
     offset = deltas.most_common(1)[0][0] if deltas else 0
     if offset and len(deltas) == 1:
-        problems.append(f"OFFSET   every matched heading is parsed {offset:+d} level(s) -- one finding")
+        problems.append(
+            f"OFFSET   every matched heading is parsed {offset:+d} level(s) -- one finding"
+        )
     elif offset:
-        problems.append(f"OFFSET   most headings are parsed {offset:+d} level(s); outliers below")
+        problems.append(
+            f"OFFSET   most headings are parsed {offset:+d} level(s); outliers below"
+        )
 
     for title, nodes in read_by.items():
         if title not in parsed_by:
@@ -286,7 +296,9 @@ def report_toc(corpus: Path) -> int:
             print(f"{work_id}: oracle present but no structure.json")
             failing += 1
             continue
-        manifest = json.loads((corpus / "works" / work_id / "manifest.json").read_text())
+        manifest = json.loads(
+            (corpus / "works" / work_id / "manifest.json").read_text()
+        )
         masthead = {
             re.sub(r"\s+", " ", (manifest.get(f) or "")).strip().casefold()
             for f in ("title", "short_title")
@@ -294,7 +306,9 @@ def report_toc(corpus: Path) -> int:
         problems = compare_toc(read, json.loads(structure.read_text()), masthead)
         if problems:
             failing += 1
-            print(f"\n{work_id}: {len(problems)} difference(s), {len(read)} headings read")
+            print(
+                f"\n{work_id}: {len(problems)} difference(s), {len(read)} headings read"
+            )
             for line in problems:
                 print(f"  {line}")
     print(f"\n{len(oracles)} oracle(s) compared, {failing} disagreeing with the parse.")
@@ -312,8 +326,13 @@ def report_coverage(rows: list[dict], floor: float, limit: int) -> int:
     withheld = withheld_ids()
     median = statistics.median(r["coverage"] for r in rows)
     print(f"{len(rows)} works measured, median coverage {median * 100:.1f}%\n")
-    bands = [(0, 0.5, "<50%"), (0.5, 0.8, "50-80%"), (0.8, 0.9, "80-90%"),
-             (0.9, 0.95, "90-95%"), (0.95, 9, ">=95%")]
+    bands = [
+        (0, 0.5, "<50%"),
+        (0.5, 0.8, "50-80%"),
+        (0.8, 0.9, "80-90%"),
+        (0.9, 0.95, "90-95%"),
+        (0.95, 9, ">=95%"),
+    ]
     for lo, hi, label in bands:
         n = sum(1 for r in rows if lo <= r["coverage"] < hi)
         print(f"  {label:8} {n:4}")
@@ -332,7 +351,9 @@ def report_coverage(rows: list[dict], floor: float, limit: int) -> int:
 
     failures = [r for r in rows if r["coverage"] < floor and r["work"] not in withheld]
     if failures:
-        print(f"\nFAIL: {len(failures)} published work(s) below {floor * 100:.0f}% coverage:")
+        print(
+            f"\nFAIL: {len(failures)} published work(s) below {floor * 100:.0f}% coverage:"
+        )
         for row in failures:
             print(f"  {row['work']}  {row['coverage'] * 100:.1f}%")
         return 1
@@ -344,13 +365,19 @@ def report_withheld(rows: list[dict]) -> int:
     withheld = withheld_ids()
     defeated = {r["work"] for r in rows if r["defeated"]}
     published_defeats = sorted(defeated - withheld)
-    print(f"{len(defeated)} work(s) marked {DEFEAT_MARKER!r}; {len(withheld)} withheld.\n")
+    print(
+        f"{len(defeated)} work(s) marked {DEFEAT_MARKER!r}; {len(withheld)} withheld.\n"
+    )
     if published_defeats:
-        print(f"FAIL: {len(published_defeats)} work(s) report a defeated parse and are published:")
+        print(
+            f"FAIL: {len(published_defeats)} work(s) report a defeated parse and are published:"
+        )
         by_id = {r["work"]: r for r in rows}
         for work_id in published_defeats:
             row = by_id[work_id]
-            print(f"  {work_id:44} {row['coverage'] * 100:5.1f}% coverage, {row['sections']} sections")
+            print(
+                f"  {work_id:44} {row['coverage'] * 100:5.1f}% coverage, {row['sections']} sections"
+            )
         return 1
     print("OK: every defeated parse is withheld.")
     # Not gated in reverse: a work may be withheld for reasons the parser has
@@ -362,10 +389,15 @@ def report_withheld(rows: list[dict]) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
-        "check", choices=["coverage", "withheld", "toc", "all"], default="all", nargs="?"
+        "check",
+        choices=["coverage", "withheld", "toc", "all"],
+        default="all",
+        nargs="?",
     )
     parser.add_argument("--min-coverage", type=float, default=DEFAULT_MIN_COVERAGE)
-    parser.add_argument("--limit", type=int, default=25, help="rows in the coverage table")
+    parser.add_argument(
+        "--limit", type=int, default=25, help="rows in the coverage table"
+    )
     parser.add_argument("--json", action="store_true", help="emit measurements as JSON")
     args = parser.parse_args()
 
@@ -380,7 +412,7 @@ def main() -> int:
     status = 0
     if args.check in ("coverage", "all"):
         status |= report_coverage(rows, args.min_coverage, args.limit)
-    if args.check in ("all",):
+    if args.check == "all":
         print()
     if args.check in ("withheld", "all"):
         status |= report_withheld(rows)

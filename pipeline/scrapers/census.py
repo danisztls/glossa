@@ -72,9 +72,7 @@ def body_region(html: str) -> str:
         # there on why starting at the attribute mattered.
         tag_end = html.find(">", testo.start())
         start = tag_end + 1 if tag_end != -1 else testo.start()
-        region = (
-            html[start : testo.start() + end.start()] if end else html[start:]
-        )
+        region = html[start : testo.start() + end.start()] if end else html[start:]
     else:
         region = html[V.find_content_start_old_shell(html) :]
     fn_start, _ = V.find_footnote_region_start(region)
@@ -128,7 +126,9 @@ def shape(raw: str) -> list[str]:
     text = V.strip_tags(raw)
     if text:
         bold = V.strip_tags(" ".join(V._BOLD_SPAN_RE.findall(raw)))
-        italic = V.strip_tags(" ".join(m.group(0) for m in V._ITALIC_SPAN_RE.finditer(raw)))
+        italic = V.strip_tags(
+            " ".join(m.group(0) for m in V._ITALIC_SPAN_RE.finditer(raw))
+        )
         if bold and bold == text:
             tags.append("all-bold")
         elif bold:
@@ -172,12 +172,14 @@ def census(corpus: Path, work_id: str) -> dict:
     body = body_region(page.read_text(encoding="utf-8", errors="replace"))
 
     kept_text = ""
-    kept_blocks: set[str] = set()   # each stored block on its own, see `kept?` below
+    kept_blocks: set[str] = set()  # each stored block on its own, see `kept?` below
     if (work / "sections.json").exists():
         for section in json.loads((work / "sections.json").read_text()):
             for block in section["blocks"]:
                 kept_blocks.add(norm(V.strip_tags(block.get("html", ""))))
-            joined = " ".join(V.strip_tags(b.get("html", "")) for b in section["blocks"])
+            joined = " ".join(
+                V.strip_tags(b.get("html", "")) for b in section["blocks"]
+            )
             kept_text += " " + norm(joined)
     structure_titles = set()
     if (work / "structure.json").exists():
@@ -213,8 +215,10 @@ def census(corpus: Path, work_id: str) -> dict:
             verdict = "heading*"
         elif n in kept_blocks:
             verdict = "kept"
-        elif n and len(n) <= HEADING_MAX_CHARS and any(
-            other.startswith(n) and other != n for other in kept_blocks
+        elif (
+            n
+            and len(n) <= HEADING_MAX_CHARS
+            and any(other.startswith(n) and other != n for other in kept_blocks)
         ):
             # A LOST HEADING CAN IMPERSONATE A KEPT ONE. `humanae-vitae.pt`
             # prints "O amor conjugal" as a heading and opens the next
@@ -226,7 +230,7 @@ def census(corpus: Path, work_id: str) -> dict:
         elif n and n in kept_text:
             verdict = "kept"
         elif n and len(n) > 12 and n[:60] in kept_text:
-            verdict = "kept*"          # kept, but not byte-identical
+            verdict = "kept*"  # kept, but not byte-identical
         else:
             verdict = "DROPPED"
         rows.append(
@@ -245,16 +249,25 @@ def census(corpus: Path, work_id: str) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("work", help="work id, e.g. encyclical.evangelium-vitae.pt")
-    ap.add_argument("--headings", action="store_true",
-                    help="only blocks short enough to be a heading, or dropped")
-    ap.add_argument("--dropped", action="store_true", help="only blocks the parse did not keep")
+    ap.add_argument(
+        "--headings",
+        action="store_true",
+        help="only blocks short enough to be a heading, or dropped",
+    )
+    ap.add_argument(
+        "--dropped", action="store_true", help="only blocks the parse did not keep"
+    )
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
     result = census(common.require_corpus(), args.work)
     rows = result["blocks"]
     if args.headings:
-        rows = [r for r in rows if r["chars"] <= HEADING_MAX_CHARS or r["verdict"] == "DROPPED"]
+        rows = [
+            r
+            for r in rows
+            if r["chars"] <= HEADING_MAX_CHARS or r["verdict"] == "DROPPED"
+        ]
     if args.dropped:
         rows = [r for r in rows if r["verdict"] == "DROPPED"]
 
@@ -266,12 +279,16 @@ def main() -> int:
     counts: dict[str, int] = {}
     for row in result["blocks"]:
         counts[row["verdict"]] = counts.get(row["verdict"], 0) + 1
-    print(f"{result['work']}: {len(result['blocks'])} blocks  "
-          + "  ".join(f"{k}={v}" for k, v in sorted(counts.items())))
+    print(
+        f"{result['work']}: {len(result['blocks'])} blocks  "
+        + "  ".join(f"{k}={v}" for k, v in sorted(counts.items()))
+    )
     print(f"{'i':>4} {'§':>4} {'verdict':<8} {'shape':<26} text")
     for row in rows:
-        print(f"{row['i']:4} {row['n'] or '':>4} {row['verdict']:<8} "
-              f"{','.join(row['shape']):<26} {row['text'][:110]}")
+        print(
+            f"{row['i']:4} {row['n'] or '':>4} {row['verdict']:<8} "
+            f"{','.join(row['shape']):<26} {row['text'][:110]}"
+        )
     return 0
 
 

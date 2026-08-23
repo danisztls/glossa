@@ -32,7 +32,7 @@ import argparse
 import re
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -631,7 +631,7 @@ def write_manifest(
     corrections_applied: int,
     generated_at: str,
 ) -> None:
-    retrieved_at = datetime.now(timezone.utc).date().isoformat()
+    retrieved_at = datetime.now(UTC).date().isoformat()
 
     notes = (
         "1956 edition (revised from the original languages with L. G. da Fonseca SJ, "
@@ -776,7 +776,7 @@ def main() -> int:
         return 1
 
     generated_at = (
-        datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+        datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
     )
     # The Ihe/Ihes auto-fix (SAFE_OCR_FIXES, applied inside clean_text during
     # parsing) is unambiguous and widespread enough to run automatically --

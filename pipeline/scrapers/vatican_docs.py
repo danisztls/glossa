@@ -215,6 +215,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+import contextlib
 import difflib
 import html as ihtml
 import json
@@ -226,7 +227,7 @@ import time
 import urllib.parse
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 # Sibling package in this directory -- a script's own directory is on sys.path,
@@ -393,8 +394,7 @@ def strip_tags(s: str) -> str:
     s = re.sub(r"<[^>]+>", " ", s)
     s = ihtml.unescape(s)
     s = s.replace("\xa0", " ")  # &nbsp; after unescape
-    s = re.sub(r"\s+", " ", s).strip()
-    return s
+    return re.sub(r"\s+", " ", s).strip()
 
 
 # --------------------------------------------------------------------------
@@ -437,7 +437,7 @@ def narrow_html(marked_html: str, dropped: collections.Counter | None = None) ->
     for m in _TAG_RE.finditer(marked_html):
         out.append(escape_text_run(marked_html[pos : m.start()]))
         pos = m.end()
-        closing, name, attrs = bool(m.group(1)), m.group(2).lower(), m.group(3)
+        closing, name, _attrs = bool(m.group(1)), m.group(2).lower(), m.group(3)
         if name in _HTML_ALLOWED_SIMPLE:
             tag = _HTML_ALLOWED_SIMPLE[name]
             out.append(f"</{tag}>" if closing else f"<{tag}>")
@@ -2338,9 +2338,9 @@ def drop_page_furniture(blocks: list[Block]) -> list[str]:
         if not blk.is_heading:
             continue
         text = " ".join(blk.text.split())
-        if _LANG_BAR_RE.match(text):
-            doomed.append(i)
-        elif i > last_numbered and _PAPAL_SIGNATURE_RE.match(fold(text)):
+        if _LANG_BAR_RE.match(text) or (
+            i > last_numbered and _PAPAL_SIGNATURE_RE.match(fold(text))
+        ):
             doomed.append(i)
 
     dropped = [blocks[i].text for i in doomed]
@@ -2509,7 +2509,7 @@ def parse_promulgation_date(digits: str) -> str | None:
     y2, m2, d2 = digits[4:8], digits[2:4], digits[0:2]
     for y, mo, d in ((y1, m1, d1), (y2, m2, d2)):
         try:
-            datetime(int(y), int(mo), int(d))
+            date(int(y), int(mo), int(d))
             return f"{y}-{mo}-{d}"
         except ValueError:
             continue
@@ -2595,7 +2595,7 @@ def parse_date_slug(fname: str) -> tuple[str, str] | None:
 def _index_links(
     fetcher: Fetcher, index_url: str, cache_name: str, link_re: re.Pattern
 ) -> list[str]:
-    text, err = fetcher.fetch_text(index_url, cache_name)
+    text, _err = fetcher.fetch_text(index_url, cache_name)
     if text is None:
         return []
     return sorted({m.group(1) for m in link_re.finditer(text)})
@@ -3308,7 +3308,7 @@ def parse_document(
         shell=shell,
         footnote_evidence=evidence,
         fetched_url=fetched_url,
-        retrieved_at=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        retrieved_at=datetime.now(UTC).strftime("%Y-%m-%d"),
         header=header_html,
     )
 
@@ -3663,11 +3663,16 @@ def build_manifest(
     parse: ParseResult,
 ) -> dict:
     notes = [
-        f"page shell: {parse.shell}; footnote-marker template: {parse.marker_template}; "
-        f"footnote-region boundary evidence: {parse.footnote_evidence}.",
-        "Inline markup is stored per block in `html`, restricted to a closed "
-        "allowlist (i, b, br, sup, blockquote); tags outside it keep their text "
-        "and lose their markup (docs/decisions.md, 2026-08-21).",
+        (
+            f"page shell: {parse.shell}; footnote-marker template: "
+            f"{parse.marker_template}; footnote-region boundary evidence: "
+            f"{parse.footnote_evidence}."
+        ),
+        (
+            "Inline markup is stored per block in `html`, restricted to a closed "
+            "allowlist (i, b, br, sup, blockquote); tags outside it keep their text "
+            "and lose their markup (docs/decisions.md, 2026-08-21)."
+        ),
     ]
     if not state.sections:
         notes.insert(
@@ -3715,7 +3720,7 @@ def build_manifest(
         )
     if work_id in KNOWN_SOURCE_DEFECTS:
         notes.append(KNOWN_SOURCE_DEFECTS[work_id])
-    manifest = {
+    return {
         "id": work_id,
         "type": "document",
         "document_kind": document_kind,
@@ -3737,10 +3742,9 @@ def build_manifest(
         # tree where it used to masquerade as a top-level node. See
         # extract_document_header.
         "header": parse.header,
-        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "corrections_applied": len(state.corrections_applied),
     }
-    return manifest
 
 
 def _tree_has_real_span(nodes: list[Node]) -> bool:
@@ -3990,7 +3994,7 @@ def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
         result["status"] = "no-translation-stub"
         result["error"] = str(exc)
         return result
-    except Exception as exc:  # noqa: BLE001 -- a parser crash on one document must not kill the crawl
+    except Exception as exc:
         result["status"] = "parse-error"
         result["error"] = f"{type(exc).__name__}: {exc}"
         return result
@@ -4600,15 +4604,11 @@ class LockHeld(Exception):
 
 def _lock_heartbeat_age(lock_path: Path) -> tuple[float, dict]:
     info: dict = {}
-    try:
+    with contextlib.suppress(json.JSONDecodeError, OSError):
         info = json.loads(lock_path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        pass
     heartbeat = 0.0
-    try:
+    with contextlib.suppress(TypeError, ValueError):
         heartbeat = float(info.get("heartbeat", info.get("started", 0)) or 0)
-    except (TypeError, ValueError):
-        pass
     return time.time() - heartbeat, info
 
 
@@ -4646,17 +4646,12 @@ def touch_crawl_lock(lock_path: Path) -> None:
     except (json.JSONDecodeError, OSError):
         info = {"pid": os.getpid(), "started": time.time()}
     info["heartbeat"] = time.time()
-    try:
+    with contextlib.suppress(OSError):
         lock_path.write_text(json.dumps(info), encoding="utf-8")
-    except OSError:
-        pass
 
 
 def release_crawl_lock(lock_path: Path) -> None:
-    try:
-        lock_path.unlink()
-    except FileNotFoundError:
-        pass
+    lock_path.unlink(missing_ok=True)
 
 
 # --------------------------------------------------------------------------
@@ -4873,7 +4868,6 @@ def main() -> int:
         total = 0
         for slug, display, _year in PONTIFF_CANDIDATES:
             refs, notes = discover_encyclicals(fetcher, slug, display)
-            pt_checked = 0
             for note in notes:
                 print(f"  [note] {note}")
             print(f"{slug} ({display}): {len(refs)} encyclicals")

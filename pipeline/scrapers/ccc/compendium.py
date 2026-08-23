@@ -84,7 +84,7 @@ import html as ihtml
 import re
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # `common` is a package one directory up. Python puts a script's own directory
@@ -745,7 +745,7 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
             "notice": COPYRIGHT_NOTICE,
         },
         "notes": " ".join(notes),
-        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
     }
 
 
@@ -824,7 +824,7 @@ def main() -> int:
     overall_ok = True
     for lang in langs:
         state, fetcher = run_scrape(lang)
-        retrieved_at = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        retrieved_at = datetime.now(UTC).strftime("%Y-%m-%d")
         write_outputs(lang, state, retrieved_at)
         ok, problems, refs_present = validate(state)
         print_summary(lang, state, ok, problems, refs_present)

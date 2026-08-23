@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from .files import read_text_or_none
@@ -78,7 +78,7 @@ class AbsentSources:
             {
                 "url": url,
                 "status": status,
-                "observed": datetime.now(timezone.utc).date().isoformat(),
+                "observed": datetime.now(UTC).date().isoformat(),
             }
         )
         if context:

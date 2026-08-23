@@ -111,7 +111,7 @@ import html as ihtml
 import re
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Sibling package in this directory -- a script's own directory is on sys.path,
@@ -637,7 +637,7 @@ def parse_rosary_body(
         # segments past the fifth back together recovers the one logical
         # item without inventing or dropping any of its words.
         if len(items) > 5:
-            items = items[:4] + [" ".join(items[4:])]
+            items = [*items[:4], " ".join(items[4:])]
         groups.append(
             MysteryGroup(
                 name,
@@ -856,7 +856,9 @@ def build_prayers_pt(html_text: str) -> list[Prayer]:
 
     latin_by_slug: dict[str, LatinText] = {}
     for slug, raw in zip(
-        [s for s in APPENDIX_SLUGS if s not in NO_LATIN_SLUGS], latin_paragraphs
+        [s for s in APPENDIX_SLUGS if s not in NO_LATIN_SLUGS],
+        latin_paragraphs,
+        strict=True,
     ):
         latin_title, latin_body = split_title(raw)
         latin_by_slug[slug] = LatinText(latin_title, latin_blocks_pt(latin_body))
@@ -984,7 +986,9 @@ def build_our_father_en(html_text: str) -> Prayer:
 
 def build_our_father_pt(html_text: str) -> Prayer:
     matches = re.findall(
-        r"<blockquote[^>]*>\s*(<p[^>]*>.*?</p>)\s*</blockquote>", html_text, re.I | re.S
+        r"<blockquote[^>]*>\s*(<p[^>]*>.*?</p>)\s*</blockquote>",
+        html_text,
+        re.IGNORECASE | re.DOTALL,
     )
     prayers = [
         raw
@@ -1515,7 +1519,7 @@ def build_manifest(
             "notice": COPYRIGHT_NOTICE,
         },
         "notes": " ".join(notes),
-        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "corrections_applied": len(applied_corrections),
     }
 
