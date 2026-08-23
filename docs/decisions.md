@@ -1088,3 +1088,32 @@ Corpus 80 MB → 47 MB, build 42 MB, validation unchanged (29/3 phase 1,
 `text_marked`/`text` and have no `html` at all, so they keep both fields until
 that migration lands. `CccBlock.text_marked` stays optional for exactly that
 reason, and `documentSectionText` keeps the fallback branch for them.
+
+## 2026-08-22 — IntraText evaluated as a document source, not adopted
+
+Companion to the Vulgate survey (`docs/research/vulgate-edition-choice.md`
+§3), which disqualified IntraText's `LAT0001` on measured integrity. Asked
+again for the Magisterium documents, with the opposite-looking result and one
+finding that reconciles them.
+
+**We already parse IntraText.** The Catechism's English corpus is an IntraText
+production hosted on vatican.va (`archive/ENG0015/`), and `vatican_docs.py`
+generalizes `ccc.py`'s parser for that same template family. The real question
+was only whether to fetch those pages from intratext.com instead.
+
+**No, because it is the same text.** Centesimus Annus EN §30–43 measured
+0.998–1.000 against our parse, the residual being footnote marker digits
+alone. It cannot improve on our text and cannot corroborate it, so it is no
+use as the independent witness a `corrections/` entry wants.
+
+**The finding worth keeping: quality there is per-work, not per-site.**
+IntraText aggregates separately-sourced e-texts, so one work can be a faithful
+copy of the Holy See's own edition while another is a truncated, unattributed
+transcription — both were measured, in the same library, a day apart. A good
+result for one document licenses nothing about the next; the credits page has
+to be checked every time. That is the disqualifying property, more than any
+individual work's score.
+
+Full evidence, costs and the one thing that would change the verdict
+(coverage vatican.va lacks, e.g. Portuguese) in
+`docs/research/intratext-2026-08.md`.
