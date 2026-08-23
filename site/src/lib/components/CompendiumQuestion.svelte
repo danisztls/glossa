@@ -9,6 +9,7 @@
 	import CompendiumAnswer from './CompendiumAnswer.svelte';
 	import RefText from './RefText.svelte';
 	import ReferenceNumber from './ReferenceNumber.svelte';
+	import { bookmarks } from '$lib/bookmarks.svelte';
 
 	interface Props {
 		question: CompendiumQuestion;
@@ -17,6 +18,11 @@
 	}
 
 	let { question, lang, href }: Props = $props();
+
+	/** The question's own page — its canonical address, and what `href` points
+	 *  at in the chapter reader. Derived rather than taken as a prop so the
+	 *  single-question view and the chapter view cannot disagree about it. */
+	const canonicalHref = $derived(`/compendium/${question.n}`);
 </script>
 
 {#snippet qa()}
@@ -42,10 +48,11 @@
 {/snippet}
 
 {#if href}
-	<section class="question" id={`q${question.n}`}>
+	<section class="question" id={`q${question.n}`} class:bookmarked={bookmarks.has(canonicalHref)}>
 		<ReferenceNumber
 			n={question.n}
 			{href}
+			{canonicalHref}
 			label={`${t('compendium.question')} ${question.n}`}
 			placement="margin"
 		/>
@@ -108,5 +115,13 @@
 	.question {
 		position: relative;
 		margin-bottom: 2rem;
+	}
+
+	/* The reader's own mark; the number carries the same colour. */
+	.question.bookmarked {
+		background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
+		border-radius: 0.25rem;
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
 	}
 </style>

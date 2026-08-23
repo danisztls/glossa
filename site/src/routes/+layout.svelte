@@ -146,6 +146,17 @@
 			-->
 			<div class="controls">
 				<JumpBox />
+				<!-- The way back to what the reader has marked. A link rather than a
+				     menu: there is one destination, and it is a page. -->
+				<a
+					class="menu-trigger"
+					href="/signata"
+					aria-current={isActive('/signata') ? 'page' : undefined}
+					aria-label={t('bookmark.library')}
+					title={t('bookmark.library')}
+				>
+					<Icon name="bookmark" />
+				</a>
 				<LanguageMenu />
 				<AppearanceMenu />
 				<PrintButton />
@@ -302,6 +313,19 @@
 		gap: 0.4rem;
 		flex-wrap: wrap;
 		margin-inline-start: auto;
+	}
+
+	/* `.menu-trigger` (app.css) is written for the buttons; the bookmark
+	   library is the one control in this row that is a link, so it needs the
+	   two things a button gets for free. */
+	.controls a.menu-trigger {
+		text-decoration: none;
+		flex-shrink: 0;
+	}
+
+	.controls a.menu-trigger[aria-current='page'] {
+		color: var(--color-accent);
+		border-color: var(--color-accent);
 	}
 
 	.primary-nav {

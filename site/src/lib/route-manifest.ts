@@ -30,6 +30,10 @@ const STATIC_PATHS = new Set([
 	'/compendium',
 	'/documenta',
 	'/preces',
+	// The reader's own bookmark library. Static and corpus-free, like
+	// `/colophon`: what it lists lives in this browser's localStorage, so
+	// there is nothing for the generated manifest to validate against.
+	'/signata',
 	'/colophon',
 	'/404'
 ]);

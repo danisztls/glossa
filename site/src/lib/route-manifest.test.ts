@@ -25,6 +25,7 @@ describe('isCanonicalPath', () => {
 		'/compendium/caput/1',
 		'/documenta/lumen-gentium',
 		'/preces/our-father',
+		'/signata',
 		'/colophon'
 	])('accepts %s', (path) => {
 		expect(isCanonicalPath(path, manifest)).toBe(true);
@@ -41,6 +42,7 @@ describe('isCanonicalPath', () => {
 		'/documenta/made-up',
 		'/preces/made-up',
 		'/catechismus/10/extra',
+		'/signata/anything',
 		'/bible/gen/1'
 	])('rejects %s', (path) => {
 		expect(isCanonicalPath(path, manifest)).toBe(false);

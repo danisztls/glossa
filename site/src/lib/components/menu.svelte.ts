@@ -7,7 +7,11 @@
  * and returning focus to the trigger — which until now was hand-rolled,
  * identically, in all five menu components (theme, font size, edition,
  * comparison edition, language). Theme and font size have since merged into
- * one `AppearanceMenu`, so there are four.
+ * one `AppearanceMenu`, so there are four — plus `AnchorMenu`, the popover a
+ * unit number opens, which is the first consumer whose trigger is an anchor
+ * rather than a button and the first whose panel needs measured positioning
+ * (`floating.ts`) because it hangs off arbitrary points in flowing prose
+ * rather than off a fixed header control.
  *
  * WHY IT WAS DUPLICATED, AND WHY THAT NO LONGER APPLIES. `ThemeMenu`'s
  * docblock (now `AppearanceMenu`'s) recorded the reason: "Svelte has no
@@ -51,10 +55,13 @@ export class Menu {
 	 *  trigger and the panel both count as "inside". Bound with `bind:this`. */
 	containerEl: HTMLElement | undefined = $state();
 
-	/** The trigger button, so focus can return to it on Escape or after a
-	 *  pick — otherwise closing the panel drops focus to `<body>` and a
-	 *  keyboard reader has to tab back through the page to where they were. */
-	triggerEl: HTMLButtonElement | undefined = $state();
+	/** The trigger, so focus can return to it on Escape or after a pick —
+	 *  otherwise closing the panel drops focus to `<body>` and a keyboard
+	 *  reader has to tab back through the page to where they were. Typed
+	 *  `HTMLElement` rather than `HTMLButtonElement` because `AnchorMenu`'s
+	 *  trigger is the unit number itself, which stays a real `<a href>` so
+	 *  that ⌘-click and the native context menu keep working. */
+	triggerEl: HTMLElement | undefined = $state();
 
 	toggle = () => {
 		this.open = !this.open;

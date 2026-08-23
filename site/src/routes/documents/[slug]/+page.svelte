@@ -32,6 +32,9 @@
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import EditionMenu from '$lib/components/EditionMenu.svelte';
+	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
+	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
+	import { bookmarks } from '$lib/bookmarks.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import { alignByNumber } from '$lib/compare';
@@ -347,14 +350,15 @@
 			<div class="title-row">
 				<h1>{metaManifest.title}</h1>
 				<div class="compare-toolbar">
+					<BookmarkButton href={`/documenta/${data.slug}`} />
+					{#if current && otherEditions.length > 0}
+						<CompareToggle active={compareActive} onclick={toggleCompare} />
+					{/if}
 					<!-- While comparing, EditionMenu moves into the left column's own
 					     header (`leftHeaderExtra` below) next to the comparison
 					     picker on the right — there's only one column for it up here
 					     once compare mode is off. -->
 					{#if !compareActive}<EditionMenu />{/if}
-					{#if current && otherEditions.length > 0}
-						<CompareToggle active={compareActive} onclick={toggleCompare} />
-					{/if}
 				</div>
 			</div>
 
@@ -523,19 +527,27 @@
 										>{/if}
 								</svelte:element>
 							{/each}
-							<section class="section" id={`s${section.n}`}>
+							{@const sectionHref = `/documenta/${data.slug}#s${section.n}`}
+							<section
+								class="section"
+								id={`s${section.n}`}
+								class:bookmarked={bookmarks.has(sectionHref)}
+							>
 								<!-- The number links to its own anchor: this is what a reader
 								     copies to cite the section, and it is now the section's
 								     only address — the per-section route it used to point at
-								     is gone (see this file's header). -->
-								<a
-									class="section-n"
+								     is gone (see this file's header). It used to be a
+								     hand-rolled `<a class="section-n">` carrying a near-verbatim
+								     copy of ReferenceNumber's margin CSS; sharing the component
+								     is what stops the two drifting, which is the reason that
+								     component's docblock gives for owning this treatment. -->
+								<ReferenceNumber
+									n={section.n}
 									href={`#s${section.n}`}
-									aria-label={`§${section.n}`}
-									data-link-preview="off"
-								>
-									{section.n}
-								</a>
+									canonicalHref={sectionHref}
+									label={`§${section.n}`}
+									placement="margin"
+								/>
 								<div class="section-text">
 									<CccParagraphText
 										paragraph={section}
@@ -766,30 +778,12 @@
 		margin-bottom: 1.1rem;
 	}
 
-	.section-n {
-		position: absolute;
-		inset-inline-start: -3.25rem;
-		top: 0.15em;
-		width: 2.75rem;
-		text-align: end;
-		font-size: 0.8rem;
-		font-variant-numeric: tabular-nums;
-		color: var(--color-text-muted);
-		text-decoration: none;
-	}
-
-	.section-n:hover {
-		color: var(--color-accent);
-		text-decoration: underline;
-	}
-
-	@media (max-width: 60rem) {
-		.section-n {
-			position: static;
-			display: block;
-			width: auto;
-			text-align: start;
-			margin-bottom: 0.15rem;
-		}
+	/* The reader's own mark; the number carries the same colour
+	   (ReferenceNumber's `.bookmarked`). */
+	.section.bookmarked {
+		background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
+		border-radius: 0.25rem;
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
 	}
 </style>

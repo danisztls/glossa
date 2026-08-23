@@ -52,6 +52,7 @@
 	import { goto } from '$app/navigation';
 	import { parsePreviewHref, type PreviewTarget } from '$lib/linkPreviewHref';
 	import { resolvePreview, type ResolvedPreview } from '$lib/linkPreviewContent';
+	import { computePanelPosition } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
 
 	// Long enough that a pointer merely crossing a citation-dense paragraph
@@ -371,25 +372,15 @@
 	// different height, so re-running this only on `anchorEl` changing would
 	// leave the box mispositioned for the second half of every preview.
 
-	function computePosition(anchor: DOMRect, box: DOMRect): { top: number; left: number } {
-		const GAP = 8;
-		let top = anchor.bottom + GAP;
-		if (top + box.height > window.innerHeight - GAP) {
-			const above = anchor.top - GAP - box.height;
-			top = above >= GAP ? above : Math.max(GAP, window.innerHeight - box.height - GAP);
-		}
-		let left = anchor.left;
-		if (left + box.width > window.innerWidth - GAP) left = window.innerWidth - box.width - GAP;
-		left = Math.max(GAP, left);
-		return { top, left };
-	}
-
 	$effect(() => {
 		if (!anchorEl || phase === 'pending' || !overlayEl) {
 			coords = undefined;
 			return;
 		}
-		coords = computePosition(anchorEl.getBoundingClientRect(), overlayEl.getBoundingClientRect());
+		coords = computePanelPosition(
+			anchorEl.getBoundingClientRect(),
+			overlayEl.getBoundingClientRect()
+		);
 	});
 </script>
 

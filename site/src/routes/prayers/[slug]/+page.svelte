@@ -39,6 +39,7 @@
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import EditionMenu from '$lib/components/EditionMenu.svelte';
+	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import PrayerBlocks from '$lib/components/PrayerBlocks.svelte';
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
@@ -210,7 +211,10 @@
 			<div class="title-row">
 				<h1>{current.prayer.title}</h1>
 				<div class="compare-toolbar">
-					<EditionMenu />
+					<!-- A prayer has no numbered sub-unit to hang the anchor popover off
+					     (PrayerBlocks renders no anchors at all), so the whole prayer is
+					     what a reader can mark. -->
+					<BookmarkButton href={`/preces/${data.slug}`} />
 					{#if hasLatin}
 						<CompareToggle
 							active={compareActive}
@@ -219,6 +223,7 @@
 							exitLabel={t('prayers.hideLatin')}
 						/>
 					{/if}
+					<EditionMenu />
 				</div>
 			</div>
 

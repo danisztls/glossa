@@ -18,6 +18,8 @@
 	import { splitDropCap } from '$lib/dropcap';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
+	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
+	import { bookmarks } from '$lib/bookmarks.svelte';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
@@ -54,6 +56,17 @@
 		})()
 	);
 	const current = $derived(data.byWorkId[workId]);
+
+	/**
+	 * The canonical, edition-free address of this chapter and of one of its
+	 * verses — what a bookmark stores and what the anchor popover copies.
+	 * Built here rather than taken from `page.url` because the number's own
+	 * href is the in-page `#v{n}`, and because a bookmark must never carry the
+	 * `?v=` span or `?compare=` of the moment: `/scriptura/exod/3#v12` is the
+	 * verse, not the way this reader happened to arrive at it.
+	 */
+	const chapterHref = $derived(`/scriptura/${data.osis}/${data.chapterN}`);
+	const verseHref = (n: number) => `${chapterHref}#v${n}`;
 
 	/**
 	 * Compare mode: the same chapter, a second edition, aligned verse by
@@ -359,6 +372,7 @@
 		<ReferenceNumber
 			n={verse.n}
 			href={`#v${verse.n}`}
+			canonicalHref={verseHref(verse.n)}
 			label={`${t('bible.verseAbbrev')} ${verse.n}`}
 			placement="inline"
 		/>
@@ -374,14 +388,15 @@
 			<div class="title-row">
 				<h1>{current.book.name} {current.chapter.n}</h1>
 				<div class="compare-toolbar">
+					<BookmarkButton href={chapterHref} />
+					{#if otherEditions.length > 0}
+						<CompareToggle active={compareActive} onclick={toggleCompare} />
+					{/if}
 					<!-- While comparing, EditionMenu moves into the left column's own
 					     header (`leftHeaderExtra` below) next to the comparison
 					     picker on the right — there's only one column for it up here
 					     once compare mode is off. -->
 					{#if !compareActive}<EditionMenu />{/if}
-					{#if otherEditions.length > 0}
-						<CompareToggle active={compareActive} onclick={toggleCompare} />
-					{/if}
 				</div>
 			</div>
 
@@ -430,10 +445,16 @@
 						{#if heading}
 							<h2 class="section-heading">{heading.text}</h2>
 						{/if}
-						<span id={`v${verse.n}`} class="verse" class:highlighted={isHighlighted(verse.n)}>
+						<span
+							id={`v${verse.n}`}
+							class="verse"
+							class:bookmarked={bookmarks.has(verseHref(verse.n))}
+							class:highlighted={isHighlighted(verse.n)}
+						>
 							<ReferenceNumber
 								n={verse.n}
 								href={`#v${verse.n}`}
+								canonicalHref={verseHref(verse.n)}
 								label={`${t('bible.verseAbbrev')} ${verse.n}`}
 								placement="inline"
 								emphasized={isHighlighted(verse.n)}
@@ -593,6 +614,22 @@
 
 	   Colour-mixed from the accent rather than hard-coded so it follows all
 	   four themes; at 12% it stays under the text rather than fighting it. */
+	/* The reader's own mark on a verse, and deliberately written BEFORE
+	   `.highlighted` so that an arriving citation's wash wins the background
+	   when a verse is both. Nothing is lost when it does: the verse number
+	   itself stays gold (ReferenceNumber's `.bookmarked`, which is written
+	   after its own `.emphasized` for exactly this reason), so each of the two
+	   states always has one visible cue. */
+	.verse.bookmarked {
+		background: color-mix(in srgb, var(--color-bookmark) 14%, transparent);
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
+		border-radius: 0.15em;
+		padding-block: 0.05em;
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
+	}
+
 	.verse.highlighted {
 		background: color-mix(in srgb, var(--color-accent) 12%, transparent);
 		box-decoration-break: clone;

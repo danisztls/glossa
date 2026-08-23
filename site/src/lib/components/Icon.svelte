@@ -7,7 +7,13 @@
 
 	Icons are always `currentColor` (they inherit the surrounding text
 	color) and sized in `em` (they scale with whatever font-size the
-	control around them uses) rather than a fixed pixel size. `@lucide/svelte`
+	control around them uses) rather than a fixed pixel size.
+
+	`filled` fills the glyph with `currentColor` instead of leaving it an
+	outline. Lucide's icons are outlines by default, and for a two-state
+	control the outline/solid pair is the state — a bookmark the reader has
+	saved reads as filled without needing a second glyph or a colour the
+	reader has to learn. `@lucide/svelte`
 	is `sideEffects: false`, so importing named icons from the package root
 	still tree-shakes to only the icons actually referenced in `ICONS` below
 	— nothing pulls in the full ~1500-icon set.
@@ -35,6 +41,11 @@
 	// screen, so the icon in the sentence has to be the one they are looking at.
 	import Share from '@lucide/svelte/icons/share';
 	import X from '@lucide/svelte/icons/x';
+	import Bookmark from '@lucide/svelte/icons/bookmark';
+	import Eye from '@lucide/svelte/icons/eye';
+	import Copy from '@lucide/svelte/icons/copy';
+	import Link from '@lucide/svelte/icons/link';
+	import Trash2 from '@lucide/svelte/icons/trash-2';
 
 	const ICONS = {
 		search: Search,
@@ -48,7 +59,12 @@
 		printer: Printer,
 		download: Download,
 		share: Share,
-		x: X
+		x: X,
+		bookmark: Bookmark,
+		eye: Eye,
+		copy: Copy,
+		link: Link,
+		'trash-2': Trash2
 	};
 
 	export type IconName = keyof typeof ICONS;
@@ -58,10 +74,16 @@
 	interface Props {
 		name: IconName;
 		class?: string;
+		filled?: boolean;
 	}
 
-	let { name, class: className }: Props = $props();
+	let { name, class: className, filled = false }: Props = $props();
 	const IconComponent = $derived(ICONS[name]);
 </script>
 
-<IconComponent size="1em" aria-hidden="true" class={className} />
+<IconComponent
+	size="1em"
+	fill={filled ? 'currentColor' : 'none'}
+	aria-hidden="true"
+	class={className}
+/>

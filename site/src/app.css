@@ -310,6 +310,13 @@
 	--color-initial: #b03024;
 	--color-apparatus: #22409a;
 	--color-focus-ring: #22409a;
+	/* A bookmark is the reader's own mark, and has to read as a different
+	   KIND of thing from an arriving citation's accent wash — the two can
+	   land on the same unit and each has to stay legible. Gold rather than
+	   another red: it is the one hue this palette does not already spend on
+	   meaning (accent, initials, apparatus blue). Provisional like the rest
+	   of these values — see PLAN.md's design pass. */
+	--color-bookmark: #8a6410;
 }
 
 /*
@@ -346,6 +353,7 @@
 	--color-initial: #b03024;
 	--color-apparatus: #22409a;
 	--color-focus-ring: #22409a;
+	--color-bookmark: #8a6410;
 }
 
 /* Explicit light: nothing to restate but the scheme, since light is the
@@ -370,6 +378,7 @@
 		--color-initial: #f2694a;
 		--color-apparatus: #8fa8e8;
 		--color-focus-ring: #8fa8e8;
+		--color-bookmark: #d9a94a;
 	}
 }
 
@@ -387,6 +396,7 @@
 	--color-initial: #f2694a;
 	--color-apparatus: #8fa8e8;
 	--color-focus-ring: #8fa8e8;
+	--color-bookmark: #d9a94a;
 }
 
 *,

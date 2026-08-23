@@ -48,6 +48,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// documents join the 16 Vatican II texts already here).
 		'nav.magisterium': 'Magisterium',
 		'nav.prayers': 'Prayers',
+		'nav.bookmarks': 'Bookmarks',
 		'nav.menu': 'Menu',
 		'home.title': 'Glossa Catholica',
 		'home.continueReading': 'Continue reading',
@@ -156,6 +157,27 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ref.tooltip.openCompendium': 'Open in Compendium',
 		'ref.preview.open': 'Open',
 		'ref.cf': 'cf.',
+
+		// The unit-number popover and the bookmark library — AnchorMenu.svelte,
+		// BookmarkButton.svelte and routes/signata are the consumers. The
+		// library's section headings deliberately reuse `nav.*` rather than
+		// declaring their own: they name the same four works.
+		'anchor.actions': 'Reference actions',
+		'anchor.copy': 'Copy text',
+		'anchor.copyLink': 'Copy link',
+		'anchor.view': 'View',
+		'anchor.copied': 'Copied',
+		'anchor.copyFailed': "Couldn't copy",
+		'bookmark.add': 'Bookmark',
+		'bookmark.remove': 'Remove bookmark',
+		'bookmark.library': 'Bookmarks',
+		'bookmark.library.tagline': 'Everything you have marked while reading.',
+		'bookmark.empty': 'Nothing marked yet.',
+		'bookmark.emptyHint':
+			'Click a verse or paragraph number and choose Bookmark, or use the bookmark button on a page.',
+		'bookmark.deviceOnly':
+			'Bookmarks are kept in this browser only. They are not sent anywhere, and clearing your browser data removes them.',
+		'bookmark.unavailable': 'Not in the edition you are reading',
 
 		// Documents (encyclicals, conciliar constitutions/decrees/declarations,
 		// docs/corpus-schema.md §Documents) — routes/documents/** is the
@@ -276,6 +298,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'nav.compendium': 'Compêndio',
 		'nav.magisterium': 'Magistério',
 		'nav.prayers': 'Orações',
+		'nav.bookmarks': 'Marcadores',
 		'nav.menu': 'Menu',
 		'home.title': 'Glossa Catholica',
 		'home.continueReading': 'Continuar lendo',
@@ -369,6 +392,23 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'ref.tooltip.openCompendium': 'Abrir no Compêndio',
 		'ref.preview.open': 'Abrir',
 		'ref.cf': 'cf.',
+
+		'anchor.actions': 'Ações da referência',
+		'anchor.copy': 'Copiar texto',
+		'anchor.copyLink': 'Copiar endereço',
+		'anchor.view': 'Ver',
+		'anchor.copied': 'Copiado',
+		'anchor.copyFailed': 'Não foi possível copiar',
+		'bookmark.add': 'Marcar',
+		'bookmark.remove': 'Remover marcador',
+		'bookmark.library': 'Marcadores',
+		'bookmark.library.tagline': 'Tudo o que marcou durante a leitura.',
+		'bookmark.empty': 'Ainda não há nada marcado.',
+		'bookmark.emptyHint':
+			'Clique no número de um versículo ou parágrafo e escolha Marcar, ou use o botão de marcador numa página.',
+		'bookmark.deviceOnly':
+			'Os marcadores ficam apenas neste navegador. Não são enviados para lado nenhum, e limpar os dados do navegador remove-os.',
+		'bookmark.unavailable': 'Não está na edição que está a ler',
 
 		'document.library.tagline':
 			'Encíclicas, constituições conciliares, decretos e declarações do Magistério.',

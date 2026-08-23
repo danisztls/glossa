@@ -7,6 +7,7 @@
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
 	import EditionMenu from '$lib/components/EditionMenu.svelte';
+	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import { alignByNumber } from '$lib/compare';
@@ -86,14 +87,15 @@
 			<div class="title-row">
 				<h1>{headingText()}</h1>
 				<div class="compare-toolbar">
+					<BookmarkButton href={`/compendium/caput/${from}`} />
+					{#if editions.others.length > 0}
+						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
+					{/if}
 					<!-- While comparing, EditionMenu moves into the left column's own
 					     header (`leftHeaderExtra` below) next to the comparison
 					     picker on the right — there's only one column for it up here
 					     once compare mode is off. -->
 					{#if !editions.compareActive}<EditionMenu />{/if}
-					{#if editions.others.length > 0}
-						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
-					{/if}
 				</div>
 			</div>
 			<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>

@@ -16,6 +16,8 @@
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
+	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
+	import { bookmarks } from '$lib/bookmarks.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareToggle from '$lib/components/CompareToggle.svelte';
@@ -146,14 +148,15 @@
 					{heading.title}
 				</h1>
 				<div class="compare-toolbar">
+					<BookmarkButton href={`/catechismus/caput/${from}`} />
+					{#if editions.others.length > 0}
+						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
+					{/if}
 					<!-- While comparing, EditionMenu moves into the left column's own
 					     header (`leftHeaderExtra` below) next to the comparison
 					     picker on the right — there's only one column for it up here
 					     once compare mode is off. -->
 					{#if !editions.compareActive}<EditionMenu />{/if}
-					{#if editions.others.length > 0}
-						<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
-					{/if}
 				</div>
 			</div>
 			<p class="range">¶{from}–{to}</p>
@@ -184,14 +187,22 @@
 			{:else}
 				<div class="reading-text ccc-body chapter-body" lang={editions.current.work.language}>
 					{#each editions.current.paragraphs as paragraph, i (paragraph.n)}
-						<section class="para" id={`p${paragraph.n}`} class:in-brief={paragraph.in_brief}>
+						<section
+							class="para"
+							id={`p${paragraph.n}`}
+							class:in-brief={paragraph.in_brief}
+							class:bookmarked={bookmarks.has(`/catechismus/${paragraph.n}`)}
+						>
 							<!-- The number is a link back to the paragraph's own page: this
 						     view is for reading, that one for citing and cross-linking,
 						     and a reader who wants the second from inside the first
-						     should not have to go back through the TOC. -->
+						     should not have to go back through the TOC. That page is also
+						     the paragraph's canonical address, so the popover bookmarks
+						     and copies exactly what the number already pointed at. -->
 							<ReferenceNumber
 								n={paragraph.n}
 								href={`/catechismus/${paragraph.n}`}
+								canonicalHref={`/catechismus/${paragraph.n}`}
 								label={`CCC ${paragraph.n}`}
 								placement="margin"
 							/>
@@ -276,6 +287,16 @@
 	.para {
 		position: relative;
 		margin-bottom: 1.1rem;
+	}
+
+	/* The reader's own mark. A block-level wash rather than the inline one the
+	   Bible verse uses, because a paragraph here is already its own block; the
+	   number itself carries the same colour (ReferenceNumber's `.bookmarked`). */
+	.para.bookmarked {
+		background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
+		border-radius: 0.25rem;
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
 	}
 
 	/* "In brief" summary blocks are set apart in the printed text too; without

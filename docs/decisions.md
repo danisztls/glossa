@@ -1401,3 +1401,109 @@ characters each.
 is **unchanged** — 67 differences across the same 6 works — which is the check
 that changing the region start did not drift the structure trees. Both audit
 gates pass, 416 site tests pass, `svelte-check` clean.
+
+## 2026-08-23 — The unit number becomes an action, and a bookmark is an address
+
+**What**: clicking a unit number — a Bible verse, a CCC paragraph in the
+chapter reader, a Compendium question, a document § — no longer navigates. It
+opens `AnchorMenu`, a small horizontal popover offering **copy**, **copy
+link**, **view** and **bookmark**. Bookmarks collect in a library at
+`/signata`, and a bookmarked unit stays marked where it lives.
+
+**Why the number stopped being a plain link.** It is the most-touched
+affordance in the reader and it did exactly one thing, which for a verse meant
+navigating to text already on the screen. Everything else a reader wants from
+an address they can see — quote it, send it, come back to it — meant selecting
+text by hand and rebuilding the URL from the address bar. The element is still
+a real `<a href>`: only the unmodified primary click is intercepted, so
+⌘/ctrl-click, middle-click and the native context menu are untouched, and the
+number still says where it goes to anything reading the page rather than
+clicking it.
+
+**A BOOKMARK IS A CANONICAL URL AND A TIMESTAMP, nothing else.** Not the text,
+not the citation, not the edition it was read in. `refHref`'s output is
+edition-free by design (2026-08-15, editions are a reader preference and not a
+path segment), so `/scriptura/exod/3#v12` names the same verse in English,
+Portuguese and Latin — resolving a bookmark LATE, through the reader's current
+edition, is what makes it follow them across an edition switch instead of
+freezing the wording they happened to have open. It also keeps the whole
+library inside one localStorage key.
+
+**This cost almost no new machinery, because `parsePreviewHref` already parses
+exactly these addresses.** The hover preview (2026-08-16) had to turn an href
+back into a typed target and resolve it to text; that is the same question a
+bookmark asks. So the bookmark key is the preview's key, `resolveUnitText` is
+`resolvePreview` minus the 320-character cap (moved out of the six resolver
+branches to the one boundary that wanted it), and the two share a memo cache —
+a reader who hovers a verse and then bookmarks it pays one corpus read.
+
+**`PreviewTarget` was wrapped, not extended.** Two bookmarkable addresses are
+deliberately not previewable ones: a whole prayer, and a whole document with no
+`#s{n}`. Teaching the preview parser about them would silently give every
+prayer link on the site a hover popover it does not have. `bookmark-target.ts`
+tries `parsePreviewHref` first and adds only those two shapes.
+
+**Two marks on one unit, and each keeps a cue.** A verse can be both bookmarked
+and the target of an arriving citation, and the two say different things. The
+background wash means "you arrived here from a citation" and keeps the accent
+colour it already had; the number means "you saved this" and goes gold
+(`--color-bookmark`, the first colour in `app.css` that is not accent-derived).
+Cascade order decides each — the bookmark wash is written before `.highlighted`
+so the arriving wash wins the background, and `.bookmarked` is written after
+`.emphasized` so the number keeps the saved colour — which is the same
+mechanism that already makes dark beat sepia.
+
+**`/signata` groups by work rather than listing newest first.** A reading list
+is not a history: a reader with eighty marks wants to find the verse where it
+lives, and save order tells them nothing. It survives only as the tie-break
+inside a section. Every document gets its own section, for the reason the
+"Cited in" panel names a work once and lists its references under it
+(2026-08-21). The route is static and corpus-free, so it joins `STATIC_PATHS`
+in `route-manifest.ts` beside `/colophon` — the edge worker would otherwise
+404 it.
+
+**What else moved.** `LinkPreview`'s viewport-clamping positioner became
+`floating.ts` when the popover needed the same measurement (the header menus
+still position in pure CSS and should: their triggers are never near an edge).
+`menu.svelte.ts` gained a fifth consumer and its `triggerEl` widened to
+`HTMLElement`. The documents reader's hand-rolled `<a class="section-n">`, which
+carried a near-verbatim copy of `ReferenceNumber`'s margin CSS, is now
+`ReferenceNumber` — the drift that component's docblock exists to prevent.
+
+**Scope deliberately not taken**: inline references in prose keep navigating on
+click and keep their hover preview. They are a different affordance — the
+reader is following an argument, not addressing a unit — and putting a menu in
+front of every "cf. Jn 3:16" would tax reading to serve citing.
+
+**The popover is a row of icons, not a list of rows.** Four actions with four
+distinct glyphs do not need four lines of prose beside a paragraph of text — a
+vertical list read as a page of its own opening over the one being read. The
+names are carried by `title`, surfacing the way every other icon control on the
+site surfaces its own. The bookmark glyph is filled when the address is saved,
+which is what carries that state at a glance; `Icon.svelte` grew a `filled`
+prop for it, keeping the icon library behind that one file as its docblock
+requires.
+
+**The copy confirmation is the icon, not a line of text.** Swapping the pressed
+button's glyph for a tick — a cross when the clipboard refuses — says it where
+the reader is already looking, and cannot resize the panel. That matters
+because a panel opened near the bottom of the viewport is flipped above its
+anchor, where any height change moves every button out from under the pointer;
+a message appearing under the row did exactly that, which is why it is gone. A
+visually-hidden live region carries the same words for assistive tech, which
+has no glyph to read.
+
+**`data-link-preview="off"` sits on the panel, not on the `Open` link.** It is
+inherited by everything inside, so no action here can raise a hover preview on
+top of the popover the reader just opened — which is the actual problem; the
+action itself stays, unconditionally, including where the target is the page
+already being read, because the reader asked for it and the address bar
+following the anchor is a real result. It is called **View**, with an eye,
+rather than **Open** with a book: "open" reads as a second thing appearing,
+where all this does is take the reader to the address, and a book glyph beside
+three abstract ones looked like it named the work rather than the act.
+
+**The edition menu moved to the right of the compare toggle** in every reader's
+toolbar, so the row now reads bookmark, compare, edition — the two controls
+that change what is on the page sit together at the end, and the mark the
+reader can make sits with the heading it belongs to.

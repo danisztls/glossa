@@ -47,6 +47,17 @@ import { i18n } from './i18n.svelte';
 import { displayTitle } from './titles';
 import type { PreviewTarget } from './linkPreviewHref';
 
+export interface ResolvedUnit {
+	/** Short heading line: "Genesis 1:1-3", "CCC 1", a CCC chapter's own
+	 *  title, "Question 12", "§19". */
+	title: string;
+	/** The unit's plain text, NOT truncated. Where a branch below deliberately
+	 *  selects an *excerpt* — a chapter's opening verses rather than the whole
+	 *  chapter — that selection is part of what the address means here and
+	 *  survives; only the character cap belongs to the preview. */
+	text: string;
+}
+
 export interface ResolvedPreview {
 	/** Short heading line: "Genesis 1:1-3", "CCC 1", a CCC chapter's own
 	 *  title, "Question 12", "§19". */
@@ -69,7 +80,7 @@ const MAX_BODY_CHARS = 320;
  *  near the limit (a single very long "word", which no real corpus prose
  *  does, but a defect somewhere upstream shouldn't be able to hang this on
  *  an infinite scan either). */
-function truncate(text: string, max = MAX_BODY_CHARS): string {
+export function truncate(text: string, max = MAX_BODY_CHARS): string {
 	const collapsed = text.trim().replace(/\s+/g, ' ');
 	if (collapsed.length <= max) return collapsed;
 	const cut = collapsed.slice(0, max);
@@ -113,7 +124,7 @@ function cacheKey(target: PreviewTarget): string | undefined {
 
 async function resolveBible(
 	target: Extract<PreviewTarget, { kind: 'bible' }>
-): Promise<ResolvedPreview | undefined> {
+): Promise<ResolvedUnit | undefined> {
 	const workId = content.workIdFor('bible');
 	if (!workId || isUnpublished(workId)) return undefined;
 
@@ -136,7 +147,7 @@ async function resolveBible(
 			target.from === target.to
 				? `${book.name} ${target.chapter}:${target.from}`
 				: `${book.name} ${target.chapter}:${target.from}-${target.to}`;
-		return { title, body: truncate(selected.map((v) => `${v.n} ${v.text}`).join(' ')) };
+		return { title, text: selected.map((v) => `${v.n} ${v.text}`).join(' ') };
 	}
 
 	// No verse named: the chapter's own opening, not its full text -- a
@@ -144,11 +155,11 @@ async function resolveBible(
 	const opening = verses.slice(0, 3);
 	return {
 		title: `${book.name} ${target.chapter}`,
-		body: truncate(opening.map((v) => `${v.n} ${v.text}`).join(' '))
+		text: opening.map((v) => `${v.n} ${v.text}`).join(' ')
 	};
 }
 
-async function resolveCcc(n: number): Promise<ResolvedPreview | undefined> {
+async function resolveCcc(n: number): Promise<ResolvedUnit | undefined> {
 	const lang = content.langFor('catechism');
 	if (isUnpublished(`ccc.${lang}`)) return undefined;
 	const para = await getCccParagraphAsync(lang, n);
@@ -159,10 +170,10 @@ async function resolveCcc(n: number): Promise<ResolvedPreview | undefined> {
 	// `CccParagraphText.svelte` does NOT use, since that component exists to
 	// render the marked-up version footnotes and inline links depend on. A
 	// hover preview has no business hosting either.
-	return { title: `CCC ${n}`, body: truncate(para.text) };
+	return { title: `CCC ${n}`, text: para.text };
 }
 
-async function resolveCccChapter(n: number): Promise<ResolvedPreview | undefined> {
+async function resolveCccChapter(n: number): Promise<ResolvedUnit | undefined> {
 	const lang = content.langFor('catechism');
 	if (isUnpublished(`ccc.${lang}`)) return undefined;
 
@@ -182,10 +193,10 @@ async function resolveCccChapter(n: number): Promise<ResolvedPreview | undefined
 	// and opening, not all of it") -- one paragraph fetch, not the whole
 	// range `getCccParagraphRangeAsync` would pull for the real reading view.
 	const para = await getCccParagraphAsync(lang, n);
-	return { title, body: para ? truncate(para.text) : '' };
+	return { title, text: para ? para.text : '' };
 }
 
-async function resolveCompendium(n: number): Promise<ResolvedPreview | undefined> {
+async function resolveCompendium(n: number): Promise<ResolvedUnit | undefined> {
 	const lang = content.langFor('compendium');
 	if (isUnpublished(`compendium.${lang}`)) return undefined;
 	const question = await getCompendiumQuestionAsync(lang, n);
@@ -193,11 +204,11 @@ async function resolveCompendium(n: number): Promise<ResolvedPreview | undefined
 	const answer = question.answer_blocks.map((b) => b.text).join(' ');
 	return {
 		title: `${i18n.t('compendium.question')} ${n}`,
-		body: truncate(`${question.question} ${answer}`)
+		text: `${question.question} ${answer}`
 	};
 }
 
-async function resolveCompendiumChapter(n: number): Promise<ResolvedPreview | undefined> {
+async function resolveCompendiumChapter(n: number): Promise<ResolvedUnit | undefined> {
 	const lang = content.langFor('compendium');
 	if (isUnpublished(`compendium.${lang}`)) return undefined;
 	const chapter = getCompendiumChapterFor(lang, n);
@@ -206,17 +217,15 @@ async function resolveCompendiumChapter(n: number): Promise<ResolvedPreview | un
 	const question = await getCompendiumQuestionAsync(lang, n);
 	return {
 		title: dt.ordinal ? `${dt.ordinal} ${dt.title}` : dt.title,
-		body: question
-			? truncate(
-					`${question.question} ${question.answer_blocks.map((block) => block.text).join(' ')}`
-				)
+		text: question
+			? `${question.question} ${question.answer_blocks.map((block) => block.text).join(' ')}`
 			: ''
 	};
 }
 
 async function resolveDocument(
 	target: Extract<PreviewTarget, { kind: 'document' }>
-): Promise<ResolvedPreview | undefined> {
+): Promise<ResolvedUnit | undefined> {
 	// `content.documentWorkIdFor` already applies the same "reader's language,
 	// falling back to whichever edition exists" rule the document's own
 	// landing/reading routes use -- a preview that resolved language
@@ -231,10 +240,10 @@ async function resolveDocument(
 
 	const manifest = getDocumentManifest(workId);
 	const title = manifest ? `${manifest.short_title} §${target.n}` : `§${target.n}`;
-	return { title, body: truncate(documentSectionText(section)) };
+	return { title, text: documentSectionText(section) };
 }
 
-async function resolveUncached(target: PreviewTarget): Promise<ResolvedPreview | undefined> {
+async function resolveUncached(target: PreviewTarget): Promise<ResolvedUnit | undefined> {
 	switch (target.kind) {
 		case 'bible':
 			return resolveBible(target);
@@ -257,18 +266,22 @@ async function resolveUncached(target: PreviewTarget): Promise<ResolvedPreview |
  *  once published (same premise `corpus.ts`'s own `contentCache` rests on),
  *  so a cached preview never goes stale except by the reader changing
  *  edition/language, which `cacheKey` already accounts for by encoding it. */
-const previewCache = new Map<string, Promise<ResolvedPreview | undefined>>();
+const previewCache = new Map<string, Promise<ResolvedUnit | undefined>>();
 
 /**
- * Resolve a parsed preview target to the text `LinkPreview.svelte` shows.
- * Returns `undefined` for anything that shouldn't produce a preview at all:
- * a withheld work (`isUnpublished`), a citation that names a verse the
- * edition doesn't have at that address, an edition-free document slug with
- * no edition in the reader's language, or a number outside this corpus.
- * `LinkPreview.svelte` treats `undefined` as "show nothing", never as an
- * error state.
+ * Resolve a parsed target to its full text and citation.
+ *
+ * Everything `resolvePreview` returns, minus the character cap -- which is
+ * the difference between a hover glance and the consumer that needs the real
+ * thing: the anchor popover's "copy", where a reader quoting a verse wants
+ * the verse and not the verse with a "…" on the end of it.
+ *
+ * Returns `undefined` for anything that shouldn't resolve at all: a withheld
+ * work (`isUnpublished`), a citation that names a verse the edition doesn't
+ * have at that address, an edition-free document slug with no edition in the
+ * reader's language, or a number outside this corpus.
  */
-export async function resolvePreview(target: PreviewTarget): Promise<ResolvedPreview | undefined> {
+export async function resolveUnitText(target: PreviewTarget): Promise<ResolvedUnit | undefined> {
 	const key = cacheKey(target);
 	if (!key) return undefined;
 	let pending = previewCache.get(key);
@@ -277,4 +290,16 @@ export async function resolvePreview(target: PreviewTarget): Promise<ResolvedPre
 		previewCache.set(key, pending);
 	}
 	return pending;
+}
+
+/**
+ * Resolve a parsed preview target to the text `LinkPreview.svelte` shows.
+ * The same resolution as `resolveUnitText`, capped for a hover overlay.
+ * `LinkPreview.svelte` treats `undefined` as "show nothing", never as an
+ * error state.
+ */
+export async function resolvePreview(target: PreviewTarget): Promise<ResolvedPreview | undefined> {
+	const unit = await resolveUnitText(target);
+	if (!unit) return undefined;
+	return { title: unit.title, body: truncate(unit.text) };
 }
