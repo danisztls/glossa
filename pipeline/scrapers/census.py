@@ -80,14 +80,25 @@ def body_region(html: str) -> str:
 
 
 def split_blocks(body: str) -> list[str]:
-    """Raw HTML of each block-level unit, in document order.
+    """Each block-level unit, in document order, WITH ITS OWN OPENING TAG.
 
     Cuts at every block boundary rather than matching open/close pairs, so
     unwrapped text between two tags becomes its own unit instead of vanishing.
     Nested containers therefore yield an empty slice for the outer element,
     which `census` drops on the text test below.
+
+    The opening tag is prepended rather than discarded because the block's
+    alignment lives in its own attributes -- `<p align="center">`,
+    `<p style="text-align: center">`. Splitting them away made `shape()`
+    structurally incapable of reporting centering, so every centered heading
+    in the corpus showed a blank shape while the parser detected them fine.
     """
-    return [piece for piece in _SPLIT_RE.split(body)]
+    out, prev_tag, prev_end = [], "", 0
+    for m in _SPLIT_RE.finditer(body):
+        out.append(prev_tag + body[prev_end : m.start()])
+        prev_tag, prev_end = m.group(0), m.end()
+    out.append(prev_tag + body[prev_end:])
+    return out
 
 
 def shape(raw: str) -> list[str]:
@@ -98,9 +109,19 @@ def shape(raw: str) -> list[str]:
     found in batch 2 were markup the parser's own predicate called false.
     """
     tags = []
-    if re.search(r"align\s*=\s*[\"']?center", raw, re.IGNORECASE) or "<center" in raw.lower():
+    # Both spellings. The old shell writes `align="center"`; the modern one
+    # writes `style="text-align: center"`, and reporting only the first showed
+    # a blank shape for all 42 centered headings in `dilexit-nos.en` -- which
+    # the parser itself detects perfectly well.
+    if (
+        re.search(r"align\s*=\s*[\"']?center", raw, re.IGNORECASE)
+        or re.search(r"text-align\s*:\s*center", raw, re.IGNORECASE)
+        or "<center" in raw.lower()
+    ):
         tags.append("center")
-    if re.search(r"align\s*=\s*[\"']?left", raw, re.IGNORECASE):
+    if re.search(r"align\s*=\s*[\"']?left", raw, re.IGNORECASE) or re.search(
+        r"text-align\s*:\s*left", raw, re.IGNORECASE
+    ):
         tags.append("left")
     text = V.strip_tags(raw)
     if text:
@@ -119,6 +140,22 @@ def shape(raw: str) -> list[str]:
     return tags
 
 
+def _is_heading_line(text: str, title: str) -> bool:
+    """Is `text` one whole line of the multi-line heading `title`?
+
+    Word-boundary anchored on purpose. A bare `in` test matched "o amor
+    conjugal" inside "AS CARACTERISTICAS DO AMOR CONJUGAL" -- catching the
+    tail of "do" -- and so reported a heading that the parser had actually
+    lost as one it had kept.
+    """
+    return (
+        text == title
+        or title.startswith(text + " ")
+        or title.endswith(" " + text)
+        or f" {text} " in title
+    )
+
+
 def norm(s: str) -> str:
     return re.sub(r"\s+", " ", ihtml.unescape(s)).strip().lower()
 
@@ -133,11 +170,12 @@ def census(corpus: Path, work_id: str) -> dict:
     body = body_region(page.read_text(encoding="utf-8", errors="replace"))
 
     kept_text = ""
-    section_of = []          # (section n, normalized text) in order
+    kept_blocks: set[str] = set()   # each stored block on its own, see `kept?` below
     if (work / "sections.json").exists():
         for section in json.loads((work / "sections.json").read_text()):
+            for block in section["blocks"]:
+                kept_blocks.add(norm(V.strip_tags(block.get("html", ""))))
             joined = " ".join(V.strip_tags(b.get("html", "")) for b in section["blocks"])
-            section_of.append((section["n"], norm(joined)))
             kept_text += " " + norm(joined)
     structure_titles = set()
     if (work / "structure.json").exists():
@@ -164,6 +202,25 @@ def census(corpus: Path, work_id: str) -> dict:
         n = norm(text)
         if n in structure_titles:
             verdict = "heading"
+        elif n and any(_is_heading_line(n, title) for title in structure_titles):
+            # A heading printed on two lines is ONE node: `merge_heading_lines`
+            # joins the division label, its name and any subtitle. Each raw
+            # line is still its own block here, so an exact-match test scores
+            # both halves DROPPED and invents content loss that did not happen
+            # -- 16 such rows in `lumen-gentium.pt` alone.
+            verdict = "heading*"
+        elif n in kept_blocks:
+            verdict = "kept"
+        elif n and len(n) <= HEADING_MAX_CHARS and any(
+            other.startswith(n) and other != n for other in kept_blocks
+        ):
+            # A LOST HEADING CAN IMPERSONATE A KEPT ONE. `humanae-vitae.pt`
+            # prints "O amor conjugal" as a heading and opens the next
+            # paragraph "O amor conjugal exprime a sua verdadeira natureza",
+            # so a containment test says kept while the heading is in fact
+            # gone from both the sections and the structure tree. Reported as
+            # unresolved rather than guessed either way.
+            verdict = "kept?"
         elif n and n in kept_text:
             verdict = "kept"
         elif n and len(n) > 12 and n[:60] in kept_text:

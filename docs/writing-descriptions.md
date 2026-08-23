@@ -113,6 +113,21 @@ Page furniture is *expected* to be dropped: the language bar
 (`AR - BE - CS - DE - …`), the title block, `© Copyright — Libreria Editrice
 Vaticana`, and the papal signature. Those are not findings.
 
+**The document's own title is not a heading.** Every work's `structure.json`
+carries a node for its title (`LIBERTAS`, `Mediator Dei`) as a fallback top
+node; it is a masthead, not an internal division, and it must not go in the
+ToC oracle. A work whose only structure node is that title has **no**
+divisions, and its oracle is `[]`. This was the one thing batch 3's agents
+disagreed about, and left unstated it produces oracles that disagree with each
+other rather than with the parser.
+
+Two verdicts are deliberately not confident. `heading*` means the block is one
+line of a heading the parser stored as a single multi-line node — normal, not
+a finding. `kept?` means the block's text matches only the *start* of a stored
+block, so a heading absorbed into the following paragraph cannot be told from
+one that survived; check that case against `sections.json` yourself before
+calling it either way.
+
 ### 3. Write the table of contents
 
 Read from the census what headings the page actually prints, and record them
