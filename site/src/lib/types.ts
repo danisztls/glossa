@@ -197,6 +197,31 @@ export interface CccNode {
 	/** DOCUMENTS ONLY. `title` with the source's partial inline emphasis kept
 	 *  — see `DocumentNode.title_html`. Absent means `title` is already plain. */
 	titleHtml?: string;
+	/**
+	 * `title` with the source's own footnote references left where it printed
+	 * them, as `⟦marker⟧` tokens — the heading counterpart of
+	 * `CccBlock.text_marked`, and paired with `citations` below exactly as a
+	 * paragraph's two fields are (docs/corpus-schema.md, added 2026-08-23).
+	 *
+	 * Absent unless the heading carries at least one reference, which is two
+	 * nodes in the whole corpus. `title` is ALWAYS the plain form, so a
+	 * consumer that just wants to print a heading reads that and needs to know
+	 * nothing about this.
+	 *
+	 * Snake_case, unlike `titleHtml`/`anchor`/`label` above, because those
+	 * three are built in TypeScript by `buildDocumentOutline` while this one
+	 * is read straight off `structure.json`.
+	 */
+	title_marked?: string;
+	/**
+	 * The footnotes `title_marked`'s tokens point at, same entry shape as a
+	 * paragraph's. Absent when the heading has none.
+	 *
+	 * A TOC or index row is a link, so it must NOT render these — a disclosure
+	 * button inside an anchor is invalid markup. The reading views, where a
+	 * heading is a real heading, render them the way body prose does.
+	 */
+	citations?: CccCitation[];
 }
 
 /**

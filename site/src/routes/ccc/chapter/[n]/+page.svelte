@@ -18,6 +18,7 @@
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
+	import HeadingText from '$lib/components/HeadingText.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
@@ -32,7 +33,7 @@
 	import { useScrollSpy } from '$lib/scroll-spy.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
-	import { displayTitle, type DisplayTitle } from '$lib/titles';
+	import { displayTitle } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
 	import type { CccNode, CccParagraph, StructureNode } from '$lib/types';
 	import type { PageData } from './$types';
@@ -97,32 +98,40 @@
 	);
 
 	/**
-	 * The chapter's own ARTICLE headings, keyed by the paragraph each one
-	 * opens at, so the continuous body can print them where the source does.
+	 * The chapter's own inner headings, keyed by the paragraph each one opens
+	 * at, so the continuous body can print them where the source does.
 	 *
 	 * Without them this view ran a whole chapter — 113 paragraphs, for the
 	 * first chapter of the Decalogue — as one undivided column, with the ten
-	 * commandments' own headings nowhere on the page. That was tolerable only
-	 * while the sidebar stopped at chapter level too; now that it lists
-	 * articles (`OUTLINE_KINDS`), a row has to have something to land on, and
-	 * a bare paragraph number is not it.
+	 * commandments' own headings nowhere on the page.
 	 *
-	 * ARTICLES ONLY, matching the sidebar's floor exactly. The `sub` level
-	 * below them (the roman-numeral subdivisions) is left out on purpose: it
-	 * is 238 EN / 301 PT nodes, no sidebar row points at one, and printing all
-	 * of them would replace one extreme with the other.
+	 * ARTICLES AND SUBS, but not `in-brief`: an "in brief" is a summary box
+	 * that the paragraphs inside it already render as one (`.para.in-brief`),
+	 * so printing its heading too would label a box that is already visibly a
+	 * box. The rest are the CCC's own printed divisions — the numbered
+	 * articles and, under them, the roman-numeral subsections and "Paragraph
+	 * N." headings. This is deliberately DEEPER than the sidebar's floor,
+	 * which stops at `article`: 3 to 37 headings per chapter is a page that
+	 * reads like the printed book, while the same depth in a 17rem column
+	 * would bury the row telling the reader where they are.
+	 *
+	 * A LIST per paragraph, not one heading: an article and its first
+	 * subsection legitimately open on the same paragraph (13 chapters have at
+	 * least one such pair), and both must print, outermost first — which is
+	 * the order this depth-first walk already produces.
 	 *
 	 * Keyed by first paragraph rather than by index, because the two editions'
 	 * chapter boundaries genuinely diverge (see the compare docblock above) —
 	 * a paragraph number is the one address both languages agree on.
 	 */
-	const articleHeadings = $derived.by(() => {
-		const byParagraph = new Map<number, DisplayTitle>();
+	const innerHeadings = $derived.by(() => {
+		const byParagraph = new Map<number, CccNode[]>();
 		const walk = (nodes: CccNode[]) => {
 			for (const node of nodes) {
 				const at = node.paragraphs[0];
-				if (node.kind === 'article' && Number.isFinite(at)) {
-					byParagraph.set(at as number, displayTitle(node, editions.lang));
+				if ((node.kind === 'article' || node.kind === 'sub') && Number.isFinite(at)) {
+					const key = at as number;
+					byParagraph.set(key, [...(byParagraph.get(key) ?? []), node]);
 				}
 				walk(node.children ?? []);
 			}
@@ -133,9 +142,10 @@
 
 	/**
 	 * Where a sidebar row lands once this route has loaded. Article rows get
-	 * the heading `articleHeadings` prints above their first paragraph;
+	 * the heading `innerHeadings` prints above their first paragraph;
 	 * everything at chapter level and above is the page top already, so it
-	 * gets no fragment at all.
+	 * gets no fragment at all. (Subs get a heading too, but no sidebar row
+	 * points at one — `OUTLINE_KINDS` stops at `article`.)
 	 */
 	function anchorFor(node: StructureNode): string | undefined {
 		if (node.kind !== 'article') return undefined;
@@ -314,13 +324,29 @@
 			{:else}
 				<div class="reading-text ccc-body chapter-body" lang={editions.current.work.language}>
 					{#each editions.current.paragraphs as paragraph, i (paragraph.n)}
-						{@const articleHeading = articleHeadings.get(paragraph.n)}
-						{#if articleHeading}
-							<h2 class="article-heading" id={`s${paragraph.n}`}>
-								{#if articleHeading.ordinal}<span class="ordinal">{articleHeading.ordinal}</span
-									>{/if}{articleHeading.title}
-							</h2>
-						{/if}
+						{#each innerHeadings.get(paragraph.n) ?? [] as heading, h (heading.kind + heading.title)}
+							{@const dt = displayTitle(heading, editions.lang)}
+							<!-- `id` on the first heading of the run only: they share a
+							     paragraph, so they would share an anchor, and it is the
+							     outermost one a table-of-contents row addresses. -->
+							{#if heading.kind === 'article'}
+								<h2 class="inner-heading" id={h === 0 ? `s${paragraph.n}` : undefined}>
+									{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}<HeadingText
+										title={dt.title}
+										node={heading}
+										lang={editions.lang}
+									/>
+								</h2>
+							{:else}
+								<h3 class="inner-heading sub-heading" id={h === 0 ? `s${paragraph.n}` : undefined}>
+									{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}<HeadingText
+										title={dt.title}
+										node={heading}
+										lang={editions.lang}
+									/>
+								</h3>
+							{/if}
+						{/each}
 						<section
 							class="para"
 							id={`p${paragraph.n}`}
@@ -408,21 +434,16 @@
 		margin-bottom: 0.5rem;
 	}
 
-	/* An article's own heading, printed inside the chapter's continuous body
-	   where the source prints it. Set well below the chapter's `h1` in weight
-	   and size — this is a division WITHIN the page, not a second title for it
-	   — and given generous space above so it reads as a break in the column
-	   rather than as a bolded first line of the paragraph beneath it.
+	/* The chapter's own inner headings, printed inside its continuous body
+	   where the source prints them. Set well below the chapter's `h1` in
+	   weight and size — these are divisions WITHIN the page, not second titles
+	   for it — and given generous space above so each reads as a break in the
+	   column rather than as a bolded first line of the paragraph beneath it.
 
 	   `scroll-margin-top` is what makes the sidebar's `#s{n}` land on the
 	   heading with room to breathe instead of flush against the viewport
 	   edge. */
-	.article-heading .ordinal {
-		color: var(--color-text-muted);
-		margin-right: 0.35em;
-	}
-
-	.article-heading {
+	.inner-heading {
 		font-family: var(--font-serif);
 		font-size: max(var(--font-size-min), 1.05em);
 		font-weight: 600;
@@ -430,11 +451,27 @@
 		scroll-margin-top: 1.5rem;
 	}
 
+	/* A subsection inside an article ("I. The Desire for God"). Same face,
+	   one step down in size and space, so the article it sits under still
+	   reads as the larger division. */
+	.sub-heading {
+		font-size: max(var(--font-size-min), 0.95em);
+		margin: 1.75rem 0 0.75rem;
+	}
+
 	/* Never above the chapter's opening paragraph: the `h1` is already right
 	   there, and the gap would read as a missing heading rather than as
-	   space. */
-	.article-heading:first-child {
+	   space. Applies to a run of headings sharing that paragraph too — only
+	   the first of them is the element's first child. */
+	.inner-heading:first-child {
 		margin-top: 0;
+	}
+
+	/* A sub immediately under the article it belongs to: the article heading
+	   has already opened the space, and a second full gap between the two
+	   reads as a missing paragraph. */
+	.inner-heading + .sub-heading {
+		margin-top: 0.75rem;
 	}
 
 	/* Paragraph numbers hang in the left margin where there's room for them,

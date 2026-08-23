@@ -6,7 +6,7 @@
 	import { splitDropCap } from '$lib/dropcap';
 	import { content } from '$lib/content.svelte';
 	import RefText from '$lib/components/RefText.svelte';
-	import { t } from '$lib/i18n.svelte';
+	import CitationDisclosure from '$lib/components/CitationDisclosure.svelte';
 
 	/**
 	 * Deliberately narrower than `CccParagraph`: only `blocks`/`citations` are
@@ -133,7 +133,6 @@
 	}
 </script>
 
-
 <!--
   One recursive walk over the block's inline nodes. Emphasis nests, so the
   snippet calls itself; everything else is a leaf. Nothing here emits an HTML
@@ -164,36 +163,13 @@
 			     paragraph. Keep each disclosure independent, as <details> did. -->
 			{@const disclosureKey = `${blockIndex}:${node.seq}`}
 			{@const citation = citationFor(marker)}
-			{#if isInline(citation)}<RefText text={citation.label} {lang} />{:else}<sup
-					class="citation-marker"
-				>
-					<button
-						type="button"
-						class="citation-trigger"
-						aria-expanded={openMarkers.has(disclosureKey)}
-						onclick={() => toggleCitation(disclosureKey)}
-					>
-						{marker}
-					</button>
-				</sup>
-				{#if openMarkers.has(disclosureKey)}
-					<span class="citation-text">
-						{#if citation && citation.text.trim() !== ''}
-							<RefText text={citation.text} {lang} />
-						{:else if citation}
-							<!-- Deliberately empty source: a handful of citations in the
-							     Vatican II corpus point at a footnote-list entry that is
-							     itself missing/truncated in the source page, not a parsing
-							     failure (docs/research/vatican-documents.md §6, "Known
-							     source defects" — 4 confirmed cases). No fabricated text
-							     to show, so say so rather than rendering a dead-looking
-							     empty box. -->
-							<span class="citation-empty">{t('citation.unavailable')}</span>
-						{:else}
-							{marker}
-						{/if}
-					</span>
-				{/if}{/if}
+			{#if isInline(citation)}<RefText text={citation.label} {lang} />{:else}<CitationDisclosure
+					{marker}
+					{citation}
+					{lang}
+					open={openMarkers.has(disclosureKey)}
+					onToggle={() => toggleCitation(disclosureKey)}
+				/>{/if}
 		{/if}
 	{/each}
 {/snippet}
@@ -252,20 +228,5 @@
 		text-decoration: underline;
 		text-decoration-color: var(--color-border);
 		text-underline-offset: 0.15em;
-	}
-
-	.citation-empty {
-		font-style: italic;
-	}
-
-	.citation-text {
-		font-size: max(var(--font-size-min), 0.9em);
-		font-style: normal;
-		color: var(--color-text-muted);
-		background: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
-		border-radius: 0.3rem;
-		padding: 0.35rem 0.5rem;
-		margin-inline-start: 0.25rem;
 	}
 </style>

@@ -329,6 +329,13 @@ const realContentUrls = import.meta.glob('./corpus-data/content/**/*.json', {
  * exercise the not-in-this-corpus paths, which real data doesn't reproduce).
  * Found exactly that way: a real-corpus build flipped two passing tests to
  * failing without a line of test or source code changing.
+ *
+ * The CCC fixture's structure tree carries one more deliberate edge case: a
+ * `sub` heading with its own `title_marked`/`citations` (docs/corpus-schema.md,
+ * "A heading can carry citations"). Two nodes in the real corpus have that and
+ * both are deep inside chapters the fixture doesn't cover, so without this the
+ * reading view's heading-footnote path would never run under `npm run dev`
+ * against fixtures.
  */
 export const USE_REAL_CORPUS =
 	!import.meta.env?.VITEST && Object.keys(realIndexManifests).length > 0;

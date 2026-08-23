@@ -22,7 +22,27 @@
 								"n": 1,
 								"title": "The Desire for God",
 								"paragraphs": [27, 30],
-								"children": []
+								"children": [
+									{
+										"kind": "sub",
+										"title": "I. The Desire for God",
+										"paragraphs": [27, 28],
+										"children": [],
+										"title_marked": "I. The Desire for God⟦1⟧",
+										"citations": [
+											{
+												"marker": "1",
+												"text": "GS 19 § 1."
+											}
+										]
+									},
+									{
+										"kind": "sub",
+										"title": "II. Ways of Coming to Know God",
+										"paragraphs": [29, 30],
+										"children": []
+									}
+								]
 							},
 							{
 								"kind": "in-brief",
