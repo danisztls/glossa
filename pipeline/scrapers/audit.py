@@ -88,10 +88,12 @@ def body_region(html: str) -> str:
     testo = re.search(r'class="testo"', html)
     if testo:
         end = re.search(r"/TESTO", html[testo.start() :], re.IGNORECASE)
+        # After the opening tag, matching `parse_document` -- see the note
+        # there on why starting at the attribute mattered.
+        tag_end = html.find(">", testo.start())
+        start = tag_end + 1 if tag_end != -1 else testo.start()
         region = (
-            html[testo.start() : testo.start() + end.start()]
-            if end
-            else html[testo.start() :]
+            html[start : testo.start() + end.start()] if end else html[start:]
         )
     else:
         region = html[V.find_content_start_old_shell(html) :]
@@ -100,13 +102,25 @@ def body_region(html: str) -> str:
 
 
 def stored_text_len(work: Path) -> int:
-    """Text we kept from the body: section blocks plus the structure tree.
+    """Text we kept from the body: section blocks, the structure tree, and the
+    masthead.
 
     Headings count. The parser lifts a heading out of the prose and into
     `structure.json`, so charging it as missing would report every correctly
     parsed document as lossy.
+
+    `manifest.header` counts for the same reason, and the omission was caught
+    the hard way: when `extract_document_header` began working on modern-shell
+    pages, 14 works "regressed" by up to 2.6pp purely because their masthead
+    moved out of a counted field into an uncounted one. Nothing was lost. A
+    coverage metric that ignores one of the three places body text is stored
+    reports relocation as loss.
     """
     total = 0
+    manifest = work / "manifest.json"
+    if manifest.exists():
+        header = json.loads(manifest.read_text()).get("header") or ""
+        total += len(V.strip_tags(header))
     sections = json.loads((work / "sections.json").read_text())
     for section in sections:
         for block in section["blocks"]:

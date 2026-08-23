@@ -1315,3 +1315,89 @@ Text yes, headings no — exactly the scope chosen above.
 **Also fixed**: `--overwrite`'s help says "no network", and phase 2 measured
 0 — but a phase-2 run still fetches pontiff index pages during discovery (6 on
 a single-slug run). The flag governs document re-parsing, not discovery.
+
+## 2026-08-23 — Three defects Mortalium Animos exposed
+
+Reported from reading the rendered page: footnotes absent, masthead absent,
+opening salutation gone. All three turned out to be classes, and one of them
+was a regression introduced hours earlier the same day.
+
+### 1. A fourth footnote-marker template: bare `[N]`
+
+The parser knew `ftn` (anchors), `sup`, and `paren` (`(N)`). Some pages print
+markers as plain **`[N]` attached to the preceding character** — `"one."[1]`,
+`head,[4]` — with no `<sup>` and no anchor of any kind, so detection fell
+through to `paren`, which matches `(N)` only, and nothing was marked.
+
+The note *lists* were never the problem: `build_footnote_table` parsed
+Mortalium Animos' 30 entries correctly all along, with nothing in the body
+pointing at them.
+
+Guarded twice against an editorial `[1]`: the bracket must be attached to a
+non-space character, and there must be at least three in the body.
+
+**Measured: citations 9,633 → 11,507 (+1,874), across exactly the 36 works
+the scan predicted.** Mediator Dei alone prints 171 of them; Mystici Corporis
+149, Casti Connubii 100, Quadragesimo Anno 75.
+
+Worth recording that batch 3 described `mediator-dei.en` and no one noticed —
+the description brief asks about headings and text and never about the
+apparatus. That is a gap in the brief, not only in the parser.
+
+### 2. `pending_first_block` held one block, not all of them
+
+Where a document prints no explicit `1.` and jumps to `2.`, the parser
+promotes the preceding unnumbered text into section 1. That field was a scalar
+overwritten by every unnumbered block before the first numbered one, so a page
+opening with a salutation *and* a real first paragraph kept whichever came
+last. `singulari-quadam.en` lost its 1,747-character opening paragraph this
+way; `mortalium-animos.en` lost its salutation.
+
+Now accumulates. Joining rather than keeping separate blocks matches how
+`add_continuation` already treats consecutive prose inside a section, so this
+adds no new shape to the corpus. `singulari-quadam.en` §1 is 2,142 characters
+again.
+
+### 3. The masthead, and the region-start regression behind it
+
+`manifest.header` was populated for all 32 old-shell `vatii` works and empty
+for all 307 encyclicals — a split by page shell, which is what gave the cause
+away. Two causes, one old and one new:
+
+- `_LANG_BAR_RE` required brackets. The old shell prints `[ AR - BE - … ]`,
+  the modern one a bare `EN - FR - IT - LA - PT`, sometimes with `ZH_CN` /
+  `ZH_TW` among the codes.
+- **`parse_document` started its content region AT the `class="testo"` match
+  rather than after the enclosing tag**, leaving `class="testo">` as literal
+  text at the head of the region. Harmless while those characters were skipped
+  anyway — and not harmless once `_gap_block` began recovering unwrapped text
+  the same day, because the debris then became the document's first block:
+  `class="testo"> EN - FR - IT - LA - PT`. The language bar with garbage glued
+  to it, so `extract_document_header` stopped on block 0.
+
+Fixed in all three copies of the sniff (`vatican_docs.py`, `audit.py`,
+`census.py`). **Headers: 32 → 313 of 339 works.**
+
+The regression had been met and dismissed once already: `census.py` carried a
+`startswith('class="testo"')` guard written to paper over the same artifact
+rather than to ask where it came from. The guard is gone.
+
+### The coverage metric was incomplete, and said so loudly
+
+Applying fix 3 produced 14 apparent regressions of up to 2.6pp. None was real:
+the masthead had moved out of `structure.json` (counted by `stored_text_len`)
+into `manifest.header` (not counted). A coverage metric that ignores one of
+the three places body text is stored reports *relocation* as loss. `header`
+now counts.
+
+After that correction: **median coverage 98.20% → 99.04%, 187 works improved,
+4 regressions** — and all four are bracket-footnote works whose `[N]` markers
+correctly left the prose to become apparatus, worth about 0.5pp of marker
+characters each.
+
+### What held
+
+`phase2` made **zero network fetches** and `raw/` is untouched. The ToC oracle
+is **unchanged** — 67 differences across the same 6 works — which is the check
+that changing the region start did not drift the structure trees. Both audit
+gates pass, 416 site tests pass, `svelte-check` clean.

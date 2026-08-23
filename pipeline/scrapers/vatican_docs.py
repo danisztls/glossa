@@ -52,6 +52,7 @@ Empirically confirmed templates (see survey doc + live fetches performed
       (39).`, RN EN) -- handled by matching on the anchor's `name`
       attribute (always present, always numeric) and separately trimming
       a redundant echoed "(N)"/"[N]" that immediately follows.
+    - "bracket": bare `[N]` inline, no <sup> and no anchor (36 works)
     - "paren": bare `(N)` inline, with an optional second series `(N*)`
       seen exactly once (Lumen Gentium's patristic "SUPPLEMENTARY NOTES",
       chapter-scoped -- see below). No anchors, no <sup> at all in the
@@ -729,11 +730,29 @@ _PAREN_MARKER_RE = re.compile(r"\((\d{1,3}\*?)\)")
 # excluding every plausible year (1000-2999) a papal document could cite.
 
 
+_BRACKET_MARKER_RE = re.compile(r"\[(\d{1,3}\*?)\]")
+# Attached to the word or punctuation it follows -- `"one."[1]`, `head,[4]`.
+# That attachment is the discriminator against an editorial `[1]` standing on
+# its own, and the count threshold below is the second: a document really
+# using this convention has dozens.
+_BRACKET_ATTACHED_RE = re.compile(r"[^\s>]\[\d{1,3}\*?\]")
+_BRACKET_MIN = 3
+
+
 def detect_marker_template(body_html: str) -> str:
     if re.search(r'name=["\']?_ftnref[0-9A-Za-z]+', body_html, re.IGNORECASE):
         return "ftn"
     if re.search(r"<sup\b", body_html, re.IGNORECASE):
         return "sup"
+    # "bracket": bare `[N]` in the text, with no <sup> and no anchor of any
+    # kind -- the whole apparatus is plain characters. Found on 36 works,
+    # every one of which stored ZERO citations because the fallthrough to
+    # "paren" below matches `(N)` only: Mediator Dei alone prints 171 of
+    # them, and its 30-entry note list parsed correctly all along with
+    # nothing in the body pointing at it. Checked after "sup"/"ftn" because
+    # the "ftn" template already reads a `[N]` echoed beside its anchor.
+    if len(_BRACKET_ATTACHED_RE.findall(body_html)) >= _BRACKET_MIN:
+        return "bracket"
     return "paren"
 
 
@@ -768,6 +787,10 @@ def mark_footnotes(inner_html: str, template: str) -> str:
             return f"{MARK_OPEN}{marker}{MARK_CLOSE}"
 
         return _FTNREF_RE.sub(sub_ftnref, inner_html)
+    if template == "bracket":
+        return _BRACKET_MARKER_RE.sub(
+            lambda m: f"{MARK_OPEN}{m.group(1)}{MARK_CLOSE}", inner_html
+        )
     return _PAREN_MARKER_RE.sub(
         lambda m: f"{MARK_OPEN}{m.group(1)}{MARK_CLOSE}", inner_html
     )
@@ -2188,7 +2211,16 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
     return [blocks[i].text for i in candidates]
 
 
-_LANG_BAR_PREFIX_RE = re.compile(r"^\s*\[\s*[A-Za-z]{2}\s*(?:-\s*[A-Za-z]{2}\s*)+\]\s*")
+# The bar is `[ AR - BE - ... ]` in the old shell and a BARE `EN - FR - IT -
+# LA - PT` in the modern one, sometimes with `ZH_CN`/`ZH_TW` among the codes.
+# Requiring the brackets meant `extract_document_header` broke on its very
+# first block for every modern-shell page, so all 307 encyclicals had an empty
+# `manifest.header` while all 32 old-shell vatii works had one -- a split by
+# page shell, which is what gave the cause away.
+_LANG_CODE = r"[A-Za-z]{2}(?:_[A-Za-z]{2})?"
+_LANG_BAR_PREFIX_RE = re.compile(
+    rf"^\s*\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)+\]?\s*"
+)
 
 
 def extract_document_header(
@@ -2277,7 +2309,7 @@ def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
     return [blocks[i].text for i in candidates]
 
 
-_LANG_BAR_RE = re.compile(r"^\[\s*[A-Z]{2}\s*(?:-\s*[A-Z]{2}\s*)+\]$")
+_LANG_BAR_RE = re.compile(rf"^\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)+\]?$")
 _PAPAL_SIGNATURE_RE = re.compile(
     r"^(?:PAPA\s+)?"
     r"(?:PIUS|PIO|LEO|LEAO|IOANNES|JOANNES|JOAO|JOHN|PAULUS|PAUL|PAULO"
@@ -2769,10 +2801,21 @@ def parse_document(
     if testo_m:
         shell = "modern"
         end_m = re.search(r"/TESTO", html[testo_m.start() :], re.IGNORECASE)
+        # AFTER the opening tag, not at the `class="testo"` attribute inside
+        # it. Starting at the match left `class="testo">` as literal text at
+        # the head of the region -- harmless while the region's first
+        # characters were skipped anyway, and NOT harmless once `_gap_block`
+        # began recovering unwrapped text, because it then became the
+        # document's first block: `class="testo"> EN - FR - IT - LA - PT`.
+        # That is the language bar with debris glued to it, so
+        # `extract_document_header` failed to recognise it and stopped on
+        # block 0, leaving every modern-shell page with no masthead.
+        tag_end = html.find(">", testo_m.start())
+        testo_start = tag_end + 1 if tag_end != -1 else testo_m.start()
         region = (
-            html[testo_m.start() : testo_m.start() + end_m.start()]
+            html[testo_start : testo_m.start() + end_m.start()]
             if end_m
-            else html[testo_m.start() :]
+            else html[testo_start:]
         )
         content_start = 0
     else:
@@ -3275,8 +3318,27 @@ def parse_document(
                 state.dropped.append(b.text)
             else:
                 if b.kind == "prose":
-                    state.pending_first_block = b.text
-                    state.pending_first_html = b.html
+                    # ACCUMULATE, do not overwrite. A document with no explicit
+                    # "1." promotes this into section 1 when it reaches "2.",
+                    # and it used to hold only the LAST unnumbered block seen --
+                    # so a page opening with a salutation and then its real
+                    # first paragraph kept the paragraph and dropped the
+                    # salutation, or worse. `singulari-quadam.en` lost its
+                    # 1,747-character opening paragraph that way, keeping only
+                    # "Beloved Son and Venerable Brethren, Health and the
+                    # Apostolic Blessing."; `mortalium-animos.en` lost its
+                    # salutation. Joining matches how `add_continuation`
+                    # already treats consecutive prose inside a section.
+                    if state.pending_first_block is None:
+                        state.pending_first_block = b.text
+                        state.pending_first_html = b.html
+                    else:
+                        state.pending_first_block += " " + b.text
+                        state.pending_first_html = (
+                            f"{state.pending_first_html} {b.html}".strip()
+                            if b.html
+                            else state.pending_first_html
+                        )
                 where = state.stack[-1].title if state.stack else "?"
                 state.orphan_content.append(f"[{where}] {b.text[:90]}")
         elif b.kind == "prose" and is_mini_header(b.text):

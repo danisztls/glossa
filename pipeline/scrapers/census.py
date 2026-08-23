@@ -68,10 +68,12 @@ def body_region(html: str) -> str:
     testo = re.search(r'class="testo"', html)
     if testo:
         end = re.search(r"/TESTO", html[testo.start() :], re.IGNORECASE)
+        # After the opening tag, matching `parse_document` -- see the note
+        # there on why starting at the attribute mattered.
+        tag_end = html.find(">", testo.start())
+        start = tag_end + 1 if tag_end != -1 else testo.start()
         region = (
-            html[testo.start() : testo.start() + end.start()]
-            if end
-            else html[testo.start() :]
+            html[start : testo.start() + end.start()] if end else html[start:]
         )
     else:
         region = html[V.find_content_start_old_shell(html) :]
@@ -187,7 +189,7 @@ def census(corpus: Path, work_id: str) -> dict:
     rows = []
     for index, raw in enumerate(split_blocks(body)):
         text = V.strip_tags(raw)
-        if not text or text.startswith('class="testo"'):
+        if not text:
             continue
         number = None
         m = re.match(r"^(\d{1,4})\s*\.\s*", text)
