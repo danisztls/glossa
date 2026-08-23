@@ -59,7 +59,12 @@ WHAT IS STILL NOT SHARED, because the duplication is only apparent:
     byte-identical `validate` functions today and must keep them apart:
     `sacredbible.py`'s docblock records that these assert things about *an
     edition*, not about a template, and being equal right now is not a reason
-    to make them unable to diverge.
+    to make them unable to diverge. Note the contrast with
+    `apply_verse_corrections`, which those two ALSO had identically and which
+    did move: the corrections layer's rules come from docs/decisions.md and
+    docs/corpus-schema.md, and an edition has no standing to disagree with
+    them. `validate` is where an edition's own claims live. Identical bodies
+    were never the test; whether the source is entitled to differ is.
   - **Heading heuristics** (`is_mini_header`, `is_full_bold` and friends).
     Same category as `strip_tags`: they encode what a heading looks like in
     one source's markup.
@@ -76,6 +81,7 @@ import os
 import time
 import unicodedata
 from dataclasses import dataclass, field
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -281,6 +287,82 @@ def corrections_receipt(
         "unresolved": [c for c in corrections if c.get("resolution")],
         "count": len(applied),
     }
+
+
+def apply_verse_corrections(
+    books: "Iterable[tuple[str, list[dict]]]",
+    corrections: list[dict],
+    full_run: bool,
+) -> tuple[list[dict], set[str]]:
+    """Apply file-sourced corrections to already-parsed verse text, in place.
+    Returns (applied entries, applied ids).
+
+    WHY THIS IS SHAREABLE WHERE `validate` IS NOT. All three Bible scrapers had
+    this, and the two sacredbible.org ones were identical to the character;
+    matos_soares.py differed only in reaching a book's fields by attribute
+    rather than by key. That is not a coincidence of three editions agreeing.
+    Every rule here comes from somewhere above the edition: the drift guard and
+    the never-apply-a-`resolution` rule are docs/decisions.md's source-defect
+    corrections policy, and the `{osis, chapter, verse}` locator and
+    `{"n", "text"}` verse are docs/corpus-schema.md. An edition has no standing
+    to disagree with either, which is exactly what `validate` -- asserting book
+    and chapter counts for one particular text -- does have.
+
+    `books` is `(osis, chapters)` pairs, so each caller writes the one line
+    that knows its own book shape and nothing here has to guess.
+
+    THREE OUTCOMES, and the middle one is the point:
+
+      - A locator whose (osis, chapter) is not in this run is SKIPPED. Scope is
+        tracked per chapter, not per book, because `--sample` keeps one book
+        whole and truncates another to its first chapters; a correction aimed
+        at a chapter the sample never built is out of scope, not drift.
+      - A locator that IS in scope but whose exact `from` text is not there is
+        a DRIFT FAILURE: the source changed since the entry was authored, and
+        re-verifying it is required before the run may proceed.
+      - On a full run, an entry that never matched anywhere is also a failure.
+        It is the only check that catches a correction which has quietly
+        stopped applying while still claiming, by its presence, to be handling
+        a defect."""
+    present_chapters: set[tuple[str, int]] = set()
+    verse_index: dict[tuple[str, int, int], dict] = {}
+    for osis, chapters in books:
+        for chap in chapters:
+            present_chapters.add((osis, chap["n"]))
+            for v in chap["verses"]:
+                verse_index[(osis, chap["n"], v["n"])] = v
+
+    applied: list[dict] = []
+    seen: set[str] = set()
+    for c in corrections:
+        if c.get("resolution"):
+            continue  # documented non-defect / unresolved -- never applied
+        loc = c["locator"]
+        key = (loc["osis"], loc["chapter"], loc["verse"])
+        if (loc["osis"], loc["chapter"]) not in present_chapters:
+            continue  # out of scope for this run (e.g. --sample)
+        verse = verse_index.get(key)
+        if verse is None or c["from"] not in verse["text"]:
+            raise CorrectionDriftError(
+                f"correction {c['id']!r}: expected text {c['from']!r} not found "
+                f"at {loc['osis']} {loc['chapter']}:{loc['verse']} (source drift -- "
+                "re-verify against corpus/raw/ and update or remove the entry)"
+            )
+        verse["text"] = verse["text"].replace(c["from"], c["to"], 1)
+        applied.append(dict(c))
+        seen.add(c["id"])
+
+    if full_run:
+        missing = [
+            c["id"]
+            for c in corrections
+            if not c.get("resolution") and c["id"] not in seen
+        ]
+        if missing:
+            raise CorrectionDriftError(
+                f"correction entries never matched during full run: {missing}"
+            )
+    return applied, seen
 
 
 def _restamp(value, field: str, stamp):

@@ -36,6 +36,7 @@ from pathlib import Path
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
 from common import (
+    apply_verse_corrections,
     CorrectionDriftError,
     chapter_opening_letter,
     corrections_receipt,
@@ -245,55 +246,6 @@ ANOMALIES: list[Anomaly] = []
 # --------------------------------------------------------------------------
 
 
-def apply_corrections(
-    book_docs: list[dict], corrections: list[dict], full_run: bool
-) -> tuple[list[dict], set[str]]:
-    # Scope is tracked at (osis, chapter) granularity, not just osis: --sample
-    # keeps Philemon whole but truncates John to chapters 1-3, so a
-    # correction targeting a chapter the sample run never touched must be
-    # skipped as out-of-scope, not treated as source drift.
-    present_chapters = {
-        (b["osis"], chap["n"]) for b in book_docs for chap in b["chapters"]
-    }
-    verse_index: dict[tuple[str, int, int], dict] = {}
-    for b in book_docs:
-        for chap in b["chapters"]:
-            for v in chap["verses"]:
-                verse_index[(b["osis"], chap["n"], v["n"])] = v
-
-    applied: list[dict] = []
-    seen: set[str] = set()
-    for c in corrections:
-        if c.get("resolution"):
-            continue  # documented non-defect / unresolved -- never applied
-        loc = c["locator"]
-        key = (loc["osis"], loc["chapter"], loc["verse"])
-        if (loc["osis"], loc["chapter"]) not in present_chapters:
-            continue  # out of scope for this run (e.g. --sample)
-        verse = verse_index.get(key)
-        if verse is None or c["from"] not in verse["text"]:
-            raise CorrectionDriftError(
-                f"correction {c['id']!r}: expected text {c['from']!r} not found "
-                f"at {loc['osis']} {loc['chapter']}:{loc['verse']} (source drift -- "
-                "re-verify against corpus/raw/ and update or remove the entry)"
-            )
-        verse["text"] = verse["text"].replace(c["from"], c["to"], 1)
-        applied.append(dict(c))
-        seen.add(c["id"])
-
-    if full_run:
-        missing = [
-            c["id"]
-            for c in corrections
-            if not c.get("resolution") and c["id"] not in seen
-        ]
-        if missing:
-            raise CorrectionDriftError(
-                f"correction entries never matched during full run: {missing}"
-            )
-    return applied, seen
-
-
 def run_scrape(
     sample: bool, offline: bool, refresh: bool
 ) -> tuple[list[dict], list[str]]:
@@ -496,8 +448,10 @@ def main() -> int:
 
     corrections = load_corrections(WORK_ID)
     try:
-        applied, _seen = apply_corrections(
-            book_docs, corrections, full_run=not args.sample
+        applied, _seen = apply_verse_corrections(
+            ((b["osis"], b["chapters"]) for b in book_docs),
+            corrections,
+            full_run=not args.sample,
         )
     except CorrectionDriftError as exc:
         print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)

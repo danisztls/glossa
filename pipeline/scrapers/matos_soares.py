@@ -43,6 +43,7 @@ from bs4 import BeautifulSoup
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
 from common import (
+    apply_verse_corrections,
     CorrectionDriftError,
     Fetcher,
     FetchPolicy,
@@ -318,64 +319,6 @@ def make_fetcher(client: httpx.Client) -> Fetcher:
 # "unresolved") are documented but never applied; they're carried through to
 # the receipt's "unresolved" list instead.
 # ---------------------------------------------------------------------------
-
-
-def apply_corrections(
-    books: list[BookResult], corrections: list[dict], full_run: bool
-) -> tuple[list[dict], set[str]]:
-    """Apply file-sourced corrections to already-parsed verse text, in place.
-    Returns (applied entries, applied ids). Entries whose locator book isn't
-    present in `books` at all (e.g. a --sample run touching only two books)
-    are silently skipped -- out of scope for this run, not a drift failure.
-    Entries whose book IS present but whose exact `from` text can't be found
-    at the locator's verse are a drift failure: the corpus changed since the
-    entry was authored, and re-verifying it is required before the run can
-    proceed. On a full run, any not-yet-applied (and not documented as a
-    non-defect/unresolved) entry is also a hard failure -- it means the
-    correction never found its target anywhere in the corpus."""
-    # Scope is tracked at (osis, chapter) granularity, not just osis: --sample
-    # keeps a whole book (e.g. Filémon) but truncates others to a single
-    # chapter (São João -> chapter 1 only), so a correction targeting a
-    # chapter the sample run never touched must be skipped as out-of-scope,
-    # not treated as source drift.
-    present_chapters = {(b.osis, chap["n"]) for b in books for chap in b.chapters}
-    verse_index: dict[tuple[str, int, int], dict] = {}
-    for b in books:
-        for chap in b.chapters:
-            for v in chap["verses"]:
-                verse_index[(b.osis, chap["n"], v["n"])] = v
-
-    applied: list[dict] = []
-    seen: set[str] = set()
-    for c in corrections:
-        if c.get("resolution"):
-            continue  # documented non-defect / unresolved -- never applied
-        loc = c["locator"]
-        key = (loc["osis"], loc["chapter"], loc["verse"])
-        if (loc["osis"], loc["chapter"]) not in present_chapters:
-            continue  # out of scope for this run (e.g. --sample)
-        verse = verse_index.get(key)
-        if verse is None or c["from"] not in verse["text"]:
-            raise CorrectionDriftError(
-                f"correction {c['id']!r}: expected text {c['from']!r} not found "
-                f"at {loc['osis']} {loc['chapter']}:{loc['verse']} (source drift -- "
-                "re-verify against corpus/raw/ and update or remove the entry)"
-            )
-        verse["text"] = verse["text"].replace(c["from"], c["to"], 1)
-        applied.append(dict(c))
-        seen.add(c["id"])
-
-    if full_run:
-        missing = [
-            c["id"]
-            for c in corrections
-            if not c.get("resolution") and c["id"] not in seen
-        ]
-        if missing:
-            raise CorrectionDriftError(
-                f"correction entries never matched during full run: {missing}"
-            )
-    return applied, seen
 
 
 def parse_index(html: str) -> list[dict]:
@@ -819,8 +762,10 @@ def main() -> int:
 
     corrections = load_corrections(WORK_ID)
     try:
-        file_applied, _seen = apply_corrections(
-            books, corrections, full_run=not args.sample
+        file_applied, _seen = apply_verse_corrections(
+            ((b.osis, b.chapters) for b in books),
+            corrections,
+            full_run=not args.sample,
         )
     except CorrectionDriftError as exc:
         print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)
