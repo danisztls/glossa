@@ -1,0 +1,13 @@
+[
+	{
+		"osis": "gen",
+		"blocks": [
+			{
+				"text": "This book is so called from its treating of the GENERATION, that is, of the creation and the beginning of the world."
+			},
+			{
+				"text": "A second paragraph, so the fixture exercises multi-block rendering rather than only the single-block case the real corpus mostly has."
+			}
+		]
+	}
+]

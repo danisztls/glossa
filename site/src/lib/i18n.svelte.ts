@@ -112,6 +112,9 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// The canonical book/chapter structure is edition-independent, so the
 		// picker can offer a chapter the reader's current edition lacks.
 		'bible.chapterUnavailable': 'Not available in this edition',
+		'bible.introduction': 'Introduction',
+		'bible.introUnavailable': 'No introduction in this language yet',
+		'bible.introSource': 'Introductions are not part of the scripture text.',
 		'bible.testament.ot': 'Old Testament',
 		'bible.testament.nt': 'New Testament',
 
@@ -351,6 +354,9 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'bible.landing.start': 'Começar a leitura',
 		'bible.landing.books': 'Livros',
 		'bible.chapterUnavailable': 'Não disponível nesta edição',
+		'bible.introduction': 'Introdução',
+		'bible.introUnavailable': 'Ainda não há introdução nesta língua',
+		'bible.introSource': 'As introduções não fazem parte do texto da Escritura.',
 		'bible.testament.ot': 'Antigo Testamento',
 		'bible.testament.nt': 'Novo Testamento',
 

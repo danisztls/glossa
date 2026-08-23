@@ -42,7 +42,15 @@ function canonicalNumber(segment: string): number | undefined {
 	// Reader routes have never emitted leading zeroes. Rejecting them here
 	// means one resource has one canonical spelling, rather than making
 	// /catechismus/01234 and /catechismus/1234 indistinguishable cache keys.
-	if (!/^[1-9]\d*$/.test(segment)) return undefined;
+	//
+	// A bare `0` is admitted, and only a bare one: `/scriptura/{book}/0` is a
+	// book's introduction (docs/corpus-schema.md §Book introductions), which
+	// fits the numbering the reader already knows because no book has a
+	// chapter 0 to collide with. `00` and `01` stay rejected, so the
+	// one-spelling rule this pattern exists for is untouched — and whether any
+	// given `/scriptura/{book}/0` is real is still decided by the manifest
+	// below, not here: only books with an introduction carry a 0.
+	if (!/^(0|[1-9]\d*)$/.test(segment)) return undefined;
 	const value = Number(segment);
 	return Number.isSafeInteger(value) ? value : undefined;
 }

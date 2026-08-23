@@ -22,7 +22,7 @@ export interface Copyright {
 	notice: string | null;
 }
 
-export type WorkType = 'bible' | 'catechism' | 'compendium' | 'document' | 'prayer';
+export type WorkType = 'bible' | 'bible-intro' | 'catechism' | 'compendium' | 'document' | 'prayer';
 
 /**
  * Bare language subtag the corpus ships content in (see `baseLang` in
@@ -52,6 +52,21 @@ export interface BibleManifest extends WorkManifestBase {
 	psalm_numbering: PsalmNumbering;
 	/** Lowercase OSIS codes, canonical 73-book order. */
 	books: string[];
+}
+
+/**
+ * A language's book introductions (`bible-intro.{lang}`). NOT `type: 'bible'`,
+ * and the distinction is load-bearing: `listBibleWorks()` filters on that type
+ * to build the edition menu, so a work typed as a Bible here would offer
+ * itself to readers as a fourth translation of scripture.
+ */
+export interface BibleIntroManifest extends WorkManifestBase {
+	type: 'bible-intro';
+	/** Lowercase OSIS codes that have an introduction, canonical order. */
+	books: string[];
+	/** `osis -> the book whose introduction covers it`, where the source prints
+	 *  one preface for two volumes (Challoner: 4 Kings, 2 Paralipomenon). */
+	shared_preface_with: Record<string, string>;
 }
 
 export interface CatechismManifest extends WorkManifestBase {
@@ -120,7 +135,12 @@ export interface DocumentManifest extends WorkManifestBase {
 }
 
 export type WorkManifest =
-	BibleManifest | CatechismManifest | CompendiumManifest | DocumentManifest | PrayerManifest;
+	| BibleManifest
+	| BibleIntroManifest
+	| CatechismManifest
+	| CompendiumManifest
+	| DocumentManifest
+	| PrayerManifest;
 
 export interface VerseNote {
 	marker: string;
@@ -155,6 +175,27 @@ export interface BibleBook {
 	/** 1-based position in the 73-book canonical order. */
 	order: number;
 	chapters: Chapter[];
+}
+
+/**
+ * A book's introduction — the reader meets it as chapter 0 of the book.
+ *
+ * NOT part of `BibleBook`, and the separation is the point. An introduction
+ * describes the book rather than the translation, so it is keyed by language
+ * (`bible-intro.{lang}`) and shared across every edition of that language;
+ * and its prose is not verses, so folding it into `chapters` would make it
+ * indistinguishable from scripture to everything that reads chapter/verse
+ * numbers — see `sync-corpus.mjs`'s `bibleIntroIndex` for the full list of
+ * what that would have broken.
+ */
+export interface BibleIntro {
+	/** Lowercase OSIS code of the book this introduces. */
+	osis: string;
+	blocks: BibleIntroBlock[];
+}
+
+export interface BibleIntroBlock {
+	text: string;
 }
 
 export type CccNodeKind =

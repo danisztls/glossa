@@ -3,6 +3,12 @@ import { readFileSync } from 'node:fs';
 import { documentChunkStartFor } from './corpus-index';
 import {
 	documentSectionText,
+	getAdjacentChapterAcrossBooks,
+	getBook,
+	getBookIntro,
+	getCanonicalBook,
+	hasBookIntro,
+	hasIntroForWork,
 	getCompendiumChapterFor,
 	getCompendiumQuestionRangeAsync,
 	listCompendiumChapters
@@ -76,5 +82,64 @@ describe('documentSectionText', () => {
 			citations: []
 		};
 		expect(documentSectionText(section)).toBe('word. Next.');
+	});
+});
+
+describe('book introductions (chapter 0)', () => {
+	// The fixtures give English an introduction for Genesis and none for John,
+	// which is what lets both the present and the absent path be asserted here
+	// rather than only the happy one.
+	it('knows which books a language introduces', () => {
+		expect(hasBookIntro('en', 'gen')).toBe(true);
+		expect(hasBookIntro('en', 'john')).toBe(false);
+		expect(hasBookIntro('pt', 'gen')).toBe(false);
+	});
+
+	it('resolves a work id to its language, so an edition inherits its language’s introductions', () => {
+		expect(hasIntroForWork('bible.cpdv.en', 'gen')).toBe(true);
+		// Same book, same address, a language with nothing written for it yet.
+		expect(hasIntroForWork('bible.matos-soares.pt', 'gen')).toBe(false);
+		expect(hasIntroForWork('bible.clementina.la', 'gen')).toBe(false);
+	});
+
+	it('reads the introduction as blocks, and nothing for a book without one', async () => {
+		const intro = await getBookIntro('en', 'gen');
+		expect(intro?.osis).toBe('gen');
+		expect(intro?.blocks.length).toBe(2);
+		expect(intro?.blocks[0].text).toContain('GENERATION');
+		await expect(getBookIntro('en', 'john')).resolves.toBeUndefined();
+		await expect(getBookIntro('pt', 'gen')).resolves.toBeUndefined();
+	});
+
+	it('puts chapter 0 before chapter 1 for the languages that have one', () => {
+		// The fixture Genesis carries one chapter; the 0 sorts in front of it.
+		expect(getCanonicalBook('gen')?.chapters).toEqual([0, 1]);
+		// The canonical list is the union across languages, so John — which no
+		// language introduces — never gains a 0 at all. (Its [1, 3] gap is the
+		// fixtures' own deliberate not-in-corpus case, left untouched.)
+		expect(getCanonicalBook('john')?.chapters).toEqual([1, 3]);
+	});
+
+	it('navigates from chapter 1 back into the introduction, but only where there is one', () => {
+		expect(getAdjacentChapterAcrossBooks('bible.cpdv.en', 'gen', 1, 'prev')).toEqual({
+			osis: 'gen',
+			chapter: 0
+		});
+		expect(getAdjacentChapterAcrossBooks('bible.cpdv.en', 'gen', 0, 'next')).toEqual({
+			osis: 'gen',
+			chapter: 1
+		});
+		// A Portuguese reader steps straight past it, because for them it is an
+		// absent chapter rather than a page with nothing on it.
+		expect(
+			getAdjacentChapterAcrossBooks('bible.matos-soares.pt', 'gen', 1, 'prev')
+		).toBeUndefined();
+	});
+
+	it('keeps chapter 0 out of the citation address space', () => {
+		// The whole reason introductions are stored apart from `chapters`: a
+		// reference must never resolve to one. `refs.ts` checks existence
+		// against the book's chapters, which never carry a 0.
+		expect(getBook('bible.cpdv.en', 'gen')?.chapters.some((c) => c.n === 0)).toBe(false);
 	});
 });

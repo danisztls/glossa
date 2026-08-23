@@ -73,7 +73,7 @@
 	 * has to relocate itself across the page after the fact.
 	 */
 	import { untrack } from 'svelte';
-	import { getBook, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
+	import { getBook, hasIntroForWork, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
@@ -355,7 +355,14 @@
 	 * subset of the canonical union (both v1 editions are 73/73 complete, but
 	 * this must not assume that stays true). */
 	function chaptersInEdition(osis: string): Set<number> {
-		return new Set(getBook(workId, osis)?.chapters.map((c) => c.n) ?? []);
+		const ns = new Set(getBook(workId, osis)?.chapters.map((c) => c.n) ?? []);
+		// Chapter 0 is the book's introduction, and belongs to the reader's
+		// LANGUAGE rather than to their edition (`corpus.ts`, "Book
+		// introductions"). A language without one leaves the 0 in the grid
+		// greyed, which is the same thing the grid already says about a chapter
+		// this edition happens not to carry.
+		if (hasIntroForWork(workId, osis)) ns.add(0);
+		return ns;
 	}
 </script>
 
@@ -410,11 +417,15 @@
 					<a
 						href={`/scriptura/${book.osis}/${chapterN}`}
 						class:current={book.osis === currentOsis && chapterN === currentChapter}
+						title={chapterN === 0 ? t('bible.introduction') : undefined}
 					>
 						{chapterN}
 					</a>
 				{:else}
-					<span class="unavailable" title={t('bible.chapterUnavailable')}>
+					<span
+						class="unavailable"
+						title={chapterN === 0 ? t('bible.introUnavailable') : t('bible.chapterUnavailable')}
+					>
 						{chapterN}
 					</span>
 				{/if}

@@ -122,6 +122,7 @@
  */
 
 import type {
+	BibleIntro,
 	CccNode,
 	CccParagraph,
 	Chapter,
@@ -140,6 +141,9 @@ import { inlineText, parseInlineHtml } from './inline-html';
 import {
 	USE_REAL_CORPUS,
 	bibleIndex,
+	bibleIntroBooks,
+	bibleIntroLocation,
+	fixtureBibleIntrosByLang,
 	cccBibleXrefsByCcc,
 	documentBibleXrefs,
 	cccChunkLocation,
@@ -273,6 +277,53 @@ export function listBooks(workId: string): BibleBookMeta[] {
 	return bibleIndex[workId] ?? [];
 }
 
+// --- Book introductions (chapter 0) --------------------------------------
+//
+// Addressed as chapter 0 of the book, but stored and reasoned about apart
+// from the chapters (see `types.ts`'s `BibleIntro`). Keyed by LANGUAGE, not
+// by edition: the three editions of a language share one introduction,
+// because an introduction is about the book.
+//
+// Which means chapter 0's existence is a language question, and every helper
+// here that takes a `workId` resolves it to that work's language first. A
+// reader on the Clementine Vulgate gets no chapter 0 while a reader on the
+// CPDV does, and that asymmetry is the ordinary "absent in this edition" path
+// the Bible routes already handle — not a special case.
+
+/** Does this language have an introduction for this book? Synchronous
+ *  (index-tier), so the picker and adjacency never wait on a fetch. */
+export function hasBookIntro(lang: string, osis: string): boolean {
+	return (bibleIntroBooks[baseLang(lang)] ?? []).includes(osis);
+}
+
+/** Whether a reader of `workId` has an introduction for this book — i.e.
+ *  whether THAT WORK'S LANGUAGE has one. Exported for the chapter picker,
+ *  which is prop-driven (it is handed a work id, not the reader's store). */
+export function hasIntroForWork(workId: string, osis: string): boolean {
+	const work = manifests[workId];
+	return work ? hasBookIntro(work.language, osis) : false;
+}
+
+/** This book's chapter numbers as the READER navigates them in `workId`:
+ *  the chapters present, preceded by 0 when this work's language has an
+ *  introduction. Deliberately not the same list as `book.chapters` — that one
+ *  is scripture, and `refs.ts` resolves citations against it. */
+function navigableChapters(workId: string, book: BibleBookMeta): number[] {
+	const ns = book.chapters.map((c) => c.n).sort((a, b) => a - b);
+	return hasIntroForWork(workId, book.osis) ? [0, ...ns] : ns;
+}
+
+export async function getBookIntro(lang: string, osis: string): Promise<BibleIntro | undefined> {
+	const base = baseLang(lang);
+	if (!hasBookIntro(base, osis)) return undefined;
+	const intros = await fetchTier(
+		fixtureBibleIntrosByLang[base],
+		bibleIntroLocation(`bible-intro.${base}`),
+		undefined as BibleIntro[] | undefined
+	);
+	return intros?.find((entry) => entry.osis === osis);
+}
+
 /** The chapter immediately before/after the given one, among chapters present. */
 function getAdjacentChapter(
 	workId: string,
@@ -282,7 +333,7 @@ function getAdjacentChapter(
 ): number | undefined {
 	const book = getBook(workId, osis);
 	if (!book) return undefined;
-	const ns = book.chapters.map((c) => c.n).sort((a, b) => a - b);
+	const ns = navigableChapters(workId, book);
 	const idx = ns.indexOf(chapterN);
 	if (idx === -1) return undefined;
 	const nextIdx = direction === 'next' ? idx + 1 : idx - 1;
@@ -312,7 +363,9 @@ export function getAdjacentChapterAcrossBooks(
 	const adjacentBook = books[direction === 'next' ? bookIdx + 1 : bookIdx - 1];
 	if (!adjacentBook || adjacentBook.chapters.length === 0) return undefined;
 
-	const chapterNs = adjacentBook.chapters.map((c) => c.n).sort((a, b) => a - b);
+	// Reading forward into a new book lands on its introduction when it has
+	// one, which is where a reader turning the page would arrive in print.
+	const chapterNs = navigableChapters(workId, adjacentBook);
 	const chapter = direction === 'next' ? chapterNs[0] : chapterNs[chapterNs.length - 1];
 	return { osis: adjacentBook.osis, chapter };
 }
@@ -343,7 +396,8 @@ export function findBookByAbbrev(workId: string, abbrev: string): BibleBookMeta 
 export interface CanonicalBook {
 	osis: string;
 	order: number;
-	/** Chapter numbers present in at least one edition, ascending. */
+	/** Chapter numbers present in at least one edition, ascending. Includes 0
+	 *  when some language introduces this book — see `hasBookIntro`. */
 	chapters: number[];
 	/** Display name per bible work id, for labelling in the reader's own edition. */
 	namesByWorkId: Record<string, string>;
@@ -366,6 +420,15 @@ const canonicalBooksByOsis: Map<string, CanonicalBook> = (() => {
 			for (const chapter of book.chapters) chapters.add(chapter.n);
 			entry.chapters = [...chapters].sort((a, b) => a - b);
 		}
+	}
+	// Chapter 0 where any language has an introduction — the union across
+	// LANGUAGES, matching how the rest of this map is the union across
+	// editions. The picker then marks it present or unavailable per edition
+	// through `chaptersInEdition`, exactly as it already does for a chapter
+	// one edition has and another doesn't.
+	for (const osis of new Set(Object.values(bibleIntroBooks).flat())) {
+		const entry = out.get(osis);
+		if (entry && !entry.chapters.includes(0)) entry.chapters = [0, ...entry.chapters];
 	}
 	return out;
 })();

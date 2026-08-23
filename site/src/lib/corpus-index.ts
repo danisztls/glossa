@@ -34,6 +34,7 @@
 
 import type {
 	BibleBook,
+	BibleIntro,
 	CccAbbreviation,
 	CccBibleXref,
 	DocumentBibleXref,
@@ -48,6 +49,8 @@ import type {
 import bibleCpdvEnManifest from './fixtures/bible.cpdv.en/manifest.json';
 import fixtureGenJson from './fixtures/bible.cpdv.en/books/gen.json';
 import fixtureJohnJson from './fixtures/bible.cpdv.en/books/john.json';
+import bibleIntroEnManifest from './fixtures/bible-intro.en/manifest.json';
+import fixtureBibleIntroEn from './fixtures/bible-intro.en/intros.json';
 
 import bibleMatosSoaresPtManifest from './fixtures/bible.matos-soares.pt/manifest.json';
 import fixtureMatosSoaresGenJson from './fixtures/bible.matos-soares.pt/books/gen.json';
@@ -153,6 +156,11 @@ function expandBookMeta(compact: BibleBookMetaCompact): BibleBookMeta {
 interface BibleIndexFile {
 	[workId: string]: { books: BibleBookMetaCompact[] };
 }
+/** `lang -> { books }` — which books have an introduction, and nothing else.
+ *  The prose is content tier (see `sync-corpus.mjs`'s `bibleIntroIndex`). */
+interface BibleIntroIndexFile {
+	[lang: string]: { books: string[] };
+}
 interface CccIndexFile {
 	[lang: string]: {
 		structure: CccNode[];
@@ -202,7 +210,12 @@ interface PrayerIndexFile {
 export interface ContentManifestEntry {
 	workId: string;
 	kind:
-		'bible-book' | 'ccc-chunk' | 'compendium-questions' | 'document-sections' | 'prayer-collection';
+		| 'bible-book'
+		| 'bible-intros'
+		| 'ccc-chunk'
+		| 'compendium-questions'
+		| 'document-sections'
+		| 'prayer-collection';
 	relPath: string;
 	bytes: number;
 }
@@ -216,6 +229,11 @@ const realIndexBible = import.meta.glob('./corpus-data/index/bible-index.json', 
 	eager: true,
 	import: 'default'
 }) as Record<string, BibleIndexFile>;
+
+const realIndexBibleIntro = import.meta.glob('./corpus-data/index/bible-intro-index.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, BibleIntroIndexFile>;
 
 const realIndexCcc = import.meta.glob('./corpus-data/index/ccc-index.json', {
 	eager: true,
@@ -352,6 +370,7 @@ export const manifests: Record<string, WorkManifest> = USE_REAL_CORPUS
 			'bible.cpdv.en': bibleCpdvEnManifest as WorkManifest,
 			'bible.matos-soares.pt': bibleMatosSoaresPtManifest as WorkManifest,
 			'bible.clementina.la': bibleClementinaLaManifest as WorkManifest,
+			'bible-intro.en': bibleIntroEnManifest as WorkManifest,
 			'ccc.en': cccEnManifest as WorkManifest,
 			'ccc.pt': cccPtManifest as WorkManifest,
 			'compendium.en': compendiumEnManifest as WorkManifest,
@@ -379,6 +398,21 @@ export const bibleIndex: Record<string, BibleBookMeta[]> = USE_REAL_CORPUS
 				metaFromFullBook(fixtureClementinaJohnJson as BibleBook)
 			]
 		};
+
+/**
+ * Which books have an introduction, per language — existence only, so
+ * `hasBookIntro`/the chapter picker/adjacency stay synchronous, the same way
+ * `cccParagraphNumbers` keeps those checks off the content tier.
+ *
+ * The fixture side deliberately covers Genesis and NOT John, so the tests
+ * exercise both the present and the absent path (this file's docblock: the
+ * fixtures are built to hit the not-in-corpus branches, not to look complete).
+ */
+export const bibleIntroBooks: Record<string, string[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexBibleIntro) ?? {}).map(([lang, v]) => [lang, v.books])
+		)
+	: { en: (fixtureBibleIntroEn as BibleIntro[]).map((entry) => entry.osis) };
 
 export const cccStructures: Record<string, CccNode[]> = USE_REAL_CORPUS
 	? Object.fromEntries(
@@ -514,6 +548,9 @@ export const fixtureBibleBooks: Record<string, Record<string, BibleBook>> = {
 		john: fixtureClementinaJohnJson as BibleBook
 	}
 };
+export const fixtureBibleIntrosByLang: Record<string, BibleIntro[]> = {
+	en: fixtureBibleIntroEn as BibleIntro[]
+};
 export const fixtureCccParagraphsByLang: Record<string, CccParagraph[]> = {
 	en: fixtureCccEnParagraphs as CccParagraph[],
 	pt: fixtureCccPtParagraphs as CccParagraph[]
@@ -585,6 +622,8 @@ const documentChunkLocationsByWork: Record<string, Record<number, ContentLocatio
  *  other content-tier location map here is keyed (the lang-vs-workid choice
  *  in the INDEX registries above is a different, index-only concern). */
 const prayerLocations: Record<string, ContentLocation> = {};
+/** Keyed by WORK ID (`bible-intro.en`), matching every other location map. */
+const bibleIntroLocations: Record<string, ContentLocation> = {};
 /** relPath (`content-manifest.json`'s shape) -> hashed URL, built once so
  *  `listContentAssets()` doesn't rescan every glob entry per manifest row. */
 const contentUrlByRelPath: Record<string, string> = {};
@@ -614,6 +653,11 @@ for (const [globPath, url] of Object.entries(realContentUrls)) {
 	if (documentMatch) {
 		const [, workId, startStr] = documentMatch;
 		(documentChunkLocationsByWork[workId] ??= {})[Number(startStr)] = location;
+		continue;
+	}
+	const introMatch = relPath.match(/^content\/([^/]+)\/intros\.json$/);
+	if (introMatch) {
+		bibleIntroLocations[introMatch[1]] = location;
 		continue;
 	}
 	const prayerMatch = relPath.match(/^content\/([^/]+)\/prayers\.json$/);
@@ -651,6 +695,10 @@ export function documentChunkLocations(workId: string): ContentLocation[] {
 		.map(Number)
 		.sort((a, b) => a - b)
 		.map((start) => byStart[start]);
+}
+
+export function bibleIntroLocation(workId: string): ContentLocation | undefined {
+	return bibleIntroLocations[workId];
 }
 
 export function prayerContentLocation(workId: string): ContentLocation | undefined {

@@ -54,7 +54,8 @@ pipeline/scrapers/
                      corrections, overrides, text. Import it as `common`;
                      `__init__.py` re-exports the whole surface.
   bible/             cpdv, vulgate, matos_soares, and the sacredbible page
-                     format the first two share
+                     format the first two share; introductions (the one
+                     scraper here that reads a JSON API, not HTML)
   ccc/               ccc, compendium
   vatican_docs.py    encyclicals, Vatican II, exhortations
   prayers.py

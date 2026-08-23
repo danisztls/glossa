@@ -108,6 +108,23 @@ stored — see "Cross-references" below.
 - If the source carries footnotes, they may optionally be captured as `"notes": [{ "marker": "i", "text": "…" }]` on the verse; strip markers from `text` regardless. (Matos Soares: liriocatolico chapter pages carry markers but not note content — strip markers, and note in the manifest that footnote content is a future enrichment via vulgata.online.)
 - If the source prints section headings inside chapters (e.g. "Primeiro dia da criação"), capture them as `"headings": [{ "before_verse": 3, "text": "…" }]` on the chapter; omit the field when absent.
 
+## Book introductions — `bible-intro.{lang}/intros.json`
+
+**Added 2026-08-23.** A short introduction per book, which the site addresses as **chapter 0** of that book (`/scriptura/gen/0`). `type: "bible-intro"`; work id `{corpus}.{lang}`, the `ccc.{lang}` shape rather than the Bible's `{corpus}.{edition}.{lang}`.
+
+```jsonc
+[{ "osis": "gen", "blocks": [{ "text": "This book is so called from…" }] }]
+```
+
+**Keyed by language, not by edition, and that is the whole design.** An introduction describes the *book*, not the translation, so the three editions of a language share one — writing it per edition would mean maintaining the same prose three times and again for every edition added later. It follows that chapter 0's existence is a **language** question: a reader on `bible.cpdv.en` has one, a reader on `bible.clementina.la` does not, and that asymmetry is served as an ordinary absent chapter rather than by falling back to another language's prose (see `site/src/routes/bible/[book]/[chapter]/+page.svelte`, which does fall back across editions for real chapters and deliberately does not here).
+
+**Chapter 0 is navigable but never citable, and it stays out of `books/{osis}.json`.** Folding it into a Bible book's `chapters` would make it indistinguishable from scripture to everything that reads chapter numbers from there — `refs.ts`'s existence check (so `Gen 0` would begin resolving as a citation), the xref checker's `chapterVerses` map, `versification.ts`. The two registries are kept apart precisely so an introduction cannot become a citation target by accident; `site/scripts/sync-corpus.mjs` unions the 0 into `corpus-routes.json` only, which is addresses and nothing else.
+
+Manifest carries `books` (OSIS codes with an introduction, canonical order) and `shared_preface_with` (`osis -> the book whose introduction covers it`) for sources that print one preface across two volumes.
+
+- `blocks[].text` is plain text on the same terms as verse text above: markup dropped, emphasis a documented v1 loss recoverable from `raw/`.
+- A book may legitimately have none. Challoner prints one preface for both volumes of Kings and both of Paralipomenon, so `bible-intro.en` covers 71 of 73 books, and `/scriptura/2kgs/0` is correctly not an address at all.
+
 ## Canonical book order (73 books, lowercase OSIS)
 
 OT (46): `gen exod lev num deut josh judg ruth 1sam 2sam 1kgs 2kgs 1chr 2chr ezra neh tob jdt esth 1macc 2macc job ps prov eccl song wis sir isa jer lam bar ezek dan hos joel amos obad jonah mic nah hab zeph hag zech mal`

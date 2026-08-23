@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
-import { getChapter, getWork, listBibleWorks } from '$lib/corpus';
+import { baseLang, getBookIntro, getChapter, getWork, listBibleWorks } from '$lib/corpus';
 import type { BibleBookMeta } from '$lib/corpus-index';
-import type { Chapter, WorkManifest } from '$lib/types';
+import type { BibleIntro, Chapter, WorkManifest } from '$lib/types';
 import type { PageLoad } from './$types';
 
 /**
@@ -28,8 +28,54 @@ export interface BibleEditionData {
 	chapter: Chapter;
 }
 
-export const load: PageLoad = async ({ params }) => {
+/**
+ * This route's data, for both of the things it serves: a chapter of scripture
+ * and a book's introduction. Declared as one type, and returned as one shape
+ * with an empty half, rather than a union — the component reads `byWorkId` in
+ * a dozen places and every one of them would otherwise need to re-narrow.
+ * `introByLang` present is what says which of the two this is.
+ */
+export interface BiblePageData {
+	osis: string;
+	chapterN: number;
+	byWorkId: Record<string, BibleEditionData>;
+	introByLang?: Record<string, BibleIntro>;
+}
+
+/**
+ * Chapter 0 — a book's introduction (docs/corpus-schema.md §Book
+ * introductions). Carried in route data as `introByLang`, keyed by LANGUAGE
+ * rather than by work id, because that is how it is stored: one introduction
+ * per language, shared by that language's editions.
+ *
+ * Every available language is loaded, exactly as every edition is loaded for
+ * an ordinary chapter, so the reader can switch edition without a refetch and
+ * the component decides what to show. There is one language today, so this
+ * costs a single small fetch; the shape is what keeps adding Portuguese from
+ * being a route change.
+ */
+export const load: PageLoad = async ({ params }): Promise<BiblePageData> => {
 	const chapterN = Number(params.chapter);
+
+	if (chapterN === 0) {
+		const introByLang: Record<string, BibleIntro> = {};
+		for (const manifest of listBibleWorks()) {
+			const lang = baseLang(manifest.language);
+			if (introByLang[lang]) continue;
+			const intro = await getBookIntro(lang, params.book);
+			if (intro) introByLang[lang] = intro;
+		}
+		// 404 only when NO language introduces this book — the same rule the
+		// edition loop below uses, one level up. Genesis has an introduction and
+		// 4 Kings does not (Challoner prints one preface for both volumes), so
+		// `/scriptura/2kgs/0` is genuinely not an address; the edge already
+		// refuses it too, since `corpus-routes.json` only carries a 0 for books
+		// that have one.
+		if (Object.keys(introByLang).length === 0) {
+			error(404, 'This book has no introduction');
+		}
+		return { osis: params.book, chapterN, byWorkId: {}, introByLang };
+	}
 
 	const byWorkId: Record<string, BibleEditionData> = {};
 	for (const manifest of listBibleWorks()) {

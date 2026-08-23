@@ -59,7 +59,12 @@
 		 *  and `CompareToggle` already take. */
 		canCompare: boolean;
 		compareActive: boolean;
-		onToggleCompare: () => void;
+		/** Omitted by routes that pass `canCompare: false` and therefore never
+		 *  render the toggle — a book introduction (`/scriptura/{book}/0`) has
+		 *  no second edition to align against. Required in spirit whenever
+		 *  `canCompare` is true; `CompareToggle` is simply not rendered
+		 *  otherwise, so there is nothing to call. */
+		onToggleCompare?: () => void;
 		/** What identifies the second column: a picker on five routes, a plain
 		 *  label on `/preces`. Rendered only while comparing. */
 		comparison?: Snippet;
@@ -84,7 +89,7 @@
 	<PrintButton />
 	<div class="reading-bar-editions">
 		<EditionMenu />
-		{#if canCompare}
+		{#if canCompare && onToggleCompare}
 			<CompareToggle active={compareActive} onclick={onToggleCompare} {enterLabel} {exitLabel} />
 		{/if}
 		{#if compareActive && comparison}

@@ -1,0 +1,14 @@
+{
+	"id": "bible-intro.en",
+	"type": "bible-intro",
+	"title": "Book Introductions",
+	"short_title": "Introductions",
+	"language": "en",
+	"edition": "Challoner's prefaces, from the Douay-Rheims",
+	"sources": [{ "url": "https://example.invalid/fixture", "retrieved_at": "2026-08-23" }],
+	"copyright": { "status": "public-domain", "holder": null, "notice": null },
+	"notes": "",
+	"generated_at": "2026-08-23T00:00:00Z",
+	"books": ["gen"],
+	"shared_preface_with": {}
+}

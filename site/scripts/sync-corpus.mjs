@@ -247,6 +247,19 @@ const descriptions = existsSync(descriptionsPath)
 
 const manifests = {}; // workId -> manifest.json, verbatim (every work type, incl. future document families)
 const bibleIndex = {}; // workId -> { books: BibleBookMeta[] }
+const bibleIntroIndex = {}; // lang -> { books: [osis, …] } -- EXISTENCE only, never the prose
+// Keyed by bare LANG, matching the CCC/Compendium/prayers: a book introduction
+// describes the BOOK, not the translation, so `bible-intro.{lang}` has no
+// edition segment to key on (docs/corpus-schema.md).
+//
+// DELIBERATELY NOT FOLDED INTO `bibleIndex`. An introduction is addressed as
+// chapter 0 of its book, and putting that 0 into a Bible book's `chapters`
+// would make it indistinguishable from a chapter of scripture to everything
+// downstream that reads chapter numbers from there -- `refs.ts`'s existence
+// check (so "Gen 0" would start resolving as a citation), the xref checker's
+// `chapterVerses` map, and `versification.ts`. Chapter 0 is an address the
+// reader can navigate to; it is not a verse-bearing chapter, and keeping the
+// two registries apart is what stops it becoming citable by accident.
 const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
 const cccEditions = []; // [{ lang, paragraphs }] -- input to the xref pass
 const documentEditions = []; // [{ slug, lang, sections }] -- ditto, per document edition
@@ -358,6 +371,35 @@ for (const workId of workIds) {
 		}
 		books.sort((a, b) => a.order - b.order);
 		bibleIndex[workId] = { books };
+		continue;
+	}
+
+	// Book introductions (docs/corpus-schema.md §Book introductions:
+	// `bible-intro.{lang}`). Branches on `manifest.type` rather than the
+	// `bible-intro.` prefix for the same reason the prayer and document
+	// branches below do — and note the prefix would be the more fragile test
+	// here in particular, since `workId.startsWith('bible.')` above must NOT
+	// match this work and only the dot keeps it from doing so.
+	if (manifest.type === 'bible-intro') {
+		const lang = workId.split('.').pop();
+		const intros = readJson(path.join(workDir, 'intros.json'));
+		// Existence only. The prose is ~50 KB per language, which is content
+		// tier by the same rule that keeps verse text out of `bible-index.json`
+		// -- the index is eager-inlined into every page, and a reader who never
+		// opens an introduction must not carry all 71 of them.
+		bibleIntroIndex[lang] = { books: intros.map((entry) => entry.osis) };
+
+		// Kept WHOLE per language, like the prayers: one fetch the first time a
+		// reader opens any introduction, then memoized for the rest of the
+		// session. There is no chunk boundary worth drawing in 50 KB.
+		const relPath = `content/${workId}/intros.json`;
+		writeJson(path.join(destDir, relPath), intros);
+		contentManifest.push({
+			workId,
+			kind: 'bible-intros',
+			relPath,
+			bytes: byteLength(intros)
+		});
 		continue;
 	}
 
@@ -522,6 +564,7 @@ if (publishedDefeats.length > 0) {
 
 writeJson(path.join(indexDir, 'manifests.json'), manifests);
 writeJson(path.join(indexDir, 'bible-index.json'), bibleIndex);
+writeJson(path.join(indexDir, 'bible-intro-index.json'), bibleIntroIndex);
 writeJson(path.join(indexDir, 'ccc-index.json'), cccIndex);
 writeJson(path.join(indexDir, 'compendium-index.json'), compendiumIndex);
 writeJson(path.join(indexDir, 'document-index.json'), documentIndex);
@@ -605,6 +648,19 @@ const routeManifest = {
 				byBook.set(book.osis, chapters);
 			}
 		}
+		// Chapter 0 is a book's introduction, in whichever languages have one
+		// (docs/corpus-schema.md §Book introductions). Blessed here on the same
+		// terms as every other chapter number: the union across languages, so
+		// the edge answers "is this an address?" and the reader's own language
+		// decides whether there is text to show — exactly how a chapter present
+		// in one edition and absent from another already behaves.
+		//
+		// Guarded on the book already existing, so an introduction filed for a
+		// book no edition carries cannot mint an address that resolves to
+		// nothing at all.
+		for (const { books } of Object.values(bibleIntroIndex)) {
+			for (const osis of books) byBook.get(osis)?.add(0);
+		}
 		return Object.fromEntries(
 			[...byBook.entries()].map(([osis, chapters]) => [osis, [...chapters].sort((a, b) => a - b)])
 		);
@@ -652,6 +708,7 @@ writeJson(path.join(indexDir, 'unpublished.json'), unpublishedWorks);
 const indexBytes = [
 	'manifests.json',
 	'bible-index.json',
+	'bible-intro-index.json',
 	'ccc-index.json',
 	'compendium-index.json',
 	'document-index.json',

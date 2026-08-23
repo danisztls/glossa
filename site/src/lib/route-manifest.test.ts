@@ -5,7 +5,7 @@ const manifest: RouteManifest = {
 	version: 1,
 	workCount: 6,
 	contentAssetCount: 12,
-	bible: { gen: [1, 2], john: [3] },
+	bible: { gen: [0, 1, 2], john: [3] },
 	ccc: [1, 2, 10],
 	cccChapters: [1, 10],
 	compendium: [1, 2],
@@ -19,6 +19,9 @@ describe('isCanonicalPath', () => {
 		'/',
 		'/scriptura',
 		'/scriptura/gen/1',
+		// A book introduction. Admitted because `gen` carries a 0 above, not
+		// because the segment parses as a number — see the two rejections below.
+		'/scriptura/gen/0',
 		'/catechismus/10',
 		'/catechismus/caput/10',
 		'/compendium/2',
@@ -33,6 +36,11 @@ describe('isCanonicalPath', () => {
 
 	it.each([
 		'/scriptura/gen/3',
+		// John has no introduction, so its chapter 0 is not an address even
+		// though Genesis's is.
+		'/scriptura/john/0',
+		// The one-canonical-spelling rule survives admitting a bare 0.
+		'/scriptura/gen/00',
 		'/scriptura/GEN/1',
 		'/catechismus/3',
 		'/catechismus/01',

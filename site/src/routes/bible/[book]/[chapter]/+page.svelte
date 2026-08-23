@@ -6,7 +6,9 @@
 		getAdjacentChapterAcrossBooks,
 		getCccCitationsForChapter,
 		getDocumentCitationsForChapter,
+		getBook,
 		getDocumentGroup,
+		getWork,
 		listEditions
 	} from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
@@ -47,13 +49,47 @@
 	 * `documents/[slug]` already take.
 	 */
 	const availableWorkIds = $derived(Object.keys(data.byWorkId));
+
+	/**
+	 * Chapter 0: this book's introduction rather than a chapter of scripture
+	 * (`+page.ts`, docs/corpus-schema.md §Book introductions). Everything below
+	 * that reads `current` is scripture-shaped — verses, compare alignment,
+	 * cited-in — and none of it applies, so the markup branches on this once
+	 * near the top rather than each of those guarding itself.
+	 */
+	const introMode = $derived(data.introByLang !== undefined);
+
 	const workId = $derived(
 		(() => {
 			const preferred = content.workIdFor('bible');
+			// In intro mode there are no editions in route data to fall back
+			// through: the reader's own edition is what names the book and drives
+			// the picker and the chapter nav, whether or not its LANGUAGE has an
+			// introduction to show.
+			if (introMode) return preferred ?? listEditions('bible')[0]?.id;
 			return preferred && data.byWorkId[preferred] ? preferred : availableWorkIds[0];
 		})()
 	);
 	const current = $derived(data.byWorkId[workId]);
+
+	/**
+	 * The introduction in the reader's own language, and nothing else.
+	 *
+	 * NO FALLBACK TO ANOTHER LANGUAGE, deliberately, and this is the one place
+	 * this route departs from how it treats an absent chapter. A chapter absent
+	 * from one edition falls back to an edition that has it, because all three
+	 * are the same verses of the same book and showing one instead of another
+	 * is a translation choice. An introduction is different: today only English
+	 * has any, and quietly showing English prose to a reader who asked for
+	 * Portuguese would not be a translation choice but a language failure
+	 * wearing one. So a language with no introduction gets an honest "not yet"
+	 * — the same shape as any other absent chapter.
+	 */
+	const introLang = $derived(content.langFor('bible'));
+	const intro = $derived(data.introByLang?.[introLang]);
+	const introWork = $derived(getWork(`bible-intro.${introLang}`));
+	/** The book's name in the reader's edition — index-tier, no fetch. */
+	const introBookName = $derived(getBook(workId, data.osis)?.name ?? data.osis);
 
 	/**
 	 * The canonical, edition-free address of this chapter and of one of its
@@ -355,14 +391,23 @@
 	// re-record when it does, or it would keep pointing at the edition the
 	// reader happened to arrive in.
 	$effect(() => {
-		if (current) {
+		if (introMode) {
+			// An introduction is a real place to be resumed to, so it records a
+			// position like any chapter — labelled by name rather than by "0",
+			// which would read as a numbering bug in "continue reading".
+			setPosition(workId, `${introBookName} — ${t('bible.introduction')}`, page.url.pathname);
+		} else if (current) {
 			setPosition(workId, `${current.book.name} ${current.chapter.n}`, page.url.pathname);
 		}
 	});
 </script>
 
 <svelte:head>
-	<title>{current?.book.name} {data.chapterN} — {current?.work.short_title}</title>
+	{#if introMode}
+		<title>{introBookName} — {t('bible.introduction')}</title>
+	{:else}
+		<title>{current?.book.name} {data.chapterN} — {current?.work.short_title}</title>
+	{/if}
 </svelte:head>
 
 <!-- No verse number in here any more: it used to be rendered once per cell,
@@ -386,7 +431,71 @@
 	<p class="compare-verse">{verse.text}</p>
 {/snippet}
 
-{#if current}
+{#if introMode}
+	<!-- Chapter 0: the book's introduction. A single column always — there is
+	     nothing to compare (no verse numbers to align by, and one introduction
+	     is shared across a language's editions), so the compare toggle, the
+	     comparison picker and the cited-in panel are all absent rather than
+	     disabled. The reading bar keeps the bookmark and print controls. -->
+	<div class="reading-layout">
+		<article class="content-column">
+			<ReadingBar bookmarkHref={chapterHref} canCompare={false} compareActive={false} />
+
+			{#if intro && introWork}
+				<p class="edition-label">{introWork.title}</p>
+				<p class="copyright-notice"><CopyrightNotice manifest={introWork} /></p>
+			{/if}
+			<h1>{introBookName}</h1>
+			<p class="intro-kicker">{t('bible.introduction')}</p>
+
+			<div class="mobile-picker">
+				<BookChapterPicker
+					currentWorkId={workId}
+					currentOsis={data.osis}
+					currentChapter={data.chapterN}
+				/>
+			</div>
+
+			{#if intro}
+				<div class="reading-text" lang={introLang}>
+					{#each intro.blocks as block, i (i)}
+						<p class="intro-block">{block.text}</p>
+					{/each}
+				</div>
+				<!-- Said plainly, once, under the text. These are Challoner's
+				     prefaces, not scripture, and a reader arriving at "chapter 0"
+				     of Genesis should not have to infer that from the typography. -->
+				<p class="intro-note">{t('bible.introSource')}</p>
+			{:else}
+				<p class="intro-note">{t('bible.introUnavailable')}</p>
+			{/if}
+
+			<nav class="unit-nav" aria-label="Chapter navigation">
+				{#if prev}
+					<a href={`/scriptura/${prev.osis}/${prev.chapter}`} rel="prev">
+						&larr; {t('bible.prevChapter')}
+					</a>
+				{:else}
+					<span></span>
+				{/if}
+				{#if next}
+					<a href={`/scriptura/${next.osis}/${next.chapter}`} rel="next">
+						{t('bible.nextChapter')} &rarr;
+					</a>
+				{/if}
+			</nav>
+		</article>
+
+		<aside class="reading-aside desktop-picker" aria-label={t('bible.pickBook')} role="navigation">
+			<BookChapterPicker
+				currentWorkId={workId}
+				currentOsis={data.osis}
+				currentChapter={data.chapterN}
+				variant="sidebar"
+			/>
+		</aside>
+	</div>
+{:else if current}
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
 			<!-- Edition, comparison, bookmark and print, in that order and in both
@@ -605,6 +714,30 @@
 
 	.copyright-notice {
 		margin: 0.15rem 0 0;
+	}
+
+	/* "Introduction", under the book's name — the counterpart of the chapter
+	   number in an ordinary chapter's `<h1>`, set as a kicker rather than
+	   folded into the heading so the heading stays the book's own name. */
+	.intro-kicker {
+		margin: 0.1rem 0 0;
+		font-family: var(--font-serif);
+		font-size: 1.05rem;
+		color: var(--color-text-muted);
+	}
+
+	.intro-block {
+		margin: 0 0 0.85em;
+	}
+
+	.intro-block:last-child {
+		margin-bottom: 0;
+	}
+
+	.intro-note {
+		margin-top: 1.5rem;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
 	}
 
 	h1 {
