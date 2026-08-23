@@ -126,9 +126,20 @@ The CCC hierarchy as a tree. Nodes:
   "n": 1,                             // ordinal within parent, when the source numbers it
   "title": "The Profession of Faith",
   "paragraphs": [26, 1065],           // [first, last] unit numbers this node spans (inclusive) — see note below
-  "children": [ … ]
+  "children": [ … ],
+
+  // Both omitted unless the source prints a footnote reference on the
+  // heading itself — see "A heading can carry citations" below.
+  "title_marked": "III. Christ Jesus — \"Mediator and Fullness of All Revelation\"⟦25⟧",
+  "citations": [{ "marker": "25", "text": "DV 2." }],
 }
 ```
+
+**A heading can carry citations** (added 2026-08-23), and `title`/`title_marked`/`citations` are the same triple a paragraph has, for the same reason: the source prints a `<sup>` reference inside the heading, and the footnote it points at is content that has to live somewhere. `title` is always the plain form with no `⟦⟧` tokens in it, so every consumer that only wants to print a heading can keep reading `title` alone; `title_marked` keeps each reference where the source set it, and is present **only** when there is at least one. `citations` uses the identical entry shape as `paragraphs.json` (`marker`, `text`, optional `label`), and the same invariants are validated: every token has an entry, every entry has a token, and no token survives in `title`.
+
+Rare, and expected to stay rare — two nodes in the whole corpus, both in `ccc.en`: `III. Christ Jesus — "Mediator and Fullness of All Revelation"` (footnote `DV 2.`) and `II. "I Know Whom I Have Believed"` (footnote `2 Tim 1:12`), each sourcing the phrase its heading quotes. The fields are optional precisely so the other 394 CCC nodes, and every node of every other work, carry no trace of the case.
+
+**A consumer must not render a heading's citation as an interactive control inside a link.** Index and table-of-contents rows are links, so they print `title` and drop the apparatus; the reading views, where a heading is an actual heading, render `title_marked` with the marker as a disclosure the same way body prose does.
 
 **`paragraphs` is generic unit-number-span vocabulary, not CCC-specific**, despite the name: it holds CCC paragraph numbers here, Compendium question numbers in `compendium.{lang}/structure.json`, and document section numbers in `{family}.{slug}.{lang}/structure.json`. The field keeps this one name across all work types rather than being renamed per type (e.g. to `sections` for documents) because the site's shared structure-tree walkers (`corpus.ts`'s `breadcrumbIn`/`flattenTree` over `StructureNode`) already operate on it across CCC and Compendium; a third name per work type would fork that code for no gain. Each work-type section below states what the span counts.
 

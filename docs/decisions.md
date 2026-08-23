@@ -1988,3 +1988,55 @@ sub-heading `«FAZ TUDO QUANTO LHE APRAZ» (Sl 115, 3)` loses a word to the
 respacing, falls under `is_mini_header`'s eight-word cap, and is now dropped
 and logged instead of being appended to the end of §268, where it never
 belonged.
+
+## 2026-08-23 — A structure heading can carry its own footnotes
+
+The CCC's EN mirror prints a `<sup>` footnote reference **inside** two of its
+headings, in each case sourcing the phrase the heading quotes:
+`III. Christ Jesus — "Mediator and Fullness of All Revelation"` cites _Dei
+Verbum_ 2, and `II. "I Know Whom I Have Believed"` cites 2 Tim 1:12. The schema
+had nowhere for that, so the marker token stayed embedded in `title` — rendering
+literally, as `⟦25⟧`, in the site's index — and the footnote text reached no
+output field at all.
+
+**Schema**: a structure node gets `title_marked` and `citations`, the same pair
+a paragraph has beside `text`, with the same validated invariants (every token
+has an entry, every entry has a token, and no token survives in `title`). Both
+are **omitted** unless the heading actually carries an apparatus, so 394 of the
+CCC's 396 nodes and every node of every other work are byte-identical to before.
+`title` stays the plain form, which is what makes this a non-event for every
+consumer that only wants to print a heading.
+
+**Where it renders, and where it must not.** A table-of-contents or index row is
+a `<a>`, and a disclosure button inside an anchor is invalid markup — those keep
+printing `title` and drop the apparatus, which is also the right editorial call
+(a footnote in a navigation row is noise). The reading views, where a heading is
+an actual heading, render `title_marked` with the marker as a disclosure exactly
+as body prose does. `HeadingText` is that side; `InlineText`'s docblock already
+stated the same rule from the other direction.
+
+**Two things fell out of needing a surface for it.** First, `CitationDisclosure`
+— the marker, the button, the boxed text and the three ways a citation can be
+empty now have one owner instead of a copy per component. (`PrayerMystery`
+deliberately keeps its own, unboxed `.citation-text`: a mystery's citation is
+always visible rather than disclosed, so the name is taken there and the
+treatments genuinely differ.) Second, the CCC chapter view now prints `sub`
+headings as well as `article` ones — otherwise the two nodes that carry a
+citation appear nowhere as a heading at all. That is deliberately deeper than
+the sidebar's `article` floor: 3 to 37 headings per chapter reads like the
+printed book in a full-width column and would bury the "you are here" row in a
+17rem one.
+
+**Offsets have to be rebased**, which is the one non-obvious bit and is why the
+splitting lives in `heading-markers.ts` with tests rather than inside the
+component: `title_marked` carries the corpus title, while the view shows
+`displayTitle`'s form with the source's redundant ordinal stripped off the
+front. Where the displayed title is not a substring of the corpus one at all
+(case normalisation is enough to cause that), every marker goes to the end
+rather than to a guessed position — a heading's footnote is terminal in both
+attested cases, and appending is the only placement that cannot land mid-word.
+Both real headings are pinned end-to-end through `displayTitle` in the tests.
+
+The CCC fixture gained a heading with a citation for the same reason: both real
+ones sit deep inside chapters the fixture doesn't cover, so the path would never
+run under `npm run dev` against fixtures.

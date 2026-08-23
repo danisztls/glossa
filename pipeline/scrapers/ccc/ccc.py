@@ -107,6 +107,52 @@ LAST_PARAGRAPH = 2865
 
 MARK_OPEN, MARK_CLOSE = "⟦", "⟧"  # ⟦ ⟧
 
+_MARKER_TOKEN_RE = re.compile(rf"{MARK_OPEN}([^ {MARK_CLOSE}]+){MARK_CLOSE}")
+
+
+def resolve_markers(
+    marked: str,
+    footnote_table: dict[str, str],
+    inline_citations: dict[str, tuple[str, str]] | None = None,
+) -> tuple[str, list[dict], list[str]]:
+    """Turn marked-up text into (plain text, citations, markers with no
+    footnote text).
+
+    Shared by paragraphs and by structure headings, which have the same
+    apparatus: the source prints a `<sup>` reference, the parser leaves a
+    `⟦N⟧` token where it stood, and the footnote's text has to be looked up
+    and attached to whatever unit carried the token. A heading's footnote used
+    to have nowhere to go, so the token stayed in `title` and the footnote
+    text was simply dropped.
+
+    `inline_citations` is the PT-only case where the SOURCE printed the
+    citation in running text rather than as a numbered note: those keep their
+    `label` and are restored into the plain text instead of removed, because
+    the label is something the source actually prints. Headings pass none.
+
+    Duplicate markers get one citation entry: the source sometimes cites the
+    same footnote twice in one unit (verified, e.g. PT §460 quotes parallel
+    Latin/vernacular texts both attributed to footnote 84)."""
+    inline = inline_citations or {}
+    seen: set[str] = set()
+    citations: list[dict] = []
+    missing: list[str] = []
+    for tok in _MARKER_TOKEN_RE.findall(marked):
+        if tok in seen:
+            continue
+        seen.add(tok)
+        if tok in inline:
+            text, label = inline[tok]
+            citations.append({"marker": tok, "text": text, "label": label})
+            continue
+        if tok not in footnote_table:
+            missing.append(tok)
+        citations.append({"marker": tok, "text": footnote_table.get(tok, "")})
+    plain = _MARKER_TOKEN_RE.sub(
+        lambda m: inline[m.group(1)][1] if m.group(1) in inline else "", marked
+    )
+    return re.sub(r"\s+", " ", plain).strip(), citations, missing
+
 
 # --------------------------------------------------------------------------
 # Fetching (cached, rate-limited)
@@ -464,10 +510,34 @@ KIND_MAP = {
 
 
 class Node:
-    def __init__(self, kind: str, n: int | None, title: str, level: int):
+    """A division of the work.
+
+    `title` is the plain heading text and `title_marked` the same text with
+    the source's footnote references left in place as `⟦N⟧`, exactly the
+    `text`/`text_marked` pair a paragraph carries -- because a heading can
+    carry the same apparatus a paragraph can. Two EN headings do: the mirror
+    prints a <sup> reference on `III. Christ Jesus -- "Mediator and Fullness
+    of All Revelation"` (footnote: "DV 2.") and on `II. "I Know Whom I Have
+    Believed"` (footnote: "2 Tim 1:12"), in both cases sourcing the phrase the
+    heading quotes. Before this, the token stayed in `title` -- rendering
+    literally in the site's index -- and the footnote text reached no output
+    field at all."""
+
+    def __init__(
+        self,
+        kind: str,
+        n: int | None,
+        title: str,
+        level: int,
+        title_marked: str | None = None,
+        citations: list[dict] | None = None,
+    ):
         self.kind = kind
         self.n = n
         self.title = title
+        #: None when the title carries no markers, i.e. almost always.
+        self.title_marked = title_marked
+        self.citations = citations or []
         self.level = level
         self.children: list[Node] = []
         self.own: set[int] = set()
@@ -492,6 +562,14 @@ class Node:
         }
         if self.n is not None:
             d["n"] = self.n
+        # Both omitted on a heading with no apparatus -- which is 394 of the
+        # CCC's 396 nodes and every node of every other work. Absence means
+        # "`title` is the whole story", the same convention `kind`,
+        # `attribution` and `label` already follow (docs/corpus-schema.md).
+        if self.title_marked is not None:
+            d["title_marked"] = self.title_marked
+        if self.citations:
+            d["citations"] = self.citations
         return d
 
 
@@ -684,43 +762,11 @@ class Paragraph:
                 inline_citations.update(found)
 
         all_marked = " ".join(b.text for b in self.blocks)
-        tokens = re.findall(rf"{MARK_OPEN}([^ {MARK_CLOSE}]+){MARK_CLOSE}", all_marked)
-        seen: set[str] = set()
-        citations = []
-        for tok in tokens:
-            if tok in seen:
-                # The source itself sometimes cites the same footnote twice
-                # within one paragraph (verified against raw HTML, e.g. PT
-                # §460 quotes two parallel Latin/vernacular texts both
-                # attributed to footnote 84) -- one citations entry per
-                # distinct marker is correct; this is not an anomaly.
-                continue
-            seen.add(tok)
-            if tok in inline_citations:
-                citations.append(
-                    {
-                        "marker": tok,
-                        "text": inline_citations[tok][0],
-                        "label": inline_citations[tok][1],
-                    }
-                )
-                continue
-            if tok not in footnote_table:
-                anomalies.append(
-                    f"paragraph {self.n}: marker {tok} has no footnote text"
-                )
-            citations.append({"marker": tok, "text": footnote_table.get(tok, "")})
-        self.citations = citations
-        flat = re.sub(
-            rf"{MARK_OPEN}([^ {MARK_CLOSE}]+){MARK_CLOSE}",
-            lambda m: (
-                inline_citations[m.group(1)][1]
-                if m.group(1) in inline_citations
-                else ""
-            ),
-            all_marked,
+        self.text, self.citations, missing = resolve_markers(
+            all_marked, footnote_table, inline_citations
         )
-        self.text = re.sub(r"\s+", " ", flat).strip()
+        for tok in missing:
+            anomalies.append(f"paragraph {self.n}: marker {tok} has no footnote text")
 
     def to_dict(self) -> dict:
         return {
@@ -768,8 +814,23 @@ class ScrapeState:
         self.normalize_pt_inline_scripture = normalize_pt_inline_scripture
 
     # -- structure -----------------------------------------------------
-    def push_heading(self, kind: str, n: int | None, title: str) -> None:
+    def push_heading(self, kind: str, n: int | None, marked_title: str) -> None:
+        """`marked_title` is the heading block's text as parsed, footnote
+        tokens included. They are resolved here, against the page currently
+        being processed, because that is where the footnote table for this
+        heading lives -- the same reason `finalize_open_paragraph` resolves a
+        paragraph's citations against `current_footnote_table`."""
         self.finalize_open_paragraph()
+        title, citations, missing = resolve_markers(
+            marked_title, self.current_footnote_table
+        )
+        # Normalized the same way `resolve_markers` normalizes `title`, so the
+        # two forms of one heading can never disagree about spacing.
+        title_marked = re.sub(r"\s+", " ", marked_title).strip() if citations else None
+        for tok in missing:
+            self.anomalies.append(
+                f"heading {title[:60]!r}: marker {tok} has no footnote text"
+            )
         if kind == "in_brief":
             while self.stack and self.stack[-1].level >= 4:
                 self.stack.pop()
@@ -808,7 +869,7 @@ class ScrapeState:
         if same_heading:
             self.stack.append(prev)
             return
-        node = Node(kind, n, title, level)
+        node = Node(kind, n, title, level, title_marked, citations)
         parent_children.append(node)
         self.stack.append(node)
 
@@ -1640,10 +1701,10 @@ def _title_key(title: str) -> str:
     heading arrived as "VII. T he Eucharist ..." against the meta's
     "VII. The Eucharist ...". `_INLINE_TAGS` fixed that at the source. The
     tolerance stays because a heading's spacing is not what this check is
-    about. Footnote markers ARE still dropped out of necessity: three headings
-    carry one and the meta never does."""
-    without_markers = re.sub(rf"{MARK_OPEN}[^{MARK_CLOSE}]*{MARK_CLOSE}", "", title)
-    folded = unicodedata.normalize("NFKD", without_markers)
+    about. Footnote markers need no special handling: `title` is the plain
+    form and keeps them in `title_marked` instead (see `Node`), and the
+    non-alphanumeric strip below would drop the brackets anyway."""
+    folded = unicodedata.normalize("NFKD", title)
     return re.sub(r"[^A-Za-z0-9]+", "", folded).upper()
 
 
@@ -1780,6 +1841,20 @@ def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[st
     def check_titles(node: Node):
         if not node.title.strip():
             problems.append(f"node kind={node.kind} n={node.n} has empty title")
+        # The same invariant paragraphs are held to: no token without a
+        # citation, no citation without a token, and never a token left in the
+        # plain form.
+        if MARK_OPEN in node.title:
+            problems.append(f"node {node.title[:60]!r}: marker token left in title")
+        tokens = set(_MARKER_TOKEN_RE.findall(node.title_marked or ""))
+        markers = {c["marker"] for c in node.citations}
+        if tokens != markers:
+            problems.append(
+                f"node {node.title[:60]!r}: token/citation mismatch "
+                f"{sorted(tokens)} vs {sorted(markers)}"
+            )
+        if node.title_marked is not None and not node.citations:
+            problems.append(f"node {node.title[:60]!r}: title_marked with no citations")
         for c in node.children:
             check_titles(c)
 
@@ -1867,12 +1942,16 @@ def build_manifest(
             "not belong."
         ),
         (
-            "KNOWN, UNCORRECTED: two EN headings carry a footnote marker captured into "
-            'their title (III. Christ Jesus -- "Mediator and Fullness of All Revelation" '
-            'and II. "I Know Whom I Have Believed"), because the source prints a <sup> '
-            "reference inside the heading and the schema has nowhere to hang a heading's "
-            "own footnote. The marker token is preserved rather than deleted, so the "
-            "reference is not silently lost."
+            "A structure node carries its own footnote apparatus where the source prints "
+            "one: `title` is the plain heading, `title_marked` keeps the reference in "
+            "place as a token, and `citations` holds the footnote text -- the same "
+            "text/text_marked/citations triple a paragraph has, and omitted entirely on "
+            "the 394 of 396 EN nodes that have no apparatus. Two EN headings do: "
+            "'III. Christ Jesus -- \"Mediator and Fullness of All Revelation\"' (DV 2.) "
+            "and 'II. \"I Know Whom I Have Believed\"' (2 Tim 1:12), each sourcing the "
+            "phrase its heading quotes. Before this the token sat in `title` and rendered "
+            "literally in the site's index, and the footnote text reached no output field "
+            "at all. No PT heading and no node of any other work carries one."
         ),
     ]
     if state.gaps:
