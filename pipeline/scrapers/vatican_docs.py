@@ -240,12 +240,11 @@ from common import (
     OverrideDriftError,
     apply_overrides,
     corpus_dir,
-    file_has_text,
     load_corrections,
     load_overrides,
     read_text_or_none,
     require_corpus,
-    write_if_changed,
+    write_stamped_json,
 )
 
 USER_AGENT = "Glossa Catholica corpus builder"
@@ -2537,11 +2536,6 @@ def find_paragraph_number_correction(
     return None
 
 
-def _json_text(value) -> str:
-    """The corpus's one JSON spelling: indent 2, real UTF-8, trailing newline."""
-    return json.dumps(value, indent=2, ensure_ascii=False) + "\n"
-
-
 def corrections_receipt(
     work_id: str,
     applied: list[dict],
@@ -3956,60 +3950,33 @@ def write_document_outputs(
     if existing and "translations" not in manifest and "translations" in existing:
         manifest["translations"] = existing["translations"]
 
-    def payloads(stamp: str) -> dict[str, str]:
-        """Every file this document owns, serialised, stamped `stamp`."""
-        out = {
-            "manifest.json": _json_text({**manifest, "generated_at": stamp}),
-            "structure.json": _json_text(structure),
-            "sections.json": _json_text(sections),
-            "corrections-applied.json": _json_text(
-                corrections_receipt(
-                    work_id, state.corrections_applied, state.corrections, stamp
-                )
-            ),
+    files: dict[str, object] = {
+        "manifest.json": manifest,
+        "structure.json": structure,
+        "sections.json": sections,
+        "corrections-applied.json": corrections_receipt(
+            work_id,
+            state.corrections_applied,
+            state.corrections,
+            manifest["generated_at"],
+        ),
+    }
+    # Written only when there are overrides, so the file's presence is itself
+    # the signal that this work needed hand-holding -- `ls corpus/works/*/
+    # overrides-applied.json` is the census of where the parser gave up.
+    if overrides_applied:
+        files["overrides-applied.json"] = {
+            "work_id": work_id,
+            "generated_at": manifest["generated_at"],
+            "applied": overrides_applied,
+            "count": len(overrides_applied),
         }
-        # Written only when there are overrides, so the file's presence is
-        # itself the signal that this work needed hand-holding -- `ls
-        # corpus/works/*/overrides-applied.json` is the census of where the
-        # parser gave up.
-        if overrides_applied:
-            out["overrides-applied.json"] = _json_text(
-                {
-                    "work_id": work_id,
-                    "generated_at": stamp,
-                    "applied": overrides_applied,
-                    "count": len(overrides_applied),
-                }
-            )
-        return out
-
-    # DID ANYTHING BUT THE CLOCK MOVE? `generated_at` is regenerated every run
-    # by construction, so comparing the text as written would make every file
-    # that carries one differ every time, and a re-parse would rewrite the
-    # whole corpus to record that a run happened. Compared with the STORED
-    # timestamp substituted in instead: if nothing else moved, the document
-    # keeps the timestamp it had, and `generated_at` comes to mean "when this
-    # content was generated" rather than "when a run last touched the file" --
-    # the former is what makes it worth anything in a git diff.
-    #
-    # All-or-nothing across the document's files: keeping the old timestamp on
-    # a manifest while sections.json changed underneath it would be worse than
-    # rewriting both.
-    stored = (existing or {}).get("generated_at")
-    if stored:
-        probe = payloads(stored)
-        # manifest.json is already in hand from the `translations` lookup
-        # above; re-reading it to compare would be the second read of the same
-        # file in the same function.
-        if probe.pop("manifest.json") == raw_manifest and all(
-            file_has_text(out_dir / name, text) for name, text in probe.items()
-        ):
-            return
-
-    for name, text in payloads(manifest["generated_at"]).items():
-        write_if_changed(out_dir / name, text)
-    if not overrides_applied:
-        (out_dir / "overrides-applied.json").unlink(missing_ok=True)
+    write_stamped_json(
+        out_dir,
+        files,
+        manifest["generated_at"],
+        remove=() if overrides_applied else ("overrides-applied.json",),
+    )
 
 
 # --------------------------------------------------------------------------

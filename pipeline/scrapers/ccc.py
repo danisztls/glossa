@@ -77,8 +77,10 @@ from common import (
     CorrectionDriftError,
     load_corrections,
     raw_root,
+    read_bytes_or_none,
     require_corpus,
     works_root,
+    write_stamped_json,
 )
 
 USER_AGENT = "Glossa Catholica corpus builder"
@@ -114,9 +116,8 @@ class Fetcher:
 
     def fetch(self, url: str, cache_name: str) -> str:
         cache_path = self.cache_dir / cache_name
-        if cache_path.exists():
-            data = cache_path.read_bytes()
-        else:
+        data = read_bytes_or_none(cache_path)
+        if data is None:
             elapsed = time.monotonic() - self._last_request
             if elapsed < CRAWL_DELAY:
                 time.sleep(CRAWL_DELAY - elapsed)
@@ -340,26 +341,21 @@ def apply_paragraph_corrections(
             )
 
 
-def write_corrections_receipt(
-    work_dir: Path,
+def corrections_receipt(
     work_id: str,
     applied: list[dict],
     corrections: list[dict],
     generated_at: str,
-) -> int:
-    unresolved = [c for c in corrections if c.get("resolution")]
-    receipt = {
+) -> dict:
+    """The corrections receipt as a value; written by common.write_stamped_json
+    along with the rest of the work, so it is skipped when nothing moved."""
+    return {
         "work_id": work_id,
         "generated_at": generated_at,
         "applied": applied,
-        "unresolved": unresolved,
+        "unresolved": [c for c in corrections if c.get("resolution")],
         "count": len(applied),
     }
-    work_dir.mkdir(parents=True, exist_ok=True)
-    (work_dir / "corrections-applied.json").write_text(
-        json.dumps(receipt, ensure_ascii=False, indent=2) + "\n"
-    )
-    return len(applied)
 
 
 # --------------------------------------------------------------------------
@@ -1660,23 +1656,20 @@ def write_outputs(
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     manifest = build_manifest(lang, state, fetched_pages, sample, generated_at)
 
-    (out_dir / "manifest.json").write_text(
-        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
-    )
-    (out_dir / "structure.json").write_text(
-        json.dumps(structure, indent=2, ensure_ascii=False) + "\n"
-    )
-    (out_dir / "paragraphs.json").write_text(
-        json.dumps(paragraphs, indent=2, ensure_ascii=False) + "\n"
-    )
-    (out_dir / "abbreviations.json").write_text(
-        json.dumps([], indent=2, ensure_ascii=False) + "\n"
-    )
-    write_corrections_receipt(
+    write_stamped_json(
         out_dir,
-        LANG_CONFIG[lang]["work_id"],
-        state.corrections_applied,
-        state.corrections,
+        {
+            "manifest.json": manifest,
+            "structure.json": structure,
+            "paragraphs.json": paragraphs,
+            "abbreviations.json": [],
+            "corrections-applied.json": corrections_receipt(
+                LANG_CONFIG[lang]["work_id"],
+                state.corrections_applied,
+                state.corrections,
+                generated_at,
+            ),
+        },
         generated_at,
     )
 

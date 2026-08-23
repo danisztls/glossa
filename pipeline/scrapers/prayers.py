@@ -108,7 +108,6 @@ from __future__ import annotations
 
 import argparse
 import html as ihtml
-import json
 import re
 import sys
 import time
@@ -121,7 +120,13 @@ from urllib.request import Request, urlopen
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
-from common import load_corrections, raw_root, require_corpus, works_root
+from common import (
+    load_corrections,
+    raw_root,
+    require_corpus,
+    works_root,
+    write_stamped_json,
+)
 
 # The corpus is a separate, private repository (docs/decisions.md,
 # 2026-08-23); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
@@ -1524,19 +1529,21 @@ def write_outputs(
     structure = build_structure(prayers, lang)
     prayers_json = [p.to_dict() for p in prayers]
 
-    (out_dir / "manifest.json").write_text(
-        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
-    )
-    (out_dir / "structure.json").write_text(
-        json.dumps(structure, indent=2, ensure_ascii=False) + "\n"
-    )
-    (out_dir / "prayers.json").write_text(
-        json.dumps(prayers_json, indent=2, ensure_ascii=False) + "\n"
-    )
+    files: dict[str, object] = {
+        "manifest.json": manifest,
+        "structure.json": structure,
+        "prayers.json": prayers_json,
+    }
+    # Written only when there are corrections, so its absence means "nothing
+    # needed fixing" rather than "the receipt was not produced".
     if applied_corrections:
-        (out_dir / "corrections-applied.json").write_text(
-            json.dumps(applied_corrections, indent=2, ensure_ascii=False) + "\n"
-        )
+        files["corrections-applied.json"] = applied_corrections
+    write_stamped_json(
+        out_dir,
+        files,
+        manifest["generated_at"],
+        remove=() if applied_corrections else ("corrections-applied.json",),
+    )
 
 
 def print_summary(

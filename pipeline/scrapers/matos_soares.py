@@ -29,7 +29,6 @@ after --sample output has been reviewed and approved.
 from __future__ import annotations
 
 import argparse
-import json
 import re
 import sys
 import time
@@ -51,6 +50,7 @@ from common import (
     raw_root,
     require_corpus,
     works_root,
+    write_stamped_json,
 )
 
 BASE_URL = "https://www.liriocatolico.com.br/biblia_online/biblia_matos_soares/"
@@ -382,25 +382,21 @@ def apply_corrections(
     return applied, seen
 
 
-def write_corrections_receipt(
-    work_dir: Path,
+def corrections_receipt(
     applied: list[dict],
     corrections: list[dict],
     generated_at: str,
-) -> int:
-    unresolved = [c for c in corrections if c.get("resolution")]
-    receipt = {
+) -> dict:
+    """The corrections receipt as a value. Written by common.write_stamped_json
+    together with the books and the manifest, so the whole work is judged as
+    one unit and an unchanged run touches none of it."""
+    return {
         "work_id": WORK_ID,
         "generated_at": generated_at,
         "applied": applied,
-        "unresolved": unresolved,
+        "unresolved": [c for c in corrections if c.get("resolution")],
         "count": len(applied),
     }
-    work_dir.mkdir(parents=True, exist_ok=True)
-    (work_dir / "corrections-applied.json").write_text(
-        json.dumps(receipt, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
-    return len(applied)
 
 
 def parse_index(html: str) -> list[dict]:
@@ -684,24 +680,25 @@ def print_summary_table(books: list[BookResult]) -> None:
 # ---------------------------------------------------------------------------
 
 
-def write_book_files(books: list[BookResult]) -> None:
-    books_dir().mkdir(parents=True, exist_ok=True)
-    for b in books:
-        payload = {
+def book_payloads(books: list[BookResult]) -> dict[str, dict]:
+    """`books/{osis}.json -> payload`, keyed relative to the work directory so
+    common.write_stamped_json can judge the books and the manifest together."""
+    return {
+        f"books/{b.osis}.json": {
             "osis": b.osis,
             "name": b.name,
             "abbrevs": b.abbrevs,
             "order": b.order,
             "chapters": b.chapters,
         }
-        out_path = books_dir() / f"{b.osis}.json"
-        out_path.write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-        )
+        for b in books
+    }
 
 
 def write_manifest(
     books: list[BookResult],
+    books_json: dict[str, dict],
+    receipt: dict,
     sample: bool,
     fix_count: int,
     ambiguous_count: int,
@@ -774,9 +771,10 @@ def write_manifest(
         "books": [b.osis for b in books],
         "corrections_applied": corrections_applied,
     }
-    work_dir().mkdir(parents=True, exist_ok=True)
-    (work_dir() / "manifest.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    write_stamped_json(
+        work_dir(),
+        {"manifest.json": manifest, "corrections-applied.json": receipt, **books_json},
+        generated_at,
     )
 
 
@@ -874,13 +872,13 @@ def main() -> int:
         for f in fixes
     ]
     all_applied = auto_ihe_applied + file_applied
-    corrections_count = write_corrections_receipt(
-        work_dir(), all_applied, corrections, generated_at
-    )
+    receipt = corrections_receipt(all_applied, corrections, generated_at)
+    corrections_count = receipt["count"]
 
-    write_book_files(books)
     write_manifest(
         books,
+        book_payloads(books),
+        receipt,
         sample=args.sample,
         fix_count=len(fixes),
         ambiguous_count=len(ambiguous),

@@ -81,7 +81,6 @@ from __future__ import annotations
 
 import argparse
 import html as ihtml
-import json
 import re
 import sys
 import time
@@ -95,7 +94,13 @@ from urllib.request import Request, urlopen
 # Sibling module in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common.py's
 # docblock for what does and does not belong there.
-from common import raw_root, require_corpus, works_root
+from common import (
+    raw_root,
+    read_bytes_or_none,
+    require_corpus,
+    works_root,
+    write_stamped_json,
+)
 
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
@@ -129,9 +134,8 @@ class Fetcher:
 
     def fetch(self, url: str, cache_name: str) -> str:
         cache_path = self.cache_dir / cache_name
-        if cache_path.exists():
-            data = cache_path.read_bytes()
-        else:
+        data = read_bytes_or_none(cache_path)
+        if data is None:
             elapsed = time.monotonic() - self._last_request
             if elapsed < CRAWL_DELAY:
                 time.sleep(CRAWL_DELAY - elapsed)
@@ -766,14 +770,14 @@ def write_outputs(lang: str, state: ScrapeState, retrieved_at: str) -> None:
     questions = [state.questions[n].to_dict() for n in sorted(state.questions)]
     manifest = build_manifest(lang, state, retrieved_at)
 
-    (out_dir / "manifest.json").write_text(
-        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
-    )
-    (out_dir / "structure.json").write_text(
-        json.dumps(structure, indent=2, ensure_ascii=False) + "\n"
-    )
-    (out_dir / "questions.json").write_text(
-        json.dumps(questions, indent=2, ensure_ascii=False) + "\n"
+    write_stamped_json(
+        out_dir,
+        {
+            "manifest.json": manifest,
+            "structure.json": structure,
+            "questions.json": questions,
+        },
+        manifest["generated_at"],
     )
 
 

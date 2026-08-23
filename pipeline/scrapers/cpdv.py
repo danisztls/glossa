@@ -43,6 +43,7 @@ from common import (
     raw_root,
     require_corpus,
     works_root,
+    write_stamped_json,
 )
 
 # The page format itself lives in sacredbible.py, shared with vulgate.py --
@@ -293,22 +294,19 @@ def apply_corrections(
     return applied, seen
 
 
-def write_corrections_receipt(
-    work_dir: Path, applied: list[dict], corrections: list[dict], generated_at: str
-) -> int:
-    unresolved = [c for c in corrections if c.get("resolution")]
-    receipt = {
+def corrections_receipt(
+    applied: list[dict], corrections: list[dict], generated_at: str
+) -> dict:
+    """The corrections receipt as a value. Written by common.write_stamped_json
+    together with the books and the manifest, so the whole work is judged as
+    one unit and an unchanged run touches none of it."""
+    return {
         "work_id": WORK_ID,
         "generated_at": generated_at,
         "applied": applied,
-        "unresolved": unresolved,
+        "unresolved": [c for c in corrections if c.get("resolution")],
         "count": len(applied),
     }
-    work_dir.mkdir(parents=True, exist_ok=True)
-    (work_dir / "corrections-applied.json").write_text(
-        json.dumps(receipt, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
-    return len(applied)
 
 
 def run_scrape(
@@ -420,12 +418,8 @@ def write_output(
     total_verses: int,
     corrections_applied: int,
     generated_at: str,
+    receipt: dict,
 ) -> None:
-    books_dir = work_dir() / "books"
-    books_dir.mkdir(parents=True, exist_ok=True)
-    for b in book_docs:
-        out_path = books_dir / f"{b['osis']}.json"
-        write_json(out_path, b)
 
     today = datetime.now(timezone.utc).date().isoformat()
 
@@ -465,7 +459,15 @@ def write_output(
         "books": [b["osis"] for b in book_docs],
         "corrections_applied": corrections_applied,
     }
-    write_json(work_dir() / "manifest.json", manifest)
+    write_stamped_json(
+        work_dir(),
+        {
+            "manifest.json": manifest,
+            "corrections-applied.json": receipt,
+            **{f"books/{b['osis']}.json": b for b in book_docs},
+        },
+        generated_at,
+    )
 
 
 def write_json(path: Path, obj) -> None:
@@ -522,9 +524,8 @@ def main() -> int:
         print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)
         return 1
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    corrections_count = write_corrections_receipt(
-        work_dir(), applied, corrections, generated_at
-    )
+    receipt = corrections_receipt(applied, corrections, generated_at)
+    corrections_count = receipt["count"]
     print(
         f"\nCorrections layer: {corrections_count} applied, "
         f"{len([c for c in corrections if c.get('resolution')])} documented unresolved/"
@@ -537,6 +538,7 @@ def main() -> int:
         total_verses=total_verses,
         corrections_applied=corrections_count,
         generated_at=generated_at,
+        receipt=receipt,
     )
     print(f"\nWrote {len(book_docs)} book file(s) to {work_dir()}")
 

@@ -43,6 +43,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import httpx
+from common import read_bytes_or_none
 
 # A chapter heading, e.g.
 #   [<A NAME=1><A HREF=#top class=chapter>John 1</A></A>]
@@ -231,9 +232,12 @@ class Fetcher:
     def fetch(self, filename: str) -> str:
         """Return decoded (cp1252) HTML for a source page, cache-first."""
         cache_path = self.raw_dir / filename
-        if not self.refresh and cache_path.exists():
-            raw = cache_path.read_bytes()
-            return raw.decode("cp1252")
+        if not self.refresh:
+            # One syscall, not exists()-then-read; see common.read_bytes_or_none
+            # for why every fetcher in this directory had the same two.
+            raw = read_bytes_or_none(cache_path)
+            if raw is not None:
+                return raw.decode("cp1252")
 
         if self.offline:
             raise RuntimeError(

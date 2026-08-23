@@ -159,6 +159,29 @@ def read_text_or_none(path: Path) -> str | None:
         return None
 
 
+def json_text(value) -> str:
+    """The corpus's one JSON spelling: indent 2, real UTF-8, trailing newline.
+
+    Every scraper had spelled this inline, and two of them had the keyword
+    arguments in a different order, which reads like a difference and is not.
+    Shared so that "what a corpus file looks like" has one answer."""
+    return json.dumps(value, indent=2, ensure_ascii=False) + "\n"
+
+
+def read_bytes_or_none(path: Path) -> bytes | None:
+    """The file's bytes, or None if it is not there.
+
+    The cache-hit half of every `Fetcher` in this directory was `exists()`
+    followed by `read_bytes()` -- two syscalls, the second of which re-answers
+    the question the first just asked, with a race in between. The fetchers
+    themselves stay separate (see this module's docblock); only this one line
+    of them was ever the same."""
+    try:
+        return path.read_bytes()
+    except OSError:
+        return None
+
+
 def file_has_text(path: Path, text: str) -> bool:
     """Is `path` exactly `text` already?
 
@@ -193,6 +216,95 @@ def write_if_changed(path: Path, text: str) -> bool:
         return False
     path.write_text(text, encoding="utf-8")
     return True
+
+
+def _restamp(value, field: str, stamp):
+    """`value` with its top-level `field` replaced, if it has one."""
+    if isinstance(value, dict) and field in value:
+        return {**value, field: stamp}
+    return value
+
+
+def write_stamped_json(
+    out_dir: Path,
+    payloads: dict[str, object],
+    stamp: str,
+    *,
+    stamp_field: str = "generated_at",
+    remove: tuple[str, ...] = (),
+) -> bool:
+    """Write a work's files, but only if something other than the clock moved.
+
+    THE GUARD THIS DIRECTORY NEEDED. Every scraper here rewrote its whole
+    output on every run, and the reason the obvious fix does not work on its
+    own is `generated_at`: it is regenerated each run by construction, so a
+    plain "skip identical files" check would still rewrite every manifest and
+    every receipt, every time, to record that a run happened. Each scraper
+    would have had to rediscover that, and the one that forgot would quietly
+    put the churn back. So the rule lives here, once, and output goes through
+    it.
+
+    The comparison substitutes the STORED stamp into this run's payloads. If
+    everything else matches, nothing is written and the work keeps the time it
+    had -- so `generated_at` means "when this content was generated" rather
+    than "when a run last touched the file", which is what it has to mean to
+    be worth reading in a git diff now that `works/` is tracked
+    (docs/decisions.md, 2026-08-23).
+
+    ALL OR NOTHING across the work's files. Keeping an old stamp on a manifest
+    while a sibling file changed underneath it would be a worse lie than the
+    churn; if any file moved, they are all restamped.
+
+    Names may be nested (`books/Gen.json`), which is what lets a work whose
+    parts live in a subdirectory -- the Bibles, 73 book files beside a
+    manifest -- be judged as the single unit it is. A book changing is a
+    reason to restamp the manifest that counts them.
+
+    `remove` names files that must not exist for this work -- a receipt whose
+    reason for existing has gone away. Returns whether anything was written."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # The stamp on disk comes from the first payload that carries one. Read
+    # once and kept, because it is also that file's comparison text.
+    stored, stored_raw, stamped_name = None, None, None
+    for name, value in payloads.items():
+        if isinstance(value, dict) and stamp_field in value:
+            stamped_name = name
+            stored_raw = read_text_or_none(out_dir / name)
+            if stored_raw:
+                try:
+                    stored = json.loads(stored_raw).get(stamp_field)
+                except json.JSONDecodeError:
+                    stored = None
+            break
+
+    if stored is not None:
+        unchanged = True
+        for name, value in payloads.items():
+            text = json_text(_restamp(value, stamp_field, stored))
+            hit = (
+                (text == stored_raw)
+                if name == stamped_name
+                else file_has_text(out_dir / name, text)
+            )
+            if not hit:
+                unchanged = False
+                break
+        if unchanged and not any((out_dir / name).exists() for name in remove):
+            return False
+
+    wrote = False
+    for name, value in payloads.items():
+        path = out_dir / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if write_if_changed(path, json_text(_restamp(value, stamp_field, stamp))):
+            wrote = True
+    for name in remove:
+        path = out_dir / name
+        if path.exists():
+            path.unlink()
+            wrote = True
+    return wrote
 
 
 class AbsentSources:
