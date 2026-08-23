@@ -6,7 +6,9 @@
 	 * row per work, titled by its short title/language/copyright label). A
 	 * reader arriving here should see what there is to read and be able to
 	 * click straight into it; which edition they're reading is now a quiet
-	 * footnote under each section (`CopyrightNotice`), not the subject.
+	 * footnote under each section, not the subject. (2026-08-23: the
+	 * footnote is the edition title only — the copyright notice itself
+	 * lives on the reading pages and `/colophon`, not here.)
 	 *
 	 * Every section below shows the reader's EFFECTIVE edition only — one
 	 * entry per work, never one per language (2026-08-15 decision: with
@@ -30,7 +32,6 @@
 		listPrayerGroups
 	} from '$lib/corpus';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
-	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
 	import { rangeLabel as structureRangeLabel } from '$lib/components/indexToc';
 	import { displayTitle } from '$lib/titles';
@@ -282,7 +283,7 @@
 		<section aria-labelledby="bible-heading">
 			<h2 id="bible-heading">{t('nav.bible')}</h2>
 			<BookChapterPicker currentWorkId={bibleWork.id} collapsible={false} />
-			<p class="edition-note">{bibleWork.title} — <CopyrightNotice manifest={bibleWork} /></p>
+			<p class="edition-note">{bibleWork.title}</p>
 		</section>
 	{/if}
 
@@ -364,12 +365,10 @@
 			</ol>
 
 			{#if cccWork}
-				<p class="edition-note">{cccWork.title} — <CopyrightNotice manifest={cccWork} /></p>
+				<p class="edition-note">{cccWork.title}</p>
 			{/if}
 			{#if compendiumWork}
-				<p class="edition-note">
-					{compendiumWork.title} — <CopyrightNotice manifest={compendiumWork} />
-				</p>
+				<p class="edition-note">{compendiumWork.title}</p>
 			{/if}
 		</section>
 	{/if}
@@ -386,7 +385,7 @@
 			</ul>
 			<a class="prayers-browse-all" href="/preces">{t('home.prayers.browseAll')} &rarr;</a>
 			{#if prayerWork}
-				<p class="edition-note">{prayerWork.title} — <CopyrightNotice manifest={prayerWork} /></p>
+				<p class="edition-note">{prayerWork.title}</p>
 			{/if}
 		</section>
 	{/if}
@@ -462,11 +461,9 @@
 		padding: 0.35rem 0;
 	}
 
-	/* Quiet edition/copyright line under a section — the reader can still
-	   tell which edition they're looking at, but it no longer heads the
-	   page the way a per-row metadata line used to (see this route's
-	   module docblock). `CopyrightNotice` still reproduces the rights
-	   holder's exact required wording; only its PLACEMENT changed. */
+	/* Quiet edition line under a section — the reader can still tell which
+	   edition they're looking at, but it no longer heads the page the way a
+	   per-row metadata line used to (see this route's module docblock). */
 	.edition-note {
 		margin: 0.75rem 0 0;
 		font-size: 0.78rem;
