@@ -548,3 +548,152 @@ markers were missing from `sections.json` — the very file being searched — a
 it produced at least one confident false negative (`adiutricem.en`, §5). Batch 2
 briefs must require the check against `corpus/raw/`, and should say that a
 negative from grepping parsed output is not evidence of absence.
+
+## Batch 3 (12 works) — and the two audits that now run before the agents
+
+`encyclical.mortalium-animos.pt`, `encyclical.humanae-vitae.pt`,
+`encyclical.ecclesiam.en`, `encyclical.singulari-quadam.en`,
+`encyclical.mediator-dei.en`, `encyclical.libertas.en`,
+`encyclical.communium-rerum.en`, `vatii.lumen-gentium.pt`,
+`vatii.dei-verbum.pt`, `encyclical.dilexit-nos.en`,
+`encyclical.laudato-si.en`, `encyclical.quod-votis.en`.
+
+All 12 described. **38 of 333 done.** This batch also introduced the ToC
+oracle (`<corpus>/oracles/toc/`) the earlier entries kept calling for, so all
+12 carry a recorded table of contents as well.
+
+### What ran before the agents did, and what it found alone
+
+Two mechanical audits (`pipeline/scrapers/audit.py`) retired work the sweep
+would otherwise have done slowly and less reliably. Reasoning in
+`decisions.md`, 2026-08-23; the short version is that **coverage** (raw body
+text vs stored text) sees a class neither existing oracle can: the round-trip
+check is a statement about one block, and cross-language symmetry compares
+section-number sets, so a block that never became a block is invisible to both.
+
+It found three works whose own manifest said `PARSER DEFEATED` and which were
+being published anyway — `quadragesimo-anno.pt` at 8.7% coverage (5 sections
+against the English edition's 148), `miranda-prorsus.en` at 10.0%, and
+`gravissimum-educationis.en` at 85.7% but mis-divided. All three are now
+withheld, and `sync-corpus.mjs` fails the build if a defeated parse is ever
+published again.
+
+### The census, and why it does not reuse the parser's own regex
+
+`census.py` puts each raw block beside the parser's verdict on it. It cuts at
+every block-level boundary rather than matching `<p>` pairs, because **1.24%
+of body text corpus-wide (216,671 chars, concentrated in 43 files) lies
+outside `<p>`/`<blockquote>`/`<center>`** — an extractor built on `_BLOCK_RE`
+inherits the blind spot under audit. That decision is what let this batch find
+the largest defect below.
+
+Three census defects were found by the agents using it, all fixed mid-batch:
+
+- It could not see block alignment at all. `re.split` discards the tags, so
+  the block's own `align="center"` / `style="text-align: center"` never
+  reached `shape()`. Every centered heading in the corpus showed a blank
+  markup column — including `evangelium-vitae.pt`'s `CAPÍTULO II/III/IV`,
+  whose whole documented defect is that they are centered but **not** bold.
+  Since batch 2 established centering-vs-left as *the* tiering discriminator,
+  this would have handed 307 agents an empty column.
+- A heading line matched its parent title mid-word (`"o amor conjugal"` inside
+  `"AS CARACTERISTICAS DO AMOR CONJUGAL"`), reporting a lost heading as kept.
+- A lost heading whose text is a prefix of the following paragraph scored
+  `kept`. Now `kept?`, reported as unresolved rather than guessed.
+
+### Findings: two new defect classes, both about unwrapped text
+
+**1. `_gap_block`'s number gate (high).** The parser already walks the text
+between consecutive `_BLOCK_RE` matches — `_gap_block`, added for
+`aeterna-dei.pt` — but returns nothing unless the gap *itself* opens with a
+paragraph number. A bare continuation sentence or a bare `<i><b>` heading
+fails that gate and is dropped with no trace. This is the whole of the 1.24%:
+
+| work                  | coverage | what is lost                                  |
+| --------------------- | -------- | --------------------------------------------- |
+| `mortalium-animos.pt` | 50.1%    | ~36 prose blocks + all 19 inline mini-headings |
+| `humanae-vitae.pt`    | 78.9%    | 18 continuation sentences + 12 sub-headings   |
+
+`humanae-vitae.pt` is the case that justifies the coverage oracle existing:
+31 sections against the English edition's 31, no manifest warning, symmetry
+clean, and a fifth of the text gone.
+
+**2. `pending_first_block` is a scalar (high).** Where a document has no
+explicit `1.` and jumps to `2.`, the parser promotes `pending_first_block`
+into section 1 — but that field is overwritten by *every* unnumbered block
+before the first numbered one. `singulari-quadam.en` has two, so its real
+1,747-character opening paragraph is discarded and only the salutation
+survives. Any document with two or more leading unnumbered paragraphs is
+affected.
+
+**3. Unnumbered lead-ins after a heading (high).** `ecclesiam.en` loses ~19
+real-prose blocks this way, including a Mystici Corporis block quotation, and
+the loss then **causes** a second defect: a heading whose only content was
+dropped reads as empty, so the next heading nests under it. Six headings are
+falsely demoted to level 3, every one sharing a `before` with the level-2 node
+above it. `quod-votis.en` is the same mechanism at the document's front: its
+addressee list and salutation precede the first numbered paragraph, so they
+have nothing to merge forward into and vanish.
+
+**4. Verse promoted to headings (medium).** Confirmed in `dilexit-nos.en`, and
+larger than recorded: **two** poems, not one — St John of the Cross's *Cántico
+Espiritual* at §70 as well as Dante's canzone at §205. Five false nodes; the
+false nesting then pushed a genuine heading from level 3 to level 5.
+
+**5. The levelling run rule, seen plainly (medium).** `dei-verbum.pt`: only
+the first heading of a style tier gets its true depth, and every later
+same-tier heading is demoted one level — so `CAPÍTULO I–VI` nest under
+`PROÉMIO` despite identical centered-bold markup. Confirmed language-independent
+against the English edition. This is the rule batch 2 recorded as producing 104
+same-anchor sibling pairs, now characterised on a document where the whole tree
+shows it.
+
+### Source defects for `pipeline/corrections/`
+
+- `libertas.en` prints §28's marker as `28,` with a comma. The section is lost
+  and its text merged into §27. Swept corpus-wide: **two** genuine cases, the
+  other being `mystici-corporis-christi.pt` (missing §2 and §3). A third hit,
+  `depuis-le-jour.en`, is a footnote citation and not a marker.
+- `ecclesiam.en` prints §63's marker as `3.`. The numbering recovers, but the
+  heading above it is anchored one section early.
+- `ecclesiam.en` prints a heading as `Modem Bent of Mind` for `Modern`.
+
+### Clean negative results, recorded so nobody re-derives them
+
+- `mediator-dei.en` (210 sections), `libertas.en` (46), `communium-rerum.en`
+  (58) and `singulari-quadam.en` (9) are **genuinely undivided prose**, all
+  verified at raw level rather than by grepping parsed output.
+  `mediator-dei.en` was settled by reading the raw file directly: 6 `<b>` tags
+  in 1,274 lines, no `font-weight`, no `<center>`.
+- `laudato-si.en` shares **neither** of the two defects recorded for its
+  Portuguese sibling — no `font-weight: 700` headings, no split numbering, and
+  none of its six chapters mis-ranged.
+- `dilexit-nos.en`'s 42 plain-centered headings with no emphasis at all were
+  **correctly** detected: the parser reads the CSS `text-align` style.
+- `dei-verbum` EN has 7 nodes to PT's 33 because the English source genuinely
+  prints no italic subsection titles. An edition difference, not a defect.
+
+### One brief defect the pilot existed to catch
+
+Agents disagreed on whether a document's own title block is a heading:
+`quod-votis.en` returned `QUOD VOTIS` as one, the others correctly treated it
+as furniture. On 307 works that ambiguity produces oracles disagreeing with
+each other rather than with the parser. `writing-descriptions.md` now says so
+explicitly, and `audit.py toc` skips any parsed node matching the manifest's
+own title.
+
+The comparison also had to learn that **a whole-tree level offset is one
+finding, not fifty**: a reader numbers the top division 1 while the parser
+ranks by observed typography and may start at 2. Reporting each separately
+buried `dilexit-nos.en`'s five real findings under fifty rows of the same
+fact. The modal delta is now reported once and only deviations are listed.
+
+### Where the oracle and the agents agree
+
+Running `audit.py toc` after the batch reproduces the agents' findings
+mechanically, which is the check that this layer works at all: 12 missing
+sub-headings in `humanae-vitae.pt`, all 19 in `mortalium-animos.pt`, exactly
+the six false demotions and the one mis-anchored heading in `ecclesiam.en`,
+and the five verse lines in `dilexit-nos.en`. Five works agree completely.
+One new finding the agents missed: `laudato-si.en` promotes a `* * * * *`
+separator to a heading.

@@ -55,6 +55,7 @@ reading into a regression check that survives every future parser change.
 from __future__ import annotations
 
 import argparse
+import collections
 import json
 import re
 import statistics
@@ -179,7 +180,7 @@ def read_toc_oracles(corpus: Path) -> dict[str, list[dict]]:
     return out
 
 
-def compare_toc(read: list[dict], parsed: list[dict]) -> list[str]:
+def compare_toc(read: list[dict], parsed: list[dict], masthead: set[str] = frozenset()) -> list[str]:
     """Differences between a read ToC and the parsed structure tree.
 
     Titles are compared on normalized text: the parser splits a heading into
@@ -197,7 +198,14 @@ def compare_toc(read: list[dict], parsed: list[dict]) -> list[str]:
     for node in read:
         read_by.setdefault(flat(node), []).append(node)
     for node in parsed:
-        parsed_by.setdefault(flat(node), []).append(node)
+        title = flat(node)
+        # Every work gets a structure node for its own title, as a fallback
+        # top node. It is a masthead, not a division, and the oracle records
+        # divisions -- so counting it as EXTRA would make every genuinely
+        # undivided work disagree with its own correct oracle, forever.
+        if title in masthead:
+            continue
+        parsed_by.setdefault(title, []).append(node)
 
     for title in read_by:
         if title not in parsed_by:
@@ -207,13 +215,34 @@ def compare_toc(read: list[dict], parsed: list[dict]) -> list[str]:
         if title not in read_by:
             node = parsed_by[title][0]
             problems.append(f"EXTRA    before={node.get('before')}  {node.get('title')!r}")
+    # A WHOLE-TREE OFFSET IS ONE FINDING, NOT FIFTY. A reader numbers the
+    # document's top division 1; the parser ranks by observed typography and
+    # may start at 2, so every level differs by a constant. Reporting each
+    # separately buried the five real findings in `dilexit-nos.en` under
+    # fifty rows of the same fact. The modal delta is reported once, and only
+    # nodes deviating from it are called out -- those are the real anomalies.
+    deltas: collections.Counter = collections.Counter()
+    for title, nodes in read_by.items():
+        if title in parsed_by and nodes[0].get("level") is not None:
+            got_level = parsed_by[title][0].get("level")
+            if got_level is not None:
+                deltas[got_level - nodes[0]["level"]] += 1
+    offset = deltas.most_common(1)[0][0] if deltas else 0
+    if offset and len(deltas) == 1:
+        problems.append(f"OFFSET   every matched heading is parsed {offset:+d} level(s) -- one finding")
+    elif offset:
+        problems.append(f"OFFSET   most headings are parsed {offset:+d} level(s); outliers below")
+
     for title, nodes in read_by.items():
         if title not in parsed_by:
             continue
         want, got = nodes[0], parsed_by[title][0]
-        if want.get("level") is not None and want["level"] != got.get("level"):
+        if want.get("level") is None or got.get("level") is None:
+            continue
+        if got["level"] - want["level"] != offset:
             problems.append(
-                f"LEVEL    {want.get('title')!r}: read {want['level']}, parsed {got.get('level')}"
+                f"LEVEL    {want.get('title')!r}: read {want['level']}, parsed {got['level']}"
+                f" (others {offset:+d})"
             )
         if want.get("before") is not None and want["before"] != got.get("before"):
             problems.append(
@@ -235,7 +264,12 @@ def report_toc(corpus: Path) -> int:
             print(f"{work_id}: oracle present but no structure.json")
             failing += 1
             continue
-        problems = compare_toc(read, json.loads(structure.read_text()))
+        manifest = json.loads((corpus / "works" / work_id / "manifest.json").read_text())
+        masthead = {
+            re.sub(r"\s+", " ", (manifest.get(f) or "")).strip().casefold()
+            for f in ("title", "short_title")
+        } - {""}
+        problems = compare_toc(read, json.loads(structure.read_text()), masthead)
         if problems:
             failing += 1
             print(f"\n{work_id}: {len(problems)} difference(s), {len(read)} headings read")
