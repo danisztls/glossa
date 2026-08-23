@@ -1989,6 +1989,105 @@ respacing, falls under `is_mini_header`'s eight-word cap, and is now dropped
 and logged instead of being appended to the end of §268, where it never
 belonged.
 
+## 2026-08-23 — The Fathers are a library, not a work; the Summa is a work
+
+Scoping decision for the two source families `link-surface.md` §"v2 surfaces"
+had parked together as "Fathers / Denzinger citations … a further-out,
+differently-sourced problem (Migne PL/PG, not vatican.va)". Measured survey and
+full sourcing in `docs/research/summa-and-fathers.md`; this entry records what
+was decided and why, not the measurements.
+
+**They were parked together and they do not belong together.** Measured over
+every `citations[].text` in `works/` — 20,061 strings across 175 works — the
+two families have opposite shapes:
+
+- **The Summa is a point target.** 248 citations from 55 works resolve to
+  **92 distinct (part, question, article) addresses**. The entire corpus's
+  demand fits inside about 3% of one work, with a single closed address space
+  and one 13th-century author whose Latin is public domain outright.
+- **The Fathers are a long tail.** 1,244 citations reach **157 distinct Migne
+  volumes** (PL has 217, PG 161) across ~288 abbreviated work-titles. Augustine
+  is 25% of it; the top twelve authors together reach 56%; the remaining 34% is
+  Faustus of Riez, Theophilus of Antioch, Epiphanius, Nicetas, Symeon of
+  Thessalonica — each a separate work, a separate source, a separate rights
+  question. Even inside Augustine the tail repeats, and his largest bucket
+  (the _Sermones_) is exactly where the public-domain English selection is
+  thinnest.
+
+**So: the Summa is ingested, the Fathers are not.** "Patristics" is not a
+backlog item that a later sprint finishes; it is an open-ended commitment
+whose size is chosen rather than discovered, and nothing in the corpus needs
+that commitment made now.
+
+**Three findings that would have been discovered the expensive way.**
+
+- **No Portuguese source exists for either family**, and this is not the
+  encyclicals' kind of gap. There, vatican.va simply has not translated a
+  document. Here the translations exist, are modern, and are somebody's
+  business: Alexandre Correia's Summa (the one that circulates freely) is under
+  copyright until **2055** — he died in 1984 — and Loyola's is in print; the
+  only substantial Portuguese patristic corpus is Paulus's 75-volume _Coleção
+  Patrística_, commercially in print. `copyright.md` §5's host-anyway posture
+  does **not** reach this material: it was adopted as a statement about
+  **Church-owned magisterial texts**, and what is owned here is a commercial
+  publisher's translation — the same line §4 of that document already draws for
+  Bible translations. These are blockers, not exposures to accept.
+- **`liriocatolico.com.br`'s free Portuguese Summa is machine-translated**, by
+  its own disclosure on the page: _"com apoio de inteligência artificial
+  (Anthropic Opus 4.1)"_. Disqualified — this corpus reproduces editions
+  somebody published, with provenance. Worth flagging past this decision: that
+  site is already the source of `bible.matos-soares.pt`. Its Matos Soares
+  chapter pages carry no such disclosure (checked, Genesis 1), so nothing in
+  the corpus is implicated — but the site has begun publishing AI-translated
+  text, and its provenance now has to be read per work, which is
+  `intratext-2026-08.md` §5's per-work-not-per-site lesson arriving a second
+  time from a different direction.
+- **The goal is separable from the ingest.** The stated aim was expanding
+  citation coverage, and **94% of the patristic citations already carry a
+  work-internal locator** (`Adv. haeres. 3, 20, 2` names book, chapter and
+  section quite apart from the Migne column) in text captured months ago. A
+  parsing pass over those strings buys reverse "cited in" panels for both
+  families, the frequency table any later subset decision would need, and
+  link-out targets — for no fetches and no rights exposure. It is recorded here
+  as the recommended next step for the Fathers, in place of an ingest.
+
+**The Summa's sources, and why these.** English is CCEL's edition of the
+Fathers of the English Dominican Province translation (Shapcote, 1920 /
+Benziger 1947) — public domain by age, and served under a **derivable**
+per-article URL (`summa.SS_Q184_A3.html`), which is the property that makes a
+sweep work at all and the one `intratext-2026-08.md` §6 faulted IntraText for
+lacking. Latin is Corpus Thomisticum (Alarcón, Leonine-based), chosen over two
+rejected candidates: **la.wikisource** declares its own text `editio:
+incognita, fons: incognitus`, which is the same disqualifier
+`vulgate-edition-choice.md` §3 applied to IntraText's `LAT0001`, and the
+**Logic Museum**'s parallel text is self-described as incomplete with no stated
+source. Corpus Thomisticum states `Iura omnia asservantur`; the claim is over
+its transcription, while the Leonine text beneath it (1888–1906) is public
+domain by age, which puts it below — not beside — the exposure this project
+already accepts on vatican.va. Its pages group many questions each, so the
+whole Latin Summa is a few dozen fetches rather than a few thousand.
+
+**Latin here is not the Latin of `PLAN.md` #1.** For the conciliar and papal
+documents, Latin is the normative text the vernaculars translate, which is why
+`check_language_symmetry` has an undecided question about what it should
+assert. The Summa has no vernacular in the corpus to compare against at all:
+it ships **EN + LA and no Portuguese**, so the cross-language oracle
+`CLAUDE.md` relies on has nothing to check. That is a real, named loss of a
+safety net, not an oversight — the validation it would have done has to be
+carried by the parser's own invariants instead (every article has a body, an
+objection count matching its replies, and a question number inside its part's
+declared range).
+
+**Reference resolution falls back rather than failing.** A citation to
+`STh I-II, 79, 1` must resolve for a reader whose interface is Portuguese, for
+which no edition exists or will. So the effective-edition rule for a work type
+becomes an explicit chain — **the reader's language, then English, then
+Latin** — replacing `defaultWorkId`'s previous "first edition whose language
+matches, or else whatever sorts first". The old behaviour already produced
+English for an unmatched language, but only by alphabetical accident
+(`en` < `la` < `pt`); a rule the corpus relies on should not be a property of
+sort order.
+
 ## 2026-08-23 — A structure heading can carry its own footnotes
 
 The CCC's EN mirror prints a `<sup>` footnote reference **inside** two of its

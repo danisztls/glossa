@@ -57,6 +57,7 @@ pipeline/scrapers/
                      format the first two share; introductions (the one
                      scraper here that reads a JSON API, not HTML)
   ccc/               ccc, compendium
+  summa/             the Summa, EN from CCEL + LA from Corpus Thomisticum
   vatican_docs.py    encyclicals, Vatican II, exhortations
   prayers.py
   audit.py census.py apply_sweep.py   tools over already-written output
@@ -137,6 +138,29 @@ tooling buys nothing (`docs/decisions.md`, 2026-08-23).
   (a PT edition using `<blockquote>` to indent the document's own words),
   filed only because the sole discriminator is cross-language and the parser
   reads one document at a time. See `pipeline/overrides/README.md`.
+
+## The Summa is the exception to two rules at once
+
+Ingested 2026-08-23 (`docs/decisions.md`, `docs/corpus-schema.md` §Summa). It
+is worth knowing about before touching edition logic, because it breaks two
+assumptions the rest of the corpus satisfies:
+
+- **It has no Portuguese edition, and will not before 2055** (the translation
+  that circulates is Alexandre Correia's, who died in 1984; the free online
+  one is machine-translated). So it is the first work where "content language
+  follows UI language" has nothing to follow. The rule is now an explicit
+  chain — the reader's language, then **English, then Latin**
+  (`CONTENT_LANG_FALLBACK` in `site/src/lib/corpus.ts`) — and it resolves
+  **per address**, not per work, because:
+- **Its two editions cover different parts.** `summa.en` has five, `summa.la`
+  four: the Corpus Thomisticum publishes no Supplementum. A citation to
+  `Suppl q. 77` must therefore reach English even for a reader who prefers
+  Latin, which a work-level fallback could not express.
+
+Neither is a gap to be filled later. Both are properties of the sources, and
+`validate` asserts the shape rather than symmetry — but the cross-language
+oracle still runs over the parts both editions carry, and it is the check
+that found three articles whose body the English edition omits.
 
 ## Running the site
 

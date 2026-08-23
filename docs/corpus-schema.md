@@ -116,7 +116,7 @@ stored — see "Cross-references" below.
 [{ "osis": "gen", "blocks": [{ "text": "This book is so called from…" }] }]
 ```
 
-**Keyed by language, not by edition, and that is the whole design.** An introduction describes the *book*, not the translation, so the three editions of a language share one — writing it per edition would mean maintaining the same prose three times and again for every edition added later. It follows that chapter 0's existence is a **language** question: a reader on `bible.cpdv.en` has one, a reader on `bible.clementina.la` does not, and that asymmetry is served as an ordinary absent chapter rather than by falling back to another language's prose (see `site/src/routes/bible/[book]/[chapter]/+page.svelte`, which does fall back across editions for real chapters and deliberately does not here).
+**Keyed by language, not by edition, and that is the whole design.** An introduction describes the _book_, not the translation, so the three editions of a language share one — writing it per edition would mean maintaining the same prose three times and again for every edition added later. It follows that chapter 0's existence is a **language** question: a reader on `bible.cpdv.en` has one, a reader on `bible.clementina.la` does not, and that asymmetry is served as an ordinary absent chapter rather than by falling back to another language's prose (see `site/src/routes/bible/[book]/[chapter]/+page.svelte`, which does fall back across editions for real chapters and deliberately does not here).
 
 **Chapter 0 is navigable but never citable, and it stays out of `books/{osis}.json`.** Folding it into a Bible book's `chapters` would make it indistinguishable from scripture to everything that reads chapter numbers from there — `refs.ts`'s existence check (so `Gen 0` would begin resolving as a citation), the xref checker's `chapterVerses` map, `versification.ts`. The two registries are kept apart precisely so an introduction cannot become a citation target by accident; `site/scripts/sync-corpus.mjs` unions the 0 into `corpus-routes.json` only, which is addresses and nothing else.
 
@@ -258,6 +258,71 @@ A prayer collection has no numbered units in its source at all — unlike CCC pa
 - **`instructions`** carries source-provided directions with their own title and ordinary prayer blocks. It is currently present only on the Rosary.
 - **Cross-language symmetry**, per `CLAUDE.md`'s free QA oracle: the two language editions' `slug` sets must match exactly — this is a real check, not a tautology, even when a scraper assigns slugs positionally from one shared list, because it still catches a parser producing the wrong count or order of entries in either language. `kind`, `variants`, and whether `latin` is present may legitimately differ per language for the same slug (the source itself typesets the same prayer differently across its two pages); only the address space itself — the slug set — is required to agree.
 - `structure.json` reuses the generic node schema purely for grouping (a lightweight table of contents), not addressing: `paragraphs` is `[null, null]` throughout, the same allowance already documented for Creed/Decalogue-style unnumbered content under "Catechism — `structure.json`" above.
+
+## Summa Theologiae — `summa.{lang}`
+
+Added 2026-08-23 (`decisions.md`; sourcing survey in `research/summa-and-fathers.md`). Work IDs `summa.en`, `summa.la`; manifest `type: "summa"`. Two editions from two different hosts — CCEL's ThML for the English Dominican Province translation, the Corpus Thomisticum for the Leonine-based Latin — joined by ADDRESS, which is safe here in a way it would not be for a Bible: an article's address is the work's own structure, not an editorial decision either site made.
+
+**The two editions do not cover the same parts, permanently.** `summa.en` has all five (I, I-II, II-II, III, Suppl); `summa.la` has four, because the Corpus Thomisticum publishes no Supplementum — it is a posthumous compilation from the _Scriptum super Sententiis_, not Aquinas's own text for this work. **There is no Portuguese edition and will not be before 2055** (Alexandre Correia died in 1984; Loyola's translation is in print). Both facts are source-level realities to design around, not gaps to fill, and the site handles them with a stated fallback chain — the reader's language, then English, then Latin (`site/src/lib/corpus.ts`, `CONTENT_LANG_FALLBACK`), resolved **per address** so a citation to the Supplement reaches English even for a Latin-preferring reader.
+
+```jsonc
+// manifest.json — the shared fields, plus:
+{
+  "type": "summa",
+  "parts": ["I", "I-II", "II-II", "III", "Suppl"], // what THIS edition carries
+  "question_count": 611,
+  "article_count": 3113,
+  "corrections_applied": 2,
+}
+```
+
+`structure.json`: FLAT and document-ordered, like the documents' and for the same reason (`decisions.md`, 2026-08-21 — "nothing stored is nothing to drift"), with one extra field:
+
+```jsonc
+[{ "level": 1, "part": "I", "title": "FIRST PART", "before": 1 }]
+```
+
+- `part` is what the documents' node does not need: **question numbering restarts at 1 in every part**, so `before` alone does not identify a position in the work. Every consumer that takes a question number must take a part with it.
+- `before` is the question number the heading precedes; ranges are derived, never stored. `null` marks trailing matter.
+- The Latin edition's structure is **the four parts and nothing else**. The Corpus Thomisticum prints no treatise groupings and no question titles — only address-titled paragraphs — so attaching the English edition's treatise names to it would assert that this source says something it does not.
+
+`questions.json`: array ordered by part, then `n`.
+
+```jsonc
+{
+  "part": "II-II",
+  "n": 184,
+  "title": "Of the state of perfection in general", // "" in summa.la, which prints none
+  "prologue": [{ "html": "…" }],                    // the question's own preamble
+  "articles": [
+    {
+      "n": 3,
+      "title": "Whether perfection consists in the observance of the counsels?",
+      "divisions": [
+        { "kind": "objection", "n": 1, "blocks": [{ "html": "…" }] },
+        { "kind": "sed-contra", "blocks": [{ "html": "…" }] },
+        { "kind": "corpus", "blocks": [{ "html": "…" }] },
+        { "kind": "reply", "n": 1, "blocks": [{ "html": "…" }] },
+      ],
+    },
+  ],
+  // Optional, and its PRESENCE is the signal — see below.
+  "divisions": [ … ],
+}
+```
+
+- **`divisions` are an address space, not a rendering hint.** This corpus's own footnotes cite `co.` (the body) and `ad 3` (the third reply) as locators — `S. Th. I-II, q. 79, a. 1, ad 2` is an ordinary citation in the Portuguese Catechism — so the five kinds (`preamble` | `objection` | `sed-contra` | `corpus` | `reply`) are stored as structure rather than flattened into prose. `n` is present on an objection or a reply and absent on the body and the _sed contra_; it is also absent on the `ad arg.` form, a reply that answers the objections together, where inventing an ordinal would make it look like `ad 1`.
+- **`kind` is always written here**, unlike every other work type (see the "omitted when prose" rule above). There is no default division: each of the five is a real, citable exception, so absence would mean nothing.
+- **`preamble` is not Aquinas's** and is deliberately outside the citable set: it holds prose the English edition prints before the first objection, which on the 2 articles that have it is a translator's bracketed note. It exists so that text is neither dropped nor mis-filed as the body — the alternative the parser first produced put an editorial gloss exactly where a citation to `co.` would land.
+- **A question may carry `divisions` of its own**, and then has no articles. I q. 71 and I q. 72 are article-less in _both_ sources — their objections, body and replies hang off the question itself. The field is absent rather than empty everywhere else, so its presence is the discriminator. No `a. 1` is invented for them: that would mint an address neither source uses and no citation can name, in the one place where the work's own address space is what everything else is built on.
+- Blocks store **`html` and nothing derived from it**, the documents' amended shape (2026-08-22). The allowlist is the same (`i`, `b`, `br`, `sup`, `blockquote`). In practice the English carries no inline markup at all — all 26,599 of its `<b>` elements are division markers, consumed by the parser — and the Latin uses only `<i>`.
+- **No `citations` field.** Neither source carries a footnote apparatus: Aquinas cites in the body prose ("as Augustine says (De Trin. viii)"), and that is left verbatim where it stands. The reader linkifies scripture out of the prose itself (7,582 references in the English edition), which is `link-surface.md`'s "regex-linkifiable any time from flat text; nothing lost".
+
+### Validation
+
+The cross-language oracle applies here, narrowed: it runs over **the parts both editions carry**, and the Supplement is excluded by construction rather than by name. It is worth having — the two editions are independently derived from sites sharing no text, and they agree on 119 questions and 582 articles in the Prima Pars — and it earned its keep immediately by finding three articles whose body the English omits and the Latin has. It **reports and never fails**: every difference found so far has been the edition speaking, not the parser.
+
+Per-edition invariants are what fail a run: question numbers inside their part's declared range, article numbers a clean sequence, divisions in printed order, no empty block, every `ad n` matching an `arg. n` _or_ reported as answering an unnumbered objection (the English folds objections the Latin numbers), and no bodiless article beyond the handful the editions genuinely print that way — an individual one is the edition, but more than 1% of them is a broken division matcher, which is the failure the check exists to catch.
 
 ## Documents (encyclicals, conciliar texts, curial documents)
 
