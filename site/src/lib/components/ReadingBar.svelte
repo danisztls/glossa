@@ -13,11 +13,20 @@
 	Gathering them here means the bar is the same object before and after —
 	only the comparison picker appears, next to the toggle that summoned it.
 
+	ONE FLAT ROW, IN A FIXED ORDER: bookmark, print, edition, compare, second
+	edition. The two page-level buttons come first and the text-level controls
+	follow, so the row runs from what is being read to how it is being read.
+	They deliberately share one container rather than being split into a
+	page-tools group and an editions group pinned to opposite ends — the split
+	made the bar read as two bars, and put the widest, most-changed control (an
+	edition name that can be "Bíblia Sagrada (Matos Soares)") at the end of a
+	line whose left half was empty.
+
 	THE TOGGLE SITS BETWEEN THE TWO EDITIONS, and that placement is the point:
 	it is the control that put the second one there, so it reads as the seam
-	between them rather than as one more button in a row. Left to right the
-	group says "this edition, compared with, that edition" — which is also what
-	identifies the two columns beneath, since they appear in the same order.
+	between them rather than as one more button in a row. Left to right that
+	part of the row says "this edition, compared with, that edition" — the same
+	order the two columns appear in beneath.
 
 	`comparison` is a snippet rather than a `ComparisonEditionMenu` of this
 	component's own making because the routes genuinely differ in what belongs
@@ -70,19 +79,15 @@
 </script>
 
 <div class="reading-bar">
-	<div class="reading-bar-editions">
-		<EditionMenu />
-		{#if canCompare}
-			<CompareToggle active={compareActive} onclick={onToggleCompare} {enterLabel} {exitLabel} />
-		{/if}
-		{#if compareActive && comparison}
-			{@render comparison()}
-		{/if}
-	</div>
-	<div class="reading-bar-tools">
-		<BookmarkButton href={bookmarkHref} />
-		<PrintButton />
-	</div>
+	<BookmarkButton href={bookmarkHref} />
+	<PrintButton />
+	<EditionMenu />
+	{#if canCompare}
+		<CompareToggle active={compareActive} onclick={onToggleCompare} {enterLabel} {exitLabel} />
+	{/if}
+	{#if compareActive && comparison}
+		{@render comparison()}
+	{/if}
 </div>
 
 <style>
@@ -104,24 +109,5 @@
 		border-block-end: 1px solid var(--color-border);
 		padding-block: 0.5rem;
 		margin-block-end: 1.25rem;
-	}
-
-	.reading-bar-editions {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		flex-wrap: wrap;
-		min-width: 0;
-	}
-
-	/* Page-level, not edition-level, so they pin to the far end rather than
-	   joining the group on the left — the top-right corner is where the
-	   bookmark button already lived, and where print lived before that in the
-	   site header. */
-	.reading-bar-tools {
-		display: flex;
-		align-items: center;
-		gap: 0.4rem;
-		margin-inline-start: auto;
 	}
 </style>
