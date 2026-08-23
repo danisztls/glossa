@@ -931,3 +931,122 @@ defect is back and the file still claims it is handled.
 list, so a run printed `corrections-drift: 1` and never said which entry
 stopped matching or why — the one thing a loud failure exists to report. Both
 now print the entry id and the reason.
+
+## 2026-08-22 — The corpus stays fat, the site ships thin; `kind` states only exceptions
+
+Four changes to how corpus data is stored and shipped, from measuring where
+the bytes actually go. `sections.json` is 52 MB of the corpus's 80 MB, and
+**97% of it is the same prose three times**: `html` 33%, `text_marked` 32%,
+`text` 32%.
+
+**Not a format problem.** NDJSON was considered first and rejected on
+measurement: the line-wise-diff argument it usually wins on is worth nothing
+here (`corpus/works/` is gitignored — the tracked artifact is `corpus/raw/`),
+it parses ~60% slower than one `JSON.parse` of an array (0.78 ms vs 0.49 ms on
+the largest file), and streaming/Range arguments are moot because the host
+serves brotli (verified: `content-encoding: br`), which puts the worst file at
+95 KB on the wire. A binary encoding (MessagePack/CBOR) fails differently:
+after brotli the raw-size win largely evaporates, and it would cost the
+`jq`-over-the-corpus auditability this project leans on.
+
+**1. `kind` is omitted when it is `prose`.** Absence means the default, as
+with `attribution`, `label`, and structure.json's `ident`/`subtitle`/
+`title_html`. It nearly disappeared entirely — documents are 99.93% prose —
+but it is 11% of CCC blocks and 4% of the Compendium's, so the field earns its
+place where quotations are real and says nothing where they are not. Every
+stored `kind` now marks an exception, and `grep -c '"kind"'` is the census.
+No site code tested for `'prose'`; every read already compared against the
+exception, which is what made this safe.
+
+**2. Five `quote` blocks were not quotations**, and are now the overrides
+layer's first entries. The PT editions of Sacrosanctum Concilium and Slavorum
+Apostoli wrap the document's own words in `<blockquote>` — four lettered
+norms introduced by the preceding block, one dash-led list of places the Pope
+wishes to visit — which the parser read faithfully as quotations and the site
+set in italic, muted, behind a citation rule. Six other `<blockquote>`s in the
+corpus are genuine (closing prayers of Deus Caritas Est, Lumen Fidei, Ecclesia
+de Eucharistia). Nothing inside one document separates the two uses; the only
+discriminator is that the EN editions mark neither, and the parser reads one
+document at a time by design. `to: null` was added to the override format for
+this: it deletes a field back to its omitted default rather than writing
+`"kind": null`, which would invent a state the schema does not define.
+
+**3. Documents are chunked by section**, 50 per chunk, as the CCC is by
+paragraph. The rule this replaces justified itself with "~200 KB raw
+worst-case (Gaudium et Spes)" — written 2026-08-16, five days before `html`
+landed, and stale by 4×: Gaudium et Spes is 623 KB and the real worst case is
+Evangelium Vitae at 827 KB. What made it matter is that a hover link preview
+of one cited section paid for the whole file, so citing one paragraph of an
+encyclical downloaded the encyclical.
+
+**4. `text` and `text_marked` are dropped from the shipped copy** and derived
+from `html` (`documentSectionText`). The corpus keeps all three on purpose:
+`html_to_text(html) == text_marked` is the round-trip oracle checked over
+every section on every run, and an oracle whose expected value is derived from
+the thing under test checks nothing. The site runs no such check.
+
+Result: the build is **74 MB → 42 MB**, the worst document asset **827 KB →
+171 KB raw / 95 KB → 46 KB brotli**, and documents no longer appear among the
+largest shipped assets at all. Note what compression already did, though —
+stripping the duplication is only ~12% of the _wire_ cost; the win is client
+parse time and retained heap, which are paid in raw bytes.
+
+**Found by the derivation, not fixed here**: deriving text from `html` does
+not reproduce the stored `text` byte-for-byte. 2,567 of 14,907 sections
+(17.2%) differ — every one by whitespace alone, none by any other character.
+`html_to_text` turns every tag into a space "matching `strip_tags`", so the
+source's `Constitution <i>Esti minime</i>.` is stored as `Esti minime .`. The
+derived form is the faithful one. This is the same tag-boundary defect
+previously recorded as "65 headings"; it is in fact 17.2% of all body text,
+and the round-trip oracle cannot see it because both sides of the comparison
+insert the same space. Fixing it means changing `html_to_text` and re-parsing.
+
+## 2026-08-22 — An emphasis tag is not a word boundary
+
+`strip_tags` turned every tag into a space, so `Constitution <i>Esti
+minime</i>.` was stored as `Esti minime .` and `Sh<sup>e</sup>ma` as
+`Sh e ma`. **6,436 spurious spaces across 17.2% of sections**, none of them
+in the source. Emphasis tags now leave nothing behind; `br`, `blockquote`
+and every tag narrowing drops still leave a space.
+
+**Why not strip the whitespace afterwards**, which is the obvious fix: the
+corpus's own text prints spaced punctuation on purpose — 2,450 `« x »`,
+2,300 `. . .`, 960 `( 1 )`, ~9,800 instances in total — so a rule keyed on
+the characters cannot tell the source's spacing from ours, and would corrupt
+more than it repaired. Only the tag boundary distinguishes them, and it is
+known in exactly one place.
+
+**The substituted space was also hiding source defects.** Where the source
+omits a space around a tag (`<i>modus vivendi</i>had`, `the<i>reaffirmation`,
+`<i>Rm</i>12, 1`), the substitution silently supplied one. Removing it
+surfaced 16 such places, now filed in `pipeline/corrections/` with the raw
+markup as evidence — which is what the source-defect policy has always
+required, against a code rule that was papering over them. A further 17
+flush-tag cases turned out to be the tag sitting INSIDE a word
+(`q<i>uando`, `A<i>cta`, `Sh<sup>e</sup>ma`) and are simply correct now.
+
+**Two silent-failure modes fixed on the way**, both found by verification
+rather than by reading:
+
+- The round-trip invariant `html_to_text(html) == text_marked` was stated in
+  five comments and **enforced nowhere** — only ever run by an ad-hoc script
+  somebody remembered to write. It is now checked in `validate_document`,
+  per block, every run. That matters more now that the two derivations have
+  to agree about every tag.
+- Two corrections in one file derived the same `id`, and
+  `apply_raw_text_corrections` skips an id it has already seen, so the second
+  never applied while the receipt still reported success. `load_corrections`
+  now refuses duplicate ids.
+
+Footnote parsing needed one structural change to go with it: Ecclesia de
+Eucharistia prints its notes as `<sup>98</sup>Cf. …`, with no space after the
+label, so the number and the text are flush once tags are gone.
+`parse_footnote_entry` now matches that form on the raw markup, as it already
+did for the anchor form — the split is structural and no rule over the
+characters could recover it. Without this, all 104 of that document's
+footnotes stopped resolving.
+
+Corpus-wide effect: stored `text` and text derived from `html` now agree on
+**14,907 of 14,907 sections** (0 differ, was 2,567), and the site's
+`documentSectionText` reproduces the corpus exactly rather than approximately.
+Validation is unchanged from baseline: 29/3 in phase 1, 266/41/10 in phase 2.
