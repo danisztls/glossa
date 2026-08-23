@@ -37,9 +37,7 @@
 	} from '$lib/compare-nav.svelte';
 	import { content } from '$lib/content.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import CompareToggle from '$lib/components/CompareToggle.svelte';
-	import EditionMenu from '$lib/components/EditionMenu.svelte';
-	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import PrayerBlocks from '$lib/components/PrayerBlocks.svelte';
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
@@ -180,6 +178,10 @@
 	</nav>
 {/snippet}
 
+{#snippet latinLabel()}
+	<span class="reading-bar-label">{t('prayers.latin')}</span>
+{/snippet}
+
 {#snippet leftCell(p: Prayer)}
 	{@render prayerBody(p)}
 {/snippet}
@@ -208,26 +210,25 @@
 						<a href={`/preces#${current.group.id}`}>{current.group.title}</a>
 					{/if}
 				</nav>
-				<div class="compare-toolbar">
-					<!-- A prayer has no numbered sub-unit to hang the anchor popover off
-					     (PrayerBlocks renders no anchors at all), so the whole prayer is
-					     what a reader can mark. -->
-					<BookmarkButton href={`/preces/${data.slug}`} />
-					{#if hasLatin}
-						<CompareToggle
-							active={compareActive}
-							onclick={toggleCompare}
-							enterLabel={t('prayers.showLatin')}
-							exitLabel={t('prayers.hideLatin')}
-						/>
-					{/if}
-				</div>
 			</div>
 
-			<div class="title-row">
-				<h1>{current.prayer.title}</h1>
-				<EditionMenu />
-			</div>
+			<!-- A prayer has no numbered sub-unit to hang the anchor popover off
+			     (PrayerBlocks renders no anchors at all), so the whole prayer is
+			     what `bookmarkHref` marks. `comparison` is a plain LABEL rather
+			     than a picker: the second column is this work's own `latin` field,
+			     not a second edition, so there is nothing to choose between — and
+			     that label is the only identification that column gets. -->
+			<ReadingBar
+				bookmarkHref={`/preces/${data.slug}`}
+				canCompare={hasLatin}
+				{compareActive}
+				onToggleCompare={toggleCompare}
+				comparison={latinLabel}
+				enterLabel={t('prayers.showLatin')}
+				exitLabel={t('prayers.hideLatin')}
+			/>
+
+			<h1>{current.prayer.title}</h1>
 
 			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 
@@ -266,17 +267,6 @@
 {/if}
 
 <style>
-	.title-row {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
-	.title-row h1 {
-		margin: 0;
-	}
-
 	.copyright-notice {
 		margin: 0.5rem 0 1.25rem;
 	}
@@ -393,6 +383,15 @@
 	.prayer-instructions h2 {
 		font-size: 1.05rem;
 		margin: 0 0 0.75rem;
+	}
+
+	/* Stands in for a picker in `ReadingBar` — see the `latinLabel` snippet.
+	   Set to match `EditionMenu`/`ComparisonEditionMenu`'s trigger text so the
+	   bar reads as one row of peers rather than a control beside a caption. */
+	.reading-bar-label {
+		font-family: var(--font-sans);
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
 	}
 
 	.prayer-latin-title {

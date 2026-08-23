@@ -18,12 +18,10 @@
 	import { splitDropCap } from '$lib/dropcap';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
-	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
-	import CompareToggle from '$lib/components/CompareToggle.svelte';
-	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber, numberSetsDiffer, pickComparisonEdition } from '$lib/compare';
 	import { compare } from '$lib/compare-pref.svelte';
 	import {
@@ -373,25 +371,15 @@
      now, printed once in the gutter between the columns — see `CompareUnit`
      in `$lib/compare.ts`, and the `unit` prop passed to `CompareGrid` below
      for this route's addresses. -->
-<!-- The sticky bar's slots (`CompareGrid`'s `controls`): both pickers moved
-     here out of the header block, and the page-level buttons out of the
-     breadcrumb row, so all four stay reachable at any scroll depth. -->
-{#snippet compareLeftControl()}
-	<EditionMenu />
-{/snippet}
-
-{#snippet compareRightControl()}
+<!-- What identifies the second column in `ReadingBar` — see that component
+     for why the route supplies it rather than the bar building its own. -->
+{#snippet comparisonEdition()}
 	<ComparisonEditionMenu
 		editions={otherEditions}
 		current={secondaryWorkId}
 		onselect={chooseComparisonEdition}
 		editionStyle
 	/>
-{/snippet}
-
-{#snippet compareToolbar()}
-	<BookmarkButton href={chapterHref} />
-	<CompareToggle active={compareActive} onclick={toggleCompare} />
 {/snippet}
 
 {#snippet verseCell(verse: Verse)}
@@ -401,24 +389,23 @@
 {#if current}
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
+			<!-- Edition, comparison, bookmark and print, in that order and in both
+			     modes — see `ReadingBar`. Everything it carries used to be spread
+			     across the breadcrumb row, the title row and the site header. -->
+			<ReadingBar
+				bookmarkHref={chapterHref}
+				canCompare={otherEditions.length > 0}
+				{compareActive}
+				onToggleCompare={toggleCompare}
+				comparison={comparisonEdition}
+			/>
 			{#if compareActive && secondary}
 				<!-- Compare mode's WHOLE header is per-edition, merged into one
 				     two-column block, same reasoning as `documents/[slug]`: the
 				     edition label, copyright notice, book/chapter heading and
 				     edition picker all differ by edition, so a single
-				     primary-edition-only copy above `CompareGrid`'s own label row
-				     was always showing the second column a header that wasn't its
-				     own. `showHeader={false}` below drops that row in favour of
-				     this one. -->
-				<!-- Only outside compare mode: while comparing, both of these live in
-				     the sticky bar instead, where they stay reachable at any scroll
-				     depth (`CompareGrid`'s `controls`). -->
-				{#if !compareActive}
-					<div class="compare-toolbar">
-						<BookmarkButton href={chapterHref} />
-						<CompareToggle active={compareActive} onclick={toggleCompare} />
-					</div>
-				{/if}
+				     primary-edition-only copy was always showing the second column a
+				     header that wasn't its own. -->
 				<!-- One row per field (`.compare-unit-header`, app.css). Nothing here
 				     ever collapses, and that is the right outcome rather than an
 				     oversight: two editions have different titles and different
@@ -452,20 +439,9 @@
 				     documents/CCC/Compendium/prayers) — the edition label is the
 				     topmost line here, so the bookmark/compare-toggle controls join
 				     it instead of taking a row of their own. -->
-				<div class="edition-label-row">
-					<p class="edition-label">{current.work.title}</p>
-					<div class="compare-toolbar">
-						<BookmarkButton href={chapterHref} />
-						{#if otherEditions.length > 0}
-							<CompareToggle active={compareActive} onclick={toggleCompare} />
-						{/if}
-					</div>
-				</div>
+				<p class="edition-label">{current.work.title}</p>
 				<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
-				<div class="title-row">
-					<h1>{current.book.name} {current.chapter.n}</h1>
-					<EditionMenu />
-				</div>
+				<h1>{current.book.name} {current.chapter.n}</h1>
 			{/if}
 
 			<!-- Kept exactly as it was before the sidebar existed — collapsed
@@ -504,11 +480,6 @@
 						emphasized: isHighlighted(n)
 					})}
 					note={compareVersesDiffer ? t('compare.versificationNote') : undefined}
-					controls={{
-						left: compareLeftControl,
-						right: compareRightControl,
-						toolbar: compareToolbar
-					}}
 				/>
 			{:else}
 				<div class="reading-text" lang={current.work.language}>
@@ -632,17 +603,6 @@
 		letter-spacing: 0.04em;
 	}
 
-	.edition-label-row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
-	.edition-label-row .compare-toolbar {
-		margin: 0;
-	}
-
 	.copyright-notice {
 		margin: 0.15rem 0 0;
 	}
@@ -650,13 +610,6 @@
 	h1 {
 		font-family: var(--font-serif);
 		margin-top: 0.25rem;
-	}
-
-	.title-row {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
 	}
 
 	/* Field-major compare header (`.compare-unit-header`, app.css): the

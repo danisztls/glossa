@@ -10,11 +10,9 @@
 	import RefText from '$lib/components/RefText.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
-	import CompareToggle from '$lib/components/CompareToggle.svelte';
-	import EditionMenu from '$lib/components/EditionMenu.svelte';
-	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
 	import {
 		adoptCompareFromUrl,
@@ -91,24 +89,14 @@
 	<title>{t('compendium.question')} {data.n} — {t('home.title')}</title>
 </svelte:head>
 
-<!-- The sticky bar's slots (`CompareGrid`'s `controls`): both pickers moved
-     here out of the header block, and the page-level buttons out of the
-     breadcrumb row, so all four stay reachable at any scroll depth. -->
-{#snippet compareLeftControl()}
-	<EditionMenu />
-{/snippet}
-
-{#snippet compareRightControl()}
+<!-- What identifies the second column in `ReadingBar` — see that component
+     for why the route supplies it rather than the bar building its own. -->
+{#snippet comparisonEdition()}
 	<ComparisonEditionMenu
 		editions={editions.others.map((e) => e.work)}
 		current={editions.secondaryWorkId}
 		onselect={chooseComparisonEdition}
 	/>
-{/snippet}
-
-{#snippet compareToolbar()}
-	<BookmarkButton href={`/compendium/${data.n}`} />
-	<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
 {/snippet}
 
 {#snippet sharedCccRefs(n: number)}
@@ -142,33 +130,26 @@
 						<a href={`/compendium/${node.paragraphs[0]}`}>{dt.title}</a>
 					{/each}
 				</nav>
-				<!-- Only outside compare mode: while comparing, both of these live in
-				     the sticky bar instead, where they stay reachable at any scroll
-				     depth (`CompareGrid`'s `controls`). -->
-				{#if !editions.compareActive}
-					<div class="compare-toolbar">
-						<BookmarkButton href={`/compendium/${data.n}`} />
-						{#if editions.others.length > 0}
-							<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
-						{/if}
-					</div>
-				{/if}
 			</div>
 
-			<div class="title-row">
-				<!--
+			<!-- Edition, comparison, bookmark and print, in that order and in both
+			     modes — see `ReadingBar`. Everything it carries used to be spread
+			     across the breadcrumb row, the title row and the site header. -->
+			<ReadingBar
+				bookmarkHref={`/compendium/${data.n}`}
+				canCompare={editions.others.length > 0}
+				compareActive={editions.compareActive}
+				onToggleCompare={toggleCompare}
+				comparison={comparisonEdition}
+			/>
+
+			<!--
 				A visually-hidden h1 keeps the document outline/SEO title numbered
 				("Question 12") without presenting the reading question itself as a
 				heading -- the Q&A rhythm below (badge + italic question) is the
 				visible presentation instead (see the module's job #5).
 			-->
-				<h1 class="visually-hidden">{t('compendium.question')} {data.n}</h1>
-				<!-- While comparing, EditionMenu moves into the left column's own
-				     header (`.compare-unit-header` below) next to the comparison
-				     picker on the right — there's only one column for it up here
-				     once compare mode is off. -->
-				{#if !editions.compareActive}<EditionMenu />{/if}
-			</div>
+			<h1 class="visually-hidden">{t('compendium.question')} {data.n}</h1>
 
 			{#if editions.compareActive && editions.secondary}
 				<!-- The visible header for compare mode: copyright notice and
@@ -214,11 +195,6 @@
 						label: `${t('compendium.question')} ${n}`
 					})}
 					apparatus={{ has: (n) => sharedRefs.has(n), render: sharedCccRefs }}
-					controls={{
-						left: compareLeftControl,
-						right: compareRightControl,
-						toolbar: compareToolbar
-					}}
 				/>
 			{:else}
 				<div class="reading-text compendium-body" lang={editions.current.work.language}>
@@ -262,12 +238,6 @@
 {/if}
 
 <style>
-	.title-row {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-	}
-
 	.copyright-notice {
 		margin: 0 0 1.25rem;
 	}

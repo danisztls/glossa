@@ -729,14 +729,12 @@ input {
 	grid-row: 1;
 }
 
-.compare-row > .compare-cell-left,
-.compare-row > .compare-header-left {
+.compare-row > .compare-cell-left {
 	grid-column: 1;
 	grid-row: 1;
 }
 
-.compare-row > .compare-cell-right,
-.compare-row > .compare-header-right {
+.compare-row > .compare-cell-right {
 	grid-column: 3;
 	grid-row: 1;
 }
@@ -799,72 +797,6 @@ input {
 	background: color-mix(in srgb, var(--color-accent) 12%, transparent);
 	print-color-adjust: exact;
 	-webkit-print-color-adjust: exact;
-}
-
-/*
- * THE STICKY EDITION BAR (`CompareGrid.svelte`'s header row — its docblock has
- * the reasoning for what moved in here and why).
- *
- * `top` is the site header's measured height, not 0: that header is itself
- * `position: sticky; top: 0` at this same z-index, so a bar at 0 would slide
- * underneath it and disappear. `--site-header-height` is published by
- * `+layout.svelte` from a ResizeObserver, since the header's height is
- * scroll-animated and wraps at phone width; the `0px` fallback covers the
- * first frame before that observer has fired.
- *
- * Below `.menu-panel`'s z-index 50, so a picker opened FROM this bar still
- * draws over it, and level with `.site-header`'s 40 — they never overlap, and
- * the reading asides that also sit at 40 are omitted entirely while comparing.
- *
- * The background is opaque because reading text scrolls under it.
- */
-.compare-row-header {
-	position: sticky;
-	top: var(--site-header-height, 0px);
-	z-index: 40;
-	background: var(--color-bg);
-	/* The rule under the bar, drawn once across all three tracks rather than
-	   per cell, so the gutter can't notch a `--compare-gutter`-wide hole in
-	   it. The vertical divider is suppressed through this row for the same
-	   reason: it should start where the text it divides does. */
-	border-block-end: 1px solid var(--color-border);
-	margin-block-end: 0.5rem;
-}
-
-.compare-header {
-	font-family: var(--font-sans);
-	font-size: 0.75rem;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	color: var(--color-text-muted);
-	padding-block: 0.4rem;
-}
-
-.compare-header-left,
-.compare-header-right {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	min-height: 2rem;
-}
-
-/* The page-level controls (bookmark, compare toggle) belong to the page and
-   not to the right-hand edition, so they push to the far end of the bar
-   instead of sitting beside that column's picker. */
-.compare-header-toolbar {
-	display: flex;
-	align-items: center;
-	gap: 0.4rem;
-	margin-inline-start: auto;
-}
-
-.compare-row-header > .compare-gutter {
-	padding-block: 0;
-}
-
-.compare-row-header > .compare-gutter::before {
-	display: none;
 }
 
 /*
@@ -1006,7 +938,7 @@ input {
 	padding-block: 0.4rem;
 }
 
-/* Repeats each cell's edition label — redundant with `.compare-header` at
+/* Repeats each cell's edition label — redundant with `ReadingBar`'s two
    normal widths (hidden there, see below) but the only column identifier
    left once the grid stacks to one column on a phone and the header has
    long since scrolled out of view (see the max-width query below). */
@@ -1060,26 +992,6 @@ input {
 	   redone as a margin rather than left to silently stop working. */
 	.compare-row + .compare-row {
 		margin-top: 1rem;
-	}
-
-	/* The bar identifies the columns by POSITION, which says nothing once they
-	   are stacked — `.compare-cell-tag` takes over per pair, so the labels go.
-	   The CONTROLS it carries have to survive (they are the only copy now), so
-	   the row itself stays and just becomes one wrapping line of them. */
-	.compare-row-header {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.compare-header-label,
-	.compare-row-header > .compare-gutter {
-		display: none;
-	}
-
-	.compare-row-header > .compare-header-right {
-		flex: 1;
 	}
 
 	/* Apparatus belongs to the pair right above it, not to the next one. */
@@ -1307,11 +1219,11 @@ input {
 	.mobile-picker,
 	.unit-nav,
 	.compare-toolbar,
-	/* Compare mode's sticky bar is a screen affordance end to end: two edition
-	   pickers, a bookmark button and a toggle out of the mode, none of which
-	   mean anything on paper. The editions it names are already stated by the
-	   two copyright notices in the block above it. */
-	.compare-row-header,
+	/* The reading bar is a screen affordance end to end: two edition pickers, a
+	   bookmark button, a toggle out of compare mode and the print control that
+	   produced this page. The editions it names are already stated by the
+	   copyright notices below it. */
+	.reading-bar,
 	/* Every edition/comparison picker trigger (`EditionMenu`,
 	   `ComparisonEditionMenu`), wherever it's placed — the bar above is not
 	   their only home, since `.compare-unit-field` may still hang one in the
@@ -1380,8 +1292,6 @@ input {
 	 * why cell spacing is redone as margin below rather than left to that
 	 * rule to (silently) stop working on paper.
 	 */
-	/* The bar that used to be hidden here is gone from paper entirely now —
-	   see `.compare-row-header` in the block-level hide list above. */
 	.compare-cell-tag {
 		display: block !important;
 	}

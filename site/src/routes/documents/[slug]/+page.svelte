@@ -30,13 +30,11 @@
 	import UnpublishedNotice from '$lib/components/UnpublishedNotice.svelte';
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
-	import CompareToggle from '$lib/components/CompareToggle.svelte';
-	import EditionMenu from '$lib/components/EditionMenu.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
-	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
 	import { compare } from '$lib/compare-pref.svelte';
 	import {
@@ -461,24 +459,14 @@
 	{@render structureHeadings(secondaryHeadingsByStart.get(n) ?? [], secondaryLang ?? lang, false)}
 {/snippet}
 
-<!-- The sticky bar's three slots (`CompareGrid`'s `controls`). Both pickers
-     and both page-level buttons moved here out of the header block and the
-     breadcrumb row respectively — see that component's docblock. -->
-{#snippet compareLeftControl()}
-	<EditionMenu />
-{/snippet}
-
-{#snippet compareRightControl()}
+<!-- What identifies the second column in `ReadingBar` — see that component
+     for why this is the route's to supply and not its own. -->
+{#snippet comparisonEdition()}
 	<ComparisonEditionMenu
 		editions={otherEditions.map((e) => e.work)}
 		current={secondaryWorkId}
 		onselect={chooseComparisonEdition}
 	/>
-{/snippet}
-
-{#snippet compareToolbar()}
-	<BookmarkButton href={`/documenta/${data.slug}`} />
-	<CompareToggle active={compareActive} onclick={toggleCompare} />
 {/snippet}
 
 {#if metaManifest}
@@ -489,18 +477,19 @@
 				<nav class="breadcrumb" aria-label="Breadcrumb">
 					<a href="/documenta">{t('nav.magisterium')}</a>
 				</nav>
-				<!-- Only outside compare mode: while comparing, both of these live
-				     in the sticky bar instead, where they stay reachable at any
-				     scroll depth (`CompareGrid`'s `controls`). -->
-				{#if !compareActive}
-					<div class="compare-toolbar">
-						<BookmarkButton href={`/documenta/${data.slug}`} />
-						{#if current && otherEditions.length > 0}
-							<CompareToggle active={compareActive} onclick={toggleCompare} />
-						{/if}
-					</div>
-				{/if}
 			</div>
+
+			<!-- Edition, comparison, bookmark and print, in that order and in both
+			     modes — see `ReadingBar`. Everything it carries used to be spread
+			     across this breadcrumb row, the title row below and the site
+			     header. -->
+			<ReadingBar
+				bookmarkHref={`/documenta/${data.slug}`}
+				canCompare={current !== undefined && otherEditions.length > 0}
+				{compareActive}
+				onToggleCompare={toggleCompare}
+				comparison={comparisonEdition}
+			/>
 
 			{#if current && compareActive && secondaryManifest}
 				<!-- Compare mode's header is per-language: the subtitle and the
@@ -588,10 +577,7 @@
 					</div>
 				</div>
 			{:else}
-				<div class="title-row">
-					<h1>{metaManifest.title}</h1>
-					<EditionMenu />
-				</div>
+				<h1>{metaManifest.title}</h1>
 
 				<p class="subtitle">
 					<span class="doc-kind">{documentKindLabel(metaManifest.document_kind)}</span>
@@ -714,11 +700,6 @@
 							left: compareHeadingsLeft,
 							right: compareHeadingsRight
 						}}
-						controls={{
-							left: compareLeftControl,
-							right: compareRightControl,
-							toolbar: compareToolbar
-						}}
 					/>
 				{:else}
 					{#if compareActive}
@@ -782,17 +763,6 @@
 <style>
 	h1 {
 		font-family: var(--font-serif);
-		margin: 0 0 0.5rem;
-	}
-
-	.title-row {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
-	.title-row h1 {
 		margin: 0 0 0.5rem;
 	}
 

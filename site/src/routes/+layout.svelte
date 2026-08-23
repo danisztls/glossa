@@ -6,7 +6,6 @@
 	import JumpBox from '$lib/components/JumpBox.svelte';
 	import LanguageMenu from '$lib/components/LanguageMenu.svelte';
 	import AppearanceMenu from '$lib/components/AppearanceMenu.svelte';
-	import PrintButton from '$lib/components/PrintButton.svelte';
 	import InstallButton from '$lib/components/InstallButton.svelte';
 	import InstallHint from '$lib/components/InstallHint.svelte';
 	import { install } from '$lib/install.svelte';
@@ -115,8 +114,7 @@
 	/**
 	 * Publish the site header's height as `--site-header-height` on <html>, so
 	 * a SECOND sticky element can sit directly beneath it instead of sliding
-	 * underneath (compare mode's edition bar, `.compare-row-header` in
-	 * app.css, is the first).
+	 * underneath (`ReadingBar`, on every reading page, is the first).
 	 *
 	 * Measured rather than declared, because this header has no fixed height
 	 * to declare: the wordmark is two lines and drops to a monogram on scroll,
@@ -194,7 +192,6 @@
 				</a>
 				<LanguageMenu />
 				<AppearanceMenu />
-				<PrintButton />
 				<!-- Renders nothing unless the browser has actually offered an
 				     install, so on most visits the row is unchanged. -->
 				<InstallButton />

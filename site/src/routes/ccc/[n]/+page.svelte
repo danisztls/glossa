@@ -8,11 +8,9 @@
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
-	import CompareToggle from '$lib/components/CompareToggle.svelte';
-	import EditionMenu from '$lib/components/EditionMenu.svelte';
-	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
 	import {
 		adoptCompareFromUrl,
@@ -88,24 +86,14 @@
 	<title>CCC {data.n} — {t('home.title')}</title>
 </svelte:head>
 
-<!-- The sticky bar's slots (`CompareGrid`'s `controls`): both pickers moved
-     here out of the header block, and the page-level buttons out of the
-     breadcrumb row, so all four stay reachable at any scroll depth. -->
-{#snippet compareLeftControl()}
-	<EditionMenu />
-{/snippet}
-
-{#snippet compareRightControl()}
+<!-- What identifies the second column in `ReadingBar` — see that component
+     for why the route supplies it rather than the bar building its own. -->
+{#snippet comparisonEdition()}
 	<ComparisonEditionMenu
 		editions={editions.others.map((e) => e.work)}
 		current={editions.secondaryWorkId}
 		onselect={chooseComparisonEdition}
 	/>
-{/snippet}
-
-{#snippet compareToolbar()}
-	<BookmarkButton href={`/catechismus/${data.n}`} />
-	<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
 {/snippet}
 
 {#snippet leftCell(paragraph: CccParagraph)}
@@ -131,21 +119,18 @@
 						</a>
 					{/each}
 				</nav>
-				<!-- Only outside compare mode: while comparing, both of these live in
-				     the sticky bar instead, where they stay reachable at any scroll
-				     depth (`CompareGrid`'s `controls`). -->
-				{#if !editions.compareActive}
-					<div class="compare-toolbar">
-						<!-- This page prints no unit number to hang the anchor popover off —
-						     the URL already names the paragraph — so the bookmark is its own
-						     control here. -->
-						<BookmarkButton href={`/catechismus/${data.n}`} />
-						{#if editions.others.length > 0}
-							<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
-						{/if}
-					</div>
-				{/if}
 			</div>
+
+			<!-- Edition, comparison, bookmark and print, in that order and in both
+			     modes — see `ReadingBar`. Everything it carries used to be spread
+			     across the breadcrumb row, the title row and the site header. -->
+			<ReadingBar
+				bookmarkHref={`/catechismus/${data.n}`}
+				canCompare={editions.others.length > 0}
+				compareActive={editions.compareActive}
+				onToggleCompare={toggleCompare}
+				comparison={comparisonEdition}
+			/>
 
 			{#if editions.compareActive && editions.secondary}
 				<!-- Compare mode's WHOLE header, merged into one two-column block —
@@ -215,15 +200,12 @@
 					</div>
 				</div>
 			{:else}
-				<div class="title-row">
-					<h1>
-						{#if editions.current.paragraph.in_brief}
-							<span class="in-brief-tag">{t('ccc.inBrief')}</span>
-						{/if}
-						CCC {data.n}
-					</h1>
-					<EditionMenu />
-				</div>
+				<h1>
+					{#if editions.current.paragraph.in_brief}
+						<span class="in-brief-tag">{t('ccc.inBrief')}</span>
+					{/if}
+					CCC {data.n}
+				</h1>
 
 				<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
 			{/if}
@@ -247,11 +229,6 @@
 						canonicalHref: `/catechismus/${n}`,
 						label: `CCC ${n}`
 					})}
-					controls={{
-						left: compareLeftControl,
-						right: compareRightControl,
-						toolbar: compareToolbar
-					}}
 				/>
 			{:else}
 				<div class="reading-text ccc-body" lang={editions.current.work.language}>
@@ -343,17 +320,6 @@
 		display: flex;
 		align-items: center;
 		gap: 0.6rem;
-	}
-
-	.title-row {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
-	.title-row h1 {
-		margin: 0;
 	}
 
 	.copyright-notice {

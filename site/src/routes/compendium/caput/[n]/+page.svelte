@@ -6,11 +6,9 @@
 	import RefText from '$lib/components/RefText.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
-	import CompareToggle from '$lib/components/CompareToggle.svelte';
-	import EditionMenu from '$lib/components/EditionMenu.svelte';
-	import BookmarkButton from '$lib/components/BookmarkButton.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
 	import {
 		adoptCompareFromUrl,
@@ -100,24 +98,14 @@
 	<title>{headingText()} — {t('home.title')}</title>
 </svelte:head>
 
-<!-- The sticky bar's slots (`CompareGrid`'s `controls`): both pickers moved
-     here out of the header block, and the page-level buttons out of the
-     breadcrumb row, so all four stay reachable at any scroll depth. -->
-{#snippet compareLeftControl()}
-	<EditionMenu />
-{/snippet}
-
-{#snippet compareRightControl()}
+<!-- What identifies the second column in `ReadingBar` — see that component
+     for why the route supplies it rather than the bar building its own. -->
+{#snippet comparisonEdition()}
 	<ComparisonEditionMenu
 		editions={editions.others.map((edition) => edition.work)}
 		current={editions.secondaryWorkId}
 		onselect={chooseComparisonEdition}
 	/>
-{/snippet}
-
-{#snippet compareToolbar()}
-	<BookmarkButton href={chapterHref} />
-	<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
 {/snippet}
 
 {#snippet sharedCccRefs(n: number)}
@@ -148,18 +136,18 @@
 				<nav class="breadcrumb" aria-label="Breadcrumb">
 					<a href="/compendium">{t('nav.compendium')}</a>
 				</nav>
-				<!-- Only outside compare mode: while comparing, both of these live in
-				     the sticky bar instead, where they stay reachable at any scroll
-				     depth (`CompareGrid`'s `controls`). -->
-				{#if !editions.compareActive}
-					<div class="compare-toolbar">
-						<BookmarkButton href={`/compendium/caput/${from}`} />
-						{#if editions.others.length > 0}
-							<CompareToggle active={editions.compareActive} onclick={toggleCompare} />
-						{/if}
-					</div>
-				{/if}
 			</div>
+
+			<!-- Edition, comparison, bookmark and print, in that order and in both
+			     modes — see `ReadingBar`. Everything it carries used to be spread
+			     across the breadcrumb row, the title row and the site header. -->
+			<ReadingBar
+				bookmarkHref={chapterHref}
+				canCompare={editions.others.length > 0}
+				compareActive={editions.compareActive}
+				onToggleCompare={toggleCompare}
+				comparison={comparisonEdition}
+			/>
 
 			{#if editions.compareActive && editions.secondary}
 				<!-- Compare mode's WHOLE header, merged into one two-column block —
@@ -230,10 +218,7 @@
 					</div>
 				</div>
 			{:else}
-				<div class="title-row">
-					<h1>{headingText()}</h1>
-					<EditionMenu />
-				</div>
+				<h1>{headingText()}</h1>
 				<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
 				<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
 			{/if}
@@ -254,11 +239,6 @@
 						anchorId: `q${n}`
 					})}
 					apparatus={{ has: (n) => sharedRefs.has(n), render: sharedCccRefs }}
-					controls={{
-						left: compareLeftControl,
-						right: compareRightControl,
-						toolbar: compareToolbar
-					}}
 				/>
 			{:else}
 				<div
@@ -286,12 +266,6 @@
 {/if}
 
 <style>
-	.title-row {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
-	}
 	h1 {
 		font-family: var(--font-serif);
 		margin: 0;

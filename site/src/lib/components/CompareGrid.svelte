@@ -62,16 +62,14 @@
 	known, disclosed limitation is not styled as an error (see
 	`UnpublishedNotice.svelte`'s own reasoning for the same choice).
 
-	THE HEADER ROW IS ALWAYS RENDERED, AND STICKS. It used to be suppressed by
-	five of six callers (`showHeader={false}`, now gone) because each had
-	folded a per-language block above the grid that already named the edition,
-	which made a plain label underneath pure repetition. Turning it into the
-	sticky control bar reverses that: the pickers, the bookmark button and the
-	compare toggle all MOVED here out of blocks that scrolled away, so the row
-	is now the only place they live and the header block above it got shorter
-	for it. `/preces` passes no `controls` and keeps plain labels — its right
-	column is a Latin FIELD, not a second edition with a picker of its own (see
-	that route's docblock). -->
+	THIS COMPONENT NO LONGER IDENTIFIES ITS OWN COLUMNS at full width. It used
+	to carry a header row — first plain labels, then the pickers themselves —
+	but that row could only exist while comparing, and the controls on it want
+	to exist in BOTH modes. They live in `ReadingBar` now, above the grid and
+	outside it, where the two edition names appear in the same left-to-right
+	order as the columns they name. What survives here is `.compare-cell-tag`,
+	which labels each cell once the columns stack and position stops saying
+	anything at all. -->
 <!--
 	`apparatus` is the collapse rule from `.compare-unit-header` (app.css)
 	applied one level down, to the units themselves: something both editions
@@ -118,17 +116,6 @@
 			has: (n: number) => boolean;
 			render: Snippet<[number]>;
 		};
-		/** The sticky bar's two controls, plus the page-level toolbar. Given
-		 *  these, the bar carries the edition pickers themselves rather than
-		 *  plain labels — the picker already prints the edition's name, so a
-		 *  label beside it would say the same word twice. `/preces` passes
-		 *  nothing and keeps the labels: its right column is a Latin FIELD with
-		 *  no picker to hang there. */
-		controls?: {
-			left: Snippet;
-			right: Snippet;
-			toolbar?: Snippet;
-		};
 		note?: string;
 	}
 
@@ -143,7 +130,6 @@
 		unit,
 		interlude,
 		apparatus,
-		controls,
 		note
 	}: Props = $props();
 </script>
@@ -153,50 +139,6 @@
 {/if}
 
 <div class="compare-grid">
-	<!--
-		THE STICKY BAR. It identifies the two columns once instead of tagging
-		every cell, and it does so at every scroll depth — which is the point,
-		because thirty sections into an encyclical nothing else on screen says
-		which side is which. It sticks BELOW the site header rather than at the
-		viewport top, using `--site-header-height` (published by `+layout.svelte`
-		from a ResizeObserver, because that header's height is animated and
-		wraps).
-
-		IT CARRIES THE CONTROLS, NOT JUST THE NAMES. Every picker used to live
-		in the per-language header block above the grid and scroll away with it;
-		so did the bookmark and compare-toggle buttons, up in `.breadcrumb-row`.
-		All four want to be reachable at depth for the same reason the labels
-		do, and the compare toggle most of all — a reader who has decided they
-		only want one language should not have to scroll back to the top to say
-		so. Gathering them here also shortens the header block, which was the
-		other complaint about this view.
-
-		The page-level toolbar rides at the FAR RIGHT of the right column rather
-		than in a track of its own: it belongs to the page, not to either
-		edition, and the top-right corner is where it already was. The empty
-		gutter cell keeps this row's tracks identical to every row beneath it.
-	-->
-	<div class="compare-row compare-row-header">
-		<div class="compare-gutter" aria-hidden="true"></div>
-		<div class="compare-header compare-header-left" lang={controls ? undefined : leftLang}>
-			{#if controls}
-				{@render controls.left()}
-			{:else}
-				<span class="compare-header-label">{leftLabel}</span>
-			{/if}
-		</div>
-		<div class="compare-header compare-header-right" lang={controls ? undefined : rightLang}>
-			{#if controls}
-				{@render controls.right()}
-			{:else}
-				<span class="compare-header-label">{rightLabel}</span>
-			{/if}
-			{#if controls?.toolbar}
-				<div class="compare-header-toolbar">{@render controls.toolbar()}</div>
-			{/if}
-		</div>
-	</div>
-
 	{#each rows as row (row.n)}
 		{@const u = unit?.(row.n)}
 		<!-- A band takes the same three tracks as a unit row, so the divider
