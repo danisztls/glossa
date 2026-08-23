@@ -26,6 +26,8 @@
  * `escape_text_run` in `vatican_docs.py`.
  */
 
+import type { RefSegment } from './refs-grammar';
+
 export type InlineNode =
 	| { kind: 'text'; text: string }
 	| { kind: 'break' }
@@ -33,7 +35,11 @@ export type InlineNode =
 	 *  of this string, which gives each disclosure a stable key even when the
 	 *  same note is cited twice in one paragraph. */
 	| { kind: 'marker'; marker: string; seq: number }
-	| { kind: 'emphasis'; tag: 'i' | 'b' | 'sup'; children: InlineNode[] };
+	| { kind: 'emphasis'; tag: 'i' | 'b' | 'sup'; children: InlineNode[] }
+	/** A run of text that `linkifyInline` resolved to a reference. Produced
+	 *  only by that function, so a tree straight from `parseInlineHtml` never
+	 *  contains one. */
+	| { kind: 'ref'; seg: RefSegment; children: InlineNode[] };
 
 const TAG = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
 const DATA_FN = /\bdata-fn="([^"]*)"/;
@@ -133,7 +139,7 @@ export function textRuns(nodes: InlineNode[]): string[] {
 	const walk = (ns: InlineNode[]) => {
 		for (const n of ns) {
 			if (n.kind === 'text') out.push(n.text);
-			else if (n.kind === 'emphasis') walk(n.children);
+			else if (n.kind === 'emphasis' || n.kind === 'ref') walk(n.children);
 		}
 	};
 	walk(nodes);
@@ -148,7 +154,7 @@ export function withTextRuns(nodes: InlineNode[], runs: string[]): InlineNode[] 
 		ns.map((n) =>
 			n.kind === 'text'
 				? { kind: 'text', text: runs[i++] ?? n.text }
-				: n.kind === 'emphasis'
+				: n.kind === 'emphasis' || n.kind === 'ref'
 					? { ...n, children: walk(n.children) }
 					: n
 		);
@@ -164,9 +170,103 @@ export function inlineText(nodes: InlineNode[]): string {
 		for (const n of ns) {
 			if (n.kind === 'text') out += n.text;
 			else if (n.kind === 'break') out += ' ';
-			else if (n.kind === 'emphasis') walk(n.children);
+			else if (n.kind === 'emphasis' || n.kind === 'ref') walk(n.children);
 		}
 	};
 	walk(nodes);
+	return out;
+}
+
+
+/**
+ * Reference links found across the WHOLE block's text, not run by run.
+ *
+ * WHY THIS EXISTS. vatican.va italicises the book name of a Scripture
+ * citation and leaves the numbers upright — `(<i>Ezek </i>47:7-9)` — so the
+ * reference straddles an emphasis boundary. Rendering walked the node tree
+ * and linkified each text run separately, which meant the linkifier was
+ * handed `"Ezek "` and `"47:7-9)."` as unrelated strings and could not match
+ * either. **3,590 references across 88 works** were silently not linking,
+ * concentrated in exactly the documents that cite Scripture most:
+ * `veritatis-splendor` (306 EN / 311 PT), `evangelium-vitae.pt` (316),
+ * `dilexit-nos` (118 EN / 127 PT).
+ *
+ * It is the same mistake the scraper made on the other side of the pipeline —
+ * "an emphasis tag is not a word boundary" (`decisions.md`, 2026-08-22).
+ * Markup describes how the words look; it does not divide them.
+ *
+ * So: flatten to text, linkify once, then split the tree back apart at the
+ * segment boundaries. A reference that spans an emphasis boundary yields two
+ * adjacent `ref` nodes sharing one segment — each keeps its own emphasis, and
+ * they render as touching links, which is right both visually and
+ * semantically (the italic half really is italic in the source).
+ */
+export function linkifyInline(
+	nodes: InlineNode[],
+	linkify: (text: string) => RefSegment[]
+): InlineNode[] {
+	// Flatten exactly as `inlineText` does, so offsets line up with what the
+	// linkifier sees. A `break` contributes one space on both sides.
+	const flat = inlineText(nodes);
+	if (!flat) return nodes;
+
+	// Segment boundaries as absolute offsets. `linkifyProse` returns segments
+	// whose text concatenates back to the input, so lengths give positions.
+	const spans: { start: number; end: number; seg: RefSegment }[] = [];
+	let at = 0;
+	for (const seg of linkify(flat)) {
+		const raw = seg.kind === 'text' ? seg.text : seg.raw;
+		if (seg.kind !== 'text') spans.push({ start: at, end: at + raw.length, seg });
+		at += raw.length;
+	}
+	if (spans.length === 0) return nodes;
+
+	let pos = 0;
+	const walk = (ns: InlineNode[]): InlineNode[] => {
+		const out: InlineNode[] = [];
+		for (const node of ns) {
+			if (node.kind === 'text') {
+				const start = pos;
+				pos += node.text.length;
+				out.push(...splitRun(node.text, start, spans));
+			} else if (node.kind === 'break') {
+				pos += 1;
+				out.push(node);
+			} else if (node.kind === 'emphasis') {
+				out.push({ ...node, children: walk(node.children) });
+			} else {
+				out.push(node);
+			}
+		}
+		return out;
+	};
+	return walk(nodes);
+}
+
+/** One text run cut at every reference boundary crossing it. */
+function splitRun(
+	text: string,
+	start: number,
+	spans: { start: number; end: number; seg: RefSegment }[]
+): InlineNode[] {
+	const end = start + text.length;
+	const cuts = new Set<number>([0, text.length]);
+	for (const s of spans) {
+		if (s.end <= start || s.start >= end) continue;
+		cuts.add(Math.max(0, s.start - start));
+		cuts.add(Math.min(text.length, s.end - start));
+	}
+	const points = [...cuts].sort((a, b) => a - b);
+	const out: InlineNode[] = [];
+	for (let i = 0; i < points.length - 1; i++) {
+		const from = points[i];
+		const to = points[i + 1];
+		if (to === from) continue;
+		const piece = text.slice(from, to);
+		const abs = start + from;
+		const span = spans.find((s) => s.start <= abs && abs < s.end);
+		const child: InlineNode = { kind: 'text', text: piece };
+		out.push(span ? { kind: 'ref', seg: span.seg, children: [child] } : child);
+	}
 	return out;
 }

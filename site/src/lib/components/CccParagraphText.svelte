@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CccBlock, CccCitation } from '$lib/types';
-	import { parseInlineHtml, type InlineNode } from '$lib/inline-html';
+	import { parseInlineHtml, linkifyInline, type InlineNode } from '$lib/inline-html';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
 	import { splitDropCap } from '$lib/dropcap';
@@ -69,7 +69,7 @@
 	 * a markup-aware branch and a plain one drifting apart.
 	 */
 	function nodesFor(block: CccBlock): InlineNode[] {
-		if (block.html) return parseInlineHtml(block.html);
+		if (block.html) return linkifyInline(parseInlineHtml(block.html), proseSegments);
 		// Exactly one of the two is present (types.ts, `CccBlock.text_marked`):
 		// a shipped document block has `html` and no `text_marked`, the CCC and
 		// Compendium the reverse. `?? ''` is the unreachable third case, kept
@@ -133,20 +133,6 @@
 	}
 </script>
 
-{#snippet prose(text: string)}
-	{#each proseSegments(text) as seg}
-		{#if seg.kind === 'text'}
-			{seg.text}
-		{:else}
-			{@const href = refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang })}
-			{#if href}
-				<a class="inline-ref" {href}>{seg.raw}</a>
-			{:else}
-				{seg.raw}
-			{/if}
-		{/if}
-	{/each}
-{/snippet}
 
 <!--
   One recursive walk over the block's inline nodes. Emphasis nests, so the
@@ -157,7 +143,15 @@
 {#snippet inline(nodes: InlineNode[], blockIndex: number)}
 	{#each nodes as node}
 		{#if node.kind === 'text'}
-			{@render prose(node.text)}
+			{node.text}
+		{:else if node.kind === 'ref'}
+			<!-- `linkifyInline` resolved this run to a reference. A citation
+			     whose book name is italic and whose numbers are not arrives as
+			     two adjacent ref nodes sharing one segment; they render as
+			     touching links, each keeping its own emphasis. -->
+			{@const href = refHref(node.seg, { bibleWorkId: content.workIdFor('bible'), lang })}
+			{#if href}<a class="inline-ref" {href}>{@render inline(node.children, blockIndex)}</a
+				>{:else}{@render inline(node.children, blockIndex)}{/if}
 		{:else if node.kind === 'break'}
 			<br />
 		{:else if node.kind === 'emphasis'}

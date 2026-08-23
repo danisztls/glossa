@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { parseInlineHtml, inlineText, textRuns, withTextRuns, decodeTextRun } from './inline-html';
+import {
+	parseInlineHtml,
+	inlineText,
+	textRuns,
+	withTextRuns,
+	decodeTextRun,
+	linkifyInline,
+	type InlineNode
+} from './inline-html';
+import { linkifyProse } from './refs';
 
 /*
  * The corpus stores inline markup as a narrow, closed vocabulary and the
@@ -87,5 +96,58 @@ describe('textRuns / withTextRuns', () => {
 		expect(inlineText(upper)).toBe('THE RES NOVAE OF  OUR TIME');
 		expect(upper[1]).toMatchObject({ kind: 'emphasis', tag: 'i' });
 		expect(upper.some((n) => n.kind === 'marker')).toBe(true);
+	});
+});
+
+/*
+ * A reference that straddles an emphasis boundary. vatican.va italicises the
+ * book name and leaves the numbers upright, so linkifying each text run
+ * separately handed the matcher "Ezek " and "47:7-9)." and matched neither.
+ * 3,590 references across 88 works were affected.
+ */
+describe('linkifyInline', () => {
+	const link = (html: string) =>
+		linkifyInline(parseInlineHtml(html), (t) => linkifyProse(t, { lang: 'en' }));
+
+	const refs = (nodes: InlineNode[]): InlineNode[] => {
+		const out: InlineNode[] = [];
+		const walk = (ns: InlineNode[]) => {
+			for (const n of ns) {
+				if (n.kind === 'ref') out.push(n);
+				if (n.kind === 'ref' || n.kind === 'emphasis') walk(n.children);
+			}
+		};
+		walk(nodes);
+		return out;
+	};
+
+	it('links a citation whose book name is italic and whose numbers are not', () => {
+		// dilexit-nos.en §93, verbatim from the corpus.
+		const nodes = link('the river goes” (<i>Ezek </i>47:7-9).');
+		const found = refs(nodes);
+		expect(found.length).toBeGreaterThan(0);
+		expect(found[0].kind === 'ref' && found[0].seg.kind).toBe('scripture');
+		expect(found[0].kind === 'ref' && found[0].seg).toMatchObject({
+			osis: 'ezek',
+			chapter: 47
+		});
+	});
+
+	it('keeps the italic half italic while linking across the boundary', () => {
+		const nodes = link('(<i>Ezek </i>47:7-9).');
+		// The emphasis node survives and now holds a ref inside it.
+		const em = nodes.find((n) => n.kind === 'emphasis');
+		expect(em).toBeDefined();
+		expect(em && em.kind === 'emphasis' && em.children[0].kind).toBe('ref');
+	});
+
+	it('loses no words', () => {
+		const html = 'quoted (<i>Ezek </i>47:7-9) and <b>bold</b> tail';
+		expect(inlineText(link(html))).toBe(inlineText(parseInlineHtml(html)));
+	});
+
+	it('leaves prose with no references structurally untouched', () => {
+		const html = 'The <i>res novae</i> of our time';
+		expect(link(html)).toEqual(parseInlineHtml(html));
 	});
 });
