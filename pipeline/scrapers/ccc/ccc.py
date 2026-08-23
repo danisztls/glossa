@@ -62,6 +62,7 @@ import html as ihtml
 import json
 import re
 import sys
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -239,6 +240,18 @@ def find_paragraph_number_correction(
     return None
 
 
+#: Correction fields applied as raw-HTML substring replacements before the
+#: page is parsed, rather than against already-parsed output.
+#:
+#: `heading_html` differs from `citation_text` in one way that matters: its
+#: locator names a `page`, and it is only applied to that page. A citation's
+#: `from` is a distinctive run of prose and is unique corpus-wide by
+#: construction; a heading's is boilerplate Word markup ("<p
+#: class=MsoNormal>SECTION TWO</b></p>" occurs on four different pages), so
+#: "first page where the string appears" is not a safe address for one.
+_PRE_PARSE_CORRECTION_FIELDS = frozenset({"citation_text", "heading_html"})
+
+
 def apply_raw_text_corrections(
     html_text: str,
     page_name: str,
@@ -246,18 +259,25 @@ def apply_raw_text_corrections(
     applied_log: list[dict],
     seen_ids: set[str],
 ) -> str:
-    """Apply citation_text corrections as raw-HTML substring replacements,
+    """Apply pre-parse corrections as raw-HTML substring replacements,
     before the page is parsed. Each correction's `from` is searched for in
     this page's raw fetched text; if found, replaced exactly once and
     recorded applied. A correction not found on this particular page is
     simply not-yet-applied here (it may belong to a different page, or --
     on a --sample run -- to a page outside the crawled slice); the caller
     checks after the full run that every non-unresolved entry was applied
-    somewhere."""
+    somewhere.
+
+    Note this edits the FETCHED text in memory. corpus/raw/ on disk stays the
+    record of what the mirror actually served (CLAUDE.md, corrections vs
+    overrides)."""
     for c in corrections:
-        if c.get("resolution") or c["field"] != "citation_text":
+        if c.get("resolution") or c["field"] not in _PRE_PARSE_CORRECTION_FIELDS:
             continue
         if c["id"] in seen_ids:
+            continue
+        page = c["locator"].get("page")
+        if page is not None and page != page_name:
             continue
         frm = c["from"]
         if frm in html_text:
@@ -285,7 +305,7 @@ def apply_paragraph_corrections(
         if loc.get("paragraph") != para.n:
             continue
         field = c["field"]
-        if field == "citation_text":
+        if field in _PRE_PARSE_CORRECTION_FIELDS:
             continue  # applied pre-parse, see apply_raw_text_corrections()
         if field == "marker":
             token_from = f"{MARK_OPEN}{c['from'].strip('()')}{MARK_CLOSE}"
@@ -324,6 +344,11 @@ LEVELS = {
     "roman": 5,
     "bare_sub": 5,
 }
+
+#: `in_brief` is not in LEVELS -- push_heading places it by popping rather
+#: than by level -- but it still needs a level deep enough that the next
+#: heading of any kind closes it. See push_heading.
+_DEEPEST_LEVEL = max(LEVELS.values())
 
 KIND_MAP = {
     "prologue": "prologue",
@@ -621,6 +646,10 @@ class ScrapeState:
         self.open_paragraph: Paragraph | None = None
         self.last_n: int | None = None
         self.gaps: list[tuple[int, int]] = []
+        #: (page name, heading chain) from each EN page's <meta name="part">.
+        #: Empty for PT, whose mirror prints no such tag. See
+        #: `check_declared_structure`.
+        self.declared_chains: list[tuple[str, tuple[str, ...]]] = []
         self.dropped: list[str] = []
         self.false_starts: list[str] = []
         self.anomalies: list[str] = []
@@ -644,7 +673,16 @@ class ScrapeState:
         if kind == "in_brief":
             while self.stack and self.stack[-1].level >= 4:
                 self.stack.pop()
-            level = (self.stack[-1].level + 1) if self.stack else 4
+            # Placed as a child of whatever survived that pop (article, or
+            # chapter where the article level is unused), but given the
+            # DEEPEST level so nothing can nest inside it. An "in brief" is a
+            # summary box closing a division, not a division of its own: with
+            # `parent.level + 1` it stayed open and adopted the next heading,
+            # which put "The Credo" inside the in-brief of Article 2 WE
+            # BELIEVE and "Amen" inside the in-brief of Article 12, where the
+            # mirror's own breadcrumbs (see check_declared_structure) make
+            # both siblings of the in-brief under the article.
+            level = _DEEPEST_LEVEL
         else:
             level = LEVELS[kind]
             while self.stack and self.stack[-1].level >= level:
@@ -787,9 +825,22 @@ def process_page(
             matched = match_label(b.text)
             if matched is not None:
                 kind, num = matched
+                # AT MOST ONE continuation block. The label line and the title
+                # it introduces are printed as two blocks ("CHAPTER TWO", then
+                # "GOD COMES TO MEET MAN") on all but a handful of pages, and
+                # this used to absorb every unlabelled heading block that
+                # followed. The EN mirror never prints more than one, so the
+                # bug was invisible there; the PT mirror prints a further
+                # sub-heading in the same style on four pages, and each came
+                # out glued onto the title AND missing from the tree --
+                # "CAPITULO PRIMEIRO A REVELACAO DA ORACAO O apelo universal a
+                # oracao" against EN's single-block "CHAPTER ONE THE REVELATION
+                # OF PRAYER - THE UNIVERSAL CALL TO PRAYER". Anything past the
+                # first block falls through to `bare_sub` below, which is what
+                # the EN equivalents already parse as.
                 title = b.text
                 j = i + 1
-                while (
+                if (
                     j < n
                     and blocks[j].is_heading
                     and match_label(blocks[j].text) is None
@@ -1354,6 +1405,7 @@ LANG_CONFIG = {
         "number_re": EN_NUMBER_RE,
         "sample_chunks": sample_chunks_en,
         "raw_dir": "ccc-en",
+        "toc_href": EN_TOC_HREF,
         "work_id": "ccc.en",
         "title": "Catechism of the Catholic Church",
         "base_url": EN_BASE,
@@ -1370,6 +1422,7 @@ LANG_CONFIG = {
         "number_re": PT_NUMBER_RE,
         "sample_chunks": sample_chunks_pt,
         "raw_dir": "ccc-pt",
+        "toc_href": PT_TOC_HREF,
         "work_id": "ccc.pt",
         "title": "Catecismo da Igreja Católica",
         "base_url": PT_BASE,
@@ -1409,6 +1462,9 @@ def run_scrape(
                 state.corrections_applied,
                 state.corrections_seen,
             )
+            chain = declared_chain(html_text)
+            if chain is not None:
+                state.declared_chains.append((name, chain))
             blocks, footnote_table = cfg["parse"](html_text)
             process_page(
                 blocks, footnote_table, cfg["match_label"], cfg["number_re"], state
@@ -1424,6 +1480,124 @@ def run_scrape(
 # --------------------------------------------------------------------------
 
 _MOJIBAKE_PATTERNS = ["Ã©", "Ã§", "â€™", "â€", "Ã³"]
+
+
+# --------------------------------------------------------------------------
+# The EN mirror's declared structure, as an oracle
+# --------------------------------------------------------------------------
+
+#: Every page of the EN mirror carries its own position in the document as a
+#: `>`-separated chain of heading titles:
+#:
+#:   <meta name="part" content="PART TWO: ... &gt; SECTION ONE ... &gt;
+#:    CHAPTER ONE ... &gt; Article 1 ... &gt; I. The Father-Source ..."/>
+#:
+#: That is the mirror stating its own structure, independently of the heading
+#: blocks this scraper reads out of the body -- and the two can disagree. Two
+#: divisions were missing from ccc.en for exactly that reason: Part Two's
+#: CHAPTER ONE is declared on ten pages and printed as a heading block on
+#: none, and Part One's SECTION TWO prints an identifier line with no title.
+#: Both are now filed as `heading_html` corrections; this check is what keeps
+#: the class from coming back silently, and what would have found them on day
+#: one.
+#:
+#: IT IS AN AUDIT, NOT AN INPUT. Structure still comes from the body's heading
+#: blocks in document order (see the module docstring): a chain carries no
+#: paragraph numbers and no kinds, so it can say THAT a division is missing
+#: but not where its content begins.
+#:
+#: EN only. The PT mirror prints no such tag -- checked on all 28 of its
+#: pages -- so `declared_chains` stays empty there and this is a no-op.
+_META_PART_RE = re.compile(
+    r'<meta\s[^>]*\bname="part"[^>]*\bcontent="(.*?)"', re.DOTALL | re.IGNORECASE
+)
+
+
+def declared_chain(html_text: str) -> tuple[str, ...] | None:
+    m = _META_PART_RE.search(html_text)
+    if m is None:
+        return None
+    # Split on the raw `&gt;` separator BEFORE unescaping, or a heading
+    # containing a literal ">" would split in two. Unescaped TWICE: the
+    # attribute holds `&amp;quot;` for a quotation mark inside a heading, so
+    # one pass leaves `&quot;` behind.
+    parts = [
+        re.sub(r"\s+", " ", ihtml.unescape(ihtml.unescape(part))).strip()
+        for part in m.group(1).split("&gt;")
+    ]
+    return tuple(part for part in parts if part)
+
+
+def _title_key(title: str) -> str:
+    """A heading title reduced to its letters and digits, upper-cased.
+
+    WHITESPACE-INSENSITIVE ON PURPOSE. `strip_tags` puts a space at every tag
+    boundary, and this mirror's Word export splits words across tags -- one
+    heading reaches us as "VII. T he Eucharist ..." against the meta's
+    "VII. The Eucharist ...". That is a real defect, but a spacing one, and
+    letting it fail this check would bury the structural findings the check
+    exists for. Footnote markers are dropped for the same reason: three
+    headings carry one and the meta never does."""
+    without_markers = re.sub(rf"{MARK_OPEN}[^{MARK_CLOSE}]*{MARK_CLOSE}", "", title)
+    folded = unicodedata.normalize("NFKD", without_markers)
+    return re.sub(r"[^A-Za-z0-9]+", "", folded).upper()
+
+
+#: Declared headings our tree deliberately does NOT match, because a
+#: `heading_html` correction changed the heading the mirror printed. Keyed by
+#: the declared title, valued by the title we emit; both are compared through
+#: `_title_key`, so spacing and punctuation here are cosmetic.
+_DECLARED_TITLE_OVERRIDES = {
+    # Correction ccc.en-p1s2-missing-section-title. The mirror prints no title
+    # for Part One's Section Two, and builds this breadcrumb from the same
+    # heading blocks this scraper reads -- so it glues the identifier line to
+    # the first subdivision beneath it and declares the two as one heading.
+    "SECTION TWO I. THE CREEDS": "SECTION TWO THE PROFESSION OF THE CHRISTIAN FAITH",
+}
+
+_DECLARED_KEY_OVERRIDES = {
+    _title_key(k): _title_key(v) for k, v in _DECLARED_TITLE_OVERRIDES.items()
+}
+
+
+def check_declared_structure(state: ScrapeState) -> list[str]:
+    """Every heading the mirror declares, checked against the tree we built:
+    present at all, and under the same ancestors."""
+    if not state.declared_chains:
+        return []
+
+    declared: dict[tuple[str, ...], str] = {}
+    for page, chain in state.declared_chains:
+        for depth in range(len(chain)):
+            keys = tuple(
+                _DECLARED_KEY_OVERRIDES.get(_title_key(x), _title_key(x))
+                for x in chain[: depth + 1]
+            )
+            declared.setdefault(keys, page)
+
+    ours: set[tuple[str, ...]] = set()
+    titles: set[str] = set()
+
+    def walk(nodes: list[Node], ancestry: tuple[str, ...]) -> None:
+        for node in nodes:
+            here = (*ancestry, _title_key(node.title))
+            ours.add(here)
+            titles.add(here[-1])
+            walk(node.children, here)
+
+    walk(state.root_children, ())
+
+    problems = []
+    for chain, page in declared.items():
+        if chain in ours:
+            continue
+        under = " > ".join(chain[:-1])[-60:]
+        kind = "missing from" if chain[-1] not in titles else "nested differently in"
+        problems.append(
+            f"{page}: heading declared by the source is {kind} the tree "
+            f"({chain[-1][:60]!r}, declared under ...{under})"
+        )
+    return problems
 
 
 def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[str]]:
@@ -1508,6 +1682,11 @@ def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[st
     for node in state.root_children:
         check_titles(node)
 
+    if not sample:
+        # Full runs only: a sampled slice deliberately skips pages, and the
+        # ancestors they declare would every one of them read as missing.
+        problems.extend(check_declared_structure(state))
+
     return (len(problems) == 0), problems
 
 
@@ -1551,6 +1730,33 @@ def build_manifest(
             "Inline italics (titles, Latin terms) are not captured in v1 -- recoverable "
             "later from corpus/raw/ without re-crawling."
         ),
+        (
+            "Structure is read from the heading blocks in the body, in document order. "
+            "The EN mirror additionally DECLARES each page's full ancestor chain in a "
+            '<meta name="part"> tag, and every heading it declares is checked against '
+            "the tree that was built (see check_declared_structure); the PT mirror prints "
+            "no such tag, so the check is EN-only. It found two divisions the EN mirror "
+            "declares but never prints as a heading block, both now supplied by "
+            "heading_html corrections: Part One's Section Two title ('THE PROFESSION OF "
+            "THE CHRISTIAN FAITH' -- the mirror prints the identifier line alone, so its "
+            "own breadcrumb falls through to the first subdivision, 'I. THE CREEDS'), and "
+            "Part Two Section One's CHAPTER ONE ('THE PASCHAL MYSTERY IN THE AGE OF THE "
+            "CHURCH'), whose two articles had attached straight to the section. Both are "
+            "corroborated by the PT mirror, which prints both."
+        ),
+        (
+            "KNOWN, UNCORRECTED: strip_tags substitutes a space for every tag, and this "
+            "mirror's Word export splits words and punctuation across tag boundaries -- so "
+            "a space appears before some footnote markers and closing punctuation, and one "
+            "heading reads 'VII. T he Eucharist - \"Pledge of the Glory To Come\"' "
+            "(source: '<b>VII. T</b><b>he Eucharist'). Dropping tags instead of "
+            "space-substituting them was measured to change 2,150 EN and 568 PT blocks, "
+            "every one of them a spurious space removed; deferred as a separate, "
+            "corpus-wide text change rather than folded into a structure fix. Three "
+            "headings also carry a footnote marker captured into the title (e.g. "
+            "'III. Christ Jesus -- \"Mediator and Fullness of All Revelation\"'), since "
+            "the schema has nowhere to hang a heading's own footnote."
+        ),
     ]
     if state.gaps:
         notes.append(f"source paragraph-number gaps detected: {state.gaps}")
@@ -1570,6 +1776,30 @@ def build_manifest(
             0,
             "SAMPLE RUN -- partial corpus, for review only. Not the full 1-2865 crawl.",
         )
+    # THE MIRROR'S OWN TABLE OF CONTENTS GOES FIRST. `sources[0]` is what the
+    # site links to as "the page this text came from" (site/src/lib/copyright.ts),
+    # and the crawl's first CONTENT page is a poor answer: EN's is "__P1.HTM",
+    # the Prologue, which tells a reader nothing about where the rest is. The
+    # index is the page `discover_pages_*` actually starts from -- it is
+    # genuinely a source of this work (it supplied the page list), it is
+    # already cached in raw/, and it is the address a reader following the
+    # link wants. Dated from the crawl that fetched the content pages, since
+    # that is the same request run; `today` only for a first-ever build.
+    toc_url = cfg["base_url"] + cfg["toc_href"]
+    crawl_date = next(iter(previous_dates.values()), today)
+    sources = [
+        {
+            "url": toc_url,
+            "retrieved_at": previous_dates.get(toc_url, crawl_date),
+        }
+    ] + [
+        {
+            "url": url,
+            "retrieved_at": previous_dates.get(url, today),
+        }
+        for url, _ in fetched_pages
+        if url != toc_url
+    ]
     return {
         "id": cfg["work_id"],
         "type": "catechism",
@@ -1577,13 +1807,7 @@ def build_manifest(
         "short_title": "CCC",
         "language": lang,
         "edition": "vatican.va archive mirror, 1993/1997 second typical edition text",
-        "sources": [
-            {
-                "url": url,
-                "retrieved_at": previous_dates.get(url, today),
-            }
-            for url, _ in fetched_pages
-        ],
+        "sources": sources,
         "copyright": {
             "status": "copyrighted",
             "holder": cfg["copyright_holder"],

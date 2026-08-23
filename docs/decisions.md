@@ -1830,3 +1830,116 @@ the previous commit. The corpus was not re-parsed; every change is
 output-neutral by construction (inlined returns, `contextlib.suppress`,
 `unlink(missing_ok=True)`, `date()` for a calendar-validity test, and
 re-wrapped f-strings whose concatenations were checked to be character-identical).
+
+## 2026-08-23 — Heading titles: the source's own anchor, not its typography
+
+**What broke.** Both the CCC and the Compendium print a division's label line
+("CHAPTER TWO"), its title, and any sub-headings beneath it in the same centred
+bold style, as separate `<p>` blocks. Both scrapers built a title by consuming
+_every_ bold block after the label until something else turned up, so a chapter
+title swallowed whatever the source printed under it — the Compendium's part
+two, chapter two came out as **"The Sacramental Celebration of the Paschal
+Mystery CELEBRATING THE LITURGY OF THE CHURCH Who celebrates?"**, and the two
+sub-headings it ate were lost as structure nodes as well as printed as part of
+the title.
+
+**The Compendium's fix: the named anchor.** The IntraText mirror gives every
+part/section/chapter title an `<a name="…">` — the target of the page's own
+table of contents — and gives it to nothing else: not to the label line, not to
+a sub-heading. Verified across both editions: all 64 label lines resolve to an
+anchor, in their own block or the one immediately after, and no sub-heading
+carries one. So the source states where a title ends, and `heading_title` reads
+that instead of guessing from boldness. It also handles the one block that
+prints label, title and sub-heading together (PT, "CAPÍTULO PRIMEIRO / CREIO EM
+DEUS PAI / OS SÍMBOLOS DA FÉ"): text after the anchor closes becomes a `sub`,
+which is what the EN edition's equivalent already parsed as. Result: EN and PT
+now agree at 32 nodes above `sub`, and the four wrong titles are gone.
+
+**The CCC's fix is different, because its markup is.** Those mirrors carry no
+such anchor on every heading, so the rule there is a cap: **at most one**
+continuation block. The EN mirror never prints more than one, which is why the
+bug was invisible in English; the PT mirror prints a further sub-heading on four
+pages, each of which came out glued onto the title _and_ missing from the tree
+("CAPÍTULO PRIMEIRO A REVELAÇÃO DA ORAÇÃO O apelo universal à oração", against
+EN's genuinely single-block "CHAPTER ONE THE REVELATION OF PRAYER - THE
+UNIVERSAL CALL TO PRAYER"). Anything past the first block now falls through to
+`bare_sub`, which is what the EN equivalents were already parsing as. The
+language-symmetry oracle is what made all four visible.
+
+**`ccc.en`'s Part One, Section Two has no title** — the mirror's own page prints
+"SECTION TWO" followed directly by "I. THE CREEDS", where PT prints "A PROFISSÃO
+DA FÉ CRISTÃ". A source omission, not a parser defect; corrected in the entry
+below.
+
+## 2026-08-23 — `sources[0]` is the mirror's index page, not its first content page
+
+The site links "source" beside a copyright notice at `manifest.sources[0]`
+(`site/src/lib/copyright.ts`), on the documented reasoning that the first entry
+is the work's entry point. True for a Bible book or a document, which have one
+page. False for the CCC: the crawl's first _content_ page is `__P1.HTM`, the
+Prologue, so the link sent a reader to the middle of the work with no way out.
+
+`ccc.py` now puts the mirror's own table of contents first —
+`.../ENG0015/_INDEX.HTM` and `.../cathechism_po/index_new/prima-pagina-cic_po.html`.
+That page is not a courtesy addition: `discover_pages_*` fetches it to get the
+page list, so it is genuinely a source of this work and is already in `raw/`. It
+is dated from the crawl that fetched the content pages, since it is the same
+run. No site-side special case for the CCC was needed, and none was added.
+
+## 2026-08-23 — The EN mirror declares its own structure, and we now check against it
+
+Every page of the CCC's EN mirror carries its position in the document as a
+`>`-separated chain of heading titles:
+
+```html
+<meta
+  name="part"
+  content="PART TWO: … &gt; SECTION ONE THE SACRAMENTAL ECONOMY
+ &gt; CHAPTER ONE THE PASCHAL MYSTERY IN THE AGE OF THE CHURCH &gt; Article 1
+ THE LITURGY - WORK OF THE HOLY TRINITY &gt; I. The Father-Source …"
+/>
+```
+
+That is the mirror stating its own structure, independently of the heading
+blocks the scraper reads out of the body — and the two disagreed. Checking all
+394 declared headings against the parsed tree (`check_declared_structure`)
+found **two divisions the mirror declares and never prints**:
+
+- **Part One, Section Two has no title.** The page prints the identifier line
+  and goes straight to "I. THE CREEDS", so the mirror's own breadcrumb falls
+  through to that — which is why the section can look as if it were _called_
+  "The Creeds". It isn't: "The Creeds" is its opening subdivision (¶185–197).
+  The section is "The Profession of the Christian Faith", printed as such by
+  the PT mirror over the identical range and by the EN Compendium.
+- **Part Two, Section One's CHAPTER ONE is printed on no page at all.** Ten
+  pages declare it in their breadcrumbs; the PT mirror prints it; ¶1076's own
+  closing sentence announces it ("…to explain this 'sacramental dispensation'
+  (chapter one)"). Without it, its two articles hung directly off the section.
+
+Both are filed as corrections, in a new `heading_html` field: a raw-HTML
+substitution applied pre-parse, like `citation_text`, but with a `page` in its
+locator, because a heading's `from` is boilerplate Word markup rather than a
+distinctive run of prose (`<p class=MsoNormal>SECTION TWO</b></p>` occurs on
+four pages) and "first page where the string appears" is not a safe address.
+`raw/` on disk is untouched, as always.
+
+**The check is an audit, not an input.** A chain carries no paragraph numbers
+and no kinds, so it can say _that_ a division is missing, never where its
+content begins — structure still comes from the body in document order. It is
+EN-only: the PT mirror prints no such tag on any of its 28 pages.
+
+**Also fixed, found by the same check**: an "in brief" node was given
+`parent.level + 1` and stayed open, so it adopted the next heading — "The
+Credo" ended up inside the in-brief of Article 2, "Amen" inside that of
+Article 12, and in PT the Decalogue texts inside one too. An in-brief is a
+summary box closing a division, not a division; it now takes the deepest
+level, so the next heading of any kind closes it.
+
+**Measured and deferred**: `strip_tags` substitutes a space for every tag, and
+this mirror's Word export splits words across tag boundaries — hence a space
+before some footnote markers and closing punctuation, and one heading reading
+"VII. T he Eucharist" (source: `<b>VII. T</b><b>he Eucharist`). Dropping tags
+instead, the way `compendium.py` already does, was measured at 2,150 EN and 568
+PT blocks changed, every one a spurious space removed. That is a corpus-wide
+verbatim-text change and wants its own pass, not a ride along a structure fix.
+Recorded in both manifests' notes.

@@ -74,7 +74,8 @@ Known source limitations (see manifest notes / final report):
     nodes at a fixed depth (chapter + 1) rather than reconstructing their
     true relative nesting, which the source does not mark up explicitly.
     A simplification, not a data loss: the raw HTML is untouched in
-    corpus/raw/.
+    corpus/raw/. What the source DOES mark up explicitly is where a title
+    ends -- see `heading_title`.
 """
 
 from __future__ import annotations
@@ -186,6 +187,41 @@ def is_full_bold(inner: str) -> bool:
         return False
     bold_text = strip_tags(" ".join(_BOLD_SPAN_RE.findall(inner)))
     return bool(bold_text) and bold_text == full_text
+
+
+# The IntraText mirror gives every part/section/chapter title its own named
+# anchor -- the target of the page's own table of contents at the top -- and
+# gives it to NOTHING else: not to the label line ("CHAPTER TWO"), not to the
+# unlabelled sub-headings printed in the same centred bold style beneath it.
+# Verified across both editions: all 64 label lines resolve to an anchor,
+# either in their own block or in the one immediately after, and no
+# sub-heading carries one. That makes the anchor the source's own statement of
+# where a title ends, which is what `heading_title` below reads instead of
+# guessing from typography -- boldness alone cannot tell "The Sacramental
+# Celebration of the Paschal Mystery" from the "CELEBRATING THE LITURGY OF THE
+# CHURCH" and "Who celebrates?" that follow it in identical markup.
+#
+# `[^>]*\bname=` rather than `\s+name=`: the attribute is not always first.
+_ANCHOR_RE = re.compile(r"<a\b[^>]*\bname=[^>]*>(.*?)</a>", re.DOTALL | re.IGNORECASE)
+
+
+def split_anchor(inner: str) -> tuple[str, str, str] | None:
+    """`inner` split around its named anchor: (before, anchor text, after),
+    each flattened to plain text; None when the block carries no anchor.
+    Slicing the raw HTML around the match can cut mid-tag, which is harmless
+    -- `strip_tags` drops tag debris either way."""
+    m = _ANCHOR_RE.search(inner)
+    if m is None:
+        return None
+    return (
+        strip_tags(inner[: m.start()]),
+        strip_tags(m.group(1)),
+        strip_tags(inner[m.end() :]),
+    )
+
+
+def _join(*parts: str) -> str:
+    return " ".join(part for part in parts if part)
 
 
 _QUESTION_START_RE = re.compile(r"^(\d{1,3})\.\s+(.*)$", re.DOTALL)
@@ -397,6 +433,57 @@ def extract_blocks(body: str) -> list[Block]:
     return blocks
 
 
+def heading_title(
+    blocks: list[Block], i: int, match_label, state: ScrapeState
+) -> tuple[str, str, int]:
+    """The full title of the labelled heading starting at `blocks[i]`, the
+    sub-heading text glued onto the end of it (usually empty), and how many
+    blocks the two of them consumed.
+
+    The label line and its title are printed either as one block ("SEGUNDA
+    PARTE<br/>A CELEBRACAO DO MISTERIO CRISTAO") or as two consecutive ones
+    ("CHAPTER TWO", then "God Comes to Meet Man"), and the named anchor says
+    which and where the title ends (see `_ANCHOR_RE`).
+
+    This USED to swallow every following full-bold block instead, which is
+    the same style the source sets its unlabelled sub-headings in: chapter
+    two of part two came out titled "The Sacramental Celebration of the
+    Paschal Mystery CELEBRATING THE LITURGY OF THE CHURCH Who celebrates?",
+    and the two sub-headings it ate were lost as structure nodes as well as
+    printed as part of the title."""
+    b = blocks[i]
+    split = split_anchor(b.inner)
+    if split is not None:
+        pre, name, post = split
+        return _join(pre, name), post, 1
+
+    nxt = blocks[i + 1] if i + 1 < len(blocks) else None
+    if nxt is not None and not nxt.is_bq:
+        split = split_anchor(nxt.inner)
+        if split is not None:
+            pre, name, post = split
+            return _join(b.stripped, pre, name), post, 2
+
+    # No anchor in either block. Unattested in both editions as cached, so
+    # this is a "the mirror changed" path, not a known shape: fall back to
+    # the old one-block merge (capped at one -- the unbounded version is the
+    # bug this function exists to fix) and say so in the run summary rather
+    # than silently emitting a bare label as the title.
+    state.anomalies.append(
+        f"heading {b.stripped[:60]!r}: no named anchor on the label block or "
+        "the one after it; title taken from typography alone"
+    )
+    if (
+        nxt is not None
+        and not nxt.is_bq
+        and match_label(nxt.stripped) is None
+        and is_full_bold(nxt.inner)
+        and match_question_start(nxt.inner, nxt.stripped) is None
+    ):
+        return _join(b.stripped, nxt.stripped), "", 2
+    return b.stripped, "", 1
+
+
 def process_body(body: str, cfg: dict, state: ScrapeState) -> None:
     blocks = extract_blocks(body)
     match_label = cfg["match_label"]
@@ -454,20 +541,17 @@ def process_body(body: str, cfg: dict, state: ScrapeState) -> None:
         if is_heading:
             if matched is not None:
                 kind, num = matched
-                title = b.stripped
-                j = i + 1
-                while (
-                    j < n
-                    and not blocks[j].is_bq
-                    and match_label(blocks[j].stripped) is None
-                    and is_full_bold(blocks[j].inner)
-                    and match_question_start(blocks[j].inner, blocks[j].stripped)
-                    is None
-                ):
-                    title = title + " " + blocks[j].stripped
-                    j += 1
+                title, tail, consumed = heading_title(blocks, i, match_label, state)
                 state.push_heading(kind, num, title)
-                i = j
+                if tail:
+                    # Printed inside the title's own block, after the anchor
+                    # closes -- a sub-heading the source glued on with a <br/>
+                    # rather than part of the title. One case in the corpus
+                    # (PT, "OS SIMBOLOS DA FE"), whose EN counterpart prints
+                    # the same heading as a block of its own and already
+                    # parses as a `sub`.
+                    state.push_heading("sub", None, tail)
+                i += consumed
                 continue
             state.push_heading("sub", None, b.stripped)
             i += 1
@@ -721,6 +805,17 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
             "of Faith', 'Heaven and Earth', 'Man' -- are emitted as `sub` structure nodes "
             "at a fixed depth (chapter + 1); the source does not mark up their true "
             "relative nesting (if any) explicitly, so none is inferred."
+        ),
+        (
+            "A part/section/chapter title is delimited by the named anchor the mirror's "
+            "own table of contents points at (<a name=...>), not by where the centred "
+            "bold styling stops -- the sub-headings beneath a title are set in that same "
+            "style, and an earlier version of this parser consumed them into the title "
+            "(e.g. 'The Sacramental Celebration of the Paschal Mystery CELEBRATING THE "
+            "LITURGY OF THE CHURCH Who celebrates?'), losing them as structure nodes too. "
+            "All 64 labelled headings across both editions resolve to an anchor; text "
+            "printed after the anchor closes in the same block is emitted as a `sub` "
+            "(one case: PT's 'OS SIMBOLOS DA FE'). See docs/decisions.md, 2026-08-23."
         ),
     ]
     if state.gaps:
