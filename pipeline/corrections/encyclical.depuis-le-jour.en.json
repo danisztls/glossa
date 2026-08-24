@@ -1,0 +1,12 @@
+[
+  {
+    "id": "depuis-le-jour.en-aetemi-patris",
+    "locator": { "raw_substring": ">Aetemi Patris</a>" },
+    "field": "raw_text",
+    "from": ">Aetemi Patris</a>",
+    "to": ">Aeterni Patris</a>",
+    "reason": "'Aetemi' for 'Aeterni' -- the rn-read-as-m artifact, the same defect already filed against Ecclesiam Suam EN's 'Modem Bent of Mind' heading. The correct value is fixed by the page itself and needs no judgement: the visible text is the label of an anchor whose own href is '/content/leo-xiii/en/encyclicals/documents/hf_l-xiii_enc_04081879_aeterni-patris.html', so the page names the document correctly in the link it builds and misspells it in the words it prints. 'Aeterni Patris' is Leo XIII's own 1879 encyclical on the restoration of Christian philosophy, which this passage recommends by name to seminary teachers; 'Aetemi' is not a Latin word.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__depuis-le-jour__en.html: 'f=\"/content/leo-xiii/en/encyclicals/documents/hf_l-xiii_enc_04081879_aeterni-patris.html\">Aetemi Patris</a></i>,&quot; which we once again recommend to the attentive perusal of your semi'. 'Aetemi' appears exactly once on the page; 'Aeterni' appears exactly once, in that same anchor's href.",
+    "added": "2026-08-24"
+  }
+]

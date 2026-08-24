@@ -2981,3 +2981,42 @@ now marks the raw block with the document's own template — the one
 `parse_document` detects — and removes the markers from both sides.
 Quadragesimo Anno EN went from 11 dropped blocks to 8, and the three that left
 were §83, §84 and §122.
+
+## 2026-08-24 — Prose under a mid-body heading goes back to its section
+
+`open_appendix_unit` buffers the prose under **every** heading, because
+whether a heading is back matter cannot be known when it is read — only by
+whether a numbered paragraph ever follows it. That is the trick that made
+`appendix.json` work. What happened when a numbered paragraph did follow was
+`self.appendix.clear()`: the buffer was thrown away, and with it every
+unnumbered paragraph a source printed under a mid-body heading.
+
+Measured cost, both found by readers writing table-of-contents oracles rather
+than by any check we had: Rerum Novarum PT lost ~4,800 characters between §5
+and §6, under three subheadings the English edition never prints; Gravissimum
+Educationis lost its entire Introduction in both editions, which is most of
+why both sat at ~89.6% coverage — the second and third lowest in the corpus.
+
+`reclaim_mid_body_prose` gives it back, and where it goes depends on whether a
+section had already started:
+
+- **A section had started.** The heading interrupted it and the prose beneath
+  is the rest of what the source printed there, so it is appended to that
+  section and the section re-resolved. `Section.resolve` recomputes citations
+  and text from its blocks, so re-running it after appending is safe.
+- **No section had started.** This is front matter under its own heading, and
+  it opens the first numbered section — which is what `pending_first_block`
+  already does for a document that prints no explicit `1.`. That path was
+  reachable only from the inline-number branch; a document whose sections open
+  from headings instead discarded it.
+
+**The heading itself still anchors at the next section, not at the one its
+prose rejoined.** `before` means "the first numbered paragraph after the
+heading" and is read off the page by eye when an oracle is written
+(`docs/writing-descriptions.md` §3). Anchoring it where the parser decided to
+put the text was tried and reverted: it moved Rerum Novarum PT's two headings
+from `before: 6` to `before: 5`, disagreeing with the oracle a reader had just
+written from the source, and it would leave `before` underivable from the page
+at all. The heading points past its own recovered text; that is a real
+mismatch, and the honest fix for it is a unit for unnumbered mid-body matter,
+not a redefinition of the one field an oracle can check.

@@ -738,7 +738,13 @@ PARA_NUM_RE = re.compile(
     r"(?:"
     r"<a\s[^>]*?name=[\"']?(?P<anchor_dot_n>\d{1,4})\.[\"']?[^>]*>\s*(?P=anchor_dot_n)\.\s*</a>"  # <a name="3.">3.</a> -- period INSIDE both the name attr and the anchor text (Caritas in Veritate EN)
     r"|<a\s[^>]*?name=[\"']?(?P<anchor_n>\d{1,4})[\"']?[^>]*>\s*(?P=anchor_n)\s*</a>\s*\."  # <a name="18">18</a>. -- period OUTSIDE (Lumen Gentium)
-    r"|(?P<bare_n>\d{1,4})\s*\."  # bare "N."
+    # bare "N." -- with the same transparent-tag tolerance between the digits
+    # and their period that `_NUM_PREFIX_HTML_RE` already has when stripping
+    # it. Arcanum EN prints `<font size="3">20<i>. </i></font>`, putting the
+    # period inside an italic run; the number went unrecognised and §20 was
+    # swallowed into §19's text, digits and all, leaving the document with no
+    # unit at that address.
+    r"|(?P<bare_n>\d{1,4})(?:\s|&nbsp;|<(?!a[\s>])[^>]*>)*\."
     r")"
     r"\s*(?:&nbsp;\s*)*",
     re.IGNORECASE | re.DOTALL,
@@ -1470,6 +1476,10 @@ class ScrapeState:
         # contents came to list entries with nothing behind them. Each entry
         # is one heading and the prose beneath it; see `appendix.json`.
         self.appendix: list[dict] = []
+        # The last numbered section started, so a heading can record which
+        # section it interrupted. See reclaim_mid_body_prose.
+        self.last_section_n: int | None = None
+        self.reclaimed: int = 0
         self.appendix_out: list[dict] = []
         self.content_started = False
         self.empty_nest_depth = 0
@@ -1555,9 +1565,20 @@ class ScrapeState:
         self.pending_headings.clear()
         self.content_started = True
         self.empty_nest_depth = 0
-        # Everything buffered so far was mid-body after all, not appendix.
+        # Everything buffered so far was mid-body after all, not appendix --
+        # so it is given back rather than dropped. See reclaim_mid_body_prose.
+        #
+        # The heading itself still anchors at THIS section, not at the one its
+        # prose rejoined. `before` means "the first numbered paragraph after
+        # the heading" and is read off the page by eye when an oracle is
+        # written (docs/writing-descriptions.md §3); making it depend on where
+        # the parser decided to put the text would leave a reader unable to
+        # derive it from the source at all.
+        front = self.reclaim_mid_body_prose(n)
         self.appendix.clear()
+        self.last_section_n = n
         sec = Section(n=n, chapter=self.current_chapter())
+        sec.blocks.extend(front)
         sec.blocks.append(BlockOut(kind, text, html))
         self.open_section = sec
         if self.stack:
@@ -1576,11 +1597,68 @@ class ScrapeState:
         cannot be known when it is read, only by whether a numbered paragraph
         ever follows it.
         """
-        self.appendix.append({"title": title, "blocks": []})
+        # `after_n` is the section this heading interrupted, and it is what
+        # `reclaim_mid_body_prose` needs to put the prose back if a numbered
+        # section turns out to follow. None means no section had started yet:
+        # front matter, which belongs to the first section instead.
+        self.appendix.append(
+            {"title": title, "blocks": [], "after_n": self.last_section_n}
+        )
+
+    def reclaim_mid_body_prose(self, opening: int) -> list[BlockOut]:
+        """Give buffered prose back, now that a numbered section proves it was
+        not back matter after all.
+
+        `open_appendix_unit` buffers the prose under EVERY heading, because
+        whether a heading is back matter cannot be known when it is read --
+        only by whether a numbered paragraph ever follows. When one does, the
+        buffer used to be thrown away, and with it every unnumbered paragraph
+        the source printed under a mid-body heading. Measured: Rerum Novarum
+        PT lost ~4,800 characters between §5 and §6 under three subheadings
+        the English edition never prints, and Gravissimum Educationis lost its
+        whole Introduction in both editions.
+
+        Where it goes is decided by whether a section had already started:
+
+        - a section HAD started -- the heading interrupted it, and the prose
+          beneath is the rest of that printed paragraph. Redemptoris Missio's
+          §37 prints `(a) Territorial limits.` and carries on; the text after
+          it is still §37.
+        - NO section had started -- this is front matter under its own
+          heading, and it opens the first numbered section rather than
+          trailing the previous one, which is what `pending_first_block`
+          already does for a document with no explicit `1.`.
+
+        Returns the blocks that belong at the FRONT of the section now
+        opening; everything else is appended to its own section here."""
+        front: list[BlockOut] = []
+        for unit in self.appendix:
+            if not unit["blocks"]:
+                continue
+            after = unit.get("after_n")
+            sec = self.sections.get(after) if after is not None else None
+            if sec is None:
+                front.extend(unit["blocks"])
+            else:
+                sec.blocks.extend(unit["blocks"])
+                sec.resolve(
+                    self.current_footnote_table,
+                    self.current_chapter_footnote_table,
+                    self.current_star_table,
+                    self.anomalies,
+                )
+            self.reclaimed += len(unit["blocks"])
+            unit["blocks"] = []
+        if front:
+            self.anomalies.append(
+                f"unnumbered prose before section {opening} kept as its opening "
+                f"({len(front)} block(s))"
+            )
+        return front
 
     def add_appendix_block(self, kind: str, text: str, html: str = "") -> None:
         if not self.appendix:
-            self.appendix.append({"title": "", "blocks": []})
+            self.appendix.append({"title": "", "blocks": [], "after_n": None})
         blocks = self.appendix[-1]["blocks"]
         if blocks and blocks[-1].kind == kind:
             blocks[-1].text += " " + text
@@ -4384,6 +4462,12 @@ def build_manifest(
             f"Section(s) {state.promoted_gap_fills} have no leading number in the source "
             "(unnumbered text between two normally-numbered sections) -- promoted the "
             "single preceding unclaimed block to fill each; see anomalies."
+        )
+    if state.reclaimed:
+        notes.append(
+            f"{state.reclaimed} unnumbered block(s) printed under a mid-body heading "
+            "returned to the section that heading interrupted (see "
+            "reclaim_mid_body_prose); they were dropped outright before 2026-08-24."
         )
     if state.orphan_content:
         notes.append(
