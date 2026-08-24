@@ -1971,6 +1971,8 @@ def _resolve_num(token: str) -> int | None:
     token = token.upper()
     if token in _EN_WORD_NUM:
         return _EN_WORD_NUM[token]
+    if token[:-1] in _PT_ORDINAL_WORDS and token[-1:] in ("A", "O"):
+        return _PT_ORDINAL_WORDS[token[:-1]]
     if token.isdigit():
         return int(token)
     return roman_to_int(token)
@@ -1984,10 +1986,32 @@ def match_label_en(text: str) -> tuple[str, int | None] | None:
     return None
 
 
+# Portuguese writes a division's number three ways, and the corpus uses all
+# three: after the noun (`PARTE II`), before it (`II PARTE`, `1ª PARTE`), and
+# spelled out and leading (`PRIMEIRA PARTE`). Gaudium et Spes PT prints
+# `PRIMEIRA PARTE` and `II PARTE` in the same document; Pascendi PT prints
+# `1ª PARTE` and `II ª PARTE`. Only the first form was recognised, so
+# `_LABEL_DEPTH` never saw a PART in those documents and CAPÍTULO came out at
+# the same level as the PART it sits under -- the Part>Chapter>Section spine
+# flattened. Sections likewise number in arabic (`Secção 1`), which the
+# roman-only pattern missed. The ordinal indicator is matched as `A`/`O` as
+# well as `ª`/`º`, because `fold` normalises NFKD and that decomposes the
+# indicator into a plain LOWERCASE letter (`.upper()` leaves `ª` alone, and
+# NFKD then yields `a`), so `1ª PARTE` reaches these patterns as `1a PARTE`
+# even though everything around it has been uppercased.
+_PT_ORDINAL_WORDS = {
+    "PRIMEIR": 1, "SEGUND": 2, "TERCEIR": 3, "QUART": 4, "QUINT": 5,
+    "SEXT": 6, "SETIM": 7, "OITAV": 8, "NON": 9, "DECIM": 10,
+}  # fmt: skip
+_PT_ORDINAL_ALT = "(?:" + "|".join(_PT_ORDINAL_WORDS) + r")[AO]"
+_PT_NOUNS = [("part", "PARTE"), ("section", "SEC[CS][AC]O"), ("chapter", "CAPITULO")]
 _PT_LABELS = [
-    ("part", re.compile(r"^PARTE\s+([IVXLCDM]+)\b")),
-    ("section", re.compile(r"^SEC[CS][AC]O\s+([IVXLCDM]+)\b")),
-    ("chapter", re.compile(r"^CAPITULO\s+([IVXLCDM]+)\b")),
+    *[(k, re.compile(rf"^{n}\s+([IVXLCDM]+|\d+)\b")) for k, n in _PT_NOUNS],
+    *[
+        (k, re.compile(rf"^([IVXLCDM]+|\d+)\s*[\u00aa\u00baAOao]?\s*{n}\b"))
+        for k, n in _PT_NOUNS
+    ],
+    *[(k, re.compile(rf"^({_PT_ORDINAL_ALT})\s+{n}\b")) for k, n in _PT_NOUNS],
     ("article", re.compile(r"^ARTIGO\s+([IVXLCDM]+|\d+)\b")),
 ]
 
@@ -3638,7 +3662,12 @@ def parse_document(
         # chapter (the subtitle rule below), each one followed it down to 3
         # while its siblings stayed at 2. Twelve of that document's oracle
         # differences were those six pairs.
-        if fold(b.text).strip(" .:;-") in _FRONT_BACK_MATTER and not (
+        # `strip_markers` because a heading can carry a footnote reference and
+        # the block still holds it as a ⟦n⟧ token here -- push_heading strips
+        # it, but that runs after this walk. Gaudium et Spes PT's `PROÉMIO(1)`
+        # read as `PROEMIO⟦1⟧`, missed this set, and was ranked by style: level
+        # 4, under the very divisions it introduces.
+        if fold(strip_markers(b.text)).strip(" .:;-") in _FRONT_BACK_MATTER and not (
             label_span[0] < idx < label_span[1]
         ):
             return (0, top_label_depth)
