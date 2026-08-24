@@ -8,6 +8,7 @@ import { appearance, migrateLegacyTheme } from './theme.svelte';
 beforeEach(() => {
 	appearance.setMode('auto');
 	appearance.setSepia(false);
+	appearance.setOled(false);
 	appearance.systemDark = false;
 });
 
@@ -71,5 +72,50 @@ describe('AppearanceStore.sepiaActive', () => {
 		expect(appearance.sepiaActive).toBe(true);
 		appearance.systemDark = true;
 		expect(appearance.sepiaActive).toBe(false);
+	});
+});
+
+// The exact mirror of the sepia rules above: OLED needs dark rather than
+// yielding to it. Kept as its own block rather than folded into those cases,
+// because the pair being symmetrical is the claim worth failing on.
+describe('AppearanceStore.oledActive', () => {
+	it('shows the true-black ground in dark', () => {
+		appearance.setMode('on');
+		appearance.toggleOled();
+		expect(appearance.oled).toBe(true);
+		expect(appearance.oledActive).toBe(true);
+	});
+
+	it('suspends it while light is showing, without forgetting it', () => {
+		appearance.setOled(true);
+		expect(appearance.oledActive).toBe(false);
+		expect(appearance.oled).toBe(true);
+
+		appearance.setMode('on');
+		expect(appearance.oledActive).toBe(true);
+	});
+
+	it("follows the system in 'auto', the way dark itself does", () => {
+		appearance.setOled(true);
+		expect(appearance.oledActive).toBe(false);
+		appearance.systemDark = true;
+		expect(appearance.oledActive).toBe(true);
+	});
+
+	// Neither tint can reach the other's half of the light/dark axis, so a
+	// reader may leave both switched on and will still only ever see one.
+	it('never shows at the same time as sepia, whatever the reader stores', () => {
+		appearance.setSepia(true);
+		appearance.setOled(true);
+		for (const [mode, systemDark] of [
+			['auto', false],
+			['auto', true],
+			['on', false],
+			['off', true]
+		] as const) {
+			appearance.setMode(mode);
+			appearance.systemDark = systemDark;
+			expect(appearance.sepiaActive && appearance.oledActive).toBe(false);
+		}
 	});
 });

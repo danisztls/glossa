@@ -34,7 +34,7 @@
 		     (its light value — see static/manifest.webmanifest), so the dark
 		     variant lives here where prefers-color-scheme can pick it. -->
 		<meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)" />
-		<meta name="theme-color" content="#201e24" media="(prefers-color-scheme: dark)" />
+		<meta name="theme-color" content="#261c1a" media="(prefers-color-scheme: dark)" />
 		<script>
 			// Apply the stored appearance settings and reading font scale before
 			// first paint, to avoid a flash of the wrong theme/size. Kept in sync
@@ -44,10 +44,12 @@
 				// CSS prefers-color-scheme decides — which is already the markup's
 				// resting state, so there's nothing to apply for it. Sepia is a
 				// separate presence-only attribute; the stylesheet, not this
-				// script, is what makes it yield to dark.
+				// script, is what makes it yield to dark. `data-oled` is the
+				// same shape, yielding to light instead.
 				var m = localStorage.getItem('glossa:dark-mode');
 				var sep = localStorage.getItem('glossa:sepia');
-				if (m === null && sep === null) {
+				var oled = localStorage.getItem('glossa:oled');
+				if (m === null && sep === null && oled === null) {
 					// Same migration off the old single-valued key as
 					// theme.svelte.ts's migrateLegacy — without it, a returning
 					// reader flashes the default theme on every load until they
@@ -65,6 +67,9 @@
 				}
 				if (sep === '1') {
 					document.documentElement.setAttribute('data-sepia', '');
+				}
+				if (oled === '1') {
+					document.documentElement.setAttribute('data-oled', '');
 				}
 			} catch (e) {}
 			try {

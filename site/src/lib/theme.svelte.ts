@@ -1,16 +1,18 @@
 /**
- * Appearance settings — the light/dark mode and the sepia paper tint —
- * persisted to localStorage.
+ * Appearance settings — the light/dark mode, the sepia paper tint and the
+ * OLED true-black ground — persisted to localStorage.
  *
- * TWO AXES, NOT FOUR THEMES. This used to be a single `Theme` of
+ * THREE AXES, NOT N THEMES. This used to be a single `Theme` of
  * auto/light/dark/sepia, which forced two unrelated questions through one
  * value: "do I want dark?" and "do I want warm paper?". A reader on sepia
  * could not also follow the system's dark preference at night — picking
  * sepia meant opting out of `prefers-color-scheme` entirely, with nothing
- * in the UI saying so. The two are now independent:
+ * in the UI saying so. They are now independent, and OLED joined them as a
+ * third rather than as a fourth value of the first:
  *
  *   `mode`   'auto' (follow prefers-color-scheme) | 'on' | 'off'
  *   `sepia`  a boolean paper tint
+ *   `oled`   a boolean true-black ground
  *
  * SEPIA IS A LIGHT-MODE TINT and goes inert whenever dark is actually
  * showing — there is no dark-sepia palette, and a warm dark would be a new
@@ -18,6 +20,16 @@
  * DOM follows; `sepia` stays as the reader left it, so switching dark back
  * off restores their tint rather than silently clearing it. The menu greys
  * the toggle out and says why while it is inert.
+ *
+ * OLED IS THE SAME SHAPE MIRRORED — a dark-mode-only modifier, inert in
+ * light — and is deliberately a modifier rather than a fourth `mode` value.
+ * "Do I want dark?" and "should dark's ground be pure black?" are the same
+ * two-questions-in-one-value mistake the old `Theme` made: as a mode it
+ * could not be combined with 'auto', so a reader who wanted true black at
+ * night would have had to give up following the system to get it. As a flag
+ * it composes with all three. `oledActive`/`sepiaActive` are exact mirrors,
+ * and the two can never both be showing, since each yields to the other's
+ * half of the light/dark axis.
  *
  * `'auto'` is persisted explicitly, the same as any other value, rather
  * than treating "nothing in localStorage" as the only way to be in auto
@@ -37,7 +49,8 @@ export type DarkMode = 'auto' | 'on' | 'off';
 
 const MODE_KEY = 'glossa:dark-mode';
 const SEPIA_KEY = 'glossa:sepia';
-/** The single-valued key these two replaced; read once, then cleared. */
+const OLED_KEY = 'glossa:oled';
+/** The single-valued key the axes above replaced; read once, then cleared. */
 const LEGACY_KEY = 'glossa:theme';
 
 export const DARK_MODES: DarkMode[] = ['auto', 'on', 'off'];
@@ -48,7 +61,11 @@ const DARK_QUERY = '(prefers-color-scheme: dark)';
 export interface Stored {
 	mode: DarkMode;
 	sepia: boolean;
+	oled: boolean;
 }
+
+/** What the legacy single-valued key can express, which predates `oled`. */
+export type LegacyStored = Omit<Stored, 'oled'>;
 
 /**
  * Maps the old single `glossa:theme` value onto the two axes it collapsed,
@@ -61,7 +78,7 @@ export interface Stored {
  * hand (it cannot import this), so the table is worth pinning in one place
  * the other copy can be checked against.
  */
-export function migrateLegacyTheme(legacy: string | undefined): Stored | undefined {
+export function migrateLegacyTheme(legacy: string | undefined): LegacyStored | undefined {
 	switch (legacy) {
 		case 'auto':
 			return { mode: 'auto', sepia: false };
@@ -79,13 +96,18 @@ export function migrateLegacyTheme(legacy: string | undefined): Stored | undefin
 function readStored(): Stored {
 	const rawMode = readStoredString(MODE_KEY);
 	const rawSepia = readStoredString(SEPIA_KEY);
-	if (rawMode === undefined && rawSepia === undefined) {
+	const rawOled = readStoredString(OLED_KEY);
+	// The legacy key is only consulted when NONE of the current ones exist:
+	// a reader who has an `oled` preference has plainly touched the setting
+	// since the split, so there is nothing left to migrate.
+	if (rawMode === undefined && rawSepia === undefined && rawOled === undefined) {
 		const migrated = migrateLegacyTheme(readStoredString(LEGACY_KEY));
-		if (migrated) return migrated;
+		if (migrated) return { ...migrated, oled: false };
 	}
 	return {
 		mode: DARK_MODES.includes(rawMode as DarkMode) ? (rawMode as DarkMode) : DEFAULT_MODE,
-		sepia: rawSepia === '1'
+		sepia: rawSepia === '1',
+		oled: rawOled === '1'
 	};
 }
 
@@ -101,6 +123,9 @@ class AppearanceStore {
 	/** The reader's stored preference, which is NOT the same as what is on
 	 *  screen while dark is active — see `sepiaActive`. */
 	sepia: boolean = $state(initial.sepia);
+	/** Likewise suspended rather than cleared while light is showing — see
+	 *  `oledActive`. */
+	oled: boolean = $state(initial.oled);
 
 	/**
 	 * Tracked, not just read once, because `mode: 'auto'` means the menu's
@@ -128,6 +153,11 @@ class AppearanceStore {
 		return this.sepia && !this.dark;
 	}
 
+	/** Whether the true-black ground is actually showing (it needs dark). */
+	get oledActive(): boolean {
+		return this.oled && this.dark;
+	}
+
 	setMode(mode: DarkMode) {
 		this.mode = mode;
 		this.#apply();
@@ -142,16 +172,27 @@ class AppearanceStore {
 		this.setSepia(!this.sepia);
 	}
 
+	setOled(oled: boolean) {
+		this.oled = oled;
+		this.#apply();
+	}
+
+	toggleOled() {
+		this.setOled(!this.oled);
+	}
+
 	/**
-	 * Writes both axes to `<html>` and to storage. `data-theme` carries only
+	 * Writes all three axes to `<html>` and to storage. `data-theme` carries only
 	 * light/dark now (absent = auto, i.e. let `prefers-color-scheme` decide);
-	 * `data-sepia` is a separate presence-only attribute, which is what lets
-	 * `app.css` order the sepia palette between light and dark and have dark
-	 * win by cascade order alone.
+	 * `data-sepia` and `data-oled` are separate presence-only attributes,
+	 * which is what lets `app.css` order the sepia palette between light and
+	 * dark and have dark win by cascade order alone, and put OLED after both
+	 * dark blocks so it wins over them.
 	 *
-	 * Note it writes `sepia`, not `sepiaActive`: the attribute records the
-	 * reader's choice and the stylesheet decides when it applies, so nothing
-	 * here has to re-run when the OS changes its mind about dark.
+	 * Note it writes `sepia`/`oled`, not `sepiaActive`/`oledActive`: the
+	 * attribute records the reader's choice and the stylesheet decides when it
+	 * applies, so nothing here has to re-run when the OS changes its mind
+	 * about dark.
 	 */
 	#apply() {
 		if (typeof document !== 'undefined') {
@@ -166,9 +207,15 @@ class AppearanceStore {
 			} else {
 				root.removeAttribute('data-sepia');
 			}
+			if (this.oled) {
+				root.setAttribute('data-oled', '');
+			} else {
+				root.removeAttribute('data-oled');
+			}
 		}
 		writeStoredString(MODE_KEY, this.mode);
 		writeStoredString(SEPIA_KEY, this.sepia ? '1' : undefined);
+		writeStoredString(OLED_KEY, this.oled ? '1' : undefined);
 		// Any write means the two new keys are now authoritative; leaving the
 		// old one behind would only be a second source of truth.
 		writeStoredString(LEGACY_KEY, undefined);

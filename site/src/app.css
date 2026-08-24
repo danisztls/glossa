@@ -306,7 +306,55 @@
 	 * affordance bound by WCAG 1.4.11, and they should be free to diverge
 	 * without one silently dragging the other along (`--color-accent` and
 	 * `--color-link` are held apart for the same reason).
+	 *
+	 * SATURATION IS SPENT FIRST AND LIGHTNESS ONLY AS THE BILL REQUIRES. That
+	 * is the rule for picking a red here, and it is worth stating because the
+	 * intuition runs the other way: chroma does not BUY contrast, it costs it.
+	 * A pure red carries less luminance than the grey at its own lightness, so
+	 * at OKLCH L 0.643 and hue 28.6, walking chroma from 0.10 up to 0.227
+	 * takes the ratio against `--color-bg-elevated` DOWN from 4.79:1 to
+	 * 4.49:1. The only thing that lifts a red off a dark ground is lightness.
+	 *
+	 * So each of dark's reds is the MOST SATURATED colour its own bar allows,
+	 * with lightness raised no further than that bar demands:
+	 *
+	 *   `--color-initial`  #df1212 — one glyph per chapter at 4.98em, so it
+	 *                      owes 3:1 and clears it at 3.8:1 (4.2:1 on OLED).
+	 *                      Deep, and it can stay deep; nothing is spent.
+	 *   `--color-accent`   #ff2f27 — 0.9rem text, so it owes 4.5:1 over
+	 *   `--color-link`     `--color-bg-elevated`, the binding surface, in
+	 *                      dark AND OLED. This is chroma 0.240 at L 0.646:
+	 *                      the maximum chroma anywhere in sRGB that still
+	 *                      clears the bar on this hue. It lands at 4.50:1.
+	 *
+	 * The accent cannot simply be #df1212 lifted a little, and cannot be
+	 * #df1212 at all: that colour reaches 4.23:1 against PURE BLACK, the most
+	 * generous ground there is, and no background can take it further. The
+	 * lightness gap between the two reds is the size of that shortfall, not a
+	 * design gesture. Light's pair still splits by pigment (see above); dark's
+	 * splits by what its two bars will each pay for.
+	 *
+	 * THE DARK GROUND IS WARM, and that is what carries the period feel rather
+	 * than the reds alone, which the floor above pins in place. It was a cool
+	 * violet-grey (#16151a / #201e24 / #38353d, hue ~300); it is now a warm
+	 * near-black at hue ~32, the colour of tanned leather and old blood in
+	 * shadow. Lightness and the border/ground separation are unchanged, so
+	 * only the temperature moved. `--color-text` stays the same warm cream and
+	 * gains contrast (15.3:1) from the darker ground; the lapis apparatus and
+	 * the gold bookmark are untouched and both read better against warmth than
+	 * they did against grey.
 	 */
+
+	/*
+	 * The sticky site header's ground. It follows `--color-bg-elevated` in
+	 * every theme and is a token of its own for exactly one reason: OLED
+	 * takes it to true black while leaving the elevated surface lifted. The
+	 * two cannot be the same variable there, because a handful of hover and
+	 * selection fills (`AnchorMenu`, `IndexSidebarToc`, the prayer TOC) are
+	 * borderless and have nothing BUT that lift to show themselves with —
+	 * flattening it to the page would delete them rather than darken them.
+	 */
+	--color-bg-chrome: var(--color-bg-elevated);
 
 	/* Light theme (default) */
 	--color-bg: #ffffff;
@@ -330,15 +378,21 @@
 }
 
 /*
- * THE THREE PALETTE BLOCKS BELOW ARE ORDERED, AND THE ORDER IS THE RULE.
+ * THE PALETTE BLOCKS BELOW ARE ORDERED, AND THE ORDER IS THE RULE.
  *
- * Light is the base above. Sepia comes next, then dark — and every one of
- * these selectors has the same specificity (0,2,0), so what resolves a
- * conflict between them is source order alone. That is deliberate: it
- * encodes "sepia is a light-mode paper tint, and anything resolving to dark
- * beats it", which is exactly the semantics `theme.svelte.ts` documents.
- * Moving the sepia block below the dark ones would silently give a reader
- * with dark on and sepia left enabled a light screen at night.
+ * Light is the base above. Sepia comes next, then dark — and each of those
+ * selectors has the same specificity (0,2,0), so what resolves a conflict
+ * between them is source order alone. That is deliberate: it encodes "sepia
+ * is a light-mode paper tint, and anything resolving to dark beats it",
+ * which is exactly the semantics `theme.svelte.ts` documents. Moving the
+ * sepia block below the dark ones would silently give a reader with dark on
+ * and sepia left enabled a light screen at night.
+ *
+ * OLED comes last, and it is the mirror image: a dark-mode-only modifier
+ * that has to beat dark, so it both follows the dark blocks AND outranks
+ * them at (0,3,0). It does not rely on order the way sepia does, because it
+ * cannot: it must lose to nothing and apply to nothing but dark, so the
+ * light case is excluded in the selector itself rather than by position.
  *
  * `color-scheme` is pinned per block rather than left at `html`'s
  * `light dark`: once the reader has made an explicit choice, the browser's
@@ -377,15 +431,15 @@
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme='light']) {
 		color-scheme: dark;
-		--color-bg: #16151a;
-		--color-bg-elevated: #201e24;
-		--color-border: #38353d;
+		--color-bg: #160e0c;
+		--color-bg-elevated: #261c1a;
+		--color-border: #403331;
 		--color-text: #e9e6de;
-		--color-text-muted: #9c968b;
-		--color-accent: #ef8a5c;
-		--color-accent-contrast: #16151a;
-		--color-link: #ef8a5c;
-		--color-initial: #f2694a;
+		--color-text-muted: #9e9187;
+		--color-accent: #ff2f27;
+		--color-accent-contrast: #160e0c;
+		--color-link: #ff2f27;
+		--color-initial: #df1212;
 		--color-apparatus: #8fa8e8;
 		--color-focus-ring: #8fa8e8;
 		--color-bookmark: #d9a94a;
@@ -395,18 +449,66 @@
 /* Explicit dark, regardless of what the system prefers. */
 :root[data-theme='dark'] {
 	color-scheme: dark;
-	--color-bg: #16151a;
-	--color-bg-elevated: #201e24;
-	--color-border: #38353d;
+	--color-bg: #160e0c;
+	--color-bg-elevated: #261c1a;
+	--color-border: #403331;
 	--color-text: #e9e6de;
-	--color-text-muted: #9c968b;
-	--color-accent: #ef8a5c;
-	--color-accent-contrast: #16151a;
-	--color-link: #ef8a5c;
-	--color-initial: #f2694a;
+	--color-text-muted: #9e9187;
+	--color-accent: #ff2f27;
+	--color-accent-contrast: #160e0c;
+	--color-link: #ff2f27;
+	--color-initial: #df1212;
 	--color-apparatus: #8fa8e8;
 	--color-focus-ring: #8fa8e8;
 	--color-bookmark: #d9a94a;
+}
+
+/*
+ * OLED: the dark ground goes to true black, and only five tokens move.
+ *
+ * WHY SO FEW. An OLED panel spends no power on a black pixel and there is no
+ * backlight to leak, so what this setting is actually buying is #000 behind
+ * the text — everything else about dark mode was already right. The three
+ * greys are re-derived rather than re-invented: `--color-bg-elevated` and
+ * `--color-border` keep their EXACT contrast ratios against the ground that
+ * they have in ordinary dark (1.15:1 and 1.57:1), so the header, the panels
+ * and every hairline sit at the same visual distance from the page. Only the
+ * floor they are measured from moved. `--color-accent-contrast` follows the
+ * ground because that is what it is — the colour of text printed ON the
+ * accent, which is the page showing through.
+ *
+ * THE HEADER GOES BLACK TOO, via `--color-bg-chrome`, which is the whole
+ * reason that token exists (see its declaration above). It is the one
+ * surface a reader asked to disappear into the page, and it can afford to:
+ * it carries a bottom border, so flattening its fill leaves the hairline to
+ * separate it — at the same 1.57:1 the border has against the page anywhere
+ * else. The floating panels keep their lift, because a popover with no fill
+ * over a page with no fill is a card that has come apart.
+ *
+ * Every foreground token is left alone and every one of them gains contrast
+ * (text 16.8:1, accent 5.9:1, the drop-cap initial 5.1:1), so nothing here
+ * can push a value under the floor the reds are pinned to above.
+ *
+ * NO PURE-BLACK VARIANT OF THE LIGHT PALETTE EXISTS, and the selectors say
+ * so: `data-oled` is inert unless dark is what is actually showing. That is
+ * the exact mirror of `data-sepia`, which is inert unless light is.
+ */
+@media (prefers-color-scheme: dark) {
+	:root[data-oled]:not([data-theme='light']) {
+		--color-bg: #000000;
+		--color-bg-chrome: #000000;
+		--color-bg-elevated: #1c1311;
+		--color-border: #3a2c2a;
+		--color-accent-contrast: #000000;
+	}
+}
+
+:root[data-theme='dark'][data-oled] {
+	--color-bg: #000000;
+	--color-bg-chrome: #000000;
+	--color-bg-elevated: #1c1311;
+	--color-border: #3a2c2a;
+	--color-accent-contrast: #000000;
 }
 
 *,

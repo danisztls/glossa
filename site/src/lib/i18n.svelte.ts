@@ -68,6 +68,8 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// `sepia.lightOnly` is shown only while dark mode is actually active, to
 		// explain why the sepia switch beside it is greyed out — it shares that
 		// switch's row, so it has to stay to about fifteen characters.
+		// `oled.darkOnly` is the mirror of it, under the same length limit, and
+		// shows while LIGHT is what the reader is looking at.
 		// KEEP THE THREE `darkMode` OPTIONS SHORT. They are three cells of one
 		// full-width segmented control inside a ~13rem panel, set uppercase at
 		// 0.68rem, so a long word in any language pushes the panel wider.
@@ -78,6 +80,8 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'darkMode.off': 'Off',
 		'sepia.label': 'Sepia',
 		'sepia.lightOnly': 'Light mode only',
+		'oled.label': 'OLED black',
+		'oled.darkOnly': 'Dark mode only',
 		'fontSize.label': 'Text size',
 		'fontSize.larger': 'Larger text',
 		'fontSize.smaller': 'Smaller text',
@@ -340,6 +344,8 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'darkMode.off': 'Desligado',
 		'sepia.label': 'Sépia',
 		'sepia.lightOnly': 'Só no modo claro',
+		'oled.label': 'Preto OLED',
+		'oled.darkOnly': 'Só no modo escuro',
 
 		'fontSize.label': 'Tamanho do texto',
 		'fontSize.larger': 'Aumentar texto',

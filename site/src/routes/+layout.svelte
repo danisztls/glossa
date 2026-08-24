@@ -243,7 +243,9 @@
 		top: 0;
 		z-index: 40;
 		border-bottom: 1px solid var(--color-border);
-		background: var(--color-bg-elevated);
+		/* Not `--color-bg-elevated` directly: OLED takes this to true black
+		   while leaving that surface lifted — see app.css. */
+		background: var(--color-bg-chrome);
 		/* A scroll-linked animation changes this element's own height below
 		   (`.header-bar`'s shrink) — without this the browser's scroll
 		   anchoring "corrects" for that shrink by nudging `scrollY`, which

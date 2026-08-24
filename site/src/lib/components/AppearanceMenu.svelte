@@ -1,6 +1,6 @@
 <!--
 	The reader's visual settings, in one popover: dark mode, the sepia paper
-	tint, and the reading text size.
+	tint, the OLED true-black ground, and the reading text size.
 
 	WHY ONE MENU. These were two triggers in the header — a palette icon for a
 	four-item theme list (auto/light/dark/sepia) and an "Aa" icon for the size
@@ -8,24 +8,26 @@
 	one too many in a row that already holds search, language, print and
 	install; and the theme list itself conflated two independent choices,
 	since picking sepia there silently meant "and stop following the system's
-	dark preference". Splitting theme into the two axes it always was — a
-	tri-state dark mode and a sepia toggle — makes three controls, which is
-	exactly the point at which they want a panel rather than a row of icons.
+	dark preference". Splitting theme into the axes it always was — a tri-state
+	dark mode plus a tint toggle per half of it — makes several controls, which
+	is exactly the point at which they want a panel rather than a row of
+	icons.
 
-	THREE ROWS BUILT TO ONE TEMPLATE: a `.field-label` over a `.field-control`
-	of fixed height, and the control fills the panel's width. That is what
-	makes the panel read as balanced rather than as three unrelated widgets —
-	the segmented dark-mode control and the size stepper are both a full-width
-	bar of three cells, and the sepia switch shares their row height. The
-	sepia note sits BESIDE the switch, in the same row, rather than under it,
-	so that turning dark mode on doesn't make one row taller than the other
-	two.
+	EVERY ROW IS BUILT TO ONE TEMPLATE: a `.field-label` over a
+	`.field-control` of fixed height, and the control fills the panel's width.
+	That is what makes the panel read as balanced rather than as a stack of
+	unrelated widgets — the segmented dark-mode control and the size stepper
+	are both a full-width bar of three cells, and the two switches share their
+	row height. Each switch's note sits BESIDE it, in the same row, rather
+	than under it, so that a change of mode doesn't make one row taller than
+	the rest.
 
-	Sepia yields to dark and its row goes inert while dark is showing; the
-	store (`$lib/theme.svelte.ts`) owns that rule and the note beside the
-	switch is what says so out loud. The switch keeps showing the reader's
-	stored preference while inert rather than snapping to off — it is
-	suspended, not cleared.
+	SEPIA AND OLED ARE THE SAME ROW MIRRORED, and they are adjacent so that
+	reads as deliberate: sepia yields to dark, OLED needs it, and so exactly
+	one of the two is ever live. The store (`$lib/theme.svelte.ts`) owns both
+	rules and the note beside each switch is what says so out loud. A switch
+	keeps showing the reader's stored preference while inert rather than
+	snapping to off — it is suspended, not cleared.
 
 	NOTHING HERE CLOSES THE PANEL. `FontSizeMenu` already worked that way (a
 	reader stepping the size up wants to keep clicking and watching), and the
@@ -129,6 +131,26 @@
 			</div>
 
 			<div class="field" role="none">
+				<span class="field-label">{t('oled.label')}</span>
+				<div class="field-control" role="none">
+					<button
+						type="button"
+						role="menuitemcheckbox"
+						aria-checked={appearance.oled}
+						aria-label={t('oled.label')}
+						class="switch-btn"
+						disabled={!appearance.dark}
+						onclick={() => appearance.toggleOled()}
+					>
+						<span class="switch" class:on={appearance.oled}></span>
+					</button>
+					{#if !appearance.dark}
+						<span class="note">{t('oled.darkOnly')}</span>
+					{/if}
+				</div>
+			</div>
+
+			<div class="field" role="none">
 				<span class="field-label">{t('fontSize.label')}</span>
 				<div class="field-control stepper" role="none">
 					<button
@@ -166,8 +188,8 @@
 		   a frame around a list of items. The titles take their own small
 		   inset back below, so they sit in from the edge the bars reach. */
 		padding: 0.4rem;
-		/* One height for every control row, so the three fields are the same
-		   height and the panel reads as one list rather than three widgets. */
+		/* One height for every control row, so every field is the same height
+		   and the panel reads as one list rather than a pile of widgets. */
 		--control-height: 1.7rem;
 	}
 
@@ -177,8 +199,8 @@
 		gap: 0.2rem;
 	}
 
-	/* Every row's title, the sepia switch's own label included: all three name
-	   a setting of the same rank, so all three are set alike. Uppercase and
+	/* Every row's title, the two switches' own labels included: they all name
+	   a setting of the same rank, so they are all set alike. Uppercase and
 	   tracked, at the same size as the segmented control's own text — these
 	   are labels on a panel of bars, and at this size mixed case reads as
 	   prose that got small rather than as a heading. */
@@ -192,9 +214,9 @@
 		color: var(--color-text-muted);
 	}
 
-	/* Even spacing between the fields, and no rule between the theme pair and
-	   the size stepper: a divider would have made one of the two gaps larger
-	   than the other, which is the imbalance it was meant to organize. */
+	/* Even spacing between the fields, and no rule between the theme rows and
+	   the size stepper: a divider would have made one of the gaps larger than
+	   the others, which is the imbalance it was meant to organize. */
 	.field + .field {
 		margin-block-start: 0.55rem;
 	}

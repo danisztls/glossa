@@ -39,6 +39,11 @@
 		 * chrome. Browsers without SVG favicon support fall back to the PNGs in
 		 * static/icons/, which are drawn on their own background and so need no
 		 * such adaptation.
+		 *
+		 * DARK IS THE EXCEPTION and takes --color-accent. That palette's initial
+		 * is a deep #df1212, which it can afford at 4.98em (see app.css); this
+		 * is the same glyph at 16px against chrome nobody controls, so it
+		 * borrows the red picked to survive at small sizes instead.
 		 */
 		.initial {
 			fill: #b03024;
@@ -48,7 +53,7 @@
 		}
 		@media (prefers-color-scheme: dark) {
 			.initial {
-				fill: #f2694a;
+				fill: #ff2f27;
 			}
 			.rest {
 				fill: #e9e6de;
