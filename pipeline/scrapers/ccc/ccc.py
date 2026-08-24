@@ -1231,9 +1231,28 @@ _EN_P_RE = re.compile(r"<p([^>]*)>(.*?)</p>", _EN_IF)
 
 
 def parse_page_en(html_text: str) -> tuple[list[Block], dict[str, str]]:
+    """One EN page is one subsection, and its headings are an unbroken run at
+    the top: across all 375 of them, no heading of any kind — labelled or not —
+    follows body text. (The PT mirror is a page per *chapter*, so headings
+    genuinely do appear mid-page there; this rule is a property of the EN
+    mirror's granularity and must not be lifted into `process_page`.)
+
+    So once body text has begun, a fully-bold <p> is the source setting a
+    passage apart, not a heading. Exactly one block in the EN CCC is of that
+    shape — the text of the Our Father in §2759, which vatican.va bolds where
+    the PT mirror indents it with <blockquote>. It was coming out as a
+    heading of its own with a 285-character title, which both dropped the
+    prayer from the body of §2759 and put it in the structure tree. It is
+    marked as a quote here, matching the PT edition and the schema's reading
+    of that kind ("indented quotation ... liturgy, prayer").
+
+    The `match_label_en` guard is not redundant: no labelled heading follows
+    body text today, but "IN BRIEF" and the article markers are the blocks
+    that would if a page's boundaries ever moved, and they must keep winning."""
     body, foot_html = _en_body_and_footnotes(html_text)
     footnote_table = _en_footnote_table(foot_html)
     blocks: list[Block] = []
+    seen_body = False
     for attrs_m, inner in ((m.group(1), m.group(2)) for m in _EN_P_RE.finditer(body)):
         is_quote = "margin-left" in attrs_m.lower()
         is_heading = is_full_bold(inner)
@@ -1241,8 +1260,33 @@ def parse_page_en(html_text: str) -> tuple[list[Block], dict[str, str]]:
         text = strip_tags(marked)
         if not text:
             continue
+        if is_heading and seen_body and match_label_en(text) is None:
+            is_heading, is_quote = False, True
+        seen_body = seen_body or not is_heading
         blocks.append(Block(is_heading, "quote" if is_quote else "prose", text))
     return merge_quote_blocks(blocks), footnote_table
+
+
+def test_en_bold_block_after_body_is_a_quote_not_a_heading() -> None:
+    # __P9V.HTM, abridged: the section heading, §2759, the Our Father, §2760.
+    page = (
+        "<hr size=1 noshade>"
+        "<p class=MsoNormal><b>SECTION TWO</b></p>"
+        "<p class=MsoNormal><b>THE LORD'S PRAYER</b></p>"
+        "<p class=MsoNormal>2759 ... has retained St. Matthew's text:</p>"
+        "<p class=MsoNormal><b>Our Father who art in heaven, hallowed be thy "
+        "name.</b></p>"
+        "<p class=MsoNormal>2760 Very early on, liturgical usage ...</p>"
+    )
+    blocks, _ = parse_page_en(page)
+    assert [(b.is_heading, b.kind) for b in blocks] == [
+        (True, "prose"),
+        (True, "prose"),
+        (False, "prose"),
+        (False, "quote"),
+        (False, "prose"),
+    ]
+    assert blocks[3].text.startswith("Our Father who art in heaven")
 
 
 def discover_pages_en(fetcher: Fetcher) -> list[tuple[str, str]]:
