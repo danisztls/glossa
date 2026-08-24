@@ -10,18 +10,34 @@ import { isDivergentBook, resolveVulgate, toVulgateCandidates } from './versific
  * block below, as the existence oracle for the corpus invariant.
  */
 const REAL_VULGATE_PS_MAX_VERSE: Record<number, number> = {
-	1: 6, 2: 13, 3: 9, 8: 10,
+	1: 6,
+	2: 13,
+	3: 9,
+	8: 10,
 	9: 39, // Heb 9 (21v) + Heb 10 (18v) merged
 	10: 8,
-	21: 32, 26: 14, 41: 12, 50: 21, 54: 24, 68: 37, 88: 53, 101: 29, 106: 43,
-	112: 9, 113: 26, // 112: top of the 11-113 shift range; 113: Heb 114 (8v) + Heb 115 (18v) merged
+	21: 32,
+	26: 14,
+	41: 12,
+	50: 21,
+	54: 24,
+	68: 37,
+	88: 53,
+	101: 29,
+	106: 43,
+	112: 9,
+	113: 26, // 112: top of the 11-113 shift range; 113: Heb 114 (8v) + Heb 115 (18v) merged
 	114: 9, // Heb 116:1-9
 	115: 10, // Heb 116:10-19
 	116: 2, // bottom of the 117-146 shift range
-	118: 176, 123: 8, 138: 24, 145: 10,
+	118: 176,
+	123: 8,
+	138: 24,
+	145: 10,
 	146: 11, // Heb 147:1-11
 	147: 9, // Heb 147:12-20
-	148: 14, 150: 6
+	148: 14,
+	150: 6
 }; // fmt: skip
 
 const REAL_VULGATE_MAL_MAX_VERSE: Record<number, number> = { 1: 14, 2: 17, 3: 18, 4: 6 };
@@ -61,14 +77,14 @@ describe('toVulgateCandidates — Psalms', () => {
 		expect(toVulgateCandidates('ps', 146, 1)).toEqual([{ osis: 'ps', chapter: 145, verse: 1 }]);
 	});
 
-	it('merges Heb 9+10 into Vulg 9, offsetting Heb 10 by Heb 9\'s own length (21)', () => {
+	it("merges Heb 9+10 into Vulg 9, offsetting Heb 10 by Heb 9's own length (21)", () => {
 		expect(toVulgateCandidates('ps', 9, 1)).toEqual([{ osis: 'ps', chapter: 9, verse: 1 }]);
 		expect(toVulgateCandidates('ps', 9, 21)).toEqual([{ osis: 'ps', chapter: 9, verse: 21 }]); // Heb 9's last verse
 		expect(toVulgateCandidates('ps', 10, 1)).toEqual([{ osis: 'ps', chapter: 9, verse: 22 }]); // Heb 10's first verse
 		expect(toVulgateCandidates('ps', 10, 18)).toEqual([{ osis: 'ps', chapter: 9, verse: 39 }]); // Heb 10's last verse = Vulg 9's last (39, verified against corpus)
 	});
 
-	it('merges Heb 114+115 into Vulg 113, offsetting Heb 115 by Heb 114\'s own length (8)', () => {
+	it("merges Heb 114+115 into Vulg 113, offsetting Heb 115 by Heb 114's own length (8)", () => {
 		expect(toVulgateCandidates('ps', 114, 8)).toEqual([{ osis: 'ps', chapter: 113, verse: 8 }]);
 		expect(toVulgateCandidates('ps', 115, 1)).toEqual([{ osis: 'ps', chapter: 113, verse: 9 }]);
 		expect(toVulgateCandidates('ps', 115, 18)).toEqual([{ osis: 'ps', chapter: 113, verse: 26 }]); // = Vulg 113's last (verified)
@@ -100,8 +116,12 @@ describe('toVulgateCandidates — Psalms', () => {
 	it('a whole-chapter reference to a merged psalm is unambiguous', () => {
 		expect(toVulgateCandidates('ps', 9)).toEqual([{ osis: 'ps', chapter: 9, verse: undefined }]);
 		expect(toVulgateCandidates('ps', 10)).toEqual([{ osis: 'ps', chapter: 9, verse: undefined }]);
-		expect(toVulgateCandidates('ps', 114)).toEqual([{ osis: 'ps', chapter: 113, verse: undefined }]);
-		expect(toVulgateCandidates('ps', 115)).toEqual([{ osis: 'ps', chapter: 113, verse: undefined }]);
+		expect(toVulgateCandidates('ps', 114)).toEqual([
+			{ osis: 'ps', chapter: 113, verse: undefined }
+		]);
+		expect(toVulgateCandidates('ps', 115)).toEqual([
+			{ osis: 'ps', chapter: 113, verse: undefined }
+		]);
 	});
 
 	// Regression cases: every one of these is a real CCC footnote citation
@@ -167,14 +187,18 @@ describe('toVulgateCandidates — Joel', () => {
 		expect(toVulgateCandidates('joel', 3, 5)).toEqual([{ osis: 'joel', chapter: 2, verse: 32 }]);
 	});
 
-	it('a whole-chapter reference to chapter 3 is unambiguous (wholly nested in Vulg 2\'s tail)', () => {
-		expect(toVulgateCandidates('joel', 3)).toEqual([{ osis: 'joel', chapter: 2, verse: undefined }]);
+	it("a whole-chapter reference to chapter 3 is unambiguous (wholly nested in Vulg 2's tail)", () => {
+		expect(toVulgateCandidates('joel', 3)).toEqual([
+			{ osis: 'joel', chapter: 2, verse: undefined }
+		]);
 	});
 
 	it('maps chapter 4 to chapter 3 (the CCC "Joel 3-4" case, second half)', () => {
 		expect(toVulgateCandidates('joel', 4, 1)).toEqual([{ osis: 'joel', chapter: 3, verse: 1 }]);
 		expect(toVulgateCandidates('joel', 4, 21)).toEqual([{ osis: 'joel', chapter: 3, verse: 21 }]);
-		expect(toVulgateCandidates('joel', 4)).toEqual([{ osis: 'joel', chapter: 3, verse: undefined }]);
+		expect(toVulgateCandidates('joel', 4)).toEqual([
+			{ osis: 'joel', chapter: 3, verse: undefined }
+		]);
 	});
 });
 
@@ -182,7 +206,9 @@ describe('toVulgateCandidates — non-divergent books', () => {
 	it('is the identity for any book this module has no divergence data for', () => {
 		expect(toVulgateCandidates('gen', 9, 16)).toEqual([{ osis: 'gen', chapter: 9, verse: 16 }]);
 		expect(toVulgateCandidates('john', 3, 16)).toEqual([{ osis: 'john', chapter: 3, verse: 16 }]);
-		expect(toVulgateCandidates('rev', 22)).toEqual([{ osis: 'rev', chapter: 22, verse: undefined }]);
+		expect(toVulgateCandidates('rev', 22)).toEqual([
+			{ osis: 'rev', chapter: 22, verse: undefined }
+		]);
 	});
 
 	it('always returns at least one candidate', () => {
@@ -218,7 +244,11 @@ describe('resolveVulgate', () => {
 	it('picks the first candidate that exists when a whole-chapter reference is ambiguous', () => {
 		// Ps 116 whole-chapter: both 114 and 115 "exist" as chapters (no verse
 		// to disambiguate), so the first (114) wins.
-		expect(resolveVulgate('ps', 116, undefined, psExists)).toEqual({ osis: 'ps', chapter: 114, verse: undefined });
+		expect(resolveVulgate('ps', 116, undefined, psExists)).toEqual({
+			osis: 'ps',
+			chapter: 114,
+			verse: undefined
+		});
 	});
 
 	it('falls through to the second candidate when the first does not exist', () => {
@@ -238,8 +268,8 @@ describe('resolveVulgate', () => {
 	});
 });
 
-describe('invariant: every mapped Psalm/Malachi/Joel address is within the real corpus\'s actual verse range', () => {
-	it('Psalms: the merge/split boundary chapters map every in-range verse within the real target chapter\'s verse count', () => {
+describe("invariant: every mapped Psalm/Malachi/Joel address is within the real corpus's actual verse range", () => {
+	it("Psalms: the merge/split boundary chapters map every in-range verse within the real target chapter's verse count", () => {
 		// Only sweep the chapters whose mapping is non-trivial (merges,
 		// splits, and the shift range) with verse numbers that are actually
 		// valid for THAT Hebrew chapter — sweeping a fixed verse range across
@@ -274,9 +304,10 @@ describe('invariant: every mapped Psalm/Malachi/Joel address is within the real 
 		for (let verse = 1; verse <= 24; verse++) {
 			const [primary] = toVulgateCandidates('mal', 3, verse);
 			const max = REAL_VULGATE_MAL_MAX_VERSE[primary.chapter];
-			expect(primary.verse! >= 1 && primary.verse! <= max, `mal 3:${verse} -> ${primary.chapter}:${primary.verse}`).toBe(
-				true
-			);
+			expect(
+				primary.verse! >= 1 && primary.verse! <= max,
+				`mal 3:${verse} -> ${primary.chapter}:${primary.verse}`
+			).toBe(true);
 		}
 	});
 
@@ -284,16 +315,18 @@ describe('invariant: every mapped Psalm/Malachi/Joel address is within the real 
 		for (let verse = 1; verse <= 5; verse++) {
 			const [primary] = toVulgateCandidates('joel', 3, verse);
 			const max = REAL_VULGATE_JOEL_MAX_VERSE[primary.chapter];
-			expect(primary.verse! >= 1 && primary.verse! <= max, `joel 3:${verse} -> ${primary.chapter}:${primary.verse}`).toBe(
-				true
-			);
+			expect(
+				primary.verse! >= 1 && primary.verse! <= max,
+				`joel 3:${verse} -> ${primary.chapter}:${primary.verse}`
+			).toBe(true);
 		}
 		for (let verse = 1; verse <= 21; verse++) {
 			const [primary] = toVulgateCandidates('joel', 4, verse);
 			const max = REAL_VULGATE_JOEL_MAX_VERSE[primary.chapter];
-			expect(primary.verse! >= 1 && primary.verse! <= max, `joel 4:${verse} -> ${primary.chapter}:${primary.verse}`).toBe(
-				true
-			);
+			expect(
+				primary.verse! >= 1 && primary.verse! <= max,
+				`joel 4:${verse} -> ${primary.chapter}:${primary.verse}`
+			).toBe(true);
 		}
 	});
 });
@@ -347,6 +380,8 @@ describe('toVulgateCandidates — late-merge chapters', () => {
 
 	it('leaves whole-chapter references untouched', () => {
 		// No verse to move.
-		expect(toVulgateCandidates('acts', 7)).toEqual([{ osis: 'acts', chapter: 7, verse: undefined }]);
+		expect(toVulgateCandidates('acts', 7)).toEqual([
+			{ osis: 'acts', chapter: 7, verse: undefined }
+		]);
 	});
 });

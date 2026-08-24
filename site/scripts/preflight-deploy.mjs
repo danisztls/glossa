@@ -95,9 +95,13 @@ if (!existsSync(routesPath)) {
 
 let routes;
 try {
-	routes = JSON.parse(await import('node:fs/promises').then(({ readFile }) => readFile(routesPath, 'utf8')));
+	routes = JSON.parse(
+		await import('node:fs/promises').then(({ readFile }) => readFile(routesPath, 'utf8'))
+	);
 } catch (error) {
-	fail(`could not read corpus-routes.json: ${error instanceof Error ? error.message : String(error)}`);
+	fail(
+		`could not read corpus-routes.json: ${error instanceof Error ? error.message : String(error)}`
+	);
 }
 
 if (routes.workCount < MIN_WORKS || routes.contentAssetCount < MIN_CONTENT_ASSETS) {

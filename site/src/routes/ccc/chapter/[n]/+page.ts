@@ -1,10 +1,5 @@
 import { error } from '@sveltejs/kit';
-import {
-	cccLangs,
-	getCccChapterFor,
-	getCccParagraphRangeAsync,
-	getWork
-} from '$lib/corpus';
+import { cccLangs, getCccChapterFor, getCccParagraphRangeAsync, getWork } from '$lib/corpus';
 import type { CccNode, CccParagraph, WorkManifest } from '$lib/types';
 import type { PageLoad } from './$types';
 

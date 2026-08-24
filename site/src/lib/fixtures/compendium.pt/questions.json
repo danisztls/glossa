@@ -1,62 +1,62 @@
 [
-  {
-    "n": 1,
-    "question": "Qual é o desígnio de Deus acerca do homem?",
-    "answer_blocks": [
-      {
-        "text": "Deus, infinitamente perfeito e bem-aventurado em si mesmo, num desígnio de pura bondade, criou livremente o homem para o tornar participante da sua vida bem-aventurada. Na plenitude dos tempos, Deus Pai enviou o seu Filho, como Redentor e Salvador dos homens caídos no pecado, convocando-os à sua Igreja e tornando-os filhos adoptivos por obra do Espírito Santo e herdeiros da sua eterna bem-aventurança."
-      }
-    ],
-    "ccc_refs": "1 – 25"
-  },
-  {
-    "n": 2,
-    "question": "Porque é que no homem existe o desejo de Deus?",
-    "answer_blocks": [
-      {
-        "text": "Ao criar o homem à sua imagem, o próprio Deus inscreveu no coração humano o desejo de O ver. Mesmo que, muitas vezes, tal desejo seja ignorado, Deus não cessa de atrair o homem a Si, para que viva e encontre n’Ele aquela plenitude de verdade e de felicidade, que ele procura sem descanso. Por natureza e por vocação, o homem é um ser religioso, capaz de entrar em comunhão com Deus. É este vínculo íntimo e vital com Deus que confere ao homem a sua dignidade fundamental."
-      }
-    ],
-    "ccc_refs": "27-30 44-45"
-  },
-  {
-    "n": 3,
-    "question": "Como é que se pode conhecer Deus apenas com a luz da razão?",
-    "answer_blocks": [
-      {
-        "text": "A partir da criação, isto é, do mundo e da pessoa humana, o homem pode, só pela razão, conhecer com certeza a Deus como origem e fim do universo e como sumo bem, verdade e beleza infinita."
-      }
-    ],
-    "ccc_refs": "31-36 46-47"
-  },
-  {
-    "n": 4,
-    "question": "Basta porém a exclusiva luz da razão para conhecer Deus?",
-    "answer_blocks": [
-      {
-        "text": "Ao conhecer Deus só com a luz da razão, o homem experimenta muitas dificuldades. Além disso, não pode entrar só pelas suas próprias forças na intimidade do mistério divino. Por isso é que Deus o quis iluminar com a sua Revelação não apenas sobre verdades que excedem o seu entendimento, mas também sobre verdades religiosas e morais que, apesar de serem por si acessíveis à razão, podem deste modo ser conhecidas por todos, sem dificuldade, com firme certeza e sem mistura de erro."
-      }
-    ],
-    "ccc_refs": "37-38"
-  },
-  {
-    "n": 5,
-    "question": "Como se pode falar de Deus?",
-    "answer_blocks": [
-      {
-        "text": "É possível falar de Deus a todos e com todos, a partir das perfeições do homem e das outras criaturas, que são um reflexo, embora limitado, da infinita perfeição de Deus. É, porém, necessário purificar continuamente a nossa linguagem de tudo o que ela contém de imaginário e imperfeito, na consciência de que nunca será possível exprimir plenamente o infinito mistério de Deus."
-      }
-    ],
-    "ccc_refs": "39-43 48-49"
-  },
-  {
-    "n": 6,
-    "question": "O que é que Deus revela ao homem?",
-    "answer_blocks": [
-      {
-        "text": "Deus revela-se ao homem, na sua bondade e sabedoria. Mediante acontecimentos e palavras, Deus revela-se a Si mesmo e ao seu desígnio de benevolência, que Ele, desde a eternidade, preestabeleceu em Cristo a favor dos homens. Tal desígnio consiste em fazer participar, pela graça do Espírito Santo, todos os homens na vida divina, como seus filhos adoptivos no seu único Filho."
-      }
-    ],
-    "ccc_refs": "50-53 68-69"
-  }
+	{
+		"n": 1,
+		"question": "Qual é o desígnio de Deus acerca do homem?",
+		"answer_blocks": [
+			{
+				"text": "Deus, infinitamente perfeito e bem-aventurado em si mesmo, num desígnio de pura bondade, criou livremente o homem para o tornar participante da sua vida bem-aventurada. Na plenitude dos tempos, Deus Pai enviou o seu Filho, como Redentor e Salvador dos homens caídos no pecado, convocando-os à sua Igreja e tornando-os filhos adoptivos por obra do Espírito Santo e herdeiros da sua eterna bem-aventurança."
+			}
+		],
+		"ccc_refs": "1 – 25"
+	},
+	{
+		"n": 2,
+		"question": "Porque é que no homem existe o desejo de Deus?",
+		"answer_blocks": [
+			{
+				"text": "Ao criar o homem à sua imagem, o próprio Deus inscreveu no coração humano o desejo de O ver. Mesmo que, muitas vezes, tal desejo seja ignorado, Deus não cessa de atrair o homem a Si, para que viva e encontre n’Ele aquela plenitude de verdade e de felicidade, que ele procura sem descanso. Por natureza e por vocação, o homem é um ser religioso, capaz de entrar em comunhão com Deus. É este vínculo íntimo e vital com Deus que confere ao homem a sua dignidade fundamental."
+			}
+		],
+		"ccc_refs": "27-30 44-45"
+	},
+	{
+		"n": 3,
+		"question": "Como é que se pode conhecer Deus apenas com a luz da razão?",
+		"answer_blocks": [
+			{
+				"text": "A partir da criação, isto é, do mundo e da pessoa humana, o homem pode, só pela razão, conhecer com certeza a Deus como origem e fim do universo e como sumo bem, verdade e beleza infinita."
+			}
+		],
+		"ccc_refs": "31-36 46-47"
+	},
+	{
+		"n": 4,
+		"question": "Basta porém a exclusiva luz da razão para conhecer Deus?",
+		"answer_blocks": [
+			{
+				"text": "Ao conhecer Deus só com a luz da razão, o homem experimenta muitas dificuldades. Além disso, não pode entrar só pelas suas próprias forças na intimidade do mistério divino. Por isso é que Deus o quis iluminar com a sua Revelação não apenas sobre verdades que excedem o seu entendimento, mas também sobre verdades religiosas e morais que, apesar de serem por si acessíveis à razão, podem deste modo ser conhecidas por todos, sem dificuldade, com firme certeza e sem mistura de erro."
+			}
+		],
+		"ccc_refs": "37-38"
+	},
+	{
+		"n": 5,
+		"question": "Como se pode falar de Deus?",
+		"answer_blocks": [
+			{
+				"text": "É possível falar de Deus a todos e com todos, a partir das perfeições do homem e das outras criaturas, que são um reflexo, embora limitado, da infinita perfeição de Deus. É, porém, necessário purificar continuamente a nossa linguagem de tudo o que ela contém de imaginário e imperfeito, na consciência de que nunca será possível exprimir plenamente o infinito mistério de Deus."
+			}
+		],
+		"ccc_refs": "39-43 48-49"
+	},
+	{
+		"n": 6,
+		"question": "O que é que Deus revela ao homem?",
+		"answer_blocks": [
+			{
+				"text": "Deus revela-se ao homem, na sua bondade e sabedoria. Mediante acontecimentos e palavras, Deus revela-se a Si mesmo e ao seu desígnio de benevolência, que Ele, desde a eternidade, preestabeleceu em Cristo a favor dos homens. Tal desígnio consiste em fazer participar, pela graça do Espírito Santo, todos os homens na vida divina, como seus filhos adoptivos no seu único Filho."
+			}
+		],
+		"ccc_refs": "50-53 68-69"
+	}
 ]

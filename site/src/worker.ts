@@ -20,7 +20,9 @@ function getManifest(request: Request, assets: AssetFetcher): Promise<RouteManif
 		const url = new URL('/corpus-routes.json', request.url);
 		manifestPromise = assets
 			.fetch(new Request(url, { headers: { Accept: 'application/json' } }))
-			.then(async (response) => (response.ok ? ((await response.json()) as RouteManifest) : undefined))
+			.then(async (response) =>
+				response.ok ? ((await response.json()) as RouteManifest) : undefined
+			)
 			.catch(() => undefined);
 	}
 	return manifestPromise;

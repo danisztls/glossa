@@ -1,62 +1,62 @@
 [
-  {
-    "n": 1,
-    "question": "What is the plan of God for man?",
-    "answer_blocks": [
-      {
-        "text": "God, infinitely perfect and blessed in himself, in a plan of sheer goodness freely created man to make him share in his own blessed life. In the fullness of time, God the Father sent his Son as the Redeemer and Savior of mankind, fallen into sin, thus calling all into his Church and, through the work of the Holy Spirit, making them adopted children and heirs of his eternal happiness."
-      }
-    ],
-    "ccc_refs": "1-25"
-  },
-  {
-    "n": 2,
-    "question": "Why does man have a desire for God?",
-    "answer_blocks": [
-      {
-        "text": "God himself, in creating man in his own image, has written upon his heart the desire to see him. Even if this desire is often ignored, God never ceases to draw man to himself because only in God will he find and live the fullness of truth and happiness for which he never stops searching. By nature and by vocation, therefore, man is a religious being, capable of entering into communion with God. This intimate and vital bond with God confers on man his fundamental dignity."
-      }
-    ],
-    "ccc_refs": "27-30 44-45"
-  },
-  {
-    "n": 3,
-    "question": "How is it possible to know God with only the light of human reason?",
-    "answer_blocks": [
-      {
-        "text": "Starting from creation, that is from the world and from the human person, through reason alone one can know God with certainty as the origin and end of the universe, as the highest good and as infinite truth and beauty."
-      }
-    ],
-    "ccc_refs": "31-36 46-47"
-  },
-  {
-    "n": 4,
-    "question": "Is the light of reason alone sufficient to know the mystery of God?",
-    "answer_blocks": [
-      {
-        "text": "In coming to a knowledge of God by the light of reason alone man experiences many difficulties. Indeed, on his own he is unable to enter into the intimacy of the divine mystery. This is why he stands in need of being enlightened by God’s revelation, not only about those things that exceed his understanding, but also about those religious and moral truths which of themselves are not beyond the grasp of human reason, so that even in the present condition of the human race, they can be known by all with ease, with firm certainty and with no admixture of error."
-      }
-    ],
-    "ccc_refs": "37-38"
-  },
-  {
-    "n": 5,
-    "question": "How can we speak about God?",
-    "answer_blocks": [
-      {
-        "text": "By taking as our starting point the perfections of man and of the other creatures which are a reflection, albeit a limited one, of the infinite perfection of God, we are able to speak about God with all people. We must, however, continually purify our language insofar as it is image-bound and imperfect, realizing that we can never fully express the infinite mystery of God."
-      }
-    ],
-    "ccc_refs": "39-43 48-49"
-  },
-  {
-    "n": 6,
-    "question": "What does God reveal to man?",
-    "answer_blocks": [
-      {
-        "text": "God in his goodness and wisdom reveals himself. With deeds and words, he reveals himself and his plan of loving goodness which he decreed from all eternity in Christ. According to this plan, all people by the grace of the Holy Spirit are to share in the divine life as adopted “sons” in the only begotten Son of God."
-      }
-    ],
-    "ccc_refs": "50-53 68-69"
-  }
+	{
+		"n": 1,
+		"question": "What is the plan of God for man?",
+		"answer_blocks": [
+			{
+				"text": "God, infinitely perfect and blessed in himself, in a plan of sheer goodness freely created man to make him share in his own blessed life. In the fullness of time, God the Father sent his Son as the Redeemer and Savior of mankind, fallen into sin, thus calling all into his Church and, through the work of the Holy Spirit, making them adopted children and heirs of his eternal happiness."
+			}
+		],
+		"ccc_refs": "1-25"
+	},
+	{
+		"n": 2,
+		"question": "Why does man have a desire for God?",
+		"answer_blocks": [
+			{
+				"text": "God himself, in creating man in his own image, has written upon his heart the desire to see him. Even if this desire is often ignored, God never ceases to draw man to himself because only in God will he find and live the fullness of truth and happiness for which he never stops searching. By nature and by vocation, therefore, man is a religious being, capable of entering into communion with God. This intimate and vital bond with God confers on man his fundamental dignity."
+			}
+		],
+		"ccc_refs": "27-30 44-45"
+	},
+	{
+		"n": 3,
+		"question": "How is it possible to know God with only the light of human reason?",
+		"answer_blocks": [
+			{
+				"text": "Starting from creation, that is from the world and from the human person, through reason alone one can know God with certainty as the origin and end of the universe, as the highest good and as infinite truth and beauty."
+			}
+		],
+		"ccc_refs": "31-36 46-47"
+	},
+	{
+		"n": 4,
+		"question": "Is the light of reason alone sufficient to know the mystery of God?",
+		"answer_blocks": [
+			{
+				"text": "In coming to a knowledge of God by the light of reason alone man experiences many difficulties. Indeed, on his own he is unable to enter into the intimacy of the divine mystery. This is why he stands in need of being enlightened by God’s revelation, not only about those things that exceed his understanding, but also about those religious and moral truths which of themselves are not beyond the grasp of human reason, so that even in the present condition of the human race, they can be known by all with ease, with firm certainty and with no admixture of error."
+			}
+		],
+		"ccc_refs": "37-38"
+	},
+	{
+		"n": 5,
+		"question": "How can we speak about God?",
+		"answer_blocks": [
+			{
+				"text": "By taking as our starting point the perfections of man and of the other creatures which are a reflection, albeit a limited one, of the infinite perfection of God, we are able to speak about God with all people. We must, however, continually purify our language insofar as it is image-bound and imperfect, realizing that we can never fully express the infinite mystery of God."
+			}
+		],
+		"ccc_refs": "39-43 48-49"
+	},
+	{
+		"n": 6,
+		"question": "What does God reveal to man?",
+		"answer_blocks": [
+			{
+				"text": "God in his goodness and wisdom reveals himself. With deeds and words, he reveals himself and his plan of loving goodness which he decreed from all eternity in Christ. According to this plan, all people by the grace of the Holy Spirit are to share in the divine life as adopted “sons” in the only begotten Son of God."
+			}
+		],
+		"ccc_refs": "50-53 68-69"
+	}
 ]
