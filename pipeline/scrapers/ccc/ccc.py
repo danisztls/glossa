@@ -1618,10 +1618,20 @@ LANG_CONFIG = {
         "title": "Catechism of the Catholic Church",
         "base_url": EN_BASE,
         "copyright_holder": "Libreria Editrice Vaticana / United States Catholic Conference",
-        "copyright_notice": (
-            '"CATECHISM OF THE CATHOLIC CHURCH, SECOND EDITION, Copyright © 2000, '
-            'Libreria Editrice Vaticana - United States Catholic Conference, Inc."'
-        ),
+        # What the source prints, and nothing else. This used to carry USCCB's
+        # stipulated notice ("CATECHISM OF THE CATHOLIC CHURCH, SECOND
+        # EDITION, Copyright (c) 2000, ... Inc."), which does not appear
+        # anywhere in the 375 raw pages under vatican.va/archive/ENG0015/ --
+        # those print only the line below, plus "copyright (c) Libreria
+        # Editrice Vaticana, Citta del Vaticano 1993" on the index. It was
+        # composed from USCCB's permissions policy (docs/research/copyright.md
+        # §2), a condition of licensing pathways this project deliberately is
+        # not on: §5's posture is to host without prior permission and comply
+        # if asked. So `notice` is now the only thing it claims to be -- a
+        # transcription of the fetched page -- and USCCB keeps its place in
+        # `holder`, which is our own attribution and does not claim to be
+        # quoting anyone. Corrected 2026-08-24.
+        "copyright_notice": "Copyright © Libreria Editrice Vaticana",
     },
     "pt": {
         "discover": discover_pages_pt,
