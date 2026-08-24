@@ -253,8 +253,31 @@
 			}
 
 			.is-brand .monogram {
-				/* Constant, not animated — see the comment above. */
+				/*
+				 * `display` is constant, not animated — see the comment above.
+				 * Everything else here restates the `from` keyframe, and it has
+				 * to: a scroll timeline whose scroller has no scrollable
+				 * overflow is INACTIVE, and an animation attached to an
+				 * inactive timeline is not in effect at all — `both` fill does
+				 * not save it, because there is no timeline to fill from. The
+				 * element then renders at its base style, so a base style of
+				 * "visible" put the monogram on screen beside the full lockup
+				 * ("GlossaGC / Catholica") on every page short enough not to
+				 * scroll, and for the instant before any route's content
+				 * renders into this SPA's empty shell.
+				 *
+				 * The lockup above never showed this because its base style
+				 * already IS its `from` keyframe. Matching that here is the
+				 * whole fix: at rest the mark is the lockup, with or without a
+				 * working timeline.
+				 */
 				display: block;
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip-path: inset(50%);
+				white-space: nowrap;
 				font-size: 1.15em;
 				animation: brand-monogram-swap-monogram linear both;
 				animation-timeline: scroll(root block);
