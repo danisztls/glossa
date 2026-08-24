@@ -168,6 +168,23 @@ common finding, not a failure — `rerum-novarum.en` (64 sections),
 genuinely undivided numbered prose, verified at raw level. Recording the empty
 result is what stops the next person re-deriving it.
 
+**Never invent punctuation, and never invent a tier.** Three corrections have
+been filed against oracles already written, all of them the reader adding
+something the page does not print:
+
+- `lumen-gentium.pt` recorded `Regras e constituições. A relação com a
+Hierarquia`. The source prints
+  `<b><i>Regras e constituições <br />A relação com a Hierarquia</i></b>` —
+  one heading on two lines, with a break and no period. Write it with a space;
+  the corpus keeps the break in `title_html` where it belongs.
+- `laudato-si.en` split two subsections of `I. POLLUTION AND CLIMATE CHANGE`
+  across levels 3 and 4, and nested the two prayers that close the encyclical.
+  Both pairs are printed identically — `<p align="left"><i>` and `<p><i>` render
+  the same — so both are peers. **If two headings look the same on the page,
+  they are the same level**, whatever their subject matter suggests.
+- The same file used a scale with no level 3 in it. Levels are contiguous:
+  1, 2, 3, not 1, 2, 4.
+
 Then check it against the parse:
 
 ```sh

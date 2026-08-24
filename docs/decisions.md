@@ -2482,3 +2482,173 @@ oracle's own `correction` field.
 67 individual differences to 21. What is left is Ecclesiam Suam EN's single
 mis-anchored heading, and Lumen Gentium PT's twenty, which are its own
 question.
+
+## 2026-08-24 — The Douay-Rheims, with Challoner's apparatus
+
+**What**: `bible.douay-rheims.en` — Challoner's revision as transcribed by
+vulgata.online (edition code `DR2`) — is in the corpus. **73 books, 1,334
+chapters, 35,804 verses, 1,917 of Challoner's notes, 1,307 chapter arguments
+and 151 lines and headings printed inside chapters.** It is the corpus's
+fourth Bible edition, its second English one, and the first work of any type
+whose apparatus is part of what we serve rather than something the source
+threw away.
+
+**It pays a debt this file opened.** The 2026-08-16 naming entry accepted
+knowingly that _Glossa Catholica_ "names an apparatus of commentary that does
+not exist yet… Until Challoner ships, the name is a promise." The text and the
+apparatus are now both on disk. **Nothing renders yet**: gap #3 in `PLAN.md`
+(sidenotes on desktop, tap-popovers on mobile) remains the stated prerequisite
+for showing a gloss at all, and that entry's rule — "a gloss must never be
+confusable with its source, visually or structurally" — is unchanged. Ingesting
+now and rendering later costs one crawl instead of two, which is the whole of
+`link-surface.md`'s "re-parse, never re-crawl".
+
+**Three schema additions, written for any annotated edition rather than for
+this one** (`corpus-schema.md`): `summary` on a chapter, for what the source
+prints ahead of the verses to say what is in it — Bible typography calls it the
+_argument_, and the field is named for what it is because Knox and Figueiredo
+print one too; `text_marked` and `notes` on a verse or a heading, reusing the
+`⟦marker⟧` vocabulary the CCC already defines rather than inventing a second;
+and `lemma` on a note, for the words it glosses.
+
+**`lemma` exists because emphasis is load-bearing here and nowhere else.** The
+corpus's standing rule is that inline emphasis is a v1 loss. Challoner's
+apparatus opens each note by quoting the words it glosses, in italics, and
+nothing else in a note is italicised — so stripping the markers would leave the
+reader guessing where the quotation ends. Promoting it to a field keeps the
+boundary without inventing a markup the schema would then have to define.
+
+**Two invariants differ from the CCC's, both deliberately.** A marker is unique
+**within its unit, not its chapter**: sources number footnotes per verse and
+restart at 1, so John 3's four notes are all marker `1`, and a chapter-wide
+index collides on the first annotated chapter it meets. And every token has a
+note while **a note need not have a token** — the transcription carries notes
+whose anchor it never marks, which drbo.org marks. Dropping those to preserve
+1:1 would discard Challoner to satisfy a schema.
+
+**The edition arrived with an oracle the other three never had.**
+`bible.clementina.la` is the text Challoner revised against, in the arrangement
+he printed, so its chapter counts and verse-number sets are the expected shape
+rather than a second opinion. Book lengths are still **discovered** (the API
+answers `[]` past the end of a book) so the two stay independent. Chapter
+counts agree for all 73 books. **15 chapters differ in their verse-number
+set**, reported and not corrected — `research/bible-edition-divergence.md` is
+explicit that calling that a defect invites someone to "fix" a faithful text.
+
+**Eleven mis-filed segments, and the bug that nearly buried them.** The source
+files two text segments under one verse number eleven times. The parser's first
+behaviour was to report the collision and keep the first segment — which
+discards real verse text while printing a line that reads like a warning about
+formatting. Josue 5:5, 3 Kings 17:19, Proverbs 30:29, Wisdom 6:5, Lamentations
+5:5, Baruch 6:37, 2 Machabees 7:5 and 10:25 were each simply **gone**. It is now
+a fatal anomaly: a collision either has an adjudicating correction or the run
+refuses to write. **The anomaly report truncates at 40 lines, and four of the
+eleven were only ever visible past that line** — a report that elides is a
+report that can be read as complete, and the count was wrong for an hour
+because of it.
+
+**A new correction scope: the source segment.** `pipeline/corrections/` gained
+entries whose locator is the source's own record `_id` and whose `from`/`to`
+are objects, because what is wrong is a segment's **number**, not its words.
+They apply to the fetched records **before parsing** — which is what makes them
+corrections and not overrides (`pipeline/overrides/README.md`): the claim is
+that the source mis-numbered, not that our derivation slipped. `anchor` carries
+a distinctive piece of the segment's text so the drift guard still fires if the
+source rewrites the words under a stable id. Fourteen entries in all: eleven
+segments, two typos in the apparatus, one stray emphasis marker. Every one
+carries the Clementine's verdict, drbo.org's independent transcription of the
+same edition, or both.
+
+**Corrections run before validation here, unlike `cpdv.py`.** The two siblings
+differ because only one of them has anything to correct: a validator that runs
+first reports faults the corrections layer is about to repair and then fails the
+run over them. The receipt keeps the audit trail, so validating the corrected
+text hides nothing — and the corrected text is the text that ships.
+
+**A check worth stealing for any annotated edition: the lemma oracle.** A lemma
+is a quotation, so the source printed those words twice — once in the verse,
+once at the head of the note. A lemma absent from its own verse means one of
+the two is mistranscribed, and nothing else can see it: the token check cannot,
+because an unanchored note has no token to disagree with, and spellcheck cannot,
+because the words are plausible either way. It found `Nineve` for `Ninive` at
+Jonas 1:2, against thirteen `Ninive`s elsewhere in the same source. It reports
+72 of 1,908 and is deliberately **not** fatal — a lemma may carry the Latin it
+renders (`Of slime. Bituminis`) or re-point its quotation.
+
+**Book names are Challoner's, with a gloss where his nomenclature traps.** `1
+Kings (1 Samuel)`, `3 Kings (1 Kings)`, `4 Kings`, `Apocalypse`,
+`Ecclesiasticus`. The four Kings are deliberately **absent** from the jump-box
+abbreviations: `1kgs` would mean 1 Samuel in this edition and 1 Kings in the
+CPDV, and `book-token.ts` resolves an ambiguous token by whichever Bible the
+reader has open, so adding them would make the answer depend on that. `apoc`
+and `eccli` are in, which is how the older encyclicals here actually cite.
+
+**Which edition an English reader gets by default is not decided here.**
+`corpus.ts`'s `editionInLang` returns the first edition matching the language,
+so the CPDV keeps the default because `c` sorts before `d` — an accident, not a
+judgment. Making it a judgment is a one-line change and a separate decision.
+
+**A correction to the entry above (2026-08-16).** That entry states that Matos
+Soares' notes are "not recoverable by re-parsing, since the upstream source
+never carried them (verified against `corpus/raw/matos-soares/`)". The
+verification was sound and the conclusion was too narrow: it is true of
+**liriocatolico**, the source that edition was scraped from. vulgata.online
+carries the same transcription lineage _with_ the apparatus — spot-checked at
+John 1, where 50 of 51 verses are byte-identical to what we hold and the one
+difference is apparatus formatting rather than words — plus section headings,
+chapter arguments and book prefaces. So the recourse is a different source, not
+a re-parse of the same one, and the Portuguese notes are reachable by the
+scraper family this entry adds. `bible-intro.pt` comes with them.
+
+## 2026-08-24 — A division owns what it prints smaller
+
+`assigned` caches one level per heading style for a whole document. That is
+right while every division has the same internal depth, and wrong the moment
+one has more. Lumen Gentium PT's chapter VIII alone is cut into `I. PROÉMIO`,
+`II. A VIRGEM SANTÍSSIMA NA ECONOMIA DA SALVAÇÃO`, `III. A VIRGEM SANTÍSSIMA E
+A IGREJA`, and its sub-headings are styled exactly like the ones sitting
+directly under a chapter everywhere else in the document — so cached by style
+they came out as **peers of the Roman divisions above them**. Thirteen of that
+document's twenty oracle differences were that.
+
+A floor fixes it without touching the cache: a heading the source prints
+**smaller** than the division above it is at least one level below it.
+`is_division` reads both spellings of a division — `match_label`'s
+PART/CHAPTER/SECTION/ARTICLE, and the Roman form printed without the word,
+which is the same tier and which the parser had no other way to recognise.
+
+**The style comparison is the whole guard, and it cost two rounds to learn
+that.** Without it the floor catches the division's own peers: Humanae Vitae PT
+prints `AS CARACTERÍSTICAS DO AMOR CONJUGAL` and Ecclesiam Suam EN prints
+`THE ACT OF FAITH` in exactly the markup of the numbered divisions they sit
+among — `<p align="center"><b>` and `<p style="text-align: center;">` — and
+flooring them put nine and ten headings a level too deep, in two documents that
+had been clean. A heading printed exactly like the division above it is its
+peer, whatever the numeral says. Lumen Gentium's Marian sub-headings are
+`<p align="left"><b><i>` under a centred bold division, which is the case the
+floor exists for.
+
+The floor is also bounded to the body, the same way `toc_floor` already is: a
+signature or an appendix trailing the last numbered paragraph is back matter,
+not a subsection of whatever division came last.
+
+**Eighteen works re-levelled, no work changed a node or a section.**
+
+### Where the twelve oracles stand
+
+Sixty-seven differences across six works this morning; **five across two now**.
+What is left is Ecclesiam Suam EN's one heading anchored to §63 where the reader
+put it before §64, and Lumen Gentium PT's four trailing nodes (`PAPA PAULO VI`,
+the notifications, the `NOTA EXPLICATIVA PRÉVIA`) still one level too deep —
+back matter that returns to the top tier, which nothing yet models.
+
+### Three reader corrections, and what they say about the brief
+
+Every oracle correction filed today was the reader adding something the page
+does not print: a period standing in for a `<br />` inside one heading, two
+pairs of identically-printed siblings recorded as nested, and a level scale
+with no 3 in it. None of them was the parser. `docs/writing-descriptions.md` §3
+now states the three rules directly — never invent punctuation, two headings
+that look the same on the page are the same level, and levels are contiguous —
+because these are the mistakes a careful reader actually makes, and the next
+batch will otherwise make them again.

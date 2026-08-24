@@ -3166,6 +3166,19 @@ def parse_document(
     def is_labelled(b: Block) -> bool:
         return match_label(b.ident or b.text) is not None
 
+    def is_division(b: Block) -> bool:
+        """A heading that NAMES a division, by label or by Roman numeral.
+
+        `match_label` covers PART/CHAPTER/SECTION/ARTICLE in both languages.
+        The Roman form is the same tier printed without the word -- Lumen
+        Gentium PT's `I. PROÉMIO` inside chapter VIII, Ecclesiam Suam EN's
+        `II. THE RENEWAL` -- and the parser has no other way to tell it from
+        an ordinary heading that happens to be centred and bold."""
+        text = b.ident or b.text
+        return (
+            match_label(text) is not None or _ROMAN_DIVISION_RE.match(text) is not None
+        )
+
     def depth_key(idx: int, b: Block) -> tuple[int, int]:
         # `ident` when the heading has one: after merge_heading_lines, `text`
         # is the division's NAME and the label that ranks it is in `ident`.
@@ -3223,6 +3236,8 @@ def parse_document(
     prev_was_subtitle = False
     last_level: int | None = None
     toc_floor: int | None = None
+    division_floor: int | None = None
+    division_style = 9
     # The TOC floor governs the body only. A dateline or signature trailing
     # the last numbered paragraph is back matter, not a sub-section of
     # whatever the TOC listed last, and pushing it under one sends
@@ -3303,6 +3318,33 @@ def parse_document(
             lvl = prelim
         else:
             lvl = min(prelim, last_level + 1)
+        # A DIVISION owns what follows it. `assigned` caches a level per
+        # heading style for the whole document, which is right while every
+        # division has the same internal depth and wrong the moment one has
+        # more: Lumen Gentium PT's chapter VIII alone is cut into `I. PROÉMIO`,
+        # `II. A VIRGEM SANTÍSSIMA NA ECONOMIA DA SALVAÇÃO`, `III. ...`, and
+        # its sub-headings are styled exactly like the sub-headings that sit
+        # directly under a chapter everywhere else in the document. Cached by
+        # style they came out as PEERS of the Roman divisions above them --
+        # thirteen of that document's twenty oracle differences. A floor fixes
+        # it without touching the cache: a heading the source prints SMALLER
+        # than the division above it is at least one level below it.
+        #
+        # The style comparison is the whole guard. Humanae Vitae PT prints
+        # `AS CARACTERÍSTICAS DO AMOR CONJUGAL` and Ecclesiam Suam EN prints
+        # `THE ACT OF FAITH` in exactly the markup of the numbered divisions
+        # they sit among -- `<p align="center"><b>` and
+        # `<p style="text-align: center;">` respectively -- so they are peers
+        # of those divisions however the numeral reads, and flooring them put
+        # nine and ten headings a level too deep. Lumen Gentium's Marian
+        # sub-headings are `<p align="left"><b><i>` under a centred bold
+        # division, which is the case this exists for.
+        if is_division(blk):
+            division_floor, division_style = lvl, blk.style
+        elif (
+            division_floor is not None and idx < body_end and blk.style > division_style
+        ):
+            lvl = max(lvl, division_floor + 1)
         assigned.setdefault(key, lvl)
         heading_level[idx] = lvl
         prev_heading_idx = idx
