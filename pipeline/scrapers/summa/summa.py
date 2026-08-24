@@ -182,6 +182,39 @@ def decode_latin1(data: bytes) -> str:
 _ALLOWED_INLINE = {"i", "b", "br", "sup", "blockquote"}
 _TAG_RE = re.compile(r"<(/?)([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>")
 
+#: CCEL's own internal cross-reference anchors, e.g. `#FP_Q74_A2`, and the
+#: 5,197 `<a href>`s carrying them are the single most valuable thing in this
+#: source after the text itself. The Summa cites itself constantly, and this
+#: edition states every target EXACTLY -- part siglum, question, article --
+#: where the visible text is a mess of `Q[74], A[2]`, `(A[3])`, `Q[76] , A[2]`
+#: and `Q[3], AA[1]` that only means anything relative to where it is printed.
+#: An earlier version of this scraper dropped these links and kept their text,
+#: which is why the corpus was full of stray square brackets: they are what a
+#: discarded anchor leaves behind.
+#:
+#: The finest anchor is the ARTICLE, which is also the finest address the site
+#: has (`/summa/{part}/{q}#a{n}`), so nothing is lost by following it. A
+#: trailing `, ad 2` sits OUTSIDE the anchor in the source and stays text.
+_CCEL_XREF_RE = re.compile(r"^#(FP|FS|SS|TP|XP)_Q(\d+)(?:_A(\d+))?$")
+
+
+def _xref_address(href: str) -> str | None:
+    """A CCEL anchor as a corpus address, or None if it is not one.
+
+    `#APN_Q1_A1` (2 occurrences) is the shape this rejects: `AP` is not a
+    part of the Summa, and a reference to a part that does not exist is not
+    one this corpus can carry. Those keep their text and lose their link,
+    which is the same rule `narrow_html` applies to any tag it does not know.
+    """
+    m = _CCEL_XREF_RE.match(href.strip())
+    if not m:
+        return None
+    part = PART_BY_CCEL_ID.get(m.group(1))
+    if part is None:
+        return None
+    article = m.group(3)
+    return f"summa:{part}:{m.group(2)}" + (f":{article}" if article else "")
+
 
 def narrow_html(fragment: str) -> str:
     """A source fragment as the corpus's narrowed HTML.
@@ -197,18 +230,46 @@ def narrow_html(fragment: str) -> str:
     which the caller has already consumed -- and Corpus Thomisticum uses only
     `<I>` for the quotations Aquinas sets off. The allowlist is applied anyway
     so that a source growing a tag does not silently ship raw markup.
+
+    `<a>` IS THE ONE ADDITION TO THE DOCUMENTS' ALLOWLIST, and it is admitted
+    only as `<a data-ref="summa:{part}:{q}[:{a}]">` -- never with an `href`,
+    never with anything else. See `_CCEL_XREF_RE`: the source states its
+    self-references exactly, and this is what carries them into the corpus
+    instead of throwing them away. An `<a>` this scraper cannot resolve to an
+    address is dropped like any other unknown tag, so an unresolvable link
+    degrades to its own words rather than to a broken one.
     """
     out: list[str] = []
     pos = 0
+    # Anchors nest nothing, but a dropped opener must not leave its `</a>`
+    # behind -- so closers are emitted only for openers that were kept.
+    anchor_kept: list[bool] = []
     for m in _TAG_RE.finditer(fragment):
         out.append(_escape_text(htmllib.unescape(fragment[pos : m.start()])))
+        closing = m.group(1)
         name = m.group(2).lower()
         name = {"em": "i", "strong": "b"}.get(name, name)
-        if name in _ALLOWED_INLINE:
+        if name == "a":
+            if closing:
+                if anchor_kept and anchor_kept.pop():
+                    out.append("</a>")
+            else:
+                href = _ATTR_HREF_RE.search(m.group(0))
+                address = _xref_address(href.group(1)) if href else None
+                anchor_kept.append(address is not None)
+                if address is not None:
+                    out.append(f'<a data-ref="{address}">')
+        elif name in _ALLOWED_INLINE:
             out.append(f"<{m.group(1)}{name}>")
         pos = m.end()
     out.append(_escape_text(htmllib.unescape(fragment[pos:])))
+    # An anchor left open by a malformed fragment is closed here, matching the
+    # "unclosed tags are closed at the end" rule the site's reader states.
+    out.append("</a>" * sum(1 for kept in anchor_kept if kept))
     return collapse_space("".join(out))
+
+
+_ATTR_HREF_RE = re.compile(r'\bhref\s*=\s*"([^"]*)"')
 
 
 def _escape_text(text: str) -> str:
@@ -229,7 +290,9 @@ def strip_tags(html_text: str) -> str:
     `<br>` is the one that genuinely separates words.
     """
     text = re.sub(r"<br\s*/?>", " ", html_text, flags=re.IGNORECASE)
-    text = re.sub(r"</?(?:i|b|sup|blockquote)>", "", text, flags=re.IGNORECASE)
+    # `<a data-ref="...">` is the one narrowed tag carrying an attribute, so
+    # this pattern cannot be the bare `</?tag>` the others match.
+    text = re.sub(r"</?(?:i|b|sup|blockquote|a)\b[^>]*>", "", text, flags=re.IGNORECASE)
     return collapse_space(htmllib.unescape(text))
 
 
@@ -1050,7 +1113,11 @@ EN_NOTES = (
     "prints no question titles for the Supplement's source and no inline "
     "emphasis anywhere: every <b> in the source marks a division "
     "(Objection/On the contrary/I answer that/Reply), and those are stored as "
-    "structure rather than as text."
+    "structure rather than as text. What it does carry inline is its own "
+    'cross-references: CCEL\'s <a href="#FP_Q74_A2"> links, kept as '
+    '<a data-ref="summa:PART:Q[:A]">, which state each self-citation\'s '
+    'target exactly where the visible text ("Q[74], A[2]", "(A[3])") '
+    "only means something relative to where it is printed."
 )
 
 LA_NOTES = (
