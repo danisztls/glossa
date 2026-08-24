@@ -46,6 +46,7 @@
 	import Copy from '@lucide/svelte/icons/copy';
 	import Link from '@lucide/svelte/icons/link';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
+	import ExternalLink from '@lucide/svelte/icons/external-link';
 
 	const ICONS = {
 		search: Search,
@@ -64,7 +65,8 @@
 		eye: Eye,
 		copy: Copy,
 		link: Link,
-		'trash-2': Trash2
+		'trash-2': Trash2,
+		'external-link': ExternalLink
 	};
 
 	export type IconName = keyof typeof ICONS;
