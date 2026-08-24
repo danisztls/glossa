@@ -455,6 +455,30 @@ A document with no internal headings gets a single node spanning from its first 
 
 No `related` and no `in_brief` fields: no marginal cross-reference apparatus (the CCC's print-margin "see also ¶¶…" numbers) was found in any document family sampled (`vatican-documents.md` §2), and "In Brief" is a CCC-only summarization device with no analogue in these texts. Both are dropped rather than carried as permanently-empty dead fields.
 
+### `appendix.json` — an unnumbered unit
+
+**Added 2026-08-24.** A document's units are the numbers its own edition prints. Matter it prints with **no** number goes here instead, as an ordered array of `{ title?, blocks, citations }` — the heading the source prints above the run, and the run itself, in the same block model as a section.
+
+```jsonc
+[
+  {
+    "title": "NOTA EXPLICATIVA PRÉVIA",
+    "blocks": [{ "html": "«A Comissão decidiu fazer preceder…" }],
+    "citations": [],
+  },
+]
+```
+
+**Written only where there is one**, so the file's presence is itself the answer to "does this work have unnumbered matter", and a stale one from an earlier parse is deleted rather than left behind.
+
+**Two different things arrive in this shape, deliberately.** One is what a numbered document appends after its last paragraph: Lumen Gentium's notifications and _Nota Explicativa Praevia_, Laudato Si's two closing prayers. The other is the **entire text of an edition that numbers nothing anywhere**, of which this corpus has eight — the Portuguese Pascendi, Quadragesimo Anno and Divini Illius Magistri, both editions of Miranda Prorsus, the English Vigilanti Cura, the Portuguese Mense Maio, the English Quae Ad Nos. Both are text with no citable address, so both store and render the same way and neither carries a `§n`.
+
+**Why it is not a section with a null `n`.** `sections.json` is indexed by number by every consumer that touches it — the chunker, the compare view's alignment, `#s42` deep links, the route manifest. A unit with no number in that array is a hole in all of them. A separate file keeps the invariant "a section has a number" exactly true.
+
+**What it fixes.** `push_heading` closes the open section, so every block after a trailing heading found no open section and was logged as orphan and dropped — while its heading survived in `structure.json`. That is how a table of contents came to list entries with nothing behind them, and how eight editions came to be withheld as parser defeats when their whole text was on the page. 495,753 characters across 20 works were being discarded.
+
+**Whether a heading is back matter cannot be known when it is read**, only by whether a numbered paragraph ever follows it — so the parser buffers a unit at every heading and `start_section` throws the buffer away. Whatever survives to the end of the walk is the appendix.
+
 `abbreviations.json`: not per-document — corpus-wide, still homed at `ccc.{lang}/abbreviations.json` (see above). The CCC's own front-matter table already covers the sigla (LG, GS, DS, …) these documents are cited by and cite each other by; see `link-surface.md` on how ingesting Vatican II resolves that file's sourcing problem.
 
 CCC ¶ ↔ document section references (future, not yet built): turns a `citations[].text` string like `"LG 12"` into `{ document: "vatii.lumen-gentium", section: 12 }`, the same derivation the CCC → Bible index already does for scripture citations — a re-parse of already-captured raw citation text, not a re-scrape. Derived at build time like that one, and likewise not stored in the corpus. See `link-surface.md` row #12.

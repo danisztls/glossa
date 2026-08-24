@@ -196,7 +196,12 @@ interface CompendiumIndexFile {
  * not one canonical work per language.
  */
 interface DocumentIndexFile {
-	[workId: string]: { structure: DocumentNode[]; sectionNumbers: number[] };
+	[workId: string]: {
+		structure: DocumentNode[];
+		sectionNumbers: number[];
+		/** How many unnumbered units the work has, absent when none. */
+		appendixUnits?: number;
+	};
 }
 /**
  * Existence/metadata for one prayer -- the index-tier projection of `Prayer`
@@ -526,6 +531,16 @@ export const documentStructures: Record<string, DocumentNode[]> = USE_REAL_CORPU
 		)
 	: {};
 
+/** How many unnumbered units each document work has. Absent from the map when
+ *  it has none, which is the great majority. */
+const documentAppendixUnitCounts: Record<string, number> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexDocuments) ?? {})
+				.filter(([, v]) => v.appendixUnits)
+				.map(([workId, v]) => [workId, v.appendixUnits as number])
+		)
+	: {};
+
 /** Section numbers actually present per document work id — same role as
  *  `cccParagraphNumbers` above, keyed by work id instead of language. */
 export const documentSectionNumbers: Record<string, number[]> = USE_REAL_CORPUS
@@ -695,6 +710,8 @@ const prayerLocations: Record<string, ContentLocation> = {};
 const summaQuestionLocations: Record<string, Record<string, Record<number, ContentLocation>>> = {};
 /** Keyed by WORK ID (`bible-intro.en`), matching every other location map. */
 const bibleIntroLocations: Record<string, ContentLocation> = {};
+/** A document's unnumbered matter, keyed by work id. Absent for most works. */
+const documentAppendixLocations: Record<string, ContentLocation> = {};
 /** relPath (`content-manifest.json`'s shape) -> hashed URL, built once so
  *  `listContentAssets()` doesn't rescan every glob entry per manifest row. */
 const contentUrlByRelPath: Record<string, string> = {};
@@ -724,6 +741,11 @@ for (const [globPath, url] of Object.entries(realContentUrls)) {
 	if (documentMatch) {
 		const [, workId, startStr] = documentMatch;
 		(documentChunkLocationsByWork[workId] ??= {})[Number(startStr)] = location;
+		continue;
+	}
+	const appendixMatch = relPath.match(/^content\/([^/]+)\/appendix\.json$/);
+	if (appendixMatch) {
+		documentAppendixLocations[appendixMatch[1]] = location;
 		continue;
 	}
 	const introMatch = relPath.match(/^content\/([^/]+)\/intros\.json$/);
@@ -762,6 +784,16 @@ export function summaQuestionLocation(
 	n: number
 ): ContentLocation | undefined {
 	return summaQuestionLocations[workId]?.[partSlug]?.[n];
+}
+
+/** How many unnumbered units a document has; 0 when it has none. */
+export function documentAppendixUnits(workId: string): number {
+	return documentAppendixUnitCounts[workId] ?? 0;
+}
+
+/** A document's unnumbered matter, when it has any. */
+export function documentAppendixLocation(workId: string): ContentLocation | undefined {
+	return documentAppendixLocations[workId];
 }
 
 /** The one chunk section `n` lives in — for a single-section read (a link

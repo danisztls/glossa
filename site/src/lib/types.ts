@@ -591,6 +591,23 @@ export interface DocumentBibleXref {
 // `CccParagraphText.svelte` render a `DocumentSection` with no changes to
 // its own type beyond the widened prop signature it already documents.
 
+/** A run of prose the source prints with NO number on it, under the heading it
+ *  prints above it (docs/corpus-schema.md §"An unnumbered unit").
+ *
+ *  Two quite different things arrive in this shape, and deliberately so: the
+ *  matter a numbered document appends after its last paragraph — Lumen
+ *  Gentium's Nota Explicativa Praevia, Laudato Si's two closing prayers — and
+ *  the ENTIRE text of an edition that numbers nothing anywhere, of which this
+ *  corpus has eight. Both are text with no citable address, so both render the
+ *  same way and neither gets a `§n` in the margin. */
+export interface DocumentAppendixUnit {
+	/** The heading the source prints above this run. Empty when the run opens
+	 *  the appendix with no heading of its own. */
+	title?: string;
+	blocks: CccBlock[];
+	citations: CccCitation[];
+}
+
 export interface DocumentSection {
 	n: number;
 	blocks: CccBlock[];

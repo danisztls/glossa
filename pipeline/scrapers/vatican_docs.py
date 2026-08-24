@@ -1290,7 +1290,7 @@ class BlockOut:
 
 @dataclass
 class Section:
-    n: int
+    n: int | None
     blocks: list[BlockOut] = field(default_factory=list)
     text: str = ""
     citations: list[dict] = field(default_factory=list)
@@ -1397,6 +1397,16 @@ class ScrapeState:
         # place like an ordinary numbered paragraph.
         self.pending_section_n: int | None = None
         self.pending_headings: list[Node] = []
+        # Content the source prints AFTER its last numbered paragraph, under
+        # its own headings: Lumen Gentium's notifications and Nota Explicativa
+        # Praevia, Laudato Si's two closing prayers. `push_heading` closes the
+        # open section, so every block after a trailing heading found
+        # `open_section is None` and was logged as orphan and dropped -- while
+        # its heading survived in structure.json, which is how a table of
+        # contents came to list entries with nothing behind them. Each entry
+        # is one heading and the prose beneath it; see `appendix.json`.
+        self.appendix: list[dict] = []
+        self.appendix_out: list[dict] = []
         self.content_started = False
         self.empty_nest_depth = 0
         self.current_footnote_table: dict[str, str] = {}
@@ -1425,6 +1435,7 @@ class ScrapeState:
         title_html: str = "",
     ) -> None:
         self.finalize_open_section()
+        self.open_appendix_unit(title)
         level = LEVELS[kind]
         # A heading that has taken no content yet is the PARENT of the
         # heading that immediately follows it, not its sibling.
@@ -1480,6 +1491,8 @@ class ScrapeState:
         self.pending_headings.clear()
         self.content_started = True
         self.empty_nest_depth = 0
+        # Everything buffered so far was mid-body after all, not appendix.
+        self.appendix.clear()
         sec = Section(n=n, chapter=self.current_chapter())
         sec.blocks.append(BlockOut(kind, text, html))
         self.open_section = sec
@@ -1489,6 +1502,29 @@ class ScrapeState:
             self.orphan_content.append(
                 f"section {n} started with no open structure node"
             )
+
+    def open_appendix_unit(self, title: str) -> None:
+        """A heading past the end of the numbered body opens an appendix unit.
+
+        Called for EVERY heading; `start_section` throws the buffer away, so
+        only the run that survives to the end of the walk is really appendix
+        matter. That is the whole trick -- whether a heading is back matter
+        cannot be known when it is read, only by whether a numbered paragraph
+        ever follows it.
+        """
+        self.appendix.append({"title": title, "blocks": []})
+
+    def add_appendix_block(self, kind: str, text: str, html: str = "") -> None:
+        if not self.appendix:
+            self.appendix.append({"title": "", "blocks": []})
+        blocks = self.appendix[-1]["blocks"]
+        if blocks and blocks[-1].kind == kind:
+            blocks[-1].text += " " + text
+            blocks[-1].html = (
+                (blocks[-1].html + " " + html).strip() if html else blocks[-1].html
+            )
+        else:
+            blocks.append(BlockOut(kind, text, html))
 
     def add_continuation(self, kind: str, text: str, html: str = "") -> None:
         sec = self.open_section
@@ -3677,6 +3713,7 @@ def parse_document(
                             if b.html
                             else state.pending_first_html
                         )
+                state.add_appendix_block(b.kind, b.text, b.html)
                 where = state.stack[-1].title if state.stack else "?"
                 state.orphan_content.append(f"[{where}] {b.text[:90]}")
         elif b.kind == "prose" and is_mini_header(b.text):
@@ -3685,6 +3722,29 @@ def parse_document(
             state.add_continuation(b.kind, b.text, b.html)
         i += 1
     state.finalize_open_section()
+
+    # Whatever is still buffered never had a numbered paragraph after it, so
+    # it is the document's appendix. Citations resolve through the same
+    # Section machinery the body uses -- these blocks carry footnote markers
+    # like any other (Lumen Gentium's Nota Explicativa Praevia has four).
+    appendix_out = []
+    for unit in state.appendix:
+        if not unit["blocks"]:
+            continue
+        holder = Section(n=None, chapter=None)
+        holder.blocks = unit["blocks"]
+        holder.resolve(
+            state.current_footnote_table,
+            state.current_chapter_footnote_table,
+            state.current_star_table,
+            state.anomalies,
+        )
+        entry = holder.to_dict()
+        entry.pop("n", None)
+        if unit["title"]:
+            entry = {"title": unit["title"], **entry}
+        appendix_out.append(entry)
+    state.appendix_out = appendix_out
 
     return ParseResult(
         state=state,
@@ -3733,6 +3793,17 @@ def validate_document(
     problems: list[str] = []
     sections = state.sections
     if not sections:
+        if state.appendix_out:
+            # An UNNUMBERED EDITION, not a defeat. Eight editions in this
+            # corpus print no paragraph number anywhere on the page -- the
+            # Portuguese Pascendi, Quadragesimo Anno and Divini Illius
+            # Magistri, both editions of Miranda Prorsus, the English
+            # Vigilanti Cura, the Portuguese Mense Maio, the English Quae Ad
+            # Nos -- and their whole text is stored under the headings the
+            # source does print. There is nothing to number and nothing was
+            # lost; what such a work does not have is a citable address, which
+            # is a property of the edition rather than a fault in the parse.
+            return True, []
         return False, ["no sections captured at all"]
     numbers = sorted(sections)
     lo, hi = numbers[0], numbers[-1]
@@ -4059,7 +4130,16 @@ def build_manifest(
             "and lose their markup (docs/decisions.md, 2026-08-21)."
         ),
     ]
-    if not state.sections:
+    if not state.sections and state.appendix_out:
+        notes.insert(
+            0,
+            "UNNUMBERED EDITION -- this edition prints no paragraph number "
+            "anywhere on the page, so it has no citable section address. Its "
+            "text is not missing: it is stored in appendix.json under the "
+            "headings the source does print, in document order. "
+            + PARSER_DEFEAT_NOTES.get(work_id, ""),
+        )
+    elif not state.sections:
         notes.insert(
             0,
             "PARSER DEFEATED -- zero sections captured. "
@@ -4238,6 +4318,15 @@ def write_document_outputs(
             manifest["generated_at"],
         ),
     }
+    # Written only where there is one. A document with no matter after its
+    # last numbered paragraph -- the great majority -- gets no file, so the
+    # file's presence is itself the answer to "does this work have an
+    # appendix", and a stale one from an earlier parse cannot survive.
+    appendix_path = out_dir / "appendix.json"
+    if state.appendix_out:
+        files["appendix.json"] = state.appendix_out
+    elif appendix_path.exists():
+        appendix_path.unlink()
     # Written only when there are overrides, so the file's presence is itself
     # the signal that this work needed hand-holding -- `ls corpus/works/*/
     # overrides-applied.json` is the census of where the parser gave up.

@@ -2749,3 +2749,70 @@ standing rather than corrected a third time.** Appended prayers are plausibly
 appendix material and plausibly a final section; the source does not settle it,
 and bending the same oracle again to match each parser change is how an oracle
 stops being evidence.
+
+## 2026-08-24 — Text the source prints with no number on it
+
+A table of contents was listing entries with nothing behind them: Lumen
+Gentium's `NOTA EXPLICATIVA PRÉVIA`, Laudato Si's two closing prayers. The
+heading was in `structure.json` and the prose was nowhere.
+
+The cause is one branch. `push_heading` closes the open section, so every block
+after a trailing heading finds `open_section is None`, and that path logs the
+block as orphan and drops it. The manifests said so all along — "17 unnumbered
+content blocks not attached to any section (logged, not fabricated)" — honestly
+enough that nothing looked wrong, and 291 of 339 works carried such a line.
+
+**The same branch was discarding eight entire encyclicals.** An edition that
+prints no paragraph number anywhere never opens a section at all, so _every_
+block it has takes that path. Pascendi PT, Quadragesimo Anno PT, Divini Illius
+Magistri PT, both editions of Miranda Prorsus, Vigilanti Cura EN, Mense Maio PT
+and Quae Ad Nos EN were withheld as parser defeats while their whole text was
+being read off the page and thrown away. **495,753 characters across 20 works.**
+
+### `appendix.json`
+
+An ordered array of `{ title?, blocks, citations }` — the heading the source
+prints above a run, and the run itself, in the same block model as a section.
+Written only where there is one, so its presence answers "does this work have
+unnumbered matter" and a stale one cannot survive a re-parse.
+
+Not a section with a null `n`: `sections.json` is indexed by number by the
+chunker, the compare view's alignment, `#s42` deep links and the route
+manifest, and a numberless row is a hole in all four. A separate file keeps
+"a section has a number" exactly true.
+
+**Whether a heading is back matter cannot be known when it is read** — only by
+whether a numbered paragraph ever follows it. So the parser opens a unit at
+every heading and `start_section` throws the buffer away; whatever survives to
+the end of the walk is the appendix. That also leaves the first-paragraph
+promotion machinery untouched, which reads the same orphan path and would have
+been starved by any eager capture.
+
+### An unnumbered edition is not a defeat
+
+`validate_document` returned "no sections captured at all" for a work with no
+numbers, and `build_manifest` stamped it `PARSER DEFEATED`. Both now
+distinguish the two: zero sections **and** zero appendix is still a defeat;
+zero sections **with** an appendix is an `UNNUMBERED EDITION`, valid, published,
+and honest about what it lacks — a citable address, which is a property of the
+edition and not a fault in the parse.
+
+**`PARSER DEFEATED`: 8 works → 0. `unpublished.json`: 8 entries → 0.** The
+quality-withholding mechanism stays exactly as it was; there is simply nothing
+withheld by it today.
+
+**Coverage tells the same story.** The `<50%` band, which held all eight, is
+now empty; nothing in the corpus is below 80%; the median moved 99.0% → 99.1%.
+`stored_text_len` counts the appendix, because a metric that ignores one of the
+four places body text is stored reports storage as loss — the same lesson
+`manifest.header` taught it in the morning.
+
+### On the site
+
+`documentHasText` joins `documentHasSections`, and the distinction is the whole
+point: gating the reader on section COUNT sent every unnumbered edition to the
+redirect meant for works we genuinely cannot show. A unit renders with its
+heading and **no `§n` in the margin**, addressed by position (`#a1`) — an
+address for scrolling and linking, not for citing. The language-switch fetch
+takes sections and appendix together, since fetching only sections would switch
+an unnumbered document to a blank page.

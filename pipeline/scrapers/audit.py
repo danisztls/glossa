@@ -100,8 +100,8 @@ def body_region(html: str) -> str:
 
 
 def stored_text_len(work: Path) -> int:
-    """Text we kept from the body: section blocks, the structure tree, and the
-    masthead.
+    """Text we kept from the body: section blocks, the appendix, the structure
+    tree, and the masthead.
 
     Headings count. The parser lifts a heading out of the prose and into
     `structure.json`, so charging it as missing would report every correctly
@@ -123,6 +123,17 @@ def stored_text_len(work: Path) -> int:
     for section in sections:
         for block in section["blocks"]:
             total += len(V.strip_tags(block.get("html", "")))
+    appendix = work / "appendix.json"
+    if appendix.exists():
+        # A fourth place body text is stored, added 2026-08-24: matter the
+        # source prints with no number on it. Eight editions in this corpus
+        # are numbered nowhere at all and are ENTIRELY appendix, so leaving
+        # this out reported them at 0-6% coverage while their whole text sat
+        # on disk.
+        for unit in json.loads(appendix.read_text()):
+            total += len(unit.get("title") or "")
+            for block in unit["blocks"]:
+                total += len(V.strip_tags(block.get("html", "")))
     structure = json.loads((work / "structure.json").read_text())
     for node in structure:
         for field in ("ident", "title", "subtitle"):

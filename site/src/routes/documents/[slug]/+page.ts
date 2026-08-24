@@ -1,12 +1,13 @@
 import { error, redirect } from '@sveltejs/kit';
 import {
 	baseLang,
-	documentHasSections,
 	getDocumentGroup,
-	getDocumentSectionsAsync
+	getDocumentSectionsAsync,
+	getDocumentAppendixAsync,
+	documentHasText
 } from '$lib/corpus';
 import { sourceUrl } from '$lib/copyright';
-import type { DocumentManifest, DocumentSection } from '$lib/types';
+import type { DocumentAppendixUnit, DocumentManifest, DocumentSection } from '$lib/types';
 import type { PageLoad } from './$types';
 
 /**
@@ -76,6 +77,10 @@ export interface DocumentPageData {
 	 *  document with no readable edition never reaches the page. */
 	embeddedLang?: string;
 	embeddedSections?: DocumentSection[];
+	/** The embedded edition's unnumbered matter — an appendix on a numbered
+	 *  document, or the whole text on one that numbers nothing. `[]` when it
+	 *  has none, which is the usual case. */
+	embeddedAppendix?: DocumentAppendixUnit[];
 }
 
 export const load: PageLoad = async ({ params }) => {
@@ -86,7 +91,9 @@ export const load: PageLoad = async ({ params }) => {
 	const manifestsByLang: Record<string, DocumentManifest> = {};
 	for (const manifest of Object.values(group.manifests)) {
 		// Disabled edition, or nothing built for this language.
-		if (!manifest || !documentHasSections(manifest.id)) continue;
+		// `documentHasText`, not `documentHasSections`: an edition that numbers
+		// nothing has no sections and is still perfectly readable.
+		if (!manifest || !documentHasText(manifest.id)) continue;
 		manifestsByLang[baseLang(manifest.language)] = manifest;
 	}
 
@@ -105,7 +112,11 @@ export const load: PageLoad = async ({ params }) => {
 	}
 
 	const embeddedLang = availableLangs.includes('en') ? 'en' : availableLangs[0];
-	const embeddedSections = await getDocumentSectionsAsync(manifestsByLang[embeddedLang].id);
+	const embeddedId = manifestsByLang[embeddedLang].id;
+	const [embeddedSections, embeddedAppendix] = await Promise.all([
+		getDocumentSectionsAsync(embeddedId),
+		getDocumentAppendixAsync(embeddedId)
+	]);
 
-	return { slug, manifestsByLang, embeddedLang, embeddedSections };
+	return { slug, manifestsByLang, embeddedLang, embeddedSections, embeddedAppendix };
 };

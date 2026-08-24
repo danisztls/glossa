@@ -128,6 +128,7 @@ import type {
 	Chapter,
 	CompendiumQuestion,
 	DocumentManifest,
+	DocumentAppendixUnit,
 	DocumentSection,
 	Prayer,
 	ScriptureRef,
@@ -158,6 +159,8 @@ import {
 	compendiumQuestionsLocation,
 	compendiumStructures,
 	documentChunkLocation,
+	documentAppendixLocation,
+	documentAppendixUnits,
 	documentChunkLocations,
 	documentSectionNumbers,
 	documentStructures,
@@ -1372,6 +1375,19 @@ export function documentHasSections(workId: string): boolean {
 	return (documentSectionNumberSets[workId]?.size ?? 0) > 0;
 }
 
+/** Whether `workId` has any READABLE text — numbered or not.
+ *
+ *  Distinct from `documentHasSections`, and the distinction is the whole
+ *  point: eight editions in this corpus print no paragraph number anywhere,
+ *  so they have no sections and their entire text is unnumbered units. Gating
+ *  the reader on section COUNT sent every one of them to the redirect that
+ *  exists for works we genuinely cannot show. Callers deciding whether a
+ *  reader can be offered this edition want this; callers resolving a `§n`
+ *  address still want `documentHasSections`. */
+export function documentHasText(workId: string): boolean {
+	return documentHasSections(workId) || documentAppendixUnits(workId) > 0;
+}
+
 // --- Documents: content tier (async, read/fetched, memoized, chunked) ------
 //
 // Chunked by section, like the CCC is by paragraph (`DOCUMENT_CHUNK_SIZE` in
@@ -1398,6 +1414,18 @@ async function fetchDocumentChunk(workId: string, n: number): Promise<DocumentSe
 
 /** Every chunk, concatenated in section order — the whole-document read.
  *  Ordered by `documentChunkLocations`, so no re-sort is needed. */
+/** A document's unnumbered matter, or `[]` when it has none.
+ *
+ *  Not folded into `getDocumentSectionsAsync`: a section has a number and this
+ *  does not, and merging the two would put a unit with no address into a list
+ *  every caller indexes by `n`. */
+export async function getDocumentAppendixAsync(workId: string): Promise<DocumentAppendixUnit[]> {
+	if (!USE_REAL_CORPUS) return [];
+	const location = documentAppendixLocation(workId);
+	if (!location) return [];
+	return readContent<DocumentAppendixUnit[]>(location);
+}
+
 async function fetchDocumentSections(workId: string): Promise<DocumentSection[]> {
 	if (!USE_REAL_CORPUS) return [];
 	const chunks = await Promise.all(

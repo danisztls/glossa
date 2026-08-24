@@ -52,10 +52,11 @@
 		compareColumnLabel,
 		flattenDocumentStructure,
 		documentOutline,
-		getDocumentSectionsAsync
+		getDocumentSectionsAsync,
+		getDocumentAppendixAsync
 	} from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
-	import type { DocumentSection, DocumentNode } from '$lib/types';
+	import type { DocumentAppendixUnit, DocumentSection, DocumentNode } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -93,9 +94,15 @@
 	 *  slug as well as language so a client-side navigation to a DIFFERENT
 	 *  document can never render the previous document's text under the new
 	 *  document's headings while its own fetch is still in flight. */
-	let fetched = $state<{ slug: string; lang: string; sections: DocumentSection[] } | undefined>(
-		undefined
-	);
+	let fetched = $state<
+		| {
+				slug: string;
+				lang: string;
+				sections: DocumentSection[];
+				appendix: DocumentAppendixUnit[];
+		  }
+		| undefined
+	>(undefined);
 
 	$effect(() => {
 		const slug = data.slug;
@@ -112,11 +119,17 @@
 		if (have?.slug === slug && have.lang === want) return;
 
 		let cancelled = false;
-		getDocumentSectionsAsync(manifest.id).then((sections) => {
+		// Both together: an edition that numbers nothing has EMPTY sections and
+		// all its text in the appendix, so fetching only the sections would
+		// switch such a document's language to a blank page.
+		Promise.all([
+			getDocumentSectionsAsync(manifest.id),
+			getDocumentAppendixAsync(manifest.id)
+		]).then(([sections, appendix]) => {
 			// Discard a response the reader has already navigated away from, or
 			// switched language again during — otherwise a slow first fetch can
 			// land after a fast second one and overwrite it.
-			if (!cancelled) fetched = { slug, lang: want, sections };
+			if (!cancelled) fetched = { slug, lang: want, sections, appendix };
 		});
 		return () => {
 			cancelled = true;
@@ -147,6 +160,10 @@
 	 * with no readable edition, so if this page renders at all, some edition's
 	 * text is behind it (docs/decisions.md, 2026-08-23).
 	 */
+	const appendixUnits = $derived(
+		fetchedIsCurrent ? fetched!.appendix : (data.embeddedAppendix ?? [])
+	);
+
 	const metaManifest = $derived(current?.work);
 
 	// Structure trees are INDEX tier (eager-inlined, synchronous — corpus.ts's
@@ -746,6 +763,31 @@
 										paragraph={section}
 										{lang}
 										dropCap={i === 0 || divisionStarts.has(section.n)}
+									/>
+								</div>
+							</section>
+						{/each}
+						<!-- Matter the source prints with no number on it. Two very
+						     different things arrive here and both render the same way,
+						     which is the point: the appendix a numbered document adds
+						     after its last paragraph (Lumen Gentium's Nota Explicativa
+						     Praevia), and the WHOLE text of an edition that numbers
+						     nothing anywhere — eight of them in this corpus. Neither
+						     gets a §n in the margin, because neither has one to give;
+						     each unit is addressed by position instead, which is an
+						     address for scrolling and linking, not for citing. -->
+						{#each appendixUnits as unit, i (i)}
+							<section class="section appendix-unit" id={`a${i + 1}`}>
+								<div class="section-text">
+									{#if unit.title}
+										<h2 class="appendix-title">
+											<InlineText nodes={inlineTitleNodes(unit.title, undefined, lang)} />
+										</h2>
+									{/if}
+									<CccParagraphText
+										paragraph={unit}
+										{lang}
+										dropCap={i === 0 && current.sections.length === 0}
 									/>
 								</div>
 							</section>

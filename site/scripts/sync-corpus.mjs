@@ -552,13 +552,32 @@ for (const workId of workIds) {
 	if (manifest.type === 'document') {
 		const structure = readJson(path.join(workDir, 'structure.json'));
 		const sections = readJson(path.join(workDir, 'sections.json'));
+		// Matter the source prints with no number on it (docs/corpus-schema.md
+		// §"An unnumbered unit"). Absent for most works; for the eight editions
+		// that number nothing at all it is the whole text.
+		const appendixPath = path.join(workDir, 'appendix.json');
+		const appendix = existsSync(appendixPath) ? readJson(appendixPath) : null;
 		// Section EXISTENCE only, mirroring `cccParagraphNumbers` — the index
 		// tier never carries section TEXT, so `documentSectionExists`/
 		// adjacency in corpus.ts stay synchronous.
 		documentIndex[workId] = {
 			structure,
-			sectionNumbers: sections.map((s) => s.n).sort((a, b) => a - b)
+			sectionNumbers: sections.map((s) => s.n).sort((a, b) => a - b),
+			...(appendix ? { appendixUnits: appendix.length } : {})
 		};
+		if (appendix) {
+			// One asset, not chunked: the largest in the corpus is 120 KB, and
+			// a reader who opens an unnumbered edition needs all of it at once
+			// because there is no numbered flow to page through.
+			const relPath = `content/${workId}/appendix.json`;
+			writeJson(path.join(destDir, relPath), appendix);
+			contentManifest.push({
+				workId,
+				kind: 'document-appendix',
+				relPath,
+				bytes: byteLength(appendix)
+			});
+		}
 		// Held for the xref pass, keyed by SLUG: the two language editions of
 		// one document are unioned into a single entry, the same way the two
 		// Catechism editions are, because they are one document citing one

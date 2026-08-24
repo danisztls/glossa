@@ -59,38 +59,5 @@
 		"    \"reason\": \"Missing ~41% of its paragraphs to the source-HTML defect in docs/research/vatican-documents.md §7.1.\"",
 		"  }"
 	],
-	"works": {
-		"encyclical.quadragesimo-anno.pt": {
-			"date": "2026-08-23",
-			"reason": "This edition prints no paragraph numbers at all. Its bold numbers are a per-part outline that starts again in each part, and reading them as paragraph numbers gave five sections against 148 in the English edition, with the rest of the text attached to nothing. We now capture no sections here rather than five wrong ones. Diagnosed in the corpus manifest's own notes."
-		},
-		"encyclical.miranda-prorsus.en": {
-			"date": "2026-08-23",
-			"reason": "This edition prints no paragraph numbers at all. The four numbers on the page are its four parts — General Instruction, Motion Pictures, Radio, Television — and reading them as paragraph numbers gave four sections of some eighteen thousand characters each. We now capture no sections here rather than four wrong ones. Its Portuguese translation is unnumbered too, so this document has no numbered edition. Diagnosed in the corpus manifest's own notes."
-		},
-		"encyclical.pascendi-dominici-gregis.pt": {
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured no paragraphs at all — the source page's markup defeated it. Diagnosed per work in the corpus manifest's own notes."
-		},
-		"encyclical.vigilanti-cura.en": {
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured no paragraphs at all — the source page's markup defeated it. Diagnosed per work in the corpus manifest's own notes."
-		},
-		"encyclical.miranda-prorsus.pt": {
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured no paragraphs at all — the source page's markup defeated it. Diagnosed per work in the corpus manifest's own notes."
-		},
-		"encyclical.mense-maio.pt": {
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured no paragraphs at all — the source page's markup defeated it. Diagnosed per work in the corpus manifest's own notes."
-		},
-		"encyclical.divini-illius-magistri.pt": {
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured no paragraphs at all — the source page's markup defeated it. Diagnosed per work in the corpus manifest's own notes."
-		},
-		"encyclical.quae-ad-nos.en": {
-			"date": "2026-08-16",
-			"reason": "Our parse of this edition captured no paragraphs at all — the source page's markup defeated it. Diagnosed per work in the corpus manifest's own notes."
-		}
-	}
+	"works": {}
 }
