@@ -17,6 +17,7 @@
 	let query = $state('');
 	let notFound = $state(false);
 	let inputEl: HTMLInputElement | undefined = $state();
+	let dialogEl: HTMLDialogElement | undefined = $state();
 
 	function isTypingTarget(el: EventTarget | null): boolean {
 		if (!(el instanceof HTMLElement)) return false;
@@ -24,28 +25,70 @@
 		return tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable;
 	}
 
+	/**
+	 * `showModal()`, not an `open` flag on the element: only the modal form
+	 * puts the dialog in the top layer, renders `::backdrop`, makes the rest
+	 * of the document inert, and TRAPS FOCUS — which is what this box lacked
+	 * as a pair of divs, where Tab walked straight out of the modal and into
+	 * the page behind it.
+	 *
+	 * `open` mirrors that rather than driving it. The element is always in the
+	 * DOM (a closed `<dialog>` is `display: none`), because `showModal()`
+	 * needs something to be called on; the flag is only here so the shortcut
+	 * handler below can tell whether the box is up, and so `inputEl` is bound
+	 * before the box opens rather than a microtask later.
+	 */
 	function openBox() {
-		open = true;
 		notFound = false;
 		query = '';
-		queueMicrotask(() => inputEl?.focus());
+		open = true;
+		dialogEl?.showModal();
+		// `showModal()` focuses the first focusable descendant, which is this
+		// input — said explicitly because that is a fact about the field's
+		// position in the markup, and a close button added above it one day
+		// would silently take the focus instead.
+		inputEl?.focus();
 	}
 
 	function closeBox() {
+		dialogEl?.close();
+	}
+
+	/**
+	 * Escape, a `close()` call, and a backdrop click all end up here. Nothing
+	 * dismisses this box without firing `close`, so this is the only place
+	 * `open` is ever cleared.
+	 */
+	function onClose() {
 		open = false;
 	}
 
 	function onWindowKeydown(e: KeyboardEvent) {
-		if (open) {
-			if (e.key === 'Escape') closeBox();
-			return;
-		}
+		// Escape is the dialog's own, and reaches it whether or not focus is
+		// inside — which is the fix for a real defect, not a tidy-up: the old
+		// markup stopped keydown propagation at the panel, so Escape typed in
+		// the field (where focus always is) never reached the window handler
+		// that was supposed to act on it, and the box could only be dismissed
+		// by clicking the backdrop.
+		if (open) return;
 		const isSlash = e.key === '/' && !isTypingTarget(e.target);
 		const isCtrlK = (e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey);
 		if (isSlash || isCtrlK) {
 			e.preventDefault();
 			openBox();
 		}
+	}
+
+	/**
+	 * A click on the dimmed surround. `::backdrop` is painted by the dialog
+	 * and cannot be a target itself, so such a click arrives with the
+	 * `<dialog>` as its target — which is only unambiguous because the
+	 * element carries no padding of its own (the visible panel inside does),
+	 * so its box and the panel's coincide exactly and there is no dead border
+	 * region that would read as "outside".
+	 */
+	function onDialogClick(e: MouseEvent) {
+		if (e.target === dialogEl) closeBox();
 	}
 
 	/**
@@ -164,34 +207,40 @@
 	<kbd aria-hidden="true">/</kbd>
 </button>
 
-{#if open}
-	<div class="backdrop" role="presentation" onclick={closeBox}>
-		<div
-			class="dialog"
-			role="dialog"
-			aria-modal="true"
-			aria-label={t('jumpbox.placeholder')}
-			tabindex="-1"
-			onclick={(e) => e.stopPropagation()}
-			onkeydown={(e) => e.stopPropagation()}
-		>
-			<form onsubmit={onSubmit}>
-				<input
-					bind:this={inputEl}
-					bind:value={query}
-					type="text"
-					placeholder={t('jumpbox.placeholder')}
-					autocomplete="off"
-					spellcheck="false"
-				/>
-			</form>
-			<p class="hint">{t('jumpbox.hint')}</p>
-			{#if notFound}
-				<p class="not-found">{t('jumpbox.noMatch')}: “{query}”</p>
-			{/if}
-		</div>
+<!--
+	No `role="dialog"`, no `aria-modal`, no `tabindex="-1"`: a `<dialog>` shown
+	with `showModal()` already carries all three, and `aria-modal` on top of it
+	is redundant at best. `aria-label` stays — the box has no visible heading,
+	only a placeholder, and a placeholder is not a name.
+
+	The content is rendered unconditionally rather than behind `{#if open}`. A
+	closed `<dialog>` is `display: none`, so nothing here is reachable, focusable
+	or announced while the box is shut, and `showModal()` has an element to be
+	called on.
+-->
+<dialog
+	bind:this={dialogEl}
+	aria-label={t('jumpbox.placeholder')}
+	onclose={onClose}
+	onclick={onDialogClick}
+>
+	<div class="panel">
+		<form onsubmit={onSubmit}>
+			<input
+				bind:this={inputEl}
+				bind:value={query}
+				type="text"
+				placeholder={t('jumpbox.placeholder')}
+				autocomplete="off"
+				spellcheck="false"
+			/>
+		</form>
+		<p class="hint">{t('jumpbox.hint')}</p>
+		{#if notFound}
+			<p class="not-found">{t('jumpbox.noMatch')}: “{query}”</p>
+		{/if}
 	</div>
-{/if}
+</dialog>
 
 <style>
 	/*
@@ -237,19 +286,35 @@
 		}
 	}
 
-	.backdrop {
-		position: fixed;
-		inset: 0;
-		background: rgb(0 0 0 / 35%);
-		display: flex;
-		align-items: flex-start;
-		justify-content: center;
-		padding-top: 12vh;
-		z-index: 100;
+	/*
+	 * The dialog element itself is nothing but position: the UA stylesheet's
+	 * border, padding and background are all cleared, and the visible box is
+	 * `.panel` inside it. That split is what makes `onDialogClick`'s
+	 * `e.target === dialogEl` test mean "the reader clicked the backdrop" —
+	 * with padding here, the panel's own margin would be part of the dialog's
+	 * box and clicking it would dismiss.
+	 *
+	 * `margin` replaces the old flex backdrop: `auto` on three sides is the
+	 * UA's centring, and 12vh on the block start is the same "sits high, not
+	 * dead centre" placement the `padding-top: 12vh` gave. No `z-index` —
+	 * a modal dialog is in the top layer, above every stacking context there
+	 * is, which is what the old `z-index: 100` was reaching for.
+	 */
+	dialog {
+		width: min(32rem, 90vw);
+		max-width: none;
+		margin: 12vh auto auto;
+		border: none;
+		padding: 0;
+		background: transparent;
+		color: inherit;
 	}
 
-	.dialog {
-		width: min(32rem, 90vw);
+	dialog::backdrop {
+		background: rgb(0 0 0 / 35%);
+	}
+
+	.panel {
 		background: var(--color-bg);
 		border: 1px solid var(--color-border);
 		border-radius: 0.5rem;
@@ -257,7 +322,7 @@
 		padding: 1rem;
 	}
 
-	/* `--color-bg-elevated`, not `--color-bg`: the dialog is already `--color-bg`,
+	/* `--color-bg-elevated`, not `--color-bg`: the panel is already `--color-bg`,
 	   so a field painted the same colour sits on the panel's own plane and is
 	   held apart from it by nothing but a 1px border. The elevated token moves
 	   in the right direction in every theme without needing a per-theme value —

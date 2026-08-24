@@ -116,6 +116,31 @@
 		status ? (status.ok ? t('anchor.copied') : t('anchor.copyFailed')) : ''
 	);
 
+	// NATIVE POPOVER, SHOWN IMPERATIVELY. `popover="auto"` buys light dismiss,
+	// Escape, focus restoration to the trigger, and the top layer — all of
+	// which this component used to hand-roll. It cannot be invoked the
+	// declarative way (`popovertarget`): that attribute is valid on `<button>`
+	// only, and the trigger is deliberately a real `<a href>` (see
+	// `ReferenceNumber.svelte`), so the panel is shown from here instead.
+	//
+	// This reads `panelEl` and nothing else, so it runs once, on mount. The
+	// `:popover-open` guard is there for the day something reactive joins it:
+	// `showPopover()` on an already-open popover throws `InvalidStateError`.
+	$effect(() => {
+		if (panelEl && !panelEl.matches(':popover-open')) panelEl.showPopover();
+	});
+
+	/**
+	 * The one thing native dismissal does NOT do: tell Svelte. Escape, a light
+	 * dismiss, and another popover superseding this one all hide the element
+	 * without touching `menu.open`, which would leave this component mounted
+	 * but invisible and the trigger's `aria-expanded` reading `true` over a
+	 * panel nobody can see. `toggle` is the one event every close path fires.
+	 */
+	function onToggle(e: ToggleEvent) {
+		if (e.newState === 'closed') menu.close();
+	}
+
 	// Measured once the panel is in the DOM — its own size is the input, so
 	// this cannot run before it renders. Nothing inside the row resizes it
 	// afterwards: every action is a fixed square, and the confirmation is a
@@ -154,11 +179,14 @@
 	});
 </script>
 
-<!-- The outside-click listener lives HERE, not on the trigger, because this
-     component only exists while the popover is open. Mounted on the trigger it
-     would be one window listener per rendered unit number — a hundred-odd of
-     them on a long Bible chapter, all but one of which return immediately. -->
-<svelte:window onclick={menu.onWindowClick} onscrollcapture={reposition} onresize={reposition} />
+<!-- No outside-click listener: light dismiss is the browser's. That deletes
+     the awkward part of this component's old shape — the listener had to live
+     HERE rather than on the trigger, because mounted on the trigger it would
+     have been one window listener per rendered unit number, a hundred-odd of
+     them on a long Bible chapter, all but one returning immediately. What is
+     left is scroll and resize, which are about where the panel is, not
+     whether it is open. -->
+<svelte:window onscrollcapture={reposition} onresize={reposition} />
 
 <!-- The `<ul role="menu">` with `role="none"` wrappers is the same accessible
      structure every other menu on the site uses (`LanguageMenu` et al.):
@@ -169,6 +197,8 @@
      which is what actually shows the name on hover. -->
 <div
 	bind:this={panelEl}
+	popover="auto"
+	ontoggle={onToggle}
 	class="anchor-menu-panel"
 	data-link-preview="off"
 	style:top={coords ? `${coords.top}px` : '0'}
@@ -180,7 +210,6 @@
 		role="menu"
 		aria-orientation="horizontal"
 		aria-label={t('anchor.actions')}
-		onkeydown={menu.onPanelKeydown}
 	>
 		<li role="none">
 			<button
@@ -240,15 +269,23 @@
 	/*
 	 * Fixed, not absolute: the trigger can be a verse number mid-line or a
 	 * paragraph number in the margin at `-3.25rem`, and only measured
-	 * coordinates (`floating.ts`) can know whether the panel fits. Above
-	 * `.menu-panel`'s z-index 50 and below `LinkPreview`'s 70, which is the
-	 * order those two already have and which this sits between: it is opened
-	 * deliberately, so it outranks a header dropdown, but a preview a reader
-	 * is pointing at should still land on top.
+	 * coordinates (`floating.ts`) can know whether the panel fits. The UA
+	 * stylesheet's `[popover]` rule wants to centre it instead (`inset: 0;
+	 * margin: auto`), so both are reset here; its `border` and `padding`
+	 * defaults are already overridden by the declarations below.
+	 *
+	 * No `z-index`. An open popover is in the top layer, which sits above
+	 * every stacking context on the page, so the old 50/60/70 ladder against
+	 * `.menu-panel` and `LinkPreview` no longer decides this. Nothing is lost:
+	 * the two orderings that ladder expressed still hold — a header dropdown
+	 * is below because it is not in the top layer, and a hover preview cannot
+	 * be showing over this panel anyway, since reaching the number means
+	 * leaving whatever link was being previewed.
 	 */
 	.anchor-menu-panel {
 		position: fixed;
-		z-index: 60;
+		inset: auto;
+		margin: 0;
 		background: var(--color-bg);
 		border: 1px solid var(--color-border);
 		border-radius: 0.5rem;

@@ -50,6 +50,26 @@
 	const menu = new Menu();
 	const bookmarked = $derived(bookmarks.has(canonicalHref));
 
+	/**
+	 * Whether this number's panel was already open when the pointer went down
+	 * — which is the whole of what a click has to know, and cannot find out by
+	 * itself.
+	 *
+	 * `AnchorMenu` is a native `popover`, so the browser light-dismisses it,
+	 * and light dismissal lands on **pointerup**: by the time this element's
+	 * `click` fires, the panel the reader clicked the number to close is
+	 * already closed and `menu.open` already `false`. Toggling blindly there
+	 * would reopen it, and the number would read as inert. The spec exempts a
+	 * declared invoker (`popovertarget`) from exactly this, but that attribute
+	 * is `<button>`-only and this stays an `<a href>`; so the state is sampled
+	 * one event earlier instead.
+	 *
+	 * Assigned rather than cleared on every pointerdown, so a stale `true` —
+	 * pressed on an open number, then dragged away without a click — cannot
+	 * outlive the next press on the same one.
+	 */
+	let openAtPointerDown = false;
+
 	function onClick(e: MouseEvent) {
 		// Anything that isn't a plain primary click is the browser's to handle:
 		// a new tab, a new window, a download, a paste-and-go. Intercepting
@@ -57,46 +77,42 @@
 		if (e.defaultPrevented || e.button !== 0) return;
 		if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 		e.preventDefault();
+		if (openAtPointerDown) {
+			// Light dismiss already did the closing. Nothing left to toggle.
+			openAtPointerDown = false;
+			return;
+		}
 		menu.toggle();
-		// NOT `stopPropagation`: when one number's popover is already open,
-		// this click has to keep travelling to the window so THAT popover's
-		// outside-click listener closes it. The listener this click is about to
-		// create cannot catch its own opening click — `AnchorMenu` mounts in a
-		// microtask, after the synchronous dispatch has finished.
 	}
 </script>
 
-<span class="anchor-menu" bind:this={menu.containerEl}>
-	<a
-		bind:this={menu.triggerEl}
-		class="reference-number {placement}"
-		class:emphasized
-		class:bookmarked
-		{href}
-		aria-label={label}
-		aria-haspopup="menu"
-		aria-expanded={menu.open}
-		data-link-preview="off"
-		onclick={onClick}>{n}</a
-	>
-	{#if menu.open}
-		<AnchorMenu {menu} {canonicalHref} navHref={href} />
-	{/if}
-</span>
+<a
+	bind:this={menu.triggerEl}
+	class="reference-number {placement}"
+	class:emphasized
+	class:bookmarked
+	{href}
+	aria-label={label}
+	aria-haspopup="menu"
+	aria-expanded={menu.open}
+	data-link-preview="off"
+	onpointerdown={() => (openAtPointerDown = menu.open)}
+	onclick={onClick}>{n}</a
+>
+{#if menu.open}
+	<AnchorMenu {menu} {canonicalHref} navHref={href} />
+{/if}
 
 <style>
 	/*
-	 * The wrapper exists only to give `Menu` an element that contains both the
-	 * trigger and the panel, so an outside click can be measured against it
-	 * (DOM containment, which `display: contents` does not affect). It
-	 * generates no box, so neither the inline number's baseline nor the margin
-	 * number's `position: absolute` — which resolves against the unit's own
-	 * `position: relative` block, not against this — changes at all.
+	 * There is no wrapper element. There used to be a `display: contents` span
+	 * around the pair, for one reason only: `Menu`'s outside-click handler
+	 * measured DOM containment, so the trigger and the panel needed a common
+	 * ancestor to both be "inside" of. Light dismiss made that handler
+	 * redundant (see `AnchorMenu.svelte`), and the span with it — the panel is
+	 * simply the number's next sibling now, which is also the DOM order Tab
+	 * follows into it.
 	 */
-	.anchor-menu {
-		display: contents;
-	}
-
 	.reference-number {
 		color: var(--color-apparatus);
 		font-family: var(--font-sans);

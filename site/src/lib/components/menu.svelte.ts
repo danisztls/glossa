@@ -13,6 +13,15 @@
  * (`floating.ts`) because it hangs off arbitrary points in flowing prose
  * rather than off a fixed header control.
  *
+ * `AnchorMenu` is also the first consumer to take only HALF of this. It is a
+ * native `popover`, so `onWindowClick` and `onPanelKeydown` are the browser's
+ * job there and it uses neither; what it still wants is `open`, `triggerEl`,
+ * and `close` — the state, so Svelte knows whether to render the panel at
+ * all, and the trigger, so the panel knows what to measure against. The four
+ * header menus use the whole class, and cannot follow it into the top layer
+ * without CSS anchor positioning (Baseline January 2026), because their
+ * panels are `position: absolute` inside their triggers.
+ *
  * WHY IT WAS DUPLICATED, AND WHY THAT NO LONGER APPLIES. `ThemeMenu`'s
  * docblock (now `AppearanceMenu`'s) recorded the reason: "Svelte has no
  * cross-file scoped style or behavior sharing below a full component." That
