@@ -9,22 +9,35 @@
 	 *
 	 * Built from the READER'S edition, falling back the usual way, and the
 	 * consequence is visible rather than hidden: under Latin there are four
-	 * parts instead of five and no question titles at all, because the Corpus
-	 * Thomisticum prints neither a Supplement nor titles. Showing the English
-	 * edition's titles beside Latin text would be asserting that this source
-	 * says something it does not.
+	 * parts instead of five and no TREATISE headings at all, because the
+	 * Corpus Thomisticum prints neither a Supplement nor an outline below the
+	 * part.
+	 *
+	 * QUESTION TITLES ARE BORROWED WHERE TREATISE HEADINGS ARE NOT, and the
+	 * line between them is the line between naming an address and asserting a
+	 * structure. `II-II q. 184` is "Of the State of Perfection in General" in
+	 * whichever edition you read it, so showing that title to a Latin reader
+	 * — marked as the English edition's, see `summaTitleFor` — helps them find
+	 * the question and claims nothing about their text. Grouping the Leonine
+	 * text's questions under the Dominican Fathers' treatise divisions would
+	 * claim something else entirely: that this source divides its work that
+	 * way. It does not, so it is left ungrouped.
 	 */
 	import { content } from '$lib/content.svelte';
 	import {
 		getWork,
+		languageDisplayName,
 		listSummaQuestions,
 		summaHeadingsForPart,
+		summaTitleFor,
 		defaultSummaWorkId,
 		baseLang
 	} from '$lib/corpus';
 	import { summaPartSlug } from '$lib/route-manifest';
+	import { summaHeadingTitle, summaQuestionLabel } from '$lib/summa-titles';
 	import { t } from '$lib/i18n.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import type { SummaManifest } from '$lib/types';
 
 	const workId = $derived(defaultSummaWorkId(content.langFor('summa')));
@@ -41,6 +54,26 @@
 			questions: questions.filter((q) => q.part === part)
 		}))
 	);
+
+	/**
+	 * The sidebar mirrors the PARTS and nothing below them, the same rule
+	 * `indexSidebarItems` states for the CCC and Compendium: this page is
+	 * already a table of contents, and a second copy of it beside itself makes
+	 * navigation harder rather than easier. Four rows under Latin, five under
+	 * English — the edition's own shape, not a filter.
+	 *
+	 * Not `indexSidebarItems` itself: that walks `StructureNode`, which the
+	 * Summa's flat `SummaNode` is not (see `summaToc.ts`).
+	 */
+	const borrowedLabel = (borrowedFrom: string) =>
+		t('summa.titleFromEdition').replace('{lang}', languageDisplayName(borrowedFrom));
+
+	const sidebarItems = $derived(
+		parts.map(({ part, slug }) => ({
+			href: `#part-${slug}`,
+			label: `${t('summa.part')} ${part}`
+		}))
+	);
 </script>
 
 <svelte:head>
@@ -55,7 +88,7 @@
 		</header>
 
 		{#each parts as { part, slug, headings, questions: partQuestions } (part)}
-			<section class="part">
+			<section class="part" id={`part-${slug}`}>
 				<h2>{t('summa.part')} {part}</h2>
 
 				{#if headings.length > 0}
@@ -63,9 +96,11 @@
 						{#each headings as heading (heading.title + heading.before)}
 							<li>
 								{#if heading.before !== null}
-									<a href={`/summa/${slug}/${heading.before}`}>{heading.title}</a>
+									<a href={`/summa/${slug}/${heading.before}`}>
+										{summaHeadingTitle(heading.title)}
+									</a>
 								{:else}
-									<span>{heading.title}</span>
+									<span>{summaHeadingTitle(heading.title)}</span>
 								{/if}
 							</li>
 						{/each}
@@ -77,7 +112,8 @@
 						<li>
 							<a href={`/summa/${slug}/${question.n}`}>
 								<span class="q-number">{question.n}</span>
-								{#if question.title}<span class="q-title">{question.title}</span>{/if}
+								{#if question.title}<span class="q-title">{summaQuestionLabel(question.title)}</span
+									>{/if}
 							</a>
 						</li>
 					{/each}
@@ -89,6 +125,10 @@
 			<CopyrightNotice manifest={work} />
 		{/if}
 	</article>
+
+	<aside class="index-aside">
+		<IndexSidebarToc heading={t('summa.tableOfContents')} items={sidebarItems} />
+	</aside>
 </div>
 
 <style>
@@ -98,6 +138,8 @@
 
 	.part {
 		margin-top: 2.5rem;
+		/* The sidebar links here by fragment, and the site header is sticky. */
+		scroll-margin-top: 4rem;
 	}
 
 	.treatises {

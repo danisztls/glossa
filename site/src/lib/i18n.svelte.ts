@@ -144,6 +144,12 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'summa.part': 'Part',
 		'summa.question': 'Question',
 		'summa.article': 'Article',
+		// Abbreviated forms, for the sidebar's 17rem column and the landing
+		// page's question grid, where the word is repeated on every row and
+		// says nothing the position does not.
+		'summa.questionShort': 'Q',
+		'summa.articleShort': 'Art.',
+		'summa.titleFromEdition': 'Title from the {lang} edition',
 		'summa.prologue': 'Prologue',
 		// The division names are kept in the Latin every citation uses: a
 		// footnote reads `ad 3` and `co.`, and translating the heading would
@@ -395,6 +401,9 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'summa.part': 'Parte',
 		'summa.question': 'Questão',
 		'summa.article': 'Artigo',
+		'summa.questionShort': 'Q',
+		'summa.articleShort': 'Art.',
+		'summa.titleFromEdition': 'Título da edição em {lang}',
 		'summa.prologue': 'Prólogo',
 		'summa.objection': 'Objecção',
 		'summa.sedContra': 'Em sentido contrário',

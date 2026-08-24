@@ -1653,6 +1653,42 @@ function orderedSummaEditions(lang: string): WorkManifest[] {
 	return preferred ? [preferred, ...editions.filter((w) => w.id !== preferred.id)] : editions;
 }
 
+/**
+ * A question's title, borrowed from another edition when the one being read
+ * prints none.
+ *
+ * THE LATIN PRINTS NO TITLES AT ALL, and that is the Leonine text's own
+ * shape rather than a gap in the capture: the Corpus Thomisticum heads each
+ * question `Quaestio 1` and states its subject inside the prooemium prose
+ * instead. Rendering that verbatim gives a Latin reader a table of contents
+ * that is a column of bare numbers -- faithful, and useless for finding
+ * anything.
+ *
+ * So the title is borrowed, and `borrowed` is returned alongside it rather
+ * than hidden, because a borrowed title is a claim about the ADDRESS and not
+ * about the text: `II-II q. 184` is "Of the State of Perfection in General"
+ * in whatever language you read it. Every caller marks it as the other
+ * edition's -- `lang` on the element, a muted treatment, a tooltip naming
+ * the edition -- which is what keeps this an aid to navigation rather than a
+ * quiet assertion that this source says something it does not.
+ *
+ * `undefined` only when no edition has a title for the address at all.
+ */
+export function summaTitleFor(
+	lang: string,
+	part: string,
+	n: number
+): { title: string; lang: string; borrowed: boolean } | undefined {
+	const own = summaQuestionMeta(lang, part, n);
+	if (own?.title) return { title: own.title, lang, borrowed: false };
+	for (const edition of orderedSummaEditions(lang)) {
+		const editionLang = baseLang(edition.language);
+		const title = summaQuestionMeta(editionLang, part, n)?.title;
+		if (title) return { title, lang: editionLang, borrowed: true };
+	}
+	return undefined;
+}
+
 /** Does `(part, n, article)` exist in any edition? Validates a `#a{n}` anchor. */
 export function summaArticleExists(part: string, n: number, article: number): boolean {
 	return summaLangs().some((lang) => summaQuestionMeta(lang, part, n)?.articles.includes(article));

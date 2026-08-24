@@ -133,7 +133,12 @@
 		padding-left: 1rem;
 	}
 
+	/* The division's NAME is chrome, not text — it is ours, not the source's
+	   ("Objection 2", "I answer that"). Held in the sans face explicitly so it
+	   stays chrome now that this component renders inside `.reading-text`,
+	   whose serif face and reader-adjustable size govern the prose beneath. */
 	.division-label {
+		font-family: var(--font-sans);
 		font-size: 0.75rem;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;

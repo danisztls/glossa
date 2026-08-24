@@ -7,6 +7,7 @@ import {
 	summaArticleExists,
 	summaQuestionExists,
 	summaWorkIdFor,
+	summaTitleFor,
 	getSummaQuestionAsync
 } from './corpus';
 import { parseRefs, refHref } from './refs';
@@ -197,5 +198,47 @@ describe('content tier', () => {
 
 	it('has no Latin Supplement to read', async () => {
 		expect(await getSummaQuestionAsync('summa.la', 'Suppl', 77)).toBeUndefined();
+	});
+});
+
+/**
+ * The Corpus Thomisticum's Leonine text heads each question `Quaestio 1` and
+ * states its subject inside the prooemium prose instead, so `summa.la` has an
+ * empty title for every question and every article — the fixtures carry that
+ * shape exactly. Rendered verbatim, a Latin reader's table of contents is a
+ * column of bare numbers, which is faithful and useless.
+ */
+describe('borrowed question titles', () => {
+	it('returns an edition’s own title unborrowed', () => {
+		const named = summaTitleFor('en', 'II-II', 184);
+		expect(named).toEqual({
+			title: 'OF THE STATE OF PERFECTION IN GENERAL (EIGHT ARTICLES)',
+			lang: 'en',
+			borrowed: false
+		});
+	});
+
+	it('borrows the English title for a Latin reader, and says so', () => {
+		const named = summaTitleFor('la', 'II-II', 184);
+		expect(named?.borrowed).toBe(true);
+		expect(named?.lang).toBe('en');
+		expect(named?.title).toBe('OF THE STATE OF PERFECTION IN GENERAL (EIGHT ARTICLES)');
+	});
+
+	it('borrows for every question a Latin reader can reach', () => {
+		// The whole point: not one convenient question, but the entire outline.
+		const borrowed = [1, 71].map((n) => summaTitleFor('la', 'I', n));
+		expect(borrowed.every((b) => b?.borrowed === true)).toBe(true);
+		expect(borrowed.every((b) => (b?.title ?? '').length > 0)).toBe(true);
+	});
+
+	it('is undefined when no edition has a title for the address', () => {
+		expect(summaTitleFor('en', 'I', 9999)).toBeUndefined();
+	});
+
+	it('does not invent a Latin title for the Supplement, which has no Latin', () => {
+		// Falls through to English, the only edition that carries the address.
+		const named = summaTitleFor('la', 'Suppl', 77);
+		expect(named === undefined || named.lang === 'en').toBe(true);
 	});
 });
