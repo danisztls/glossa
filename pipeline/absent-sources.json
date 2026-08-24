@@ -7,11 +7,25 @@
     "note": "vatican.va publishes no encyclicals index for this pontificate; discovery reports 0 and skips it"
   },
   {
+    "url": "https://www.vatican.va/content/leo-xiii/en/apost_exhortations.index.html",
+    "status": 404,
+    "observed": "2026-08-24",
+    "context": "index__exhortations__leo-xiii.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-ix/en/encyclicals.index.html",
     "status": 404,
     "observed": "2026-08-23",
     "context": "index__encyclicals__pius-ix.html",
     "note": "vatican.va publishes no encyclicals index for this pontificate; discovery reports 0 and skips it"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/en/apost_exhortations.index.html",
+    "status": 404,
+    "observed": "2026-08-24",
+    "context": "index__exhortations__pius-xi.html",
+    "note": ""
   },
   {
     "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_02101931_nova-impendet.html",

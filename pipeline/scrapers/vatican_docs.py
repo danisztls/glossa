@@ -3750,6 +3750,14 @@ class StubPageError(Exception):
 # strip). 300 sits with wide margin on both sides -- it will never
 # misclassify a real, however-short, encyclical, and every stub sampled
 # clears it by 3x or more.
+#
+# It is a floor, not the whole test, because the two things it measures that
+# are NOT the document -- the language bar and the masthead -- have no fixed
+# size. `amoris-laetitia.en` cleared 300 on those alone: vatican.va publishes
+# that exhortation's English text as a PDF and nothing else, so its HTML page
+# carries a sixteen-language bar, a six-line masthead, the words "DOWNLOAD
+# PDF", and no document. See `parse_document`'s closing check, which asks the
+# question this threshold is a cheap approximation of.
 STUB_CONTENT_MIN_CHARS = 300
 
 
@@ -4497,6 +4505,24 @@ def parse_document(
             entry = {"title": unit["title"], **entry}
         appendix_out.append(entry)
     state.appendix_out = appendix_out
+
+    # THE STUB TEST, ASKED PROPERLY. `STUB_CONTENT_MIN_CHARS` above guesses
+    # from the size of the raw region, before the language bar and the
+    # masthead have been told apart from the document; this asks the same
+    # question of the result, where the answer is not a guess -- a page that
+    # yielded no numbered section and no unnumbered unit carried no document,
+    # whatever its region measured.
+    #
+    # Zero sections alone is NOT the test, and must not become it: an edition
+    # that prints no paragraph numbers is a real document whose whole text is
+    # in `appendix.json` (Pascendi PT, Quadragesimo Anno PT, Vigilanti Cura
+    # EN). Both halves have to be empty.
+    if not state.sections and not any(u["blocks"] for u in state.appendix):
+        raise StubPageError(
+            "parsed to no sections and no unnumbered content -- the page "
+            "carries a masthead and no document (the text is published "
+            "elsewhere, typically as a PDF), not a parse this scraper lost"
+        )
 
     return ParseResult(
         state=state,
