@@ -9,36 +9,26 @@ import { isDivergentBook, resolveVulgate, toVulgateCandidates } from './versific
  * to assert exact chapter/verse mappings and, in the "never out of range"
  * block below, as the existence oracle for the corpus invariant.
  */
+// The compact rows are the point: this is a measured table, and one psalm per
+// line buries which chapters carry a note and which do not. Prettier only
+// honours `// prettier-ignore` alone on the line directly above, so keep the
+// reason here and the pragma bare -- it used to read `}; // fmt: skip`, which
+// is ruff's spelling and prettier silently ignored.
+// prettier-ignore
 const REAL_VULGATE_PS_MAX_VERSE: Record<number, number> = {
-	1: 6,
-	2: 13,
-	3: 9,
-	8: 10,
+	1: 6, 2: 13, 3: 9, 8: 10,
 	9: 39, // Heb 9 (21v) + Heb 10 (18v) merged
 	10: 8,
-	21: 32,
-	26: 14,
-	41: 12,
-	50: 21,
-	54: 24,
-	68: 37,
-	88: 53,
-	101: 29,
-	106: 43,
-	112: 9,
-	113: 26, // 112: top of the 11-113 shift range; 113: Heb 114 (8v) + Heb 115 (18v) merged
+	21: 32, 26: 14, 41: 12, 50: 21, 54: 24, 68: 37, 88: 53, 101: 29, 106: 43,
+	112: 9, 113: 26, // 112: top of the 11-113 shift range; 113: Heb 114 (8v) + Heb 115 (18v) merged
 	114: 9, // Heb 116:1-9
 	115: 10, // Heb 116:10-19
 	116: 2, // bottom of the 117-146 shift range
-	118: 176,
-	123: 8,
-	138: 24,
-	145: 10,
+	118: 176, 123: 8, 138: 24, 145: 10,
 	146: 11, // Heb 147:1-11
 	147: 9, // Heb 147:12-20
-	148: 14,
-	150: 6
-}; // fmt: skip
+	148: 14, 150: 6
+};
 
 const REAL_VULGATE_MAL_MAX_VERSE: Record<number, number> = { 1: 14, 2: 17, 3: 18, 4: 6 };
 const REAL_VULGATE_JOEL_MAX_VERSE: Record<number, number> = { 1: 20, 2: 32, 3: 21 };
