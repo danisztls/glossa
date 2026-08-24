@@ -2875,3 +2875,45 @@ addressable". That was right while the body rendered nothing for such a row and
 wrong the moment the appendix landed; the test now pins the new rule and says
 why it changed, plus a second case for a document with no last section to count
 from.
+
+## 2026-08-24 — A line break in a heading is structure only above a bare label
+
+`heading_inner_html` flattens every `<br/>` inside a heading to a space, on the
+reasoning that a break there is the source's measure running out mid-phrase.
+Lumen Gentium PT breaks its eighth chapter after `MÃE DE DEUS`, which lands in
+the wrong place at any other width, and flattening it is right.
+
+Lumen Gentium EN then showed the other case: `APPENDIX<br/>From the Acts of the
+Council*`, where the break separates a division's label from its name and
+flattening produces one run-on title. Both are the same character. Nothing in
+the markup distinguishes them, so the rule had to come from somewhere else.
+
+**The discriminator is the first line, and nothing else: it must be a division
+label carrying no name of its own.** That is the same question
+`merge_heading_lines` already asks when a source prints label and name as
+separate paragraphs; this applies it when the source prints them as one block
+divided by a break. Measured over every heading block in `raw/vatican-docs`
+holding a `<br/>` — 326 of them — the test accepts 50 and every one is a label
+(`SECTION 1`, `PRIMEIRA PARTE`, `CHAPTER FOUR`). Of the 276 it rejects, none
+is: they are wraps (`FRATERNITY, ECONOMIC<br/>DEVELOPMENT AND CIVIL SOCIETY`)
+and salutations (`Venerable Brethren,<br/>Health and the Apostolic Blessing.`),
+and both have to stay whole. No false positive, no false negative.
+
+42 of the 50 were already split from the flattened text by `split_label_prefix`,
+whose patterns anchor on a numeral. The break reaches the other 8 — labels
+spelled out in words — and the appendix, whose label carries no number at all.
+
+**`APPENDIX` is a division label that LABEL_PATTERNS cannot hold**, because
+every pattern there is anchored on a numeral. It went into `_label_prefix_end`
+instead, the offset test now shared by both splitters, which deliberately keeps
+it out of `match_label` and so out of the `_LABEL_DEPTH` ranking: three
+appendices corpus-wide are not evidence for a new depth tier. It reaches
+Sacrosanctum Concilium's `APPENDIX A DECLARATION…` and `Apêndice: Declaração…`
+as well, which are the same shape run together rather than broken.
+
+**A pre-existing defect surfaced while measuring**: seven structure nodes
+carried the label in `title_html` as well as in `ident`, and the site typesets
+those as separate spans — so `CHAPTER VII` printed twice. `title_html` is the
+name's markup; `strip_leading_text_html` now removes the label from it wherever
+the label moves to `ident`, matching across tag boundaries because the two are
+routinely divided by markup (`APPENDIX <i>A DECLARATION…</i>`).

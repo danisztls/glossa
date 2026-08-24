@@ -1798,10 +1798,49 @@ LABEL_PATTERNS = {"en": _EN_LABELS, "pt": _PT_LABELS}
 # "PRIMEIRA PARTE", "SEGUNDA PARTE" -- which the _PT_LABELS patterns, all
 # anchored on the noun, do not match. Only needed to recognise a BARE label
 # (below); the depth ranking still goes through MATCH_LABEL.
-_PT_ORDINAL_LABEL_RE = re.compile(
-    r"^(?:PRIMEIR|SEGUND|TERCEIR|QUART|QUINT|SEXT|SETIM|OITAV|NON|DECIM)[AO]\s+"
-    r"(?:PARTE|SEC[CS][AC]O|CAPITULO)$"
+_PT_ORDINAL_LABEL_BODY = (
+    r"(?:PRIMEIR|SEGUND|TERCEIR|QUART|QUINT|SEXT|SETIM|OITAV|NON|DECIM)[AO]\s+"
+    r"(?:PARTE|SEC[CS][AC]O|CAPITULO)"
 )
+_PT_ORDINAL_LABEL_RE = re.compile(rf"^{_PT_ORDINAL_LABEL_BODY}$")
+# The same label as a PREFIX, for `_label_prefix_end`, which needs the offset
+# the label ends at rather than a yes/no over the whole string.
+_PT_ORDINAL_LABEL_PREFIX_RE = re.compile(rf"^{_PT_ORDINAL_LABEL_BODY}\b")
+
+
+_APPENDIX_LABEL_RE = re.compile(r"^(?:APPENDIX|AP[EÊ]NDICE)(?=\s|:|$)", re.IGNORECASE)
+
+
+def _label_prefix_end(text: str, lang: str) -> int | None:
+    """The offset at which a division label ends in `text`, or None when
+    `text` does not open with one.
+
+    Split out of `split_label_prefix` so the same question can be asked of one
+    LINE of a multi-line heading -- see `split_heading_break`.
+
+    `APPENDIX` is here rather than in LABEL_PATTERNS because every pattern
+    there is anchored on a numeral (`PART II`, `CAPITULO IV`) and an appendix
+    carries no number. Keeping it out of LABEL_PATTERNS also keeps it out of
+    `match_label`, hence out of the `_LABEL_DEPTH` ranking -- which has no
+    tier for a division appearing once at the end of a document, and should
+    not be given one on the strength of the three that exist in this corpus.
+    `fold` preserves length, so a Portuguese match's offset applies to the
+    original string unchanged."""
+    m = _APPENDIX_LABEL_RE.match(text)
+    if m:
+        return m.end()
+    folded = fold(text) if lang == "pt" else text
+    for _kind, pat in LABEL_PATTERNS[lang]:
+        m = pat.match(folded)
+        if m:
+            return m.end()
+    # PT also writes a division with the ordinal spelled out and LEADING --
+    # `PRIMEIRA PARTE` -- which every LABEL_PATTERNS entry, all anchored on
+    # the noun, misses. `bare_division_label` has always known this form;
+    # leaving it out here made the two predicates disagree, and the break
+    # split silently did nothing on the seven headings that use it.
+    m = _PT_ORDINAL_LABEL_PREFIX_RE.match(folded)
+    return m.end() if m else None
 
 
 def bare_division_label(text: str, lang: str) -> bool:
@@ -1847,16 +1886,115 @@ def split_label_prefix(text: str, lang: str) -> tuple[str, str] | None:
     however the two are wrapped. `fold` preserves length, so the offset from a
     Portuguese match applies to the original string unchanged.
     """
-    folded = fold(text) if lang == "pt" else text
-    for _kind, pat in LABEL_PATTERNS[lang]:
-        m = pat.match(folded)
-        if not m:
+    end = _label_prefix_end(text, lang)
+    if end is None:
+        return None
+    ident, rest = text[:end].strip(), text[end:].strip(" .:;-\u2014")
+    # No name after the label is the ordinary merged case, already handled:
+    # `CHAPTER I` alone is the whole heading and stays the title.
+    return (ident, rest) if rest else None
+
+
+_BR_SPLIT_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
+
+
+_EMPTY_TAG_PAIR_RE = re.compile(r"<(\w+)[^>]*>\s*</\1>")
+
+
+def strip_leading_text_html(html: str, prefix: str) -> str:
+    """Drop `prefix` from the front of `html`, ignoring tags and whitespace.
+
+    Wanted when a heading's label moves into `ident`: `title_html` is the
+    NAME's inline markup, and leaving the label in it makes the site -- which
+    typesets `ident` and `title_html` as separate spans -- print the label
+    twice. Seven nodes in the corpus read `CHAPTER VII CHAPTER VII THE
+    ESCHATOLOGICAL NATURE...` for exactly this reason.
+
+    Matched character by character across tag boundaries, like
+    `strip_leading_number_html`, because the label and its name are routinely
+    divided by markup -- `APPENDIX <i> A DECLARATION...</i>`, `CHAPTER VII
+    <b>THE ESCHATOLOGICAL...</b>`. Returns `html` untouched if the visible
+    text does not in fact begin with `prefix`, so a failed match cannot
+    truncate a title."""
+    want = "".join(prefix.split()).upper()
+    out, seen, i = [], 0, 0
+    while i < len(html) and seen < len(want):
+        if html[i] == "<":
+            j = html.find(">", i)
+            if j == -1:
+                return html
+            out.append(html[i : j + 1])
+            i = j + 1
             continue
-        ident, rest = text[: m.end()].strip(), text[m.end() :].strip(" .:;-\u2014")
-        # No name after the label is the ordinary merged case, already
-        # handled: `CHAPTER I` alone is the whole heading and stays the title.
-        return (ident, rest) if rest else None
-    return None
+        ch = html[i]
+        if not ch.isspace():
+            if ch.upper() != want[seen]:
+                return html
+            seen += 1
+        i += 1
+    if seen < len(want):
+        return html
+    # Tags the prefix emptied would leave `heading_inner_html` storing markup
+    # that says nothing. Collapsed on the JOINED result, because the pair
+    # routinely straddles the cut -- `<b>CHAPTER</b> <i>III</i> THE NAME`
+    # leaves its `<i>` on one side and its `</i>` on the other. A tag the
+    # prefix only opened still closes over the name and survives, having
+    # something between its ends.
+    rest = html[i:].lstrip().lstrip(" .:;-\u2014\u2013").lstrip()
+    kept = "".join(out) + rest
+    while (collapsed := _EMPTY_TAG_PAIR_RE.sub("", kept)) != kept:
+        kept = collapsed
+    return kept
+
+
+def split_heading_break(html: str, text: str, lang: str) -> tuple[str, str] | None:
+    """Split `APPENDIX<br/>From the Acts of the Council` into label and name.
+
+    `heading_inner_html` flattens every `<br/>` in a heading to a space,
+    because in this corpus a break inside a heading is nearly always the
+    source's measure running out mid-phrase: `THE MESSAGE<br/>OF POPULORUM
+    PROGRESSIO` is one title set on two lines, and reading the break as
+    structure would cut a title in half. That flattening is right and stays.
+
+    Nearly always is not always. Of the 326 heading blocks in
+    corpus/raw/vatican-docs holding a `<br/>`, 50 print a bare division label
+    above the division's name -- `SECTION 1<br/>The Avoidance of War`,
+    `PRIMEIRA PARTE<br/>MARIA NO MISTÉRIO DE CRISTO`. That is the same thing
+    `merge_heading_lines` recognises when a source prints the two as separate
+    paragraphs, set one way instead of the other, and it earns the same
+    answer: an `ident` and a `title`, not one run-on line.
+
+    THE DISCRIMINATOR IS THE FIRST LINE AND NOTHING ELSE. It must be a
+    division label and carry no name of its own, which is what makes this
+    safe to hang on a break. Measured over the same 326: the test accepts 50,
+    every one of them a label; of the 276 it rejects, none is -- they are
+    wraps (`FRATERNITY, ECONOMIC<br/>DEVELOPMENT AND CIVIL SOCIETY`) and
+    salutations (`Venerable Brethren,<br/>Health and the Apostolic
+    Blessing.`), and both have to stay whole.
+
+    42 of the 50 are already split by `split_label_prefix` from the flattened
+    text, since their label carries a numeral it can anchor on. This reaches
+    the other 8 -- the labels spelled out in words, `PRIMEIRA PARTE` and
+    `CHAPTER FOUR` -- and Lumen Gentium EN's appendix, whose label carries no
+    number at all.
+
+    The split is applied to `text`, not to the html: `text` is the marked
+    text, carrying the footnote tokens, and is what a heading's title is
+    built from. The html is consulted only for WHERE the source broke."""
+    parts = _BR_SPLIT_RE.split(html, maxsplit=1)
+    if len(parts) != 2:
+        return None
+    ident = " ".join(html_to_text(parts[0]).split()).strip(" .:;-\u2014\u2013")
+    if not ident:
+        return None
+    end = _label_prefix_end(ident, lang)
+    if end is None or ident[end:].strip(" .:;-\u2014\u2013"):
+        return None
+    probe = " ".join(text.split())
+    if not probe.upper().startswith(ident.upper()):
+        return None
+    rest = probe[len(ident) :].strip(" .:;-\u2014\u2013")
+    return (ident, rest) if rest else None
 
 
 def merge_heading_lines(
@@ -3171,12 +3309,20 @@ def parse_document(
     # A division's identifier, name and subtitle are printed as separate
     # paragraphs; they are one heading. See merge_heading_lines.
     toc_level, merged_headings = merge_heading_lines(blocks, lang, toc_level)
-    # A label and its name printed inside ONE block -- see split_label_prefix.
+    # A label and its name printed inside ONE block, either run together
+    # (`split_label_prefix`) or divided by the source's own line break
+    # (`split_heading_break`).
     for blk in blocks:
         if blk.is_heading and not blk.ident:
-            split = split_label_prefix(blk.text, lang)
+            split = split_heading_break(blk.html, blk.text, lang) or split_label_prefix(
+                blk.text, lang
+            )
             if split is not None:
                 blk.ident, blk.text = split
+                # The label left `text`; it has to leave `title_html` too, or
+                # the two get printed one after the other. See
+                # strip_leading_text_html.
+                blk.html = strip_leading_text_html(blk.html, blk.ident)
     if merged_headings:
         state.anomalies.append(
             f"heading lines merged ({len(merged_headings)}): "
