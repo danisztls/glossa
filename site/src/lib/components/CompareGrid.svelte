@@ -69,7 +69,11 @@
 	outside it, where the two edition names appear in the same left-to-right
 	order as the columns they name. What survives here is `.compare-cell-tag`,
 	which labels each cell once the columns stack and position stops saying
-	anything at all. -->
+	anything at all. `leftLabel`/`rightLabel` come from `compareColumnLabel`
+	(corpus.ts) at every call site — the CONTENT LANGUAGE, plus the edition only
+	where a language can hold two of them, which is the Bible and nowhere else.
+	They used to be `short_title` on both sides, which on `/documenta` printed
+	the SAME string over both columns. -->
 <!--
 	`apparatus` is the collapse rule from `.compare-unit-header` (app.css)
 	applied one level down, to the units themselves: something both editions

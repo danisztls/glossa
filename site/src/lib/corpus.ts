@@ -302,6 +302,31 @@ export function languageDisplayName(tag: string): string {
 }
 
 /**
+ * What names a compare column once the two stack and position stops saying
+ * anything (`.compare-cell-tag`, app.css).
+ *
+ * SAME FORK AS `EditionMenu`'s `editionStyle`, for the same reason: only the
+ * Bible is expected to ever carry more than one edition in the same language,
+ * so everywhere else the two columns differ ONLY by language and the edition's
+ * `short_title` is the wrong discriminator — "Catecismo da Igreja Católica"
+ * over one column and "Catechism of the Catholic Church" over the other makes
+ * the reader parse a title to recover a fact ("Português") the language name
+ * states outright. Worse on `/documenta`, where `short_title` is the document's
+ * own Latin-incipit title and is frequently the SAME STRING in both columns.
+ *
+ * The Bible is where the title genuinely carries information the language does
+ * not — `bible.cpdv.en` and a future second English edition are both "English"
+ * — so there, and only there, the tag is both: "English — Douay-Rheims (CPDV)".
+ */
+export function compareColumnLabel(
+	manifest: { language: string; short_title: string },
+	editionStyle = false
+): string {
+	const language = languageDisplayName(manifest.language);
+	return editionStyle ? `${language} – ${manifest.short_title}` : language;
+}
+
+/**
  * Bible work IDs are `bible.{edition}` (see docs/corpus-schema.md); routes
  * use just the `{edition}` part (e.g. `cpdv.en`) to avoid the `bible/bible.`
  * stutter in URLs like `/bible/cpdv.en/john/3`.
@@ -1563,7 +1588,6 @@ export async function getPrayerAsync(lang: string, slug: string): Promise<Prayer
 	return prayers.find((p) => p.slug === slug);
 }
 
-
 // --- Summa: index tier (sync) ---------------------------------------------
 //
 // Addressed by (part, question, article), which is three levels rather than
@@ -1597,11 +1621,7 @@ export function listSummaQuestions(lang: string): SummaQuestionMeta[] {
 	return summaQuestionMetas[lang] ?? [];
 }
 
-function summaQuestionMeta(
-	lang: string,
-	part: string,
-	n: number
-): SummaQuestionMeta | undefined {
+function summaQuestionMeta(lang: string, part: string, n: number): SummaQuestionMeta | undefined {
 	return listSummaQuestions(lang).find((q) => q.part === part && q.n === n);
 }
 
@@ -1635,9 +1655,7 @@ function orderedSummaEditions(lang: string): WorkManifest[] {
 
 /** Does `(part, n, article)` exist in any edition? Validates a `#a{n}` anchor. */
 export function summaArticleExists(part: string, n: number, article: number): boolean {
-	return summaLangs().some((lang) =>
-		summaQuestionMeta(lang, part, n)?.articles.includes(article)
-	);
+	return summaLangs().some((lang) => summaQuestionMeta(lang, part, n)?.articles.includes(article));
 }
 
 /** Headings that apply to one part, in document order — that part's TOC. */
@@ -1656,9 +1674,5 @@ export async function getSummaQuestionAsync(
 	const fixture = (fixtureSummaQuestionsByLang[lang] ?? []).find(
 		(q) => q.part === part && q.n === n
 	);
-	return fetchTier(
-		fixture,
-		summaQuestionLocation(workId, summaPartSlug(part), n),
-		undefined
-	);
+	return fetchTier(fixture, summaQuestionLocation(workId, summaPartSlug(part), n), undefined);
 }

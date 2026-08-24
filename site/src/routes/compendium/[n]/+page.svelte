@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { flattenCompendiumStructure } from '$lib/corpus';
+	import { compareColumnLabel, flattenCompendiumStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { content } from '$lib/content.svelte';
 	import { displayTitle } from '$lib/titles';
@@ -183,8 +183,8 @@
 					rows={compareRows}
 					leftLang={editions.current.work.language}
 					rightLang={editions.secondary.work.language}
-					leftLabel={editions.current.work.short_title}
-					rightLabel={editions.secondary.work.short_title}
+					leftLabel={compareColumnLabel(editions.current.work)}
+					rightLabel={compareColumnLabel(editions.secondary.work)}
 					left={leftCell}
 					right={rightCell}
 					unit={(n) => ({

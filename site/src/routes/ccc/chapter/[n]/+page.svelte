@@ -12,7 +12,7 @@
 	 * single paragraph can land the reader where they already were.
 	 */
 	import { page } from '$app/state';
-	import { flattenCccStructure } from '$lib/corpus';
+	import { compareColumnLabel, flattenCccStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
@@ -310,8 +310,8 @@
 					rows={compareRows}
 					leftLang={editions.current.work.language}
 					rightLang={editions.secondary.work.language}
-					leftLabel={editions.current.work.short_title}
-					rightLabel={editions.secondary.work.short_title}
+					leftLabel={compareColumnLabel(editions.current.work)}
+					rightLabel={compareColumnLabel(editions.secondary.work)}
 					left={leftCell}
 					right={rightCell}
 					unit={(n) => ({

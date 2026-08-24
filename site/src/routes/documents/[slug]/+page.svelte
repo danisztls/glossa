@@ -50,6 +50,7 @@
 	import { formatPromulgated } from '$lib/dates';
 	import { content } from '$lib/content.svelte';
 	import {
+		compareColumnLabel,
 		flattenDocumentStructure,
 		documentOutline,
 		getDocumentGroup,
@@ -682,8 +683,8 @@
 						rows={compareRows}
 						leftLang={current.work.language}
 						rightLang={secondaryManifest.language}
-						leftLabel={current.work.short_title}
-						rightLabel={secondaryManifest.short_title}
+						leftLabel={compareColumnLabel(current.work)}
+						rightLabel={compareColumnLabel(secondaryManifest)}
 						left={leftCell}
 						right={rightCell}
 						unit={(n) => ({

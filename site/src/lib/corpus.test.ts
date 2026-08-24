@@ -9,6 +9,7 @@ import {
 	getCanonicalBook,
 	hasBookIntro,
 	hasIntroForWork,
+	compareColumnLabel,
 	getCompendiumChapterFor,
 	getCompendiumQuestionRangeAsync,
 	listCompendiumChapters
@@ -141,5 +142,31 @@ describe('book introductions (chapter 0)', () => {
 		// reference must never resolve to one. `refs.ts` checks existence
 		// against the book's chapters, which never carry a 0.
 		expect(getBook('bible.cpdv.en', 'gen')?.chapters.some((c) => c.n === 0)).toBe(false);
+	});
+});
+
+describe('compare column labels', () => {
+	// The tag over a stacked compare column. Two editions of the same work are
+	// told apart by LANGUAGE everywhere except the Bible, which is the only
+	// type expected to ever hold two editions of one language.
+	it('names the content language in its own tongue', () => {
+		expect(compareColumnLabel({ language: 'en', short_title: 'CCC' })).toBe('English');
+		expect(compareColumnLabel({ language: 'pt-PT', short_title: 'CIC' })).toBe('Português');
+		expect(compareColumnLabel({ language: 'la', short_title: 'Vulgata' })).toBe('Latina');
+	});
+
+	it('adds the edition only where a language can hold two of them', () => {
+		expect(compareColumnLabel({ language: 'en', short_title: 'Douay-Rheims (CPDV)' }, true)).toBe(
+			'English – Douay-Rheims (CPDV)'
+		);
+	});
+
+	// The regression this replaced: on `/documenta` both columns are one
+	// document, so `short_title` was frequently the SAME STRING over both —
+	// a tag that identified nothing.
+	it('distinguishes two editions whose titles are identical', () => {
+		const left = compareColumnLabel({ language: 'en', short_title: 'Magnifica Humanitas' });
+		const right = compareColumnLabel({ language: 'pt', short_title: 'Magnifica Humanitas' });
+		expect(left).not.toBe(right);
 	});
 });

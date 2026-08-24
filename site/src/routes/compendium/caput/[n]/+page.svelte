@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { flattenCompendiumStructure } from '$lib/corpus';
+	import { compareColumnLabel, flattenCompendiumStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import CompendiumQa from '$lib/components/CompendiumQuestion.svelte';
 	import RefText from '$lib/components/RefText.svelte';
@@ -228,8 +228,8 @@
 					rows={compareRows}
 					leftLang={editions.current.work.language}
 					rightLang={editions.secondary.work.language}
-					leftLabel={editions.current.work.short_title}
-					rightLabel={editions.secondary.work.short_title}
+					leftLabel={compareColumnLabel(editions.current.work)}
+					rightLabel={compareColumnLabel(editions.secondary.work)}
 					left={leftCell}
 					right={rightCell}
 					unit={(n) => ({

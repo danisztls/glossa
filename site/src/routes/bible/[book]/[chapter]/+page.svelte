@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import {
 		baseLang,
+		compareColumnLabel,
 		getAdjacentChapterAcrossBooks,
 		getCccCitationsForChapter,
 		getDocumentCitationsForChapter,
@@ -573,8 +574,8 @@
 					rows={compareRows}
 					leftLang={current.work.language}
 					rightLang={secondary.work.language}
-					leftLabel={current.work.short_title}
-					rightLabel={secondary.work.short_title}
+					leftLabel={compareColumnLabel(current.work, true)}
+					rightLabel={compareColumnLabel(secondary.work, true)}
 					left={verseCell}
 					right={verseCell}
 					unit={(n) => ({

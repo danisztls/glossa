@@ -35,6 +35,7 @@
 		chooseComparisonEdition,
 		toggleCompare
 	} from '$lib/compare-nav.svelte';
+	import { compareColumnLabel, languageDisplayName } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
@@ -233,12 +234,19 @@
 			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 
 			{#if compareActive}
+				<!-- `rightLabel` is `languageDisplayName('la')`, not
+				     `t('prayers.latin')`: that string is the UI-language name of Latin
+				     ("Latin"/"Latim"), which is what the TOGGLE should say — a control
+				     speaks the reader's language. A column tag names the content, and
+				     every other tag on the site names a content language in its own
+				     tongue, so this one is "Latina" for the same reason the
+				     Clementina's column is. -->
 				<CompareGrid
 					rows={compareRows}
 					leftLang={current.work.language}
 					rightLang="la"
-					leftLabel={current.work.short_title}
-					rightLabel={t('prayers.latin')}
+					leftLabel={compareColumnLabel(current.work)}
+					rightLabel={languageDisplayName('la')}
 					left={leftCell}
 					right={rightCell}
 				/>
