@@ -454,7 +454,14 @@ html {
 	 * existed, and additively they would have pushed a heading further down
 	 * the viewport the more carefully someone had tuned one.
 	 */
-	scroll-padding-top: calc(var(--site-header-height, 0px) + var(--reading-bar-height, 0px) + 1rem);
+	/* The two stacked stickies' combined height, as one token: the scroll
+	   inset below and the sidebars' own `top`/`max-height` (`.reading-aside`,
+	   `.index-aside`) all have to clear the same chrome, and three copies of
+	   the same sum drift. Both variables are published at runtime on this very
+	   element, so the fallbacks here are what a route with no bar (or a frame
+	   before the first measurement) evaluates against. */
+	--sticky-chrome-height: calc(var(--site-header-height, 0px) + var(--reading-bar-height, 0px));
+	scroll-padding-top: calc(var(--sticky-chrome-height) + 1rem);
 }
 
 body {
@@ -577,8 +584,16 @@ input {
 	   expanding in flow within it. */
 	.reading-aside {
 		position: sticky;
-		top: 1.5rem;
-		max-height: calc(100vh - 3rem);
+		/* Offset by the same chrome `scroll-padding-top` clears. A bare
+		   `1.5rem` sticks the aside to the viewport's top edge, which is
+		   BEHIND the site header (and, on a reader route, the reading bar
+		   below it) — so the sidebar's first rows, its heading among them,
+		   disappear under the chrome the moment the page scrolls. The
+		   max-height loses the same amount, or the aside's own scroll
+		   container would run off the bottom of the screen by however much
+		   it was pushed down. */
+		top: calc(var(--sticky-chrome-height) + 1.5rem);
+		max-height: calc(100vh - var(--sticky-chrome-height) - 3rem);
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		font-size: 0.9rem;
@@ -587,8 +602,9 @@ input {
 	.index-aside {
 		display: block;
 		position: sticky;
-		top: 1.5rem;
-		max-height: calc(100vh - 3rem);
+		/* Same chrome compensation as `.reading-aside` above. */
+		top: calc(var(--sticky-chrome-height) + 1.5rem);
+		max-height: calc(100vh - var(--sticky-chrome-height) - 3rem);
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		font-size: 0.9rem;
