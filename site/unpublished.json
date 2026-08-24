@@ -62,15 +62,11 @@
 	"works": {
 		"encyclical.quadragesimo-anno.pt": {
 			"date": "2026-08-23",
-			"reason": "Our parse of this edition captured only 5 numbered paragraphs — about 9% of the page's text — against 148 in the English edition, leaving 132 blocks of real prose attached to no section. The page opens with a long unnumbered recap under topic labels, and our parser never picks the numbering back up. Diagnosed in the corpus manifest's own notes."
+			"reason": "This edition prints no paragraph numbers at all. Its bold numbers are a per-part outline that starts again in each part, and reading them as paragraph numbers gave five sections against 148 in the English edition, with the rest of the text attached to nothing. We now capture no sections here rather than five wrong ones. Diagnosed in the corpus manifest's own notes."
 		},
 		"encyclical.miranda-prorsus.en": {
 			"date": "2026-08-23",
-			"reason": "Our parse of this edition captured only 4 numbered paragraphs — about 10% of the page's text — leaving 139 blocks of real prose attached to no section. The source numbers its paragraphs sparsely and inconsistently rather than not at all. Diagnosed in the corpus manifest's own notes."
-		},
-		"vatii.gravissimum-educationis.en": {
-			"date": "2026-08-23",
-			"reason": "This edition prints its numbered items as bold headings with unnumbered prose beneath, instead of as numbered paragraphs, so our parse divides it wrongly. Most of the text is present, but the paragraph numbers a citation would point at are not the ones the document itself uses. Its Portuguese translation does not share the convention and parses correctly. Diagnosed in the corpus manifest's own notes."
+			"reason": "This edition prints no paragraph numbers at all. The four numbers on the page are its four parts — General Instruction, Motion Pictures, Radio, Television — and reading them as paragraph numbers gave four sections of some eighteen thousand characters each. We now capture no sections here rather than four wrong ones. Its Portuguese translation is unnumbered too, so this document has no numbered edition. Diagnosed in the corpus manifest's own notes."
 		},
 		"encyclical.pascendi-dominici-gregis.pt": {
 			"date": "2026-08-16",

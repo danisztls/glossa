@@ -218,6 +218,7 @@ import collections
 import contextlib
 import difflib
 import html as ihtml
+import itertools
 import json
 import multiprocessing
 import os
@@ -1350,6 +1351,13 @@ class ScrapeState:
         # reported gap rather than guessed at.
         self.pending_first_block: str | None = None
         self.pending_first_html: str | None = None
+        # A section number read off a "N. Title" heading, waiting for the
+        # prose block underneath to open the section (Gravissimum
+        # Educationis EN -- see parse_document's heading branch). The number
+        # and the section's first words are in DIFFERENT blocks there, which
+        # is the whole reason this has to be carried rather than handled in
+        # place like an ordinary numbered paragraph.
+        self.pending_section_n: int | None = None
         self.pending_headings: list[Node] = []
         self.content_started = False
         self.empty_nest_depth = 0
@@ -2349,6 +2357,82 @@ def drop_page_furniture(blocks: list[Block]) -> list[str]:
     return dropped
 
 
+_TITLE_NUMBERING_MIN_RUN = 3
+
+
+def numbering_is_in_headings(blocks: list[Block]) -> bool:
+    """Does this document number its SECTIONS in its headings?
+
+    Gravissimum Educationis EN does: its twelve items are printed as
+    `<p><i><b>N. Title</b></i></p>` with unnumbered prose underneath, and
+    nowhere does a paragraph carry a number of its own. Quadragesimo Anno PT
+    looks identical block by block and means something entirely different --
+    its bold numbers run 1,2,3 / 1,3,4,5 / 1,2,3, a per-part outline that
+    RESTARTS, and reading them as section numbers fabricated five sections
+    out of an unnumbered document (it was withheld for that, and this is the
+    gate that stops the parser producing them in the first place).
+
+    One block can't tell the two apart, so the decision is made once for the
+    document, on three things:
+
+    - the numbered headings never go backwards. A GAP is fine -- Mortalium
+      Animos PT prints 2, 3, 8, 13, 14, 15, 17, 18 as headings and the
+      numbers in between inline, mid-prose, where _gap_block recovers them,
+      so demanding a complete run there cost seven real sections. A RESTART
+      is the fabrication signal: Quadragesimo Anno PT's bold numbers go
+      1, 2, 3 / 1, 3, 4, 5 / 1, 2, 3, a per-part outline that begins again
+      in each part, and reading it as section numbers invented five
+      sections for a document that numbers nothing (it was withheld for
+      exactly that, against an EN sibling with 148);
+    A document may use BOTH conventions at once and still be read correctly:
+    Mortalium Animos PT prints eight of its nineteen section numbers as
+    headings and the rest inline. So the presence of ordinary numbered
+    paragraphs is deliberately not disqualifying -- an earlier draft made it
+    so and cost that document seven sections.
+    - every heading between the first numbered one and the last is either
+      numbered itself or a ROMAN-numeral division. A section number names
+      the finest division a document has, so a heading of some other kind
+      underneath means the numbers are an outline over finer structure.
+      Miranda Prorsus EN is why: its "1. GENERAL INSTRUCTION" .. "4.
+      TELEVISION" run 1-4 contiguously and it numbers no paragraphs, so the
+      first two tests pass -- but fifteen unnumbered headings sit between
+      its 1 and its 2 ("PUBLICISING CHRISTIAN DOCTRINE", 'THE "GOOD SEED"',
+      ...), because those four are the encyclical's parts. Read as sections
+      they produced four ~18,000-character "paragraphs" against a PT
+      sibling that has none to check them by.
+
+      The Roman exemption is not a loophole: Redemptor Hominis, Laborem
+      Exercens and Dives in Misericordia all print "I. INHERITANCE",
+      "II. THE MYSTERY OF THE REDEMPTION" between their numbered sections,
+      and those are a COARSER tier above them, not a finer one underneath.
+      Requiring nothing at all between the numbers took all three to zero
+      sections -- 64 real ones lost -- which is what this clause prevents."""
+    numbered: list[int] = []
+    span: list[bool] = []  # is_numbered, per heading, in document order
+    allowed: list[bool] = []  # numbered, or a coarser Roman division
+    for b in blocks:
+        if b.is_heading:
+            m = _SECTION_TITLE_HEADING_RE.match(b.text)
+            span.append(m is not None)
+            allowed.append(
+                m is not None or _ROMAN_DIVISION_RE.match(b.text) is not None
+            )
+            if m is not None:
+                numbered.append(int(m.group(1)))
+    if len(numbered) < _TITLE_NUMBERING_MIN_RUN:
+        return False
+    if any(b <= a for a, b in itertools.pairwise(numbered)):
+        return False
+    lo, hi = span.index(True), len(span) - span[::-1].index(True)
+    return all(allowed[lo:hi])
+
+
+_ROMAN_DIVISION_RE = re.compile(r"^[IVXLCDM]+\s*\.\s")
+# Anchored on the period: "IN THE SERVICE OF TRUTH" and "MASS EDUCATION"
+# both open on letters that are also Roman digits, and neither is followed
+# by one.
+
+
 _SECTION_TITLE_HEADING_RE = re.compile(r"^(\d{1,4})\s*\.\s+")
 # Gravissimum Educationis EN's convention (see parse_document's heading
 # branch): a fully-bold block whose text is itself "N. Title" -- checked
@@ -3084,6 +3168,8 @@ def parse_document(
     compact = {lvl: i + 1 for i, lvl in enumerate(used)}
     heading_level = {k: compact[v] for k, v in heading_level.items()}
 
+    numbered_titles = numbering_is_in_headings(blocks)
+
     i, n = 0, len(blocks)
     while i < n:
         b = blocks[i]
@@ -3125,17 +3211,40 @@ def parse_document(
                 # fully-bold block matching this pattern at a position
                 # where the number is a legitimate continuation.
                 cand_title = int(title_m.group(1))
-                if state.last_n is None or cand_title == state.last_n + 1:
-                    state.finalize_open_section()
-                    state.start_section(
-                        cand_title,
-                        b.kind,
+                if numbered_titles and (
+                    state.last_n is None or cand_title == state.last_n + 1
+                ):
+                    # The heading is a HEADING, not the section's opening
+                    # words. Folding its title into the first prose block
+                    # (what this branch did originally) both left the
+                    # narrowed html unbalanced -- `strip_leading_number_html`
+                    # takes off the opening `<i><b>` with the number and
+                    # leaves the matching `</b></i>` behind -- and made EN
+                    # §1 open on "The Meaning of the Universal Right to an
+                    # Education All men of every race..." where its own PT
+                    # sibling opens on "Todos os homens...". PT prints these
+                    # same 12 titles as ordinary heading blocks, so treating
+                    # them as headings here is what makes the two editions
+                    # agree rather than a convention invented for EN.
+                    if state.pending_section_n is not None:
+                        state.anomalies.append(
+                            f"section {state.pending_section_n} read off a "
+                            f"'N. Title' heading never reached prose before "
+                            f"section {cand_title}'s heading"
+                        )
+                    state.push_heading(
+                        "sub",
+                        None,
                         b.text[title_m.end() :],
-                        strip_leading_number_html(b.html),
+                        heading_level.get(i, 1),
+                        ident=b.ident,
+                        subtitle=b.subtitle,
+                        title_html=heading_inner_html(
+                            strip_leading_number_html(b.html)
+                        ),
                     )
+                    state.pending_section_n = cand_title
                     state.last_n = cand_title
-                    state.pending_first_block = None
-                    state.pending_first_html = None
                     i += 1
                     continue
             # body_html is already trimmed to real content (see
@@ -3154,6 +3263,18 @@ def parse_document(
                 subtitle=b.subtitle,
                 title_html=heading_inner_html(b.html),
             )
+            i += 1
+            continue
+
+        if state.pending_section_n is not None:
+            # The prose under a "N. Title" heading. It carries no number of
+            # its own, so it would otherwise fall through to the unnumbered
+            # path and be swallowed as orphan content.
+            state.finalize_open_section()
+            state.start_section(state.pending_section_n, b.kind, b.text, b.html)
+            state.pending_section_n = None
+            state.pending_first_block = None
+            state.pending_first_html = None
             i += 1
             continue
 
@@ -3482,14 +3603,12 @@ def validate_document(
 # --------------------------------------------------------------------------
 
 PARSER_DEFEAT_NOTES: dict[str, str] = {
-    "vatii.gravissimum-educationis.en": (
-        "This document's numbered items are printed as bold 'N. Title' headings with "
-        "unnumbered prose underneath, not vatii's usual sequential 'N. body text' "
-        "paragraphs (confirmed live: Gravissimum Educationis EN specifically; its own PT "
-        "translation does NOT share this convention and parses cleanly). This is fixable "
-        "without re-crawling -- raw HTML is cached in corpus/raw/ -- but needs a "
-        "section-title-aware pass this parser does not yet have."
-    ),
+    # vatii.gravissimum-educationis.en's former entry here ("needs a
+    # section-title-aware pass this parser does not yet have") is obsolete:
+    # that pass exists -- see _SECTION_TITLE_HEADING_RE and the heading
+    # branch in parse_document -- and the document now parses to the same 12
+    # sections its PT sibling has, with the 12 titles as heading nodes on
+    # both sides. Removed rather than left to keep a fixed document withheld.
     "encyclical.pascendi-dominici-gregis.pt": (
         "NOT a parser gap and not fixable by better parsing: confirmed by direct "
         "inspection of the cached raw HTML that this page's whole content region "
@@ -3549,19 +3668,20 @@ PARSER_DEFEAT_NOTES: dict[str, str] = {
         "arabic numbers the source never printed."
     ),
     "encyclical.miranda-prorsus.en": (
-        "Not a total failure -- worth distinguishing from the zero-section "
-        "cases above: this page (Pius XII 1957, ~80K chars of real prose) captured only 4 of "
-        "what should be a much longer sequence (139 blocks logged as unnumbered orphan content, "
-        "a 35x orphan/section ratio -- see validate_document's orphan-ratio guard, which is what "
-        "flagged this as invalid rather than letting it pass as a deceptively small 'clean' "
-        "4-section document). The page is organized under a mix of italic mini-headings "
-        "('Motivos do interesse da Igreja', 'Precedentes da Encíclica', ...) and continuous "
-        "prose; footnotes use the standard `_ftnrefN` convention (so footnote resolution itself "
-        "is fine), but paragraph numbering is sparse/inconsistent rather than absent outright, "
-        "unlike the fully-unnumbered cases. A real fix would need this specific page's actual "
-        "numbering convention characterized paragraph-by-paragraph, not assumed from the 4 "
-        "matches found by accident -- not attempted here; left flagged rather than shipped as a "
-        "falsely-clean 4-section document."
+        "NOT a parser gap and not fixable by better parsing -- and no longer a PARTIAL failure "
+        "either, which is a correction to this entry rather than a change in the source. It "
+        "read 'captured only 4 of what should be a much longer sequence ... paragraph numbering "
+        "is sparse/inconsistent rather than absent outright'. That was wrong about the page. "
+        "The four are not sparse paragraph numbers: they are the encyclical's four PARTS -- "
+        "'1. GENERAL INSTRUCTION', '2. MOTION PICTURES', '3. RADIO', '4. TELEVISION' -- printed "
+        "as centered bold headings, with fifteen further unnumbered headings ('PUBLICISING "
+        "CHRISTIAN DOCTRINE', 'THE \"GOOD SEED\"', ...) between the first and the second alone. "
+        "Read as section numbers they produced four ~18,000-character 'paragraphs' and left 139 "
+        "blocks orphaned, which is what the orphan-ratio guard was reporting. This page (Pius "
+        "XII 1957, ~74K chars of real prose) numbers no paragraph anywhere; footnotes use the "
+        "standard `_ftnrefN` convention and would resolve fine. numbering_is_in_headings now "
+        "declines the four, so the parse is honestly empty instead of falsely divided. No "
+        "number to recover from either edition -- its PT sibling is unnumbered too."
     ),
     "encyclical.miranda-prorsus.pt": (
         "NOT a parser gap and not fixable by better parsing: same document as "
@@ -3583,18 +3703,20 @@ PARSER_DEFEAT_NOTES: dict[str, str] = {
     # document is still defeated or that 4-7 are genuinely unnumbered in
     # the source.
     "encyclical.quadragesimo-anno.pt": (
-        "This page (Pius XI 1931, the Rerum Novarum 40th-anniversary encyclical) opens with a "
-        "long unnumbered historical recap organized under bold/italic topic labels ('A Encíclica "
-        "«Rerum novarum»', 'Sua ocasião', 'Tópicos principais', ...) before its real numbered "
-        "content begins -- only sections 1-5 were captured (133 blocks logged as orphan content, "
-        "a 26.6x ratio -- see validate_document's orphan-ratio guard) against an EN sibling "
-        "running to 148 sections. Checked against the missing-<p>-after-a-block family fixed for "
-        "the 11 PT encyclicals in docs/research/vatican-documents.md §7.1 (and, discovered "
-        "alongside them, Mortalium Animos PT -- no longer a PARSER_DEFEAT_NOTES entry, see the "
-        "comment above this one): that fix's own re-parse left this document's section "
-        "count/range completely unchanged, so whatever breaks numbering resumption after section "
-        "5 here is a genuinely different, not-yet-characterized shape, not the same defect. Not "
-        "investigated past confirming that -- flagged rather than guessed at."
+        "NOT a parser gap and not fixable by better parsing. This entry used to say only "
+        "sections 1-5 were captured and that 'whatever breaks numbering resumption after "
+        "section 5 here is a genuinely different, not-yet-characterized shape'. It is now "
+        "characterized, and there was no resumption to break: this page (Pius XI 1931, the "
+        "Rerum Novarum 40th-anniversary encyclical, 104K chars) numbers no paragraph at all. "
+        "Its bold numbers belong to a per-part outline that begins again in each part -- "
+        "1, 2, 3 / 1, 3, 4, 5 / 1, 2, 3 ('1. - ACÇÃO DA IGREJA', '2. - ACÇÃO DA AUTORIDADE "
+        "CIVIL', ... then '1. - DO DIREITO DE PROPRIEDADE') -- and the five 'sections' were "
+        "the parser reading the first three and a later 4, 5 as a section sequence, which is "
+        "why 133 blocks landed in the orphan bucket against an EN sibling running to 148. "
+        "numbering_is_in_headings now rejects a restarting run, so the parse is honestly empty "
+        "rather than fabricating five addresses. Every number-like token in the body text is a "
+        "footnote marker, printed '( 9 )'. No number to recover; inventing one would be "
+        "fabrication."
     ),
 }
 

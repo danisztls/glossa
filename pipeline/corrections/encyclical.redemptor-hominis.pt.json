@@ -1,0 +1,14 @@
+[
+  {
+    "id": "redemptor-hominis.pt-heading-1-lost-number",
+    "locator": {
+      "raw_substring": "<p><b><i>No final do segundo Mil&eacute;nio</i></b></p>"
+    },
+    "field": "raw_text",
+    "from": "<p><b><i>No final do segundo Mil&eacute;nio</i></b></p>",
+    "to": "<p><b><i>1. No final do segundo Mil&eacute;nio</i></b></p>",
+    "reason": "The heading that opens section 1 is printed without its number, alone among the edition's twenty-two. Every other section heading on the page carries one -- '2. Primeiras palavras do novo Pontificado' through '22. A Mãe da nossa confiança' -- in the same '<p><b><i>N. Title</i></b></p>' form, so the omission is a defect in this one heading rather than a convention. The consequence is not cosmetic: with no number to open it, section 1's prose is claimed by nothing and drops out of the parse entirely, and validate_document reports 'numbering starts at 2, not 1'. What is lost is the encyclical's opening sentence, 'O Redentor do homem, Jesus Cristo, é o centro do cosmos e da história'. The correct value is not inferred from the sibling alone -- the surrounding headings fix it by themselves, since 2 follows it and nothing else can precede a 2 -- but the EN edition agrees.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__redemptor-hominis__pt.html: '<p align=\"center\"><b>I. HERAN&Ccedil;A</b></p> <p><b><i>No final do segundo Mil&eacute;nio</i></b></p> <p>O Redento...' against the next heading '<p><b><i>2. Primeiras palavras do novo Pontificado</i></b></p>'. corpus/raw/vatican-docs/encyclical__redemptor-hominis__en.html prints '1. At the close of the second Millennium' at the same position under 'I. INHERITANCE', and encyclical.redemptor-hominis.en parses to sections 1..22 against this edition's 2..22.",
+    "added": "2026-08-24"
+  }
+]

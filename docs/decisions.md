@@ -2201,3 +2201,93 @@ out rather than shown with invisible gaps. Still not built, and still worth
 saying: a whole-site lever. The 2026-08-16 correction stands — a rights request
 from Libreria Editrice Vaticana would concern nearly everything here at once,
 and this file is not that lever.
+
+## 2026-08-24 — A number in a heading: which documents mean it as an address
+
+`vatican_docs.py` had a branch for one document's convention: Gravissimum
+Educationis EN prints its twelve items as `<p><i><b>N. Title</b></i></p>` with
+unnumbered prose beneath, never as a bare `N. body text` paragraph. The branch
+fired on any bold heading opening with `N.` whose number continued the
+sequence, and it folded the title into the section's first prose block.
+
+Both halves of that were wrong, and the second was wrong in a way the corpus
+had been carrying for a while.
+
+**A heading is a heading.** Folding the title into the body left the stored
+`html` unbalanced — `strip_leading_number_html` takes off the opening `<i><b>`
+along with the number and leaves the matching `</b></i>` behind — and made
+Gravissimum Educationis EN §1 open on "The Meaning of the Universal Right to an
+Education All men of every race…" where its own PT sibling opens on "Todos os
+homens…". PT prints the same twelve titles as ordinary heading blocks, so
+reading them as headings is what makes the two editions agree; it is not a
+convention invented for the English. A `pending_section_n` on `ScrapeState`
+carries the number from the heading to the prose underneath, which is the one
+thing an ordinary numbered paragraph never needs: there, the number and the
+section's first words are in the same block.
+
+Six published documents gained a real table of contents from this — Redemptor
+Hominis EN/PT (5 nodes → 27/26), Laborem Exercens EN/PT (6/5 → 33/32), Dives in
+Misericordia EN (9 → 24), Gravissimum Educationis EN (2 → 14). Their section
+titles had been prose all along.
+
+**Divino Afflante Spiritu PT was worse than untidy.** Its first numbered
+heading became a phantom §1 whose entire content was `50° aniversário da
+encíclica " Providentissimus Deus "</i></b>`, and every real section after it
+was numbered one too high. Thirty Portuguese sections, all pointing at the
+wrong text, in a published work. §1 and §2 now line up with the English.
+
+### Which numbers are addresses
+
+The branch also fired where the numbers were never section numbers, and both
+cases were withheld for the damage rather than caught at the source.
+`numbering_is_in_headings` now decides once per document, on three things:
+
+- **at least three** numbered headings;
+- **they never go backwards.** A gap is fine: Mortalium Animos PT prints 2, 3,
+  8, 13, 14, 15, 17, 18 as headings and the rest of its numbers inline, where
+  `_gap_block` recovers them. A restart is the fabrication signal — Quadragesimo
+  Anno PT's bold numbers run 1, 2, 3 / 1, 3, 4, 5 / 1, 2, 3, a per-part outline
+  beginning again in each part, and the parser read the first three and a later
+  4, 5 as a section sequence. Five addresses invented for a document that
+  numbers nothing, against an EN sibling running to 148.
+- **every heading between the first numbered one and the last is numbered
+  itself, or a Roman-numeral division.** A section number names the finest
+  division a document has, so a heading of another kind underneath means the
+  numbers are an outline over it. Miranda Prorsus EN passes the first two tests
+  and fails this one: its 1–4 are the encyclical's parts (GENERAL INSTRUCTION,
+  MOTION PICTURES, RADIO, TELEVISION) with fifteen unnumbered headings between
+  the first and the second alone, and reading them as sections produced four
+  ~18,000-character "paragraphs". The Roman exemption is not a loophole —
+  Redemptor Hominis, Laborem Exercens and Dives in Misericordia all print
+  `I. INHERITANCE`, `II. THE MYSTERY OF THE REDEMPTION` between their numbered
+  sections, a **coarser** tier above them.
+
+Each clause is here because a draft without it cost something measured: the
+"no numbered paragraphs anywhere" clause an earlier draft carried cost
+Mortalium Animos PT seven sections, and requiring nothing at all between the
+numbers took Redemptor Hominis, Laborem Exercens and Dives in Misericordia to
+zero — 64 real sections — before a full re-parse caught it. That re-parse is the
+check: `works/` is tracked in the corpus repo, so the blast radius of a parser
+change is `git status` there, and nothing but the two fabricating documents
+lost a section.
+
+### Two source defects this uncovered, and the honest count
+
+Redemptor Hominis PT's opening heading is printed **without its number**, alone
+among the edition's twenty-two. With nothing to open it, §1's prose was claimed
+by nothing and left the corpus entirely — the loss was the encyclical's first
+sentence, "O Redentor do homem, Jesus Cristo, é o centro do cosmos e da
+história". Redemptor Hominis EN's marker for note 106 prints `06`. Both are
+`pipeline/corrections/` entries with the correct value fixed by the page itself
+(the surrounding headings run 2..22; the marker's own anchor resolves to the
+entry numbered 106, between 105 and 107) rather than inferred from the sibling,
+though the sibling agrees in both cases. Both editions now validate.
+
+**The withheld count went 9 → 8, and the two that stayed are differently
+described.** Their `PARSER_DEFEAT_NOTES` entries claimed partial failures with
+sparse or interrupted numbering; both now say plainly that the edition numbers
+no paragraph anywhere, because the sections we had were the parser's own
+misreading. The remaining eight are one kind of thing: **an edition that prints
+no paragraph numbers at all.** What to do about that is a schema question — the
+address a citation would use does not exist in the source — and it is not
+answered here.

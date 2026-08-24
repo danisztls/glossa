@@ -10,5 +10,17 @@
     "reason": "The source omits the space between the italic phrase 'munus regale' and the preposition 'of'. A browser renders the two flush ('regaleof'), so this is a defect in the HTML export, not a reading: the space is required by the sentence and no other reading is possible. Previously invisible because `strip_tags` substituted a space for every tag, which masked the gap; it now leaves emphasis tags empty (see its docstring), so the omission shows in the stored text.",
     "evidence": "corpus/raw/vatican-docs/encyclical__redemptor-hominis__en.html: '... that is to say his call to share in the kingly function-the <i>munus regale</i>of Christ himself<font face=\"Verdana\" size=\"2\">...'",
     "added": "2026-08-22"
+  },
+  {
+    "id": "redemptor-hominis.en-marker-106-lost-digit",
+    "locator": {
+      "raw_substring": "href=\"#%242Y\">06</a>"
+    },
+    "field": "raw_text",
+    "from": "href=\"#%242Y\">06</a>",
+    "to": "href=\"#%242Y\">106</a>",
+    "reason": "The footnote marker in section 16 prints '06' and has lost its leading digit. The correct value is fixed by the page itself, not inferred: the marker's own anchor pair ('-2Y' linking to '%242Y') resolves to the note entry the apparatus numbers 106, its neighbours in the body are 105 and 107 on the adjacent anchors '-2X' and '-2Z', and the note list runs 105, 106, 107 without a gap. No note numbered 06 exists anywhere on the page, which is why validate_document reported 'section 16: citations with no resolved text'. The defect is in the marker's visible digits only; the link is intact.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__redemptor-hominis__en.html, body: 'frustration and bitterness.<font face=\"Verdana\" size=\"2\"><sup><a name=\"-2Y\" href=\"#%242Y\">06</a></sup></font>.' between '<a name=\"-2X\" href=\"#%242X\">105</a>' and '<a name=\"-2Z\" href=\"#%242Z\">107</a>'; apparatus: '<a name=\"%242Y\" href=\"#-2Y\">106</a></b></font><font face=\"Verdana\" size=\"1\">. Cf. Pope John Paul II: <i>Homily at Santo...</i>' sitting between the entries numbered 105 (Cf. Lk. 16:19-31) and 107.",
+    "added": "2026-08-24"
   }
 ]
