@@ -539,8 +539,16 @@ def heading_inner_html(html: str) -> str:
             html = re.sub(r"</?b>", "", html)
         if is_full_italic(html):
             html = re.sub(r"</?i>", "", html)
+    # A <br/> inside a heading is where the SOURCE's measure ran out, not
+    # something the heading says. Lumen Gentium PT breaks its eighth chapter
+    # after `MÃE DE DEUS`, which is a line-wrap in the middle of one title and
+    # lands in the wrong place at any other width. The words are unchanged and
+    # `title` already joins them with a space; this stops `title_html` from
+    # carrying the source's page layout into ours. Recoverable from raw/, like
+    # every other typographic loss.
+    html = re.sub(r"<br\s*/?>", " ", html, flags=re.IGNORECASE)
     html = re.sub(r"\s+", " ", html).strip()
-    return html if re.search(r"<(?:i|b|br|sup)\b", html) else ""
+    return html if re.search(r"<(?:i|b|sup)\b", html) else ""
 
 
 def html_to_text(html: str) -> str:
@@ -1778,6 +1786,41 @@ def bare_division_label(text: str, lang: str) -> bool:
         if m:
             return probe[m.end() :].strip(" .:;-\u2014\u2013") == ""
     return bool(_PT_ORDINAL_LABEL_RE.match(fold(stripped)))
+
+
+def split_label_prefix(text: str, lang: str) -> tuple[str, str] | None:
+    """Split `CHAPTER I THE MYSTERY OF THE CHURCH` into its label and its name.
+
+    `merge_heading_lines` already does this when the source prints the two on
+    separate blocks, which is how the Portuguese edition of Lumen Gentium sets
+    its chapters -- `<p align="center"><b>CAPÍTULO I</b></p>` followed by
+    `<p align="center"><b>O MISTÉRIO DA IGREJA</b></p>`. The English edition
+    of the same document prints them inside ONE `<center>`, with the label
+    loose and the name in a nested `<p>`:
+
+        <center>
+          <font size="3"> <b>CHAPTER I </b> </font>
+          <font ...> <p><b> THE MYSTERY OF THE CHURCH</b></p></font>
+        </center>
+
+    `_BLOCK_RE` takes the `<center>` as a single block, so there are never two
+    lines to merge and all eight chapters came out with an empty `ident` and
+    the label welded to the front of the title.
+
+    Matched on the label patterns rather than on the markup, so it holds
+    however the two are wrapped. `fold` preserves length, so the offset from a
+    Portuguese match applies to the original string unchanged.
+    """
+    folded = fold(text) if lang == "pt" else text
+    for _kind, pat in LABEL_PATTERNS[lang]:
+        m = pat.match(folded)
+        if not m:
+            continue
+        ident, rest = text[: m.end()].strip(), text[m.end() :].strip(" .:;-\u2014")
+        # No name after the label is the ordinary merged case, already
+        # handled: `CHAPTER I` alone is the whole heading and stays the title.
+        return (ident, rest) if rest else None
+    return None
 
 
 def merge_heading_lines(
@@ -3092,6 +3135,12 @@ def parse_document(
     # A division's identifier, name and subtitle are printed as separate
     # paragraphs; they are one heading. See merge_heading_lines.
     toc_level, merged_headings = merge_heading_lines(blocks, lang, toc_level)
+    # A label and its name printed inside ONE block -- see split_label_prefix.
+    for blk in blocks:
+        if blk.is_heading and not blk.ident:
+            split = split_label_prefix(blk.text, lang)
+            if split is not None:
+                blk.ident, blk.text = split
     if merged_headings:
         state.anomalies.append(
             f"heading lines merged ({len(merged_headings)}): "
@@ -3238,14 +3287,24 @@ def parse_document(
     toc_floor: int | None = None
     division_floor: int | None = None
     division_style = 9
+    back_matter_style: int | None = None
     # The TOC floor governs the body only. A dateline or signature trailing
     # the last numbered paragraph is back matter, not a sub-section of
     # whatever the TOC listed last, and pushing it under one sends
     # magnifica-humanitas.pt's "Dado em Roma..." from h2 to h4.
-    numbered_idx = [
-        i for i, b in enumerate(blocks) if not b.is_heading and match_para_num(b.raw)
-    ]
-    body_end = numbered_idx[-1] if numbered_idx else len(blocks)
+    # The last block that could have OPENED a section, not merely the last one
+    # carrying a number. Lumen Gentium PT's `NOTA EXPLICATIVA PRÉVIA` is an
+    # appendix whose four points are printed `1.` .. `4.`; taking the last of
+    # those put `body_end` past every heading in the back matter, so nothing
+    # downstream could tell body from appendix. Numbers are accepted only
+    # while they increase, which is the gate the section walker itself uses.
+    body_end, _seen = len(blocks), 0
+    for i, b in enumerate(blocks):
+        if b.is_heading:
+            continue
+        pm = match_para_num(b.raw)
+        if pm is not None and pm[0] > _seen:
+            _seen, body_end = pm[0], i
     for idx, blk in enumerate(blocks):
         if not blk.is_heading:
             if match_para_num(blk.raw):
@@ -3339,6 +3398,24 @@ def parse_document(
         # nine and ten headings a level too deep. Lumen Gentium's Marian
         # sub-headings are `<p align="left"><b><i>` under a centred bold
         # division, which is the case this exists for.
+        if idx > body_end:
+            # BACK MATTER. Everything after the last numbered paragraph is
+            # appendix material -- Lumen Gentium PT's `PAPA PAULO VI`, the
+            # notifications read to the Council, the `NOTA EXPLICATIVA
+            # PRÉVIA`; the English edition prints an `APPENDIX` heading over
+            # the same matter. It is not a subsection of whatever division
+            # happened to come last, so the walk restarts here: the first such
+            # heading returns to the top tier and the rest rank against it by
+            # style, exactly as the body's own headings do.
+            if back_matter_style is None:
+                back_matter_style, lvl = blk.style, 1
+            else:
+                lvl = 1 if blk.style <= back_matter_style else 2
+            assigned.setdefault(key, lvl)
+            heading_level[idx] = lvl
+            prev_heading_idx = idx
+            last_level = lvl
+            continue
         if is_division(blk):
             division_floor, division_style = lvl, blk.style
         elif (

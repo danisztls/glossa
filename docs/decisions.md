@@ -2691,3 +2691,61 @@ filed string carries the source's markup and an oracle title does not.
 
 Ecclesiam Suam EN is clean. **Twelve oracles, one disagreeing**: Lumen Gentium
 PT's four trailing nodes, still one level too deep.
+
+## 2026-08-24 — A label welded to its title, a line break that is page layout, and back matter
+
+Three fixes from reading the corpus rather than the oracles.
+
+**A label and its name printed inside one block.** `merge_heading_lines` splits
+`ident` from `title` when the source prints them as two blocks, which is how
+Lumen Gentium PT sets its chapters. The **English** edition of the same
+document prints them inside one `<center>`, the label loose and the name in a
+nested `<p>` — so `_BLOCK_RE` takes the whole thing as a single block, there
+are never two lines to merge, and all eight chapters came out as
+`CHAPTER I THE MYSTERY OF THE CHURCH` with an empty `ident`.
+`split_label_prefix` matches the label patterns against the flattened text
+rather than the markup, so it holds however the two are wrapped. **118 headings
+across the corpus gained an `ident` they should always have had.**
+
+**A `<br/>` in a heading is where the source's measure ran out.** Lumen Gentium
+PT breaks its eighth chapter after `MÃE DE DEUS` — a wrap in the middle of one
+title, which lands in the wrong place at any other width. `title` already
+joined the words with a space; `title_html` was carrying the source's page
+layout into ours. Stripped, and with it the last `<br/>` in any heading in the
+corpus. Recoverable from `raw/`, like every other typographic loss. Note this
+is **not** the same judgement as the text of a heading: where two lines are two
+different things, both are still kept, joined by a space.
+
+**Back matter is not a subsection of whatever came last.** Everything after the
+last numbered paragraph — Lumen Gentium PT's `PAPA PAULO VI`, the notifications
+read to the Council, the `NOTA EXPLICATIVA PRÉVIA` — was ranking under chapter
+VIII. The walk now restarts there: the first such heading returns to the top
+tier and the rest rank against it by style.
+
+That required fixing `body_end`, which took the last block carrying a number
+rather than the last that could have opened a section. Lumen Gentium PT's own
+appendix numbers its four points `1.` .. `4.`, which put `body_end` past every
+heading in the back matter, so nothing downstream could tell body from
+appendix. Numbers are now accepted only while they increase, the same gate the
+section walker uses.
+
+The English edition shows what this is worth: it prints its own
+`APPENDIX From the Acts of the Council` heading, which now sits at the top tier
+with the notifications, the preliminary note and Felici's signature beneath it.
+The Portuguese prints **no** appendix heading, so nothing was synthesised for
+it — its three trailing nodes simply rank at the top instead of under a
+chapter. Inventing a heading the source does not print is the one thing this
+layer may not do.
+
+**Sixty-nine works changed, none gained or lost a node or a section.** Lumen
+Gentium PT: 4 oracle differences → 1.
+
+### One consequence to weigh, not silently absorbed
+
+Laudato Si' EN's two closing prayers follow §246 and are therefore back matter
+by this rule, so they moved from level 3 to level 1 — and its oracle, which
+already carries two corrections, now disagrees on them. **That is left
+standing rather than corrected a third time.** Appended prayers are plausibly
+appendix material and plausibly a final section; the source does not settle it,
+and bending the same oracle again to match each parser change is how an oracle
+stops being evidence.
