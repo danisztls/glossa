@@ -151,3 +151,52 @@ describe('linkifyInline', () => {
 		expect(link(html)).toEqual(parseInlineHtml(html));
 	});
 });
+
+/**
+ * `<a data-ref>` is the corpus stating a reference rather than the site
+ * guessing one out of prose — CCEL marks all 5,180 of the Summa's
+ * self-citations this way (`parseStoredRef`).
+ */
+describe('stored references', () => {
+	it('parses an anchor into a ref node carrying its address', () => {
+		const nodes = parseInlineHtml('as shown (<a data-ref="summa:I:74:2">Q[74], A[2]</a>)');
+		const ref = nodes.find((n) => n.kind === 'ref');
+		expect(ref).toBeDefined();
+		expect(ref!.kind === 'ref' && ref!.seg).toMatchObject({
+			kind: 'summa',
+			part: 'I',
+			question: 74,
+			article: 2
+		});
+		expect(inlineText(nodes)).toBe('as shown (Q[74], A[2])');
+	});
+
+	it('reads a question-level anchor as having no article', () => {
+		const nodes = parseInlineHtml('<a data-ref="summa:II-II:184">Q[184]</a>');
+		const ref = nodes[0];
+		expect(ref.kind === 'ref' && ref.seg.kind === 'summa' && ref.seg.article).toBe(null);
+	});
+
+	it('keeps the words and drops the wrapper for an address it cannot read', () => {
+		// What makes a corpus written by a newer scraper readable by an older
+		// site: an unknown work family degrades to text, never to an error.
+		const nodes = parseInlineHtml('see <a data-ref="quodlibet:3:1">Q[3]</a> here');
+		expect(nodes.some((n) => n.kind === 'ref')).toBe(false);
+		expect(inlineText(nodes)).toBe('see Q[3] here');
+	});
+
+	it('keeps a later prose citation at the right offset', () => {
+		// The regression this was written for: `linkifyInline` counted a
+		// `ref`'s text in its flattened string but not in its walk, so every
+		// span after a stored anchor landed short by that anchor's length.
+		const nodes = parseInlineHtml('<a data-ref="summa:I:1:1">Q[1], A[1]</a> and then Jn 3:16');
+		const linked = linkifyInline(nodes, (text) => {
+			const at = text.indexOf('Jn 3:16');
+			return [
+				{ kind: 'text', text: text.slice(0, at) },
+				{ kind: 'text', text: text.slice(at) }
+			];
+		});
+		expect(inlineText(linked)).toBe('Q[1], A[1] and then Jn 3:16');
+	});
+});

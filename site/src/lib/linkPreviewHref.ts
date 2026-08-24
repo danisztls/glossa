@@ -38,7 +38,20 @@ export type PreviewTarget =
 	| { kind: 'cccChapter'; n: number }
 	| { kind: 'compendium'; n: number }
 	| { kind: 'compendiumChapter'; n: number }
-	| { kind: 'document'; slug: string; n: number };
+	| { kind: 'document'; slug: string; n: number }
+	/**
+	 * A Summa question, or one article of it (`#a3`).
+	 *
+	 * ADDED BECAUSE THIS WORK CITES ITSELF CONSTANTLY: 5,180 of the links on
+	 * a Summa page point back into the Summa, which is more internal
+	 * cross-referencing than the rest of the corpus put together. A reader
+	 * following `Q[74], A[2]` mid-argument wants to see what it says without
+	 * losing their place — which is exactly the case the hover preview was
+	 * built for, and the reason the "an unanchored link is navigation, not a
+	 * quotable unit" rule that excludes `/documenta/{slug}` does not exclude
+	 * this one: a Summa question is a page, but it is also a unit.
+	 */
+	| { kind: 'summa'; part: string; question: number; article: number | null };
 
 // A fixed, obviously-fake origin: `URL`'s relative-reference constructor
 // needs *some* absolute base to resolve against, and its value is never
@@ -60,6 +73,8 @@ const COMPENDIUM_RE = /^\/compendium\/(\d+)$/;
 // which is a whole encyclical rather than a previewable unit, and only the
 // `#s{n}` anchor names something small enough to show in a popover.
 const DOCUMENT_RE = /^\/documenta\/([a-z0-9-]+)$/;
+const SUMMA_RE = /^\/summa\/([a-z-]+)\/(\d+)$/;
+const ARTICLE_ANCHOR_RE = /^#a(\d+)$/;
 const VERSE_SPAN_RE = /^(\d+)-(\d+)$/;
 const VERSE_ANCHOR_RE = /^#v(\d+)$/;
 const SECTION_ANCHOR_RE = /^#s(\d+)$/;
@@ -133,6 +148,25 @@ export function parsePreviewHref(href: string | null | undefined): PreviewTarget
 		// No anchor means the document as a whole — a link to the top of an
 		// entire encyclical, which is navigation rather than a quotable unit.
 		if (anchor) return { kind: 'document', slug: document[1], n: Number(anchor[1]) };
+	}
+
+	const summa = SUMMA_RE.exec(path);
+	if (summa) {
+		const question = Number(summa[2]);
+		// The part slug is NOT validated here, unlike in `bookmark-target.ts`:
+		// this module is deliberately corpus-free, and `resolvePreview` has to
+		// ask the corpus whether the address exists anyway. A slug that names
+		// no part simply resolves to nothing, which is the same "show nothing"
+		// a real address with no content gets.
+		if (question >= 1) {
+			const article = ARTICLE_ANCHOR_RE.exec(url.hash);
+			return {
+				kind: 'summa',
+				part: summa[1],
+				question,
+				article: article ? Number(article[1]) : null
+			};
+		}
 	}
 
 	return undefined;

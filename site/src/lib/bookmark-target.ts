@@ -75,10 +75,18 @@ export function parseBookmarkHref(href: string | null | undefined): BookmarkTarg
 /** Which section of the library a bookmark files under, and where that
  *  section sits. Every document gets its own section (`document:{slug}`),
  *  the way the "Cited in" panel names a work once and lists its references
- *  under it. */
+ *  under it.
+ *
+ *  THE SUMMA TOOK ORDER 3, PUSHING PRAYERS AND DOCUMENTS DOWN ONE. The
+ *  sequence is a shelf order, not an append log: Scripture, then the two
+ *  catechetical works, then the Summa beside them as the other doctrinal
+ *  text, then the devotional collection, then the document library last
+ *  because it is the section that grows without bound. Adding the Summa at
+ *  the end instead would have filed it after every encyclical a reader had
+ *  ever marked. */
 export function bookmarkGroup(target: BookmarkTarget): { key: string; order: number } {
-	if (target.kind === 'prayer') return { key: 'prayers', order: 3 };
-	if (target.kind === 'documentWhole') return { key: `document:${target.slug}`, order: 4 };
+	if (target.kind === 'prayer') return { key: 'prayers', order: 4 };
+	if (target.kind === 'documentWhole') return { key: `document:${target.slug}`, order: 5 };
 	switch (target.target.kind) {
 		case 'bible':
 			return { key: 'scripture', order: 0 };
@@ -89,6 +97,8 @@ export function bookmarkGroup(target: BookmarkTarget): { key: string; order: num
 		case 'compendiumChapter':
 			return { key: 'compendium', order: 2 };
 		case 'document':
-			return { key: `document:${target.target.slug}`, order: 4 };
+			return { key: `document:${target.target.slug}`, order: 5 };
+		case 'summa':
+			return { key: 'summa', order: 3 };
 	}
 }

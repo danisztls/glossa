@@ -133,6 +133,7 @@ import type {
 	ScriptureRef,
 	StructureNode,
 	DocumentNode,
+	SummaDivision,
 	SummaNode,
 	SummaQuestion,
 	WorkManifest,
@@ -1711,4 +1712,21 @@ export async function getSummaQuestionAsync(
 		(q) => q.part === part && q.n === n
 	);
 	return fetchTier(fixture, summaQuestionLocation(workId, summaPartSlug(part), n), undefined);
+}
+
+/**
+ * Plain text of a run of divisions, for an excerpt. Derived the same way
+ * `documentSectionText` derives a section's -- blocks walked through
+ * `parseInlineHtml` rather than regex-stripped, so the narrowed-HTML
+ * allowlist stays the one place that knows what markup the corpus carries.
+ *
+ * Per call rather than cached, and for the same reason: its only caller is
+ * the bookmark library's excerpt, which truncates immediately.
+ */
+export function summaDivisionsText(divisions: SummaDivision[]): string {
+	return divisions
+		.flatMap((division) => division.blocks.map((block) => inlineText(parseInlineHtml(block.html))))
+		.join(' ')
+		.replace(/\s+/g, ' ')
+		.trim();
 }

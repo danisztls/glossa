@@ -11,6 +11,9 @@ import {
 	getSummaQuestionAsync
 } from './corpus';
 import { parseRefs, refHref } from './refs';
+import { parseStoredRef } from './refs-grammar';
+import { parsePreviewHref } from './linkPreviewHref';
+import { summaRefLabel } from './summa-titles';
 import { isCanonicalPath, summaPartFromSlug, summaPartSlug } from './route-manifest';
 import type { RefSegment } from './refs-grammar';
 
@@ -240,5 +243,81 @@ describe('borrowed question titles', () => {
 		// Falls through to English, the only edition that carries the address.
 		const named = summaTitleFor('la', 'Suppl', 77);
 		expect(named === undefined || named.lang === 'en').toBe(true);
+	});
+});
+
+/**
+ * The Summa cites itself 5,180 times, and CCEL marks every one of those with
+ * an anchor naming its exact target. Those anchors are the corpus's only
+ * stored references — see `docs/corpus-schema.md`, and `parseStoredRef` for
+ * why this work's citations are the ones flat text cannot recover.
+ */
+describe('stored self-references', () => {
+	it('resolves an anchor to a link into the right article', () => {
+		const seg = parseStoredRef('summa:I:1:2', 'Q[1], A[2]');
+		expect(seg).toMatchObject({ kind: 'summa', part: 'I', question: 1, article: 2 });
+		expect(refHref(seg!, { lang: 'en' })).toBe('/summa/i/1#a2');
+	});
+
+	it('under-links an anchor whose address this corpus does not carry', () => {
+		// The source states a target; whether we HAVE it is a separate
+		// question, and `refHref` still answers it. A stored reference gets no
+		// more trust than a parsed one at the point of linking.
+		const seg = parseStoredRef('summa:I:74:2', 'Q[74], A[2]');
+		expect(seg).toMatchObject({ kind: 'summa', question: 74 });
+		expect(refHref(seg!, { lang: 'en' })).toBeUndefined();
+	});
+
+	it('resolves a question-level anchor to the question, with no fragment', () => {
+		const seg = parseStoredRef('summa:II-II:184', 'Q[184]');
+		expect(refHref(seg!, { lang: 'en' })).toBe('/summa/ii-ii/184');
+	});
+
+	it('reads every part siglum the source uses', () => {
+		const parts = ['I', 'I-II', 'II-II', 'III', 'Suppl'].map(
+			(p) => parseStoredRef(`summa:${p}:1:1`, 'raw')?.kind === 'summa'
+		);
+		expect(parts).toEqual([true, true, true, true, true]);
+	});
+
+	it('declines a payload it cannot read, rather than throwing', () => {
+		// An address written by a newer scraper, or a malformed one: the words
+		// stay, the link does not appear. Never an error.
+		expect(parseStoredRef('quodlibet:3:1', 'Q[3]')).toBeUndefined();
+		expect(parseStoredRef('summa:AP:1:1', 'Q[1]')).toBeUndefined();
+		expect(parseStoredRef('summa:I:0', 'Q[0]')).toBeUndefined();
+		expect(parseStoredRef('', '')).toBeUndefined();
+	});
+
+	it('unpicks the anchor brackets for display, and rewrites nothing else', () => {
+		expect(summaRefLabel('Q[74], A[2]')).toBe('Q 74, A 2');
+		expect(summaRefLabel('(A[3])')).toBe('(A 3)');
+		expect(summaRefLabel('FP, Q[22], AA[1]')).toBe('FP, Q 22, AA 1');
+		// Not renormalized to `q. 74, a. 2`: that would be rewriting the
+		// edition's words rather than removing an artifact of its markup.
+		expect(summaRefLabel('Q 74, A 2')).toBe('Q 74, A 2');
+	});
+});
+
+/** The hover preview, which this work earns more than any other. */
+describe('summa hover previews', () => {
+	it('previews a question and an article', () => {
+		expect(parsePreviewHref('/summa/ii-ii/184')).toEqual({
+			kind: 'summa',
+			part: 'ii-ii',
+			question: 184,
+			article: null
+		});
+		expect(parsePreviewHref('/summa/ii-ii/184#a3')).toEqual({
+			kind: 'summa',
+			part: 'ii-ii',
+			question: 184,
+			article: 3
+		});
+	});
+
+	it('declines an address with no question', () => {
+		expect(parsePreviewHref('/summa')).toBeUndefined();
+		expect(parsePreviewHref('/summa/ii-ii')).toBeUndefined();
 	});
 });

@@ -39,9 +39,14 @@ import {
 	documentSectionText,
 	documentSectionExists,
 	getCompendiumChapterFor,
+	getSummaQuestionAsync,
 	isUnpublished,
-	listCccChapters
+	listCccChapters,
+	summaDivisionsText,
+	summaWorkIdFor
 } from './corpus';
+import { summaPartFromSlug } from './route-manifest';
+import { summaQuestionLabel } from './summa-titles';
 import { content } from './content.svelte';
 import { i18n } from './i18n.svelte';
 import { displayTitle } from './titles';
@@ -118,6 +123,17 @@ function cacheKey(target: PreviewTarget): string | undefined {
 			const workId = content.documentWorkIdFor(target.slug);
 			if (!workId) return undefined;
 			return `document:${workId}:${target.n}`;
+		}
+		case 'summa': {
+			const part = summaPartFromSlug(target.part);
+			if (!part) return undefined;
+			// Keyed by the WORK the address resolves to, not by the reader's
+			// language: the Summa's edition falls back per address, so a Latin
+			// reader's `Suppl` previews come from English while the rest come
+			// from Latin, and one key per language would collide those.
+			const workId = summaWorkIdFor(content.langFor('summa'), part, target.question);
+			if (!workId) return undefined;
+			return `summa:${workId}:${part}:${target.question}:${target.article ?? ''}`;
 		}
 	}
 }
@@ -243,6 +259,55 @@ async function resolveDocument(
 	return { title, text: documentSectionText(section) };
 }
 
+/**
+ * One Summa question, or one article of it.
+ *
+ * THE WORK CITES ITSELF MORE THAN ANY OTHER IN THE CORPUS -- 5,180 internal
+ * cross-references, each one an argument leaning on an argument made
+ * elsewhere -- so this is the preview that earns its keep most: following
+ * `Q[74], A[2]` in the middle of a reply is exactly the case where a reader
+ * wants the text without losing their place.
+ *
+ * The citation is the scholastic form (`S.Th. II-II, q. 184, a. 3`), matching
+ * `bookmarkContent.ts`, and the excerpt is the article's BODY where the
+ * citation names one: `co.` is what a cross-reference to an article almost
+ * always means, and the objections that precede it are the position being
+ * argued against rather than what the article holds. Showing those first
+ * would preview the opposite of the point.
+ */
+async function resolveSummaUnit(
+	target: Extract<PreviewTarget, { kind: 'summa' }>
+): Promise<ResolvedUnit | undefined> {
+	const part = summaPartFromSlug(target.part);
+	if (!part) return undefined;
+	const workId = summaWorkIdFor(content.langFor('summa'), part, target.question);
+	if (!workId || isUnpublished(workId)) return undefined;
+	const question = await getSummaQuestionAsync(workId, part, target.question);
+	if (!question) return undefined;
+
+	const cite =
+		`S.Th. ${part}, q. ${target.question}` +
+		(target.article === null ? '' : `, a. ${target.article}`);
+
+	if (target.article !== null) {
+		const article = question.articles.find((a) => a.n === target.article);
+		if (!article) return undefined;
+		const body = article.divisions.filter((d) => d.kind === 'corpus');
+		return {
+			title: article.title ? `${cite} — ${article.title}` : cite,
+			text: summaDivisionsText(body.length > 0 ? body : article.divisions)
+		};
+	}
+
+	// A question-level citation previews the question's own prologue, which is
+	// where this work says what the question is about -- and is the only place
+	// the Latin edition says it at all, printing no titles.
+	return {
+		title: question.title ? `${cite} — ${summaQuestionLabel(question.title)}` : cite,
+		text: summaDivisionsText([{ kind: 'preamble', blocks: question.prologue }])
+	};
+}
+
 async function resolveUncached(target: PreviewTarget): Promise<ResolvedUnit | undefined> {
 	switch (target.kind) {
 		case 'bible':
@@ -257,6 +322,8 @@ async function resolveUncached(target: PreviewTarget): Promise<ResolvedUnit | un
 			return resolveCompendiumChapter(target.n);
 		case 'document':
 			return resolveDocument(target);
+		case 'summa':
+			return resolveSummaUnit(target);
 	}
 }
 

@@ -23,6 +23,7 @@ import {
 	isUnpublished,
 	listCanonicalBooks
 } from './corpus';
+import { summaPartFromSlug } from './route-manifest';
 import { content } from './content.svelte';
 import { resolveUnitText, type ResolvedUnit } from './linkPreviewContent';
 import type { BookmarkTarget } from './bookmark-target';
@@ -57,6 +58,11 @@ async function resolveDocumentWhole(slug: string): Promise<ResolvedUnit | undefi
 		text: opening ? documentSectionText(opening) : ''
 	};
 }
+
+/** The parts in the order the work prints them, for `sortKey`. Not
+ *  `SUMMA_PART_SLUGS`' key order, which is an object literal's and carries no
+ *  promise. */
+const SUMMA_PART_ORDER = ['I', 'I-II', 'II-II', 'III', 'Suppl'];
 
 /** Full text and citation for a bookmark. `undefined` for an address that no
  *  longer resolves -- a withheld work, a slug this edition doesn't carry, a
@@ -96,6 +102,12 @@ function sortKey(target: BookmarkTarget): [number, number, number] {
 			return [t.n, 0, 0];
 		case 'document':
 			return [t.n, 0, 0];
+		case 'summa': {
+			// Part first: question numbers restart at 1 in each part, so `n`
+			// alone would interleave five parts into one run of ones and twos.
+			const i = SUMMA_PART_ORDER.indexOf(summaPartFromSlug(t.part) ?? '');
+			return [i < 0 ? SUMMA_PART_ORDER.length : i, t.question, t.article ?? 0];
+		}
 	}
 }
 

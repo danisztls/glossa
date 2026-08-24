@@ -26,7 +26,7 @@
  * `escape_text_run` in `vatican_docs.py`.
  */
 
-import type { RefSegment } from './refs-grammar';
+import { parseStoredRef, type RefSegment } from './refs-grammar';
 
 export type InlineNode =
 	| { kind: 'text'; text: string }
@@ -36,13 +36,24 @@ export type InlineNode =
 	 *  same note is cited twice in one paragraph. */
 	| { kind: 'marker'; marker: string; seq: number }
 	| { kind: 'emphasis'; tag: 'i' | 'b' | 'sup'; children: InlineNode[] }
-	/** A run of text that `linkifyInline` resolved to a reference. Produced
-	 *  only by that function, so a tree straight from `parseInlineHtml` never
-	 *  contains one. */
+	/**
+	 * A run of text that resolved to a reference. Produced two ways, which is
+	 * a change: `linkifyInline` still makes one when it FINDS a citation in
+	 * prose, and `parseInlineHtml` now makes one when the corpus STATES a
+	 * reference, from `<a data-ref="…">`.
+	 *
+	 * The two are the same node on purpose. Everything downstream — `refHref`,
+	 * the renderers, the hover preview — cares what the reference addresses,
+	 * not how it was found, and a source that marked its own cross-references
+	 * up is strictly better evidence than a regex over its prose, not a
+	 * different kind of thing.
+	 */
 	| { kind: 'ref'; seg: RefSegment; children: InlineNode[] };
 
 const TAG = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
 const DATA_FN = /\bdata-fn="([^"]*)"/;
+/** The corpus address on an inline anchor — see `parseStoredRef`. */
+const DATA_REF = /\bdata-ref="([^"]*)"/;
 const EMPHASIS = new Set(['i', 'b', 'sup']);
 
 /** The three escapes `escape_text_run` produces, and no others. `&amp;` is
@@ -63,8 +74,23 @@ export function decodeTextRun(s: string): string {
  */
 export function parseInlineHtml(html: string): InlineNode[] {
 	const root: InlineNode[] = [];
-	const stack: { tag: string; children: InlineNode[] }[] = [];
+	// `seg` is set only on an `<a data-ref>` frame, and is what decides
+	// whether closing it yields a `ref` node or an `emphasis` one.
+	const stack: { tag: string; children: InlineNode[]; seg?: RefSegment }[] = [];
 	const top = () => (stack.length ? stack[stack.length - 1].children : root);
+
+	const closeFrame = (frame: { tag: string; children: InlineNode[]; seg?: RefSegment }) => {
+		const parent = stack.length ? stack[stack.length - 1].children : root;
+		if (frame.seg) {
+			parent.push({ kind: 'ref', seg: frame.seg, children: frame.children });
+		} else {
+			parent.push({
+				kind: 'emphasis',
+				tag: frame.tag as 'i' | 'b' | 'sup',
+				children: frame.children
+			});
+		}
+	};
 
 	let seq = 0;
 	let pos = 0;
@@ -95,7 +121,16 @@ export function parseInlineHtml(html: string): InlineNode[] {
 				continue;
 			}
 		}
-		if (!EMPHASIS.has(tag)) continue; // unknown tag: keep the text, drop the wrapper
+		// An anchor whose address this version cannot read is treated as an
+		// unknown tag: its words stay, its wrapper goes. That is what keeps a
+		// corpus written by a newer scraper readable by an older site.
+		let seg: RefSegment | undefined;
+		if (tag === 'a' && !closing) {
+			const address = DATA_REF.exec(attrs);
+			seg = address ? parseStoredRef(address[1], '') : undefined;
+			if (!seg) continue;
+		}
+		if (tag !== 'a' && !EMPHASIS.has(tag)) continue; // unknown tag: keep the text, drop the wrapper
 
 		if (closing) {
 			// Close the nearest matching opener; ignore it entirely if there
@@ -103,16 +138,10 @@ export function parseInlineHtml(html: string): InlineNode[] {
 			const at = stack.map((f) => f.tag).lastIndexOf(tag);
 			if (at === -1) continue;
 			while (stack.length > at) {
-				const frame = stack.pop() as { tag: string; children: InlineNode[] };
-				const parent = stack.length ? stack[stack.length - 1].children : root;
-				parent.push({
-					kind: 'emphasis',
-					tag: frame.tag as 'i' | 'b' | 'sup',
-					children: frame.children
-				});
+				closeFrame(stack.pop() as { tag: string; children: InlineNode[]; seg?: RefSegment });
 			}
 		} else {
-			stack.push({ tag, children: [] });
+			stack.push({ tag, children: [], seg });
 		}
 	}
 	if (pos < html.length) {
@@ -120,13 +149,7 @@ export function parseInlineHtml(html: string): InlineNode[] {
 		if (text) top().push({ kind: 'text', text });
 	}
 	while (stack.length) {
-		const frame = stack.pop() as { tag: string; children: InlineNode[] };
-		const parent = stack.length ? stack[stack.length - 1].children : root;
-		parent.push({
-			kind: 'emphasis',
-			tag: frame.tag as 'i' | 'b' | 'sup',
-			children: frame.children
-		});
+		closeFrame(stack.pop() as { tag: string; children: InlineNode[]; seg?: RefSegment });
 	}
 	return root;
 }
@@ -176,7 +199,6 @@ export function inlineText(nodes: InlineNode[]): string {
 	walk(nodes);
 	return out;
 }
-
 
 /**
  * Reference links found across the WHOLE block's text, not run by run.
@@ -234,6 +256,15 @@ export function linkifyInline(
 				out.push(node);
 			} else if (node.kind === 'emphasis') {
 				out.push({ ...node, children: walk(node.children) });
+			} else if (node.kind === 'ref') {
+				// A reference the CORPUS stated (`<a data-ref>`, parsed before
+				// this ever runs) is already resolved, so its interior is not
+				// re-linkified — but `pos` must still advance past its text, or
+				// every span after it in the block lands at the wrong offset.
+				// `inlineText` counts a `ref`'s children; this walk did not,
+				// which was harmless only while no `ref` could exist yet.
+				pos += inlineText([node]).length;
+				out.push(node);
 			} else {
 				out.push(node);
 			}

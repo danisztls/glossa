@@ -18,6 +18,7 @@
 	import { t } from '$lib/i18n.svelte';
 	import { linkifyInline, parseInlineHtml, type InlineNode } from '$lib/inline-html';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
+	import { summaRefLabel } from '$lib/summa-titles';
 	import type { SummaDivision } from '$lib/types';
 
 	interface Props {
@@ -88,21 +89,24 @@
   One recursive walk over each block's inline nodes, the same shape
   `CccParagraphText` uses. Nothing here emits an HTML string.
 -->
-{#snippet inline(nodes: InlineNode[])}
+{#snippet inline(nodes: InlineNode[], within?: string)}
 	{#each nodes as node, k (k)}
 		{#if node.kind === 'text'}
-			{node.text}
+			{within === 'summa' ? summaRefLabel(node.text) : node.text}
 		{:else if node.kind === 'ref'}
 			{@const href = hrefFor(node.seg)}
-			{#if href}<a class="inline-ref" {href}>{@render inline(node.children)}</a
-				>{:else}{@render inline(node.children)}{/if}
+			<!-- A self-citation the CORPUS states, from CCEL's own anchor — see
+			     `parseStoredRef`. Its text keeps the edition's words and loses
+			     the square brackets that were only ever markup (`summaRefLabel`);
+			     an unresolvable one still renders its words, never nothing. -->
+			{#if href}<a class="inline-ref" {href}>{@render inline(node.children, node.seg.kind)}</a
+				>{:else}{@render inline(node.children, node.seg.kind)}{/if}
 		{:else if node.kind === 'break'}
 			<br />
 		{:else if node.kind === 'emphasis'}
-			{#if node.tag === 'i'}<em>{@render inline(node.children)}</em
-				>{:else if node.tag === 'b'}<strong>{@render inline(node.children)}</strong>{:else}<sup
-					>{@render inline(node.children)}</sup
-				>{/if}
+			{#if node.tag === 'i'}<em>{@render inline(node.children, within)}</em
+				>{:else if node.tag === 'b'}<strong>{@render inline(node.children, within)}</strong
+				>{:else}<sup>{@render inline(node.children, within)}</sup>{/if}
 		{/if}
 	{/each}
 {/snippet}

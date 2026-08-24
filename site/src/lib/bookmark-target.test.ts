@@ -70,14 +70,51 @@ describe('bookmarkGroup', () => {
 		expect(bookmarkGroup(chapter).key).toBe('catechism');
 	});
 
-	it('orders scripture, catechism, compendium, prayers, then documents', () => {
+	// The Summa files with the doctrinal works rather than after them: the
+	// document library grows without bound, so appending a new work at the end
+	// would have buried it under every encyclical a reader had marked.
+	it('orders scripture, catechism, compendium, summa, prayers, then documents', () => {
 		const order = (href: string) => bookmarkGroup(parseBookmarkHref(href)!).order;
 		expect([
 			order('/scriptura/gen/1'),
 			order('/catechismus/1'),
 			order('/compendium/1'),
+			order('/summa/i/1'),
 			order('/preces/our-father'),
 			order('/documenta/lumen-gentium')
-		]).toEqual([0, 1, 2, 3, 4]);
+		]).toEqual([0, 1, 2, 3, 4, 5]);
+	});
+
+	it('files a question and one of its articles under one work', () => {
+		const question = parseBookmarkHref('/summa/ii-ii/184')!;
+		const article = parseBookmarkHref('/summa/ii-ii/184#a3')!;
+		expect(bookmarkGroup(question).key).toBe('summa');
+		expect(bookmarkGroup(article).key).toBe('summa');
+	});
+});
+
+/**
+ * The Summa reaches `BookmarkTarget` through `{kind:'unit'}` rather than a
+ * kind of its own. It briefly had one, on the reasoning that governs prayers
+ * and whole documents — that `linkPreviewHref` deliberately declines them.
+ * That stopped being true the moment the hover preview learned `/summa`
+ * (this work cites itself 5,180 times, which is what earned it one), so the
+ * separate kind was dead code the day it was written.
+ */
+describe('summa bookmarks', () => {
+	it('parses a question and an article fragment as units', () => {
+		expect(parseBookmarkHref('/summa/ii-ii/184')).toEqual({
+			kind: 'unit',
+			target: { kind: 'summa', part: 'ii-ii', question: 184, article: null }
+		});
+		expect(parseBookmarkHref('/summa/ii-ii/184#a3')).toEqual({
+			kind: 'unit',
+			target: { kind: 'summa', part: 'ii-ii', question: 184, article: 3 }
+		});
+	});
+
+	it('drops an address with no question number', () => {
+		expect(parseBookmarkHref('/summa/i')).toBeUndefined();
+		expect(parseBookmarkHref('/summa/i/0')).toBeUndefined();
 	});
 });

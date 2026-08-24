@@ -52,12 +52,13 @@
 		return [...byKey.values()].sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
 	});
 
-	// The four work-type headings deliberately reuse the nav labels rather than
-	// declaring their own strings: they name the same four works.
+	// The work-type headings deliberately reuse the nav labels rather than
+	// declaring their own strings: they name the same works.
 	function sectionTitle(key: string): string {
 		if (key === 'scripture') return t('nav.bible');
 		if (key === 'catechism') return t('nav.ccc');
 		if (key === 'compendium') return t('nav.compendium');
+		if (key === 'summa') return t('nav.summa');
 		if (key === 'prayers') return t('nav.prayers');
 		return documentGroupTitle(key.slice('document:'.length));
 	}

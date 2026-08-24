@@ -268,7 +268,48 @@ function normalizeSummaPart(token: string): SummaPartLabel | null {
 	const label = sides.length === 1 ? sides[0] : `${sides[0]}-${sides[1]}`;
 	// `II` alone is not a part: the Summa's second part is always cited as
 	// `I-II` or `II-II`, so a bare `II` is a mis-parse rather than an address.
-	return label === 'II' ? null : ((label as SummaPartLabel) satisfies SummaPartLabel);
+	return label === 'II' ? null : (label as SummaPartLabel satisfies SummaPartLabel);
+}
+
+/**
+ * A stored corpus address (`data-ref` on an inline anchor) as a reference
+ * segment.
+ *
+ * THE OTHER DIRECTION FROM EVERYTHING ELSE IN THIS FILE. The rest of this
+ * module reads references out of PROSE, where a citation is whatever a
+ * source's house style made of it and the parser's job is to guess well and
+ * to under-link when it cannot. This reads a reference the SOURCE ITSELF
+ * stated, so there is nothing to guess: CCEL marks each of the Summa's 5,180
+ * self-citations with an anchor naming its exact target (`#FP_Q74_A2`), and
+ * the scraper carries that across as `data-ref="summa:I:74:2"`.
+ *
+ * Which matters, because the visible text of those citations is not
+ * parseable in isolation. `Q[74], A[2]` names a question in whichever part
+ * happens to be printing it; `(A[3])` names an article of whichever question.
+ * A prose grammar would have to be handed the surrounding address and would
+ * still be guessing at `Q[3], AA[1]` and `Q[76] , A[2]`. The anchor simply
+ * says.
+ *
+ * `undefined` for anything this version does not know -- a work family added
+ * later, a malformed payload -- which is the same "no link, keep the words"
+ * outcome an unparseable citation gets, and never an error.
+ */
+export function parseStoredRef(address: string, raw: string): RefSegment | undefined {
+	const parts = address.split(':');
+	if (parts[0] !== 'summa') return undefined;
+	const part = normalizeSummaPart(parts[1] ?? '');
+	const question = Number(parts[2]);
+	if (!part || !Number.isSafeInteger(question) || question < 1) return undefined;
+	// A question-level anchor (`#FP_Q74`, 94 of them) carries no article, and
+	// yields the same `null` a citation naming only a question produces.
+	const article = parts.length > 3 ? Number(parts[3]) : NaN;
+	return {
+		kind: 'summa',
+		part,
+		question,
+		article: Number.isSafeInteger(article) && article >= 1 ? article : null,
+		raw
+	};
 }
 
 function findSummaAt(
