@@ -3147,3 +3147,107 @@ the pair. That destroyed Populorum Progressio PT's masthead — closing its
 anywhere `strip_leading_text_html` met a break before a closing tag. A `\b`
 after the name is what stops it, because there is no word boundary inside
 `br`. Caught by reading the sweep's diff, not by any test.
+
+## 2026-08-24 — Magnifica Humanitas in nine languages, and nine interface languages
+
+**What**: Leo XIV's `Magnifica Humanitas` (15 May 2026) is published on
+vatican.va in Arabic, German, English, Spanish, French, Italian, Polish,
+Portuguese and Russian. All nine are now in the corpus, and the interface is
+available in all nine.
+
+**Why this document and not a general policy**: crawling every translation of
+every document would be ~2,400 requests against a `Crawl-delay: 2` commitment,
+for editions in languages the site had no interface in. So `phase2` keeps
+`--langs en,pt` as its default and takes the wider set on request. Magnifica
+Humanitas is the one document asked for; the mechanism is general and the
+sweep is not.
+
+**The corpus is not the interface, and now it is short in both directions.**
+It already carried a content language nobody wants chrome in — Latin. It now
+carries eight interface languages the corpus has almost nothing in: an Italian
+reader gets Italian chrome and, for 420 of 421 works, the English text through
+`CONTENT_LANG_FALLBACK`. That is stated in `i18n.svelte.ts` rather than hidden,
+because the alternative is a reader who can read this encyclical in their own
+language having to navigate to it in someone else's.
+
+**Nine editions of one document is the best oracle in the corpus.** All nine
+carry sections 1–245 and 224 citations, and all nine put the five chapters at
+the same paragraphs (17, 46, 90, 131, 182) with the conclusion at 229. Two
+editions can tell you a defect exists; nine tell you which one is wrong, so
+`check_language_symmetry` now names the odd one out instead of reporting an
+EN/PT disagreement with no way to say which side moved.
+
+**What the seven new languages actually cost in the parser**, measured by a
+full re-parse: no `structure.json` or `sections.json` byte in any of the 352
+works already written changed. Four things had to generalise:
+
+- **Division labels are generated from vocabulary now, not written per
+  language.** Every language writes the noun and the number in some subset of
+  four arrangements (`CHAPTER I`, `Capitolo primo`, `II PARTE`, `ERSTES
+KAPITEL`), so `DIVISIONS` holds the nouns and the number-words and the
+  patterns are built from them. The Portuguese list had already been rewritten
+  twice this month, each time covering the forms one document happened to
+  print. Ordinals are read on both sides of the noun and cardinals only after
+  it, because `ONE PART OF THE CHURCH` is prose and `FIRST PART` is not.
+- **`fold` is not length-preserving, and Arabic is where that stops being
+  theoretical.** Its vowel marks are combining characters, so folding shortens
+  the string and every offset past one is short. `fold_index` translates a
+  match offset back; `_label_prefix_end` uses it rather than the caveat.
+- **The page says where its masthead ends, on the pages that say it.** The
+  identity rule — a leading block belongs to the masthead while it names the
+  document or its author — is a Latin-script rule wearing a general one's
+  clothes. Polish, Russian and Arabic open with a bare kind-word block
+  (`ENCYKLIKA`, `ЭНЦИКЛИКА`, `رسالة بابويّة عامّة`) naming neither, and localised
+  regnal names (`ЛЬВА XIV`) close the other route in; all three captured an
+  empty masthead. These nine pages print a rule of underscores between the
+  masthead and the body, and where a page prints one it outranks the guess —
+  the same precedence a printed table of contents already gets over inferred
+  heading levels. Exactly those nine pages of 468 print it, and six of them
+  already had the right masthead, so they are the regression check.
+- **A table of contents names a division by its label, not by its wording.**
+  The Italian and Russian editions list `CAPITOLO 1` / `ГЛАВА 1` and print
+  `Capitolo primo` / `ГЛАВА ПЕРВАЯ`, which no amount of text similarity
+  connects. Unmatched, the TOC levelled every sub-heading around the chapters
+  and left the chapters to the style walk, which ranked them _below_ their own
+  sections — both editions came out as five-chapter documents whose chapters
+  sat at levels 3 to 5.
+
+**Right-to-left is a property of the text, not of the reader.** `<html dir>`
+follows the interface language, which is right for the chrome and wrong for
+the text: an English reader opening the Arabic edition needs that text
+right-to-left inside a left-to-right page, and an Arabic reader needs the
+opposite for every other work. The reader pages already declare the content
+language on the region they render (74 places), so `app.css` derives direction
+from that declaration once rather than repeating it 74 times. The stylesheet
+was already written in logical properties; fifteen physical ones in ten
+component files were converted.
+
+**A defect the ninth language exposed**: `defaultDocumentWorkId` fell from "no
+edition in your language" straight to "the first one in the object". Invisible
+while every reader read one of the two languages every document had; with nine,
+a German reader opening Rerum Novarum landed on an edition chosen by insertion
+order. It goes through `editionInLang` now, like everything else.
+
+## 2026-08-24 — Where the source publishes only a PDF, we publish nothing
+
+**What**: `parse_document` now raises `StubPageError` when a parse yields no
+numbered section _and_ no unnumbered unit, and nothing is written.
+
+**Why**: `amoris-laetitia.en` is not a parse this scraper lost. The Holy See
+publishes that exhortation's English text as a PDF; its HTML page carries a
+sixteen-language bar, a six-line masthead, the words "DOWNLOAD PDF", and no
+document. The existing `STUB_CONTENT_MIN_CHARS = 300` guard measures the raw
+region _before_ the language bar and the masthead have been told apart from
+the text, and this page clears 300 on those alone — sixteen languages is a
+long bar. So the threshold stays as a cheap floor and the real question is
+asked of the result, where the answer is not a guess.
+
+**Zero sections alone is not the test and must not become it.** An edition
+that prints no paragraph numbers is a real document whose whole text lives in
+`appendix.json` — Pascendi PT, Quadragesimo Anno PT, Vigilanti Cura EN. Both
+halves have to be empty.
+
+Measured across every written work with a cached page: exactly one is
+affected. Its directory was removed; the Portuguese edition is unaffected and
+keeps its own source link, which is all the site ever promised for a text we
+do not hold.

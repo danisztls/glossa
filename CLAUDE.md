@@ -157,7 +157,7 @@ decides _when_ something runs.
   stay the record of what the source actually said. Overrides are the
   exception: before filing one, ask whether the defect belongs to one document
   or to a class of them. It has been a class nearly every time — the layer
-  holds 5 entries against a corpus of 339 works, all of them the same defect
+  holds 5 entries against a corpus of 421 works, all of them the same defect
   (a PT edition using `<blockquote>` to indent the document's own words),
   filed only because the sole discriminator is cross-language and the parser
   reads one document at a time. See `pipeline/overrides/README.md`.
@@ -297,13 +297,24 @@ are **edition divergence, not defects** — see `docs/research/bible-edition-div
 for the four kinds and why calling them defects invites someone to "fix" a
 faithful text.
 
-**Latin is a content language and not an interface language**, and the
-distinction is load-bearing rather than cosmetic. `UiLang` in
-`site/src/lib/i18n.svelte.ts` stays `'en' | 'pt'` (use `isUiLang`/`UI_LANGS`);
-`ContentLang` in `types.ts` is the wider set. `content.svelte.ts` keeps an
-edition override forever when its language is not a UI language, because no
-interface event can mean "the reader changed their mind about Latin" — see
-`docs/decisions.md`, 2026-08-23.
+**The interface languages and the content languages are two different sets,
+and neither contains the other.** `UiLang` in `site/src/lib/i18n.svelte.ts` is
+the nine Magnifica Humanitas is published in (use `isUiLang`/`UI_LANGS`, never
+a literal list — `app.css` and `app.html` each keep one by necessity and say
+so); `ContentLang` in `types.ts` adds Latin and drops nothing. Latin is the
+language nobody wants chrome in, and `content.svelte.ts` depends on the
+asymmetry: it keeps an edition override forever when that override's language
+is not a UI language, because no interface event can mean "the reader changed
+their mind about Latin" (`docs/decisions.md`, 2026-08-23). The other eight
+point the other way — interface languages the corpus has one work in — so a
+reader in any of them gets English content nearly everywhere through
+`CONTENT_LANG_FALLBACK` (2026-08-24).
+
+**Direction is a property of the text, not of the reader.** `<html dir>`
+follows the interface language; content regions get theirs from the `lang`
+they already declare, via two rules at the foot of `app.css`. Write CSS in
+logical properties (`margin-inline-start`, not `margin-left`) — the stylesheet
+is entirely logical and the components are now too.
 
 Citations may use Hebrew or Vulgate versification. The corpus canonicalizes on
 **Vulgate**; `site/src/lib/versification.ts` converts — the only implementation, since its Python twin went with `pipeline/build/` (see `docs/decisions.md`, 2026-08-21). Note that a wrong
