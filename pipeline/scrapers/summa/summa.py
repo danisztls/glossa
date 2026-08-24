@@ -77,6 +77,7 @@ from __future__ import annotations
 
 import argparse
 import html as htmllib
+import json
 import re
 import sys
 from datetime import UTC, datetime
@@ -790,12 +791,39 @@ def manifest_for(
     }
 
 
+def _retrieved_at(out_dir: Path, fetched: int) -> str:
+    """When this edition's source was actually RETRIEVED.
+
+    Not "when this ran". A re-parse serves every page from `raw/` and makes
+    no request at all, so stamping today would put a retrieval date in the
+    manifest for a retrieval that did not happen -- and provenance is the one
+    field in the manifest whose whole job is to be true. The project's stated
+    insurance policy is that capture regret is fixed by re-parsing rather than
+    re-crawling (`CLAUDE.md`), which means re-parses are the NORMAL case here,
+    not an edge one.
+
+    So: today when something was fetched, and otherwise whatever the previous
+    manifest recorded. A first run with a warm cache and no prior manifest has
+    no better answer than today, and says so by falling back to it.
+    """
+    if fetched:
+        return datetime.now(UTC).strftime("%Y-%m-%d")
+    try:
+        previous = json.loads((out_dir / "manifest.json").read_text(encoding="utf-8"))
+        sources = previous.get("sources") or []
+        if sources and sources[0].get("retrieved_at"):
+            return str(sources[0]["retrieved_at"])
+    except (OSError, ValueError, AttributeError, IndexError):
+        pass
+    return datetime.now(UTC).strftime("%Y-%m-%d")
+
+
 def write_outputs(
-    lang: str, questions: list[dict], structure: list[dict], notes: str
+    lang: str, questions: list[dict], structure: list[dict], notes: str, fetched: int
 ) -> bool:
     stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-    retrieved_at = datetime.now(UTC).strftime("%Y-%m-%d")
     out_dir = works_root() / f"summa.{lang}"
+    retrieved_at = _retrieved_at(out_dir, fetched)
 
     manifest = manifest_for(lang, questions, retrieved_at, notes)
     applied = _EN_APPLIED if lang == "en" else []
@@ -1165,7 +1193,7 @@ def main() -> int:
             print("(--dry-run: nothing written)")
         else:
             notes = EN_NOTES if lang == "en" else LA_NOTES
-            wrote = write_outputs(lang, questions, structure, notes)
+            wrote = write_outputs(lang, questions, structure, notes, fetches)
             print(f"output      : {'written' if wrote else 'unchanged'}")
         overall_ok = overall_ok and ok
 
