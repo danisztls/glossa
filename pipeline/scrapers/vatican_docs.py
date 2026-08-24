@@ -595,6 +595,36 @@ _CENTERED_RE = re.compile(
 )
 
 
+_INDENT_STYLE_RE = re.compile(
+    r"(?:margin|padding)-(?:left|inline-start)\s*:\s*(?!0)", re.IGNORECASE
+)
+_INDENT_NBSP_RE = re.compile(
+    r"^(?:\s|<[^>]+>)*(?:(?:&nbsp;|&#160;|&#[xX]0*[aA]0;)\s*){3,}"
+)
+
+
+def is_indented(outer_html: str, inner_html: str) -> bool:
+    """Did the source push this block in from the margin?
+
+    Two spellings, both found live: a `style="margin-left: 40px;"` on the
+    block (Dilexit Nos EN's Dante quotation), and a run of `&nbsp;` before
+    the first word (the same encyclical's John of the Cross verses, whose
+    <p> carries no style at all). Three or more, so an ordinary typographic
+    space or two is not read as an indent.
+
+    An indent means a QUOTATION here. `heading_style_rank` knows only
+    centred against flush-left, so without this the italic-run recovery
+    reads quoted verse -- short, fully italic, several in a row -- as a run
+    of sub-headings, which is exactly what it looks like to that pass.
+    `pipeline/overrides/README.md` records the mirror-image case, PT editions
+    using <blockquote> to indent the document's own words; the signal is the
+    same in both directions.
+    """
+    return bool(_INDENT_STYLE_RE.search(outer_html)) or bool(
+        _INDENT_NBSP_RE.match(inner_html)
+    )
+
+
 def heading_style_rank(outer_html: str, inner_html: str, is_center_tag: bool) -> int:
     """Rank a heading block by how it LOOKS, not by what it means.
 
@@ -1504,6 +1534,10 @@ class Block:
     # the ordinary one-line heading. See merge_heading_lines.
     ident: str = ""
     subtitle: str = ""
+    # The source indented this block. `heading_style_rank` models centred
+    # against flush-left and nothing else, so an indent is invisible to it --
+    # and in this corpus an indent means a quotation. See `is_indented`.
+    indented: bool = False
 
 
 def mark_and_split(raw: str, marker_template: str) -> tuple[str, str, str]:
@@ -2231,6 +2265,7 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
         and match_para_num(blk.raw) is None
         and _SECTION_TITLE_HEADING_RE.match(blk.text) is None
         and has_words(blk.text)
+        and not blk.indented
         and is_full_italic(blk.raw)
     ]
     if len(candidates) < _ITALIC_HEADING_MIN_RUN:
@@ -2331,6 +2366,7 @@ def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
         and match_para_num(b.raw) is None
         and _SECTION_TITLE_HEADING_RE.match(b.text) is None
         and has_words(b.text)
+        and not b.indented
     ]
     if len(candidates) < _ITALIC_HEADING_MIN_RUN:
         return []
@@ -2984,6 +3020,7 @@ def parse_document(
                 inner,
                 narrow_html(marked, dropped_tags),
                 heading_style_rank(m.group(0), inner, kind == "center"),
+                indented=is_indented(m.group(0), inner),
             )
         )
     # Trailing gap after the last block match (or the whole region, if
@@ -3107,6 +3144,18 @@ def parse_document(
         "BLESSING",
     }
 
+    # The shallowest division label the document actually prints. Gaudium et
+    # Spes says PART, Dei Verbum's top division is CHAPTER; front and back
+    # matter is a peer of whichever it is.
+    labelled_depths = [
+        _LABEL_DEPTH[matched[0]]
+        for b in blocks
+        if b.is_heading
+        for matched in [match_label(b.ident or b.text)]
+        if matched is not None and matched[0] in _LABEL_DEPTH
+    ]
+    top_label_depth = min(labelled_depths, default=_LABEL_DEPTH["part"])
+
     def depth_key(b: Block) -> tuple[int, int]:
         # `ident` when the heading has one: after merge_heading_lines, `text`
         # is the division's NAME and the label that ranks it is in `ident`.
@@ -3116,8 +3165,17 @@ def parse_document(
         # Front and back matter is unlabelled but top-level: a PREFACE is a
         # peer of PART I, not something beneath its sections. Ranking it by
         # appearance alone buried it under SECTION in Gaudium et Spes.
+        #
+        # Peer of the top division THIS document has, not of "part"
+        # unconditionally. Dei Verbum PT has no parts -- a PROÉMIO and six
+        # CAPÍTULOs, which are peers -- and pinning the prologue at part depth
+        # invented a tier above the chapters: every chapter came out at level
+        # 2, and because a chapter's first sub-heading is levelled from the
+        # chapter (the subtitle rule below), each one followed it down to 3
+        # while its siblings stayed at 2. Twelve of that document's oracle
+        # differences were those six pairs.
         if fold(b.text).strip(" .:;-") in _FRONT_BACK_MATTER:
-            return (0, _LABEL_DEPTH["part"])
+            return (0, top_label_depth)
         return (1, b.style)
 
     keys = sorted({depth_key(b) for b in blocks if b.is_heading})

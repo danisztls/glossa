@@ -2398,3 +2398,51 @@ contiguous 1..4 and the siblings sit together.
 The oracle is corrected in place with a `correction` field saying all of this,
 rather than silently edited. Laudato Si' EN now matches completely, and the
 count of oracles disagreeing with the parse is 6 → 5.
+
+## 2026-08-24 — An indent means a quotation, and front matter ranks against the document's own top division
+
+Two more heading-detection fixes, measured the same way as the last: full
+re-parse, `git status` in the corpus repo, `audit.py toc` against the twelve
+hand-read tables of contents. Oracles disagreeing with the parse: **6 → 3**.
+
+**An indented block is not a heading.** `heading_style_rank` models centred
+against flush-left and nothing else, so an indent is invisible to it — and in
+this corpus an indent means a quotation. Dilexit Nos EN quotes Dante in
+`<p style="margin-left: 40px;"><i>…</i></p>` and John of the Cross in
+`<p><i>&nbsp;&nbsp;… The wounded stag</i></p>`, four and three lines of verse,
+short and fully italic and consecutive, which is exactly what the italic-run
+recovery pass exists to find. Five of them were standing in `structure.json` as
+sub-headings.
+
+`is_indented` reads both spellings — a `margin-left`/`padding-left` on the
+block, or three or more leading `&nbsp;` so an ordinary typographic space is
+not mistaken for one — and both recovery passes skip an indented block.
+`pipeline/overrides/README.md` records the mirror-image case, PT editions using
+`<blockquote>` to indent the document's own words; the signal reads the same in
+both directions. Corpus-wide this touches 18 blocks in two documents: Dilexit
+Nos EN's seven verse lines, and eleven table-of-contents lines in Magnifica
+Humanitas PT that were never headings either. Dilexit Nos EN went from 8 oracle
+differences to 2, and it was the only document whose output changed.
+
+**Front matter is a peer of the top division the document actually has.**
+`depth_key` pinned a PREFACE/PROLOGUE/INTRODUCTION at `_LABEL_DEPTH["part"]`,
+which is right for Gaudium et Spes and wrong for every document with no parts
+in it. Dei Verbum PT has a PROÉMIO and six CAPÍTULOs, which are peers; ranking
+the prologue at part depth invented a tier above the chapters, so every chapter
+came out at level 2 — and because a chapter's first sub-heading is levelled
+from the chapter, each one followed it down to 3 while its siblings stayed at 2.
+All twelve of that document's oracle differences were those six pairs. It now
+takes the shallowest label depth the document prints, defaulting to part when it
+prints none.
+
+Thirty-one works re-levelled, **none lost a node**, and every one lost exactly
+one tier. Caritas in Veritate EN is the clearest: INTRODUCTION, six CHAPTERs and
+CONCLUSION, previously 1 / 2 / 1, now all at 1, which is what they are. Dei
+Verbum EN's seven nodes are its prologue and six chapters, now all at 1, which
+also makes its two editions agree at the top tier for the first time.
+
+Gaudium et Spes PT — the document the original rule was written for — keeps
+`PART` at part depth and is strictly improved: its introduction's sub-headings
+drop from 4 to 3, directly under the level-2 division that owns them. Its
+`PRIMEIRA PARTE` still sits at 2 against `INTRODUÇÃO` at 1, which is a separate
+pre-existing question this did not touch and no oracle covers.
