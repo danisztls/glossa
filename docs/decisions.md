@@ -3068,3 +3068,51 @@ citations array to resolve it against — the title came out `PROÉMIO⟦1⟧`.
 The note itself keeps its place in the footnote region and in `raw/`; what is
 lost is the reference _from the heading_, which is much the lesser loss against
 dropping the heading altogether.
+
+## 2026-08-24 — Portuguese numbers a division three ways
+
+`_PT_LABELS` matched one: the numeral after the noun, in roman (`PARTE II`).
+The corpus uses all three — before the noun (`II PARTE`, `1ª PARTE`), spelled
+out and leading (`PRIMEIRA PARTE`), and in arabic (`Secção 1`). Gaudium et
+Spes PT prints `PRIMEIRA PARTE` and `II PARTE` in the same document; Pascendi
+PT prints `1ª PARTE` and `II ª PARTE`.
+
+The cost was not a missing label but a missing TIER. `_LABEL_DEPTH` never saw
+a part in those documents, so `CAPÍTULO` ranked at the same level as the part
+containing it and the Part>Chapter>Section spine flattened. Gaudium et Spes PT
+had `PRIMEIRA PARTE`, `CAPÍTULO I` and `CAPÍTULO II` all at level 1.
+
+Two things about the matching are worth writing down:
+
+- **The ordinal indicator arrives folded to a lowercase letter.** `fold`
+  uppercases then normalises NFKD, `'ª'.upper()` is `'ª'`, and NFKD decomposes
+  it to a plain `a` — so `1ª PARTE` reaches these patterns as `1a PARTE`, one
+  lowercase character in an otherwise uppercased string.
+- **The ordinal words and the numeral-first form now live in `_PT_LABELS`
+  only.** They had been duplicated into `_label_prefix_end` as a side
+  mechanism. Keeping one question answered in two places is what cost a silent
+  no-op earlier the same day — a rule measured with `bare_division_label` and
+  implemented against `_label_prefix_end`, which disagreed about exactly these
+  forms.
+
+A third defect fell out of the same document: `PROÉMIO` was ranked by style
+rather than as front matter, because its block text still carried the `⟦1⟧`
+footnote token at ranking time and so missed `_FRONT_BACK_MATTER`.
+`push_heading` strips markers, but that runs after the level walk.
+
+Eleven Portuguese encyclicals gained a tier along with Gaudium et Spes:
+Mediator Dei's four PARTE headings moved to level 1 with their subsections
+following, and Pacem in Terris' sub-headings — previously scattered across
+levels 1 and 2, some of them peers of the parts themselves — are now uniformly
+level 3.
+
+**Against the oracles this reads worse, and honestly so.** Gaudium et Spes PT
+went from 47 differences to 63, because its reader recorded all ~92 italic
+"argument" headings at one flat level 4 on the "same printing, same level"
+rule, while the parser now nests each under whatever contains it — level 2
+under the PROÉMIO, 3 under a chapter. That reader flagged the choice as
+unresolved rather than picking silently, and it stays unresolved: the three
+things they reported as _defects_ are fixed, and the level of identically
+printed headings sitting inside different containers is a question about what
+a table of contents is for, not a parse bug. Populorum PT's two new
+differences are the same question in miniature.
