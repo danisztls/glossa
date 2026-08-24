@@ -158,6 +158,9 @@ def _is_heading_line(text: str, title: str) -> bool:
     )
 
 
+_MARKER_RE = re.compile(f"{V.MARK_OPEN}[^{V.MARK_CLOSE}]*{V.MARK_CLOSE}")
+
+
 def norm(s: str) -> str:
     return re.sub(r"\s+", " ", ihtml.unescape(s)).strip().lower()
 
@@ -170,6 +173,14 @@ def census(corpus: Path, work_id: str) -> dict:
     work = corpus / "works" / work_id
 
     body = body_region(page.read_text(encoding="utf-8", errors="replace"))
+    # The parser marks footnote references and then stores the text WITHOUT
+    # them, so a raw block reading "...Encyclical,[48] is not..." never
+    # matches the stored "...Encyclical, is not..." and every test below
+    # falls through to DROPPED. Three separate readers reported paragraphs as
+    # lost content on that basis alone. Marked here with the document's own
+    # template -- the same one `parse_document` detects -- so both sides of
+    # every comparison have their markers removed rather than one.
+    marker_template = V.detect_marker_template(body)
 
     kept_text = ""
     kept_blocks: set[str] = set()  # each stored block on its own, see `kept?` below
@@ -190,7 +201,7 @@ def census(corpus: Path, work_id: str) -> dict:
 
     rows = []
     for index, raw in enumerate(split_blocks(body)):
-        text = V.strip_tags(raw)
+        text = _MARKER_RE.sub("", V.strip_tags(V.mark_footnotes(raw, marker_template)))
         if not text:
             continue
         number = None

@@ -2917,3 +2917,67 @@ those as separate spans — so `CHAPTER VII` printed twice. `title_html` is the
 name's markup; `strip_leading_text_html` now removes the label from it wherever
 the label moves to `ident`, matching across tag boundaries because the two are
 routinely divided by markup (`APPENDIX <i>A DECLARATION…</i>`).
+
+## 2026-08-24 — What a source may set outside a heading's emphasis
+
+`is_full_bold` required a block's **entire** text to sit inside `<b>`, which is
+what stops a bold lead-in to an ordinary paragraph reading as a heading. It
+also meant a single character outside the run defeated it, and vatican.va puts
+one there constantly:
+
+    I. - <b><i>The Study of Scholastic Philosophy</i></b>
+    <b><i>A Encíclica «Rerum novarum»</i></b>.
+    <b>CHAPTER I</b> - <b>Title</b>
+
+Measured cost: Pascendi EN's entire REMEDIES I–VII list was absent from the
+corpus — not merely unlifted, gone — because the roman numeral sits outside
+the bold. The predicate now tolerates exactly two things outside the run: the
+**enumerator** a source prints in front, and the **punctuation** it closes
+with (or sets between two runs). Anything else still means prose. 16 headings
+came back across 8 works; no `sections.json` lost text.
+
+**The italic predicate takes neither tolerance, and that was learned twice.**
+Granting the enumerator cost Redemptoris Missio EN 9,318 characters: its
+`(a) <i>Territorial limits.</i>` sub-labels became headings, and a heading
+closes the open section, so §37's remaining prose was orphaned. Granting
+trailing punctuation promoted Sacerdotii EN's closing dateline to a level-1
+node. `is_full_italic`'s own docstring already said a lone italic block is
+presumed not to be a heading; it is the weaker signal, and widening the weaker
+signal is what turned a correct reading into lost text.
+
+Those `(a)` sub-labels **are** headings. What cannot hold them yet is the
+walk: `push_heading` finalizes the open section, so unnumbered prose after a
+mid-section heading has nowhere to go. That is the same defect behind
+Gravissimum Educationis' missing Introduction (~2,200 chars per edition, where
+`pending_first_block` is discarded on the heading-driven branch) and Rerum
+Novarum PT's ~4,800 characters between §5 and §6. One fix, three documents,
+and it changes what a section is allowed to contain — so it is its own
+decision, not a rider on this one.
+
+## 2026-08-24 — An oracle says whether its edition is numbered
+
+`before` is the number of the first numbered paragraph after a heading, and
+null already meant "trailing matter the numbered flow never reaches". Eight
+editions print no numbers at all, so every heading in their oracles is null
+for an entirely different reason. Both readers who wrote one raised this
+unprompted, and neither invented a field for it, which was the right call.
+
+Oracles now carry `"numbered": false`, and `audit.py toc` checks the claim in
+both directions rather than trusting it: a declared flag whose oracle still
+carries a `before` is a contradiction, and an edition with no sections whose
+oracle stays silent is reported until it says so. An undeclared flag is as
+easy to get wrong as an undeclared null.
+
+## 2026-08-24 — census.py stripped footnote markers from one side only
+
+Its last-resort test is `n[:60] in kept_text`. The parser turns a footnote
+reference into `<sup data-fn="N"></sup>` and stores nothing visible; the raw
+page prints `...Encyclical,[48] is not...`. So any paragraph carrying a marker
+in its first 60 characters failed every match and was reported `DROPPED`.
+
+Three readers independently reported paragraphs as lost content on that basis,
+and each had to verify by hand that the text was in fact present. The census
+now marks the raw block with the document's own template — the one
+`parse_document` detects — and removes the markers from both sides.
+Quadragesimo Anno EN went from 11 dropped blocks to 8, and the three that left
+were §83, §84 and §122.

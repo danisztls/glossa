@@ -568,34 +568,98 @@ def html_to_text(html: str) -> str:
 _BOLD_SPAN_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.DOTALL | re.IGNORECASE)
 
 
-def is_full_bold(inner_html: str) -> bool:
-    """True when the block's entire visible text sits inside <b>...</b> --
-    ccc.py's heading style detector, unchanged. See ccc.py for the caveat
-    this guards against (a bold *prefix* of an ordinary paragraph must not
-    read as a heading)."""
-    full_text = strip_tags(inner_html)
-    if not full_text:
-        return False
-    bold_text = strip_tags(" ".join(_BOLD_SPAN_RE.findall(inner_html)))
-    return bool(bold_text) and bold_text == full_text
-
-
 _ITALIC_SPAN_RE = re.compile(r"<(i|em)\b[^>]*>(.*?)</\1>", re.IGNORECASE | re.DOTALL)
+
+# What a source may set OUTSIDE a heading's emphasis run without the run
+# ceasing to cover the heading. Two things, and deliberately no more:
+#
+#   the ENUMERATOR it prints in front  -- `I. - <b><i>The Study of Scholastic
+#                                         Philosophy</i></b>`, `d) <i>Cristo é
+#                                         o "conservador"</i>`, `N.<b> Title</b>`
+#   the PUNCTUATION it closes with     -- `<b><i>A Encíclica «Rerum
+#                                         novarum»</i></b>.`
+#
+# and the same punctuation BETWEEN two runs, which is the long-documented
+# `<b>CHAPTER I</b> - <b>Title</b>` form. Anything else outside the run means
+# the emphasis is a bold lead-in to ordinary prose, not a heading, and the
+# test must keep saying no -- that caveat is why the predicate was written as
+# exact equality in the first place.
+_ENUM_OUTSIDE_RE = re.compile(
+    r"^[\s(\[]*(?:\d{1,4}|[IVXLCDM]{1,7}|[A-Za-z])[\s.)\]\u00ba\u00aa]*"
+    r"[-\u2013\u2014]?\s*$"
+)
+_PUNCT_OUTSIDE_RE = re.compile(r"^[\s.,;:\u2013\u2014-]*$")
+
+
+_BLANK_OUTSIDE_RE = re.compile(r"^\s*$")
+
+
+def _emphasis_covers(
+    inner_html: str, span_re: re.Pattern, tolerant: bool = False
+) -> bool:
+    """Does `span_re`'s emphasis cover this block's text, allowing a source's
+    enumerator and punctuation to sit outside it?
+
+    Measured cost of the old exact-equality form: Pascendi EN's entire
+    REMEDIES I-VII list vanished from the corpus, because the roman numeral
+    sits outside the `<b>`; Mystici Corporis PT lost two lettered
+    sub-headings the same way; Quadragesimo PT absorbed one into a paragraph
+    over a trailing period. All three are the source setting an enumerator or
+    a full stop outside the run it emphasises."""
+    spans = list(span_re.finditer(inner_html))
+    if not spans:
+        return False
+    covered = strip_tags("".join(m.group(0) for m in spans))
+    if not covered.strip():
+        return False
+    for a, b in itertools.pairwise(spans):
+        if not _PUNCT_OUTSIDE_RE.match(strip_tags(inner_html[a.end() : b.start()])):
+            return False
+    before = strip_tags(inner_html[: spans[0].start()])
+    after = strip_tags(inner_html[spans[-1].end() :])
+    outside = _PUNCT_OUTSIDE_RE if tolerant else _BLANK_OUTSIDE_RE
+    if not outside.match(after):
+        return False
+    if outside.match(before):
+        return True
+    return bool(tolerant and _ENUM_OUTSIDE_RE.match(before))
+
+
+def is_full_bold(inner_html: str) -> bool:
+    """True when the block's visible text sits inside <b>...</b> --
+    ccc.py's heading style detector, widened 2026-08-24 to allow the
+    enumerator and punctuation a source sets outside the run (see
+    `_emphasis_covers`). The caveat it still guards against is ccc.py's: a
+    bold *prefix* of an ordinary paragraph must not read as a heading."""
+    if not strip_tags(inner_html):
+        return False
+    return _emphasis_covers(inner_html, _BOLD_SPAN_RE, tolerant=True)
 
 
 def is_full_italic(inner_html: str) -> bool:
-    """True when the block's entire visible text sits inside <i>/<em>, the
-    italic counterpart of `is_full_bold`.
+    """True when the block's visible text sits inside <i>/<em>, the italic
+    counterpart of `is_full_bold`.
 
     Not a heading test on its own -- see `promote_italic_heading_run` for
-    why a single italic block is presumed NOT to be a heading."""
-    full_text = strip_tags(inner_html)
-    if not full_text:
+    why a single italic block is presumed NOT to be a heading. That weakness
+    is why it takes NEITHER tolerance `is_full_bold` has, and stays exact.
+    Both were measured and both cost more than they returned:
+
+    - the ENUMERATOR tolerance cost Redemptoris Missio EN 9,318 characters of
+      §37, whose `(a) <i>Territorial limits.</i>` sub-labels became headings,
+      closed the section, and left the prose beneath them orphaned. Those
+      sub-labels really are headings; what cannot yet hold them is the walk,
+      which has no way to keep a section open across one.
+    - the TRAILING-PUNCTUATION tolerance promoted Sacerdotii EN's closing
+      dateline, `<i>Given at Rome, at St. Peter's, on August 1, 1959...</i>.`,
+      to a level-1 node in the table of contents.
+
+    A heading whose emphasis is bold survives either mistake, because
+    `is_full_bold` sees it first. Until the walk can keep a section open
+    across a heading, the safer reading of a lone italic line is prose."""
+    if not strip_tags(inner_html):
         return False
-    ital = strip_tags(
-        " ".join(m.group(0) for m in _ITALIC_SPAN_RE.finditer(inner_html))
-    )
-    return bool(ital) and ital == full_text
+    return _emphasis_covers(inner_html, _ITALIC_SPAN_RE)
 
 
 _CENTERED_RE = re.compile(

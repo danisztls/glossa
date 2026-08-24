@@ -201,7 +201,7 @@ def read_toc_oracles(corpus: Path) -> dict[str, list[dict]]:
         return {}
     out = {}
     for path in sorted(root.glob("*.json")):
-        out[path.stem] = json.loads(path.read_text())["headings"]
+        out[path.stem] = json.loads(path.read_text())
     return out
 
 
@@ -323,13 +323,56 @@ def compare_toc(
     return problems
 
 
+def check_numbering_flag(corpus: Path, work_id: str, oracle: dict) -> list[str]:
+    """`numbered: false` must agree with the edition it describes.
+
+    `before` is the number of the first numbered paragraph after a heading,
+    and eight editions in this corpus print no numbers at all -- their whole
+    text lives in `appendix.json`, and every heading's `before` is null. Null
+    already meant something else, though: "this heading is trailing matter the
+    numbered flow never reaches" (docs/corpus-schema.md). A reader could not
+    tell the two apart, and both readers who wrote an oracle for an unnumbered
+    edition raised it unprompted.
+
+    So the file says which it is, and this checks the claim rather than
+    trusting it -- an undeclared flag is as easy to get wrong as an undeclared
+    null. A declared `numbered: false` whose oracle still carries a `before`
+    is a contradiction; an edition with no sections whose oracle stays silent
+    is the ambiguity this field exists to remove."""
+    problems = []
+    declared = oracle.get("numbered", True)
+    sections = corpus / "works" / work_id / "sections.json"
+    has_sections = sections.exists() and bool(json.loads(sections.read_text()))
+    if declared is False:
+        stray = [
+            h.get("title") for h in oracle["headings"] if h.get("before") is not None
+        ]
+        if stray:
+            problems.append(
+                f"NUMBERING oracle declares `numbered: false` but {len(stray)} "
+                f"heading(s) carry a `before`: {', '.join(repr(t) for t in stray[:3])}"
+            )
+        if has_sections:
+            problems.append(
+                "NUMBERING oracle declares `numbered: false` but the work has "
+                "numbered sections"
+            )
+    elif not has_sections:
+        problems.append(
+            "NUMBERING work has no numbered sections; its oracle should declare "
+            "`numbered: false` so a null `before` is not read as trailing matter"
+        )
+    return problems
+
+
 def report_toc(corpus: Path) -> int:
     oracles = read_toc_oracles(corpus)
     if not oracles:
         print("No ToC oracles yet (<corpus>/oracles/toc/). Nothing to compare.")
         return 0
     failing = 0
-    for work_id, read in sorted(oracles.items()):
+    for work_id, oracle in sorted(oracles.items()):
+        read = oracle["headings"]
         structure = corpus / "works" / work_id / "structure.json"
         if not structure.exists():
             print(f"{work_id}: oracle present but no structure.json")
@@ -348,6 +391,7 @@ def report_toc(corpus: Path) -> int:
             masthead,
             common.load_corrections(work_id),
         )
+        problems += check_numbering_flag(corpus, work_id, oracle)
         if problems:
             failing += 1
             print(

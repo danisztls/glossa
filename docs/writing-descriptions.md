@@ -168,6 +168,17 @@ common finding, not a failure — `rerum-novarum.en` (64 sections),
 genuinely undivided numbered prose, verified at raw level. Recording the empty
 result is what stops the next person re-deriving it.
 
+**An edition that prints no paragraph numbers declares `"numbered": false`**
+beside `work`/`read_on`/`source`. Eight editions in the corpus are typeset as
+continuous prose with no inline numbering at all; their text lives in
+`appendix.json` rather than `sections.json`, and every heading's `before` is
+null. Null already meant something else — "trailing matter the numbered flow
+never reaches" — so without the flag a reader cannot tell "there is no number
+to point at" from "this heading sits past the last one". `audit.py toc` checks
+the claim both ways: a declared flag whose oracle still carries a `before` is a
+contradiction, and an edition with no sections whose oracle stays silent is
+reported until it says so.
+
 **Never invent punctuation, and never invent a tier.** Three corrections have
 been filed against oracles already written, all of them the reader adding
 something the page does not print:
