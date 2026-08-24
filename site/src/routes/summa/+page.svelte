@@ -166,7 +166,7 @@
 
 	.q-number {
 		flex: 0 0 2.5rem;
-		text-align: right;
+		text-align: end;
 		color: var(--color-text-muted);
 		font-variant-numeric: tabular-nums;
 	}

@@ -132,8 +132,8 @@
 	 * which is how the work is actually read.
 	 */
 	.division.body {
-		border-left: 2px solid var(--color-border);
-		padding-left: 1rem;
+		border-inline-start: 2px solid var(--color-border);
+		padding-inline-start: 1rem;
 	}
 
 	/* The division's NAME is chrome, not text — it is ours, not the source's

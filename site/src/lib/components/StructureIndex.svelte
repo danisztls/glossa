@@ -208,7 +208,7 @@
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		color: var(--color-text-muted);
-		margin-right: 0.45em;
+		margin-inline-end: 0.45em;
 		white-space: nowrap;
 	}
 	.subs {

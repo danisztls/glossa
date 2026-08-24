@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { detectUiLang } from './i18n.svelte';
+import { detectUiLang, dictionaryFor, isRtl, UI_LANGS } from './i18n.svelte';
 
 describe('detectUiLang', () => {
 	it('uses the first supported browser preference', () => {
@@ -8,12 +8,55 @@ describe('detectUiLang', () => {
 	});
 
 	it('skips unsupported preferences in favour of a later supported one', () => {
-		expect(detectUiLang(['fr-FR', 'pt-PT', 'en-US'])).toBe('pt');
+		expect(detectUiLang(['sw-KE', 'pt-PT', 'en-US'])).toBe('pt');
 	});
 
 	it('falls back to English when there is no supported browser language', () => {
-		expect(detectUiLang(['fr-FR', 'es-ES'])).toBe('en');
+		expect(detectUiLang(['ja-JP', 'ko-KR'])).toBe('en');
 		expect(detectUiLang([])).toBe('en');
 		expect(detectUiLang(undefined)).toBe('en');
+	});
+
+	it('negotiates the languages added with Magnifica Humanitas', () => {
+		expect(detectUiLang(['de-AT'])).toBe('de');
+		expect(detectUiLang(['ar'])).toBe('ar');
+		expect(detectUiLang(['ja-JP', 'ru-RU', 'en-US'])).toBe('ru');
+	});
+});
+
+describe('UI_LANGS and the dictionaries', () => {
+	it('has a dictionary for every interface language', () => {
+		for (const lang of UI_LANGS) {
+			expect(Object.keys(dictionaryFor(lang)).length).toBeGreaterThan(0);
+		}
+	});
+
+	// Not "every dictionary is complete" — `t()` falls back to English per key
+	// on purpose, so a partial translation is a supported state. What must
+	// hold is that no translation invents a key English does not have, since
+	// such a key is unreachable and always a typo.
+	it('declares no key English does not have', () => {
+		const known = new Set(Object.keys(dictionaryFor('en')));
+		for (const lang of UI_LANGS) {
+			for (const key of Object.keys(dictionaryFor(lang))) {
+				expect(known, `${lang}: ${key}`).toContain(key);
+			}
+		}
+	});
+
+	// The placeholder is substituted by the caller with `.replace('{lang}',
+	// …)`, so a translation that drops or misspells it silently loses the
+	// language name from the sentence.
+	it('keeps the {lang} placeholder wherever English has one', () => {
+		for (const key of ['summa.titleFromEdition', 'summa.noEditionInYourLanguage']) {
+			for (const lang of UI_LANGS) {
+				const value = dictionaryFor(lang)[key];
+				if (value !== undefined) expect(value, `${lang}: ${key}`).toContain('{lang}');
+			}
+		}
+	});
+
+	it('marks Arabic, and only Arabic, as right to left', () => {
+		expect(UI_LANGS.filter(isRtl)).toEqual(['ar']);
 	});
 });

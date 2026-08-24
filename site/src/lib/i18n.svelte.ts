@@ -16,14 +16,27 @@
 import { readStoredString, writeStoredString } from './storage';
 
 /**
- * The languages the INTERFACE is available in — deliberately not the same set
- * as the languages the corpus ships CONTENT in. The Latin Bible
- * (`bible.clementina.la`) is a content language nobody wants chrome in, and
- * `content.svelte.ts` depends on being able to tell the two apart: an edition
- * pick whose language is not a UI language has no interface event that should
- * ever supersede it. See `docs/decisions.md`.
+ * The languages the INTERFACE is available in — still deliberately not the
+ * same set as the languages the corpus ships CONTENT in, in both directions
+ * now. Latin is a content language nobody wants chrome in
+ * (`bible.clementina.la`), and `content.svelte.ts` depends on being able to
+ * tell the two apart: an edition pick whose language is not a UI language has
+ * no interface event that should ever supersede it (`docs/decisions.md`).
+ *
+ * The seven added on 2026-08-24 point the other way — they are interface
+ * languages the corpus has almost no content in. Magnifica Humanitas is
+ * published in all nine and is, so far, the only work that is; a reader who
+ * picks Italian gets Italian chrome and, for every other work, the English
+ * text through `CONTENT_LANG_FALLBACK`. That is the honest state of it rather
+ * than a defect to hide: the alternative is a reader who can read the
+ * encyclical in their own language having to navigate to it in someone
+ * else's.
+ *
+ * Ordered as a reader scanning the language menu would want them, which is
+ * not the order they were added: English and Portuguese first because they
+ * are what the corpus is mostly in, then the rest by their own names.
  */
-export const UI_LANGS = ['en', 'pt'] as const;
+export const UI_LANGS = ['en', 'pt', 'de', 'es', 'fr', 'it', 'pl', 'ru', 'ar'] as const;
 
 export type UiLang = (typeof UI_LANGS)[number];
 
@@ -31,519 +44,65 @@ export function isUiLang(tag: string): tag is UiLang {
 	return (UI_LANGS as readonly string[]).includes(tag);
 }
 
+/**
+ * The interface languages written right to left.
+ *
+ * A list rather than a lookup against `Intl`, which has no stable API for
+ * this: `Intl.Locale.prototype.getTextInfo` is recent, unevenly shipped, and
+ * would be an awkward dependency for a question whose answer is one entry
+ * long and changes about once a decade.
+ */
+export const RTL_LANGS: readonly UiLang[] = ['ar'];
+
+export function isRtl(lang: UiLang): boolean {
+	return RTL_LANGS.includes(lang);
+}
+
+/**
+ * Put the chosen language on the document element, where CSS and the browser
+ * can see it.
+ *
+ * `lang` drives hyphenation, quote marks and font fallback; `dir` flips the
+ * whole layout, which the stylesheet is written for in logical properties
+ * (`margin-inline-start`, not `margin-left`) so that one attribute is all it
+ * takes. app.html sets both before first paint for the reader's stored or
+ * negotiated choice; this is what keeps them right when the choice changes,
+ * which nothing did while the only two options were both left-to-right.
+ */
+function applyDocumentLang(lang: UiLang): void {
+	if (typeof document === 'undefined') return;
+	document.documentElement.lang = lang;
+	document.documentElement.dir = isRtl(lang) ? 'rtl' : 'ltr';
+}
+
 const STORAGE_KEY = 'glossa:ui-lang';
 const DEFAULT_LANG: UiLang = 'en';
 
-type Dictionary = Record<string, string>;
+export type Dictionary = Record<string, string>;
 
-const dictionaries: Record<UiLang, Dictionary> = {
-	en: {
-		'nav.bible': 'Bible',
-		'nav.ccc': 'Catechism',
-		'nav.compendium': 'Compendium',
-		// "Magisterium" over "Documents"/"Magisterial Documents" — the name
-		// shown in the navbar and the home-page Library group; the route path
-		// stays `/documents` regardless (URL and display name needn't match,
-		// and `/documents` stays accurate as encyclicals/exhortations/CDF
-		// documents join the 16 Vatican II texts already here).
-		'nav.magisterium': 'Magisterium',
-		'nav.prayers': 'Prayers',
-		'nav.bookmarks': 'Bookmarks',
-		'nav.menu': 'Menu',
-		'home.title': 'Glossa Catholica',
-		'home.continueReading': 'Continue reading',
-		'home.works': 'Library',
-		// Home page's Catechism/Compendium section — see routes/+page.svelte's
-		// module docblock for why this is ONE table of contents, not two.
-		'home.ccc.heading': 'Catechism & Compendium',
-		'home.ccc.noCounterpart': 'No counterpart in the other work',
-		'home.magisterium.mostRecent': 'Latest',
-		'jumpbox.placeholder': 'Jump to… (e.g. john 3:16, ccc 1234)',
-		'jumpbox.short': 'Search',
-		'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
-		'jumpbox.noMatch': 'No match',
+import { ar } from './i18n/ar';
+import { de } from './i18n/de';
+import { en } from './i18n/en';
+import { es } from './i18n/es';
+import { fr } from './i18n/fr';
+import { it } from './i18n/it';
+import { pl } from './i18n/pl';
+import { pt } from './i18n/pt';
+import { ru } from './i18n/ru';
 
-		// Appearance menu — AppearanceMenu.svelte is the consumer; the dark-mode
-		// and sepia stores are theme.svelte.ts, the text size is prefs.svelte.ts.
-		// `sepia.lightOnly` is shown only while dark mode is actually active, to
-		// explain why the sepia switch beside it is greyed out — it shares that
-		// switch's row, so it has to stay to about fifteen characters.
-		// `oled.darkOnly` is the mirror of it, under the same length limit, and
-		// shows while LIGHT is what the reader is looking at.
-		// KEEP THE THREE `darkMode` OPTIONS SHORT. They are three cells of one
-		// full-width segmented control inside a ~13rem panel, set uppercase at
-		// 0.68rem, so a long word in any language pushes the panel wider.
-		'appearance.label': 'Appearance',
-		'darkMode.label': 'Dark mode',
-		'darkMode.auto': 'Auto',
-		'darkMode.on': 'On',
-		'darkMode.off': 'Off',
-		'sepia.label': 'Sepia',
-		'sepia.lightOnly': 'Light mode only',
-		'oled.label': 'OLED black',
-		'oled.darkOnly': 'Dark mode only',
-		'fontSize.label': 'Text size',
-		'fontSize.larger': 'Larger text',
-		'fontSize.smaller': 'Smaller text',
-		'print.label': 'Print this page',
+/**
+ * One module per language under `./i18n/`. A dictionary need not be complete
+ * — `t()` falls back to English key by key — so a language can ship with the
+ * chrome translated and a long colophon still in English, which is better
+ * than shipping it with a machine translation of a page about how carefully
+ * this site handles other people's words.
+ */
+const dictionaries: Record<UiLang, Dictionary> = { en, pt, de, es, fr, it, pl, ru, ar };
 
-		// Home-screen install — InstallButton.svelte (Chromium) and
-		// InstallHint.svelte (iOS); the gating lives in install.svelte.ts.
-		// The hint's instruction is split around the Share glyph because the
-		// icon sits mid-sentence and names a button on the reader's own screen.
-		// Both halves must be translated as one sentence, and the wording
-		// tracks Apple's own: iOS spells the entry "Add to Home Screen".
-		'install.label': 'Install Glossa',
-		'install.hint.label': 'Add to Home Screen',
-		'install.hint.title': 'Add Glossa to your Home Screen',
-		'install.hint.stepBefore': 'It opens like an app and reads offline. Tap',
-		'install.hint.stepAfter': 'then “Add to Home Screen”.',
-		'install.hint.dismiss': 'Dismiss',
-
-		// Edition/version selector — EditionMenu.svelte is the consumer; store is content.svelte.ts.
-		'edition.label': 'Edition',
-		'edition.select': 'Choose edition',
-		'edition.current': 'Current edition',
-
-		'bible.prevChapter': 'Previous chapter',
-		'bible.nextChapter': 'Next chapter',
-		'bible.pickBook': 'Books & chapters',
-		'bible.landing.title': 'The Bible',
-		'bible.landing.tagline': 'Read the whole Bible, book by book, chapter by chapter.',
-		'bible.landing.continue': 'Continue where you left off',
-		'bible.landing.start': 'Start reading',
-		'bible.landing.books': 'Books',
-		// The canonical book/chapter structure is edition-independent, so the
-		// picker can offer a chapter the reader's current edition lacks.
-		'bible.chapterUnavailable': 'Not available in this edition',
-		'bible.introduction': 'Introduction',
-		'bible.introUnavailable': 'No introduction in this language yet',
-		'bible.introSource': 'Introductions are not part of the scripture text.',
-		'bible.testament.ot': 'Old Testament',
-		'bible.testament.nt': 'New Testament',
-
-		'ccc.prevParagraph': 'Previous',
-		'ccc.nextParagraph': 'Next',
-		'ccc.inBrief': 'In Brief',
-		'ccc.landing.title': 'Catechism of the Catholic Church',
-		'ccc.landing.tagline': 'The complete Catechism.',
-		'ccc.tableOfContents': 'Table of Contents',
-		'ccc.related': 'See also',
-
-		// Compendium of the CCC — routes/compendium/** is the consumer.
-		'compendium.landing.title': 'Compendium of the Catechism',
-		'compendium.landing.tagline':
-			'Questions and answers summarizing the Catechism of the Catholic Church.',
-		'compendium.question': 'Question',
-		'compendium.answer': 'Answer',
-		'compendium.tableOfContents': 'Table of Contents',
-		'compendium.prevQuestion': 'Previous question',
-		'compendium.nextQuestion': 'Next question',
-		'compendium.condenses': 'Condenses CCC ¶¶',
-		'compendium.noQuestionNumber': 'No question number in this corpus',
-		'nav.summa': 'Summa',
-		'summa.landing.title': 'Summa Theologiae',
-		'summa.landing.tagline': 'Thomas Aquinas, in English and in the Latin he wrote.',
-		'summa.tableOfContents': 'Table of Contents',
-		'summa.part': 'Part',
-		'summa.question': 'Question',
-		'summa.article': 'Article',
-		// Abbreviated forms, for the sidebar's 17rem column and the landing
-		// page's question grid, where the word is repeated on every row and
-		// says nothing the position does not.
-		'summa.questionShort': 'Q',
-		'summa.articleShort': 'Art.',
-		'summa.titleFromEdition': 'Title from the {lang} edition',
-		'summa.prologue': 'Prologue',
-		// The division names are kept in the Latin every citation uses: a
-		// footnote reads `ad 3` and `co.`, and translating the heading would
-		// leave the reader to guess which paragraph the reference means.
-		'summa.objection': 'Objection',
-		'summa.sedContra': 'On the contrary',
-		'summa.corpus': 'I answer that',
-		'summa.reply': 'Reply to Objection',
-		'summa.preamble': 'Note',
-		'summa.prevQuestion': 'Previous question',
-		'summa.nextQuestion': 'Next question',
-		'summa.noEditionInYourLanguage': 'The Summa has no Portuguese edition. Shown in {lang}.',
-		'summa.noLatinSupplement':
-			'The Supplement exists in English only — it was compiled after Aquinas’ death.',
-		'index.showSubsections': 'Show subsections',
-		'index.hideSubsections': 'Hide subsections',
-
-		// Common Prayers (docs/corpus-schema.md §Prayers) — routes/prayers/**
-		// is the consumer, plus the home page's compact Prayers section.
-		'prayers.landing.title': 'Common Prayers',
-		'prayers.landing.tagline': 'Prayers with the Latin text alongside.',
-		'prayers.tableOfContents': 'Table of Contents',
-		'prayers.prevPrayer': 'Previous prayer',
-		'prayers.nextPrayer': 'Next prayer',
-		'home.prayers.heading': 'Prayers',
-		'home.prayers.browseAll': 'Browse all prayers',
-
-		// Reference tooltips/popovers — RefText.svelte is the consumer.
-		'ref.tooltip.loading': 'Loading…',
-		'ref.tooltip.openCcc': 'Open in Catechism',
-		'ref.tooltip.openBible': 'Open in Bible',
-		'ref.tooltip.openCompendium': 'Open in Compendium',
-		'ref.preview.open': 'Open',
-		'ref.cf': 'cf.',
-
-		// The unit-number popover and the bookmark library — AnchorMenu.svelte,
-		// BookmarkButton.svelte and routes/signata are the consumers. The
-		// library's section headings deliberately reuse `nav.*` rather than
-		// declaring their own: they name the same four works.
-		'anchor.actions': 'Reference actions',
-		'anchor.copy': 'Copy text',
-		'anchor.copyLink': 'Copy link',
-		'anchor.view': 'View',
-		'anchor.copied': 'Copied',
-		'anchor.copyFailed': "Couldn't copy",
-		'bookmark.add': 'Bookmark',
-		'bookmark.remove': 'Remove bookmark',
-		'bookmark.library': 'Bookmarks',
-		'bookmark.library.tagline': 'Everything you have marked while reading.',
-		'bookmark.empty': 'Nothing marked yet.',
-		'bookmark.emptyHint':
-			'Click a verse or paragraph number and choose Bookmark, or use the bookmark button on a page.',
-		'bookmark.deviceOnly':
-			'Bookmarks are kept in this browser only. They are not sent anywhere, and clearing your browser data removes them.',
-		'bookmark.unavailable': 'Not in the edition you are reading',
-
-		// Documents (encyclicals, conciliar constitutions/decrees/declarations,
-		// docs/corpus-schema.md §Documents) — routes/documents/** is the
-		// consumer, plus the home page's Magisterium group.
-		'document.library.tagline':
-			'Encyclicals, conciliar constitutions, decrees, and declarations of the Magisterium.',
-		'document.tableOfContents': 'Table of Contents',
-		'document.startReading': 'Start reading',
-		'document.readFullDocument': 'Read the full document',
-		'document.section': 'Section',
-		'document.prevSection': 'Previous',
-		'document.nextSection': 'Next',
-		'document.kind.conciliarConstitution': 'Constitution',
-		'document.kind.conciliarDecree': 'Decree',
-		'document.kind.conciliarDeclaration': 'Declaration',
-		'document.kind.encyclical': 'Encyclical',
-		'document.kind.apostolicExhortation': 'Apostolic Exhortation',
-		'document.kind.apostolicConstitution': 'Apostolic Constitution',
-		'document.kind.cdfDeclaration': 'CDF Declaration',
-		'document.kindPlural.conciliarConstitution': 'Constitutions',
-		'document.kindPlural.conciliarDecree': 'Decrees',
-		'document.kindPlural.conciliarDeclaration': 'Declarations',
-		'document.kindPlural.encyclical': 'Encyclicals',
-		'document.kindPlural.apostolicExhortation': 'Apostolic Exhortations',
-		'document.kindPlural.apostolicConstitution': 'Apostolic Constitutions',
-		'document.kindPlural.cdfDeclaration': 'CDF Declarations',
-
-		// A citation whose source text is a confirmed gap in the source page
-		// itself, not a parsing failure (docs/research/vatican-documents.md §6)
-		// — CccParagraphText.svelte's citation disclosure, shared by CCC and
-		// document sections.
-		'citation.unavailable': 'No source text available for this note.',
-
-		'colophon.title': 'Colophon',
-		'colophon.lede':
-			'What this site is, where its texts come from, and where we stand on reproducing them.',
-		'colophon.whatThisIs': 'What this is',
-		'colophon.whatThisIsBody':
-			'Glossa Catholica is a reading site for the Scriptures, the Catechism, the Compendium, and the documents of the Magisterium, in English and Portuguese. It exists to be read, and nothing else is asked of you for reading it:',
-		'colophon.pointFree': 'Free, and always free. No paywall, no subscription, nothing to buy.',
-		'colophon.pointNoAds': 'No advertising, and no sponsored placement of any kind.',
-		'colophon.pointNoAccounts': 'No accounts. Nothing to sign up for, nothing to log in to.',
-		'colophon.pointNoTracking':
-			'No analytics, no tracking scripts, no third-party code. The server that sends you these pages keeps ordinary request logs, as any web server does; nothing beyond that watches what you read.',
-		'colophon.pointOffline':
-			'Built to keep working offline once you have visited it, so a poor connection need not be a barrier to reading.',
-		'colophon.textsTitle': 'The texts',
-		'colophon.textsBody':
-			'Every text comes from a named source, and every work records its edition, its source page and the date it was retrieved. Scripture uses public-domain translations; the Catechism, the Compendium and the magisterial documents come from the Holy See\u2019s own published texts. We reproduce them unaltered \u2014 and where our copy of a work has turned out incomplete, we leave it out of the site rather than show you a text with gaps you cannot see.',
-		'colophon.countBible': 'Bible editions',
-		'colophon.countDocuments': 'magisterial documents',
-		'colophon.copyrightTitle': 'Copyright',
-		'colophon.copyrightBody1':
-			'The Catechism, the Compendium and the magisterial documents are the property of their rights holders \u2014 principally the Libreria Editrice Vaticana and the Dicastery for Communication. We reproduce them here without having asked permission first. We say so plainly rather than leave it to be discovered: this is a deliberate choice, not an oversight.',
-		'colophon.copyrightBody2':
-			'We make that choice because these texts are the Church\u2019s teaching, addressed to everyone, and because the concern rights holders have stated is the integrity of the text. So the text is never abridged, never paraphrased, never rewritten, and never placed beside advertising. We do repair plain defects in the published pages \u2014 a dropped word, a mangled citation, markup that swallowed a paragraph \u2014 always toward what the source itself prints, never toward what we might think it should say. We do not change its meaning, do not substitute our own wording, and do not annotate or editorialise. Every correction is recorded on its own, with the original, the replacement and the reason; nothing is ever changed silently. Each work displays its rights holder\u2019s own copyright notice, in their wording, and links to the page it was taken from.',
-		'colophon.copyrightBody3':
-			'If you hold rights in any text here and would rather it were not published, write to us and we will take it down promptly. No argument, and no need to involve anyone else first.',
-		'colophon.contactTitle': 'Contact',
-		'colophon.contactBody': 'For anything at all, including the above:',
-		'colophon.contactPending':
-			'A contact address has not been set yet. This site should not be made public until it has one \u2014 the commitment above is not meaningful without a way to reach us.',
-		'colophon.buildTitle': 'How it is made',
-		'colophon.buildBody':
-			'The texts are collected from their published sources, parsed into a structured corpus, and rendered as static pages. Corrections to source defects are recorded individually, with the original wording, the corrected wording, and the reason \u2014 no text is ever silently changed.',
-		'colophon.typeTitle': 'The type',
-		'colophon.typeBody':
-			'Set in EB Garamond, Georg Duffner and Octavio Pardo\u2019s revival of the types Claude Garamont cut in the 1590s \u2014 the humanist tradition the Church has printed in since the Renaissance. The opening initials are Pirata One, a blackletter whose capitals stay legible at the size a drop cap demands. Both are licensed under the SIL Open Font License and served from this site rather than from a third party, so reading a page asks nothing of anyone else\u2019s server.',
-		// One panel for every work that cites a verse — the Catechism and the
-		// magisterial documents together, so the verse is named once and
-		// everything citing it sits beside it. Each entry carries its own
-		// work's name, so the heading names no work at all.
-		'bible.citedIn': 'Cited in',
-		'bible.cccAbbrev': 'CCC',
-		'bible.wholeChapter': 'This chapter',
-		'bible.verseNotInEdition':
-			'This verse number is not in this edition — see the note in the page source',
-		'bible.verseAbbrev': 'v.',
-		'ccc.readFullChapter': 'Read the full chapter',
-		'ccc.noParagraphNumber': 'No paragraph number in this corpus',
-		'copyright.sourceTitle': 'Open the original source page',
-		'lang.label': 'Language',
-
-		// Static 404 — routes/404/+page.svelte, an ordinary SPA route (there is
-		// no build/404.html any more — the build emits only index.html and the
-		// offline fallback) reached directly or via +error.svelte for an
-		// invalid deep link, with src/worker.ts preserving the HTTP 404 status
-		// before the SPA starts. See that route file's own docblock.
-		'notFound.title': 'Nothing at this address',
-		'notFound.lede': 'The page you asked for is not here.',
-		'notFound.body':
-			'The link may be mistyped or out of date, or it may point to a text this site does not carry. Nothing here is behind a login or a paywall, so if a page exists, it can be reached.',
-		'notFound.searchHint':
-			'If you know the reference you want — a book and chapter, a paragraph of the Catechism — type it into the search box at the top of this page.',
-		'notFound.elsewhere': 'Or start from one of these:',
-		'notFound.home': 'Home',
-
-		// Compare mode (side-by-side, unit-aligned comparison) — CompareToggle.svelte
-		// and CompareGrid.svelte are the consumers.
-		'compare.enter': 'Compare editions',
-		'compare.exit': 'Exit comparison',
-		'compare.missing': 'Not present in this edition',
-		'compare.versificationNote':
-			'These two editions divide this chapter’s verses differently in places (a textual variant, not a translation choice) — the same verse number does not always mark the same sentence in both columns.',
-		'compare.loading': 'Loading the second language…'
-	},
-	pt: {
-		'nav.bible': 'Bíblia',
-		'nav.ccc': 'Catecismo',
-		'nav.compendium': 'Compêndio',
-		'nav.magisterium': 'Magistério',
-		'nav.prayers': 'Orações',
-		'nav.bookmarks': 'Marcadores',
-		'nav.menu': 'Menu',
-		'home.title': 'Glossa Catholica',
-		'home.continueReading': 'Continuar lendo',
-		'home.works': 'Biblioteca',
-		'home.ccc.heading': 'Catecismo e Compêndio',
-		'home.ccc.noCounterpart': 'Sem correspondência na outra obra',
-		'home.magisterium.mostRecent': 'Mais recente',
-		'jumpbox.placeholder': 'Ir para… (ex: jo 3,16, ccc 1234)',
-		'jumpbox.short': 'Buscar',
-		'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
-		'jumpbox.noMatch': 'Nenhum resultado',
-
-		'appearance.label': 'Aparência',
-		'darkMode.label': 'Modo escuro',
-		// 'Auto', not 'Automático': see the note in the English dictionary — the
-		// three share one segmented control, and 'AUTOMÁTICO' set uppercase is
-		// wider than the cell that holds it.
-		'darkMode.auto': 'Auto',
-		'darkMode.on': 'Ligado',
-		'darkMode.off': 'Desligado',
-		'sepia.label': 'Sépia',
-		'sepia.lightOnly': 'Só no modo claro',
-		'oled.label': 'Preto OLED',
-		'oled.darkOnly': 'Só no modo escuro',
-
-		'fontSize.label': 'Tamanho do texto',
-		'fontSize.larger': 'Aumentar texto',
-		'fontSize.smaller': 'Diminuir texto',
-		'print.label': 'Imprimir esta página',
-
-		// "Ecrã Principal" and "Adicionar ao Ecrã Principal" are iOS's own
-		// pt-PT wording — the reader is being told to find that exact entry in
-		// their share sheet, so the string has to match what Apple prints
-		// there rather than read as a natural translation of the English.
-		'install.label': 'Instalar a Glossa',
-		'install.hint.label': 'Adicionar ao Ecrã Principal',
-		'install.hint.title': 'Adicione a Glossa ao seu Ecrã Principal',
-		'install.hint.stepBefore': 'Abre como uma aplicação e lê-se sem ligação. Toque em',
-		'install.hint.stepAfter': 'e depois em «Adicionar ao Ecrã Principal».',
-		'install.hint.dismiss': 'Dispensar',
-
-		'edition.label': 'Edição',
-		'edition.select': 'Escolher edição',
-		'edition.current': 'Edição atual',
-
-		'bible.prevChapter': 'Capítulo anterior',
-		'bible.nextChapter': 'Próximo capítulo',
-		'bible.pickBook': 'Livros e capítulos',
-		'bible.landing.title': 'A Bíblia',
-		'bible.landing.tagline': 'Leia toda a Bíblia, livro por livro, capítulo por capítulo.',
-		'bible.landing.continue': 'Continuar de onde parou',
-		'bible.landing.start': 'Começar a leitura',
-		'bible.landing.books': 'Livros',
-		'bible.chapterUnavailable': 'Não disponível nesta edição',
-		'bible.introduction': 'Introdução',
-		'bible.introUnavailable': 'Ainda não há introdução nesta língua',
-		'bible.introSource': 'As introduções não fazem parte do texto da Escritura.',
-		'bible.testament.ot': 'Antigo Testamento',
-		'bible.testament.nt': 'Novo Testamento',
-
-		'ccc.prevParagraph': 'Anterior',
-		'ccc.nextParagraph': 'Próximo',
-		'ccc.inBrief': 'Resumindo',
-		'ccc.landing.title': 'Catecismo da Igreja Católica',
-		'ccc.landing.tagline': 'O Catecismo completo.',
-		'ccc.tableOfContents': 'Índice',
-		'ccc.related': 'Veja também',
-
-		'compendium.landing.title': 'Compêndio do Catecismo',
-		'compendium.landing.tagline':
-			'Perguntas e respostas que resumem o Catecismo da Igreja Católica.',
-		'compendium.question': 'Pergunta',
-		'compendium.answer': 'Resposta',
-		'compendium.tableOfContents': 'Índice',
-		'compendium.prevQuestion': 'Pergunta anterior',
-		'compendium.nextQuestion': 'Próxima pergunta',
-		'compendium.condenses': 'Condensa os §§',
-		'compendium.noQuestionNumber': 'Sem número de pergunta neste corpus',
-		'nav.summa': 'Suma',
-		'summa.landing.title': 'Suma Teológica',
-		'summa.landing.tagline': 'Tomás de Aquino, em inglês e no latim em que escreveu.',
-		'summa.tableOfContents': 'Índice',
-		'summa.part': 'Parte',
-		'summa.question': 'Questão',
-		'summa.article': 'Artigo',
-		'summa.questionShort': 'Q',
-		'summa.articleShort': 'Art.',
-		'summa.titleFromEdition': 'Título da edição em {lang}',
-		'summa.prologue': 'Prólogo',
-		'summa.objection': 'Objecção',
-		'summa.sedContra': 'Em sentido contrário',
-		'summa.corpus': 'Respondo que',
-		'summa.reply': 'Resposta à objecção',
-		'summa.preamble': 'Nota',
-		'summa.prevQuestion': 'Questão anterior',
-		'summa.nextQuestion': 'Questão seguinte',
-		'summa.noEditionInYourLanguage': 'A Suma não tem edição portuguesa. Apresentada em {lang}.',
-		'summa.noLatinSupplement':
-			'O Suplemento existe apenas em inglês — foi compilado após a morte de Tomás de Aquino.',
-		'index.showSubsections': 'Mostrar subsecções',
-		'index.hideSubsections': 'Ocultar subsecções',
-
-		'prayers.landing.title': 'Orações Comuns',
-		'prayers.landing.tagline': 'Orações com o texto em latim ao lado.',
-		'prayers.tableOfContents': 'Índice',
-		'prayers.prevPrayer': 'Oração anterior',
-		'prayers.nextPrayer': 'Próxima oração',
-		'home.prayers.heading': 'Orações',
-		'home.prayers.browseAll': 'Ver todas as orações',
-
-		'ref.tooltip.loading': 'Carregando…',
-		'ref.tooltip.openCcc': 'Abrir no Catecismo',
-		'ref.tooltip.openBible': 'Abrir na Bíblia',
-		'ref.tooltip.openCompendium': 'Abrir no Compêndio',
-		'ref.preview.open': 'Abrir',
-		'ref.cf': 'cf.',
-
-		'anchor.actions': 'Ações da referência',
-		'anchor.copy': 'Copiar texto',
-		'anchor.copyLink': 'Copiar endereço',
-		'anchor.view': 'Ver',
-		'anchor.copied': 'Copiado',
-		'anchor.copyFailed': 'Não foi possível copiar',
-		'bookmark.add': 'Marcar',
-		'bookmark.remove': 'Remover marcador',
-		'bookmark.library': 'Marcadores',
-		'bookmark.library.tagline': 'Tudo o que marcou durante a leitura.',
-		'bookmark.empty': 'Ainda não há nada marcado.',
-		'bookmark.emptyHint':
-			'Clique no número de um versículo ou parágrafo e escolha Marcar, ou use o botão de marcador numa página.',
-		'bookmark.deviceOnly':
-			'Os marcadores ficam apenas neste navegador. Não são enviados para lado nenhum, e limpar os dados do navegador remove-os.',
-		'bookmark.unavailable': 'Não está na edição que está a ler',
-
-		'document.library.tagline':
-			'Encíclicas, constituições conciliares, decretos e declarações do Magistério.',
-		'document.tableOfContents': 'Índice',
-		'document.startReading': 'Começar a leitura',
-		'document.readFullDocument': 'Ler o documento completo',
-		'document.section': 'Secção',
-		'document.prevSection': 'Anterior',
-		'document.nextSection': 'Próximo',
-		'document.kind.conciliarConstitution': 'Constituição',
-		'document.kind.conciliarDecree': 'Decreto',
-		'document.kind.conciliarDeclaration': 'Declaração',
-		'document.kind.encyclical': 'Encíclica',
-		'document.kind.apostolicExhortation': 'Exortação Apostólica',
-		'document.kind.apostolicConstitution': 'Constituição Apostólica',
-		'document.kind.cdfDeclaration': 'Declaração da CDF',
-		'document.kindPlural.conciliarConstitution': 'Constituições',
-		'document.kindPlural.conciliarDecree': 'Decretos',
-		'document.kindPlural.conciliarDeclaration': 'Declarações',
-		'document.kindPlural.encyclical': 'Encíclicas',
-		'document.kindPlural.apostolicExhortation': 'Exortações Apostólicas',
-		'document.kindPlural.apostolicConstitution': 'Constituições Apostólicas',
-		'document.kindPlural.cdfDeclaration': 'Declarações da CDF',
-
-		'citation.unavailable': 'Sem texto de fonte disponível para esta nota.',
-
-		'colophon.title': 'Colof\u00e3o',
-		'colophon.lede':
-			'O que \u00e9 este site, de onde v\u00eam os seus textos e qual a nossa posi\u00e7\u00e3o quanto \u00e0 sua reprodu\u00e7\u00e3o.',
-		'colophon.whatThisIs': 'O que \u00e9 isto',
-		'colophon.whatThisIsBody':
-			'A Glossa Catholica \u00e9 um site de leitura das Escrituras, do Catecismo, do Compêndio e dos documentos do Magist\u00e9rio, em portugu\u00eas e em ingl\u00eas. Existe para ser lido, e nada mais lhe \u00e9 pedido para o ler:',
-		'colophon.pointFree':
-			'Gratuito, e sempre gratuito. Sem barreira de pagamento, sem subscri\u00e7\u00e3o, nada para comprar.',
-		'colophon.pointNoAds': 'Sem publicidade nem qualquer conte\u00fado patrocinado.',
-		'colophon.pointNoAccounts': 'Sem contas. Nada para registar, nada para iniciar sess\u00e3o.',
-		'colophon.pointNoTracking':
-			'Sem an\u00e1lises de tr\u00e1fego, sem scripts de rastreio, sem c\u00f3digo de terceiros. O servidor que lhe envia estas p\u00e1ginas guarda registos de pedidos, como qualquer servidor web; nada al\u00e9m disso observa o que l\u00ea.',
-		'colophon.pointOffline':
-			'Feito para continuar a funcionar sem liga\u00e7\u00e3o depois da primeira visita, para que uma liga\u00e7\u00e3o fraca n\u00e3o tenha de impedir a leitura.',
-		'colophon.textsTitle': 'Os textos',
-		'colophon.textsBody':
-			'Cada texto prov\u00e9m de uma fonte identificada, e cada obra indica a sua edi\u00e7\u00e3o, a p\u00e1gina de origem e a data em que foi obtida. As Escrituras usam tradu\u00e7\u00f5es de dom\u00ednio p\u00fablico; o Catecismo, o Compêndio e os documentos do Magist\u00e9rio prov\u00eam dos textos publicados pela Santa S\u00e9. Reproduzimo-los sem altera\u00e7\u00f5es \u2014 e quando a nossa c\u00f3pia de uma obra ficou incompleta, deixamo-la fora do site, em vez de lhe mostrar um texto com falhas que n\u00e3o consegue ver.',
-		'colophon.countBible': 'edi\u00e7\u00f5es b\u00edblicas',
-		'colophon.countDocuments': 'documentos do Magist\u00e9rio',
-		'colophon.copyrightTitle': 'Direitos de autor',
-		'colophon.copyrightBody1':
-			'O Catecismo, o Compêndio e os documentos do Magist\u00e9rio pertencem aos seus titulares de direitos \u2014 principalmente a Libreria Editrice Vaticana e o Dicast\u00e9rio para a Comunica\u00e7\u00e3o. Reproduzimo-los aqui sem ter pedido autoriza\u00e7\u00e3o pr\u00e9via. Dizemo-lo com clareza em vez de o deixar por descobrir: \u00e9 uma escolha deliberada, n\u00e3o um descuido.',
-		'colophon.copyrightBody2':
-			'Fazemos essa escolha porque estes textos s\u00e3o o ensino da Igreja, dirigido a todos, e porque a preocupa\u00e7\u00e3o manifestada pelos titulares de direitos \u00e9 a integridade do texto. Por isso o texto nunca \u00e9 abreviado, nunca parafraseado, nunca reescrito e nunca colocado junto a publicidade. Corrigimos defeitos evidentes das p\u00e1ginas publicadas \u2014 uma palavra em falta, uma refer\u00eancia truncada, marca\u00e7\u00e3o que engoliu um par\u00e1grafo \u2014 sempre no sentido do que a pr\u00f3pria fonte imprime, nunca no sentido do que julgamos que deveria dizer. N\u00e3o alteramos o seu significado, n\u00e3o substitu\u00edmos as suas palavras pelas nossas e n\u00e3o anotamos nem comentamos. Cada corre\u00e7\u00e3o \u00e9 registada em separado, com o original, a substitui\u00e7\u00e3o e o motivo; nada \u00e9 alterado em sil\u00eancio. Cada obra apresenta o aviso de direitos do seu titular, nas palavras dele, e liga \u00e0 p\u00e1gina de onde foi retirada.',
-		'colophon.copyrightBody3':
-			'Se detiver direitos sobre algum texto aqui presente e preferir que n\u00e3o seja publicado, escreva-nos e retiramo-lo prontamente. Sem discuss\u00e3o, e sem necessidade de envolver mais ningu\u00e9m.',
-		'colophon.contactTitle': 'Contacto',
-		'colophon.contactBody': 'Para qualquer assunto, incluindo o acima:',
-		'colophon.contactPending':
-			'Ainda n\u00e3o foi definido um endere\u00e7o de contacto. Este site n\u00e3o deve ser tornado p\u00fablico enquanto n\u00e3o o tiver \u2014 o compromisso acima n\u00e3o tem sentido sem uma forma de nos contactar.',
-		'colophon.buildTitle': 'Como \u00e9 feito',
-		'colophon.buildBody':
-			'Os textos s\u00e3o recolhidos das suas fontes publicadas, analisados para um corpus estruturado e apresentados como p\u00e1ginas est\u00e1ticas. As corre\u00e7\u00f5es a defeitos das fontes s\u00e3o registadas uma a uma, com a reda\u00e7\u00e3o original, a corrigida e o motivo \u2014 nenhum texto \u00e9 alterado em sil\u00eancio.',
-		'colophon.typeTitle': 'Os tipos',
-		'colophon.typeBody':
-			'Composto em EB Garamond, o renascimento por Georg Duffner e Octavio Pardo dos tipos que Claude Garamont gravou na d\u00e9cada de 1590 \u2014 a tradi\u00e7\u00e3o humanista em que a Igreja imprime desde o Renascimento. As iniciais s\u00e3o Pirata One, uma letra g\u00f3tica cujas mai\u00fasculas permanecem leg\u00edveis no tamanho que uma capitular exige. Ambas as fontes t\u00eam licen\u00e7a SIL Open Font License e s\u00e3o servidas a partir deste s\u00edtio e n\u00e3o de terceiros, de modo que ler uma p\u00e1gina nada exige do servidor de outrem.',
-		'bible.citedIn': 'Citado em',
-		'bible.cccAbbrev': 'CIC',
-		'bible.wholeChapter': 'Este capítulo',
-		'bible.verseNotInEdition': 'Este número de versículo não existe nesta edição',
-		'bible.verseAbbrev': 'v.',
-		'ccc.readFullChapter': 'Ler o capítulo completo',
-		'ccc.noParagraphNumber': 'Sem número de parágrafo neste corpus',
-		'copyright.sourceTitle': 'Abrir a página de origem',
-		'lang.label': 'Idioma',
-
-		'notFound.title': 'Nada neste endereço',
-		'notFound.lede': 'A página que pediu não está aqui.',
-		'notFound.body':
-			'A ligação pode estar mal escrita ou desatualizada, ou pode apontar para um texto que este sítio não contém. Nada aqui exige conta nem pagamento, por isso, se uma página existe, é acessível.',
-		'notFound.searchHint':
-			'Se souber a referência que procura — um livro e capítulo, um parágrafo do Catecismo — escreva-a na caixa de pesquisa no topo desta página.',
-		'notFound.elsewhere': 'Ou comece por uma destas:',
-		'notFound.home': 'Início',
-
-		'compare.enter': 'Comparar edições',
-		'compare.exit': 'Sair da comparação',
-		'compare.missing': 'Não presente nesta edição',
-		'compare.versificationNote':
-			'Estas duas edições dividem os versículos deste capítulo de forma diferente em alguns pontos (uma variante textual, não uma escolha de tradução) — o mesmo número de versículo nem sempre assinala a mesma frase nas duas colunas.',
-		'compare.loading': 'A carregar o segundo idioma…'
-	}
-};
+/** One language's dictionary. Exported for the tests that check them all. */
+export function dictionaryFor(lang: UiLang): Dictionary {
+	return dictionaries[lang];
+}
 
 function readStored(): UiLang | null {
 	const value = readStoredString(STORAGE_KEY);
@@ -553,11 +112,11 @@ function readStored(): UiLang | null {
 /**
  * Pick the first browser-preferred language that the interface supports.
  *
- * Browser locale tags are normally regional (`pt-BR`, `en-US`), while the
- * interface deliberately has one Portuguese and one English locale. Matching
- * the primary subtag gives both variants the right UI without pretending that
- * we have separate regional translations. Unknown locales fall back to
- * English, the site's existing no-preference default.
+ * Browser locale tags are normally regional (`pt-BR`, `en-US`, `de-AT`) while
+ * the interface has one locale per language. Matching the primary subtag
+ * gives every variant the right UI without pretending that we have separate
+ * regional translations. Unknown locales fall back to English, the site's
+ * existing no-preference default.
  */
 export function detectUiLang(languages: readonly string[] | undefined): UiLang {
 	for (const language of languages ?? []) {
@@ -590,9 +149,23 @@ function initialLang(): UiLang {
 class I18nStore {
 	lang: UiLang = $state(initialLang());
 
+	constructor() {
+		// app.html already ran the same negotiation before first paint, but
+		// only for the two attributes it can set from a script; re-applying
+		// here keeps the store the single authority on what the document says
+		// it is, including after a language whose script it did not know.
+		applyDocumentLang(this.lang);
+	}
+
 	set(lang: UiLang) {
 		this.lang = lang;
 		writeStoredString(STORAGE_KEY, lang);
+		applyDocumentLang(lang);
+	}
+
+	/** Whether the interface is currently reading right to left. */
+	get rtl(): boolean {
+		return isRtl(this.lang);
 	}
 
 	t(key: string): string {

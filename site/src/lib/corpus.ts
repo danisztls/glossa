@@ -298,7 +298,14 @@ export function baseLang(tag: string): string {
 const LANGUAGE_NAMES: Record<string, string> = {
 	en: 'English',
 	pt: 'Português',
-	la: 'Latina'
+	la: 'Latina',
+	de: 'Deutsch',
+	es: 'Español',
+	fr: 'Français',
+	it: 'Italiano',
+	pl: 'Polski',
+	ru: 'Русский',
+	ar: 'العربية'
 };
 
 export function languageDisplayName(tag: string): string {
@@ -1228,11 +1235,25 @@ export function getDocumentGroup(slug: string): DocumentGroup | undefined {
  * `defaultWorkId('document', lang)`, which would only tell you *a* document
  * exists in that language, not which one).
  */
+/**
+ * The edition of `slug` a reader of `lang` should get.
+ *
+ * Goes through `editionInLang` rather than falling straight from "no edition
+ * in your language" to "the first one in the object". That shortcut was
+ * invisible while every document had at most an English and a Portuguese
+ * edition and every reader read one of the two. It stopped being invisible on
+ * 2026-08-24, when the interface gained seven more languages: a German reader
+ * opening Rerum Novarum matches neither edition, and which one they landed on
+ * was decided by insertion order — the same "should not be a property of how
+ * work ids happen to alphabetize" this module already rejects for the Summa.
+ * English first, then Latin, then anything, is the answer stated once in
+ * `CONTENT_LANG_FALLBACK` and now used here too.
+ */
 export function defaultDocumentWorkId(slug: string, lang: string): string | undefined {
 	const group = getDocumentGroup(slug);
 	if (!group) return undefined;
-	const target = baseLang(lang);
-	return (group.manifests[target] ?? Object.values(group.manifests)[0])?.id;
+	const editions = Object.values(group.manifests).filter((m) => m !== undefined);
+	return (editionInLang(editions, lang) ?? editions[0])?.id;
 }
 
 export function getDocumentManifest(workId: string): DocumentManifest | undefined {

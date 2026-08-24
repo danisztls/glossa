@@ -1822,3 +1822,38 @@ input {
 	border-radius: 0.25rem;
 	padding: 0 0.3rem;
 }
+
+/* ---------------------------------------------------------------------------
+   Writing direction, taken from the CONTENT language
+
+   `<html dir>` follows the INTERFACE language (i18n.svelte.ts, and app.html
+   before first paint), which is the right answer for the chrome and the wrong
+   one for the text: the corpus and the interface are different sets of
+   languages, and the two disagree constantly. A reader with the interface in
+   English opening the Arabic edition of Magnifica Humanitas needs that
+   edition's text right-to-left inside a left-to-right page; a reader with the
+   interface in Arabic needs the opposite for all 351 other works, which have
+   no Arabic edition at all.
+
+   Every reader page already declares the content language on the region it
+   renders — `lang={current.work.language}`, 74 of them across ten route and
+   component files — so the direction is already stated there and only needs
+   to be honoured. Deriving it here, once, is what keeps the derivation from
+   being repeated (and eventually forgotten) at each of those 74 sites.
+
+   `unicode-bidi: isolate` is what makes this equivalent to the `dir`
+   attribute rather than merely similar: without it a right-to-left run
+   reorders the neutral characters on either side of it — the punctuation and
+   the verse numbers around a quotation — against its neighbours.
+
+   Keep the Arabic selector in step with `RTL_LANGS` in i18n.svelte.ts. Scoped
+   off `:root` because the document element's direction is set as an
+   attribute, and a stylesheet fighting it would only be able to lose. */
+:not(:root)[lang] {
+	direction: ltr;
+	unicode-bidi: isolate;
+}
+
+:not(:root)[lang='ar'] {
+	direction: rtl;
+}

@@ -229,7 +229,7 @@
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		color: var(--color-text-muted);
-		margin-right: 0.4em;
+		margin-inline-end: 0.4em;
 		white-space: nowrap;
 	}
 

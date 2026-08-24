@@ -27,11 +27,16 @@ export type WorkType =
 
 /**
  * Bare language subtag the corpus ships content in (see `baseLang` in
- * corpus.ts). Deliberately a wider set than `UiLang` in i18n.svelte.ts:
- * `la` is a language readers want the TEXT in (the Clementine Vulgate) and
- * nobody wants the interface in.
+ * corpus.ts). Still not the same set as `UiLang` in i18n.svelte.ts, though
+ * the two now overlap in eight of nine: `la` is a language readers want the
+ * TEXT in (the Clementine Vulgate) and nobody wants the interface in, which
+ * is the asymmetry `content.svelte.ts` depends on.
+ *
+ * The other seven arrived with Magnifica Humanitas, which vatican.va
+ * publishes in all nine — so far the only work in the corpus that is in any
+ * of them.
  */
-export type ContentLang = 'en' | 'pt' | 'la';
+export type ContentLang = 'en' | 'pt' | 'la' | 'de' | 'es' | 'fr' | 'it' | 'pl' | 'ru' | 'ar';
 
 interface WorkManifestBase {
 	id: string;

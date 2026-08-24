@@ -51,7 +51,7 @@
 	}
 
 	.citation-text {
-		margin-left: 0.35em;
+		margin-inline-start: 0.35em;
 		font-size: max(var(--font-size-min), 0.9em);
 		color: var(--color-text-muted);
 	}

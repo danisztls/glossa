@@ -418,7 +418,7 @@
 	.fallback-note {
 		margin: 1rem 0;
 		padding: 0.6rem 0.85rem;
-		border-left: 3px solid var(--color-border);
+		border-inline-start: 3px solid var(--color-border);
 		font-size: 0.9rem;
 		color: var(--color-text-muted);
 	}

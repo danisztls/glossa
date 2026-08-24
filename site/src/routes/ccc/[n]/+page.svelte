@@ -311,7 +311,7 @@
 
 <style>
 	.breadcrumb .ordinal {
-		margin-right: 0.3em;
+		margin-inline-end: 0.3em;
 	}
 
 	h1 {

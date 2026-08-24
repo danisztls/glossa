@@ -45,11 +45,13 @@
 				// resting state, so there's nothing to apply for it. Sepia is a
 				// separate presence-only attribute; the stylesheet, not this
 				// script, is what makes it yield to dark. `data-oled` is the
-				// same shape, yielding to light instead.
+				// same shape, yielding to light instead. `data-cues` yields to
+				// neither — it adds rules to whatever palette is showing.
 				var m = localStorage.getItem('glossa:dark-mode');
 				var sep = localStorage.getItem('glossa:sepia');
 				var oled = localStorage.getItem('glossa:oled');
-				if (m === null && sep === null && oled === null) {
+				var cues = localStorage.getItem('glossa:cues');
+				if (m === null && sep === null && oled === null && cues === null) {
 					// Same migration off the old single-valued key as
 					// theme.svelte.ts's migrateLegacy — without it, a returning
 					// reader flashes the default theme on every load until they
@@ -71,6 +73,9 @@
 				if (oled === '1') {
 					document.documentElement.setAttribute('data-oled', '');
 				}
+				if (cues === '1') {
+					document.documentElement.setAttribute('data-cues', '');
+				}
 			} catch (e) {}
 			try {
 				var s = Number(localStorage.getItem('glossa:font-scale'));
@@ -83,9 +88,15 @@
 			// as early as possible. The app store performs the same negotiation and
 			// persists the result during hydration; this only keeps the outer
 			// document semantically correct before then.
+			//
+			// `dir` matters more than `lang` does here, and is why this block is
+			// worth keeping in sync by hand: an Arabic reader whose direction is
+			// only set at hydration watches the whole page flip sides. Keep the
+			// list below equal to UI_LANGS and RTL_LANGS in src/lib/i18n.svelte.ts.
 			try {
+				var UI = ['en', 'pt', 'de', 'es', 'fr', 'it', 'pl', 'ru', 'ar'];
 				var l = localStorage.getItem('glossa:ui-lang');
-				if (l !== 'en' && l !== 'pt') {
+				if (UI.indexOf(l) === -1) {
 					var ls =
 						navigator.languages && navigator.languages.length
 							? navigator.languages
@@ -93,13 +104,14 @@
 					l = 'en';
 					for (var i = 0; i < ls.length; i++) {
 						var p = String(ls[i]).trim().toLowerCase().split('-', 1)[0];
-						if (p === 'en' || p === 'pt') {
+						if (UI.indexOf(p) !== -1) {
 							l = p;
 							break;
 						}
 					}
 				}
 				document.documentElement.lang = l;
+				document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
 			} catch (e) {}
 		</script>
 		%sveltekit.head%

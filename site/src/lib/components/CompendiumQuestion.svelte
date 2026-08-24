@@ -116,7 +116,7 @@
 	}
 
 	.refs-label {
-		margin-right: 0.4em;
+		margin-inline-end: 0.4em;
 	}
 
 	.question {

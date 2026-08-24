@@ -423,7 +423,7 @@
 
 	h1 .ordinal {
 		color: var(--color-text-muted);
-		margin-right: 0.35em;
+		margin-inline-end: 0.35em;
 	}
 
 	.range {

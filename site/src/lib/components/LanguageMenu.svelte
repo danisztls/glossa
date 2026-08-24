@@ -15,10 +15,13 @@
 	not need to be: the label reads "EN", which says what the control is more
 	plainly than any grouping did.
 
-	The trigger shows the current language's own code (EN / PT) as text. No
-	icon: a globe or speech-bubble glyph next to two letters that already
-	spell the answer is decoration, and the two-letter code is both shorter
-	and less ambiguous than any icon for this particular job.
+	The trigger shows the current language's own code (EN / PT / AR …) as
+	text. No icon: a globe or speech-bubble glyph next to two letters that
+	already spell the answer is decoration, and the two-letter code is both
+	shorter and less ambiguous than any icon for this particular job. The
+	codes stay in the Latin alphabet even for the languages that do not use
+	one — a two-letter code is an identifier, and `AR` is what the reader will
+	have seen on vatican.va's own language bar.
 -->
 <script lang="ts">
 	import { i18n, t } from '$lib/i18n.svelte';
@@ -29,10 +32,22 @@
 	// Each label is written in its OWN language, not translated into the
 	// current one: a reader who has landed on the wrong interface language
 	// needs to recognize their language in the list, and "Portuguese" is no
-	// help to someone who only reads Portuguese.
+	// help to someone who only reads Portuguese. That was worth stating with
+	// two entries and is the whole usability of the control with nine.
+	//
+	// Order matches `UI_LANGS` (i18n.svelte.ts), which is not alphabetical:
+	// English and Portuguese lead because they are what the corpus is mostly
+	// in, and the seven that came with Magnifica Humanitas follow.
 	const OPTIONS: { code: UiLang; short: string; label: string }[] = [
 		{ code: 'en', short: 'EN', label: 'English' },
-		{ code: 'pt', short: 'PT', label: 'Português' }
+		{ code: 'pt', short: 'PT', label: 'Português' },
+		{ code: 'de', short: 'DE', label: 'Deutsch' },
+		{ code: 'es', short: 'ES', label: 'Español' },
+		{ code: 'fr', short: 'FR', label: 'Français' },
+		{ code: 'it', short: 'IT', label: 'Italiano' },
+		{ code: 'pl', short: 'PL', label: 'Polski' },
+		{ code: 'ru', short: 'RU', label: 'Русский' },
+		{ code: 'ar', short: 'AR', label: 'العربية' }
 	];
 
 	const menu = new Menu();

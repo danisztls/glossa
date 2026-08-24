@@ -775,7 +775,7 @@
 	}
 
 	.verse {
-		margin-right: 0.25em;
+		margin-inline-end: 0.25em;
 	}
 
 	/* A passage a citation pointed at (`?v=1-7`), or a single verse opened by

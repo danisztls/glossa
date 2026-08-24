@@ -1022,7 +1022,7 @@
 		flex: none;
 		width: 0.45rem;
 		height: 0.45rem;
-		border-right: 1.5px solid var(--color-text-muted);
+		border-inline-end: 1.5px solid var(--color-text-muted);
 		border-bottom: 1.5px solid var(--color-text-muted);
 		transform: translateY(-0.15em) rotate(45deg);
 		transition: transform 0.15s ease;
@@ -1094,7 +1094,7 @@
 
 	.toc-inline .ordinal {
 		color: var(--color-text-muted);
-		margin-right: 0.35em;
+		margin-inline-end: 0.35em;
 	}
 
 	/*
@@ -1138,7 +1138,7 @@
 
 	.structure-heading .ordinal {
 		color: var(--color-text-muted);
-		margin-right: 0.4em;
+		margin-inline-end: 0.4em;
 	}
 
 	/* The identifier sits ABOVE the name, smaller and quieter, the way the
