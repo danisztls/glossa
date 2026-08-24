@@ -165,9 +165,6 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// is the consumer, plus the home page's compact Prayers section.
 		'prayers.landing.title': 'Common Prayers',
 		'prayers.landing.tagline': 'Prayers with the Latin text alongside.',
-		'prayers.latin': 'Latin',
-		'prayers.showLatin': 'Show Latin text',
-		'prayers.hideLatin': 'Hide Latin text',
 		'prayers.tableOfContents': 'Table of Contents',
 		'prayers.prevPrayer': 'Previous prayer',
 		'prayers.nextPrayer': 'Next prayer',
@@ -414,9 +411,6 @@ const dictionaries: Record<UiLang, Dictionary> = {
 
 		'prayers.landing.title': 'Orações Comuns',
 		'prayers.landing.tagline': 'Orações com o texto em latim ao lado.',
-		'prayers.latin': 'Latim',
-		'prayers.showLatin': 'Mostrar texto em latim',
-		'prayers.hideLatin': 'Ocultar texto em latim',
 		'prayers.tableOfContents': 'Índice',
 		'prayers.prevPrayer': 'Oração anterior',
 		'prayers.nextPrayer': 'Próxima oração',

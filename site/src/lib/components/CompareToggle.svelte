@@ -12,14 +12,17 @@
 	(`{#if ctx && editions.length > 0}`), so this component doesn't need a
 	`disabled` prop of its own: if it's on the page, comparing is possible.
 
-	`enterLabel`/`exitLabel` default to the generic "Compare editions"/"Exit
-	comparison" copy every other caller wants, but are overridable: the
-	prayer route's second column is a Latin FIELD on the same work, not a
-	second edition (docs/corpus-schema.md "Prayers" — "Latin is a field, not
-	an edition"), so calling it a compared "edition" there would be
-	inaccurate, not just imprecise. Read reactively inside the template
-	(never captured into a plain variable at init) so the label still updates
-	if the reader switches UI language while the button is on screen.
+	THE LABEL IS NOT OVERRIDABLE, and used to be. `enterLabel`/`exitLabel`
+	existed for one caller: the prayer route, whose second column was always
+	the Latin FIELD on the same work rather than a second edition
+	(docs/corpus-schema.md "Prayers"), so "Compare editions" was inaccurate
+	there and it passed "Show/Hide Latin text" instead. That route now lets
+	the reader CHOOSE its second column — Latin or the other vernacular — and
+	a button promising Latin while showing Português would be worse than the
+	generic wording ever was. With no caller left, two props and two i18n keys
+	went with it; the label is read reactively inside the template (never
+	captured into a plain variable at init) so it still updates if the reader
+	switches UI language while the button is on screen.
 -->
 <script lang="ts">
 	import Icon from './Icon.svelte';
@@ -28,15 +31,11 @@
 	interface Props {
 		active: boolean;
 		onclick: () => void;
-		enterLabel?: string;
-		exitLabel?: string;
 	}
 
-	let { active, onclick, enterLabel, exitLabel }: Props = $props();
+	let { active, onclick }: Props = $props();
 
-	const label = $derived(
-		active ? (exitLabel ?? t('compare.exit')) : (enterLabel ?? t('compare.enter'))
-	);
+	const label = $derived(active ? t('compare.exit') : t('compare.enter'));
 </script>
 
 <button

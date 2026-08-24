@@ -33,9 +33,11 @@
 	component's own making because the routes genuinely differ in what belongs
 	there: the Bible passes `editionStyle` (it is the one work that can carry
 	two editions in the same language, so its picker names editions rather than
-	languages), and `/preces` has no picker at all — its second column is a
-	Latin FIELD on the one work, not a second edition, so it passes a plain
-	label and that is the only identification that column gets.
+	languages), and `/preces` builds its own option list, mixing this prayer's
+	sibling languages with its Latin FIELD — which is not a work and has no
+	manifest of its own to list (that route's docblock). All seven now pass a
+	picker; `/preces` passed a static label for as long as Latin was the only
+	second column it could offer.
 
 	Sticks BELOW the site header, not at the viewport top, using
 	`--site-header-height` — published by `+layout.svelte` from a
@@ -53,10 +55,9 @@
 	interface Props {
 		/** The page's own canonical address, for the bookmark. */
 		bookmarkHref: string;
-		/** Whether there is a second edition (or, on `/preces`, a Latin text) to
-		 *  compare against at all. False hides the toggle outright rather than
-		 *  disabling it — the same "hide, don't disable" posture `EditionMenu`
-		 *  and `CompareToggle` already take. */
+		/** Whether there is anything to compare against at all. False hides the
+		 *  toggle outright rather than disabling it — the same "hide, don't
+		 *  disable" posture `EditionMenu` and `CompareToggle` already take. */
 		canCompare: boolean;
 		compareActive: boolean;
 		/** Omitted by routes that pass `canCompare: false` and therefore never
@@ -65,23 +66,12 @@
 		 *  `canCompare` is true; `CompareToggle` is simply not rendered
 		 *  otherwise, so there is nothing to call. */
 		onToggleCompare?: () => void;
-		/** What identifies the second column: a picker on five routes, a plain
-		 *  label on `/preces`. Rendered only while comparing. */
+		/** The picker that names and chooses the second column. Rendered only
+		 *  while comparing. */
 		comparison?: Snippet;
-		/** `/preces` calls it "show/hide Latin" — see `CompareToggle`. */
-		enterLabel?: string;
-		exitLabel?: string;
 	}
 
-	let {
-		bookmarkHref,
-		canCompare,
-		compareActive,
-		onToggleCompare,
-		comparison,
-		enterLabel,
-		exitLabel
-	}: Props = $props();
+	let { bookmarkHref, canCompare, compareActive, onToggleCompare, comparison }: Props = $props();
 </script>
 
 <div class="reading-bar">
@@ -90,7 +80,7 @@
 	<div class="reading-bar-editions">
 		<EditionMenu />
 		{#if canCompare && onToggleCompare}
-			<CompareToggle active={compareActive} onclick={onToggleCompare} {enterLabel} {exitLabel} />
+			<CompareToggle active={compareActive} onclick={onToggleCompare} />
 		{/if}
 		{#if compareActive && comparison}
 			{@render comparison()}

@@ -4,27 +4,49 @@
 	 * `.content-column`; the Rosary is the one exception, using the shared
 	 * `.reading-layout` so its four-part table of contents has a right sidebar.
 	 *
-	 * COMPARE MODE HERE IS LATIN, NOT A SECOND EDITION. Every other route
-	 * `CompareGrid` serves pairs the SAME unit across two language editions
-	 * of a work; a prayer's `latin` is a FIELD on the one canonical work
-	 * (docs/corpus-schema.md "Prayers": "Latin is a field, not an edition"),
-	 * so there is no second `WorkManifest` here at all — `leftLang`/
-	 * `rightLang` are the reader's language and the literal string `"la"`,
-	 * not two entries from `listEditions('prayer')`.
+	 * THE SECOND COLUMN IS A CHOICE HERE TOO, and it used to be hardcoded to
+	 * Latin. The reasoning for that was sound as far as it went — a prayer's
+	 * `latin` is a FIELD on the one canonical work (docs/corpus-schema.md
+	 * "Prayers": "Latin is a field, not an edition"), so there is no second
+	 * `WorkManifest` for it — but it answered the wrong question. That Latin
+	 * is not an edition explains why it cannot be the ONLY thing offered; it
+	 * never explained why the OTHER vernacular could not be. `+page.ts`
+	 * already embeds every language's copy of the slug, so English against
+	 * Português was one line of markup away the whole time, and a reader who
+	 * compares translations everywhere else on the site arrived here to find
+	 * the picker replaced by the word "Latina".
 	 *
-	 * `alignByNumber` is still the RIGHT mechanism, not a bent one: there is
-	 * exactly one prayer and exactly one Latin companion, and both sides of
-	 * `compareRows` are keyed on the SAME real number — the prayer's own
-	 * `n` (print order), not a fabricated index. A single-row alignment like
-	 * this can never mis-zip, by construction — there is only one number to
-	 * align on either side. What genuinely does NOT fit is aligning by
-	 * BLOCK: the Angelus has 14 vernacular blocks (its versicle/response
-	 * lines kept separate) against 10 Latin blocks (the source collapses
-	 * each repeated "Hail Mary" into one fused "Ave, María..." line) — a
-	 * per-block zip would silently misalign the moment the two sides'
-	 * block counts diverge, which is exactly the failure `alignByNumber`'s
-	 * own docblock exists to rule out. Rendering each side's `blocks` in its
-	 * own natural flow, inside one aligned row, is what stays honest.
+	 * So this route now resolves a target like every other one
+	 * (`compare.resolveTarget`), over a list that mixes the two kinds:
+	 *
+	 *   - each OTHER language's copy of this same slug — real works, real ids;
+	 *   - the Latin field, under `LATIN_TARGET`, which is not a work id and is
+	 *     not pretending to be (see that constant).
+	 *
+	 * Latin sorts first, so it stays what `AUTO` picks and what a reader who
+	 * has expressed no preference sees — `/preces`' own tagline is "Prayers
+	 * with the Latin text alongside", and that remains the default reading of
+	 * the page.
+	 *
+	 * BOTH SIDES ARE KEYED ON THE LEFT PRAYER'S `n`, deliberately, and this is
+	 * the one place `alignByNumber` is handed a number rather than reading it.
+	 * A prayer's `n` is its print order WITHIN ITS OWN LANGUAGE'S list, and
+	 * what makes two entries the same prayer is the SLUG — the schema
+	 * guarantees the slug sets match, not that the two lists number them
+	 * alike. Passing each side its own `n` would therefore emit two orphaned
+	 * rows instead of one pair the moment a language reordered. There is
+	 * exactly one unit per side (this page is one slug), so forcing the pair
+	 * cannot mis-zip: it is the degenerate case where the address IS the
+	 * match.
+	 *
+	 * What genuinely does NOT fit is aligning by BLOCK: the Angelus has 14
+	 * vernacular blocks (its versicle/response lines kept separate) against 10
+	 * Latin blocks (the source collapses each repeated "Hail Mary" into one
+	 * fused "Ave, María..." line) — a per-block zip would silently misalign
+	 * the moment the two sides' block counts diverge, which is exactly the
+	 * failure `alignByNumber`'s own docblock exists to rule out. Rendering
+	 * each side's blocks in its own natural flow, inside one aligned row, is
+	 * what stays honest.
 	 */
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
@@ -35,16 +57,17 @@
 		chooseComparisonEdition,
 		toggleCompare
 	} from '$lib/compare-nav.svelte';
-	import { compareColumnLabel, languageDisplayName } from '$lib/corpus';
+	import { compareColumnLabel } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
+	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import PrayerBlocks from '$lib/components/PrayerBlocks.svelte';
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { t } from '$lib/i18n.svelte';
-	import type { Prayer } from '$lib/types';
+	import type { Prayer, WorkManifest } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -54,35 +77,98 @@
 	);
 	let current = $derived(data.byLang[lang]);
 
-	const hasLatin = $derived(current?.prayer.latin !== undefined);
+	/**
+	 * What the compare preference stores when the second column is the Latin
+	 * FIELD rather than another work.
+	 *
+	 * DELIBERATELY NOT WORK-ID-SHAPED. Every real prayer work is
+	 * `prayer.common.{lang}`, so the tempting spelling here is
+	 * `prayer.common.la` — and it would be a lie of exactly the kind
+	 * docs/corpus-schema.md §Prayers exists to prevent: there is no Latin
+	 * prayer work, the source never prints Latin as independently addressable
+	 * content, and a stored id claiming otherwise would be the first step
+	 * toward code that tries to load one. `prayer.latin` cannot collide with
+	 * a work id because no work id has that shape, and it reads correctly in
+	 * the `?compare=` link it ends up in: the Latin, of this prayer.
+	 *
+	 * The store treats it as an opaque string either way — `resolveTarget`
+	 * only asks whether the route offers it (`compare-pref.svelte.ts`), so
+	 * nothing outside this file needs to know it isn't a work.
+	 */
+	const LATIN_TARGET = 'prayer.latin';
 
-	/** The Latin side as a `{ n }`-shaped unit sharing the prayer's own `n` —
-	 *  see this module's docblock for why that's a genuine, not a bent, use
-	 *  of `alignByNumber`. */
-	const compareRows = $derived.by(() => {
-		const prayer = current?.prayer;
-		const latin = prayer?.latin;
-		if (!prayer || !latin) return [];
-		return alignByNumber([prayer], [{ n: prayer.n, title: latin.title, blocks: latin.blocks }]);
+	/**
+	 * Every second column this page can offer, in menu order.
+	 *
+	 * THE LATIN ENTRY BORROWS THE VERNACULAR WORK'S MANIFEST, overriding only
+	 * the id and the language, and that is accurate rather than convenient:
+	 * the Latin text IS part of this work — same array entry, same scraped
+	 * vatican.va page, therefore the same sources and the same copyright.
+	 * Everything the picker and the column tag read off a manifest is
+	 * genuinely true of it. The two fields overridden are the two that are
+	 * not: it is not separately addressable, and it is not in the vernacular.
+	 *
+	 * `render` is what the right cell needs and the manifest cannot say: a
+	 * sibling language brings a whole `Prayer` (rubric, variants, the Rosary's
+	 * groups, instructions) and gets the same full body treatment the left
+	 * column gets, while the Latin field carries only a title and blocks.
+	 */
+	const comparisons = $derived.by(() => {
+		if (!current) return [];
+		const out: { work: WorkManifest; title: string; prayer?: Prayer; blocks: Prayer['blocks'] }[] =
+			[];
+		const latin = current.prayer.latin;
+		if (latin) {
+			out.push({
+				work: { ...current.work, id: LATIN_TARGET, language: 'la' },
+				title: latin.title,
+				blocks: latin.blocks
+			});
+		}
+		for (const other of Object.keys(data.byLang).sort()) {
+			if (other === lang) continue;
+			const entry = data.byLang[other];
+			out.push({
+				work: entry.work,
+				title: entry.prayer.title,
+				prayer: entry.prayer,
+				blocks: entry.prayer.blocks
+			});
+		}
+		return out;
 	});
 
 	adoptCompareFromUrl();
 
-	/**
-	 * ON/OFF ONLY — NO EDITION TO PICK, AND SO NO `resolveTarget` CALL HERE.
-	 * Every other route resolves the store's target against a list of
-	 * alternative WORK ids (`otherEditions`, `compare.resolveTarget`) because
-	 * the second column there really is a choice between editions. This
-	 * route's second column is the prayer's own `latin` FIELD (see the module
-	 * docblock above), so there is nothing a stored work id could ever name
-	 * here — reading `compare.active` directly is what keeps this route
-	 * boolean, without teaching the store or `CompareGrid` a special case for
-	 * it: a reader whose *stored* preference happens to be a specific Bible
-	 * edition id (picked on some other page) still gets Latin shown here,
-	 * because `active` only asks "is compare mode on at all", never "is THIS
-	 * particular id available".
-	 */
-	const compareActive = $derived(compare.active && hasLatin);
+	/** Latin first — see the module docblock on why `AUTO` must keep landing
+	 *  there rather than on whichever sibling language sorts first. */
+	const compareTarget = $derived(
+		compare.resolveTarget(
+			comparisons.map((c) => c.work.id),
+			comparisons[0]?.work.id
+		)
+	);
+	const secondary = $derived(comparisons.find((c) => c.work.id === compareTarget));
+	const compareActive = $derived(secondary !== undefined);
+
+	/** One row, both sides keyed on the LEFT prayer's `n` — the module
+	 *  docblock says why the right side's own number is the wrong key. */
+	const compareRows = $derived.by(() => {
+		const prayer = current?.prayer;
+		if (!prayer || !secondary) return [];
+		return alignByNumber(
+			[prayer],
+			[
+				{
+					n: prayer.n,
+					title: secondary.title,
+					prayer: secondary.prayer,
+					blocks: secondary.blocks
+				}
+			]
+		);
+	});
+
 	const hasToc = $derived((current?.prayer.groups?.length ?? 0) > 0);
 
 	/** Stable in-page destinations for a grouped prayer's sourced divisions.
@@ -110,7 +196,7 @@
 	<title>{current?.prayer.title ?? data.slug} — {t('home.title')}</title>
 </svelte:head>
 
-{#snippet prayerBody(p: Prayer)}
+{#snippet prayerBody(p: Prayer, bodyLang: string)}
 	{#if p.rubric}
 		<p class="prayer-rubric">{p.rubric}</p>
 	{/if}
@@ -147,7 +233,7 @@
 				<ol class="prayer-mystery-items">
 					{#each group.items as item, i (i)}
 						<li>
-							<PrayerMystery {item} lang={current?.work.language ?? 'en'} />
+							<PrayerMystery {item} lang={bodyLang} />
 						</li>
 					{/each}
 				</ol>
@@ -179,17 +265,43 @@
 	</nav>
 {/snippet}
 
-{#snippet latinLabel()}
-	<span class="reading-bar-label">{t('prayers.latin')}</span>
+<!-- What identifies the second column in `ReadingBar`. It was a static label
+     reading "Latina" for as long as Latin was the only thing this route could
+     put there; now that it is a choice, it is the same picker every other
+     reading route uses. -->
+{#snippet comparisonEdition()}
+	<ComparisonEditionMenu
+		editions={comparisons.map((c) => c.work)}
+		current={compareTarget}
+		onselect={chooseComparisonEdition}
+	/>
 {/snippet}
 
 {#snippet leftCell(p: Prayer)}
-	{@render prayerBody(p)}
+	{@render prayerBody(p, current?.work.language ?? 'en')}
 {/snippet}
 
-{#snippet rightCell(l: { n: number; title: string; blocks: Prayer['blocks'] })}
-	<p class="prayer-latin-title">{l.title}</p>
-	<PrayerBlocks blocks={l.blocks} />
+<!-- NO TITLE HERE. The secondary side carries its own `title`, and printing
+     it at the top of this cell is what made the two columns start at different
+     heights and in different weights: the vernacular column has no title of
+     its own — the page's `<h1>` IS its title — so the right column opened one
+     line lower with a bold line the left column had no counterpart for. Both
+     titles now sit in the `.compare-unit-header` below, which is where every
+     other compare route puts the pair, and where an identical pair collapses
+     to one instead of being set twice.
+
+     A SIBLING LANGUAGE GETS THE FULL BODY, the Latin field only its blocks,
+     because that is all the Latin field has — no rubric, no variants, no
+     groups (docs/corpus-schema.md §Prayers). Rendering the whole prayer
+     wherever there is a whole prayer is what keeps an English/Português
+     comparison from silently dropping the Rosary's mysteries out of one
+     column. -->
+{#snippet rightCell(u: { n: number; title: string; prayer?: Prayer; blocks: Prayer['blocks'] })}
+	{#if u.prayer}
+		{@render prayerBody(u.prayer, secondary?.work.language ?? 'en')}
+	{:else}
+		<PrayerBlocks blocks={u.blocks} />
+	{/if}
 {/snippet}
 
 {#if current}
@@ -215,44 +327,83 @@
 
 			<!-- A prayer has no numbered sub-unit to hang the anchor popover off
 			     (PrayerBlocks renders no anchors at all), so the whole prayer is
-			     what `bookmarkHref` marks. `comparison` is a plain LABEL rather
-			     than a picker: the second column is this work's own `latin` field,
-			     not a second edition, so there is nothing to choose between — and
-			     that label is the only identification that column gets. -->
+			     what `bookmarkHref` marks.
+
+			     No `enterLabel`/`exitLabel` any more. They said "Show/Hide Latin
+			     text", which was the accurate wording while Latin was the only
+			     second column this route had; now that the reader picks, the
+			     generic "Compare editions" the toggle defaults to is the accurate
+			     one, and a button that promises Latin while showing Português
+			     would be worse than one that promises nothing in particular. -->
 			<ReadingBar
 				bookmarkHref={`/preces/${data.slug}`}
-				canCompare={hasLatin}
+				canCompare={comparisons.length > 0}
 				{compareActive}
 				onToggleCompare={toggleCompare}
-				comparison={latinLabel}
-				enterLabel={t('prayers.showLatin')}
-				exitLabel={t('prayers.hideLatin')}
+				comparison={comparisonEdition}
 			/>
 
-			<h1>{current.prayer.title}</h1>
+			{#if compareActive && secondary}
+				<!-- One row per field (`.compare-unit-header`, app.css), same as the
+				     CCC/Compendium/document readers. The TITLE collapses whenever the
+				     two match, which happens whenever the prayer is known by its
+				     Latin incipit in both languages ("Memorare", "Magnificat") and
+				     not when it is translated ("Hail Mary" against "Ave Maria") —
+				     the field asks, nothing here decides centrally. -->
+				<div class="compare-unit-header">
+					{#if secondary.title === current.prayer.title}
+						<div class="compare-unit-field compare-unit-field-shared">
+							<h1>{current.prayer.title}</h1>
+						</div>
+					{:else}
+						<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
+							<span class="compare-cell-tag">{compareColumnLabel(current.work)}</span>
+							<h1>{current.prayer.title}</h1>
+						</div>
+						<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
+							<span class="compare-cell-tag">{compareColumnLabel(secondary.work)}</span>
+							<h1>{secondary.title}</h1>
+						</div>
+					{/if}
+				</div>
+			{:else}
+				<h1>{current.prayer.title}</h1>
+			{/if}
 
+			<!-- OUTSIDE the header, and one notice in both modes. Every other
+			     compare route carries TWO, kept apart because they link to
+			     different source pages and that link is the checkable part
+			     (`CopyrightNotice.svelte`). Here there is one work and one page —
+			     `latin` is a field on the same array entry, scraped from the same
+			     vatican.va page (docs/corpus-schema.md §Prayers, "Latin is a field,
+			     not an edition") — so a second notice would not be provenance, it
+			     would be the same sentence twice. A full-width line under both
+			     titles says it covers both, and it says so identically whether or
+			     not the reader is comparing. -->
 			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 
-			{#if compareActive}
-				<!-- `rightLabel` is `languageDisplayName('la')`, not
-				     `t('prayers.latin')`: that string is the UI-language name of Latin
-				     ("Latin"/"Latim"), which is what the TOGGLE should say — a control
-				     speaks the reader's language. A column tag names the content, and
-				     every other tag on the site names a content language in its own
-				     tongue, so this one is "Latina" for the same reason the
-				     Clementina's column is. -->
+			<!-- `{#if secondary}` rather than `{#if compareActive}`, which is the
+			     same condition: the derived boolean is what the layout classes and
+			     `ReadingBar` want, but only the object itself narrows here.
+
+			     Both column labels come from `compareColumnLabel`, so the Latin
+			     column is tagged "Latina" — the content language's own name, like
+			     every other tag on the site — and never "Latin"/"Latim", which is
+			     the READER's-language name and belongs on controls, not on a label
+			     that names what the column holds. -->
+			{#if secondary}
 				<CompareGrid
 					rows={compareRows}
 					leftLang={current.work.language}
-					rightLang="la"
+					rightLang={secondary.work.language}
 					leftLabel={compareColumnLabel(current.work)}
-					rightLabel={languageDisplayName('la')}
+					rightLabel={compareColumnLabel(secondary.work)}
 					left={leftCell}
 					right={rightCell}
 				/>
 			{:else}
 				<div class="reading-text prayer-body" lang={current.work.language}>
-					{@render prayerBody(current.prayer)}
+					{@render prayerBody(current.prayer, current.work.language)}
 				</div>
 			{/if}
 
@@ -393,19 +544,11 @@
 		margin: 0 0 0.75rem;
 	}
 
-	/* Stands in for a picker in `ReadingBar` — see the `latinLabel` snippet.
-	   Set to match `EditionMenu`/`ComparisonEditionMenu`'s trigger text so the
-	   bar reads as one row of peers rather than a control beside a caption. */
-	.reading-bar-label {
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
-	}
-
-	.prayer-latin-title {
-		font-family: var(--font-serif);
-		font-weight: 700;
-		margin: 0 0 0.75rem;
+	/* The compare header's own vertical spacing — the row shape and the divider
+	   are `.compare-unit-header`/`.compare-unit-field` in app.css, shared with
+	   every other route that merges a header the same way. */
+	.compare-unit-field h1 {
+		margin: 0 0 0.5rem;
 	}
 
 	/* Non-Rosary prayers do not need a sidebar or a reading-layout, but their
