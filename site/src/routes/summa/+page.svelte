@@ -138,8 +138,6 @@
 
 	.part {
 		margin-top: 2.5rem;
-		/* The sidebar links here by fragment, and the site header is sticky. */
-		scroll-margin-top: 4rem;
 	}
 
 	.treatises {

@@ -123,7 +123,6 @@
 <style>
 	.division {
 		margin: 1.25rem 0;
-		scroll-margin-top: 4rem;
 	}
 
 	/*

@@ -455,7 +455,6 @@
 
 	.prayer-mystery-group {
 		margin: 0 0 1.5rem;
-		scroll-margin-top: 1rem;
 	}
 
 	.prayer-toc {
@@ -536,7 +535,6 @@
 		margin: 1.75rem 0;
 		padding-top: 1rem;
 		border-top: 1px solid var(--color-border);
-		scroll-margin-top: 1rem;
 	}
 
 	.prayer-instructions h2 {

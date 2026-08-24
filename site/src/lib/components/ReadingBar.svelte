@@ -43,7 +43,8 @@
 	`--site-header-height` — published by `+layout.svelte` from a
 	ResizeObserver, since that header's height is scroll-animated and wraps at
 	phone width. The `0px` fallback covers the first frame before the observer
-	has fired.
+	has fired. It publishes its OWN height back the same way; see the effect
+	below for who needs it.
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
@@ -72,9 +73,41 @@
 	}
 
 	let { bookmarkHref, canCompare, compareActive, onToggleCompare, comparison }: Props = $props();
+
+	/**
+	 * Publish this bar's height as `--reading-bar-height` on <html>, exactly
+	 * as `+layout.svelte` publishes the header's. `app.css`'s
+	 * `scroll-padding-top` adds the two: a fragment target has to clear BOTH
+	 * stickies, and this is the one of them that only some routes render.
+	 *
+	 * Measured rather than declared for the same reason the header is — the
+	 * row wraps at phone width, and the edition it names can be as wide as
+	 * "Bíblia Sagrada (Matos Soares)", so there is no single height to state.
+	 *
+	 * Removed on teardown, so an index or the home page falls back to the
+	 * `0px` in that `calc` instead of inheriting the height of whichever
+	 * reading page the reader came from.
+	 */
+	let barEl: HTMLElement | undefined = $state();
+
+	$effect(() => {
+		const el = barEl;
+		if (!el) return;
+		const observer = new ResizeObserver(([entry]) => {
+			document.documentElement.style.setProperty(
+				'--reading-bar-height',
+				`${entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height}px`
+			);
+		});
+		observer.observe(el);
+		return () => {
+			observer.disconnect();
+			document.documentElement.style.removeProperty('--reading-bar-height');
+		};
+	});
 </script>
 
-<div class="reading-bar">
+<div class="reading-bar" bind:this={barEl}>
 	<BookmarkButton href={bookmarkHref} />
 	<PrintButton />
 	<div class="reading-bar-editions">

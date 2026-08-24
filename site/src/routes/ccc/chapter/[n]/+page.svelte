@@ -449,17 +449,12 @@
 	   where the source prints them. Set well below the chapter's `h1` in
 	   weight and size — these are divisions WITHIN the page, not second titles
 	   for it — and given generous space above so each reads as a break in the
-	   column rather than as a bolded first line of the paragraph beneath it.
-
-	   `scroll-margin-top` is what makes the sidebar's `#s{n}` land on the
-	   heading with room to breathe instead of flush against the viewport
-	   edge. */
+	   column rather than as a bolded first line of the paragraph beneath it. */
 	.inner-heading {
 		font-family: var(--font-serif);
 		font-size: max(var(--font-size-min), 1.05em);
 		font-weight: 600;
 		margin: 2.25rem 0 1rem;
-		scroll-margin-top: 1.5rem;
 	}
 
 	/* A subsection inside an article ("I. The Desire for God"). Same face,

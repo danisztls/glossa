@@ -420,6 +420,39 @@ html {
 	   Percentage keeps visitors' chosen default font size intact. */
 	font-size: 112.5%;
 	color-scheme: light dark;
+	/*
+	 * WHAT KEEPS A FRAGMENT FROM LANDING UNDER THE STICKY CHROME. Two sticky
+	 * elements stack on this scrollport: `.site-header` at `top: 0` and
+	 * `.reading-bar` directly beneath it. An anchor left to itself puts the
+	 * heading at scroll offset 0 — behind both of them.
+	 *
+	 * Insetting the SCROLLPORT rather than compensating at each target is
+	 * what makes it hold for every way a scroll can be asked for: a `#s12`
+	 * typed into the address bar, `:target`, `scrollIntoView()` (which is how
+	 * SvelteKit deep-links, deliberately — see its client runtime, which
+	 * comments that it chose that over `scrollTo` for exactly this reason),
+	 * and sequential focus navigation. It is also the only form that can
+	 * follow chrome whose height is measured rather than declared: both
+	 * variables are published from ResizeObservers (`+layout.svelte`,
+	 * `ReadingBar.svelte`), and `--reading-bar-height` is simply absent —
+	 * hence `0px` — on every route that renders no bar.
+	 *
+	 * THE 1rem IS NOT DECORATION. The header's block padding is scroll-
+	 * animated over the first 96px (`+layout.svelte`), and the browser reads
+	 * this value at the moment it scrolls, i.e. against the header height
+	 * BEFORE the jump. Scrolling down, that overshoots by the shrink delta,
+	 * which only costs a little space; scrolling UP to a target near the top,
+	 * the header re-expands afterwards and would cover the heading by that
+	 * same delta. It is 0.8rem (0.75rem → 0.35rem, both sides), so a gap at
+	 * or above it makes the second case impossible. Don't shrink it below.
+	 *
+	 * The per-element `scroll-margin-top` rules this replaced are gone rather
+	 * than left to compose. They ran 1rem to 4rem across five files, the
+	 * 4rems being hand-guessed header compensation written before this bar
+	 * existed, and additively they would have pushed a heading further down
+	 * the viewport the more carefully someone had tuned one.
+	 */
+	scroll-padding-top: calc(var(--site-header-height, 0px) + var(--reading-bar-height, 0px) + 1rem);
 }
 
 body {
@@ -711,10 +744,6 @@ input {
 	display: grid;
 	grid-template-columns: 1fr var(--compare-gutter) 1fr;
 	column-gap: 0;
-	/* So a `#s12` landing here doesn't put the row's first line hard against
-	   the top of the viewport — same allowance `.prayer-mystery-group` and
-	   `.prayer-instructions` already make for their own fragment addresses. */
-	scroll-margin-top: 1rem;
 }
 
 /*

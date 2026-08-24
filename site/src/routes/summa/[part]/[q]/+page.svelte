@@ -464,7 +464,6 @@
 
 	.article {
 		margin-top: 2.5rem;
-		scroll-margin-top: 4rem;
 	}
 
 	/* The text is covered; the margin number hangs outside it on the page's
