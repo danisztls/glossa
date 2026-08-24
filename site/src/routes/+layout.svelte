@@ -16,6 +16,7 @@
 	// component (RefText, linkifyProse, route TOCs, ...) has to opt into.
 	import LinkPreview from '$lib/components/LinkPreview.svelte';
 	import { t } from '$lib/i18n.svelte';
+	import { publishHeight } from '$lib/sticky-height';
 
 	let { children } = $props();
 
@@ -126,6 +127,9 @@
 	 * width. A `ResizeObserver` is the only thing that sees all three, and it
 	 * sees the shrink continuously rather than at a threshold — the same
 	 * reason that animation is scroll-timeline-driven and not a JS flag.
+	 * `publishHeight` measures once up front as well, which is what makes the
+	 * value there in time for a deep link on a cold load; its docblock has
+	 * the timing.
 	 *
 	 * Written to the document element, not to a wrapper, so it is in scope for
 	 * anything on the page regardless of which route rendered it.
@@ -135,17 +139,7 @@
 	$effect(() => {
 		const el = headerEl;
 		if (!el) return;
-		const observer = new ResizeObserver(([entry]) => {
-			document.documentElement.style.setProperty(
-				'--site-header-height',
-				`${entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height}px`
-			);
-		});
-		observer.observe(el);
-		return () => {
-			observer.disconnect();
-			document.documentElement.style.removeProperty('--site-header-height');
-		};
+		return publishHeight(el, '--site-header-height');
 	});
 </script>
 

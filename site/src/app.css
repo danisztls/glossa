@@ -433,9 +433,11 @@ html {
 	 * comments that it chose that over `scrollTo` for exactly this reason),
 	 * and sequential focus navigation. It is also the only form that can
 	 * follow chrome whose height is measured rather than declared: both
-	 * variables are published from ResizeObservers (`+layout.svelte`,
-	 * `ReadingBar.svelte`), and `--reading-bar-height` is simply absent —
-	 * hence `0px` — on every route that renders no bar.
+	 * variables are published by `$lib/sticky-height`'s `publishHeight`
+	 * (from `+layout.svelte` and `ReadingBar.svelte`), which measures on
+	 * mount and observes thereafter — see its docblock for why the mount
+	 * measurement is what a deep link actually reads. `--reading-bar-height`
+	 * is simply absent — hence `0px` — on every route that renders no bar.
 	 *
 	 * THE 1rem IS NOT DECORATION. The header's block padding is scroll-
 	 * animated over the first 96px (`+layout.svelte`), and the browser reads
