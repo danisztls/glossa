@@ -63,7 +63,20 @@ from common import (
     write_stamped_json,
 )
 
-BASE_URL = "https://vulgata.online"
+# The API format itself lives in vulgata_online.py, shared with
+# douay_rheims.py -- same host, same responses, different halves of them.
+# See that module's docblock for where the boundary between "the API" and
+# "this work" is drawn, and for the `bd` record this scraper is here for.
+from vulgata_online import (
+    BASE_URL,
+    BOOK_MAP,
+    cache_name,
+    chapter_url,
+    records,
+    strip_brackets,
+    strip_emphasis,
+)
+
 SOURCE_EDITION = "DR2"
 USER_AGENT = "Glossa Catholica corpus builder (+contact via repo)"
 # vulgata.online's robots.txt is `Disallow:` with no Crawl-delay, so this
@@ -73,92 +86,6 @@ RATE_LIMIT_SECONDS = 1.0
 RAW_SUBDIR = "vulgata-online"
 WORK_ID = "bible-intro.en"
 
-#: Their book code -> (our lowercase OSIS code, their book name).
-#:
-#: BY IDENTITY, NEVER BY POSITION. Their canon orders the Machabees after
-#: Malachias; ours puts them after Esther (docs/corpus-schema.md), so the two
-#: `order` fields disagree for 27 books and zipping the lists would silently
-#: mis-file every one of them.
-#:
-#: Their names are kept beside the codes because two pairs are live traps in
-#: Douay nomenclature: `Jn` is Jonas and `Jo` is John, and their "1 Kings" is
-#: our 1 Samuel while their "3 Kings" is our 1 Kings. `validate` re-checks
-#: this mapping against bible.cpdv.en rather than trusting it.
-BOOK_MAP: dict[str, tuple[str, str]] = {
-    "Gn": ("gen", "Genesis"),
-    "Ex": ("exod", "Exodus"),
-    "Lv": ("lev", "Leviticus"),
-    "Nm": ("num", "Numbers"),
-    "Dt": ("deut", "Deuteronomy"),
-    "Js": ("josh", "Josue"),
-    "Ju": ("judg", "Judges"),
-    "Rt": ("ruth", "Ruth"),
-    "1Sm": ("1sam", "1 Kings (1 Samuel)"),
-    "2Sm": ("2sam", "2 Kings (2 Samuel)"),
-    "1Rs": ("1kgs", "3 Kings (1 Kings)"),
-    "2Rs": ("2kgs", "4 Kings"),
-    "1Pa": ("1chr", "1 Paralipomenon"),
-    "2Pa": ("2chr", "2 Paralipomenon"),
-    "Esd": ("ezra", "1 Esdras"),
-    "Ne": ("neh", "2 Esdras (Nehemias)"),
-    "Tob": ("tob", "Tobias"),
-    "Jdi": ("jdt", "Judith"),
-    "Est": ("esth", "Esther"),
-    "Job": ("job", "Job"),
-    "Ps": ("ps", "Psalms"),
-    "Pv": ("prov", "Proverbs (Sentences)"),
-    "Ees": ("eccl", "Ecclesiastes"),
-    "Cc": ("song", "Canticle of Canticles"),
-    "Sa": ("wis", "Wisdom"),
-    "Eus": ("sir", "Ecclesiasticus"),
-    "Is": ("isa", "Isaias"),
-    "Je": ("jer", "Jeremias"),
-    "Lm": ("lam", "Lamentations"),
-    "Ba": ("bar", "Baruch"),
-    "Ez": ("ezek", "Ezechiel"),
-    "Dn": ("dan", "Daniel"),
-    "Os": ("hos", "Osee"),
-    "Jl": ("joel", "Joel"),
-    "Am": ("amos", "Amos"),
-    "Ab": ("obad", "Abdias"),
-    "Jn": ("jonah", "Jonas"),
-    "Mic": ("mic", "Micheas"),
-    "Na": ("nah", "Nahum"),
-    "Hc": ("hab", "Habacuc"),
-    "So": ("zeph", "Sophonias"),
-    "Ag": ("hag", "Aggæus"),
-    "Zc": ("zech", "Zacharias"),
-    "Ml": ("mal", "Malachias"),
-    "1Ma": ("1macc", "1 Machabees"),
-    "2Ma": ("2macc", "2 Machabees"),
-    "Mt": ("matt", "Matthew"),
-    "Mc": ("mark", "Mark"),
-    "Lc": ("luke", "Luke"),
-    "Jo": ("john", "John"),
-    "Act": ("acts", "Acts"),
-    "Rm": ("rom", "Romans"),
-    "1Co": ("1cor", "1 Corinthians"),
-    "2Co": ("2cor", "2 Corinthians"),
-    "Gl": ("gal", "Galatians"),
-    "Ef": ("eph", "Ephesians"),
-    "Fp": ("phil", "Philippians"),
-    "Cl": ("col", "Colossians"),
-    "1Ts": ("1thess", "1 Thessalonians"),
-    "2Ts": ("2thess", "2 Thessalonians"),
-    "1Tm": ("1tim", "1 Timothy"),
-    "2Tm": ("2tim", "2 Timothy"),
-    "Tt": ("titus", "Titus"),
-    "Fm": ("phlm", "Philemon"),
-    "Hb": ("heb", "Hebrews"),
-    "Tg": ("jas", "James"),
-    "1Pe": ("1pet", "1 Peter"),
-    "2Pe": ("2pet", "2 Peter"),
-    "1Jo": ("1john", "1 John"),
-    "2Jo": ("2john", "2 John"),
-    "3Jo": ("3john", "3 John"),
-    "Jda": ("jude", "Jude"),
-    "Ap": ("rev", "Apocalypse"),
-}
 
 #: Books Challoner gives no preface of their own, because the preface printed
 #: before their FIRST volume covers both. Its opening words say so outright:
@@ -197,10 +124,6 @@ def work_dir() -> Path:
     return works_root() / WORK_ID
 
 
-def chapter_url(abbr: str) -> str:
-    return f"{BASE_URL}/api/text/readings2/?ed={SOURCE_EDITION}&bk={abbr}&cn=1"
-
-
 def normalize(raw: str) -> list[str]:
     """One `bd` string -> its paragraphs, as plain text.
 
@@ -215,8 +138,7 @@ def normalize(raw: str) -> list[str]:
     finds references in running prose, and the brackets are this source's
     apparatus rather than Challoner's text."""
     text = raw.replace("\r\n", "\n").replace("\r", "\n")
-    text = re.sub(r"_([^_]*)_", r"\1", text)
-    text = re.sub(r"\[([^\[\]]*)\]", r"\1", text)
+    text = strip_brackets(strip_emphasis(text))
     paragraphs = []
     for chunk in re.split(r"\n\s*\n", text):
         collapsed = re.sub(r"\s+", " ", chunk).strip()
@@ -225,9 +147,9 @@ def normalize(raw: str) -> list[str]:
     return paragraphs
 
 
-def book_intro(records: list[dict]) -> list[str]:
+def book_intro(chapter: list[dict]) -> list[str]:
     """The `bd` record's paragraphs, or `[]` when the book has no preface."""
-    for record in records:
+    for record in chapter:
         if record.get("tp") == "bd":
             return normalize(record.get("cnt") or "")
     return []
@@ -257,17 +179,14 @@ def run_scrape(
     verses: dict[str, int] = {}
     for abbr, (osis, name) in BOOK_MAP.items():
         payload = fetcher.fetch_bytes(
-            chapter_url(abbr), f"{SOURCE_EDITION}/{abbr}.json"
+            chapter_url(SOURCE_EDITION, abbr, 1),
+            cache_name(SOURCE_EDITION, abbr, 1),
         )
-        records = json.loads(payload)
-        if not isinstance(records, list):
-            raise SystemExit(
-                f"{abbr} ({name}): API returned {type(records).__name__}, not a list"
-            )
-        paragraphs = book_intro(records)
+        chapter = records(payload, where=f"{abbr} ({name})")
+        paragraphs = book_intro(chapter)
         if paragraphs:
             intros[osis] = paragraphs
-        verses[osis] = sum(1 for record in records if record.get("tp") == "vs")
+        verses[osis] = sum(1 for record in chapter if record.get("tp") == "vs")
         print(
             f"  {abbr:<5} {osis:<7} {name:<28} "
             f"{sum(len(p.split()) for p in paragraphs):>4} words"

@@ -1,0 +1,271 @@
+[
+  {
+    "id": "dr.en-john3.19-note1-comdemnation",
+    "locator": {
+      "osis": "john",
+      "chapter": 3,
+      "verse": 19,
+      "note": "1"
+    },
+    "field": "text",
+    "from": "comdemnation",
+    "to": "condemnation",
+    "reason": "Transcription typo in Challoner's note, not in his text: 'comdemnation' for 'condemnation' (m for n). A mechanical single-letter defect of the kind docs/decisions.md's source-defect corrections policy admits -- no wording is changed, and the corrected reading is the only English word the letters can be.",
+    "evidence": "corpus/raw/vulgata-online/DR2/Jo.3.json, record tp='fn' vn=19 rn=1: '_The judgment:_ That is, the cause of his comdemnation.' The note glosses John 3:19 'And this is the judgment', and the printed Challoner reads 'condemnation' -- cf. the note on the neighbouring verse 18 in the same chapter, which uses the word correctly twice ('is not condemned', 'condemned already'). 'comdemnation' is not a word, an archaism, or an eighteenth-century spelling.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-jonah1.2-note1-lemma-Nineve",
+    "locator": {
+      "osis": "jonah",
+      "chapter": 1,
+      "verse": 2,
+      "note": "1"
+    },
+    "field": "lemma",
+    "from": "Nineve",
+    "to": "Ninive",
+    "reason": "Transcription typo in the note's lemma: the two middle vowels are transposed. Mechanical and single-word, so within docs/decisions.md's source-defect policy. It matters more than an ordinary typo because a lemma is structural, not prose -- it names the words in the verse the note glosses, and a lemma matching no string in its verse cannot be resolved to a span by anything downstream.",
+    "evidence": "Internal: across the whole DR2 source the city is spelled 'Ninive' 13 times -- in verses (Gen 10:11-12, Tob 1:11, Jdt 1:5, Jonas 1:2 itself), in Jonas's own chapter argument, in Tobias's book preface, and in four OTHER footnotes including Nahum's -- against this single 'Nineve'. External: drbo.org, an independent transcription of the same Challoner apparatus, prints the note as '[2] \"Ninive\": The capital city of the Assyrian empire.' -- same gloss word for word, lemma spelled Ninive (https://drbo.org/chapter/37001.htm, retrieved 2026-08-24). Note that the missing inline anchor on this verse is a SEPARATE defect of the same transcription and is not repaired here: drbo marks the lemma in the verse text, vulgata.online does not.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-josh5-segment-v5",
+    "locator": {
+      "osis": "josh",
+      "chapter": 5,
+      "record": "5ef15c66af518144068e64f9"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 6
+    },
+    "to": {
+      "vn": 5
+    },
+    "anchor": "Now these were all circumcised.",
+    "reason": "Mis-numbered segment: the source files this text as a second verse 6, leaving Josue 5 with no verse 5 at all.",
+    "evidence": "bible.clementina.la has 16 verses in Josue 5 and this parse had 15, the gap being exactly verse 5. drbo.org prints 'Now these were all circumcised. But the people that were born in the desert,' as verse 5, and 'During the forty years of the journey in the wide wilderness, were uncircumcised' -- the other segment filed under 6 -- as verse 6. Two independent witnesses, and the two segments read as consecutive verses rather than as one.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-1kgs17-segment-v19",
+    "locator": {
+      "osis": "1kgs",
+      "chapter": 17,
+      "record": "5ef15b0faf518144068e0dff"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 11
+    },
+    "to": {
+      "vn": 19
+    },
+    "anchor": "And Elias said to her: Give me thy son.",
+    "reason": "Mis-numbered segment: filed as a second verse 11, leaving 3 Kings 17 with no verse 19.",
+    "evidence": "bible.clementina.la has 24 verses in this chapter and this parse had 23, the gap being exactly verse 19. drbo.org prints 'And Elias said to her: Give me thy son. And he took him out of her bosom, and carried him into the upper chamber where he abode, and laid him upon his own bed' as verse 19; verse 11 is the other segment, 'And when she was going to fetch it, he called after her'. The displaced text also belongs narratively to the raising of the widow's son, eight verses later than where it was filed.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-prov30-segment-v29",
+    "locator": {
+      "osis": "prov",
+      "chapter": 30,
+      "record": "5ef15d3caf518144068e927c"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 19
+    },
+    "to": {
+      "vn": 29
+    },
+    "anchor": "There are three things, which go well",
+    "reason": "Mis-numbered segment: filed as a second verse 19, leaving Proverbs 30 with no verse 29.",
+    "evidence": "bible.clementina.la has 33 verses in Proverbs 30 and this parse had 32, the gap being exactly verse 29. drbo.org prints 'There are three things, which go well, and the fourth that walketh happily' as verse 29 -- it introduces the eagle/serpent/ship numerical saying's SECOND instance, and the segment correctly filed at 19 ('The way of an eagle in the air...') is the first one's continuation. The transcriber appears to have caught the repeated formula.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-wis6-segment-v5",
+    "locator": {
+      "osis": "wis",
+      "chapter": 6,
+      "record": "5ef15d4faf518144068e9574"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 6
+    },
+    "to": {
+      "vn": 5
+    },
+    "anchor": "Because being ministers of his kingdom",
+    "reason": "Mis-numbered segment: filed as a second verse 6, leaving Wisdom 6 with no verse 5.",
+    "evidence": "bible.clementina.la has 27 verses in Wisdom 6 and this parse had 26, the gap being exactly verse 5. drbo.org prints 'Because being ministers of his kingdom, you have not judged rightly, nor kept the law of justice, nor walked according to the will of God' as verse 5, and 'Horribly and speedily will he appear to you' -- the other segment under 6 -- as verse 6.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-prov12-segment-v11-tail",
+    "locator": {
+      "osis": "prov",
+      "chapter": 12,
+      "record": "5ef15d29af518144068e9052"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 12
+    },
+    "to": {
+      "vn": 11,
+      "seq": 1
+    },
+    "anchor": "He that is delighted in passing his time over wine",
+    "reason": "A verse SPLIT rather than a mis-numbering: this is the second sentence of verse 11, filed under 12. `seq` orders it after the sentence already at 11 so the two join in the printed order.",
+    "evidence": "Unlike the four re-numberings above, bible.clementina.la agrees with this parse on the verse COUNT (28 either way), so no gap identifies a home -- the segment is surplus, not missing. drbo.org settles it: it prints verse 11 as 'He that tilleth his land shall be satisfied with bread: but he that pursueth idleness is very foolish. He that is delighted in passing his time over wine, leaveth a reproach in his strong holds.' -- both sentences, one verse -- and verse 12 as 'The desire of the wicked is the fortification of evil men', which is the segment correctly filed (https://drbo.org/chapter/22012.htm, retrieved 2026-08-24).",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-lam1-segment-prologue-2",
+    "locator": {
+      "osis": "lam",
+      "chapter": 1,
+      "record": "5ef15c97af518144068e6ec8"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 2
+    },
+    "to": {
+      "tp": "ln",
+      "vn": 1,
+      "seq": 1
+    },
+    "anchor": "that Jeremiah the prophet sat weeping",
+    "reason": "Not scripture at all: this is the middle of the prologue Challoner prints before Lamentations 1:1, filed by the source as a verse. Re-typed to `ln`, the record type the prologue's first segment already uses, and sequenced after it.",
+    "evidence": "drbo.org prints the whole prologue as one unbroken sentence ahead of verse 1: 'And it came to pass, after Israel was carried into captivity, and Jerusalem was desolate, that Jeremias the prophet sat weeping, and mourned with this lamentation over Jerusalem, and with a sorrowful mind, sighing and moaning, he said:' (https://drbo.org/chapter/29001.htm, retrieved 2026-08-24). The source's own `ln` record carries the first clause of exactly that sentence, and this segment is its continuation -- it begins 'that', which cannot open a verse. bible.clementina.la agrees with the parse on 22 verses either way, so as with Proverbs 12 the segment is surplus rather than missing.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-lam1-segment-prologue-3",
+    "locator": {
+      "osis": "lam",
+      "chapter": 1,
+      "record": "5ef15c97af518144068e6eca"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 3
+    },
+    "to": {
+      "tp": "ln",
+      "vn": 1,
+      "seq": 2
+    },
+    "anchor": "and with a sorrowful mind, sighing and moaning",
+    "reason": "The closing clause of the same prologue, filed by the source as a verse 3. Same repair as the entry above, sequenced after it.",
+    "evidence": "Same drbo.org reading: the prologue ends '...and with a sorrowful mind, sighing and moaning, he said:' immediately before 'Aleph. How doth the city sit solitary'. The segment ends in a colon introducing the lamentation, which is the prologue's function and not a verse's.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-josh6.24-stray-underscore",
+    "locator": {
+      "osis": "josh",
+      "chapter": 6,
+      "verse": 24
+    },
+    "field": "verse_text",
+    "from": "treasury of the Lord. _",
+    "to": "treasury of the Lord.",
+    "reason": "An unpaired emphasis marker left in the source's verse text. The site's markup convention here is `_italic_`; a lone underscore closes nothing and is markup debris, not text. It is the only one in 35,796 verses, so it is filed as the accident it is rather than handled in the parser.",
+    "evidence": "corpus/raw/vulgata-online/DR2/Js.6.json, record tp='vs' vn=24 ends '...which they consecrated unto the treasury of the Lord. _'. drbo.org prints the verse ending at 'the treasury of the Lord.' with nothing following. No other verse in the edition contains an underscore at all.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-lam5-segment-v5",
+    "locator": {
+      "osis": "lam",
+      "chapter": 5,
+      "record": "5ef15c97af518144068e6f53"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 6
+    },
+    "to": {
+      "vn": 5
+    },
+    "anchor": "We were dragged by the necks",
+    "reason": "Mis-numbered segment: filed as a second verse 6, leaving Lamentations 5 with no verse 5.",
+    "evidence": "bible.clementina.la has 22 verses in Lamentations 5. drbo.org prints verse 5 as 'We were dragged by the necks, we were weary and no rest was given us.' and verse 6 as 'We have given our hand to Egypt, and to the Assyrians, that we might be satisfied with bread.' -- the two segments the source filed together, in that order (https://drbo.org/chapter/29005.htm, retrieved 2026-08-24).",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-bar6-segment-v37",
+    "locator": {
+      "osis": "bar",
+      "chapter": 6,
+      "record": "5ef15b79af518144068e28a6"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 7
+    },
+    "to": {
+      "vn": 37
+    },
+    "anchor": "They shall not pity the widow",
+    "reason": "Mis-numbered segment, and by thirty verses: filed as a second verse 7, leaving Baruch 6 with no verse 37. The same long-distance displacement as 3 Kings 17.",
+    "evidence": "bible.clementina.la has 72 verses in Baruch 6 and this parse had 70, the gaps being 7 and 37 -- both members of the collided group. drbo.org prints verse 7 as 'For their tongue that is polished by the craftsman, and themselves laid over with gold and silver, are false things, and they cannot speak.' and verse 37 as 'They shall not pity the widow, nor do good to the fatherless.' (https://drbo.org/chapter/30006.htm, retrieved 2026-08-24). So the segment left at 7 is correct and this one belongs at 37.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-2macc7-segment-v5",
+    "locator": {
+      "osis": "2macc",
+      "chapter": 7,
+      "record": "5ef15b2daf518144068e155f"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 6
+    },
+    "to": {
+      "vn": 5
+    },
+    "anchor": "when he was now maimed in all parts",
+    "reason": "Mis-numbered segment: filed as a second verse 6, leaving 2 Machabees 7 with no verse 5.",
+    "evidence": "bible.clementina.la has 42 verses in 2 Machabees 7 and this parse had 40, the gaps being 5 and 6 -- both members of the collided group. drbo.org prints verse 5 as 'And when he was now maimed in all parts, he commanded him, being yet alive, to be brought to the fire...' and verse 6 as 'Saying: The Lord God will look upon the truth...' (https://drbo.org/chapter/46007.htm, retrieved 2026-08-24).",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "dr.en-2macc10-segment-v25",
+    "locator": {
+      "osis": "2macc",
+      "chapter": 10,
+      "record": "5ef15b2daf518144068e15e7"
+    },
+    "field": "segment",
+    "from": {
+      "tp": "vs",
+      "vn": 26
+    },
+    "to": {
+      "vn": 25
+    },
+    "anchor": "But Machabeus, and they that were with him",
+    "reason": "Mis-numbered segment: filed as a second verse 26, leaving 2 Machabees 10 with no verse 25.",
+    "evidence": "bible.clementina.la has 38 verses in 2 Machabees 10 and this parse had 36, the gaps being 25 and 26 -- both members of the collided group. drbo.org prints verse 25 as 'But Machabeus and they that were with him, when he drew near, prayed to the Lord, sprinkling earth upon their heads...' and verse 26 as 'And lying prostrate at the foot of the altar, besought him to be merciful to them...' (https://drbo.org/chapter/46010.htm, retrieved 2026-08-24). The two read as consecutive clauses of one action, which is how the transcriber came to file them together.",
+    "added": "2026-08-24"
+  }
+]

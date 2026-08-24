@@ -54,8 +54,9 @@ pipeline/scrapers/
                      corrections, overrides, text. Import it as `common`;
                      `__init__.py` re-exports the whole surface.
   bible/             cpdv, vulgate, matos_soares, and the sacredbible page
-                     format the first two share; introductions (the one
-                     scraper here that reads a JSON API, not HTML)
+                     format the first two share; douay_rheims and
+                     introductions, and the vulgata_online API format THOSE
+                     two share (the only scrapers here reading JSON, not HTML)
   ccc/               ccc, compendium
   summa/             the Summa, EN from CCEL + LA from Corpus Thomisticum
   vatican_docs.py    encyclicals, Vatican II, exhortations
@@ -67,9 +68,10 @@ pipeline/scrapers/
 Python puts a script's own directory on `sys.path` at startup, which is the
 entire mechanism behind a bare `import common`; for `bible/` and `ccc/` that
 directory is no longer the one holding the package. Each of those six files
-inserts its parent before importing `common`, so the `common` import (and, in
-the two Bible scrapers, the `sacredbible` one that itself imports `common`)
-sits below that line rather than at the very top. Ruff does not object — it
+inserts its parent before importing `common`, so the `common` import (and the
+per-host format import that itself imports `common` — `sacredbible` in two
+Bible scrapers, `vulgata_online` in the other two) sits below that line rather
+than at the very top. Ruff does not object — it
 exempts imports that follow `sys.path` manipulation from E402, so no `noqa` is
 needed and one added "for safety" is reported as unused. Copying one of these
 scrapers to start a new one and dropping the "odd" lines at the top gets you

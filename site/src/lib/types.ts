@@ -231,25 +231,65 @@ export type WorkManifest =
 	| SummaManifest;
 
 export interface VerseNote {
+	/**
+	 * Unique WITHIN ITS UNIT, not within the chapter — sources number
+	 * footnotes per verse and restart at 1, so John 3's four notes are all
+	 * marker `"1"`. A chapter-wide marker index collides immediately.
+	 */
 	marker: string;
+	/**
+	 * The words the note glosses, when the source's apparatus names them
+	 * before glossing them (Challoner: `_The judgment:_ That is, …`). The
+	 * token in `text_marked` sits immediately AFTER the last of these words,
+	 * so a renderer that wants to mark the whole phrase walks back from the
+	 * token by exactly this string. Omitted when the source names none.
+	 */
+	lemma?: string;
 	text: string;
 }
 
-export interface Verse {
-	n: number;
+/**
+ * A unit of text that may carry an apparatus. Verses and chapter headings
+ * both can — some sources anchor a note inside a heading (Challoner prints
+ * Jeremias's prologue before Lamentations 1:1 and footnotes it).
+ */
+interface Annotated {
 	text: string;
+	/**
+	 * `text` with each note's `⟦marker⟧` token where the source sets it — the
+	 * same vocabulary `CccParagraph` uses. Present only when the unit really
+	 * carries apparatus, and then `text` is always this string with the tokens
+	 * stripped.
+	 *
+	 * Every token has a `notes` entry; the converse does NOT hold. A source
+	 * may print a note whose anchor it never marks, and that note is stored
+	 * against its verse with a marker and no token (docs/corpus-schema.md).
+	 */
+	text_marked?: string;
 	notes?: VerseNote[];
 }
 
-export interface ChapterHeading {
+export interface Verse extends Annotated {
+	n: number;
+}
+
+export interface ChapterHeading extends Annotated {
 	/** Verse number this heading is printed immediately before. */
 	before_verse: number;
-	text: string;
 }
 
 export interface Chapter {
 	n: number;
 	verses: Verse[];
+	/**
+	 * What the source prints before the chapter's verses to say what is in it
+	 * — Bible typography calls it the chapter's *argument*. Belongs to the
+	 * whole chapter, which is what distinguishes it from a `headings` entry:
+	 * that one is a division inside the chapter and names the verse it
+	 * precedes. Omitted when the edition prints none, which is three of the
+	 * corpus's four.
+	 */
+	summary?: string;
 	/** Section headings the source prints inside the chapter, if any. */
 	headings?: ChapterHeading[];
 }

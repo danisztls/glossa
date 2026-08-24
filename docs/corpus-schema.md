@@ -97,6 +97,9 @@ stored — see "Cross-references" below.
   "chapters": [
     {
       "n": 1,
+      // Optional. What the source prints before the chapter's verses to say
+      // what is in it — see "A chapter may carry a summary" below.
+      "summary": "Christ's discourse with Nicodemus. John's testimony.",
       "verses": [{ "n": 1, "text": "In the beginning was the Word…" }],
     },
   ],
@@ -105,8 +108,42 @@ stored — see "Cross-references" below.
 
 - `text` is plain text: no markup, no verse markers, no footnote markers, single spaces, no leading/trailing whitespace. Typographic quotes/dashes preserved as proper UTF-8.
 - Verse-number gaps are allowed (critical-text omissions); never renumber. A verse present with empty text is invalid — omit it instead.
-- If the source carries footnotes, they may optionally be captured as `"notes": [{ "marker": "i", "text": "…" }]` on the verse; strip markers from `text` regardless. (Matos Soares: liriocatolico chapter pages carry markers but not note content — strip markers, and note in the manifest that footnote content is a future enrichment via vulgata.online.)
-- If the source prints section headings inside chapters (e.g. "Primeiro dia da criação"), capture them as `"headings": [{ "before_verse": 3, "text": "…" }]` on the chapter; omit the field when absent.
+- If the source carries footnotes, capture them as `"notes"` on the verse and strip the markers from `text` regardless — see "An annotated edition" below for the full entry shape. (Matos Soares: liriocatolico chapter pages carry markers but not note content — strip markers, and note in the manifest that footnote content is a future enrichment via vulgata.online.)
+- If the source prints section headings inside chapters (e.g. "Primeiro dia da criação"), capture them as `"headings": [{ "before_verse": 3, "text": "…" }]` on the chapter; omit the field when absent. A heading takes the same optional `text_marked`/`notes` a verse does, and for the same reason the CCC's structure nodes do (§"A heading can carry citations"): some sources anchor a footnote inside one.
+
+### A chapter may carry a summary
+
+**Added 2026-08-24.** `summary` is optional and omitted when absent, per the rule `kind`/`attribution`/`label` already follow. It holds whatever the source prints ahead of a chapter's verses to say what the chapter contains — plain text, on the same terms as verse text.
+
+**Named for what it is, not for what one edition calls it.** Challoner (and Knox, and Figueiredo) print what Bible typography calls the chapter's _argument_; the term is precise and almost entirely unread outside that trade, where it collides with two commoner senses. Editions that print one are common enough that this is edition-agnostic vocabulary rather than a Douay-Rheims field: `bible.douay-rheims.en` carries one on every chapter, and the other three editions carry none, which is exactly the shape an optional field is for.
+
+**Not a heading.** A `headings` entry is a division _inside_ a chapter and is addressed by the verse it precedes; a summary belongs to the chapter as a whole and has no `before_verse`. Folding one into the other would make a renderer guess which it had.
+
+### An annotated edition — `notes`, `text_marked`, and `lemma`
+
+**Added 2026-08-24 with `bible.douay-rheims.en`,** the corpus's first edition whose apparatus is part of the work rather than absent from the source.
+
+```jsonc
+{
+  "n": 19,
+  "text": "And this is the judgment: Because the light is come into the world…",
+  "text_marked": "And this is the judgment⟦1⟧: Because the light is come into the world…",
+  "notes": [
+    {
+      "marker": "1",
+      "lemma": "The judgment", // optional — see below
+      "text": "That is, the cause of his condemnation.",
+    },
+  ],
+}
+```
+
+- **`text_marked` is the same vocabulary the CCC, the Compendium and the prayers already use**, and deliberately not a second one: `⟦marker⟧` keeps each note's position in the sentence, `text` is that string with the tokens stripped, and the two must agree. Both are optional on a verse and appear together or not at all — a verse with no apparatus stores only `text`, so a stored `text_marked` always marks a verse that really carries one.
+- **A marker is unique within its unit, not within the chapter.** This is the sharp edge. Sources number footnotes per verse and restart at 1: John 3 carries four notes and every one of them is marker `1`. Uniqueness is therefore scoped exactly as it is for a CCC paragraph — within the one `text_marked` the tokens appear in — and a consumer that builds a chapter-wide marker index will collide on the first annotated chapter it meets.
+- **`lemma` is optional and holds the words the note glosses**, when the source's apparatus names them before glossing them. It exists because for this class of edition the distinction is carried by _emphasis_ — Challoner's notes open by quoting the lemma in italics — and the corpus's standing rule that inline emphasis is a v1 loss would, here alone, destroy meaning rather than flatten it: strip the italics and the reader must guess where the quotation ends. Promoting it to a field keeps the boundary without inventing a markup. Emphasis anywhere else in a note stays a v1 loss, recoverable from `raw/`.
+- **The token is a point, the lemma is a range, and that is not a contradiction.** The token sits immediately after the last word the note refers to, which is where a printed edition sets its marker; a renderer wanting to underline the whole glossed phrase walks back from the token by exactly `lemma`.
+- **Every token must have a note entry. A note need not have a token.** The asymmetry is real and is the one place this differs from the CCC's 1:1 rule: a transcription may carry a note whose anchor it never marks — 9 of the first 148 Douay-Rheims notes sampled, among them Jonas 1:2, where drbo.org marks the lemma in the verse and vulgata.online does not. Such a note is stored against the verse it names, with a marker but no token, and renders as a note on that verse. Dropping it to preserve a 1:1 invariant would discard the source to satisfy the schema.
+- **A `lemma` that appears nowhere in its unit's `text` is a defect, and the validator says so.** It is the cheapest available check on an annotated edition, because the lemma is a quotation: the source printed those words twice, once in the verse and once at the head of the note, so a mismatch means one of the two is mistranscribed. It found `Nineve` for `Ninive` in Jonas 1:2 (`pipeline/corrections/bible.douay-rheims.en.json`) — a defect invisible to spellcheck, since both are plausible transliterations, and invisible to the token check, since that note has no token to disagree with. Reported rather than fatal: an edition may legitimately normalize a lemma's capitalization or elide it with "etc.".
 
 ## Book introductions — `bible-intro.{lang}/intros.json`
 
