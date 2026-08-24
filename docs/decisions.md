@@ -2853,3 +2853,25 @@ before a parser run that adds a NEW content file keeps serving the old set:
 `import.meta.glob(..., { eager: true })` is resolved at server start, and a
 file appearing underneath it is not picked up. Restart after a re-parse that
 adds files, not just after one that changes them.
+
+## 2026-08-24 — The tail scrolls into view like anything else
+
+`rowState` decides whether a table-of-contents row is the one being read
+entirely from its `paragraphs` range, and a tail heading's range was
+`[null, null]`. So even once the appendix rendered, the sidebar stopped marking
+anything the moment a reader scrolled into it — and on an edition that numbers
+nothing it never marked anything at all, because there was no `s{n}` on the
+page to find.
+
+`documentTailNumber` gives each tail row a position strictly above every real
+section number. It is positional, never an address: nothing citable is derived
+from it, it reaches no URL, and the row still links by its `#h{i}` anchor. The
+scroll spy then extends its ordered list with the tail's heading ids instead of
+needing a second mechanism.
+
+`buildDocumentOutline`'s contract test asserted the opposite — `[null, null]`,
+"a consumer must not link it; inventing a range would make it look
+addressable". That was right while the body rendered nothing for such a row and
+wrong the moment the appendix landed; the test now pins the new rule and says
+why it changed, plus a second case for a document with no last section to count
+from.

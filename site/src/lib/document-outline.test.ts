@@ -45,12 +45,28 @@ describe('buildDocumentOutline', () => {
 		expect(out[0].paragraphs).toEqual([1, 64]);
 	});
 
-	it('leaves an unanchored heading unaddressable rather than guessing a span', () => {
+	it('gives trailing matter a position past the last section', () => {
 		// `before: null` is trailing matter the numbered flow never reaches.
-		// A consumer must not link it; inventing a range would make it look
-		// addressable, which is the failure the stored spans used to produce.
+		// This used to assert `[null, null]`, on the reasoning that a consumer
+		// must not link a heading with no address — right while the body
+		// rendered nothing for it, and wrong since the appendix landed
+		// (docs/decisions.md, 2026-08-24): the text IS on the page, and a range
+		// of nulls left `rowState` unable to mark the row a reader was in.
+		// Strictly above every real section number, so nothing collides, and
+		// positional only — the row still LINKS by its `#h{i}` anchor, and
+		// nothing citable is derived from this.
 		const out = buildDocumentOutline([row(1, 'A', 1), row(1, 'APPENDIX', null)], 10);
-		expect(out[1].paragraphs).toEqual([null, null]);
+		expect(out[1].paragraphs).toEqual([11, 11]);
+	});
+
+	it('numbers an all-unnumbered document from one', () => {
+		// An edition that prints no paragraph number has no last section to
+		// count from — eight of them in this corpus (Pascendi PT and the rest).
+		const out = buildDocumentOutline([row(1, 'I', null), row(1, 'II', null)], null);
+		expect(out.map((n) => n.paragraphs)).toEqual([
+			[1, 1],
+			[2, 2]
+		]);
 	});
 
 	it('skips back out of a deep run to a shallower sibling', () => {

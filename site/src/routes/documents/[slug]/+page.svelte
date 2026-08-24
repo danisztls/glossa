@@ -52,6 +52,7 @@
 		compareColumnLabel,
 		flattenDocumentStructure,
 		documentOutline,
+		documentTailNumber,
 		getDocumentSectionsAsync,
 		getDocumentAppendixAsync
 	} from '$lib/corpus';
@@ -416,9 +417,22 @@
 	 * (`useScrollSpy` runs inside `$effect`), so this changes nothing about the
 	 * initial render.
 	 */
-	const spy = useScrollSpy(() =>
-		(current?.sections ?? []).map((section) => [`s${section.n}`, section.n] as const)
-	);
+	const spy = useScrollSpy(() => {
+		const sections = (current?.sections ?? []).map(
+			(section) => [`s${section.n}`, section.n] as const
+		);
+		// The tail's headings carry `#h{i}` ids and sit past the last section,
+		// so they extend the same ordered list rather than needing a second
+		// mechanism. Without them the sidebar stops marking anything the moment
+		// the reader scrolls into an appendix — and on an edition that numbers
+		// nothing, it never marks anything at all, because there is no `s{n}`
+		// on the page to find.
+		const lastN = sections.length ? sections[sections.length - 1][1] : null;
+		const tail = tailRows
+			.map((row, k) => [row.anchor, documentTailNumber(lastN, k)] as const)
+			.filter((t): t is readonly [string, number] => typeof t[0] === 'string');
+		return [...sections, ...tail];
+	});
 
 	// Reactive rather than `onMount`: re-records the position whenever the
 	// reader toggles the document's language mid-read too.

@@ -1306,7 +1306,29 @@ export function documentOutline(workId: string): StructureNode[] {
 /** `documentOutline`'s derivation, split out so it is testable without a
  *  corpus: documents have no fixtures, so `documentStructures` is `{}` under
  *  vitest and the workId-taking wrapper can never exercise this. */
+/**
+ * The position a TAIL row occupies, past the document's last real section.
+ *
+ * A heading that anchors no numbered section has no `before`, so its outline
+ * node's `paragraphs` range is `[null, null]` — and `rowState` keys entirely
+ * off that range, which is why the sidebar could never mark such a row as the
+ * one being read even once the body rendered it. These sentinels sit strictly
+ * above every real section number, so they collide with nothing and the scroll
+ * spy, the outline and the row-state machinery all keep speaking one language.
+ *
+ * Positional, not an address: nothing citable is derived from it, and it never
+ * reaches the corpus or a URL — the row still links by its `#h{i}` anchor.
+ */
+export function documentTailNumber(lastN: number | null, tailIndex: number): number {
+	return (lastN ?? 0) + tailIndex + 1;
+}
+
 export function buildDocumentOutline(rows: DocumentNode[], lastN: number | null): StructureNode[] {
+	let lastAnchored = -1;
+	rows.forEach((row, i) => {
+		if (row.before !== null && row.before !== undefined) lastAnchored = i;
+	});
+	let tailIndex = -1;
 	const nodes: StructureNode[] = rows.map((row, i) => {
 		// Ends just before the next heading at this level or shallower; if
 		// none follows, it runs to the document's last section.
@@ -1325,12 +1347,14 @@ export function buildDocumentOutline(rows: DocumentNode[], lastN: number | null)
 				break;
 			}
 		}
-		const start = row.before;
+		const isTail = i > lastAnchored && (row.before === null || row.before === undefined);
+		if (isTail) tailIndex += 1;
+		const start = isTail ? documentTailNumber(lastN, tailIndex) : row.before;
 		return {
 			kind: 'sub',
 			n: null,
 			title: row.title,
-			paragraphs: [start, start === null ? null : end],
+			paragraphs: isTail ? [start, start] : [start, start === null ? null : end],
 			children: [],
 			// Same index, same id as the heading the document route renders
 			// (`flattenDocumentStructure`), so a TOC row navigates to the
