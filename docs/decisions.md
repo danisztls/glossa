@@ -3020,3 +3020,31 @@ written from the source, and it would leave `before` underivable from the page
 at all. The heading points past its own recovered text; that is a real
 mismatch, and the honest fix for it is a unit for unnumbered mid-body matter,
 not a redefinition of the one field an oracle can check.
+
+## 2026-08-24 — The paired-anchor footnote convention
+
+`detect_marker_template` recognised `name="_ftnrefN"` — with the underscore.
+27 Portuguese pages write `name="fnrefN"` without one, and split the marker
+across two elements:
+
+    body:  <a name="fnref1">(</a><a href="#fn1">1</a>)
+    notes: <a name="fn1">(</a><a href="#fnref1">1</a>) Enc. Annum Sacrum...
+
+Detection fell through to the "paren" template, whose regex needs a literal
+untagged `(N)`; here the bracket and the digit sit in different elements, so
+nothing matched either. Every footnote on all 27 pages resolved to nothing:
+921 markers, `citations: []` in each work, and the note text stored nowhere in
+the corpus at all.
+
+Found by a reader writing a table-of-contents oracle for Haurietis Aquas, who
+noticed its PT edition had no citations while its EN edition had 126, traced
+it to the underscore, and correctly declined to guess how far it spread. It
+spread to 27 works: **+697 citations across 23 numbered editions**, plus 80 in
+Quadragesimo Anno PT and 69 in Divini Illius Magistri PT, whose text lives in
+`appendix.json`.
+
+Four markers still resolve empty, and both causes are the source's, not ours:
+Ecclesia de Eucharistia PT prints one entry's `name` on the `<p>` rather than
+on an `<a>`, and Mystici Corporis PT labels its thirteenth note "3" with a
+back-link to `#fnref3`. Reported as anomalies, not fabricated — the standing
+rule for a defect with no known correct value.

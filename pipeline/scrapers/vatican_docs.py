@@ -833,9 +833,27 @@ _BRACKET_ATTACHED_RE = re.compile(r"[^\s>]\[\d{1,3}\*?\]")
 _BRACKET_MIN = 3
 
 
+# The PAIRED anchor convention, found on 27 Portuguese pages and nowhere
+# else: the marker is TWO anchors, `<a name="fnrefN">(</a>` carrying the
+# opening bracket and `<a href="#fnN">N</a>` carrying the number, with the
+# closing bracket as plain text after them. `_ftnref` (with the underscore)
+# does not match it, so `detect_marker_template` fell through to "paren",
+# whose regex needs a literal untagged `(N)` -- and here the bracket and the
+# digit sit in different elements, so nothing matched either. Every footnote
+# on all 27 pages resolved to nothing: 921 of them, `citations: []` in each
+# work, with the note text stored nowhere in the corpus.
+_FNPAIR_REF_RE = re.compile(
+    r"<a\s[^>]*?name=[\"']?fnref(?P<code>[0-9A-Za-z]+)[\"']?[^>]*>.*?</a>"
+    r"\s*<a\s[^>]*?href=[\"']?#fn[0-9A-Za-z]+[\"']?[^>]*>(?P<vis>[^<]*)</a>\s*\)?",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
 def detect_marker_template(body_html: str) -> str:
     if re.search(r'name=["\']?_ftnref[0-9A-Za-z]+', body_html, re.IGNORECASE):
         return "ftn"
+    if _FNPAIR_REF_RE.search(body_html):
+        return "fnpair"
     if re.search(r"<sup\b", body_html, re.IGNORECASE):
         return "sup"
     # "bracket": bare `[N]` in the text, with no <sup> and no anchor of any
@@ -851,6 +869,16 @@ def detect_marker_template(body_html: str) -> str:
 
 
 def mark_footnotes(inner_html: str, template: str) -> str:
+    if template == "fnpair":
+
+        def sub_pair(m: re.Match) -> str:
+            # Keyed on the PRINTED number, like every other template: the
+            # anchor code and the visible label agree on these pages, but the
+            # table is built from the visible one either way.
+            visible = strip_tags(m.group("vis")).strip().strip("()[]")
+            return f"{MARK_OPEN}{visible or m.group('code')}{MARK_CLOSE}"
+
+        return _FNPAIR_REF_RE.sub(sub_pair, inner_html)
     if template == "sup":
 
         def sub_sup(m: re.Match) -> str:
@@ -910,7 +938,8 @@ _FN_HEADING_RE = re.compile(
 # bibliographic year citations ("A.A.S. 54 (1962)") get swallowed as
 # ordinary body prose attached to the final numbered section.
 _FN_DEF_ANCHOR_RE = re.compile(
-    r'name=["\']?(?:_ftn(?!ref)[0-9A-Za-z]+|\$[0-9A-Za-z]+|%24[0-9A-Za-z]+)',
+    r'name=["\']?(?:_ftn(?!ref)[0-9A-Za-z]+|\$[0-9A-Za-z]+|%24[0-9A-Za-z]+'
+    r"|fn(?!ref)\d[0-9A-Za-z]*)",
     re.IGNORECASE,
 )
 # (?!ref) matters: name="_ftnrefN" is the INLINE reference anchor, not a
@@ -1058,8 +1087,14 @@ def raw_blocks(html: str) -> list[str]:
 
 
 _FN_ANCHOR_ANY_RE = re.compile(
-    r"<a\s[^>]*?name=[\"']?(?:_ftn(?!ref)(?P<ftn>[0-9A-Za-z]+)|\$(?P<dollar>[0-9A-Za-z]+)|%24(?P<pct>[0-9A-Za-z]+))[\"']?[^>]*>"
-    r"(?P<inner>.*?)</a>",
+    r"<a\s[^>]*?name=[\"']?(?:_ftn(?!ref)(?P<ftn>[0-9A-Za-z]+)|\$(?P<dollar>[0-9A-Za-z]+)"
+    r"|%24(?P<pct>[0-9A-Za-z]+)|fn(?!ref)(?P<pair>\d[0-9A-Za-z]*))[\"']?[^>]*>"
+    r"(?P<inner>.*?)</a>"
+    # The PAIRED form prints its number in a SECOND anchor linking back to the
+    # body: `<a name="fn1">(</a><a href="#fnref1">1</a>) text`. The first
+    # anchor's own text is just the opening bracket, so the visible number has
+    # to come from the sibling or every entry keys on "(".
+    r"(?:\s*<a\s[^>]*?href=[\"']?#fnref[0-9A-Za-z]+[\"']?[^>]*>(?P<pairvis>[^<]*)</a>\s*\)?)?",
     re.IGNORECASE | re.DOTALL,
 )
 
@@ -1089,11 +1124,12 @@ def build_footnote_table_anchor(region_html: str) -> dict[str, str]:
     matches = list(_FN_ANCHOR_ANY_RE.finditer(region_html))
     table: dict[str, str] = {}
     for i, m in enumerate(matches):
-        code = m.group("ftn") or m.group("dollar") or m.group("pct")
+        code = m.group("ftn") or m.group("dollar") or m.group("pct") or m.group("pair")
         start = m.end()
         end = matches[i + 1].start() if i + 1 < len(matches) else len(region_html)
         chunk = region_html[start:end]
-        visible = strip_tags(m.group("inner")).strip().strip("[]")
+        visible = strip_tags(m.group("pairvis") or m.group("inner"))
+        visible = visible.strip().strip("[]()")
         if visible.isdigit():
             marker = visible
         else:
