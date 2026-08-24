@@ -684,10 +684,22 @@ def write_manifest(
         ],
         "copyright": {
             "status": "copyrighted",
+            # The TRANSLATOR, not a current rights holder, because we do not
+            # know who the current rights holder is. This said "Herdeiros de
+            # Pe. Manuel de Matos Soares" until 2026-08-24, which was a
+            # composed inference and not a transcription: liriocatolico prints
+            # no rights statement at all (hence `notice: None`), and
+            # docs/research/copyright.md §4 records reprint rights as
+            # commercially active, which points at least as plausibly to a
+            # publisher holding an assignment as to the estate. Naming the
+            # author is the convention for a protected work whose current
+            # holder is unknown, and it is the person the term is measured
+            # from either way — an assignment does not move the life+70 clock.
+            #
             # The public-domain date is documented in `notes` above and in
             # docs/research/copyright.md, not smuggled into the holder name —
             # `holder` is a plain attribution string, not a status summary.
-            "holder": "Herdeiros de Pe. Manuel de Matos Soares",
+            "holder": "Manuel de Matos Soares",
             "notice": None,
         },
         "notes": notes,

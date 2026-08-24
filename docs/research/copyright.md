@@ -46,6 +46,32 @@ Public domain options:
 | Portuguese | Figueiredo (1778–90, PD, archaic), Almeida 1819 (Protestant canon), Bíblia Portuguesa Mundial (PD, draft)             | Ave Maria, CNBB, Jerusalém, Peregrino, SBB versions: copyrighted, do not host.                                                                                            |
 | Portuguese | **Matos Soares** — PD in Brazil/Portugal on **1 Jan 2028** (translator died 1957; life+70 from 1 Jan following death) | Currently circulates freely (liriocatolico, padrepauloricardo, archive.org) with no visible enforcement, but reprint rights are commercially active (Ecclesiae, Realeza). |
 
+### Who holds Matos Soares, exactly — unresolved (2026-08-24)
+
+The table above dates the term but names no holder, and that gap was quietly
+filled in by the corpus: `bible.matos-soares.pt` carried
+`holder: "Herdeiros de Pe. Manuel de Matos Soares"`, which no source says. The
+scraped pages at liriocatolico print no rights statement of any kind — the
+manifest's `notice` is `null` for exactly that reason — so the string was an
+inference from "life+70 means the estate", filed as if it were a fact.
+
+The inference is not unreasonable: _herdeiro_ is any legal successor, not a
+descendant, and a diocesan priest takes no vow of poverty, so a celibate
+author's rights pass by succession to collaterals or testamentary heirs like
+anyone else's. But the same table records reprint rights as commercially
+active (Ecclesiae, Realeza), which points at least as plausibly to a publisher
+holding an assignment. Neither was checked, and neither is checkable from what
+we fetched.
+
+So the manifest now names the **translator** rather than guessing at the
+current holder — the convention for a protected work whose holder is unknown.
+Nothing about the ingestion decision changes: an assignment does not move the
+life+70 clock, which runs from the author's death in 1957 either way, so the
+1 Jan 2028 date and §5's "knowingly accepted, self-resolving exposure" stand
+as written. Resolving the holder would mean reading the rights page of a
+current Ecclesiae or Realeza printing; worth doing before any correspondence
+with a rights holder, not worth blocking on otherwise.
+
 ## 5. Adopted posture (decision, 2026-08-13)
 
 Host the current texts (CCC, encyclicals — Church-owned material) verbatim with full attribution, **without prior permission, and comply promptly if asked** — explicitly as a political statement in the Vogt/"Free the Word" lineage. Scope notes:
