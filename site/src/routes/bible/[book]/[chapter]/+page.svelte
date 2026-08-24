@@ -320,7 +320,7 @@
 	 * its short title where the manifest has one — "Lumen Gentium" rather than
 	 * "Dogmatic Constitution on the Church Lumen Gentium". A slug with no
 	 * manifest at all is skipped rather than shown raw: it can only mean the
-	 * index outlived the work (a takedown between builds), and a bare slug is
+	 * index outlived the work (switched off between builds), and a bare slug is
 	 * not something to put in front of a reader.
 	 */
 	function documentSource(slug: string, sections: number[]): CitingSource | null {

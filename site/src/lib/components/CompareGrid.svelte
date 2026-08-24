@@ -59,8 +59,7 @@
 	chapter's verses differently" advisory (`$lib/compare.ts`'s
 	`numberSetsDiffer`, docblock) — deliberately plain, muted text rather
 	than a warning colour, matching the project's established posture that a
-	known, disclosed limitation is not styled as an error (see
-	`UnpublishedNotice.svelte`'s own reasoning for the same choice).
+	known, disclosed limitation is not styled as an error.
 
 	THIS COMPONENT NO LONGER IDENTIFIES ITS OWN COLUMNS at full width. It used
 	to carry a header row — first plain labels, then the pickers themselves —

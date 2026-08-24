@@ -315,56 +315,35 @@ const realContentManifest = import.meta.glob('./corpus-data/index/content-manife
 }) as Record<string, ContentManifestEntry[]>;
 
 /**
- * Works taken down — written by `sync-corpus.mjs` from `site/unpublished.json`,
- * which documents the mechanism. Index tier, and tiny: one entry per
- * unpublished work, normally none at all.
+ * Work ids switched off — written by `sync-corpus.mjs` from
+ * `site/unpublished.json`, which documents the mechanism. Index tier, and
+ * tiny: one id per disabled work, normally none at all. Ids only; the
+ * registry's `date` and `reason` are notes for whoever files an entry and
+ * never reach the client (docs/decisions.md, 2026-08-23).
  *
  * Carried as data rather than inferred from "this work has no content files",
  * because a partially-built corpus looks identical from the outside and wants
  * the opposite treatment — a missing chunk should fail loudly in development,
- * a taken-down work should render a calm, deliberate notice.
+ * a disabled work is deliberate and silent.
  */
 const realUnpublished = import.meta.glob('./corpus-data/index/unpublished.json', {
 	eager: true,
 	import: 'default'
-}) as Record<string, Record<string, UnpublishedWork>>;
+}) as Record<string, string[]>;
+
+const unpublishedWorks = new Set<string>(single(realUnpublished) ?? []);
 
 /**
- * Why a work is withheld, for the notice its pages render in place of the
- * text.
+ * True when this work is switched off and has no content in this build — so
+ * nothing should offer it: no preview, no bookmark target, no page.
  *
- * `kind` matters to the reader, not just to us. "We can't render this
- * properly yet" and "the rights holder asked us to stop" are different
- * statements about the same blank space, and a reader deciding whether to
- * trust the rest of the site is owed the right one. Defaults to `quality`
- * because that is what this mechanism is actually for (see
- * `site/unpublished.json`).
- */
-export interface UnpublishedWork {
-	kind?: 'quality' | 'rights';
-	/** ISO date the work was withheld. */
-	date: string;
-	/** Free text, shown to the reader as given. */
-	reason: string;
-}
-
-const unpublishedWorks: Record<string, UnpublishedWork> = single(realUnpublished) ?? {};
-
-/**
- * The takedown record for a work, or undefined if it is published.
- *
- * Note there is no fixture counterpart: the fixtures ship no unpublished
- * works, so `npm test` exercises the published path by default and any test
- * of this behaviour has to opt in explicitly. That is the right default for a
+ * Note there is no fixture counterpart: the fixtures disable nothing, so
+ * `npm test` exercises the published path by default and any test of this
+ * behaviour has to opt in explicitly. That is the right default for a
  * mechanism whose failure mode is publishing something it shouldn't.
  */
-export function unpublishedInfo(workId: string): UnpublishedWork | undefined {
-	return unpublishedWorks[workId];
-}
-
-/** True when this work has been taken down (see `unpublishedInfo`). */
 export function isUnpublished(workId: string): boolean {
-	return workId in unpublishedWorks;
+	return unpublishedWorks.has(workId);
 }
 
 // Content tier: `?url` + `import: 'default'` yields the hashed BUILD ASSET
@@ -713,10 +692,7 @@ const prayerLocations: Record<string, ContentLocation> = {};
 /** workId -> part slug -> question number -> file. Three levels because a
  *  question number is only unique WITHIN a part: numbering restarts at 1 in
  *  each of the five. */
-const summaQuestionLocations: Record<
-	string,
-	Record<string, Record<number, ContentLocation>>
-> = {};
+const summaQuestionLocations: Record<string, Record<string, Record<number, ContentLocation>>> = {};
 /** Keyed by WORK ID (`bible-intro.en`), matching every other location map. */
 const bibleIntroLocations: Record<string, ContentLocation> = {};
 /** relPath (`content-manifest.json`'s shape) -> hashed URL, built once so

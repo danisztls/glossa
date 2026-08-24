@@ -2139,3 +2139,65 @@ Both real headings are pinned end-to-end through `displayTitle` in the tests.
 The CCC fixture gained a heading with a citation for the same reason: both real
 ones sit deep inside chapters the fixture doesn't cover, so the path would never
 run under `npm run dev` against fixtures.
+
+## 2026-08-24 — Where we have no text, we send the reader to the source
+
+**Three states collapse into one.** A document address could previously resolve
+three ways: we have the text (read it here); the text is withheld in
+`site/unpublished.json` (a page explaining that, headed "This text is not
+published here" or "We are not showing this text yet", quoting a reason and
+linking to vatican.va); or the parse produced nothing and nothing was withheld
+(a page with metadata and no body). The reader's question is the same in the
+last two — _where is the document_ — and so is the only useful answer, so
+`/documenta/{slug}` now **redirects to the source page** whenever this build
+has none of the document's text. No notice, no badge, no explanation.
+
+**What was removed**: `UnpublishedNotice.svelte` and its ten strings,
+the `kind` field (`quality` | `rights`) that chose between two of them,
+`unpublishedInfo`, and the `date`/`reason` fields' trip into the index tier —
+`sync-corpus.mjs` now writes only the disabled ids, and the notice a listing
+carried ("Not shown here", `.doc-unpublished`) is gone with them.
+
+**Why the notice had to go rather than be reworded.** It was written for a
+request that has never arrived. The 2026-08-16 entries built the mechanism
+against the copyright posture, then corrected themselves the same day to say it
+is really about parse quality — but the reader-facing half kept its original
+shape, a considered editorial statement about rights. Every entry in the
+registry is our own parser losing to someone's markup. And the badge that
+announced it in the library was wrong on most of the rows it appeared on: an
+entry is per EDITION, a row is per DOCUMENT, and six of the eight documents
+with an entry today are complete in their other language — the row said "Not
+shown here" over a link that opened the full text.
+
+**Why redirect rather than hide.** Hiding was tried first, in the same session,
+and it is worse in both directions: it loses the two documents that have rows
+at all (`miranda-prorsus`, `quae-ad-nos`) from a library whose job is to be a
+complete index of the Magisterium, and it silently drops an address that
+external links and citations still point at. A redirect keeps the library
+complete, keeps every address live, and gets the reader to the text — which is
+the one thing they wanted and the one thing we cannot give them ourselves.
+
+**Mechanically**: `documents/[slug]/+page.ts` throws `redirect(307, sourceUrl)`
+when no edition has sections built. An external redirect from `load` becomes a
+full-page navigation in the browser (SvelteKit turns a cross-origin redirect
+into `location.href = …`), on cold entry and in-app navigation alike. The slug
+therefore stays in `corpus-routes.json` — a 404 at the edge would strand the
+redirect before it ran — and `error(404)` survives only for a manifest with no
+source URL at all, which would be a corpus defect rather than a state to design
+around.
+
+**`reason` and `date` stay in `site/unpublished.json`** and stop travelling any
+further. They are notes for whoever has to decide whether an entry can go, and
+they were never something a reader needed. The site now keeps exactly one bit
+about a disabled work — `isUnpublished`, an id set — and its only callers are
+the ones that would otherwise offer an address with nothing behind it (link
+previews, bookmark resolution).
+
+**Unchanged**: withholding is still preferred over shipping a damaged text,
+entries are still expected to be temporary, `sync-corpus.mjs` still hard-errors
+on a work whose manifest says `PARSER DEFEATED` with no entry filed, and the
+colophon still says plainly that a work whose copy came out incomplete is left
+out rather than shown with invisible gaps. Still not built, and still worth
+saying: a whole-site lever. The 2026-08-16 correction stands — a rights request
+from Libreria Editrice Vaticana would concern nearly everything here at once,
+and this file is not that lever.

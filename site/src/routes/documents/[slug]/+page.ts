@@ -1,10 +1,11 @@
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import {
 	baseLang,
 	documentHasSections,
 	getDocumentGroup,
 	getDocumentSectionsAsync
 } from '$lib/corpus';
+import { sourceUrl } from '$lib/copyright';
 import type { DocumentManifest, DocumentSection } from '$lib/types';
 import type { PageLoad } from './$types';
 
@@ -49,15 +50,19 @@ import type { PageLoad } from './$types';
  * content until the client hydrates, so there is no server here to
  * content-negotiate against, and no fallback content either.
  *
- * A DOCUMENT WITH NOTHING READABLE STILL RENDERS. `embeddedLang` and
- * `embeddedSections` are absent when no edition has sections built — a rights
- * takedown (`site/unpublished.json`), or a v1 EN/PT asymmetry with nothing
- * built for either. The page then shows the document's bibliographic metadata
- * and the takedown notice, which is the posture docs/decisions.md fixed for
- * per-work unpublish: what is withheld is the work, not the fact of it. This
- * is the one behaviour that could not be carried over from `read/+page.ts`
- * unchanged — that route 404'd in this case, because the landing page it sat
- * behind was still there to say so. Now there is no page behind this one.
+ * A DOCUMENT WITH NOTHING READABLE REDIRECTS TO ITS SOURCE. When no edition
+ * has sections built — switched off in `site/unpublished.json`, or a parse
+ * that produced nothing — this sends the reader to the vatican.va page the
+ * text would have come from, rather than rendering a page about not having
+ * it (docs/decisions.md, 2026-08-24). One behaviour covers both reasons,
+ * because from where the reader stands they are the same event: we do not
+ * have this text, and the people who do are one hop away.
+ *
+ * An external `redirect()` from `load` is a full-page navigation in the
+ * browser (SvelteKit's client turns a cross-origin redirect into
+ * `location.href = …`), which is what we want: the reader leaves. The
+ * address stays in `corpus-routes.json` so the edge serves the shell that
+ * performs it — a 404 there would strand the redirect before it ran.
  */
 export interface DocumentPageData {
 	slug: string;
@@ -67,8 +72,8 @@ export interface DocumentPageData {
 	 *  (withheld, or nothing built for it): a language present here is a
 	 *  promise `getDocumentSectionsAsync` will return something for it. */
 	manifestsByLang: Record<string, DocumentManifest>;
-	/** The one language whose full sections are embedded — absent when this
-	 *  document has no readable edition at all. */
+	/** The one language whose full sections are embedded. Always set: a
+	 *  document with no readable edition never reaches the page. */
 	embeddedLang?: string;
 	embeddedSections?: DocumentSection[];
 }
@@ -80,15 +85,24 @@ export const load: PageLoad = async ({ params }) => {
 
 	const manifestsByLang: Record<string, DocumentManifest> = {};
 	for (const manifest of Object.values(group.manifests)) {
-		// Withheld edition, or nothing built for this language.
+		// Disabled edition, or nothing built for this language.
 		if (!manifest || !documentHasSections(manifest.id)) continue;
 		manifestsByLang[baseLang(manifest.language)] = manifest;
 	}
 
 	const availableLangs = Object.keys(manifestsByLang);
-	// Nothing readable — the page still renders its metadata and, where the
-	// registry has one, its takedown notice. See the module docblock.
-	if (availableLangs.length === 0) return { slug, manifestsByLang };
+	if (availableLangs.length === 0) {
+		// Nothing readable — hand the reader to the source. Whichever edition's
+		// manifest carries a source URL will do: they are editions of one
+		// document, and the reader asked for the document. 404 only if none
+		// does, which would mean a manifest with no provenance at all — a
+		// corpus defect, not a state to design around.
+		const url = Object.values(group.manifests)
+			.map((m) => m && sourceUrl(m))
+			.find(Boolean);
+		if (url) redirect(307, url);
+		error(404, 'Document not published in this corpus');
+	}
 
 	const embeddedLang = availableLangs.includes('en') ? 'en' : availableLangs[0];
 	const embeddedSections = await getDocumentSectionsAsync(manifestsByLang[embeddedLang].id);

@@ -4,7 +4,7 @@
  * Split out from the component (and from `linkPreviewHref.ts`'s pure
  * parsing) because this half is the opposite of pure: it reads the reader's
  * effective language/edition off the content store, fetches corpus content
- * tier files, and enforces takedown state — none of which belongs in a unit
+ * tier files, and skips works switched off — none of which belongs in a unit
  * that's supposed to be testable with no mocks at all.
  *
  * COST: every fetch here goes through `corpus.ts`'s existing `readContent`

@@ -183,21 +183,20 @@ if (manifestless.length > 0) {
 const workIds = workDirs.filter((name) => !manifestless.includes(name));
 
 /**
- * Works taken down — see `site/unpublished.json`, which documents the
+ * Works switched off — see `site/unpublished.json`, which documents the
  * mechanism and the reasoning.
  *
  * Read here, at the point where content is written, because that is what
- * makes a takedown real: an unpublished work's TEXT is never written into
- * `corpus-data/content/` at all, so it is absent from the server rather
- * than hidden by the client. Its manifest still goes into the index, which
- * is what lets the reading routes render an honest link-out instead of a
- * 404 (see `unpublished.json` for why the pages are kept).
+ * makes the switch real: a disabled work's TEXT is never written into
+ * `corpus-data/content/` at all, so it is absent from the server rather than
+ * hidden by the client. Its manifest still goes into the index, because the
+ * registry is what tells the site which addresses to stop offering; the site
+ * then serves no page for a work with nothing left to read.
  *
  * A missing or malformed file is a hard error rather than an empty default.
  * Every other input here degrades quietly when absent, and that is right for
  * a corpus that may be partially built — but silently publishing a work
- * somebody asked us to take down is the one failure this script must never
- * produce.
+ * somebody switched off is the one failure this script must never produce.
  */
 const unpublishedPath = path.join(siteRoot, 'unpublished.json');
 const unpublishedWorks = readJson(unpublishedPath).works ?? {};
@@ -315,19 +314,18 @@ for (const workId of workIds) {
 		if (!unpublishedIds.has(workId)) publishedDefeats.push(workId);
 	}
 
-	// The takedown. Everything above this line still happens — the manifest
-	// goes into the index, so the work keeps its title, its rights holder's
-	// notice and its source URL, and its reading pages can render an honest
-	// link-out. Everything BELOW writes reading text, and for an unpublished
-	// work none of it runs: no content file is produced, so the text is not
-	// on the server at all rather than merely unreachable from the UI.
+	// The switch. Everything above this line still happens — the manifest goes
+	// into the index, so the registry still knows the work exists, which is
+	// what the listings need in order to fall back to another edition of the
+	// same document. Everything BELOW writes reading text, and for a disabled
+	// work none of it runs: no content file is produced, so the text is not on
+	// the server at all rather than merely unreachable from the UI.
 	//
-	// Structure trees are skipped with the text. A table of contents is a
-	// map of a work's internal divisions, which is less than the text but
-	// more than nothing, and a takedown request is not an invitation to
-	// negotiate over how much we keep.
+	// Structure trees are skipped with the text. A table of contents built
+	// from a parse we do not trust is not better than nothing, and the routes
+	// enumerated from it would address text that was never written.
 	if (unpublishedIds.has(workId)) {
-		console.warn(`[sync-corpus] ${workId}: UNPUBLISHED — content withheld from the build`);
+		console.warn(`[sync-corpus] ${workId}: DISABLED — content withheld from the build`);
 		continue;
 	}
 
@@ -733,6 +731,10 @@ const routeManifest = {
 			)
 		)
 	].sort((a, b) => a - b),
+	// From `manifests`, so a document the corpus knows about is an address even
+	// when this build has none of its text: `/documenta/{slug}` redirects that
+	// reader to the source page (docs/decisions.md, 2026-08-24), and it needs
+	// the shell in order to do it.
 	documents: [
 		...new Set(
 			Object.entries(manifests)
@@ -760,12 +762,16 @@ const routeManifest = {
 
 writeJson(routeManifestPath, routeManifest);
 
-// Copied into the index tier so the SITE knows which works are unpublished,
-// not merely that their content files are missing. The distinction matters:
+// IDS ONLY, not the entries. The site's one question is "is this work
+// switched off", which it asks to keep from offering an address whose content
+// was never written; `date` and `reason` are notes to whoever files an entry
+// and have no reader-facing surface (docs/decisions.md, 2026-08-23).
+//
+// Copied at all — rather than inferred from "no content files" — because
 // "content absent" is also what a partially-built corpus looks like, and the
-// two want opposite treatment — a missing chunk should fail loudly during
-// development, a taken-down work should render a calm, deliberate notice.
-writeJson(path.join(indexDir, 'unpublished.json'), unpublishedWorks);
+// two want opposite treatment: a missing chunk should fail loudly during
+// development, a disabled work is deliberate and silent.
+writeJson(path.join(indexDir, 'unpublished.json'), [...unpublishedIds].sort());
 
 const indexBytes = [
 	'manifests.json',

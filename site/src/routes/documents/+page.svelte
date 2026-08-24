@@ -13,7 +13,7 @@
 	 * load — the registry (`listDocuments()`) is index-tier and already
 	 * eager-inlined, so there's nothing to fetch here.
 	 */
-	import { isUnpublished, listDocuments } from '$lib/corpus';
+	import { listDocuments } from '$lib/corpus';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
 	import { documentKindLabel } from '$lib/document-labels';
@@ -35,6 +35,11 @@
 	// (`EditionMenu` on `/documents/{slug}`) is what lets a reader pick a
 	// different edition once they're actually reading one; this list just
 	// shows their current default.
+	//
+	// EVERY document gets a row, including one whose text this build does not
+	// have: `/documenta/{slug}` redirects that reader to the source page
+	// instead of showing them nothing (docs/decisions.md, 2026-08-24), so the
+	// row leads somewhere either way and the library needs no second state.
 	const rows = $derived.by(() => {
 		const out: Row[] = [];
 		for (const group of listDocuments()) {
@@ -102,7 +107,7 @@
 		<h1>{t('nav.magisterium')}</h1>
 		<p class="tagline">{t('document.library.tagline')}</p>
 
-	<!--
+		<!--
 		Each pontificate collapses, and every one starts OPEN. Default-open
 		rather than default-closed because this is a library index: a reader
 		arriving here is browsing, and a page of nothing but closed headings
@@ -115,27 +120,20 @@
 		find-in-page can open a closed section to reveal a match. A page whose
 		whole purpose is finding a document should not break Ctrl+F.
 	-->
-	{#each groups as group (group.pontiff)}
-		<details class="doc-group" id={groupAnchor(group.pontiff)} open>
-			<summary>
-				<h2>{group.pontiff}</h2>
-				<span class="group-count">{group.rows.length}</span>
-			</summary>
-			<ul class="docs">
-				{#each group.rows as row (row.slug)}
-					<li>
-						<a href={`/documenta/${row.slug}`} class="doc-link">
-							<span class="doc-title">{row.manifest.title}</span>
-							<!-- Marked, not hidden: a document that silently vanishes from
-							     the library looks like a bug and invites someone to "fix"
-							     it. The row still links to the work's page, which explains
-							     the takedown and links to the source. -->
-							{#if isUnpublished(row.manifest.id)}
-								<span class="doc-unpublished">{t('unpublished.tag')}</span>
-							{/if}
-							<span class="doc-kind">{documentKindLabel(row.manifest.document_kind)}</span>
-						</a>
-						<!--
+		{#each groups as group (group.pontiff)}
+			<details class="doc-group" id={groupAnchor(group.pontiff)} open>
+				<summary>
+					<h2>{group.pontiff}</h2>
+					<span class="group-count">{group.rows.length}</span>
+				</summary>
+				<ul class="docs">
+					{#each group.rows as row (row.slug)}
+						<li>
+							<a href={`/documenta/${row.slug}`} class="doc-link">
+								<span class="doc-title">{row.manifest.title}</span>
+								<span class="doc-kind">{documentKindLabel(row.manifest.document_kind)}</span>
+							</a>
+							<!--
 							Date alone, no "Promulgated" label: in a list where every
 							row carries one, the label is 345 repetitions of a word
 							that the date's own format already implies.
@@ -149,19 +147,19 @@
 							none do, so this renders nothing rather than a
 							placeholder.
 						-->
-						<p class="doc-meta">
-							<time datetime={row.manifest.promulgated}>
-								{formatPromulgated(row.manifest.promulgated, row.manifest.language)}
-							</time>
-						</p>
-						{#if row.manifest.description}
-							<p class="doc-description">{row.manifest.description}</p>
-						{/if}
-					</li>
-				{/each}
-			</ul>
-		</details>
-	{/each}
+							<p class="doc-meta">
+								<time datetime={row.manifest.promulgated}>
+									{formatPromulgated(row.manifest.promulgated, row.manifest.language)}
+								</time>
+							</p>
+							{#if row.manifest.description}
+								<p class="doc-description">{row.manifest.description}</p>
+							{/if}
+						</li>
+					{/each}
+				</ul>
+			</details>
+		{/each}
 	</div>
 	<aside class="index-aside">
 		<IndexSidebarToc heading={t('nav.magisterium')} items={sidebarItems} />
@@ -256,18 +254,6 @@
 		font-family: var(--font-serif);
 		font-size: 1.15rem;
 		color: var(--color-text);
-	}
-
-	.doc-unpublished {
-		flex-shrink: 0;
-		font-size: var(--font-size-min);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--color-text-muted);
-		border: 1px dashed var(--color-border);
-		border-radius: 0.25rem;
-		padding: 0.1rem 0.4rem;
-		white-space: nowrap;
 	}
 
 	.doc-kind {

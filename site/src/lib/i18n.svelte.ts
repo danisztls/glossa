@@ -155,8 +155,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'summa.preamble': 'Note',
 		'summa.prevQuestion': 'Previous question',
 		'summa.nextQuestion': 'Next question',
-		'summa.noEditionInYourLanguage':
-			'The Summa has no Portuguese edition. Shown in {lang}.',
+		'summa.noEditionInYourLanguage': 'The Summa has no Portuguese edition. Shown in {lang}.',
 		'summa.noLatinSupplement':
 			'The Supplement exists in English only — it was compiled after Aquinas’ death.',
 		'index.showSubsections': 'Show subsections',
@@ -236,14 +235,6 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		// document sections.
 		'citation.unavailable': 'No source text available for this note.',
 
-		'unpublished.tag': 'Not shown here',
-		'unpublished.quality.heading': 'We are not showing this text yet',
-		'unpublished.quality.explain':
-			'Our copy of this work came out incomplete \u2014 parts of it are missing, and we would rather show you nothing than show you a text with gaps you cannot see. It will come back once we can render it properly.',
-		'unpublished.rights.heading': 'This text is not published here',
-		'unpublished.rights.explain':
-			'We reproduced this work until its rights holder asked us not to, and we stopped. The text has been removed from this site; everything else about the work is unchanged.',
-		'unpublished.readAt': 'Read it at',
 		'colophon.title': 'Colophon',
 		'colophon.lede':
 			'What this site is, where its texts come from, and where we stand on reproducing them.',
@@ -259,7 +250,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 			'Built to keep working offline once you have visited it, so a poor connection need not be a barrier to reading.',
 		'colophon.textsTitle': 'The texts',
 		'colophon.textsBody':
-			'Every text comes from a named source, and every work records its edition, its source page and the date it was retrieved. Scripture uses public-domain translations; the Catechism, the Compendium and the magisterial documents come from the Holy See\u2019s own published texts. We reproduce them unaltered \u2014 and where our copy of a work has turned out incomplete, we withhold it and link to the source instead, rather than show you a text with gaps you cannot see.',
+			'Every text comes from a named source, and every work records its edition, its source page and the date it was retrieved. Scripture uses public-domain translations; the Catechism, the Compendium and the magisterial documents come from the Holy See\u2019s own published texts. We reproduce them unaltered \u2014 and where our copy of a work has turned out incomplete, we leave it out of the site rather than show you a text with gaps you cannot see.',
 		'colophon.countBible': 'Bible editions',
 		'colophon.countDocuments': 'magisterial documents',
 		'colophon.copyrightTitle': 'Copyright',
@@ -415,8 +406,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 		'summa.preamble': 'Nota',
 		'summa.prevQuestion': 'Questão anterior',
 		'summa.nextQuestion': 'Questão seguinte',
-		'summa.noEditionInYourLanguage':
-			'A Suma não tem edição portuguesa. Apresentada em {lang}.',
+		'summa.noEditionInYourLanguage': 'A Suma não tem edição portuguesa. Apresentada em {lang}.',
 		'summa.noLatinSupplement':
 			'O Suplemento existe apenas em inglês — foi compilado após a morte de Tomás de Aquino.',
 		'index.showSubsections': 'Mostrar subsecções',
@@ -482,14 +472,6 @@ const dictionaries: Record<UiLang, Dictionary> = {
 
 		'citation.unavailable': 'Sem texto de fonte disponível para esta nota.',
 
-		'unpublished.tag': 'N\u00e3o apresentado aqui',
-		'unpublished.quality.heading': 'Ainda n\u00e3o apresentamos este texto',
-		'unpublished.quality.explain':
-			'A nossa c\u00f3pia desta obra ficou incompleta \u2014 faltam-lhe partes, e preferimos n\u00e3o mostrar nada a mostrar um texto com falhas que n\u00e3o consegue ver. Voltar\u00e1 quando o conseguirmos apresentar corretamente.',
-		'unpublished.rights.heading': 'Este texto n\u00e3o \u00e9 publicado aqui',
-		'unpublished.rights.explain':
-			'Reproduzimos esta obra at\u00e9 que o seu titular de direitos nos pediu que n\u00e3o o fiz\u00e9ssemos, e par\u00e1mos. O texto foi removido deste site; tudo o resto sobre a obra permanece inalterado.',
-		'unpublished.readAt': 'Leia em',
 		'colophon.title': 'Colof\u00e3o',
 		'colophon.lede':
 			'O que \u00e9 este site, de onde v\u00eam os seus textos e qual a nossa posi\u00e7\u00e3o quanto \u00e0 sua reprodu\u00e7\u00e3o.',
@@ -506,7 +488,7 @@ const dictionaries: Record<UiLang, Dictionary> = {
 			'Feito para continuar a funcionar sem liga\u00e7\u00e3o depois da primeira visita, para que uma liga\u00e7\u00e3o fraca n\u00e3o tenha de impedir a leitura.',
 		'colophon.textsTitle': 'Os textos',
 		'colophon.textsBody':
-			'Cada texto prov\u00e9m de uma fonte identificada, e cada obra indica a sua edi\u00e7\u00e3o, a p\u00e1gina de origem e a data em que foi obtida. As Escrituras usam tradu\u00e7\u00f5es de dom\u00ednio p\u00fablico; o Catecismo, o Compêndio e os documentos do Magist\u00e9rio prov\u00eam dos textos publicados pela Santa S\u00e9. Reproduzimo-los sem altera\u00e7\u00f5es \u2014 e quando a nossa c\u00f3pia de uma obra ficou incompleta, retiramo-la e ligamos \u00e0 fonte, em vez de lhe mostrar um texto com falhas que n\u00e3o consegue ver.',
+			'Cada texto prov\u00e9m de uma fonte identificada, e cada obra indica a sua edi\u00e7\u00e3o, a p\u00e1gina de origem e a data em que foi obtida. As Escrituras usam tradu\u00e7\u00f5es de dom\u00ednio p\u00fablico; o Catecismo, o Compêndio e os documentos do Magist\u00e9rio prov\u00eam dos textos publicados pela Santa S\u00e9. Reproduzimo-los sem altera\u00e7\u00f5es \u2014 e quando a nossa c\u00f3pia de uma obra ficou incompleta, deixamo-la fora do site, em vez de lhe mostrar um texto com falhas que n\u00e3o consegue ver.',
 		'colophon.countBible': 'edi\u00e7\u00f5es b\u00edblicas',
 		'colophon.countDocuments': 'documentos do Magist\u00e9rio',
 		'colophon.copyrightTitle': 'Direitos de autor',

@@ -26,10 +26,11 @@
 	const bibleEditions = works.filter((w) => w.type === 'bible').length;
 
 	/**
-	 * Documents you can actually READ, which is not the same as documents the
-	 * corpus contains. A withheld work still has a manifest and still has a
-	 * page, so counting registry entries would quote a number this page cannot
-	 * back up — on the one page whose entire job is to be believable.
+	 * Documents whose text this site actually SERVES, which is not the same as
+	 * documents the corpus contains. A work switched off still has a manifest
+	 * and still has an address (which redirects to the source), so counting
+	 * registry entries would quote a number this page cannot back up — on the
+	 * one page whose entire job is to be believable.
 	 *
 	 * Counted per slug, and a slug survives if ANY of its editions is
 	 * published: a document whose Portuguese text was withheld for a bad parse

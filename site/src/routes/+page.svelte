@@ -524,9 +524,8 @@
 	/* A row whose pairing has no counterpart on this side — the CCC's
 	   Prologue today, and degradation ground for anything similar in a
 	   future edition (see module docblock). Dashed border + muted text
-	   matches the site's existing "marked, not hidden" convention for an
-	   intentionally-absent link (`documents/+page.svelte`'s
-	   `.doc-unpublished`, `ccc/+page.svelte`'s `.unlinked`). */
+	   matches the site's existing convention for an intentionally-absent
+	   link (`ccc/+page.svelte`'s `.unlinked`). */
 	.ccc-link-empty {
 		border-style: dashed;
 		color: var(--color-text-muted);

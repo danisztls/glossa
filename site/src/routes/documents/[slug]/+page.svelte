@@ -27,7 +27,6 @@
 	import { untrack } from 'svelte';
 	import { page } from '$app/state';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
-	import UnpublishedNotice from '$lib/components/UnpublishedNotice.svelte';
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
@@ -53,9 +52,7 @@
 		compareColumnLabel,
 		flattenDocumentStructure,
 		documentOutline,
-		getDocumentGroup,
-		getDocumentSectionsAsync,
-		unpublishedInfo
+		getDocumentSectionsAsync
 	} from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentSection, DocumentNode } from '$lib/types';
@@ -145,21 +142,12 @@
 	);
 
 	/**
-	 * Metadata to head the page with, which is NOT always the metadata of text
-	 * that can be shown. A document whose every edition is withheld
-	 * (`site/unpublished.json`) or simply not built has no `current` at all,
-	 * and this page is now the only page it has — so the title, kind,
-	 * promulgator and date come from the registry group directly in that case,
-	 * and the body below becomes the takedown notice rather than prose. See
-	 * `+page.ts`'s docblock: what a takedown withholds is the work, not the
-	 * fact of it.
+	 * Metadata to head the page with — the manifest of the edition being read.
+	 * There is no second source for it any more: `+page.ts` 404s a document
+	 * with no readable edition, so if this page renders at all, some edition's
+	 * text is behind it (docs/decisions.md, 2026-08-23).
 	 */
-	const group = $derived(getDocumentGroup(data.slug));
-	const fallbackManifest = $derived(
-		group?.manifests[preferred] ?? Object.values(group?.manifests ?? {})[0]
-	);
-	const metaManifest = $derived(current?.work ?? fallbackManifest);
-	const takedown = $derived(metaManifest ? unpublishedInfo(metaManifest.id) : undefined);
+	const metaManifest = $derived(current?.work);
 
 	// Structure trees are INDEX tier (eager-inlined, synchronous — corpus.ts's
 	// "Documents" section), so unlike `current.sections` this needs no
@@ -593,11 +581,7 @@
 					</time>
 				</p>
 
-				{#if takedown}
-					<UnpublishedNotice manifest={metaManifest} info={takedown} />
-				{:else}
-					<p class="copyright-notice"><CopyrightNotice manifest={metaManifest} /></p>
-				{/if}
+				<p class="copyright-notice"><CopyrightNotice manifest={metaManifest} /></p>
 
 				<!-- The source page's own masthead, verbatim per language.
 				     `{@html}` is safe here specifically: this string is produced by

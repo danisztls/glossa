@@ -152,7 +152,6 @@ import {
 	cccChunkLocation,
 	cccChunkStartFor,
 	isUnpublished,
-	unpublishedInfo,
 	cccParagraphNumbers,
 	cccStructures,
 	compendiumQuestionsLocation,
@@ -190,15 +189,16 @@ export { USE_REAL_CORPUS, listContentAssets };
 
 /** All work manifests available in this corpus, in registry order. */
 /**
- * Takedown state — see `site/unpublished.json` for the mechanism and why the
- * pages of an unpublished work are kept rather than removed.
+ * Whether a work is switched off in this build — see `site/unpublished.json`
+ * for the mechanism. A disabled work has no content on the server, so the
+ * callers of this are the ones that would otherwise offer an address with
+ * nothing behind it.
  *
  * Re-exported here so callers have one import for everything corpus-shaped,
  * and so `corpus-index.ts` stays the boundary nothing outside `$lib` reaches
  * past.
  */
-export { isUnpublished, unpublishedInfo };
-export type { UnpublishedWork } from './corpus-index';
+export { isUnpublished };
 
 export function listWorks(): WorkManifest[] {
 	return Object.values(manifests);
