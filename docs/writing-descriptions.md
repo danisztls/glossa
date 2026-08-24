@@ -27,7 +27,7 @@ nothing. A wrong one silently misinforms them about what the Church taught.**
 
 The worked example that established this: `encyclical.magnifica-humanitas`
 (Leo XIV, 2026-05-15) sits at the edge of the model's knowledge. Guessing from
-the title — *magnifica humanitas*, "the grandeur of humanity" — yields
+the title — _magnifica humanitas_, "the grandeur of humanity" — yields
 something about human dignity, which sounds right and is wrong: the document
 is about **artificial intelligence**. Reading §1 settles it in one sentence.
 Reading five more sections gives a description that is checkable line by line.
@@ -109,7 +109,7 @@ Treat every oddity as a suspected parse defect and report it. The tells:
   own typography
 - a `before` that does not match where the heading actually sits
 
-Page furniture is *expected* to be dropped: the language bar
+Page furniture is _expected_ to be dropped: the language bar
 (`AR - BE - CS - DE - …`), the title block, `© Copyright — Libreria Editrice
 Vaticana`, and the papal signature. Those are not findings.
 
@@ -123,7 +123,7 @@ other rather than with the parser.
 
 Two verdicts are deliberately not confident. `heading*` means the block is one
 line of a heading the parser stored as a single multi-line node — normal, not
-a finding. `kept?` means the block's text matches only the *start* of a stored
+a finding. `kept?` means the block's text matches only the _start_ of a stored
 block, so a heading absorbed into the following paragraph cannot be told from
 one that survived; check that case against `sections.json` yourself before
 calling it either way.
@@ -144,7 +144,12 @@ $CORPUS/oracles/toc/encyclical.<slug>.en.json
   "source": "raw/vatican-docs/encyclical__<slug>__en.html",
   "headings": [
     { "level": 1, "title": "INTRODUÇÃO", "before": 1 },
-    { "level": 2, "ident": "CAPÍTULO I", "title": "A VOZ DO SANGUE…", "before": 7 }
+    {
+      "level": 2,
+      "ident": "CAPÍTULO I",
+      "title": "A VOZ DO SANGUE…",
+      "before": 7
+    }
   ]
 }
 ```
@@ -153,7 +158,7 @@ $CORPUS/oracles/toc/encyclical.<slug>.en.json
 from the source's own typography — centered bold is the major tier,
 left-aligned bold-italic the minor one, and a `<center>` wrapper distinguishes
 CHAPTER from PART in the old shell. `before` is the number of the first
-numbered paragraph *after* the heading, which is what the census's `§` column
+numbered paragraph _after_ the heading, which is what the census's `§` column
 gives you. Split a heading into `ident`/`title` only where the source really
 prints two lines; the comparison flattens them anyway.
 

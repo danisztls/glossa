@@ -2333,7 +2333,9 @@ them would fight their writer on every sweep.
   halves cannot share a convention: the prettier loop fails on any stderr
   output, and treats a clean stderr as the pass.
 
-**Not done here**: eight Markdown files at the repo root are currently
-non-conforming (`README.md`, `docs/corpus-schema.md`, and six under
-`docs/research/`). The hook only sees staged files, so they are not a blocker
-today; whoever next edits one of them will reformat it then.
+**The eight Markdown files that had drifted were formatted in the same
+breath** (`README.md`, `docs/corpus-schema.md`, and six under
+`docs/research/`), so the hook never fires on someone else's old text. The
+diff is entirely cosmetic — `*em*` to `_em_`, table padding, one `jsonc`
+fence re-indented — and nothing under `site/` changed, having been formatted
+already.

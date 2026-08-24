@@ -594,7 +594,7 @@ Three census defects were found by the agents using it, all fixed mid-batch:
   reached `shape()`. Every centered heading in the corpus showed a blank
   markup column — including `evangelium-vitae.pt`'s `CAPÍTULO II/III/IV`,
   whose whole documented defect is that they are centered but **not** bold.
-  Since batch 2 established centering-vs-left as *the* tiering discriminator,
+  Since batch 2 established centering-vs-left as _the_ tiering discriminator,
   this would have handed 307 agents an empty column.
 - A heading line matched its parent title mid-word (`"o amor conjugal"` inside
   `"AS CARACTERISTICAS DO AMOR CONJUGAL"`), reporting a lost heading as kept.
@@ -605,14 +605,14 @@ Three census defects were found by the agents using it, all fixed mid-batch:
 
 **1. `_gap_block`'s number gate (high).** The parser already walks the text
 between consecutive `_BLOCK_RE` matches — `_gap_block`, added for
-`aeterna-dei.pt` — but returns nothing unless the gap *itself* opens with a
+`aeterna-dei.pt` — but returns nothing unless the gap _itself_ opens with a
 paragraph number. A bare continuation sentence or a bare `<i><b>` heading
 fails that gate and is dropped with no trace. This is the whole of the 1.24%:
 
-| work                  | coverage | what is lost                                  |
-| --------------------- | -------- | --------------------------------------------- |
+| work                  | coverage | what is lost                                   |
+| --------------------- | -------- | ---------------------------------------------- |
 | `mortalium-animos.pt` | 50.1%    | ~36 prose blocks + all 19 inline mini-headings |
-| `humanae-vitae.pt`    | 78.9%    | 18 continuation sentences + 12 sub-headings   |
+| `humanae-vitae.pt`    | 78.9%    | 18 continuation sentences + 12 sub-headings    |
 
 `humanae-vitae.pt` is the case that justifies the coverage oracle existing:
 31 sections against the English edition's 31, no manifest warning, symmetry
@@ -620,7 +620,7 @@ clean, and a fifth of the text gone.
 
 **2. `pending_first_block` is a scalar (high).** Where a document has no
 explicit `1.` and jumps to `2.`, the parser promotes `pending_first_block`
-into section 1 — but that field is overwritten by *every* unnumbered block
+into section 1 — but that field is overwritten by _every_ unnumbered block
 before the first numbered one. `singulari-quadam.en` has two, so its real
 1,747-character opening paragraph is discarded and only the salutation
 survives. Any document with two or more leading unnumbered paragraphs is
@@ -636,8 +636,8 @@ addressee list and salutation precede the first numbered paragraph, so they
 have nothing to merge forward into and vanish.
 
 **4. Verse promoted to headings (medium).** Confirmed in `dilexit-nos.en`, and
-larger than recorded: **two** poems, not one — St John of the Cross's *Cántico
-Espiritual* at §70 as well as Dante's canzone at §205. Five false nodes; the
+larger than recorded: **two** poems, not one — St John of the Cross's _Cántico
+Espiritual_ at §70 as well as Dante's canzone at §205. Five false nodes; the
 false nesting then pushed a genuine heading from level 3 to level 5.
 
 **5. The levelling run rule, seen plainly (medium).** `dei-verbum.pt`: only

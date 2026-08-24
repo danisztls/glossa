@@ -8,15 +8,15 @@ the compare view already shows.
 
 Both editions carry all 73 books and 1,333 chapters in common.
 
-- **30 chapters (2.25%)** have differing verse-number *sets*.
+- **30 chapters (2.25%)** have differing verse-number _sets_.
 - **1 chapter** exists in one edition only (Esther 16, PT).
 
-| book | diverging chapters |
-| --- | --- |
-| Esther | 15 |
-| Psalms | 5 |
-| Song of Songs | 5 |
-| Genesis, Judges, 2 Samuel, 2 Thessalonians, Sirach | 1 each |
+| book                                               | diverging chapters |
+| -------------------------------------------------- | ------------------ |
+| Esther                                             | 15                 |
+| Psalms                                             | 5                  |
+| Song of Songs                                      | 5                  |
+| Genesis, Judges, 2 Samuel, 2 Thessalonians, Sirach | 1 each             |
 
 ## The four kinds, which need different treatment
 
@@ -56,7 +56,7 @@ EN v16 is PT v17.
 
 The Hebrew/Greek-Vulgate offset that `versification.ts` already exists for.
 The corpus canonicalizes on Vulgate and converts citations.
-This is the one kind that *is* formulaic, and it is already handled — the
+This is the one kind that _is_ formulaic, and it is already handled — the
 Psalms entries here are the residue that the table does not yet cover.
 
 ### d. Genuine textual variant — Psalm 13
@@ -90,7 +90,7 @@ It reaches further than the compare view:
   divergent chapter the anchor is edition-dependent, and nothing says so.
 - **The `?v=` citation highlight.** Highlights a span by number; in a divergent
   chapter it can highlight the wrong sentences.
-- **Compare mode.** Aligns by number. Where the number *sets* differ it now
+- **Compare mode.** Aligns by number. Where the number _sets_ differ it now
   shows an advisory. Where they coincide but the text has shifted, it cannot
   know.
 
@@ -115,7 +115,7 @@ that does not exist.
 Keyed by `(osis, chapter)`, recording the kind (`chapter-absent`,
 `merge-split`, `numbering-tradition`, `textual-variant`), the verse-number sets
 on each side, and evidence. Generated like `xrefs/`, but with the
-*classification* reviewed by a person — a script can detect that two editions
+_classification_ reviewed by a person — a script can detect that two editions
 disagree; it cannot diagnose why, and the four kinds above needed reading the
 text to tell apart.
 
@@ -125,7 +125,7 @@ text to tell apart.
 
 Number-set comparison misses the dangerous case (same numbers, shifted text).
 A cheap signal that invents nothing: within a chapter whose verse-number sets
-*match*, compare per-verse text-length ratios against the chapter's own median
+_match_, compare per-verse text-length ratios against the chapter's own median
 ratio. A verse where one edition runs 2× the other, in a chapter averaging
 ~1.05×, is a candidate for review. This finds candidates; it does not align
 anything and it does not decide anything.
@@ -133,7 +133,7 @@ anything and it does not decide anything.
 ### 4. Record explicit mappings only where confirmed
 
 Where a correspondence is determinable and checked — `2thess 2: en 16 ↔ pt 17`
-— record it. Then citations and compare mode can be *right* in those chapters
+— record it. Then citations and compare mode can be _right_ in those chapters
 rather than merely cautious. A handful of chapters, verifiable by hand.
 
 ### 5. Disclose in the reading view, not only in compare mode

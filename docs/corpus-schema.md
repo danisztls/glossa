@@ -323,6 +323,7 @@ Added 2026-08-23 (`decisions.md`; sourcing survey in `research/summa-and-fathers
   An anchor whose target this parser cannot resolve to a real address (`#APN_Q1_A1`, 2 of them — `AP` is not a part of the Summa) keeps its words and loses its markup, the same rule any unknown tag gets. The finest anchor CCEL offers is the **article**, which is also the finest address this corpus has, so nothing is lost by following it; a trailing `, ad 2` sits outside the anchor in the source and stays prose.
 
   The Latin edition carries none of this: Corpus Thomisticum's pages link only to other pages, never into the text.
+
 - **No `citations` field.** Neither source carries a footnote apparatus: Aquinas cites in the body prose ("as Augustine says (De Trin. viii)"), and that is left verbatim where it stands. The reader linkifies scripture out of the prose itself (7,582 references in the English edition), which is `link-surface.md`'s "regex-linkifiable any time from flat text; nothing lost". The Summa's citations of _itself_ are the exception, and are stored — see `<a data-ref>` above for why they are the one kind that flat text cannot recover.
 
 ### Validation

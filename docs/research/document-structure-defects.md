@@ -45,14 +45,14 @@ Vatican II documents left every artifact byte-identical, so the guard holds.
 
 The larger problem. Measured across 339 document works:
 
-| root-level structure | documents |
-| --- | --- |
-| only `sub` nodes | 300 |
-| `chapter` + `sub` | 29 |
-| `part` + `sub` | 4 |
-| `chapter` only | 4 |
-| `chapter` + `section` + `sub` | 1 |
-| nothing at all | 1 |
+| root-level structure          | documents |
+| ----------------------------- | --------- |
+| only `sub` nodes              | 300       |
+| `chapter` + `sub`             | 29        |
+| `part` + `sub`                | 4         |
+| `chapter` only                | 4         |
+| `chapter` + `section` + `sub` | 1         |
+| nothing at all                | 1         |
 
 And, counting root nodes that carry a real section range, across 333 works
 that have both a structure and sections:
@@ -116,7 +116,7 @@ Both become workable once §2 is fixed. Neither is worth implementing before.
 Worth recording because it will come up again when the unit is finally named:
 
 - **"section"** already means the numbered unit — §17, the `{n}` in
-  `/documents/{slug}/{n}`, `sections.json` — *and* is a `StructureNode.kind`
+  `/documents/{slug}/{n}`, `sections.json` — _and_ is a `StructureNode.kind`
   (`SECTION ONE`).
 - **"chapter"** collides with Bible chapters and with `/ccc/chapter/[n]`.
 
