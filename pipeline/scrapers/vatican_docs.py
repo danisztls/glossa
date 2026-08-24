@@ -242,6 +242,7 @@ from common import (
     corpus_dir,
     corrections_receipt,
     fold,
+    fold_index,
     load_corrections,
     load_overrides,
     looks_like_number_typo,
@@ -1204,7 +1205,7 @@ def match_footnote_chapter_heading(text: str) -> int | None:
     every 'Chapter I' / 'Chapter II' / 'CHAPTER III' (confirmed live: the
     footnote-list numbers run 1-7, then restart 1-8, then 1-21, then 1-2,
     with exactly these three headings sitting at each restart). This is
-    a DIFFERENT matcher from match_label_en/match_label_pt (which detect
+    a DIFFERENT matcher from `match_label` (which detects
     the same convention in the document BODY, driving the structure
     tree) for two reasons, both confirmed live: (1) the footnote list's
     own chapter labels don't always agree in numeral style with the
@@ -1223,7 +1224,7 @@ def match_footnote_chapter_heading(text: str) -> int | None:
     fold() (accent/case normalization, already used elsewhere in this
     module) turns "Capítulo"/"CAPÍTULO"/"Chapter"/"CHAPTER" into one
     comparison, covering both languages with a single regex instead of
-    forking EN/PT the way MATCH_LABEL does for body headings.
+    forking EN/PT the way `DIVISIONS` does for body headings.
 
     Grep-confirmed safe against false positives from a footnote entry's
     OWN body prose that happens to mention a chapter in passing (e.g.
@@ -1237,7 +1238,7 @@ def match_footnote_chapter_heading(text: str) -> int | None:
     m = _FN_CHAPTER_HEADING_RE.match(fold(text))
     if not m:
         return None
-    return _resolve_num(m.group(1))
+    return _resolve_num(m.group(1), "en")
 
 
 def build_footnote_table(region_html: str) -> tuple[dict, dict]:
@@ -1929,117 +1930,343 @@ def _gap_block(gap_html: str, marker_template: str) -> Block | None:
 
 
 # --------------------------------------------------------------------------
-# EN / PT structure labels
+# Structure labels, in every language the corpus reads
 # --------------------------------------------------------------------------
+#
+# A division label is a noun ("CHAPTER", "CAPITOLO", "ГЛАВА") and a number,
+# and every language in the corpus writes the pair in some subset of four
+# arrangements:
+#
+#   noun then numeral   CHAPTER I, ROZDZIAŁ V, PARTE II
+#   noun then word      Capitolo primo, CAPÍTULO PRIMERO, ГЛАВА ПЕРВАЯ,
+#                       الفصل الأوّل, CHAPTER ONE
+#   numeral then noun   II PARTE, 1ª PARTE
+#   word then noun      PRIMEIRA PARTE, ERSTES KAPITEL, PREMIÈRE PARTIE
+#
+# so the patterns are generated from the vocabulary rather than written out
+# per language. The alternative -- nine hand-written pattern lists -- was
+# what EN and PT had, and the Portuguese one had to be rewritten twice
+# (2026-08-24) because each rewrite covered the forms one document happened
+# to print. Generating them means a new language is a vocabulary entry and
+# nothing else, and it means the four arrangements are recognised uniformly
+# instead of wherever someone remembered to add them.
+#
+# ORDINALS AND CARDINALS ARE NOT INTERCHANGEABLE, and the distinction is the
+# one guard here that earns its keep. An ordinal before the noun is
+# unambiguous -- "FIRST PART" is a label and nothing else. A CARDINAL before
+# the noun is ordinary prose: "ONE PART OF THE CHURCH" would become a
+# division heading. So cardinals are only ever read AFTER the noun, where
+# English prints them ("CHAPTER ONE"), and ordinals are read on both sides.
+#
+# Everything below is written in its natural spelling and folded at compile
+# time -- `fold` is what the matching runs through, so the table stays
+# readable as the language actually writes it (`SECÇÃO`, `ЧЕТВЁРТАЯ`,
+# `الأوّل`) rather than as the folded form nobody would recognise.
 
-_EN_WORD_NUM = {
-    "ONE": 1,
-    "TWO": 2,
-    "THREE": 3,
-    "FOUR": 4,
-    "FIVE": 5,
-    "SIX": 6,
-    "SEVEN": 7,
-    "EIGHT": 8,
-    "NINE": 9,
-    "TEN": 10,
+_NUMERAL = r"[IVXLCDM]+|\d{1,3}"
+
+
+@dataclass(frozen=True)
+class Divisions:
+    """One language's division vocabulary."""
+
+    #: kind (a `_LABEL_DEPTH` key) -> the noun's spellings. Several where the
+    #: language spells it more than one way: Portuguese prints both `SECÇÃO`
+    #: and the post-reform `SEÇÃO`.
+    nouns: dict[str, tuple[str, ...]]
+    #: A number written as an ordinal -> its value. Read on either side of
+    #: the noun. Genders and declensions are listed out rather than stemmed:
+    #: the stem forms are what made the Portuguese table hard to read.
+    ordinals: dict[str, int]
+    #: A number written as a cardinal -> its value. Read only AFTER the noun.
+    cardinals: dict[str, int] = field(default_factory=dict)
+    #: Between a LEADING numeral and the noun. Portuguese prints the ordinal
+    #: indicator there (`1ª PARTE`), which arrives folded as a plain
+    #: lowercase letter -- `'ª'.upper()` is `'ª'`, and NFKD then yields `a`.
+    infix: str = r"\s*"
+    #: Whether the language ever puts the numeral first. English never does,
+    #: and admitting the form there would only add false positives.
+    numeral_first: bool = True
+
+
+def _alt(words) -> str:
+    """Folded alternation, longest first so no entry shadows a longer one
+    sharing its prefix (`الأول` ahead of nothing, but `PRIMEIRA` ahead of
+    `PRIMEIR`-style stems, and every Arabic ordinal shares `ال`)."""
+    return "|".join(sorted({fold(w) for w in words}, key=len, reverse=True))
+
+
+def _compile_labels(spec: Divisions) -> list[tuple[str, re.Pattern]]:
+    """`spec` -> the (kind, pattern) list `match_label`/`LABEL_PATTERNS` use.
+
+    Grouped by arrangement rather than by kind, so a noun-anchored form is
+    always tried before a number-anchored one; the kinds themselves cannot
+    collide, since no two share a noun."""
+    after = _alt({**spec.ordinals, **spec.cardinals})
+    before = _alt(spec.ordinals)
+    nouns = {k: _alt(v) for k, v in spec.nouns.items()}
+    pats = [
+        (kind, re.compile(rf"^(?:{noun})\s+({_NUMERAL}|{after})\b"))
+        for kind, noun in nouns.items()
+    ]
+    if spec.numeral_first:
+        pats += [
+            (kind, re.compile(rf"^({_NUMERAL}){spec.infix}(?:{noun})\b"))
+            for kind, noun in nouns.items()
+        ]
+    if before:
+        pats += [
+            (kind, re.compile(rf"^({before})\s+(?:{noun})\b"))
+            for kind, noun in nouns.items()
+        ]
+    return pats
+
+
+# fmt: off
+DIVISIONS: dict[str, Divisions] = {
+    "en": Divisions(
+        nouns={
+            "part": ("PART",),
+            "section": ("SECTION",),
+            "chapter": ("CHAPTER",),
+            "article": ("ARTICLE",),
+        },
+        ordinals={
+            "FIRST": 1, "SECOND": 2, "THIRD": 3, "FOURTH": 4, "FIFTH": 5,
+            "SIXTH": 6, "SEVENTH": 7, "EIGHTH": 8, "NINTH": 9, "TENTH": 10,
+        },
+        cardinals={
+            "ONE": 1, "TWO": 2, "THREE": 3, "FOUR": 4, "FIVE": 5,
+            "SIX": 6, "SEVEN": 7, "EIGHT": 8, "NINE": 9, "TEN": 10,
+        },
+        numeral_first=False,
+    ),
+    "pt": Divisions(
+        nouns={
+            "part": ("PARTE",),
+            "section": ("SECÇÃO", "SEÇÃO"),
+            "chapter": ("CAPÍTULO",),
+            "article": ("ARTIGO",),
+        },
+        ordinals={
+            "PRIMEIRA": 1, "PRIMEIRO": 1, "SEGUNDA": 2, "SEGUNDO": 2,
+            "TERCEIRA": 3, "TERCEIRO": 3, "QUARTA": 4, "QUARTO": 4,
+            "QUINTA": 5, "QUINTO": 5, "SEXTA": 6, "SEXTO": 6,
+            "SÉTIMA": 7, "SÉTIMO": 7, "OITAVA": 8, "OITAVO": 8,
+            "NONA": 9, "NONO": 9, "DÉCIMA": 10, "DÉCIMO": 10,
+        },
+        # `1ª PARTE`, `II ª PARTE` -- Pascendi PT prints both.
+        infix=r"\s*[ªºAOao]?\s*",
+    ),
+    "es": Divisions(
+        nouns={
+            "part": ("PARTE",),
+            "section": ("SECCIÓN",),
+            "chapter": ("CAPÍTULO",),
+            "article": ("ARTÍCULO",),
+        },
+        ordinals={
+            "PRIMERO": 1, "PRIMERA": 1, "PRIMER": 1, "SEGUNDO": 2, "SEGUNDA": 2,
+            "TERCERO": 3, "TERCERA": 3, "TERCER": 3, "CUARTO": 4, "CUARTA": 4,
+            "QUINTO": 5, "QUINTA": 5, "SEXTO": 6, "SEXTA": 6,
+            "SÉPTIMO": 7, "SÉPTIMA": 7, "OCTAVO": 8, "OCTAVA": 8,
+            "NOVENO": 9, "NOVENA": 9, "DÉCIMO": 10, "DÉCIMA": 10,
+        },
+    ),
+    "it": Divisions(
+        nouns={
+            "part": ("PARTE",),
+            "section": ("SEZIONE",),
+            "chapter": ("CAPITOLO",),
+            "article": ("ARTICOLO",),
+        },
+        ordinals={
+            "PRIMO": 1, "PRIMA": 1, "SECONDO": 2, "SECONDA": 2,
+            "TERZO": 3, "TERZA": 3, "QUARTO": 4, "QUARTA": 4,
+            "QUINTO": 5, "QUINTA": 5, "SESTO": 6, "SESTA": 6,
+            "SETTIMO": 7, "SETTIMA": 7, "OTTAVO": 8, "OTTAVA": 8,
+            "NONO": 9, "NONA": 9, "DECIMO": 10, "DECIMA": 10,
+        },
+    ),
+    "fr": Divisions(
+        nouns={
+            "part": ("PARTIE",),
+            "section": ("SECTION",),
+            "chapter": ("CHAPITRE",),
+            "article": ("ARTICLE",),
+        },
+        ordinals={
+            "PREMIER": 1, "PREMIÈRE": 1, "DEUXIÈME": 2, "SECOND": 2, "SECONDE": 2,
+            "TROISIÈME": 3, "QUATRIÈME": 4, "CINQUIÈME": 5, "SIXIÈME": 6,
+            "SEPTIÈME": 7, "HUITIÈME": 8, "NEUVIÈME": 9, "DIXIÈME": 10,
+        },
+    ),
+    "de": Divisions(
+        nouns={
+            "part": ("TEIL",),
+            "section": ("ABSCHNITT",),
+            "chapter": ("KAPITEL",),
+            "article": ("ARTIKEL",),
+        },
+        # German inflects the ordinal for the noun's gender and case, and the
+        # mastheads print the neuter (`ERSTES KAPITEL`); the other endings are
+        # listed because `TEIL` is masculine (`ERSTER TEIL`).
+        ordinals={
+            "ERSTES": 1, "ERSTER": 1, "ERSTE": 1, "ZWEITES": 2, "ZWEITER": 2,
+            "ZWEITE": 2, "DRITTES": 3, "DRITTER": 3, "DRITTE": 3,
+            "VIERTES": 4, "VIERTER": 4, "VIERTE": 4, "FÜNFTES": 5,
+            "FÜNFTER": 5, "FÜNFTE": 5, "SECHSTES": 6, "SECHSTER": 6,
+            "SECHSTE": 6, "SIEBTES": 7, "SIEBENTES": 7, "SIEBTER": 7,
+            "SIEBTE": 7, "ACHTES": 8, "ACHTER": 8, "ACHTE": 8,
+            "NEUNTES": 9, "NEUNTER": 9, "NEUNTE": 9,
+            "ZEHNTES": 10, "ZEHNTER": 10, "ZEHNTE": 10,
+        },
+    ),
+    "pl": Divisions(
+        nouns={
+            "part": ("CZĘŚĆ",),
+            "section": ("SEKCJA",),
+            "chapter": ("ROZDZIAŁ",),
+            "article": ("ARTYKUŁ",),
+        },
+        # Ł has no canonical decomposition, so it survives `fold` and the
+        # folded noun is still `ROZDZIAŁ`; Ę/Ś/Ć do decompose, so `CZĘŚĆ`
+        # folds to `CZESC`. Both are handled by folding the table itself.
+        ordinals={
+            "PIERWSZY": 1, "PIERWSZA": 1, "PIERWSZE": 1, "DRUGI": 2,
+            "DRUGA": 2, "DRUGIE": 2, "TRZECI": 3, "TRZECIA": 3, "TRZECIE": 3,
+            "CZWARTY": 4, "CZWARTA": 4, "CZWARTE": 4, "PIĄTY": 5, "PIĄTA": 5,
+            "PIĄTE": 5, "SZÓSTY": 6, "SZÓSTA": 6, "SZÓSTE": 6, "SIÓDMY": 7,
+            "SIÓDMA": 7, "SIÓDME": 7, "ÓSMY": 8, "ÓSMA": 8, "ÓSME": 8,
+            "DZIEWIĄTY": 9, "DZIEWIĄTA": 9, "DZIESIĄTY": 10, "DZIESIĄTA": 10,
+        },
+    ),
+    "ru": Divisions(
+        nouns={
+            "part": ("ЧАСТЬ",),
+            "section": ("РАЗДЕЛ",),
+            "chapter": ("ГЛАВА",),
+            "article": ("СТАТЬЯ",),
+        },
+        # Ё decomposes to Е under NFKD, so `ЧЕТВЁРТАЯ` and `ЧЕТВЕРТАЯ` fold
+        # to the same string and one entry covers both spellings.
+        ordinals={
+            "ПЕРВАЯ": 1, "ПЕРВЫЙ": 1, "ПЕРВОЕ": 1, "ВТОРАЯ": 2, "ВТОРОЙ": 2,
+            "ВТОРОЕ": 2, "ТРЕТЬЯ": 3, "ТРЕТИЙ": 3, "ТРЕТЬЕ": 3,
+            "ЧЕТВЁРТАЯ": 4, "ЧЕТВЁРТЫЙ": 4, "ЧЕТВЁРТОЕ": 4, "ПЯТАЯ": 5,
+            "ПЯТЫЙ": 5, "ПЯТОЕ": 5, "ШЕСТАЯ": 6, "ШЕСТОЙ": 6, "ШЕСТОЕ": 6,
+            "СЕДЬМАЯ": 7, "СЕДЬМОЙ": 7, "СЕДЬМОЕ": 7, "ВОСЬМАЯ": 8,
+            "ВОСЬМОЙ": 8, "ВОСЬМОЕ": 8, "ДЕВЯТАЯ": 9, "ДЕВЯТЫЙ": 9,
+            "ДЕСЯТАЯ": 10, "ДЕСЯТЫЙ": 10,
+        },
+    ),
+    "ar": Divisions(
+        # Arabic prints the definite article on both halves -- `الفصل الأوّل`,
+        # "the chapter the-first" -- so it is part of both the noun and the
+        # ordinal rather than something to strip.
+        nouns={
+            "part": ("الجزء",),
+            "section": ("القسم",),
+            "chapter": ("الفصل",),
+            "article": ("المادة",),
+        },
+        # Written without tashkeel: the vowel marks the page prints (`الأوّل`)
+        # are combining characters, so `fold` removes them from the text
+        # before these patterns ever see it.
+        ordinals={
+            "الأول": 1, "الثاني": 2, "الثالث": 3, "الرابع": 4, "الخامس": 5,
+            "السادس": 6, "السابع": 7, "الثامن": 8, "التاسع": 9, "العاشر": 10,
+        },
+    ),
 }
 
-_EN_LABELS = [
-    (
-        "part",
-        re.compile(r"^PART\s+([IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE)\b", re.IGNORECASE),
-    ),
-    (
-        "section",
-        re.compile(
-            r"^SECTION\s+([IVXLCDM]+|\d+|ONE|TWO|THREE|FOUR|FIVE)\b", re.IGNORECASE
+# fmt: on
+
+LABEL_PATTERNS = {lang: _compile_labels(spec) for lang, spec in DIVISIONS.items()}
+
+#: Headings that name a document's front or back matter rather than one of
+#: its divisions, in every language the corpus reads. Ranked as a peer of the
+#: shallowest division the document prints (see `depth_key`), which is what
+#: keeps a PROLOGUE from being read as a sub-heading of the chapter above it.
+#:
+#: One set for all nine languages rather than one per language: these words
+#: do not collide across languages in any way that matters, and a document is
+#: only ever tested against the list in the language it is written in anyway.
+#: Written naturally and folded here, so `CONCLUSIÓN` and `ZAKOŃCZENIE` are
+#: entered as they are printed.
+_FRONT_BACK_MATTER = frozenset(
+    map(
+        fold,
+        (
+            # en / la
+            "PREFACE", "PROLOGUE", "PROEMIUM", "INTRODUCTION", "CONCLUSION",
+            "EPILOGUE", "APPENDIX", "BLESSING",
+            # pt
+            "PREFÁCIO", "PROÉMIO", "PRÓLOGO", "INTRODUÇÃO", "CONCLUSÃO",
+            "EPÍLOGO", "APÊNDICE",
+            # es
+            "PREFACIO", "PROEMIO", "INTRODUCCIÓN", "CONCLUSIÓN", "EPÍLOGO",
+            "APÉNDICE",
+            # it
+            "PREFAZIONE", "PROEMIO", "INTRODUZIONE", "CONCLUSIONE", "EPILOGO",
+            "APPENDICE",
+            # fr
+            "PRÉFACE", "AVANT-PROPOS", "PROLOGUE", "CONCLUSION", "ÉPILOGUE",
+            "ANNEXE",
+            # de
+            "VORWORT", "EINLEITUNG", "EINFÜHRUNG", "SCHLUSS", "SCHLUSSWORT",
+            "ANHANG",
+            # pl
+            "WSTĘP", "WPROWADZENIE", "PRZEDMOWA", "ZAKOŃCZENIE", "ANEKS",
+            # ru
+            "ПРЕДИСЛОВИЕ", "ВВЕДЕНИЕ", "ЗАКЛЮЧЕНИЕ", "ПРИЛОЖЕНИЕ",
+            # ar
+            "المقدمة", "الخاتمة", "تمهيد", "الملحق",
         ),
-    ),
-    (
-        "chapter",
-        re.compile(
-            r"^CHAPTER\s+([IVXLCDM]+|ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)\b",
-            re.IGNORECASE,
-        ),
-    ),
-    ("article", re.compile(r"^ARTICLE\s+([IVXLCDM]+|\d+)\b", re.IGNORECASE)),
-]
+    )
+)  # fmt: skip
+
+#: The number-words keyed the way a match actually arrives -- folded. The
+#: table above is written in natural spelling for the reader, and a captured
+#: group comes out of a pattern built from `fold`ed alternatives, so the two
+#: only meet here. Arabic is the case that made this its own step: `الأوّل`
+#: folds to `الاول`, and looking the capture up in the natural-spelling dict
+#: quietly returned no number at all.
+_LABEL_WORDS = {
+    lang: {fold(w): n for w in (spec.ordinals, spec.cardinals) for w, n in w.items()}
+    for lang, spec in DIVISIONS.items()
+}
 
 
-def _resolve_num(token: str) -> int | None:
-    token = token.upper()
-    if token in _EN_WORD_NUM:
-        return _EN_WORD_NUM[token]
-    if token[:-1] in _PT_ORDINAL_WORDS and token[-1:] in ("A", "O"):
-        return _PT_ORDINAL_WORDS[token[:-1]]
-    if token.isdigit():
-        return int(token)
-    return roman_to_int(token)
+def _resolve_num(token: str, lang: str) -> int | None:
+    """The number a label's captured group names, in `lang`.
+
+    Resolved against ONE language's vocabulary rather than a merged table:
+    the words collide across languages (`PRIMA` is Italian for first and
+    Portuguese for the feminine of it, `SECOND` is English and French), and
+    while every collision found so far agrees on the value, nothing makes
+    that a property worth relying on."""
+    folded = fold(token)
+    if folded in _LABEL_WORDS[lang]:
+        return _LABEL_WORDS[lang][folded]
+    if folded.isdigit():
+        return int(folded)
+    return roman_to_int(folded)
 
 
-def match_label_en(text: str) -> tuple[str, int | None] | None:
-    for kind, pat in _EN_LABELS:
-        m = pat.match(text)
+def match_label(text: str, lang: str) -> tuple[str, int | None] | None:
+    """`(kind, number)` when `text` OPENS with a division label, else None."""
+    for kind, pat in LABEL_PATTERNS[lang]:
+        m = pat.match(fold(text))
         if m:
-            return kind, _resolve_num(m.group(1))
+            return kind, _resolve_num(m.group(1), lang)
     return None
 
 
-# Portuguese writes a division's number three ways, and the corpus uses all
-# three: after the noun (`PARTE II`), before it (`II PARTE`, `1ª PARTE`), and
-# spelled out and leading (`PRIMEIRA PARTE`). Gaudium et Spes PT prints
-# `PRIMEIRA PARTE` and `II PARTE` in the same document; Pascendi PT prints
-# `1ª PARTE` and `II ª PARTE`. Only the first form was recognised, so
-# `_LABEL_DEPTH` never saw a PART in those documents and CAPÍTULO came out at
-# the same level as the PART it sits under -- the Part>Chapter>Section spine
-# flattened. Sections likewise number in arabic (`Secção 1`), which the
-# roman-only pattern missed. The ordinal indicator is matched as `A`/`O` as
-# well as `ª`/`º`, because `fold` normalises NFKD and that decomposes the
-# indicator into a plain LOWERCASE letter (`.upper()` leaves `ª` alone, and
-# NFKD then yields `a`), so `1ª PARTE` reaches these patterns as `1a PARTE`
-# even though everything around it has been uppercased.
-_PT_ORDINAL_WORDS = {
-    "PRIMEIR": 1, "SEGUND": 2, "TERCEIR": 3, "QUART": 4, "QUINT": 5,
-    "SEXT": 6, "SETIM": 7, "OITAV": 8, "NON": 9, "DECIM": 10,
-}  # fmt: skip
-_PT_ORDINAL_ALT = "(?:" + "|".join(_PT_ORDINAL_WORDS) + r")[AO]"
-_PT_NOUNS = [("part", "PARTE"), ("section", "SEC[CS][AC]O"), ("chapter", "CAPITULO")]
-_PT_LABELS = [
-    *[(k, re.compile(rf"^{n}\s+([IVXLCDM]+|\d+)\b")) for k, n in _PT_NOUNS],
-    *[
-        (k, re.compile(rf"^([IVXLCDM]+|\d+)\s*[\u00aa\u00baAOao]?\s*{n}\b"))
-        for k, n in _PT_NOUNS
-    ],
-    *[(k, re.compile(rf"^({_PT_ORDINAL_ALT})\s+{n}\b")) for k, n in _PT_NOUNS],
-    ("article", re.compile(r"^ARTIGO\s+([IVXLCDM]+|\d+)\b")),
-]
-
-
-def match_label_pt(text: str) -> tuple[str, int | None] | None:
-    folded = fold(text)
-    for kind, pat in _PT_LABELS:
-        m = pat.match(folded)
-        if m:
-            return kind, _resolve_num(m.group(1))
-    return None
-
-
-MATCH_LABEL = {"en": match_label_en, "pt": match_label_pt}
-LABEL_PATTERNS = {"en": _EN_LABELS, "pt": _PT_LABELS}
-
-# PT also writes its divisions with the ordinal spelled out and leading --
-# "PRIMEIRA PARTE", "SEGUNDA PARTE" -- which the _PT_LABELS patterns, all
-# anchored on the noun, do not match. Only needed to recognise a BARE label
-# (below); the depth ranking still goes through MATCH_LABEL.
-_PT_ORDINAL_LABEL_BODY = (
-    r"(?:PRIMEIR|SEGUND|TERCEIR|QUART|QUINT|SEXT|SETIM|OITAV|NON|DECIM)[AO]\s+"
-    r"(?:PARTE|SEC[CS][AC]O|CAPITULO)"
-)
-_PT_ORDINAL_LABEL_RE = re.compile(rf"^{_PT_ORDINAL_LABEL_BODY}$")
-# The same label as a PREFIX, for `_label_prefix_end`, which needs the offset
-# the label ends at rather than a yes/no over the whole string.
-_PT_ORDINAL_LABEL_PREFIX_RE = re.compile(rf"^{_PT_ORDINAL_LABEL_BODY}\b")
+def label_matcher(lang: str):
+    """`match_label` bound to one language, for the call sites that take a
+    matcher rather than a language (`drop_table_of_contents`)."""
+    return lambda text: match_label(text, lang)
 
 
 _APPENDIX_LABEL_RE = re.compile(r"^(?:APPENDIX|AP[EÊ]NDICE)(?=\s|:|$)", re.IGNORECASE)
@@ -2058,23 +2285,21 @@ def _label_prefix_end(text: str, lang: str) -> int | None:
     `match_label`, hence out of the `_LABEL_DEPTH` ranking -- which has no
     tier for a division appearing once at the end of a document, and should
     not be given one on the strength of the three that exist in this corpus.
-    `fold` preserves length, so a Portuguese match's offset applies to the
-    original string unchanged."""
+
+    The offset comes back through `fold_index` rather than being used as-is.
+    `fold` is length-preserving for Latin text and the Portuguese patterns
+    relied on that, but Arabic folds SHORTER (its vowel marks are combining
+    characters), and an offset that is quietly a few characters early would
+    cut a heading mid-word rather than fail."""
     m = _APPENDIX_LABEL_RE.match(text)
     if m:
         return m.end()
-    folded = fold(text) if lang == "pt" else text
+    folded = fold(text)
     for _kind, pat in LABEL_PATTERNS[lang]:
         m = pat.match(folded)
         if m:
-            return m.end()
-    # PT also writes a division with the ordinal spelled out and LEADING --
-    # `PRIMEIRA PARTE` -- which every LABEL_PATTERNS entry, all anchored on
-    # the noun, misses. `bare_division_label` has always known this form;
-    # leaving it out here made the two predicates disagree, and the break
-    # split silently did nothing on the seven headings that use it.
-    m = _PT_ORDINAL_LABEL_PREFIX_RE.match(folded)
-    return m.end() if m else None
+            return fold_index(text)[m.end()]
+    return None
 
 
 def bare_division_label(text: str, lang: str) -> bool:
@@ -2088,13 +2313,12 @@ def bare_division_label(text: str, lang: str) -> bool:
     TEOLOGICOS") is complete on its own, and whatever follows it is a real
     sub-heading, not a continuation -- which is exactly the distinction that
     keeps the merge off `ad-caeli-reginam.pt` and on `caritas-in-veritate`."""
-    stripped = " ".join(text.split()).strip(" .:;-")
-    probe = stripped if lang == "en" else fold(stripped)
+    probe = fold(" ".join(text.split()).strip(" .:;-"))
     for _kind, pat in LABEL_PATTERNS[lang]:
         m = pat.match(probe)
         if m:
             return probe[m.end() :].strip(" .:;-\u2014\u2013") == ""
-    return bool(_PT_ORDINAL_LABEL_RE.match(fold(stripped)))
+    return False
 
 
 def split_label_prefix(text: str, lang: str) -> tuple[str, str] | None:
@@ -2499,7 +2723,7 @@ def extract_toc_outline(body_html: str) -> list[tuple[str, int]]:
 
 
 def apply_toc_outline(
-    blocks: list[Block], entries: list[tuple[str, int]]
+    blocks: list[Block], entries: list[tuple[str, int]], match_label
 ) -> tuple[dict[int, int], list[str]]:
     """Match TOC entries to body blocks. Returns (block index -> level) and
     the texts of blocks PROMOTED to headings because the TOC named them.
@@ -2519,6 +2743,17 @@ def apply_toc_outline(
     the heart and the grandeur of the human person" in the body. The BODY
     text is kept as the title in every case: the TOC supplies depth, not
     wording.
+
+    A LABELLED heading is matched on its label instead, which is the same
+    identity `drop_table_of_contents` uses and for the same reason: the two
+    places a document names a division rarely agree on how to write its
+    number. Magnifica Humanitas lists `CAPITOLO 1` / `ГЛАВА 1` in its table
+    of contents and prints `Capitolo primo` / `ГЛАВА ПЕРВАЯ` in the body, so
+    no amount of text similarity connects them -- and with the chapters
+    unmatched the TOC levelled every sub-heading around them while leaving
+    the chapters to the style walk, which ranked them BELOW their own
+    sections. Both editions came out as five-chapter documents whose
+    chapters sat at levels 3 to 5.
 
     PROMOTION, for a block the style rules missed. A TOC entry is the
     document asserting that a heading exists, which is better evidence than
@@ -2546,10 +2781,19 @@ def apply_toc_outline(
             if not have:
                 continue
             if blk.is_heading:
+                # Both numbers must be known before a label counts as
+                # identity: `("chapter", None)` compares equal to every other
+                # unnumbered chapter, and would match the first one found.
+                sig = match_label(blk.ident or blk.text)
                 hit = (
                     have == want
                     or have.startswith(want + " ")
                     or want.startswith(have + " ")
+                    or (
+                        sig is not None
+                        and sig[1] is not None
+                        and sig == match_label(title)
+                    )
                     or difflib.SequenceMatcher(None, have, want).ratio()
                     >= _TOC_FUZZY_RATIO
                 )
@@ -2772,6 +3016,51 @@ def drop_orphan_close_tags(html: str) -> str:
     return "".join(out)
 
 
+# The rule a page may print between its masthead and its body, and the link
+# lines that sit beside it. Structural rather than a vocabulary list: the link
+# is localised (`[ Multimedia ]`, `[ Multimédia ]`, `[ Multimídia ]`) and the
+# next one added would be too, so what is matched is "a bracketed single
+# anchor, and nothing else in the block".
+_MASTHEAD_RULE_RE = re.compile(r"^_{5,}$")
+_MASTHEAD_LINK_RE = re.compile(r"^\[\s*[^\[\]]{1,24}\s*\]$")
+_SINGLE_ANCHOR_RE = re.compile(
+    r"^\[\s*<a\s[^>]*>.*</a>\s*\]$", re.IGNORECASE | re.DOTALL
+)
+#: How far into a page the furniture may sit before it stops being a masthead
+#: boundary at all. The nine pages that print one put it at block 2-7.
+_MASTHEAD_WINDOW = 12
+
+
+def _is_masthead_furniture(b: Block) -> bool:
+    flat = " ".join(b.text.split())
+    if _MASTHEAD_RULE_RE.match(flat):
+        return True
+    return bool(_MASTHEAD_LINK_RE.match(flat)) and bool(
+        _SINGLE_ANCHOR_RE.match(" ".join(b.raw.split()))
+    )
+
+
+def _printed_masthead_end(blocks: list[Block]) -> int | None:
+    """Index of the first furniture block, when the page prints one ahead of
+    its body, else None. See `extract_document_header`."""
+    for i, b in enumerate(blocks[:_MASTHEAD_WINDOW]):
+        if match_para_num(b.raw):
+            return None
+        if _is_masthead_furniture(b):
+            return i or None
+    return None
+
+
+def _skip_masthead_furniture(blocks: list[Block], end: int) -> int:
+    """`end` advanced past the furniture run itself. Not simply "one block":
+    the Russian edition prints the rule between `[ Multimedia ]` and
+    `[ PDF ]`, so the run is three blocks long there and one elsewhere."""
+    i = end
+    while i < len(blocks) and _is_masthead_furniture(blocks[i]):
+        i += 1
+    return i
+
+
 def extract_document_header(
     blocks: list[Block], slug: str, pontiff: str
 ) -> tuple[str, int]:
@@ -2795,12 +3084,35 @@ def extract_document_header(
     significant word of the slug) or names its author. The first block that
     does neither is the document's first real heading, and the scan stops
     there rather than running to the first numbered section, which would
-    swallow a genuine PREFACE or PROÉMIO."""
+    swallow a genuine PREFACE or PROÉMIO.
+
+    UNLESS THE PAGE SAYS WHERE THE MASTHEAD ENDS, which some do: a rule of
+    underscores, and the `[ Multimedia ]` / `[ PDF ]` links beside it, printed
+    between the masthead and the first heading. Where a page prints that, it
+    is stating its own boundary and the identity guess defers to it -- the
+    same order of precedence `extract_toc_outline` gives a printed table of
+    contents over inferred heading levels.
+
+    It matters because identity is a Latin-script rule wearing a general
+    one's clothes. It works while the masthead is one block naming the
+    document, which is every page in the corpus until Magnifica Humanitas
+    arrived in nine languages: its Polish, Russian and Arabic editions each
+    open with a bare kind-word block (`ENCYKLIKA`, `ЭНЦИКЛИКА`, `رسالة بابويّة
+    عامّة`) that names neither the document nor its author, so the scan
+    stopped on block one and captured an empty masthead, leaving
+    `MAGNIFICA HUMANITAS` and the Pope's name behind as phantom headings.
+    Localised regnal names (`ЛЬВА XIV` for `Leo XIV`) close the other route
+    in. Measured over all 468 raw pages, exactly those nine print the rule,
+    and six of them already had the right masthead by identity -- so they are
+    the regression check on this, not just its beneficiaries."""
+    end = _printed_masthead_end(blocks)
     slug_words = [w for w in fold(slug.replace("-", " ")).split() if len(w) > 2]
     pont = fold(pontiff or "").strip()
     taken = 0
     kept: list[str] = []
-    for b in blocks:
+    for i, b in enumerate(blocks):
+        if end is not None and i >= end:
+            break
         if match_para_num(b.raw):
             break
         flat = " ".join(b.text.split())
@@ -2808,7 +3120,7 @@ def extract_document_header(
         folded = fold(_LANG_BAR_PREFIX_RE.sub("", flat))
         names_doc = bool(slug_words) and all(w in folded for w in slug_words)
         names_author = bool(pont) and pont in folded
-        if not (bar_only or names_doc or names_author):
+        if end is None and not (bar_only or names_doc or names_author):
             break
         taken += 1
         if not bar_only:
@@ -2820,7 +3132,11 @@ def extract_document_header(
                 kept.append(html)
     if not taken:
         return "", 0
-    del blocks[:taken]
+    # The furniture itself is not masthead and not content -- a link to a PDF
+    # of the same document and a printed rule. Dropped with it, so nothing
+    # downstream has to decide what a block of underscores is.
+    dropped = taken if end is None else _skip_masthead_furniture(blocks, end)
+    del blocks[:dropped]
     # Joined with a BREAK, not a space: each block kept here is its own
     # printed paragraph, which is a line of the masthead. Populorum
     # Progressio EN prints the title, `ENCYCLICAL OF POPE PAUL VI / ON THE
@@ -2837,7 +3153,7 @@ def extract_document_header(
     # nest.
     while (collapsed := _EMPTY_TAG_PAIR_RE.sub("", joined)) != joined:
         joined = collapsed
-    return drop_orphan_close_tags(joined).strip(), taken
+    return drop_orphan_close_tags(joined).strip(), dropped
 
 
 def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
@@ -3345,13 +3661,31 @@ def discover_exhortations(
     return refs, notes
 
 
-def pt_url_for(ref: DocRef) -> str | None:
+#: The languages a phase2 run fetches unless told otherwise. Not "every
+#: language vatican.va publishes": the Holy See puts most encyclicals out in
+#: eight or nine, and crawling all of them for all 339 documents would be
+#: ~2,400 requests at the 2s Crawl-delay this project treats as a commitment,
+#: for editions in languages the site has no interface in. A run that wants
+#: more asks for it (`--langs`), which is how Magnifica Humanitas was taken in
+#: all nine.
+DEFAULT_LANGS = ("en", "pt")
+
+
+def translation_url_for(ref: DocRef, lang: str) -> str | None:
+    """`ref`'s URL in `lang`, derived from its English one.
+
+    vatican.va's modern shell puts the language in one path segment and
+    changes nothing else, so every translation of a document is one
+    substitution away from the English URL it was discovered from. Whether
+    the page is actually there is not asked here -- a 404 is the expected
+    answer for most (language, document) pairs and is recorded in the absent
+    ledger, not treated as an error."""
     en_url = ref.lang_urls.get("en")
-    if en_url is None:
+    if en_url is None or lang == "en":
         return None
     if ref.family == "vatii":
         return None  # discovered directly from the index, not derived
-    return en_url.replace("/en/", "/pt/", 1)
+    return en_url.replace("/en/", f"/{lang}/", 1)
 
 
 # --------------------------------------------------------------------------
@@ -3533,7 +3867,7 @@ def parse_document(
     if tail_gap is not None:
         blocks.append(tail_gap)
 
-    match_label = MATCH_LABEL[lang]
+    match_label = label_matcher(lang)
 
     # Strip the page's own table of contents before the walker sees it --
     # its entries are fully-bold blocks indistinguishable from the headings
@@ -3580,7 +3914,7 @@ def parse_document(
     toc_entries = extract_toc_outline(body_html)
     toc_level: dict[int, int] = {}
     if toc_entries:
-        toc_level, toc_promoted = apply_toc_outline(blocks, toc_entries)
+        toc_level, toc_promoted = apply_toc_outline(blocks, toc_entries, match_label)
         state.anomalies.append(
             f"table of contents read: {len(toc_entries)} entries, "
             f"{len(toc_level)} matched to a body block"
@@ -3642,26 +3976,6 @@ def parse_document(
     # makes, so labelled headings sort by label and unlabelled ones sort
     # by appearance strictly beneath them (docs/decisions.md, 2026-08-21).
     _LABEL_DEPTH = {"part": 1, "chapter": 2, "section": 3, "article": 4}
-    _FRONT_BACK_MATTER = {
-        "PREFACE",
-        "PREFACIO",
-        "PROEMIO",
-        "PROEMIUM",
-        "PROLOGO",
-        "PROLOGUE",
-        "INTRODUCTION",
-        "INTRODUCAO",
-        "INTRODUZIONE",
-        "CONCLUSION",
-        "CONCLUSAO",
-        "CONCLUSIONE",
-        "EPILOGUE",
-        "EPILOGO",
-        "APPENDIX",
-        "APENDICE",
-        "BLESSING",
-    }
-
     # The shallowest division label the document actually prints. Gaudium et
     # Spes says PART, Dei Verbum's top division is CHAPTER; front and back
     # matter is a peer of whichever it is.
@@ -5244,6 +5558,7 @@ def run_phase2(
     overwrite: bool = False,
     doc_slugs: list[str] | None = None,
     jobs: int = 1,
+    want_langs: tuple[str, ...] = DEFAULT_LANGS,
 ) -> list[dict]:
     """`overwrite` re-parses documents already written to corpus/works/ from
     their CACHED raw HTML — the module docstring has promised this flag since
@@ -5284,28 +5599,31 @@ def run_phase2(
         del awaiting[idx]
         if entry["quiet"]:
             return
-        en = entry["have"].get("en", {})
-        pt = entry["have"].get("pt")
-        if pt is None:
-            pt_status = "no-pt-url"
-        else:
-            pt_status = pt["status"]
-            if pt_status in ("fetch-failed", "no-translation-stub"):
-                pt_status = (
-                    "pt-unavailable (expected for many pontificates, see survey)"
-                )
-        print(f"  {entry['slug']}: en={en.get('status')} pt={pt_status}")
+        parts = []
+        for lang in want_langs:
+            r_lang = entry["have"].get(lang)
+            if r_lang is None:
+                parts.append(f"{lang}=no-url")
+                continue
+            status = r_lang["status"]
+            if lang != "en" and status in ("fetch-failed", "no-translation-stub"):
+                status = "unavailable"  # expected for many pontificates
+            parts.append(f"{lang}={status}")
+        print(f"  {entry['slug']}: " + " ".join(parts))
 
     def submit_doc(ref: DocRef, quiet: bool) -> None:
         """Fetch this document's languages serially, queue their parses."""
         nonlocal n_submitted
         idx = n_submitted
         n_submitted += 1
-        langs = ["en"]
-        pt_url = pt_url_for(ref)
-        if pt_url:
-            ref.lang_urls["pt"] = pt_url
-            langs.append("pt")
+        langs = ["en"] if "en" in want_langs else []
+        for lang in want_langs:
+            if lang == "en":
+                continue
+            url = translation_url_for(ref, lang)
+            if url:
+                ref.lang_urls[lang] = url
+                langs.append(lang)
         awaiting[idx] = {
             "slug": ref.slug,
             "want": len(langs),
@@ -5414,9 +5732,9 @@ def sections_from_results(results: list[dict]) -> dict[str, list[int]]:
 def check_language_symmetry(
     works_root: Path = WORKS_ROOT, known: dict[str, list[int]] | None = None
 ) -> tuple[bool, list[str]]:
-    """For every (family, slug) that has a WRITTEN sections.json in BOTH
-    "en" and "pt" under works_root, checks that the two languages' sets of
-    section numbers are identical -- exactly the check that would have
+    """For every (family, slug) written in more than one language under
+    works_root, checks that all of them carry the same set of section
+    numbers -- exactly the check that would have
     caught all three of this task's defects (Gravissimum Educationis EN:
     0 sections vs. PT's 12; Sacrosanctum Concilium: EN missing 87, PT
     missing 70; Optatam Totius EN: 21 sections vs. PT's 22). Each
@@ -5425,8 +5743,16 @@ def check_language_symmetry(
     check cannot see this class of defect at all, only comparing against
     the sibling translation's own section set reveals it.
 
-    Deliberately does NOT require every document to exist in both
-    languages: a missing translation is legitimate and common across the
+    Was an EN/PT check until Magnifica Humanitas arrived in nine languages
+    (2026-08-24). Nothing about the reasoning was ever specific to two: the
+    rule is "where two editions of one document exist, they must agree", and
+    a document in nine editions offers thirty-six times the evidence rather
+    than a different kind of it. A language that deviates alone is now named
+    as the odd one out, which two editions could never tell you -- with only
+    EN and PT, a disagreement says a defect exists and not which side has it.
+
+    Deliberately does NOT require every document to exist in every
+    language: a missing translation is legitimate and common across the
     full encyclical corpus this scraper also covers (Leo XIII is only
     ~17% translated into Portuguese on vatican.va, docs/decisions.md's
     "Vatican documents in scope" entry / research/vatican-documents.md
@@ -5472,18 +5798,34 @@ def check_language_symmetry(
 
     problems: list[str] = []
     for (family, slug), langs in sorted(by_pair.items()):
-        if "en" not in langs or "pt" not in langs:
+        if len(langs) < 2:
             continue  # one language legitimately absent -- not a defect, see docstring
-        en_nums = numbers(family, slug, "en", langs["en"])
-        pt_nums = numbers(family, slug, "pt", langs["pt"])
-        if en_nums != pt_nums:
-            only_en = sorted(en_nums - pt_nums)
-            only_pt = sorted(pt_nums - en_nums)
-            problems.append(
-                f"{family}.{slug}: EN/PT section-number sets differ -- "
-                f"EN has {len(en_nums)}{f', missing from PT: {only_en}' if only_en else ''}; "
-                f"PT has {len(pt_nums)}{f', missing from EN: {only_pt}' if only_pt else ''}"
+        sets = {lang: numbers(family, slug, lang, path) for lang, path in langs.items()}
+        if len(set(map(frozenset, sets.values()))) == 1:
+            continue
+        # The reference is the set the most editions agree on, so the report
+        # names the ones that deviate rather than measuring everything against
+        # whichever language happens to sort first.
+        agreed = collections.Counter(frozenset(v) for v in sets.values()).most_common(
+            1
+        )[0][0]
+        detail = []
+        for lang, nums in sorted(sets.items()):
+            if frozenset(nums) == agreed:
+                continue
+            missing = sorted(agreed - nums)
+            extra = sorted(nums - agreed)
+            detail.append(
+                f"{lang.upper()} has {len(nums)}"
+                + (f", missing {missing}" if missing else "")
+                + (f", extra {extra}" if extra else "")
             )
+        agreeing = sorted(k.upper() for k, v in sets.items() if frozenset(v) == agreed)
+        problems.append(
+            f"{family}.{slug}: section-number sets differ -- "
+            + "; ".join(detail)
+            + f" (against {len(agreed)} in {', '.join(agreeing)})"
+        )
     return (len(problems) == 0), problems
 
 
@@ -5700,6 +6042,13 @@ def main() -> int:
         default=None,
         help="comma-separated document slugs; default: every document discovered",
     )
+    p2.add_argument(
+        "--langs",
+        default=",".join(DEFAULT_LANGS),
+        help="comma-separated language codes to fetch "
+        f"(default: {','.join(DEFAULT_LANGS)}). Every code must be one this "
+        "parser has division labels for: " + ", ".join(sorted(DIVISIONS)),
+    )
 
     sub.add_parser(
         "discover-encyclicals",
@@ -5747,6 +6096,14 @@ def main() -> int:
         try:
             pontiffs = args.pontiffs.split(",") if args.pontiffs else None
             doc_slugs = args.slugs.split(",") if args.slugs else None
+            want_langs = tuple(x.strip() for x in args.langs.split(",") if x.strip())
+            unknown = [x for x in want_langs if x not in DIVISIONS]
+            if unknown:
+                print(
+                    f"ERROR: no division labels for {', '.join(unknown)}; "
+                    f"known: {', '.join(sorted(DIVISIONS))}"
+                )
+                return 1
             results = run_phase2(
                 fetcher,
                 pontiffs,
@@ -5756,6 +6113,7 @@ def main() -> int:
                 overwrite=args.overwrite,
                 doc_slugs=doc_slugs,
                 jobs=args.jobs,
+                want_langs=want_langs,
             )
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)

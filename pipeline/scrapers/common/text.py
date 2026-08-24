@@ -55,12 +55,37 @@ def fold(s: str) -> str:
     """Uppercase + strip accents, for robust (typo/accent-insensitive) label
     matching.
 
-    Length-preserving for every character these labels use (single precomposed
-    accented Latin letters), so a match offset in the folded string is safe to
-    reuse against the original -- compendium.py depends on that and it is worth
-    keeping written down."""
+    Length-preserving for single precomposed accented LATIN letters, which is
+    every character the labels this was written for use, so a match offset in
+    the folded string is safe to reuse against the original -- compendium.py
+    depends on that and it is worth keeping written down.
+
+    It is NOT length-preserving in general, and Arabic is where that stops
+    being theoretical: the vowel marks vatican.va's Arabic pages print
+    (`الأوّل`) are combining characters, so folding removes them and every
+    offset past one is short. Use `fold_index` wherever an offset has to make
+    the trip back."""
     s = unicodedata.normalize("NFKD", s.upper())
     return "".join(c for c in s if not unicodedata.combining(c))
+
+
+def fold_index(s: str) -> list[int]:
+    """`fold(s)`'s offsets translated back to offsets in `s`.
+
+    Entry `i` is where `fold(s)[i]` came from; the list carries one final
+    entry for the end of the string, so `idx[len(fold(s))] == len(s)` and a
+    match's `end()` can be looked up without a special case.
+
+    Folding character by character agrees with folding the whole string:
+    NFKD decomposes per character, canonical ordering only ever reorders a
+    combining sequence within its own base character, and case mapping is
+    per character too (`ß` -> `SS` expands, but it expands the same way
+    either side of the split)."""
+    idx: list[int] = []
+    for i, ch in enumerate(s):
+        idx.extend(i for _ in fold(ch))
+    idx.append(len(s))
+    return idx
 
 
 _ROMAN_VALUES = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}

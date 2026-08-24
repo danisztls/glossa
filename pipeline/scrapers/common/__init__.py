@@ -114,6 +114,7 @@ from .text import (
     CHAPTER_OPENING_PUNCT,
     chapter_opening_letter,
     fold,
+    fold_index,
     looks_like_number_typo,
     roman_to_int,
 )
@@ -138,6 +139,7 @@ __all__ = [
     "file_has_text",
     "filed_work_ids",
     "fold",
+    "fold_index",
     "httpx_transport",
     "json_text",
     "load_corrections",
