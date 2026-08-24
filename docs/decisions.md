@@ -3116,3 +3116,34 @@ things they reported as _defects_ are fixed, and the level of identically
 printed headings sitting inside different containers is a question about what
 a table of contents is for, not a parse bug. Populorum PT's two new
 differences are the same question in miniature.
+
+## 2026-08-24 — A masthead's lines are its blocks
+
+`extract_document_header` joined the masthead's blocks with a **space**. Each
+of those blocks is its own printed paragraph — a line — so every line break in
+a multi-block masthead was lost. Populorum Progressio EN prints its title,
+`ENCYCLICAL OF POPE PAUL VI / ON THE DEVELOPMENT OF PEOPLES` and its date as
+three separate blocks, and came out with the title run into the line beneath
+it. Its Portuguese edition looked right only by accident of markup: that page
+sets the whole masthead in ONE block with its own `<br/>`s, so nothing had to
+be joined.
+
+Joined with `<br/>` now, 108 mastheads over. Three details the sweep forced:
+
+- Blocks that already end with a break would double it, so runs collapse.
+- Emphasis wrapped around nothing (`<b><i> </i></b>`, left between lines on
+  several pages) is not a line and is dropped.
+- Three mastheads carried a closing tag nothing had opened — the source opens
+  `<b><i>` in one block and closes it in the next, and the scan keeps only the
+  second. Harmless in storage, not on the page: the site renders `header` as
+  html, so a stray `</i></b>` closes a tag the page itself opened.
+  `drop_orphan_close_tags` removes them.
+
+**And one bug of my own, worth recording because the regex is still in use.**
+`_EMPTY_TAG_PAIR_RE` was `<(\w+)[^>]*>\s*</\1>`, and `(\w+)` backtracks: given
+`<br/> </b>` it matches the name as `b`, reads `r/` as attributes, and deletes
+the pair. That destroyed Populorum Progressio PT's masthead — closing its
+`<b>` and swallowing a line break at once — and it would have done the same
+anywhere `strip_leading_text_html` met a break before a closing tag. A `\b`
+after the name is what stops it, because there is no word boundary inside
+`br`. Caught by reading the sweep's diff, not by any test.

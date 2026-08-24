@@ -2132,7 +2132,11 @@ def split_label_prefix(text: str, lang: str) -> tuple[str, str] | None:
 _BR_SPLIT_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
 
 
-_EMPTY_TAG_PAIR_RE = re.compile(r"<(\w+)[^>]*>\s*</\1>")
+# `\b` after the name is load-bearing: without it `(\w+)` backtracks, so
+# `<br/> </b>` matches as an empty `b` pair -- `br` reduced to `b` with `r/`
+# read as attributes -- and deleting it destroyed Populorum Progressio PT's
+# masthead, closing `<b>` and swallowing the line break at once.
+_EMPTY_TAG_PAIR_RE = re.compile(r"<(\w+)\b[^>]*>\s*</\1\s*>")
 
 
 def strip_leading_text_html(html: str, prefix: str) -> str:
@@ -2738,6 +2742,36 @@ _LANG_BAR_PREFIX_RE = re.compile(
 )
 
 
+_BR_RUN_RE = re.compile(r"(?:<br\s*/?>\s*){2,}", re.IGNORECASE)
+_ANY_TAG_RE = re.compile(r"<(/?)(\w+)\b[^>]*>")
+
+
+def drop_orphan_close_tags(html: str) -> str:
+    """Remove closing tags that nothing in `html` opened.
+
+    Three mastheads carry one: the source opens `<b><i>` in one block and
+    closes it in the next, and blocks are narrowed one at a time, so the
+    opener is in a block the header scan dropped while `</i></b>` survives in
+    the one it kept. Harmless in the corpus, not harmless on the page -- the
+    site renders `header` as html, so a stray closer shuts a tag the page
+    itself opened."""
+    open_counts: dict[str, int] = {}
+    out, pos = [], 0
+    for m in _ANY_TAG_RE.finditer(html):
+        name = m.group(2).lower()
+        if m.group(1):
+            if open_counts.get(name, 0) > 0:
+                open_counts[name] -= 1
+            else:
+                out.append(html[pos : m.start()])
+                pos = m.end()
+                continue
+        elif name != "br":
+            open_counts[name] = open_counts.get(name, 0) + 1
+    out.append(html[pos:])
+    return "".join(out)
+
+
 def extract_document_header(
     blocks: list[Block], slug: str, pontiff: str
 ) -> tuple[str, int]:
@@ -2779,12 +2813,31 @@ def extract_document_header(
         taken += 1
         if not bar_only:
             html = _LANG_BAR_PREFIX_RE.sub("", b.html).strip()
-            if html:
+            # A block whose only content is empty emphasis (`<b><i> </i></b>`,
+            # which several pages leave behind between masthead lines) is not
+            # a line of the masthead and must not become one.
+            if html and strip_tags(html).strip():
                 kept.append(html)
     if not taken:
         return "", 0
     del blocks[:taken]
-    return " ".join(kept).strip(), taken
+    # Joined with a BREAK, not a space: each block kept here is its own
+    # printed paragraph, which is a line of the masthead. Populorum
+    # Progressio EN prints the title, `ENCYCLICAL OF POPE PAUL VI / ON THE
+    # DEVELOPMENT OF PEOPLES` and the date as three blocks, and a space join
+    # ran the title into the line beneath it. Its PT edition looked right only
+    # because that page happens to set the whole masthead in ONE block with
+    # its own `<br/>`s -- the same masthead, saved by an accident of markup.
+    joined = "<br/>".join(kept).strip()
+    # Some blocks already end with their own break; the join would double it.
+    joined = _BR_RUN_RE.sub("<br/>", joined)
+    # Emphasis wrapped around nothing -- `<b><i> </i></b>`, which several
+    # pages leave between masthead lines -- renders as nothing and only makes
+    # the stored markup harder to read. Collapsed repeatedly because the pairs
+    # nest.
+    while (collapsed := _EMPTY_TAG_PAIR_RE.sub("", joined)) != joined:
+        joined = collapsed
+    return drop_orphan_close_tags(joined).strip(), taken
 
 
 def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
