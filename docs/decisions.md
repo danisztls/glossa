@@ -2446,3 +2446,39 @@ Gaudium et Spes PT — the document the original rule was written for — keeps
 drop from 4 to 3, directly under the level-2 division that owns them. Its
 `PRIMEIRA PARTE` still sits at 2 against `INTRODUÇÃO` at 1, which is a separate
 pre-existing question this did not touch and no oracle covers.
+
+## 2026-08-24 — Two headings over one section are two headings
+
+The walker levelled a heading that follows another heading with no numbered
+paragraph between them as its **subtitle**, one level down. Sometimes it is.
+Ecclesiam Suam EN prints `The Two Vatican Councils` and `Leo XIII and Pius XII
+on the Church` as consecutive `<p style="text-align: center;"><i>` blocks
+before §31, in identical markup, and six pairs like it — two headings over one
+section, not a title and its subtitle. That was six of that document's seven
+oracle differences.
+
+A heading goes under the one it follows when the source says so, in one of two
+ways: by printing it **smaller** (a strictly deeper `heading_style_rank`), or by
+having **named the previous one a division**. The label half is not redundant —
+Lumen Gentium PT prints `CAPÍTULO VIII` and the `I. PROÉMIO` that opens it in
+exactly the same centred bold, so style alone reads them as peers and flattens
+that chapter's whole interior. Requiring only the style test cost Lumen Gentium
+PT five differences; adding the label test gave them back.
+
+Ecclesiam Suam EN: 7 differences → 1, the remaining one a heading anchored to
+§63 where the reader put it before §64. **Forty-one works re-levelled, none
+lost a node.**
+
+### A second reader slip in the same oracle
+
+Laudato Si' EN's `A Christian prayer in union with creation` was recorded one
+level under `A prayer for our earth`. The encyclical closes with two prayers,
+printed identically as `<p><i>` and appended side by side; they are peers, and
+the reading had them nested — the same class of slip as the level-3 gap
+corrected earlier today, in the same file. Corrected in place, appended to the
+oracle's own `correction` field.
+
+**Twelve oracles, two now disagreeing** — down from six this morning, and from
+67 individual differences to 21. What is left is Ecclesiam Suam EN's single
+mis-anchored heading, and Lumen Gentium PT's twenty, which are its own
+question.

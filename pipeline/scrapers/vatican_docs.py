@@ -3147,16 +3147,26 @@ def parse_document(
     # The shallowest division label the document actually prints. Gaudium et
     # Spes says PART, Dei Verbum's top division is CHAPTER; front and back
     # matter is a peer of whichever it is.
-    labelled_depths = [
-        _LABEL_DEPTH[matched[0]]
-        for b in blocks
+    labelled = [
+        (i, _LABEL_DEPTH[matched[0]])
+        for i, b in enumerate(blocks)
         if b.is_heading
         for matched in [match_label(b.ident or b.text)]
         if matched is not None and matched[0] in _LABEL_DEPTH
     ]
-    top_label_depth = min(labelled_depths, default=_LABEL_DEPTH["part"])
+    top_label_depth = min((d for _, d in labelled), default=_LABEL_DEPTH["part"])
+    # FRONT and BACK matter, literally: outside the span of the document's
+    # labelled divisions. A PROLOGUE among the chapters belongs to the chapter
+    # it sits in -- Lumen Gentium PT's chapter VIII opens on `I. PROÉMIO`,
+    # whose label `merge_heading_lines` moves to `ident`, leaving a bare
+    # 'PROÉMIO' that the name test cannot tell from the document's own. Ranked
+    # top-level it flattened that whole chapter's interior by a level.
+    label_span = (labelled[0][0], labelled[-1][0]) if labelled else (len(blocks), -1)
 
-    def depth_key(b: Block) -> tuple[int, int]:
+    def is_labelled(b: Block) -> bool:
+        return match_label(b.ident or b.text) is not None
+
+    def depth_key(idx: int, b: Block) -> tuple[int, int]:
         # `ident` when the heading has one: after merge_heading_lines, `text`
         # is the division's NAME and the label that ranks it is in `ident`.
         matched = match_label(b.ident or b.text)
@@ -3174,11 +3184,13 @@ def parse_document(
         # chapter (the subtitle rule below), each one followed it down to 3
         # while its siblings stayed at 2. Twelve of that document's oracle
         # differences were those six pairs.
-        if fold(b.text).strip(" .:;-") in _FRONT_BACK_MATTER:
+        if fold(b.text).strip(" .:;-") in _FRONT_BACK_MATTER and not (
+            label_span[0] < idx < label_span[1]
+        ):
             return (0, top_label_depth)
         return (1, b.style)
 
-    keys = sorted({depth_key(b) for b in blocks if b.is_heading})
+    keys = sorted({depth_key(i, b) for i, b in enumerate(blocks) if b.is_heading})
     level_of = {k: i + 1 for i, k in enumerate(keys)}
 
     # Levels are assigned by walking the document, not by the global rank
@@ -3225,7 +3237,7 @@ def parse_document(
                 prev_heading_idx = None
                 prev_was_subtitle = False
             continue
-        key = depth_key(blk)
+        key = depth_key(idx, blk)
         prelim = level_of.get(key, 1)
         if idx in toc_level:
             # The document said so. Taken verbatim, including where two
@@ -3248,7 +3260,28 @@ def parse_document(
             # did. divini-redemptoris.pt lists only its seven parts, so its
             # ~50 unlisted headings are their sub-sections by construction.
             lvl = max(prelim, toc_floor + 1)
-        elif prev_heading_idx is not None and not prev_was_subtitle:
+        elif (
+            prev_heading_idx is not None
+            and not prev_was_subtitle
+            and (
+                blk.style > blocks[prev_heading_idx].style
+                or (is_labelled(blocks[prev_heading_idx]) and not is_labelled(blk))
+            )
+        ):
+            # A heading goes UNDER the one it follows when the source says so
+            # -- by printing it smaller, or by having named the previous one a
+            # division. Neither, and two headings over the same section are
+            # two headings: Ecclesiam Suam EN prints 'The Two Vatican
+            # Councils' and 'Leo XIII and Pius XII on the Church' as
+            # consecutive `<p style="text-align: center;"><i>` blocks before
+            # §31, and six pairs like it, all identical markup. Demoting the
+            # second of each was six of that document's seven oracle
+            # differences.
+            #
+            # The label half is not redundant with the style half: Lumen
+            # Gentium PT prints 'CAPÍTULO VIII' and the 'I. PROÉMIO' that
+            # opens it in exactly the same centred bold, so style alone reads
+            # them as peers and flattens that chapter's whole interior.
             lvl = heading_level[prev_heading_idx] + 1
             prev_was_subtitle = True
         elif prev_heading_idx is not None:
