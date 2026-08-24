@@ -2291,3 +2291,49 @@ misreading. The remaining eight are one kind of thing: **an edition that prints
 no paragraph numbers at all.** What to do about that is a schema question — the
 address a citation would use does not exist in the source — and it is not
 answered here.
+
+## 2026-08-24 — Prettier joins the hook, and what the hook does not touch
+
+**What**: `.githooks/pre-commit` now checks staged files with prettier as well
+as ruff — everything under `site/`, plus Markdown anywhere in the tree. Same
+contract as the ruff half: the **index** is what is checked, nothing is
+rewritten, `--no-verify` bypasses.
+
+**This reverses "the hook is therefore Python-only"** (2026-08-23 above). The
+reasoning there was about the repo root having no `package.json` and not
+wanting Node tooling in front of a `uv` pipeline — and none of that changed.
+What changed is the reading of it: the hook does not need a root
+`package.json`, it needs a prettier binary, and `site/node_modules/.bin/prettier`
+is already on disk for anyone who can run the site. A commit that stages only
+Python still never invokes Node, because the prettier half is skipped when
+nothing it owns is staged.
+
+**It checks, it does not write.** A hook that reformatted files behind you
+would either commit what you did not stage or silently swallow a partial
+`git add -p`. Reporting the file and letting you fix it keeps the index the
+thing you chose.
+
+**Scope is "what prettier already owns", not "what prettier can parse".** The
+site, because `npm run format` already formats it and it is now clean; Markdown,
+because the docs here are already written to prettier's defaults. The pipeline's
+JSON is deliberately out — `pipeline/corrections/`, `pipeline/overrides/` and
+`absent-sources.json` are written by the scrapers, and a hook that reformatted
+them would fight their writer on every sweep.
+
+**Two invocation details that are not incidental**:
+
+- Prettier runs **from `site/`** for every file, including the ones outside it
+  (addressed as `../path`). A config's `plugins` are resolved against the
+  working directory, so `prettier-plugin-svelte` is only found from there —
+  run from the repo root, every `.svelte` file fails to load the plugin. The
+  default ignore file follows the same rule, and that is what keeps
+  `package-lock.json` (listed in `site/.prettierignore`) from being checked.
+- **A file prettier cannot parse exits 0 over stdin**, printing the syntax
+  error to stderr only. Ruff exits non-zero for the same case, so the two
+  halves cannot share a convention: the prettier loop fails on any stderr
+  output, and treats a clean stderr as the pass.
+
+**Not done here**: eight Markdown files at the repo root are currently
+non-conforming (`README.md`, `docs/corpus-schema.md`, and six under
+`docs/research/`). The hook only sees staged files, so they are not a blocker
+today; whoever next edits one of them will reformat it then.

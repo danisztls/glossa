@@ -82,11 +82,11 @@ wrong yields paths that are merely _absent_ rather than obviously wrong --
 `load_corrections` reads a missing directory as "no corrections filed", which
 is a silent, corpus-wide no-op.
 
-## Linting the pipeline: ruff, and a hook that is not installed for you
+## Linting: ruff and prettier, behind a hook that is not installed for you
 
-Rules live in `ruff.toml` at the repo root -- not a `pyproject.toml`, because
-the scrapers are standalone PEP 723 `uv run --script` files and there is no
-package to declare. The selection is pinned rather than left to ruff's
+Ruff's rules live in `ruff.toml` at the repo root -- not a `pyproject.toml`,
+because the scrapers are standalone PEP 723 `uv run --script` files and there
+is no package to declare. The selection is pinned rather than left to ruff's
 defaults, which have widened between releases.
 
 ```sh
@@ -108,9 +108,30 @@ breakage cannot fail a clean one. It uses `ruff` from `PATH`, falls back to
 writes `.git/config`, which the sandbox masks with `/dev/null`; run that one
 line with the sandbox off.
 
-The site is not in the hook's scope. It has its own `npm run format` /
-`check` / `test`, and reaching up out of `site/` to gate Python on Node
-tooling buys nothing (`docs/decisions.md`, 2026-08-23).
+**Prettier runs in the same hook, over what is staged and nothing else**
+(`docs/decisions.md`, 2026-08-24) -- everything under `site/`, plus Markdown
+anywhere in the tree. Two things about how it is invoked are load-bearing:
+
+- It runs **from `site/`** whatever the file, because prettier resolves a
+  config's `plugins` against the working directory, so `prettier-plugin-svelte`
+  is only found from there, and `site/.prettierignore` (which is what excludes
+  `package-lock.json`) is only the default ignore file from there. Files
+  outside `site/` are addressed as `../path`; they resolve no config and get
+  prettier's defaults, which is what the Markdown here is already written to.
+- A file prettier **cannot parse exits 0** over stdin and complains only on
+  stderr, unlike ruff. So the hook fails on any stderr output, not on the exit
+  status alone.
+
+It uses `site/node_modules/.bin/prettier`, falls back to `prettier` from
+`PATH` (fine for Markdown; a `.svelte` file needs the plugin, i.e. `npm
+install` in `site/`), and skips the whole section when nothing it owns is
+staged -- a Python-only commit never touches Node.
+
+The pipeline's JSON stays out of it: `pipeline/corrections/`,
+`pipeline/overrides/` and `absent-sources.json` are written by the scrapers,
+and a hook that reformatted them would fight their writer. `site/` still owns
+`npm run format` / `check` / `test` for a whole-tree pass; the hook only
+decides _when_ something runs.
 
 ## Scraping vatican.va
 

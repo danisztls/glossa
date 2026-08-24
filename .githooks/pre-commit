@@ -1,5 +1,6 @@
 #!/bin/sh
-# Ruff over the Python being committed. Rules live in ../ruff.toml.
+# Formatters over the code being committed: ruff for Python, prettier for the
+# site and for Markdown. Rules live in ../ruff.toml and ../site/.prettierrc.
 #
 #   enable (once per clone):  git config core.hooksPath .githooks
 #   bypass (once):            git commit --no-verify
@@ -7,48 +8,130 @@
 # This checks the INDEX, not the working tree: each file is piped from
 # `git show :path`, so an unstaged fix cannot make a broken commit pass and an
 # unstaged breakage cannot fail a clean one. That is why the checks run per
-# file over stdin rather than as one `ruff check pipeline/`.
+# file over stdin rather than as one `ruff check pipeline/`. Nothing here
+# rewrites a file: a hook that formats behind your back would either commit
+# what you did not stage or silently drop a partial `git add -p`.
 
 set -eu
 
-staged=$(git diff --cached --name-only --diff-filter=ACMR -z -- '*.py' | tr '\0' '\n')
-[ -n "$staged" ] || exit 0
-
-if command -v ruff >/dev/null 2>&1; then
-	RUFF="ruff"
-elif command -v uvx >/dev/null 2>&1; then
-	RUFF="uvx ruff"
-else
-	echo "pre-commit: no ruff on PATH, and no uvx to borrow one from." >&2
-	echo "            install ruff, or commit with --no-verify." >&2
-	exit 1
-fi
-
-# Split on newlines only, so a path with spaces survives, and so the loop runs
+# Split on newlines only, so a path with spaces survives, and so the loops run
 # in this shell rather than a pipeline subshell where the tallies would vanish.
 IFS='
 '
-unformatted=""
-lint_failed=0
+failed=0
 
-for f in $staged; do
-	# `ruff format --check` on stdin says nothing and only sets its exit
-	# status, so the file name has to be reported here.
-	git show ":$f" | $RUFF format --check --stdin-filename "$f" - >/dev/null 2>&1 ||
-		unformatted="$unformatted  $f
+# ---------------------------------------------------------------- ruff (py)
+
+staged_py=$(git diff --cached --name-only --diff-filter=ACMR -z -- '*.py' | tr '\0' '\n')
+
+if [ -n "$staged_py" ]; then
+	if command -v ruff >/dev/null 2>&1; then
+		RUFF="ruff"
+	elif command -v uvx >/dev/null 2>&1; then
+		RUFF="uvx ruff"
+	else
+		echo "pre-commit: no ruff on PATH, and no uvx to borrow one from." >&2
+		echo "            install ruff, or commit with --no-verify." >&2
+		exit 1
+	fi
+
+	unformatted=""
+	for f in $staged_py; do
+		# `ruff format --check` on stdin says nothing and only sets its exit
+		# status, so the file name has to be reported here.
+		git show ":$f" | $RUFF format --check --stdin-filename "$f" - >/dev/null 2>&1 ||
+			unformatted="$unformatted  $f
 "
-	git show ":$f" | $RUFF check -q --no-cache --stdin-filename "$f" - || lint_failed=1
-done
+		git show ":$f" | $RUFF check -q --no-cache --stdin-filename "$f" - || failed=1
+	done
 
-if [ -n "$unformatted" ]; then
-	echo "pre-commit: not formatted:" >&2
-	printf '%s' "$unformatted" >&2
+	if [ -n "$unformatted" ]; then
+		echo "pre-commit: not formatted:" >&2
+		printf '%s' "$unformatted" >&2
+		failed=1
+	fi
+
+	if [ "$failed" -ne 0 ]; then
+		echo >&2
+		echo "pre-commit: staged Python did not pass ruff." >&2
+		echo "  fix:    ruff format pipeline && ruff check --fix pipeline   (then git add)" >&2
+	fi
 fi
 
-if [ -n "$unformatted" ] || [ "$lint_failed" -ne 0 ]; then
+# ----------------------------------------------------- prettier (site, docs)
+
+# Everything prettier owns here: the site, whose own config and svelte plugin
+# it needs, plus Markdown anywhere in the tree. The pipeline's JSON is left
+# alone -- corrections, overrides and absent-sources.json are written by the
+# scrapers, and a hook that reformats them would just fight their writer.
+staged_fmt=$(
+	git diff --cached --name-only --diff-filter=ACMR -z \
+		-- 'site/**' '*.md' |
+		tr '\0' '\n' |
+		grep -E '\.(js|cjs|mjs|ts|mts|cts|svelte|css|html|json|jsonc|md|ya?ml)$' || true
+)
+
+if [ -n "$staged_fmt" ]; then
+	# Run from site/ whatever the file: prettier resolves a config's `plugins`
+	# against the working directory, so prettier-plugin-svelte is only found
+	# from there, and site/.prettierignore is only the default ignore file from
+	# there (which is what excludes package-lock.json). Files outside site/ are
+	# addressed as ../path and pick up no config, i.e. prettier's defaults --
+	# which is what the Markdown in this repo is already written to.
+	root=$(git rev-parse --show-toplevel)
+	if [ -x "$root/site/node_modules/.bin/prettier" ]; then
+		PRETTIER="$root/site/node_modules/.bin/prettier"
+	elif command -v prettier >/dev/null 2>&1; then
+		# Fine for Markdown; a .svelte file will fail to parse without the
+		# plugin, which needs `npm install` in site/ regardless.
+		PRETTIER="prettier"
+	else
+		echo "pre-commit: no prettier -- run 'npm install' in site/," >&2
+		echo "            or commit with --no-verify." >&2
+		exit 1
+	fi
+
+	unformatted=""
+	for f in $staged_fmt; do
+		case "$f" in
+		site/*) rel=${f#site/} ;;
+		*) rel="../$f" ;;
+		esac
+
+		# --check names the file as "(stdin)", so report it here instead. A
+		# failure prettier can describe itself -- a missing plugin, a file it
+		# cannot parse -- keeps its own message, which is the only thing worth
+		# reading. Note that a parse error over stdin still *exits 0* and says so
+		# only on stderr, so silence there is the pass, not the status alone.
+		set +e
+		err=$(git show ":$f" | (cd "$root/site" && "$PRETTIER" --check --stdin-filepath "$rel" 2>&1 >/dev/null))
+		code=$?
+		set -e
+
+		if [ -n "$err" ]; then
+			printf '%s\n' "$err" >&2
+			failed=1
+		elif [ "$code" -eq 1 ]; then
+			unformatted="$unformatted  $f
+"
+		elif [ "$code" -ne 0 ]; then
+			echo "pre-commit: prettier exited $code on $f" >&2
+			failed=1
+		fi
+	done
+
+	if [ -n "$unformatted" ]; then
+		echo "pre-commit: not formatted:" >&2
+		printf '%s' "$unformatted" >&2
+		echo >&2
+		echo "pre-commit: staged files did not pass prettier." >&2
+		echo "  fix:    cd site && npx prettier --write <file>   (then git add)" >&2
+		failed=1
+	fi
+fi
+
+if [ "$failed" -ne 0 ]; then
 	echo >&2
-	echo "pre-commit: staged Python did not pass ruff." >&2
-	echo "  fix:    ruff format pipeline && ruff check --fix pipeline   (then git add)" >&2
 	echo "  bypass: git commit --no-verify" >&2
 	exit 1
 fi
