@@ -170,6 +170,13 @@
 		    the same page and would otherwise share one address. Left unset,
 		    every row links to the page top exactly as before. */
 		anchorFor?: (node: StructureNode) => string | undefined;
+		/** Rows the PAGE renders a heading for even though they bound no
+		 *  numbered unit — a document's tail matter, whose text is unnumbered
+		 *  (docs/corpus-schema.md §appendix.json). Without this they fall to
+		 *  the unlinked branch below and a reader gets a table of contents
+		 *  listing text that is on the page and unreachable from it. Absent
+		 *  for the CCC and Compendium, which have no such rows. */
+		linkableAnchors?: Set<string>;
 	}
 
 	let {
@@ -180,7 +187,8 @@
 		basePath,
 		linkMode = 'route',
 		outlineKinds,
-		anchorFor
+		anchorFor,
+		linkableAnchors
 	}: Props = $props();
 
 	const roots = $derived(structure.filter((row) => row.depth === 0).map((row) => row.node));
@@ -214,7 +222,7 @@
 			{@const raw = rowState(node, currentN, outlineKinds)}
 			{@const state = { onPath: raw.onPath, isCurrent: raw.isCurrent && i === cur }}
 			<li class={`kind-${node.kind}`} class:on-path={state.onPath}>
-				{#if Number.isFinite(anchor)}
+				{#if Number.isFinite(anchor) || (linkMode === 'anchor' && node.anchor && linkableAnchors?.has(node.anchor))}
 					<a
 						id={state.isCurrent ? CURRENT_ID : undefined}
 						href={hrefFor(node, anchor as number, linkMode, basePath, anchorFor?.(node))}

@@ -2816,3 +2816,40 @@ heading and **no `§n` in the margin**, addressed by position (`#a1`) — an
 address for scrolling and linking, not for citing. The language-switch fetch
 takes sections and appendix together, since fetching only sections would switch
 an unnumbered document to a blank page.
+
+## 2026-08-24 — A tail heading and its text were both stored and neither reached the reader
+
+Storing `appendix.json` was not enough to render it, and the reason is worth
+recording because both halves were already on disk.
+
+A tail heading lives in `structure.json` with `before: null`. Both tables of
+contents gate a link on that field being a number, so they rendered it as
+unlinked text — correctly, at the time: `headingsByStart` only emits a heading
+that opens a numbered section, so there was no `h{i}` in the body to link to.
+The text lives in `appendix.json`, which knows its own title but not which
+structure row that title came from. Each half was addressable only through the
+other.
+
+`tailRows` rejoins them on the page: the structure rows after the last one that
+anchors a numbered section, each paired with the appendix unit whose title
+matches, first unclaimed row winning so a document printing the same tail
+heading twice still pairs in order. A unit matching nothing — the untitled run
+that can open an appendix — still renders, headingless. The heading is then
+emitted through the **same** `structureHeadings` snippet the body already uses,
+so it gets the ordinary `#h{i}` id and the tables of contents need no second
+anchor scheme; they just stop refusing to link rows the body now renders
+(`linkableAnchors`).
+
+That refusal is still right for a row the body renders nothing for — Lumen
+Gentium PT's `PAPA PAULO VI` is a signature line the source prints as a heading
+with no prose beneath it, and it stays plain text rather than becoming a link
+to nothing.
+
+**Verified pairing**: Pascendi PT 8 tail rows / 8 units / 8 matched; Lumen
+Gentium PT 4 rows / 2 units / 2; Laudato Si' EN 2 / 2 / 2.
+
+**One operational note.** `predev` syncs the corpus, so a dev server started
+before a parser run that adds a NEW content file keeps serving the old set:
+`import.meta.glob(..., { eager: true })` is resolved at server start, and a
+file appearing underneath it is not picked up. Restart after a re-parse that
+adds files, not just after one that changes them.

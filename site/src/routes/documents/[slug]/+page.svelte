@@ -164,6 +164,62 @@
 		fetchedIsCurrent ? fetched!.appendix : (data.embeddedAppendix ?? [])
 	);
 
+	const normTitle = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+	/**
+	 * The document's tail: headings that anchor no numbered section, paired
+	 * with the unnumbered text under each.
+	 *
+	 * Both halves already exist and neither could reach the reader alone. The
+	 * heading is in `structure.json` with `before: null`, which is why both
+	 * tables of contents rendered it as unlinked text — there was no `h{i}` in
+	 * the body to link to, because `headingsByStart` only emits a heading that
+	 * opens a numbered section. The text is in `appendix.json`, which knows
+	 * its own title but not which structure row that title came from.
+	 * Rejoining them here restores the ordinary anchor (`#h{i}`) rather than
+	 * inventing a second scheme, so the TOC rows need no special href.
+	 *
+	 * Matched on title, first unclaimed row wins, so a document that prints
+	 * the same tail heading twice still pairs them in order. A unit whose
+	 * title matches nothing (the untitled run that can open an appendix)
+	 * still renders, with no heading of its own.
+	 */
+	const tailRows = $derived.by(() => {
+		const rows = structureRows;
+		let lastAnchored = -1;
+		rows.forEach((row, i) => {
+			if (Number.isFinite(row.node.before)) lastAnchored = i;
+		});
+		const tail = rows
+			.map((row, i) => ({ row, i }))
+			.filter(({ row, i }) => i > lastAnchored && !Number.isFinite(row.node.before));
+		const claimed = new Set<number>();
+		const out: { anchor?: string; node?: DocumentNode; unit?: DocumentAppendixUnit }[] = [];
+		for (const { row } of tail) {
+			const key = normTitle(row.node.title);
+			const hit = appendixUnits.findIndex(
+				(u, ui) => !claimed.has(ui) && key !== '' && normTitle(u.title) === key
+			);
+			if (hit >= 0) claimed.add(hit);
+			out.push({
+				anchor: row.anchor,
+				node: row.node,
+				unit: hit >= 0 ? appendixUnits[hit] : undefined
+			});
+		}
+		// Anything the tail headings did not claim, in corpus order.
+		appendixUnits.forEach((unit, ui) => {
+			if (!claimed.has(ui)) out.push({ unit });
+		});
+		return out;
+	});
+
+	/** Structure rows the body renders a heading for, so the two tables of
+	 *  contents can link exactly those and leave the rest as plain text. */
+	const linkableAnchors = $derived(
+		new Set(tailRows.map((r) => r.anchor).filter((a): a is string => Boolean(a)))
+	);
+
 	const metaManifest = $derived(current?.work);
 
 	// Structure trees are INDEX tier (eager-inlined, synchronous — corpus.ts's
@@ -667,7 +723,7 @@
 									     goes to the heading's own id, not to `#s{before}` — the
 									     section behind it. Same rule as the sidebar; the two tables
 									     of contents on this page must not address differently. -->
-										{#if Number.isFinite(node.before)}
+										{#if Number.isFinite(node.before) || linkableAnchors.has(anchor)}
 											<a href={`#${anchor}`}>
 												{#if node.ident}<span class="ordinal">{node.ident}</span>{/if}
 												{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
@@ -776,21 +832,25 @@
 						     gets a §n in the margin, because neither has one to give;
 						     each unit is addressed by position instead, which is an
 						     address for scrolling and linking, not for citing. -->
-						{#each appendixUnits as unit, i (i)}
-							<section class="section appendix-unit" id={`a${i + 1}`}>
-								<div class="section-text">
-									{#if unit.title}
-										<h2 class="appendix-title">
-											<InlineText nodes={inlineTitleNodes(unit.title, undefined, lang)} />
-										</h2>
-									{/if}
-									<CccParagraphText
-										paragraph={unit}
-										{lang}
-										dropCap={i === 0 && current.sections.length === 0}
-									/>
-								</div>
-							</section>
+						{#each tailRows as row, i (row.anchor ?? `u${i}`)}
+							{#if row.node && row.anchor}
+								{@render structureHeadings(
+									[{ node: row.node, depth: row.node.level - 1, anchor: row.anchor }],
+									lang,
+									true
+								)}
+							{/if}
+							{#if row.unit}
+								<section class="section appendix-unit">
+									<div class="section-text">
+										<CccParagraphText
+											paragraph={row.unit}
+											{lang}
+											dropCap={i === 0 && current.sections.length === 0}
+										/>
+									</div>
+								</section>
+							{/if}
 						{/each}
 					</div>
 				{/if}
@@ -808,6 +868,7 @@
 					{lang}
 					heading={t('document.tableOfContents')}
 					linkMode="anchor"
+					{linkableAnchors}
 				/>
 			</aside>
 		{/if}
