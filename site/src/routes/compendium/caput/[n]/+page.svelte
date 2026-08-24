@@ -172,16 +172,22 @@
 				     (CLAUDE.md) says match — so it collapses, and a split there is
 				     itself the finding. -->
 				<div class="compare-unit-header">
+					<!-- Tagged like `ccc/chapter/[n]`'s title pair, and for the same
+					     reason: stacked on a phone these are two headings with nothing
+					     saying which language each one is. Only the title carries the
+					     tag — the range and the notices below inherit its answer. -->
 					<div
 						class="compare-unit-field compare-unit-field-left"
 						lang={editions.current.work.language}
 					>
+						<span class="compare-cell-tag">{compareColumnLabel(editions.current.work)}</span>
 						<h1>{headingText()}</h1>
 					</div>
 					<div
 						class="compare-unit-field compare-unit-field-right"
 						lang={editions.secondary.work.language}
 					>
+						<span class="compare-cell-tag">{compareColumnLabel(editions.secondary.work)}</span>
 						<h1>{secondaryHeadingText}</h1>
 					</div>
 

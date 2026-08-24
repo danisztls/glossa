@@ -247,10 +247,20 @@
 				     guarantee (CLAUDE.md) says match — so it collapses, and on the
 				     rare chapter where it doesn't, the split is itself the finding. -->
 				<div class="compare-unit-header">
+					<!-- `.compare-cell-tag` here for the reason `CompareGrid` uses it a
+					     level down, and it is the same class so the two cannot drift:
+					     stacked, a chapter title in two languages is two headings with
+					     nothing saying which is which, and position — the one thing
+					     that identified them side by side — says nothing at all. Only
+					     the TITLE is tagged, not every field: the range and the
+					     copyright notices sit under a labelled title and inherit its
+					     answer, and tagging all three turned a header into a list of
+					     language names. Hidden above 60rem by the class itself. -->
 					<div
 						class="compare-unit-field compare-unit-field-left"
 						lang={editions.current.work.language}
 					>
+						<span class="compare-cell-tag">{compareColumnLabel(editions.current.work)}</span>
 						<h1>
 							{#if heading.ordinal}<span class="ordinal">{heading.ordinal}</span>{/if}
 							{heading.title}
@@ -260,6 +270,7 @@
 						class="compare-unit-field compare-unit-field-right"
 						lang={editions.secondary.work.language}
 					>
+						<span class="compare-cell-tag">{compareColumnLabel(editions.secondary.work)}</span>
 						<h1>
 							{#if secondaryHeading.ordinal}<span class="ordinal">{secondaryHeading.ordinal}</span
 								>{/if}

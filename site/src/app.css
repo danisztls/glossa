@@ -907,12 +907,17 @@ input {
 }
 
 /*
- * Narrow: one column, so each field's two languages stack as a PAIR — title
- * then title, range then range — rather than one language's entire header
- * followed by the other's, which is what the old column-major block collapsed
- * to. Same stacked-pairs shape `.compare-row` takes at this width, and it
- * needs no separator rule to stay legible because a field is short and its two
- * halves are adjacent.
+ * Narrow: one column, and the header regroups by LANGUAGE — one edition's
+ * title, range and copyright notice, then the other's (see `order` below).
+ *
+ * NOTE THAT THIS DIVERGES FROM `.compare-row`, which stacks the same content
+ * one level down and stays field-major: unit 26 in English immediately above
+ * unit 26 in Portuguese. The two are not inconsistent. A UNIT is what the
+ * reader is comparing — putting the same passage's two versions next to each
+ * other is the whole feature, and the gap between them has to stay one line.
+ * A HEADER is what they are comparing IN; nobody reads two copyright notices
+ * against each other. So the body keeps the pairs and the header keeps the
+ * editions whole.
  */
 @media (max-width: 59.99rem) {
 	.compare-unit-header {
@@ -928,6 +933,70 @@ input {
 	.compare-unit-field-left::after {
 		display: none;
 	}
+
+	/*
+	 * STACKED, THE HEADER GOES LANGUAGE-MAJOR: each edition's title, range and
+	 * copyright notice together, then the other edition's. Field-major is the
+	 * right grouping side by side — that is what puts a title beside a title —
+	 * but read top to bottom it interleaves two documents' worth of metadata
+	 * (title, title, range, notice, notice) and a reader has to count to work
+	 * out whose notice is whose.
+	 *
+	 * `order` RATHER THAN LANGUAGE-MAJOR MARKUP, because the markup cannot be:
+	 * the wide grid places fields by `grid-column` alone and relies on sparse
+	 * auto-placement to pair them into rows, and that cursor never moves
+	 * backwards — so `L L L R R R` in source would drop the right column three
+	 * rows below its own left half instead of beside it. Field-major source is
+	 * load-bearing at full width; this reorders only the paint.
+	 *
+	 * WHAT THAT COSTS, recorded rather than discovered later: `order` moves
+	 * nothing in the DOM, so a screen reader and the tab key still walk the
+	 * field-major sequence. Accepted here because these fields hold prose and
+	 * two provenance links, no controls whose order carries meaning, and the
+	 * DOM sequence is still a coherent reading of the same content — it is the
+	 * one every wider viewport shows.
+	 *
+	 * A shared field joins the FIRST block (same `order` as the left half,
+	 * source order breaking the tie) rather than getting a group of its own:
+	 * a shared `¶26–184` under the English title is exactly where the
+	 * single-column view puts it, and a document's shared `<h1>` stays at the
+	 * top of the page where a title belongs.
+	 */
+	.compare-unit-field-left,
+	.compare-unit-field-shared {
+		order: 1;
+	}
+
+	.compare-unit-field-right {
+		order: 2;
+	}
+
+	/*
+	 * The seam between the two blocks, on the first right field only — which
+	 * `~` identifies without anyone knowing the header's shape: every right
+	 * field that already has a right field somewhere before it gives the
+	 * margin back, leaving it on the one that opens the group. Spacing INSIDE
+	 * a block stays each route's own, as it is at every other width.
+	 */
+	.compare-unit-field-right {
+		margin-block-start: 1rem;
+	}
+
+	.compare-unit-field-right ~ .compare-unit-field-right {
+		margin-block-start: 0;
+	}
+
+	/*
+	 * A translated title is set as an `<h1>` in BOTH halves, and at the
+	 * document-title scale that is two headings of two or three lines each —
+	 * most of a phone screen spent on one title before a word of the text.
+	 * They are still the page's heading, so they stay an `h1` and stay first;
+	 * they just stop being sized as though only one of them were there.
+	 */
+	.compare-unit-header h1 {
+		font-size: 1.5rem;
+		line-height: 1.2;
+	}
 }
 
 /* The gutter track supplies the space that used to be `padding-inline-end`
@@ -941,7 +1010,13 @@ input {
 /* Repeats each cell's edition label — redundant with `ReadingBar`'s two
    normal widths (hidden there, see below) but the only column identifier
    left once the grid stacks to one column on a phone and the header has
-   long since scrolled out of view (see the max-width query below). */
+   long since scrolled out of view (see the max-width query below).
+
+   ALSO USED BY THE UNIT HEADER, on the split title pair (`ccc/chapter/[n]`,
+   `compendium/caput/[n]`) — the same class rather than a second one that
+   looks like it, because it is the same problem: a stacked half has lost the
+   position that identified it. Its content is `compareColumnLabel` at every
+   site. */
 .compare-cell-tag {
 	display: none;
 	font-size: var(--font-size-min);
