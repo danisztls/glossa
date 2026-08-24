@@ -3048,3 +3048,23 @@ Ecclesia de Eucharistia PT prints one entry's `name` on the `<p>` rather than
 on an `<a>`, and Mystici Corporis PT labels its thirteenth note "3" with a
 back-link to `#fnref3`. Reported as anomalies, not fabricated — the standing
 rule for a defect with no known correct value.
+
+## 2026-08-24 — A footnote marker outside a heading's bold run
+
+Gaudium et Spes PT prints `<p align="center"><b>PROÉMIO</b>(1)</p>`, with the
+reference outside the emphasis. `is_full_bold` saw a partly-bold block and the
+whole heading was dropped as page furniture — the Portuguese counterpart of the
+English edition's PREFACE, absent from `structure.json` entirely.
+
+A footnote marker is not part of the heading it hangs off, so `_emphasis_covers`
+now tolerates a **bracketed** one after the run. Bracketed only: a bare trailing
+numeral would make a heading of any bold line a source happens to follow with a
+digit.
+
+That surfaced a second question immediately. The marker survives into the
+heading's text as a literal `⟦1⟧` token, because a structure node has no
+citations array to resolve it against — the title came out `PROÉMIO⟦1⟧`.
+`push_heading` now strips markers from `title`/`ident`/`subtitle`/`title_html`.
+The note itself keeps its place in the footnote region and in `raw/`; what is
+lost is the reference _from the heading_, which is much the lesser loss against
+dropping the heading altogether.

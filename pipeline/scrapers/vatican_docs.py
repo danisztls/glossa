@@ -510,6 +510,16 @@ def escape_text_run(s: str) -> str:
     )
 
 
+_MARKER_TOKEN_RE = re.compile(rf"{MARK_OPEN}[0-9A-Za-z*]+{MARK_CLOSE}")
+
+
+def strip_markers(text: str) -> str:
+    """Drop ⟦n⟧ footnote tokens and tidy the space they leave."""
+    if not text:
+        return text
+    return re.sub(r"\s+", " ", _MARKER_TOKEN_RE.sub("", text)).strip()
+
+
 def heading_inner_html(html: str) -> str:
     """A heading's narrowed html with its OWN emphasis stripped, or "" when
     nothing meaningful is left.
@@ -589,6 +599,15 @@ _ENUM_OUTSIDE_RE = re.compile(
     r"[-\u2013\u2014]?\s*$"
 )
 _PUNCT_OUTSIDE_RE = re.compile(r"^[\s.,;:\u2013\u2014-]*$")
+# A footnote marker is not part of the heading it hangs off. Gaudium et Spes
+# PT prints `<p align="center"><b>PROÉMIO</b>(1)</p>`, putting the reference
+# outside the bold run, and the whole heading was dropped as furniture --
+# the Portuguese counterpart of the English edition's PREFACE, missing from
+# structure.json outright. Bracketed only: a bare trailing numeral would make
+# a heading of any bold line a source happens to follow with a digit.
+_FN_MARKER_OUTSIDE_RE = re.compile(
+    r"^[\s.,;:\u2013\u2014-]*(?:\(\d{1,3}\*?\)|\[\d{1,3}\*?\])[\s.,;:\u2013\u2014-]*$"
+)
 
 
 _BLANK_OUTSIDE_RE = re.compile(r"^\s*$")
@@ -618,7 +637,9 @@ def _emphasis_covers(
     before = strip_tags(inner_html[: spans[0].start()])
     after = strip_tags(inner_html[spans[-1].end() :])
     outside = _PUNCT_OUTSIDE_RE if tolerant else _BLANK_OUTSIDE_RE
-    if not outside.match(after):
+    if not outside.match(after) and not (
+        tolerant and _FN_MARKER_OUTSIDE_RE.match(after)
+    ):
         return False
     if outside.match(before):
         return True
@@ -1544,6 +1565,17 @@ class ScrapeState:
         subtitle: str = "",
         title_html: str = "",
     ) -> None:
+        # A structure node has no citations array, so a footnote marker inside
+        # a heading has nothing to resolve against and would be stored as a
+        # literal token in the title -- `PROÉMIO⟦1⟧`. The note itself stays in
+        # the footnote region and in raw/; what is lost is the reference from
+        # the heading, which is the lesser loss against dropping the heading
+        # (see `_FN_MARKER_OUTSIDE_RE`, which is why such headings survive at
+        # all now).
+        title = strip_markers(title)
+        ident = strip_markers(ident)
+        subtitle = strip_markers(subtitle)
+        title_html = strip_markers(title_html)
         self.finalize_open_section()
         self.open_appendix_unit(title)
         level = LEVELS[kind]
