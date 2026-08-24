@@ -2339,3 +2339,62 @@ breath** (`README.md`, `docs/corpus-schema.md`, and six under
 diff is entirely cosmetic — `*em*` to `_em_`, table padding, one `jsonc`
 fence re-indented — and nothing under `site/` changed, having been formatted
 already.
+
+## 2026-08-24 — A heading has words, and an unwrapped bold line is one
+
+Two changes to heading detection, both measured the same way: a full document
+re-parse, `git status` in the corpus repo for the blast radius, and
+`audit.py toc` against the twelve hand-read tables of contents.
+
+**A fully-bold gap is a heading.** `_gap_block` recovers text the source left
+between two blocks with no `<p>` of its own, and its docstring said promoting
+such a span to a heading "would change heading detection for the whole corpus,
+which is a separate decision needing its own blast-radius measurement", so it
+returned prose. The harm was larger than "losing a heading's rank": Mortalium
+Animos PT prints **eleven of its nineteen** section headings that way —
+`</p> <b>4. <i>Outro erro...</i></b> <p>` — and kept as prose each one opened
+its section with its own title as the first words of the body, the same defect
+the `<p>`-wrapped case had. The test is `is_full_bold`, the detector every
+ordinary block already uses, applied to a span that used to be skipped.
+
+The source is not consistent about which side of the `<b>` its number falls on
+— eighteen headings read `<b>4. <i>Title</i></b>` and the first reads
+`1.  <b><i>Title</i></b>` — so the test is tried again with a leading number
+stripped. Deliberately **not** `strip_leading_number_html`: that one lets tags
+count as padding after the period, so it takes the opening `<b><i>` off with
+the number and `is_full_bold` then sees no bold at all.
+
+Mortalium Animos PT went from **15 oracle differences to 2**. Five works
+changed in total, none lost a section, and two datelines and a salutation
+stopped being headings (they are back matter, and the text is still in the
+sections).
+
+**A heading has at least one letter.** Both italic-run and centred-run recovery
+promote a _run_ of same-styled blocks, and a source that sets its headings
+apart typographically tends to set its scene breaks apart the same way.
+Laudato Si' EN's `<p align="center">* * * * *</p>`, Laudato Si' PT's and
+Fratelli Tutti EN's `* * *` were all standing in `structure.json` as headings.
+Punctuation is not a title.
+
+### The separator was holding up a level, and the oracle had recorded that
+
+Removing it took Laudato Si' EN from 1 oracle difference to 10 — every heading
+the reader had at level 4 dropped to 3. The mechanism is `compact`: levels are
+squeezed to a contiguous range at the end, so a heading that is the sole member
+of a tier keeps that tier alive for everything above it. The separator was that
+sole member.
+
+The reader was wrong and the parse is now right, which is worth stating
+carefully because "correct the oracle to match the parser" is how an oracle
+stops being one. The evidence is in the source, not in the parse: the original
+reading used a scale with **no level 3 in it at all** except one entry, and it
+split two siblings across tiers — `Pollution, waste and the throwaway culture`
+at 3 and `Climate as a common good` at 4, when both are subsections of
+`I. POLLUTION AND CLIMATE CHANGE` and are printed `<p align="left"><i>` and
+`<p><i>`, which render identically flush left. The phantom tier reproduced the
+reader's gap exactly, so the two agreed. With it gone the levels compact to a
+contiguous 1..4 and the siblings sit together.
+
+The oracle is corrected in place with a `correction` field saying all of this,
+rather than silently edited. Laudato Si' EN now matches completely, and the
+count of oracles disagreeing with the parse is 6 → 5.

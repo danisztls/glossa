@@ -1547,6 +1547,9 @@ def strip_leading_number_html(html: str) -> str:
     return _NUM_PREFIX_HTML_RE.sub("", html, count=1)
 
 
+_GAP_NUM_PREFIX_RE = re.compile(r"^\s*\d{1,4}\s*\.\s*")
+
+
 def _gap_block(gap_html: str, marker_template: str) -> Block | None:
     """Recovers a numbered paragraph whose opening <p> tag is missing from
     the source. Confirmed live (docs/research/vatican-documents.md §7.1,
@@ -1589,11 +1592,24 @@ def _gap_block(gap_html: str, marker_template: str) -> Block | None:
     Corpus-wide the recoverable text is 216,671 characters, 1.24% of all body
     text, concentrated in 43 files (`audit.py coverage`).
 
-    DELIBERATELY TEXT ONLY. A bare `<i><b>Title</b></i>` between two blocks is
-    a heading in the source, and this returns it as prose. Promoting it would
-    change heading detection for the whole corpus, which is a separate
-    decision needing its own blast-radius measurement -- and losing a
-    heading's rank is a much smaller harm than losing the paragraph's words.
+    A FULLY-BOLD GAP IS A HEADING, as of 2026-08-24. This used to be text
+    only, on the grounds that promoting it "would change heading detection for
+    the whole corpus, which is a separate decision needing its own
+    blast-radius measurement". That measurement is now cheap -- `works/` is
+    tracked in the corpus repo, so a full re-parse's blast radius is `git
+    status` there, and `audit.py toc` compares twelve hand-read tables of
+    contents against the parse -- and the harm was not as small as it looked.
+    Mortalium Animos PT prints eleven of its nineteen section headings this
+    way, `</p> <b>4. <i>Outro erro...</i></b> <p>`, with no <p> of their own.
+    Kept as prose they were not merely unranked: each one opened its section
+    with its own title as the first words of the body, the same defect the
+    <p>-wrapped case had.
+
+    The test is `is_full_bold`, the detector every ordinary block already
+    uses, applied to the span _BLOCK_RE stepped over -- not a new heuristic.
+    The style rank comes out left-aligned by construction (a gap has no outer
+    tag to carry `align=`), which is what these are.
+
     A whitespace-only gap -- the overwhelming majority, ordinary inter-block
     newlines in every one of the other works -- still yields nothing, because
     it has no text.
@@ -1602,7 +1618,26 @@ def _gap_block(gap_html: str, marker_template: str) -> Block | None:
     text = strip_tags(marked)
     if not text:
         return None
-    return Block(False, "prose", text, gap_html, narrow_html(marked))
+    # The second test because the source is not consistent about which side
+    # of the <b> its own number falls on: Mortalium Animos PT prints
+    # `<b>4. <i>Outro erro...</i></b>` for eighteen of its headings and
+    # `1.  <b><i>Ânsia Universal...</i></b>` for the first -- same element,
+    # same document, number outside the bold once. NOT
+    # `strip_leading_number_html`: that one lets tags count as padding after
+    # the period, so it takes the opening `<b><i>` off with the number and
+    # `is_full_bold` then sees no bold at all. Here the prefix must be the
+    # number and whitespace only, leaving the markup to be judged.
+    heading = is_full_bold(gap_html) or is_full_bold(
+        _GAP_NUM_PREFIX_RE.sub("", gap_html, count=1)
+    )
+    return Block(
+        heading,
+        "prose",
+        text,
+        gap_html,
+        narrow_html(marked),
+        heading_style_rank(gap_html, gap_html, False),
+    )
 
 
 # --------------------------------------------------------------------------
@@ -2195,6 +2230,7 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
         and len(blk.text) <= _ITALIC_HEADING_MAX_CHARS
         and match_para_num(blk.raw) is None
         and _SECTION_TITLE_HEADING_RE.match(blk.text) is None
+        and has_words(blk.text)
         and is_full_italic(blk.raw)
     ]
     if len(candidates) < _ITALIC_HEADING_MIN_RUN:
@@ -2294,12 +2330,29 @@ def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
         and len(b.text) <= _ITALIC_HEADING_MAX_CHARS
         and match_para_num(b.raw) is None
         and _SECTION_TITLE_HEADING_RE.match(b.text) is None
+        and has_words(b.text)
     ]
     if len(candidates) < _ITALIC_HEADING_MIN_RUN:
         return []
     for i in candidates:
         blocks[i].is_heading = True
     return [blocks[i].text for i in candidates]
+
+
+_HEADING_LETTER_RE = re.compile(r"[^\W\d_]", re.UNICODE)
+
+
+def has_words(text: str) -> bool:
+    """A heading names something, so it has at least one letter.
+
+    Both recovery passes below promote a RUN of same-styled blocks, and a
+    source that sets its headings apart typographically tends to set its
+    scene breaks apart the same way: Laudato Si' EN prints
+    `<p align="center">* * * * *</p>` before section 246, indistinguishable
+    by style from the 42 centred headings the pass exists to find, and the
+    hand-read table of contents (`audit.py toc`) caught it standing among
+    them as a heading. Punctuation is not a title."""
+    return _HEADING_LETTER_RE.search(text) is not None
 
 
 _LANG_BAR_RE = re.compile(rf"^\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)+\]?$")
