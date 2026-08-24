@@ -195,20 +195,48 @@ def read_toc_oracles(corpus: Path) -> dict[str, list[dict]]:
 
 
 def compare_toc(
-    read: list[dict], parsed: list[dict], masthead: set[str] = frozenset()
+    read: list[dict],
+    parsed: list[dict],
+    masthead: set[str] = frozenset(),
+    corrections: list[dict] = (),
 ) -> list[str]:
     """Differences between a read ToC and the parsed structure tree.
 
     Titles are compared on normalized text: the parser splits a heading into
     `ident`/`title`/`subtitle` where it can, and a reader writing the oracle
     should not have to guess that split, so both sides are flattened first.
+
+    CORRECTIONS ARE APPLIED TO THE READ SIDE. The oracle records what the PAGE
+    prints and the corpus holds the page as corrected, so wherever a
+    correction is filed the two must differ -- and reporting that as a
+    difference would be reporting the corrections layer working. Ecclesiam
+    Suam EN prints a heading `Modem Bent of Mind`; the reader wrote that down,
+    correctly, and `pipeline/corrections/` turns it into `Modern`. Applying
+    the same `from`/`to` to the read title is what keeps the oracle a faithful
+    record of the page instead of a copy of our output.
     """
+    edits = [
+        (c["from"], c["to"])
+        for c in corrections
+        if c.get("field") == "raw_text" and c.get("from") and c.get("to")
+    ]
+
+    def corrected(text: str) -> str:
+        for src, dst in edits:
+            # The filed strings carry the source's markup around the words;
+            # a heading title has none by the time it reaches the oracle, so
+            # match on the visible text of each side.
+            src_text = V.strip_tags(src).strip()
+            dst_text = V.strip_tags(dst).strip()
+            if src_text and src_text in text:
+                text = text.replace(src_text, dst_text)
+        return text
 
     def flat(node):
         joined = " ".join(
             (node.get(f) or "").strip() for f in ("ident", "title", "subtitle")
         )
-        return re.sub(r"\s+", " ", joined).strip().casefold()
+        return re.sub(r"\s+", " ", corrected(joined)).strip().casefold()
 
     problems = []
     read_by, parsed_by = {}, {}
@@ -303,7 +331,12 @@ def report_toc(corpus: Path) -> int:
             re.sub(r"\s+", " ", (manifest.get(f) or "")).strip().casefold()
             for f in ("title", "short_title")
         } - {""}
-        problems = compare_toc(read, json.loads(structure.read_text()), masthead)
+        problems = compare_toc(
+            read,
+            json.loads(structure.read_text()),
+            masthead,
+            common.load_corrections(work_id),
+        )
         if problems:
             failing += 1
             print(

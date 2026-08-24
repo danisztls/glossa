@@ -1,0 +1,24 @@
+[
+  {
+    "id": "ecclesiam.en-section-63-lost-leading-digit",
+    "locator": {
+      "raw_substring": "<p>3. The fact that we are distinct from the world"
+    },
+    "field": "raw_text",
+    "from": "<p>3. The fact that we are distinct from the world",
+    "to": "<p>63. The fact that we are distinct from the world",
+    "reason": "The paragraph is printed '3.' and has lost the leading digit of '63.'. The correct value is fixed by the page itself: it sits between the paragraphs printed '62.' and '64.', and this edition's numbering is otherwise contiguous 1..119 with no gap and no repeat, so 63 is the only number it can carry. Two consequences, both of which this fixes: the parser recovers the section only through validate_document's one-wide-gap promotion, which leaves the stray '3. ' standing at the head of §63's stored text; and because that promotion happens when §64 arrives, BOTH headings pending at the time are anchored to §63 -- so 'The Term Explained', which the source prints immediately above '<p>64.', comes out anchored to §63. The Portuguese edition's own headings are anchored at 63 and 64, confirming the numbering even though its apparatus is a different set of headings.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__ecclesiam__en.html: '...Church makes this prayer its own.</p> <p>&nbsp;</p> <p style=\"text-align: center;\"><i>Not Aloof, but Concerned and Loving</i></p> <p>3. The fact that we are distinct from the world does not mean that we are entirely separated from it.' -- and further down, '<p style=\"text-align: center;\"><i>The Term Explained</i></p> <p>64. If, as We said, the Church realizes what is God's will in its regard...'. The string appears exactly once on the page.",
+    "added": "2026-08-24"
+  },
+  {
+    "id": "ecclesiam.en-heading-28-modem",
+    "locator": { "raw_substring": "<i>Modem Bent of Mind</i>" },
+    "field": "raw_text",
+    "from": "<i>Modem Bent of Mind</i>",
+    "to": "<i>Modern Bent of Mind</i>",
+    "reason": "'Modem' for 'Modern' -- the rn-read-as-m artifact, in the heading above §28. Not a word that can be meant here: the section it introduces is about how 'the need for serious reflection on truths which are already well known is in close accordance with the genius and mentality of our contemporaries', which is precisely a modern bent of mind. Nothing in a 1964 encyclical on the Church's self-awareness concerns modems, and the term postdates the document's subject matter entirely.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__ecclesiam__en.html: '...divine revelation and the Church's Christ-given authority to teach.</p> <p>&nbsp;</p> <p style=\"text-align: center;\"><i>Modem Bent of Mind</i></p> <p>28. But the need for serious reflection on truths which are already well known is in close accordance with the genius and mentality of our contemporaries...'. The string appears exactly once on the page; 'Modern' appears elsewhere in the document spelled correctly.",
+    "added": "2026-08-24"
+  }
+]

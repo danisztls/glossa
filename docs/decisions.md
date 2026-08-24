@@ -2652,3 +2652,42 @@ now states the three rules directly — never invent punctuation, two headings
 that look the same on the page are the same level, and levels are contiguous —
 because these are the mistakes a careful reader actually makes, and the next
 batch will otherwise make them again.
+
+## 2026-08-24 — Two source defects in Ecclesiam Suam, and an oracle that must not copy our output
+
+The last ToC-oracle difference in Ecclesiam Suam EN — a heading anchored to
+§63 where the reader put it before §64 — turned out to be a **lost digit**.
+The paragraph is printed `3.` where the sequence requires `63.`, between the
+paragraphs printed `62.` and `64.`, in an edition otherwise numbered 1..119
+with no gap and no repeat.
+
+The parse had recovered the section anyway, through `validate_document`'s
+one-wide-gap promotion — which is why nothing reported it: 119 sections, no
+gaps, no anomalies. What it left behind was the giveaway. The promoted block
+kept the literal `3. ` at the head of §63's stored text, and because the
+promotion happens when §64 arrives, **both** headings pending at that moment
+were anchored to §63 — so `The Term Explained`, which the source prints
+directly above `<p>64.`, lost its anchor. A silent gap-fill can be right about
+the number and wrong about everything attached to it.
+
+The second defect is in the same document: `Modem Bent of Mind`, the
+rn-read-as-m artifact, above the section on how reflection on known truths
+suits "the genius and mentality of our contemporaries". Both are filed with
+the correct value fixed by the page itself, not inferred from the sibling.
+
+### The oracle records the page, not the corpus
+
+Correcting `Modem` immediately produced a new oracle difference, because the
+reader had written down `Modem` — correctly. The oracle is a record of what
+the **page** prints; the corpus holds the page **as corrected**; wherever a
+correction is filed the two must differ, and reporting that is reporting the
+corrections layer working.
+
+The wrong fix is to edit the oracle to say `Modern`, which would make it a
+copy of our output and destroy the only thing it is for. `audit.py toc` now
+loads the work's filed corrections and applies the same `from`/`to` to the
+**read** side before comparing, matching on the visible text of each since a
+filed string carries the source's markup and an oracle title does not.
+
+Ecclesiam Suam EN is clean. **Twelve oracles, one disagreeing**: Lumen Gentium
+PT's four trailing nodes, still one level too deep.
