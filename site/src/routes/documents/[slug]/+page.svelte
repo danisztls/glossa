@@ -623,42 +623,69 @@
 				     `StructureSidebarToc` — that component owns fixed element ids
 				     (`reading-toc-heading`) and rendering it twice would duplicate
 				     them in one document. -->
+				<!-- IT IS A DISCLOSURE, AND CLOSED IS THE RIGHT DEFAULT HERE. Open,
+				     Magnifica Humanitas' 60-odd headings are several phone screens of
+				     list standing between the masthead and the document's first word —
+				     a reader who arrived to READ has to scroll past the whole apparatus
+				     to reach the text, every time. Closed, the row still says a table
+				     of contents exists, says how long it is, and is one tap from the
+				     full list: the same "text is one tap further on" shape the
+				     pre-merge landing page had, with the tap on the other side.
+				     `<details>` rather than a `$state` boolean because the browser
+				     already owns this widget's keyboard handling, ARIA and
+				     find-in-page behaviour (Chrome/Firefox search open a closed one),
+				     and none of that is worth reimplementing for a chevron.
+				     The `<nav>` stays outside it: a landmark that vanishes when
+				     collapsed is a landmark a screen-reader user cannot find. -->
 				{#if structureRows.length > 0}
 					<nav
 						class="toc-inline"
 						aria-label={t('document.tableOfContents')}
 						data-link-preview="off"
 					>
-						<h2 class="toc-inline-heading">{t('document.tableOfContents')}</h2>
-						<ol>
-							{#each structureRows as { node, depth, anchor } (anchor)}
-								{@const dt = displayDocumentTitle(node.title, lang)}
-								{@const titleNodes = inlineTitleNodes(node.title, node.title_html, lang)}
-								<li style={`--depth: ${depth}`} class={`level-${node.level}`}>
-									<!-- `before` decides whether this heading is RENDERED at all
+						<details class="toc-disclosure">
+							<!-- The count lives INSIDE the heading because `<summary>`'s
+							     content model allows phrasing content OR one heading, not a
+							     heading plus a sibling span. It is a bare numeral rather than
+							     "60 sections" so it needs no translation, and it is the one
+							     thing the collapsed row can say that the label cannot: how
+							     much is behind it. -->
+							<summary>
+								<h2 class="toc-inline-heading">
+									{t('document.tableOfContents')}
+									<span class="toc-count">{structureRows.length}</span>
+								</h2>
+							</summary>
+							<ol>
+								{#each structureRows as { node, depth, anchor } (anchor)}
+									{@const dt = displayDocumentTitle(node.title, lang)}
+									{@const titleNodes = inlineTitleNodes(node.title, node.title_html, lang)}
+									<li style={`--depth: ${depth}`} class={`level-${node.level}`}>
+										<!-- `before` decides whether this heading is RENDERED at all
 									     (`headingsByStart` drops the unanchored ones), but the link
 									     goes to the heading's own id, not to `#s{before}` — the
 									     section behind it. Same rule as the sidebar; the two tables
 									     of contents on this page must not address differently. -->
-									{#if Number.isFinite(node.before)}
-										<a href={`#${anchor}`}>
-											{#if node.ident}<span class="ordinal">{node.ident}</span>{/if}
-											{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-											<InlineText nodes={titleNodes} />
-										</a>
-									{:else}
-										<!-- Same null-bound convention as the CCC/Compendium
+										{#if Number.isFinite(node.before)}
+											<a href={`#${anchor}`}>
+												{#if node.ident}<span class="ordinal">{node.ident}</span>{/if}
+												{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+												<InlineText nodes={titleNodes} />
+											</a>
+										{:else}
+											<!-- Same null-bound convention as the CCC/Compendium
 										     structure trees: unnumbered front/back matter the
 										     structure knows about but no section number
 										     addresses — nothing to link to. -->
-										<span class="unlinked" title="No section number in this corpus">
-											{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
-											<InlineText nodes={titleNodes} />
-										</span>
-									{/if}
-								</li>
-							{/each}
-						</ol>
+											<span class="unlinked" title="No section number in this corpus">
+												{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+												<InlineText nodes={titleNodes} />
+											</span>
+										{/if}
+									</li>
+								{/each}
+							</ol>
+						</details>
 					</nav>
 				{/if}
 
@@ -838,24 +865,99 @@
 	/* See the markup comment: this replaces the sidebar below the grid
 	   breakpoint, where the aside would otherwise land past the whole text. */
 	.toc-inline {
-		margin: 0 0 2.5rem;
+		margin: 0 0 2rem;
 	}
 
-	.toc-inline-heading {
-		font-size: 1.1rem;
+	/* The whole closed state is this one row, so it carries the rule that used
+	   to sit under the heading — and it is the only rule left in the list.
+	   `list-style: none` is what removes the default disclosure triangle in
+	   Chrome/Firefox (a `summary` is a list item); the `::-webkit-` line is the
+	   same removal for older Safari, which ignores it. The chevron below
+	   replaces both, because the native marker sizes with the font and cannot
+	   be given the transition that makes open/closed legible at a glance. */
+	.toc-disclosure > summary {
+		display: flex;
+		align-items: baseline;
+		gap: 0.5rem;
+		cursor: pointer;
+		list-style: none;
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 0.5rem;
 	}
 
+	.toc-disclosure > summary::-webkit-details-marker {
+		display: none;
+	}
+
+	/* A 44px-tall tap target on a phone without a 44px-tall row on a laptop:
+	   the padding grows only where the pointer is coarse. */
+	@media (pointer: coarse) {
+		.toc-disclosure > summary {
+			padding-block: 0.5rem;
+		}
+	}
+
+	.toc-inline-heading {
+		font-size: 1.05rem;
+		margin: 0;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.toc-count {
+		font-family: var(--font-sans);
+		font-size: 0.75rem;
+		font-weight: 400;
+		font-variant-numeric: tabular-nums;
+		color: var(--color-text-muted);
+	}
+
+	/* Points down when closed, up when open — the standard direction, i.e. "the
+	   list will come down from here". Drawn from two borders on a rotated
+	   square rather than a glyph so it inherits `currentColor` and needs no
+	   icon import for one 8px mark. */
+	.toc-disclosure > summary::after {
+		content: '';
+		flex: none;
+		width: 0.45rem;
+		height: 0.45rem;
+		border-right: 1.5px solid var(--color-text-muted);
+		border-bottom: 1.5px solid var(--color-text-muted);
+		transform: translateY(-0.15em) rotate(45deg);
+		transition: transform 0.15s ease;
+	}
+
+	.toc-disclosure[open] > summary::after {
+		transform: translateY(0.1em) rotate(-135deg);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.toc-disclosure > summary::after {
+			transition: none;
+		}
+	}
+
 	.toc-inline ol {
 		list-style: none;
-		margin: 0;
+		margin: 0.25rem 0 0;
 		padding: 0;
 	}
 
+	/*
+	 * STREAMLINED, WHICH HERE MEANS FEWER LINES RATHER THAN SHORTER ONES. The
+	 * rows used to carry a hairline each, so a 60-heading contents was 60
+	 * horizontal rules — more ink than the titles they separated, and the
+	 * indent they were supposed to make legible was the thing they cut across.
+	 * Indentation alone carries the hierarchy now, at a smaller step (0.9rem,
+	 * from 1.25rem) so a level-4 heading still has most of a phone's width to
+	 * set its title in. Titles wrap rather than truncate: a TOC row clipped
+	 * mid-word is a row you cannot use.
+	 */
 	.toc-inline li {
-		padding: 0.4rem 0 0.4rem calc(var(--depth) * 1.25rem);
-		border-bottom: 1px solid var(--color-border);
+		padding: 0.3rem 0 0.3rem calc(var(--depth) * 0.9rem);
+		font-size: 0.95rem;
+		line-height: 1.35;
+		text-wrap: pretty;
 	}
 
 	.toc-inline a {
@@ -869,10 +971,24 @@
 		text-decoration-color: var(--color-border);
 	}
 
-	.toc-inline .kind-chapter a,
-	.toc-inline .kind-chapter .unlinked {
-		font-size: 1.1rem;
+	/* `.level-1`, NOT `.kind-chapter`: this list's rows carry `level-{n}` from
+	   `flattenDocumentStructure` (depth is `level - 1`, so level 1 is the top),
+	   and never a `kind-` class at all — that vocabulary belongs to
+	   `StructureSidebarToc`/`StructureIndex`, whose nodes are a different
+	   shape. The old selector matched nothing, so the top-level headings this
+	   was meant to weight have been reading flat the whole time. Svelte does
+	   not flag it because the class is set from an expression it cannot
+	   evaluate. */
+	.toc-inline .level-1 > a,
+	.toc-inline .level-1 > .unlinked {
 		font-weight: 700;
+	}
+
+	/* The gap that the deleted hairlines used to imply: a new top-level
+	   division starts a little away from the previous one's last child. Only
+	   between rows, so the first entry doesn't hang off the summary. */
+	.toc-inline li + .level-1 {
+		margin-top: 0.5rem;
 	}
 
 	.toc-inline .ordinal {
