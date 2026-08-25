@@ -11,20 +11,30 @@
 			type="image/png"
 			sizes="192x192"
 		/>
-		<!-- The one font file every page is certain to need: EB Garamond's latin
-		     subset, upright. Declared here rather than left to the @font-face in
-		     app.css so the fetch starts alongside the stylesheet instead of
-		     after the browser has parsed it and matched a unicode-range.
+		<!-- The two font files every page is certain to need, upright latin in
+		     each: EB Garamond for the text and Source Sans 3 for the chrome.
+		     Declared here rather than left to the @font-face in app.css so the
+		     fetches start alongside the stylesheet instead of after the browser
+		     has parsed it and matched a unicode-range.
 
-		     Deliberately the ONLY font preloaded. Italic, latin-ext, greek and
+		     Deliberately only these two. Italic, latin-ext, greek, cyrillic and
 		     vietnamese are each needed by a minority of pages, and preloading a
 		     file the page never uses costs bandwidth and delays the one it does.
-		     `crossorigin` is required even though this is same-origin: fonts are
-		     fetched in CORS mode, and without it the preload is discarded and
-		     the file downloaded a second time. -->
+		     The sans qualifies under the same rule the serif does — `body`
+		     carries it, so every page renders some of it above the fold — and
+		     it is the smaller of the two. `crossorigin` is required even though
+		     this is same-origin: fonts are fetched in CORS mode, and without it
+		     the preload is discarded and the file downloaded a second time. -->
 		<link
 			rel="preload"
 			href="%sveltekit.assets%/fonts/eb-garamond-latin-wght-normal.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+		<link
+			rel="preload"
+			href="%sveltekit.assets%/fonts/source-sans-3-latin-wght-normal.woff2"
 			as="font"
 			type="font/woff2"
 			crossorigin

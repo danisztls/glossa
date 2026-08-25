@@ -418,7 +418,10 @@
 		margin: 0 0 0.25rem;
 	}
 
+	/* The chapter's number, set as the identifier it is while the heading
+	   beside it keeps the text face. */
 	h1 .ordinal {
+		font-family: var(--font-sans);
 		color: var(--color-text-muted);
 		margin-inline-end: 0.35em;
 	}

@@ -50,7 +50,10 @@
 		margin: 0 0 1.5rem;
 		font-size: 0.8rem;
 	}
+	/* "Table of Contents" is ours, the way the sidebar's own heading is —
+	   interface face, not the text face the base heading rule hands an `h2`. */
 	.toc-heading {
+		font-family: var(--font-sans);
 		font-size: 1.1rem;
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 0.5rem;

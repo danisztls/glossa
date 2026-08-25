@@ -480,8 +480,11 @@
 		margin-top: 1.5rem;
 	}
 
+	/* A label the picker prints over a group of books, not a title from the
+	   text — interface face. */
 	.testament h3 {
 		margin: 0 0 0.5rem;
+		font-family: var(--font-sans);
 		font-size: 0.75rem;
 		text-transform: uppercase;
 		letter-spacing: 0.06em;

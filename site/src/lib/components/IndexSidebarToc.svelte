@@ -87,7 +87,12 @@
 </nav>
 
 <style>
+	/* Interface face, for the reason `StructureSidebarToc`'s `nav` rule gives
+	   at length: a sidebar is navigation standing outside the reading column,
+	   not a page of the book. Named rather than inherited for the same reason
+	   it is named there. */
 	.index-sidebar-toc {
+		font-family: var(--font-sans);
 		font-size: 0.85rem;
 	}
 

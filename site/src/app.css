@@ -256,10 +256,145 @@
 		U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
 		U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
 }
+/*
+ * SOURCE SANS 3, the interface face — and the only face here that revives
+ * nothing.
+ *
+ * The chrome is not the book. A menu, a keycap, a "CH. 4" marker, the
+ * sidebar's navigation rows: those are our words about the text, not the
+ * text's own, and until now they were set in EB Garamond only because
+ * `--font-sans` was an alias for `--font-serif`. What stays in the text face
+ * is everything the work itself wrote — every page `h1`, every
+ * `.structure-heading`, the index and the inline table of contents — each of
+ * which names `var(--font-serif)` explicitly, and did so before this face
+ * existed, precisely so that this change could not move them.
+ *
+ * Slimbach's Source Sans is a humanist sans with an old-style skeleton, drawn
+ * by the hand that also drew Garamond Premier, which is why it sits beside a
+ * Garamond without arguing; it was drawn for interfaces at small sizes, which
+ * is the whole of its job here. Adobe, SIL OFL. One variable master, `wght`
+ * 200-900, so the letterspaced labels at 600 come off a real axis rather than
+ * a synthetic bold.
+ *
+ * THREE SUBSETS, and unlike the text face's six the interface dictionaries
+ * decide them outright: the chrome's strings are `src/lib/i18n/*.ts`, so its
+ * glyph inventory is countable rather than estimated. Across all ten:
+ *
+ *   latin       every language.
+ *   latin-ext   nine glyphs, every one of them Polish (ł ź ś ć ą ń ę ż Ś).
+ *   cyrillic    55 glyphs, Russian.
+ *   arabic      47 glyphs — and Source Sans has none. `ar` chrome keeps
+ *               falling through to Amiri, which is where it already was and
+ *               where it belongs: Arabic does not carry the serif/sans
+ *               distinction this face exists to draw, so there is nothing
+ *               here for it to be excluded from.
+ *
+ * No greek, no vietnamese, no cyrillic-ext — nothing in the ten dictionaries
+ * reaches them. The sidebar tables of contents do set corpus titles in this
+ * face, and those are NOT countable, so the omission is a real bet: a
+ * Vietnamese name in a heading finds no `@font-face` here and falls to EB
+ * Garamond through `--font-sans`'s own chain. One word in the text face is
+ * the failure mode, not tofu — which is what makes the bet cheap, and cheap
+ * to reverse if a sidebar ever looks mixed.
+ *
+ * `size-adjust: 95%`, and the number is a compromise between two facts.
+ * Source Sans's x-height is 0.478em against EB Garamond's 0.400 — 19.5%
+ * larger at the same `font-size` — so mixed-case chrome set at sizes chosen
+ * for the serif (the sidebar's rows at 0.85rem, the menus) came out reading
+ * bigger than the page around it. Matching x-heights outright would mean 84%,
+ * which throws away the large x-height a UI face is chosen for and leaves
+ * 12px labels genuinely small. 95% takes the edge off and keeps the
+ * advantage: x-height lands at 0.454 (still 13% over the serif's) and cap
+ * height at 0.627 against 0.650, a 3.5% difference nobody will see in the
+ * uppercase letterspaced labels that are most of the call sites.
+ *
+ * It is declared on the face rather than spent adjusting `font-size` at each
+ * call site, because the mismatch is a property of the face and would
+ * otherwise have to be re-derived every time a new surface takes the sans.
+ *
+ * Italic is declared for all three because the chrome genuinely uses it
+ * (`.row-title.borrowed` in the structure sidebar, `.sidenote-missing`), and
+ * a declared italic beats the synthetic oblique a missing one produces.
+ * Ranges are copied verbatim from the package's `wght.css` /
+ * `wght-italic.css` — do not hand-edit them.
+ */
+
+/* latin */
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: normal;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-wght-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: italic;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-wght-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin-ext */
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: normal;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-ext-wght-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+		U+A720-A7FF;
+}
+
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: italic;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-ext-wght-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+		U+A720-A7FF;
+}
+
+/* cyrillic */
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: normal;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-cyrillic-wght-normal.woff2') format('woff2-variations');
+	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: italic;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-cyrillic-wght-italic.woff2') format('woff2-variations');
+	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
 
 /*
- * The illuminated initial, and the only place on the site set in anything but
- * the text face. Pirata One is a blackletter with roman-derived capitals.
+ * The illuminated initial, and the only place the reading text is set in
+ * anything but the text face. Pirata One is a blackletter with roman-derived capitals.
  *
  * It replaced UnifrakturMaguntia, and the reason is worth recording because it
  * is not a matter of taste. Maguntia is a true Mainz fraktur, and fraktur
@@ -403,18 +538,20 @@
 	   `unicode-range` is scoped to what those two need. */
 	--font-display: 'Pirata One Subset', var(--font-serif);
 	/*
-	 * The site sets no sans anywhere. `--font-sans`'s nine call sites are
-	 * almost all small uppercase letterspaced labels already set at weight
-	 * 600, which is exactly where EB Garamond's 400-800 axis stops being
-	 * delicate — running heads set in the text face is what a printed book
-	 * does, and it is the right register for a site that is only ever read.
+	 * The interface face (see the Source Sans 3 block above). `body` carries
+	 * it, so the chrome takes it by inheritance and only the surfaces that
+	 * name `--font-serif` stand outside it — which is the whole of the
+	 * distinction: what the work wrote is set in the text face, what we wrote
+	 * about it is set in this one.
 	 *
-	 * Kept as an alias rather than deleted so those call sites don't have to
-	 * change (several of their files have unrelated work in flight), and so
-	 * reintroducing a UI sans is a one-line edit here. Renaming the pair to
-	 * --font-text / --font-ui is the real cleanup, once the tree is quiet.
+	 * Falling back to `--font-serif` rather than to a generic `sans-serif` is
+	 * deliberate, and does two things. A glyph outside the three declared
+	 * subsets lands on EB Garamond, and Arabic lands on Amiri, instead of on
+	 * whatever the system calls a sans; and if the file never arrives the
+	 * chrome renders exactly as it did before this face was added, rather
+	 * than in a face nobody chose.
 	 */
-	--font-sans: var(--font-serif);
+	--font-sans: 'Source Sans 3 Variable', var(--font-serif);
 	/* Compact metadata may be smaller than body text, but never below 13.5px
 	   at the site's 18px root size. Use this in any relative reduction so a
 	   nested label cannot become illegibly small. */
@@ -943,6 +1080,42 @@ body {
 	line-height: 1.5;
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
+}
+
+/*
+ * A HEADING IS A TITLE UNTIL IT SAYS OTHERWISE.
+ *
+ * `body` carries the interface face, so without this every heading that never
+ * named a family would have followed the chrome into the sans — and about
+ * fifteen of them never named one, which is why the landing pages, the Summa's
+ * article heads and a prayer's mystery names came out set differently from
+ * the CCC's and a document's, which did name it. The split was never a rule,
+ * only a habit that some files had and others did not.
+ *
+ * The rule, stated once: a heading names a division of the work, so it takes
+ * the text face. What is set in the interface face is the identifier BESIDE
+ * the title — the `CHAPTER TWO` above it, the ordinal in front of it, the
+ * `ARTICLE 3`, the `CITED IN` — because those are our words for where the
+ * reader is, not the work's words for what this is. Each of those names
+ * `--font-sans` at its own rule, and a scoped component selector outranks
+ * this one, so saying it there is all it takes.
+ *
+ * A heading that is entirely OUR label rather than the work's title — a
+ * sidebar's `Table of Contents`, a picker's `Old Testament` — names
+ * `--font-sans` too, for the same reason and by the same mechanism.
+ *
+ * The per-file `font-family: var(--font-serif)` declarations on individual
+ * headings predate this rule and are now redundant. They are kept, not
+ * cleaned up: they were written as a defence against exactly this change, and
+ * a heading that states its face is not wrong, only wordy.
+ */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--font-serif);
 }
 
 a {
@@ -2184,8 +2357,12 @@ input {
  * beyond heading + list reset (on-path/current row states, etc.) is real
  * divergence between the two components and stays where it is.
  */
+/* Our label for the list below it ("Table of Contents"), not a title the work
+   wrote — so it names the interface face rather than taking the text face the
+   base heading rule above hands every other `h2`. */
 .sidebar-toc-heading {
 	margin: 0 0 0.5rem;
+	font-family: var(--font-sans);
 	font-size: 0.85rem;
 	text-transform: uppercase;
 	letter-spacing: 0.03em;

@@ -4509,6 +4509,87 @@ strength of citation. It exists to let the "Cited in" panel (or a paragraph's
 footnote rendering) distinguish "quotes this verse" from "alludes to it",
 which the `ref.cf` string was added for. Nothing renders it yet.
 
+## 2026-08-25 — A second face, for the words that are ours
+
+**What**: the interface is set in Source Sans 3 (Adobe, Robert Slimbach, SIL
+OFL, one variable master on `wght` 200–900), self-hosted from
+`site/static/fonts/` like every other face here. `--font-sans` had been an
+alias for `--font-serif` since the type pass; it is now the thing its name
+says.
+
+**The line is authorship, not chrome versus content.** What the work wrote
+stays in EB Garamond — every page `h1`, every `.structure-heading`,
+`StructureIndex`'s rows, a document's inline table of contents. What we wrote
+about the work takes the sans: the header and its menus, the appearance and
+language controls, the jump box, and the labels those surfaces are mostly made
+of — `CH. 4`, a question's `Q`, an article number, a section count, a keycap.
+No call site had to move for this. Twenty-eight `var(--font-serif)`
+declarations were already sitting in the tree as no-ops, written when there was
+no sans to be protected from; they are what made the switch a one-line edit at
+the token rather than an audit of every heading.
+
+**A heading is a title until it says otherwise.** `body` carries the interface
+face, so a heading that never named a family would have followed the chrome
+into the sans — and about fifteen never named one, which is why the landing
+pages, the Summa's article heads and a prayer's mystery names came out set
+differently from the CCC's and a document's, which did. The split had been a
+habit some files kept and others did not. `app.css` now states it once, as
+`h1`–`h6` in `--font-serif`, and the surfaces that mean otherwise say so at
+their own rule: the identifier BESIDE the title takes the sans (`CHAPTER TWO`
+above a document's heading, the ordinal in front of it, `ARTICLE 3`, the
+Bible's `Introduction` kicker, `CITED IN`), as does a heading that is entirely
+our label rather than the work's title (every `Table of Contents` — sidebar,
+index page and inline — and the picker's `Old Testament`). What the work
+titled is in the text face; what we call it is in ours.
+
+**The sidebar tables of contents are the one navigation surface set in the
+sans**, and the rule is where the list stands rather than what it holds: a
+sidebar is outside the reading column, present on every unit, and its rows are
+addresses to jump to. `StructureSidebarToc` and `IndexSidebarToc` now name
+`--font-sans` themselves rather than inheriting it from `body`, on the
+principle that a surface which means to be in the interface face should say so
+as plainly as the ones that mean to stay in the text face.
+
+**A known seam**: on a document below 80rem (or below 100rem while comparing)
+the sidebar yields to `.toc-inline`, which is the same table of contents in the
+reading column, and that one stays serif. So the same list changes face at a
+breakpoint. Left as it is because `.toc-inline`'s serif is an explicit prior
+decision and the two really do sit in different places; the alternative is to
+call a table of contents interface wherever it renders, which is a one-line
+change if the seam reads worse than the inconsistency.
+
+**Three subsets, decided by the dictionaries.** Unlike the text face, whose six
+subsets answer to an unbounded corpus, the chrome's strings are countable —
+`src/lib/i18n/*.ts`, all ten of them: latin everywhere, latin-ext for nine
+Polish glyphs, cyrillic for 55 Russian ones, and 47 Arabic glyphs that Source
+Sans does not have. Arabic therefore keeps falling through to Amiri, which is
+where it already was and where it belongs: Arabic does not carry the
+serif/sans distinction this face exists to draw. No greek, no vietnamese, no
+cyrillic-ext. The sidebar does set corpus titles in this face and those are not
+countable, so a Vietnamese name in a heading falls to EB Garamond through
+`--font-sans`'s own chain — one word in the text face, not tofu, which is what
+makes the omission cheap and reversible.
+
+**`size-adjust: 95%` on the face.** Source Sans's x-height is 0.478em against
+EB Garamond's 0.400, 19.5% larger at the same `font-size`, so chrome sized for
+the serif came out reading bigger than the page around it. Matching x-heights
+outright is 84% and would throw away the large x-height a UI face is chosen
+for; 95% leaves it at 0.454, still 13% over the serif, and moves cap height
+from 0.660 to 0.627 against the serif's 0.650 — a difference the uppercase
+letterspaced labels, which are most of the call sites, will not show. On the
+face rather than at each call site, because the mismatch is a property of the
+face and would otherwise be re-derived by every surface that takes the sans.
+
+**Costs, stated.** `static/fonts/` goes from 896 KB to 1,105 KB, all of it
+precached by the service worker at install; 120 KB of that is the latin-ext
+pair, carried for nine Polish letters and whatever the sidebar's corpus titles
+turn out to need. `app.html` now preloads two files instead of one — the sans
+qualifies under the rule that admitted the serif, since `body` carries it and
+every page renders some of it above the fold. `--font-sans` falls back to
+`var(--font-serif)` rather than to a generic `sans-serif`, so a glyph outside
+the three subsets lands on the site's own faces, and a page whose sans never
+arrives renders exactly as it did before the face existed.
+
 ## 2026-08-25 — A verse-count oracle is not a textual one, and Psalm 13 is where believing otherwise gets the wrong answer
 
 **What**: `research/bible-edition-divergence.md`'s proposed divergence table is

@@ -686,7 +686,10 @@
 	   folded into the heading so the heading stays the book's own name. */
 	.intro-kicker {
 		margin: 0.1rem 0 0;
-		font-family: var(--font-serif);
+		/* The comment above says it: this stands in for the chapter number,
+		   and the chapter number is an identifier. It is also our word rather
+		   than the edition's, which the heading above it is not. */
+		font-family: var(--font-sans);
 		font-size: 1.05rem;
 		color: var(--color-text-muted);
 	}

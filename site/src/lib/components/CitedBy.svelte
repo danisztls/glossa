@@ -83,8 +83,11 @@
 		font-size: 0.85rem;
 	}
 
+	/* Our label for the panel, not a heading the work wrote — interface face,
+	   like every other uppercase letterspaced label. */
 	.cited-in h2 {
 		margin: 0 0 0.6rem;
+		font-family: var(--font-sans);
 		font-size: 0.75rem;
 		font-weight: 600;
 		text-transform: uppercase;

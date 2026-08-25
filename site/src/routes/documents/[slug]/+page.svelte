@@ -1047,7 +1047,11 @@
 		}
 	}
 
+	/* The list's own label — "Table of Contents", ours — so it takes the
+	   interface face like the sidebar's heading and the index pages', even
+	   though the rows below it stay in the text face. */
 	.toc-inline-heading {
+		font-family: var(--font-sans);
 		font-size: 1.05rem;
 		margin: 0;
 		flex: 1;
@@ -1141,7 +1145,11 @@
 		margin-top: 0.5rem;
 	}
 
+	/* Sans even here, where the row's title stays in the text face: the
+	   ordinal is the same identifier the heading itself prints in the sans,
+	   and the sidebar sets its own markers (`.kind-label`) the same way. */
 	.toc-inline .ordinal {
+		font-family: var(--font-sans);
 		color: var(--color-text-muted);
 		margin-inline-end: 0.35em;
 	}
@@ -1179,7 +1187,10 @@
 		color: var(--color-text);
 	}
 
+	/* The identifier, not the title: the interface face, like every other
+	   marker that says where the reader is rather than what they are reading. */
 	.structure-heading .ordinal {
+		font-family: var(--font-sans);
 		color: var(--color-text-muted);
 		margin-inline-end: 0.4em;
 	}
@@ -1190,6 +1201,7 @@
 	   subtitle sits below on its own line for the mirror reason. */
 	.structure-heading .heading-ident {
 		display: block;
+		font-family: var(--font-sans);
 		font-size: 0.75em;
 		font-weight: 600;
 		letter-spacing: 0.08em;

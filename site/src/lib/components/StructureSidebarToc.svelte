@@ -289,7 +289,22 @@
 </nav>
 
 <style>
+	/*
+	 * The sidebar takes the interface face, and it is the one table of
+	 * contents that does. The line is where the list stands rather than what
+	 * it holds: this one sits outside the reading column, is present on every
+	 * unit of the work, and its rows are addresses to jump to. The index page
+	 * (`StructureIndex`) and a document's inline list (`.toc-inline`) sit in
+	 * the reading column and read as a page of the book, so they keep
+	 * `--font-serif` and say so explicitly.
+	 *
+	 * Declared rather than inherited from `body`, even though `body` already
+	 * carries `--font-sans`: every surface that stays in the text face names
+	 * `--font-serif`, so a surface that means to be in the interface face
+	 * should name that too. Inheritance here would read as an omission.
+	 */
 	nav {
+		font-family: var(--font-sans);
 		font-size: 0.85rem;
 	}
 
