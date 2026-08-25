@@ -1,0 +1,12 @@
+[
+  {
+    "id": "prayer.common.en-glory-be-saecula-acute",
+    "locator": { "prayer": "glory-be" },
+    "field": "latin_text",
+    "from": "et in sæ´cula sæculórum",
+    "to": "et in sǽcula sæculórum",
+    "reason": "'sæ´cula' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the spacing character, sitting between two letters of one syllable. The source HTML writes it as the entity pair '&aelig;&acute;', which is an attempt to point the ligature that never composed -- the page has no other pointed 'æ' anywhere, so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than deleting the accent: the editor did type an acute here, and dropping it would be second-guessing the source rather than repairing its markup.",
+    "evidence": "corpus/raw/compendium-en/archive_2005_compendium-ccc_en.html Appendix A Latin column, Gloria Patri: 'et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacute;rum. Amen.'; the Portuguese Compendium page's parallel Latin column for the same doxology writes the same word as a single precomposed character -- corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html: 'et in s&#x1fd;cula s&aelig;cul&oacute;rum. Amen.' Same universal doxology, and the two witnesses agree on every other character of the line.",
+    "added": "2026-08-25"
+  }
+]

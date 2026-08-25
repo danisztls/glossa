@@ -3583,3 +3583,83 @@ eagerly loaded by every reader and already 2.2 MB; eight translations of every
 description would multiply the one field in it that is prose. Shipping
 translations wants a per-language asset loaded on demand, which is a separate
 decision and is not taken here.
+
+## 2026-08-25 — Latin becomes an edition of the prayers, built from two witnesses
+
+**What**: `prayer.common.la` now exists as a real work, alongside `prayer.common.en` and
+`prayer.common.pt`. It holds the 21 of 28 prayers the Compendium prints Latin for. The
+per-prayer `latin` field stays exactly where it is.
+
+**This reverses `corpus-schema.md` §Prayers' "Latin is a field, not an edition."** That
+ruling rested on two claims. One had already expired and the entry said so: a Latin
+edition was held to reopen the UI-language-vs-content-language question, and Latin has
+been an interface language since 2026-08-24. What was left — "a `prayer.common.la` work
+would be an edition nobody printed" — is true about the source and wrong about the
+reader. Every other work in this corpus reaches a Latin-preferring reader as a work
+(`bible.clementina.la`, `summa.la`). Prayers were the single place where setting Latin
+as the content language silently returned English, because `CONTENT_LANG_FALLBACK` had
+no `la` work to resolve to and fell through. The site had already noticed: the reading
+route carried a fabricated `prayer.latin` target whose manifest was the vernacular
+work's with `id` and `language` overwritten. An edition that has to be forged at render
+time to be offered at all is an edition; promoting it deletes the forgery rather than
+adding a case.
+
+**The field is not redundant and does not go away.** It is what the source prints — Latin
+bound to the vernacular, same page, same cell — and it is what the edition is derived
+from. Both are true statements about different things, and the schema now says both.
+
+**THE HARD PART WAS THAT THERE ARE TWO WITNESSES AND THEY DISAGREE.** The Latin appears
+twice on vatican.va, once in each vernacular Compendium page. Measured across all 21:
+
+- **20 of 21 are word-identical** once ligatures, stress accents and punctuation are
+  folded away. The Rosary is the sole exception.
+- **The English witness carries one malformed character in the whole edition** —
+  `sæ´cula`, an `&aelig;&acute;` that never composed — against the Portuguese witness's
+  14 grave-for-acute letters (13 `ò`, 1 `À`).
+- **Where they differ in letters, English is fuller and better spelled**: Portuguese
+  drops the _Mystéria luminósa_ heading outright and prints `Tempio` for `Templo`,
+  `Dorninica` for `Dominica` (an rn/m slip) and `coniúcta` for `coniúncta`.
+- **But Portuguese segments better in two prayers**: it prints _Veni Creator Spiritus_ as
+  7 stanzas and _Veni Sancte Spiritus_ as 9, where English runs each into one block.
+  English segments better in three (Angelus 11/1, Regina Cæli 5/1, Rosary 12/9).
+
+**The rule is: English's text, the finer of the two segmentations.** Every character comes
+from one witness, chosen once and stated; the other contributes only _where the breaks
+fall_, which is information the base witness does not carry and cannot be wrong about.
+`_resegment` asserts the re-cut pieces rejoin to exactly the text they were cut from, so
+a transplant that does not fit is refused rather than approximated. Nothing is reconciled
+character by character and no word is emitted that neither page printed.
+
+**Why not a critical edition.** The tempting move is to take the better reading at each
+disagreement — Portuguese's `sǽcula` here, English's `Templo` there. That is editing, not
+transcription, and it produces a text no page prints, whose provenance is a rule rather
+than a URL. The whole corpus's claim is that a reader can check any string against a
+source page; a per-character merge would be the first text here that fails that.
+
+**The one English defect is a correction, not a merge.** `pipeline/corrections/prayer.common.en.json`
+fixes `sæ´cula` against the source HTML, citing the Portuguese witness as evidence for
+what was meant — the ordinary path for a source defect with a known correct value. Filing
+it there rather than in the derivation keeps the builder a pure selection over parsed
+text, and fixes the English edition's own `latin` field at the same time.
+
+**`witnesses.json`** is written into the work: one row per prayer naming which witness
+supplied the text, which supplied the breaks, and whether the two disagreed about
+anything but orthography. The choice is inspectable without re-running the scraper.
+
+**Validation is narrowed, not skipped.** The slug-set oracle cannot apply — this edition
+covers a strict subset by construction — so `validate_latin` asserts what is actually
+assertable: every prayer with a Latin companion reached the edition, and every character
+of it still folds to what the English witness printed. Same narrowing the Summa already
+has for the Supplementum.
+
+**Built only on a full run.** `build_latin_edition` needs both witnesses, so
+`prayers.py --lang en` alone does not write it — producing a differently-segmented
+edition under the same work id from one witness is exactly the silent failure worth
+refusing.
+
+**Verified**: re-parsed from `raw/` with no network. 21 prayers, 61 blocks, 2 re-segmented
+from Portuguese, 1 recorded divergence, zero malformed characters in the output (the
+character inventory is `ÁÆÍáæéíóúœǽ` and nothing else). Both vernacular editions
+re-parsed byte-identical apart from `generated_at` and the correction — and the removal of
+`"kind": "prose"` from 103 blocks per edition, which is the schema's omit-the-default rule
+(`BlockOut.to_dict`) reaching files last generated before it applied.

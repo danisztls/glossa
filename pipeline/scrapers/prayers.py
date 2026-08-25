@@ -110,6 +110,7 @@ import argparse
 import html as ihtml
 import re
 import sys
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -1299,17 +1300,26 @@ def validate(en: list[Prayer], pt: list[Prayer]) -> tuple[bool, list[str]]:
 # an empty heading.
 STRUCTURE_GROUPS = [
     (
-        {"en": "Creeds and the Lord's Prayer", "pt": "Credos e o Pai-Nosso"},
+        {
+            "en": "Creeds and the Lord's Prayer",
+            "pt": "Credos e o Pai-Nosso",
+            "la": "Symbola et Oratio Dominica",
+        },
         ["apostles-creed", "nicene-creed", "our-father"],
     ),
     (
-        {"en": "Basic Prayers", "pt": "Ora\u00e7\u00f5es fundamentais"},
+        {
+            "en": "Basic Prayers",
+            "pt": "Ora\u00e7\u00f5es fundamentais",
+            "la": "Orationes fundamentales",
+        },
         ["sign-of-the-cross", "glory-be", "hail-mary", "angel-of-god", "eternal-rest"],
     ),
     (
         {
             "en": "Marian and Devotional Prayers",
             "pt": "Ora\u00e7\u00f5es marianas e devocionais",
+            "la": "Orationes marianae et devotionales",
         },
         [
             "angelus",
@@ -1325,11 +1335,15 @@ STRUCTURE_GROUPS = [
             "memorare",
         ],
     ),
-    ({"en": "The Rosary", "pt": "O Ros\u00e1rio"}, ["rosary"]),
+    (
+        {"en": "The Rosary", "pt": "O Ros\u00e1rio", "la": "Rosarium"},
+        ["rosary"],
+    ),
     (
         {
             "en": "Prayers of the Eastern Churches",
             "pt": "Ora\u00e7\u00f5es das Igrejas orientais",
+            "la": "Orationes Ecclesiarum Orientalium",
         },
         [
             "coptic-incense-prayer",
@@ -1341,35 +1355,236 @@ STRUCTURE_GROUPS = [
         {
             "en": "Acts of Faith, Hope, Love and Contrition",
             "pt": "Atos de f\u00e9, esperan\u00e7a, caridade e contri\u00e7\u00e3o",
+            "la": "Actus fidei, spei, caritatis et contritionis",
         },
         ["act-of-faith", "act-of-hope", "act-of-love", "act-of-contrition"],
     ),
-    ({"en": "Litanies", "pt": "Ladainhas"}, [LITANY_SLUG]),
+    (
+        {"en": "Litanies", "pt": "Ladainhas", "la": "Litaniae"},
+        [LITANY_SLUG],
+    ),
 ]
 
 
 def build_structure(prayers: list[Prayer], lang: str) -> list[dict]:
+    """The work's lightweight table of contents -- grouping only, never an
+    address (`paragraphs` is `[null, null]` throughout, docs/corpus-schema.md).
+
+    A GROUP LISTS ONLY THE PRAYERS THIS EDITION ACTUALLY HAS, and an edition
+    that has none of a group's prayers does not get an empty heading for it.
+    That is `prayer.common.la`: the two Creeds, the Our Father, the three
+    Eastern prayers and the Litany of Loreto are printed with no Latin
+    companion anywhere in the source, so the Latin edition genuinely has
+    nothing under "Symbola et Oratio Dominica" and says so by not printing
+    the heading. The vernacular editions carry every slug and so are
+    unaffected -- this is not a filter they pass through, it is a filter that
+    never fires for them.
+    """
     by_slug = {p.slug: p for p in prayers}
     nodes = []
     for titles, slugs in STRUCTURE_GROUPS:
-        title = titles.get(lang, titles["en"])
+        children = [
+            {
+                "kind": "sub",
+                "title": by_slug[s].title,
+                "paragraphs": [None, None],
+                "children": [],
+            }
+            for s in slugs
+            if s in by_slug
+        ]
+        if not children:
+            continue
         nodes.append(
             {
                 "kind": "section",
-                "title": title,
+                "title": titles.get(lang, titles["en"]),
                 "paragraphs": [None, None],
-                "children": [
-                    {
-                        "kind": "sub",
-                        "title": by_slug[s].title,
-                        "paragraphs": [None, None],
-                        "children": [],
-                    }
-                    for s in slugs
-                ],
+                "children": children,
             }
         )
     return nodes
+
+
+# --------------------------------------------------------------------------
+# The Latin edition -- `prayer.common.la`
+# --------------------------------------------------------------------------
+#
+# LATIN IS AN EDITION, NOT A FIELD, AND THIS IS WHERE THE EDITION IS BUILT.
+# It supersedes the schema's original "Latin is a field, not an edition"
+# ruling (docs/corpus-schema.md §Prayers, reversed in docs/decisions.md):
+# every other work in this corpus reaches a Latin-preferring reader as a work
+# -- `bible.clementina.la`, `summa.la` -- and prayers were the one place where
+# setting Latin as the content language silently returned English instead,
+# because there was no `prayer.common.la` for `CONTENT_LANG_FALLBACK` to
+# resolve to. The per-prayer `latin` field STAYS exactly as it is: it is what
+# the source prints, it is what this edition is derived from, and it is what
+# a reader comparing a prayer with its bound Latin companion is looking at.
+#
+# THERE ARE TWO WITNESSES TO THIS TEXT AND THEY ARE NOT IDENTICAL. The Latin
+# is printed twice on vatican.va -- once in the English Compendium appendix
+# and once in the Portuguese -- and the two transcriptions differ. Measured
+# over all 21 prayers that carry Latin in both:
+#
+#   * 20 of 21 are WORD-IDENTICAL once ligatures, stress accents and
+#     punctuation are folded away. The Rosary is the sole exception.
+#   * The EN witness carries exactly ONE malformed character in the whole
+#     edition (`sæ´cula`, an `&aelig;&acute;` that never composed); the PT
+#     witness carries 14 grave-for-acute letters (13 `ò`, 1 `À`) across
+#     benedictus, te-deum, veni-creator-spiritus and magnificat.
+#   * Where they differ in LETTERS -- the Rosary alone -- EN is both fuller
+#     and better spelled: PT drops the "Mystéria luminósa" heading entirely
+#     and prints `Tempio` for `Templo`, `Dorninica` for `Dominica` (an rn/m
+#     slip) and `coniúcta` for `coniúncta`.
+#   * But the PT witness SEGMENTS BETTER in two prayers: it breaks Veni
+#     Creator Spiritus into its 7 stanzas and Veni Sancte Spiritus into its
+#     9, where EN runs each into a single undivided block. EN segments
+#     better in three (angelus 11/1, regina-caeli 5/1, rosary 12/9).
+#
+# So the edition takes EN'S TEXT AND THE FINER OF THE TWO SEGMENTATIONS. That
+# is the whole rule, and it is deliberately mechanical rather than a reading:
+# every character of the output comes from one witness, chosen once and
+# stated, while the other witness contributes only WHERE THE BREAKS FALL --
+# information EN does not carry and cannot be wrong about. Nothing is
+# reconciled character by character, nothing is re-accented to taste, and no
+# word is emitted that neither page printed. `_resegment` asserts that the
+# re-cut pieces rejoin to exactly the EN text they were cut from, so a
+# transplant that does not fit is refused rather than approximated.
+#
+# THE ONE EN DEFECT IS A CORRECTION, NOT A MERGE. `sæ´cula` is fixed in
+# pipeline/corrections/prayer.common.en.json, against the source HTML, with
+# the PT witness cited as the evidence for what was meant -- the ordinary
+# path for a source defect with a known correct value (docs/decisions.md
+# §Source-defect corrections policy). Fixing it there rather than here keeps
+# this function a pure selection over already-parsed text, and fixes the EN
+# edition's own `latin` field at the same time.
+
+LATIN_WORK_ID = "prayer.common.la"
+LATIN_TITLE = "Orationes Communes"
+
+# The witness whose TEXT the edition prints. See the section docblock.
+LATIN_BASE_LANG = "en"
+LATIN_SEGMENTATION_LANG = "pt"
+
+
+def _fold_stream(text: str) -> list[tuple[int, str]]:
+    """Every significant character of `text` as `(offset, folded)` pairs.
+
+    Significant means letters and digits; accents, ligature spelling,
+    punctuation, case and whitespace are all folded away, because those are
+    exactly the axes the two witnesses disagree on and none of them moves a
+    block boundary. A ligature folds to two entries sharing one offset, so
+    `æ` in one witness still lines up with `ae` in the other.
+    """
+    out: list[tuple[int, str]] = []
+    for i, ch in enumerate(text):
+        for folded in unicodedata.normalize("NFKD", ch.lower()):
+            if unicodedata.combining(folded):
+                continue
+            if folded in ("æ", "œ"):
+                folded = "ae" if folded == "æ" else "oe"
+            for c in folded:
+                if c.isalnum():
+                    out.append((i, c))
+    return out
+
+
+def _resegment(base_text: str, donor_blocks: list[str]) -> list[str] | None:
+    """Cut `base_text` where `donor_blocks` breaks, or `None` if it cannot.
+
+    Returns `None` rather than a best effort whenever the two witnesses do
+    not carry the same significant characters in the same order -- that is
+    the case where a transplant would silently move text between blocks, and
+    the caller keeps the base witness's own segmentation instead.
+    """
+    base = _fold_stream(base_text)
+    donor = [_fold_stream(b) for b in donor_blocks]
+    if [c for _, c in base] != [c for block in donor for _, c in block]:
+        return None
+
+    pieces: list[str] = []
+    start = 0
+    consumed = 0
+    for block in donor[:-1]:
+        consumed += len(block)
+        # Cut just past the last significant character of this donor block,
+        # so the punctuation and whitespace that follow it stay with it.
+        cut = base[consumed][0] if consumed < len(base) else len(base_text)
+        pieces.append(base_text[start:cut])
+        start = cut
+    pieces.append(base_text[start:])
+
+    # A transplant that does not rejoin to the original is not a transplant.
+    assert "".join(pieces) == base_text, "resegmentation lost or duplicated text"
+    return [p for p in pieces if p.strip()]
+
+
+def build_latin_edition(
+    en: list[Prayer], pt: list[Prayer]
+) -> tuple[list[Prayer], list[dict]]:
+    """`prayer.common.la`, derived from both witnesses -- see the docblock.
+
+    The report returned alongside is the audit trail: one row per prayer
+    saying which witness supplied the text, which supplied the breaks, and
+    whether the two disagreed about anything but orthography. It is written
+    into the work as `witnesses.json` so the choice is inspectable without
+    re-running this.
+    """
+    by_slug_pt = {p.slug: p for p in pt}
+    out: list[Prayer] = []
+    report: list[dict] = []
+
+    for source in en:
+        latin = source.latin
+        if latin is None:
+            continue
+        other = by_slug_pt.get(source.slug)
+        donor = other.latin if other else None
+
+        blocks = list(latin.blocks)
+        segmentation = LATIN_BASE_LANG
+        divergence: str | None = None
+
+        if donor is not None:
+            base_chars = [
+                c for _, c in _fold_stream(" ".join(b.text for b in latin.blocks))
+            ]
+            donor_chars = [
+                c for _, c in _fold_stream(" ".join(b.text for b in donor.blocks))
+            ]
+            if base_chars != donor_chars:
+                # Recorded, never reconciled: the witnesses disagree about
+                # the words themselves, and the base witness is the edition.
+                divergence = "witnesses differ in letters, not only in orthography"
+            elif len(donor.blocks) > len(blocks):
+                recut = _resegment(
+                    " ".join(b.text for b in latin.blocks),
+                    [b.text for b in donor.blocks],
+                )
+                if recut is not None:
+                    blocks = [BlockOut(kind="prose", text=t.strip()) for t in recut]
+                    segmentation = LATIN_SEGMENTATION_LANG
+
+        out.append(
+            Prayer(
+                n=len(out) + 1,
+                slug=source.slug,
+                title=latin.title,
+                blocks=blocks,
+            )
+        )
+        report.append(
+            {
+                "slug": source.slug,
+                "text_from": LATIN_BASE_LANG,
+                "segmentation_from": segmentation,
+                "blocks": len(blocks),
+                "blocks_en": len(latin.blocks),
+                "blocks_pt": len(donor.blocks) if donor else None,
+                "divergence": divergence,
+            }
+        )
+    return out, report
 
 
 # --------------------------------------------------------------------------
@@ -1426,12 +1641,13 @@ def build_manifest(
             "The three CCC prayers (the Apostles' Creed, Nicene Creed, and Our "
             "Father) are sourced from pages that do not print a Latin companion; "
             "the Coptic, Syro-Maronite, and Byzantine prayers likewise have none "
-            "in either Compendium language. Latin is deliberately a per-prayer "
-            "field, not a third work/edition: see docs/decisions.md and "
-            "docs/research/prayers.md §3 for why (a real `lang=la` edition would "
-            "reopen PLAN.md's unresolved UI-language-vs-content-language "
-            "question; the source itself prints Latin as a bound companion to "
-            "the vernacular, not as independently addressable text)."
+            "in either Compendium language. Latin is a per-prayer field AND, "
+            "since 2026-08-25, an edition: `prayer.common.la` is derived from "
+            "these fields and does not replace them -- the field is what the "
+            "source prints (a companion bound to the vernacular text, same "
+            "page, same cell), the edition is what a Latin-preferring reader "
+            "resolves to. See docs/decisions.md for the reversal of the "
+            "original field-not-edition ruling."
         ),
         (
             f"{n_with_variants} prayers carry a `variants` array (Regina Caeli, "
@@ -1552,6 +1768,145 @@ def write_outputs(
     )
 
 
+def build_latin_manifest(prayers: list[Prayer], report: list[dict]) -> dict:
+    """`prayer.common.la`'s manifest.
+
+    ITS `sources` ARE BOTH COMPENDIUM PAGES, and that is the honest listing
+    rather than a tidy one. The Latin printed here was transcribed from the
+    English page; the Portuguese page is what says where five of these
+    prayers break into stanzas. Both pages are load-bearing for what this
+    file contains, so both are cited -- provenance is a URL a reader can
+    check, and citing only one of them would make the other's contribution
+    unattributable.
+    """
+    resegmented = [
+        r["slug"] for r in report if r["segmentation_from"] != LATIN_BASE_LANG
+    ]
+    diverged = [r["slug"] for r in report if r["divergence"]]
+    return {
+        "id": LATIN_WORK_ID,
+        "type": "prayer",
+        "title": LATIN_TITLE,
+        "short_title": LATIN_TITLE,
+        "language": "la",
+        "edition": "Compendium of the CCC (2005) Appendix A, Latin columns",
+        "sources": [
+            {"url": EN_URL, "retrieved_at": RETRIEVED_AT},
+            {"url": PT_URL, "retrieved_at": RETRIEVED_AT},
+        ],
+        "copyright": {
+            "status": "copyrighted",
+            "holder": COPYRIGHT_HOLDER,
+            "notice": COPYRIGHT_NOTICE,
+        },
+        "notes": " ".join(
+            [
+                (
+                    f"Derived, not separately scraped: the {len(prayers)} prayers the "
+                    "Compendium of the CCC prints with a Latin companion, lifted out "
+                    "of the `latin` field the two vernacular editions already carry. "
+                    "The other 7 entries of those editions (the Apostles' and Nicene "
+                    "Creeds, the Our Father, the three Eastern prayers and the Litany "
+                    "of Loreto) are printed with no Latin anywhere in the source and "
+                    "so are absent here -- a property of the source, not a gap to "
+                    "fill. The per-prayer `latin` field remains in both vernacular "
+                    "editions: it is what the source prints and what this edition is "
+                    "derived from."
+                ),
+                (
+                    "TWO WITNESSES, ONE TEXT. The Latin appears twice on vatican.va, "
+                    "once in each vernacular Compendium page, and the two "
+                    "transcriptions differ. The text here is the ENGLISH page's "
+                    "throughout: it carries one malformed character in the whole "
+                    "edition against the Portuguese page's 14 grave-for-acute "
+                    "letters, and where the two disagree in letters rather than "
+                    "orthography -- the Rosary alone -- it is both fuller (the "
+                    "Portuguese drops the Myst\u00e9ria lumin\u00f3sa heading) and "
+                    "better spelled. Every other character-level difference between "
+                    "the two is an accent or a ligature, and 20 of the 21 prayers are "
+                    "word-identical once those are folded away."
+                ),
+                (
+                    "WHAT THE PORTUGUESE WITNESS CONTRIBUTES IS WHERE THE BREAKS "
+                    f"FALL. {len(resegmented)} prayers ({', '.join(resegmented)}) are "
+                    "printed there as separate stanzas and in the English page as one "
+                    "undivided block; the English text is re-cut at those boundaries, "
+                    "checked to rejoin exactly. No character of this edition comes "
+                    "from the Portuguese page."
+                    + (
+                        f" {len(diverged)} prayer(s) ({', '.join(diverged)}) where the "
+                        "witnesses disagree about the words themselves keep the "
+                        "English reading and the English segmentation."
+                        if diverged
+                        else ""
+                    )
+                ),
+                (
+                    "See witnesses.json for the per-prayer audit trail, and "
+                    "docs/decisions.md for the reversal of the schema's original "
+                    '"Latin is a field, not an edition" ruling.'
+                ),
+            ]
+        ),
+        "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "corrections_applied": 0,
+    }
+
+
+def write_latin_outputs(prayers: list[Prayer], report: list[dict]) -> None:
+    out_dir = WORKS_ROOT / LATIN_WORK_ID
+    out_dir.mkdir(parents=True, exist_ok=True)
+    manifest = build_latin_manifest(prayers, report)
+    write_stamped_json(
+        out_dir,
+        {
+            "manifest.json": manifest,
+            "structure.json": build_structure(prayers, "la"),
+            "prayers.json": [p.to_dict() for p in prayers],
+            "witnesses.json": report,
+        },
+        manifest["generated_at"],
+    )
+
+
+def validate_latin(
+    latin: list[Prayer], en: list[Prayer], pt: list[Prayer]
+) -> tuple[bool, list[str]]:
+    """Per-edition invariants for the derived work.
+
+    The cross-language oracle CLAUDE.md describes does not apply as written:
+    this edition covers a strict subset of the vernacular slug set by
+    construction, so equal slug sets would be the wrong thing to assert. What
+    IS assertable, and is what these checks are, is that the derivation lost
+    nothing -- every prayer with a Latin companion reached the edition, and
+    every character of it still folds to what the English witness printed.
+    """
+    problems: list[str] = []
+    expected = [p.slug for p in en if p.latin]
+    got = [p.slug for p in latin]
+    if got != expected:
+        problems.append(f"slug set/order drifted: {got} != {expected}")
+
+    en_by_slug = {p.slug: p for p in en}
+    for prayer in latin:
+        source = en_by_slug[prayer.slug].latin
+        assert source is not None
+        want = [c for _, c in _fold_stream(" ".join(b.text for b in source.blocks))]
+        have = [c for _, c in _fold_stream(" ".join(b.text for b in prayer.blocks))]
+        if want != have:
+            problems.append(f"{prayer.slug}: text differs from the EN witness")
+        if any(not b.text.strip() for b in prayer.blocks):
+            problems.append(f"{prayer.slug}: empty block")
+
+    pt_slugs = {p.slug for p in pt if p.latin}
+    missing = [s for s in got if s not in pt_slugs]
+    if missing:
+        # Not a failure: a prayer only one page prints Latin for is legitimate.
+        # Reported so it is never a silent asymmetry.
+        problems.append(f"note: Latin printed only in EN for {missing}")
+    return not [p for p in problems if not p.startswith("note:")], problems
+
+
 def print_summary(
     lang: str, prayers: list[Prayer], ok: bool, problems: list[str]
 ) -> None:
@@ -1626,6 +1981,22 @@ def run(lang: str) -> tuple[list[Prayer], list[dict]]:
     return prayers, applied
 
 
+def print_latin_summary(prayers: list[Prayer], report: list[dict]) -> None:
+    resegmented = [r for r in report if r["segmentation_from"] != LATIN_BASE_LANG]
+    diverged = [r for r in report if r["divergence"]]
+    print("\n=== LA summary (derived) ===")
+    print(f"prayers with a Latin companion: {len(prayers)}")
+    print(f"text witness: {LATIN_BASE_LANG} (every character)")
+    print(
+        f"re-segmented from {LATIN_SEGMENTATION_LANG}: {len(resegmented)}"
+        + (f" ({', '.join(r['slug'] for r in resegmented)})" if resegmented else "")
+    )
+    print(
+        f"witnesses disagree in letters: {len(diverged)}"
+        + (f" ({', '.join(r['slug'] for r in diverged)})" if diverged else "")
+    )
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--lang", choices=["en", "pt", "both"], default="both")
@@ -1659,6 +2030,17 @@ def main() -> int:
     pt = results.get("pt", [])
     if "en" in results and "pt" in results:
         ok, problems = validate(en, pt)
+        # The Latin edition needs BOTH witnesses -- the English for its text,
+        # the Portuguese for where five prayers break into stanzas -- so it is
+        # built only on a full run, never on `--lang en` alone. Writing it
+        # from one witness would silently produce a differently-segmented
+        # edition under the same work id.
+        latin, witnesses = build_latin_edition(en, pt)
+        write_latin_outputs(latin, witnesses)
+        latin_ok, latin_problems = validate_latin(latin, en, pt)
+        ok = ok and latin_ok
+        problems = problems + latin_problems
+        print_latin_summary(latin, witnesses)
     else:
         # single-language run: validate what we have against itself, with
         # the other side's slug set standing in (only the per-language

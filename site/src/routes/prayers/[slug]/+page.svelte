@@ -17,16 +17,23 @@
 	 * the picker replaced by the word "Latina".
 	 *
 	 * So this route now resolves a target like every other one
-	 * (`compare.resolveTarget`), over a list that mixes the two kinds:
+	 * (`compare.resolveTarget`), over every OTHER language's copy of this
+	 * same slug — all of them real works with real ids.
 	 *
-	 *   - each OTHER language's copy of this same slug — real works, real ids;
-	 *   - the Latin field, under `LATIN_TARGET`, which is not a work id and is
-	 *     not pretending to be (see that constant).
+	 * LATIN IS ONE OF THEM NOW. It used to be the exception this file existed
+	 * to accommodate: a fabricated `prayer.latin` target whose manifest was
+	 * the vernacular work's with `id` and `language` overwritten, because the
+	 * schema held that "Latin is a field, not an edition". That ruling is
+	 * reversed (docs/decisions.md) and `prayer.common.la` is a real work, so
+	 * the fabrication and the second cell shape it needed are both gone —
+	 * every column on this page is now a whole `Prayer` from a whole edition.
+	 * The `latin` FIELD stays in the corpus, unchanged: it is what the source
+	 * prints, and it is what the Latin edition was derived from.
 	 *
-	 * Latin sorts first, so it stays what `AUTO` picks and what a reader who
-	 * has expressed no preference sees — `/preces`' own tagline is "Prayers
-	 * with the Latin text alongside", and that remains the default reading of
-	 * the page.
+	 * Latin sorts first among the alternatives, so it stays what `AUTO` picks
+	 * and what a reader who has expressed no preference sees — `/preces`' own
+	 * tagline is "Prayers with the Latin text alongside", and that remains the
+	 * default reading of the page.
 	 *
 	 * BOTH SIDES ARE KEYED ON THE LEFT PRAYER'S `n`, deliberately, and this is
 	 * the one place `alignByNumber` is handed a number rather than reading it.
@@ -67,7 +74,7 @@
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { t } from '$lib/i18n.svelte';
-	import type { Prayer, WorkManifest } from '$lib/types';
+	import type { Prayer } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -78,64 +85,33 @@
 	let current = $derived(data.byLang[lang]);
 
 	/**
-	 * What the compare preference stores when the second column is the Latin
-	 * FIELD rather than another work.
+	 * Every second column this page can offer, in menu order: each OTHER
+	 * language's edition of this same slug, Latin included.
 	 *
-	 * DELIBERATELY NOT WORK-ID-SHAPED. Every real prayer work is
-	 * `prayer.common.{lang}`, so the tempting spelling here is
-	 * `prayer.common.la` — and it would be a lie of exactly the kind
-	 * docs/corpus-schema.md §Prayers exists to prevent: there is no Latin
-	 * prayer work, the source never prints Latin as independently addressable
-	 * content, and a stored id claiming otherwise would be the first step
-	 * toward code that tries to load one. `prayer.latin` cannot collide with
-	 * a work id because no work id has that shape, and it reads correctly in
-	 * the `?compare=` link it ends up in: the Latin, of this prayer.
+	 * LATIN SORTS FIRST rather than alphabetically among the rest, and that
+	 * is the one thing here that is a choice rather than a listing. `/preces`
+	 * is published as "Prayers with the Latin text alongside", so Latin is
+	 * what `AUTO` must keep landing on for a reader who has expressed no
+	 * preference — a sibling vernacular winning that slot because its tag
+	 * happens to sort earlier would quietly change what the collection is.
 	 *
-	 * The store treats it as an opaque string either way — `resolveTarget`
-	 * only asks whether the route offers it (`compare-pref.svelte.ts`), so
-	 * nothing outside this file needs to know it isn't a work.
-	 */
-	const LATIN_TARGET = 'prayer.latin';
-
-	/**
-	 * Every second column this page can offer, in menu order.
-	 *
-	 * THE LATIN ENTRY BORROWS THE VERNACULAR WORK'S MANIFEST, overriding only
-	 * the id and the language, and that is accurate rather than convenient:
-	 * the Latin text IS part of this work — same array entry, same scraped
-	 * vatican.va page, therefore the same sources and the same copyright.
-	 * Everything the picker and the column tag read off a manifest is
-	 * genuinely true of it. The two fields overridden are the two that are
-	 * not: it is not separately addressable, and it is not in the vernacular.
-	 *
-	 * `render` is what the right cell needs and the manifest cannot say: a
-	 * sibling language brings a whole `Prayer` (rubric, variants, the Rosary's
-	 * groups, instructions) and gets the same full body treatment the left
-	 * column gets, while the Latin field carries only a title and blocks.
+	 * NOT EVERY PRAYER HAS A LATIN EDITION. Seven of the twenty-eight are
+	 * printed with no Latin anywhere in the source (the two Creeds, the Our
+	 * Father, the three Eastern prayers, the Litany of Loreto), so
+	 * `prayer.common.la` genuinely has no entry for them and `+page.ts`
+	 * simply never puts one in `byLang`. Those pages offer the other
+	 * vernacular instead, which is the ordinary "hide, don't disable"
+	 * outcome rather than a case to handle.
 	 */
 	const comparisons = $derived.by(() => {
 		if (!current) return [];
-		const out: { work: WorkManifest; title: string; prayer?: Prayer; blocks: Prayer['blocks'] }[] =
-			[];
-		const latin = current.prayer.latin;
-		if (latin) {
-			out.push({
-				work: { ...current.work, id: LATIN_TARGET, language: 'la' },
-				title: latin.title,
-				blocks: latin.blocks
-			});
-		}
-		for (const other of Object.keys(data.byLang).sort()) {
-			if (other === lang) continue;
+		const langs = Object.keys(data.byLang)
+			.filter((other) => other !== lang)
+			.sort((a, b) => (a === 'la' ? -1 : b === 'la' ? 1 : a.localeCompare(b)));
+		return langs.map((other) => {
 			const entry = data.byLang[other];
-			out.push({
-				work: entry.work,
-				title: entry.prayer.title,
-				prayer: entry.prayer,
-				blocks: entry.prayer.blocks
-			});
-		}
-		return out;
+			return { work: entry.work, title: entry.prayer.title, prayer: entry.prayer };
+		});
 	});
 
 	adoptCompareFromUrl();
@@ -162,8 +138,7 @@
 				{
 					n: prayer.n,
 					title: secondary.title,
-					prayer: secondary.prayer,
-					blocks: secondary.blocks
+					prayer: secondary.prayer
 				}
 			]
 		);
@@ -290,18 +265,14 @@
      other compare route puts the pair, and where an identical pair collapses
      to one instead of being set twice.
 
-     A SIBLING LANGUAGE GETS THE FULL BODY, the Latin field only its blocks,
-     because that is all the Latin field has — no rubric, no variants, no
-     groups (docs/corpus-schema.md §Prayers). Rendering the whole prayer
-     wherever there is a whole prayer is what keeps an English/Português
-     comparison from silently dropping the Rosary's mysteries out of one
-     column. -->
-{#snippet rightCell(u: { n: number; title: string; prayer?: Prayer; blocks: Prayer['blocks'] })}
-	{#if u.prayer}
-		{@render prayerBody(u.prayer, secondary?.work.language ?? 'en')}
-	{:else}
-		<PrayerBlocks blocks={u.blocks} />
-	{/if}
+     ONE SHAPE, NOT TWO. This snippet used to branch on whether the right side
+     was a whole `Prayer` or the bare title-and-blocks of the Latin FIELD.
+     Latin is an edition now (see the module docblock), so every column is a
+     whole prayer and the branch is gone — which also means the Latin column
+     renders a rubric or a group if the Latin edition ever prints one, instead
+     of silently dropping it the way the field-shaped cell had to. -->
+{#snippet rightCell(u: { n: number; title: string; prayer: Prayer })}
+	{@render prayerBody(u.prayer, secondary?.work.language ?? 'en')}
 {/snippet}
 
 {#if current}
@@ -370,17 +341,30 @@
 				<h1>{current.prayer.title}</h1>
 			{/if}
 
-			<!-- OUTSIDE the header, and one notice in both modes. Every other
-			     compare route carries TWO, kept apart because they link to
-			     different source pages and that link is the checkable part
-			     (`CopyrightNotice.svelte`). Here there is one work and one page —
-			     `latin` is a field on the same array entry, scraped from the same
-			     vatican.va page (docs/corpus-schema.md §Prayers, "Latin is a field,
-			     not an edition") — so a second notice would not be provenance, it
-			     would be the same sentence twice. A full-width line under both
-			     titles says it covers both, and it says so identically whether or
-			     not the reader is comparing. -->
-			<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+			<!-- TWO NOTICES WHILE COMPARING, like every other compare route, and
+			     the reason this route no longer has its own rule here is that it
+			     no longer has its own second column. It used to print ONE, on the
+			     grounds that `latin` was a field on the same array entry from the
+			     same scraped page, so a second notice would have been the same
+			     sentence twice rather than provenance. `prayer.common.la` is a
+			     real edition with a real manifest now, and its sources are not
+			     the vernacular's: it cites BOTH Compendium pages, because the
+			     English one is where its text was transcribed and the Portuguese
+			     one is where five of these prayers break into stanzas. Two
+			     notices linking to different source lists is exactly the case
+			     `CopyrightNotice` exists to make checkable. -->
+			{#if compareActive && secondary}
+				<div class="compare-unit-header">
+					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
+						<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+					</div>
+					<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
+						<p class="copyright-notice"><CopyrightNotice manifest={secondary.work} /></p>
+					</div>
+				</div>
+			{:else}
+				<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+			{/if}
 
 			<!-- `{#if secondary}` rather than `{#if compareActive}`, which is the
 			     same condition: the derived boolean is what the layout classes and
