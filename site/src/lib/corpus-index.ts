@@ -338,7 +338,7 @@ const realContentManifest = import.meta.glob('./corpus-data/index/content-manife
  * `site/unpublished.json`, which documents the mechanism. Index tier, and
  * tiny: one id per disabled work, normally none at all. Ids only; the
  * registry's `date` and `reason` are notes for whoever files an entry and
- * never reach the client (docs/decisions.md, 2026-08-23).
+ * never reach the client (docs/decisions.md §Posture).
  *
  * Carried as data rather than inferred from "this work has no content files",
  * because a partially-built corpus looks identical from the outside and wants
@@ -739,7 +739,7 @@ function contentKey(globPath: string): string {
  * return, which already only carries the coarse-fetch's requested slice
  * (see corpus.ts's "COARSE FETCH, NARROW RETURN"). That SSR path dates from
  * when every route was prerendered; since the site became one SPA shell
- * with `ssr = false` (`+layout.ts`, docs/decisions.md 2026-08-18) no
+ * with `ssr = false` (`+layout.ts`, docs/decisions.md §The site) no
  * route's `load()` runs on the server at all, so `relPath` has nothing left
  * to read against today — `corpus.ts`'s docblock covers why it stays.
  */

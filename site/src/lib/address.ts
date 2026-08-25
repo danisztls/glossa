@@ -62,7 +62,7 @@ export type Address =
 	/** A document, or one numbered section of it. `n` absent is the whole
 	 *  document: a section is a FRAGMENT on the document's single page
 	 *  (`#s{n}`), not a page of its own -- `documents/[slug]/[n]` was retired
-	 *  2026-08-17 (docs/decisions.md; 9,315 prerendered files for one section
+	 *  2026-08-17 (docs/decisions.md §The site; 9,315 prerendered files for one section
 	 *  of text each). */
 	| { kind: 'document'; slug: string; n?: number }
 	/** A Summa question, or one article of it (`#a3`). Articles are fragments
@@ -182,8 +182,8 @@ function canonicalNumber(segment: string, min: 0 | 1): number | undefined {
 /**
  * Read an address out of an href, or `undefined` for anything that is not one
  * -- nav chrome, an external URL, a legacy English path (`/ccc/1`,
- * `/prayers/x`, deliberately invalid site-wide since docs/decisions.md
- * 2026-08-18), a retired shape, or a stored value from a future version of
+ * `/prayers/x`, deliberately invalid site-wide -- docs/decisions.md
+ * §Addresses and editions), a retired shape, or a stored value from a future version of
  * this grammar.
  *
  * `undefined` is always "not a place", never an error; see the module

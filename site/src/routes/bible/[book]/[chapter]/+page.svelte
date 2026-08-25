@@ -225,7 +225,7 @@
 	 * the design rather than working around a restriction, and the chapter
 	 * rendered complete without JavaScript, with only the passage marking
 	 * needing it. Since the site became one SPA shell with `ssr = false`
-	 * (`+layout.ts`, docs/decisions.md 2026-08-18) no route component runs
+	 * (`+layout.ts`, docs/decisions.md §The site) no route component runs
 	 * during the build at all — the whole chapter now needs JavaScript to
 	 * render, not just the highlight — so the guard is no longer load-bearing
 	 * against a prerendering throw; it stays because it still states the

@@ -6,9 +6,16 @@
  * (a presence-only paper tint that yields to dark), `data-oled` (a
  * presence-only true black that needs it) and `data-mono` (a presence-only
  * single-hue palette, which suspends sepia for the same reason dark does).
- * See `src/lib/theme.svelte.ts`. Colors are placeholders — real
- * palette lands in the design pass (see docs/decisions.md); the type below
- * is no longer a placeholder.
+ * See `src/lib/theme.svelte.ts`.
+ *
+ * The colours are the palette, not a stand-in for one. This header used to
+ * say they were placeholders awaiting a design pass; there is no such pass
+ * pending — the design is made here, against the running site, and the
+ * reasoning for every value lives beside it. Read "THREE REDS AND A BLUE"
+ * below before changing one: what has to survive an edit is the ROLE
+ * (sober red for small text, vermilion for the initial, lapis for the
+ * reference apparatus) and the contrast bar each colour was picked to
+ * clear, neither of which is recoverable from the hex alone.
  */
 
 /*
@@ -1303,7 +1310,7 @@ input {
  * Douay-Rheims carries 1,307 of them).
  *
  * SET AS APPARATUS, NOT AS TEXT. It is Challoner writing about Scripture, and
- * the 2026-08-16 naming rule (docs/decisions.md) is that a gloss must never be
+ * the naming rule (docs/decisions.md §Posture) is that a gloss must never be
  * confusable with its source. So it takes the sans face and the muted colour
  * the notes take, and closes with the rule that opens the reading column
  * rather than sitting inside it. Italic on top of that would be a fourth
@@ -2321,7 +2328,7 @@ input {
 
 /*
  * Inline citation marker + trigger button, shared verbatim by
- * CccParagraphText and PrayerMystery. Their citation *behavior* differs on
+ * ProseBlocks and PrayerMystery. Their citation *behavior* differs on
  * purpose (a Set of open markers vs. a single boolean) and stays in each
  * component; only this purely visual shell is identical.
  */

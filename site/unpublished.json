@@ -51,7 +51,7 @@
 		"concern most of the site at once — a whole-site decision (stop publishing,",
 		"or degrade everything to link-outs), not a handful of entries here. This",
 		"file is not that lever and should not be mistaken for one. See",
-		"docs/decisions.md, 2026-08-16.",
+		"docs/decisions.md §Posture.",
 		"",
 		"Example:",
 		"  \"encyclical.humanae-vitae.pt\": {",

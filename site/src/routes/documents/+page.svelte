@@ -39,7 +39,7 @@
 	//
 	// EVERY document gets a row, including one whose text this build does not
 	// have: `/documenta/{slug}` redirects that reader to the source page
-	// instead of showing them nothing (docs/decisions.md, 2026-08-24), so the
+	// instead of showing them nothing (docs/decisions.md §Posture), so the
 	// row leads somewhere either way and the library needs no second state.
 	/**
 	 * Descriptions translated into the reader's interface language, `document

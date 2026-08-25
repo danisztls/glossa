@@ -93,8 +93,8 @@ from common import (
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 
-# The corpus is a separate, private repository (docs/decisions.md,
-# 2026-08-23); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
+# The corpus is a separate, private repository (docs/decisions.md
+# §The corpus); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
 RAW_ROOT = raw_root()
 WORKS_ROOT = works_root()
 

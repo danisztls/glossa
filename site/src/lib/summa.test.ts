@@ -20,7 +20,7 @@ import type { RefSegment } from './refs-grammar';
 /**
  * The Summa is the first work with no edition in one of the two interface
  * languages, and the first whose two editions cover different PARTS. Both
- * facts are permanent (docs/decisions.md, 2026-08-23): Portuguese is under
+ * facts are permanent (docs/decisions.md §Scope): Portuguese is under
  * copyright until 2055, and the Corpus Thomisticum publishes no Latin
  * Supplement. So these are not tests of a temporary corpus state.
  *

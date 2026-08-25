@@ -566,7 +566,7 @@ oracle (`<corpus>/oracles/toc/`) the earlier entries kept calling for, so all
 
 Two mechanical audits (`pipeline/scrapers/audit.py`) retired work the sweep
 would otherwise have done slowly and less reliably. Reasoning in
-`decisions.md`, 2026-08-23; the short version is that **coverage** (raw body
+`decisions.md` §Oracles; the short version is that **coverage** (raw body
 text vs stored text) sees a class neither existing oracle can: the round-trip
 check is a statement about one block, and cross-language symmetry compares
 section-number sets, so a block that never became a block is invisible to both.

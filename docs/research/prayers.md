@@ -137,7 +137,7 @@ Both already carry the compendium's own copyright notice ("© Copyright 2005 - L
 
 ## 6. URL / link surface
 
-Consistent with `decisions.md`'s existing pattern for CCC/Compendium — same reasoning the 2026-08-15 "Content language follows UI language" entry already gives for those two ("language and edition are the same axis… leaving edition out of the URL loses no addressing information") applies identically here: one prayer text per language, no competing editions.
+Consistent with `decisions.md`'s existing pattern for CCC/Compendium — same reasoning `decisions.md` §Languages already gives for those two ("language and edition are the same axis… leaving edition out of the URL loses no addressing information") applies identically here: one prayer text per language, no competing editions.
 
 - `/prayers` — index, listing all prayers (grouped the way the source groups them if that reads well; otherwise flat — a UX call, not a data one)
 - `/prayers/{slug}` — e.g. `/prayers/our-father` _(if the Creed tranche lands, this would actually be `/prayers/sign-of-the-cross`, `/prayers/hail-mary`, `/prayers/rosary`, `/prayers/apostles-creed`, …)_, edition-free, resolving language client-side from the stored preference exactly like `/ccc/{n}` and `/compendium/{n}` do today.

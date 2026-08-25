@@ -69,7 +69,7 @@
  * SvelteKit's server build, not whenever a route is prerendered — those
  * used to be the same thing, back when every route was prerendered, but
  * since the site became one SPA shell with `ssr = false` (`+layout.ts`,
- * docs/decisions.md 2026-08-18) no route's `load()` executes on the server
+ * docs/decisions.md §The site) no route's `load()` executes on the server
  * for a real visit any more, so `readContentFromDisk`'s branch has nothing
  * left to run against in production — it stays correct and in place
  * because the split was never actually about prerendering, only about
@@ -251,7 +251,7 @@ export function listEditions(type: WorkType): WorkManifest[] {
  * question never arose — `defaultWorkId` took "the first edition" and the
  * answer happened to be English because `en` sorts before `la` and `pt`.
  * The Summa breaks that: it ships EN + LA and no Portuguese, and will not
- * have one before 2055 (docs/decisions.md, 2026-08-23). A Portuguese reader
+ * have one before 2055 (docs/decisions.md §Scope). A Portuguese reader
  * following a citation to `STh I-II, 79, 1` must land somewhere, and which
  * somewhere should not be a property of how work ids happen to alphabetize.
  *
@@ -387,7 +387,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
  * A REGIONAL EDITION NAMES ITS REGION; the unmarked one does not.
  * `prayer.common.en-gb` is the UK wording of the five prayers the source
  * prints twice, alongside `prayer.common.en`, which is the collection
- * (docs/decisions.md, 2026-08-25). Only the marked one needs a name here —
+ * (docs/decisions.md §Addresses and editions). Only the marked one needs a name here —
  * `en` falls through to `LANGUAGE_NAMES` and stays plain "English", which is
  * what the collection is.
  *
@@ -672,7 +672,7 @@ declare const __CORPUS_DATA_DIR__: string;
  *     the page except `load`'s own return. `import.meta.env.SSR` is true
  *     whenever this module runs in SvelteKit's server build; since the site
  *     became one SPA shell with `ssr = false` (`+layout.ts`,
- *     docs/decisions.md 2026-08-18) no route's `load()` runs there for a
+ *     docs/decisions.md §The site) no route's `load()` runs there for a
  *     real visit any more, so this branch has nothing left to run against
  *     today — it is kept because the split was never really "prerender vs
  *     runtime", only "server vs browser", and `import.meta.env.SSR` still
@@ -964,7 +964,7 @@ export function getCccChapterFor(lang: string, n: number): CccNode | undefined {
  * entry list handed to `adapter-static`'s prerendering for
  * `/catechismus/caput/[n]`, back when every route was prerendered
  * individually. Since the site became one SPA shell with `ssr = false`
- * (`+layout.ts`, docs/decisions.md 2026-08-18) there is no such entry list
+ * (`+layout.ts`, docs/decisions.md §The site) there is no such entry list
  * to prerender any more; this now resolves a chapter address to its
  * structure node instead (`linkPreviewContent.ts` uses it to find the
  * chapter starting at a given paragraph number), and it still defines which
@@ -1756,7 +1756,7 @@ export function prayerLangs(): string[] {
  *
  * THE TWO DIFFER FOR A REGIONAL EDITION AND ONLY FOR ONE. `prayer.common.en-gb`
  * is the five prayers the source heads "UK VERSION" and nothing else
- * (docs/decisions.md, 2026-08-25), so indexing off it would present the
+ * (docs/decisions.md §Addresses and editions), so indexing off it would present the
  * collection as five prayers and a reader who prefers English (UK) would lose
  * the other twenty-three from the listing, the sidebar and the prev/next
  * chain — none of which they have lost: they read those from
@@ -1906,8 +1906,8 @@ export async function getPrayerAsync(lang: string, slug: string): Promise<Prayer
 // here takes a bare number the way `cccParagraphExists` can. An article is a
 // FRAGMENT on its question's page (`/summa/ii-ii/184#a3`), not a page of its
 // own: 3,113 articles would be 3,113 addresses for one article of text each,
-// which is the trade documents already made and reversed (docs/decisions.md,
-// 2026-08-17).
+// which is the trade documents already made and reversed (docs/decisions.md
+// §The site).
 
 export function summaLangs(): string[] {
 	return Object.keys(summaStructures).sort();

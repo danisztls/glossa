@@ -2,7 +2,7 @@
 	/**
 	 * One document, whole, on one page.
 	 *
-	 * THIS ROUTE ABSORBED TWO OTHERS on 2026-08-17 (docs/decisions.md): the
+	 * THIS ROUTE ABSORBED TWO OTHERS on 2026-08-17 (docs/decisions.md §The site): the
 	 * former `documents/[slug]/read` (continuous full text) and
 	 * `documents/[slug]/[n]` (one prerendered page per numbered section). The
 	 * per-section route alone was 9,315 of the deployment's 15,256 files — 61%
@@ -170,7 +170,7 @@
 	 * Metadata to head the page with — the manifest of the edition being read.
 	 * There is no second source for it any more: `+page.ts` 404s a document
 	 * with no readable edition, so if this page renders at all, some edition's
-	 * text is behind it (docs/decisions.md, 2026-08-23).
+	 * text is behind it (docs/decisions.md §Posture).
 	 */
 	const appendixUnits = $derived(
 		fetchedIsCurrent ? fetched!.appendix : (data.embeddedAppendix ?? [])

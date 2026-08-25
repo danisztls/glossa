@@ -1,6 +1,6 @@
 # Latin as a source language
 
-Research conducted 2026-08-15 (Claude, read-only survey; live `curl` fetches against `www.vatican.va` and `sacredbible.org`, both network-allowlisted for this task). Companion to `bible-texts.md`, `vatican-documents.md`, and `copyright.md`. Written to establish, empirically, whether Latin is actually fetchable and addressable before it's scheduled as a source language — see `../../PLAN.md`'s Latin phase for how these findings translate into scoped work, and `../decisions.md`'s 2026-08-15 "Latin as next source language" entry for the decision this feeds.
+Research conducted 2026-08-15 (Claude, read-only survey; live `curl` fetches against `www.vatican.va` and `sacredbible.org`, both network-allowlisted for this task). Companion to `bible-texts.md`, `vatican-documents.md`, and `copyright.md`. Written to establish, empirically, whether Latin is actually fetchable and addressable before it's scheduled as a source language — see `../../PLAN.md`'s Latin phase for how these findings translate into scoped work, and `../decisions.md` §Scope for the decision this feeds.
 
 **Scope note**: this document only establishes availability and addressability. Nothing here is scraped, parsed, or ingested — `pipeline/` is untouched by this task. See `../../PLAN.md` for sequencing.
 

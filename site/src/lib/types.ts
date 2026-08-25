@@ -164,8 +164,8 @@ export interface SummaQuestion {
 /**
  * A heading in the Summa's table of contents. Flat and document-ordered,
  * with ranges DERIVED rather than stored — the same shape and the same
- * reasoning as the documents' `DocumentNode` (docs/decisions.md,
- * 2026-08-21: "Nothing stored is nothing to drift").
+ * reasoning as the documents' `DocumentNode` (docs/decisions.md §Storage:
+ * "record the observable thing; derive the rest").
  *
  * `part` is the extra field the documents' node does not need: question
  * numbering restarts at 1 in each part, so `before` alone does not identify
@@ -756,8 +756,8 @@ export interface PrayerBlock {
 
 /** A prayer's Latin companion text, as the SOURCE prints it: a field on the
  *  vernacular entry, bound to the text beside it. `prayer.common.la` is
- *  derived from these and does not replace them (docs/decisions.md,
- *  2026-08-25). Present on 21 of 28 prayers in the real corpus; genuinely
+ *  derived from these and does not replace them (docs/decisions.md
+ *  §Addresses and editions). Present on 21 of 28 prayers in the real corpus; genuinely
  *  absent (not a capture gap) for the three Eastern-rite prayers, which the
  *  source prints with no Latin text in either language. */
 export interface PrayerLatin {

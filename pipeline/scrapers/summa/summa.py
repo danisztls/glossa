@@ -14,7 +14,7 @@ server-rendered text (aquinas.cc). So the two editions come from the two best
 single-language sources and are joined by ADDRESS, which is safe here in a way
 it would not be for a Bible: an article's address (part, question, article,
 division) is the same in both because it is the work's own structure, not an
-editorial decision either site made. See docs/decisions.md, 2026-08-23.
+editorial decision either site made.
 
   EN: https://ccel.org/ccel/aquinas/summa.xml
       CCEL's ThML source for the Fathers of the English Dominican Province
@@ -297,8 +297,9 @@ def strip_tags(html_text: str) -> str:
     """The plain text of a narrowed-HTML block.
 
     Inline tags are dropped with NO replacement -- `strip_tags` on the CCC
-    learned this the expensive way (docs/decisions.md, 2026-08-23: "inline
-    tags are not whitespace"), and `<i>quae</i>dam` must not become `quae dam`.
+    learned this the expensive way (docs/decisions.md §Storage: "inline
+    emphasis is not a word boundary"), and `<i>quae</i>dam` must not become
+    `quae dam`.
     `<br>` is the one that genuinely separates words.
     """
     text = re.sub(r"<br\s*/?>", " ", html_text, flags=re.IGNORECASE)

@@ -27,7 +27,7 @@
 	 * before reading a word. That is an edition boundary, and is now built as
 	 * one: `prayer.common.en` is the collection and prints the USA wording,
 	 * `prayer.common.en-gb` is those five prayers in the UK wording and
-	 * nothing else (docs/decisions.md, 2026-08-25). The reader picks once, in
+	 * nothing else (docs/decisions.md §Addresses and editions). The reader picks once, in
 	 * the same menu as every other work, and `variants` is gone from the
 	 * schema rather than carried for five entries.
 	 *

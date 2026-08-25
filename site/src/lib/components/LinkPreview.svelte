@@ -36,7 +36,7 @@
 	 * one static, empty, invisible root div unconditionally, which used to
 	 * matter doubly: present in the prerendered HTML, hydration had nothing
 	 * to attach that wasn't already there. Since the site became one SPA
-	 * shell with `ssr = false` (`+layout.ts`, docs/decisions.md 2026-08-18)
+	 * shell with `ssr = false` (`+layout.ts`, docs/decisions.md §The site)
 	 * this component's `<script>` never runs outside the browser at all, so
 	 * neither guard is load-bearing against a build-time throw any more —
 	 * they are kept because the discipline (touch `window`/`document` only

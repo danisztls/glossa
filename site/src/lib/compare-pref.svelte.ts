@@ -75,7 +75,7 @@ class CompareStore {
 	 * because one prerendered file served every query string that points at
 	 * it (see `bible/[book]/[chapter]/+page.svelte`'s `citedRange` docblock,
 	 * which documents that trap for `?v=`). Since the site became one SPA
-	 * shell with `ssr = false` (`+layout.ts`, docs/decisions.md 2026-08-18)
+	 * shell with `ssr = false` (`+layout.ts`, docs/decisions.md §The site)
 	 * no route component runs during the build at all, so the guard is now
 	 * belt-and-braces rather than load-bearing — kept because it states the
 	 * requirement, not because this can run server-side.

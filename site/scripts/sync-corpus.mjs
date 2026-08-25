@@ -50,7 +50,7 @@
  * Configurable via the `CORPUS_DIR` env var (default: `../../glossa-corpus`,
  * resolved relative to this `site/` package — the corpus is a separate,
  * private repository expected as a sibling checkout of this one, see
- * docs/decisions.md, 2026-08-23). Spelled the same way as
+ * docs/decisions.md §The corpus). Spelled the same way as
  * `pipeline/scrapers/common/`'s `corpus_dir()`, so one exported variable
  * moves both halves of the project. If no corpus is found, this is a no-op
  * (with a warning): `corpus.ts` falls back to its fixtures, so the site
@@ -106,7 +106,7 @@ const CCC_CHUNK_SIZE = 100;
  *  "~200 KB raw worst-case (Gaudium et Spes)" — had gone stale by 4×: Gaudium
  *  et Spes measures 623 KB today and the real worst case is Evangelium Vitae
  *  at 827 KB. The claim was written 2026-08-16 and `html` landed on
- *  2026-08-21 (docs/decisions.md), which is most of the gap; nobody re-measured
+ *  2026-08-21 (docs/decisions.md §Storage), which is most of the gap; nobody re-measured
  *  after. What made it matter is that a hover LINK PREVIEW of a single cited
  *  section (`linkPreviewContent.ts`) pays for the whole file, so citing one
  *  paragraph of an encyclical downloaded the encyclical.
@@ -263,7 +263,7 @@ const descriptions = existsSync(descriptionsPath)
  * merged into the manifest here: the index tier is eagerly loaded by every
  * reader, and putting eight translations of every description into it would
  * multiply the one field in it that is prose. Translations are stored and are
- * not yet shipped — see docs/decisions.md, 2026-08-25.
+ * not yet shipped.
  *
  * A work's own language is the only one a reading can be in, so this is a
  * lookup rather than a search: `encyclical.rerum-novarum.pt` is described in
@@ -728,7 +728,7 @@ writeJson(path.join(indexDir, 'summa-index.json'), summaIndex);
  * corpus. `corpus/xrefs/ccc-bible.json` used to be a committed file built by
  * a separate Python parser; it is now computed from `corpus/works/` on every
  * build by the site's own citation grammar. See `build-xrefs.mjs` for why,
- * and docs/decisions.md (2026-08-21).
+ * and docs/decisions.md §Parsing.
  */
 // The grammar's document-title and siglum matchers are fed the same document
 // list `refs.ts` hands them in the browser, so the builder and the renderer
@@ -923,7 +923,7 @@ const routeManifest = {
 	].sort((a, b) => a - b),
 	// From `manifests`, so a document the corpus knows about is an address even
 	// when this build has none of its text: `/documenta/{slug}` redirects that
-	// reader to the source page (docs/decisions.md, 2026-08-24), and it needs
+	// reader to the source page (docs/decisions.md §Posture), and it needs
 	// the shell in order to do it.
 	documents: [
 		...new Set(
@@ -955,7 +955,7 @@ writeJson(routeManifestPath, routeManifest);
 // IDS ONLY, not the entries. The site's one question is "is this work
 // switched off", which it asks to keep from offering an address whose content
 // was never written; `date` and `reason` are notes to whoever files an entry
-// and have no reader-facing surface (docs/decisions.md, 2026-08-23).
+// and have no reader-facing surface (docs/decisions.md §Posture).
 //
 // Copied at all — rather than inferred from "no content files" — because
 // "content absent" is also what a partially-built corpus looks like, and the

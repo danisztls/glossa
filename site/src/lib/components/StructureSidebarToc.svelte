@@ -207,7 +207,7 @@
 	// scroll container (`.reading-aside` is `overflow-y: auto` — app.css)
 	// whenever they land on a new page. Browser-only: `document` doesn't
 	// exist outside a browser. That guarded against a prerendering throw;
-	// since `ssr = false` (`+layout.ts`, docs/decisions.md 2026-08-18) no
+	// since `ssr = false` (`+layout.ts`, docs/decisions.md §The site) no
 	// route ever renders server-side at all now, so the guard is
 	// belt-and-braces rather than load-bearing — kept because it still
 	// states the actual requirement, and every route this component serves

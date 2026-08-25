@@ -353,7 +353,7 @@ async function cacheFirstAndStore(request: Request, cacheName: string): Promise<
  * prerendered pages weren't precached; the header no longer says that (see
  * its current SHELL_CACHE/CONTENT_CACHE split, above) because there are no
  * prerendered pages any more. Since the site became one SPA shell with
- * `ssr = false` (`+layout.ts`, docs/decisions.md 2026-08-18), the
+ * `ssr = false` (`+layout.ts`, docs/decisions.md §The site), the
  * network-first HTML carries no route content until the client hydrates —
  * true for a crawler or a no-JS reader exactly as it is for anyone else.
  * Only on network failure does this reach for the cached shell: the app

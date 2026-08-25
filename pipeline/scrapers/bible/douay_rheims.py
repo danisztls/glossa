@@ -704,7 +704,7 @@ def write_output(
         "on the unanchored, since a verse may carry several) -- where the source "
         "prints no anchor the note is filed against its own verse. Challoner's "
         "notes are a dated apparatus of eighteenth-century controversy, not "
-        "neutral commentary; see docs/decisions.md, 2026-08-16."
+        "neutral commentary; see docs/decisions.md §Posture."
     )
     if sample:
         notes = (

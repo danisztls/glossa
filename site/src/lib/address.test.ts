@@ -151,7 +151,7 @@ describe('parseHref', () => {
 		});
 
 		// The shape this route used to have, before a document became one page
-		// (docs/decisions.md, 2026-08-17). Nothing generates it now, and a
+		// (docs/decisions.md §Addresses and editions). Nothing generates it now, and a
 		// stale link from anywhere should degrade to nothing rather than to the
 		// wrong thing.
 		it('does not parse the retired per-section path', () => {
@@ -223,7 +223,7 @@ describe('parseHref', () => {
 			'/signata',
 			'/',
 			// The English route names resolve as invalid addresses site-wide
-			// (docs/decisions.md, 2026-08-18); nothing may resurrect them.
+			// (docs/decisions.md §Addresses and editions); nothing may resurrect them.
 			'/ccc/1213',
 			'/bible/exod/3#v12',
 			'/prayers/sub-tuum-praesidium',

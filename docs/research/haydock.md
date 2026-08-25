@@ -62,7 +62,7 @@ About 72% of notes in the sample close with a recognizable attribution; the
 rest are unsigned (conventionally Haydock's own).
 
 **This is the _Glossa Ordinaria_ arrangement the project is named for**
-(`docs/decisions.md`, 2026-08-16): not a single modern commentary, but the
+(`docs/decisions.md` §Posture): not a single modern commentary, but the
 tradition's own voices set around the sacred text, each named. Challoner's
 1,917 notes made the site's name honest; Haydock would make it the thing it
 claims to be.

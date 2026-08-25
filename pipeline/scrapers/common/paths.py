@@ -33,7 +33,7 @@ _DEFAULT_CORPUS_DIR = _REPO_ROOT.parent / "glossa-corpus"
 def corpus_dir() -> Path:
     """The corpus checkout: `$CORPUS_DIR`, or a `glossa-corpus/` sibling.
 
-    THE CORPUS IS NOT IN THIS REPOSITORY (docs/decisions.md, 2026-08-23). It
+    THE CORPUS IS NOT IN THIS REPOSITORY (docs/decisions.md §The corpus). It
     holds verbatim reproductions of texts other people hold rights in, so it
     lives in a private repository of its own, expected on disk beside this
     one. `CORPUS_DIR` overrides that, and is spelled the same way here as in

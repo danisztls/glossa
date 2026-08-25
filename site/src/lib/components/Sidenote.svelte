@@ -13,7 +13,7 @@
 	 * have in view while reading the text it belongs to, not to go and fetch.
 	 * Where there is room it therefore sits in the margin, open, beside its
 	 * own line — the *Glossa Ordinaria* arrangement the project is named for
-	 * (docs/decisions.md, 2026-08-16).
+	 * (docs/decisions.md §Posture).
 	 *
 	 * A GLOSS MUST NEVER BE CONFUSABLE WITH ITS SOURCE, the naming rule from
 	 * that same entry, is why the note is set smaller, in the sans face, and

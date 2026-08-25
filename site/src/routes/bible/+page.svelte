@@ -24,7 +24,7 @@
 	// The reading position is read on mount, not eagerly, because localStorage
 	// doesn't exist outside a browser (see reading-position.ts). That guarded
 	// against a prerendering throw; since `ssr = false` (`+layout.ts`,
-	// docs/decisions.md 2026-08-18) no route ever runs server-side at all, so
+	// docs/decisions.md §The site) no route ever runs server-side at all, so
 	// the guard is now belt-and-braces rather than load-bearing — kept
 	// because it still states the actual requirement, and matches the
 	// pattern the home page (`routes/+page.svelte`) already uses.

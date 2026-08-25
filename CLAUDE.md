@@ -11,8 +11,7 @@ have actually bitten someone.
 `glossa-corpus`, a **private** repository expected on disk as a sibling of
 this one (`~/Dev/me/glossa` and `~/Dev/me/glossa-corpus`) — it holds verbatim
 reproductions of texts other people hold rights in, and this repository is
-public. See `docs/decisions.md` for the reversal of the 2026-08-16 entry that
-put it here, and the corpus repo's own `README.md` for the copyright position.
+public. See `docs/decisions.md` §The corpus for why it lives there, and the corpus repo's own `README.md` for the copyright position.
 
 Both halves resolve it the same way, so one exported variable moves both:
 
@@ -122,7 +121,7 @@ writes `.git/config`, which the sandbox masks with `/dev/null`; run that one
 line with the sandbox off.
 
 **Prettier runs in the same hook, over what is staged and nothing else**
-(`docs/decisions.md`, 2026-08-24) -- everything under `site/`, plus Markdown
+(`docs/decisions.md` §Process) -- everything under `site/`, plus Markdown
 anywhere in the tree. Two things about how it is invoked are load-bearing:
 
 - It runs **from `site/`** whatever the file, because prettier resolves a
@@ -343,7 +342,7 @@ language with no text). The seven that came with Magnifica Humanitas are
 interface languages the corpus has one work in, so a reader in any of them
 gets English content nearly everywhere through `CONTENT_LANG_FALLBACK`; Latin
 is the opposite — two whole works, and the chrome arrived last
-(`docs/decisions.md`, 2026-08-24). Latin's promotion deleted a special case
+(`docs/decisions.md` §Languages). Latin's promotion deleted a special case
 rather than adding one: `content.svelte.ts`'s `#stillApplies` used to keep an
 override forever when its language was not a UI language, and now every
 override sleeps and wakes on the UI language it was made under.
@@ -355,7 +354,7 @@ logical properties (`margin-inline-start`, not `margin-left`) — the stylesheet
 is entirely logical and the components are now too.
 
 Citations may use Hebrew or Vulgate versification. The corpus canonicalizes on
-**Vulgate**; `site/src/lib/versification.ts` converts — the only implementation, since its Python twin went with `pipeline/build/` (see `docs/decisions.md`, 2026-08-21). Note that a wrong
+**Vulgate**; `site/src/lib/versification.ts` converts — the only implementation, since its Python twin went with `pipeline/build/` (see `docs/decisions.md` §Parsing). Note that a wrong
 chapter does not fail an existence check — `Joel 3:1-5` resolves to real but
 wrong text — so conversion is applied unconditionally for divergent books rather
 than as a fallback.

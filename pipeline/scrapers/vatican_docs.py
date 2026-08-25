@@ -400,7 +400,7 @@ def strip_tags(s: str) -> str:
 
 
 # --------------------------------------------------------------------------
-# Narrowed inline HTML (docs/decisions.md, 2026-08-21)
+# Narrowed inline HTML (docs/decisions.md §Storage)
 # --------------------------------------------------------------------------
 #
 # A unit's text is stored as HTML restricted to a closed allowlist, rather
@@ -1526,7 +1526,7 @@ class Section:
         # blocks joined with markers stripped, so it is derivable from them
         # twice over; the site's `documentSectionText` is that derivation, and
         # it now matches this section for section rather than approximately
-        # (docs/decisions.md, 2026-08-22).
+        # (docs/decisions.md §Storage).
         return {
             "n": self.n,
             "blocks": [b.to_dict() for b in self.blocks],
@@ -1877,7 +1877,7 @@ class Block:
     kind: str  # "prose" | "quote"
     text: str  # marked text (⟦n⟧ tokens embedded), tags stripped
     raw: str  # raw inner html, for paragraph-number detection
-    html: str = ""  # narrowed inline html (docs/decisions.md, 2026-08-21)
+    html: str = ""  # narrowed inline html (docs/decisions.md §Storage)
     style: int = 9  # observed heading style rank; see heading_style_rank
     # A heading printed on several lines: the bare division label above the
     # name ("CHAPTER THREE"), and any further lines below it. Both empty for
@@ -3514,7 +3514,7 @@ def has_words(text: str) -> bool:
 #
 # `_LANG_BAR_ONE_RE` accepts a bar of a single code, because a document
 # published in one language still prints one and it is then a bare `EN`
-# (docs/decisions.md, 2026-08-25: 19 mastheads recovered). That tolerance is
+# (19 mastheads recovered). That tolerance is
 # safe for the masthead scan, which only asks where the front matter STARTS.
 #
 # `_LANG_BAR_RE` requires two, because `drop_page_furniture` DELETES what it
@@ -3925,7 +3925,7 @@ def _index_links(
 #:
 #: This is not a general "crawl more languages" switch. It exists so that
 #: every encyclical the Holy See publishes is on the site in SOME language
-#: (`docs/decisions.md`, 2026-08-25); the language a document arrives in is
+#: (`docs/decisions.md` §Scope); the language a document arrives in is
 #: whichever one it exists in, not a preference.
 FALLBACK_INDEX_LANGS = ("it",)
 
@@ -4367,7 +4367,7 @@ def parse_document(
         state.anomalies.append(f"page furniture skipped: {text[:80]!r}")
 
     # Tags outside the stored allowlist keep their text and lose their markup
-    # (docs/decisions.md, 2026-08-21). Reported per run so the allowlist can be
+    # (docs/decisions.md §Storage). Reported per run so the allowlist can be
     # revisited against evidence rather than assumption -- which is how `sup`
     # earned its place, and how `span[lang]` lost the one it was wrongly
     # given (all 486 instances were lang="pt" inside Portuguese pages).
@@ -4384,7 +4384,7 @@ def parse_document(
     # arrived at from the other direction. Where the source names its own
     # divisions, that naming is the most direct statement of depth it
     # makes, so labelled headings sort by label and unlabelled ones sort
-    # by appearance strictly beneath them (docs/decisions.md, 2026-08-21).
+    # by appearance strictly beneath them (docs/decisions.md §Parsing).
     _LABEL_DEPTH = {"part": 1, "chapter": 2, "section": 3, "article": 4}
     # The shallowest division label the document actually prints. Gaudium et
     # Spes says PART, Dei Verbum's top division is CHAPTER; front and back
@@ -5462,7 +5462,7 @@ def build_manifest(
         (
             "Inline markup is stored per block in `html`, restricted to a closed "
             "allowlist (i, b, br, sup, blockquote); tags outside it keep their text "
-            "and lose their markup (docs/decisions.md, 2026-08-21)."
+            "and lose their markup (docs/decisions.md §Storage)."
         ),
     ]
     if not state.sections and state.appendix_out:

@@ -99,7 +99,7 @@ def write_if_changed(path: Path, text: str) -> bool:
     A re-parse rewrote every file in `works/` on every run -- 18.1 MB of
     sections.json and structure.json alone -- whether or not the parser had
     changed its mind about a single byte. Now that `works/` is tracked in git
-    (docs/decisions.md, 2026-08-23) the second cost is the one that bites: a
+    (docs/decisions.md §The corpus) the second cost is the one that bites: a
     diff in which all 1,229 files look touched cannot show which document a
     parser fix actually moved, which is the entire reason for tracking it.
 
@@ -143,7 +143,7 @@ def write_stamped_json(
     had -- so `generated_at` means "when this content was generated" rather
     than "when a run last touched the file", which is what it has to mean to
     be worth reading in a git diff now that `works/` is tracked
-    (docs/decisions.md, 2026-08-23).
+    (docs/decisions.md §The corpus).
 
     ALL OR NOTHING across the work's files. Keeping an old stamp on a manifest
     while a sibling file changed underneath it would be a worse lie than the

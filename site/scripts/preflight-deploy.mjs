@@ -138,7 +138,7 @@ if (regressions.length > 0) {
 if (files > MAX_FILES) {
 	fail(
 		`${files.toLocaleString()} files exceeds Cloudflare's ${MAX_FILES.toLocaleString()}-file cap. ` +
-			`See docs/decisions.md (2026-08-17) for which routes to collapse and what it costs.`
+			`See docs/decisions.md §The site for which routes to collapse and what it costs.`
 	);
 }
 

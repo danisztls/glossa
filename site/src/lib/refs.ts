@@ -8,7 +8,7 @@
  * `scripts/sync-corpus.mjs` build the scripture cross-reference index with the
  * exact parser that renders the page, instead of the second, separately
  * maintained Python implementation the corpus used to ship (see
- * docs/decisions.md, 2026-08-21). This module is the part that genuinely needs
+ * docs/decisions.md §Parsing). This module is the part that genuinely needs
  * the corpus: whether a book, chapter, verse or document section actually
  * exists in the edition the reader has open.
  *
@@ -97,7 +97,7 @@ export function refAddress(
 		// an edition in each interface language (CCC, Compendium) or checks the
 		// reader's own before linking (documents). The Summa has neither: it
 		// ships EN + LA and no Portuguese, and will not have one before 2055
-		// (docs/decisions.md, 2026-08-23). Refusing to link for a Portuguese
+		// (docs/decisions.md §Scope). Refusing to link for a Portuguese
 		// reader — which is what the documents' "their own language or no
 		// link" rule would do here — would leave every Summa citation in the
 		// Portuguese Catechism dead, which is most of them.
@@ -132,7 +132,7 @@ export function refAddress(
 		// The number is validated, never trusted: "Humani generis 561" cites an
 		// AAS page, and that document has 44 sections. A section is a FRAGMENT
 		// on the document's one page, not a page of its own —
-		// `documents/[slug]/[n]` was retired 2026-08-17 (docs/decisions.md;
+		// `documents/[slug]/[n]` was retired 2026-08-17 (docs/decisions.md §The site;
 		// 9,315 prerendered files for one section of text each). `#s{n}` is the
 		// same anchor the reading view has always carried.
 		const n = firstLocusSection(seg.locus);

@@ -16,7 +16,7 @@ import type { PageLoad } from './$types';
  *
  * THIS ROUTE IS THE WHOLE DOCUMENT. It absorbed the former
  * `documents/[slug]/read` (continuous full text) and `documents/[slug]/[n]`
- * (one page per numbered section) on 2026-08-17 — see docs/decisions.md. The
+ * (one page per numbered section) on 2026-08-17 — see docs/decisions.md §The site. The
  * per-section route was 9,315 of the deployment's 15,256 prerendered files,
  * 61% of it, at ~21 KB each for a few hundred bytes of actual text; the rest
  * was the same chrome repeated. Section addresses did not go away, they became
@@ -35,7 +35,7 @@ import type { PageLoad } from './$types';
  * client-side preference (`$lib/content.svelte.ts`), and `load` only
  * re-runs on navigation, not when that preference changes on its own — this
  * route renders only in the browser now (`ssr = false`, `+layout.ts`,
- * docs/decisions.md 2026-08-18), so `load` COULD technically read
+ * docs/decisions.md §The site), so `load` COULD technically read
  * `localStorage`, but doing so wouldn't keep the page honest once the
  * reader flips languages without navigating. `i18n.svelte.ts` defaults to
  * `'en'` when nothing is stored; picking `'en'` here too (falling back to
@@ -55,7 +55,7 @@ import type { PageLoad } from './$types';
  * has sections built — switched off in `site/unpublished.json`, or a parse
  * that produced nothing — this sends the reader to the vatican.va page the
  * text would have come from, rather than rendering a page about not having
- * it (docs/decisions.md, 2026-08-24). One behaviour covers both reasons,
+ * it (docs/decisions.md §Posture). One behaviour covers both reasons,
  * because from where the reader stands they are the same event: we do not
  * have this text, and the people who do are one hop away.
  *

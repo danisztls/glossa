@@ -132,8 +132,8 @@ from common import (
     write_stamped_json,
 )
 
-# The corpus is a separate, private repository (docs/decisions.md,
-# 2026-08-23); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
+# The corpus is a separate, private repository (docs/decisions.md
+# §The corpus); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
 RAW_ROOT = raw_root()
 WORKS_ROOT = works_root()
 
@@ -1552,7 +1552,7 @@ def build_structure(prayers: list[Prayer], lang: str) -> list[dict]:
 # those five and nothing else. A reader who prefers English (UK) therefore
 # reads five prayers from it and twenty-three from `prayer.common.en`,
 # resolved per address the way a citation to the Summa's Supplementum reaches
-# English for a Latin-preferring reader (docs/decisions.md, 2026-08-23).
+# English for a Latin-preferring reader (docs/decisions.md §Addresses and editions).
 #
 # THAT IS A REVERSAL of the shape this file shipped with hours earlier, and
 # the reasoning it reverses is worth keeping because it was not wrong so much
@@ -1667,7 +1667,8 @@ def build_regional_manifest(
             f"these here and the other {len(SLUGS) - len(prayers)} from "
             "prayer.common.en, resolved per address. Sources, copyright and "
             "corrections are identical to prayer.common.en's because the two are "
-            "one parse of one page. See docs/decisions.md, 2026-08-25, for why "
+            "one parse of one page. See docs/decisions.md §Addresses and editions "
+            "for why "
             "this is sparse rather than a second whole book."
         ),
     }
@@ -1937,7 +1938,7 @@ def build_manifest(
                 f"{REGIONAL_VARIANT} wording of the same {len(varied)} is "
                 f"{REGIONAL_WORK_ID}, a regional edition of those prayers alone. "
                 "There is no `variants` field: the split is an edition boundary "
-                "(docs/decisions.md, 2026-08-25)."
+                "(docs/decisions.md §Addresses and editions)."
             )
             if lang == "en"
             else (

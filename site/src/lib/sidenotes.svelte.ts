@@ -21,7 +21,7 @@
  * INLINE-START, NOT INLINE-END: the end margin is where `.reading-aside`
  * already lives at these widths. The start margin is both the free one and
  * the historically right one — a *Glossa Ordinaria* sets its gloss around
- * the text, and the project is named for it (docs/decisions.md, 2026-08-16).
+ * the text, and the project is named for it (docs/decisions.md §Posture).
  */
 const MARGIN_QUERY = '(min-width: 100rem)';
 

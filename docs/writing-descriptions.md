@@ -55,7 +55,7 @@ Note both shapes changed in August 2026 and older recipes are wrong:
 `structure.json` is a **flat array** of `{level, title, before}` (plus optional
 `ident`/`subtitle`), not a tree with `kind`/`paragraphs`; and a section's
 blocks carry **`html` only** — `text` and `text_marked` were removed
-(`docs/decisions.md`, 2026-08-22). A recipe asking for `.text` returns empty
+(`docs/decisions.md` §Storage). A recipe asking for `.text` returns empty
 strings rather than failing, which reads as an empty document.
 
 ```sh
@@ -288,7 +288,7 @@ multiply the one field in it that is prose. Translations ship separately, one
 `index/descriptions.<lang>.json` per language, keyed by document **slug** —
 `descriptions.json` is keyed by work because that records which text was read,
 but a translation is prose about the document and serves whichever edition a
-reader is shown. See `docs/decisions.md`, 2026-08-25.
+reader is shown.
 
 ### 6. Report defects; fix parsers only deliberately
 
