@@ -212,7 +212,7 @@ def run_scrape(
             )
             chapter = records(payload, where=f"{abbr} {cn} ({name})")
             # A BOOK ENDS AT ITS FIRST VERSELESS CHAPTER, not at its first
-            # empty response -- the same rule matos_soares_vulgata.py needs,
+            # empty response -- the same rule matos_soares_apparatus.py needs,
             # where this host answers 2 John chapter 2 with a lone chapter
             # argument and no verses. `DR2` has no such case; the rule is
             # here so the two scrapers agree about where a book stops rather

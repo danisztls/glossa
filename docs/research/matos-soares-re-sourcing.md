@@ -25,7 +25,7 @@ Backfilling by marker position turned out to be impossible — the markers were
 stripped at ingestion and their offsets never recorded — so the obvious move
 was to re-take the whole edition from vulgata.online, which carries text and
 apparatus together, already anchored, in the format `douay_rheims.py` reads.
-`matos_soares_vulgata.py` does exactly that, and validates the result against
+`matos_soares_apparatus.py` does exactly that, and validates the result against
 the edition already on disk before writing.
 
 ## What the comparison found
@@ -136,12 +136,14 @@ in the map is an index into the string the caller holds.
 ## What is already built
 
 - `raw/vulgata-online/MS/` — the full crawl, committed, write-once
-- `pipeline/scrapers/bible/matos_soares_vulgata.py` — parses it, validates it,
+- `pipeline/scrapers/bible/matos_soares_apparatus.py` — parses it, validates it,
   and refuses to write; the re-sourcing oracle is the reason it exists
-- `pipeline/corrections/bible.matos-soares.pt.json` — 32 adjudicated segment
-  corrections against this source, which is what took the fatal collisions to
-  zero
-- `pipeline/corrections/retired/` — the 39 liriocatolico entries, kept as
-  evidence and no longer loaded
+- `pipeline/corrections/bible.matos-soares.pt.json` — one file, two layers,
+  told apart by the shape of the locator: 39 `{osis, chapter, verse}` entries
+  correcting the liriocatolico verses that ship, and 32 `{osis, chapter,
+record}` entries correcting an apparatus record of this source before it is
+  parsed. The second set is what took the fatal collisions to zero; the first
+  set is live, not retired, because the text it corrects is the text the site
+  still serves
 
 Nothing here needs re-crawling to act on.
