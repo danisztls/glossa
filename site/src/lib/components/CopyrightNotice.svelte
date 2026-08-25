@@ -48,6 +48,7 @@
 	<span title={exact}>{copyrightLabel(manifest)}</span>
 	{#if url && host}
 		<span class="sep" aria-hidden="true">·</span>
+		<span class="source-label">{t('copyright.sourceLabel')}:</span>
 		<a
 			class="source-link"
 			href={url}
@@ -81,6 +82,12 @@
 	.source-link:hover {
 		color: var(--color-accent);
 		text-decoration-style: solid;
+	}
+
+	.source-label {
+		/* A label, not part of the destination's name, so it stays outside the
+		   anchor: the link text should be the thing being linked to. */
+		margin-inline-end: 0.2em;
 	}
 
 	/* The glyph, at 1em and on the baseline, rose past the cap height of the
