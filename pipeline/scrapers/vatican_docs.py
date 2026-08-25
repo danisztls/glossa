@@ -3166,6 +3166,18 @@ def _opens_a_numbered_paragraph(blocks: list[Block], i: int) -> bool:
 _ITALIC_HEADING_MAX_CHARS = 90
 _ITALIC_HEADING_MIN_RUN = 3
 
+#: How many headings a style must hold before a lone heading of the
+#: neighbouring style is read as the odd one out rather than a tier. Three,
+#: the same floor `_ITALIC_HEADING_MIN_RUN` uses: two headings are not yet a
+#: pattern worth overruling a third with.
+_MIN_STYLE_TIER = 3
+
+#: How many headings a style may hold and still be read as the odd one out.
+#: Two, because Sollicitudo Rei Socialis EN puts two there -- the citation
+#: heading and the `Blessing` salutation, both centred and italic against six
+#: centred plain chapters -- and its oracle reads all eight as one tier.
+_ODD_TIER_MAX = 2
+
 
 def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
     """Mark italic-only blocks as headings where a RUN of them appears, and
@@ -4455,6 +4467,55 @@ def parse_document(
     # headings look the same on the page they are the same level
     # (`docs/writing-descriptions.md` §3), and that holds whatever the first
     # one is called.
+    body_end, _seen = len(blocks), 0
+    for i, b in enumerate(blocks):
+        if b.is_heading:
+            continue
+        pm = match_para_num(b.raw)
+        if pm is not None and pm[0] > _seen:
+            _seen, body_end = pm[0], i
+
+    # A TIER OF ONE, NEXT TO A TIER OF MANY THAT LOOKS THE SAME, IS A
+    # CITATION AND NOT A TIER.
+    #
+    # `heading_style_rank` counts a heading as italic when `<i>` appears
+    # ANYWHERE in it, which cannot tell a heading SET in italics from one
+    # that merely QUOTES something. Sollicitudo Rei Socialis EN prints eight
+    # chapter headings in one identical style; the second names the encyclical
+    # it re-reads, `II. ORIGINALITY OF THE ENCYCLICAL POPULORUM PROGRESSIO`,
+    # and because the source italicises that title the heading ranked as a
+    # tier of its own. The document came out levelled 1,2,1,2,2,2,2,2 -- a
+    # staircase built out of a citation.
+    #
+    # Proportional coverage was tried first and rejected: it fixed this and
+    # broke Pascendi EN, whose `<b>The Magisterium<i> of the Church</i></b>`
+    # opens its italic run mid-line and so reads as barely italic while
+    # genuinely belonging to that page's twelve-strong bold-italic tier. The
+    # two markups are the same shape, so the discriminator cannot be the
+    # markup -- it has to be the document. Here it is: a style held by ONE
+    # heading, against a style held by several that differs only in the
+    # italic bit and sits at the same centring, is the odd one out and joins
+    # the many. Pascendi's italic tier has twelve members and is untouched.
+    #
+    # `docs/writing-descriptions.md` §3, stated the other way round: if two
+    # headings look the same on the page, they are the same level.
+    # INSIDE THE NUMBERED BODY ONLY. Back matter is ranked by its own branch
+    # in `depth_key`, and restyling it here reaches that branch as a changed
+    # `b.style`: merging Lumen Gentium EN's post-body `'NOTIFICATIONES'...`
+    # block lifted it from level 2 to level 1, a heading the reader placed
+    # under the note it introduces.
+    _in_body = [b for i, b in enumerate(blocks) if b.is_heading and i < body_end]
+    _style_counts = collections.Counter(b.style for b in _in_body)
+    for _style, _count in list(_style_counts.items()):
+        if _count > _ODD_TIER_MAX:
+            continue
+        _peer = _style ^ 1  # same centring, opposite italic bit
+        if _style_counts.get(_peer, 0) < _MIN_STYLE_TIER:
+            continue
+        for _b in _in_body:
+            if _b.style == _style:
+                _b.style = _peer
+
     best_heading_style = min((b.style for b in blocks if b.is_heading), default=0)
     first_heading_style = next((b.style for b in blocks if b.is_heading), None)
 
@@ -4504,13 +4565,6 @@ def parse_document(
     # those put `body_end` past every heading in the back matter, so nothing
     # downstream could tell body from appendix. Numbers are accepted only
     # while they increase, which is the gate the section walker itself uses.
-    body_end, _seen = len(blocks), 0
-    for i, b in enumerate(blocks):
-        if b.is_heading:
-            continue
-        pm = match_para_num(b.raw)
-        if pm is not None and pm[0] > _seen:
-            _seen, body_end = pm[0], i
     for idx, blk in enumerate(blocks):
         if not blk.is_heading:
             if match_para_num(blk.raw):

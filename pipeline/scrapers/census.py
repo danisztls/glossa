@@ -158,6 +158,29 @@ def _is_heading_line(text: str, title: str) -> bool:
     )
 
 
+_JOIN_SEP_RE = re.compile(r"[\s\u00a0]*[-\u2010-\u2015:.]+[\s\u00a0]*")
+
+
+def join_key(text: str) -> str:
+    """A heading reduced to its words, with the punctuation that separates a
+    division label from its name thrown away.
+
+    The parser splits a heading into `ident` and `title`; the SOURCE prints
+    them on one line, joined however that page happens to punctuate it --
+    `CHAPTER I - PRINCIPLES OF DOCTRINE`, `ARTICLE 1: Christian Witness`.
+    Comparing the raw line against the two fields separately matches neither,
+    so a correctly-parsed heading was reported DROPPED. That false negative
+    cost four documents' readers a wasted investigation each
+    (redemptoris-mater, redemptoris-missio, ad-gentes, evangelium-vitae)
+    before it was recognised as a defect in this tool rather than the parser.
+
+    `_is_heading_line` covers the opposite shape -- the source printing ONE
+    heading across two blocks -- and is not a substitute: there the raw text
+    is a PART of the stored title, here it is the WHOLE of two stored fields.
+    """
+    return " ".join(_JOIN_SEP_RE.sub(" ", text).split())
+
+
 _MARKER_RE = re.compile(f"{V.MARK_OPEN}[^{V.MARK_CLOSE}]*{V.MARK_CLOSE}")
 
 
@@ -192,12 +215,33 @@ def census(corpus: Path, work_id: str) -> dict:
                 V.strip_tags(b.get("html", "")) for b in section["blocks"]
             )
             kept_text += " " + norm(joined)
+    # AN UNNUMBERED EDITION KEEPS ITS TEXT IN `appendix.json`, NOT
+    # `sections.json`. Reading only the latter scored every body paragraph of
+    # such a work DROPPED -- all 35 blocks of `rerum-orientalium.it`, a
+    # document with nothing wrong with it. The same blind spot reported the
+    # trailing block after `optatam-totius.en`'s CONCLUSION as lost.
+    if (work / "appendix.json").exists():
+        for entry in json.loads((work / "appendix.json").read_text()):
+            blocks = entry.get("blocks", []) if isinstance(entry, dict) else []
+            for block in blocks:
+                kept_blocks.add(norm(V.strip_tags(block.get("html", ""))))
+            kept_text += " " + norm(
+                " ".join(V.strip_tags(b.get("html", "")) for b in blocks)
+            )
     structure_titles = set()
+    structure_joined = set()
     if (work / "structure.json").exists():
         for node in json.loads((work / "structure.json").read_text()):
+            parts = []
             for field in ("ident", "title", "subtitle"):
                 if node.get(field):
                     structure_titles.add(norm(node[field]))
+                    parts.append(norm(node[field]))
+            # Every leading run of the node's fields, so a source line that
+            # prints `IDENT - TITLE` matches whether or not the node also
+            # carries a subtitle the page set on its own line.
+            for cut in range(2, len(parts) + 1):
+                structure_joined.add(join_key(" ".join(parts[:cut])))
 
     rows = []
     for index, raw in enumerate(split_blocks(body)):
@@ -215,7 +259,7 @@ def census(corpus: Path, work_id: str) -> dict:
         # it (`mark_and_split`) before storing. Comparing with it in place scores
         # every correctly-parsed numbered paragraph as DROPPED.
         n = norm(text)
-        if n in structure_titles:
+        if n in structure_titles or (n and join_key(n) in structure_joined):
             verdict = "heading"
         elif n and any(_is_heading_line(n, title) for title in structure_titles):
             # A heading printed on two lines is ONE node: `merge_heading_lines`

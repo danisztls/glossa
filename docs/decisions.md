@@ -4238,3 +4238,78 @@ accent _before_ a lemma pushed its token one place left: `quem não renascer
 few words, not an edge case. It now decomposes per character, so an index in
 the map is an index into the string the caller holds, and all 1,483 tokens sit
 where the source sets them.
+
+## 2026-08-25 — The census reported 1,371 losses the corpus never suffered
+
+`census.py` is the tool a reader consults to decide whether a heading the page
+prints survived the parse. Two blind spots in its matching made it report
+correctly-parsed content as `DROPPED`, and because a `DROPPED` verdict is the
+one thing the reading brief tells an agent to investigate, every false one cost
+a reader a wasted investigation. Six of them filed it as a defect.
+
+- **A heading split into `ident` and `title` never matched.** The parser stores
+  the two apart; the source prints them on one line, joined however that page
+  punctuates it — `CHAPTER I - PRINCIPLES OF DOCTRINE`, `ARTICLE 1: Christian
+Witness`. The census compared the raw line against each field separately and
+  matched neither. `join_key` now collapses both sides to their words, throwing
+  away the separating punctuation. `_is_heading_line` covers the opposite shape
+  — one heading printed across two blocks — and is not a substitute: there the
+  raw text is a PART of the stored title, here it is the WHOLE of two fields.
+- **`appendix.json` was invisible to it.** An unnumbered edition keeps its
+  entire text there, so the census read every body paragraph as lost:
+  `miranda-prorsus.pt` reported 182 blocks dropped and had dropped none.
+
+Measured across all 354 document editions: 35 works improved, **1,371 false
+`DROPPED` verdicts cleared, zero new ones**. The corpus did not change — only
+what the tool says about it.
+
+An `audit.py toc` change was written alongside these and thrown away: widening
+the masthead set to every line of `manifest.header` was correct in principle
+and moved nothing at all, because the one case it was meant to catch
+(`redemptoris-missio.en`, whose fallback top node is the document's SUBTITLE)
+does not carry that line in `header` either. A change that fixes nothing
+measurable does not earn its place. That work remains a one-off — a corpus-wide
+scan found exactly one document with that shape — and stays documented rather
+than fixed.
+
+## 2026-08-25 — A tier of one, beside a tier of many that looks the same, is a citation
+
+`heading_style_rank` counts a heading as italic when `<i>` appears anywhere in
+it, which cannot tell a heading SET in italics from one that merely QUOTES
+something. Sollicitudo Rei Socialis EN prints eight chapter headings in one
+identical style; the second names the encyclical it re-reads, `II. ORIGINALITY
+OF THE ENCYCLICAL POPULORUM PROGRESSIO`, and because the source italicises that
+title, that one heading ranked as a tier of its own. The document came out
+levelled 1,2,1,2,2,2,2,2 — a staircase built out of a citation.
+
+**Proportional coverage was tried first and rejected.** Requiring the italic run
+to cover two thirds of the visible text fixed Sollicitudo and broke Pascendi EN,
+whose `<b>The Magisterium<i> of the Church</i></b>` opens its italic run
+mid-line and so reads as barely italic while genuinely belonging to that page's
+twelve-strong bold-italic tier. Discounting an enumerator set outside the run
+(`IV. - <b><i>Censorship</i></b>`) recovered part of it but not that one. The
+two markups are the same shape, so the discriminator cannot be the markup.
+
+It has to be the document, which is where the corpus's own rule already lives:
+_if two headings look the same on the page, they are the same level_. A style
+held by at most two headings, against a style held by three or more that
+differs only in the italic bit and sits at the same centring, is the odd one
+out and joins the many. Pascendi's italic tier has twelve members and is
+untouched.
+
+Two bounds, both load-bearing:
+
+- **At most two, not exactly one.** Sollicitudo puts two headings in the odd
+  tier — the citation and the `Blessing` salutation — and its oracle reads all
+  eight as one tier. At one, the fix missed the document it was written for.
+- **Inside the numbered body only.** Back matter is ranked by its own branch in
+  `depth_key`, which reads `b.style`; restyling it here reached that branch and
+  lifted Lumen Gentium EN's post-body `'NOTIFICATIONES'…` block from level 2 to
+  level 1, a heading the reader placed under the note it introduces.
+
+Blast radius, `phase1` + `phase2 --overwrite`, zero network: **9 `structure.json`
+and no `sections.json` anywhere** — levels moved, no text did. `audit.py toc`
+went from **33 disagreeing of 144 oracles to 28**, six documents improved and
+none regressed. It resolved the `Blessing` disagreement that had stood in four
+John Paul II encyclicals, which was the same defect all along. 594 site tests
+pass.
