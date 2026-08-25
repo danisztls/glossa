@@ -16,9 +16,12 @@
 import { readStoredString, writeStoredString } from './storage';
 
 /**
- * The languages the INTERFACE is available in — as of 2026-08-24 the same
- * set as `ContentLang` in types.ts, which is new and is the point of the
- * entry that added Latin here.
+ * The languages the INTERFACE is available in — as of 2026-08-25 again the
+ * same set as `ContentLang` in types.ts, fourteen tags on both sides. That
+ * equality is a fact about today, not an invariant: it held on 2026-08-24,
+ * broke the next day when the Compendium's ten editions brought in four
+ * languages with no dictionary, and is restored here by writing them. It
+ * will break again the same way. Do not derive one list from the other.
  *
  * LATIN WAS THE ONE CONTENT LANGUAGE THIS LIST DELIBERATELY EXCLUDED, on the
  * grounds that it is a language readers want the TEXT in and nobody wants
@@ -40,11 +43,37 @@ import { readStoredString, writeStoredString } from './storage';
  * someone else's. Latin is the opposite case and the reason it belongs here
  * — the corpus carries two whole works in it.
  *
+ * HUNGARIAN, ROMANIAN, SLOVENIAN AND SWEDISH ARE NEITHER CASE. They arrived
+ * as content languages with a whole work each — the Compendium, all 598
+ * questions — and a reader who came for it was reading it inside English
+ * chrome, which is the one combination this list should never leave standing:
+ * not a language the corpus barely reaches (the Magnifica Humanitas seven),
+ * where English chrome around English content is at least consistent, but a
+ * complete work in the reader's own language wrapped in someone else's
+ * interface. Russian is the remaining asymmetry and points the other way: a
+ * dictionary since Magnifica Humanitas, and a Compendium that exists only as
+ * a PDF nothing parses.
+ *
  * Ordered as a reader scanning the language menu would want them, which is
  * not the order they were added: English, Portuguese and Latin first because
  * they are what the corpus is in, then the rest by their own names.
  */
-export const UI_LANGS = ['en', 'pt', 'la', 'de', 'es', 'fr', 'it', 'pl', 'ru', 'ar'] as const;
+export const UI_LANGS = [
+	'en',
+	'pt',
+	'la',
+	'de',
+	'es',
+	'fr',
+	'it',
+	'hu',
+	'pl',
+	'ro',
+	'sl',
+	'sv',
+	'ru',
+	'ar'
+] as const;
 
 export type UiLang = (typeof UI_LANGS)[number];
 
@@ -93,11 +122,15 @@ import { de } from './i18n/de';
 import { en } from './i18n/en';
 import { es } from './i18n/es';
 import { fr } from './i18n/fr';
+import { hu } from './i18n/hu';
 import { it } from './i18n/it';
 import { la } from './i18n/la';
 import { pl } from './i18n/pl';
 import { pt } from './i18n/pt';
+import { ro } from './i18n/ro';
 import { ru } from './i18n/ru';
+import { sl } from './i18n/sl';
+import { sv } from './i18n/sv';
 
 /**
  * One module per language under `./i18n/`. A dictionary need not be complete
@@ -106,7 +139,22 @@ import { ru } from './i18n/ru';
  * than shipping it with a machine translation of a page about how carefully
  * this site handles other people's words.
  */
-const dictionaries: Record<UiLang, Dictionary> = { en, pt, la, de, es, fr, it, pl, ru, ar };
+const dictionaries: Record<UiLang, Dictionary> = {
+	en,
+	pt,
+	la,
+	de,
+	es,
+	fr,
+	it,
+	hu,
+	pl,
+	ro,
+	sl,
+	sv,
+	ru,
+	ar
+};
 
 /** One language's dictionary. Exported for the tests that check them all. */
 export function dictionaryFor(lang: UiLang): Dictionary {

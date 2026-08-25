@@ -285,10 +285,12 @@
  *
  * THREE SUBSETS, and unlike the text face's six the interface dictionaries
  * decide them outright: the chrome's strings are `src/lib/i18n/*.ts`, so its
- * glyph inventory is countable rather than estimated. Across all ten:
+ * glyph inventory is countable rather than estimated. Across all fourteen:
  *
- *   latin       every language.
- *   latin-ext   nine glyphs, every one of them Polish (ł ź ś ć ą ń ę ż Ś).
+ *   latin       every language — Swedish included, whose å ä ö are all
+ *               Latin-1 Supplement, so it added nothing outside this file.
+ *   latin-ext   19 glyphs: Polish 9 (ł ź ś ć ą ń ę ż Ś), Slovenian 5
+ *               (č š ž Č Š), Romanian 3 (ă ș ț) and Hungarian 2 (ő ű).
  *   cyrillic    55 glyphs, Russian.
  *   arabic      47 glyphs — and Source Sans has none. `ar` chrome keeps
  *               falling through to Amiri, which is where it already was and
@@ -296,13 +298,13 @@
  *               distinction this face exists to draw, so there is nothing
  *               here for it to be excluded from.
  *
- * No greek, no vietnamese, no cyrillic-ext — nothing in the ten dictionaries
- * reaches them. The sidebar tables of contents do set corpus titles in this
- * face, and those are NOT countable, so the omission is a real bet: a
- * Vietnamese name in a heading finds no `@font-face` here and falls to EB
- * Garamond through `--font-sans`'s own chain. One word in the text face is
- * the failure mode, not tofu — which is what makes the bet cheap, and cheap
- * to reverse if a sidebar ever looks mixed.
+ * No greek, no vietnamese, no cyrillic-ext — nothing in the fourteen
+ * dictionaries reaches them. The sidebar tables of contents do set corpus
+ * titles in this face, and those are NOT countable, so the omission is a
+ * real bet: a Vietnamese name in a heading finds no `@font-face` here and
+ * falls to EB Garamond through `--font-sans`'s own chain. One word in the
+ * text face is the failure mode, not tofu — which is what makes the bet
+ * cheap, and cheap to reverse if a sidebar ever looks mixed.
  *
  * `size-adjust: 95%`, and the number is a compromise between two facts.
  * Source Sans's x-height is 0.478em against EB Garamond's 0.400 — 19.5%

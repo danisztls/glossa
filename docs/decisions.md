@@ -345,9 +345,11 @@ five prayers while the collection's shape, order and prev/next chain come from t
 hatch. One switch, fewer surprising states; the override sleeps and wakes on the UI
 language it was made under.
 
-**`UiLang` and `ContentLang` are two sets that happen to hold the same ten tags.** They
-answer different questions — a content language arrives when someone ingests a text, an
-interface language when someone writes a dictionary — and either will move alone. **Do
+**`UiLang` and `ContentLang` are two sets that happen to hold the same fourteen tags.**
+They answer different questions — a content language arrives when someone ingests a text,
+an interface language when someone writes a dictionary — and either will move alone: they
+were equal at ten, separated when the Compendium's editions brought `hu`, `ro`, `sl` and
+`sv` in with no dictionaries, and are equal again now that those four are written. **Do
 not derive one from the other.** Use `isUiLang`/`UI_LANGS`, never a literal list.
 
 **Direction is a property of the text, not of the reader.** `<html dir>` follows the
@@ -367,6 +369,16 @@ A reader in any of them gets English content nearly everywhere through the fallb
 chain, and the alternative is a reader who _can_ read Magnifica Humanitas in their own
 language having to navigate to it in someone else's. Latin is the mirror image: two whole
 works, chrome added last.
+
+**A whole work in a language with no chrome is the case that does not wait.** The
+Compendium is complete in Hungarian, Romanian, Slovenian and Swedish — 598 questions
+each — so a reader of any of them was reading a finished work inside an English
+interface, which is a worse state than the seven single-work languages ever were in
+(English chrome around English content is at least consistent). The four dictionaries
+were written for that reason, and the rule they encode is about coverage, not counts: a
+dictionary is owed where the corpus can already fill a reader's language, not wherever a
+tag exists. Russian is the standing counter-case — chrome since Magnifica Humanitas, and
+a Compendium that exists only as a PDF nothing parses.
 
 **A description must be read, not recalled, and a translation is not a reading.**
 `site/descriptions.json` carries `origin: "read" | "translated"` plus a `from` chain, so

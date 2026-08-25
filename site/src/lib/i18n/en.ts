@@ -152,7 +152,7 @@ export const en: Dictionary = {
 	'summa.prevQuestion': 'Previous question',
 	'summa.nextQuestion': 'Next question',
 	// Named no language until 2026-08-24, when it named Portuguese — the
-	// only other interface language there was. There are ten now, so the
+	// only other interface language there was. There are fourteen now, so the
 	// sentence says "your language" and lets `{lang}` name the one shown.
 	'summa.noEditionInYourLanguage': 'The Summa has no edition in your language. Shown in {lang}.',
 	'summa.noLatinSupplement':

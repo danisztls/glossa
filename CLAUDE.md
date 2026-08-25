@@ -339,24 +339,31 @@ for the four kinds and why calling them defects invites someone to "fix" a
 faithful text.
 
 **The interface languages and the content languages are two different sets**,
-and since 2026-08-25 they are visibly different sizes: fourteen content
-languages against ten interface ones. `UiLang` in
-`site/src/lib/i18n.svelte.ts` is the nine Magnifica Humanitas is published in
-plus Latin (use `isUiLang`/`UI_LANGS`, never a literal list — `app.css` and
-`app.html` each keep one by necessity and say so); `ContentLang` in `types.ts`
-is those ten plus `hu`, `ro`, `sl` and `sv`, which arrived with the
-Compendium's ten editions and have no dictionary. **Do not derive one from the
-other**: they equalized on 2026-08-24 and separated the next day, exactly the
-way this note predicted (a text ingested in a language with no dictionary).
-Russian is now the case in the other direction — an interface language whose
-Compendium exists only as a PDF nothing parses. The seven that came with Magnifica Humanitas are
+and they hold the same fourteen tags again as of 2026-08-25 — which is a fact
+about today, not the invariant it keeps looking like. `UiLang` in
+`site/src/lib/i18n.svelte.ts` is the nine Magnifica Humanitas is published in,
+plus Latin, plus `hu`, `ro`, `sl` and `sv` (use `isUiLang`/`UI_LANGS`, never a
+literal list — `app.css` and `app.html` each keep a copy by necessity and say
+so; a test asserts `app.html`'s copy against `UI_LANGS`); `ContentLang` in
+`types.ts` is the same fourteen by coincidence of timing. **Do not derive one
+from the other**: they equalized at ten on 2026-08-24, separated the next day
+when the Compendium's ten editions landed four texts with no dictionary, and
+equalized at fourteen the day after when the dictionaries were written. The
+next ingestion in an unwritten language separates them again.
+
+Coverage, not the count, is what decides whether a language belongs in
+`UI_LANGS`. The four newest each have a **whole work** in them — the
+Compendium, all 598 questions — so their readers were reading a finished text
+inside English chrome; the seven that came with Magnifica Humanitas are
 interface languages the corpus has one work in, so a reader in any of them
-gets English content nearly everywhere through `CONTENT_LANG_FALLBACK`; Latin
-is the opposite — two whole works, and the chrome arrived last
-(`docs/decisions.md` §Languages). Latin's promotion deleted a special case
-rather than adding one: `content.svelte.ts`'s `#stillApplies` used to keep an
-override forever when its language was not a UI language, and now every
-override sleeps and wakes on the UI language it was made under.
+gets English content nearly everywhere through `CONTENT_LANG_FALLBACK`, which
+is at least consistent. Russian is the case in the other direction — chrome
+since Magnifica Humanitas, and a Compendium that exists only as a PDF nothing
+parses. Latin is the opposite again: two whole works, and the chrome arrived
+last (`docs/decisions.md` §Languages). Latin's promotion deleted a special
+case rather than adding one: `content.svelte.ts`'s `#stillApplies` used to
+keep an override forever when its language was not a UI language, and now
+every override sleeps and wakes on the UI language it was made under.
 
 **Direction is a property of the text, not of the reader.** `<html dir>`
 follows the interface language; content regions get theirs from the `lang`

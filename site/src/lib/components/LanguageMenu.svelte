@@ -33,11 +33,12 @@
 	// current one: a reader who has landed on the wrong interface language
 	// needs to recognize their language in the list, and "Portuguese" is no
 	// help to someone who only reads Portuguese. That was worth stating with
-	// two entries and is the whole usability of the control with ten.
+	// two entries and is the whole usability of the control with fourteen.
 	//
 	// Order matches `UI_LANGS` (i18n.svelte.ts), which is not alphabetical:
 	// English, Portuguese and Latin lead because they are what the corpus is
-	// in, and the seven that came with Magnifica Humanitas follow.
+	// in, and the rest follow by their own names — which is why Magyar sits
+	// between Italiano and Polski rather than where `hu` would sort.
 	//
 	// `Latina` is the label rather than `Lingua Latina` for the same reason
 	// `Deutsch` is not `Deutsche Sprache` — and it is what `corpus.ts`'s
@@ -51,7 +52,11 @@
 		{ code: 'es', short: 'ES', label: 'Español' },
 		{ code: 'fr', short: 'FR', label: 'Français' },
 		{ code: 'it', short: 'IT', label: 'Italiano' },
+		{ code: 'hu', short: 'HU', label: 'Magyar' },
 		{ code: 'pl', short: 'PL', label: 'Polski' },
+		{ code: 'ro', short: 'RO', label: 'Română' },
+		{ code: 'sl', short: 'SL', label: 'Slovenščina' },
+		{ code: 'sv', short: 'SV', label: 'Svenska' },
 		{ code: 'ru', short: 'RU', label: 'Русский' },
 		{ code: 'ar', short: 'AR', label: 'العربية' }
 	];

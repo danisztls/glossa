@@ -29,22 +29,26 @@ export type WorkType =
  * Bare language subtag the corpus ships content in (see `baseLang` in
  * corpus.ts). Fourteen tags as of 2026-08-25, and the four newest are the
  * point of this comment: `hu`, `ro`, `sl` and `sv` arrived with the
- * Compendium, which vatican.va publishes in ten languages, and NONE of them
- * is an interface language.
+ * Compendium, which vatican.va publishes in ten languages, and none of them
+ * was an interface language when it did.
  *
- * THE TWO TYPES WERE EQUAL FOR ONE DAY and the comment here said they were
- * equal by coincidence rather than by construction. They separated on the
- * next: a content language arrives when someone ingests a text in it, an
- * interface language when someone writes a dictionary, and the Compendium
- * brought four texts and no dictionaries. A reader of any of the four gets
- * the Compendium in their own language and everything else through
- * `CONTENT_LANG_FALLBACK` — which is what that chain is for, and is a better
+ * THE TWO TYPES SEPARATED FOR A DAY AND ARE EQUAL AGAIN, which is the whole
+ * lesson and not a reason to merge them. They were equal on 2026-08-24; the
+ * Compendium's editions arrived the next day with four texts and no
+ * dictionaries; the dictionaries were written the day after that. Each list
+ * moved on its own schedule for its own reason — a content language arrives
+ * when someone ingests a text in it, an interface language when someone
+ * writes a dictionary — and in between, readers of all four got the
+ * Compendium in their own language and everything else through
+ * `CONTENT_LANG_FALLBACK`, which is what that chain is for and a better
  * answer than declining to store a text because the chrome around it is in
  * English.
  *
- * Nothing may be written that assumes one set is the other. Russian is now
- * the case in the other direction: an interface language whose only
- * Compendium is a PDF nothing parses.
+ * Nothing may be written that assumes one set is the other; today's equality
+ * is an accident of timing, and the next ingestion in a language nobody has
+ * written a dictionary for breaks it again. Russian is the standing example
+ * pointing the other way: an interface language since Magnifica Humanitas
+ * whose only Compendium is a PDF nothing parses.
  */
 export type ContentLang =
 	'en' | 'pt' | 'la' | 'de' | 'es' | 'fr' | 'it' | 'pl' | 'ru' | 'ar' | 'hu' | 'ro' | 'sl' | 'sv';
