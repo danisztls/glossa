@@ -235,32 +235,6 @@
 	   nested label cannot become illegibly small. */
 	--font-size-min: 0.75rem;
 
-	/*
-	 * Characters-per-line is what actually governs readability, and `ch` here
-	 * is measured in `.content-column`'s own body-size font — NOT
-	 * `.reading-text`'s larger reading size, since the two live on different
-	 * elements and `ch` doesn't inherit across that boundary.
-	 *
-	 * Re-derived from 68ch when the type stopped being a system stack. Until
-	 * then `ch` meant whatever sans the OS happened to supply, so the column
-	 * was ~605px on macOS (Helvetica's "0" is 0.556em) and ~692px on Linux
-	 * (DejaVu Sans, 0.636em) — the measure was never actually pinned, it just
-	 * looked pinned in the source. EB Garamond's "0" is 0.480em, so the unit
-	 * itself is now fixed for every visitor.
-	 *
-	 * 64, not 68, because the numbers moved: measured against 288k characters
-	 * of real corpus prose, EB Garamond averages 0.376em per character, which
-	 * puts 68ch at 66.7 cpl — just outside the target. 64ch lands at 62.8.
-	 *
-	 *   N x 0.480em x 16px = column px;  cpl = column px / (0.376 x 1.3 x 16)
-	 *
-	 * Raising `--reading-base` below shrinks cpl at a fixed column width
-	 * (bigger glyphs in the same physical width means fewer of them fit), so
-	 * widening the column a few `ch` is what compensates. Recompute both
-	 * together, and keep the result in the ~55-65 range.
-	 */
-	--content-width: 64ch;
-
 	/* The track BETWEEN compare mode's two reading measures: the divider runs
 	   down its centre and each row's unit number rides it (`.compare-gutter`
 	   below). Wide enough that the corpus's longest address — CCC ¶2865, four
@@ -268,8 +242,14 @@
 	   sides. It was 3rem of pure whitespace before the number moved in, split
 	   between the left cell's padding and a column gap; keeping it one named
 	   track is what lets the header block above the grid line its own divider
-	   up with the one below without restating the arithmetic. */
-	--compare-gutter: 3.5rem;
+	   up with the one below without restating the arithmetic.
+
+	   Scaled by `--reading-scale` for the same reason `--content-width` below
+	   is: `CompareGrid.svelte` puts `.reading-text` on the gutter so the unit
+	   number riding it grows with the reader's setting, but the track holding
+	   that number did not, so at 180% a four-digit address was being asked to
+	   fit a width measured for 100%. */
+	--compare-gutter: calc(3.5rem * var(--reading-scale, 1));
 
 	/* Base reading size before the reader's fine adjustment is applied —
 	   see `.reading-text` below and `$lib/prefs.svelte.ts`. */
@@ -281,6 +261,69 @@
 	   JS has run on a first-ever visit (inline style on <html> always wins
 	   over this once it's set, regardless of specificity). */
 	--reading-scale: 1;
+
+	/*
+	 * THE MEASURE IS DENOMINATED IN THE READING FONT, NOT IN `ch`.
+	 *
+	 * Characters-per-line is what governs readability, so the width is stated
+	 * as one: `--measure-cpl` characters of running prose at whatever size
+	 * `.reading-text` is currently set to. The rest is arithmetic turning that
+	 * into a length, and it has to sit below `--reading-base` and
+	 * `--reading-scale` to read in dependency order (resolution is a graph,
+	 * not source order, so it would work anywhere — but nobody reads it that
+	 * way).
+	 *
+	 * It was `64ch`, and `ch` was a proxy twice over. It is the width of "0"
+	 * (0.480em here), not of an average character (0.3787em), so the 64 was
+	 * reached by dividing one by the other in a comment. Worse, it resolved
+	 * against `.content-column`'s own 18px — NOT `.reading-text`'s larger
+	 * size, since the two are different elements and `ch` doesn't inherit
+	 * across that boundary. So the column was pinned while the prose inside it
+	 * scaled, and cpl ran 78.6 at the reader's 80% setting down to 34.9 at
+	 * 180% — on target at exactly one of eleven steps. Multiplying through by
+	 * `--reading-scale` is the fix; deriving from `--reading-base` too is what
+	 * retires the old note here telling a human to recompute both by hand.
+	 *
+	 * 62.4 x 0.3787 x 1.3rem = 30.72rem, which is what `64ch` computed to.
+	 * This is a no-op at the default setting, by construction.
+	 */
+	/* Frequency-weighted mean advance of EB Garamond wght 400 over the whole
+	   corpus — 65.5M characters of Latin-script prose. EN 0.3753, PT 0.3822,
+	   LA 0.3838, and the seven single-work languages between 0.3695 (it) and
+	   0.3904 (de): a ±3% band, so no language leaves the 55-65 range. Unitless
+	   em; remeasure if the text face changes.
+
+	   NOT valid for `ar` or `ru`. EB Garamond ships no Arabic or Cyrillic
+	   subset, so those fall through `--font-serif` to a system face whose
+	   metrics we don't have. `64ch` was no better there — "0" came from EB
+	   Garamond either way — so this is a standing limitation rather than a
+	   regression, and it is two works out of 359. */
+	--prose-char-advance: 0.3787;
+	/* Target characters per line. 55-65 is where this type sets well; 62.4 is
+	   what the corpus actually measured at under the old 64ch, kept so the
+	   default column does not move. */
+	--measure-cpl: 62.4;
+	/*
+	 * The ceiling is the grid arithmetic rather than a taste call: 80rem,
+	 * where `.reading-layout` becomes two tracks, minus `--aside-width` 17rem,
+	 * minus `--aside-gap` 4.5rem, minus 2.5rem of page padding = 56rem.
+	 * Holding the column at or under that is what keeps the 80rem breakpoint's
+	 * own comment true — the aside never shrinks to make room for the text.
+	 *
+	 * It is a rail, not a constraint. At `MAX_FONT_SCALE` 1.8 the column wants
+	 * 55.3rem, so across the range `prefs.svelte.ts` offers it never binds; it
+	 * starts binding at 1.83, i.e. only if that maximum is ever raised.
+	 *
+	 * No floor, though one was considered. Clamping the low end up would put
+	 * the 80% setting at 66.4 cpl — outside the band this token exists to
+	 * hold. 24.6rem at 62.4 cpl is an ordinary book measure.
+	 */
+	--content-width: min(
+		calc(
+			var(--measure-cpl) * var(--prose-char-advance) * var(--reading-base) * var(--reading-scale, 1)
+		),
+		56rem
+	);
 
 	/*
 	 * THREE REDS AND A BLUE, and the split is the point.
@@ -748,6 +791,10 @@ input {
  * genuinely room for the reading measure AND a sidebar side by side —
  * 80rem, i.e. the content column at its full `--content-width` plus the
  * aside plus gutters, rather than a width where one of them has to shrink.
+ * That arithmetic is why `--content-width` carries a 56rem ceiling: the
+ * column now grows with the reader's font-size setting, and 80rem minus
+ * `--aside-width` minus `--aside-gap` minus the page padding is exactly the
+ * width past which it would start eating this track.
  *
  * The pair is centred as a UNIT: the reading column sits left of centre when
  * the aside is present. Centring the text and hanging the aside off the
@@ -867,22 +914,30 @@ input {
 /*
  * TWO COLUMNS NEED TWICE THE MEASURE, NOT HALF OF IT.
  *
- * `--content-width` is one reading column: 64ch, tuned so a line lands in
- * the 55-65 characters-per-line range. Compare mode puts a `1fr 1fr` grid
- * inside `.content-column`, so leaving that container at `--content-width`
- * gave each column ~32ch — half the measure, and well under any readable
- * one. This is the width the container has to be for the COLUMNS to come
- * out at the measure the rest of the site is built around.
+ * `--content-width` is one reading column, `--measure-cpl` characters wide.
+ * Compare mode puts a `1fr 1fr` grid inside `.content-column`, so leaving
+ * that container at `--content-width` gave each column half the measure —
+ * about 31 characters, well under any readable one. This is the width the
+ * container has to be for the COLUMNS to come out at the measure the rest of
+ * the site is built around.
  *
  * Deriving from the token rather than hard-coding a width is also what keeps
  * this correct across a type change: retuning `--content-width` for a new
- * face moves both the single and the two-up measure by the same factor. The
- * `+ var(--compare-gutter)` is the middle track the two measures are
- * separated by, added rather than taken out of them for the same reason.
+ * face moves both the single and the two-up measure by the same factor. It
+ * now does the same across the reader's font-size setting, which both tokens
+ * track. The `+ var(--compare-gutter)` is the middle track the two measures
+ * are separated by, added rather than taken out of them for the same reason.
+ *
+ * KNOWN LIMIT: at the 100rem breakpoint below, where compare mode regains the
+ * aside, the budget is 76rem and two scaled columns plus the gutter exceed it
+ * past a reading scale of about 1.17. `minmax(0, …)` shrinks rather than
+ * overflows, so the failure is graceful — each column lands near 39
+ * characters at the 1.8 maximum, better than the 34.9 the pinned column gave
+ * but under target. Raising that breakpoint is a separate decision.
  *
  * Applied at every width rather than inside the 80rem query: below that
  * breakpoint `.reading-layout` is not a grid, so `.content-column` kept its
- * single-column 68ch and halved it just the same. `max-width` still lets the
+ * single-column measure and halved it just the same. `max-width` still lets the
  * whole thing shrink on a narrow viewport, where the grid stacks to one
  * column anyway (see `.compare-row`'s own media query).
  */
@@ -1315,12 +1370,19 @@ input {
  * columns positionally, which means nothing once they are stacked.
  *
  * IT HANDS OVER AT 60rem, NOT 40rem, AND THAT IS A READING-MEASURE DECISION.
- * `--content-width` is 64ch precisely because 55-65 characters per line is
+ * `--measure-cpl` is 62.4 precisely because 55-65 characters per line is
  * where this type sets well. Two columns inside a 40rem viewport are about 35
  * characters each — nowhere near it, and worse than the stacked pairs that
  * were already available below. 60rem is roughly where each column clears the
  * low 40s and side-by-side starts being the better of the two, so that is
  * where the switch belongs.
+ *
+ * Those counts assume a reading scale of 1, and cannot do otherwise: a media
+ * query can't read a custom property, so this breakpoint is fixed while the
+ * measure it reasons about is not. A reader at 180% gets side-by-side from
+ * 60rem on a pair of columns narrower than the argument above allows for.
+ * Making it scale-aware needs JS, which is not worth it for the stacking
+ * threshold alone.
  */
 @media (max-width: 59.99rem) {
 	.compare-row {
