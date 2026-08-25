@@ -246,7 +246,7 @@ function normalizeSummaPart(token: string): SummaPartLabel | null {
 
 	// Split on a hyphen OR whitespace: `Ia-IIae` and `IIª IIª³` are the same
 	// notation, and one encyclical prints each.
-	const sides = upper.split(/\s*[-–]\s*|\s+/).map((side) => {
+	const sides = upper.split(new RegExp(`\\s*[${DASHES}]\\s*|\\s+`)).map((side) => {
 		// Drop the ordinal suffixes (`Ia`, `IIae`) and the superscript
 		// ordinal marks vatican.va's typesetting leaves behind (`IIª`, `³`),
 		// then read `L` as the OCR of `1` that it is.
@@ -442,6 +442,29 @@ const MAX_CHAPTER: Record<string, number> = {
 	jude: 1,
 	rev: 22
 }; // fmt: skip
+
+/**
+ * EVERY CHARACTER A SOURCE IN THIS CORPUS RANGES WITH. Written once because
+ * it was written six times, each spelling out its own `[-–]`, and the seventh
+ * source to arrive used a character none of them had.
+ *
+ * That source is the Romanian Compendium, which ranges all 598 of its
+ * reference lines with a NON-BREAKING hyphen (U+2011): "1‑25", not "1-25".
+ * None of them was a number list at all, and 490 citations that resolve
+ * perfectly well fell out of the coverage report as unrecognized — which is
+ * the deploy gate working, and the only reason it was noticed.
+ *
+ * The em dash is here for the same reason in advance: the Catechism's
+ * Portuguese edition prints one in running prose, and a range set with one is
+ * a matter of which typesetter, not of which grammar.
+ *
+ * Use it in a `[...]` class. It is deliberately NOT a separator anywhere a
+ * dash could be punctuation instead — `parseBareCccList` reproduces whatever
+ * it finds between two numbers as literal text rather than normalizing it,
+ * because the corpus stores raw strings and the reader should see the mark
+ * the page printed (docs/link-surface.md).
+ */
+const DASHES = '\\-\\u2011–—';
 
 /** Books the corpus/citations cite as "Book <verse>" with no chapter — see MAX_CHAPTER. */
 const SINGLE_CHAPTER_BOOKS = new Set(
@@ -1366,7 +1389,9 @@ interface DocumentMatch {
 }
 
 /** A locus is digits, comma/dot-chained and dash-ranged, plus an optional "# N" subsection — display-only text, not parsed further (document segments never resolve to a link). */
-const LOCUS_RE = /^\d+(?:\s*[-–]\s*\d+)?(?:\s*[,.]\s*\d+(?:\s*[-–]\s*\d+)?)*(?:\s*#\s*\d+)?/;
+const LOCUS_RE = new RegExp(
+	`^\\d+(?:\\s*[${DASHES}]\\s*\\d+)?(?:\\s*[,.]\\s*\\d+(?:\\s*[${DASHES}]\\s*\\d+)?)*(?:\\s*#\\s*\\d+)?`
+);
 
 function findDocumentAt(cfg: LangConfig, s: string, start: number): DocumentMatch | null {
 	cfg.documentRe.lastIndex = start;
@@ -1420,8 +1445,9 @@ const WORK_TITLE_RE = new RegExp(
 	'gu'
 );
 /** A paragraph list after a work title: "1939", "nn. 2258-2262", ", 1888, 1891". */
-const WORK_LOCUS_RE =
-	/^[\s,.:]*(?:nn?\.?\s*|n[.º°]\s*)?(\d+(?:\s*[-–]\s*\d+)?(?:\s*,\s*\d+(?:\s*[-–]\s*\d+)?)*)/;
+const WORK_LOCUS_RE = new RegExp(
+	`^[\\s,.:]*(?:nn?\\.?\\s*|n[.º°]\\s*)?(\\d+(?:\\s*[${DASHES}]\\s*\\d+)?(?:\\s*,\\s*\\d+(?:\\s*[${DASHES}]\\s*\\d+)?)*)`
+);
 const MAX_CCC = 2865;
 const MAX_COMPENDIUM = 598;
 
@@ -1751,14 +1777,8 @@ function parseCitationClauses(text: string, cfg: LangConfig): RefSegment[] {
 // paragraph would be a link wall, not a citation).
 // --------------------------------------------------------------------------
 
-// `\u2011` is the NON-BREAKING hyphen, and it is here because the Romanian
-// Compendium ranges every one of its 598 reference lines with one: "1\u201125"
-// rather than "1-25". Without it none of them was a number list at all, and
-// 490 citations that resolve perfectly well fell out of the coverage report
-// as unrecognized — which is the check working, and the sole reason this was
-// noticed at all.
 function isBareNumberList(text: string): boolean {
-	return /\d/.test(text) && /^[\d\s,.;\-\u2011–—]+$/.test(text);
+	return new RegExp(`^[\\d\\s,.;${DASHES}]+$`).test(text) && /\d/.test(text);
 }
 
 function parseBareCccList(text: string, kind: 'ccc' | 'compendium' = 'ccc'): RefSegment[] {
@@ -1864,7 +1884,9 @@ export function linkifyProse(text: string, opts?: RefsOpts): RefSegment[] {
 	if (!text) return [];
 	const cfg = configFor(opts?.lang);
 	const CF_RE = /\bcf\.\s*/gi;
-	const NUM_LIST_RE = /^\d+(?:\s*[-–]\s*\d+)?(?:\s*,\s*\d+(?:\s*[-–]\s*\d+)?)*/;
+	const NUM_LIST_RE = new RegExp(
+		`^\\d+(?:\\s*[${DASHES}]\\s*\\d+)?(?:\\s*,\\s*\\d+(?:\\s*[${DASHES}]\\s*\\d+)?)*`
+	);
 	const LABEL_RE = /^nn?\.\s*/i;
 
 	/** One accepted match: [start, end) of the source text plus what it becomes. */

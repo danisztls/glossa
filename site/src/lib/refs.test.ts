@@ -663,6 +663,21 @@ describe('parseRefs — bare CCC-paragraph-number lists (Compendium ccc_refs, CC
 		expect(parseRefs('75-79, 83 96.98').filter((s) => s.kind === 'ccc')).toHaveLength(5);
 	});
 
+	it('ranges with a non-breaking hyphen exactly as with a hyphen, everywhere', () => {
+		// The Romanian Compendium is the source that forced this, but the range
+		// separator is now one shared class (`DASHES` in refs-grammar.ts) rather
+		// than six regexes each spelling out its own `[-–]`. Asserted as an
+		// EQUIVALENCE so it keeps holding whatever those sites parse into.
+		// Compared with the separator normalized back, not by rewriting the
+		// expectation: the parse KEEPS whatever the page printed, so the two
+		// results differ in exactly that one character and nowhere else — a
+		// slug like `dei-verbum` stays a hyphen on both sides.
+		const parsed = (s: string) => JSON.stringify(parseRefs(s));
+		for (const s of ['Cf. Mt 5, 3-12', 'LG 14-16', '279-289, 296-298', 'DV 7-10']) {
+			expect(parsed(s.replace(/-/g, '\u2011')).replace(/\u2011/g, '-')).toBe(parsed(s));
+		}
+	});
+
 	it('tolerates the non-breaking hyphen the Romanian Compendium ranges with', () => {
 		// Every one of ro's 598 reference lines uses U+2011, not U+002D. Before
 		// the grammar accepted it, none of them was a number list at all and 490
