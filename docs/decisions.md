@@ -4508,3 +4508,47 @@ it as a "cf.", so the flag is a faithful, edition-independent claim about
 strength of citation. It exists to let the "Cited in" panel (or a paragraph's
 footnote rendering) distinguish "quotes this verse" from "alludes to it",
 which the `ref.cf` string was added for. Nothing renders it yet.
+
+## 2026-08-25 — A verse-count oracle is not a textual one, and Psalm 13 is where believing otherwise gets the wrong answer
+
+**What**: `research/bible-edition-divergence.md`'s proposed divergence table is
+built — 31 diverging chapters, every one classified by a person, with the
+classification held as `KINDS` in `pipeline/scrapers/bible/divergence.py` and
+checked against the corpus on every run. Two of the four kinds the 2026-08-16
+pass named did not survive re-reading against two more editions, and one of the
+casualties is a claim made here.
+
+**The claim being corrected is the 2026-08-23 entry above**, which reasoned from
+the Clementine's verse count at Psalm 13 that "the interpolation is not in
+CPDV's own base." It is. The Clementine carries the catena quoted at Romans
+3:13–18, folded into its v3 (_Sepulchrum patens est guttur eorum…_), and so does
+the Douay-Rheims. Three of the four editions have the text; only Matos Soares
+omits it, silently. CPDV differs from the Latin not by carrying the
+interpolation but by numbering it as vv. 4–6 where the Latin keeps it inside a
+verse.
+
+So at Psalm 13 the Latin's **count** agrees with the Portuguese and the Latin's
+**text** agrees with the English. Both halves of "in all 31 EN/PT disagreements
+the Latin takes a side (PT 25, EN 6)" remain true as measured — that measurement
+was of verse-number sets, and it is still the right measurement of them. What
+was wrong was reading a side taken on the count as a side taken on the reading.
+`divergence.py` therefore reports the Latin as a column and resolves no row with
+it.
+
+**The other kind that went**: "numbering tradition — Psalms" was never a kind.
+The corpus canonicalizes on Vulgate numbering at ingestion, so the Hebrew/Greek
+offset leaves no residue at all; the four leftover Psalms rows are ordinary
+merge/splits and one title. Filing them under a numbering tradition would have
+sent someone hunting a formula that does not exist — the precise failure that
+document warns about in the other direction.
+
+**And the silent case turned out to be real.** The same document proposed
+detecting chapters whose verse numbers agree while their text has moved beneath
+them, by flagging length-ratio outliers against the Latin. Built as `--shifted`;
+110 candidates, three chapters read so far. One of them is **Acts 14**, where
+Matos Soares splits the Latin's v6 and rejoins its v26 and v27, so both editions
+run 1–27 and **twenty verses in between name different text**. Every existing
+check passes on it. It was invisible to the 2026-08-16 comparison because that
+comparison asked about numbers, and it is the strongest argument yet for
+proposal §5 — disclosing divergence in the reading view and not only in compare
+mode, which remains unbuilt.
