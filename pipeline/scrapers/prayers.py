@@ -1217,7 +1217,7 @@ def enrich_rosary_with_full_mysteries(rosary: Prayer, lang: str) -> None:
 
 
 # --------------------------------------------------------------------------
-# Corrections (docs/decisions.md §Source-defect corrections policy)
+# Corrections (docs/decisions.md §Corrections and overrides)
 # --------------------------------------------------------------------------
 
 
@@ -1722,7 +1722,7 @@ def build_regional_manifest(
 # pipeline/corrections/prayer.common.en.json, against the source HTML, with
 # the PT witness cited as the evidence for what was meant -- the ordinary
 # path for a source defect with a known correct value (docs/decisions.md
-# §Source-defect corrections policy). Fixing it there rather than here keeps
+# §Corrections and overrides). Fixing it there rather than here keeps
 # this function a pure selection over already-parsed text, and fixes the EN
 # edition's own `latin` field at the same time.
 

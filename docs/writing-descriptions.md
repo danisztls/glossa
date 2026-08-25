@@ -21,7 +21,7 @@ familiar. Nothing on the rendered page distinguishes that from a real summary.
 
 The project's standing rule for the corpus itself is that a defect with no
 known correct value gets **documented, not invented** (`docs/decisions.md`,
-Source-defect corrections policy). A description invented from a title is the
+Corrections and overrides). A description invented from a title is the
 same failure wearing editorial clothes. **A missing description costs a reader
 nothing. A wrong one silently misinforms them about what the Church taught.**
 

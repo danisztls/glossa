@@ -11,12 +11,12 @@ _Glossa_ — the apparatus of cross-references and commentary that medieval scri
 | `pipeline/` | Scrapers and build tools that produce the corpus (Python, `uv run` standalone scripts) |
 | `corpus/`   | The built corpus (gitignored — fetched/built locally, never committed)                 |
 | `site/`     | The SvelteKit site (static adapter, offline-first PWA)                                 |
-| `docs/`     | Decision log, research, corpus schema                                                  |
+| `docs/`     | Design decisions, research, corpus schema                                              |
 
-Start with `docs/decisions.md` for what this is and why, and `docs/corpus-schema.md` for the data contract between pipeline and site. See `PLAN.md` for the current development plan — what's done, in flight, and next, and why.
+Start with `docs/decisions.md` for the design choices and why they are what they are, and `docs/corpus-schema.md` for the data contract between pipeline and site. See `PLAN.md` for the current development plan — what's done, in flight, and next, and why.
 
 ## Content and copyright
 
 Texts are reproduced verbatim, complete, and attributed. The corpus is never committed to this repository; only code is published here (MIT). See `docs/research/copyright.md` for the full rights picture and posture.
 
-Bible texts: CPDV (English, public domain) and Matos Soares 1956 (Portuguese). Catechism and Compendium of the Catechism: Libreria Editrice Vaticana / USCCB text, reproduced from vatican.va. Encyclicals and conciliar documents (Vatican II first) are scoped and in progress — see `docs/decisions.md` §Vatican documents in scope and `docs/research/vatican-documents.md`.
+Bible texts: CPDV (English, public domain) and Matos Soares 1956 (Portuguese). Catechism and Compendium of the Catechism: Libreria Editrice Vaticana / USCCB text, reproduced from vatican.va. Encyclicals and conciliar documents (Vatican II first) are scoped and in progress — see `docs/decisions.md` §Scope and `docs/research/vatican-documents.md`.

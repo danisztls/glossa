@@ -188,7 +188,7 @@ follow whichever checkout the code being run lives in.
 
   SOURCE_ROOT -- where pipeline/corrections/ lives. Derived from
   __file__, the way ccc.py/compendium.py do it, because corrections ARE
-  tracked source: `docs/decisions.md`'s Source-defect corrections policy
+  tracked source: `docs/decisions.md`'s Corrections and overrides
   makes git history the audit log, so a correction must land in whatever
   checkout its scraper change is being written in. Hardcoding this one
   wrote correction files into the main checkout while their scraper code
@@ -6392,7 +6392,7 @@ def check_language_symmetry(
     language: a missing translation is legitimate and common across the
     full encyclical corpus this scraper also covers (Leo XIII is only
     ~17% translated into Portuguese on vatican.va, docs/decisions.md's
-    "Vatican documents in scope" entry / research/vatican-documents.md
+    "Scope" section / research/vatican-documents.md
     §2) -- so a (family, slug) with only one language written is silently
     skipped, not flagged. Only a pair where BOTH sides exist and disagree
     is a defect. A work directory that exists but has no sections.json at

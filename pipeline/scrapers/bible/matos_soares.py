@@ -312,7 +312,7 @@ def make_fetcher(client: httpx.Client) -> Fetcher:
 
 # ---------------------------------------------------------------------------
 # Corrections layer (docs/corpus-schema.md #Corrections, docs/decisions.md
-# #Source-defect corrections policy)
+# #Corrections and overrides)
 #
 # Verified source defects (OCR artifacts, split words) are corrected here via
 # an auditable data file rather than by hand-editing output. Entries live in

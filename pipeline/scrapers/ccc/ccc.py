@@ -330,7 +330,7 @@ def is_mini_header(text: str) -> bool:
 
 # --------------------------------------------------------------------------
 # Corrections layer (docs/corpus-schema.md #Corrections, docs/decisions.md
-# #Source-defect corrections policy)
+# #Corrections and overrides)
 #
 # Verified source defects are corrected via an auditable data file
 # (pipeline/corrections/ccc.{lang}.json, committed to the repo) rather than

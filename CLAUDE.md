@@ -160,7 +160,7 @@ decides _when_ something runs.
 - Source defects go through `pipeline/corrections/` with locator, exact
   before/after, reason and evidence — never a code special-case, and never
   invented text. A defect with no known correct value gets documented, not
-  fixed (`docs/decisions.md` §Source-defect corrections policy).
+  fixed (`docs/decisions.md` §Corrections and overrides).
 - **`pipeline/corrections/` and `pipeline/overrides/` are different layers.**
   A correction says the _source_ is wrong and edits the fetched HTML before
   parsing; an override says the source is fine and our _derivation_ is not,

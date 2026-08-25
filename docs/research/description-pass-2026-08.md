@@ -194,7 +194,7 @@ Three distinct causes found, two of them parser-side:
 - **Source typo** — `aeterni-patris.en` renders §21's marker as literal `Z 1.`
   on vatican.va's own page. This is a source defect and belongs in
   `pipeline/corrections/` with locator and evidence, per
-  `docs/decisions.md` §Source-defect corrections policy — not a code
+  `docs/decisions.md` §Corrections and overrides — not a code
   special-case.
 
 ### 4. Hypothesis killed: PT heading detection is _not_ overfiring

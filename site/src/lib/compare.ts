@@ -14,7 +14,7 @@
  * promise about the two languages' address spaces agreeing on which numbers
  * exist — not that the arrays holding them line up index-for-index. Documents
  * don't even get that promise (a missing translation is legitimate and
- * common, `docs/decisions.md` "Vatican documents in scope"). Zipping two
+ * common, `docs/decisions.md` §Scope). Zipping two
  * arrays by position silently mismatches the moment either side has a gap:
  * the first missing unit shifts everything after it by one, and nothing about
  * that failure is visible on screen — it just quietly shows the wrong pair of

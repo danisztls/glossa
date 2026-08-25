@@ -25,7 +25,7 @@ Two things about the text are deliberate and must not be "fixed":
     folded in the lookup keys.
 
 Corpus fidelity says the stored text is what the page prints
-(docs/decisions.md, Source-defect corrections policy). Normalising
+(docs/decisions.md, Corrections and overrides). Normalising
 orthography on the way in would make the Latin edition a silent modernisation
 of a 1914 critical printing, and would do it in the one place -- the corpus --
 where it could not be undone without re-parsing.
@@ -327,7 +327,7 @@ ANOMALIES: list[Anomaly] = []
 
 # --------------------------------------------------------------------------
 # Corrections layer (docs/corpus-schema.md #Corrections, docs/decisions.md
-# #Source-defect corrections policy)
+# #Corrections and overrides)
 #
 # Verified source defects are corrected via an auditable data file rather
 # than by hand-editing output. Entries would live in

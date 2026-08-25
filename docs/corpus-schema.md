@@ -379,7 +379,7 @@ Per-edition invariants are what fail a run: question numbers inside their part's
 
 ## Documents (encyclicals, conciliar texts, curial documents)
 
-v2, scoped 2026-08-15 — see `decisions.md` §Vatican documents in scope for what's in/out and why, and `research/vatican-documents.md` for the underlying survey (citation-frequency tables, per-pontificate EN/PT coverage audit, numbering tests — cited by locator below, not restated here). Covers Vatican II's 16 constitutions/decrees/declarations, papal encyclicals, apostolic exhortations, and CDF/DDF declarations — one schema shape for all of them, since every family sampled shares the same numbering/citation/quotation structure (`vatican-documents.md` §3).
+v2, scoped 2026-08-15 — see `decisions.md` §Scope for what's in/out and why, and `research/vatican-documents.md` for the underlying survey (citation-frequency tables, per-pontificate EN/PT coverage audit, numbering tests — cited by locator below, not restated here). Covers Vatican II's 16 constitutions/decrees/declarations, papal encyclicals, apostolic exhortations, and CDF/DDF declarations — one schema shape for all of them, since every family sampled shares the same numbering/citation/quotation structure (`vatican-documents.md` §3).
 
 Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vatii` | `encyclical` | `apost-exhort` | `apost-const` | `cdf` (distinguishes publishing pipeline and future per-family styling without forking the schema). Examples: `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `cdf.dominus-iesus.en`.
 
@@ -510,7 +510,7 @@ An entry's `refs` are the union across every edition of the work, drawn from all
 
 ## Corrections (auditable source-defect fixes)
 
-Verified source defects are fixed through a corrections layer, never by hand-editing output (see `decisions.md` §Source-defect corrections policy):
+Verified source defects are fixed through a corrections layer, never by hand-editing output (see `decisions.md` §Corrections and overrides):
 
 - **Input**: `pipeline/corrections/{work_id}.json` (committed to the repo) — array of entries:
 
