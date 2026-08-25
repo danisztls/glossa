@@ -207,6 +207,17 @@ The stated goal is expanding citation coverage. Hosting the texts is one way to
 serve it and the most expensive one, and it is not the first step even if both
 ingests eventually happen.
 
+> **Run 2026-08-25 — see `patristic-citations.md`.** The parser exists
+> (`pipeline/scrapers/patristics.py`) and the numbers below have been replaced
+> by measured ones. Two things changed. The locator share is **72.8%**, not
+> 94%: the 27% without one are citations that genuinely address a Migne column
+> and nothing else, not parser failures. And the first bullet's frequency
+> index came back with an answer that argues harder for this section's own
+> conclusion than the section did — **69% of the 734 works are cited exactly
+> once**, and a top-40-work subset would serve 33% of the demand. The
+> recommendation below stands; the "which 40 works" question it left open has
+> been answered, and the answer is "none of them".
+
 **94% of the 1,244 patristic citations carry a work-internal locator** —
 `St. Irenaeus, Adv. haeres. 3, 20, 2: PG 7/1, 944` names book 3, chapter 20,
 section 2 quite apart from the Migne column. Only 6% are addressed by Migne
@@ -244,13 +255,13 @@ two languages, with OCR damage, and no `abbreviations.json` to decode them
 
 All estimates, labelled as such — nothing here has been prototyped.
 
-| item                            | sizing                                                                                          |
-| ------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Citation parser (both families) | **Estimate: medium.** No fetches. The work is the abbreviation table and the two-language forms |
-| Summa ingest, LA + EN           | **Estimate: medium.** ~2 sources, bulk download, but a new work type and a new reader route     |
-| Summa, PT                       | **Blocked until 2055.** Not a sizing question                                                   |
-| Patristic ingest, EN subset     | **Not sized, and deliberately so** — the number is a function of how many works are chosen      |
-| Patristic ingest, PT            | **No source exists.** Not a sizing question                                                     |
+| item                            | sizing                                                                                                                                                                                                                                                 |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Citation parser (both families) | **Built 2026-08-25** (`patristics.py`; the Summa half was closed by ingesting the Summa instead). The estimate held: no fetches, and the abbreviation table was the work — solved by folding titles on token-prefix rather than tabulating 288 of them |
+| Summa ingest, LA + EN           | **Estimate: medium.** ~2 sources, bulk download, but a new work type and a new reader route                                                                                                                                                            |
+| Summa, PT                       | **Blocked until 2055.** Not a sizing question                                                                                                                                                                                                          |
+| Patristic ingest, EN subset     | **Not sized, and deliberately so** — the number is a function of how many works are chosen                                                                                                                                                             |
+| Patristic ingest, PT            | **No source exists.** Not a sizing question                                                                                                                                                                                                            |
 
 ## Honest gaps
 
@@ -268,7 +279,10 @@ All estimates, labelled as such — nothing here has been prototyped.
   selection misses much of our tail follows from the collections' known
   contents, not from a title-by-title match against the 288 abbreviated titles.
   That match is exactly what the §6 parser would produce, and it should be run
-  before anyone commits to a patristic subset.
+  before anyone commits to a patristic subset. _2026-08-25: the parser is
+  built and the match still has not been run — it needs those collections'
+  contents, which is a fetch. The subset ladder in `patristic-citations.md`
+  answers the prior question harshly enough that it may never be worth running._
 - **CCEL's own terms were not established** — three candidate URLs 404 and the
   site is a JS app. The underlying Schaff translations are public domain by
   age regardless; what is unverified is whether CCEL asserts anything over its

@@ -4600,3 +4600,56 @@ the previous citation's target across a unit boundary and asserting that is
 what the source meant, which is a claim about someone else's apparatus rather
 than a reading of it — the same line `pipeline/corrections/` draws between a
 defect with a known correct value and one without.
+
+## 2026-08-25 — The Fathers, counted by work rather than by author, and the subset stops existing
+
+**What**: `pipeline/scrapers/patristics.py` parses the corpus's patristic
+citations into `{author, work, locator}` — the pass
+`research/summa-and-fathers.md` §6 recommended in place of ingesting a
+patristic library. `research/patristic-citations.md` is what it measures. No
+fetches, nothing ingested, and one number that changes an argument.
+
+**The survey's own recommendation is now better founded than the survey made
+it.** It concluded "Fathers — do not ingest. Link out", reasoning from author
+coverage: even the top twelve authors leave 44% of the citations unresolved.
+That reasoning is sound and the measurement confirms its shape — four authors
+are half the demand, twenty are ninety per cent. But **a work, not an author,
+is the unit of ingestion**, and by works the demand is flat: **509 of 734
+works, 69%, are cited exactly once in the whole corpus.** A top-forty-work
+subset would serve 33%. Augustine's 296 citations are spread across 82
+distinct works of his own, so "ingest Augustine" is eighty-two projects.
+
+The survey imagined this parser would say "which 40 works to do and which 250
+to skip". It says there is no such forty.
+
+**Two of the survey's own numbers moved, and both moved down.** The
+work-internal locator share is **72.8%**, not the sampled 94% — the shortfall
+is not parser failure but citations that genuinely address a Migne column and
+nothing else (307 name no work at all; 173 name a work but no place in it).
+And 41.9% of clauses name no author, concentrated almost entirely in
+encyclicals ABOUT one Father: _Aeterna Dei_ on Leo, _Doctor Mellifluus_ on
+Bernard, _Sacra Virginitas_ on Ambrose. A document about one man names him in
+its first footnote and cites him by work alone for forty more.
+
+**Attributing those from the Migne volume is refused.** Migne is arranged by
+author, so `PL 182` could be read as Bernard from a table. That table would be
+written from memory rather than read from the citation, and its output would
+be indistinguishable in the index from an attribution a source actually made.
+Same line the source-defect policy draws: a defect with no known correct value
+is documented, not fixed.
+
+**The abbreviation table the sizing called the hard half was not built.** ~288
+abbreviated titles in three languages was the estimate. What the tool does
+instead is fold titles on token-prefix — `Adv. haer.` abbreviates `Adversus
+haereses` because each of its tokens is a prefix of the corresponding one,
+which is what an abbreviation IS. That needs no table at all. The only hand
+table left is fourteen entries of cross-language pairs (`Sermão`/`Sermo`),
+because that is a translation and not a truncation, and prefix folding cannot
+see it.
+
+**Two deliverables §6 listed are not built, and the measurement is why.** A
+reverse "cited in" panel for the Fathers needs a page for Augustine's
+_Sermones_ to put it on, and a link-out layer needs a hand-built New Advent id
+map for 734 works with a 69% singleton tail. Both were downstream of an ingest
+this now argues harder against. The third — the same normalization for `LG 12`
+— was delivered by the reverse citation index the same day.
