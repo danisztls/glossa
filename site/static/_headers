@@ -7,17 +7,6 @@
 # exceptions: paths where the URL changes whenever the bytes do, or where the
 # bytes effectively never change.
 
-# PRE-LAUNCH BLOCK — temporary, see docs/decisions.md (2026-08-17), and the
-# other half of it in site/static/robots.txt (`rg 'PRE-LAUNCH BLOCK'` finds
-# both; undo them together).
-#
-# robots.txt asks well-behaved crawlers not to fetch. This tells the ones that
-# fetch anyway not to index — and it is the mechanism that actually governs
-# indexing, since `Disallow` only prevents the fetch and a URL discovered by a
-# link can still be listed without one. Remove this block at launch.
-/*
-  X-Robots-Tag: noindex, nofollow
-
 # Content-hashed by the build. A given URL here can never mean different bytes,
 # which is the entire precondition for `immutable`.
 /_app/immutable/*

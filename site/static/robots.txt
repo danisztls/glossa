@@ -1,19 +1,19 @@
-# PRE-LAUNCH BLOCK — temporary, see docs/decisions.md (2026-08-17).
+# Everything here is meant to be found, cited and linked to. There is no
+# Disallow.
 #
-# The site is live on its Cloudflare subdomain for verification only. Left
-# crawlable, that hostname gets indexed and then competes with the real domain
-# for the same pages once one is attached — and every page here is a verbatim
-# reproduction that already has a canonical home on vatican.va, so a duplicate
-# under a throwaway hostname is worth nothing and costs something.
+# The site has no private area, no account, and no search-result or filter URLs
+# that multiply into a crawl trap: every address is a canonical citation
+# (`/scriptura/{osis}/{chapter}`, `/catechismus/{n}`, …), and an address that is
+# not one gets a real 404 from the edge worker rather than the shell with a 200.
+# So there is nothing here a crawler can reach that we would rather it did not
+# spend a request on.
 #
-# TO UNDO, at launch: restore the two lines commented out below and remove the
-# blanket Disallow. There is a second half to this in site/static/_headers —
-# `rg 'PRE-LAUNCH BLOCK'` finds both. Undoing only one of them leaves the site
-# invisible to search with nothing on the surface to show why.
+# This file said `Disallow: /` until launch, to keep the verification-only
+# Cloudflare hostname out of the index. The other half of that block lived in
+# site/static/_headers as `X-Robots-Tag: noindex, nofollow`, and the two were
+# always to be undone together — noted here because a robots.txt that permits
+# everything is not by itself evidence that the header does too. `Disallow`
+# governs the fetch; the header governs the indexing.
 
 User-agent: *
-Disallow: /
-
-# The launch state:
-# User-agent: *
-# Disallow:
+Disallow:

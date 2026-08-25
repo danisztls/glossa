@@ -26,6 +26,16 @@ one knowingly accepted, self-resolving exposure, and Alexandre Correia's Summa
 **Free, ad-free, account-free, no analytics.** The absence of analytics is what lets the
 colophon state a privacy position without qualification.
 
+**Indexable, and a duplicate of vatican.va on purpose.** Every page reproduces text with a
+canonical home on someone else's server, so the site competes with that server for its own
+paragraphs. It is still the copy meant to be found: what it adds is the apparatus —
+resolved citations, the reverse index, parallel editions, offline reading — and a reader
+who searches a paragraph number should land somewhere that carries all of it. So
+`robots.txt` carries no `Disallow` and the build sends no `noindex`. Both were blanket-set
+before launch, so that a verification-only hostname would not become the indexed one; that
+remains the single condition under which they go back, because whichever hostname is
+crawlable is the one readers will cite.
+
 **A text we cannot show properly is not shown.** `site/unpublished.json` switches a work
 off; its addresses then redirect to the source page rather than explaining themselves.
 The mechanism was built for rights and is used for **quality** — a damaged parse is
