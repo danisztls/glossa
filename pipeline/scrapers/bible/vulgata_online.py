@@ -43,6 +43,15 @@ list of typed records, each carrying `bk`, `cn`, `vn`:
     ln   a line the source prints BEFORE the chapter's verses, at `vn`
     h1   a section heading
     h2   a section subheading
+    h3   a section sub-subheading
+    en   the TRANSCRIBER's own editorial note, not the edition's -- 144 of
+         them, and deliberately never ingested. They are vulgata.online
+         speaking about its own transcription rather than anything the printed
+         book contains: the one at 2 John 1:1 records that Matos Soares
+         printed the second and third Epistles of John as one and that the
+         site has separated them "conforme a Vulgata em Latim". Useful to know
+         (that particular one explains a real structural divergence from the
+         liriocatolico scrape of the same edition) and not ours to publish.
 
 `ln` is not one thing, and reading it as one is the trap. In the Psalms it is
 the Latin incipit the psalm is known by (`Beatus vir.`); in Lamentations it is
@@ -479,6 +488,95 @@ def grouped(
     return out
 
 
+#: The heading types this source prints, most prominent first, and the `level`
+#: each becomes in the corpus.
+#:
+#: `ln` IS THE LEAST PROMINENT AND NOT A FOURTH KIND. It is the type this
+#: module's docblock warns is not one thing -- a Psalm's Latin incipit, the
+#: prose prologue before Lamentations 1, a Matos Soares pericope caption -- but
+#: in every one of those roles it is the innermost thing printed above a verse,
+#: below any lettered or numbered section it sits inside. So it ranks last, and
+#: a renderer that sets levels in decreasing prominence gets all three right
+#: without knowing which it has.
+HEADING_LEVELS = {"h1": 1, "h2": 2, "h3": 3, "ln": 4}
+
+
+def heading_units(
+    chapter: list[dict], osis: str, cn: int, anomalies: list[Anomaly]
+) -> list[tuple[int, int, str]]:
+    """`(vn, level, text)` per heading printed before a verse, in printed order.
+
+    NOT `grouped`, AND THE DIFFERENCE IS WHY THIS FUNCTION EXISTS. That one
+    reads two records under one number as a defect, because for a VERSE it is:
+    a verse is a single thing and a second segment claiming its number means
+    one of them is mis-filed. A heading is not. This source prints a hierarchy
+    -- the Matos Soares edition sets "PRIMEIRA PARTE" (`h1`), "I - CRIAÇÃO DO
+    MUNDO" (`h2`) and "Principio." (`ln`) all before Genesis 1:1 -- and 558 of
+    its verse numbers carry more than one heading record for exactly that
+    reason. Reading those as collisions reported 558 fatal anomalies against a
+    perfectly well-formed edition, which is what this replaces.
+
+    So the type is part of the identity: records are grouped by `(vn, tp)`, and
+    different types under one `vn` are different headings, ordered by
+    HEADING_LEVELS.
+
+    WITHIN ONE `(vn, tp)` there are two cases and `seq` tells them apart:
+
+      - **Distinct `seq` values** -- the source split one heading across
+        records, or a filed segment correction put it back together. Joined in
+        `seq` order. This is the Douay-Rheims's Lamentations 1, whose prologue
+        arrives in two pieces.
+      - **No order at all** -- two genuinely separate headings of the same rank
+        before one verse, which the Matos Soares edition does 13 times (Isaias
+        13:1 carries both "III - Profecias contra os povos pagãos" and "Oráculo
+        contra Babilônia"). Kept as two, in the order the response listed them,
+        and REPORTED rather than failed: the endpoint's list is unordered, so
+        that order is arbitrary -- but a heading is presentation attached to a
+        verse rather than structure of its own, and losing one to avoid
+        guessing between two would cost more than getting their order wrong.
+    """
+    # `(record, its position in the response)`, so the response's own order can
+    # break a tie without writing a key back into the caller's records.
+    buckets: dict[tuple[int, str], list[tuple[dict, int]]] = {}
+    for index, record in enumerate(chapter):
+        tp = record.get("tp")
+        if tp not in HEADING_LEVELS:
+            continue
+        buckets.setdefault((record.get("vn") or 1, tp), []).append((record, index))
+
+    out: list[tuple[int, int, int, str]] = []
+    for (vn, tp), pairs in buckets.items():
+        level = HEADING_LEVELS[tp]
+        segments = [r for r, _ in pairs]
+        # `seq or 0`, the same reading `grouped` gives it: the source numbers
+        # the SECOND piece of a split unit onward and leaves the first bare, so
+        # a filed correction sets 1 and 2 against an original that has none.
+        # Treating absent as 0 is what makes those three one heading; the Matos
+        # Soares case, where every record is bare, collapses to [0, 0] and is
+        # correctly not joinable.
+        seqs = [r.get("seq") or 0 for r in segments]
+        joinable = len(segments) > 1 and len(set(seqs)) == len(segments)
+        if joinable:
+            ordered = sorted(pairs, key=lambda pair: pair[0].get("seq") or 0)
+            text = " ".join((r.get("cnt") or "").strip() for r, _ in ordered)
+            out.append((vn, level, min(at for _, at in pairs), text))
+            continue
+        if len(segments) > 1:
+            anomalies.append(
+                Anomaly(
+                    osis,
+                    cn,
+                    f"{len(segments)} {tp} headings before verse {vn} with no order "
+                    "between them; kept in the order the response listed them",
+                )
+            )
+        for record, at in pairs:
+            out.append((vn, level, at, (record.get("cnt") or "").strip()))
+
+    out.sort(key=lambda h: (h[0], h[1], h[2]))
+    return [(vn, level, text) for vn, level, _at, text in out]
+
+
 def parse_chapter(
     osis: str, cn: int, chapter: list[dict], *, normalize: Normalizer
 ) -> tuple[dict, list[Anomaly]]:
@@ -543,20 +641,18 @@ def parse_chapter(
         return text, marked, mine
 
     headings: list[dict] = []
-    for group in grouped(chapter, ("ln", "h1", "h2"), osis, cn, anomalies):
-        vn, raw = group
+    for vn, level, raw in heading_units(chapter, osis, cn, anomalies):
         if not raw.strip():
             continue
-        record = {"vn": vn}
-        vn = record.get("vn") if isinstance(record.get("vn"), int) else 1
         text, marked, mine = build(vn, raw)
-        entry = {"before_verse": vn, "text": text}
+        if not text:
+            continue
+        entry = {"before_verse": vn, "level": level, "text": text}
         if marked:
             entry["text_marked"] = marked
         if mine:
             entry["notes"] = mine
         headings.append(entry)
-    headings.sort(key=lambda h: h["before_verse"])
 
     verses: list[dict] = []
     for n, raw in grouped(chapter, ("vs",), osis, cn, anomalies):
@@ -682,8 +778,14 @@ def unit_faults(unit: dict) -> list[str]:
     if strip_tokens(marked) != text:
         faults.append("`text` is not `text_marked` with its tokens stripped")
     tokens = re.findall(r"⟦([^⟧]*)⟧", marked)
-    if len(tokens) != len(set(tokens)):
-        faults.append("a marker is tokenized twice")
+    # A REPEATED TOKEN IS NOT A FAULT. One note may be anchored at two points
+    # in the same unit, and the Matos Soares edition does it wherever a note
+    # glosses both halves of a Hebrew parallelism -- Deuteronomy 32:21 anchors
+    # note 1 at "com o que não é Deus" and again at "eu os provocarei", which
+    # are the two limbs of one line. The CCC has the same shape for citations
+    # (`CccParagraphText` keys by position precisely so two occurrences open
+    # independently), and `docs/corpus-schema.md` scopes a MARKER's uniqueness
+    # to its unit -- it says nothing about how often the unit may point at it.
     orphans = [t for t in tokens if t not in markers]
     if orphans:
         faults.append(f"token(s) with no note entry: {orphans}")

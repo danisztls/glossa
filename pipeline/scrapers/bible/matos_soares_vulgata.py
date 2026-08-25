@@ -267,7 +267,15 @@ def run_scrape(
                 cache_name(SOURCE_EDITION, abbr, cn),
             )
             chapter = records(payload, where=f"{abbr} {cn} ({name})")
-            if not chapter:
+            # A BOOK ENDS AT ITS FIRST VERSELESS CHAPTER, not at its first
+            # empty response. The two are the same answer almost everywhere,
+            # and 2 John is where they part: this source answers chapter 2
+            # with a lone `cd` record -- a chapter argument for a chapter that
+            # does not exist, left over from the transcriber splitting what
+            # Matos Soares printed as one epistle into two. Stopping only at
+            # `[]` walked past it and produced a chapter with a summary and no
+            # verses, which docs/corpus-schema.md has no shape for.
+            if not any(r.get("tp") == "vs" for r in chapter):
                 break
             seg_applied += apply_segment_corrections(
                 chapter, segment_corrections, osis, cn

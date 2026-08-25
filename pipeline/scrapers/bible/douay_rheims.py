@@ -211,7 +211,13 @@ def run_scrape(
                 cache_name(SOURCE_EDITION, abbr, cn),
             )
             chapter = records(payload, where=f"{abbr} {cn} ({name})")
-            if not chapter:
+            # A BOOK ENDS AT ITS FIRST VERSELESS CHAPTER, not at its first
+            # empty response -- the same rule matos_soares_vulgata.py needs,
+            # where this host answers 2 John chapter 2 with a lone chapter
+            # argument and no verses. `DR2` has no such case; the rule is
+            # here so the two scrapers agree about where a book stops rather
+            # than one of them being accidentally stricter.
+            if not any(r.get("tp") == "vs" for r in chapter):
                 break
             # Before anything reads the records: see this function's docblock.
             seg_applied += apply_segment_corrections(
