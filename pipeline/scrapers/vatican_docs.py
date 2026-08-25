@@ -766,7 +766,8 @@ PARA_NUM_RE = re.compile(
     # period inside an italic run; the number went unrecognised and §20 was
     # swallowed into §19's text, digits and all, leaving the document with no
     # unit at that address.
-    r"|(?P<bare_n>\d{1,4})(?:\s|&nbsp;|<(?!a[\s>])[^>]*>)*\."
+    r"|(?P<bare_n>\d(?:(?:<(?!a[\s>])[^>]*>)*\d){0,3})"
+    r"(?:\s|&nbsp;|<(?!a[\s>])[^>]*>)*\."
     r")"
     r"\s*(?:&nbsp;\s*)*",
     re.IGNORECASE | re.DOTALL,
@@ -821,7 +822,15 @@ def match_para_num(inner_html: str) -> tuple[int, int] | None:
     if not m:
         return None
     n = m.group("anchor_dot_n") or m.group("anchor_n") or m.group("bare_n")
-    return int(n), m.end()
+    # `bare_n` may carry tags BETWEEN its digits -- Humanae Vitae EN prints
+    # paragraph 14 as `1<b>4.</b>`, opening the bold run between the digits
+    # rather than before them. Read as a contiguous `\d{1,4}` the block was
+    # not a numbered paragraph at all: it was buffered as unnumbered prose,
+    # given back to §13, and then promoted a second time to fill the §14 gap
+    # its own absence had created. Only one page in the corpus does this, and
+    # allowing tags (never whitespace, which would read "1 4." as fourteen)
+    # is cheaper than a correction against a source that is not wrong.
+    return int(_TAG_RE.sub("", n)), m.end()
 
 
 # --------------------------------------------------------------------------
@@ -1517,6 +1526,14 @@ class ScrapeState:
         # reported gap rather than guessed at.
         self.pending_first_block: str | None = None
         self.pending_first_html: str | None = None
+        # How many of `pending_headings` were pushed BEFORE the buffered
+        # prose began. A promoted section takes only those: a heading
+        # printed after the text being promoted belongs to the section that
+        # follows, not to the one the text becomes. Humanae Vitae prints its
+        # salutation, then `I. PROBLEM AND COMPETENCY OF THE MAGISTERIUM`,
+        # then `2.` -- and the part heading was landing at `before` 1, the
+        # section made out of the salutation above it.
+        self.pending_before_buffer: int = 0
         # A section number read off a "N. Title" heading, waiting for the
         # prose block underneath to open the section (Gravissimum
         # Educationis EN -- see parse_document's heading branch). The number
@@ -1624,14 +1641,32 @@ class ScrapeState:
         self.stack.append(node)
         self.pending_headings.append(node)
 
-    def start_section(self, n: int, kind: str, text: str, html: str = "") -> None:
+    def start_section(
+        self,
+        n: int,
+        kind: str,
+        text: str = "",
+        html: str = "",
+        blocks: list[BlockOut] | None = None,
+        claim: int | None = None,
+    ) -> None:
+        """`blocks`, when given, IS the section's own content and replaces
+        the single `(kind, text, html)` block. Only the promotion paths use
+        it, and they need it because their content is a run of blocks already
+        buffered elsewhere -- see `take_buffered_blocks`.
+
+        `claim` limits how many pending headings anchor here; None means all
+        of them, which is right for every ordinary section."""
         # Every heading seen since the last section began anchors here: this
         # is the section it precedes, which is what `before` means. Headings
         # with no following section keep `before = None` -- trailing matter
         # the numbered flow never reaches.
-        for node in self.pending_headings:
+        claimed = (
+            self.pending_headings if claim is None else self.pending_headings[:claim]
+        )
+        for node in claimed:
             node.before = n
-        self.pending_headings.clear()
+        del self.pending_headings[: len(claimed)]
         self.content_started = True
         self.empty_nest_depth = 0
         # Everything buffered so far was mid-body after all, not appendix --
@@ -1648,7 +1683,10 @@ class ScrapeState:
         self.last_section_n = n
         sec = Section(n=n, chapter=self.current_chapter())
         sec.blocks.extend(front)
-        sec.blocks.append(BlockOut(kind, text, html))
+        if blocks is not None:
+            sec.blocks.extend(blocks)
+        else:
+            sec.blocks.append(BlockOut(kind, text, html))
         self.open_section = sec
         if self.stack:
             self.stack[-1].own.add(n)
@@ -1724,6 +1762,32 @@ class ScrapeState:
                 f"({len(front)} block(s))"
             )
         return front
+
+    def take_buffered_blocks(self) -> list[BlockOut]:
+        """Remove and return everything buffered since the last section closed.
+
+        THE DEFECT THIS FIXES: unclaimed prose was being kept TWICE, in two
+        places that did not know about each other. `pending_first_block`
+        accumulates it as one joined string, ready to be promoted into a
+        section the source never numbered; `add_appendix_block` buffers the
+        same blocks against the chance that they are back matter. When the
+        promotion fired, `start_section` handed the buffer back through
+        `reclaim_mid_body_prose` AND appended the promoted string, so the
+        section opened with its own opening text printed twice. Measured
+        across the corpus: 171 works, every one of them in §1 -- the
+        salutation and first paragraph of nearly every encyclical Leo XIII
+        through Pius XII wrote, read twice on the page.
+
+        The buffered blocks are the better copy and the promoted string is
+        dropped, not the other way round: `pending_first_block` only
+        accumulates `kind == "prose"`, so a blockquote printed before the
+        first numbered paragraph is missing from it entirely, while the
+        buffer keeps it as its own block."""
+        taken: list[BlockOut] = []
+        for unit in self.appendix:
+            taken.extend(unit["blocks"])
+            unit["blocks"] = []
+        return taken
 
     def add_appendix_block(self, kind: str, text: str, html: str = "") -> None:
         if not self.appendix:
@@ -1817,8 +1881,10 @@ _NUM_PREFIX_TEXT_RE = re.compile(r"^(\d{1,4})\s*\.\s*")
 # period then swallowed a leading `&quot;` -- 359 sections lost an opening
 # quotation mark, caught by the round-trip check.
 _PREFIX_FILLER = r"(?:<[^>]+>|\s|&nbsp;|&#160;|&#[xX]0*[aA]0;)*"
+# Same tags-between-digits tolerance as PARA_NUM_RE's `bare_n`, so a number
+# that IS recognised is also stripped rather than left in the stored html.
 _NUM_PREFIX_HTML_RE = re.compile(
-    rf"^{_PREFIX_FILLER}\d{{1,4}}{_PREFIX_FILLER}\.{_PREFIX_FILLER}"
+    rf"^{_PREFIX_FILLER}\d(?:(?:<[^>]+>)*\d){{0,3}}{_PREFIX_FILLER}\.{_PREFIX_FILLER}"
 )
 
 
@@ -2574,6 +2640,130 @@ _BR_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
 _MARGIN_LEFT_RE = re.compile(r"margin-left:\s*(\d+)", re.IGNORECASE)
 
 
+def toc_link_span(body_html: str) -> tuple[int, int] | None:
+    """The character span of the page's own printed table of contents, or
+    None where it prints none.
+
+    The detection is `extract_toc_outline`'s, factored out because two
+    different jobs need the same answer: that function reads the outline's
+    LEVELS, and `parse_document` needs to take the outline's TEXT out of the
+    body before it is mistaken for the document's opening paragraph. A table
+    of contents is the one region of a page that says the same things the
+    body says, so anything that reads it must also know where it stops.
+
+    A TOC entry is an in-page link whose target is defined LATER in the
+    document; the forward direction is what separates it from the footnote
+    back-references that are far more common (see `extract_toc_outline`).
+    The span runs from the first such link to the last, widened to whole
+    paragraphs, so the UNLINKED lines between them are inside it too. That
+    matters: the Russian edition of `magnifica-humanitas` links only its
+    chapter titles and prints all forty sub-entries as plain text, so a rule
+    that could only see links would take out a tenth of its table of
+    contents and leave the rest as prose.
+
+    THE GUARD IS THE NUMBERED PARAGRAPH. Widening a span to the last forward
+    link would be reckless on its own: one stray forward link in the body
+    would stretch the span over the whole document. But a table of contents
+    never contains a numbered paragraph and a body is made of them, so a span
+    holding one is not a table of contents, and None is returned rather than
+    a guess. That is a property of the two things being told apart, not a
+    threshold to tune."""
+    targets: dict[str, int] = {}
+    for m in _ANCHOR_TARGET_RE.finditer(body_html):
+        name = m.group(1) or m.group(2)
+        targets.setdefault(name, m.start())
+        targets.setdefault(urllib.parse.unquote(name), m.start())
+
+    forward = [
+        m
+        for m in _INPAGE_LINK_RE.finditer(body_html)
+        if len(strip_tags(m.group(2))) >= _TOC_MIN_TITLE_CHARS
+        and (
+            targets.get(m.group(1), targets.get(urllib.parse.unquote(m.group(1)))) or -1
+        )
+        > m.start()
+    ]
+    if len(forward) < _TOC_MIN_ENTRIES:
+        return None
+
+    start, end = forward[0].start(), forward[-1].end()
+    for para in _TOC_PARA_RE.finditer(body_html):
+        if para.end() > start and para.start() < end:
+            start = min(start, para.start())
+            end = max(end, para.end())
+    end = _extend_toc_tail(body_html, end)
+    for para in _TOC_PARA_RE.finditer(body_html[start:end]):
+        if match_para_num(para.group(2)):
+            return None
+    return start, end
+
+
+def _printed_lines_from(body_html: str, pos: int) -> set[str]:
+    """Every printed line at or after `pos`, normalized for comparison.
+
+    A "line" is what the page breaks: a paragraph, or one <br>-separated run
+    inside one. That is the unit a heading occupies and the unit a table of
+    contents lists, which is what makes the two comparable at all."""
+    lines = set()
+    for para in _TOC_PARA_RE.finditer(body_html, pos):
+        for line in _BR_RE.split(para.group(2)):
+            text = _norm_heading(strip_tags(line))
+            if text:
+                lines.add(text)
+    return lines
+
+
+def _extend_toc_tail(body_html: str, end: int) -> int:
+    """Grow a table-of-contents span forward over the unlinked paragraphs
+    that finish it.
+
+    A page need not link its last outline entries. The Russian edition of
+    `magnifica-humanitas` links its chapter titles and stops: the four
+    sub-entries under CONCLUSION are printed after the last link and are
+    plain text, so a span ending at that link leaves them behind to be read
+    as the document's opening paragraph -- the same defect the span exists to
+    fix, one paragraph wide.
+
+    The test for "still the outline" is that every line of the paragraph is
+    printed AGAIN BELOW IT, as a whole line. Both halves of that were got
+    wrong once and each failed in its own direction, so both are load-bearing:
+
+      - Measured against the text after the SPAN rather than after the
+        paragraph, every paragraph trivially contains its own lines and the
+        extension runs to the end of the document. It fails safe when it does
+        -- `toc_link_span`'s numbered-paragraph guard rejects the span
+        outright -- so the German and Polish editions lost their outline
+        entirely rather than gaining a wrong one.
+      - Tested as a SUBSTRING of the running text rather than as a whole
+        printed line, a heading that is also an ordinary word matches its own
+        body. The Polish edition's `WPROWADZENIE` was swallowed that way: it
+        is both the title of the introduction and the word for introducing
+        something, which the encyclical goes on to do about forty times.
+
+    Ordinary prose is not reprinted verbatim as a line further down, so a
+    paragraph of it stops the extension at once, and a numbered paragraph
+    stops it whatever its text says -- the body has started. Lines too short
+    to be a heading are ignored rather than allowed to stop it: a stray
+    `&nbsp;` line is not evidence of anything."""
+    for para in _TOC_PARA_RE.finditer(body_html, end):
+        gap = body_html[end : para.start()]
+        if para.start() != end and _norm_heading(strip_tags(gap)):
+            break  # real text between the span and this paragraph
+        if match_para_num(para.group(2)):
+            break  # the body has started
+        lines = [
+            _norm_heading(strip_tags(line)) for line in _BR_RE.split(para.group(2))
+        ]
+        lines = [line for line in lines if len(line) >= _TOC_MIN_TITLE_CHARS]
+        if not lines:
+            break
+        below = _printed_lines_from(body_html, para.end())
+        if not all(line in below for line in lines):
+            break
+        end = para.end()
+    return end
+
+
 def extract_toc_outline(body_html: str) -> list[tuple[str, int]]:
     """Read the page's own linked table of contents and return its entries as
     (title, level), in document order. Empty when the page has no such TOC.
@@ -2629,29 +2819,10 @@ def extract_toc_outline(body_html: str) -> list[tuple[str, int]]:
     The levels are then shifted to a base of 1 and clamped so that no entry
     sits more than one level below the one before it -- see the comment at
     the foot of the function for what each of those two steps is for."""
-    targets: dict[str, int] = {}
-    for m in _ANCHOR_TARGET_RE.finditer(body_html):
-        name = m.group(1) or m.group(2)
-        targets.setdefault(name, m.start())
-        targets.setdefault(urllib.parse.unquote(name), m.start())
-
-    def entry_title(m: re.Match) -> str:
-        return strip_tags(m.group(2))
-
-    links = list(_INPAGE_LINK_RE.finditer(body_html))
-    forward = [
-        m
-        for m in links
-        if len(entry_title(m)) >= _TOC_MIN_TITLE_CHARS
-        and (
-            targets.get(m.group(1), targets.get(urllib.parse.unquote(m.group(1)))) or -1
-        )
-        > m.start()
-    ]
-    if len(forward) < _TOC_MIN_ENTRIES:
+    span = toc_link_span(body_html)
+    if span is None:
         return []
-
-    span_start, span_end = forward[0].start(), forward[-1].end()
+    span_start, span_end = span
     entries: list[tuple[str, int]] = []
     for para in _TOC_PARA_RE.finditer(body_html):
         if para.end() <= span_start or para.start() >= span_end:
@@ -2839,8 +3010,27 @@ def drop_table_of_contents(blocks: list[Block], match_label) -> list[str]:
     scraper runs across ~450 documents in several templates, so the rule
     here is structural instead of positional:
 
-        A heading that appears BEFORE the body's first numbered section is a
+        A block that appears BEFORE the body's first numbered section is a
         table-of-contents entry if a LATER heading duplicates it.
+
+    It said "a HEADING that appears before" until 2026-08-24, and that was
+    too narrow by exactly the amount that matters. A printed table of
+    contents is typeset like the outline it depicts: its chapter lines are
+    bold and its sub-headings are not, so only the bold minority ever became
+    heading blocks. The rest stayed ordinary prose blocks, invisible to this
+    function, and were swept into the document's first section --
+    `magnifica-humanitas` opened with its own table of contents as the first
+    paragraph of §1 in eight of its nine editions, and
+    `divini-redemptoris.pt` with all four of its part titles. The Arabic
+    edition escaped only because it prints no table of contents at all.
+
+    A pre-body block is a weaker candidate than a pre-body heading, so the
+    duplicate test below carries the whole burden -- which it already could:
+    a block holding several TOC lines run together with <br/> is matched by
+    the same whole-word-prefix rule that matches one, since the first line
+    of the block is the heading and the rest is what follows it in the
+    outline. That is how the Russian edition's unlinked, unbolded sub-entries
+    are caught alongside the English edition's linked ones.
 
     "Duplicates" is deliberately two-pronged, because a TOC entry is rarely
     character-identical to its target. Where a heading carries a real label
@@ -2854,9 +3044,11 @@ def drop_table_of_contents(blocks: list[Block], match_label) -> list[str]:
     TWO GUARDS AGAINST EATING REAL STRUCTURE, since dropping a legitimate
     heading would be a worse defect than the one being fixed:
 
-      - Only pre-body headings are ever candidates. A document's real
+      - Only pre-body blocks are ever candidates. A document's real
         INTRODUCTION also sits before section 1, and survives precisely
-        because nothing later duplicates it.
+        because nothing later duplicates it -- as do the salutation, the
+        dateline, and the unnumbered framing prose that several encyclicals
+        print ahead of their first numbered paragraph.
       - At least TWO duplicates are required before anything is dropped. One
         repeated heading is a coincidence a real document can easily produce
         (per-part introductions, a repeated ARTICLE label); a whole run of
@@ -2873,7 +3065,10 @@ def drop_table_of_contents(blocks: list[Block], match_label) -> list[str]:
         return []
 
     heading_idx = [i for i, blk in enumerate(blocks) if blk.is_heading]
-    candidates = [i for i in heading_idx if i < first_numbered]
+    # Every pre-body block, not only the ones the walker already reads as
+    # headings: see the docstring's note on why a printed TOC is only
+    # half bold.
+    candidates = [i for i in range(first_numbered) if blocks[i].text.strip()]
     if not candidates:
         return []
 
@@ -2905,6 +3100,32 @@ def drop_table_of_contents(blocks: list[Block], match_label) -> list[str]:
     for i in reversed(duplicated):
         del blocks[i]
     return dropped
+
+
+def _opens_a_numbered_paragraph(blocks: list[Block], i: int) -> bool:
+    """Whether the next block that is not a heading carries a paragraph number.
+
+    The one thing that lets an italic block BEFORE the body's first numbered
+    paragraph be a heading rather than furniture. `promote_italic_heading_run`
+    excludes that whole region, and has to: a document's salutation
+    ("Venerable Brethren, Health and the Apostolic Blessing.") is printed in
+    exactly the same italics as its sub-headings, and promoting it would put
+    furniture in the table of contents.
+
+    But an encyclical whose §1 is unnumbered framing text puts its FIRST real
+    sub-heading in that region too, and it was being dropped outright --
+    `augustissimae-virginis-mariae.en` kept nine of its ten and lost "Mary's
+    Place in the Incarnation and Redemption", the only difference being that
+    §1 carries no number for it to sit after.
+
+    The two are told apart by what follows, which is what a heading is for: a
+    heading is followed by the numbered paragraph it heads, while the
+    salutation is followed by the document's unnumbered opening prose."""
+    for blk in blocks[i + 1 :]:
+        if blk.is_heading:
+            continue
+        return match_para_num(blk.raw) is not None
+    return False
 
 
 # Longest italic block still plausibly a heading. Sub-headings in this
@@ -2957,7 +3178,7 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
     candidates = [
         i
         for i, blk in enumerate(blocks)
-        if i > body_start
+        if (i > body_start or _opens_a_numbered_paragraph(blocks, i))
         and not blk.is_heading
         and blk.kind != "quote"
         and len(blk.text) <= _ITALIC_HEADING_MAX_CHARS
@@ -2967,7 +3188,16 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
         and not blk.indented
         and is_full_italic(blk.raw)
     ]
-    if len(candidates) < _ITALIC_HEADING_MIN_RUN:
+    # THE RUN IS ESTABLISHED BY THE BODY, and a pre-body block only joins
+    # one that already exists. Counting the two together lets a single
+    # pre-body block push a document over the threshold on its own, and
+    # the blocks that then come with it are not headings:
+    # `quum-diuturnum.en` has two real italic sub-headings and one italic
+    # CONTINUATION of §4's own sentence, and admitting all three turned
+    # that sentence into a heading and took it out of the section. A
+    # document that titles its sub-sections does so in its body, where the
+    # evidence is a run rather than a single block.
+    if len([i for i in candidates if i > body_start]) < _ITALIC_HEADING_MIN_RUN:
         return []
     for i in candidates:
         blocks[i].is_heading = True
@@ -3211,7 +3441,19 @@ def has_words(text: str) -> bool:
     return _HEADING_LETTER_RE.search(text) is not None
 
 
-_LANG_BAR_RE = re.compile(rf"^\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)+\]?$")
+# `*`, not `+`: a document published in ONE language still prints the bar,
+# and it is then a single bare code. `rerum-ecclesiae.en` opens with `EN`
+# alone, which failed this test, was not the document's title or its author
+# either, and so ended the masthead scan on block one -- leaving `ENCYCLICAL
+# OF POPE PIUS XI / ON CATHOLIC MISSIONS / TO OUR VENERABLE BRETHREN...` to
+# be read as the opening words of §1. 26 works had an empty
+# `manifest.header` for this reason.
+#
+# Deliberately only the WHOLE-BLOCK test. `_LANG_BAR_PREFIX_RE` strips a bar
+# off the front of a block that continues into real text, and letting one
+# code satisfy that would truncate any masthead line beginning with a
+# two-letter word.
+_LANG_BAR_RE = re.compile(rf"^\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)*\]?$")
 _PAPAL_SIGNATURE_RE = re.compile(
     r"^(?:PAPA\s+)?"
     r"(?:PIUS|PIO|LEO|LEAO|IOANNES|JOANNES|JOAO|JOHN|PAULUS|PAUL|PAULO"
@@ -3810,6 +4052,28 @@ def parse_document(
     else:
         body_html, foot_html = region[:fn_start], region[fn_start:]
 
+    # Take the page's own printed table of contents out of the body before
+    # anything reads the body as text. Its LEVELS are still wanted -- they
+    # are the document stating its own outline, and outrank anything the
+    # levelling walk can infer -- so `extract_toc_outline` keeps reading the
+    # untouched string further down, and only the block stream loses it.
+    #
+    # `drop_table_of_contents` used to be the whole answer and is not: it
+    # drops a pre-body HEADING that a later heading duplicates, and a printed
+    # table of contents is only half headings. Its chapter lines are bold and
+    # its sub-entries are not, so the sub-entries stayed ordinary prose and
+    # were swept into the document's first numbered section --
+    # `magnifica-humanitas` opened §1 with its own table of contents in eight
+    # of its nine editions, and `divini-redemptoris.pt` with all four of its
+    # part titles. Both functions stay: this one is exact where the page
+    # links its outline, and that one still covers a table of contents typeset
+    # without links, which nothing in the corpus has yet but the older shell
+    # could plausibly produce.
+    toc_html = body_html
+    toc_span = toc_link_span(body_html)
+    if toc_span is not None:
+        body_html = body_html[: toc_span[0]] + body_html[toc_span[1] :]
+
     marker_template = detect_marker_template(body_html + foot_html)
     footnote_table, chapter_footnote_table = build_footnote_table(foot_html)
 
@@ -3919,7 +4183,7 @@ def parse_document(
     # levelling walk below can infer from styling. See extract_toc_outline.
     # Read from the raw region rather than from `blocks`, so it survives the
     # entries having just been dropped from the stream.
-    toc_entries = extract_toc_outline(body_html)
+    toc_entries = extract_toc_outline(toc_html)
     toc_level: dict[int, int] = {}
     if toc_entries:
         toc_level, toc_promoted = apply_toc_outline(blocks, toc_entries, match_label)
@@ -4042,11 +4306,30 @@ def parse_document(
         # it, but that runs after this walk. Gaudium et Spes PT's `PROÉMIO(1)`
         # read as `PROEMIO⟦1⟧`, missed this set, and was ranked by style: level
         # 4, under the very divisions it introduces.
-        if fold(strip_markers(b.text)).strip(" .:;-") in _FRONT_BACK_MATTER and not (
-            label_span[0] < idx < label_span[1]
+        if (
+            fold(strip_markers(b.text)).strip(" .:;-") in _FRONT_BACK_MATTER
+            and not (label_span[0] < idx < label_span[1])
+            and b.style <= best_heading_style
         ):
             return (0, top_label_depth)
         return (1, b.style)
+
+    # THE STYLE TEST IS WHAT KEEPS THE FRONT-MATTER PROMOTION HONEST.
+    # Lifting a PREFACE to the top tier is right where the document prints it
+    # AS the top tier -- Gaudium et Spes' PROÉMIO and Divini Redemptoris PT's
+    # INTRODUÇÃO are both set in the best heading style their page uses, the
+    # same one their parts and chapters get.
+    #
+    # It is wrong where the front matter is printed in a LESSER style than
+    # something else on the page: `spe-salvi.en` sets "Introduction" in the
+    # bold-italic of the eight headings it sits among, while the page's best
+    # style belongs to the three centred `I./II./III.` settings nested inside
+    # one of them. Promoting it there invented a tier above its own peers and
+    # pushed every other heading in the document one level down. If two
+    # headings look the same on the page they are the same level
+    # (`docs/writing-descriptions.md` §3), and that holds whatever the first
+    # one is called.
+    best_heading_style = min((b.style for b in blocks if b.is_heading), default=0)
 
     keys = sorted({depth_key(i, b) for i, b in enumerate(blocks) if b.is_heading})
     level_of = {k: i + 1 for i, k in enumerate(keys)}
@@ -4136,6 +4419,7 @@ def parse_document(
             and (
                 blk.style > blocks[prev_heading_idx].style
                 or (is_labelled(blocks[prev_heading_idx]) and not is_labelled(blk))
+                or (is_division(blk) and not is_division(blocks[prev_heading_idx]))
             )
         ):
             # A heading goes UNDER the one it follows when the source says so
@@ -4410,8 +4694,15 @@ def parse_document(
                 state.start_section(
                     fills_gap_at,
                     "prose",
-                    state.pending_first_block,
-                    state.pending_first_html or "",
+                    blocks=state.take_buffered_blocks()
+                    or [
+                        BlockOut(
+                            "prose",
+                            state.pending_first_block,
+                            state.pending_first_html or "",
+                        )
+                    ],
+                    claim=state.pending_before_buffer,
                 )
                 state.finalize_open_section()
                 state.last_n = fills_gap_at
@@ -4433,8 +4724,15 @@ def parse_document(
                 state.start_section(
                     1,
                     "prose",
-                    state.pending_first_block,
-                    state.pending_first_html or "",
+                    blocks=state.take_buffered_blocks()
+                    or [
+                        BlockOut(
+                            "prose",
+                            state.pending_first_block,
+                            state.pending_first_html or "",
+                        )
+                    ],
+                    claim=state.pending_before_buffer,
                 )
                 state.finalize_open_section()
                 state.last_n = 1
@@ -4464,6 +4762,7 @@ def parse_document(
                     # salutation. Joining matches how `add_continuation`
                     # already treats consecutive prose inside a section.
                     if state.pending_first_block is None:
+                        state.pending_before_buffer = len(state.pending_headings)
                         state.pending_first_block = b.text
                         state.pending_first_html = b.html
                     else:
