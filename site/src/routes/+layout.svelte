@@ -237,8 +237,11 @@
 	}
 
 	.site-header {
-		/* Above `.reading-aside`/`.index-aside`'s own `position: sticky` (z-index
-		   50 is `.menu-panel`'s, which must still win over both). */
+		/* Above `.reading-aside`/`.index-aside`'s own `position: sticky`, and
+		   above `.reading-bar`'s 30 — this element is a stacking context, so
+		   its open dropdowns are ordered against that bar by THIS number, not
+		   by `.menu-panel`'s 50. (50 is `.menu-panel`'s, which must still win
+		   over both asides.) */
 		position: sticky;
 		top: 0;
 		z-index: 40;

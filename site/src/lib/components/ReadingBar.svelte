@@ -112,15 +112,24 @@
 
 <style>
 	/*
-	 * Opaque background because reading text scrolls under it. z-index 40 is
-	 * `.site-header`'s — the two never overlap, since this one starts where
-	 * that one ends — and below `.menu-panel`'s 50, so a picker opened FROM
-	 * this bar still draws over it.
+	 * Opaque background because reading text scrolls under it. z-index 30 is
+	 * BELOW `.site-header`'s 40, and deliberately: the bars themselves never
+	 * overlap, since this one starts where that one ends, but a menu opened
+	 * from the header drops past the header's own box and over this bar. The
+	 * panel's z-index 50 cannot settle that on its own — `.site-header` is a
+	 * stacking context (sticky + z-index), so the panel's 50 only orders it
+	 * against the header's other children, and against this bar the header
+	 * competes as a whole. At an equal 40 the later sibling won and the bar
+	 * painted over the open menu.
+	 *
+	 * A picker opened FROM this bar still draws over it: `.menu-panel`'s 50
+	 * orders it within this bar's own stacking context, and it opens
+	 * downward, away from the header.
 	 */
 	.reading-bar {
 		position: sticky;
 		top: var(--site-header-height, 0px);
-		z-index: 40;
+		z-index: 30;
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
