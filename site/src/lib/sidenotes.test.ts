@@ -13,7 +13,7 @@ describe('noteKey', () => {
 	});
 
 	// Two occurrences of one marker INSIDE a single unit, which is what `seq`
-	// is for — the same rule `CccParagraphText` follows for a paragraph that
+	// is for — the same rule `ProseBlocks` follows for a paragraph that
 	// cites one footnote twice.
 	it('keeps two occurrences in one unit apart', () => {
 		expect(noteKey(5, '1', 0)).not.toBe(noteKey(5, '1', 1));

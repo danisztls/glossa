@@ -536,7 +536,7 @@ export interface CccBlock {
 	 * round-trip oracle's expected value. Exactly one of `text_marked` and
 	 * `html` is guaranteed present — the CCC and Compendium have the former
 	 * and not the latter, shipped documents the reverse — so a renderer must
-	 * handle both; `CccParagraphText`'s `nodesFor` is the one place that does.
+	 * handle both; `ProseBlocks`'s `nodesFor` is the one place that does.
 	 */
 	text_marked?: string;
 	/**
@@ -673,7 +673,7 @@ export interface CccCitationXref {
 // numbers). `sections.json` reuses the CCC's `blocks`/`text_marked`/
 // `citations`/`text` block model exactly (`CccBlock`/`CccCitation` below are
 // literally the same wire shape, not just similar), which is what lets
-// `CccParagraphText.svelte` render a `DocumentSection` with no changes to
+// `ProseBlocks.svelte` render a `DocumentSection` with no changes to
 // its own type beyond the widened prop signature it already documents.
 
 /** A run of prose the source prints with NO number on it, under the heading it

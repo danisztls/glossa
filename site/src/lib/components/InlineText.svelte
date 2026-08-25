@@ -3,7 +3,7 @@
 	 * Renders the corpus's inline markup where the text is NOT interactive —
 	 * headings and table-of-contents rows.
 	 *
-	 * `CccParagraphText` has its own use of the same walk (`InlineNodes`) and
+	 * `ProseBlocks` has its own use of the same walk (`InlineNodes`) and
 	 * this passes it neither `hrefFor` nor `marker`: body prose additionally
 	 * linkifies scripture mentions and turns `<sup data-fn>` into a citation
 	 * disclosure button, neither of which belongs in a heading (a heading is a

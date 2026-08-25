@@ -22,7 +22,7 @@
 	 * own body, which mixes real prose with the occasional "cf. 1212") —
 	 * that's `linkifyProse`, meant to be rendered by hand alongside the
 	 * text-marker splitting a paragraph already needs (see
-	 * `CccParagraphText.svelte`). This component assumes the *whole* string
+	 * `ProseBlocks.svelte`). This component assumes the *whole* string
 	 * is citation-shaped, which is true for a footnote or a `ccc_refs`
 	 * string but not for running prose.
 	 */
@@ -69,7 +69,7 @@
 <style>
 	/*
 	 * "Quiet" by design — a footnote or ccc_refs line is already small/muted
-	 * type (see CccParagraphText.svelte's .citation-text, the compendium
+	 * type (see ProseBlocks.svelte's .citation-text, the compendium
 	 * page's .ccc-refs), so a link here should read as "this word is also a
 	 * link" rather than compete with the page's actual accent color. Color
 	 * inherits from context; only the underline marks it as interactive,

@@ -333,6 +333,13 @@ wrote is EB Garamond — every `h1`, every structure heading. What we wrote _abo
 work is Source Sans — the header, the controls, the labels, the identifier beside a title.
 A heading is a title until it says otherwise.
 
+**A scoped rule cannot reach into a child component, and the failure is silent.** Svelte
+scopes an ANCESTOR selector with a hard class, so `.division p` or
+`.compare-unit-field .subtitle` written in a route simply stops matching once the element
+it names is rendered by a shared component — no error, no unused-selector warning, just
+spacing that quietly changes. Pass a custom property the child reads
+(`--prose-block-gap`), or `:global()` the ancestor alone.
+
 **A note goes in the margin where there is a margin and becomes a disclosure where there
 is not**, and the breakpoint is legible to the markup, not only to the stylesheet: a
 visible margin note is not a disclosure control, and `aria-expanded` on a button whose

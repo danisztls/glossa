@@ -6,6 +6,8 @@
 	import RefText from '$lib/components/RefText.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
+	import CompareField from '$lib/components/CompareField.svelte';
+	import CompareCopyrightField from '$lib/components/CompareCopyrightField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
@@ -85,6 +87,13 @@
 	const spy = useScrollSpy(() =>
 		(editions.current?.questions ?? []).map((question) => [`q${question.n}`, question.n] as const)
 	);
+
+	/** `Q12` or `Q12–18`. Three call sites — the plain range and the compare
+	 *  header's two columns, which print different numbers only where the two
+	 *  editions disagree about the chapter's extent. */
+	function questionRange(a: number | null, b: number | null): string {
+		return a === b ? `Q${a}` : `Q${a}–${b}`;
+	}
 
 	function headingText(): string {
 		if (!editions.current || !heading) return '';
@@ -168,60 +177,28 @@
 				     (CLAUDE.md) says match — so it collapses, and a split there is
 				     itself the finding. -->
 				<div class="compare-unit-header">
-					<!-- Tagged like `ccc/chapter/[n]`'s title pair, and for the same
-					     reason: stacked on a phone these are two headings with nothing
-					     saying which language each one is. Only the title carries the
-					     tag — the range and the notices below inherit its answer. -->
-					<div
-						class="compare-unit-field compare-unit-field-left"
-						lang={editions.current.work.language}
+					<CompareField
+						leftLang={editions.current.work.language}
+						rightLang={editions.secondary.work.language}
+						leftTag={compareColumnLabel(editions.current.work)}
+						rightTag={compareColumnLabel(editions.secondary.work)}
 					>
-						<span class="compare-cell-tag">{compareColumnLabel(editions.current.work)}</span>
-						<h1>{headingText()}</h1>
-					</div>
-					<div
-						class="compare-unit-field compare-unit-field-right"
-						lang={editions.secondary.work.language}
-					>
-						<span class="compare-cell-tag">{compareColumnLabel(editions.secondary.work)}</span>
-						<h1>{secondaryHeadingText}</h1>
-					</div>
+						{#snippet left()}<h1>{headingText()}</h1>{/snippet}
+						{#snippet right()}<h1>{secondaryHeadingText}</h1>{/snippet}
+					</CompareField>
 
-					{#if from === secondaryFrom && to === secondaryTo}
-						<div class="compare-unit-field compare-unit-field-shared">
-							<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
-						</div>
-					{:else}
-						<div class="compare-unit-field compare-unit-field-left">
-							<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
-						</div>
-						<div class="compare-unit-field compare-unit-field-right">
-							<p class="range">
-								{secondaryFrom === secondaryTo
-									? `Q${secondaryFrom}`
-									: `Q${secondaryFrom}–${secondaryTo}`}
-							</p>
-						</div>
-					{/if}
+					<CompareField shared={from === secondaryFrom && to === secondaryTo}>
+						{#snippet left()}<p class="range">{questionRange(from, to)}</p>{/snippet}
+						{#snippet right()}
+							<p class="range">{questionRange(secondaryFrom, secondaryTo)}</p>
+						{/snippet}
+					</CompareField>
 
-					<!-- Never collapsed: the two notices read alike and link to
-					     different source pages (see `documents/[slug]`). -->
-					<div
-						class="compare-unit-field compare-unit-field-left"
-						lang={editions.current.work.language}
-					>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
-					</div>
-					<div
-						class="compare-unit-field compare-unit-field-right"
-						lang={editions.secondary.work.language}
-					>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
-					</div>
+					<CompareCopyrightField left={editions.current.work} right={editions.secondary.work} />
 				</div>
 			{:else}
 				<h1>{headingText()}</h1>
-				<p class="range">{from === to ? `Q${from}` : `Q${from}–${to}`}</p>
+				<p class="range">{questionRange(from, to)}</p>
 				<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
 			{/if}
 

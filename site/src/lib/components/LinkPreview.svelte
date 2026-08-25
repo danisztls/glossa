@@ -72,7 +72,7 @@
 	// Hovering costs the reader nothing, so it previews every internal content
 	// link the site emits; tapping costs a tap, so it previews only the links
 	// where a glance is the likely intent — inline citations inside prose
-	// (`RefText.svelte`'s `.ref-link`, `CccParagraphText.svelte`'s
+	// (`RefText.svelte`'s `.ref-link`, `ProseBlocks.svelte`'s
 	// `.inline-ref`). Table-of-contents entries, prev/next nav and jump-box
 	// results are the opposite case: the reader picked them in order to GO
 	// there, and taxing that with a peek would be an obstacle, not a feature.

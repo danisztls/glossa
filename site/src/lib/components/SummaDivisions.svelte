@@ -14,15 +14,21 @@
 	editorial essay the edition appends after a last reply, and giving either
 	a division's heading would present an editorial aside as part of the
 	argument.
+
+	WHAT THIS COMPONENT IS, after the divisions' prose moved out, is the
+	structure: the label, the anchor, and the rule down the body. The blocks
+	themselves go through `ProseBlocks`, which was already rendering the
+	CCC's and the documents' blocks by exactly the same path this file
+	described in prose — walk the markup, linkify the references found in
+	running text, never `{@html}`. A division's blocks satisfy its `paragraph`
+	prop structurally (`{ html: string }` is the `html`-only subset of
+	`CccBlock`), and `citations: []` says what is true of a division: the
+	Summa's apparatus is its own divisions, not numbered notes.
 -->
 <script lang="ts">
-	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
-	import { linkifyInline, parseInlineHtml, type InlineNode } from '$lib/inline-html';
-	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
-	import { summaRefLabel } from '$lib/summa-titles';
 	import type { SummaDivision } from '$lib/types';
-	import InlineNodes from './InlineNodes.svelte';
+	import ProseBlocks from './ProseBlocks.svelte';
 
 	interface Props {
 		divisions: SummaDivision[];
@@ -32,37 +38,6 @@
 	}
 
 	let { divisions, lang, idPrefix = '' }: Props = $props();
-
-	/**
-	 * The Summa quotes Scripture constantly and in running prose, so the
-	 * markup is WALKED and linkified rather than pasted into `{@html}` — the
-	 * same path `CccParagraphText` takes, and for the reason
-	 * `inline-html.ts` exists: an emphasis tag is not a word boundary
-	 * (docs/decisions.md, 2026-08-22), so a reference split across `<i>` must
-	 * still resolve as one reference.
-	 *
-	 * `linkifyProse`, not `parseRefs`: a division's blocks are prose with
-	 * references in them, not citation-shaped strings. That distinction is
-	 * `refs.ts`'s, not a new one here.
-	 */
-	function nodesFor(html: string): InlineNode[] {
-		return linkifyInline(parseInlineHtml(html), (text: string) => linkifyProse(text, { lang }));
-	}
-
-	function hrefFor(seg: RefSegment): string | undefined {
-		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang });
-	}
-
-	/**
-	 * A self-citation the CORPUS states, from CCEL's own anchor — see
-	 * `parseStoredRef`. Its text keeps the edition's words and loses the
-	 * square brackets that were only ever markup (`summaRefLabel`); an
-	 * unresolvable one still renders its words, never nothing. Only text
-	 * enclosed in a `summa` ref gets this — everything else prints as stored.
-	 */
-	function textFor(text: string, within?: RefSegment['kind']): string {
-		return within === 'summa' ? summaRefLabel(text) : text;
-	}
 
 	function label(division: SummaDivision): string {
 		switch (division.kind) {
@@ -109,15 +84,19 @@
 {#each divisions as division, i (i)}
 	<section class="division" class:body={division.kind === 'corpus'} id={anchor(division)}>
 		<h3 class="division-label">{label(division)}</h3>
-		{#each division.blocks as block, j (j)}
-			<p><InlineNodes nodes={nodesFor(block.html)} {hrefFor} text={textFor} /></p>
-		{/each}
+		<ProseBlocks unit={{ blocks: division.blocks, citations: [] }} {lang} />
 	</section>
 {/each}
 
 <style>
+	/* `--prose-block-gap` is read by `ProseBlocks`'s paragraphs, which are
+	   this component's children and so out of reach of a scoped `.division p`.
+	   A division's blocks are consecutive paragraphs of ONE argument, and want
+	   to sit closer together than the 1.25rem that separates one division from
+	   the next — otherwise the two breaks read as the same break. */
 	.division {
 		margin: 1.25rem 0;
+		--prose-block-gap: 0.6rem;
 	}
 
 	/*
@@ -143,9 +122,5 @@
 		color: var(--color-text-muted);
 		margin: 0 0 0.35rem;
 		font-weight: 600;
-	}
-
-	.division p {
-		margin: 0 0 0.6rem;
 	}
 </style>

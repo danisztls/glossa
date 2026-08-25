@@ -10,23 +10,34 @@
 	import InlineNodes from '$lib/components/InlineNodes.svelte';
 
 	/**
-	 * Deliberately narrower than `CccParagraph`: only `blocks`/`citations` are
-	 * read below, and both a CCC paragraph and a document's `DocumentSection`
-	 * (docs/corpus-schema.md §Documents) carry the identical wire shape for
-	 * both fields — a document's `sections.json` reuses the CCC's block model
-	 * verbatim. Structural typing means both satisfy this without a cast:
-	 * this component is genuinely shared between `/catechismus/[n]` and
-	 * `/documents/{slug}/{n}`, not merely similar-looking duplicated markup.
+	 * ONE READING UNIT'S BLOCKS — deliberately narrower than any of the four
+	 * types that have one. A CCC paragraph, a Compendium question's answer, a
+	 * document's `DocumentSection` (docs/corpus-schema.md §Documents) and a
+	 * Summa division all carry the identical wire shape for `blocks` and
+	 * `citations`: a document's `sections.json` reuses the CCC's block model
+	 * verbatim, and a division's blocks are the `html`-only subset of it.
+	 * Structural typing means all of them satisfy this without a cast, which
+	 * is why this component is genuinely shared rather than similar-looking
+	 * duplicated markup.
+	 *
+	 * `unit`, not `paragraph`, and `ProseBlocks`, not `CccParagraphText`: it
+	 * was named for the first type that used it and outgrew that name twice —
+	 * once when the documents arrived, once when `SummaDivisions` stopped
+	 * carrying its own copy of this walk.
+	 *
+	 * A caller with no apparatus passes `citations: []` — `blocks` then carry
+	 * no markers to look up, so nothing here goes hunting through an empty
+	 * array.
 	 */
 	interface Props {
-		paragraph: { blocks: CccBlock[]; citations: CccCitation[] };
-		/** Bare content language ('en' | 'pt') the paragraph is being read in — picks the citation grammar in `$lib/refs.ts` (e.g. PT's ':'-vs-','  chapter/verse separator, its own book-abbreviation table). */
+		unit: { blocks: CccBlock[]; citations: CccCitation[] };
+		/** Bare content language ('en' | 'pt') the unit is being read in — picks the citation grammar in `$lib/refs.ts` (e.g. PT's ':'-vs-','  chapter/verse separator, its own book-abbreviation table). */
 		lang: string;
-		/** Set an illuminated initial on the opening block. The caller decides — it is the one that knows this paragraph opens a chapter or a document, which this component cannot see. */
+		/** Set an illuminated initial on the opening block. The caller decides — it is the one that knows this unit opens a chapter or a document, which this component cannot see. */
 		dropCap?: boolean;
 	}
 
-	let { paragraph, lang, dropCap = false }: Props = $props();
+	let { unit, lang, dropCap = false }: Props = $props();
 
 	/**
 	 * The opening of the first block, split into the pieces app.css's
@@ -37,7 +48,7 @@
 	 * rather than the paragraph's. Three CCC paragraphs open on one.
 	 */
 	const cap = $derived.by(() => {
-		const opening = paragraph.blocks[0];
+		const opening = unit.blocks[0];
 		if (!dropCap || !opening || opening.kind === 'quote') return null;
 		// The cap comes off the first TEXT run, not off the block's string:
 		// with markup in play the opening may be `<i>Rerum Novarum</i>...`,
@@ -95,7 +106,7 @@
 	}
 
 	function citationFor(marker: string) {
-		return paragraph.citations.find((c) => c.marker === marker);
+		return unit.citations.find((c) => c.marker === marker);
 	}
 
 	/**
@@ -142,9 +153,9 @@
      started shipping without it (types.ts) — every document block would have
      keyed on `undefined`, and Svelte rejects a duplicate key at runtime, so a
      two-block section would have thrown rather than rendered. Position is the
-     right key regardless: a paragraph's blocks are a fixed ordered list that
+     right key regardless: a unit's blocks are a fixed ordered list that
      is never reordered, inserted into, or filtered. -->
-{#each paragraph.blocks as block, blockIndex (blockIndex)}
+{#each unit.blocks as block, blockIndex (blockIndex)}
 	<!-- The source can cite the same numbered footnote twice in one paragraph;
 	     the key stays independent per occurrence, as <details> did. Declared
 	     per block so it closes over `blockIndex` — `InlineNodes`'s `marker`
@@ -161,14 +172,14 @@
 			/>{/if}
 	{/snippet}
 	{#if block.kind === 'quote'}
-		<blockquote class="ccc-quote">
+		<blockquote class="prose-quote">
 			<p><InlineNodes nodes={nodesFor(block)} {hrefFor} {marker} /></p>
 			{#if block.attribution}
 				<footer>{block.attribution}</footer>
 			{/if}
 		</blockquote>
 	{:else}
-		<p class="ccc-prose">
+		<p class="prose-block">
 			{#if blockIndex === 0 && cap}<span class="drop-cap-letter"
 					>{#if cap.lead}<span class="drop-cap-lead">{cap.lead}</span>{/if}{cap.first}</span
 				><InlineNodes nodes={cap.restNodes} {hrefFor} {marker} />{:else}<InlineNodes
@@ -181,11 +192,21 @@
 {/each}
 
 <style>
-	.ccc-prose {
-		margin: 0 0 1rem;
+	/*
+	 * The gap between blocks is the CALLER'S, because it is a statement about
+	 * what surrounds them: a CCC paragraph and a document section sit alone
+	 * under their own number and get the full rem, while a Summa division's
+	 * blocks are consecutive paragraphs of one argument, set tighter so that
+	 * the 1.25rem between divisions still reads as the larger break. Passed as
+	 * a custom property rather than a class prop because a scoped `.division p`
+	 * rule cannot reach into this component at all — which is what would have
+	 * silently swallowed the Summa's tighter setting when it moved here.
+	 */
+	.prose-block {
+		margin: 0 0 var(--prose-block-gap, 1rem);
 	}
 
-	.ccc-quote {
+	.prose-quote {
 		margin: 1rem 0;
 		padding-inline-start: 1rem;
 		border-inline-start: 3px solid var(--color-border);
@@ -193,11 +214,11 @@
 		color: var(--color-text-muted);
 	}
 
-	.ccc-quote p {
+	.prose-quote p {
 		margin: 0;
 	}
 
-	.ccc-quote footer {
+	.prose-quote footer {
 		margin-top: 0.35rem;
 		font-style: normal;
 		font-size: 0.85rem;

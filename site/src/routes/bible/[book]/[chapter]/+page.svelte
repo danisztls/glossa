@@ -25,6 +25,8 @@
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import CitedBy from '$lib/components/CitedBy.svelte';
 	import { documentCitedSource, type CitedByRow, type CitedBySource } from '$lib/cited-by';
+	import CompareField from '$lib/components/CompareField.svelte';
+	import CompareCopyrightField from '$lib/components/CompareCopyrightField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import UnitNav from '$lib/components/UnitNav.svelte';
@@ -491,26 +493,17 @@
 				     ("Genesis 1" against "Génesis 1"). This is the route that shows the
 				     collapse rule correctly declining to fire. -->
 				<div class="compare-unit-header">
-					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
-						<p class="edition-label">{current.work.title}</p>
-					</div>
-					<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
-						<p class="edition-label">{secondary.work.title}</p>
-					</div>
+					<CompareField leftLang={current.work.language} rightLang={secondary.work.language}>
+						{#snippet left()}<p class="edition-label">{current.work.title}</p>{/snippet}
+						{#snippet right()}<p class="edition-label">{secondary.work.title}</p>{/snippet}
+					</CompareField>
 
-					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
-						<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
-					</div>
-					<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
-						<p class="copyright-notice"><CopyrightNotice manifest={secondary.work} /></p>
-					</div>
+					<CompareCopyrightField left={current.work} right={secondary.work} />
 
-					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
-						<h1>{current.book.name} {current.chapter.n}</h1>
-					</div>
-					<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
-						<h1>{secondary.book.name} {secondary.chapter.n}</h1>
-					</div>
+					<CompareField leftLang={current.work.language} rightLang={secondary.work.language}>
+						{#snippet left()}<h1>{current.book.name} {current.chapter.n}</h1>{/snippet}
+						{#snippet right()}<h1>{secondary.book.name} {secondary.chapter.n}</h1>{/snippet}
+					</CompareField>
 				</div>
 			{:else}
 				<!-- No breadcrumb on this route to share a line with (unlike

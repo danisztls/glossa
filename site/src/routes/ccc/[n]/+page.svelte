@@ -11,11 +11,13 @@
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
 	import { displayTitle } from '$lib/titles';
-	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
+	import ProseBlocks from '$lib/components/ProseBlocks.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CitedBy from '$lib/components/CitedBy.svelte';
 	import { documentCitedSource, type CitedByRow, type CitedBySource } from '$lib/cited-by';
+	import CompareField from '$lib/components/CompareField.svelte';
+	import CompareCopyrightField from '$lib/components/CompareCopyrightField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import UnitNav from '$lib/components/UnitNav.svelte';
@@ -128,11 +130,24 @@
 </svelte:head>
 
 {#snippet leftCell(paragraph: CccParagraph)}
-	<CccParagraphText {paragraph} lang={editions.lang} />
+	<ProseBlocks unit={paragraph} lang={editions.lang} />
 {/snippet}
 
 {#snippet rightCell(paragraph: CccParagraph)}
-	<CccParagraphText {paragraph} lang={editions.secondaryLang ?? editions.lang} />
+	<ProseBlocks unit={paragraph} lang={editions.secondaryLang ?? editions.lang} />
+{/snippet}
+
+<!-- The paragraph's address, and the tag the CCC sets on a summary paragraph.
+     Written once and rendered three times: the plain heading, and each column
+     of the compare header — where the two can disagree about `in_brief`, which
+     is the one thing that makes this a field with two sides at all. -->
+{#snippet address(inBrief?: boolean)}
+	<h1>
+		{#if inBrief}
+			<span class="in-brief-tag">{t('ccc.inBrief')}</span>
+		{/if}
+		CCC {data.n}
+	</h1>
 {/snippet}
 
 {#if editions.current}
@@ -172,6 +187,12 @@
 			/>
 
 			{#if editions.compareActive && editions.secondary}
+				<!-- Read out here, not inside the field below: a snippet body does
+				     not inherit the narrowing this `{#if}` performs, so
+				     `editions.secondary` reads as possibly-undefined once it is
+				     referenced from inside `{#snippet right()}`. -->
+				{@const inBriefLeft = editions.current.paragraph.in_brief}
+				{@const inBriefRight = editions.secondary.paragraph.in_brief}
 				<!-- Compare mode's WHOLE header, merged into one two-column block —
 				     same reasoning as `documents/[slug]` and the Bible chapter
 				     route: the heading, copyright notice and edition picker all
@@ -189,62 +210,19 @@
 				     the two editions genuinely disagree about that flag, which is a
 				     defect worth seeing rather than smoothing over. -->
 				<div class="compare-unit-header">
-					{#if editions.current.paragraph.in_brief === editions.secondary.paragraph.in_brief}
-						<div class="compare-unit-field compare-unit-field-shared">
-							<h1>
-								{#if editions.current.paragraph.in_brief}
-									<span class="in-brief-tag">{t('ccc.inBrief')}</span>
-								{/if}
-								CCC {data.n}
-							</h1>
-						</div>
-					{:else}
-						<div
-							class="compare-unit-field compare-unit-field-left"
-							lang={editions.current.work.language}
-						>
-							<h1>
-								{#if editions.current.paragraph.in_brief}
-									<span class="in-brief-tag">{t('ccc.inBrief')}</span>
-								{/if}
-								CCC {data.n}
-							</h1>
-						</div>
-						<div
-							class="compare-unit-field compare-unit-field-right"
-							lang={editions.secondary.work.language}
-						>
-							<h1>
-								{#if editions.secondary.paragraph.in_brief}
-									<span class="in-brief-tag">{t('ccc.inBrief')}</span>
-								{/if}
-								CCC {data.n}
-							</h1>
-						</div>
-					{/if}
+					<CompareField
+						shared={inBriefLeft === inBriefRight}
+						leftLang={editions.current.work.language}
+						rightLang={editions.secondary.work.language}
+					>
+						{#snippet left()}{@render address(inBriefLeft)}{/snippet}
+						{#snippet right()}{@render address(inBriefRight)}{/snippet}
+					</CompareField>
 
-					<!-- Never collapsed: the two notices read alike and link to
-					     different source pages (see `documents/[slug]`). -->
-					<div
-						class="compare-unit-field compare-unit-field-left"
-						lang={editions.current.work.language}
-					>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
-					</div>
-					<div
-						class="compare-unit-field compare-unit-field-right"
-						lang={editions.secondary.work.language}
-					>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
-					</div>
+					<CompareCopyrightField left={editions.current.work} right={editions.secondary.work} />
 				</div>
 			{:else}
-				<h1>
-					{#if editions.current.paragraph.in_brief}
-						<span class="in-brief-tag">{t('ccc.inBrief')}</span>
-					{/if}
-					CCC {data.n}
-				</h1>
+				{@render address(editions.current.paragraph.in_brief)}
 
 				<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
 			{/if}
@@ -271,7 +249,7 @@
 				/>
 			{:else}
 				<div class="reading-text ccc-body" lang={editions.current.work.language}>
-					<CccParagraphText paragraph={editions.current.paragraph} lang={editions.lang} />
+					<ProseBlocks unit={editions.current.paragraph} lang={editions.lang} />
 				</div>
 			{/if}
 

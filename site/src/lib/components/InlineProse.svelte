@@ -4,7 +4,7 @@
 	 * references linkified — for prose that carries no footnote apparatus.
 	 *
 	 * Distinct from `InlineText` (headings, TOC rows: no links at all, because
-	 * a heading is itself a link target) and from `CccParagraphText` (which
+	 * a heading is itself a link target) and from `ProseBlocks` (which
 	 * additionally turns `<sup data-fn>` into a citation disclosure). What all
 	 * three share is `parseInlineHtml`, where the markup rules live, and
 	 * `InlineNodes`, which walks the parsed nodes.

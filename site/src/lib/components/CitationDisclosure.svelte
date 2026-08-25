@@ -11,7 +11,7 @@
 	 * disclosure and the three ways a citation can be empty now have one owner
 	 * instead of a copy per surface.
 	 *
-	 * THE OPEN STATE IS THE CALLER'S, not this component's. `CccParagraphText`
+	 * THE OPEN STATE IS THE CALLER'S, not this component's. `ProseBlocks`
 	 * keys a `SvelteSet` by block and position because the source can cite the
 	 * same footnote twice in one paragraph and the two disclosures must open
 	 * independently; a heading needs no such key. Neither rule belongs in

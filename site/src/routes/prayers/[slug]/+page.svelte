@@ -85,6 +85,7 @@
 	import { compareColumnLabel, resolveEditionTag } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
+	import CompareField from '$lib/components/CompareField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import UnitNav from '$lib/components/UnitNav.svelte';
@@ -319,20 +320,16 @@
 				     not when it is translated ("Hail Mary" against "Ave Maria") —
 				     the field asks, nothing here decides centrally. -->
 				<div class="compare-unit-header">
-					{#if secondary.title === current.prayer.title}
-						<div class="compare-unit-field compare-unit-field-shared">
-							<h1>{current.prayer.title}</h1>
-						</div>
-					{:else}
-						<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
-							<span class="compare-cell-tag">{compareColumnLabel(current.work)}</span>
-							<h1>{current.prayer.title}</h1>
-						</div>
-						<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
-							<span class="compare-cell-tag">{compareColumnLabel(secondary.work)}</span>
-							<h1>{secondary.title}</h1>
-						</div>
-					{/if}
+					<CompareField
+						shared={secondary.title === current.prayer.title}
+						leftLang={current.work.language}
+						rightLang={secondary.work.language}
+						leftTag={compareColumnLabel(current.work)}
+						rightTag={compareColumnLabel(secondary.work)}
+					>
+						{#snippet left()}<h1>{current.prayer.title}</h1>{/snippet}
+						{#snippet right()}<h1>{secondary.title}</h1>{/snippet}
+					</CompareField>
 				</div>
 			{:else}
 				<h1>{current.prayer.title}</h1>

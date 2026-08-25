@@ -2,11 +2,21 @@
 	The one recursive walk over `InlineNode[]` (`$lib/inline-html.ts`), shared
 	by every caller that renders the corpus's inline markup: `InlineText`
 	(headings, TOC rows — no links, no markers), `InlineProse` (scripture
-	links), `SummaDivisions` (scripture links, plus stripping CCEL's brackets
-	from text inside a `summa` self-citation), `CccParagraphText` (scripture
-	links, plus footnote-marker disclosures and a drop cap). The four used to
-	each carry their own copy of this walk and had already drifted in small
-	ways — this is where the markup rules become rendering ONCE.
+	links), `ProseBlocks` (scripture links, plus footnote-marker
+	disclosures and a drop cap). They used to each carry their own copy of this
+	walk and had already drifted in small ways — this is where the markup rules
+	become rendering ONCE.
+
+	CCEL'S ANCHOR BRACKETS ARE UNPICKED HERE, not by a caller. `Q[74], A[2]`
+	is how one edition wrote the text it linked, and stripping it is a markup
+	rule of exactly the kind this walk exists to hold — it fires only inside a
+	`summa` ref, so no other corpus's brackets are touched, and `summaRefLabel`
+	is a no-op on text that has none. It arrived here as a `text` transform
+	`SummaDivisions` passed down; that component now renders through
+	`ProseBlocks`, which left the prop with one caller and one possible
+	value. Moving it in also reaches the 8
+	question prologues that carry a bracketed self-citation and, going through
+	`InlineProse`, never had the transform at all.
 
 	Nothing here emits an HTML string — see `inline-html.ts`'s docblock for why
 	the markup is walked (a `<sup data-fn>` has to become a disclosure button,
@@ -17,6 +27,7 @@
 	import type { Snippet } from 'svelte';
 	import type { InlineNode } from '$lib/inline-html';
 	import type { RefSegment } from '$lib/refs-grammar';
+	import { summaRefLabel } from '$lib/summa-titles';
 
 	interface Props {
 		nodes: InlineNode[];
@@ -25,25 +36,20 @@
 		 *  than a link, because a heading is itself a link target and nesting
 		 *  an anchor inside one would be invalid. */
 		hrefFor?: (seg: RefSegment) => string | undefined;
-		/** Transform a text run, given the kind of ref node it is enclosed in,
-		 *  if any. `SummaDivisions` passes `summaRefLabel` for text inside a
-		 *  `summa` self-citation, to drop CCEL's own bracket markup; everyone
-		 *  else leaves the run as printed. */
-		text?: (text: string, within?: RefSegment['kind']) => string;
 		/** Render a footnote marker. Omit to render nothing for one —
 		 *  `InlineText` and `InlineProse` never see any (headings carry no
 		 *  apparatus, and a caller that wants footnotes uses
-		 *  `CccParagraphText`, which supplies this). */
+		 *  `ProseBlocks`, which supplies this). */
 		marker?: Snippet<[marker: string, seq: number]>;
 	}
 
-	let { nodes, hrefFor, text, marker }: Props = $props();
+	let { nodes, hrefFor, marker }: Props = $props();
 </script>
 
 {#snippet walk(items: InlineNode[], within?: RefSegment['kind'])}
 	{#each items as node, k (k)}
 		{#if node.kind === 'text'}
-			{text ? text(node.text, within) : node.text}
+			{within === 'summa' ? summaRefLabel(node.text) : node.text}
 		{:else if node.kind === 'ref'}
 			{@const href = hrefFor?.(node.seg)}
 			<!-- A reference split across an emphasis boundary (`<i>Ezek </i>47:7`)

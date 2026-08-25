@@ -64,7 +64,7 @@ export const sidenoteRoom = new SidenoteRoom();
  * make every "1" in a chapter open and close together, showing the reader
  * Nicodemus's note against a verse thirteen verses later. `seq` then separates
  * two occurrences of one marker inside a single unit, the same way
- * `CccParagraphText` keys a paragraph that cites one footnote twice.
+ * `ProseBlocks` keys a paragraph that cites one footnote twice.
  */
 export function noteKey(unit: string | number, marker: string, seq: number): string {
 	return `${unit}:${marker}:${seq}`;

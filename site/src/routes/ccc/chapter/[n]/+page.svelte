@@ -14,12 +14,14 @@
 	import { page } from '$app/state';
 	import { compareColumnLabel, flattenCccStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
-	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
+	import ProseBlocks from '$lib/components/ProseBlocks.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import HeadingText from '$lib/components/HeadingText.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
+	import CompareField from '$lib/components/CompareField.svelte';
+	import CompareCopyrightField from '$lib/components/CompareCopyrightField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
@@ -185,7 +187,7 @@
 {#snippet leftCell(paragraph: CccParagraph)}
 	<div class="para" class:in-brief={paragraph.in_brief}>
 		<div class="para-text">
-			<CccParagraphText {paragraph} lang={editions.lang} />
+			<ProseBlocks unit={paragraph} lang={editions.lang} />
 		</div>
 	</div>
 {/snippet}
@@ -193,9 +195,20 @@
 {#snippet rightCell(paragraph: CccParagraph)}
 	<div class="para" class:in-brief={paragraph.in_brief}>
 		<div class="para-text">
-			<CccParagraphText {paragraph} lang={editions.secondaryLang ?? editions.lang} />
+			<ProseBlocks unit={paragraph} lang={editions.secondaryLang ?? editions.lang} />
 		</div>
 	</div>
+{/snippet}
+
+<!-- The chapter's heading, ordinal and title kept apart so the ordinal can be
+     set in its own face. Written once and rendered three times: the plain
+     heading, and each column of the compare header, where the title is
+     translated and the two therefore always differ. -->
+{#snippet chapterTitle(t: ReturnType<typeof displayTitle>)}
+	<h1>
+		{#if t.ordinal}<span class="ordinal">{t.ordinal}</span>{/if}
+		{t.title}
+	</h1>
 {/snippet}
 
 {#if editions.current && heading}
@@ -244,70 +257,25 @@
 				     guarantee (CLAUDE.md) says match — so it collapses, and on the
 				     rare chapter where it doesn't, the split is itself the finding. -->
 				<div class="compare-unit-header">
-					<!-- `.compare-cell-tag` here for the reason `CompareGrid` uses it a
-					     level down, and it is the same class so the two cannot drift:
-					     stacked, a chapter title in two languages is two headings with
-					     nothing saying which is which, and position — the one thing
-					     that identified them side by side — says nothing at all. Only
-					     the TITLE is tagged, not every field: the range and the
-					     copyright notices sit under a labelled title and inherit its
-					     answer, and tagging all three turned a header into a list of
-					     language names. Hidden above 60rem by the class itself. -->
-					<div
-						class="compare-unit-field compare-unit-field-left"
-						lang={editions.current.work.language}
+					<CompareField
+						leftLang={editions.current.work.language}
+						rightLang={editions.secondary.work.language}
+						leftTag={compareColumnLabel(editions.current.work)}
+						rightTag={compareColumnLabel(editions.secondary.work)}
 					>
-						<span class="compare-cell-tag">{compareColumnLabel(editions.current.work)}</span>
-						<h1>
-							{#if heading.ordinal}<span class="ordinal">{heading.ordinal}</span>{/if}
-							{heading.title}
-						</h1>
-					</div>
-					<div
-						class="compare-unit-field compare-unit-field-right"
-						lang={editions.secondary.work.language}
-					>
-						<span class="compare-cell-tag">{compareColumnLabel(editions.secondary.work)}</span>
-						<h1>
-							{#if secondaryHeading.ordinal}<span class="ordinal">{secondaryHeading.ordinal}</span
-								>{/if}
-							{secondaryHeading.title}
-						</h1>
-					</div>
+						{#snippet left()}{@render chapterTitle(heading)}{/snippet}
+						{#snippet right()}{@render chapterTitle(secondaryHeading)}{/snippet}
+					</CompareField>
 
-					{#if from === secondaryFrom && to === secondaryTo}
-						<div class="compare-unit-field compare-unit-field-shared">
-							<p class="range">¶{from}–{to}</p>
-						</div>
-					{:else}
-						<div class="compare-unit-field compare-unit-field-left">
-							<p class="range">¶{from}–{to}</p>
-						</div>
-						<div class="compare-unit-field compare-unit-field-right">
-							<p class="range">¶{secondaryFrom}–{secondaryTo}</p>
-						</div>
-					{/if}
+					<CompareField shared={from === secondaryFrom && to === secondaryTo}>
+						{#snippet left()}<p class="range">¶{from}–{to}</p>{/snippet}
+						{#snippet right()}<p class="range">¶{secondaryFrom}–{secondaryTo}</p>{/snippet}
+					</CompareField>
 
-					<!-- Never collapsed: the two notices read alike and link to
-					     different source pages (see `documents/[slug]`). -->
-					<div
-						class="compare-unit-field compare-unit-field-left"
-						lang={editions.current.work.language}
-					>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
-					</div>
-					<div
-						class="compare-unit-field compare-unit-field-right"
-						lang={editions.secondary.work.language}
-					>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
-					</div>
+					<CompareCopyrightField left={editions.current.work} right={editions.secondary.work} />
 				</div>
 			{:else}
-				<h1>
-					{#if heading.ordinal}<span class="ordinal">{heading.ordinal}</span>{/if}
-					{heading.title}
-				</h1>
+				{@render chapterTitle(heading)}
 				<p class="range">¶{from}–{to}</p>
 
 				<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
@@ -380,8 +348,8 @@
 						     opening `«` — which four of the PT catechism's twenty
 						     chapters begin with (see app.css). -->
 							<div class="para-text">
-								<CccParagraphText
-									{paragraph}
+								<ProseBlocks
+									unit={paragraph}
 									lang={editions.lang}
 									dropCap={i === 0 && !paragraph.in_brief}
 								/>

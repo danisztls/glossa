@@ -52,7 +52,7 @@ export type MarkedPiece = { text: string } | { marker: string; seq: number };
  *
  * `seq` numbers the markers by POSITION rather than by name, so a string
  * citing one footnote twice discloses each occurrence independently — the
- * same rule `CccParagraphText` follows for a paragraph, which does have such
+ * same rule `ProseBlocks` follows for a paragraph, which does have such
  * cases. It matters for the Bible too, though one level up: a marker is
  * unique within its VERSE and not within its chapter, so `⟦1⟧` recurs down a
  * chapter meaning something different each time (docs/corpus-schema.md). That

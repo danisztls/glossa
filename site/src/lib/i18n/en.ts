@@ -227,7 +227,7 @@ export const en: Dictionary = {
 
 	// A citation whose source text is a confirmed gap in the source page
 	// itself, not a parsing failure (docs/research/vatican-documents.md §6)
-	// — CccParagraphText.svelte's citation disclosure, shared by CCC and
+	// — ProseBlocks.svelte's citation disclosure, shared by CCC and
 	// document sections.
 	'citation.unavailable': 'No source text available for this note.',
 

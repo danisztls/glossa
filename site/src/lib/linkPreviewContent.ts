@@ -182,7 +182,7 @@ async function resolveCcc(n: number): Promise<ResolvedUnit | undefined> {
 	// `.text` is CccParagraph's own already-derived plain rendering (blocks
 	// joined, `⟦marker⟧` footnote tokens stripped, whitespace normalized) --
 	// exactly what a plain-text preview needs and precisely what
-	// `CccParagraphText.svelte` does NOT use, since that component exists to
+	// `ProseBlocks.svelte` does NOT use, since that component exists to
 	// render the marked-up version footnotes and inline links depend on. A
 	// hover preview has no business hosting either.
 	return { title: `CCC ${n}`, text: para.text };

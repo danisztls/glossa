@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
 	 * Renders a Compendium question's answer blocks (prose | quote, optional
-	 * attribution) — the same block model as `CccParagraphText.svelte`, but
+	 * attribution) — the same block model as `ProseBlocks.svelte`, but
 	 * simpler: Compendium answers carry plain `text` with no `⟦marker⟧`
 	 * footnote tokens (docs/corpus-schema.md "Compendium — questions.json"),
 	 * so there's no marker-splitting or citation lookup to do here, just

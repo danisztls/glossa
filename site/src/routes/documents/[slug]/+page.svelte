@@ -27,12 +27,14 @@
 	import { untrack } from 'svelte';
 	import { page } from '$app/state';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
-	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
+	import ProseBlocks from '$lib/components/ProseBlocks.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import CitedBy from '$lib/components/CitedBy.svelte';
 	import { documentCitedSource, type CitedByRow, type CitedBySource } from '$lib/cited-by';
+	import CompareField from '$lib/components/CompareField.svelte';
+	import CompareCopyrightField from '$lib/components/CompareCopyrightField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
@@ -60,7 +62,13 @@
 		getDocumentAppendixAsync
 	} from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
-	import type { Citer, DocumentAppendixUnit, DocumentSection, DocumentNode } from '$lib/types';
+	import type {
+		Citer,
+		DocumentAppendixUnit,
+		DocumentSection,
+		DocumentNode,
+		DocumentManifest
+	} from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -514,11 +522,39 @@
 </svelte:head>
 
 {#snippet leftCell(section: DocumentSection)}
-	<CccParagraphText paragraph={section} {lang} />
+	<ProseBlocks unit={section} {lang} />
+{/snippet}
+
+<!-- The document's masthead line: kind, author, date. Written once and
+     rendered three times — the plain heading and the compare header's two
+     columns, which carry different manifests and, in the date, different
+     languages: the plain line formats in the READER's language, a compare cell
+     in the edition's own, because there the two sit side by side and a date in
+     the reader's language over a Portuguese column would be describing one
+     edition in another's terms.
+
+     Compared as a whole and always split in practice: the kind badge is an
+     interface-language label and so matches, but the pontiff's name and the
+     promulgation date are both translated. Splitting the line further to
+     collapse the badge alone would turn one line into two and cost more height
+     than the duplicate badge does. -->
+{#snippet subtitle(manifest: DocumentManifest, dateLang: string)}
+	<p class="subtitle">
+		<span class="doc-kind">{documentKindLabel(manifest.document_kind)}</span>
+		<span class="sep">·</span>
+		{manifest.pontiff_or_council}
+		<span class="sep">·</span>
+		<!-- Bare date, no "Promulgated" label — matching the /documents list.
+		     In a subtitle already reading "Encyclical · Francis · <date>",
+		     the only date a document has needs no naming. -->
+		<time class="promulgated" datetime={manifest.promulgated}>
+			{formatPromulgated(manifest.promulgated, dateLang)}
+		</time>
+	</p>
 {/snippet}
 
 {#snippet rightCell(section: DocumentSection)}
-	<CccParagraphText paragraph={section} lang={secondaryLang ?? lang} />
+	<ProseBlocks unit={section} lang={secondaryLang ?? lang} />
 {/snippet}
 
 <!--
@@ -650,85 +686,33 @@
 				     that genuinely did differ. Nothing here decides that centrally;
 				     the field simply asks whether the two strings match. -->
 				<div class="compare-unit-header">
-					{#if current.work.title === secondaryManifest.title}
-						<!-- No `lang`: an identical pair has no one language to claim,
-						     and asserting the primary edition's would be a small lie
-						     about a Latin incipit in particular. -->
-						<div class="compare-unit-field compare-unit-field-shared">
-							<h1>{current.work.title}</h1>
-						</div>
-					{:else}
-						<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
-							<h1>{current.work.title}</h1>
-						</div>
-						<div
-							class="compare-unit-field compare-unit-field-right"
-							lang={secondaryManifest.language}
-						>
-							<h1>{secondaryManifest.title}</h1>
-						</div>
-					{/if}
-
-					<!-- The subtitle is compared as a whole and always splits in
-					     practice: the kind badge is an interface-language label and so
-					     matches, but the pontiff's name and the promulgation date are
-					     both translated. Splitting the line further to collapse the
-					     badge alone would turn one line into two and cost more height
-					     than the duplicate badge does. -->
-					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
-						<p class="subtitle">
-							<span class="doc-kind">{documentKindLabel(current.work.document_kind)}</span>
-							<span class="sep">·</span>
-							{current.work.pontiff_or_council}
-							<span class="sep">·</span>
-							<time class="promulgated" datetime={current.work.promulgated}>
-								{formatPromulgated(current.work.promulgated, current.work.language)}
-							</time>
-						</p>
-					</div>
-					<div
-						class="compare-unit-field compare-unit-field-right"
-						lang={secondaryManifest.language}
+					<!-- An encyclical is addressed by its Latin incipit, which is the same
+					     string in every language, so this used to set `Magnifica Humanitas`
+					     as an `<h1>` twice, side by side, above a subtitle that genuinely
+					     did differ. -->
+					<CompareField
+						shared={current.work.title === secondaryManifest.title}
+						leftLang={current.work.language}
+						rightLang={secondaryManifest.language}
 					>
-						<p class="subtitle">
-							<span class="doc-kind">{documentKindLabel(secondaryManifest.document_kind)}</span>
-							<span class="sep">·</span>
-							{secondaryManifest.pontiff_or_council}
-							<span class="sep">·</span>
-							<time class="promulgated" datetime={secondaryManifest.promulgated}>
-								{formatPromulgated(secondaryManifest.promulgated, secondaryManifest.language)}
-							</time>
-						</p>
-					</div>
+						{#snippet left()}<h1>{current.work.title}</h1>{/snippet}
+						{#snippet right()}<h1>{secondaryManifest.title}</h1>{/snippet}
+					</CompareField>
 
-					<!-- Never collapsed, even though both editions print the same
-					     words: the two notices link to DIFFERENT vatican.va pages, and
-					     that link is the checkable part (`CopyrightNotice.svelte`). -->
-					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
-						<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
-					</div>
-					<div
-						class="compare-unit-field compare-unit-field-right"
-						lang={secondaryManifest.language}
-					>
-						<p class="copyright-notice"><CopyrightNotice manifest={secondaryManifest} /></p>
-					</div>
+					<CompareField leftLang={current.work.language} rightLang={secondaryManifest.language}>
+						{#snippet left()}{@render subtitle(current.work, current.work.language)}{/snippet}
+						{#snippet right()}{@render subtitle(
+								secondaryManifest,
+								secondaryManifest.language
+							)}{/snippet}
+					</CompareField>
+
+					<CompareCopyrightField left={current.work} right={secondaryManifest} />
 				</div>
 			{:else}
 				<h1>{metaManifest.title}</h1>
 
-				<p class="subtitle">
-					<span class="doc-kind">{documentKindLabel(metaManifest.document_kind)}</span>
-					<span class="sep">·</span>
-					{metaManifest.pontiff_or_council}
-					<span class="sep">·</span>
-					<!-- Bare date, no "Promulgated" label — matching the /documents list.
-					     In a subtitle already reading "Encyclical · Francis · <date>",
-					     the only date a document has needs no naming. -->
-					<time class="promulgated" datetime={metaManifest.promulgated}>
-						{formatPromulgated(metaManifest.promulgated, lang)}
-					</time>
-				</p>
+				{@render subtitle(metaManifest, lang)}
 
 				<p class="copyright-notice"><CopyrightNotice manifest={metaManifest} /></p>
 
@@ -891,8 +875,8 @@
 									placement="margin"
 								/>
 								<div class="section-text">
-									<CccParagraphText
-										paragraph={section}
+									<ProseBlocks
+										unit={section}
 										{lang}
 										dropCap={i === 0 || divisionStarts.has(section.n)}
 									/>
@@ -919,8 +903,8 @@
 							{#if row.unit}
 								<section class="section appendix-unit">
 									<div class="section-text">
-										<CccParagraphText
-											paragraph={row.unit}
+										<ProseBlocks
+											unit={row.unit}
 											{lang}
 											dropCap={i === 0 && current.sections.length === 0}
 										/>
@@ -978,13 +962,14 @@
 		margin: 1.25rem 0 1.5rem;
 	}
 
-	.compare-unit-field .subtitle {
+	/* `:global` ON THE ANCESTOR because the cell is `CompareField`'s element,
+	   not this route's, and Svelte scopes an ancestor selector with a HARD
+	   class rather than `:where` — `.compare-unit-field.svelte-A .subtitle`
+	   simply stops matching when the div carrying that class is compiled under
+	   hash B. The subtitle itself is still this component's, so it still gets
+	   scoped and this rule still cannot reach another route's. */
+	:global(.compare-unit-field) .subtitle {
 		margin: 0 0 0.5rem;
-	}
-
-	.compare-unit-field .document-masthead {
-		margin-top: 1rem;
-		margin-bottom: 0;
 	}
 
 	.subtitle .sep {
