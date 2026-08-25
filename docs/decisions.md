@@ -3312,3 +3312,130 @@ unchanged. That is the same shape as the seven languages added earlier today,
 in the opposite proportion — and the Supplementum still resolves to English
 for a Latin reader, per address, because that fallback was never a property
 of the override store.
+
+## 2026-08-24 — The page's own table of contents is not the document's first paragraph
+
+Reported from the site: `magnifica-humanitas` opened §1 with its own table of
+contents, run together as prose. It affected **eight of its nine editions**
+and `divini-redemptoris.pt`; the Arabic edition escaped only because it prints
+no table of contents at all.
+
+`drop_table_of_contents` existed for exactly this and was too narrow. Its rule
+— a pre-body **heading** that a later heading duplicates — matched only the
+half of a printed outline that is set in bold. The sub-entries are not bold,
+so they never became headings, stayed ordinary prose blocks, and were swept
+into the first numbered section.
+
+The fix uses the discriminator already in the file. `extract_toc_outline`
+finds the outline by its **forward-pointing** in-page links, which is what
+separates a table of contents from the far more common footnote
+back-reference. That detection is now `toc_link_span`, and `parse_document`
+excises the span from the body before any block is cut, keeping the untouched
+string for the outline's levels. **A table of contents never contains a
+numbered paragraph**, so a span holding one is not a table of contents and
+nothing is excised — a property of the two things being told apart, not a
+threshold.
+
+Two mistakes on the way, both kept in the docstrings because each failed in
+its own direction. Extending the span over trailing unlinked entries,
+measuring "printed again below" from the _span_ rather than from _the
+paragraph under test_ made every paragraph contain its own lines and ran the
+span to the end of the document — which fails safe, so German and Polish lost
+their outline entirely rather than gaining a wrong one. Testing as a substring
+rather than as a whole printed line let Polish `WPROWADZENIE` match its own
+body, since it is both the title of the introduction and the ordinary word for
+introducing something.
+
+Blast radius: 9 works of 346, every structural change a gain — Italian loses
+three phantom nodes anchored at §1, Russian reads four more outline entries.
+
+## 2026-08-24 — Unclaimed prose was kept in two places, and printed twice
+
+Found while writing descriptions, then measured: **171 works opened §1 with
+the same block twice** — every occurrence in §1, none anywhere else. The
+salutation and first paragraph of nearly every encyclical from Leo XIII to
+Pius XII read twice on the page.
+
+Two buffers held the same blocks and did not know about each other.
+`pending_first_block` accumulates unclaimed prose as one joined string, ready
+to be promoted into a section the source never numbered; `add_appendix_block`
+buffers the same blocks against the chance that they are back matter. When the
+promotion fired, `start_section` handed the buffer back through
+`reclaim_mid_body_prose` _and_ appended the promoted string.
+
+`take_buffered_blocks` empties the buffer and hands it to the promoted section
+as its content. **The buffered blocks are the better copy**, not the joined
+string: `pending_first_block` only accumulates `kind == "prose"`, so a
+blockquote printed before the first numbered paragraph is missing from it
+entirely.
+
+The same promotion also mis-anchored headings. A heading printed _after_ the
+text being promoted belongs to the section that follows, not to the one the
+text becomes — Humanae Vitae prints its salutation, then `I. PROBLEM AND
+COMPETENCY OF THE MAGISTERIUM`, then `2.`, and that heading was landing at
+`before` 1. `start_section` now takes a `claim` count, and the promotion
+claims only the headings that predate its buffer.
+
+Removed exactly 191,233 characters across 182 works, and in 178 of them the
+removal is exactly the duplicated block. The other four are the same defect
+across two sections rather than within one — including the Sacrosanctum
+Concilium PT §70 gap-fill this machinery was written for, which was counting
+its text into §69 as well.
+
+## 2026-08-24 — Four smaller parse defects, each its own class
+
+Found by reading six documents for descriptions. Each is small; none is
+unique to the document that surfaced it.
+
+**A paragraph number whose digits are split by a tag.** Humanae Vitae EN
+prints paragraph 14 as `1<b>4.</b>`, opening the bold run between the digits.
+Read as a contiguous `\d{1,4}` it was not a numbered paragraph at all: it was
+buffered as unnumbered prose, given back to §13, and then promoted a second
+time to fill the §14 gap its own absence had created. `PARA_NUM_RE` and
+`_NUM_PREFIX_HTML_RE` now tolerate tags — never whitespace, which would read
+`1 4.` as fourteen. One page in the corpus does this.
+
+**A sub-heading before the first numbered paragraph.** `promote_italic_heading_run`
+excluded that whole region, and had to: a salutation is printed in exactly the
+italics of a sub-heading. But an encyclical whose §1 is unnumbered framing
+text puts its first real sub-heading there too.
+`augustissimae-virginis-mariae.en` kept nine of its ten and lost _Mary's Place
+in the Incarnation and Redemption_. The two are told apart by what follows — a
+heading is followed by the numbered paragraph it heads; the salutation by the
+document's unnumbered opening prose. **The run itself is still established by
+the body**: counting a pre-body block toward the threshold let one push a
+document over it on its own, and `quum-diuturnum.en` then turned an italic
+continuation of §4's own sentence into a heading. 27 headings recovered.
+
+**A language bar of one code.** A document published in a single language
+still prints the bar, and it is then a bare `EN`. That failed the whole-block
+test, was not the title or the author either, and ended the masthead scan on
+block one — leaving `ENCYCLICAL OF POPE PIUS XI / ON CATHOLIC MISSIONS / TO
+OUR VENERABLE BRETHREN…` to be read as the opening words of §1. 19 mastheads
+recovered, none lost. Only the whole-block test was loosened; the prefix form
+still needs two codes, or it would truncate any masthead line beginning with a
+two-letter word.
+
+**Front matter promoted above its own peers.** `depth_key` lifts a
+PREFACE/INTRODUCTION to the top tier, which is right where the document prints
+it as the top tier — Gaudium et Spes' PROÉMIO and Divini Redemptoris PT's
+INTRODUÇÃO are both set in the best heading style their page uses. It is wrong
+where the front matter is printed in a _lesser_ style than something else on
+the page: `spe-salvi.en` sets "Introduction" in the bold-italic of the eight
+headings it sits among, while the page's best style belongs to the three
+centred `I./II./III.` settings nested inside one of them. Promoting it
+invented a tier above its own peers and pushed every other heading in the
+document one level down. Gated on `b.style <= best_heading_style`.
+
+Two rules were tried against all 46 ToC oracles and **rejected for regressing
+documents they were not aimed at**: suppressing the promotion whenever the
+front matter shares a style with any ordinary heading (turned a perfect
+`divini-redemptoris.pt` into 25 differences), and releasing `division_floor`
+for a style already established elsewhere (best total of all — 159
+differences against 175 — but it cost `lumen-gentium.pt` fourteen, the very
+case the floor was written for). Corpus-wide oracle differences: **175 → 169,
+with no work worse than before**.
+
+Left unfixed and known: `spe-salvi.en`'s _Mary, Star of Hope_ still parses
+three levels deep. It is printed in the top tier's bold italic but follows the
+centred `III.`, and nothing in the typography says it leaves that division.
