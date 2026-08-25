@@ -111,7 +111,7 @@ import html as ihtml
 import re
 import sys
 import unicodedata
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -1529,6 +1529,117 @@ def build_structure(prayers: list[Prayer], lang: str) -> list[dict]:
 
 
 # --------------------------------------------------------------------------
+# The two English editions -- `prayer.common.en-us` and `prayer.common.en-gb`
+# --------------------------------------------------------------------------
+#
+# THE UK/USA SPLIT IS AN EDITION BOUNDARY, NOT A FIELD ON A PRAYER. The source
+# prints one English appendix in which five prayers appear twice, under the
+# headings "UK VERSION" and "USA VERSION". That was captured as a `variants`
+# array -- a concept used by those five prayers, in that one language, and by
+# nothing else in this corpus -- and it made the reader choose between two
+# boxed, equally-labelled wordings before they could read a word, on five
+# pages, every time.
+#
+# Two texts of one work, in one language, differing in wording, is what an
+# EDITION is here: it is exactly `bible.cpdv.en` against
+# `bible.douay-rheims.en`. Expressed that way the reader picks once, the
+# choice persists across pages through the same stored preference every other
+# work uses, compare mode can put the two side by side, and `variants`
+# disappears from the schema rather than being carried for five entries.
+#
+# BOTH EDITIONS CARRY ALL 28 PRAYERS, and 23 of them are byte-identical
+# between the two. That duplication is deliberate and is what "edition" means:
+# a reader who chooses English (UK) is choosing a book, not a patch, and every
+# word in it is a word the source printed under "English". The alternative --
+# a sparse UK edition of only the five that differ, with the rest resolved
+# through `CONTENT_LANG_FALLBACK` -- was rejected because that chain exists
+# for content that is ABSENT, not for content that exists and happens to
+# match, and it would have made `/preces` under English (UK) look like a
+# five-prayer collection.
+#
+# THE LATIN EDITION IS DERIVED FROM THE UNSPLIT PARSE, not from either of
+# these. Latin is a field on the same array entry in both witnesses and does
+# not vary by region -- there is one Latin column on the page -- so deriving
+# it from a regional edition would imply a distinction the source does not
+# make.
+
+#: Which regional wording each edition prints, keyed by work id. The label is
+#: the source's own printed heading (`_VARIANT_MARKERS`), so this table is a
+#: mapping between two things the source states, not a naming of our own.
+REGIONAL_EDITIONS = {
+    "prayer.common.en-us": {
+        "variant": "USA",
+        "language": "en-US",
+        "title": "Common Prayers (US)",
+    },
+    "prayer.common.en-gb": {
+        "variant": "UK",
+        "language": "en-GB",
+        "title": "Common Prayers (UK)",
+    },
+}
+
+
+def resolve_variant(prayer: Prayer, label: str) -> Prayer:
+    """One prayer as this edition prints it: the named wording, then whatever
+    the source prints after every wording.
+
+    A variant-bearing prayer's own `blocks` is either empty -- the whole
+    prayer differs by region (Hail Holy Queen, the Magnificat, the Benedictus,
+    the Te Deum) -- or a shared tail the source prints once after both
+    (Regina Caeli's closing collect, "Let us pray; ..."). Either way the
+    edition's text is "this region's wording, then the shared remainder", in
+    that order, which is the order the page itself reads in.
+
+    A prayer with no variants passes through untouched, which is 23 of the 28.
+    """
+    if not prayer.variants:
+        return prayer
+    chosen = next((v for v in prayer.variants if v.label == label), None)
+    if chosen is None:
+        raise RuntimeError(
+            f"{prayer.slug}: no {label!r} wording among "
+            f"{[v.label for v in prayer.variants]!r} (drift guard)"
+        )
+    return replace(prayer, blocks=[*chosen.blocks, *prayer.blocks], variants=[])
+
+
+def build_regional_edition(prayers: list[Prayer], label: str) -> list[Prayer]:
+    return [resolve_variant(p, label) for p in prayers]
+
+
+def build_regional_manifest(
+    work_id: str,
+    prayers: list[Prayer],
+    applied_corrections: list[dict],
+    varied: list[str],
+) -> dict:
+    spec = REGIONAL_EDITIONS[work_id]
+    other = next(k for k in REGIONAL_EDITIONS if k != work_id)
+    base = build_manifest("en", prayers, applied_corrections)
+    return {
+        **base,
+        "id": work_id,
+        "title": spec["title"],
+        "short_title": spec["title"],
+        "language": spec["language"],
+        "edition": f"{base['edition']} -- {spec['variant']} wording",
+        "notes": base["notes"]
+        + " "
+        + (
+            f"One of two English editions. The source prints a single English "
+            f"appendix in which {len(varied)} prayers ({', '.join(varied)}) appear "
+            f'twice, headed "UK VERSION" and "USA VERSION"; this edition prints the '
+            f"{spec['variant']} wording of each and is otherwise identical to "
+            f"{other}. Both carry all {len(prayers)} prayers, because a reader who "
+            "chooses one is choosing a book rather than a patch -- see "
+            "docs/decisions.md for why the alternative (a sparse edition resolved "
+            "through the content-language fallback) was rejected."
+        ),
+    }
+
+
+# --------------------------------------------------------------------------
 # The Latin edition -- `prayer.common.la`
 # --------------------------------------------------------------------------
 #
@@ -2108,6 +2219,78 @@ def run(lang: str) -> tuple[list[Prayer], list[dict]]:
     return prayers, applied
 
 
+def write_regional_outputs(
+    work_id: str,
+    prayers: list[Prayer],
+    applied_corrections: list[dict],
+    varied: list[str],
+) -> None:
+    out_dir = WORKS_ROOT / work_id
+    out_dir.mkdir(parents=True, exist_ok=True)
+    manifest = build_regional_manifest(work_id, prayers, applied_corrections, varied)
+    files: dict[str, object] = {
+        "manifest.json": manifest,
+        "structure.json": build_structure(prayers, "en"),
+        "prayers.json": [p.to_dict() for p in prayers],
+    }
+    if applied_corrections:
+        files["corrections-applied.json"] = applied_corrections
+    write_stamped_json(
+        out_dir,
+        files,
+        manifest["generated_at"],
+        remove=() if applied_corrections else ("corrections-applied.json",),
+    )
+
+
+def validate_regional(
+    editions: dict[str, list[Prayer]], varied: list[str]
+) -> tuple[bool, list[str]]:
+    """Both editions are whole books, and differ exactly where the source says.
+
+    The two assertions are the ones that would actually catch a broken split:
+    every edition carries every slug (a sparse edition is the thing this
+    design rejected, so producing one silently is the failure mode worth
+    guarding), and the set of prayers whose text differs between them is
+    exactly the set the source marked with a UK/USA heading -- no more, which
+    would mean the resolver touched a prayer it should not have, and no fewer,
+    which would mean a wording was dropped.
+    """
+    problems: list[str] = []
+    slug_sets = {wid: [p.slug for p in ps] for wid, ps in editions.items()}
+    for wid, slugs in slug_sets.items():
+        if slugs != [p.slug for p in next(iter(editions.values()))]:
+            problems.append(f"{wid}: slug set/order differs from its sibling edition")
+        if len(slugs) != len(SLUGS):
+            problems.append(f"{wid}: expected {len(SLUGS)} prayers, got {len(slugs)}")
+        if any(p.variants for p in editions[wid]):
+            problems.append(f"{wid}: a variant survived into an edition")
+
+    (us_id, us), (gb_id, gb) = editions.items()
+    differing = sorted(
+        a.slug
+        for a, b in zip(us, gb, strict=True)
+        if [x.to_dict() for x in a.blocks] != [x.to_dict() for x in b.blocks]
+    )
+    if differing != sorted(varied):
+        problems.append(
+            f"{us_id} and {gb_id} differ on {differing}, but the source marked {sorted(varied)}"
+        )
+    return not problems, problems
+
+
+def print_regional_summary(
+    editions: dict[str, list[Prayer]], varied: list[str]
+) -> None:
+    print("\n=== EN regional editions ===")
+    for work_id, prayers in editions.items():
+        spec = REGIONAL_EDITIONS[work_id]
+        print(f"{work_id}: {len(prayers)} prayers, {spec['variant']} wording")
+    print(
+        f"prayers whose wording differs between them: {len(varied)} ({', '.join(varied)})"
+    )
+
+
 def print_latin_summary(prayers: list[Prayer], report: list[dict]) -> None:
     resegmented = [r for r in report if r["segmentation_from"] != LATIN_BASE_LANG]
     diverged = [r for r in report if r["divergence"]]
@@ -2147,16 +2330,42 @@ def main() -> int:
     langs = ["en", "pt"] if args.lang == "both" else [args.lang]
 
     results: dict[str, list[Prayer]] = {}
+    applied_by_lang: dict[str, list[dict]] = {}
     overall_ok = True
     for lang in langs:
         prayers, applied = run(lang)
         results[lang] = prayers
+        applied_by_lang[lang] = applied
+        # ENGLISH WRITES TWO WORKS AND NO `prayer.common.en`. The parse is one
+        # pass over one page; the split into a UK and a US edition happens
+        # here, on the parsed prayers, so both editions come from the same
+        # reading of the source and cannot drift. See `REGIONAL_EDITIONS`.
+        if lang == "en":
+            continue
         write_outputs(lang, prayers, applied)
 
     en = results.get("en", [])
     pt = results.get("pt", [])
+    regional: dict[str, list[Prayer]] = {}
+    if en:
+        varied = [p.slug for p in en if p.variants]
+        regional = {
+            work_id: build_regional_edition(en, spec["variant"])
+            for work_id, spec in REGIONAL_EDITIONS.items()
+        }
+        for work_id, prayers in regional.items():
+            write_regional_outputs(work_id, prayers, applied_by_lang["en"], varied)
+        regional_ok, regional_problems = validate_regional(regional, varied)
+        print_regional_summary(regional, varied)
+    else:
+        regional_ok, regional_problems = True, []
+
     if "en" in results and "pt" in results:
         ok, problems = validate(en, pt)
+        # `en` here is the UNSPLIT parse -- the cross-language oracle is about
+        # the address space the source publishes, which is one English
+        # appendix against one Portuguese one, not about our two editions of
+        # the former.
         # The Latin edition needs BOTH witnesses -- the English for its text,
         # the Portuguese for where five prayers break into stanzas -- so it is
         # built only on a full run, never on `--lang en` alone. Writing it
@@ -2175,6 +2384,8 @@ def main() -> int:
         # meaningfully; the slug-order-match check is trivially true).
         only = en or pt
         ok, problems = validate(only, only)
+    ok = ok and regional_ok
+    problems = problems + regional_problems
     overall_ok = ok
 
     for lang in langs:

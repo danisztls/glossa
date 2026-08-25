@@ -20,7 +20,18 @@
 	 * (`compare.resolveTarget`), over every OTHER language's copy of this
 	 * same slug — all of them real works with real ids.
 	 *
-	 * LATIN IS ONE OF THEM NOW. It used to be the exception this file existed
+	 * SO ARE THE TWO ENGLISH WORDINGS. The source prints one English appendix
+	 * in which five prayers appear twice, headed "UK VERSION" and "USA
+	 * VERSION"; this route used to render both, boxed and labelled, one above
+	 * the other, so a reader who wanted the Te Deum had to choose between two
+	 * regional labels before reading a word. They are two editions of one work
+	 * in one language — exactly what `bible.cpdv.en` and
+	 * `bible.douay-rheims.en` are — and are now built as such
+	 * (`prayer.common.en-us`, `prayer.common.en-gb`; docs/decisions.md). The
+	 * reader picks once, in the same menu as every other work, and `variants`
+	 * is gone from the schema rather than carried for five entries.
+	 *
+	 * LATIN IS ONE OF THEM TOO. It used to be the exception this file existed
 	 * to accommodate: a fabricated `prayer.latin` target whose manifest was
 	 * the vernacular work's with `id` and `language` overwritten, because the
 	 * schema held that "Latin is a field, not an edition". That ruling is
@@ -64,7 +75,7 @@
 		chooseComparisonEdition,
 		toggleCompare
 	} from '$lib/compare-nav.svelte';
-	import { compareColumnLabel, languageDisplayName } from '$lib/corpus';
+	import { compareColumnLabel, resolveEditionTag } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
@@ -80,9 +91,9 @@
 
 	let { data }: { data: PageData } = $props();
 
-	let lang = $derived(
-		data.byLang[content.langFor('prayer')] ? content.langFor('prayer') : Object.keys(data.byLang)[0]
-	);
+	/** `tagFor`, not `langFor`: `byLang` is keyed on full tags now that English
+	 *  has two editions, and the bare form cannot tell them apart. */
+	let lang = $derived(resolveEditionTag(Object.keys(data.byLang), content.tagFor('prayer')) ?? '');
 	let current = $derived(data.byLang[lang]);
 
 	/**
@@ -147,31 +158,6 @@
 
 	const hasToc = $derived((current?.prayer.groups?.length ?? 0) > 0);
 
-	/**
-	 * Which regional wording reads as "the English text" rather than as an
-	 * alternative to it. Only EN carries variants at all (5 prayers), and
-	 * only ever this pair.
-	 */
-	const DEFAULT_VARIANT = 'USA';
-
-	/** The default first, then the rest in the source's own order — the
-	 *  reader meets the prayer before its alternatives. */
-	function orderedVariants(p: Prayer) {
-		const variants = p.variants ?? [];
-		return [
-			...variants.filter((v) => v.label === DEFAULT_VARIANT),
-			...variants.filter((v) => v.label !== DEFAULT_VARIANT)
-		];
-	}
-
-	/** "English (UK)" — the CONTENT language's own name plus the source's own
-	 *  regional label, the same construction every column tag on the site
-	 *  uses (`compareColumnLabel`). Built rather than translated: the label
-	 *  names what the text IS, not what the reader's interface calls it. */
-	function variantLabel(label: string, bodyLang: string): string {
-		return `${languageDisplayName(bodyLang)} (${label})`;
-	}
-
 	/** Stable in-page destinations for a grouped prayer's sourced divisions.
 	 * The Rosary is currently the only such prayer; deriving these from each
 	 * printed group name keeps EN/PT headings and their ToC aligned without
@@ -200,37 +186,6 @@
 {#snippet prayerBody(p: Prayer, bodyLang: string)}
 	{#if p.rubric}
 		<p class="prayer-rubric">{p.rubric}</p>
-	{/if}
-
-	<!-- Variants render BEFORE the shared `blocks` -- in the real corpus a
-	     variant-bearing prayer's `blocks` is either empty (the whole prayer
-	     differs by region, e.g. Hail Holy Queen) or a shared tail the source
-	     prints after every variant (Regina Caeli's closing collect, the same
-	     for UK and USA) -- either way, "the alternatives, then whatever both
-	     share" is the order the source itself reads in.
-
-	     ONE OF THEM IS THE PRAYER AND THE REST ARE ALTERNATIVES. The source
-	     prints "UK VERSION" and "USA VERSION" as two equal headings, and this
-	     used to render them that way: two boxed, labelled blocks, neither of
-	     them simply the Te Deum. That is faithful to the page and unhelpful
-	     as a reader's edition, because a reader who wants "the English Te
-	     Deum" is made to choose between two regional labels before they can
-	     read a word. So `DEFAULT_VARIANT` is set unlabelled and unboxed --
-	     it is the English text -- and anything else keeps the box under its
-	     own name. The corpus is untouched: both wordings are stored exactly
-	     as printed, under exactly the labels the source prints, and this is
-	     a presentation choice made here where presentation choices belong. -->
-	{#if p.variants && p.variants.length > 0}
-		{#each orderedVariants(p) as variant (variant.label)}
-			{#if variant.label === DEFAULT_VARIANT}
-				<PrayerBlocks blocks={variant.blocks} />
-			{:else}
-				<div class="prayer-variant">
-					<p class="prayer-variant-label">{variantLabel(variant.label, bodyLang)}</p>
-					<PrayerBlocks blocks={variant.blocks} />
-				</div>
-			{/if}
-		{/each}
 	{/if}
 
 	<!-- Groups (the Rosary alone, v1) render as their own named list, never
@@ -444,23 +399,6 @@
 		font-style: italic;
 		color: var(--color-text-muted);
 		margin: 0 0 1rem;
-	}
-
-	.prayer-variant {
-		margin: 0 0 1.25rem;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--color-border);
-		border-radius: 0.4rem;
-	}
-
-	.prayer-variant-label {
-		margin: 0 0 0.5rem;
-		font-family: var(--font-sans);
-		font-size: 0.75rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--color-text-muted);
 	}
 
 	.prayer-mystery-group {

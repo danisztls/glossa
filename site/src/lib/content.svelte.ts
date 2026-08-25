@@ -135,9 +135,23 @@ class ContentStore {
 
 	/** Effective bare content language for a type, e.g. "pt". Falls back to i18n.lang. */
 	langFor(type: WorkTypeKey): string {
+		return baseLang(this.tagFor(type));
+	}
+
+	/**
+	 * `langFor` WITHOUT the region dropped — `"en-GB"`, not `"en"`.
+	 *
+	 * The bare form is what almost every caller wants: it picks a citation
+	 * grammar, a book-abbreviation table, a `lang` attribute. But it cannot
+	 * tell the prayers' two English editions apart (docs/decisions.md,
+	 * 2026-08-25), and a route that keys its `byLang` map on the full tag
+	 * needs the full tag back or the reader's own choice reads as "English"
+	 * and resolves to whichever of the two comes first.
+	 */
+	tagFor(type: WorkTypeKey): string {
 		const workId = this.workIdFor(type);
 		const edition = workId && listEditions(type).find((w) => w.id === workId);
-		return edition ? baseLang(edition.language) : i18n.lang;
+		return edition ? edition.language : i18n.lang;
 	}
 
 	/** Set (or clear, with null) the reader's explicit edition override. */

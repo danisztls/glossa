@@ -695,19 +695,10 @@ export interface PrayerBlock {
 	label?: string;
 }
 
-/** A full alternate wording the source prints under the SAME title
- *  (regional adaptations -- EN's Regina Caeli UK/USA split is the only
- *  instance in v1). Not to be confused with a translation difference
- *  between language editions, which is just two separate top-level works --
- *  see docs/corpus-schema.md "Prayers". */
-export interface PrayerVariant {
-	label: string;
-	blocks: PrayerBlock[];
-}
-
-/** A prayer's Latin companion text -- a FIELD on the prayer, not a third
- *  edition/work (docs/corpus-schema.md "Prayers": "Latin is a field, not an
- *  edition"). Present on 21 of 28 prayers in the real corpus; genuinely
+/** A prayer's Latin companion text, as the SOURCE prints it: a field on the
+ *  vernacular entry, bound to the text beside it. `prayer.common.la` is
+ *  derived from these and does not replace them (docs/decisions.md,
+ *  2026-08-25). Present on 21 of 28 prayers in the real corpus; genuinely
  *  absent (not a capture gap) for the three Eastern-rite prayers, which the
  *  source prints with no Latin text in either language. */
 export interface PrayerLatin {
@@ -763,9 +754,6 @@ export interface Prayer {
 	 *  source-faithful, the same way structure trees are per-language. */
 	kind: PrayerKind;
 	blocks: PrayerBlock[];
-	/** Present only when the source prints more than one full wording under
-	 *  this title -- absent (not `[]`) otherwise. */
-	variants?: PrayerVariant[];
 	/** Present only when the source prints Latin for this prayer -- absent
 	 *  (not `null`) otherwise, so `!!prayer.latin` alone answers "does this
 	 *  prayer have a Latin companion." */

@@ -3828,3 +3828,66 @@ rows the page renders that bound no numbered unit.
 **Verified**: 12 new tests in `summa-outline.test.ts` over the real derivation, replacing
 the 6 that tested the bespoke grouping; full suite 568 passing, `svelte-check` clean,
 production build clean. Net: three files deleted, one function added.
+
+## 2026-08-25 — The prayers' UK/USA split becomes two English editions
+
+**What**: `prayer.common.en` is replaced by `prayer.common.en-us` and
+`prayer.common.en-gb`, each carrying all 28 prayers. `variants` is gone from the schema.
+
+**They were always editions.** Two texts of one work, in one language, differing in
+wording, is what an edition is here — it is exactly `bible.cpdv.en` against
+`bible.douay-rheims.en`. Modelling them as a `variants` array instead created a concept
+used by five prayers, in one language, and by nothing else in the corpus, and it pushed a
+choice onto the reader at the wrong moment: five pages showed two boxed, equally-labelled
+wordings, and neither box was simply the Te Deum. An intermediate attempt made the USA
+wording the default in the VIEW, which was better for the reader and worse as
+architecture — an editorial decision hardcoded in a template, invisible to the edition
+picker, the compare feature and the stored preference.
+
+As editions the reader picks once, in the same menu as every other work, the choice
+persists across pages through the same store, and compare mode can put the two side by
+side for free.
+
+**This reverses "only the Bible may carry more than one edition per language."** That was
+hardcoded at `EditionMenu.svelte:127` as `ctx.type === 'bible'` and stated in
+`compareColumnLabel`. It stays hardcoded, because it is still true of the `editionStyle`
+FORK it governs — that fork exists to disambiguate two editions whose language name is
+identical, and here `languageDisplayName` disambiguates them itself: `en-US` and `en-GB`
+render as "English (US)" and "English (UK)". The rule that changed is the corpus one, not
+the display one.
+
+**Both editions carry all 28, and that duplication is the point.** 23 prayers are
+byte-identical between them. The alternative was a sparse `en-gb` of only the five that
+differ, with the rest resolved through `CONTENT_LANG_FALLBACK`. Rejected: that chain
+exists for content that is _absent_, not for content that exists and happens to match, and
+it would have made `/preces` under English (UK) look like a five-prayer collection. Every
+word in either edition is a word the source printed under "English"; nothing is
+synthesized.
+
+**`langFor` could not express this, so `tagFor` joined it.** `content.langFor(type)`
+returns `baseLang(edition.language)` — `"en"` for both editions — which is right for the
+things it feeds (citation grammar, abbreviation tables, a `lang` attribute) and useless
+for telling two English editions apart. `tagFor` returns the full tag; the two prayer
+routes use it, and `resolveEditionTag` is the tag-level counterpart of `editionInLang`:
+exact tag, then the base language's default region, then any edition in that language,
+then the fallback chain, then whatever exists.
+
+**A default region had to be stated rather than fallen into.** `listEditions` sorted by
+base language then by id, which would have answered `en-gb` purely because `g` sorts
+before `u` — right by accident, and right only until an id changed. `DEFAULT_REGION`
+(`{ en: 'en-US' }`) is one table saying which edition a reader who asked for "English" and
+nothing more specific gets, consulted by `listEditions`, `defaultWorkId` and
+`resolveEditionTag` alike. Only the reader's own stored preference overrides it.
+
+**The Latin edition is derived from the UNSPLIT parse.** Latin is one column on the page
+and does not vary by region, so deriving `prayer.common.la` from either regional edition
+would imply a distinction the source does not make.
+
+**Validation asserts the two things that would catch a broken split**: every edition
+carries every slug (a silently sparse edition is the failure this design rejected), and
+the set of prayers whose text differs between them is exactly the set the source marked
+with a UK/USA heading — no more, which would mean the resolver touched a prayer it should
+not have, and no fewer, which would mean a wording was dropped.
+
+**`works/prayer.common.en` was deleted**, being superseded generated output. `raw/` is
+untouched and both editions re-parse from it with no network.

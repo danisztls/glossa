@@ -231,7 +231,11 @@ export function listWorksOfType(type: WorkType): WorkManifest[] {
  */
 export function listEditions(type: WorkType): WorkManifest[] {
 	return listWorksOfType(type).sort(
-		(a, b) => baseLang(a.language).localeCompare(baseLang(b.language)) || a.id.localeCompare(b.id)
+		(a, b) =>
+			baseLang(a.language).localeCompare(baseLang(b.language)) ||
+			// Within one language, the default region first — see `DEFAULT_REGION`.
+			regionRank(a) - regionRank(b) ||
+			a.id.localeCompare(b.id)
 	);
 }
 
@@ -285,6 +289,30 @@ export function editionInLang(editions: WorkManifest[], lang: string): WorkManif
 	return undefined;
 }
 
+/**
+ * Which of `available` an edition-tag preference resolves to.
+ *
+ * `available` is a set of full language tags (`"en-US"`, `"pt"`, `"la"`) —
+ * whatever a route's own `byLang` map is keyed on. The chain is: the exact
+ * tag, then the base language's default region, then any edition in that base
+ * language, then `CONTENT_LANG_FALLBACK` applied the same way, and finally
+ * whatever exists. Same "degrade, don't fabricate" posture as
+ * `editionInLang`, which this is the tag-level counterpart of — that one
+ * picks between MANIFESTS and collapses regions, this one picks between the
+ * tags a route has text for and does not.
+ */
+export function resolveEditionTag(available: string[], preferred: string): string | undefined {
+	const has = (tag: string) => available.find((a) => a.toLowerCase() === tag.toLowerCase());
+	const inLang = (base: string) =>
+		has(DEFAULT_REGION[base] ?? base) ?? available.find((a) => baseLang(a) === base);
+	return (
+		has(preferred) ??
+		inLang(baseLang(preferred)) ??
+		CONTENT_LANG_FALLBACK.map(inLang).find(Boolean) ??
+		available[0]
+	);
+}
+
 /** BCP-47 language tag -> bare language subtag, e.g. "pt-PT" -> "pt". */
 export function baseLang(tag: string): string {
 	return tag.split('-')[0].toLowerCase();
@@ -312,8 +340,44 @@ const LANGUAGE_NAMES: Record<string, string> = {
 	ar: 'العربية'
 };
 
+/**
+ * A REGIONAL EDITION NAMES ITS REGION, because otherwise two of them are the
+ * same string. `prayer.common.en-us` and `prayer.common.en-gb` are two
+ * English editions of one work (docs/decisions.md), so "English" alone would
+ * label both and the picker would offer the reader a choice between two
+ * identical rows.
+ *
+ * Written in the content language's own language, like every other entry
+ * here — these two happen to be English already. The region is spelled the
+ * way a reader of that edition would name it ("US", "UK"), not by its BCP-47
+ * subtag, which for the UK is `GB`.
+ */
+const REGION_NAMES: Record<string, string> = {
+	'en-us': 'English (US)',
+	'en-gb': 'English (UK)'
+};
+
 export function languageDisplayName(tag: string): string {
-	return LANGUAGE_NAMES[baseLang(tag)] ?? tag;
+	return REGION_NAMES[tag.toLowerCase()] ?? LANGUAGE_NAMES[baseLang(tag)] ?? tag;
+}
+
+/**
+ * Within one base language, the edition that reads as the unmarked default —
+ * what a reader who asked for "English" and nothing more specific gets.
+ *
+ * Stated here rather than left to `listEditions`' id tiebreak, which would
+ * answer `en-gb` purely because `g` sorts before `u`. That is the kind of
+ * answer that is right by accident and stays right only until an id changes.
+ * Only the reader's own stored preference overrides it.
+ */
+const DEFAULT_REGION: Record<string, string> = {
+	en: 'en-US'
+};
+
+/** Sort key putting a base language's default region ahead of its siblings. */
+function regionRank(manifest: WorkManifest): number {
+	const preferred = DEFAULT_REGION[baseLang(manifest.language)];
+	return preferred && manifest.language.toLowerCase() === preferred.toLowerCase() ? 0 : 1;
 }
 
 /**
