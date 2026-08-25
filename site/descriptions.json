@@ -78,9 +78,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.aeterna-dei.en": {
+			"en": {
+				"text": "John XXIII's encyclical for the fifteenth centenary of the death of Pope St. Leo the Great, recounting Leo's life, his defense of the faith against the Nestorian and Pelagian heresies, and his teaching on the primacy of the Roman See as the center of the Church's visible unity. With the Second Vatican Council approaching, it turns that example into a renewed call for unity among all Christians.",
+				"origin": "read"
+			}
+		},
 		"encyclical.aeterni-patris.en": {
 			"en": {
 				"text": "On the restoration of Christian philosophy, and specifically of St Thomas Aquinas, in Catholic schools. Leo XIII sets out philosophy's proper office as handmaid to faith, surveys what the Fathers and the Scholastics made of it, singles out Thomas as the master whose method keeps faith and reason each in its right, and directs bishops to make his doctrine the foundation of clerical and university teaching.",
+				"origin": "read"
+			}
+		},
+		"encyclical.annus-iam-plenus.en": {
+			"en": {
+				"text": "Benedict XV renews, for a second Christmas, his appeal on behalf of the starving and disease-stricken children of Central Europe left destitute by the war. He asks that a collection be taken up on the feast of the Holy Innocents, or the preceding Sunday, for their relief, to be forwarded to him or to the Save the Children Fund, and pledges one hundred thousand lire of his own.",
 				"origin": "read"
 			}
 		},
@@ -210,6 +222,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.etsi-nos.en": {
+			"en": {
+				"text": "Leo XIII's encyclical to the bishops of Italy, confronting a “pernicious sect” exploiting the country's altered political condition to strip away its Christian institutions. Recalling Italy's historic debts to the papacy, it charges the bishops to rouse Catholic courage through associations, a sound press against hostile journalism, and rigorously formed seminaries, closing with an appeal to Mary and the saints.",
+				"origin": "read"
+			}
+		},
 		"encyclical.evangelium-vitae.pt": {
 			"pt": {
 				"text": "Sobre o valor da vida humana e a sua inviolabilidade, diante das novas ameaças do aborto e da eutanásia: parte do grito do sangue de Abel e do eclipse do sentido da vida, percorre o mandamento «não matarás» perante a lei civil e a lei moral, e chama a uma nova cultura da vida, terminando com uma prece a Maria, Mãe dos viventes.",
@@ -237,6 +255,12 @@
 		"encyclical.grata-recordatio.en": {
 			"en": {
 				"text": "John XXIII on the October Rosary, recalling that Leo XIII and Pius XII had made the same appeal before him. He asks prayers for the missionaries about to leave for the foreign missions and for the centenary of the North American College, for rulers weighing the causes of international discord, against the errors of laicism and materialism, and for the coming Roman Synod and Ecumenical Council.",
+				"origin": "read"
+			}
+		},
+		"encyclical.gravissimo-officii-munere.en": {
+			"en": {
+				"text": "Pius X's follow-up to Vehementer Nos, addressed to the French bishops after the 1905 separation law. It rules that the associations of worship the law requires cannot be formed without violating the Church's divine constitution and the rights of pope and bishops over ecclesiastical property, and directs the bishops instead to organize worship through whatever lawful means remain open to them.",
 				"origin": "read"
 			}
 		},
@@ -306,6 +330,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.iniquis-afflictisque.en": {
+			"en": {
+				"text": "Pius XI's encyclical on the persecution of the Catholic Church in Mexico under the 1917 Constitution and its 1926 enforcement laws, which stripped the Church of civil status, barred clergy from teaching, expelled foreign priests and religious, and closed schools and seminaries. He reviews the resistance of Mexico's bishops, clergy, and lay organizations, and commends the country to Our Lady of Guadalupe.",
+				"origin": "read"
+			}
+		},
 		"encyclical.inscrutabili-dei-consilio.en": {
 			"en": {
 				"text": "Leo XIII's first encyclical, written days into his pontificate: a survey of the evils he sees oppressing society — the subversion of first truths, contempt for lawful authority, family life corrupted — traced to the setting aside of the Church's authority, and answered by recalling what the papacy has done for civilization and by pressing bishops toward a Christian education of youth begun at home.",
@@ -342,6 +372,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.licet-multa.en": {
+			"en": {
+				"text": "Leo XIII's encyclical to the Belgian bishops on preserving Catholic unity amid disputes over how far Catholic doctrine should govern the forms of civil law and government. He urges charity in controversy, rebukes attacks on fellow Catholics — naming the accusations against Cardinal Deschamps — and directs scholars to follow St. Thomas Aquinas as the model for philosophy and theology, renewing his call for Thomistic teaching at Louvain.",
+				"origin": "read"
+			}
+		},
 		"encyclical.lumen-fidei.en": {
 			"en": {
 				"text": "On faith as the light of Christ by which human life is guided — the encyclical that completes the trilogy on the theological virtues, drafted by Benedict XVI before his resignation and finished by Francis. It follows faith from Abraham and Israel to Christ, examines its bond with truth and with reason, its transmission through the Church's creed and sacraments, and its power to sustain the family, society and those who suffer.",
@@ -357,6 +393,12 @@
 		"encyclical.magnifica-humanitas.pt": {
 			"pt": {
 				"text": "Carta encíclica de Leão XIV sobre a inteligência artificial e a doutrina social da Igreja. Estruturada em torno de duas imagens bíblicas da construção comum — a Torre de Babel e a reconstrução de Jerusalém por Neemias —, sustenta que a IA não é mais um tema a tratar pela doutrina social, mas um desenvolvimento que desafia as suas próprias categorias, e aborda a dignidade humana e o bem comum, a verdade, o trabalho e a liberdade, e o lugar crescente dos sistemas autónomos na guerra.",
+				"origin": "read"
+			}
+		},
+		"encyclical.mater.en": {
+			"en": {
+				"text": "John XXIII's restatement of Catholic social teaching on the seventieth anniversary of Rerum Novarum, carrying Leo XIII's principles forward through Quadragesimo Anno and Pius XII's radio addresses. It then takes up newer aspects of the social question — the depressed state of agriculture, the gap between developed and developing nations, population growth, and international cooperation — and closes with principles for rebuilding a social order on truth, justice, and love.",
 				"origin": "read"
 			}
 		},
@@ -402,6 +444,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.orientales-omnes-ecclesias.en": {
+			"en": {
+				"text": "Pius XII's encyclical marking the 350th anniversary of the Union of Brest, by which the Ruthenian Church entered communion with Rome. It traces that reunion's history — the negotiations of 1595–96, the martyrdom of Josaphat Kuntsevych, and Rome's steady defense of the Ruthenian rite against Latinization — before turning to the persecution then engulfing the Ruthenian Church and exhorting its bishops, priests, and faithful to constancy.",
+				"origin": "read"
+			}
+		},
 		"encyclical.orientalis-ecclesiae.en": {
 			"en": {
 				"text": "For the fifteenth centenary of St Cyril of Alexandria, recounting his defence of the unity of Christ's person against Nestorius, his deference to the Apostolic See through the Council of Ephesus, and his patient reconciliation with the Antiochene bishops — which Pius XII holds up as the model for reunion with the separated Christians of the East, the modern Nestorians and those who do not receive Chalcedon.",
@@ -414,9 +462,27 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.paenitentiam.en": {
+			"en": {
+				"text": "John XXIII's call to the whole Church, clergy and laity alike, for prayer and penance in preparation for the Second Vatican Council, invoking Scripture's repeated calls to penance and the precedent of earlier councils. It urges a solemn novena to the Holy Spirit carrying a plenary indulgence, and distinguishes internal repentance — confession and the Eucharist — from the voluntary external acts of penance offered for the Council's success.",
+				"origin": "read"
+			}
+		},
+		"encyclical.pascendi-dominici-gregis.en": {
+			"en": {
+				"text": "Pius X's systematic condemnation of Modernism as “the synthesis of all heresies,” set out through the several roles a Modernist combines — philosopher, believer, theologian, historian and critic, apologist, reformer — and tracing agnosticism and “vital immanence” through his account of dogma, Scripture, and the Church. It then prescribes remedies: scholastic philosophy in seminaries, censorship of publications, and diocesan vigilance councils reporting to Rome every three years.",
+				"origin": "read"
+			}
+		},
 		"encyclical.paterno-iam-diu.en": {
 			"en": {
 				"text": "An appeal for the starving and destitute children of central Europe after the First World War. Benedict XV commends the Save the Children societies formed to help them, directs bishops to order public prayers and to gather alms, food, medicine and clothing on the feast of the Holy Innocents, and pledges a hundred thousand lire of his own toward the relief.",
+				"origin": "read"
+			}
+		},
+		"encyclical.pieni-l-animo.en": {
+			"en": {
+				"text": "Pius X's admonition to the Italian bishops against a spirit of insubordination and independence spreading among the younger clergy. It demands strict seminary discipline, regulates who may preach and publish, reaffirms earlier norms governing “Popular Christian Action”, and forbids clerics from joining any society lacking episcopal approval, naming the National Democratic League specifically.",
 				"origin": "read"
 			}
 		},
@@ -438,6 +504,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.principi-apostolorum-petro.en": {
+			"en": {
+				"text": "Benedict XV's encyclical proclaiming St. Ephrem the Syrian, deacon of Edessa, a Doctor of the Universal Church, with his feast fixed on 18 June. A companion to his encyclical on St. Jerome, it recounts Ephrem's life, teaching and hymnody — “the lyre of the Holy Spirit” — his devotion to the Virgin and to Peter's primacy, and appeals for the reunion of the separated Eastern churches with Rome.",
+				"origin": "read"
+			}
+		},
 		"encyclical.quadragesimo-anno.en": {
 			"en": {
 				"text": "Pius XI's encyclical for the fortieth anniversary of Leo XIII's On the Condition of Workers, treated under three headings: that encyclical's fruits, Catholic teaching on property's individual and social character and on just wages, and a verdict on the present economic order — wealth concentrated into an “economic dictatorship,” free competition's self-destruction, and Socialism's irreconcilability with Christianity — closing with a call to restore society through vocational guilds and reform of morals.",
@@ -447,6 +519,12 @@
 		"encyclical.quas-primas.en": {
 			"en": {
 				"text": "On the kingship of Christ over persons, families and states, gathering the scriptural, patristic and liturgical evidence for a dominion the age's anticlericalism had set out to deny. Closing the Holy Year of 1925, it institutes the feast of Christ the King on the last Sunday of October and joins to it the yearly renewal of the consecration of mankind to the Sacred Heart.",
+				"origin": "read"
+			}
+		},
+		"encyclical.quemadmodum.en": {
+			"en": {
+				"text": "Pius XII's post-war appeal to the bishops on behalf of the world's destitute children, millions of whom the conflict left without food, shelter, clothing, or care. He asks that a day of public prayer be set aside in every diocese and urges the faithful to support relief through prayer, almsgiving, and organized charitable works, warning that neglect now will breed sickness, vice, and delinquency in the next generation.",
 				"origin": "read"
 			}
 		},
@@ -471,6 +549,12 @@
 		"encyclical.redemptor-hominis.en": {
 			"en": {
 				"text": "John Paul II's first encyclical, opening his pontificate on the claim that Jesus Christ, the Redeemer of man, is the centre of the universe and of history. Taking up the inheritance of Vatican II, it turns to the man Redemption reaches — afraid of what his own progress has made, his rights honoured in letter or in spirit — and to the Church's answer in truth, in the Eucharist and Penance, and in service.",
+				"origin": "read"
+			}
+		},
+		"encyclical.redemptoris-mater.en": {
+			"en": {
+				"text": "John Paul II's encyclical on the Blessed Virgin Mary in the life of the pilgrim Church, proclaiming a Marian Year before the third millennium. It follows Mary's pilgrimage of faith in three parts: her place in the mystery of Christ, from the Annunciation to “Behold your mother” at the Cross; her role at the center of the Church's journey toward Christian unity; and her maternal mediation, subordinate to Christ's one mediation.",
 				"origin": "read"
 			}
 		},
@@ -515,6 +599,12 @@
 		"encyclical.rerum-omnium-perturbationem.en": {
 			"en": {
 				"text": "Marks the third centenary of the death of St Francis de Sales, recounting his gentle but resolute holiness, surveying his major writings — the Introduction to the Devout Life, the Treatise on the Love of God, and the Controversies written during his mission to the Chablais — and declaring him heavenly patron of writers.",
+				"origin": "read"
+			}
+		},
+		"encyclical.rite-expiatis.en": {
+			"en": {
+				"text": "Pius XI's encyclical for the seventh centenary of the death of St. Francis of Assisi, describing him as God's providential answer to a medieval society riven by class hostility and moral decay. It surveys Francis's poverty, humility and obedience, the Rule he gave the Friars Minor, and the Second and Third Orders that grew from his reform, urging the world's bishops to promote the Third Order anew for the centenary.",
 				"origin": "read"
 			}
 		},
@@ -628,6 +718,12 @@
 				"origin": "read"
 			}
 		},
+		"vatii.christus-dominus.en": {
+			"en": {
+				"text": "Vatican II's decree on the pastoral office of bishops. It treats first their place in the college united with the pope — instituting the Synod of Bishops and calling for a reorganized Roman Curia — then the diocesan bishop's governance of his own particular church, in its boundaries, auxiliaries, curia, clergy and religious, and finally cooperation among bishops through episcopal conferences, ecclesiastical provinces, and inter-diocesan offices such as military vicariates.",
+				"origin": "read"
+			}
+		},
 		"vatii.dei-verbum.en": {
 			"en": {
 				"text": "The Second Vatican Council's dogmatic constitution on divine revelation. It describes revelation as God speaking to human beings as friends through deeds and words together, with Christ as both mediator and fullness; sets Scripture and Tradition as one deposit under the Church's teaching office; and holds that the inspired books teach without error the truth God wanted written for salvation. It closes by urging that all preaching, and the reading of all the faithful, be fed from Scripture.",
@@ -691,6 +787,18 @@
 		"vatii.lumen-gentium.pt": {
 			"pt": {
 				"text": "Constituição dogmática do Concílio Vaticano II sobre a Igreja, chamada luz dos povos e sacramento da união com Deus. Percorre o mistério da Igreja como povo de Deus e corpo de Cristo, sua constituição hierárquica de bispos, presbíteros e diáconos, a vocação dos leigos, o chamamento universal à santidade, a vida religiosa e a índole escatológica da Igreja peregrina, terminando com o lugar de Maria no mistério de Cristo e da Igreja.",
+				"origin": "read"
+			}
+		},
+		"vatii.nostra-aetate.en": {
+			"en": {
+				"text": "Vatican II's declaration on the Church's relationship to non-Christian religions, moving from the questions common to all peoples about the meaning of existence through Hinduism and Buddhism, Islam, and above all Judaism, whose spiritual patrimony with Christianity it traces to Abraham and whose collective guilt for Christ's death it repudiates. It closes by rejecting all discrimination on grounds of race, color, condition, or religion.",
+				"origin": "read"
+			}
+		},
+		"vatii.optatam-totius.en": {
+			"en": {
+				"text": "Vatican II's decree on the training of future priests, requiring each episcopal conference to draft a national program adapting formation to local conditions. It treats the fostering of vocations, the organization of major seminaries, and a spiritual formation modeled on Christ the priest, then calls for ecclesiastical studies reorganized around the mystery of Christ with Scripture as theology's soul, adding pastoral training and formation continuing after ordination.",
 				"origin": "read"
 			}
 		},
