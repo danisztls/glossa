@@ -77,6 +77,7 @@ all eleven entry points offline and diffing the corpus byte for byte.
 from __future__ import annotations
 
 from .absent import AbsentSources
+from .book_forms import BOOK_FORMS_PATH, book_form_pattern, book_forms
 from .corrections import (
     CorrectionDriftError,
     apply_verse_corrections,
@@ -121,6 +122,7 @@ from .text import (
 
 __all__ = [
     "ABSENT_SOURCES_PATH",
+    "BOOK_FORMS_PATH",
     "CHAPTER_OPENING_PUNCT",
     "CORRECTIONS_DIR",
     "DEFINITIVE_ABSENCE",
@@ -133,6 +135,8 @@ __all__ = [
     "OverrideDriftError",
     "apply_overrides",
     "apply_verse_corrections",
+    "book_form_pattern",
+    "book_forms",
     "chapter_opening_letter",
     "corpus_dir",
     "corrections_receipt",

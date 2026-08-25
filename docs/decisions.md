@@ -4414,3 +4414,93 @@ went from **33 disagreeing of 144 oracles to 28**, six documents improved and
 none regressed. It resolved the `Blessing` disagreement that had stood in four
 John Paul II encyclicals, which was the same defect all along. 594 site tests
 pass.
+
+## 2026-08-25 — References: one address, one render walk, a measured grammar
+
+**What**, in one pass over the reference system, after a review that named
+three worries — fragmented architecture, complexity theater, poor coverage —
+and found the third to be the real one:
+
+1. **Coverage is measured on every sync and guarded at deploy.**
+   `site/scripts/reference-coverage.mjs` parses every citation string and
+   every prose block in the corpus with the same grammar the page uses and
+   reports, per work family, how many citations are _linkable_, _recognized_
+   (a siglum with nothing to link to — DS, PL, AAS), or _nothing_. The
+   report ships in the build; `preflight-deploy.mjs` refuses when any
+   family's linkable citations, prose scripture references or stored
+   references fall more than 3% below `scripts/reference-coverage.baseline.json`,
+   which is committed and updated only by `npm run coverage:accept`.
+   `REFERENCE_COVERAGE=verbose` prints the residue — what the grammar
+   recognized nothing in — which is where every coverage gain below was found.
+
+2. **The cheap coverage wins the measurement surfaced.** A siglum's slug is
+   now a claim in `DOCUMENT_SIGLA_EN`, validated at parse time against the
+   documents the corpus actually holds; the separate hand-written siglum→slug
+   table went, and with it its premise that encyclicals are never cited by
+   siglum (they cite each other that way: 67 citations to ten ingested
+   encyclicals now link). The Catechism and Compendium cited by name
+   ("Catechism of the Catholic Church, 1939", "CEC 2265") link to the
+   paragraph — 58 citations, none of which did. Roman-numeral chapters
+   ("Matth. IX, 37-38", "I Cor. VI, 20") parse in citation strings, never in
+   prose, only with a verse after them, and only a verse-sized one — the
+   guard that keeps "John XXIII, 1962" a pope; 109 citations, with the
+   Latin forms the older translations use (`Matth`, `Luc`, `Io`, `Joh`,
+   `Petr`, `Eccli`) added to the English table, and new commentary-title
+   guards (`Hist.`, `Expos.`, `Expl.`, "interpretation of") for the wrong
+   links the same measurement produced. Net, before → after over the whole
+   corpus: 282 citations changed, every one inspected.
+
+   **Not done, on the evidence:** `Ibid.` (933 citations, 4% of the whole
+   apparatus) follows a Scripture note only 24 times; the rest follow a
+   document or a Father, and nothing in the corpus links to those yet. A
+   resolver would need the previous note's target and would live in the
+   index builder only, since the renderer sees one string at a time. Worth
+   doing when a document→document index exists; not before.
+
+3. **One address type.** `src/lib/address.ts` — `Address`, `hrefFor`,
+   `parseHref` — is the only place a canonical reader URL is written or read.
+   `RefSegment → refHref → string → parsePreviewHref → PreviewTarget` was the
+   app serializing an address to a URL and regex-parsing it back inside the
+   same process because four unions (`RefSegment`, `PreviewTarget`,
+   `BookmarkTarget`, `ParsedReference`) described the same thing; the URL
+   grammar was known in six places. `linkPreviewHref.ts` and
+   `bookmark-target.ts` are gone, `route-manifest.ts` validates existence
+   only, `refHref` is `hrefFor(refAddress(...))`, and the jump box and the
+   routes' hand-written template literals call `hrefFor`. The `Address`
+   bible variant carries an optional `anchor` because `Jn 1:7,1,4` links to
+   `?v=1-7#v7` — the extent starts at 1, the citation is about 7 — and that
+   URL is public. Typing the numbers found four places emitting
+   `/catechismus/null` from an unbounded structure node.
+
+4. **One render walk.** `InlineNodes.svelte` owns the recursive walk over
+   `InlineNode[]`; `InlineText`, `InlineProse`, `SummaDivisions` and
+   `CccParagraphText` are thin callers passing `hrefFor`, a text transform
+   and a marker snippet. Four copies had already drifted.
+
+5. **The pipeline reads the site's book table.** `ccc.py`'s Portuguese
+   inline-locator tokenizer carried its own book list, in Python — the last
+   second grammar after 2026-08-21's "one grammar" decision, and the one that
+   could not learn what the site's table learned. It now builds its
+   alternation from `pipeline/scrapers/common/book_forms.json`, generated
+   from `refs-grammar.ts` by `site/scripts/export-book-forms.mjs` and held
+   equal to it by `book-forms.test.ts`. Case-sensitive now, as the site is
+   (the short Portuguese forms are common words in lowercase). A re-parse of
+   `ccc.pt` from cache is byte-identical: 1,254 inline locators before and
+   after, so the change is to what can drift, not to the corpus.
+
+**What was judged and left alone.** The grammar's rules and their comments
+are evidence-backed almost without exception and were not the problem; the
+review's "complexity theater" worry mostly failed to survive reading. Two
+things did: the `document`/`documentTitle` split into two segment kinds with
+two `refHref` branches for one destination, and the `cf` flag — parsed,
+merged with care in the index builder, typed on the wire, given an i18n
+string, and rendered nowhere. Neither is touched here; `cf` is explained
+below and is a decision for the "Cited in" panel, not for the grammar.
+
+**What `cf` means.** A citation printed as "Cf. Jn 3:16" says _compare_ —
+the text alludes to the verse; a bare "Jn 3:16" says the text _quotes_ it.
+The index keeps `cf` only when every edition that cites the address prints
+it as a "cf.", so the flag is a faithful, edition-independent claim about
+strength of citation. It exists to let the "Cited in" panel (or a paragraph's
+footnote rendering) distinguish "quotes this verse" from "alludes to it",
+which the `ref.cf` string was added for. Nothing renders it yet.

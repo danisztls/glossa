@@ -16,6 +16,7 @@ node_modules
 # compact route manifest before serving the SPA shell; it is deploy output,
 # not an editorial source file.
 /static/corpus-routes.json
+/static/reference-coverage.json
 
 # OS
 .DS_Store

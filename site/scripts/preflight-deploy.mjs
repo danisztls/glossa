@@ -32,9 +32,10 @@
  * synthetic directory rather than only against whatever `build/` happens to
  * hold.
  */
-import { readdirSync, existsSync } from 'node:fs';
+import { readdirSync, existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { compareCoverage, readBaseline } from './reference-coverage.mjs';
 
 const siteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const buildDir = process.argv[2]
@@ -108,6 +109,29 @@ if (routes.workCount < MIN_WORKS || routes.contentAssetCount < MIN_CONTENT_ASSET
 	fail(
 		`corpus-routes.json reports ${routes.workCount ?? '?'} work(s) and ${routes.contentAssetCount ?? '?'} ` +
 			`content file(s) — this looks like fixtures, not the real corpus. Set CORPUS_DIR and rebuild.`
+	);
+}
+
+// 3. REFERENCE COVERAGE. The sync measured how much of the corpus's citation
+//    apparatus the grammar reads and shipped the report with the build; a
+//    family that lost links against the committed baseline is a grammar
+//    regression nobody would otherwise see until a reader did. See
+//    `reference-coverage.mjs`; `npm run coverage:accept` records an intended
+//    drop.
+const coveragePath = path.join(buildDir, 'reference-coverage.json');
+if (!existsSync(coveragePath)) {
+	fail('missing reference-coverage.json — the build predates the coverage report. Rebuild.');
+}
+const baseline = readBaseline();
+if (!baseline) {
+	fail('no scripts/reference-coverage.baseline.json — run `npm run coverage:accept` after a sync.');
+}
+const regressions = compareCoverage(JSON.parse(readFileSync(coveragePath, 'utf8')), baseline);
+if (regressions.length > 0) {
+	fail(
+		`reference coverage dropped below the baseline:\n` +
+			regressions.map((r) => `  ${r}`).join('\n') +
+			`\n  Fix the grammar, or \`npm run coverage:accept\` if the drop is intended.`
 	);
 }
 

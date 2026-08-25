@@ -78,6 +78,7 @@ from common import (
     CorrectionDriftError,
     Fetcher,
     FetchPolicy,
+    book_form_pattern,
     corrections_receipt,
     fold,
     load_corrections,
@@ -585,18 +586,16 @@ class Node:
 # Scripture-reference syntax: a PT book form + chapter, optional verse(s),
 # and semicolon-separated continuations.  It therefore cannot turn an aside
 # that merely mentions a biblical book into a synthetic citation.
-# The book-number prefix accepts a Roman numeral as well as a digit: the
-# mirror prints "(I Jo 4, 9)" and "(I Cor 15, 28)" beside its usual "(1 Jo ...)"
-# form, the same typesetting artifact `refs.ts`'s `numberedVariants` already
-# folds into both language tables. Without it those two parentheses stayed
-# ordinary prose while every neighbouring one became a citation.
-_PT_INLINE_BOOK = (
-    r"(?:[1-3]\s*|I{1,3}\s+)?(?:Gn|Ex|Lv|Nm|Dt|Dr|Js|Jz|Rt|Tb|Jt|Est|Job|Jó|Sl|Pr|"
-    r"Ecl|Ec|Ct|Sb|Sir|Is|Jr|Lm|Br|Ez|Esd|Ne|Dn|Os|Jl|Am|Ab|Jn|Mq|Na|Hab|"
-    r"Sf|Ag|Zc|Ml|Mt|Mc|Mr|Lc|Jo|Act|At|Rm|Gl|Ef|Fl|Cl|Tt|Flm|Fm|Heb|Hb|Tg|Jd|Ap|"
-    r"Cr|Cor|Rs|Mac|Pe|Sm|Ts|Tm)"
-)
-_PT_INLINE_CF = r"(?:(?:Cf|Cfr)\.?\s*)?"
+# The book forms are the SITE'S, read from `common/book_forms.json`, which is
+# generated from `site/src/lib/refs-grammar.ts` (see `common/book_forms.py`).
+# That table already carries every numbered-book spelling the mirror prints
+# ("1 Jo", "I Jo", "1Jo", "l Cor"), so no number prefix is added here. Matched
+# CASE-SENSITIVELY, as the site matches them: the short Portuguese forms
+# ("Na", "At", "Os", "Am", "Is") are ordinary words in lowercase, and the
+# earlier case-insensitive regex was safe only because its own list was
+# shorter.
+_PT_INLINE_BOOK = book_form_pattern("pt")
+_PT_INLINE_CF = r"(?:(?:[Cc]f|[Cc]fr)\.?\s*)?"
 # The PT mirror is inconsistent enough that a full parenthesis cannot always
 # satisfy a tidy chapter/verse grammar: it has copied comments ("segundo a
 # Vulgata"), a second reference after a colon, and several spacing/OCR
@@ -616,7 +615,6 @@ _PT_INLINE_SCRIPTURE_RE = re.compile(
     rf"\((?P<leading>\s*)(?P<ref>{_PT_INLINE_CF}{_PT_INLINE_BOOK}"
     rf"{_PT_INLINE_REF_START_SEPARATOR}(?=\d)[^(){MARK_OPEN}{MARK_CLOSE}]*)"
     rf"(?P<tail>\s*{MARK_OPEN}[^{MARK_CLOSE}]*{MARK_CLOSE})?\)",
-    re.IGNORECASE,
 )
 
 

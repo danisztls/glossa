@@ -513,7 +513,7 @@ const BOOK_VARIANTS_EN: Record<string, string[]> = {
 	eccl: ['Eccl', 'Qo', 'Qoh', 'Ecclesiastes'],
 	song: ['Song', 'SS', 'Ct', 'Song of Songs', 'Song of Solomon'],
 	wis: ['Wis', 'Wisdom'],
-	sir: ['Sir', 'Ecclus', 'Sirach'],
+	sir: ['Sir', 'Ecclus', 'Sirach', 'Eccli'],
 	isa: ['Is', 'Isa', 'Isaiah'],
 	jer: ['Jer', 'Jeremiah'],
 	lam: ['Lam', 'Lamentations'],
@@ -532,10 +532,16 @@ const BOOK_VARIANTS_EN: Record<string, string[]> = {
 	hag: ['Hag', 'Haggai'],
 	zech: ['Zec', 'Zech', 'Zechariah'],
 	mal: ['Mal', 'Malachi'],
-	matt: ['Mt', 'Matt', 'Matthew'],
+	// The Latin abbreviations ("Matth.", "Luc.", "Io.", "Joh.", "Petr.",
+	// "Eccli.") are how the pre-conciliar encyclicals' English translations
+	// cite Scripture, nearly always with a Roman-numeral chapter ("Matth. IX,
+	// 37-38", "I Petr. II, 21"). Found by scanning every citation for a
+	// Roman-chapter shape and reading each form's occurrences (2026-08-25);
+	// only forms that named a book every time are here.
+	matt: ['Mt', 'Matt', 'Matthew', 'Matth'],
 	mark: ['Mk', 'Mark'],
-	luke: ['Lk', 'Luke'],
-	john: ['Jn', 'John', 'In'], // In: observed typo (J -> I), only fires with a chapter:verse after it
+	luke: ['Lk', 'Luke', 'Luc'],
+	john: ['Jn', 'John', 'In', 'Io', 'Ioan', 'Joh'], // In: observed typo (J -> I), only fires with a chapter:verse after it
 	acts: ['Acts'],
 	rom: ['Rom', 'Romans'],
 	gal: ['Gal', 'Galatians', 'Cal'], // Cal: observed typo (G -> C), verified against ccc476/478's Christology
@@ -556,8 +562,10 @@ const BOOK_VARIANTS_EN: Record<string, string[]> = {
 	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Thess', 'Thessalonians', 'Th'], {
 		lTypo: true
 	}),
-	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tim', 'Timothy'], { lTypo: true }),
-	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pet', 'Pt', 'Peter'], { lTypo: true }),
+	// "Tm": the Portuguese-style abbreviation, printed in 25 English
+	// citations ("1 Tm 3.15") — the older encyclicals' translators kept it.
+	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tim', 'Timothy', 'Tm'], { lTypo: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pet', 'Pt', 'Peter', 'Petr'], { lTypo: true }),
 	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jn', 'John', 'In'], { lTypo: true })
 };
 
@@ -652,23 +660,51 @@ const BOOK_VARIANTS_PT: Record<string, string[]> = {
 	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jo'], { unspaced: true })
 };
 
+/**
+ * The book tables, materialized, for anything outside this module that has
+ * to recognize the same surface forms.
+ *
+ * The one such consumer is the pipeline: `pipeline/scrapers/ccc/ccc.py`
+ * decides which parentheses in the Portuguese Catechism are Scripture
+ * locators (docs/corpus-schema.md §CCC, the `⟦inlineN⟧` tokens), and it
+ * used to do so with a book list of its own, in Python, that could not learn
+ * what this table learned. `scripts/export-book-forms.mjs` writes this object
+ * to `pipeline/scrapers/common/book_forms.json`, and `book-forms.test.ts`
+ * fails when the two differ — so the JSON is generated, committed, and
+ * checked, and the table has one home.
+ */
+export const BOOK_FORMS: Record<string, Record<string, string[]>> = {
+	en: BOOK_VARIANTS_EN,
+	pt: BOOK_VARIANTS_PT
+};
+
 // --------------------------------------------------------------------------
 // Document sigla (non-scripture: councils, encyclicals, canon law, patrology
-// series, magisterial document collections). The 16 Vatican II sigla now
-// resolve to a real `/documents/{slug}/{n}` link via `DOCUMENT_SLUGS_EN` +
-// `refHref` below — everything else here (DS, CIC, PL, PG, AAS, canon law,
-// patrology series, and every siglum's PT appearance) still has nothing in
-// the corpus to link to, so the point of recognizing THOSE is a quiet,
-// informative non-link (sigla + locus + expansion tooltip) instead of the
-// sigla vanishing into unstyled text.
+// series, magisterial document collections). A siglum that names a document
+// the corpus has ingested links to it through `refHref`; everything else
+// (DS, CIC, PL, PG, AAS, canon law, patrology series, and every siglum's PT
+// appearance) has nothing in the corpus to link to, so the point of
+// recognizing THOSE is a quiet, informative non-link (sigla + locus +
+// expansion tooltip) instead of the sigla vanishing into unstyled text.
 //
-// This table is a STOPGAP. `docs/link-surface.md` records that neither
-// language's `abbreviations.json` carries a real one (the vatican.va
-// mirrors omit the front-matter table); replace this wholesale once the
-// corpus ships one. Built by counting `\bTOKEN\b` occurrences in both
-// `ccc.en` and `ccc.pt` `paragraphs.json` citations with `jq` and confirming
-// each entry's meaning against its citation context — not exhaustive, just
-// the sigla that actually occur with enough frequency to verify.
+// This table is the decoder ring `docs/link-surface.md` says neither
+// language's `abbreviations.json` carries (the vatican.va mirrors omit the
+// front-matter table). Built by counting `\bTOKEN\b` occurrences in the
+// corpus's citations and confirming each entry's meaning against its citation
+// context — not exhaustive, just the sigla that actually occur with enough
+// frequency to verify.
+//
+// A SLUG HERE IS A CLAIM, NOT A LINK. Whether the siglum actually links is
+// decided at parse time by `ingestedSlugs()` — the set of documents the
+// corpus really holds, injected through `setDocumentTitleSource` — so an
+// entry naming a work that is not (or not yet) ingested is inert rather than
+// a dead link, and ingesting a work is enough to make its citations resolve.
+// The previous arrangement, a separate hand-written siglum→slug table that
+// only listed Vatican II, rested on the claim that "the CCC cites encyclicals
+// by title, never by siglum" — true of the Catechism, false of the
+// encyclicals citing each other: measured 2026-08-25, 67 citations to ten
+// ingested encyclicals (CA 28, SRS 10, HV 6, LE 6, DeV 4, PT 4 …) were
+// recognized and rendered as non-links because the table did not know them.
 //
 // EN and PT get separate tables, not one shared one, because at least one
 // siglum means something different per language: "SC" is Sacrosanctum
@@ -677,121 +713,155 @@ const BOOK_VARIANTS_PT: Record<string, string[]> = {
 // series) doesn't appear in ccc.pt at all — PT citations use bare "SC" for
 // Sources Chrétiennes instead (103 occurrences, zero for the Vatican II
 // document sigla, which PT citations spell out in full: "Const. past.
-// Gaudium et Spes"). Sharing one table would silently mislabel one language.
+// Gaudium et Spes"; a 2026-08-25 scan of every PT citation for a conciliar or
+// encyclical siglum followed by a number found none). Sharing one table would
+// silently mislabel one language.
 // --------------------------------------------------------------------------
 
-const DOCUMENT_SIGLA_EN: Record<string, string> = {
-	LG: 'Lumen Gentium (Vatican II, Dogmatic Constitution on the Church)',
-	AG: "Ad Gentes (Vatican II, Decree on the Church's Missionary Activity)",
-	SC: 'Sacrosanctum Concilium (Vatican II, Constitution on the Sacred Liturgy)',
-	GS: 'Gaudium et Spes (Vatican II, Pastoral Constitution on the Church in the Modern World)',
-	UR: 'Unitatis Redintegratio (Vatican II, Decree on Ecumenism)',
-	CT: 'Catechesi Tradendae (John Paul II, apostolic exhortation on catechesis)',
-	DS: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)',
-	CIC: 'Codex Iuris Canonici (Code of Canon Law)',
-	CCEO: 'Codex Canonum Ecclesiarum Orientalium (Code of Canons of the Eastern Churches)',
-	RCIA: 'Rite of Christian Initiation of Adults',
-	RBC: 'Rite of Baptism for Children',
-	CDF: 'Congregation for the Doctrine of the Faith',
-	PL: 'Patrologia Latina (Migne)',
-	PG: 'Patrologia Graeca (Migne)',
-	SCh: 'Sources Chrétiennes (patristic critical-edition series)',
-	AAS: 'Acta Apostolicae Sedis (official gazette of the Holy See)',
-	DV: 'Dei Verbum (Vatican II, Dogmatic Constitution on Divine Revelation)',
-	NA: 'Nostra Aetate (Vatican II, Declaration on the Relation of the Church to Non-Christian Religions)',
-	OT: 'Optatam Totius (Vatican II, Decree on Priestly Training)',
-	PO: 'Presbyterorum Ordinis (Vatican II, Decree on the Ministry and Life of Priests)',
-	CD: 'Christus Dominus (Vatican II, Decree on the Pastoral Office of Bishops)',
-	OE: 'Orientalium Ecclesiarum (Vatican II, Decree on the Eastern Catholic Churches)',
-	EP: 'Eucharistic Prayer (Roman Missal)',
-	PC: 'Perfectae Caritatis (Vatican II, Decree on the Renewal of Religious Life)',
-	AA: 'Apostolicam Actuositatem (Vatican II, Decree on the Apostolate of the Laity)',
-	DH: 'Dignitatis Humanae (Vatican II, Declaration on Religious Freedom)',
-	CA: 'Centesimus Annus (John Paul II encyclical)',
-	FC: 'Familiaris Consortio (John Paul II, apostolic exhortation on the family)',
-	SRS: 'Sollicitudo Rei Socialis (John Paul II encyclical)',
-	RP: 'Reconciliatio et Paenitentia (John Paul II, apostolic exhortation)',
-	LE: 'Laborem Exercens (John Paul II encyclical)',
-	HV: 'Humanae Vitae (Paul VI encyclical)',
-	EN: 'Evangelii Nuntiandi (Paul VI, apostolic exhortation on evangelization)',
-	IM: 'Inter Mirifica (Vatican II, Decree on Social Communication)',
-	GE: 'Gravissimum Educationis (Vatican II, Declaration on Christian Education)',
-	MC: 'Marialis Cultus (Paul VI, apostolic exhortation)',
-	MD: 'Mulieris Dignitatem (John Paul II, apostolic letter)',
-	MF: 'Mysterium Fidei (Paul VI encyclical)',
-	PP: 'Populorum Progressio (Paul VI encyclical)',
-	RH: 'Redemptor Hominis (John Paul II encyclical)',
-	RM: 'Redemptoris Mater (John Paul II encyclical)',
-	RMat: 'Redemptoris Mater (John Paul II encyclical)', // observed alt siglum, same document as RM
-	PT: 'Pacem in Terris (John XXIII encyclical)',
-	GCD: 'General Catechetical Directory',
-	GIRM: 'General Instruction of the Roman Missal',
-	GILH: 'General Instruction of the Liturgy of the Hours',
-	OCF: 'Order of Christian Funerals',
-	OP: 'Ordo Paenitentiae (Rite of Penance)',
-	LC: 'Libertatis Conscientia (CDF instruction on Christian freedom and liberation)',
-	ND: 'Neuner–Dupuis, The Christian Faith (doctrinal sourcebook)'
+interface SiglumEntry {
+	expansion: string;
+	/** The ingested document this siglum names — see the section comment on
+	 *  why a slug listed here is validated against the corpus, never trusted. */
+	slug?: string;
+}
+
+const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
+	LG: {
+		expansion: 'Lumen Gentium (Vatican II, Dogmatic Constitution on the Church)',
+		slug: 'lumen-gentium'
+	},
+	AG: {
+		expansion: "Ad Gentes (Vatican II, Decree on the Church's Missionary Activity)",
+		slug: 'ad-gentes'
+	},
+	SC: {
+		expansion: 'Sacrosanctum Concilium (Vatican II, Constitution on the Sacred Liturgy)',
+		slug: 'sacrosanctum-concilium'
+	},
+	GS: {
+		expansion:
+			'Gaudium et Spes (Vatican II, Pastoral Constitution on the Church in the Modern World)',
+		slug: 'gaudium-et-spes'
+	},
+	UR: {
+		expansion: 'Unitatis Redintegratio (Vatican II, Decree on Ecumenism)',
+		slug: 'unitatis-redintegratio'
+	},
+	CT: { expansion: 'Catechesi Tradendae (John Paul II, apostolic exhortation on catechesis)' },
+	DS: { expansion: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)' },
+	CIC: { expansion: 'Codex Iuris Canonici (Code of Canon Law)' },
+	CCEO: {
+		expansion: 'Codex Canonum Ecclesiarum Orientalium (Code of Canons of the Eastern Churches)'
+	},
+	RCIA: { expansion: 'Rite of Christian Initiation of Adults' },
+	RBC: { expansion: 'Rite of Baptism for Children' },
+	CDF: { expansion: 'Congregation for the Doctrine of the Faith' },
+	PL: { expansion: 'Patrologia Latina (Migne)' },
+	PG: { expansion: 'Patrologia Graeca (Migne)' },
+	SCh: { expansion: 'Sources Chrétiennes (patristic critical-edition series)' },
+	AAS: { expansion: 'Acta Apostolicae Sedis (official gazette of the Holy See)' },
+	DV: {
+		expansion: 'Dei Verbum (Vatican II, Dogmatic Constitution on Divine Revelation)',
+		slug: 'dei-verbum'
+	},
+	NA: {
+		expansion:
+			'Nostra Aetate (Vatican II, Declaration on the Relation of the Church to Non-Christian Religions)',
+		slug: 'nostra-aetate'
+	},
+	OT: {
+		expansion: 'Optatam Totius (Vatican II, Decree on Priestly Training)',
+		slug: 'optatam-totius'
+	},
+	PO: {
+		expansion: 'Presbyterorum Ordinis (Vatican II, Decree on the Ministry and Life of Priests)',
+		slug: 'presbyterorum-ordinis'
+	},
+	CD: {
+		expansion: 'Christus Dominus (Vatican II, Decree on the Pastoral Office of Bishops)',
+		slug: 'christus-dominus'
+	},
+	OE: {
+		expansion: 'Orientalium Ecclesiarum (Vatican II, Decree on the Eastern Catholic Churches)',
+		slug: 'orientalium-ecclesiarum'
+	},
+	EP: { expansion: 'Eucharistic Prayer (Roman Missal)' },
+	PC: {
+		expansion: 'Perfectae Caritatis (Vatican II, Decree on the Renewal of Religious Life)',
+		slug: 'perfectae-caritatis'
+	},
+	AA: {
+		expansion: 'Apostolicam Actuositatem (Vatican II, Decree on the Apostolate of the Laity)',
+		slug: 'apostolicam-actuositatem'
+	},
+	DH: {
+		expansion: 'Dignitatis Humanae (Vatican II, Declaration on Religious Freedom)',
+		slug: 'dignitatis-humanae'
+	},
+	IM: {
+		expansion: 'Inter Mirifica (Vatican II, Decree on Social Communication)',
+		slug: 'inter-mirifica'
+	},
+	GE: {
+		expansion: 'Gravissimum Educationis (Vatican II, Declaration on Christian Education)',
+		slug: 'gravissimum-educationis'
+	},
+	// Encyclicals, cited by siglum in the other encyclicals rather than in the
+	// Catechism. Slugs are the corpus's own (`encyclical.{slug}.{lang}`), which
+	// for a handful of documents is the incipit's first word alone
+	// (`populorum`, `mater`, `pacem`, `mysterium`).
+	CA: { expansion: 'Centesimus Annus (John Paul II encyclical)', slug: 'centesimus-annus' },
+	SRS: {
+		expansion: 'Sollicitudo Rei Socialis (John Paul II encyclical)',
+		slug: 'sollicitudo-rei-socialis'
+	},
+	LE: { expansion: 'Laborem Exercens (John Paul II encyclical)', slug: 'laborem-exercens' },
+	HV: { expansion: 'Humanae Vitae (Paul VI encyclical)', slug: 'humanae-vitae' },
+	MF: { expansion: 'Mysterium Fidei (Paul VI encyclical)', slug: 'mysterium' },
+	PP: { expansion: 'Populorum Progressio (Paul VI encyclical)', slug: 'populorum' },
+	RH: { expansion: 'Redemptor Hominis (John Paul II encyclical)', slug: 'redemptor-hominis' },
+	RM: { expansion: 'Redemptoris Mater (John Paul II encyclical)', slug: 'redemptoris-mater' },
+	RMat: { expansion: 'Redemptoris Mater (John Paul II encyclical)', slug: 'redemptoris-mater' }, // observed alt siglum, same document as RM
+	PT: { expansion: 'Pacem in Terris (John XXIII encyclical)', slug: 'pacem' },
+	MM: { expansion: 'Mater et Magistra (John XXIII encyclical)', slug: 'mater' },
+	DeV: {
+		expansion: 'Dominum et Vivificantem (John Paul II encyclical)',
+		slug: 'dominum-et-vivificantem'
+	},
+	DM: {
+		expansion: 'Dives in Misericordia (John Paul II encyclical)',
+		slug: 'dives-in-misericordia'
+	},
+	CIV: { expansion: 'Caritas in Veritate (Benedict XVI encyclical)', slug: 'caritas-in-veritate' },
+	// `SS` (Spe Salvi, 2 citations) is deliberately absent: "Festo SS. Apost."
+	// and "C.SS. Rituum" would claim it ten times over.
+	// Apostolic exhortations and letters, recognized for the tooltip; none is
+	// ingested (docs/corpus-schema.md §Documents lists the families that are).
+	FC: { expansion: 'Familiaris Consortio (John Paul II, apostolic exhortation on the family)' },
+	RP: { expansion: 'Reconciliatio et Paenitentia (John Paul II, apostolic exhortation)' },
+	EN: { expansion: 'Evangelii Nuntiandi (Paul VI, apostolic exhortation on evangelization)' },
+	MC: { expansion: 'Marialis Cultus (Paul VI, apostolic exhortation)' },
+	MD: { expansion: 'Mulieris Dignitatem (John Paul II, apostolic letter)' },
+	CL: { expansion: 'Christifideles Laici (John Paul II, apostolic exhortation)' },
+	GCD: { expansion: 'General Catechetical Directory' },
+	GIRM: { expansion: 'General Instruction of the Roman Missal' },
+	GILH: { expansion: 'General Instruction of the Liturgy of the Hours' },
+	OCF: { expansion: 'Order of Christian Funerals' },
+	OP: { expansion: 'Ordo Paenitentiae (Rite of Penance)' },
+	LC: { expansion: 'Libertatis Conscientia (CDF instruction on Christian freedom and liberation)' },
+	ND: { expansion: 'Neuner–Dupuis, The Christian Faith (doctrinal sourcebook)' }
 };
 
-/**
- * Siglum -> document SLUG (docs/corpus-schema.md §Documents work ids,
- * `{family}.{slug}.{lang}`) for sigla that are BOTH recognized above AND
- * actually ingested into the corpus — currently the 16 Vatican II
- * constitutions/decrees/declarations, the one document family both fully
- * ingested and cited by siglum anywhere in the CCC
- * (docs/research/vatican-documents.md §1a). `refHref` below consults this to
- * turn e.g. `GS 19` into `/documents/gaudium-et-spes/19` — see
- * `docs/link-surface.md`'s "once ingested, the raw citations + abbreviations
- * let the parser resolve 'LG 12' to an actual paragraph link" prediction,
- * which this table is what makes true.
- *
- * Encyclicals are NOT in this table even though ~60+ are already in the
- * corpus: the CCC cites them by spelled-out title ("Familiaris Consortio"),
- * never by siglum (`vatican-documents.md` §1b), so there is no siglum ->
- * encyclical-slug mapping for the citation grammar to need — this table maps
- * what the grammar can actually encounter, not everything the corpus has.
- *
- * EN-ONLY, DELIBERATELY: `DOCUMENT_SIGLA_PT` below doesn't carry any of
- * these sigla at all (ccc.pt spells conciliar documents out in full rather
- * than abbreviating them — see that table's own docblock), so there's
- * nothing to map for PT. Critically, `SC` must NEVER appear in a PT version
- * of this table: in `DOCUMENT_SIGLA_EN` it's Sacrosanctum Concilium, but the
- * identical siglum in `DOCUMENT_SIGLA_PT` means Sources Chrétiennes — a
- * shared slug table would silently mislink a PT patristics citation into a
- * conciliar constitution. `buildConfig`'s `documentSlugs` parameter defaults
- * to `{}` for exactly this reason: PT's config simply never resolves any
- * siglum to a slug, so `RefSegment.slug` is always `null` there and
- * `refHref` never links a PT document segment (see its own docblock).
- */
-const DOCUMENT_SLUGS_EN: Record<string, string> = {
-	LG: 'lumen-gentium',
-	SC: 'sacrosanctum-concilium',
-	GS: 'gaudium-et-spes',
-	DV: 'dei-verbum',
-	UR: 'unitatis-redintegratio',
-	AG: 'ad-gentes',
-	DH: 'dignitatis-humanae',
-	AA: 'apostolicam-actuositatem',
-	CD: 'christus-dominus',
-	OE: 'orientalium-ecclesiarum',
-	NA: 'nostra-aetate',
-	PC: 'perfectae-caritatis',
-	IM: 'inter-mirifica',
-	OT: 'optatam-totius',
-	GE: 'gravissimum-educationis',
-	PO: 'presbyterorum-ordinis'
-};
-
-const DOCUMENT_SIGLA_PT: Record<string, string> = {
+const DOCUMENT_SIGLA_PT: Record<string, SiglumEntry> = {
 	// SC deliberately means something different here than in EN — see the
 	// table-group docblock above.
-	SC: 'Sources Chrétiennes (patristic critical-edition series)',
-	DS: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)',
-	CIC: 'Codex Iuris Canonici (Código de Direito Canónico)',
-	CCEO: 'Codex Canonum Ecclesiarum Orientalium',
-	PL: 'Patrologia Latina (Migne)',
-	PG: 'Patrologia Graeca (Migne)',
-	AAS: 'Acta Apostolicae Sedis'
+	SC: { expansion: 'Sources Chrétiennes (patristic critical-edition series)' },
+	DS: { expansion: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)' },
+	CIC: { expansion: 'Codex Iuris Canonici (Código de Direito Canónico)' },
+	CCEO: { expansion: 'Codex Canonum Ecclesiarum Orientalium' },
+	PL: { expansion: 'Patrologia Latina (Migne)' },
+	PG: { expansion: 'Patrologia Graeca (Migne)' },
+	AAS: { expansion: 'Acta Apostolicae Sedis' }
 	// Vatican II / encyclical sigla (LG, GS, DV, ...) do not appear in
 	// ccc.pt at all — its citations spell those documents out in full
 	// ("Const. past. Gaudium et Spes") rather than abbreviating them.
@@ -805,10 +875,11 @@ const DOCUMENT_SIGLA_PT: Record<string, string> = {
 interface LangConfig {
 	variantToOsis: Map<string, string>;
 	bookRe: RegExp;
-	documentSigla: Map<string, string>;
+	documentSigla: Map<string, SiglumEntry>;
 	documentRe: RegExp;
-	/** Siglum -> ingested document slug, e.g. "GS" -> "gaudium-et-spes"; empty for PT (see `DOCUMENT_SLUGS_EN`'s docblock). */
-	documentSlugs: Map<string, string>;
+	/** Whether a siglum may resolve to an ingested document at all. False for
+	 *  PT, whose table maps no siglum to a slug (see `DOCUMENT_SIGLA_PT`). */
+	linksSigla: boolean;
 	/** Primary chapter/verse separator: ":" (EN) or "," (PT, "Act 2, 42"). */
 	primarySep: string;
 	/** EN-only: a bare space or "." also separates chapter from verse when
@@ -844,10 +915,10 @@ function buildVariantRe(variants: string[]): RegExp {
 
 function buildConfig(
 	bookVariants: Record<string, string[]>,
-	documentSigla: Record<string, string>,
+	documentSigla: Record<string, SiglumEntry>,
 	primarySep: string,
 	allowBareSeparators: boolean,
-	documentSlugs: Record<string, string> = {},
+	linksSigla: boolean,
 	extraChapterVerseSeparators: string[] = [],
 	clauseSeparators: string[] = [';']
 ): LangConfig {
@@ -860,7 +931,7 @@ function buildConfig(
 		bookRe: buildVariantRe([...variantToOsis.keys()]),
 		documentSigla: new Map(Object.entries(documentSigla)),
 		documentRe: buildVariantRe(Object.keys(documentSigla)),
-		documentSlugs: new Map(Object.entries(documentSlugs)),
+		linksSigla,
 		primarySep,
 		allowBareSeparators,
 		extraChapterVerseSeparators,
@@ -872,24 +943,22 @@ function buildConfig(
 // colon-separated English references. A comma immediately after a chapter is
 // unambiguously a verse separator there, so accept it while retaining the
 // source's printed spelling in the corpus.
-const CONFIG_EN = buildConfig(BOOK_VARIANTS_EN, DOCUMENT_SIGLA_EN, ':', true, DOCUMENT_SLUGS_EN, [
-	','
-]);
+const CONFIG_EN = buildConfig(BOOK_VARIANTS_EN, DOCUMENT_SIGLA_EN, ':', true, true, [',']);
 // Fourth argument stays `false`: PT never uses a bare SPACE as a
 // chapter/verse separator, so `allowBareSeparators` (which would enable both
 // " " and ".") is still the wrong knob for it. What PT does drift to is "."
 // where it means "," -- "Sl 40. 7-9" for Ps 40:7-9, "Mc 14. 25" for Mk 14:25
 // -- so that one mark goes in via `extraChapterVerseSeparators`, the knob
 // meant for exactly this kind of verified, source-specific punctuation
-// drift. Fifth argument empty: PT's document segments always parse with
-// `slug: null` (DOCUMENT_SLUGS_EN's docblock explains why that's correct,
-// not a gap).
+// drift. Fifth argument `false`: PT's document segments always parse with
+// `slug: null` (the sigla section comment explains why that's correct, not a
+// gap).
 const CONFIG_PT = buildConfig(
 	BOOK_VARIANTS_PT,
 	DOCUMENT_SIGLA_PT,
 	',',
 	false,
-	{},
+	false,
 	['.'],
 	[';', ':']
 );
@@ -954,11 +1023,21 @@ export function setDocumentTitleSource(source: () => DocumentTitleGroup[]): void
 	documentTitleSource = source;
 	documentTitleIndex = null;
 	documentTitleRe = null;
+	ingestedSlugSet = null;
 }
 
 /** Lazily built so it costs nothing on pages that never parse a citation. */
 let documentTitleIndex: Map<string, string> | null = null;
 let documentTitleRe: RegExp | null = null;
+let ingestedSlugSet: Set<string> | null = null;
+
+/** The slugs the corpus holds — what a siglum's claimed slug is checked against. */
+function ingestedSlugs(): Set<string> {
+	if (!ingestedSlugSet) {
+		ingestedSlugSet = new Set(documentTitleSource().map((group) => group.slug));
+	}
+	return ingestedSlugSet;
+}
 
 function normalizeTitleKey(title: string): string {
 	return title.trim().toLowerCase().replace(/\s+/g, ' ');
@@ -1139,15 +1218,57 @@ function parseVerseList(s: string, primarySep: string): { verses: number[]; cons
 	return { verses: [...new Set(verses)].sort((a, b) => a - b), consumed: pos };
 }
 
-/** Parse "chapter<sep>verselist" or a bare "chapter" (whole-chapter) from the start of `s`. */
+/**
+ * A chapter written as a Roman numeral, read strictly — no OCR tolerance,
+ * unlike `romanToInt`'s reading of `l` as `I`, because here a stray letter is
+ * far more likely to be a word than a damaged numeral.
+ */
+function strictRomanToInt(token: string): number | null {
+	if (!/^[IVXLC]+$/.test(token)) return null;
+	return romanToInt(token);
+}
+
+/** No chapter of any book runs past Psalm 118's 176 verses. A "verse" beyond
+ *  that after a Roman-numeral chapter is a year or a page — "John XXIII,
+ *  1962" — and the guard that keeps a pope from becoming a Gospel. */
+const MAX_VERSE = 176;
+
+/**
+ * Parse "chapter<sep>verselist" or a bare "chapter" (whole-chapter) from the
+ * start of `s`.
+ *
+ * `romanChapters` admits a Roman-numeral chapter ("Matth. IX, 37-38", "I Cor.
+ * VI, 20") — the pre-conciliar encyclicals' convention, ~100 citations that
+ * parsed as nothing. Only the CITATION grammar turns it on; running prose
+ * keeps digits-only, where "John XXIII" is a pope far more often than a
+ * chapter. Even in a citation a Roman chapter is accepted only with an
+ * explicit verse after it, and only a verse-sized one (`MAX_VERSE`): a bare
+ * "John XXIII" or "John XXIII, 1962" is not a reference, and a whole-chapter
+ * reading of it would be a confidently wrong link.
+ */
 function parseChapterVerses(
 	s: string,
-	cfg: LangConfig
+	cfg: LangConfig,
+	romanChapters = false
 ): { chapter: number | null; verses: number[]; consumed: number } {
+	const none = { chapter: null, verses: [], consumed: 0 };
+	let chapter: number | null = null;
+	let pos = 0;
+	let roman = false;
 	const m = /^(\d+)/.exec(s);
-	if (!m) return { chapter: null, verses: [], consumed: 0 };
-	const chapter = Number(m[1]);
-	const pos = m[0].length;
+	if (m) {
+		chapter = Number(m[1]);
+		pos = m[0].length;
+	} else if (romanChapters) {
+		const rm = /^[IVXLC]{1,7}(?![\p{L}])/u.exec(s);
+		const value = rm ? strictRomanToInt(rm[0]) : null;
+		if (rm && value !== null) {
+			chapter = value;
+			pos = rm[0].length;
+			roman = true;
+		}
+	}
+	if (chapter === null) return none;
 	const rest = s.slice(pos);
 	// A space before the separator ("Rm 8 , 15", "Mt 28 , 19") is a spacing
 	// defect in the PT archive, not a different locator: 9 ccc.pt citations
@@ -1163,13 +1284,16 @@ function parseChapterVerses(
 		// the "." ending "Cf. Ez 36." is the sentence's full stop, and
 		// consuming it would pull the period inside the rendered link.
 		if (verses.length > 0) {
+			if (roman && verses[0] > MAX_VERSE) return none;
 			return { chapter, verses, consumed: pos + gap.length + 1 + consumed };
 		}
 	}
 	if (cfg.allowBareSeparators && (rest[0] === '.' || rest[0] === ' ') && /\d/.test(rest[1] ?? '')) {
 		const { verses, consumed } = parseVerseList(rest.slice(1), cfg.primarySep);
+		if (roman && verses[0] > MAX_VERSE) return none;
 		return { chapter, verses, consumed: pos + 1 + consumed };
 	}
+	if (roman) return none; // a Roman chapter never stands alone — see the docblock
 	return { chapter, verses: [], consumed: pos };
 }
 
@@ -1194,7 +1318,8 @@ function parseSingleChapterRef(
 function parseRefNumbers(
 	s: string,
 	cfg: LangConfig,
-	osis: string
+	osis: string,
+	romanChapters = false
 ): { chapter: number | null; verses: number[]; consumed: number } {
 	// A mark between the book abbreviation and its locus separates those two,
 	// not the locus's chapter from its verse, so discard it before the normal
@@ -1211,7 +1336,7 @@ function parseRefNumbers(
 	const body = s.slice(bookPunctuation.length);
 	const parsed = SINGLE_CHAPTER_BOOKS.has(osis)
 		? parseSingleChapterRef(body, cfg)
-		: parseChapterVerses(body, cfg);
+		: parseChapterVerses(body, cfg, romanChapters);
 	return { ...parsed, consumed: parsed.consumed + bookPunctuation.length };
 }
 
@@ -1253,18 +1378,90 @@ function findDocumentAt(cfg: LangConfig, s: string, start: number): DocumentMatc
 	const m = cfg.documentRe.exec(s);
 	if (!m) return null;
 	const after = s.slice(m.index + m[0].length);
+	// "Pius PP. X", "Benedictus PP. XV": the papal style, not Populorum
+	// Progressio. A siglum followed by a full stop and a Roman numeral is a
+	// title, and this is the one siglum that collides with one.
+	if (/^\.\s*[IVXL]+(?![\p{L}])/u.test(after)) return null;
 	const spaceSkip = /^ */.exec(after)![0];
 	const locusMatch = LOCUS_RE.exec(after.slice(spaceSkip.length));
 	const locus = locusMatch ? locusMatch[0] : null;
 	const consumedEnd =
 		m.index + m[0].length + (locusMatch ? spaceSkip.length + locusMatch[0].length : 0);
+	const entry = cfg.documentSigla.get(m[0]);
+	// Validated against what the corpus actually holds, never trusted from
+	// the table — see the sigla section comment.
+	const slug = cfg.linksSigla && entry?.slug && ingestedSlugs().has(entry.slug) ? entry.slug : null;
 	return {
 		sigla: m[0],
 		matchStart: m.index,
 		consumedEnd,
 		locus,
-		slug: cfg.documentSlugs.get(m[0]) ?? null
+		slug
 	};
+}
+
+// --------------------------------------------------------------------------
+// The Catechism and its Compendium named as WORKS — "Catechism of the
+// Catholic Church, 1939", "Catecismo da Igreja Católica, nn. 2258-2262",
+// "CCC 1234". The encyclicals cite the Catechism this way constantly (80
+// citations, measured 2026-08-25) and none of them linked: a `ccc` segment
+// only ever came out of a bare number list. Same shape as a document siglum
+// with a locus, except that the locus is a paragraph list in a fixed range
+// the grammar already knows, so the segments are the same `ccc`/`compendium`
+// kinds `parseBareCccList` produces and `refHref` needs no corpus to link.
+//
+// The Compendium's title CONTAINS the Catechism's, so it is listed first and
+// the alternation is tried in order. "CEC" is Portuguese usage; "CIC" is not
+// accepted for the Catechism in either language because the PT sigla table
+// reads it as the Codex Iuris Canonici, and one grammar must not read one
+// siglum two ways (the jump box makes the same choice, `refparse.ts`).
+// --------------------------------------------------------------------------
+
+const WORK_TITLE_RE = new RegExp(
+	LEFT_BOUND +
+		'(?:(Compendium of the Catechism of the Catholic Church|Comp[êe]ndio do Catecismo da Igreja Cat[óo]lica)' +
+		'|(Catechism of the Catholic Church|Catecismo da Igreja Cat[óo]lica|Catechismus Catholicae Ecclesiae|CCC|CEC))' +
+		RIGHT_BOUND,
+	'gu'
+);
+/** A paragraph list after a work title: "1939", "nn. 2258-2262", ", 1888, 1891". */
+const WORK_LOCUS_RE =
+	/^[\s,.:]*(?:nn?\.?\s*|n[.º°]\s*)?(\d+(?:\s*[-–]\s*\d+)?(?:\s*,\s*\d+(?:\s*[-–]\s*\d+)?)*)/;
+const MAX_CCC = 2865;
+const MAX_COMPENDIUM = 598;
+
+interface WorkTitleMatch {
+	kind: 'ccc' | 'compendium';
+	matchStart: number;
+	consumedEnd: number;
+	/** Where the number list starts, so the title itself can stay text. */
+	locusStart: number;
+	locus: string;
+}
+
+function findWorkTitleAt(clause: string, pos: number): WorkTitleMatch | null {
+	WORK_TITLE_RE.lastIndex = pos;
+	let m: RegExpExecArray | null;
+	while ((m = WORK_TITLE_RE.exec(clause))) {
+		const kind = m[1] ? 'compendium' : 'ccc';
+		const after = m.index + m[0].length;
+		const locus = WORK_LOCUS_RE.exec(clause.slice(after));
+		if (!locus) continue; // the work named in passing, no paragraph to point at
+		// Every number must be a paragraph the work has. "Catechism of the
+		// Catholic Church, 1994" is the year of publication, and a page or
+		// year would link to a paragraph that merely happens to exist.
+		const max = kind === 'ccc' ? MAX_CCC : MAX_COMPENDIUM;
+		const numbers = locus[1].match(/\d+/g) ?? [];
+		if (numbers.some((n) => Number(n) < 1 || Number(n) > max)) continue;
+		return {
+			kind,
+			matchStart: m.index,
+			consumedEnd: after + locus[0].length,
+			locusStart: after + locus[0].length - locus[1].length,
+			locus: locus[1]
+		};
+	}
+	return null;
 }
 
 /**
@@ -1287,7 +1484,17 @@ function findDocumentAt(cfg: LangConfig, s: string, start: number): DocumentMatc
  * `BOOK_VARIANTS_PT`: a narrow, evidence-backed block on a form the corpus
  * demonstrably uses for something else.
  */
-const COMMENTARY_TITLE_RE = /(?:\bIn|\.\s*in|\bMoralia\s+in)\s*$/;
+const COMMENTARY_TITLE_RE =
+	/(?:\bIn|\.\s*in|\bMoralia\s+in|\b(?:Hist|Expos|Expl|Comm|Tract)\.|\b(?:interpretation|Commentary|Commentaries|Homilies|Homily|Tractates?|Expositions?|Sermons?)\s+(?:on|of))\s*$/;
+// The English commentary titles at the end ("On the literal interpretation
+// of Genesis XI, 15.20") are the Latin ones in translation, found by the same
+// measurement.
+// The abbreviated genres joined above ("Hist. Eccl. V, 23", "Expos. Lc. II,
+// 7", "Expl. Ps. I, 33") surfaced when Roman-numeral chapters began to parse:
+// each is a work ABOUT the book, or merely sharing its abbreviation
+// (Eusebius's Historia Ecclesiastica is not Ecclesiastes), and each produced
+// a plausible chapter-and-verse into the wrong book. Same evidence standard as
+// the rest of the pattern — every form listed was seen doing exactly that.
 
 /**
  * "Cat Rom"/"CatRom" is the Catechismus Romanus, and its locus is shaped
@@ -1360,7 +1567,7 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 		if (!bm) break;
 		const spaceAfter = /^ */.exec(rawClause.slice(bm.matchEnd))![0];
 		const afterBook = bm.matchEnd + spaceAfter.length;
-		const cv = parseRefNumbers(rawClause.slice(afterBook), cfg, bm.osis);
+		const cv = parseRefNumbers(rawClause.slice(afterBook), cfg, bm.osis, true);
 		if (cv.chapter === null) {
 			searchPos = bm.matchEnd; // book-shaped, but nothing ref-shaped follows it
 			continue;
@@ -1455,6 +1662,17 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 	const dm = findDocumentAt(cfg, rawClause, pos);
 	const tm = findDocumentTitleAt(rawClause, pos);
 	const sm = findSummaAt(rawClause, pos);
+	const wm = findWorkTitleAt(rawClause, pos);
+	const earliest = Math.min(...[dm, tm, sm, wm].filter((x) => x !== null).map((x) => x.matchStart));
+	if (wm !== null && wm.matchStart === earliest) {
+		// The Catechism or Compendium by name: the title stays text, each
+		// paragraph number links, as a bare number list would.
+		const segs: RefSegment[] = [];
+		if (wm.locusStart > 0) segs.push(textSeg(rawClause.slice(0, wm.locusStart)));
+		segs.push(...parseBareCccList(wm.locus, wm.kind));
+		if (wm.consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(wm.consumedEnd)));
+		return segs;
+	}
 	if (
 		sm !== null &&
 		(dm === null || sm.matchStart < dm.matchStart) &&
@@ -1495,7 +1713,7 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 			kind: 'document',
 			sigla: dm.sigla,
 			locus: dm.locus,
-			expansion: cfg.documentSigla.get(dm.sigla) ?? null,
+			expansion: cfg.documentSigla.get(dm.sigla)?.expansion ?? null,
 			slug: dm.slug,
 			raw: rawClause.slice(dm.matchStart, dm.consumedEnd)
 		});
@@ -1539,14 +1757,14 @@ function isBareNumberList(text: string): boolean {
 	return /\d/.test(text) && /^[\d\s,.;\-–—]+$/.test(text);
 }
 
-function parseBareCccList(text: string): RefSegment[] {
+function parseBareCccList(text: string, kind: 'ccc' | 'compendium' = 'ccc'): RefSegment[] {
 	const segs: RefSegment[] = [];
 	const re = /\d+/g;
 	let last = 0;
 	let m: RegExpExecArray | null;
 	while ((m = re.exec(text))) {
 		if (m.index > last) segs.push(textSeg(text.slice(last, m.index)));
-		segs.push({ kind: 'ccc', n: Number(m[0]), raw: m[0] });
+		segs.push({ kind, n: Number(m[0]), raw: m[0] });
 		last = m.index + m[0].length;
 	}
 	if (last < text.length) segs.push(textSeg(text.slice(last)));

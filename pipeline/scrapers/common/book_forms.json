@@ -1,0 +1,733 @@
+{
+	"generated_by": "site/scripts/export-book-forms.mjs — do not edit; see src/lib/refs-grammar.ts",
+	"en": {
+		"gen": [
+			"Gn",
+			"Gen",
+			"Genesis"
+		],
+		"exod": [
+			"Ex",
+			"Exod",
+			"Exodus",
+			"EX"
+		],
+		"lev": [
+			"Lv",
+			"Lev",
+			"Leviticus"
+		],
+		"num": [
+			"Nm",
+			"Num",
+			"Numbers"
+		],
+		"deut": [
+			"Dt",
+			"Deut",
+			"Deuteronomy"
+		],
+		"josh": [
+			"Jos",
+			"Josh",
+			"Joshua"
+		],
+		"judg": [
+			"Jdg",
+			"Jgs",
+			"Judg",
+			"Judges"
+		],
+		"ruth": [
+			"Ru",
+			"Ruth"
+		],
+		"ezra": [
+			"Ezr",
+			"Ezra"
+		],
+		"neh": [
+			"Neh",
+			"Nehemiah"
+		],
+		"tob": [
+			"Tb",
+			"Tob",
+			"Tobit"
+		],
+		"jdt": [
+			"Jdt",
+			"Judith"
+		],
+		"esth": [
+			"Est",
+			"Esth",
+			"Esther"
+		],
+		"job": [
+			"Job"
+		],
+		"ps": [
+			"Ps",
+			"Pss",
+			"Psalm",
+			"Psalms",
+			"PS"
+		],
+		"prov": [
+			"Prv",
+			"Prov",
+			"Proverbs"
+		],
+		"eccl": [
+			"Eccl",
+			"Qo",
+			"Qoh",
+			"Ecclesiastes"
+		],
+		"song": [
+			"Song",
+			"SS",
+			"Ct",
+			"Song of Songs",
+			"Song of Solomon"
+		],
+		"wis": [
+			"Wis",
+			"Wisdom"
+		],
+		"sir": [
+			"Sir",
+			"Ecclus",
+			"Sirach",
+			"Eccli"
+		],
+		"isa": [
+			"Is",
+			"Isa",
+			"Isaiah"
+		],
+		"jer": [
+			"Jer",
+			"Jeremiah"
+		],
+		"lam": [
+			"Lam",
+			"Lamentations"
+		],
+		"bar": [
+			"Bar",
+			"Baruch"
+		],
+		"ezek": [
+			"Ez",
+			"Ezek",
+			"Ezekiel"
+		],
+		"dan": [
+			"Dn",
+			"Dan",
+			"Daniel"
+		],
+		"hos": [
+			"Hos",
+			"Hosea"
+		],
+		"joel": [
+			"Jl",
+			"Joel"
+		],
+		"amos": [
+			"Am",
+			"Amos"
+		],
+		"obad": [
+			"Ob",
+			"Obad",
+			"Obadiah"
+		],
+		"jonah": [
+			"Jon",
+			"Jonah"
+		],
+		"mic": [
+			"Mi",
+			"Mic",
+			"Micah"
+		],
+		"nah": [
+			"Na",
+			"Nah",
+			"Nahum"
+		],
+		"hab": [
+			"Hab",
+			"Habakkuk"
+		],
+		"zeph": [
+			"Zep",
+			"Zeph",
+			"Zephaniah"
+		],
+		"hag": [
+			"Hag",
+			"Haggai"
+		],
+		"zech": [
+			"Zec",
+			"Zech",
+			"Zechariah"
+		],
+		"mal": [
+			"Mal",
+			"Malachi"
+		],
+		"matt": [
+			"Mt",
+			"Matt",
+			"Matthew",
+			"Matth"
+		],
+		"mark": [
+			"Mk",
+			"Mark"
+		],
+		"luke": [
+			"Lk",
+			"Luke",
+			"Luc"
+		],
+		"john": [
+			"Jn",
+			"John",
+			"In",
+			"Io",
+			"Ioan",
+			"Joh"
+		],
+		"acts": [
+			"Acts"
+		],
+		"rom": [
+			"Rom",
+			"Romans"
+		],
+		"gal": [
+			"Gal",
+			"Galatians",
+			"Cal"
+		],
+		"eph": [
+			"Eph",
+			"Ephesians"
+		],
+		"phil": [
+			"Phil",
+			"Philippians"
+		],
+		"col": [
+			"Col",
+			"Colossians"
+		],
+		"titus": [
+			"Ti",
+			"Tit",
+			"Titus"
+		],
+		"phlm": [
+			"Philem",
+			"Phlm",
+			"Philemon"
+		],
+		"heb": [
+			"Heb",
+			"Hebrews"
+		],
+		"jas": [
+			"Jas",
+			"James"
+		],
+		"jude": [
+			"Jude"
+		],
+		"rev": [
+			"Rev",
+			"Rv",
+			"Revelation",
+			"Apoc"
+		],
+		"1sam": [
+			"1 Sam",
+			"I Sam",
+			"l Sam",
+			"1 Samuel",
+			"I Samuel",
+			"l Samuel"
+		],
+		"2sam": [
+			"2 Sam",
+			"II Sam",
+			"2 Samuel",
+			"II Samuel"
+		],
+		"1kgs": [
+			"1 Kings",
+			"I Kings",
+			"l Kings",
+			"1 Kgs",
+			"I Kgs",
+			"l Kgs"
+		],
+		"2kgs": [
+			"2 Kings",
+			"II Kings",
+			"2 Kgs",
+			"II Kgs"
+		],
+		"1chr": [
+			"1 Chr",
+			"I Chr",
+			"l Chr",
+			"1 Chronicles",
+			"I Chronicles",
+			"l Chronicles"
+		],
+		"2chr": [
+			"2 Chr",
+			"II Chr",
+			"2 Chronicles",
+			"II Chronicles"
+		],
+		"1macc": [
+			"1 Macc",
+			"I Macc",
+			"l Macc",
+			"1 Maccabees",
+			"I Maccabees",
+			"l Maccabees"
+		],
+		"2macc": [
+			"2 Macc",
+			"II Macc",
+			"2 Maccabees",
+			"II Maccabees"
+		],
+		"1cor": [
+			"1 Cor",
+			"I Cor",
+			"l Cor",
+			"1 Corinthians",
+			"I Corinthians",
+			"l Corinthians"
+		],
+		"2cor": [
+			"2 Cor",
+			"II Cor",
+			"2 Corinthians",
+			"II Corinthians"
+		],
+		"1thess": [
+			"1 Thess",
+			"I Thess",
+			"l Thess",
+			"1 Thessalonians",
+			"I Thessalonians",
+			"l Thessalonians",
+			"1 Th",
+			"I Th",
+			"l Th"
+		],
+		"2thess": [
+			"2 Thess",
+			"II Thess",
+			"2 Thessalonians",
+			"II Thessalonians",
+			"2 Th",
+			"II Th"
+		],
+		"1tim": [
+			"1 Tim",
+			"I Tim",
+			"l Tim",
+			"1 Timothy",
+			"I Timothy",
+			"l Timothy",
+			"1 Tm",
+			"I Tm",
+			"l Tm"
+		],
+		"2tim": [
+			"2 Tim",
+			"II Tim",
+			"2 Timothy",
+			"II Timothy",
+			"2 Tm",
+			"II Tm"
+		],
+		"1pet": [
+			"1 Pet",
+			"I Pet",
+			"l Pet",
+			"1 Pt",
+			"I Pt",
+			"l Pt",
+			"1 Peter",
+			"I Peter",
+			"l Peter",
+			"1 Petr",
+			"I Petr",
+			"l Petr"
+		],
+		"2pet": [
+			"2 Pet",
+			"II Pet",
+			"2 Pt",
+			"II Pt",
+			"2 Peter",
+			"II Peter",
+			"2 Petr",
+			"II Petr"
+		],
+		"1john": [
+			"1 Jn",
+			"I Jn",
+			"l Jn",
+			"1 John",
+			"I John",
+			"l John",
+			"1 In",
+			"I In",
+			"l In"
+		],
+		"2john": [
+			"2 Jn",
+			"II Jn",
+			"2 John",
+			"II John",
+			"2 In",
+			"II In"
+		],
+		"3john": [
+			"3 Jn",
+			"III Jn",
+			"3 John",
+			"III John",
+			"3 In",
+			"III In"
+		]
+	},
+	"pt": {
+		"gen": [
+			"Gn",
+			"Gén",
+			"Gen"
+		],
+		"exod": [
+			"Ex",
+			"Éx"
+		],
+		"lev": [
+			"Lv"
+		],
+		"num": [
+			"Nm",
+			"Núm"
+		],
+		"deut": [
+			"Dt",
+			"Dr",
+			"Deut"
+		],
+		"josh": [
+			"Js"
+		],
+		"judg": [
+			"Jz"
+		],
+		"ruth": [
+			"Rt"
+		],
+		"tob": [
+			"Tb"
+		],
+		"jdt": [
+			"Jt"
+		],
+		"esth": [
+			"Est"
+		],
+		"job": [
+			"Job",
+			"Jó"
+		],
+		"ps": [
+			"Sl",
+			"Sal",
+			"Salm"
+		],
+		"prov": [
+			"Pr",
+			"Prov"
+		],
+		"eccl": [
+			"Ecl",
+			"Ec"
+		],
+		"song": [
+			"Ct",
+			"Cânt"
+		],
+		"wis": [
+			"Sb",
+			"Sab"
+		],
+		"sir": [
+			"Sir",
+			"Eclo",
+			"Ecli"
+		],
+		"isa": [
+			"Is"
+		],
+		"jer": [
+			"Jr",
+			"Jer"
+		],
+		"lam": [
+			"Lm"
+		],
+		"bar": [
+			"Br",
+			"Bar"
+		],
+		"ezek": [
+			"Ez"
+		],
+		"ezra": [
+			"Esd"
+		],
+		"neh": [
+			"Ne"
+		],
+		"dan": [
+			"Dn"
+		],
+		"hos": [
+			"Os"
+		],
+		"joel": [
+			"Jl"
+		],
+		"amos": [
+			"Am"
+		],
+		"obad": [
+			"Ab"
+		],
+		"jonah": [
+			"Jn"
+		],
+		"mic": [
+			"Mq"
+		],
+		"nah": [
+			"Na"
+		],
+		"hab": [
+			"Hab"
+		],
+		"zeph": [
+			"Sf"
+		],
+		"hag": [
+			"Ag"
+		],
+		"zech": [
+			"Zc"
+		],
+		"mal": [
+			"Ml"
+		],
+		"matt": [
+			"Mt"
+		],
+		"mark": [
+			"Mc",
+			"Mr"
+		],
+		"luke": [
+			"Lc",
+			"Luc"
+		],
+		"john": [
+			"Jo"
+		],
+		"acts": [
+			"Act",
+			"At"
+		],
+		"rom": [
+			"Rm",
+			"Rom"
+		],
+		"gal": [
+			"Gl",
+			"Gál",
+			"Gal"
+		],
+		"eph": [
+			"Ef"
+		],
+		"phil": [
+			"Fl",
+			"Fil"
+		],
+		"col": [
+			"Cl",
+			"Col"
+		],
+		"titus": [
+			"Tt",
+			"Tit"
+		],
+		"phlm": [
+			"Fm",
+			"Flm"
+		],
+		"heb": [
+			"Heb",
+			"Hb",
+			"Hebr"
+		],
+		"jas": [
+			"Tg"
+		],
+		"jude": [
+			"Jd"
+		],
+		"rev": [
+			"Ap",
+			"Apoc"
+		],
+		"1chr": [
+			"1 Cr",
+			"I Cr",
+			"1Cr"
+		],
+		"2chr": [
+			"2 Cr",
+			"II Cr",
+			"2Cr"
+		],
+		"1cor": [
+			"1 Cor",
+			"I Cor",
+			"1Cor",
+			"l Cor"
+		],
+		"2cor": [
+			"2 Cor",
+			"II Cor",
+			"2Cor"
+		],
+		"1kgs": [
+			"1 Rs",
+			"I Rs",
+			"1Rs"
+		],
+		"2kgs": [
+			"2 Rs",
+			"II Rs",
+			"2Rs"
+		],
+		"1macc": [
+			"1 Mac",
+			"I Mac",
+			"1Mac"
+		],
+		"2macc": [
+			"2 Mac",
+			"II Mac",
+			"2Mac"
+		],
+		"1pet": [
+			"1 Pe",
+			"I Pe",
+			"1Pe",
+			"1 Ped",
+			"I Ped",
+			"1Ped",
+			"1 Pd",
+			"I Pd",
+			"1Pd"
+		],
+		"2pet": [
+			"2 Pe",
+			"II Pe",
+			"2Pe",
+			"2 Ped",
+			"II Ped",
+			"2Ped",
+			"2 Pd",
+			"II Pd",
+			"2Pd"
+		],
+		"1sam": [
+			"1 Sm",
+			"I Sm",
+			"1Sm"
+		],
+		"2sam": [
+			"2 Sm",
+			"II Sm",
+			"2Sm"
+		],
+		"1thess": [
+			"1 Ts",
+			"I Ts",
+			"1Ts",
+			"1 Tess",
+			"I Tess",
+			"1Tess"
+		],
+		"2thess": [
+			"2 Ts",
+			"II Ts",
+			"2Ts",
+			"2 Tess",
+			"II Tess",
+			"2Tess"
+		],
+		"1tim": [
+			"1 Tm",
+			"I Tm",
+			"1Tm",
+			"1 Tim",
+			"I Tim",
+			"1Tim"
+		],
+		"2tim": [
+			"2 Tm",
+			"II Tm",
+			"2Tm",
+			"2 Tim",
+			"II Tim",
+			"2Tim"
+		],
+		"1john": [
+			"1 Jo",
+			"I Jo",
+			"1Jo"
+		],
+		"2john": [
+			"2 Jo",
+			"II Jo",
+			"2Jo"
+		],
+		"3john": [
+			"3 Jo",
+			"III Jo",
+			"3Jo"
+		]
+	}
+}

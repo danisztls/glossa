@@ -1,0 +1,501 @@
+{
+	"version": 1,
+	"families": {
+		"bible": {
+			"citations": {
+				"total": 0,
+				"linkable": 0,
+				"recognized": 0,
+				"nothing": 0
+			},
+			"prose": {
+				"blocks": 0,
+				"scripture": 0,
+				"stored": 0
+			},
+			"residue": []
+		},
+		"bible-intro": {
+			"citations": {
+				"total": 0,
+				"linkable": 0,
+				"recognized": 0,
+				"nothing": 0
+			},
+			"prose": {
+				"blocks": 76,
+				"scripture": 7,
+				"stored": 0
+			},
+			"residue": []
+		},
+		"ccc": {
+			"citations": {
+				"total": 8582,
+				"linkable": 6852,
+				"recognized": 1337,
+				"nothing": 393
+			},
+			"prose": {
+				"blocks": 6473,
+				"scripture": 167,
+				"stored": 0
+			},
+			"residue": [
+				{
+					"key": "roman missal",
+					"count": 19,
+					"example": "Roman Missal, Eucharistic Prayer IV, 118."
+				},
+				{
+					"key": "roman catechism",
+					"count": 18,
+					"example": "Roman Catechism I, 1, 3."
+				},
+				{
+					"key": "são tomás",
+					"count": 11,
+					"example": "São Tomás de Aquino, Summa contra gentiles I 30: Ed. Leon. 13, 92."
+				},
+				{
+					"key": "oração eucarística",
+					"count": 11,
+					"example": "Oração eucarística IV: Missal Romano, editio typica. Typis Polyglottis Vaticanis. 1970 p. "
+				},
+				{
+					"key": "st. thomas",
+					"count": 10,
+					"example": "St. Thomas Aquinas, SCG 1, 30."
+				},
+				{
+					"key": "santa teresa",
+					"count": 10,
+					"example": "Santa Teresa do Menino Jesus, Manuscrit A, 83v: Manuscrits autobiographiques, Paris 1929, "
+				},
+				{
+					"key": "st. john",
+					"count": 9,
+					"example": "St. John of the Cross, the Ascent of Mount Carmel 2, 22, 3-5 in The Collected Works of St."
+				},
+				{
+					"key": "paul vi",
+					"count": 9,
+					"example": "Paul VI, CPG (1968)."
+				},
+				{
+					"key": "são joão",
+					"count": 8,
+					"example": "São João da Cruz, Subida del monte Carmelo 2, 22, 3-5: Biblioteca Mística Carmelitana, v. "
+				},
+				{
+					"key": "vigília pascal",
+					"count": 8,
+					"example": "Cf. Vigília Pascal, oração depois da primeira leitura: Missale Romanum, editio typica (Typ"
+				},
+				{
+					"key": "byzantine liturgy",
+					"count": 7,
+					"example": "Byzantine Liturgy, Feast of the Transfiguration, Kontakion."
+				},
+				{
+					"key": "john paul",
+					"count": 6,
+					"example": "Cf. John Paul II, Apostolic Exhortation Catechesi tradendae 1; 2."
+				},
+				{
+					"key": "st. therese",
+					"count": 6,
+					"example": "St. Therese of Lisieux, Autobiography of a Saint, tr. Ronald Knox (London: Collins, 1960),"
+				},
+				{
+					"key": "st. ignatius",
+					"count": 6,
+					"example": "St. Ignatius of Antioch, Ad Smyrn. 8, 2: Apostolic Fathers, II/2, 311."
+				},
+				{
+					"key": "indulgentiarum doctrina",
+					"count": 6,
+					"example": "Indulgentiarum doctrina, Norm 2; Cf. Norm 3."
+				},
+				{
+					"key": "liturgia bizantina",
+					"count": 6,
+					"example": "Liturgia bizantina, Kontakion na Festa da Transfiguração: «Mênaîa toû bólou eniautoû», v. "
+				},
+				{
+					"key": "instrução geral",
+					"count": 6,
+					"example": "Cf. Instrução geral do Missal Romano, 259: Missale Romanum, editio typica (Typis Polyglott"
+				},
+				{
+					"key": "st. teresa",
+					"count": 5,
+					"example": "St. Teresa of Jesus, Poesias 30 in the Collected Works of St. Teresa of Avila, vol. III, t"
+				},
+				{
+					"key": "cat rom",
+					"count": 5,
+					"example": "Cat Rom I, I,"
+				},
+				{
+					"key": "ordo exsequiarum",
+					"count": 5,
+					"example": "Ordo exsequiarum, 50, editio typica (Typis Polyglottis Vaticanis 1969), p. 23 [Ed. portugu"
+				},
+				{
+					"key": "santo inácio",
+					"count": 5,
+					"example": "Santo Inácio de Antioquia, Epistula ad Romanos 6, 1-2: Sc: l0bis, 114 (Funk 1, 258-260)."
+				},
+				{
+					"key": "pontificale romanum.",
+					"count": 5,
+					"example": "Pontificale Romanum. De Ordinatione Episcopi, presbyterorum et diaconorum. De Ordinatione "
+				},
+				{
+					"key": "john henry",
+					"count": 4,
+					"example": "John Henry Cardinal Newman, Apologia pro vita sua (London Longman, 1878) 239."
+				},
+				{
+					"key": "st. francis",
+					"count": 4,
+					"example": "St. Francis of Assisi, Canticle of the Creatures."
+				},
+				{
+					"key": "pius xii",
+					"count": 4,
+					"example": "Pius XII, Address at Pentecost, June 1, 1941."
+				}
+			]
+		},
+		"compendium": {
+			"citations": {
+				"total": 1195,
+				"linkable": 1194,
+				"recognized": 0,
+				"nothing": 1
+			},
+			"prose": {
+				"blocks": 0,
+				"scripture": 0,
+				"stored": 0
+			},
+			"residue": [
+				{
+					"key": "1804 1810-1811",
+					"count": 1,
+					"example": "1804; 1810-1811: 1834, 1839"
+				}
+			]
+		},
+		"encyclical": {
+			"citations": {
+				"total": 11808,
+				"linkable": 4225,
+				"recognized": 2473,
+				"nothing": 5110
+			},
+			"prose": {
+				"blocks": 15776,
+				"scripture": 4802,
+				"stored": 0
+			},
+			"residue": [
+				{
+					"key": ". cf.",
+					"count": 156,
+					"example": ". Cf. Pius XI, Encyclical Letter QuadragesimoAnno, III, loc. cit., 228."
+				},
+				{
+					"key": "ibid.",
+					"count": 132,
+					"example": "Ibid."
+				},
+				{
+					"key": ". ibid.",
+					"count": 95,
+					"example": ". Ibid.: loc. cit., 98."
+				},
+				{
+					"key": "id. epist.",
+					"count": 46,
+					"example": "Id., Epist. ad Theophilum, 82, 2, 2."
+				},
+				{
+					"key": "ibid. p.",
+					"count": 44,
+					"example": "Ibid. p. 618."
+				},
+				{
+					"key": "id. in",
+					"count": 38,
+					"example": "ID., In octo libros Physicorum Aristotelis expositio, Lib. II, lectio 14."
+				},
+				{
+					"key": "ibidem.",
+					"count": 31,
+					"example": "Ibidem."
+				},
+				{
+					"key": "encyclical on",
+					"count": 29,
+					"example": "Encyclical, On the Condition of Workers, May 15, 1891, 3."
+				},
+				{
+					"key": "pontifical council",
+					"count": 27,
+					"example": "Cf.Pontifical Council for Justice and Peace, Compendium of the Social Doctrine of the Chur"
+				},
+				{
+					"key": "i cor.",
+					"count": 26,
+					"example": "I Cor., II, 9"
+				},
+				{
+					"key": "راجع المرجع",
+					"count": 26,
+					"example": "راجع المرجع نفسه ، 11: أعمال الكرسيّ الرّسوليّ 58 (1966)، 1033-1034."
+				},
+				{
+					"key": "address to",
+					"count": 25,
+					"example": "Address to the Participants in the International Colloquium “Réparer L’Irréparable”, on th"
+				},
+				{
+					"key": "ibid. v.",
+					"count": 25,
+					"example": "Cf. ibid., v. 227, p. 13i."
+				},
+				{
+					"key": "conc. trid.",
+					"count": 24,
+					"example": "Conc. Trid., Sess. XXIV."
+				},
+				{
+					"key": "letter to",
+					"count": 24,
+					"example": "Letter to the Min. Gen.of the Friars Minor, November25, 1898."
+				},
+				{
+					"key": "roman missal",
+					"count": 24,
+					"example": "Cf. Roman Missal, prayer of the celebrant before communion."
+				},
+				{
+					"key": "] mansi",
+					"count": 22,
+					"example": "] Mansi, Conciliorum Amplissima Collectio, IV, c. 1007; Schwartz, Acta Conciliorum Oecumen"
+				},
+				{
+					"key": "vita s.",
+					"count": 21,
+					"example": "Vita S. Bonifatii, auctore Willibaldo, ed. Levison (Hannoveras et Lipsiae, 1905), p. 21."
+				},
+				{
+					"key": "ibidem epist.",
+					"count": 21,
+					"example": "Cf. Ibidem, Epist. 51, 57, 58, 60, 68, 77, 80, 86, 87, 89."
+				},
+				{
+					"key": "ibid. t.",
+					"count": 21,
+					"example": "Cf. Ibid. t. 227, p.137."
+				},
+				{
+					"key": "ib. c.",
+					"count": 19,
+					"example": "Ib., c. 19."
+				},
+				{
+					"key": "s. tomás",
+					"count": 19,
+					"example": "S. Tomás de Aquino, Summa theologiæ, III, q. 73, a. 3c."
+				},
+				{
+					"key": "code of",
+					"count": 18,
+					"example": "Cf. Code of Canon Law, Canon 844 §§ 3-4; Code of Canons of the Eastern Churches, Canon 671"
+				},
+				{
+					"key": "archiv. secret.",
+					"count": 18,
+					"example": "Cf. Archiv. Secret. Vat., v. 227, p. 42."
+				},
+				{
+					"key": "francisco discurso",
+					"count": 18,
+					"example": "Francisco, Discurso aos participantes do Colóquio internacional “Réparer l´irréparable”, n"
+				}
+			]
+		},
+		"prayer": {
+			"citations": {
+				"total": 40,
+				"linkable": 40,
+				"recognized": 0,
+				"nothing": 0
+			},
+			"prose": {
+				"blocks": 301,
+				"scripture": 0,
+				"stored": 0
+			},
+			"residue": []
+		},
+		"summa": {
+			"citations": {
+				"total": 0,
+				"linkable": 0,
+				"recognized": 0,
+				"nothing": 0
+			},
+			"prose": {
+				"blocks": 52989,
+				"scripture": 7586,
+				"stored": 5174
+			},
+			"residue": []
+		},
+		"vatii": {
+			"citations": {
+				"total": 2305,
+				"linkable": 1324,
+				"recognized": 429,
+				"nothing": 552
+			},
+			"prose": {
+				"blocks": 1250,
+				"scripture": 1083,
+				"stored": 0
+			},
+			"residue": [
+				{
+					"key": "r. conc.",
+					"count": 36,
+					"example": "Cfr. Conc. Vat. I, Sess. IV, Const. Dogm. Pastor aeternus. Denz. 1821 (3050 s.)."
+				},
+				{
+					"key": "second vatican",
+					"count": 34,
+					"example": "cf. Second Vatican Council, Dogmatic Constitution on the Nature of the Church, nos. 33 ff."
+				},
+				{
+					"key": "r. s.",
+					"count": 34,
+					"example": "Cfr. S. Thomas, Sumtna Theol. III, q. 62, a. 5, ad 1."
+				},
+				{
+					"key": "pius xii",
+					"count": 20,
+					"example": "cf. Pius XII, allocution to cardinals, Feb. 18, 1946: A.A.S. 38 (1946) pp. 101-102; Idem.,"
+				},
+				{
+					"key": "decree \"",
+					"count": 12,
+					"example": "Decree \" Unitates Redintegratio \" 1."
+				},
+				{
+					"key": "r. pio",
+					"count": 12,
+					"example": "Cfr. Pio XII, aloc. aos Párocos, etc., 6 fevereiro 1951: Discorsi e Radiomessaggi di S. S."
+				},
+				{
+					"key": "john xxiii",
+					"count": 10,
+					"example": "cf. John XXIII, apostolic constitution \"Humani Salutis,\" Dec. 25, 1961: A.A.S. 54 (1962) p"
+				},
+				{
+					"key": "first vatican",
+					"count": 8,
+					"example": "cf. First Vatican Council, fourth session, part 1 of Dogmatic Constitution on the Church o"
+				},
+				{
+					"key": "paul vi's",
+					"count": 8,
+					"example": "cf. Paul VI's motu proprio, Apostolica Sollicitudo, Sept. 15, 1965."
+				},
+				{
+					"key": "council of",
+					"count": 8,
+					"example": "cf. Council of Trent, fifth session, Decree De Reform., c. 2, Mansi 33, 30: 24th session, "
+				},
+				{
+					"key": "pius xi",
+					"count": 7,
+					"example": "cf. Pius XI, letter \"Quae Nobis\" to Cardinal Bertram, Nov. 13, 1928: A.A.S. 20 (1928) p. 3"
+				},
+				{
+					"key": "pius xii's",
+					"count": 7,
+					"example": "cf. Pius XII's allocution of Dec. 8, 1950: A.A.S. 43 (1951) p. 28; also cf. Paul VI's allo"
+				},
+				{
+					"key": "r. cod.",
+					"count": 7,
+					"example": "Cfr. Cod. Iur. Can., c. 227."
+				},
+				{
+					"key": "roman pontifical",
+					"count": 7,
+					"example": "Cf. Roman Pontifical Ordination of a Priest, preface. These words are already found in the"
+				},
+				{
+					"key": "r. leão",
+					"count": 7,
+					"example": "Cfr. Leão XIII, aloc. 28 janeiro 1894: Acta, 14 (1894), p. 424-425."
+				},
+				{
+					"key": "john xxiii's",
+					"count": 6,
+					"example": "cf. John XXIII's apostolic constitution, Humanae Salutis, Dec. 25, 1961: A.A.S. 54 (1962) "
+				},
+				{
+					"key": "r. paulo",
+					"count": 6,
+					"example": "Cfr. Paulo VI, Alocução aos Emin. Cardeais, Ex.mos Bispos e Rev.mos Prelados e outros ofic"
+				},
+				{
+					"key": "gasser ib.",
+					"count": 5,
+					"example": "Gasser, ib.: Mansi 1214 A."
+				},
+				{
+					"key": "] cf.",
+					"count": 5,
+					"example": "] Cf. St. Augustine, Tractatus in Ioannem, VI, n. 7. ["
+				},
+				{
+					"key": "conc. vat.",
+					"count": 4,
+					"example": "Conc. Vat. I, Const. dogm. Pastor Aesernus, 4: Denz. 1836 (3070) no. 26"
+				},
+				{
+					"key": "conc. florentinum",
+					"count": 4,
+					"example": "Conc. Florentinum, Decretum pro Graecis: Denz. 693 (1305)."
+				},
+				{
+					"key": "r. syn.",
+					"count": 4,
+					"example": "Cfr. Syn. Laodicen., an. 347/381, can. 29; S. Nicephorus CP., cap. 14; Syn. Duinen. Armeno"
+				},
+				{
+					"key": "s. inácio",
+					"count": 4,
+					"example": "S. Inácio M., Philad., Praef., ed. Funk, I, p. 264."
+				},
+				{
+					"key": "r. missale",
+					"count": 4,
+					"example": "Cfr. Missale romanum, Prefácio da festa de Cristo Rei."
+				},
+				{
+					"key": "st. pius",
+					"count": 3,
+					"example": "cf. St. Pius X, apostolic letter \"Creationis Duarum Novarum Paroeciarum\" June 1, 1905: A.A"
+				}
+			]
+		}
+	}
+}

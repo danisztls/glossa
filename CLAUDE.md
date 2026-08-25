@@ -51,8 +51,10 @@ as an unstated judgment call, and it will get taken.
 ```
 pipeline/scrapers/
   common/            shared machinery -- paths, files, fetch, absent,
-                     corrections, overrides, text. Import it as `common`;
-                     `__init__.py` re-exports the whole surface.
+                     corrections, overrides, text, book_forms. Import it as
+                     `common`; `__init__.py` re-exports the whole surface.
+                     `book_forms.json` there is GENERATED from the site's
+                     grammar (see below) -- never edit it by hand.
   bible/             cpdv, vulgate, matos_soares, and the sacredbible page
                      format the first two share; douay_rheims and
                      introductions, and the vulgata_online API format THOSE
@@ -76,6 +78,15 @@ exempts imports that follow `sys.path` manipulation from E402, so no `noqa` is
 needed and one added "for safety" is reported as unused. Copying one of these
 scrapers to start a new one and dropping the "odd" lines at the top gets you
 `ModuleNotFoundError: common`.
+
+**`common/book_forms.json` is the site's book table, exported.** `ccc.py`
+tokenizes the Portuguese Catechism's inline Scripture locators with the same
+surface forms `site/src/lib/refs-grammar.ts` links with; Python cannot import
+the TypeScript, so `site/scripts/export-book-forms.mjs` writes the table as
+JSON and `site/src/lib/book-forms.test.ts` fails when the two differ. After
+changing `BOOK_VARIANTS_EN`/`BOOK_VARIANTS_PT`: `cd site && node
+scripts/export-book-forms.mjs`, commit both. Editing the JSON directly is
+undone by the next export.
 
 **`common/paths.py` computes the repo root as `parents[3]`** and asserts the
 result contains `pipeline/scrapers`. It was `parents[2]` while `common` was a
@@ -265,6 +276,17 @@ npm run deploy      # build -> preflight -> wrangler deploy
   reads `corpus-routes.json` and refuses a build reporting fewer than 100 works
   or 100 content assets — that is what catches a fixture-backed build. The old
   minimum-HTML-count guard would reject a correct SPA build.
+- **Preflight also refuses a build whose reference coverage dropped.** The
+  sync measures how much of the corpus's citation apparatus the grammar reads
+  (`scripts/reference-coverage.mjs`, printed as a per-family table on every
+  sync) and preflight compares the shipped report against the committed
+  `scripts/reference-coverage.baseline.json`: more than a 3% fall in any
+  family's linkable citations, prose scripture references or stored references
+  is a refusal. That is deliberate — every grammar regression so far was
+  silent. If the drop is intended (a work withdrawn, a rule tightened on
+  purpose), `npm run coverage:accept` records the new floor and the diff shows
+  it. `REFERENCE_COVERAGE=verbose npm run sync-corpus` prints what the grammar
+  recognized nothing in, which is where coverage work starts.
 
 ## Sandbox quirks that waste time
 

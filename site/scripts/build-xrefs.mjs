@@ -170,7 +170,7 @@ function mergeRefs(refs) {
  * @param {{ text_marked?: string, html?: string }} block
  * @returns {string}
  */
-function blockProse(block) {
+export function blockProse(block) {
 	if (block.html) {
 		return block.html
 			.replace(/<sup\s+data-fn="[^"]*"><\/sup>/g, '')
@@ -182,7 +182,9 @@ function blockProse(block) {
 			.replace(/\s+/g, ' ')
 			.trim();
 	}
-	return (block.text_marked ?? '').replace(/⟦[^⟧]*⟧/g, '');
+	// `text` alone is a block with no apparatus at all (a book introduction);
+	// it still carries prose worth scanning.
+	return (block.text_marked ?? block.text ?? '').replace(/⟦[^⟧]*⟧/g, '');
 }
 
 /**

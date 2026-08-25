@@ -66,6 +66,14 @@ import {
 	checkXrefsAgainstCorpus
 } from './build-xrefs.mjs';
 import { summaPartSlug } from '../src/lib/route-manifest.ts';
+import { setDocumentTitleSource } from '../src/lib/refs-grammar.ts';
+import {
+	CoverageMeter,
+	compareCoverage,
+	readBaseline,
+	summarize,
+	writeReport
+} from './reference-coverage.mjs';
 
 const siteRoot = path.resolve(fileURLToPath(import.meta.url), '../..');
 const corpusDir = path.resolve(siteRoot, process.env.CORPUS_DIR ?? '../../glossa-corpus');
@@ -304,6 +312,10 @@ const prayerIndex = {}; // lang -> { structure, prayers } -- keyed by bare LANG,
  *  can be joined at runtime without a second copy of the byte counts. */
 const contentManifest = [];
 
+// Every work's citation strings and prose, measured against the grammar once
+// all manifests are in — see `reference-coverage.mjs`.
+const coverage = new CoverageMeter();
+
 for (const workId of workIds) {
 	const workDir = path.join(worksSrc, workId);
 	const manifestPath = path.join(workDir, 'manifest.json');
@@ -311,6 +323,7 @@ for (const workId of workIds) {
 	// have a manifest, and the ones that don't were reported up there rather
 	// than skipped in silence.
 	const manifest = readJson(manifestPath);
+	coverage.addWork(workId, workDir);
 	// `notes` is free-text scraper/provenance diagnostics — sometimes several
 	// paragraphs (observed: the Vatican-document manifests, which can run to
 	// a page of scraper notes) — and no route renders it (only `copyright`,
@@ -716,11 +729,56 @@ writeJson(path.join(indexDir, 'summa-index.json'), summaIndex);
  * build by the site's own citation grammar. See `build-xrefs.mjs` for why,
  * and docs/decisions.md (2026-08-21).
  */
+// The grammar's document-title and siglum matchers are fed the same document
+// list `refs.ts` hands them in the browser, so the builder and the renderer
+// run the SAME parser configuration — before this, the builder parsed with no
+// document table at all, which cost the scripture index nothing (scripture is
+// matched first in every clause) but made "one grammar" true only by luck.
+const documentGroups = new Map();
+for (const [workId, manifest] of Object.entries(manifests)) {
+	if (manifest.type !== 'document') continue;
+	const [, slug, lang] = workId.split('.');
+	let group = documentGroups.get(slug);
+	if (!group) documentGroups.set(slug, (group = { slug, manifests: {} }));
+	group.manifests[lang] = { title: manifest.title };
+}
+setDocumentTitleSource(() => [...documentGroups.values()]);
+
 const xrefs = buildCccBibleXrefs(cccEditions);
 writeJson(path.join(indexDir, 'xrefs.json'), xrefs);
 const documentXrefs = buildDocumentBibleXrefs(documentEditions);
 writeJson(path.join(indexDir, 'document-xrefs.json'), documentXrefs);
 const xrefsSynced = xrefs.length > 0;
+
+// How much of the apparatus the grammar reads, against the committed
+// baseline. Loud and non-fatal here; `preflight-deploy.mjs` is where a drop
+// refuses to ship. See `reference-coverage.mjs`.
+const coverageReport = coverage.report();
+writeReport(coverageReport);
+console.log(`[sync-corpus] reference coverage:\n${summarize(coverageReport)}`);
+if (process.env.REFERENCE_COVERAGE === 'verbose') {
+	for (const [family, f] of Object.entries(coverageReport.families)) {
+		if (f.residue.length === 0) continue;
+		console.log(`[sync-corpus] ${family}: citations the grammar recognized nothing in`);
+		for (const r of f.residue) console.log(`  ${String(r.count).padStart(5)}  ${r.example}`);
+	}
+}
+const coverageBaseline = readBaseline();
+if (!coverageBaseline) {
+	console.warn(
+		`[sync-corpus] no reference-coverage baseline; run \`npm run coverage:accept\` to record this build's as the floor`
+	);
+} else {
+	const regressions = compareCoverage(coverageReport, coverageBaseline);
+	if (regressions.length > 0) {
+		console.error(
+			`[sync-corpus] REFERENCE COVERAGE DROPPED below scripts/reference-coverage.baseline.json ` +
+				`(preflight will refuse to deploy this build):\n` +
+				regressions.map((r) => `  ${r}`).join('\n') +
+				`\n  If the drop is intended, \`npm run coverage:accept\` records the new floor.`
+		);
+	}
+}
 
 if (xrefsSynced) {
 	// Loud, non-fatal, and always on — not behind a flag. See
