@@ -3891,3 +3891,30 @@ not have, and no fewer, which would mean a wording was dropped.
 
 **`works/prayer.common.en` was deleted**, being superseded generated output. `raw/` is
 untouched and both editions re-parse from it with no network.
+
+## 2026-08-25 — A translated description is about the document, not about the edition
+
+Correcting the shipping entry above, which keyed `index/descriptions.<lang>.json`
+by work id. That left a Portuguese reader looking at the Portuguese edition of a
+document read in English with **no description at all**: the row he sees is the
+`.pt` work, and the translation was filed against the `.en` one. The failure was
+invisible in testing because it only appears for the 122 documents that have a
+Portuguese edition — exactly the ones a Portuguese reader is most likely to open.
+
+The two keys answer different questions, and both are right where they are:
+
+| File                        | Keyed by | Because                                                         |
+| --------------------------- | -------- | --------------------------------------------------------------- |
+| `site/descriptions.json`    | work id  | records WHICH TEXT WAS READ; the PT edition is a different text |
+| `index/descriptions.<lang>` | doc slug | a translation is prose about the DOCUMENT; every edition is it  |
+
+The route is `/documenta/{slug}` on the same reasoning.
+
+`/documenta` now resolves a row's description in this order: **a reading in the
+reader's own language** (the manifest's, when the edition shown is in that
+language), then a translation into it, then the manifest's own. A reading beats a
+translation because both are in the language he wants and only one was written by
+someone looking at the text the row leads to — and 22 Portuguese editions have
+been read on their own terms, so the case is real. It is also the only ordering
+under which correcting a reading cannot be silently overruled by a translation of
+some other edition's reading.

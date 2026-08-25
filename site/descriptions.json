@@ -48,6 +48,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.ad-diem-illum-laetissimum.en": {
+			"en": {
+				"text": "Pius X marks the golden jubilee of the definition of the Immaculate Conception, urging renewed devotion to Mary as the surest way of restoring all things in Christ. He sets out her singular part in the work of redemption and her office as mediatrix of grace, calls the faithful to imitate her faith, hope and charity, and closes by proclaiming a jubilee indulgence with its conditions.",
+				"origin": "read"
+			}
+		},
 		"encyclical.ad-petri.en": {
 			"en": {
 				"text": "John XXIII's first encyclical, written at the start of his pontificate around the recognition of truth, “a renewal of Christian morals,” and “a restoration of unity, harmony, and peace.” It addresses truth against error and the press's duties, unity among nations, within the family, and within the Church around the newly announced Ecumenical Council, then counsels bishops, clergy, religious, and the sick.",
@@ -74,7 +80,7 @@
 		},
 		"encyclical.aeterni-patris.en": {
 			"en": {
-				"text": "Argues that the restoration of Christian, especially Scholastic, philosophy is needed in Catholic schools, tracing the errors unsettling civil and public life to false philosophical teaching, and holding up Thomas Aquinas's synthesis — inherited from the Fathers and taught at Paris, Salamanca, and Louvain — as the surest defense of the faith and remedy for those errors.",
+				"text": "On the restoration of Christian philosophy, and specifically of St Thomas Aquinas, in Catholic schools. Leo XIII sets out philosophy's proper office as handmaid to faith, surveys what the Fathers and the Scholastics made of it, singles out Thomas as the master whose method keeps faith and reason each in its right, and directs bishops to make his doctrine the foundation of clerical and university teaching.",
 				"origin": "read"
 			}
 		},
@@ -92,7 +98,7 @@
 		},
 		"encyclical.caritas-in-veritate.en": {
 			"en": {
-				"text": "Benedict XVI's encyclical on integral human development in charity and truth, revisiting Paul VI's Populorum Progressio more than forty years after its publication. Across six chapters it treats globalization, human rights and duties, the environment, international cooperation, and technology, arguing that authentic development needs gratuitousness, openness to life and the logic of gift alongside justice.",
+				"text": "On integral human development in charity and truth, taking up Paul VI's Populorum Progressio forty years on. Charity in truth is set out as the principle of the Church's social doctrine and then applied: to the global financial crisis, to the ethics of business and the market, to gratuitousness and gift, to the environment, to cooperation between peoples, and to the human meaning of technology and bioethics.",
 				"origin": "read"
 			}
 		},
@@ -114,6 +120,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.deus-caritas-est.en": {
+			"en": {
+				"text": "On the meaning of Christian love: it follows eros and agape from their ancient distinction to their unity in biblical revelation and the Incarnation, then turns to the Church's charitable activity — alongside proclaiming the word and celebrating the sacraments — as belonging to her own nature, its relation to justice and its organisation, closing with the saints and Mary as the exemplars of charity.",
+				"origin": "read"
+			}
+		},
 		"encyclical.deus-caritas-est.pt": {
 			"pt": {
 				"text": "Trata do amor cristão a partir de « Deus é amor » (1 Jo 4, 16): a primeira parte busca a unidade entre eros e agape na criação e na história da salvação, culminando no amor a Deus e ao próximo revelados em Jesus Cristo; a segunda volta-se para a caritas como prática da Igreja enquanto « comunidade de amor », discutindo justiça, caridade e seus responsáveis.",
@@ -126,6 +138,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.dives-in-misericordia.en": {
+			"en": {
+				"text": "On the mercy of God, revealed above all in Christ crucified and risen and read through the parable of the prodigal son. It follows mercy from the covenant with Israel to the Paschal Mystery, weighs it against the anxieties of the modern world and against the demand for justice alone, and closes asking the Church to proclaim mercy, to practise it, and to beg for it from generation to generation.",
+				"origin": "read"
+			}
+		},
 		"encyclical.divini-redemptoris.en": {
 			"en": {
 				"text": "Pius XI's encyclical on atheistic communism, written as its persecution intensified in Russia, Mexico and Spain. It traces communism's Marxist materialism, how it strips man of liberty and dignity and would dissolve family and property into a collectivity built for production, opposes to it the Church's teaching on God, man and society, and prescribes remedies — renewed Christian life, social justice, Catholic Action — under St. Joseph's protection.",
@@ -135,6 +153,12 @@
 		"encyclical.divini-redemptoris.pt": {
 			"pt": {
 				"text": "Carta encíclica de Pio XI sobre o comunismo ateu, escrita quando a sua perseguição já lavrava na Rússia, no México e na Espanha. Expõe a doutrina comunista e o seu materialismo marxista, com frutos deploráveis como a luta contra tudo o que se chama Deus e o terrorismo, opondo-lhe a doutrina católica sobre Deus, o homem e a sociedade, e indicando remédios: renovação da vida cristã, justiça social e Ação Católica.",
+				"origin": "read"
+			}
+		},
+		"encyclical.e-supremi.en": {
+			"en": {
+				"text": "Pius X's inaugural encyclical, taking the Apostle's phrase \"to restore all things in Christ\" as the whole programme of his pontificate. He reads his age's apostasy from God as a deep-rooted disease, makes the Church the way back to Christ, and asks bishops for holy priests, well-governed seminaries, patient religious instruction, and charity rather than bitterness toward those estranged.",
 				"origin": "read"
 			}
 		},
@@ -186,6 +210,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.humani-generis-redemptionem.en": {
+			"en": {
+				"text": "Benedict XV on preaching: never have there been more preachers, he observes, and never has the harvest been thinner. He blames men who run unsent, preach themselves and hunt applause, asks bishops to weigh character and learning before granting faculties as strictly as for confessors, and holds up St Paul — conformed to God's will, a man of prayer, preaching Christ crucified — as the measure.",
+				"origin": "read"
+			}
+		},
 		"encyclical.humanum-genus.en": {
 			"en": {
 				"text": "Leo XIII's encyclical on Freemasonry, framing history as a struggle between two opposed kingdoms and naming Freemasonry as the organizing centre of a wider network of secret societies. It traces their doctrine to naturalism and the denial of revelation, which it holds corrodes marriage, education and civil authority, and prescribes religious instruction, the revival of workers' guilds, and the Third Order of St. Francis.",
@@ -210,6 +240,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.inscrutabili-dei-consilio.en": {
+			"en": {
+				"text": "Leo XIII's first encyclical, written days into his pontificate: a survey of the evils he sees oppressing society — the subversion of first truths, contempt for lawful authority, family life corrupted — traced to the setting aside of the Church's authority, and answered by recalling what the papacy has done for civilization and by pressing bishops toward a Christian education of youth begun at home.",
+				"origin": "read"
+			}
+		},
 		"encyclical.laudato-si.en": {
 			"en": {
 				"text": "Francis's encyclical on ecology, taking its title from Saint Francis's Canticle of the Creatures. It diagnoses pollution, climate change, water scarcity, biodiversity loss and social breakdown as symptoms of one crisis rooted in a 'technocratic paradigm,' develops an 'integral ecology' linking care for nature to justice for the poor, and proposes lines of dialogue, education, and 'ecological conversion.'",
@@ -225,6 +261,12 @@
 		"encyclical.libertas.en": {
 			"en": {
 				"text": "Leo XIII's encyclical on the nature of human liberty, arguing true freedom lies in the will's conformity to the eternal law of God, not in acting simply as one pleases. It examines and limits the liberties liberalism champions — of worship, of speech and the press, of teaching, and of conscience — rejects unconditional separation of Church and State, and allows that Catholics may licitly prefer democratic government.",
+				"origin": "read"
+			}
+		},
+		"encyclical.lumen-fidei.en": {
+			"en": {
+				"text": "On faith as the light of Christ by which human life is guided — the encyclical that completes the trilogy on the theological virtues, drafted by Benedict XVI before his resignation and finished by Francis. It follows faith from Abraham and Israel to Christ, examines its bond with truth and with reason, its transmission through the Church's creed and sacraments, and its power to sustain the family, society and those who suffer.",
 				"origin": "read"
 			}
 		},
@@ -246,9 +288,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.mense-maio.en": {
+			"en": {
+				"text": "Paul VI asks that the month of May be given to prayer to Mary for two urgent reasons: the Second Vatican Council, still sitting, and a peace in jeopardy as international tensions worsen. He condemns the disregard for human life that armed conflict brings, appeals to the world's rulers to renounce force, and asks children and the suffering in particular to pray the Rosary for peace.",
+				"origin": "read"
+			}
+		},
 		"encyclical.mortalium-animos.pt": {
 			"pt": {
 				"text": "Carta encíclica de Pio XI aos bispos católicos sobre a unidade verdadeira da religião, contra o movimento \"pancristão\" e seus congressos ecumênicos, que buscam uma fraternidade comum ignorando as diferenças doutrinárias. Pio XI ensina que só existe uma religião verdadeira, revelada por Deus e guardada pela Igreja Católica, e que a unidade dos cristãos só se dá pelo retorno dos dissidentes a essa única Igreja, em obediência ao Romano Pontífice.",
+				"origin": "read"
+			}
+		},
+		"encyclical.mysterium.en": {
+			"en": {
+				"text": "Mysterium Fidei, on the Holy Eucharist, written while the Council was still sitting to check opinions then circulating that would reduce the Real Presence to symbolism or put transignification in the place of transubstantiation. It reaffirms the Mass as both sacrifice and sacrament, defends Trent's language on Christ's substantial presence and the adoration due the Sacrament, and closes urging daily Mass and Eucharistic devotion.",
 				"origin": "read"
 			}
 		},
@@ -282,9 +336,27 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.quod-apostolici-muneris.en": {
+			"en": {
+				"text": "On socialism, communism and nihilism, whose rise Leo XIII traces to the sixteenth-century revolt against the Catholic faith and to the philosophers' doctrine of unbridled liberty. It defends legitimate civil authority, the indissolubility of marriage and the family, and the natural right of private property against claims of absolute equality and common ownership, and asks bishops to keep workingmen out of the sect.",
+				"origin": "read"
+			}
+		},
+		"encyclical.quod-iam-diu.en": {
+			"en": {
+				"text": "Written three weeks after the Armistice, with the peace congress about to meet: Benedict XV asks the bishops to order public prayers in every parish for its success, that what the delegates decide may rest on the Christian principles of justice and secure a true and lasting peace.",
+				"origin": "read"
+			}
+		},
 		"encyclical.quod-votis.en": {
 			"en": {
 				"text": "Leo XIII writes to the Archbishops and Bishops of Austria — of Vienna, Wroclaw, Prague, and Krakow — approving their long-pending plan to found a Catholic university. He expresses joy that the project, awaited under his predecessors, is nearing completion, urges the faithful to hasten it, and directs that its final arrangements be reported to the Sacred Congregation of Studies for approval under canonical norms.",
+				"origin": "read"
+			}
+		},
+		"encyclical.redemptor-hominis.en": {
+			"en": {
+				"text": "John Paul II's first encyclical, opening his pontificate on the claim that Jesus Christ, the Redeemer of man, is the centre of the universe and of history. Taking up the inheritance of Vatican II, it turns to the man Redemption reaches — afraid of what his own progress has made, his rights honoured in letter or in spirit — and to the Church's answer in truth, in the Eucharist and Penance, and in service.",
 				"origin": "read"
 			}
 		},
@@ -326,6 +398,24 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.rerum-omnium-perturbationem.en": {
+			"en": {
+				"text": "Marks the third centenary of the death of St Francis de Sales, recounting his gentle but resolute holiness, surveying his major writings — the Introduction to the Devout Life, the Treatise on the Love of God, and the Controversies written during his mission to the Chablais — and declaring him heavenly patron of writers.",
+				"origin": "read"
+			}
+		},
+		"encyclical.saeculo-exeunte-octavo.en": {
+			"en": {
+				"text": "Written to the bishops of Portugal for the eighth centenary of Portuguese independence, recalling how papal protection of the medieval kingdom bound its history to the spread of the faith through its missions. Pius XII asks for renewed recruitment and training of missionaries for the African and Asian territories, invokes Francis Xavier and John de Brito as patrons, and appeals to clergy and Catholic Action to sustain that work.",
+				"origin": "read"
+			}
+		},
+		"encyclical.sertum-laetitiae.en": {
+			"en": {
+				"text": "Written to the American hierarchy for the hundred-and-fiftieth anniversary of its establishment, recalling the growth of the Church in the United States from John Carroll's appointment as its first bishop to its present schools, missions and lay associations. It then warns against materialism in education and the breakdown of marriage, and asks for a just settlement of the labour question.",
+				"origin": "read"
+			}
+		},
 		"encyclical.singulari-quadam.en": {
 			"en": {
 				"text": "Settles the German 'trade union controversy': whether Catholic workers, alongside purely Catholic Arbeitervereine, may join mixed interconfessional labor unions with Protestants. Addressed to Cardinal Kopp and the German bishops, it reaffirms Rerum Novarum's principles and permits qualified toleration of the Christian Trade Unions where local conditions warrant, provided members also belong to a Catholic association and the unions never act against Church teaching, under episcopal oversight.",
@@ -341,6 +431,18 @@
 		"encyclical.spiritus-paraclitus.en": {
 			"en": {
 				"text": "Benedict XV's encyclical marking the fifteenth centenary of St. Jerome's death, presenting his life and biblical scholarship as a model for the Church. Invoking Jerome's teaching, it restates the doctrine of the Bible's divine inspiration and total inerrancy against critics who deny it, particularly regarding the Gospels, and reaffirms Leo XIII's Providentissimus Deus, urging bishops to promote rigorous biblical study among seminarians and clergy.",
+				"origin": "read"
+			}
+		},
+		"encyclical.summi-pontificatus.en": {
+			"en": {
+				"text": "Pius XII's first encyclical, issued weeks into the Second World War, on the unity of the human family under Christ the King. It names two errors eroding that unity: forgetting mankind's common origin and equal dignity, and divorcing civil authority from God's law so that the State becomes its own supreme end. Written in what it calls an Hour of Darkness, it appeals for a return to unity through the Church.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ubi-arcano-dei-consilio.en": {
+			"en": {
+				"text": "Why the world has no true peace after the Great War: treaties that never reached the hearts of men, and a chronic war between the social classes. Against this Pius XI sets the peace of Christ, an effect of love rather than of justice alone; he calls the laity to disciplined cooperation with their bishops, condemns a moral, legal and social modernism, and closes protesting the unresolved Roman Question.",
 				"origin": "read"
 			}
 		},
@@ -421,6 +523,12 @@
 		"vatii.gravissimum-educationis.pt": {
 			"pt": {
 				"text": "Declaração conciliar sobre a educação cristã, que parte do direito inalienável de todo o homem a uma educação correspondente à sua dignidade de pessoa. Afirma os pais como primeiros educadores, o papel próprio da Igreja na formação cristã dos baptizados, e a missão das escolas católicas, das universidades católicas e das faculdades de ciências sagradas, terminando com um apelo à coordenação entre as instituições escolares católicas.",
+				"origin": "read"
+			}
+		},
+		"vatii.inter-mirifica.en": {
+			"en": {
+				"text": "The Council's decree on the media of social communications — press, cinema, radio, television. It claims the Church's right to use them and her duty to teach their right use, sets out the moral principles binding on those who make and those who consume them, including the claims of art and the protection of the young, and charges pastors, laity and a Roman office with a common apostolate.",
 				"origin": "read"
 			}
 		},

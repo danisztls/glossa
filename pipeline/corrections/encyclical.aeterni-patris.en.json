@@ -1,0 +1,14 @@
+[
+  {
+    "id": "aeterni-patris.en-para21-Z1",
+    "locator": {
+      "raw_substring": "<font size=\"3\">Z 1. But, furthermore, Our predecessors"
+    },
+    "field": "raw_text",
+    "from": "<font size=\"3\">Z 1. But, furthermore, Our predecessors",
+    "to": "<font size=\"3\">21. But, furthermore, Our predecessors",
+    "reason": "The paragraph number 21 is printed as 'Z 1.' -- a mechanical mis-keying of the digit 2 as the adjacent letter Z, splitting the number in two. It is not a reading: no paragraph in this corpus is numbered with a letter, and the value is fixed by its neighbours rather than chosen. Filed as a source defect rather than handled in the parser because tolerating 'Z 1.' as a paragraph number would make the numbered-paragraph detector accept arbitrary letter-digit debris across ~450 documents to repair one page.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__aeterni-patris__en.html: the numbered-paragraph markers run ... '20.' (offset 54844), 'Z 1.' (55568), '22.' (57723) ... with no other gap in the sequence, and sections.json for this work holds 33 sections numbered 1-34 with 21 as the only missing number. The paragraph's own text ('But, furthermore, Our predecessors in the Roman pontificate have celebrated the wisdom of Thomas Aquinas...') continues the argument of 20 and is continued by 22, so no paragraph is displaced -- only its number was lost. Note the same page prints 27 as '27<i>. </i>', with the period inside an italic tag, and THAT one parses correctly; the defect here is the number itself, not the markup around it.",
+    "added": "2026-08-25"
+  }
+]

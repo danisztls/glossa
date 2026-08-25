@@ -283,9 +283,12 @@ jq -r '.["encyclical.<slug>.en"].description' src/lib/corpus-data/index/manifest
 ```
 
 Only the **reading** reaches `manifest.description`: the index tier is loaded
-eagerly by every reader and eight translations of every description would
-multiply the one field in it that is prose. Translations are stored and not
-yet shipped; see `docs/decisions.md`, 2026-08-25.
+eagerly by every reader and nine translations of every description would
+multiply the one field in it that is prose. Translations ship separately, one
+`index/descriptions.<lang>.json` per language, keyed by document **slug** —
+`descriptions.json` is keyed by work because that records which text was read,
+but a translation is prose about the document and serves whichever edition a
+reader is shown. See `docs/decisions.md`, 2026-08-25.
 
 ### 6. Report defects; fix parsers only deliberately
 
