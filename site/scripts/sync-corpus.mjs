@@ -668,24 +668,36 @@ if (publishedDefeats.length > 0) {
  * Only `origin: "translated"` renderings go here. A reading in the work's own
  * language is already in the manifest, and duplicating it would make two
  * places disagree the moment one is corrected.
+ *
+ * Keyed by document SLUG, not by work id, though `descriptions.json` is keyed
+ * by work. The two keys answer different questions: the authoring file records
+ * WHICH TEXT WAS READ, because a description read from the Portuguese edition
+ * is prose about that text; a translation of that prose is about the DOCUMENT,
+ * and every edition of it is the same document. Keying the shipped file by work
+ * would leave a Portuguese reader looking at the Portuguese edition of a
+ * document read in English with no description at all — the row he sees is the
+ * `.pt` work, and the translation was filed against the `.en` one. The route is
+ * `/documenta/{slug}` for the same reason.
  */
-const translatedDescriptions = {}; // lang -> { workId: text }
+const translatedDescriptions = {}; // lang -> { slug: text }
 for (const [workId, renderings] of Object.entries(descriptions)) {
-	const language = manifests[workId]?.language;
+	const manifest = manifests[workId];
+	if (!manifest || manifest.type !== 'document') continue;
+	const slug = workId.split('.')[1];
 	for (const [lang, rendering] of Object.entries(renderings)) {
-		if (lang === language) continue; // the reading, already in the manifest
+		if (lang === manifest.language) continue; // the reading, already in the manifest
 		if (rendering?.origin !== 'translated') continue;
-		(translatedDescriptions[lang] ??= {})[workId] = rendering.text;
+		(translatedDescriptions[lang] ??= {})[slug] = rendering.text;
 	}
 }
-for (const [lang, byWork] of Object.entries(translatedDescriptions)) {
-	writeJson(path.join(indexDir, `descriptions.${lang}.json`), byWork);
+for (const [lang, bySlug] of Object.entries(translatedDescriptions)) {
+	writeJson(path.join(indexDir, `descriptions.${lang}.json`), bySlug);
 }
 const describedWorks = Object.keys(descriptions).filter(
 	(workId) => descriptions[workId]?.[manifests[workId]?.language]?.origin === 'read'
 ).length;
 const translatedCount = Object.values(translatedDescriptions).reduce(
-	(n, byWork) => n + Object.keys(byWork).length,
+	(n, bySlug) => n + Object.keys(bySlug).length,
 	0
 );
 

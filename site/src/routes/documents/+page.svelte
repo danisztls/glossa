@@ -41,8 +41,8 @@
 	// instead of showing them nothing (docs/decisions.md, 2026-08-24), so the
 	// row leads somewhere either way and the library needs no second state.
 	/**
-	 * Descriptions translated into the reader's interface language, `work id
-	 * -> text`. One request, for every document at once, made only when the
+	 * Descriptions translated into the reader's interface language, `document
+	 * slug -> text`. One request, for every document at once, made only when the
 	 * language is one something has been translated into — a reader of the
 	 * language a description was WRITTEN in never issues it, because that
 	 * sentence is already on the manifest.
@@ -69,13 +69,22 @@
 	 * The description to show for a row, in the reader's language where we
 	 * have one and the work's own language otherwise.
 	 *
+	 * A reading in the reader's own language beats a translation into it. Both
+	 * are in the language he wants; only one of them was written by someone
+	 * looking at the text this row leads to. That case is real and not rare —
+	 * 22 Portuguese editions have been read on their own terms — and it is the
+	 * only ordering under which correcting a reading cannot be silently
+	 * overruled by a translation of a different edition's reading.
+	 *
 	 * Never a placeholder and never a machine translation of a missing
 	 * reading: `manifest.description` is absent for a work nobody has read
 	 * yet, and `translated` only ever holds renderings of a reading that
 	 * exists (`site/descriptions.json`, `origin`).
 	 */
-	function describe(manifest: DocumentManifest): string | null {
-		return translated[manifest.id] ?? manifest.description ?? null;
+	function describe(row: Row): string | null {
+		const own = row.manifest.description ?? null;
+		if (own && row.manifest.language === i18n.lang) return own;
+		return translated[row.slug] ?? own;
 	}
 
 	const rows = $derived.by(() => {
@@ -166,7 +175,7 @@
 				</summary>
 				<ul class="docs">
 					{#each group.rows as row (row.slug)}
-						{@const description = describe(row.manifest)}
+						{@const description = describe(row)}
 						<li>
 							<a href={`/documenta/${row.slug}`} class="doc-link">
 								<span class="doc-title">{row.manifest.title}</span>
@@ -185,11 +194,11 @@
 							one exists (see `DocumentManifest.description`), and
 							nothing rather than a placeholder when none does.
 
-							`describe()` prefers a description translated into the
-							reader's language over the one on the manifest, which is
-							written in the WORK's language: a reader of Italian looking
-							at an English edition wants the Italian sentence about it,
-							and the English one is the fallback rather than the default.
+							`describe()` prefers a description in the reader's own
+							language over the one on the manifest, which is written in
+							the WORK's language: a reader of Italian looking at an
+							English edition wants the Italian sentence about it, and the
+							English one is the fallback rather than the default.
 						-->
 							<p class="doc-meta">
 								<time datetime={row.manifest.promulgated}>

@@ -666,7 +666,7 @@ async function readContentFromNetwork<T>(url: string): Promise<T> {
 }
 
 /**
- * Descriptions translated into `lang`, as `work id -> text`.
+ * Descriptions translated into `lang`, as `document slug -> text`.
  *
  * A description written by READING a document is already on its manifest, in
  * the work's own language. This is the other kind: renderings marked
@@ -675,6 +675,10 @@ async function readContentFromNetwork<T>(url: string): Promise<T> {
  * a description was written in. An English reader never issues this request;
  * everyone else issues exactly one, for every document at once, because
  * `/documenta` lists them all on one page.
+ *
+ * Keyed by document slug rather than work id: a translation is prose about the
+ * document, so it serves whichever edition a reader happens to be shown. See
+ * `scripts/sync-corpus.mjs` for why the authoring file is keyed the other way.
  *
  * `{}` for a language nothing is translated into — the ordinary case today
  * and not an error, the same way an absent content file means "the corpus has
