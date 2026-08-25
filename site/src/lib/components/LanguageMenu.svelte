@@ -87,7 +87,12 @@
 		{current.short}
 	</button>
 	{#if menu.open}
-		<ul class="menu-panel" role="menu" aria-label={t('lang.label')} onkeydown={menu.onPanelKeydown}>
+		<ul
+			class="menu-panel lang-panel"
+			role="menu"
+			aria-label={t('lang.label')}
+			onkeydown={menu.onPanelKeydown}
+		>
 			{#each OPTIONS as opt (opt.code)}
 				{@const isCurrent = i18n.lang === opt.code}
 				<li role="none">
@@ -100,7 +105,9 @@
 						onclick={() => choose(opt.code)}
 					>
 						<span class="menu-item-main">
-							{#if isCurrent}<Icon name="check" />{/if}
+							<span class="check-slot"
+								>{#if isCurrent}<Icon name="check" />{/if}</span
+							>
 							<span lang={opt.code}>{opt.label}</span>
 						</span>
 					</button>
@@ -127,5 +134,52 @@
 		font-weight: 600;
 		font-variant-numeric: tabular-nums;
 		letter-spacing: 0.03em;
+	}
+
+	/*
+	 * TWO COLUMNS, BECAUSE THIS MENU IS A NAME LIST AND THE OTHERS ARE NOT.
+	 *
+	 * The shared `.menu-panel` is a single column of rows, which is right for
+	 * every other consumer: an edition row carries a title and a `.menu-item-meta`
+	 * line under it, an appearance row is a setting with a state. Those are
+	 * sentences, and sentences stack. A language row is a single word the
+	 * reader is SCANNING for — they know which one they want and are looking
+	 * for its shape, not reading down the list — and a scan is what a short
+	 * two-column grid serves better than a long column.
+	 *
+	 * The count is what turned this from preference into a defect. Ten rows sat
+	 * just inside the panel's `max-height: min(24rem, 70vh)`; fourteen do not,
+	 * so the language a reader wants can be below the fold of a menu whose
+	 * whole job is to be looked at once. Two columns of seven fit with room to
+	 * spare, and the panel stops scrolling.
+	 *
+	 * `auto-fit` rather than a hard `repeat(2, …)`: the panel is capped at
+	 * `90vw`, so on a narrow phone there is not room for two columns of names,
+	 * and the grid drops to one on its own rather than crushing "Slovenščina"
+	 * into six characters and an ellipsis. `min-width` is `min(…, 90vw)` for
+	 * the same reason — a bare `18rem` would win over the shared `max-width`
+	 * (min beats max in CSS) and hang the panel off the side of a 320px screen.
+	 */
+	.lang-panel {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+		gap: 0.1rem;
+		min-width: min(18.5rem, 90vw);
+	}
+
+	/*
+	 * The tick is a column, not a prefix. In one column an indented current
+	 * row reads as emphasis; in a grid the labels form two vertical edges, and
+	 * one row starting 1.3rem further in breaks both of them. So the slot is
+	 * always there and only sometimes filled — `aria-checked` on the button is
+	 * what actually carries the state, and the glyph is decorative (Icon
+	 * enforces `aria-hidden`), so an empty box says nothing to a screen reader
+	 * that the row has not already said.
+	 */
+	.check-slot {
+		display: inline-flex;
+		justify-content: center;
+		inline-size: 0.9em;
+		flex: none;
 	}
 </style>
