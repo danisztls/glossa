@@ -108,6 +108,18 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.auspicato-concessum.en": {
+			"en": {
+				"text": "Leo XIII on the life and legacy of Francis of Assisi, marking the seventh centenary of his birth alongside St. Benedict's. It presents Francis as a living image of Christ, down to the stigmata, and commends the Third Order he founded — open to every age, rank, and sex — as the remedy for the era's strife between rich and poor, urging the faithful, and Italians especially, to enroll in it.",
+				"origin": "read"
+			}
+		},
+		"encyclical.auspicia-quaedam.en": {
+			"en": {
+				"text": "Pius XII invites the faithful, during the month traditionally dedicated to Mary, to public prayer for a peace still unsettled after the war and, particularly, for a just resolution of the dispute over Palestine and its Holy Places. He renews his wartime consecration of the human family to the Immaculate Heart of Mary and asks that the same consecration be repeated in every diocese and parish.",
+				"origin": "read"
+			}
+		},
 		"encyclical.caritas-in-veritate.en": {
 			"en": {
 				"text": "On integral human development in charity and truth, taking up Paul VI's Populorum Progressio forty years on. Charity in truth is set out as the principle of the Church's social doctrine and then applied: to the global financial crisis, to the ethics of business and the market, to gratuitousness and gift, to the environment, to cooperation between peoples, and to the human meaning of technology and bioethics.",
@@ -117,6 +129,12 @@
 		"encyclical.casti-connubii.en": {
 			"en": {
 				"text": "Pius XI's encyclical on Christian marriage, organized around St. Augustine's three blessings of wedlock — offspring, conjugal faith, and the sacrament — expounding each in turn before cataloguing the errors attacking them: contraception, abortion, eugenic sterilization, divorce, and the “false emancipation” of women, and closing with remedies for restoring marriage to the divine plan.",
+				"origin": "read"
+			}
+		},
+		"encyclical.centesimus-annus.en": {
+			"en": {
+				"text": "John Paul II re-reads Rerum Novarum on its centenary against the “new things” of 1989, the fall of Communism in Eastern Europe. He diagnoses socialism's core error, then treats the proper limits of private property and its universal destination, the free market's strengths and its moral limits, and the state's duty toward the common good, closing on the human person as the way the Church must walk.",
 				"origin": "read"
 			}
 		},
@@ -135,6 +153,18 @@
 		"encyclical.communium-rerum.en": {
 			"en": {
 				"text": "Pius X marks the eighth centenary of the death of St. Anselm of Canterbury, praising his sanctity and his stand for the Church's liberty against secular encroachment, then holds him up as founder of a scholastic middle way between rationalist excess and fideist neglect — deployed as a direct warning against modernist \"agnosticism\" and dialecticians who overreach reason's limits.",
+				"origin": "read"
+			}
+		},
+		"encyclical.cum-multa.en": {
+			"en": {
+				"text": "Leo XIII to the bishops of Spain, where rival Catholic political factions had fractured the unity the country once showed the Church. He calls for full obedience to bishops, draws a line between religion and politics without divorcing the two, directs the clergy to stay clear of party strife, and places Catholic associations and the Catholic press under their bishops' direction as the way back to that lost concord.",
+				"origin": "read"
+			}
+		},
+		"encyclical.deiparae-virginis-mariae.en": {
+			"en": {
+				"text": "Pius XII's letter to the bishops of the world, prompted by decades of petitions asking that the Blessed Virgin Mary's bodily Assumption into heaven be defined as a dogma of faith. Rather than defining it himself, the pope asks each bishop to report on the devotion of his clergy and people to the Assumption, and whether he judges the doctrine fit for solemn definition.",
 				"origin": "read"
 			}
 		},
@@ -228,9 +258,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.evangelium-vitae.en": {
+			"en": {
+				"text": "John Paul II on the value and inviolability of human life, setting the “Gospel of life” against what he calls a “culture of death”. Reading Genesis 4 as an image of violence against life, he surveys the threats from abortion to euthanasia, affirms “you shall not kill” as sacred and inviolable law, and calls for a new culture of life, closing with an appeal to Mary.",
+				"origin": "read"
+			}
+		},
 		"encyclical.evangelium-vitae.pt": {
 			"pt": {
 				"text": "Sobre o valor da vida humana e a sua inviolabilidade, diante das novas ameaças do aborto e da eutanásia: parte do grito do sangue de Abel e do eclipse do sentido da vida, percorre o mandamento «não matarás» perante a lei civil e a lei moral, e chama a uma nova cultura da vida, terminando com uma prece a Maria, Mãe dos viventes.",
+				"origin": "read"
+			}
+		},
+		"encyclical.fausto-appetente-die.en": {
+			"en": {
+				"text": "Benedict XV's encyclical for the seventh centenary of the death of St. Dominic, commending the Order of Preachers to the whole Church. It traces three marks of Dominican preaching — solid doctrine, fidelity to the Apostolic See, and devotion to the Virgin through the Rosary — recalling Dominic's disputations against heresy at Toulouse, the four popes drawn from his order, and St. Pius V's victory at Lepanto.",
 				"origin": "read"
 			}
 		},
@@ -243,6 +285,12 @@
 		"encyclical.fratelli-tutti.pt": {
 			"pt": {
 				"text": "Carta encíclica de Francisco sobre a fraternidade e a amizade social, inspirada no apelo de São Francisco de Assis, de quem toma o título. Parte da parábola do bom samaritano para denunciar as sombras dum mundo fechado e propor a política melhor, o diálogo e a amizade social, e o papel das religiões ao serviço da fraternidade no mundo.",
+				"origin": "read"
+			}
+		},
+		"encyclical.fulgens-radiatur.en": {
+			"en": {
+				"text": "Pius XII's encyclical for the fourteenth centenary of the death of St. Benedict of Nursia, recounting his youth in Rome, his years as a hermit at Subiaco, and his founding of Monte Cassino, then expounding the Rule and its balance of prayer, labor, and hospitality. It credits the Benedictines with preserving learning as the Roman Empire collapsed, and closes appealing for the rebuilding of Monte Cassino, destroyed in the recent war.",
 				"origin": "read"
 			}
 		},
@@ -306,6 +354,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.iamdudum.en": {
+			"en": {
+				"text": "Pius X to the Portuguese hierarchy, condemning the Republic's Law of Separation of Church and State, which strips the Church of its property, subjects worship to lay associations under state control, forbids bishops to publish or act without government leave, and severs their ties to Rome. He declares the law null and void, praises the clergy's resistance, and urges bishops everywhere to support them.",
+				"origin": "read"
+			}
+		},
 		"encyclical.il-fermo-proposito.en": {
 			"en": {
 				"text": "Written to the Italian bishops to organise the lay Catholic works — what came to be called Catholic Action — under the single aim of restoring all things in Christ. Pius X defines the movement's scope, ties its social work to Rerum Novarum, prescribes a Popular Union to hold it together, repeats the ban on direct participation in politics, and subordinates every such work to the bishops.",
@@ -327,6 +381,12 @@
 		"encyclical.in-hac-tanta.en": {
 			"en": {
 				"text": "For the twelfth centenary of St Boniface's mission to Germany, written to the German hierarchy amid the disorder that followed the First World War. Benedict XV retraces Boniface's oath of fidelity to the Holy See, his correspondence with successive popes and his martyrdom, holds them up as the pattern of Germany's ancient union with Rome, urges its restoration, and grants indulgences for the centenary.",
+				"origin": "read"
+			}
+		},
+		"encyclical.in-praeclara-summorum.en": {
+			"en": {
+				"text": "Benedict XV's encyclical for the sixth centenary of Dante Alighieri's death, addressed to Catholic professors and students of literature. It presents Dante as a lifelong exemplar of Catholic faith whose Divine Comedy embodies Scripture, Christian philosophy and theology, and sound principles of civil government, and urges renewed devotion to his study against systems of education that exclude God.",
 				"origin": "read"
 			}
 		},
@@ -414,9 +474,27 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.mens-nostra.en": {
+			"en": {
+				"text": "Pius XI, on the golden jubilee of his ordination, urges wider practice of the Spiritual Exercises — retreats modeled on Christ's own withdrawals to the desert — as a remedy for the thoughtlessness of the age. He commends St. Ignatius of Loyola's method as foremost, presses their use among clergy, religious, laity and Catholic Action, and recommends a monthly day of recollection to preserve their fruit.",
+				"origin": "read"
+			}
+		},
 		"encyclical.mense-maio.en": {
 			"en": {
 				"text": "Paul VI asks that the month of May be given to prayer to Mary for two urgent reasons: the Second Vatican Council, still sitting, and a peace in jeopardy as international tensions worsen. He condemns the disregard for human life that armed conflict brings, appeals to the world's rulers to renounce force, and asks children and the suffering in particular to pray the Rosary for peace.",
+				"origin": "read"
+			}
+		},
+		"encyclical.miserentissimus-redemptor.en": {
+			"en": {
+				"text": "Pius XI's encyclical on reparation to the Sacred Heart of Jesus, presented as completing the consecration he had established through Quas Primas and the feast of Christ the King. It grounds the duty of expiatory reparation in Christ's continuing sufferings within his Mystical Body, laments the era's apostasy and ingratitude toward the Sacred Heart, and decrees an annual Act of Reparation to be recited in every church.",
+				"origin": "read"
+			}
+		},
+		"encyclical.mortalium-animos.en": {
+			"en": {
+				"text": "Pius XI on the interwar movement to reunite separated Christian bodies through shared conferences and mutual charity without doctrinal agreement. The encyclical rejects this “pan-Christian” approach, holding that Christ's prayer that his followers be one is already fulfilled in the visible, doctrinally united Catholic Church, forbids Catholic participation in such assemblies, and insists that reunion comes only through return to the one true Church under the Bishop of Rome.",
 				"origin": "read"
 			}
 		},
@@ -444,6 +522,18 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.nobilissima-gallorum-gens.en": {
+			"en": {
+				"text": "Leo XIII to the bishops of France on the anti-clerical measures then underway, the suppression of religious orders and the secularizing laws. He urges the French, “eldest daughter of the Church”, to keep religious instruction within the family, to respect the distinct but harmonious authority of Church and State, to preserve unity among Catholics under their bishops, and to answer persecution with prayer and constancy.",
+				"origin": "read"
+			}
+		},
+		"encyclical.optatissima-pax.en": {
+			"en": {
+				"text": "Pius XII on the social unrest that followed the Second World War: economic ruin has left workers idle while agitators incite class hatred and rioting in place of relief. Rejecting both rancor and the pursuit of private profit as remedies, he calls for reconciliation through Christian charity and prescribes public prayers — especially by children at the Christmas crib — for peace and for the relief of the needy.",
+				"origin": "read"
+			}
+		},
 		"encyclical.orientales-omnes-ecclesias.en": {
 			"en": {
 				"text": "Pius XII's encyclical marking the 350th anniversary of the Union of Brest, by which the Ruthenian Church entered communion with Rome. It traces that reunion's history — the negotiations of 1595–96, the martyrdom of Josaphat Kuntsevych, and Rome's steady defense of the Ruthenian rite against Latinization — before turning to the persecution then engulfing the Ruthenian Church and exhorting its bishops, priests, and faithful to constancy.",
@@ -459,6 +549,12 @@
 		"encyclical.pacem-dei-munus-pulcherrimum.en": {
 			"en": {
 				"text": "On charity and mutual pardon between men and between nations, written weeks after the peace treaties that ended the First World War. Benedict XV presses for the forgiving of wartime enmities, commends practical relief for the widows, the orphans and the devastated regions, and calls the states to unite in a league — a family of peoples — to reduce armaments and keep the peace.",
+				"origin": "read"
+			}
+		},
+		"encyclical.pacem.en": {
+			"en": {
+				"text": "John XXIII grounds peace in an order willed by God, traced through four relations: the rights and duties of the individual person; citizens and the public authority over them; states with one another, owed truth, justice, solidarity and an end to the arms race; and political communities with a still-forming world community, whose own public authority he sees the United Nations beginning to supply.",
 				"origin": "read"
 			}
 		},
@@ -558,6 +654,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.redemptoris-missio.en": {
+			"en": {
+				"text": "John Paul II reasserts the permanent validity of the Church's mandate to bring the Gospel to every people, twenty-five years after the Council's Ad Gentes and against currents that would narrow it. He grounds mission in Christ the one Savior, the Kingdom of God, and the Holy Spirit as its principal agent, then traces its paths — witness, proclamation, conversion, inculturation, dialogue, human development — closing on missionary spirituality.",
+				"origin": "read"
+			}
+		},
 		"encyclical.rerum-ecclesiae.en": {
 			"en": {
 				"text": "Pius XI on the Catholic missions, setting two aims: more and better-trained missionaries, and lay Catholics who pray and give for them through the Society for the Propagation of the Faith. Its sharpest passage takes up Benedict XV's complaint that ancient mission territories still have no native bishops, and it commits the Pope to redividing and reassigning mission territories — to native clergy where possible — rather than leaving them to the institute that opened them.",
@@ -602,6 +704,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.rerum-orientalium.it": {
+			"it": {
+				"text": "Pio XI ripercorre l'impegno secolare della Sede Apostolica per gli studi orientali, dai collegi medievali di Parigi ai predecessori più recenti, per motivare la fondazione del Pontificio Istituto Orientale, affidato ai Gesuiti e trasferito presso Sant'Antonio all'Esquilino. Esorta i Vescovi a formare nei seminari sacerdoti esperti di teologia, liturgia e lingue orientali, in vista del ritorno degli Orientali separati all'unità con Roma.",
+				"origin": "read"
+			}
+		},
 		"encyclical.rite-expiatis.en": {
 			"en": {
 				"text": "Pius XI's encyclical for the seventh centenary of the death of St. Francis of Assisi, describing him as God's providential answer to a medieval society riven by class hostility and moral decay. It surveys Francis's poverty, humility and obedience, the Rule he gave the Friars Minor, and the Second and Third Orders that grew from his reform, urging the world's bishops to promote the Third Order anew for the centenary.",
@@ -617,6 +725,12 @@
 		"encyclical.sacerdotii.en": {
 			"en": {
 				"text": "Written for the centenary of the death of St John Mary Vianney, holding up the Curé of Ars as the model of a priest: his poverty, chastity and obedience, his life of prayer and his devotion to the Eucharist and the Mass, and his zeal as preacher, catechist and confessor. It closes by asking bishops, the faithful and the young themselves to foster priestly vocations.",
+				"origin": "read"
+			}
+		},
+		"encyclical.sacra-propediem.en": {
+			"en": {
+				"text": "Benedict XV's encyclical for the seventh centenary of the Third Order of St. Francis, defending the true character of Francis of Assisi against Modernist reinterpretation and naming fraternal charity as the Tertiaries' distinguishing mark. It addresses the social unrest and class conflict of the age, calls the Third Order to carry the spirit of Christ into social life, and closes by granting indulgences for the centenary's Triduum.",
 				"origin": "read"
 			}
 		},
@@ -674,6 +788,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.supremi-apostolatus-officio.en": {
+			"en": {
+				"text": "Leo XIII's first encyclical on the Rosary, commending it as a defense of the Church against the errors and dangers of the age. Recalling the precedent of St. Dominic and the victory over the Turks attributed to Mary's intercession in the sixteenth century, he asks that the Rosary and the Litany of Loreto be recited publicly throughout October in every parish church, and grants indulgences to those who take part.",
+				"origin": "read"
+			}
+		},
 		"encyclical.tribus-circiter.en": {
 			"en": {
 				"text": "Written to the bishops of Poland against the Mariavites, a society of self-styled Mystic Priests formed without episcopal permission around a woman its members held to be divinely inspired. Pius X confirms the 1904 decree suppressing it, refuses their professed submission as belied by their continued defiance of their bishops, and orders that those who persist in rebellion be dealt with severely.",
@@ -683,6 +803,12 @@
 		"encyclical.ubi-arcano-dei-consilio.en": {
 			"en": {
 				"text": "Why the world has no true peace after the Great War: treaties that never reached the hearts of men, and a chronic war between the social classes. Against this Pius XI sets the peace of Christ, an effect of love rather than of justice alone; he calls the laity to disciplined cooperation with their bishops, condemns a moral, legal and social modernism, and closes protesting the unresolved Roman Question.",
+				"origin": "read"
+			}
+		},
+		"encyclical.une-fois-encore.en": {
+			"en": {
+				"text": "Pius X's follow-up encyclical to the French clergy and people on the aftermath of the 1905 Law of Separation, defending the Church's refusal to form the associations cultuelles the law required. It refutes the charges that she incited persecution and abandoned her own property, and condemns a newly voted law on public worship as a further act of spoliation aggravating the Separation itself.",
 				"origin": "read"
 			}
 		},
@@ -715,6 +841,18 @@
 		"encyclical.veritatis-splendor.en": {
 			"en": {
 				"text": "John Paul II's encyclical to the bishops on the foundations of Catholic moral theology, written amid dissent from the Church's moral teaching. Framed by Christ's dialogue with the rich young man — “Teacher, what good must I do to have eternal life?” — it treats freedom's dependence on truth and God's law, conscience, the moral act, and intrinsically evil acts, closing with an appeal to Mary, Mother of Mercy.",
+				"origin": "read"
+			}
+		},
+		"vatii.ad-gentes.en": {
+			"en": {
+				"text": "Vatican II's decree on the Church's missionary activity, grounded in the Trinitarian missions of the Son and the Spirit. It treats mission work itself — witness, preaching, and the gathering of a Christian community — then the young particular churches it plants, the calling and training of missionaries, the planning of missionary work, and the cooperation owed by bishops, priests, religious, and laity.",
+				"origin": "read"
+			}
+		},
+		"vatii.apostolicam-actuositatem.en": {
+			"en": {
+				"text": "Vatican II's decree on the apostolate of the laity, holding that the call to spread Christ's kingdom and renew the temporal order belongs to every layperson through Baptism and Confirmation, not by clerical delegation. It surveys the apostolate's aims, its fields — church, family, youth, social and international life — its individual and organized forms, right relations with the hierarchy, and formation.",
 				"origin": "read"
 			}
 		},
@@ -805,6 +943,12 @@
 		"vatii.orientalium-ecclesiarum.en": {
 			"en": {
 				"text": "The Council's decree on the Eastern Catholic Churches — those in communion with Rome that follow the Byzantine, Alexandrian, Antiochene, Armenian or Chaldean rites rather than the Latin. It affirms their equal dignity with the Latin Church and their right to keep their own liturgical, disciplinary and spiritual patrimony, then treats patriarchal precedence, the discipline of the sacraments, worship and the calendar, and what common prayer with separated Eastern Christians is permitted.",
+				"origin": "read"
+			}
+		},
+		"vatii.perfectae-caritatis.en": {
+			"en": {
+				"text": "Vatican II's decree on the renewal and adaptation of religious life, addressed to institutes of consecrated chastity, poverty and obedience. It lays down general principles of renewal — return to the Gospel and to each institute's founding spirit, adaptation to modern conditions — treats the contemplative, active, monastic, lay and secular-institute forms in turn, and gives norms on formation, cloister, habit, vocations, and the union of small communities.",
 				"origin": "read"
 			}
 		},
