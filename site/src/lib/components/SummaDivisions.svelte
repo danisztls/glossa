@@ -153,19 +153,4 @@
 	.division p {
 		margin: 0 0 0.6rem;
 	}
-
-	/* Same quiet treatment as `RefText`'s links: the underline marks it, the
-	   colour stays the text's until hover. */
-	.inline-ref {
-		color: inherit;
-		text-decoration: underline;
-		text-decoration-color: var(--color-border);
-		text-underline-offset: 0.15em;
-	}
-
-	.inline-ref:hover,
-	.inline-ref:focus-visible {
-		color: var(--color-link);
-		text-decoration-color: currentColor;
-	}
 </style>

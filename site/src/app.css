@@ -1020,6 +1020,36 @@ input {
 	display: none;
 }
 
+/*
+ * THE READER'S SIDEBAR IS DESKTOP-ONLY, AND THAT IS THE DEFAULT RATHER THAN
+ * A PER-ROUTE DECISION.
+ *
+ * Below 80rem `.reading-layout` stops being a grid, so an aside left visible
+ * falls to the bottom of the document — past a 287-section encyclical, i.e.
+ * nowhere. Six routes each carried their own copy of this rule (five at
+ * 79.9375rem, `/documenta` at 79.99rem — a divergence with no reason behind
+ * it), and the Bible spelled the same rule as `.desktop-picker`. One rule
+ * here replaces all seven.
+ *
+ * A ROUTE OPTS BACK IN when it has a mobile counterpart worth keeping, which
+ * is `/preces` and only `/preces`: its prayer table of contents is short, and
+ * the route puts the aside FIRST in source order so a phone reader meets it
+ * ahead of the Rosary's text. `/documenta` solves the same problem the other
+ * way, with `.toc-inline` as separate markup, because a document's tree is
+ * too long to lead with. The remaining five have no mobile counterpart at
+ * all — which is a real gap, not a decision (see docs/decisions.md).
+ *
+ * Hidden in CSS rather than by the routes omitting the element, for the same
+ * reason `.reading-layout.compare` gives below: keeping it in the markup is
+ * what lets a wider viewport place it, and it costs a hidden subtree, not a
+ * fetch — every sidebar's tree is index tier and already inlined.
+ */
+@media (max-width: 79.9375rem) {
+	.reading-aside:not(.reading-aside-mobile) {
+		display: none;
+	}
+}
+
 @media (min-width: 80rem) {
 	.reading-layout {
 		display: grid;
@@ -1285,11 +1315,34 @@ input {
 }
 
 /*
+ * THE BLOCK-LEVEL FORM OF THE READER'S OWN MARK, shared by every
+ * single-column reader whose unit is its own block: a document section, a
+ * Summa article, a CCC paragraph in the chapter view, a Compendium question.
+ * All four had written it out identically — same 12%, same radius, same two
+ * print-colour properties — under four different element class names.
+ *
+ * The wash covers the TEXT only; the margin number hangs outside it on the
+ * page's own ground and marks itself (`ReferenceNumber`'s `.bookmarked`).
+ *
+ * THE BIBLE IS NOT ONE OF THESE and keeps its own rule. A verse is an inline
+ * span inside a continuous paragraph, so its wash needs `box-decoration-break`
+ * to survive a line break and sits a shade stronger (14%) to read at all
+ * against the text flowing around it — a genuinely different treatment for a
+ * genuinely different unit, not a fifth copy.
+ */
+.unit-bookmarked {
+	background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
+	border-radius: 0.25rem;
+	print-color-adjust: exact;
+	-webkit-print-color-adjust: exact;
+}
+
+/*
  * A row the reader has saved, and a row an arriving citation named. Washes on
  * the two TEXT cells only, never on the row: the gutter has to stay page
  * background for the number's own background to punch cleanly through the
  * divider (see `.reference-number.gutter`), and this is also exactly where
- * the single-column readers put it — `.section.bookmarked` and
+ * the single-column readers put it — `.unit-bookmarked` and
  * `.verse.bookmarked` cover the text, while the margin number hangs outside
  * at `-3.25rem` on the page's own ground.
  *
@@ -1394,6 +1447,28 @@ input {
 
 .compare-unit-field {
 	min-width: 0;
+}
+
+/*
+ * A FIELD'S OWN VERTICAL RHYTHM, ONCE, INSTEAD OF PER ROUTE.
+ *
+ * Five routes each restated these: the heading at `0 0 0.5rem` in three and
+ * `0 0 0.25rem` in the fourth, the copyright notice at `0 0 0.75rem` in one
+ * and `0 0 0.5rem` in two. Nothing in the markup those values sat next to
+ * accounts for the difference — the fields are the same fields, stacked the
+ * same way, and the spread is drift from five separate authorings rather than
+ * five decisions. Settled on the majority value in each case.
+ *
+ * The tighter spacing than the single-column header's is the one deliberate
+ * part: a field here is one line of a two-column block that already reads as
+ * a unit, so it needs separating from its neighbour, not framing.
+ */
+.compare-unit-field h1 {
+	margin: 0 0 0.5rem;
+}
+
+.compare-unit-field .copyright-notice {
+	margin: 0 0 0.5rem;
 }
 
 .compare-unit-field-shared {
@@ -2024,6 +2099,33 @@ input {
 .copyright-notice {
 	font-size: 0.75rem;
 	color: var(--color-text-muted);
+}
+
+/*
+ * A REFERENCE LINKIFIED OUT OF RUNNING PROSE — the quiet treatment, shared by
+ * every component that emits one: `CccParagraphText` (CCC paragraphs and
+ * document sections), `SummaDivisions`, `InlineProse`. The underline marks it,
+ * the colour stays the sentence's until hover, because these appear several to
+ * a paragraph and a coloured link each time would speckle the page.
+ *
+ * IT IS HERE BECAUSE ONE OF THE THREE COPIES HAD DRIFTED. `CccParagraphText`
+ * carried the resting state and not the hover/focus pair, so a scripture
+ * reference inside a Catechism paragraph or an encyclical section — the two
+ * places a reader meets them most — was the one that did not respond to the
+ * pointer or take a visible focus ring. Sharing the rule fixes that by
+ * construction rather than by remembering to.
+ */
+.inline-ref {
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-color: var(--color-border);
+	text-underline-offset: 0.15em;
+}
+
+.inline-ref:hover,
+.inline-ref:focus-visible {
+	color: var(--color-link);
+	text-decoration-color: currentColor;
 }
 
 /*

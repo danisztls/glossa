@@ -43,18 +43,3 @@
 {/snippet}
 
 <p>{@render inline(nodes)}</p>
-
-<style>
-	.inline-ref {
-		color: inherit;
-		text-decoration: underline;
-		text-decoration-color: var(--color-border);
-		text-underline-offset: 0.15em;
-	}
-
-	.inline-ref:hover,
-	.inline-ref:focus-visible {
-		color: var(--color-link);
-		text-decoration-color: currentColor;
-	}
-</style>

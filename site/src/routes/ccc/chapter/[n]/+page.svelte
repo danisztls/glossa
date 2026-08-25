@@ -362,7 +362,7 @@
 							class="para"
 							id={`p${paragraph.n}`}
 							class:in-brief={paragraph.in_brief}
-							class:bookmarked={bookmarks.has(`/catechismus/${paragraph.n}`)}
+							class:unit-bookmarked={bookmarks.has(`/catechismus/${paragraph.n}`)}
 						>
 							<!-- The number is a link back to the paragraph's own page: this
 						     view is for reading, that one for citing and cross-linking,
@@ -437,14 +437,6 @@
 		margin: 0 0 2rem;
 	}
 
-	.compare-unit-field .copyright-notice {
-		margin: 0 0 0.5rem;
-	}
-
-	.compare-unit-field :global(.menu) {
-		margin-bottom: 0.5rem;
-	}
-
 	/* The chapter's own inner headings, printed inside its continuous body
 	   where the source prints them. Set well below the chapter's `h1` in
 	   weight and size — these are divisions WITHIN the page, not second titles
@@ -489,16 +481,6 @@
 		margin-bottom: 1.1rem;
 	}
 
-	/* The reader's own mark. A block-level wash rather than the inline one the
-	   Bible verse uses, because a paragraph here is already its own block; the
-	   number itself carries the same colour (ReferenceNumber's `.bookmarked`). */
-	.para.bookmarked {
-		background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
-		border-radius: 0.25rem;
-		print-color-adjust: exact;
-		-webkit-print-color-adjust: exact;
-	}
-
 	/* "In brief" summary blocks are set apart in the printed text too; without
 	   this they read as just more prose in a wall of it. */
 	.para.in-brief .para-text {
@@ -506,13 +488,5 @@
 		padding-inline-start: 0.9rem;
 		font-size: max(var(--font-size-min), 0.95em);
 		color: var(--color-text-muted);
-	}
-
-	/* No mobile counterpart exists to preserve — below `.reading-layout`'s
-	   own breakpoint (app.css) this simply isn't shown. */
-	@media (max-width: 79.9375rem) {
-		.reading-aside {
-			display: none;
-		}
 	}
 </style>

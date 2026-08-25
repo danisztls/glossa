@@ -241,10 +241,4 @@
 	.copyright-notice {
 		margin: 0 0 1.25rem;
 	}
-
-	@media (max-width: 79.9375rem) {
-		.reading-aside {
-			display: none;
-		}
-	}
 </style>

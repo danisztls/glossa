@@ -811,7 +811,7 @@
 							<section
 								class="section"
 								id={`s${section.n}`}
-								class:bookmarked={bookmarks.has(sectionHref)}
+								class:unit-bookmarked={bookmarks.has(sectionHref)}
 							>
 								<!-- The number links to its own anchor: this is what a reader
 								     copies to cite the section, and it is now the section's
@@ -913,24 +913,8 @@
 		margin: 1.25rem 0 1.5rem;
 	}
 
-	/* The grid, its tracks and its divider are `.compare-unit-header`/
-	   `.compare-unit-field` (app.css) — shared with every other route that
-	   merges a compare header the same way. This only tunes the vertical
-	   spacing of what THIS route puts in each field. */
-	.compare-unit-field h1 {
-		margin: 0 0 0.5rem;
-	}
-
 	.compare-unit-field .subtitle {
 		margin: 0 0 0.5rem;
-	}
-
-	.compare-unit-field .copyright-notice {
-		margin: 0 0 0.75rem;
-	}
-
-	.compare-unit-field :global(.menu) {
-		margin-bottom: 0.5rem;
 	}
 
 	.compare-unit-field .document-masthead {
@@ -1119,12 +1103,6 @@
 		}
 	}
 
-	@media (max-width: 79.99rem) {
-		.reading-aside {
-			display: none;
-		}
-	}
-
 	/* Document body headings, threaded into the reading flow between sections
 	   (see `headingsByStart`) — sized by level, never by literal `--depth`
 	   indent: unlike the TOC's list rows, prose headings read better centred in
@@ -1184,14 +1162,5 @@
 	.section {
 		position: relative;
 		margin-bottom: 1.1rem;
-	}
-
-	/* The reader's own mark; the number carries the same colour
-	   (ReferenceNumber's `.bookmarked`). */
-	.section.bookmarked {
-		background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
-		border-radius: 0.25rem;
-		print-color-adjust: exact;
-		-webkit-print-color-adjust: exact;
 	}
 </style>

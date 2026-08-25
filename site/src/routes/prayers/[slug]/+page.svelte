@@ -309,7 +309,7 @@
 		{#if hasToc}
 			<!-- On wide screens this is the right sidebar; source order keeps it
 			     ahead of the long Rosary text on a narrow screen. -->
-			<aside class="reading-aside">
+			<aside class="reading-aside reading-aside-mobile">
 				{@render prayerToc(current.prayer)}
 			</aside>
 		{/if}
@@ -540,13 +540,6 @@
 	.prayer-instructions h2 {
 		font-size: 1.05rem;
 		margin: 0 0 0.75rem;
-	}
-
-	/* The compare header's own vertical spacing — the row shape and the divider
-	   are `.compare-unit-header`/`.compare-unit-field` in app.css, shared with
-	   every other route that merges a header the same way. */
-	.compare-unit-field h1 {
-		margin: 0 0 0.5rem;
 	}
 
 	/* Non-Rosary prayers do not need a sidebar or a reading-layout, but their

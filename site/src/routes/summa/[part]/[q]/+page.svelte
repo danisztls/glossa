@@ -358,7 +358,7 @@
 						<section
 							class="article"
 							id={`a${article.n}`}
-							class:bookmarked={bookmarks.has(articleHref)}
+							class:unit-bookmarked={bookmarks.has(articleHref)}
 						>
 							<ReferenceNumber
 								n={article.n}
@@ -466,16 +466,6 @@
 		margin-top: 2.5rem;
 	}
 
-	/* The text is covered; the margin number hangs outside it on the page's
-	   own ground and marks itself (`ReferenceNumber`'s `.bookmarked`) — the
-	   same split `.section.bookmarked` and `.question.bookmarked` use. */
-	.article.bookmarked {
-		background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
-		border-radius: 0.25rem;
-		print-color-adjust: exact;
-		-webkit-print-color-adjust: exact;
-	}
-
 	/*
 	 * The heading's subtitle: smaller, muted, and in the sans face, so it
 	 * reads as apparatus about the title rather than as the start of the text
@@ -502,11 +492,5 @@
 		text-transform: uppercase;
 		color: var(--color-text-muted);
 		font-family: var(--font-sans);
-	}
-
-	@media (max-width: 79.9375rem) {
-		.reading-aside {
-			display: none;
-		}
 	}
 </style>

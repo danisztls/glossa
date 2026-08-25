@@ -746,14 +746,6 @@
 		margin-top: 0.25rem;
 	}
 
-	/* Field-major compare header (`.compare-unit-header`, app.css): the
-	   edition picker sits right under each column's own heading, so it
-	   needs a little room before whatever follows (the mobile picker, or
-	   the grid) that `.title-row`'s single-column layout doesn't. */
-	.compare-unit-field :global(.menu) {
-		margin-top: 0.5rem;
-	}
-
 	/* Compare-mode verse cell (`verseCell` snippet, CompareGrid) — plainer
 	   than `.verse` because everything that used to make it richer now
 	   belongs to the row rather than to the cell: the number lives in the
@@ -951,12 +943,6 @@
 	   80rem (app.css) cost one extra hidden DOM subtree instead. */
 	@media (min-width: 80rem) {
 		.mobile-picker {
-			display: none;
-		}
-	}
-
-	@media (max-width: 79.9375rem) {
-		.desktop-picker {
 			display: none;
 		}
 	}

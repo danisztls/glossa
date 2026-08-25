@@ -285,21 +285,4 @@
 	.copyright-notice {
 		margin: 0 0 2rem;
 	}
-
-	.compare-unit-field h1 {
-		margin: 0 0 0.25rem;
-	}
-
-	.compare-unit-field .copyright-notice {
-		margin: 0 0 0.5rem;
-	}
-
-	.compare-unit-field :global(.menu) {
-		margin-bottom: 0.5rem;
-	}
-	@media (max-width: 79.9375rem) {
-		.reading-aside {
-			display: none;
-		}
-	}
 </style>

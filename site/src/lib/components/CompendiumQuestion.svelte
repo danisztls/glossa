@@ -55,7 +55,11 @@
 {/snippet}
 
 {#if href}
-	<section class="question" id={`q${question.n}`} class:bookmarked={bookmarks.has(canonicalHref)}>
+	<section
+		class="question"
+		id={`q${question.n}`}
+		class:unit-bookmarked={bookmarks.has(canonicalHref)}
+	>
 		<ReferenceNumber
 			n={question.n}
 			{href}
@@ -122,13 +126,5 @@
 	.question {
 		position: relative;
 		margin-bottom: 2rem;
-	}
-
-	/* The reader's own mark; the number carries the same colour. */
-	.question.bookmarked {
-		background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
-		border-radius: 0.25rem;
-		print-color-adjust: exact;
-		-webkit-print-color-adjust: exact;
 	}
 </style>

@@ -326,14 +326,6 @@
 		margin: 0 0 1rem;
 	}
 
-	.compare-unit-field h1 {
-		margin: 0 0 0.5rem;
-	}
-
-	.compare-unit-field :global(.menu) {
-		margin-top: 0.25rem;
-	}
-
 	.in-brief-tag {
 		font-size: 0.7rem;
 		text-transform: uppercase;
@@ -384,15 +376,5 @@
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
 		font-variant-numeric: tabular-nums;
-	}
-
-	/* No mobile counterpart exists to preserve (see the markup comment above
-	   the aside) — below `.reading-layout`'s own breakpoint (app.css) this
-	   simply isn't shown, rather than falling back to a plain block after
-	   the text. */
-	@media (max-width: 79.9375rem) {
-		.reading-aside {
-			display: none;
-		}
 	}
 </style>

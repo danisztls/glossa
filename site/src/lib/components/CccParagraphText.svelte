@@ -222,11 +222,4 @@
 		font-style: normal;
 		font-size: 0.85rem;
 	}
-
-	.inline-ref {
-		color: inherit;
-		text-decoration: underline;
-		text-decoration-color: var(--color-border);
-		text-underline-offset: 0.15em;
-	}
 </style>
