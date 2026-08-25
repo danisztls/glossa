@@ -4012,3 +4012,59 @@ per language under test, so neither the preferred-edition table nor the
 same-tier tie-break had anything to fail against, and the annotated reading
 path had no notes to render. John 3 keeps all four of Challoner's notes,
 markers and all.
+
+## 2026-08-25 — Two levelling defects: a phantom tier, and a staircase
+
+Found by the ToC-oracle pass, which is what the oracles exist for: 102 oracles
+now compared, and the audit went from **34 documents disagreeing / 284
+differences to 31 / 206**. Forty-three `structure.json` files changed; **no
+`sections.json` and no `appendix.json` changed at all**, so no text moved —
+only the nesting of headings over it.
+
+**The phantom tier.** `depth_key` lifts a heading named CONCLUSION or PROÉMIO
+to the tier of the document's labelled divisions, which is right where the page
+prints it as that tier (Gaudium et Spes' PREFACE beside its PART I). But the key
+it returns outranks _every_ style key, so in a document whose divisions carry no
+label the promotion joins no tier — it invents one above the whole document.
+`aeterna-dei.en` is the clean case: six divisions in byte-identical
+`<p align="CENTER">`, no bold, no italic, none saying CHAPTER, and CONCLUSION
+alone at level 1 with its five siblings at 2. `mater.en` across five,
+`orientalium-ecclesiarum.en` across eight. The audit reported each as "most
+headings parsed +1 level(s)" with the closing heading the lone outlier.
+
+Fixed as a **post-condition, not a guard on the promotion**: the promoted
+heading may not rise above headings the page sets in the same style. Withholding
+the key entirely collapses a tier in `divini-redemptoris.pt`, whose INTRODUÇÃO,
+seven parts and their sub-headings need three levels out of two styles and get
+the third from exactly this key — measured, 25 differences, which is why the
+first attempt was thrown away. The post-pass is skipped where the document does
+label its divisions, because there the front matter is _supposed_ to outrank its
+same-styled twins.
+
+**The staircase.** Rule 2 of the levelling walk — a style already seen keeps the
+level it was first given — was written at the head of the walk from the start
+and was never reachable: it sat under `elif prev_heading_idx is not None`, which
+after the document's opening is always true. It only fires when a heading has no
+heading before it.
+
+That is invisible in most documents, because a numbered paragraph between two
+headings resets `prev_heading_idx`. It is fatal in a document that numbers its
+own headings (`1. At the close of the second Millennium`), where there is no
+numbered block between them and the whole document is one unbroken run, each
+heading ranked against the one before it rather than against its siblings.
+Redemptor Hominis' four parts — identical centred bold — came out at levels
+2, 3, 4, 5; Laborem Exercens reached **level 7**. Titles and positions were
+right in every case, which is the signature of a heading that never gets popped.
+
+Moving rule 2 above the two branches that shadowed it took `redemptor-hominis`
+21 differences → 2, `dives-in-misericordia` 21 → 2, `laborem-exercens` 25 → 2,
+and helped `quadragesimo-anno.pt` and `sacrosanctum-concilium.pt` besides. The
+key that must match is `depth_key`, not raw style: Lumen Gentium PT's
+`CAPÍTULO VIII` and the `I. PROÉMIO` nested inside it are set in the same
+centred bold but differ in key, so that pair is untouched.
+
+**What is left in those three is one heading.** `Blessing`, the salutation John
+Paul II prints before his first part, is centred bold-**italic** where the parts
+are centred bold, so the parse gives it a tier of its own and the oracles read it
+as their peer. Two differences each, and the disagreement is about whether a
+salutation is a division at all — not about the staircase.

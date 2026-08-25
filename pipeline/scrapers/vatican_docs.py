@@ -4476,6 +4476,34 @@ def parse_document(
             # did. divini-redemptoris.pt lists only its seven parts, so its
             # ~50 unlisted headings are their sub-sections by construction.
             lvl = max(prelim, toc_floor + 1)
+        elif key in assigned:
+            # RULE 2, AND IT HAS TO COME BEFORE THE TWO BRANCHES BELOW.
+            #
+            # It was written down at the head of this walk from the start and
+            # never reached: sitting under `elif prev_heading_idx is not None`
+            # it could only fire for a heading with no heading before it,
+            # which after the document's opening is never.
+            #
+            # What that cost is a STAIRCASE, in every document whose paragraph
+            # numbers live IN its headings ("1. At the close of the second
+            # Millennium"). There is then no numbered block between one
+            # heading and the next to reset `prev_heading_idx`, so the whole
+            # document is one unbroken run of headings, each ranked against the
+            # one before it rather than against its own siblings. Redemptor
+            # Hominis' four parts came out at levels 2, 3, 4, 5 -- identical
+            # centred bold on the page, one tier deeper each time -- and
+            # Laborem Exercens reached level 7. Titles and positions were right
+            # in both; only the nesting was wrong, which is the signature of a
+            # heading that never gets popped.
+            #
+            # Now a style that already has a level in this document keeps it,
+            # which is `docs/writing-descriptions.md` §3 -- if two headings look
+            # the same on the page they are the same level -- stated where the
+            # walk can act on it. `depth_key`, not raw style, is what has to
+            # match: Lumen Gentium PT's `CAPÍTULO VIII` and the `I. PROÉMIO`
+            # nested inside it are set in the same centred bold but differ in
+            # key, so that pair is untouched.
+            lvl = assigned[key]
         elif (
             prev_heading_idx is not None
             and not prev_was_subtitle
@@ -4506,8 +4534,6 @@ def parse_document(
             # its subtitle, then siblings -- not a staircase. Chaining +1 per
             # heading sent Evangelium Vitae's chapter openings to h5.
             lvl = heading_level[prev_heading_idx]
-        elif key in assigned:
-            lvl = assigned[key]
         elif last_level is None:
             # Deliberately the styling rank, not 1. Anchoring the first
             # heading at h1 reads better for Laudato Si', whose introduction
@@ -4572,6 +4598,54 @@ def parse_document(
         heading_level[idx] = lvl
         prev_heading_idx = idx
         last_level = lvl
+
+    # A PROMOTED FRONT/BACK-MATTER HEADING MAY NOT OUTRANK ITS OWN TWINS.
+    #
+    # `depth_key` lifts a CONCLUSION or PROÉMIO to the tier of the document's
+    # labelled divisions, which is right where the page prints it as that tier
+    # (Gaudium et Spes' PROÉMIO beside its PARTE I). But the key it returns
+    # outranks EVERY style key, so in a document whose divisions are unlabelled
+    # the promotion does not join a tier -- it invents one above the whole
+    # document, and the closing heading comes out alone at level 1 with its
+    # five identically-printed siblings at 2.
+    #
+    # `aeterna-dei.en` is the clean case: six divisions in byte-identical
+    # `<p align="CENTER">`, no bold, no italic, none of them saying CHAPTER,
+    # and CONCLUSION alone lifted. `mater.en` does it across five,
+    # `orientalium-ecclesiarum.en` across eight. The audit reported each as
+    # "most headings parsed +1 level(s)" with the closing heading the lone
+    # outlier -- the signature of a phantom tier rather than a real one.
+    #
+    # The repair is stated as the constraint it is, and NOT as a guard on the
+    # promotion itself: withholding the key entirely collapses a tier in
+    # `divini-redemptoris.pt`, whose INTRODUÇÃO, seven parts and their
+    # sub-headings need three levels out of two styles and get the third from
+    # exactly this key. Here the promotion still happens; it is only stopped
+    # from rising ABOVE headings the page sets in the same style, which is
+    # `docs/writing-descriptions.md` §3 read as a post-condition -- if two
+    # headings look the same on the page they are the same level.
+    #
+    # AND ONLY WHERE THE DOCUMENT LABELS NOTHING. A page that does say PART or
+    # CHAPTER has a real top tier for the promotion to join, and there the
+    # front matter is SUPPOSED to outrank its same-styled twins: Gaudium et
+    # Spes EN sets PREFACE in the style of its chapters and means it as the
+    # peer of PARTE I, so pulling it down to the chapters cost that document
+    # two headings before this guard was added.
+    def _is_matter(b: Block) -> bool:
+        return fold(strip_markers(b.text)).strip(" .:;-") in _FRONT_BACK_MATTER
+
+    for i in list(heading_level) if not labelled else []:
+        if not _is_matter(blocks[i]):
+            continue
+        twins = [
+            heading_level[j]
+            for j in heading_level
+            if j != i
+            and blocks[j].style == blocks[i].style
+            and not _is_matter(blocks[j])
+        ]
+        if twins:
+            heading_level[i] = max(heading_level[i], min(twins))
 
     used = sorted(set(heading_level.values()))
     compact = {lvl: i + 1 for i, lvl in enumerate(used)}
