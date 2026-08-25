@@ -45,13 +45,13 @@
 				// resting state, so there's nothing to apply for it. Sepia is a
 				// separate presence-only attribute; the stylesheet, not this
 				// script, is what makes it yield to dark. `data-oled` is the
-				// same shape, yielding to light instead. `data-cues` yields to
-				// neither — it adds rules to whatever palette is showing.
+				// same shape, yielding to light instead. `data-mono` yields to
+				// neither and suspends sepia; the stylesheet does that too.
 				var m = localStorage.getItem('glossa:dark-mode');
 				var sep = localStorage.getItem('glossa:sepia');
 				var oled = localStorage.getItem('glossa:oled');
-				var cues = localStorage.getItem('glossa:cues');
-				if (m === null && sep === null && oled === null && cues === null) {
+				var mono = localStorage.getItem('glossa:mono');
+				if (m === null && sep === null && oled === null && mono === null) {
 					// Same migration off the old single-valued key as
 					// theme.svelte.ts's migrateLegacy — without it, a returning
 					// reader flashes the default theme on every load until they
@@ -73,8 +73,8 @@
 				if (oled === '1') {
 					document.documentElement.setAttribute('data-oled', '');
 				}
-				if (cues === '1') {
-					document.documentElement.setAttribute('data-cues', '');
+				if (mono === '1') {
+					document.documentElement.setAttribute('data-mono', '');
 				}
 			} catch (e) {}
 			try {

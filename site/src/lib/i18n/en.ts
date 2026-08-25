@@ -42,16 +42,16 @@ export const en: Dictionary = {
 	// switch's row, so it has to stay to about fifteen characters.
 	// `oled.darkOnly` is the mirror of it, under the same length limit, and
 	// shows while LIGHT is what the reader is looking at.
-	// `cues.label` NAMES the setting and `cues.hint` says what it does —
+	// `sepia.noHue` is the THIRD note that row can show: monochrome suspends
+	// sepia the same way dark does, so the switch has two different reasons
+	// to be greyed out and has to say which one applies. Same length limit.
+	// `mono.label` names the setting and `mono.hint` says what it costs —
 	// the label is a row title of the same width as the others, so the
-	// sentence goes in the switch's `title` instead of beside it.
-	// THIS IS THE ONE ROW NAMED AFTER ITS AUDIENCE rather than after its
-	// mechanism, which every other row here is ("Dark mode", "Sepia",
-	// "OLED black", "Text size"). The mechanism name went through a round
-	// of "Shape cues" and was not intuitive to anyone who had not read
-	// app.css; the audience name is the word a reader who needs this will
-	// actually scan the panel for. The KEY still says `cues`, matching the
-	// store field and the `data-cues` attribute — code names mechanisms.
+	// sentence goes in the switch's `title` instead of beside it. Naming it
+	// for the mechanism rather than for an audience is deliberate and was
+	// arrived at the hard way: this row was once "Shape cues" and then
+	// "Colour-blind", and a reader who wants a grey page should not have to
+	// identify themselves to find it.
 	// KEEP THE THREE `darkMode` OPTIONS SHORT. They are three cells of one
 	// full-width segmented control inside a ~13rem panel, set uppercase at
 	// 0.68rem, so a long word in any language pushes the panel wider.
@@ -62,11 +62,12 @@ export const en: Dictionary = {
 	'darkMode.off': 'Off',
 	'sepia.label': 'Sepia',
 	'sepia.lightOnly': 'Light mode only',
+	'sepia.noHue': 'Not in mono',
 	'oled.label': 'OLED black',
 	'oled.darkOnly': 'Dark mode only',
-	'cues.label': 'Colour-blind',
-	'cues.hint':
-		'Underline reference numbers and links, and mark saved and cited passages, so nothing on the page is told by colour alone',
+	'mono.label': 'Monochrome',
+	'mono.hint':
+		'Sets the whole page in a single grey, so nothing is told apart by colour. Sepia turns off while it is on.',
 	'fontSize.label': 'Text size',
 	'fontSize.larger': 'Larger text',
 	'fontSize.smaller': 'Smaller text',

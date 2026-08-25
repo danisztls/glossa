@@ -36,11 +36,12 @@ export const fr: Dictionary = {
 	'darkMode.off': 'Non',
 	'sepia.label': 'Sépia',
 	'sepia.lightOnly': 'Mode clair seul',
+	'sepia.noHue': 'Pas en mono',
 	'oled.label': 'Noir OLED',
 	'oled.darkOnly': 'Mode sombre seul',
-	'cues.label': 'Daltonisme',
-	'cues.hint':
-		'Souligne les numéros de référence et les liens, et marque les passages enregistrés et cités, pour que rien sur la page ne se distingue par la seule couleur',
+	'mono.label': 'Monochrome',
+	'mono.hint':
+		'Compose toute la page dans un seul gris, de sorte que rien ne se distingue par la couleur. Le sépia s’éteint tant qu’il est actif.',
 	'fontSize.label': 'Taille du texte',
 	'fontSize.larger': 'Texte plus grand',
 	'fontSize.smaller': 'Texte plus petit',

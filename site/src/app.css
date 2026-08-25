@@ -1,10 +1,12 @@
 /*
  * Global styles and theme tokens.
  *
- * Two independent appearance axes on <html>: `data-theme` (absent = auto,
- * so `prefers-color-scheme` decides; else 'light' / 'dark') and `data-sepia`
- * (a presence-only paper tint that yields to dark). See
- * `src/lib/theme.svelte.ts`. Colors are placeholders — real
+ * Four independent appearance axes on <html>: `data-theme` (absent = auto,
+ * so `prefers-color-scheme` decides; else 'light' / 'dark'), `data-sepia`
+ * (a presence-only paper tint that yields to dark), `data-oled` (a
+ * presence-only true black that needs it) and `data-mono` (a presence-only
+ * single-hue palette, which suspends sepia for the same reason dark does).
+ * See `src/lib/theme.svelte.ts`. Colors are placeholders — real
  * palette lands in the design pass (see docs/decisions.md); the type below
  * is no longer a placeholder.
  */
@@ -388,11 +390,17 @@
  * sepia block below the dark ones would silently give a reader with dark on
  * and sepia left enabled a light screen at night.
  *
- * OLED comes last, and it is the mirror image: a dark-mode-only modifier
+ * OLED comes next, and it is the mirror image: a dark-mode-only modifier
  * that has to beat dark, so it both follows the dark blocks AND outranks
  * them at (0,3,0). It does not rely on order the way sepia does, because it
  * cannot: it must lose to nothing and apply to nothing but dark, so the
  * light case is excluded in the selector itself rather than by position.
+ *
+ * MONOCHROME COMES LAST and beats all of them, also at (0,3,0) and also by
+ * selector rather than by position — it applies in both halves of the
+ * light/dark axis, so it cannot borrow either one's exclusion. Its light
+ * blocks restate the plain ground because suspending sepia is part of what
+ * it means; its dark blocks restate none, so OLED still shows through.
  *
  * `color-scheme` is pinned per block rather than left at `html`'s
  * `light dark`: once the reader has made an explicit choice, the browser's
@@ -509,6 +517,113 @@
 	--color-bg-elevated: #1c1311;
 	--color-border: #3a2c2a;
 	--color-accent-contrast: #000000;
+}
+
+/*
+ * MONOCHROME: the whole page in a single grey, so nothing anywhere is told
+ * apart by hue. Presence-only `data-mono`, off by default.
+ *
+ * WHY A PALETTE AND NOTHING ELSE. This replaced a mode that added marks —
+ * underlines on links and reference numbers, a box on a saved unit, a rule
+ * beside a cited passage — on the argument that a dichromat's colour space
+ * is two-dimensional and three signals do not fit in it. The measurements
+ * behind that are still true and still worth keeping, because they are what
+ * this mode's numbers have to be read against:
+ *
+ *   accent vs bookmark    dE 29.0 light / 36.4 dark, falling to 10.6 / 10.3
+ *                         under deuteranopia (Brettel 1997)
+ *   the two 12% washes    7.2 / 13.1, falling to 2.6 / 2.0
+ *   apparatus vs both     39-55 under every deficiency — the blue is fine
+ *
+ * But decoration is a cost paid on every page by a reader who wanted a
+ * palette, and this is a reading site before it is a demonstration of
+ * WCAG 1.4.1. So the mode is now exactly what its name says: one hue.
+ *
+ * WHERE THE GREYS COME FROM. A single hue at near-zero chroma — 60 in the
+ * light family, 45 in the dark one, so the ramp stays faintly warm against
+ * grounds that are themselves warm — sampled every 0.005 in OKLCH L, kept
+ * only where it clears 4.5:1 on every ground the family has and dE 12 from
+ * that family's body text, then the three furthest apart:
+ *
+ *   light   #443f3b  #5e5854  #756f6a     mutual dE 8.6
+ *   dark    #8e847f  #a69c97  #c1b6b2     mutual dE 7.6
+ *
+ * THAT SEPARATION IS THE CEILING, NOT A CHOICE, and it is worth being plain
+ * about: 8.6 is a fifth of what the colours manage for a reader who can see
+ * them, and about what red and gold already collapse to under deuteranopia.
+ * A grey has only lightness to spend, the AA floor sets one end of the band
+ * and body text sits at the other, and what is left between them is this
+ * wide. Monochrome buys freedom from hue, not a sharper distinction.
+ *
+ * ROLES ARE ASSIGNED BY WEIGHT, mirrored between the two families so the
+ * mode means the same thing in both: the apparatus is the quietest step
+ * (furthest from body text), the accent and links take the middle, and a
+ * bookmark — the reader's own mark — takes the strongest, which is the
+ * darkest grey on paper and the brightest on a dark ground.
+ *
+ * IT SUSPENDS SEPIA, because a paper tint is a hue and this mode is the
+ * claim that there are none. That is why the light blocks below restate the
+ * plain light ground rather than only the six semantic tokens — and why
+ * they are split in two, one per `prefers-color-scheme`, instead of the
+ * single `:not([data-theme='dark'])` that would read more naturally: such a
+ * rule would also match a reader on `auto` under a dark system, and paint
+ * their page white before the dark block below got to the accent. The dark
+ * blocks restate no ground at all, which is what leaves OLED's true black
+ * standing underneath them.
+ */
+
+@media (prefers-color-scheme: light) {
+	:root[data-mono]:not([data-theme='dark']) {
+		color-scheme: light;
+		--color-bg: #ffffff;
+		--color-bg-elevated: #f6f5f1;
+		--color-border: #ddd9d0;
+		--color-text: #1c1a17;
+		--color-text-muted: #6b6559;
+		--color-accent: #5e5854;
+		--color-accent-contrast: #ffffff;
+		--color-link: #5e5854;
+		--color-initial: #5e5854;
+		--color-apparatus: #756f6a;
+		--color-focus-ring: #756f6a;
+		--color-bookmark: #443f3b;
+	}
+}
+
+:root[data-mono][data-theme='light'] {
+	color-scheme: light;
+	--color-bg: #ffffff;
+	--color-bg-elevated: #f6f5f1;
+	--color-border: #ddd9d0;
+	--color-text: #1c1a17;
+	--color-text-muted: #6b6559;
+	--color-accent: #5e5854;
+	--color-accent-contrast: #ffffff;
+	--color-link: #5e5854;
+	--color-initial: #5e5854;
+	--color-apparatus: #756f6a;
+	--color-focus-ring: #756f6a;
+	--color-bookmark: #443f3b;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root[data-mono]:not([data-theme='light']) {
+		--color-accent: #a69c97;
+		--color-link: #a69c97;
+		--color-initial: #a69c97;
+		--color-apparatus: #8e847f;
+		--color-focus-ring: #8e847f;
+		--color-bookmark: #c1b6b2;
+	}
+}
+
+:root[data-mono][data-theme='dark'] {
+	--color-accent: #a69c97;
+	--color-link: #a69c97;
+	--color-initial: #a69c97;
+	--color-apparatus: #8e847f;
+	--color-focus-ring: #8e847f;
+	--color-bookmark: #c1b6b2;
 }
 
 *,

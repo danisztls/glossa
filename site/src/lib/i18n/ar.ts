@@ -36,11 +36,12 @@ export const ar: Dictionary = {
 	'darkMode.off': 'إيقاف',
 	'sepia.label': 'بنّي فاتح',
 	'sepia.lightOnly': 'في الوضع الفاتح فقط',
+	'sepia.noHue': 'ليس في الأحادي',
 	'oled.label': 'أسود OLED',
 	'oled.darkOnly': 'في الوضع الداكن فقط',
-	'cues.label': 'عمى الألوان',
-	'cues.hint':
-		'يضع خطًّا تحت أرقام المراجع والروابط، ويعلّم المقاطع المحفوظة والمقتبسة، حتى لا يتميّز شيء في الصفحة باللون وحده',
+	'mono.label': 'أحادي اللون',
+	'mono.hint':
+		'يضبط الصفحة كاملة بدرجة رمادية واحدة، فلا يُميَّز شيء باللون. يُطفأ السيبيا أثناء تفعيله.',
 	'fontSize.label': 'حجم النصّ',
 	'fontSize.larger': 'نصّ أكبر',
 	'fontSize.smaller': 'نصّ أصغر',

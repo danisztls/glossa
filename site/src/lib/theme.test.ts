@@ -9,6 +9,7 @@ beforeEach(() => {
 	appearance.setMode('auto');
 	appearance.setSepia(false);
 	appearance.setOled(false);
+	appearance.setMono(false);
 	appearance.systemDark = false;
 });
 
@@ -117,5 +118,67 @@ describe('AppearanceStore.oledActive', () => {
 			appearance.systemDark = systemDark;
 			expect(appearance.sepiaActive && appearance.oledActive).toBe(false);
 		}
+	});
+});
+
+// The third switch, and the one that is NOT a mirror of the other two:
+// monochrome has a palette for both halves of the light/dark axis, so nothing
+// suspends it — it is the axis that suspends something else. These cases exist
+// to fail if someone ever gives it a `monoActive`.
+describe('AppearanceStore.mono', () => {
+	it('is off until the reader asks for it', () => {
+		expect(appearance.mono).toBe(false);
+	});
+
+	it('toggles, and stays where it was put', () => {
+		appearance.toggleMono();
+		expect(appearance.mono).toBe(true);
+		appearance.toggleMono();
+		expect(appearance.mono).toBe(false);
+	});
+
+	it('shows in every theme, unlike sepia and OLED', () => {
+		appearance.setMono(true);
+		for (const [mode, systemDark] of [
+			['auto', false],
+			['auto', true],
+			['on', false],
+			['off', true]
+		] as const) {
+			appearance.setMode(mode);
+			appearance.systemDark = systemDark;
+			expect(appearance.mono).toBe(true);
+		}
+	});
+
+	it('is independent of the OLED switch', () => {
+		appearance.setMono(true);
+		appearance.setOled(true);
+		expect(appearance.mono).toBe(true);
+		appearance.setOled(false);
+		expect(appearance.mono).toBe(true);
+	});
+
+	// A tint is a hue, so it cannot survive a palette that has none — the same
+	// suspension dark performs, arriving from the other axis.
+	it('suspends sepia in light, without forgetting it', () => {
+		appearance.setSepia(true);
+		expect(appearance.sepiaActive).toBe(true);
+
+		appearance.setMono(true);
+		expect(appearance.sepiaSuspended).toBe(true);
+		expect(appearance.sepiaActive).toBe(false);
+		expect(appearance.sepia).toBe(true);
+
+		appearance.setMono(false);
+		expect(appearance.sepiaActive).toBe(true);
+	});
+
+	// `sepiaSuspended` is about the OTHER axes, never about the reader's own
+	// choice — a reader with sepia off must still be able to switch it on.
+	it('leaves the sepia switch usable when the reader simply has it off', () => {
+		expect(appearance.sepia).toBe(false);
+		expect(appearance.sepiaActive).toBe(false);
+		expect(appearance.sepiaSuspended).toBe(false);
 	});
 });

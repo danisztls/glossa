@@ -1,6 +1,7 @@
 <!--
 	The reader's visual settings, in one popover: dark mode, the sepia paper
-	tint, the OLED true-black ground, and the reading text size.
+	tint, the OLED true-black ground, the monochrome palette, and the reading
+	text size.
 
 	WHY ONE MENU. These were two triggers in the header — a palette icon for a
 	four-item theme list (auto/light/dark/sepia) and an "Aa" icon for the size
@@ -24,10 +25,19 @@
 
 	SEPIA AND OLED ARE THE SAME ROW MIRRORED, and they are adjacent so that
 	reads as deliberate: sepia yields to dark, OLED needs it, and so exactly
-	one of the two is ever live. The store (`$lib/theme.svelte.ts`) owns both
+	one of the two is ever live. Monochrome can switch sepia off from a third
+	direction, which is why the sepia row's disabled state asks the store
+	rather than testing `dark` itself. The store (`$lib/theme.svelte.ts`) owns both
 	rules and the note beside each switch is what says so out loud. A switch
 	keeps showing the reader's stored preference while inert rather than
 	snapping to off — it is suspended, not cleared.
+
+	THE MONOCHROME SWITCH IS THE THIRD ONE AND THE ODD ONE OUT: it applies in
+	every theme, so it is the only switch here that is never disabled — it is
+	the one that disables something else. It sits last of the three because
+	it outranks both, and it is the only row carrying a `title`, because
+	"monochrome" names the result without saying what the page gives up for
+	it. What it does is app.css's monochrome section.
 
 	NOTHING HERE CLOSES THE PANEL. `FontSizeMenu` already worked that way (a
 	reader stepping the size up wants to keep clicking and watching), and the
@@ -119,12 +129,14 @@
 						aria-checked={appearance.sepia}
 						aria-label={t('sepia.label')}
 						class="switch-btn"
-						disabled={appearance.dark}
+						disabled={appearance.sepiaSuspended}
 						onclick={() => appearance.toggleSepia()}
 					>
 						<span class="switch" class:on={appearance.sepia}></span>
 					</button>
-					{#if appearance.dark}
+					{#if appearance.mono}
+						<span class="note">{t('sepia.noHue')}</span>
+					{:else if appearance.dark}
 						<span class="note">{t('sepia.lightOnly')}</span>
 					{/if}
 				</div>
@@ -147,6 +159,23 @@
 					{#if !appearance.dark}
 						<span class="note">{t('oled.darkOnly')}</span>
 					{/if}
+				</div>
+			</div>
+
+			<div class="field" role="none">
+				<span class="field-label">{t('mono.label')}</span>
+				<div class="field-control" role="none">
+					<button
+						type="button"
+						role="menuitemcheckbox"
+						aria-checked={appearance.mono}
+						aria-label={t('mono.label')}
+						title={t('mono.hint')}
+						class="switch-btn"
+						onclick={() => appearance.toggleMono()}
+					>
+						<span class="switch" class:on={appearance.mono}></span>
+					</button>
 				</div>
 			</div>
 
