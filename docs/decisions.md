@@ -4826,3 +4826,101 @@ would only encode them:
 The third row, ¶230 at 2.12×, is not a defect: the English prints its
 Augustine citation inline where the Portuguese footnotes it. One such row in
 2,865 is the noise floor being paid for honestly.
+
+## 2026-08-25 — Three units that had swallowed something, and the one sentence a mirror never printed
+
+`audit.py balance` shipped the same day with four findings. Three were
+defects, and this is what each turned out to be. The fourth — `ccc.en` ¶230
+at 2.12×, where the English prints its Augustine citation inline and the
+Portuguese footnotes it — is the noise floor and stays.
+
+### `ccc.en` ¶2051: a summary that had said the Decalogue
+
+The English mirror prints the three-column Ten Commandments table between
+§2051 and §2052 — "The Ten Commandments", then the columns "Exodus 20 2-17",
+"Deuteronomy 5:6-21" and "A Traditional Catechetical Formula" — as 47
+unnumbered `<p>` blocks with no markup distinguishing them from prose. All
+four of those headings were already being recognized by `is_mini_header` and
+discarded; the 43 blocks of Decalogue beneath them, 2,562 characters, were
+being kept as the continuation of §2051, an in-brief on the infallibility of
+the Magisterium. The paragraph measured 2,813 characters against its own 208
+and the Portuguese edition's 187.
+
+**Two narrower rules were tried first and both were wrong**, which is why the
+one that shipped has two conditions:
+
+- _Matter under a mini-header is display matter._ Truncates §1471 in **both**
+  editions by 554 characters: its mini-header is the run-in question "What is
+  an indulgence?" and the definition answering it is the paragraph. Four more
+  EN paragraphs (§§327, 812, 963, 2071) lost text the same way.
+- _Unnumbered prose after an in-brief paragraph is not its continuation._
+  Truncates §§2077–2081, whose sentences the source simply breaks across
+  print lines.
+
+Together — a headed run **inside an in-brief** — they change exactly one
+paragraph in either edition. That narrowness is stated in the code rather than
+hidden: an in-brief is a summary box closing a division, so a headed run
+inside one is a display block printed after the summary, never a question the
+summary asks. The table itself is dropped with its header, counted in the run
+summary and named in the manifest, which is the treatment the Compendium
+already gives this same table in its appendix; the Portuguese mirror prints no
+such table at all, and `raw/` keeps every word.
+
+**An override was considered and rejected on a rights argument.** This is
+exactly the shape `pipeline/overrides/README.md` describes — a quirk of one
+document's markup that no rule states without naming it — and the measurement
+above is the evidence. But an override's `from` must quote what is there now,
+and that is 2,813 characters of the CCC's Scripture text in the **public**
+repository. The longest `from`/`to` pair anywhere in `pipeline/corrections/`
+is 371 characters. The corpus is private for this exact reason
+(2026-08-23), and a layer that is honest about drift is not worth republishing
+the Decalogue for.
+
+### `ccc.en` ¶2436: the sentence is not in the mirror
+
+The paragraph opens on its second sentence. "It is unjust not to pay the
+social security contributions required by legitimate authority" is not in
+`raw/ccc-en/` under any spelling — `social security` returns zero hits across
+all 375 pages — and it is not misfiled into §2435, which is about strikes. So
+it is a source defect, and filing one needs a witness for the English wording
+that is not us.
+
+The witness question is the one that opened this whole thread for the
+Compendium, and here it had an answer: the **USCCB's own flipbook** of the
+printed second English edition
+(`.../flipbooks/catechism/587/`, book p. 585) and **catholicculture.org**
+both read "2436 It is unjust not to pay the social security contributions
+required by legitimate authority. Unemployment almost always wounds its
+victim's dignity…". Filed as `ccc.en-2436-opening-sentence` against page
+`__P8D.HTM`, with a new pre-parse correction field **`paragraph_html`** —
+body prose, alongside `citation_text` and `heading_html`. Its `from` is 37
+characters and anchors uniquely in one page of 375.
+
+### `summa.en` III q. 26 a. 2: an editor's essay filed as `ad 3`
+
+`ad 3` measured 5,354 characters against the Latin's 230. It had absorbed
+"ST. THOMAS AND THE IMMACULATE CONCEPTION (EDITORIAL NOTE)" and the 5,150
+characters after it — a twentieth-century editorial essay, sitting exactly
+where a citation to `ad 3` lands. That is the failure the `preamble` kind
+already exists to prevent, at the other end of the article, so the answer was
+its mirror: a **`postscript`** division kind, outside the citable set,
+rendering under the same neutral "Note" label so no new translation was
+needed in any of the ten interface languages.
+
+The rule that opens one is the edition's own convention for a heading it
+inserts — full capitals, no terminal punctuation. **Five** paragraphs in the
+whole English Summa answer to it, and four are the next question's heading
+printed inside the previous article's region ("VICES OPPOSED TO DISTRIBUTIVE
+JUSTICE (Q[63]) …" and three like it), which never reach the division walk
+because `split_question_region` already cuts on their `(Q[nn])`. The fifth
+carries no question number and so had nothing to cut on. Exactly one article
+in the corpus carries a `postscript`.
+
+`audit.py balance` now excludes both non-Aquinas kinds from what it measures:
+the Latin edition has neither, so counting them measures how much the
+translator wrote. With that and the three fixes, the whole check reports **one
+row in 6,154 units**, and the Summa's range closed from 0.72–2.35× to
+0.72–1.35×.
+
+Reference coverage is unchanged in every family — the bullets, the table and
+the note carry no citations the grammar was reading.

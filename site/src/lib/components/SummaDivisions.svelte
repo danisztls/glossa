@@ -8,10 +8,12 @@
 	ids yet — `refHref` resolves a citation as far as its article — but the
 	anchors cost nothing and are what a division-level link would need.
 
-	`preamble` is the one kind that is not Aquinas's and is deliberately
-	unlabelled beyond a quiet "Note": it holds the translator's bracketed
-	remark that opens 2 articles of 3,113, and giving it a division's heading
-	would present an editorial aside as part of the argument.
+	`preamble` and `postscript` are the kinds that are not Aquinas's, and both
+	are deliberately unlabelled beyond a quiet "Note": they hold the
+	translator's bracketed remark that opens 2 articles of 3,113 and the one
+	editorial essay the edition appends after a last reply, and giving either
+	a division's heading would present an editorial aside as part of the
+	argument.
 -->
 <script lang="ts">
 	import { content } from '$lib/content.svelte';
@@ -77,6 +79,13 @@
 			case 'corpus':
 				return t('summa.corpus');
 			case 'preamble':
+			case 'postscript':
+				// One label for both, because the reader is being told the same
+				// thing either way: this is the edition's note, not the
+				// argument. Where it sits on the page already says which end of
+				// the article it came from, so a second word for it would only
+				// name a distinction that costs nine more translations and
+				// tells nobody anything.
 				return t('summa.preamble');
 		}
 	}

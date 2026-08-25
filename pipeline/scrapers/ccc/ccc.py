@@ -396,7 +396,16 @@ def find_paragraph_number_correction(
 #: construction; a heading's is boilerplate Word markup ("<p
 #: class=MsoNormal>SECTION TWO</b></p>" occurs on four different pages), so
 #: "first page where the string appears" is not a safe address for one.
-_PRE_PARSE_CORRECTION_FIELDS = frozenset({"citation_text", "heading_html"})
+#:
+#: `paragraph_html` is for body prose the mirror gets wrong, and exists
+#: because §2436 drops its opening sentence -- "It is unjust not to pay the
+#: social security contributions required by legitimate authority" is simply
+#: not in raw/ccc-en/ under any spelling. It behaves like `citation_text`
+#: (its `from` is distinctive prose) and files a `page` anyway, because one
+#: is known and a locator that can be checked should be.
+_PRE_PARSE_CORRECTION_FIELDS = frozenset(
+    {"citation_text", "heading_html", "paragraph_html"}
+)
 
 
 def apply_raw_text_corrections(
@@ -795,6 +804,14 @@ class ScrapeState:
         #: `check_declared_structure`.
         self.declared_chains: list[tuple[str, tuple[str, ...]]] = []
         self.dropped: list[str] = []
+        #: The mini-header a display run is currently under, or None. Cleared
+        #: by the next numbered paragraph and by any real heading -- both of
+        #: which end the run the header opened. See `process_page`.
+        self.open_display_header: str | None = None
+        #: (header, block text) for every block dropped as matter under a
+        #: mini-header rather than kept as the previous paragraph's
+        #: continuation.
+        self.display_matter: list[tuple[str, str]] = []
         self.false_starts: list[str] = []
         self.anomalies: list[str] = []
         self.orphan_content: list[str] = []
@@ -981,6 +998,9 @@ def process_page(
     while i < n:
         b = blocks[i]
         if b.is_heading:
+            # A real heading ends whatever a mini-header opened, the same way
+            # the next numbered paragraph does.
+            state.open_display_header = None
             matched = match_label(b.text)
             if matched is not None:
                 kind, num = matched
@@ -1070,14 +1090,64 @@ def process_page(
             state.finalize_open_paragraph()
             state.start_paragraph(cand, b.kind, first_text)
             state.last_n = cand
+            state.open_display_header = None
         elif state.open_paragraph is None:
             if b.kind == "prose" and is_mini_header(first_text):
                 state.dropped.append(first_text)
+                state.open_display_header = first_text
             else:
                 where = state.stack[-1].title if state.stack else "?"
                 state.orphan_content.append(f"[{where}] {first_text[:90]}")
         elif b.kind == "prose" and is_mini_header(first_text):
             state.dropped.append(first_text)
+            state.open_display_header = first_text
+        elif (
+            b.kind == "prose"
+            and state.open_display_header is not None
+            and state.stack
+            and state.stack[-1].kind == "in_brief"
+        ):
+            # DISPLAY MATTER UNDER A MINI-HEADER, INSIDE AN IN-BRIEF. The
+            # parser dropped such a header and then kept the matter under it
+            # as the previous paragraph's continuation -- two incoherent
+            # decisions about one run. It cost §2051: the EN mirror prints
+            # the three-column Ten Commandments table between §2051 and
+            # §2052, its columns headed "Exodus 20 2-17", "Deuteronomy
+            # 5:6-21" and "A Traditional Catechetical Formula" under "The
+            # Ten Commandments" -- all four already recognized by
+            # `is_mini_header` and discarded -- and the 43 blocks of
+            # Decalogue beneath them, 2,562 characters, were stored as
+            # though an in-brief on the infallibility of the Magisterium had
+            # said them, taking §2051 from its own 208 characters to 2,813.
+            # The PT mirror prints no such table, and the 14.9x
+            # cross-language length skew is what found this (`audit.py
+            # balance`).
+            #
+            # BOTH CONDITIONS ARE LOAD-BEARING, and each was established by
+            # running the wider rule over both editions:
+            #
+            #   - "matter under a mini-header" alone truncates §1471 in BOTH
+            #     editions by 554 characters. Its mini-header is the run-in
+            #     question "What is an indulgence?" and the definition
+            #     answering it is the paragraph. Four more EN paragraphs
+            #     (§§327, 812, 963, 2071) lost text the same way.
+            #   - "unnumbered prose after an in-brief paragraph" alone
+            #     truncates §§2077-2081, whose sentences the source simply
+            #     breaks across print lines.
+            #
+            # Together they change exactly one paragraph in either edition,
+            # which is stated here rather than hidden: the rule is narrow
+            # because the thing it describes is rare, not because it was cut
+            # to fit. An in-brief is a summary box closing a division (see
+            # `push_heading`), so a HEADED run inside one is a display block
+            # printed after the summary, never a question the summary asks.
+            #
+            # Unnumbered display matter has nowhere to go in `paragraphs.json`
+            # and is dropped with its header, the same treatment the
+            # Compendium already gives this same table in its appendix. It is
+            # counted in the run summary and named in the manifest, and
+            # `raw/` keeps every word.
+            state.display_matter.append((state.open_display_header, first_text))
         else:
             state.add_continuation(b.kind, first_text)
 
@@ -2019,6 +2089,22 @@ def build_manifest(
             "not attached to any paragraph -- a known v1 capture gap, logged not fabricated; "
             "see scraper output for the per-article breakdown."
         )
+    if state.display_matter:
+        headers = ", ".join(
+            repr(h) for h in dict.fromkeys(h for h, _t in state.display_matter)
+        )
+        notes.append(
+            f"{len(state.display_matter)} block(s), "
+            f"{sum(len(t) for _h, t in state.display_matter):,} characters, are display "
+            f"matter printed under a mini-header inside an in-brief ({headers}) and are "
+            "dropped with that header rather than stored as the preceding paragraph's "
+            "continuation, which is where they used to go. In this edition that is the "
+            "three-column Ten Commandments table the mirror prints between paragraph "
+            "2051 and 2052; unnumbered display matter has no address in paragraphs.json, "
+            "the Portuguese mirror prints no such table, and the Compendium already "
+            "declines the same table in its own appendix. raw/ keeps every word, so a "
+            "later schema for unnumbered matter recovers it by re-parsing."
+        )
     if sample:
         notes.insert(
             0,
@@ -2123,6 +2209,18 @@ def print_summary(lang: str, state: ScrapeState, ok: bool, problems: list[str]) 
     )
     print(f"source gaps recorded: {state.gaps}")
     print(f"dropped mini-headers: {len(state.dropped)}")
+    if state.display_matter:
+        by_header: dict[str, int] = {}
+        for header, _text in state.display_matter:
+            by_header[header] = by_header.get(header, 0) + 1
+        chars = sum(len(text) for _header, text in state.display_matter)
+        print(
+            f"display matter dropped with its mini-header: "
+            f"{len(state.display_matter)} block(s), {chars:,} chars, under "
+            f"{len(by_header)} header(s)"
+        )
+        for header, count in by_header.items():
+            print(f"  - {header!r}: {count}")
     if state.false_starts:
         print(f"false paragraph-number starts: {state.false_starts}")
     if state.fetch_failures:

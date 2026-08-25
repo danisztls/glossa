@@ -67,8 +67,8 @@ assumption:
     numbering drifts wherever a translation splits or joins a paragraph,
     and `check-symmetry` passes because both editions have the same COUNT.
     Comparing 8,942 units across the 103 EN/PT document pairs put 650 of
-    them outside the band -- 7.3%, against 0.06% for the types kept -- and
-    the ones inspected were all drift. Document truncation is
+    them outside the band -- 7.3%, against one unit in 6,154 for the types
+    kept -- and the ones inspected were all drift. Document truncation is
     what `coverage` above is for, and it is the better instrument: it needs
     no sibling edition and says how much was lost.
   - **The Bible.** 95 outliers in 35,743 verses (cpdv.en against
@@ -78,8 +78,19 @@ assumption:
     specific mistake CLAUDE.md warns against.
 
 It reports and never fails, the same footing as the Summa's cross-language
-oracle. Two findings stand open against `ccc.en` as of 2026-08-25 (¶2051,
-¶2436 -- see the run output); gating would only encode them.
+oracle -- but unlike that one, its findings have not all been the edition
+speaking. Its first run produced four, and three were defects it was the
+only thing that could see: `ccc.en` ¶2051 had swallowed the Ten Commandments
+table (14.9x), `ccc.en` ¶2436 was missing the opening sentence the mirror
+never printed (0.49x), and `summa.en` III q. 26 a. 2 had a 5,150-character
+editorial note stored as the continuation of `ad 3` (2.35x). All three were
+fixed on 2026-08-25 (docs/decisions.md).
+
+What is left is the noise floor, and it is worth naming so nobody re-opens
+it: `ccc.en` ¶230 at 2.12x prints its Augustine citation inline where the
+Portuguese footnotes it. Gating is still not offered, because the band that
+would clear that row is wide enough to have missed ¶2436 anyway -- the value
+here is a short list somebody reads, not a build that stops.
 
   ./audit.py coverage            # ranked table, worst first
   ./audit.py withheld            # marker vs unpublished.json
@@ -526,9 +537,10 @@ BALANCE_TYPES = ("catechism", "compendium", "prayer", "summa")
 BALANCE_MIN_UNITS = 20
 
 #: Reporting band, in multiples of the pair's own median ratio. Calibrated
-#: against what the corpus actually holds: every legitimate unit measured
-#: across the CCC, the Compendium, the prayers and the Summa sits inside
-#: [0.49, 2.35], and the one outright parse defect sits at 14.9.
+#: against what the corpus actually holds: with the three defects of
+#: 2026-08-25 repaired, every remaining unit across the CCC, the Compendium,
+#: the prayers and the Summa sits inside [0.53, 2.12], and the defects had
+#: sat at 0.13, 0.14, 0.24, 0.41, 0.49, 2.35 and 14.9.
 BALANCE_LOW, BALANCE_HIGH = 0.5, 2.0
 
 
@@ -579,6 +591,12 @@ def unit_texts(work: Path, work_type: str) -> dict | None:
                 out[(q["part"], q["n"], article["n"])] = " ".join(
                     V.strip_tags(block.get("html") or "")
                     for division in article["divisions"]
+                    # `preamble` and `postscript` are the English edition's
+                    # own editorial matter and are outside the citable set
+                    # (docs/corpus-schema.md). The Latin edition has neither,
+                    # so counting them measures how much the translator wrote,
+                    # which is not what this check is asking.
+                    if division["kind"] not in ("preamble", "postscript")
                     for block in division["blocks"]
                 )
         return out

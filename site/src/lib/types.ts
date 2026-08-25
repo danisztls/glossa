@@ -116,13 +116,18 @@ export interface SummaManifest extends WorkManifestBase {
  * `ad 3` (the third reply) as locators, so they are stored as structure
  * rather than flattened into prose.
  *
- * `preamble` is the one member that is not Aquinas's: it holds prose the
- * English edition prints before the first objection — a translator's
- * bracketed note, on 2 articles of 3,113 — and is deliberately outside the
- * citable set. Nothing may cite it, and it exists only so that text is
- * neither dropped nor mis-filed as the body.
+ * `preamble` and `postscript` are the two members that are not Aquinas's,
+ * and both are deliberately outside the citable set: nothing may cite them,
+ * and they exist only so that the edition's own editorial matter is neither
+ * dropped nor mis-filed as part of the argument. `preamble` holds the
+ * translator's bracketed note that opens 2 articles of 3,113; `postscript`
+ * holds the one note the edition appends after the last reply, on III q. 26
+ * a. 2, which was previously stored as the continuation of `ad 3` — a
+ * twentieth-century editor's essay on the Immaculate Conception sitting
+ * exactly where a citation to `ad 3` lands. Both read as "Note".
  */
-export type SummaDivisionKind = 'preamble' | 'objection' | 'sed-contra' | 'corpus' | 'reply';
+export type SummaDivisionKind =
+	'preamble' | 'objection' | 'sed-contra' | 'corpus' | 'reply' | 'postscript';
 
 export interface SummaDivision {
 	kind: SummaDivisionKind;

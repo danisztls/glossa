@@ -136,12 +136,24 @@ CT_PAGE_PREFIX_PART = {"1": "I", "2": "I-II", "3": "II-II", "4": "III"}
 #: that text is neither dropped nor mis-filed as the body -- the alternative
 #: this parser first produced, which put a translator's gloss where a
 #: citation to `co.` would land.
+#:
+#: `postscript` is the same thing at the other end of the article, and was
+#: added on 2026-08-25 for the same reason: the edition appends one editorial
+#: note AFTER the last reply -- "ST. THOMAS AND THE IMMACULATE CONCEPTION
+#: (EDITORIAL NOTE)", 5,354 characters of it, on III q. 26 a. 2 -- and it was
+#: being stored as the continuation of `ad 3`. That put a twentieth-century
+#: editor's essay exactly where a citation to `ad 3` lands, which is the
+#: failure `preamble` already exists to prevent. Also outside the citable
+#: set, and labelled the same "Note" in the reader. Found by `audit.py
+#: balance`: the article measured 2.35x its Latin sibling, the widest skew
+#: in 2,663 shared articles.
 DIVISION_ORDER = {
     "preamble": -1,
     "objection": 0,
     "sed-contra": 1,
     "corpus": 2,
     "reply": 3,
+    "postscript": 4,
 }
 
 CCEL_XML_URL = "https://ccel.org/ccel/aquinas/summa.xml"
@@ -570,15 +582,60 @@ def split_question_region(
     return prologue, divisions
 
 
+def is_inserted_heading(text: str) -> bool:
+    """True for a heading this edition inserts into the running text: set in
+    full capitals, with no terminal sentence punctuation.
+
+    That is the edition's own convention and not a guess. Five paragraphs in
+    the whole English Summa answer to it, and four are the next question's
+    heading, printed inside the previous article's region -- "VICES OPPOSED
+    TO DISTRIBUTIVE JUSTICE (Q[63]) OF RESPECT OF PERSONS (FOUR ARTICLES)"
+    and three like it. Those never reach here, because
+    `split_question_region` already cuts on their `(Q[nn])`. The fifth
+    carries no question number and so had nothing to cut on: the editorial
+    note on the Immaculate Conception, which is what this predicate is for.
+    """
+    stripped = strip_tags(text).strip()
+    if not stripped or len(stripped) > 90:
+        return False
+    letters = [c for c in stripped if c.isalpha()]
+    if not letters or not all(c.isupper() for c in letters):
+        return False
+    return not stripped.endswith((".", "!", "?", ":", ";"))
+
+
+def test_is_inserted_heading_separates_a_caps_heading_from_shouted_prose() -> None:
+    assert is_inserted_heading(
+        "ST. THOMAS AND THE IMMACULATE CONCEPTION (EDITORIAL NOTE)"
+    )
+    assert is_inserted_heading("CONFIRMATION (Q[72]) OF THE SACRAMENT OF CONFIRMATION")
+    # Terminal punctuation means a sentence, however it is set.
+    assert not is_inserted_heading("I AM THE LORD YOUR GOD.")
+    # Ordinary prose, and the division openers, are not all capitals.
+    assert not is_inserted_heading("Reply to Objection 3: Although it belongs")
+    assert not is_inserted_heading("")
+
+
 def en_divisions(blocks: list[str], div_id: str, anomalies: list[str]) -> list[dict]:
     """Group an article's paragraphs under the division each one opens.
 
     A paragraph with no marker continues the division above it -- the long
     `corpus` of a substantial article runs to several paragraphs, and they
-    are its blocks, not four anonymous ones."""
+    are its blocks, not four anonymous ones. The exception is a heading the
+    edition inserts mid-article: it opens a `postscript`, and everything
+    after it belongs there rather than to the reply it happens to follow.
+    See `DIVISION_ORDER`."""
     divisions: list[dict] = []
     for block in blocks:
-        opened = en_division_of(block, seen=tuple(d["kind"] for d in divisions))
+        in_postscript = bool(divisions) and divisions[-1]["kind"] == "postscript"
+        if divisions and not in_postscript and is_inserted_heading(block):
+            divisions.append({"kind": "postscript", "blocks": []})
+            in_postscript = True
+        opened = (
+            None
+            if in_postscript
+            else en_division_of(block, seen=tuple(d["kind"] for d in divisions))
+        )
         if opened is None:
             if not divisions:
                 # Prose before any marker, and before any objection: an
