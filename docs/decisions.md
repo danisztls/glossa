@@ -107,6 +107,22 @@ print is reported and not failed — that is the page's, and there is nothing to
 invent it from. Three editions omit one or more, and Slovenian prints two of
 them twice.
 
+**A heading in an unexpected style is read, not corrected** (2026-08-25). Same test as
+the separator below, applied to structure: the Swedish Compendium heads two of its eight
+sections `sektionen` where the other six are `avdelningen`, and the Italian numbers one
+chapter `CAPITOLO I` where its other nineteen spell the ordinal out. Both say exactly
+which division they are, so reading them as printed loses nothing and the parser's
+vocabulary widened instead. Contrast the one heading in the same edition that IS
+corrected: Swedish prints `Andra delen` over a SECTION, and `delen` is that edition's word
+for a PART — read as printed it opens a fifth part in a four-part work.
+
+**A missing heading is a claim about the parser until the raw page is opened.** All three
+editions recorded as "omitting" a heading the work has were printing it; two are fixed
+above and the third (`es`) is a parser gap of another kind. The lesson is procedural: the
+subsequence check reports what it did not find, and "not found" was written into a
+manifest note as "not printed at all" without anyone looking at the page. `raw/` is kept
+so that question is always answerable — see `corpus-schema.md` §Compendium.
+
 **A wrong separator is corrected only when it stops the line parsing.** The
 Compendium's reference lines are full of typesetting slips — periods where a
 hyphen belongs, en dashes and hyphens used interchangeably, a semicolon and a

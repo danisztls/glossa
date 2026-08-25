@@ -1063,6 +1063,11 @@ _HU_ORDINALS = {
     "OTODIK": 5,
 }
 
+# The roman numerals are for ONE heading. This edition spells its chapter
+# ordinals out nineteen times and prints the twentieth "CAPITOLO I" (Part One,
+# section two, chapter one). One edition numbering one of its chapters in a
+# different style is not a defect -- the heading says exactly which chapter it
+# is -- so the vocabulary widens rather than the source being corrected.
 _IT_ORDINALS = {
     "PRIMA": 1,
     "SECONDA": 2,
@@ -1074,6 +1079,11 @@ _IT_ORDINALS = {
     "TERZO": 3,
     "QUARTO": 4,
     "QUINTO": 5,
+    "I": 1,
+    "II": 2,
+    "III": 3,
+    "IV": 4,
+    "V": 5,
 }
 
 # Romanian's ordinals past the first are two words ("a doua", "al doilea"),
@@ -1175,7 +1185,10 @@ _ORDINAL_LABELS: dict[str, tuple[dict[str, int], list[tuple[str, str]]]] = {
         [
             ("part", r"^PARTE\s+(PRIMA|SECONDA|TERZA|QUARTA|QUINTA)\b"),
             ("section", r"^SEZIONE\s+(PRIMA|SECONDA|TERZA|QUARTA|QUINTA)\b"),
-            ("chapter", r"^CAPITOLO\s+(PRIMO|SECONDO|TERZO|QUARTO|QUINTO)\b"),
+            (
+                "chapter",
+                r"^CAPITOLO\s+(PRIMO|SECONDO|TERZO|QUARTO|QUINTO|I|II|III|IV|V)\b",
+            ),
         ],
     ),
     "ro": (
@@ -1201,7 +1214,18 @@ _ORDINAL_LABELS: dict[str, tuple[dict[str, int], list[tuple[str, str]]]] = {
         _SV_ORDINALS,
         [
             ("part", r"^(FORSTA|ANDRA|TREDJE|FJARDE|FEMTE)\s+DELEN\b"),
-            ("section", r"^(FORSTA|ANDRA|TREDJE|FJARDE|FEMTE)\s+AVDELNINGEN\b"),
+            # Two nouns for one division: this edition heads six of its eight
+            # sections AVDELNINGEN and the two in Part Two SEKTIONEN. Both are
+            # ordinary Swedish for a section and both say what they mean, so
+            # neither is a defect to correct -- reading them as printed loses
+            # nothing, which is the test. Contrast Part One's second section,
+            # printed "Andra delen": DELEN is this edition's word for a PART,
+            # so reading THAT as printed opens a fifth part in a four-part
+            # work, and it is corrected pre-parse.
+            (
+                "section",
+                r"^(FORSTA|ANDRA|TREDJE|FJARDE|FEMTE)\s+(?:AVDELNINGEN|SEKTIONEN)\b",
+            ),
             ("chapter", r"^(FORSTA|ANDRA|TREDJE|FJARDE|FEMTE)\s+KAPITLET\b"),
         ],
     ),
@@ -1312,6 +1336,11 @@ LANG_CONFIG = {
                 "Seven questions print the number, the reference line and the whole answer "
                 "as one paragraph broken by <br/> (Q361, Q534, Q563-Q566)."
             ),
+            (
+                "Nineteen chapter headings spell their ordinal out ('CAPITOLO PRIMO'); "
+                "the twentieth is printed 'CAPITOLO I'. Read as printed -- the heading "
+                "says which chapter it is either way."
+            ),
         ),
         "title": "Compendio del Catechismo della Chiesa Cattolica",
         "short_title": "Compendio",
@@ -1375,8 +1404,10 @@ LANG_CONFIG = {
             (
                 "The heading opening Part One's second section is printed 'Andra delen' "
                 "(second PART) where the work has a section; corrected pre-parse, see "
-                "corrections-applied.json. The headings opening both sections of Part Two "
-                "are not printed at all, and 39 questions carry no reference line."
+                "corrections-applied.json. Both sections of Part Two are headed "
+                "'sektionen' where the other six are headed 'avdelningen' -- two words "
+                "for one division, both read as printed. 39 questions carry no reference "
+                "line."
             ),
         ),
         "title": "Katolska Kyrkans lilla katekes",
