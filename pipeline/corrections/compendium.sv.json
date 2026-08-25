@@ -1,0 +1,12 @@
+[
+  {
+    "id": "compendium.sv-p1s2-heading-delen-for-avdelningen",
+    "locator": { "part": 1, "section": 2 },
+    "field": "heading_html",
+    "from": ">Andra delen <br /><b><font size=\"4\">DEN KRISTNA TROSBEK&Auml;NNELSEN",
+    "to": ">Andra avdelningen <br /><b><font size=\"4\">DEN KRISTNA TROSBEK&Auml;NNELSEN",
+    "reason": "The heading that opens Part One's second section is printed 'Andra delen' (Second Part) where the work has a section, not a part. Read as printed it opens a fifth part in a work that has four, and everything under it -- the Creed, questions 33 to 217 -- hangs off that phantom part instead of under Part One.",
+    "evidence": "This same edition's own table of contents prints 'Andra avdelningen – den kristna trosbekännelsen' at the corresponding entry, and prints 'Andra delen – firandet av det kristna mysteriet' for the actual second part further down. The other nine editions all set a section here (EN 'Section Two The Profession of the Christian Faith'). The anchor text is unique in the page: the two other occurrences of 'Andra delen' are followed by an en dash and by the word 'kallas'.",
+    "added": "2026-08-25"
+  }
+]

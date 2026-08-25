@@ -171,10 +171,10 @@
 		},
 		"compendium": {
 			"citations": {
-				"total": 1195,
-				"linkable": 1194,
+				"total": 5949,
+				"linkable": 5947,
 				"recognized": 0,
-				"nothing": 1
+				"nothing": 2
 			},
 			"prose": {
 				"blocks": 0,
@@ -186,6 +186,11 @@
 					"key": "1804 1810-1811",
 					"count": 1,
 					"example": "1804; 1810-1811: 1834, 1839"
+				},
+				{
+					"key": "39 43",
+					"count": 1,
+					"example": "39:43; 48-49"
 				}
 			]
 		},

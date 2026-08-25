@@ -251,7 +251,7 @@ This is the decoder ring for `citations` strings ("LG 12", "DS 150", "CIC, can. 
 
 ## Compendium — `questions.json`
 
-The Compendium of the CCC (2005) is Q&A-format: 598 numbered questions, each printed with a reference to the CCC paragraphs it condenses. Work IDs `compendium.{lang}`; manifest `type: "compendium"`. Array ordered by `n`:
+The Compendium of the CCC (2005) is Q&A-format: 598 numbered questions, each printed with a reference to the CCC paragraphs it condenses. Work IDs `compendium.{lang}`; manifest `type: "compendium"`. **Ten editions as of 2026-08-25** — `de`, `en`, `es`, `fr`, `hu`, `it`, `pt`, `ro`, `sl`, `sv` — which is every language vatican.va publishes it in as HTML; the four it publishes only as PDF (`be`, `id`, `lt`, `ru`) are captured in `raw/` and parsed by nothing. This is the first work with more than three editions, and the first to bring content languages the interface does not have. Array ordered by `n`:
 
 ```jsonc
 {
@@ -264,7 +264,8 @@ The Compendium of the CCC (2005) is Q&A-format: 598 numbered questions, each pri
 
 - `ccc_refs` stays a **raw verbatim string** per the store-raw principle; the phase-2 parser expands ranges into links. Empty string if a question prints none.
 - `structure.json` uses the same node schema as the CCC (parts/sections/chapters); the `paragraphs` field is the generic unit-number span described under "Catechism — `structure.json`" above and holds Compendium question numbers here, spanning questions 1–598 by number.
-- The Compendium's Appendix A (common prayers, in Latin parallel) is parsed separately, from the same cached raw HTML, into `prayer.common.{lang}` — see "Prayers" below. Appendix B (doctrinal formulas — virtues, precepts, capital sins, …) remains deferred: not prayers, out of scope for that work too; document its presence in `manifest.notes`.
+- **The division scheme is the same in every edition and is asserted against each**: four parts, eight sections, twenty chapters, in that printed order. The scraper checks the labelled headings it found are a _subsequence_ of that scheme — a heading the work does not have, or one out of order, fails the run; a heading an edition does not print is recorded in `manifest.notes`, because there is nothing to invent it from. Three editions omit headings the work has (`es` one section, `it` one chapter, `sv` two sections), and the unnumbered `sub` nodes beneath a chapter vary widely and legitimately by edition — 42 in Romanian against 109 in Slovenian.
+- The Compendium's Appendix A (common prayers, in Latin parallel) is parsed separately, from the same cached raw HTML, into `prayer.common.{lang}` — see "Prayers" below; only the English and Portuguese appendices are read, the other eight editions' are captured and deferred. Appendix B (doctrinal formulas — virtues, precepts, capital sins, …) remains deferred: not prayers, out of scope for that work too; document its presence in `manifest.notes`.
 - The print edition's sacred-art images and their commentary are out of scope for v1 (note their existence in `manifest.notes`).
 
 ## Prayers — `prayers.json`

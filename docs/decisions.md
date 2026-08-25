@@ -67,6 +67,55 @@ is that capture regret is fixed by **re-parsing, never re-crawling**, and that h
 only while `raw/` is intact. When judging whether a deletion is safe the question is
 never "is this corpus data" but which of the two it is.
 
+**Every edition the source publishes as HTML is parsed, not just the two with
+a dictionary.** The Compendium is ten editions as of 2026-08-25 — de, en, es,
+fr, hu, it, pt, ro, sl, sv — because they exist, they are the same 598
+questions, and the marginal cost of the eighth is a config entry. Four of
+those languages have no interface translation, and that is not a reason to
+decline the text: a reader of Hungarian gets the Compendium in Hungarian and
+everything else in English through `CONTENT_LANG_FALLBACK`, which is better
+than getting the Compendium in English too. It is also what finally separated
+`ContentLang` from `UiLang`, one day after they equalized.
+
+**The same work in ten hands is ten different pages.** Nothing about the
+Compendium's markup is uniform across its editions, and every rule the parser
+has is a claim about which of them: the reference line follows the question in
+eight editions and the answer in two; Romanian sets no `<blockquote>` at all
+and italicises its quotations instead; Swedish prints 21 questions and 39
+answers outside any paragraph; Spanish opens four questions with no period
+after the number and one inside the previous answer's paragraph; Italian packs
+a question, its references and its answer into a single paragraph broken by
+`<br/>`. Each is declared per edition in `LANG_CONFIG` rather than sniffed,
+because a rule that guesses is a rule that will guess wrong silently on the
+eleventh.
+
+**A heading's title ends where the source says, and the source says it two
+ways.** The named anchor is the mirror's own statement and is used where it
+exists (en, pt, es, fr, it); the printed line break between label and title is
+the fallback for the five editions with no usable anchors — Hungarian has 21
+anchors for 33 headings, which is worse than none. The line rule is second
+rather than only because it cannot see a title that wraps: English's "CHAPTER
+ONE 'You Shall Love the Lord Your God / With All Your Heart... / and With All
+Your Mind'" is one title on three lines, and reading lines alone turns the
+last two into sub-headings no edition has.
+
+**The division scheme is asserted as a subsequence, not as equality.** Four
+parts, eight sections, twenty chapters, written down rather than taken from
+one edition's parse. A heading matched that the work does not have, or matched
+out of order, fails the run — that is ours. A heading an edition does not
+print is reported and not failed — that is the page's, and there is nothing to
+invent it from. Three editions omit one or more, and Slovenian prints two of
+them twice.
+
+**A stray U+00C2 before a punctuation mark is decoding, not a correction.**
+38 occurrences across four editions, always in front of an en dash, a curly
+quote or an ellipsis, in files that are pure ASCII and spell every other
+character as an entity: it is the residue of encoding the mark twice, not
+something the source says. It is removed in `strip_tags`, one level up from
+`decode_cp1252`'s claim about the same bytes. The follow-set is what keeps it
+safe and is checked rather than assumed — French prints a real Â in "GRÂCE"
+and "ton ÂME", and a rule reading Â alone would eat it.
+
 **Capture is cheap; re-crawling is not, so capture every edition the source has.**
 vatican.va publishes the Compendium in fourteen languages; we parse two. All fourteen
 are in `raw/` regardless — ten HTML, four PDF-only — because the marginal cost was

@@ -27,21 +27,27 @@ export type WorkType =
 
 /**
  * Bare language subtag the corpus ships content in (see `baseLang` in
- * corpus.ts). The same ten as `UiLang` in i18n.svelte.ts since 2026-08-24,
- * when Latin — the last member that was content-only, and the asymmetry
- * `content.svelte.ts` used to depend on — became an interface language too.
+ * corpus.ts). Fourteen tags as of 2026-08-25, and the four newest are the
+ * point of this comment: `hu`, `ro`, `sl` and `sv` arrived with the
+ * Compendium, which vatican.va publishes in ten languages, and NONE of them
+ * is an interface language.
  *
- * THE TWO TYPES STAY SEPARATE ANYWAY, because they answer different
- * questions and are equal today by coincidence of history rather than by
- * construction. A content language arrives when someone ingests a text in
- * it; an interface language arrives when someone writes a dictionary. Greek
- * would enter here alone; a UI translation of a language the corpus has
- * nothing in enters there alone (seven did, with Magnifica Humanitas, which
- * vatican.va publishes in nine and which is still the only work in the
- * corpus in any of them). Nothing should be written that assumes one set is
- * the other.
+ * THE TWO TYPES WERE EQUAL FOR ONE DAY and the comment here said they were
+ * equal by coincidence rather than by construction. They separated on the
+ * next: a content language arrives when someone ingests a text in it, an
+ * interface language when someone writes a dictionary, and the Compendium
+ * brought four texts and no dictionaries. A reader of any of the four gets
+ * the Compendium in their own language and everything else through
+ * `CONTENT_LANG_FALLBACK` — which is what that chain is for, and is a better
+ * answer than declining to store a text because the chrome around it is in
+ * English.
+ *
+ * Nothing may be written that assumes one set is the other. Russian is now
+ * the case in the other direction: an interface language whose only
+ * Compendium is a PDF nothing parses.
  */
-export type ContentLang = 'en' | 'pt' | 'la' | 'de' | 'es' | 'fr' | 'it' | 'pl' | 'ru' | 'ar';
+export type ContentLang =
+	'en' | 'pt' | 'la' | 'de' | 'es' | 'fr' | 'it' | 'pl' | 'ru' | 'ar' | 'hu' | 'ro' | 'sl' | 'sv';
 
 interface WorkManifestBase {
 	id: string;

@@ -1751,8 +1751,14 @@ function parseCitationClauses(text: string, cfg: LangConfig): RefSegment[] {
 // paragraph would be a link wall, not a citation).
 // --------------------------------------------------------------------------
 
+// `\u2011` is the NON-BREAKING hyphen, and it is here because the Romanian
+// Compendium ranges every one of its 598 reference lines with one: "1\u201125"
+// rather than "1-25". Without it none of them was a number list at all, and
+// 490 citations that resolve perfectly well fell out of the coverage report
+// as unrecognized — which is the check working, and the sole reason this was
+// noticed at all.
 function isBareNumberList(text: string): boolean {
-	return /\d/.test(text) && /^[\d\s,.;\-–—]+$/.test(text);
+	return /\d/.test(text) && /^[\d\s,.;\-\u2011–—]+$/.test(text);
 }
 
 function parseBareCccList(text: string, kind: 'ccc' | 'compendium' = 'ccc'): RefSegment[] {

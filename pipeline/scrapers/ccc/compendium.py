@@ -110,10 +110,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from common import (
+    CorrectionDriftError,
     Fetcher,
     FetchPolicy,
+    corrections_receipt,
     download_resumable,
     fold,
+    load_corrections,
     raw_root,
     require_corpus,
     works_root,
@@ -123,8 +126,8 @@ from common import (
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 
-# The corpus is a separate, private repository (docs/decisions.md,
-# 2026-08-23); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
+# The corpus is a separate, private repository (docs/decisions.md
+# §The corpus); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
 RAW_ROOT = raw_root()
 WORKS_ROOT = works_root()
 
@@ -228,9 +231,38 @@ def make_fetcher(cache_dir: Path) -> Fetcher:
 # Text utilities
 # --------------------------------------------------------------------------
 
-_BR_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
+# `<br\b[^>]*>` rather than `<br\s*/?>`: the Word export writes
+# `<br clear="all" />` at 26 places across the ten editions, and the narrow
+# pattern left those to `_TAG_RE`, which drops a tag with no replacement --
+# gluing the two printed lines into one word. Harmless where the source also
+# printed a space, silent corruption where it did not.
+_BR_RE = re.compile(r"<br\b[^>]*>", re.IGNORECASE)
 _TAG_RE = re.compile(r"<[^>]+>")
 _WS_RE = re.compile(r"\s+")
+
+
+#: The Word export that made these pages double-encoded some of its
+#: punctuation, leaving a U+00C2 in front of the mark itself: the entity run
+#: `&Acirc;&#x2013;` where the page prints an en dash, and the same before
+#: curly quotes and the ellipsis. 38 occurrences across four editions, 28 of
+#: them Spanish.
+#:
+#: THIS IS DECODING, NOT A TEXT CORRECTION, which is why it is here rather
+#: than in `pipeline/corrections/`. The stray character is not something the
+#: source says and we disagree with -- it is the byte residue of encoding the
+#: mark twice, in a file that is pure ASCII and expresses every non-ASCII
+#: character as an entity. The same claim `decode_cp1252` makes about this
+#: source's bytes, one level up.
+#:
+#: The follow-set is what keeps it safe and is checked rather than assumed:
+#: only punctuation in the General Punctuation block, never a letter. French
+#: prints a real Â in "GRÂCE" and "ton ÂME", and a rule reading Â alone would
+#: silently eat it.
+_DOUBLE_ENCODED_RE = re.compile("\u00c2([\u2010-\u2027])")
+
+
+def strip_double_encoding(text: str) -> str:
+    return _DOUBLE_ENCODED_RE.sub(r"\1", text)
 
 
 def strip_tags(inner: str) -> str:
@@ -245,11 +277,12 @@ def strip_tags(inner: str) -> str:
     its period)."""
     s = _BR_RE.sub(" ", inner)
     s = _TAG_RE.sub("", s)
-    s = ihtml.unescape(s)
+    s = strip_double_encoding(ihtml.unescape(s))
     return _WS_RE.sub(" ", s).strip()
 
 
 _BOLD_SPAN_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.DOTALL)
+_ITALIC_SPAN_RE = re.compile(r"<i[^>]*>(.*?)</i>", re.DOTALL)
 
 
 def is_full_bold(inner: str) -> bool:
@@ -264,52 +297,93 @@ def is_full_bold(inner: str) -> bool:
     return bool(bold_text) and bold_text == full_text
 
 
-# The IntraText mirror gives every part/section/chapter title its own named
-# anchor -- the target of the page's own table of contents at the top -- and
-# gives it to NOTHING else: not to the label line ("CHAPTER TWO"), not to the
-# unlabelled sub-headings printed in the same centred bold style beneath it.
-# Verified across both editions: all 64 label lines resolve to an anchor,
-# either in their own block or in the one immediately after, and no
-# sub-heading carries one. That makes the anchor the source's own statement of
-# where a title ends, which is what `heading_title` below reads instead of
-# guessing from typography -- boldness alone cannot tell "The Sacramental
-# Celebration of the Paschal Mystery" from the "CELEBRATING THE LITURGY OF THE
-# CHURCH" and "Who celebrates?" that follow it in identical markup.
+def is_full_italic(inner: str) -> bool:
+    """True when the block is a quotation set in italics, attribution aside.
+
+    ROMANIAN HAS NO `<blockquote>` AT ALL. Where the other nine editions set a
+    quotation off as one, it prints an ordinary paragraph in italics with the
+    attribution after the closing italic, in parentheses -- so a walk that
+    knows only `<blockquote>` stored all 24 of its quotations as answer prose
+    and reported "quote blocks: 0" without anything looking wrong.
+
+    Wholly italic OR italic up to the attribution, because that is how the
+    edition prints it: `<i>"Mare esti tu, Doamne..."</i> (Sfantul Augustin).`
+    """
+    full = strip_tags(inner)
+    if not full:
+        return False
+    italic = strip_tags(" ".join(_ITALIC_SPAN_RE.findall(inner)))
+    if not italic:
+        return False
+    body, _ = split_attribution(full)
+    return italic in (full, body)
+
+
+# WHERE A HEADING'S TITLE ENDS, and why it takes two rules to say.
 #
+# A labelled heading is printed as a label line ("CHAPTER TWO", "SEGUNDA
+# PARTE") followed by its title, and the two arrive either as one block with a
+# <br/> between them or as two consecutive blocks -- and the unlabelled
+# sub-headings beneath a chapter are set in the SAME centred bold style, so
+# typography cannot tell the title from what follows it. An earlier version
+# swallowed every following full-bold block and produced chapter titles like
+# "The Sacramental Celebration of the Paschal Mystery CELEBRATING THE LITURGY
+# OF THE CHURCH Who celebrates?", losing the two sub-headings as structure
+# nodes as well.
+#
+# THE NAMED ANCHOR IS THE SOURCE'S OWN ANSWER, where the mirror gives one. It
+# is the target of the page's table of contents, so it wraps the title and
+# nothing else: not the label line, not the sub-headings under it. EN and PT
+# anchor every one of their 33 headings.
+#
+# WHERE IT DOES NOT, the printed line is the next best witness: the source
+# breaks the line between label and title because they are separate lines.
+# Four editions (de, ro, sl, sv) carry no named anchor at all, and Hungarian
+# carries 21 for 33 headings -- worse than none, in that a rule reading only
+# anchors would work silently for two thirds of them.
+#
+# The line rule is SECOND rather than only, because it cannot see a title that
+# wraps: EN's "CHAPTER ONE 'You Shall Love the Lord Your God / With All Your
+# Heart, With All Your Soul, / and With All Your Mind'" is one title printed
+# on three lines, and reading lines alone turns the last two into sub-headings
+# that no edition has. What catches that where no anchor exists is the
+# cross-edition structure check in `validate` -- every edition of this work
+# has the same tree.
 # `[^>]*\bname=` rather than `\s+name=`: the attribute is not always first.
 _ANCHOR_RE = re.compile(r"<a\b[^>]*\bname=[^>]*>(.*?)</a>", re.DOTALL | re.IGNORECASE)
 
 
-def split_anchor(inner: str) -> tuple[str, str, str] | None:
-    """`inner` split around its named anchor: (before, anchor text, after),
-    each flattened to plain text; None when the block carries no anchor.
-    Slicing the raw HTML around the match can cut mid-tag, which is harmless
-    -- `strip_tags` drops tag debris either way."""
+def split_anchor(inner: str) -> tuple[str, str, list[str]] | None:
+    """`inner` split around its named anchor: (before, anchor text, the
+    printed lines after it), the first two flattened to plain text. None when
+    the block carries no anchor. Slicing the raw HTML around the match can cut
+    mid-tag, which is harmless -- `strip_tags` drops tag debris either way."""
     m = _ANCHOR_RE.search(inner)
     if m is None:
         return None
     return (
         strip_tags(inner[: m.start()]),
         strip_tags(m.group(1)),
-        strip_tags(inner[m.end() :]),
+        printed_lines(inner[m.end() :]),
     )
+
+
+def printed_lines(inner: str) -> list[str]:
+    """One block's printed lines: its inner HTML split at `<br/>`, each
+    flattened and the empty ones dropped."""
+    return [t for t in (strip_tags(part) for part in _BR_RE.split(inner)) if t]
 
 
 def _join(*parts: str) -> str:
     return " ".join(part for part in parts if part)
 
 
-_QUESTION_START_RE = re.compile(r"^(\d{1,3})\.\s+(.*)$", re.DOTALL)
-
-# What a printed CCC-paragraph reference string looks like: digits and the
-# punctuation/whitespace used to join and range them (hyphen, en/em dash,
-# comma, semicolon, colon, period -- all seen verbatim in one edition or
-# the other, including apparent printer's-error separators, e.g. PT Q378's
-# "1804; 1810-1811: 1834, 1839"). No letters. Used only to tell a genuine
-# reference line apart from a question that has none printed at all
-# (source omission, e.g. PT Q555) and whose answer prose would otherwise be
-# mis-captured as ccc_refs.
-_REFS_LIKE_RE = re.compile(r"^[0-9,;:.\-–—\s]*$")
+# A question opens with its number, and the three things that follow it vary:
+# "1. What", "523.¿Que" (no space -- ES twice) and "210 ¿Que" (no period at
+# all -- ES twice more). Requiring EITHER the period or the space, rather than
+# both or neither, is what reads all three without also matching a bold
+# reference range: "1210-1211" has neither after its first three digits.
+_QUESTION_START_RE = re.compile(r"^(\d{1,3})(?:\.\s*|\s+)(.*)$", re.DOTALL)
 
 
 def match_question_start(inner: str, stripped: str) -> tuple[int, str] | None:
@@ -415,7 +489,12 @@ class Question:
 
 
 class ScrapeState:
-    def __init__(self):
+    def __init__(self, refs_after: bool = False):
+        #: Whether this edition prints the reference line after the answer
+        #: rather than after the question -- see LANG_CONFIG's `refs_after`.
+        self.refs_after = refs_after
+        self.corrections: list[dict] = []
+        self.corrections_applied: list[dict] = []
         self.stack: list[Node] = []
         self.root_children: list[Node] = []
         self.questions: dict[int, Question] = {}
@@ -429,6 +508,20 @@ class ScrapeState:
     def push_heading(self, kind: str, n: int | None, title: str) -> None:
         self.finalize_current()
         level = LEVELS[kind]
+        # A HEADING THE SOURCE PRINTS TWICE is one division, not two. Slovenian
+        # sets "DRUGI ODDELEK / SEDEM ZAKRAMENTOV CERKVE" before the list of
+        # the seven sacraments and then again, identically, before the first
+        # question under it -- a running head reprinted after the interposed
+        # matter. Read as two sections it gave the work ten, and the
+        # subsequence check in `validate` rejected the whole tree.
+        #
+        # Matched on kind, number AND title, and only against a heading still
+        # open: two chapters numbered 1 in different sections never collide,
+        # because the earlier one has already been popped.
+        for depth, node in enumerate(self.stack):
+            if (node.kind, node.n, node.title) == (kind, n, title):
+                del self.stack[depth + 1 :]
+                return
         while self.stack and self.stack[-1].level >= level:
             self.stack.pop()
         node = Node(kind, n, title, level)
@@ -438,7 +531,7 @@ class ScrapeState:
     def start_question(self, n: int, question_text: str) -> None:
         self.finalize_current()
         self.current = Question(n=n, question=question_text)
-        self.mode = "awaiting_refs"
+        self.mode = "in_answer" if self.refs_after else "awaiting_refs"
         if self.stack:
             self.stack[-1].own.add(n)
         else:
@@ -447,6 +540,11 @@ class ScrapeState:
     def set_refs(self, refs: str) -> None:
         assert self.current is not None
         self.current.ccc_refs = refs
+        # The answer stays open either way. Reading the reference line as the
+        # end of the answer looked right and is not: Romanian prints
+        # question, answer, references, THEN the quotation that closes the
+        # answer, and closing at the references dropped 22 of its 23
+        # quotations as orphans.
         self.mode = "in_answer"
 
     def add_prose(self, text: str) -> None:
@@ -484,6 +582,9 @@ class Block:
     is_bq: bool
     inner: str
     stripped: str
+    #: The opening tag's attributes, verbatim. Kept because `align="center"`
+    #: is the one heading signal every edition agrees on -- see `is_centred`.
+    attrs: str = ""
 
 
 # <li> is here for one reason and it is not tidiness: four English answers
@@ -501,97 +602,256 @@ class Block:
 # matching <li> rather than <ul> is both simpler and the thing that
 # actually carries the text.
 _BLOCK_RE = re.compile(
-    r"<p[^>]*>((?:(?!</p>).)*?)</p>"
-    r"|<blockquote>((?:(?!</blockquote>).)*?)</blockquote>"
-    r"|<li[^>]*>((?:(?!</li>).)*?)</li>",
+    r"<p(?P<attrs>[^>]*)>(?P<p>(?:(?!</p>|<p[\s>]).)*?)(?:</p>|(?=<p[\s>]))"
+    r"|<blockquote>(?P<bq>(?:(?!</blockquote>).)*?)</blockquote>"
+    r"|<li[^>]*>(?P<li>(?:(?!</li>).)*?)</li>",
     re.DOTALL,
 )
 
+# TEXT THAT SITS OUTSIDE ANY PARAGRAPH, read from the GAPS between block
+# matches rather than by adding alternatives to `_BLOCK_RE`. Swedish needs it
+# twice over: 21 of its 598 questions open in bold outside any paragraph
+# (`</p><b>52. Vem har skapat varlden?</b><p>`), and 39 of its answers are
+# bare text between a closing `</p>` and the next `<p>` -- Q386's whole answer
+# on the virtue of faith sits there. Walking only <p>, <blockquote> and <li>
+# lost all 21 questions, which the sequential-number guard reported as source
+# gaps that are not in the source, and stored those 39 answers as nothing but
+# their own reference line.
+#
+# WHY THE GAPS AND NOT AN ALTERNATIVE. An alternative matches wherever it can
+# and CONSUMES what it spans, and this markup leaves bold open across table
+# cells: one such run began inside the Latin Pater noster and closed after
+# question 578, taking the question's whole paragraph with it. Reading only
+# what the main scan did not claim cannot do that.
+#
+# The whole gap becomes one block, not the bold run alone, because Swedish
+# also breaks a question across two bold runs (`<b>116. Har Jesus fornekat</b>
+# <b>Israels tro pa Gud...</b>`) and the second half is not question-shaped on
+# its own.
+_CENTRED_RE = re.compile(r'align\s*=\s*"?center"?', re.IGNORECASE)
 
-def extract_blocks(body: str) -> list[Block]:
+
+#: The longest heading printed in any of the ten editions is 118 characters;
+#: the cap is above that and well below a sentence of catechesis.
+SUB_HEADING_MAX = 140
+
+
+def is_sub_heading(b: Block) -> bool:
+    """Whether an unlabelled block is a sub-heading rather than text.
+
+    Wholly bold is EN's and PT's own mark and is taken at face value. Centring
+    is what the editions that do not embolden use -- but it is also how they
+    set the Creed, the Decalogue and the catechetical formula, which are text.
+    A full stop is what separates the two: a heading in this work does not end
+    in one and a sentence does. Without that clause the Portuguese summary of
+    the Ten Commandments ("Estes dez mandamentos resumem-se em dois...")
+    became a structure node.
+    """
+    if is_full_bold(b.inner):
+        return True
+    return (
+        is_centred(b.attrs)
+        and len(b.stripped) <= SUB_HEADING_MAX
+        and not b.stripped.endswith(".")
+    )
+
+
+def is_centred(attrs: str) -> bool:
+    """Whether the block was printed centred.
+
+    THE ONE TYPOGRAPHIC SIGNAL ALL TEN EDITIONS SHARE. Boldness does not:
+    German, Romanian and Swedish set their unlabelled sub-headings in plain
+    centred text, so `is_full_bold` finds 27 of German's 70 and the rest were
+    silently dropped as orphans. Centring alone is not sufficient either --
+    the Creed, the Decalogue and the epigraphs are centred and are text, not
+    headings -- which is why `is_sub_heading` asks for both this and a shape
+    no sentence has."""
+    return bool(_CENTRED_RE.search(attrs))
+
+
+def split_at_question(inner: str, refs_shape: re.Pattern) -> list[str]:
+    """One `<p>`'s inner HTML, split where the paragraph holds more than one
+    unit of the Q&A stream.
+
+    Usually a question, its reference line and its answer each get a paragraph
+    of their own. Two editions break that, in opposite directions:
+
+      - Spanish ends an answer, prints two `<br/>`s and opens the NEXT
+        question in the same paragraph (Q339 and three more). Read whole, the
+        block starts with answer prose, so nothing matches and the question
+        vanishes.
+      - Italian prints a question, its references and its whole answer as one
+        paragraph broken by `<br/>` (Q534, and six more that lost only their
+        reference line). Read whole, the question's text becomes the question,
+        the references and the answer along with it, and the question is
+        stored with no answer at all.
+
+    So the cuts are: before any later line that opens a question, and -- when
+    the paragraph itself opens with one -- after that question and after the
+    run of reference-shaped lines that follows it. Reference lines are joined
+    rather than split, because an edition may print a range over two lines
+    and both halves are one citation.
+
+    A heading's block also carries `<br/>`s and `heading_title` needs it whole
+    (see `printed_lines`). No heading opens with a question number and none
+    contains one, so no heading is cut here.
+    """
+    parts = _BR_RE.split(inner)
+    if len(parts) < 2:
+        return [inner]
+
+    def joined(lo: int, hi: int) -> str:
+        return "<br/>".join(parts[lo:hi])
+
+    cuts = [
+        j
+        for j, part in enumerate(parts)
+        if j and match_question_start(part, strip_tags(part)) is not None
+    ]
+    opens = match_question_start(parts[0], strip_tags(parts[0])) is not None
+    if not cuts and not opens:
+        return [inner]
+
+    out, prev = [], 0
+    if opens:
+        first_break = cuts[0] if cuts else len(parts)
+        refs_end = 1
+        while refs_end < first_break and refs_shape.match(strip_tags(parts[refs_end])):
+            refs_end += 1
+        for lo, hi in ((0, 1), (1, refs_end), (refs_end, first_break)):
+            if lo < hi:
+                out.append(joined(lo, hi))
+        prev = first_break
+    for j in [*cuts, len(parts)]:
+        if j > prev:
+            out.append(joined(prev, j))
+            prev = j
+    return out
+
+
+def extract_blocks(
+    body: str, refs_shape: re.Pattern, bare_bold: bool = False
+) -> list[Block]:
     blocks: list[Block] = []
+
+    def add(inner: str, is_bq: bool, attrs: str) -> None:
+        for part in [inner] if is_bq else split_at_question(inner, refs_shape):
+            stripped = strip_tags(part)
+            if stripped:
+                blocks.append(Block(is_bq, part, stripped, attrs))
+
+    last_end = 0
     for m in _BLOCK_RE.finditer(body):
-        if m.group(2) is not None:
-            inner = m.group(2)
-            is_bq = True
-        else:
-            # A <p> or a <li>. A list item is answer prose set off by a
-            # bullet, so it enters as prose and `add_prose` joins it onto
-            # the run it belongs to -- the lead-in, the items and the
-            # closing sentence come out as the one block the answer already
-            # was. That is not a compromise forced by the block vocabulary
-            # being prose/quote (docs/corpus-schema.md): it is what the
-            # Portuguese edition, which bullets nothing, produces for the
-            # same four answers. The bullets themselves are presentation
-            # and are recorded in the manifest notes rather than modelled.
-            inner = m.group(1) if m.group(1) is not None else m.group(3)
-            is_bq = False
-        stripped = strip_tags(inner)
-        if not stripped:
+        if bare_bold:
+            add(body[last_end : m.start()], False, "")
+        last_end = m.end()
+        if m.group("bq") is not None:
+            add(m.group("bq"), True, "")
             continue
-        blocks.append(Block(is_bq, inner, stripped))
+        # A <p> or a <li>. A list item is answer prose set off by a bullet, so
+        # it enters as prose and `add_prose` joins it onto the run it belongs
+        # to -- the lead-in, the items and the closing sentence come out as
+        # the one block the answer already was. That is not a compromise
+        # forced by the block vocabulary being prose/quote
+        # (docs/corpus-schema.md): it is what the Portuguese edition, which
+        # bullets nothing, produces for the same four answers. The bullets
+        # themselves are presentation and are recorded in the manifest notes
+        # rather than modelled.
+        inner = m.group("p")
+        add(m.group("li") if inner is None else inner, False, m.group("attrs") or "")
+    if bare_bold:
+        add(body[last_end:], False, "")
     return blocks
 
 
 def heading_title(
     blocks: list[Block], i: int, match_label, state: ScrapeState
-) -> tuple[str, str, int]:
+) -> tuple[str, list[str], int]:
     """The full title of the labelled heading starting at `blocks[i]`, the
-    sub-heading text glued onto the end of it (usually empty), and how many
-    blocks the two of them consumed.
+    sub-headings printed with it (usually none), and how many blocks the whole
+    thing consumed.
 
-    The label line and its title are printed either as one block ("SEGUNDA
-    PARTE<br/>A CELEBRACAO DO MISTERIO CRISTAO") or as two consecutive ones
-    ("CHAPTER TWO", then "God Comes to Meet Man"), and the named anchor says
-    which and where the title ends (see `_ANCHOR_RE`).
+    The label line and its title arrive either as one block
+    ("SEGUNDA PARTE<br/>A CELEBRACAO DO MISTERIO CRISTAO") or as two
+    consecutive ones ("CHAPTER TWO", then "God Comes to Meet Man"). Both are
+    the same shape either way once the block is read as an anchor plus what
+    follows it, or as printed lines -- see the note above `split_anchor` for
+    which rule applies when, and why there are two.
 
-    This USED to swallow every following full-bold block instead, which is
-    the same style the source sets its unlabelled sub-headings in: chapter
-    two of part two came out titled "The Sacramental Celebration of the
-    Paschal Mystery CELEBRATING THE LITURGY OF THE CHURCH Who celebrates?",
-    and the two sub-headings it ate were lost as structure nodes as well as
-    printed as part of the title."""
+    The title KEEPS its label ("Part One The Profession of Faith"): the label
+    is how the work refers to the division, and dropping it would leave the
+    reader a title with no ordinal.
+    """
     b = blocks[i]
+
     split = split_anchor(b.inner)
     if split is not None:
-        pre, name, post = split
-        return _join(pre, name), post, 1
+        pre, name, after = split
+        return _join(pre, name), after, 1
 
     nxt = blocks[i + 1] if i + 1 < len(blocks) else None
-    if nxt is not None and not nxt.is_bq:
-        split = split_anchor(nxt.inner)
-        if split is not None:
-            pre, name, post = split
-            return _join(b.stripped, pre, name), post, 2
-
-    # No anchor in either block. Unattested in both editions as cached, so
-    # this is a "the mirror changed" path, not a known shape: fall back to
-    # the old one-block merge (capped at one -- the unbounded version is the
-    # bug this function exists to fix) and say so in the run summary rather
-    # than silently emitting a bare label as the title.
-    state.anomalies.append(
-        f"heading {b.stripped[:60]!r}: no named anchor on the label block or "
-        "the one after it; title taken from typography alone"
-    )
-    if (
+    followable = (
         nxt is not None
         and not nxt.is_bq
         and match_label(nxt.stripped) is None
-        and is_full_bold(nxt.inner)
         and match_question_start(nxt.inner, nxt.stripped) is None
-    ):
-        return _join(b.stripped, nxt.stripped), "", 2
-    return b.stripped, "", 1
+    )
+    if followable:
+        split = split_anchor(nxt.inner)
+        if split is not None:
+            pre, name, after = split
+            return _join(b.stripped, pre, name), after, 2
+
+    lines = printed_lines(b.inner)
+    if len(lines) > 1:
+        return _join(lines[0], lines[1]), lines[2:], 1
+    if followable:
+        nlines = printed_lines(nxt.inner)
+        if nlines:
+            return _join(b.stripped, nlines[0]), nlines[1:], 2
+
+    # A label with nothing printed after it. Not seen in any of the ten
+    # editions, so this is a "the mirror changed" path: emit the bare label as
+    # the title rather than an empty one, and say so in the run summary.
+    state.anomalies.append(
+        f"heading {b.stripped[:60]!r}: no title line printed after the label"
+    )
+    return b.stripped, [], 1
 
 
 def process_body(body: str, cfg: dict, state: ScrapeState) -> None:
-    blocks = extract_blocks(body)
+    refs_shape = cfg["refs_shape"]
+    blocks = extract_blocks(body, refs_shape, bare_bold=cfg["bare_bold"])
     match_label = cfg["match_label"]
+    italic_quotes = cfg["italic_quotes"]
     i, n = 0, len(blocks)
     while i < n:
         b = blocks[i]
 
+        if not state.stack and match_label(b.stripped) is None:
+            # THE WORK BEGINS AT PART ONE. What precedes it is front matter --
+            # the Motu Proprio's signature, the Introduction, a footnote block
+            # -- and it is not addressable: `sections.json` hangs everything
+            # off a part. EN and PT drop it here already because none of it is
+            # emboldened; ES and HU print their signature line centred, which
+            # made "Joseph Card. Ratzinger, Presidente de la Comision especial"
+            # a top-level structure node.
+            state.dropped_orphans.append(f"front matter: {b.stripped[:80]!r}")
+            i += 1
+            continue
+
         if b.is_bq:
+            if state.current is not None and state.mode == "awaiting_refs":
+                # A quotation where the reference line should be: this
+                # question has none printed, and its whole answer IS the
+                # quotation. Three of the ten editions end that way (DE and
+                # ES at Q598, IT at Q534 and again at Q598), and reading it
+                # any other way stored those questions with no answer at all.
+                state.set_refs("")
+                state.anomalies.append(
+                    f"question {state.current.n}: no reference paragraph "
+                    "printed; the answer opens with a quotation"
+                )
             if state.current is not None and state.mode == "in_answer":
                 state.add_quote(b.stripped)
             else:
@@ -618,9 +878,27 @@ def process_body(body: str, cfg: dict, state: ScrapeState) -> None:
             # inside an answer that happens to start "N. "); fall through
             # and treat as ordinary content below.
 
+        if (
+            state.refs_after
+            and state.mode == "in_answer"
+            and state.current.blocks
+            and not state.current.ccc_refs
+        ):
+            # The reference line follows the answer in these editions rather
+            # than preceding it. Guarded on the answer having started, so a
+            # question whose first block happens to be numeric cannot claim
+            # to be its own citation, and on the citation not already being
+            # set, so a numeric line later in the answer cannot replace it.
+            m = refs_shape.match(b.stripped)
+            if m:
+                state.set_refs(m.group(1).strip() if m.groups() else b.stripped)
+                i += 1
+                continue
+
         if state.mode == "awaiting_refs":
-            if _REFS_LIKE_RE.match(b.stripped):
-                state.set_refs(b.stripped)
+            m = refs_shape.match(b.stripped)
+            if m:
+                state.set_refs(m.group(1) if m.groups() else b.stripped)
                 i += 1
                 continue
             # The block right after this question's opener doesn't look
@@ -637,20 +915,19 @@ def process_body(body: str, cfg: dict, state: ScrapeState) -> None:
             )
 
         matched = match_label(b.stripped)
-        is_heading = matched is not None or is_full_bold(b.inner)
+        is_heading = matched is not None or is_sub_heading(b)
         if is_heading:
             if matched is not None:
                 kind, num = matched
-                title, tail, consumed = heading_title(blocks, i, match_label, state)
+                title, subs, consumed = heading_title(blocks, i, match_label, state)
                 state.push_heading(kind, num, title)
-                if tail:
-                    # Printed inside the title's own block, after the anchor
-                    # closes -- a sub-heading the source glued on with a <br/>
-                    # rather than part of the title. One case in the corpus
-                    # (PT, "OS SIMBOLOS DA FE"), whose EN counterpart prints
-                    # the same heading as a block of its own and already
-                    # parses as a `sub`.
-                    state.push_heading("sub", None, tail)
+                for sub in subs:
+                    # A third printed line in the heading's own block: a
+                    # sub-heading the source set with a <br/> rather than in a
+                    # block of its own. One case in PT ("OS SIMBOLOS DA FE"),
+                    # whose EN counterpart prints the same heading separately
+                    # and already parses as a `sub`.
+                    state.push_heading("sub", None, sub)
                 i += consumed
                 continue
             state.push_heading("sub", None, b.stripped)
@@ -658,7 +935,10 @@ def process_body(body: str, cfg: dict, state: ScrapeState) -> None:
             continue
 
         if state.current is not None and state.mode == "in_answer":
-            state.add_prose(b.stripped)
+            if italic_quotes and is_full_italic(b.inner):
+                state.add_quote(b.stripped)
+            else:
+                state.add_prose(b.stripped)
         else:
             state.dropped_orphans.append(f"paragraph: {b.stripped[:80]!r}")
         i += 1
@@ -667,10 +947,45 @@ def process_body(body: str, cfg: dict, state: ScrapeState) -> None:
 
 
 # --------------------------------------------------------------------------
-# EN / PT label config
+# Label vocabulary, one entry per edition
 # --------------------------------------------------------------------------
+#
+# Every edition prints the same four parts, eight sections and twenty-one
+# chapters, and names them in its own language: "PART TWO", "SEGUNDA PARTE",
+# "PARTE SECONDA", "ZWEITER TEIL", "Partea a doua". What varies is the word
+# order (noun-first in Italian, Spanish and Romanian; ordinal-first in the
+# rest), the ordinal's gender (German declines it: ERSTER TEIL but ERSTES
+# KAPITEL) and, in French alone, the ordinal being a Roman numeral.
+#
+# Matching runs over `fold`ed text -- uppercased, accents stripped -- so the
+# patterns are written without diacritics and match a mixed-case printing of
+# the same label. That is not cosmetic: Romanian prints "Secţiunea a doua" in
+# the body and Hungarian "Első fejezet" in its table of contents, and folding
+# is what lets one pattern read both.
+#
+# The number is looked up rather than parsed, and a label whose ordinal is not
+# in the table yields `n=None` -- a heading with no number, which `validate`
+# reports -- instead of a wrong one.
 
-_EN_WORD_NUM = {
+
+def label_matcher(ordinals: dict[str, int], patterns: list[tuple[str, str]]):
+    """A `match_label` for one edition: folded text in, `(kind, n)` or None
+    out. `patterns` is tried in order, so a noun that prefixes another
+    ("PARTE" before "PARTEA") must be listed the more specific way round."""
+    compiled = [(kind, re.compile(pat)) for kind, pat in patterns]
+
+    def match(stripped: str) -> tuple[str, int | None] | None:
+        folded = fold(stripped)
+        for kind, pat in compiled:
+            m = pat.match(folded)
+            if m:
+                return kind, ordinals.get(m.group(1))
+        return None
+
+    return match
+
+
+_EN_ORDINALS = {
     "ONE": 1,
     "TWO": 2,
     "THREE": 3,
@@ -683,26 +998,7 @@ _EN_WORD_NUM = {
     "TEN": 10,
 }
 
-_EN_LABELS = [
-    ("part", re.compile(r"^PART\s+(ONE|TWO|THREE|FOUR|FIVE)\b")),
-    ("section", re.compile(r"^SECTION\s+(ONE|TWO|THREE|FOUR|FIVE)\b")),
-    (
-        "chapter",
-        re.compile(r"^CHAPTER\s+(ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)\b"),
-    ),
-]
-
-
-def match_label_en(stripped: str) -> tuple[str, int | None] | None:
-    folded = fold(stripped)
-    for kind, pat in _EN_LABELS:
-        m = pat.match(folded)
-        if m:
-            return kind, _EN_WORD_NUM.get(m.group(1))
-    return None
-
-
-_PT_WORD_NUM = {
+_PT_ORDINALS = {
     "PRIMEIRA": 1,
     "SEGUNDA": 2,
     "TERCEIRA": 3,
@@ -715,64 +1011,467 @@ _PT_WORD_NUM = {
     "QUINTO": 5,
 }
 
-_PT_LABELS = [
-    ("part", re.compile(r"^(PRIMEIRA|SEGUNDA|TERCEIRA|QUARTA|QUINTA)\s+PARTE\b")),
-    ("section", re.compile(r"^(PRIMEIRA|SEGUNDA|TERCEIRA|QUARTA|QUINTA)\s+SECCAO\b")),
-    (
-        "chapter",
-        re.compile(r"^CAPI?TULO\s+(PRIMEIRO|SEGUNDO|TERCEIRO|QUARTO|QUINTO)\b"),
+# Both genders, because German declines the ordinal to its noun: der Teil and
+# der Abschnitt take ERSTER, das Kapitel takes ERSTES.
+_DE_ORDINALS = {
+    "ERSTER": 1,
+    "ZWEITER": 2,
+    "DRITTER": 3,
+    "VIERTER": 4,
+    "FUNFTER": 5,
+    "ERSTES": 1,
+    "ZWEITES": 2,
+    "DRITTES": 3,
+    "VIERTES": 4,
+    "FUNFTES": 5,
+}
+
+_ES_ORDINALS = {
+    "PRIMERA": 1,
+    "SEGUNDA": 2,
+    "TERCERA": 3,
+    "CUARTA": 4,
+    "QUINTA": 5,
+    "PRIMERO": 1,
+    "SEGUNDO": 2,
+    "TERCERO": 3,
+    "CUARTO": 4,
+    "QUINTO": 5,
+}
+
+# French numbers its chapters in Roman numerals -- the only edition that does
+# -- so the "ordinal" table here is numerals, and the part/section words are
+# the ordinary ones.
+_FR_ORDINALS = {
+    "PREMIERE": 1,
+    "DEUXIEME": 2,
+    "TROISIEME": 3,
+    "QUATRIEME": 4,
+    "CINQUIEME": 5,
+    "I": 1,
+    "II": 2,
+    "III": 3,
+    "IV": 4,
+    "V": 5,
+}
+
+_HU_ORDINALS = {
+    "ELSO": 1,
+    "MASODIK": 2,
+    "HARMADIK": 3,
+    "NEGYEDIK": 4,
+    "OTODIK": 5,
+}
+
+_IT_ORDINALS = {
+    "PRIMA": 1,
+    "SECONDA": 2,
+    "TERZA": 3,
+    "QUARTA": 4,
+    "QUINTA": 5,
+    "PRIMO": 1,
+    "SECONDO": 2,
+    "TERZO": 3,
+    "QUARTO": 4,
+    "QUINTO": 5,
+}
+
+# Romanian's ordinals past the first are two words ("a doua", "al doilea"),
+# which is why these keys contain spaces: the pattern captures the whole
+# ordinal phrase rather than a single word.
+_RO_ORDINALS = {
+    "INTAI": 1,
+    "A DOUA": 2,
+    "A TREIA": 3,
+    "A PATRA": 4,
+    "A CINCEA": 5,
+    "AL DOILEA": 2,
+    "AL TREILEA": 3,
+    "AL PATRULEA": 4,
+    "AL CINCILEA": 5,
+}
+
+_SL_ORDINALS = {
+    "PRVI": 1,
+    "DRUGI": 2,
+    "TRETJI": 3,
+    "CETRTI": 4,
+    "PETI": 5,
+    "PRVO": 1,
+    "DRUGO": 2,
+    "TRETJE": 3,
+    "CETRTO": 4,
+    "PETO": 5,
+}
+
+_SV_ORDINALS = {
+    "FORSTA": 1,
+    "ANDRA": 2,
+    "TREDJE": 3,
+    "FJARDE": 4,
+    "FEMTE": 5,
+}
+
+_ORDINAL_LABELS: dict[str, tuple[dict[str, int], list[tuple[str, str]]]] = {
+    "en": (
+        _EN_ORDINALS,
+        [
+            ("part", r"^PART\s+(ONE|TWO|THREE|FOUR|FIVE)\b"),
+            ("section", r"^SECTION\s+(ONE|TWO|THREE|FOUR|FIVE)\b"),
+            (
+                "chapter",
+                r"^CHAPTER\s+(ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN|EIGHT|NINE|TEN)\b",
+            ),
+        ],
     ),
-]
+    "pt": (
+        _PT_ORDINALS,
+        [
+            ("part", r"^(PRIMEIRA|SEGUNDA|TERCEIRA|QUARTA|QUINTA)\s+PARTE\b"),
+            ("section", r"^(PRIMEIRA|SEGUNDA|TERCEIRA|QUARTA|QUINTA)\s+SECCAO\b"),
+            ("chapter", r"^CAPITULO\s+(PRIMEIRO|SEGUNDO|TERCEIRO|QUARTO|QUINTO)\b"),
+        ],
+    ),
+    "de": (
+        _DE_ORDINALS,
+        [
+            ("part", r"^(ERSTER|ZWEITER|DRITTER|VIERTER|FUNFTER)\s+TEIL\b"),
+            ("section", r"^(ERSTER|ZWEITER|DRITTER|VIERTER|FUNFTER)\s+ABSCHNITT\b"),
+            ("chapter", r"^(ERSTES|ZWEITES|DRITTES|VIERTES|FUNFTES)\s+KAPITEL\b"),
+        ],
+    ),
+    "es": (
+        _ES_ORDINALS,
+        [
+            ("part", r"^(PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA)\s+PARTE\b"),
+            ("section", r"^(PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA)\s+SECCION\b"),
+            ("chapter", r"^CAPITULO\s+(PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO)\b"),
+        ],
+    ),
+    "fr": (
+        _FR_ORDINALS,
+        [
+            (
+                "part",
+                r"^(PREMIERE|DEUXIEME|TROISIEME|QUATRIEME|CINQUIEME)\s+PARTIE\b",
+            ),
+            (
+                "section",
+                r"^(PREMIERE|DEUXIEME|TROISIEME|QUATRIEME|CINQUIEME)\s+SECTION\b",
+            ),
+            ("chapter", r"^CHAPITRE\s+(I|II|III|IV|V)\b"),
+        ],
+    ),
+    "hu": (
+        _HU_ORDINALS,
+        [
+            ("part", r"^(ELSO|MASODIK|HARMADIK|NEGYEDIK|OTODIK)\s+RESZ\b"),
+            ("section", r"^(ELSO|MASODIK|HARMADIK|NEGYEDIK|OTODIK)\s+SZAKASZ\b"),
+            ("chapter", r"^(ELSO|MASODIK|HARMADIK|NEGYEDIK|OTODIK)\s+FEJEZET\b"),
+        ],
+    ),
+    "it": (
+        _IT_ORDINALS,
+        [
+            ("part", r"^PARTE\s+(PRIMA|SECONDA|TERZA|QUARTA|QUINTA)\b"),
+            ("section", r"^SEZIONE\s+(PRIMA|SECONDA|TERZA|QUARTA|QUINTA)\b"),
+            ("chapter", r"^CAPITOLO\s+(PRIMO|SECONDO|TERZO|QUARTO|QUINTO)\b"),
+        ],
+    ),
+    "ro": (
+        _RO_ORDINALS,
+        [
+            ("part", r"^PARTEA\s+(INTAI|A DOUA|A TREIA|A PATRA|A CINCEA)\b"),
+            ("section", r"^SECTIUNEA\s+(INTAI|A DOUA|A TREIA|A PATRA|A CINCEA)\b"),
+            (
+                "chapter",
+                r"^CAPITOLUL\s+(INTAI|AL DOILEA|AL TREILEA|AL PATRULEA|AL CINCILEA)\b",
+            ),
+        ],
+    ),
+    "sl": (
+        _SL_ORDINALS,
+        [
+            ("part", r"^(PRVI|DRUGI|TRETJI|CETRTI|PETI)\s+DEL\b"),
+            ("section", r"^(PRVI|DRUGI|TRETJI|CETRTI|PETI)\s+ODDELEK\b"),
+            ("chapter", r"^(PRVO|DRUGO|TRETJE|CETRTO|PETO)\s+POGLAVJE\b"),
+        ],
+    ),
+    "sv": (
+        _SV_ORDINALS,
+        [
+            ("part", r"^(FORSTA|ANDRA|TREDJE|FJARDE|FEMTE)\s+DELEN\b"),
+            ("section", r"^(FORSTA|ANDRA|TREDJE|FJARDE|FEMTE)\s+AVDELNINGEN\b"),
+            ("chapter", r"^(FORSTA|ANDRA|TREDJE|FJARDE|FEMTE)\s+KAPITLET\b"),
+        ],
+    ),
+}
+
+MATCH_LABEL = {
+    lang: label_matcher(ordinals, patterns)
+    for lang, (ordinals, patterns) in _ORDINAL_LABELS.items()
+}
 
 
-def match_label_pt(stripped: str) -> tuple[str, int | None] | None:
-    folded = fold(stripped)
-    for kind, pat in _PT_LABELS:
-        m = pat.match(folded)
-        if m:
-            return kind, _PT_WORD_NUM.get(m.group(1))
-    return None
-
+# --------------------------------------------------------------------------
+# The ten parsed editions
+# --------------------------------------------------------------------------
+#
+# `start` and `end` bound the region walked, and are found by a plain `find`
+# in the raw HTML -- `end` searched from `start`, so a table of contents
+# printed above the body cannot be mistaken for it.
+#
+# WHICH MARKER, and why it differs. EN, PT, ES, FR, HU and IT get the named
+# anchor of the Introduction and of the Appendix: those cut the front matter
+# and the prayers off cleanly and are the mirror's own statement of where each
+# begins. The other four carry no anchors at all, so the marker is the text of
+# the part-one heading and of the Appendix. `at_block` marks that second kind
+# and does two things for it: it snaps the cut back to the `<p>` holding the
+# marker, which is what keeps "ERSTER TEIL" in the region rather than losing
+# the first part of the work, and it takes the LAST occurrence rather than the
+# first, because a table of contents prints the same words above the body.
+#
+# `refs_after` says the reference line follows the ANSWER rather than the
+# question -- true of Romanian and Swedish, false of the other eight. It is a
+# property of the printed page, not a parser preference: reading Swedish the
+# other way round would store its whole first answer as a citation.
+#
+# `refs_shape` is how a reference line is recognized and what of it is kept: a
+# printed CCC-paragraph reference is digits and the punctuation used to join
+# and range them, and no letters -- which is what tells a genuine reference
+# line apart from a question that has none printed at all (PT Q555) and whose
+# answer prose would otherwise be stored as its citation. Verbatim, including
+# what look like printer's-error separators (PT Q378's "1804; 1810-1811: 1834,
+# 1839").
+# Everything but Swedish prints the bare numbers; Swedish encloses them in
+# parentheses behind its own siglum for the Catechism ("(KKK 1-25)"). The
+# siglum is dropped and the numbers kept, so `ccc_refs` means the same thing
+# in every edition -- a locator normalization, and the one place any edition's
+# reference line is not stored exactly as printed. Note the U+2011 in the
+# class: Romanian ranges its numbers with a non-breaking hyphen.
+_REFS_LIKE_RE = re.compile(r"^[0-9,;:.\-\u2011\u2013\u2014\s]*$")
+_SV_REFS_RE = re.compile(r"^\(\s*KKK\s*([0-9,;:.\-\u2011\u2013\u2014\s]*)\)$")
 
 LANG_CONFIG = {
     "en": {
-        "url": EN_URL,
-        "start_anchor": 'name="INTRODUCTION"',
-        "end_anchor": 'name="APPENDIX"',
-        "match_label": match_label_en,
-        "work_id": "compendium.en",
+        "start": 'name="INTRODUCTION"',
+        "end": 'name="APPENDIX"',
         "title": "Compendium of the Catechism of the Catholic Church",
         "short_title": "Compendium",
-        "edition": "2005, vatican.va HTML mirror",
     },
     "pt": {
-        "url": PT_URL,
-        "start_anchor": 'name="INTRODU&Ccedil;&Atilde;O"',
-        "end_anchor": 'name="AP&Ecirc;NDICE"',
-        "match_label": match_label_pt,
-        "work_id": "compendium.pt",
+        "start": 'name="INTRODU&Ccedil;&Atilde;O"',
+        "end": 'name="AP&Ecirc;NDICE"',
         "title": "Compêndio do Catecismo da Igreja Católica",
         "short_title": "Compêndio",
-        "edition": "2005, vatican.va HTML mirror",
+    },
+    "de": {
+        "start": "ERSTER TEIL",
+        "end": "ANHANG",
+        "at_block": True,
+        "notes": (
+            (
+                "The chapter label is set in plain centred text rather than bold, and the "
+                "ordinal declines to its noun (ERSTER TEIL, ERSTES KAPITEL)."
+            ),
+        ),
+        "title": "Kompendium des Katechismus der Katholischen Kirche",
+        "short_title": "Kompendium",
+    },
+    "es": {
+        "start": 'name="INTRODUCCI&Oacute;N"',
+        "end": 'name="AP&Eacute;NDICE"',
+        "notes": (
+            (
+                "Four questions are printed without a space after the number (Q523, Q530) "
+                "or with no period at all (Q210, Q586), and Q339 shares its paragraph with "
+                "the end of the previous answer, after two <br/>s."
+            ),
+        ),
+        "title": "Compendio del Catecismo de la Iglesia Católica",
+        "short_title": "Compendio",
+    },
+    "fr": {
+        "start": 'name="INTRODUCTION"',
+        "end": 'name="APPENDICE"',
+        "notes": ("Chapters are numbered in Roman numerals, uniquely among the ten.",),
+        "title": "Compendium du Catéchisme de l'Église catholique",
+        "short_title": "Compendium",
+    },
+    "hu": {
+        "start": 'name="BEVEZET&Eacute;S"',
+        "end": 'name="F&Uuml;GGEL&Eacute;K"',
+        "title": "A Katolikus Egyház Katekizmusának Kompendiuma",
+        "short_title": "Kompendium",
+    },
+    "it": {
+        "start": 'name="INTRODUZIONE"',
+        "end": 'name="APPENDICE"',
+        "notes": (
+            (
+                "Seven questions print the number, the reference line and the whole answer "
+                "as one paragraph broken by <br/> (Q361, Q534, Q563-Q566)."
+            ),
+        ),
+        "title": "Compendio del Catechismo della Chiesa Cattolica",
+        "short_title": "Compendio",
+    },
+    "ro": {
+        "start": "Partea &icirc;nt&acirc;i",
+        "end": "Apendice",
+        "at_block": True,
+        "refs_after": True,
+        "italic_quotes": True,
+        "notes": (
+            (
+                "This edition sets no <blockquote> at all: its 27 quotations are ordinary "
+                "paragraphs in italics with the attribution after the closing italic, in "
+                "parentheses. Its reference line follows the answer rather than the "
+                "question, and a quotation that closes an answer follows the reference "
+                "line in turn."
+            ),
+            (
+                "Numbers in the reference line are ranged with a non-breaking hyphen "
+                "(U+2011), stored as printed."
+            ),
+        ),
+        "title": "Catehismul Bisericii Catolice — Compendiu",
+        "short_title": "Compendiu",
+    },
+    "sl": {
+        "start": "PRVI DEL",
+        "end": "DODATEK",
+        "at_block": True,
+        "notes": (
+            (
+                "The section heading of Part Two's second section and of Part Four's "
+                "second section is printed twice -- once before the matter interposed "
+                "under it (the list of the seven sacraments; the Our Father) and again "
+                "before the first question. The repetition is one division, not two."
+            ),
+        ),
+        "title": "Kompendij — Katekizem Katoliške Cerkve",
+        "short_title": "Kompendij",
+    },
+    "sv": {
+        "start": "F&Ouml;RSTA DELEN",
+        "end": "APPENDIX",
+        "at_block": True,
+        "refs_after": True,
+        "refs_shape": _SV_REFS_RE,
+        "bare_bold": True,
+        "notes": (
+            (
+                "The reference line follows the answer and is enclosed in parentheses "
+                "behind this edition's own siglum for the Catechism, '(KKK 1-25)'. The "
+                "siglum and the parentheses are dropped so that ccc_refs means the same "
+                "thing in every edition; it is the one place any edition's reference line "
+                "is not stored exactly as printed."
+            ),
+            (
+                "21 questions open in bold that sits outside any paragraph, and one of "
+                "those (Q116) is broken across two bold runs."
+            ),
+            (
+                "The heading opening Part One's second section is printed 'Andra delen' "
+                "(second PART) where the work has a section; corrected pre-parse, see "
+                "corrections-applied.json. The headings opening both sections of Part Two "
+                "are not printed at all, and 39 questions carry no reference line."
+            ),
+        ),
+        "title": "Katolska Kyrkans lilla katekes",
+        "short_title": "Lilla katekesen",
     },
 }
+
+for _lang, _cfg in LANG_CONFIG.items():
+    _cfg["url"] = source_url(_lang)
+    _cfg["work_id"] = f"compendium.{_lang}"
+    _cfg["match_label"] = MATCH_LABEL[_lang]
+    _cfg.setdefault("at_block", False)
+    _cfg.setdefault("refs_after", False)
+    _cfg.setdefault("italic_quotes", False)
+    _cfg.setdefault("bare_bold", False)
+    _cfg.setdefault("notes", ())
+    _cfg.setdefault("refs_shape", _REFS_LIKE_RE)
+    _cfg.setdefault("edition", "2005, vatican.va HTML mirror")
+
+
+#: The only field a Compendium correction may target. The layer edits the
+#: FETCHED HTML before parsing, which is what keeps `raw/` the record of what
+#: the mirror actually served (CLAUDE.md, corrections vs overrides); the field
+#: names what kind of text the edit is against, so a correction cannot quietly
+#: be applied somewhere its evidence does not cover.
+_CORRECTION_FIELDS = frozenset({"heading_html"})
+
+
+def apply_corrections(
+    html_text: str, corrections: list[dict], lang: str
+) -> tuple[str, list[dict]]:
+    """Pre-parse corrections, as raw-HTML substring replacements.
+
+    Drift is fatal (`CorrectionDriftError`): a correction whose `from` no
+    longer matches means either the mirror changed or the correction was
+    wrong, and both are worse than a failed run. An entry carrying a
+    `resolution` is documented rather than applied -- the policy for a defect
+    with no known correct value (docs/decisions.md).
+    """
+    applied: list[dict] = []
+    for c in corrections:
+        if c.get("resolution"):
+            continue
+        field = c.get("field")
+        if field not in _CORRECTION_FIELDS:
+            raise ValueError(f"{lang}: correction {c['id']}: unknown field {field!r}")
+        if c["from"] not in html_text:
+            raise CorrectionDriftError(
+                f"{lang}: correction {c['id']}: `from` text not found in the "
+                "fetched page -- the source changed, or the correction is wrong"
+            )
+        html_text = html_text.replace(c["from"], c["to"])
+        applied.append(c)
+    return html_text, applied
+
+
+def region(html_text: str, cfg: dict, lang: str) -> str:
+    """The slice of the page the Q&A stream lives in."""
+    # A named anchor is unique by construction, so the first hit is the only
+    # hit. A TEXT marker is not: Romanian prints "Partea intai" in its table
+    # of contents 24,000 characters above the heading it names, so the LAST
+    # occurrence is the body's -- and the first would have made the region
+    # four blocks long, which is how this was found.
+    start = (
+        html_text.rfind(cfg["start"])
+        if cfg["at_block"]
+        else html_text.find(cfg["start"])
+    )
+    if start == -1:
+        raise RuntimeError(
+            f"{lang}: start marker {cfg['start']!r} not found -- "
+            "source page structure may have changed"
+        )
+    if cfg["at_block"]:
+        start = html_text.rfind("<p", 0, start)
+    end = html_text.find(cfg["end"], start + len(cfg["start"]))
+    if end <= start:
+        raise RuntimeError(
+            f"{lang}: end marker {cfg['end']!r} not found after the start -- "
+            "source page structure may have changed"
+        )
+    return html_text[start:end]
 
 
 def run_scrape(lang: str) -> tuple[ScrapeState, Fetcher]:
     cfg = LANG_CONFIG[lang]
     fetcher = make_fetcher(RAW_ROOT)
     html_text = fetcher.fetch_str(cfg["url"], raw_name(lang))
+    state_corrections = load_corrections(cfg["work_id"])
+    html_text, applied = apply_corrections(html_text, state_corrections, lang)
+    body = region(html_text, cfg, lang)
 
-    start_idx = html_text.find(cfg["start_anchor"])
-    end_idx = html_text.find(cfg["end_anchor"])
-    if start_idx == -1 or end_idx == -1 or end_idx <= start_idx:
-        raise RuntimeError(
-            f"{lang}: could not locate content boundaries "
-            f"(start={start_idx}, end={end_idx}) -- source page structure may have changed"
-        )
-    body = html_text[start_idx:end_idx]
-
-    state = ScrapeState()
+    state = ScrapeState(refs_after=cfg["refs_after"])
+    state.corrections = state_corrections
+    state.corrections_applied = applied
     process_body(body, cfg, state)
     return state, fetcher
 
@@ -781,7 +1480,99 @@ def run_scrape(lang: str) -> tuple[ScrapeState, Fetcher]:
 # Validation
 # --------------------------------------------------------------------------
 
-_MOJIBAKE_PATTERNS = ["Ã©", "Ã§", "â€™", "â€", "Ã³", "Â"]
+#: A bare "Â" WAS in this list and cannot be: French prints it as a letter --
+#: "GRÂCE", "de toute ton ÂME" -- six times in its own headings. What is
+#: always wrong is Â immediately before a General Punctuation mark, which is
+#: the residue `strip_double_encoding` removes; this keeps the check as the
+#: guard against that removal failing, without failing French for its own
+#: alphabet.
+_MOJIBAKE_PATTERNS = ["Ã©", "Ã§", "â€™", "â€", "Ã³", "Â\u2013", "Â\u201c", "Â\u201d"]
+
+
+#: The work's own division scheme, flat and in printed order: four parts,
+#: eight sections, twenty chapters. It is written down rather than taken from
+#: one edition's parse so that a regression in THAT edition is caught too.
+#:
+#: The check is a SUBSEQUENCE test, and the asymmetry is deliberate. An
+#: edition may print fewer headings than the work has -- Spanish omits the
+#: first section of Part Four, Italian the first chapter of Part One's second
+#: section, Swedish both sections of Part Two -- and the parser has nothing to
+#: invent from, so a missing heading is reported and not failed. Anything the
+#: subsequence test rejects is ours: a heading matched that is not in the
+#: work, or matched in the wrong order, or numbered wrongly.
+EXPECTED_SKELETON: tuple[tuple[str, int], ...] = (
+    ("part", 1),
+    ("section", 1),
+    ("chapter", 1),
+    ("chapter", 2),
+    ("chapter", 3),
+    ("section", 2),
+    ("chapter", 1),
+    ("chapter", 2),
+    ("chapter", 3),
+    ("part", 2),
+    ("section", 1),
+    ("chapter", 1),
+    ("chapter", 2),
+    ("section", 2),
+    ("chapter", 1),
+    ("chapter", 2),
+    ("chapter", 3),
+    ("chapter", 4),
+    ("part", 3),
+    ("section", 1),
+    ("chapter", 1),
+    ("chapter", 2),
+    ("chapter", 3),
+    ("section", 2),
+    ("chapter", 1),
+    ("chapter", 2),
+    ("part", 4),
+    ("section", 1),
+    ("chapter", 1),
+    ("chapter", 2),
+    ("chapter", 3),
+    ("section", 2),
+)
+
+
+def observed_skeleton(state: ScrapeState) -> list[tuple[str, int | None]]:
+    """The labelled headings this run found, flat and in printed order."""
+    out: list[tuple[str, int | None]] = []
+
+    def walk(nodes: list[Node]) -> None:
+        for node in nodes:
+            if node.kind != "sub":
+                out.append((node.kind, node.n))
+            walk(node.children)
+
+    walk(state.root_children)
+    return out
+
+
+def skeleton_diff(
+    observed: list[tuple[str, int | None]],
+) -> tuple[list[tuple[str, int]], list[tuple[str, int | None]]]:
+    """`(missing, unexpected)` against `EXPECTED_SKELETON`.
+
+    Walks both in order: an expected entry the edition did not print is
+    missing; an observed entry that does not match where the walk has got to
+    is unexpected, and means the parse is wrong rather than the page.
+    """
+    missing: list[tuple[str, int]] = []
+    unexpected: list[tuple[str, int | None]] = []
+    i = 0
+    for entry in observed:
+        j = i
+        while j < len(EXPECTED_SKELETON) and EXPECTED_SKELETON[j] != entry:
+            j += 1
+        if j == len(EXPECTED_SKELETON):
+            unexpected.append(entry)
+            continue
+        missing.extend(EXPECTED_SKELETON[i:j])
+        i = j + 1
+    missing.extend(EXPECTED_SKELETON[i:])
+    return missing, unexpected
 
 
 def validate(state: ScrapeState) -> tuple[bool, list[str], int]:
@@ -843,6 +1634,15 @@ def validate(state: ScrapeState) -> tuple[bool, list[str], int]:
             f"nonempty ccc_refs -- below the 90% floor; likely parsing the wrong element"
         )
 
+    missing_headings, unexpected_headings = skeleton_diff(observed_skeleton(state))
+    if unexpected_headings:
+        problems.append(
+            f"headings not in the work's division scheme, or out of order: "
+            f"{unexpected_headings}"
+        )
+    for kind, n in missing_headings:
+        state.anomalies.append(f"{kind} {n}: no heading printed for it")
+
     dup_check = list(questions.keys())
     if len(dup_check) != len(set(dup_check)):
         problems.append("duplicate question numbers present")
@@ -859,79 +1659,82 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
     cfg = LANG_CONFIG[lang]
     notes = [
         (
-            "The Appendix's Part A (common prayers) is now parsed separately, from this "
-            "same cached raw HTML, into prayer.common." + lang + " (pipeline/scrapers/"
-            "prayers.py) -- see that work's own manifest for its scope. It doesn't live "
-            "here because it is materially more complex than a title/body table -- "
-            "multi-paragraph cells, dialogic (versicle/response) prayers, regional "
-            "wording variants (five prayers print separate UK and USA texts, EN only), "
-            "and Latin text, which -- CORRECTING an earlier version of this note that "
-            "claimed it was 'EN only' -- is present in BOTH languages: EN prints it as a "
-            "side-by-side table column, PT prints the same 21 Latin texts as a second "
-            "sequential pass after its vernacular prayers, easy to miss on a first read "
-            "of the raw HTML (see docs/research/prayers.md). PT alone also carries a "
-            "bonus 'Biblical Abbreviations' table with no EN equivalent, still unparsed. "
-            "Part B (formulas of Catholic doctrine) is also still unparsed here -- a "
-            "simple title/body list in both languages, but not prayers, so out of scope "
-            "for prayer.common." + lang + " too. None of this is part of the "
-            "598-question schema; deferred per corpus-schema.md's explicit allowance. "
-            "Raw HTML is cached in full, so nothing was ever lost."
-        ),
-        (
-            "Sacred-art images and their commentary (out of scope per project spec) were "
-            "not investigated."
+            "The Appendix (common prayers, then formulas of Catholic doctrine) is not "
+            "part of the 598-question schema and is not parsed here; deferred per "
+            "corpus-schema.md's explicit allowance. Raw HTML is cached in full, so "
+            "nothing was lost. Sacred-art images and their commentary are out of scope "
+            "per project spec and were not investigated."
         ),
         (
             "A single decorative epigraph -- a quotation attributed to Saint Augustine "
             "(CCC ¶30, 'You are great, O Lord...') -- is printed between the Chapter One "
-            "heading and Question 2 in both languages, attached to no question; dropped "
+            "heading and Question 2 in every edition, attached to no question; dropped "
             "as an orphan block (see run summary)."
         ),
         (
             "ccc_refs is captured by flattening the reference paragraph's own <br/> line "
             "breaks to a single space (matching how the block model treats <br/> "
             "everywhere else) and stripping all other markup -- otherwise verbatim, "
-            "including what appear to be printer's-error separators in a handful of PT "
-            "entries (e.g. '96.98', '192. 197' -- periods where a hyphen or comma is "
-            "presumably meant) and inconsistent en-dash/hyphen use across both editions. "
-            "Per the store-raw principle, none of this is normalized or corrected."
+            "including what appear to be printer's-error separators (PT '96.98', "
+            "'192. 197' -- periods where a hyphen or comma is presumably meant) and "
+            "inconsistent en-dash/hyphen use. Per the store-raw principle, none of this "
+            "is normalized or corrected."
         ),
         (
+            "Generic (unlabeled) sub-headings under a chapter are emitted as `sub` "
+            "structure nodes at a fixed depth (chapter + 1); the source does not mark up "
+            "their true relative nesting (if any), so none is inferred. How many an "
+            "edition prints varies widely and is a property of that edition: 84 in "
+            "English, 109 in Slovenian and Hungarian, 42 in Romanian."
+        ),
+        (
+            "A labelled heading's title ends where the mirror's named anchor ends, or -- "
+            "in the editions that carry no usable anchors (de, hu, ro, sl, sv) -- at the "
+            "source's own line break between the label and the title. Boldness alone "
+            "cannot say: an earlier parser consumed the sub-headings beneath a title "
+            "into it ('The Sacramental Celebration of the Paschal Mystery CELEBRATING "
+            "THE LITURGY OF THE CHURCH Who celebrates?'). See docs/decisions.md §Parsing."
+        ),
+        (
+            "The work's division scheme -- four parts, eight sections, twenty chapters -- "
+            "is asserted against every edition as a subsequence: a heading matched that "
+            "the work does not have, or matched out of order, fails the run; a heading "
+            "the edition does not print is reported here, because there is nothing to "
+            "invent it from."
+        ),
+        (
+            "A stray U+00C2 printed in front of an en dash, a curly quote or an ellipsis "
+            "is removed as the double-encoding residue it is (38 occurrences, 28 of them "
+            "Spanish); a U+00C2 before a letter is left alone, because French prints one "
+            "in 'GRÂCE' and 'ton ÂME'."
+        ),
+    ]
+    if lang in ("en", "pt"):
+        notes.append(
+            "The Appendix's Part A is separately parsed, from this same cached raw "
+            "HTML, into prayer.common."
+            + lang
+            + " (pipeline/scrapers/prayers.py) -- see "
+            "that work's own manifest for its scope. Part B (formulas of Catholic "
+            "doctrine) remains unparsed: title/body pairs, but not prayers."
+        )
+        notes.append(
             "Four English answers (Q445, Q470, Q483, Q523) print their enumeration as a "
             "bulleted list -- 16 items, each in its own single-item <ul>. The items are "
             "read as answer prose and join the run they interrupt, so each of the four "
-            "answers is the single prose block it already was; the bullets are "
-            "presentation and are recorded here rather than modelled as a block kind. "
-            "The Portuguese edition has no list markup anywhere and prints the same "
-            "four enumerations as run-on prose, so both editions come out the same "
-            "shape. Until 2026-08-25 the parser walked only <p> and <blockquote> and "
-            "dropped all 16 items: Q523 was stored as its lead-in and closing sentence "
-            "with the three things it forbids missing from between them."
-        ),
-        (
-            "Generic (unlabeled) bold sub-headings under a chapter -- e.g. 'The Symbols "
-            "of Faith', 'Heaven and Earth', 'Man' -- are emitted as `sub` structure nodes "
-            "at a fixed depth (chapter + 1); the source does not mark up their true "
-            "relative nesting (if any) explicitly, so none is inferred."
-        ),
-        (
-            "A part/section/chapter title is delimited by the named anchor the mirror's "
-            "own table of contents points at (<a name=...>), not by where the centred "
-            "bold styling stops -- the sub-headings beneath a title are set in that same "
-            "style, and an earlier version of this parser consumed them into the title "
-            "(e.g. 'The Sacramental Celebration of the Paschal Mystery CELEBRATING THE "
-            "LITURGY OF THE CHURCH Who celebrates?'), losing them as structure nodes too. "
-            "All 64 labelled headings across both editions resolve to an anchor; text "
-            "printed after the anchor closes in the same block is emitted as a `sub` "
-            "(one case: PT's 'OS SIMBOLOS DA FE'). See docs/decisions.md, 2026-08-23."
-        ),
-    ]
+            "answers is the single prose block it already was. The Portuguese edition "
+            "has no list markup anywhere and prints the same four enumerations as "
+            "run-on prose, so both editions come out the same shape. Until 2026-08-25 "
+            "the parser walked only <p> and <blockquote> and dropped all 16 items."
+        )
+    notes.extend(cfg["notes"])
     if state.gaps:
         notes.append(f"source question-number gaps detected: {state.gaps}")
     if state.anomalies:
         notes.append(
-            "Per-question anomalies (question opened but with no answer content, or "
-            "no reference line, printed after it -- see run summary for full detail): "
+            "Anomalies observed in this edition (a question with no reference line or "
+            "no answer content printed after it, a division of the work this edition "
+            "prints no heading for -- see run summary for full detail): "
             + "; ".join(state.anomalies)
         )
     return {
@@ -967,6 +1770,12 @@ def write_outputs(lang: str, state: ScrapeState, retrieved_at: str) -> None:
             "manifest.json": manifest,
             "structure.json": structure,
             "questions.json": questions,
+            "corrections-applied.json": corrections_receipt(
+                LANG_CONFIG[lang]["work_id"],
+                state.corrections_applied,
+                state.corrections,
+                manifest["generated_at"],
+            ),
         },
         manifest["generated_at"],
     )
@@ -1076,7 +1885,13 @@ def capture_raw(langs: list[str]) -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--lang", choices=["en", "pt", "both"], default="both")
+    ap.add_argument(
+        "--lang",
+        default="all",
+        help=(
+            "'all' (the default), or a comma-separated list of " + ",".join(LANG_CONFIG)
+        ),
+    )
     ap.add_argument(
         "--capture",
         metavar="LANGS",
@@ -1102,7 +1917,14 @@ def main() -> int:
             ap.error(f"no such edition: {', '.join(unknown)}")
         return capture_raw(wanted)
 
-    langs = ["en", "pt"] if args.lang == "both" else [args.lang]
+    langs = (
+        list(LANG_CONFIG)
+        if args.lang == "all"
+        else [x.strip() for x in args.lang.split(",") if x.strip()]
+    )
+    unknown = [x for x in langs if x not in LANG_CONFIG]
+    if unknown:
+        ap.error(f"no such edition: {', '.join(unknown)}")
     overall_ok = True
     for lang in langs:
         state, fetcher = run_scrape(lang)

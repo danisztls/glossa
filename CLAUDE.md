@@ -310,7 +310,7 @@ translated into Portuguese) — there the rule is "when both exist, they must
 agree".
 
 **Where the address space is fixed, that oracle is vacuous, and it will not
-tell you so.** The Compendium is questions 1–598 in both editions by
+tell you so.** The Compendium is questions 1–598 in every edition by
 construction, so the unit-number sets can never disagree — and while it
 reported symmetry, four English answers were missing their entire bulleted
 enumeration, 16 items the parser walked past (`docs/decisions.md`,
@@ -321,6 +321,14 @@ over the documents (a section number is not the same section in both editions
 — `coverage` is the instrument there) or the Bible (Esther is versification
 divergence, not loss). It reports and never fails.
 
+**It scales quadratically, and that is what makes it worth running.** The
+Compendium's ten editions are 45 pairs, and `balance` compares all of them:
+48 pairs and 32,466 units across the corpus, 2 outside the band. That
+all-pairs matrix is what found the Swedish edition storing 39 of its answers
+as nothing but their own reference line — its text sits outside any paragraph,
+so the block walk never saw it, and against English alone the ratio would have
+read as one more terse translation.
+
 **The Bible is the exception to reading asymmetry as a defect**, and adding the
 Latin sharpened rather than blurred that. `bible.clementina.la` is the text
 `bible.cpdv.en` was translated from, so where the three disagree about verse
@@ -330,15 +338,18 @@ are **edition divergence, not defects** — see `docs/research/bible-edition-div
 for the four kinds and why calling them defects invites someone to "fix" a
 faithful text.
 
-**The interface languages and the content languages are two different sets
-that happen to hold the same ten tags.** `UiLang` in
+**The interface languages and the content languages are two different sets**,
+and since 2026-08-25 they are visibly different sizes: fourteen content
+languages against ten interface ones. `UiLang` in
 `site/src/lib/i18n.svelte.ts` is the nine Magnifica Humanitas is published in
 plus Latin (use `isUiLang`/`UI_LANGS`, never a literal list — `app.css` and
 `app.html` each keep one by necessity and say so); `ContentLang` in `types.ts`
-is the same ten. **Do not derive one from the other**: they equalized on
-2026-08-24 and will separate again the first time either side moves alone (a
-text ingested in a language with no dictionary, or a dictionary written for a
-language with no text). The seven that came with Magnifica Humanitas are
+is those ten plus `hu`, `ro`, `sl` and `sv`, which arrived with the
+Compendium's ten editions and have no dictionary. **Do not derive one from the
+other**: they equalized on 2026-08-24 and separated the next day, exactly the
+way this note predicted (a text ingested in a language with no dictionary).
+Russian is now the case in the other direction — an interface language whose
+Compendium exists only as a PDF nothing parses. The seven that came with Magnifica Humanitas are
 interface languages the corpus has one work in, so a reader in any of them
 gets English content nearly everywhere through `CONTENT_LANG_FALLBACK`; Latin
 is the opposite — two whole works, and the chrome arrived last

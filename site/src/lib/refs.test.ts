@@ -663,6 +663,17 @@ describe('parseRefs — bare CCC-paragraph-number lists (Compendium ccc_refs, CC
 		expect(parseRefs('75-79, 83 96.98').filter((s) => s.kind === 'ccc')).toHaveLength(5);
 	});
 
+	it('tolerates the non-breaking hyphen the Romanian Compendium ranges with', () => {
+		// Every one of ro's 598 reference lines uses U+2011, not U+002D. Before
+		// the grammar accepted it, none of them was a number list at all and 490
+		// citations read as unrecognized.
+		expect(parseRefs('1\u201125').filter((s) => s.kind === 'ccc')).toEqual([
+			{ kind: 'ccc', n: 1, raw: '1' },
+			{ kind: 'ccc', n: 25, raw: '25' }
+		]);
+		expect(parseRefs('39\u201143 48\u201149').filter((s) => s.kind === 'ccc')).toHaveLength(4);
+	});
+
 	it('reproduces the exact original string', () => {
 		const s = '279-289, 296-298';
 		const segs = parseRefs(s);
