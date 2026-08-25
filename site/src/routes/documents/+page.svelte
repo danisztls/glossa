@@ -13,12 +13,12 @@
 	 * load — the registry (`listDocuments()`) is index-tier and already
 	 * eager-inlined, so there's nothing to fetch here.
 	 */
-	import { listDocuments } from '$lib/corpus';
+	import { listDocuments, loadTranslatedDescriptions } from '$lib/corpus';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
 	import { documentKindLabel } from '$lib/document-labels';
 	import { formatPromulgated } from '$lib/dates';
-	import { t } from '$lib/i18n.svelte';
+	import { i18n, t } from '$lib/i18n.svelte';
 	import type { DocumentManifest } from '$lib/types';
 
 	interface Row {
@@ -40,6 +40,44 @@
 	// have: `/documenta/{slug}` redirects that reader to the source page
 	// instead of showing them nothing (docs/decisions.md, 2026-08-24), so the
 	// row leads somewhere either way and the library needs no second state.
+	/**
+	 * Descriptions translated into the reader's interface language, `work id
+	 * -> text`. One request, for every document at once, made only when the
+	 * language is one something has been translated into — a reader of the
+	 * language a description was WRITTEN in never issues it, because that
+	 * sentence is already on the manifest.
+	 *
+	 * `$state` + `$effect` rather than an `await` in the template: the list
+	 * must paint immediately with the descriptions the manifests already
+	 * carry, and swap in translated ones when they arrive. A reader who
+	 * changes language mid-page re-runs the effect and gets the same
+	 * treatment, which is why this is not a `load()`.
+	 */
+	let translated = $state<Record<string, string>>({});
+	$effect(() => {
+		const lang = i18n.lang;
+		let stale = false;
+		loadTranslatedDescriptions(lang).then((byWork) => {
+			if (!stale) translated = byWork;
+		});
+		return () => {
+			stale = true;
+		};
+	});
+
+	/**
+	 * The description to show for a row, in the reader's language where we
+	 * have one and the work's own language otherwise.
+	 *
+	 * Never a placeholder and never a machine translation of a missing
+	 * reading: `manifest.description` is absent for a work nobody has read
+	 * yet, and `translated` only ever holds renderings of a reading that
+	 * exists (`site/descriptions.json`, `origin`).
+	 */
+	function describe(manifest: DocumentManifest): string | null {
+		return translated[manifest.id] ?? manifest.description ?? null;
+	}
+
 	const rows = $derived.by(() => {
 		const out: Row[] = [];
 		for (const group of listDocuments()) {
@@ -128,6 +166,7 @@
 				</summary>
 				<ul class="docs">
 					{#each group.rows as row (row.slug)}
+						{@const description = describe(row.manifest)}
 						<li>
 							<a href={`/documenta/${row.slug}`} class="doc-link">
 								<span class="doc-title">{row.manifest.title}</span>
@@ -143,17 +182,22 @@
 							so repeating it per row is pure noise — it stays on the
 							reading pages, where it is attached to the text it
 							actually governs. The description takes its place, when
-							one exists (see `DocumentManifest.description`); today
-							none do, so this renders nothing rather than a
-							placeholder.
+							one exists (see `DocumentManifest.description`), and
+							nothing rather than a placeholder when none does.
+
+							`describe()` prefers a description translated into the
+							reader's language over the one on the manifest, which is
+							written in the WORK's language: a reader of Italian looking
+							at an English edition wants the Italian sentence about it,
+							and the English one is the fallback rather than the default.
 						-->
 							<p class="doc-meta">
 								<time datetime={row.manifest.promulgated}>
 									{formatPromulgated(row.manifest.promulgated, row.manifest.language)}
 								</time>
 							</p>
-							{#if row.manifest.description}
-								<p class="doc-description">{row.manifest.description}</p>
+							{#if description}
+								<p class="doc-description">{description}</p>
 							{/if}
 						</li>
 					{/each}

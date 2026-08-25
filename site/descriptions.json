@@ -292,6 +292,26 @@
 			"en": {
 				"text": "Pius XI on the Catholic missions, setting two aims: more and better-trained missionaries, and lay Catholics who pray and give for them through the Society for the Propagation of the Faith. Its sharpest passage takes up Benedict XV's complaint that ancient mission territories still have no native bishops, and it commits the Pope to redividing and reassigning mission territories — to native clergy where possible — rather than leaving them to the institute that opened them.",
 				"origin": "read"
+			},
+			"es": {
+				"text": "Pío XI sobre las misiones católicas, con dos objetivos: más misioneros y mejor formados, y laicos que recen y contribuyan a ellos por medio de la Obra de la Propagación de la Fe. Su pasaje más incisivo retoma la queja de Benedicto XV de que territorios de misión antiguos siguen sin obispos autóctonos, y compromete al Papa a dividir y reasignar territorios de misión —al clero autóctono siempre que sea posible— en lugar de dejarlos al instituto que los abrió.",
+				"origin": "translated",
+				"from": "en"
+			},
+			"fr": {
+				"text": "Pie XI sur les missions catholiques, avec deux objectifs : davantage de missionnaires et mieux formés, et des laïcs qui prient et donnent pour eux par l'Œuvre de la Propagation de la Foi. Son passage le plus incisif reprend la plainte de Benoît XV selon laquelle d'anciens territoires de mission n'ont toujours pas d'évêques autochtones, et il engage le Pape à diviser et à réattribuer les territoires de mission — au clergé autochtone lorsque c'est possible — plutôt que de les laisser à l'institut qui les a ouverts.",
+				"origin": "translated",
+				"from": "en"
+			},
+			"it": {
+				"text": "Pio XI sulle missioni cattoliche, con due obiettivi: più missionari e meglio formati, e laici che preghino e contribuiscano per loro tramite l'Opera della Propagazione della Fede. Il passaggio più incisivo riprende la lamentela di Benedetto XV che territori di missione antichi siano ancora senza vescovi autoctoni, e impegna il Papa a dividere e riassegnare i territori di missione — al clero autoctono ove possibile — invece di lasciarli all'istituto che li ha aperti.",
+				"origin": "translated",
+				"from": "en"
+			},
+			"pt": {
+				"text": "Pio XI sobre as missões católicas, com dois objectivos: mais missionários e melhor formados, e leigos que rezem e contribuam para eles através da Obra da Propagação da Fé. A sua passagem mais incisiva retoma a queixa de Bento XV de que territórios de missão antigos continuam sem bispos autóctones, e compromete o Papa a dividir e reatribuir territórios de missão — ao clero autóctone sempre que possível — em vez de os deixar ao instituto que os abriu.",
+				"origin": "translated",
+				"from": "en"
 			}
 		},
 		"encyclical.rerum-novarum.en": {
@@ -328,6 +348,26 @@
 			"en": {
 				"text": "Pius X's protest against the 1905 French Law of Separation, addressed to the cardinals, bishops, clergy and people of France. It rejects separation of Church and state as “a thesis absolutely false” that denies God public worship and confines the state to this life alone, then itemises the law's injuries — the seizure of ecclesiastical property and pious foundations — before calling French Catholics to unity with their bishops and the Holy See.",
 				"origin": "read"
+			},
+			"es": {
+				"text": "Protesta de Pío X contra la Ley francesa de Separación de 1905, dirigida a los cardenales, obispos, clero y pueblo de Francia. Rechaza la separación entre la Iglesia y el Estado como «una tesis absolutamente falsa», que niega a Dios el culto público y confina al Estado a esta sola vida; enumera después los daños de la ley —la incautación de los bienes eclesiásticos y de las fundaciones pías— antes de llamar a los católicos franceses a la unión con sus obispos y con la Santa Sede.",
+				"origin": "translated",
+				"from": "en"
+			},
+			"fr": {
+				"text": "Protestation de Pie X contre la loi française de Séparation de 1905, adressée aux cardinaux, évêques, clergé et peuple de France. Elle rejette la séparation de l'Église et de l'État comme « une thèse absolument fausse », qui refuse à Dieu le culte public et enferme l'État dans cette seule vie ; elle énumère ensuite les atteintes de la loi — la saisie des biens ecclésiastiques et des fondations pieuses — avant d'appeler les catholiques français à l'union avec leurs évêques et avec le Saint-Siège.",
+				"origin": "translated",
+				"from": "en"
+			},
+			"it": {
+				"text": "Protesta di Pio X contro la legge francese di Separazione del 1905, indirizzata ai cardinali, ai vescovi, al clero e al popolo di Francia. Respinge la separazione tra Chiesa e Stato come «una tesi assolutamente falsa», che nega a Dio il culto pubblico e confina lo Stato a questa sola vita; enumera poi i danni della legge — la confisca dei beni ecclesiastici e delle fondazioni pie — prima di chiamare i cattolici francesi all'unione con i loro vescovi e con la Santa Sede.",
+				"origin": "translated",
+				"from": "en"
+			},
+			"pt": {
+				"text": "Protesto de Pio X contra a Lei francesa de Separação de 1905, dirigido aos cardeais, bispos, clero e povo de França. Rejeita a separação entre a Igreja e o Estado como «uma tese absolutamente falsa», que nega a Deus o culto público e confina o Estado a esta vida apenas; enumera depois os danos da lei — a apropriação dos bens eclesiásticos e das fundações pias — antes de chamar os católicos franceses à união com os seus bispos e com a Santa Sé.",
+				"origin": "translated",
+				"from": "en"
 			}
 		},
 		"encyclical.veritatis-splendor.en": {

@@ -649,6 +649,46 @@ if (publishedDefeats.length > 0) {
 	process.exit(1);
 }
 
+/**
+ * Translated descriptions, one file per language, written only for the
+ * languages that have any.
+ *
+ * NOT in `manifests.json`, which every reader downloads before the first
+ * page paints. A description is the only prose in the index tier, and eight
+ * translations of every one of them would add roughly a megabyte to a 415 KB
+ * file — most of it in languages any given reader cannot read. One file per
+ * language is one request, made only when the reader's language is not the
+ * one the description was written in, and never made at all for a reader in
+ * that language.
+ *
+ * NOT one file per work either, which was the other candidate: `/documenta`
+ * lists every document with its description, so a per-work file would mean
+ * one request per row to render a single page.
+ *
+ * Only `origin: "translated"` renderings go here. A reading in the work's own
+ * language is already in the manifest, and duplicating it would make two
+ * places disagree the moment one is corrected.
+ */
+const translatedDescriptions = {}; // lang -> { workId: text }
+for (const [workId, renderings] of Object.entries(descriptions)) {
+	const language = manifests[workId]?.language;
+	for (const [lang, rendering] of Object.entries(renderings)) {
+		if (lang === language) continue; // the reading, already in the manifest
+		if (rendering?.origin !== 'translated') continue;
+		(translatedDescriptions[lang] ??= {})[workId] = rendering.text;
+	}
+}
+for (const [lang, byWork] of Object.entries(translatedDescriptions)) {
+	writeJson(path.join(indexDir, `descriptions.${lang}.json`), byWork);
+}
+const describedWorks = Object.keys(descriptions).filter(
+	(workId) => descriptions[workId]?.[manifests[workId]?.language]?.origin === 'read'
+).length;
+const translatedCount = Object.values(translatedDescriptions).reduce(
+	(n, byWork) => n + Object.keys(byWork).length,
+	0
+);
+
 writeJson(path.join(indexDir, 'manifests.json'), manifests);
 writeJson(path.join(indexDir, 'bible-index.json'), bibleIndex);
 writeJson(path.join(indexDir, 'bible-intro-index.json'), bibleIntroIndex);
@@ -830,5 +870,8 @@ const indexBytes = [
 console.log(
 	`[sync-corpus] Built corpus-data/ from ${worksSrc}: ${workIds.length} work(s), ` +
 		`${contentManifest.length} content file(s)${xrefsSynced ? `, plus ${xrefs.length} CCC and ${documentXrefs.length} document xref entries` : ''}. ` +
-		`Index tier: ${(indexBytes / 1000).toFixed(0)} KB raw. Works: ${workIds.join(', ')}`
+		`Index tier: ${(indexBytes / 1000).toFixed(0)} KB raw. ` +
+		`Descriptions: ${describedWorks} read, ${translatedCount} translated across ` +
+		`${Object.keys(translatedDescriptions).length} language file(s). ` +
+		`Works: ${workIds.join(', ')}`
 );

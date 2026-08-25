@@ -174,6 +174,7 @@ import {
 	type SummaQuestionMeta,
 	bibleBookLocation,
 	manifests,
+	translatedDescriptionsLocation,
 	listContentAssets,
 	prayerContentLocation,
 	prayerMetasByLang,
@@ -597,6 +598,28 @@ async function readContentFromNetwork<T>(url: string): Promise<T> {
 	const res = await fetch(url);
 	if (!res.ok) throw new Error(`corpus.ts: failed to fetch ${url} (${res.status})`);
 	return res.json() as Promise<T>;
+}
+
+/**
+ * Descriptions translated into `lang`, as `work id -> text`.
+ *
+ * A description written by READING a document is already on its manifest, in
+ * the work's own language. This is the other kind: renderings marked
+ * `origin: "translated"` in `site/descriptions.json`, which are shipped one
+ * file per language and fetched only when a reader's language is not the one
+ * a description was written in. An English reader never issues this request;
+ * everyone else issues exactly one, for every document at once, because
+ * `/documenta` lists them all on one page.
+ *
+ * `{}` for a language nothing is translated into — the ordinary case today
+ * and not an error, the same way an absent content file means "the corpus has
+ * nothing built at that address" rather than a failure.
+ */
+export async function loadTranslatedDescriptions(lang: string): Promise<Record<string, string>> {
+	if (!USE_REAL_CORPUS) return {};
+	const location = translatedDescriptionsLocation(lang);
+	if (!location) return {};
+	return readContent<Record<string, string>>(location);
 }
 
 /**

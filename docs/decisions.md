@@ -3663,3 +3663,44 @@ character inventory is `ÁÆÍáæéíóúœǽ` and nothing else). Both vernacul
 re-parsed byte-identical apart from `generated_at` and the correction — and the removal of
 `"kind": "prose"` from 103 blocks per edition, which is the schema's omit-the-default rule
 (`BlockOut.to_dict`) reaching files last generated before it applied.
+
+## 2026-08-25 — Translated descriptions ship one file per language
+
+Chosen over the two alternatives, both of which were measured against the 61
+descriptions written so far (417 characters on average, 239 works to describe):
+
+|                         | files | a reader downloads                        |
+| ----------------------- | ----- | ----------------------------------------- |
+| all in `manifests.json` | 0 new | **+959 KB, always**                       |
+| one per language        | **8** | 107 KB, once, only if not reading English |
+| one per work + language | 2,151 | 239 requests to render `/documenta`       |
+
+The last row is what settles it rather than the byte counts: `/documenta`
+lists every document with its description, so a per-work file means a request
+per row for a single page. And the first row is the one that had to be
+avoided — a description is the only prose in the index tier, which every
+reader downloads before the first paint.
+
+`sync-corpus.mjs` writes `index/descriptions.<lang>.json` for each language
+that has any, containing only `origin: "translated"` renderings. The reading
+stays on the manifest: duplicating it would give two places to disagree the
+moment one is corrected. `corpus-index.ts` globs them as URLs, the way the
+content tier is globbed, and `loadTranslatedDescriptions(lang)` fetches
+through the same memoised reader every content file uses.
+
+**Vite inlines an asset under 4 KB**, so while only a handful of translations
+exist these ride along in a chunk instead of being fetched. That is
+self-correcting — at the real size, 107 KB, they cross the threshold and
+become separate hashed assets — but it means the "one request" property is a
+property of the finished state, not of today's.
+
+`/documenta` prefers a translation in the reader's interface language over the
+manifest's own, which is written in the WORK's language: a reader of Italian
+looking at an English edition wants the Italian sentence about it, and the
+English one is the fallback rather than the default.
+
+`descriptions.test.ts` pins the provenance invariants rather than the prose: a
+reading is filed under its work's own language and there is at most one, every
+translation names a `from` that exists and is not itself, and translations go
+only into interface languages. A batch that fills the text correctly and
+labels its origin wrongly would render identically and be wrong silently.

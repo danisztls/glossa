@@ -351,6 +351,17 @@ export function isUnpublished(workId: string): boolean {
 	return unpublishedWorks.has(workId);
 }
 
+// Translated descriptions: `index/descriptions.<lang>.json`, one per
+// language, written by `sync-corpus.mjs` only for the languages that have
+// any. Globbed as URLs rather than eagerly inlined for the same reason the
+// content tier is: a reader downloads at most ONE of these, and only when
+// their language is not the one a description was written in.
+const realDescriptionUrls = import.meta.glob('./corpus-data/index/descriptions.*.json', {
+	eager: true,
+	query: '?url',
+	import: 'default'
+}) as Record<string, string>;
+
 // Content tier: `?url` + `import: 'default'` yields the hashed BUILD ASSET
 // URL for each file (a string), not its contents — Vite still emits the
 // file itself as a build asset, just doesn't inline it. `corpus.ts` fetches
@@ -694,6 +705,17 @@ function contentKey(globPath: string): string {
 export interface ContentLocation {
 	relPath: string;
 	url: string;
+}
+
+/**
+ * Where the translated descriptions for `lang` live, or undefined when
+ * nothing is translated into it — which is the ordinary case for most
+ * languages and is not an error. See `sync-corpus.mjs`.
+ */
+export function translatedDescriptionsLocation(lang: string): ContentLocation | undefined {
+	const relPath = `index/descriptions.${lang}.json`;
+	const url = realDescriptionUrls[`./corpus-data/${relPath}`];
+	return url ? { relPath, url } : undefined;
 }
 
 const bibleBookLocations: Record<string, Record<string, ContentLocation>> = {};
