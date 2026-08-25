@@ -48,12 +48,12 @@ CORPUS=${CORPUS_DIR:-$HOME/Dev/me/glossa-corpus}
 cd $CORPUS/works/encyclical.<slug>.en
 
 jq 'length' sections.json                                  # how long is it
-jq -r '.[] | "\(.level)  before \u00a7\(.before)  \(.ident // "")\(.title)"' structure.json
+jq -r '.[] | "\(.level)  before \u00a7\(.before)  \(.label // "")\(.title)"' structure.json
 ```
 
 Note both shapes changed in August 2026 and older recipes are wrong:
 `structure.json` is a **flat array** of `{level, title, before}` (plus optional
-`ident`/`subtitle`), not a tree with `kind`/`paragraphs`; and a section's
+`label`/`subtitle`), not a tree with `kind`/`paragraphs`; and a section's
 blocks carry **`html` only** — `text` and `text_marked` were removed
 (`docs/decisions.md` §Storage). A recipe asking for `.text` returns empty
 strings rather than failing, which reads as an empty document.
@@ -146,7 +146,7 @@ $CORPUS/oracles/toc/encyclical.<slug>.en.json
     { "level": 1, "title": "INTRODUÇÃO", "before": 1 },
     {
       "level": 2,
-      "ident": "CAPÍTULO I",
+      "label": "CAPÍTULO I",
       "title": "A VOZ DO SANGUE…",
       "before": 7
     }
@@ -159,7 +159,7 @@ from the source's own typography — centered bold is the major tier,
 left-aligned bold-italic the minor one, and a `<center>` wrapper distinguishes
 CHAPTER from PART in the old shell. `before` is the number of the first
 numbered paragraph _after_ the heading, which is what the census's `§` column
-gives you. Split a heading into `ident`/`title` only where the source really
+gives you. Split a heading into `label`/`title` only where the source really
 prints two lines; the comparison flattens them anyway.
 
 **A document with no divisions gets `"headings": []`.** That is a real and

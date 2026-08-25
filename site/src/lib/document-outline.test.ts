@@ -124,7 +124,7 @@ describe('buildDocumentOutline', () => {
 			level: 1,
 			title: 'TECHNOLOGY AND DOMINANCE.',
 			before: 90,
-			ident: 'CHAPTER THREE',
+			label: 'CHAPTER THREE',
 			subtitle: 'THE GRANDEUR OF HUMANITY'
 		};
 		const out = buildDocumentOutline([withIdent], 130);

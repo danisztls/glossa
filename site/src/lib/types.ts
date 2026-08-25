@@ -418,9 +418,10 @@ export interface CccNode {
 	 */
 	titleLang?: string;
 	/**
-	 * DOCUMENTS ONLY. The division identifier printed above the title
-	 * ("CHAPTER THREE"), shown as the row's marker. See `DocumentNode.ident`
-	 * for why the two are stored apart.
+	 * DOCUMENTS ONLY. The division label printed above the title
+	 * ("CHAPTER THREE"), shown as the row's marker. Same name as
+	 * `DocumentNode.label`, which is where it is read from, and see there
+	 * for why the label and the title are stored apart.
 	 */
 	label?: string;
 	/** DOCUMENTS ONLY. `title` with the source's partial inline emphasis kept
@@ -485,17 +486,25 @@ export interface DocumentNode {
 	title: string;
 	before: number | null;
 	/**
-	 * The division identifier the source prints on its own line above the
+	 * The division label the source prints on its own line above the
 	 * title — "CHAPTER THREE", "PRIMEIRA PARTE" — when it prints one.
 	 *
 	 * Stored apart from `title` rather than folded into it because they are
-	 * different things: the identifier names the division's place in a
-	 * sequence, the title names its subject, and a renderer wants them
-	 * typeset differently (and a table of contents may want only one). The
-	 * scraper merges the two printed paragraphs into one heading; keeping
-	 * three nodes made them three TOC rows all anchored to the same section.
+	 * different things: the label names the division's place in a sequence,
+	 * the title names its subject, and a renderer wants them typeset
+	 * differently (and a table of contents may want only one). The scraper
+	 * merges the two printed paragraphs into one heading; keeping three
+	 * nodes made them three TOC rows all anchored to the same section.
+	 *
+	 * Called `ident` until 2026-08-25. It was never an identifier: `CHAPTER
+	 * ONE` picks nothing out — four of them can sit in one work, and only
+	 * the enclosing trail tells them apart — it NAMES a place in a sequence,
+	 * which is what a label does. The rest of the codebase had been calling
+	 * it that all along (`match_label`, `OutlineRow.label`, `KIND_LABELS`),
+	 * so the rename removed the one word that disagreed rather than
+	 * introducing a new one.
 	 */
-	ident?: string;
+	label?: string;
 	/** Further heading lines below the title, joined — the second title line
 	 *  a chapter opening sometimes carries. Same merge, same reasoning. */
 	subtitle?: string;

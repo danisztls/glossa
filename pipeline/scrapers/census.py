@@ -165,7 +165,7 @@ def join_key(text: str) -> str:
     """A heading reduced to its words, with the punctuation that separates a
     division label from its name thrown away.
 
-    The parser splits a heading into `ident` and `title`; the SOURCE prints
+    The parser splits a heading into `label` and `title`; the SOURCE prints
     them on one line, joined however that page happens to punctuate it --
     `CHAPTER I - PRINCIPLES OF DOCTRINE`, `ARTICLE 1: Christian Witness`.
     Comparing the raw line against the two fields separately matches neither,
@@ -233,7 +233,7 @@ def census(corpus: Path, work_id: str) -> dict:
     if (work / "structure.json").exists():
         for node in json.loads((work / "structure.json").read_text()):
             parts = []
-            for field in ("ident", "title", "subtitle"):
+            for field in ("label", "title", "subtitle"):
                 if node.get(field):
                     structure_titles.add(norm(node[field]))
                     parts.append(norm(node[field]))

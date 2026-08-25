@@ -184,7 +184,7 @@ def stored_text_len(work: Path) -> int:
                 total += len(V.strip_tags(block.get("html", "")))
     structure = json.loads((work / "structure.json").read_text())
     for node in structure:
-        for field in ("ident", "title", "subtitle"):
+        for field in ("label", "title", "subtitle"):
             total += len(node.get(field) or "")
     return total
 
@@ -262,7 +262,7 @@ def compare_toc(
     """Differences between a read ToC and the parsed structure tree.
 
     Titles are compared on normalized text: the parser splits a heading into
-    `ident`/`title`/`subtitle` where it can, and a reader writing the oracle
+    `label`/`title`/`subtitle` where it can, and a reader writing the oracle
     should not have to guess that split, so both sides are flattened first.
 
     CORRECTIONS ARE APPLIED TO THE READ SIDE. The oracle records what the PAGE
@@ -293,7 +293,7 @@ def compare_toc(
 
     def flat(node):
         joined = " ".join(
-            (node.get(f) or "").strip() for f in ("ident", "title", "subtitle")
+            (node.get(f) or "").strip() for f in ("label", "title", "subtitle")
         )
         return re.sub(r"\s+", " ", corrected(joined)).strip().casefold()
 

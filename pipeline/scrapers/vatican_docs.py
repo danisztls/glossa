@@ -1374,7 +1374,7 @@ class Node:
         self.n = n
         self.title = title
         self.level = level
-        self.ident: str = ""  # bare division label above the title
+        self.label: str = ""  # bare division label above the title
         self.title_html: str = ""  # title with partial inline emphasis kept
         self.subtitle: str = ""  # further printed lines below it
         self.children: list[Node] = []
@@ -1427,7 +1427,7 @@ class BlockOut:
     def to_dict(self) -> dict:
         # `kind` is OMITTED when it is "prose", the same "absent means the
         # ordinary case" rule `attribution` below already follows, and
-        # `ident`/`subtitle`/`title_html` follow in structure.json. Documents
+        # `label`/`subtitle`/`title_html` follow in structure.json. Documents
         # are 99.93% prose -- 11 blocks of 14,924 are not -- so writing it
         # every time spent the field's whole budget saying "nothing to see",
         # and a reader scanning a section could not tell the exception from
@@ -1610,7 +1610,7 @@ class ScrapeState:
         n: int | None,
         title: str,
         depth: int = 1,
-        ident: str = "",
+        label: str = "",
         subtitle: str = "",
         title_html: str = "",
     ) -> None:
@@ -1622,7 +1622,7 @@ class ScrapeState:
         # (see `_FN_MARKER_OUTSIDE_RE`, which is why such headings survive at
         # all now).
         title = strip_markers(title)
-        ident = strip_markers(ident)
+        label = strip_markers(label)
         subtitle = strip_markers(subtitle)
         title_html = strip_markers(title_html)
         self.finalize_open_section()
@@ -1665,7 +1665,7 @@ class ScrapeState:
             return
         node = Node(kind, n, title, level)
         node.depth = depth
-        node.ident = ident
+        node.label = label
         node.title_html = title_html
         node.subtitle = subtitle
         parent_children.append(node)
@@ -1882,7 +1882,7 @@ class Block:
     # A heading printed on several lines: the bare division label above the
     # name ("CHAPTER THREE"), and any further lines below it. Both empty for
     # the ordinary one-line heading. See merge_heading_lines.
-    ident: str = ""
+    label: str = ""
     subtitle: str = ""
     # The source indented this block. `heading_style_rank` models centred
     # against flush-left and nothing else, so an indent is invisible to it --
@@ -2434,7 +2434,7 @@ def split_label_prefix(text: str, lang: str) -> tuple[str, str] | None:
         </center>
 
     `_BLOCK_RE` takes the `<center>` as a single block, so there are never two
-    lines to merge and all eight chapters came out with an empty `ident` and
+    lines to merge and all eight chapters came out with an empty `label` and
     the label welded to the front of the title.
 
     Matched on the label patterns rather than on the markup, so it holds
@@ -2444,10 +2444,10 @@ def split_label_prefix(text: str, lang: str) -> tuple[str, str] | None:
     end = _label_prefix_end(text, lang)
     if end is None:
         return None
-    ident, rest = text[:end].strip(), text[end:].strip(" .:;-\u2014")
+    label, rest = text[:end].strip(), text[end:].strip(" .:;-\u2014")
     # No name after the label is the ordinary merged case, already handled:
     # `CHAPTER I` alone is the whole heading and stays the title.
-    return (ident, rest) if rest else None
+    return (label, rest) if rest else None
 
 
 _BR_SPLIT_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
@@ -2463,10 +2463,10 @@ _EMPTY_TAG_PAIR_RE = re.compile(r"<(\w+)\b[^>]*>\s*</\1\s*>")
 def strip_leading_text_html(html: str, prefix: str) -> str:
     """Drop `prefix` from the front of `html`, ignoring tags and whitespace.
 
-    Wanted when a heading's label moves into `ident`: `title_html` is the
-    NAME's inline markup, and leaving the label in it makes the site -- which
-    typesets `ident` and `title_html` as separate spans -- print the label
-    twice. Seven nodes in the corpus read `CHAPTER VII CHAPTER VII THE
+    Wanted when a heading's label moves into its own `label` field:
+    `title_html` is the NAME's inline markup, and leaving the label in it
+    makes the site -- which typesets the two as separate spans -- print the
+    label twice. Seven nodes in the corpus read `CHAPTER VII CHAPTER VII THE
     ESCHATOLOGICAL NATURE...` for exactly this reason.
 
     Matched character by character across tag boundaries, like
@@ -2521,7 +2521,7 @@ def split_heading_break(html: str, text: str, lang: str) -> tuple[str, str] | No
     `PRIMEIRA PARTE<br/>MARIA NO MISTÉRIO DE CRISTO`. That is the same thing
     `merge_heading_lines` recognises when a source prints the two as separate
     paragraphs, set one way instead of the other, and it earns the same
-    answer: an `ident` and a `title`, not one run-on line.
+    answer: a `label` and a `title`, not one run-on line.
 
     THE DISCRIMINATOR IS THE FIRST LINE AND NOTHING ELSE. It must be a
     division label and carry no name of its own, which is what makes this
@@ -2543,17 +2543,17 @@ def split_heading_break(html: str, text: str, lang: str) -> tuple[str, str] | No
     parts = _BR_SPLIT_RE.split(html, maxsplit=1)
     if len(parts) != 2:
         return None
-    ident = " ".join(html_to_text(parts[0]).split()).strip(" .:;-\u2014\u2013")
-    if not ident:
+    label = " ".join(html_to_text(parts[0]).split()).strip(" .:;-\u2014\u2013")
+    if not label:
         return None
-    end = _label_prefix_end(ident, lang)
-    if end is None or ident[end:].strip(" .:;-\u2014\u2013"):
+    end = _label_prefix_end(label, lang)
+    if end is None or label[end:].strip(" .:;-\u2014\u2013"):
         return None
     probe = " ".join(text.split())
-    if not probe.upper().startswith(ident.upper()):
+    if not probe.upper().startswith(label.upper()):
         return None
-    rest = probe[len(ident) :].strip(" .:;-\u2014\u2013")
-    return (ident, rest) if rest else None
+    rest = probe[len(label) :].strip(" .:;-\u2014\u2013")
+    return (label, rest) if rest else None
 
 
 def merge_heading_lines(
@@ -2602,7 +2602,7 @@ def merge_heading_lines(
     while i < len(blocks):
         if (
             not blocks[i].is_heading
-            or blocks[i].ident
+            or blocks[i].label
             or not bare_division_label(blocks[i].text, lang)
             or i + 1 >= len(blocks)
             or not blocks[i + 1].is_heading
@@ -2625,13 +2625,13 @@ def merge_heading_lines(
         ):
             absorbed.append(j)
             j += 1
-        head.ident = head.text
+        head.label = head.text
         head.text = blocks[absorbed[0]].text
         head.html = blocks[absorbed[0]].html
         head.style = blocks[absorbed[0]].style
         head.subtitle = " ".join(blocks[k].text for k in absorbed[1:]).strip()
         merged.append(
-            f"{head.ident} / {head.text}"
+            f"{head.label} / {head.text}"
             + (f" / {head.subtitle}" if head.subtitle else "")
         )
         dropped.update(absorbed)
@@ -2986,7 +2986,7 @@ def apply_toc_outline(
                 # Both numbers must be known before a label counts as
                 # identity: `("chapter", None)` compares equal to every other
                 # unnumbered chapter, and would match the first one found.
-                sig = match_label(blk.ident or blk.text)
+                sig = match_label(blk.label or blk.text)
                 hit = (
                     have == want
                     or have.startswith(want + " ")
@@ -4344,16 +4344,16 @@ def parse_document(
     # (`split_label_prefix`) or divided by the source's own line break
     # (`split_heading_break`).
     for blk in blocks:
-        if blk.is_heading and not blk.ident:
+        if blk.is_heading and not blk.label:
             split = split_heading_break(blk.html, blk.text, lang) or split_label_prefix(
                 blk.text, lang
             )
             if split is not None:
-                blk.ident, blk.text = split
+                blk.label, blk.text = split
                 # The label left `text`; it has to leave `title_html` too, or
                 # the two get printed one after the other. See
                 # strip_leading_text_html.
-                blk.html = strip_leading_text_html(blk.html, blk.ident)
+                blk.html = strip_leading_text_html(blk.html, blk.label)
     if merged_headings:
         state.anomalies.append(
             f"heading lines merged ({len(merged_headings)}): "
@@ -4393,20 +4393,20 @@ def parse_document(
         (i, _LABEL_DEPTH[matched[0]])
         for i, b in enumerate(blocks)
         if b.is_heading
-        for matched in [match_label(b.ident or b.text)]
+        for matched in [match_label(b.label or b.text)]
         if matched is not None and matched[0] in _LABEL_DEPTH
     ]
     top_label_depth = min((d for _, d in labelled), default=_LABEL_DEPTH["part"])
     # FRONT and BACK matter, literally: outside the span of the document's
     # labelled divisions. A PROLOGUE among the chapters belongs to the chapter
     # it sits in -- Lumen Gentium PT's chapter VIII opens on `I. PROÉMIO`,
-    # whose label `merge_heading_lines` moves to `ident`, leaving a bare
-    # 'PROÉMIO' that the name test cannot tell from the document's own. Ranked
+    # whose label `merge_heading_lines` moves into the `label` field, leaving
+    # a bare 'PROÉMIO' the name test cannot tell from the document's own. Ranked
     # top-level it flattened that whole chapter's interior by a level.
     label_span = (labelled[0][0], labelled[-1][0]) if labelled else (len(blocks), -1)
 
     def is_labelled(b: Block) -> bool:
-        return match_label(b.ident or b.text) is not None
+        return match_label(b.label or b.text) is not None
 
     def is_division(b: Block) -> bool:
         """A heading that NAMES a division, by label or by Roman numeral.
@@ -4416,15 +4416,16 @@ def parse_document(
         Gentium PT's `I. PROÉMIO` inside chapter VIII, Ecclesiam Suam EN's
         `II. THE RENEWAL` -- and the parser has no other way to tell it from
         an ordinary heading that happens to be centred and bold."""
-        text = b.ident or b.text
+        text = b.label or b.text
         return (
             match_label(text) is not None or _ROMAN_DIVISION_RE.match(text) is not None
         )
 
     def depth_key(idx: int, b: Block) -> tuple[int, int]:
-        # `ident` when the heading has one: after merge_heading_lines, `text`
-        # is the division's NAME and the label that ranks it is in `ident`.
-        matched = match_label(b.ident or b.text)
+        # `label` first when the heading has one: after merge_heading_lines,
+        # `text` is the division's NAME and the label that ranks it has moved
+        # out of it.
+        matched = match_label(b.label or b.text)
         if matched is not None and matched[0] in _LABEL_DEPTH:
             return (0, _LABEL_DEPTH[matched[0]])
         # Front and back matter is unlabelled but top-level: a PREFACE is a
@@ -4775,9 +4776,9 @@ def parse_document(
     while i < n:
         b = blocks[i]
         if b.is_heading:
-            # `ident` first: a merged heading keeps its label there and its
-            # name in `text` (see merge_heading_lines).
-            matched = match_label(b.ident or b.text)
+            # `label` first: a merged heading keeps its label in that field
+            # and its name in `text` (see merge_heading_lines).
+            matched = match_label(b.label or b.text)
             if matched is not None:
                 kind, num = matched
                 state.push_heading(
@@ -4785,7 +4786,7 @@ def parse_document(
                     num,
                     b.text,
                     heading_level.get(i, 1),
-                    ident=b.ident,
+                    label=b.label,
                     subtitle=b.subtitle,
                     title_html=heading_inner_html(b.html),
                 )
@@ -4838,7 +4839,7 @@ def parse_document(
                         None,
                         b.text[title_m.end() :],
                         heading_level.get(i, 1),
-                        ident=b.ident,
+                        label=b.label,
                         subtitle=b.subtitle,
                         title_html=heading_inner_html(
                             strip_leading_number_html(b.html)
@@ -4860,7 +4861,7 @@ def parse_document(
                 None,
                 b.text,
                 heading_level.get(i, 1),
-                ident=b.ident,
+                label=b.label,
                 subtitle=b.subtitle,
                 title_html=heading_inner_html(b.html),
             )
@@ -5610,8 +5611,8 @@ def build_structure(state: ScrapeState, title: str) -> list[dict]:
         row = {"level": nd.depth, "title": nd.title, "before": nd.before}
         # Optional and omitted when absent, so the common one-line heading
         # stays a three-key object (docs/corpus-schema.md).
-        if nd.ident:
-            row["ident"] = nd.ident
+        if nd.label:
+            row["label"] = nd.label
         if nd.subtitle:
             row["subtitle"] = nd.subtitle
         if nd.title_html:

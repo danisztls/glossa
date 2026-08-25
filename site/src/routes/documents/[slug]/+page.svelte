@@ -585,7 +585,7 @@
 			     precisely so they can be typeset apart here; folding them into one
 			     string is what a reader's table of contents used to show as three
 			     separate rows. -->
-			{#if node.ident}<span class="heading-ident">{node.ident}</span>{/if}
+			{#if node.label}<span class="heading-label">{node.label}</span>{/if}
 			{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
 			<!-- `title_html` keeps the emphasis the source set inside the heading —
 			     an encyclical name, a scripture reference, a Latin phrase. Absent
@@ -785,7 +785,7 @@
 									     of contents on this page must not address differently. -->
 										{#if Number.isFinite(node.before) || linkableAnchors.has(anchor)}
 											<a href={`#${anchor}`}>
-												{#if node.ident}<span class="ordinal">{node.ident}</span>{/if}
+												{#if node.label}<span class="ordinal">{node.label}</span>{/if}
 												{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
 												<InlineText nodes={titleNodes} />
 											</a>
@@ -1131,7 +1131,7 @@
 	}
 
 	/* Sans even here, where the row's title stays in the text face: the
-	   ordinal is the same identifier the heading itself prints in the sans,
+	   ordinal is the same label the heading itself prints in the sans,
 	   and the sidebar sets its own markers (`.kind-label`) the same way. */
 	.toc-inline .ordinal {
 		font-family: var(--font-sans);
@@ -1172,7 +1172,7 @@
 		color: var(--color-text);
 	}
 
-	/* The identifier, not the title: the interface face, like every other
+	/* The label, not the title: the interface face, like every other
 	   marker that says where the reader is rather than what they are reading. */
 	.structure-heading .ordinal {
 		font-family: var(--font-sans);
@@ -1180,11 +1180,11 @@
 		margin-inline-end: 0.4em;
 	}
 
-	/* The identifier sits ABOVE the name, smaller and quieter, the way the
+	/* The label sits ABOVE the name, smaller and quieter, the way the
 	   source prints it — it names the division's place in a sequence, not its
 	   subject, and reading it inline with the title makes one long shout. The
 	   subtitle sits below on its own line for the mirror reason. */
-	.structure-heading .heading-ident {
+	.structure-heading .heading-label {
 		display: block;
 		font-family: var(--font-sans);
 		font-size: 0.75em;

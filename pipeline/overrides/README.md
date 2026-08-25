@@ -120,7 +120,7 @@ is the census of where the parser gave up. Keep that list short.
 
 ## `to: null` deletes the field
 
-The corpus omits defaults — `kind` when a block is prose, `ident`/`subtitle`/
+The corpus omits defaults — `kind` when a block is prose, `label`/`subtitle`/
 `title_html` when a heading has none — so "make this an ordinary block" is
 expressed by removing the key, not by writing the default into it. `to: null`
 does that, mirroring `from: null`, which already means "the key is absent".

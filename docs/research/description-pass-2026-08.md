@@ -87,7 +87,8 @@ section 10 and stays, protected by the existing positional guard.
 ### Heading lines merged; the TOC addresses headings (2026-08-22)
 
 Two corrections found by looking at the rendered result, both recorded in
-`decisions.md`. `structure.json` gained optional `ident`/`subtitle`, and a
+`decisions.md`. `structure.json` gained optional `ident`/`subtitle` (renamed `label`/`subtitle`
+2026-08-25), and a
 division's identifier, name and subtitle are now one node instead of three:
 **150 headings merged across 32 works**, 2 of them carrying a subtitle. And a
 table-of-contents row now links to the heading's own id rather than to `#s{n}`,

@@ -214,7 +214,7 @@ were dropped once the round-trip check moved into `validate_document`, where bot
 are computed from the same source string in the same process. Storing the copy was never
 what made the check work — computing both was.
 
-**Absence means the default.** `kind`, `attribution`, `ident`, `subtitle`, `title_html`
+**Absence means the default.** `kind`, `attribution`, `label`, `subtitle`, `title_html`
 and their kin are omitted when unexceptional, so every stored value marks an exception
 and `grep -c` is the census. `to: null` in an override deletes a field back to its
 default rather than inventing a state the schema does not define.
@@ -453,7 +453,7 @@ order in `app.css` is what encodes the precedence.
 
 **Two faces, split on authorship rather than on chrome-versus-content.** What the work
 wrote is EB Garamond — every `h1`, every structure heading. What we wrote _about_ the
-work is Source Sans — the header, the controls, the labels, the identifier beside a title.
+work is Source Sans — the header, the controls, the labels, the marker beside a title.
 A heading is a title until it says otherwise.
 
 **A scoped rule cannot reach into a child component, and the failure is silent.** Svelte
