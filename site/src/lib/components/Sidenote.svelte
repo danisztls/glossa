@@ -97,18 +97,23 @@
 	 * it does not read as part of the serif text it interrupts, and lettered
 	 * rather than numbered so it cannot be taken for a verse number — see
 	 * `noteLetter`.
+	 *
+	 * SIZED AND COLOURED AS `.citation-marker` (app.css), which is the other
+	 * small raised mark the reader meets in running text. The two open
+	 * different things — a source, a gloss — but that is a difference the
+	 * opened thing makes and not one the mark should: a reader who has
+	 * learned what a raised accent letter means in the Catechism should not
+	 * have to learn a second mark to read the Bible. The clamp is that rule's
+	 * too, and it earns its keep here: a marker set purely in `em` shrinks
+	 * with the text around it and these sit inside verses, which is the
+	 * smallest type on the page.
 	 */
 	.note-marker {
 		font-family: var(--font-sans);
-		font-size: 0.62em;
+		font-size: max(var(--font-size-min), 0.7em);
 		font-weight: 600;
 		line-height: 0;
-		/* Ground lapis, the apparatus colour (app.css) — the blue's traditional
-		   job in a manuscript. That token is deliberately kept OFF Bible verse
-		   numbers, which recur every few words and are too dense to colour;
-		   Challoner's markers are the opposite case at roughly one per nineteen
-		   verses, which is the density the convention was actually for. */
-		color: var(--color-apparatus);
+		color: var(--color-accent);
 		/* The source sets the marker immediately after the words it glosses,
 		   with no space (docs/corpus-schema.md) — so the only separation is
 		   this, and a full space would misrepresent the printed page. */
@@ -168,7 +173,12 @@
 
 	.sidenote-marker {
 		font-weight: 600;
-		color: var(--color-apparatus);
+		/* The same colour as the marker in the text, because the pairing of
+		   the two identical letters is the ONLY thing tying a note to the
+		   place it belongs — in the margin layout they are separated by the
+		   whole width of the gutter, with other notes stacked below. Colour
+		   them differently and the reader has to match on shape alone. */
+		color: var(--color-accent);
 		padding-inline-end: 0.35em;
 	}
 
