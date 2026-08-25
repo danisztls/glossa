@@ -3918,3 +3918,97 @@ someone looking at the text the row leads to — and 22 Portuguese editions have
 been read on their own terms, so the case is real. It is also the only ordering
 under which correcting a reading cannot be silently overruled by a translation of
 some other edition's reading.
+
+## 2026-08-25 — Challoner's apparatus reaches the page, and the default edition stops being alphabetical
+
+Three related changes, all downstream of the Douay-Rheims ingestion of the day
+before.
+
+### The apparatus renders
+
+`PLAN.md` #3 had been ranked first on a claim no other gap could make: it was
+the only row blocking data already paid for. 1,917 of Challoner's notes and
+1,307 chapter arguments were on disk and nowhere on screen. They are now on the
+page.
+
+**A note goes in the margin where there is a margin, and becomes a disclosure
+where there is not.** Above 100rem `Sidenote.svelte` floats it into the
+**inline-start** slack outside the reading column; below that it opens as a
+block under the line the reader tapped. Inline-start rather than inline-end
+because `.reading-aside` already owns the end margin at these widths — and
+because a _Glossa Ordinaria_ sets its gloss around the text, which is the
+arrangement this site is named for.
+
+Floats, not absolute positioning: several notes against nearby verses stack
+down the margin instead of overlapping, and getting that right by measurement
+would need JavaScript watching layout.
+
+**The breakpoint is legible to the markup and not only to the stylesheet**
+(`sidenotes.svelte.ts`), which is the one place this could have been done
+purely in CSS and should not have been. A margin note is already visible, so
+its marker is not a disclosure control; `aria-expanded` on a button whose
+content is on screen regardless is a lie to a screen reader, and a control with
+no state is the same mistake from the other side. The two layouts differ in
+what the marker _is_, so JavaScript has to know where the breakpoint is.
+
+**A marker is unique within its unit, not within its chapter** — the sharp edge
+`docs/corpus-schema.md` records, and the one that would have shipped as a bug.
+John 3 carries four notes and every one of them is numbered 1. Keyed on the
+marker alone, opening the note at verse 5 would also open the ones at 16, 18
+and 20. `noteKey(unit, marker, seq)` is the fix and `sidenotes.test.ts` is the
+guard.
+
+**`heading-markers.ts` became `inline-markers.ts`.** A CCC heading's
+`title`/`title_marked` and a Douay-Rheims verse's `text`/`text_marked` are one
+shape under two names, because the corpus encodes an apparatus the same way
+wherever it carries one. Nothing in that module was ever about headings.
+
+**The chapter argument is set as apparatus, not as text** — sans, muted, above
+the rule that opens the reading column — and carries no visible label, because
+that is how the editions print it. The `aria-label` exists for a reader who
+cannot see that it is set apart. Same rule as the notes, and the same reason:
+the 2026-08-16 naming decision says a gloss must never be confusable with its
+source, and Challoner writing _about_ Scripture is not Scripture.
+
+The note markers take `--color-apparatus`, the ground-lapis token that
+`app.css` explicitly keeps **off** Bible verse numbers because those "recur
+every few words at 0.65em, and the convention was never to colour an apparatus
+that dense". Challoner's markers are the opposite case — roughly one per
+nineteen verses — which is the density the convention was for.
+
+### Which Bible an English reader gets is now stated
+
+`editionInLang` took the first manifest in `listEditions` order, which within
+one language is `id` order. So an English reader got the CPDV because `c` sorts
+before `d`, and the arrival of a second English Bible put the default one
+rename away from changing by accident. `PREFERRED_EDITION` in `corpus.ts` names
+it: **CPDV for English**, Matos Soares for Portuguese, the Clementine for
+Latin.
+
+All three of the Bible's languages are listed although only English currently
+has a choice, because the point is that the answer is written down rather than
+derived. Regional pairs are deliberately **not** listed — `prayer.common.en-us`
+against `prayer.common.en-gb` is already decided by `DEFAULT_REGION`, and
+repeating it here would be a second place for it to be true.
+
+`corpus.test.ts` asserts that every entry names an edition that exists and —
+the guard that matters — that no two editions sharing one full language tag are
+left without an entry. A third English Bible has to walk past that test.
+
+**The same accident existed a second time**, in `resolveBookToken`: within one
+tier several editions can match a token exactly (`joh` is a real abbreviation
+in both English Bibles), and the winner was registry order. It now defers to
+the same table. Only _within_ a tier, never across one — a stronger reading in
+any edition still beats a weaker reading in the preferred one, so `genesis`
+still reports the Douay-Rheims, where it is an abbreviation rather than merely
+the display name.
+
+### The fixtures gained a second English Bible
+
+`bible.douay-rheims.en` is now a fixture (Genesis 1:1-13, John 1:1-18 and
+3:1-21, mirroring the CPDV's). Not for coverage — for the case the fixtures
+could not previously express. Until it existed there was exactly one edition
+per language under test, so neither the preferred-edition table nor the
+same-tier tie-break had anything to fail against, and the annotated reading
+path had no notes to render. John 3 keeps all four of Challoner's notes,
+markers and all.
