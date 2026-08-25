@@ -25,7 +25,7 @@
 	import type { StructureNode } from '$lib/types';
 	import { SvelteSet } from 'svelte/reactivity';
 	import CitationDisclosure from './CitationDisclosure.svelte';
-	import { splitHeadingMarkers } from '$lib/heading-markers';
+	import { splitMarkers } from '$lib/inline-markers';
 
 	interface Props {
 		/** The heading's own title text — the caller's, not `node.title`, so it
@@ -43,7 +43,7 @@
 
 	let openMarkers = $state(new SvelteSet<number>());
 
-	const pieces = $derived(splitHeadingMarkers(title, node.title_marked));
+	const pieces = $derived(splitMarkers(title, node.title_marked));
 
 	function citationFor(marker: string) {
 		return node.citations?.find((c) => c.marker === marker);

@@ -276,6 +276,13 @@ export const en: Dictionary = {
 	'bible.verseNotInEdition':
 		'This verse number is not in this edition — see the note in the page source',
 	'bible.verseAbbrev': 'v.',
+	// Challoner's apparatus in the Douay-Rheims (docs/corpus-schema.md). The
+	// argument is the summary an annotated edition prints under the chapter
+	// number; it is never labelled on the page — printed Bibles set it as an
+	// unlabelled paragraph — so this string reaches only assistive technology.
+	'bible.note': 'Note',
+	'bible.noteMissing': 'This note is missing from the corpus',
+	'bible.chapterArgument': 'Argument',
 	'ccc.readFullChapter': 'Read the full chapter',
 	'ccc.noParagraphNumber': 'No paragraph number in this corpus',
 	'copyright.sourceTitle': 'Open the original source page',

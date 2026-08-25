@@ -200,6 +200,9 @@ export const ru: Dictionary = {
 	'bible.verseNotInEdition':
 		'Этого номера стиха нет в данном издании — см. примечание в источнике страницы',
 	'bible.verseAbbrev': 'ст.',
+	'bible.note': 'Примечание',
+	'bible.noteMissing': 'Это примечание отсутствует в корпусе',
+	'bible.chapterArgument': 'Краткое содержание',
 	'ccc.readFullChapter': 'Читать главу целиком',
 	'ccc.noParagraphNumber': 'В этом корпусе нет номера абзаца',
 	'copyright.sourceTitle': 'Открыть исходную страницу',

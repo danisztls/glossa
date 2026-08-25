@@ -18,7 +18,7 @@
 	// Drop cap on the chapter's opening verse only, and only when no section
 	// heading precedes it — a cap immediately under a heading collides with
 	// it, and the heading is already doing the work of marking the opening.
-	import { splitDropCap } from '$lib/dropcap';
+	import AnnotatedText from '$lib/components/AnnotatedText.svelte';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
@@ -544,6 +544,22 @@
 				<p class="edition-label">{current.work.title}</p>
 				<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 				<h1>{current.book.name} {current.chapter.n}</h1>
+				<!-- The chapter argument: an annotated edition's summary of what
+				     the chapter contains, which the Douay-Rheims prints under the
+				     chapter number for all but 27 of its 1,334 chapters. Set as an
+				     unlabelled paragraph because that is how the editions print it
+				     — the label exists only for assistive technology, which needs
+				     to be told this is apparatus rather than the chapter's opening
+				     words. In the edition's own language, never the reader's. -->
+				{#if current.chapter.summary}
+					<p
+						class="chapter-argument"
+						lang={current.work.language}
+						aria-label={t('bible.chapterArgument')}
+					>
+						{current.chapter.summary}
+					</p>
+				{/if}
 			{/if}
 
 			<!-- Kept exactly as it was before the sidebar existed — collapsed
@@ -588,7 +604,20 @@
 					{#each current.chapter.verses as verse, i (verse.n)}
 						{@const heading = headingBefore(verse.n)}
 						{#if heading}
-							<h2 class="section-heading">{heading.text}</h2>
+							<!-- A heading can carry apparatus of its own: Lamentations 1
+							     opens with Jeremias's prologue, which the Douay-Rheims
+							     prints before verse 1 with a note saying he did not write
+							     it. Keyed `h{n}` so its notes stay distinct from those of
+							     the verse it precedes, whose markers restart at 1. -->
+							<h2 class="section-heading">
+								<AnnotatedText
+									text={heading.text}
+									textMarked={heading.text_marked}
+									notes={heading.notes}
+									unit={`h${verse.n}`}
+									lang={current.work.language}
+								/>
+							</h2>
 						{/if}
 						<span
 							id={`v${verse.n}`}
@@ -603,11 +632,14 @@
 								label={`${t('bible.verseAbbrev')} ${verse.n}`}
 								placement="inline"
 								emphasized={isHighlighted(verse.n)}
-							/>{#if i === 0 && !heading}{@const cap = splitDropCap(verse.text)}{#if cap.first}<span
-										class="drop-cap-letter"
-										>{#if cap.lead}<span class="drop-cap-lead">{cap.lead}</span
-											>{/if}{cap.first}</span
-									>{cap.rest}{:else}{verse.text}{/if}{:else}{verse.text}{/if}
+							/><AnnotatedText
+								text={verse.text}
+								textMarked={verse.text_marked}
+								notes={verse.notes}
+								unit={verse.n}
+								lang={current.work.language}
+								dropCap={i === 0 && !heading}
+							/>
 						</span>
 					{/each}
 				</div>

@@ -204,6 +204,9 @@ export const de: Dictionary = {
 	'bible.verseNotInEdition':
 		'Diese Versnummer steht nicht in dieser Ausgabe — siehe die Anmerkung in der Seitenquelle',
 	'bible.verseAbbrev': 'V.',
+	'bible.note': 'Anmerkung',
+	'bible.noteMissing': 'Diese Anmerkung fehlt im Korpus',
+	'bible.chapterArgument': 'Inhaltsangabe',
 	'ccc.readFullChapter': 'Das ganze Kapitel lesen',
 	'ccc.noParagraphNumber': 'Keine Absatznummer in diesem Korpus',
 	'copyright.sourceTitle': 'Die ursprüngliche Quellseite öffnen',

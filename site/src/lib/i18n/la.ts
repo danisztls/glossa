@@ -245,6 +245,9 @@ export const la: Dictionary = {
 	'bible.verseNotInEdition':
 		'Hic numerus versus in hac editione non est — vide notam in fonte paginae',
 	'bible.verseAbbrev': 'v.',
+	'bible.note': 'Nota',
+	'bible.noteMissing': 'Haec nota in corpore deest',
+	'bible.chapterArgument': 'Argumentum',
 	'ccc.readFullChapter': 'Lege caput integrum',
 	'ccc.noParagraphNumber': 'Numerus paragraphi in hoc corpore deest',
 	'copyright.sourceTitle': 'Aperi paginam fontis',

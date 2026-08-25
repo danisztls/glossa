@@ -203,6 +203,9 @@ export const fr: Dictionary = {
 	'bible.verseNotInEdition':
 		'Ce numéro de verset n’est pas dans cette édition — voir la note dans la source de la page',
 	'bible.verseAbbrev': 'v.',
+	'bible.note': 'Note',
+	'bible.noteMissing': 'Cette note manque dans le corpus',
+	'bible.chapterArgument': 'Argument',
 	'ccc.readFullChapter': 'Lire tout le chapitre',
 	'ccc.noParagraphNumber': 'Pas de numéro de paragraphe dans ce corpus',
 	'copyright.sourceTitle': 'Ouvrir la page source d’origine',
