@@ -229,14 +229,42 @@ there is simply no `.pt` entry.
 ### 5. Record the description
 
 Add entries to `site/descriptions.json` — in **this** repository, not the
-corpus one — keyed by full work id:
+corpus one — keyed by full work id, then by the language the prose is
+written in:
 
 ```json
 "descriptions": {
-  "encyclical.magnifica-humanitas.en": "Leo XIV's encyclical on artificial intelligence…",
-  "encyclical.magnifica-humanitas.pt": "Carta encíclica de Leão XIV sobre a inteligência artificial…"
+  "encyclical.magnifica-humanitas.en": {
+    "en": { "text": "Leo XIV's encyclical on artificial intelligence…", "origin": "read" },
+    "fr": {
+      "text": "Lettre encyclique de Léon XIV sur l'intelligence artificielle…",
+      "origin": "translated",
+      "from": "en"
+    }
+  },
+  "encyclical.magnifica-humanitas.pt": {
+    "pt": { "text": "Carta encíclica de Leão XIV sobre a inteligência artificial…", "origin": "read" }
+  }
 }
 ```
+
+**`origin` is the field this whole procedure exists to make true.** `"read"`
+means what §1 says: written by reading the document in the corpus. `"translated"`
+means derived from another rendering of the same work, named in `from` —
+never from the document, because a translator does not read it. The two are
+kept apart rather than merged into one field precisely because nothing on the
+rendered page distinguishes them, which is the same argument that makes a
+guessed description worse than none.
+
+A translation inherits whatever its source got right and whatever it got
+wrong. `from` is what makes that a chain you can follow: correct a reading and
+every translation of it is known to be stale.
+
+The outer key stays the WORK, not the document, for the reason it always did —
+the Portuguese edition is a different text, so a description read from it is
+prose about that text and not a translated label. A work described only in
+Italian (the seven encyclicals with no English edition) has one entry, under
+`it`.
 
 **Not** into `$CORPUS/works/*/manifest.json`. Those are generated; a re-parse
 rewrites them, and this project fixes parsers by re-parsing. `sync-corpus.mjs`
@@ -253,6 +281,11 @@ cd site
 node scripts/sync-corpus.mjs        # CORPUS_DIR only if the corpus is not the sibling
 jq -r '.["encyclical.<slug>.en"].description' src/lib/corpus-data/index/manifests.json
 ```
+
+Only the **reading** reaches `manifest.description`: the index tier is loaded
+eagerly by every reader and eight translations of every description would
+multiply the one field in it that is prose. Translations are stored and not
+yet shipped; see `docs/decisions.md`, 2026-08-25.
 
 ### 6. Report defects; fix parsers only deliberately
 

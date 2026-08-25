@@ -245,6 +245,25 @@ const descriptions = existsSync(descriptionsPath)
 	? (readJson(descriptionsPath).descriptions ?? {})
 	: {};
 
+/**
+ * The description written in a work's OWN language.
+ *
+ * `descriptions.json` is `work id -> language -> { text, origin }` since
+ * 2026-08-25, so that a description read from a document and a translation of
+ * one are distinguishable rather than sharing a field. Only the reading is
+ * merged into the manifest here: the index tier is eagerly loaded by every
+ * reader, and putting eight translations of every description into it would
+ * multiply the one field in it that is prose. Translations are stored and are
+ * not yet shipped — see docs/decisions.md, 2026-08-25.
+ *
+ * A work's own language is the only one a reading can be in, so this is a
+ * lookup rather than a search: `encyclical.rerum-novarum.pt` is described in
+ * Portuguese by definition, because the description is prose about that text.
+ */
+function ownLanguageDescription(workId, language) {
+	return descriptions[workId]?.[language]?.text ?? null;
+}
+
 const manifests = {}; // workId -> manifest.json, verbatim (every work type, incl. future document families)
 const bibleIndex = {}; // workId -> { books: BibleBookMeta[] }
 const bibleIntroIndex = {}; // lang -> { books: [osis, …] } -- EXISTENCE only, never the prose
@@ -307,7 +326,7 @@ for (const workId of workIds) {
 	manifests[workId] = {
 		...manifest,
 		notes: '',
-		description: descriptions[workId] ?? manifest.description ?? null
+		description: ownLanguageDescription(workId, manifest.language) ?? manifest.description ?? null
 	};
 
 	if (typeof manifest.notes === 'string' && manifest.notes.includes('PARSER DEFEATED')) {
