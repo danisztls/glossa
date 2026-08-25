@@ -107,25 +107,6 @@ export type RefSegment =
 	| { kind: 'compendium'; n: number; raw: string }
 	| {
 			/**
-			 * A document named by its TITLE rather than by a siglum — "Pius XII,
-			 * Humani generis 561", "Const. dogm. Dei Verbum, 2". Distinct from
-			 * `document` because the two resolve differently: a siglum without a
-			 * section number links nowhere (a bare "cf. GS" has no destination
-			 * worth guessing), whereas a title without a usable section number
-			 * still names one specific document and links to its landing page.
-			 * See `findDocumentTitleAt` for why titles are matched at all.
-			 */
-			kind: 'documentTitle';
-			/** The ingested document's slug — always set; an unresolvable title never becomes this segment. */
-			slug: string;
-			/** The manifest title that matched, for tooltips. */
-			title: string;
-			/** Trailing number(s) after the title, if any — validated against the document in `refHref`, never trusted. */
-			locus: string | null;
-			raw: string;
-	  }
-	| {
-			/**
 			 * A Summa Theologiae locus. Its own kind rather than a `document`
 			 * with a slug because its address is three levels deep (part,
 			 * question, article) where a document's is one section number, and
@@ -141,16 +122,30 @@ export type RefSegment =
 			raw: string;
 	  }
 	| {
+			/**
+			 * A magisterial document, named either by a SIGLUM ("GS 19 # 1", "DS
+			 * 1514") or by its spelled-out TITLE ("Pius XII, Humani generis 561",
+			 * "Const. dogm. Dei Verbum, 2"). One kind for both, because both
+			 * resolve to the same address the same way; `via` records which
+			 * matcher found it, for the one place the two differ (`refAddress`:
+			 * a title with no usable section still names one document and
+			 * links to its landing page, a bare siglum links nowhere).
+			 */
 			kind: 'document';
-			sigla: string;
+			via: 'siglum' | 'title';
+			/** The siglum as printed, or the manifest title that matched. */
+			label: string;
+			/** Trailing number(s), if any — validated against the document in `refAddress`, never trusted. */
 			locus: string | null;
+			/** The decoder-ring text for a siglum, for tooltips; `null` for a title, which explains itself. */
 			expansion: string | null;
-			/** The ingested document this siglum names, or `null` for a
+			/** The ingested document this names, or `null` for a
 			 *  recognized-but-not-ingested siglum (DS, CIC, PL, PG, AAS, ...) or
 			 *  a language whose config never maps sigla to slugs at all (PT —
-			 *  see `DOCUMENT_SLUGS_EN`'s docblock). Resolved at PARSE time, not
-			 *  re-derived in `refHref`, so there's one place that decides "is
-			 *  this siglum a document we have," not two that could drift. */
+			 *  see the sigla section comment). Always set for a title: an
+			 *  unresolvable title never becomes a segment. Resolved at PARSE
+			 *  time, not re-derived in `refAddress`, so there's one place that
+			 *  decides "is this a document we have," not two that could drift. */
 			slug: string | null;
 			raw: string;
 	  };
@@ -1009,7 +1004,7 @@ function configFor(lang?: string): LangConfig {
  * this module stays corpus-free (see the top of the file): `refs.ts` calls
  * this with `listDocuments` at import time, and anything that only needs the
  * scripture grammar — the xref builder — simply never does, and gets no
- * `documentTitle` segments. Scripture is matched before documents in
+ * title-matched `document` segments. Scripture is matched before documents in
  * `parseClause`, so an absent table costs those callers nothing.
  */
 let documentTitleSource: () => DocumentTitleGroup[] = () => [];
@@ -1696,10 +1691,12 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 		const segs: RefSegment[] = [];
 		if (tm.matchStart > 0) segs.push(textSeg(rawClause.slice(0, tm.matchStart)));
 		segs.push({
-			kind: 'documentTitle',
-			slug: tm.slug,
-			title: tm.title,
+			kind: 'document',
+			via: 'title',
+			label: tm.title,
 			locus: tm.locus,
+			expansion: null,
+			slug: tm.slug,
 			raw: rawClause.slice(tm.matchStart, tm.consumedEnd)
 		});
 		if (tm.consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(tm.consumedEnd)));
@@ -1711,7 +1708,8 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 		if (dm.matchStart > 0) segs.push(textSeg(rawClause.slice(0, dm.matchStart)));
 		segs.push({
 			kind: 'document',
-			sigla: dm.sigla,
+			via: 'siglum',
+			label: dm.sigla,
 			locus: dm.locus,
 			expansion: cfg.documentSigla.get(dm.sigla)?.expansion ?? null,
 			slug: dm.slug,

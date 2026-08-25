@@ -158,7 +158,8 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 			{ kind: 'text', text: '; ' },
 			{
 				kind: 'document',
-				sigla: 'DV',
+				via: 'siglum',
+				label: 'DV',
 				locus: '3',
 				expansion: expect.stringContaining('Dei Verbum'),
 				slug: 'dei-verbum',
@@ -345,7 +346,7 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 		expect(segs).toContainEqual(
 			expect.objectContaining({
 				kind: 'document',
-				sigla: 'GS',
+				label: 'GS',
 				locus: '19 # 1',
 				slug: 'gaudium-et-spes',
 				raw: 'GS 19 # 1'
@@ -355,7 +356,7 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 
 	it('recognizes a document siglum with no ingested slug behind it (DS is not in the corpus)', () => {
 		const segs = parseRefs('Cf. Council of Trent (1546): DS 1514; cf. Col 1:12-14.');
-		const ds = segs.find((s) => s.kind === 'document' && s.sigla === 'DS');
+		const ds = segs.find((s) => s.kind === 'document' && s.label === 'DS');
 		expect(ds).toMatchObject({ slug: null });
 	});
 
@@ -363,7 +364,7 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 		const text = 'St. Augustine, Sermo 241, 2: PL 38, 1134,';
 		const segs = parseRefs(text);
 		expect(segs.some((s) => s.kind === 'scripture')).toBe(false);
-		expect(segs.some((s) => s.kind === 'document' && s.sigla === 'PL')).toBe(true);
+		expect(segs.some((s) => s.kind === 'document' && s.label === 'PL')).toBe(true);
 		// Reassembling every segment's text/raw must reproduce the original string.
 		const reassembled = segs.map((s) => (s.kind === 'text' ? s.text : s.raw)).join('');
 		expect(reassembled).toBe(text);
@@ -527,7 +528,7 @@ describe('parseRefs — citation-clause grammar (PT)', () => {
 			})
 		);
 		expect(parseRefs('canon 1: DS1511.', { lang: 'pt' })).toContainEqual(
-			expect.objectContaining({ kind: 'document', sigla: 'DS', locus: '1511' })
+			expect.objectContaining({ kind: 'document', label: 'DS', locus: '1511' })
 		);
 	});
 
@@ -561,7 +562,7 @@ describe('parseRefs — citation-clause grammar (PT)', () => {
 		const segs = parseRefs('Santo Ireneu de Lião, Adversus haereses I. 10, 1-2: SC 264, 154-158.', {
 			lang: 'pt'
 		});
-		const doc = segs.find((s) => s.kind === 'document' && s.sigla === 'SC') as
+		const doc = segs.find((s) => s.kind === 'document' && s.label === 'SC') as
 			Extract<RefSegment, { kind: 'document' }> | undefined;
 		expect(doc).toBeTruthy();
 		expect(doc?.expansion).toContain('Sources Chrétiennes');
@@ -793,7 +794,8 @@ describe('refHref', () => {
 			refHref(
 				{
 					kind: 'document',
-					sigla: 'DS',
+					via: 'siglum',
+					label: 'DS',
 					locus: '1514',
 					expansion: 'Denzinger',
 					slug: null,
@@ -809,7 +811,8 @@ describe('refHref', () => {
 			refHref(
 				{
 					kind: 'document',
-					sigla: 'GS',
+					via: 'siglum',
+					label: 'GS',
 					locus: '19',
 					expansion: 'Gaudium et Spes',
 					slug: 'gaudium-et-spes',
@@ -825,7 +828,8 @@ describe('refHref', () => {
 			refHref(
 				{
 					kind: 'document',
-					sigla: 'GS',
+					via: 'siglum',
+					label: 'GS',
 					locus: '19 # 1',
 					expansion: 'Gaudium et Spes',
 					slug: 'gaudium-et-spes',
@@ -841,7 +845,8 @@ describe('refHref', () => {
 			refHref(
 				{
 					kind: 'document',
-					sigla: 'GS',
+					via: 'siglum',
+					label: 'GS',
 					locus: '19',
 					expansion: 'Gaudium et Spes',
 					slug: 'gaudium-et-spes',
@@ -857,7 +862,8 @@ describe('refHref', () => {
 			refHref(
 				{
 					kind: 'document',
-					sigla: 'DV',
+					via: 'siglum',
+					label: 'DV',
 					locus: '2',
 					expansion: 'Dei Verbum',
 					slug: 'dei-verbum',
@@ -881,7 +887,8 @@ describe('refHref', () => {
 			refHref(
 				{
 					kind: 'document',
-					sigla: 'GS',
+					via: 'siglum',
+					label: 'GS',
 					locus: null,
 					expansion: 'Gaudium et Spes',
 					slug: 'gaudium-et-spes',
@@ -1123,7 +1130,7 @@ describe('refHref', () => {
 describe('parseRefs — documents named by title', () => {
 	it('links a papal document cited by its incipit', () => {
 		const segs = parseRefs('Pius XII, Enc. Humani Generis 3.');
-		expect(segs.find((s) => s.kind === 'documentTitle')).toMatchObject({
+		expect(segs.find((s) => s.kind === 'document' && s.via === 'title')).toMatchObject({
 			slug: 'humani-generis',
 			locus: '3'
 		});
@@ -1147,7 +1154,7 @@ describe('parseRefs — documents named by title', () => {
 				lang: 'pt'
 			}
 		);
-		expect(segs.find((s) => s.kind === 'documentTitle')).toMatchObject({
+		expect(segs.find((s) => s.kind === 'document' && s.via === 'title')).toMatchObject({
 			slug: 'dei-verbum',
 			locus: '2'
 		});
@@ -1157,18 +1164,17 @@ describe('parseRefs — documents named by title', () => {
 		// "Paul VI, Mysterium Fidei" names a document we do not have; matching
 		// the bare "Mysterium" would link confidently to the wrong one.
 		const segs = parseRefs('Paul VI, Mysterium Fidei: AAS (1965) 771.');
-		expect(segs.every((s) => s.kind !== 'documentTitle')).toBe(true);
+		expect(segs.every((s) => !(s.kind === 'document' && s.via === 'title'))).toBe(true);
 	});
 
 	it('does NOT match a single-word title appearing in ordinary Latin prose', () => {
 		const segs = parseRefs('Roman Missal, Embolism after the Lord’s Prayer: da propitius pacem.');
-		expect(segs.every((s) => s.kind !== 'documentTitle')).toBe(true);
+		expect(segs.every((s) => !(s.kind === 'document' && s.via === 'title'))).toBe(true);
 	});
 
 	it('prefers a siglum over a title when a clause offers both', () => {
 		const segs = parseRefs('GS 19');
-		expect(segs.find((s) => s.kind === 'document')).toBeDefined();
-		expect(segs.every((s) => s.kind !== 'documentTitle')).toBe(true);
+		expect(segs.find((s) => s.kind === 'document')).toMatchObject({ via: 'siglum' });
 	});
 
 	it('is not shadowed by an unlinkable siglum appearing LATER in the clause', () => {
@@ -1177,13 +1183,23 @@ describe('parseRefs — documents named by title', () => {
 		// sigla first let that trailing AAS beat the linkable title earlier in
 		// the same clause — for most of the Portuguese corpus, silently.
 		const segs = parseRefs('Const. dogm. Dei Verbum, 2: AAS 58 (1966) 818.', { lang: 'pt' });
-		expect(segs.find((s) => s.kind === 'documentTitle')).toMatchObject({ slug: 'dei-verbum' });
+		expect(segs.find((s) => s.kind === 'document' && s.via === 'title')).toMatchObject({
+			slug: 'dei-verbum'
+		});
 	});
 });
 
 describe('refHref — documents named by title', () => {
 	const seg = (locus: string | null, slug = 'gaudium-et-spes') =>
-		({ kind: 'documentTitle', slug, title: 'Gaudium et Spes', locus, raw: 'x' }) as const;
+		({
+			kind: 'document',
+			via: 'title',
+			label: 'Gaudium et Spes',
+			locus,
+			expansion: null,
+			slug,
+			raw: 'x'
+		}) as const;
 
 	it('links to the section when the number really is one', () => {
 		expect(refHref(seg('19'), { lang: 'en' })).toBe('/documenta/gaudium-et-spes#s19');

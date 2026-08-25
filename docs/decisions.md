@@ -4494,8 +4494,12 @@ review's "complexity theater" worry mostly failed to survive reading. Two
 things did: the `document`/`documentTitle` split into two segment kinds with
 two `refHref` branches for one destination, and the `cf` flag — parsed,
 merged with care in the index builder, typed on the wire, given an i18n
-string, and rendered nowhere. Neither is touched here; `cf` is explained
-below and is a decision for the "Cited in" panel, not for the grammar.
+string, and rendered nowhere. The first is merged in the same pass: one
+`document` kind with `via: 'siglum' | 'title'`, one resolver branch, and the
+single genuine difference (a title without a usable section degrades to the
+landing page, a bare siglum to no link) as one conditional. `cf` stays as it
+is; it is explained below and is a decision for the "Cited in" panel, not for
+the grammar.
 
 **What `cf` means.** A citation printed as "Cf. Jn 3:16" says _compare_ —
 the text alludes to the verse; a bare "Jn 3:16" says the text _quotes_ it.

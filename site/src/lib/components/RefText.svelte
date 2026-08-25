@@ -46,7 +46,7 @@
 	/** Tooltip for an unresolved segment: the document expansion when we have one, otherwise just the raw citation text (better than nothing, no worse than the plain text it sits next to). */
 	function tooltipFor(seg: RefSegment): string {
 		return seg.kind === 'document' && seg.expansion
-			? `${seg.sigla} — ${seg.expansion}`
+			? `${seg.label} — ${seg.expansion}`
 			: seg.kind === 'text'
 				? ''
 				: seg.raw;

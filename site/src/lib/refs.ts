@@ -121,36 +121,29 @@ export function refAddress(
 				: null;
 		return { kind: 'summa', part, question: seg.question, article };
 	}
-	if (seg.kind === 'documentTitle') {
-		// The reader's own language edition, for the same reason the siglum
-		// branch below uses it: a citation link must not silently move them to
-		// a different-language edition than the one they are reading.
+	if (seg.kind === 'document') {
+		if (!seg.slug) return undefined; // recognized siglum, but not an ingested document (or PT, which never resolves one)
+		// The reader's own language edition: a citation link must not silently
+		// move them to a different-language edition than the one they are
+		// reading (see the docblock).
 		const targetLang = (ctx.lang ?? 'en').split('-')[0].toLowerCase();
 		const workId = getDocumentGroup(seg.slug)?.manifests[targetLang]?.id;
 		if (!workId) return undefined;
-		// Unlike a siglum, a title with no usable section number still names one
-		// specific document, so it degrades to that document's landing page
-		// rather than to no link. The number is validated, never trusted: "Humani
-		// generis 561" cites an AAS page, and that document has 44 sections.
-		const n = firstLocusSection(seg.locus);
-		// A section is a FRAGMENT on the document's one page, not a page of its
-		// own — `documents/[slug]/[n]` was retired 2026-08-17 (docs/decisions.md;
+		// The number is validated, never trusted: "Humani generis 561" cites an
+		// AAS page, and that document has 44 sections. A section is a FRAGMENT
+		// on the document's one page, not a page of its own —
+		// `documents/[slug]/[n]` was retired 2026-08-17 (docs/decisions.md;
 		// 9,315 prerendered files for one section of text each). `#s{n}` is the
 		// same anchor the reading view has always carried.
+		const n = firstLocusSection(seg.locus);
 		if (n !== undefined && documentSectionExists(workId, n)) {
 			return { kind: 'document', slug: seg.slug, n };
 		}
-		return { kind: 'document', slug: seg.slug };
-	}
-	if (seg.kind === 'document') {
-		if (!seg.slug) return undefined; // recognized siglum, but not an ingested document (or PT, which never resolves one)
-		const n = firstLocusSection(seg.locus);
-		if (n === undefined) return undefined; // e.g. a bare "cf. GS" with no section number at all
-		const targetLang = (ctx.lang ?? 'en').split('-')[0].toLowerCase();
-		const workId = getDocumentGroup(seg.slug)?.manifests[targetLang]?.id;
-		if (!workId || !documentSectionExists(workId, n)) return undefined;
-		// Fragment, not a path segment — see the `documentTitle` branch above.
-		return { kind: 'document', slug: seg.slug, n };
+		// The one place a siglum and a title part ways. A title with no usable
+		// section still names one specific document, so it degrades to that
+		// document's landing page; a bare siglum ("cf. GS") has no destination
+		// worth guessing and links nowhere.
+		return seg.via === 'title' ? { kind: 'document', slug: seg.slug } : undefined;
 	}
 	if (seg.kind !== 'scripture') return undefined; // 'text' never links
 

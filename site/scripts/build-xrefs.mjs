@@ -39,7 +39,7 @@ import { toVulgateCandidates } from '../src/lib/versification.ts';
  *
  * Any numbered unit carrying an apparatus — a CCC paragraph, a document
  * section. Only the two fields read here are named.
- * @typedef {{ n: number, citations?: Citation[], blocks?: { text_marked?: string, html?: string }[] }} Unit
+ * @typedef {{ n: number, citations?: Citation[], blocks?: { text_marked?: string, html?: string, text?: string }[] }} Unit
  */
 
 /**
@@ -167,7 +167,7 @@ function mergeRefs(refs) {
  * other tag leave a space, footnote markers contribute nothing whether they
  * arrive as `<sup data-fn>` elements or as bare ⟦n⟧ tokens.
  *
- * @param {{ text_marked?: string, html?: string }} block
+ * @param {{ text_marked?: string, html?: string, text?: string }} block
  * @returns {string}
  */
 export function blockProse(block) {
