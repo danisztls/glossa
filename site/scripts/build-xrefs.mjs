@@ -25,7 +25,12 @@
  * `mergeRefs` for what that does with `cf` and with duplicate verses.
  */
 
-import { linkifyProse, normalizeCitationSpacing, parseRefs } from '../src/lib/refs-grammar.ts';
+import {
+	expandIbidem,
+	linkifyProse,
+	normalizeCitationSpacing,
+	parseRefs
+} from '../src/lib/refs-grammar.ts';
 import { toVulgateCandidates } from '../src/lib/versification.ts';
 
 /**
@@ -327,12 +332,38 @@ export function buildDocumentBibleXrefs(editions) {
  *     whether or not anything can be linked to, and a reader standing on that
  *     document is owed the fact.
  *
- * `Ibid.` IS NOT RESOLVED HERE, and it is 6.2% of the corpus's 22,387
- * citations. Resolving it means carrying the previous citation's target
- * across a unit boundary and asserting that is what the source meant, which
- * is a claim about someone else's apparatus rather than a reading of it. It
- * belongs to this builder (docs/link-surface.md #12 says so) and it is not in
- * it yet.
+ * `Ibid.` IS RESOLVED HERE, and the doubt about whether that is reading or
+ * guessing is settled by a guard rather than by an argument. An ibidem word
+ * names the work of the PREVIOUS FOOTNOTE, and 401 of the corpus's 1,240 sit
+ * in a different unit from the note they point back at — so believing them
+ * means carrying a target across a unit boundary. What makes that a reading:
+ * the apparatus numbers its notes, and the builder refuses to expand unless
+ * this citation's number is exactly one past the number of the citation it
+ * would inherit from. A footnote the parser dropped, or a chapter that
+ * restarts its numbering, breaks the run and the `Ibid.` stays unread. 1,227
+ * of 1,240 pass; the thirteen that fail are the check doing its job.
+ *
+ * `expandIbidem` (in the grammar, with the surface forms and the case
+ * against `Id.`) does the rewriting; everything else about a citation is
+ * read here exactly as it would have been had the source spelled the work
+ * out. Two rules make the expansion mean what the word means:
+ *
+ *   - **A work is inherited only from the citation immediately before**, and
+ *     only when that citation named one. A note giving nothing but an AAS
+ *     volume ends the run rather than being seen through, because "the same
+ *     as two notes ago" is not what `Ibid.` says.
+ *   - **A bare `Ibid.` inherits the PLACE too**, not just the work. That is
+ *     the whole content of the word, and it is the only part the re-parse
+ *     cannot state on its own: a work named with no number after it is not a
+ *     reference, so it comes back as no segment at all.
+ *
+ * MEASURED over the corpus (2026-08-25): 513 citations that resolved to
+ * nothing now name an ingested work — 499 documents and 14 Catechism
+ * paragraphs — which is 38 document addresses and 8 Catechism paragraphs
+ * gaining a citer they did not have. The other 718 still resolve to nothing,
+ * and correctly: their antecedent is Denzinger, Migne, a Father or a papal
+ * address, none of which this corpus holds, so there was never a link to
+ * inherit.
  *
  * @typedef {{ kind: 'ccc' | 'document', slug?: string, n: number }} Citer
  * @typedef {{ work: string, n: number | null, cited_by: Citer[] }} DocumentCitationXref
@@ -351,6 +382,15 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists) {
 	/** @type {Map<number, Citer[]>} */
 	const ccc = new Map();
 
+	/**
+	 * One `Ibid.` chain per EDITION — a work in one language — because that
+	 * is the unit a footnote sequence runs through. The units of one edition
+	 * arrive here contiguous and in order, so the chain is a running pair
+	 * rather than an index.
+	 */
+	/** @type {Map<string, { marker: number | null, named: NamedWork | null }>} */
+	const chains = new Map();
+
 	/** @param {Citer[]} list @param {Citer} citer */
 	const addOnce = (list, citer) => {
 		// One citer per address however many times it cites it: a paragraph
@@ -364,28 +404,45 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists) {
 	};
 
 	for (const { citer, lang, unit } of units) {
-		/** @type {import('../src/lib/refs-grammar.ts').RefSegment[]} */
-		const segments = [];
+		const chainKey = `${citer.kind}\u0000${citer.slug ?? ''}\u0000${lang}`;
+		let chain = chains.get(chainKey);
+		if (!chain) chains.set(chainKey, (chain = { marker: null, named: null }));
+
 		for (const citation of unit.citations ?? []) {
 			const raw = citation.label ?? citation.text;
-			if (raw) segments.push(...parseRefs(normalizeCitationSpacing(raw), { lang }));
-		}
-		for (const seg of segments) {
-			if (seg.kind === 'ccc') {
-				if (citer.kind === 'ccc' || !paragraphExists(seg.n)) continue;
-				let list = ccc.get(seg.n);
-				if (!list) ccc.set(seg.n, (list = []));
-				addOnce(list, citer);
-				continue;
+			if (!raw) continue;
+			const text = normalizeCitationSpacing(raw);
+			// An inline locator (`marker: "inline3"`) carries no footnote
+			// number, so it neither breaks the chain nor joins it: it sits
+			// between two numbered notes without standing between them.
+			const marker = /^\d+$/.test(String(citation.marker ?? '').trim())
+				? Number(citation.marker)
+				: null;
+			const antecedent = marker !== null && chain.marker === marker - 1 ? chain.named : null;
+			const segments = antecedent
+				? expandedSegments(text, lang, antecedent)
+				: parseRefs(text, { lang });
+			if (marker !== null) {
+				chain.marker = marker;
+				chain.named = lastNamedWork(segments);
 			}
-			if (seg.kind !== 'document' || !seg.slug || seg.slug === citer.slug) continue;
-			const n = firstSection(seg.locus);
-			const key = n !== null && sectionExists(seg.slug, n) ? String(n) : '';
-			let byUnit = documents.get(seg.slug);
-			if (!byUnit) documents.set(seg.slug, (byUnit = new Map()));
-			let list = byUnit.get(key);
-			if (!list) byUnit.set(key, (list = []));
-			addOnce(list, citer);
+			for (const seg of segments) {
+				if (seg.kind === 'ccc') {
+					if (citer.kind === 'ccc' || !paragraphExists(seg.n)) continue;
+					let list = ccc.get(seg.n);
+					if (!list) ccc.set(seg.n, (list = []));
+					addOnce(list, citer);
+					continue;
+				}
+				if (seg.kind !== 'document' || !seg.slug || seg.slug === citer.slug) continue;
+				const n = firstSection(seg.locus);
+				const key = n !== null && sectionExists(seg.slug, n) ? String(n) : '';
+				let byUnit = documents.get(seg.slug);
+				if (!byUnit) documents.set(seg.slug, (byUnit = new Map()));
+				let list = byUnit.get(key);
+				if (!list) byUnit.set(key, (list = []));
+				addOnce(list, citer);
+			}
 		}
 	}
 
@@ -419,6 +476,68 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists) {
 			.sort((a, b) => a - b)
 			.map((n) => ({ ccc: n, cited_by: ordered(ccc.get(n) ?? []) }))
 	};
+}
+
+/**
+ * The work a citation ends by naming, in the form an `Ibid.` after it needs:
+ * the label to write into the expansion, and the segment itself, which is
+ * what a bare `Ibid.` inherits whole.
+ *
+ * THE LAST named work, not the first, because that is the one an ibidem word
+ * points at. The distinction only ever arises inside a single citation that
+ * names two ("LG 12; GS 22"), since the edition locators that usually trail
+ * a citation — "GS 82: AAS 58 (1966), 1105" — name no work this corpus
+ * holds and so are not candidates at all.
+ *
+ * @typedef {{ label: string, segment: import('../src/lib/refs-grammar.ts').RefSegment }} NamedWork
+ * @param {import('../src/lib/refs-grammar.ts').RefSegment[]} segments
+ * @returns {NamedWork | null}
+ */
+function lastNamedWork(segments) {
+	/** @type {NamedWork | null} */
+	let named = null;
+	for (const seg of segments) {
+		if (seg.kind === 'document' && seg.slug) named = { label: seg.label, segment: seg };
+		// "CCC" is a form the grammar's own work-title matcher reads, in
+		// every language, so the Catechism expands by the same route a
+		// document does rather than through a special case.
+		else if (seg.kind === 'ccc') named = { label: 'CCC', segment: seg };
+	}
+	return named;
+}
+
+/**
+ * @param {import('../src/lib/refs-grammar.ts').RefSegment} seg
+ * @param {import('../src/lib/refs-grammar.ts').RefSegment} named
+ */
+function namesSameWork(seg, named) {
+	return named.kind === 'ccc'
+		? seg.kind === 'ccc'
+		: seg.kind === 'document' && named.kind === 'document' && seg.slug === named.slug;
+}
+
+/**
+ * One citation's segments, with a leading `Ibid.` expanded against the work
+ * the previous footnote named.
+ *
+ * @param {string} text a citation, already spacing-normalized
+ * @param {string} lang
+ * @param {NamedWork} antecedent
+ * @returns {import('../src/lib/refs-grammar.ts').RefSegment[]}
+ */
+function expandedSegments(text, lang, antecedent) {
+	const expanded = expandIbidem(text, antecedent.label);
+	if (expanded === null) return parseRefs(text, { lang });
+	const segments = parseRefs(expanded, { lang });
+	const i = segments.findIndex((seg) => namesSameWork(seg, antecedent.segment));
+	// A bare `Ibid.` — the place stands as well as the work. The expansion
+	// reads as a work named in passing, which is not a reference, so it comes
+	// back either as no segment (i < 0) or as one with no locus; either way
+	// the answer is the segment the previous footnote produced.
+	if (i < 0) return [antecedent.segment, ...segments];
+	const seg = segments[i];
+	if (seg.kind === 'document' && seg.locus === null) segments[i] = antecedent.segment;
+	return segments;
 }
 
 /**

@@ -1796,6 +1796,85 @@ function parseBareCccList(text: string, kind: 'ccc' | 'compendium' = 'ccc'): Ref
 }
 
 // --------------------------------------------------------------------------
+// `Ibid.` — a citation that names no work because the one before it did
+//
+// 1,243 of the corpus's 22,693 citation strings open with an ibidem word,
+// and every one of them is a citation that reads as nothing: the grammar
+// parses one string at a time, and "Ibid., 14." carries no work to resolve.
+// What it
+// carries is an ABBREVIATION, and the expansion is the previous citation's
+// work — so `expandIbidem` writes that work back into the string and hands
+// the result to `parseRefs`, which then reads the locus, the range, the "#"
+// subsection and the rest of the citation by the rules it already has. One
+// grammar (this file's whole premise), and the expanded string is the exact
+// shape it reads everywhere else.
+//
+// SUPPLYING THE PREVIOUS CITATION IS THE CALLER'S JOB, and deliberately so:
+// which citation precedes this one is a fact about a document's apparatus,
+// not about a string, and the caller is the only one who knows whether the
+// two are really adjacent (`build-xrefs.mjs` requires consecutive footnote
+// numbers before it will believe they are).
+//
+// ONE TABLE FOR EVERY LANGUAGE, not a `LangConfig` field. Two reasons. The
+// forms are a Latin loanword everywhere but German, so the table is nearly
+// the same list six times over; and `configFor` collapses to EN or PT, so
+// the Spanish, French, Italian and German editions that print `Ibíd.`,
+// `ibid.` and `Ebd.` would all be reading the English config anyway. Every
+// form here was counted in the corpus (2026-08-25) — nothing is here on the
+// strength of a dictionary, and `Ivi`, which an Italian apparatus may print,
+// is absent because this one never does.
+//
+// `IDEM`/`ID.` IS NOT AN IBIDEM WORD and is deliberately absent. It means
+// the same AUTHOR, not the same work, and what follows it is a different
+// title — "Id., Homilia III in Dormitionem Ssmae Deiparae" after a citation
+// of St Germanus's In Praesentationem. Of the corpus's 299, all but one name
+// a new work that way; expanding them would file a citation the source never
+// made, which is the failure this module's docblock rules out. The single
+// bare `Idem.` is left unread with them, at a cost of one.
+// --------------------------------------------------------------------------
+
+/**
+ * A citation opening with an ibidem word, with the word itself captured.
+ *
+ * Anchored at the start, because an `ib.` in the middle of a citation refers
+ * back to a work that citation already named ("Gasser, ib.") and not to the
+ * previous note. The optional prefix is what the corpus actually prints in
+ * front of one: a stray full stop left by the source's own typesetting, a
+ * "cf." in five spellings across four languages, or both.
+ */
+const IBIDEM_RE =
+	/^[\s.]*((?:cfr?|vgl|see|vd)[.,]?\s+)?(?:ibidem|ib[íi]dem|ibid|ib[íi]d|ebenda|ebd|ib)(?![\p{L}])\.?/iu;
+
+/**
+ * Rewrite an `Ibid.` citation as though it had named its work in full.
+ *
+ * `label` is the work the previous citation named — a siglum as printed
+ * ("LG") or a manifest title ("Gaudium et spes"), i.e. exactly what a
+ * `document` segment carries in its own `label`, so the rewritten string is
+ * guaranteed to parse back to the same document. Returns `null` when the
+ * citation does not open with an ibidem word, which is the caller's signal
+ * that there is nothing to expand.
+ *
+ * The punctuation between the word and what follows it is DROPPED rather
+ * than kept, and that is load-bearing: "Ibid., 14." must become "LG 14" and
+ * not "LG, 14", because the siglum path reads a locus only when digits
+ * follow the siglum directly (`LOCUS_RE`). Kept, the comma would make the
+ * locus unreadable and the citation would silently inherit the previous
+ * note's section — a wrong link where there had merely been no link.
+ *
+ * What follows an ibidem word is often not a locus at all ("Ibid.: AAS 20
+ * (1928), 172.", "Ibid., p. 618."), and nothing here pretends otherwise: the
+ * expansion is handed to the same parser as any other citation, and a
+ * volume or page number does not look like a section to it either.
+ */
+export function expandIbidem(text: string, label: string): string | null {
+	const m = IBIDEM_RE.exec(text);
+	if (!m) return null;
+	const rest = text.slice(m[0].length).replace(/^[\s.,:;]*/, '');
+	return (m[1] ?? '') + label + (rest ? ' ' + rest : '');
+}
+
+// --------------------------------------------------------------------------
 // Public API
 // --------------------------------------------------------------------------
 

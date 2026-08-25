@@ -5,7 +5,7 @@ import {
 	buildDocumentBibleXrefs,
 	checkXrefsAgainstCorpus
 } from '../../scripts/build-xrefs.mjs';
-import { setDocumentTitleSource } from './refs-grammar';
+import { expandIbidem, parseRefs, setDocumentTitleSource } from './refs-grammar';
 
 /** A CCC paragraph shaped the way `paragraphs.json` stores one. */
 function para(
@@ -318,6 +318,284 @@ describe('buildCitationXrefs', () => {
 		// `n: null` because `has` does not claim Dei Verbum has a section 2 —
 		// the number is captured and validated, never trusted.
 		expect(documents).toEqual([{ work: 'dei-verbum', n: null, cited_by: [{ kind: 'ccc', n: 2 }] }]);
+	});
+
+	it('reads Ibid. as the work the footnote before it named', () => {
+		const { documents } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'ccc', n: 1 },
+					lang: 'en',
+					unit: para(1, [
+						{ marker: '1', text: 'LG 12.' },
+						{ marker: '2', text: 'Ibid., 14.' }
+					])
+				}
+			],
+			has,
+			() => true
+		);
+		expect(documents).toEqual([
+			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] },
+			{ work: 'lumen-gentium', n: 14, cited_by: [{ kind: 'ccc', n: 1 }] }
+		]);
+	});
+
+	it('carries the work across a unit boundary when the footnote numbers run on', () => {
+		// 401 of the corpus's 1,240 ibidem citations are the first note of
+		// their unit. The apparatus is numbered document-wide, so the note
+		// before note 2 is note 1 whichever section it sits in.
+		const { documents } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'ccc', n: 1 },
+					lang: 'en',
+					unit: para(1, [{ marker: '1', text: 'LG 12.' }])
+				},
+				{
+					citer: { kind: 'ccc', n: 2 },
+					lang: 'en',
+					unit: para(2, [{ marker: '2', text: 'Ibid., 14.' }])
+				}
+			],
+			has,
+			() => true
+		);
+		expect(documents).toEqual([
+			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] },
+			{ work: 'lumen-gentium', n: 14, cited_by: [{ kind: 'ccc', n: 2 }] }
+		]);
+	});
+
+	it('refuses to carry it when the numbering does not run on', () => {
+		// A gap means a footnote this parser did not read, or a chapter that
+		// restarts its numbering — either way the note before this one is not
+		// the note it says it is, and the guard is what makes the carry a
+		// reading rather than an assertion.
+		const { documents } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'ccc', n: 1 },
+					lang: 'en',
+					unit: para(1, [{ marker: '1', text: 'LG 12.' }])
+				},
+				{
+					citer: { kind: 'ccc', n: 2 },
+					lang: 'en',
+					unit: para(2, [{ marker: '5', text: 'Ibid., 14.' }])
+				}
+			],
+			has,
+			() => true
+		);
+		expect(documents).toEqual([
+			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] }
+		]);
+	});
+
+	it('inherits the section too when Ibid. names none of its own', () => {
+		const { documents } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'ccc', n: 1 },
+					lang: 'en',
+					unit: para(1, [{ marker: '1', text: 'LG 12.' }])
+				},
+				{
+					citer: { kind: 'ccc', n: 2 },
+					lang: 'en',
+					unit: para(2, [{ marker: '2', text: 'Ibid.' }])
+				}
+			],
+			has,
+			() => true
+		);
+		expect(documents).toEqual([
+			{
+				work: 'lumen-gentium',
+				n: 12,
+				cited_by: [
+					{ kind: 'ccc', n: 1 },
+					{ kind: 'ccc', n: 2 }
+				]
+			}
+		]);
+	});
+
+	it('follows a run of them, each against the one before', () => {
+		const { documents } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'ccc', n: 1 },
+					lang: 'en',
+					unit: para(1, [{ marker: '1', text: 'LG 12.' }])
+				},
+				{
+					citer: { kind: 'ccc', n: 2 },
+					lang: 'en',
+					unit: para(2, [{ marker: '2', text: 'Ibid., 14.' }])
+				},
+				{
+					citer: { kind: 'ccc', n: 3 },
+					lang: 'en',
+					unit: para(3, [{ marker: '3', text: 'Ibid.' }])
+				}
+			],
+			has,
+			() => true
+		);
+		expect(documents).toEqual([
+			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] },
+			{
+				work: 'lumen-gentium',
+				n: 14,
+				cited_by: [
+					{ kind: 'ccc', n: 2 },
+					{ kind: 'ccc', n: 3 }
+				]
+			}
+		]);
+	});
+
+	it('does not see past a footnote that named no work this corpus holds', () => {
+		// "the same as two notes ago" is not what Ibid. says, and the note in
+		// between is a real citation of something — a papal address, an AAS
+		// page — that simply is not here.
+		const { documents } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'ccc', n: 1 },
+					lang: 'en',
+					unit: para(1, [{ marker: '1', text: 'LG 12.' }])
+				},
+				{
+					citer: { kind: 'ccc', n: 2 },
+					lang: 'en',
+					unit: para(2, [
+						{ marker: '2', text: 'Paul VI, Discourse of 21 November 1964: AAS 56 (1964) 1015.' }
+					])
+				},
+				{
+					citer: { kind: 'ccc', n: 3 },
+					lang: 'en',
+					unit: para(3, [{ marker: '3', text: 'Ibid., 1016.' }])
+				}
+			],
+			has,
+			() => true
+		);
+		expect(documents).toEqual([
+			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] }
+		]);
+	});
+
+	it('leaves Id. alone, which names the same author and a different work', () => {
+		const { documents } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'ccc', n: 1 },
+					lang: 'en',
+					unit: para(1, [{ marker: '1', text: 'LG 12.' }])
+				},
+				{
+					citer: { kind: 'ccc', n: 2 },
+					lang: 'en',
+					unit: para(2, [
+						{
+							marker: '2',
+							text: 'Id., Homilia III in Dormitionem Ssmae Deiparae: PG XCVII, 1099 A.'
+						}
+					])
+				}
+			],
+			has,
+			() => true
+		);
+		expect(documents).toEqual([
+			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] }
+		]);
+	});
+
+	it('is not interrupted by an inline locator, which carries no footnote number', () => {
+		const { documents } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'ccc', n: 1 },
+					lang: 'en',
+					unit: para(1, [
+						{ marker: '1', text: 'LG 12.' },
+						{ marker: 'inline1', label: '(Cf. Mt 5:3)', text: 'Mt 5:3' },
+						{ marker: '2', text: 'Ibid., 14.' }
+					])
+				}
+			],
+			has,
+			() => true
+		);
+		expect(documents).toEqual([
+			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] },
+			{ work: 'lumen-gentium', n: 14, cited_by: [{ kind: 'ccc', n: 1 }] }
+		]);
+	});
+
+	it('does not carry a work out of one edition and into the next', () => {
+		// Two documents' apparatuses both number their notes from 1; nothing
+		// but the edition boundary stops one running into the other.
+		const { documents } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'document', slug: 'dei-verbum', n: 1 },
+					lang: 'en',
+					unit: para(1, [{ marker: '1', text: 'LG 12.' }])
+				},
+				{
+					citer: { kind: 'document', slug: 'gaudium-et-spes', n: 1 },
+					lang: 'en',
+					unit: para(1, [{ marker: '2', text: 'Ibid., 14.' }])
+				}
+			],
+			has,
+			() => true
+		);
+		expect(documents).toEqual([
+			{
+				work: 'lumen-gentium',
+				n: 12,
+				cited_by: [{ kind: 'document', slug: 'dei-verbum', n: 1 }]
+			}
+		]);
+	});
+
+	it('reads Ibid. against the Catechism as readily as against a document', () => {
+		const { ccc } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'document', slug: 'dei-verbum', n: 1 },
+					lang: 'en',
+					unit: para(1, [
+						{ marker: '1', text: 'Catechism of the Catholic Church, 2417.' },
+						{ marker: '2', text: 'Ibid., 2418.' }
+					])
+				}
+			],
+			has,
+			(n) => n === 2417 || n === 2418
+		);
+		expect(ccc).toEqual([
+			{ ccc: 2417, cited_by: [{ kind: 'document', slug: 'dei-verbum', n: 1 }] },
+			{ ccc: 2418, cited_by: [{ kind: 'document', slug: 'dei-verbum', n: 1 }] }
+		]);
+	});
+
+	it('expands into a string the grammar reads back as the same document', () => {
+		// The point of rewriting rather than carrying a target: the locus, the
+		// "cf." and everything else in the citation go through the rules that
+		// read every other citation.
+		expect(
+			parseRefs(expandIbidem('Cf. ibid ., 43: AAS 48 (1956), 336.', 'LG') ?? '', { lang: 'en' })
+		).toContainEqual(
+			expect.objectContaining({ kind: 'document', slug: 'lumen-gentium', locus: '43' })
+		);
 	});
 
 	it('ignores prose, because the grammar links no document title outside an apparatus', () => {

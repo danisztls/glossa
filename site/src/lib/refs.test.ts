@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
+	expandIbidem,
 	linkifyProse,
 	normalizeCitationSpacing,
 	parseRefs,
@@ -1246,5 +1247,49 @@ describe('refHref — documents named by title', () => {
 	it('respects the reader language rather than falling back to another edition', () => {
 		expect(refHref(seg('2', 'dei-verbum'), { lang: 'pt' })).toBeUndefined();
 		expect(refHref(seg('2', 'dei-verbum'), { lang: 'en' })).toBe('/documenta/dei-verbum#s2');
+	});
+});
+
+describe('expandIbidem', () => {
+	it('writes the work back in where the abbreviation stood', () => {
+		expect(expandIbidem('Ibid.', 'Lumen Gentium')).toBe('Lumen Gentium');
+	});
+
+	it('drops the punctuation between the word and the locus', () => {
+		// "LG, 14" would not parse: the siglum path reads a locus only when
+		// digits follow the siglum directly. Kept, the comma would cost the
+		// section and the citation would inherit the previous note's — a
+		// wrong link where there had merely been no link.
+		expect(expandIbidem('Ibid., 14.', 'LG')).toBe('LG 14.');
+	});
+
+	it('keeps a "cf.", which is part of what the citation claims', () => {
+		expect(expandIbidem('Cf. ibid ., 43: AAS 48 (1956), 336.', 'Haurietis aquas')).toBe(
+			'Cf. Haurietis aquas 43: AAS 48 (1956), 336.'
+		);
+	});
+
+	it('tolerates the stray full stop the sources leave in front of one', () => {
+		expect(expandIbidem('. Ibid., 23.', 'Ad Gentes')).toBe('Ad Gentes 23.');
+	});
+
+	it('reads every form the corpus prints', () => {
+		for (const word of ['Ibid.', 'Ibidem', 'ibid', 'Ib.', 'Ibíd.', 'Ebd.']) {
+			expect(expandIbidem(word, 'LG')).toBe('LG');
+		}
+	});
+
+	it('does not read Id., which names the same author and a different work', () => {
+		expect(expandIbidem('Id., Homilia III in Dormitionem Ssmae Deiparae.', 'LG')).toBeNull();
+		expect(expandIbidem('Idem, Oratio ad Ssmam Dei Matrem.', 'LG')).toBeNull();
+	});
+
+	it('does not read one buried in a citation, which points back inside it', () => {
+		expect(expandIbidem('Gasser, ib., c. 2.', 'LG')).toBeNull();
+	});
+
+	it('leaves an ordinary citation alone', () => {
+		expect(expandIbidem('Cf. Acts 2:41.', 'LG')).toBeNull();
+		expect(expandIbidem('Ibiza, 4.', 'LG')).toBeNull();
 	});
 });

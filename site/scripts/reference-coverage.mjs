@@ -27,6 +27,12 @@
  *   nothing     — no reference recognized at all (the Fathers, the Roman
  *                 Missal, "Ibid.", a papal address …).
  *
+ * "Ibid." stays in that last bucket even though `buildCitationXrefs` now
+ * reads one: what expands it is the PREVIOUS citation, and this measures
+ * what the grammar reads in a string handed to it alone. Parse-level is the
+ * point — a coverage number that moved when a neighbouring footnote changed
+ * would not be measuring the grammar.
+ *
  * and every prose block is scanned with `linkifyProse`, counting scripture
  * references found in running text and, for the Summa, the self-references
  * the source itself marked (`<a data-ref>`). Parse-level, deliberately: it

@@ -254,7 +254,28 @@ case where markup alone said otherwise.
 name **case-sensitively** on its exact printed surface form followed by its own locus —
 in Portuguese, "na" and "at" are ordinary words where "Na" and "At" are Nahum and Acts.
 Rules that would guess (a bare `cf. 1212`, a commentary title naming the book it
-comments on, `Ibid.`) stay off until they can be read rather than inferred.
+comments on) stay off until they can be read rather than inferred.
+
+**`Ibid.` left that list by acquiring a check rather than an argument** (2026-08-25). An
+ibidem word opens 1,243 of the corpus's 22,693 citation strings and names the work of the
+previous footnote — which no single string can state, so reading it means carrying a work
+in from outside the string, and 401 of them carry it across a unit boundary as well. What
+settles that it is reading: the apparatus numbers its own notes. `buildCitationXrefs`
+expands an `Ibid.` only where this citation's number is exactly one past the citation it
+would inherit from, so a footnote the parser dropped, or a chapter that restarts its
+numbering, breaks the run and the citation stays unread — 1,227 of 1,240 pass, and the
+thirteen that fail are the check working. `expandIbidem` then writes the work back into
+the string and hands the result to `parseRefs`, so the locus, the "cf." and everything
+else are read by the rules that read every other citation instead of by a second set of
+them. 513 citations that named nothing now name an ingested work.
+
+**`Id.` did not leave the list, and the scripture index is deliberately not in this.**
+`Id.`/`Idem` means the same AUTHOR and a different work — all but one of the corpus's 299
+print that work's title immediately after it — so expanding it would file a citation the
+source never made. And a document section is one number deep where a verse address is
+two, so "Ibid., 14." after "Rom. 10:17" cannot be assigned to a chapter or to a verse
+without guessing which; the reverse citation index reads ibidem words, the Scripture
+cross-reference index does not.
 
 **One grammar.** The citation grammar lives once, in TypeScript
 (`site/src/lib/refs-grammar.ts`), and every index is **derived at build and never
