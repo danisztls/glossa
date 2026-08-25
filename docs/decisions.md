@@ -380,6 +380,27 @@ dictionary is owed where the corpus can already fill a reader's language, not wh
 tag exists. Russian is the standing counter-case — chrome since Magnifica Humanitas, and
 a Compendium that exists only as a PDF nothing parses.
 
+**A division label is read in the language it was printed in.** `titles.ts` strips the
+label a source prints on top of a structure title (`PART ONE`, `ERSTER ABSCHNITT`),
+because `kind` and `n` already carry it and the site prints its own translated marker
+instead. That grammar was `en`/`pt` for as long as those were the only editions of
+anything; the Compendium's ten made it eight languages short, and the label survived into
+the title everywhere else — `Erster Abschnitt „Ich Glaube“ – „Wir Glauben“`. The table is
+now a **second copy** of the vocabulary `compendium.py` matches, and deliberately not a
+generated one: the scraper's copy decides what a heading _is_, and getting it wrong fails
+`validate`; this one decides how a heading _reads_, and getting it wrong shows an
+unstripped label. Different failure modes, and the source they both describe is a frozen
+capture. What guards the copy is a test asserting a real title from each of the ten
+editions, not the table.
+
+**Case normalization is still English and Portuguese only, and knowingly so.** The same
+pass title-cases an ALL-CAPS heading against a closed list of small words, and the eight
+new languages borrow English's — so Italian and Spanish headings are title-cased where
+their own orthography wants sentence case, and German gets every word capitalised where
+only its nouns should be. Fixing that is not another table: it is a decision per language
+between title case, sentence case, and leaving the source's capitals alone, and the
+sources give no evidence either way because they print these headings in capitals.
+
 **A description must be read, not recalled, and a translation is not a reading.**
 `site/descriptions.json` carries `origin: "read" | "translated"` plus a `from` chain, so
 correcting a reading marks every translation of it stale by inspection. A fluent wrong

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { displayTitle, normalizeCase, normalizeCaseRuns } from './titles';
+import { displayTitle, kindOrdinalLabel, normalizeCase, normalizeCaseRuns } from './titles';
 import type { StructureNode } from './types';
 
 function node(kind: StructureNode['kind'], n: number | null, title: string) {
@@ -285,5 +285,124 @@ describe('normalizeCaseRuns', () => {
 			'res novae',
 			' of our time'
 		]);
+	});
+});
+
+// Every title below is verbatim from `compendium.{lang}/structure.json` —
+// the ten HTML editions ingested 2026-08-25. They are the guard on
+// `KIND_PREFIXES`, which is a second copy of the label vocabulary
+// `pipeline/scrapers/ccc/compendium.py` recognizes; a copy is only safe
+// while something asserts the outcome, and the outcome is what these check.
+describe('displayTitle — the eight Compendium languages beyond en/pt', () => {
+	it('de: the ordinal declines to its noun (ERSTER Teil, ERSTES Kapitel)', () => {
+		expect(displayTitle(node('part', 1, 'ERSTER TEIL DAS GLAUBENSBEKENNTNIS'), 'de')).toEqual({
+			ordinal: '1.',
+			title: 'Das Glaubensbekenntnis'
+		});
+		// The neuter series, and a mixed-case title the caser leaves alone.
+		expect(
+			displayTitle(node('chapter', 2, 'ZWEITES KAPITEL Gott geht auf den Menschen zu'), 'de')
+		).toEqual({ ordinal: '2.', title: 'Gott geht auf den Menschen zu' });
+		// The masculine series must NOT strip a chapter, or n would be read
+		// off the wrong word.
+		expect(displayTitle(node('chapter', 1, 'ERSTER KAPITEL Etwas'), 'de').ordinal).toBe(null);
+	});
+
+	it('es: ordinal before part/section, after CAPÍTULO — as in pt', () => {
+		expect(displayTitle(node('part', 1, 'PRIMERA PARTE LA PROFESIÓN DE LA FE'), 'es')).toEqual({
+			ordinal: '1.',
+			title: 'La Profesión De La Fe'
+		});
+		expect(
+			displayTitle(node('chapter', 3, 'CAPÍTULO TERCERO LA RESPUESTA DEL HOMBRE A DIOS'), 'es')
+		).toEqual({ ordinal: '3.', title: 'La Respuesta Del Hombre a Dios' });
+	});
+
+	it('fr: chapters are numbered in roman numerals, uniquely', () => {
+		expect(
+			displayTitle(node('chapter', 2, 'CHAPITRE II DIEU À LA RENCONTRE DE L’HOMME'), 'fr')
+		).toEqual({ ordinal: '2.', title: 'Dieu À La Rencontre De L’homme' });
+	});
+
+	it('fr: a part whose title is nothing but its own label stays whole', () => {
+		// Same shape as ccc.en's bare "SECTION TWO" above: stripping would
+		// leave an empty title, so nothing is stripped and the marker comes
+		// from `kindOrdinalLabel` instead.
+		expect(displayTitle(node('part', 1, 'PREMIÈRE PARTIE'), 'fr')).toEqual({
+			ordinal: null,
+			title: 'Première Partie'
+		});
+	});
+
+	it('hu: one ordinal series for all three kinds', () => {
+		expect(displayTitle(node('section', 2, 'MÁSODIK SZAKASZ A TÍZPARANCSOLAT'), 'hu')).toEqual({
+			ordinal: '2.',
+			title: 'A Tízparancsolat'
+		});
+	});
+
+	it('it: the noun comes first for all three kinds', () => {
+		expect(displayTitle(node('part', 1, 'PARTE PRIMA LA PROFESSIONE DELLA FEDE'), 'it')).toEqual({
+			ordinal: '1.',
+			title: 'La Professione Della Fede'
+		});
+		expect(
+			displayTitle(node('chapter', 4, 'CAPITOLO QUARTO LE ALTRE CELEBRAZIONI LITURGICHE'), 'it')
+		).toEqual({ ordinal: '4.', title: 'Le Altre Celebrazioni Liturgiche' });
+	});
+
+	it('ro: two-word ordinals, and a cedilla the folding sees past', () => {
+		// "Secţiunea" is printed with U+0163 (t-cedilla), not the comma-below
+		// ț of modern orthography; matching folds both to T.
+		expect(
+			displayTitle(node('section', 2, 'Secţiunea a doua Mărturisirea de credinţă creştină'), 'ro')
+		).toEqual({ ordinal: '2.', title: 'Mărturisirea de credinţă creştină' });
+		expect(
+			displayTitle(node('chapter', 4, 'Capitolul al patrulea CELELALTE CELEBRĂRI LITURGICE'), 'ro')
+		).toEqual({ ordinal: '4.', title: 'Celelalte Celebrări Liturgice' });
+	});
+
+	it('sl: the ordinal declines to its noun, as in de', () => {
+		expect(
+			displayTitle(node('chapter', 4, 'ČETRTO POGLAVJE DRUGA LITURGIČNA OPRAVILA'), 'sl')
+		).toEqual({ ordinal: '4.', title: 'Druga Liturgična Opravila' });
+	});
+
+	it('sv: the noun is printed in its definite form ("FÖRSTA DELEN")', () => {
+		expect(displayTitle(node('part', 1, 'FÖRSTA DELEN TROSBEKÄNNELSEN'), 'sv')).toEqual({
+			ordinal: '1.',
+			title: 'Trosbekännelsen'
+		});
+		// This one edition prints its second section's label in mixed case
+		// where every other heading is capitals — the match ignores case.
+		expect(
+			displayTitle(node('section', 2, 'Andra avdelningen DEN KRISTNA TROSBEKÄNNELSEN'), 'sv')
+		).toEqual({ ordinal: '2.', title: 'Den Kristna Trosbekännelsen' });
+	});
+
+	it('a language with no prefix grammar leaves the title alone', () => {
+		// `la` is a content language with no CCC or Compendium edition; it
+		// falls back to `en`, which strips nothing here rather than guessing.
+		expect(displayTitle(node('part', 1, 'ERSTER TEIL DAS GLAUBENSBEKENNTNIS'), 'la')).toEqual({
+			ordinal: null,
+			title: 'Erster Teil Das Glaubensbekenntnis'
+		});
+	});
+});
+
+describe("kindOrdinalLabel — our own marker, not the source's", () => {
+	it("names the division in the reader's language", () => {
+		expect(kindOrdinalLabel(node('section', 2, ''), 'de')).toBe('Abschnitt 2');
+		expect(kindOrdinalLabel(node('section', 1, ''), 'ro')).toBe('Secțiunea 1');
+		expect(kindOrdinalLabel(node('chapter', 4, ''), 'sv')).toBe('Kap. 4');
+		expect(kindOrdinalLabel(node('part', 3, ''), 'sl')).toBe('Del 3');
+	});
+
+	it('puts the number first in Hungarian, which is where its ordinal goes', () => {
+		expect(kindOrdinalLabel(node('part', 3, ''), 'hu')).toBe('3. rész');
+	});
+
+	it('falls back to English for a language with no labels', () => {
+		expect(kindOrdinalLabel(node('part', 1, ''), 'la')).toBe('Part 1');
 	});
 });
