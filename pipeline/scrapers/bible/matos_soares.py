@@ -29,6 +29,7 @@ after --sample output has been reviewed and approved.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from dataclasses import dataclass, field
@@ -46,6 +47,7 @@ from bs4 import BeautifulSoup
 # below it being the only ones not at the top of the file.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+import matos_soares_apparatus as ms_apparatus
 from common import (
     CorrectionDriftError,
     Fetcher,
@@ -60,6 +62,7 @@ from common import (
     works_root,
     write_stamped_json,
 )
+from matos_soares_apparatus import anchor_notes
 
 BASE_URL = "https://www.liriocatolico.com.br/biblia_online/biblia_matos_soares/"
 USER_AGENT = "Glossa Catholica corpus builder"
@@ -620,6 +623,28 @@ def book_payloads(books: list[BookResult]) -> dict[str, dict]:
     }
 
 
+def fetched_on() -> str:
+    """The date the TEXT was fetched, which a re-run does not change.
+
+    Same rule and the same reason as `retrieved_at` in douay_rheims.py: a run
+    that reads the cache rewrites the manifest without touching the network,
+    and stamping today would claim a retrieval that did not happen.
+    `generated_at` already says when the parse ran.
+    """
+    existing = work_dir() / "manifest.json"
+    if existing.exists():
+        try:
+            prior = json.loads(existing.read_text(encoding="utf-8"))
+            for source in prior.get("sources") or []:
+                if "liriocatolico" in (source.get("url") or ""):
+                    stamp = source.get("retrieved_at")
+                    if isinstance(stamp, str) and stamp:
+                        return stamp
+        except (json.JSONDecodeError, OSError):
+            pass
+    return datetime.now(UTC).date().isoformat()
+
+
 def write_manifest(
     books: list[BookResult],
     books_json: dict[str, dict],
@@ -629,9 +654,14 @@ def write_manifest(
     ambiguous_count: int,
     split_word_count: int,
     corrections_applied: int,
+    apparatus: dict[str, int],
     generated_at: str,
 ) -> None:
-    retrieved_at = datetime.now(UTC).date().isoformat()
+    retrieved_at = fetched_on()
+    note_count = apparatus["notes"]
+    anchored_count = apparatus["anchored"]
+    summary_count = apparatus["summaries"]
+    heading_count = apparatus["headings"]
 
     notes = (
         "1956 edition (revised from the original languages with L. G. da Fonseca SJ, "
@@ -640,11 +670,18 @@ def write_manifest(
         '(not "filho de Jonas"); Luke 1:28 omits "bendita és tu entre as mulheres". '
         'Psalter follows the Pius XII "Pian Psalter" line. Pre-1990-Agreement Portuguese '
         "orthography (baptizar, Unigénito, rectas, etc.) is preserved as printed -- not "
-        "modernized. Footnote markers ([i], [ii], ...) stripped from verse text; footnote "
-        "CONTENT is not available on this source (liriocatolico prints markers only, no "
-        "note text) -- no notes[] are captured here. Possible future enrichment: "
-        "vulgata.online carries Matos Soares footnotes and could backfill notes[] by "
-        "marker position in a later pass. "
+        "modernized. TWO SOURCES: the verses are liriocatolico's, which prints the "
+        "edition's footnote markers ([i], [ii], ...) and not their text -- those markers "
+        "are stripped -- and the apparatus is vulgata.online's transcription of the same "
+        f"1956 printing (edition code MS), joined on (book, chapter, verse): {note_count} "
+        f"footnotes, {summary_count} chapter arguments and {heading_count} headings. The "
+        "text was NOT re-sourced from it, and deliberately: 98.01% of verses agree, but "
+        "247 are missing from that transcription -- Job 32 stops at 14 of 22 and Esdras "
+        "6:9-13 is overwritten by a duplicate of Esdras 4:9-13 (docs/research/"
+        "matos-soares-re-sourcing.md). Each note is anchored where its own lemma ends in "
+        f"OUR verse rather than at a transplanted offset, which places {anchored_count} of "
+        "them; the rest quote nothing to anchor to, or quote words this transcription "
+        "does not have, and sit on the verse without a token as the schema allows. "
         f'OCR artifact class (capital I for lowercase l, e.g. "Ihe"/"Ihes"): '
         f"{fix_count} unambiguous instance(s) auto-corrected in code (widespread, "
         f"never-a-valid-word tokens), plus {ambiguous_count} other mid-word-capital-I "
@@ -680,7 +717,14 @@ def write_manifest(
             {
                 "url": "https://www.liriocatolico.com.br/biblia_online/biblia_matos_soares/",
                 "retrieved_at": retrieved_at,
-            }
+            },
+            # The apparatus. Listed as a source because it is one: a reader
+            # following provenance for a footnote must arrive here and not at
+            # liriocatolico, which does not carry it.
+            {
+                "url": "https://vulgata.online/bible/Gn.1?ed=MS",
+                "retrieved_at": "2026-08-25",
+            },
         ],
         "copyright": {
             "status": "copyrighted",
@@ -718,6 +762,114 @@ def write_manifest(
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
+
+def attach_apparatus(
+    books: list[BookResult], *, sample: bool
+) -> tuple[list[str], dict[str, int]]:
+    """Fasten the edition's own apparatus onto the verses just parsed.
+
+    WHY THE APPARATUS COMES FROM ANOTHER SOURCE. liriocatolico prints this
+    edition's footnote MARKERS and not their text -- `[i]`, `[ii]`, stripped
+    here at ingestion since 2026-08-16 with the manifest recording the gap.
+    vulgata.online transcribes the same 1956 printing WITH the notes. What it
+    does not have is a complete text: 247 verses are missing from it, Job 32
+    stops at 14 of 22, and Esdras 6:9-13 is overwritten by a duplicate of
+    Esdras 4:9-13. So the text stays ours and only the apparatus travels
+    (`docs/research/matos-soares-re-sourcing.md`).
+
+    JOINED ON THE ADDRESS, ANCHORED BY THE LEMMA. `(osis, chapter, verse)` is
+    what the two transcriptions agree about; the marker positions are not,
+    since ours were discarded. Each note instead names the words it glosses,
+    and `anchor_notes` finds that phrase in OUR verse and puts the token where
+    it ends -- so the anchor is derived from the text that ships rather than
+    transplanted from text that does not.
+
+    NOTHING IS PLACED BY GUESS. A note whose lemma is not in our verse gets no
+    token and is still attached to the verse, which the schema allows outright
+    ("every token must have a note; a note need not have a token"). A note
+    naming a verse we do not have is DROPPED and counted -- there is no
+    address to hang it from, and the count is the check that the two sources
+    have not drifted apart.
+
+    Returns `(report lines, counts)`. The counts go into the manifest, because
+    "how much apparatus does this work carry, and how much of it is anchored"
+    is a property of the work rather than of the run that built it.
+    """
+    apparatus = ms_apparatus.apparatus(offline=True)
+
+    attached = anchored = no_lemma = not_found = 0
+    orphan_notes: list[str] = []
+    orphan_headings = 0
+    summaries = headings_kept = 0
+    for book in books:
+        per_chapter = apparatus.get(book.osis, {})
+        for chapter in book.chapters:
+            entry = per_chapter.get(chapter["n"])
+            if not entry:
+                continue
+            if entry.get("summary"):
+                chapter["summary"] = entry["summary"]
+                summaries += 1
+
+            by_n = {v["n"]: v for v in chapter["verses"]}
+            for vn, notes in (entry.get("notes") or {}).items():
+                verse = by_n.get(vn)
+                if verse is None:
+                    orphan_notes.append(f"{book.osis} {chapter['n']}:{vn}")
+                    continue
+                marked, bare, missed = anchor_notes(verse["text"], notes)
+                verse["notes"] = notes
+                if marked:
+                    verse["text_marked"] = marked
+                attached += len(notes)
+                no_lemma += len(bare)
+                not_found += len(missed)
+                anchored += len(notes) - len(bare) - len(missed)
+
+            # A heading names the verse it precedes, so one naming a verse we
+            # do not have has nowhere to sit. Dropped rather than moved: its
+            # position is the only thing it asserts.
+            kept = [
+                h for h in (entry.get("headings") or []) if h["before_verse"] in by_n
+            ]
+            orphan_headings += len(entry.get("headings") or []) - len(kept)
+            if kept:
+                chapter["headings"] = kept
+                headings_kept += len(kept)
+
+    scope = "sample" if sample else "full run"
+    report = [
+        f"Apparatus ({scope}) from vulgata.online, joined by address:",
+        (
+            f"  {attached} note(s) attached, {anchored} of them anchored in the text "
+            f"by their lemma"
+        ),
+        (
+            f"  {no_lemma} note(s) quote nothing to anchor to and {not_found} quote "
+            "words this transcription does not have; both keep the verse and lose "
+            "only the token"
+        ),
+        f"  {summaries} chapter argument(s), {headings_kept} heading(s)",
+    ]
+    if orphan_notes:
+        report.append(
+            f"  {len(orphan_notes)} note(s) named a verse this edition does not have "
+            f"and were dropped: {', '.join(orphan_notes[:12])}"
+            + (f" (+{len(orphan_notes) - 12} more)" if len(orphan_notes) > 12 else "")
+        )
+    if orphan_headings:
+        report.append(
+            f"  {orphan_headings} heading(s) named a verse this edition does not have "
+            "and were dropped"
+        )
+    counts = {
+        "notes": attached,
+        "anchored": anchored,
+        "summaries": summaries,
+        "headings": headings_kept,
+    }
+    return report, counts
 
 
 def main() -> int:
@@ -776,11 +928,21 @@ def main() -> int:
             books.append(book)
             print(f"fetched {slug} -> {osis}: {len(book.chapters)} chapter(s)")
 
+    # ONE FILE, TWO LAYERS. `pipeline/corrections/bible.matos-soares.pt.json`
+    # holds corrections against BOTH sources this work is built from, and they
+    # are told apart by the shape of their locator rather than by living in
+    # separate files: a `{osis, chapter, verse}` locator corrects the verse
+    # text this scraper produces, and a `{osis, chapter, record}` one corrects
+    # a record of the vulgata.online apparatus before it is parsed
+    # (`matos_soares_apparatus.py`, which filters for exactly the complement of
+    # this). Splitting them by file would have meant a second work id for
+    # something that is not a second work.
     corrections = load_corrections(WORK_ID)
+    verse_corrections = [c for c in corrections if "record" not in c["locator"]]
     try:
         file_applied, _seen = apply_verse_corrections(
             ((b.osis, b.chapters) for b in books),
-            corrections,
+            verse_corrections,
             full_run=not args.sample,
         )
     except CorrectionDriftError as exc:
@@ -809,8 +971,13 @@ def main() -> int:
         for f in fixes
     ]
     all_applied = auto_ihe_applied + file_applied
-    receipt = corrections_receipt(WORK_ID, all_applied, corrections, generated_at)
+    receipt = corrections_receipt(WORK_ID, all_applied, verse_corrections, generated_at)
     corrections_count = receipt["count"]
+
+    apparatus_report, apparatus_counts = attach_apparatus(books, sample=args.sample)
+    print()
+    for line in apparatus_report:
+        print(line)
 
     write_manifest(
         books,
@@ -821,6 +988,7 @@ def main() -> int:
         ambiguous_count=len(ambiguous),
         split_word_count=len(split_words),
         corrections_applied=corrections_count,
+        apparatus=apparatus_counts,
         generated_at=generated_at,
     )
 

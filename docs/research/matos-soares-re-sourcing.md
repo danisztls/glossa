@@ -7,6 +7,13 @@ Measured 2026-08-25 against a full crawl of vulgata.online edition `MS`
 text where it is. The reasoning is below, and the crawl that establishes it is
 already paid for and kept.
 
+**Implemented 2026-08-25.** `matos_soares.py` now attaches the apparatus as
+its last step, and `bible.matos-soares.pt` carries 3,013 footnotes, 1,279
+chapter arguments and 5,733 headings on liriocatolico's verses. 1,483 notes
+are anchored in the text by their own lemma; two named a verse this edition
+does not have and were dropped. The section below is what the decision was
+made on and is kept as the record.
+
 ## What was being decided
 
 `bible.matos-soares.pt` is scraped from liriocatolico.com.br, whose chapter
@@ -80,7 +87,7 @@ Everything the text is not. Parsed and validated, this source yields:
   (`ChapterHeading.level`, added for this)
 - the book prefaces, which belong to `bible-intro.pt` and are still unbuilt
 
-## The recommended path
+## The path taken
 
 Attach the apparatus to the text already in the corpus, rather than replacing
 the text.
@@ -101,6 +108,30 @@ note need not have a token.").
 **What this costs:** the 26 verses this source has and the old scrape does not,
 and the chapter arguments/headings for anything the two number differently. Both
 are recorded here rather than discovered later.
+
+**What it cost in the event**, measured on the run that landed it:
+
+| outcome                                                                        | notes |
+| ------------------------------------------------------------------------------ | ----- |
+| anchored in the text by their lemma                                            | 1,483 |
+| kept on the verse, but the note quotes nothing to anchor to                    | 1,270 |
+| kept on the verse, but the lemma quotes words this transcription does not have | 260   |
+| dropped — named a verse this edition does not have (`ps 115:11`, `ps 115:16`)  | 2     |
+
+The 1,270 were never anchorable: two in five of this edition's notes simply do
+not open by quoting the text. The 260 are the interesting number — they are
+where the two transcriptions disagree about the very words a note names, and
+they are the Matos Soares counterpart of the Douay-Rheims lemma oracle's 72
+(`douay-rheims-lemma-audit.md`). Both kinds keep the note and lose only the
+token, which the schema allows outright.
+
+**One bug worth recording, because it looked like a formatting quirk.** The
+first implementation built its fold-to-plain-letters index over the
+NFD-decomposed string and then sliced the original, so every accent before a
+lemma pushed its token one place to the left — `quem não renascer ⟦1⟧da água`
+instead of `renascer⟦1⟧ da`. In a language with an accent every few words that
+is not an edge case. `fold_with_map` now decomposes per character, so an index
+in the map is an index into the string the caller holds.
 
 ## What is already built
 

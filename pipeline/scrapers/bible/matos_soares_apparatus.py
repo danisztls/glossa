@@ -3,57 +3,49 @@
 # requires-python = ">=3.11"
 # dependencies = []
 # ///
-"""The Matos Soares Bible with its apparatus, as `bible.matos-soares.pt`.
+"""The apparatus of the Matos Soares edition, from vulgata.online.
 
 Source: https://vulgata.online, edition `MS`, through the same undocumented
 JSON API `douay_rheims.py` and `introductions.py` read:
 
     GET /api/text/readings2/?ed=MS&bk={abbr}&cn={n}
 
-THIS WORK ALREADY EXISTED, FROM A DIFFERENT SOURCE, and that is the thing to
-understand before touching this file. `matos_soares.py` (still present, still
-the record of how the work was first built) scrapes liriocatolico.com.br,
-whose pages print the SAME 1956 translation but print the footnote MARKERS
-only -- `[i]`, `[ii]` -- with no note text anywhere on the page. Its manifest
-has said so since 2026-08-16, and said what to do about it: "Possible future
-enrichment: vulgata.online carries Matos Soares footnotes and could backfill
-notes[] by marker position in a later pass."
+THIS SUPPLIES APPARATUS AND NOT TEXT, and the distinction is the whole point
+of the file. `matos_soares.py` scrapes liriocatolico.com.br for the verses and
+owns `bible.matos-soares.pt`; that source prints the edition's footnote
+MARKERS and not their content, which is the gap this closes. Nothing here
+writes a work.
 
-Backfilling by marker position turned out to be the wrong shape. The markers
-were stripped at ingestion and their offsets never recorded, so there is
-nothing left in the corpus to align a note against; recovering the positions
-means re-parsing liriocatolico anyway and then reconciling two transcriptions
-character by character to place each anchor. This source carries the text AND
-the apparatus together, already anchored, in the format the Douay-Rheims
-parser reads -- so re-taking the edition from it is both less work and less
-invention than joining two halves the source never joined.
+IT WAS GOING TO BE A RE-SOURCING, AND THE MEASUREMENT SAID NO. This host
+carries text and apparatus together, already anchored, in the format the
+Douay-Rheims parser reads, so re-taking the whole edition from it looked
+strictly better than joining two halves. Then the comparison ran: 98.01% of
+verses agree with the transcription already in the corpus, and **247 verses
+are missing from this one**. Job 32 stops at 14 of 22. Esdras 6:9-13 is
+silently overwritten by a duplicate of Esdras 4:9-13, so a reader would find
+Artaxerxes's letter inside the dedication of the Temple with nothing looking
+wrong. Around 215 more are scattered single holes -- Genesis 15 arrives with
+verses 1-3 and 5-21. Full measurement in
+`docs/research/matos-soares-re-sourcing.md`; `--report` below regenerates it.
 
-WHY THAT IS SAFE, measured rather than assumed: the two transcriptions agree.
-`validate` re-checks it every run against whatever edition of this work is
-already on disk, and REPORTS the per-verse agreement rate rather than
-asserting one. A re-sourcing that silently changed the text would be a worse
-outcome than a missing apparatus, so the check is the point of the run and not
-a formality.
+So the text stays where it is and only the apparatus travels: 3,013 footnotes,
+1,279 chapter arguments and 5,733 headings in the four-level hierarchy
+`ChapterHeading.level` now models.
 
-WHAT THIS SOURCE ADDS over liriocatolico: the notes themselves, the chapter
-arguments (`cd`), the section headings the edition prints inside a chapter
-(`h1`/`h2`/`h3`/`ln`), and the book prefaces (`bd`, which belong to
-`bible-intro.pt` and are NOT taken here -- the same split the Douay-Rheims
-makes with `bible-intro.en`, because a preface describes the book rather than
-the translation).
+HOW A NOTE FINDS ITS PLACE IN A DIFFERENT TRANSCRIPTION. Not by the marker
+offsets, which liriocatolico stripped at ingestion and never recorded -- by
+the note's own `lemma`. Every note in this apparatus opens by quoting the
+words it glosses, so `anchor_notes` folds both transcriptions to letters and
+digits, finds the lemma in OUR verse, and puts the token where it ends. That
+is the same lemma-to-token relation `douay_rheims.py` builds within one
+source, and it is self-checking: a note whose lemma is not in our verse gets
+no token and is reported, rather than being placed by guess.
 
-WHAT IT ALSO ADDS, and the reason this file needs its own `normalize`: this
-edition sets quoted clauses in `_..._` and prints scripture locators in
-brackets inside running prose (`([Is. 40,3])`). The Douay-Rheims does neither
-in a verse. Both are flattened here -- emphasis is the v1 loss
-docs/corpus-schema.md records, and the brackets come off so the site's
-citation parser meets a locator in running prose, the shape it reads
-everywhere else. `raw/` keeps both verbatim.
+The book prefaces (`bd`) belong to `bible-intro.pt` and are not taken here,
+the same split `douay_rheims.py` makes with `bible-intro.en`.
 
 Usage:
-    uv run pipeline/scrapers/bible/matos_soares_vulgata.py --sample
-    uv run pipeline/scrapers/bible/matos_soares_vulgata.py
-    uv run pipeline/scrapers/bible/matos_soares_vulgata.py --offline
+    uv run pipeline/scrapers/bible/matos_soares_apparatus.py --report
 """
 
 from __future__ import annotations
@@ -62,7 +54,7 @@ import argparse
 import json
 import re
 import sys
-from datetime import UTC, datetime
+import unicodedata
 from pathlib import Path
 
 # See the note above the same two lines in douay_rheims.py.
@@ -71,16 +63,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import (
     Fetcher,
     FetchPolicy,
-    corrections_receipt,
     load_corrections,
     raw_root,
     require_corpus,
     works_root,
-    write_stamped_json,
 )
 from vulgata_online import (
     BASE_URL,
     BOOK_MAP,
+    TOKEN,
     Anomaly,
     apply_segment_corrections,
     cache_name,
@@ -527,11 +518,147 @@ def validate(book_docs: list[dict], sample: bool) -> tuple[bool, list[str]]:
 
 
 # --------------------------------------------------------------------------
-# Output
+# The apparatus, keyed by address
 # --------------------------------------------------------------------------
 
 
+def apparatus(*, offline: bool = True) -> dict[str, dict[int, dict]]:
+    """`osis -> chapter number -> {summary, headings, notes}`.
+
+    `notes` is keyed by verse number, because that is the address the caller
+    joins on -- the verse TEXT this source carries is discarded here, and
+    everything below is what the caller cannot get from its own source.
+
+    Offline by default: the crawl is committed under `raw/vulgata-online/MS/`
+    and `matos_soares.py` must never reach the network on this host's behalf
+    while it is being polite to another one.
+    """
+    corrections = load_corrections(WORK_ID)
+    segment_corrections = [c for c in corrections if "record" in c["locator"]]
+    book_docs, anomalies, _applied = run_scrape(
+        sample=False,
+        offline=offline,
+        refresh=False,
+        segment_corrections=segment_corrections,
+    )
+    fatal = [a for a in anomalies if a.fatal]
+    if fatal:
+        raise SystemExit(
+            f"apparatus(): {len(fatal)} fatal anomaly/anomalies parsing the "
+            f"{SOURCE_EDITION} cache; run --report and file segment corrections."
+        )
+
+    out: dict[str, dict[int, dict]] = {}
+    for book in book_docs:
+        for chap in book["chapters"]:
+            entry: dict = {}
+            if chap.get("summary"):
+                entry["summary"] = chap["summary"]
+            if chap.get("headings"):
+                entry["headings"] = chap["headings"]
+            notes = {v["n"]: v["notes"] for v in chap["verses"] if v.get("notes")}
+            if notes:
+                entry["notes"] = notes
+            if entry:
+                out.setdefault(book["osis"], {})[chap["n"]] = entry
+    return out
+
+
+#: Everything but letters and digits, for comparing two transcriptions of one
+#: printing. Accents go too: the two disagree about them in places (`E tempo`
+#: for `É tempo`), and a lemma is a phrase long enough that folding them
+#: cannot plausibly match the wrong words.
+def fold_with_map(text: str) -> tuple[str, list[int]]:
+    """`(folded text, index in the original of each folded character)`.
+
+    The map is what makes this usable for PLACING something rather than just
+    comparing: fold both strings, find the lemma in the folded verse, then ask
+    the map where that match ends in the verse the reader will actually see.
+    """
+    folded: list[str] = []
+    positions: list[int] = []
+    # DECOMPOSED PER CHARACTER, NOT OVER THE WHOLE STRING, so an index in the
+    # map is an index into `text` as the caller holds it. Normalizing the
+    # string first and enumerating THAT was the first version and it was
+    # quietly wrong: NFD turns "ã" into two code points, so every accent
+    # before a lemma pushed its token one place further left, and Portuguese
+    # has an accent every few words. It put the marker inside the space in
+    # John 3:5 -- "quem não renascer ⟦1⟧da água" -- which is exactly the kind
+    # of off-by-one that looks like a formatting quirk instead of a bug.
+    for index, char in enumerate(text):
+        for part in unicodedata.normalize("NFD", char):
+            if unicodedata.combining(part):
+                continue
+            lowered = part.lower()
+            if lowered.isalnum():
+                folded.append(lowered)
+                positions.append(index)
+    return "".join(folded), positions
+
+
+def anchor_notes(
+    text: str, notes: list[dict]
+) -> tuple[str | None, list[str], list[str]]:
+    """`(text_marked, notes with no lemma, notes whose lemma was not found)`.
+
+    THE TWO FAILURE KINDS ARE REPORTED APART BECAUSE THEY MEAN DIFFERENT
+    THINGS. A note with no lemma was never anchorable -- the source simply did
+    not open it by quoting anything, and roughly two in five of this edition's
+    notes are like that. A note whose lemma is not in our verse is the
+    interesting one: the two transcriptions disagree about those words, which
+    is the same signal the Douay-Rheims lemma oracle reports
+    (`docs/research/douay-rheims-lemma-audit.md`). Collapsing them into one
+    number would hide the second behind the first.
+
+    A note is anchored where its `lemma` ENDS, which is where a printed
+    edition sets the marker (docs/corpus-schema.md). Tokens are inserted from
+    the last position backwards so that placing one cannot move the next.
+
+    A LEMMA THAT MATCHES NOWHERE GETS NO TOKEN, and the note still ships. That
+    is the schema's own asymmetry -- every token must have a note, a note need
+    not have a token -- and here it has a second justification: the lemma was
+    quoted from a different transcription of the same printing, so a miss
+    means the two disagree about those words, which is exactly the case where
+    guessing a position would put the marker in the wrong place.
+    """
+    folded, positions = fold_with_map(text)
+    placements: list[tuple[int, str]] = []
+    no_lemma: list[str] = []
+    not_found: list[str] = []
+    taken: set[int] = set()
+    for note in notes:
+        lemma = note.get("lemma")
+        if not lemma:
+            no_lemma.append(note["marker"])
+            continue
+        needle, _ = fold_with_map(lemma)
+        if not needle:
+            no_lemma.append(note["marker"])
+            continue
+        at = folded.find(needle)
+        # A lemma repeated in one verse takes its next occurrence, so two
+        # notes quoting the same words do not stack on one position.
+        while at != -1 and at in taken:
+            at = folded.find(needle, at + 1)
+        if at == -1:
+            not_found.append(note["marker"])
+            continue
+        taken.add(at)
+        end = positions[at + len(needle) - 1] + 1
+        placements.append((end, note["marker"]))
+
+    if not placements:
+        return None, no_lemma, not_found
+    marked = text
+    for end, marker in sorted(placements, reverse=True):
+        marked = marked[:end] + TOKEN.format(marker) + marked[end:]
+    return marked, no_lemma, not_found
+
+
 def census(book_docs: list[dict]) -> dict[str, int]:
+    """What the cached edition holds, for the report. Counts the verses too,
+    which this module does not export -- they are what the comparison against
+    the corpus's own transcription is made of."""
     chapters = [c for b in book_docs for c in b["chapters"]]
     verses = [v for c in chapters for v in c["verses"]]
     headings = [h for c in chapters for h in (c.get("headings") or [])]
@@ -542,147 +669,33 @@ def census(book_docs: list[dict]) -> dict[str, int]:
         "verses": len(verses),
         "notes": len(notes),
         "notes with lemma": sum(1 for n in notes if n.get("lemma")),
-        "verses with apparatus": sum(1 for v in verses if v.get("text_marked")),
         "chapter arguments": sum(1 for c in chapters if c.get("summary")),
         "headings": len(headings),
     }
 
 
-def write_output(
-    book_docs: list[dict],
-    *,
-    sample: bool,
-    counts: dict[str, int],
-    receipt: dict,
-    generated_at: str,
-) -> None:
-    notes = (
-        "1956 edition (revised from the original languages with L. G. da Fonseca "
-        "SJ, Pontifical Biblical Institute), not the 1932 Vulgate-only "
-        "translation. Taken from vulgata.online's transcription (edition code "
-        "MS) through its JSON API, which carries the apparatus liriocatolico.com.br "
-        "prints only the markers of -- see docs/decisions.md, 2026-08-25, for the "
-        "change of source and the agreement measured between the two. Ingested "
-        f"with the edition's footnotes ({counts['notes']}), its chapter arguments "
-        f"({counts['chapter arguments']}) and the headings and lines it prints "
-        f"inside a chapter ({counts['headings']}); the book prefaces are a separate "
-        "work, bible-intro.pt, because a preface describes the book rather than "
-        "the translation. A note quotes the words it glosses before glossing them "
-        "and the source sets exactly those words in italics: they are kept as the "
-        "note's `lemma`, and the point in the verse where they end carries the same "
-        "U+27E6/U+27E7 token the CCC uses. Emphasis elsewhere in a verse is "
-        "flattened and the source's bracketed locators lose their brackets -- both "
-        "the v1 losses docs/corpus-schema.md records, both recoverable from "
-        "corpus/raw/. Pre-1990-Agreement Portuguese orthography (baptizar, "
-        "Unigénito, rectas) is preserved as printed. Psalter follows the Pius XII "
-        '"Pian Psalter" line. Copyright status: see docs/research/copyright.md -- '
-        "accepted as a knowingly self-resolving exposure until the work enters the "
-        "public domain on 1 Jan 2028; the notes are under the same clock as the "
-        "translation."
-    )
-    if sample:
-        notes = (
-            "SAMPLE RUN for review only -- Philemon (complete) and John "
-            "(chapters 1-3 only). Not the full 73-book corpus. " + notes
-        )
-
-    manifest = {
-        "id": WORK_ID,
-        "type": "bible",
-        "title": "Bíblia Sagrada (Matos Soares)",
-        "short_title": "Matos Soares",
-        "language": "pt",
-        "edition": "1956 (revised from the original languages)",
-        "sources": [
-            {"url": BASE_URL + "/bible/Gn.1?ed=MS", "retrieved_at": retrieved_at()}
-        ],
-        "copyright": {
-            "status": "copyrighted",
-            "holder": "Manuel de Matos Soares",
-            "notice": None,
-        },
-        "notes": notes,
-        "generated_at": generated_at,
-        "psalm_numbering": "vulgate",
-        "books": [b["osis"] for b in book_docs],
-        "corrections_applied": receipt["count"],
-    }
-
-    write_stamped_json(
-        work_dir(),
-        {
-            "manifest.json": manifest,
-            "corrections-applied.json": receipt,
-            **{f"books/{b['osis']}.json": b for b in book_docs},
-        },
-        generated_at,
-    )
-
-
-def retrieved_at() -> str:
-    """The date this edition was actually FETCHED -- see douay_rheims.py.
-
-    Note this deliberately reads the manifest of whatever is on disk, which on
-    the first run of this scraper is the LIRIOCATOLICO scrape's manifest, whose
-    retrieval date belongs to a different source. So the first run must be the
-    one that stamps today, and it is: the value is only preserved when the
-    manifest already names this source.
-    """
-    existing = work_dir() / "manifest.json"
-    if existing.exists():
-        try:
-            prior = json.loads(existing.read_text(encoding="utf-8"))
-            source = (prior.get("sources") or [{}])[0]
-            if BASE_URL in (source.get("url") or ""):
-                stamp = source.get("retrieved_at")
-                if isinstance(stamp, str) and stamp:
-                    return stamp
-        except (json.JSONDecodeError, OSError, IndexError):
-            pass
-    return datetime.now(UTC).date().isoformat()
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--sample",
+        "--report",
         action="store_true",
-        help="Only scrape Philemon (complete) and John (chapters 1-3) for review.",
-    )
-    parser.add_argument(
-        "--offline",
-        action="store_true",
-        help="Never touch the network; fail if a required response isn't cached.",
+        help="Parse the cached MS edition and print the comparison against the "
+        "text already in the corpus. Writes nothing, ever.",
     )
     parser.add_argument(
         "--refresh",
         action="store_true",
         help="Bypass the cache and re-fetch every response from the network.",
     )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Parse and validate, but write nothing. The re-sourcing check needs "
-        "the edition already on disk, so this is how to read it before deciding.",
-    )
     args = parser.parse_args()
     require_corpus()
 
-    # THE CORRECTIONS FILED HERE ARE THIS SOURCE'S, and the previous ones are
-    # not. `pipeline/corrections/bible.matos-soares.pt.json` held 39 entries
-    # against the LIRIOCATOLICO scan -- capital I read for lowercase l ("Ihe"
-    # for "lhe"), words split across whitespace, and the adjudications that
-    # decided which of those were real. This transcription does not have that
-    # class of defect, and applying them here would fail the drift guard on the
-    # first entry, which is the layer working correctly. They moved to
-    # `pipeline/corrections/retired/`, which `filed_work_ids` does not read.
     corrections = load_corrections(WORK_ID)
     segment_corrections = [c for c in corrections if "record" in c["locator"]]
-
-    print(f"Fetching {SOURCE_EDITION} from {BASE_URL}, one request per chapter\n")
-    book_docs, anomalies, applied = run_scrape(
-        sample=args.sample,
-        offline=args.offline,
+    print(f"Reading {SOURCE_EDITION} from {BASE_URL}\n")
+    book_docs, anomalies, _applied = run_scrape(
+        sample=False,
+        offline=not args.refresh,
         refresh=args.refresh,
         segment_corrections=segment_corrections,
     )
@@ -700,36 +713,14 @@ def main() -> int:
     for key, value in counts.items():
         print(f"  {key:<24} {value:>6}")
 
-    ok, report = validate(book_docs, args.sample)
-    ok = ok and not fatal
+    ok, report = validate(book_docs, False)
     print()
     for line in report:
         print(line)
-    print(f"\nVALIDATION: {'PASS' if ok else 'FAIL'}")
-
-    if not ok:
-        print("\nRefusing to write a work that failed validation.", file=sys.stderr)
-        return 1
-    if args.dry_run:
-        print("\n--dry-run: nothing written.")
-        return 0
-
-    generated_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-    receipt = corrections_receipt(WORK_ID, applied, corrections, generated_at)
     print(
-        f"\nCorrections layer: {receipt['count']} applied, "
-        f"{len(receipt['unresolved'])} documented unresolved/not-a-defect "
-        "(see corrections-applied.json)"
+        "\nREAD-ONLY: this module supplies apparatus to matos_soares.py and writes nothing."
     )
-    write_output(
-        book_docs,
-        sample=args.sample,
-        counts=counts,
-        receipt=receipt,
-        generated_at=generated_at,
-    )
-    print(f"\nWrote {len(book_docs)} book file(s) to {work_dir()}")
-    return 0
+    return 0 if ok and not fatal else 1
 
 
 if __name__ == "__main__":

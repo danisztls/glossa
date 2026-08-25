@@ -4150,3 +4150,91 @@ wrapper slipped outside the paragraph, leaving an orphaned `<i> </i>` before a
 plain `<p>`; `mense-maio.en` prints two centred unemphasised headings, one short
 of the run of three that recovery requires. Recorded here rather than fixed —
 two headings are not a run, and a detached tag is not a convention.
+
+## 2026-08-25 — The Matos Soares apparatus, from a source whose text we refused
+
+`bible.matos-soares.pt` now carries the edition's own footnotes. Its verses are
+still liriocatolico's. The two facts are the decision.
+
+### What was going to happen, and why it did not
+
+liriocatolico.com.br prints this edition's footnote **markers** and not their
+text, which the manifest has recorded since 2026-08-16 along with the intended
+fix: "vulgata.online carries Matos Soares footnotes and could backfill notes[]
+by marker position in a later pass."
+
+Marker positions turned out not to exist — they were stripped at ingestion and
+never recorded — so the obvious move was to re-take the whole edition from
+vulgata.online, which carries text and apparatus together, already anchored, in
+the format `douay_rheims.py` already reads. That was built, and it validated,
+and then the re-sourcing oracle ran.
+
+**98.01% of verses agree between the two transcriptions. 247 verses are missing
+from the new one.** Job 32 stops at 14 of its 22 verses. Esdras 6:9-13 is
+overwritten by a duplicate of Esdras 4:9-13, so a reader would meet Artaxerxes's
+letter inside the dedication of the Temple with nothing on the page looking
+wrong. Around 215 more are scattered single holes — Genesis 15 arrives with
+verses 1-3 and 5-21.
+
+No amount of apparatus pays for 247 verses of Scripture. Full measurement in
+`docs/research/matos-soares-re-sourcing.md`.
+
+**The oracle is the point.** Every one of those defects is invisible to a check
+that does not compare against another witness: the parse is clean, the schema is
+satisfied, and the Clementine reports the differences as versification because
+this edition legitimately diverges from the Vulgate in shape. Only a second
+transcription of the same printing could say which of the two was short. This is
+the same argument the corpus already makes for cross-language symmetry, applied
+one level down — and it is why `matos_soares_apparatus.py` keeps the comparison
+as a permanent `--report` rather than a one-off script.
+
+### How a note finds its place in a different transcription
+
+By its own **lemma**. Every note in this apparatus opens by quoting the words it
+glosses, exactly as Challoner's do; `anchor_notes` folds both strings to letters
+and digits, finds the lemma in **our** verse, and puts the `⟦marker⟧` token where
+it ends. The anchor is therefore derived from the text that ships, not
+transplanted from text that does not.
+
+Of 3,013 notes: **1,483 anchored**, 1,270 quote nothing to anchor to (two in
+five of this edition's notes simply do not open with a quotation), 260 quote
+words this transcription does not have, and **2 were dropped** because they
+named a verse this edition lacks. The two middle cases keep the note and lose
+only the token, which the schema allows outright — "every token must have a
+note; a note need not have a token". Nothing is placed by guess.
+
+The 260 are the Matos Soares counterpart of the Douay-Rheims lemma oracle's 72
+(`docs/research/douay-rheims-lemma-audit.md`): the places where two
+transcriptions of one printing disagree about the very words a note names.
+
+### One work, two sources, one corrections file
+
+The manifest lists both sources, because a reader following provenance for a
+footnote must arrive at vulgata.online and not at liriocatolico, which does not
+carry it.
+
+`pipeline/corrections/bible.matos-soares.pt.json` holds both layers and tells
+them apart **by the shape of the locator**: `{osis, chapter, verse}` corrects
+the verse text that ships, `{osis, chapter, record}` corrects a record of the
+apparatus source before it is parsed. Splitting them across two files would
+have meant inventing a second work id for something that is not a second work.
+The 39 liriocatolico entries were briefly retired on the assumption that the
+re-sourcing would go ahead; they are live again, and correctly so — they
+correct the text the reader reads.
+
+Thirty-two new entries against the apparatus source took its fatal segment
+collisions from 21 to zero. They divide into four kinds, and one of them earned
+a new capability: `"drop": true`, for a mis-filed record with no right verse
+number to be given. Sixteen records of Esdras 4 are duplicated into chapter 6
+where chapter 4 already holds every one of them, so re-filing would collide with
+the originals and keeping them would put the wrong chapter in the reader's way.
+
+### An off-by-one that looked like a formatting quirk
+
+Worth recording because it would have shipped. `fold_with_map` built its
+index over the NFD-decomposed string and then sliced the original, so every
+accent _before_ a lemma pushed its token one place left: `quem não renascer
+⟦1⟧da água` instead of `renascer⟦1⟧ da`. In Portuguese that is an accent every
+few words, not an edge case. It now decomposes per character, so an index in
+the map is an index into the string the caller holds, and all 1,483 tokens sit
+where the source sets them.
