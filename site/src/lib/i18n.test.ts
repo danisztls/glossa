@@ -22,6 +22,16 @@ describe('detectUiLang', () => {
 		expect(detectUiLang(['ar'])).toBe('ar');
 		expect(detectUiLang(['ja-JP', 'ru-RU', 'en-US'])).toBe('ru');
 	});
+
+	// No operating system offers Latin as a display language, so this branch
+	// is unreachable from a real browser — asserted anyway because the
+	// function's contract is about `UI_LANGS`, not about what a browser is
+	// likely to send, and a `la` that negotiated to English would mean Latin
+	// had fallen out of that list.
+	it('negotiates Latin like any other interface language', () => {
+		expect(detectUiLang(['la'])).toBe('la');
+		expect(detectUiLang(['ja-JP', 'la'])).toBe('la');
+	});
 });
 
 describe('UI_LANGS and the dictionaries', () => {

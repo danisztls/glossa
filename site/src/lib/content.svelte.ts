@@ -34,7 +34,7 @@
  * it — but same shape, same staleness rule, same reasoning throughout.
  */
 
-import { i18n, isUiLang } from './i18n.svelte';
+import { i18n } from './i18n.svelte';
 import {
 	baseLang,
 	defaultDocumentWorkId,
@@ -43,7 +43,6 @@ import {
 	listEditions
 } from './corpus';
 import { readStoredJson, writeStoredJson } from './storage';
-import type { WorkManifest } from './types';
 
 /**
  * `'prayer'` joins this union rather than getting a fourth `#documentOverrides`-
@@ -53,15 +52,15 @@ import type { WorkManifest } from './types';
  * need a per-slug override map because there's no single "the document
  * edition" (see this file's docblock).
  *
- * `'summa'` joins on the same terms, and is the first member for which
- * `defaultWorkId` cannot return the reader's own language: the work ships
- * EN + LA and no Portuguese. That is handled entirely inside `defaultWorkId`
- * (see `corpus.ts`'s `CONTENT_LANG_FALLBACK`), so nothing here changes --
- * but note the consequence for `#stillApplies`: a Portuguese reader's
- * effective Summa edition is English, English IS a UI language, so an
- * explicit pick of the Latin Summa persists across UI switches while a pick
- * of the English one does not. That is the intended reading of the Latin
- * rule, not an accident of this work having no Portuguese.
+ * `'summa'` joins on the same terms, and is the member for which
+ * `defaultWorkId` most visibly cannot return the reader's own language: the
+ * work ships EN + LA and no Portuguese. That is handled entirely inside
+ * `defaultWorkId` (see `corpus.ts`'s `CONTENT_LANG_FALLBACK`), so nothing
+ * here changes. It is also where Latin becoming an interface language pays
+ * off twice: a reader who sets the interface to Latin gets the Corpus
+ * Thomisticum by default rather than by override, and the Supplementum still
+ * falls back to English per address, because that fallback was never a
+ * property of this store.
  */
 export type WorkTypeKey = 'bible' | 'catechism' | 'compendium' | 'prayer' | 'summa';
 
@@ -100,26 +99,25 @@ class ContentStore {
 	#documentOverrides: DocumentOverrideMap = $state(readDocumentStored());
 
 	/**
-	 * Whether an override still applies, given the language of the edition it
-	 * names.
+	 * Whether an override still applies.
 	 *
-	 * The reset-on-UI-switch rule (module docblock) exists so that a reader
-	 * who picked the Portuguese Bible under an English interface, then
-	 * deliberately switches the interface to Portuguese, gets Portuguese
-	 * content throughout rather than a stale pick. That reasoning holds only
-	 * while the picked language is one the interface *has*.
+	 * ONE RULE FOR EVERY EDITION SINCE 2026-08-24, when Latin became an
+	 * interface language (`UI_LANGS`, docs/decisions.md). Until then this
+	 * method carried a second clause: an override naming an edition in a
+	 * language the interface did not have — in practice the Clementine —
+	 * survived every UI switch, because no UI language defaulted to it and so
+	 * no interface event could be read as the reader changing their mind
+	 * about Latin. That clause was an escape hatch for a reader the language
+	 * menu could not serve. The menu serves them now: a reader who wants
+	 * Latin picks Latin, and gets the Vulgate, the Summa's Latin and Latin
+	 * chrome from one choice that persists on its own terms.
 	 *
-	 * Latin breaks that premise rather than the mechanism. No UI language
-	 * will ever default to the Latin Bible, so for a reader who wants it the
-	 * override is not an escape hatch from a sensible default — it is the
-	 * only path to the text they came for, and there is no interface event
-	 * that should be read as "they changed their mind about Latin." So an
-	 * override whose own language is not a UI language persists until the
-	 * reader changes it, and everything else keeps the old rule exactly.
+	 * What is left is the rule the module docblock states, applied to
+	 * everything: an override is stamped with the UI language it was made
+	 * under and goes dormant while the interface is elsewhere. It is not
+	 * deleted, so returning to that language revives it.
 	 */
-	#stillApplies(override: Override, editions: WorkManifest[]): boolean {
-		const picked = editions.find((w) => w.id === override.workId);
-		if (picked && !isUiLang(baseLang(picked.language))) return true;
+	#stillApplies(override: Override): boolean {
 		return override.forUiLang === i18n.lang;
 	}
 
@@ -127,7 +125,7 @@ class ContentStore {
 	#activeOverride(type: WorkTypeKey): Override | undefined {
 		const override = this.#overrides[type];
 		if (!override) return undefined;
-		return this.#stillApplies(override, listEditions(type)) ? override : undefined;
+		return this.#stillApplies(override) ? override : undefined;
 	}
 
 	/** Effective work id, e.g. "bible.matos-soares.pt" / "ccc.en". undefined if none. */
@@ -157,16 +155,12 @@ class ContentStore {
 	/** Document analogue of `workIdFor`, keyed by the document's `slug` rather than a `WorkTypeKey` — see module docblock. */
 	documentWorkIdFor(slug: string): string | undefined {
 		const override = this.#documentOverrides[slug];
-		// Same staleness rule as `#activeOverride`, for the same reason. No
-		// document has a Latin edition yet, but the rule belongs to the
-		// override rather than to the work type, and two rules that differ
-		// only by which map they read is how they drift apart.
-		const editions = override
-			? (Object.values(getDocumentGroup(slug)?.manifests ?? {}).filter(
-					(m) => m !== undefined
-				) as WorkManifest[])
-			: [];
-		const active = override && this.#stillApplies(override, editions) ? override : undefined;
+		// Same staleness rule as `#activeOverride`, for the same reason: two
+		// rules that differ only by which map they read is how they drift
+		// apart. It no longer needs the slug's edition list to decide —
+		// `#stillApplies` stopped asking what language the picked edition is
+		// in when Latin joined `UI_LANGS`.
+		const active = override && this.#stillApplies(override) ? override : undefined;
 		return active?.workId ?? defaultDocumentWorkId(slug, i18n.lang);
 	}
 

@@ -43,19 +43,37 @@ describe('edition override lifecycle', () => {
 		expect(content.workIdFor('bible')).toBe(PT); // and it wakes up again
 	});
 
-	// The Latin case, and the whole reason `#stillApplies` exists. No UI
-	// language will ever default to the Latin Bible, so no UI-language event
-	// can be read as the reader changing their mind about it. Contrast the
-	// test above, where the identical sequence drops back to a default.
-	it('keeps an override whose language is not a UI language, across UI switches', () => {
+	// Latin used to be exempt from the rule above, because no UI language
+	// defaulted to the Clementine and so no UI event could mean "they changed
+	// their mind about Latin". Latin is a UI language now (2026-08-24), which
+	// is a better answer to the same problem, so the exemption is gone and a
+	// Latin pick sleeps and wakes exactly like a Portuguese one.
+	it('treats a Latin override like every other, since Latin became a UI language', () => {
 		i18n.set('pt');
 		content.set('bible', LA);
 		expect(content.workIdFor('bible')).toBe(LA);
 
 		i18n.set('en');
-		expect(content.workIdFor('bible')).toBe(LA);
+		expect(content.workIdFor('bible')).toBe(EN);
 		i18n.set('pt');
 		expect(content.workIdFor('bible')).toBe(LA);
+	});
+
+	// And the reader who wants Latin no longer needs an override to keep it:
+	// the interface language carries it, for the Bible and for the Summa.
+	it('gives a Latin interface the Latin editions with no override at all', () => {
+		i18n.set('la');
+		expect(content.workIdFor('bible')).toBe(LA);
+		expect(content.langFor('bible')).toBe('la');
+		expect(content.langFor('summa')).toBe('la');
+	});
+
+	// The Catechism has no Latin edition in the corpus, so a Latin reader
+	// falls through `CONTENT_LANG_FALLBACK` to English like a Portuguese
+	// reader falls through it for the Summa.
+	it('falls back to English for a work the corpus has no Latin edition of', () => {
+		i18n.set('la');
+		expect(content.workIdFor('catechism')).toBe('ccc.en');
 	});
 
 	it('still lets the reader leave Latin explicitly', () => {
@@ -66,16 +84,5 @@ describe('edition override lifecycle', () => {
 		content.set('bible', LA);
 		content.set('bible', null);
 		expect(content.workIdFor('bible')).toBe(EN);
-	});
-
-	// The rule keys on the picked edition's language, not on the work type,
-	// so a type with no non-UI-language edition keeps the old behaviour whole.
-	it('leaves work types with no non-UI-language edition alone', () => {
-		i18n.set('pt');
-		content.set('catechism', 'ccc.pt');
-		expect(content.workIdFor('catechism')).toBe('ccc.pt');
-
-		i18n.set('en');
-		expect(content.workIdFor('catechism')).toBe('ccc.en');
 	});
 });

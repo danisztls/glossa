@@ -16,27 +16,35 @@
 import { readStoredString, writeStoredString } from './storage';
 
 /**
- * The languages the INTERFACE is available in — still deliberately not the
- * same set as the languages the corpus ships CONTENT in, in both directions
- * now. Latin is a content language nobody wants chrome in
- * (`bible.clementina.la`), and `content.svelte.ts` depends on being able to
- * tell the two apart: an edition pick whose language is not a UI language has
- * no interface event that should ever supersede it (`docs/decisions.md`).
+ * The languages the INTERFACE is available in — as of 2026-08-24 the same
+ * set as `ContentLang` in types.ts, which is new and is the point of the
+ * entry that added Latin here.
  *
- * The seven added on 2026-08-24 point the other way — they are interface
- * languages the corpus has almost no content in. Magnifica Humanitas is
- * published in all nine and is, so far, the only work that is; a reader who
- * picks Italian gets Italian chrome and, for every other work, the English
- * text through `CONTENT_LANG_FALLBACK`. That is the honest state of it rather
- * than a defect to hide: the alternative is a reader who can read the
- * encyclical in their own language having to navigate to it in someone
- * else's.
+ * LATIN WAS THE ONE CONTENT LANGUAGE THIS LIST DELIBERATELY EXCLUDED, on the
+ * grounds that it is a language readers want the TEXT in and nobody wants
+ * the chrome in. That was an assumption about readers, not a fact about the
+ * corpus, and it does not survive contact with what this site is: the
+ * canonical URLs are Latin, the Summa's division names are Latin in every
+ * dictionary here, and a reader who came for the Clementine and the Corpus
+ * Thomisticum is the last reader who needs `Caput sequens` glossed. So the
+ * asymmetry is gone, and with it the special case it was holding up in
+ * `content.svelte.ts` (see `#stillApplies` there, and docs/decisions.md).
+ *
+ * The seven added earlier on 2026-08-24 point the other way — they are
+ * interface languages the corpus has almost no content in. Magnifica
+ * Humanitas is published in all nine and is, so far, the only work that is;
+ * a reader who picks Italian gets Italian chrome and, for every other work,
+ * the English text through `CONTENT_LANG_FALLBACK`. That is the honest state
+ * of it rather than a defect to hide: the alternative is a reader who can
+ * read the encyclical in their own language having to navigate to it in
+ * someone else's. Latin is the opposite case and the reason it belongs here
+ * — the corpus carries two whole works in it.
  *
  * Ordered as a reader scanning the language menu would want them, which is
- * not the order they were added: English and Portuguese first because they
- * are what the corpus is mostly in, then the rest by their own names.
+ * not the order they were added: English, Portuguese and Latin first because
+ * they are what the corpus is in, then the rest by their own names.
  */
-export const UI_LANGS = ['en', 'pt', 'de', 'es', 'fr', 'it', 'pl', 'ru', 'ar'] as const;
+export const UI_LANGS = ['en', 'pt', 'la', 'de', 'es', 'fr', 'it', 'pl', 'ru', 'ar'] as const;
 
 export type UiLang = (typeof UI_LANGS)[number];
 
@@ -86,6 +94,7 @@ import { en } from './i18n/en';
 import { es } from './i18n/es';
 import { fr } from './i18n/fr';
 import { it } from './i18n/it';
+import { la } from './i18n/la';
 import { pl } from './i18n/pl';
 import { pt } from './i18n/pt';
 import { ru } from './i18n/ru';
@@ -97,7 +106,7 @@ import { ru } from './i18n/ru';
  * than shipping it with a machine translation of a page about how carefully
  * this site handles other people's words.
  */
-const dictionaries: Record<UiLang, Dictionary> = { en, pt, de, es, fr, it, pl, ru, ar };
+const dictionaries: Record<UiLang, Dictionary> = { en, pt, la, de, es, fr, it, pl, ru, ar };
 
 /** One language's dictionary. Exported for the tests that check them all. */
 export function dictionaryFor(lang: UiLang): Dictionary {
@@ -117,6 +126,12 @@ function readStored(): UiLang | null {
  * gives every variant the right UI without pretending that we have separate
  * regional translations. Unknown locales fall back to English, the site's
  * existing no-preference default.
+ *
+ * Latin is negotiable here like any other — `la` in `navigator.languages`
+ * gets a Latin interface — but no operating system offers it as a display
+ * language, so in practice it is reached by choosing it in the menu. That is
+ * not a gap: nothing about this function needs to know which of its answers
+ * a browser will actually ask for.
  */
 export function detectUiLang(languages: readonly string[] | undefined): UiLang {
 	for (const language of languages ?? []) {

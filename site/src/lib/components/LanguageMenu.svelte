@@ -33,14 +33,20 @@
 	// current one: a reader who has landed on the wrong interface language
 	// needs to recognize their language in the list, and "Portuguese" is no
 	// help to someone who only reads Portuguese. That was worth stating with
-	// two entries and is the whole usability of the control with nine.
+	// two entries and is the whole usability of the control with ten.
 	//
 	// Order matches `UI_LANGS` (i18n.svelte.ts), which is not alphabetical:
-	// English and Portuguese lead because they are what the corpus is mostly
+	// English, Portuguese and Latin lead because they are what the corpus is
 	// in, and the seven that came with Magnifica Humanitas follow.
+	//
+	// `Latina` is the label rather than `Lingua Latina` for the same reason
+	// `Deutsch` is not `Deutsche Sprache` — and it is what `corpus.ts`'s
+	// `LANGUAGE_NAMES` already calls the Clementine's language in the edition
+	// menu, which sits two triggers away in the same header.
 	const OPTIONS: { code: UiLang; short: string; label: string }[] = [
 		{ code: 'en', short: 'EN', label: 'English' },
 		{ code: 'pt', short: 'PT', label: 'Português' },
+		{ code: 'la', short: 'LA', label: 'Latina' },
 		{ code: 'de', short: 'DE', label: 'Deutsch' },
 		{ code: 'es', short: 'ES', label: 'Español' },
 		{ code: 'fr', short: 'FR', label: 'Français' },

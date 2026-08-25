@@ -3251,3 +3251,64 @@ Measured across every written work with a cached page: exactly one is
 affected. Its directory was removed; the Portuguese edition is unaffected and
 keeps its own source link, which is all the site ever promised for a text we
 do not hold.
+
+## 2026-08-24 — Latin is an interface language
+
+**What**: `UI_LANGS` gains `la` (tenth), `site/src/lib/i18n/la.ts` is a
+complete dictionary — all 188 keys, no English fallback anywhere — and the
+language menu offers `LA / Latina` third, after English and Portuguese.
+`content.svelte.ts`'s `#stillApplies` loses its Latin clause and is now one
+line.
+
+**Why**: the exclusion was an assumption about readers, never a fact about
+the corpus, and it is the one this site is least entitled to. The canonical
+URLs are Latin (`/scriptura`, `/catechismus`, `/preces`, `/signata`). Every
+dictionary here already leaves the Summa's divisions in Latin — `Obiectio`,
+`Sed contra`, `Respondeo dicendum` — because translating a heading a footnote
+cites by its Latin name loses the reader. The corpus carries two whole works
+in Latin. A reader who came for the Clementine and the Corpus Thomisticum is
+the last reader who needs `Caput sequens` glossed.
+
+**It deletes a special case rather than adding one.** The 2026-08-23 entry
+above made an edition override permanent when its language was not a UI
+language, on the reasoning that no UI language would ever default to the
+Latin Bible, so no interface event could honestly mean "the reader changed
+their mind about Latin." That was an escape hatch for a reader the language
+menu could not serve. The menu serves them now — one choice gives the
+Vulgate, the Corpus Thomisticum and Latin chrome — so the premise is gone and
+with it the clause. Every override is again stamped with the UI language it
+was made under and sleeps while the interface is elsewhere. The behaviour a
+reader loses is narrow and was strange: an English interface holding the
+Latin Bible across a switch to Portuguese and back. The behaviour they gain
+is that Latin is a language of this site rather than a text stashed behind a
+selector.
+
+**`ContentLang` and `UiLang` are now the same ten tags and stay separate
+types.** They answer different questions and are equal today by coincidence
+of history: a content language arrives when someone ingests a text, an
+interface language when someone writes a dictionary. Greek would enter one
+alone; the seven that came with Magnifica Humanitas entered the other alone.
+Nothing may be written that derives either from the other.
+
+**The dictionary is the Church's Latin, not a reconstruction.** Where the
+corpus supplies a term it wins: `Catechismus Catholicae Ecclesiae` is the
+editio typica's own title, `CCE` its own siglum. Where the Church has no word
+— browser, clipboard, monochrome — the entry is a descriptive phrase rather
+than a Latinized loan (`navigatrum`, `Unicolor`, `Textum exscribe`), because
+a reader who asks for Latin chrome wants Latin, not `installare`. Three
+entries record a decision in the file itself: `Breviter` for the CCC's "In
+Brief" because the editio typica's own heading there is `Compendium`, which
+names another work in this corpus; `Sponte / Semper / Numquam` for dark
+mode's three cells because Latin has no yes/no pair, so the control says when
+rather than whether; and the search box's example stays `ioannes 3,16, ccc
+1234` because those are the tokens the parser actually accepts — the
+Clementine's own abbreviations carry `ioannes`, while `refparse.ts` reads
+only `ccc`, so `cce 1234` would be a promise the box does not keep.
+
+**What a Latin reader actually gets.** The Vulgate and the Corpus
+Thomisticum by default rather than by override; English for the Catechism,
+the Compendium, the documents and the prayers, through `CONTENT_LANG_FALLBACK`
+unchanged. That is the same shape as the seven languages added earlier today,
+in the opposite proportion — and the Supplementum still resolves to English
+for a Latin reader, per address, because that fallback was never a property
+of the override store.

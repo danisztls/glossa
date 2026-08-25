@@ -291,9 +291,11 @@ export function baseLang(tag: string): string {
 /**
  * A content language's own name, written in that language ("Português", not
  * "Portuguese") — same convention LanguageMenu.svelte uses for the UI
- * language switch. Keyed on CONTENT language, which since the Clementine
- * Vulgate landed is a wider set than the interface languages; an
- * unrecognized tag falls back to the tag itself.
+ * language switch, and `Latina` is deliberately the same string in both.
+ * Keyed on CONTENT language, which is the same ten tags as the interface
+ * languages since Latin joined those (i18n.svelte.ts) but is not the same
+ * list and should not be derived from it; an unrecognized tag falls back to
+ * the tag itself.
  */
 const LANGUAGE_NAMES: Record<string, string> = {
 	en: 'English',

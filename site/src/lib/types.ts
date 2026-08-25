@@ -27,14 +27,19 @@ export type WorkType =
 
 /**
  * Bare language subtag the corpus ships content in (see `baseLang` in
- * corpus.ts). Still not the same set as `UiLang` in i18n.svelte.ts, though
- * the two now overlap in eight of nine: `la` is a language readers want the
- * TEXT in (the Clementine Vulgate) and nobody wants the interface in, which
- * is the asymmetry `content.svelte.ts` depends on.
+ * corpus.ts). The same ten as `UiLang` in i18n.svelte.ts since 2026-08-24,
+ * when Latin — the last member that was content-only, and the asymmetry
+ * `content.svelte.ts` used to depend on — became an interface language too.
  *
- * The other seven arrived with Magnifica Humanitas, which vatican.va
- * publishes in all nine — so far the only work in the corpus that is in any
- * of them.
+ * THE TWO TYPES STAY SEPARATE ANYWAY, because they answer different
+ * questions and are equal today by coincidence of history rather than by
+ * construction. A content language arrives when someone ingests a text in
+ * it; an interface language arrives when someone writes a dictionary. Greek
+ * would enter here alone; a UI translation of a language the corpus has
+ * nothing in enters there alone (seven did, with Magnifica Humanitas, which
+ * vatican.va publishes in nine and which is still the only work in the
+ * corpus in any of them). Nothing should be written that assumes one set is
+ * the other.
  */
 export type ContentLang = 'en' | 'pt' | 'la' | 'de' | 'es' | 'fr' | 'it' | 'pl' | 'ru' | 'ar';
 
