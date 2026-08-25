@@ -3555,3 +3555,31 @@ All seven are **unnumbered documents** — continuous prose with no inline
 paragraph numbers, so their text is in `appendix.json` and `sections.json` is
 empty, the shape the corpus already had eight editions of. 20–75 KB of text
 each. The corpus is 367 works.
+
+## 2026-08-25 — A description that was read and a description that was translated are different things
+
+`site/descriptions.json` was `work id -> string`. It is now
+`work id -> language -> { text, origin }`, with `origin` either `"read"` or
+`"translated"` (plus `from`, naming the rendering it came from).
+
+The distinction is the same one `docs/writing-descriptions.md` opens with. A
+description must be written by READING THE DOCUMENT, never from recollection
+of what a document with that title probably says, because a fluent wrong
+summary is indistinguishable on the page from a real one. A translation is not
+a reading: it inherits whatever the reading got right and whatever it got
+wrong, and it never touches the document. Storing both in one string field
+would erase exactly the property the procedure exists to guarantee.
+
+`from` makes provenance a chain rather than a label — correct a reading, and
+every translation of it is known to be stale by inspection.
+
+The outer key stays the WORK. A description read from the Portuguese edition
+is prose about that text, not a translated label for the English one; the two
+editions are described separately and always were.
+
+**Only the reading is shipped.** `sync-corpus.mjs` merges the work's
+own-language rendering into `manifest.description` as before. The index tier is
+eagerly loaded by every reader and already 2.2 MB; eight translations of every
+description would multiply the one field in it that is prose. Shipping
+translations wants a per-language asset loaded on demand, which is a separate
+decision and is not taken here.
