@@ -89,6 +89,7 @@ from .fetch import (
     Fetcher,
     FetchError,
     FetchPolicy,
+    download_resumable,
     httpx_transport,
     urllib_transport,
 )
@@ -140,6 +141,7 @@ __all__ = [
     "chapter_opening_letter",
     "corpus_dir",
     "corrections_receipt",
+    "download_resumable",
     "file_has_text",
     "filed_work_ids",
     "fold",

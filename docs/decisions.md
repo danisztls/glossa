@@ -57,6 +57,24 @@ is that capture regret is fixed by **re-parsing, never re-crawling**, and that h
 only while `raw/` is intact. When judging whether a deletion is safe the question is
 never "is this corpus data" but which of the two it is.
 
+**Capture is cheap; re-crawling is not, so capture every edition the source has.**
+vatican.va publishes the Compendium in fourteen languages; we parse two. All fourteen
+are in `raw/` regardless — ten HTML, four PDF-only — because the marginal cost was
+twelve requests once, and the alternative is that the day a third language is wanted,
+someone crawls that server again. This is the same insurance the rule above states, paid
+before the loss rather than after. It scales by judgment, not by rule: the whole
+Compendium is 68 MB, of which 51 MB is one Indonesian PDF, and a work with hundreds of
+per-chapter pages per language would deserve a different answer.
+
+**A resumed download is a different operation from a retried one.** A 50 MB file across
+an edge that drops long transfers can never arrive by retrying, because every retry
+starts at zero — three attempts at that Indonesian PDF reached 8 MB, then 33 MB, then
+failed. `common.download_resumable` appends to a `.part` and asks for the rest, so each
+attempt keeps its ground; `Fetcher` stays the whole-response-in-memory thing the pipeline
+is otherwise made of. Related, and found the same afternoon: `IncompleteRead` is an
+`http.client` exception that urllib does not wrap, so it used to escape past every caller
+that handles `FetchError` and past the retry loop that exists for it.
+
 **`works/` is tracked in git anyway**, though it is derived. Not for reproducibility —
 for **diffability**: the blast radius of a parser change is `git status` in the corpus
 repo, and nothing else answers "what did this fix actually move".
@@ -359,7 +377,10 @@ under-reports by a factor of six and cannot be used as an index of what exists.
 - **Roman Catechism, Vatican I** — not found on vatican.va under any URL tried.
 - **IntraText as a source** — quality there is per **work**, not per site: the same
   library holds a faithful copy of the Holy See's own edition and a truncated
-  unattributed transcription. A good result licenses nothing about the next work.
+  unattributed transcription. A good result licenses nothing about the next work. It is
+  also not a fallback for anything published after it stopped: the vatican.va Compendium
+  pages are IntraText's _export_, but the Compendium is absent from IntraText's own
+  library, whose Catholica section carries the 1997 Catechism and stops before 2005.
 - **Machine-translated sources** — disqualified on provenance. Note this now has to be
   read per work: liriocatolico, the source of `bible.matos-soares.pt`, has begun
   publishing AI-translated text elsewhere on the site.

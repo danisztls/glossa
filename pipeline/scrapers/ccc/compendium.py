@@ -10,6 +10,16 @@ Sources (each language is a single long HTML page, not a multi-page mirror):
   EN: https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_en.html
   PT: https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_po.html
 
+vatican.va publishes fourteen editions in all, ten of them this same HTML and
+four PDF-only -- see `EDITIONS`, and `--capture` for taking them all into
+raw/. Only these two are parsed; the rest are held so that adding one later
+is a re-parse rather than another crawl.
+
+These pages are IntraText's export, but the Compendium is NOT in IntraText's
+own library: its Catholica section carries the 1997 Catechism in nine
+languages and stops before 2005, so vatican.va is the only source for this
+work, in every language it has.
+
 Both pages carry the full document: front matter (Motu Proprio, Introduction
 -- unnumbered, out of scope, see notes), the 598 numbered Q&A items grouped
 under a Part/Section/Chapter hierarchy, and an Appendix (common prayers +
@@ -40,6 +50,7 @@ the unnumbered front matter.
 
 Usage:
   uv run pipeline/scrapers/ccc/compendium.py --lang en|pt|both
+  uv run pipeline/scrapers/ccc/compendium.py --capture [all|de,fr,...]
 
 No --sample mode: the source is one page per language (598 questions
 total), small enough to run in full every time; re-runs are offline-capable
@@ -101,6 +112,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import (
     Fetcher,
     FetchPolicy,
+    download_resumable,
     fold,
     raw_root,
     require_corpus,
@@ -116,8 +128,54 @@ CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 RAW_ROOT = raw_root()
 WORKS_ROOT = works_root()
 
-EN_URL = "https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_en.html"
-PT_URL = "https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_po.html"
+DOCUMENTS_URL = "https://www.vatican.va/archive/compendium_ccc/documents/"
+
+#: EVERY edition vatican.va publishes, keyed by OUR language tag; the value is
+#: the file the mirror serves. Two things about it are worth stating rather
+#: than inferring:
+#:
+#:   - The stem carries the VATICAN's language slug, which is not ours and not
+#:     ISO: `ge` for German, `sp` for Spanish, `po` for Portuguese, `lit` for
+#:     Lithuanian. The mapping is the point of this table.
+#:   - Four editions exist only as PDF. That is the source's limit, not a
+#:     choice here: there is no HTML for Belarusian, Indonesian, Lithuanian or
+#:     Russian anywhere on the site. They are still captured, byte-exact, by
+#:     `--capture` -- nothing parses them, and `raw/` is where the answer to
+#:     "could we have?" lives (docs/link-surface.md).
+#:
+#: Taken from the language selector printed on the English page itself, not
+#: from guessing at slugs. There is no Latin edition on vatican.va; the
+#: *editio typica latina* exists in print and is not published here.
+EDITIONS = {
+    "be": "archive_2005_compendium-ccc_be.pdf",
+    "de": "archive_2005_compendium-ccc_ge.html",
+    "en": "archive_2005_compendium-ccc_en.html",
+    "es": "archive_2005_compendium-ccc_sp.html",
+    "fr": "archive_2005_compendium-ccc_fr.html",
+    "hu": "archive_2005_compendium-ccc_hu.html",
+    "id": "archive_compendium-ccc_id.pdf",
+    "it": "archive_2005_compendium-ccc_it.html",
+    "lt": "compendium_catech_lit.pdf",
+    "pt": "archive_2005_compendium-ccc_po.html",
+    "ro": "archive_2005_compendium-ccc_ro.html",
+    "ru": "archive_compendium-ccc_ru.pdf",
+    "sl": "archive_2005_compendium-ccc_sl.html",
+    "sv": "archive_2005_compendium-ccc_sv.html",
+}
+
+
+#: One raw directory per language, named by OUR tag -- so the Portuguese file
+#: `..._po.html` lands in `compendium-pt/`, which is what it has always done.
+def raw_name(lang: str) -> str:
+    return f"compendium-{lang}/{EDITIONS[lang]}"
+
+
+def source_url(lang: str) -> str:
+    return DOCUMENTS_URL + EDITIONS[lang]
+
+
+EN_URL = source_url("en")
+PT_URL = source_url("pt")
 
 FIRST_Q = 1
 LAST_Q = 598
@@ -139,6 +197,20 @@ COPYRIGHT_HOLDER = "Libreria Editrice Vaticana"
 VATICAN_POLICY = FetchPolicy(
     user_agent=USER_AGENT,
     delay=2.0,
+)
+
+#: Capture, unlike a parse run, DOES retry -- and the difference is not
+#: inconsistency. The no-retry rule above is about a parse: a page that failed
+#: would silently make the output wrong, so stopping is the correct answer.
+#: A capture writes nothing anyone reads, reports each file by name, and is
+#: pulling megabyte-scale PDFs across an edge that drops roughly one request in
+#: six to eight (CLAUDE.md); one attempt there just means a hand-run retry.
+CAPTURE_POLICY = FetchPolicy(
+    user_agent=USER_AGENT,
+    delay=2.0,
+    attempts=3,
+    backoff=(5.0, 15.0),
+    timeout=180.0,
 )
 
 
@@ -665,8 +737,6 @@ def match_label_pt(stripped: str) -> tuple[str, int | None] | None:
 LANG_CONFIG = {
     "en": {
         "url": EN_URL,
-        "raw_dir": "compendium-en",
-        "cache_name": "archive_2005_compendium-ccc_en.html",
         "start_anchor": 'name="INTRODUCTION"',
         "end_anchor": 'name="APPENDIX"',
         "match_label": match_label_en,
@@ -677,8 +747,6 @@ LANG_CONFIG = {
     },
     "pt": {
         "url": PT_URL,
-        "raw_dir": "compendium-pt",
-        "cache_name": "archive_2005_compendium-ccc_po.html",
         "start_anchor": 'name="INTRODU&Ccedil;&Atilde;O"',
         "end_anchor": 'name="AP&Ecirc;NDICE"',
         "match_label": match_label_pt,
@@ -692,8 +760,8 @@ LANG_CONFIG = {
 
 def run_scrape(lang: str) -> tuple[ScrapeState, Fetcher]:
     cfg = LANG_CONFIG[lang]
-    fetcher = make_fetcher(RAW_ROOT / cfg["raw_dir"])
-    html_text = fetcher.fetch_str(cfg["url"], cfg["cache_name"])
+    fetcher = make_fetcher(RAW_ROOT)
+    html_text = fetcher.fetch_str(cfg["url"], raw_name(lang))
 
     start_idx = html_text.find(cfg["start_anchor"])
     end_idx = html_text.find(cfg["end_anchor"])
@@ -944,6 +1012,64 @@ def print_summary(
 
 
 # --------------------------------------------------------------------------
+# Capture (raw only, every language)
+# --------------------------------------------------------------------------
+
+
+def capture_raw(langs: list[str]) -> int:
+    """Fetch each edition's source file into `raw/compendium-{lang}/`, and
+    parse nothing.
+
+    This is the "re-parse, never re-crawl" policy being paid forward
+    (docs/link-surface.md): the twelve editions nothing reads today cost
+    twelve requests once, and having them means a future question about, say,
+    the Italian wording of a question is answered offline instead of by
+    another crawl of someone else's server.
+
+    ONE fetcher over the whole run, not one per language, and that is
+    load-bearing: the 2s floor lives in `Fetcher._last_request`, so a fetcher
+    per language would reset it and issue fourteen requests back to back.
+    Hence `raw_name` putting the language in the cache name rather than in the
+    cache root.
+
+    `fetch_bytes`, never `fetch_str`: four of these are PDFs, and this
+    fetcher's `decode` is a claim about the HTML pages' cp1252 charset that a
+    PDF would not survive. Bytes are what `raw/` is for anyway.
+    """
+    fetcher = Fetcher(RAW_ROOT, CAPTURE_POLICY, decode=decode_cp1252)
+    ok = True
+    print(f"capturing {len(langs)} edition(s) into {RAW_ROOT}")
+    for lang in langs:
+        name = raw_name(lang)
+        kind = "PDF" if EDITIONS[lang].endswith(".pdf") else "HTML"
+        url = source_url(lang)
+        cached = fetcher.cached(name) is not None
+        data, err = fetcher.try_fetch(url, name)
+        if data is not None:
+            where = "cached" if cached else "fetched"
+            print(f"  {lang:3s} {where:7s} {kind:4s} {len(data):>9,d} B  {name}")
+            continue
+        # The Indonesian PDF is 51 MB, and vatican.va's edge has never once
+        # delivered it whole down a single connection -- three attempts got
+        # 8 MB, then 33 MB, then failed again. Retrying cannot fix that,
+        # because each retry starts over; resuming can, and the server
+        # advertises `Accept-Ranges: bytes`. Second-choice rather than the
+        # default because the other thirteen arrive in one piece and their
+        # bytes are wanted in memory for the size report.
+        size, resume_err = download_resumable(
+            url, RAW_ROOT / name, policy=CAPTURE_POLICY
+        )
+        if resume_err is not None:
+            ok = False
+            print(f"  {lang:3s} FAILED  {err}")
+            print(f"      resume: {resume_err}")
+            continue
+        print(f"  {lang:3s} resumed {kind:4s} {size:>9,d} B  {name}")
+    print(f"(network fetches this run: {fetcher.network_fetches})")
+    return 0 if ok else 1
+
+
+# --------------------------------------------------------------------------
 # CLI
 # --------------------------------------------------------------------------
 
@@ -951,9 +1077,30 @@ def print_summary(
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--lang", choices=["en", "pt", "both"], default="both")
+    ap.add_argument(
+        "--capture",
+        metavar="LANGS",
+        nargs="?",
+        const="all",
+        help=(
+            "Fetch source editions into raw/ and parse nothing. "
+            "'all' (the default) or a comma-separated list of " + ",".join(EDITIONS)
+        ),
+    )
     args = ap.parse_args()
     # Fail before any directory is created; see common.require_corpus().
     require_corpus()
+
+    if args.capture:
+        wanted = (
+            list(EDITIONS)
+            if args.capture == "all"
+            else [x.strip() for x in args.capture.split(",") if x.strip()]
+        )
+        unknown = [x for x in wanted if x not in EDITIONS]
+        if unknown:
+            ap.error(f"no such edition: {', '.join(unknown)}")
+        return capture_raw(wanted)
 
     langs = ["en", "pt"] if args.lang == "both" else [args.lang]
     overall_ok = True

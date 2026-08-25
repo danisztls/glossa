@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
+from http.client import HTTPException
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -75,6 +76,87 @@ def urllib_transport(url: str, *, user_agent: str, timeout: float) -> bytes:
         raise FetchError(f"{url}: {exc}", status=exc.code) from exc
     except URLError as exc:
         raise FetchError(f"{url}: {exc}") from exc
+    except HTTPException as exc:
+        # A response that BEGAN and then stopped -- `IncompleteRead` above all,
+        # which is what a large file off a flaky edge looks like. urllib does
+        # not wrap it in URLError, so without this it escapes as `http.client`'s
+        # own exception, past every caller that handles FetchError and past the
+        # retry loop that exists for exactly this. Found by a 51 MB PDF that
+        # cut off eight megabytes in.
+        raise FetchError(f"{url}: {type(exc).__name__}: {exc}") from exc
+
+
+#: How much of a resumed download to read per `recv`. Big enough that a
+#: 50 MB file is not fifty thousand syscalls, small enough that a drop costs
+#: at most this much re-fetching.
+RESUME_CHUNK = 1 << 20
+
+
+def download_resumable(
+    url: str,
+    dest: Path,
+    *,
+    policy: FetchPolicy,
+    attempts: int = 6,
+) -> tuple[int, str | None]:
+    """Stream `url` to `dest`, resuming with `Range` after a dropped transfer.
+
+    THIS IS NOT WHAT `Fetcher` DOES, and the difference is the file size.
+    `Fetcher` reads a whole response into memory and returns it, which is
+    right for the pages this pipeline is made of and wrong for a 50 MB PDF
+    over an edge that drops long transfers: every retry there starts from
+    zero, so a file big enough to outlast the connection can never be
+    fetched by retrying harder. This appends to `dest.part` instead and asks
+    for the rest, so each attempt keeps its ground.
+
+    Returns `(bytes_on_disk, error)`; `error` is None only when the whole file
+    arrived and was moved into place. A server that ignores `Range` answers
+    200 instead of 206, which is handled by starting the file over rather than
+    corrupting it with a second copy of the head.
+
+    Rate-limited the same way `Fetcher` is, from the same policy -- a resumed
+    request is still a request to someone else's server.
+    """
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    part = dest.with_name(dest.name + ".part")
+    expected: int | None = None
+    last: str | None = None
+
+    for _ in range(attempts):
+        have = part.stat().st_size if part.exists() else 0
+        if expected is not None and have >= expected:
+            break
+        headers = {"User-Agent": policy.user_agent}
+        if have:
+            headers["Range"] = f"bytes={have}-"
+        time.sleep(policy.delay)
+        try:
+            with urlopen(Request(url, headers=headers), timeout=policy.timeout) as resp:
+                if have and resp.status != 206:
+                    have = 0  # Range refused; the body is the whole file again.
+                content_range = resp.headers.get("Content-Range", "")
+                length = resp.headers.get("Content-Length")
+                if "/" in content_range:
+                    total = content_range.rsplit("/", 1)[1].strip()
+                    expected = int(total) if total.isdigit() else expected
+                elif length and length.isdigit():
+                    expected = have + int(length)
+                with part.open("ab" if have else "wb") as fh:
+                    while chunk := resp.read(RESUME_CHUNK):
+                        fh.write(chunk)
+        except (HTTPError, URLError, HTTPException, TimeoutError) as exc:
+            last = f"{type(exc).__name__}: {exc}"
+
+    have = part.stat().st_size if part.exists() else 0
+    if expected is None:
+        return have, last or f"{url}: never learned the file's length"
+    if have < expected:
+        return have, (
+            f"{url}: stopped at {have:,} of {expected:,} bytes"
+            + (f" ({last})" if last else "")
+        )
+    part.replace(dest)
+    return have, None
 
 
 def httpx_transport(client):
