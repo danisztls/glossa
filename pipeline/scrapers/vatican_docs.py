@@ -6208,6 +6208,17 @@ def check_language_symmetry(
     written -- see build_manifest) is treated the same as absent, not as
     an empty section set that would trivially "disagree" with everything.
 
+    AN EDITION WITH NO SECTIONS IS THE SAME CASE, and is skipped for the same
+    reason. Nine editions in the corpus are typeset as continuous prose with
+    no inline paragraph numbers at all -- their text is in `appendix.json` and
+    `sections.json` is an empty array, which is a real and complete parse, not
+    a failure. Comparing that against a numbered sibling says only that one
+    edition prints numbers and the other does not, which is a fact about the
+    two typesettings and not a defect in either: `orientales` is unnumbered in
+    Italian and carries 24 numbered sections in Portuguese. This surfaced the
+    day the work-id pattern stopped saying `(en|pt)`, because until then the
+    Italian edition was not being read at all.
+
     `known` is `work_id -> section numbers` for documents the caller has just
     parsed and still holds in memory. It is a CACHE, not a substitute for the
     scan: the sweep over works_root still decides which pairs exist, so a run
@@ -6246,6 +6257,11 @@ def check_language_symmetry(
         if len(langs) < 2:
             continue  # one language legitimately absent -- not a defect, see docstring
         sets = {lang: numbers(family, slug, lang, path) for lang, path in langs.items()}
+        # See the docstring: an unnumbered edition is absent for this
+        # comparison, exactly as a missing sections.json is.
+        sets = {lang: ns for lang, ns in sets.items() if ns}
+        if len(sets) < 2:
+            continue
         if len(set(map(frozenset, sets.values()))) == 1:
             continue
         # The reference is the set the most editions agree on, so the report
