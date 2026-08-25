@@ -19,11 +19,15 @@
  * contract's example table): `ccc.en`, `ccc.pt` and all ten HTML
  * `compendium.{lang}` structure.json trees — see titles.test.ts.
  *
- * The stripping was `en`/`pt` only until 2026-08-25, which was invisible
+ * BOTH HALVES WERE `en`/`pt` ONLY until 2026-08-25, which was invisible
  * while those were the only two editions of anything. The Compendium's ten
- * landed eight more, and a German reader saw the whole label survive into
- * the title — `Erster Abschnitt „Ich Glaube“ – „Wir Glauben“` — since no
- * English pattern matched it.
+ * landed eight more, and the two halves failed differently on them. The
+ * stripping failed loudly: a German reader saw the whole label survive into
+ * the title — `Erster Abschnitt „Ich Glaube“ – „Wir Glauben“` — because no
+ * English pattern matched it. The casing failed quietly, in the same
+ * heading: `Ich Glaube` for a verb, and `La Professione Della Fede` for an
+ * Italian title whose prepositions the English small-word list has never
+ * heard of. Twelve languages now have their own list.
  */
 
 import type { StructureNode } from './types';
@@ -43,16 +47,14 @@ export interface DisplayTitle {
  * the title as the source printed it — the same posture the module already
  * takes for a title it cannot split.
  *
- * WHAT IS STILL en/pt ONLY, knowingly: the small-word lists
- * `normalizeCaseRuns` uses to title-case an ALL-CAPS heading. The eight
- * languages added here go on borrowing the English list, so a Slovenian or
- * Italian heading is title-cased by English convention where its own
- * orthography wants sentence case, and a German one gets every word
- * capitalised where only its nouns should be. That is a separate defect
- * from the prefix one and needs a per-language decision (title case, or
- * sentence case, or leave the source's capitals alone), not another table.
+ * TWO TABLES ARE KEYED BY IT and they cover different subsets, which is why
+ * this is one list rather than two: `KIND_PREFIXES` (the ten editions with a
+ * label grammar) and `SMALL_WORDS` (those ten plus `pl` and `ru`, which have
+ * ALL-CAPS document headings but no CCC or Compendium). A language in
+ * neither — `la`, `ar` — falls back to `en`, and neither has an ALL-CAPS
+ * heading in the corpus to normalize.
  */
-const LANGS = ['en', 'pt', 'de', 'es', 'fr', 'hu', 'it', 'ro', 'sl', 'sv'] as const;
+const LANGS = ['en', 'pt', 'de', 'es', 'fr', 'hu', 'it', 'pl', 'ro', 'ru', 'sl', 'sv'] as const;
 
 type Lang = (typeof LANGS)[number];
 
@@ -115,6 +117,357 @@ const PT_SMALL_WORDS = new Set([
 	'à'
 ]);
 
+// The eight below were added 2026-08-25 with the Compendium's ten editions
+// and Magnifica Humanitas' Polish and Russian. Each is closed-class —
+// articles, prepositions, conjunctions — for the same reason the two above
+// are: lower-casing one can never destroy information, because none of them
+// is ever a proper noun. That is also the ceiling. Title case is not the
+// convention in most of these languages, but it is the only SAFE guess from
+// an ALL-CAPS source: sentence case would lowercase `GESÙ CRISTO`,
+// `DUMNEZEU`, `GUD FADER`, and no table can put those capitals back. So a
+// content word stays capitalised where its own orthography would not
+// capitalise it — over-capitalised, never wrong in the losing direction.
+
+// German declines its articles rather than dropping them, so all six forms
+// of "der" are here. Adjectives and verbs are NOT — "SAKRAMENTALE",
+// "GLAUBE" — and cannot be, since only a lexicon separates them from the
+// nouns German capitalises by rule.
+const DE_SMALL_WORDS = new Set([
+	'der',
+	'die',
+	'das',
+	'den',
+	'dem',
+	'des',
+	'ein',
+	'eine',
+	'einen',
+	'einem',
+	'eines',
+	'einer',
+	'und',
+	'oder',
+	'aber',
+	'als',
+	'wie',
+	'in',
+	'im',
+	'an',
+	'am',
+	'auf',
+	'aus',
+	'bei',
+	'beim',
+	'mit',
+	'nach',
+	'von',
+	'vom',
+	'zu',
+	'zur',
+	'zum',
+	'für',
+	'über',
+	'unter',
+	'vor',
+	'durch',
+	'um',
+	'ohne'
+]);
+
+const ES_SMALL_WORDS = new Set([
+	'el',
+	'la',
+	'los',
+	'las',
+	'un',
+	'una',
+	'unos',
+	'unas',
+	'lo',
+	'de',
+	'del',
+	'a',
+	'al',
+	'y',
+	'e',
+	'o',
+	'u',
+	'en',
+	'con',
+	'por',
+	'para',
+	'que',
+	'se',
+	'su',
+	'sus',
+	'como',
+	'sin',
+	'sobre'
+]);
+
+const FR_SMALL_WORDS = new Set([
+	'le',
+	'la',
+	'les',
+	'un',
+	'une',
+	'des',
+	'du',
+	'de',
+	'et',
+	'ou',
+	'à',
+	'au',
+	'aux',
+	'en',
+	'dans',
+	'pour',
+	'par',
+	'sur',
+	'sous',
+	'avec',
+	'sans',
+	'que',
+	'qui',
+	'ne',
+	'se',
+	'comme'
+]);
+
+// `vagy` — "or" — is absent on purpose. It is also the second-person
+// present of "to be", and the corpus's only heading containing it is the
+// Our Father: "MI ATYÁNK, AKI A MENNYEKBEN VAGY". A list entry that is a
+// coin flip between a conjunction and a verb does not belong on a list
+// whose whole warrant is that lower-casing its members is always safe.
+const HU_SMALL_WORDS = new Set([
+	'a',
+	'az',
+	'és',
+	's',
+	'de',
+	'is',
+	'hogy',
+	'ha',
+	'nem',
+	'meg',
+	'mint'
+]);
+
+// Italian contracts its prepositions with its articles, and every one of the
+// results is a separate token ("della", "nello", "sulla") — the list is long
+// because the language spells them out, not because it reaches further.
+const IT_SMALL_WORDS = new Set([
+	'il',
+	'lo',
+	'la',
+	'i',
+	'gli',
+	'le',
+	'un',
+	'uno',
+	'una',
+	'di',
+	'del',
+	'dello',
+	'della',
+	'dei',
+	'degli',
+	'delle',
+	'al',
+	'allo',
+	'alla',
+	'ai',
+	'agli',
+	'alle',
+	'dal',
+	'dalla',
+	'dai',
+	'nel',
+	'nello',
+	'nella',
+	'nei',
+	'negli',
+	'nelle',
+	'sul',
+	'sulla',
+	'e',
+	'ed',
+	'o',
+	'a',
+	'da',
+	'in',
+	'con',
+	'su',
+	'per',
+	'tra',
+	'fra',
+	'che',
+	'non',
+	'si',
+	'come'
+]);
+
+// `i` is deliberately absent: it is Polish for "and", and it is also roman
+// one, and the corpus prints "ROZDZIAŁ I" — a heading where lower-casing it
+// would turn a chapter number into a conjunction. Leaving it capitalised is
+// wrong in the other headings and harmless there, which is the direction
+// this list errs in everywhere.
+const PL_SMALL_WORDS = new Set([
+	'w',
+	'we',
+	'z',
+	'ze',
+	'na',
+	'do',
+	'od',
+	'za',
+	'po',
+	'dla',
+	'przez',
+	'o',
+	'u',
+	'ku',
+	'przy',
+	'nad',
+	'pod',
+	'bez',
+	'a',
+	'ale',
+	'lub',
+	'oraz',
+	'nie',
+	'się',
+	'że'
+]);
+
+// Both spellings of Romanian's "and": the corpus prints the cedilla forms
+// (ş U+015F) its 2005 source was typeset with, not the comma-below ș of
+// current orthography.
+const RO_SMALL_WORDS = new Set([
+	'a',
+	'al',
+	'ai',
+	'ale',
+	'un',
+	'o',
+	'unui',
+	'unei',
+	'și',
+	'şi',
+	'sau',
+	'de',
+	'din',
+	'la',
+	'în',
+	'pe',
+	'cu',
+	'pentru',
+	'prin',
+	'ca',
+	'că',
+	'să',
+	'se',
+	'lui',
+	'ce',
+	'nu'
+]);
+
+const RU_SMALL_WORDS = new Set([
+	'и',
+	'а',
+	'но',
+	'или',
+	'в',
+	'во',
+	'на',
+	'с',
+	'со',
+	'о',
+	'об',
+	'от',
+	'до',
+	'для',
+	'по',
+	'к',
+	'ко',
+	'у',
+	'за',
+	'из',
+	'при',
+	'про',
+	'над',
+	'под',
+	'без',
+	'как',
+	'что',
+	'не',
+	'же'
+]);
+
+const SL_SMALL_WORDS = new Set([
+	'in',
+	'ali',
+	'pa',
+	'ter',
+	'v',
+	'na',
+	'z',
+	's',
+	'o',
+	'od',
+	'do',
+	'za',
+	'pri',
+	'po',
+	'ob',
+	'iz',
+	'je',
+	'so',
+	'se',
+	'ne',
+	'kot'
+]);
+
+const SV_SMALL_WORDS = new Set([
+	'och',
+	'eller',
+	'men',
+	'i',
+	'på',
+	'av',
+	'för',
+	'till',
+	'från',
+	'med',
+	'om',
+	'som',
+	'vid',
+	'under',
+	'över',
+	'att',
+	'en',
+	'ett',
+	'den',
+	'det',
+	'de',
+	'är'
+]);
+
+const SMALL_WORDS: Record<Lang, ReadonlySet<string>> = {
+	en: EN_SMALL_WORDS,
+	pt: PT_SMALL_WORDS,
+	de: DE_SMALL_WORDS,
+	es: ES_SMALL_WORDS,
+	fr: FR_SMALL_WORDS,
+	hu: HU_SMALL_WORDS,
+	it: IT_SMALL_WORDS,
+	pl: PL_SMALL_WORDS,
+	ro: RO_SMALL_WORDS,
+	ru: RU_SMALL_WORDS,
+	sl: SL_SMALL_WORDS,
+	sv: SV_SMALL_WORDS
+};
+
 /** Roman-numeral list marker at the very start of a string (`I.`, `IV.`, `XI.` …). */
 const ROMAN_MARKER = /^([IVXLCDM]{1,6})\.(?=\s|$)/;
 
@@ -137,6 +490,28 @@ const ROMAN_MARKER = /^([IVXLCDM]{1,6})\.(?=\s|$)/;
 const ROMAN_TOKEN = /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
 
 /**
+ * Tokens that satisfy `ROMAN_TOKEN` but are ordinary words in one language,
+ * and so must be cased rather than preserved.
+ *
+ * Derived from the corpus, not guessed — the same rule `ACRONYMS` states.
+ * Every roman-shaped token in every ALL-CAPS heading was counted per
+ * language, and these four are the ones that are words: Italian `DI` (of,
+ * ×13, "L'UOMO É «CAPACE» DI DIO"), French `DIX` (ten, ×1, "LES DIX
+ * COMMANDEMENTS"), Hungarian `MI` (our/we, ×2, "MI ATYÁNK") and Swedish
+ * `VI` (we, ×2, "«JAG TROR» - «VI TROR»").
+ *
+ * `VI` is the one that shows why this has to be per language rather than a
+ * single list: it is a word in Swedish and the number six in English and
+ * Portuguese, where it heads 31 real chapter divisions.
+ */
+const NOT_ROMAN: Partial<Record<Lang, ReadonlySet<string>>> = {
+	fr: new Set(['DIX']),
+	hu: new Set(['MI']),
+	it: new Set(['DI']),
+	sv: new Set(['VI'])
+};
+
+/**
  * Tokens to leave in capitals because they are acronyms, not words.
  *
  * Inside an ALL-CAPS title nothing about `AI` distinguishes it from `AS` by
@@ -146,14 +521,38 @@ const ROMAN_TOKEN = /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
  * us they are acronyms — `AI` appears that way 59 times and `IA` (its
  * Portuguese equivalent) 57.
  *
- * Only `AI` and `IA` currently reach an ALL-CAPS heading, both in Magnifica
- * Humanitas' third chapter. The rest are attested in prose and listed so a
- * future heading carrying one is right the first time. To extend it, look
- * for capitalised tokens in mixed-case `text_marked` rather than adding a
- * plausible-looking one — an entry that is also a word would freeze that
- * word in capitals wherever it appears in a title.
+ * Only `AI`, `IA` and `ИИ` currently reach an ALL-CAPS heading — all three
+ * in Magnifica Humanitas' third chapter, which is about artificial
+ * intelligence in every language it was published in. The rest are attested
+ * in prose and listed so a future heading carrying one is right the first
+ * time. To extend it, look for capitalised tokens in mixed-case
+ * `text_marked` rather than adding a plausible-looking one — an entry that
+ * is also a word would freeze that word in capitals wherever it appears in
+ * a title.
+ *
+ * The 2026-08-25 census that added the last seven counted every all-capital
+ * token in mixed-case prose per language: `AAS` ×173 (Acta Apostolicae
+ * Sedis) and `CCSL` ×3 in every language's footnotes, the Catechism sigla
+ * `KKK` (sv) and `KKC` (sl), the divine name as both `YHWH` and `JHWH`, and
+ * `ИИ` ×2. Polish is the language that got NOTHING out of that census and
+ * is the reason it is worth running rather than guessing: it spells
+ * "sztuczna inteligencja" out and has no acronym for it at all.
  */
-const ACRONYMS = new Set(['AI', 'IA', 'DNA', 'ONU', 'UNESCO', 'FAO']);
+const ACRONYMS = new Set([
+	'AI',
+	'IA',
+	'ИИ',
+	'DNA',
+	'ONU',
+	'UNESCO',
+	'FAO',
+	'AAS',
+	'CCSL',
+	'KKK',
+	'KKC',
+	'YHWH',
+	'JHWH'
+]);
 
 /** Runs of letters (plus in-word apostrophes, so `MAN'S` is one token, not two). */
 const WORD = /[\p{L}][\p{L}'’]*/gu;
@@ -203,14 +602,14 @@ export function normalizeCaseRuns(runs: string[], lang: string): string[] {
 	const hasUpper = /\p{Lu}/u.test(joined);
 	if (!hasUpper || hasLower) return runs;
 
-	// en/pt only, and every other language borrows the English list — the
-	// gap named in `Lang`'s docblock. Widening this is a per-language
-	// decision about what "normalized" even means for that orthography.
-	const smallWords = normLang(lang) === 'pt' ? PT_SMALL_WORDS : EN_SMALL_WORDS;
+	const L = normLang(lang);
+	const smallWords = SMALL_WORDS[L];
+	const notRoman = NOT_ROMAN[L];
 	const marker = joined.match(ROMAN_MARKER);
 	const markerEnd = marker ? marker[0].length : 0;
 
 	let sawFirstContentWord = false;
+	let previousEnd = 0;
 	let base = 0;
 	return runs.map((run) => {
 		const runStart = base;
@@ -219,9 +618,19 @@ export function normalizeCaseRuns(runs: string[], lang: string): string[] {
 			// part of the preserved roman-numeral marker itself
 			if (runStart + offset < markerEnd) return word;
 
-			if (word.length >= 2 && ROMAN_TOKEN.test(word)) return word;
+			if (word.length >= 2 && ROMAN_TOKEN.test(word) && !notRoman?.has(word)) return word;
 
-			const isFirst = !sawFirstContentWord;
+			// A colon introduces a new phrase, so the word after it is a
+			// first word again and keeps its capital: "La Vocation de
+			// l'homme : la Vie" is French for a heading that reads "…: La
+			// Vie". Only the colon — a full stop is as often an ellipsis or
+			// an abbreviation inside a heading as it is the end of a
+			// sentence, and treating those as boundaries would capitalise
+			// the wrong words.
+			const gap = joined.slice(previousEnd, runStart + offset);
+			previousEnd = runStart + offset + word.length;
+
+			const isFirst = !sawFirstContentWord || gap.includes(':');
 			sawFirstContentWord = true;
 
 			if (ACRONYMS.has(word)) return word;
@@ -294,7 +703,9 @@ const KIND_LABELS: Record<Lang, Partial<Record<StructureNode['kind'], string>>> 
 	fr: { part: 'Partie', section: 'Section', chapter: 'Ch.' },
 	hu: { part: 'rész', section: 'szakasz', chapter: 'fejezet' },
 	it: { part: 'Parte', section: 'Sezione', chapter: 'Cap.' },
+	pl: { part: 'Część', section: 'Sekcja', chapter: 'Rozdz.' },
 	ro: { part: 'Partea', section: 'Secțiunea', chapter: 'Cap.' },
+	ru: { part: 'Часть', section: 'Раздел', chapter: 'Гл.' },
 	sl: { part: 'Del', section: 'Oddelek', chapter: 'Pogl.' },
 	sv: { part: 'Del', section: 'Avdelning', chapter: 'Kap.' }
 };
@@ -582,6 +993,12 @@ const KIND_PREFIXES: Record<Lang, Partial<Record<StructureNode['kind'], KindPref
 		section: { noun: 'SEZIONE', ordinals: IT_ORDINAL_FEM, ordinalFirst: false },
 		chapter: { noun: 'CAPITOLO', ordinals: IT_ORDINAL_MASC, ordinalFirst: false }
 	},
+	// Polish and Russian reach this module through their Magnifica Humanitas
+	// documents, which carry no `kind`/`n` to reconstruct a label from — so
+	// there is nothing to strip, and the entries are empty rather than
+	// absent because the map is total over `Lang`.
+	pl: {},
+	ru: {},
 	ro: {
 		part: { noun: 'PARTEA', ordinals: RO_ORDINAL_FEM, ordinalFirst: false },
 		section: { noun: 'SECTIUNEA', ordinals: RO_ORDINAL_FEM, ordinalFirst: false },

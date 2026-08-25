@@ -393,13 +393,31 @@ unstripped label. Different failure modes, and the source they both describe is 
 capture. What guards the copy is a test asserting a real title from each of the ten
 editions, not the table.
 
-**Case normalization is still English and Portuguese only, and knowingly so.** The same
-pass title-cases an ALL-CAPS heading against a closed list of small words, and the eight
-new languages borrow English's — so Italian and Spanish headings are title-cased where
-their own orthography wants sentence case, and German gets every word capitalised where
-only its nouns should be. Fixing that is not another table: it is a decision per language
-between title case, sentence case, and leaving the source's capitals alone, and the
-sources give no evidence either way because they print these headings in capitals.
+**Title case is the only safe guess from an ALL-CAPS heading, so every language gets one
+small-word list rather than its own convention.** Most of the twelve would use sentence
+case for a heading, and sentence case is unavailable: from `CREDO IN GESÙ CRISTO` nothing
+distinguishes `CRISTO` from `FEDE`, and lower-casing a name is a loss no later pass can
+repair. Over-capitalising a content word is the error a reader reads past. So the same
+title-case pass runs everywhere and only its list of function words is per language — the
+one thing that can be lower-cased with no risk, because no article or preposition is ever
+a proper noun. What that leaves is a ceiling, not a bug to file: German adjectives and
+verbs stay capitalised (`Das Christliche Gebet`), because only a lexicon separates them
+from the nouns German capitalises by rule.
+
+**A list entry that is a coin flip does not go on the list.** Two of these decided
+themselves against the obvious reading. Polish `i` is both "and" and roman one, and the
+corpus prints `ROZDZIAŁ I` — so it stays off the list and stays capitalised, wrong in the
+other headings and harmless there. Hungarian `vagy` is both "or" and "you are", and the
+corpus's only heading with it is the Our Father. In both cases the entry would have been
+right more often than not, which is not the standard: the list's whole warrant is that
+lower-casing its members is _always_ safe.
+
+**A roman numeral that is a word is a per-language fact.** `DI`, `DIX`, `MI` and `VI`
+satisfy every roman-numeral rule and are Italian, French, Hungarian and Swedish words;
+`VI` is also the number six heading 31 real divisions in English and Portuguese. The
+exclusions were counted out of the corpus — every roman-shaped token in every ALL-CAPS
+heading, per language — the same way the acronym list is built, and for the same reason:
+a plausible-looking guess here freezes a word in capitals wherever it appears.
 
 **A description must be read, not recalled, and a translation is not a reading.**
 `site/descriptions.json` carries `origin: "read" | "translated"` plus a `from` chain, so

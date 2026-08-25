@@ -311,17 +311,17 @@ describe('displayTitle — the eight Compendium languages beyond en/pt', () => {
 	it('es: ordinal before part/section, after CAPÍTULO — as in pt', () => {
 		expect(displayTitle(node('part', 1, 'PRIMERA PARTE LA PROFESIÓN DE LA FE'), 'es')).toEqual({
 			ordinal: '1.',
-			title: 'La Profesión De La Fe'
+			title: 'La Profesión de la Fe'
 		});
 		expect(
 			displayTitle(node('chapter', 3, 'CAPÍTULO TERCERO LA RESPUESTA DEL HOMBRE A DIOS'), 'es')
-		).toEqual({ ordinal: '3.', title: 'La Respuesta Del Hombre a Dios' });
+		).toEqual({ ordinal: '3.', title: 'La Respuesta del Hombre a Dios' });
 	});
 
 	it('fr: chapters are numbered in roman numerals, uniquely', () => {
 		expect(
 			displayTitle(node('chapter', 2, 'CHAPITRE II DIEU À LA RENCONTRE DE L’HOMME'), 'fr')
-		).toEqual({ ordinal: '2.', title: 'Dieu À La Rencontre De L’homme' });
+		).toEqual({ ordinal: '2.', title: 'Dieu à la Rencontre de L’homme' });
 	});
 
 	it('fr: a part whose title is nothing but its own label stays whole', () => {
@@ -344,7 +344,7 @@ describe('displayTitle — the eight Compendium languages beyond en/pt', () => {
 	it('it: the noun comes first for all three kinds', () => {
 		expect(displayTitle(node('part', 1, 'PARTE PRIMA LA PROFESSIONE DELLA FEDE'), 'it')).toEqual({
 			ordinal: '1.',
-			title: 'La Professione Della Fede'
+			title: 'La Professione della Fede'
 		});
 		expect(
 			displayTitle(node('chapter', 4, 'CAPITOLO QUARTO LE ALTRE CELEBRAZIONI LITURGICHE'), 'it')
@@ -404,5 +404,67 @@ describe("kindOrdinalLabel — our own marker, not the source's", () => {
 
 	it('falls back to English for a language with no labels', () => {
 		expect(kindOrdinalLabel(node('part', 1, ''), 'la')).toBe('Part 1');
+	});
+});
+
+// Casing, the other half of the same 2026-08-25 gap: every language but
+// en/pt was title-cased against the ENGLISH small-word list. Titles here are
+// verbatim from the corpus, and each one is a word the English list has no
+// entry for.
+describe('normalizeCase — the ten languages that had no small-word list', () => {
+	it('lowercases the function words of the language it is reading', () => {
+		expect(normalizeCase('DIE BERUFUNG DES MENSCHEN', 'de')).toBe('Die Berufung des Menschen');
+		expect(normalizeCase('LA PROFESIÓN DE LA FE', 'es')).toBe('La Profesión de la Fe');
+		expect(normalizeCase('LA PROFESSIONE DELLA FEDE', 'it')).toBe('La Professione della Fede');
+		expect(normalizeCase('CELE ZECE PORUNCI', 'ro')).toBe('Cele Zece Porunci');
+		expect(normalizeCase('VERUJEM V BOGA OČETA', 'sl')).toBe('Verujem v Boga Očeta');
+		expect(normalizeCase('JAG TROR PÅ GUD FADER', 'sv')).toBe('Jag Tror på Gud Fader');
+		expect(normalizeCase('AZ ÚR IMÁDSÁGA', 'hu')).toBe('Az Úr Imádsága');
+		expect(normalizeCase('ЦЕРКОВЬ И ЧЕЛОВЕЧЕСТВО НА ПУТИ ИСТОРИИ', 'ru')).toBe(
+			'Церковь и Человечество на Пути Истории'
+		);
+	});
+
+	it('capitalises a content word rather than risk lowercasing a name', () => {
+		// Sentence case is what most of these orthographies actually use for
+		// a heading, and it is not available: from ALL CAPS there is nothing
+		// that separates `CRISTO` from `FEDE`. Over-capitalising is the
+		// error that can be read past.
+		expect(normalizeCase('CREDO IN GESÙ CRISTO, IL FIGLIO UNIGENITO DI DIO', 'it')).toBe(
+			'Credo in Gesù Cristo, il Figlio Unigenito di Dio'
+		);
+	});
+
+	it('starts a new first word after a colon', () => {
+		expect(normalizeCase('LA VOCATION DE L’HOMME: LA VIE DANS L’ESPRIT', 'fr')).toBe(
+			'La Vocation de L’homme: La Vie dans L’esprit'
+		);
+	});
+});
+
+describe('normalizeCase — roman numerals that are words', () => {
+	it('cases the four the corpus proves are words', () => {
+		expect(normalizeCase('L’UOMO É «CAPACE» DI DIO', 'it')).toContain('di Dio');
+		expect(normalizeCase('LES DIX COMMANDEMENTS', 'fr')).toBe('Les Dix Commandements');
+		expect(normalizeCase('MI ATYÁNK, AKI A MENNYEKBEN VAGY', 'hu')).toBe(
+			'Mi Atyánk, Aki a Mennyekben Vagy'
+		);
+		expect(normalizeCase('VI TROR', 'sv')).toBe('Vi Tror');
+	});
+
+	it('keeps VI a numeral in English and Portuguese, where it heads chapters', () => {
+		expect(normalizeCase('CHAPTER VI', 'en')).toBe('Chapter VI');
+		expect(normalizeCase('CAPÍTULO VI', 'pt')).toBe('Capítulo VI');
+	});
+
+	it('keeps a lone Polish I capital, because it is also roman one', () => {
+		// `i` is Polish for "and" and is deliberately NOT in the Polish
+		// small-word list: the corpus prints "ROZDZIAŁ I", where lowercasing
+		// it would turn a chapter number into a conjunction.
+		expect(normalizeCase('ROZDZIAŁ I', 'pl')).toBe('Rozdział I');
+	});
+
+	it('knows the Russian acronym for artificial intelligence', () => {
+		expect(normalizeCase('ОБЕЩАНИЙ ИИ', 'ru')).toBe('Обещаний ИИ');
 	});
 });
