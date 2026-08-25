@@ -93,6 +93,7 @@ from vulgata_online import (
     parse_chapter,
     records,
     strip_brackets,
+    unit_faults,
 )
 
 
@@ -129,12 +130,6 @@ WORK_ID = "bible.douay-rheims.en"
 
 #: The edition whose shape this one is checked against; see the docblock.
 ORACLE_WORK_ID = "bible.clementina.la"
-
-#: Signatures of a bad decode. The API answers JSON, which `json.loads`
-#: decodes as UTF-8 by contract, so unlike the cp1252 pages at sacredbible.org
-#: this should be unreachable -- which is the reason to assert it rather than
-#: assume it.
-MOJIBAKE_MARKERS = ["\N{REPLACEMENT CHARACTER}", "Ã©", "â€™", "â€œ"]
 
 SAMPLE_BOOKS = {"phlm", "john"}
 SAMPLE_JOHN_CHAPTERS = {1, 2, 3}
@@ -367,51 +362,6 @@ def fold_for_match(text: str) -> str:
     a lemma whose WORDS are not in the verse, which is what `Nineve` for
     `Ninive` is."""
     return re.sub(r"[^a-z0-9 ]+", "", text.lower()).strip()
-
-
-def strip_tokens(text: str) -> str:
-    return re.sub(r"⟦[^⟧]*⟧", "", text)
-
-
-def unit_faults(unit: dict) -> list[str]:
-    """Schema-level defects in one verse or heading, as phrases for a report."""
-    faults: list[str] = []
-    text = unit["text"]
-    if "{" in text or "}" in text:
-        faults.append("leftover anchor braces in text")
-    if "_" in text:
-        faults.append("leftover emphasis marker in text")
-    if "⟦" in text or "⟧" in text:
-        faults.append("citation token in `text` (belongs only in `text_marked`)")
-    if "  " in text or text != text.strip():
-        faults.append("un-normalized whitespace in text")
-    for marker in MOJIBAKE_MARKERS:
-        if marker in text:
-            faults.append(f"mojibake marker {marker!r} in text")
-
-    notes = unit.get("notes") or []
-    markers = [note["marker"] for note in notes]
-    if len(markers) != len(set(markers)):
-        faults.append("duplicate note markers")
-    for note in notes:
-        if not note.get("text"):
-            faults.append(f"note {note['marker']} has no text")
-
-    marked = unit.get("text_marked")
-    if marked is None:
-        if "⟦" in text:
-            faults.append("token present without `text_marked`")
-        return faults
-
-    if strip_tokens(marked) != text:
-        faults.append("`text` is not `text_marked` with its tokens stripped")
-    tokens = re.findall(r"⟦([^⟧]*)⟧", marked)
-    if len(tokens) != len(set(tokens)):
-        faults.append("a marker is tokenized twice")
-    orphans = [t for t in tokens if t not in markers]
-    if orphans:
-        faults.append(f"token(s) with no note entry: {orphans}")
-    return faults
 
 
 def validate(book_docs: list[dict], sample: bool) -> tuple[bool, list[str]]:
