@@ -1,0 +1,18 @@
+{
+	"id": "bible.douay-rheims.en",
+	"type": "bible",
+	"title": "Douay-Rheims Bible",
+	"short_title": "Douay-Rheims",
+	"language": "en",
+	"edition": "Challoner revision, 1749-52",
+	"sources": [{ "url": "https://vulgata.online/bible/Gn.1?ed=DR2", "retrieved_at": "2026-08-24" }],
+	"copyright": {
+		"status": "public-domain",
+		"holder": null,
+		"notice": null
+	},
+	"notes": "SITE FIXTURE, not the full corpus: only Genesis 1:1-13 and John 1:1-18, 3:1-21 are populated, mirroring bible.cpdv.en so the two can be compared. Present so the fixtures carry the case the real corpus has and the CPDV alone cannot show — a SECOND English Bible, which is what `PREFERRED_EDITION` in corpus.ts exists to decide between, and an annotated one: John 3 keeps all four of Challoner's notes, and every chapter its argument (`summary`). Note the markers repeat across verses (v5 and v18 both carry ⟦1⟧) because a marker is unique within its unit, not its chapter — see docs/corpus-schema.md.",
+	"generated_at": "2026-08-24T00:00:00Z",
+	"psalm_numbering": "vulgate",
+	"books": ["gen", "john"]
+}

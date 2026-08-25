@@ -259,6 +259,40 @@ export function listEditions(type: WorkType): WorkManifest[] {
 const CONTENT_LANG_FALLBACK = ['en', 'la'];
 
 /**
+ * Which edition a content language resolves to when it has more than one,
+ * keyed `"{type}:{base language}"`.
+ *
+ * STATED, BECAUSE THE ALTERNATIVE WAS AN ACCIDENT. `editionInLang` used to
+ * take the first manifest in `listEditions` order, which within one language
+ * is `id` order — so an English reader got the CPDV because `c` sorts before
+ * `d`, and ingesting the Douay-Rheims (2026-08-24) put a second English Bible
+ * one rename away from silently becoming the default. Which translation a
+ * reader meets first is an editorial decision and now reads as one.
+ *
+ * THE BIBLE IS THE ONLY TYPE HERE, and by expectation the only one that ever
+ * will be: everywhere else an "edition" is a language (see `editionStyle` in
+ * EditionMenu.svelte and the compare-column fork below, which fork on the same
+ * assumption). All three of its languages are listed even though only English
+ * currently has a choice, because the point is that the answer is written
+ * down rather than derived.
+ *
+ * WHAT IS DELIBERATELY NOT LISTED: regional pairs like `prayer.common.en-us`
+ * and `prayer.common.en-gb`. Those are already decided, explicitly, by
+ * `DEFAULT_REGION`, and repeating the answer here would be a second place for
+ * it to be true.
+ *
+ * Exported for corpus.test.ts, which asserts that every entry names an
+ * edition that exists, and — the guard that matters — that no two editions
+ * sharing one full language tag are left without an entry to separate them.
+ * That is the check a third English Bible has to walk past.
+ */
+export const PREFERRED_EDITION: Record<string, string> = {
+	'bible:en': 'bible.cpdv.en',
+	'bible:pt': 'bible.matos-soares.pt',
+	'bible:la': 'bible.clementina.la'
+};
+
+/**
  * Preferred work id for a type at a UI language (docs/decisions.md #1:
  * content language follows UI language by default) — the edition in the
  * reader's own language, else the first one `CONTENT_LANG_FALLBACK` finds,
@@ -282,9 +316,15 @@ export function defaultWorkId(type: WorkType, lang: string): string | undefined 
  * whole of the Summa's situation.
  */
 export function editionInLang(editions: WorkManifest[], lang: string): WorkManifest | undefined {
+	// The type comes off the manifests rather than the signature: every caller
+	// passes one type's editions (`listEditions`), so asking them to repeat it
+	// would add an argument that can disagree with the list it describes.
+	const type = editions[0]?.type;
 	for (const candidate of [baseLang(lang), ...CONTENT_LANG_FALLBACK]) {
-		const match = editions.find((w) => baseLang(w.language) === candidate);
-		if (match) return match;
+		const inLang = editions.filter((w) => baseLang(w.language) === candidate);
+		if (!inLang.length) continue;
+		const named = PREFERRED_EDITION[`${type}:${candidate}`];
+		return inLang.find((w) => w.id === named) ?? inLang[0];
 	}
 	return undefined;
 }

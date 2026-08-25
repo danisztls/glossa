@@ -52,6 +52,9 @@ import type {
 import bibleCpdvEnManifest from './fixtures/bible.cpdv.en/manifest.json';
 import fixtureGenJson from './fixtures/bible.cpdv.en/books/gen.json';
 import fixtureJohnJson from './fixtures/bible.cpdv.en/books/john.json';
+import bibleDouayRheimsEnManifest from './fixtures/bible.douay-rheims.en/manifest.json';
+import fixtureDouayRheimsGenJson from './fixtures/bible.douay-rheims.en/books/gen.json';
+import fixtureDouayRheimsJohnJson from './fixtures/bible.douay-rheims.en/books/john.json';
 import bibleIntroEnManifest from './fixtures/bible-intro.en/manifest.json';
 import fixtureBibleIntroEn from './fixtures/bible-intro.en/intros.json';
 
@@ -407,6 +410,7 @@ export const manifests: Record<string, WorkManifest> = USE_REAL_CORPUS
 	? (single(realIndexManifests) ?? {})
 	: {
 			'bible.cpdv.en': bibleCpdvEnManifest as WorkManifest,
+			'bible.douay-rheims.en': bibleDouayRheimsEnManifest as WorkManifest,
 			'bible.matos-soares.pt': bibleMatosSoaresPtManifest as WorkManifest,
 			'bible.clementina.la': bibleClementinaLaManifest as WorkManifest,
 			'bible-intro.en': bibleIntroEnManifest as WorkManifest,
@@ -429,6 +433,10 @@ export const bibleIndex: Record<string, BibleBookMeta[]> = USE_REAL_CORPUS
 			'bible.cpdv.en': [
 				metaFromFullBook(fixtureGenJson as BibleBook),
 				metaFromFullBook(fixtureJohnJson as BibleBook)
+			],
+			'bible.douay-rheims.en': [
+				metaFromFullBook(fixtureDouayRheimsGenJson as BibleBook),
+				metaFromFullBook(fixtureDouayRheimsJohnJson as BibleBook)
 			],
 			'bible.matos-soares.pt': [
 				metaFromFullBook(fixtureMatosSoaresGenJson as BibleBook),
@@ -622,6 +630,10 @@ export const documentBibleXrefs: DocumentBibleXref[] = USE_REAL_CORPUS
  *  the fixtures (see this file's docblock). */
 export const fixtureBibleBooks: Record<string, Record<string, BibleBook>> = {
 	'bible.cpdv.en': { gen: fixtureGenJson as BibleBook, john: fixtureJohnJson as BibleBook },
+	'bible.douay-rheims.en': {
+		gen: fixtureDouayRheimsGenJson as BibleBook,
+		john: fixtureDouayRheimsJohnJson as BibleBook
+	},
 	'bible.matos-soares.pt': {
 		gen: fixtureMatosSoaresGenJson as BibleBook,
 		john: fixtureMatosSoaresJohnJson as BibleBook

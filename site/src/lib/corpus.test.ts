@@ -12,7 +12,11 @@ import {
 	compareColumnLabel,
 	getCompendiumChapterFor,
 	getCompendiumQuestionRangeAsync,
-	listCompendiumChapters
+	listCompendiumChapters,
+	defaultWorkId,
+	listEditions,
+	baseLang,
+	PREFERRED_EDITION
 } from './corpus';
 
 describe('Compendium whole-reading units', () => {
@@ -168,5 +172,51 @@ describe('compare column labels', () => {
 		const left = compareColumnLabel({ language: 'en', short_title: 'Magnifica Humanitas' });
 		const right = compareColumnLabel({ language: 'pt', short_title: 'Magnifica Humanitas' });
 		expect(left).not.toBe(right);
+	});
+});
+
+describe('preferred edition', () => {
+	it('gives an English reader the CPDV, not whichever id sorts first', () => {
+		// Both English Bibles are in the fixtures precisely so this can fail.
+		expect(listEditions('bible').filter((w) => w.language === 'en')).toHaveLength(2);
+		expect(defaultWorkId('bible', 'en')).toBe('bible.cpdv.en');
+	});
+
+	it("carries the choice into the fallback languages, not just the reader's own", () => {
+		// A German reader has no German Bible and lands on English by
+		// CONTENT_LANG_FALLBACK — which must arrive at the same edition an
+		// English reader gets, rather than re-deciding by sort order.
+		expect(defaultWorkId('bible', 'de')).toBe('bible.cpdv.en');
+	});
+
+	it('names only editions that exist', () => {
+		for (const [key, id] of Object.entries(PREFERRED_EDITION)) {
+			const [type, lang] = key.split(':');
+			const editions = listEditions(type as Parameters<typeof listEditions>[0]);
+			const named = editions.find((w) => w.id === id);
+			expect(named, `${key} names ${id}, which is not an edition`).toBeDefined();
+			expect(baseLang(named!.language), `${key} names an edition in another language`).toBe(lang);
+		}
+	});
+
+	it('leaves no two editions of one language tag undecided', () => {
+		// The accident this whole table exists to prevent: a second edition
+		// arrives in a language that already has one, nobody states which wins,
+		// and the answer becomes alphabetical. Regional pairs are exempt —
+		// DEFAULT_REGION decides those, and their tags differ.
+		for (const type of ['bible', 'catechism', 'compendium', 'prayer', 'summa'] as const) {
+			const byTag = new Map<string, string[]>();
+			for (const w of listEditions(type)) {
+				const tag = w.language.toLowerCase();
+				byTag.set(tag, [...(byTag.get(tag) ?? []), w.id]);
+			}
+			for (const [tag, ids] of byTag) {
+				if (ids.length < 2) continue;
+				expect(
+					PREFERRED_EDITION[`${type}:${baseLang(tag)}`],
+					`${ids.length} editions share ${type}/${tag} (${ids.join(', ')}) with nothing to choose between them`
+				).toBeDefined();
+			}
+		}
 	});
 });

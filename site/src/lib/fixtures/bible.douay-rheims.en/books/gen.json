@@ -1,0 +1,74 @@
+{
+	"osis": "gen",
+	"name": "Genesis",
+	"abbrevs": ["gen", "genesis", "gn"],
+	"order": 1,
+	"chapters": [
+		{
+			"n": 1,
+			"summary": "God createth Heaven and Earth, and all things therein, in six days.",
+			"verses": [
+				{
+					"n": 1,
+					"text": "In the beginning God created heaven, and earth."
+				},
+				{
+					"n": 2,
+					"text": "And the earth was void and empty, and darkness was upon the face of the deep; and the spirit of God moved over the waters."
+				},
+				{
+					"n": 3,
+					"text": "And God said: Be light made. And light was made."
+				},
+				{
+					"n": 4,
+					"text": "And God saw the light that it was good; and he divided the light from the darkness."
+				},
+				{
+					"n": 5,
+					"text": "And he called the light Day, and the darkness Night; and there was evening and morning one day."
+				},
+				{
+					"n": 6,
+					"text": "And God said: Let there be a firmament made amidst the waters: and let it divide the waters from the waters.",
+					"text_marked": "And God said: Let there be a firmament⟦1⟧ made amidst the waters: and let it divide the waters from the waters.",
+					"notes": [
+						{
+							"marker": "1",
+							"lemma": "A firmament",
+							"text": "By this name is here understood the whole space between the earth, and the highest stars. The lower part of which divideth the waters that are upon the earth, from those that are above in the clouds."
+						}
+					]
+				},
+				{
+					"n": 7,
+					"text": "And God made a firmament, and divided the waters that were under the firmament, from those that were above the firmament, and it was so."
+				},
+				{
+					"n": 8,
+					"text": "And God called the firmament, Heaven; and the evening and morning were the second day."
+				},
+				{
+					"n": 9,
+					"text": "God also said; Let the waters that are under the heaven, be gathered together into one place: and let the dry land appear. And it was so done."
+				},
+				{
+					"n": 10,
+					"text": "And God called the dry land, Earth; and the gathering together of the waters, he called Seas. And God saw that it was good."
+				},
+				{
+					"n": 11,
+					"text": "And he said: let the earth bring forth green herb, and such as may seed, and the fruit tree yielding fruit after its kind, which may have seed in itself upon the earth. And it was so done."
+				},
+				{
+					"n": 12,
+					"text": "And the earth brought forth the green herb, and such as yieldeth seed according to its kind, and the tree that beareth fruit, having seed each one according to its kind. And God saw that it was good."
+				},
+				{
+					"n": 13,
+					"text": "And the evening and the morning were the third day."
+				}
+			]
+		}
+	]
+}

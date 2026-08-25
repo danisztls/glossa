@@ -44,7 +44,7 @@
  * preference decides only how an ambiguous *token* is read.
  */
 
-import { listBibleWorks, listBooks } from './corpus';
+import { baseLang, listBibleWorks, listBooks, PREFERRED_EDITION } from './corpus';
 import type { BibleBookMeta } from './corpus-index';
 import { normalizeBookToken } from './refparse';
 
@@ -59,9 +59,31 @@ function foldDiacritics(s: string): string {
 	return s.normalize('NFD').replace(/\p{Mn}/gu, '');
 }
 
-/** Editions in resolution order: the reader's own first, then the rest in registry order. */
+/**
+ * Editions in resolution order: the reader's own first, then each language's
+ * preferred edition ahead of its siblings, then registry order.
+ *
+ * THE SECOND RULE ARRIVED WITH THE SECOND ENGLISH BIBLE. Within one tier
+ * several editions can match a token exactly — `gen` is a real abbreviation
+ * in both the CPDV and the Douay-Rheims — and until 2026-08-24 no English
+ * edition had a rival, so "registry order" was never a decision anyone made.
+ * It is one now, and it defers to the same `PREFERRED_EDITION` table the
+ * reader's default edition comes from rather than inventing a second answer.
+ *
+ * This orders editions WITHIN a tier and never across one: a stronger
+ * reading in any edition still beats a weaker reading in the preferred one,
+ * which is the module docblock's whole design. So `genesis` — an explicit
+ * abbreviation in the Douay-Rheims, merely the display name in the CPDV —
+ * still reports the Douay-Rheims.
+ */
 function orderedWorkIds(preferWorkId?: string): string[] {
-	const ids = listBibleWorks().map((w) => w.id);
+	const works = listBibleWorks();
+	const preferredRank = (id: string, language: string) =>
+		PREFERRED_EDITION[`bible:${baseLang(language)}`] === id ? 0 : 1;
+	const ids = works
+		.map((w, index) => ({ id: w.id, rank: preferredRank(w.id, w.language), index }))
+		.sort((a, b) => a.rank - b.rank || a.index - b.index)
+		.map((w) => w.id);
 	if (!preferWorkId || !ids.includes(preferWorkId)) return ids;
 	return [preferWorkId, ...ids.filter((id) => id !== preferWorkId)];
 }

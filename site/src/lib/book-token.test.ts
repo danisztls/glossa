@@ -8,6 +8,7 @@ import { resolveBookToken } from './book-token';
 // ("Gênesis", "São João") reachable only through `name`.
 const EN = 'bible.cpdv.en';
 const PT = 'bible.matos-soares.pt';
+const DR = 'bible.douay-rheims.en';
 
 describe('resolveBookToken', () => {
 	it('resolves an abbreviation from either edition', () => {
@@ -40,10 +41,22 @@ describe('resolveBookToken', () => {
 		// with the English edition preferred — the accent the reader typed is
 		// evidence, not noise.
 		expect(resolveBookToken('gênesis', { preferWorkId: EN })?.workId).toBe(PT);
-		// And the reverse: "genesis" is exactly a CPDV abbreviation, so it wins
-		// in the English edition even with Portuguese preferred, rather than
-		// being folded into the PT name.
-		expect(resolveBookToken('genesis', { preferWorkId: PT })?.workId).toBe(EN);
+		// And the reverse: "genesis" is an exact English reading — the
+		// Douay-Rheims prints it as an abbreviation, the CPDV as its display
+		// name — so it wins in English even with Portuguese preferred, rather
+		// than being folded into the PT name. Which English edition reports it
+		// is tier order, not preference: an abbreviation outranks a name.
+		expect(resolveBookToken('genesis', { preferWorkId: PT })?.workId).toBe(DR);
+	});
+
+	it("gives a same-tier tie to the language's preferred edition", () => {
+		// "joh" is a real abbreviation in BOTH English editions and in neither
+		// the OSIS code nor anything Portuguese carries, so nothing about the
+		// token separates the two and the answer used to be registry order. It
+		// is now PREFERRED_EDITION, the same table that decides which Bible the
+		// reader opens. (An OSIS code like "gen" would NOT show this: every
+		// edition matches it, so the reader's own wins first, as it should.)
+		expect(resolveBookToken('joh', { preferWorkId: PT })?.workId).toBe(EN);
 	});
 
 	it('breaks a tie between editions in favour of the reader’s own', () => {
