@@ -244,7 +244,7 @@ browser.
 
 ## Deploying
 
-Live at <https://glossa.me-f65.workers.dev>, on Cloudflare Workers static assets
+Live at <https://glossacatholica.org>, on Cloudflare Workers static assets
 (`site/wrangler.jsonc`; rationale in `docs/decisions.md`).
 
 ```sh

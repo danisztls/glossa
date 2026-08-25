@@ -20,6 +20,21 @@
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "glossa",
 	"compatibility_date": "2026-08-16",
+
+	// The site answers on one hostname, and it is this one. `workers_dev`
+	// defaults to true, which would keep glossa.me-f65.workers.dev serving the
+	// same corpus from a second address -- harmless while the site asked not to
+	// be crawled, and a duplicate-content problem the moment it stopped
+	// (docs/decisions.md, Posture: "Indexable, and a duplicate of vatican.va on
+	// purpose"). Turning it off is what makes the canonical address canonical in
+	// fact rather than by intention.
+	//
+	// The route is declared here rather than left to the dashboard so that this
+	// file, not an account someone else cannot see, is the record of where the
+	// worker is reachable. `custom_domain` (not a plain route pattern) is the
+	// form that owns the DNS record and the certificate.
+	"workers_dev": false,
+	"routes": [{ "pattern": "glossacatholica.org", "custom_domain": true }],
 	"assets": {
 		"directory": "./build",
 		"binding": "ASSETS",

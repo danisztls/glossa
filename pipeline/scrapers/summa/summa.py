@@ -160,7 +160,7 @@ CCEL_XML_URL = "https://ccel.org/ccel/aquinas/summa.xml"
 CT_INDEX_URL = "https://www.corpusthomisticum.org/iopera.html"
 CT_PAGE_URL = "https://www.corpusthomisticum.org/{page}"
 
-USER_AGENT = "glossa-catholica/0.1 (+https://glossa.me-f65.workers.dev)"
+USER_AGENT = "glossa-catholica/0.1 (+https://glossacatholica.org)"
 
 # `robots.txt` allows all with `Crawl-delay: 10`. One request per run cannot
 # breach that, but the floor is declared anyway so a future second fetch
