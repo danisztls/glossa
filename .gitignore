@@ -14,9 +14,12 @@ __pycache__/
 .ruff_cache/
 .pytest_cache/
 
-# Node / SvelteKit
+# Node / SvelteKit. `.svelte-kit/` is unanchored on purpose: `svelte-kit sync`
+# writes it relative to wherever it was invoked, so running a site script from
+# the repo root leaves a stray copy HERE rather than in `site/`, which the
+# anchored rule in site/.gitignore cannot see. Same guard as /corpus/ above.
 node_modules/
-site/.svelte-kit/
+.svelte-kit/
 site/build/
 
 # Empty dotfiles recreated by Claude Code's sandbox shell init — not project files
