@@ -1,10 +1,16 @@
 /**
  * Bookmark-target -> title/text resolution, and the library's ordering.
  *
- * The corpus-aware half of `bookmark-target.ts`, split from it for the same
- * reason `linkPreviewContent.ts` is split from `linkPreviewHref.ts`: this
- * side reads the reader's effective edition off the content store and fetches
- * corpus content, none of which belongs in the unit that parses a string.
+ * The corpus-aware half of a bookmark, split from `address.ts` for the same
+ * reason `linkPreviewContent.ts` is: this side reads the reader's effective
+ * edition off the content store and fetches corpus content, none of which
+ * belongs in the unit that parses a string.
+ *
+ * A bookmark IS an `Address` and nothing else -- no title, no excerpt, no
+ * edition, no work id -- because a canonical href is deliberately
+ * edition-free, so an address saved while reading the Clementine Vulgate is
+ * still the right address when the same reader comes back in Portuguese.
+ * Everything a bookmark displays is re-derived here.
  *
  * Almost all of it is delegation. Every bookmark whose address the hover
  * preview can already name resolves through `resolveUnitText`, sharing its
@@ -23,10 +29,9 @@ import {
 	isUnpublished,
 	listCanonicalBooks
 } from './corpus';
-import { summaPartFromSlug } from './route-manifest';
+import { summaPartFromSlug, type Address } from './address';
 import { content } from './content.svelte';
 import { resolveUnitText, type ResolvedUnit } from './linkPreviewContent';
-import type { BookmarkTarget } from './bookmark-target';
 
 async function resolvePrayer(slug: string): Promise<ResolvedUnit | undefined> {
 	const lang = content.langFor('prayer');
@@ -68,50 +73,52 @@ const SUMMA_PART_ORDER = ['I', 'I-II', 'II-II', 'III', 'Suppl'];
  *  longer resolves -- a withheld work, a slug this edition doesn't carry, a
  *  number outside the corpus -- which the library renders as a dead row it
  *  can still remove, never as an error. */
-export async function resolveBookmark(target: BookmarkTarget): Promise<ResolvedUnit | undefined> {
-	switch (target.kind) {
-		case 'unit':
-			return resolveUnitText(target.target);
-		case 'prayer':
-			return resolvePrayer(target.slug);
-		case 'documentWhole':
-			return resolveDocumentWhole(target.slug);
+export async function resolveBookmark(target: Address): Promise<ResolvedUnit | undefined> {
+	if (target.kind === 'prayer') return resolvePrayer(target.slug);
+	// A document with no section number is the whole document -- the one
+	// bookmarkable address the hover preview deliberately declines, along with
+	// prayers (see `PreviewTarget`).
+	if (target.kind === 'document') {
+		return target.n === undefined
+			? resolveDocumentWhole(target.slug)
+			: resolveUnitText({ ...target, n: target.n });
 	}
+	return resolveUnitText(target);
 }
 
 /** Position within a library section: canonical order, not save order. A
  *  reader scanning their marked verses wants them in the order the Bible
  *  prints them; `addedAt` decides nothing here except ties. */
-function sortKey(target: BookmarkTarget): [number, number, number] {
-	if (target.kind === 'prayer') {
-		const meta = getPrayerMeta(content.langFor('prayer'), target.slug);
-		return [meta?.n ?? 0, 0, 0];
-	}
-	if (target.kind === 'documentWhole') return [0, 0, 0];
-	const t = target.target;
-	switch (t.kind) {
+function sortKey(target: Address): [number, number, number] {
+	switch (target.kind) {
+		case 'prayer': {
+			const meta = getPrayerMeta(content.langFor('prayer'), target.slug);
+			return [meta?.n ?? 0, 0, 0];
+		}
 		case 'bible': {
 			const books = listCanonicalBooks();
-			const i = books.findIndex((b) => b.osis === t.osis);
-			return [i < 0 ? books.length : i, t.chapter, t.from ?? 0];
+			const i = books.findIndex((b) => b.osis === target.osis);
+			return [i < 0 ? books.length : i, target.chapter, target.from ?? 0];
 		}
 		case 'ccc':
 		case 'cccChapter':
 		case 'compendium':
 		case 'compendiumChapter':
-			return [t.n, 0, 0];
+			return [target.n, 0, 0];
+		// The whole document sorts to the top of its own section, ahead of every
+		// section of it.
 		case 'document':
-			return [t.n, 0, 0];
+			return [target.n ?? 0, 0, 0];
 		case 'summa': {
 			// Part first: question numbers restart at 1 in each part, so `n`
 			// alone would interleave five parts into one run of ones and twos.
-			const i = SUMMA_PART_ORDER.indexOf(summaPartFromSlug(t.part) ?? '');
-			return [i < 0 ? SUMMA_PART_ORDER.length : i, t.question, t.article ?? 0];
+			const i = SUMMA_PART_ORDER.indexOf(summaPartFromSlug(target.part) ?? '');
+			return [i < 0 ? SUMMA_PART_ORDER.length : i, target.question, target.article ?? 0];
 		}
 	}
 }
 
-export function compareBookmarks(a: BookmarkTarget, b: BookmarkTarget): number {
+export function compareBookmarks(a: Address, b: Address): number {
 	const ka = sortKey(a);
 	const kb = sortKey(b);
 	return ka[0] - kb[0] || ka[1] - kb[1] || ka[2] - kb[2];
@@ -124,4 +131,36 @@ export function documentGroupTitle(slug: string): string {
 	const workId = content.documentWorkIdFor(slug);
 	const manifest = workId ? getDocumentManifest(workId) : undefined;
 	return manifest?.short_title ?? slug;
+}
+
+/** Which section of the library a bookmark files under, and where that
+ *  section sits. Every document gets its own section (`document:{slug}`),
+ *  the way the "Cited in" panel names a work once and lists its references
+ *  under it.
+ *
+ *  THE SUMMA TOOK ORDER 3, PUSHING PRAYERS AND DOCUMENTS DOWN ONE. The
+ *  sequence is a shelf order, not an append log: Scripture, then the two
+ *  catechetical works, then the Summa beside them as the other doctrinal
+ *  text, then the devotional collection, then the document library last
+ *  because it is the section that grows without bound. Adding the Summa at
+ *  the end instead would have filed it after every encyclical a reader had
+ *  ever marked. */
+export function bookmarkGroup(target: Address): { key: string; order: number } {
+	switch (target.kind) {
+		case 'bible':
+			return { key: 'scripture', order: 0 };
+		case 'ccc':
+		case 'cccChapter':
+			return { key: 'catechism', order: 1 };
+		case 'compendium':
+		case 'compendiumChapter':
+			return { key: 'compendium', order: 2 };
+		case 'summa':
+			return { key: 'summa', order: 3 };
+		case 'prayer':
+			return { key: 'prayers', order: 4 };
+		// A section and the whole document file together, under the document.
+		case 'document':
+			return { key: `document:${target.slug}`, order: 5 };
+	}
 }

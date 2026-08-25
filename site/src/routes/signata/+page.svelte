@@ -20,7 +20,7 @@
 	 * because we cannot show its text would be the worse failure.
 	 */
 	import { bookmarks, type ResolvedBookmark } from '$lib/bookmarks.svelte';
-	import { bookmarkGroup } from '$lib/bookmark-target';
+	import { bookmarkGroup } from '$lib/bookmarkContent';
 	import { compareBookmarks, documentGroupTitle, resolveBookmark } from '$lib/bookmarkContent';
 	import { truncate } from '$lib/linkPreviewContent';
 	import Icon from '$lib/components/Icon.svelte';

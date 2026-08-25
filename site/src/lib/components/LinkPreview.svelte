@@ -14,7 +14,7 @@
 	 * `RefText.svelte`, route templates, and `corpus.ts` this session. Instead
 	 * this component attaches ONE set of delegated listeners at the window
 	 * level, inspects whatever `<a>` the event bubbled through
-	 * (`Element.closest('a[href]')`), and asks `linkPreviewHref.ts` whether
+	 * (`Element.closest('a[href]')`), and asks `address.ts` whether
 	 * that href names previewable content. Every existing internal link gets a
 	 * preview for free, and so does every link any future page adds — nobody
 	 * has to remember this feature exists to get it. Navigation contexts can
@@ -50,7 +50,7 @@
 	 * ever true again for some part of the site.
 	 */
 	import { goto } from '$app/navigation';
-	import { parsePreviewHref, type PreviewTarget } from '$lib/linkPreviewHref';
+	import { previewTarget, type PreviewTarget } from '$lib/address';
 	import { resolvePreview, type ResolvedPreview } from '$lib/linkPreviewContent';
 	import { computePanelPosition } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
@@ -168,7 +168,7 @@
 		// The marker is intentionally inherited: a TOC can opt out once on its
 		// `<nav>` rather than making every row remember this global feature.
 		if (a.closest('[data-link-preview="off"]')) return undefined;
-		const parsed = parsePreviewHref(a.getAttribute('href'));
+		const parsed = previewTarget(a.getAttribute('href'));
 		return parsed ? { el: a, target: parsed } : undefined;
 	}
 

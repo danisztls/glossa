@@ -44,10 +44,7 @@ describe('BookmarkStore', () => {
 
 	it('carries a parsed target on every listed row', () => {
 		bookmarks.add(PARAGRAPH);
-		expect(bookmarks.list[0].target).toEqual({
-			kind: 'unit',
-			target: { kind: 'ccc', n: 1213 }
-		});
+		expect(bookmarks.list[0].target).toEqual({ kind: 'ccc', n: 1213 });
 	});
 
 	it('lists newest first', async () => {

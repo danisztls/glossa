@@ -84,6 +84,7 @@
 	} from '$lib/compare-nav.svelte';
 	import { compareColumnLabel, resolveEditionTag } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import UnitNav from '$lib/components/UnitNav.svelte';
@@ -299,7 +300,7 @@
 			     one, and a button that promises Latin while showing Português
 			     would be worse than one that promises nothing in particular. -->
 			<ReadingBar
-				bookmarkHref={`/preces/${data.slug}`}
+				bookmarkHref={hrefFor({ kind: 'prayer', slug: data.slug })}
 				canCompare={comparisons.length > 0}
 				{compareActive}
 				onToggleCompare={toggleCompare}
@@ -383,12 +384,12 @@
 			<UnitNav
 				ariaLabel="Prayer navigation"
 				prev={current.prev && {
-					href: `/preces/${current.prev.slug}`,
+					href: hrefFor({ kind: 'prayer', slug: current.prev.slug }),
 					label: t('prayers.prevPrayer'),
 					detail: current.prev.title
 				}}
 				next={current.next && {
-					href: `/preces/${current.next.slug}`,
+					href: hrefFor({ kind: 'prayer', slug: current.next.slug }),
 					label: t('prayers.nextPrayer'),
 					detail: current.next.title
 				}}

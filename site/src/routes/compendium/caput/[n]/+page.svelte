@@ -16,6 +16,7 @@
 	} from '$lib/compare-nav.svelte';
 	import { useEditionCompare } from '$lib/edition-compare.svelte';
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import { t } from '$lib/i18n.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { useScrollSpy } from '$lib/scroll-spy.svelte';
@@ -70,9 +71,11 @@
 	/** This chapter's canonical address. Derived at script scope rather than
 	 *  from the `from` const in the template, because the sticky bar's
 	 *  toolbar snippet is declared outside that block. */
-	const chapterHref = $derived(
-		editions.current ? `/compendium/caput/${editions.current.chapter.paragraphs[0]}` : ''
-	);
+	const chapterHref = $derived.by(() => {
+		// Nullable bound, as on the CCC chapter route: no number, no address.
+		const from = editions.current?.chapter.paragraphs[0];
+		return from == null ? '' : hrefFor({ kind: 'compendiumChapter', n: from });
+	});
 
 	const compareRows = $derived(
 		editions.current && editions.secondary
@@ -232,8 +235,8 @@
 					left={leftCell}
 					right={rightCell}
 					unit={(n) => ({
-						href: `/compendium/${n}`,
-						canonicalHref: `/compendium/${n}`,
+						href: hrefFor({ kind: 'compendium', n }),
+						canonicalHref: hrefFor({ kind: 'compendium', n }),
 						label: `${t('compendium.question')} ${n}`,
 						anchorId: `q${n}`
 					})}
@@ -245,7 +248,11 @@
 					lang={editions.current.work.language}
 				>
 					{#each editions.current.questions as item (item.n)}
-						<CompendiumQa question={item} lang={editions.lang} href={`/compendium/${item.n}`} />
+						<CompendiumQa
+							question={item}
+							lang={editions.lang}
+							href={hrefFor({ kind: 'compendium', n: item.n })}
+						/>
 					{/each}
 				</div>
 			{/if}

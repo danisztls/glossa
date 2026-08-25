@@ -63,7 +63,7 @@
 	import SummaDivisions from '$lib/components/SummaDivisions.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { summaTitleParts } from '$lib/summa-titles';
-	import { summaPartSlug } from '$lib/route-manifest';
+	import { hrefFor, summaPartSlug } from '$lib/address';
 	import type { SummaArticle } from '$lib/types';
 	import type { PageData } from './$types';
 
@@ -233,7 +233,7 @@
 				unreachable.
 			-->
 			<ReadingBar
-				bookmarkHref={`/summa/${partSlug}/${data.n}`}
+				bookmarkHref={hrefFor({ kind: 'summa', part: partSlug, question: data.n, article: null })}
 				{canCompare}
 				{compareActive}
 				onToggleCompare={toggleCompare}
@@ -306,7 +306,12 @@
 					right={rightCell}
 					unit={(n) => ({
 						href: `#a${n}`,
-						canonicalHref: `/summa/${partSlug}/${data.n}#a${n}`,
+						canonicalHref: hrefFor({
+							kind: 'summa',
+							part: partSlug,
+							question: data.n,
+							article: n
+						}),
 						label: `${t('summa.article')} ${n}`,
 						anchorId: `a${n}`
 					})}
@@ -328,7 +333,12 @@
 					{/if}
 
 					{#each question.articles as article (article.n)}
-						{@const articleHref = `/summa/${partSlug}/${data.n}#a${article.n}`}
+						{@const articleHref = hrefFor({
+							kind: 'summa',
+							part: partSlug,
+							question: data.n,
+							article: article.n
+						})}
 						<!-- An article is an ADDRESSABLE UNIT — `refHref` resolves a
 						     citation straight to `#a{n}` — so it gets the same margin
 						     anchor every other addressable unit on the site has: copy,
@@ -357,12 +367,22 @@
 			<UnitNav
 				ariaLabel="Question navigation"
 				prev={editions.current.prev && {
-					href: `/summa/${partSlug}/${editions.current.prev.n}`,
+					href: hrefFor({
+						kind: 'summa',
+						part: partSlug,
+						question: editions.current.prev.n,
+						article: null
+					}),
 					label: t('summa.prevQuestion'),
 					detail: String(editions.current.prev.n)
 				}}
 				next={editions.current.next && {
-					href: `/summa/${partSlug}/${editions.current.next.n}`,
+					href: hrefFor({
+						kind: 'summa',
+						part: partSlug,
+						question: editions.current.next.n,
+						article: null
+					}),
 					label: t('summa.nextQuestion'),
 					detail: String(editions.current.next.n)
 				}}

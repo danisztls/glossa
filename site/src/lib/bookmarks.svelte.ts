@@ -24,7 +24,7 @@
  */
 
 import { readStoredJson, writeStoredJson } from './storage';
-import { parseBookmarkHref, type BookmarkTarget } from './bookmark-target';
+import { parseHref, type Address } from './address';
 
 const STORAGE_KEY = 'glossa:bookmarks';
 
@@ -36,7 +36,7 @@ export interface Bookmark {
 }
 
 export interface ResolvedBookmark extends Bookmark {
-	target: BookmarkTarget;
+	target: Address;
 }
 
 type BookmarkMap = Record<string, Bookmark>;
@@ -57,7 +57,7 @@ function readStored(): BookmarkMap {
 		if (!row || typeof row !== 'object') continue;
 		const addedAt = (row as Bookmark).addedAt;
 		if (typeof addedAt !== 'string') continue;
-		if (!parseBookmarkHref(href)) continue;
+		if (!parseHref(href)) continue;
 		out[href] = { href, addedAt };
 	}
 	return out;
@@ -71,7 +71,7 @@ class BookmarkStore {
 	}
 
 	add(href: string): void {
-		if (this.has(href) || !parseBookmarkHref(href)) return;
+		if (this.has(href) || !parseHref(href)) return;
 		this.#write({ ...this.#items, [href]: { href, addedAt: new Date().toISOString() } });
 	}
 
@@ -91,7 +91,7 @@ class BookmarkStore {
 	 *  first; the library re-sorts canonically within each of its sections. */
 	get list(): ResolvedBookmark[] {
 		return Object.values(this.#items)
-			.map((b) => ({ ...b, target: parseBookmarkHref(b.href) }))
+			.map((b) => ({ ...b, target: parseHref(b.href) }))
 			.filter((b): b is ResolvedBookmark => b.target !== undefined)
 			.sort((a, b) => b.addedAt.localeCompare(a.addedAt));
 	}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { hrefFor } from '$lib/address';
 	import { parseReference, type ParsedBibleReference } from '$lib/refparse';
 	import { resolveBookToken } from '$lib/book-token';
 	import { cccParagraphExists, getCanonicalBook } from '$lib/corpus';
@@ -134,7 +135,7 @@
 				return;
 			}
 			closeBox();
-			goto(`/catechismus/${ref.n}`);
+			goto(hrefFor({ kind: 'ccc', n: ref.n }));
 			return;
 		}
 
@@ -163,15 +164,22 @@
 			// the same shape citation links use (see `refHref`), so a typed
 			// range highlights the passage instead of just landing on its
 			// first verse.
-			const hash = target.verse ? `#v${target.verse}` : '';
-			const query =
-				target.verse !== undefined &&
-				target.verseEnd !== undefined &&
-				target.verseEnd > target.verse
-					? `?v=${target.verse}-${target.verseEnd}`
-					: '';
 			closeBox();
-			goto(`/scriptura/${resolved.book.osis}/${target.chapter}${query}${hash}`);
+			goto(
+				hrefFor({
+					kind: 'bible',
+					osis: resolved.book.osis,
+					chapter: target.chapter,
+					// `hrefFor` spells the extent: `?v=` only when it spans more
+					// than one verse, `#v` always.
+					...(target.verse
+						? {
+								from: target.verse,
+								to: Math.max(target.verse, target.verseEnd ?? target.verse)
+							}
+						: {})
+				})
+			);
 			return;
 		}
 

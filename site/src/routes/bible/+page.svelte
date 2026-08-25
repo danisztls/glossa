@@ -11,6 +11,7 @@
 	 * book/chapter structure via `BookChapterPicker`.
 	 */
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { getWork, listBooks } from '$lib/corpus';
 	import { getPosition, type ReadingPosition } from '$lib/reading-position';
@@ -38,7 +39,7 @@
 		const firstBook = listBooks(workId)[0];
 		if (!firstBook) return undefined;
 		const firstChapterN = firstBook.chapters[0]?.n ?? 1;
-		return `/scriptura/${firstBook.osis}/${firstChapterN}`;
+		return hrefFor({ kind: 'bible', osis: firstBook.osis, chapter: firstChapterN });
 	});
 </script>
 

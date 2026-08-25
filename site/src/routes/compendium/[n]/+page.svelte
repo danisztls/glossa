@@ -5,6 +5,7 @@
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import CompareCopyrightHeader from '$lib/components/CompareCopyrightHeader.svelte';
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import { displayTitle } from '$lib/titles';
 	import { setPosition } from '$lib/reading-position';
 	import CompendiumQa from '$lib/components/CompendiumQuestion.svelte';
@@ -117,8 +118,13 @@
 					<a href="/compendium">{t('nav.compendium')}</a>
 					{#each editions.current.breadcrumb as node (node.title + node.paragraphs.join('-'))}
 						{@const dt = displayTitle(node, editions.lang)}
+						{@const from = node.paragraphs[0]}
 						<span class="sep">›</span>
-						<a href={`/compendium/${node.paragraphs[0]}`}>{dt.title}</a>
+						<!-- Nullable bounds, as on the CCC breadcrumb: no lower bound, no
+						     address, so the crumb keeps its text and loses its link. -->
+						<a href={from === null ? undefined : hrefFor({ kind: 'compendium', n: from })}>
+							{dt.title}
+						</a>
 					{/each}
 				</nav>
 			</div>
@@ -127,7 +133,7 @@
 			     modes — see `ReadingBar`. Everything it carries used to be spread
 			     across the breadcrumb row, the title row and the site header. -->
 			<ReadingBar
-				bookmarkHref={`/compendium/${data.n}`}
+				bookmarkHref={hrefFor({ kind: 'compendium', n: data.n })}
 				canCompare={editions.others.length > 0}
 				compareActive={editions.compareActive}
 				onToggleCompare={toggleCompare}
@@ -172,8 +178,8 @@
 					unit={(n) => ({
 						// Its own page, and no `anchorId` — same single-unit case as
 						// `catechismus/[n]`, see that route for the reasoning.
-						href: `/compendium/${n}`,
-						canonicalHref: `/compendium/${n}`,
+						href: hrefFor({ kind: 'compendium', n }),
+						canonicalHref: hrefFor({ kind: 'compendium', n }),
 						label: `${t('compendium.question')} ${n}`
 					})}
 					apparatus={{ has: (n) => sharedRefs.has(n), render: sharedCccRefs }}
@@ -187,12 +193,12 @@
 			<UnitNav
 				ariaLabel="Question navigation"
 				prev={editions.current.prev && {
-					href: `/compendium/${editions.current.prev.n}`,
+					href: hrefFor({ kind: 'compendium', n: editions.current.prev.n }),
 					label: t('compendium.prevQuestion'),
 					detail: String(editions.current.prev.n)
 				}}
 				next={editions.current.next && {
-					href: `/compendium/${editions.current.next.n}`,
+					href: hrefFor({ kind: 'compendium', n: editions.current.next.n }),
 					label: t('compendium.nextQuestion'),
 					detail: String(editions.current.next.n)
 				}}

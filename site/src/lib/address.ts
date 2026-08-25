@@ -1,0 +1,311 @@
+/**
+ * A place in the corpus, and the one grammar that writes it as a URL and
+ * reads it back.
+ *
+ * WHY ONE MODULE. "A place in the corpus" used to be four near-identical
+ * discriminated unions -- one in the reference grammar, one for the hover
+ * preview, one for bookmarks, plus `route-manifest.ts`'s own path splitting --
+ * with the href string as the interchange format between them. Every one of
+ * them had to be taught the same shape when the Summa arrived, and the edge
+ * worker's idea of a valid address was a different piece of code from the one
+ * that had written the link. `Address` is that shape, `hrefFor` is the only
+ * place a canonical reference URL is written, and `parseHref` is the only
+ * place one is read.
+ *
+ * IMPORTS NOTHING, deliberately and permanently. `route-manifest.ts`
+ * re-exports the Summa part table from here and is loaded by `src/worker.ts`
+ * at the Cloudflare edge and by `scripts/sync-corpus.mjs` under plain Node --
+ * neither of which has a bundler, a DOM, or the corpus. This is the same
+ * arrangement `refs-grammar.ts` already has with `refs.ts`: the grammar half
+ * runs anywhere, the corpus-bound half does not.
+ *
+ * WHY PARSING IS REGEXES AND NOT A REPLAY OF HOW THE LINK WAS BUILT:
+ * `parseHref` does not reconstruct a reference, it reads an address that has
+ * already been written. `refs.ts` canonicalises chapter/verse numbers into
+ * this corpus's Vulgate address space *before* the href exists (see
+ * `resolveVulgate`), so a URL's numbers ARE the Vulgate numbers. Feeding them
+ * through `versification.ts` a second time would risk double-converting a
+ * chapter that only needed shifting once -- which is why nothing here imports
+ * it.
+ *
+ * TOLERANT, NOT STRICT. An address this site never generates (a negative
+ * chapter, a malformed query, a hand-edited URL) degrades to `undefined`
+ * rather than throwing: every caller treats that as "not a place", which is
+ * a bookmark the library quietly omits, a link with no hover preview, or a
+ * 404 from the edge -- never an error a reader sees.
+ */
+
+export type Address =
+	| {
+			kind: 'bible';
+			osis: string;
+			chapter: number;
+			/** The cited extent, set together. `from === to` is a single verse;
+			 *  both absent is a bare chapter link, which names the chapter's
+			 *  opening rather than a cited passage. */
+			from?: number;
+			to?: number;
+			/** The verse to scroll to, when it is NOT the extent's start.
+			 *
+			 *  A citation's verse list arrives from range expansion AND from
+			 *  comma lists, so "Jn 1:7,1,4" spans verses 1-7 but is *about*
+			 *  verse 7 -- `refHref` has always emitted `?v=1-7#v7` for it. The
+			 *  extent and the landing place are genuinely two facts, and this is
+			 *  the only field that can hold the second. Absent in the ordinary
+			 *  case, where they coincide. */
+			anchor?: number;
+	  }
+	| { kind: 'ccc'; n: number }
+	| { kind: 'cccChapter'; n: number }
+	| { kind: 'compendium'; n: number }
+	| { kind: 'compendiumChapter'; n: number }
+	/** A document, or one numbered section of it. `n` absent is the whole
+	 *  document: a section is a FRAGMENT on the document's single page
+	 *  (`#s{n}`), not a page of its own -- `documents/[slug]/[n]` was retired
+	 *  2026-08-17 (docs/decisions.md; 9,315 prerendered files for one section
+	 *  of text each). */
+	| { kind: 'document'; slug: string; n?: number }
+	/** A Summa question, or one article of it (`#a3`). Articles are fragments
+	 *  for the same reason document sections are, following that same 2026-08-17
+	 *  decision rather than minting 3,113 addresses for one article each.
+	 *  `part` is the URL slug (`i`, `i-ii`, ...), not the work's own spelling
+	 *  of it -- see `summaPartSlug`. */
+	| { kind: 'summa'; part: string; question: number; article: number | null }
+	| { kind: 'prayer'; slug: string };
+
+/**
+ * The Summa's parts, as they appear in a URL.
+ *
+ * Lower-cased Roman, which is what the work's own citations already use
+ * (`STh I-II, 79, 1`) and therefore the least surprising thing to see in an
+ * address. It lives in the module that imports nothing because
+ * `scripts/sync-corpus.mjs` needs the same mapping to lay out the content
+ * files and the worker needs it to validate an address.
+ */
+const SUMMA_PART_SLUGS: Record<string, string> = {
+	I: 'i',
+	'I-II': 'i-ii',
+	'II-II': 'ii-ii',
+	III: 'iii',
+	Suppl: 'suppl'
+};
+
+export function summaPartSlug(part: string): string {
+	const slug = SUMMA_PART_SLUGS[part];
+	if (!slug) throw new Error(`unknown Summa part ${JSON.stringify(part)}`);
+	return slug;
+}
+
+/** The inverse of `summaPartSlug`; `undefined` for anything not a part. */
+export function summaPartFromSlug(slug: string): string | undefined {
+	return Object.keys(SUMMA_PART_SLUGS).find((part) => SUMMA_PART_SLUGS[part] === slug);
+}
+
+/** The canonical URL for an address. The only place one is written. */
+export function hrefFor(a: Address): string {
+	switch (a.kind) {
+		case 'bible': {
+			// The extent goes in the QUERY and the scroll target stays in the
+			// hash rather than inventing a `#v1-7` fragment: `#v1` remains a real
+			// id on a real element, so browsers scroll natively with no
+			// JavaScript. Only emitted when the range spans more than one verse
+			// -- a single-verse citation is fully described by its anchor.
+			const span = a.from !== undefined && a.to !== undefined && a.to > a.from;
+			const query = span ? `?v=${a.from}-${a.to}` : '';
+			const hash = a.from !== undefined ? `#v${a.anchor ?? a.from}` : '';
+			// Edition-free (docs/decisions.md #2, which the Bible now follows
+			// too): which edition renders here is the reader's standing
+			// preference, never the link's to decide.
+			return `/scriptura/${a.osis}/${a.chapter}${query}${hash}`;
+		}
+		case 'ccc':
+			return `/catechismus/${a.n}`;
+		case 'cccChapter':
+			return `/catechismus/caput/${a.n}`;
+		case 'compendium':
+			return `/compendium/${a.n}`;
+		case 'compendiumChapter':
+			return `/compendium/caput/${a.n}`;
+		case 'document':
+			return a.n === undefined ? `/documenta/${a.slug}` : `/documenta/${a.slug}#s${a.n}`;
+		case 'summa': {
+			const base = `/summa/${a.part}/${a.question}`;
+			return a.article === null ? base : `${base}#a${a.article}`;
+		}
+		case 'prayer':
+			return `/preces/${a.slug}`;
+	}
+}
+
+// A fixed, obviously-fake origin: `URL`'s relative-reference constructor needs
+// *some* absolute base to resolve against, and its value is never read below
+// except to detect that an href resolved to a DIFFERENT origin (i.e. was
+// itself absolute, and thus external -- `https://vatican.va/...` parses fine
+// against this base but keeps its own origin, which is exactly the signal used
+// to reject it).
+const INTERNAL_BASE = 'https://glossa.internal.invalid';
+
+const BIBLE_RE = /^\/scriptura\/([a-z0-9]+)\/(\d+)$/;
+const CCC_CHAPTER_RE = /^\/catechismus\/caput\/(\d+)$/;
+const CCC_RE = /^\/catechismus\/(\d+)$/;
+const COMPENDIUM_CHAPTER_RE = /^\/compendium\/caput\/(\d+)$/;
+const COMPENDIUM_RE = /^\/compendium\/(\d+)$/;
+const DOCUMENT_RE = /^\/documenta\/([a-z0-9-]+)$/;
+const PRAYER_RE = /^\/preces\/([a-z0-9-]+)$/;
+const SUMMA_RE = /^\/summa\/([a-z-]+)\/(\d+)$/;
+const ARTICLE_ANCHOR_RE = /^#a(\d+)$/;
+const SECTION_ANCHOR_RE = /^#s(\d+)$/;
+const VERSE_SPAN_RE = /^(\d+)-(\d+)$/;
+const VERSE_ANCHOR_RE = /^#v(\d+)$/;
+
+/**
+ * A number in its one canonical spelling, or `undefined`.
+ *
+ * Reader routes have never emitted leading zeroes. Rejecting them here means
+ * one resource has one canonical spelling, rather than making
+ * /catechismus/01234 and /catechismus/1234 indistinguishable cache keys.
+ *
+ * `min` is 0 for a Bible chapter and 1 everywhere else: `/scriptura/{book}/0`
+ * is a book's introduction (docs/corpus-schema.md §Book introductions), which
+ * fits the numbering the reader already knows because no book has a chapter 0
+ * to collide with. `00` and `01` stay rejected either way. Whether any given
+ * `/scriptura/{book}/0` is real is still decided by the route manifest, not
+ * here: only books with an introduction carry a 0.
+ */
+function canonicalNumber(segment: string, min: 0 | 1): number | undefined {
+	if (!/^(0|[1-9]\d*)$/.test(segment)) return undefined;
+	const value = Number(segment);
+	if (!Number.isSafeInteger(value) || value < min) return undefined;
+	return value;
+}
+
+/**
+ * Read an address out of an href, or `undefined` for anything that is not one
+ * -- nav chrome, an external URL, a legacy English path (`/ccc/1`,
+ * `/prayers/x`, deliberately invalid site-wide since docs/decisions.md
+ * 2026-08-18), a retired shape, or a stored value from a future version of
+ * this grammar.
+ *
+ * `undefined` is always "not a place", never an error; see the module
+ * docblock.
+ */
+export function parseHref(href: string | null | undefined): Address | undefined {
+	if (!href) return undefined;
+
+	let url: URL;
+	try {
+		url = new URL(href, INTERNAL_BASE);
+	} catch {
+		return undefined;
+	}
+	if (url.origin !== INTERNAL_BASE) return undefined; // absolute -> external, or a scheme we don't address (mailto:, ...)
+
+	const path = url.pathname;
+
+	const bible = BIBLE_RE.exec(path);
+	if (bible) {
+		const chapter = canonicalNumber(bible[2], 0);
+		if (chapter === undefined) return undefined;
+		const osis = bible[1];
+
+		const anchorMatch = VERSE_ANCHOR_RE.exec(url.hash);
+		const anchorVerse = anchorMatch ? canonicalNumber(anchorMatch[1], 1) : undefined;
+
+		// `?v=` names the WHOLE cited extent and takes priority over the anchor,
+		// which only ever names one verse of it. A hand-edited URL may disagree
+		// with itself; the span is the more informative of the two, so it wins
+		// rather than the parser picking whichever happens to be checked first.
+		const span = VERSE_SPAN_RE.exec(url.searchParams.get('v') ?? '');
+		if (span) {
+			const from = canonicalNumber(span[1], 1);
+			const to = canonicalNumber(span[2], 1);
+			if (from !== undefined && to !== undefined && to > from) {
+				return anchorVerse !== undefined && anchorVerse !== from
+					? { kind: 'bible', osis, chapter, from, to, anchor: anchorVerse }
+					: { kind: 'bible', osis, chapter, from, to };
+			}
+		}
+
+		// No usable span: a lone anchor is a single-verse extent.
+		if (anchorVerse !== undefined) {
+			return { kind: 'bible', osis, chapter, from: anchorVerse, to: anchorVerse };
+		}
+		return { kind: 'bible', osis, chapter };
+	}
+
+	const cccChapter = CCC_CHAPTER_RE.exec(path);
+	if (cccChapter) return numbered('cccChapter', cccChapter[1]);
+
+	const ccc = CCC_RE.exec(path);
+	if (ccc) return numbered('ccc', ccc[1]);
+
+	const compendiumChapter = COMPENDIUM_CHAPTER_RE.exec(path);
+	if (compendiumChapter) return numbered('compendiumChapter', compendiumChapter[1]);
+
+	const compendium = COMPENDIUM_RE.exec(path);
+	if (compendium) return numbered('compendium', compendium[1]);
+
+	const document = DOCUMENT_RE.exec(path);
+	if (document) {
+		const anchor = SECTION_ANCHOR_RE.exec(url.hash);
+		const n = anchor ? canonicalNumber(anchor[1], 1) : undefined;
+		return { kind: 'document', slug: document[1], ...(n !== undefined ? { n } : {}) };
+	}
+
+	const prayer = PRAYER_RE.exec(path);
+	if (prayer) return { kind: 'prayer', slug: prayer[1] };
+
+	const summa = SUMMA_RE.exec(path);
+	if (summa) {
+		const question = canonicalNumber(summa[2], 1);
+		if (question === undefined) return undefined;
+		// The part slug is NOT checked against `SUMMA_PART_SLUGS` here. A slug
+		// that names no part is an address that resolves to nothing, which every
+		// caller already handles the same way it handles a question number the
+		// corpus doesn't carry -- the route manifest decides existence, this
+		// decides shape.
+		const article = ARTICLE_ANCHOR_RE.exec(url.hash);
+		const n = article ? canonicalNumber(article[1], 1) : undefined;
+		return { kind: 'summa', part: summa[1], question, article: n ?? null };
+	}
+
+	return undefined;
+}
+
+function numbered(
+	kind: 'ccc' | 'cccChapter' | 'compendium' | 'compendiumChapter',
+	segment: string
+): Address | undefined {
+	const n = canonicalNumber(segment, 1);
+	return n === undefined ? undefined : { kind, n };
+}
+
+/**
+ * An address the hover preview can show: everything except a whole prayer and
+ * a whole document.
+ *
+ * Both exclusions are the same rule -- an unanchored link is navigation, not a
+ * quotable unit. `/documenta/{slug}` opens an entire encyclical, and prayers
+ * have no inline link surface at all; teaching either one to `PreviewTarget`
+ * would silently give every prayer link on the site a popover it does not have
+ * today.
+ *
+ * A Summa QUESTION is deliberately not excluded even though it, too, is a
+ * page. This work cites itself constantly -- 5,180 of the links on a Summa
+ * page point back into the Summa -- and a reader following `Q[74], A[2]`
+ * mid-argument wants to see what it says without losing their place, which is
+ * exactly the case the preview was built for. A question is a page, but it is
+ * also a unit.
+ */
+export type PreviewTarget =
+	| Exclude<Address, { kind: 'prayer' } | { kind: 'document' }>
+	| { kind: 'document'; slug: string; n: number };
+
+/** `parseHref`, restricted to what the hover preview can show. */
+export function previewTarget(href: string | null | undefined): PreviewTarget | undefined {
+	const a = parseHref(href);
+	if (!a) return undefined;
+	if (a.kind === 'prayer') return undefined;
+	if (a.kind === 'document') return a.n === undefined ? undefined : { ...a, n: a.n };
+	return a;
+}

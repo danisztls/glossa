@@ -47,6 +47,7 @@
 	import { documentKindLabel } from '$lib/document-labels';
 	import { formatPromulgated } from '$lib/dates';
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import {
 		compareColumnLabel,
 		flattenDocumentStructure,
@@ -549,7 +550,7 @@
 			     across this breadcrumb row, the title row below and the site
 			     header. -->
 			<ReadingBar
-				bookmarkHref={`/documenta/${data.slug}`}
+				bookmarkHref={hrefFor({ kind: 'document', slug: data.slug })}
 				canCompare={current !== undefined && otherEditions.length > 0}
 				{compareActive}
 				onToggleCompare={toggleCompare}
@@ -780,7 +781,7 @@
 						right={rightCell}
 						unit={(n) => ({
 							href: `#s${n}`,
-							canonicalHref: `/documenta/${data.slug}#s${n}`,
+							canonicalHref: hrefFor({ kind: 'document', slug: data.slug, n }),
 							label: `§${n}`,
 							anchorId: `s${n}`
 						})}
@@ -800,7 +801,7 @@
 					<div class="reading-text document-body" lang={current.work.language}>
 						{#each current.sections as section, i (section.n)}
 							{@render structureHeadings(headingsByStart.get(section.n) ?? [], lang, true)}
-							{@const sectionHref = `/documenta/${data.slug}#s${section.n}`}
+							{@const sectionHref = hrefFor({ kind: 'document', slug: data.slug, n: section.n })}
 							<section
 								class="section"
 								id={`s${section.n}`}

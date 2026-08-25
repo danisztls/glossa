@@ -12,7 +12,7 @@ import {
 } from './corpus';
 import { parseRefs, refHref } from './refs';
 import { parseStoredRef } from './refs-grammar';
-import { parsePreviewHref } from './linkPreviewHref';
+import { previewTarget } from './address';
 import { summaRefLabel } from './summa-titles';
 import { isCanonicalPath, summaPartFromSlug, summaPartSlug } from './route-manifest';
 import type { RefSegment } from './refs-grammar';
@@ -302,13 +302,13 @@ describe('stored self-references', () => {
 /** The hover preview, which this work earns more than any other. */
 describe('summa hover previews', () => {
 	it('previews a question and an article', () => {
-		expect(parsePreviewHref('/summa/ii-ii/184')).toEqual({
+		expect(previewTarget('/summa/ii-ii/184')).toEqual({
 			kind: 'summa',
 			part: 'ii-ii',
 			question: 184,
 			article: null
 		});
-		expect(parsePreviewHref('/summa/ii-ii/184#a3')).toEqual({
+		expect(previewTarget('/summa/ii-ii/184#a3')).toEqual({
 			kind: 'summa',
 			part: 'ii-ii',
 			question: 184,
@@ -317,7 +317,7 @@ describe('summa hover previews', () => {
 	});
 
 	it('declines an address with no question', () => {
-		expect(parsePreviewHref('/summa')).toBeUndefined();
-		expect(parsePreviewHref('/summa/ii-ii')).toBeUndefined();
+		expect(previewTarget('/summa')).toBeUndefined();
+		expect(previewTarget('/summa/ii-ii')).toBeUndefined();
 	});
 });

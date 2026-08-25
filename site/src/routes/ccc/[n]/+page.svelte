@@ -4,6 +4,7 @@
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import { displayTitle } from '$lib/titles';
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
@@ -102,8 +103,12 @@
 					<a href="/catechismus">{t('nav.ccc')}</a>
 					{#each editions.current.breadcrumb as node (node.title)}
 						{@const dt = displayTitle(node, editions.lang)}
+						{@const from = node.paragraphs[0]}
 						<span class="sep">›</span>
-						<a href={`/catechismus/${node.paragraphs[0]}`}>
+						<!-- A structure node's paragraph bounds are nullable (`CccNode`), and
+						     a node with no lower bound names no address — so it renders as
+						     a crumb without a link rather than as `/catechismus/null`. -->
+						<a href={from === null ? undefined : hrefFor({ kind: 'ccc', n: from })}>
 							{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
 							{dt.title}
 						</a>
@@ -115,7 +120,7 @@
 			     modes — see `ReadingBar`. Everything it carries used to be spread
 			     across the breadcrumb row, the title row and the site header. -->
 			<ReadingBar
-				bookmarkHref={`/catechismus/${data.n}`}
+				bookmarkHref={hrefFor({ kind: 'ccc', n: data.n })}
 				canCompare={editions.others.length > 0}
 				compareActive={editions.compareActive}
 				onToggleCompare={toggleCompare}
@@ -219,8 +224,8 @@
 						// `anchorId` either. What the popover is worth here is its
 						// other three actions — copy, copy link, bookmark — which
 						// compare mode had no way to reach at all.
-						href: `/catechismus/${n}`,
-						canonicalHref: `/catechismus/${n}`,
+						href: hrefFor({ kind: 'ccc', n }),
+						canonicalHref: hrefFor({ kind: 'ccc', n }),
 						label: `CCC ${n}`
 					})}
 				/>
@@ -236,7 +241,7 @@
 					{#each editions.current.paragraph.related as n, i (n)}
 						{#if i > 0}·{/if}
 						{#if relatedExists(n)}
-							<a href={`/catechismus/${n}`}>¶{n}</a>
+							<a href={hrefFor({ kind: 'ccc', n })}>¶{n}</a>
 						{:else}
 							<span class="related-unresolved" title="Not in this fixture">¶{n}</span>
 						{/if}
@@ -270,12 +275,12 @@
 			<UnitNav
 				ariaLabel="Paragraph navigation"
 				prev={editions.current.prev && {
-					href: `/catechismus/${editions.current.prev.n}`,
+					href: hrefFor({ kind: 'ccc', n: editions.current.prev.n }),
 					label: t('ccc.prevParagraph'),
 					detail: `¶${editions.current.prev.n}`
 				}}
 				next={editions.current.next && {
-					href: `/catechismus/${editions.current.next.n}`,
+					href: hrefFor({ kind: 'ccc', n: editions.current.next.n }),
 					label: t('ccc.nextParagraph'),
 					detail: `¶${editions.current.next.n}`
 				}}

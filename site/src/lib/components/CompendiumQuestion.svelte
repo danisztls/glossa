@@ -10,6 +10,7 @@
 	import RefText from './RefText.svelte';
 	import ReferenceNumber from './ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
+	import { hrefFor } from '$lib/address';
 
 	interface Props {
 		question: CompendiumQuestion;
@@ -29,7 +30,7 @@
 	/** The question's own page — its canonical address, and what `href` points
 	 *  at in the chapter reader. Derived rather than taken as a prop so the
 	 *  single-question view and the chapter view cannot disagree about it. */
-	const canonicalHref = $derived(`/compendium/${question.n}`);
+	const canonicalHref = $derived(hrefFor({ kind: 'compendium', n: question.n }));
 </script>
 
 {#snippet qa()}

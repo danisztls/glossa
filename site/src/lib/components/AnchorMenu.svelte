@@ -43,7 +43,7 @@
 <script lang="ts">
 	import { t } from '$lib/i18n.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
-	import { parseBookmarkHref } from '$lib/bookmark-target';
+	import { parseHref } from '$lib/address';
 	import { resolveBookmark } from '$lib/bookmarkContent';
 	import { computePanelPosition } from '$lib/floating';
 	import Icon from './Icon.svelte';
@@ -95,7 +95,7 @@
 	}
 
 	async function copyText() {
-		const target = parseBookmarkHref(canonicalHref);
+		const target = parseHref(canonicalHref);
 		const resolved = target ? await resolveBookmark(target) : undefined;
 		if (!resolved || !resolved.text) {
 			flash('copy', false);

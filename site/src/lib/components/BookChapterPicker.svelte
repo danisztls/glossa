@@ -75,6 +75,7 @@
 	import { untrack } from 'svelte';
 	import { getBook, hasIntroForWork, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
+	import { hrefFor } from '$lib/address';
 
 	interface Props {
 		/** Which edition's book NAMES to show. No longer affects link targets — those are edition-free. */
@@ -415,7 +416,7 @@
 			{#each book.chapters as chapterN (chapterN)}
 				{#if present.has(chapterN)}
 					<a
-						href={`/scriptura/${book.osis}/${chapterN}`}
+						href={hrefFor({ kind: 'bible', osis: book.osis, chapter: chapterN })}
 						class:current={book.osis === currentOsis && chapterN === currentChapter}
 						title={chapterN === 0 ? t('bible.introduction') : undefined}
 					>

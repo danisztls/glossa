@@ -24,6 +24,7 @@
 	 */
 	import { onMount } from 'svelte';
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import {
 		getCccStructure,
 		getCompendiumStructure,
@@ -297,8 +298,8 @@
 					<li class="ccc-row">
 						<div class="ccc-row-title">{dt.title}</div>
 						<div class="ccc-row-links">
-							{#if Number.isFinite(anchor)}
-								<a class="ccc-link" href={`/catechismus/${anchor}`}>
+							{#if anchor != null && Number.isFinite(anchor)}
+								<a class="ccc-link" href={hrefFor({ kind: 'ccc', n: anchor })}>
 									{t('nav.ccc')} <span class="ccc-range">{rangeLabel(cccPrologue, '¶')}</span>
 								</a>
 							{/if}
@@ -313,15 +314,15 @@
 					<li class="ccc-row ccc-row-part">
 						{#if title}<div class="ccc-row-title">{title}</div>{/if}
 						<div class="ccc-row-links">
-							{#if part.ccc && Number.isFinite(cccAnchor)}
-								<a class="ccc-link" href={`/catechismus/${cccAnchor}`}>
+							{#if part.ccc && cccAnchor != null && Number.isFinite(cccAnchor)}
+								<a class="ccc-link" href={hrefFor({ kind: 'ccc', n: cccAnchor })}>
 									{t('nav.ccc')} <span class="ccc-range">{rangeLabel(part.ccc, '¶')}</span>
 								</a>
 							{:else}
 								<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
 							{/if}
-							{#if part.compendium && Number.isFinite(compendiumAnchor)}
-								<a class="ccc-link" href={`/compendium/${compendiumAnchor}`}>
+							{#if part.compendium && compendiumAnchor != null && Number.isFinite(compendiumAnchor)}
+								<a class="ccc-link" href={hrefFor({ kind: 'compendium', n: compendiumAnchor })}>
 									{t('nav.compendium')}
 									<span class="ccc-range">{rangeLabel(part.compendium, 'Q')}</span>
 								</a>
@@ -339,16 +340,19 @@
 									<li class="ccc-row ccc-row-section">
 										{#if stitle}<div class="ccc-row-title">{stitle}</div>{/if}
 										<div class="ccc-row-links">
-											{#if section.ccc && Number.isFinite(sCccAnchor)}
-												<a class="ccc-link" href={`/catechismus/${sCccAnchor}`}>
+											{#if section.ccc && sCccAnchor != null && Number.isFinite(sCccAnchor)}
+												<a class="ccc-link" href={hrefFor({ kind: 'ccc', n: sCccAnchor })}>
 													{t('nav.ccc')}
 													<span class="ccc-range">{rangeLabel(section.ccc, '¶')}</span>
 												</a>
 											{:else}
 												<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
 											{/if}
-											{#if section.compendium && Number.isFinite(sCompendiumAnchor)}
-												<a class="ccc-link" href={`/compendium/${sCompendiumAnchor}`}>
+											{#if section.compendium && sCompendiumAnchor != null && Number.isFinite(sCompendiumAnchor)}
+												<a
+													class="ccc-link"
+													href={hrefFor({ kind: 'compendium', n: sCompendiumAnchor })}
+												>
 													{t('nav.compendium')}
 													<span class="ccc-range">{rangeLabel(section.compendium, 'Q')}</span>
 												</a>
@@ -397,7 +401,9 @@
 			{#if mostRecentDoc}
 				<p class="magisterium-recent">
 					<span class="magisterium-recent-label">{t('home.magisterium.mostRecent')}</span>
-					<a href={`/documenta/${mostRecentDoc.slug}`}>{mostRecentDoc.manifest.title}</a>
+					<a href={hrefFor({ kind: 'document', slug: mostRecentDoc.slug })}>
+						{mostRecentDoc.manifest.title}
+					</a>
 					<span class="magisterium-recent-meta">
 						{mostRecentDoc.manifest.pontiff_or_council}
 						<span aria-hidden="true">·</span>

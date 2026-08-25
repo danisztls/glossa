@@ -32,6 +32,7 @@
 	import { useScrollSpy } from '$lib/scroll-spy.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import { displayTitle } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
 	import type { CccNode, CccParagraph, StructureNode } from '$lib/types';
@@ -92,9 +93,12 @@
 	/** This chapter's canonical address. Derived at script scope rather than
 	 *  from the `from` const in the template, because the sticky bar's
 	 *  toolbar snippet is declared outside that block. */
-	const chapterHref = $derived(
-		editions.current ? `/catechismus/caput/${editions.current.chapter.paragraphs[0]}` : ''
-	);
+	const chapterHref = $derived.by(() => {
+		// A chapter is addressed by its FIRST paragraph number, which the
+		// structure type allows to be null; no number, no address.
+		const from = editions.current?.chapter.paragraphs[0];
+		return from == null ? '' : hrefFor({ kind: 'cccChapter', n: from });
+	});
 
 	/**
 	 * The chapter's own inner headings, keyed by the paragraph each one opens
@@ -319,8 +323,8 @@
 					left={leftCell}
 					right={rightCell}
 					unit={(n) => ({
-						href: `/catechismus/${n}`,
-						canonicalHref: `/catechismus/${n}`,
+						href: hrefFor({ kind: 'ccc', n }),
+						canonicalHref: hrefFor({ kind: 'ccc', n }),
 						label: `CCC ${n}`,
 						anchorId: `p${n}`
 					})}
@@ -355,7 +359,7 @@
 							class="para"
 							id={`p${paragraph.n}`}
 							class:in-brief={paragraph.in_brief}
-							class:unit-bookmarked={bookmarks.has(`/catechismus/${paragraph.n}`)}
+							class:unit-bookmarked={bookmarks.has(hrefFor({ kind: 'ccc', n: paragraph.n }))}
 						>
 							<!-- The number is a link back to the paragraph's own page: this
 						     view is for reading, that one for citing and cross-linking,
@@ -365,8 +369,8 @@
 						     and copies exactly what the number already pointed at. -->
 							<ReferenceNumber
 								n={paragraph.n}
-								href={`/catechismus/${paragraph.n}`}
-								canonicalHref={`/catechismus/${paragraph.n}`}
+								href={hrefFor({ kind: 'ccc', n: paragraph.n })}
+								canonicalHref={hrefFor({ kind: 'ccc', n: paragraph.n })}
 								label={`CCC ${paragraph.n}`}
 								placement="margin"
 							/>

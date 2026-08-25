@@ -16,6 +16,7 @@
 	import { listDocuments, loadTranslatedDescriptions } from '$lib/corpus';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import { documentKindLabel } from '$lib/document-labels';
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
@@ -177,7 +178,7 @@
 					{#each group.rows as row (row.slug)}
 						{@const description = describe(row)}
 						<li>
-							<a href={`/documenta/${row.slug}`} class="doc-link">
+							<a href={hrefFor({ kind: 'document', slug: row.slug })} class="doc-link">
 								<span class="doc-title">{row.manifest.title}</span>
 								<span class="doc-kind">{documentKindLabel(row.manifest.document_kind)}</span>
 							</a>

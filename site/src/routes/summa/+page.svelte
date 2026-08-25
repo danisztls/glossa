@@ -33,7 +33,7 @@
 		defaultSummaWorkId,
 		baseLang
 	} from '$lib/corpus';
-	import { summaPartSlug } from '$lib/route-manifest';
+	import { hrefFor, summaPartSlug } from '$lib/address';
 	import { summaHeadingTitle, summaQuestionLabel } from '$lib/summa-titles';
 	import { t } from '$lib/i18n.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
@@ -98,7 +98,14 @@
 						{#each headings as heading (heading.title + heading.before)}
 							<li>
 								{#if heading.before !== null}
-									<a href={`/summa/${slug}/${heading.before}`}>
+									<a
+										href={hrefFor({
+											kind: 'summa',
+											part: slug,
+											question: heading.before,
+											article: null
+										})}
+									>
 										{summaHeadingTitle(heading.title)}
 									</a>
 								{:else}
@@ -112,7 +119,14 @@
 				<ol class="questions">
 					{#each partQuestions as question (question.n)}
 						<li>
-							<a href={`/summa/${slug}/${question.n}`}>
+							<a
+								href={hrefFor({
+									kind: 'summa',
+									part: slug,
+									question: question.n,
+									article: null
+								})}
+							>
 								<span class="q-number">{question.n}</span>
 								{#if question.title}<span class="q-title">{summaQuestionLabel(question.title)}</span
 									>{/if}

@@ -1,8 +1,8 @@
 /**
  * Preview-target -> rendered text resolution for `LinkPreview.svelte`.
  *
- * Split out from the component (and from `linkPreviewHref.ts`'s pure
- * parsing) because this half is the opposite of pure: it reads the reader's
+ * Split out from the component (and from `address.ts`'s pure parsing)
+ * because this half is the opposite of pure: it reads the reader's
  * effective language/edition off the content store, fetches corpus content
  * tier files, and skips works switched off — none of which belongs in a unit
  * that's supposed to be testable with no mocks at all.
@@ -45,12 +45,11 @@ import {
 	summaDivisionsText,
 	summaWorkIdFor
 } from './corpus';
-import { summaPartFromSlug } from './route-manifest';
+import { summaPartFromSlug, type PreviewTarget } from './address';
 import { summaQuestionLabel } from './summa-titles';
 import { content } from './content.svelte';
 import { i18n } from './i18n.svelte';
 import { displayTitle } from './titles';
-import type { PreviewTarget } from './linkPreviewHref';
 
 export interface ResolvedUnit {
 	/** Short heading line: "Genesis 1:1-3", "CCC 1", a CCC chapter's own

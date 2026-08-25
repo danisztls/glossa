@@ -6,7 +6,17 @@
  * worker before it returns the SPA shell. Keeping the grammar here makes the
  * client and the worker testable without giving either one a special case for
  * individual works.
+ *
+ * The URL grammar itself lives in `./address.ts` — this file decides only
+ * whether an address the grammar recognises actually EXISTS.
  */
+
+import { parseHref, summaPartFromSlug, summaPartSlug } from './address.ts';
+
+// Re-exported because `scripts/sync-corpus.mjs` imports `summaPartSlug` from
+// here (it lays the Summa's content files out by part slug) and this module is
+// the one the build scripts already know about.
+export { summaPartFromSlug, summaPartSlug };
 
 export interface RouteManifest {
 	version: 1;
@@ -25,35 +35,6 @@ export interface RouteManifest {
 	summa: Record<string, number[]>;
 }
 
-/**
- * The Summa's parts, as they appear in a URL.
- *
- * Lower-cased Roman, which is what the work's own citations already use
- * (`STh I-II, 79, 1`) and therefore the least surprising thing to see in an
- * address. Defined here, in the module that imports nothing, because
- * `scripts/sync-corpus.mjs` needs the same mapping to lay out the content
- * files and the worker needs it to validate an address — the same
- * one-grammar-two-consumers arrangement this file already exists for.
- */
-const SUMMA_PART_SLUGS: Record<string, string> = {
-	I: 'i',
-	'I-II': 'i-ii',
-	'II-II': 'ii-ii',
-	III: 'iii',
-	Suppl: 'suppl'
-};
-
-export function summaPartSlug(part: string): string {
-	const slug = SUMMA_PART_SLUGS[part];
-	if (!slug) throw new Error(`unknown Summa part ${JSON.stringify(part)}`);
-	return slug;
-}
-
-/** The inverse of `summaPartSlug`; `undefined` for anything not a part. */
-export function summaPartFromSlug(slug: string): string | undefined {
-	return Object.keys(SUMMA_PART_SLUGS).find((part) => SUMMA_PART_SLUGS[part] === slug);
-}
-
 const STATIC_PATHS = new Set([
 	'/',
 	'/scriptura',
@@ -70,63 +51,39 @@ const STATIC_PATHS = new Set([
 	'/404'
 ]);
 
-function canonicalNumber(segment: string): number | undefined {
-	// Reader routes have never emitted leading zeroes. Rejecting them here
-	// means one resource has one canonical spelling, rather than making
-	// /catechismus/01234 and /catechismus/1234 indistinguishable cache keys.
-	//
-	// A bare `0` is admitted, and only a bare one: `/scriptura/{book}/0` is a
-	// book's introduction (docs/corpus-schema.md §Book introductions), which
-	// fits the numbering the reader already knows because no book has a
-	// chapter 0 to collide with. `00` and `01` stay rejected, so the
-	// one-spelling rule this pattern exists for is untouched — and whether any
-	// given `/scriptura/{book}/0` is real is still decided by the manifest
-	// below, not here: only books with an introduction carry a 0.
-	if (!/^(0|[1-9]\d*)$/.test(segment)) return undefined;
-	const value = Number(segment);
-	return Number.isSafeInteger(value) ? value : undefined;
-}
-
-function hasNumber(numbers: number[], segment: string): boolean {
-	const value = canonicalNumber(segment);
-	return value !== undefined && numbers.includes(value);
-}
-
-/** True exactly for an address the corpus or the app shell can resolve. */
+/**
+ * True exactly for an address the corpus or the app shell can resolve.
+ *
+ * `parseHref` decides SHAPE — including the one-canonical-spelling rule that
+ * rejects `/catechismus/01234`, and the bare `0` admitted only for a book
+ * introduction. This function decides EXISTENCE, and nothing else: a
+ * well-formed address for a work the corpus does not carry is a real 404.
+ */
 export function isCanonicalPath(pathname: string, manifest: RouteManifest): boolean {
 	if (STATIC_PATHS.has(pathname)) return true;
 
-	const parts = pathname.split('/').filter(Boolean);
-	if (parts[0] === 'scriptura' && parts.length === 3) {
-		return hasNumber(manifest.bible[parts[1]] ?? [], parts[2]);
-	}
-	if (parts[0] === 'catechismus') {
-		if (parts.length === 2) return hasNumber(manifest.ccc, parts[1]);
-		if (parts.length === 3 && parts[1] === 'caput') {
-			return hasNumber(manifest.cccChapters, parts[2]);
-		}
-		return false;
-	}
-	if (parts[0] === 'compendium') {
-		if (parts.length === 2) return hasNumber(manifest.compendium, parts[1]);
-		if (parts.length === 3 && parts[1] === 'caput') {
-			return hasNumber(manifest.compendiumChapters, parts[2]);
-		}
-		return false;
-	}
-	if (parts[0] === 'documenta' && parts.length === 2) {
-		return manifest.documents.includes(parts[1]);
-	}
-	if (parts[0] === 'preces' && parts.length === 2) {
-		return manifest.prayers.includes(parts[1]);
-	}
-	// `/summa/{part}/{question}` — an article is a FRAGMENT on the question's
-	// page (`#a3`), not a page of its own, following the documents' 2026-08-17
-	// decision rather than minting 3,113 addresses for one article of text
-	// each.
-	if (parts[0] === 'summa' && parts.length === 3) {
-		return hasNumber(manifest.summa[parts[1]] ?? [], parts[2]);
-	}
+	const address = parseHref(pathname);
+	if (!address) return false;
 
-	return false;
+	switch (address.kind) {
+		case 'bible':
+			return (manifest.bible[address.osis] ?? []).includes(address.chapter);
+		case 'ccc':
+			return manifest.ccc.includes(address.n);
+		case 'cccChapter':
+			return manifest.cccChapters.includes(address.n);
+		case 'compendium':
+			return manifest.compendium.includes(address.n);
+		case 'compendiumChapter':
+			return manifest.compendiumChapters.includes(address.n);
+		case 'document':
+			return manifest.documents.includes(address.slug);
+		case 'prayer':
+			return manifest.prayers.includes(address.slug);
+		// `/summa/{part}/{question}` — an article is a FRAGMENT on the
+		// question's page (`#a3`), so a part slug naming no part simply finds no
+		// question list here.
+		case 'summa':
+			return (manifest.summa[address.part] ?? []).includes(address.question);
+	}
 }

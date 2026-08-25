@@ -20,6 +20,7 @@
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import { t } from '$lib/i18n.svelte';
 
 	/** `prayerIndexLang`, not `resolveEditionTag`: English (UK) is five prayers
@@ -52,7 +53,9 @@
 				<ul class="prayer-list">
 					{#each group.prayers as meta (meta.slug)}
 						<li>
-							<a class="prayer-link" href={`/preces/${meta.slug}`}>{meta.title}</a>
+							<a class="prayer-link" href={hrefFor({ kind: 'prayer', slug: meta.slug })}>
+								{meta.title}
+							</a>
 						</li>
 					{/each}
 				</ul>

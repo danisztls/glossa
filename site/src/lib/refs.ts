@@ -25,7 +25,7 @@ import {
 	summaQuestionExists,
 	workIdToEdition
 } from './corpus';
-import { summaPartSlug } from './route-manifest';
+import { hrefFor, summaPartSlug, type Address } from './address';
 import { setDocumentTitleSource, type RefSegment } from './refs-grammar';
 import { isDivergentBook, resolveVulgate } from './versification';
 
@@ -86,12 +86,12 @@ function firstLocusSection(locus: string | null): number | undefined {
  * cover, so this looks up the exact-language edition directly and emits no
  * link at all if that specific edition doesn't have the section.
  */
-export function refHref(
+export function refAddress(
 	seg: RefSegment,
 	ctx: { bibleWorkId?: string; lang?: string }
-): string | undefined {
-	if (seg.kind === 'ccc') return `/catechismus/${seg.n}`;
-	if (seg.kind === 'compendium') return `/compendium/${seg.n}`;
+): Address | undefined {
+	if (seg.kind === 'ccc') return { kind: 'ccc', n: seg.n };
+	if (seg.kind === 'compendium') return { kind: 'compendium', n: seg.n };
 	if (seg.kind === 'summa') {
 		// EDITION-FREE, and it has to be. Every other work type here either has
 		// an edition in each interface language (CCC, Compendium) or checks the
@@ -109,16 +109,17 @@ export function refHref(
 		// and Compendium URLs edition-free, arriving at the same answer from a
 		// different direction.
 		if (!summaQuestionExists(seg.part, seg.question)) return undefined;
-		const base = `/summa/${summaPartSlug(seg.part)}/${seg.question}`;
+		const part = summaPartSlug(seg.part);
 		// The article is validated, never trusted: the Portuguese archive's
 		// OCR produces article numbers that do not exist ("a. l" read as 1
 		// where the article is 4), and a citation naming only a question is
 		// ordinary. Either way the question page is a correct destination, so
 		// an unusable article degrades to it rather than to no link at all.
-		if (seg.article !== null && summaArticleExists(seg.part, seg.question, seg.article)) {
-			return `${base}#a${seg.article}`;
-		}
-		return base;
+		const article =
+			seg.article !== null && summaArticleExists(seg.part, seg.question, seg.article)
+				? seg.article
+				: null;
+		return { kind: 'summa', part, question: seg.question, article };
 	}
 	if (seg.kind === 'documentTitle') {
 		// The reader's own language edition, for the same reason the siglum
@@ -137,9 +138,9 @@ export function refHref(
 		// 9,315 prerendered files for one section of text each). `#s{n}` is the
 		// same anchor the reading view has always carried.
 		if (n !== undefined && documentSectionExists(workId, n)) {
-			return `/documenta/${seg.slug}#s${n}`;
+			return { kind: 'document', slug: seg.slug, n };
 		}
-		return `/documenta/${seg.slug}`;
+		return { kind: 'document', slug: seg.slug };
 	}
 	if (seg.kind === 'document') {
 		if (!seg.slug) return undefined; // recognized siglum, but not an ingested document (or PT, which never resolves one)
@@ -149,7 +150,7 @@ export function refHref(
 		const workId = getDocumentGroup(seg.slug)?.manifests[targetLang]?.id;
 		if (!workId || !documentSectionExists(workId, n)) return undefined;
 		// Fragment, not a path segment — see the `documentTitle` branch above.
-		return `/documenta/${seg.slug}#s${n}`;
+		return { kind: 'document', slug: seg.slug, n };
 	}
 	if (seg.kind !== 'scripture') return undefined; // 'text' never links
 
@@ -218,41 +219,61 @@ export function refHref(
 		}
 	}
 
-	const anchor = anchorVerse !== undefined ? `#v${anchorVerse}` : '';
-
 	/**
 	 * A multi-verse reference carries its whole extent, not just its first
-	 * verse: `Jn 1:1-7` links to `?v=1-7#v1`, so the reader arrives knowing
+	 * verse: `Jn 1:1-7` reaches `?v=1-7#v1`, so the reader arrives knowing
 	 * where the cited passage ENDS as well as where it starts. Landing on
 	 * verse 1 of a long chapter with no indication that the citation runs
 	 * through verse 7 is the single most common thing a scripture link can
-	 * get wrong.
-	 *
-	 * The extent goes in the QUERY and the scroll target stays in the hash,
-	 * rather than inventing a `#v1-7` fragment. Prerendering runs with
-	 * `handleMissingId: 'fail'`, which is a genuinely useful check — it is
-	 * what caught the Luke 2:61 citation — and a range fragment would either
-	 * defeat it or require an element per range, of which there are
-	 * thousands. `#v1` remains a real id on a real element, so the check
-	 * keeps working and browsers still scroll natively with no JavaScript.
+	 * get wrong. (`hrefFor` owns how that is spelled; see its own note on why
+	 * the extent goes in the query and the scroll target stays in the hash.)
 	 *
 	 * Bounded by min/max rather than by `verses[0]`/`verses.at(-1)`: the
 	 * corpus's verse arrays come from range expansion and comma lists alike
 	 * ("Jn 1:1-7" and "Jn 1:7,1" both land here), so they are not guaranteed
-	 * sorted. Only emitted when the range spans more than one verse — a
-	 * single-verse citation is fully described by its anchor already.
+	 * sorted. Which is also why the extent's start and the ANCHOR can differ —
+	 * "Jn 1:7,1" spans 1-7 but is about verse 7 — and why `Address` carries
+	 * both.
 	 */
 	const extent =
 		anchorVerse !== undefined && seg.verses.length > 1
 			? verseExtent(seg.osis, seg.chapter, seg.verses, chapterN, exists)
 			: undefined;
-	const query = extent ? `?v=${extent.from}-${extent.to}` : '';
 
 	// Edition-free (docs/decisions.md #2, which the Bible now follows too).
 	// `ctx.bibleWorkId` is still required above: it decides whether the
 	// book/chapter/verse EXISTS for this reader, which is what stops a dead
 	// link — it just no longer appears in the URL.
-	return `/scriptura/${seg.osis}/${chapterN}${query}${anchor}`;
+	if (anchorVerse === undefined) return { kind: 'bible', osis: seg.osis, chapter: chapterN };
+	if (!extent) {
+		// A single verse (or a list of which only one survived conversion) is
+		// fully described by its anchor.
+		return {
+			kind: 'bible',
+			osis: seg.osis,
+			chapter: chapterN,
+			from: anchorVerse,
+			to: anchorVerse
+		};
+	}
+	return {
+		kind: 'bible',
+		osis: seg.osis,
+		chapter: chapterN,
+		from: extent.from,
+		to: extent.to,
+		...(anchorVerse !== extent.from ? { anchor: anchorVerse } : {})
+	};
+}
+
+/** Where a segment points, as a URL. `refAddress` decides the place; this is
+ *  only the spelling of it. */
+export function refHref(
+	seg: RefSegment,
+	ctx: { bibleWorkId?: string; lang?: string }
+): string | undefined {
+	const address = refAddress(seg, ctx);
+	return address && hrefFor(address);
 }
 
 /**

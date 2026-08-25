@@ -13,6 +13,7 @@
 		listEditions
 	} from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { setPosition } from '$lib/reading-position';
 	// Drop cap on the chapter's opening verse only, and only when no section
@@ -101,7 +102,7 @@
 	 * `?v=` span or `?compare=` of the moment: `/scriptura/exod/3#v12` is the
 	 * verse, not the way this reader happened to arrive at it.
 	 */
-	const chapterHref = $derived(`/scriptura/${data.osis}/${data.chapterN}`);
+	const chapterHref = $derived(hrefFor({ kind: 'bible', osis: data.osis, chapter: data.chapterN }));
 	const verseHref = (n: number) => `${chapterHref}#v${n}`;
 
 	/**
@@ -353,9 +354,13 @@
 			fullTitle: manifest.title !== label ? manifest.title : null,
 			// A section is an anchor on the document's single page, not a page
 			// of its own — the same `#s{n}` target `refs.ts` links to. It is
-			// also a previewable address (`linkPreviewHref.ts`), so hovering a
+			// also a previewable address (`address.ts`), so hovering a
 			// section number shows the text itself, not just its number.
-			refs: sections.map((n) => ({ n, label: `§${n}`, href: `/documenta/${slug}#s${n}` }))
+			refs: sections.map((n) => ({
+				n,
+				label: `§${n}`,
+				href: hrefFor({ kind: 'document', slug, n })
+			}))
 		};
 	}
 
@@ -379,7 +384,7 @@
 								refs: paragraphs.map((n) => ({
 									n,
 									label: `¶${n}`,
-									href: `/catechismus/${n}`
+									href: hrefFor({ kind: 'ccc', n })
 								}))
 							}
 						]
@@ -481,11 +486,11 @@
 			<UnitNav
 				ariaLabel="Chapter navigation"
 				prev={prev && {
-					href: `/scriptura/${prev.osis}/${prev.chapter}`,
+					href: hrefFor({ kind: 'bible', osis: prev.osis, chapter: prev.chapter }),
 					label: t('bible.prevChapter')
 				}}
 				next={next && {
-					href: `/scriptura/${next.osis}/${next.chapter}`,
+					href: hrefFor({ kind: 'bible', osis: next.osis, chapter: next.chapter }),
 					label: t('bible.nextChapter')
 				}}
 			/>
@@ -720,11 +725,11 @@
 			<UnitNav
 				ariaLabel="Chapter navigation"
 				prev={prev && {
-					href: `/scriptura/${prev.osis}/${prev.chapter}`,
+					href: hrefFor({ kind: 'bible', osis: prev.osis, chapter: prev.chapter }),
 					label: t('bible.prevChapter')
 				}}
 				next={next && {
-					href: `/scriptura/${next.osis}/${next.chapter}`,
+					href: hrefFor({ kind: 'bible', osis: next.osis, chapter: next.chapter }),
 					label: t('bible.nextChapter')
 				}}
 			/>
