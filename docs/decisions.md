@@ -3451,3 +3451,69 @@ levelling rule is real, plus `sacerdotalis.pt`'s closing _Intercessão de
 Maria_. `lumen-gentium.pt` and `gaudium-et-spes.pt`, which the two rejected
 rules pulled in opposite directions, are untouched. Corpus-wide oracle
 differences: **175 → 168**.
+
+## 2026-08-25 — What the language bar says, and what the server actually has
+
+The nine-language pass raised an obvious question — which languages does the
+Holy See actually publish an encyclical in — and the cheap answer turned out
+to be wrong.
+
+Every vatican.va document page prints its own language bar, so the set can be
+read off `raw/` at zero cost. Done that way over the 232 magisterial documents
+on the site, it reports Italian 85%, Spanish 40%, French 37%, German 21%.
+Fetching the pages says otherwise:
+
+|     | bar says | actually there |
+| --- | -------- | -------------- |
+| fr  | 32%      | **94%**        |
+| de  | 15%      | **94%**        |
+| it  | 83%      | **94%**        |
+| es  | 36%      | **94%**        |
+| la  | 71%      | 72%            |
+| pl  | 9%       | 10%            |
+| ar  | 3%       | 4%             |
+| ru  | 2%       | 3%             |
+
+**The bar under-reports by a factor of six for German and French.** It is a
+navigation widget maintained per page, not an index of what exists, and the
+modern shell's URLs are one path substitution apart whether the bar mentions
+them or not. Latin and the three low-coverage languages match, which is what
+made the discrepancy legible rather than a suspicion: the bar is not wrong at
+random, it is stale on exactly the editions added after the page was built.
+
+So the corpus now holds every encyclical in the nine interface languages and
+Latin as **raw only** — 1,007 pages, no works — and the absent ledger carries
+723 entries recording the (language, document) pairs that genuinely 404, so no
+future run re-asks. `phase2 --fetch-only` exists for this: acquiring sources
+and deciding what to publish are separate decisions on separate timescales.
+
+## 2026-08-25 — What is missing from the site, and why
+
+Discovery reads the **English** index only
+(`discover_encyclicals`), deriving every other language by substituting the
+path segment. A document the Holy See never put into English is therefore
+invisible: never discovered, never fetched, never recorded as absent. Every
+document each English index does list is written — 216 of 216 — so the gap is
+entirely in what those indexes show.
+
+Comparing each pontificate's Italian index against its English one (24
+requests) gives the whole answer:
+
+- **Seven encyclicals are listed in Italian and not in English.** Six are Pius
+  XI's — `studiorum-ducem` (1923, St Thomas Aquinas), `ecclesiam-dei` (1923,
+  St Josaphat), `rerum-orientalium` (1928, oriental studies),
+  `quinquagesimo-ante-anno` (1929), `ad-salutem-humani` (1930, St Augustine),
+  `lux-veritatis` (1931, Ephesus) — and one is Pius XII's `orientales` (1952).
+- **Pius IX's ~38 encyclicals are absent for a different reason.** Both
+  `/content/pius-ix/en/encyclicals.index.html` and its Italian twin 404. That
+  pontificate is not published under the `content/{pontiff}/{lang}/` shape at
+  all, so no language of discovery would find it; it needs a different source
+  path, not a different language.
+- John Paul I's index also 404s, correctly: he reigned 33 days and wrote none.
+- Leo XIII's Italian index lists 65 against English's 86, and adds nothing —
+  Italian is the wider edition overall, not everywhere.
+
+Ingesting the seven is a separate decision and is not taken here: they would
+be the corpus's first Italian-only works, and `CONTENT_LANG_FALLBACK` resolves
+a reader's language, then English, then Latin — a chain none of them can
+satisfy.
