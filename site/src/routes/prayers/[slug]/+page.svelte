@@ -67,9 +67,10 @@
 	import { compareColumnLabel, languageDisplayName } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
+	import UnitNav from '$lib/components/UnitNav.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import CompareCopyrightHeader from '$lib/components/CompareCopyrightHeader.svelte';
 	import PrayerBlocks from '$lib/components/PrayerBlocks.svelte';
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
 	import { setPosition } from '$lib/reading-position';
@@ -281,18 +282,6 @@
 	</nav>
 {/snippet}
 
-<!-- What identifies the second column in `ReadingBar`. It was a static label
-     reading "Latina" for as long as Latin was the only thing this route could
-     put there; now that it is a choice, it is the same picker every other
-     reading route uses. -->
-{#snippet comparisonEdition()}
-	<ComparisonEditionMenu
-		editions={comparisons.map((c) => c.work)}
-		current={compareTarget}
-		onselect={chooseComparisonEdition}
-	/>
-{/snippet}
-
 {#snippet leftCell(p: Prayer)}
 	{@render prayerBody(p, current?.work.language ?? 'en')}
 {/snippet}
@@ -352,7 +341,11 @@
 				canCompare={comparisons.length > 0}
 				{compareActive}
 				onToggleCompare={toggleCompare}
-				comparison={comparisonEdition}
+				comparison={{
+					editions: comparisons.map((c) => c.work),
+					current: compareTarget,
+					onselect: chooseComparisonEdition
+				}}
 			/>
 
 			{#if compareActive && secondary}
@@ -395,14 +388,7 @@
 			     notices linking to different source lists is exactly the case
 			     `CopyrightNotice` exists to make checkable. -->
 			{#if compareActive && secondary}
-				<div class="compare-unit-header">
-					<div class="compare-unit-field compare-unit-field-left" lang={current.work.language}>
-						<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
-					</div>
-					<div class="compare-unit-field compare-unit-field-right" lang={secondary.work.language}>
-						<p class="copyright-notice"><CopyrightNotice manifest={secondary.work} /></p>
-					</div>
-				</div>
+				<CompareCopyrightHeader left={current.work} right={secondary.work} />
 			{:else}
 				<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 			{/if}
@@ -432,20 +418,19 @@
 				</div>
 			{/if}
 
-			<nav class="unit-nav" aria-label="Prayer navigation">
-				{#if current.prev}
-					<a href={`/preces/${current.prev.slug}`} rel="prev"
-						>&larr; {t('prayers.prevPrayer')} · {current.prev.title}</a
-					>
-				{:else}
-					<span></span>
-				{/if}
-				{#if current.next}
-					<a href={`/preces/${current.next.slug}`} rel="next"
-						>{t('prayers.nextPrayer')} · {current.next.title} &rarr;</a
-					>
-				{/if}
-			</nav>
+			<UnitNav
+				ariaLabel="Prayer navigation"
+				prev={current.prev && {
+					href: `/preces/${current.prev.slug}`,
+					label: t('prayers.prevPrayer'),
+					detail: current.prev.title
+				}}
+				next={current.next && {
+					href: `/preces/${current.next.slug}`,
+					label: t('prayers.nextPrayer'),
+					detail: current.next.title
+				}}
+			/>
 		</div>
 	</div>
 {/if}

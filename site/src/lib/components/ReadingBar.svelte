@@ -29,15 +29,15 @@
 	part of the row says "this edition, compared with, that edition" — the same
 	order the two columns appear in beneath.
 
-	`comparison` is a snippet rather than a `ComparisonEditionMenu` of this
-	component's own making because the routes genuinely differ in what belongs
-	there: the Bible passes `editionStyle` (it is the one work that can carry
-	two editions in the same language, so its picker names editions rather than
-	languages), and `/preces` builds its own option list, mixing this prayer's
-	sibling languages with its Latin FIELD — which is not a work and has no
-	manifest of its own to list (that route's docblock). All seven now pass a
-	picker; `/preces` passed a static label for as long as Latin was the only
-	second column it could offer.
+	`comparison` USED TO BE A SNIPPET, on the argument that the routes differed
+	in what belonged there: the Bible passes `editionStyle`, and `/preces`
+	"builds its own option list, mixing this prayer's sibling languages with
+	its Latin FIELD — which is not a work and has no manifest of its own".
+	The second half of that stopped being true when Latin became a real prayer
+	edition (docs/decisions.md, 2026-08-25) and `/preces` started passing
+	ordinary manifests like everyone else; the first half was always just a
+	boolean. What was left was eight copies of one `ComparisonEditionMenu`
+	call differing only in where the array came from, so the bar builds it.
 
 	Sticks BELOW the site header, not at the viewport top, using
 	`--site-header-height` — published by `+layout.svelte` from a
@@ -47,12 +47,27 @@
 	below for who needs it.
 -->
 <script lang="ts">
-	import type { Snippet } from 'svelte';
 	import EditionMenu from './EditionMenu.svelte';
+	import ComparisonEditionMenu from './ComparisonEditionMenu.svelte';
+	import type { WorkManifest } from '$lib/types';
 	import CompareToggle from './CompareToggle.svelte';
 	import BookmarkButton from './BookmarkButton.svelte';
 	import PrintButton from './PrintButton.svelte';
 	import { publishHeight } from '$lib/sticky-height';
+
+	/** What the second column shows, and how the reader changes it. The
+	 *  caller supplies the list because only it knows which editions this
+	 *  address actually has text for — see each route's `others`. */
+	export interface ComparisonPicker {
+		editions: WorkManifest[];
+		/** The work id currently in the second column, if any. */
+		current: string | undefined;
+		onselect: (workId: string) => void;
+		/** Name editions rather than languages. The Bible only: it is the one
+		 *  work that can carry two editions in the same language, so its
+		 *  picker has something to disambiguate. */
+		editionStyle?: boolean;
+	}
 
 	interface Props {
 		/** The page's own canonical address, for the bookmark. */
@@ -70,7 +85,7 @@
 		onToggleCompare?: () => void;
 		/** The picker that names and chooses the second column. Rendered only
 		 *  while comparing. */
-		comparison?: Snippet;
+		comparison?: ComparisonPicker;
 	}
 
 	let { bookmarkHref, canCompare, compareActive, onToggleCompare, comparison }: Props = $props();
@@ -105,7 +120,12 @@
 			<CompareToggle active={compareActive} onclick={onToggleCompare} />
 		{/if}
 		{#if compareActive && comparison}
-			{@render comparison()}
+			<ComparisonEditionMenu
+				editions={comparison.editions}
+				current={comparison.current}
+				onselect={comparison.onselect}
+				editionStyle={comparison.editionStyle}
+			/>
 		{/if}
 	</div>
 </div>

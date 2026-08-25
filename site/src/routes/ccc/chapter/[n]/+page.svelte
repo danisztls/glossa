@@ -21,7 +21,6 @@
 	import HeadingText from '$lib/components/HeadingText.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
 	import {
@@ -179,16 +178,6 @@
 	<title>{headingText()} — {t('home.title')}</title>
 </svelte:head>
 
-<!-- What identifies the second column in `ReadingBar` — see that component
-     for why the route supplies it rather than the bar building its own. -->
-{#snippet comparisonEdition()}
-	<ComparisonEditionMenu
-		editions={editions.others.map((e) => e.work)}
-		current={editions.secondaryWorkId}
-		onselect={chooseComparisonEdition}
-	/>
-{/snippet}
-
 {#snippet leftCell(paragraph: CccParagraph)}
 	<div class="para" class:in-brief={paragraph.in_brief}>
 		<div class="para-text">
@@ -224,7 +213,11 @@
 				canCompare={editions.others.length > 0}
 				compareActive={editions.compareActive}
 				onToggleCompare={toggleCompare}
-				comparison={comparisonEdition}
+				comparison={{
+					editions: editions.others.map((e) => e.work),
+					current: editions.secondaryWorkId,
+					onselect: chooseComparisonEdition
+				}}
 			/>
 
 			{#if editions.compareActive && editions.secondary}

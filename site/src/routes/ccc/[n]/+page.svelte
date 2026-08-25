@@ -9,8 +9,8 @@
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
+	import UnitNav from '$lib/components/UnitNav.svelte';
 	import { alignByNumber } from '$lib/compare';
 	import {
 		adoptCompareFromUrl,
@@ -86,16 +86,6 @@
 	<title>CCC {data.n} — {t('home.title')}</title>
 </svelte:head>
 
-<!-- What identifies the second column in `ReadingBar` — see that component
-     for why the route supplies it rather than the bar building its own. -->
-{#snippet comparisonEdition()}
-	<ComparisonEditionMenu
-		editions={editions.others.map((e) => e.work)}
-		current={editions.secondaryWorkId}
-		onselect={chooseComparisonEdition}
-	/>
-{/snippet}
-
 {#snippet leftCell(paragraph: CccParagraph)}
 	<CccParagraphText {paragraph} lang={editions.lang} />
 {/snippet}
@@ -129,7 +119,11 @@
 				canCompare={editions.others.length > 0}
 				compareActive={editions.compareActive}
 				onToggleCompare={toggleCompare}
-				comparison={comparisonEdition}
+				comparison={{
+					editions: editions.others.map((e) => e.work),
+					current: editions.secondaryWorkId,
+					onselect: chooseComparisonEdition
+				}}
 			/>
 
 			{#if editions.compareActive && editions.secondary}
@@ -273,20 +267,19 @@
 				</p>
 			{/if}
 
-			<nav class="unit-nav" aria-label="Paragraph navigation">
-				{#if editions.current.prev}
-					<a href={`/catechismus/${editions.current.prev.n}`} rel="prev"
-						>&larr; {t('ccc.prevParagraph')} · ¶{editions.current.prev.n}</a
-					>
-				{:else}
-					<span></span>
-				{/if}
-				{#if editions.current.next}
-					<a href={`/catechismus/${editions.current.next.n}`} rel="next"
-						>{t('ccc.nextParagraph')} · ¶{editions.current.next.n} &rarr;</a
-					>
-				{/if}
-			</nav>
+			<UnitNav
+				ariaLabel="Paragraph navigation"
+				prev={editions.current.prev && {
+					href: `/catechismus/${editions.current.prev.n}`,
+					label: t('ccc.prevParagraph'),
+					detail: `¶${editions.current.prev.n}`
+				}}
+				next={editions.current.next && {
+					href: `/catechismus/${editions.current.next.n}`,
+					label: t('ccc.nextParagraph'),
+					detail: `¶${editions.current.next.n}`
+				}}
+			/>
 		</article>
 
 		<!-- Hidden below 80rem, alongside `.reading-layout`'s own breakpoint

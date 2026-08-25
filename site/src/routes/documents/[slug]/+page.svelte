@@ -32,7 +32,6 @@
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
 	import { compare } from '$lib/compare-pref.svelte';
@@ -535,16 +534,6 @@
 	{@render structureHeadings(secondaryHeadingsByStart.get(n) ?? [], secondaryLang ?? lang, false)}
 {/snippet}
 
-<!-- What identifies the second column in `ReadingBar` — see that component
-     for why this is the route's to supply and not its own. -->
-{#snippet comparisonEdition()}
-	<ComparisonEditionMenu
-		editions={otherEditions.map((e) => e.work)}
-		current={secondaryWorkId}
-		onselect={chooseComparisonEdition}
-	/>
-{/snippet}
-
 {#if metaManifest}
 	{@const secondaryManifest = secondaryLang ? data.manifestsByLang[secondaryLang] : undefined}
 	<div class="reading-layout" class:compare={compareActive}>
@@ -564,7 +553,11 @@
 				canCompare={current !== undefined && otherEditions.length > 0}
 				{compareActive}
 				onToggleCompare={toggleCompare}
-				comparison={comparisonEdition}
+				comparison={{
+					editions: otherEditions.map((e) => e.work),
+					current: secondaryWorkId,
+					onselect: chooseComparisonEdition
+				}}
 			/>
 
 			{#if current && compareActive && secondaryManifest}

@@ -7,7 +7,6 @@
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
 	import {
@@ -98,16 +97,6 @@
 	<title>{headingText()} — {t('home.title')}</title>
 </svelte:head>
 
-<!-- What identifies the second column in `ReadingBar` — see that component
-     for why the route supplies it rather than the bar building its own. -->
-{#snippet comparisonEdition()}
-	<ComparisonEditionMenu
-		editions={editions.others.map((edition) => edition.work)}
-		current={editions.secondaryWorkId}
-		onselect={chooseComparisonEdition}
-	/>
-{/snippet}
-
 {#snippet sharedCccRefs(n: number)}
 	<p class="ccc-refs-shared">
 		<span class="refs-label">{t('compendium.condenses')}</span>
@@ -146,7 +135,11 @@
 				canCompare={editions.others.length > 0}
 				compareActive={editions.compareActive}
 				onToggleCompare={toggleCompare}
-				comparison={comparisonEdition}
+				comparison={{
+					editions: editions.others.map((edition) => edition.work),
+					current: editions.secondaryWorkId,
+					onselect: chooseComparisonEdition
+				}}
 			/>
 
 			{#if editions.compareActive && editions.secondary}

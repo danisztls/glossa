@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import { compareColumnLabel, flattenCompendiumStructure } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import CompareCopyrightHeader from '$lib/components/CompareCopyrightHeader.svelte';
 	import { content } from '$lib/content.svelte';
 	import { displayTitle } from '$lib/titles';
 	import { setPosition } from '$lib/reading-position';
@@ -11,8 +12,8 @@
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
+	import UnitNav from '$lib/components/UnitNav.svelte';
 	import { alignByNumber } from '$lib/compare';
 	import {
 		adoptCompareFromUrl,
@@ -89,16 +90,6 @@
 	<title>{t('compendium.question')} {data.n} — {t('home.title')}</title>
 </svelte:head>
 
-<!-- What identifies the second column in `ReadingBar` — see that component
-     for why the route supplies it rather than the bar building its own. -->
-{#snippet comparisonEdition()}
-	<ComparisonEditionMenu
-		editions={editions.others.map((e) => e.work)}
-		current={editions.secondaryWorkId}
-		onselect={chooseComparisonEdition}
-	/>
-{/snippet}
-
 {#snippet sharedCccRefs(n: number)}
 	<p class="ccc-refs-shared">
 		<span class="refs-label">{t('compendium.condenses')}</span>
@@ -140,7 +131,11 @@
 				canCompare={editions.others.length > 0}
 				compareActive={editions.compareActive}
 				onToggleCompare={toggleCompare}
-				comparison={comparisonEdition}
+				comparison={{
+					editions: editions.others.map((e) => e.work),
+					current: editions.secondaryWorkId,
+					onselect: chooseComparisonEdition
+				}}
 			/>
 
 			<!--
@@ -160,20 +155,7 @@
 				<!-- One row per field (`.compare-unit-header`, app.css). Neither
 				     field can collapse: the copyright notices link to different
 				     source pages, and the two pickers are different controls. -->
-				<div class="compare-unit-header">
-					<div
-						class="compare-unit-field compare-unit-field-left"
-						lang={editions.current.work.language}
-					>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
-					</div>
-					<div
-						class="compare-unit-field compare-unit-field-right"
-						lang={editions.secondary.work.language}
-					>
-						<p class="copyright-notice"><CopyrightNotice manifest={editions.secondary.work} /></p>
-					</div>
-				</div>
+				<CompareCopyrightHeader left={editions.current.work} right={editions.secondary.work} />
 			{:else}
 				<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
 			{/if}
@@ -202,20 +184,19 @@
 				</div>
 			{/if}
 
-			<nav class="unit-nav" aria-label="Question navigation">
-				{#if editions.current.prev}
-					<a href={`/compendium/${editions.current.prev.n}`} rel="prev"
-						>&larr; {t('compendium.prevQuestion')} · {editions.current.prev.n}</a
-					>
-				{:else}
-					<span></span>
-				{/if}
-				{#if editions.current.next}
-					<a href={`/compendium/${editions.current.next.n}`} rel="next"
-						>{t('compendium.nextQuestion')} · {editions.current.next.n} &rarr;</a
-					>
-				{/if}
-			</nav>
+			<UnitNav
+				ariaLabel="Question navigation"
+				prev={editions.current.prev && {
+					href: `/compendium/${editions.current.prev.n}`,
+					label: t('compendium.prevQuestion'),
+					detail: String(editions.current.prev.n)
+				}}
+				next={editions.current.next && {
+					href: `/compendium/${editions.current.next.n}`,
+					label: t('compendium.nextQuestion'),
+					detail: String(editions.current.next.n)
+				}}
+			/>
 		</article>
 
 		<!-- No mobile counterpart to preserve — this route had no chapter/TOC

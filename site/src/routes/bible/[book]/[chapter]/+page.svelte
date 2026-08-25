@@ -23,8 +23,8 @@
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
-	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
+	import UnitNav from '$lib/components/UnitNav.svelte';
 	import { alignByNumber, numberSetsDiffer, pickComparisonEdition } from '$lib/compare';
 	import { compare } from '$lib/compare-pref.svelte';
 	import {
@@ -417,16 +417,6 @@
      now, printed once in the gutter between the columns — see `CompareUnit`
      in `$lib/compare.ts`, and the `unit` prop passed to `CompareGrid` below
      for this route's addresses. -->
-<!-- What identifies the second column in `ReadingBar` — see that component
-     for why the route supplies it rather than the bar building its own. -->
-{#snippet comparisonEdition()}
-	<ComparisonEditionMenu
-		editions={otherEditions}
-		current={secondaryWorkId}
-		onselect={chooseComparisonEdition}
-		editionStyle
-	/>
-{/snippet}
 
 {#snippet verseCell(verse: Verse)}
 	<p class="compare-verse">{verse.text}</p>
@@ -471,20 +461,17 @@
 				<p class="intro-note">{t('bible.introUnavailable')}</p>
 			{/if}
 
-			<nav class="unit-nav" aria-label="Chapter navigation">
-				{#if prev}
-					<a href={`/scriptura/${prev.osis}/${prev.chapter}`} rel="prev">
-						&larr; {t('bible.prevChapter')}
-					</a>
-				{:else}
-					<span></span>
-				{/if}
-				{#if next}
-					<a href={`/scriptura/${next.osis}/${next.chapter}`} rel="next">
-						{t('bible.nextChapter')} &rarr;
-					</a>
-				{/if}
-			</nav>
+			<UnitNav
+				ariaLabel="Chapter navigation"
+				prev={prev && {
+					href: `/scriptura/${prev.osis}/${prev.chapter}`,
+					label: t('bible.prevChapter')
+				}}
+				next={next && {
+					href: `/scriptura/${next.osis}/${next.chapter}`,
+					label: t('bible.nextChapter')
+				}}
+			/>
 		</article>
 
 		<aside class="reading-aside desktop-picker" aria-label={t('bible.pickBook')} role="navigation">
@@ -507,7 +494,12 @@
 				canCompare={otherEditions.length > 0}
 				{compareActive}
 				onToggleCompare={toggleCompare}
-				comparison={comparisonEdition}
+				comparison={{
+					editions: otherEditions,
+					current: secondaryWorkId,
+					onselect: chooseComparisonEdition,
+					editionStyle: true
+				}}
 			/>
 			{#if compareActive && secondary}
 				<!-- Compare mode's WHOLE header is per-edition, merged into one
@@ -667,20 +659,17 @@
 				</section>
 			{/if}
 
-			<nav class="unit-nav" aria-label="Chapter navigation">
-				{#if prev}
-					<a href={`/scriptura/${prev.osis}/${prev.chapter}`} rel="prev">
-						&larr; {t('bible.prevChapter')}
-					</a>
-				{:else}
-					<span></span>
-				{/if}
-				{#if next}
-					<a href={`/scriptura/${next.osis}/${next.chapter}`} rel="next">
-						{t('bible.nextChapter')} &rarr;
-					</a>
-				{/if}
-			</nav>
+			<UnitNav
+				ariaLabel="Chapter navigation"
+				prev={prev && {
+					href: `/scriptura/${prev.osis}/${prev.chapter}`,
+					label: t('bible.prevChapter')
+				}}
+				next={next && {
+					href: `/scriptura/${next.osis}/${next.chapter}`,
+					label: t('bible.nextChapter')
+				}}
+			/>
 		</article>
 
 		<!-- Hidden below 80rem — `.mobile-picker` above is this component's
@@ -922,12 +911,6 @@
 	.cited-in a {
 		text-decoration-color: var(--color-border);
 		text-underline-offset: 0.15em;
-	}
-
-	/* `.unit-nav` (app.css) covers everything else; this route alone keeps a
-	   larger top margin than the other three unit-nav callers. */
-	.unit-nav {
-		margin-top: 2.5rem;
 	}
 
 	/* Two BookChapterPicker instances, CSS-swapped by breakpoint rather than
