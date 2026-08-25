@@ -71,6 +71,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import (
     Fetcher,
     FetchPolicy,
+    corrections_receipt,
+    load_corrections,
     raw_root,
     require_corpus,
     works_root,
@@ -469,6 +471,7 @@ def validate(book_docs: list[dict], sample: bool) -> tuple[bool, list[str]]:
 
     same = differ = only_mine = only_theirs = 0
     examples: list[str] = []
+    missing: list[str] = []
     for book in book_docs:
         theirs = prior.get(book["osis"], {})
         mine = {
@@ -490,7 +493,11 @@ def validate(book_docs: list[dict], sample: bool) -> tuple[bool, list[str]]:
                         f"      was: {other[:110]}\n"
                         f"      now: {text[:110]}"
                     )
-        only_theirs += sum(1 for key in theirs if key not in mine)
+        for key in sorted(theirs):
+            if key in mine:
+                continue
+            only_theirs += 1
+            missing.append(f"{book['osis']} {key[0]}:{key[1]}")
 
     total = same + differ
     rate = (same / total * 100) if total else 0.0
@@ -499,6 +506,18 @@ def validate(book_docs: list[dict], sample: bool) -> tuple[bool, list[str]]:
         f"already on disk, folding whitespace and punctuation away; {differ} differ, "
         f"{only_mine} are new here, {only_theirs} are only in the old scrape"
     )
+    if missing:
+        # THE NUMBER THAT DECIDES THE RE-SOURCING. A verse the old scrape has
+        # and this one does not is Scripture that would disappear from the
+        # corpus, which no amount of new apparatus pays for. Listed rather
+        # than counted because the answer depends entirely on whether they
+        # cluster -- a contiguous run is one source defect, and scattered
+        # singletons are versification.
+        report.append(
+            f"  {len(missing)} verse(s) in the old scrape and NOT here: "
+            + ", ".join(missing[:40])
+            + (f" (+{len(missing) - 40} more)" if len(missing) > 40 else "")
+        )
     if examples:
         report.append("  Differences to read before accepting the change of source:")
         report += [f"    {e}" for e in examples]
@@ -530,7 +549,12 @@ def census(book_docs: list[dict]) -> dict[str, int]:
 
 
 def write_output(
-    book_docs: list[dict], *, sample: bool, counts: dict[str, int], generated_at: str
+    book_docs: list[dict],
+    *,
+    sample: bool,
+    counts: dict[str, int],
+    receipt: dict,
+    generated_at: str,
 ) -> None:
     notes = (
         "1956 edition (revised from the original languages with L. G. da Fonseca "
@@ -581,12 +605,14 @@ def write_output(
         "generated_at": generated_at,
         "psalm_numbering": "vulgate",
         "books": [b["osis"] for b in book_docs],
+        "corrections_applied": receipt["count"],
     }
 
     write_stamped_json(
         work_dir(),
         {
             "manifest.json": manifest,
+            "corrections-applied.json": receipt,
             **{f"books/{b['osis']}.json": b for b in book_docs},
         },
         generated_at,
@@ -642,24 +668,19 @@ def main() -> int:
     args = parser.parse_args()
     require_corpus()
 
-    # NO CORRECTIONS ARE LOADED HERE, and that is deliberate rather than an
-    # omission. `pipeline/corrections/bible.matos-soares.pt.json` holds 39
-    # entries, and every one of them describes a defect in the LIRIOCATOLICO
-    # scan -- capital I read for lowercase l ("Ihe" for "lhe"), words split
-    # across whitespace, and the adjudications that decided which of those were
-    # real. This transcription is a different one and does not have those
-    # defects; applying the file here would fail its own drift guard on the
-    # first entry, which is the layer working correctly.
-    #
-    # So a collision in THIS source has no correction to resolve it and is
-    # fatal, exactly as it should be: `apply_segment_corrections` is called
-    # with an empty list, and if the run stops naming a chapter, that chapter
-    # needs a filed correction before this edition can ship. The Douay-Rheims
-    # needed eleven; how many this one needs is not yet known.
-    segment_corrections: list[dict] = []
+    # THE CORRECTIONS FILED HERE ARE THIS SOURCE'S, and the previous ones are
+    # not. `pipeline/corrections/bible.matos-soares.pt.json` held 39 entries
+    # against the LIRIOCATOLICO scan -- capital I read for lowercase l ("Ihe"
+    # for "lhe"), words split across whitespace, and the adjudications that
+    # decided which of those were real. This transcription does not have that
+    # class of defect, and applying them here would fail the drift guard on the
+    # first entry, which is the layer working correctly. They moved to
+    # `pipeline/corrections/retired/`, which `filed_work_ids` does not read.
+    corrections = load_corrections(WORK_ID)
+    segment_corrections = [c for c in corrections if "record" in c["locator"]]
 
     print(f"Fetching {SOURCE_EDITION} from {BASE_URL}, one request per chapter\n")
-    book_docs, anomalies, _applied = run_scrape(
+    book_docs, anomalies, applied = run_scrape(
         sample=args.sample,
         offline=args.offline,
         refresh=args.refresh,
@@ -694,8 +715,18 @@ def main() -> int:
         return 0
 
     generated_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    receipt = corrections_receipt(WORK_ID, applied, corrections, generated_at)
+    print(
+        f"\nCorrections layer: {receipt['count']} applied, "
+        f"{len(receipt['unresolved'])} documented unresolved/not-a-defect "
+        "(see corrections-applied.json)"
+    )
     write_output(
-        book_docs, sample=args.sample, counts=counts, generated_at=generated_at
+        book_docs,
+        sample=args.sample,
+        counts=counts,
+        receipt=receipt,
+        generated_at=generated_at,
     )
     print(f"\nWrote {len(book_docs)} book file(s) to {work_dir()}")
     return 0

@@ -404,8 +404,19 @@ def apply_segment_corrections(
     plus the `seq` that orders a join); `anchor` carries a distinctive piece
     of the segment's text so the drift guard still fails loudly if the source
     silently rewrites the words under a stable id.
+
+    `"drop": true` REMOVES the record instead of re-filing it, and exists
+    because some mis-filed segments have no right verse number to be given.
+    The Matos Soares transcription duplicates Esdras 4:14-22 under chapter 6,
+    where chapter 4 already carries every one of those verses with the same
+    text; re-filing them would collide with the originals, and keeping them
+    would put Artaxerxes's letter in the middle of the dedication of the
+    Temple. A dropped record still declares `from` and `anchor`, so the guard
+    is exactly as strict as it is for a re-filing -- the difference is what
+    happens after the claim is verified, not how much is claimed.
     """
     applied: list[dict] = []
+    dropped: list[dict] = []
     by_id = {r.get("_id"): r for r in chapter}
     for c in corrections:
         if c.get("resolution"):
@@ -425,14 +436,22 @@ def apply_segment_corrections(
                 f"correction {c['id']!r}: record {loc['record']!r} no longer contains "
                 f"{anchor!r} (the source rewrote the segment under a stable id)"
             )
-        for key, expected in c["from"].items():
+        for key, expected in (c.get("from") or {}).items():
             if record.get(key) != expected:
                 raise CorrectionDriftError(
                     f"correction {c['id']!r}: expected {key}={expected!r} on record "
                     f"{loc['record']!r}, found {record.get(key)!r}"
                 )
-        record.update(c["to"])
+        if c.get("drop"):
+            dropped.append(record)
+        else:
+            record.update(c["to"])
         applied.append(dict(c))
+
+    # Removed after the loop, not during it, so `by_id` and the correction
+    # order stay valid while several corrections are being checked.
+    for record in dropped:
+        chapter.remove(record)
     return applied
 
 
