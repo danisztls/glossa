@@ -4330,6 +4330,7 @@ def parse_document(
     # (`docs/writing-descriptions.md` §3), and that holds whatever the first
     # one is called.
     best_heading_style = min((b.style for b in blocks if b.is_heading), default=0)
+    first_heading_style = next((b.style for b in blocks if b.is_heading), None)
 
     keys = sorted({depth_key(i, b) for i, b in enumerate(blocks) if b.is_heading})
     level_of = {k: i + 1 for i, k in enumerate(keys)}
@@ -4499,7 +4500,10 @@ def parse_document(
         if is_division(blk):
             division_floor, division_style = lvl, blk.style
         elif (
-            division_floor is not None and idx < body_end and blk.style > division_style
+            division_floor is not None
+            and idx < body_end
+            and blk.style > division_style
+            and blk.style != first_heading_style
         ):
             lvl = max(lvl, division_floor + 1)
         assigned.setdefault(key, lvl)

@@ -3436,6 +3436,18 @@ differences against 175 — but it cost `lumen-gentium.pt` fourteen, the very
 case the floor was written for). Corpus-wide oracle differences: **175 → 169,
 with no work worse than before**.
 
-Left unfixed and known: `spe-salvi.en`'s _Mary, Star of Hope_ still parses
-three levels deep. It is printed in the top tier's bold italic but follows the
-centred `III.`, and nothing in the typography says it leaves that division.
+That last one — _Mary, Star of Hope_ parsing three levels deep — did have a
+rule, found after those two were rejected: **a heading printed like the
+document's FIRST heading is a peer of it, not a subsection of whatever
+division precedes it.** `division_floor` is released for it. Mary is set in
+the bold italic that opens the encyclical and follows the centred `III.`,
+which is the only reason it was being buried.
+
+That is what a rule looks like when it is about the page rather than about the
+document: it takes `spe-salvi` to zero oracle differences and changes exactly
+three works in the corpus, all of them the same shape — `spe-salvi.en` and
+`spe-salvi.pt` alike, which is the cross-language agreement that says a
+levelling rule is real, plus `sacerdotalis.pt`'s closing _Intercessão de
+Maria_. `lumen-gentium.pt` and `gaudium-et-spes.pt`, which the two rejected
+rules pulled in opposite directions, are untouched. Corpus-wide oracle
+differences: **175 → 168**.
