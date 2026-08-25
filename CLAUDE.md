@@ -310,6 +310,18 @@ where a missing translation is legitimate and common (Leo XIII is ~17%
 translated into Portuguese) — there the rule is "when both exist, they must
 agree".
 
+**Where the address space is fixed, that oracle is vacuous, and it will not
+tell you so.** The Compendium is questions 1–598 in both editions by
+construction, so the unit-number sets can never disagree — and while it
+reported symmetry, four English answers were missing their entire bulleted
+enumeration, 16 items the parser walked past (`docs/decisions.md`,
+2026-08-25). What sees that is `audit.py balance`: per-unit text length
+against the sibling edition, normalized by the pair's own median. Run it over
+the CCC, the Compendium, the prayers and the Summa; it is deliberately not run
+over the documents (a section number is not the same section in both editions
+— `coverage` is the instrument there) or the Bible (Esther is versification
+divergence, not loss). It reports and never fails.
+
 **The Bible is the exception to reading asymmetry as a defect**, and adding the
 Latin sharpened rather than blurred that. `bible.clementina.la` is the text
 `bible.cpdv.en` was translated from, so where the three disagree about verse

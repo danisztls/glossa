@@ -46,16 +46,53 @@ sufficient (`docs/research/description-pass-2026-08.md`), so the oracle is the
 only thing that can say the parser got them wrong. Storing it turns a one-off
 reading into a regression check that survives every future parser change.
 
+THE FOURTH AUDIT, `balance`, is cross-language symmetry asking about SIZE
+rather than membership. `check-symmetry` compares which unit numbers exist;
+this compares how much text each one holds against the same unit in the
+sibling edition, normalized by that pair's own median ratio so a language
+being habitually terser than another says nothing. It exists because the
+Compendium proved the set comparison vacuous there: both editions are
+questions 1-598 by construction, so the sets can never disagree, and four
+English answers were missing their entire enumeration -- 16 bulleted items
+the parser walked straight past -- while the check reported symmetry. Run
+against the corpus as it stood, those four questions were the only ones
+outside the band, at 0.13-0.41x; the fifth-worst sat at 0.77x, and the
+work's whole range was 0.13-1.49x.
+
+WHERE IT DOES NOT APPLY, both established by measuring rather than by
+assumption:
+
+  - **Documents.** A section number is not the same section in both
+    editions. `mediator-dei` EN section 23 is PT sections 21-22; the
+    numbering drifts wherever a translation splits or joins a paragraph,
+    and `check-symmetry` passes because both editions have the same COUNT.
+    Comparing 8,942 units across the 103 EN/PT document pairs put 650 of
+    them outside the band -- 7.3%, against 0.06% for the types kept -- and
+    the ones inspected were all drift. Document truncation is
+    what `coverage` above is for, and it is the better instrument: it needs
+    no sibling edition and says how much was lost.
+  - **The Bible.** 95 outliers in 35,743 verses (cpdv.en against
+    clementina.la), concentrated in Esther -- which is the documented
+    versification divergence, not a defect (docs/research/bible-edition-
+    divergence.md). Reading verse-shape asymmetry as a defect there is the
+    specific mistake CLAUDE.md warns against.
+
+It reports and never fails, the same footing as the Summa's cross-language
+oracle. Two findings stand open against `ccc.en` as of 2026-08-25 (¶2051,
+¶2436 -- see the run output); gating would only encode them.
+
   ./audit.py coverage            # ranked table, worst first
   ./audit.py withheld            # marker vs unpublished.json
   ./audit.py toc                 # parsed structure vs the read oracle
-  ./audit.py all                 # all three; exit 1 if any gates
+  ./audit.py balance             # cross-language text-length symmetry
+  ./audit.py all                 # all four; exit 1 if any gates
 """
 
 from __future__ import annotations
 
 import argparse
 import collections
+import itertools
 import json
 import re
 import statistics
@@ -474,26 +511,219 @@ def report_withheld(rows: list[dict]) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------
+# Cross-language balance
+# --------------------------------------------------------------------------
+
+#: Work types whose unit number means the same thing in every edition, which
+#: is the whole precondition for comparing unit against unit. See the module
+#: docstring for what was measured to leave `document` and `bible` out.
+BALANCE_TYPES = ("catechism", "compendium", "prayer", "summa")
+
+#: Below this many shared units a median ratio is not a norm, it is an
+#: opinion. It also drops `prayer.common.en-gb` (five prayers, a regional
+#: variant of a handful of texts) without naming it.
+BALANCE_MIN_UNITS = 20
+
+#: Reporting band, in multiples of the pair's own median ratio. Calibrated
+#: against what the corpus actually holds: every legitimate unit measured
+#: across the CCC, the Compendium, the prayers and the Summa sits inside
+#: [0.49, 2.35], and the one outright parse defect sits at 14.9.
+BALANCE_LOW, BALANCE_HIGH = 0.5, 2.0
+
+
+def unit_texts(work: Path, work_type: str) -> dict | None:
+    """Addressable unit -> all the text stored under it, or None when the
+    type is one this audit does not compare.
+
+    The key is whatever the edition is addressed by, which differs per type:
+    a paragraph number, a question number, a prayer slug, a Summa
+    part/question/article triple. It is compared for equality and nothing
+    else, so its shape only has to be stable across editions."""
+    if work_type == "catechism":
+        return {
+            p["n"]: p.get("text") or ""
+            for p in json.loads((work / "paragraphs.json").read_text())
+        }
+    if work_type == "compendium":
+        return {
+            q["n"]: q["question"]
+            + " "
+            + " ".join(b["text"] for b in q["answer_blocks"])
+            for q in json.loads((work / "questions.json").read_text())
+        }
+    if work_type == "prayer":
+        # The Rosary keeps its mysteries in `groups`, not `blocks`, and in
+        # the vernacular editions only. Counting blocks alone made it the
+        # single worst-skewed prayer in the collection -- a finding about
+        # this function rather than about the corpus.
+        return {
+            p["slug"]: " ".join(
+                [p.get("title") or "", p.get("rubric") or ""]
+                + [b.get("text") or "" for b in p["blocks"]]
+                + [
+                    item.get("title", "") + " " + item.get("meditation", "")
+                    for group in (p.get("groups") or [])
+                    for item in group["items"]
+                ]
+            )
+            for p in json.loads((work / "prayers.json").read_text())
+        }
+    if work_type == "summa":
+        # Note this reads `questions.json` as the Compendium does and means
+        # something entirely different by it -- which is why the dispatch is
+        # on the manifest's `type` and never on which files are present.
+        out = {}
+        for q in json.loads((work / "questions.json").read_text()):
+            for article in q["articles"]:
+                out[(q["part"], q["n"], article["n"])] = " ".join(
+                    V.strip_tags(block.get("html") or "")
+                    for division in article["divisions"]
+                    for block in division["blocks"]
+                )
+        return out
+    return None
+
+
+def language_groups(corpus: Path) -> dict[str, dict[str, Path]]:
+    """`base work id -> {language tag: work directory}`, for the comparable
+    types only. The language is the last dot-component of the work id and
+    may carry a region (`prayer.common.en-gb`)."""
+    groups: dict[str, dict[str, Path]] = collections.defaultdict(dict)
+    for work in sorted((corpus / "works").iterdir()):
+        manifest = work / "manifest.json"
+        if not work.is_dir() or not manifest.exists():
+            continue
+        if json.loads(manifest.read_text()).get("type") not in BALANCE_TYPES:
+            continue
+        if (work / "witnesses.json").exists():
+            # A DERIVED edition: built from the other editions of this same
+            # work rather than from a source of its own (today, exactly
+            # `prayer.common.la`, which holds the 21 of 28 prayers the
+            # Compendium prints Latin for). corpus-schema.md already narrows
+            # the slug-set oracle away from it for being a subset by
+            # construction, and length is the same story -- the Latin
+            # Rosary has no mysteries because the source prints none, which
+            # is a fact about the source and not a finding about anything.
+            continue
+        base, _, lang = work.name.rpartition(".")
+        if base and lang:
+            groups[base][lang] = work
+    return {base: langs for base, langs in groups.items() if len(langs) > 1}
+
+
+def balance_pair(a_texts: dict, b_texts: dict) -> dict | None:
+    """One edition pair measured: the median length ratio between them, and
+    every unit whose own ratio departs from it.
+
+    A unit stored empty on one side and not the other is reported separately
+    rather than as an infinite ratio -- it is the same finding at its limit,
+    and it is the one shape where the number would say nothing."""
+    shared = [k for k in a_texts if k in b_texts]
+    both = [k for k in shared if a_texts[k] and b_texts[k]]
+    if len(both) < BALANCE_MIN_UNITS:
+        return None
+    ratios = {k: len(a_texts[k]) / len(b_texts[k]) for k in both}
+    median = statistics.median(ratios.values())
+    rows = sorted(
+        ((r / median, k, len(a_texts[k]), len(b_texts[k])) for k, r in ratios.items()),
+        key=lambda row: row[0],
+    )
+    return {
+        "shared": len(shared),
+        "compared": len(both),
+        "median": median,
+        "only_a": sorted((k for k in a_texts if k not in b_texts), key=str),
+        "only_b": sorted((k for k in b_texts if k not in a_texts), key=str),
+        "empty": sorted(
+            (k for k in shared if bool(a_texts[k]) != bool(b_texts[k])), key=str
+        ),
+        "outliers": [r for r in rows if r[0] < BALANCE_LOW or r[0] > BALANCE_HIGH],
+        "range": (rows[0][0], rows[-1][0]),
+    }
+
+
+def measure_balance(corpus: Path) -> list[dict]:
+    rows = []
+    for base, langs in sorted(language_groups(corpus).items()):
+        work_type = json.loads(
+            (next(iter(langs.values())) / "manifest.json").read_text()
+        )["type"]
+        texts = {}
+        for lang, work in langs.items():
+            got = unit_texts(work, work_type)
+            if got is not None:
+                texts[lang] = got
+        for a, b in itertools.combinations(sorted(texts), 2):
+            measured = balance_pair(texts[a], texts[b])
+            if measured is not None:
+                rows.append({"work": base, "a": a, "b": b, **measured})
+    return rows
+
+
+def report_balance(rows: list[dict], limit: int) -> int:
+    total = sum(r["outliers"].__len__() for r in rows)
+    print(
+        f"{len(rows)} edition pair(s) compared, "
+        f"{sum(r['compared'] for r in rows):,} units, {total} outside "
+        f"[{BALANCE_LOW}, {BALANCE_HIGH}]x the pair's own median.\n"
+    )
+    for row in rows:
+        lo, hi = row["range"]
+        print(
+            f"{row['work']}  {row['a']}:{row['b']}  {row['compared']:,} units, "
+            f"median {row['median']:.2f}x, skew {lo:.2f}-{hi:.2f}"
+        )
+        for key, label in (("only_a", row["a"]), ("only_b", row["b"])):
+            if row[key]:
+                print(
+                    f"    {len(row[key])} unit(s) in {label} only: "
+                    f"{', '.join(str(k) for k in row[key][:8])}"
+                    f"{' ...' if len(row[key]) > 8 else ''}"
+                )
+        for key in row["empty"]:
+            print(f"    EMPTY   {key}: stored on one side only")
+        for skew, key, a_len, b_len in row["outliers"][:limit]:
+            print(
+                f"    {'SHORT' if skew < 1 else 'LONG ':7} {skew:6.2f}x  {key!s:<14} "
+                f"{row['a']} {a_len:6,}c  {row['b']} {b_len:6,}c"
+            )
+        if len(row["outliers"]) > limit:
+            print(f"    ... {len(row['outliers']) - limit} more")
+    # Not gated, for the reason the module docstring gives: a skew is a
+    # finding to adjudicate, and the two standing against ccc.en would turn
+    # `audit.py all` red without telling anyone anything new.
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
         "check",
-        choices=["coverage", "withheld", "toc", "all"],
+        choices=["coverage", "withheld", "toc", "balance", "all"],
         default="all",
         nargs="?",
     )
     parser.add_argument("--min-coverage", type=float, default=DEFAULT_MIN_COVERAGE)
     parser.add_argument(
-        "--limit", type=int, default=25, help="rows in the coverage table"
+        "--limit",
+        type=int,
+        default=25,
+        help="rows in the coverage table, and outliers listed per edition pair",
     )
     parser.add_argument("--json", action="store_true", help="emit measurements as JSON")
     args = parser.parse_args()
 
     corpus = common.require_corpus()
-    rows = measure(corpus)
+    # `balance` reads no raw pages and no document works, so it does not pay
+    # for the coverage measurement it never looks at.
+    rows = measure(corpus) if args.check != "balance" else []
 
     if args.json:
-        json.dump(rows, sys.stdout, indent=2)
+        if args.check == "balance":
+            json.dump(measure_balance(corpus), sys.stdout, indent=2, default=str)
+        else:
+            json.dump(rows, sys.stdout, indent=2)
         print()
         return 0
 
@@ -507,6 +737,10 @@ def main() -> int:
     if args.check in ("toc", "all"):
         print()
         status |= report_toc(corpus)
+    if args.check in ("balance", "all"):
+        if args.check == "all":
+            print()
+        status |= report_balance(measure_balance(corpus), args.limit)
     return status
 
 

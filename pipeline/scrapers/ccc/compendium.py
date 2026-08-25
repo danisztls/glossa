@@ -23,10 +23,13 @@ Q&A stream itself: every question is printed as
 
 with the reference string always the paragraph immediately after the
 question, and an optional set-off <blockquote> (with the attribution
-inline, in trailing parentheses) as the last block of the answer.
+inline, in trailing parentheses) as the last block of the answer. Four
+English answers interrupt that with a bulleted list -- one single-item
+<ul><li> per bullet -- and nothing else in either edition does.
 
-This script parses each page as a flat stream of top-level <p> and
-<blockquote> blocks (verified non-nested across every block inspected). A
+This script parses each page as a flat stream of top-level <p>,
+<blockquote> and <li> blocks (verified non-nested across every block
+inspected; the <ul> wrappers carry no text of their own). A
 small stack keyed by heading level builds the Part/Section/Chapter tree,
 question numbers attach to whichever node is deepest-open, and content
 between "<a name="INTRODUCTION">" and "<a name="APPENDIX">" (EN) / the
@@ -411,8 +414,24 @@ class Block:
     stripped: str
 
 
+# <li> is here for one reason and it is not tidiness: four English answers
+# print their enumeration as a list rather than as prose, and a walk over
+# <p> and <blockquote> alone silently dropped every item. Q523 was stored
+# as "The eighth commandment forbids: A sin committed against truth demands
+# reparation if it has caused harm to others." -- the lead-in and the
+# closing sentence with the three things it forbids gone from between them.
+# All 16 items in the edition sit inside the walked region, in questions
+# 445, 470, 483 and 523; the Portuguese page has no <ul>/<li> at all and
+# prints the same enumerations as run-on prose, which is why the loss was
+# one-sided and why adding this alternative leaves PT byte-identical.
+#
+# The source wraps each item in its own single-item <ul> (Word export), so
+# matching <li> rather than <ul> is both simpler and the thing that
+# actually carries the text.
 _BLOCK_RE = re.compile(
-    r"<p[^>]*>((?:(?!</p>).)*?)</p>|<blockquote>((?:(?!</blockquote>).)*?)</blockquote>",
+    r"<p[^>]*>((?:(?!</p>).)*?)</p>"
+    r"|<blockquote>((?:(?!</blockquote>).)*?)</blockquote>"
+    r"|<li[^>]*>((?:(?!</li>).)*?)</li>",
     re.DOTALL,
 )
 
@@ -420,12 +439,21 @@ _BLOCK_RE = re.compile(
 def extract_blocks(body: str) -> list[Block]:
     blocks: list[Block] = []
     for m in _BLOCK_RE.finditer(body):
-        if m.group(1) is not None:
-            inner = m.group(1)
-            is_bq = False
-        else:
+        if m.group(2) is not None:
             inner = m.group(2)
             is_bq = True
+        else:
+            # A <p> or a <li>. A list item is answer prose set off by a
+            # bullet, so it enters as prose and `add_prose` joins it onto
+            # the run it belongs to -- the lead-in, the items and the
+            # closing sentence come out as the one block the answer already
+            # was. That is not a compromise forced by the block vocabulary
+            # being prose/quote (docs/corpus-schema.md): it is what the
+            # Portuguese edition, which bullets nothing, produces for the
+            # same four answers. The bullets themselves are presentation
+            # and are recorded in the manifest notes rather than modelled.
+            inner = m.group(1) if m.group(1) is not None else m.group(3)
+            is_bq = False
         stripped = strip_tags(inner)
         if not stripped:
             continue
@@ -799,6 +827,18 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
             "entries (e.g. '96.98', '192. 197' -- periods where a hyphen or comma is "
             "presumably meant) and inconsistent en-dash/hyphen use across both editions. "
             "Per the store-raw principle, none of this is normalized or corrected."
+        ),
+        (
+            "Four English answers (Q445, Q470, Q483, Q523) print their enumeration as a "
+            "bulleted list -- 16 items, each in its own single-item <ul>. The items are "
+            "read as answer prose and join the run they interrupt, so each of the four "
+            "answers is the single prose block it already was; the bullets are "
+            "presentation and are recorded here rather than modelled as a block kind. "
+            "The Portuguese edition has no list markup anywhere and prints the same "
+            "four enumerations as run-on prose, so both editions come out the same "
+            "shape. Until 2026-08-25 the parser walked only <p> and <blockquote> and "
+            "dropped all 16 items: Q523 was stored as its lead-in and closing sentence "
+            "with the three things it forbids missing from between them."
         ),
         (
             "Generic (unlabeled) bold sub-headings under a chapter -- e.g. 'The Symbols "

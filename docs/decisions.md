@@ -4734,3 +4734,95 @@ _Sermones_ to put it on, and a link-out layer needs a hand-built New Advent id
 map for 734 works with a 69% singleton tail. Both were downstream of an ingest
 this now argues harder against. The third — the same normalization for `LG 12`
 — was delivered by the reverse citation index the same day.
+
+## 2026-08-25 — There is no second English witness, and the free check found the defect anyway
+
+The question was what an independent English witness for the Compendium would
+cost — a second transcription to adjudicate against, the way
+`raw/vulgata-online/DR2` settled `rev 9:1` for the Douay-Rheims lemma audit.
+The answer is that one does not exist to buy, and the probe that established
+that turned up a real defect on its way past.
+
+**What is actually published.** EWTN carries the Motu Proprio, the
+Introduction and the Presentation, and not the 598. USCCB carries a
+description. The Catholic Truth Society's 2006 print edition is scanned on
+archive.org (`compendiumofcate0000cath`) and is `access-restricted-item:
+true` — every text derivative, `_djvu.txt` through `_hocr`, is marked
+`private`, so it is a lending item with search-inside and nothing more. The
+only complete text off vatican.va is a 168-page Word-to-PDF from 2011 hosted
+by a parish, `© 2005 Libreria Editrice Vaticana`, 50,983 words, all 598
+questions and both appendices.
+
+**It is a copy, not a witness.** Aligned against `compendium.en`, 556 of the
+598 questions matched automatically and **not one question differed** —
+identical wording, identical curly quotes and dashes. 621 of 622 answer
+blocks were present verbatim. A transcription independently keyed from print
+does not agree with a web mirror to the punctuation mark; this one was
+retyped from the same electronic text, so it can never adjudicate a
+vatican.va typo. What it does contribute is noise of its own: a font-encoding
+bug printing `N` as `!` or `3` (`I!TRODUCTIO!`, `3icene-Constantinopolitan`)
+across 63 questions, and hyphens lost at line breaks. Capturing that into
+`raw/` would have added copyright exposure for no information.
+
+**The single non-match was ours.** Q523 stored "The eighth commandment
+forbids:" followed directly by "A sin committed against truth demands
+reparation if it has caused harm to others" — the three things it forbids
+gone from between them. The English page sets four answers' enumerations as
+`<ul><li>`, each item in its own single-item `<ul>`, and `compendium.py`
+walked only `<p>` and `<blockquote>`. All 16 items across Q445, Q470, Q483
+and Q523 were being dropped. The Portuguese page has no list markup anywhere
+and prints the same four enumerations as run-on prose, which is why the loss
+was one-sided — and why the fix leaves PT byte-identical. `<li>` now enters
+as prose and joins the run it interrupts, so each of the four answers is the
+single block it already was, the same shape PT produces.
+
+**The cross-language oracle could not see it, and this is the general
+problem.** `CLAUDE.md`'s free QA oracle compares which unit numbers exist.
+For the Compendium both editions are questions 1–598 by construction, so the
+sets can never disagree: the check was not merely quiet, it was vacuous.
+Comparing how much text each unit holds is not. Against the corpus as it
+stood, the four broken questions were the only four outside a
+half-to-double band of the pair's own median ratio, at 0.13–0.41×, with the
+fifth-worst at 0.77×.
+
+**`audit.py balance` is that check**, a fourth audit beside `coverage`,
+`withheld` and `toc`. Per-unit length against the sibling edition,
+normalized by the pair's median so that one language being habitually
+terser than another says nothing. It runs over the CCC, the Compendium, the
+prayers and the Summa — 6,154 units in four edition pairs, **4 outside the
+band**.
+
+**Two work types are excluded, both by measurement rather than by
+assumption.** Documents: a section number is not the same section in both
+editions (`mediator-dei` EN §23 is PT §§21–22), the numbering drifts wherever
+a translation splits a paragraph, and `check_language_symmetry` passes
+because the counts match. 650 of 8,942 units fell outside the band — 7.3%,
+against 0.06% for the types kept — and every one inspected was drift. What
+catches document truncation is `coverage`, which needs no sibling edition and
+says how much was lost. The Bible: 95 outliers in 35,743 verses, concentrated
+in Esther, which is the documented versification divergence and precisely the
+thing `bible-edition-divergence.md` warns against calling a defect.
+`prayer.common.la` is skipped too, on a marker rather than by name — a work
+carrying `witnesses.json` is derived from the other editions of itself, and
+its Latin Rosary has no mysteries because the source prints none.
+
+**It reports and never fails**, the same footing as the Summa's
+cross-language oracle. Two findings stand open against `ccc.en` and gating
+would only encode them:
+
+- **¶2051 at 14.9×** (2,813c against the Portuguese 187c) has swallowed the
+  entire three-column Decalogue table the source prints after it as
+  unnumbered `<p>` blocks. Ours: unnumbered matter attaches to the last
+  numbered paragraph, and here that is 2,600 characters that the CCC does not
+  print as ¶2051. Where such matter should go instead is a schema question,
+  not a parser tweak.
+- **¶2436 at 0.49×** is missing its opening sentence, "It is unjust not to
+  pay the social security contributions required by legitimate authority."
+  It is not misfiled into ¶2435; the phrase "social security" appears nowhere
+  in `raw/ccc-en/`. This is a source defect, and filing it needs an English
+  witness for the sentence — the same problem this entry opened with, one
+  work over.
+
+The third row, ¶230 at 2.12×, is not a defect: the English prints its
+Augustine citation inline where the Portuguese footnotes it. One such row in
+2,865 is the noise floor being paid for honestly.
