@@ -3346,7 +3346,7 @@ def extract_document_header(
         if match_para_num(b.raw):
             break
         flat = " ".join(b.text.split())
-        bar_only = bool(_LANG_BAR_RE.match(flat))
+        bar_only = bool(_LANG_BAR_ONE_RE.match(flat))
         folded = fold(_LANG_BAR_PREFIX_RE.sub("", flat))
         names_doc = bool(slug_words) and all(w in folded for w in slug_words)
         names_author = bool(pont) and pont in folded
@@ -3405,21 +3405,35 @@ def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
     if not numbered:
         return []
     lo, hi = numbered[0], numbered[-1]
-    candidates = [
+    # THE RUN IS THE WHOLE RUN, including the members some earlier pass has
+    # already claimed. Counting only the unclaimed ones let a document lose
+    # exactly the markers another pass had missed: `ad-petri.en` prints its
+    # four parts as `<p align="CENTER">I</p>` .. `IV`, byte-identical, and the
+    # page's own table of contents had already promoted I and III -- leaving
+    # II and IV as a run of two, one short of the threshold, so the document
+    # came out with a part boundary at 6 and 59 and none at 20 or 97. Same
+    # shape, opposite verdict, from a gate that was never meant to decide it.
+    #
+    # `is_full_bold` is what keeps the peers honest: `style` records centring
+    # and italics but says nothing about bold, so without it a centred BOLD
+    # heading would pad the run that is supposed to establish the unemphasised
+    # ones.
+    peers = [
         i
         for i, b in enumerate(blocks)
         if lo < i < hi
-        and not b.is_heading
         and b.kind != "quote"
         and b.style == 0  # centred, no italic, and not bold or it would be a heading
+        and not is_full_bold(b.raw)
         and len(b.text) <= _ITALIC_HEADING_MAX_CHARS
         and match_para_num(b.raw) is None
         and _SECTION_TITLE_HEADING_RE.match(b.text) is None
         and has_words(b.text)
         and not b.indented
     ]
-    if len(candidates) < _ITALIC_HEADING_MIN_RUN:
+    if len(peers) < _ITALIC_HEADING_MIN_RUN:
         return []
+    candidates = [i for i in peers if not blocks[i].is_heading]
     for i in candidates:
         blocks[i].is_heading = True
     return [blocks[i].text for i in candidates]
@@ -3453,7 +3467,23 @@ def has_words(text: str) -> bool:
 # off the front of a block that continues into real text, and letting one
 # code satisfy that would truncate any masthead line beginning with a
 # two-letter word.
-_LANG_BAR_RE = re.compile(rf"^\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)*\]?$")
+# TWO SPELLINGS, FOR TWO DIFFERENT DECISIONS.
+#
+# `_LANG_BAR_ONE_RE` accepts a bar of a single code, because a document
+# published in one language still prints one and it is then a bare `EN`
+# (docs/decisions.md, 2026-08-25: 19 mastheads recovered). That tolerance is
+# safe for the masthead scan, which only asks where the front matter STARTS.
+#
+# `_LANG_BAR_RE` requires two, because `drop_page_furniture` DELETES what it
+# matches, and a lone two-letter token is not evidence of anything: `II` and
+# `IV` are two letters. Sharing the loosened form cost `ad-petri.en` the part
+# markers before §20 and §97 while leaving `I` and `III` standing -- same
+# markup, opposite verdict, decided by nothing but how many letters the
+# numeral has. `sacerdotii.en`, `grata-recordatio.en` and `princeps.en` lost
+# the same `II`, and in each the effect was worse than a missing heading: the
+# flat structure array had no boundary at all where that part began.
+_LANG_BAR_ONE_RE = re.compile(rf"^\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)*\]?$")
+_LANG_BAR_RE = re.compile(rf"^\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)+\]?$")
 _PAPAL_SIGNATURE_RE = re.compile(
     r"^(?:PAPA\s+)?"
     r"(?:PIUS|PIO|LEO|LEAO|IOANNES|JOANNES|JOAO|JOHN|PAULUS|PAUL|PAULO"

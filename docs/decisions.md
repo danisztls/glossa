@@ -4068,3 +4068,36 @@ Paul II prints before his first part, is centred bold-**italic** where the parts
 are centred bold, so the parse gives it a tier of its own and the oracles read it
 as their peer. Two differences each, and the disagreement is about whether a
 salutation is a division at all — not about the staircase.
+
+## 2026-08-25 — A part marker named `II` was being read as a language bar
+
+`ad-petri.en` prints its four parts as bare `<p align="CENTER">I</p>` …
+`IV`, byte-identical. `I` and `III` became divisions; `II` and `IV` vanished.
+
+The discriminator was **how many letters the numeral has**. `_LANG_CODE` is
+`[A-Za-z]{2}`, and the whole-block bar test had been loosened from "two or more
+codes" to "one or more" on 2026-08-25 so that a document published in a single
+language — whose bar is a bare `EN` — would not end the masthead scan on block
+one. `drop_page_furniture` shares that regex and **deletes** what it matches, so
+a two-letter Roman numeral matched a one-code bar and was dropped as furniture.
+`II` and `IV` are two letters; `I` and `III` are not.
+
+The effect was worse than a missing heading: `structure.json` is a flat array,
+so a document that loses a part marker has no boundary at all where that part
+begins — a consumer walking it cannot tell where part II starts.
+`sacerdotii.en`, `grata-recordatio.en` and `princeps.en` lost the same `II`.
+
+Split in two, by what the match is used to decide. `_LANG_BAR_ONE_RE` keeps the
+one-code tolerance for the masthead scan, which only asks where the front matter
+starts; `_LANG_BAR_RE` requires two codes again, because it is the one that
+deletes. Five `structure.json` files changed, no `sections.json`, and the 19
+recovered mastheads stayed recovered — the count of works with an empty
+`manifest.header` is 9 before and after.
+
+Also fixed alongside it: the centred-unemphasised heading recovery counted only
+the run members no earlier pass had claimed, so a page's own table of contents
+promoting two of four markers left the other two below the threshold of three.
+The run is now the whole run, and only the unclaimed members are promoted.
+
+Audit over 102 oracles: **34 documents disagreeing / 284 differences before the
+day's three levelling fixes, 28 / 200 after.**
