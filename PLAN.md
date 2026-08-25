@@ -35,7 +35,7 @@ Nothing here gates anything else; order is a priority argument, not a dependency
 **Recommended order:**
 
 1. **#4 design pass.** It moves up: #3 no longer needs it as a companion, but #3 has just put four new typographic surfaces on the page (the sidenote, the chapter argument, the four heading levels, the apparatus colour on a Bible marker) that were designed against placeholder colours and should be reviewed as a set. The Matos Soares apparatus now exercises all of them at scale — 5,733 headings and 3,013 notes — where the Douay-Rheims exercised them sparsely.
-2. **#7 the Fathers citation pass**, **#8 the reverse document index**, **#9 the divergence table** — the cheap, no-fetch, already-measured tier. Each is small enough to slot between larger phases. Alongside them sits a genuinely tiny one: **six lemma corrections** adjudicated in `docs/research/douay-rheims-lemma-audit.md`, ready to file and not yet filed.
+2. **#7 the Fathers citation pass**, **#8 the reverse document index**, **#9 the divergence table** — the cheap, no-fetch, already-measured tier. Each is small enough to slot between larger phases. The genuinely tiny one that used to sit alongside them — six lemma corrections adjudicated in `docs/research/douay-rheims-lemma-audit.md` — was filed on 2026-08-25, taking the Douay-Rheims corrections layer from 14 entries to 20 and the lemma oracle from 72 strays to 66.
 3. **#11 Haydock** — the largest and most interesting addition, once its schema is settled.
 4. **#2 search** — the largest unscoped item; needs a prototype before it can be planned.
 5. **#1 Latin for the CCC and documents** — scoped below.

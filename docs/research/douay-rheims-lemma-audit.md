@@ -1,7 +1,7 @@
 # The Douay-Rheims lemma oracle: 72 candidates, adjudicated
 
 Measured 2026-08-25 over `bible.douay-rheims.en` as it stands in the corpus.
-**Six defects found and not yet corrected**; the remaining 66 are the source
+**Six defects found, and filed the same day**; the remaining 66 are the source
 behaving as an apparatus behaves, and must not be "fixed".
 
 ## What the oracle is
@@ -23,13 +23,15 @@ lemmas as absent, nearly all of them punctuation. It also skips any lemma
 ending in `etc.` — the apparatus's own elision marker, where the quotation is
 deliberately partial and its absence says nothing.
 
-That leaves **72 of 1,908** lemmas quoting words their verse does not contain.
+That left **72 of 1,908** lemmas quoting words their verse does not contain. It
+is **66 of 1,908** now, the six below having been corrected.
 
 ## The six that are defects
 
 Each is a mistranscription in the **lemma**, not in the verse; the verse reads
-correctly in every case. Same class as `Nineve`, and each is a one-line entry
-in `pipeline/corrections/bible.douay-rheims.en.json` with `field: "lemma"`.
+correctly in every case. Same class as `Nineve`, and each is now an entry in
+`pipeline/corrections/bible.douay-rheims.en.json` with `field: "lemma"` —
+filed 2026-08-25, taking the layer from 14 corrections to 20.
 
 | locator      | lemma as transcribed                | verse reads                           |
 | ------------ | ----------------------------------- | ------------------------------------- |
@@ -40,10 +42,20 @@ in `pipeline/corrections/bible.douay-rheims.en.json` with `field: "lemma"`.
 | `dan 2:2`    | The Chald**ee**ans                  | `… and the Chaldeans: to declare …`   |
 | `rev 9:1`    | A star f**u**ll                     | `… I saw a star fall from heaven …`   |
 
-`rev 9:1` is the one worth a second look before filing: "a star full" is not a
-plausible printed lemma for a verse about a star _falling_, but it is the kind
-of error that could equally be ours. `raw/vulgata-online/DR2/Ap.9.json` settles
-it without a re-crawl.
+`rev 9:1` was the one flagged as worth a second look before filing: "a star
+full" is not a plausible printed lemma for a verse about a star _falling_, but
+it is the kind of error that could equally be ours. It is not.
+`raw/vulgata-online/DR2/Ap.9.json` settles it without a re-crawl — the source
+itself prints `_A star full:_`, and the note under it explains a fall twice
+over ("the fall and apostasy of great and learned men", "a whole nation falling
+into error"), which is not a gloss anything could write on a star that is full.
+
+**The other five needed no external witness**, because each is outvoted inside
+the source it comes from: `Assyrians` appears 151 times against one
+`Assyraians`, `Chaldeans` 91 against one `Chaldeeans`, `Illustrious` 6 against
+one `Illustrius`, `hath not known` 6 against one `hath not know`. `Nohestan` is
+the exception at 1 against 1 — the verse against its own lemma — and there
+`bible.clementina.la` breaks the tie with _vocavitque nomen eius Nohestan_.
 
 ## The five kinds that are not defects
 
@@ -71,9 +83,11 @@ defect invites someone to "fix" a faithful text** — the same warning
 
 ## The full list
 
-Kept whole so this can be re-adjudicated rather than re-derived. Regenerate
-with `uv run pipeline/scrapers/bible/douay_rheims.py --offline`, which prints
-the count and the first ten.
+The 72 as the oracle first reported them — kept whole so this can be
+re-adjudicated rather than re-derived, which is also why the six corrected ones
+stay in it, marked **†**. Regenerate with `uv run
+pipeline/scrapers/bible/douay_rheims.py --offline`, which prints the count and
+the first ten; it now reports the 66 unmarked rows.
 
 | locator       | lemma                                                                            |
 | ------------- | -------------------------------------------------------------------------------- |
@@ -91,11 +105,11 @@ the count and the first ten.
 | `josh 14:4`   | Hebron belonged                                                                  |
 | `judg 19:10`  | Jemini                                                                           |
 | `1kgs 12:29`  | Bethel and Dan                                                                   |
-| `2kgs 18:4`   | And he called its name Noheston                                                  |
+| `2kgs 18:4`   | † And he called its name Noheston                                                |
 | `2chr 30:3`   | The host of heaven                                                               |
 | `ezra 8:21`   | And I proclaimed a fast                                                          |
 | `tob 6:8`     | Its heart, etc. The liver (ver. 19)                                              |
-| `1macc 1:11`  | Antiochus the Illustrius                                                         |
+| `1macc 1:11`  | † Antiochus the Illustrius                                                       |
 | `2macc 6:2`   | That in Gazarim                                                                  |
 | `2macc 11:21` | In the year 148                                                                  |
 | `2macc 14:3`  | Now Alcimus, who had been chief priest                                           |
@@ -105,14 +119,14 @@ the count and the first ten.
 | `ps 111:1`    | Of the returning                                                                 |
 | `ps 136:1`    | For Jeremias                                                                     |
 | `song 4:12`   | My sister, etc., a garden enclosed                                               |
-| `isa 63:16`   | Abraham hath not know us                                                         |
+| `isa 63:16`   | † Abraham hath not know us                                                       |
 | `isa 63:17`   | Made us to err, etc. Hardened our heart                                          |
 | `isa 66:4`    | I will choose their mockeries                                                    |
 | `jer 49:28`   | Cedar and Asor                                                                   |
 | `ezek 14:9`   | I have deceived that prophet                                                     |
 | `ezek 23:4`   | Oolla and Ooliba                                                                 |
-| `ezek 23:5`   | On the Assyraians                                                                |
-| `dan 2:2`     | The Chaldeeans                                                                   |
+| `ezek 23:5`   | † On the Assyraians                                                              |
+| `dan 2:2`     | † The Chaldeeans                                                                 |
 | `hos 2:1`     | Say to your brethren                                                             |
 | `hos 2:24`    | That which was not my people                                                     |
 | `hos 4:15`    | Galgal and Bethaven                                                              |
@@ -148,4 +162,4 @@ the count and the first ten.
 | `jude 1:21`   | Building yourselves upon your most holy faith                                    |
 | `jude 1:23`   | And some indeed reprove being judged                                             |
 | `jude 1:25`   | Now to him                                                                       |
-| `rev 9:1`     | A star full                                                                      |
+| `rev 9:1`     | † A star full                                                                    |
