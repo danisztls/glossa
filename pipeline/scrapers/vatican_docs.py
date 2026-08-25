@@ -647,6 +647,28 @@ def _emphasis_covers(
     return bool(tolerant and _ENUM_OUTSIDE_RE.match(before))
 
 
+_ANCHOR_TITLE_RE = re.compile(
+    r"^\s*<a\s+name=\"([^\"]+)\"\s*>\s*</a>\s*([^<]{1,120}?)\s*$", re.IGNORECASE
+)
+
+
+def _anchor_titles_itself(inner_html: str) -> bool:
+    """An empty named anchor whose NAME is the text that follows it.
+
+    `<p><a name="SHATTERED_DREAMS"></a>SHATTERED DREAMS</p>` -- no bold, no
+    italic, no centring, nothing `is_full_bold` or either recovery pass can
+    see. The anchor is the signal: an empty `<a name>` exists to be linked TO,
+    and one whose name spells the paragraph's own text is a heading the page
+    means a table of contents to point at. Body prose never carries one.
+    """
+    m = _ANCHOR_TITLE_RE.match(inner_html)
+    if m is None:
+        return False
+    name = re.sub(r"[^a-z0-9]+", "", m.group(1).lower())
+    text = re.sub(r"[^a-z0-9]+", "", ihtml.unescape(m.group(2)).lower())
+    return bool(name) and bool(text) and (name == text or text.startswith(name))
+
+
 def is_full_bold(inner_html: str) -> bool:
     """True when the block's visible text sits inside <b>...</b> --
     ccc.py's heading style detector, widened 2026-08-24 to allow the
@@ -719,7 +741,9 @@ def is_indented(outer_html: str, inner_html: str) -> bool:
     )
 
 
-def heading_style_rank(outer_html: str, inner_html: str, is_center_tag: bool) -> int:
+def heading_style_rank(
+    outer_html: str, inner_html: str, is_center_tag: bool, anchor_titled: bool = False
+) -> int:
     """Rank a heading block by how it LOOKS, not by what it means.
 
     The corpus distinguishes heading tiers visually and does so consistently
@@ -734,7 +758,14 @@ def heading_style_rank(outer_html: str, inner_html: str, is_center_tag: bool) ->
     -- a document using only centered and left-italic headings gets levels 1
     and 2, not 1 and 4."""
     centered = is_center_tag or bool(_CENTERED_RE.search(outer_html))
-    italic = bool(re.search(r"<(i|em)\b", inner_html, re.IGNORECASE))
+    # An anchor-titled heading carries no emphasis of its own (see
+    # `_anchor_titles_itself`), so ranked on markup alone it lands BETWEEN the
+    # centred tier and the left-italic one and becomes a tier of its own.
+    # Fratelli Tutti prints both kinds under the same chapters, interleaved --
+    # `THE BASIS OF CONSENSUS` sits between two italic sub-headings rather than
+    # containing either -- so they are peers, and giving the anchored ones the
+    # emphasised rank is what says so.
+    italic = anchor_titled or bool(re.search(r"<(i|em)\b", inner_html, re.IGNORECASE))
     return (0 if centered else 2) + (1 if italic else 0)
 
 
@@ -4198,6 +4229,7 @@ def parse_document(
 
         inner, kind = block_kind(m)
         is_bq = kind == "blockquote"
+        anchor_titled = _anchor_titles_itself(inner)
         if kind == "center":
             # Always a heading candidate, not gated on is_full_bold: LG's
             # "CHAPTER VII" (uniquely among its 8 chapters) is printed
@@ -4209,7 +4241,7 @@ def parse_document(
             # this is safe rather than a special case for one document.
             is_heading = True
         else:
-            is_heading = is_full_bold(inner) if not is_bq else False
+            is_heading = (is_full_bold(inner) or anchor_titled) if not is_bq else False
         marked = mark_footnotes(inner, marker_template)
         text = strip_tags(marked)
         if not text:
@@ -4221,7 +4253,9 @@ def parse_document(
                 text,
                 inner,
                 narrow_html(marked, dropped_tags),
-                heading_style_rank(m.group(0), inner, kind == "center"),
+                heading_style_rank(
+                    m.group(0), inner, kind == "center", anchor_titled=anchor_titled
+                ),
                 indented=is_indented(m.group(0), inner),
             )
         )

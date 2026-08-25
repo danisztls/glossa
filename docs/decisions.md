@@ -4101,3 +4101,52 @@ The run is now the whole run, and only the unclaimed members are promoted.
 
 Audit over 102 oracles: **34 documents disagreeing / 284 differences before the
 day's three levelling fixes, 28 / 200 after.**
+
+## 2026-08-25 — Headings whose only marking is the anchor pointing at them
+
+Measured before it was fixed, because it looked like one document's problem and
+mostly was.
+
+`fratelli-tutti.en` prints 34 of its sub-headings as
+`<p><a name="SHATTERED_DREAMS"></a>SHATTERED DREAMS</p>` — no bold, no italic,
+no centring, nothing `is_full_bold` or either recovery pass can see. They were
+not absorbed into a section, they were **dropped outright**: the text appears
+nowhere in `sections.json`, so a third of that document's outline simply did not
+exist. (The census scored five of them `kept`; that verdict is a substring test
+against the whole document's prose and was a false positive in all five.)
+
+**How general is it.** Scanning every raw page for a `<p>` whose entire content
+is an empty `<a name>` and text the anchor names: 9 pages, 149 paragraphs. Of
+the pages backing an ingested work, 102 such paragraphs — and 68 of them are
+already headings by some other route, so the shape only _loses_ a heading in one
+document. `magnifica-humanitas.fr/it/de` and `dilexit-nos.pt` use it too and
+lose nothing. So: a real convention of the modern shell, with exactly one
+victim today.
+
+Fixed in the parser rather than in `pipeline/overrides/` even so. The rule is
+stated in terms of the source's own convention — an empty `<a name>` exists to
+be linked _to_, and one whose name spells the paragraph's own text is a heading
+the page means a table of contents to point at; body prose never carries one —
+and the alternative was 34 hand-written headings with levels and positions in
+the override layer, which is derived data that should be derived.
+
+**The level was the harder half.** Promoted on markup alone the anchored
+headings rank between the centred tier and the left-italic one, so they became a
+tier of their own and pushed every italic heading down: 34 MISSING turned into
+**45 LEVEL differences — worse than leaving them out**. They are peers of the
+italic sub-headings, not a tier above or below them: `THE BASIS OF CONSENSUS`
+sits _between_ two italic sub-headings rather than containing either. Ranking an
+anchor-titled heading as emphasised says so, and takes the document to **zero**
+differences.
+
+Blast radius: two files, both in that one document — `structure.json` (55 nodes
+→ 89) and `sections.json` (287 sections before and after, content unchanged).
+No other work in the corpus changed. Audit over 102 oracles: **200 differences
+→ 166**, 28 documents disagreeing → 27.
+
+**Two neighbouring shapes were left alone**, both single-document accidents with
+no convention behind them: `grande-munus.en` prints three headings whose `<i>`
+wrapper slipped outside the paragraph, leaving an orphaned `<i> </i>` before a
+plain `<p>`; `mense-maio.en` prints two centred unemphasised headings, one short
+of the run of three that recovery requires. Recorded here rather than fixed —
+two headings are not a run, and a detached tag is not a convention.
