@@ -5213,6 +5213,43 @@ def fetch_for_parse(
     return None, html
 
 
+def cache_page(fetcher: Fetcher, ref: DocRef, lang: str) -> dict:
+    """Put this document's page for `lang` in corpus/raw/, and stop there.
+
+    The serial half of `fetch_for_parse` without the half that decides
+    anything. It exists because acquiring raw pages and deciding what the
+    corpus publishes are separate decisions on separate timescales: raw/ is
+    write-once and the only artifact that costs real fetches, while works/ is
+    regenerable from it in minutes with no network at all
+    (`docs/link-surface.md`). Crawling a language ahead of the parser, the
+    site's plumbing, or anyone's decision to publish it is therefore cheap and
+    reversible; writing a work directory for it is neither, and an agent that
+    conflates the two has been the way unwanted works got made.
+
+    Deliberately does NOT consult works/. `fetch_for_parse` short-circuits on
+    an already-written document because re-parsing it is the caller's whole
+    question; here the question is only whether the bytes are on disk, and a
+    written work whose raw page went missing is exactly the case worth
+    re-asking for."""
+    url = ref.lang_urls.get(url_lang_key(ref, lang))
+    result = _result_base(ref, lang, url)
+    if url is None:
+        result["status"] = "no-url"
+        return result
+    before = fetcher.network_fetches
+    html, err = fetcher.fetch_text(url, cache_name_for(ref, lang))
+    if html is None:
+        # A translation that does not exist is the expected answer for most
+        # (language, document) pairs, and the absent ledger has already
+        # recorded it. Reported, never raised.
+        result["status"] = "fetch-failed"
+        result["error"] = err
+        return result
+    result["status"] = "fetched" if fetcher.network_fetches > before else "cached"
+    result["bytes"] = len(html)
+    return result
+
+
 def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
     """The parallel half: everything after the bytes are in hand.
 
@@ -5585,6 +5622,7 @@ def run_phase2(
     doc_slugs: list[str] | None = None,
     jobs: int = 1,
     want_langs: tuple[str, ...] = DEFAULT_LANGS,
+    fetch_only: bool = False,
 ) -> list[dict]:
     """`overwrite` re-parses documents already written to corpus/works/ from
     their CACHED raw HTML — the module docstring has promised this flag since
@@ -5593,6 +5631,13 @@ def run_phase2(
     network: `scrape_one` reads corpus/raw/ and only falls through to a fetch
     for a page that isn't cached, which for an already-written document never
     happens.
+
+    `fetch_only` stops after `cache_page`: every requested language's page
+    lands in corpus/raw/ and nothing is parsed, validated or written to
+    works/. That is the honest shape of "acquire the sources now, decide what
+    to publish later" -- and without it the only way to obtain a language's
+    raw pages was a run that also created a work directory per document per
+    language, which is a publishing decision wearing a crawl's clothes.
 
     `doc_slugs` narrows a run to named documents. Without it the smallest unit
     is a whole pontificate, which for Leo XIII is dozens of encyclicals — far
@@ -5658,6 +5703,9 @@ def run_phase2(
         }
         title = ref.slug.replace("-", " ").title()
         for lang in langs:
+            if fetch_only:
+                pool.submit_done((idx, lang), cache_page(fetcher, ref, lang))
+                continue
             early, html = fetch_for_parse(fetcher, ref, lang, overwrite)
             if early is not None:
                 pool.submit_done((idx, lang), early)
@@ -6072,8 +6120,16 @@ def main() -> int:
         "--langs",
         default=",".join(DEFAULT_LANGS),
         help="comma-separated language codes to fetch "
-        f"(default: {','.join(DEFAULT_LANGS)}). Every code must be one this "
-        "parser has division labels for: " + ", ".join(sorted(DIVISIONS)),
+        f"(default: {','.join(DEFAULT_LANGS)}). Without --fetch-only every "
+        "code must be one this parser has division labels for: "
+        + ", ".join(sorted(DIVISIONS)),
+    )
+    p2.add_argument(
+        "--fetch-only",
+        action="store_true",
+        help="cache each language's page under corpus/raw/ and stop -- no "
+        "parsing, no works/ written. Accepts any language code, since "
+        "nothing reads the text",
     )
 
     sub.add_parser(
@@ -6123,7 +6179,14 @@ def main() -> int:
             pontiffs = args.pontiffs.split(",") if args.pontiffs else None
             doc_slugs = args.slugs.split(",") if args.slugs else None
             want_langs = tuple(x.strip() for x in args.langs.split(",") if x.strip())
-            unknown = [x for x in want_langs if x not in DIVISIONS]
+            # Division labels are a parser's requirement, so --fetch-only,
+            # which parses nothing, does not have it. This is what lets the
+            # raw side of the corpus hold Latin (154 encyclicals) and the
+            # languages the interface has never had, years before anything
+            # can read them.
+            unknown = (
+                [] if args.fetch_only else [x for x in want_langs if x not in DIVISIONS]
+            )
             if unknown:
                 print(
                     f"ERROR: no division labels for {', '.join(unknown)}; "
@@ -6140,11 +6203,18 @@ def main() -> int:
                 doc_slugs=doc_slugs,
                 jobs=args.jobs,
                 want_langs=want_langs,
+                fetch_only=args.fetch_only,
             )
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
         report_fetching(fetcher)
+        if args.fetch_only:
+            # Nothing was parsed, so the symmetry oracle has no evidence from
+            # this run and would report the corpus's standing state as though
+            # it were this run's verdict. A fetch-only run succeeds when the
+            # pages it could get are on disk.
+            return 0
         sym_ok, sym_problems = check_language_symmetry(
             known=sections_from_results(results)
         )
