@@ -233,11 +233,19 @@ export function hrefFor(
 	routeAnchor?: string
 ): string {
 	// A row carrying its own `anchor` addresses the heading it names. Only
-	// documents set one, and only they need it: `#s{n}` lands on the SECTION
-	// after the heading, which puts the heading itself off the top of the
-	// viewport and makes a TOC row and the text it points at disagree about
-	// where the division starts.
+	// documents set one in anchor mode, and only they need it there: `#s{n}`
+	// lands on the SECTION after the heading, which puts the heading itself
+	// off the top of the viewport and makes a TOC row and the text it points
+	// at disagree about where the division starts.
 	if (linkMode === 'anchor' && node.anchor) return `#${node.anchor}`;
+	// A row with NO numbered bound of its own but an anchor is addressed by
+	// that anchor and nothing else — the Summa's articles, which are
+	// fragments of the question page they hang under (`summaOutline`). It can
+	// only arise on a row the caller has vouched for through
+	// `linkableAnchors`, so this cannot silently turn a null-bound
+	// CCC/Compendium row into a link to nowhere: neither work sets `anchor`
+	// on anything.
+	if (node.anchor && !Number.isFinite(n)) return `#${node.anchor}`;
 	if (linkMode === 'anchor') return `#s${n}`;
 	// `routeAnchor` is the same idea for a route whose PAGE is bigger than one
 	// row — the CCC's whole-chapter view, where every article in the chapter

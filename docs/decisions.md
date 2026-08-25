@@ -3769,3 +3769,62 @@ before reading a word, and neither box was simply the prayer.
 regional label, which is the same construction every column tag on the site uses. It names
 what the text IS, not what the reader's interface calls it — so a Portuguese-reading
 visitor still sees "English (UK)".
+
+## 2026-08-25 — The Summa's sidebar was an accidental fork, not a requirement
+
+**What**: `summaToc.ts` and `SummaSidebarToc.svelte` are gone. The Summa reader now uses
+`StructureSidebarToc` over a real `StructureNode` tree, built by `summaOutline`
+(`corpus.ts`).
+
+**The argument for the fork was false, and it is worth saying exactly how.** `summaToc.ts`
+justified itself this way: every other sidebar walks a `StructureNode` tree, "the Summa's
+`SummaNode` is a FLAT list of `{ level, part, title, before }`", and reshaping it into a
+tree "would mean inventing bounds (`paragraphs`) and kinds the corpus does not carry,
+which is the kind of quiet fabrication `docs/corpus-schema.md` exists to prevent."
+
+`DocumentNode` is `{ level, title, before }` — the same shape minus `part`. And
+`buildDocumentOutline` performs precisely the reshaping that was called fabrication:
+`paragraphs` derived as `[before, nextBefore - 1]`, a uniform `kind`, nesting by `level`.
+Far from being forbidden, that derivation is the documented convention for this node
+shape. `types.ts`: "a heading owns sections from its anchor until the next heading of
+equal or shallower `level`. Storing ranges is what let them drift from the text."
+`corpus-schema.md`, about the Summa specifically: its `structure.json` is "FLAT and
+document-ordered, **like the documents' and for the same reason**."
+
+`summaTocGroups` was already doing the same derivation — "a treatise runs from its own
+`before` up to the next heading's" — and only differed in stopping at one level and
+returning a bespoke type. Two implementations of one rule, one of them arguing the other
+was impossible.
+
+**The three things that really are the Summa's, none of them a fork:**
+
+- **`part`.** Question numbers restart at 1 in every part, so an outline is built per
+  part and `lastN` is that part's own last question. A parameter.
+- **The Latin edition prints no treatise headings.** The Corpus Thomisticum publishes the
+  four part headings and nothing below them, so `headings` is empty and every question
+  lands at the top level. That falls out of the same builder as correct degradation —
+  attaching the English edition's treatise names to Latin text would assert a structure
+  that source does not print.
+- **A borrowed title.** Under Latin every question title is the English edition's, by
+  address. `StructureNode` gained `titleLang` for it: the row renders muted and italic
+  with the real language on the element, rather than passing another edition's words off
+  as this source's own. General, not Summa-shaped — any work that ever borrows a title
+  gets it.
+
+**Articles are fragments, and they say so with null bounds plus an `anchor`.** An article
+is genuinely not addressed by a question number; `/summa/ii-ii/184#a3` is what reaches it.
+Giving them their question's range instead would have been the easy path and wrong twice
+over: it would claim an address they do not have, and `currentIndex`'s first-match-wins
+rule would then permanently highlight article 1. With null bounds they render as ordinary
+links and never take the current-row highlight from their question — which is exactly what
+the bespoke component did by hand.
+
+That needed two small, general changes to the shared machinery, neither of them a Summa
+case: `hrefFor` now returns `#{anchor}` for a row with an anchor and no numbered bound,
+and the row renders as a link when `linkableAnchors` vouches for it regardless of
+`linkMode`. `linkableAnchors` already existed for exactly this situation in documents —
+rows the page renders that bound no numbered unit.
+
+**Verified**: 12 new tests in `summa-outline.test.ts` over the real derivation, replacing
+the 6 that tested the bespoke grouping; full suite 568 passing, `svelte-check` clean,
+production build clean. Net: three files deleted, one function added.

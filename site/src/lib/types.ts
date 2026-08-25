@@ -368,6 +368,22 @@ export interface CccNode {
 	 */
 	anchor?: string;
 	/**
+	 * SUMMA ONLY. The language this row's title was actually written in, when
+	 * that is NOT the edition being read.
+	 *
+	 * The Corpus Thomisticum prints no question titles at all, so under
+	 * `summa.la` every title in the outline is the English edition's,
+	 * borrowed by address (`summaTitleFor`). Saying so is the difference
+	 * between showing a Latin reader a helpful gloss and passing another
+	 * edition's words off as this source's own — the row renders it muted
+	 * and italic, and the attribute puts the real language on the element so
+	 * a screen reader switches voice with it.
+	 *
+	 * Absent whenever the title is the edition's own, which is every row of
+	 * every other work.
+	 */
+	titleLang?: string;
+	/**
 	 * DOCUMENTS ONLY. The division identifier printed above the title
 	 * ("CHAPTER THREE"), shown as the row's marker. See `DocumentNode.ident`
 	 * for why the two are stored apart.

@@ -62,8 +62,10 @@
 	 * navigation harder rather than easier. Four rows under Latin, five under
 	 * English — the edition's own shape, not a filter.
 	 *
-	 * Not `indexSidebarItems` itself: that walks `StructureNode`, which the
-	 * Summa's flat `SummaNode` is not (see `summaToc.ts`).
+	 * Not `indexSidebarItems` itself: that walks a whole `StructureNode` tree,
+	 * and what this page's sidebar wants is a flat list of its four or five
+	 * part anchors. (The READER's sidebar does walk the shared tree now — see
+	 * `summaOutline` in corpus.ts.)
 	 */
 	const borrowedLabel = (borrowedFrom: string) =>
 		t('summa.titleFromEdition').replace('{lang}', languageDisplayName(borrowedFrom));

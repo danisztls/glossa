@@ -143,6 +143,7 @@ import type {
 
 import { inlineText, parseInlineHtml } from './inline-html';
 import { summaPartSlug } from './route-manifest';
+import { summaHeadingTitle, summaQuestionLabel } from './summa-titles';
 import {
 	USE_REAL_CORPUS,
 	bibleIndex,
@@ -1796,6 +1797,116 @@ export function summaArticleExists(part: string, n: number, article: number): bo
 /** Headings that apply to one part, in document order — that part's TOC. */
 export function summaHeadingsForPart(lang: string, part: string): SummaNode[] {
 	return getSummaStructure(lang).filter((row) => row.part === part);
+}
+
+/**
+ * The Summa's outline for one part, as the SAME `StructureNode` tree every
+ * other reader's sidebar walks.
+ *
+ * WHY THIS REPLACES A BESPOKE COMPONENT. `summaToc.ts` and
+ * `SummaSidebarToc.svelte` existed on the argument that the Summa's
+ * `SummaNode` is "a FLAT list of `{ level, part, title, before }`" and that
+ * reshaping it into a tree "would mean inventing bounds (`paragraphs`) and
+ * kinds the corpus does not carry". That argument does not survive contact
+ * with `DocumentNode`, which is the SAME SHAPE minus `part` — and which
+ * `buildDocumentOutline` reshapes in exactly that way, deriving each
+ * heading's range from where the next heading of equal or shallower level
+ * begins. Far from being fabrication, that derivation is the documented
+ * convention for this node shape: `docs/corpus-schema.md` says the Summa's
+ * `structure.json` is "FLAT and document-ordered, like the documents' and
+ * for the same reason", and `types.ts` states the rule — "a heading owns
+ * sections from its anchor until the next heading of equal or shallower
+ * `level`. Storing ranges is what let them drift from the text."
+ * `summaTocGroups` was already performing the same derivation ("a treatise
+ * runs from its own `before` up to the next heading's"); it just stopped at
+ * one level and returned a bespoke type. So the divergence was accidental,
+ * and this is it removed.
+ *
+ * THE THREE THINGS THAT ARE GENUINELY THE SUMMA'S, and none of them a fork:
+ *
+ *  - **`part`.** Question numbers restart at 1 in every part, so an outline
+ *    is built per part and `lastN` is that part's own last question. A
+ *    parameter, not a different algorithm.
+ *  - **The Latin edition prints no treatise headings at all** — the Corpus
+ *    Thomisticum publishes the four part headings and nothing below them —
+ *    so `headings` arrives empty and every question lands at the top level.
+ *    That falls out of the same builder as correct degradation; borrowing
+ *    the English edition's treatise names to organise Latin text would
+ *    assert a structure that source does not print.
+ *  - **A question's title may be borrowed from another edition**, which is
+ *    the normal case under Latin. `titleLang` carries that so the row can
+ *    say so, rather than passing another edition's words off as this one's.
+ *
+ * ARTICLES ARE FRAGMENTS, NOT ROUTES, and they say so with null bounds plus
+ * an `anchor`: an article is genuinely not addressed by a question number,
+ * and `/summa/ii-ii/184#a3` is the address that reaches it. They hang under
+ * their own question, so the shared component's "only the reader's own
+ * branch expands" rule already shows them for the question being read and
+ * for no other — the same rule the bespoke component implemented by hand.
+ */
+export function summaOutline(
+	lang: string,
+	part: string,
+	currentN?: number,
+	articles: number[] = []
+): StructureNode[] {
+	const questions = listSummaQuestions(lang).filter((q) => q.part === part);
+	if (questions.length === 0) return [];
+	const lastN = questions[questions.length - 1].n;
+
+	const questionNode = (meta: { n: number }): StructureNode => {
+		const named = summaTitleFor(lang, part, meta.n);
+		const kids: StructureNode[] =
+			meta.n === currentN
+				? articles.map((a) => ({
+						kind: 'sub',
+						n: a,
+						title: String(a),
+						// Null bounds: an article is not addressed by a question
+						// number. `anchor` is what addresses it, and the shared
+						// row renders that as an in-page link.
+						paragraphs: [null, null],
+						children: [],
+						anchor: `a${a}`
+					}))
+				: [];
+		return {
+			kind: 'sub',
+			n: meta.n,
+			title: named ? summaQuestionLabel(named.title) : '',
+			paragraphs: [meta.n, meta.n],
+			children: kids,
+			titleLang: named?.borrowed ? named.lang : undefined
+		};
+	};
+
+	// `level > 1` drops the PART heading itself ("FIRST PART"): this outline
+	// is already scoped to one part, and a single root containing everything
+	// is a row that says nothing and costs a level of indent.
+	const headings = summaHeadingsForPart(lang, part).filter(
+		(row) => row.level > 1 && row.before !== null
+	);
+	if (headings.length === 0) return questions.map(questionNode);
+
+	// One treatise runs from its own `before` to just before the next
+	// heading's -- `buildDocumentOutline`'s rule, applied to the same shape.
+	const treatises: StructureNode[] = headings.map((row, i) => {
+		const from = row.before as number;
+		const to = i + 1 < headings.length ? (headings[i + 1].before as number) - 1 : lastN;
+		return {
+			kind: 'section',
+			n: null,
+			title: summaHeadingTitle(row.title),
+			paragraphs: [from, to],
+			children: questions.filter((q) => q.n >= from && q.n <= to).map(questionNode)
+		};
+	});
+
+	// Questions ahead of the first heading keep their place at the top level
+	// rather than being swallowed into it -- the sidebar is a view of the
+	// source's own outline, and a row it cannot place is not a row to drop.
+	const leading = questions.filter((q) => q.n < (headings[0].before as number));
+	return [...leading.map(questionNode), ...treatises];
 }
 
 // --- Summa: content tier (async, one file per question) -------------------

@@ -40,8 +40,7 @@
 	import {
 		compareColumnLabel,
 		languageDisplayName,
-		listSummaQuestions,
-		summaHeadingsForPart,
+		summaOutline,
 		summaTitleFor
 	} from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
@@ -61,7 +60,7 @@
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import SummaDivisions from '$lib/components/SummaDivisions.svelte';
-	import SummaSidebarToc from '$lib/components/SummaSidebarToc.svelte';
+	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { summaTitleParts } from '$lib/summa-titles';
 	import { summaPartSlug } from '$lib/route-manifest';
 	import type { SummaArticle } from '$lib/types';
@@ -96,13 +95,12 @@
 	 * reader seeing the English part they are actually reading and seeing an
 	 * outline for a part their preferred edition does not have.
 	 */
-	const headings = $derived(
-		summaHeadingsForPart(editions.lang, data.part).filter((row) => row.level > 1)
-	);
-	const partQuestions = $derived(
-		listSummaQuestions(editions.lang).filter((q) => q.part === data.part)
-	);
 	const articleNumbers = $derived((question?.articles ?? []).map((a) => a.n));
+	const outline = $derived(summaOutline(editions.lang, data.part, data.n, articleNumbers));
+	/** The article rows' own anchors. They bound no question number of their
+	 *  own, so this is what tells the shared sidebar they are addressable —
+	 *  the same mechanism a document's tail headings already use. */
+	const linkableAnchors = $derived(new Set(articleNumbers.map((a) => `a${a}`)));
 
 	// A question with no articles has nothing `alignByNumber` can align — see
 	// the module docblock.
@@ -396,19 +394,21 @@
 		     counterpart to preserve — the same call `/compendium/[n]` made.
 		     Omitted entirely in compare mode, per `.reading-layout.compare`. -->
 		<aside class="reading-aside">
-			<SummaSidebarToc
-				{headings}
-				questions={partQuestions}
+			<!-- The same sidebar every other reader has, over the same
+			     `StructureNode` tree — see `summaOutline` (corpus.ts) for why
+			     the bespoke component this replaced was an accidental
+			     divergence rather than a requirement. `outlineKinds` is
+			     omitted, as for a document: the Summa's tree is two levels
+			     deep and has no "chapter-sized" floor to cut it to. -->
+			<StructureSidebarToc
+				structure={outline.map((node) => ({ node, depth: 0 }))}
 				currentN={data.n}
-				articles={articleNumbers}
-				{partSlug}
-				part={data.part}
 				lang={editions.lang}
 				heading={t('summa.tableOfContents')}
-				questionLabel={t('summa.questionShort')}
-				articleLabel={t('summa.articleShort')}
-				borrowedTitleLabel={t('summa.titleFromEdition')}
-				languageName={languageDisplayName}
+				basePath={`/summa/${partSlug}`}
+				{linkableAnchors}
+				borrowedTitleLabel={(from) =>
+					t('summa.titleFromEdition').replace('{lang}', languageDisplayName(from))}
 			/>
 		</aside>
 	</div>

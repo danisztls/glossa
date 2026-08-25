@@ -170,6 +170,12 @@
 		    the same page and would otherwise share one address. Left unset,
 		    every row links to the page top exactly as before. */
 		anchorFor?: (node: StructureNode) => string | undefined;
+		/** Tooltip for a row whose title was borrowed from another edition
+		 *  (`StructureNode.titleLang`), given that edition's language tag.
+		 *  Passed in rather than read from i18n here so this component stays
+		 *  a pure view of what it is handed — the same reason the heading is.
+		 *  Only the Summa has such rows. */
+		borrowedTitleLabel?: (lang: string) => string;
 		/** Rows the PAGE renders a heading for even though they bound no
 		 *  numbered unit — a document's tail matter, whose text is unnumbered
 		 *  (docs/corpus-schema.md §appendix.json). Without this they fall to
@@ -188,6 +194,7 @@
 		linkMode = 'route',
 		outlineKinds,
 		anchorFor,
+		borrowedTitleLabel,
 		linkableAnchors
 	}: Props = $props();
 
@@ -222,7 +229,7 @@
 			{@const raw = rowState(node, currentN, outlineKinds)}
 			{@const state = { onPath: raw.onPath, isCurrent: raw.isCurrent && i === cur }}
 			<li class={`kind-${node.kind}`} class:on-path={state.onPath}>
-				{#if Number.isFinite(anchor) || (linkMode === 'anchor' && node.anchor && linkableAnchors?.has(node.anchor))}
+				{#if Number.isFinite(anchor) || (node.anchor && linkableAnchors?.has(node.anchor))}
 					<a
 						id={state.isCurrent ? CURRENT_ID : undefined}
 						href={hrefFor(node, anchor as number, linkMode, basePath, anchorFor?.(node))}
@@ -230,7 +237,13 @@
 						aria-current={state.isCurrent ? 'page' : undefined}
 					>
 						{#if label}<span class="kind-label">{label}</span>{/if}
-						<InlineText nodes={inlineTitleNodes(dt.title, node.titleHtml, lang)} />
+						<span
+							class="row-title"
+							class:borrowed={node.titleLang !== undefined}
+							lang={node.titleLang}
+							title={node.titleLang ? borrowedTitleLabel?.(node.titleLang) : undefined}
+							><InlineText nodes={inlineTitleNodes(dt.title, node.titleHtml, lang)} /></span
+						>
 					</a>
 				{:else}
 					<!-- Null bounds: real structure the corpus knows about but no
@@ -383,5 +396,17 @@
 	   that happens to also work here. */
 	a.current .kind-label {
 		color: inherit;
+	}
+	/*
+	 * A title this edition does not print, shown so a reader is not left with
+	 * a bare number (`summaTitleFor`). Italic and muted rather than badged: it
+	 * is the same address named in another language, not a second thing to
+	 * read — the same treatment the reader already meets on the question
+	 * heading itself. The `lang` attribute on the element is what actually
+	 * tells a screen reader the language changed.
+	 */
+	.row-title.borrowed {
+		font-style: italic;
+		opacity: 0.85;
 	}
 </style>
