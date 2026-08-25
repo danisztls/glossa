@@ -26,7 +26,7 @@
 	import type { VerseNote } from '$lib/types';
 	import { splitMarkers } from '$lib/inline-markers';
 	import { splitDropCap } from '$lib/dropcap';
-	import { noteKey } from '$lib/sidenotes.svelte';
+	import { noteKey, noteLetter } from '$lib/sidenotes.svelte';
 	import Sidenote from '$lib/components/Sidenote.svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 
@@ -45,9 +45,13 @@
 		/** Promote the opening letter — the caller's decision, since only it
 		    knows whether this unit opens the chapter. */
 		dropCap?: boolean;
+		/** How many notes of this CHAPTER come before this unit's, so the
+		    printed labels run a, b, c… down the page rather than restarting at
+		    every verse. See `noteLetter`. */
+		noteOffset?: number;
 	}
 
-	let { text, textMarked, notes, unit, lang, dropCap = false }: Props = $props();
+	let { text, textMarked, notes, unit, lang, dropCap = false, noteOffset = 0 }: Props = $props();
 
 	const pieces = $derived(splitMarkers(text, textMarked));
 
@@ -64,6 +68,43 @@
 		return (notes ?? []).filter((note) => !anchored.has(note.marker));
 	});
 
+	/**
+	 * This unit's notes in the order they are printed — anchored ones where
+	 * their token falls, then the unanchored — which is the order the labels
+	 * are assigned in. Every note appears exactly once, so this is always the
+	 * same length as `notes` and a caller can advance `noteOffset` by that
+	 * length without re-deriving anything.
+	 */
+	const ordered = $derived.by(() => {
+		const seen = new Set<string>();
+		const out: VerseNote[] = [];
+		for (const piece of pieces) {
+			if (!('marker' in piece) || seen.has(piece.marker)) continue;
+			const note = byMarker.get(piece.marker);
+			if (note) {
+				seen.add(piece.marker);
+				out.push(note);
+			}
+		}
+		for (const note of notes ?? []) {
+			if (seen.has(note.marker)) continue;
+			seen.add(note.marker);
+			out.push(note);
+		}
+		return out;
+	});
+
+	/**
+	 * A note's printed label. Falls back to the source's own marker for a
+	 * token with no note behind it — there is no note to be the nth of, and
+	 * inventing a letter would put a label in the sequence that names nothing.
+	 */
+	function labelOf(marker: string): string {
+		const note = byMarker.get(marker);
+		const at = note ? ordered.indexOf(note) : -1;
+		return at < 0 ? marker : noteLetter(noteOffset + at);
+	}
+
 	const open = new SvelteSet<string>();
 
 	function toggle(key: string) {
@@ -76,7 +117,7 @@
 </script>
 
 {#each pieces as piece, i (i)}{#if 'marker' in piece}<Sidenote
-			marker={piece.marker}
+			label={labelOf(piece.marker)}
 			note={byMarker.get(piece.marker)}
 			{lang}
 			open={open.has(noteKey(unit, piece.marker, piece.seq))}
@@ -86,7 +127,7 @@
 		)}{#if cap.first}<span class="drop-cap-letter"
 				>{#if cap.lead}<span class="drop-cap-lead">{cap.lead}</span>{/if}{cap.first}</span
 			>{cap.rest}{:else}{piece.text}{/if}{:else}{piece.text}{/if}{/each}{#each unanchored as note, i (`${note.marker}-${i}`)}<Sidenote
-		marker={note.marker}
+		label={labelOf(note.marker)}
 		{note}
 		{lang}
 		open={open.has(noteKey(unit, note.marker, -1 - i))}

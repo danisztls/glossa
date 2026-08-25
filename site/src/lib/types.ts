@@ -286,6 +286,25 @@ export interface Verse extends Annotated {
 export interface ChapterHeading extends Annotated {
 	/** Verse number this heading is printed immediately before. */
 	before_verse: number;
+	/**
+	 * How prominent the source sets it, 1 (most) to 4 (least) — a part title,
+	 * a section, a subsection, and the innermost line printed above a verse.
+	 *
+	 * SEVERAL HEADINGS CAN SHARE ONE `before_verse`, which is the whole reason
+	 * this field exists. The Matos Soares edition sets "PRIMEIRA PARTE",
+	 * "I - CRIAÇÃO DO MUNDO" and "Principio." all before Genesis 1:1, and 558
+	 * of its verse numbers carry more than one heading. They arrive in level
+	 * order, so a renderer can take them in sequence without sorting.
+	 *
+	 * PRESENTATION, NOT STRUCTURE. Verse numbering is the Bible's structure
+	 * and headings hang off it — a heading names the verse it precedes and
+	 * addresses nothing. Two consequences: no address ever resolves to a
+	 * heading, and an edition may divide a chapter however it likes without
+	 * that being a disagreement with another edition about shape.
+	 *
+	 * Optional because an edition ingested before 2026-08-25 has none.
+	 */
+	level?: number;
 }
 
 export interface Chapter {

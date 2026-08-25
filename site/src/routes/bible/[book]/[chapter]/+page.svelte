@@ -19,6 +19,7 @@
 	// heading precedes it — a cap immediately under a heading collides with
 	// it, and the heading is already doing the work of marking the opening.
 	import AnnotatedText from '$lib/components/AnnotatedText.svelte';
+	import { chapterNoteOffsets } from '$lib/sidenotes.svelte';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
@@ -173,9 +174,25 @@
 	const prev = $derived(getAdjacentChapterAcrossBooks(workId, data.osis, data.chapterN, 'prev'));
 	const next = $derived(getAdjacentChapterAcrossBooks(workId, data.osis, data.chapterN, 'next'));
 
-	function headingBefore(verseN: number) {
-		return current?.chapter.headings?.find((h) => h.before_verse === verseN);
+	/**
+	 * Every heading printed before a verse, in the order the source sets them.
+	 *
+	 * PLURAL SINCE 2026-08-25, when the Matos Soares edition arrived with a
+	 * hierarchy: "PRIMEIRA PARTE" / "I - CRIAÇÃO DO MUNDO" / "Principio." all
+	 * precede Genesis 1:1. The pipeline already emits them in level order, so
+	 * this filters and does not sort — re-sorting here would silently disagree
+	 * with the corpus about two headings of the same level, whose order is the
+	 * source's own and not derivable (see `heading_units` in the pipeline).
+	 */
+	function headingsBefore(verseN: number) {
+		return current?.chapter.headings?.filter((h) => h.before_verse === verseN) ?? [];
 	}
+
+	/** Where each unit's notes start in the chapter's lettered run — see
+	 *  `chapterNoteOffsets`, which is the reading-order rule this depends on. */
+	const noteOffsets = $derived(
+		current ? chapterNoteOffsets(current.chapter) : new Map<string, number>()
+	);
 
 	/**
 	 * The passage a citation pointed at, as `?v=1-7`.
@@ -602,23 +619,31 @@
 			{:else}
 				<div class="reading-text" lang={current.work.language}>
 					{#each current.chapter.verses as verse, i (verse.n)}
-						{@const heading = headingBefore(verse.n)}
-						{#if heading}
-							<!-- A heading can carry apparatus of its own: Lamentations 1
-							     opens with Jeremias's prologue, which the Douay-Rheims
-							     prints before verse 1 with a note saying he did not write
-							     it. Keyed `h{n}` so its notes stay distinct from those of
-							     the verse it precedes, whose markers restart at 1. -->
-							<h2 class="section-heading">
+						<!-- A heading can carry apparatus of its own: Lamentations 1
+						     opens with Jeremias's prologue, which the Douay-Rheims prints
+						     before verse 1 with a note saying he did not write it. Keyed
+						     `h{n}.{i}` so its notes stay distinct both from the verse it
+						     precedes and from a sibling heading at another level, since
+						     every one of them numbers its notes from 1. -->
+						{#each headingsBefore(verse.n) as heading, hi (`${verse.n}-${hi}`)}
+							<svelte:element
+								this={`h${Math.min((heading.level ?? 4) + 1, 6)}`}
+								class="section-heading"
+								class:section-heading-1={(heading.level ?? 4) === 1}
+								class:section-heading-2={(heading.level ?? 4) === 2}
+								class:section-heading-3={(heading.level ?? 4) === 3}
+								class:section-heading-4={(heading.level ?? 4) >= 4}
+							>
 								<AnnotatedText
 									text={heading.text}
 									textMarked={heading.text_marked}
 									notes={heading.notes}
-									unit={`h${verse.n}`}
+									unit={`h${verse.n}.${hi}`}
 									lang={current.work.language}
+									noteOffset={noteOffsets.get(`h${verse.n}.${hi}`) ?? 0}
 								/>
-							</h2>
-						{/if}
+							</svelte:element>
+						{/each}
 						<span
 							id={`v${verse.n}`}
 							class="verse"
@@ -638,7 +663,8 @@
 								notes={verse.notes}
 								unit={verse.n}
 								lang={current.work.language}
-								dropCap={i === 0 && !heading}
+								dropCap={i === 0 && headingsBefore(verse.n).length === 0}
+								noteOffset={noteOffsets.get(`v${verse.n}`) ?? 0}
 							/>
 						</span>
 					{/each}
@@ -778,6 +804,20 @@
 		margin: 0;
 	}
 
+	/*
+	 * A heading the edition prints inside a chapter. FOUR LEVELS, because an
+	 * annotated edition sets a hierarchy: the Matos Soares Bible puts a part
+	 * title, a section title and a pericope line all above Genesis 1:1.
+	 *
+	 * THEY DESCEND IN PROMINENCE WITHOUT GROWING, which is the constraint that
+	 * shapes all four. The chapter's own `<h1>` is the largest thing on the
+	 * page and a level-1 section heading sits under it, so the range runs from
+	 * just above the reading size downward — separation is carried by letter-
+	 * spacing, case and weight rather than by size, which there is no room for.
+	 * Level 4 is the innermost line (a Psalm's Latin incipit, a Matos Soares
+	 * caption) and is deliberately the quietest: it recurs every few verses,
+	 * and at that frequency anything emphatic reads as clutter.
+	 */
 	.section-heading {
 		font-family: var(--font-serif);
 		/* em, not rem: scales with .reading-text's own font-size (which
@@ -785,6 +825,41 @@
 		font-size: 1.1em;
 		font-weight: 600;
 		margin: 1.5rem 0 0.5rem;
+	}
+
+	.section-heading-1 {
+		/* A part title — "PRIMEIRA PARTE". Small caps and tracking rather than
+		   size: it is the most prominent of the four and still must not compete
+		   with the chapter number above it. */
+		font-size: 0.82em;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+		margin-block-start: 2.5rem;
+		padding-block-end: 0.4rem;
+		border-block-end: 1px solid var(--color-border);
+	}
+
+	.section-heading-2 {
+		font-size: 1.05em;
+		letter-spacing: 0.02em;
+		margin-block-start: 2rem;
+	}
+
+	.section-heading-3 {
+		font-size: 1em;
+		margin-block-start: 1.75rem;
+	}
+
+	.section-heading-4 {
+		/* The innermost line. Italic and muted, at the reading size — it marks
+		   a pericope rather than announcing a division. */
+		font-size: 0.95em;
+		font-weight: 500;
+		font-style: italic;
+		color: var(--color-text-muted);
+		margin-block: 1.25rem 0.4rem;
 	}
 
 	.verse {

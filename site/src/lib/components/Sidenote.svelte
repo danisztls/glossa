@@ -33,13 +33,17 @@
 	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
-		/** The printed marker — "1". Shown in the superscript and again at the
-		    head of the note, so a note read in isolation still names itself. */
-		marker: string;
-		/** The entry `marker` points at. `undefined` means the corpus has a
-		    token with no note behind it, which the pipeline validates against —
-		    so it is a bug rather than a shrug, and the marker still renders so
-		    the reader is not silently shown less than the source printed. */
+		/** What the note is PRINTED as — "a", "b" — shown in the superscript and
+		    again at the head of the note, so a note read in isolation still names
+		    itself. NOT `VerseNote.marker`, which is the source's own ordinal and
+		    stays in the corpus: the label is lettered per chapter so it cannot be
+		    mistaken for a verse number. See `noteLetter`. */
+		label: string;
+		/** The note itself. `undefined` means the corpus has a token with no
+		    note behind it, which the pipeline validates against — so it is a bug
+		    rather than a shrug, and the reference still renders so the reader is
+		    not silently shown less than the source printed. (`label` then falls
+		    back to the source's own marker: there is no note to be the nth of.) */
 		note: VerseNote | undefined;
 		/** Content language of the note, which is the edition's own — a gloss
 		    is written in the language of the edition that carries it, never the
@@ -50,7 +54,7 @@
 		onToggle: () => void;
 	}
 
-	let { marker, note, lang, open, onToggle }: Props = $props();
+	let { label, note, lang, open, onToggle }: Props = $props();
 
 	// In the margin the note is on screen no matter what `open` says, so the
 	// marker is not a disclosure control and does not claim to be one.
@@ -59,24 +63,24 @@
 </script>
 
 {#if inMargin}
-	<sup class="note-marker note-marker-static" aria-hidden="true">{marker}</sup>
+	<sup class="note-marker note-marker-static" aria-hidden="true">{label}</sup>
 {:else}
 	<sup class="note-marker">
 		<button
 			type="button"
 			class="note-trigger"
 			aria-expanded={open}
-			aria-label={`${t('bible.note')} ${marker}`}
+			aria-label={`${t('bible.note')} ${label}`}
 			onclick={onToggle}
 		>
-			{marker}
+			{label}
 		</button>
 	</sup>
 {/if}
 
 {#if shown}
 	<small class="sidenote" class:sidenote-margin={inMargin} {lang}>
-		<span class="sidenote-marker" aria-hidden="true">{marker}</span>
+		<span class="sidenote-marker" aria-hidden="true">{label}</span>
 		{#if note}
 			{#if note.lemma}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span class="sidenote-text"
 				>{note.text}</span
@@ -89,8 +93,10 @@
 
 <style>
 	/*
-	 * The marker. Superscript, in the sans face so that even at this size it
-	 * does not read as part of the serif text it interrupts.
+	 * The reference. Superscript, in the sans face so that even at this size
+	 * it does not read as part of the serif text it interrupts, and lettered
+	 * rather than numbered so it cannot be taken for a verse number — see
+	 * `noteLetter`.
 	 */
 	.note-marker {
 		font-family: var(--font-sans);
