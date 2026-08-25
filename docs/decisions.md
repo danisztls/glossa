@@ -3517,3 +3517,41 @@ Ingesting the seven is a separate decision and is not taken here: they would
 be the corpus's first Italian-only works, and `CONTENT_LANG_FALLBACK` resolves
 a reader's language, then English, then Latin — a chain none of them can
 satisfy.
+
+## 2026-08-25 — Every encyclical in some language, and Italian when not English
+
+Discovery read the English index only, so seven encyclicals the Holy See never
+translated were invisible: not discovered, not fetched, not recorded absent.
+The rule is now that **every encyclical the Holy See publishes is on the site
+in some language** — English where it exists, otherwise the language it does
+exist in.
+
+`FALLBACK_INDEX_LANGS = ("it",)`, consulted per pontificate for anything the
+English index does not list. Italian is enough: measured across all thirteen
+pontificates, it lists seven documents English does not and no other language
+reaches a document at all. This is not a "crawl more languages" switch — the
+language a document arrives in is whichever one it exists in, not a preference.
+
+Three things had assumed English and now do not:
+
+- **`DocRef.base_lang`** — the language of the index that found a document,
+  and the one every other URL is substituted from. `translation_url_for` used
+  to derive from `lang_urls["en"]`, which a document with no English edition
+  does not have.
+- **`submit_doc`** starts from `base_lang` rather than from `"en"`.
+- **`_WORK_ID_RE`** matched `(en|pt)`, so `check_language_symmetry` was
+  silently skipping seven of Magnifica Humanitas' nine editions — the literal
+  pair outlived the two-language corpus by one day, and the docstring had been
+  generalised while the regex was not. Any two-letter language now.
+
+**The seven are Italian-only, and the English pages exist but are stubs.** All
+seven have an `…/en/…` URL that returns a 31 KB page with no document in it,
+which `StubPageError` already refuses to write — so "no English edition" is
+the correct reading and not a discovery accident. `orientales` also has a real
+Portuguese edition (24 sections), ingested alongside; the other six are
+Italian and Latin only.
+
+All seven are **unnumbered documents** — continuous prose with no inline
+paragraph numbers, so their text is in `appendix.json` and `sections.json` is
+empty, the shape the corpus already had eight editions of. 20–75 KB of text
+each. The corpus is 367 works.

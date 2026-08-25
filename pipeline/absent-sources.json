@@ -3220,6 +3220,20 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/pius-xi/ar/encyclicals/documents/hf_p-xi_enc_19230629_studiorum-ducem.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__studiorum-ducem__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/ar/encyclicals/documents/hf_p-xi_enc_19231112_ecclesiam-dei.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__ecclesiam-dei__ar.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xi/ar/encyclicals/documents/hf_p-xi_enc_19280106_mortalium-animos.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -3234,10 +3248,31 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/pius-xi/ar/encyclicals/documents/hf_p-xi_enc_19280908_rerum-orientalium.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__rerum-orientalium__ar.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xi/ar/encyclicals/documents/hf_p-xi_enc_19291220_mens-nostra.html",
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__mens-nostra__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/ar/encyclicals/documents/hf_p-xi_enc_19291223_quinquagesimo-ante-anno.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__quinquagesimo-ante-anno__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/ar/encyclicals/documents/hf_p-xi_enc_19300420_ad-salutem-humani.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__ad-salutem-humani__ar.html",
     "note": ""
   },
   {
@@ -3252,6 +3287,13 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__quadragesimo-anno__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/ar/encyclicals/documents/hf_p-xi_enc_19311225_lux-veritatis.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__lux-veritatis__ar.html",
     "note": ""
   },
   {
@@ -3507,6 +3549,13 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/pius-xi/fr/encyclicals/documents/hf_p-xi_enc_19311225_lux-veritatis.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__lux-veritatis__fr.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xi/fr/encyclicals/documents/hf_p-xi_enc_28021926_rerum-ecclesiae.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -3752,6 +3801,20 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/pius-xi/pl/encyclicals/documents/hf_p-xi_enc_19230629_studiorum-ducem.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__studiorum-ducem__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pl/encyclicals/documents/hf_p-xi_enc_19231112_ecclesiam-dei.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__ecclesiam-dei__pl.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xi/pl/encyclicals/documents/hf_p-xi_enc_19280106_mortalium-animos.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -3766,10 +3829,31 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/pius-xi/pl/encyclicals/documents/hf_p-xi_enc_19280908_rerum-orientalium.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__rerum-orientalium__pl.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xi/pl/encyclicals/documents/hf_p-xi_enc_19291220_mens-nostra.html",
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__mens-nostra__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pl/encyclicals/documents/hf_p-xi_enc_19291223_quinquagesimo-ante-anno.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__quinquagesimo-ante-anno__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pl/encyclicals/documents/hf_p-xi_enc_19300420_ad-salutem-humani.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__ad-salutem-humani__pl.html",
     "note": ""
   },
   {
@@ -3784,6 +3868,13 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__quadragesimo-anno__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/pl/encyclicals/documents/hf_p-xi_enc_19311225_lux-veritatis.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__lux-veritatis__pl.html",
     "note": ""
   },
   {
@@ -3892,6 +3983,13 @@
     "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
   },
   {
+    "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_19311225_lux-veritatis.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__lux-veritatis__pt.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xi/pt/encyclicals/documents/hf_p-xi_enc_28021926_rerum-ecclesiae.html",
     "status": 404,
     "observed": "2026-08-23",
@@ -3990,6 +4088,20 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/pius-xi/ru/encyclicals/documents/hf_p-xi_enc_19230629_studiorum-ducem.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__studiorum-ducem__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/ru/encyclicals/documents/hf_p-xi_enc_19231112_ecclesiam-dei.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__ecclesiam-dei__ru.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xi/ru/encyclicals/documents/hf_p-xi_enc_19280106_mortalium-animos.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -4004,10 +4116,31 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/pius-xi/ru/encyclicals/documents/hf_p-xi_enc_19280908_rerum-orientalium.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__rerum-orientalium__ru.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xi/ru/encyclicals/documents/hf_p-xi_enc_19291220_mens-nostra.html",
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__mens-nostra__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/ru/encyclicals/documents/hf_p-xi_enc_19291223_quinquagesimo-ante-anno.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__quinquagesimo-ante-anno__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/ru/encyclicals/documents/hf_p-xi_enc_19300420_ad-salutem-humani.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__ad-salutem-humani__ru.html",
     "note": ""
   },
   {
@@ -4022,6 +4155,13 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__quadragesimo-anno__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xi/ru/encyclicals/documents/hf_p-xi_enc_19311225_lux-veritatis.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__lux-veritatis__ru.html",
     "note": ""
   },
   {
@@ -4274,6 +4414,13 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__ingruentium-malorum__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xii/ar/encyclicals/documents/hf_p-xii_enc_15121952_orientales.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__orientales__ar.html",
     "note": ""
   },
   {
@@ -4662,6 +4809,13 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/pius-xii/pl/encyclicals/documents/hf_p-xii_enc_15121952_orientales.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__orientales__pl.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xii/pl/encyclicals/documents/hf_p-xii_enc_16051957_invicti-athletae.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -4946,6 +5100,13 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__ingruentium-malorum__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xii/ru/encyclicals/documents/hf_p-xii_enc_15121952_orientales.html",
+    "status": 404,
+    "observed": "2026-08-25",
+    "context": "encyclical__orientales__ru.html",
     "note": ""
   },
   {

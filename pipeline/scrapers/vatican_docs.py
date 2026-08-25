@@ -3735,6 +3735,13 @@ class DocRef:
         str  # 8 raw digits from the filename, format TBD (see parse_promulgation_date)
     )
     lang_urls: dict[str, str]  # {"en": url, "pt": url}
+    #: The language of the index this document was discovered from, and so the
+    #: language its other URLs are derived from. English for all but the seven
+    #: encyclicals vatican.va lists only in Italian -- see
+    #: `FALLBACK_INDEX_LANGS`. Not cosmetic: every other language's URL is one
+    #: path substitution away from THIS one, and a document with no English
+    #: edition has no English URL to substitute from.
+    base_lang: str = "en"
 
 
 def parse_promulgation_date(digits: str) -> str | None:
@@ -3836,22 +3843,36 @@ def _index_links(
     return sorted({m.group(1) for m in link_re.finditer(text)})
 
 
-def discover_encyclicals(
-    fetcher: Fetcher, pontiff_slug: str, display_name: str
-) -> tuple[list[DocRef], list[str]]:
-    """Enumerates from the pontiff's own EN encyclicals index -- not a
-    hardcoded document list, per this task's brief. PT availability is
-    then checked per-document (a 404 is expected, not an error -- see
-    module docstring / final report)."""
+#: Indexes consulted after English, for documents English does not list.
+#: Measured 2026-08-25 across all thirteen pontificates: Italian lists seven
+#: encyclicals English does not -- six of Pius XI's and one of Pius XII's --
+#: and no other language was needed to reach a document at all. Ordered, and
+#: the first index that has a document wins, so a document reachable in two
+#: fallbacks is taken from the earlier one.
+#:
+#: This is not a general "crawl more languages" switch. It exists so that
+#: every encyclical the Holy See publishes is on the site in SOME language
+#: (`docs/decisions.md`, 2026-08-25); the language a document arrives in is
+#: whichever one it exists in, not a preference.
+FALLBACK_INDEX_LANGS = ("it",)
+
+
+def _encyclical_refs_from_index(
+    fetcher: Fetcher, pontiff_slug: str, display_name: str, lang: str
+) -> tuple[dict[str, DocRef], list[str]]:
+    """`slug -> DocRef` for one pontificate's encyclical index in `lang`."""
     notes: list[str] = []
-    en_re = re.compile(_ENCYC_LINK_RE_TMPL.format(slug=pontiff_slug, lang="en"))
+    link_re = re.compile(_ENCYC_LINK_RE_TMPL.format(slug=pontiff_slug, lang=lang))
+    cache = f"index__encyclicals__{pontiff_slug}.html"
+    if lang != "en":
+        cache = f"index__encyclicals__{pontiff_slug}__{lang}.html"
     fnames = _index_links(
         fetcher,
-        f"https://www.vatican.va/content/{pontiff_slug}/en/encyclicals.index.html",
-        f"index__encyclicals__{pontiff_slug}.html",
-        en_re,
+        f"https://www.vatican.va/content/{pontiff_slug}/{lang}/encyclicals.index.html",
+        cache,
+        link_re,
     )
-    refs = []
+    refs: dict[str, DocRef] = {}
     for fname in fnames:
         parsed = parse_date_slug(fname)
         if parsed is None:
@@ -3860,13 +3881,49 @@ def discover_encyclicals(
             )
             continue
         date8, slug = parsed
-        en_url = f"https://www.vatican.va/content/{pontiff_slug}/en/encyclicals/documents/{fname}.html"
-        refs.append(
-            DocRef(
-                "encyclical", "encyclical", slug, display_name, date8, {"en": en_url}
-            )
+        url = (
+            f"https://www.vatican.va/content/{pontiff_slug}/{lang}"
+            f"/encyclicals/documents/{fname}.html"
+        )
+        refs[slug] = DocRef(
+            "encyclical",
+            "encyclical",
+            slug,
+            display_name,
+            date8,
+            {lang: url},
+            base_lang=lang,
         )
     return refs, notes
+
+
+def discover_encyclicals(
+    fetcher: Fetcher, pontiff_slug: str, display_name: str
+) -> tuple[list[DocRef], list[str]]:
+    """Enumerates from the pontiff's own encyclicals index -- not a hardcoded
+    document list, per this task's brief. Other languages are then checked
+    per-document (a 404 is expected, not an error -- see module docstring /
+    final report).
+
+    English first, then `FALLBACK_INDEX_LANGS` for anything English does not
+    list. Reading one index only was a silent gap rather than a small one: a
+    document the Holy See never translated into English was not discovered,
+    not fetched, and not recorded absent, so nothing anywhere said it existed.
+    Seven encyclicals were in that state until 2026-08-25."""
+    refs, notes = _encyclical_refs_from_index(fetcher, pontiff_slug, display_name, "en")
+    for lang in FALLBACK_INDEX_LANGS:
+        extra, extra_notes = _encyclical_refs_from_index(
+            fetcher, pontiff_slug, display_name, lang
+        )
+        notes.extend(extra_notes)
+        new = {s: r for s, r in extra.items() if s not in refs}
+        if new:
+            notes.append(
+                f"{pontiff_slug}: {len(new)} encyclical(s) listed in {lang} and not "
+                f"in en: {', '.join(sorted(new))}"
+            )
+        refs.update(new)
+    return list(refs.values()), notes
 
 
 def discover_exhortations(
@@ -3914,20 +3971,25 @@ DEFAULT_LANGS = ("en", "pt")
 
 
 def translation_url_for(ref: DocRef, lang: str) -> str | None:
-    """`ref`'s URL in `lang`, derived from its English one.
+    """`ref`'s URL in `lang`, derived from the one its index gave it.
 
     vatican.va's modern shell puts the language in one path segment and
     changes nothing else, so every translation of a document is one
-    substitution away from the English URL it was discovered from. Whether
-    the page is actually there is not asked here -- a 404 is the expected
-    answer for most (language, document) pairs and is recorded in the absent
-    ledger, not treated as an error."""
-    en_url = ref.lang_urls.get("en")
-    if en_url is None or lang == "en":
+    substitution away from the URL it was discovered from. Whether the page is
+    actually there is not asked here -- a 404 is the expected answer for most
+    (language, document) pairs and is recorded in the absent ledger, not
+    treated as an error.
+
+    Substitutes from `ref.base_lang` rather than from English, which is the
+    same thing for all but seven documents and the whole point for those
+    seven: an encyclical the Holy See never translated has no English URL to
+    start from."""
+    base = ref.lang_urls.get(ref.base_lang)
+    if base is None or lang == ref.base_lang:
         return None
     if ref.family == "vatii":
         return None  # discovered directly from the index, not derived
-    return en_url.replace("/en/", f"/{lang}/", 1)
+    return base.replace(f"/{ref.base_lang}/", f"/{lang}/", 1)
 
 
 # --------------------------------------------------------------------------
@@ -5990,9 +6052,9 @@ def run_phase2(
         nonlocal n_submitted
         idx = n_submitted
         n_submitted += 1
-        langs = ["en"] if "en" in want_langs else []
+        langs = [ref.base_lang] if ref.base_lang in want_langs else []
         for lang in want_langs:
-            if lang == "en":
+            if lang == ref.base_lang:
                 continue
             url = translation_url_for(ref, lang)
             if url:
@@ -6090,7 +6152,13 @@ def run_phase2(
 # earlier crawl without re-parsing anything.
 # --------------------------------------------------------------------------
 
-_WORK_ID_RE = re.compile(r"^([a-z][a-z-]*)\.(.+)\.(en|pt)$")
+# Any language, not `(en|pt)`. That literal pair outlived the two-language
+# corpus by a day: Magnifica Humanitas arrived in nine editions on 2026-08-24
+# and `check_language_symmetry`'s docstring was generalised to match, but this
+# regex was not -- so seven of those nine were silently outside the check that
+# exists to compare them. The seven Italian-only encyclicals would have been
+# the second set to slip past it.
+_WORK_ID_RE = re.compile(r"^([a-z][a-z-]*)\.(.+)\.([a-z]{2})$")
 
 
 def sections_from_results(results: list[dict]) -> dict[str, list[int]]:
