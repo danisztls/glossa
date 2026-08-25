@@ -6,6 +6,7 @@ import {
 	withTextRuns,
 	decodeTextRun,
 	linkifyInline,
+	splitLines,
 	type InlineNode
 } from './inline-html';
 import { linkifyProse } from './refs';
@@ -198,5 +199,40 @@ describe('stored references', () => {
 			];
 		});
 		expect(inlineText(linked)).toBe('Q[1], A[1] and then Jn 3:16');
+	});
+});
+
+describe('splitLines', () => {
+	const text = (line: InlineNode[]) => line.map((n) => (n.kind === 'text' ? n.text : '')).join('');
+
+	it('cuts a verse block into the lines the source printed', () => {
+		const lines = splitLines(
+			parseInlineHtml('and holy is his Name.<br />He has mercy<br />on those')
+		);
+		expect(lines.map(text)).toEqual(['and holy is his Name.', 'He has mercy', 'on those']);
+	});
+
+	it('gives a block with no breaks exactly one line', () => {
+		// The prose prayers depend on this: one line means no hanging indent,
+		// so the Memorare is not set as if it were a hymn.
+		expect(splitLines(parseInlineHtml('Remember, O most gracious Virgin Mary'))).toHaveLength(1);
+	});
+
+	it('keeps markup inside the line it belongs to', () => {
+		const lines = splitLines(parseInlineHtml('a <i>b</i><br />c'));
+		expect(lines).toHaveLength(2);
+		expect(lines[0][1]).toEqual({
+			kind: 'emphasis',
+			tag: 'i',
+			children: [{ kind: 'text', text: 'b' }]
+		});
+		expect(text(lines[1])).toBe('c');
+	});
+
+	it('leaves a break nested in emphasis alone rather than splitting across it', () => {
+		// Splitting there would mean reopening the `<i>` on the far side of the
+		// cut — rewriting the corpus's markup rather than reading it.
+		const lines = splitLines(parseInlineHtml('<i>a<br />b</i>'));
+		expect(lines).toHaveLength(1);
 	});
 });

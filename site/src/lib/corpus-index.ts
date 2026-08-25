@@ -221,7 +221,6 @@ export interface PrayerMeta {
 	title: string;
 	kind: 'simple' | 'dialogic' | 'group';
 	hasLatin: boolean;
-	hasVariants: boolean;
 	hasGroups: boolean;
 }
 /** Keyed by bare LANG, matching `CccIndexFile`/`CompendiumIndexFile` above --

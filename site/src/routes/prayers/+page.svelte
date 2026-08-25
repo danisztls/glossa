@@ -16,15 +16,17 @@
 	 * `content.langFor('prayer')` alone decides which language's copy to
 	 * show, and recomputes with no reload when the reader switches it.
 	 */
-	import { getWork, listPrayerGroups, prayerLangs, resolveEditionTag } from '$lib/corpus';
+	import { getWork, listPrayerGroups, prayerIndexLang } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
 
-	/** The full tag, not the bare language: English has two editions
-	 *  (`prayer.common.en-us` / `-gb`) and they index separately. */
-	let lang = $derived(resolveEditionTag(prayerLangs(), content.tagFor('prayer')) ?? 'en-us');
+	/** `prayerIndexLang`, not `resolveEditionTag`: English (UK) is five prayers
+	 *  and cannot enumerate a 28-prayer collection, so the listing runs on the
+	 *  collection it falls back to while each prayer's own page still resolves
+	 *  to the UK wording where there is one. */
+	let lang = $derived(prayerIndexLang(content.tagFor('prayer')));
 	let groups = $derived(listPrayerGroups(lang));
 	let work = $derived(getWork(`prayer.common.${lang}`));
 	let sidebarItems = $derived(

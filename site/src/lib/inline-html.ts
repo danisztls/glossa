@@ -154,6 +154,36 @@ export function parseInlineHtml(html: string): InlineNode[] {
 	return root;
 }
 
+/**
+ * A parsed string cut at its top-level line breaks — one array per printed
+ * line, and a one-element array when the string has none.
+ *
+ * WHY A CALLER WANTS THE LINES RATHER THAN THE BREAKS. Verse has to
+ * distinguish a line the SOURCE broke from a line the VIEWPORT broke, and a
+ * hanging indent is how print does it: the source's lines start at the
+ * margin, a wrap sits in from it. One paragraph carrying `<br>` cannot
+ * express that, and the way it fails is not subtle — `text-indent` applies to
+ * a BLOCK's first line, so the first source line is the only one at the
+ * margin and all nineteen others look like continuations of it. Giving each
+ * line its own block is what lets the indent mean "continued".
+ *
+ * SPLITS AT THE TOP LEVEL ONLY. A break inside `<i>`/`<b>`/`<a>` stays a
+ * `break` node and renders as a `<br>` within its line — the behaviour this
+ * replaces, not a new failure. Splitting there would mean reopening the
+ * emphasis on the far side of the cut, which is rewriting the corpus's markup
+ * rather than reading it. No stored string does it today: measured across
+ * every block of every prayer edition, vernacular and Latin, along with
+ * leading, trailing and doubled breaks, all of which are likewise absent.
+ */
+export function splitLines(nodes: InlineNode[]): InlineNode[][] {
+	const lines: InlineNode[][] = [[]];
+	for (const node of nodes) {
+		if (node.kind === 'break') lines.push([]);
+		else lines[lines.length - 1].push(node);
+	}
+	return lines;
+}
+
 /** Every text run, in document order. The case normalizer works on these so
  *  that an ALL-CAPS heading carrying markup is title-cased across its words
  *  without the tags between them being touched. */

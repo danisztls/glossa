@@ -20,16 +20,23 @@
 	 * (`compare.resolveTarget`), over every OTHER language's copy of this
 	 * same slug — all of them real works with real ids.
 	 *
-	 * SO ARE THE TWO ENGLISH WORDINGS. The source prints one English appendix
-	 * in which five prayers appear twice, headed "UK VERSION" and "USA
-	 * VERSION"; this route used to render both, boxed and labelled, one above
-	 * the other, so a reader who wanted the Te Deum had to choose between two
-	 * regional labels before reading a word. They are two editions of one work
-	 * in one language — exactly what `bible.cpdv.en` and
-	 * `bible.douay-rheims.en` are — and are now built as such
-	 * (`prayer.common.en-us`, `prayer.common.en-gb`; docs/decisions.md). The
-	 * reader picks once, in the same menu as every other work, and `variants`
-	 * is gone from the schema rather than carried for five entries.
+	 * SO IS THE UK WORDING. The source prints one English appendix in which
+	 * five prayers appear twice, headed "UK VERSION" and "USA VERSION"; this
+	 * route used to render both, boxed and labelled, one above the other, so a
+	 * reader who wanted the Te Deum had to choose between two regional labels
+	 * before reading a word. That is an edition boundary, and is now built as
+	 * one: `prayer.common.en` is the collection and prints the USA wording,
+	 * `prayer.common.en-gb` is those five prayers in the UK wording and
+	 * nothing else (docs/decisions.md, 2026-08-25). The reader picks once, in
+	 * the same menu as every other work, and `variants` is gone from the
+	 * schema rather than carried for five entries.
+	 *
+	 * WHICH MEANS THE UK EDITION IS ABSENT FROM 23 OF THESE PAGES, and nothing
+	 * here announces that. `byLang` simply has no `en-gb` entry for the Our
+	 * Father, `resolveEditionTag` lands on `en`, and the reader gets the only
+	 * English text there is — the one their own source prints under the same
+	 * heading. A notice would be telling them they are reading a fallback when
+	 * what they are reading is the text.
 	 *
 	 * LATIN IS ONE OF THEM TOO. It used to be the exception this file existed
 	 * to accommodate: a fabricated `prayer.latin` target whose manifest was

@@ -296,7 +296,7 @@ const prayerIndex = {}; // lang -> { structure, prayers } -- keyed by bare LANG,
 // follow that shape rather than the Documents one above: today there is
 // exactly one prayer collection (`prayer.common.{lang}`), so `workId.split('.').pop()`
 // safely recovers the language. `prayers` here is a COMPACT per-prayer summary
-// (slug/n/title/kind/hasLatin/hasVariants/hasGroups) -- existence metadata for
+// (slug/n/title/kind/hasLatin/hasGroups) -- existence metadata for
 // `entries()`/list pages/adjacency, never `blocks`/`latin` text, mirroring
 // `bible-index.json`'s "numbers, never verse text" rule one type over.
 /** [{ workId, kind, relPath, bytes }] — relPath matches the key `corpus.ts`
@@ -493,7 +493,6 @@ for (const workId of workIds) {
 				title: p.title,
 				kind: p.kind,
 				hasLatin: Boolean(p.latin),
-				hasVariants: Boolean(p.variants && p.variants.length > 0),
 				hasGroups: Boolean(p.groups && p.groups.length > 0)
 			}))
 		};

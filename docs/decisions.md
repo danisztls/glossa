@@ -3831,6 +3831,10 @@ production build clean. Net: three files deleted, one function added.
 
 ## 2026-08-25 — The prayers' UK/USA split becomes two English editions
 
+> **Partly reversed the same day** — see "The UK edition is five prayers, not a second
+> book" below. The split into editions stands; the shape does not. `prayer.common.en-us`
+> never reached a reader.
+
 **What**: `prayer.common.en` is replaced by `prayer.common.en-us` and
 `prayer.common.en-gb`, each carrying all 28 prayers. `variants` is gone from the schema.
 
@@ -3987,7 +3991,7 @@ Latin.
 
 All three of the Bible's languages are listed although only English currently
 has a choice, because the point is that the answer is written down rather than
-derived. Regional pairs are deliberately **not** listed — `prayer.common.en-us`
+derived. Regional pairs are deliberately **not** listed — `prayer.common.en`
 against `prayer.common.en-gb` is already decided by `DEFAULT_REGION`, and
 repeating it here would be a second place for it to be true.
 
@@ -4238,6 +4242,103 @@ accent _before_ a lemma pushed its token one place left: `quem não renascer
 few words, not an edge case. It now decomposes per character, so an index in
 the map is an index into the string the caller holds, and all 1,483 tokens sit
 where the source sets them.
+
+## 2026-08-25 — The UK edition is five prayers, not a second book
+
+**What**: `prayer.common.en-us` is retired hours after it shipped. `prayer.common.en` is
+the English collection again — all 28 prayers, printing the USA wording of the five the
+source prints twice — and `prayer.common.en-gb` holds those five in the UK wording and
+nothing else. The reader picker shows "English" and "English (UK)".
+
+**What the entry above got right, and keeps.** The UK/USA split is an edition boundary,
+not a `variants` array on five prayers. Nothing in that reasoning is withdrawn: the
+reader still picks once, in the same menu as every other work, the choice still persists
+through the same store, compare mode still puts the two side by side, and `variants` is
+still gone from the schema.
+
+**What it got wrong was the object the argument applied to.** The rejection of a sparse
+edition ran: the content-language fallback exists for content that is _absent_, not for
+content that exists and happens to match. That sentence is true. It is about the wrong
+thing. The 23 shared prayers are not two editions that happen to agree — they are **one
+text, printed once, under one heading**, in a source that regionalizes five prayers and
+nothing else. Duplicating it produced two rows in the picker both reading as English,
+differing in five of twenty-eight entries, and made a reader choose between them to read
+the Our Father. A sparse edition says what the source says.
+
+**Which wording is unmarked is now an editorial choice, stated.** The source heads the two
+as equals, but the collection has to print one of them, because there is one
+`prayer.common.en` and it is what every reader who has not asked otherwise gets. USA, in
+`BASE_VARIANT`, rather than falling out of the order `_VARIANT_MARKERS` happens to list.
+
+**The index and the text resolve separately, and that is the whole site-side change.**
+`prayerIndexLang` picks the edition the collection's shape, order, section headings and
+prev/next chain come from; `resolveEditionTag` picks the edition one prayer's text comes
+from. They agree everywhere except under an English (UK) preference, where the listing,
+the sidebar and the prev/next chain run on the 28-prayer collection while the Magnificat
+still renders its UK wording. This is the Summa's rule — an address, not a work, picks
+the edition — arrived at from the other side, and without it a UK reader would see
+`/preces` as a five-prayer collection, which is exactly the outcome the entry above
+feared and mistakenly blamed on sparseness itself.
+
+**Completeness is measured within a base language, not across the corpus**, which is the
+one subtle line in `prayerIndexLang` and the line that keeps `prayer.common.la` indexing
+itself. Latin prints 21 of the 28 because the source prints no Latin for the other seven:
+absent content, which is what the fallback chain is for, and a Latin reader's index
+honestly showing 21 Latin titles is correct. English (UK)'s missing 23 are not absent —
+they are printed once, under "English", by the very edition it falls back to. Measuring
+each edition against the fullest one in its own language is what separates those two
+situations without naming either work.
+
+**`DEFAULT_REGION` becomes `{ en: 'en' }`**, and reading that as a tautology misses what
+it says. English has two prayer editions and the region-less one is the unmarked member
+of the pair; a corpus could just as well ship `en-US` and `en-GB` with no plain `en` —
+the shape retired here did exactly that — and then the entry would have to name one of
+them. `REGION_NAMES` correspondingly names only the marked edition: `en` falls through to
+"English".
+
+**Nothing announces the fallback on the 23 pages where it fires.** `byLang` simply has no
+`en-gb` entry for the Our Father, `resolveEditionTag` lands on `en`, and the reader gets
+the only English text there is — the one their own source prints under the same heading.
+A borrowed-edition notice would be telling them they are reading a fallback when what
+they are reading is the text.
+
+**Validation follows the shape.** Three assertions replace the two: the collection still
+carries every slug, the regional edition carries exactly the slugs the source marked, and
+every prayer it carries actually reads differently from the collection's — a UK entry
+identical to the USA one is a wording that failed to resolve, and would put a row in the
+picker that changes nothing on the page.
+
+**`works/prayer.common.en-us` was deleted**, being superseded generated output that
+existed for part of one day. `raw/` is untouched; everything here re-parses from it with
+no network.
+
+## 2026-08-25 — A prayer is set as verse, one line at a time
+
+**What**: `PrayerBlocks.svelte` renders each line the source printed as its own
+hanging-indent block, instead of one paragraph carrying `<br>` with a hanging indent on
+the paragraph.
+
+**The bug is what a hanging indent means on a block.** `text-indent` applies to a block's
+FIRST line and to nothing else. So in a 20-line Magnificat set as one `<p>`, the first
+line sat at the margin and the other nineteen sat indented — the exact inverse of verse
+setting, where every line the source printed starts at the margin and only a line the
+VIEWPORT broke sits in from it. The intent (`html` was added earlier the same day to keep
+the source's line breaks) was right; the mechanism could not express it, because there
+was one block and twenty lines.
+
+Cutting the parsed nodes at their top-level breaks (`splitLines`) and giving each line its
+own `display: block` span puts the indent back on the unit it describes. `splitLines`
+does not split a break nested inside `<i>`/`<b>`/`<a>` — that would mean reopening the
+emphasis on the far side of the cut, i.e. rewriting the corpus's markup rather than
+reading it. No stored string does that today, measured across every block of every prayer
+edition along with leading, trailing and doubled breaks, all likewise absent.
+
+**A block with no line breaks now gets no indent at all**, which is a second fix rather
+than a consequence. The previous code claimed the hanging indent "costs nothing on the
+prayers that are genuinely one run of prose, where nothing wraps far enough to indent";
+the Memorare and the four Acts wrap several times each and were being set as if they were
+hymns. Whether a block is verse is not a field on it — it is whether the source broke it
+into lines — so the renderer asks that question and sets it accordingly.
 
 ## 2026-08-25 — The census reported 1,371 losses the corpus never suffered
 

@@ -143,10 +143,11 @@ class ContentStore {
 	 *
 	 * The bare form is what almost every caller wants: it picks a citation
 	 * grammar, a book-abbreviation table, a `lang` attribute. But it cannot
-	 * tell the prayers' two English editions apart (docs/decisions.md,
-	 * 2026-08-25), and a route that keys its `byLang` map on the full tag
-	 * needs the full tag back or the reader's own choice reads as "English"
-	 * and resolves to whichever of the two comes first.
+	 * tell `prayer.common.en-gb` from `prayer.common.en` (docs/decisions.md,
+	 * 2026-08-25) — it answers "en" for both — and a route that keys its
+	 * `byLang` map on the full tag needs the full tag back, or a reader who
+	 * chose English (UK) silently reads the collection's USA wording on the
+	 * five pages where the choice is the whole point.
 	 */
 	tagFor(type: WorkTypeKey): string {
 		const workId = this.workIdFor(type);

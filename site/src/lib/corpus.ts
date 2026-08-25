@@ -276,8 +276,8 @@ const CONTENT_LANG_FALLBACK = ['en', 'la'];
  * currently has a choice, because the point is that the answer is written
  * down rather than derived.
  *
- * WHAT IS DELIBERATELY NOT LISTED: regional pairs like `prayer.common.en-us`
- * and `prayer.common.en-gb`. Those are already decided, explicitly, by
+ * WHAT IS DELIBERATELY NOT LISTED: a regional pair like `prayer.common.en`
+ * against `prayer.common.en-gb`. That is already decided, explicitly, by
  * `DEFAULT_REGION`, and repeating the answer here would be a second place for
  * it to be true.
  *
@@ -381,19 +381,19 @@ const LANGUAGE_NAMES: Record<string, string> = {
 };
 
 /**
- * A REGIONAL EDITION NAMES ITS REGION, because otherwise two of them are the
- * same string. `prayer.common.en-us` and `prayer.common.en-gb` are two
- * English editions of one work (docs/decisions.md), so "English" alone would
- * label both and the picker would offer the reader a choice between two
- * identical rows.
+ * A REGIONAL EDITION NAMES ITS REGION; the unmarked one does not.
+ * `prayer.common.en-gb` is the UK wording of the five prayers the source
+ * prints twice, alongside `prayer.common.en`, which is the collection
+ * (docs/decisions.md, 2026-08-25). Only the marked one needs a name here —
+ * `en` falls through to `LANGUAGE_NAMES` and stays plain "English", which is
+ * what the collection is.
  *
  * Written in the content language's own language, like every other entry
- * here — these two happen to be English already. The region is spelled the
- * way a reader of that edition would name it ("US", "UK"), not by its BCP-47
- * subtag, which for the UK is `GB`.
+ * here — this one happens to be English already. The region is spelled the
+ * way a reader of that edition would name it ("UK"), not by its BCP-47
+ * subtag, which is `GB`.
  */
 const REGION_NAMES: Record<string, string> = {
-	'en-us': 'English (US)',
 	'en-gb': 'English (UK)'
 };
 
@@ -402,16 +402,22 @@ export function languageDisplayName(tag: string): string {
 }
 
 /**
- * Within one base language, the edition that reads as the unmarked default —
+ * Within one base language, the full tag that reads as the unmarked default —
  * what a reader who asked for "English" and nothing more specific gets.
  *
  * Stated here rather than left to `listEditions`' id tiebreak, which would
- * answer `en-gb` purely because `g` sorts before `u`. That is the kind of
- * answer that is right by accident and stays right only until an id changes.
- * Only the reader's own stored preference overrides it.
+ * answer whichever id sorts first. That is the kind of answer that is right
+ * by accident and stays right only until an id changes. Only the reader's own
+ * stored preference overrides it.
+ *
+ * Reading `en: 'en'` as a tautology misses what it says: English has two
+ * prayer editions, and the region-less one is the unmarked member of the
+ * pair. A corpus could just as well ship `en-US` and `en-GB` with no plain
+ * `en` — the option-(a) shape this one replaced did exactly that — and then
+ * this entry would have to name one of them.
  */
 const DEFAULT_REGION: Record<string, string> = {
-	en: 'en-US'
+	en: 'en'
 };
 
 /** Sort key putting a base language's default region ahead of its siblings. */
@@ -1689,9 +1695,58 @@ export function documentSectionText(section: DocumentSection): string {
 // order, so this is a safe, self-checking join: a title that doesn't match
 // anything is silently dropped rather than mis-paired, never a crash.
 
-/** Languages the prayer collection is available in. */
+/** Language tags the prayer collection is available in -- FULL tags, so
+ *  `en-gb` is one of them and is not the same entry as `en`. */
 export function prayerLangs(): string[] {
 	return Object.keys(prayerStructures).sort();
+}
+
+/**
+ * Which edition the prayer INDEX runs on for a reader who prefers `tag` — the
+ * collection's shape, its section headings, its order and its prev/next
+ * chain — as distinct from the edition any one prayer's TEXT resolves to.
+ *
+ * THE TWO DIFFER FOR A REGIONAL EDITION AND ONLY FOR ONE. `prayer.common.en-gb`
+ * is the five prayers the source heads "UK VERSION" and nothing else
+ * (docs/decisions.md, 2026-08-25), so indexing off it would present the
+ * collection as five prayers and a reader who prefers English (UK) would lose
+ * the other twenty-three from the listing, the sidebar and the prev/next
+ * chain — none of which they have lost: they read those from
+ * `prayer.common.en`, resolved per address by `resolveEditionTag`. This is
+ * the Summa's rule (an address, not a work, picks the edition) reached from
+ * the other side.
+ *
+ * COMPLETENESS IS MEASURED WITHIN A BASE LANGUAGE, and that is the whole of
+ * why `prayer.common.la` keeps indexing itself. Latin prints 21 of the 28
+ * because the source prints no Latin for the other seven — content that is
+ * genuinely ABSENT, which is what the fallback chain is for, and a Latin
+ * reader's index honestly showing 21 Latin titles is right. English (UK)'s
+ * missing 23 are not absent; they are printed once, under "English", by the
+ * very edition this function falls back to. Measuring each edition against
+ * the fullest one in its OWN language is what tells those two situations
+ * apart without naming either work.
+ */
+export function prayerIndexLang(tag: string): string {
+	const langs = prayerLangs();
+	const sizes = Object.fromEntries(langs.map((l) => [l, prayerMetasByLang[l]?.length ?? 0]));
+	return resolveEditionTag(completeEditionTags(sizes), tag) ?? langs[0] ?? '';
+}
+
+/**
+ * Of `sizes` (language tag -> how many units that edition carries), the tags
+ * that carry as many as the fullest edition IN THEIR OWN BASE LANGUAGE.
+ *
+ * Split out from `prayerIndexLang` only so the rule can be tested: everything
+ * above it reads the corpus index, which the unit tests deliberately do not
+ * have (`corpus.ts`'s prayer tier is empty under vitest). The reasoning for
+ * measuring per base language rather than globally is that function's.
+ */
+export function completeEditionTags(sizes: Record<string, number>): string[] {
+	const fullest = new Map<string, number>();
+	for (const [tag, size] of Object.entries(sizes)) {
+		fullest.set(baseLang(tag), Math.max(fullest.get(baseLang(tag)) ?? 0, size));
+	}
+	return Object.keys(sizes).filter((tag) => sizes[tag] === fullest.get(baseLang(tag)));
 }
 
 export function getPrayerStructure(lang: string): StructureNode[] {

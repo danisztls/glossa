@@ -4,6 +4,7 @@ import {
 	getPrayerAsync,
 	getWork,
 	listPrayerGroups,
+	prayerIndexLang,
 	prayerLangs,
 	type PrayerMeta
 } from '$lib/corpus';
@@ -40,13 +41,20 @@ export const load: PageLoad = async ({ params }) => {
 		if (!work) continue;
 		const prayer = await getPrayerAsync(lang, slug);
 		if (!prayer) continue; // this language's corpus doesn't have this slug (gappy fixtures / v1 asymmetry)
-		const group = listPrayerGroups(lang).find((g) => g.prayers.some((p) => p.slug === slug));
+		// The TEXT is this edition's; the BREADCRUMB and the prev/next chain are
+		// the collection's (`prayerIndexLang`). They come apart only for
+		// `prayer.common.en-gb`, which holds five prayers: reading its own
+		// adjacency would walk a reader from the Magnificat to the Benedictus
+		// past three prayers it does not print but they can still read, and
+		// would put them in a section heading that lists five entries.
+		const index = prayerIndexLang(lang);
+		const group = listPrayerGroups(index).find((g) => g.prayers.some((p) => p.slug === slug));
 		byLang[lang] = {
 			prayer,
 			work,
 			group: group ? { id: group.id, title: group.title } : undefined,
-			prev: getAdjacentPrayer(lang, slug, 'prev'),
-			next: getAdjacentPrayer(lang, slug, 'next')
+			prev: getAdjacentPrayer(index, slug, 'prev'),
+			next: getAdjacentPrayer(index, slug, 'next')
 		};
 	}
 

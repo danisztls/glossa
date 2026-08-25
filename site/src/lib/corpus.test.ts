@@ -16,6 +16,9 @@ import {
 	defaultWorkId,
 	listEditions,
 	baseLang,
+	completeEditionTags,
+	languageDisplayName,
+	resolveEditionTag,
 	PREFERRED_EDITION
 } from './corpus';
 
@@ -218,5 +221,37 @@ describe('preferred edition', () => {
 				).toBeDefined();
 			}
 		}
+	});
+});
+
+describe('regional editions', () => {
+	// `prayer.common.en-gb` is the five prayers the source heads "UK VERSION";
+	// `prayer.common.en` is the collection (docs/decisions.md, 2026-08-25).
+	const PRAYERS = { en: 28, 'en-gb': 5, la: 21, pt: 28 };
+
+	it('measures completeness within a base language, not across the corpus', () => {
+		// `la` is complete: 21 is every prayer the source prints Latin for, and
+		// nothing else is in Latin to be fuller than it. `en-gb` is not: `en` is.
+		expect(completeEditionTags(PRAYERS).sort()).toEqual(['en', 'la', 'pt']);
+	});
+
+	it('leaves an unmarked edition complete even when a regional one ties it', () => {
+		// Two English editions of equal size are two whole books, and both index.
+		expect(completeEditionTags({ en: 28, 'en-gb': 28 }).sort()).toEqual(['en', 'en-gb']);
+	});
+
+	it('resolves a regional preference to itself where it has the address', () => {
+		expect(resolveEditionTag(['en', 'en-gb', 'la', 'pt'], 'en-GB')).toBe('en-gb');
+	});
+
+	it("falls back to the base language's unmarked edition where it does not", () => {
+		// The Our Father: no UK wording exists, so the reader gets the one text
+		// the source prints — not `pt`, and not by id sort order.
+		expect(resolveEditionTag(['en', 'la', 'pt'], 'en-GB')).toBe('en');
+	});
+
+	it('names only the marked edition after its region', () => {
+		expect(languageDisplayName('en')).toBe('English');
+		expect(languageDisplayName('en-GB')).toBe('English (UK)');
 	});
 });
