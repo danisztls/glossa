@@ -37,7 +37,9 @@ import type {
 	BibleIntro,
 	CccAbbreviation,
 	CccBibleXref,
+	CccCitationXref,
 	DocumentBibleXref,
+	DocumentCitationXref,
 	CccNode,
 	CccParagraph,
 	CompendiumQuestion,
@@ -315,6 +317,16 @@ const realIndexDocumentXrefs = import.meta.glob('./corpus-data/index/document-xr
 	eager: true,
 	import: 'default'
 }) as Record<string, DocumentBibleXref[]>;
+
+const realIndexDocumentCitations = import.meta.glob('./corpus-data/index/document-citations.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, DocumentCitationXref[]>;
+
+const realIndexCccCitations = import.meta.glob('./corpus-data/index/ccc-citations.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, CccCitationXref[]>;
 
 const realContentManifest = import.meta.glob('./corpus-data/index/content-manifest.json', {
 	eager: true,
@@ -619,6 +631,24 @@ export const cccBibleXrefsByCcc: Map<number, CccBibleXref['refs']> = new Map(
  */
 export const documentBibleXrefs: DocumentBibleXref[] = USE_REAL_CORPUS
 	? (single(realIndexDocumentXrefs) ?? [])
+	: [];
+
+/**
+ * The two reverse CITATION indexes — who cites this document section, who
+ * cites this Catechism paragraph. Same tier and same reasoning as the two
+ * above, and much smaller than either: 122 KB raw, 12 KB gzipped for the
+ * documents' and under 1 KB for the Catechism's (measured 2026-08-25).
+ *
+ * `[]` under fixtures for the documents' half, for the same reason
+ * `documentBibleXrefs` is: the fixture corpus holds no documents. The
+ * Catechism's half is `[]` there too — its citers are documents.
+ */
+export const documentCitationXrefs: DocumentCitationXref[] = USE_REAL_CORPUS
+	? (single(realIndexDocumentCitations) ?? [])
+	: [];
+
+export const cccCitationXrefs: CccCitationXref[] = USE_REAL_CORPUS
+	? (single(realIndexCccCitations) ?? [])
 	: [];
 
 // --- Content tier: fixtures (whole, in-memory) vs. real (URL + fetch) -----

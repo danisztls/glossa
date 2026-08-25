@@ -270,7 +270,7 @@ export const en: Dictionary = {
 	// magisterial documents together, so the verse is named once and
 	// everything citing it sits beside it. Each entry carries its own
 	// work's name, so the heading names no work at all.
-	'bible.citedIn': 'Cited in',
+	'refs.citedIn': 'Cited in',
 	'bible.cccAbbrev': 'CCC',
 	'bible.wholeChapter': 'This chapter',
 	'bible.verseNotInEdition':

@@ -195,7 +195,7 @@ export const pl: Dictionary = {
 	'colophon.typeTitle': 'Krój pisma',
 	'colophon.typeBody':
 		'Złożono krojem EB Garamond, odnowieniem przez Georga Duffnera i Octavia Parda czcionek, które Claude Garamont wyciął w latach dziewięćdziesiątych XVI wieku — tradycji humanistycznej, w której Kościół drukuje od czasów renesansu. Inicjały to Pirata One, gotyk, którego wersaliki pozostają czytelne w rozmiarze, jakiego wymaga inicjał. Oba są na licencji SIL Open Font License i serwowane z tej strony, a nie przez osoby trzecie, więc czytanie strony niczego nie wymaga od cudzego serwera.',
-	'bible.citedIn': 'Cytowane w',
+	'refs.citedIn': 'Cytowane w',
 	'bible.cccAbbrev': 'KKK',
 	'bible.wholeChapter': 'Ten rozdział',
 	'bible.verseNotInEdition':

@@ -197,7 +197,7 @@ export const it: Dictionary = {
 	'colophon.typeTitle': 'I caratteri',
 	'colophon.typeBody':
 		'Composto in EB Garamond, la rinascita a opera di Georg Duffner e Octavio Pardo dei caratteri che Claude Garamont incise negli anni 1590 — la tradizione umanistica in cui la Chiesa stampa fin dal Rinascimento. I capilettera sono in Pirata One, una gotica le cui maiuscole restano leggibili alla dimensione che un capolettera richiede. Entrambi sono sotto licenza SIL Open Font License e serviti da questo sito anziché da terzi, così che leggere una pagina non chieda nulla al server di nessun altro.',
-	'bible.citedIn': 'Citato in',
+	'refs.citedIn': 'Citato in',
 	'bible.cccAbbrev': 'CCC',
 	'bible.wholeChapter': 'Questo capitolo',
 	'bible.verseNotInEdition':

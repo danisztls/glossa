@@ -197,7 +197,7 @@ export const fr: Dictionary = {
 	'colophon.typeTitle': 'Les caractères',
 	'colophon.typeBody':
 		'Composé en EB Garamond, la renaissance par Georg Duffner et Octavio Pardo des caractères que Claude Garamont grava dans les années 1590 — la tradition humaniste dans laquelle l’Église imprime depuis la Renaissance. Les lettrines sont en Pirata One, une gothique dont les capitales restent lisibles à la taille qu’exige une lettrine. Les deux sont sous licence SIL Open Font License et servies depuis ce site plutôt que par un tiers, de sorte que lire une page ne demande rien au serveur de personne d’autre.',
-	'bible.citedIn': 'Cité dans',
+	'refs.citedIn': 'Cité dans',
 	'bible.cccAbbrev': 'CEC',
 	'bible.wholeChapter': 'Ce chapitre',
 	'bible.verseNotInEdition':

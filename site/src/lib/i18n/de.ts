@@ -198,7 +198,7 @@ export const de: Dictionary = {
 	'colophon.typeTitle': 'Die Schrift',
 	'colophon.typeBody':
 		'Gesetzt in EB Garamond, Georg Duffners und Octavio Pardos Wiederbelebung der Typen, die Claude Garamont in den 1590er Jahren schnitt — jene humanistische Tradition, in der die Kirche seit der Renaissance druckt. Die Initialen sind Pirata One, eine gebrochene Schrift, deren Versalien in der Größe, die eine Initiale verlangt, lesbar bleiben. Beide stehen unter der SIL Open Font License und werden von dieser Seite ausgeliefert und nicht von Dritten, sodass das Lesen einer Seite von niemandes Server sonst etwas verlangt.',
-	'bible.citedIn': 'Zitiert in',
+	'refs.citedIn': 'Zitiert in',
 	'bible.cccAbbrev': 'KKK',
 	'bible.wholeChapter': 'Dieses Kapitel',
 	'bible.verseNotInEdition':

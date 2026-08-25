@@ -624,6 +624,41 @@ export interface DocumentBibleXref {
 	refs: ScriptureRef[];
 }
 
+/**
+ * A unit that cites something — one entry in a reverse citation index.
+ * `slug` is present only for `kind: 'document'`, where `n` is a section
+ * number; for `kind: 'ccc'` it is a paragraph number.
+ */
+export interface Citer {
+	kind: 'ccc' | 'document';
+	slug?: string;
+	n: number;
+}
+
+/**
+ * Who cites one document address — the non-scripture counterpart of
+ * `DocumentBibleXref`, derived by `scripts/build-xrefs.mjs` and keyed the
+ * same way, by edition-free slug.
+ *
+ * `n` is `null` for a citation that names the document without naming a
+ * section it has: a bare siglum ("cf. GS"), a spelled-out title with no
+ * number after it, or a number the document does not have ("Humani generis
+ * 561" is an AAS page). That is one fact about the document at large rather
+ * than a fact about a section, and it is kept apart from the numbered
+ * entries rather than folded into section 1.
+ */
+export interface DocumentCitationXref {
+	work: string;
+	n: number | null;
+	cited_by: Citer[];
+}
+
+/** Who cites one Catechism paragraph. The other direction of the same pass. */
+export interface CccCitationXref {
+	ccc: number;
+	cited_by: Citer[];
+}
+
 // --- Documents (encyclicals, conciliar texts, curial documents) ------------
 //
 // docs/corpus-schema.md §Documents: `structure.json` reuses `StructureNode`

@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { cccParagraphExists, compareColumnLabel, flattenCccStructure } from '$lib/corpus';
+	import {
+		cccParagraphExists,
+		compareColumnLabel,
+		flattenCccStructure,
+		getCccCitations
+	} from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
@@ -9,6 +14,8 @@
 	import CccParagraphText from '$lib/components/CccParagraphText.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
+	import CitedBy from '$lib/components/CitedBy.svelte';
+	import { documentCitedSource, type CitedByRow, type CitedBySource } from '$lib/cited-by';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import UnitNav from '$lib/components/UnitNav.svelte';
@@ -80,6 +87,39 @@
 	// always points at the edition they were last actually looking at.
 	$effect(() => {
 		if (editions.current) setPosition(editions.current.work.id, `CCC ${data.n}`, page.url.pathname);
+	});
+
+	/**
+	 * Which magisterial documents cite this paragraph — the other direction of
+	 * the pass that lets a document say who cites IT
+	 * (`scripts/build-xrefs.mjs`, docs/link-surface.md #12).
+	 *
+	 * ONE ROW, always, because the reader is standing on one paragraph and
+	 * there is only one address to group by. That is the degenerate case of
+	 * the same panel the Bible chapter and the documents use, and it renders
+	 * as one because the shape is genuinely the same — not because the panel
+	 * was bent to fit.
+	 *
+	 * IT IS RARE, and that is a fact about the corpus rather than a bug: 44 of
+	 * the Catechism's 2,865 paragraphs have a citer, because a document can
+	 * only cite the Catechism if it was written after 1992 and most of this
+	 * corpus was not. The panel is simply absent on the rest.
+	 */
+	const citedInRows: CitedByRow[] = $derived.by(() => {
+		const citers = getCccCitations(data.n);
+		if (citers.length === 0) return [];
+		const bySlug = new Map<string, number[]>();
+		for (const citer of citers) {
+			if (citer.kind !== 'document' || !citer.slug) continue;
+			const list = bySlug.get(citer.slug);
+			if (list) list.push(citer.n);
+			else bySlug.set(citer.slug, [citer.n]);
+		}
+		const sources = [...bySlug]
+			.map(([slug, sections]) => documentCitedSource(slug, sections))
+			.filter((source): source is CitedBySource => source !== null)
+			.sort((a, b) => a.label.localeCompare(b.label));
+		return sources.length > 0 ? [{ key: data.n, label: `¶${data.n}`, sources }] : [];
 	});
 </script>
 
@@ -247,6 +287,10 @@
 						{/if}
 					{/each}
 				</p>
+			{/if}
+
+			{#if citedInRows.length > 0}
+				<CitedBy heading={t('refs.citedIn')} rows={citedInRows} />
 			{/if}
 
 			{#if editions.current.chapter}

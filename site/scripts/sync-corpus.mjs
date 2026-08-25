@@ -62,6 +62,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import {
 	buildCccBibleXrefs,
+	buildCitationXrefs,
 	buildDocumentBibleXrefs,
 	checkXrefsAgainstCorpus
 } from './build-xrefs.mjs';
@@ -749,6 +750,48 @@ writeJson(path.join(indexDir, 'xrefs.json'), xrefs);
 const documentXrefs = buildDocumentBibleXrefs(documentEditions);
 writeJson(path.join(indexDir, 'document-xrefs.json'), documentXrefs);
 const xrefsSynced = xrefs.length > 0;
+
+/**
+ * The same derivation for the citations that are NOT scripture: which CCC
+ * paragraph or document section cites which document section, reversed, so
+ * a document can say who cites it. docs/link-surface.md #12; the forward
+ * direction has rendered since 2026-08-25 and this is its counterpart.
+ *
+ * Both validators come from what was just read rather than from the site's
+ * corpus helpers, which this script cannot import: `sectionNumbers` is
+ * already indexed per document above, and the Catechism's paragraph numbers
+ * per edition. A section is real if ANY edition of that document has it, the
+ * same union rule the scripture pass applies to references.
+ */
+const sectionsBySlug = new Map();
+for (const { slug, sections } of documentEditions) {
+	let set = sectionsBySlug.get(slug);
+	if (!set) sectionsBySlug.set(slug, (set = new Set()));
+	for (const section of sections) set.add(section.n);
+}
+const cccParagraphSet = new Set();
+for (const { paragraphs } of cccEditions) for (const p of paragraphs) cccParagraphSet.add(p.n);
+
+const citingUnits = [];
+for (const { lang, paragraphs } of cccEditions) {
+	for (const p of paragraphs) citingUnits.push({ citer: { kind: 'ccc', n: p.n }, lang, unit: p });
+}
+for (const { slug, lang, sections } of documentEditions) {
+	for (const section of sections) {
+		citingUnits.push({ citer: { kind: 'document', slug, n: section.n }, lang, unit: section });
+	}
+}
+const citationXrefs = buildCitationXrefs(
+	citingUnits,
+	(slug, n) => sectionsBySlug.get(slug)?.has(n) ?? false,
+	(n) => cccParagraphSet.has(n)
+);
+writeJson(path.join(indexDir, 'document-citations.json'), citationXrefs.documents);
+writeJson(path.join(indexDir, 'ccc-citations.json'), citationXrefs.ccc);
+console.log(
+	`[sync-corpus] reverse citation index: ${citationXrefs.documents.length} document addresses ` +
+		`and ${citationXrefs.ccc.length} Catechism paragraphs have a citer`
+);
 
 // How much of the apparatus the grammar reads, against the committed
 // baseline. Loud and non-fatal here; `preflight-deploy.mjs` is where a drop

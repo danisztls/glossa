@@ -196,7 +196,7 @@ export const es: Dictionary = {
 	'colophon.typeTitle': 'La tipografía',
 	'colophon.typeBody':
 		'Compuesto en EB Garamond, el renacimiento que Georg Duffner y Octavio Pardo hicieron de los tipos que Claude Garamont grabó en la década de 1590, la tradición humanista en la que la Iglesia imprime desde el Renacimiento. Las iniciales son Pirata One, una letra gótica cuyas mayúsculas siguen siendo legibles al tamaño que exige una capitular. Ambas están licenciadas bajo la SIL Open Font License y se sirven desde este sitio y no desde un tercero, de modo que leer una página no pide nada al servidor de nadie más.',
-	'bible.citedIn': 'Citado en',
+	'refs.citedIn': 'Citado en',
 	'bible.cccAbbrev': 'CIC',
 	'bible.wholeChapter': 'Este capítulo',
 	'bible.verseNotInEdition':

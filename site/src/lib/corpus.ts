@@ -126,6 +126,7 @@ import type {
 	CccNode,
 	CccParagraph,
 	Chapter,
+	Citer,
 	CompendiumQuestion,
 	DocumentManifest,
 	DocumentAppendixUnit,
@@ -151,7 +152,9 @@ import {
 	bibleIntroLocation,
 	fixtureBibleIntrosByLang,
 	cccBibleXrefsByCcc,
+	cccCitationXrefs,
 	documentBibleXrefs,
+	documentCitationXrefs,
 	cccChunkLocation,
 	cccChunkStartFor,
 	isUnpublished,
@@ -1293,6 +1296,51 @@ export function getDocumentCitationsForChapter(
 ): DocumentCitationsByVerse {
 	documentBibleReverseIndex ??= buildDocumentBibleReverseIndex();
 	return documentBibleReverseIndex.get(reverseKey(osis, chapter)) ?? new Map();
+}
+
+/**
+ * The non-scripture reverse index: who cites this document, and who cites
+ * this Catechism paragraph.
+ *
+ * ALREADY INVERTED, unlike the two above, which is why there is no lazy build
+ * here. Those two invert a forward index the site also needs forward (a
+ * paragraph's own references); this one has no forward use — the forward
+ * direction is a link the grammar renders from the citation string itself,
+ * with nothing stored. So the builder emits it in the only shape anything
+ * reads it in (`scripts/build-xrefs.mjs`).
+ *
+ * Grouped by section for the same reason `DocumentCitation` groups by work:
+ * the reader is standing on one section and wants that section's citers, not
+ * a flat list to filter. The `null` key holds the citations that name the
+ * document without naming a section of it — see `DocumentCitationXref`.
+ */
+let documentCitationIndex: Map<string, Map<number | null, Citer[]>> | null = null;
+
+function buildDocumentCitationIndex(): Map<string, Map<number | null, Citer[]>> {
+	const index = new Map<string, Map<number | null, Citer[]>>();
+	for (const entry of documentCitationXrefs) {
+		let bySection = index.get(entry.work);
+		if (!bySection) index.set(entry.work, (bySection = new Map()));
+		bySection.set(entry.n, entry.cited_by);
+	}
+	return index;
+}
+
+/**
+ * Every citer of one document, keyed by the section cited (`null` = the
+ * document at large). Empty map when nothing cites it.
+ */
+export function getDocumentCitations(slug: string): Map<number | null, Citer[]> {
+	documentCitationIndex ??= buildDocumentCitationIndex();
+	return documentCitationIndex.get(slug) ?? new Map();
+}
+
+let cccCitationIndex: Map<number, Citer[]> | null = null;
+
+/** Who cites one Catechism paragraph. Empty array when nothing does. */
+export function getCccCitations(cccN: number): Citer[] {
+	cccCitationIndex ??= new Map(cccCitationXrefs.map((entry) => [entry.ccc, entry.cited_by]));
+	return cccCitationIndex.get(cccN) ?? [];
 }
 
 // --- Documents: index-backed (registry, structure, existence, sync) -------

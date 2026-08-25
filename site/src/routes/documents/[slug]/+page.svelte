@@ -31,6 +31,8 @@
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
+	import CitedBy from '$lib/components/CitedBy.svelte';
+	import { documentCitedSource, type CitedByRow, type CitedBySource } from '$lib/cited-by';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { alignByNumber } from '$lib/compare';
@@ -53,11 +55,12 @@
 		flattenDocumentStructure,
 		documentOutline,
 		documentTailNumber,
+		getDocumentCitations,
 		getDocumentSectionsAsync,
 		getDocumentAppendixAsync
 	} from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
-	import type { DocumentAppendixUnit, DocumentSection, DocumentNode } from '$lib/types';
+	import type { Citer, DocumentAppendixUnit, DocumentSection, DocumentNode } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -403,6 +406,71 @@
 		// to map a taxonomy onto a depth — the depth is what was recorded.
 		return `h${Math.min(level + 1, 6)}`;
 	}
+
+	/**
+	 * Who cites this document, from the reverse citation index
+	 * (`scripts/build-xrefs.mjs`, docs/link-surface.md #12). The forward
+	 * direction has rendered for a while — a footnote reading "LG 12" becomes a
+	 * link to this page's §12 — and this is the half a reader standing here
+	 * could not otherwise get at.
+	 *
+	 * ONE ROW PER SECTION rather than a note under each section's text. A
+	 * document is one page (see this file's header), so a per-section note
+	 * would interrupt the reading of a text that is meant to be read straight
+	 * through, and the reader who wants the concordance wants it as a
+	 * concordance — Lumen Gentium has 66 cited addresses and 479 citers, which
+	 * is a table, not an aside.
+	 *
+	 * The `null` key holds the citations that name this document without
+	 * naming a section it has, and it leads the panel, labelled with the
+	 * document's own name — the row says "Lumen Gentium: cited by …" and means
+	 * exactly that. Its label needs no translation for the same reason the
+	 * title needs none: it is the work's own Latin incipit.
+	 */
+	const citations = $derived(getDocumentCitations(data.slug));
+
+	function citedSources(citers: Citer[]): CitedBySource[] {
+		const paragraphs = citers.filter((c) => c.kind === 'ccc').map((c) => c.n);
+		const ccc: CitedBySource[] = paragraphs.length
+			? [
+					{
+						key: 'ccc',
+						label: t('bible.cccAbbrev'),
+						fullTitle: t('ccc.landing.title'),
+						refs: paragraphs.map((n) => ({
+							key: n,
+							label: `¶${n}`,
+							href: hrefFor({ kind: 'ccc', n })
+						}))
+					}
+				]
+			: [];
+		const bySlug = new Map<string, number[]>();
+		for (const citer of citers) {
+			if (citer.kind !== 'document' || !citer.slug) continue;
+			const list = bySlug.get(citer.slug);
+			if (list) list.push(citer.n);
+			else bySlug.set(citer.slug, [citer.n]);
+		}
+		const documents = [...bySlug]
+			.map(([slug, sections]) => documentCitedSource(slug, sections))
+			.filter((source): source is CitedBySource => source !== null)
+			.sort((a, b) => a.label.localeCompare(b.label));
+		return [...ccc, ...documents];
+	}
+
+	const citedInRows: CitedByRow[] = $derived(
+		[...citations.keys()]
+			.sort((a, b) => (a === null ? -1 : b === null ? 1 : a - b))
+			.map((n) => ({
+				key: n ?? 'work',
+				label:
+					n === null ? (metaManifest?.short_title ?? metaManifest?.title ?? data.slug) : `§${n}`,
+				...(n === null ? {} : { href: `#s${n}` }),
+				sources: citedSources(citations.get(n) ?? [])
+			}))
+			.filter((row) => row.sources.length > 0)
+	);
 
 	/**
 	 * Which section the reader has scrolled to. The whole document is one page,
@@ -861,6 +929,9 @@
 							{/if}
 						{/each}
 					</div>
+					{#if citedInRows.length > 0}
+						<CitedBy heading={t('refs.citedIn')} rows={citedInRows} />
+					{/if}
 				{/if}
 			{/if}
 		</article>

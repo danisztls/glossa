@@ -288,6 +288,156 @@ export function buildDocumentBibleXrefs(editions) {
 }
 
 /**
+ * The non-scripture half of the same derivation: who cites this document
+ * section, and who cites this Catechism paragraph.
+ *
+ * THE FORWARD DIRECTION HAS BEEN RENDERED FOR A WHILE and this is its
+ * missing counterpart (docs/link-surface.md #12). A CCC footnote reading
+ * "LG 12" already becomes a link to Lumen Gentium §12; standing on Lumen
+ * Gentium §12 there was no way to learn the Catechism cites it. Same shape as
+ * the two Bible indexes above — derived on every build, by the same grammar
+ * that renders the links, never committed — and for the same reason: a second
+ * implementation of the citation grammar is what this file exists to have
+ * stopped having.
+ *
+ * WHAT COUNTS AS A CITER is every unit that carries an apparatus: a CCC
+ * paragraph and a document section. Both are read through `parseRefs` over
+ * their CITATIONS and not, unlike the scripture pass, over their prose:
+ * `linkifyProse` finds scripture locators anywhere in a sentence and emits
+ * nothing else, so a document named in running text is not linked on the page
+ * either. Scanning prose here would therefore have been work that could only
+ * ever return scripture segments this function discards. If that limit is
+ * ever lifted in the grammar, this is a caller that wants the lift.
+ *
+ * TWO THINGS ARE DROPPED, both deliberately:
+ *
+ *   - **A document citing itself.** Lumen Gentium's own text says "Lumen
+ *     Gentium", and a panel telling a reader that §22 is cited by §1 of the
+ *     document they are already reading is noise wearing the clothes of a
+ *     cross-reference. Same slug in and out is dropped whatever the sections.
+ *   - **A section number the target does not have.** `sectionExists` is the
+ *     same validation `refAddress` performs before it will render a link, and
+ *     for the same reason: "Humani generis 561" is an AAS page number and
+ *     that document has 44 sections. A citation whose number does not
+ *     validate still names the document, so it is kept with `n: null` — that
+ *     is what the landing-page fallback in `refAddress` means, recorded. The
+ *     same bucket holds a bare siglum ("cf. GS"), which the forward direction
+ *     refuses to link because it has no destination worth guessing. The
+ *     reverse direction is not guessing: the citation names Gaudium et Spes
+ *     whether or not anything can be linked to, and a reader standing on that
+ *     document is owed the fact.
+ *
+ * `Ibid.` IS NOT RESOLVED HERE, and it is 6.2% of the corpus's 22,387
+ * citations. Resolving it means carrying the previous citation's target
+ * across a unit boundary and asserting that is what the source meant, which
+ * is a claim about someone else's apparatus rather than a reading of it. It
+ * belongs to this builder (docs/link-surface.md #12 says so) and it is not in
+ * it yet.
+ *
+ * @typedef {{ kind: 'ccc' | 'document', slug?: string, n: number }} Citer
+ * @typedef {{ work: string, n: number | null, cited_by: Citer[] }} DocumentCitationXref
+ * @typedef {{ ccc: number, cited_by: Citer[] }} CccCitationXref
+ *
+ * @param {{ citer: Citer & { slug?: string }, lang: string, unit: Unit }[]} units
+ *   every citing unit, each already carrying the address that names it
+ * @param {(slug: string, n: number) => boolean} sectionExists
+ * @param {(n: number) => boolean} paragraphExists
+ * @returns {{ documents: DocumentCitationXref[], ccc: CccCitationXref[] }}
+ */
+export function buildCitationXrefs(units, sectionExists, paragraphExists) {
+	/** `slug` -> section number (or `''` for the document at large) -> citers */
+	/** @type {Map<string, Map<string, Citer[]>>} */
+	const documents = new Map();
+	/** @type {Map<number, Citer[]>} */
+	const ccc = new Map();
+
+	/** @param {Citer[]} list @param {Citer} citer */
+	const addOnce = (list, citer) => {
+		// One citer per address however many times it cites it: a paragraph
+		// that footnotes LG 12 twice cites it once as far as a reader standing
+		// on LG 12 is concerned. The two language editions of one work arrive
+		// as separate units with the same address, which is the other half of
+		// what this collapses.
+		if (!list.some((c) => c.kind === citer.kind && c.slug === citer.slug && c.n === citer.n)) {
+			list.push(citer);
+		}
+	};
+
+	for (const { citer, lang, unit } of units) {
+		/** @type {import('../src/lib/refs-grammar.ts').RefSegment[]} */
+		const segments = [];
+		for (const citation of unit.citations ?? []) {
+			const raw = citation.label ?? citation.text;
+			if (raw) segments.push(...parseRefs(normalizeCitationSpacing(raw), { lang }));
+		}
+		for (const seg of segments) {
+			if (seg.kind === 'ccc') {
+				if (citer.kind === 'ccc' || !paragraphExists(seg.n)) continue;
+				let list = ccc.get(seg.n);
+				if (!list) ccc.set(seg.n, (list = []));
+				addOnce(list, citer);
+				continue;
+			}
+			if (seg.kind !== 'document' || !seg.slug || seg.slug === citer.slug) continue;
+			const n = firstSection(seg.locus);
+			const key = n !== null && sectionExists(seg.slug, n) ? String(n) : '';
+			let byUnit = documents.get(seg.slug);
+			if (!byUnit) documents.set(seg.slug, (byUnit = new Map()));
+			let list = byUnit.get(key);
+			if (!list) byUnit.set(key, (list = []));
+			addOnce(list, citer);
+		}
+	}
+
+	/** @param {Citer[]} list */
+	const ordered = (list) =>
+		[...list].sort(
+			(a, b) =>
+				(a.slug ?? '').localeCompare(b.slug ?? '') || a.kind.localeCompare(b.kind) || a.n - b.n
+		);
+
+	/** @type {DocumentCitationXref[]} */
+	const documentsOut = [];
+	for (const slug of [...documents.keys()].sort()) {
+		const byUnit = documents.get(slug);
+		if (!byUnit) continue;
+		// The document-at-large entry (`n: null`) leads its own sections, the
+		// way a landing page precedes what it contains.
+		const keys = [...byUnit.keys()].sort((a, b) => (a === '' ? -1 : b === '' ? 1 : +a - +b));
+		for (const key of keys) {
+			documentsOut.push({
+				work: slug,
+				n: key === '' ? null : +key,
+				cited_by: ordered(byUnit.get(key) ?? [])
+			});
+		}
+	}
+
+	return {
+		documents: documentsOut,
+		ccc: [...ccc.keys()]
+			.sort((a, b) => a - b)
+			.map((n) => ({ ccc: n, cited_by: ordered(ccc.get(n) ?? []) }))
+	};
+}
+
+/**
+ * The first section number in a parsed document locus, or `null`.
+ *
+ * A locus is captured but never trusted (`refs-grammar.ts`), and this is the
+ * builder's copy of the one line `refs.ts`'s `firstLocusSection` runs before
+ * `refAddress` will validate it. Kept here rather than imported because that
+ * module reaches the corpus and this script must not.
+ *
+ * @param {string | null} locus
+ * @returns {number | null}
+ */
+function firstSection(locus) {
+	const m = locus ? /^\d+/.exec(locus) : null;
+	return m ? +m[0] : null;
+}
+
+/**
  * References that point outside the corpus — the check whose absence once let
  * sixteen dead references ship.
  *

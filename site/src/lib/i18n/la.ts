@@ -235,7 +235,7 @@ export const la: Dictionary = {
 	'colophon.typeTitle': 'De litterarum forma',
 	'colophon.typeBody':
 		'Litteris EB Garamond composita, quas Georgius Duffner et Octavius Pardo ex typis a Claudio Garamont circa annum 1590 caesis renovaverunt — ea traditione humanistica qua Ecclesia ab aetate litterarum renascentium imprimit. Litterae initiales sunt Pirata One, forma Gothica cuius capitales etiam ea magnitudine quam littera initialis poscit legi possunt. Utraeque sub licentia SIL Open Font License dantur et ex hac ipsa sede mittuntur, non ex aliena, ne pagina legenda quicquam ab alterius machina petat.',
-	'bible.citedIn': 'Ubi affertur',
+	'refs.citedIn': 'Ubi affertur',
 	// The Latin editio typica is `Catechismus Catholicae Ecclesiae`, so the
 	// siglum is CCE — as in French. `refparse.ts` still reads only `ccc`;
 	// this key names the work in prose, it does not decide what the search

@@ -8,7 +8,6 @@
 		getCccCitationsForChapter,
 		getDocumentCitationsForChapter,
 		getBook,
-		getDocumentGroup,
 		getWork,
 		listEditions
 	} from '$lib/corpus';
@@ -24,6 +23,8 @@
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
+	import CitedBy from '$lib/components/CitedBy.svelte';
+	import { documentCitedSource, type CitedByRow, type CitedBySource } from '$lib/cited-by';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import UnitNav from '$lib/components/UnitNav.svelte';
@@ -317,72 +318,29 @@
 	const documentCitations = $derived(getDocumentCitationsForChapter(data.osis, data.chapterN));
 
 	/**
-	 * A source group inside one verse's row: the work's name once, then every
-	 * place in it that cites this verse — "CCC (¶425 · ¶1108)", "Lumen Gentium
-	 * (§8 · §22)". Grouping rather than repeating the name per reference is
-	 * what keeps a heavily-cited verse readable; Matthew 25 draws on 237
-	 * document references across its verses, and naming each one's work
-	 * separately would be most of the panel.
-	 */
-	interface CitingSource {
-		key: string;
-		/** The short name shown in the row — "CCC", "Lumen Gentium". */
-		label: string;
-		/** The work's full name, shown on hover; null when it adds nothing. */
-		fullTitle: string | null;
-		refs: { n: number; label: string; href: string }[];
-	}
-
-	/**
-	 * The document's name in the edition this reader would actually open, and
-	 * its short title where the manifest has one — "Lumen Gentium" rather than
-	 * "Dogmatic Constitution on the Church Lumen Gentium". A slug with no
-	 * manifest at all is skipped rather than shown raw: it can only mean the
-	 * index outlived the work (switched off between builds), and a bare slug is
-	 * not something to put in front of a reader.
-	 */
-	function documentSource(slug: string, sections: number[]): CitingSource | null {
-		const group = getDocumentGroup(slug);
-		if (!group) return null;
-		const lang = content.documentLangFor(slug);
-		const manifest = group.manifests[lang] ?? Object.values(group.manifests)[0];
-		if (!manifest) return null;
-		const label = manifest.short_title || manifest.title;
-		return {
-			key: `doc:${slug}`,
-			label,
-			fullTitle: manifest.title !== label ? manifest.title : null,
-			// A section is an anchor on the document's single page, not a page
-			// of its own — the same `#s{n}` target `refs.ts` links to. It is
-			// also a previewable address (`address.ts`), so hovering a
-			// section number shows the text itself, not just its number.
-			refs: sections.map((n) => ({
-				n,
-				label: `§${n}`,
-				href: hrefFor({ kind: 'document', slug, n })
-			}))
-		};
-	}
-
-	/**
 	 * One row per cited verse, carrying every work that cites it — the
 	 * Catechism first, then the documents by display title. The verse scaffold
 	 * is built once and shared, which is the whole point of a single panel:
 	 * the reader looks up a verse, not a work.
+	 *
+	 * Verse 0 is the corpus's whole-chapter citation sentinel (`verses: []`):
+	 * the work cited the chapter, not a verse in it, and saying so is more
+	 * honest than picking a verse or expanding across all of them. It gets no
+	 * `href` for the same reason — there is nothing in the page to scroll to.
 	 */
-	const citedInRows = $derived(
+	const citedInRows: CitedByRow[] = $derived(
 		[...new Set([...cccCitations.keys(), ...documentCitations.keys()])]
 			.sort((a, b) => a - b)
 			.map((verse) => {
 				const paragraphs = cccCitations.get(verse) ?? [];
-				const ccc: CitingSource[] = paragraphs.length
+				const ccc: CitedBySource[] = paragraphs.length
 					? [
 							{
 								key: 'ccc',
 								label: t('bible.cccAbbrev'),
 								fullTitle: t('ccc.landing.title'),
 								refs: paragraphs.map((n) => ({
-									n,
+									key: n,
 									label: `¶${n}`,
 									href: hrefFor({ kind: 'ccc', n })
 								}))
@@ -390,23 +348,19 @@
 						]
 					: [];
 				const documents = (documentCitations.get(verse) ?? [])
-					.map((entry) => documentSource(entry.slug, entry.sections))
-					.filter((source): source is CitingSource => source !== null)
+					.map((entry) => documentCitedSource(entry.slug, entry.sections))
+					.filter((source): source is CitedBySource => source !== null)
 					.sort((a, b) => a.label.localeCompare(b.label));
+				const present = chapterVerseNumbers.has(verse);
 				return {
-					verse,
-					present: verse === 0 || chapterVerseNumbers.has(verse),
+					key: verse,
+					label: verse === 0 ? t('bible.wholeChapter') : `${t('bible.verseAbbrev')}\u00a0${verse}`,
+					...(verse !== 0 && present ? { href: `#v${verse}` } : {}),
+					...(verse !== 0 && !present ? { note: t('bible.verseNotInEdition') } : {}),
 					sources: [...ccc, ...documents]
 				};
 			})
 			.filter((row) => row.sources.length > 0)
-	);
-
-	const citedInTotal = $derived(
-		citedInRows.reduce(
-			(sum, row) => sum + row.sources.reduce((n, source) => n + source.refs.length, 0),
-			0
-		)
 	);
 
 	// Reactive rather than onMount: the edition can now change without a
@@ -677,49 +631,7 @@
 			{/if}
 
 			{#if citedInRows.length > 0}
-				<section class="cited-in" aria-labelledby="cited-in-heading">
-					<h2 id="cited-in-heading">
-						{t('bible.citedIn')}
-						<span class="count">{citedInTotal}</span>
-					</h2>
-					<ul>
-						{#each citedInRows as row (row.verse)}
-							<li>
-								<!-- Verse 0 is the corpus's whole-chapter citation sentinel
-						     (`verses: []`) — the work cited the chapter, not a verse
-						     in it, and saying so is more honest than picking a verse
-						     or expanding across all of them. -->
-								<span class="verse-ref">
-									{#if row.verse === 0}
-										{t('bible.wholeChapter')}
-									{:else if row.present}
-										<a href={`#v${row.verse}`}>{t('bible.verseAbbrev')}&nbsp;{row.verse}</a>
-									{:else}
-										<span class="verse-absent" title={t('bible.verseNotInEdition')}>
-											{t('bible.verseAbbrev')}&nbsp;{row.verse}
-										</span>
-									{/if}
-								</span>
-								<span class="sources">
-									{#each row.sources as source (source.key)}
-										<span class="source">
-											<span
-												class="source-label"
-												class:named={source.fullTitle !== null}
-												title={source.fullTitle ?? undefined}>{source.label}</span
-											><span class="refs"
-												>({#each source.refs as ref, i (ref.n)}{#if i > 0}<span
-															class="sep"
-															aria-hidden="true">·</span
-														>{/if}<a href={ref.href}>{ref.label}</a>{/each})</span
-											>
-										</span>
-									{/each}
-								</span>
-							</li>
-						{/each}
-					</ul>
-				</section>
+				<CitedBy heading={t('refs.citedIn')} rows={citedInRows} />
 			{/if}
 
 			<UnitNav
@@ -926,105 +838,6 @@
 	   cites the chapter, not one per work type: the reader looks up a verse,
 	   so the verse scaffold is built once and each work names itself inside
 	   the row. */
-	.cited-in {
-		margin-top: 2.5rem;
-		padding-top: 1rem;
-		border-top: 1px solid var(--color-border);
-		font-size: 0.85rem;
-	}
-
-	.cited-in h2 {
-		margin: 0 0 0.6rem;
-		font-size: 0.75rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--color-text-muted);
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.cited-in .count {
-		font-variant-numeric: tabular-nums;
-		border: 1px solid var(--color-border);
-		border-radius: 0.25rem;
-		padding: 0 0.3rem;
-		letter-spacing: 0;
-	}
-
-	.cited-in ul {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: grid;
-		/* Verse label in a fixed column so the paragraph lists line up, which
-		   is what makes a long concordance scannable rather than a wall. */
-		grid-template-columns: max-content 1fr;
-		gap: 0.3rem 0.9rem;
-	}
-
-	.cited-in li {
-		display: contents;
-	}
-
-	.cited-in .verse-ref {
-		color: var(--color-text-muted);
-		font-variant-numeric: tabular-nums;
-		white-space: nowrap;
-	}
-
-	.cited-in .verse-absent {
-		cursor: help;
-		text-decoration: underline dotted;
-		text-decoration-color: var(--color-border);
-	}
-
-	/* Groups wrap as a unit — a work's name must never end a line with its
-	   own references orphaned onto the next one. */
-	.cited-in .sources {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.15rem 0.7rem;
-	}
-
-	.cited-in .source {
-		white-space: nowrap;
-		font-variant-numeric: tabular-nums;
-	}
-
-	/* The work's name, said once per group. Quiet relative to the numbers
-	   beside it: those are the links, this is the label that tells you what
-	   they are. */
-	.cited-in .source-label {
-		color: var(--color-text-muted);
-	}
-
-	/* Only labels that actually shorten something get the affordance, so the
-	   dotted underline means "there is more to read here" rather than
-	   decorating every row. Same signal as `.verse-absent` above and
-	   `RefText`'s `.ref-unresolved`. */
-	.cited-in .source-label.named {
-		cursor: help;
-		text-decoration: underline dotted;
-		text-decoration-color: var(--color-border);
-		text-underline-offset: 0.15em;
-	}
-
-	.cited-in .refs {
-		margin-inline-start: 0.3em;
-	}
-
-	.cited-in .sep {
-		margin-inline: 0.3em;
-		color: var(--color-text-muted);
-	}
-
-	.cited-in a {
-		text-decoration-color: var(--color-border);
-		text-underline-offset: 0.15em;
-	}
-
 	/* Two BookChapterPicker instances, CSS-swapped by breakpoint rather than
 	   one instance whose variant is decided in JS: a JS-decided swap would
 	   have to pick a default before hydration resolves the real viewport,

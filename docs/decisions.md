@@ -4552,3 +4552,51 @@ check passes on it. It was invisible to the 2026-08-16 comparison because that
 comparison asked about numbers, and it is the strongest argument yet for
 proposal §5 — disclosing divergence in the reading view and not only in compare
 mode, which remains unbuilt.
+
+## 2026-08-25 — Who cites this, answered from the same grammar that renders the citation
+
+**What**: the reverse citation index, `docs/link-surface.md` #12's missing
+half. `buildCitationXrefs` joins the two Bible indexes in
+`scripts/build-xrefs.mjs` — derived on every build, never committed, by the
+grammar that renders the forward links — and answers, for a document section
+or a Catechism paragraph, who cites it. **566 document addresses and 44
+Catechism paragraphs have a citer.** A reader standing on Gaudium et Spes §22
+is now told the Catechism cites it at ¶¶359, 367, 470 and twenty-three other
+places do too.
+
+**The one component, extracted rather than copied.** The Bible chapter page
+had built this panel over verses — address in a fixed column, each citing
+work's name said once with its references beside it. The document page needs
+it over sections and the Catechism page over paragraphs, and what varies is
+only what an address is called and whether it can be jumped to. So
+`CitedBy.svelte` is the panel and `cited-by.ts` is its shapes plus the one
+lookup all three share; the Bible page now calls it rather than owning it. The
+alternative was a second copy of a hundred lines of CSS, which is the thing in
+this repository that drifts fastest.
+
+**Prose is not scanned, and finding that out removed code rather than adding
+it.** The scripture pass reads a unit's apparatus AND its body, because
+`linkifyProse` finds a locator in a sentence. This pass was written the same
+way on the assumption that a document named in a sentence is cited the same
+way. It is not: `linkifyProse` emits scripture segments and nothing else, so a
+document title in running text is not linked on the page either. The body scan
+was doing work that could only return segments this builder discards. Dropped,
+with the measurement to prove it cost nothing — the index is byte-identical
+without it.
+
+**A citation naming no section is kept, not dropped.** `n: null` holds the
+bare siglum ("cf. GS"), the title with no number after it, and the number the
+document does not have ("Humani generis 561" is an AAS page and that document
+has 44 sections). The forward direction refuses to link any of those, because
+it has no destination worth guessing. The reverse direction is not guessing:
+the citation names Gaudium et Spes whether or not a link can be built, and the
+reader standing on that document is owed the fact. Those entries lead the
+panel, labelled with the work's own name.
+
+**`Ibid.` is still not resolved, and it is 6.2% of the corpus's 22,387
+citations** — a bigger share than `link-surface.md`'s earlier estimate of 4%.
+It belongs to this builder. It is left out because resolving it means carrying
+the previous citation's target across a unit boundary and asserting that is
+what the source meant, which is a claim about someone else's apparatus rather
+than a reading of it — the same line `pipeline/corrections/` draws between a
+defect with a known correct value and one without.
