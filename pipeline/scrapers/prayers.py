@@ -268,6 +268,39 @@ def flatten(raw: str) -> str:
     return _WS_RE.sub(" ", s).strip()
 
 
+def line_html(lines: list[str]) -> str | None:
+    """The narrow markup for a block that prints on more than one line.
+
+    THE SOURCE'S `<br/>` IS VERSE STRUCTURE HERE, NOT COLUMN WRAP, and this
+    scraper used to throw it away on the opposite assumption -- `flatten`'s
+    docstring still called it "a fixed-column-width typesetting artifact",
+    borrowed from the convention `docs/corpus-schema.md` states for CCC
+    paragraph blocks. That is true of the Catechism's running prose and false
+    of a prayer: measured over the whole Appendix A region of the English
+    page, its 895 `<br/>`-separated lines have a MEDIAN LENGTH OF 28
+    CHARACTERS and 73% of them end on punctuation. Column wrap produces long
+    lines of near-uniform width breaking mid-clause; these are short and
+    clause-final, because the Salve Regina, the Te Deum and the Veni Creator
+    are set as verse and the source sets them that way. Collapsing them gave
+    every prayer on the site as one undifferentiated paragraph.
+
+    Carried as `html` beside `text`, which is exactly how a document section
+    carries the same thing (docs/corpus-schema.md §Documents): `<br>` is
+    already in that allowlist, `inline-html.ts` already parses it, and every
+    prose renderer on the site already emits it. A second convention -- a
+    `lines` array, or newlines inside `text` -- would have been a new thing
+    to teach five components about. `text` keeps the collapsed form, so
+    search and every plain-text consumer are unaffected.
+
+    `None` for a single-line block, so the field marks a real exception the
+    way every other optional field in this corpus does rather than restating
+    `text` with markup around it for the majority that has no lines to keep.
+    """
+    if len(lines) < 2:
+        return None
+    return "<br />".join(ihtml.escape(line, quote=False) for line in lines)
+
+
 def br_segments(raw: str) -> list[str]:
     """Split raw HTML on <br/> into flattened text segments, dropping
     empty ones. Used only where <br/> is doing real structural work
@@ -378,6 +411,10 @@ class BlockOut:
     kind: str  # "prose" | "versicle" | "response"
     text: str
     label: str | None = None  # verbatim printed prefix: "V." | "R." | "D." | "C."
+    #: The block's printed LINES, joined by `<br />`, when it has more than
+    #: one -- see `line_html`. Absent otherwise, and `text` always carries the
+    #: same words either way.
+    html: str | None = None
 
     def to_dict(self) -> dict:
         # Omitted when "prose" -- see vatican_docs.py's BlockOut for why, and
@@ -387,6 +424,8 @@ class BlockOut:
         if self.kind != "prose":
             d["kind"] = self.kind
         d["text"] = self.text
+        if self.html:
+            d["html"] = self.html
         if self.label:
             d["label"] = self.label
         return d
@@ -549,13 +588,15 @@ def process_paragraph(raw: str, out: list[BlockOut]) -> None:
         return
     segments = br_segments(raw)
     if not any(_DIALOGIC_PREFIX_RE.match(seg) for seg in segments):
-        out.append(BlockOut("prose", text))
+        out.append(BlockOut("prose", text, html=line_html(segments)))
         return
     prose_buf: list[str] = []
 
     def flush() -> None:
         if prose_buf:
-            out.append(BlockOut("prose", " ".join(prose_buf)))
+            out.append(
+                BlockOut("prose", " ".join(prose_buf), html=line_html(prose_buf))
+            )
             prose_buf.clear()
 
     for seg in segments:
@@ -673,7 +714,9 @@ def parse_vernacular_chunk(
 
 def latin_blocks_en(body_html: str) -> list[BlockOut]:
     return [
-        BlockOut("prose", flatten(p)) for p in top_paragraphs(body_html) if flatten(p)
+        BlockOut("prose", flatten(p), html=line_html(br_segments(p)))
+        for p in top_paragraphs(body_html)
+        if flatten(p)
     ]
 
 
@@ -688,7 +731,7 @@ def latin_blocks_pt(body_html: str) -> list[BlockOut]:
     block, which is the honest answer when the source marks no internal
     structure."""
     return [
-        BlockOut("prose", flatten(part))
+        BlockOut("prose", flatten(part), html=line_html(br_segments(part)))
         for part in _DOUBLE_BR_RE.split(body_html)
         if flatten(part)
     ]
@@ -920,10 +963,17 @@ def build_creeds_en(html_text: str) -> list[Prayer]:
             0,
             "apostles-creed",
             "The Apostles Creed",
-            [BlockOut("prose", flatten(apostles))],
+            [
+                BlockOut(
+                    "prose", flatten(apostles), html=line_html(br_segments(apostles))
+                )
+            ],
         ),
         Prayer(
-            0, "nicene-creed", "The Nicene Creed", [BlockOut("prose", flatten(nicene))]
+            0,
+            "nicene-creed",
+            "The Nicene Creed",
+            [BlockOut("prose", flatten(nicene), html=line_html(br_segments(nicene)))],
         ),
     ]
 
@@ -950,21 +1000,26 @@ def build_creeds_pt(html_text: str) -> list[Prayer]:
     ]
     if titles != expected_titles:
         raise RuntimeError(f"PT: unexpected Credo table titles: {titles!r}")
-    columns = [
-        " ".join(flatten(row[column]) for row in rows[1:]) for column in range(2)
+    # Each table ROW is a printed line of the creed, and each column one of
+    # the two creeds -- so the rows ARE the lines, and joining them with a
+    # space is the same collapse `flatten` used to do to `<br/>` (line_html).
+    column_lines = [
+        [flatten(row[column]) for row in rows[1:] if flatten(row[column])]
+        for column in range(2)
     ]
+    columns = [" ".join(lines) for lines in column_lines]
     return [
         Prayer(
             0,
             "apostles-creed",
             "Símbolo dos Apóstolos",
-            [BlockOut("prose", columns[0])],
+            [BlockOut("prose", columns[0], html=line_html(column_lines[0]))],
         ),
         Prayer(
             0,
             "nicene-creed",
             "Credo de Niceia–Constantinopla",
-            [BlockOut("prose", columns[1])],
+            [BlockOut("prose", columns[1], html=line_html(column_lines[1]))],
         ),
     ]
 
@@ -981,7 +1036,14 @@ def build_our_father_en(html_text: str) -> Prayer:
             f"EN: expected one Our Father text at CCC 2759, found {len(matches)}"
         )
     return Prayer(
-        0, "our-father", "The Our Father", [BlockOut("prose", flatten(matches[0]))]
+        0,
+        "our-father",
+        "The Our Father",
+        [
+            BlockOut(
+                "prose", flatten(matches[0]), html=line_html(br_segments(matches[0]))
+            )
+        ],
     )
 
 
@@ -1001,7 +1063,14 @@ def build_our_father_pt(html_text: str) -> Prayer:
             f"PT: expected one Our Father text at CCC 2759, found {len(prayers)}"
         )
     return Prayer(
-        0, "our-father", "Pai Nosso", [BlockOut("prose", flatten(prayers[0]))]
+        0,
+        "our-father",
+        "Pai Nosso",
+        [
+            BlockOut(
+                "prose", flatten(prayers[0]), html=line_html(br_segments(prayers[0]))
+            )
+        ],
     )
 
 
@@ -1018,7 +1087,7 @@ def _litany_paragraphs(
     for raw in paragraphs[starts[0] :]:
         text = flatten(raw)
         if text:
-            blocks.append(BlockOut("prose", text))
+            blocks.append(BlockOut("prose", text, html=line_html(br_segments(raw))))
         if text.startswith(last):
             return blocks
     raise RuntimeError(f"{lang}: could not locate the Litany closing paragraph")
@@ -1115,7 +1184,7 @@ def parse_rosary_instructions(html_text: str, lang: str) -> PrayerInstructions:
     # independently present in this work, so retain the actual instructions
     # without duplicating those prayer texts on the same page.
     blocks = [
-        BlockOut("prose", flatten(raw))
+        BlockOut("prose", flatten(raw), html=line_html(br_segments(raw)))
         for raw in paragraphs[matches[0] + 1 :]
         if flatten(raw)
     ]
@@ -1149,6 +1218,46 @@ def enrich_rosary_with_full_mysteries(rosary: Prayer, lang: str) -> None:
 # --------------------------------------------------------------------------
 
 
+def _block_lines(block: BlockOut) -> list[str]:
+    """A block as its printed lines -- one entry when it prints on one."""
+    return ihtml.unescape(block.html).split("<br />") if block.html else [block.text]
+
+
+def _correct_lines(lines: list[str], frm: str, to: str) -> list[str] | None:
+    """Apply one correction across a block's printed LINES.
+
+    Corrections are written against the prayer as it reads, so two of the ten
+    on file name a phrase the source prints across a line break ("ad
+    faciéndam misericórdiam eum / pátribus nostris"). A plain per-line
+    replace would silently miss exactly those, which is how the `html` field
+    came to disagree with `text` the first time this was written.
+
+    So the match is whitespace-flexible and the REPLACEMENT REUSES THE
+    SEPARATORS IT MATCHED: word i of `to` is joined to word i+1 by whatever
+    stood between words i and i+1 of `from`, line break included. The
+    correction therefore cannot move, add or remove a line break -- it can
+    only change the words. That requires the two phrases to have the same
+    word count, which every correction on file does (they are single-word
+    OCR repairs quoted with enough context to be unambiguous); `None` for
+    anything else, so the caller fails loudly rather than guessing.
+    """
+    words_from, words_to = frm.split(), to.split()
+    if len(words_from) != len(words_to):
+        return None
+    joined = "\n".join(lines)
+    pattern = re.compile(r"[ \n]+".join(re.escape(w) for w in words_from))
+
+    def swap(m: re.Match[str]) -> str:
+        seps = re.findall(r"[ \n]+", m.group(0))
+        out = words_to[0]
+        for sep, word in zip(seps, words_to[1:], strict=True):
+            out += sep + word
+        return out
+
+    fixed, n = pattern.subn(swap, joined)
+    return fixed.split("\n") if n else None
+
+
 def apply_corrections(prayers: list[Prayer], corrections: list[dict]) -> list[dict]:
     """Apply each correction to the single Latin block of the named prayer
     that contains its `from` text verbatim. Fails loudly (drift guard) if
@@ -1171,7 +1280,20 @@ def apply_corrections(prayers: list[Prayer], corrections: list[dict]) -> list[di
                 f"{c['from']!r} in {slug}'s Latin text, found {len(matches)} "
                 "(drift guard -- source text no longer matches the correction)"
             )
-        matches[0].text = matches[0].text.replace(c["from"], c["to"])
+        block = matches[0]
+        block.text = block.text.replace(c["from"], c["to"])
+        # `html` carries the same words with the source's line breaks kept
+        # (`line_html`), so it needs the same fix -- and needs it to land, or
+        # the two fields disagree about what the prayer says. Silently
+        # correcting one of them is worse than not correcting either.
+        if block.html:
+            fixed = _correct_lines(_block_lines(block), c["from"], c["to"])
+            if fixed is None:
+                raise RuntimeError(
+                    f"correction {c['id']}: applied to {slug}'s text but not to "
+                    "its line markup (drift guard -- see _correct_lines)"
+                )
+            block.html = line_html(fixed)
         applied.append(c)
     return applied
 
@@ -1489,34 +1611,42 @@ def _fold_stream(text: str) -> list[tuple[int, str]]:
     return out
 
 
-def _resegment(base_text: str, donor_blocks: list[str]) -> list[str] | None:
-    """Cut `base_text` where `donor_blocks` breaks, or `None` if it cannot.
+def _resegment(base: list[BlockOut], donor: list[BlockOut]) -> list[BlockOut] | None:
+    """Regroup `base`'s printed LINES into `donor`'s blocks, or `None`.
 
-    Returns `None` rather than a best effort whenever the two witnesses do
-    not carry the same significant characters in the same order -- that is
-    the case where a transplant would silently move text between blocks, and
-    the caller keeps the base witness's own segmentation instead.
+    Works at line granularity rather than by cutting strings, because a line
+    is the finest thing either witness actually prints and a stanza break can
+    only ever fall between two of them. A donor boundary that would land
+    mid-line is a boundary the base witness does not have, and it returns
+    `None` rather than approximating -- the caller then keeps the base
+    witness's own segmentation.
+
+    Every line of the output is a line of the input, so no character is
+    rewritten, reordered or dropped; the assert below states exactly that.
     """
-    base = _fold_stream(base_text)
-    donor = [_fold_stream(b) for b in donor_blocks]
-    if [c for _, c in base] != [c for block in donor for _, c in block]:
+    lines = [line for block in base for line in _block_lines(block)]
+    wanted = [[c for _, c in _fold_stream(line)] for line in lines]
+
+    out: list[BlockOut] = []
+    i = 0
+    for group in donor:
+        target = [c for _, c in _fold_stream(" ".join(_block_lines(group)))]
+        taken: list[str] = []
+        folded: list[str] = []
+        while i < len(lines) and len(folded) < len(target):
+            folded += wanted[i]
+            taken.append(lines[i])
+            i += 1
+        if folded != target:
+            return None
+        out.append(BlockOut("prose", " ".join(taken).strip(), html=line_html(taken)))
+    if i != len(lines):
         return None
 
-    pieces: list[str] = []
-    start = 0
-    consumed = 0
-    for block in donor[:-1]:
-        consumed += len(block)
-        # Cut just past the last significant character of this donor block,
-        # so the punctuation and whitespace that follow it stay with it.
-        cut = base[consumed][0] if consumed < len(base) else len(base_text)
-        pieces.append(base_text[start:cut])
-        start = cut
-    pieces.append(base_text[start:])
-
-    # A transplant that does not rejoin to the original is not a transplant.
-    assert "".join(pieces) == base_text, "resegmentation lost or duplicated text"
-    return [p for p in pieces if p.strip()]
+    assert [line for block in out for line in _block_lines(block)] == lines, (
+        "resegmentation lost or duplicated a line"
+    )
+    return out
 
 
 def build_latin_edition(
@@ -1557,12 +1687,9 @@ def build_latin_edition(
                 # the words themselves, and the base witness is the edition.
                 divergence = "witnesses differ in letters, not only in orthography"
             elif len(donor.blocks) > len(blocks):
-                recut = _resegment(
-                    " ".join(b.text for b in latin.blocks),
-                    [b.text for b in donor.blocks],
-                )
+                recut = _resegment(latin.blocks, donor.blocks)
                 if recut is not None:
-                    blocks = [BlockOut(kind="prose", text=t.strip()) for t in recut]
+                    blocks = recut
                     segmentation = LATIN_SEGMENTATION_LANG
 
         out.append(

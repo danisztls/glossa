@@ -653,6 +653,24 @@ export interface PrayerBlock {
 	/** Absent means `'prose'` — see `CccBlock.kind`. */
 	kind?: PrayerBlockKind;
 	text: string;
+	/**
+	 * The block's printed LINES, joined by `<br />`, when it prints on more
+	 * than one -- absent otherwise, and `text` carries the same words either
+	 * way (collapsed to single spaces, which is what search and every
+	 * plain-text consumer want).
+	 *
+	 * A PRAYER IS SET AS VERSE AND THE SOURCE SETS IT THAT WAY. The scraper
+	 * used to collapse these breaks on the CCC's convention that a `<br/>`
+	 * inside a block is column wrap; measured over the source's whole prayer
+	 * region that is false here -- 895 lines, median length 28 characters,
+	 * 73% ending on punctuation. Every prayer on the site rendered as one
+	 * undifferentiated paragraph until this field existed.
+	 *
+	 * Same field, same name and same narrow allowlist as a document
+	 * section's block (docs/corpus-schema.md), so `parseInlineHtml` already
+	 * understands it and every prose renderer already emits `<br>`.
+	 */
+	html?: string;
 	/** Verbatim printed prefix on a versicle/response line -- `"V."`/`"R."`
 	 *  in most sources, PT's own Angelus and Rosary-closing dialogue use
 	 *  `"D."`/`"C."` instead. Kept exactly as printed, never normalized to a

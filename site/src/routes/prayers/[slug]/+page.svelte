@@ -64,7 +64,7 @@
 		chooseComparisonEdition,
 		toggleCompare
 	} from '$lib/compare-nav.svelte';
-	import { compareColumnLabel } from '$lib/corpus';
+	import { compareColumnLabel, languageDisplayName } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ComparisonEditionMenu from '$lib/components/ComparisonEditionMenu.svelte';
@@ -146,6 +146,31 @@
 
 	const hasToc = $derived((current?.prayer.groups?.length ?? 0) > 0);
 
+	/**
+	 * Which regional wording reads as "the English text" rather than as an
+	 * alternative to it. Only EN carries variants at all (5 prayers), and
+	 * only ever this pair.
+	 */
+	const DEFAULT_VARIANT = 'USA';
+
+	/** The default first, then the rest in the source's own order — the
+	 *  reader meets the prayer before its alternatives. */
+	function orderedVariants(p: Prayer) {
+		const variants = p.variants ?? [];
+		return [
+			...variants.filter((v) => v.label === DEFAULT_VARIANT),
+			...variants.filter((v) => v.label !== DEFAULT_VARIANT)
+		];
+	}
+
+	/** "English (UK)" — the CONTENT language's own name plus the source's own
+	 *  regional label, the same construction every column tag on the site
+	 *  uses (`compareColumnLabel`). Built rather than translated: the label
+	 *  names what the text IS, not what the reader's interface calls it. */
+	function variantLabel(label: string, bodyLang: string): string {
+		return `${languageDisplayName(bodyLang)} (${label})`;
+	}
+
 	/** Stable in-page destinations for a grouped prayer's sourced divisions.
 	 * The Rosary is currently the only such prayer; deriving these from each
 	 * printed group name keeps EN/PT headings and their ToC aligned without
@@ -181,13 +206,29 @@
 	     differs by region, e.g. Hail Holy Queen) or a shared tail the source
 	     prints after every variant (Regina Caeli's closing collect, the same
 	     for UK and USA) -- either way, "the alternatives, then whatever both
-	     share" is the order the source itself reads in. -->
+	     share" is the order the source itself reads in.
+
+	     ONE OF THEM IS THE PRAYER AND THE REST ARE ALTERNATIVES. The source
+	     prints "UK VERSION" and "USA VERSION" as two equal headings, and this
+	     used to render them that way: two boxed, labelled blocks, neither of
+	     them simply the Te Deum. That is faithful to the page and unhelpful
+	     as a reader's edition, because a reader who wants "the English Te
+	     Deum" is made to choose between two regional labels before they can
+	     read a word. So `DEFAULT_VARIANT` is set unlabelled and unboxed --
+	     it is the English text -- and anything else keeps the box under its
+	     own name. The corpus is untouched: both wordings are stored exactly
+	     as printed, under exactly the labels the source prints, and this is
+	     a presentation choice made here where presentation choices belong. -->
 	{#if p.variants && p.variants.length > 0}
-		{#each p.variants as variant (variant.label)}
-			<div class="prayer-variant">
-				<p class="prayer-variant-label">{variant.label}</p>
+		{#each orderedVariants(p) as variant (variant.label)}
+			{#if variant.label === DEFAULT_VARIANT}
 				<PrayerBlocks blocks={variant.blocks} />
-			</div>
+			{:else}
+				<div class="prayer-variant">
+					<p class="prayer-variant-label">{variantLabel(variant.label, bodyLang)}</p>
+					<PrayerBlocks blocks={variant.blocks} />
+				</div>
+			{/if}
 		{/each}
 	{/if}
 

@@ -3704,3 +3704,68 @@ reading is filed under its work's own language and there is at most one, every
 translation names a `from` that exists and is not itself, and translations go
 only into interface languages. A batch that fills the text correctly and
 labels its origin wrongly would render identically and be wrong silently.
+
+## 2026-08-25 — A prayer is verse, and the scraper was reading it as prose
+
+**What**: `PrayerBlock` gains `html`, carrying the source's own line breaks for any block
+that prints on more than one line. Every prayer on the site rendered as a single
+undifferentiated paragraph until it did.
+
+**The bug was an inherited convention, applied one work-type too far.** `flatten`'s
+docstring called the source's `<br/>` "a fixed-column-width typesetting artifact, not
+meaningful structure", and cited `corpus-schema.md`'s rule for CCC paragraph blocks. That
+rule is right about the Catechism, whose paragraphs are running prose broken by whatever
+width the page was set to. It is wrong about a prayer. Measured over the whole Appendix A
+region of the English page: **895 `<br/>`-separated lines, median length 28 characters,
+73% of them ending on punctuation.** Column wrap produces long lines of near-uniform width
+breaking mid-clause. These are short and clause-final, because the Salve Regina, the Te
+Deum and the Veni Creator are verse and vatican.va sets them as verse.
+
+**Stored as `html`, not as a `lines` array or newlines inside `text`.** A document section
+already carries exactly this — block text with the source's narrow inline markup, `<br>` in
+the allowlist — so `parseInlineHtml` already parses it and every prose renderer on the site
+already emits it. A second convention would have been a new thing to teach five components
+about, for no gain. `text` is unchanged, so nothing that reads plain text noticed.
+
+**`InlineText`, not `InlineProse`, renders it.** The one thing `InlineProse` adds is
+linkifying scripture references out of running prose, and a prayer does not contain any —
+running that scanner over "and lead us not into temptation" is a hunt for citations that
+are not there. The Rosary's meditations do carry sourced locators; those are
+`PrayerMystery`'s and were never this component's.
+
+**The hanging indent is not decoration.** Once a block keeps its own breaks, two things
+that must not look alike otherwise do: a line the SOURCE broke and a line the VIEWPORT
+broke. A wrapped continuation now sits in from the margin and a real new line starts at it,
+which is how a printed missal sets the same text.
+
+**A correction has to land on both fields or fail.** `apply_corrections` fixed `text` and
+silently left `html` alone in the first version of this, which produced blocks whose two
+fields disagreed about what the prayer says — caught by the Latin edition's re-segmentation
+refusing to align, not by anything looking for it. Two of the ten corrections on file name
+a phrase the source prints across a line break, so the match is whitespace-flexible and the
+replacement reuses the separators it matched: a correction can change words and can never
+move, add or remove a line break. Unequal word counts raise rather than guess.
+
+**Also**: the Latin edition's `_resegment` now works at line granularity rather than by
+cutting strings. A stanza break can only fall between two printed lines, so a donor
+boundary that would land mid-line is a boundary the base witness does not have, and it is
+refused instead of approximated.
+
+## 2026-08-25 — The USA wording is the English prayer; the UK wording is an alternative
+
+**What**: five English prayers carry a UK/USA regional split. The USA wording now renders
+as the prayer — unlabelled and unboxed — and the UK wording keeps a box headed
+"English (UK)".
+
+**Why this is a presentation choice and stays one.** The source prints "UK VERSION" and
+"USA VERSION" as two equal headings, and the corpus stores both wordings verbatim under
+exactly those labels; none of that changes, and `variants` remains what
+`corpus-schema.md` describes. What changed is the reader's page. Rendering two boxed,
+equally-labelled alternatives is faithful to vatican.va and unhelpful as an edition: a
+reader who wants "the English Te Deum" was made to choose between two regional labels
+before reading a word, and neither box was simply the prayer.
+
+**The label is built, not translated**: `languageDisplayName(lang)` plus the source's own
+regional label, which is the same construction every column tag on the site uses. It names
+what the text IS, not what the reader's interface calls it — so a Portuguese-reading
+visitor still sees "English (UK)".
