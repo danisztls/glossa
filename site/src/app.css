@@ -19,7 +19,7 @@
  * module graph — neither can produce the stable path `app.html`'s explicit
  * <link rel="preload"> needs. So the files are copied in and declared here.
  *
- * Four subsets are declared, not seven. Which ones is an empirical question,
+ * Six subsets are declared, not seven. Which ones is an empirical question,
  * and the corpus answers it:
  *
  *   latin       every page. Covers ALL Portuguese on its own — the accents
@@ -32,7 +32,19 @@
  *               both editions). U+1EA0-1EF9 is NOT covered by latin-ext, so
  *               without this subset that name renders as tofu.
  *
- * `cyrillic`/`cyrillic-ext` are omitted — nothing in the corpus needs them.
+ *   cyrillic    the Russian edition of Magnifica Humanitas, 250,526
+ *               characters. EB Garamond covers it 100% — the Cyrillic here is
+ *               a modern extension by Duffner/Pardo, not a Garamont form (no
+ *               historical Cyrillic Garamond exists), but it harmonises by
+ *               construction because it is the same hand.
+ *   cyrillic-ext  `№` (U+2116) is in `cyrillic`, but the ext range is what
+ *               carries the Church Slavonic letters, and it is 33 KB that
+ *               only downloads if one appears. Declared for the same reason
+ *               `vietnamese` is: the cost of being wrong is tofu.
+ *
+ * `greek-ext` remains the only omission. Arabic is not a subset question at
+ * all — EB Garamond has no Arabic, so the Arabic edition is served by Amiri
+ * through `--font-serif`'s fallback chain. See the Amiri block below.
  *
  * Declaring a subset is close to free: `unicode-range` means the browser only
  * downloads a file when a character in its range is actually on the page. A
@@ -135,6 +147,116 @@
 		U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
 }
 
+/* cyrillic */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-cyrillic-wght-normal.woff2') format('woff2-variations');
+	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-cyrillic-wght-italic.woff2') format('woff2-variations');
+	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/* cyrillic-ext */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-cyrillic-ext-wght-normal.woff2') format('woff2-variations');
+	unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-cyrillic-ext-wght-italic.woff2') format('woff2-variations');
+	unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+/*
+ * AMIRI, for the one script EB Garamond does not reach at all.
+ *
+ * Chosen on the same logic that chose EB Garamond: it is a revival of one
+ * specific historical book type — the 1905 Naskh of the Bulaq (Amiria) Press
+ * in Cairo — rather than a contemporary drawing. Khaled Hosny, SIL OFL. Its
+ * cap height is 0.646em against EB Garamond's 0.650, so the two sit at the
+ * same optical size with no `size-adjust`, which is luck rather than design.
+ *
+ * No `:lang()` rule routes it. `--font-serif` lists it after EB Garamond and
+ * font fallback is per-glyph, so an Arabic codepoint finds no EB Garamond
+ * `@font-face` covering it and falls through to Amiri on its own — in reader
+ * text and in the interface chrome alike, which matters because `ar` is a UI
+ * language and the chrome was rendering tofu for it.
+ *
+ * Static weights, not variable: Amiri ships 400/700 rather than an axis, so
+ * both are declared. The Quran-specific companions in the family (Amiri Quran,
+ * Amiri Quran Colored) are deliberately NOT vendored — the model for the plain
+ * face is the Bulaq state press, which printed gazettes and science, and that
+ * is the register this corpus wants.
+ *
+ * There is a better answer that does not exist yet. Robert Granjon cut Arabic
+ * in Rome between 1580 and 1586 for the Typographia Vaticana and the Medici
+ * Oriental Press, expressly for Catholic publishing — the same generation and
+ * milieu as the Garamont types this site's text face revives. No digital
+ * revival of it exists, open or commercial. If original type is ever
+ * commissioned here, that is the brief.
+ */
+@font-face {
+	font-family: 'Amiri';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/amiri-arabic-400-normal.woff2') format('woff2');
+	unicode-range:
+		U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
+		U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
+@font-face {
+	font-family: 'Amiri';
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/amiri-arabic-400-italic.woff2') format('woff2');
+	unicode-range:
+		U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
+		U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
+@font-face {
+	font-family: 'Amiri';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/amiri-arabic-700-normal.woff2') format('woff2');
+	unicode-range:
+		U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
+		U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
+@font-face {
+	font-family: 'Amiri';
+	font-style: italic;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/amiri-arabic-700-italic.woff2') format('woff2');
+	unicode-range:
+		U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
+		U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
 /*
  * The illuminated initial, and the only place on the site set in anything but
  * the text face. Pirata One is a blackletter with roman-derived capitals.
@@ -208,9 +330,72 @@
 		U+2019, U+201C, U+201D;
 }
 
+/*
+ * THE CYRILLIC INITIAL, and the one place the site sets a second display face.
+ *
+ * Ponomar reproduces the type of the Synodal Press of the Russian Orthodox
+ * Church in the early twentieth century (Slavonic Computing Initiative, SIL
+ * OFL). It is a CHURCH SLAVONIC face, which is a liturgical register and not
+ * an antiquarian one — the distinction from OLD Church Slavonic matters: that
+ * is the 9th-10th century literary language, a philological object, and its
+ * font is SIL's Shafarik with the Glagolitic.
+ *
+ * Which is why it sets the INITIAL and not the text. The Russian edition here
+ * is a 2026 encyclical in modern civil orthography; setting its running text
+ * in Synodal type would say something untrue about what the text is, roughly
+ * as a press release in blackletter would. At display size the association is
+ * an ornament rather than a claim — exactly the trade Pirata One already makes
+ * against EB Garamond above. If a Church Slavonic edition of `/preces` ever
+ * lands, that is liturgical text and this face may set all of it.
+ *
+ * TWO FILES, ONE FAMILY, because the Russian edition's 245 drop-cap positions
+ * open on 26 distinct letters and one of them is a Latin `R` ("Res novae").
+ * Without the latin range that initial alone would fall through to Pirata One
+ * and set one blackletter capital among twenty-five Slavonic ones.
+ *
+ * `size-adjust` IS THE WHOLE GEOMETRY FIX. The drop cap's scale is derived
+ * from Pirata One's 0.793em cap height (see `.drop-cap-letter`); Ponomar's is
+ * 0.700em, so the same scale would set a cap 12% short and break the
+ * three-line alignment. 0.793 / 0.700 = 113.29% normalises Ponomar to the
+ * height the existing derivation already assumes, which keeps that whole
+ * calculation — and the phone breakpoint that overrides it — true for both
+ * faces without a second set of numbers to maintain.
+ *
+ * Regenerate with:
+ *   uv run --with "fonttools[woff]" pyftsubset \
+ *     node_modules/@fontsource/ponomar/files/ponomar-cyrillic-400-normal.woff2 \
+ *     --output-file=static/fonts/ponomar-dropcap-cyrillic.woff2 --flavor=woff2 \
+ *     --layout-features='' --no-hinting --desubroutinize --unicodes='U+0400-042F'
+ *   uv run --with "fonttools[woff]" pyftsubset \
+ *     node_modules/@fontsource/ponomar/files/ponomar-latin-400-normal.woff2 \
+ *     --output-file=static/fonts/ponomar-dropcap-latin.woff2 --flavor=woff2 \
+ *     --layout-features='' --no-hinting --desubroutinize \
+ *     --unicodes='U+0041-005A,U+00C0-00D6,U+00D8-00DE'
+ */
+@font-face {
+	font-family: 'Ponomar Dropcap';
+	font-style: normal;
+	font-weight: 400;
+	font-display: block;
+	size-adjust: 113.29%;
+	src: url('/fonts/ponomar-dropcap-cyrillic.woff2') format('woff2');
+	unicode-range: U+0400-042F;
+}
+
+@font-face {
+	font-family: 'Ponomar Dropcap';
+	font-style: normal;
+	font-weight: 400;
+	font-display: block;
+	size-adjust: 113.29%;
+	src: url('/fonts/ponomar-dropcap-latin.woff2') format('woff2');
+	unicode-range: U+0041-005A, U+00C0-00D6, U+00D8-00DE;
+}
+
 :root {
 	--font-serif:
-		'EB Garamond Variable', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+		'EB Garamond Variable', 'Amiri', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
+		serif;
 	/* Two call sites, and only two: the `.drop-cap-letter` rule near the bottom
 	   of this file, and the wordmark (`components/Wordmark.svelte`). Both are single
 	   large glyphs or a short display lockup in the one weight the subset
@@ -1508,6 +1693,30 @@ input {
 }
 
 /*
+ * The Cyrillic initial is Ponomar, not Pirata One. Routed by an explicit rule
+ * rather than by appending Ponomar to `--font-display`'s fallback chain,
+ * because that chain would never reach it: Pirata One's subset already covers
+ * U+0041-005A, so the Latin `R` of "Res novae" — one of the Russian edition's
+ * 26 opening letters — would set in blackletter while its 25 Cyrillic
+ * neighbours set in Slavonic type. Per-glyph fallback cannot express "this
+ * work's initials", only "this codepoint's face".
+ *
+ * `[lang='ru']` and not `:lang(ru)`: the reader pages declare the content
+ * language on the region (`lang={current.work.language}` on `.reading-text`),
+ * which is the same convention the direction rules at the foot of this file
+ * use, and it keeps an inherited language from reaching into a nested region
+ * set in another one.
+ *
+ * Only the family changes. `size-adjust` on the @font-face normalises
+ * Ponomar's cap height to the one the scale above is derived from, so the
+ * three-line arithmetic and the phone breakpoint below both stay correct
+ * without a second set of constants.
+ */
+[lang='ru'] .drop-cap-letter {
+	font-family: 'Ponomar Dropcap', var(--font-serif);
+}
+
+/*
  * THE PUNCTUATION THAT LEADS INTO THE CAP, and why it is not part of it.
  *
  * A passage opening on a quotation mark is the common case, not an edge one:
@@ -2029,8 +2238,47 @@ input {
 :not(:root)[lang] {
 	direction: ltr;
 	unicode-bidi: isolate;
+	/*
+	 * THE MEASURE IS PER-SCRIPT, and this reset is what keeps it from leaking.
+	 *
+	 * `--prose-char-advance` (see the token's own docblock) is a property of
+	 * the script, not of the site: measured over the corpus editions
+	 * themselves, Latin runs 0.3787em per character, Cyrillic 0.4331 and
+	 * Arabic 0.4774. Left at the Latin figure, the column tuned to 62.4
+	 * characters delivers 54.6 in Russian and 49.5 in Arabic — the second of
+	 * those well outside the 55-65 band the whole derivation exists to hold.
+	 *
+	 * Restating the Latin default HERE rather than relying on `:root` is the
+	 * point of the rule. An Arabic interface sets `lang="ar"` on the document
+	 * element, and every one of the 351 works with no Arabic edition then
+	 * renders inside it in a region declaring its own `lang`. Without this
+	 * line those regions would inherit Arabic's advance and set English at a
+	 * measure computed for Naskh.
+	 */
+	--prose-char-advance: 0.3787;
+}
+
+:not(:root)[lang='ru'] {
+	--prose-char-advance: 0.4331;
 }
 
 :not(:root)[lang='ar'] {
 	direction: rtl;
+	--prose-char-advance: 0.4774;
+}
+
+/*
+ * Arabic is leaded looser, and here it has to be. Naskh carries its meaning in
+ * strokes that swing well below the baseline and in marks that stack above, so
+ * Amiri's own ascender-to-descender extent is 1.758em against EB Garamond's
+ * 1.305 — it does not fit the 1.65 line box `.reading-text` sets, and lines
+ * would touch. 1.9 clears the extent with room for the diacritics, and matches
+ * how the script is set in print anyway.
+ *
+ * On `.reading-text` specifically rather than the region: the same element
+ * carries both, so this is the narrowest selector that reaches the running
+ * prose without also loosening the chrome.
+ */
+.reading-text[lang='ar'] {
+	line-height: 1.9;
 }

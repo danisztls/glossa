@@ -59,6 +59,32 @@ const LEADING_PUNCT = /[\s"'“”‘’«»¿¡([{—–-]/u;
 const CAP_LETTER = /\p{L}/u;
 const LOWERCASE = /\p{Ll}/u;
 
+/*
+ * CURSIVE SCRIPTS GET NO CAP, and this is a correctness rule rather than a
+ * stylistic one.
+ *
+ * Arabic letters join, and take a different shape depending on whether they
+ * sit at the start, middle or end of a word. A drop cap works by lifting the
+ * first letter into its own element, which severs that join: the promoted
+ * letter renders in isolated form and the remainder re-forms without it, so
+ * `نحن` set with a cap is not big-`ن` plus `حن` but a differently-spelled
+ * word. Latin can be cut anywhere because its letters do not touch; Arabic
+ * cannot be cut at all.
+ *
+ * Two further reasons it would be wrong even if the join survived. Arabic is
+ * unicase, so there is no majuscule to promote — enlarging the first letter
+ * has none of the register shift a Latin initial carries. And the tradition
+ * already has its own device for the job: the ʿunwān, an illuminated headpiece
+ * BAND above the text block, with the opening words rubricated. Ornament goes
+ * over the text, not inside the first line.
+ *
+ * Syriac is listed with it because it joins the same way, and Garshuni (Arabic
+ * written in Syriac letters) is a live possibility for a Maronite or Syriac
+ * Catholic text this corpus might yet take. Adding a script here is the whole
+ * fix; nothing downstream needs to know.
+ */
+const JOINING_SCRIPT = /[\p{Script=Arabic}\p{Script=Syriac}]/u;
+
 export interface DropCapSplit {
 	/** Opening punctuation, set at body size ahead of the cap — may be empty. */
 	lead: string;
@@ -113,6 +139,9 @@ export function splitDropCap(text: string): DropCapSplit {
 	const candidate = units[taken];
 	if (candidate === undefined) return NO_CAP(text);
 	if (!CAP_LETTER.test(candidate) || LOWERCASE.test(candidate)) return NO_CAP(text);
+	// See JOINING_SCRIPT: promoting the letter would change how the word is
+	// spelled, not just how large it is set.
+	if (JOINING_SCRIPT.test(candidate)) return NO_CAP(text);
 
 	return {
 		lead: units.slice(0, taken).join(''),

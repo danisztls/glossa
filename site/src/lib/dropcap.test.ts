@@ -24,26 +24,49 @@ import { splitDropCap } from './dropcap';
  */
 const CSS = readFileSync(fileURLToPath(new URL('../app.css', import.meta.url)), 'utf8');
 
-function dropCapRanges(): Array<[number, number]> {
+function familyRanges(family: string): Array<[number, number]> {
 	// Match on the family declaration, NOT on the woff2 filename: the comment
 	// above the block quotes the pyftsubset command (filename and all), and
 	// that comment lands in the PRECEDING segment of this split — matching the
 	// filename silently returned the vietnamese block's range instead.
-	const block = CSS.split('@font-face').find((b) => /font-family:\s*'Pirata One Subset'/.test(b));
-	if (!block) throw new Error('no drop-cap @font-face in app.css');
-	const range = /unicode-range:([^;]+);/.exec(block);
-	if (!range) throw new Error('drop-cap @font-face has no unicode-range');
-	return range[1]
-		.split(',')
-		.map((part) => part.trim().replace(/^U\+/i, ''))
-		.filter(Boolean)
-		.map((part) => {
-			const [lo, hi] = part.split('-');
-			return [parseInt(lo, 16), parseInt(hi ?? lo, 16)] as [number, number];
-		});
+	//
+	// `filter`, not `find`: 'Ponomar Dropcap' is two @font-face blocks under
+	// one family (a cyrillic file and a latin one — see app.css for why the
+	// Latin capitals are needed inside a Russian work), and taking only the
+	// first would leave half the subset unverified.
+	//
+	// A segment counts only if it OPENS the block — `/^\s*\{/` — and is then cut
+	// at that block's closing brace. Both halves are load-bearing. Ordinary
+	// rules naming the family in a `font-family` of their own would otherwise
+	// be picked up and throw for having no `unicode-range`, which is not
+	// hypothetical: `[lang='ru'] .drop-cap-letter` sets 'Ponomar Dropcap', and
+	// it trails the last @font-face in the same segment.
+	const blocks = CSS.split('@font-face')
+		.filter((b) => /^\s*\{/.test(b))
+		.map((b) => b.slice(0, b.indexOf('}')))
+		.filter((b) => new RegExp(`font-family:\\s*'${family}'`).test(b));
+	if (blocks.length === 0) throw new Error(`no @font-face for ${family} in app.css`);
+	return blocks.flatMap((block) => {
+		const range = /unicode-range:([^;]+);/.exec(block);
+		if (!range) throw new Error(`${family} @font-face has no unicode-range`);
+		return range[1]
+			.split(',')
+			.map((part) => part.trim().replace(/^U\+/i, ''))
+			.filter(Boolean)
+			.map((part) => {
+				const [lo, hi] = part.split('-');
+				return [parseInt(lo, 16), parseInt(hi ?? lo, 16)] as [number, number];
+			});
+	});
 }
 
-const RANGES = dropCapRanges();
+/*
+ * The union of both display faces, because `splitDropCap` does not know which
+ * one will set the letter it promotes — app.css routes Cyrillic to Ponomar and
+ * everything else to Pirata One, and a character missing from BOTH is the tofu
+ * this file exists to prevent.
+ */
+const RANGES = [...familyRanges('Pirata One Subset'), ...familyRanges('Ponomar Dropcap')];
 const covered = (cp: number) => RANGES.some(([lo, hi]) => cp >= lo && cp <= hi);
 
 /*
@@ -194,6 +217,32 @@ describe('splitDropCap', () => {
 	});
 });
 
+describe('cursive scripts get no cap', () => {
+	/*
+	 * Not a coverage question — Amiri would render these letters perfectly. The
+	 * cap is refused because promoting the first letter of a joined word severs
+	 * the join and changes the letterforms on both sides of the cut. See
+	 * JOINING_SCRIPT in dropcap.ts.
+	 */
+	it('declines an Arabic opening and leaves the text untouched', () => {
+		// Openings of the first two divisions of encyclical.magnifica-humanitas.ar.
+		for (const text of ['الإنسانيّة الرّائعة التي خلقها الله', 'نحن مؤسَّسون على المسيح']) {
+			const { lead, first, rest } = splitDropCap(text);
+			expect(first).toBe('');
+			expect(rest).toBe(text);
+			expect(lead).toBe('');
+		}
+	});
+
+	it('still caps the scripts that do not join', () => {
+		// Guards the guard: a JOINING_SCRIPT that matched everything would make
+		// the assertions above pass while silently killing every drop cap.
+		for (const text of ['В нас, утвержденных', 'In the beginning']) {
+			expect(splitDropCap(text).first).not.toBe('');
+		}
+	});
+});
+
 describe('drop-cap font coverage', () => {
 	it('parses a non-trivial unicode-range out of app.css', () => {
 		// Guards the guard: a regex that silently matched nothing would make
@@ -220,6 +269,19 @@ describe('drop-cap font coverage', () => {
 			}
 		}
 		expect(Object.fromEntries(uncovered)).toEqual({});
+	});
+
+	it('covers every letter the Russian edition opens a division on', () => {
+		// Measured over encyclical.magnifica-humanitas.ru: 245 drop-cap
+		// positions, 26 distinct opening letters. The Latin `R` is not a typo —
+		// one division opens "Res novae", which is why 'Ponomar Dropcap' carries
+		// a latin subset as well as a cyrillic one.
+		for (const ch of 'RАБВГДЕЖЗИКМНОПРСТУФХЦЧШЭЯ') {
+			expect({ char: ch, covered: covered(ch.codePointAt(0)!) }).toEqual({
+				char: ch,
+				covered: true
+			});
+		}
 	});
 
 	it('covers the openings the real corpus is known to contain', () => {
