@@ -39,8 +39,8 @@ function familyRanges(family: string): Array<[number, number]> {
 	// at that block's closing brace. Both halves are load-bearing. Ordinary
 	// rules naming the family in a `font-family` of their own would otherwise
 	// be picked up and throw for having no `unicode-range`, which is not
-	// hypothetical: `[lang='ru'] .drop-cap-letter` sets 'Ponomar Dropcap', and
-	// it trails the last @font-face in the same segment.
+	// hypothetical: `:not(:root)[lang='ru'] .drop-cap-letter` sets 'Ponomar
+	// Dropcap', and it trails the last @font-face in the same segment.
 	const blocks = CSS.split('@font-face')
 		.filter((b) => /^\s*\{/.test(b))
 		.map((b) => b.slice(0, b.indexOf('}')))
@@ -295,6 +295,26 @@ describe('drop-cap font coverage', () => {
 				covered: true
 			});
 		}
+	});
+
+	it('routes the Slavonic face by the text’s language, not the interface’s', () => {
+		// `<html lang>` carries the INTERFACE language, so a bare `[lang='ru']`
+		// selector matches the document element and sets every initial in the
+		// corpus in Ponomar for a reader whose chrome is Russian — including the
+		// Latin ones, which Ponomar's latin subset covers and therefore renders
+		// in the wrong face rather than visibly failing. `:not(:root)` is what
+		// confines the rule to the region declaring the content language.
+		// Comments stripped FIRST. The docblock above the rule explains the very
+		// scoping asserted here, so matching over the raw stylesheet lets that
+		// prose satisfy the assertion and the check passes on a selector that
+		// lost `:not(:root)`.
+		const css = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
+		const rules = [...css.matchAll(/([^{}]*)\.drop-cap-letter\s*\{/g)].map((m) =>
+			m[1].split(/[;}]/).pop()!.trim()
+		);
+		const ponomar = rules.filter((selector) => selector.includes("[lang='ru']"));
+		expect(ponomar.length).toBeGreaterThan(0);
+		for (const selector of ponomar) expect(selector).toContain(':not(:root)');
 	});
 
 	it('covers the whole Latin-1 uppercase block, not just today’s accents', () => {

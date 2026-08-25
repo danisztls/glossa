@@ -2024,12 +2024,21 @@ input {
  * use, and it keeps an inherited language from reaching into a nested region
  * set in another one.
  *
+ * `:not(:root)` for the same reason those rules carry it, and it is not
+ * decoration: `<html lang>` follows the INTERFACE language (i18n.svelte.ts,
+ * and app.html before first paint), so a bare `[lang='ru']` also matches the
+ * document element. A reader with the interface in Russian would then get
+ * every initial in the corpus set in Slavonic type — the Latin `A` opening an
+ * English or Portuguese work included, which Ponomar's Latin file covers and
+ * so renders as a wrong face rather than as tofu. The face follows the
+ * language of the TEXT, never the language of the chrome.
+ *
  * Only the family changes. `size-adjust` on the @font-face normalises
  * Ponomar's cap height to the one the scale above is derived from, so the
  * three-line arithmetic and the phone breakpoint below both stay correct
  * without a second set of constants.
  */
-[lang='ru'] .drop-cap-letter {
+:not(:root)[lang='ru'] .drop-cap-letter {
 	font-family: 'Ponomar Dropcap', var(--font-serif);
 }
 
