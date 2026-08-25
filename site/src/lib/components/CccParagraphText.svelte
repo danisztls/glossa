@@ -7,6 +7,7 @@
 	import { content } from '$lib/content.svelte';
 	import RefText from '$lib/components/RefText.svelte';
 	import CitationDisclosure from '$lib/components/CitationDisclosure.svelte';
+	import InlineNodes from '$lib/components/InlineNodes.svelte';
 
 	/**
 	 * Deliberately narrower than `CccParagraph`: only `blocks`/`citations` are
@@ -131,48 +132,11 @@
 	function proseSegments(text: string): RefSegment[] {
 		return linkifyProse(text, { lang });
 	}
-</script>
 
-<!--
-  One recursive walk over the block's inline nodes. Emphasis nests, so the
-  snippet calls itself; everything else is a leaf. Nothing here emits an HTML
-  string — see `$lib/inline-html.ts` for why the markup is walked rather than
-  pasted into {@html}.
--->
-{#snippet inline(nodes: InlineNode[], blockIndex: number)}
-	{#each nodes as node}
-		{#if node.kind === 'text'}
-			{node.text}
-		{:else if node.kind === 'ref'}
-			<!-- `linkifyInline` resolved this run to a reference. A citation
-			     whose book name is italic and whose numbers are not arrives as
-			     two adjacent ref nodes sharing one segment; they render as
-			     touching links, each keeping its own emphasis. -->
-			{@const href = refHref(node.seg, { bibleWorkId: content.workIdFor('bible'), lang })}
-			{#if href}<a class="inline-ref" {href}>{@render inline(node.children, blockIndex)}</a
-				>{:else}{@render inline(node.children, blockIndex)}{/if}
-		{:else if node.kind === 'break'}
-			<br />
-		{:else if node.kind === 'emphasis'}
-			{#if node.tag === 'i'}<em>{@render inline(node.children, blockIndex)}</em
-				>{:else if node.tag === 'b'}<strong>{@render inline(node.children, blockIndex)}</strong
-				>{:else}<sup>{@render inline(node.children, blockIndex)}</sup>{/if}
-		{:else}
-			{@const marker = node.marker}
-			<!-- The source can cite the same numbered footnote twice in one
-			     paragraph. Keep each disclosure independent, as <details> did. -->
-			{@const disclosureKey = `${blockIndex}:${node.seq}`}
-			{@const citation = citationFor(marker)}
-			{#if isInline(citation)}<RefText text={citation.label} {lang} />{:else}<CitationDisclosure
-					{marker}
-					{citation}
-					{lang}
-					open={openMarkers.has(disclosureKey)}
-					onToggle={() => toggleCitation(disclosureKey)}
-				/>{/if}
-		{/if}
-	{/each}
-{/snippet}
+	function hrefFor(seg: RefSegment): string | undefined {
+		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang });
+	}
+</script>
 
 <!-- Keyed by POSITION, not by text. `text_marked` was the key until documents
      started shipping without it (types.ts) — every document block would have
@@ -181,9 +145,24 @@
      right key regardless: a paragraph's blocks are a fixed ordered list that
      is never reordered, inserted into, or filtered. -->
 {#each paragraph.blocks as block, blockIndex (blockIndex)}
+	<!-- The source can cite the same numbered footnote twice in one paragraph;
+	     the key stays independent per occurrence, as <details> did. Declared
+	     per block so it closes over `blockIndex` — `InlineNodes`'s `marker`
+	     snippet is `Snippet<[marker, seq]>` only, with no block of its own. -->
+	{#snippet marker(marker: string, seq: number)}
+		{@const disclosureKey = `${blockIndex}:${seq}`}
+		{@const citation = citationFor(marker)}
+		{#if isInline(citation)}<RefText text={citation.label} {lang} />{:else}<CitationDisclosure
+				{marker}
+				{citation}
+				{lang}
+				open={openMarkers.has(disclosureKey)}
+				onToggle={() => toggleCitation(disclosureKey)}
+			/>{/if}
+	{/snippet}
 	{#if block.kind === 'quote'}
 		<blockquote class="ccc-quote">
-			<p>{@render inline(nodesFor(block), blockIndex)}</p>
+			<p><InlineNodes nodes={nodesFor(block)} {hrefFor} {marker} /></p>
 			{#if block.attribution}
 				<footer>{block.attribution}</footer>
 			{/if}
@@ -192,10 +171,11 @@
 		<p class="ccc-prose">
 			{#if blockIndex === 0 && cap}<span class="drop-cap-letter"
 					>{#if cap.lead}<span class="drop-cap-lead">{cap.lead}</span>{/if}{cap.first}</span
-				>{@render inline(cap.restNodes, blockIndex)}{:else}{@render inline(
-					nodesFor(block),
-					blockIndex
-				)}{/if}
+				><InlineNodes nodes={cap.restNodes} {hrefFor} {marker} />{:else}<InlineNodes
+					nodes={nodesFor(block)}
+					{hrefFor}
+					{marker}
+				/>{/if}
 		</p>
 	{/if}
 {/each}

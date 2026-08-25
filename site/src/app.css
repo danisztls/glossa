@@ -2147,33 +2147,6 @@ input {
 }
 
 /*
- * A REFERENCE LINKIFIED OUT OF RUNNING PROSE — the quiet treatment, shared by
- * every component that emits one: `CccParagraphText` (CCC paragraphs and
- * document sections), `SummaDivisions`, `InlineProse`. The underline marks it,
- * the colour stays the sentence's until hover, because these appear several to
- * a paragraph and a coloured link each time would speckle the page.
- *
- * IT IS HERE BECAUSE ONE OF THE THREE COPIES HAD DRIFTED. `CccParagraphText`
- * carried the resting state and not the hover/focus pair, so a scripture
- * reference inside a Catechism paragraph or an encyclical section — the two
- * places a reader meets them most — was the one that did not respond to the
- * pointer or take a visible focus ring. Sharing the rule fixes that by
- * construction rather than by remembering to.
- */
-.inline-ref {
-	color: inherit;
-	text-decoration: underline;
-	text-decoration-color: var(--color-border);
-	text-underline-offset: 0.15em;
-}
-
-.inline-ref:hover,
-.inline-ref:focus-visible {
-	color: var(--color-link);
-	text-decoration-color: currentColor;
-}
-
-/*
  * Inline citation marker + trigger button, shared verbatim by
  * CccParagraphText and PrayerMystery. Their citation *behavior* differs on
  * purpose (a Set of open markers vs. a single boolean) and stays in each
