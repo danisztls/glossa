@@ -542,20 +542,20 @@
 	 * intuition runs the other way: chroma does not BUY contrast, it costs it.
 	 * A pure red carries less luminance than the grey at its own lightness, so
 	 * at OKLCH L 0.643 and hue 28.6, walking chroma from 0.10 up to 0.227
-	 * takes the ratio against `--color-bg-elevated` DOWN from 4.79:1 to
-	 * 4.49:1. The only thing that lifts a red off a dark ground is lightness.
+	 * takes the ratio against `--color-bg-elevated` DOWN from 4.80:1 to
+	 * 4.51:1. The only thing that lifts a red off a dark ground is lightness.
 	 *
 	 * So each of dark's reds is the MOST SATURATED colour its own bar allows,
 	 * with lightness raised no further than that bar demands:
 	 *
 	 *   `--color-initial`  #df1212 — one glyph per chapter at 4.98em, so it
-	 *                      owes 3:1 and clears it at 3.8:1 (4.2:1 on OLED).
+	 *                      owes 3:1 and clears it at 3.7:1 (4.2:1 on OLED).
 	 *                      Deep, and it can stay deep; nothing is spent.
 	 *   `--color-accent`   #ff2f27 — 0.9rem text, so it owes 4.5:1 over
 	 *   `--color-link`     `--color-bg-elevated`, the binding surface, in
 	 *                      dark AND OLED. This is chroma 0.240 at L 0.646:
 	 *                      the maximum chroma anywhere in sRGB that still
-	 *                      clears the bar on this hue. It lands at 4.50:1.
+	 *                      clears the bar on this hue. It lands at 4.52:1.
 	 *
 	 * The accent cannot simply be #df1212 lifted a little, and cannot be
 	 * #df1212 at all: that colour reaches 4.23:1 against PURE BLACK, the most
@@ -564,15 +564,21 @@
 	 * design gesture. Light's pair still splits by pigment (see above); dark's
 	 * splits by what its two bars will each pay for.
 	 *
-	 * THE DARK GROUND IS WARM, and that is what carries the period feel rather
-	 * than the reds alone, which the floor above pins in place. It was a cool
-	 * violet-grey (#16151a / #201e24 / #38353d, hue ~300); it is now a warm
-	 * near-black at hue ~32, the colour of tanned leather and old blood in
-	 * shadow. Lightness and the border/ground separation are unchanged, so
-	 * only the temperature moved. `--color-text` stays the same warm cream and
-	 * gains contrast (15.3:1) from the darker ground; the lapis apparatus and
-	 * the gold bookmark are untouched and both read better against warmth than
-	 * they did against grey.
+	 * THE DARK GROUND HAS NO HUE AT ALL (#161616 / #1e1e1e / #363636, chroma
+	 * 0), and the reds above carry the period feel on their own. Two tinted
+	 * grounds were tried under them and both are gone: a warm near-black at
+	 * hue ~32, and the cool violet-grey at hue ~300 this palette shipped with
+	 * before it. The reds are the rubric; a ground with a temperature of its
+	 * own argued with them instead of setting them off, in either direction.
+	 * Only chroma left — every red, the lapis apparatus, the gold bookmark
+	 * and the warm cream `--color-text` (14.5:1 here) are unchanged, and each
+	 * of the three greys sits at the exact luminance its tinted predecessor
+	 * did, so nothing above or below moved with it.
+	 *
+	 * `--color-bg-elevated` is #1e1e1e rather than the #1f1f1f that luminance
+	 * rounds to, one step darker for one reason: the accent's 4.5:1 bar is
+	 * measured against it, and #1f1f1f leaves it at 4.46:1. A step no eye can
+	 * see is cheaper than a red that misses.
 	 */
 
 	/*
@@ -667,13 +673,13 @@
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme='light']) {
 		color-scheme: dark;
-		--color-bg: #160e0c;
-		--color-bg-elevated: #261c1a;
-		--color-border: #403331;
+		--color-bg: #161616;
+		--color-bg-elevated: #1e1e1e;
+		--color-border: #363636;
 		--color-text: #e9e6de;
 		--color-text-muted: #9e9187;
 		--color-accent: #ff2f27;
-		--color-accent-contrast: #160e0c;
+		--color-accent-contrast: #161616;
 		--color-link: #ff2f27;
 		--color-initial: #df1212;
 		--color-apparatus: #8fa8e8;
@@ -685,13 +691,13 @@
 /* Explicit dark, regardless of what the system prefers. */
 :root[data-theme='dark'] {
 	color-scheme: dark;
-	--color-bg: #160e0c;
-	--color-bg-elevated: #261c1a;
-	--color-border: #403331;
+	--color-bg: #161616;
+	--color-bg-elevated: #1e1e1e;
+	--color-border: #363636;
 	--color-text: #e9e6de;
 	--color-text-muted: #9e9187;
 	--color-accent: #ff2f27;
-	--color-accent-contrast: #160e0c;
+	--color-accent-contrast: #161616;
 	--color-link: #ff2f27;
 	--color-initial: #df1212;
 	--color-apparatus: #8fa8e8;
@@ -707,7 +713,7 @@
  * the text — everything else about dark mode was already right. The three
  * greys are re-derived rather than re-invented: `--color-bg-elevated` and
  * `--color-border` keep their EXACT contrast ratios against the ground that
- * they have in ordinary dark (1.15:1 and 1.57:1), so the header, the panels
+ * they have in ordinary dark (1.09:1 and 1.50:1), so the header, the panels
  * and every hairline sit at the same visual distance from the page. Only the
  * floor they are measured from moved. `--color-accent-contrast` follows the
  * ground because that is what it is — the colour of text printed ON the
@@ -717,7 +723,7 @@
  * reason that token exists (see its declaration above). It is the one
  * surface a reader asked to disappear into the page, and it can afford to:
  * it carries a bottom border, so flattening its fill leaves the hairline to
- * separate it — at the same 1.57:1 the border has against the page anywhere
+ * separate it — at the same 1.50:1 the border has against the page anywhere
  * else. The floating panels keep their lift, because a popover with no fill
  * over a page with no fill is a card that has come apart.
  *
@@ -733,8 +739,8 @@
 	:root[data-oled]:not([data-theme='light']) {
 		--color-bg: #000000;
 		--color-bg-chrome: #000000;
-		--color-bg-elevated: #1c1311;
-		--color-border: #3a2c2a;
+		--color-bg-elevated: #0e0e0e;
+		--color-border: #2c2c2c;
 		--color-accent-contrast: #000000;
 	}
 }
@@ -742,8 +748,8 @@
 :root[data-theme='dark'][data-oled] {
 	--color-bg: #000000;
 	--color-bg-chrome: #000000;
-	--color-bg-elevated: #1c1311;
-	--color-border: #3a2c2a;
+	--color-bg-elevated: #0e0e0e;
+	--color-border: #2c2c2c;
 	--color-accent-contrast: #000000;
 }
 
@@ -768,8 +774,7 @@
  * WCAG 1.4.1. So the mode is now exactly what its name says: one hue.
  *
  * WHERE THE GREYS COME FROM. A single hue at near-zero chroma — 60 in the
- * light family, 45 in the dark one, so the ramp stays faintly warm against
- * grounds that are themselves warm — sampled every 0.005 in OKLCH L, kept
+ * light family, 45 in the dark one — sampled every 0.005 in OKLCH L, kept
  * only where it clears 4.5:1 on every ground the family has and dE 12 from
  * that family's body text, then the three furthest apart:
  *
@@ -782,6 +787,14 @@
  * A grey has only lightness to spend, the AA floor sets one end of the band
  * and body text sits at the other, and what is left between them is this
  * wide. Monochrome buys freedom from hue, not a sharper distinction.
+ *
+ * The dark family's hue 45 sits on a ground that now has no hue at all, and
+ * stays that way, because at this chroma there is no hue to read: what the
+ * mode owes is that nothing is told apart BY hue, and a ramp with one step
+ * per role tells them apart by lightness alone. The four dark grounds moved
+ * under it twice while the ramp held still, since both moves were sideways
+ * in chroma and not in lightness: its tightest ratio is the quietest grey on
+ * the elevated surface, 4.57:1.
  *
  * ROLES ARE ASSIGNED BY WEIGHT, mirrored between the two families so the
  * mode means the same thing in both: the apparatus is the quietest step
