@@ -1,12 +1,27 @@
 [
   {
     "id": "compendium.sv-p1s2-heading-delen-for-avdelningen",
-    "locator": { "part": 1, "section": 2 },
+    "locator": {
+      "part": 1,
+      "section": 2
+    },
     "field": "heading_html",
     "from": ">Andra delen <br /><b><font size=\"4\">DEN KRISTNA TROSBEK&Auml;NNELSEN",
     "to": ">Andra avdelningen <br /><b><font size=\"4\">DEN KRISTNA TROSBEK&Auml;NNELSEN",
     "reason": "The heading that opens Part One's second section is printed 'Andra delen' (Second Part) where the work has a section, not a part. Read as printed it opens a fifth part in a work that has four, and everything under it -- the Creed, questions 33 to 217 -- hangs off that phantom part instead of under Part One.",
     "evidence": "This same edition's own table of contents prints 'Andra avdelningen – den kristna trosbekännelsen' at the corresponding entry, and prints 'Andra delen – firandet av det kristna mysteriet' for the actual second part further down. The other nine editions all set a section here (EN 'Section Two The Profession of the Christian Faith'). The anchor text is unique in the page: the two other occurrences of 'Andra delen' are followed by an en dash and by the word 'kallas'.",
+    "added": "2026-08-25"
+  },
+  {
+    "id": "compendium.sv-5-refs-colon-for-hyphen",
+    "locator": {
+      "question": 5
+    },
+    "field": "refs_html",
+    "from": "(KKK 39:43; 48-49)",
+    "to": "(KKK 39-43; 48-49)",
+    "reason": "The reference line for question 5 sets its first range with a colon where the hyphen belongs -- '(KKK 39:43; 48-49)'. A colon is not a separator in these lists; read literally the line is not a reference list at all, and neither range links.",
+    "evidence": "Eight other editions print exactly this pair of ranges with a hyphen -- EN, PT, FR, HU, IT and SL all '39-43 48-49', RO '39‑43 48‑49' with its non-breaking hyphen. (DE prints only the first range and ES prints no reference line for this question.) The second range in this same Swedish line is already set with a hyphen. The anchor text occurs once in the page.",
     "added": "2026-08-25"
   }
 ]

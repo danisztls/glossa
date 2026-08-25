@@ -172,27 +172,16 @@
 		"compendium": {
 			"citations": {
 				"total": 5949,
-				"linkable": 5947,
+				"linkable": 5949,
 				"recognized": 0,
-				"nothing": 2
+				"nothing": 0
 			},
 			"prose": {
 				"blocks": 0,
 				"scripture": 0,
 				"stored": 0
 			},
-			"residue": [
-				{
-					"key": "1804 1810-1811",
-					"count": 1,
-					"example": "1804; 1810-1811: 1834, 1839"
-				},
-				{
-					"key": "39 43",
-					"count": 1,
-					"example": "39:43; 48-49"
-				}
-			]
+			"residue": []
 		},
 		"encyclical": {
 			"citations": {

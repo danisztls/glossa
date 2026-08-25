@@ -1,0 +1,14 @@
+[
+  {
+    "id": "compendium.pt-378-refs-colon-for-comma",
+    "locator": {
+      "question": 378
+    },
+    "field": "refs_html",
+    "from": "1810-1811: <br />1834",
+    "to": "1810-1811, <br />1834",
+    "reason": "The reference line for question 378 separates two of its four CCC references with a colon -- '1804; 1810-1811: 1834, 1839'. A colon is not a separator in this list and is not one anywhere else in this edition's 598 reference lines; read literally the line is not a reference list at all, and its four references do not link.",
+    "evidence": "The other nine editions print the same four references with a space or a comma in that position and never a colon: EN '1804 1810-1811 1834 1839', DE/ES/FR/HU/SL '1804 1810-1811 1834, 1839', IT '1804 1810-1811 1834,1839', RO '1804 1810‑1811 1834, 1839', SV '1804, 1810-1811, 1834, 1839'. The comma is taken rather than a space because this same Portuguese line already separates its last pair with one ('1834, 1839'). The anchor text occurs once in the page.",
+    "added": "2026-08-25"
+  }
+]

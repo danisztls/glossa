@@ -1397,12 +1397,12 @@ for _lang, _cfg in LANG_CONFIG.items():
     _cfg.setdefault("edition", "2005, vatican.va HTML mirror")
 
 
-#: The only field a Compendium correction may target. The layer edits the
+#: The fields a Compendium correction may target. The layer edits the
 #: FETCHED HTML before parsing, which is what keeps `raw/` the record of what
 #: the mirror actually served (CLAUDE.md, corrections vs overrides); the field
 #: names what kind of text the edit is against, so a correction cannot quietly
 #: be applied somewhere its evidence does not cover.
-_CORRECTION_FIELDS = frozenset({"heading_html"})
+_CORRECTION_FIELDS = frozenset({"heading_html", "refs_html"})
 
 
 def apply_corrections(
@@ -1677,8 +1677,11 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
             "everywhere else) and stripping all other markup -- otherwise verbatim, "
             "including what appear to be printer's-error separators (PT '96.98', "
             "'192. 197' -- periods where a hyphen or comma is presumably meant) and "
-            "inconsistent en-dash/hyphen use. Per the store-raw principle, none of this "
-            "is normalized or corrected."
+            "inconsistent en-dash/hyphen use. Per the store-raw principle none of that "
+            "is normalized. Two separators are corrected rather than tolerated, and "
+            "only because they stop the line being a reference list at all: a colon "
+            "where a comma belongs (PT Q378) and one where a range hyphen belongs "
+            "(SV Q5). See corrections-applied.json."
         ),
         (
             "Generic (unlabeled) sub-headings under a chapter are emitted as `sub` "

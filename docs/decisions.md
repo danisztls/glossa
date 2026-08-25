@@ -107,6 +107,19 @@ print is reported and not failed — that is the page's, and there is nothing to
 invent it from. Three editions omit one or more, and Slovenian prints two of
 them twice.
 
+**A wrong separator is corrected only when it stops the line parsing.** The
+Compendium's reference lines are full of typesetting slips — periods where a
+hyphen belongs, en dashes and hyphens used interchangeably, a semicolon and a
+comma doing the same job in the same line — and none of them is corrected,
+because none of them changes which paragraphs are cited or stops a reader
+following them. Two are: a colon standing where a comma belongs (PT Q378) and
+where a range hyphen belongs (SV Q5), because a colon is not a separator in
+these lists at all and the line stops being a reference list, so all six
+references go unlinked. The evidence in both cases is the other nine editions
+printing the same references with the ordinary mark. That is the line: not
+"is this what a careful typesetter would have done" but "does reading it as
+printed lose something".
+
 **A stray U+00C2 before a punctuation mark is decoding, not a correction.**
 38 occurrences across four editions, always in front of an en dash, a curly
 quote or an ellipsis, in files that are pure ASCII and spell every other
