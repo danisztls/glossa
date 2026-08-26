@@ -87,5 +87,18 @@
     "reason": "The EN mirror drops the first sentence of ¶2436. It prints '... contrary to the common good. <br> 2436 Unemployment almost always wounds its victim's dignity ...', so the paragraph opens on its second sentence. The omission is the mirror's, not a lost footnote or a heading absorbed elsewhere: the phrase 'social security' does not occur anywhere in raw/ccc-en/ under any spelling, and the sentence is not misfiled into ¶2435, which is about strikes.",
     "evidence": "Missing from raw/ccc-en/__P8D.HTM (grep for 'social security' across all 375 EN pages: zero hits). Present in ccc.pt ¶2436, which opens 'É injusto não pagar aos organismos de segurança social as quotas estabelecidas pelas autoridades legítimas.' -- the EN edition is 176c against the PT's 355c, a 0.49x cross-language length skew and the second-worst in the CCC (audit.py balance). English wording taken verbatim from two independent witnesses to the printed second English edition: the USCCB's own flipbook of it, https://www.usccb.org/sites/default/files/flipbooks/catechism/587/ (book p. 585), and catholicculture.org's transcription, https://www.catholicculture.org/culture/library/catechism/cat_view.cfm?recnum=6277 -- both reading '2436 It is unjust not to pay the social security contributions required by legitimate authority. Unemployment almost always wounds its victim's dignity and threatens the equilibrium of his life.'",
     "added": "2026-08-25"
+  },
+  {
+    "id": "ccc.en-984-missing-in-brief",
+    "locator": {
+      "page": "__P2F.HTM",
+      "paragraph": 984
+    },
+    "field": "heading_html",
+    "from": "<p class=MsoNormal>984\r\nThe Creed links",
+    "to": "<p class=MsoNormal><b>IN BRIEF</b></p>\r\n\r\n<p class=MsoNormal>984\r\nThe Creed links",
+    "reason": "The in-brief division closing Article 10 ('I believe in the forgiveness of sins') is not printed on this page: paragraph 983 runs straight into 984 with no heading between, where every other article in the mirror prints 'IN BRIEF' above its summary paragraphs. Found by comparing divisions across editions -- the Portuguese, German and Malagasy mirrors of the same work each print this heading at exactly 984-987, and they agree with English on all 80 of the work's other in-brief divisions. Twenty-two English in-brief divisions were missing before this; twenty-one of them were a parser defect (the mirror sets whole pages of headings in plain type, and only bold blocks were read as headings), and this is the one that survived the fix because the words are genuinely absent from the source. Supplied as the invariant heading the other 80 English pages print, not composed: 'IN BRIEF' is the same string every time.",
+    "evidence": "raw HTML corpus/raw/ccc-en/__P2F.HTM: '...Let us thank God who has given his Church such a gift.<sup>531</sup></p>\\n\\n<p class=MsoNormal>984\\nThe Creed links \"the forgiveness of sins\"...' -- no block between them, and the string 'IN BRIEF' does not occur on this page. Corroborated by corpus/works/ccc.pt (RESUMINDO), ccc.de (KURZTEXTE) and ccc.mg (FAMINTINANA), each of which opens an in-brief division at 984 and closes it at 987. Paragraphs 984-987 are themselves summary restatements of 976-983, which is what an in-brief is.",
+    "added": "2026-08-26"
   }
 ]

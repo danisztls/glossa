@@ -1,0 +1,16 @@
+[
+  {
+    "id": "ccc.mg-1632-numprint",
+    "locator": {
+      "page": "1533-1666_mg.html",
+      "paragraph": 1632,
+      "structural": "paragraph_number"
+    },
+    "field": "paragraph_html",
+    "from": "<p>l632. Mba ho asa an-kalalahana",
+    "to": "<p>1632. Mba ho asa an-kalalahana",
+    "reason": "Source misprints this paragraph's own leading number with a lowercase letter L where the digit 1 belongs -- 'l632' for '1632'. The same substitution appears in the Italian, Latin and Spanish editions' article and paragraph headings ('Articolo l:', 'Parrafo l:'), where it is read as 1 by the label matcher; here it falls in a paragraph's leading number, which no matcher reads, so the paragraph is simply not recognised as one and its text is swallowed by paragraph 1631. Corrected pre-parse rather than as a paragraph_number correction because that layer edits a number the parser has already found, and this one it never finds. Content (preparation for marriage as what makes the spouses' consent free and responsible) and sequential position (directly after 1631 on canonical form, before 1633 on mixed marriages) confirm 1632; the page's own span is 1533-1666, in which 632 is impossible. All seven other editions number this paragraph 1632.",
+    "evidence": "raw HTML corpus/raw/ccc-mg/1533-1666_mg.html: '...tsy hivadika amin&#x2019;izany.</p> <p>l632. Mba ho asa an-kalalahana sy izakana andraikitra ny “Eny” ifaneken’ny mpivady...'. Sole occurrence of the string 'l632' in the edition, and the only letter-for-digit paragraph number anywhere in its 27 pages (checked by regex over all of them).",
+    "added": "2026-08-26"
+  }
+]

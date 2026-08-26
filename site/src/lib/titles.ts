@@ -48,13 +48,35 @@ export interface DisplayTitle {
  * takes for a title it cannot split.
  *
  * TWO TABLES ARE KEYED BY IT and they cover different subsets, which is why
- * this is one list rather than two: `KIND_PREFIXES` (the ten editions with a
- * label grammar) and `SMALL_WORDS` (those ten plus `pl` and `ru`, which have
- * ALL-CAPS document headings but no CCC or Compendium). A language in
- * neither — `la`, `ar` — falls back to `en`, and neither has an ALL-CAPS
- * heading in the corpus to normalize.
+ * this is one list rather than two: `KIND_PREFIXES` (the editions with a
+ * label grammar) and `SMALL_WORDS` (those plus `pl` and `ru`, which have
+ * ALL-CAPS document headings but no CCC or Compendium). A language outside
+ * it — `ar` — falls back to `en`, and it has no ALL-CAPS heading in the
+ * corpus to normalize.
+ *
+ * `la` AND `mg` ARRIVED WITH THE CATECHISM (2026-08-26), which vatican.va
+ * publishes as HTML in eight languages. Latin had been a content language
+ * since the Summa and was outside this list because the Summa's divisions
+ * carry no printed label to strip; the Catechism's do (`PARS PRIMA`, `CAPUT
+ * SECUNDUM`), so it needs the grammar now. Malagasy was not a content
+ * language at all.
  */
-const LANGS = ['en', 'pt', 'de', 'es', 'fr', 'hu', 'it', 'pl', 'ro', 'ru', 'sl', 'sv'] as const;
+const LANGS = [
+	'en',
+	'pt',
+	'de',
+	'es',
+	'fr',
+	'hu',
+	'it',
+	'la',
+	'mg',
+	'pl',
+	'ro',
+	'ru',
+	'sl',
+	'sv'
+] as const;
 
 type Lang = (typeof LANGS)[number];
 
@@ -453,6 +475,40 @@ const SV_SMALL_WORDS = new Set([
 	'är'
 ]);
 
+// Latin's closed-class function words: conjunctions and prepositions, none
+// of which is ever a proper noun, which is the whole standard for this list
+// (see decisions.md, "A list entry that is a coin flip does not go on the
+// list"). Latin has no articles, so the list is shorter than any other here.
+const LA_SMALL_WORDS = new Set([
+	'et',
+	'ac',
+	'atque',
+	'aut',
+	'vel',
+	'sed',
+	'in',
+	'de',
+	'ex',
+	'ad',
+	'cum',
+	'per',
+	'sub',
+	'pro',
+	'sine',
+	'contra',
+	'inter'
+]);
+
+// EMPTY, AND DELIBERATELY SO. Nobody here reads Malagasy, and the standard
+// for an entry on these lists is that lower-casing it is ALWAYS safe — which
+// is a claim about a language, not a guess at one. An empty set means the
+// ALL-CAPS pass capitalises every word of a Malagasy heading, which
+// over-capitalises function words and is the error a reader reads past;
+// guessing wrong would lower-case a name, which no later pass repairs. Most
+// of this edition's headings are printed in sentence case anyway and never
+// reach the pass at all.
+const MG_SMALL_WORDS = new Set<string>([]);
+
 const SMALL_WORDS: Record<Lang, ReadonlySet<string>> = {
 	en: EN_SMALL_WORDS,
 	pt: PT_SMALL_WORDS,
@@ -461,6 +517,8 @@ const SMALL_WORDS: Record<Lang, ReadonlySet<string>> = {
 	fr: FR_SMALL_WORDS,
 	hu: HU_SMALL_WORDS,
 	it: IT_SMALL_WORDS,
+	la: LA_SMALL_WORDS,
+	mg: MG_SMALL_WORDS,
 	pl: PL_SMALL_WORDS,
 	ro: RO_SMALL_WORDS,
 	ru: RU_SMALL_WORDS,
@@ -698,11 +756,13 @@ export function inlineTitleNodes(
 const KIND_LABELS: Record<Lang, Partial<Record<StructureNode['kind'], string>>> = {
 	en: { part: 'Part', section: 'Section', chapter: 'Ch.', article: 'Art.' },
 	pt: { part: 'Parte', section: 'Secção', chapter: 'Cap.', article: 'Art.' },
-	de: { part: 'Teil', section: 'Abschnitt', chapter: 'Kap.' },
-	es: { part: 'Parte', section: 'Sección', chapter: 'Cap.' },
-	fr: { part: 'Partie', section: 'Section', chapter: 'Ch.' },
+	de: { part: 'Teil', section: 'Abschnitt', chapter: 'Kap.', article: 'Art.' },
+	es: { part: 'Parte', section: 'Sección', chapter: 'Cap.', article: 'Art.' },
+	fr: { part: 'Partie', section: 'Section', chapter: 'Ch.', article: 'Art.' },
 	hu: { part: 'rész', section: 'szakasz', chapter: 'fejezet' },
-	it: { part: 'Parte', section: 'Sezione', chapter: 'Cap.' },
+	it: { part: 'Parte', section: 'Sezione', chapter: 'Cap.', article: 'Art.' },
+	la: { part: 'Pars', section: 'Sectio', chapter: 'Cap.', article: 'Art.' },
+	mg: { part: 'Fizarana', section: 'Sampana', chapter: 'Toko', article: 'And.' },
 	pl: { part: 'Część', section: 'Sekcja', chapter: 'Rozdz.' },
 	ro: { part: 'Partea', section: 'Secțiunea', chapter: 'Cap.' },
 	ru: { part: 'Часть', section: 'Раздел', chapter: 'Гл.' },
@@ -714,8 +774,10 @@ const KIND_LABELS: Record<Lang, Partial<Record<StructureNode['kind'], string>>> 
  * Languages that write the number BEFORE the noun ("1. rész"), not after
  * it. Hungarian's ordinal syntax, not a house style — and the reason the
  * label word is stored lowercase for it, since it is no longer the first
- * word of the marker. `article` is absent from all eight new tables because
- * only the CCC has that kind and the CCC is en/pt.
+ * word of the marker. `article` is absent only from `hu`, `pl`, `ro`, `ru`,
+ * `sl` and `sv`: the Catechism is the one work with that kind and those are
+ * the six languages it is not published in. It was absent from all eight
+ * until 2026-08-26, when the Catechism stopped being en/pt.
  */
 const NUMBER_FIRST: ReadonlySet<Lang> = new Set<Lang>(['hu']);
 
@@ -856,10 +918,48 @@ const FR_ORDINAL_FEM: Record<number, string> = {
 	5: 'CINQUIEME'
 };
 
-// French is the only edition that numbers its chapters in roman numerals
-// ("CHAPITRE II"), so its chapter series is numerals where every other
-// language's is words.
+// The French COMPENDIUM numbers its chapters in roman numerals ("CHAPITRE
+// II") where every other edition of it uses words. The French CATECHISM does
+// not — it prints "CHAPITRE PREMIER" — so French chapters carry both series
+// and `stripKindPrefix` tries each. Which of the two a heading uses is a fact
+// about the work, and the table is keyed by language.
 const ROMAN: Record<number, string> = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V' };
+
+const FR_ORDINAL_MASC: Record<number, string> = {
+	1: 'PREMIER',
+	2: 'DEUXIEME',
+	3: 'TROISIEME',
+	4: 'QUATRIEME',
+	5: 'CINQUIEME'
+};
+
+// Latin declines its ordinal to the gender of the noun it heads, so PARS and
+// SECTIO (feminine) take one series and CAPUT (neuter) the other. Same shape
+// as German's two, for the same grammatical reason.
+const LA_ORDINAL_FEM: Record<number, string> = {
+	1: 'PRIMA',
+	2: 'SECUNDA',
+	3: 'TERTIA',
+	4: 'QUARTA',
+	5: 'QUINTA'
+};
+
+const LA_ORDINAL_NEUT: Record<number, string> = {
+	1: 'PRIMUM',
+	2: 'SECUNDUM',
+	3: 'TERTIUM',
+	4: 'QUARTUM',
+	5: 'QUINTUM'
+};
+
+// Malagasy does not decline, so one series serves every division.
+const MG_ORDINAL: Record<number, string> = {
+	1: 'VOALOHANY',
+	2: 'FAHAROA',
+	3: 'FAHATELO',
+	4: 'FAHEFATRA',
+	5: 'FAHADIMY'
+};
 
 const HU_ORDINAL: Record<number, string> = {
 	1: 'ELSO',
@@ -955,7 +1055,10 @@ interface KindPrefix {
  * NOUNS ARE AS PRINTED, which for Swedish means the definite form its
  * headings actually use — "FÖRSTA DELEN", not "DEL".
  */
-const KIND_PREFIXES: Record<Lang, Partial<Record<StructureNode['kind'], KindPrefix>>> = {
+const KIND_PREFIXES: Record<
+	Lang,
+	Partial<Record<StructureNode['kind'], KindPrefix | KindPrefix[]>>
+> = {
 	en: {
 		part: { noun: 'PART', ordinals: EN_CARDINAL, ordinalFirst: false },
 		section: { noun: 'SECTION', ordinals: EN_CARDINAL, ordinalFirst: false },
@@ -971,17 +1074,25 @@ const KIND_PREFIXES: Record<Lang, Partial<Record<StructureNode['kind'], KindPref
 	de: {
 		part: { noun: 'TEIL', ordinals: DE_ORDINAL_MASC, ordinalFirst: true },
 		section: { noun: 'ABSCHNITT', ordinals: DE_ORDINAL_MASC, ordinalFirst: true },
-		chapter: { noun: 'KAPITEL', ordinals: DE_ORDINAL_NEUT, ordinalFirst: true }
+		chapter: { noun: 'KAPITEL', ordinals: DE_ORDINAL_NEUT, ordinalFirst: true },
+		article: { noun: 'ARTIKEL', ordinals: 'digits', ordinalFirst: false }
 	},
 	es: {
 		part: { noun: 'PARTE', ordinals: ES_ORDINAL_FEM, ordinalFirst: true },
 		section: { noun: 'SECCION', ordinals: ES_ORDINAL_FEM, ordinalFirst: true },
-		chapter: { noun: 'CAPITULO', ordinals: ES_ORDINAL_MASC, ordinalFirst: false }
+		chapter: { noun: 'CAPITULO', ordinals: ES_ORDINAL_MASC, ordinalFirst: false },
+		article: { noun: 'ARTICULO', ordinals: 'digits', ordinalFirst: false }
 	},
 	fr: {
 		part: { noun: 'PARTIE', ordinals: FR_ORDINAL_FEM, ordinalFirst: true },
 		section: { noun: 'SECTION', ordinals: FR_ORDINAL_FEM, ordinalFirst: true },
-		chapter: { noun: 'CHAPITRE', ordinals: ROMAN, ordinalFirst: false }
+		// The Compendium's roman numerals and the Catechism's ordinal words,
+		// in that order — see the note on `ROMAN`.
+		chapter: [
+			{ noun: 'CHAPITRE', ordinals: ROMAN, ordinalFirst: false },
+			{ noun: 'CHAPITRE', ordinals: FR_ORDINAL_MASC, ordinalFirst: false }
+		],
+		article: { noun: 'ARTICLE', ordinals: 'digits', ordinalFirst: false }
 	},
 	hu: {
 		part: { noun: 'RESZ', ordinals: HU_ORDINAL, ordinalFirst: true },
@@ -991,7 +1102,20 @@ const KIND_PREFIXES: Record<Lang, Partial<Record<StructureNode['kind'], KindPref
 	it: {
 		part: { noun: 'PARTE', ordinals: IT_ORDINAL_FEM, ordinalFirst: false },
 		section: { noun: 'SEZIONE', ordinals: IT_ORDINAL_FEM, ordinalFirst: false },
-		chapter: { noun: 'CAPITOLO', ordinals: IT_ORDINAL_MASC, ordinalFirst: false }
+		chapter: { noun: 'CAPITOLO', ordinals: IT_ORDINAL_MASC, ordinalFirst: false },
+		article: { noun: 'ARTICOLO', ordinals: 'digits', ordinalFirst: false }
+	},
+	la: {
+		part: { noun: 'PARS', ordinals: LA_ORDINAL_FEM, ordinalFirst: false },
+		section: { noun: 'SECTIO', ordinals: LA_ORDINAL_FEM, ordinalFirst: false },
+		chapter: { noun: 'CAPUT', ordinals: LA_ORDINAL_NEUT, ordinalFirst: false },
+		article: { noun: 'ARTICULUS', ordinals: 'digits', ordinalFirst: false }
+	},
+	mg: {
+		part: { noun: 'FIZARANA', ordinals: MG_ORDINAL, ordinalFirst: false },
+		section: { noun: 'SAMPANA', ordinals: MG_ORDINAL, ordinalFirst: false },
+		chapter: { noun: 'TOKO', ordinals: MG_ORDINAL, ordinalFirst: false },
+		article: { noun: 'ANDALANA', ordinals: 'digits', ordinalFirst: false }
 	},
 	// Polish and Russian reach this module through their Magnifica Humanitas
 	// documents, which carry no `kind`/`n` to reconstruct a label from — so
@@ -1050,12 +1174,16 @@ function foldCodePoints(chars: string[]): string {
  * label for that kind or `n` is out of the range we have words for (safer
  * to skip stripping than to guess).
  */
-function kindPrefixWords(kind: StructureNode['kind'], n: number, lang: Lang): string[] | null {
+function kindPrefixWords(kind: StructureNode['kind'], n: number, lang: Lang): string[][] {
 	const spec = KIND_PREFIXES[lang][kind];
-	if (!spec) return null;
-	const ordinal = spec.ordinals === 'digits' ? String(n) : spec.ordinals[n];
-	if (!ordinal) return null;
-	return spec.ordinalFirst ? [ordinal, spec.noun] : [spec.noun, ordinal];
+	if (!spec) return [];
+	const out: string[][] = [];
+	for (const one of Array.isArray(spec) ? spec : [spec]) {
+		const ordinal = one.ordinals === 'digits' ? String(n) : one.ordinals[n];
+		if (!ordinal) continue;
+		out.push(one.ordinalFirst ? [ordinal, one.noun] : [one.noun, ordinal]);
+	}
+	return out;
 }
 
 /**
@@ -1083,20 +1211,25 @@ function stripKindPrefix(
 	n: number,
 	lang: Lang
 ): string | null {
-	const words = kindPrefixWords(kind, n, lang);
-	if (!words) return null;
-	// `\b` after a digit token (article) is what stops n=1's prefix from
-	// also matching the start of an n=10/n=11 title — \b only holds between
-	// a word character and a non-word character, so "1" directly followed
-	// by another digit ("10…") never satisfies it. Word tokens (ONE, PARTE,
-	// CAPITULO…) get the same boundary for free, and folding has already
-	// reduced every one of them to ASCII letters, which is the alphabet
-	// `\b` knows.
-	const pattern = words.map((word) => word.split(' ').map(esc).join('\\s+')).join('\\s+');
 	const chars = [...title];
-	const match = foldCodePoints(chars).match(new RegExp('^' + pattern + '\\b'));
-	if (!match) return null;
-	return afterPrefix(chars.slice([...match[0]].length));
+	const folded = foldCodePoints(chars);
+	// One language can print one kind two ways — French chapters are roman
+	// in the Compendium and ordinal words in the Catechism — so each
+	// alternative is tried and the first that matches wins. They cannot both
+	// match: a title opens with one prefix or the other.
+	for (const words of kindPrefixWords(kind, n, lang)) {
+		// `\b` after a digit token (article) is what stops n=1's prefix from
+		// also matching the start of an n=10/n=11 title — \b only holds between
+		// a word character and a non-word character, so "1" directly followed
+		// by another digit ("10…") never satisfies it. Word tokens (ONE, PARTE,
+		// CAPITULO…) get the same boundary for free, and folding has already
+		// reduced every one of them to ASCII letters, which is the alphabet
+		// `\b` knows.
+		const pattern = words.map((word) => word.split(' ').map(esc).join('\\s+')).join('\\s+');
+		const match = folded.match(new RegExp('^' + pattern + '\\b'));
+		if (match) return afterPrefix(chars.slice([...match[0]].length));
+	}
+	return null;
 }
 
 /**

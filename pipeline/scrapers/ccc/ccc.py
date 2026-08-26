@@ -80,6 +80,7 @@ from common import (
     FetchPolicy,
     book_form_pattern,
     corrections_receipt,
+    download_resumable,
     fold,
     load_corrections,
     looks_like_number_typo,
@@ -105,6 +106,306 @@ PT_TOC_HREF = "prima-pagina-cic_po.html"
 
 FIRST_PARAGRAPH = 1
 LAST_PARAGRAPH = 2865
+
+#: Part One opens at §26; §§1-25 are the Prologue. A fact about the work, the
+#: same in all ten editions -- see `push_heading`, which needs it to tell the
+#: Prologue's own account of the four Parts from the Parts themselves.
+FIRST_PART_PARAGRAPH = 26
+
+
+# --------------------------------------------------------------------------
+# The editions vatican.va publishes
+# --------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class Edition:
+    """One language's mirror of the CCC on vatican.va.
+
+    `family` is the only thing that decides how the pages are read, and there
+    are three of them rather than ten -- see `PAGE_FAMILIES`.
+    """
+
+    base: str
+    toc: str
+    family: str
+    #: Which hrefs on the table of contents are body pages. Matched against a
+    #: bare filename: every real content href on all ten mirrors is a sibling
+    #: in the TOC's own directory, and the ones carrying a path separator are
+    #: front matter linked from elsewhere on the site.
+    page_re: str
+    #: Pages the TOC links and `page_re` matches, but which are front matter
+    #: rather than the numbered text. Only the German mirror has any: it opens
+    #: with six pages of the apostolic constitution *Fidei Depositum*, which
+    #: the English and French mirrors of the same IntraText shell do not
+    #: carry. They are still captured -- `page_re` matches them, so
+    #: `--capture` takes them -- and simply not parsed, which is what every
+    #: other edition does with its own front matter (see `extra`). Parsing
+    #: them would put six paragraph-less divisions above Part One in one
+    #: edition of eight, and the eight editions addressing the same space is
+    #: the precondition for every cross-language check there is.
+    front: tuple[str, ...] = ()
+    #: Pages linked from the same TOC that are NOT the numbered text -- the
+    #: two apostolic documents that preface every edition, and (Latin only)
+    #: the abbreviations table. Captured into `raw/`, parsed by nothing. They
+    #: are here rather than merely unmatched by `page_re` so that `--capture`
+    #: takes them: they cost one request each and `raw/` is where the answer
+    #: to "could we have?" lives (docs/link-surface.md).
+    extra: tuple[str, ...] = ()
+
+
+#: EVERY edition of the 1997 Catechism vatican.va publishes, keyed by OUR
+#: language tag, taken from the language list printed on
+#: https://www.vatican.va/archive/ccc/index.htm rather than guessed at.
+#:
+#: Four things about this table are worth stating rather than inferring:
+#:
+#:   - **`catechism_lt` IS LATIN, NOT LITHUANIAN.** The site's own link text
+#:     says "Latin", the pages say PARS PRIMA, and the slug is `lt` for
+#:     *latine*. The Compendium's Lithuanian PDF two directories away is
+#:     `compendium_catech_lit.pdf`, with the other slug. Reading this one as
+#:     `lt`/Lithuanian would file the editio typica latina under a language
+#:     it is not in, which no later check would catch -- both are plausible
+#:     expansions and nothing else in the corpus disambiguates them.
+#:   - The stem carries the VATICAN's language slug, which is not ours and
+#:     not ISO: `ge`-style abbreviations elsewhere, `sp` for Spanish, `po`
+#:     for Portuguese, `lt` for Latin. The mapping is the point of this table.
+#:   - Portuguese is NOT in that language list -- its link sits elsewhere on
+#:     the page, under a directory the site spells `cathechism_po`, with the
+#:     typo. It has been ingested since the beginning anyway.
+#:   - Two editions exist only as PDF, and unlike the Compendium's four they
+#:     are not one file but a set: Arabic is six part-PDFs, Chinese
+#:     forty-three. `--capture` takes them; nothing parses them.
+EDITIONS = {
+    "ar": Edition(
+        base="https://www.vatican.va/archive/catechism_ar/",
+        toc="index_ar.htm",
+        family="pdf",
+        page_re=r".*\.pdf$",
+    ),
+    "de": Edition(
+        base="https://www.vatican.va/archive/DEU0035/",
+        toc=EN_TOC_HREF,
+        family="intratext",
+        page_re=r"^__P\w+\.HTM$",
+        front=("__P1.HTM", "__P2.HTM", "__P3.HTM", "__P4.HTM", "__P5.HTM", "__P6.HTM"),
+    ),
+    "en": Edition(
+        base=EN_BASE,
+        toc=EN_TOC_HREF,
+        family="intratext",
+        page_re=r"^__P\w+\.HTM$",
+    ),
+    "es": Edition(
+        base="https://www.vatican.va/archive/catechism_sp/",
+        toc="index_sp.html",
+        family="cms",
+        page_re=r"^(prologue|p\d[a-z0-9]*)_sp\.html$",
+        extra=("lettera-apost_sp.html", "aposcons_sp.html"),
+    ),
+    "fr": Edition(
+        base="https://www.vatican.va/archive/FRA0013/",
+        toc=EN_TOC_HREF,
+        family="intratext",
+        page_re=r"^__P\w+\.HTM$",
+        # "LISTE DES SIGLES" -- the abbreviations table, and the second copy
+        # of it this crawl turned up (Latin serves one as `abbrev_lt.htm`).
+        # It is the front matter this scraper has emitted an empty
+        # `abbreviations.json` for since the beginning, and it is now in
+        # `raw/` in two languages: still unparsed, but a re-parse away rather
+        # than another crawl (docs/link-surface.md).
+        front=("__P1.HTM",),
+    ),
+    "it": Edition(
+        base="https://www.vatican.va/archive/catechism_it/",
+        toc="index_it.htm",
+        family="cms",
+        page_re=r"^(prologue|p\d[a-z0-9]*)_it\.htm$",
+        extra=("lettera-apost_it.htm", "aposcons_it.htm"),
+    ),
+    "la": Edition(
+        base="https://www.vatican.va/archive/catechism_lt/",
+        toc="index_lt.htm",
+        family="cms",
+        page_re=r"^(prologue|p\d[a-z0-9]*)_lt\.htm$",
+        # `abbrev_lt.htm` is the abbreviations table -- the one thing the EN
+        # and PT mirrors omit and this scraper has emitted as an empty
+        # `abbreviations.json` since the beginning. Captured here; still
+        # unparsed, but now a re-parse away rather than another crawl.
+        extra=("lettera-apost_lt.htm", "aposcons_lt.htm", "abbrev_lt.htm"),
+    ),
+    "mg": Edition(
+        base="https://www.vatican.va/archive/ccc_madagascar/documents/",
+        toc="ccc_index_mg.html",
+        family="cms",
+        # Malagasy names its pages by the paragraph range they carry, which
+        # is also the only edition whose TOC states its own coverage.
+        page_re=r"^\d+-\d+_mg\.html$",
+        extra=("fidei-depositum_mg.html", "catechism_mg.pdf"),
+    ),
+    "pt": Edition(
+        base=PT_BASE,
+        toc=PT_TOC_HREF,
+        family="pt",
+        page_re=r"^(?!index-)(?!indice_po\.html$).*_po\.html$",
+    ),
+    "zh": Edition(
+        base="https://www.vatican.va/chinese/",
+        toc="ccc_zh.htm",
+        family="pdf",
+        page_re=r".*\.pdf$",
+    ),
+}
+
+#: How each family's pages are read. Populated below the parsers, which is
+#: also where each family's shape is documented.
+PAGE_FAMILIES: dict[str, dict] = {}
+
+
+def raw_dir(lang: str) -> str:
+    return f"ccc-{lang}"
+
+
+#: `href=__P8.HTM` (IntraText, unquoted) and `href="p1s1c1_it.htm"` (the
+#: modern CMS mirrors) are both attested, so the quoting cannot be assumed.
+_HREF_RE = re.compile(
+    r"""href\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))""", re.IGNORECASE
+)
+
+
+def discover_pages(fetcher: Fetcher, lang: str) -> list[tuple[str, str]]:
+    """The edition's body pages, in the order its own table of contents links
+    them -- which is document order on all ten mirrors, and is the only
+    ordering any of them declares.
+
+    Bare filenames only. Every real content href is a sibling of the TOC in
+    its own directory; the ones carrying a path separator are links away from
+    the edition (front matter hosted elsewhere, the site's own navigation,
+    and -- on the Portuguese mirror -- an apostolic letter whose filename
+    happens to end in `_po.html` too).
+    """
+    ed = EDITIONS[lang]
+    text = fetcher.fetch_str(ed.base + ed.toc, ed.toc)
+    keep = re.compile(ed.page_re)
+    seen: set[str] = set()
+    ordered: list[str] = []
+    # The Chinese mirror is the one exception to "sibling of the TOC": its
+    # forty-three part-PDFs sit in a `ccc/` subdirectory beneath it. Nothing
+    # parses them, so they are allowed a path segment and cached under the
+    # basename; every family that IS parsed keeps the stricter rule.
+    nested_ok = ed.family == "pdf"
+    for m in _HREF_RE.finditer(text):
+        href = (m.group(1) or m.group(2) or m.group(3) or "").split("#")[0]
+        if not href or href in seen:
+            continue
+        if "/" in href and not (nested_ok and not href.startswith(("/", "http"))):
+            continue
+        if not keep.match(href.rsplit("/", 1)[-1] if nested_ok else href):
+            continue
+        seen.add(href)
+        ordered.append(href)
+    return [(ed.base + h, h.rsplit("/", 1)[-1]) for h in ordered if h not in ed.front]
+
+
+def capture_raw(langs: list[str]) -> int:
+    """Fetch every page of each named edition into `raw/ccc-{lang}/`, and
+    parse nothing.
+
+    This is "re-parse, never re-crawl" being paid forward
+    (docs/link-surface.md). It is also the only way the Arabic and Chinese
+    editions enter the corpus at all: they are PDF-only, six and forty-three
+    part-files respectively, and nothing here reads a PDF.
+
+    ONE fetcher across the whole run, not one per language, and that is
+    load-bearing: the 2s floor lives in `Fetcher._last_request`, so a fetcher
+    per language would reset it and issue ten requests back to back. Hence
+    the cache name carrying the language rather than the cache root.
+
+    `fetch_bytes`, never `fetch_str`: this fetcher's `decode` is a claim
+    about the HTML mirrors' charset that a PDF would not survive, and bytes
+    are what `raw/` is for.
+    """
+    fetcher = Fetcher(RAW_ROOT, VATICAN_POLICY, decode=decode_cp1252)
+    ok = True
+    print(f"capturing {len(langs)} edition(s) into {RAW_ROOT}")
+    for lang in langs:
+        ed = EDITIONS[lang]
+        toc_name = f"{raw_dir(lang)}/{ed.toc}"
+        try:
+            fetcher.fetch_bytes(ed.base + ed.toc, toc_name)
+        except RuntimeError as exc:
+            print(f"  {lang:3s} FAILED toc  {exc}")
+            ok = False
+            continue
+        # `discover_pages` needs a fetcher rooted at the edition's own cache
+        # directory; it reads the TOC just captured, so this costs no request.
+        pages = discover_pages(make_fetcher(RAW_ROOT / raw_dir(lang)), lang)
+        wanted = [(url, name) for url, name in pages]
+        wanted += [(ed.base + e, e) for e in ed.extra]
+        fetched = cached = failed = 0
+        for url, name in wanted:
+            cache_name = f"{raw_dir(lang)}/{name}"
+            was_cached = fetcher.cached(cache_name) is not None
+            data, err = fetcher.try_fetch(url, cache_name)
+            if data is not None:
+                cached += was_cached
+                fetched += not was_cached
+                continue
+            # A PDF that vatican.va's edge drops mid-transfer cannot be
+            # fixed by retrying (each retry starts over) but can be resumed;
+            # the server advertises `Accept-Ranges: bytes`. Second choice
+            # rather than the default because the HTML pages arrive whole.
+            if name.lower().endswith(".pdf"):
+                size, rerr = download_resumable(
+                    url, RAW_ROOT / cache_name, policy=VATICAN_POLICY
+                )
+                if rerr is None:
+                    print(f"  {lang:3s} resumed  {size:>10,d} B  {name}")
+                    fetched += 1
+                    continue
+                err = rerr
+            print(f"  {lang:3s} FAILED   {name}: {err}")
+            failed += 1
+            ok = False
+        print(
+            f"  {lang:3s} {len(wanted):>4d} page(s): "
+            f"{fetched} fetched, {cached} cached, {failed} failed"
+        )
+    print(f"(network fetches this run: {fetcher.network_fetches})")
+    return 0 if ok else 1
+
+
+#: How a paragraph announces its own number, in all eight editions.
+#:
+#: ONE PATTERN, AND THAT WAS WORTH CHECKING RATHER THAN ASSUMING. There were
+#: three -- English's bare "26 ", Portuguese's "1216. ", Malagasy's
+#: "81.\u201cTenin\u2019Andriamanitra" with no space at all after the period --
+#: and each was written for the edition in front of whoever wrote it. Read as
+#: one pattern, English and Portuguese come out byte-identical to what the
+#: three produced, so the differences were never differences.
+#:
+#: WHAT EACH PIECE IS FOR, since none of it is decoration:
+#:
+#:   - `\s*` BEFORE the period: the Portuguese mirror marks up a leading
+#:     number as both "<b>1663. </b>" and "<b>1662<i>. </i></b>", the period
+#:     living inside a nested tag. `strip_tags` used to turn every tag
+#:     boundary into a space, so the second shape arrived as "1662 . Text";
+#:     without this the match ended after "1662 " and 126 Portuguese
+#:     paragraphs opened with a lone period, against zero in English. That
+#:     asymmetry is what identified it -- both editions number the same 2,865
+#:     paragraphs, so a defect in one alone is a parser defect (CLAUDE.md,
+#:     "Work that spans languages"). `strip_tags` no longer inserts that space
+#:     (see `_INLINE_TAGS`), so this is now defence in depth, kept because the
+#:     source decides where its spaces go, not this parser.
+#:   - `(?!\d)` after the period: "50.000 fi\u00e9is" is fifty thousand
+#:     faithful, not paragraph 50. The thousands separator is the one place a
+#:     digit run followed by a period is not a paragraph opening, and it is
+#:     Portuguese and Spanish prose, not an edge case.
+#:   - The period OR whitespace, never neither: Malagasy prints the period and
+#:     often nothing after it, so requiring trailing whitespace walked past
+#:     400-odd of its paragraphs and folded each into the one before. A bare
+#:     digit run with neither is a numeral in prose.
+NUMBER_RE = re.compile(r"^(\d{1,4})(?:\s*\.(?!\d)\s*|\s+)")
 
 MARK_OPEN, MARK_CLOSE = "⟦", "⟧"  # ⟦ ⟧
 
@@ -256,7 +557,21 @@ _BOLD_SPAN_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.DOTALL | re.IGNORECASE)
 
 
 def _visible(text: str) -> str:
-    return re.sub(r"\s+", "", text)
+    """`text` reduced to the characters a bold-span comparison can rely on.
+
+    WHITESPACE, BECAUSE THE TWO SIDES CANNOT AGREE ON IT -- see `is_full_bold`.
+    PUNCTUATION, because these are Word exports and Word closes a bold run
+    one character early: the Spanish mirror prints Article 8's heading as
+    `<b>ARTÍCULO 8<br />“CREO EN EL ESPÍRITU SANTO</b>”`, with the closing
+    quotation mark outside the bold and nothing else. One character of
+    punctuation is not the source saying "this is not a heading", and read
+    strictly it cost that edition its whole Article 8 and one of its
+    paragraph markers.
+
+    A heading is still distinguished from a bolded paragraph number by this,
+    which is the distinction that matters: "<b>1216.</b> Este banho é
+    chamado" has letters outside the bold and always will."""
+    return "".join(ch for ch in text if ch.isalnum())
 
 
 def is_full_bold(inner_html: str) -> bool:
@@ -280,6 +595,52 @@ def is_full_bold(inner_html: str) -> bool:
         return False
     bold_text = strip_tags(" ".join(_BOLD_SPAN_RE.findall(inner_html)))
     return bool(bold_text) and _visible(bold_text) == _visible(full_text)
+
+
+#: A source reference the mirror sets after a heading, outside its bold —
+#: "(2 Tm 1, 12)", "(LG 43)". Anchored to the end because that is where a
+#: heading's reference goes; a parenthesis anywhere else is prose.
+_TRAILING_REFERENCE_RE = re.compile(r"\(\s*[^()]{1,60}\)\s*$")
+
+
+def is_bold_heading_with_reference(inner_html: str) -> bool:
+    """True when the block is a bold heading followed by an unbolded source
+    reference in parentheses.
+
+    THE FRENCH EDITION SOURCES ITS HEADINGS INLINE, and it is the only one
+    that does. Where English prints `II. "I Know Whom I Have Believed"` and
+    footnotes the reference, French prints `<b>II. " Je sais en qui j'ai mis
+    ma foi " </b>(2 Tm 1, 12)` — the citation outside the bold, because it is
+    not part of the title. `is_full_bold` correctly says no, and the heading
+    was then dropped entirely.
+
+    Distinguished from a bolded paragraph number ("<b>1216.</b> Este banho é
+    chamado", which must never read as a heading) by two things together: the
+    bold has to come first, and everything after it has to be a parenthesis
+    and nothing else. A paragraph's text is not a parenthesis."""
+    full_text = strip_tags(inner_html).strip()
+    bold_spans = _BOLD_SPAN_RE.findall(inner_html)
+    if not full_text or not bold_spans:
+        return False
+    bold_text = strip_tags(" ".join(bold_spans)).strip()
+    if not bold_text or not full_text.startswith(bold_text[: len(bold_text)]):
+        return False
+    rest = full_text[len(bold_text) :].strip()
+    return bool(rest) and _TRAILING_REFERENCE_RE.fullmatch(rest) is not None
+
+
+def test_a_heading_keeps_the_reference_the_source_sets_outside_its_bold() -> None:
+    # __PX.HTM, verbatim. The reference is the source's, not the title's.
+    inner = (
+        "<b style='mso-bidi-font-weight:normal'>II. &quot;&nbsp;Je sais en qui "
+        "j&rsquo;ai mis ma foi&nbsp;&quot; </b>(2 Tm 1, 12)"
+    )
+    assert not is_full_bold(inner)
+    assert is_bold_heading_with_reference(inner)
+    # The case it must never claim: a bolded paragraph number.
+    assert not is_bold_heading_with_reference(
+        "<b>1216.</b> Este banho &eacute; chamado"
+    )
 
 
 def test_strip_tags_drops_inline_tags_and_spaces_block_ones() -> None:
@@ -846,6 +1207,29 @@ class ScrapeState:
             self.anomalies.append(
                 f"heading {title[:60]!r}: marker {tok} has no footnote text"
             )
+        # THE PROLOGUE NAMES THE FOUR PARTS, AND ONE EDITION SETS THAT LIST IN
+        # BOLD. §13 announces the Catechism's plan and §§14-17 describe each
+        # Part in turn, each introduced by a display line carrying that Part's
+        # own title. English prints those lines plain and Portuguese bolds
+        # only the subtitle half, so both fall through to `is_mini_header` and
+        # are dropped; Malagasy centres and fully bolds them, which is exactly
+        # what a real heading looks like. Reading them as headings opened four
+        # more Parts in a four-part work, took §§14-25 out of the Prologue,
+        # and left `part` nodes numbered 1,2,3,4,1,2,3,4.
+        #
+        # The discriminator is not typography, which is the edition's to
+        # choose, but position: a Part cannot begin before §26, so a Part
+        # heading arriving while the numbering is still inside the Prologue is
+        # the Prologue talking ABOUT the work. Restated running banners are
+        # unaffected -- those arrive at §25 or later, and `same_heading` below
+        # is what merges them.
+        if (
+            kind == "part"
+            and self.last_n is not None
+            and self.last_n < FIRST_PART_PARAGRAPH - 1
+        ):
+            self.dropped.append(title)
+            return
         if kind == "in_brief":
             while self.stack and self.stack[-1].level >= 4:
                 self.stack.pop()
@@ -973,9 +1357,19 @@ def split_embedded_paragraph_starts(
     expected = base_n + 1
     owner: int | None = None
     while True:
-        m = re.search(
-            rf"(?<={_EMBEDDED_START_PUNCT_RE})\s+({expected})\b\s*", remaining
-        )
+        # WHITESPACE ON BOTH SIDES OF THE NUMBER. The trailing `\s+` used to
+        # be `\b\s*`, which allows none at all -- so a citation that names a
+        # psalm and a verse satisfied it. The German edition prints
+        # Augustine inline as "(Augustinus, Psal. 103,4, 1)" inside the quote
+        # closing §102, and the "103" there, sitting after a period and
+        # before a comma, was read as the opening of §103: the real §103
+        # then arrived as an out-of-sequence number and was folded away,
+        # leaving the paragraph stored as the four characters ",4, 1)." The
+        # French edition printed the same citation the same way and lost the
+        # same paragraph; English and the rest footnote it instead, so
+        # nothing was ever wrong there. A paragraph number is followed by the
+        # paragraph, which begins with a space.
+        m = re.search(rf"(?<={_EMBEDDED_START_PUNCT_RE})\s+({expected})\s+", remaining)
         if not m:
             result.append((owner, remaining))
             break
@@ -989,10 +1383,10 @@ def split_embedded_paragraph_starts(
 def process_page(
     blocks: list[Block],
     footnote_table: dict[str, str],
-    match_label,
-    number_re: re.Pattern,
+    cfg: dict,
     state: ScrapeState,
 ) -> None:
+    match_label, number_re, lang = cfg["match_label"], cfg["number_re"], cfg["lang"]
     state.current_footnote_table = footnote_table
     i, n = 0, len(blocks)
     while i < n:
@@ -1004,24 +1398,33 @@ def process_page(
             matched = match_label(b.text)
             if matched is not None:
                 kind, num = matched
-                # AT MOST ONE continuation block. The label line and the title
-                # it introduces are printed as two blocks ("CHAPTER TWO", then
-                # "GOD COMES TO MEET MAN") on all but a handful of pages, and
-                # this used to absorb every unlabelled heading block that
-                # followed. The EN mirror never prints more than one, so the
-                # bug was invisible there; the PT mirror prints a further
-                # sub-heading in the same style on four pages, and each came
-                # out glued onto the title AND missing from the tree --
-                # "CAPITULO PRIMEIRO A REVELACAO DA ORACAO O apelo universal a
-                # oracao" against EN's single-block "CHAPTER ONE THE REVELATION
-                # OF PRAYER - THE UNIVERSAL CALL TO PRAYER". Anything past the
-                # first block falls through to `bare_sub` below, which is what
-                # the EN equivalents already parse as.
+                # AT MOST ONE continuation block, AND ONLY WHEN THE LABEL IS
+                # ALONE. The label line and the title it introduces are printed
+                # as two blocks ("CHAPTER TWO", then "GOD COMES TO MEET MAN") on
+                # all but a handful of pages, and this used to absorb every
+                # unlabelled heading block that followed. The EN mirror never
+                # prints more than one, so the bug was invisible there; the PT
+                # mirror prints a further sub-heading in the same style on four
+                # pages, and each came out glued onto the title AND missing from
+                # the tree -- "CAPITULO PRIMEIRO A REVELACAO DA ORACAO O apelo
+                # universal a oracao" against EN's single-block "CHAPTER ONE THE
+                # REVELATION OF PRAYER - THE UNIVERSAL CALL TO PRAYER".
+                #
+                # The `is_bare_structural_label` guard is the French edition's
+                # doing. Where a heading already carries its own title in the
+                # same block -- "II. Les étapes de la Révélation" -- there is
+                # nothing to continue, and absorbing the next bold block ate the
+                # genuine sub-heading after it ("Dès l'origine, Dieu se fait
+                # connaître"), which then appeared neither as a node nor
+                # anywhere a reader could see it. A label that consumes its
+                # whole block is a label looking for its title; a label with a
+                # title attached is finished.
                 title = b.text
                 j = i + 1
                 if (
                     j < n
                     and blocks[j].is_heading
+                    and is_bare_structural_label(b.text, lang)
                     and match_label(blocks[j].text) is None
                 ):
                     title = title + " " + blocks[j].text
@@ -1184,47 +1587,6 @@ def merge_quote_blocks(blocks: list[Block]) -> list[Block]:
 # EN: labels, page parsing
 # --------------------------------------------------------------------------
 
-_EN_WORD_NUM = {
-    "ONE": 1,
-    "TWO": 2,
-    "THREE": 3,
-    "FOUR": 4,
-    "FIVE": 5,
-    "SIX": 6,
-    "SEVEN": 7,
-    "EIGHT": 8,
-    "NINE": 9,
-    "TEN": 10,
-}
-
-_EN_LABELS = [
-    ("prologue", re.compile(r"^PROLOGUE$")),
-    ("part", re.compile(r"^PART\s+(ONE|TWO|THREE|FOUR|FIVE)\b")),
-    ("section", re.compile(r"^SECTION\s+(ONE|TWO|THREE|FOUR|FIVE)\b")),
-    ("chapter", re.compile(r"^CHAPTER\s+(ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN)\b")),
-    ("article", re.compile(r"^ARTICLE\s+(\d+)\b", re.IGNORECASE)),
-    ("paragraph_marker", re.compile(r"^Paragraph\s+(\d+)\.", re.IGNORECASE)),
-    ("in_brief", re.compile(r"^IN BRIEF$")),
-    ("roman", re.compile(r"^([IVXLCDM]+)\.\s")),
-]
-
-
-def match_label_en(text: str) -> tuple[str, int | None] | None:
-    for kind, pat in _EN_LABELS:
-        m = pat.match(text)
-        if not m:
-            continue
-        if kind in ("part", "section", "chapter"):
-            return kind, _EN_WORD_NUM.get(m.group(1))
-        if kind == "article" or kind == "paragraph_marker":
-            return kind, int(m.group(1))
-        if kind == "roman":
-            return kind, roman_to_int(m.group(1))
-        return kind, None
-    return None
-
-
-EN_NUMBER_RE = re.compile(r"^(\d{1,4})\s")
 
 _EN_IF = re.IGNORECASE | re.DOTALL
 
@@ -1243,7 +1605,7 @@ _EN_SUP_RE = re.compile(
 )
 
 
-_EN_STRAY_BOLD_RE = re.compile(r"^\s*<b([^>]*)>\s*<p([^>]*)>", re.IGNORECASE)
+_EN_STRAY_BOLD_RE = re.compile(r"<b([^>]*)>\s*<p([^>]*)>", re.IGNORECASE)
 
 # <hr> boundary markers, matched by the attribute combination that's unique
 # to that boundary regardless of tag-name case, attribute order, or
@@ -1262,12 +1624,20 @@ _EN_HR_FOOTNOTE_END_RE = re.compile(
 def _en_body_and_footnotes(html_text: str) -> tuple[str, str]:
     start_m = _EN_HR_CONTENT_START_RE.search(html_text)
     rest = html_text[start_m.end() :] if start_m else html_text
-    # The page's first heading is sometimes preceded by a stray <b> that opens
-    # *before* the <p> tag and closes partway through its content (e.g.
-    # "<hr...><b><p class=MsoNormal>CHAPTER ONE</b><b...></b></p>"). Reorder
-    # so the <b> ends up properly nested inside the <p>, matching every other
-    # heading on the page -- otherwise these pages' first heading is invisible
-    # to the bold-heading detector.
+    # A heading is sometimes preceded by a stray <b> that opens *before* the
+    # <p> tag and closes partway through its content (e.g. "<hr...><b><p
+    # class=MsoNormal>CHAPTER ONE</b><b...></b></p>"). Reorder so the <b> ends
+    # up properly nested inside the <p>, matching every other heading on the
+    # page -- otherwise the heading is invisible to the bold-heading detector.
+    #
+    # ANYWHERE ON THE PAGE, not just at its head. This was anchored to the
+    # start of the body for as long as English was the only edition read
+    # through this shell, which is where English does it. German does it to
+    # article headings in mid-page ("<b ...><p ...><A NAME=SL_4.1.3.1
+    # IXT=SL>ARTIKEL 7</b></p>"), and with the anchor in place every one of
+    # its sixty-odd articles was missing from the tree -- caught by
+    # `check_declared_structure`, which reads the breadcrumb this mirror
+    # prints and had never had a second edition to check.
     rest = _EN_STRAY_BOLD_RE.sub(lambda m: f"<p{m.group(2)}><b{m.group(1)}>", rest)
     foot_m = _EN_HR_FOOTNOTE_START_RE.search(rest)
     if foot_m is None:
@@ -1298,12 +1668,14 @@ def _en_footnote_table(foot_html: str) -> dict[str, str]:
 _EN_P_RE = re.compile(r"<p([^>]*)>(.*?)</p>", _EN_IF)
 
 
-def parse_page_en(html_text: str) -> tuple[list[Block], dict[str, str]]:
-    """One EN page is one subsection, and its headings are an unbroken run at
-    the top: across all 375 of them, no heading of any kind — labelled or not —
-    follows body text. (The PT mirror is a page per *chapter*, so headings
-    genuinely do appear mid-page there; this rule is a property of the EN
-    mirror's granularity and must not be lifted into `process_page`.)
+def parse_page_intratext(
+    html_text: str, cfg: dict
+) -> tuple[list[Block], dict[str, str]]:
+    """One IntraText page is one subsection, and its headings are an unbroken
+    run at the top: across all 375 EN pages, no heading of any kind — labelled
+    or not — follows body text. (The PT mirror is a page per *chapter*, so
+    headings genuinely do appear mid-page there; this rule is a property of
+    this family's granularity and must not be lifted into `process_page`.)
 
     So once body text has begun, a fully-bold <p> is the source setting a
     passage apart, not a heading. Exactly one block in the EN CCC is of that
@@ -1314,25 +1686,59 @@ def parse_page_en(html_text: str) -> tuple[list[Block], dict[str, str]]:
     marked as a quote here, matching the PT edition and the schema's reading
     of that kind ("indented quotation ... liturgy, prayer").
 
-    The `match_label_en` guard is not redundant: no labelled heading follows
+    The `match_label` guard is not redundant: no labelled heading follows
     body text today, but "IN BRIEF" and the article markers are the blocks
-    that would if a page's boundaries ever moved, and they must keep winning."""
+    that would if a page's boundaries ever moved, and they must keep winning.
+
+    THREE EDITIONS SHARE THIS SHELL AND ONLY ONE HAS FOOTNOTES. English keys
+    its apparatus to anchors and prints it under a rule at the foot of each
+    page; French and German print no apparatus at all, having folded every
+    reference into the running text — French in parentheses ("(cf. CT 20-22 ;
+    25)"), German in square brackets ("[Vgl. DV 5.]"). That is what those
+    editions are, not something lost in transit: `cfg["footnotes"]` says so
+    per edition and `_en_footnote_table` is simply never reached for the two
+    that have none. See `LANG_CONFIG` for what it means for `citations`."""
+    match_label = cfg["match_label"]
     body, foot_html = _en_body_and_footnotes(html_text)
-    footnote_table = _en_footnote_table(foot_html)
+    footnote_table = _en_footnote_table(foot_html) if cfg["footnotes"] else {}
     blocks: list[Block] = []
     seen_body = False
     for attrs_m, inner in ((m.group(1), m.group(2)) for m in _EN_P_RE.finditer(body)):
         is_quote = "margin-left" in attrs_m.lower()
-        is_heading = is_full_bold(inner)
+        is_heading = is_full_bold(inner) or is_bold_heading_with_reference(inner)
         marked = _EN_SUP_RE.sub(lambda m: f"{MARK_OPEN}{m.group(2)}{MARK_CLOSE}", inner)
         text = strip_tags(marked)
         if not text:
             continue
-        if is_heading and seen_body and match_label_en(text) is None:
+        if not is_heading and is_bare_structural_label(text, cfg["lang"]):
+            # A LABELLED HEADING THE MIRROR DID NOT BOLD. Whole pages of the
+            # English edition set every heading in plain type -- __P16.HTM
+            # prints "Article 1", "II. GOD REVEALS HIS NAME" and "IN BRIEF"
+            # with no <b> anywhere -- and reading only bold blocks lost all
+            # of them: the in-brief fell under the word cap for a run-in
+            # sub-header and was dropped. It cost 22 of the work's 81
+            # in-brief divisions in English alone, against Portuguese,
+            # German and Malagasy, which all print 81 and agree on which.
+            # A one-sided gap of that shape is a parser defect by the
+            # project's own rule (CLAUDE.md, "Work that spans languages"),
+            # and the same guard Portuguese has needed since the beginning
+            # closes it. Roman-numeral subheadings stay excluded there and
+            # so stay lost here -- "I." is too easily ordinary prose without
+            # the bold signal, which is a documented ceiling, not this bug.
+            is_heading = True
+        if is_heading and seen_body and match_label(text) is None:
             is_heading, is_quote = False, True
         seen_body = seen_body or not is_heading
         blocks.append(Block(is_heading, "quote" if is_quote else "prose", text))
     return merge_quote_blocks(blocks), footnote_table
+
+
+def parse_page_en(html_text: str) -> tuple[list[Block], dict[str, str]]:
+    """The English edition's reading of the shell above. Kept as a name of its
+    own because the tests below pin English pages specifically."""
+    return parse_page_intratext(
+        html_text, {"match_label": MATCH_LABEL["en"], "footnotes": True, "lang": "en"}
+    )
 
 
 def test_en_bold_block_after_body_is_a_quote_not_a_heading() -> None:
@@ -1357,47 +1763,12 @@ def test_en_bold_block_after_body_is_a_quote_not_a_heading() -> None:
     assert blocks[3].text.startswith("Our Father who art in heaven")
 
 
-def discover_pages_en(fetcher: Fetcher) -> list[tuple[str, str]]:
-    text = fetcher.fetch_str(EN_BASE + EN_TOC_HREF, EN_TOC_HREF)
-    hrefs = re.findall(r"href=(__P\w+\.HTM)", text)
-    seen: set[str] = set()
-    ordered = [h for h in hrefs if not (h in seen or seen.add(h))]
-    return [(EN_BASE + h, h) for h in ordered]
-
-
 # --------------------------------------------------------------------------
 # PT: labels, page parsing
 # --------------------------------------------------------------------------
 
-_PT_WORD_NUM = {
-    "PRIMEIRA": 1,
-    "SEGUNDA": 2,
-    "TERCEIRA": 3,
-    "QUARTA": 4,
-    "QUINTA": 5,
-    "PRIMEIRO": 1,
-    "SEGUNDO": 2,
-    "TERCEIRO": 3,
-    "QUARTO": 4,
-    "QUINTO": 5,
-}
 
-_PT_LABELS = [
-    ("prologue", re.compile(r"^PROLOGO$")),
-    ("part", re.compile(r"^(PRIMEIRA|SEGUNDA|TERCEIRA|QUARTA|QUINTA)\s+PARTE\b")),
-    ("section", re.compile(r"^(PRIMEIRA|SEGUNDA|TERCEIRA|QUARTA|QUINTA)\s+SECCAO\b")),
-    (
-        "chapter",
-        re.compile(r"^CAPI?TULO\s+(PRIMEIRO|SEGUNDO|TERCEIRO|QUARTO|QUINTO)\b"),
-    ),
-    ("article", re.compile(r"^ARTIGO\s+([IVXL\d]+)\b")),
-    ("paragraph_marker", re.compile(r"^PARAGRAFO\s+(\d+)\b")),
-    ("in_brief", re.compile(r"^RESUMINDO:?$")),
-    ("roman", re.compile(r"^([IVXLCDM]+)\.?\s")),
-]
-
-
-def is_bare_structural_label(text: str) -> bool:
+def is_bare_structural_label(text: str, lang: str = "pt") -> bool:
     """True when `text` is *just* a structural label (e.g. "CAPÍTULO
     PRIMEIRO") with no trailing subtitle or other content glued on in the
     same block. Used to decide whether a non-bold block can still count as
@@ -1406,9 +1777,14 @@ def is_bare_structural_label(text: str) -> bool:
     *describes* the four Parts by name in ordinary running prose (e.g.
     "PRIMEIRA PARTE: A Profissão da Fé ..."), which must not be mistaken for
     the real heading. A bare label consumes (almost) the whole block;
-    prose mentioning a part name goes on for a full sentence afterwards."""
+    prose mentioning a part name goes on for a full sentence afterwards.
+
+    Written for Portuguese and needed again, unchanged, by Malagasy, which
+    prints its summary heading ("FAMINTINANA") in plain text where every
+    other edition bolds it -- so `is_full_bold` alone loses every one of that
+    edition's in-brief divisions."""
     folded = fold(text)
-    for kind, pat in _PT_LABELS:
+    for kind, pat in _COMPILED_LABELS[lang]:
         if kind == "roman":
             continue
         m = pat.match(folded)
@@ -1417,40 +1793,6 @@ def is_bare_structural_label(text: str) -> bool:
     return False
 
 
-def match_label_pt(original_text: str) -> tuple[str, int | None] | None:
-    folded = fold(original_text)
-    for kind, pat in _PT_LABELS:
-        m = pat.match(folded)
-        if not m:
-            continue
-        if kind in ("part", "section", "chapter"):
-            return kind, _PT_WORD_NUM.get(m.group(1))
-        if kind == "article":
-            g = m.group(1)
-            return kind, int(g) if g.isdigit() else (roman_to_int(g) or 1)
-        if kind == "paragraph_marker":
-            return kind, int(m.group(1))
-        if kind == "roman":
-            return kind, roman_to_int(m.group(1))
-        return kind, None
-    return None
-
-
-# The `\s*` before the period WAS load-bearing, and is now defence in depth.
-# The PT mirror marks up a paragraph's leading number in two shapes --
-# "<b>1663. </b>" and "<b>1662<i>. </i></b>", the period living inside a
-# *nested* tag -- and `strip_tags` used to turn every tag boundary into a
-# space, so the second shape reached here as "1662 . Text". Without the `\s*`
-# the match ended after "1662 ", leaving a stray ". " at the head of the
-# paragraph's body text: 126 PT paragraphs (33, 45, 46, 49, 96, ...) opened
-# with a lone period, against zero in EN. The asymmetry is what identified
-# it -- both editions number the same 2,865 paragraphs, so a defect present
-# in one alone is a parser defect (CLAUDE.md, "Work that spans languages").
-# `strip_tags` no longer inserts that space (see `_INLINE_TAGS`), so both
-# shapes now arrive as "1662. Text" and the `\s*` matches nothing. Kept
-# because the source, not this parser, is what decides where its spaces go,
-# and the tests below pin both shapes either way.
-PT_NUMBER_RE = re.compile(r"^(\d{1,4})\s*\.?\s+")
 _PT_MARKER_RE = re.compile(r"\((\d{1,3})\)")
 
 
@@ -1466,7 +1808,7 @@ def test_pt_paragraph_number_strips_a_period_left_behind_by_a_nested_tag() -> No
         "<b>33<i>. </i></b>O<i> homem: </i>Com a sua abertura",
     ):
         text = strip_tags(html)
-        m = PT_NUMBER_RE.match(text)
+        m = NUMBER_RE.match(text)
         assert m is not None, html
         assert not text[m.end() :].startswith("."), html
 
@@ -1474,10 +1816,10 @@ def test_pt_paragraph_number_strips_a_period_left_behind_by_a_nested_tag() -> No
 def test_pt_paragraph_number_does_not_run_past_the_number_it_matched() -> None:
     # The `\s*\.?` must not let the match wander into body text that merely
     # starts with a period-shaped token.
-    assert PT_NUMBER_RE.match("33 . O homem").end() == len("33 . ")
-    assert PT_NUMBER_RE.match("1216. Este banho").end() == len("1216. ")
-    assert PT_NUMBER_RE.match("2117 Comparar") is not None
-    assert PT_NUMBER_RE.match("50.000 fi&eacute;is") is None
+    assert NUMBER_RE.match("33 . O homem").end() == len("33 . ")
+    assert NUMBER_RE.match("1216. Este banho").end() == len("1216. ")
+    assert NUMBER_RE.match("2117 Comparar") is not None
+    assert NUMBER_RE.match("50.000 fi&eacute;is") is None
 
 
 def _pt_body(html_text: str) -> tuple[str, str]:
@@ -1621,27 +1963,672 @@ def parse_page_pt(html_text: str) -> tuple[list[Block], dict[str, str]]:
     return merge_quote_blocks(blocks), footnote_table
 
 
-def discover_pages_pt(fetcher: Fetcher) -> list[tuple[str, str]]:
-    text = fetcher.fetch_str(PT_BASE + PT_TOC_HREF, PT_TOC_HREF)
-    hrefs = re.findall(r'href="([^"]+)"', text)
-    ordered: list[str] = []
-    seen: set[str] = set()
-    for h in hrefs:
-        if not h.endswith("_po.html"):
+# --------------------------------------------------------------------------
+# CMS: the modern vatican.va mirrors (es, it, la, mg)
+# --------------------------------------------------------------------------
+
+#: Four editions are served by vatican.va's own CMS rather than by IntraText,
+#: and they are one format: the text sits in a single table cell as a flat run
+#: of `<p align="left">` blocks with `<blockquote>` for set-off quotation, a
+#: paragraph's number bold at the head of its first block, and headings marked
+#: either fully bold or by an `<a name="...">` naming the heading itself.
+#:
+#: THEY DISAGREE ABOUT THE APPARATUS, AND THAT IS AN EDITORIAL FACT, NOT A
+#: PARSING ONE. Italian and Latin print `<sup>N</sup>` in the text and the
+#: notes as a `(N) ...` run at the foot of the page. Malagasy uses Word's
+#: footnote export -- `<a name="_ftnrefN">[N]</a>` against `<div id="ftnN">`
+#: -- which is the least ambiguous of any edition in the corpus. Spanish
+#: prints no apparatus at all: it folds every reference into the running text
+#: in parentheses, hyperlinked where the referent is on vatican.va. See
+#: `LANG_CONFIG` for what that means downstream.
+_CMS_BLOCK_RE = re.compile(
+    r"<blockquote[^>]*>(.*?)</blockquote>|<p([^>]*)>(.*?)</p>",
+    re.DOTALL | re.IGNORECASE,
+)
+_CMS_INNER_P_RE = re.compile(r"<p[^>]*>(.*?)</p>", re.DOTALL | re.IGNORECASE)
+
+#: `<sup>1</sup>`, and nothing else: these mirrors use <sup> for footnote
+#: markers only, never for ordinals or exponents (checked across every page).
+_CMS_SUP_RE = re.compile(r"<sup[^>]*>\s*\(?(\d{1,3})\)?\s*</sup>", re.IGNORECASE)
+
+#: A superscript that is NOT a footnote number, content and all. There is
+#: exactly one in each of the two mirrors that use this style -- 3,706 numeric
+#: against one `[n]` in Latin, 3,695 against one empty in Italian -- and the
+#: Latin one is the mirror's own editorial marker on §2267, flagging the text
+#: revised in 2018. Its note sits below the page's footnote rule, is written
+#: in Italian, and reads "Indica che il testo corrisponde alla nuova
+#: versione": furniture about the edition, not apparatus belonging to the
+#: Catechism. Left in place it sat between the paragraph's number and its
+#: text, so §2267 was not recognised as a paragraph at all and its whole text
+#: was folded into §2266.
+_CMS_STRAY_SUP_RE = re.compile(r"<sup[^>]*>.*?</sup>", re.DOTALL | re.IGNORECASE)
+
+#: Word's footnote export, as Malagasy serves it.
+_CMS_FTNREF_RE = re.compile(
+    r"<a\s[^>]*name=[\"\']?_ftnref(\d{1,4})[\"\']?[^>]*>.*?</a>",
+    re.DOTALL | re.IGNORECASE,
+)
+_CMS_FTN_RE = re.compile(
+    r"<div[^>]*\bid=[\"\']?ftn(\d{1,4})[\"\']?[^>]*>(.*?)</div>",
+    re.DOTALL | re.IGNORECASE,
+)
+
+#: Everything between two blocks is whitespace, Word's conditional comments
+#: and stray markup on all but the Malagasy mirror, so a recovered gap has
+#: to carry at least one letter or digit before it is worth a block.
+_CMS_GAP_KEEP_RE = re.compile(r"[^\W_]")
+
+#: The number a note reprints at its own head, in either edition's style.
+_CMS_LEADING_MARKER_RE = re.compile(r"^\s*[\[(]\d{1,4}[\])]\s*")
+
+#: A note in the `(N) text` run at the foot of an Italian or Latin page.
+_CMS_NOTE_RE = re.compile(r"^\((\d{1,3})\)\s*")
+
+#: The heading sizes. Body prose is unsized or size 3; only a division title
+#: is set at 4 or 5, and Latin's chapter titles are the one heading shape
+#: that is NOT bold, so this is the only thing that catches them.
+_CMS_HEADING_FONT_RE = re.compile(r"<font[^>]*\bsize=[\"\']?[45]\b", re.IGNORECASE)
+
+_CMS_LINK_SPAN_RE = re.compile(
+    r"<a\s[^>]*\bhref=[^>]*>(.*?)</a>", re.DOTALL | re.IGNORECASE
+)
+
+_CMS_ANCHOR_SPAN_RE = re.compile(
+    r"<a\s[^>]*\bname=(?![\"\']?_ftn)[^>]*>(.*?)</a>", re.DOTALL | re.IGNORECASE
+)
+
+
+def is_full_anchor(inner_html: str) -> bool:
+    """True when the block's entire visible text sits inside a named anchor.
+
+    The CMS mirrors put `<a name="CAPUT PRIMUM HOMO EST DEI « CAPAX »">`
+    around the heading it names -- the anchor's own name is the heading text
+    -- and Latin does that WITHOUT bolding the result, which is why
+    `is_full_bold` alone loses every Latin chapter title. Footnote anchors
+    (`_ftnref...`) are excluded by the pattern: those sit inside running
+    prose and would otherwise make a one-word paragraph look like a heading.
+
+    Same whitespace-insensitive comparison as `is_full_bold`, for the same
+    reason."""
+    full_text = strip_tags(inner_html)
+    if not full_text:
+        return False
+    inside = strip_tags(" ".join(_CMS_ANCHOR_SPAN_RE.findall(inner_html)))
+    return bool(inside) and _visible(inside) == _visible(full_text)
+
+
+def is_full_link(inner_html: str) -> bool:
+    """True when the block is nothing but a hyperlink -- navigation, not text.
+
+    One block on every Italian page is of this shape: the running banner
+    "CATECHISMO DELLA CHIESA CATTOLICA", set in bold size-5 type and linking
+    back to that edition's own table of contents. It satisfies every test for
+    a heading, and read as one it opened a stray structure node above Part
+    One on each of the 108 pages.
+
+    A LINK INSIDE PROSE IS NOT THIS. Spanish hyperlinks the referent of a
+    citation where vatican.va hosts it ("(<a ...>GS</a> 19,1)"), which is
+    part of the sentence and stays; the whole-block test is what separates
+    them."""
+    full_text = strip_tags(inner_html)
+    if not full_text:
+        return False
+    inside = strip_tags(" ".join(_CMS_LINK_SPAN_RE.findall(inner_html)))
+    return bool(inside) and _visible(inside) == _visible(full_text)
+
+
+def _note_n(block: Block) -> int:
+    return int(_CMS_NOTE_RE.match(block.text).group(1))
+
+
+def _cms_note_run(blocks: list[Block]) -> tuple[list[Block], dict[str, str]]:
+    """Split an Italian/Latin page's `(N) ...` note run off its body.
+
+    FOUND BY ITS SHAPE, NOT BY A MARKER IN THE HTML, because there is none:
+    the notes are ordinary `<p align="left">` blocks in the same cell as the
+    text, distinguished only by opening with their own number in parentheses.
+    So this looks for runs of consecutive blocks whose numbers ascend by one,
+    and accepts the longest that answers every `⟦N⟧` marker on the page --
+    which is the property that actually matters, and what stops a body
+    paragraph that happens to open "(3) " from being mistaken for one.
+
+    THE RUN IS NOT ALWAYS LAST, which is what this used to assume. On
+    `p3s2c2a5_lt.htm` the Latin mirror prints the notes and then keeps going:
+    an editorial marker saying §2267 was revised, the 2018 rescript that
+    revised it, the words "Versione precedente:", and the superseded pre-2018
+    text of §2267 itself. Walking back from the end of the page hit that
+    instead of the notes, found none, and left all 49 of them as ordinary
+    blocks -- so the page's whole apparatus was appended to §2330, a
+    Beatitude one line long. It measured 45x its own length in every pairing,
+    the widest reading `audit.py balance` has produced.
+
+    EVERYTHING AFTER THE RUN GOES WITH IT. The notes close the page's body;
+    what follows them is the mirror talking about the edition rather than the
+    Catechism. Only that one page has anything there at all, and what it has
+    is a text the Church has replaced -- storing it as §2330's continuation,
+    or as a second §2267, would both be worse than dropping it. `raw/` keeps
+    it, as it keeps everything.
+
+    Returns the body blocks and the note table. An empty table is normal:
+    plenty of pages carry no notes."""
+    runs: list[list[int]] = []
+    for i, b in enumerate(blocks):
+        if b.is_heading or not _CMS_NOTE_RE.match(b.text):
             continue
-        if h.startswith("index-") or h == "indice_po.html":
+        n = _note_n(b)
+        # A note the source split across two blocks repeats its own number,
+        # so the same number twice continues a run rather than ending it.
+        if (
+            runs
+            and runs[-1][-1] == i - 1
+            and n in (n0 := _note_n(blocks[runs[-1][-1]]), n0 + 1)
+        ):
+            runs[-1].append(i)
             continue
-        # Front-matter links (e.g. the Laetamur Magnopere apostolic letter)
-        # are absolute site paths and happen to also end in "_po.html";
-        # every real CCC content page href is a bare filename in this same
-        # directory, with no path separator.
-        if "/" in h:
+        runs.append([i])
+    markers = {tok for b in blocks for tok in _MARKER_TOKEN_RE.findall(b.text)}
+    if not markers:
+        return blocks, {}
+    for run in sorted(runs, key=len, reverse=True):
+        table: dict[str, str] = {}
+        for i in run:
+            m = _CMS_NOTE_RE.match(blocks[i].text)
+            key, text = m.group(1), blocks[i].text[m.end() :]
+            table[key] = f"{table[key]} {text}".strip() if key in table else text
+        if markers <= set(table):
+            return blocks[: run[0]], table
+    return blocks, {}
+
+
+#: The page's own furniture: the head (whose <title> and inline script are not
+#: in any <p> and so arrive as recovered gap text), and any script or style
+#: that follows it.
+_CMS_CHROME_RE = re.compile(
+    r"\A.*?</head\s*>|<script\b.*?</script\s*>|<style\b.*?</style\s*>",
+    re.DOTALL | re.IGNORECASE,
+)
+
+
+def _cms_body(html_text: str) -> str:
+    """The page with its chrome removed, which is all the bounding these
+    mirrors admit of.
+
+    NOT A CONTAINER, AND THAT WAS THE FIRST ATTEMPT. The obvious reading is
+    that the text lives in one table cell -- Italian and Latin serve it from
+    `<td align="left" height="50" valign="top" width="99%">` and Spanish from
+    `<td width="609" valign="top">` -- and taking the largest leaf cell got
+    every page of three editions right. It gets `p1s1c3a2_sp.html` completely
+    wrong: that page's text sits in no cell at all, only the two-column Creed
+    at its foot does, and the rule returned a 312-character table cell and
+    dropped §§166-184 entirely. A container the source uses on most pages is
+    not a container the source guarantees.
+
+    So nothing is selected and only what is certainly not text is removed.
+    What that leaves out is handled where it is recognisable as itself: the
+    running banner Italian prints above every page is dropped by
+    `is_full_link` (it is a link to that edition's own contents), and
+    navigation images strip to nothing and are dropped for being empty."""
+    return _CMS_CHROME_RE.sub("", html_text)
+
+
+def parse_page_cms(html_text: str, cfg: dict) -> tuple[list[Block], dict[str, str]]:
+    """One CMS page as a flat block stream, plus its footnote table.
+
+    Unlike the IntraText family, these pages are one *article* (or, in
+    Malagasy, one paragraph range) rather than one subsection, so headings do
+    appear after body text and the "a bold block after prose is a quote" rule
+    of `parse_page_intratext` must not be applied here. What distinguishes a
+    heading is the source's own marking -- bold, a named anchor, or a
+    size-4/5 font -- in every case set on the whole block."""
+    style = cfg["notes"]
+    html_text = _cms_body(html_text)
+    footnote_table: dict[str, str] = {}
+    if style == "ftn":
+        # READ THE NOTES, THEN CUT THEM OUT. They sit in `<div id="ftnN">`
+        # rather than in a `<p>`, so the block walk never matches them -- and
+        # the gap recovery below, which exists because the Malagasy mirror
+        # emits whole paragraphs outside any `<p>`, swept up every one of
+        # them and appended the page's entire apparatus to its last
+        # paragraph. §975 was stored at 13,680 characters against the
+        # Portuguese edition's 197, and the same happened at the foot of all
+        # 27 pages -- which is exactly the shape `audit.py balance` is for:
+        # the five worst ratios in the whole corpus were this, at 31x to 69x.
+        # The note's own text, with the back-link that opens it removed. That
+        # link is `<a name="_ftnN" href="#_ftnrefN">[N]</a>` -- the printed
+        # "[N]" is the marker, not part of the note -- and it is a DIFFERENT
+        # anchor name from the one in the body, so stripping it by name would
+        # need a second pattern. Dropping a leading bracketed number after
+        # flattening covers it, and also covers the pages that print the
+        # number without wrapping it in a link at all.
+        footnote_table = {
+            m.group(1): _CMS_LEADING_MARKER_RE.sub("", strip_tags(m.group(2)), count=1)
+            for m in _CMS_FTN_RE.finditer(html_text)
+        }
+        html_text = _CMS_FTN_RE.sub("", html_text)
+
+    if style == "sup":
+        # ONCE, OVER THE WHOLE PAGE, AND IN THIS ORDER. The numeric
+        # superscripts become markers first; whatever `<sup>` is left is
+        # furniture and goes, content and all. Doing it here rather than
+        # per-block is what puts it ahead of the heading tests, which matters
+        # for the one stray superscript in the corpus: the Latin mirror sets
+        # its editorial "[n]" on §2267 in a size-4 font, and
+        # `_CMS_HEADING_FONT_RE` reads a size-4 font as a heading -- so
+        # cleaning only the text left that paragraph correctly numbered and
+        # wrongly filed as a division title. Doing it in the other order eats
+        # all 3,706 real markers with it.
+        html_text = _CMS_SUP_RE.sub(f"{MARK_OPEN}\\1{MARK_CLOSE}", html_text)
+        html_text = _CMS_STRAY_SUP_RE.sub("", html_text)
+
+    def mark(inner: str) -> str:
+        if style == "sup":
+            return inner
+        if style == "ftn":
+            return _CMS_FTNREF_RE.sub(
+                lambda m: f"{MARK_OPEN}{m.group(1)}{MARK_CLOSE}", inner
+            )
+        return inner
+
+    lang = cfg.get("lang", "pt")
+    blocks: list[Block] = []
+    last_end = 0
+    for m in _CMS_BLOCK_RE.finditer(html_text):
+        # CONTENT WRAPPED IN NOTHING AT ALL, which the Malagasy mirror does
+        # 500-odd times: a paragraph that follows a </blockquote> is simply
+        # emitted as bare text in the cell, with only a Word conditional
+        # comment ("<!--[if !mso]-->") between. Without this the whole
+        # paragraph vanishes -- §§27-29, 32-33, 35-36 and on through the work.
+        # parse_page_pt recovers the same defect the same way.
+        gap = strip_tags(mark(html_text[last_end : m.start()]))
+        if gap and _CMS_GAP_KEEP_RE.search(gap):
+            blocks.append(Block(is_full_bold(gap), "prose", gap))
+        last_end = m.end()
+
+        bq, _attrs, p_inner = m.group(1), m.group(2), m.group(3)
+        if bq is not None:
+            # One block per inner <p>, for the same reason parse_page_pt does
+            # it: a numbered paragraph can start inside a <blockquote>, and
+            # merge_quote_blocks re-joins genuine multi-line quotations after.
+            pieces = _CMS_INNER_P_RE.findall(bq) or [bq]
+            for piece in pieces:
+                text = strip_tags(mark(piece))
+                if text:
+                    blocks.append(Block(False, "quote", text))
             continue
-        if h in seen:
+        if is_full_link(p_inner):
             continue
-        seen.add(h)
-        ordered.append(h)
-    return [(PT_BASE + h, h) for h in ordered]
+        is_heading = (
+            is_full_bold(p_inner)
+            or is_full_anchor(p_inner)
+            or bool(_CMS_HEADING_FONT_RE.search(p_inner))
+        )
+        if not is_heading and is_bare_structural_label(strip_tags(p_inner), lang):
+            is_heading = True
+        text = strip_tags(mark(p_inner))
+        if not text:
+            continue
+        blocks.append(Block(is_heading, "prose", text))
+    blocks = merge_quote_blocks(blocks)
+    if style == "sup":
+        blocks, footnote_table = _cms_note_run(blocks)
+    return blocks, footnote_table
+
+
+def test_cms_latin_chapter_title_is_a_heading_though_it_is_not_bold() -> None:
+    # p1s1c1_lt.htm, verbatim: Latin marks a chapter title with a named
+    # anchor and a size-4 font, and does not bold it.
+    page = (
+        '<p align="left"><font size="4"><a name="CAPUT PRIMUM HOMO EST DEI">'
+        " CAPUT PRIMUM<br />HOMO EST DEI « CAPAX »</a></font></p>"
+        '<p align="left"><b>27</b> Dei desiderium in corde hominis est'
+        " inscriptum<sup>1</sup>.</p>"
+        '<p align="left"><font size="2">(1) Cf Act 17,26-28.</font></p>'
+    )
+    blocks, notes = parse_page_cms(page, {"notes": "sup"})
+    assert [b.is_heading for b in blocks] == [True, False]
+    assert blocks[0].text.startswith("CAPUT PRIMUM")
+    assert blocks[1].text.endswith(f"inscriptum{MARK_OPEN}1{MARK_CLOSE}.")
+    assert notes == {"1": "Cf Act 17,26-28."}
+
+
+def test_cms_malagasy_reads_words_footnote_export() -> None:
+    # 26-184_mg.html, abridged: the marker sits tight against the word it
+    # follows, and the note text lives in a <div id="ftnN"> after the body.
+    page = (
+        '<p>26. Ny olombelona<a name="_ftnref1" href="#_ftn1">[1]</a>.</p>'
+        '<div id="ftn1"><a name="_ftn1" href="#_ftnref1">[1]</a>&nbsp;DS 30.</div>'
+    )
+    blocks, notes = parse_page_cms(page, {"notes": "ftn"})
+    assert blocks[0].text == f"26. Ny olombelona{MARK_OPEN}1{MARK_CLOSE}."
+    assert notes == {"1": "DS 30."}
+
+
+def test_cms_note_run_is_answerable_to_the_page_markers() -> None:
+    # Italian numbers its footnotes continuously across a chapter, so an
+    # article page's notes start wherever the previous page left off -- (29)
+    # here, never (1). What makes the run a run is that it answers the
+    # page's own markers.
+    page = (
+        '<p align="left"><b>27</b> Prose.<sup>29</sup></p>'
+        '<p align="left"><font size="2">(29) Cf Act 17,26-28.</font></p>'
+    )
+    blocks, notes = parse_page_cms(page, {"notes": "sup"})
+    assert notes == {"29": "Cf Act 17,26-28."}
+    assert len(blocks) == 1
+
+    # And a page that refers to nothing has no notes, whatever its last
+    # block happens to open with.
+    page = (
+        '<p align="left"><b>27</b> Prose.</p>'
+        '<p align="left">(3) Not a note; nothing on this page cites one.</p>'
+    )
+    blocks, notes = parse_page_cms(page, {"notes": "sup"})
+    assert notes == {}
+    assert len(blocks) == 2
+
+
+# --------------------------------------------------------------------------
+# Structural labels, per edition
+# --------------------------------------------------------------------------
+
+#: The ordinal each edition counts its parts, sections and chapters with,
+#: folded (uppercase, accents stripped) exactly as `match_label` will see it.
+#: Both genders and both declensions where the language has them: German heads
+#: a part ERSTER TEIL and a chapter ERSTES KAPITEL, Latin PARS PRIMA and CAPUT
+#: PRIMUM, and the ordinal is the only thing carrying the number.
+_ORDINALS = {
+    "de": {
+        "ERSTER": 1,
+        "ERSTES": 1,
+        "ZWEITER": 2,
+        "ZWEITES": 2,
+        "DRITTER": 3,
+        "DRITTES": 3,
+        "VIERTER": 4,
+        "VIERTES": 4,
+        "FUNFTER": 5,
+        "FUNFTES": 5,
+    },
+    "en": {
+        "ONE": 1,
+        "TWO": 2,
+        "THREE": 3,
+        "FOUR": 4,
+        "FIVE": 5,
+        "SIX": 6,
+        "SEVEN": 7,
+        "EIGHT": 8,
+        "NINE": 9,
+        "TEN": 10,
+    },
+    "es": {
+        "PRIMERA": 1,
+        "PRIMERO": 1,
+        "SEGUNDA": 2,
+        "SEGUNDO": 2,
+        "TERCERA": 3,
+        "TERCERO": 3,
+        "CUARTA": 4,
+        "CUARTO": 4,
+        "QUINTA": 5,
+        "QUINTO": 5,
+    },
+    "fr": {
+        "PREMIERE": 1,
+        "PREMIER": 1,
+        "DEUXIEME": 2,
+        "SECONDE": 2,
+        "SECOND": 2,
+        "TROISIEME": 3,
+        "QUATRIEME": 4,
+        "CINQUIEME": 5,
+    },
+    "it": {
+        "PRIMA": 1,
+        "PRIMO": 1,
+        "SECONDA": 2,
+        "SECONDO": 2,
+        "TERZA": 3,
+        "TERZO": 3,
+        "QUARTA": 4,
+        "QUARTO": 4,
+        "QUINTA": 5,
+        "QUINTO": 5,
+    },
+    "la": {
+        "PRIMA": 1,
+        "PRIMUM": 1,
+        "SECUNDA": 2,
+        "SECUNDUM": 2,
+        "TERTIA": 3,
+        "TERTIUM": 3,
+        "QUARTA": 4,
+        "QUARTUM": 4,
+        "QUINTA": 5,
+        "QUINTUM": 5,
+    },
+    "mg": {
+        "VOALOHANY": 1,
+        "FAHAROA": 2,
+        "FAHATELO": 3,
+        "FAHEFATRA": 4,
+        "FAHADIMY": 5,
+    },
+    "pt": {
+        "PRIMEIRA": 1,
+        "PRIMEIRO": 1,
+        "SEGUNDA": 2,
+        "SEGUNDO": 2,
+        "TERCEIRA": 3,
+        "TERCEIRO": 3,
+        "QUARTA": 4,
+        "QUARTO": 4,
+        "QUINTA": 5,
+        "QUINTO": 5,
+    },
+}
+
+#: What each edition prints above each kind of division, in the order the
+#: kinds are tried. Matched against `fold(text)`, so patterns are written
+#: uppercase and unaccented and need no IGNORECASE.
+#:
+#: `roman` LAST, ALWAYS: it is the loosest pattern here and would otherwise
+#: swallow a labelled heading that happens to open with a numeral.
+#:
+#: THE COLON IS NOT PART OF THE LABEL. The Italian, Latin and Spanish tables
+#: of contents print "Articolo 1:", and the pages themselves print
+#: "ART\u00cdCULO 2 \u201cY EN JESUCRISTO...\u201d" with no colon at all.
+#: Matching the colon cost all 65 articles in each of those three editions.
+#:
+#: THE ARTICLE AND PARAGRAPH NUMBER IS NOT ALWAYS A DIGIT. Italian, Latin and
+#: Spanish print "Articolo l:", "Paragrafo l:" -- a lowercase letter L where
+#: the digit 1 belongs, a Word-era typesetting artifact that appears in all
+#: three at the same six headings. `_label_number` reads a lone L as 1, which
+#: is the only thing it can mean: these editions number articles 1-12 and
+#: paragraphs 1-7, and there is no fiftieth of either.
+_LABEL_PATTERNS = {
+    "de": [
+        ("prologue", r"^PROLOG$"),
+        ("part", r"^(ERSTER|ZWEITER|DRITTER|VIERTER|FUNFTER)\s+TEIL\b"),
+        ("section", r"^(ERSTER|ZWEITER|DRITTER)\s+ABSCHNITT\b"),
+        ("chapter", r"^(ERSTES|ZWEITES|DRITTES|VIERTES)\s+KAPITEL\b"),
+        ("article", r"^ARTIKEL\s+(\d+)\b"),
+        ("paragraph_marker", r"^ABSATZ\s+(\d+)\b"),
+        ("in_brief", r"^KURZTEXTE?$"),
+        # THE ONE EDITION THAT PRINTS ITS ROMAN NUMERALS WITHOUT A PERIOD
+        # ("III Armut im Herzen", against English's "III. Poverty of heart").
+        # Optional-period costs a guard elsewhere: the numeral class is cut to
+        # I/V/X here, because D, C, L and M all begin ordinary German words
+        # ("Die", "Christus", "Liebe", "Man") and without the period there is
+        # nothing else to stop one matching.
+        ("roman", r"^([IVX]{1,5})\.?\s"),
+    ],
+    "en": [
+        ("prologue", r"^PROLOGUE$"),
+        ("part", r"^PART\s+(ONE|TWO|THREE|FOUR|FIVE)\b"),
+        ("section", r"^SECTION\s+(ONE|TWO|THREE|FOUR|FIVE)\b"),
+        ("chapter", r"^CHAPTER\s+(ONE|TWO|THREE|FOUR|FIVE|SIX|SEVEN)\b"),
+        ("article", r"^ARTICLE\s+(\d+)\b"),
+        ("paragraph_marker", r"^PARAGRAPH\s+(\d+)\."),
+        ("in_brief", r"^IN BRIEF$"),
+        ("roman", r"^([IVXLCDM]+)\.\s"),
+    ],
+    "es": [
+        ("prologue", r"^PROLOGO$"),
+        ("part", r"^(PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA)\s+PARTE\b"),
+        ("section", r"^(PRIMERA|SEGUNDA|TERCERA)\s+SECCION\b"),
+        ("chapter", r"^CAPITULO\s+(PRIMERO|SEGUNDO|TERCERO|CUARTO)\b"),
+        ("article", r"^ARTICULO\s+([IVXL\d]+)\b"),
+        ("paragraph_marker", r"^PARRAFO\s+([IVXL\d]+)\b"),
+        ("in_brief", r"^RESUMEN$"),
+        # Spanish is inconsistent about the period after a roman numeral --
+        # "I. El deseo de Dios" on most pages, "II Las vías de acceso al
+        # conocimiento de Dios" on others -- so it takes German's shape here,
+        # and for the same reason takes German's narrower numeral class. See
+        # the German entry: without the period, D/C/L/M begin ordinary words.
+        ("roman", r"^([IVX]{1,5})\.?\s"),
+    ],
+    "fr": [
+        ("prologue", r"^PROLOGUE$"),
+        ("part", r"^(PREMIERE|DEUXIEME|TROISIEME|QUATRIEME|CINQUIEME)\s+PARTIE\b"),
+        ("section", r"^(PREMIERE|DEUXIEME|TROISIEME)\s+SECTION\b"),
+        ("chapter", r"^CHAPITRE\s+(PREMIER|DEUXIEME|TROISIEME|QUATRIEME)\b"),
+        ("article", r"^ARTICLE\s+(\d+)\b"),
+        ("paragraph_marker", r"^PARAGRAPHE\s+(\d+)\b"),
+        ("in_brief", r"^EN BREF$"),
+        # Period-optional, and so the narrower numeral class -- see the German
+        # entry. French prints "III Le Christ Jésus" alongside "II. Les étapes
+        # de la Révélation", and the unperiodded ones were reaching the tree
+        # as unnumbered sub-headings.
+        ("roman", r"^([IVX]{1,5})\.?\s"),
+    ],
+    "it": [
+        # PREFAZIONE, not PROLOGO. The Italian edition is the only one that
+        # calls the Prologue a preface, and reading only the cognate left its
+        # §§1-25 under a paragraph-less top-level node.
+        ("prologue", r"^PREFAZIONE$"),
+        ("part", r"^PARTE\s+(PRIMA|SECONDA|TERZA|QUARTA|QUINTA)\b"),
+        ("section", r"^SEZIONE\s+(PRIMA|SECONDA|TERZA)\b"),
+        ("chapter", r"^CAPITOLO\s+(PRIMO|SECONDO|TERZO|QUARTO)\b"),
+        ("article", r"^ARTICOLO\s+([IVXL\d]+)\b"),
+        ("paragraph_marker", r"^PARAGRAFO\s+([IVXL\d]+)\b"),
+        ("in_brief", r"^IN SINTESI$"),
+        ("roman", r"^([IVXLCDM]+)\.\s"),
+    ],
+    "la": [
+        # PROOEMIUM, not PROLOGUS -- the word the Latin edition actually
+        # prints. Same trap as Italian's PREFAZIONE.
+        ("prologue", r"^PROOEMIUM$"),
+        ("part", r"^PARS\s+(PRIMA|SECUNDA|TERTIA|QUARTA|QUINTA)\b"),
+        ("section", r"^SECTIO\s+(PRIMA|SECUNDA|TERTIA)\b"),
+        ("chapter", r"^CAPUT\s+(PRIMUM|SECUNDUM|TERTIUM|QUARTUM)\b"),
+        ("article", r"^ARTICULUS\s+([IVXL\d]+)\b"),
+        ("paragraph_marker", r"^PARAGRAPHUS\s+([IVXL\d]+)\b"),
+        # The Latin edition heads its summaries "Compendium", which is also
+        # the name of a different work in this corpus. Nothing here is keyed
+        # on the word, so the collision is only a reader's.
+        ("in_brief", r"^COMPENDIUM$"),
+        ("roman", r"^([IVXLCDM]+)\.\s"),
+    ],
+    "mg": [
+        ("prologue", r"^TENY MIALOHA$"),
+        ("part", r"^FIZARANA\s+(VOALOHANY|FAHAROA|FAHATELO|FAHEFATRA)\b"),
+        ("section", r"^SAMPANA\s+(VOALOHANY|FAHAROA|FAHATELO)\b"),
+        ("chapter", r"^TOKO\s+(VOALOHANY|FAHAROA|FAHATELO|FAHEFATRA)\b"),
+        ("article", r"^ANDALANA\s+(\d+)\b"),
+        ("paragraph_marker", r"^PARAGRAFY\s+(\d+)\b"),
+        # PRINTED, BUT NOT BOLDED. Every other edition sets its in-brief
+        # heading in bold; Malagasy sets "FAMINTINANA" in the same plain type
+        # as the summary paragraphs under it, which is why it needs
+        # `is_bare_structural_label` and why reading only bold blocks as
+        # headings would lose every one of this edition's in-brief divisions.
+        ("in_brief", r"^FAMINTINANA:?$"),
+        ("roman", r"^([IVXLCDM]+)\.\s"),
+    ],
+    "pt": [
+        ("prologue", r"^PROLOGO$"),
+        ("part", r"^(PRIMEIRA|SEGUNDA|TERCEIRA|QUARTA|QUINTA)\s+PARTE\b"),
+        ("section", r"^(PRIMEIRA|SEGUNDA|TERCEIRA|QUARTA|QUINTA)\s+SECCAO\b"),
+        ("chapter", r"^CAPI?TULO\s+(PRIMEIRO|SEGUNDO|TERCEIRO|QUARTO|QUINTO)\b"),
+        ("article", r"^ARTIGO\s+([IVXL\d]+)\b"),
+        ("paragraph_marker", r"^PARAGRAFO\s+(\d+)\b"),
+        ("in_brief", r"^RESUMINDO:?$"),
+        ("roman", r"^([IVXLCDM]+)\.?\s"),
+    ],
+}
+
+_COMPILED_LABELS = {
+    lang: [(kind, re.compile(pat)) for kind, pat in patterns]
+    for lang, patterns in _LABEL_PATTERNS.items()
+}
+
+_ORDINAL_KINDS = ("part", "section", "chapter")
+
+
+def _label_number(kind: str, raw: str, ordinals: dict[str, int]) -> int | None:
+    if kind in _ORDINAL_KINDS:
+        return ordinals.get(raw)
+    if kind == "roman":
+        return roman_to_int(raw)
+    if raw.isdigit():
+        return int(raw)
+    # See `_LABEL_PATTERNS`: a lone L in an article or paragraph number is the
+    # source's letter for the digit 1, not the numeral fifty.
+    if raw == "L":
+        return 1
+    return roman_to_int(raw) or 1
+
+
+def make_match_label(lang: str):
+    """The edition's heading recognizer: folded text in, `(kind, number)` out.
+
+    One factory for all eight parsed editions, because the differences
+    between them are entirely in `_LABEL_PATTERNS` and `_ORDINALS` -- the
+    matching itself never varied."""
+    labels = _COMPILED_LABELS[lang]
+    ordinals = _ORDINALS[lang]
+
+    def match_label(text: str) -> tuple[str, int | None] | None:
+        folded = fold(text)
+        for kind, pat in labels:
+            m = pat.match(folded)
+            if not m:
+                continue
+            return kind, (
+                _label_number(kind, m.group(1), ordinals) if m.groups() else None
+            )
+        return None
+
+    return match_label
+
+
+MATCH_LABEL = {lang: make_match_label(lang) for lang in _LABEL_PATTERNS}
+
+
+def test_match_label_reads_each_edition_in_its_own_words() -> None:
+    # One heading of each kind, verbatim from the mirrors.
+    assert MATCH_LABEL["la"]("PARS PRIMA") == ("part", 1)
+    assert MATCH_LABEL["la"]("CAPUT SECUNDUM") == ("chapter", 2)
+    assert MATCH_LABEL["la"]("Compendium") == ("in_brief", None)
+    assert MATCH_LABEL["de"]("DRITTER TEIL") == ("part", 3)
+    assert MATCH_LABEL["de"]("ZWEITES KAPITEL") == ("chapter", 2)
+    assert MATCH_LABEL["de"]("KURZTEXTE") == ("in_brief", None)
+    # German prints its roman numerals bare, and must not read an ordinary
+    # word that opens with a numeral letter as one.
+    assert MATCH_LABEL["de"]("III Armut im Herzen") == ("roman", 3)
+    assert MATCH_LABEL["de"]("Die Zehn Gebote") is None
+    assert MATCH_LABEL["fr"]("QUATRIEME PARTIE") == ("part", 4)
+    assert MATCH_LABEL["fr"]("Chapitre premier") == ("chapter", 1)
+    assert MATCH_LABEL["it"]("PARTE TERZA") == ("part", 3)
+    assert MATCH_LABEL["es"]("SEGUNDA SECCION") == ("section", 2)
+    assert MATCH_LABEL["mg"]("FIZARANA FAHEFATRA") == ("part", 4)
+    assert MATCH_LABEL["mg"]("ANDALANA 7") == ("article", 7)
+    # The lowercase-L-for-1 artifact, present in all three CMS editions.
+    assert MATCH_LABEL["it"]("Articolo l: Il sacramento del Battesimo") == (
+        "article",
+        1,
+    )
+    assert MATCH_LABEL["es"]("Parrafo l: Jesus e Israel") == ("paragraph_marker", 1)
 
 
 # --------------------------------------------------------------------------
@@ -1669,22 +2656,60 @@ def sample_chunks_pt(pages: list[tuple[str, str]]) -> list[list[tuple[str, str]]
     return [[by_name[PT_SAMPLE_PROLOGUE]], [by_name[PT_SAMPLE_BAPTISM]]]
 
 
+def sample_chunks_head(pages: list[tuple[str, str]]) -> list[list[tuple[str, str]]]:
+    """The first few pages, for the six editions added after the two above.
+
+    The named slices are better -- they were chosen so the sample exercises
+    both the front of the work and a deep, quotation-heavy article -- but they
+    name pages, and page names are per-mirror. Nothing here needs a
+    representative slice the way the first ingestion did: those two editions
+    established what the schema is, and `--sample` on the rest is a smoke test
+    that the mirror still answers and its headings still parse. The full run is
+    offline after `--capture` anyway."""
+    return [pages[:8]]
+
+
 # --------------------------------------------------------------------------
 # Orchestration
 # --------------------------------------------------------------------------
 
+#: The eight editions this scraper PARSES, keyed by our language tag. The two
+#: it only captures (Arabic, Chinese -- PDF, see `EDITIONS`) are absent by
+#: construction: a language here is a language that gets a work directory.
+#:
+#: `family` picks the page reader, `notes` the apparatus within it, and the two
+#: are not the same axis -- Italian and Latin share both, Spanish shares the
+#: family and has no apparatus at all.
+#:
+#: WHAT AN EMPTY APPARATUS MEANS FOR `citations`. Three of the eight editions
+#: print no footnotes: French folds every reference into the running text in
+#: parentheses, German in square brackets, Spanish in parentheses with a
+#: hyperlink where the referent is on vatican.va. Their paragraphs therefore
+#: carry `citations: []` while the same paragraph in English, Latin, Italian,
+#: Malagasy or Portuguese carries the reference as a citation. That is a
+#: difference between the editions, not between the parsers, and it is left
+#: as the source has it: lifting a parenthesis out of French prose would be
+#: this project inventing an apparatus its source does not have, and the text
+#: those editions print would then be missing words they do print. It is the
+#: one place `audit.py balance` must be read with the editions in mind -- see
+#: the manifest note each of the three carries.
 LANG_CONFIG = {
+    "de": {
+        "family": "intratext",
+        "footnotes": False,
+        "number_re": NUMBER_RE,
+        "work_id": "ccc.de",
+        "title": "Katechismus der Katholischen Kirche",
+        "copyright_holder": "Libreria Editrice Vaticana",
+        "copyright_notice": "Copyright © Libreria Editrice Vaticana",
+    },
     "en": {
-        "discover": discover_pages_en,
-        "parse": parse_page_en,
-        "match_label": match_label_en,
-        "number_re": EN_NUMBER_RE,
+        "family": "intratext",
+        "footnotes": True,
+        "number_re": NUMBER_RE,
         "sample_chunks": sample_chunks_en,
-        "raw_dir": "ccc-en",
-        "toc_href": EN_TOC_HREF,
         "work_id": "ccc.en",
         "title": "Catechism of the Catholic Church",
-        "base_url": EN_BASE,
         "copyright_holder": "Libreria Editrice Vaticana / United States Catholic Conference",
         # What the source prints, and nothing else. This used to carry USCCB's
         # stipulated notice ("CATECHISM OF THE CATHOLIC CHURCH, SECOND
@@ -1701,21 +2726,79 @@ LANG_CONFIG = {
         # quoting anyone. Corrected 2026-08-24.
         "copyright_notice": "Copyright © Libreria Editrice Vaticana",
     },
+    "es": {
+        "family": "cms",
+        "notes": "none",
+        "number_re": NUMBER_RE,
+        "work_id": "ccc.es",
+        "title": "Catecismo de la Iglesia Católica",
+        "copyright_holder": "Libreria Editrice Vaticana",
+        "copyright_notice": "Copyright © Libreria Editrice Vaticana",
+    },
+    "fr": {
+        "family": "intratext",
+        "footnotes": False,
+        "number_re": NUMBER_RE,
+        "work_id": "ccc.fr",
+        "title": "Catéchisme de l'Église Catholique",
+        "copyright_holder": "Libreria Editrice Vaticana",
+        "copyright_notice": "Copyright © Libreria Editrice Vaticana",
+    },
+    "it": {
+        "family": "cms",
+        "notes": "sup",
+        "number_re": NUMBER_RE,
+        "work_id": "ccc.it",
+        "title": "Catechismo della Chiesa Cattolica",
+        "copyright_holder": "Libreria Editrice Vaticana",
+        "copyright_notice": "Copyright © Libreria Editrice Vaticana",
+    },
+    "la": {
+        "family": "cms",
+        "notes": "sup",
+        "number_re": NUMBER_RE,
+        "work_id": "ccc.la",
+        "title": "Catechismus Catholicae Ecclesiae",
+        "copyright_holder": "Libreria Editrice Vaticana",
+        "copyright_notice": "Copyright © Libreria Editrice Vaticana",
+    },
+    "mg": {
+        "family": "cms",
+        "notes": "ftn",
+        "number_re": NUMBER_RE,
+        "work_id": "ccc.mg",
+        "title": "Katesizin'ny Fiangonana Katôlika",
+        "copyright_holder": "Libreria Editrice Vaticana",
+        "copyright_notice": "Copyright © Libreria Editrice Vaticana",
+    },
     "pt": {
-        "discover": discover_pages_pt,
-        "parse": parse_page_pt,
-        "match_label": match_label_pt,
-        "number_re": PT_NUMBER_RE,
+        "family": "pt",
+        "number_re": NUMBER_RE,
         "sample_chunks": sample_chunks_pt,
-        "raw_dir": "ccc-pt",
-        "toc_href": PT_TOC_HREF,
         "work_id": "ccc.pt",
         "title": "Catecismo da Igreja Católica",
-        "base_url": PT_BASE,
         "copyright_holder": "Libreria Editrice Vaticana",
         "copyright_notice": "Copyright © Libreria Editrice Vaticana",
     },
 }
+
+#: Filled in from the tables above rather than repeated in each entry, so an
+#: edition cannot end up reading one mirror and citing another.
+for _lang, _cfg in LANG_CONFIG.items():
+    _cfg["lang"] = _lang
+    _cfg["match_label"] = MATCH_LABEL[_lang]
+    _cfg["raw_dir"] = raw_dir(_lang)
+    _cfg["base_url"] = EDITIONS[_lang].base
+    _cfg["toc_href"] = EDITIONS[_lang].toc
+    _cfg.setdefault("sample_chunks", sample_chunks_head)
+
+PAGE_FAMILIES.update(
+    {
+        "intratext": parse_page_intratext,
+        "cms": parse_page_cms,
+        "pt": lambda html_text, _cfg: parse_page_pt(html_text),
+    }
+)
 
 
 def run_scrape(
@@ -1723,7 +2806,7 @@ def run_scrape(
 ) -> tuple[ScrapeState, list[tuple[str, str]], Fetcher]:
     cfg = LANG_CONFIG[lang]
     fetcher = make_fetcher(RAW_ROOT / cfg["raw_dir"])
-    all_pages = cfg["discover"](fetcher)
+    all_pages = discover_pages(fetcher, lang)
     chunks = cfg["sample_chunks"](all_pages) if sample else [all_pages]
 
     state = ScrapeState(corrections, normalize_pt_inline_scripture=(lang == "pt"))
@@ -1751,10 +2834,8 @@ def run_scrape(
             chain = declared_chain(html_text)
             if chain is not None:
                 state.declared_chains.append((name, chain))
-            blocks, footnote_table = cfg["parse"](html_text)
-            process_page(
-                blocks, footnote_table, cfg["match_label"], cfg["number_re"], state
-            )
+            blocks, footnote_table = PAGE_FAMILIES[cfg["family"]](html_text, cfg)
+            process_page(blocks, footnote_table, cfg, state)
         state.finalize_open_paragraph()
         # close remaining open structure nodes at end of chunk
         state.stack = []
@@ -1840,6 +2921,25 @@ _DECLARED_TITLE_OVERRIDES = {
     # heading blocks this scraper reads -- so it glues the identifier line to
     # the first subdivision beneath it and declares the two as one heading.
     "SECTION TWO I. THE CREEDS": "SECTION TWO THE PROFESSION OF THE CHRISTIAN FAITH",
+    # Correction ccc.fr-p2s1-missing-chapter-one, the French mirror's copy of
+    # the same omission. Its breadcrumb prints the chapter title with the
+    # definite article eaten by its own entity-escaping ("DE ÉGLISE"); the
+    # correction supplies the grammatical form, so the two differ by exactly
+    # that word.
+    "CHAPITRE PREMIER LE MYSTERE PASCAL DANS LE TEMPS DE ÉGLISE": (
+        "CHAPITRE PREMIER LE MYSTÈRE PASCAL DANS LE TEMPS DE L’ÉGLISE"
+    ),
+    # NOT A CORRECTION -- a breadcrumb that reflects how IntraText BUILDS a
+    # breadcrumb rather than how the page is divided. It joins consecutive
+    # bold blocks at one index level, and the French mirror bolds a run-in
+    # sub-header ("REVELATION PROGRESSIVE DE LA RESURRECTION") that the
+    # English mirror sets plain -- so English declares the heading alone and
+    # French declares the two glued together, off the same page of the same
+    # work. The tree keeps them as the two headings they are; this tells the
+    # check to expect that.
+    "I. La résurrection du Christ et la nôtre REVELATION PROGRESSIVE DE LA RESURRECTION": (
+        "I. La résurrection du Christ et la nôtre"
+    ),
 }
 
 _DECLARED_KEY_OVERRIDES = {
@@ -2253,17 +3353,56 @@ def print_summary(lang: str, state: ScrapeState, ok: bool, problems: list[str]) 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--lang", choices=["en", "pt", "both"], default="both")
+    ap.add_argument(
+        "--lang",
+        default="all",
+        help=(
+            "'all' (the default, every parsed edition), 'both' (en,pt -- what "
+            "this flag meant while those were the only two), or a "
+            "comma-separated list of " + ",".join(LANG_CONFIG)
+        ),
+    )
     ap.add_argument(
         "--sample",
         action="store_true",
         help="process only the Prologue + Baptism article slices",
     )
+    ap.add_argument(
+        "--capture",
+        nargs="?",
+        const="all",
+        metavar="LANGS",
+        help=(
+            "fetch raw pages only, parsing nothing: 'all' (the default) or a "
+            "comma-separated list of " + ",".join(EDITIONS)
+        ),
+    )
     args = ap.parse_args()
     # Fail before any directory is created; see common.require_corpus().
     require_corpus()
 
-    langs = ["en", "pt"] if args.lang == "both" else [args.lang]
+    if args.capture:
+        wanted = (
+            list(EDITIONS)
+            if args.capture == "all"
+            else [x.strip() for x in args.capture.split(",") if x.strip()]
+        )
+        unknown = [x for x in wanted if x not in EDITIONS]
+        if unknown:
+            print(f"unknown edition(s): {', '.join(unknown)}", file=sys.stderr)
+            return 2
+        return capture_raw(wanted)
+
+    if args.lang == "all":
+        langs = list(LANG_CONFIG)
+    elif args.lang == "both":
+        langs = ["en", "pt"]
+    else:
+        langs = [x.strip() for x in args.lang.split(",") if x.strip()]
+    unknown = [x for x in langs if x not in LANG_CONFIG]
+    if unknown:
+        print(f"unknown language(s): {', '.join(unknown)}", file=sys.stderr)
+        return 2
     overall_ok = True
     for lang in langs:
         corrections = load_corrections(LANG_CONFIG[lang]["work_id"])

@@ -92,11 +92,48 @@ Portuguese footnotes it. Gating is still not offered, because the band that
 would clear that row is wide enough to have missed ¶2436 anyway -- the value
 here is a short list somebody reads, not a build that stops.
 
+THE FIFTH AUDIT, `divisions`, is cross-language symmetry asking about the
+STRUCTURE TREE rather than about units at all -- and it exists because the
+other four are all per-unit, so a division that never got built is outside
+every one of their universes.
+
+`check-symmetry` compares which unit numbers exist and `balance` compares how
+much text each holds; both are blind to whether the work's own divisions came
+out the same shape. Where the address space is fixed that blindness is total:
+the CCC is paragraphs 1-2865 in every edition by construction, so the sets
+agree no matter what happens to the headings above them.
+
+The Catechism's eight editions landed on 2026-08-26 and this is what they
+bought. English carried 59 in-brief divisions where Portuguese, German and
+Malagasy each carried 81 and agreed on which 81 -- a gap a year old, invisible
+to everything else, and two defects underneath it: 21 of the 22 were the
+parser (whole pages of the English mirror set every heading in plain type, and
+only bold blocks were read as headings), and the 22nd was a real source
+omission at §984, now supplied by a `heading_html` correction against the
+three editions that print it. The same run recovered a Portuguese sub-heading
+swallowed since the first ingestion.
+
+READ IT DIRECTIONALLY, which is the whole skill in using it. An edition doing
+something the others do not, consistently and everywhere, is that edition
+speaking: English prints two of the CCC's divisions as articles where the
+other seven print them as sub-headings, and the unnumbered run-in headings are
+bold in four mirrors and plain in the rest, so `ccc.es` has several hundred
+`sub` nodes and `ccc.en` has two. An edition missing what all the others have,
+in scattered places, is a parser. So this reports only the kinds whose count
+is a property of the work (`part`, `section`, `chapter`, `article`,
+`in-brief`) and never `sub`, and it ranks by how many editions agree against
+the odd one out.
+
+It reports and never fails, for the same reason `balance` does not: the band
+that would clear the legitimate divergences is wide enough to have missed the
+finding.
+
   ./audit.py coverage            # ranked table, worst first
   ./audit.py withheld            # marker vs unpublished.json
   ./audit.py toc                 # parsed structure vs the read oracle
   ./audit.py balance             # cross-language text-length symmetry
-  ./audit.py all                 # all four; exit 1 if any gates
+  ./audit.py divisions           # cross-language structure-tree symmetry
+  ./audit.py all                 # all five; exit 1 if any gates
 """
 
 from __future__ import annotations
@@ -727,11 +764,115 @@ def report_balance(rows: list[dict], limit: int) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------
+# Cross-language divisions
+# --------------------------------------------------------------------------
+
+#: The division kinds whose presence is a property of the WORK rather than of
+#: the edition printing it. `sub` is deliberately absent: an unnumbered run-in
+#: heading exists in the tree only where its mirror set it in bold, which is
+#: typography and differs legitimately by two orders of magnitude across
+#: editions of the CCC.
+DIVISION_KINDS = ("part", "section", "chapter", "article", "in-brief")
+
+
+def divisions(work: Path) -> dict[str, set[tuple]] | None:
+    """`kind -> {(first, last) paragraph span}` for one edition.
+
+    KEYED BY SPAN, NOT BY TITLE OR BY ORDINAL. The title is in a different
+    language in every edition and the ordinal restarts inside each parent, so
+    neither identifies a division across editions. The span does: the unit
+    numbers are the one thing every edition of a work agrees on by
+    construction, which is exactly what makes the unit-set oracle vacuous and
+    this one possible.
+
+    A node with a null bound (unnumbered content -- creed texts, Decalogue
+    epigraphs; see corpus-schema.md) addresses nothing and is skipped."""
+    structure = work / "structure.json"
+    if not structure.exists():
+        return None
+    found: dict[str, set[tuple]] = {k: set() for k in DIVISION_KINDS}
+
+    def walk(nodes: list[dict]) -> None:
+        for node in nodes:
+            span = tuple(node.get("paragraphs") or (None, None))
+            # `.get`, because not every comparable type stores a division
+            # tree of this shape -- the Summa's is questions and articles, and
+            # the prayers have none at all. A node with no `kind` contributes
+            # nothing rather than raising.
+            if node.get("kind") in found and all(b is not None for b in span):
+                found[node["kind"]].add(span)
+            walk(node.get("children") or [])
+
+    walk(json.loads(structure.read_text()))
+    return found
+
+
+def measure_divisions(corpus: Path) -> list[dict]:
+    """One row per division that some editions of a work have and others do
+    not, with the two sides named."""
+    rows = []
+    for base, langs in sorted(language_groups(corpus).items()):
+        trees = {}
+        for lang, work in langs.items():
+            got = divisions(work)
+            if got is not None:
+                trees[lang] = got
+        if len(trees) < 2:
+            continue
+        for kind in DIVISION_KINDS:
+            spans: dict[tuple, set[str]] = collections.defaultdict(set)
+            for lang, tree in trees.items():
+                for span in tree[kind]:
+                    spans[span].add(lang)
+            for span, have in sorted(spans.items()):
+                missing = set(trees) - have
+                if not missing:
+                    continue
+                rows.append(
+                    {
+                        "work": base,
+                        "kind": kind,
+                        "span": span,
+                        "have": sorted(have),
+                        "missing": sorted(missing),
+                    }
+                )
+    # The lopsided disagreements first: one edition against seven is a finding,
+    # four against four is two conventions.
+    rows.sort(key=lambda r: (len(r["missing"]), -len(r["have"])))
+    return rows
+
+
+def report_divisions(rows: list[dict], limit: int) -> int:
+    works = {r["work"] for r in rows}
+    print(
+        f"{len(rows)} division(s) present in some editions and not others, "
+        f"across {len(works)} work(s).\n"
+        "Ranked by how lopsided the disagreement is. An edition alone against "
+        "the rest is a lead;\nan even split is two printing conventions. "
+        "Reports only; never gates."
+    )
+    if not rows:
+        return 0
+    print()
+    for row in rows[:limit]:
+        first, last = row["span"]
+        print(
+            f"  {row['work']:14s} {row['kind']:9s} {first}-{last}"
+            f"  missing from {','.join(row['missing'])}"
+            f"  (present in {len(row['have'])}: {','.join(row['have'])})"
+        )
+    if len(rows) > limit:
+        print(f"  ... and {len(rows) - limit} more (raise --limit, or --json)")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
         "check",
-        choices=["coverage", "withheld", "toc", "balance", "all"],
+        choices=["coverage", "withheld", "toc", "balance", "divisions", "all"],
         default="all",
         nargs="?",
     )
@@ -746,13 +887,15 @@ def main() -> int:
     args = parser.parse_args()
 
     corpus = common.require_corpus()
-    # `balance` reads no raw pages and no document works, so it does not pay
-    # for the coverage measurement it never looks at.
-    rows = measure(corpus) if args.check != "balance" else []
+    # `balance` and `divisions` read no raw pages and no document works, so
+    # neither pays for the coverage measurement it never looks at.
+    rows = measure(corpus) if args.check not in ("balance", "divisions") else []
 
     if args.json:
         if args.check == "balance":
             json.dump(measure_balance(corpus), sys.stdout, indent=2, default=str)
+        elif args.check == "divisions":
+            json.dump(measure_divisions(corpus), sys.stdout, indent=2, default=str)
         else:
             json.dump(rows, sys.stdout, indent=2)
         print()
@@ -772,6 +915,10 @@ def main() -> int:
         if args.check == "all":
             print()
         status |= report_balance(measure_balance(corpus), args.limit)
+    if args.check in ("divisions", "all"):
+        if args.check == "all":
+            print()
+        status |= report_divisions(measure_divisions(corpus), args.limit)
     return status
 
 

@@ -381,12 +381,60 @@ describe('displayTitle — the eight Compendium languages beyond en/pt', () => {
 	});
 
 	it('a language with no prefix grammar leaves the title alone', () => {
-		// `la` is a content language with no CCC or Compendium edition; it
+		// `ar` is a content language with no CCC or Compendium edition; it
 		// falls back to `en`, which strips nothing here rather than guessing.
-		expect(displayTitle(node('part', 1, 'ERSTER TEIL DAS GLAUBENSBEKENNTNIS'), 'la')).toEqual({
+		// This was `la` until the Catechism's Latin edition arrived
+		// (2026-08-26) and gave Latin a grammar of its own.
+		expect(displayTitle(node('part', 1, 'ERSTER TEIL DAS GLAUBENSBEKENNTNIS'), 'ar')).toEqual({
 			ordinal: null,
 			title: 'Erster Teil Das Glaubensbekenntnis'
 		});
+	});
+
+	// One real title from each of the six Catechism editions added
+	// 2026-08-26, which is what guards the second copy of the label
+	// vocabulary (decisions.md, "A division label is read in the language it
+	// was printed in").
+	it('reads each Catechism edition’s own division labels', () => {
+		expect(displayTitle(node('part', 1, 'PARS PRIMA PROFESSIO FIDEI'), 'la')).toEqual({
+			ordinal: '1.',
+			title: 'Professio Fidei'
+		});
+		expect(displayTitle(node('chapter', 2, 'CAPUT SECUNDUM DEUS HOMINI OCCURRIT'), 'la')).toEqual({
+			ordinal: '2.',
+			title: 'Deus Homini Occurrit'
+		});
+		expect(displayTitle(node('article', 8, 'ARTIKEL 8 KAMPF DES BETENS'), 'de')).toEqual({
+			ordinal: '8.',
+			title: 'Kampf des Betens'
+		});
+		expect(
+			displayTitle(node('article', 8, 'ARTÍCULO 8 “CREO EN EL ESPÍRITU SANTO”'), 'es')
+		).toEqual({ ordinal: '8.', title: '“Creo en el Espíritu Santo”' });
+		expect(displayTitle(node('article', 2, 'ARTICOLO 2 IO CREDO'), 'it')).toEqual({
+			ordinal: '2.',
+			title: 'Io Credo'
+		});
+		expect(displayTitle(node('part', 4, 'FIZARANA FAHEFATRA'), 'mg')).toEqual({
+			ordinal: null,
+			title: 'Fizarana Fahefatra'
+		});
+		expect(displayTitle(node('article', 2, 'ANDALANA 2 Ny tolom-bavaka'), 'mg')).toEqual({
+			ordinal: '2.',
+			title: 'Ny tolom-bavaka'
+		});
+	});
+
+	// French chapters are roman in the Compendium and ordinal words in the
+	// Catechism. The same table has to read both.
+	it('reads both French chapter conventions', () => {
+		expect(displayTitle(node('chapter', 2, 'CHAPITRE II JE CROIS EN JÉSUS-CHRIST'), 'fr')).toEqual({
+			ordinal: '2.',
+			title: 'Je Crois en Jésus-Christ'
+		});
+		expect(
+			displayTitle(node('chapter', 1, 'CHAPITRE PREMIER L’HOMME EST CAPABLE DE DIEU'), 'fr')
+		).toEqual({ ordinal: '1.', title: 'L’homme Est Capable de Dieu' });
 	});
 });
 
@@ -403,7 +451,15 @@ describe("kindOrdinalLabel — our own marker, not the source's", () => {
 	});
 
 	it('falls back to English for a language with no labels', () => {
-		expect(kindOrdinalLabel(node('part', 1, ''), 'la')).toBe('Part 1');
+		expect(kindOrdinalLabel(node('part', 1, ''), 'ar')).toBe('Part 1');
+	});
+
+	it('names the Catechism’s own divisions in its eight languages', () => {
+		expect(kindOrdinalLabel(node('part', 1, ''), 'la')).toBe('Pars 1');
+		expect(kindOrdinalLabel(node('article', 8, ''), 'la')).toBe('Art. 8');
+		expect(kindOrdinalLabel(node('chapter', 3, ''), 'mg')).toBe('Toko 3');
+		expect(kindOrdinalLabel(node('article', 2, ''), 'mg')).toBe('And. 2');
+		expect(kindOrdinalLabel(node('article', 8, ''), 'de')).toBe('Art. 8');
 	});
 });
 

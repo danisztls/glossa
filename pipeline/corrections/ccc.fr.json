@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ccc.fr-918-numspace",
+    "locator": {
+      "page": "__P24.HTM",
+      "paragraph": 918,
+      "structural": "paragraph_number"
+    },
+    "field": "paragraph_html",
+    "from": "<p>918&quot;&nbsp;D&egrave;s les origines de",
+    "to": "<p>918 &quot;&nbsp;D&egrave;s les origines de",
+    "reason": "Source omits the space between this paragraph's own number and the opening quotation mark that begins its text, printing the number hard against the quote where every other paragraph in the edition prints it followed by whitespace. Without that space the number is not recognised as a paragraph opening and the whole paragraph is folded into the previous one's text. One defect in three places, all of the same shape and all where a paragraph happens to begin with a quotation: filed as three corrections rather than by loosening the shared number pattern, because accepting a bare digit run followed by punctuation as a paragraph opening would apply to all eight editions and 22,920 paragraphs in order to fix three. The paragraph number itself is correct and in sequence; only the space is missing.",
+    "evidence": "raw HTML corpus/raw/ccc-fr/__P24.HTM: '</p>\\n\\n<p>918&quot;&nbsp;D&egrave;s les origines de...' stands directly after paragraph 917. The other seven editions all carry paragraph 918, and this edition's own remaining 2,862 paragraphs print the number with a following space.",
+    "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.fr-2107-numspace",
+    "locator": {
+      "page": "__P78.HTM",
+      "paragraph": 2107,
+      "structural": "paragraph_number"
+    },
+    "field": "paragraph_html",
+    "from": "<p>2107&quot;&nbsp;Si, en raison",
+    "to": "<p>2107 &quot;&nbsp;Si, en raison",
+    "reason": "Source omits the space between this paragraph's own number and the opening quotation mark that begins its text, printing the number hard against the quote where every other paragraph in the edition prints it followed by whitespace. Without that space the number is not recognised as a paragraph opening and the whole paragraph is folded into the previous one's text. One defect in three places, all of the same shape and all where a paragraph happens to begin with a quotation: filed as three corrections rather than by loosening the shared number pattern, because accepting a bare digit run followed by punctuation as a paragraph opening would apply to all eight editions and 22,920 paragraphs in order to fix three. The paragraph number itself is correct and in sequence; only the space is missing.",
+    "evidence": "raw HTML corpus/raw/ccc-fr/__P78.HTM: '</p>\\n\\n<p>2107&quot;&nbsp;Si, en raison...' stands directly after paragraph 2106. The other seven editions all carry paragraph 2107, and this edition's own remaining 2,862 paragraphs print the number with a following space.",
+    "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.fr-2122-numspace",
+    "locator": {
+      "page": "__P79.HTM",
+      "paragraph": 2122,
+      "structural": "paragraph_number"
+    },
+    "field": "paragraph_html",
+    "from": "<p>2122&quot;&nbsp;En dehors des",
+    "to": "<p>2122 &quot;&nbsp;En dehors des",
+    "reason": "Source omits the space between this paragraph's own number and the opening quotation mark that begins its text, printing the number hard against the quote where every other paragraph in the edition prints it followed by whitespace. Without that space the number is not recognised as a paragraph opening and the whole paragraph is folded into the previous one's text. One defect in three places, all of the same shape and all where a paragraph happens to begin with a quotation: filed as three corrections rather than by loosening the shared number pattern, because accepting a bare digit run followed by punctuation as a paragraph opening would apply to all eight editions and 22,920 paragraphs in order to fix three. The paragraph number itself is correct and in sequence; only the space is missing.",
+    "evidence": "raw HTML corpus/raw/ccc-fr/__P79.HTM: '</p>\\n\\n<p>2122&quot;&nbsp;En dehors des...' stands directly after paragraph 2121. The other seven editions all carry paragraph 2122, and this edition's own remaining 2,862 paragraphs print the number with a following space.",
+    "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.fr-p2s1-missing-chapter-one",
+    "locator": {
+      "page": "__P2Q.HTM"
+    },
+    "field": "heading_html",
+    "from": "<hr size=1 noshade><b><p>Article 1</b>",
+    "to": "<hr size=1 noshade><b><p>CHAPITRE PREMIER</b></p>\n\n<p><b>LE MYSTÈRE PASCAL DANS LE TEMPS DE L’ÉGLISE</b></p>\n\n<p><b>Article 1</b>",
+    "reason": "Part Two, Section One's Chapter One is not printed as a heading block on this page -- it goes straight from the section to Article 1, so the chapter's articles attach to the section and the chapter does not exist in the tree. The identical omission is present in the English mirror and is corrected there the same way (ccc.en-p2s1-missing-chapter-one); this is the same defect in the same place in a second edition of the same work, which is what makes it the mirror's rather than a translator's.",
+    "evidence": "raw HTML corpus/raw/ccc-fr/__P2Q.HTM: the body opens '<hr size=1 noshade><b><p>Article 1</b></p>' with no chapter heading before it. The page's own <meta name=\"part\"> breadcrumb -- which the mirror generates from its heading blocks -- reads '... > PREMIERE SECTION L’ÉCONOMIE SACRAMENTELLE > CHAPITRE PREMIER LE MYSTERE PASCAL DANS LE TEMPS DE ÉGLISE > Article 1 ...', i.e. the mirror knows the chapter is there and declares it, and only the printed block is missing. The title is taken from that breadcrumb, with the elided article restored (\"DE L’ÉGLISE\"): the breadcrumb's own entity-escaping has dropped it, and the six other editions all print the definite article. corpus/works/ccc.pt, ccc.de, ccc.es, ccc.it, ccc.la and ccc.mg each carry this chapter at paragraphs 1076-1209.",
+    "added": "2026-08-26"
+  }
+]

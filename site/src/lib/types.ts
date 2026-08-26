@@ -49,9 +49,34 @@ export type WorkType =
  * written a dictionary for breaks it again. Russian is the standing example
  * pointing the other way: an interface language since Magnifica Humanitas
  * whose only Compendium is a PDF nothing parses.
+ *
+ * AND IT BROKE AGAIN THE NEXT DAY, exactly as that paragraph said it would.
+ * The Catechism landed in the eight languages vatican.va publishes it as
+ * HTML (2026-08-26), of which `mg` — Malagasy — was not a content language
+ * and is not an interface language. Fifteen content tags now, fourteen
+ * interface ones. A Malagasy reader has the whole Catechism, 2,865
+ * paragraphs, inside English chrome; by the rule the four Compendium
+ * languages established, that is a dictionary owed, and it is owed to a
+ * language nobody here reads. Until someone who does writes it, English
+ * chrome around Malagasy content is the honest state and the fallback chain
+ * is what makes it navigable.
  */
 export type ContentLang =
-	'en' | 'pt' | 'la' | 'de' | 'es' | 'fr' | 'it' | 'pl' | 'ru' | 'ar' | 'hu' | 'ro' | 'sl' | 'sv';
+	| 'en'
+	| 'pt'
+	| 'la'
+	| 'de'
+	| 'es'
+	| 'fr'
+	| 'it'
+	| 'mg'
+	| 'pl'
+	| 'ru'
+	| 'ar'
+	| 'hu'
+	| 'ro'
+	| 'sl'
+	| 'sv';
 
 interface WorkManifestBase {
 	id: string;

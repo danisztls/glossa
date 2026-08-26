@@ -237,7 +237,14 @@ Array ordered by `n`:
 - Keep citation `text` **raw and verbatim** as printed in the source footnote — the phase-2 citation parser consumes it; do not normalize.
 - `related` captures the CCC's **marginal reference apparatus**: the small paragraph numbers printed beside/inside each paragraph pointing to other paragraphs on the same theme. Capture them in printed order, deduplicated, each in 1–2865; empty array when a paragraph has none. These are NOT footnotes — do not mix them into `citations`, and strip them from `text`/`text_marked`.
 - Cross-paragraph references inside the running prose ("cf. 1212") stay in `text`/`text_marked` as printed.
-- Both `ccc.en` and `ccc.pt` must contain exactly paragraphs 1–2865; report (in `manifest.notes`) any source gaps rather than papering over them.
+- Every edition must contain exactly paragraphs 1–2865; report (in `manifest.notes`) any source gaps rather than papering over them.
+
+**Eight editions as of 2026-08-26** — `de`, `en`, `es`, `fr`, `it`, `la`, `mg`, `pt` — which is every language vatican.va publishes the Catechism in as HTML. The two it publishes only as PDF (Arabic, and Traditional Chinese, both split across part-files rather than one document) are captured in `raw/` and parsed by nothing. Three source mirrors are involved and the differences between them are edition facts worth stating before anyone reads an asymmetry as a defect:
+
+- **Only five of the eight print a footnote apparatus.** English keys its notes to anchors, Italian and Latin to `<sup>` numbers with the notes at the foot of the page, Malagasy to Word's footnote export, Portuguese to bare `(N)` markers. French, German and Spanish print no notes at all: they fold every reference into the running text — French in parentheses (`(cf. CT 20-22 ; 25)`), German in square brackets (`[Vgl. DV 5.]`), Spanish in parentheses with a hyperlink where the referent is on vatican.va. Those three therefore store `citations: []` throughout, and their `text` is correspondingly longer than the same paragraph elsewhere. Lifting a parenthesis out of French prose would be inventing an apparatus the source does not have, and would remove words the source does print. `audit.py balance` normalizes each pair by its own median, which is what makes the comparison survive this.
+- **`in_brief` is 81 divisions in every edition**, and getting there found two defects in editions that had been in the corpus for a week — see decisions.md §Oracles.
+- **`sub` density is a typographic fact, not a structural one.** The unnumbered run-in sub-headings ("The living God", "God is Truth") are bold in the Spanish, Malagasy, Italian and Latin mirrors and plain in the English and German ones. Where the source bolds them they are `sub` nodes; where it does not they are dropped as display matter and logged. So the same work has 2 unnumbered subs in `ccc.en` and several hundred in `ccc.es`. No paragraph text differs.
+- **English prints two divisions as articles that the others print as subheadings** — `2746-2758` ("The prayer of the hour of Jesus") and `2855-2865` ("The final doxology") — which is why it has 67 articles against everyone else's 65. Read as printed; not a defect in either direction.
 
 ## Catechism — `abbreviations.json`
 
@@ -248,6 +255,8 @@ The CCC's own front-matter abbreviations table, verbatim:
 ```
 
 This is the decoder ring for `citations` strings ("LG 12", "DS 150", "CIC, can. 849") — the phase-2 citation parser and all future document-to-document linking (encyclicals, council documents) depend on it. Capture both the scripture-book abbreviations and the document abbreviations if the source separates them (a `"kind": "scripture" | "document"` field is welcome if distinguishable).
+
+**Still empty in all eight editions, but no longer unsourced** (2026-08-26). The English and Portuguese mirrors begin at the Prologue and print no such table, which is why this file has been `[]` since the first ingestion. Two of the six editions added since do print one — French serves it as `__P1.HTM` ("LISTE DES SIGLES": `AA Apostolicam actuositatem`, `CT Catechesi tradendae`, `DV Dei Verbum`, …) and Latin as `abbrev_lt.htm` — and both are now captured byte-exact in `raw/`. Filling this file is therefore a re-parse, not another crawl. It is deliberately not done here: the sigla are shared across editions but the expansions are not (French expands `CDF` as "Congrégation pour la doctrine de la foi"), so populating it needs a decision about whether the table is per-edition or one shared table with per-language expansions, which is a schema question and not a scraping one.
 
 ## Compendium — `questions.json`
 

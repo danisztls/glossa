@@ -583,7 +583,7 @@ for (const workId of workIds) {
 		const paragraphNumbers = paragraphs.map((p) => p.n).sort((a, b) => a - b);
 		cccIndex[lang] = { structure, abbreviations, paragraphNumbers };
 		// Held for the xref pass below, which needs every edition at once —
-		// the two editions' Scripture references are unioned per paragraph
+		// every edition's Scripture references are unioned per paragraph
 		// (see build-xrefs.mjs). Not read from the chunks written just below:
 		// those are already filtered by `unpublished`, and taking a work down
 		// should not silently rewrite what the Catechism is recorded as

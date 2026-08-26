@@ -31,141 +31,141 @@
 		},
 		"ccc": {
 			"citations": {
-				"total": 8582,
-				"linkable": 6852,
-				"recognized": 1337,
-				"nothing": 393
+				"total": 19528,
+				"linkable": 11934,
+				"recognized": 3058,
+				"nothing": 4536
 			},
 			"prose": {
-				"blocks": 6473,
-				"scripture": 167,
+				"blocks": 26088,
+				"scripture": 7817,
 				"stored": 0
 			},
 			"residue": [
 				{
-					"key": "roman missal",
-					"count": 19,
-					"example": "Roman Missal, Eucharistic Prayer IV, 118."
+					"key": "jer. jo",
+					"count": 192,
+					"example": "jer. Jo 11,52; 10,16."
 				},
 				{
-					"key": "roman catechism",
-					"count": 18,
-					"example": "Roman Catechism I, 1, 3."
+					"key": ". jer.",
+					"count": 168,
+					"example": ". jer. Efez 3,4."
 				},
 				{
-					"key": "são tomás",
-					"count": 11,
-					"example": "São Tomás de Aquino, Summa contra gentiles I 30: Ed. Leon. 13, 92."
+					"key": "jer. 1",
+					"count": 120,
+					"example": "jer. 1 Jo 2,20.27."
 				},
 				{
-					"key": "oração eucarística",
-					"count": 11,
-					"example": "Oração eucarística IV: Missal Romano, editio typica. Typis Polyglottis Vaticanis. 1970 p. "
+					"key": "jer. jen",
+					"count": 90,
+					"example": "jer. Jen 3,8-10."
 				},
 				{
-					"key": "st. thomas",
-					"count": 10,
-					"example": "St. Thomas Aquinas, SCG 1, 30."
+					"key": "jer. rôm",
+					"count": 76,
+					"example": "jer. Rôm 1,18-25."
 				},
 				{
-					"key": "santa teresa",
-					"count": 10,
-					"example": "Santa Teresa do Menino Jesus, Manuscrit A, 83v: Manuscrits autobiographiques, Paris 1929, "
+					"key": "md augustin",
+					"count": 62,
+					"example": "Md Augustin, conf. 1, 1, 1."
 				},
 				{
-					"key": "st. john",
-					"count": 9,
-					"example": "St. John of the Cross, the Ascent of Mount Carmel 2, 22, 3-5 in The Collected Works of St."
+					"key": "lc 1",
+					"count": 60,
+					"example": "Cf Lc 1,38."
 				},
 				{
-					"key": "paul vi",
-					"count": 9,
-					"example": "Paul VI, CPG (1968)."
+					"key": "jer. asa",
+					"count": 60,
+					"example": "jer. Asa 2,42."
 				},
 				{
-					"key": "são joão",
-					"count": 8,
-					"example": "São João da Cruz, Subida del monte Carmelo 2, 22, 3-5: Biblioteca Mística Carmelitana, v. "
+					"key": "lc 24",
+					"count": 50,
+					"example": "Cf Lc 24,45."
 				},
 				{
-					"key": "vigília pascal",
-					"count": 8,
-					"example": "Cf. Vigília Pascal, oração depois da primeira leitura: Missale Romanum, editio typica (Typ"
+					"key": "lc 2",
+					"count": 46,
+					"example": "Cf Lc 2,35."
 				},
 				{
-					"key": "byzantine liturgy",
-					"count": 7,
-					"example": "Byzantine Liturgy, Feast of the Transfiguration, Kontakion."
+					"key": "jer. ff",
+					"count": 46,
+					"example": "jer. FF 20."
 				},
 				{
-					"key": "john paul",
-					"count": 6,
-					"example": "Cf. John Paul II, Apostolic Exhortation Catechesi tradendae 1; 2."
+					"key": ". md",
+					"count": 43,
+					"example": ". Md Jean Damascène, f.o. 3,24."
 				},
 				{
-					"key": "st. therese",
-					"count": 6,
-					"example": "St. Therese of Lisieux, Autobiography of a Saint, tr. Ronald Knox (London: Collins, 1960),"
+					"key": "jer. efez",
+					"count": 41,
+					"example": "jer. Efez 1,4-5."
 				},
 				{
-					"key": "st. ignatius",
-					"count": 6,
-					"example": "St. Ignatius of Antioch, Ad Smyrn. 8, 2: Apostolic Fathers, II/2, 311."
+					"key": "jer. iz",
+					"count": 39,
+					"example": "jer. Iz 2,2-4."
 				},
 				{
-					"key": "indulgentiarum doctrina",
-					"count": 6,
-					"example": "Indulgentiarum doctrina, Norm 2; Cf. Norm 3."
+					"key": "jer. sal",
+					"count": 39,
+					"example": "jer. Sal 22,15."
 				},
 				{
-					"key": "liturgia bizantina",
-					"count": 6,
-					"example": "Liturgia bizantina, Kontakion na Festa da Transfiguração: «Mênaîa toû bólou eniautoû», v. "
+					"key": "jer. apôk",
+					"count": 37,
+					"example": "jer. Apôk 21,1 - 22,5."
 				},
 				{
-					"key": "instrução geral",
-					"count": 6,
-					"example": "Cf. Instrução geral do Missal Romano, 259: Missale Romanum, editio typica (Typis Polyglott"
+					"key": "jer. eks",
+					"count": 30,
+					"example": "jer. Eks 19,6."
 				},
 				{
-					"key": "st. teresa",
-					"count": 5,
-					"example": "St. Teresa of Jesus, Poesias 30 in the Collected Works of St. Teresa of Avila, vol. III, t"
+					"key": "mc 16",
+					"count": 28,
+					"example": "Cf Mc 16,20; Eb 2,4."
 				},
 				{
-					"key": "cat rom",
-					"count": 5,
-					"example": "Cat Rom I, I,"
+					"key": "lc 22",
+					"count": 28,
+					"example": "Cf Lc 22,43."
 				},
 				{
-					"key": "ordo exsequiarum",
-					"count": 5,
-					"example": "Ordo exsequiarum, 50, editio typica (Typis Polyglottis Vaticanis 1969), p. 23 [Ed. portugu"
+					"key": "jer. 2",
+					"count": 28,
+					"example": "jer. 2 Kôr 12,9; Filip 4,13."
 				},
 				{
-					"key": "santo inácio",
-					"count": 5,
-					"example": "Santo Inácio de Antioquia, Epistula ad Romanos 6, 1-2: Sc: l0bis, 114 (Funk 1, 258-260)."
+					"key": "jer. faa",
+					"count": 27,
+					"example": "jer. FAA 19-21."
 				},
 				{
-					"key": "pontificale romanum.",
-					"count": 5,
-					"example": "Pontificale Romanum. De Ordinatione Episcopi, presbyterorum et diaconorum. De Ordinatione "
+					"key": "mc 3",
+					"count": 26,
+					"example": "Cf Mc 3,27."
 				},
 				{
-					"key": "john henry",
-					"count": 4,
-					"example": "John Henry Cardinal Newman, Apologia pro vita sua (London Longman, 1878) 239."
+					"key": "catechismus romanus",
+					"count": 26,
+					"example": "Catechismus Romanus seu Catechismus ex decreto Concilii Tridentini ad parochos, Pii V Pont"
 				},
 				{
-					"key": "st. francis",
-					"count": 4,
-					"example": "St. Francis of Assisi, Canticle of the Creatures."
+					"key": "catechismo romano",
+					"count": 25,
+					"example": "Catechismo Romano seu Catechismus ex decreto Concilii Tridentini ad parochos, Pii V Pontif"
 				},
 				{
-					"key": "pius xii",
-					"count": 4,
-					"example": "Pius XII, Address at Pentecost, June 1, 1941."
+					"key": "1 gv",
+					"count": 25,
+					"example": "Cf 1 Gv 2,20.27."
 				}
 			]
 		},
@@ -191,7 +191,7 @@
 				"nothing": 5110
 			},
 			"prose": {
-				"blocks": 15776,
+				"blocks": 15752,
 				"scripture": 4802,
 				"stored": 0
 			},

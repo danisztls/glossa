@@ -172,6 +172,39 @@ decides _when_ something runs.
   filed only because the sole discriminator is cross-language and the parser
   reads one document at a time. See `pipeline/overrides/README.md`.
 
+## The Catechism is eight editions in three page formats
+
+Ingested 2026-08-26 (`docs/decisions.md`, `docs/corpus-schema.md` §Catechism).
+`ccc.py` reads every language vatican.va publishes the CCC in as HTML — `de`,
+`en`, `es`, `fr`, `it`, `la`, `mg`, `pt` — and captures the two it publishes
+only as PDF (`ar`, `zh`, both split across part-files) into `raw/` for nothing
+to read. Three things about it are worth knowing before touching the file:
+
+- **`catechism_lt` on vatican.va is LATIN, not Lithuanian.** The site's own
+  link text says so, the pages say `PARS PRIMA`, and `lt` there is _latine_.
+  The Compendium's Lithuanian PDF two directories away is
+  `compendium_catech_lit.pdf`, with the other slug. Both expansions are
+  plausible and nothing else in the corpus disambiguates them, so getting it
+  wrong files the _editio typica latina_ under a language it is not in and no
+  check catches it.
+- **Three page families, not eight parsers.** `intratext` (en/fr/de — the old
+  IntraText mirror, `__P*.HTM`), `cms` (es/it/la/mg — vatican.va's own CMS,
+  `<p align="left">` with a bold leading number), and `pt` (its own
+  per-chapter mirror, which predates both and keeps its own reader).
+  `EDITIONS` names the source, `LANG_CONFIG` the reader, and the label
+  vocabulary is one table per language in `_LABEL_PATTERNS`.
+- **Only five of the eight print footnotes.** French, German and Spanish fold
+  every reference into the running text instead, so their paragraphs carry
+  `citations: []` by construction and their stored text is longer than the
+  same paragraph elsewhere. That is the edition, not a gap — see
+  `docs/corpus-schema.md`, and read `audit.py balance` with it in mind.
+
+**Two editions carry the abbreviations table `abbreviations.json` has been
+empty for since the beginning** — French as `__P1.HTM` ("LISTE DES SIGLES"),
+Latin as `abbrev_lt.htm` — and both are captured. Filling that file is now a
+re-parse, not a crawl. It is unparsed because the sigla are shared across
+editions and the expansions are not, which is a schema question.
+
 ## The Summa is the exception to two rules at once
 
 Ingested 2026-08-23 (`docs/decisions.md`, `docs/corpus-schema.md` §Summa). It
@@ -305,7 +338,7 @@ npm run deploy      # build -> preflight -> wrangler deploy
 - **Deploys are not sandboxed** — `wrangler` needs the Cloudflare API, which the
   sandbox blocks. Same for `git commit` (GPG).
 - **The file count is no longer the thing to watch.** Cloudflare still caps a
-  deployment at 20,000 files, but the SPA-shell build is **~2,730 files / 91 MB**,
+  deployment at 20,000 files, but the SPA-shell build is **~2,910 files / 110 MB**,
   of which exactly two are HTML (`index.html` and the offline fallback) — down
   from ~5,700 when every unit had its own page (`docs/decisions.md`,
   2026-08-18). The bulk is now immutable, content-hashed corpus JSON, which
@@ -349,21 +382,37 @@ npm run deploy      # build -> preflight -> wrangler deploy
 
 ## Work that spans languages
 
-All three Bible editions and both CCC/Compendium editions cover the same
-canonical address space, and that symmetry is a free QA oracle: when a document
-exists in two languages, their unit-number sets must match, and any asymmetry is
-a defect. That check caught three parser bugs that each looked internally
-plausible in one language alone. It does **not** generalize to the encyclicals,
-where a missing translation is legitimate and common (Leo XIII is ~17%
-translated into Portuguese) — there the rule is "when both exist, they must
-agree".
+All three Bible editions, all eight CCC editions and all ten Compendium
+editions cover the same canonical address space, and that symmetry is a free QA
+oracle: when a document exists in two languages, their unit-number sets must
+match, and any asymmetry is a defect. That check caught three parser bugs that
+each looked internally plausible in one language alone. It does **not**
+generalize to the encyclicals, where a missing translation is legitimate and
+common (Leo XIII is ~17% translated into Portuguese) — there the rule is "when
+both exist, they must agree".
 
 **Where the address space is fixed, that oracle is vacuous, and it will not
 tell you so.** The Compendium is questions 1–598 in every edition by
 construction, so the unit-number sets can never disagree — and while it
 reported symmetry, four English answers were missing their entire bulleted
 enumeration, 16 items the parser walked past (`docs/decisions.md`,
-2026-08-25). What sees that is `audit.py balance`: per-unit text length
+2026-08-25). The CCC is 1–2865 by construction the same way.
+
+**Compare the DIVISIONS instead, and it stops being vacuous.** The unit sets
+cannot disagree, but the structure trees can, and that is where the CCC's
+eight editions earned their keep on the day they landed (2026-08-26): English
+had 59 in-brief divisions where Portuguese, German and Malagasy each had 81
+and agreed on which. Twenty-one were a parser defect a year old, one was a
+source omission now corrected, and the same pass recovered a Portuguese
+sub-heading that had been swallowed since the first ingestion. It is a
+three-line script over `structure.json` — collect nodes of a kind with their
+paragraph spans, set-difference the editions — and nothing else in the corpus
+sees it, because round-trip, coverage and balance are all per-unit and a
+division is not a unit. **Read it directionally**: an edition doing something
+the others do not, everywhere and consistently, is that edition; an edition
+missing what the others all have, in scattered places, is the parser.
+
+What sees loss _inside_ a unit is `audit.py balance`: per-unit text length
 against the sibling edition, normalized by the pair's own median. Run it over
 the CCC, the Compendium, the prayers and the Summa; it is deliberately not run
 over the documents (a section number is not the same section in both editions
@@ -371,12 +420,32 @@ over the documents (a section number is not the same section in both editions
 divergence, not loss). It reports and never fails.
 
 **It scales quadratically, and that is what makes it worth running.** The
-Compendium's ten editions are 45 pairs, and `balance` compares all of them:
-48 pairs and 32,466 units across the corpus, 2 outside the band. That
-all-pairs matrix is what found the Swedish edition storing 39 of its answers
-as nothing but their own reference line — its text sits outside any paragraph,
-so the block walk never saw it, and against English alone the ratio would have
-read as one more terse translation.
+Compendium's ten editions are 45 pairs and the Catechism's eight are 28, so
+`balance` now compares 75 pairs and 109,821 units. That all-pairs matrix is
+what found the Swedish Compendium storing 39 of its answers as nothing but
+their own reference line — its text sits outside any paragraph, so the block
+walk never saw it, and against English alone the ratio would have read as one
+more terse translation.
+
+**Its first run over eight Catechism editions produced 375 outliers and three
+defects**, and each was invisible to every other check because each was one
+edition against seven (2026-08-26):
+
+- Malagasy appended each page's entire footnote apparatus to that page's last
+  paragraph — §975 stored at 13,680 characters against Portuguese's 197. Its
+  notes live in `<div id="ftnN">` rather than in a `<p>`, so the block walk
+  never matched them and the gap recovery swept them up.
+- Latin did the same to §2330 (45x), for a different reason: that page prints
+  its notes and then keeps going, with the pre-2018 text of §2267 as editorial
+  matter, so a note run detected by walking back from the end found nothing.
+- German and French both stored §103 as a seven-character fragment. The
+  embedded-paragraph-start heuristic split a quotation at the "103" in
+  "(Augustinus, Psal. 103,4, 1)" — a citation both editions print inline where
+  the others footnote it.
+
+375 outliers became 56. **Read the count, not the list**: what identified all
+three was one edition sitting far outside a band the other seven agreed on,
+and the remaining 56 are editions being editions.
 
 **The Bible is the exception to reading asymmetry as a defect**, and adding the
 Latin sharpened rather than blurred that. `bible.clementina.la` is the text

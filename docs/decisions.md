@@ -330,14 +330,34 @@ and the reason each exists is the gap in the one before it.
 - **Cross-language symmetry** — compares unit-number _sets_, so it is blind to loss
   inside a unit. **Where the address space is fixed it is vacuous and will not say so**:
   the Compendium is 1–598 in both editions by construction, and reported symmetry while
-  four English answers were missing an entire enumeration.
+  four English answers were missing an entire enumeration. **Comparing DIVISIONS rather
+  than units is the version of it that is not vacuous there**, and it is what six new
+  Catechism editions were worth: the CCC is 1–2865 in all eight by construction, so the
+  unit sets can never disagree — but the in-brief divisions can, and did. English had 59
+  where Portuguese, German and Malagasy each had 81 and agreed on which. Twenty-one were
+  a parser defect a year old (whole pages of the English mirror set every heading in
+  plain type, and only bold blocks were read as headings, so those in-brief headings fell
+  under the run-in-subheader word cap and were dropped); the twenty-second is a genuine
+  source omission at §984, now supplied by a `heading_html` correction against the three
+  editions that print it. The same pass found a Portuguese sub-heading that had been
+  swallowed since the first ingestion. **A one-sided gap against three independent
+  editions is not a reading, it is a bug**, and no check the corpus already had could see
+  it: round-trip, coverage and balance are all per-unit, and the divisions are not units.
 - **Coverage** (`audit.py coverage`) — raw body text divided by what we stored. Crude and
   therefore hard to fool; it cannot say what was lost, only how much. It never legitimately
   reaches 100%, so a low band is a research lead and only a floor is gated.
 - **Balance** (`audit.py balance`) — per-unit length against the sibling edition,
   normalized by the pair's own median. Run over the CCC, Compendium, prayers and Summa;
   deliberately **not** over documents (a section number is not the same section in both
-  editions — `coverage` is the instrument there) or the Bible.
+  editions — `coverage` is the instrument there) or the Bible. Its first run over eight
+  Catechism editions found three defects in three different parsers' worth of assumption
+  — a whole page's footnotes appended to that page's last paragraph in Malagasy, the same
+  in Latin for a different reason, and a quotation split at the "103" inside "(Augustinus,
+  Psal. 103,4, 1)" in both German and French. 375 outliers became 56.
+- **Divisions** (`audit.py divisions`) — the structure trees of a work's editions, compared
+  by paragraph span. The one check that is not per-unit, and therefore the only one that
+  can see a division that never got built: it is what found English carrying 59 in-brief
+  divisions where three other editions carried 81.
 - **Hand-read oracles** — a person reads the source page and writes down its table of
   contents (`audit.py toc`), or a note's lemma is checked against the verse it quotes.
   These are the only checks that can see something the parser never produced at all.
@@ -358,6 +378,17 @@ count and on nothing else.
 
 **Bible asymmetry is edition divergence, not defect** (`docs/research/bible-edition-divergence.md`).
 Calling it a defect invites someone to "fix" a faithful text.
+
+**And neither is every Catechism asymmetry**, which is the same rule meeting eight
+editions of one work. Three of the eight print no footnote apparatus at all — French
+folds its references into the prose in parentheses, German in brackets, Spanish in
+parentheses with a hyperlink — so their paragraphs carry no citations and their stored
+text is longer. The unnumbered run-in sub-headings are bold in four mirrors and plain in
+the others, so `ccc.es` has several hundred `sub` nodes and `ccc.en` has two. English
+prints two divisions as articles that the rest print as sub-headings. **What separates
+these from the in-brief gap above is which way the evidence points**: an edition doing
+something the others do not, consistently and everywhere, is that edition; an edition
+missing something the others all have, in scattered places, is a parser.
 
 **A second transcription of the same printing is the only check that sees a hole.** It
 is why `bible.matos-soares.pt` keeps liriocatolico's verses despite taking its apparatus
@@ -490,6 +521,15 @@ generated one: the scraper's copy decides what a heading _is_, and getting it wr
 unstripped label. Different failure modes, and the source they both describe is a frozen
 capture. What guards the copy is a test asserting a real title from each of the ten
 editions, not the table.
+
+**One language can print one kind two ways, and the table is keyed by language.** French
+numbers its Compendium chapters in roman numerals and its Catechism chapters in ordinal
+words, so `fr.chapter` holds both series and the first that matches wins — they cannot
+both match one title. The Catechism's eight editions also added the `article` kind to six
+tables that had never needed it (only the Catechism has articles) and brought `la` and
+`mg` into the grammar: Latin had been a content language since the Summa and stayed out
+of it because the Summa's divisions carry no printed label to strip, which stopped being
+true the moment `PARS PRIMA` arrived.
 
 **Title case is the only safe guess from an ALL-CAPS heading, so every language gets one
 small-word list rather than its own convention.** Most of the twelve would use sentence
