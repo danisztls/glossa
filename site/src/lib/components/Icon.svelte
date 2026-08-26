@@ -47,6 +47,10 @@
 	import Link from '@lucide/svelte/icons/link';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
+	// Two dice rather than a single face (`dice-5`): one die reads as a
+	// number — the five — where the pair reads as the act of rolling, which
+	// is what the control does.
+	import Dices from '@lucide/svelte/icons/dices';
 
 	const ICONS = {
 		search: Search,
@@ -66,7 +70,8 @@
 		copy: Copy,
 		link: Link,
 		'trash-2': Trash2,
-		'external-link': ExternalLink
+		'external-link': ExternalLink,
+		dices: Dices
 	};
 
 	export type IconName = keyof typeof ICONS;

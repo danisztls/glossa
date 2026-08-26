@@ -108,6 +108,7 @@ export const en: Dictionary = {
 	'bible.landing.tagline': 'Read the whole Bible, book by book, chapter by chapter.',
 	'bible.landing.continue': 'Continue where you left off',
 	'bible.landing.start': 'Start reading',
+	'bible.landing.random': "I'm feeling lucky",
 	'bible.landing.books': 'Books',
 	// The canonical book/chapter structure is edition-independent, so the
 	// picker can offer a chapter the reader's current edition lacks.

@@ -498,6 +498,55 @@ export function listBooks(workId: string): BibleBookMeta[] {
 	return bibleIndex[workId] ?? [];
 }
 
+/**
+ * One verse of `workId`, drawn at random — what the landing page's dice
+ * button opens.
+ *
+ * UNIFORM OVER VERSES, NOT OVER BOOKS. Picking a book and then a chapter
+ * inside it would give Obadiah (one chapter, 21 verses) the same weight as
+ * the Psalms (150 chapters), and a reader rolling twice would notice: the
+ * short prophets would come up constantly and the historical books almost
+ * never. So the walk is over a running total of verse counts, and every
+ * verse in the edition is equally likely.
+ *
+ * INDEX TIER ONLY — no fetch, no chapter text. `bibleIndex` already carries
+ * every chapter's verse numbers (it is what `refs.ts` checks citations
+ * against), which is also why the verse is read out of `verses[]` by
+ * position rather than assumed to be `index + 1`: verse numbering is not
+ * always contiguous.
+ *
+ * Chapter 0 needs no excluding here. A book introduction is addressed as
+ * chapter 0 but is deliberately kept out of `chapters` (see
+ * `scripts/sync-corpus.mjs`), so it is not a candidate, and it has no verse
+ * to land on in any case.
+ *
+ * `random` is injectable only so the walk's boundaries can be tested;
+ * callers pass nothing.
+ */
+export function randomVerse(
+	workId: string,
+	random: () => number = Math.random
+): { osis: string; chapter: number; verse: number } | undefined {
+	const books = listBooks(workId);
+	let total = 0;
+	for (const book of books) for (const chapter of book.chapters) total += chapter.verses.length;
+	if (total === 0) return undefined;
+
+	// `Math.random()` is [0, 1), so this is already in [0, total) — clamped
+	// because an injected generator that returns exactly 1 would otherwise
+	// walk off the end and report "no verses" for a corpus plainly full of
+	// them.
+	let index = Math.min(Math.floor(random() * total), total - 1);
+	for (const book of books) {
+		for (const chapter of book.chapters) {
+			const verse = chapter.verses[index];
+			if (verse) return { osis: book.osis, chapter: chapter.n, verse: verse.n };
+			index -= chapter.verses.length;
+		}
+	}
+	return undefined;
+}
+
 // --- Book introductions (chapter 0) --------------------------------------
 //
 // Addressed as chapter 0 of the book, but stored and reasoned about apart

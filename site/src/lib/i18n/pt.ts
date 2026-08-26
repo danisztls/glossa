@@ -78,6 +78,7 @@ export const pt: Dictionary = {
 	'bible.landing.tagline': 'Leia toda a Bíblia, livro por livro, capítulo por capítulo.',
 	'bible.landing.continue': 'Continuar de onde parou',
 	'bible.landing.start': 'Começar a leitura',
+	'bible.landing.random': 'Estou com sorte',
 	'bible.landing.books': 'Livros',
 	'bible.chapterUnavailable': 'Não disponível nesta edição',
 	'bible.introduction': 'Introdução',

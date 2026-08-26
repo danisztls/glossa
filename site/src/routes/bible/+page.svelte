@@ -7,7 +7,9 @@
 	 * every route client-rendered. Offers the reader's edition + its
 	 * copyright notice, a single entry point (continue reading if a
 	 * position is stored for this edition, else the edition's first
-	 * chapter — Genesis 1 for both v1 editions), and the canonical
+	 * chapter — Genesis 1 for both v1 editions), the dice button that draws
+	 * one verse at random from that same edition (`RandomVerseButton`, which
+	 * the scripture reader carries in its own bar), and the canonical
 	 * book/chapter structure via `BookChapterPicker`.
 	 */
 	import { content } from '$lib/content.svelte';
@@ -16,6 +18,7 @@
 	import { getWork, listBooks } from '$lib/corpus';
 	import { getPosition, type ReadingPosition } from '$lib/reading-position';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
+	import RandomVerseButton from '$lib/components/RandomVerseButton.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	const workId = $derived(content.workIdFor('bible'));
@@ -63,6 +66,7 @@
 		{:else if firstChapterHref}
 			<a href={firstChapterHref} class="entry-link">{t('bible.landing.start')}</a>
 		{/if}
+		<RandomVerseButton />
 	</p>
 
 	{#if workId}
@@ -97,6 +101,14 @@
 
 	.entry-link {
 		font-weight: 600;
+	}
+
+	/* The button brings its own `.menu-trigger` box; only its place in this
+	   sentence is this page's business. `:global` because the class is on the
+	   component's own element, out of reach of this stylesheet's scoping. */
+	.entry-point :global(.random-verse) {
+		margin-inline-start: 0.5rem;
+		vertical-align: middle;
 	}
 
 	.entry-detail {

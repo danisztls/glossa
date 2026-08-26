@@ -64,6 +64,7 @@ export const hu: Dictionary = {
 		'Olvassa végig a teljes Szentírást, könyvről könyvre, fejezetről fejezetre.',
 	'bible.landing.continue': 'Folytassa ott, ahol abbahagyta',
 	'bible.landing.start': 'Olvasás megkezdése',
+	'bible.landing.random': 'Szerencsét próbálok',
 	'bible.landing.books': 'Könyvek',
 	'bible.chapterUnavailable': 'Ebben a kiadásban nem érhető el',
 	'bible.introduction': 'Bevezetés',

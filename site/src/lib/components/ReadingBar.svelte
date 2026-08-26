@@ -1,8 +1,8 @@
 <!--
 	The reading page's own control bar: which edition, whether to compare it
-	with another, and the two things a reader does with the page itself (save
-	it, print it). Sticky, so all four stay reachable at any depth in a text
-	that can run to 287 sections.
+	with another, and the things a reader does with the page itself (save it,
+	print it, and — on scripture — roll for another verse). Sticky, so they
+	stay reachable at any depth in a text that can run to 287 sections.
 
 	IT EXISTS IN BOTH MODES, WHICH IS WHY IT IS NOT PART OF `CompareGrid`.
 	These controls used to be scattered across three places that each existed
@@ -13,9 +13,14 @@
 	Gathering them here means the bar is the same object before and after —
 	only the comparison picker appears, next to the toggle that summoned it.
 
-	ONE FLAT ROW, IN A FIXED ORDER: bookmark, print, edition, compare, second
-	edition. The two page-level buttons come first and the text-level controls
-	follow, so the row runs from what is being read to how it is being read.
+	ONE FLAT ROW, IN A FIXED ORDER: bookmark, print, roll, edition, compare,
+	second edition. The page-level buttons come first and the text-level
+	controls follow, so the row runs from what is being read to how it is
+	being read. The roll joins the first group and sits last in it: it is the
+	only one of the three that leaves the page, and the only one not every
+	route renders (see `randomVerse` below), so putting it at that group's
+	edge keeps bookmark and print in the same place whether or not it is
+	there.
 	Evenly spaced throughout — the three edition controls share a wrapper, but
 	only so they wrap as a unit (see `.reading-bar-editions`), not to set them
 	apart. An earlier version DID pin them to opposite ends of the bar; that
@@ -53,6 +58,7 @@
 	import CompareToggle from './CompareToggle.svelte';
 	import BookmarkButton from './BookmarkButton.svelte';
 	import PrintButton from './PrintButton.svelte';
+	import RandomVerseButton from './RandomVerseButton.svelte';
 	import { publishHeight } from '$lib/sticky-height';
 
 	/** What the second column shows, and how the reader changes it. The
@@ -86,9 +92,21 @@
 		/** The picker that names and chooses the second column. Rendered only
 		 *  while comparing. */
 		comparison?: ComparisonPicker;
+		/** Offer the random-verse roll beside print. Opt-in, and taken up by
+		 *  the scripture routes alone: it opens a Bible verse, which is a
+		 *  page-level action where the page IS scripture and a non-sequitur
+		 *  in the bar of a Summa article or an encyclical. */
+		randomVerse?: boolean;
 	}
 
-	let { bookmarkHref, canCompare, compareActive, onToggleCompare, comparison }: Props = $props();
+	let {
+		bookmarkHref,
+		canCompare,
+		compareActive,
+		onToggleCompare,
+		comparison,
+		randomVerse = false
+	}: Props = $props();
 
 	/**
 	 * Publish this bar's height as `--reading-bar-height` on <html>, exactly
@@ -114,6 +132,9 @@
 <div class="reading-bar" bind:this={barEl}>
 	<BookmarkButton href={bookmarkHref} />
 	<PrintButton />
+	{#if randomVerse}
+		<RandomVerseButton />
+	{/if}
 	<div class="reading-bar-editions">
 		<EditionMenu />
 		{#if canCompare && onToggleCompare}

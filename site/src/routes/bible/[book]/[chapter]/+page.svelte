@@ -405,10 +405,12 @@
 	     nothing to compare (no verse numbers to align by, and one introduction
 	     is shared across a language's editions), so the compare toggle, the
 	     comparison picker and the cited-in panel are all absent rather than
-	     disabled. The reading bar keeps the bookmark and print controls. -->
+	     disabled. The reading bar keeps the bookmark, print and roll
+	     controls — an introduction is still a page of scripture to roll away
+	     from. -->
 	<div class="reading-layout">
 		<article class="content-column">
-			<ReadingBar bookmarkHref={chapterHref} canCompare={false} compareActive={false} />
+			<ReadingBar bookmarkHref={chapterHref} canCompare={false} compareActive={false} randomVerse />
 
 			{#if intro && introWork}
 				<p class="edition-label">{introWork.title}</p>
@@ -464,14 +466,16 @@
 {:else if current}
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
-			<!-- Edition, comparison, bookmark and print, in that order and in both
-			     modes — see `ReadingBar`. Everything it carries used to be spread
-			     across the breadcrumb row, the title row and the site header. -->
+			<!-- Edition, comparison, bookmark, print and the random-verse roll, in
+			     that order and in both modes — see `ReadingBar`. Everything it
+			     carries used to be spread across the breadcrumb row, the title row
+			     and the site header. -->
 			<ReadingBar
 				bookmarkHref={chapterHref}
 				canCompare={otherEditions.length > 0}
 				{compareActive}
 				onToggleCompare={toggleCompare}
+				randomVerse
 				comparison={{
 					editions: otherEditions,
 					current: secondaryWorkId,

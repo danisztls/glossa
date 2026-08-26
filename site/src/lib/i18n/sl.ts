@@ -63,6 +63,7 @@ export const sl: Dictionary = {
 		'Preberite celotno Sveto pismo, knjigo za knjigo, poglavje za poglavjem.',
 	'bible.landing.continue': 'Nadaljujte tam, kjer ste ostali',
 	'bible.landing.start': 'Začnite brati',
+	'bible.landing.random': 'Počutim se srečnega',
 	'bible.landing.books': 'Knjige',
 	'bible.chapterUnavailable': 'V tej izdaji ni na voljo',
 	'bible.introduction': 'Uvod',
