@@ -857,6 +857,41 @@ a title derived from an address is not corpus text but is not nothing either. An
 `HTMLRewriter` work to every navigation, against a CPU limit that has never yet been the
 binding constraint and would want measuring before it is.
 
+**A link to this site is unfurled, not searched, nearly everywhere it is pasted**
+(2026-08-26). The head above is read by search engines; what a chat client, a forum or a
+social post reads is Open Graph, and there was none — so a pasted link rendered as the bare
+URL. `app.html` now carries the tags and `static/og.png` the card they point at.
+
+Two of the tags are absent on purpose, and the absences are the decisions. **`og:url` is
+omitted**: its job is to name the canonical address of the thing being unfurled, and with
+one document answering all 5,812 addresses the only value this file could hold is the site
+root — which would retitle and relink every deep-link preview to the home page. Omitted, an
+unfurler falls back to the URL it fetched, which is right by construction. **`og:locale` is
+omitted** for the same shape of reason: the interface language is a stored preference, not
+part of the path, so no one value is true of the document.
+
+**The card is generated, not drawn** (`site/scripts/og-image.mjs`). It is the site's own
+wordmark — the lockup from `Wordmark.svelte`, whose second line is sized by a ratio derived
+from Pirata One's advance widths — set in the site's own faces on the light palette's
+paper, with the words read from `manifest.webmanifest` so the image cannot claim a name or
+a description the site does not. Drawing that by hand in an editor produces a second
+wordmark, which is the drift that component's docblock already spends a paragraph
+refusing. The script is run by hand and the PNG committed: it shells out to
+`woff2_decompress` and `rsvg-convert` (fontconfig will not read woff2, and the render is
+pointed at a private font directory so a locally-installed EB Garamond of another vintage
+cannot answer instead), and a deploy that needs either binary is a deploy that fails on a
+machine which is otherwise fine.
+
+It is **one image in one theme**, and the theme is the paper. A card is a single file
+served to a reader whose `prefers-color-scheme` it cannot know, so there is nothing to
+answer — only a choice of which of the site's looks represents it.
+
+The file is 47 KB nothing on this site ever fetches, which puts it in two lists it would
+otherwise have quietly missed: `CRAWLER_FILES` in `sw-policy.ts`, so the service worker
+does not precache a card for an unfurler in someone else's chat client, and the
+`run_worker_first` negations in `wrangler.jsonc`, so a scrape of it is not a billed Worker
+invocation.
+
 **The sitemap dates each URL from the English text, because that is the text the URL
 serves a crawler** (2026-08-26). `<lastmod>` comes from a committed ledger of per-address
 fingerprints (`site/scripts/lastmod.mjs`) rather than the build clock — git's granularity
@@ -1004,6 +1039,30 @@ missed.
 and `perfectoin` does not, because its `o` precedes its `i` and the target's does not.
 Written down as a test rather than left as folklore, since the next person to meet it will
 otherwise file it as a bug and tune the threshold, which cannot fix it.
+
+**The matched span is marked in the row, and re-derived rather than carried.** A row shows
+an address as the reader's own language spells it, which is very often not what they typed
+— `jo 3` offers "John 3", `lg` offers "Lumen Gentium" — so the row says where it goes and
+nothing about why it is on a list of eight. `highlight.ts` marks the spans, and it matches
+the LABEL rather than reusing what `suggest.ts` matched: the suggester scores a candidate's
+_forms_ (a title, a slug with its hyphens opened out, a siglum, a book abbreviation in
+eleven languages), and a span in a form the reader cannot see is nothing to draw. The
+consequence is stated rather than papered over — `lg` reaching "Lumen Gentium" carries no
+mark at all, because the evidence was a siglum and the siglum is not printed. It renders as
+segments and never as `{@html}`: the strings being marked are corpus titles.
+
+**It marks by the matcher's own tiers, with one asymmetry that is the corpus's.** A token
+marks where it opens a word, and only where it opens none does an interior hit count, from
+four characters — `titleScore`'s gate and `titleSubstring`'s measurement. A one-LETTER
+token must be a whole word and a one-DIGIT token need not: `summa i-ii 1` otherwise marked
+the `I` of "In", "Is" and "Intention" down four rows of Summa titles, while a digit is an
+address whose typed prefix is exactly why the row is there, so `jo 3` marking the `3` of
+"Job 30" is information. Where nothing matches literally a subsequence is marked instead,
+for the rows loose matching put on the list — `capcity` over "Man's **Cap**a**city** for
+God" is the whole explanation for a row that would otherwise look accidental. That pass
+runs only after the literal tiers find nothing, and it is honest rather than tidy: a stray
+letter far from the rest ("**Prayer** in the Chri**s**tian Life") is what the matcher
+actually walked, and hiding it would mean drawing a shape the ranker did not use.
 
 **Theme is independent axes, not one list.** `auto / light / dark / sepia` made one value
 answer two questions and cost the reader a real combination. Sepia yields to dark because

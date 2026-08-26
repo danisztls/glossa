@@ -96,7 +96,9 @@ const HOST_CONFIG_FILES = ['/_headers', '/_redirects'];
  * that no part of the app ever fetches, and precaching it would spend a
  * reader's bandwidth at install on a file written for crawlers. `security.txt`
  * is small but is read the same way: by a researcher over HTTP, never by the
- * running application. Both are in `static/`, so `files` offers them and the
+ * running application. `og.png` is the link-preview card — 47 KB rendered for
+ * an unfurler in someone else's chat client, which is not this browser and
+ * never this cache. All three are in `static/`, so `files` offers them and the
  * precache would take them without this.
  *
  * Kept separate from HOST_CONFIG_FILES because the reason differs: those two
@@ -105,7 +107,7 @@ const HOST_CONFIG_FILES = ['/_headers', '/_redirects'];
  * arguably the same category and ARE still precached — a few KB each,
  * predating this list, and left alone rather than changed in passing.)
  */
-const CRAWLER_FILES = ['/sitemap.xml', '/.well-known/security.txt'];
+const CRAWLER_FILES = ['/sitemap.xml', '/.well-known/security.txt', '/og.png'];
 
 export interface PartitionInput {
 	/** `$service-worker`'s `build` — EVERY emitted build asset, corpus JSON

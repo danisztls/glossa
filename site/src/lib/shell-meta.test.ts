@@ -62,3 +62,76 @@ describe('app.html', () => {
 		expect(declared).toBe(layoutTitle);
 	});
 });
+
+/**
+ * The link-preview card.
+ *
+ * Three files have to agree and none of them imports another: `src/app.html`
+ * declares the tags, `static/og.png` is the image they point at, and
+ * `scripts/og-image.mjs` generated it from `static/manifest.webmanifest`. A
+ * card is also the one part of the site nobody working on it ever looks at —
+ * it renders in someone else's chat client — so nothing but this file notices
+ * when a rename leaves the image saying the old name, or a redesign leaves the
+ * declared dimensions describing the old PNG.
+ */
+describe('app.html Open Graph', () => {
+	const html = read('src/app.html');
+	const property = (name: string) =>
+		new RegExp(`<meta\\s+property="${name}"\\s+content="([^"]*)"`).exec(html)?.[1] ??
+		// Prettier breaks a long tag across lines, putting the attributes on
+		// their own; match that shape too rather than depending on the width of
+		// any one value.
+		new RegExp(`property="${name}"\\s+content="([^"]*)"`).exec(html)?.[1];
+
+	// The unfurl is a second rendering of the title and description the rest of
+	// the head already carries. Two consumers, one claim.
+	it('titles and describes the card the same as the page', () => {
+		expect(property('og:title')).toBe(/<title>([^<]*)<\/title>/.exec(html)?.[1]);
+		expect(property('og:description')).toBe(
+			/<meta\s+name="description"\s+content="([^"]*)"/.exec(html)?.[1]
+		);
+	});
+
+	// Absolute because a scraper is not a browser and has no document to
+	// resolve a rooted path against — and on the host `wrangler.jsonc` routes,
+	// not on whatever the last environment happened to be.
+	it('points at the image absolutely, on the canonical host', () => {
+		expect(property('og:image')).toBe('https://glossacatholica.org/og.png');
+	});
+
+	/**
+	 * Declared so an unfurler can lay the card out before the bytes arrive —
+	 * which makes them a claim about the file, checked here against the file's
+	 * own PNG header (bytes 16-23 of IHDR).
+	 */
+	it('declares the dimensions static/og.png actually has', () => {
+		const header = readFileSync(path.join(process.cwd(), 'static/og.png')).subarray(0, 24);
+		expect(property('og:image:width')).toBe(String(header.readUInt32BE(16)));
+		expect(property('og:image:height')).toBe(String(header.readUInt32BE(20)));
+	});
+
+	// The one thing Open Graph cannot say. Without it the card is a square
+	// thumbnail with the wordmark cropped out of it.
+	it('asks for the large card shape', () => {
+		expect(/<meta\s+name="twitter:card"\s+content="([^"]*)"/.exec(html)?.[1]).toBe(
+			'summary_large_image'
+		);
+	});
+
+	/**
+	 * `og:url` names the canonical address of the thing being unfurled, and one
+	 * document answers 5,812 of them here — so any value it could carry would
+	 * redirect every deep-link preview to the home page. Absent, the unfurler
+	 * uses the URL it fetched. This is an assertion that it STAYS absent,
+	 * because adding it looks like completing the set.
+	 */
+	it('declares no og:url', () => {
+		expect(property('og:url')).toBeUndefined();
+	});
+
+	// Alt text describes the image to a reader who cannot see it, and an unfurl
+	// is often the only thing a screen reader gets of a shared link.
+	it('describes the image', () => {
+		expect(property('og:image:alt')?.length).toBeGreaterThan(20);
+	});
+});

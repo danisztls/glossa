@@ -178,6 +178,28 @@ Chromium only fires `beforeinstallprompt` for a page it considers installable,
 which requires the worker. Testing the hint does not; `?install-hint` works
 under `npm run dev`.
 
+## The link-preview card
+
+`static/og.png` is what a paste of this site's URL renders as in a chat client
+or a social post. It is generated, not drawn:
+
+```sh
+node scripts/og-image.mjs   # rewrites static/og.png; commit it
+```
+
+The words come from `static/manifest.webmanifest` (its `name`, and the clause
+before the em dash of its `description`), the type from `static/fonts/`, and the
+colours from `src/app.css`'s light palette — so the card cannot drift from the
+name and description the head declares. `src/lib/shell-meta.test.ts` checks that
+the `og:` tags, the page title, the description and the PNG's own dimensions all
+still agree.
+
+It is **not** part of `npm run build`, and must not become part of it: the script
+shells out to `woff2_decompress` (Arch: `woff2`) and `rsvg-convert` (Arch:
+`librsvg`), and a deploy that needs either binary fails on a machine that is
+otherwise fine. Run it when the name, the description or the design changes,
+which is roughly never.
+
 ## Developing
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:

@@ -81,7 +81,8 @@ describe('partitionAssets', () => {
 		'/_headers',
 		'/_redirects',
 		'/sitemap.xml',
-		'/.well-known/security.txt'
+		'/.well-known/security.txt',
+		'/og.png'
 	];
 	const contentAssets = [
 		asset({ url: '_app/immutable/assets/ccc.hash.json' }),
@@ -136,6 +137,9 @@ describe('partitionAssets', () => {
 		// bandwidth at install on a file no module fetches.
 		expect(partition.shellUrls.has('/sitemap.xml')).toBe(false);
 		expect(partition.shellUrls.has('/.well-known/security.txt')).toBe(false);
+		// The link-preview card, rendered for an unfurler in someone else's
+		// chat client: no browser on this site ever requests it.
+		expect(partition.shellUrls.has('/og.png')).toBe(false);
 		expect(partition.shellUrls.has('/manifest.webmanifest')).toBe(true);
 		expect(partition.shellUrls.has('/offline.html')).toBe(true);
 	});

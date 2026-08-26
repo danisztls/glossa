@@ -129,6 +129,7 @@
 			"!/reference-coverage.json",
 			"!/offline.html",
 			"!/sitemap.xml",
+			"!/og.png",
 			// Not just the file that exists. `/.well-known/*` is where every scanner
 			// probes -- security.txt, then a dozen paths we will never serve -- and
 			// a miss handled here is a static 404 rather than a Worker invocation
