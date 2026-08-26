@@ -186,8 +186,12 @@ const PER_PRODUCER_CAP = 6;
 
 /** Case- and accent-insensitive. The last tier of book matching and the only
  *  tier of title matching — see `book-token.ts` on why accents are folded
- *  late rather than early (`jó` is Job, `jo` is John). */
-function fold(s: string): string {
+ *  late rather than early (`jó` is Job, `jo` is John).
+ *
+ *  Exported for `highlight.ts`, which has to fold per code point to keep an
+ *  index map back to the original and therefore cannot call this — its test
+ *  asserts the two agree, which is the coupling that matters. */
+export function fold(s: string): string {
 	return s
 		.normalize('NFD')
 		.replace(/\p{Mn}/gu, '')
@@ -401,7 +405,7 @@ function bookForms(lang: string): BookForm[] {
 	const add = (form: string, osis: string, tier: 0 | 1 | 2) => {
 		const norm = normalizeBookToken(form);
 		if (!norm) return;
-		const key = `${norm} ${osis} ${tier}`;
+		const key = `${norm}\u0000${osis}\u0000${tier}`;
 		if (seen.has(key)) return;
 		seen.add(key);
 		out.push({ norm, folded: fold(norm), osis, tier });

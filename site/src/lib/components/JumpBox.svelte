@@ -31,6 +31,7 @@
 	import type { BibleBookMeta } from '$lib/corpus-index';
 	import { content } from '$lib/content.svelte';
 	import { setFuzzyRanker, suggest } from '$lib/suggest';
+	import { highlight } from '$lib/highlight';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
 
@@ -484,11 +485,34 @@
 							onmousemove={() => (active = index)}
 						>
 							<span class="row">
-								<span class="label">{suggestion.label}</span>
+								<!--
+									Segments, never `{@html}`: the strings being marked are
+									corpus titles, and a highlighter that built markup would
+									be injecting whatever a document is called into the page.
+
+									Written without a break inside the element — Svelte keeps
+									the whitespace, and a newline before the first segment is
+									a leading space in front of every label.
+								-->
+								<span class="label"
+									>{#each highlight( suggestion.label, query, { loose: true } ) as segment}{#if segment.hit}<mark
+												>{segment.text}</mark
+											>{:else}{segment.text}{/if}{/each}</span
+								>
 								<span class="badge">{suggestion.badge}</span>
 							</span>
 							{#if suggestion.detail}
-								<span class="detail">{suggestion.detail}</span>
+								<!--
+									The detail is marked literally and never loosely: it is
+									not what the row was matched on, so a subsequence found
+									in a pontiff's name or a chapter span would be a
+									coincidence drawn as evidence.
+								-->
+								<span class="detail"
+									>{#each highlight(suggestion.detail, query) as segment}{#if segment.hit}<mark
+												>{segment.text}</mark
+											>{:else}{segment.text}{/if}{/each}</span
+								>
 							{/if}
 						</a>
 					</li>
@@ -673,6 +697,35 @@
 
 	.label {
 		font-size: 0.98rem;
+	}
+
+	/*
+	 * The matched run, and the one place on this site a `<mark>` appears.
+	 *
+	 * NOT the UA's yellow: these rows sit on the panel in three themes, and a
+	 * fixed background that reads as emphasis on parchment reads as damage on
+	 * dark. A tint mixed from `--color-apparatus` moves with the theme the same
+	 * way the focus ring does, and stays a tint — the text keeps the row's own
+	 * colour, because a mark that recoloured the label would make eight rows of
+	 * suggestions look like eight links inside a list of links.
+	 *
+	 * Weight rather than colour carries it where the tint cannot: under
+	 * forced-colors the background is dropped, and `mark` there is repainted in
+	 * the user's own Mark/MarkText pair, so the emphasis survives twice over.
+	 * 600 and not bolder — the label is set at 0.98rem and a heavier step
+	 * reflows the row enough to jitter the list as the reader types.
+	 */
+	mark {
+		background: color-mix(in srgb, var(--color-apparatus) 18%, transparent);
+		color: inherit;
+		font-weight: 600;
+		border-radius: 0.15rem;
+	}
+
+	/* The detail is muted and one line; a tint there would fight the ellipsis
+	   for the reader's attention. Weight alone. */
+	.detail mark {
+		background: transparent;
 	}
 
 	.badge {
