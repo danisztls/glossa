@@ -52,10 +52,14 @@
 	// is what the control does.
 	import Dices from '@lucide/svelte/icons/dices';
 	// The plain arrow, not `arrow-up-to-line` or `chevron-up`: it is the same
-	// shape UnitNav already sets as a text character for "back" and "onward"
-	// (`&larr;`/`&rarr;`), rotated, so movement through the text reads as one
-	// vocabulary whether the control is a word or an icon.
+	// shape UnitNav draws for "back" and "onward", rotated, so movement through
+	// the text reads as one vocabulary wherever the control appears. Those two
+	// were the text characters `&larr;`/`&rarr;` until they became icons here;
+	// `arrow-left`/`arrow-right` are what keeps that vocabulary one drawing
+	// rather than a glyph beside a font's idea of the same glyph.
 	import ArrowUp from '@lucide/svelte/icons/arrow-up';
+	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 
 	const ICONS = {
 		search: Search,
@@ -77,7 +81,9 @@
 		'trash-2': Trash2,
 		'external-link': ExternalLink,
 		dices: Dices,
-		'arrow-up': ArrowUp
+		'arrow-up': ArrowUp,
+		'arrow-left': ArrowLeft,
+		'arrow-right': ArrowRight
 	};
 
 	export type IconName = keyof typeof ICONS;

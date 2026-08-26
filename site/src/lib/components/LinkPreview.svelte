@@ -73,10 +73,12 @@
 	// link the site emits; tapping costs a tap, so it previews only the links
 	// where a glance is the likely intent — inline citations inside prose
 	// (`RefText.svelte`'s `.ref-link`, `ProseBlocks.svelte`'s
-	// `.inline-ref`). Table-of-contents entries, prev/next nav and jump-box
-	// results are the opposite case: the reader picked them in order to GO
-	// there, and taxing that with a peek would be an obstacle, not a feature.
-	// They keep their plain one-tap navigation, and still preview on hover.
+	// `.inline-ref`). Table-of-contents entries and jump-box results are the
+	// opposite case: the reader picked them in order to GO there, and taxing
+	// that with a peek would be an obstacle, not a feature. They keep their
+	// plain one-tap navigation, and still preview on hover. Prev/next nav was
+	// on that list until it stopped previewing at all — `UnitNav` now carries
+	// `data-link-preview="off"`, for the reason its own docblock gives.
 	const TAP_PREVIEW_SELECTOR = 'a.ref-link, a.inline-ref';
 
 	// The tracked anchor IS the state machine's key: `undefined` means nothing

@@ -290,10 +290,15 @@
 				paragraph's own number so the reader lands on the text they
 				were already looking at rather than at the chapter's top,
 				having lost their place as the price of getting context.
+
+				No hover preview, for `UnitNav`'s reason: the chapter this
+				names is the one the paragraph above is already in, so the
+				panel would preview the page it is standing on to a reader who
+				has decided to go there.
 			-->
-				<p class="read-chapter">
+				<p class="read-chapter" data-link-preview="off">
 					<a href={`/catechismus/caput/${editions.current.chapter.start}#p${data.n}`}>
-						{t('ccc.readFullChapter')}
+						<span class="label">{t('ccc.readFullChapter')}</span>
 						<span class="chapter-name">
 							{#if dt.ordinal}{dt.ordinal}{/if}
 							{dt.title}
@@ -391,6 +396,18 @@
 		align-items: baseline;
 		gap: 0.5rem;
 		text-decoration: none;
+	}
+
+	/* Same hover/focus state as `UnitNav`'s links: the underline this card
+	   suppresses, put back. On the label alone, and that is what the span
+	   around it is for — the anchor is a flex row, so underlining it would
+	   have drawn three separate runs, one of them under the paragraph range
+	   sitting at the far edge. The label is the part that reads as a control;
+	   the chapter's name and its extent are what the control names. */
+	.read-chapter a:hover .label,
+	.read-chapter a:focus-visible .label {
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
 	}
 
 	.read-chapter .chapter-name {
