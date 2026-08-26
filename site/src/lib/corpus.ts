@@ -1834,6 +1834,64 @@ export function completeEditionTags(sizes: Record<string, number>): string[] {
 	return Object.keys(sizes).filter((tag) => sizes[tag] === fullest.get(baseLang(tag)));
 }
 
+/**
+ * The prayer editions a reader can actually CHOOSE at the address in view —
+ * the edition menu's list on `/preces` and `/preces/{slug}`.
+ *
+ * IT IS NOT `listEditions('prayer')`, and that is the whole reason this
+ * exists. `prayer.common.en-gb` is five prayers (docs/decisions.md §Addresses
+ * and editions), so listing every prayer edition unconditionally put "English
+ * (UK)" in the menu on all twenty-eight pages — an option that on twenty-three
+ * of them named an edition with no text at this address, resolved straight
+ * back to `prayer.common.en` through `resolveEditionTag`, and left the trigger
+ * announcing a wording the page was not printing. A menu row that changes
+ * nothing is worse than an absent one: it reads as a claim that a second
+ * English wording of the Our Father exists.
+ *
+ * So the list is address-scoped, the same way the TEXT already was:
+ *
+ * - at a prayer (`slug` given), the editions that hold that slug — which is
+ *   `en`/`pt`/`la` for most, plus `en-gb` for the five the source prints
+ *   twice, minus `la` for the seven the source prints no Latin for;
+ * - at the collection index (no `slug`), the editions that can enumerate it,
+ *   which is exactly `prayerIndexLang`'s own set (`completeEditionTags`) —
+ *   the index runs on `en` for a reader who prefers English (UK), and the
+ *   menu should say so rather than offer a choice the listing overrules.
+ *
+ * Sorted like `listEditions`, so the menu order does not depend on which
+ * branch produced the tags.
+ */
+export function listPrayerEditions(slug?: string): WorkManifest[] {
+	const sizes = Object.fromEntries(
+		prayerLangs().map((l) => [l, prayerMetasByLang[l]?.length ?? 0])
+	);
+	const tags = slug
+		? prayerLangs().filter((l) => prayerExists(l, slug))
+		: completeEditionTags(sizes);
+	const editions = listEditions('prayer');
+	return editions.filter((w) => tags.some((tag) => tag.toLowerCase() === w.language.toLowerCase()));
+}
+
+/**
+ * Which prayer edition is actually being RENDERED at the address in view, for
+ * the menu's trigger and its checkmark.
+ *
+ * `content.workIdFor('prayer')` answers what the reader PREFERS, which is the
+ * right answer everywhere else on the site because every other type's editions
+ * all hold every address. Prayers do not, so the preference and the page come
+ * apart on twenty-three of twenty-eight pages, and the trigger was reporting
+ * the preference. This applies the same `resolveEditionTag` the route itself
+ * applies to `byLang`, over the same list the menu offers.
+ */
+export function currentPrayerEditionId(preferredTag: string, slug?: string): string | undefined {
+	const editions = listPrayerEditions(slug);
+	const tag = resolveEditionTag(
+		editions.map((w) => w.language),
+		preferredTag
+	);
+	return editions.find((w) => w.language.toLowerCase() === tag?.toLowerCase())?.id;
+}
+
 export function getPrayerStructure(lang: string): StructureNode[] {
 	return prayerStructures[lang] ?? [];
 }

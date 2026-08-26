@@ -806,6 +806,39 @@ export interface PrayerGroupEntry {
 	 *  the whole prayer. */
 	rubric: string | null;
 	items: PrayerMysteryItem[];
+	/**
+	 * ISO weekday numbers (1 = Monday … 7 = Sunday) this set is traditionally
+	 * prayed on, read by the scraper out of the rubric the source prints and
+	 * asserted against the rotation both sources are known to carry.
+	 *
+	 * The rubric stays verbatim and is what the page shows; this is the form
+	 * a reader's own weekday can be compared against. It has to be a corpus
+	 * field rather than something the site parses, because the rubric is
+	 * written in the CONTENT language ("(recited Monday and Saturday)",
+	 * "(Segundas e Sábados)") while the reader may be in any of fourteen
+	 * interface languages — a client-side parse would be reimplementing a
+	 * weekday vocabulary per language to recover a fact the scraper already
+	 * knew.
+	 *
+	 * Optional: absent in a corpus written before 2026-08-26, and absent on
+	 * any future grouped prayer whose groups are not weekday-assigned.
+	 */
+	days?: number[];
+	/**
+	 * The page THIS GROUP's five mysteries were parsed from.
+	 *
+	 * The Rosary is assembled from five pages, not one: the Compendium's
+	 * Appendix A prints the entry (its title, rubric and concluding prayer),
+	 * and the four Holy Rosary micro-site pages print the twenty mysteries
+	 * and the directions — which is the overwhelming bulk of the page a
+	 * reader sees. Attributing that to the Compendium, as the work-level
+	 * notice necessarily did, pointed a reader at a page not containing the
+	 * text they had just read. So each group names its own.
+	 *
+	 * Optional: nothing outside the Rosary has ever had more than one source,
+	 * and a group without this falls back to the prayer's own `sources`.
+	 */
+	source?: string;
 }
 
 /** Source-provided directions attached to a prayer. Present for the Rosary,
@@ -814,6 +847,9 @@ export interface PrayerGroupEntry {
 export interface PrayerInstructions {
 	title: string;
 	blocks: PrayerBlock[];
+	/** The page these directions were parsed from -- see
+	 *  `PrayerGroupEntry.source`. */
+	source?: string;
 }
 
 export interface Prayer {
@@ -842,4 +878,23 @@ export interface Prayer {
 	groups?: PrayerGroupEntry[];
 	/** Optional source-provided directions for praying this prayer. */
 	instructions?: PrayerInstructions;
+	/**
+	 * Where THIS prayer's own text came from — not the work's.
+	 *
+	 * A prayer manifest lists every page the collection was assembled from
+	 * (eight, for English) and cannot say which prayer came from which, so a
+	 * copyright notice reading `manifest.sources[0]` attributed all
+	 * twenty-eight to the Compendium appendix. Four of them are not from it:
+	 * the two Creeds and the Our Father come from the Catechism's own pages,
+	 * the Litany of Loreto from the Holy Rosary micro-site. Read this instead
+	 * of the manifest's list wherever one prayer is in view.
+	 *
+	 * It is the prayer's OWN text only: the Rosary's mysteries and directions
+	 * come from four further pages and carry their own `source`, because they
+	 * are the case that motivated all of this (see `PrayerGroupEntry.source`).
+	 * Optional so a corpus written before 2026-08-25 still loads — a consumer
+	 * with nothing here falls back to the manifest, which is what it did
+	 * before.
+	 */
+	sources?: SourceRef[];
 }

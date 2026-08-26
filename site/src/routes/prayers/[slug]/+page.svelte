@@ -82,7 +82,7 @@
 		chooseComparisonEdition,
 		toggleCompare
 	} from '$lib/compare-nav.svelte';
-	import { compareColumnLabel, resolveEditionTag } from '$lib/corpus';
+	import { compareColumnLabel, getPrayerMeta, resolveEditionTag } from '$lib/corpus';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
 	import CompareField from '$lib/components/CompareField.svelte';
@@ -90,6 +90,7 @@
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import UnitNav from '$lib/components/UnitNav.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import Icon from '$lib/components/Icon.svelte';
 	import CompareCopyrightHeader from '$lib/components/CompareCopyrightHeader.svelte';
 	import PrayerBlocks from '$lib/components/PrayerBlocks.svelte';
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
@@ -171,6 +172,63 @@
 	 * The Rosary is currently the only such prayer; deriving these from each
 	 * printed group name keeps EN/PT headings and their ToC aligned without
 	 * inventing a second set of identifiers in the corpus. */
+	/**
+	 * TODAY, AS AN ISO WEEKDAY (1 = Monday … 7 = Sunday).
+	 *
+	 * `getDay()` is 0-for-Sunday; the corpus stores ISO numbers because that
+	 * is what the rubric means by "Monday and Saturday" and because a
+	 * 0-indexed week has no name anyone prays by. Read from the BROWSER's
+	 * local date deliberately: which mysteries are today's is a fact about
+	 * where the reader is standing, not about where the site is served from,
+	 * and this route renders only in the browser anyway (`ssr = false`).
+	 *
+	 * Computed once at mount rather than derived: a reactive read of the
+	 * clock would buy nothing (nobody is holding this page open across
+	 * midnight waiting for the highlight to move) and would make every
+	 * re-render depend on the time.
+	 */
+	const todayIso = new Date().getDay() || 7;
+
+	/** The mystery set whose rubric names today, if this prayer has groups and
+	 *  the corpus recorded their weekdays. Undefined for every prayer but the
+	 *  Rosary, and for a Rosary parsed before `days` existed — in which case
+	 *  the page simply renders without a highlight, which is what it did
+	 *  before. */
+	const todayGroup = $derived(current?.prayer.groups?.find((g) => g.days?.includes(todayIso)));
+
+	/**
+	 * The three prayers a decade is made of, as links.
+	 *
+	 * BY SLUG, NOT BY MATCHING THE SOURCE'S WORDS. The directions name them
+	 * in running prose — `the "Our Father", ten "Hail Marys" and the "Glory
+	 * be to the Father"`, `um Pai Nosso, dez Ave Marias e um Glória ao Pai` —
+	 * and linkifying that text would mean a per-language table of prayer
+	 * names, in singular and plural, to recover addresses the corpus already
+	 * assigns. Slugs are language-invariant, so the same three constants find
+	 * the right prayer in every edition, and each link's TITLE comes from
+	 * that edition's own index rather than from anything written here.
+	 *
+	 * Rendered beside the directions rather than inside them: the source's
+	 * sentences stay exactly as printed, and the reader still gets somewhere
+	 * to go. A slug the current edition lacks is dropped rather than rendered
+	 * dead — `prayer.common.la` has all three, but nothing here assumes that.
+	 */
+	const DECADE_SLUGS = ['our-father', 'hail-mary', 'glory-be'];
+	const decadePrayers = $derived(
+		DECADE_SLUGS.map((slug) => ({ slug, meta: getPrayerMeta(lang, slug) })).filter(
+			(p) => p.meta !== undefined
+		)
+	);
+
+	/** A source URL's own filename, without extension —
+	 *  `.../misteri_gaudiosi_en.html` -> `misteri_gaudiosi_en`. See the
+	 *  `sectionSource` snippet on why this and not the host. Degrades to the
+	 *  whole URL rather than to nothing if a source is ever not a file path. */
+	function sourceFileLabel(url: string): string {
+		const last = url.split('/').pop();
+		return last ? last.replace(/\.[^.]+$/, '') : url;
+	}
+
 	function groupAnchorId(name: string) {
 		return (
 			'prayer-group-' +
@@ -192,6 +250,40 @@
 	<title>{current?.prayer.title ?? data.slug} — {t('home.title')}</title>
 </svelte:head>
 
+<!--
+	THE SECTION'S OWN SOURCE, printed under its heading.
+
+	Only the Rosary has any (`PrayerGroupEntry.source`): it is the one prayer
+	assembled from more than one page, and the notice at the top of the page
+	names the Compendium appendix its entry, rubric and concluding prayer come
+	from — not the four Holy Rosary micro-site pages the twenty mysteries and
+	the directions come from, which is most of what is on the screen.
+
+	It prints the URL's LAST SEGMENT, not the host `CopyrightNotice` prints.
+	The host is what answers that notice's question ("is this from the Holy
+	See's own servers?") and it would be the same five words five times here;
+	what distinguishes these is exactly the filename — `misteri_gaudiosi_en`
+	against `misteri_luminosi_en` — which is also the only part a reader could
+	use to tell which page they are being sent to before clicking.
+
+	A section with no `source` renders nothing at all, which is every prayer
+	but one, and every group in a corpus written before this field existed.
+-->
+{#snippet sectionSource(url: string | undefined)}
+	{#if url}
+		<a
+			class="prayer-section-source"
+			href={url}
+			target="_blank"
+			rel="external noopener"
+			title={t('copyright.sourceTitle')}
+			data-link-preview="off"
+		>
+			{sourceFileLabel(url)}<Icon name="external-link" class="ext" />
+		</a>
+	{/if}
+{/snippet}
+
 {#snippet prayerBody(p: Prayer, bodyLang: string)}
 	{#if p.rubric}
 		<p class="prayer-rubric">{p.rubric}</p>
@@ -206,10 +298,22 @@
 	     themselves. -->
 	{#if p.groups && p.groups.length > 0}
 		{#each p.groups as group (group.name)}
-			<section class="prayer-mystery-group" id={groupAnchorId(group.name)}>
+			<section
+				class="prayer-mystery-group"
+				class:today={group === todayGroup}
+				id={groupAnchorId(group.name)}
+			>
 				<h2 class="prayer-mystery-name">
 					{group.name}
+					<!-- The badge names the DAY, never the weekday. "Today" is true in
+					     every interface language without a weekday vocabulary, and the
+					     rubric beside it already prints which days these are — in the
+					     content language, where the source put them. -->
+					{#if group === todayGroup}<span class="prayer-today-badge"
+							>{t('prayers.rosary.today')}</span
+						>{/if}
 					{#if group.rubric}<span class="prayer-mystery-rubric">{group.rubric}</span>{/if}
+					{@render sectionSource(group.source)}
 				</h2>
 				<ol class="prayer-mystery-items">
 					{#each group.items as item, i (i)}
@@ -222,10 +326,54 @@
 		{/each}
 	{/if}
 
+	<!--
+	     THE DIRECTIONS ARE A HOW-TO, AND THE SOURCE ALREADY WROTE THEM AS ONE.
+	     They were rendered as five undifferentiated paragraphs, which is what
+	     `PrayerBlocks` is for and what hid the shape: the FIRST block is not a
+	     direction at all but the opening prayer itself, the words a reader
+	     says out loud — sign of the cross, "O God come to my aid", the Glory
+	     be — and the remaining four are the numbered steps that follow it.
+	     Setting them apart is not editorializing; it is printing the
+	     difference the source's own text states.
+
+	     THE TEXT ITSELF IS UNTOUCHED. No sentence is rewritten, split, joined
+	     or renumbered — the blocks are the corpus's, in the corpus's order,
+	     through the same `PrayerBlocks` renderer. What changed is the frame
+	     around them: a label over the first, an ordered list around the rest,
+	     and links beside them to the three prayers a decade is made of, which
+	     the directions name but a reader had no way to reach from here. -->
 	{#if p.instructions}
 		<section class="prayer-instructions" id="prayer-instructions">
-			<h2>{p.instructions.title}</h2>
-			<PrayerBlocks blocks={p.instructions.blocks} />
+			<h2>
+				{p.instructions.title}
+				{@render sectionSource(p.instructions.source)}
+			</h2>
+
+			{#if p.instructions.blocks.length > 1}
+				<div class="prayer-opening">
+					<p class="prayer-step-label">{t('prayers.rosary.openingPrayer')}</p>
+					<PrayerBlocks blocks={p.instructions.blocks.slice(0, 1)} />
+				</div>
+				<ol class="prayer-steps">
+					{#each p.instructions.blocks.slice(1) as block, i (i)}
+						<li><PrayerBlocks blocks={[block]} /></li>
+					{/each}
+				</ol>
+			{:else}
+				<!-- A single-block instructions field has no opening prayer to
+				     separate from its steps, so it renders the way it always did. -->
+				<PrayerBlocks blocks={p.instructions.blocks} />
+			{/if}
+
+			{#if decadePrayers.length > 0}
+				<p class="prayer-decade-links">
+					<span class="prayer-step-label">{t('prayers.rosary.decadePrayers')}</span>
+					{#each decadePrayers as entry, i (entry.slug)}
+						{#if i > 0}<span class="sep" aria-hidden="true">·</span>{/if}
+						<a href={hrefFor({ kind: 'prayer', slug: entry.slug })}>{entry.meta?.title}</a>
+					{/each}
+				</p>
+			{/if}
 		</section>
 	{/if}
 
@@ -237,7 +385,11 @@
 		<h2>{t('prayers.tableOfContents')}</h2>
 		<ol>
 			{#each p.groups ?? [] as group (group.name)}
-				<li><a href={`#${groupAnchorId(group.name)}`}>{group.name}</a></li>
+				<li>
+					<a href={`#${groupAnchorId(group.name)}`} class:today={group === todayGroup}>
+						{group.name}
+					</a>
+				</li>
 			{/each}
 			{#if p.instructions}
 				<li><a href="#prayer-instructions">{p.instructions.title}</a></li>
@@ -346,11 +498,28 @@
 			     English one is where its text was transcribed and the Portuguese
 			     one is where five of these prayers break into stanzas. Two
 			     notices linking to different source lists is exactly the case
-			     `CopyrightNotice` exists to make checkable. -->
+			     `CopyrightNotice` exists to make checkable.
+
+			     AND THE SOURCE IS THE PRAYER'S, NOT THE WORK'S. The manifest
+			     lists eight pages for English and cannot say which prayer came
+			     from which, so the notice linked `sources[0]` — the Compendium
+			     appendix — under all twenty-eight, including the four that are
+			     not from it at all (the two Creeds, the Our Father, the Litany
+			     of Loreto) and the Rosary, whose twenty mysteries are from four
+			     pages the Compendium does not contain. `Prayer.sources` is the
+			     per-address answer; the mysteries and the directions carry their
+			     own, printed beside the sections they belong to. -->
 			{#if compareActive && secondary}
-				<CompareCopyrightHeader left={current.work} right={secondary.work} />
+				<CompareCopyrightHeader
+					left={current.work}
+					right={secondary.work}
+					leftSources={current.prayer.sources}
+					rightSources={secondary.prayer.sources}
+				/>
 			{:else}
-				<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
+				<p class="copyright-notice">
+					<CopyrightNotice manifest={current.work} sources={current.prayer.sources} />
+				</p>
 			{/if}
 
 			<!-- `{#if secondary}` rather than `{#if compareActive}`, which is the
@@ -372,7 +541,27 @@
 					left={leftCell}
 					right={rightCell}
 				/>
+				<!-- WHICH MYSTERIES ARE TODAY'S, ANSWERED BEFORE THE READER SCROLLS.
+			     The Rosary is prayed one set of five decades at a time, on a
+			     weekday rotation the source prints as a rubric over each set —
+			     so a reader arriving to pray has to read four rubrics and work
+			     out which one names today before they can start. This says it
+			     once, at the top, and links straight into that set.
+
+			     SINGLE-COLUMN ONLY. In compare mode the two editions each print
+			     their own four rubrics, and a banner over the pair would have to
+			     name one edition's heading or both; the reader in that mode is
+			     comparing wordings rather than sitting down to pray. -->
 			{:else}
+				{#if todayGroup}
+					<p class="prayer-today">
+						<span class="prayer-today-badge">{t('prayers.rosary.today')}</span>
+						<span class="prayer-today-heading">{t('prayers.rosary.todayHeading')}:</span>
+						<a href={`#${groupAnchorId(todayGroup.name)}`} lang={current.work.language}>
+							{todayGroup.name}
+						</a>
+					</p>
+				{/if}
 				<div class="reading-text prayer-body" lang={current.work.language}>
 					{@render prayerBody(current.prayer, current.work.language)}
 				</div>
@@ -396,6 +585,48 @@
 {/if}
 
 <style>
+	/*
+	 * PRAYERS ARE SET LARGER THAN THE REST OF THE READING TEXT, AT THE SAME
+	 * COLUMN WIDTH.
+	 *
+	 * `--reading-base` (app.css) is 1.3rem, tuned for running prose — a
+	 * Catechism paragraph, an encyclical section, a chapter of Kings, all read
+	 * in long unbroken stretches where 62.4 characters per line is the point.
+	 * A prayer is not that. It is short, it is often set in versicle/response
+	 * or stanza lines that break well before the measure, and it is a text
+	 * people read ALOUD and from memory — the two things that make a larger
+	 * face useful rather than merely bigger. The longest thing here is the
+	 * Rosary, and even that is twenty short meditations rather than one column
+	 * of prose.
+	 *
+	 * 1.1x (`--reading-base-prayer`, app.css), and the number is bounded rather
+	 * than chosen by eye. `--content-width` is declared on `:root` and
+	 * therefore resolves against `:root`'s `--reading-base`, so overriding the
+	 * base HERE moves the type without moving the column — which is exactly
+	 * the ask, and also what makes the multiplier a decision about characters
+	 * per line. 62.4 / 1.1 = 56.7 cpl, inside the 55-65 band `--measure-cpl`'s
+	 * own comment names as where this type sets well. 1.15x would put it at
+	 * 54.3 and outside it.
+	 *
+	 * Scale-invariant: both the column and the type carry `--reading-scale`,
+	 * so the reader's own size setting cancels out of that ratio and 56.7
+	 * holds across all eleven steps.
+	 *
+	 * It is set on the LAYOUT, not on `.prayer-body`, because compare mode
+	 * renders the same text through `CompareGrid`'s cells instead — both
+	 * columns and the gutter's unit number are `.reading-text`, and a rule
+	 * scoped to the single-column class would silently stop applying the
+	 * moment a reader opened the Latin alongside.
+	 *
+	 * The two `1.05rem` headings below are deliberately NOT relative to this.
+	 * They are labels over a list ("The Joyful Mysteries", "How to pray the
+	 * Rosary?"), sized as chrome and already smaller than the body they head;
+	 * scaling them with the text would make them compete with it.
+	 */
+	.prayer-reading-layout {
+		--reading-base: var(--reading-base-prayer);
+	}
+
 	.copyright-notice {
 		margin: 0.5rem 0 1.25rem;
 	}
@@ -475,6 +706,40 @@
 		color: var(--color-text-muted);
 	}
 
+	/* Sized and coloured like `.copyright-notice`, because that is what it is
+	   — the same claim about the same kind of fact, made about a section
+	   instead of a work. `--font-size-min` floors it at 13.5px the way every
+	   other relative reduction on the site does; the `em` is relative to the
+	   heading it sits under, which is itself relative to nothing the reader
+	   can adjust, so this stays a fixed small rather than shrinking with the
+	   enlarged prayer type above it. */
+	.prayer-section-source {
+		display: block;
+		font-family: var(--font-sans);
+		font-size: max(var(--font-size-min), 0.7em);
+		font-weight: 400;
+		font-style: normal;
+		color: var(--color-text-muted);
+		text-decoration-line: underline;
+		text-decoration-style: dotted;
+		text-underline-offset: 0.15em;
+		margin-block-start: 0.15rem;
+	}
+
+	.prayer-section-source:hover {
+		color: var(--color-accent);
+		text-decoration-style: solid;
+	}
+
+	/* Same optical correction as `CopyrightNotice`'s glyph — see its docblock
+	   for the 24x24 viewBox inset the numbers come from. */
+	.prayer-section-source :global(.ext) {
+		width: 0.85em;
+		height: 0.85em;
+		margin-inline-start: 0.28em;
+		vertical-align: -0.18em;
+	}
+
 	.prayer-mystery-items {
 		margin: 0;
 		padding-inline-start: 1.5rem;
@@ -493,6 +758,119 @@
 	.prayer-instructions h2 {
 		font-size: 1.05rem;
 		margin: 0 0 0.75rem;
+	}
+
+	/*
+	 * TODAY'S SET — the banner above the text, the badge on its heading, and
+	 * the marker in the table of contents. Three places, one accent, because
+	 * a reader who has read the banner should recognize the same mark when
+	 * they arrive at the section and in the list they navigate by.
+	 *
+	 * `--color-apparatus` (ground lapis), not `--color-accent`: app.css
+	 * reserves the blue for the reference apparatus — the marks that tell a
+	 * reader WHERE they are rather than carrying text — and "which of these
+	 * four is today's" is exactly that job. The reds are already spoken for by
+	 * links and initials, and a red badge beside a red link would read as a
+	 * second kind of link.
+	 */
+	.prayer-today {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin: 0 0 1.5rem;
+		padding: 0.6rem 0.8rem;
+		border-inline-start: 3px solid var(--color-apparatus);
+		border-radius: 0 0.3rem 0.3rem 0;
+		background: var(--color-bg-elevated);
+		font-family: var(--font-sans);
+		font-size: 0.9rem;
+	}
+
+	.prayer-today-heading {
+		color: var(--color-text-muted);
+	}
+
+	.prayer-today a {
+		font-weight: 600;
+	}
+
+	.prayer-today-badge {
+		font-family: var(--font-sans);
+		font-size: max(var(--font-size-min), 0.65em);
+		font-weight: 600;
+		font-style: normal;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--color-apparatus);
+		border: 1px solid var(--color-apparatus);
+		border-radius: 0.2rem;
+		padding: 0.05em 0.4em;
+		/* `white-space: nowrap` because in several interface languages this is
+		   two words ("I dag", "A mai titkok" shortens to "Ma" but "Aujourd’hui"
+		   does not) and a badge that wraps stops reading as a badge. */
+		white-space: nowrap;
+	}
+
+	/* On the heading the badge rides the baseline of a line it is smaller
+	   than, so it gets its own spacing rather than the flex gap above. */
+	.prayer-mystery-name .prayer-today-badge {
+		margin-inline-start: 0.5em;
+		vertical-align: 0.1em;
+	}
+
+	.prayer-mystery-group.today {
+		border-inline-start: 3px solid var(--color-apparatus);
+		padding-inline-start: 0.9rem;
+		/* Pulled back by its own indent so the TEXT stays on the measure and
+		   only the rule sits outside it — otherwise today's set would be set
+		   to a narrower column than the other three and read as a quotation. */
+		margin-inline-start: -0.9rem;
+	}
+
+	.prayer-toc a.today {
+		color: var(--color-apparatus);
+		font-weight: 600;
+	}
+
+	/*
+	 * The directions, as a how-to. See the markup's own comment for why the
+	 * first block is separated from the rest.
+	 */
+	.prayer-step-label {
+		display: block;
+		font-family: var(--font-sans);
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--color-text-muted);
+		margin: 0 0 0.3rem;
+	}
+
+	.prayer-opening {
+		margin: 0 0 1.25rem;
+		padding-inline-start: 0.9rem;
+		border-inline-start: 2px solid var(--color-border);
+	}
+
+	.prayer-steps {
+		margin: 0 0 1.25rem;
+		padding-inline-start: 1.5rem;
+	}
+
+	.prayer-steps li {
+		margin: 0 0 0.6rem;
+	}
+
+	.prayer-decade-links {
+		margin: 0;
+		font-family: var(--font-sans);
+		font-size: 0.9rem;
+	}
+
+	.prayer-decade-links .sep {
+		opacity: 0.6;
+		margin-inline: 0.35rem;
 	}
 
 	/* Non-Rosary prayers do not need a sidebar or a reading-layout, but their

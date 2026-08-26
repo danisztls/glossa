@@ -28,19 +28,42 @@
 	in the same tab costs them their place. `rel="noopener"` accordingly.
 -->
 <script lang="ts">
-	import { copyrightLabel, copyrightNoticeExact, sourceHost, sourceUrl } from '$lib/copyright';
+	import {
+		copyrightLabel,
+		copyrightNoticeExact,
+		hostOf,
+		sourceHost,
+		sourceUrl
+	} from '$lib/copyright';
 	import Icon from '$lib/components/Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
-	import type { WorkManifest } from '$lib/types';
+	import type { SourceRef, WorkManifest } from '$lib/types';
 
 	interface Props {
 		manifest: WorkManifest;
+		/**
+		 * Override the source link when the ADDRESS in view has a narrower
+		 * provenance than the work.
+		 *
+		 * Every other type's editions are one page (or one contiguous run of
+		 * them), so `manifest.sources[0]` is the page any address in it came
+		 * from. The prayer collection is not: English is assembled from eight
+		 * pages, and four of its twenty-eight prayers come from somewhere
+		 * other than the Compendium appendix `sources[0]` names. `Prayer.sources`
+		 * records which; passing it here is what makes the notice name the page
+		 * a reader can actually check the text against.
+		 *
+		 * Omitted everywhere else, and the fallback is the manifest — so a
+		 * corpus with no per-address provenance behaves exactly as before.
+		 */
+		sources?: SourceRef[];
 	}
 
-	let { manifest }: Props = $props();
+	let { manifest, sources }: Props = $props();
 
-	const url = $derived(sourceUrl(manifest));
-	const host = $derived(sourceHost(manifest));
+	const source = $derived(sources?.[0]);
+	const url = $derived(source?.url ?? sourceUrl(manifest));
+	const host = $derived(source ? hostOf(source.url) : sourceHost(manifest));
 	const exact = $derived(copyrightNoticeExact(manifest));
 </script>
 

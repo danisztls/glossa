@@ -115,6 +115,14 @@ export const sl: Dictionary = {
 	'prayers.tableOfContents': 'Kazalo',
 	'prayers.prevPrayer': 'Prejšnja molitev',
 	'prayers.nextPrayer': 'Naslednja molitev',
+	// The Rosary reader's own chrome — routes/prayers/[slug] renders the
+	// source's directions as a how-to and marks the set whose weekday it is
+	// (`PrayerGroupEntry.days`). The weekday itself is never named: the
+	// heading says "today" and the set's own printed name says which.
+	'prayers.rosary.today': 'Danes',
+	'prayers.rosary.todayHeading': 'Današnje skrivnosti',
+	'prayers.rosary.openingPrayer': 'Uvodna molitev',
+	'prayers.rosary.decadePrayers': 'Molitve ene desetke',
 	'home.prayers.heading': 'Molitve',
 	'home.prayers.browseAll': 'Vse molitve',
 	'ref.tooltip.loading': 'Nalaganje…',

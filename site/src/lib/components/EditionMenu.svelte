@@ -46,7 +46,14 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { content, type WorkTypeKey } from '$lib/content.svelte';
-	import { getDocumentGroup, listEditions, baseLang, languageDisplayName } from '$lib/corpus';
+	import {
+		currentPrayerEditionId,
+		getDocumentGroup,
+		listEditions,
+		listPrayerEditions,
+		baseLang,
+		languageDisplayName
+	} from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
@@ -88,7 +95,24 @@
 
 	const ctx = $derived(context(page.url.pathname));
 
-	const typeEditions = $derived(ctx?.kind === 'type' ? listEditions(ctx.type) : []);
+	/**
+	 * PRAYERS ARE THE ONE TYPE WHOSE EDITIONS DO NOT ALL HOLD EVERY ADDRESS,
+	 * so they are the one type whose menu cannot be the corpus-wide list.
+	 * `prayer.common.en-gb` is five prayers; offering it on the other
+	 * twenty-three put a row in the menu that resolved straight back to
+	 * `prayer.common.en` and changed nothing but the trigger's label. See
+	 * `listPrayerEditions` for the rule and why it is address-scoped.
+	 *
+	 * `page.params.slug` is the prayer at `/preces/{slug}` and undefined at
+	 * `/preces` itself, which is exactly the fork that helper takes.
+	 */
+	const typeEditions = $derived(
+		ctx?.kind !== 'type'
+			? []
+			: ctx.type === 'prayer'
+				? listPrayerEditions(page.params.slug)
+				: listEditions(ctx.type)
+	);
 	const documentGroup = $derived(ctx?.kind === 'document' ? getDocumentGroup(ctx.slug) : undefined);
 	// A document's editions, sorted like `listEditions` (docs/decisions.md #1:
 	// language then id) rather than however `Object.values` happens to order
@@ -109,9 +133,18 @@
 	// The content store is the only source of truth for every context now —
 	// no URL anywhere carries an edition, so there is nothing for it to
 	// disagree with.
+	// PRAYERS AGAIN: `workIdFor` answers what the reader PREFERS, and for every
+	// other type that is also what the page renders. A reader who prefers
+	// English (UK) on the Our Father is reading `prayer.common.en` — the only
+	// English text there is — so a trigger reading "English (UK)" there was
+	// naming a wording nothing on the page came from. `currentPrayerEditionId`
+	// resolves the preference against this address the same way the route
+	// resolves it against `byLang`.
 	const currentWorkId = $derived(
 		ctx?.kind === 'type'
-			? content.workIdFor(ctx.type)
+			? ctx.type === 'prayer'
+				? currentPrayerEditionId(content.tagFor('prayer'), page.params.slug)
+				: content.workIdFor(ctx.type)
 			: ctx?.kind === 'document'
 				? content.documentWorkIdFor(ctx.slug)
 				: undefined
@@ -186,7 +219,11 @@
 							<span class="menu-item-main">
 								{#if current}<Icon name="check" />{/if}
 								<span>{editionStyle ? edition.title : languageDisplayName(edition.language)}</span>
-								<span class="edition-lang">{baseLang(edition.language).toUpperCase()}</span>
+								<!-- The FULL tag, not `baseLang`: `prayer.common.en` and
+								     `prayer.common.en-gb` are both "EN" under the bare subtag, so
+								     the badge that exists to tell rows apart printed the same
+								     two letters beside "English" and "English (UK)". -->
+								<span class="edition-lang">{edition.language.toUpperCase()}</span>
 							</span>
 							{#if editionStyle}
 								<span class="menu-item-meta"

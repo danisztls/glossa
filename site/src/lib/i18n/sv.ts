@@ -114,6 +114,14 @@ export const sv: Dictionary = {
 	'prayers.tableOfContents': 'Innehåll',
 	'prayers.prevPrayer': 'Föregående bön',
 	'prayers.nextPrayer': 'Nästa bön',
+	// The Rosary reader's own chrome — routes/prayers/[slug] renders the
+	// source's directions as a how-to and marks the set whose weekday it is
+	// (`PrayerGroupEntry.days`). The weekday itself is never named: the
+	// heading says "today" and the set's own printed name says which.
+	'prayers.rosary.today': 'I dag',
+	'prayers.rosary.todayHeading': 'Dagens hemligheter',
+	'prayers.rosary.openingPrayer': 'Inledande bön',
+	'prayers.rosary.decadePrayers': 'Bönerna i en dekad',
 	'home.prayers.heading': 'Böner',
 	'home.prayers.browseAll': 'Se alla böner',
 	'ref.tooltip.loading': 'Läser in…',

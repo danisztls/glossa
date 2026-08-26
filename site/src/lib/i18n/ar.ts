@@ -112,6 +112,14 @@ export const ar: Dictionary = {
 	'prayers.tableOfContents': 'الفهرس',
 	'prayers.prevPrayer': 'الصلاة السابقة',
 	'prayers.nextPrayer': 'الصلاة التالية',
+	// The Rosary reader's own chrome — routes/prayers/[slug] renders the
+	// source's directions as a how-to and marks the set whose weekday it is
+	// (`PrayerGroupEntry.days`). The weekday itself is never named: the
+	// heading says "today" and the set's own printed name says which.
+	'prayers.rosary.today': 'اليوم',
+	'prayers.rosary.todayHeading': 'أسرار اليوم',
+	'prayers.rosary.openingPrayer': 'صلاة الافتتاح',
+	'prayers.rosary.decadePrayers': 'صلوات العشرية',
 	'home.prayers.heading': 'الصلوات',
 	'home.prayers.browseAll': 'تصفّح كلّ الصلوات',
 	'ref.tooltip.loading': 'جارٍ التحميل…',

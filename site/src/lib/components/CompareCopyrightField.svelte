@@ -12,26 +12,31 @@
 <script lang="ts">
 	import CompareField from './CompareField.svelte';
 	import CopyrightNotice from './CopyrightNotice.svelte';
-	import type { WorkManifest } from '$lib/types';
+	import type { SourceRef, WorkManifest } from '$lib/types';
 
 	interface Props {
 		/** The edition in the left column. */
 		left: WorkManifest;
 		/** The edition in the right column. */
 		right: WorkManifest;
+		/** Per-column source override, for a route whose ADDRESS has a
+		 *  narrower provenance than its work — see `CopyrightNotice`'s
+		 *  `sources`. `/preces` is the only such route. */
+		leftSources?: SourceRef[];
+		rightSources?: SourceRef[];
 	}
 
-	let { left, right }: Props = $props();
+	let { left, right, leftSources, rightSources }: Props = $props();
 </script>
 
 <!-- Declared outside the component tag, not as `{#snippet left()}` children,
      because this component's own props are already called `left` and `right`
      and a snippet of that name would shadow the manifest it needs to read. -->
 {#snippet leftNotice()}
-	<p class="copyright-notice"><CopyrightNotice manifest={left} /></p>
+	<p class="copyright-notice"><CopyrightNotice manifest={left} sources={leftSources} /></p>
 {/snippet}
 {#snippet rightNotice()}
-	<p class="copyright-notice"><CopyrightNotice manifest={right} /></p>
+	<p class="copyright-notice"><CopyrightNotice manifest={right} sources={rightSources} /></p>
 {/snippet}
 
 <CompareField

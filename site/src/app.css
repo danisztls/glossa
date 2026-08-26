@@ -585,6 +585,15 @@
 	/* Base reading size before the reader's fine adjustment is applied —
 	   see `.reading-text` below and `$lib/prefs.svelte.ts`. */
 	--reading-base: 1.3rem;
+	/* Prayers are set larger than the rest of the reading text at the same
+	   column width — the reasoning and the characters-per-line arithmetic that
+	   bounds the 1.1 are in `routes/prayers/[slug]/+page.svelte`, which is the
+	   only consumer. It is derived HERE rather than there because a
+	   `var(--reading-base)` reference inside a `--reading-base` declaration is
+	   a self-reference on that element, which is a cycle and invalid at
+	   computed-value time; deriving it under its own name is what lets the
+	   route override the base without restating the length. */
+	--reading-base-prayer: calc(1.1 * var(--reading-base));
 	/* Reading font-size multiplier, written directly onto <html> by
 	   `$lib/prefs.svelte.ts` (and by `app.html`'s pre-hydration script from
 	   the persisted value, to avoid a flash of the wrong size). Defaulted

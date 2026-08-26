@@ -115,6 +115,14 @@ export const de: Dictionary = {
 	'prayers.tableOfContents': 'Inhaltsverzeichnis',
 	'prayers.prevPrayer': 'Vorheriges Gebet',
 	'prayers.nextPrayer': 'Nächstes Gebet',
+	// The Rosary reader's own chrome — routes/prayers/[slug] renders the
+	// source's directions as a how-to and marks the set whose weekday it is
+	// (`PrayerGroupEntry.days`). The weekday itself is never named: the
+	// heading says "today" and the set's own printed name says which.
+	'prayers.rosary.today': 'Heute',
+	'prayers.rosary.todayHeading': 'Geheimnisse von heute',
+	'prayers.rosary.openingPrayer': 'Eröffnungsgebet',
+	'prayers.rosary.decadePrayers': 'Die Gebete eines Gesätzes',
 	'home.prayers.heading': 'Gebete',
 	'home.prayers.browseAll': 'Alle Gebete durchsehen',
 	'ref.tooltip.loading': 'Wird geladen…',

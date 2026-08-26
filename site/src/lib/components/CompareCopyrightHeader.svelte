@@ -22,18 +22,21 @@
 -->
 <script lang="ts">
 	import CompareCopyrightField from './CompareCopyrightField.svelte';
-	import type { WorkManifest } from '$lib/types';
+	import type { SourceRef, WorkManifest } from '$lib/types';
 
 	interface Props {
 		/** The edition in the left column. */
 		left: WorkManifest;
 		/** The edition in the right column. */
 		right: WorkManifest;
+		/** Per-column source override — see `CompareCopyrightField`. */
+		leftSources?: SourceRef[];
+		rightSources?: SourceRef[];
 	}
 
-	let { left, right }: Props = $props();
+	let { left, right, leftSources, rightSources }: Props = $props();
 </script>
 
 <div class="compare-unit-header">
-	<CompareCopyrightField {left} {right} />
+	<CompareCopyrightField {left} {right} {leftSources} {rightSources} />
 </div>
