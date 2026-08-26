@@ -10,16 +10,23 @@
  * so `listContentAssets()` need not rescan the glob.
  *
  * `src/service-worker.ts` is its own bundle entry, so importing this from
- * there and nowhere else is what actually keeps it out of the app. The glob
- * below duplicates the one in `corpus-index.ts` on purpose: Vite emits each
- * content file once regardless, and the duplicated thing is a map of strings
- * in a bundle the page never loads. The alternative — exporting the map from
- * `corpus-index.ts` — would pull the whole boot index into the service worker
- * instead, which is the same mistake pointed the other way.
+ * there and nowhere else is what actually keeps it out of the app.
+ *
+ * The relPath→URL glob it used to keep here — a deliberate duplicate of
+ * `corpus-index.ts`'s, on the argument that duplicating a map of strings across
+ * two bundles that never load together costs nothing — moved to
+ * `content-urls.ts` on 2026-08-26. The argument was true of the BUILD and false
+ * of the dev server, where an eager glob is one module request per matched file
+ * and two globs over 2,590 files exhausted the browser's connection pool before
+ * the app could boot. Importing the map from a module that is only the map keeps
+ * the original objection satisfied: what could not happen was importing it from
+ * `corpus-index.ts` and dragging the whole boot index in here with it.
  *
  * See `sw-policy.ts` for what the worker does with this: partition the build
  * into cache tiers, and order the library into per-language download waves.
  */
+
+import { contentUrlByRelPath } from './content-urls';
 
 /** One row of `content-manifest.json`, as `scripts/sync-corpus.mjs` writes it. */
 export interface ContentManifestEntry {
@@ -61,12 +68,6 @@ const realContentManifest = import.meta.glob('./corpus-data/index/content-manife
 	import: 'default'
 }) as Record<string, ContentManifestEntry[]>;
 
-const realContentUrls = import.meta.glob('./corpus-data/content/**/*.json', {
-	eager: true,
-	query: '?url',
-	import: 'default'
-}) as Record<string, string>;
-
 /**
  * The full per-file inventory. Empty when no corpus has been synced — there is
  * nothing to fetch, and the worker's partition then holds no content tier at
@@ -76,14 +77,9 @@ export function listContentAssets(): ContentAsset[] {
 	const manifest = Object.values(realContentManifest)[0];
 	if (!manifest) return [];
 
-	const urlByRelPath: Record<string, string> = {};
-	for (const [globPath, url] of Object.entries(realContentUrls)) {
-		urlByRelPath[globPath.replace(/^\.\/corpus-data\//, '')] = url;
-	}
-
 	const out: ContentAsset[] = [];
 	for (const entry of manifest) {
-		const url = urlByRelPath[entry.relPath];
+		const url = contentUrlByRelPath[entry.relPath];
 		if (url) out.push({ ...entry, url });
 	}
 	return out;

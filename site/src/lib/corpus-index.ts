@@ -122,6 +122,8 @@ import fixtureCompendiumPtQuestions from './fixtures/compendium.pt/questions.jso
 
 import fixtureXrefs from './fixtures/xrefs/ccc-bible.json';
 
+import { contentUrlByRelPath } from './content-urls';
+
 // --- Bible book metadata (index tier: chapter NUMBERS, never verse text) --
 
 /** Verse EXISTENCE only — `{ n }`, never `text` — kept as `{ n }[]` rather
@@ -377,16 +379,6 @@ export function isUnpublished(workId: string): boolean {
 // content tier is: a reader downloads at most ONE of these, and only when
 // their language is not the one a description was written in.
 const realDescriptionUrls = import.meta.glob('./corpus-data/index/descriptions.*.json', {
-	eager: true,
-	query: '?url',
-	import: 'default'
-}) as Record<string, string>;
-
-// Content tier: `?url` + `import: 'default'` yields the hashed BUILD ASSET
-// URL for each file (a string), not its contents — Vite still emits the
-// file itself as a build asset, just doesn't inline it. `corpus.ts` fetches
-// these at runtime, one file at a time, only for the page that needs it.
-const realContentUrls = import.meta.glob('./corpus-data/content/**/*.json', {
 	eager: true,
 	query: '?url',
 	import: 'default'
@@ -759,13 +751,6 @@ export function bibleChapterChunkStartFor(n: number): number {
 	return Math.floor((n - 1) / BIBLE_CHAPTER_CHUNK_SIZE) * BIBLE_CHAPTER_CHUNK_SIZE + 1;
 }
 
-/** `./corpus-data/content/...` glob key -> the `relPath` shape
- *  `content-manifest.json` entries use (`content/...`), so the two can be
- *  joined without a second copy of the path. */
-function contentKey(globPath: string): string {
-	return globPath.replace(/^\.\/corpus-data\//, '');
-}
-
 /**
  * A content file's two addresses: `relPath` (its path under
  * `corpus-data/`, e.g. `content/bible.cpdv.en/books/gen.json`) and `url`
@@ -835,8 +820,10 @@ const documentAppendixLocations: Record<string, ContentLocation> = {};
  * headings is not a library).
  */
 const documentStructureLocations: Record<string, ContentLocation> = {};
-for (const [globPath, url] of Object.entries(realContentUrls)) {
-	const relPath = contentKey(globPath);
+// The content tier's URL map is `content-urls.ts`, not a glob of its own — see
+// that module for why the second copy of this glob had to go (it doubled dev's
+// module-request count and took the dev server past what a browser will open).
+for (const [relPath, url] of Object.entries(contentUrlByRelPath)) {
 	const location: ContentLocation = { relPath, url };
 	const bibleMatch = relPath.match(/^content\/([^/]+)\/books\/([^/]+)\/(\d+)-(\d+)\.json$/);
 	if (bibleMatch) {
