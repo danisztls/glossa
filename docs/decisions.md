@@ -779,6 +779,58 @@ the whole site went dark until 00:00 UTC. Scoped, a cold visit costs one invocat
 the failure degrades instead: negative patterns keep serving assets, and only fresh
 navigations 429.
 
+**The zone has one rate limiting rule, and it lives in the Cloudflare dashboard**
+(2026-08-26). Every HTML navigation is a billed Worker invocation against the free plan's
+100,000/day, the sitemap advertises ~5,800 canonical addresses, and nothing bounds how
+many times they are crawled. A rule in the WAF is the only lever that costs nothing to
+exercise: it runs before the Worker, and per Cloudflare's pricing "only requests that hit
+a Worker will count against your limits and your bill".
+
+The rule is: **block** an unverified client at **120 requests per 10 seconds**, counted per
+`ip.src` **and `cf.colo.id`** (the counter is per data centre, not global), with a
+10-second mitigation timeout, over the expression
+
+```
+not starts_with(http.request.uri.path, "/_app/")
+  and not starts_with(http.request.uri.path, "/fonts/")
+  and not starts_with(http.request.uri.path, "/icons/")
+  and not cf.client.bot
+```
+
+**Those three exclusions are load-bearing and must stay equal to the first three
+`run_worker_first` negations in `site/wrangler.jsonc`.** A reader who accepts the offline
+library pulls ~2,240 content assets in a burst from one IP, and all of them are under
+`/_app/immutable/assets/`; counting those would rate-limit the site's headline feature at
+the moment it works. The excluded set is also exactly the set that is free to serve, so
+there is nothing there to protect. What remains is the navigation plus the eight
+one-per-visit files the service worker precaches from outside those prefixes, so a cold
+visit spends **nine** and a returning reader spends **zero** — their service worker answers
+the navigation. An in-app route change is a `pushState` and never reaches the edge. 120 is
+therefore about thirteen simultaneous first-time readers behind one address.
+
+**It was written as `site/scripts/waf-rate-limit.mjs` and the script has been deleted.**
+Wrangler's OAuth token is `zone:read` and cannot write — or even read — the ratelimit
+ruleset, so the script could never apply anything; a script that cannot run reads as though
+it does. The rule is dashboard state, and this is its record.
+
+Three things about it are decisions rather than settings. **`cf.client.bot`, not a
+user-agent test**: the free plan restricts the expression to Path and Verified Bot, which
+is a good restriction — it exempts Googlebot and Bingbot by Cloudflare's own reverse-DNS
+verification instead of by a string anyone can send. **Block, because it is the only action
+the free plan offers here**; managed challenge was the first choice and is not on the menu.
+For the traffic this aims at that is an improvement — a block answers **429**, the
+standardised back-off signal a crawler can act on, where a challenge says nothing. The loss
+is entirely in the false-positive case, which is why the threshold is 120 rather than the
+40 it would have been under a challenge: a shared exit address (a household, an office, a
+carrier's CGNAT) is many readers on one IP, and a 10-second characteristic cannot tell them
+apart.
+
+**What it does not do**: bound a daily total. The free plan allows one rule, per IP, over a
+10-second window, so a scraper pacing itself just under the threshold stays under it all
+day. This stops the pathological case — the crawler that takes the whole budget in twenty
+minutes needs 83 requests/second — and nothing subtler. The levers that bound the total are
+the AI-crawler controls and an accurate sitemap `lastmod`.
+
 **What a crawler that does not render is told — and what it is still not told**
 (2026-08-26). `ssr = false` means `%sveltekit.head%` is empty in the build, so the one
 document served for all 5,812 canonical addresses is the whole of what a non-rendering

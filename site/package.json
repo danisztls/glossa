@@ -14,7 +14,6 @@
 		"preflight": "node scripts/preflight-deploy.mjs",
 		"coverage:accept": "node scripts/reference-coverage.mjs --accept",
 		"lastmod:accept": "node scripts/sync-corpus.mjs --accept-lastmod",
-		"waf:rate-limit": "node scripts/waf-rate-limit.mjs",
 		"deploy": "npm run build && npm run preflight && wrangler deploy",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

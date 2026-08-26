@@ -107,6 +107,14 @@
 		// new static file added to `static/` and not added here still WORKS; it
 		// just quietly costs an invocation per request, which is exactly the
 		// mistake this comment exists to make findable.
+		//
+		// THE FIRST THREE ARE ALSO THE ZONE'S RATE LIMITING RULE. That rule
+		// excludes `/_app/`, `/fonts/` and `/icons/` by prefix so it does not
+		// count the offline library's ~2,240-asset burst against the reader who
+		// asked for it. It is dashboard state and nothing here can assert the
+		// two agree, so changing these three means changing it too --
+		// docs/decisions.md, "The zone has one rate limiting rule". Drift is
+		// silent and rate-limits the site's headline feature.
 		"run_worker_first": [
 			"/*",
 			"!/_app/*",
