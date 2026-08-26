@@ -26,4 +26,24 @@ describe('app.html', () => {
 		expect(declared, 'no `<meta name="description">` found in src/app.html').toBeDefined();
 		expect(declared).toBe(manifest.description);
 	});
+
+	// The shell shipped without one for months. An untitled document is what
+	// every non-rendering consumer saw at all 5,812 addresses, and nothing on a
+	// rendered page — where the route's own title has long since replaced it —
+	// shows that the static one is missing.
+	it('carries a static title, so a consumer that does not render has a name for the page', () => {
+		const declared = /<title>([^<]*)<\/title>/.exec(read('src/app.html'))?.[1];
+		expect(declared, 'no `<title>` found in src/app.html').toBeDefined();
+		expect(declared?.trim()).not.toBe('');
+	});
+
+	// Equal to the English `home.title`, which the root layout assigns at
+	// hydration: if they drift, the title visibly changes as the app boots.
+	it('titles the shell the same as the root layout does', () => {
+		const declared = /<title>([^<]*)<\/title>/.exec(read('src/app.html'))?.[1];
+		const layoutTitle = /'home\.title':\s*'([^']*)'/.exec(read('src/lib/i18n/en.ts'))?.[1];
+
+		expect(layoutTitle, "no `'home.title'` found in src/lib/i18n/en.ts").toBeDefined();
+		expect(declared).toBe(layoutTitle);
+	});
 });

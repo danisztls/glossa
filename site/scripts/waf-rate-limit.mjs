@@ -30,11 +30,12 @@
  * moment it works. So the expression excludes the same static prefixes
  * `run_worker_first` negates, which is also precisely the set that is free to
  * serve — there is nothing to protect there. What remains is the navigation
- * shell plus a handful of one-per-visit files (`/service-worker.js`,
- * `/manifest.webmanifest`, `/corpus-routes.json`, `/favicon.ico`), so a human
- * cold visit spends about six of the allowance and an in-app route change
- * spends none at all: the SPA changes address with `pushState` and never asks
- * the edge again.
+ * shell plus the eight one-per-visit files the service worker precaches from
+ * outside those prefixes (`/service-worker.js`, `/manifest.webmanifest`,
+ * `/favicon.ico`, `/corpus-routes.json`, `/reference-coverage.json`,
+ * `/offline.html`, `/robots.txt`, `/llms.txt`), so a human cold visit spends
+ * NINE of the allowance and an in-app route change spends none at all: the SPA
+ * changes address with `pushState` and never asks the edge again.
  *
  * WHY `cf.client.bot` RATHER THAN A USER-AGENT TEST. The free plan restricts
  * this expression to two fields, Path and Verified Bot, and that restriction is
@@ -44,12 +45,23 @@
  * information" as `cf.bot_management.verified_bot`. A crawler we WANT is
  * verified and uncapped; a crawler pretending to be one is not.
  *
- * WHY MANAGED CHALLENGE RATHER THAN BLOCK. A shared exit address — a household,
- * an office, a VPN, a university — is several readers on one IP, and with only
- * a 10-second characteristic there is no way to tell them apart. A managed
- * challenge is invisible to a browser that can solve it and fatal to a scraper
- * that cannot, so the failure mode for a false positive is a moment's delay
- * rather than a locked door.
+ * BLOCK, BECAUSE IT IS THE ONLY ACTION THE FREE PLAN OFFERS HERE. Managed
+ * challenge was the first choice and is not on the menu; the dashboard's action
+ * list for a free-plan rate limiting rule holds Block and nothing else.
+ *
+ * For the traffic this rule is actually aimed at, that is an improvement rather
+ * than a concession. A blocked request answers **429**, which is the
+ * standardised "you are going too fast" signal — Google documents backing off
+ * on it, and any crawler worth keeping does the same. A challenge says nothing
+ * a crawler can act on; a 429 says exactly the thing we want said.
+ *
+ * The loss is entirely in the false-positive case, and it is why the threshold
+ * below moved. A shared exit address — a household, an office, a university, a
+ * mobile carrier's CGNAT — is many readers on one IP, and a 10-second
+ * characteristic cannot tell them apart. Under a challenge a false positive was
+ * an invisible moment; under Block it is a hard 429 for ten seconds. So the
+ * rule is set where a false positive is implausible rather than merely
+ * unlikely, and accepts a slower cap in exchange.
  *
  * Usage (needs an API token with Zone -> WAF -> Edit on this zone; the OAuth
  * token wrangler holds is `zone:read` only and cannot write this):
@@ -66,14 +78,27 @@ const API = 'https://api.cloudflare.com/client/v4';
 const DESCRIPTION = 'glossa: cap unverified bursts on navigations';
 
 /**
- * Requests per 10 seconds per IP before the challenge starts.
+ * Requests per 10 seconds per IP before the block starts.
  *
- * A cold human visit spends ~6 (see the exclusions note above) and an in-app
- * route change spends none, so 40 is roughly six simultaneous cold readers
- * behind one address. It caps a scraper at 4 requests/second, which is slower
- * than the 2-second courtesy this project already extends to vatican.va.
+ * Almost nothing a reader does counts, and the offline library — the thing
+ * that looks like it would — counts LEAST: all 2,764 content assets are
+ * emitted under `/_app/immutable/assets/`, so the ~2,240-file background fill
+ * is excluded in full by the first exclusion above. An in-app route change is
+ * a `pushState` and never reaches the edge, and a returning reader is served
+ * the shell by their own service worker — so a RETURNING reader spends zero.
+ * What counts is a cold visit: the navigation plus the eight precached files
+ * listed in the header, so NINE, and only the first time.
+ *
+ * 120 is therefore roughly thirteen simultaneous FIRST-TIME readers behind one
+ * address in the same ten seconds. That is the headroom Block buys: it was 40
+ * while the action was a managed challenge, where being wrong cost nothing.
+ *
+ * It caps an unverified client at 12 requests/second, which still stops the
+ * case this rule exists for — a runaway crawler taking the day's 100,000
+ * invocations in twenty minutes needs 83/second. It does NOT bound a daily
+ * total, and no 10-second rule can; see the header.
  */
-const REQUESTS_PER_PERIOD = 40;
+const REQUESTS_PER_PERIOD = 120;
 
 const STATIC_PREFIXES = ['/_app/', '/fonts/', '/icons/'];
 
@@ -84,7 +109,7 @@ const rule = {
 		...STATIC_PREFIXES.map((p) => `not starts_with(http.request.uri.path, "${p}")`),
 		'not cf.client.bot'
 	].join(' and '),
-	action: 'managed_challenge',
+	action: 'block',
 	enabled: true,
 	ratelimit: {
 		// `cf.colo.id` is required alongside the counting characteristic: the

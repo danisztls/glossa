@@ -3,6 +3,31 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- The shell had NO `<title>` at all until now, which is a stronger
+		     statement than it looks: `%sveltekit.head%` is empty in an SPA build,
+		     so every consumer that does not run JavaScript received an untitled
+		     document — 5,812 of them, identical, one per canonical address. A
+		     search result, a link unfurl or a chat preview then falls back to
+		     showing the URL.
+
+		     Safe to state statically because Svelte compiles a `<title>` inside
+		     `<svelte:head>` to an assignment to `document.title` rather than to
+		     an appended element (see the compiler's TitleElement visitor). So
+		     this is the initial value and the route's own title overwrites it at
+		     hydration; it does not become a second `<title>` that shadows the
+		     real one. That is also why the root layout and a page can both
+		     declare one today.
+
+		     It is the site name and nothing else, deliberately: this document is
+		     served for every address, so the only honest title is the one true
+		     of all of them. Per-address titles for a consumer that does not
+		     render would have to come from the edge — see docs/decisions.md
+		     §The site, "What a crawler that does not render is told".
+
+		     Equal to `home.title` in src/lib/i18n/en.ts, which the root layout
+		     sets at hydration; src/lib/shell-meta.test.ts fails when they
+		     drift. -->
+		<title>Glossa Catholica</title>
 		<!-- The site is one SPA shell (`+layout.ts` sets `ssr = false`, and the
 		     build emits no per-route HTML), so every address is served this same
 		     document and a `<svelte:head>` description would not exist until

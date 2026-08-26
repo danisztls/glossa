@@ -779,6 +779,32 @@ the whole site went dark until 00:00 UTC. Scoped, a cold visit costs one invocat
 the failure degrades instead: negative patterns keep serving assets, and only fresh
 navigations 429.
 
+**What a crawler that does not render is told — and what it is still not told**
+(2026-08-26). `ssr = false` means `%sveltekit.head%` is empty in the build, so the one
+document served for all 5,812 canonical addresses is the whole of what a non-rendering
+consumer receives. Until now that document had **no `<title>` at all** and one
+library-wide description, so every social unfurl, every chat preview and every crawler
+that is not Google saw an untitled, bodyless page — the same one, 5,812 times, which is
+also the textbook signature of duplicated content. `app.html` now carries a static
+`<title>`; it is safe there because Svelte compiles a `<title>` in `<svelte:head>` to an
+assignment to `document.title` rather than to an appended element, so the route's own
+title overwrites it at hydration rather than being shadowed by it.
+
+That fixes the missing name, not the sameness. **The open option is to have
+`src/worker.ts` inject a per-address `<title>`, description and `<noscript>` line**, all
+derived from the address it has already parsed and the `corpus-routes.json` it already
+holds — no corpus text at the edge, and no extra invocation, since the invocation is spent
+the moment the request arrives. It would give `/catechismus/330` a name of its own without
+JavaScript, and let the `<noscript>` say what `llms.txt` says in prose: that the text
+renders in a browser, and that the source publisher is the place to take it from.
+
+Deliberately **not done yet**, because it costs two things worth deciding in the open
+rather than in a commit. It widens the edge worker's job past the line `wrangler.jsonc`
+draws for it — "not an application server and never reads or transforms corpus text" — and
+a title derived from an address is not corpus text but is not nothing either. And it adds
+`HTMLRewriter` work to every navigation, against a CPU limit that has never yet been the
+binding constraint and would want measuring before it is.
+
 **Deploy guards measure the corpus, not the page count.** Preflight refuses a
 fixture-sized build, and refuses a build whose reference coverage fell more than 3% below
 the committed baseline in any family — every grammar regression so far was silent. A
