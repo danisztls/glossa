@@ -3,6 +3,23 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- The site is one SPA shell (`+layout.ts` sets `ssr = false`, and the
+		     build emits no per-route HTML), so every address is served this same
+		     document and a `<svelte:head>` description would not exist until
+		     hydration. This static one is therefore the only description a
+		     consumer that does not run JavaScript will ever see — every social
+		     unfurler, and every crawler that is not Google — which is why it
+		     describes the library rather than any one page.
+
+		     It is the same sentence as `description` in
+		     static/manifest.webmanifest, which the install prompt shows. Two
+		     copies by necessity: the manifest is JSON a browser reads on its own
+		     terms and cannot be interpolated from here. src/lib/shell-meta.test.ts
+		     fails when they drift. -->
+		<meta
+			name="description"
+			content="Scripture and the Magisterium — the Bible, the Catechism, the Compendium, and the documents of the Church. Free to read, offline-first."
+		/>
 		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.ico" sizes="48x48" />
 		<link
