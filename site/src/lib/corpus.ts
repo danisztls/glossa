@@ -336,11 +336,17 @@ function fallbackFor(base: string): readonly string[] {
  *
  * THE OFFLINE FILL TAKES THIS SAME CHAIN, and that is a decision with a
  * price. The download planner's three automatic waves fill per language (see
- * `AUTOMATIC_WAVES` in sw-policy.ts), so a neighbour row is not free there
- * the way it is when resolving one address: a reader whose row names a
- * language with a Catechism pays about 3.3 MB raw across ~35 files for it —
- * ~290 KB of essentials and ~3 MB of Catechism — before being asked. Nine of
- * the fifteen rows name such a neighbour.
+ * `AUTOMATIC_WAVES` in sw-policy.ts), so a neighbour row is not free there the
+ * way it is when resolving one address: a reader whose row names a neighbour
+ * pays ~290 KB raw of essentials for it — its Compendium, and its prayers
+ * where it has them — before being asked. Nine of the fifteen rows name such
+ * a neighbour.
+ *
+ * IT IS NOT ~3.3 MB, which is what this said until 2026-08-26 and which was
+ * the Catechism's doing rather than the chain's. Eight editions made the
+ * per-language figure a per-EDITION one, and `ONE_EDITION_AUTOMATIC` in
+ * sw-policy.ts now takes exactly one — so the chain's own cost is the cheap
+ * part again, which is what the argument below always assumed.
  *
  * IT IS WORTH THAT because the alternative fails in the one condition the
  * offline library exists for. A short download chain would leave a Romanian

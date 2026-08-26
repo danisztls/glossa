@@ -99,9 +99,11 @@ const SHELL_CACHE = `glossa-shell-${version}`;
 //                without revalidation because these URLs are content-hashed: a
 //                changed file is a different URL.
 //   - deferred → after first render the layout sends CACHE_CONTENT with the
-//                reader's language chain and what they have open. The worker
-//                fills the AUTOMATIC waves only (`planWaves`) and stops. The
-//                rest is reachable, but only by asking: CACHE_WAVE for a wave,
+//                reader's language chain, the editions they picked themselves
+//                and what they have open. The worker fills the AUTOMATIC part
+//                of the AUTOMATIC waves (`planWaves`, and `autoAssets` for the
+//                Catechism, which is one edition of eight) and stops. The rest
+//                is reachable, but only by asking: CACHE_WAVE for a wave,
 //                CACHE_CONTENT with a `workId` for one work.
 //
 // Until 2026-08-25 that last step took the WHOLE library in EVERY language,
@@ -173,8 +175,12 @@ async function requestPersistence(): Promise<void> {
 }
 
 /** The waves for one reader, and the assets in a named wave. */
-function wavesFor(langs: string[], current?: { workId: string; path: string }): Wave[] {
-	return planWaves(partition.contentEntries, { langs, current });
+function wavesFor(
+	langs: string[],
+	current?: { workId: string; path: string },
+	chosen?: string[]
+): Wave[] {
+	return planWaves(partition.contentEntries, { langs, current, chosen });
 }
 
 sw.addEventListener('install', (event) => {
@@ -335,12 +341,14 @@ sw.addEventListener('fetch', (event) => {
 /**
  * Messages from the page. Four of them:
  *
- *   CACHE_CONTENT  — `{ langs, current?, workId? }`. With a `workId`, take
- *                    that one work (this is the explicit request that reaching
- *                    outside the reader's own language requires). Without one,
- *                    fill the AUTOMATIC waves for `langs` and stop.
- *   CACHE_WAVE     — `{ langs, current?, wave }`. Take one named wave,
- *                    ungated: the reader asked.
+ *   CACHE_CONTENT  — `{ langs, current?, chosen?, workId? }`. With a `workId`,
+ *                    take that one work (this is the explicit request that
+ *                    reaching outside the reader's own language requires).
+ *                    Without one, fill the automatic part of the AUTOMATIC
+ *                    waves for `langs` and stop.
+ *   CACHE_WAVE     — `{ langs, current?, chosen?, wave }`. Take one named wave
+ *                    WHOLE and ungated — every edition of it in the chain, not
+ *                    just the automatic slice: the reader asked.
  *   CLEAR_CONTENT  — drop the whole content cache.
  *   SKIP_WAITING   — the reader accepted the update offer; take over now.
  *
@@ -356,6 +364,8 @@ interface CacheMessage {
 	workId?: string;
 	wave?: WaveId;
 	current?: { workId: string; path: string };
+	/** The reader's explicitly picked editions — see `WavePlanInput.chosen`. */
+	chosen?: string[];
 }
 
 sw.addEventListener('message', (event) => {
@@ -388,34 +398,39 @@ sw.addEventListener('message', (event) => {
 
 	if (data.type === 'CACHE_CONTENT' || data.type === 'CACHE_WAVE') {
 		const langs = data.langs?.length ? data.langs : ['en'];
-		const planned = wavesFor(langs, data.current);
-		const wanted =
-			data.type === 'CACHE_WAVE'
-				? planned.filter((wave) => wave.id === data.wave)
-				: planned.filter((wave) => wave.automatic);
+		const explicit = data.type === 'CACHE_WAVE';
+		const planned = wavesFor(langs, data.current, data.chosen);
+		const wanted = explicit
+			? planned.filter((wave) => wave.id === data.wave)
+			: planned.filter((wave) => wave.automatic);
 
 		event.waitUntil(
 			(async () => {
 				const total = { count: 0, bytes: 0 };
 				for (const wave of wanted) {
-					if (wave.assets.length === 0) continue;
+					// The reader asked for the whole wave; the automatic pass takes
+					// only the part `planWaves` marked as takeable uninvited, which
+					// for `catechism` is one edition of eight (`ONE_EDITION_AUTOMATIC`).
+					const assets = explicit ? wave.assets : wave.autoAssets;
+					const bytes = explicit ? wave.bytes : wave.autoBytes;
+					if (assets.length === 0) continue;
 					// Gated per wave, not once for the whole run: `essentials` is
 					// worth taking on a connection that `catechism` is not, and a
 					// wave-sized question is the one the quota check can answer.
-					if (data.type === 'CACHE_CONTENT' && !(await mayDownloadUninvited(wave.bytes))) {
+					if (!explicit && !(await mayDownloadUninvited(bytes))) {
 						break;
 					}
 					const result = await cacheAssets(env, {
 						cacheName: CONTENT_CACHE,
-						assets: wave.assets,
-						onProgress: ({ count, bytes }) =>
+						assets,
+						onProgress: ({ count, bytes: done }) =>
 							announce({
 								type: 'CACHE_CONTENT:progress',
 								wave: wave.id,
 								count,
-								bytes,
-								ofCount: wave.assets.length,
-								ofBytes: wave.bytes
+								bytes: done,
+								ofCount: assets.length,
+								ofBytes: bytes
 							})
 					});
 					total.count += result.count;

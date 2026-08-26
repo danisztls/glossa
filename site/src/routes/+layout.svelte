@@ -66,7 +66,8 @@
 	 * for the WHOLE library in EVERY language — 2,236 files and ~26 MB gzipped
 	 * — 1.5s after first render, on every visit, gated only by `saveData`,
 	 * which almost nobody sets. It now asks for the automatic waves in the
-	 * reader's own languages and stops; the rest is offered, not taken.
+	 * reader's own languages and editions — one Catechism, not one per
+	 * language — and stops; the rest is offered, not taken.
 	 */
 	onMount(() => serviceWorker.start());
 

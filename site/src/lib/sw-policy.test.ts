@@ -318,8 +318,8 @@ describe('planWaves', () => {
 
 	/**
 	 * The neighbour rows in `CONTENT_LANG_FALLBACK` made some chains four
-	 * languages long, and a language costs ~3.3 MB in the automatic waves
-	 * wherever it has a Catechism. The fill stops at three so that a reader
+	 * languages long, and each language costs ~290 KB of essentials. The fill
+	 * stops at three so that a reader
 	 * whose row names a neighbour pays what every reader paid before the rows
 	 * existed — the resolution chain still runs to its end.
 	 */
@@ -389,7 +389,96 @@ describe('planWaves', () => {
 		const waves = byId(['en']);
 		for (const wave of Object.values(waves)) {
 			expect(wave.bytes).toBe(wave.assets.reduce((n, a) => n + a.bytes, 0));
+			expect(wave.autoBytes).toBe(wave.autoAssets.reduce((n, a) => n + a.bytes, 0));
 		}
+	});
+
+	/**
+	 * The Catechism is eight editions, so a three-language chain used to take
+	 * three of them uninvited — 2.19 MB gzipped for a Portuguese reader against
+	 * an English reader's 1.37, a 1.6x spread for a preference neither
+	 * expressed. One edition is taken; the rest stay in the wave for a reader
+	 * who asks for it.
+	 */
+	it('takes one Catechism edition uninvited, and keeps the rest askable', () => {
+		const waves = byId(['pt', 'en']);
+		expect(waves['catechism'].assets.map((a) => a.lang)).toEqual(['pt', 'en', 'en']);
+		expect(waves['catechism'].autoAssets.map((a) => a.lang)).toEqual(['pt']);
+	});
+
+	/**
+	 * Seven of the fifteen chains have a Compendium in their own language and
+	 * no Catechism — `ro > it > en` is one. Electing `langs[0]` would leave
+	 * every one of them with no Catechism offline at all; electing the first
+	 * language that HAS an edition gives them the one `editionInLang` will
+	 * show them anyway.
+	 */
+	it('elects the first language in the chain that has an edition', () => {
+		const withItalian = [
+			...entries,
+			entry({ workId: 'ccc.it', kind: 'ccc-chunk', lang: 'it', path: '/ccc-it-0001-0100.json' })
+		];
+		const waves = Object.fromEntries(
+			planWaves(withItalian, { langs: ['ro', 'it', 'en'] }).map((w) => [w.id, w])
+		);
+		expect(waves['catechism'].autoAssets.map((a) => a.lang)).toEqual(['it']);
+	});
+
+	/** Only the Catechism is rationed this way. Essentials is ~90 KB per
+	 *  language and its whole point is that every language in the chain has it. */
+	it('takes every edition of the cheap waves', () => {
+		const waves = byId(['en', 'fr']);
+		expect(waves['essentials'].autoAssets).toEqual(waves['essentials'].assets);
+		expect(waves['essentials'].assets.map((a) => a.lang)).toContain('fr');
+	});
+
+	/** A wave outside `AUTOMATIC_WAVES` has nothing takeable, not merely a flag
+	 *  saying so — the worker reads `autoAssets`, and a non-empty one here
+	 *  would be a 28 MB download nobody asked for. */
+	it('offers nothing automatic from a wave that is not automatic', () => {
+		const waves = byId(['en']);
+		expect(waves['scripture'].assets.length).toBeGreaterThan(0);
+		expect(waves['scripture'].autoAssets).toEqual([]);
+		expect(waves['scripture'].autoBytes).toBe(0);
+		expect(waves['summa'].autoAssets).toEqual([]);
+	});
+
+	/**
+	 * The reader picked an edition in the menu; it is the one thing here that
+	 * is a choice rather than an inference from the interface language, and
+	 * until 2026-08-26 the plan could not see it — so an English-interface
+	 * reader of the Portuguese Bible had `[en, la]` filled and their own
+	 * edition left off the device.
+	 */
+	it('plans a chosen edition even from outside the language chain', () => {
+		const waves = Object.fromEntries(
+			planWaves(entries, { langs: ['en'], chosen: ['ccc.pt'] }).map((w) => [w.id, w])
+		);
+		expect(waves['catechism'].assets.map((a) => a.lang)).toEqual(['pt', 'en', 'en']);
+		// And it is the edition elected, over the chain's own first language.
+		expect(waves['catechism'].autoAssets.map((a) => a.lang)).toEqual(['pt']);
+	});
+
+	/** Choosing a Portuguese Bible says nothing about which Catechism this
+	 *  reader wants: a chosen edition sorts first inside ITS OWN wave, and the
+	 *  language chain is left alone. */
+	it('does not let a chosen edition elect its language elsewhere', () => {
+		const waves = Object.fromEntries(
+			planWaves(
+				[
+					...entries,
+					entry({
+						workId: 'bible.matos-soares.pt',
+						kind: 'bible-chapters',
+						lang: 'pt',
+						path: '/content/bible.matos-soares.pt/books/gen/0001-0020.json'
+					})
+				],
+				{ langs: ['en'], chosen: ['bible.matos-soares.pt'] }
+			).map((w) => [w.id, w])
+		);
+		expect(waves['scripture'].assets[0].workId).toBe('bible.matos-soares.pt');
+		expect(new Set(waves['catechism'].autoAssets.map((a) => a.lang))).toEqual(new Set(['en']));
 	});
 
 	it('holds the expensive waves back from the automatic set', () => {

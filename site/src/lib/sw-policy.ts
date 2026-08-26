@@ -283,14 +283,29 @@ export type WaveId =
 
 export interface Wave {
 	id: WaveId;
-	/** Whether the worker may fetch this wave without the reader asking.
+	/** Whether ANY of this wave may be fetched without the reader asking.
 	 *  See `AUTOMATIC_WAVES` for where the line is drawn and why. */
 	automatic: boolean;
+	/** The whole wave, in download order — what an explicit `CACHE_WAVE` takes. */
 	assets: ContentEntry[];
 	/** Sum of `bytes` — raw, not transfer size, and it is the number a UI
 	 *  should show *before* committing a reader to a download. `content-length`
 	 *  is only knowable after fetching, which is too late to ask. */
 	bytes: number;
+	/**
+	 * The leading slice of `assets` that may be taken UNINVITED, with its own
+	 * size — `assets`/`bytes` for every wave but `catechism`, and empty for
+	 * every wave outside `AUTOMATIC_WAVES`.
+	 *
+	 * Two numbers rather than one because "what the reader may ask for" and
+	 * "what we take without asking" stopped being the same set when the
+	 * Catechism became eight editions; see `ONE_EDITION_AUTOMATIC`. The gate
+	 * in `service-worker.ts` prices `autoBytes`, not `bytes`, or it would
+	 * refuse an automatic fill on the size of a download it was never going
+	 * to start.
+	 */
+	autoAssets: ContentEntry[];
+	autoBytes: number;
 }
 
 /**
@@ -301,11 +316,11 @@ export interface Wave {
  * and the Bible introductions whole. That is a rounding error against a single
  * photograph on most sites, and it makes the app meaningfully usable offline.
  *
- * `catechism` is ~1 MB gzipped, which is a real download and is included
- * anyway: the Catechism is the site's second pillar, a reader who installed
- * this PWA installed it to read one of four or five works offline, and 1 MB is
- * the cheapest whole work among them. The three excluded waves are 2-5 MB
- * each.
+ * `catechism` is ~0.6 MB gzipped per edition (3.0-3.8 MB raw, 29 files), which
+ * is a real download and is included anyway: the Catechism is the site's second
+ * pillar, a reader who installed this PWA installed it to read one of four or
+ * five works offline, and it is the cheapest whole work among them. The three
+ * excluded waves are 23-28 MB raw each.
  *
  * The worker gates this further at runtime on connection and storage quota —
  * see `src/service-worker.ts`. This table is the ceiling, not the decision.
@@ -315,6 +330,38 @@ const AUTOMATIC_WAVES: ReadonlySet<WaveId> = new Set<WaveId>([
 	'essentials',
 	'catechism'
 ]);
+
+/**
+ * Waves whose automatic part is ONE EDITION — the first language in the
+ * reader's chain that has one — rather than every edition in the chain.
+ *
+ * "Per edition" is what made this necessary. Until the Catechism was eight
+ * editions (2026-08-26) a language cost one Catechism because most languages
+ * had none, and the whole automatic set was the ~3.3 MB raw this file and
+ * `corpus.ts` both still claimed afterwards. With eight, `OFFLINE_LANG_DEPTH`
+ * multiplies: an English reader's chain reached two editions and a Portuguese
+ * reader's three, so the fill was 1.37 MB gzipped against 2.19 — a 1.6x spread
+ * for a preference neither reader expressed, and the exact property
+ * `OFFLINE_LANG_DEPTH`'s docblock exists to defend.
+ *
+ * THE ELECTED EDITION IS THE ONE THE READER WILL BE SHOWN. Because the wave is
+ * already sorted by language rank, the leading run IS the highest-ranked
+ * language that has an edition — the same answer `editionInLang` gives when
+ * they open the Catechism. So a Romanian reader (chain `ro > it > en`, and
+ * there is no `ccc.ro`) fills Italian and not also English; a Hungarian reader
+ * fills German. Electing `langs[0]` instead would leave seven of the fifteen
+ * chains — every language with a Compendium but no Catechism — with no
+ * Catechism offline at all.
+ *
+ * The other editions are not lost, and are not a wave either: `CACHE_WAVE`
+ * takes the whole `catechism` wave, and `assetsForWork` takes one edition by
+ * id. Both are the reader asking, which is what crossing an edition boundary
+ * has always required here.
+ *
+ * Every chain now fills 39-51 files, 0.74-1.00 MB gzipped, against 68-109
+ * files and 1.37-2.19 MB before.
+ */
+const ONE_EDITION_AUTOMATIC: ReadonlySet<WaveId> = new Set<WaveId>(['catechism']);
 
 /**
  * Which wave each content `kind` belongs to.
@@ -410,14 +457,35 @@ export interface WavePlanInput {
 	/** The reader's content-language chain, most preferred first —
 	 *  `contentLangChain` in corpus.ts, the same order edition resolution
 	 *  follows, so what a reader is routed to is what they have offline.
-	 *  Nothing outside it is planned, and only its first `OFFLINE_LANG_DEPTH`
-	 *  entries are. */
+	 *  Only its first `OFFLINE_LANG_DEPTH` entries are planned, and nothing
+	 *  outside it except `chosen`. */
 	langs: readonly string[];
 	/** What the reader has open, if anything, so `neighbours` knows what is
 	 *  adjacent. A path this inventory does not contain yields no neighbours
 	 *  rather than an error — a reader on a page with no content file (the
 	 *  colophon, a listing) is an ordinary case. */
 	current?: { workId: string; path: string };
+	/**
+	 * Work ids the reader picked FOR THEMSELVES in the edition menu —
+	 * `content.svelte.ts`'s active overrides, which is the one input here that
+	 * is a choice rather than an inference from the interface language.
+	 *
+	 * IT WAS INVISIBLE TO THE FILL UNTIL 2026-08-26, and the reader that
+	 * broke on is the one `content.svelte.ts`'s own docblock uses as its
+	 * example: an English interface reading the Portuguese Matos Soares Bible.
+	 * The plan was built from `contentLangChain(ui language)` alone, so `[en,
+	 * la]` filled and the single edition they had explicitly asked for was the
+	 * one thing not on the device — the inverse of the intent, and invisible
+	 * because everything still WORKS while the network is up.
+	 *
+	 * A chosen work is planned whatever its language (asking for an edition by
+	 * id is the explicit request that crossing languages requires, the same
+	 * rule `assetsForWork` states) and sorts first WITHIN ITS OWN WAVE. It is
+	 * deliberately not promoted into `langs`: choosing a Portuguese Bible says
+	 * nothing about which Catechism this reader wants, and a chain promotion
+	 * would elect the Portuguese one for them.
+	 */
+	chosen?: readonly string[];
 }
 
 /**
@@ -425,13 +493,19 @@ export interface WavePlanInput {
  * rather than "the chain".
  *
  * EVERY READER SHOULD PAY ABOUT THE SAME. A language in an automatic wave
- * costs ~3.3 MB raw across ~35 files wherever it has a Catechism (~290 KB of
- * essentials, ~3 MB of Catechism), and `CONTENT_LANG_FALLBACK` in corpus.ts
+ * costs ~290 KB raw of essentials, and `CONTENT_LANG_FALLBACK` in corpus.ts
  * gives nine of its fifteen rows a neighbour language ahead of English and
  * Latin. Uncapped, that is a Spanish reader filling four languages against a
- * German reader's three — ~12.9 MB against ~9.5 — for a preference neither of
- * them expressed. Three is what every chain had before the neighbour rows
- * existed, so the cap holds the cost where it already was.
+ * German reader's three, for a preference neither of them expressed. Three is
+ * what every chain had before the neighbour rows existed, so the cap holds the
+ * cost where it already was.
+ *
+ * THE CAP IS NOT WHAT HOLDS THE CATECHISM'S COST, and assuming it did is how
+ * the automatic fill quietly reached 2.19 MB gzipped for a Portuguese reader:
+ * at ~3.3 MB raw per edition, three languages deep is three Catechisms. That
+ * is `ONE_EDITION_AUTOMATIC`'s job, and the two are independent — this number
+ * bounds how many languages are planned, that set bounds how many editions of
+ * one work are taken uninvited.
  *
  * WHAT IT DROPS IS LATIN, for the nine rows with a neighbour, and that is the
  * cheapest thing in the chain to lose: Latin sits last precisely because it
@@ -463,8 +537,9 @@ const NEIGHBOURS_BEHIND = 1;
  */
 export function planWaves(
 	entries: readonly ContentEntry[],
-	{ langs, current }: WavePlanInput
+	{ langs, current, chosen = [] }: WavePlanInput
 ): Wave[] {
+	const chosenIds = new Set(chosen);
 	const rank = new Map(
 		langs.slice(0, OFFLINE_LANG_DEPTH).map((lang, i) => [lang.toLowerCase(), i])
 	);
@@ -477,7 +552,14 @@ export function planWaves(
 		const l = lang.toLowerCase();
 		return rank.get(l) ?? rank.get(l.split('-')[0]);
 	};
-	const mine = entries.filter((entry) => rankOf(entry.lang) !== undefined);
+	// A chosen edition is planned whether or not its language is in the chain;
+	// everything else is planned only if it is. `rankOf` answers `undefined`
+	// for the former, so every later comparison reads the rank through
+	// `rankOrLast` rather than asserting it.
+	const mine = entries.filter(
+		(entry) => rankOf(entry.lang) !== undefined || chosenIds.has(entry.workId)
+	);
+	const rankOrLast = (entry: ContentEntry) => rankOf(entry.lang) ?? OFFLINE_LANG_DEPTH;
 
 	const neighbours = current ? neighboursOf(mine, current) : [];
 	const claimed = new Set(neighbours.map((entry) => entry.path));
@@ -493,9 +575,15 @@ export function planWaves(
 	for (const [id, assets] of buckets) {
 		if (id === 'neighbours') continue; // already in reading order
 		assets.sort((a, b) => {
-			// Language preference outranks everything: an English reader with
-			// Latin as fallback finishes English before starting Latin.
-			const byLang = rankOf(a.lang)! - rankOf(b.lang)!;
+			// An edition the reader picked outranks even language preference —
+			// it IS the preference, stated rather than inferred. This is also
+			// what elects it for `ONE_EDITION_AUTOMATIC`, which reads the
+			// leading run.
+			const byChosen = Number(chosenIds.has(b.workId)) - Number(chosenIds.has(a.workId));
+			if (byChosen !== 0) return byChosen;
+			// Language preference next: an English reader with Latin as
+			// fallback finishes English before starting Latin.
+			const byLang = rankOrLast(a) - rankOrLast(b);
 			if (byLang !== 0) return byLang;
 			if (id === 'scripture') {
 				const byBook = scriptureRank(osisOf(a)) - scriptureRank(osisOf(b));
@@ -516,13 +604,37 @@ export function planWaves(
 
 	return WAVE_ORDER.map((id) => {
 		const assets = buckets.get(id)!;
+		const automatic = AUTOMATIC_WAVES.has(id);
+		const autoAssets = !automatic
+			? []
+			: ONE_EDITION_AUTOMATIC.has(id)
+				? leadingEdition(assets)
+				: assets;
 		return {
 			id,
-			automatic: AUTOMATIC_WAVES.has(id),
+			automatic,
 			assets,
-			bytes: assets.reduce((sum, entry) => sum + entry.bytes, 0)
+			bytes: assets.reduce((sum, entry) => sum + entry.bytes, 0),
+			autoAssets,
+			autoBytes: autoAssets.reduce((sum, entry) => sum + entry.bytes, 0)
 		};
 	});
+}
+
+/**
+ * The run of assets at the front of a sorted wave that share the first one's
+ * language — for `ONE_EDITION_AUTOMATIC`, where that run is the edition the
+ * reader will actually be shown.
+ *
+ * Read off the sort rather than elected separately, because the sort already
+ * encodes the whole answer: a chosen edition first, then language rank. A
+ * second implementation of "which edition is this reader's" is a second thing
+ * to keep in step with `editionInLang`.
+ */
+function leadingEdition(assets: readonly ContentEntry[]): ContentEntry[] {
+	const lead = assets[0]?.lang.toLowerCase();
+	if (lead === undefined) return [];
+	return assets.filter((entry) => entry.lang.toLowerCase() === lead);
 }
 
 function scriptureRank(osis: string): number {

@@ -34,6 +34,7 @@
  */
 
 import { contentLangChain, lastContentRead } from './corpus';
+import { content, type WorkTypeKey } from './content.svelte';
 import type { WaveId } from './sw-policy';
 
 /** How long to wait between `registration.update()` checks. Six hours: long
@@ -208,7 +209,8 @@ class ServiceWorkerStore {
 			// no access to the reader's stored preferences: language lives in
 			// localStorage and the worker cannot see it.
 			langs: contentLangChain(readerLang()),
-			current: lastContentRead()
+			current: lastContentRead(),
+			chosen: chosenEditions()
 		});
 	}
 
@@ -230,11 +232,52 @@ class ServiceWorkerStore {
  * The interface language, read from storage directly rather than through
  * `i18n`.
  *
- * Importing `i18n.svelte.ts` here would make a module the root layout loads
- * before anything else depend on the whole i18n store, and this needs one
- * string. The key is the one `app.html`'s pre-paint script already writes and
- * reads; a wrong answer costs a suboptimal download order, not correctness.
+ * The reason used to be graph weight: importing `i18n.svelte.ts` would make a
+ * module the root layout loads before anything else depend on the whole i18n
+ * store — fourteen eagerly-imported dictionaries — for one string. That reason
+ * is spent, since `chosenEditions` above imports `content.svelte.ts` and that
+ * imports i18n. (No new weight: the layout itself imports `t`.)
+ *
+ * What is left is smaller and still true. This wants the raw stored tag, not a
+ * validated `UiLang`: the key is the one `app.html`'s pre-paint script writes
+ * and reads, `document.documentElement.lang` is the same answer a step later,
+ * and a wrong answer costs a suboptimal download order rather than
+ * correctness. Reading it directly is also what keeps this working before the
+ * i18n store has hydrated.
  */
+/**
+ * The editions this reader is actually reading, one per work type.
+ *
+ * `content.workIdFor` answers the EFFECTIVE edition — an active override if
+ * there is one, the UI language's default otherwise — which is deliberately
+ * more than "their overrides": it is the same answer the reader is routed to
+ * when they open the work, and sending it means the offline library and the
+ * reader's screen cannot disagree about which edition is theirs. Where there
+ * is no override the answer is redundant with `langs` and costs nothing;
+ * where there is one it is the whole point (see `WavePlanInput.chosen`).
+ *
+ * Documents are left out. Their overrides are per slug — hundreds of possible
+ * keys, one work each — and the wave they belong to is not automatic, so
+ * naming them here would order a download nobody has asked for.
+ *
+ * This is why the module now imports `content.svelte.ts` (and through it
+ * `i18n.svelte.ts`, which `readerLang` below still declines to depend on for
+ * its own reason). The store reads localStorage through the same staleness
+ * rule the edition menu does, and duplicating that rule here to keep the
+ * import out would be a second copy of a policy that has already been
+ * rewritten once.
+ */
+function chosenEditions(): string[] {
+	const types: WorkTypeKey[] = ['bible', 'catechism', 'compendium', 'prayer', 'summa'];
+	try {
+		return types.map((type) => content.workIdFor(type)).filter((id): id is string => !!id);
+	} catch {
+		// The store reads storage on construction; a context that refuses it
+		// should cost the plan its precision, not its existence.
+		return [];
+	}
+}
+
 function readerLang(): string {
 	try {
 		return localStorage.getItem('glossa:ui-lang') || document.documentElement.lang || 'en';
