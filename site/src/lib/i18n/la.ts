@@ -45,6 +45,7 @@ export const la: Dictionary = {
 	'jumpbox.short': 'Quaere',
 	'jumpbox.hint': 'Preme / vel Ctrl+K ut ad locum adeas',
 	'jumpbox.noMatch': 'Nihil inventum',
+	'jumpbox.suggestions': 'Proposita',
 	'appearance.label': 'Species',
 	'darkMode.label': 'Modus obscurus',
 	// Latin has no yes/no pair, so the three cells say WHEN rather than

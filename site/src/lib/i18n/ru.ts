@@ -29,6 +29,7 @@ export const ru: Dictionary = {
 	'jumpbox.short': 'Поиск',
 	'jumpbox.hint': 'Нажмите / или Ctrl+K, чтобы перейти к ссылке',
 	'jumpbox.noMatch': 'Ничего не найдено',
+	'jumpbox.suggestions': 'Подсказки',
 	'appearance.label': 'Оформление',
 	'darkMode.label': 'Тёмный режим',
 	'darkMode.auto': 'Авто',

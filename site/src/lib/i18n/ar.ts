@@ -29,6 +29,7 @@ export const ar: Dictionary = {
 	'jumpbox.short': 'بحث',
 	'jumpbox.hint': 'اضغط / أو Ctrl+K للانتقال إلى موضع',
 	'jumpbox.noMatch': 'لا نتيجة',
+	'jumpbox.suggestions': 'اقتراحات',
 	'appearance.label': 'المظهر',
 	'darkMode.label': 'الوضع الداكن',
 	'darkMode.auto': 'تلقائي',

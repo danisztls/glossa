@@ -1458,7 +1458,7 @@ export const BOOK_FORMS: Record<string, Record<string, string[]>> = {
 // section below the book tables.
 // --------------------------------------------------------------------------
 
-interface SiglumEntry {
+export interface SiglumEntry {
 	expansion: string;
 	/** The ingested document this siglum names — see the section comment on
 	 *  why a slug listed here is validated against the corpus, never trusted. */
@@ -2124,6 +2124,48 @@ function configFor(lang?: string, work?: string): LangConfig {
 	if (!lang) return CONFIG_EN;
 	const tag = lang.toLowerCase();
 	return CONFIGS[tag.split('-')[0]] ?? CONFIG_EN;
+}
+
+/**
+ * The surface forms one language reads, for a consumer that has to RECOGNIZE
+ * them rather than parse a finished citation.
+ *
+ * `parseRefs` and `linkifyProse` read a string the corpus already printed;
+ * the jump box's suggester (`suggest.ts`) reads a string a reader is still
+ * typing, so it needs the tables themselves — every spelling of a book, every
+ * siglum, and the separator this language puts between chapter and verse —
+ * rather than the pre-built matchers, which are anchored regexes over
+ * complete tokens and match nothing halfway through a word.
+ *
+ * This is a READ-ONLY view of the same `LangConfig` the parser uses, not a
+ * second copy: a table the suggester completes and the parser then fails to
+ * resolve would offer the reader an address that does not exist. `BOOK_FORMS`
+ * is deliberately not that view — it is the eight tables the pipeline's
+ * exporter needs, keyed by the language it happens to know about, and it has
+ * no sigla and no separator.
+ */
+export interface GrammarSurface {
+	/** Every spelling of a book this language reads -> that book's OSIS code. */
+	books: ReadonlyMap<string, string>;
+	/** Every document siglum this language reads. A `slug` here is a claim the
+	 *  corpus may not honour — see the sigla section above. */
+	sigla: ReadonlyMap<string, Readonly<SiglumEntry>>;
+	/** What this language prints between chapter and verse: `:` in English,
+	 *  `,` in the Romance tables, an Arabic comma in `ar`. */
+	chapterVerseSep: string;
+	/** Whether a siglum in this language may resolve to an ingested document
+	 *  at all (false for PT — see `DOCUMENT_SIGLA_PT`). */
+	linksSigla: boolean;
+}
+
+export function grammarSurface(lang?: string, work?: string): GrammarSurface {
+	const config = configFor(lang, work);
+	return {
+		books: config.variantToOsis,
+		sigla: config.documentSigla,
+		chapterVerseSep: config.primarySep,
+		linksSigla: config.linksSigla
+	};
 }
 
 // --------------------------------------------------------------------------

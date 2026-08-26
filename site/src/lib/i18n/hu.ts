@@ -29,6 +29,7 @@ export const hu: Dictionary = {
 	'jumpbox.short': 'Keresés',
 	'jumpbox.hint': 'Nyomja meg a / vagy a Ctrl+K billentyűt a hivatkozásra ugráshoz',
 	'jumpbox.noMatch': 'Nincs találat',
+	'jumpbox.suggestions': 'Javaslatok',
 	'appearance.label': 'Megjelenés',
 	'darkMode.label': 'Sötét mód',
 	'darkMode.auto': 'Auto',

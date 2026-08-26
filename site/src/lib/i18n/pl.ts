@@ -29,6 +29,7 @@ export const pl: Dictionary = {
 	'jumpbox.short': 'Szukaj',
 	'jumpbox.hint': 'Naciśnij / lub Ctrl+K, aby przejść do odsyłacza',
 	'jumpbox.noMatch': 'Brak wyników',
+	'jumpbox.suggestions': 'Podpowiedzi',
 	'appearance.label': 'Wygląd',
 	'darkMode.label': 'Tryb ciemny',
 	'darkMode.auto': 'Auto',

@@ -29,6 +29,7 @@ export const it: Dictionary = {
 	'jumpbox.short': 'Cerca',
 	'jumpbox.hint': 'Premi / o Ctrl+K per andare a un riferimento',
 	'jumpbox.noMatch': 'Nessuna corrispondenza',
+	'jumpbox.suggestions': 'Suggerimenti',
 	'appearance.label': 'Aspetto',
 	'darkMode.label': 'Modo scuro',
 	'darkMode.auto': 'Auto',

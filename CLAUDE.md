@@ -466,6 +466,24 @@ keeping the French `Jc` for James where its own convention is `St`, Malagasy
 §604 dropping the `1` from `1 Jo 4,19`. Each was a real link to the wrong
 verse, and each was one edition against seven.
 
+**The tables now have a second consumer, and it is the one a reader touches.**
+`site/src/lib/suggest.ts` (the jump box's autocomplete) reads them through
+`grammarSurface`, so editing a book table or a siglum table changes what the
+box completes as well as what the page links — deliberately, since a form the
+box completes and `parseRefs` then fails to resolve would offer an address that
+does not exist. Two consequences worth knowing before you touch either:
+
+- **The tables hold abbreviations, not names**, because the oracle derives
+  them from citations and citations abbreviate. So a French reader completes
+  `Jn 3` and not `Jean 3`, and the fix is not to hand-write the missing names
+  — that is the maintenance `--derive` exists to avoid. A book's full name is
+  matched only where an EDITION carries it (`bible.*`'s own `name`/`abbrevs`,
+  the suggester's lower tier), which is why English, Portuguese and Latin
+  complete full names and the other eleven do not.
+- **`suggest()` takes its language as an argument**, never from the `i18n`
+  store, and memoizes its book and title indexes per language. A test that
+  switches language calls `resetSuggestCaches()`; the app never needs to.
+
 The five tags with **no** config (`hu`, `ro`, `sl`, `sv`, `en-gb`) fall to
 English, and that is measured rather than assumed: the four Compendium-only
 languages cite the Catechism by bare number, which needs no book table at all

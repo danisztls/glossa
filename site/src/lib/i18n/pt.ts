@@ -27,6 +27,7 @@ export const pt: Dictionary = {
 	'jumpbox.short': 'Buscar',
 	'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
 	'jumpbox.noMatch': 'Nenhum resultado',
+	'jumpbox.suggestions': 'Sugestões',
 
 	'appearance.label': 'Aparência',
 	'darkMode.label': 'Modo escuro',

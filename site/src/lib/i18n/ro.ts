@@ -29,6 +29,7 @@ export const ro: Dictionary = {
 	'jumpbox.short': 'Caută',
 	'jumpbox.hint': 'Apăsați / sau Ctrl+K pentru a sări la o referință',
 	'jumpbox.noMatch': 'Nicio potrivire',
+	'jumpbox.suggestions': 'Sugestii',
 	'appearance.label': 'Aspect',
 	'darkMode.label': 'Mod întunecat',
 	'darkMode.auto': 'Auto',

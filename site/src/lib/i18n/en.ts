@@ -34,6 +34,10 @@ export const en: Dictionary = {
 	'jumpbox.short': 'Search',
 	'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
 	'jumpbox.noMatch': 'No match',
+	// The suggestion listbox's accessible name. The box has no visible
+	// heading, and `aria-label` on the dialog names the DIALOG; a listbox
+	// inside it is a second widget and owes its own name.
+	'jumpbox.suggestions': 'Suggestions',
 
 	// Appearance menu — AppearanceMenu.svelte is the consumer; the dark-mode
 	// and sepia stores are theme.svelte.ts, the text size is prefs.svelte.ts.

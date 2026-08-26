@@ -29,6 +29,7 @@ export const sv: Dictionary = {
 	'jumpbox.short': 'Sök',
 	'jumpbox.hint': 'Tryck / eller Ctrl+K för att gå till en hänvisning',
 	'jumpbox.noMatch': 'Ingen träff',
+	'jumpbox.suggestions': 'Förslag',
 	'appearance.label': 'Utseende',
 	'darkMode.label': 'Mörkt läge',
 	'darkMode.auto': 'Auto',

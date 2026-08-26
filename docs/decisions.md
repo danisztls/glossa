@@ -908,6 +908,62 @@ the committed baseline in any family — every grammar regression so far was sil
 deliberate drop is recorded with `npm run coverage:accept` and shows in the diff. There is
 no CI; a deploy ships one person's working tree.
 
+**The jump box suggests over the sitemap's address space, not over a search index.**
+It was a parser with a field in front of it: type a finished citation, press Enter, be
+told "no match". That serves a reader who already knows the address, and three quarters of
+the corpus has no address anyone would type — a document, a prayer and a Summa question
+are reached by name. `suggest.ts` enumerates what a fragment could become, from the same
+places `scripts/sitemap.mjs` enumerates: Bible chapters and verses, Catechism paragraphs
+and chapters, Compendium questions and chapters, documents (with a section locus, `LG 12`),
+prayers, Summa questions, and the section landing pages. It reads the index tier only, so
+a keystroke costs no fetch and the box works offline. It is deliberately not full-text
+search — it completes addresses, which is what this site's URLs name.
+
+**It completes in the reader's own notation, sharing the parser's tables rather than
+copying them.** The surface forms come from `refs-grammar.ts` through `grammarSurface`,
+the same tables `parseRefs` links printed citations with, because a form the suggester
+completes and the parser then fails to resolve would offer an address that does not exist.
+Behind them every edition's own `abbrevs` and `name` are matched, ranked lower — the five
+interface languages with no grammar config would otherwise complete nothing but English.
+What this cannot fix is a table that has no full book names in it: the tables are derived
+from citations by `scripts/book-forms-oracle.mjs`, so a French reader completes `Jn 3` and
+not `Jean 3`, and inventing the missing names is exactly the hand-maintenance that
+derivation exists to avoid.
+
+**A suggester has a list, so divergent numbering is offered rather than guessed.** `Ps 23`
+is Psalm 22 in this corpus and Psalm 23 is also a real address; `refparse.ts` has to pick
+one and picks the citation's meaning. The box shows both, converted first, each labelled by
+where it actually goes — which is the one thing this surface can do about
+`docs/link-surface.md`'s standing warning that a wrong chapter does not fail an existence
+check.
+
+**Tab completes, Enter goes, and a completion is an input rather than a label.** A
+suggestion is usually a PREFIX of where the reader is going — completing `John 3` and then
+typing `:16` is a chain the box could not previously make — so Tab fills the field and
+leaves it open, and only with a row chosen, because Tab is also the only keyboard way out
+of a modal. Every row states its own completion because the label is an output and the two
+part company wherever the label reads better than the grammar parses: "Summa II-II, Q 184"
+parses as nothing. The round-trip is tested as a property over every row, not spot-checked,
+and it found three real defects — a book introduction swallowed by the single-chapter
+fixup, a full section name outranked by a Summa title that merely contained the word, and
+an Arabic completion the partial matcher could not read back because it wrote the Arabic
+comma and read only the Latin one.
+
+**A completion of a divergent chapter is a DUAL citation, because a plain one converts
+twice.** A row labelled "Psalms 22" completing to "Psalms 22" is read back as a Hebrew
+citation and converted to Psalm 21 — Tab moved the reader's own chosen row down the list
+they picked it from. `refparse.ts` already has the escape hatch and the sources already
+print it: `Ps 22(23)` states both numberings, so nothing converts. It is the same
+double-conversion `address.ts` refuses to risk by parsing URLs with regexes instead of
+replaying how they were built.
+
+**`suggest()` reads its language from its argument, never from the store.** The component
+passes `i18n.lang`, so the two agree in the app; a function whose output half-follows its
+argument and half-follows a global is one nobody can test, and this one is tested at
+fourteen languages' worth of labels. Enter still runs the parser when no row is chosen, so
+a complete citation stays a one-keystroke operation and the shapes the suggester declines
+to complete — a verse list, an `ff` tail — keep working.
+
 **Theme is independent axes, not one list.** `auto / light / dark / sepia` made one value
 answer two questions and cost the reader a real combination. Sepia yields to dark because
 no dark-sepia palette exists, and it is **suspended, not cleared** — a dark control that

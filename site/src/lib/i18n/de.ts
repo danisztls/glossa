@@ -29,6 +29,7 @@ export const de: Dictionary = {
 	'jumpbox.short': 'Suchen',
 	'jumpbox.hint': '/ oder Strg+K drücken, um zu einer Stelle zu springen',
 	'jumpbox.noMatch': 'Kein Treffer',
+	'jumpbox.suggestions': 'Vorschläge',
 	'appearance.label': 'Darstellung',
 	'darkMode.label': 'Dunkelmodus',
 	'darkMode.auto': 'Auto',

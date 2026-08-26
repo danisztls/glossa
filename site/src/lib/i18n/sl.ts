@@ -29,6 +29,7 @@ export const sl: Dictionary = {
 	'jumpbox.short': 'Iskanje',
 	'jumpbox.hint': 'Pritisnite / ali Ctrl+K za skok na navedbo',
 	'jumpbox.noMatch': 'Ni zadetkov',
+	'jumpbox.suggestions': 'Predlogi',
 	'appearance.label': 'Videz',
 	'darkMode.label': 'Temni način',
 	'darkMode.auto': 'Auto',

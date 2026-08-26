@@ -1,12 +1,37 @@
 <script lang="ts">
+	/**
+	 * The jump box: a combobox over the whole canonical address space.
+	 *
+	 * It was a parser with a text field in front of it — type a finished
+	 * citation, press Enter, navigate or be told "no match". That still works
+	 * and is still the fastest path for a reader who knows the address, but it
+	 * was the ONLY path, and three quarters of the corpus has no address a
+	 * reader would ever type: a document, a prayer and a Summa question are
+	 * reached by name, and nobody types `/documenta/lumen-gentium`.
+	 *
+	 * `suggest.ts` answers that half — what the fragment could become, in the
+	 * reader's own citation grammar — and this component is its keyboard and
+	 * its list. The parser is still here and still runs on Enter, as the
+	 * fallback for a shape the suggester declined to complete (see `submit`);
+	 * what changed is that the reader can now SEE where they are about to go
+	 * before they commit to it, which is the only thing that makes a divergent
+	 * Psalm number (`suggest.ts`'s docblock) a choice rather than a surprise.
+	 *
+	 * WHY `aria-activedescendant` AND NOT ROVING FOCUS. Focus must stay in the
+	 * text field — the reader is still typing — so the active option is named
+	 * rather than focused, which is the combobox pattern's whole point. The
+	 * options are therefore not tabbable and are moved through with the arrow
+	 * keys alone; a mouse still clicks them directly.
+	 */
 	import { goto } from '$app/navigation';
 	import { hrefFor } from '$lib/address';
 	import { parseReference, type ParsedBibleReference } from '$lib/refparse';
 	import { resolveBookToken } from '$lib/book-token';
-	import { cccParagraphExists, getCanonicalBook } from '$lib/corpus';
+	import { cccParagraphExists, getCanonicalBook, prayerIndexLang } from '$lib/corpus';
 	import type { BibleBookMeta } from '$lib/corpus-index';
 	import { content } from '$lib/content.svelte';
-	import { t } from '$lib/i18n.svelte';
+	import { suggest } from '$lib/suggest';
+	import { i18n, t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
 
 	// CCC scope for jump-box resolution: a single content language for now
@@ -17,8 +42,48 @@
 	let open = $state(false);
 	let query = $state('');
 	let notFound = $state(false);
+	/** Index into `suggestions`, or -1 for "nothing chosen yet". Enter then
+	 *  falls through to the parser, which is the behaviour that predates the
+	 *  list and the one a reader typing a full citation still expects. */
+	let active = $state(-1);
 	let inputEl: HTMLInputElement | undefined = $state();
 	let dialogEl: HTMLDialogElement | undefined = $state();
+	let listEl: HTMLUListElement | undefined = $state();
+
+	/**
+	 * Recomputed on every keystroke, from indexes already in memory — no fetch,
+	 * no debounce. `content.workIdFor`/`langFor` are read here rather than
+	 * inside `suggest` so the store stays the component's dependency and the
+	 * suggester stays a pure function of its arguments.
+	 */
+	const suggestions = $derived(
+		open
+			? suggest(query, {
+					lang: i18n.lang,
+					bibleWorkId: content.workIdFor('bible'),
+					cccLang: content.langFor('catechism'),
+					compendiumLang: content.langFor('compendium'),
+					// The INDEX edition, not the reading one: `prayer.common.en-gb`
+					// is five prayers and nothing else, so indexing off it would
+					// offer a reader who prefers English (UK) five of the
+					// twenty-eight they can actually reach (`corpus.ts`'s
+					// `prayerIndexLang`).
+					prayerLang: prayerIndexLang(content.langFor('prayer')),
+					summaLang: content.langFor('summa')
+				})
+			: []
+	);
+
+	// The active row cannot outlive the list it indexes: a keystroke that
+	// shortens the results would otherwise leave `aria-activedescendant`
+	// pointing at an option that no longer exists.
+	$effect(() => {
+		if (active >= suggestions.length) active = -1;
+	});
+
+	function optionId(index: number): string {
+		return `jump-option-${index}`;
+	}
 
 	function isTypingTarget(el: EventTarget | null): boolean {
 		if (!(el instanceof HTMLElement)) return false;
@@ -36,12 +101,14 @@
 	 * `open` mirrors that rather than driving it. The element is always in the
 	 * DOM (a closed `<dialog>` is `display: none`), because `showModal()`
 	 * needs something to be called on; the flag is only here so the shortcut
-	 * handler below can tell whether the box is up, and so `inputEl` is bound
-	 * before the box opens rather than a microtask later.
+	 * handler below can tell whether the box is up, so `inputEl` is bound
+	 * before the box opens rather than a microtask later, and so the
+	 * suggester does no work for a box nobody is looking at.
 	 */
 	function openBox() {
 		notFound = false;
 		query = '';
+		active = -1;
 		open = true;
 		dialogEl?.showModal();
 		// `showModal()` focuses the first focusable descendant, which is this
@@ -93,6 +160,63 @@
 	}
 
 	/**
+	 * Arrow keys move the active row and wrap; Home/End jump to the ends; Tab
+	 * completes. Everything else is left to the field, including Enter, which
+	 * the form's submit handler owns.
+	 *
+	 * TAB COMPLETES RATHER THAN NAVIGATES, and only with a row chosen. Enter is
+	 * already "go there", so a Tab that did the same would be a second key for
+	 * one action; what the box had no key for was "put that in the field and let
+	 * me keep typing" — which is the useful half, because a suggestion is
+	 * usually a PREFIX of where the reader is going. Completing `John 3` and
+	 * then typing `:16` is two operations the box could not previously chain.
+	 *
+	 * With no row chosen, Tab is left alone: it is the only way out of a modal
+	 * dialog by keyboard, and taking it hostage would trap a reader who opened
+	 * the box by accident.
+	 */
+	function onInputKeydown(e: KeyboardEvent) {
+		if (suggestions.length === 0) return;
+		if (e.key === 'Tab' && !e.shiftKey && active >= 0) {
+			e.preventDefault();
+			query = suggestions[active].completion;
+			// The list re-derives from the new text, so the old index would name
+			// a different row — and the completed query is itself a query, whose
+			// own first row may now be something else. Nothing stays chosen.
+			active = -1;
+			// The caret goes to the end: a completion is a prefix the reader is
+			// about to extend, and browsers otherwise keep the old selection.
+			queueMicrotask(() => inputEl?.setSelectionRange(query.length, query.length));
+			return;
+		}
+		if (e.key === 'ArrowDown') {
+			e.preventDefault();
+			active = active >= suggestions.length - 1 ? 0 : active + 1;
+		} else if (e.key === 'ArrowUp') {
+			e.preventDefault();
+			active = active <= 0 ? suggestions.length - 1 : active - 1;
+		} else if (e.key === 'Home' && active >= 0) {
+			e.preventDefault();
+			active = 0;
+		} else if (e.key === 'End' && active >= 0) {
+			e.preventDefault();
+			active = suggestions.length - 1;
+		} else {
+			return;
+		}
+		scrollActiveIntoView();
+	}
+
+	function scrollActiveIntoView() {
+		listEl?.children[active]?.scrollIntoView({ block: 'nearest' });
+	}
+
+	function choose(href: string) {
+		closeBox();
+		goto(href);
+	}
+
+	/**
 	 * Read `Jd 3` / `Philem 6` as a VERSE of a one-chapter book.
 	 *
 	 * Jude, Philemon, Obadiah, 2 and 3 John have no chapter to cite, so both
@@ -125,7 +249,22 @@
 		return getCanonicalBook(osis)?.chapters.includes(chapter) ?? false;
 	}
 
+	/**
+	 * Enter.
+	 *
+	 * A chosen row wins outright — the reader has read where it goes. With
+	 * nothing chosen the parser runs exactly as it always did, which keeps a
+	 * complete citation a one-keystroke operation and keeps the shapes the
+	 * suggester declines to complete (a verse list, an `ff` tail) working.
+	 * Only when BOTH decline is "no match" the honest answer, and the box
+	 * stays open with the query still in it.
+	 */
 	function submit() {
+		if (active >= 0 && suggestions[active]) {
+			choose(suggestions[active].href);
+			return;
+		}
+
 		const ref = parseReference(query);
 		notFound = false;
 
@@ -134,8 +273,7 @@
 				notFound = true;
 				return;
 			}
-			closeBox();
-			goto(hrefFor({ kind: 'ccc', n: ref.n }));
+			choose(hrefFor({ kind: 'ccc', n: ref.n }));
 			return;
 		}
 
@@ -164,8 +302,7 @@
 			// the same shape citation links use (see `refHref`), so a typed
 			// range highlights the passage instead of just landing on its
 			// first verse.
-			closeBox();
-			goto(
+			choose(
 				hrefFor({
 					kind: 'bible',
 					osis: resolved.book.osis,
@@ -183,12 +320,25 @@
 			return;
 		}
 
+		// The suggester found somewhere to go even though the parser could not
+		// read the query as a citation — a title, a siglum, a section name. Its
+		// first row is the answer rather than a refusal.
+		if (suggestions.length > 0) {
+			choose(suggestions[0].href);
+			return;
+		}
+
 		notFound = true;
 	}
 
 	function onSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		submit();
+	}
+
+	function onInput() {
+		notFound = false;
+		active = -1;
 	}
 </script>
 
@@ -234,16 +384,70 @@
 >
 	<div class="panel">
 		<form onsubmit={onSubmit}>
+			<!--
+				`aria-expanded` follows whether there is a list to expand INTO,
+				not whether the dialog is up: a combobox with no options is
+				collapsed, and saying otherwise sends a screen-reader user
+				looking for a listbox that is not rendered.
+			-->
 			<input
 				bind:this={inputEl}
 				bind:value={query}
+				oninput={onInput}
+				onkeydown={onInputKeydown}
 				type="text"
+				role="combobox"
+				aria-expanded={suggestions.length > 0}
+				aria-controls="jump-listbox"
+				aria-autocomplete="list"
+				aria-activedescendant={active >= 0 ? optionId(active) : undefined}
 				placeholder={t('jumpbox.placeholder')}
 				autocomplete="off"
 				spellcheck="false"
 			/>
 		</form>
-		<p class="hint">{t('jumpbox.hint')}</p>
+
+		{#if suggestions.length > 0}
+			<ul bind:this={listEl} id="jump-listbox" role="listbox" aria-label={t('jumpbox.suggestions')}>
+				{#each suggestions as suggestion, index (suggestion.href)}
+					<li
+						id={optionId(index)}
+						role="option"
+						aria-selected={index === active}
+						class:active={index === active}
+					>
+						<!--
+							The row is an anchor, not a button with a `goto`: the
+							address is a real URL, so it opens in a new tab on a
+							middle click, copies from the context menu, and is
+							announced as a link. `onclick` still calls `choose`
+							so the dialog closes and the SPA navigates.
+						-->
+						<a
+							href={suggestion.href}
+							tabindex="-1"
+							onclick={(e) => {
+								if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+								e.preventDefault();
+								choose(suggestion.href);
+							}}
+							onmousemove={() => (active = index)}
+						>
+							<span class="row">
+								<span class="label">{suggestion.label}</span>
+								<span class="badge">{suggestion.badge}</span>
+							</span>
+							{#if suggestion.detail}
+								<span class="detail">{suggestion.detail}</span>
+							{/if}
+						</a>
+					</li>
+				{/each}
+			</ul>
+		{:else}
+			<p class="hint">{t('jumpbox.hint')}</p>
+		{/if}
+
 		{#if notFound}
 			<p class="not-found">{t('jumpbox.noMatch')}: “{query}”</p>
 		{/if}
@@ -374,6 +578,71 @@
 		outline-offset: 2px;
 		border-color: var(--color-apparatus);
 		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
+	}
+
+	/* The list is capped in height rather than in rows: `suggest.ts` already
+	   caps the count, and a `max-height` in `vh` is what keeps the panel from
+	   running off a short viewport when it does not. */
+	ul {
+		list-style: none;
+		margin: 0.6rem 0 0;
+		padding: 0;
+		max-height: min(24rem, 55vh);
+		overflow-y: auto;
+	}
+
+	/* Rows are anchors, so the site's link colour would paint every one of them
+	   red. A suggestion is a destination, not a citation — it takes the body
+	   colour and lets the active row carry the emphasis instead. */
+	a {
+		display: block;
+		padding: 0.4rem 0.5rem;
+		border-radius: 0.3rem;
+		color: var(--color-text);
+		text-decoration: none;
+	}
+
+	li.active a,
+	a:hover {
+		background: var(--color-bg-elevated);
+	}
+
+	/* The active row is marked by more than its background: a reader in forced
+	   colours, or anyone for whom a 4% surface shift is not a signal, gets the
+	   inline start border too. */
+	li.active a {
+		box-shadow: inset 3px 0 0 0 var(--color-apparatus);
+	}
+
+	.row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
+
+	.label {
+		font-size: 0.98rem;
+	}
+
+	.badge {
+		flex: none;
+		font-size: 0.72rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--color-text-muted);
+	}
+
+	/* One line, ellipsized: a Summa question title or a Catechism chapter
+	   heading is longer than this panel and wrapping it turns an eight-row list
+	   into a page of prose. */
+	.detail {
+		display: block;
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.hint {
