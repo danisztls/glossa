@@ -34,8 +34,10 @@
  * would not be measuring the grammar.
  *
  * and every prose block is scanned with `linkifyProse`, counting scripture
- * references found in running text and, for the Summa, the self-references
- * the source itself marked (`<a data-ref>`). Parse-level, deliberately: it
+ * references found in running text, document sigla found there (the German,
+ * Spanish and French Catechisms print no footnotes at all, so their whole
+ * apparatus is prose), and, for the Summa, the self-references the source
+ * itself marked (`<a data-ref>`). Parse-level, deliberately: it
  * asks what the grammar READS, not whether each address exists in the reader's
  * edition — the latter is `checkXrefsAgainstCorpus`'s job, and the two guard
  * opposite failures (under-linking here, dead links there).
@@ -81,7 +83,7 @@ const NOT_CONTENT = new Set(['manifest.json', 'corrections-applied.json', 'abbre
  * @typedef {{ key: string, count: number, example: string }} ResidueBucket
  * @typedef {{
  *   citations: { total: number, linkable: number, recognized: number, nothing: number },
- *   prose: { blocks: number, scripture: number, stored: number },
+ *   prose: { blocks: number, scripture: number, document: number, stored: number },
  *   residue: ResidueBucket[]
  * }} FamilyCoverage
  * @typedef {{ version: 1, families: Record<string, FamilyCoverage> }} CoverageReport
@@ -184,7 +186,7 @@ export class CoverageMeter {
 		for (const family of [...this.#pending.keys()].sort()) {
 			const counts = {
 				citations: { total: 0, linkable: 0, recognized: 0, nothing: 0 },
-				prose: { blocks: 0, scripture: 0, stored: 0 }
+				prose: { blocks: 0, scripture: 0, document: 0, stored: 0 }
 			};
 			/** @type {Map<string, { count: number, example: string }>} */
 			const residue = new Map();
@@ -206,6 +208,7 @@ export class CoverageMeter {
 				for (const text of bucket.prose) {
 					for (const seg of linkifyProse(text, { lang })) {
 						if (seg.kind === 'scripture') counts.prose.scripture++;
+						else if (seg.kind === 'document') counts.prose.document++;
 					}
 				}
 			}
@@ -259,7 +262,7 @@ function residueKey(raw) {
  * missing is exactly the kind of build this exists to stop.
  * Structurally typed on the three counters it reads, so a baseline written by
  * an older report shape still compares.
- * @typedef {{ families: Record<string, { citations: { linkable: number }, prose: { scripture: number, stored: number } }> }} Comparable
+ * @typedef {{ families: Record<string, { citations: { linkable: number }, prose: { scripture: number, document?: number, stored: number } }> }} Comparable
  * @param {Comparable} report
  * @param {Comparable} baseline
  * @param {number} tolerance
@@ -278,6 +281,10 @@ export function compareCoverage(report, baseline, tolerance = TOLERANCE) {
 		const checks = [
 			['linkable citations', expected.citations.linkable, actual.citations.linkable],
 			['prose scripture references', expected.prose.scripture, actual.prose.scripture],
+			// `?? 0` on both sides, not just the baseline's: a report written
+			// before this counter existed compares as zero rather than as
+			// NaN, which would silently pass every comparison.
+			['prose document sigla', expected.prose.document ?? 0, actual.prose.document ?? 0],
 			['stored references', expected.prose.stored, actual.prose.stored]
 		];
 		for (const [label, before, after] of checks) {
@@ -295,7 +302,10 @@ export function compareCoverage(report, baseline, tolerance = TOLERANCE) {
  */
 export function summarize(report) {
 	return Object.entries(report.families)
-		.filter(([, f]) => f.citations.total > 0 || f.prose.scripture > 0 || f.prose.stored > 0)
+		.filter(
+			([, f]) =>
+				f.citations.total > 0 || f.prose.scripture > 0 || f.prose.document > 0 || f.prose.stored > 0
+		)
 		.map(([family, f]) => {
 			const c = f.citations;
 			const pct = c.total ? Math.round((100 * c.linkable) / c.total) : 0;
@@ -303,6 +313,7 @@ export function summarize(report) {
 				`  ${family.padEnd(11)} citations ${String(c.total).padStart(5)}: ` +
 				`${c.linkable} linkable (${pct}%), ${c.recognized} recognized, ${c.nothing} nothing` +
 				` | prose: ${f.prose.scripture} scripture` +
+				(f.prose.document ? `, ${f.prose.document} sigla` : '') +
 				(f.prose.stored ? `, ${f.prose.stored} stored` : '')
 			);
 		})

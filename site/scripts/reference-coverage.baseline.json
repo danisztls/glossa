@@ -11,6 +11,7 @@
 			"prose": {
 				"blocks": 0,
 				"scripture": 0,
+				"document": 0,
 				"stored": 0
 			},
 			"residue": []
@@ -24,21 +25,23 @@
 			},
 			"prose": {
 				"blocks": 76,
-				"scripture": 7,
+				"scripture": 17,
+				"document": 0,
 				"stored": 0
 			},
 			"residue": []
 		},
 		"ccc": {
 			"citations": {
-				"total": 19528,
-				"linkable": 14840,
+				"total": 19533,
+				"linkable": 14846,
 				"recognized": 3268,
-				"nothing": 1420
+				"nothing": 1419
 			},
 			"prose": {
 				"blocks": 26088,
-				"scripture": 15072,
+				"scripture": 15080,
+				"document": 3751,
 				"stored": 0
 			},
 			"residue": [
@@ -179,6 +182,7 @@
 			"prose": {
 				"blocks": 0,
 				"scripture": 0,
+				"document": 0,
 				"stored": 0
 			},
 			"residue": []
@@ -186,19 +190,20 @@
 		"encyclical": {
 			"citations": {
 				"total": 11808,
-				"linkable": 4227,
-				"recognized": 2485,
-				"nothing": 5096
+				"linkable": 4251,
+				"recognized": 2487,
+				"nothing": 5070
 			},
 			"prose": {
 				"blocks": 15752,
-				"scripture": 4876,
+				"scripture": 5022,
+				"document": 10,
 				"stored": 0
 			},
 			"residue": [
 				{
 					"key": ". cf.",
-					"count": 156,
+					"count": 155,
 					"example": ". Cf. Pius XI, Encyclical Letter QuadragesimoAnno, III, loc. cit., 228."
 				},
 				{
@@ -333,6 +338,7 @@
 			"prose": {
 				"blocks": 301,
 				"scripture": 0,
+				"document": 0,
 				"stored": 0
 			},
 			"residue": []
@@ -346,7 +352,8 @@
 			},
 			"prose": {
 				"blocks": 52989,
-				"scripture": 7586,
+				"scripture": 8759,
+				"document": 0,
 				"stored": 5174
 			},
 			"residue": []
@@ -354,13 +361,14 @@
 		"vatii": {
 			"citations": {
 				"total": 2305,
-				"linkable": 1324,
+				"linkable": 1329,
 				"recognized": 429,
-				"nothing": 552
+				"nothing": 547
 			},
 			"prose": {
 				"blocks": 1250,
-				"scripture": 1083,
+				"scripture": 1097,
+				"document": 0,
 				"stored": 0
 			},
 			"residue": [

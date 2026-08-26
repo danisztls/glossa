@@ -99,7 +99,12 @@ const mockDocumentSections: Record<string, Partial<Record<string, number[]>>> = 
 	// stay unlinked from the Latin/Italian one, which is the whole point of
 	// splitting those two entries.
 	'sacrosanctum-concilium': { en: [5, 61] },
-	'centesimus-annus': { en: [25, 48] }
+	'centesimus-annus': { en: [25, 48] },
+	// Added for the prose-siglum tests: LG is the siglum the four editions
+	// that print sigla in prose use most (850 occurrences), and AA is the one
+	// that collides with the Summa's own "articles" shorthand.
+	'lumen-gentium': { en: [12, 20, 30, 56], de: [12, 20, 30, 56] },
+	'apostolicam-actuositatem': { en: [2, 3] }
 };
 
 /**
@@ -116,7 +121,9 @@ const mockDocumentTitles: Record<string, string> = {
 	'humani-generis': 'Humani Generis',
 	mysterium: 'Mysterium',
 	'sacrosanctum-concilium': 'Sacrosanctum Concilium',
-	'centesimus-annus': 'Centesimus Annus'
+	'centesimus-annus': 'Centesimus Annus',
+	'lumen-gentium': 'Lumen Gentium',
+	'apostolicam-actuositatem': 'Apostolicam Actuositatem'
 };
 
 vi.mock('./corpus', () => ({
@@ -998,6 +1005,222 @@ describe('linkifyProse', () => {
 			{ kind: 'ccc', n: 1212, raw: '1212' },
 			{ kind: 'text', text: ' below.' }
 		]);
+	});
+});
+
+// Every string below is one the corpus actually prints, with the work and
+// unit it comes from named. The rules were derived from those strings.
+describe('linkifyProse — document sigla, added 2026-08-26', () => {
+	it('reads a siglum with a locus inside a bracket, in each edition that prints one there', () => {
+		const cases: [string, string, string, string | null][] = [
+			// ccc.de §85, ccc.es §27, ccc.fr §27, ccc.en §27 — the German,
+			// Spanish and French editions print NO footnotes, so this is where
+			// their whole apparatus lives.
+			['de', '…und nehmen [Vgl. LG 20.] auf.', 'LG', 'lumen-gentium'],
+			['es', '…y se entrega a su Creador» (GS 19,1).', 'GS', 'gaudium-et-spes'],
+			['fr', '…s’abandonne à son Créateur (GS 19, § 1).', 'GS', 'gaudium-et-spes'],
+			[
+				'en',
+				'this "intimate and vital bond of man to God" (GS 19 # 1) can be forgotten.',
+				'GS',
+				'gaudium-et-spes'
+			]
+		];
+		for (const [lang, text, siglum, slug] of cases) {
+			const doc = linkifyProse(text, { lang }).find((s) => s.kind === 'document');
+			expect(doc?.label).toBe(siglum);
+			expect(doc?.slug).toBe(slug);
+		}
+	});
+
+	it('requires the bracket', () => {
+		// Measured over the four editions that print sigla in prose: 3,708 of
+		// 3,712 occurrences are inside a "(" or a "[". Without the guard every
+		// capitalised abbreviation in 383 works is a candidate.
+		expect(
+			linkifyProse('Vgl. LG 20 und andere.', { lang: 'de' }).some((s) => s.kind === 'document')
+		).toBe(false);
+		expect(linkifyProse('[Vgl. LG 20.]', { lang: 'de' }).some((s) => s.kind === 'document')).toBe(
+			true
+		);
+	});
+
+	it('requires a locus', () => {
+		// A siglum named in passing points at nothing.
+		expect(
+			linkifyProse('(so LG lehrt es)', { lang: 'de' }).some((s) => s.kind === 'document')
+		).toBe(false);
+	});
+
+	it('reads "SC" as the constitution or the patristic series, per edition', () => {
+		// ccc.de §1068 "(SC 103)" is Sacrosanctum concilium; ccc.es §478 quotes
+		// "SC 345, 480" — Sources chrétiennes volume 345, page 480.
+		const de = linkifyProse('die erhabenste Frucht der Erlösung" (SC 103).', { lang: 'de' }).find(
+			(s) => s.kind === 'document'
+		);
+		expect(de?.slug).toBe('sacrosanctum-concilium');
+		const la = linkifyProse('(Adversus haereses, 3, 20, 2: SC 211, 392)', { lang: 'la' }).find(
+			(s) => s.kind === 'document'
+		);
+		expect(la?.expansion).toBe('Sources chrétiennes');
+		expect(la?.slug).toBeNull();
+	});
+
+	it('keeps a recognized but unlinkable siglum as a segment, so its words still render', () => {
+		// DS is 646 of the sigla found in prose and names nothing the corpus
+		// holds. `InlineNodes` renders a hrefless ref as its own text.
+		const seg = linkifyProse('(1. Vatikanisches K.: DS 3004)', { lang: 'de' }).find(
+			(s) => s.kind === 'document'
+		);
+		expect(seg).toMatchObject({ label: 'DS', locus: '3004', slug: null, raw: 'DS 3004' });
+	});
+
+	it('does not read the Summa’s "(AA 1,2)" as Apostolicam actuositatem', () => {
+		// summa.en I q.13 a.4: articles 1 and 2 of the question being read,
+		// three of which CCEL left unanchored. The conciliar decree is always
+		// cited with one section number.
+		expect(
+			linkifyProse('it is also clear from what has been said (AA 1,2) that they differ.', {
+				lang: 'en'
+			}).some((s) => s.kind === 'document')
+		).toBe(false);
+		expect(
+			linkifyProse('a leaven in the world" (AA 2 # 2).', { lang: 'en' }).find(
+				(s) => s.kind === 'document'
+			)?.slug
+		).toBe('apostolicam-actuositatem');
+	});
+});
+
+describe('the three content languages that had no grammar until 2026-08-26', () => {
+	it('reads Polish, Russian and Arabic Scripture in prose', () => {
+		// Magnifica Humanitas §7, the same sentence in three of its nine
+		// editions. `configFor` answered English for all three, which matched
+		// nothing at all in them.
+		const cases: [string, string][] = [
+			['pl', 'budowę wieży Babel (por. Rdz 11, 1–9) oraz'],
+			['ru', 'строительству Вавилонской башни (ср. Быт 11, 1–9) и'],
+			['ar', 'بناء برج بابل (راجع تكوين 11، 1-9) و']
+		];
+		for (const [lang, text] of cases) {
+			expect(linkifyProse(text, { lang })).toContainEqual(
+				expect.objectContaining({ kind: 'scripture', osis: 'gen', chapter: 11 })
+			);
+		}
+	});
+
+	it('reads the Arabic comma as the chapter/verse separator', () => {
+		// U+060C, not U+002C: a config built on "," reads none of this
+		// edition's 62 references.
+		const seg = linkifyProse('(المزمور 85، 11)', { lang: 'ar' }).find(
+			(s) => s.kind === 'scripture'
+		);
+		expect(seg).toMatchObject({ osis: 'ps', chapter: 85, verses: [11] });
+	});
+
+	it('prefers the longer Arabic name where one book’s name opens another’s', () => {
+		// "رؤيا يوحنّا" (the Revelation of John) begins with "يوحنّا" (John).
+		expect(
+			linkifyProse('(رؤيا يوحنّا 21، 2)', { lang: 'ar' }).find((s) => s.kind === 'scripture')?.osis
+		).toBe('rev');
+		expect(
+			linkifyProse('(راجع يوحنّا 10، 10)', { lang: 'ar' }).find((s) => s.kind === 'scripture')?.osis
+		).toBe('john');
+	});
+});
+
+describe('the Douay book names the English Summa cites in', () => {
+	it('reads the forms the modern table had no entry for', () => {
+		// summa.en, in order: I q.1 a.9, I q.10 a.4, I-II q.100 a.5,
+		// II-II q.2 a.2, III q.80 a.4 — 1,180 references in that work's prose
+		// alone, all of which read as nothing.
+		const cases: [string, string, number][] = [
+			['(Mat. 7:6)', 'matt', 7],
+			['(Eccles. 1:4)', 'eccl', 1],
+			['(Osee 12:10)', 'hos', 12],
+			['commenting on Ezech. 16:53', 'ezek', 16],
+			['(Malach. 4:4)', 'mal', 4],
+			['(Cant 3:4)', 'song', 3],
+			['(Tobias 3:17)', 'tob', 3],
+			['(2 Paralip. 19:2)', '2chr', 19]
+		];
+		for (const [text, osis, chapter] of cases) {
+			expect(linkifyProse(text, { lang: 'en' })).toContainEqual(
+				expect.objectContaining({ kind: 'scripture', osis, chapter })
+			);
+		}
+	});
+
+	it('reads "3 Kings" and "4 Kings", which only the Douay tradition uses', () => {
+		expect(
+			linkifyProse('(3 Kings 20:39)', { lang: 'en' }).find((s) => s.kind === 'scripture')?.osis
+		).toBe('1kgs');
+		expect(
+			linkifyProse('(4 Kings 2:15)', { lang: 'en' }).find((s) => s.kind === 'scripture')?.osis
+		).toBe('2kgs');
+	});
+
+	it('still reads "1 Kings" as the modern book, which is the known limit of a per-language table', () => {
+		// ccc.en cites 1-2 Kings in the modern sense 14 times and summa.en in
+		// the Douay sense 50 times, and the citation string is identical. The
+		// grammar's one axis is language; telling these apart needs the work.
+		expect(
+			linkifyProse('(1 Kings 19:5)', { lang: 'en' }).find((s) => s.kind === 'scripture')?.osis
+		).toBe('1kgs');
+	});
+
+	it('reads "2 Esdras" as Nehemias in both languages that print it', () => {
+		expect(
+			linkifyProse('the Church of God (cf. 2 Esd. 13:1)', { lang: 'en' }).find(
+				(s) => s.kind === 'scripture'
+			)?.osis
+		).toBe('neh');
+		expect(
+			linkifyProse('é já chamado Igreja de Deus (cfr. 2 Esdr. 13,1)', { lang: 'pt' }).find(
+				(s) => s.kind === 'scripture'
+			)?.osis
+		).toBe('neh');
+	});
+
+	it('leaves "3 Esdras" unlinked, because the corpus does not hold the apocryphon', () => {
+		expect(
+			linkifyProse('it is stated (3 Esdra 3:21) that', { lang: 'en' }).some(
+				(s) => s.kind === 'scripture'
+			)
+		).toBe(false);
+	});
+});
+
+describe('the Portuguese forms the prose scan found outside the Catechism', () => {
+	it('reads the encyclicals’ own abbreviations', () => {
+		const cases: [string, string, number][] = [
+			['dos dez Mandamentos (cf. Êx 20, 12-17)', 'exod', 20],
+			['“obediente até à morte” (Flp 2, 8)', 'phil', 2],
+			['a palavra de Deus (cf. 1 Tes 2, 13)', '1thess', 2],
+			['« esteja a dormir » (cf. 1 Re 18, 27)', '1kgs', 18],
+			['a fé sem as obras é ineficaz" (Tiago 2, 20)', 'jas', 2],
+			['amando a piedade (cf. Miq 6, 8)', 'mic', 6],
+			['um « explorador » (cf. Coel 1, 13)', 'eccl', 1],
+			['o texto de João 7, 38', 'john', 7]
+		];
+		for (const [text, osis, chapter] of cases) {
+			expect(linkifyProse(text, { lang: 'pt' })).toContainEqual(
+				expect.objectContaining({ kind: 'scripture', osis, chapter })
+			);
+		}
+	});
+
+	it('does not read a Portuguese commentary title as the book it comments on', () => {
+		// Augustine's Enarrationes and Cyril's commentary, both cited by title
+		// in the Portuguese encyclicals and council documents, and Tertullian
+		// AGAINST Marcion wearing Mark's abbreviation.
+		for (const text of [
+			'Comentário aos Salmos, 85,5.',
+			'Comentário ao Evangelho de João, XII, 20: PG 74, 716.',
+			'Tertuliano, Adv. Marc. 3, 7: PL 2, 335.'
+		]) {
+			expect(linkifyProse(text, { lang: 'pt' }).some((s) => s.kind === 'scripture')).toBe(false);
+		}
 	});
 });
 

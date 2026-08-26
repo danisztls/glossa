@@ -60,17 +60,57 @@ const CORPUS = process.env.CORPUS_DIR
 	? path.resolve(process.env.CORPUS_DIR)
 	: path.resolve(siteRoot, '../../glossa-corpus');
 
-/** Every edition of the Catechism the corpus holds, in work-id order. */
+const ARGV = process.argv.slice(2);
+/** Every index that is a `--flag` or the value belonging to one, so the sole
+ *  positional argument (the edition list) is not confused with `--work`'s
+ *  value. */
+const FLAG_INDEXES = new Set(ARGV.flatMap((a, i) => (a.startsWith('--') ? [i, i + 1] : [])));
+/** `--name value`, or null when the flag is absent. Defined here rather than
+ *  beside the rest of the argument handling because `WORK` below needs it. */
+function flagOf(name) {
+	const i = ARGV.indexOf(name);
+	return i === -1 ? null : (ARGV[i + 1] ?? '');
+}
+
+/**
+ * The work whose editions are the oracle. `ccc` by default, because eight
+ * editions of 2,865 aligned paragraphs is the largest such body the corpus
+ * holds; `--work encyclical.magnifica-humanitas` points it at any other work
+ * published in more than one language, which is what derived the Polish and
+ * Russian tables (245 sections, nine editions, 2026-08-26).
+ *
+ * The alignment this depends on is NOT free for every family — a section
+ * number is famously not the same section in two translations of an older
+ * encyclical (CLAUDE.md, "Work that spans languages"). It holds for a work
+ * translated from one text at one time, which is why the check below refuses
+ * to run when the editions do not agree on their unit numbers.
+ */
+const WORK = flagOf('--work') ?? 'ccc';
+
+/** The one file in a work directory that holds its numbered units. */
+const UNIT_FILES = ['paragraphs.json', 'sections.json', 'questions.json'];
+
+function workDir(lang) {
+	return path.join(CORPUS, 'works', `${WORK}.${lang}`);
+}
+
+/** Every edition of the chosen work the corpus holds, in work-id order. */
 function editions() {
 	const works = path.join(CORPUS, 'works');
 	if (!existsSync(works)) {
 		console.error(`[book-forms-oracle] no corpus at ${works}; set CORPUS_DIR`);
 		process.exit(2);
 	}
-	return readdirSync(works)
-		.filter((d) => d.startsWith('ccc.'))
-		.map((d) => d.slice('ccc.'.length))
+	const found = readdirSync(works)
+		.filter((d) => d.startsWith(`${WORK}.`))
+		.map((d) => d.slice(WORK.length + 1))
+		.filter((lang) => !lang.includes('.'))
 		.sort();
+	if (found.length < 2) {
+		console.error(`[book-forms-oracle] ${WORK} has ${found.length} edition(s); need at least two`);
+		process.exit(2);
+	}
+	return found;
 }
 
 /** One paragraph's reference-bearing strings: its citations and its prose. */
@@ -82,8 +122,15 @@ function strings(para) {
 }
 
 function load(lang) {
-	const file = path.join(CORPUS, 'works', `ccc.${lang}`, 'paragraphs.json');
-	return new Map(JSON.parse(readFileSync(file, 'utf8')).map((p) => [p.n, strings(p)]));
+	const dir = workDir(lang);
+	const name = UNIT_FILES.find((f) => existsSync(path.join(dir, f)));
+	if (!name) {
+		console.error(`[book-forms-oracle] ${dir} holds none of ${UNIT_FILES.join(', ')}`);
+		process.exit(2);
+	}
+	return new Map(
+		JSON.parse(readFileSync(path.join(dir, name), 'utf8')).map((p) => [p.n, strings(p)])
+	);
 }
 
 /** Every scripture segment the grammar finds in one string, both grammars. */
@@ -235,17 +282,11 @@ function check(langs, refLangs, refLoci) {
 	return worst;
 }
 
-const argv = process.argv.slice(2);
-const flag = (name) => {
-	const i = argv.indexOf(name);
-	return i === -1 ? null : (argv[i + 1] ?? '');
-};
-const refLangs = (flag('--ref') ?? 'en,pt').split(',').filter(Boolean);
+const refLangs = (flagOf('--ref') ?? 'en,pt').split(',').filter(Boolean);
 const all = editions();
-const deriveArg = flag('--derive');
-const targets = (deriveArg || argv.find((a) => !a.startsWith('--')) || '')
-	.split(',')
-	.filter(Boolean);
+const deriveArg = flagOf('--derive');
+const positional = ARGV.find((a, i) => !FLAG_INDEXES.has(i));
+const targets = (deriveArg || positional || '').split(',').filter(Boolean);
 
 const refLoci = referenceLoci(refLangs);
 if (deriveArg !== null) {

@@ -47,7 +47,7 @@ describe('CoverageMeter', () => {
 		expect(families.ccc.citations).toEqual({ total: 2, linkable: 1, recognized: 0, nothing: 1 });
 		expect(families.ccc.prose.scripture).toBe(1);
 		expect(families.ccc.residue).toEqual([{ key: 'ibid.', count: 1, example: 'Ibid.' }]);
-		expect(families.summa.prose).toEqual({ blocks: 1, scripture: 1, stored: 1 });
+		expect(families.summa.prose).toEqual({ blocks: 1, scripture: 1, document: 0, stored: 1 });
 	});
 });
 

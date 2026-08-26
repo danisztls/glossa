@@ -115,5 +115,19 @@
     "reason": "The inline locator in paragraph 2615's body prints the book abbreviation glued to its chapter, \"Jo14\". A missing space is not something the render-time whitespace tidy can repair -- normalizeCitationSpacing only removes whitespace, never adds a mark -- and unlike the 18 other glued abbreviations in the corpus (DS1511, PL16, CSEL73, ...), which sit inside footnote-disclosure text, this one is printed in the running sentence a reader is actually reading. The reference parser resolves \"Jo14\" correctly either way; this is about what the page shows.",
     "evidence": "raw HTML corpus/raw/ccc-pt/p4s1cap1_2566-2649_po.html: '...e o outro Paraclito, [...] para ficar convosco para sempre, o Espirito de verdade>> (Jo14, 16-17).' The same page's own footnote 104 spells the identical reference with the space -- 'Cf. Jo 14, 16-17.26; 15. 26; 16, 7-15; 17, 26.' -- and every other inline locator in ccc.pt separates book from chapter. EN parallel ccc.en paragraph 2615's first citation reads 'Jn 14:16-17.' Anchor string '(Jo14, 16-17)' verified unique (count=1) across the whole page.",
     "added": "2026-08-21"
+  },
+  {
+    "id": "ccc.pt-371-ga-for-gn",
+    "locator": {
+      "page": "p1s2c1_198-421_po.html",
+      "paragraph": 371,
+      "structural": "scripture_reference"
+    },
+    "field": "paragraph_html",
+    "from": "carne&raquo; (<i>Ga </i> 2, 23)",
+    "to": "carne&raquo; (<i>Gn </i> 2, 23)",
+    "reason": "The reference names the wrong book: the words quoted, 'é osso dos meus ossos e carne da minha carne', are Adam's cry at the creation of Eve, Genesis 2:23, and this edition prints 'Ga' -- Gálatas, which has six chapters. An n/a substitution in a two-letter abbreviation, not a wording question; the surrounding paragraph cites 'Gn 2, 18' and 'Gn 2, 19-20' in its own footnotes, so the edition's own convention for Genesis is 'Gn' and this is the sole 'Ga' in all 2,865 of its paragraphs.",
+    "evidence": "raw HTML corpus/raw/ccc-pt/p1s2c1_198-421_po.html: '&laquo;E osso dos meus ossos e carne da minha carne&raquo; (<i>Ga </i> 2, 23).', sole occurrence. ccc.en §371 cites 'Gen 2:23'; ccc.pt §371's own citations are '(Gn 2, 18)' and 'Cf. Gn 2, 19-20.' Left OUT of BOOK_VARIANTS_PT deliberately -- 'Ga' is Galatians in the French and Spanish tables and the corpus prints it that way 200+ times, so reading it as Genesis anywhere would be a far wider defect than the one it fixes.",
+    "added": "2026-08-26"
   }
 ]

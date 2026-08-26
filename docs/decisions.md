@@ -307,6 +307,18 @@ an empty array rather than borrowing a neighbour's. The site's grammar had reach
 same split for EN and PT from the citations alone, which is the corroboration, not the
 cause (2026-08-26).
 
+**An edition that prints no footnotes puts its apparatus in the prose, and the prose
+scan has to be an apparatus reader.** German, French and Spanish fold every reference
+into the Catechism's body text, so a grammar that reads sigla only in citation strings
+reads three of eight editions at a fraction of the others. `linkifyProse` gained a
+document-siglum scan on 2026-08-26 — 3,624 references in those three, 82 in English —
+and the guard that makes a two-letter token safe in running text is a **bracket**:
+3,708 of the 3,712 such tokens the four editions print in prose are inside a `(` or a
+`[`, the four that are not are one repeated markup defect, and the rule is therefore
+measured rather than stylistic. It also fixed the direction of the standing note that
+`ar`, `pl` and `ru` "print no Scripture locator": they had none when that was written,
+and one encyclical later they had 62 apiece that nothing was reading.
+
 **Inline emphasis is not a word boundary.** A tag becomes a space only where it is
 block-level; an emphasis tag leaves nothing behind. The substituted space was hiding real
 source defects behind a code rule, and stripping whitespace afterwards cannot work
@@ -434,6 +446,18 @@ missing something the others all have, in scattered places, is a parser.
 is why `bible.matos-soares.pt` keeps liriocatolico's verses despite taking its apparatus
 from vulgata.online: that transcription is missing 247 verses, and nothing but the
 comparison could tell which of the two was short.
+
+**The cross-edition oracle is not the Catechism's; it belongs to any work translated
+once.** `book-forms-oracle.mjs` was written to derive book tables from the CCC's eight
+aligned editions, and on 2026-08-26 it was pointed at _Magnifica Humanitas_ — 245
+sections in nine languages — to derive Polish, Russian and Arabic, which the corpus had
+no grammar for at all. What makes the alignment usable is not the family but the
+translation history: a work rendered from one text at one moment has section N meaning
+the same thing everywhere, which is exactly what a nineteenth-century encyclical's
+translations do not. So `--work` takes any work id and the reading is on whoever passes
+it. Arabic is the interesting case, because it shares no surface form, no letter case
+and not even the comma with any other edition: its chapter/verse mark is U+060C, and a
+grammar built on "," reads none of its 62 references.
 
 ## Addresses and editions
 

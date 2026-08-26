@@ -1,0 +1,16 @@
+[
+  {
+    "id": "ccc.it-964-1gv-for-gv",
+    "locator": {
+      "page": "p123a9p6_it.htm",
+      "paragraph": 964,
+      "structural": "scripture_reference"
+    },
+    "field": "paragraph_html",
+    "from": "(cf 1<i> Gv </i>19,26-27)",
+    "to": "(cf <i>Gv </i>19,26-27)",
+    "reason": "The reference carries a book number the passage does not have: the words quoted, 'Donna, ecco il tuo figlio', are John 19:26-27, and this edition prints '1 Gv 19,26-27' -- the First Letter of John, which has five chapters and no nineteenth. A spurious leading digit on a Johannine reference, the mirror image of the defect corrected in ccc.mg 604, and not a wording question. The same edition gets it right twice elsewhere on other pages, printing 'Cf <i>Gv </i>19,26-27' at 501 and quoting the same verse as '(<i>Gv </i>19,26-27)' at 2605.",
+    "evidence": "raw HTML corpus/raw/ccc-it/p123a9p6_it.htm: '... queste parole: \"Donna, ecco il tuo figlio\" (cf 1<i> Gv </i>19,26-27)».<sup>526</sup>', sole occurrence of the string in the edition; the two correct forms are in the same directory (p122a3p2_it.htm and p4s1c1a2_it.htm). ccc.en §964 'LG 58; cf. Jn 19:26-27.' Found by the prose scan added on 2026-08-26, as the edition's only remaining book-shaped token that resolved to nothing.",
+    "added": "2026-08-26"
+  }
+]

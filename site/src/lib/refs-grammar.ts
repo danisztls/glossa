@@ -493,7 +493,7 @@ const SINGLE_CHAPTER_BOOKS = new Set(
 // typos rather than real abbreviating conventions (see inline comments).
 // --------------------------------------------------------------------------
 
-const ROMAN: Record<number, string> = { 1: 'I', 2: 'II', 3: 'III' };
+const ROMAN: Record<number, string> = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV' };
 
 /** Build `{n} {base}` / `{roman} {base}` (and optionally digit-glued/typo) variants for a family of numbered books. */
 function numberedVariants(
@@ -513,7 +513,11 @@ function numberedVariants(
 			// visually confusable with "1" in some renderings.
 			if (opts.lTypo && n === 1) variants.push(`l ${base}`);
 		}
-		out[osis] = variants;
+		// Accumulated, not assigned: one family can be numbered two ways at
+		// once. English calls the same four books 1-2 Samuel and 1-2 Kings or,
+		// in the Douay tradition, 1-4 Kings, so `1kgs` is reached from both
+		// `3 Kings` and `1 Kings` and the second call must not erase the first.
+		(out[osis] ??= []).push(...variants);
 	}
 	return out;
 }
@@ -527,71 +531,146 @@ const BOOK_VARIANTS_EN: Record<string, string[]> = {
 	josh: ['Jos', 'Josh', 'Joshua'],
 	judg: ['Jdg', 'Jgs', 'Judg', 'Judges'],
 	ruth: ['Ru', 'Ruth'],
-	ezra: ['Ezr', 'Ezra'],
-	neh: ['Neh', 'Nehemiah'],
-	tob: ['Tb', 'Tob', 'Tobit'],
+	// The Douay tradition numbers these two as ESDRAS — 1 Esdras is Ezra and
+	// 2 Esdras is Nehemias — and the CCEL Summa, the Douay-Rheims's own book
+	// prefaces and Redemptoris Mater's English translation all cite them that
+	// way ("2 Esd. 13:1" for Neh 13:1). Written out rather than built with
+	// `numberedVariants` because the numbered forms belong to two DIFFERENT
+	// osis keys, which that helper's one-family shape cannot express. A
+	// "3 Esdras" is deliberately absent: it is the apocryphon, which the
+	// corpus does not hold, so the Summa's five citations of it stay text.
+	ezra: ['Ezr', 'Ezra', '1 Esdras', '1 Esdra', '1 Esdr', '1 Esd', 'I Esdras', '1Esdras', '1Esd'],
+	neh: [
+		'Neh',
+		'Nehemiah',
+		'Nehemias',
+		'2 Esdras',
+		'2 Esdra',
+		'2 Esdr',
+		'2 Esd',
+		'II Esdras',
+		'2Esdras',
+		'2Esd'
+	],
+	tob: ['Tb', 'Tob', 'Tobit', 'Tobias'],
 	jdt: ['Jdt', 'Judith'],
 	esth: ['Est', 'Esth', 'Esther'],
 	job: ['Job'],
 	ps: ['Ps', 'Pss', 'Psalm', 'Psalms', 'PS'], // PS: observed all-caps variant
 	prov: ['Prv', 'Prov', 'Proverbs'],
-	eccl: ['Eccl', 'Qo', 'Qoh', 'Ecclesiastes'],
-	song: ['Song', 'SS', 'Ct', 'Song of Songs', 'Song of Solomon'],
+	eccl: ['Eccl', 'Eccles', 'Ec', 'Qo', 'Qoh', 'Ecclesiastes'],
+	song: ['Song', 'SS', 'Ct', 'Cant', 'Canticle of Canticles', 'Song of Songs', 'Song of Solomon'],
 	wis: ['Wis', 'Wisdom'],
 	sir: ['Sir', 'Ecclus', 'Sirach', 'Eccli'],
 	isa: ['Is', 'Isa', 'Isaiah'],
 	jer: ['Jer', 'Jeremiah'],
 	lam: ['Lam', 'Lamentations'],
 	bar: ['Bar', 'Baruch'],
-	ezek: ['Ez', 'Ezek', 'Ezekiel'],
+	ezek: ['Ez', 'Ezek', 'Ezech', 'Ezechiel'],
 	dan: ['Dn', 'Dan', 'Daniel'],
-	hos: ['Hos', 'Hosea'],
+	hos: ['Hos', 'Hosea', 'Osee'],
 	joel: ['Jl', 'Joel'],
 	amos: ['Am', 'Amos'],
 	obad: ['Ob', 'Obad', 'Obadiah'],
 	jonah: ['Jon', 'Jonah'],
 	mic: ['Mi', 'Mic', 'Micah'],
 	nah: ['Na', 'Nah', 'Nahum'],
-	hab: ['Hab', 'Habakkuk'],
-	zeph: ['Zep', 'Zeph', 'Zephaniah'],
+	hab: ['Hab', 'Habakkuk', 'Habac', 'Habacuc'],
+	zeph: ['Zep', 'Zeph', 'Zephaniah', 'Soph', 'Sophonias'],
 	hag: ['Hag', 'Haggai'],
 	zech: ['Zec', 'Zech', 'Zechariah'],
-	mal: ['Mal', 'Malachi'],
+	mal: ['Mal', 'Malachi', 'Malach', 'Malachias'],
 	// The Latin abbreviations ("Matth.", "Luc.", "Io.", "Joh.", "Petr.",
 	// "Eccli.") are how the pre-conciliar encyclicals' English translations
 	// cite Scripture, nearly always with a Roman-numeral chapter ("Matth. IX,
 	// 37-38", "I Petr. II, 21"). Found by scanning every citation for a
 	// Roman-chapter shape and reading each form's occurrences (2026-08-25);
 	// only forms that named a book every time are here.
-	matt: ['Mt', 'Matt', 'Matthew', 'Matth'],
-	mark: ['Mk', 'Mark'],
-	luke: ['Lk', 'Luke', 'Luc'],
+	matt: ['Mt', 'Matt', 'Mat', 'Matthew', 'Matth'],
+	mark: ['Mk', 'Mc', 'Mark'],
+	luke: ['Lk', 'Lc', 'Luke', 'Luc'],
 	john: ['Jn', 'John', 'In', 'Io', 'Ioan', 'Joh'], // In: observed typo (J -> I), only fires with a chapter:verse after it
-	acts: ['Acts'],
-	rom: ['Rom', 'Romans'],
+	acts: ['Acts', 'Act'],
+	rom: ['Rom', 'Rm', 'Romans'],
 	gal: ['Gal', 'Galatians', 'Cal'], // Cal: observed typo (G -> C), verified against ccc476/478's Christology
 	eph: ['Eph', 'Ephesians'],
-	phil: ['Phil', 'Philippians'],
+	phil: ['Phil', 'Philip', 'Philippians'],
 	col: ['Col', 'Colossians'],
-	titus: ['Ti', 'Tit', 'Titus'],
+	titus: ['Ti', 'Tit', 'Tt', 'Titus'],
 	phlm: ['Philem', 'Phlm', 'Philemon'],
 	heb: ['Heb', 'Hebrews'],
-	jas: ['Jas', 'James'],
+	jas: ['Jas', 'Js', 'Jam', 'James'],
 	jude: ['Jude'],
-	rev: ['Rev', 'Rv', 'Revelation', 'Apoc'],
-	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sam', 'Samuel'], { lTypo: true }),
-	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['Kings', 'Kgs'], { lTypo: true }),
-	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Chr', 'Chronicles'], { lTypo: true }),
-	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Macc', 'Maccabees'], { lTypo: true }),
-	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor', 'Corinthians'], { lTypo: true }),
-	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Thess', 'Thessalonians', 'Th'], {
-		lTypo: true
+	rev: ['Rev', 'Rv', 'Revelation', 'Apoc', 'Apocalypse'],
+	// `unspaced` everywhere: the number is printed hard against the book in
+	// several English works ("2Tim 1:6" in ccc.en, "1Jn 4:19" in Veritatis
+	// Splendor, "2Pa. 9,29" and "1Jo. 4,21" in the Douay-Rheims prefaces),
+	// and every one of those was a reference the grammar read as nothing.
+	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sam', 'Samuel'], {
+		lTypo: true,
+		unspaced: true
+	}),
+	// FOUR BOOKS OF KINGS, in one call because the two conventions meet on the
+	// same two osis keys. The Douay tradition — which the CCEL Summa follows
+	// throughout, and which `bible.douay-rheims.en`'s own book names state
+	// ("1 Kings (1 Samuel)", "3 Kings (1 Kings)") — calls 1-2 Samuel the first
+	// two books of Kings and 1-2 Kings the third and fourth.
+	//
+	// So `3 Kings` and `4 Kings` are unambiguous and are read here; `1 Kings`
+	// and `2 Kings` are NOT, and stay the modern books. That is a measured
+	// choice, not a complete one: ccc.en cites them 14 times in the modern
+	// sense and summa.en 50 times in the Douay sense, and no property of the
+	// citation string tells the two apart — only the work does, which this
+	// grammar's one axis is language and cannot see. Reading them as modern
+	// keeps ccc.en right and leaves 50 references in the Summa pointing at the
+	// wrong book; reading them as Douay would trade one for the other. The
+	// third option is a per-work axis, which is a design change and not one to
+	// make in passing.
+	...numberedVariants({ 1: '1kgs', 2: '2kgs', 3: '1kgs', 4: '2kgs' }, ['Kings', 'Kgs', 'Kg'], {
+		lTypo: true,
+		unspaced: true
+	}),
+	// "Paralipomenon" is the Douay name for Chronicles, abbreviated by the
+	// Summa five different ways in five places.
+	...numberedVariants(
+		{ 1: '1chr', 2: '2chr' },
+		['Chr', 'Chronicles', 'Paralipomenon', 'Paralip', 'Paral', 'Para', 'Pa'],
+		{ lTypo: true, unspaced: true }
+	),
+	// "Mc" numbered is MACCABEES in the older English translations ("2 Mc
+	// 1.19-22", "1 Mc 4:24") while bare "Mc." is Mark — the same two letters,
+	// the same language. Both work because `buildVariantRe` sorts its
+	// alternation longest-first, so "1 Mc" is tried before "Mc".
+	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Macc', 'Mac', 'Mc', 'Maccabees'], {
+		lTypo: true,
+		unspaced: true
+	}),
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor', 'Corinthians'], {
+		lTypo: true,
+		unspaced: true
+	}),
+	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Thess', 'Thes', 'Thessalonians', 'Th'], {
+		lTypo: true,
+		unspaced: true
 	}),
 	// "Tm": the Portuguese-style abbreviation, printed in 25 English
 	// citations ("1 Tm 3.15") — the older encyclicals' translators kept it.
-	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tim', 'Timothy', 'Tm'], { lTypo: true }),
-	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pet', 'Pt', 'Peter', 'Petr'], { lTypo: true }),
-	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jn', 'John', 'In'], { lTypo: true })
+	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tim', 'Timothy', 'Tm'], {
+		lTypo: true,
+		unspaced: true
+	}),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pet', 'Pt', 'Peter', 'Petr'], {
+		lTypo: true,
+		unspaced: true
+	}),
+	// "Jo" is deliberately absent, here and above: ccc.en cites Augustine's
+	// tractates on the Epistle of John as "In ep Jo. 8, 9" three times, which
+	// is a tract and a section and not John 8:9, against one real "Jo. 7, 52"
+	// in the Douay-Rheims prefaces.
+	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jn', 'John', 'In'], {
+		lTypo: true,
+		unspaced: true
+	})
 };
 
 /**
@@ -614,20 +693,20 @@ const BOOK_VARIANTS_EN: Record<string, string[]> = {
 // confirm which book it names. None was guessed.
 const BOOK_VARIANTS_PT: Record<string, string[]> = {
 	gen: ['Gn', 'Gén', 'Gen'],
-	exod: ['Ex', 'Éx'],
+	exod: ['Ex', 'Éx', 'Êx'], // Êx: the circumflex spelling, in Veritatis Splendor and Sollicitudo rei socialis
 	lev: ['Lv'],
-	num: ['Nm', 'Núm'],
+	num: ['Nm', 'Núm', 'Num'],
 	deut: ['Dt', 'Dr', 'Deut'], // Dr: observed typo (t -> r), "Cf. Dr 18, 10" = Dt 18:10
-	josh: ['Js'],
+	josh: ['Js', 'Jos'],
 	judg: ['Jz'],
 	ruth: ['Rt'], // fallback: not observed in a ccc.pt citation
-	tob: ['Tb'],
+	tob: ['Tb', 'Tob'],
 	jdt: ['Jt'],
 	esth: ['Est'], // fallback
 	job: ['Job', 'Jó'],
-	ps: ['Sl', 'Sal', 'Salm'],
+	ps: ['Sl', 'Sal', 'Salm', 'Salmo', 'Salmos', 'SI'], // SI: observed OCR of "Sl" (l -> I), "SI 24, 8-10" = Ps 24:8-10
 	prov: ['Pr', 'Prov'],
-	eccl: ['Ecl', 'Ec'],
+	eccl: ['Ecl', 'Ec', 'Coel'], // Coel: Coélet, the Hebrew name, used by Fides et Ratio
 	song: ['Ct', 'Cânt'],
 	wis: ['Sb', 'Sab'],
 	sir: ['Sir', 'Eclo', 'Ecli'],
@@ -637,24 +716,35 @@ const BOOK_VARIANTS_PT: Record<string, string[]> = {
 	bar: ['Br', 'Bar'],
 	ezek: ['Ez'],
 	ezra: ['Esd'],
-	neh: ['Ne'],
+	// "2 Esdras" is Nehemias, the same Douay-tradition numbering the English
+	// table carries: Lumen Gentium's Portuguese translation cites
+	// "2 Esdr. 13,1" for Neh 13:1. Spelled out because the two numbers of
+	// Esdras name two different books, which `numberedVariants` cannot say.
+	neh: ['Ne', '2 Esdras', '2 Esdr', '2 Esd', 'II Esdras'],
 	dan: ['Dn'],
 	hos: ['Os'],
 	joel: ['Jl'],
 	amos: ['Am'],
 	obad: ['Ab'], // fallback
 	jonah: ['Jn'], // NOTE: the reverse of English convention — "Jo" is John, "Jn" is Jonah
-	mic: ['Mq'],
+	mic: ['Mq', 'Miq'],
 	nah: ['Na'], // fallback
 	hab: ['Hab'], // fallback
-	zeph: ['Sf'],
+	zeph: ['Sf', 'Sof'],
 	hag: ['Ag'], // fallback
-	zech: ['Zc'],
-	mal: ['Ml'],
-	matt: ['Mt'],
-	mark: ['Mc', 'Mr'], // Mr: observed one-off typo for Mc
+	zech: ['Zc', 'Zac'],
+	mal: ['Ml', 'Mal'],
+	matt: ['Mt', 'Mat'],
+	mark: ['Mc', 'Mr', 'Marc'], // Mr: observed one-off typo for Mc
 	luke: ['Lc', 'Luc'],
-	john: ['Jo'],
+	// "João" spelled out: how a Portuguese sentence names the evangelist it
+	// is quoting ("interpretaram o texto de João 7, 38"), which only the prose
+	// scan sees. "Lucas" is NOT here, and the asymmetry is measured rather
+	// than stylistic: Humanae Vitae's Portuguese text cites an address given
+	// to the Italian medical association *San Luca* as "São Lucas, 12 de
+	// novembro de 1944", which reads as Luke 12 — a whole-chapter link to a
+	// date. Nothing in the corpus does that to "João".
+	john: ['Jo', 'João'],
 	acts: ['Act', 'At'],
 	// "Rom" is included despite colliding with "Cat Rom"/"CatRom"
 	// (Catechismus Romanus), whose locus shapes identically to a
@@ -662,26 +752,31 @@ const BOOK_VARIANTS_PT: Record<string, string[]> = {
 	// prefix, in `precededByFalseLead` — rather than by dropping the book,
 	// which used to cost 153 real references to Romans in the older
 	// encyclical translations that spell it out this way.
+	// "Roma" is deliberately absent: every occurrence in the corpus is the
+	// city followed by a date ("Universidade de Roma, 15 jun. 1952").
 	rom: ['Rm', 'Rom'],
-	gal: ['Gl', 'Gál', 'Gal'],
+	gal: ['Gl', 'Gál', 'Gal', 'GI'], // GI: observed OCR of "Gl" (l -> I), "GI 4, 4" = Gal 4:4
 	eph: ['Ef'],
-	phil: ['Fl', 'Fil'],
+	phil: ['Fl', 'Fil', 'Flp', 'Fp', 'Filip'],
 	col: ['Cl', 'Col'],
 	titus: ['Tt', 'Tit'],
 	phlm: ['Fm', 'Flm'], // Flm observed in an inline PT citation
-	heb: ['Heb', 'Hb', 'Hebr'],
-	jas: ['Tg'],
+	heb: ['Heb', 'Hb', 'Hebr', 'Hbr', 'He'],
+	jas: ['Tg', 'Tiago'],
 	jude: ['Jd'], // fallback
-	rev: ['Ap', 'Apoc'],
+	rev: ['Ap', 'Apoc', 'Apc'],
 	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Cr'], { unspaced: true }),
-	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor'], { unspaced: true, lTypo: true }),
-	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['Rs'], { unspaced: true }),
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor', 'Co'], { unspaced: true, lTypo: true }),
+	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['Rs', 'Re'], { unspaced: true }),
 	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Mac'], { unspaced: true }),
-	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pe', 'Ped', 'Pd'], { unspaced: true }),
-	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sm'], { unspaced: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pe', 'Ped', 'Pd', 'Pdr', 'Pedr'], {
+		unspaced: true
+	}),
+	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sm', 'Sam'], { unspaced: true }),
 	// Observed unspaced once ("1Ts 4, 7") alongside the normal spaced form.
-	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Ts', 'Tess'], { unspaced: true }),
-	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tm', 'Tim'], { unspaced: true }),
+	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Ts', 'Tess', 'Tes'], { unspaced: true }),
+	// `lTypo`: "l Tim. 2, 4-6" is printed in Ad Gentes and Dei Verbum.
+	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tm', 'Tim'], { unspaced: true, lTypo: true }),
 	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jo'], { unspaced: true })
 };
 
@@ -945,7 +1040,10 @@ const BOOK_VARIANTS_IT: Record<string, string[]> = {
 	mal: ['Ml'],
 	matt: ['Mt'],
 	mark: ['Mc'],
-	luke: ['Lc'],
+	// `Luca` spelled out: this edition names the evangelist in running prose
+	// where it abbreviates in a footnote ("commentando il passo di san Luca
+	// 22,19"), and the prose scan is what found it.
+	luke: ['Lc', 'Luca'],
 	john: ['Gv'],
 	acts: ['At'],
 	rom: ['Rm'],
@@ -990,7 +1088,9 @@ const BOOK_VARIANTS_MG: Record<string, string[]> = {
 	song: ['Ton'],
 	wis: ['Fah'],
 	sir: ['Ekl'],
-	isa: ['Iz'],
+	// `Izaia`, `Lioka` and `Hebrio` are this edition's full names, printed
+	// where it introduces a book in its own sentence rather than citing it.
+	isa: ['Iz', 'Izaia'],
 	jer: ['Jer'],
 	lam: ['Fitom'],
 	ezek: ['Ezek'],
@@ -1005,7 +1105,7 @@ const BOOK_VARIANTS_MG: Record<string, string[]> = {
 	mal: ['Mal'],
 	matt: ['Mt'],
 	mark: ['Mk'],
-	luke: ['Lk'],
+	luke: ['Lk', 'Lioka'],
 	john: ['Jo'],
 	acts: ['Asa'],
 	rom: ['Rôm', 'Rom.'],
@@ -1014,7 +1114,7 @@ const BOOK_VARIANTS_MG: Record<string, string[]> = {
 	phil: ['Filip'],
 	col: ['Kôl'],
 	titus: ['Tito'],
-	heb: ['Heb'],
+	heb: ['Heb', 'Hebrio'],
 	jas: ['Jak', 'Jak.'],
 	jude: ['Joda'],
 	rev: ['Apôk'],
@@ -1094,7 +1194,10 @@ const BOOK_VARIANTS_LA: Record<string, string[]> = {
 	mal: ['Mal'],
 	matt: ['Mt'],
 	mark: ['Mc'],
-	luke: ['Lc'],
+	// The GENITIVE, which is how a Latin sentence names a book it is about
+	// ("super illud Lucae 22,19"). Only this one is attested; the others are
+	// left out rather than declined by rule.
+	luke: ['Lc', 'Lucae'],
 	john: ['Io'],
 	acts: ['Act'],
 	rom: ['Rom'],
@@ -1120,6 +1223,99 @@ const BOOK_VARIANTS_LA: Record<string, string[]> = {
 		lTypo: true,
 		unspaced: true
 	})
+};
+
+// --------------------------------------------------------------------------
+// Three more, added 2026-08-26 when `linkifyProse` learned to read document
+// sigla and the same pass measured what its SCRIPTURE half was still missing.
+//
+// These are not Catechism editions. `pl`, `ru` and `ar` hold exactly one work
+// apiece — Leo XIV's *Magnifica Humanitas*, published simultaneously in nine
+// languages — and until now `configFor` answered ENGLISH for all three, which
+// matched nothing at all in them: not one of their references shares a
+// surface form with the English table, so the failure was silent and total
+// rather than wrong. CLAUDE.md's standing note that these tags "print no
+// Scripture locator" was measured before that encyclical landed and is what
+// this replaces.
+//
+// DERIVED THE SAME WAY THE CATECHISM'S SIX WERE, by the same tool: the nine
+// editions are 245 sections that align exactly, so section N's citations are
+// translations of each other and a chapter:verse read from the English or
+// Italian edition names the book the Polish one abbreviates at the same
+// locus. `scripts/book-forms-oracle.mjs --work encyclical.magnifica-humanitas`
+// is that run, and every row below came back corroborated on 100% of its
+// occurrences. The oracle was generalized past `ccc.` for exactly this.
+//
+// They stop at what one encyclical cites, which is between eleven and
+// fourteen books — the same rule the derived Catechism tables follow, and for
+// the same reason: a form nothing in the corpus prints is a form nothing has
+// checked.
+// --------------------------------------------------------------------------
+
+const BOOK_VARIANTS_PL: Record<string, string[]> = {
+	gen: ['Rdz'],
+	neh: ['Ne'],
+	ps: ['Ps'],
+	prov: ['Prz'],
+	isa: ['Iz'],
+	// `Mt`, `Mk` and `Ps` are the same three letters Polish and English
+	// happen to share, and they went unnoticed in the first derivation for
+	// exactly that reason: the English fallback was already resolving them,
+	// so the oracle saw nothing unresolved to propose. Giving the language a
+	// table of its own is what made them visible.
+	matt: ['Mt'],
+	mark: ['Mk'],
+	luke: ['Łk'],
+	john: ['J'],
+	acts: ['Dz'],
+	eph: ['Ef'],
+	rev: ['Ap'],
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Kor'], { unspaced: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['P'], { unspaced: true })
+};
+
+const BOOK_VARIANTS_RU: Record<string, string[]> = {
+	gen: ['Быт'],
+	neh: ['Неем'],
+	ps: ['Пс'],
+	prov: ['Притч'],
+	isa: ['Ис'],
+	matt: ['Мф'],
+	mark: ['Мк'],
+	luke: ['Лк'],
+	john: ['Ин'],
+	acts: ['Деян'],
+	eph: ['Еф'],
+	rev: ['Откр'],
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Кор'], { unspaced: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Пет'], { unspaced: true })
+};
+
+/**
+ * Arabic, which spells its books out rather than abbreviating them and is the
+ * only table here whose language has no letter case at all — so nothing in
+ * the matcher can lean on a capital, and `LEFT_BOUND`/`RIGHT_BOUND`'s
+ * `\p{L}` guards are what keep a book name from matching inside a longer
+ * word. Two of them are two words ("أعمال الرّسل", Acts of the Apostles), and
+ * one CONTAINS another: "رؤيا يوحنّا" (the Revelation of John) opens on the
+ * evangelist's own name, which is harmless because `buildVariantRe` sorts its
+ * alternation longest-first.
+ */
+const BOOK_VARIANTS_AR: Record<string, string[]> = {
+	gen: ['تكوين'],
+	neh: ['نحميا'],
+	ps: ['المزمور'],
+	prov: ['أمثال'],
+	isa: ['أشعيا'],
+	matt: ['متّى'],
+	mark: ['مرقس'],
+	luke: ['لوقا'],
+	john: ['يوحنّا'],
+	acts: ['أعمال الرّسل'],
+	eph: ['أفسس'],
+	rev: ['رؤيا يوحنّا'],
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['قورنتس']),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['بطرس'])
 };
 
 /**
@@ -1587,6 +1783,18 @@ const DOCUMENT_SIGLA_IT = DOCUMENT_SIGLA_LA;
  * FAA as Gaudium et spes on 155 of 165 — and the conciliar sigla are the
  * only ones this edition translates.
  */
+/**
+ * Polish, Russian and Arabic, whose one work cites nothing but bibliographic
+ * series: `AAS` 172-176 times apiece, then `CCSL`, `ASS` and `PL` in single
+ * figures, and — measured across all three editions — not one conciliar or
+ * papal siglum. So they get `SERIES_SIGLA` and nothing else, on the same
+ * evidence that gave Italian and Latin theirs. Under the English fallback
+ * they carried every siglum in `DOCUMENT_SIGLA_EN`, which is a table of
+ * two-letter tokens offered to running text in two languages nobody had
+ * checked them against.
+ */
+const DOCUMENT_SIGLA_SERIES_ONLY: Record<string, SiglumEntry> = SERIES_SIGLA;
+
 const DOCUMENT_SIGLA_MG: Record<string, SiglumEntry> = {
 	...SERIES_SIGLA,
 	...PAPAL_SIGLA,
@@ -1726,6 +1934,29 @@ const CONFIG_FR = romanceConfig(BOOK_VARIANTS_FR, DOCUMENT_SIGLA_FR);
 const CONFIG_IT = romanceConfig(BOOK_VARIANTS_IT, DOCUMENT_SIGLA_IT);
 const CONFIG_LA = romanceConfig(BOOK_VARIANTS_LA, DOCUMENT_SIGLA_LA);
 const CONFIG_MG = romanceConfig(BOOK_VARIANTS_MG, DOCUMENT_SIGLA_MG);
+const CONFIG_PL = romanceConfig(BOOK_VARIANTS_PL, DOCUMENT_SIGLA_SERIES_ONLY);
+const CONFIG_RU = romanceConfig(BOOK_VARIANTS_RU, DOCUMENT_SIGLA_SERIES_ONLY);
+
+/**
+ * Arabic is the one config whose MARKS differ rather than only its tables.
+ * Its chapter/verse separator is the Arabic comma U+060C ("تكوين 11، 1-9"),
+ * and its clause separator the Arabic semicolon U+061B, both of which are
+ * distinct characters from the ASCII ones every other edition prints — a
+ * config built on "," would read none of its 25 references.
+ *
+ * `.` stays in `extraChapterVerseSeparators` because a book abbreviation's
+ * own full stop is handled before the locus grammar runs (`parseRefNumbers`),
+ * and dropping it here would change that path for no reason.
+ */
+const CONFIG_AR = buildConfig(
+	BOOK_VARIANTS_AR,
+	DOCUMENT_SIGLA_SERIES_ONLY,
+	'\u060C',
+	false,
+	true,
+	['.'],
+	[';', '\u061B']
+);
 
 /**
  * Content language -> grammar. Keyed on the BARE tag, matched on the prefix
@@ -1743,13 +1974,16 @@ const CONFIG_MG = romanceConfig(BOOK_VARIANTS_MG, DOCUMENT_SIGLA_MG);
  * `scripts/reference-coverage.mjs`.
  */
 const CONFIGS: Record<string, LangConfig> = {
+	ar: CONFIG_AR,
 	de: CONFIG_DE,
 	es: CONFIG_ES,
 	fr: CONFIG_FR,
 	it: CONFIG_IT,
 	la: CONFIG_LA,
 	mg: CONFIG_MG,
+	pl: CONFIG_PL,
 	pt: CONFIG_PT,
+	ru: CONFIG_RU,
 	en: CONFIG_EN
 };
 
@@ -2280,7 +2514,17 @@ function findWorkTitleAt(clause: string, pos: number): WorkTitleMatch | null {
  * demonstrably uses for something else.
  */
 const COMMENTARY_TITLE_RE =
-	/(?:\bIn|\.\s*in|\bMoralia\s+in|\b(?:Hist|Expos|Expl|Comm|Tract)\.|\b(?:interpretation|Commentary|Commentaries|Homilies|Homily|Tractates?|Expositions?|Sermons?)\s+(?:on|of))\s*$/;
+	/(?:\bIn|\.\s*in|\bMoralia\s+in|\b(?:Hist|Expos|Expl|Comm|Tract|Adv)\.|\b(?:interpretation|Commentary|Commentaries|Homilies|Homily|Tractates?|Expositions?|Sermons?)\s+(?:on|of)|\bComent[áa]rios?\b[^.;:]{0,40})\s*$/;
+// "Adv." joined the abbreviated genres when the prose scan reached the
+// Portuguese council documents: "Tertuliano, Adv. Marc. 3, 7" is Adversus
+// Marcionem, and "Adv. Haer." Adversus haereses — a work AGAINST a person,
+// wearing a book's abbreviation.
+//
+// "Comentário" is the same rule in Portuguese, and needs a window rather than
+// an adjacency because the title names the book at a distance: "Comentário ao
+// Evangelho de João, XII, 20" and "Comentário aos Salmos, 85,5" are Cyril and
+// Augustine, not John 12 and Psalm 85. Bounded at 40 characters and stopped
+// by any sentence punctuation, so it cannot reach out of its own title.
 // The English commentary titles at the end ("On the literal interpretation
 // of Genesis XI, 15.20") are the Latin ones in translation, found by the same
 // measurement.
@@ -2696,6 +2940,58 @@ export function parseRefs(text: string, opts?: RefsOpts): RefSegment[] {
 }
 
 /**
+ * Which characters of `text` sit inside a parenthesis or a square bracket.
+ *
+ * The one guard that makes a two-letter siglum safe in running prose (see
+ * `linkifyProse`'s scan 3), and it is not a stylistic hunch: of the 3,712
+ * siglum-shaped tokens the Catechism's German, Spanish, French and English
+ * editions print in their PROSE, 3,708 are inside a bracket of one of these
+ * two kinds — "(GS 19,1)", "[Vgl. LG 20.]", "(cf. LG 20)". The four that are
+ * not are all a source defect of the same shape, an opening bracket lost in
+ * the mirror's markup ("...beten Vgl. UR 8;22]."), so requiring the bracket
+ * costs four references and buys a hard stop on every capitalised
+ * abbreviation the running text of 383 works happens to contain.
+ *
+ * An unmatched closer is clamped rather than treated as an error: these
+ * pages drop brackets, and a stray ")" must not make the whole rest of a
+ * paragraph read as "outside".
+ */
+/**
+ * The one siglum-and-locus shape that means something else in this corpus's
+ * running prose, blocked the same narrow, measured way `precededByFalseLead`
+ * blocks a commentary title.
+ *
+ * "(AA 1,2)" in the English Summa is ARTICLES 1 and 2 of the question being
+ * read — CCEL doubles the letter to pluralise, exactly as "nn." pluralises
+ * "n." — and not Apostolicam actuositatem. It normally anchors those itself
+ * ("AA<a data-ref="summa:I:13:1">[1]</a>,2", 300+ times, which
+ * `parseStoredRef` reads and this scan never sees); three it forgot to, and
+ * those three are the only false hits a prose siglum scan produces anywhere
+ * in the corpus's 383 works.
+ *
+ * The discriminator is the locus, and it is not a coincidence of these three:
+ * a conciliar decree cited in prose points at ONE section, and all 42 real
+ * uses of "AA" across the German, Spanish, French and English Catechisms are
+ * a single number ("AA 3", "AA 2 # 2"). Blocking the siglum outright would
+ * cost those 42 to save 3.
+ */
+function proseSiglumFalseLead(sigla: string, locus: string): boolean {
+	return sigla === 'AA' && /[,.]/.test(locus);
+}
+
+function bracketedPositions(text: string): boolean[] {
+	const inside = new Array<boolean>(text.length);
+	let depth = 0;
+	for (let i = 0; i < text.length; i++) {
+		const c = text[i];
+		if (c === '(' || c === '[') depth++;
+		inside[i] = depth > 0;
+		if (c === ')' || c === ']') depth = Math.max(0, depth - 1);
+	}
+	return inside;
+}
+
+/**
  * Link references inside RUNNING PROSE — a Catechism paragraph's own body, an
  * encyclical's argument — as opposed to a citation string, which is what
  * `parseRefs` is for.
@@ -2712,6 +3008,18 @@ export function parseRefs(text: string, opts?: RefsOpts): RefSegment[] {
  *      in parentheses inside the running text, and the corpus holds ~4,400
  *      such locators that were previously plain text — 334 in Evangelium
  *      Vitae alone.
+ *   3. A DOCUMENT SIGLUM with a locus, inside a bracket — "(GS 19,1)",
+ *      "[Vgl. LG 20.]", "(cf. AG 2)". Added 2026-08-26, and the reason it
+ *      was worth adding is the same fact that made the six new book tables
+ *      worth deriving: German, Spanish and French print no footnotes at all
+ *      (docs/corpus-schema.md §Catechism), so the whole apparatus of those
+ *      three editions is in the prose this scan reads. 3,624 references,
+ *      against 82 in the English edition, which footnotes almost everything.
+ *
+ * The bracket requirement is scan 3's alone — see `bracketedPositions` for
+ * the measurement behind it. Scripture does not need it (a book name plus a
+ * chapter is already distinctive) and would lose by it, since the Catechism's
+ * prose names books in the open constantly.
  *
  * Deliberately NOT `parseRefs` over prose. That function assumes the whole
  * string is citation apparatus, and two of its rules are actively wrong here:
@@ -2803,6 +3111,37 @@ export function linkifyProse(text: string, opts?: RefsOpts): RefSegment[] {
 			]
 		});
 		searchPos = end;
+	}
+
+	// --- 3. Document sigla with a locus, inside a bracket ------------------
+	let bracketed: boolean[] | null = null;
+	let siglumPos = 0;
+	while (siglumPos < text.length) {
+		const dm = findDocumentAt(cfg, text, siglumPos);
+		if (!dm) break;
+		siglumPos = Math.max(dm.consumedEnd, dm.matchStart + 1);
+		// A bare siglum with no number after it names a document in passing at
+		// best and is an ordinary capitalised word at worst; in prose there is
+		// nothing to point at either way.
+		if (!dm.locus) continue;
+		if (proseSiglumFalseLead(dm.sigla, dm.locus)) continue;
+		if (!bracketed) bracketed = bracketedPositions(text);
+		if (!bracketed[dm.matchStart]) continue;
+		hits.push({
+			start: dm.matchStart,
+			end: dm.consumedEnd,
+			segs: [
+				{
+					kind: 'document',
+					via: 'siglum',
+					label: dm.sigla,
+					locus: dm.locus,
+					expansion: cfg.documentSigla.get(dm.sigla)?.expansion ?? null,
+					slug: dm.slug,
+					raw: text.slice(dm.matchStart, dm.consumedEnd)
+				}
+			]
+		});
 	}
 
 	// --- Merge, earliest first, dropping anything that overlaps a kept hit -

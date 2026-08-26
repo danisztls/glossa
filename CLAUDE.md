@@ -399,13 +399,16 @@ npm run deploy      # build -> preflight -> wrangler deploy
   use a heartbeat file, or check with the sandbox disabled.
 - `git commit` needs `~/.gnupg` for signing, which the sandbox blocks.
 
-## Reference grammar: eight book tables, and the oracle that built six of them
+## Reference grammar: eleven book tables, prose as apparatus, and the oracle behind both
 
 `site/src/lib/refs-grammar.ts` turns a stored citation string into links. It
 is per **content language**, and until 2026-08-26 it had exactly two
 configs — EN and PT — with `configFor` answering EN for everything else.
-There are eight now (`de`, `en`, `es`, `fr`, `it`, `la`, `mg`, `pt`), and the
-six added are the six Catechism editions ingested that day.
+There are eleven now — `ar`, `de`, `en`, `es`, `fr`, `it`, `la`, `mg`, `pl`,
+`pt`, `ru` — added in two passes on 2026-08-26: six for the Catechism
+editions ingested that day, then `ar`, `pl` and `ru` when the prose scan
+below measured what the English fallback was reading in them (nothing at
+all — not one of their forms shares a surface with the English table).
 
 **English was never a neutral default, and that is the point.** Falling back
 to it did not merely under-link; it mis-read. `1 Joh 2,20` / `1 Io 2,20` /
@@ -419,15 +422,24 @@ Sacrosanctum concilium in the German, Spanish and French, with `CA` doing the
 same (Corpus apologetarum against Centesimus annus). The Latin edition's own
 printed sigla table settles both.
 
-**`scripts/book-forms-oracle.mjs` is where five of the six tables came from,
-and it is the tool to reach for next time.** Paragraph N is the same paragraph
-in all eight editions, so a chapter:verse the EN/PT tables resolve is the same
-reference the Italian edition prints beside its own abbreviation: align on the
-locus, read the abbreviation off. `--derive` proposes a table with vote counts;
-the default mode **checks** an existing one by reporting links whose OSIS the
-other editions contradict. Read that as a count, not a list — 330 rows for
-German meant the wrong table was being applied, 18 means the editions
-genuinely cite different verses (Sir 5:8 against Qo 5:9 at §2536).
+**`scripts/book-forms-oracle.mjs` is where eight of the eleven tables came
+from, and it is the tool to reach for next time.** Paragraph N is the same
+paragraph in all eight editions, so a chapter:verse the EN/PT tables resolve is
+the same reference the Italian edition prints beside its own abbreviation:
+align on the locus, read the abbreviation off. `--derive` proposes a table with
+vote counts; the default mode **checks** an existing one by reporting links
+whose OSIS the other editions contradict. Read that as a count, not a list —
+330 rows for German meant the wrong table was being applied, 18 means the
+editions genuinely cite different verses (Sir 5:8 against Qo 5:9 at §2536).
+
+**`--work` points it at any work published in more than one language**, which
+is what derived Polish, Russian and Arabic: _Magnifica Humanitas_ is 245
+sections that align exactly across nine editions, so
+`--work encyclical.magnifica-humanitas --ref en,it` reads their forms off the
+same way and then checks them (62 links apiece, none contested). The alignment
+is not free for every family — a section number is not the same section in two
+translations of an older encyclical (see "Work that spans languages") — so it
+holds for a work translated from one text at one time, and for nothing else.
 
 Two things it will keep proposing that are **not** books: patristic work
 titles (`Sermo 241, 2`, `Enarratio in Psalmum 103, 4, 1`, `Ed. Leon. 4, 31`),
@@ -454,13 +466,61 @@ keeping the French `Jc` for James where its own convention is `St`, Malagasy
 §604 dropping the `1` from `1 Jo 4,19`. Each was a real link to the wrong
 verse, and each was one edition against seven.
 
-The eight tags with **no** config (`ar`, `hu`, `pl`, `ro`, `ru`, `sl`, `sv`,
-`en-gb`) fall to English, and that is measured rather than assumed: the four
-Compendium-only languages cite the Catechism by bare number, which needs no
-book table at all and is already at 100%, and their prose prints no Scripture
-locator, so the English table matched nothing rather than matching something
-wrong. `scripts/reference-coverage.mjs` is what says when that stops being
-true.
+The five tags with **no** config (`hu`, `ro`, `sl`, `sv`, `en-gb`) fall to
+English, and that is measured rather than assumed: the four Compendium-only
+languages cite the Catechism by bare number, which needs no book table at all
+and is already at 100%, and their prose prints no Scripture locator, so the
+English table matched nothing rather than matching something wrong.
+`scripts/reference-coverage.mjs` is what says when that stops being true —
+and it did: `ar`, `pl` and `ru` were on that list until _Magnifica Humanitas_
+landed a work in each of them.
+
+## Running prose is an apparatus, not decoration
+
+**Three of the eight Catechism editions print no footnotes at all** — German
+brackets its references, French and Spanish parenthesize them — so everything
+`parseRefs` reads elsewhere, `linkifyProse` has to read in the body text. That
+is the whole reason its **document-siglum scan** (added 2026-08-26) is worth
+3,624 references in those three editions against 82 in English.
+
+**A siglum in prose must sit inside a bracket**, and that is a measurement
+rather than a hunch: of the 3,712 siglum-shaped tokens those four editions
+print in prose, 3,708 are inside a `(` or a `[`, and the four that are not are
+one source defect repeated (an opening bracket lost in the mirror's markup).
+Without the guard, every capitalised abbreviation in 383 works is a candidate.
+It must also carry a locus; a siglum named in passing points at nothing.
+
+**The one collision the whole corpus produces is `AA`.** CCEL doubles a
+letter to pluralize, so the English Summa's "(AA 1,2)" is _articles_ 1 and 2 of
+the question being read, not Apostolicam actuositatem. It anchors 300+ of those
+itself and forgot three. The discriminator is the locus — a conciliar decree
+cited in prose points at ONE section, and all 42 real uses of `AA` are a single
+number — so `proseSiglumFalseLead` blocks the list form and keeps the rest.
+
+**The same scan is how the book tables get their second pass.** Reading what
+prose still resolves to nothing found 1,180 Douay-named references in
+`summa.en` ("Mat. 7:6" 820 times, "Eccles.", "Ezech.", "Osee", "3 Kings"), 59
+in the Portuguese encyclicals ("Êx", "Flp", "1 Tes", "Coel"), and two source
+misprints now filed as corrections (`ccc.it-964-1gv-for-gv`,
+`ccc.pt-371-ga-for-gn`). Run it after any table change; the residue is where
+the next win is.
+
+**English has two book-naming conventions and they collide on Kings.** The
+Douay tradition — which the CCEL Summa follows and which
+`bible.douay-rheims.en`'s own book names state ("1 Kings (1 Samuel)", "3 Kings
+(1 Kings)") — calls 1–2 Samuel the first two books of Kings. `3 Kings` and
+`4 Kings` are unambiguous and are read; `1 Kings` and `2 Kings` are not, and
+stay the modern books, which keeps `ccc.en`'s 14 citations right and leaves 50
+in `summa.en` pointing one book off. **Nothing in the citation string tells
+them apart — only the work does**, and this grammar's one axis is language.
+Fixing it means giving `RefsOpts` a per-work axis and threading it through
+`ProseBlocks`, `InlineProse`, `build-xrefs.mjs` and `reference-coverage.mjs`;
+that is a design change, not a table entry.
+
+**`prose.document` is the counter that guards the sigla scan.**
+`reference-coverage.mjs` counts it per family and `preflight-deploy.mjs`
+refuses a 3% drop, the same as prose scripture. A baseline written before the
+counter existed compares as zero rather than as NaN.
 
 ## Work that spans languages
 
