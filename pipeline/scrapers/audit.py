@@ -569,6 +569,15 @@ def unit_texts(work: Path, work_type: str) -> dict | None:
         # the vernacular editions only. Counting blocks alone made it the
         # single worst-skewed prayer in the collection -- a finding about
         # this function rather than about the corpus.
+        #
+        # `instructions` is here for the same reason and was missing for it:
+        # five more blocks the Rosary alone carries, from the Joyful
+        # Mysteries page, present in both vernacular editions. Their absence
+        # never skewed the ratio -- both sides lost the same text -- which is
+        # exactly what made it worth fixing: a parser that dropped the
+        # directions in ONE language would have been invisible here, and the
+        # Compendium's four unnumbered enumerations are what this audit exists
+        # to have caught.
         return {
             p["slug"]: " ".join(
                 [p.get("title") or "", p.get("rubric") or ""]
@@ -577,6 +586,10 @@ def unit_texts(work: Path, work_type: str) -> dict | None:
                     item.get("title", "") + " " + item.get("meditation", "")
                     for group in (p.get("groups") or [])
                     for item in group["items"]
+                ]
+                + [
+                    b.get("text") or ""
+                    for b in (p.get("instructions") or {}).get("blocks", [])
                 ]
             )
             for p in json.loads((work / "prayers.json").read_text())

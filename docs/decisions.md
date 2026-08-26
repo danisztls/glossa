@@ -376,6 +376,47 @@ edition switch instead of freezing the wording they happened to have open.
 five prayers while the collection's shape, order and prev/next chain come from the
 28-prayer English edition.
 
+**So the edition MENU is address-scoped too** (2026-08-25). It was not, and prayers are
+the one type where that shows: `listEditions('prayer')` put "English (UK)" in the picker
+on all twenty-eight prayers, where on twenty-three it named an edition with no text at
+that address, resolved straight back to `prayer.common.en`, and left the trigger
+announcing a wording the page was not printing. The rule the text already followed now
+governs the control that offers it — the menu lists the editions holding the address in
+view, and the trigger names the edition actually rendered rather than the one stored.
+At the collection index, where no one prayer is in view, "holds the address" means "can
+enumerate the collection", which is `completeEditionTags` — the set `prayerIndexLang`
+already indexes off. A menu row that changes nothing is worse than an absent one: it
+reads as a claim that a second English wording of the Our Father exists.
+
+**Provenance follows the address as well** (2026-08-25). A work-level `sources` list
+answers "where did this work come from", and for every other type that is also the answer
+for any address in it. A prayer collection is assembled from unrelated pages — eight for
+English — so the copyright notice's `sources[0]` claimed the Compendium's Appendix A
+under all twenty-eight prayers, wrongly for the two Creeds, the Our Father and the Litany
+of Loreto, and half-wrongly for the Rosary, whose twenty mysteries and directions come
+from four Holy Rosary micro-site pages the Compendium does not contain. Prayers now carry
+their own `sources`, and the Rosary's groups and instructions each carry the page they
+were parsed from, printed beside them. The point is the same one the source link has
+always been making (`research/copyright.md` §5): an attribution the reader cannot check
+is asking them to take our word for it, and one that sends them to the wrong page is
+worse than none.
+
+**A correction's `field` names which text it repairs** (2026-08-26). It had been
+decorative — every prayer correction on file said `latin_text` and the code read
+`prayer.latin.blocks` unconditionally, so the key described what the code happened to do.
+That held only for as long as every defect found here was in the Latin, which was a fact
+about which column had been read closely rather than about the corpus. The first
+vernacular defect (a dropped letter in the UK Te Deum) could not be expressed at all.
+`variant_text` is the third value and needs a `locator.variant`, because corrections run
+before the UK/USA split resolves and the two wordings share whole lines — "whichever
+column matched" is not a safe answer.
+
+**A correction receipt names only what is in the file beside it** (2026-08-26). One
+parse is written into three editions, so `corrections-applied.json` was the same list in
+all of them: `prayer.common.en-gb` shipped a receipt for a defect in `glory-be`, which
+it does not contain. A receipt exists to be checked against its own file, and naming a
+change that is not there is the one thing it cannot do.
+
 ## Languages
 
 **Content language follows UI language**, with a per-work-type override as the escape

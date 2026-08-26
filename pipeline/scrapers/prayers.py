@@ -464,18 +464,87 @@ class MysteryItem:
         return d
 
 
+#: ISO weekday numbers (1 = Monday .. 7 = Sunday) each mystery set is prayed
+#: on, in the source's own print order -- Joyful, Luminous, Sorrowful,
+#: Glorious. NOT the data: it is the ORACLE. Each group's `days` is parsed out
+#: of the rubric the source actually prints ("(recited Monday and Saturday)",
+#: "(Segundas e Sábados)") and then asserted against this, so the corpus
+#: carries what the page says and this catches the page saying something else
+#: -- or a parser mis-zipping four rubrics onto four groups, which is the
+#: failure that would otherwise be invisible: every rubric would still be
+#: present, just attached to the wrong set.
+#:
+#: Thursday belongs to the Luminous mysteries because John Paul II gave it to
+#: them in Rosarium Virginis Mariae (2002), moving the Joyful set off it; the
+#: other three are the older rotation. Both sources print the post-2002 one.
+CANONICAL_MYSTERY_DAYS = ({1, 6}, {4}, {2, 5}, {3, 7})
+
+#: Weekday name stems, accent-folded and lowercased, in ISO order. Portuguese
+#: prints the plural ("Segundas e Sábados") and sometimes the full form
+#: ("Quintas Feiras"), so these are STEMS matched as substrings rather than
+#: whole words.
+_WEEKDAY_STEMS = {
+    "en": (
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+    ),
+    "pt": ("segunda", "terca", "quarta", "quinta", "sexta", "sabado", "domingo"),
+}
+
+
+def parse_rubric_days(rubric: str | None, lang: str) -> list[int]:
+    """The ISO weekday numbers a mystery set's printed rubric names.
+
+    Accent- and case-folded substring matching on stems, because the two
+    sources phrase this differently and neither phrases it consistently:
+    English writes "(recited Monday and Saturday)" and "(recited Thursday)",
+    Portuguese writes "(Segundas e Sábados)", "(Quintas Feiras)" and
+    "(Quartas e Domingo )" -- singular, plural and a stray trailing space in
+    one line. Returned sorted, so the assertion against
+    `CANONICAL_MYSTERY_DAYS` compares sets and not word order."""
+    if not rubric:
+        return []
+    folded = "".join(
+        ch
+        for ch in unicodedata.normalize("NFD", rubric.lower())
+        if not unicodedata.combining(ch)
+    )
+    return sorted(
+        n for n, stem in enumerate(_WEEKDAY_STEMS[lang], start=1) if stem in folded
+    )
+
+
 @dataclass
 class MysteryGroup:
     name: str
     rubric: str | None
     items: list[MysteryItem]
+    #: ISO weekday numbers this set is prayed on, read out of `rubric` -- see
+    #: `parse_rubric_days`. The rubric stays verbatim; this is the form a
+    #: reader's own weekday can be compared against without a consumer having
+    #: to parse prose in fourteen interface languages.
+    days: list[int] = field(default_factory=list)
+    #: The page THIS GROUP's five mysteries were parsed from -- one of the
+    #: four Holy Rosary micro-site pages, not the Compendium appendix the
+    #: surrounding Rosary entry comes from. See `prayer_sources`.
+    source: str | None = None
 
     def to_dict(self) -> dict:
-        return {
+        d: dict = {
             "name": self.name,
             "rubric": self.rubric,
             "items": [item.to_dict() for item in self.items],
         }
+        if self.days:
+            d["days"] = self.days
+        if self.source:
+            d["source"] = self.source
+        return d
 
 
 @dataclass
@@ -491,12 +560,17 @@ class LatinText:
 class PrayerInstructions:
     title: str
     blocks: list[BlockOut]
+    #: The page these directions were parsed from -- see `MysteryGroup.source`.
+    source: str | None = None
 
     def to_dict(self) -> dict:
-        return {
+        d: dict = {
             "title": self.title,
             "blocks": [block.to_dict() for block in self.blocks],
         }
+        if self.source:
+            d["source"] = self.source
+        return d
 
 
 @dataclass
@@ -519,6 +593,10 @@ class Prayer:
     rubric: str | None = None
     groups: list[MysteryGroup] = field(default_factory=list)
     instructions: PrayerInstructions | None = None
+    #: Where THIS prayer's own text came from, as `{url, retrieved_at}` --
+    #: filled by `attach_sources` just before writing. See `prayer_sources`
+    #: for why a work-level source list was not enough.
+    sources: list[dict] = field(default_factory=list)
 
     @property
     def kind(self) -> str:
@@ -552,6 +630,8 @@ class Prayer:
             d["groups"] = [g.to_dict() for g in self.groups]
         if self.instructions:
             d["instructions"] = self.instructions.to_dict()
+        if self.sources:
+            d["sources"] = self.sources
         return d
 
 
@@ -1202,7 +1282,7 @@ def enrich_rosary_with_full_mysteries(rosary: Prayer, lang: str) -> None:
         raise RuntimeError(
             f"{lang}: expected 4 existing Rosary groups, found {len(rosary.groups)}"
         )
-    for group, path in zip(rosary.groups, paths, strict=True):
+    for index, (group, path) in enumerate(zip(rosary.groups, paths, strict=True)):
         if not path.exists():
             raise RuntimeError(
                 f"{lang}: full Rosary-mystery raw source not found at {path}; "
@@ -1211,6 +1291,17 @@ def enrich_rosary_with_full_mysteries(rosary: Prayer, lang: str) -> None:
         group.items = parse_rosary_mystery_page(
             path.read_text(encoding="cp1252", errors="replace"), lang, path.name
         )
+        # Read out of the printed rubric, then checked against the rotation
+        # both sources are known to print -- see `CANONICAL_MYSTERY_DAYS` for
+        # why this direction (parse, then assert) rather than just assigning
+        # the canonical answer, and for what a mis-zip would look like
+        # without it.
+        group.days = parse_rubric_days(group.rubric, lang)
+        if set(group.days) != CANONICAL_MYSTERY_DAYS[index]:
+            raise RuntimeError(
+                f"{lang}: {group.name!r} rubric {group.rubric!r} names weekdays "
+                f"{group.days}, expected {sorted(CANONICAL_MYSTERY_DAYS[index])}"
+            )
     rosary.instructions = parse_rosary_instructions(
         paths[0].read_text(encoding="cp1252", errors="replace"), lang
     )
@@ -1261,27 +1352,112 @@ def _correct_lines(lines: list[str], frm: str, to: str) -> list[str] | None:
     return fixed.split("\n") if n else None
 
 
+def correction_blocks(prayer: Prayer, c: dict) -> list[BlockOut]:
+    """The blocks one correction is allowed to search.
+
+    `field` USED TO BE DECORATIVE. Every correction on file said
+    `"latin_text"` and this function did not exist: `apply_corrections` read
+    `prayer.latin.blocks` unconditionally, so the key described what the code
+    happened to do rather than directing it. That held for as long as every
+    defect found here was in the Latin, which was not a property of the
+    corpus so much as of which column had been read closely -- the first
+    vernacular defect (a dropped letter in the UK Te Deum, 2026-08-26) could
+    not be expressed at all.
+
+    Three fields, because the English appendix has three texts per prayer and
+    they are not interchangeable:
+
+      - `latin_text`   the Latin companion the source prints alongside
+      - `text`         the vernacular this edition prints
+      - `variant_text` one REGIONAL wording, named by `locator.variant`
+
+    The last is the reason this takes the whole correction and not just a
+    field name. Corrections run before the UK/USA split is resolved (see
+    `build_base_edition`), so at this point both wordings of the five
+    regionalized prayers are still sitting in `variants` and neither is in
+    `blocks`. A correction that named only `text` would find nothing there
+    and, worse, a correction that searched `blocks` and `variants` together
+    would silently repair whichever column happened to match -- the two
+    wordings of the Te Deum share whole lines, so "whichever matched" is not
+    a safe answer. The variant is named, and only that variant is searched.
+    """
+    field = c.get("field", "latin_text")
+    if field == "latin_text":
+        if prayer.latin is None:
+            raise RuntimeError(
+                f"correction {c['id']}: prayer {prayer.slug!r} has no Latin text"
+            )
+        return prayer.latin.blocks
+    if field == "text":
+        return prayer.blocks
+    if field == "variant_text":
+        label = c["locator"].get("variant")
+        matches = [v for v in prayer.variants if v.label == label]
+        if len(matches) != 1:
+            raise RuntimeError(
+                f"correction {c['id']}: expected exactly 1 {label!r} variant of "
+                f"{prayer.slug!r}, found {len(matches)}"
+            )
+        return matches[0].blocks
+    raise RuntimeError(f"correction {c['id']}: unknown field {field!r}")
+
+
+def corrections_in_edition(
+    applied: list[dict], prayers: list[Prayer], variant: str | None
+) -> list[dict]:
+    """Of the corrections applied to the parse, the ones whose text this
+    EDITION actually carries.
+
+    A receipt exists to be checked against the file it sits beside, so naming
+    a change that is not in that file is the one thing it must not do -- and
+    both English editions were doing it. The parse is corrected once and
+    written three times, so `prayer.common.en-gb` (five prayers) shipped a
+    receipt for a defect in `glory-be`, which it does not contain, and once
+    the first vernacular correction landed (the UK Te Deum, 2026-08-26)
+    `prayer.common.en` returned the favour with a receipt for a wording it
+    does not print.
+
+    Two tests, and the second is why `variant` is a parameter rather than
+    something recoverable here: by write time the wordings are resolved and
+    no `variants` array survives, so an edition cannot be asked which one it
+    took. The caller knows -- `BASE_VARIANT` for the collection,
+    `REGIONAL_VARIANT` for the regional edition, `None` for a language that
+    has no regional split at all, where a `variant_text` correction belongs
+    to nothing and is correctly dropped."""
+    slugs = {p.slug for p in prayers}
+    return [
+        c
+        for c in applied
+        if c["locator"]["prayer"] in slugs
+        and (
+            c.get("field") != "variant_text"
+            or (variant is not None and c["locator"].get("variant") == variant)
+        )
+    ]
+
+
 def apply_corrections(prayers: list[Prayer], corrections: list[dict]) -> list[dict]:
-    """Apply each correction to the single Latin block of the named prayer
-    that contains its `from` text verbatim. Fails loudly (drift guard) if
-    the text isn't found in exactly one block -- either it was already
-    fixed, the source changed, or the locator is wrong; silently doing
-    nothing in any of those cases would be worse than crashing."""
+    """Apply each correction to the single block of the named prayer's named
+    text (`correction_blocks`) that contains its `from` verbatim. Fails
+    loudly (drift guard) if the text isn't found in exactly one block --
+    either it was already fixed, the source changed, or the locator is wrong;
+    silently doing nothing in any of those cases would be worse than
+    crashing."""
     by_slug = {p.slug: p for p in prayers}
     applied = []
     for c in corrections:
         slug = c["locator"]["prayer"]
         prayer = by_slug.get(slug)
-        if prayer is None or prayer.latin is None:
-            raise RuntimeError(
-                f"correction {c['id']}: prayer {slug!r} has no Latin text"
-            )
-        matches = [b for b in prayer.latin.blocks if c["from"] in b.text]
+        if prayer is None:
+            raise RuntimeError(f"correction {c['id']}: no prayer {slug!r}")
+        blocks = correction_blocks(prayer, c)
+        matches = [b for b in blocks if c["from"] in b.text]
         if len(matches) != 1:
             raise RuntimeError(
                 f"correction {c['id']}: expected exactly 1 block containing "
-                f"{c['from']!r} in {slug}'s Latin text, found {len(matches)} "
-                "(drift guard -- source text no longer matches the correction)"
+                f"{c['from']!r} in {slug}'s {c.get('field', 'latin_text')}, "
+                f"found {len(matches)} (drift guard -- source text no longer "
+                "matches the correction)"
             )
         block = matches[0]
         block.text = block.text.replace(c["from"], c["to"])
@@ -1331,8 +1507,37 @@ def collect_texts(p: Prayer) -> list[str]:
     return texts
 
 
-def validate(en: list[Prayer], pt: list[Prayer]) -> tuple[bool, list[str]]:
+def check_source_coverage() -> list[str]:
+    """Every per-prayer URL is one the manifest already lists, and every URL
+    the manifest lists is claimed by some prayer.
+
+    Both directions matter and they catch opposite mistakes. A per-prayer URL
+    the manifest doesn't carry means the collection is attributing text to a
+    page it never declared it read. A manifest URL nothing claims means a page
+    was fetched and either isn't being used or is being used under someone
+    else's attribution -- which is exactly the state `prayer_sources` was
+    written to end, and the state a fifth Rosary page would silently recreate.
+
+    Reads the constants, not parsed output, so it holds whether or not a
+    parse ran."""
     problems: list[str] = []
+    for lang in ("en", "pt"):
+        declared = {src["url"] for src in build_manifest(lang, [], [])["sources"]}
+        claimed = {src["url"] for slug in SLUGS for src in prayer_sources(slug, lang)}
+        claimed |= set(ROSARY_MYSTERY_URLS["en" if lang == "en" else "po"])
+        if claimed - declared:
+            problems.append(
+                f"{lang}: prayer sources not in the manifest: {sorted(claimed - declared)}"
+            )
+        if declared - claimed:
+            problems.append(
+                f"{lang}: manifest sources no prayer claims: {sorted(declared - claimed)}"
+            )
+    return problems
+
+
+def validate(en: list[Prayer], pt: list[Prayer]) -> tuple[bool, list[str]]:
+    problems: list[str] = check_source_coverage()
 
     if len(en) != len(SLUGS):
         problems.append(f"EN: expected {len(SLUGS)} prayers, got {len(en)}")
@@ -1884,6 +2089,109 @@ LANG_CONFIG = {
 }
 
 
+# --------------------------------------------------------------------------
+# Per-prayer provenance
+# --------------------------------------------------------------------------
+#
+# THE WORK-LEVEL SOURCE LIST WAS NOT ENOUGH, and the Rosary is what made that
+# visible. A manifest carries eight `sources` for the English collection and
+# says nothing about which prayer came from which; the site's copyright
+# notice, having no better rule available, linked `sources[0]` -- the
+# Compendium appendix page -- under every one of the twenty-eight. That is
+# right for twenty-four of them and wrong for four:
+#
+#   - the Apostles' Creed and the Nicene Creed are parsed from the
+#     Catechism's own "The Credo" page,
+#   - the Our Father from the unnumbered prayer at CCC 2759,
+#   - the Litany of Loreto from the Holy Rosary micro-site,
+#
+# and PARTLY wrong for the Rosary, which is the case worth spelling out. Its
+# `blocks` -- the title, the rubric, the concluding prayer -- genuinely are
+# the Compendium's Appendix A entry. Its twenty mysteries and its directions
+# for praying are not: those are `enrich_rosary_with_full_mysteries`, from
+# four separate micro-site pages captured on 2026-08-18, and they are the
+# overwhelming bulk of what a reader sees on that page. Attributing all of it
+# to the Compendium told a reader to go check a page that does not contain
+# the text they just read.
+#
+# So provenance is recorded where the text is, at three levels: the prayer's
+# own `sources`, and -- for the Rosary alone, because it is the only entry
+# assembled from more than one page -- a `source` on each mystery group and
+# on the instructions. The site prints the first under the title and the
+# others beside the sections they belong to, which is what makes the whole
+# page checkable rather than just its top.
+#
+# Derived from the same constants the manifest's list is built from, so the
+# two cannot drift: `validate_prayers` asserts every per-prayer URL appears
+# in the manifest and that every manifest URL is claimed by some prayer.
+
+
+def prayer_sources(slug: str, lang: str) -> list[dict]:
+    """Where `slug`'s own text came from, as `{url, retrieved_at}`.
+
+    Not the mysteries or the instructions -- those carry their own `source`,
+    because they come from pages this entry's surrounding text does not."""
+    if lang == "la":
+        # A DERIVED edition (see `build_latin_edition`): its text is the
+        # `latin` field of both vernacular witnesses, which are two cells on
+        # two Compendium pages. Both are named because both were read -- the
+        # English is where the wording is transcribed from and the
+        # Portuguese is where five of these prayers break into stanzas.
+        return [
+            {"url": EN_URL, "retrieved_at": RETRIEVED_AT},
+            {"url": PT_URL, "retrieved_at": RETRIEVED_AT},
+        ]
+    en = lang == "en"
+    if slug in ("apostles-creed", "nicene-creed"):
+        return [
+            {
+                "url": CCC_EN_CREDO_URL if en else CCC_PT_CREDO_URL,
+                "retrieved_at": CCC_RETRIEVED_AT,
+            }
+        ]
+    if slug == "our-father":
+        return [
+            {
+                "url": CCC_EN_OUR_FATHER_URL if en else CCC_PT_OUR_FATHER_URL,
+                "retrieved_at": CCC_RETRIEVED_AT,
+            }
+        ]
+    if slug == LITANY_SLUG:
+        return [
+            {
+                "url": LITANY_EN_URL if en else LITANY_PT_URL,
+                "retrieved_at": LITANY_RETRIEVED_AT,
+            }
+        ]
+    return [{"url": EN_URL if en else PT_URL, "retrieved_at": RETRIEVED_AT}]
+
+
+def attach_sources(prayers: list[Prayer], lang: str) -> None:
+    """Fill `Prayer.sources` and, on the Rosary, each group's and the
+    instructions' own `source`.
+
+    Called just before writing rather than during parsing because the same
+    parsed prayers are written into three editions (`en`, `en-gb`, `la`) and
+    the answer differs by edition -- the regional edition's five prayers are
+    the English page's UK column, the Latin edition's text is neither page's
+    vernacular. Idempotent: re-running it overwrites rather than appends."""
+    mystery_urls = ROSARY_MYSTERY_URLS["en" if lang == "en" else "po"]
+    for prayer in prayers:
+        prayer.sources = prayer_sources(prayer.slug, lang)
+        if prayer.slug != "rosary" or lang == "la":
+            # The Latin Rosary has no mysteries and no instructions: the
+            # Compendium prints Latin for the entry, and the micro-site
+            # pages are vernacular only. Nothing to attribute.
+            continue
+        for group, url in zip(prayer.groups, mystery_urls, strict=True):
+            group.source = url
+        if prayer.instructions:
+            # `parse_rosary_instructions` reads the FIRST mystery page --
+            # the directions are printed once, on the Joyful Mysteries page,
+            # and shared by all four.
+            prayer.instructions.source = mystery_urls[0]
+
+
 def build_manifest(
     lang: str,
     prayers: list[Prayer],
@@ -2042,6 +2350,15 @@ def write_outputs(
     out_dir = WORKS_ROOT / cfg["work_id"]
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    attach_sources(prayers, lang)
+    # The collection prints the base wording where the source prints two, so
+    # a correction to the OTHER wording is not in this file -- see
+    # `corrections_in_edition`. Portuguese has no regional split, hence the
+    # `if`: its `None` drops any `variant_text` correction, and there are none
+    # to drop.
+    applied_corrections = corrections_in_edition(
+        applied_corrections, prayers, BASE_VARIANT if lang == "en" else None
+    )
     manifest = build_manifest(lang, prayers, applied_corrections, varied)
     structure = build_structure(prayers, lang)
     prayers_json = [p.to_dict() for p in prayers]
@@ -2151,6 +2468,7 @@ def build_latin_manifest(prayers: list[Prayer], report: list[dict]) -> dict:
 def write_latin_outputs(prayers: list[Prayer], report: list[dict]) -> None:
     out_dir = WORKS_ROOT / LATIN_WORK_ID
     out_dir.mkdir(parents=True, exist_ok=True)
+    attach_sources(prayers, "la")
     manifest = build_latin_manifest(prayers, report)
     write_stamped_json(
         out_dir,
@@ -2281,6 +2599,12 @@ def write_regional_outputs(
 ) -> None:
     out_dir = WORKS_ROOT / REGIONAL_WORK_ID
     out_dir.mkdir(parents=True, exist_ok=True)
+    # "en", not a tag of its own: the UK wording is the second column of the
+    # SAME English Compendium page, so its provenance is the English one.
+    attach_sources(prayers, "en")
+    applied_corrections = corrections_in_edition(
+        applied_corrections, prayers, REGIONAL_VARIANT
+    )
     manifest = build_regional_manifest(prayers, applied_corrections)
     files: dict[str, object] = {
         "manifest.json": manifest,
