@@ -474,12 +474,24 @@ change that is not there is the one thing it cannot do.
 hatch. One switch, fewer surprising states; the override sleeps and wakes on the UI
 language it was made under.
 
-**`UiLang` and `ContentLang` are two sets that happen to hold the same fourteen tags.**
-They answer different questions — a content language arrives when someone ingests a text,
-an interface language when someone writes a dictionary — and either will move alone: they
-were equal at ten, separated when the Compendium's editions brought `hu`, `ro`, `sl` and
-`sv` in with no dictionaries, and are equal again now that those four are written. **Do
-not derive one from the other.** Use `isUiLang`/`UI_LANGS`, never a literal list.
+**`UiLang` and `ContentLang` are two sets, fourteen tags against fifteen.** They answer
+different questions — a content language arrives when someone ingests a text, an interface
+language when someone writes a dictionary — and either moves alone: they were equal at
+ten, separated when the Compendium's editions brought `hu`, `ro`, `sl` and `sv` in with no
+dictionaries, drew level again when those four were written, and separated once more on
+2026-08-26 when the Catechism landed `mg`. **Do not derive one from the other.** Use
+`isUiLang`/`UI_LANGS`, never a literal list.
+
+**Malagasy is a content language with no chrome, and that is the honest state rather than
+a defect to hide** (2026-08-26). A Malagasy reader has the whole Catechism, 2,865
+paragraphs, inside an English interface; by the rule the four Compendium languages
+established that is a dictionary owed, and it is owed to a language nobody working here
+reads. Until someone who does writes it, `CONTENT_LANG_FALLBACK` is what keeps the rest of
+the corpus navigable around it. What the asymmetry must NOT do is leave the edition
+unnamed: a content language is named in its own language by `LANGUAGE_NAMES` in
+`corpus.ts`, which is keyed on `ContentLang` and not on the interface list, and an
+unnamed tag degrades silently to itself — `ccc.mg` offered itself in the edition menu as
+"mg".
 
 **Direction is a property of the text, not of the reader.** `<html dir>` follows the
 interface language; a content region takes its direction from the `lang` it already
@@ -605,7 +617,7 @@ reader accepts. Announcing it requires an existing controller, or a first-time v
 told a version they have never seen is out of date.
 
 **The background fill is per-language, ordered, and opt-in past the Catechism.** The
-corpus is 82.6 MB raw / ~26 MB gzipped across fourteen languages, and a reader speaks one
+corpus is 82.6 MB raw / ~26 MB gzipped across fifteen languages, and a reader speaks one
 or two of them. The worker plans waves over the reader's own language chain and takes only
 the three cheapest without being asked — the next chunk of what is open, the small whole
 works, the Catechism, together about 1.2 MB gzipped. Scripture, the Magisterium and the

@@ -426,4 +426,12 @@ describe('regional editions', () => {
 		expect(languageDisplayName('en')).toBe('English');
 		expect(languageDisplayName('en-GB')).toBe('English (UK)');
 	});
+
+	it('names a content language the interface is not written in', () => {
+		// The pairing that let this table fall a language behind `ContentLang`:
+		// `mg` is content-only, so nothing in the language switch would ever
+		// have shown it missing, and an unnamed tag degrades to itself — the
+		// Catechism's Malagasy edition named itself "mg" in the edition menu.
+		expect(languageDisplayName('mg')).toBe('Malagasy');
+	});
 });

@@ -16,12 +16,14 @@
 import { readStoredString, writeStoredString } from './storage';
 
 /**
- * The languages the INTERFACE is available in — as of 2026-08-25 again the
- * same set as `ContentLang` in types.ts, fourteen tags on both sides. That
- * equality is a fact about today, not an invariant: it held on 2026-08-24,
- * broke the next day when the Compendium's ten editions brought in four
- * languages with no dictionary, and is restored here by writing them. It
- * will break again the same way. Do not derive one list from the other.
+ * The languages the INTERFACE is available in — fourteen tags against
+ * `ContentLang`'s fifteen in types.ts, and the gap is `mg`. Inequality is
+ * the normal state of these two lists, not a defect in either: they held the
+ * same ten on 2026-08-24, separated the next day when the Compendium's ten
+ * editions brought in four languages with no dictionary, drew level again
+ * when those dictionaries were written, and separated once more on
+ * 2026-08-26 when the Catechism landed Malagasy. It will keep moving that
+ * way, a language at a time. Do not derive one list from the other.
  *
  * LATIN WAS THE ONE CONTENT LANGUAGE THIS LIST DELIBERATELY EXCLUDED, on the
  * grounds that it is a language readers want the TEXT in and nobody wants

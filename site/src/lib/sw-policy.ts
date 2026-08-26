@@ -249,7 +249,7 @@ export function routeFor(request: RoutableRequest, partition: AssetPartition): R
  * Two rules shape the order:
  *
  *   - **Never leave the reader's own language uninvited.** English alone is
- *     ~13.6 MB gzipped across 1,117 files; the other thirteen languages are
+ *     ~13.6 MB gzipped across 1,117 files; the other fourteen languages are
  *     work nobody asked for. `planWaves` takes the reader's language chain
  *     (their own, then `CONTENT_LANG_FALLBACK`) and considers nothing else.
  *     Another language is reachable, but only by asking for it by work id.

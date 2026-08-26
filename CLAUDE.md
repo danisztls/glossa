@@ -457,17 +457,27 @@ for the four kinds and why calling them defects invites someone to "fix" a
 faithful text.
 
 **The interface languages and the content languages are two different sets**,
-and they hold the same fourteen tags again as of 2026-08-25 — which is a fact
-about today, not the invariant it keeps looking like. `UiLang` in
+fourteen tags against fifteen as of 2026-08-26. `UiLang` in
 `site/src/lib/i18n.svelte.ts` is the nine Magnifica Humanitas is published in,
 plus Latin, plus `hu`, `ro`, `sl` and `sv` (use `isUiLang`/`UI_LANGS`, never a
 literal list — `app.css` and `app.html` each keep a copy by necessity and say
 so; a test asserts `app.html`'s copy against `UI_LANGS`); `ContentLang` in
-`types.ts` is the same fourteen by coincidence of timing. **Do not derive one
-from the other**: they equalized at ten on 2026-08-24, separated the next day
-when the Compendium's ten editions landed four texts with no dictionary, and
-equalized at fourteen the day after when the dictionaries were written. The
-next ingestion in an unwritten language separates them again.
+`types.ts` is those fourteen plus `mg`. **Do not derive one from the other**:
+they equalized at ten on 2026-08-24, separated the next day when the
+Compendium's ten editions landed four texts with no dictionary, equalized at
+fourteen the day after when the dictionaries were written, and separated again
+on 2026-08-26 when the Catechism landed Malagasy — which nobody working here
+reads, so the dictionary it is owed is not one of us to write.
+
+**A content language that is not an interface language has exactly one place
+to go wrong, and nothing checks it.** `LANGUAGE_NAMES` in `corpus.ts` names
+each content language in its own language for the edition menu and the compare
+columns; it is keyed on `ContentLang`, and an unnamed tag falls through to the
+tag itself. So `ccc.mg` shipped offering itself as "mg" — the type union gained
+the language, that table did not, and no build, test or type error saw it,
+because the one surface that would have made it obvious (the language switch)
+is the surface `mg` is deliberately absent from. Adding a content language
+means adding a line there in the same commit.
 
 Coverage, not the count, is what decides whether a language belongs in
 `UI_LANGS`. The four newest each have a **whole work** in them — the

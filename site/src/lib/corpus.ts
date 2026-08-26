@@ -269,7 +269,7 @@ const CONTENT_LANG_FALLBACK = ['en', 'la'];
  * fallback chain, deduped.
  *
  * Exported for the service worker's download planner, which is per-language by
- * design — the corpus is 82.6 MB raw across fourteen languages and a reader
+ * design — the corpus is 82.6 MB raw across fifteen languages and a reader
  * speaks one or two of them. `editionInLang` already walks this chain one
  * edition at a time; this is the same chain as a list, so the two cannot
  * disagree about what a reader's languages are.
@@ -383,10 +383,13 @@ export function baseLang(tag: string): string {
  * "Portuguese") — same convention LanguageMenu.svelte uses for the UI
  * language switch, and `Latina` is deliberately the same string in both.
  * Keyed on CONTENT language, which is NOT the interface list and must not be
- * derived from it — the last four here have no dictionary and never appear in
- * the language switch (see `ContentLang` in types.ts). An unrecognized tag
- * falls back to the tag itself, which is why a missing entry degrades to
- * "sv" rather than to nothing.
+ * derived from it — `mg` has no dictionary and never appears in the language
+ * switch (see `ContentLang` in types.ts). An unrecognized tag falls back to
+ * the tag itself, which is why a missing entry degrades to "mg" rather than
+ * to nothing, and why the Catechism's Malagasy edition named itself in the
+ * edition menu as the bare subtag from the day it was ingested: the type
+ * union gained the language and this table did not. EVERY TAG IN THAT UNION
+ * NEEDS A LINE HERE, and nothing fails when one does not.
  */
 const LANGUAGE_NAMES: Record<string, string> = {
 	en: 'English',
@@ -396,6 +399,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
 	es: 'Español',
 	fr: 'Français',
 	it: 'Italiano',
+	mg: 'Malagasy',
 	pl: 'Polski',
 	ru: 'Русский',
 	ar: 'العربية',
