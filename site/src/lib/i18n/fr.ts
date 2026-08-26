@@ -46,6 +46,7 @@ export const fr: Dictionary = {
 	'fontSize.larger': 'Texte plus grand',
 	'fontSize.smaller': 'Texte plus petit',
 	'print.label': 'Imprimer cette page',
+	'toTop.label': 'Revenir en haut',
 	'install.label': 'Installer Glossa',
 	'install.hint.label': 'Sur l’écran d’accueil',
 	'install.hint.title': 'Ajoutez Glossa à votre écran d’accueil',

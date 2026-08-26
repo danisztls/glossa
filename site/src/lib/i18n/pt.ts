@@ -49,6 +49,7 @@ export const pt: Dictionary = {
 	'fontSize.larger': 'Aumentar texto',
 	'fontSize.smaller': 'Diminuir texto',
 	'print.label': 'Imprimir esta página',
+	'toTop.label': 'Voltar ao topo',
 
 	// "Ecrã Principal" and "Adicionar ao Ecrã Principal" are iOS's own
 	// pt-PT wording — the reader is being told to find that exact entry in

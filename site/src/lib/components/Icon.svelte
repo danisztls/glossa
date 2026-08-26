@@ -51,6 +51,11 @@
 	// number — the five — where the pair reads as the act of rolling, which
 	// is what the control does.
 	import Dices from '@lucide/svelte/icons/dices';
+	// The plain arrow, not `arrow-up-to-line` or `chevron-up`: it is the same
+	// shape UnitNav already sets as a text character for "back" and "onward"
+	// (`&larr;`/`&rarr;`), rotated, so movement through the text reads as one
+	// vocabulary whether the control is a word or an icon.
+	import ArrowUp from '@lucide/svelte/icons/arrow-up';
 
 	const ICONS = {
 		search: Search,
@@ -71,7 +76,8 @@
 		link: Link,
 		'trash-2': Trash2,
 		'external-link': ExternalLink,
-		dices: Dices
+		dices: Dices,
+		'arrow-up': ArrowUp
 	};
 
 	export type IconName = keyof typeof ICONS;

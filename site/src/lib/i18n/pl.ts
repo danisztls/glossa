@@ -46,6 +46,7 @@ export const pl: Dictionary = {
 	'fontSize.larger': 'Większy tekst',
 	'fontSize.smaller': 'Mniejszy tekst',
 	'print.label': 'Drukuj tę stronę',
+	'toTop.label': 'Powrót na górę',
 	'install.label': 'Zainstaluj Glossę',
 	'install.hint.label': 'Dodaj do ekranu głównego',
 	'install.hint.title': 'Dodaj Glossę do ekranu głównego',

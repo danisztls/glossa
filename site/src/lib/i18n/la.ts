@@ -69,6 +69,7 @@ export const la: Dictionary = {
 	'fontSize.larger': 'Litterae maiores',
 	'fontSize.smaller': 'Litterae minores',
 	'print.label': 'Hanc paginam imprime',
+	'toTop.label': 'Ad summum paginae redi',
 	// iOS ships no Latin, so the quoted button CANNOT match what the reader
 	// sees on their own screen, the way this string does in the other eight
 	// languages. The sentence around it names the action instead, and the

@@ -46,6 +46,7 @@ export const hu: Dictionary = {
 	'fontSize.larger': 'Nagyobb betű',
 	'fontSize.smaller': 'Kisebb betű',
 	'print.label': 'Az oldal nyomtatása',
+	'toTop.label': 'Vissza a tetejére',
 	'install.label': 'A Glossa telepítése',
 	'install.hint.label': 'Hozzáadás a kezdőképernyőhöz',
 	'install.hint.title': 'A Glossa hozzáadása a kezdőképernyőhöz',

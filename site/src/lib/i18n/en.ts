@@ -72,6 +72,7 @@ export const en: Dictionary = {
 	'fontSize.larger': 'Larger text',
 	'fontSize.smaller': 'Smaller text',
 	'print.label': 'Print this page',
+	'toTop.label': 'Return to top',
 
 	// Home-screen install — InstallButton.svelte (Chromium) and
 	// InstallHint.svelte (iOS); the gating lives in install.svelte.ts.

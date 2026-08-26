@@ -46,6 +46,7 @@ export const sl: Dictionary = {
 	'fontSize.larger': 'Večje besedilo',
 	'fontSize.smaller': 'Manjše besedilo',
 	'print.label': 'Natisnite to stran',
+	'toTop.label': 'Nazaj na vrh',
 	'install.label': 'Namestite Glosso',
 	'install.hint.label': 'Dodaj na začetni zaslon',
 	'install.hint.title': 'Dodajte Glosso na začetni zaslon',

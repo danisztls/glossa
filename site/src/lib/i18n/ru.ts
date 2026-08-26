@@ -46,6 +46,7 @@ export const ru: Dictionary = {
 	'fontSize.larger': 'Крупнее',
 	'fontSize.smaller': 'Мельче',
 	'print.label': 'Напечатать эту страницу',
+	'toTop.label': 'Наверх',
 	'install.label': 'Установить Glossa',
 	'install.hint.label': 'На экран «Домой»',
 	'install.hint.title': 'Добавьте Glossa на экран «Домой»',

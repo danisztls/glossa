@@ -46,6 +46,7 @@ export const ro: Dictionary = {
 	'fontSize.larger': 'Text mai mare',
 	'fontSize.smaller': 'Text mai mic',
 	'print.label': 'Tipăriți această pagină',
+	'toTop.label': 'Înapoi sus',
 	'install.label': 'Instalați Glossa',
 	'install.hint.label': 'Adăugați pe ecranul principal',
 	'install.hint.title': 'Adăugați Glossa pe ecranul principal',

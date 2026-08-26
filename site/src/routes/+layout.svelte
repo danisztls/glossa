@@ -19,6 +19,7 @@
 	import { publishHeight } from '$lib/sticky-height';
 	import { serviceWorker } from '$lib/sw.svelte';
 	import UpdateBanner from '$lib/components/UpdateBanner.svelte';
+	import ToTopButton from '$lib/components/ToTopButton.svelte';
 
 	let { children } = $props();
 
@@ -200,6 +201,9 @@
 <LinkPreview />
 <InstallHint />
 <UpdateBanner />
+<!-- Outside `.app-shell` with the other viewport-fixed overlays: it belongs to
+     the window, not to the column of text under it. -->
+<ToTopButton />
 
 <style>
 	.app-shell {

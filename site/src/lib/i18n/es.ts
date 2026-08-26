@@ -46,6 +46,7 @@ export const es: Dictionary = {
 	'fontSize.larger': 'Texto más grande',
 	'fontSize.smaller': 'Texto más pequeño',
 	'print.label': 'Imprimir esta página',
+	'toTop.label': 'Volver arriba',
 	'install.label': 'Instalar Glossa',
 	'install.hint.label': 'Añadir a la pantalla de inicio',
 	'install.hint.title': 'Añade Glossa a tu pantalla de inicio',

@@ -46,6 +46,7 @@ export const de: Dictionary = {
 	'fontSize.larger': 'Größere Schrift',
 	'fontSize.smaller': 'Kleinere Schrift',
 	'print.label': 'Diese Seite drucken',
+	'toTop.label': 'Nach oben',
 	'install.label': 'Glossa installieren',
 	'install.hint.label': 'Zum Home-Bildschirm',
 	'install.hint.title': 'Glossa zum Home-Bildschirm hinzufügen',

@@ -46,6 +46,7 @@ export const ar: Dictionary = {
 	'fontSize.larger': 'نصّ أكبر',
 	'fontSize.smaller': 'نصّ أصغر',
 	'print.label': 'طباعة هذه الصفحة',
+	'toTop.label': 'العودة إلى الأعلى',
 	'install.label': 'تثبيت Glossa',
 	'install.hint.label': 'إضافة إلى الشاشة الرئيسيّة',
 	'install.hint.title': 'أضف Glossa إلى شاشتك الرئيسيّة',

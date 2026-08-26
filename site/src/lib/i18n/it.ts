@@ -46,6 +46,7 @@ export const it: Dictionary = {
 	'fontSize.larger': 'Testo più grande',
 	'fontSize.smaller': 'Testo più piccolo',
 	'print.label': 'Stampa questa pagina',
+	'toTop.label': 'Torna su',
 	'install.label': 'Installa Glossa',
 	'install.hint.label': 'Aggiungi a Home',
 	'install.hint.title': 'Aggiungi Glossa alla schermata Home',

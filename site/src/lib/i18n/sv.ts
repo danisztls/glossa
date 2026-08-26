@@ -46,6 +46,7 @@ export const sv: Dictionary = {
 	'fontSize.larger': 'Större text',
 	'fontSize.smaller': 'Mindre text',
 	'print.label': 'Skriv ut sidan',
+	'toTop.label': 'Tillbaka till toppen',
 	'install.label': 'Installera Glossa',
 	'install.hint.label': 'Lägg till på hemskärmen',
 	'install.hint.title': 'Lägg till Glossa på hemskärmen',
