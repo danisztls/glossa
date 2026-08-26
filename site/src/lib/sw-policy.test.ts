@@ -133,7 +133,7 @@ describe('partitionAssets', () => {
 		expect(partition.shellUrls.has('/')).toBe(true);
 	});
 
-	it('holds nothing in the content tier under fixtures', () => {
+	it('plans no waves under fixtures, there being no inventory to plan over', () => {
 		const empty = partitionAssets({
 			build,
 			files,
@@ -141,10 +141,43 @@ describe('partitionAssets', () => {
 			contentAssets: [],
 			baseHref: BASE_HREF
 		});
-		expect(empty.contentUrls.size).toBe(0);
-		// And the corpus files then fall to the shell tier, which is correct:
-		// with no inventory there is nothing to say they are corpus.
-		expect(empty.shellUrls.has('/_app/immutable/assets/ccc.hash.json')).toBe(true);
+		expect(empty.contentEntries).toHaveLength(0);
+	});
+
+	/**
+	 * Data the app fetches on demand but which is not corpus text — the four
+	 * citation tables, the translated descriptions. They must not be in the
+	 * install precache (715 KB of citation apparatus before the reader has
+	 * opened a page) and they must not be in the versioned shell cache (they
+	 * are content-hashed and immutable, so there is nothing to re-download).
+	 */
+	it('routes on-demand data assets to the content cache, never the precache', () => {
+		const withXrefs = partitionAssets({
+			build: [...build, '/_app/immutable/assets/document-xrefs.hash.json'],
+			files,
+			base: '',
+			contentAssets,
+			baseHref: BASE_HREF
+		});
+		expect(withXrefs.contentUrls.has('/_app/immutable/assets/document-xrefs.hash.json')).toBe(true);
+		expect(withXrefs.precacheUrls).not.toContain('/_app/immutable/assets/document-xrefs.hash.json');
+		// But it is not corpus, so the download waves must not plan over it.
+		expect(withXrefs.contentEntries.map((e) => e.path)).not.toContain(
+			'/_app/immutable/assets/document-xrefs.hash.json'
+		);
+	});
+
+	/** SvelteKit's update-poll target. Caching it at all would make the poll
+	 *  answer from cache, which is the one thing it exists not to do. */
+	it('leaves _app/version.json to the network', () => {
+		const withVersion = partitionAssets({
+			build: [...build, '/_app/version.json'],
+			files,
+			base: '',
+			contentAssets,
+			baseHref: BASE_HREF
+		});
+		expect(withVersion.contentUrls.has('/_app/version.json')).toBe(false);
 	});
 });
 

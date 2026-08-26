@@ -45,7 +45,7 @@
 /// <reference lib="webworker" />
 
 import { base, build, files, version } from '$service-worker';
-import { listContentAssets } from '$lib/corpus-index';
+import { listContentAssets } from '$lib/corpus-assets';
 import {
 	assetsForWork,
 	partitionAssets,

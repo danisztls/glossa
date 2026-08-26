@@ -105,7 +105,13 @@ export interface PartitionInput {
 
 export interface AssetPartition {
 	contentEntries: ContentEntry[];
-	/** Content pathnames, for O(1) routing. */
+	/** Content pathnames, for O(1) routing.
+	 *
+	 *  This is the routing set, so it holds the corpus inventory PLUS the
+	 *  deferred data assets described in `partitionAssets` — everything that
+	 *  belongs in the permanent, immutable content cache. `contentEntries` is
+	 *  the corpus inventory alone, because that is what the download waves
+	 *  plan over and what a per-work UI prices. */
 	contentUrls: Set<string>;
 	/** Everything the install pass fetches into the versioned shell cache. */
 	precacheUrls: string[];
@@ -138,6 +144,28 @@ export function partitionAssets(input: PartitionInput): AssetPartition {
 		path: contentPath(asset.url, baseHref)
 	}));
 	const contentUrls = new Set(contentEntries.map((entry) => entry.path));
+
+	// Data the app fetches on demand but which is not corpus TEXT: the four
+	// citation tables (`xrefs.svelte.ts`) and the translated document
+	// descriptions. They are content-hashed build assets like the corpus is,
+	// so they belong in the permanent content cache on the same terms —
+	// immutable, stored on first read, outliving deploys — and they must NOT
+	// be in the install precache, which would download 715 KB of citation
+	// apparatus before the reader had asked for a single page of it.
+	//
+	// Recognized by extension because that is what actually distinguishes
+	// them: everything the shell needs to BOOT is JS, CSS, a font or an icon,
+	// and every `.json` under the build's immutable assets is data some module
+	// fetches. (`_app/version.json` is the one JSON outside that directory,
+	// and it is SvelteKit's poll target, which must never be cached at all —
+	// hence matching on the immutable prefix rather than on `.json` alone.)
+	const isDeferredData = (url: string) => {
+		const path = contentPath(url, baseHref);
+		return path.endsWith('.json') && path.includes('/immutable/') && !contentUrls.has(path);
+	};
+	for (const url of build) {
+		if (isDeferredData(url)) contentUrls.add(contentPath(url, baseHref));
+	}
 
 	const shellDocumentUrl = `${base}/`;
 	const offlineFallbackUrl = `${base}/offline.html`;

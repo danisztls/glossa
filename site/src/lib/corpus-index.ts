@@ -33,10 +33,10 @@
  * silent — it shows up only as a location lookup returning `undefined` for a
  * chunk that was in fact written.
  *
- * `listContentAssets()` is the other half of this file's content-tier job: the
- * per-file inventory (URL, byte size, kind) that `sw-policy.ts` orders into
- * download waves and that a per-work offline UI can price before committing
- * a reader to a download.
+ * The per-file INVENTORY that the service worker downloads from is NOT here:
+ * it is `corpus-assets.ts`, imported by `src/service-worker.ts` and by nothing
+ * that runs on a page. It used to live here, which put 248 KB of manifest rows
+ * into the boot chunk every page preloads, to be read by nothing on any page.
  */
 
 import type {
@@ -261,27 +261,6 @@ export interface SummaQuestionMeta {
 interface SummaIndexFile {
 	[lang: string]: { structure: SummaNode[]; questions: SummaQuestionMeta[] };
 }
-export interface ContentManifestEntry {
-	workId: string;
-	/** Must match the `kind` literals `scripts/sync-corpus.mjs` pushes onto
-	 *  `contentManifest`. Nothing enforces that across the language boundary,
-	 *  and the two had already drifted once (`document-sections` was listed
-	 *  here while the sync wrote `document-chunk`), so the service worker's
-	 *  wave ordering — which switches on these — asserts the set it sees at
-	 *  runtime rather than trusting this union. See `sw-policy.ts`. */
-	kind:
-		| 'bible-chapters'
-		| 'bible-intros'
-		| 'ccc-chunk'
-		| 'compendium-chunk'
-		| 'document-appendix'
-		| 'document-chunk'
-		| 'prayer-collection'
-		| 'summa-question';
-	relPath: string;
-	bytes: number;
-}
-
 const realIndexManifests = import.meta.glob('./corpus-data/index/manifests.json', {
 	eager: true,
 	import: 'default'
@@ -321,31 +300,6 @@ const realIndexPrayers = import.meta.glob('./corpus-data/index/prayer-index.json
 	eager: true,
 	import: 'default'
 }) as Record<string, PrayerIndexFile>;
-
-const realIndexXrefs = import.meta.glob('./corpus-data/index/xrefs.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, CccBibleXref[]>;
-
-const realIndexDocumentXrefs = import.meta.glob('./corpus-data/index/document-xrefs.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, DocumentBibleXref[]>;
-
-const realIndexDocumentCitations = import.meta.glob('./corpus-data/index/document-citations.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, DocumentCitationXref[]>;
-
-const realIndexCccCitations = import.meta.glob('./corpus-data/index/ccc-citations.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, CccCitationXref[]>;
-
-const realContentManifest = import.meta.glob('./corpus-data/index/content-manifest.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, ContentManifestEntry[]>;
 
 /**
  * Work ids switched off — written by `sync-corpus.mjs` from
@@ -646,53 +600,42 @@ export const prayerMetasByLang: Record<string, PrayerMeta[]> = USE_REAL_CORPUS
 		)
 	: {};
 
-// xrefs/ccc-bible.json has thousands of entries but compresses to ~30 KB
-// gzipped (measured against the real corpus 2026-08-15) — small enough to
-// stay in the eager index tier rather than fetched/chunked, and several
-// call sites (the CCC paragraph page's future verse cross-links, per
-// docs/decisions.md's "bidirectional cross-linking" flagship feature) want
-// it synchronously.
-const xrefsList: CccBibleXref[] = USE_REAL_CORPUS
-	? (single(realIndexXrefs) ?? [])
-	: (fixtureXrefs as CccBibleXref[]);
+/**
+ * The citation tables are the one part of the index tier that is NOT inlined.
+ *
+ * `xrefs.svelte.ts` fetches them after first paint; this exports only their
+ * URLs. They were eager until 2026-08-25 on a "small enough to stay in the
+ * eager tier" argument that was written when `xrefs.json` was the only one of
+ * them and measured 30 KB gzipped. Four tables later they are 715 KB raw /
+ * ~69 KB gzipped — the largest thing the boot chunk carried, in front of first
+ * paint on every route including the ones that never read a byte of it.
+ *
+ * The fixture half stays synchronous and stays here, because there is nothing
+ * to fetch: `fixtureXrefs` is already in memory, and the other three tables
+ * are empty under fixtures anyway (the fixture corpus has no documents, so a
+ * citation index over them would have nothing to point at).
+ */
+const realXrefUrls = import.meta.glob(
+	'./corpus-data/index/{xrefs,document-xrefs,document-citations,ccc-citations}.json',
+	{ eager: true, query: '?url', import: 'default' }
+) as Record<string, string>;
 
+function xrefUrl(name: string): string | undefined {
+	return realXrefUrls[`./corpus-data/index/${name}.json`];
+}
+
+export const xrefUrls = {
+	cccBible: xrefUrl('xrefs'),
+	documentBible: xrefUrl('document-xrefs'),
+	documentCitations: xrefUrl('document-citations'),
+	cccCitations: xrefUrl('ccc-citations')
+};
+
+/** The fixture CCC→Bible table, in the shape the queries want. Only ever
+ *  consulted when `USE_REAL_CORPUS` is false — see `xrefs.svelte.ts`. */
 export const cccBibleXrefsByCcc: Map<number, CccBibleXref['refs']> = new Map(
-	xrefsList.map((entry) => [entry.ccc, entry.refs])
+	(fixtureXrefs as CccBibleXref[]).map((entry) => [entry.ccc, entry.refs])
 );
-
-/**
- * The document → Bible index, same tier and same reasoning as the CCC one
- * above: 327 KB raw but 31 KB gzipped (measured against the real corpus
- * 2026-08-21), against an index tier already at ~227 KB gzipped, so inlining
- * it costs less than the round-trip to fetch it would. Revisit if the
- * Magisterium corpus grows several times over — this is the entry most likely
- * to outgrow the eager tier first.
- *
- * `[]` under fixtures, deliberately: the fixture corpus has no documents at
- * all (`documentStructures` is `{}` for the same reason), so a citation index
- * over them would have nothing to point at.
- */
-export const documentBibleXrefs: DocumentBibleXref[] = USE_REAL_CORPUS
-	? (single(realIndexDocumentXrefs) ?? [])
-	: [];
-
-/**
- * The two reverse CITATION indexes — who cites this document section, who
- * cites this Catechism paragraph. Same tier and same reasoning as the two
- * above, and much smaller than either: 122 KB raw, 12 KB gzipped for the
- * documents' and under 1 KB for the Catechism's (measured 2026-08-25).
- *
- * `[]` under fixtures for the documents' half, for the same reason
- * `documentBibleXrefs` is: the fixture corpus holds no documents. The
- * Catechism's half is `[]` there too — its citers are documents.
- */
-export const documentCitationXrefs: DocumentCitationXref[] = USE_REAL_CORPUS
-	? (single(realIndexDocumentCitations) ?? [])
-	: [];
-
-export const cccCitationXrefs: CccCitationXref[] = USE_REAL_CORPUS
-	? (single(realIndexCccCitations) ?? [])
-	: [];
 
 // --- Content tier: fixtures (whole, in-memory) vs. real (URL + fetch) -----
 
@@ -849,13 +792,8 @@ const summaQuestionLocations: Record<string, Record<string, Record<number, Conte
 const bibleIntroLocations: Record<string, ContentLocation> = {};
 /** A document's unnumbered matter, keyed by work id. Absent for most works. */
 const documentAppendixLocations: Record<string, ContentLocation> = {};
-/** relPath (`content-manifest.json`'s shape) -> hashed URL, built once so
- *  `listContentAssets()` doesn't rescan every glob entry per manifest row. */
-const contentUrlByRelPath: Record<string, string> = {};
-
 for (const [globPath, url] of Object.entries(realContentUrls)) {
 	const relPath = contentKey(globPath);
-	contentUrlByRelPath[relPath] = url;
 	const location: ContentLocation = { relPath, url };
 	const bibleMatch = relPath.match(/^content\/([^/]+)\/books\/([^/]+)\/(\d+)-(\d+)\.json$/);
 	if (bibleMatch) {
@@ -987,25 +925,4 @@ export function bibleIntroLocation(workId: string): ContentLocation | undefined 
 
 export function prayerContentLocation(workId: string): ContentLocation | undefined {
 	return prayerLocations[workId];
-}
-
-/**
- * The full per-file content inventory (URL + byte size), for the service
- * worker's future explicit per-work precache/download UI (see this file's
- * docblock and `src/service-worker.ts`'s "CONTENT TIER POLICY" block).
- * Empty under fixtures/no-corpus — there's nothing to fetch.
- */
-export interface ContentAsset extends ContentManifestEntry {
-	url: string;
-}
-
-export function listContentAssets(): ContentAsset[] {
-	if (!USE_REAL_CORPUS) return [];
-	const manifest = single(realContentManifest) ?? [];
-	const out: ContentAsset[] = [];
-	for (const entry of manifest) {
-		const url = contentUrlByRelPath[entry.relPath];
-		if (url) out.push({ ...entry, url });
-	}
-	return out;
 }
