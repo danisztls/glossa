@@ -72,6 +72,7 @@
 	 * JavaScript still gets the right one on first paint and nothing ever
 	 * has to relocate itself across the page after the fact.
 	 */
+	import { afterNavigate } from '$app/navigation';
 	import { getBook, hasIntroForWork, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
 	import { hrefFor } from '$lib/address';
@@ -283,6 +284,18 @@
 	function closePanel() {
 		openOsis = undefined;
 	}
+
+	// A chapter link is the one thing inside the panel that ENDS the reader's
+	// business with it, and `onWindowClick` deliberately ignores clicks inside
+	// `.book-item` — so without this the panel a reader picked Genesis 3 from
+	// stays open on top of Genesis 3. Hung off the navigation rather than off
+	// the anchor's own click, because those are not the same event: ⌘-click
+	// and middle-click open a new tab and navigate nothing here, and closing
+	// the picker in the tab the reader is still standing in would be the
+	// opposite of what they asked for. `afterNavigate` also covers the ways
+	// out that aren't a click at all — Enter on a focused chapter, back and
+	// forward — and fires once on mount, where there is nothing open to close.
+	afterNavigate(closePanel);
 
 	// Out-of-flow panels don't dismiss by themselves the way an in-flow
 	// disclosure did, so this takes the same window-level outside-click and
