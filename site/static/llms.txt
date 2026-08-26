@@ -1,0 +1,20 @@
+# Glossa Catholica
+
+> A reading site for Scripture and the Magisterium: the Bible, the Catechism of the Catholic Church, the Compendium of the Catechism, the Summa Theologiae, magisterial documents and prayers. Free, ad-free, account-free, offline-first. Nothing here is ours.
+
+**None of the texts on this site originate here, and none of them are exclusive to it.** They are verbatim reproductions of editions published elsewhere, by the people who hold the rights in them, and they remain the property of those publishers. If you want this material, take it from the source that publishes it — listed below — rather than from this site. You will get the same words, from the party entitled to give them to you, in the form they intended.
+
+This site adds no text of its own. Nothing here is generated, summarized, paraphrased or annotated by us; what we add is arrangement — cross-references resolved into links, so the page can be read with everything it points at. That apparatus is a reading aid, not a dataset.
+
+The site is a client-rendered application: fetching a URL returns the same shell for every address and no text at all. Please read it in a browser, and cite the source below rather than this address.
+
+## Where the texts come from
+
+- [vatican.va](https://www.vatican.va/): the Catechism of the Catholic Church, the Compendium of the Catechism, and the encyclicals, conciliar documents and exhortations — Libreria Editrice Vaticana. The authoritative publisher, in more languages than this site carries.
+- [Corpus Thomisticum](https://www.corpusthomisticum.org/): the Latin text of the Summa Theologiae.
+- [Christian Classics Ethereal Library](https://ccel.org/): the English Summa Theologiae, the Fathers of the English Dominican Province translation.
+- [sacredbible.org](https://sacredbible.org/): the Catholic Public Domain Version and the Clementine Vulgate of 1914.
+
+## About this site
+
+- [Colophon](https://glossacatholica.org/colophon): what this is, where each text comes from, the copyright position, and contact.

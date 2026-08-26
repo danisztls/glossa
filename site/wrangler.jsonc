@@ -84,6 +84,7 @@
 			"!/icons/*",
 			"!/favicon.ico",
 			"!/robots.txt",
+			"!/llms.txt",
 			"!/manifest.webmanifest",
 			"!/service-worker.js",
 			"!/corpus-routes.json",
