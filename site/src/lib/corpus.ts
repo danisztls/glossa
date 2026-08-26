@@ -246,36 +246,112 @@ export function listEditions(type: WorkType): WorkManifest[] {
 }
 
 /**
- * The order a content language is fallen back to when the reader's own has
- * no edition of a work: English first, then Latin.
+ * The order a content language is fallen back to when the reader's own has no
+ * edition of a work — one row per content language, most preferred first.
  *
- * ENGLISH BEFORE LATIN, and stated rather than left to sort order. Every
- * work type used to have an edition in both interface languages, so this
- * question never arose — `defaultWorkId` took "the first edition" and the
- * answer happened to be English because `en` sorts before `la` and `pt`.
- * The Summa breaks that: it ships EN + LA and no Portuguese, and will not
- * have one before 2055 (docs/decisions.md §Scope). A Portuguese reader
- * following a citation to `STh I-II, 79, 1` must land somewhere, and which
- * somewhere should not be a property of how work ids happen to alphabetize.
+ * ENGLISH THEN LATIN ENDS EVERY ROW, and that is the invariant, not a
+ * default: English is the language more readers can read and the only one the
+ * whole corpus exists in, and Latin is the normative text and always complete
+ * where it exists, so a chain that ends in the two of them can always answer.
+ * A row that dropped them would strand its readers on whatever
+ * `defaultWorkId` shows last-resort. `fallbackTailIsEnglishThenLatin` in the
+ * tests asserts it of every row.
  *
- * English before Latin because it is the one more readers can read; Latin
- * before nothing because it is the normative text and always complete where
- * it exists.
+ * IT WAS ONE GLOBAL `['en', 'la']` UNTIL 2026-08-26, which stated where a
+ * reader ends up and nothing about where they should look first. Every work
+ * type used to have an edition in both interface languages, so the question
+ * never arose — `defaultWorkId` took "the first edition" and the answer
+ * happened to be English because `en` sorts before `la` and `pt`. The Summa
+ * broke that (EN + LA, no Portuguese before 2055, docs/decisions.md §Scope)
+ * and the Catechism's eight editions made it routine: most readers here now
+ * have a language the corpus reaches for some works and not others.
+ *
+ * WHAT A ROW IS FOR is the reader who cannot have their own language on this
+ * address and would rather have a near one than a far one:
+ *
+ *   - `mg: ['fr', …]` is the row this table was written for. French is
+ *     co-official in Madagascar and the language the Church there works in
+ *     alongside Malagasy; sending a Malagasy reader to English first was
+ *     wrong on the ground, and `mg` has exactly one work (the Catechism), so
+ *     it is a reader who falls back constantly.
+ *   - `la: ['it', …]` for the same kind of reason pointing the other way:
+ *     Italian is the closest living language to the Latin the reader chose
+ *     and the Holy See's own working language.
+ *   - `es: ['pt', …]` and `pt: ['es', …]`, which is where the fallback buys
+ *     the most: Portuguese carries 112 works to Spanish's three, and the two
+ *     are close enough to read across.
+ *   - `ar: ['fr', …]` and `hu: ['de', …]`: the second language those readers
+ *     are likeliest to already have.
+ *
+ * ONE NEIGHBOUR PER ROW AT MOST, deliberately. A longer row reads as a
+ * ranking of languages by how close they are, which is an argument nobody
+ * wins and which the corpus cannot settle; one neighbour is a claim about a
+ * specific readership, and each of the four above is defensible on its own.
+ * The rows that name none are not gaps — a German, Polish, Slovenian,
+ * Swedish or Russian reader who cannot have their own language is better
+ * served by English than by a language they are being guessed into.
+ *
+ * KEYED ON CONTENT LANGUAGE, all fifteen (see `ContentLang` in types.ts), of
+ * which fourteen are also interface languages. An unlisted tag gets the tail
+ * alone, so a language ingested before its row is written degrades to the old
+ * global behaviour rather than to nothing.
  */
-const CONTENT_LANG_FALLBACK = ['en', 'la'];
+export const CONTENT_LANG_FALLBACK: Readonly<Record<string, readonly string[]>> = {
+	en: ['en', 'la'],
+	pt: ['es', 'en', 'la'],
+	la: ['it', 'en', 'la'],
+	de: ['en', 'la'],
+	es: ['pt', 'en', 'la'],
+	fr: ['it', 'en', 'la'],
+	it: ['es', 'en', 'la'],
+	mg: ['fr', 'en', 'la'],
+	pl: ['en', 'la'],
+	ru: ['en', 'la'],
+	ar: ['fr', 'en', 'la'],
+	hu: ['de', 'en', 'la'],
+	ro: ['it', 'en', 'la'],
+	sl: ['en', 'la'],
+	sv: ['en', 'la']
+};
+
+/** The tail every row ends in, and what an unlisted language falls back to. */
+const CONTENT_LANG_FALLBACK_TAIL = ['en', 'la'] as const;
 
 /**
- * A reader's content languages in preference order: their own, then the
- * fallback chain, deduped.
+ * Where a reader of `base` looks after their own language.
  *
- * Exported for the service worker's download planner, which is per-language by
- * design — the corpus is 82.6 MB raw across fifteen languages and a reader
- * speaks one or two of them. `editionInLang` already walks this chain one
- * edition at a time; this is the same chain as a list, so the two cannot
- * disagree about what a reader's languages are.
+ * A row names the reader's own language only where it is also part of
+ * someone's tail (`en`, `la`); every caller puts the reader's own language
+ * first anyway, so the repetition costs nothing and keeps every row ending
+ * the same way.
+ */
+function fallbackFor(base: string): readonly string[] {
+	return CONTENT_LANG_FALLBACK[base] ?? CONTENT_LANG_FALLBACK_TAIL;
+}
+
+/**
+ * A reader's content languages in preference order: their own, then their
+ * row, deduped. `editionInLang` walks the same order one edition at a time,
+ * so the two cannot disagree about what a reader's languages are.
+ *
+ * THE OFFLINE FILL TAKES THIS SAME CHAIN, and that is a decision with a
+ * price. The download planner's three automatic waves fill per language (see
+ * `AUTOMATIC_WAVES` in sw-policy.ts), so a neighbour row is not free there
+ * the way it is when resolving one address: a reader whose row names a
+ * language with a Catechism pays about 3.3 MB raw across ~35 files for it —
+ * ~290 KB of essentials and ~3 MB of Catechism — before being asked. Nine of
+ * the fifteen rows name such a neighbour.
+ *
+ * IT IS WORTH THAT because the alternative fails in the one condition the
+ * offline library exists for. A short download chain would leave a Romanian
+ * reader routed to the Italian Catechism with no Italian Catechism on the
+ * device — the fallback would stop working exactly when the network does,
+ * which is when a reader most needs the address to resolve to something. A
+ * reader's languages are one list, and a fallback nobody can read offline is
+ * not a fallback.
  */
 export function contentLangChain(lang: string): string[] {
-	return [...new Set([lang, ...CONTENT_LANG_FALLBACK])];
+	return [...new Set([lang, ...fallbackFor(baseLang(lang))])];
 }
 
 /**
@@ -340,7 +416,7 @@ export function editionInLang(editions: WorkManifest[], lang: string): WorkManif
 	// passes one type's editions (`listEditions`), so asking them to repeat it
 	// would add an argument that can disagree with the list it describes.
 	const type = editions[0]?.type;
-	for (const candidate of [baseLang(lang), ...CONTENT_LANG_FALLBACK]) {
+	for (const candidate of [baseLang(lang), ...fallbackFor(baseLang(lang))]) {
 		const inLang = editions.filter((w) => baseLang(w.language) === candidate);
 		if (!inLang.length) continue;
 		const named = PREFERRED_EDITION[`${type}:${candidate}`];
@@ -368,7 +444,7 @@ export function resolveEditionTag(available: string[], preferred: string): strin
 	return (
 		has(preferred) ??
 		inLang(baseLang(preferred)) ??
-		CONTENT_LANG_FALLBACK.map(inLang).find(Boolean) ??
+		fallbackFor(baseLang(preferred)).map(inLang).find(Boolean) ??
 		available[0]
 	);
 }

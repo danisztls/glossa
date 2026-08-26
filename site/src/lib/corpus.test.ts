@@ -23,7 +23,9 @@ import {
 	getCompendiumQuestionRangeAsync,
 	listCompendiumChapters,
 	randomVerse,
+	CONTENT_LANG_FALLBACK,
 	defaultWorkId,
+	editionInLang,
 	listEditions,
 	baseLang,
 	completeEditionTags,
@@ -362,6 +364,39 @@ describe('preferred edition', () => {
 		// CONTENT_LANG_FALLBACK — which must arrive at the same edition an
 		// English reader gets, rather than re-deciding by sort order.
 		expect(defaultWorkId('bible', 'de')).toBe('bible.cpdv.en');
+	});
+
+	it('ends every fallback row in English then Latin', () => {
+		// The invariant the rows are allowed to differ underneath: whatever a
+		// language prefers, the chain can always answer, because English is the
+		// only language the whole corpus exists in and Latin is complete
+		// wherever it exists. A row that dropped them would strand its readers.
+		for (const [lang, chain] of Object.entries(CONTENT_LANG_FALLBACK)) {
+			expect(chain.slice(-2), `${lang} does not end in English then Latin`).toEqual(['en', 'la']);
+		}
+	});
+
+	it('sends a reader to a near language before a far one', () => {
+		// A Spanish reader has no Spanish Catechism in the fixtures. Portuguese
+		// and English both have one, and Portuguese is the one they can read —
+		// which is the whole point of the row and was English until 2026-08-26.
+		expect(editionInLang(listEditions('catechism'), 'es')?.id).toBe('ccc.pt');
+	});
+
+	it('routes Malagasy through French, the language the Church there works in', () => {
+		expect(resolveEditionTag(['en', 'fr', 'la'], 'mg')).toBe('fr');
+	});
+
+	it('falls through a neighbour that does not have the address', () => {
+		// No French Summa exists, so `mg`'s row runs on to its tail rather than
+		// stopping at the neighbour.
+		expect(defaultWorkId('summa', 'mg')).toBe('summa.en');
+	});
+
+	it('gives an unlisted language the tail alone', () => {
+		// A language ingested before its row is written degrades to the global
+		// behaviour this table replaced, not to nothing.
+		expect(editionInLang(listEditions('catechism'), 'zz')?.id).toBe('ccc.en');
 	});
 
 	it('names only editions that exist', () => {

@@ -251,7 +251,7 @@ export function routeFor(request: RoutableRequest, partition: AssetPartition): R
  *   - **Never leave the reader's own language uninvited.** English alone is
  *     ~13.6 MB gzipped across 1,117 files; the other fourteen languages are
  *     work nobody asked for. `planWaves` takes the reader's language chain
- *     (their own, then `CONTENT_LANG_FALLBACK`) and considers nothing else.
+ *     (their own, then English and Latin) and considers nothing else.
  *     Another language is reachable, but only by asking for it by work id.
  *
  *   - **Value per byte, descending.** The next chunk of what is open costs
@@ -387,8 +387,11 @@ export function naturalCompare(a: string, b: string): number {
 }
 
 export interface WavePlanInput {
-	/** The reader's content-language chain, most preferred first — their own
-	 *  language then `CONTENT_LANG_FALLBACK`. Nothing outside it is planned. */
+	/** The reader's content-language chain, most preferred first —
+	 *  `contentLangChain` in corpus.ts, the same order edition resolution
+	 *  follows, so what a reader is routed to is what they have offline.
+	 *  Nothing outside it is planned, and only its first `OFFLINE_LANG_DEPTH`
+	 *  entries are. */
 	langs: readonly string[];
 	/** What the reader has open, if anything, so `neighbours` knows what is
 	 *  adjacent. A path this inventory does not contain yields no neighbours
@@ -396,6 +399,32 @@ export interface WavePlanInput {
 	 *  colophon, a listing) is an ordinary case. */
 	current?: { workId: string; path: string };
 }
+
+/**
+ * How many languages deep the fill goes, and the reason it is a fixed number
+ * rather than "the chain".
+ *
+ * EVERY READER SHOULD PAY ABOUT THE SAME. A language in an automatic wave
+ * costs ~3.3 MB raw across ~35 files wherever it has a Catechism (~290 KB of
+ * essentials, ~3 MB of Catechism), and `CONTENT_LANG_FALLBACK` in corpus.ts
+ * gives nine of its fifteen rows a neighbour language ahead of English and
+ * Latin. Uncapped, that is a Spanish reader filling four languages against a
+ * German reader's three — ~12.9 MB against ~9.5 — for a preference neither of
+ * them expressed. Three is what every chain had before the neighbour rows
+ * existed, so the cap holds the cost where it already was.
+ *
+ * WHAT IT DROPS IS LATIN, for the nine rows with a neighbour, and that is the
+ * cheapest thing in the chain to lose: Latin sits last precisely because it
+ * is only reached when English does not have the address, which for a corpus
+ * whose English tier is the one complete tier is close to never. The reader
+ * routed to a neighbour they can actually read keeps it offline; the reader
+ * who would have been sent to Latin was not going to be sent there.
+ *
+ * It caps the FILL and not the chain: `editionInLang` still walks every row
+ * to its end, so a reader is never refused an address that exists — it is
+ * fetched when they ask for it rather than ahead of them.
+ */
+const OFFLINE_LANG_DEPTH = 3;
 
 /** How many files either side of the open one count as neighbours. Forward
  *  weighted because reading runs forward: the next chunk is the one whose
@@ -416,7 +445,9 @@ export function planWaves(
 	entries: readonly ContentEntry[],
 	{ langs, current }: WavePlanInput
 ): Wave[] {
-	const rank = new Map(langs.map((lang, i) => [lang.toLowerCase(), i]));
+	const rank = new Map(
+		langs.slice(0, OFFLINE_LANG_DEPTH).map((lang, i) => [lang.toLowerCase(), i])
+	);
 	const rankOf = (lang: string) => {
 		// A regioned work matches a bare chain entry: `prayer.common.en-gb`
 		// declares `en-GB`, and a reader whose chain says `en` wants it. The

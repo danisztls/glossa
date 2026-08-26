@@ -506,6 +506,43 @@ unnamed: a content language is named in its own language by `LANGUAGE_NAMES` in
 unnamed tag degrades silently to itself — `ccc.mg` offered itself in the edition menu as
 "mg".
 
+**Content fallback is per-language, at most one neighbour deep, and always ends English
+then Latin** (2026-08-26). `CONTENT_LANG_FALLBACK` in `corpus.ts` was one global
+`['en', 'la']`, which said where a reader ends up and nothing about where they should look
+first. It is now a row per content language. English then Latin ends every row and is the
+invariant a test asserts: English is the only language the whole corpus exists in and
+Latin is complete wherever it exists, so a chain ending in the two can always answer.
+
+Four rows name a neighbour ahead of that tail, each on a claim about a specific
+readership rather than on a general ranking of languages by distance: `mg → fr` (French is
+co-official in Madagascar and the language the Church there works in alongside Malagasy,
+and `mg` has one work, so it is a reader who falls back constantly), `la → it` (the
+closest living language to the one the reader chose, and the Holy See's working language),
+`es → pt` and `pt → es` (where the fallback buys the most — Portuguese carries 112 works to
+Spanish's three, and the two read across), plus `ar → fr` and `hu → de` for the second
+language those readers are likeliest to already have. **One neighbour at most, deliberately:**
+a longer row is a ranking of languages by closeness, which is an argument nobody wins and
+the corpus cannot settle. A row that names none is not a gap — a German or Polish reader is
+better served by English than by a language they are being guessed into.
+
+**The offline fill follows the same chain, three languages deep** (`OFFLINE_LANG_DEPTH` in
+`sw-policy.ts`). One order, walked by both edition resolution and the download planner, so
+what a reader is routed to is what they have offline — a reader sent to the Italian
+Catechism with no Italian Catechism on the device would lose the fallback exactly when the
+network drops, which is the condition the offline library exists for.
+
+The cap is there because the planner's three automatic waves fill _per language_: a
+language costs ~3.3 MB raw across ~35 files wherever it has a Catechism (~290 KB of
+essentials, ~3 MB of Catechism). Uncapped, a Spanish reader would fill four languages
+against a German reader's three, ~12.9 MB against ~9.5, for a preference neither expressed.
+**Every reader should pay about the same, and three is what every chain cost before the
+neighbour rows existed.** What the cap drops is Latin, for the nine rows with a neighbour,
+and that is the cheapest thing in the chain to lose: Latin sits last precisely because it is
+reached only when English lacks the address, which against a complete English tier is close
+to never. It caps the fill and not the chain — `editionInLang` still walks every row to its
+end, so an address that exists is never refused, only fetched on demand rather than ahead
+of the reader.
+
 **Direction is a property of the text, not of the reader.** `<html dir>` follows the
 interface language; a content region takes its direction from the `lang` it already
 declares. Write CSS in logical properties.

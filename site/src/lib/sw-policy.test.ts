@@ -304,6 +304,29 @@ describe('planWaves', () => {
 		expect(planned.some((a) => a.lang === 'pt')).toBe(false);
 	});
 
+	/**
+	 * The neighbour rows in `CONTENT_LANG_FALLBACK` made some chains four
+	 * languages long, and a language costs ~3.3 MB in the automatic waves
+	 * wherever it has a Catechism. The fill stops at three so that a reader
+	 * whose row names a neighbour pays what every reader paid before the rows
+	 * existed — the resolution chain still runs to its end.
+	 */
+	it('fills only the first three languages of a longer chain', () => {
+		// Latin has to be IN the inventory or the assertion below passes for
+		// the wrong reason — the shared fixture carries no Latin.
+		const withLatin = [
+			...entries,
+			entry({ workId: 'ccc.la', kind: 'ccc-chunk', lang: 'la', path: '/ccc-la-0001-0100.json' })
+		];
+		const planned = planWaves(withLatin, { langs: ['pt', 'fr', 'en', 'la'] }).flatMap(
+			(w) => w.assets
+		);
+		expect(planned.some((a) => a.lang === 'pt')).toBe(true);
+		expect(planned.some((a) => a.lang === 'fr')).toBe(true);
+		expect(planned.some((a) => a.lang === 'en')).toBe(true);
+		expect(planned.every((a) => a.lang !== 'la')).toBe(true);
+	});
+
 	it('follows the fallback chain in order, own language first', () => {
 		const catechism = byId(['pt', 'en'])['catechism'].assets;
 		expect(catechism.map((a) => a.lang)).toEqual(['pt', 'en', 'en']);
