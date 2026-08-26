@@ -1,0 +1,16 @@
+[
+  {
+    "id": "ccc.de-330-dtn-for-dan",
+    "locator": {
+      "page": "__P1H.HTM",
+      "paragraph": 330,
+      "structural": "scripture_reference"
+    },
+    "field": "paragraph_html",
+    "from": "davon [Vgl. Dtn 10,9-12.]",
+    "to": "davon [Vgl. Dan 10,9-12.]",
+    "reason": "The reference names the wrong book: this edition prints 'Dtn' (Deuteronomium) where the passage is Daniel 10:9-12, the vision in which the angel's appearance overwhelms the prophet. The sentence it supports is about the angels' splendour bearing witness to their perfection, which Deuteronomy 10:9-12 (the Levites' inheritance and what the Lord requires of Israel) does not touch. A three-letter misprint of a book abbreviation, not a wording question -- all seven other editions cite Daniel here.",
+    "evidence": "raw HTML corpus/raw/ccc-de/__P1H.HTM: 'Der Glanz ihrer Herrlichkeit zeugt davon [Vgl. Dtn 10,9-12.].', sole occurrence of the string in the edition. ccc.en §330 'Cf. Pius XII, Humani generis: DS 3891; Lk 20:36; Dan 10:9-12.'; ccc.pt, ccc.it, ccc.la 'Dn 10,9-12'; ccc.fr, ccc.es '(cf. Dn 10, 9-12)'; ccc.mg 'Dan 10,9-12'. Filed after the site's reference grammar gained a German book table (2026-08-26) and this became the edition's only citation that resolved to a book no other edition names.",
+    "added": "2026-08-26"
+  }
+]

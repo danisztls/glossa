@@ -32,125 +32,25 @@
 		"ccc": {
 			"citations": {
 				"total": 19528,
-				"linkable": 11934,
-				"recognized": 3058,
-				"nothing": 4536
+				"linkable": 14840,
+				"recognized": 3268,
+				"nothing": 1420
 			},
 			"prose": {
 				"blocks": 26088,
-				"scripture": 7817,
+				"scripture": 15072,
 				"stored": 0
 			},
 			"residue": [
 				{
-					"key": "jer. jo",
-					"count": 192,
-					"example": "jer. Jo 11,52; 10,16."
-				},
-				{
-					"key": ". jer.",
-					"count": 168,
-					"example": ". jer. Efez 3,4."
-				},
-				{
-					"key": "jer. 1",
-					"count": 120,
-					"example": "jer. 1 Jo 2,20.27."
-				},
-				{
-					"key": "jer. jen",
-					"count": 90,
-					"example": "jer. Jen 3,8-10."
-				},
-				{
-					"key": "jer. rôm",
-					"count": 76,
-					"example": "jer. Rôm 1,18-25."
-				},
-				{
 					"key": "md augustin",
-					"count": 62,
+					"count": 56,
 					"example": "Md Augustin, conf. 1, 1, 1."
 				},
 				{
-					"key": "lc 1",
-					"count": 60,
-					"example": "Cf Lc 1,38."
-				},
-				{
-					"key": "jer. asa",
-					"count": 60,
-					"example": "jer. Asa 2,42."
-				},
-				{
-					"key": "lc 24",
-					"count": 50,
-					"example": "Cf Lc 24,45."
-				},
-				{
-					"key": "lc 2",
-					"count": 46,
-					"example": "Cf Lc 2,35."
-				},
-				{
-					"key": "jer. ff",
-					"count": 46,
-					"example": "jer. FF 20."
-				},
-				{
 					"key": ". md",
-					"count": 43,
-					"example": ". Md Jean Damascène, f.o. 3,24."
-				},
-				{
-					"key": "jer. efez",
 					"count": 41,
-					"example": "jer. Efez 1,4-5."
-				},
-				{
-					"key": "jer. iz",
-					"count": 39,
-					"example": "jer. Iz 2,2-4."
-				},
-				{
-					"key": "jer. sal",
-					"count": 39,
-					"example": "jer. Sal 22,15."
-				},
-				{
-					"key": "jer. apôk",
-					"count": 37,
-					"example": "jer. Apôk 21,1 - 22,5."
-				},
-				{
-					"key": "jer. eks",
-					"count": 30,
-					"example": "jer. Eks 19,6."
-				},
-				{
-					"key": "mc 16",
-					"count": 28,
-					"example": "Cf Mc 16,20; Eb 2,4."
-				},
-				{
-					"key": "lc 22",
-					"count": 28,
-					"example": "Cf Lc 22,43."
-				},
-				{
-					"key": "jer. 2",
-					"count": 28,
-					"example": "jer. 2 Kôr 12,9; Filip 4,13."
-				},
-				{
-					"key": "jer. faa",
-					"count": 27,
-					"example": "jer. FAA 19-21."
-				},
-				{
-					"key": "mc 3",
-					"count": 26,
-					"example": "Cf Mc 3,27."
+					"example": ". Md Jean Damascène, f.o. 3,24."
 				},
 				{
 					"key": "catechismus romanus",
@@ -159,13 +59,113 @@
 				},
 				{
 					"key": "catechismo romano",
-					"count": 25,
+					"count": 24,
 					"example": "Catechismo Romano seu Catechismus ex decreto Concilii Tridentini ad parochos, Pii V Pontif"
 				},
 				{
-					"key": "1 gv",
-					"count": 25,
-					"example": "Cf 1 Gv 2,20.27."
+					"key": "santa teresa",
+					"count": 20,
+					"example": "Santa Teresa di Gesù Bambino, Manoscritto A, 83v: Manoscritti autobiografici: Opere comple"
+				},
+				{
+					"key": "ibid.",
+					"count": 20,
+					"example": "Ibid."
+				},
+				{
+					"key": "md jean",
+					"count": 20,
+					"example": "Md Jean Chrysostome, serm. in Gen. 2, 1."
+				},
+				{
+					"key": "roman missal",
+					"count": 19,
+					"example": "Roman Missal, Eucharistic Prayer IV, 118."
+				},
+				{
+					"key": "jer. l",
+					"count": 19,
+					"example": "jer. L 103."
+				},
+				{
+					"key": "roman catechism",
+					"count": 18,
+					"example": "Roman Catechism I, 1, 3."
+				},
+				{
+					"key": "md grégoire",
+					"count": 18,
+					"example": "Md Grégoire le Grand, hom. Ez. 1, 7, 8."
+				},
+				{
+					"key": "md irénée",
+					"count": 18,
+					"example": "Md Irénée, dem. 100."
+				},
+				{
+					"key": "jer. md",
+					"count": 16,
+					"example": "jer. Md Thomas d’A., Psal. 21,11."
+				},
+				{
+					"key": ". jer.",
+					"count": 15,
+					"example": ". jer. Md Augustin, serm. 56,6,9."
+				},
+				{
+					"key": "prex eucharistica",
+					"count": 13,
+					"example": "Prex eucharistica IV: Missale Romanum, editio typica (Typis Polyglottis Vaticanis 1970) p."
+				},
+				{
+					"key": "pontificale romanum.",
+					"count": 13,
+					"example": "Pontificale Romanum. De Ordinatione Episcopi, presbyterorum et diaconorum, De Ordinatione "
+				},
+				{
+					"key": "cdf instr.",
+					"count": 13,
+					"example": "CDF, instr. “Libertatis conscientia” 13."
+				},
+				{
+					"key": "preghiera eucaristica",
+					"count": 12,
+					"example": "Preghiera eucaristica IV: Messale Romano (Libreria Editrice Vaticana 1983) p. 412."
+				},
+				{
+					"key": "catech. r.",
+					"count": 12,
+					"example": "Catech. R. 1,10,24."
+				},
+				{
+					"key": "paul vi",
+					"count": 11,
+					"example": "Paul VI, CPG (1968)."
+				},
+				{
+					"key": "md ambroise",
+					"count": 11,
+					"example": "Md Ambroise, symb. 7."
+				},
+				{
+					"key": "são tomás",
+					"count": 11,
+					"example": "São Tomás de Aquino, Summa contra gentiles I 30: Ed. Leon. 13, 92."
+				},
+				{
+					"key": "oração eucarística",
+					"count": 11,
+					"example": "Oração eucarística IV: Missal Romano, editio typica. Typis Polyglottis Vaticanis. 1970 p. "
+				},
+				{
+					"key": "st. thomas",
+					"count": 10,
+					"example": "St. Thomas Aquinas, SCG 1, 30."
+				},
+				{
+					"key": "ordo exsequiarum",
+					"count": 10,
+					"example": "Ordo exsequiarum, 50, editio typica (Typis Polyglottis Vaticanis 1969) p. 23."
 				}
 			]
 		},
@@ -186,13 +186,13 @@
 		"encyclical": {
 			"citations": {
 				"total": 11808,
-				"linkable": 4225,
-				"recognized": 2473,
-				"nothing": 5110
+				"linkable": 4227,
+				"recognized": 2485,
+				"nothing": 5096
 			},
 			"prose": {
 				"blocks": 15752,
-				"scripture": 4802,
+				"scripture": 4876,
 				"stored": 0
 			},
 			"residue": [

@@ -34,7 +34,13 @@
  *      jump abbreviation for John is "jo", but the citation form for
  *      *Jonah* is "Jn" — a direct swap of the English convention. Built by
  *      grepping every `Cf. X 1, 2` — shaped token out of the real
- *      `ccc.pt/paragraphs.json`, not guessed.)
+ *      `ccc.pt/paragraphs.json`, not guessed.) There are eight tables now,
+ *      not two: the six editions of the Catechism added on 2026-08-26 each
+ *      got one, derived by the cross-edition oracle in
+ *      `scripts/book-forms-oracle.mjs`. What that added is measured
+ *      (+2,906 linkable citations, +7,255 prose references); what it FIXED
+ *      matters as much, because the English table was never a neutral
+ *      default — see the section above `BOOK_VARIANTS_DE`.
  *   2. Document sigla (DV, LG, GS, CIC, DS, PL, PG, AAS, …) — non-scripture
  *      but nameable. Sigla naming a document the corpus has actually
  *      ingested (currently the 16 Vatican II texts, see
@@ -45,13 +51,14 @@
  *      non-link with an expansion tooltip instead of disappearing into
  *      plain text. A parser that only builds an index needs a
  *      *non*-scripture allowlist; one that renders needs the sigla's
- *      expansions too. The table below is a stopgap —
- *      `docs/link-surface.md` records that neither language's
- *      `abbreviations.json` carries a real one (the vatican.va mirrors omit
- *      the front-matter table) — built by counting sigla occurrences in
- *      both `paragraphs.json` files with `jq` and confirming each one's
- *      meaning against its citation context. Replace this table wholesale
- *      once the corpus carries a real abbreviations source.
+ *      expansions too. The EN and PT tables were built by counting sigla
+ *      occurrences in both `paragraphs.json` files with `jq` and confirming
+ *      each one's meaning against its citation context; the six added in
+ *      2026-08-26 lean on something better where it exists — the French and
+ *      Latin editions publish their OWN sigla lists, now parsed into
+ *      `abbreviations.json` (docs/corpus-schema.md §abbreviations), and
+ *      those two tables are transcribed from the source rather than
+ *      inferred from it.
  *   3. Two grammars an index-only parser never had to touch: a bare
  *      comma/dash-separated CCC-paragraph number list (the Compendium's
  *      `ccc_refs`, e.g. "279-289, 296-298", and the CCC's own `related`
@@ -678,6 +685,443 @@ const BOOK_VARIANTS_PT: Record<string, string[]> = {
 	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jo'], { unspaced: true })
 };
 
+// --------------------------------------------------------------------------
+// The six editions added 2026-08-26, and how their book tables were built.
+//
+// Each is derived, not transcribed from a style guide. The Catechism is the
+// same 2,865 paragraphs in every edition, so paragraph N's citations are
+// translations of each other, and a chapter:verse the English and Portuguese
+// tables already resolve is the SAME reference the Italian edition prints
+// beside its own abbreviation. `scripts/derive-book-forms.mjs` aligns the two
+// and reads the abbreviation off the locus; every entry below is backed by at
+// least one such corroboration and most by hundreds ("Gv" as John: 455 of its
+// 458 occurrences). What it could not corroborate is patristic work titles
+// ("Sermo 241, 2", "Epistula 187, 11, 34"), which are not books and are
+// deliberately absent — the Fathers are not ingested (docs/link-surface.md).
+//
+// THIS FIXED READINGS, it did not only add them. Until these tables existed
+// `configFor` answered EN for all six, and the English table is not a neutral
+// default: it silently mis-read 120 German, 138 Latin and 4 Spanish
+// references, because "1 Joh 2,20" / "1 Io 2,20" / "1 Jn 4,19" have no
+// numbered form in it and matched the bare `Joh`/`Io`/`Jn` instead — every
+// First-John citation in three editions resolving to the Gospel. The German
+// mirror also prints `Job` for `Joh` throughout (73 occurrences), so those
+// resolved to the book of Job.
+//
+// BOOKS THE CATECHISM NEVER CITES ARE ABSENT, and are left absent rather than
+// filled in from a style guide — the same choice `BOOK_VARIANTS_PT` records
+// inline for its own gaps, made stricter: nothing here is unobserved. Latin
+// is the exception, and for better evidence rather than a lower bar; see
+// `BOOK_VARIANTS_LA`.
+// --------------------------------------------------------------------------
+
+const BOOK_VARIANTS_DE: Record<string, string[]> = {
+	gen: ['Gen', 'Gn'],
+	exod: ['Ex'],
+	lev: ['Lev'],
+	num: ['Num'],
+	// `Din`: observed twice, a t/n confusion of `Dtn` from the same Word
+	// export that produces `Job`, `KoI` and `Epb` below.
+	deut: ['Dtn', 'Din'],
+	josh: ['Jos'],
+	judg: ['Ri'],
+	neh: ['Neh'],
+	tob: ['Tob'],
+	esth: ['Est'],
+	job: ['Ijob'],
+	ps: ['Ps'],
+	prov: ['Spr'],
+	eccl: ['Koh'],
+	song: ['Hld'],
+	wis: ['Weish'],
+	sir: ['Sir'],
+	isa: ['Jes'],
+	jer: ['Jer'],
+	ezek: ['Ez'],
+	dan: ['Dan'],
+	hos: ['Hos'],
+	joel: ['Joël'],
+	amos: ['Am'],
+	jonah: ['Jona'],
+	mic: ['Mi'],
+	zeph: ['Zef'],
+	zech: ['Sach'],
+	mal: ['Mal'],
+	matt: ['Mt'],
+	mark: ['Mk'],
+	luke: ['Lk'],
+	// `Job` IS John here, 73 times, and never the book of Job — which this
+	// mirror spells `Ijob`. Corroborated on every occurrence: "Mt 26,38; Job
+	// 12,27" is Mt 26:38 beside Jn 12:27, "Mt 16,25-26 - Job 15,13" beside
+	// Jn 15:13. Under the English table every one of these linked to Job.
+	john: ['Joh', 'Job'],
+	acts: ['Apg'],
+	rom: ['Röm', 'Rom.'],
+	gal: ['Gal'],
+	eph: ['Eph', 'Epb'],
+	phil: ['Phil'],
+	col: ['Kol', 'KoI'],
+	titus: ['Tit'],
+	heb: ['Hebr'],
+	jas: ['Jak'],
+	rev: ['Offb'],
+	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sam'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['Kön'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Chr'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Makk'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Kor'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Thess'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tim'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Petr'], { lTypo: true, unspaced: true }),
+	// `Job` again in its numbered form: "1 Job 2,20.27" is 1 Jn 2:20,27.
+	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Joh', 'Job'], {
+		lTypo: true,
+		unspaced: true
+	})
+};
+
+const BOOK_VARIANTS_ES: Record<string, string[]> = {
+	gen: ['Gn'],
+	exod: ['Ex'],
+	lev: ['Lv'],
+	num: ['Nm'],
+	deut: ['Dt'],
+	josh: ['Jos'],
+	judg: ['Jc'],
+	ezra: ['Esd'],
+	neh: ['Ne'],
+	tob: ['Tb'],
+	jdt: ['Jdt'],
+	esth: ['Est'],
+	job: ['Jb', 'Job'],
+	ps: ['Sal'],
+	prov: ['Pr'],
+	eccl: ['Qo'],
+	song: ['Ct'],
+	wis: ['Sb'],
+	sir: ['Si'],
+	isa: ['Is'],
+	jer: ['Jr'],
+	lam: ['Lm'],
+	ezek: ['Ez'],
+	dan: ['Dn'],
+	hos: ['Os'],
+	joel: ['Jl'],
+	amos: ['Am'],
+	jonah: ['Jon'],
+	mic: ['Mi'],
+	zeph: ['So'],
+	zech: ['Za'],
+	mal: ['Ml'],
+	matt: ['Mt', 'Mt.'],
+	mark: ['Mc', 'Mc.'],
+	luke: ['Lc', 'Lc.'],
+	john: ['Jn'],
+	acts: ['Hch'],
+	rom: ['Rm', 'Rom'],
+	gal: ['Ga', 'Gál'],
+	eph: ['Ef'],
+	phil: ['Flp'],
+	col: ['Col'],
+	titus: ['Tt', 'Tit'],
+	heb: ['Hb'],
+	jas: ['St'],
+	rev: ['Ap'],
+	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['S'], { lTypo: true }),
+	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['R'], { lTypo: true }),
+	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Cro'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['M'], { lTypo: true }),
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Co', 'Cor'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Ts'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tm', 'Tim'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['P', 'Pe'], { lTypo: true }),
+	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jn'], {
+		lTypo: true,
+		unspaced: true
+	})
+};
+
+const BOOK_VARIANTS_FR: Record<string, string[]> = {
+	gen: ['Gn'],
+	exod: ['Ex'],
+	lev: ['Lv'],
+	num: ['Nb'],
+	deut: ['Dt'],
+	josh: ['Jos'],
+	judg: ['Jg'],
+	ezra: ['Esd'],
+	neh: ['Ne'],
+	tob: ['Tb'],
+	jdt: ['Jdt'],
+	esth: ['Est'],
+	job: ['Jb'],
+	ps: ['Ps'],
+	prov: ['Pr'],
+	eccl: ['Qo'],
+	song: ['Ct'],
+	wis: ['Sg'],
+	sir: ['Si'],
+	isa: ['Is'],
+	jer: ['Jr'],
+	lam: ['Lm'],
+	ezek: ['Ez'],
+	dan: ['Dn'],
+	hos: ['Os'],
+	joel: ['Jl'],
+	amos: ['Am'],
+	jonah: ['Jon'],
+	mic: ['Mi'],
+	zeph: ['So'],
+	zech: ['Za'],
+	mal: ['Ml'],
+	matt: ['Mt'],
+	mark: ['Mc'],
+	luke: ['Lc', 'Lc.'],
+	john: ['Jn'],
+	acts: ['Ac'],
+	rom: ['Rm', 'Rom.'],
+	gal: ['Ga'],
+	eph: ['Ep'],
+	phil: ['Ph'],
+	col: ['Col'],
+	titus: ['Tt'],
+	heb: ['He'],
+	jas: ['Jc'],
+	rev: ['Ap'],
+	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['S'], { lTypo: true }),
+	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['R'], { lTypo: true }),
+	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Ch'], { lTypo: true }),
+	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['M'], { lTypo: true }),
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Co'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Th'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tm'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['P'], { lTypo: true }),
+	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jn'], {
+		lTypo: true,
+		unspaced: true
+	})
+};
+
+const BOOK_VARIANTS_IT: Record<string, string[]> = {
+	// `Gen` and `Pr` are Magnifica Humanitas's forms, not the Catechism's —
+	// the table is per LANGUAGE and the language has ten works.
+	gen: ['Gn', 'Gen'],
+	exod: ['Es'],
+	lev: ['Lv'],
+	num: ['Nm'],
+	deut: ['Dt'],
+	josh: ['Gs'],
+	judg: ['Gdc'],
+	ezra: ['Esd'],
+	neh: ['Ne'],
+	tob: ['Tb'],
+	jdt: ['Gdt'],
+	esth: ['Est'],
+	job: ['Gb'],
+	// `Psalm.` and `Ephes.` are the Latin forms Pius XI's *Ecclesiam Dei*
+	// cites in ("] Psalm. XLIV, 10. ["), the same pre-conciliar habit
+	// `BOOK_VARIANTS_EN` records for the English translations of that era.
+	ps: ['Sal', 'Psalm.'],
+	prov: ['Prv', 'Pr'],
+	eccl: ['Qo'],
+	song: ['Ct'],
+	wis: ['Sap'],
+	sir: ['Sir'],
+	isa: ['Is'],
+	jer: ['Ger'],
+	lam: ['Lam'],
+	ezek: ['Ez'],
+	dan: ['Dn'],
+	hos: ['Os'],
+	// `Gl` is JOEL here. The same two letters are Galatians in Portuguese and
+	// Spanish, which is the clearest single reason these tables are
+	// per-language and never merged into a shared base.
+	joel: ['Gl'],
+	amos: ['Am'],
+	jonah: ['Gio'],
+	mic: ['Mic'],
+	zeph: ['Sof'],
+	zech: ['Zc'],
+	mal: ['Ml'],
+	matt: ['Mt'],
+	mark: ['Mc'],
+	luke: ['Lc'],
+	john: ['Gv'],
+	acts: ['At'],
+	rom: ['Rm'],
+	gal: ['Gal'],
+	eph: ['Ef', 'Ephes.'],
+	phil: ['Fil'],
+	col: ['Col'],
+	titus: ['Tt'],
+	heb: ['Eb'],
+	jas: ['Gc'],
+	jude: ['Gd'],
+	rev: ['Ap'],
+	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sam'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['Re'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Cr'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Mac'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Ts'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tm'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pt'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Gv'], {
+		lTypo: true,
+		unspaced: true
+	})
+};
+
+const BOOK_VARIANTS_MG: Record<string, string[]> = {
+	gen: ['Jen'],
+	exod: ['Eks'],
+	lev: ['Lev'],
+	num: ['Fan'],
+	deut: ['Det'],
+	josh: ['Jôs'],
+	judg: ['Mpits'],
+	neh: ['Neh'],
+	tob: ['Tob', 'Tobia'],
+	esth: ['Est'],
+	job: ['Jôba', 'Joba'],
+	ps: ['Sal'],
+	prov: ['Ohab'],
+	eccl: ['Mpitor'],
+	song: ['Ton'],
+	wis: ['Fah'],
+	sir: ['Ekl'],
+	isa: ['Iz'],
+	jer: ['Jer'],
+	lam: ['Fitom'],
+	ezek: ['Ezek'],
+	dan: ['Dan'],
+	hos: ['Ôs'],
+	joel: ['Joely'],
+	amos: ['Am'],
+	jonah: ['Jôn'],
+	mic: ['Mik', 'Mi'],
+	zeph: ['Sôf'],
+	zech: ['Zak'],
+	mal: ['Mal'],
+	matt: ['Mt'],
+	mark: ['Mk'],
+	luke: ['Lk'],
+	john: ['Jo'],
+	acts: ['Asa'],
+	rom: ['Rôm', 'Rom.'],
+	gal: ['Gal'],
+	eph: ['Efez'],
+	phil: ['Filip'],
+	col: ['Kôl'],
+	titus: ['Tito'],
+	heb: ['Heb'],
+	jas: ['Jak', 'Jak.'],
+	jude: ['Joda'],
+	rev: ['Apôk'],
+	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sam'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['Mpanj'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Tan', 'Tant'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Mak'], { lTypo: true, unspaced: true }),
+	// `l Kôr 15,4` is printed in this edition, which is why `lTypo` is on for
+	// all six rather than carried over from the English table's observation.
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Kôr', 'Kor'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Tes'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tim'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pi'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jo'], {
+		lTypo: true,
+		unspaced: true
+	})
+};
+
+/**
+ * Latin, and the only one of the six taken from a printed table rather than
+ * derived: the Latin mirror publishes its own `ABBREVIATIONES PRO SACRA
+ * SCRIPTURA` (`abbrev_lt.htm`, parsed into `ccc.la/abbreviations.json` on
+ * 2026-08-26), and this is those 73 rows in canonical order — every book,
+ * including the twenty the Catechism never cites, which is why this table is
+ * complete where the other five stop at what was observed.
+ *
+ * It is not taken on trust either. The same locus alignment that built the
+ * other five was run over it and corroborated 53 of the 73 in actual use,
+ * disagreeing on none — two independent derivations of the same table, one
+ * from what the edition SAYS its abbreviations are and one from what it
+ * DOES with them. `Il` for Joel and `Ids` for Jude look like defects and are
+ * not: both are the source's own system (I + consonants, as in `Idc` for
+ * Iudicum and `Idt` for Iudith) and both are attested in its citations.
+ */
+const BOOK_VARIANTS_LA: Record<string, string[]> = {
+	// `Gen.` is the Corpus Thomisticum's form in `summa.la`, not the
+	// Catechism's — this config answers for every Latin work, and the Summa
+	// and the Clementine Vulgate are two more.
+	gen: ['Gn', 'Gen.'],
+	exod: ['Ex'],
+	lev: ['Lv'],
+	num: ['Nm'],
+	deut: ['Dt'],
+	josh: ['Ios'],
+	judg: ['Idc'],
+	ruth: ['Rt'],
+	ezra: ['Esd'],
+	neh: ['Ne'],
+	tob: ['Tb'],
+	jdt: ['Idt'],
+	esth: ['Est'],
+	job: ['Iob'],
+	ps: ['Ps'],
+	prov: ['Prv'],
+	eccl: ['Eccle'],
+	song: ['Ct'],
+	wis: ['Sap'],
+	sir: ['Eccli'],
+	isa: ['Is'],
+	jer: ['Ier'],
+	lam: ['Lam'],
+	bar: ['Bar'],
+	ezek: ['Ez'],
+	dan: ['Dn'],
+	hos: ['Os'],
+	joel: ['Il'],
+	amos: ['Am'],
+	obad: ['Abd'],
+	jonah: ['Ion'],
+	mic: ['Mich'],
+	nah: ['Nah'],
+	hab: ['Hab'],
+	zeph: ['Soph'],
+	hag: ['Ag'],
+	zech: ['Zach'],
+	mal: ['Mal'],
+	matt: ['Mt'],
+	mark: ['Mc'],
+	luke: ['Lc'],
+	john: ['Io'],
+	acts: ['Act'],
+	rom: ['Rom'],
+	gal: ['Gal'],
+	eph: ['Eph'],
+	phil: ['Phil'],
+	col: ['Col'],
+	titus: ['Tit'],
+	phlm: ['Philm'],
+	heb: ['Heb'],
+	jas: ['Iac'],
+	jude: ['Ids'],
+	rev: ['Apc'],
+	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sam'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['Reg'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Par'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Mac'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Thess'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tim'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pe'], { lTypo: true, unspaced: true }),
+	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Io'], {
+		lTypo: true,
+		unspaced: true
+	})
+};
+
 /**
  * The book tables, materialized, for anything outside this module that has
  * to recognize the same surface forms.
@@ -693,7 +1137,13 @@ const BOOK_VARIANTS_PT: Record<string, string[]> = {
  */
 export const BOOK_FORMS: Record<string, Record<string, string[]>> = {
 	en: BOOK_VARIANTS_EN,
-	pt: BOOK_VARIANTS_PT
+	pt: BOOK_VARIANTS_PT,
+	de: BOOK_VARIANTS_DE,
+	es: BOOK_VARIANTS_ES,
+	fr: BOOK_VARIANTS_FR,
+	it: BOOK_VARIANTS_IT,
+	la: BOOK_VARIANTS_LA,
+	mg: BOOK_VARIANTS_MG
 };
 
 // --------------------------------------------------------------------------
@@ -741,16 +1191,15 @@ export const BOOK_FORMS: Record<string, Record<string, string[]>> = {
 // encyclical siglum followed by a number found none). Sharing one table would
 // silently mislabel one language.
 //
-// KNOWN GAP, MEASURED 2026-08-26. `configFor` has EN and PT and nothing
-// else, so the six editions added that day parse their references through
-// the ENGLISH table — and the same `SC` collision PT was given its own table
-// for is present in two of them. `ccc.la`'s own sigla table says `SC` is
-// Sources chrétiennes, `ccc.it` follows the same apparatus, and each cites
-// it 118 times as a volume-and-page ("SC 211, 392 (PG 7, 944)"); 54 and 55
-// of those carry a number Sacrosanctum Concilium happens to have a section
-// for, so they resolve to a real, wrong link. Closing it means per-language
-// configs (book variants included, which no edition but EN and PT has), not
-// a new siglum entry — hence recorded rather than patched here.
+// SIX MORE TABLES FOLLOW, and they exist because that split turned out to be
+// the rule rather than a Portuguese peculiarity. Until 2026-08-26 `configFor`
+// answered EN for every language but PT, and the same `SC` collision was
+// present in two of the six editions added that month: `ccc.la`'s own printed
+// sigla table says `SC` is Sources chrétiennes, `ccc.it` prints the same
+// apparatus, and each cites it 118 times as a volume-and-page, of which 54
+// and 55 carried a number Sacrosanctum Concilium really has a section for —
+// real links to the wrong document. `CA` collides the same way. See the
+// section below the book tables.
 // --------------------------------------------------------------------------
 
 interface SiglumEntry {
@@ -903,6 +1352,256 @@ const DOCUMENT_SIGLA_PT: Record<string, SiglumEntry> = {
 };
 
 // --------------------------------------------------------------------------
+// Sigla for the six editions added 2026-08-26.
+//
+// These editions split cleanly in two, and the split is a fact about their
+// APPARATUS rather than about their languages:
+//
+//   - German, Spanish and French cite magisterial documents by the Latin
+//     siglum, exactly as English does — LG 281 times in the French edition,
+//     GS 159, DV 73. So they share the conciliar and encyclical tables below.
+//   - Italian and Latin cite none of them. They spell every document out
+//     ("Conc. Vat. II, Const. dogm. Lumen gentium, 20"), which the title
+//     matcher already reads because an incipit is Latin in every edition, and
+//     the only sigla they print are bibliographic: AAS, DS, PL, PG, SC, CCL,
+//     CSEL, PTS, CA. Their two lists are identical, count for count.
+//   - Malagasy translates the conciliar sigla and keeps the encyclical ones:
+//     FF is Lumen gentium, FAA Gaudium et spes, FA Dei Verbum, EK Unitatis
+//     redintegratio — while CA, CT, RM, SRS, HV, LE stay as they are.
+//
+// TWO SIGLA MEAN DIFFERENT THINGS IN DIFFERENT EDITIONS, and both are settled
+// by the Latin edition's own printed table (`ccc.la/abbreviations.json`)
+// rather than by inference:
+//
+//   - `SC` is *Sacrosanctum concilium* in German, Spanish and French, and
+//     *Sources chrétiennes* in Italian and Latin — where its 118 references
+//     apiece are volume-and-page ("SC 211, 392 (PG 7, 944)"). Read with the
+//     English table, 54 Latin and 55 Italian citations linked to real
+//     sections of the Vatican II constitution.
+//   - `CA` is *Centesimus annus* in German, Spanish, French and Malagasy (32
+//     citations each), and *Corpus apologetarum* in Italian and Latin (10
+//     each: "Sanctus Iustinus, Apologia, 1, 61: CA 1, 168").
+//
+// This is the same collision `DOCUMENT_SIGLA_PT` was split off for, found
+// twice more, and it is why no shared base table sits under these.
+//
+// EXPANSIONS ARE THE DOCUMENT'S OWN INCIPIT and carry no translated gloss,
+// unlike the English table's "Lumen Gentium (Vatican II, Dogmatic
+// Constitution on the Church)". The incipit is what the French edition's own
+// sigla list prints, it is the same words in every language, and a gloss in
+// five languages would be this file inventing text. Where an edition's own
+// table does gloss in its language, that gloss is used — French expands
+// `CDF` as "Congrégation pour la doctrine de la foi".
+// --------------------------------------------------------------------------
+
+/**
+ * Bibliographic series and critical editions — the same in every language,
+ * because what they abbreviate is a series TITLE and not a word: *Patrologia
+ * latina* is *Patrologia latina* in a German footnote too.
+ *
+ * Taken from the Latin edition's printed `SIGLA` list, minus the rows that
+ * are editorial shorthand rather than a work (`c` for *caput*, `q` for
+ * *quaestio*, `Cf`, `Ibid`, `ed`, `p`, `v`, `Sess`, `Const. dogm.` and their
+ * kin). None names anything the corpus holds, so every one of these is a
+ * tooltip and never a link — which is the point: they are what the Italian
+ * and Latin apparatus is mostly made of.
+ */
+const SERIES_SIGLA: Record<string, SiglumEntry> = {
+	AAS: { expansion: 'Acta Apostolicae Sedis' },
+	AHMA: { expansion: 'Analecta hymnica Medii Aevi' },
+	BP: { expansion: 'Biblioteca patristica' },
+	CCG: { expansion: 'Corpus Christianorum (Series Graeca)' },
+	CCL: { expansion: 'Corpus Christianorum (Series Latina)' },
+	COD: { expansion: 'Conciliorum Oecumenicorum Decreta' },
+	CSEL: { expansion: 'Corpus Scriptorum Ecclesiasticorum Latinorum' },
+	// Not in the Latin edition's list; both are printed by Magnifica
+	// Humanitas in all four of its languages that have a table here. `CCSL`
+	// is the fuller form of `CCL`, and `ASS` is what AAS was called before
+	// 1909.
+	CCSL: { expansion: 'Corpus Christianorum (Series Latina)' },
+	ASS: { expansion: 'Acta Sanctae Sedis' },
+	DS: {
+		expansion:
+			'Denzinger–Schönmetzer, Enchiridion Symbolorum definitionum et declarationum de rebus fidei et morum'
+	},
+	'Ed. Leon.': { expansion: 'Sancti Thomae Aquinatis Opera omnia, editio Leonina' },
+	Funk: { expansion: 'F.X. Funk, Patres apostolici' },
+	GCS: { expansion: 'Die griechischen christlichen Schriftsteller' },
+	MGH: { expansion: 'Monumenta Germaniae historica' },
+	MHSI: { expansion: 'Monumenta historica Societatis Iesu' },
+	PG: { expansion: 'Patrologia graeca (J.P. Migne)' },
+	PL: { expansion: 'Patrologia latina (J.P. Migne)' },
+	PLS: { expansion: 'Patrologia latina. Supplementum' },
+	PTS: { expansion: 'Patristische Texte und Studien' },
+	SPM: { expansion: 'Stromata patristica et medievalia' },
+	TD: { expansion: 'Textes et documents' },
+	TPL: { expansion: 'Textus patristici et liturgici' },
+	CIC: { expansion: 'Codex Iuris Canonici' },
+	CCEO: { expansion: 'Codex Canonum Ecclesiarum Orientalium' }
+};
+
+/**
+ * Vatican II, by siglum, for the editions that cite it that way. Every slug
+ * here names a document the corpus holds; `ingestedSlugs()` still decides
+ * whether it links, per `DOCUMENT_SIGLA_EN`'s standing rule that a slug is a
+ * claim and not a link.
+ *
+ * `SC` is deliberately NOT here — see this section's docblock.
+ */
+const CONCILIAR_SIGLA: Record<string, SiglumEntry> = {
+	LG: { expansion: 'Lumen gentium', slug: 'lumen-gentium' },
+	GS: { expansion: 'Gaudium et spes', slug: 'gaudium-et-spes' },
+	DV: { expansion: 'Dei Verbum', slug: 'dei-verbum' },
+	AG: { expansion: 'Ad gentes', slug: 'ad-gentes' },
+	UR: { expansion: 'Unitatis redintegratio', slug: 'unitatis-redintegratio' },
+	DH: { expansion: 'Dignitatis humanae', slug: 'dignitatis-humanae' },
+	NA: { expansion: 'Nostra aetate', slug: 'nostra-aetate' },
+	AA: { expansion: 'Apostolicam actuositatem', slug: 'apostolicam-actuositatem' },
+	CD: { expansion: 'Christus Dominus', slug: 'christus-dominus' },
+	PC: { expansion: 'Perfectae caritatis', slug: 'perfectae-caritatis' },
+	PO: { expansion: 'Presbyterorum ordinis', slug: 'presbyterorum-ordinis' },
+	OT: { expansion: 'Optatam totius', slug: 'optatam-totius' },
+	OE: { expansion: 'Orientalium ecclesiarum', slug: 'orientalium-ecclesiarum' },
+	IM: { expansion: 'Inter mirifica', slug: 'inter-mirifica' },
+	GE: { expansion: 'Gravissimum educationis', slug: 'gravissimum-educationis' }
+};
+
+/**
+ * Papal documents by siglum. The ingested ones carry a slug; the
+ * exhortations and letters do not, because the corpus holds no exhortation
+ * family (docs/corpus-schema.md §Documents), and are here for the expansion.
+ *
+ * `CA` is deliberately NOT here — see this section's docblock.
+ */
+const PAPAL_SIGLA: Record<string, SiglumEntry> = {
+	SRS: { expansion: 'Sollicitudo rei socialis', slug: 'sollicitudo-rei-socialis' },
+	LE: { expansion: 'Laborem exercens', slug: 'laborem-exercens' },
+	HV: { expansion: 'Humanae vitae', slug: 'humanae-vitae' },
+	RH: { expansion: 'Redemptor hominis', slug: 'redemptor-hominis' },
+	RM: { expansion: 'Redemptoris Mater', slug: 'redemptoris-mater' },
+	DeV: { expansion: 'Dominum et Vivificantem', slug: 'dominum-et-vivificantem' },
+	DM: { expansion: 'Dives in misericordia', slug: 'dives-in-misericordia' },
+	MF: { expansion: 'Mysterium fidei', slug: 'mysterium' },
+	PP: { expansion: 'Populorum progressio', slug: 'populorum' },
+	PT: { expansion: 'Pacem in terris', slug: 'pacem' },
+	MM: { expansion: 'Mater et magistra', slug: 'mater' },
+	CT: { expansion: 'Catechesi tradendae' },
+	EN: { expansion: 'Evangelii nuntiandi' },
+	FC: { expansion: 'Familiaris consortio' },
+	RP: { expansion: 'Reconciliatio et paenitentia' },
+	MC: { expansion: 'Marialis cultus' },
+	MD: { expansion: 'Mulieris dignitatem' },
+	CL: { expansion: 'Christifideles laici' },
+	SPF: { expansion: 'Sollemnis Professio fidei (Credo of the People of God)' }
+};
+
+/** `SC` where it is the Vatican II constitution: German, Spanish, French. */
+const SC_CONCILIAR: SiglumEntry = {
+	expansion: 'Sacrosanctum concilium',
+	slug: 'sacrosanctum-concilium'
+};
+/** `SC` where it is the patristic series: Italian, Latin. Never a link. */
+const SC_SERIES: SiglumEntry = { expansion: 'Sources chrétiennes' };
+
+const DOCUMENT_SIGLA_DE: Record<string, SiglumEntry> = {
+	...SERIES_SIGLA,
+	...CONCILIAR_SIGLA,
+	...PAPAL_SIGLA,
+	SC: SC_CONCILIAR,
+	CA: { expansion: 'Centesimus annus', slug: 'centesimus-annus' },
+	// German-only forms, each corroborated against the English edition's own
+	// siglum at the same paragraph: DCG is the General Catechetical
+	// Directory, IGMR the General Instruction of the Roman Missal, OEx the
+	// Order of Christian Funerals, DnV Dominum et Vivificantem.
+	DCG: { expansion: 'Directorium Catecheticum Generale' },
+	IGMR: { expansion: 'Institutio generalis Missalis Romani' },
+	IGLH: { expansion: 'Institutio generalis de Liturgia Horarum' },
+	OEx: { expansion: 'Ordo exsequiarum' },
+	DnV: { expansion: 'Dominum et Vivificantem', slug: 'dominum-et-vivificantem' }
+};
+
+const DOCUMENT_SIGLA_ES: Record<string, SiglumEntry> = {
+	...SERIES_SIGLA,
+	...CONCILIAR_SIGLA,
+	...PAPAL_SIGLA,
+	SC: SC_CONCILIAR,
+	CA: { expansion: 'Centesimus annus', slug: 'centesimus-annus' }
+};
+
+/**
+ * French, and the second table in this file taken from a source rather than
+ * derived: the French mirror prints its own `LISTE DES SIGLES` (`__P1.HTM`,
+ * parsed into `ccc.fr/abbreviations.json` on 2026-08-26). Its 58 rows are the
+ * conciliar and papal blocks above plus the liturgical books below, and the
+ * three rows it expands in French rather than Latin are kept in French.
+ */
+const DOCUMENT_SIGLA_FR: Record<string, SiglumEntry> = {
+	...SERIES_SIGLA,
+	...CONCILIAR_SIGLA,
+	...PAPAL_SIGLA,
+	SC: SC_CONCILIAR,
+	CA: { expansion: 'Centesimus annus', slug: 'centesimus-annus' },
+	SPF: { expansion: 'Credo du Peuple de Dieu : profession de foi solennelle' },
+	CDF: { expansion: 'Congrégation pour la doctrine de la foi' },
+	'off. lect.': { expansion: 'office des lectures' },
+	Ben: { expansion: 'De Benedictionibus' },
+	'Catech. R.': { expansion: 'Catechismus Romanus' },
+	DCG: { expansion: 'Directorium Catecheticum Generale' },
+	IGLH: { expansion: 'Introductio generalis LH' },
+	IGMR: { expansion: 'Institutio generalis MR' },
+	LH: { expansion: 'Liturgia Horarum' },
+	MR: { expansion: 'Missale Romanum' },
+	OBA: { expansion: 'Ordo baptismi adultorum' },
+	OBP: { expansion: 'Ordo baptismi parvulorum' },
+	OCf: { expansion: 'Ordo confirmationis' },
+	OcM: { expansion: 'Ordo celebrandi Matrimonium' },
+	OCV: { expansion: 'Ordo consecrationis virginum' },
+	OEx: { expansion: 'Ordo exsequiarum' },
+	OICA: { expansion: 'Ordo initiationis christianae adultorum' },
+	OP: { expansion: 'Ordo poenitentiae' }
+};
+
+/**
+ * Latin, from the same printed table as `BOOK_VARIANTS_LA` — its `SIGLA`
+ * list, narrowed to the rows that name a work. It is almost entirely
+ * bibliographic, because this edition names its documents in full rather
+ * than by siglum, and it is where `SC` and `CA` are settled for both editions
+ * that use this apparatus.
+ */
+const DOCUMENT_SIGLA_LA: Record<string, SiglumEntry> = {
+	...SERIES_SIGLA,
+	SC: SC_SERIES,
+	CA: { expansion: 'Corpus apologetarum Christianorum saeculi secundi' }
+};
+
+/** Italian prints the same apparatus as the Latin editio typica, siglum for
+ *  siglum and count for count — AAS, DS, PL, PG, SC, CCL, CSEL, PTS, CA and
+ *  nothing else — so it reads the same table rather than a copy of it. */
+const DOCUMENT_SIGLA_IT = DOCUMENT_SIGLA_LA;
+
+/**
+ * Malagasy, derived the same way the book tables were: a `SIGLUM n` shape
+ * this edition prints, aligned against the document the English edition
+ * cites at the same paragraph. Every entry below was corroborated on the
+ * large majority of its occurrences — FF as Lumen gentium on 265 of 282,
+ * FAA as Gaudium et spes on 155 of 165 — and the conciliar sigla are the
+ * only ones this edition translates.
+ */
+const DOCUMENT_SIGLA_MG: Record<string, SiglumEntry> = {
+	...SERIES_SIGLA,
+	...PAPAL_SIGLA,
+	CA: { expansion: 'Centesimus annus', slug: 'centesimus-annus' },
+	FF: { expansion: 'Lumen gentium', slug: 'lumen-gentium' },
+	FAA: { expansion: 'Gaudium et spes', slug: 'gaudium-et-spes' },
+	FA: { expansion: 'Dei Verbum', slug: 'dei-verbum' },
+	EK: { expansion: 'Unitatis redintegratio', slug: 'unitatis-redintegratio' },
+	AFF: { expansion: 'Ad gentes', slug: 'ad-gentes' },
+	FVA: { expansion: 'Dignitatis humanae', slug: 'dignitatis-humanae' },
+	RFP: { expansion: 'Presbyterorum ordinis', slug: 'presbyterorum-ordinis' },
+	FM: { expansion: 'Familiaris consortio' }
+};
+
+// --------------------------------------------------------------------------
 // Per-language config: pre-built matchers so parseRefs doesn't rebuild a
 // regex per call.
 // --------------------------------------------------------------------------
@@ -998,8 +1697,66 @@ const CONFIG_PT = buildConfig(
 	[';', ':']
 );
 
+/**
+ * The six editions added 2026-08-26, all reading `,` as the chapter/verse
+ * separator and `.` as the verse-list separator ("Cf 1 Gv 2,20.27") — which
+ * is the Continental convention `CONFIG_PT` already encodes, not a per-
+ * edition choice. What differs between them is the tables, not the marks.
+ *
+ * `allowBareSeparators` stays off for all six: none of them prints a bare
+ * space or a bare full stop where the chapter/verse mark belongs, and
+ * turning it on would read "Serm. 241, 2" and "Ed. Leon. 4, 31" — both
+ * everywhere in these apparatus — as loci.
+ *
+ * `linksSigla` is on for all six, unlike PT. PT's is off because its table
+ * maps no siglum to a slug at all; these do, and the document a siglum names
+ * is the same document whatever language cites it — the reader lands on it
+ * through `CONTENT_LANG_FALLBACK` like any other cross-language address.
+ */
+function romanceConfig(
+	books: Record<string, string[]>,
+	sigla: Record<string, SiglumEntry>
+): LangConfig {
+	return buildConfig(books, sigla, ',', false, true, ['.']);
+}
+
+const CONFIG_DE = romanceConfig(BOOK_VARIANTS_DE, DOCUMENT_SIGLA_DE);
+const CONFIG_ES = romanceConfig(BOOK_VARIANTS_ES, DOCUMENT_SIGLA_ES);
+const CONFIG_FR = romanceConfig(BOOK_VARIANTS_FR, DOCUMENT_SIGLA_FR);
+const CONFIG_IT = romanceConfig(BOOK_VARIANTS_IT, DOCUMENT_SIGLA_IT);
+const CONFIG_LA = romanceConfig(BOOK_VARIANTS_LA, DOCUMENT_SIGLA_LA);
+const CONFIG_MG = romanceConfig(BOOK_VARIANTS_MG, DOCUMENT_SIGLA_MG);
+
+/**
+ * Content language -> grammar. Keyed on the BARE tag, matched on the prefix
+ * so `en-gb` reads as English.
+ *
+ * ENGLISH IS THE FALLBACK FOR EVERYTHING ELSE, and that is a smaller claim
+ * than it looks. The eight tags with no entry here — `ar`, `hu`, `pl`, `ro`,
+ * `ru`, `sl`, `sv` and `en-gb` — hold one work apiece besides `en-gb`'s
+ * prayers, and the four Compendium ones cite the Catechism by bare number
+ * ("279-289, 296-298"), which `parseBareCccList` reads without any table at
+ * all: measured 2026-08-26, all four are at 100% of their citations already.
+ * Their prose prints no Scripture locator, so the English book table matched
+ * nothing in them rather than matching something wrong. A tag that acquires
+ * a work with a real apparatus needs a row here, and the way to find out is
+ * `scripts/reference-coverage.mjs`.
+ */
+const CONFIGS: Record<string, LangConfig> = {
+	de: CONFIG_DE,
+	es: CONFIG_ES,
+	fr: CONFIG_FR,
+	it: CONFIG_IT,
+	la: CONFIG_LA,
+	mg: CONFIG_MG,
+	pt: CONFIG_PT,
+	en: CONFIG_EN
+};
+
 function configFor(lang?: string): LangConfig {
-	return lang?.toLowerCase().startsWith('pt') ? CONFIG_PT : CONFIG_EN;
+	if (!lang) return CONFIG_EN;
+	const tag = lang.toLowerCase();
+	return CONFIGS[tag.split('-')[0]] ?? CONFIG_EN;
 }
 
 // --------------------------------------------------------------------------

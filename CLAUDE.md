@@ -218,13 +218,11 @@ six stay `[]`, and `abbr` is not even unique within one edition (Latin gives
 `Act` as both _Actio_ and _Actus Apostolorum_): read the array in order and
 use `kind`.
 
-**The site does not read it yet, and one thing it does read is wrong because
-of that.** `refs-grammar.ts` has configs for EN and PT only, so the six
-editions added on 2026-08-26 parse references through the English sigla
-table — under which `ccc.la` and `ccc.it` each resolve 54 and 55 `SC`
-volume numbers to real Sacrosanctum Concilium sections. Fixing it is
-per-language configs, not a table entry; recorded in that file's
-`DOCUMENT_SIGLA` docblock.
+**Both tables now feed the site's grammar**, which is where the collision
+turned out to matter: `refs-grammar.ts` had configs for EN and PT only, so
+the six new editions read their references through the English sigla table
+and `ccc.la`/`ccc.it` resolved 54 and 55 `SC` volume numbers to real
+Sacrosanctum Concilium sections. See "Reference grammar" below.
 
 ## The Summa is the exception to two rules at once
 
@@ -400,6 +398,69 @@ npm run deploy      # build -> preflight -> wrangler deploy
   Don't use `ps` or `os.kill(pid, 0)` to decide whether a long job is running;
   use a heartbeat file, or check with the sandbox disabled.
 - `git commit` needs `~/.gnupg` for signing, which the sandbox blocks.
+
+## Reference grammar: eight book tables, and the oracle that built six of them
+
+`site/src/lib/refs-grammar.ts` turns a stored citation string into links. It
+is per **content language**, and until 2026-08-26 it had exactly two
+configs — EN and PT — with `configFor` answering EN for everything else.
+There are eight now (`de`, `en`, `es`, `fr`, `it`, `la`, `mg`, `pt`), and the
+six added are the six Catechism editions ingested that day.
+
+**English was never a neutral default, and that is the point.** Falling back
+to it did not merely under-link; it mis-read. `1 Joh 2,20` / `1 Io 2,20` /
+`1 Jn 4,19` have no numbered form in the English table, so the bare
+`Joh`/`Io`/`Jn` matched and **every First-John citation in three editions
+resolved to the Gospel** — 120, 138 and 4. The German mirror prints `Job`
+where it means `Joh` (73 times, an h/b confusion of its Word export), so those
+linked to the book of Job. And `SC`, which the Portuguese table was split off
+for, collides again: Sources chrétiennes in the Latin and Italian apparatus,
+Sacrosanctum concilium in the German, Spanish and French, with `CA` doing the
+same (Corpus apologetarum against Centesimus annus). The Latin edition's own
+printed sigla table settles both.
+
+**`scripts/book-forms-oracle.mjs` is where five of the six tables came from,
+and it is the tool to reach for next time.** Paragraph N is the same paragraph
+in all eight editions, so a chapter:verse the EN/PT tables resolve is the same
+reference the Italian edition prints beside its own abbreviation: align on the
+locus, read the abbreviation off. `--derive` proposes a table with vote counts;
+the default mode **checks** an existing one by reporting links whose OSIS the
+other editions contradict. Read that as a count, not a list — 330 rows for
+German meant the wrong table was being applied, 18 means the editions
+genuinely cite different verses (Sir 5:8 against Qo 5:9 at §2536).
+
+Two things it will keep proposing that are **not** books: patristic work
+titles (`Sermo 241, 2`, `Enarratio in Psalmum 103, 4, 1`, `Ed. Leon. 4, 31`),
+which shape exactly like a locator and name works the corpus deliberately does
+not hold; and the `??`-flagged singletons, which are for reading, not pasting.
+
+**Latin is the exception to "derived":** `BOOK_VARIANTS_LA` is the Latin
+edition's own printed table (73 rows, via `ccc.la/abbreviations.json`), and
+the oracle was run over it as a check — 53 rows corroborated in use, none
+contradicted. That is two independent derivations agreeing, and it is why
+Latin is the only table complete for books the Catechism never cites.
+
+**A table answers for every work in its language, not just the Catechism.**
+`la` also covers `summa.la`, `bible.clementina.la` and `prayer.common.la`;
+`it` covers ten works. That is how `Gen.` (the Corpus Thomisticum's form) and
+`Psalm.`/`Ephes.` (Pius XI's _Ecclesiam Dei_, in Italian) got in — each worth
+one or two links, each found by scanning the non-Catechism works after the
+Catechism-derived table was in place. Do that second scan.
+
+**The oracle finds source defects too, and they belong in `corrections/`, not
+in a hole in the table.** Three were filed on 2026-08-26 — German §330 citing
+`Dtn 10,9-12` where all seven other editions read Daniel, Spanish §1867
+keeping the French `Jc` for James where its own convention is `St`, Malagasy
+§604 dropping the `1` from `1 Jo 4,19`. Each was a real link to the wrong
+verse, and each was one edition against seven.
+
+The eight tags with **no** config (`ar`, `hu`, `pl`, `ro`, `ru`, `sl`, `sv`,
+`en-gb`) fall to English, and that is measured rather than assumed: the four
+Compendium-only languages cite the Catechism by bare number, which needs no
+book table at all and is already at 100%, and their prose prints no Scripture
+locator, so the English table matched nothing rather than matching something
+wrong. `scripts/reference-coverage.mjs` is what says when that stops being
+true.
 
 ## Work that spans languages
 

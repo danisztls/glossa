@@ -267,6 +267,33 @@ psalms. Splitting moved existence and adjacency for the Compendium up to the ind
 too — they were answered by scanning the whole-language file every reader had already
 fetched, which chunked would have meant fetching every chunk to learn a number is absent.
 
+**A reference grammar is per content language, and English is not a neutral
+default.** `refs-grammar.ts` had EN and PT for a year, on the reasonable-looking
+premise that another language would merely under-link under the English table.
+It over-linked instead: the bare `Joh`/`Io`/`Jn` matched inside `1 Joh 2,20`
+and every First-John citation in three editions resolved to the Gospel, the
+German mirror's `Job` (its own misprint of `Joh`) resolved to the book of Job,
+and `SC` — the collision Portuguese had already been split off for — sent 109
+Latin and Italian Sources-chrétiennes volume numbers to real sections of
+Sacrosanctum Concilium. A language with no table is safe; a language reading
+another language's table is not, and the difference is invisible because both
+produce links that look right. Six tables were added 2026-08-26 (docs above);
+the eight tags still without one fall back to English on a measurement, not an
+assumption — they cite by bare number or not at all.
+
+**The corpus's own cross-language symmetry builds the table, not just checks
+it.** The Catechism is the same paragraph in eight editions, so a
+chapter:verse the English table resolves is the same reference the Italian
+edition prints beside its own abbreviation; aligning on the locus reads the
+abbreviation off, with a vote count per entry. Five of the six tables were
+derived that way and the sixth — Latin, transcribed from the edition's own
+printed list — was checked by it, agreeing on 53 rows and contradicting none.
+The same pass is the regression check afterwards, and it found three source
+misprints (a book named wrong in German, a French siglum left in Spanish, a
+dropped book number in Malagasy) that no per-edition check could see. This is
+`audit.py divisions`' argument one level down: the symmetry is free evidence,
+and it is the only instrument that can tell a wrong link from a missing one.
+
 **A reference table belongs to the edition that printed it, not to the work.** The
 Catechism's front-matter sigla are the corpus's one case of the same key meaning two
 different things in two editions of one work, and it took reading both to see it: French

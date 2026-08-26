@@ -93,7 +93,13 @@ const { mockBibleBooks } = vi.hoisted(() => {
  */
 const mockDocumentSections: Record<string, Partial<Record<string, number[]>>> = {
 	'gaudium-et-spes': { en: [1, 2, 19, 20], pt: [1, 2, 19, 20] },
-	'dei-verbum': { en: [1, 2, 3] }
+	'dei-verbum': { en: [1, 2, 3] },
+	// Present so the per-language sigla tests below can prove that `SC` and
+	// `CA` reach a real document from the German/Spanish/French tables and
+	// stay unlinked from the Latin/Italian one, which is the whole point of
+	// splitting those two entries.
+	'sacrosanctum-concilium': { en: [5, 61] },
+	'centesimus-annus': { en: [25, 48] }
 };
 
 /**
@@ -108,7 +114,9 @@ const mockDocumentTitles: Record<string, string> = {
 	'gaudium-et-spes': 'Gaudium et Spes',
 	'dei-verbum': 'Dei Verbum',
 	'humani-generis': 'Humani Generis',
-	mysterium: 'Mysterium'
+	mysterium: 'Mysterium',
+	'sacrosanctum-concilium': 'Sacrosanctum Concilium',
+	'centesimus-annus': 'Centesimus Annus'
 };
 
 vi.mock('./corpus', () => ({
@@ -574,6 +582,192 @@ describe('parseRefs — citation-clause grammar (PT)', () => {
 		// conciliar constitution; `slug: null` (and, in the `refHref` describe
 		// block below, an actually-unlinked href) is what proves it doesn't.
 		expect(doc?.slug).toBeNull();
+	});
+});
+
+// Every case below is a string the corpus actually prints, with the paragraph
+// it comes from named — the tables were derived from those strings, so a test
+// invented from a style guide would be testing the wrong thing.
+describe('parseRefs — the six editions added 2026-08-26', () => {
+	it('reads each edition’s own name for John, none of which is the English one', () => {
+		const cases: [string, string, string][] = [
+			['it', 'Gv 11,52', 'Gv'],
+			['la', 'Io 11,52', 'Io'],
+			['mg', 'Jo 11,52', 'Jo'],
+			['fr', 'Jn 11, 52', 'Jn'],
+			['es', 'Jn 11,52', 'Jn'],
+			['de', 'Joh 11,52', 'Joh']
+		];
+		for (const [lang, raw, form] of cases) {
+			expect(parseRefs(raw, { lang })).toContainEqual({
+				kind: 'scripture',
+				osis: 'john',
+				chapter: 11,
+				verses: [52],
+				raw
+			});
+			expect(form).toBeTruthy();
+		}
+	});
+
+	it('reads a numbered book that the English table made resolve to the Gospel', () => {
+		// ccc.de §91, ccc.la §91: "1 Joh 2,20.27" / "1 Io 2,20.27". Neither
+		// base is in `BOOK_VARIANTS_EN`'s numbered forms, so the bare `Joh` /
+		// `Io` matched and every First-John citation in both editions landed
+		// on John — 120 and 138 of them.
+		expect(parseRefs('Cf 1 Io 2,20.27.', { lang: 'la' })).toContainEqual({
+			kind: 'scripture',
+			osis: '1john',
+			chapter: 2,
+			verses: [20, 27],
+			cf: true,
+			raw: '1 Io 2,20.27'
+		});
+		expect(parseRefs('Vgl. 1 Joh 2,20.27.', { lang: 'de' })).toContainEqual({
+			kind: 'scripture',
+			osis: '1john',
+			chapter: 2,
+			verses: [20, 27],
+			raw: '1 Joh 2,20.27'
+		});
+	});
+
+	it('reads the German mirror’s `Job` as John, and `Ijob` as Job', () => {
+		// ccc.de §363 prints "Mt 26,38; Job 12,27" — Jn 12:27 beside Mt 26:38
+		// — and §223 prints "Ijob 36,26". The h/b confusion is this Word
+		// export's, on all 73 occurrences; under the English table they were
+		// links to the book of Job.
+		expect(parseRefs('Vgl. Job 12,27.', { lang: 'de' })).toContainEqual({
+			kind: 'scripture',
+			osis: 'john',
+			chapter: 12,
+			verses: [27],
+			raw: 'Job 12,27'
+		});
+		expect(parseRefs('Ijob 36,26.', { lang: 'de' })).toContainEqual({
+			kind: 'scripture',
+			osis: 'job',
+			chapter: 36,
+			verses: [26],
+			raw: 'Ijob 36,26'
+		});
+	});
+
+	it('reads "Gl" as Joel in Italian and as Galatians in Portuguese', () => {
+		// ccc.it §715 ends "Ger 31,31-34; Gl 3,1-5" — Joel 3. The same two
+		// letters are Galatians in the Portuguese table, which is why these
+		// tables are never merged.
+		expect(parseRefs('Gl 3,1-5.', { lang: 'it' })).toContainEqual({
+			kind: 'scripture',
+			osis: 'joel',
+			chapter: 3,
+			verses: [1, 2, 3, 4, 5],
+			raw: 'Gl 3,1-5'
+		});
+		expect(parseRefs('Gl 3, 1.', { lang: 'pt' })).toContainEqual({
+			kind: 'scripture',
+			osis: 'gal',
+			chapter: 3,
+			verses: [1],
+			raw: 'Gl 3, 1'
+		});
+	});
+
+	it('keeps "SC" a patristic series in Latin and Italian, and the constitution elsewhere', () => {
+		// ccc.la §53: "Adversus haereses, 3, 20, 2: SC 211, 392 (PG 7, 944)"
+		// — Sources chrétiennes volume 211, page 392, which the English table
+		// read as Sacrosanctum Concilium §211. 54 Latin and 55 Italian
+		// citations carried a number that constitution really has.
+		for (const lang of ['la', 'it']) {
+			const doc = parseRefs('SC 211, 392.', { lang }).find((s) => s.kind === 'document');
+			expect(doc?.label).toBe('SC');
+			expect(doc?.expansion).toBe('Sources chrétiennes');
+			expect(doc?.slug).toBeNull();
+		}
+		for (const lang of ['fr', 'es', 'de']) {
+			const doc = parseRefs('SC 5.', { lang }).find((s) => s.kind === 'document');
+			expect(doc?.expansion).toBe('Sacrosanctum concilium');
+			expect(doc?.slug).toBe('sacrosanctum-concilium');
+		}
+	});
+
+	it('keeps "CA" the encyclical in French and the patristic corpus in Latin', () => {
+		// ccc.fr §2431 "(CA 48)" against ccc.la §160 "Apologia, 1, 61: CA 1,
+		// 168" — the second collision the Latin edition's own sigla table
+		// settles.
+		expect(parseRefs('CA 48.', { lang: 'fr' }).find((s) => s.kind === 'document')?.slug).toBe(
+			'centesimus-annus'
+		);
+		const la = parseRefs('CA 1, 168.', { lang: 'la' }).find((s) => s.kind === 'document');
+		expect(la?.expansion).toBe('Corpus apologetarum Christianorum saeculi secundi');
+		expect(la?.slug).toBeNull();
+	});
+
+	it('reads the Malagasy edition’s translated conciliar sigla', () => {
+		// ccc.mg §87 "jer. FF 20" is Lumen gentium 20 — this edition
+		// translates the conciliar sigla (FF, FAA, FA, EK) and keeps the
+		// papal ones (CA, CT, RM, SRS) as they are.
+		expect(
+			parseRefs('jer. FF 20.', { lang: 'mg' }).find((s) => s.kind === 'document')
+		).toMatchObject({ label: 'FF', expansion: 'Lumen gentium' });
+		expect(parseRefs('FAA 19, § 1.', { lang: 'mg' }).find((s) => s.kind === 'document')?.slug).toBe(
+			'gaudium-et-spes'
+		);
+		expect(parseRefs('jer. FA 6.', { lang: 'mg' }).find((s) => s.kind === 'document')?.slug).toBe(
+			'dei-verbum'
+		);
+		expect(parseRefs('jer. CA 25.', { lang: 'mg' }).find((s) => s.kind === 'document')?.slug).toBe(
+			'centesimus-annus'
+		);
+	});
+
+	it('does not read a patristic work title as a book', () => {
+		// "Sermo 241, 2", "Ed. Leon. 4, 31" and "Oratio 40, 9" shape exactly
+		// like a chapter/verse locator and are the bulk of what these
+		// apparatus print. The Fathers are not ingested; leaving them as text
+		// is the module's under-link-rather-than-guess rule.
+		for (const lang of ['it', 'la', 'fr', 'es', 'de', 'mg']) {
+			for (const raw of ['Sermo 241, 2.', 'Oratio 40, 9.', 'Enarratio in Psalmum 103, 4, 1.']) {
+				expect(parseRefs(raw, { lang }).some((s) => s.kind === 'scripture')).toBe(false);
+			}
+		}
+	});
+
+	it('falls back to English for a language with no table of its own', () => {
+		// `hu`, `ro`, `sl`, `sv` hold the Compendium and nothing else, and its
+		// `ccc_refs` are bare numbers no book table touches. `en-gb` is
+		// English by prefix.
+		expect(parseRefs('279-289, 296-298', { lang: 'sv' })).toContainEqual({
+			kind: 'ccc',
+			n: 279,
+			raw: '279'
+		});
+		expect(parseRefs('Jn 3:16', { lang: 'en-gb' })).toContainEqual({
+			kind: 'scripture',
+			osis: 'john',
+			chapter: 3,
+			verses: [16],
+			raw: 'Jn 3:16'
+		});
+	});
+});
+
+describe('linkifyProse — the six editions added 2026-08-26', () => {
+	it('links a Scripture locator inside running prose in each of them', () => {
+		// These three editions fold every reference into the text instead of
+		// printing footnotes (docs/corpus-schema.md §Catechism), so prose is
+		// where all of their references live.
+		const cases: [string, string, string, number][] = [
+			['fr', 'les nations de la terre " (Gn 12, 3 LXX; cf. Ga 3, 8).', 'gal', 3],
+			['es', 'todas las naciones de la tierra" (Gn 12,3; cf. Ga 3,8).', 'gal', 3],
+			['de', 'Erdgeschlechter Segen erlangen" (Gen 12,3) [Vgl. Gal 3,8.]', 'gal', 3]
+		];
+		for (const [lang, text, osis, chapter] of cases) {
+			const segs = linkifyProse(text, { lang });
+			expect(
+				segs.some((s) => s.kind === 'scripture' && s.osis === osis && s.chapter === chapter)
+			).toBe(true);
+		}
 	});
 });
 

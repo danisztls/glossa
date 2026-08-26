@@ -729,5 +729,1534 @@
 			"III Jo",
 			"3Jo"
 		]
+	},
+	"de": {
+		"gen": [
+			"Gen",
+			"Gn"
+		],
+		"exod": [
+			"Ex"
+		],
+		"lev": [
+			"Lev"
+		],
+		"num": [
+			"Num"
+		],
+		"deut": [
+			"Dtn",
+			"Din"
+		],
+		"josh": [
+			"Jos"
+		],
+		"judg": [
+			"Ri"
+		],
+		"neh": [
+			"Neh"
+		],
+		"tob": [
+			"Tob"
+		],
+		"esth": [
+			"Est"
+		],
+		"job": [
+			"Ijob"
+		],
+		"ps": [
+			"Ps"
+		],
+		"prov": [
+			"Spr"
+		],
+		"eccl": [
+			"Koh"
+		],
+		"song": [
+			"Hld"
+		],
+		"wis": [
+			"Weish"
+		],
+		"sir": [
+			"Sir"
+		],
+		"isa": [
+			"Jes"
+		],
+		"jer": [
+			"Jer"
+		],
+		"ezek": [
+			"Ez"
+		],
+		"dan": [
+			"Dan"
+		],
+		"hos": [
+			"Hos"
+		],
+		"joel": [
+			"Joël"
+		],
+		"amos": [
+			"Am"
+		],
+		"jonah": [
+			"Jona"
+		],
+		"mic": [
+			"Mi"
+		],
+		"zeph": [
+			"Zef"
+		],
+		"zech": [
+			"Sach"
+		],
+		"mal": [
+			"Mal"
+		],
+		"matt": [
+			"Mt"
+		],
+		"mark": [
+			"Mk"
+		],
+		"luke": [
+			"Lk"
+		],
+		"john": [
+			"Joh",
+			"Job"
+		],
+		"acts": [
+			"Apg"
+		],
+		"rom": [
+			"Röm",
+			"Rom."
+		],
+		"gal": [
+			"Gal"
+		],
+		"eph": [
+			"Eph",
+			"Epb"
+		],
+		"phil": [
+			"Phil"
+		],
+		"col": [
+			"Kol",
+			"KoI"
+		],
+		"titus": [
+			"Tit"
+		],
+		"heb": [
+			"Hebr"
+		],
+		"jas": [
+			"Jak"
+		],
+		"rev": [
+			"Offb"
+		],
+		"1sam": [
+			"1 Sam",
+			"I Sam",
+			"1Sam",
+			"l Sam"
+		],
+		"2sam": [
+			"2 Sam",
+			"II Sam",
+			"2Sam"
+		],
+		"1kgs": [
+			"1 Kön",
+			"I Kön",
+			"1Kön",
+			"l Kön"
+		],
+		"2kgs": [
+			"2 Kön",
+			"II Kön",
+			"2Kön"
+		],
+		"1chr": [
+			"1 Chr",
+			"I Chr",
+			"1Chr",
+			"l Chr"
+		],
+		"2chr": [
+			"2 Chr",
+			"II Chr",
+			"2Chr"
+		],
+		"1macc": [
+			"1 Makk",
+			"I Makk",
+			"1Makk",
+			"l Makk"
+		],
+		"2macc": [
+			"2 Makk",
+			"II Makk",
+			"2Makk"
+		],
+		"1cor": [
+			"1 Kor",
+			"I Kor",
+			"1Kor",
+			"l Kor"
+		],
+		"2cor": [
+			"2 Kor",
+			"II Kor",
+			"2Kor"
+		],
+		"1thess": [
+			"1 Thess",
+			"I Thess",
+			"1Thess",
+			"l Thess"
+		],
+		"2thess": [
+			"2 Thess",
+			"II Thess",
+			"2Thess"
+		],
+		"1tim": [
+			"1 Tim",
+			"I Tim",
+			"1Tim",
+			"l Tim"
+		],
+		"2tim": [
+			"2 Tim",
+			"II Tim",
+			"2Tim"
+		],
+		"1pet": [
+			"1 Petr",
+			"I Petr",
+			"1Petr",
+			"l Petr"
+		],
+		"2pet": [
+			"2 Petr",
+			"II Petr",
+			"2Petr"
+		],
+		"1john": [
+			"1 Joh",
+			"I Joh",
+			"1Joh",
+			"l Joh",
+			"1 Job",
+			"I Job",
+			"1Job",
+			"l Job"
+		],
+		"2john": [
+			"2 Joh",
+			"II Joh",
+			"2Joh",
+			"2 Job",
+			"II Job",
+			"2Job"
+		],
+		"3john": [
+			"3 Joh",
+			"III Joh",
+			"3Joh",
+			"3 Job",
+			"III Job",
+			"3Job"
+		]
+	},
+	"es": {
+		"gen": [
+			"Gn"
+		],
+		"exod": [
+			"Ex"
+		],
+		"lev": [
+			"Lv"
+		],
+		"num": [
+			"Nm"
+		],
+		"deut": [
+			"Dt"
+		],
+		"josh": [
+			"Jos"
+		],
+		"judg": [
+			"Jc"
+		],
+		"ezra": [
+			"Esd"
+		],
+		"neh": [
+			"Ne"
+		],
+		"tob": [
+			"Tb"
+		],
+		"jdt": [
+			"Jdt"
+		],
+		"esth": [
+			"Est"
+		],
+		"job": [
+			"Jb",
+			"Job"
+		],
+		"ps": [
+			"Sal"
+		],
+		"prov": [
+			"Pr"
+		],
+		"eccl": [
+			"Qo"
+		],
+		"song": [
+			"Ct"
+		],
+		"wis": [
+			"Sb"
+		],
+		"sir": [
+			"Si"
+		],
+		"isa": [
+			"Is"
+		],
+		"jer": [
+			"Jr"
+		],
+		"lam": [
+			"Lm"
+		],
+		"ezek": [
+			"Ez"
+		],
+		"dan": [
+			"Dn"
+		],
+		"hos": [
+			"Os"
+		],
+		"joel": [
+			"Jl"
+		],
+		"amos": [
+			"Am"
+		],
+		"jonah": [
+			"Jon"
+		],
+		"mic": [
+			"Mi"
+		],
+		"zeph": [
+			"So"
+		],
+		"zech": [
+			"Za"
+		],
+		"mal": [
+			"Ml"
+		],
+		"matt": [
+			"Mt",
+			"Mt."
+		],
+		"mark": [
+			"Mc",
+			"Mc."
+		],
+		"luke": [
+			"Lc",
+			"Lc."
+		],
+		"john": [
+			"Jn"
+		],
+		"acts": [
+			"Hch"
+		],
+		"rom": [
+			"Rm",
+			"Rom"
+		],
+		"gal": [
+			"Ga",
+			"Gál"
+		],
+		"eph": [
+			"Ef"
+		],
+		"phil": [
+			"Flp"
+		],
+		"col": [
+			"Col"
+		],
+		"titus": [
+			"Tt",
+			"Tit"
+		],
+		"heb": [
+			"Hb"
+		],
+		"jas": [
+			"St"
+		],
+		"rev": [
+			"Ap"
+		],
+		"1sam": [
+			"1 S",
+			"I S",
+			"l S"
+		],
+		"2sam": [
+			"2 S",
+			"II S"
+		],
+		"1kgs": [
+			"1 R",
+			"I R",
+			"l R"
+		],
+		"2kgs": [
+			"2 R",
+			"II R"
+		],
+		"1chr": [
+			"1 Cro",
+			"I Cro",
+			"1Cro",
+			"l Cro"
+		],
+		"2chr": [
+			"2 Cro",
+			"II Cro",
+			"2Cro"
+		],
+		"1macc": [
+			"1 M",
+			"I M",
+			"l M"
+		],
+		"2macc": [
+			"2 M",
+			"II M"
+		],
+		"1cor": [
+			"1 Co",
+			"I Co",
+			"1Co",
+			"l Co",
+			"1 Cor",
+			"I Cor",
+			"1Cor",
+			"l Cor"
+		],
+		"2cor": [
+			"2 Co",
+			"II Co",
+			"2Co",
+			"2 Cor",
+			"II Cor",
+			"2Cor"
+		],
+		"1thess": [
+			"1 Ts",
+			"I Ts",
+			"1Ts",
+			"l Ts"
+		],
+		"2thess": [
+			"2 Ts",
+			"II Ts",
+			"2Ts"
+		],
+		"1tim": [
+			"1 Tm",
+			"I Tm",
+			"1Tm",
+			"l Tm",
+			"1 Tim",
+			"I Tim",
+			"1Tim",
+			"l Tim"
+		],
+		"2tim": [
+			"2 Tm",
+			"II Tm",
+			"2Tm",
+			"2 Tim",
+			"II Tim",
+			"2Tim"
+		],
+		"1pet": [
+			"1 P",
+			"I P",
+			"l P",
+			"1 Pe",
+			"I Pe",
+			"l Pe"
+		],
+		"2pet": [
+			"2 P",
+			"II P",
+			"2 Pe",
+			"II Pe"
+		],
+		"1john": [
+			"1 Jn",
+			"I Jn",
+			"1Jn",
+			"l Jn"
+		],
+		"2john": [
+			"2 Jn",
+			"II Jn",
+			"2Jn"
+		],
+		"3john": [
+			"3 Jn",
+			"III Jn",
+			"3Jn"
+		]
+	},
+	"fr": {
+		"gen": [
+			"Gn"
+		],
+		"exod": [
+			"Ex"
+		],
+		"lev": [
+			"Lv"
+		],
+		"num": [
+			"Nb"
+		],
+		"deut": [
+			"Dt"
+		],
+		"josh": [
+			"Jos"
+		],
+		"judg": [
+			"Jg"
+		],
+		"ezra": [
+			"Esd"
+		],
+		"neh": [
+			"Ne"
+		],
+		"tob": [
+			"Tb"
+		],
+		"jdt": [
+			"Jdt"
+		],
+		"esth": [
+			"Est"
+		],
+		"job": [
+			"Jb"
+		],
+		"ps": [
+			"Ps"
+		],
+		"prov": [
+			"Pr"
+		],
+		"eccl": [
+			"Qo"
+		],
+		"song": [
+			"Ct"
+		],
+		"wis": [
+			"Sg"
+		],
+		"sir": [
+			"Si"
+		],
+		"isa": [
+			"Is"
+		],
+		"jer": [
+			"Jr"
+		],
+		"lam": [
+			"Lm"
+		],
+		"ezek": [
+			"Ez"
+		],
+		"dan": [
+			"Dn"
+		],
+		"hos": [
+			"Os"
+		],
+		"joel": [
+			"Jl"
+		],
+		"amos": [
+			"Am"
+		],
+		"jonah": [
+			"Jon"
+		],
+		"mic": [
+			"Mi"
+		],
+		"zeph": [
+			"So"
+		],
+		"zech": [
+			"Za"
+		],
+		"mal": [
+			"Ml"
+		],
+		"matt": [
+			"Mt"
+		],
+		"mark": [
+			"Mc"
+		],
+		"luke": [
+			"Lc",
+			"Lc."
+		],
+		"john": [
+			"Jn"
+		],
+		"acts": [
+			"Ac"
+		],
+		"rom": [
+			"Rm",
+			"Rom."
+		],
+		"gal": [
+			"Ga"
+		],
+		"eph": [
+			"Ep"
+		],
+		"phil": [
+			"Ph"
+		],
+		"col": [
+			"Col"
+		],
+		"titus": [
+			"Tt"
+		],
+		"heb": [
+			"He"
+		],
+		"jas": [
+			"Jc"
+		],
+		"rev": [
+			"Ap"
+		],
+		"1sam": [
+			"1 S",
+			"I S",
+			"l S"
+		],
+		"2sam": [
+			"2 S",
+			"II S"
+		],
+		"1kgs": [
+			"1 R",
+			"I R",
+			"l R"
+		],
+		"2kgs": [
+			"2 R",
+			"II R"
+		],
+		"1chr": [
+			"1 Ch",
+			"I Ch",
+			"l Ch"
+		],
+		"2chr": [
+			"2 Ch",
+			"II Ch"
+		],
+		"1macc": [
+			"1 M",
+			"I M",
+			"l M"
+		],
+		"2macc": [
+			"2 M",
+			"II M"
+		],
+		"1cor": [
+			"1 Co",
+			"I Co",
+			"1Co",
+			"l Co"
+		],
+		"2cor": [
+			"2 Co",
+			"II Co",
+			"2Co"
+		],
+		"1thess": [
+			"1 Th",
+			"I Th",
+			"1Th",
+			"l Th"
+		],
+		"2thess": [
+			"2 Th",
+			"II Th",
+			"2Th"
+		],
+		"1tim": [
+			"1 Tm",
+			"I Tm",
+			"1Tm",
+			"l Tm"
+		],
+		"2tim": [
+			"2 Tm",
+			"II Tm",
+			"2Tm"
+		],
+		"1pet": [
+			"1 P",
+			"I P",
+			"l P"
+		],
+		"2pet": [
+			"2 P",
+			"II P"
+		],
+		"1john": [
+			"1 Jn",
+			"I Jn",
+			"1Jn",
+			"l Jn"
+		],
+		"2john": [
+			"2 Jn",
+			"II Jn",
+			"2Jn"
+		],
+		"3john": [
+			"3 Jn",
+			"III Jn",
+			"3Jn"
+		]
+	},
+	"it": {
+		"gen": [
+			"Gn",
+			"Gen"
+		],
+		"exod": [
+			"Es"
+		],
+		"lev": [
+			"Lv"
+		],
+		"num": [
+			"Nm"
+		],
+		"deut": [
+			"Dt"
+		],
+		"josh": [
+			"Gs"
+		],
+		"judg": [
+			"Gdc"
+		],
+		"ezra": [
+			"Esd"
+		],
+		"neh": [
+			"Ne"
+		],
+		"tob": [
+			"Tb"
+		],
+		"jdt": [
+			"Gdt"
+		],
+		"esth": [
+			"Est"
+		],
+		"job": [
+			"Gb"
+		],
+		"ps": [
+			"Sal",
+			"Psalm."
+		],
+		"prov": [
+			"Prv",
+			"Pr"
+		],
+		"eccl": [
+			"Qo"
+		],
+		"song": [
+			"Ct"
+		],
+		"wis": [
+			"Sap"
+		],
+		"sir": [
+			"Sir"
+		],
+		"isa": [
+			"Is"
+		],
+		"jer": [
+			"Ger"
+		],
+		"lam": [
+			"Lam"
+		],
+		"ezek": [
+			"Ez"
+		],
+		"dan": [
+			"Dn"
+		],
+		"hos": [
+			"Os"
+		],
+		"joel": [
+			"Gl"
+		],
+		"amos": [
+			"Am"
+		],
+		"jonah": [
+			"Gio"
+		],
+		"mic": [
+			"Mic"
+		],
+		"zeph": [
+			"Sof"
+		],
+		"zech": [
+			"Zc"
+		],
+		"mal": [
+			"Ml"
+		],
+		"matt": [
+			"Mt"
+		],
+		"mark": [
+			"Mc"
+		],
+		"luke": [
+			"Lc"
+		],
+		"john": [
+			"Gv"
+		],
+		"acts": [
+			"At"
+		],
+		"rom": [
+			"Rm"
+		],
+		"gal": [
+			"Gal"
+		],
+		"eph": [
+			"Ef",
+			"Ephes."
+		],
+		"phil": [
+			"Fil"
+		],
+		"col": [
+			"Col"
+		],
+		"titus": [
+			"Tt"
+		],
+		"heb": [
+			"Eb"
+		],
+		"jas": [
+			"Gc"
+		],
+		"jude": [
+			"Gd"
+		],
+		"rev": [
+			"Ap"
+		],
+		"1sam": [
+			"1 Sam",
+			"I Sam",
+			"1Sam",
+			"l Sam"
+		],
+		"2sam": [
+			"2 Sam",
+			"II Sam",
+			"2Sam"
+		],
+		"1kgs": [
+			"1 Re",
+			"I Re",
+			"1Re",
+			"l Re"
+		],
+		"2kgs": [
+			"2 Re",
+			"II Re",
+			"2Re"
+		],
+		"1chr": [
+			"1 Cr",
+			"I Cr",
+			"1Cr",
+			"l Cr"
+		],
+		"2chr": [
+			"2 Cr",
+			"II Cr",
+			"2Cr"
+		],
+		"1macc": [
+			"1 Mac",
+			"I Mac",
+			"1Mac",
+			"l Mac"
+		],
+		"2macc": [
+			"2 Mac",
+			"II Mac",
+			"2Mac"
+		],
+		"1cor": [
+			"1 Cor",
+			"I Cor",
+			"1Cor",
+			"l Cor"
+		],
+		"2cor": [
+			"2 Cor",
+			"II Cor",
+			"2Cor"
+		],
+		"1thess": [
+			"1 Ts",
+			"I Ts",
+			"1Ts",
+			"l Ts"
+		],
+		"2thess": [
+			"2 Ts",
+			"II Ts",
+			"2Ts"
+		],
+		"1tim": [
+			"1 Tm",
+			"I Tm",
+			"1Tm",
+			"l Tm"
+		],
+		"2tim": [
+			"2 Tm",
+			"II Tm",
+			"2Tm"
+		],
+		"1pet": [
+			"1 Pt",
+			"I Pt",
+			"1Pt",
+			"l Pt"
+		],
+		"2pet": [
+			"2 Pt",
+			"II Pt",
+			"2Pt"
+		],
+		"1john": [
+			"1 Gv",
+			"I Gv",
+			"1Gv",
+			"l Gv"
+		],
+		"2john": [
+			"2 Gv",
+			"II Gv",
+			"2Gv"
+		],
+		"3john": [
+			"3 Gv",
+			"III Gv",
+			"3Gv"
+		]
+	},
+	"la": {
+		"gen": [
+			"Gn",
+			"Gen."
+		],
+		"exod": [
+			"Ex"
+		],
+		"lev": [
+			"Lv"
+		],
+		"num": [
+			"Nm"
+		],
+		"deut": [
+			"Dt"
+		],
+		"josh": [
+			"Ios"
+		],
+		"judg": [
+			"Idc"
+		],
+		"ruth": [
+			"Rt"
+		],
+		"ezra": [
+			"Esd"
+		],
+		"neh": [
+			"Ne"
+		],
+		"tob": [
+			"Tb"
+		],
+		"jdt": [
+			"Idt"
+		],
+		"esth": [
+			"Est"
+		],
+		"job": [
+			"Iob"
+		],
+		"ps": [
+			"Ps"
+		],
+		"prov": [
+			"Prv"
+		],
+		"eccl": [
+			"Eccle"
+		],
+		"song": [
+			"Ct"
+		],
+		"wis": [
+			"Sap"
+		],
+		"sir": [
+			"Eccli"
+		],
+		"isa": [
+			"Is"
+		],
+		"jer": [
+			"Ier"
+		],
+		"lam": [
+			"Lam"
+		],
+		"bar": [
+			"Bar"
+		],
+		"ezek": [
+			"Ez"
+		],
+		"dan": [
+			"Dn"
+		],
+		"hos": [
+			"Os"
+		],
+		"joel": [
+			"Il"
+		],
+		"amos": [
+			"Am"
+		],
+		"obad": [
+			"Abd"
+		],
+		"jonah": [
+			"Ion"
+		],
+		"mic": [
+			"Mich"
+		],
+		"nah": [
+			"Nah"
+		],
+		"hab": [
+			"Hab"
+		],
+		"zeph": [
+			"Soph"
+		],
+		"hag": [
+			"Ag"
+		],
+		"zech": [
+			"Zach"
+		],
+		"mal": [
+			"Mal"
+		],
+		"matt": [
+			"Mt"
+		],
+		"mark": [
+			"Mc"
+		],
+		"luke": [
+			"Lc"
+		],
+		"john": [
+			"Io"
+		],
+		"acts": [
+			"Act"
+		],
+		"rom": [
+			"Rom"
+		],
+		"gal": [
+			"Gal"
+		],
+		"eph": [
+			"Eph"
+		],
+		"phil": [
+			"Phil"
+		],
+		"col": [
+			"Col"
+		],
+		"titus": [
+			"Tit"
+		],
+		"phlm": [
+			"Philm"
+		],
+		"heb": [
+			"Heb"
+		],
+		"jas": [
+			"Iac"
+		],
+		"jude": [
+			"Ids"
+		],
+		"rev": [
+			"Apc"
+		],
+		"1sam": [
+			"1 Sam",
+			"I Sam",
+			"1Sam",
+			"l Sam"
+		],
+		"2sam": [
+			"2 Sam",
+			"II Sam",
+			"2Sam"
+		],
+		"1kgs": [
+			"1 Reg",
+			"I Reg",
+			"1Reg",
+			"l Reg"
+		],
+		"2kgs": [
+			"2 Reg",
+			"II Reg",
+			"2Reg"
+		],
+		"1chr": [
+			"1 Par",
+			"I Par",
+			"1Par",
+			"l Par"
+		],
+		"2chr": [
+			"2 Par",
+			"II Par",
+			"2Par"
+		],
+		"1macc": [
+			"1 Mac",
+			"I Mac",
+			"1Mac",
+			"l Mac"
+		],
+		"2macc": [
+			"2 Mac",
+			"II Mac",
+			"2Mac"
+		],
+		"1cor": [
+			"1 Cor",
+			"I Cor",
+			"1Cor",
+			"l Cor"
+		],
+		"2cor": [
+			"2 Cor",
+			"II Cor",
+			"2Cor"
+		],
+		"1thess": [
+			"1 Thess",
+			"I Thess",
+			"1Thess",
+			"l Thess"
+		],
+		"2thess": [
+			"2 Thess",
+			"II Thess",
+			"2Thess"
+		],
+		"1tim": [
+			"1 Tim",
+			"I Tim",
+			"1Tim",
+			"l Tim"
+		],
+		"2tim": [
+			"2 Tim",
+			"II Tim",
+			"2Tim"
+		],
+		"1pet": [
+			"1 Pe",
+			"I Pe",
+			"1Pe",
+			"l Pe"
+		],
+		"2pet": [
+			"2 Pe",
+			"II Pe",
+			"2Pe"
+		],
+		"1john": [
+			"1 Io",
+			"I Io",
+			"1Io",
+			"l Io"
+		],
+		"2john": [
+			"2 Io",
+			"II Io",
+			"2Io"
+		],
+		"3john": [
+			"3 Io",
+			"III Io",
+			"3Io"
+		]
+	},
+	"mg": {
+		"gen": [
+			"Jen"
+		],
+		"exod": [
+			"Eks"
+		],
+		"lev": [
+			"Lev"
+		],
+		"num": [
+			"Fan"
+		],
+		"deut": [
+			"Det"
+		],
+		"josh": [
+			"Jôs"
+		],
+		"judg": [
+			"Mpits"
+		],
+		"neh": [
+			"Neh"
+		],
+		"tob": [
+			"Tob",
+			"Tobia"
+		],
+		"esth": [
+			"Est"
+		],
+		"job": [
+			"Jôba",
+			"Joba"
+		],
+		"ps": [
+			"Sal"
+		],
+		"prov": [
+			"Ohab"
+		],
+		"eccl": [
+			"Mpitor"
+		],
+		"song": [
+			"Ton"
+		],
+		"wis": [
+			"Fah"
+		],
+		"sir": [
+			"Ekl"
+		],
+		"isa": [
+			"Iz"
+		],
+		"jer": [
+			"Jer"
+		],
+		"lam": [
+			"Fitom"
+		],
+		"ezek": [
+			"Ezek"
+		],
+		"dan": [
+			"Dan"
+		],
+		"hos": [
+			"Ôs"
+		],
+		"joel": [
+			"Joely"
+		],
+		"amos": [
+			"Am"
+		],
+		"jonah": [
+			"Jôn"
+		],
+		"mic": [
+			"Mik",
+			"Mi"
+		],
+		"zeph": [
+			"Sôf"
+		],
+		"zech": [
+			"Zak"
+		],
+		"mal": [
+			"Mal"
+		],
+		"matt": [
+			"Mt"
+		],
+		"mark": [
+			"Mk"
+		],
+		"luke": [
+			"Lk"
+		],
+		"john": [
+			"Jo"
+		],
+		"acts": [
+			"Asa"
+		],
+		"rom": [
+			"Rôm",
+			"Rom."
+		],
+		"gal": [
+			"Gal"
+		],
+		"eph": [
+			"Efez"
+		],
+		"phil": [
+			"Filip"
+		],
+		"col": [
+			"Kôl"
+		],
+		"titus": [
+			"Tito"
+		],
+		"heb": [
+			"Heb"
+		],
+		"jas": [
+			"Jak",
+			"Jak."
+		],
+		"jude": [
+			"Joda"
+		],
+		"rev": [
+			"Apôk"
+		],
+		"1sam": [
+			"1 Sam",
+			"I Sam",
+			"1Sam",
+			"l Sam"
+		],
+		"2sam": [
+			"2 Sam",
+			"II Sam",
+			"2Sam"
+		],
+		"1kgs": [
+			"1 Mpanj",
+			"I Mpanj",
+			"1Mpanj",
+			"l Mpanj"
+		],
+		"2kgs": [
+			"2 Mpanj",
+			"II Mpanj",
+			"2Mpanj"
+		],
+		"1chr": [
+			"1 Tan",
+			"I Tan",
+			"1Tan",
+			"l Tan",
+			"1 Tant",
+			"I Tant",
+			"1Tant",
+			"l Tant"
+		],
+		"2chr": [
+			"2 Tan",
+			"II Tan",
+			"2Tan",
+			"2 Tant",
+			"II Tant",
+			"2Tant"
+		],
+		"1macc": [
+			"1 Mak",
+			"I Mak",
+			"1Mak",
+			"l Mak"
+		],
+		"2macc": [
+			"2 Mak",
+			"II Mak",
+			"2Mak"
+		],
+		"1cor": [
+			"1 Kôr",
+			"I Kôr",
+			"1Kôr",
+			"l Kôr",
+			"1 Kor",
+			"I Kor",
+			"1Kor",
+			"l Kor"
+		],
+		"2cor": [
+			"2 Kôr",
+			"II Kôr",
+			"2Kôr",
+			"2 Kor",
+			"II Kor",
+			"2Kor"
+		],
+		"1thess": [
+			"1 Tes",
+			"I Tes",
+			"1Tes",
+			"l Tes"
+		],
+		"2thess": [
+			"2 Tes",
+			"II Tes",
+			"2Tes"
+		],
+		"1tim": [
+			"1 Tim",
+			"I Tim",
+			"1Tim",
+			"l Tim"
+		],
+		"2tim": [
+			"2 Tim",
+			"II Tim",
+			"2Tim"
+		],
+		"1pet": [
+			"1 Pi",
+			"I Pi",
+			"1Pi",
+			"l Pi"
+		],
+		"2pet": [
+			"2 Pi",
+			"II Pi",
+			"2Pi"
+		],
+		"1john": [
+			"1 Jo",
+			"I Jo",
+			"1Jo",
+			"l Jo"
+		],
+		"2john": [
+			"2 Jo",
+			"II Jo",
+			"2Jo"
+		],
+		"3john": [
+			"3 Jo",
+			"III Jo",
+			"3Jo"
+		]
 	}
 }

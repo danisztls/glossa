@@ -12,5 +12,19 @@
     "reason": "Source misprints this paragraph's own leading number with a lowercase letter L where the digit 1 belongs -- 'l632' for '1632'. The same substitution appears in the Italian, Latin and Spanish editions' article and paragraph headings ('Articolo l:', 'Parrafo l:'), where it is read as 1 by the label matcher; here it falls in a paragraph's leading number, which no matcher reads, so the paragraph is simply not recognised as one and its text is swallowed by paragraph 1631. Corrected pre-parse rather than as a paragraph_number correction because that layer edits a number the parser has already found, and this one it never finds. Content (preparation for marriage as what makes the spouses' consent free and responsible) and sequential position (directly after 1631 on canonical form, before 1633 on mixed marriages) confirm 1632; the page's own span is 1533-1666, in which 632 is impossible. All seven other editions number this paragraph 1632.",
     "evidence": "raw HTML corpus/raw/ccc-mg/1533-1666_mg.html: '...tsy hivadika amin&#x2019;izany.</p> <p>l632. Mba ho asa an-kalalahana sy izakana andraikitra ny “Eny” ifaneken’ny mpivady...'. Sole occurrence of the string 'l632' in the edition, and the only letter-for-digit paragraph number anywhere in its 27 pages (checked by regex over all of them).",
     "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.mg-604-jo-missing-one",
+    "locator": {
+      "page": "422-682_mg.html",
+      "paragraph": 604,
+      "structural": "scripture_reference"
+    },
+    "field": "citation_text",
+    "from": "href=\"#_ftnref449\">[449]</a>&nbsp;jer. Jo 4,19.",
+    "to": "href=\"#_ftnref449\">[449]</a>&nbsp;jer. 1 Jo 4,19.",
+    "reason": "The book number is missing: the reference is to 1 John 4:19 ('we love because he first loved us'), which is the verse the paragraph is about, and this edition prints 'Jo 4,19' -- John 4:19, the Samaritan woman at the well. Dropping the leading '1' from a Johannine reference, not a wording question. The edition itself gets it right elsewhere: §1828 quotes the same verse in its own prose as '(1 Jo 4,19)'.",
+    "evidence": "raw HTML corpus/raw/ccc-mg/422-682_mg.html, footnote 449: '<a name=\"_ftn449\" ... >[449]</a>&nbsp;jer. Jo 4,19.', sole occurrence of the string in the edition; the corroborating '(1 Jo 4,19)' is in corpus/raw/ccc-mg/1803-1876_mg.html. ccc.en §604 'I John 4:10; 4:19.'; ccc.pt 'Cf. 1 Jo 4, 19.'; ccc.it 'Cf 1 Gv 4,19.'; ccc.la 'Cf 1 Io 4,19.'",
+    "added": "2026-08-26"
   }
 ]

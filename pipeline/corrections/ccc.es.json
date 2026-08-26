@@ -1,0 +1,16 @@
+[
+  {
+    "id": "ccc.es-1867-jc-for-st",
+    "locator": {
+      "page": "p3s1c1a8_sp.html",
+      "paragraph": 1867,
+      "structural": "scripture_reference"
+    },
+    "field": "paragraph_html",
+    "from": "<i>Dt</i> 24, 14-15; <i>Jc</i> 5, 4)",
+    "to": "<i>Dt</i> 24, 14-15; <i>St</i> 5, 4)",
+    "reason": "The reference carries the FRENCH abbreviation for James. This edition abbreviates Santiago as 'St' in all 32 of its other citations to that letter and uses 'Jc' for Jueces in its other three occurrences (Jc 13,18; Jc 13; Jc 6,11-24 -- Samson's birth and Gideon's call, all unambiguously Judges). Here 'Jc 5, 4' is James 5:4, the wages withheld from the labourer, which is the sin the sentence names; Judges 5:4 is a line of Deborah's song about the earth trembling. The French edition prints 'Jc 5, 4' for Jacques and is what this edition's translator followed. Read as printed the reference resolves to a real but wrong verse.",
+    "evidence": "raw HTML corpus/raw/ccc-es/p3s1c1a8_sp.html: 'la injusticia para con el asalariado (cf <i>Dt</i> 24, 14-15; <i>Jc</i> 5, 4).', sole occurrence. ccc.en §1867 'Cf. Deut 24:14-15; Jas 5:4.'; ccc.de 'Vgl. Dtn 24,14-15; Jak 5,4.'; ccc.fr 'cf. Dt 24, 14-15; Jc 5, 4' (where Jc IS Jacques). Counted over all 2,865 paragraphs of ccc.es: 'St' 32, 'Jc' 4.",
+    "added": "2026-08-26"
+  }
+]
