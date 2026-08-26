@@ -160,7 +160,10 @@ import {
 	isUnpublished,
 	cccParagraphNumbers,
 	cccStructures,
-	compendiumQuestionsLocation,
+	compendiumChunkLocation,
+	compendiumChunkLocationsFor,
+	compendiumChunkStartFor,
+	compendiumQuestionNumbers,
 	compendiumStructures,
 	documentChunkLocation,
 	documentAppendixLocation,
@@ -176,7 +179,7 @@ import {
 	summaQuestionMetas,
 	summaStructures,
 	type SummaQuestionMeta,
-	bibleBookLocation,
+	bibleChapterLocation,
 	manifests,
 	translatedDescriptionsLocation,
 	listContentAssets,
@@ -767,20 +770,42 @@ async function fetchTier<T>(
 	return readContent<T>(location);
 }
 
-async function fetchBookContent(
+/**
+ * The 20-chapter chunk `chapterN` of `osis` lives in (see
+ * `BIBLE_CHAPTER_CHUNK_SIZE` in scripts/sync-corpus.mjs).
+ *
+ * The fixture branch returns the whole fixture book rather than a slice of
+ * it, and that is deliberate rather than an approximation: fixtures are
+ * hand-authored two-book editions well under a single chunk, so "the chunk
+ * containing chapter n" and "the book" are the same set of chapters there.
+ * Slicing them to the stride would make the tests assert the chunking
+ * arithmetic twice — once here and once in the stride-parity test — while
+ * testing nothing the real corpus does differently.
+ */
+async function fetchChapterChunk(
 	workId: string,
-	osis: string
-): Promise<{ chapters: Chapter[] } | undefined> {
-	return fetchTier(fixtureBibleBooks[workId]?.[osis], bibleBookLocation(workId, osis), undefined);
+	osis: string,
+	chapterN: number
+): Promise<Chapter[]> {
+	return fetchTier(
+		fixtureBibleBooks[workId]?.[osis]?.chapters,
+		bibleChapterLocation(workId, osis, chapterN),
+		[]
+	);
 }
 
 /**
- * Reads the whole book (content tier) but returns only book METADATA
+ * Reads the chapter chunk (content tier) but returns only book METADATA
  * (already had it, from the index — no need to wait on the read for it)
  * plus the ONE requested `Chapter` (verses). See this module's docblock,
- * "COARSE FETCH, NARROW RETURN": returning the full book here would
- * re-embed an entire book's text into every one of its chapter pages'
- * route data, exactly the bloat this rewrite removes.
+ * "COARSE FETCH, NARROW RETURN": returning the whole chunk here would
+ * re-embed twenty chapters of text into every one of their pages' route
+ * data, exactly the bloat this rewrite removes.
+ *
+ * The coarse unit used to be the whole book, which was the print volume's
+ * granularity but never the reader's: this tier's only caller is this
+ * function, and it wants one chapter. Reading Ps 23 fetched all 150 psalms —
+ * 374 KB raw, the largest single read in the corpus — until 2026-08-25.
  */
 export async function getChapter(
 	workId: string,
@@ -789,8 +814,8 @@ export async function getChapter(
 ): Promise<{ book: BibleBookMeta; chapter: Chapter } | undefined> {
 	const book = getBook(workId, osis);
 	if (!book || !book.chapters.some((c) => c.n === chapterN)) return undefined;
-	const full = await fetchBookContent(workId, osis);
-	const chapter = full?.chapters.find((c) => c.n === chapterN);
+	const chunk = await fetchChapterChunk(workId, osis, chapterN);
+	const chapter = chunk.find((c) => c.n === chapterN);
 	if (!chapter) return undefined;
 	return { book, chapter };
 }
@@ -1138,54 +1163,83 @@ export function flattenCompendiumStructure(lang: string): { node: StructureNode;
 	return flattenTree(getCompendiumStructure(lang));
 }
 
-// --- Compendium: content tier (async, read/fetched, memoized, whole) ------
+// --- Compendium: content tier (async, read/fetched, memoized, chunked) ----
 //
-// Unlike the Bible (per book) and the CCC (100-paragraph chunks), the
-// Compendium is read WHOLE per language: ~90 KB gzipped total for BOTH
-// languages combined (measured against the real corpus 2026-08-15) — well
-// under the size that would justify splitting it further (docs/corpus-
-// schema.md's own framing: "598 numbered questions" is already a small
-// work compared to the Bible or CCC).
+// Chunked by question at a stride of 100, exactly as the CCC is by paragraph
+// — see `COMPENDIUM_CHUNK_SIZE` in scripts/sync-corpus.mjs for why, and for
+// the whole-file rule this replaced on 2026-08-25. Ten editions at 280-290 KB
+// raw each meant opening question 1 downloaded all 598 answers.
 
-async function fetchCompendiumQuestions(lang: string): Promise<CompendiumQuestion[]> {
+async function fetchCompendiumChunk(lang: string, n: number): Promise<CompendiumQuestion[]> {
 	return fetchTier(
 		fixtureCompendiumQuestionsByLang[lang] ?? [],
-		compendiumQuestionsLocation(`compendium.${lang}`),
+		compendiumChunkLocation(`compendium.${lang}`, n),
 		[]
 	);
 }
 
+/** Reads the 100-question chunk `n` lives in, returns only question `n`.
+ *  Checks existence against the index first, so a number this edition does
+ *  not carry never triggers a read — the CCC's `getCccParagraphAsync` rule,
+ *  and newly possible here because the numbers moved to the index with the
+ *  split (see `compendiumQuestionNumbers`). */
 export async function getCompendiumQuestionAsync(
 	lang: string,
 	n: number
 ): Promise<CompendiumQuestion | undefined> {
-	const questions = await fetchCompendiumQuestions(lang);
-	return questions.find((q) => q.n === n);
+	if (!compendiumQuestionExists(lang, n)) return undefined;
+	const chunk = await fetchCompendiumChunk(lang, n);
+	return chunk.find((q) => q.n === n);
 }
 
-/** Every question in an inclusive structural range, for `/compendium/caput/[n]`.
- * The source file is already fetched as one small, memoized language asset. */
+/**
+ * Every question in an inclusive structural range, for `/compendium/caput/[n]`.
+ *
+ * One fetch per 100-question span the range touches, not one per question —
+ * see `getCccParagraphRangeAsync`, which this mirrors exactly, including the
+ * re-sort: chunk boundaries are a fixed arithmetic partition and chapter
+ * boundaries are editorial, so a chapter spanning a boundary arrives in chunk
+ * order, which is only coincidentally question order.
+ */
 export async function getCompendiumQuestionRangeAsync(
 	lang: string,
 	from: number,
 	to: number
 ): Promise<CompendiumQuestion[]> {
 	if (!Number.isFinite(from) || !Number.isFinite(to) || to < from) return [];
-	const questions = await fetchCompendiumQuestions(lang);
-	return questions.filter((question) => question.n >= from && question.n <= to);
+
+	const starts = new Set<number>();
+	for (let n = from; n <= to; n++) starts.add(compendiumChunkStartFor(n));
+
+	const chunks = await Promise.all([...starts].map((start) => fetchCompendiumChunk(lang, start)));
+	return chunks
+		.flat()
+		.filter((question) => question.n >= from && question.n <= to)
+		.sort((a, b) => a.n - b.n);
 }
 
-/** The question number immediately before/after `n` that actually exists.
- *  Operates on the same whole-language read `getCompendiumQuestionAsync`
- *  uses (memoized — this doesn't cost a second read). */
-export async function getAdjacentCompendiumQuestionNumber(
+/** Question numbers this edition carries, as a set per language — the
+ *  Compendium's `cccParagraphNumberSets`. */
+const compendiumQuestionNumberSets: Record<string, Set<number>> = Object.fromEntries(
+	Object.entries(compendiumQuestionNumbers).map(([lang, ns]) => [lang, new Set(ns)])
+);
+
+/** Whether this edition carries question `n`. Index-backed (no fetch), same
+ *  role as `cccParagraphExists`. */
+export function compendiumQuestionExists(lang: string, n: number): boolean {
+	return compendiumQuestionNumberSets[lang]?.has(n) ?? false;
+}
+
+/** The question number immediately before/after `n` that actually exists, or
+ *  undefined at either end. Index-backed — see `compendiumQuestionExists`.
+ *  Was a content read until the chunk split, which would now have had to pull
+ *  every chunk to answer. */
+export function getAdjacentCompendiumQuestionNumber(
 	lang: string,
 	n: number,
 	direction: 'prev' | 'next'
-): Promise<number | undefined> {
-	const questions = await fetchCompendiumQuestions(lang);
-	const ns = questions.map((q) => q.n).sort((a, b) => a - b);
-	return adjacentInSorted(ns, n, direction);
+): number | undefined {
+	return adjacentInSorted(compendiumQuestionNumbers[lang] ?? [], n, direction);
 }
 
 // --- Cross-references -------------------------------------------------

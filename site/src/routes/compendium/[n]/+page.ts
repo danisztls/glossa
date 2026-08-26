@@ -42,8 +42,11 @@ export const load: PageLoad = async ({ params }) => {
 		if (!work) continue;
 		const question = await getCompendiumQuestionAsync(lang, n);
 		if (!question) continue; // this language's corpus doesn't have question `n` (gappy fixtures)
-		const prevN = await getAdjacentCompendiumQuestionNumber(lang, n, 'prev');
-		const nextN = await getAdjacentCompendiumQuestionNumber(lang, n, 'next');
+		// Synchronous since the chunk split: adjacency reads the index, not
+		// the content tier, which chunked would have meant fetching every
+		// chunk to learn what the neighbouring number is.
+		const prevN = getAdjacentCompendiumQuestionNumber(lang, n, 'prev');
+		const nextN = getAdjacentCompendiumQuestionNumber(lang, n, 'next');
 		byLang[lang] = {
 			question,
 			work,

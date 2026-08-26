@@ -23,13 +23,20 @@
  *     directly and reduced to the same registry shapes below so both
  *     branches present one interface to `corpus.ts`.
  *
- * Content-tier URL lookups (`bibleBookUrl`, `cccChunkUrl`,
- * `compendiumQuestionsUrl`) live here too, alongside `listContentAssets()`
- * — the per-work-file inventory (URL shape, byte size) the service worker
- * needs to precache real content explicitly instead of the size-sniffing
- * heuristic its docblock currently describes as a stopgap (see
- * `src/service-worker.ts`'s "CONTENT TIER POLICY" block, which names this
- * exact shape as what should replace it).
+ * Content-tier location lookups live here too — one `…Location(…)` per work
+ * type, each resolving an address to the single chunk file holding it, plus a
+ * plural form for the callers that want every chunk of a work. All of them go
+ * through the same fixed-stride `*ChunkStartFor` functions below, which are
+ * the client half of the split `scripts/sync-corpus.mjs` writes; the two
+ * halves are separate literals (this module cannot import a build script) and
+ * `corpus.test.ts` pins each stride to its counterpart, because a mismatch is
+ * silent — it shows up only as a location lookup returning `undefined` for a
+ * chunk that was in fact written.
+ *
+ * `listContentAssets()` is the other half of this file's content-tier job: the
+ * per-file inventory (URL, byte size, kind) that `sw-policy.ts` orders into
+ * download waves and that a per-work offline UI can price before committing
+ * a reader to a download.
  */
 
 import type {
@@ -191,7 +198,7 @@ interface CccIndexFile {
 	};
 }
 interface CompendiumIndexFile {
-	[lang: string]: { structure: StructureNode[] };
+	[lang: string]: { structure: StructureNode[]; questionNumbers: number[] };
 }
 /**
  * Keyed by WORK ID (`vatii.lumen-gentium.en`), not by bare language like
@@ -256,12 +263,19 @@ interface SummaIndexFile {
 }
 export interface ContentManifestEntry {
 	workId: string;
+	/** Must match the `kind` literals `scripts/sync-corpus.mjs` pushes onto
+	 *  `contentManifest`. Nothing enforces that across the language boundary,
+	 *  and the two had already drifted once (`document-sections` was listed
+	 *  here while the sync wrote `document-chunk`), so the service worker's
+	 *  wave ordering — which switches on these — asserts the set it sees at
+	 *  runtime rather than trusting this union. See `sw-policy.ts`. */
 	kind:
-		| 'bible-book'
+		| 'bible-chapters'
 		| 'bible-intros'
 		| 'ccc-chunk'
-		| 'compendium-questions'
-		| 'document-sections'
+		| 'compendium-chunk'
+		| 'document-appendix'
+		| 'document-chunk'
 		| 'prayer-collection'
 		| 'summa-question';
 	relPath: string;
@@ -548,6 +562,35 @@ export const compendiumStructures: Record<string, StructureNode[]> = USE_REAL_CO
 			pt: compendiumPtStructure as unknown as StructureNode[]
 		};
 
+/** Sorted question numbers present per language — the Compendium's
+ *  `cccParagraphNumbers`, and new with the chunk split.
+ *
+ *  Before the split, existence and adjacency were answered by scanning the
+ *  one whole-language file every reader had already fetched, which was free
+ *  only because that file was whole. Chunked, the same scan would have to
+ *  pull all six chunks to learn that question 599 does not exist. So the
+ *  numbers move to the index, where the CCC has always kept them — strictly
+ *  fewer requests than before, not more, since these checks now cost no
+ *  fetch at all. */
+export const compendiumQuestionNumbers: Record<string, number[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexCompendium) ?? {}).map(([lang, v]) => [
+				lang,
+				v.questionNumbers ?? []
+			])
+		)
+	: {
+			// The raw fixture imports, not `fixtureCompendiumQuestionsByLang`
+			// below: that binding is declared further down this module, and a
+			// `const` cannot be read before its declaration is evaluated.
+			en: (fixtureCompendiumEnQuestions as CompendiumQuestion[])
+				.map((q) => q.n)
+				.sort((a, b) => a - b),
+			pt: (fixtureCompendiumPtQuestions as CompendiumQuestion[])
+				.map((q) => q.n)
+				.sort((a, b) => a - b)
+		};
+
 /**
  * Document structure trees, keyed by WORK ID (not language — see
  * `DocumentIndexFile`'s docblock). No fixture branch: documents have no
@@ -716,6 +759,32 @@ export function documentChunkStartFor(n: number): number {
 	return Math.floor((n - 1) / DOCUMENT_CHUNK_SIZE) * DOCUMENT_CHUNK_SIZE + 1;
 }
 
+/** Must equal `COMPENDIUM_CHUNK_SIZE` in scripts/sync-corpus.mjs, which is
+ *  where the choice of 100 is argued — and where the whole-file rule it
+ *  replaced is recorded. Pinned to that literal by `corpus.test.ts`, for the
+ *  same reason the document stride is: a mismatch shows up only as
+ *  `compendiumChunkLocation` returning `undefined` for a chunk that was in
+ *  fact written. */
+const COMPENDIUM_CHUNK_SIZE = 100;
+
+/** The fixed-range chunk a Compendium QUESTION number lives in — the same
+ *  pure function again, at the Compendium's stride. */
+export function compendiumChunkStartFor(n: number): number {
+	return Math.floor((n - 1) / COMPENDIUM_CHUNK_SIZE) * COMPENDIUM_CHUNK_SIZE + 1;
+}
+
+/** Must equal `BIBLE_CHAPTER_CHUNK_SIZE` in scripts/sync-corpus.mjs, which is
+ *  where the choice of 20 is argued and measured. Pinned by `corpus.test.ts`
+ *  like the other two. */
+const BIBLE_CHAPTER_CHUNK_SIZE = 20;
+
+/** The fixed-range chunk a Bible CHAPTER number lives in. Note this partitions
+ *  chapters WITHIN one book — `Ps 23` and `Gen 23` are different files — so it
+ *  is always applied together with a book's OSIS id, never on its own. */
+export function bibleChapterChunkStartFor(n: number): number {
+	return Math.floor((n - 1) / BIBLE_CHAPTER_CHUNK_SIZE) * BIBLE_CHAPTER_CHUNK_SIZE + 1;
+}
+
 /** `./corpus-data/content/...` glob key -> the `relPath` shape
  *  `content-manifest.json` entries use (`content/...`), so the two can be
  *  joined without a second copy of the path. */
@@ -759,9 +828,14 @@ export function translatedDescriptionsLocation(lang: string): ContentLocation | 
 	return url ? { relPath, url } : undefined;
 }
 
-const bibleBookLocations: Record<string, Record<string, ContentLocation>> = {};
+/** workId -> OSIS -> chapter-chunk start -> file. Three levels: the chapter
+ *  stride partitions chapters WITHIN a book, so the OSIS id is part of the
+ *  key rather than something the stride could ever encode. */
+const bibleChapterLocations: Record<string, Record<string, Record<number, ContentLocation>>> = {};
 const cccChunkLocations: Record<string, Record<number, ContentLocation>> = {};
-const compendiumQuestionsLocations: Record<string, ContentLocation> = {};
+/** workId -> question-chunk start -> file. Two levels, exactly like the CCC's
+ *  paragraph chunks; it was a single whole-language file until 2026-08-25. */
+const compendiumChunkLocations: Record<string, Record<number, ContentLocation>> = {};
 const documentChunkLocationsByWork: Record<string, Record<number, ContentLocation>> = {};
 /** Keyed by WORK ID (`prayer.common.en`), not bare lang -- matches how every
  *  other content-tier location map here is keyed (the lang-vs-workid choice
@@ -783,10 +857,10 @@ for (const [globPath, url] of Object.entries(realContentUrls)) {
 	const relPath = contentKey(globPath);
 	contentUrlByRelPath[relPath] = url;
 	const location: ContentLocation = { relPath, url };
-	const bibleMatch = relPath.match(/^content\/([^/]+)\/books\/([^/]+)\.json$/);
+	const bibleMatch = relPath.match(/^content\/([^/]+)\/books\/([^/]+)\/(\d+)-(\d+)\.json$/);
 	if (bibleMatch) {
-		const [, workId, osis] = bibleMatch;
-		(bibleBookLocations[workId] ??= {})[osis] = location;
+		const [, workId, osis, startStr] = bibleMatch;
+		((bibleChapterLocations[workId] ??= {})[osis] ??= {})[Number(startStr)] = location;
 		continue;
 	}
 	const cccMatch = relPath.match(/^content\/([^/]+)\/paragraphs\/(\d+)-(\d+)\.json$/);
@@ -795,9 +869,10 @@ for (const [globPath, url] of Object.entries(realContentUrls)) {
 		(cccChunkLocations[workId] ??= {})[Number(startStr)] = location;
 		continue;
 	}
-	const compendiumMatch = relPath.match(/^content\/([^/]+)\/questions\.json$/);
+	const compendiumMatch = relPath.match(/^content\/([^/]+)\/questions\/(\d+)-(\d+)\.json$/);
 	if (compendiumMatch) {
-		compendiumQuestionsLocations[compendiumMatch[1]] = location;
+		const [, workId, startStr] = compendiumMatch;
+		(compendiumChunkLocations[workId] ??= {})[Number(startStr)] = location;
 		continue;
 	}
 	const documentMatch = relPath.match(/^content\/([^/]+)\/sections\/(\d+)-(\d+)\.json$/);
@@ -829,16 +904,50 @@ for (const [globPath, url] of Object.entries(realContentUrls)) {
 	}
 }
 
-export function bibleBookLocation(workId: string, osis: string): ContentLocation | undefined {
-	return bibleBookLocations[workId]?.[osis];
+/** The one chunk chapter `n` of `osis` lives in. */
+/** Chunk-keyed map -> its files in ascending chunk-start order. Ordered by
+ *  the numeric key rather than by insertion, so the pieces concatenate into
+ *  work order regardless of the order the glob happened to walk them. Shared
+ *  by the three tiers whose chunks a caller may want all of. */
+function locationsInChunkOrder(
+	byStart: Record<number, ContentLocation> | undefined
+): ContentLocation[] {
+	if (!byStart) return [];
+	return Object.keys(byStart)
+		.map(Number)
+		.sort((a, b) => a - b)
+		.map((start) => byStart[start]);
+}
+
+export function bibleChapterLocation(
+	workId: string,
+	osis: string,
+	n: number
+): ContentLocation | undefined {
+	return bibleChapterLocations[workId]?.[osis]?.[bibleChapterChunkStartFor(n)];
+}
+
+/** Every chunk of one book, in chapter order — for a whole-book read. Nothing
+ *  needs it today (`getChapter` is this tier's only reader and wants one
+ *  chapter), but it is what makes "download this book for offline" expressible
+ *  as a book rather than as a list of chunk paths. */
+export function bibleBookLocations(workId: string, osis: string): ContentLocation[] {
+	return locationsInChunkOrder(bibleChapterLocations[workId]?.[osis]);
 }
 
 export function cccChunkLocation(workId: string, n: number): ContentLocation | undefined {
 	return cccChunkLocations[workId]?.[cccChunkStartFor(n)];
 }
 
-export function compendiumQuestionsLocation(workId: string): ContentLocation | undefined {
-	return compendiumQuestionsLocations[workId];
+/** The one chunk question `n` lives in. */
+export function compendiumChunkLocation(workId: string, n: number): ContentLocation | undefined {
+	return compendiumChunkLocations[workId]?.[compendiumChunkStartFor(n)];
+}
+
+/** Every chunk of one edition, in question order — for a range read that
+ *  spans the whole work. */
+export function compendiumChunkLocationsFor(workId: string): ContentLocation[] {
+	return locationsInChunkOrder(compendiumChunkLocations[workId]);
 }
 
 export function summaQuestionLocation(
@@ -866,16 +975,10 @@ export function documentChunkLocation(workId: string, n: number): ContentLocatio
 }
 
 /** Every chunk of a document, in section order — for the continuous reading
- *  view, which needs all of them. Ordered by chunk start rather than by the
- *  object's own key order so the fetched pieces concatenate into a
- *  document-ordered array without re-sorting the sections themselves. */
+ *  view, which needs all of them. See `locationsInChunkOrder` for why the
+ *  numeric key, not insertion order, decides. */
 export function documentChunkLocations(workId: string): ContentLocation[] {
-	const byStart = documentChunkLocationsByWork[workId];
-	if (!byStart) return [];
-	return Object.keys(byStart)
-		.map(Number)
-		.sort((a, b) => a - b)
-		.map((start) => byStart[start]);
+	return locationsInChunkOrder(documentChunkLocationsByWork[workId]);
 }
 
 export function bibleIntroLocation(workId: string): ContentLocation | undefined {

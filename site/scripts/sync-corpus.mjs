@@ -16,18 +16,22 @@
  *   at real-corpus scale it's well under 500 KB total, so inlining it once
  *   costs less than a network round-trip would.
  *
- *   `corpus-data/content/**` — the actual reading text: Bible books split
- *   one-file-per-book (73/edition, matching the print volume's own
- *   granularity), CCC paragraphs split into fixed 100-paragraph chunks (29
- *   chunks/language — shipping the 3.5 MB/language `paragraphs.json` whole
- *   would put a >500 KB gzipped file behind a single `¶1` visit), the
- *   Compendium kept whole per language (only ~90 KB gzipped total, no split
- *   needed), documents (docs/corpus-schema.md §Documents) split into fixed
- *   section chunks the same way — see `DOCUMENT_CHUNK_SIZE` — and prayers
- *   (docs/corpus-schema.md §Prayers) kept whole per language too, same as
- *   the Compendium and for the same reason: `prayers.json` measures ~40 KB
- *   RAW per language in the real corpus, smaller by an order of magnitude
- *   than the Compendium's already-established no-split threshold, so there
+ *   `corpus-data/content/**` — the actual reading text, split so a reader
+ *   pays for roughly the unit they asked for and no more. Every split is one
+ *   rule at a different stride: a fixed arithmetic partition of the work's
+ *   own numbering, so chunk membership stays a pure function of `n` with no
+ *   lookup table to ship or keep in sync (the `*ChunkStartFor` functions in
+ *   `corpus-index.ts`). Bible books split into fixed 20-chapter chunks
+ *   (`BIBLE_CHAPTER_CHUNK_SIZE`), CCC paragraphs into fixed 100-paragraph
+ *   chunks (29 chunks/language — shipping the 3.5 MB/language
+ *   `paragraphs.json` whole would put a >500 KB gzipped file behind a single
+ *   `¶1` visit), the Compendium into fixed 100-question chunks
+ *   (`COMPENDIUM_CHUNK_SIZE`), documents (docs/corpus-schema.md §Documents)
+ *   into fixed section chunks (`DOCUMENT_CHUNK_SIZE`) — and prayers
+ *   (docs/corpus-schema.md §Prayers) kept whole per language, the one work
+ *   type with no stride at all: `prayers.json` measures ~40 KB RAW per
+ *   language in the real corpus, smaller than the smallest chunk any of the
+ *   four strides above produces, so there
  *   is nothing here that would ever justify chunking it. It belongs in the
  *   content tier at all — rather than being small enough to just inline
  *   into the index — because it holds actual reading TEXT (prayer wording,
@@ -120,6 +124,65 @@ const CCC_CHUNK_SIZE = 100;
  *  It also bounds the continuous reading view (`/documenta/{slug}`, which
  *  needs every chunk) at 3 parallel fetches for the longest document. */
 const DOCUMENT_CHUNK_SIZE = 50;
+
+/** The Compendium, chunked by question on the same fixed-stride rule as the
+ *  CCC and for the same "pure function of `n`, no lookup table" reason
+ *  (`compendiumChunkStartFor` in `corpus-index.ts`).
+ *
+ *  This replaces a keep-it-whole rule whose premise — "only ~90 KB gzipped
+ *  total, no split needed" — was measured on 2026-08-15 against TWO editions
+ *  and never re-measured. Ten editions landed on 2026-08-25 and each
+ *  `questions.json` is now 280-290 KB raw (~90 KB brotli) on its own, so
+ *  opening question 1 downloaded all 598 answers. Exactly the stale-premise
+ *  failure `DOCUMENT_CHUNK_SIZE` above was written to correct, one work over.
+ *
+ *  100 rather than the documents' 50 because a Compendium answer is short and
+ *  uniform — much more like a catechism paragraph than an encyclical section —
+ *  so the CCC's stride transfers directly: 6 chunks per edition, worst chunk
+ *  51 KB raw (measured 2026-08-25). */
+const COMPENDIUM_CHUNK_SIZE = 100;
+
+/** Bible books, chunked by CHAPTER on the same fixed-stride rule again
+ *  (`bibleChapterChunkStartFor` in `corpus-index.ts`).
+ *
+ *  One file per book matched the print volume's own granularity, which is a
+ *  good OFFLINE unit but was never the READ unit: `/scriptura/{osis}/{chapter}`
+ *  shows one chapter, and `getChapter` is the only reader of this tier, so
+ *  opening Ps 23 paid for all 150 psalms — 374 KB raw in the Matos Soares
+ *  edition, the largest single read in the corpus.
+ *
+ *  20 was measured rather than guessed (2026-08-25, all four editions, every
+ *  stride from 10 to 30): it caps the worst chunk at 159 KB raw, in line with
+ *  the CCC's 147 KB and the documents' 171 KB, for 444 files against 388 at
+ *  stride 25 and 692 at stride 10. Below 20 the file count climbs fast for
+ *  almost no reduction in the worst case, because the worst case is set by a
+ *  handful of genuinely long chapters (1 Maccabees) rather than by the stride.
+ *
+ *  Applied uniformly, not above a size threshold: a threshold would put two
+ *  different path shapes in the same tier, and the whole point of a fixed
+ *  stride is that chunk membership stays a pure function of the chapter
+ *  number. Every book with 20 chapters or fewer — most of them — is still a
+ *  single file, just at a chunked path. */
+const BIBLE_CHAPTER_CHUNK_SIZE = 20;
+
+/** No single content file may exceed this. Checked over the whole manifest at
+ *  the end of the run, and a HARD failure rather than a warning.
+ *
+ *  Every chunking regression this project has had was the same one: a size
+ *  premise recorded in a comment, correct when written, never re-measured.
+ *  Documents were whole-file on a "~200 KB raw worst-case" note until the real
+ *  worst case reached 827 KB; the Compendium was whole-file on a "~90 KB for
+ *  both languages" note until it had ten editions at 290 KB each. Both were
+ *  found by someone happening to look, months late. A ceiling converts that
+ *  class of silent drift into a failed build.
+ *
+ *  200 KB against a measured worst of 171 KB (a document chunk) leaves real
+ *  headroom while still catching either regression above at roughly the point
+ *  it started to matter. Raising it is a legitimate decision — some units,
+ *  like a single Summa question or a single Bible chapter, cannot be split at
+ *  all — but it should be a decision someone makes and records here, which is
+ *  the entire purpose of the check. */
+const CONTENT_FILE_CEILING_BYTES = 200_000;
 
 function readJson(p) {
 	return JSON.parse(readFileSync(p, 'utf8'));
@@ -399,9 +462,27 @@ for (const workId of workIds) {
 					verses: c.verses.map((v) => v.n)
 				}))
 			});
-			const relPath = `content/${workId}/books/${book.osis}.json`;
-			writeJson(path.join(destDir, relPath), book);
-			contentManifest.push({ workId, kind: 'bible-book', relPath, bytes: byteLength(book) });
+			// Chapter text, chunked by CHAPTER (see `BIBLE_CHAPTER_CHUNK_SIZE`).
+			// The chunk is the bare `Chapter[]` for its range, not a trimmed
+			// copy of the book object: `osis`/`name`/`abbrevs`/`order` are all
+			// in the index tier above, already in hand at every call site, and
+			// repeating them in each of a book's chunks would be the only
+			// thing in this tier that isn't reading text.
+			const maxChapterN = book.chapters.reduce((max, c) => Math.max(max, c.n), 0);
+			for (let start = 1; start <= maxChapterN; start += BIBLE_CHAPTER_CHUNK_SIZE) {
+				const end = start + BIBLE_CHAPTER_CHUNK_SIZE - 1;
+				const chunk = book.chapters.filter((c) => c.n >= start && c.n <= end);
+				if (chunk.length === 0) continue;
+				const chunkName = `${String(start).padStart(4, '0')}-${String(end).padStart(4, '0')}`;
+				const relPath = `content/${workId}/books/${book.osis}/${chunkName}.json`;
+				writeJson(path.join(destDir, relPath), chunk);
+				contentManifest.push({
+					workId,
+					kind: 'bible-chapters',
+					relPath,
+					bytes: byteLength(chunk)
+				});
+			}
 		}
 		books.sort((a, b) => a.order - b.order);
 		bibleIndex[workId] = { books };
@@ -470,18 +551,36 @@ for (const workId of workIds) {
 	if (workId.startsWith('compendium.')) {
 		const lang = workId.slice('compendium.'.length);
 		const structure = readJson(path.join(workDir, 'structure.json'));
-		compendiumIndex[lang] = { structure };
 
 		const questions = readJson(path.join(workDir, 'questions.json'));
+		// Existence numbers move to the INDEX tier with the chunk split, the
+		// way the CCC has always kept `paragraphNumbers`: existence and
+		// adjacency used to be answered by scanning the one whole-language
+		// content file every reader had already fetched, and chunked that scan
+		// would have to pull all six chunks to learn a number is absent.
+		compendiumIndex[lang] = {
+			structure,
+			questionNumbers: questions.map((question) => question.n).sort((a, b) => a - b)
+		};
 		compendiumQuestionNumbers.push(...questions.map((question) => question.n));
-		const relPath = `content/${workId}/questions.json`;
-		writeJson(path.join(destDir, relPath), questions);
-		contentManifest.push({
-			workId,
-			kind: 'compendium-questions',
-			relPath,
-			bytes: byteLength(questions)
-		});
+
+		// Chunked by question, exactly as the CCC is by paragraph — see
+		// `COMPENDIUM_CHUNK_SIZE` for why this stopped being a whole-file work.
+		const maxQuestionN = questions.reduce((max, q) => Math.max(max, q.n), 0);
+		for (let start = 1; start <= maxQuestionN; start += COMPENDIUM_CHUNK_SIZE) {
+			const end = start + COMPENDIUM_CHUNK_SIZE - 1;
+			const chunk = questions.filter((q) => q.n >= start && q.n <= end);
+			if (chunk.length === 0) continue;
+			const chunkName = `${String(start).padStart(4, '0')}-${String(end).padStart(4, '0')}`;
+			const relPath = `content/${workId}/questions/${chunkName}.json`;
+			writeJson(path.join(destDir, relPath), chunk);
+			contentManifest.push({
+				workId,
+				kind: 'compendium-chunk',
+				relPath,
+				bytes: byteLength(chunk)
+			});
+		}
 		continue;
 	}
 
@@ -658,6 +757,39 @@ if (publishedDefeats.length > 0) {
 			`\n\nEither withhold them in site/unpublished.json (see its header for the ` +
 			`reasoning and the field meanings) or repair the parse and re-parse. ` +
 			`Run pipeline/scrapers/audit.py for how much text each one is actually losing.`
+	);
+	process.exit(1);
+}
+
+/**
+ * Nothing in the content tier may exceed `CONTENT_FILE_CEILING_BYTES`.
+ *
+ * Deliberately checked over the manifest rather than inside each writer: the
+ * point is to catch a work type whose size premise has gone stale, and the
+ * writer that would need to notice is exactly the one whose comment says the
+ * split isn't needed. A single check over everything cannot be reasoned past
+ * one work type at a time.
+ */
+const oversized = contentManifest
+	.filter((entry) => entry.bytes > CONTENT_FILE_CEILING_BYTES)
+	.sort((a, b) => b.bytes - a.bytes);
+
+if (oversized.length > 0) {
+	const kinds = [...new Set(oversized.map((entry) => entry.kind))].sort();
+	console.error(
+		`[sync-corpus] ${oversized.length} content file(s) exceed the ` +
+			`${(CONTENT_FILE_CEILING_BYTES / 1000).toFixed(0)} KB ceiling ` +
+			`(kind(s): ${kinds.join(', ')}):\n` +
+			oversized
+				.slice(0, 20)
+				.map((entry) => `  ${(entry.bytes / 1000).toFixed(0).padStart(5)} KB  ${entry.relPath}`)
+				.join('\n') +
+			(oversized.length > 20 ? `\n  ... and ${oversized.length - 20} more` : '') +
+			`\n\nA reader pays for the whole file to read one unit of it. Either chunk ` +
+			`the kind(s) above the way the CCC, the Compendium, the documents and the ` +
+			`Bible already are, or raise CONTENT_FILE_CEILING_BYTES deliberately and ` +
+			`record why — see its docblock for the two regressions this check exists ` +
+			`to stop repeating.`
 	);
 	process.exit(1);
 }

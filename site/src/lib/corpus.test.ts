@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { documentChunkStartFor } from './corpus-index';
+import {
+	bibleChapterChunkStartFor,
+	cccChunkStartFor,
+	compendiumChunkStartFor,
+	documentChunkStartFor
+} from './corpus-index';
 import {
 	documentSectionText,
 	getAdjacentChapterAcrossBooks,
@@ -84,29 +89,64 @@ describe('CCC whole-chapter breadcrumb', () => {
 	});
 });
 
-describe('document chunking', () => {
+describe('content chunking', () => {
 	/**
-	 * `DOCUMENT_CHUNK_SIZE` is written twice — in `scripts/sync-corpus.mjs`,
-	 * which decides where the chunk boundaries fall, and in `corpus-index.ts`,
-	 * which decides where to look for them. They cannot import each other (one
-	 * is a build script, the other ships to the browser), and a mismatch fails
-	 * SILENTLY: `documentChunkLocation` would compute a start no file was
-	 * written for, return `undefined`, and the link preview would render
-	 * nothing at all rather than erroring. This is the guard for that.
+	 * Every stride is written TWICE — in `scripts/sync-corpus.mjs`, which
+	 * decides where the chunk boundaries fall, and in `corpus-index.ts`, which
+	 * decides where to look for them. They cannot import each other (one is a
+	 * build script, the other ships to the browser), and a mismatch fails
+	 * SILENTLY: the `…ChunkStartFor` function computes a start no file was
+	 * written for, the location lookup returns `undefined`, and the page
+	 * renders nothing at all rather than erroring.
+	 *
+	 * A table rather than four copies of one test, so that adding a fifth
+	 * chunked work type is one row — the document stride shipped alone for
+	 * nine days and the Compendium and Bible strides were added without this
+	 * guard being extended, which is exactly how the pair drifts.
 	 */
-	it('uses the same chunk stride as the sync script that writes the chunks', () => {
-		const source = readFileSync(new URL('../../scripts/sync-corpus.mjs', import.meta.url), 'utf8');
-		const declared = source.match(/^const DOCUMENT_CHUNK_SIZE = (\d+);$/m);
-		expect(declared, 'sync-corpus.mjs must declare DOCUMENT_CHUNK_SIZE').not.toBeNull();
-		const stride = Number(declared![1]);
+	const STRIDES: { name: string; constant: string; startFor: (n: number) => number }[] = [
+		{ name: 'documents', constant: 'DOCUMENT_CHUNK_SIZE', startFor: documentChunkStartFor },
+		{ name: 'CCC', constant: 'CCC_CHUNK_SIZE', startFor: cccChunkStartFor },
+		{ name: 'Compendium', constant: 'COMPENDIUM_CHUNK_SIZE', startFor: compendiumChunkStartFor },
+		{
+			name: 'Bible chapters',
+			constant: 'BIBLE_CHAPTER_CHUNK_SIZE',
+			startFor: bibleChapterChunkStartFor
+		}
+	];
 
-		// `documentChunkStartFor` is the only place the reader's copy is
-		// observable, so exercise it rather than re-reading the literal:
-		// the first section of a chunk and its last must agree on the start.
-		expect(documentChunkStartFor(1)).toBe(1);
-		expect(documentChunkStartFor(stride)).toBe(1);
-		expect(documentChunkStartFor(stride + 1)).toBe(stride + 1);
-		expect(documentChunkStartFor(stride * 2)).toBe(stride + 1);
+	for (const { name, constant, startFor } of STRIDES) {
+		it(`${name}: same stride as the sync script that writes the chunks`, () => {
+			const source = readFileSync(
+				new URL('../../scripts/sync-corpus.mjs', import.meta.url),
+				'utf8'
+			);
+			const declared = source.match(new RegExp(`^const ${constant} = (\\d+);$`, 'm'));
+			expect(declared, `sync-corpus.mjs must declare ${constant}`).not.toBeNull();
+			const stride = Number(declared![1]);
+
+			// The `…StartFor` function is the only place the reader's copy is
+			// observable, so exercise it rather than re-reading the literal:
+			// the first unit of a chunk and its last must agree on the start.
+			expect(startFor(1)).toBe(1);
+			expect(startFor(stride)).toBe(1);
+			expect(startFor(stride + 1)).toBe(stride + 1);
+			expect(startFor(stride * 2)).toBe(stride + 1);
+		});
+	}
+
+	/**
+	 * The ceiling exists because every chunking regression so far was a size
+	 * premise that went stale unobserved. It is enforced by the sync (which is
+	 * where the byte counts are), so what this checks is only that the sync
+	 * still declares one — deleting the constant would delete the guard
+	 * without failing anything else.
+	 */
+	it('declares a per-file size ceiling in the sync script', () => {
+		const source = readFileSync(new URL('../../scripts/sync-corpus.mjs', import.meta.url), 'utf8');
+		const declared = source.match(/^const CONTENT_FILE_CEILING_BYTES = ([\d_]+);$/m);
+		expect(declared, 'sync-corpus.mjs must declare CONTENT_FILE_CEILING_BYTES').not.toBeNull();
+		expect(Number(declared![1].replace(/_/g, ''))).toBeGreaterThan(0);
 	});
 });
 
