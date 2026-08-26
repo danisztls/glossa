@@ -72,7 +72,6 @@
 	 * JavaScript still gets the right one on first paint and nothing ever
 	 * has to relocate itself across the page after the fact.
 	 */
-	import { untrack } from 'svelte';
 	import { getBook, hasIntroForWork, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
 	import { hrefFor } from '$lib/address';
@@ -123,13 +122,13 @@
 		{ key: 'nt', books: books.filter((b) => b.order > OT_BOOK_COUNT) }
 	]);
 
-	// Default-open the reader's current book (if any) so arriving at a
-	// chapter with the picker expanded shows that book's chapters already.
-	// `untrack` makes explicit that only the INITIAL `currentOsis` seeds this
-	// — the picker's open/closed state is then user-driven, not re-synced
-	// every time the prop changes (e.g. navigating to a new chapter of the
-	// same book shouldn't collapse an unrelated book the reader opened).
-	let openOsis: string | undefined = $state(untrack(() => currentOsis));
+	// NOTHING IS OPEN UNTIL THE READER OPENS IT. This used to seed itself with
+	// `currentOsis`, so arriving at a chapter rendered the ToC with that
+	// book's chapter panel already floating over the page — a popover nobody
+	// asked for, covering the text they came to read, on every single Bible
+	// navigation. The highlight on `.book-btn.current` already says which book
+	// they are in; the panel is a thing to open, not a thing to dismiss.
+	let openOsis: string | undefined = $state();
 
 	/**
 	 * The three lengths the chapter grid is laid out with, in rem, mirrored
@@ -263,12 +262,12 @@
 		};
 	}
 
-	// Runs for BOTH click-opens and the default-open-current-book case
-	// (`openOsis`'s initial value, set with no click event to measure) — a
-	// DOM lookup by id rather than the triggering event, so there is one code
-	// path instead of two that can fall out of sync. Nothing here reads the
-	// panel, so it does not matter that this runs before the panel has
-	// settled — or, for that matter, whether the panel exists yet.
+	// A DOM lookup by id rather than the triggering event: `openOsis` is what
+	// this tracks, so anything that sets it — a click today, whatever sets it
+	// tomorrow — measures through one code path rather than two that can fall
+	// out of sync. Nothing here reads the panel, so it does not matter that
+	// this runs before the panel has settled — or, for that matter, whether
+	// the panel exists yet.
 	$effect(() => {
 		if (!openOsis) {
 			placement = null;
