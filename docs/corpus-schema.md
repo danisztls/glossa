@@ -248,15 +248,39 @@ Array ordered by `n`:
 
 ## Catechism — `abbreviations.json`
 
-The CCC's own front-matter abbreviations table, verbatim:
+Each edition's own front-matter sigla table, verbatim and in source order:
 
 ```jsonc
-[{ "abbr": "LG", "expansion": "Lumen Gentium" }]
+[
+  {
+    "abbr": "LG",
+    "expansion": "Lumen gentium",
+    "kind": "general",
+    "section": "LISTE DES SIGLES",
+  },
+  {
+    "abbr": "Gn",
+    "expansion": "Liber Genesis",
+    "kind": "scripture",
+    "section": "VETUS TESTAMENTUM",
+  },
+]
 ```
 
-This is the decoder ring for `citations` strings ("LG 12", "DS 150", "CIC, can. 849") — the phase-2 citation parser and all future document-to-document linking (encyclicals, council documents) depend on it. Capture both the scripture-book abbreviations and the document abbreviations if the source separates them (a `"kind": "scripture" | "document"` field is welcome if distinguishable).
+This is the decoder ring for `citations` strings ("LG 12", "DS 150", "CIC, can. 849"): a siglum's expansion, for the tooltip layer and for anything that has to know what an edition means by two letters.
 
-**Still empty in all eight editions, but no longer unsourced** (2026-08-26). The English and Portuguese mirrors begin at the Prologue and print no such table, which is why this file has been `[]` since the first ingestion. Two of the six editions added since do print one — French serves it as `__P1.HTM` ("LISTE DES SIGLES": `AA Apostolicam actuositatem`, `CT Catechesi tradendae`, `DV Dei Verbum`, …) and Latin as `abbrev_lt.htm` — and both are now captured byte-exact in `raw/`. Filling this file is therefore a re-parse, not another crawl. It is deliberately not done here: the sigla are shared across editions but the expansions are not (French expands `CDF` as "Congrégation pour la doctrine de la foi"), so populating it needs a decision about whether the table is per-edition or one shared table with per-language expansions, which is a schema question and not a scraping one.
+**Populated for two of the eight editions, 2026-08-26; the other six are `[]` because their mirrors print no table.** English and Portuguese begin at the Prologue, which is why this file was empty everywhere from the first ingestion until the six new editions landed. French serves a table as `__P1.HTM` ("LISTE DES SIGLES", 58 entries) and Latin as `abbrev_lt.htm` (119); both were captured in `raw/` on 2026-08-26 and parsed the same day, no second crawl.
+
+**Per-edition, not one shared table** — the open schema question this file used to carry, settled by reading the two sources rather than by argument, because they are not the same table:
+
+- **French** lists magisterial documents and liturgical books: `AA Apostolicam actuositatem`, `CT Catechesi tradendae`, `DV Dei Verbum`, `OICA Ordo initiationis christianae adultorum`.
+- **Latin** lists bibliographic series and editorial abbreviations — `PL`, `PG`, `CSEL`, `c` for _caput vel corpus_, `q` for _quaestio_ — and then all 73 Scripture books under its own two testament headings.
+
+Their overlap is eight abbreviations, and on two of those eight the editions disagree about what the letters mean: `SC` is _Sacrosanctum concilium_ in French and _Sources chrétiennes_ in Latin, `CA` is _Centesimus annus_ against _Corpus apologetarum_. Each is right about its own edition — the Latin text's 118 `SC` references are volume-and-page ("SC 211, 392 (PG 7, 944)"), not conciliar sections — so no shared table could be built without overruling one edition about its own apparatus. `site/src/lib/refs-grammar.ts` had already reached the same conclusion for EN and PT from the citations alone.
+
+**`abbr` is not a key.** The Latin table gives `Act` twice, as _Actio_ among the sigla and as _Actus Apostolorum_ among the New Testament books. Hence an array in source order, and hence `kind` — which is `"scripture" | "general"`, the only division either source itself draws. (This section previously proposed `"scripture" | "document"`; "document" would be a false claim about most of the Latin general list.) `section` keeps the source's own heading verbatim so a consumer can regroup without the pipeline having guessed a taxonomy.
+
+Both tables carry misprints, corrected pre-parse under the `abbreviation_html` field with the usual locator/before/after/reason/evidence: Latin glosses `3 Io` as _Epistula II Ioannis_ (the row above it, verbatim) and misspells three expansions; French prints the siglum itself wrong twice, `GB` for Gravissimum educationis and `CJC` for a row whose own expansion reads _Codex Iuris Canonici_ — its own text uses `GE` and `CIC`, 3 and 138 times, and `GB`/`CJC` never.
 
 ## Compendium — `questions.json`
 
@@ -502,7 +526,7 @@ No `related` and no `in_brief` fields: no marginal cross-reference apparatus (th
 
 **Whether a heading is back matter cannot be known when it is read**, only by whether a numbered paragraph ever follows it — so the parser buffers a unit at every heading and `start_section` throws the buffer away. Whatever survives to the end of the walk is the appendix.
 
-`abbreviations.json`: not per-document — corpus-wide, still homed at `ccc.{lang}/abbreviations.json` (see above). The CCC's own front-matter table already covers the sigla (LG, GS, DS, …) these documents are cited by and cite each other by; see `link-surface.md` on how ingesting Vatican II resolves that file's sourcing problem.
+`abbreviations.json`: not per-document. It stays homed at `ccc.{lang}/abbreviations.json`, and as of 2026-08-26 it is per-EDITION rather than corpus-wide (see above): the two editions that print a table print different tables and disagree where they overlap, so there is no one table to be corpus-wide. Between them they cover the sigla (LG, GS, DS, …) these documents are cited by and cite each other by; `link-surface.md` #4 records the other, independent route to the same expansions — each ingested document's own title.
 
 CCC ¶ ↔ document section references (future, not yet built): turns a `citations[].text` string like `"LG 12"` into `{ document: "vatii.lumen-gentium", section: 12 }`, the same derivation the CCC → Bible index already does for scripture citations — a re-parse of already-captured raw citation text, not a re-scrape. Derived at build time like that one, and likewise not stored in the corpus. See `link-surface.md` row #12.
 

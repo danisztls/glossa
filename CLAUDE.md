@@ -199,11 +199,32 @@ to read. Three things about it are worth knowing before touching the file:
   same paragraph elsewhere. That is the edition, not a gap — see
   `docs/corpus-schema.md`, and read `audit.py balance` with it in mind.
 
-**Two editions carry the abbreviations table `abbreviations.json` has been
-empty for since the beginning** — French as `__P1.HTM` ("LISTE DES SIGLES"),
-Latin as `abbrev_lt.htm` — and both are captured. Filling that file is now a
-re-parse, not a crawl. It is unparsed because the sigla are shared across
-editions and the expansions are not, which is a schema question.
+**Two editions print an abbreviations table, and they are not the same
+table.** `abbreviations.json` was `[]` everywhere until 2026-08-26 because
+the EN and PT mirrors open at the Prologue; French serves one as `__P1.HTM`
+("LISTE DES SIGLES", 58 magisterial documents and liturgical books) and Latin
+as `abbrev_lt.htm` (119: 46 bibliographic and editorial sigla, then all 73
+Scripture books). Both are now parsed, by `Edition.sigla` and
+`SIGLA_READERS`, from pages the body loop never visits.
+
+The open schema question — one shared table with per-language expansions, or
+one per edition? — was settled by the sources rather than by argument. The two
+overlap on eight abbreviations and **disagree on two of them**: `SC` is
+_Sacrosanctum concilium_ in French and _Sources chrétiennes_ in Latin, `CA` is
+_Centesimus annus_ against _Corpus apologetarum_, and each is right about its
+own edition's references — the Latin text's 118 `SC` citations are
+volume-and-page, "SC 211, 392 (PG 7, 944)". So it is per-edition, the other
+six stay `[]`, and `abbr` is not even unique within one edition (Latin gives
+`Act` as both _Actio_ and _Actus Apostolorum_): read the array in order and
+use `kind`.
+
+**The site does not read it yet, and one thing it does read is wrong because
+of that.** `refs-grammar.ts` has configs for EN and PT only, so the six
+editions added on 2026-08-26 parse references through the English sigla
+table — under which `ccc.la` and `ccc.it` each resolve 54 and 55 `SC`
+volume numbers to real Sacrosanctum Concilium sections. Fixing it is
+per-language configs, not a table entry; recorded in that file's
+`DOCUMENT_SIGLA` docblock.
 
 ## The Summa is the exception to two rules at once
 

@@ -705,12 +705,18 @@ export const BOOK_FORMS: Record<string, Record<string, string[]>> = {
 // recognizing THOSE is a quiet, informative non-link (sigla + locus +
 // expansion tooltip) instead of the sigla vanishing into unstyled text.
 //
-// This table is the decoder ring `docs/link-surface.md` says neither
-// language's `abbreviations.json` carries (the vatican.va mirrors omit the
-// front-matter table). Built by counting `\bTOKEN\b` occurrences in the
-// corpus's citations and confirming each entry's meaning against its citation
-// context — not exhaustive, just the sigla that actually occur with enough
-// frequency to verify.
+// This table is a decoder ring built by counting `\bTOKEN\b` occurrences in
+// the corpus's citations and confirming each entry's meaning against its
+// citation context — not exhaustive, just the sigla that actually occur with
+// enough frequency to verify. It was written when no edition's
+// `abbreviations.json` carried one; two now do (`ccc.fr` 58 entries,
+// `ccc.la` 119, added 2026-08-26), and they are the sources' own tables
+// rather than a reading of the citations. Nothing here consumes them yet,
+// and they would not simply replace this: they name the sigla those two
+// EDITIONS print, EN and PT are the only languages this file has configs
+// for, and an expansion is not a slug. What they do settle is that the
+// per-language split below is right — see the `SC` note in the next
+// paragraph, which the Latin table states outright.
 //
 // A SLUG HERE IS A CLAIM, NOT A LINK. Whether the siglum actually links is
 // decided at parse time by `ingestedSlugs()` — the set of documents the
@@ -734,6 +740,17 @@ export const BOOK_FORMS: Record<string, Record<string, string[]>> = {
 // Gaudium et Spes"; a 2026-08-25 scan of every PT citation for a conciliar or
 // encyclical siglum followed by a number found none). Sharing one table would
 // silently mislabel one language.
+//
+// KNOWN GAP, MEASURED 2026-08-26. `configFor` has EN and PT and nothing
+// else, so the six editions added that day parse their references through
+// the ENGLISH table — and the same `SC` collision PT was given its own table
+// for is present in two of them. `ccc.la`'s own sigla table says `SC` is
+// Sources chrétiennes, `ccc.it` follows the same apparatus, and each cites
+// it 118 times as a volume-and-page ("SC 211, 392 (PG 7, 944)"); 54 and 55
+// of those carry a number Sacrosanctum Concilium happens to have a section
+// for, so they resolve to a real, wrong link. Closing it means per-language
+// configs (book variants included, which no edition but EN and PT has), not
+// a new siglum entry — hence recorded rather than patched here.
 // --------------------------------------------------------------------------
 
 interface SiglumEntry {

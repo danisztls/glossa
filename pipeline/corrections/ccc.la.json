@@ -1,0 +1,72 @@
+[
+  {
+    "id": "ccc.la-abbrev-3io-wrong-ordinal",
+    "locator": {
+      "page": "abbrev_lt.htm",
+      "abbr": "3 Io",
+      "structural": "abbreviation"
+    },
+    "field": "abbreviation_html",
+    "from": "3 Io </font> </td> \n                <td width=\"76%\" height=\"21\"><font face=\"Times\" size=\"3\">Epistula II Ioannis",
+    "to": "3 Io </font> </td> \n                <td width=\"76%\" height=\"21\"><font face=\"Times\" size=\"3\">Epistula III Ioannis",
+    "reason": "The New Testament abbreviations table gives the same expansion for two consecutive rows: '2 Io' and '3 Io' are both glossed 'Epistula II Ioannis'. The second is a numeral typo -- the row is the third of the three Johannine letters, in a table that lists all 27 New Testament books once each and in canonical order, and '3 Io' is the abbreviation this edition's own citations use for Third John. A numeral misprint, not a wording question: the entry as printed claims a book that is already on the row above it, and read literally it would map every reference to Third John onto Second John.",
+    "evidence": "raw HTML corpus/raw/ccc-la/abbrev_lt.htm, NOVUM TESTAMENTUM table: rows '2 Io | Epistula II Ioannis' and '3 Io | Epistula II Ioannis' are consecutive and identical on the right. The edition's own apparatus cites '3 Io 7' (ccc.la paragraph citation to §2 of the third letter), so the abbreviation is real and in use. Corroborated in-corpus by bible.clementina.la, whose 3John book carries name 'III Joannes' and abbrevs including '3io'.",
+    "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.la-abbrev-idt-liher",
+    "locator": {
+      "page": "abbrev_lt.htm",
+      "abbr": "Idt",
+      "structural": "abbreviation"
+    },
+    "field": "abbreviation_html",
+    "from": "Liher Iudith",
+    "to": "Liber Iudith",
+    "reason": "Letter typo in the expansion: 'Liher' for 'Liber', h for b. Every other 'Liber X' row in the same Old Testament table (30 of them) spells it 'Liber', and 'liher' is not a Latin word.",
+    "evidence": "raw HTML corpus/raw/ccc-la/abbrev_lt.htm: '<td width=\"23%\">Idt</td> <td width=\"77%\"><font face=\"Times\" size=\"3\">Liher Iudith </font>'. Sole occurrence of the string in the page. In-corpus corroboration: bible.clementina.la's Jdt book is 'Judith', abbrevs including 'idt'.",
+    "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.la-abbrev-dt-deuteronomii",
+    "locator": {
+      "page": "abbrev_lt.htm",
+      "abbr": "Dt",
+      "structural": "abbreviation"
+    },
+    "field": "abbreviation_html",
+    "from": "Liber Deutoronomii",
+    "to": "Liber Deuteronomii",
+    "reason": "Letter typo in the expansion: 'Deutoronomii' for 'Deuteronomii', with the third e dropped. A spelling defect in a proper title with one attested form, not a variant.",
+    "evidence": "raw HTML corpus/raw/ccc-la/abbrev_lt.htm, VETUS TESTAMENTUM table, sole occurrence. In-corpus corroboration: bible.clementina.la's Deut book is 'Deuteronomium' (genitive Deuteronomii).",
+    "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.la-abbrev-ne-nehemiae",
+    "locator": {
+      "page": "abbrev_lt.htm",
+      "abbr": "Ne",
+      "structural": "abbreviation"
+    },
+    "field": "abbreviation_html",
+    "from": "Liber Nahemiae",
+    "to": "Liber Nehemiae",
+    "reason": "Letter typo in the expansion: 'Nahemiae' for 'Nehemiae', a for e in the first syllable. The Latin name of the book and of the man is Nehemias; 'Nahemias' is not an attested form in the Vulgate tradition this edition cites throughout.",
+    "evidence": "raw HTML corpus/raw/ccc-la/abbrev_lt.htm, VETUS TESTAMENTUM table, sole occurrence. In-corpus corroboration: bible.clementina.la's Neh book is 'Nehemias' (genitive Nehemiae).",
+    "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.la-abbrev-gcs-schriftsteller",
+    "locator": {
+      "page": "abbrev_lt.htm",
+      "abbr": "GCS",
+      "structural": "abbreviation"
+    },
+    "field": "abbreviation_html",
+    "from": "Die griechischen christlichen Schrifsteller",
+    "to": "Die griechischen christlichen Schriftsteller",
+    "reason": "Letter typo in the expansion: 'Schrifsteller' for 'Schriftsteller', with the t of Schrift dropped. The series named is the Berlin corpus Die griechischen christlichen Schriftsteller der ersten Jahrhunderte, whose title this row abbreviates; the printed form is not a German word.",
+    "evidence": "raw HTML corpus/raw/ccc-la/abbrev_lt.htm, SIGLA table, sole occurrence. The edition cites the series as 'GCS' six times in its own apparatus, so the siglum is in use and only its expansion is misprinted.",
+    "added": "2026-08-26"
+  }
+]

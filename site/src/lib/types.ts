@@ -610,12 +610,34 @@ export interface CccParagraph {
 	notes: string[];
 }
 
-export type CccAbbreviationKind = 'scripture' | 'document';
+/**
+ * The Catechism's own front-matter sigla table, as its source prints it.
+ *
+ * TWO OF THE EIGHT EDITIONS PRINT ONE, AND THEY ARE DIFFERENT TABLES.
+ * French lists 58 magisterial documents and liturgical books; Latin lists 46
+ * bibliographic and editorial sigla plus all 73 Scripture books. The other
+ * six mirrors open at the Prologue and carry `[]` — which is the source
+ * speaking, not a gap. So this is per-edition data and never a shared table:
+ * where the two overlap they disagree, `SC` being *Sacrosanctum concilium*
+ * in the French list and *Sources chrétiennes* in the Latin one, and both
+ * are right about their own edition's references.
+ *
+ * `abbr` is therefore not a key: the Latin table gives `Act` twice, as
+ * *Actio* among the sigla and as *Actus Apostolorum* among the New Testament
+ * books. Read the array in order, and disambiguate with `kind`.
+ */
+export type CccAbbreviationKind = 'scripture' | 'general';
 
 export interface CccAbbreviation {
 	abbr: string;
 	expansion: string;
-	kind?: CccAbbreviationKind;
+	/** The only division either source itself draws — Latin separates
+	 *  Scripture from the rest with a heading, French has one list. */
+	kind: CccAbbreviationKind;
+	/** The source's own heading over this entry, verbatim ("SIGLA",
+	 *  "NOVUM TESTAMENTUM", "LISTE DES SIGLES"), so a finer grouping can be
+	 *  derived here rather than guessed at in the pipeline. */
+	section: string;
 }
 
 // --- Compendium ------------------------------------------------------------

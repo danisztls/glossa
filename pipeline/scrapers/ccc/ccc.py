@@ -47,10 +47,10 @@ Known source limitations (see manifest notes / final report):
     around a dozen+ paragraphs in both languages. `related` is emitted as
     an empty array for every paragraph; this is a source gap, not a parser
     bug.
-  - Neither mirror includes the CCC's own front-matter abbreviations table
-    (LG, GS, DS, CIC, ...). Both mirrors start directly at the Prologue.
-    `abbreviations.json` is emitted as an empty array pending a decision on
-    sourcing it (see final report).
+  - Six of the eight mirrors start directly at the Prologue and print no
+    abbreviations table, so their `abbreviations.json` is an empty array.
+    French and Latin print one each, and they are not the same table --
+    see "The abbreviations table" below.
   - Inline italics (titles, Latin terms) are not captured — a deliberate v1
     loss, recoverable later from corpus/raw/ without re-crawling.
 """
@@ -152,6 +152,12 @@ class Edition:
     #: takes them: they cost one request each and `raw/` is where the answer
     #: to "could we have?" lives (docs/link-surface.md).
     extra: tuple[str, ...] = ()
+    #: The page carrying this edition's abbreviations table, if it prints one.
+    #: Two of the eight do, and it is front matter in both -- so it is named
+    #: here rather than reached through `page_re`, and it is read by
+    #: `SIGLA_READERS[family]` rather than by the body parser. See the
+    #: "abbreviations table" section for why the two tables are not one.
+    sigla: str | None = None
 
 
 #: EVERY edition of the 1997 Catechism vatican.va publishes, keyed by OUR
@@ -208,13 +214,11 @@ EDITIONS = {
         toc=EN_TOC_HREF,
         family="intratext",
         page_re=r"^__P\w+\.HTM$",
-        # "LISTE DES SIGLES" -- the abbreviations table, and the second copy
-        # of it this crawl turned up (Latin serves one as `abbrev_lt.htm`).
-        # It is the front matter this scraper has emitted an empty
-        # `abbreviations.json` for since the beginning, and it is now in
-        # `raw/` in two languages: still unparsed, but a re-parse away rather
-        # than another crawl (docs/link-surface.md).
+        # "LISTE DES SIGLES" -- the abbreviations table, and one of the two
+        # this crawl turned up (Latin serves the other as `abbrev_lt.htm`).
+        # `front` keeps it out of the numbered text; `sigla` is what reads it.
         front=("__P1.HTM",),
+        sigla="__P1.HTM",
     ),
     "it": Edition(
         base="https://www.vatican.va/archive/catechism_it/",
@@ -228,11 +232,12 @@ EDITIONS = {
         toc="index_lt.htm",
         family="cms",
         page_re=r"^(prologue|p\d[a-z0-9]*)_lt\.htm$",
-        # `abbrev_lt.htm` is the abbreviations table -- the one thing the EN
-        # and PT mirrors omit and this scraper has emitted as an empty
-        # `abbreviations.json` since the beginning. Captured here; still
-        # unparsed, but now a re-parse away rather than another crawl.
+        # `abbrev_lt.htm` is the abbreviations table -- the fuller of the two
+        # the corpus has (the French one is documents only; this one adds the
+        # bibliographic sigla and all 73 Scripture books). `extra` is what
+        # captures it, `sigla` what reads it.
         extra=("lettera-apost_lt.htm", "aposcons_lt.htm", "abbrev_lt.htm"),
+        sigla="abbrev_lt.htm",
     ),
     "mg": Edition(
         base="https://www.vatican.va/archive/ccc_madagascar/documents/",
@@ -764,8 +769,12 @@ def find_paragraph_number_correction(
 #: not in raw/ccc-en/ under any spelling. It behaves like `citation_text`
 #: (its `from` is distinctive prose) and files a `page` anyway, because one
 #: is known and a locator that can be checked should be.
+#: `abbreviation_html` is the same mechanism aimed at the front matter: the
+#: two editions that print an abbreviations table print misprints in it, and
+#: the page it lives on is not one the body loop ever visits, so its
+#: corrections are applied where `run_scrape` reads it.
 _PRE_PARSE_CORRECTION_FIELDS = frozenset(
-    {"citation_text", "heading_html", "paragraph_html"}
+    {"citation_text", "heading_html", "paragraph_html", "abbreviation_html"}
 )
 
 
@@ -1177,6 +1186,10 @@ class ScrapeState:
         self.anomalies: list[str] = []
         self.orphan_content: list[str] = []
         self.fetch_failures: list[str] = []
+        #: This edition's abbreviations table, in source order. Empty for the
+        #: six mirrors that print none -- see the "abbreviations table"
+        #: section.
+        self.abbreviations: list[dict] = []
         # The footnote table for whichever page is currently being processed.
         # A paragraph never spans two pages (verified across every mirror
         # inspected), so it's always safe to resolve citations against
@@ -2328,6 +2341,193 @@ def test_cms_note_run_is_answerable_to_the_page_markers() -> None:
 
 
 # --------------------------------------------------------------------------
+# The abbreviations table
+# --------------------------------------------------------------------------
+
+#: TWO EDITIONS PRINT ONE, AND THEY ARE NOT THE SAME TABLE.
+#:
+#: `abbreviations.json` shipped as `[]` from the first ingestion because
+#: neither the English nor the Portuguese mirror carries the Catechism's
+#: front matter -- both open at the Prologue. Two of the six editions added
+#: on 2026-08-26 do carry it, and reading them settled the schema question
+#: `docs/corpus-schema.md` had left open ("one shared table with per-language
+#: expansions, or one per edition?") in favour of per-edition, on stronger
+#: evidence than the one that question anticipated:
+#:
+#:   - **French** (`__P1.HTM`, "LISTE DES SIGLES") lists 58 magisterial
+#:     documents and liturgical books -- LG, GS, DV, MR, OICA.
+#:   - **Latin** (`abbrev_lt.htm`) lists 46 bibliographic series and editorial
+#:     abbreviations -- PL, PG, CSEL, `q` for *quaestio* -- and then 73
+#:     Scripture books under its own two testament headings.
+#:
+#: Their overlap is eight abbreviations, and on two of those eight the
+#: editions disagree about what the letters mean: `SC` is *Sacrosanctum
+#: concilium* in the French table and *Sources chrétiennes* in the Latin one,
+#: `CA` is *Centesimus annus* against *Corpus apologetarum*. Both readings are
+#: right for their own edition's references -- the Latin text's 118 `SC`
+#: citations are volume-and-page ("SC 211, 392 (PG 7, 944)"), not conciliar
+#: sections. A single shared table could not be built without overruling one
+#: edition about its own apparatus, which is the same reason
+#: `site/src/lib/refs-grammar.ts` keeps EN and PT sigla apart. So each edition
+#: gets the table its own source prints, and the six that print none keep the
+#: empty array, which is what their mirrors say.
+#:
+#: `abbr` is not unique within an edition either: the Latin table gives `Act`
+#: twice, as *Actio* among the sigla and as *Actus Apostolorum* among the New
+#: Testament books. Hence a list in source order rather than a mapping, and
+#: hence `kind`.
+
+#: `kind` is the distinction the SOURCE draws, and it draws only one: Latin
+#: separates Scripture from everything else with a heading, French has a
+#: single list. `docs/corpus-schema.md` originally proposed "scripture" |
+#: "document" for this; "document" would be a false claim about most of the
+#: Latin general list, where `q` is *quaestio* and `PL` is a Migne series.
+#: `section` keeps the source's own heading verbatim, so a consumer that
+#: wants a finer grouping can regroup without this file having guessed one.
+_SIGLA_SCRIPTURE_MARKER = "ABBREVIATIONES PRO SACRA SCRIPTURA"
+
+#: The Latin page sets its headings, and only its headings, in `size="4"` or
+#: `size="5"`; every table cell is `size="3"` or unstyled. Section membership
+#: is then "the last heading before this row", which is also how the page
+#: reads.
+_LA_SIGLA_HEADING_RE = re.compile(
+    r'<font[^>]*\bsize="[45]"[^>]*>(.*?)</font>', re.DOTALL | re.IGNORECASE
+)
+#: INNERMOST rows and cells: the content may hold no further opening tag of
+#: its own kind. The three real tables are nested inside the CMS shell's
+#: layout table, and a plain non-greedy `<tr>(.*?)</tr>` matches the LAYOUT
+#: row first, running from its opening tag to the first inner `</tr>` -- so
+#: the outer cell and the first real cell read as one two-cell row ("SIGLA
+#: AAS" | "Acta Apostolicae Sedis"), and `finditer` then resumes past the
+#: real row it swallowed. The cell count alone does not catch that, because
+#: the misread row has two cells.
+_TR_RE = re.compile(r"<tr[^>]*>((?:(?!<tr[^>]*>).)*?)</tr>", re.DOTALL | re.IGNORECASE)
+_TD_RE = re.compile(r"<td[^>]*>((?:(?!<td[^>]*>).)*?)</td>", re.DOTALL | re.IGNORECASE)
+
+
+def parse_sigla_cms(html_text: str) -> list[dict]:
+    """The Latin mirror's `abbrev_lt.htm`: three tables under three headings.
+
+    Innermost two-cell rows only. The page nests its three real tables inside
+    the CMS shell's layout table, whose own rows carry one cell or six -- so
+    the cell count discriminates once the nesting does, and no assumption is
+    made about tag balance that this old markup would have to honour.
+    """
+    headings = [
+        (m.start(), strip_tags(m.group(1)))
+        for m in _LA_SIGLA_HEADING_RE.finditer(html_text)
+    ]
+    headings = [(pos, title) for pos, title in headings if title]
+    out: list[dict] = []
+    for row in _TR_RE.finditer(html_text):
+        cells = _TD_RE.findall(row.group(1))
+        if len(cells) != 2:
+            continue
+        abbr, expansion = strip_tags(cells[0]), strip_tags(cells[1])
+        if not abbr or not expansion:
+            continue
+        before = [t for pos, t in headings if pos < row.start()]
+        section = before[-1] if before else ""
+        scripture = _SIGLA_SCRIPTURE_MARKER in before
+        out.append(
+            {
+                "abbr": abbr,
+                "expansion": expansion,
+                "kind": "scripture" if scripture else "general",
+                "section": section,
+            }
+        )
+    return out
+
+
+_P_BLOCK_RE = re.compile(r"<p[^>]*>(.*?)</p>", re.DOTALL | re.IGNORECASE)
+_BR_RE = re.compile(r"<br[^>]*>", re.IGNORECASE)
+
+
+def parse_sigla_intratext(html_text: str) -> list[dict]:
+    """The French mirror's `__P1.HTM`: one paragraph of `<br>`-separated rows.
+
+    The abbreviation and its expansion are separated by nothing but a space,
+    so where one ends is read the way the page itself reads: an abbreviation
+    is the run of leading dot-terminated tokens ("Catech. R.", "off. lect."),
+    or the first token alone when none of them is dotted ("AA", "DeV"). All
+    58 rows split correctly under that rule; the failure it could have is an
+    expansion whose first word is abbreviated, which this page has none of.
+    """
+    blocks = _P_BLOCK_RE.findall(html_text)
+    if not blocks:
+        return []
+    # The list is one <p> and the page's other paragraphs are the heading and
+    # an empty one, so "the block with the most rows" needs no French in it.
+    body = max(blocks, key=lambda b: len(_BR_RE.findall(b)))
+    out: list[dict] = []
+    for row in _BR_RE.split(body):
+        text = strip_tags(row)
+        if not text:
+            continue
+        tokens = text.split(" ")
+        n = 0
+        while n < len(tokens) - 1 and tokens[n].endswith("."):
+            n += 1
+        if n == 0:
+            n = 1
+        abbr, expansion = " ".join(tokens[:n]), " ".join(tokens[n:])
+        if not expansion:
+            continue
+        out.append(
+            {
+                "abbr": abbr,
+                "expansion": expansion,
+                "kind": "general",
+                "section": "LISTE DES SIGLES",
+            }
+        )
+    return out
+
+
+SIGLA_READERS = {"intratext": parse_sigla_intratext, "cms": parse_sigla_cms}
+
+
+def test_sigla_cms_reads_a_two_cell_row_and_its_section() -> None:
+    # The layout table WRAPS the heading and the real table, which is the
+    # shape that made a plain non-greedy row match read "layout SIGLA q" as
+    # one row and drop the real one. See `_TR_RE`.
+    page = (
+        '<table><tr><td colspan="6">layout'
+        '<p><b><font size="5">SIGLA</font></b></p>'
+        '<table><tr><td width="18%">q</td><td width="82%">quaestio</td></tr></table>'
+        "</td></tr></table>"
+        f'<p><b><font size="5">{_SIGLA_SCRIPTURE_MARKER}</font></b></p>'
+        '<p><font size="4">VETUS TESTAMENTUM</font></p>'
+        '<table><tr><td width="18%">Gn</td>'
+        '<td width="82%"><i>Liber Genesis</i> </td></tr></table>'
+    )
+    assert parse_sigla_cms(page) == [
+        {"abbr": "q", "expansion": "quaestio", "kind": "general", "section": "SIGLA"},
+        {
+            "abbr": "Gn",
+            "expansion": "Liber Genesis",
+            "kind": "scripture",
+            "section": "VETUS TESTAMENTUM",
+        },
+    ]
+
+
+def test_sigla_intratext_splits_a_dotted_abbreviation_from_its_expansion() -> None:
+    page = (
+        "<p><b>LISTE DES SIGLES</b></p>"
+        "<p>AA\nApostolicam actuositatem<br>"
+        "Catech. R. Catechismus Romanus<br>"
+        "off. lect. office des lectures</p>"
+    )
+    assert [(e["abbr"], e["expansion"]) for e in parse_sigla_intratext(page)] == [
+        ("AA", "Apostolicam actuositatem"),
+        ("Catech. R.", "Catechismus Romanus"),
+        ("off. lect.", "office des lectures"),
+    ]
+
+
+# --------------------------------------------------------------------------
 # Structural labels, per edition
 # --------------------------------------------------------------------------
 
@@ -2839,6 +3039,27 @@ def run_scrape(
         state.finalize_open_paragraph()
         # close remaining open structure nodes at end of chunk
         state.stack = []
+
+    sigla_page = EDITIONS[lang].sigla
+    if sigla_page is not None:
+        # Front matter, on a page the loop above never visits (French keeps it
+        # in `front`, Latin in `extra`), so it is fetched and corrected here.
+        # Read on sampled runs too: it is one cached page, and leaving it out
+        # would make `--sample` report every correction filed against it as
+        # drift.
+        try:
+            page_html = fetcher.fetch_str(EDITIONS[lang].base + sigla_page, sigla_page)
+        except RuntimeError as exc:
+            state.fetch_failures.append(f"{sigla_page}: {exc}")
+        else:
+            page_html = apply_raw_text_corrections(
+                page_html,
+                sigla_page,
+                state.corrections,
+                state.corrections_applied,
+                state.corrections_seen,
+            )
+            state.abbreviations = SIGLA_READERS[cfg["family"]](page_html)
     return state, fetched_pages, fetcher
 
 
@@ -3088,6 +3309,22 @@ def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[st
         # ancestors they declare would every one of them read as missing.
         problems.extend(check_declared_structure(state))
 
+    # An edition that prints an abbreviations table must still be producing
+    # one. Nothing else would notice it stopping: the file is optional by
+    # design (six editions ship it empty), so a reader that quietly matched
+    # nothing after a markup change would read as one more mirror without
+    # front matter.
+    if EDITIONS[lang].sigla is not None and not state.abbreviations:
+        problems.append(
+            f"{EDITIONS[lang].sigla} parsed to no abbreviations, but this edition "
+            "prints a table"
+        )
+    for entry in state.abbreviations:
+        if not entry["abbr"] or not entry["expansion"]:
+            problems.append(f"abbreviation entry with an empty side: {entry}")
+        if "<" in entry["expansion"] or ">" in entry["expansion"]:
+            problems.append(f"leftover markup in abbreviation {entry['abbr']!r}")
+
     return (len(problems) == 0), problems
 
 
@@ -3122,10 +3359,18 @@ def build_manifest(
             "paragraphs pending a better source."
         ),
         (
-            "The CCC's own front-matter abbreviations table (LG, GS, DS, CIC, ...) was not "
-            "found in either archive mirror (both start directly at the Prologue); "
-            "abbreviations.json is empty pending a decision on sourcing it (candidate: the "
-            "separate Compendium document, a different LEV publication, not yet in scope)."
+            f"abbreviations.json holds {len(state.abbreviations)} entries: this edition's "
+            "own front-matter table, verbatim and in source order, or nothing where the "
+            "mirror prints none. Six of the eight do print none -- they open at the "
+            "Prologue -- and the two that print one print DIFFERENT tables, so this file "
+            "is deliberately per-edition rather than one shared table: French lists 58 "
+            "magisterial documents and liturgical books, Latin 46 bibliographic and "
+            "editorial sigla plus 73 Scripture books, and where they overlap they "
+            "disagree ('SC' is Sacrosanctum concilium in French and Sources chretiennes "
+            "in Latin, which is what this edition's own references mean by it). `abbr` is "
+            "therefore not unique within an edition either (Latin gives 'Act' as both "
+            "Actio and Actus Apostolorum), and `kind` is the only division either source "
+            "itself draws: scripture, or general."
         ),
         (
             "Inline italics (titles, Latin terms) are not captured in v1 -- recoverable "
@@ -3271,7 +3516,7 @@ def write_outputs(
             "manifest.json": manifest,
             "structure.json": structure,
             "paragraphs.json": paragraphs,
-            "abbreviations.json": [],
+            "abbreviations.json": state.abbreviations,
             "corrections-applied.json": corrections_receipt(
                 LANG_CONFIG[lang]["work_id"],
                 state.corrections_applied,
@@ -3307,6 +3552,13 @@ def print_summary(lang: str, state: ScrapeState, ok: bool, problems: list[str]) 
     print(
         "paragraphs with marginal 'related' refs: 0 (apparatus absent from source; see manifest notes)"
     )
+    if state.abbreviations:
+        by_kind: dict[str, int] = {}
+        for entry in state.abbreviations:
+            by_kind[entry["kind"]] = by_kind.get(entry["kind"], 0) + 1
+        print(f"abbreviations table: {len(state.abbreviations)} entries {by_kind}")
+    else:
+        print("abbreviations table: none (this mirror prints no front matter)")
     print(f"source gaps recorded: {state.gaps}")
     print(f"dropped mini-headers: {len(state.dropped)}")
     if state.display_matter:

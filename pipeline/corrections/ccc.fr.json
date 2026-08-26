@@ -52,5 +52,47 @@
     "reason": "Part Two, Section One's Chapter One is not printed as a heading block on this page -- it goes straight from the section to Article 1, so the chapter's articles attach to the section and the chapter does not exist in the tree. The identical omission is present in the English mirror and is corrected there the same way (ccc.en-p2s1-missing-chapter-one); this is the same defect in the same place in a second edition of the same work, which is what makes it the mirror's rather than a translator's.",
     "evidence": "raw HTML corpus/raw/ccc-fr/__P2Q.HTM: the body opens '<hr size=1 noshade><b><p>Article 1</b></p>' with no chapter heading before it. The page's own <meta name=\"part\"> breadcrumb -- which the mirror generates from its heading blocks -- reads '... > PREMIERE SECTION L’ÉCONOMIE SACRAMENTELLE > CHAPITRE PREMIER LE MYSTERE PASCAL DANS LE TEMPS DE ÉGLISE > Article 1 ...', i.e. the mirror knows the chapter is there and declares it, and only the printed block is missing. The title is taken from that breadcrumb, with the elided article restored (\"DE L’ÉGLISE\"): the breadcrumb's own entity-escaping has dropped it, and the six other editions all print the definite article. corpus/works/ccc.pt, ccc.de, ccc.es, ccc.it, ccc.la and ccc.mg each carry this chapter at paragraphs 1076-1209.",
     "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.fr-sigles-gravissimum-educationis",
+    "locator": {
+      "page": "__P1.HTM",
+      "abbr": "GE",
+      "structural": "abbreviation"
+    },
+    "field": "abbreviation_html",
+    "from": "GB Gravissimum educationis",
+    "to": "GE Gravissimum educationis",
+    "reason": "The abbreviation itself is misprinted: the sigla list gives 'GB' for Gravissimum educationis, where every other row in the table forms the siglum from the initials of the document's incipit, and this is the only row whose letters do not match its own expansion. Filed because the defect is in the key rather than the gloss: an entry filed under GB is unreachable from anything the text prints, and the three references the text does print are left with no expansion.",
+    "evidence": "raw HTML corpus/raw/ccc-fr/__P1.HTM: 'GB Gravissimum educationis<br>', sole occurrence. The parsed edition's own body text uses 'GE' three times and 'GB' zero times -- 'les premiers et les principaux educateurs de leurs enfants (cf. GE 3)' (ccc.fr paragraph 2223), 'il est impossible de les remplacer\" (GE 3)' (§1653) -- counted over all 2,865 paragraphs.",
+    "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.fr-sigles-codex-iuris-canonici",
+    "locator": {
+      "page": "__P1.HTM",
+      "abbr": "CIC",
+      "structural": "abbreviation"
+    },
+    "field": "abbreviation_html",
+    "from": "CJC Codex Iuris Canonici",
+    "to": "CIC Codex Iuris Canonici",
+    "reason": "Same defect as the row above, in the same key position: the siglum is printed with a J where its own expansion has an I. The row glosses 'Codex Iuris Canonici', which abbreviates to CIC, and CIC is what the edition cites the Code by throughout. Read as printed, the single most-used non-scriptural siglum in this edition resolves to nothing.",
+    "evidence": "raw HTML corpus/raw/ccc-fr/__P1.HTM: 'CJC Codex Iuris Canonici<br>', sole occurrence. The parsed edition's own body text uses 'CIC' 138 times ('cf. CIC, can. 748, § 2') and 'CJC' zero times, counted over all 2,865 paragraphs. The Latin edition's table gives the same siglum as CIC.",
+    "added": "2026-08-26"
+  },
+  {
+    "id": "ccc.fr-sigles-ccceo-codex",
+    "locator": {
+      "page": "__P1.HTM",
+      "abbr": "CCEO",
+      "structural": "abbreviation"
+    },
+    "field": "abbreviation_html",
+    "from": "CCEO Corpus Canonum Ecclesiarum Orientalium",
+    "to": "CCEO Codex Canonum Ecclesiarum Orientalium",
+    "reason": "The expansion misnames the work: the 1990 code promulgated by Sacri canones is the Codex Canonum Ecclesiarum Orientalium, and 'Corpus' is not one of its titles. The siglum itself is right and in use. A one-word misprint of a fixed proper title rather than a wording judgement -- the correct value is not inferred from context but printed in another edition of this same work.",
+    "evidence": "raw HTML corpus/raw/ccc-fr/__P1.HTM: 'CCEO Corpus Canonum Ecclesiarum Orientalium<br>', sole occurrence. The Latin edition's own sigla table (corpus/raw/ccc-la/abbrev_lt.htm) prints 'CCEO | Codex Canonum Ecclesiarum Orientalium'. The French text cites the code by siglum 26 times.",
+    "added": "2026-08-26"
   }
 ]

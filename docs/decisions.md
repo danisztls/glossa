@@ -267,6 +267,19 @@ psalms. Splitting moved existence and adjacency for the Compendium up to the ind
 too — they were answered by scanning the whole-language file every reader had already
 fetched, which chunked would have meant fetching every chunk to learn a number is absent.
 
+**A reference table belongs to the edition that printed it, not to the work.** The
+Catechism's front-matter sigla are the corpus's one case of the same key meaning two
+different things in two editions of one work, and it took reading both to see it: French
+prints `SC` for _Sacrosanctum concilium_ and Latin prints `SC` for _Sources chrétiennes_,
+`CA` for _Centesimus annus_ against _Corpus apologetarum_ — and each is right about its
+own apparatus, since the Latin text's 118 `SC` references are volume-and-page. The two
+tables are not translations of each other either: one lists documents, the other
+bibliographic sigla plus all 73 Scripture books. So `abbreviations.json` is per-edition,
+`abbr` is not a key even within one edition, and the six mirrors that print no table keep
+an empty array rather than borrowing a neighbour's. The site's grammar had reached the
+same split for EN and PT from the citations alone, which is the corroboration, not the
+cause (2026-08-26).
+
 **Inline emphasis is not a word boundary.** A tag becomes a space only where it is
 block-level; an emphasis tag leaves nothing behind. The substituted space was hiding real
 source defects behind a code rule, and stripping whitespace afterwards cannot work
