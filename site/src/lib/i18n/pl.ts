@@ -60,8 +60,6 @@ export const pl: Dictionary = {
 	'bible.pickBook': 'Księgi i rozdziały',
 	'bible.landing.title': 'Biblia',
 	'bible.landing.tagline': 'Czytaj całą Biblię, księga po księdze, rozdział po rozdziale.',
-	'bible.landing.continue': 'Wróć tam, gdzie skończyłeś',
-	'bible.landing.start': 'Zacznij czytać',
 	'bible.landing.random': 'Szczęśliwy traf',
 	'bible.landing.books': 'Księgi',
 	'bible.chapterUnavailable': 'Niedostępne w tym wydaniu',

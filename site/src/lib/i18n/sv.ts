@@ -60,8 +60,6 @@ export const sv: Dictionary = {
 	'bible.pickBook': 'Böcker och kapitel',
 	'bible.landing.title': 'Bibeln',
 	'bible.landing.tagline': 'Läs hela Bibeln, bok för bok, kapitel för kapitel.',
-	'bible.landing.continue': 'Fortsätt där du slutade',
-	'bible.landing.start': 'Börja läsa',
 	'bible.landing.random': 'Jag har tur',
 	'bible.landing.books': 'Böcker',
 	'bible.chapterUnavailable': 'Inte tillgängligt i den här utgåvan',

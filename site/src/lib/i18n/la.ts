@@ -88,8 +88,6 @@ export const la: Dictionary = {
 	'bible.pickBook': 'Libri et capita',
 	'bible.landing.title': 'Sacra Scriptura',
 	'bible.landing.tagline': 'Lege totam Scripturam, librum post librum, caput post caput.',
-	'bible.landing.continue': 'Perge ubi desiisti',
-	'bible.landing.start': 'Incipe legere',
 	'bible.landing.random': 'Fortunam tento',
 	'bible.landing.books': 'Libri',
 	'bible.chapterUnavailable': 'In hac editione non exstat',

@@ -60,8 +60,6 @@ export const ro: Dictionary = {
 	'bible.pickBook': 'Cărți și capitole',
 	'bible.landing.title': 'Biblia',
 	'bible.landing.tagline': 'Citiți întreaga Biblie, carte cu carte, capitol cu capitol.',
-	'bible.landing.continue': 'Continuați de unde ați rămas',
-	'bible.landing.start': 'Începeți lectura',
 	'bible.landing.random': 'Mă simt norocos',
 	'bible.landing.books': 'Cărți',
 	'bible.chapterUnavailable': 'Indisponibil în această ediție',

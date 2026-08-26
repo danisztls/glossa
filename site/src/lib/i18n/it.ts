@@ -60,8 +60,6 @@ export const it: Dictionary = {
 	'bible.pickBook': 'Libri e capitoli',
 	'bible.landing.title': 'La Bibbia',
 	'bible.landing.tagline': 'Leggi tutta la Bibbia, libro per libro, capitolo per capitolo.',
-	'bible.landing.continue': 'Riprendi da dove eri',
-	'bible.landing.start': 'Inizia a leggere',
 	'bible.landing.random': 'Mi sento fortunato',
 	'bible.landing.books': 'Libri',
 	'bible.chapterUnavailable': 'Non disponibile in questa edizione',

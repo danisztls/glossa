@@ -5,52 +5,35 @@
 	 * (see `$lib/content.svelte.ts`), same as any other stored-preference
 	 * read anywhere on the site now that `ssr = false` (`+layout.ts`) makes
 	 * every route client-rendered. Offers the reader's edition + its
-	 * copyright notice, a single entry point (continue reading if a
-	 * position is stored for this edition, else the edition's first
-	 * chapter — Genesis 1 for both v1 editions), and the canonical
-	 * book/chapter structure via `BookChapterPicker`.
+	 * copyright notice and the canonical book/chapter structure via
+	 * `BookChapterPicker`.
+	 *
+	 * IT OFFERS NO ENTRY POINT OF ITS OWN. A "continue where you left off"
+	 * link and a "start reading" link sat above the book list until
+	 * 2026-08-26. The first is the home page's job and the home page does it
+	 * better — one row per work type, so a reader's Bible, Catechism and
+	 * document positions are in one place rather than each behind its own
+	 * index. The second answered a question this page already answers
+	 * seventy-three times over, and answered it with Genesis 1, which is
+	 * where a reader who wants the beginning would look anyway.
 	 *
 	 * THE EDITION PICKER AND THE ROLL SIT IN `ReadingBar`, the same sticky bar
 	 * the scripture reader carries, rather than in this page's own body. Both
 	 * belong to the whole page and not to any one line of it: which edition
 	 * this is decides the book list beneath as much as it decides a chapter's
-	 * text, and the roll opens a verse from that same edition. The dice used
-	 * to sit inline at the end of the entry-point sentence, which put it out
-	 * of reach the moment a reader scrolled into the seventy-three books —
-	 * exactly where an undecided reader is.
+	 * text, and the roll opens a verse from that same edition. The roll is now
+	 * the only entry point here that needs no decision, which is the other
+	 * reason it belongs in a bar that stays put while the book list scrolls.
 	 */
 	import { content } from '$lib/content.svelte';
-	import { hrefFor } from '$lib/address';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
-	import { getWork, listBooks } from '$lib/corpus';
-	import { getPosition, type ReadingPosition } from '$lib/reading-position';
+	import { getWork } from '$lib/corpus';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	const workId = $derived(content.workIdFor('bible'));
 	const work = $derived(workId ? getWork(workId) : undefined);
-
-	// The reading position is read on mount, not eagerly, because localStorage
-	// doesn't exist outside a browser (see reading-position.ts). That guarded
-	// against a prerendering throw; since `ssr = false` (`+layout.ts`,
-	// docs/decisions.md §The site) no route ever runs server-side at all, so
-	// the guard is now belt-and-braces rather than load-bearing — kept
-	// because it still states the actual requirement, and matches the
-	// pattern the home page (`routes/+page.svelte`) already uses.
-	let position: ReadingPosition | undefined = $state(undefined);
-
-	$effect(() => {
-		position = workId ? getPosition(workId) : undefined;
-	});
-
-	const firstChapterHref = $derived.by(() => {
-		if (!workId) return undefined;
-		const firstBook = listBooks(workId)[0];
-		if (!firstBook) return undefined;
-		const firstChapterN = firstBook.chapters[0]?.n ?? 1;
-		return hrefFor({ kind: 'bible', osis: firstBook.osis, chapter: firstChapterN });
-	});
 </script>
 
 <svelte:head>
@@ -71,15 +54,6 @@
 		<p class="edition-label">{work.title}</p>
 		<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
 	{/if}
-
-	<p class="entry-point">
-		{#if position}
-			<a href={position.href} class="entry-link">{t('bible.landing.continue')}</a>
-			<span class="entry-detail">— {position.label}</span>
-		{:else if firstChapterHref}
-			<a href={firstChapterHref} class="entry-link">{t('bible.landing.start')}</a>
-		{/if}
-	</p>
 
 	{#if workId}
 		<section aria-labelledby="books-heading">
@@ -103,21 +77,10 @@
 		letter-spacing: 0.04em;
 	}
 
+	/* The book list follows directly now that the entry-point links are gone;
+	   the bottom margin the removed paragraph carried lives here instead. */
 	.copyright-notice {
-		margin: 0.15rem 0 0;
-	}
-
-	.entry-point {
-		margin: 1.25rem 0 2rem;
-	}
-
-	.entry-link {
-		font-weight: 600;
-	}
-
-	.entry-detail {
-		color: var(--color-text-muted);
-		font-size: 0.9rem;
+		margin: 0.15rem 0 2rem;
 	}
 
 	h2 {
