@@ -21,6 +21,36 @@
 	"name": "glossa",
 	"compatibility_date": "2026-08-16",
 
+	// OFF, stated explicitly rather than left to a default or a dashboard
+	// toggle, because Workers Cache is the one platform feature here that looks
+	// like a fix for this site's cost model and is in fact the same outage
+	// `run_worker_first` already caused once.
+	//
+	// The pitch is exact: "Cloudflare checks the cache before running your
+	// Worker", so a crawler re-fetching the same ~5,800 canonical addresses
+	// would execute `src/worker.ts` once per address instead of once per
+	// request. The billing note underneath it is the part that matters
+	// (workers/cache, Pricing):
+	//
+	//   "When caching is enabled, every request to your Worker is charged at
+	//    the standard Workers request rate, including requests that are
+	//    normally free: static asset requests."
+	//
+	// A cache HIT is billed at the standard rate even though the Worker does
+	// not run, and — decisively — every corpus chunk, font and script under the
+	// `!` negations below stops being free. That is precisely the ~2,240
+	// invocations per cold visitor that the negation list was written to
+	// eliminate, reintroduced through a different door and with a cache in
+	// front of it. There is nothing to gain in exchange: this Worker does no
+	// work worth caching. It reads a manifest once per isolate and hands the
+	// request back to the asset binding.
+	//
+	// `enabled: false` is versioned with the deploy (workers/cache,
+	// Configuration §Versioned deployments), so it also survives a rollback and
+	// cannot be re-enabled behind the repo's back without a deploy that shows
+	// up in this file's history.
+	"cache": { "enabled": false },
+
 	// The site answers on one hostname, and it is this one. `workers_dev`
 	// defaults to true, which would keep glossa.me-f65.workers.dev serving the
 	// same corpus from a second address -- harmless while the site asked not to
