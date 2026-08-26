@@ -247,6 +247,26 @@ numberless row is a hole in all four. An edition that numbers nothing is an
 `UNNUMBERED EDITION` — valid and published, honest about lacking a citable address —
 not a parser defeat.
 
+**Every content split is a fixed stride, and a size ceiling fails the build.** Chunk
+membership is a pure function of the unit's own number (`*ChunkStartFor`), so no boundary
+table has to ship or stay in sync. The strides differ because the units do — 100 CCC
+paragraphs, 100 Compendium questions, 50 document sections, 20 Bible chapters, one file
+per Summa question. What the strides are matters less than the ceiling: every chunking
+regression this project has had was one size premise recorded in a comment, correct when
+written, never re-measured. Documents were whole-file on a "~200 KB worst case" note until
+the real worst case reached 827 KB; the Compendium was whole-file on a "~90 KB for both
+languages" note until it had ten editions at 290 KB each. Both were found months late by
+someone happening to look. `CONTENT_FILE_CEILING_BYTES` turns that class into a failed
+sync. Raising it is legitimate — a single Summa question cannot be split — but it has to
+be a decision someone records.
+
+**The reader's unit, not the volume's, decides the chunk.** A Bible book matched the print
+volume's own granularity and was the wrong unit anyway: `/scriptura/{osis}/{chapter}` shows
+one chapter and `getChapter` is that tier's only reader, so opening Ps 23 fetched all 150
+psalms. Splitting moved existence and adjacency for the Compendium up to the index tier
+too — they were answered by scanning the whole-language file every reader had already
+fetched, which chunked would have meant fetching every chunk to learn a number is absent.
+
 **Inline emphasis is not a word boundary.** A tag becomes a space only where it is
 block-level; an emphasis tag leaves nothing behind. The substituted space was hiding real
 source defects behind a code rule, and stripping whitespace afterwards cannot work
@@ -516,6 +536,45 @@ manifest checked at the edge, generated from the same indexes the client uses.
 **Offline is two cache tiers.** The content tier is unversioned and survives app updates
 the way a downloaded book should; the shell tier is versioned and swept on activate. No
 `skipWaiting()` — a reader mid-chapter should not have assets swapped under an open tab.
+Content-hashed data the app fetches on demand but that is not corpus text — the citation
+tables, the translated descriptions — is content tier too, and deliberately not in the
+install precache.
+
+**Not calling `skipWaiting()` obliges us to offer the update instead.** The browser's own
+rule for when a waiting worker takes over ("once every client on the old version is gone")
+is not something a reader can act on: a plain reload does not release the old worker, and
+an installed PWA can sit on a superseded version indefinitely. Since the corpus index
+ships inside the shell bundle, that is a stale table of contents, not merely stale code.
+The page watches for the waiting worker and offers a reload; nothing moves until the
+reader accepts. Announcing it requires an existing controller, or a first-time visitor is
+told a version they have never seen is out of date.
+
+**The background fill is per-language, ordered, and opt-in past the Catechism.** The
+corpus is 82.6 MB raw / ~26 MB gzipped across fourteen languages, and a reader speaks one
+or two of them. The worker plans waves over the reader's own language chain and takes only
+the three cheapest without being asked — the next chunk of what is open, the small whole
+works, the Catechism, together about 1.2 MB gzipped. Scripture, the Magisterium and the
+Summa are offered, not taken. It asked for everything, in every language, on every visit
+until 2026-08-25, gated only by `saveData`, which almost nobody sets.
+
+**The service worker's decisions live outside the service worker.** `service-worker.ts`
+cannot be imported by a test — it reads `$service-worker` at module scope and registers
+listeners on load — and every way it can be wrong is silent: a misclassified corpus file
+lands in the versioned cache, is wiped on the next deploy, and the reader re-downloads
+their library without an error anywhere. The classification, the routing table and the
+wave order are in `sw-policy.ts`; the cache operations take `caches` and `fetch` as
+arguments in `sw-cache.ts`. Same split, and same reason, as `route-manifest.ts` for the
+edge worker.
+
+**`run_worker_first` is a list of navigation patterns, never `true`.** As a boolean it
+routes every request through the edge worker, and every one of those is a billed Worker
+invocation — corpus chunks, JS, fonts, icons. `src/worker.ts` returns non-navigations on
+its first line, but the invocation is already spent: one cold visitor filling the offline
+library cost ~2,240 of the free plan's 100,000 per day, about fifty first-time readers.
+Past the limit `run_worker_first` answers 429 rather than falling back to the asset, so
+the whole site went dark until 00:00 UTC. Scoped, a cold visit costs one invocation and
+the failure degrades instead: negative patterns keep serving assets, and only fresh
+navigations 429.
 
 **Deploy guards measure the corpus, not the page count.** Preflight refuses a
 fixture-sized build, and refuses a build whose reference coverage fell more than 3% below

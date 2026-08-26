@@ -265,12 +265,21 @@ npm run deploy      # build -> preflight -> wrangler deploy
 - **Deploys are not sandboxed** — `wrangler` needs the Cloudflare API, which the
   sandbox blocks. Same for `git commit` (GPG).
 - **The file count is no longer the thing to watch.** Cloudflare still caps a
-  deployment at 20,000 files, but the SPA-shell build is **635 files / 56 MB**,
+  deployment at 20,000 files, but the SPA-shell build is **~2,345 files / 91 MB**,
   of which exactly two are HTML (`index.html` and the offline fallback) — down
   from ~5,700 when every unit had its own page (`docs/decisions.md`,
   2026-08-18). The bulk is now immutable, content-hashed corpus JSON, which
   Wrangler dedupes by content hash, so a redeploy that changes no corpus data
   uploads very little.
+- **What IS worth watching is `run_worker_first` in `wrangler.jsonc`.** It must
+  stay a list of navigation patterns with `!` negations for everything static.
+  As the boolean `true` it was until 2026-08-25, every request — every corpus
+  chunk, every font — is a billed Worker invocation, and past the free plan's
+  100,000/day the platform answers **429 instead of serving the asset**, so the
+  whole site goes dark until 00:00 UTC. A cold visitor filling the offline
+  library was ~2,240 invocations, i.e. about fifty readers a day. Anything new
+  added to `static/` still works if it is not negated there; it just silently
+  costs an invocation per request.
 - **Preflight checks the corpus, not the page count.** `preflight-deploy.mjs`
   reads `corpus-routes.json` and refuses a build reporting fewer than 100 works
   or 100 content assets — that is what catches a fixture-backed build. The old
