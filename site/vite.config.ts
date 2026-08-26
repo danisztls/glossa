@@ -22,6 +22,37 @@ export default defineConfig({
 	define: {
 		__CORPUS_DATA_DIR__: JSON.stringify(corpusDataDir)
 	},
+	build: {
+		/*
+		 * CORPUS DATA IS NEVER INLINED, whatever its size.
+		 *
+		 * `corpus-index.ts` globs the content tier with `query: '?url'` on the
+		 * premise that Vite hands back a URL and emits the file as a separate,
+		 * content-hashed, immutably-cached build asset. That premise is FALSE
+		 * below `assetsInlineLimit` (4 KB by default): Vite base64s the file
+		 * into a `data:` URI instead, and every layer downstream then quietly
+		 * does the wrong thing —
+		 *
+		 *   - the bytes land in the boot chunk every route `modulepreload`s,
+		 *     which is the exact cost the content tier exists to avoid;
+		 *   - `sw-policy.ts`'s `contentPath` cannot make a pathname out of a
+		 *     `data:` URI, so the file matches nothing in the partition and
+		 *     belongs to no download wave;
+		 *   - `fetch()`ing it works, so nothing errors.
+		 *
+		 * Found when the document outlines moved to the content tier
+		 * (2026-08-26): 354 files averaging 1.2 KB, of which Vite emitted 29
+		 * and inlined 325, and the boot chunk barely moved. 43 documents'
+		 * `appendix.json` had been silently inlined the same way since the
+		 * appendix tier shipped.
+		 *
+		 * `false` disables inlining for these paths; `undefined` leaves every
+		 * other asset — icons, fonts, the odd small SVG — on Vite's default,
+		 * where inlining is the right call.
+		 */
+		assetsInlineLimit: (filePath: string) =>
+			filePath.includes('/corpus-data/') ? false : undefined
+	},
 	plugins: [
 		sveltekit({
 			compilerOptions: {

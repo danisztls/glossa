@@ -195,6 +195,26 @@ Neither is a gap to be filled later. Both are properties of the sources, and
 oracle still runs over the parts both editions carry, and it is the check
 that found three articles whose body the English edition omits.
 
+## Corpus data must never be inlined into the bundle
+
+`corpus-index.ts` globs the content tier with `query: '?url'` on the premise
+that Vite hands back a URL and emits the file as a separate, content-hashed
+build asset. **Below `assetsInlineLimit` (4 KB by default) that premise is
+false**: Vite base64s the file into a `data:` URI instead, and nothing
+downstream notices. The bytes land in the boot chunk every route
+`modulepreload`s -- the exact cost the content tier exists to avoid --
+`sw-policy.ts`'s `contentPath` cannot make a pathname out of a `data:` URI so
+the file belongs to no download wave, and `fetch()`ing it still works, so
+nothing errors.
+
+`vite.config.ts` disables inlining for anything under `corpus-data/` and says
+so at length. It was found when the document outlines moved to the content tier
+(2026-08-26): 354 files averaging 1.2 KB, of which Vite emitted 29 and inlined
+325, and the boot chunk barely moved. 43 documents' `appendix.json` had been
+inlined the same way, unnoticed, since the appendix tier shipped. **If a new
+content kind is small, check `build/_app/immutable/assets/` actually contains
+it** rather than trusting the file count.
+
 ## Running the site
 
 **The site is one SPA shell, not a prerender** (`docs/decisions.md`,
@@ -265,7 +285,7 @@ npm run deploy      # build -> preflight -> wrangler deploy
 - **Deploys are not sandboxed** — `wrangler` needs the Cloudflare API, which the
   sandbox blocks. Same for `git commit` (GPG).
 - **The file count is no longer the thing to watch.** Cloudflare still caps a
-  deployment at 20,000 files, but the SPA-shell build is **~2,345 files / 91 MB**,
+  deployment at 20,000 files, but the SPA-shell build is **~2,730 files / 91 MB**,
   of which exactly two are HTML (`index.html` and the offline fallback) — down
   from ~5,700 when every unit had its own page (`docs/decisions.md`,
   2026-08-18). The bulk is now immutable, content-hashed corpus JSON, which

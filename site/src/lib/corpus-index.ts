@@ -2,13 +2,22 @@
  * The corpus boot index: every registry `corpus.ts`'s public API is backed
  * by, built once at module load and read synchronously ever after. This is
  * the "small index the app boots from" — work manifests, the canonical
- * Bible book/chapter *numbers* (never verse text), the CCC/Compendium/
- * Document TOC trees, CCC abbreviations, and the scripture cross-reference
- * table — never the heavy reading text itself (Bible chapters, CCC
- * paragraph prose, Compendium answers, document sections), which
- * `corpus.ts` fetches separately, on demand, per page (see that file's
- * docblock for why the split, and the two-tier `corpus-data/index/` vs
- * `corpus-data/content/` layout `scripts/sync-corpus.mjs` produces).
+ * Bible book/chapter *numbers* (never verse text), the CCC/Compendium TOC
+ * trees, CCC abbreviations, and the scripture cross-reference table — never
+ * the heavy reading text itself (Bible chapters, CCC paragraph prose,
+ * Compendium answers, document sections), which `corpus.ts` fetches
+ * separately, on demand, per page (see that file's docblock for why the
+ * split, and the two-tier `corpus-data/index/` vs `corpus-data/content/`
+ * layout `scripts/sync-corpus.mjs` produces).
+ *
+ * THE DOCUMENT TOC TREES ARE NO LONGER AMONG THEM. There are 354 document
+ * editions and a reader opens one, so their outlines went to the content tier
+ * on 2026-08-26 (`documentStructureLocation` below,
+ * `document-structures.svelte.ts` above it); what stays here of a document is
+ * its section NUMBERS, which is an existence question asked without a document
+ * in hand. The eager/lazy line in this file is that distinction and not size:
+ * a registry answering "does this address exist" boots with the app, a
+ * registry only the page already reading a work can want does not.
  *
  * Two sources, chosen the same way `corpus.ts` always has:
  *   - Real corpus: `import.meta.glob(..., { eager: true })` over
@@ -51,7 +60,6 @@ import type {
 	CccParagraph,
 	CompendiumQuestion,
 	StructureNode,
-	DocumentNode,
 	SummaNode,
 	SummaPart,
 	SummaQuestion,
@@ -151,8 +159,33 @@ function metaFromFullBook(book: BibleBook): BibleBookMeta {
 	};
 }
 
+/**
+ * A sorted run of positive integers as the index tier stores it: the bare
+ * COUNT when the run is exactly `1..n`, and the explicit array otherwise.
+ * `compactRun` in `scripts/sync-corpus.mjs` is the encoder and argues the
+ * trade; `expandRun` below is the only thing that reads this type, so nothing
+ * downstream ever sees the two shapes.
+ */
+export type CompactRun = number | number[];
+
+/**
+ * Decode a `CompactRun` back into the array the registries and every caller
+ * work in.
+ *
+ * Total, and deliberately so: an encoder that only ever emits the count for a
+ * gapless run means `expandRun(n)` reconstructs exactly what was encoded, and
+ * the three real gaps in the corpus today (Douay-Rheims Ps 115 and Ps 147,
+ * which begin at verses 10 and 12, and Wis 18, which skips 25) arrive as
+ * arrays and pass straight through. `0` is the empty run — an article-less
+ * Summa question — not a missing field.
+ */
+export function expandRun(run: CompactRun): number[] {
+	if (Array.isArray(run)) return run;
+	return Array.from({ length: run }, (_, i) => i + 1);
+}
+
 /** On-disk/wire shape of `bible-index.json`'s per-book entry: `verses` is a
- *  PLAIN number array, not `{ n }[]` — see `scripts/sync-corpus.mjs`'s
+ *  PLAIN number run, not `{ n }[]` — see `scripts/sync-corpus.mjs`'s
  *  comment on why (object-wrapping ~72,000 verse numbers was most of the
  *  client chunk's weight for zero benefit, since the wrapping only needs
  *  to exist in memory). Expanded to `BibleBookMeta` (which DOES use `{ n
@@ -162,7 +195,7 @@ interface BibleBookMetaCompact {
 	name: string;
 	abbrevs: string[];
 	order: number;
-	chapters: { n: number; verses: number[] }[];
+	chapters: { n: number; verses: CompactRun }[];
 }
 
 function expandBookMeta(compact: BibleBookMetaCompact): BibleBookMeta {
@@ -170,7 +203,7 @@ function expandBookMeta(compact: BibleBookMetaCompact): BibleBookMeta {
 		...compact,
 		chapters: compact.chapters.map((c) => ({
 			n: c.n,
-			verses: c.verses.map((n) => ({ n }))
+			verses: expandRun(c.verses).map((n) => ({ n }))
 		}))
 	};
 }
@@ -194,11 +227,11 @@ interface CccIndexFile {
 	[lang: string]: {
 		structure: CccNode[];
 		abbreviations: CccAbbreviation[];
-		paragraphNumbers: number[];
+		paragraphNumbers: CompactRun;
 	};
 }
 interface CompendiumIndexFile {
-	[lang: string]: { structure: StructureNode[]; questionNumbers: number[] };
+	[lang: string]: { structure: StructureNode[]; questionNumbers: CompactRun };
 }
 /**
  * Keyed by WORK ID (`vatii.lumen-gentium.en`), not by bare language like
@@ -209,8 +242,7 @@ interface CompendiumIndexFile {
  */
 interface DocumentIndexFile {
 	[workId: string]: {
-		structure: DocumentNode[];
-		sectionNumbers: number[];
+		sectionNumbers: CompactRun;
 		/** How many unnumbered units the work has, absent when none. */
 		appendixUnits?: number;
 	};
@@ -256,10 +288,16 @@ export interface SummaQuestionMeta {
 	/** Set only on the article-less questions (I q. 71, q. 72) -- see `SummaQuestion.divisions`. */
 	hasOwnDivisions?: boolean;
 }
+/** The wire form of `SummaQuestionMeta`: `articles` is a `CompactRun`, since
+ *  a question's articles are 1..n in all but nothing. Expanded once, below. */
+interface SummaQuestionMetaCompact extends Omit<SummaQuestionMeta, 'articles'> {
+	articles: CompactRun;
+}
+
 /** Keyed by bare LANG, matching `CccIndexFile`/`CompendiumIndexFile`: one
  *  canonical Summa per language, not N works sharing a type. */
 interface SummaIndexFile {
-	[lang: string]: { structure: SummaNode[]; questions: SummaQuestionMeta[] };
+	[lang: string]: { structure: SummaNode[]; questions: SummaQuestionMetaCompact[] };
 }
 const realIndexManifests = import.meta.glob('./corpus-data/index/manifests.json', {
 	eager: true,
@@ -468,7 +506,10 @@ export const cccAbbreviations: Record<string, CccAbbreviation[]> = USE_REAL_CORP
  *  docblock and corpus.ts's VITEST guard). */
 export const cccParagraphNumbers: Record<string, number[]> = USE_REAL_CORPUS
 	? Object.fromEntries(
-			Object.entries(single(realIndexCcc) ?? {}).map(([lang, v]) => [lang, v.paragraphNumbers])
+			Object.entries(single(realIndexCcc) ?? {}).map(([lang, v]) => [
+				lang,
+				expandRun(v.paragraphNumbers)
+			])
 		)
 	: {
 			en: (fixtureCccEnParagraphs as CccParagraph[]).map((p) => p.n).sort((a, b) => a - b),
@@ -489,7 +530,10 @@ export const summaStructures: Record<string, SummaNode[]> = USE_REAL_CORPUS
 /** Question existence/metadata per language -- see `SummaQuestionMeta`. */
 export const summaQuestionMetas: Record<string, SummaQuestionMeta[]> = USE_REAL_CORPUS
 	? Object.fromEntries(
-			Object.entries(single(realIndexSumma) ?? {}).map(([lang, v]) => [lang, v.questions])
+			Object.entries(single(realIndexSumma) ?? {}).map(([lang, v]) => [
+				lang,
+				v.questions.map((q) => ({ ...q, articles: expandRun(q.articles) }))
+			])
 		)
 	: Object.fromEntries(
 			Object.entries({
@@ -530,7 +574,7 @@ export const compendiumQuestionNumbers: Record<string, number[]> = USE_REAL_CORP
 	? Object.fromEntries(
 			Object.entries(single(realIndexCompendium) ?? {}).map(([lang, v]) => [
 				lang,
-				v.questionNumbers ?? []
+				expandRun(v.questionNumbers ?? 0)
 			])
 		)
 	: {
@@ -544,19 +588,6 @@ export const compendiumQuestionNumbers: Record<string, number[]> = USE_REAL_CORP
 				.map((q) => q.n)
 				.sort((a, b) => a - b)
 		};
-
-/**
- * Document structure trees, keyed by WORK ID (not language — see
- * `DocumentIndexFile`'s docblock). No fixture branch: documents have no
- * hand-authored fixtures yet (`corpus.ts`'s content-tier functions return
- * empty results under fixtures for the same reason — see that file's
- * "Documents" section), so this is `{}` under vitest/no-corpus.
- */
-export const documentStructures: Record<string, DocumentNode[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexDocuments) ?? {}).map(([workId, v]) => [workId, v.structure])
-		)
-	: {};
 
 /** How many unnumbered units each document work has. Absent from the map when
  *  it has none, which is the great majority. */
@@ -574,7 +605,7 @@ export const documentSectionNumbers: Record<string, number[]> = USE_REAL_CORPUS
 	? Object.fromEntries(
 			Object.entries(single(realIndexDocuments) ?? {}).map(([workId, v]) => [
 				workId,
-				v.sectionNumbers
+				expandRun(v.sectionNumbers)
 			])
 		)
 	: {};
@@ -792,6 +823,18 @@ const summaQuestionLocations: Record<string, Record<string, Record<number, Conte
 const bibleIntroLocations: Record<string, ContentLocation> = {};
 /** A document's unnumbered matter, keyed by work id. Absent for most works. */
 const documentAppendixLocations: Record<string, ContentLocation> = {};
+/**
+ * A document's OUTLINE, keyed by work id — content tier since 2026-08-26.
+ *
+ * It was a field of `document-index.json` and therefore eager in the boot
+ * chunk: 354 editions, 414 KB of tree, ~82 KB brotli, `modulepreload`ed by
+ * every route so one of them could be read. `document-structures.svelte.ts`
+ * fetches one on demand; see `sync-corpus.mjs`'s document branch for why the
+ * content tier rather than a lazy index file (the service worker's download
+ * waves are over the content inventory, and an offline library without
+ * headings is not a library).
+ */
+const documentStructureLocations: Record<string, ContentLocation> = {};
 for (const [globPath, url] of Object.entries(realContentUrls)) {
 	const relPath = contentKey(globPath);
 	const location: ContentLocation = { relPath, url };
@@ -822,6 +865,11 @@ for (const [globPath, url] of Object.entries(realContentUrls)) {
 	const appendixMatch = relPath.match(/^content\/([^/]+)\/appendix\.json$/);
 	if (appendixMatch) {
 		documentAppendixLocations[appendixMatch[1]] = location;
+		continue;
+	}
+	const structureMatch = relPath.match(/^content\/([^/]+)\/structure\.json$/);
+	if (structureMatch) {
+		documentStructureLocations[structureMatch[1]] = location;
 		continue;
 	}
 	const introMatch = relPath.match(/^content\/([^/]+)\/intros\.json$/);
@@ -904,6 +952,13 @@ export function documentAppendixUnits(workId: string): number {
 /** A document's unnumbered matter, when it has any. */
 export function documentAppendixLocation(workId: string): ContentLocation | undefined {
 	return documentAppendixLocations[workId];
+}
+
+/** A document's outline. `undefined` means the work was never built, not that
+ *  it has no headings — the sync writes the file even when the tree is empty,
+ *  precisely so the two stay distinguishable. */
+export function documentStructureLocation(workId: string): ContentLocation | undefined {
+	return documentStructureLocations[workId];
 }
 
 /** The one chunk section `n` lives in — for a single-section read (a link

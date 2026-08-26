@@ -528,6 +528,21 @@ summary is indistinguishable on the page from a real one.
 identity: prerendering repeated the chrome thousands of times and could embed only a
 build-time default edition or every edition at once. The build is two HTML documents.
 
+**The boot chunk is what that shell actually costs, and it is priced per registry, not
+per byte** (2026-08-26). With `ssr = false` nothing paints until the client bundle has
+downloaded, parsed and mounted, so whatever the boot index carries sits in front of first
+paint on every route — including the routes that never read a byte of it. Three cuts took
+it from 2.32 MB raw / 305 KB brotli to 1.34 MB / 170 KB. What decides whether a registry
+boots with the app is the QUESTION IT ANSWERS, not its size: "does this address exist" is
+asked with no work in hand and stays eager, while a document's outline is only ever wanted
+by the page already reading that document — so all 354 of them became content-tier assets,
+where they also ride the offline download waves rather than merely landing in a cache.
+Numbering runs (a chapter's verses, the Compendium's questions, a document's sections, a
+Summa question's articles) are stored as their count, with the explicit array kept wherever
+there is a gap; that is lossless, so the older refusal to store a mere BOUND — a verse gap
+must not silently mislink — still holds unamended. And a work manifest keeps only the first
+of its `sources`, because `sourceUrl` reads `sources[0].url` and no page reads the rest.
+
 **A bogus reference-shaped URL gets a 404, not the shell with a 200.** The host's
 ordinary SPA fallback would make every mistyped citation look like a citable resource, on
 a site whose whole point is citable deep links. `corpus-routes.json` is an address-only

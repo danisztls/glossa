@@ -315,6 +315,11 @@ const WAVE_FOR_KIND: Readonly<Record<string, WaveId>> = {
 	'bible-chapters': 'scripture',
 	'document-chunk': 'magisterium',
 	'document-appendix': 'magisterium',
+	// The outline, ~1.2 KB, beside the text it indexes. In `magisterium` and
+	// not `essentials` despite the size: a reader whose fill stops before the
+	// magisterium wave has no document text offline either, so an outline
+	// downloaded ahead of it would index nothing.
+	'document-structure': 'magisterium',
 	'summa-question': 'summa'
 };
 

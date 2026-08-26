@@ -28,20 +28,35 @@
 			type="image/png"
 			sizes="192x192"
 		/>
-		<!-- The two font files every page is certain to need, upright latin in
-		     each: EB Garamond for the text and Source Sans 3 for the chrome.
-		     Declared here rather than left to the @font-face in app.css so the
-		     fetches start alongside the stylesheet instead of after the browser
-		     has parsed it and matched a unicode-range.
+		<!-- The three font files every page is certain to need, upright latin in
+		     each: EB Garamond for the text, Source Sans 3 for the chrome, and
+		     the Pirata One subset for the wordmark. Declared here rather than
+		     left to the @font-face in app.css so the fetches start alongside
+		     the stylesheet instead of after the browser has parsed it and
+		     matched a unicode-range.
 
-		     Deliberately only these two. Italic, latin-ext, greek, cyrillic and
-		     vietnamese are each needed by a minority of pages, and preloading a
-		     file the page never uses costs bandwidth and delays the one it does.
-		     The sans qualifies under the same rule the serif does — `body`
-		     carries it, so every page renders some of it above the fold — and
-		     it is the smaller of the two. `crossorigin` is required even though
-		     this is same-origin: fonts are fetched in CORS mode, and without it
-		     the preload is discarded and the file downloaded a second time. -->
+		     THE THIRD ONE IS NOT DECORATION-ONLY, which is why it earns a
+		     preload the other display faces don't. `components/Wordmark.svelte`
+		     sets the header mark in it on every route, and its @font-face is
+		     `font-display: block` (see app.css — a late swap on one large glyph
+		     in an accent colour lurches), so the mark is INVISIBLE until the
+		     file lands. Without this line it is discovered three levels deep:
+		     document -> app.css -> font, and, because this is an SPA shell with
+		     an empty body, not even then — the request only starts once the
+		     boot JS has mounted a header for the font to match against.
+		     Lighthouse measured that chain at 683 ms for 6 KB. Preloaded, it
+		     starts with the stylesheet and is done long before the mount.
+
+		     Deliberately only these three. Italic, latin-ext, greek, cyrillic
+		     and vietnamese are each needed by a minority of pages, and
+		     preloading a file the page never uses costs bandwidth and delays
+		     the one it does; Ponomar is the Russian edition's initial and no
+		     other page touches it. The sans qualifies under the same rule the
+		     serif does — `body` carries it, so every page renders some of it
+		     above the fold — and it is the smaller of the two. `crossorigin` is
+		     required even though this is same-origin: fonts are fetched in CORS
+		     mode, and without it the preload is discarded and the file
+		     downloaded a second time. -->
 		<link
 			rel="preload"
 			href="%sveltekit.assets%/fonts/eb-garamond-latin-wght-normal.woff2"
@@ -52,6 +67,13 @@
 		<link
 			rel="preload"
 			href="%sveltekit.assets%/fonts/source-sans-3-latin-wght-normal.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+		<link
+			rel="preload"
+			href="%sveltekit.assets%/fonts/pirata-one-dropcap.woff2"
 			as="font"
 			type="font/woff2"
 			crossorigin

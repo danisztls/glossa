@@ -197,6 +197,43 @@ function byteLength(data) {
 	return Buffer.byteLength(JSON.stringify(data));
 }
 
+/**
+ * A sorted run of positive integers, in the shape the index tier writes it:
+ * the bare COUNT when the run is exactly `1..n`, and the explicit array
+ * otherwise. `expandRun` in `src/lib/corpus-index.ts` is the other half, and
+ * `sync-corpus.test.ts` pins the pair.
+ *
+ * LOSSLESS, WHICH IS THE ONLY REASON IT IS ALLOWED HERE. The Bible branch
+ * below already argues at length that verse numbers must be EXPLICIT and not
+ * "e.g. a max-verse-number bound", because a critical-text verse gap
+ * (docs/corpus-schema.md allows them) would then silently mislink — the
+ * opposite of `refs.ts`'s under-link-rather-than-over-link rule. That argument
+ * is untouched: a bound is lossy and this is not. The count is emitted ONLY
+ * when the run has no gap to lose, and the moment one appears the encoder
+ * falls back to writing every number. Round-tripping any input through
+ * `compactRun`/`expandRun` returns it unchanged; a bound could not promise
+ * that, which is exactly why it was refused.
+ *
+ * WHAT IT BUYS. `[1,2,3,…,31]` is ~110 bytes of source text and one JS array
+ * allocation per chapter; `31` is two bytes and none. Across the four Bible
+ * editions that is 5,332 of 5,335 chapters, and the same shape repeats in the
+ * CCC's `paragraphNumbers` (1..2865, twice), the Compendium's
+ * `questionNumbers` (1..598, ten times), each document's `sectionNumbers` and
+ * each Summa question's `articles`. Together it is ~470 KB of the boot chunk
+ * every route `modulepreload`s in front of first paint — mostly parse time and
+ * heap rather than transfer, since brotli already saw the pattern.
+ *
+ * Callers pass an ASCENDING run. Nothing here sorts: every call site below
+ * already sorts (or reads an ordered source), and sorting silently here would
+ * hide a caller that stopped.
+ */
+function compactRun(nums) {
+	for (let i = 0; i < nums.length; i++) {
+		if (nums[i] !== i + 1) return nums;
+	}
+	return nums.length;
+}
+
 rmSync(destDir, { recursive: true, force: true });
 
 const worksSrc = path.join(corpusDir, 'works');
@@ -358,7 +395,7 @@ const compendiumIndex = {}; // lang -> { structure }
 const compendiumQuestionNumbers = []; // canonical URL existence, across languages
 const summaIndex = {}; // lang -> { structure, questions } -- metadata only, never article text
 const summaAddresses = {}; // partSlug -> Set(question numbers), unioned across editions
-const documentIndex = {}; // workId -> { structure, sectionNumbers } -- keyed by WORK ID, not lang: unlike
+const documentIndex = {}; // workId -> { sectionNumbers, appendixUnits? } -- keyed by WORK ID, not lang: unlike
 // the CCC/Compendium (one canonical work per language), each document work id
 // (`{family}.{slug}.{lang}`) is its own independent work with its own section
 // count and its own structure tree -- there is no single "the document tree
@@ -400,9 +437,27 @@ for (const workId of workIds) {
 	// (today: always null — no scraper writes one, and none should: a
 	// description is editorial). Falls back to the manifest's own value so
 	// that stays true rather than assumed.
+	// `sources` is trimmed to its FIRST ENTRY for the same reason `notes` is
+	// blanked: nothing on any page reads the rest. `copyright.ts`'s
+	// `sourceUrl` — the only reader there is, via `CopyrightNotice.svelte` and
+	// the document route's redirect-to-source — takes `sources[0].url` and
+	// nothing else, and `retrieved_at` is read by no component in the site at
+	// all. The full array is provenance for whoever reads the corpus repo, and
+	// the CCC's mirror alone contributes hundreds of entries: across 377 works
+	// it was 92 KB of the index, ~38 KB of it in the boot chunk after the
+	// first entry is kept.
+	//
+	// TRIMMED, NOT RESHAPED. `ccc.py` deliberately puts the mirror's table of
+	// contents at the head of the list because that is what the source link
+	// wants (see `sourceUrl`'s docblock), so "the first entry" is a decision
+	// the scrapers already make on purpose — this only stops carrying the ones
+	// after it. Keeping the entry whole rather than reducing it to a bare URL
+	// leaves `WorkManifest`'s shape intact, which is the same bargain `notes:
+	// ''` strikes.
 	manifests[workId] = {
 		...manifest,
 		notes: '',
+		...(manifest.sources ? { sources: manifest.sources.slice(0, 1) } : {}),
 		description: ownLanguageDescription(workId, manifest.language) ?? manifest.description ?? null
 	};
 
@@ -691,11 +746,43 @@ for (const workId of workIds) {
 		// Section EXISTENCE only, mirroring `cccParagraphNumbers` — the index
 		// tier never carries section TEXT, so `documentSectionExists`/
 		// adjacency in corpus.ts stay synchronous.
+		//
+		// THE STRUCTURE TREE IS NOT HERE. It is written as a content-tier
+		// asset just below, one file per work, and the reason is arithmetic:
+		// 354 document editions carry 414 KB of outline between them, which
+		// was 82 KB brotli — a quarter of the whole boot chunk — inlined into
+		// every route's `modulepreload` so that a reader could open ONE of the
+		// 354. The other index registries here stay eager because they are
+		// answers to questions asked without a work in hand (does this
+		// paragraph exist, which books are there); an outline is only ever
+		// wanted by the page already reading that document, which is the
+		// definition of the content tier.
+		//
+		// It is content-tier rather than a lazily-fetched index file for one
+		// further reason: content-tier assets ride the service worker's
+		// download waves, so a reader filling their offline library gets each
+		// document's headings alongside that document's text. An index file
+		// would have landed in the permanent cache but in no wave, and the
+		// offline library would have gone quietly headless.
 		documentIndex[workId] = {
-			structure,
 			sectionNumbers: sections.map((s) => s.n).sort((a, b) => a - b),
 			...(appendix ? { appendixUnits: appendix.length } : {})
 		};
+		{
+			// Averages 1.2 KB. Written even when empty, so an absent file
+			// means "this work was never built" rather than "this work has no
+			// headings" — the same distinction every other content location
+			// makes, and the one `documentStructures.svelte.ts` relies on to
+			// tell a real miss from a document that simply has no outline.
+			const relPath = `content/${workId}/structure.json`;
+			writeJson(path.join(destDir, relPath), structure);
+			contentManifest.push({
+				workId,
+				kind: 'document-structure',
+				relPath,
+				bytes: byteLength(structure)
+			});
+		}
 		if (appendix) {
 			// One asset, not chunked: the largest in the corpus is 120 KB, and
 			// a reader who opens an unnumbered edition needs all of it at once
@@ -846,14 +933,59 @@ const translatedCount = Object.values(translatedDescriptions).reduce(
 	0
 );
 
+/**
+ * NUMBERING IS COMPACTED HERE, ON THE WAY OUT, and not where each index is
+ * built. `compactRun`'s docblock covers what the encoding is and why it is
+ * allowed; this is why it happens at the write.
+ *
+ * Three consumers above still read these registries as plain arrays, and
+ * compacting them in place broke all three — only the first of them loudly:
+ *
+ *   - the xref checker spreads a chapter's verses (`Math.max(0, ...verses)`),
+ *     which throws on a number;
+ *   - the route manifest flat-maps `paragraphNumbers`, and `[].flatMap` over
+ *     the number 2865 quietly yields `[2865]` — a manifest declaring exactly
+ *     one valid Catechism address, which the edge would then 404 the other
+ *     2,864 of;
+ *   - the document branch reads its own `sectionNumbers` back to find the
+ *     last chunk boundary.
+ *
+ * So the in-memory registries stay plain and the encoding happens once, in one
+ * place, where `expandRun` in `src/lib/corpus-index.ts` is the mirror image.
+ */
+const mapValues = (obj, fn) => Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, fn(v)]));
+
 writeJson(path.join(indexDir, 'manifests.json'), manifests);
-writeJson(path.join(indexDir, 'bible-index.json'), bibleIndex);
+writeJson(
+	path.join(indexDir, 'bible-index.json'),
+	mapValues(bibleIndex, (edition) => ({
+		books: edition.books.map((book) => ({
+			...book,
+			chapters: book.chapters.map((c) => ({ n: c.n, verses: compactRun(c.verses) }))
+		}))
+	}))
+);
 writeJson(path.join(indexDir, 'bible-intro-index.json'), bibleIntroIndex);
-writeJson(path.join(indexDir, 'ccc-index.json'), cccIndex);
-writeJson(path.join(indexDir, 'compendium-index.json'), compendiumIndex);
-writeJson(path.join(indexDir, 'document-index.json'), documentIndex);
+writeJson(
+	path.join(indexDir, 'ccc-index.json'),
+	mapValues(cccIndex, (v) => ({ ...v, paragraphNumbers: compactRun(v.paragraphNumbers) }))
+);
+writeJson(
+	path.join(indexDir, 'compendium-index.json'),
+	mapValues(compendiumIndex, (v) => ({ ...v, questionNumbers: compactRun(v.questionNumbers) }))
+);
+writeJson(
+	path.join(indexDir, 'document-index.json'),
+	mapValues(documentIndex, (v) => ({ ...v, sectionNumbers: compactRun(v.sectionNumbers) }))
+);
 writeJson(path.join(indexDir, 'prayer-index.json'), prayerIndex);
-writeJson(path.join(indexDir, 'summa-index.json'), summaIndex);
+writeJson(
+	path.join(indexDir, 'summa-index.json'),
+	mapValues(summaIndex, (v) => ({
+		...v,
+		questions: v.questions.map((q) => ({ ...q, articles: compactRun(q.articles) }))
+	}))
+);
 
 /**
  * CCC -> Bible cross-references, DERIVED here rather than read from the

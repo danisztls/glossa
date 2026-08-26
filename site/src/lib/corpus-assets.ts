@@ -37,6 +37,7 @@ export interface ContentManifestEntry {
 		| 'compendium-chunk'
 		| 'document-appendix'
 		| 'document-chunk'
+		| 'document-structure'
 		| 'prayer-collection'
 		| 'summa-question';
 	relPath: string;

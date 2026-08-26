@@ -143,6 +143,10 @@ import type {
 } from './types';
 
 import { inlineText, parseInlineHtml } from './inline-html';
+// Imported rather than re-exported straight through, because this module's own
+// `flattenDocumentStructure`/`documentOutline` call it; the `export` that makes
+// it public again is beside those, in the Documents section.
+import { getDocumentStructure, loadDocumentStructure } from './document-structures.svelte';
 import { summaPartSlug } from './route-manifest';
 import { summaHeadingTitle, summaQuestionLabel } from './summa-titles';
 import {
@@ -166,7 +170,6 @@ import {
 	documentAppendixUnits,
 	documentChunkLocations,
 	documentSectionNumbers,
-	documentStructures,
 	fixtureBibleBooks,
 	fixtureCccParagraphsByLang,
 	fixtureCompendiumQuestionsByLang,
@@ -1415,9 +1418,16 @@ export function getDocumentManifest(workId: string): DocumentManifest | undefine
 // verbatim"), just addressing SECTION numbers via `.paragraphs` instead of
 // CCC paragraphs or Compendium questions.
 
-export function getDocumentStructure(workId: string): DocumentNode[] {
-	return documentStructures[workId] ?? [];
-}
+/**
+ * A document's outline. Re-exported from `document-structures.svelte.ts`,
+ * where it became a fetch on 2026-08-26 — see that module for why nothing had
+ * to become `await` and why the route awaits one anyway.
+ *
+ * The two functions below are pure derivations over it and therefore inherit
+ * the same behaviour: empty until the tree lands, then correct, with the
+ * `$derived` callers re-running of their own accord.
+ */
+export { getDocumentStructure, loadDocumentStructure };
 
 /**
  * Document structure is already flat and in document order

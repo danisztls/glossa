@@ -4,7 +4,8 @@ import {
 	bibleChapterChunkStartFor,
 	cccChunkStartFor,
 	compendiumChunkStartFor,
-	documentChunkStartFor
+	documentChunkStartFor,
+	expandRun
 } from './corpus-index';
 import {
 	documentSectionText,
@@ -21,6 +22,7 @@ import {
 	getCompendiumChapterFor,
 	getCompendiumQuestionRangeAsync,
 	listCompendiumChapters,
+	randomVerse,
 	defaultWorkId,
 	listEditions,
 	baseLang,
@@ -150,6 +152,61 @@ describe('content chunking', () => {
 	});
 });
 
+/**
+ * `compactRun` (in the sync script) and `expandRun` (in `corpus-index.ts`) are
+ * the same pair of halves the strides above are, and they fail the same way:
+ * the sync writes `31`, the reader expands it wrongly, and a chapter's verses
+ * are quietly the wrong set — no error, just citations that stop linking or
+ * start linking to verses that are not there.
+ *
+ * The encoder is LIFTED OUT OF THE SOURCE rather than imported, because
+ * importing `sync-corpus.mjs` runs it, and the first thing it does is
+ * `rmSync(destDir, { recursive: true })`. Reading the script as text is what
+ * `sw-policy.test.ts` already does to recover the content kinds, for the same
+ * reason.
+ */
+describe("the index tier's compact numbering", () => {
+	function encoder(): (nums: number[]) => number | number[] {
+		const source = readFileSync(new URL('../../scripts/sync-corpus.mjs', import.meta.url), 'utf8');
+		const declared = source.match(/^function compactRun\(nums\) \{\n(?:.*\n)*?\}$/m);
+		expect(declared, 'sync-corpus.mjs must declare compactRun').not.toBeNull();
+		return new Function(`${declared![0]}; return compactRun;`)() as (
+			nums: number[]
+		) => number | number[];
+	}
+
+	/** The three real gaps in the corpus today all live in Douay-Rheims, plus
+	 *  the shapes the other index files exhibit and the two degenerate ones. */
+	const RUNS: { name: string; run: number[] }[] = [
+		{ name: 'an empty run (an article-less Summa question)', run: [] },
+		{ name: 'a single element', run: [1] },
+		{ name: 'a gapless chapter', run: [1, 2, 3, 4, 5] },
+		{ name: 'the Compendium, 1..598', run: Array.from({ length: 598 }, (_, i) => i + 1) },
+		{ name: 'Douay-Rheims Ps 115, beginning at verse 10', run: [10, 11, 12, 13, 14, 15] },
+		{ name: 'Douay-Rheims Wis 18, skipping 25', run: [22, 23, 24, 26] },
+		{ name: 'a run starting at 1 with a hole in it', run: [1, 2, 4, 5] }
+	];
+
+	for (const { name, run } of RUNS) {
+		it(`round-trips ${name}`, () => {
+			expect(expandRun(encoder()(run))).toEqual(run);
+		});
+	}
+
+	it('encodes a gapless run as its count and anything else verbatim', () => {
+		const compactRun = encoder();
+		// The whole saving, and the whole risk: this is the only case where the
+		// wire form is not the data.
+		expect(compactRun([1, 2, 3])).toBe(3);
+		expect(compactRun([])).toBe(0);
+		// A gap of any kind falls back to the array, which is what keeps the
+		// encoding lossless — see `compactRun`'s docblock on why a bound was
+		// refused for exactly this reason.
+		expect(compactRun([2, 3])).toEqual([2, 3]);
+		expect(compactRun([1, 3])).toEqual([1, 3]);
+	});
+});
+
 describe('documentSectionText', () => {
 	it('derives from html — the corpus stores no `text` to read', () => {
 		const section = {
@@ -230,6 +287,40 @@ describe('book introductions (chapter 0)', () => {
 		// reference must never resolve to one. `refs.ts` checks existence
 		// against the book's chapters, which never carry a 0.
 		expect(getBook('bible.cpdv.en', 'gen')?.chapters.some((c) => c.n === 0)).toBe(false);
+	});
+});
+
+describe('randomVerse', () => {
+	// The fixtures are Genesis 1 (13 verses), John 1 (18) and John 3 (21) —
+	// 52 verses in three chapters across two books, in that order.
+	it('walks the whole edition, in canonical order', () => {
+		const at = (fraction: number) => randomVerse('bible.cpdv.en', () => fraction);
+		expect(at(0)).toEqual({ osis: 'gen', chapter: 1, verse: 1 });
+		expect(at(12 / 52)).toEqual({ osis: 'gen', chapter: 1, verse: 13 });
+		expect(at(13 / 52)).toEqual({ osis: 'john', chapter: 1, verse: 1 });
+		expect(at(31 / 52)).toEqual({ osis: 'john', chapter: 3, verse: 1 });
+		// `Math.random()` never returns 1, but the clamp means an injected
+		// generator that does still lands on the last verse rather than
+		// walking off the end and reporting an empty Bible.
+		expect(at(1)).toEqual({ osis: 'john', chapter: 3, verse: 21 });
+	});
+
+	// The distribution the walk exists for: weight by verses, not by books.
+	// John 3 alone is 21 of 52 verses, and a book-then-chapter pick would
+	// have given it 1 in 4 instead.
+	it('gives every verse the same chance', () => {
+		const counts = new Map<string, number>();
+		for (let i = 0; i < 52; i++) {
+			const verse = randomVerse('bible.cpdv.en', () => (i + 0.5) / 52);
+			const key = `${verse?.osis} ${verse?.chapter}:${verse?.verse}`;
+			counts.set(key, (counts.get(key) ?? 0) + 1);
+		}
+		expect(counts.size).toBe(52);
+		expect([...counts.values()].every((n) => n === 1)).toBe(true);
+	});
+
+	it('has nothing to offer for a work that is not a Bible', () => {
+		expect(randomVerse('ccc.en')).toBeUndefined();
 	});
 });
 

@@ -4,7 +4,8 @@ import {
 	getDocumentGroup,
 	getDocumentSectionsAsync,
 	getDocumentAppendixAsync,
-	documentHasText
+	documentHasText,
+	loadDocumentStructure
 } from '$lib/corpus';
 import { sourceUrl } from '$lib/copyright';
 import type { DocumentAppendixUnit, DocumentManifest, DocumentSection } from '$lib/types';
@@ -113,9 +114,23 @@ export const load: PageLoad = async ({ params }) => {
 
 	const embeddedLang = availableLangs.includes('en') ? 'en' : availableLangs[0];
 	const embeddedId = manifestsByLang[embeddedLang].id;
+	// THE OUTLINE IS AWAITED BUT NOT RETURNED. It left the boot index for the
+	// content tier on 2026-08-26 (`document-structures.svelte.ts`), and the
+	// page reads it through the synchronous `$state` accessor rather than from
+	// `data` — so what this call is for is the TIMING, not the value: the
+	// outline's rows are interleaved into the section flow, and letting them
+	// arrive a beat after the text would shove the text the reader is already
+	// looking at. Fetched alongside the sections rather than after them, over
+	// the same warm connection, so it costs no wall clock; ~1.2 KB against a
+	// document's own text.
+	//
+	// Returning it in `data` would embed it in the page's hydration payload as
+	// well, which is the per-page re-bloat this route's docblock spends a
+	// paragraph refusing for the sections themselves.
 	const [embeddedSections, embeddedAppendix] = await Promise.all([
 		getDocumentSectionsAsync(embeddedId),
-		getDocumentAppendixAsync(embeddedId)
+		getDocumentAppendixAsync(embeddedId),
+		loadDocumentStructure(embeddedId)
 	]);
 
 	return { slug, manifestsByLang, embeddedLang, embeddedSections, embeddedAppendix };
