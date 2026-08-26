@@ -1160,12 +1160,46 @@ describe('the Douay book names the English Summa cites in', () => {
 		).toBe('2kgs');
 	});
 
-	it('still reads "1 Kings" as the modern book, which is the known limit of a per-language table', () => {
-		// ccc.en cites 1-2 Kings in the modern sense 14 times and summa.en in
-		// the Douay sense 50 times, and the citation string is identical. The
-		// grammar's one axis is language; telling these apart needs the work.
+	it('reads "1 Kings" as the modern book unless the work is known to be Douay', () => {
+		// The citation string is identical in both conventions — ccc.en prints
+		// it 13 times meaning 1 Kings and summa.en 38 times meaning 1 Samuel —
+		// so only `RefsOpts.work` tells them apart. Modern is the default.
+		const osisOf = (opts: { lang: string; work?: string }) =>
+			linkifyProse('(1 Kings 19:5)', opts).find((s) => s.kind === 'scripture')?.osis;
+		expect(osisOf({ lang: 'en' })).toBe('1kgs');
+		expect(osisOf({ lang: 'en', work: 'ccc.en' })).toBe('1kgs');
+		expect(osisOf({ lang: 'en', work: 'summa.en' })).toBe('1sam');
+	});
+
+	it('overrides the work for citation strings too, not only prose', () => {
+		// Aeterni Patris cites "the God of all knowledge" — 1 Samuel 2:3 — as
+		// "1 Kings 2:3", in a numbered footnote rather than in the body.
+		const osisOf = (work?: string) =>
+			parseRefs('1 Kings 2:3.', { lang: 'en', work }).find((s) => s.kind === 'scripture')?.osis;
+		expect(osisOf()).toBe('1kgs');
+		expect(osisOf('encyclical.aeterni-patris.en')).toBe('1sam');
+	});
+
+	it('moves only the books of Kings, and only for the listed works', () => {
+		const douay = { lang: 'en', work: 'summa.en' };
+		// 3 and 4 Kings mean the same thing under both conventions, and the
+		// other seventy books are untouched: the override is a naming
+		// difference, not a dialect.
+		for (const [text, osis] of [
+			['(3 Kings 20:39)', '1kgs'],
+			['(4 Kings 2:15)', '2kgs'],
+			['(1 Samuel 2:3)', '1sam'],
+			['(2 Esd. 13:1)', 'neh'],
+			['(Mat. 7:6)', 'matt']
+		] as const) {
+			expect(linkifyProse(text, douay).find((s) => s.kind === 'scripture')?.osis).toBe(osis);
+		}
+		// A work not on the list reads its language's table, whatever else it
+		// shares with one that is.
 		expect(
-			linkifyProse('(1 Kings 19:5)', { lang: 'en' }).find((s) => s.kind === 'scripture')?.osis
+			linkifyProse('(1 Kings 19:5)', { lang: 'en', work: 'summa.la' }).find(
+				(s) => s.kind === 'scripture'
+			)?.osis
 		).toBe('1kgs');
 	});
 

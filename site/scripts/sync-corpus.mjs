@@ -395,8 +395,8 @@ const bibleIntroIndex = {}; // lang -> { books: [osis, …] } -- EXISTENCE only,
 // reader can navigate to; it is not a verse-bearing chapter, and keeping the
 // two registries apart is what stops it becoming citable by accident.
 const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
-const cccEditions = []; // [{ lang, paragraphs }] -- input to the xref pass
-const documentEditions = []; // [{ slug, lang, sections }] -- ditto, per document edition
+const cccEditions = []; // [{ lang, work, paragraphs }] -- input to the xref pass
+const documentEditions = []; // [{ slug, lang, work, sections }] -- ditto, per document edition
 const compendiumIndex = {}; // lang -> { structure }
 const compendiumQuestionNumbers = []; // canonical URL existence, across languages
 const summaIndex = {}; // lang -> { structure, questions } -- metadata only, never article text
@@ -594,7 +594,7 @@ for (const workId of workIds) {
 		// those are already filtered by `unpublished`, and taking a work down
 		// should not silently rewrite what the Catechism is recorded as
 		// citing.
-		cccEditions.push({ lang, paragraphs });
+		cccEditions.push({ lang, work: workId, paragraphs });
 
 		const maxN = paragraphNumbers[paragraphNumbers.length - 1] ?? 0;
 		for (let start = 1; start <= maxN; start += CCC_CHUNK_SIZE) {
@@ -807,7 +807,7 @@ for (const workId of workIds) {
 		// Catechism editions are, because they are one document citing one
 		// verse. `{family}.{slug}.{lang}` -> slug, lang.
 		const [, slug, docLang] = workId.split('.');
-		documentEditions.push({ slug, lang: docLang, sections });
+		documentEditions.push({ slug, lang: docLang, work: workId, sections });
 
 		// Chunked, and shipped verbatim: there is nothing to strip. The corpus
 		// stores `html` and nothing derived from it (docs/corpus-schema.md),
@@ -1043,12 +1043,19 @@ const cccParagraphSet = new Set();
 for (const { paragraphs } of cccEditions) for (const p of paragraphs) cccParagraphSet.add(p.n);
 
 const citingUnits = [];
-for (const { lang, paragraphs } of cccEditions) {
-	for (const p of paragraphs) citingUnits.push({ citer: { kind: 'ccc', n: p.n }, lang, unit: p });
+for (const { lang, work, paragraphs } of cccEditions) {
+	for (const p of paragraphs) {
+		citingUnits.push({ citer: { kind: 'ccc', n: p.n }, lang, work, unit: p });
+	}
 }
-for (const { slug, lang, sections } of documentEditions) {
+for (const { slug, lang, work, sections } of documentEditions) {
 	for (const section of sections) {
-		citingUnits.push({ citer: { kind: 'document', slug, n: section.n }, lang, unit: section });
+		citingUnits.push({
+			citer: { kind: 'document', slug, n: section.n },
+			lang,
+			work,
+			unit: section
+		});
 	}
 }
 const citationXrefs = buildCitationXrefs(

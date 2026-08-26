@@ -54,6 +54,13 @@
 		() => content.langFor('catechism')
 	);
 
+	/** This edition's work id, passed to every surface that linkifies its
+	 *  text. No Catechism edition is in `refs-grammar.ts`'s `WORK_CONFIGS`
+	 *  today, so it changes nothing here — it is passed so the axis is
+	 *  reachable from every reading surface rather than only from the two
+	 *  that need it now. */
+	const workId = $derived(editions.current?.work.id);
+
 	adoptCompareFromUrl();
 
 	// A single-paragraph comparison is still an `alignByNumber` call, not a
@@ -130,11 +137,15 @@
 </svelte:head>
 
 {#snippet leftCell(paragraph: CccParagraph)}
-	<ProseBlocks unit={paragraph} lang={editions.lang} />
+	<ProseBlocks unit={paragraph} lang={editions.lang} work={workId} />
 {/snippet}
 
 {#snippet rightCell(paragraph: CccParagraph)}
-	<ProseBlocks unit={paragraph} lang={editions.secondaryLang ?? editions.lang} />
+	<ProseBlocks
+		unit={paragraph}
+		lang={editions.secondaryLang ?? editions.lang}
+		work={editions.secondaryWorkId ?? workId}
+	/>
 {/snippet}
 
 <!-- The paragraph's address, and the tag the CCC sets on a summary paragraph.
@@ -249,7 +260,7 @@
 				/>
 			{:else}
 				<div class="reading-text ccc-body" lang={editions.current.work.language}>
-					<ProseBlocks unit={editions.current.paragraph} lang={editions.lang} />
+					<ProseBlocks unit={editions.current.paragraph} lang={editions.lang} work={workId} />
 				</div>
 			{/if}
 

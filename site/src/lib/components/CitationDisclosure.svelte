@@ -36,11 +36,17 @@
 		citation: CccCitation | undefined;
 		/** Bare content language, for `RefText`'s citation grammar. */
 		lang: string;
+		/** Corpus work id of the text being read, when the caller knows it. Only
+		    the few works listed in `refs-grammar.ts`'s `WORK_CONFIGS` read
+		    differently for it — English works that number the books of Kings
+		    the Douay way — and passing nothing reads the work as its language
+		    reads. */
+		work?: string;
 		open: boolean;
 		onToggle: () => void;
 	}
 
-	let { marker, citation, lang, open, onToggle }: Props = $props();
+	let { marker, citation, lang, work, open, onToggle }: Props = $props();
 </script>
 
 <sup class="citation-marker">
@@ -51,7 +57,7 @@
 {#if open}
 	<span class="citation-text">
 		{#if citation && citation.text.trim() !== ''}
-			<RefText text={citation.text} {lang} />
+			<RefText text={citation.text} {lang} {work} />
 		{:else if citation}
 			<!-- Deliberately empty source: a handful of citations in the Vatican II
 			     corpus point at a footnote-list entry that is itself

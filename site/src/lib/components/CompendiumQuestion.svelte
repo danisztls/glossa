@@ -15,6 +15,13 @@
 	interface Props {
 		question: CompendiumQuestion;
 		lang: string;
+		/** Corpus work id of the text being read, when the caller knows it. Only
+		    the few works listed in `refs-grammar.ts`'s `WORK_CONFIGS` read
+		    differently for it — English works that number the books of Kings
+		    the Douay way — and passing nothing reads the work as its language
+		    reads. */
+		work?: string;
+
 		href?: string;
 		/** False in compare mode when both editions cite the SAME CCC
 		 *  paragraphs, because the grid then prints that line once beneath the
@@ -25,7 +32,7 @@
 		showRefs?: boolean;
 	}
 
-	let { question, lang, href, showRefs = true }: Props = $props();
+	let { question, lang, work, href, showRefs = true }: Props = $props();
 
 	/** The question's own page — its canonical address, and what `href` points
 	 *  at in the chapter reader. Derived rather than taken as a prop so the
@@ -50,7 +57,7 @@
 	{#if question.ccc_refs && showRefs}
 		<p class="ccc-refs">
 			<span class="refs-label">{t('compendium.condenses')}</span>
-			<RefText text={question.ccc_refs} {lang} />
+			<RefText text={question.ccc_refs} {lang} {work} />
 		</p>
 	{/if}
 {/snippet}

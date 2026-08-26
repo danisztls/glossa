@@ -90,8 +90,17 @@ const WORK = flagOf('--work') ?? 'ccc';
 /** The one file in a work directory that holds its numbered units. */
 const UNIT_FILES = ['paragraphs.json', 'sections.json', 'questions.json'];
 
+/** This edition's work id — the axis `refs-grammar.ts`'s `WORK_CONFIGS`
+ *  overrides on, passed everywhere the oracle parses so it reads each edition
+ *  exactly as its page does. Without it the Summa's Douay-numbered books of
+ *  Kings would read here as the modern ones and the oracle would report a
+ *  contradiction of its own making. */
+function workIdOf(lang) {
+	return `${WORK}.${lang}`;
+}
+
 function workDir(lang) {
-	return path.join(CORPUS, 'works', `${WORK}.${lang}`);
+	return path.join(CORPUS, 'works', workIdOf(lang));
 }
 
 /** Every edition of the chosen work the corpus holds, in work-id order. */
@@ -136,7 +145,8 @@ function load(lang) {
 /** Every scripture segment the grammar finds in one string, both grammars. */
 function scriptureIn(text, lang) {
 	const out = [];
-	for (const segs of [parseRefs(text, { lang }), linkifyProse(text, { lang })]) {
+	const opts = { lang, work: workIdOf(lang) };
+	for (const segs of [parseRefs(text, opts), linkifyProse(text, opts)]) {
 		for (const s of segs) if (s.kind === 'scripture') out.push(s);
 	}
 	return out;
@@ -177,7 +187,8 @@ const SHAPE =
 /** Byte spans of `text` the grammar already claims, so they are not proposed. */
 function claimed(text, lang) {
 	const spans = [];
-	for (const segs of [parseRefs(text, { lang }), linkifyProse(text, { lang })]) {
+	const opts = { lang, work: workIdOf(lang) };
+	for (const segs of [parseRefs(text, opts), linkifyProse(text, opts)]) {
 		let at = 0;
 		for (const s of segs) {
 			const raw = s.kind === 'text' ? s.text : (s.raw ?? '');

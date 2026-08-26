@@ -86,6 +86,15 @@
 	 */
 	const fellBack = $derived(editions.current !== undefined && editions.lang !== preferred);
 
+	/**
+	 * The work id, passed down to every surface that linkifies this text.
+	 * `summa.en` is one of the works `refs-grammar.ts`'s `WORK_CONFIGS`
+	 * overrides — CCEL quotes Scripture in Douay-Rheims, where "1 Kings" is
+	 * 1 Samuel — so the Summa is the one route where dropping it changes what
+	 * a reference resolves to.
+	 */
+	const workId = $derived(editions.current?.work.id);
+
 	const partSlug = $derived(summaPartSlug(data.part));
 	const question = $derived(editions.current?.question);
 	const named = $derived(summaTitleFor(editions.lang, data.part, data.n));
@@ -209,32 +218,37 @@
 
 {#snippet leftCell(article: SummaArticle)}
 	{@render articleHeading(article, editions.lang)}
-	<SummaDivisions divisions={article.divisions} lang={editions.lang} />
+	<SummaDivisions divisions={article.divisions} lang={editions.lang} work={workId} />
 {/snippet}
 
 {#snippet rightCell(article: SummaArticle)}
 	{@render articleHeading(article, editions.secondaryLang ?? editions.lang)}
-	<SummaDivisions divisions={article.divisions} lang={editions.secondaryLang ?? editions.lang} />
+	<SummaDivisions
+		divisions={article.divisions}
+		lang={editions.secondaryLang ?? editions.lang}
+		work={editions.secondaryWorkId ?? workId}
+	/>
 {/snippet}
 
-{#snippet prologue(blocks: { html: string }[], lang: string)}
+{#snippet prologue(blocks: { html: string }[], lang: string, work: string | undefined)}
 	{#if blocks.length > 0}
 		<div class="prologue" {lang}>
 			{#each blocks as block, i (i)}
-				<InlineProse html={block.html} {lang} />
+				<InlineProse html={block.html} {lang} {work} />
 			{/each}
 		</div>
 	{/if}
 {/snippet}
 
 {#snippet leftPrologue()}
-	{@render prologue(editions.current?.question.prologue ?? [], editions.lang)}
+	{@render prologue(editions.current?.question.prologue ?? [], editions.lang, workId)}
 {/snippet}
 
 {#snippet rightPrologue()}
 	{@render prologue(
 		editions.secondary?.question.prologue ?? [],
-		editions.secondaryLang ?? editions.lang
+		editions.secondaryLang ?? editions.lang,
+		editions.secondaryWorkId ?? workId
 	)}
 {/snippet}
 
@@ -364,13 +378,13 @@
 				/>
 			{:else}
 				<div class="reading-text summa-body" lang={editions.current.work.language}>
-					{@render prologue(question.prologue, editions.lang)}
+					{@render prologue(question.prologue, editions.lang, workId)}
 
 					<!-- The article-less questions (I q. 71, q. 72) hang their
 					     divisions off the question itself; both sources agree they
 					     have no articles, so none is invented. -->
 					{#if question.divisions}
-						<SummaDivisions divisions={question.divisions} lang={editions.lang} />
+						<SummaDivisions divisions={question.divisions} lang={editions.lang} work={workId} />
 					{/if}
 
 					{#each question.articles as article (article.n)}
@@ -399,7 +413,7 @@
 								placement="margin"
 							/>
 							{@render articleHeading(article, editions.lang)}
-							<SummaDivisions divisions={article.divisions} lang={editions.lang} />
+							<SummaDivisions divisions={article.divisions} lang={editions.lang} work={workId} />
 						</section>
 					{/each}
 				</div>

@@ -40,6 +40,13 @@
 		() => content.langFor('compendium')
 	);
 
+	/** This edition's work id, passed to every surface that linkifies its
+	 *  text. No Compendium edition is in `refs-grammar.ts`'s `WORK_CONFIGS`
+	 *  today, so it changes nothing here — it is passed so the axis is
+	 *  reachable from every reading surface rather than only from the two
+	 *  that need it now. */
+	const workId = $derived(editions.current?.work.id);
+
 	// Same index-backed, no-fetch call `/compendium/+page.svelte` makes for
 	// the full table of contents, just recomputed for whichever language is
 	// active on this page.
@@ -94,7 +101,7 @@
 {#snippet sharedCccRefs(n: number)}
 	<p class="ccc-refs-shared">
 		<span class="refs-label">{t('compendium.condenses')}</span>
-		<RefText text={sharedRefs.get(n) ?? ''} lang={editions.lang} />
+		<RefText text={sharedRefs.get(n) ?? ''} lang={editions.lang} work={workId} />
 	</p>
 {/snippet}
 

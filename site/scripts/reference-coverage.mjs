@@ -79,7 +79,7 @@ const RESIDUE_BUCKETS = 25;
 const NOT_CONTENT = new Set(['manifest.json', 'corrections-applied.json', 'abbreviations.json']);
 
 /**
- * @typedef {{ citations: string[], prose: string[], stored: number }} Pending
+ * @typedef {{ lang: string, work?: string, citations: string[], prose: string[], stored: number }} Pending
  * @typedef {{ key: string, count: number, example: string }} ResidueBucket
  * @typedef {{
  *   citations: { total: number, linkable: number, recognized: number, nothing: number },
@@ -101,7 +101,17 @@ const NOT_CONTENT = new Set(['manifest.json', 'corrections-applied.json', 'abbre
  * for the whole corpus, once, at build time.
  */
 export class CoverageMeter {
-	/** @type {Map<string, Map<string, Pending>>} family -> lang -> pending strings */
+	/**
+	 * @type {Map<string, Map<string, Pending>>} family -> work id -> pending strings
+	 *
+	 * Bucketed per WORK, not per language, because the grammar is not purely
+	 * per-language: `refs-grammar.ts`'s `WORK_CONFIGS` overrides a handful of
+	 * works whose own book naming contradicts their language's table. Two
+	 * English encyclicals are among them, and an `encyclical`/`en` bucket
+	 * would have had to parse them the same way as their 200 neighbours —
+	 * i.e. measure something the site does not render. The report still
+	 * aggregates per family; only the parsing sees the work.
+	 */
 	#pending = new Map();
 
 	/**
@@ -121,7 +131,7 @@ export class CoverageMeter {
 			for (const f of readdirSync(booksDir)) files.push(path.join(booksDir, f));
 		}
 		for (const file of files) {
-			this.addUnits(family, lang, JSON.parse(readFileSync(file, 'utf8')));
+			this.addUnits(family, lang, JSON.parse(readFileSync(file, 'utf8')), workId);
 		}
 	}
 
@@ -130,9 +140,11 @@ export class CoverageMeter {
 	 * @param {string} family
 	 * @param {string} lang
 	 * @param {unknown} data
+	 * @param {string} [work] corpus work id, when the caller has one — see
+	 *   `#pending`. Defaults to bucketing by language alone.
 	 */
-	addUnits(family, lang, data) {
-		const bucket = this.#bucket(family, lang);
+	addUnits(family, lang, data, work) {
+		const bucket = this.#bucket(family, lang, work);
 		/** @param {any} node */
 		const walk = (node) => {
 			if (Array.isArray(node)) {
@@ -166,13 +178,15 @@ export class CoverageMeter {
 	/**
 	 * @param {string} family
 	 * @param {string} lang
+	 * @param {string} [work]
 	 * @returns {Pending}
 	 */
-	#bucket(family, lang) {
-		let byLang = this.#pending.get(family);
-		if (!byLang) this.#pending.set(family, (byLang = new Map()));
-		let bucket = byLang.get(lang);
-		if (!bucket) byLang.set(lang, (bucket = { citations: [], prose: [], stored: 0 }));
+	#bucket(family, lang, work) {
+		let byWork = this.#pending.get(family);
+		if (!byWork) this.#pending.set(family, (byWork = new Map()));
+		const key = work ?? lang;
+		let bucket = byWork.get(key);
+		if (!bucket) byWork.set(key, (bucket = { lang, work, citations: [], prose: [], stored: 0 }));
 		return bucket;
 	}
 
@@ -190,11 +204,12 @@ export class CoverageMeter {
 			};
 			/** @type {Map<string, { count: number, example: string }>} */
 			const residue = new Map();
-			for (const [lang, bucket] of this.#pending.get(family) ?? []) {
-				for (const raw of bucket.citations) {
+			for (const { lang, work, citations, prose, stored } of this.#pending.get(family)?.values() ??
+				[]) {
+				for (const raw of citations) {
 					if (!raw) continue;
 					counts.citations.total++;
-					const verdict = classifyCitation(raw, lang);
+					const verdict = classifyCitation(raw, lang, work);
 					counts.citations[verdict]++;
 					if (verdict === 'nothing') {
 						const key = residueKey(raw);
@@ -203,10 +218,10 @@ export class CoverageMeter {
 						residue.set(key, entry);
 					}
 				}
-				counts.prose.blocks += bucket.prose.length;
-				counts.prose.stored += bucket.stored;
-				for (const text of bucket.prose) {
-					for (const seg of linkifyProse(text, { lang })) {
+				counts.prose.blocks += prose.length;
+				counts.prose.stored += stored;
+				for (const text of prose) {
+					for (const seg of linkifyProse(text, { lang, work })) {
 						if (seg.kind === 'scripture') counts.prose.scripture++;
 						else if (seg.kind === 'document') counts.prose.document++;
 					}
@@ -228,12 +243,13 @@ export class CoverageMeter {
  * One citation string's verdict — see the module docblock for the three.
  * @param {string} raw
  * @param {string} lang
+ * @param {string} [work] corpus work id, for `WORK_CONFIGS`
  * @returns {Verdict}
  */
-export function classifyCitation(raw, lang) {
+export function classifyCitation(raw, lang, work) {
 	let linkable = false;
 	let recognized = false;
-	for (const seg of parseRefs(normalizeCitationSpacing(raw), { lang })) {
+	for (const seg of parseRefs(normalizeCitationSpacing(raw), { lang, work })) {
 		if (seg.kind === 'text') continue;
 		if (seg.kind === 'document' && !seg.slug) recognized = true;
 		else linkable = true;

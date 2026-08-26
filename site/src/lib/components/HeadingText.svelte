@@ -37,9 +37,15 @@
 		node: StructureNode;
 		/** Bare content language, for the citation grammar in `$lib/refs.ts`. */
 		lang: string;
+		/** Corpus work id of the text being read, when the caller knows it. Only
+		    the few works listed in `refs-grammar.ts`'s `WORK_CONFIGS` read
+		    differently for it — English works that number the books of Kings
+		    the Douay way — and passing nothing reads the work as its language
+		    reads. */
+		work?: string;
 	}
 
-	let { title, node, lang }: Props = $props();
+	let { title, node, lang, work }: Props = $props();
 
 	let openMarkers = $state(new SvelteSet<number>());
 
@@ -59,6 +65,7 @@
 			marker={piece.marker}
 			citation={citationFor(piece.marker)}
 			{lang}
+			{work}
 			open={openMarkers.has(piece.seq)}
 			onToggle={() => toggle(piece.seq)}
 		/>{/if}{/each}

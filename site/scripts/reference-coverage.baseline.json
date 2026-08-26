@@ -302,29 +302,29 @@
 					"example": "Cf. Ibid. t. 227, p.137."
 				},
 				{
-					"key": "ib. c.",
-					"count": 19,
-					"example": "Ib., c. 19."
-				},
-				{
 					"key": "s. tomás",
 					"count": 19,
 					"example": "S. Tomás de Aquino, Summa theologiæ, III, q. 73, a. 3c."
 				},
 				{
-					"key": "code of",
-					"count": 18,
-					"example": "Cf. Code of Canon Law, Canon 844 §§ 3-4; Code of Canons of the Eastern Churches, Canon 671"
+					"key": "ib. c.",
+					"count": 19,
+					"example": "Ib., c. 19."
 				},
 				{
-					"key": "archiv. secret.",
+					"key": "] de",
 					"count": 18,
-					"example": "Cf. Archiv. Secret. Vat., v. 227, p. 42."
+					"example": "] De dono perseverantiae, c. 20, n. 53. ["
 				},
 				{
 					"key": "francisco discurso",
 					"count": 18,
 					"example": "Francisco, Discurso aos participantes do Colóquio internacional “Réparer l´irréparable”, n"
+				},
+				{
+					"key": "code of",
+					"count": 18,
+					"example": "Cf. Code of Canon Law, Canon 844 §§ 3-4; Code of Canons of the Eastern Churches, Canon 671"
 				}
 			]
 		},
@@ -352,7 +352,7 @@
 			},
 			"prose": {
 				"blocks": 52989,
-				"scripture": 8759,
+				"scripture": 8763,
 				"document": 0,
 				"stored": 5174
 			},
@@ -375,7 +375,7 @@
 				{
 					"key": "r. conc.",
 					"count": 36,
-					"example": "Cfr. Conc. Vat. I, Sess. IV, Const. Dogm. Pastor aeternus. Denz. 1821 (3050 s.)."
+					"example": "Cfr. Conc. Vat. II, ibid., n.° 36-38."
 				},
 				{
 					"key": "second vatican",
@@ -385,7 +385,7 @@
 				{
 					"key": "r. s.",
 					"count": 34,
-					"example": "Cfr. S. Thomas, Sumtna Theol. III, q. 62, a. 5, ad 1."
+					"example": "Cfr. S. Pio X, aloc. à Associação católica da juventude francesa acerca da piedade, ciénci"
 				},
 				{
 					"key": "pius xii",
@@ -428,6 +428,11 @@
 					"example": "cf. Pius XI, letter \"Quae Nobis\" to Cardinal Bertram, Nov. 13, 1928: A.A.S. 20 (1928) p. 3"
 				},
 				{
+					"key": "r. leão",
+					"count": 7,
+					"example": "Cfr. Leão XIII, aloc. 28 janeiro 1894: Acta, 14 (1894), p. 424-425."
+				},
+				{
 					"key": "pius xii's",
 					"count": 7,
 					"example": "cf. Pius XII's allocution of Dec. 8, 1950: A.A.S. 43 (1951) p. 28; also cf. Paul VI's allo"
@@ -441,11 +446,6 @@
 					"key": "roman pontifical",
 					"count": 7,
 					"example": "Cf. Roman Pontifical Ordination of a Priest, preface. These words are already found in the"
-				},
-				{
-					"key": "r. leão",
-					"count": 7,
-					"example": "Cfr. Leão XIII, aloc. 28 janeiro 1894: Acta, 14 (1894), p. 424-425."
 				},
 				{
 					"key": "john xxiii's",
@@ -478,11 +478,6 @@
 					"example": "Conc. Florentinum, Decretum pro Graecis: Denz. 693 (1305)."
 				},
 				{
-					"key": "r. syn.",
-					"count": 4,
-					"example": "Cfr. Syn. Laodicen., an. 347/381, can. 29; S. Nicephorus CP., cap. 14; Syn. Duinen. Armeno"
-				},
-				{
 					"key": "s. inácio",
 					"count": 4,
 					"example": "S. Inácio M., Philad., Praef., ed. Funk, I, p. 264."
@@ -493,9 +488,14 @@
 					"example": "Cfr. Missale romanum, Prefácio da festa de Cristo Rei."
 				},
 				{
-					"key": "st. pius",
+					"key": "r. syn.",
+					"count": 4,
+					"example": "Cfr. Syn. Laodicen., an. 347/381, can. 29; S. Nicephorus CP., cap. 14; Syn. Duinen. Armeno"
+				},
+				{
+					"key": "breviarium romanum",
 					"count": 3,
-					"example": "cf. St. Pius X, apostolic letter \"Creationis Duarum Novarum Paroeciarum\" June 1, 1905: A.A"
+					"example": "Breviarium Romanum, Ant. O, Vésperas do dia 23 de Dez."
 				}
 			]
 		}

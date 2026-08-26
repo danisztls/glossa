@@ -234,6 +234,13 @@
 
 	const metaManifest = $derived(current?.work);
 
+	/** The work id of the edition being read, handed to every surface that
+	 *  linkifies its text. Two English encyclicals here — Aeterni Patris and
+	 *  Diuturnum — number the books of Kings the Douay way, and are read one
+	 *  book off without it (`refs-grammar.ts`'s `WORK_CONFIGS`). Named
+	 *  `workId` because `work` above is already this edition's manifest. */
+	const workId = $derived(current?.work.id);
+
 	// Structure trees are INDEX tier (eager-inlined, synchronous — corpus.ts's
 	// "Documents" section), so unlike `current.sections` this needs no
 	// `+page.ts` load step: it's read reactively here.
@@ -522,7 +529,7 @@
 </svelte:head>
 
 {#snippet leftCell(section: DocumentSection)}
-	<ProseBlocks unit={section} {lang} />
+	<ProseBlocks unit={section} {lang} work={workId} />
 {/snippet}
 
 <!-- The document's masthead line: kind, author, date. Written once and
@@ -554,7 +561,7 @@
 {/snippet}
 
 {#snippet rightCell(section: DocumentSection)}
-	<ProseBlocks unit={section} lang={secondaryLang ?? lang} />
+	<ProseBlocks unit={section} lang={secondaryLang ?? lang} work={secondaryWorkId ?? workId} />
 {/snippet}
 
 <!--
@@ -878,6 +885,7 @@
 									<ProseBlocks
 										unit={section}
 										{lang}
+										work={workId}
 										dropCap={i === 0 || divisionStarts.has(section.n)}
 									/>
 								</div>
@@ -906,6 +914,7 @@
 										<ProseBlocks
 											unit={row.unit}
 											{lang}
+											work={workId}
 											dropCap={i === 0 && current.sections.length === 0}
 										/>
 									</div>

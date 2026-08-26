@@ -294,6 +294,41 @@ dropped book number in Malagasy) that no per-edition check could see. This is
 `audit.py divisions`' argument one level down: the symmetry is free evidence,
 and it is the only instrument that can tell a wrong link from a missing one.
 
+**The grammar's axis is content language, plus a short list of works that
+contradict it** (2026-08-26). English numbers the books of Kings two ways —
+the Septuagint's four Regum, which the Douay-Rheims translates and the CCEL
+Summa quotes in, against the modern Samuel-and-Kings the Nova Vulgata and
+every modern Catholic translation use — and the two disagree about exactly
+`1 Kings` and `2 Kings`. `3 Kings` and `4 Kings` are unambiguous under both
+and had been read since the tables were written; the other two were left as
+the modern books, correct for the Catechism and one book off for fifty-odd
+references in the Summa, because nothing in the citation string distinguishes
+them and the grammar could not see the work.
+
+It can now: `RefsOpts` carries an optional work id, `configFor` consults
+`WORK_CONFIGS` before the language table, and three works are listed there —
+`summa.en`, `encyclical.aeterni-patris.en`, `encyclical.diuturnum.en`. Two
+things about the shape were deliberate. **Modern is the default and Douay is
+the opt-in**, which is the measurement rather than a preference about
+traditions: thirteen references in `ccc.en` and one apiece in the Compendium
+and six encyclicals read modern, against three works that do not. And **the
+list is per work and evidence-backed, not a general second axis** — each
+entry was verified against the verse it actually names (Aeterni Patris's
+"1 Kings 2:3" anchors "the God of all knowledge", 1 Samuel 2:3; Diuturnum's
+"1 Kings 9:16; 10:1; 16:13" anchors the anointing of Saul and David, which
+`ccc.en` cites as 1 Samuel), and none of the three ever prints "Samuel". A
+work earns a row the way a source defect earns a correction, or the axis
+becomes a place to put guesses.
+
+The cost of the axis is that **the builders have to pass the same work the
+page passes**. `build-xrefs.mjs` threads it from the sync's edition records,
+`reference-coverage.mjs` buckets per work instead of per language — an
+`encyclical`/`en` bucket would have measured two of its works differently
+from how the site renders them — and `book-forms-oracle.mjs` derives it from
+`--work`, without which it would report a contradiction it had introduced
+itself. That is the recurring shape here: one grammar, or the index and the
+page disagree about which verse a citation names.
+
 **A reference table belongs to the edition that printed it, not to the work.** The
 Catechism's front-matter sigla are the corpus's one case of the same key meaning two
 different things in two editions of one work, and it took reading both to see it: French

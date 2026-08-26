@@ -505,17 +505,43 @@ misprints now filed as corrections (`ccc.it-964-1gv-for-gv`,
 `ccc.pt-371-ga-for-gn`). Run it after any table change; the residue is where
 the next win is.
 
-**English has two book-naming conventions and they collide on Kings.** The
-Douay tradition — which the CCEL Summa follows and which
-`bible.douay-rheims.en`'s own book names state ("1 Kings (1 Samuel)", "3 Kings
+**English has two book-naming conventions and they collide on Kings, which
+is why `RefsOpts` has a second axis.** The Douay tradition — the Septuagint's
+four Βασιλειῶν by way of the Vulgate's four Regum, stated by
+`bible.douay-rheims.en`'s own book names ("1 Kings (1 Samuel)", "3 Kings
 (1 Kings)") — calls 1–2 Samuel the first two books of Kings. `3 Kings` and
-`4 Kings` are unambiguous and are read; `1 Kings` and `2 Kings` are not, and
-stay the modern books, which keeps `ccc.en`'s 14 citations right and leaves 50
-in `summa.en` pointing one book off. **Nothing in the citation string tells
-them apart — only the work does**, and this grammar's one axis is language.
-Fixing it means giving `RefsOpts` a per-work axis and threading it through
-`ProseBlocks`, `InlineProse`, `build-xrefs.mjs` and `reference-coverage.mjs`;
-that is a design change, not a table entry.
+`4 Kings` mean the same under both and always read; `1 Kings` and `2 Kings`
+mean different books and **nothing in the citation string tells them apart —
+only the work does**.
+
+So `configFor` takes a work id as well as a language, and
+`refs-grammar.ts`'s **`WORK_CONFIGS`** lists the works whose own text
+contradicts their language's table. Modern is the default, because that is
+what the corpus prints nearly everywhere (13 references in `ccc.en`, one
+apiece in the Compendium and six encyclicals). Three works opt out, each
+verified against the verse it actually names: `summa.en` (CCEL quotes
+Douay-Rheims throughout — 38/17/37/30 across the four books), and
+`encyclical.aeterni-patris.en` and `encyclical.diuturnum.en`, one reference
+each. Two more print `III Kings`/`3 Kgs` and need no entry. None of the three
+ever prints "Samuel", which is the corroboration.
+
+**A work belongs in `WORK_CONFIGS` only when its references are measurably
+read wrong without it**, and the evidence goes in the comment beside it — the
+same standard `pipeline/corrections/` holds a source defect to. It is a short
+list on purpose, not a second general axis.
+
+**Every reading surface passes `work`, including the ones that need it
+today's answer of "nothing".** `ProseBlocks`, `InlineProse`, `RefText`,
+`CitationDisclosure`, `HeadingText`, `SummaDivisions` and `CompendiumQuestion`
+all take it, and the CCC, Compendium, Summa and document routes all fill it
+from `editions.current?.work.id` / `editions.secondaryWorkId`. The prayers
+route is the one that does not — a prayer carries no work id where it renders
+one, and no prayer work cites Kings at all. **The build side has to pass the
+same work the page passes**, or the scripture index points at a different
+verse from the link on it: `build-xrefs.mjs` threads it from `sync-corpus`'s
+edition records, `reference-coverage.mjs` buckets per work rather than per
+language for the same reason, and `book-forms-oracle.mjs` derives it from
+`--work` so it does not report a contradiction of its own making.
 
 **`prose.document` is the counter that guards the sigla scan.**
 `reference-coverage.mjs` counts it per family and `preflight-deploy.mjs`

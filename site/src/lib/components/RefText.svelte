@@ -34,13 +34,21 @@
 		text: string;
 		/** Bare content language driving the citation grammar (PT's comma separator, its own book-abbreviation table). Falls back to the current UI language. */
 		lang?: string;
+		/** Corpus work id of the text being read, when the caller knows it. Only
+		    the few works listed in `refs-grammar.ts`'s `WORK_CONFIGS` read
+		    differently for it — English works that number the books of Kings
+		    the Douay way — and passing nothing reads the work as its language
+		    reads. */
+		work?: string;
 		class?: string;
 	}
 
-	let { text, lang, class: className }: Props = $props();
+	let { text, lang, work, class: className }: Props = $props();
 
 	const effectiveLang = $derived(lang ?? i18n.lang);
-	const segments = $derived(parseRefs(normalizeCitationSpacing(text), { lang: effectiveLang }));
+	const segments = $derived(
+		parseRefs(normalizeCitationSpacing(text), { lang: effectiveLang, work })
+	);
 	const bibleWorkId = $derived(content.workIdFor('bible'));
 
 	/** Tooltip for an unresolved segment: the document expansion when we have one, otherwise just the raw citation text (better than nothing, no worse than the plain text it sits next to). */

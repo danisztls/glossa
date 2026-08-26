@@ -347,6 +347,19 @@ export interface RefsOpts {
 	/** BCP-47 or bare language tag; only the `pt`/non-`pt` distinction matters. Defaults to `en`. */
 	lang?: string;
 	/**
+	 * Corpus work id of the text being read (`summa.en`,
+	 * `encyclical.diuturnum.en`), when the caller knows it.
+	 *
+	 * Optional, and almost always ignorable: the grammar's axis is content
+	 * language, and this is consulted only for the handful of works listed in
+	 * `WORK_CONFIGS`, whose own text contradicts their language's book table.
+	 * Today all of them are English works numbering the books of Kings the
+	 * Douay way, where `1 Kings` means 1 Samuel. Passing nothing reads such a
+	 * work as its language reads — which is what happened until 2026-08-26,
+	 * and what left 52 references pointing one book off.
+	 */
+	work?: string;
+	/**
 	 * `linkifyProse` only: read a bare "cf. 1212" as a CCC PARAGRAPH reference.
 	 *
 	 * Off by default, and deliberately. The grammar is real — the Catechism's
@@ -522,6 +535,66 @@ function numberedVariants(
 	return out;
 }
 
+/**
+ * ENGLISH NUMBERS THE BOOKS OF KINGS TWO WAYS, and the two collide.
+ *
+ * The Douay tradition — inherited from the Septuagint's four Βασιλειῶν and
+ * the Vulgate's four Regum, and stated by `bible.douay-rheims.en`'s own book
+ * names ("1 Kings (1 Samuel)", "3 Kings (1 Kings)") — calls 1-2 Samuel the
+ * first two books of Kings and 1-2 Kings the third and fourth. The modern
+ * naming, which the Nova Vulgata and every modern Catholic translation use,
+ * keeps Samuel and Kings apart and stops at two of each.
+ *
+ * So `3 Kings` and `4 Kings` are unambiguous under both, and `1 Kings` and
+ * `2 Kings` are unambiguous under neither: nothing in the citation string
+ * tells them apart. Only the WORK does — which is why `RefsOpts.work` exists
+ * and why `configFor` takes it. Modern is the default because that is what
+ * the corpus overwhelmingly prints (measured 2026-08-26: 13 references in
+ * `ccc.en` and one apiece in the Compendium and six encyclicals, against
+ * three works that read the other way); Douay is opt-in per work, listed in
+ * `WORK_CONFIGS`.
+ *
+ * Both build the same surface forms, so `remapBookVariants` can swap one for
+ * the other by dropping the first table's strings and adding the second's.
+ */
+const KINGS_BASES = ['Kings', 'Kgs', 'Kg'];
+const KINGS_NUMBER_OPTS = { lTypo: true, unspaced: true };
+const KINGS_MODERN = numberedVariants(
+	{ 1: '1kgs', 2: '2kgs', 3: '1kgs', 4: '2kgs' },
+	KINGS_BASES,
+	KINGS_NUMBER_OPTS
+);
+const KINGS_DOUAY = numberedVariants(
+	{ 1: '1sam', 2: '2sam', 3: '1kgs', 4: '2kgs' },
+	KINGS_BASES,
+	KINGS_NUMBER_OPTS
+);
+
+/**
+ * A book table with one family's surface forms re-pointed at other books.
+ *
+ * `from` and `to` must span the same surface forms — the point is a work
+ * that spells references identically to its neighbours and means something
+ * else by them, not a work with extra abbreviations. Anything `from` claims
+ * is dropped wherever it appears, so a form that survives in `to` comes back
+ * on the key `to` gives it, and a book left with no forms at all disappears
+ * from the table rather than lingering as an empty array.
+ */
+function remapBookVariants(
+	base: Record<string, string[]>,
+	from: Record<string, string[]>,
+	to: Record<string, string[]>
+): Record<string, string[]> {
+	const dropped = new Set(Object.values(from).flat());
+	const out: Record<string, string[]> = {};
+	for (const [osis, variants] of Object.entries(base)) {
+		const kept = variants.filter((v) => !dropped.has(v));
+		if (kept.length) out[osis] = kept;
+	}
+	for (const [osis, variants] of Object.entries(to)) (out[osis] ??= []).push(...variants);
+	return out;
+}
+
 const BOOK_VARIANTS_EN: Record<string, string[]> = {
 	gen: ['Gn', 'Gen', 'Genesis'],
 	exod: ['Ex', 'Exod', 'Exodus', 'EX'], // EX: observed all-caps variant
@@ -610,26 +683,13 @@ const BOOK_VARIANTS_EN: Record<string, string[]> = {
 		lTypo: true,
 		unspaced: true
 	}),
-	// FOUR BOOKS OF KINGS, in one call because the two conventions meet on the
-	// same two osis keys. The Douay tradition — which the CCEL Summa follows
-	// throughout, and which `bible.douay-rheims.en`'s own book names state
-	// ("1 Kings (1 Samuel)", "3 Kings (1 Kings)") — calls 1-2 Samuel the first
-	// two books of Kings and 1-2 Kings the third and fourth.
-	//
-	// So `3 Kings` and `4 Kings` are unambiguous and are read here; `1 Kings`
-	// and `2 Kings` are NOT, and stay the modern books. That is a measured
-	// choice, not a complete one: ccc.en cites them 14 times in the modern
-	// sense and summa.en 50 times in the Douay sense, and no property of the
-	// citation string tells the two apart — only the work does, which this
-	// grammar's one axis is language and cannot see. Reading them as modern
-	// keeps ccc.en right and leaves 50 references in the Summa pointing at the
-	// wrong book; reading them as Douay would trade one for the other. The
-	// third option is a per-work axis, which is a design change and not one to
-	// make in passing.
-	...numberedVariants({ 1: '1kgs', 2: '2kgs', 3: '1kgs', 4: '2kgs' }, ['Kings', 'Kgs', 'Kg'], {
-		lTypo: true,
-		unspaced: true
-	}),
+	// FOUR BOOKS OF KINGS. `1 Kings` means two different books in two English
+	// conventions, and which one a work follows is not a property of the
+	// citation string — see `KINGS_MODERN`/`KINGS_DOUAY` above and
+	// `WORK_CONFIGS` below. This table carries the modern reading, which is
+	// the default for every English work that has not been measured to use
+	// the other one.
+	...KINGS_MODERN,
 	// "Paralipomenon" is the Douay name for Chronicles, abbreviated by the
 	// Summa five different ways in five places.
 	...numberedVariants(
@@ -1886,6 +1946,23 @@ function buildConfig(
 // unambiguously a verse separator there, so accept it while retaining the
 // source's printed spelling in the corpus.
 const CONFIG_EN = buildConfig(BOOK_VARIANTS_EN, DOCUMENT_SIGLA_EN, ':', true, true, [',']);
+
+/**
+ * English, read by a work that numbers the books of Kings the Douay way —
+ * see `KINGS_MODERN`/`KINGS_DOUAY`. Identical to `CONFIG_EN` in every other
+ * respect, because the convention is a naming difference and not a dialect:
+ * such a work abbreviates, punctuates and separates exactly as its
+ * neighbours do, and the sigla, the marks and the other seventy books are
+ * the same table.
+ */
+const CONFIG_EN_DOUAY = buildConfig(
+	remapBookVariants(BOOK_VARIANTS_EN, KINGS_MODERN, KINGS_DOUAY),
+	DOCUMENT_SIGLA_EN,
+	':',
+	true,
+	true,
+	[',']
+);
 // Fourth argument stays `false`: PT never uses a bare SPACE as a
 // chapter/verse separator, so `allowBareSeparators` (which would enable both
 // " " and ".") is still the wrong knob for it. What PT does drift to is "."
@@ -1963,15 +2040,17 @@ const CONFIG_AR = buildConfig(
  * so `en-gb` reads as English.
  *
  * ENGLISH IS THE FALLBACK FOR EVERYTHING ELSE, and that is a smaller claim
- * than it looks. The eight tags with no entry here — `ar`, `hu`, `pl`, `ro`,
- * `ru`, `sl`, `sv` and `en-gb` — hold one work apiece besides `en-gb`'s
- * prayers, and the four Compendium ones cite the Catechism by bare number
- * ("279-289, 296-298"), which `parseBareCccList` reads without any table at
- * all: measured 2026-08-26, all four are at 100% of their citations already.
- * Their prose prints no Scripture locator, so the English book table matched
- * nothing in them rather than matching something wrong. A tag that acquires
- * a work with a real apparatus needs a row here, and the way to find out is
- * `scripts/reference-coverage.mjs`.
+ * than it looks. Five tags have no entry here: `en-gb`, whose prayers are
+ * English and read as English by the prefix rule, and `hu`, `ro`, `sl` and
+ * `sv`, which hold one work apiece — a Compendium, citing the Catechism by
+ * bare number ("279-289, 296-298"), which `parseBareCccList` reads without
+ * any table at all. Measured 2026-08-26, all four are at 100% of their
+ * citations already, and their prose prints no Scripture locator, so the
+ * English book table matched nothing in them rather than matching something
+ * wrong. `ar`, `pl` and `ru` were on that list until one encyclical landed a
+ * work in each and the same measurement said otherwise — which is the point:
+ * a tag that acquires a work with a real apparatus needs a row here, and the
+ * way to find out is `scripts/reference-coverage.mjs`.
  */
 const CONFIGS: Record<string, LangConfig> = {
 	ar: CONFIG_AR,
@@ -1987,7 +2066,46 @@ const CONFIGS: Record<string, LangConfig> = {
 	en: CONFIG_EN
 };
 
-function configFor(lang?: string): LangConfig {
+/**
+ * Work id -> grammar, consulted BEFORE the language table and overriding it.
+ *
+ * The grammar's axis is content language, and it stays that: this map is not
+ * a second axis so much as a short list of works whose own text contradicts
+ * their language's table, and it is short on purpose. A work belongs here
+ * only when its references are measurably read wrong without it, and the
+ * evidence goes in the comment beside it — the same standard
+ * `pipeline/corrections/` holds a source defect to.
+ *
+ * All three entries are the Douay numbering of Kings, verified reference by
+ * reference against the verse each one actually names (2026-08-26):
+ *
+ *   `summa.en`      50 references. CCEL quotes Scripture in Douay-Rheims
+ *                   throughout, and prints all four books of Kings — 38 "1
+ *                   Kings", 17 "2 Kings", 37 "3 Kings", 30 "4 Kings". The
+ *                   3s and 4s are what put it beyond doubt.
+ *   `encyclical.aeterni-patris.en`   1. "1 Kings 2:3" anchors "the God of
+ *                   all knowledge", which is 1 Samuel 2:3.
+ *   `encyclical.diuturnum.en`        1, covering three verses. "1 Kings
+ *                   9:16; 10:1; 16:13" anchors the anointing of kings —
+ *                   Saul and David, 1 Samuel — and `ccc.en` cites the same
+ *                   three verses as "1 Sam 9:16; 10:1; 16:1, 12-13".
+ *
+ * Two other English works print the Douay numbering and need no entry, since
+ * `3 Kings`/`4 Kings` resolve the same way under both conventions:
+ * `encyclical.editae-saepe.en` ("III Kings 19:11") and
+ * `encyclical.mysterium.en` ("3 Kgs 19.8").
+ */
+const WORK_CONFIGS: Record<string, LangConfig> = {
+	'summa.en': CONFIG_EN_DOUAY,
+	'encyclical.aeterni-patris.en': CONFIG_EN_DOUAY,
+	'encyclical.diuturnum.en': CONFIG_EN_DOUAY
+};
+
+function configFor(lang?: string, work?: string): LangConfig {
+	if (work) {
+		const byWork = WORK_CONFIGS[work];
+		if (byWork) return byWork;
+	}
 	if (!lang) return CONFIG_EN;
 	const tag = lang.toLowerCase();
 	return CONFIGS[tag.split('-')[0]] ?? CONFIG_EN;
@@ -2936,7 +3054,7 @@ export function normalizeCitationSpacing(text: string): string {
 export function parseRefs(text: string, opts?: RefsOpts): RefSegment[] {
 	if (!text) return [];
 	if (isBareNumberList(text)) return parseBareCccList(text);
-	return parseCitationClauses(text, configFor(opts?.lang));
+	return parseCitationClauses(text, configFor(opts?.lang, opts?.work));
 }
 
 /**
@@ -3043,7 +3161,7 @@ function bracketedPositions(text: string): boolean[] {
  */
 export function linkifyProse(text: string, opts?: RefsOpts): RefSegment[] {
 	if (!text) return [];
-	const cfg = configFor(opts?.lang);
+	const cfg = configFor(opts?.lang, opts?.work);
 	const CF_RE = /\bcf\.\s*/gi;
 	const NUM_LIST_RE = new RegExp(
 		`^\\d+(?:\\s*[${DASHES}]\\s*\\d+)?(?:\\s*,\\s*\\d+(?:\\s*[${DASHES}]\\s*\\d+)?)*`

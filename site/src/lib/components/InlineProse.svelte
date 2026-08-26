@@ -14,10 +14,13 @@
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
 	import InlineNodes from './InlineNodes.svelte';
 
-	let { html, lang }: { html: string; lang: string } = $props();
+	/** `work` is the corpus work id when the caller knows it — see
+	 *  `RefsOpts.work`; it changes the grammar only for the handful of works
+	 *  `WORK_CONFIGS` lists, and the Summa is one of them. */
+	let { html, lang, work }: { html: string; lang: string; work?: string } = $props();
 
 	const nodes = $derived(
-		linkifyInline(parseInlineHtml(html), (text: string) => linkifyProse(text, { lang }))
+		linkifyInline(parseInlineHtml(html), (text: string) => linkifyProse(text, { lang, work }))
 	);
 
 	function hrefFor(seg: RefSegment): string | undefined {

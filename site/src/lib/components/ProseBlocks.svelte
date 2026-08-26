@@ -33,11 +33,17 @@
 		unit: { blocks: CccBlock[]; citations: CccCitation[] };
 		/** Bare content language ('en' | 'pt') the unit is being read in — picks the citation grammar in `$lib/refs.ts` (e.g. PT's ':'-vs-','  chapter/verse separator, its own book-abbreviation table). */
 		lang: string;
+		/** Corpus work id of the text being read, when the caller knows it. Only
+		    the few works listed in `refs-grammar.ts`'s `WORK_CONFIGS` read
+		    differently for it — English works that number the books of Kings
+		    the Douay way — and passing nothing reads the work as its language
+		    reads. */
+		work?: string;
 		/** Set an illuminated initial on the opening block. The caller decides — it is the one that knows this unit opens a chapter or a document, which this component cannot see. */
 		dropCap?: boolean;
 	}
 
-	let { unit, lang, dropCap = false }: Props = $props();
+	let { unit, lang, work, dropCap = false }: Props = $props();
 
 	/**
 	 * The opening of the first block, split into the pieces app.css's
@@ -141,7 +147,7 @@
 	 * `RefText` uses internally) keeps the actual URL logic in one place.
 	 */
 	function proseSegments(text: string): RefSegment[] {
-		return linkifyProse(text, { lang });
+		return linkifyProse(text, { lang, work });
 	}
 
 	function hrefFor(seg: RefSegment): string | undefined {
@@ -163,10 +169,15 @@
 	{#snippet marker(marker: string, seq: number)}
 		{@const disclosureKey = `${blockIndex}:${seq}`}
 		{@const citation = citationFor(marker)}
-		{#if isInline(citation)}<RefText text={citation.label} {lang} />{:else}<CitationDisclosure
+		{#if isInline(citation)}<RefText
+				text={citation.label}
+				{lang}
+				{work}
+			/>{:else}<CitationDisclosure
 				{marker}
 				{citation}
 				{lang}
+				{work}
 				open={openMarkers.has(disclosureKey)}
 				onToggle={() => toggleCitation(disclosureKey)}
 			/>{/if}

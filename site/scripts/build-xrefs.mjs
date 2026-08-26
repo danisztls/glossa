@@ -195,15 +195,19 @@ export function blockProse(block) {
 /**
  * @param {Unit} unit
  * @param {string} lang
+ * @param {string} [work] corpus work id, for the few works whose own book
+ *   naming overrides their language's — see `refs-grammar.ts`'s `WORK_CONFIGS`.
+ *   The builder must pass the same one the reader's page passes, or the
+ *   scripture index points at a different verse from the link on the page.
  * @returns {ScriptureRef[]}
  */
-function refsForUnit(unit, lang) {
+function refsForUnit(unit, lang, work) {
 	/** @type {ScriptureRef[]} */
 	const out = [];
 	for (const citation of unit.citations ?? []) {
 		const raw = citation.label ?? citation.text;
 		if (!raw) continue;
-		for (const seg of parseRefs(normalizeCitationSpacing(raw), { lang })) {
+		for (const seg of parseRefs(normalizeCitationSpacing(raw), { lang, work })) {
 			if (seg.kind === 'scripture') out.push(...toVulgateRefs(seg));
 		}
 	}
@@ -215,7 +219,7 @@ function refsForUnit(unit, lang) {
 	// and both were already read from `citations` above.
 	for (const block of unit.blocks ?? []) {
 		const prose = blockProse(block);
-		for (const seg of linkifyProse(prose, { lang })) {
+		for (const seg of linkifyProse(prose, { lang, work })) {
 			if (seg.kind === 'scripture') out.push(...toVulgateRefs(seg));
 		}
 	}
@@ -230,15 +234,15 @@ function refsForUnit(unit, lang) {
  * with no references omitted.
  */
 /**
- * @param {{ lang: string, paragraphs: Unit[] }[]} editions
+ * @param {{ lang: string, work?: string, paragraphs: Unit[] }[]} editions
  * @returns {CccBibleXref[]}
  */
 export function buildCccBibleXrefs(editions) {
 	/** @type {Map<number, ScriptureRef[]>} */
 	const byParagraph = new Map();
-	for (const { lang, paragraphs } of editions) {
+	for (const { lang, work, paragraphs } of editions) {
 		for (const p of paragraphs) {
-			const refs = refsForUnit(p, lang);
+			const refs = refsForUnit(p, lang, work);
 			if (refs.length === 0) continue;
 			const list = byParagraph.get(p.n);
 			if (list) list.push(...refs);
@@ -263,15 +267,15 @@ export function buildCccBibleXrefs(editions) {
  * that page opens in. Output is `[{ work, n, refs }]`, ordered by slug then
  * section, entries with no references omitted.
  *
- * @param {{ slug: string, lang: string, sections: Unit[] }[]} editions
+ * @param {{ slug: string, lang: string, work?: string, sections: Unit[] }[]} editions
  * @returns {DocumentBibleXref[]}
  */
 export function buildDocumentBibleXrefs(editions) {
 	/** @type {Map<string, Map<number, ScriptureRef[]>>} */
 	const bySlug = new Map();
-	for (const { slug, lang, sections } of editions) {
+	for (const { slug, lang, work, sections } of editions) {
 		for (const section of sections) {
-			const refs = refsForUnit(section, lang);
+			const refs = refsForUnit(section, lang, work);
 			if (refs.length === 0) continue;
 			let byUnit = bySlug.get(slug);
 			if (!byUnit) bySlug.set(slug, (byUnit = new Map()));
@@ -369,7 +373,7 @@ export function buildDocumentBibleXrefs(editions) {
  * @typedef {{ work: string, n: number | null, cited_by: Citer[] }} DocumentCitationXref
  * @typedef {{ ccc: number, cited_by: Citer[] }} CccCitationXref
  *
- * @param {{ citer: Citer & { slug?: string }, lang: string, unit: Unit }[]} units
+ * @param {{ citer: Citer & { slug?: string }, lang: string, work?: string, unit: Unit }[]} units
  *   every citing unit, each already carrying the address that names it
  * @param {(slug: string, n: number) => boolean} sectionExists
  * @param {(n: number) => boolean} paragraphExists
@@ -403,7 +407,7 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists) {
 		}
 	};
 
-	for (const { citer, lang, unit } of units) {
+	for (const { citer, lang, work, unit } of units) {
 		const chainKey = `${citer.kind}\u0000${citer.slug ?? ''}\u0000${lang}`;
 		let chain = chains.get(chainKey);
 		if (!chain) chains.set(chainKey, (chain = { marker: null, named: null }));
@@ -420,8 +424,8 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists) {
 				: null;
 			const antecedent = marker !== null && chain.marker === marker - 1 ? chain.named : null;
 			const segments = antecedent
-				? expandedSegments(text, lang, antecedent)
-				: parseRefs(text, { lang });
+				? expandedSegments(text, lang, work, antecedent)
+				: parseRefs(text, { lang, work });
 			if (marker !== null) {
 				chain.marker = marker;
 				chain.named = lastNamedWork(segments);
@@ -522,13 +526,14 @@ function namesSameWork(seg, named) {
  *
  * @param {string} text a citation, already spacing-normalized
  * @param {string} lang
+ * @param {string | undefined} work
  * @param {NamedWork} antecedent
  * @returns {import('../src/lib/refs-grammar.ts').RefSegment[]}
  */
-function expandedSegments(text, lang, antecedent) {
+function expandedSegments(text, lang, work, antecedent) {
 	const expanded = expandIbidem(text, antecedent.label);
-	if (expanded === null) return parseRefs(text, { lang });
-	const segments = parseRefs(expanded, { lang });
+	if (expanded === null) return parseRefs(text, { lang, work });
+	const segments = parseRefs(expanded, { lang, work });
 	const i = segments.findIndex((seg) => namesSameWork(seg, antecedent.segment));
 	// A bare `Ibid.` — the place stands as well as the work. The expansion
 	// reads as a work named in passing, which is not a reference, so it comes

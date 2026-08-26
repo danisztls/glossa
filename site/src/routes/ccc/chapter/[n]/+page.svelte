@@ -52,6 +52,13 @@
 		() => data.byLang,
 		() => content.langFor('catechism')
 	);
+
+	/** This edition's work id, passed to every surface that linkifies its
+	 *  text. No Catechism edition is in `refs-grammar.ts`'s `WORK_CONFIGS`
+	 *  today, so it changes nothing here — it is passed so the axis is
+	 *  reachable from every reading surface rather than only from the two
+	 *  that need it now. */
+	const workId = $derived(editions.current?.work.id);
 	const heading = $derived(
 		editions.current ? displayTitle(editions.current.chapter, editions.lang) : undefined
 	);
@@ -187,7 +194,7 @@
 {#snippet leftCell(paragraph: CccParagraph)}
 	<div class="para" class:in-brief={paragraph.in_brief}>
 		<div class="para-text">
-			<ProseBlocks unit={paragraph} lang={editions.lang} />
+			<ProseBlocks unit={paragraph} lang={editions.lang} work={workId} />
 		</div>
 	</div>
 {/snippet}
@@ -195,7 +202,11 @@
 {#snippet rightCell(paragraph: CccParagraph)}
 	<div class="para" class:in-brief={paragraph.in_brief}>
 		<div class="para-text">
-			<ProseBlocks unit={paragraph} lang={editions.secondaryLang ?? editions.lang} />
+			<ProseBlocks
+				unit={paragraph}
+				lang={editions.secondaryLang ?? editions.lang}
+				work={editions.secondaryWorkId ?? workId}
+			/>
 		</div>
 	</div>
 {/snippet}
@@ -332,6 +343,7 @@
 										title={dt.title}
 										node={heading}
 										lang={editions.lang}
+										work={workId}
 									/>
 								</h2>
 							{:else}
@@ -340,6 +352,7 @@
 										title={dt.title}
 										node={heading}
 										lang={editions.lang}
+										work={workId}
 									/>
 								</h3>
 							{/if}
@@ -372,6 +385,7 @@
 								<ProseBlocks
 									unit={paragraph}
 									lang={editions.lang}
+									work={workId}
 									dropCap={i === 0 && !paragraph.in_brief}
 								/>
 							</div>

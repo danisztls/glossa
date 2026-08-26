@@ -33,11 +33,17 @@
 	interface Props {
 		divisions: SummaDivision[];
 		lang: string;
+		/** Corpus work id of the text being read, when the caller knows it. Only
+		    the few works listed in `refs-grammar.ts`'s `WORK_CONFIGS` read
+		    differently for it — English works that number the books of Kings
+		    the Douay way — and passing nothing reads the work as its language
+		    reads. */
+		work?: string;
 		/** Prefix for the generated ids, so two articles on one page cannot collide. */
 		idPrefix?: string;
 	}
 
-	let { divisions, lang, idPrefix = '' }: Props = $props();
+	let { divisions, lang, work, idPrefix = '' }: Props = $props();
 
 	function label(division: SummaDivision): string {
 		switch (division.kind) {
@@ -84,7 +90,7 @@
 {#each divisions as division, i (i)}
 	<section class="division" class:body={division.kind === 'corpus'} id={anchor(division)}>
 		<h3 class="division-label">{label(division)}</h3>
-		<ProseBlocks unit={{ blocks: division.blocks, citations: [] }} {lang} />
+		<ProseBlocks unit={{ blocks: division.blocks, citations: [] }} {lang} {work} />
 	</section>
 {/each}
 
