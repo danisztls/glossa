@@ -890,8 +890,17 @@ carries none either, and cannot — a sitemap's own date exists only inside a
 `<sitemapindex>`, and 5,812 URLs against a 50,000 cap do not warrant one. Cloudflare
 serves it with a strong `ETag` and no `Last-Modified`; adding the latter would mean routing
 the file through the Worker that `run_worker_first` deliberately negates, at an invocation
-per fetch. The ledger already makes the ETag mean something, since a rebuild over an
-unchanged corpus produces a byte-identical file.
+per fetch.
+
+**The `ETag` is not worth reasoning about either way, and it is worth saying so** rather
+than leaving it to look like a compensating mechanism. A conditional fetch of the sitemap
+saves a 562 KB body, but `/sitemap.xml` is negated in `run_worker_first`, so the request
+was already free of invocations, and bandwidth is unmetered on this plan. It saves nothing
+we pay for. Nor does a 304 change crawl scheduling: what schedules a recrawl is the
+`<lastmod>` values, which a crawler receiving a 304 already holds. The byte-stability the
+ledger buys is real, but it pays off somewhere else — Wrangler dedupes uploads by content
+hash, so a deploy over an unchanged corpus re-uploads neither the sitemap nor the corpus
+JSON.
 
 **Deploy guards measure the corpus, not the page count.** Preflight refuses a
 fixture-sized build, and refuses a build whose reference coverage fell more than 3% below
