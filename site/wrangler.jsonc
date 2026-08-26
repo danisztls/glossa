@@ -48,6 +48,47 @@
 		// navigation requests receive index.html. That keeps canonical deep
 		// links working while a typo such as /catechismus/999999 remains a real 404.
 		"not_found_handling": "404-page",
-		"run_worker_first": true
+
+		// Navigations only — NOT the boolean `true`, which is what this was
+		// until 2026-08-25 and which is a hard outage waiting on traffic.
+		//
+		// `true` routes EVERY request through the worker, and every one of those
+		// is a billed Worker invocation: all 2,236 corpus JSON chunks, plus JS,
+		// CSS, fonts and icons. `src/worker.ts` returns non-navigations to the
+		// asset binding on its first line, but the invocation is already spent.
+		// A single cold visitor that fills the offline library therefore cost
+		// ~2,240 invocations against the free plan's 100,000/day — about fifty
+		// first-time readers before the day's budget was gone.
+		//
+		// The failure past that limit is not graceful, which is the part that
+		// makes this urgent rather than merely wasteful: under `run_worker_first`
+		// Cloudflare answers 429 instead of falling back to serving the asset
+		// (workers/static-assets/billing-and-limitations), so with `true` the
+		// whole site — every path — went dark until 00:00 UTC.
+		//
+		// Scoped this way a cold visit costs ONE invocation, and past the limit
+		// the site degrades instead of dying: negative patterns keep serving
+		// assets, so corpus text, JS and fonts stay up and only fresh navigations
+		// 429. A reader with the service worker already installed sees nothing.
+		//
+		// The negations are the top level of `build/`, and they are a list rather
+		// than a rule because there is no shape that separates them from reader
+		// paths — `/scriptura/gen/1` and `/robots.txt` look alike to a glob. A
+		// new static file added to `static/` and not added here still WORKS; it
+		// just quietly costs an invocation per request, which is exactly the
+		// mistake this comment exists to make findable.
+		"run_worker_first": [
+			"/*",
+			"!/_app/*",
+			"!/fonts/*",
+			"!/icons/*",
+			"!/favicon.ico",
+			"!/robots.txt",
+			"!/manifest.webmanifest",
+			"!/service-worker.js",
+			"!/corpus-routes.json",
+			"!/reference-coverage.json",
+			"!/offline.html"
+		]
 	}
 }
