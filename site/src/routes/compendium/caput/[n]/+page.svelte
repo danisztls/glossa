@@ -136,6 +136,25 @@
 			<div class="breadcrumb-row">
 				<nav class="breadcrumb" aria-label="Breadcrumb">
 					<a href="/compendium">{t('nav.compendium')}</a>
+					<!-- The unit's ancestors, ending in the unit itself — the same
+					     trail `/catechismus/caput/[n]` prints, and stopping in the same
+					     place: what lies below this unit is on the page already, not
+					     above it. Ancestors link to their own opening QUESTION; the
+					     last crumb is this page and so is text, not a link. -->
+					{#each editions.current.breadcrumb as node, i (node.title + node.paragraphs.join('-'))}
+						{@const dt = displayTitle(node, editions.lang)}
+						{@const from = node.paragraphs[0]}
+						{@const here = i === editions.current.breadcrumb.length - 1}
+						<span class="sep">›</span>
+						<!-- Nullable bounds, as on the `/compendium/[n]` breadcrumb: no
+						     lower bound, no address, so the crumb carries no link. -->
+						<a
+							href={here || from === null ? undefined : hrefFor({ kind: 'compendium', n: from })}
+							aria-current={here ? 'page' : undefined}
+						>
+							{dt.title}
+						</a>
+					{/each}
 				</nav>
 			</div>
 

@@ -98,6 +98,31 @@
 	 */
 	const articleNumbers = $derived((question?.articles ?? []).map((a) => a.n));
 	const outline = $derived(summaOutline(editions.lang, data.part, data.n, articleNumbers));
+	/**
+	 * The treatise this question sits in, for the breadcrumb — read off the
+	 * sidebar's own `outline` rather than derived a second time, so the crumb
+	 * row and the table of contents cannot name different treatises.
+	 *
+	 * Undefined in two legitimate cases, and both render as a two-crumb trail
+	 * rather than an invented one: the Latin edition prints no treatise
+	 * headings at all (`summaOutline`'s docblock — borrowing English's would
+	 * assert a structure the Corpus Thomisticum does not publish), and a
+	 * question ahead of its part's first heading belongs to no treatise, which
+	 * is why `summaOutline` keeps those at the top level.
+	 */
+	const treatise = $derived(
+		outline.find((node) => {
+			const [from, to] = node.paragraphs;
+			return (
+				node.kind === 'section' &&
+				typeof from === 'number' &&
+				typeof to === 'number' &&
+				data.n >= from &&
+				data.n <= to
+			);
+		})
+	);
+
 	/** The article rows' own anchors. They bound no question number of their
 	 *  own, so this is what tells the shared sidebar they are addressable —
 	 *  the same mechanism a document's tail headings already use. */
@@ -220,7 +245,23 @@
 				<nav class="breadcrumb" aria-label="Breadcrumb">
 					<a href="/summa">{t('summa.landing.title')}</a>
 					<span class="sep">›</span>
-					<span>{t('summa.part')} {data.part}</span>
+					<!-- The part is a section of the landing page, which is the whole
+					     table of contents — the same shape `/preces`' group crumb
+					     links to, and the anchor that page already puts on it. -->
+					<a href={`/summa#part-${partSlug}`}>{t('summa.part')} {data.part}</a>
+					{#if treatise}
+						{@const from = treatise.paragraphs[0]}
+						<span class="sep">›</span>
+						<!-- Addressed by its opening question, exactly as the landing
+						     page's treatise list addresses it. -->
+						<a
+							href={from === null
+								? undefined
+								: hrefFor({ kind: 'summa', part: partSlug, question: from, article: null })}
+						>
+							{treatise.title}
+						</a>
+					{/if}
 				</nav>
 			</div>
 

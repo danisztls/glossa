@@ -330,10 +330,6 @@
 {/if}
 
 <style>
-	.breadcrumb .ordinal {
-		margin-inline-end: 0.3em;
-	}
-
 	h1 {
 		font-family: var(--font-serif);
 		margin-top: 0;

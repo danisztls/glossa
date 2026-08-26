@@ -2256,10 +2256,12 @@ input {
  * prayers), for the same reason `.reading-layout` lives here and not in any
  * one of its six callers: Svelte's per-component style scoping has no
  * mechanism to share a block across files. `.breadcrumb .sep` is only
- * rendered by three of the six routes (the others have nothing to
- * separate), and `.breadcrumb .ordinal` (ccc/[n] only) stays scoped there as
- * a genuine per-route addition. See the print media query above for why
- * `.breadcrumb` itself is deliberately never hidden.
+ * rendered by the routes that print a trail rather than a single root crumb
+ * (the others have nothing to separate), and `.breadcrumb .ordinal` came
+ * here from `ccc/[n]`'s own `<style>` when the whole-chapter view started
+ * printing the same trail — a structure node's ordinal is set apart from its
+ * title identically wherever a crumb carries one. See the print media query
+ * above for why `.breadcrumb` itself is deliberately never hidden.
  */
 .breadcrumb {
 	font-size: 0.85rem;
@@ -2274,6 +2276,10 @@ input {
 
 .breadcrumb .sep {
 	margin: 0 0.35em;
+}
+
+.breadcrumb .ordinal {
+	margin-inline-end: 0.3em;
 }
 
 /*

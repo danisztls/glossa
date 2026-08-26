@@ -219,6 +219,27 @@
 			<div class="breadcrumb-row">
 				<nav class="breadcrumb" aria-label="Breadcrumb">
 					<a href="/catechismus">{t('nav.ccc')}</a>
+					<!-- The chapter's ancestors, ending in the chapter itself: this
+					     page is a whole chapter, so the trail stops where the page
+					     begins (`getCccChapterBreadcrumb`). Ancestors link to their
+					     own opening paragraph, exactly as on `/catechismus/[n]`; the
+					     last crumb is this page and so is text, not a link. -->
+					{#each editions.current.breadcrumb as node, i (node.title)}
+						{@const dt = displayTitle(node, editions.lang)}
+						{@const from = node.paragraphs[0]}
+						{@const here = i === editions.current.breadcrumb.length - 1}
+						<span class="sep">›</span>
+						<!-- A structure node's paragraph bounds are nullable (`CccNode`), and
+						     a node with no lower bound names no address — so it renders as
+						     a crumb without a link rather than as `/catechismus/null`. -->
+						<a
+							href={here || from === null ? undefined : hrefFor({ kind: 'ccc', n: from })}
+							aria-current={here ? 'page' : undefined}
+						>
+							{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+							{dt.title}
+						</a>
+					{/each}
 				</nav>
 			</div>
 

@@ -864,6 +864,30 @@ function isChapterNode(node: StructureNode, kinds: readonly StructureNode['kind'
 }
 
 /**
+ * A breadcrumb trail cut off at the chapter-sized node, inclusive — the
+ * ancestors a WHOLE-CHAPTER reading view can name above itself.
+ *
+ * The single-unit routes print the full trail because everything in it is
+ * above the paragraph on the page. On `/catechismus/caput/[n]` and
+ * `/compendium/caput/[n]` the chapter IS the page, so the articles and
+ * subsections below it are not places the reader could go up to — they are
+ * headings already printed in the body. Truncating at the chapter is what
+ * keeps the crumb row a path to this page rather than a path through it.
+ *
+ * Empty when no node of `kinds` contains `n`, matching the chapter
+ * accessors below: no chapter, no chapter trail.
+ */
+function chapterTrailIn(
+	trail: StructureNode[],
+	kinds: readonly StructureNode['kind'][]
+): StructureNode[] {
+	for (let i = trail.length - 1; i >= 0; i--) {
+		if (isChapterNode(trail[i], kinds)) return trail.slice(0, i + 1);
+	}
+	return [];
+}
+
+/**
  * The value in a sorted, ascending, gap-tolerant number list immediately
  * before/after `n` — shared by the CCC's and Compendium's "adjacent
  * paragraph/question that actually exists" accessors, which both need this
@@ -957,11 +981,16 @@ const CCC_CHAPTER_KINDS: CccNode['kind'][] = ['chapter', 'prologue', 'section', 
  * resolves to the chapter.
  */
 export function getCccChapterFor(lang: string, n: number): CccNode | undefined {
-	const trail = getCccBreadcrumb(lang, n);
-	for (let i = trail.length - 1; i >= 0; i--) {
-		if (isChapterNode(trail[i], CCC_CHAPTER_KINDS)) return trail[i];
-	}
-	return undefined;
+	return getCccChapterBreadcrumb(lang, n).at(-1);
+}
+
+/**
+ * The trail from root down to and including that chapter — what
+ * `/catechismus/caput/[n]` prints above the chapter it is showing. See
+ * `chapterTrailIn` for why it stops there.
+ */
+export function getCccChapterBreadcrumb(lang: string, n: number): CccNode[] {
+	return chapterTrailIn(getCccBreadcrumb(lang, n), CCC_CHAPTER_KINDS);
 }
 
 /**
@@ -1084,11 +1113,14 @@ const COMPENDIUM_CHAPTER_KINDS: StructureNode['kind'][] = ['chapter', 'section',
 
 /** The innermost whole-reading unit containing question `n`. */
 export function getCompendiumChapterFor(lang: string, n: number): StructureNode | undefined {
-	const trail = getCompendiumBreadcrumb(lang, n);
-	for (let i = trail.length - 1; i >= 0; i--) {
-		if (isChapterNode(trail[i], COMPENDIUM_CHAPTER_KINDS)) return trail[i];
-	}
-	return undefined;
+	return getCompendiumChapterBreadcrumb(lang, n).at(-1);
+}
+
+/** The trail from root down to and including that unit, for
+ *  `/compendium/caput/[n]`'s crumb row — the CCC's
+ *  `getCccChapterBreadcrumb`, over question numbers. */
+export function getCompendiumChapterBreadcrumb(lang: string, n: number): StructureNode[] {
+	return chapterTrailIn(getCompendiumBreadcrumb(lang, n), COMPENDIUM_CHAPTER_KINDS);
 }
 
 /** Every canonical Compendium whole-reading start in one language. */

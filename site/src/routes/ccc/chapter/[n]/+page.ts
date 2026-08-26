@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { cccLangs, getCccChapterFor, getCccParagraphRangeAsync, getWork } from '$lib/corpus';
+import { cccLangs, getCccChapterBreadcrumb, getCccParagraphRangeAsync, getWork } from '$lib/corpus';
 import type { CccNode, CccParagraph, WorkManifest } from '$lib/types';
 import type { PageLoad } from './$types';
 
@@ -15,6 +15,14 @@ export interface CccChapterLangData {
 	chapter: CccNode;
 	paragraphs: CccParagraph[];
 	work: WorkManifest;
+	/**
+	 * The chapter's own ancestors, outermost first, with the chapter itself
+	 * last — the crumb row above the text. Per language like everything else
+	 * here, because the two editions' structure trees genuinely differ (see
+	 * the component's compare docblock): the same `n` can sit under a
+	 * differently-grouped section in each.
+	 */
+	breadcrumb: CccNode[];
 }
 
 export const load: PageLoad = async ({ params }) => {
@@ -28,12 +36,13 @@ export const load: PageLoad = async ({ params }) => {
 		// start in this language: a start that exists in one language's tree
 		// may fall mid-chapter in the other's, and landing mid-chapter should
 		// still show the whole enclosing chapter rather than nothing.
-		const chapter = getCccChapterFor(lang, n);
+		const breadcrumb = getCccChapterBreadcrumb(lang, n);
+		const chapter = breadcrumb.at(-1);
 		if (!chapter) continue;
 		const [from, to] = chapter.paragraphs as [number, number];
 		const paragraphs = await getCccParagraphRangeAsync(lang, from, to);
 		if (paragraphs.length === 0) continue;
-		byLang[lang] = { chapter, paragraphs, work };
+		byLang[lang] = { chapter, paragraphs, work, breadcrumb };
 	}
 
 	if (Object.keys(byLang).length === 0) {

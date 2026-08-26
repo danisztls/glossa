@@ -10,6 +10,9 @@ import {
 	hasBookIntro,
 	hasIntroForWork,
 	compareColumnLabel,
+	getCccChapterBreadcrumb,
+	getCccChapterFor,
+	getCompendiumChapterBreadcrumb,
 	getCompendiumChapterFor,
 	getCompendiumQuestionRangeAsync,
 	listCompendiumChapters,
@@ -28,6 +31,25 @@ describe('Compendium whole-reading units', () => {
 		expect(getCompendiumChapterFor('en', 1)?.kind).toBe('section');
 	});
 
+	/**
+	 * The whole-chapter view prints its unit's ancestors and stops there —
+	 * everything below the chapter is on the page already, not above it. So
+	 * the trail must end at the same node `getCompendiumChapterFor` picks,
+	 * including where that is the section fallback before the first chapter.
+	 */
+	it('trails down to the whole-reading unit and no further', () => {
+		expect(getCompendiumChapterBreadcrumb('en', 2).map((node) => node.kind)).toEqual([
+			'part',
+			'section',
+			'chapter'
+		]);
+		expect(getCompendiumChapterBreadcrumb('en', 1).map((node) => node.kind)).toEqual([
+			'part',
+			'section'
+		]);
+		expect(getCompendiumChapterBreadcrumb('en', 2).at(-1)).toBe(getCompendiumChapterFor('en', 2));
+	});
+
 	it('makes all whole-reading starts available to the route manifest', () => {
 		expect(listCompendiumChapters('en').map((chapter) => chapter.paragraphs[0])).toEqual([
 			1, 1, 2, 6, 25
@@ -40,6 +62,25 @@ describe('Compendium whole-reading units', () => {
 			{ n: 3 },
 			{ n: 4 }
 		]);
+	});
+});
+
+describe('CCC whole-chapter breadcrumb', () => {
+	/** Paragraph 28 sits inside an ARTICLE inside the chapter, and the article
+	 *  is a heading printed in the chapter's own body — a place the reader is
+	 *  already at, not one to go up to. */
+	it('stops at the chapter, dropping the article the paragraph is in', () => {
+		expect(getCccChapterBreadcrumb('en', 28).map((node) => node.kind)).toEqual([
+			'part',
+			'section',
+			'chapter'
+		]);
+		expect(getCccChapterBreadcrumb('en', 28).at(-1)).toBe(getCccChapterFor('en', 28));
+	});
+
+	it('is empty where no chapter contains the paragraph', () => {
+		expect(getCccChapterBreadcrumb('en', 9999)).toEqual([]);
+		expect(getCccChapterFor('en', 9999)).toBeUndefined();
 	});
 });
 
