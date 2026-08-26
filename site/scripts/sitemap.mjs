@@ -21,13 +21,20 @@
  * second spelling of the grammar, and the first one to drift would drift
  * silently — a sitemap is read by machines that never complain.
  *
- * Deliberately no `<lastmod>`, `<changefreq>` or `<priority>`:
+ * `<lastmod>` comes from `scripts/lastmod.json`, a committed ledger of one
+ * fingerprint per address — never from the build clock. The objection that kept
+ * it out of this file until now still stands and is what that ledger exists to
+ * satisfy: a build-time value would mark all ~5,800 URLs as changed on every
+ * deploy, and Google discounts a lastmod it catches lying, for the whole file
+ * rather than the one entry. See `scripts/lastmod.mjs`.
  *
- * - `lastmod` would have to come from the build, since the corpus carries no
- *   per-address timestamp. A build-time value marks all ~5,800 URLs as changed
- *   on every deploy, which is worse than silence — Google discounts a lastmod
- *   it catches lying, for the whole file rather than the one entry.
- * - `changefreq` and `priority` are ignored by every major crawler.
+ * The static pages below carry no `lastmod` at all. They are chrome, not corpus
+ * — their content changes with the app, which the ledger deliberately does not
+ * fingerprint — and the element is per-URL optional. Saying nothing about them
+ * is the only claim available that is certainly true.
+ *
+ * Still deliberately no `<changefreq>` or `<priority>`: both are ignored by
+ * every major crawler.
  */
 
 import { hrefFor } from '../src/lib/address.ts';
@@ -126,9 +133,12 @@ function escapeXml(s) {
 
 /**
  * @param {RouteManifest} manifest
+ * @param {Record<string, string>} [dates] Address -> ISO date, from the lastmod
+ *   ledger. An address absent here is emitted without `<lastmod>`, which is the
+ *   correct output for the static pages and for a build that has no ledger yet.
  * @returns {string}
  */
-export function sitemapXml(manifest) {
+export function sitemapXml(manifest, dates = {}) {
 	const paths = sitemapPaths(manifest);
 	assertCanonical(paths, manifest);
 	if (paths.length > MAX_URLS) {
@@ -136,7 +146,11 @@ export function sitemapXml(manifest) {
 			`sitemap: ${paths.length} URLs exceeds the ${MAX_URLS} single-file limit — split into a sitemap index`
 		);
 	}
-	const entries = paths.map((p) => `\t<url><loc>${escapeXml(ORIGIN + p)}</loc></url>`);
+	const entries = paths.map((p) => {
+		const loc = `<loc>${escapeXml(ORIGIN + p)}</loc>`;
+		const date = dates[p];
+		return `\t<url>${loc}${date ? `<lastmod>${date}</lastmod>` : ''}</url>`;
+	});
 	return [
 		'<?xml version="1.0" encoding="UTF-8"?>',
 		'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',

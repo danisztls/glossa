@@ -153,6 +153,23 @@ if (!existsSync(sitemapPath)) {
 	fail('missing sitemap.xml — the build predates the sitemap, or prebuild did not run. Rebuild.');
 }
 
+// A sitemap that lost its dates is not a broken build in any visible way — it
+// is a smaller file that still validates, still lists every address, and tells
+// every crawler nothing about what changed. The corpus addresses all carry a
+// date; only the handful of static pages do not (scripts/lastmod.mjs), so
+// anything below a large majority means the ledger did not reach this build.
+{
+	const xml = readFileSync(sitemapPath, 'utf8');
+	const urls = (xml.match(/<url>/g) ?? []).length;
+	const dated = (xml.match(/<lastmod>/g) ?? []).length;
+	if (urls > 0 && dated / urls < 0.9) {
+		fail(
+			`sitemap.xml carries <lastmod> on ${dated} of ${urls} URLs — the lastmod ledger did not ` +
+				`reach this build. Check scripts/lastmod.json is present, then rebuild.`
+		);
+	}
+}
+
 const securityTxtPath = path.join(buildDir, '.well-known/security.txt');
 if (!existsSync(securityTxtPath)) {
 	fail(

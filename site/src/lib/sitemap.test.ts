@@ -61,9 +61,29 @@ describe('sitemapXml', () => {
 		expect((xml.match(/<url>/g) ?? []).length).toBe(sitemapPaths(manifest).length);
 	});
 
-	it('carries no lastmod, changefreq or priority', () => {
+	it('carries no changefreq or priority', () => {
 		const xml = sitemapXml(manifest);
-		expect(xml).not.toMatch(/lastmod|changefreq|priority/);
+		expect(xml).not.toMatch(/changefreq|priority/);
+	});
+
+	it('emits lastmod only where the ledger has a date', () => {
+		const xml = sitemapXml(manifest, { '/catechismus/27': '2026-08-26' });
+		expect(xml).toContain(
+			`<url><loc>${ORIGIN}/catechismus/27</loc><lastmod>2026-08-26</lastmod></url>`
+		);
+		expect(xml).toContain(`<url><loc>${ORIGIN}/catechismus/1</loc></url>`);
+	});
+
+	it('says nothing about the static pages, which the ledger does not cover', () => {
+		// They are chrome, not corpus. An address with no honest date available
+		// gets no claim rather than the build's — see scripts/lastmod.mjs.
+		const xml = sitemapXml(manifest, { '/catechismus/27': '2026-08-26' });
+		expect(xml).toContain(`<url><loc>${ORIGIN}/</loc></url>`);
+		expect(xml).toContain(`<url><loc>${ORIGIN}/colophon</loc></url>`);
+	});
+
+	it('omits lastmod entirely when no ledger is passed', () => {
+		expect(sitemapXml(manifest)).not.toMatch(/lastmod/);
 	});
 
 	it('throws rather than advertising an address the worker would 404', () => {

@@ -62,6 +62,7 @@
  */
 
 import { existsSync, rmSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import {
@@ -72,7 +73,15 @@ import {
 } from './build-xrefs.mjs';
 import { summaPartSlug } from '../src/lib/route-manifest.ts';
 import { setDocumentTitleSource } from '../src/lib/refs-grammar.ts';
+import { hrefFor } from '../src/lib/address.ts';
 import { sitemapXml } from './sitemap.mjs';
+import {
+	CHANGE_CEILING,
+	fingerprint,
+	readLedger,
+	resolveLastmod,
+	writeLedger
+} from './lastmod.mjs';
 import {
 	CoverageMeter,
 	compareCoverage,
@@ -94,6 +103,9 @@ const routeManifestPath = path.join(siteRoot, 'static/corpus-routes.json');
 // SPA shell means a crawler can otherwise reach the corpus only by rendering
 // the app and walking JavaScript-written links; see scripts/sitemap.mjs.
 const sitemapPath = path.join(siteRoot, 'static/sitemap.xml');
+// COMMITTED, and the sitemap's `<lastmod>` is only as truthful as this file's
+// history. See scripts/lastmod.mjs for why git cannot stand in for it.
+const lastmodPath = path.join(siteRoot, 'scripts/lastmod.json');
 
 /** CCC/Compendium `paragraphs.json`/`questions.json` are per-language single
  *  arrays ordered by `n`; Bible books split naturally along the print
@@ -250,6 +262,9 @@ if (!existsSync(worksSrc)) {
 	// meant to stop. This is generated site output, never corpus/raw.
 	rmSync(routeManifestPath, { force: true });
 	rmSync(sitemapPath, { force: true });
+	// The lastmod ledger is deliberately NOT removed, and this exit is what
+	// keeps a fixture build from rewriting it: two fixture books cannot be
+	// allowed to record the rest of the corpus as withdrawn.
 	console.warn(
 		`[sync-corpus] No corpus found at ${worksSrc} -- corpus.ts will fall back to its bundled ` +
 			`fixtures. The corpus is a separate, private repository (docs/decisions.md, ` +
@@ -423,6 +438,70 @@ const contentManifest = [];
 // all manifests are in — see `reference-coverage.mjs`.
 const coverage = new CoverageMeter();
 
+/** Whole-reading routes are addressed by their unit's first number. Keep
+ * these kind sets in sync with the corresponding corpus helpers: the edge
+ * may only bless canonical addresses the client reader can actually resolve.
+ * Declared above the work loop because the lastmod pass reads them there as
+ * well as the route manifest below.
+ */
+const CCC_CHAPTER_KINDS = new Set(['chapter', 'prologue', 'section', 'part']);
+const COMPENDIUM_CHAPTER_KINDS = new Set(['chapter', 'section', 'part']);
+
+/** Canonical path -> the per-edition fingerprints of the text stored there.
+ *  Filled by `mark()` below as each work is read; resolved against the
+ *  committed ledger once the address space is complete. */
+const addressFingerprints = new Map();
+
+/**
+ * Record one edition's text for one address.
+ *
+ * The `hrefFor` indirection is not decoration: `address.ts` is "the only place
+ * a canonical URL is written", and a fingerprint filed under a path the sitemap
+ * spells differently is a date that silently attaches to nothing. Passing the
+ * same builder both consumers use is what keeps them joined.
+ *
+ * @param {Parameters<typeof hrefFor>[0]} address
+ * @param {unknown} value
+ * @param {string} workId
+ */
+function mark(address, value, workId) {
+	fingerprint(addressFingerprints, hrefFor(address), value, corpusDateFor(workId));
+}
+
+/**
+ * The corpus's own last commit date for a work, as `YYYY-MM-DD`, or undefined.
+ *
+ * Used ONLY to seed an address the ledger has never seen (`lastmod.mjs`). It is
+ * far too coarse to detect change — one commit touching `ccc.en/paragraphs.json`
+ * covers all 2,865 CCC addresses, which is exactly why the ledger exists — but
+ * as an upper bound on when a work's text last moved it beats stamping a first
+ * build with the wall clock, and it is reproducible on any machine holding the
+ * same corpus checkout.
+ *
+ * Best-effort by design: `CORPUS_DIR` may point at something that is not a git
+ * checkout at all, and the fixtures never are.
+ *
+ * @param {string} workId
+ * @returns {string | undefined}
+ */
+const corpusDates = new Map();
+function corpusDateFor(workId) {
+	if (corpusDates.has(workId)) return corpusDates.get(workId);
+	let date;
+	try {
+		date =
+			execFileSync('git', ['log', '-1', '--format=%cs', '--', `works/${workId}`], {
+				cwd: corpusDir,
+				encoding: 'utf8',
+				stdio: ['ignore', 'pipe', 'ignore']
+			}).trim() || undefined;
+	} catch {
+		date = undefined;
+	}
+	corpusDates.set(workId, date);
+	return date;
+}
+
 for (const workId of workIds) {
 	const workDir = path.join(worksSrc, workId);
 	const manifestPath = path.join(workDir, 'manifest.json');
@@ -523,6 +602,13 @@ for (const workId of workIds) {
 					verses: c.verses.map((v) => v.n)
 				}))
 			});
+			// One address per chapter, fingerprinted from the chapter as stored.
+			// Unioned across editions by `mark`: `/scriptura/gen/1` is one page
+			// showing whichever edition the reader has, so a correction to any
+			// of the three is a change at that address.
+			for (const chapter of book.chapters) {
+				mark({ kind: 'bible', osis: book.osis, chapter: chapter.n }, chapter, workId);
+			}
 			// Chapter text, chunked by CHAPTER (see `BIBLE_CHAPTER_CHUNK_SIZE`).
 			// The chunk is the bare `Chapter[]` for its range, not a trimmed
 			// copy of the book object: `osis`/`name`/`abbrevs`/`order` are all
@@ -565,6 +651,13 @@ for (const workId of workIds) {
 		// opens an introduction must not carry all 71 of them.
 		bibleIntroIndex[lang] = { books: intros.map((entry) => entry.osis) };
 
+		// An introduction is chapter 0 of its book, and therefore an address on
+		// the same terms as any other chapter (docs/corpus-schema.md §Book
+		// introductions) — including this one.
+		for (const entry of intros) {
+			mark({ kind: 'bible', osis: entry.osis, chapter: 0 }, entry, workId);
+		}
+
 		// Kept WHOLE per language, like the prayers: one fetch the first time a
 		// reader opens any introduction, then memoized for the rest of the
 		// session. There is no chunk boundary worth drawing in 50 KB.
@@ -596,6 +689,17 @@ for (const workId of workIds) {
 		// citing.
 		cccEditions.push({ lang, work: workId, paragraphs });
 
+		for (const paragraph of paragraphs) {
+			mark({ kind: 'ccc', n: paragraph.n }, paragraph, workId);
+		}
+		// The chapter page renders its whole span, so its fingerprint is that
+		// span's paragraphs — not the outline. A correction inside a chapter
+		// changes the chapter page as surely as it changes the paragraph page.
+		for (const [from, to] of chapterSpans(structure, CCC_CHAPTER_KINDS)) {
+			const span = paragraphs.filter((p) => p.n >= from && p.n <= to);
+			mark({ kind: 'cccChapter', n: from }, span, workId);
+		}
+
 		const maxN = paragraphNumbers[paragraphNumbers.length - 1] ?? 0;
 		for (let start = 1; start <= maxN; start += CCC_CHUNK_SIZE) {
 			const end = start + CCC_CHUNK_SIZE - 1;
@@ -624,6 +728,14 @@ for (const workId of workIds) {
 			questionNumbers: questions.map((question) => question.n).sort((a, b) => a - b)
 		};
 		compendiumQuestionNumbers.push(...questions.map((question) => question.n));
+
+		for (const question of questions) {
+			mark({ kind: 'compendium', n: question.n }, question, workId);
+		}
+		for (const [from, to] of chapterSpans(structure, COMPENDIUM_CHAPTER_KINDS)) {
+			const span = questions.filter((q) => q.n >= from && q.n <= to);
+			mark({ kind: 'compendiumChapter', n: from }, span, workId);
+		}
 
 		// Chunked by question, exactly as the CCC is by paragraph — see
 		// `COMPENDIUM_CHUNK_SIZE` for why this stopped being a whole-file work.
@@ -670,6 +782,10 @@ for (const workId of workIds) {
 				hasGroups: Boolean(p.groups && p.groups.length > 0)
 			}))
 		};
+
+		for (const prayer of prayers) {
+			mark({ kind: 'prayer', slug: prayer.slug }, prayer, workId);
+		}
 
 		// Kept WHOLE per language (see this module's docblock) -- ~40 KB raw
 		// per language in the real corpus, an order of magnitude under the
@@ -726,6 +842,13 @@ for (const workId of workIds) {
 		for (const question of questions) {
 			const slug = summaPartSlug(question.part);
 			(summaAddresses[slug] ??= new Set()).add(question.n);
+			// `article: null` — an article is a fragment on its question's page,
+			// and `sitemapPaths` lists the question for the same reason.
+			// `slug`, not `question.part`: the address space is keyed by the part
+			// SLUG (`summaAddresses` above, and the route manifest the sitemap
+			// reads). Passing the raw part here files the fingerprint under a
+			// path the sitemap never spells, and the date attaches to nothing.
+			mark({ kind: 'summa', part: slug, question: question.n, article: null }, question, workId);
 			const relPath = `content/${workId}/questions/${slug}/${question.n}.json`;
 			writeJson(path.join(destDir, relPath), question);
 			contentManifest.push({
@@ -774,6 +897,16 @@ for (const workId of workIds) {
 			sectionNumbers: sections.map((s) => s.n).sort((a, b) => a - b),
 			...(appendix ? { appendixUnits: appendix.length } : {})
 		};
+
+		// A document is ONE address showing the whole text, so it is one
+		// fingerprint over everything that renders there — sections and the
+		// unnumbered matter alike, which for the eight editions that number
+		// nothing at all is the entire work. The slug is read the same way the
+		// route manifest reads it, from the middle segment of the work id.
+		{
+			const slug = /^([a-z0-9-]+)\.([a-z0-9-]+)\.([a-z]{2,3})$/.exec(workId)?.[2];
+			if (slug) mark({ kind: 'document', slug }, [sections, appendix], workId);
+		}
 		{
 			// Averages 1.2 KB. Written even when empty, so an absent file
 			// means "this work was never built" rather than "this work has no
@@ -1154,26 +1287,32 @@ for (const entry of contentManifest) {
 
 writeJson(path.join(indexDir, 'content-manifest.json'), contentManifest);
 
-/** Whole-reading routes are addressed by their unit's first number. Keep
- * these kind sets in sync with the corresponding corpus helpers: the edge
- * may only bless canonical addresses the client reader can actually resolve.
+/**
+ * Every chapter-kind node's paragraph span, outermost first.
+ *
+ * `chapterStarts` below is this with the ends dropped. The spans are what the
+ * lastmod ledger needs: a `/catechismus/caput/{n}` page renders the paragraphs
+ * between `from` and `to` (see the route's loader), so its fingerprint has to
+ * cover that range rather than the outline alone — a corrected paragraph
+ * changes the chapter page it appears on.
  */
-const CCC_CHAPTER_KINDS = new Set(['chapter', 'prologue', 'section', 'part']);
-const COMPENDIUM_CHAPTER_KINDS = new Set(['chapter', 'section', 'part']);
-
-function chapterStarts(nodes, kinds) {
-	const starts = [];
+function chapterSpans(nodes, kinds) {
+	const spans = [];
 	function walk(items) {
 		for (const node of items) {
 			const [from, to] = node.paragraphs ?? [];
 			if (kinds.has(node.kind) && Number.isFinite(from) && Number.isFinite(to)) {
-				starts.push(from);
+				spans.push([from, to]);
 			}
 			walk(node.children ?? []);
 		}
 	}
 	walk(nodes);
-	return starts;
+	return spans;
+}
+
+function chapterStarts(nodes, kinds) {
+	return chapterSpans(nodes, kinds).map(([from]) => from);
 }
 
 /**
@@ -1258,10 +1397,43 @@ const routeManifest = {
 
 writeJson(routeManifestPath, routeManifest);
 
+// Per-address `<lastmod>`, resolved against the committed ledger: an address
+// whose text is byte-identical to the last build keeps the date it already had,
+// however many times the site is rebuilt. See scripts/lastmod.mjs — the value
+// of this element is entirely in its being true.
+const previousLedger = readLedger(lastmodPath);
+const lastmod = resolveLastmod({
+	fingerprints: addressFingerprints,
+	ledger: previousLedger,
+	today: new Date().toISOString().slice(0, 10)
+});
+{
+	const { total, added, changed, removed, unseeded } = lastmod.stats;
+	const known = total - added;
+	const share = known === 0 ? 0 : changed / known;
+	if (share > CHANGE_CEILING && !process.argv.includes('--accept-lastmod')) {
+		// Not a warning. A sitemap that claims a quarter of the corpus changed
+		// at once is how a crawler learns to stop believing the file, and the
+		// realistic cause is a change to what `mark()` covers rather than to the
+		// corpus. Re-run with --accept-lastmod once that is what you meant.
+		console.error(
+			`lastmod: ${changed} of ${known} known addresses changed ` +
+				`(${(share * 100).toFixed(1)}%, ceiling ${(CHANGE_CEILING * 100).toFixed(0)}%). ` +
+				`Refusing to write. Re-run with --accept-lastmod if this is intended.`
+		);
+		process.exit(1);
+	}
+	writeLedger(lastmodPath, lastmod.entries);
+	console.log(
+		`lastmod: ${total} addresses — ${changed} changed, ${added} new, ${removed} withdrawn` +
+			(unseeded ? `, ${unseeded} dated from the build clock (corpus is not a git checkout)` : '')
+	);
+}
+
 // Throws rather than warns if any address it derives is one the edge worker
 // would 404: the two are generated from the same object in the same pass, so
 // a disagreement between them is a bug here and not a corpus condition.
-writeFileSync(sitemapPath, sitemapXml(routeManifest));
+writeFileSync(sitemapPath, sitemapXml(routeManifest, lastmod.dates));
 
 // IDS ONLY, not the entries. The site's one question is "is this work
 // switched off", which it asks to keep from offering an address whose content
