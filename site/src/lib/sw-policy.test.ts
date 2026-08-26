@@ -75,7 +75,14 @@ describe('partitionAssets', () => {
 		'/_app/immutable/assets/ccc.hash.json',
 		'/_app/immutable/assets/gen.hash.json'
 	];
-	const files = ['/manifest.webmanifest', '/offline.html', '/_headers', '/_redirects'];
+	const files = [
+		'/manifest.webmanifest',
+		'/offline.html',
+		'/_headers',
+		'/_redirects',
+		'/sitemap.xml',
+		'/.well-known/security.txt'
+	];
 	const contentAssets = [
 		asset({ url: '_app/immutable/assets/ccc.hash.json' }),
 		asset({
@@ -124,6 +131,11 @@ describe('partitionAssets', () => {
 	it('drops host config files the platform never serves, and nothing else', () => {
 		expect(partition.shellUrls.has('/_headers')).toBe(false);
 		expect(partition.shellUrls.has('/_redirects')).toBe(false);
+		// Served, but never to the app: the sitemap is 394 KB of crawler-facing
+		// XML in the real build, and precaching it would spend a reader's
+		// bandwidth at install on a file no module fetches.
+		expect(partition.shellUrls.has('/sitemap.xml')).toBe(false);
+		expect(partition.shellUrls.has('/.well-known/security.txt')).toBe(false);
 		expect(partition.shellUrls.has('/manifest.webmanifest')).toBe(true);
 		expect(partition.shellUrls.has('/offline.html')).toBe(true);
 	});

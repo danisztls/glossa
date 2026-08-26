@@ -89,6 +89,24 @@ export function contentPath(url: string, baseHref: string): string {
  */
 const HOST_CONFIG_FILES = ['/_headers', '/_redirects'];
 
+/**
+ * Static files that exist for machines which are not this browser.
+ *
+ * `sitemap.xml` is the whole ~5,800-address citation space as XML — 394 KB
+ * that no part of the app ever fetches, and precaching it would spend a
+ * reader's bandwidth at install on a file written for crawlers. `security.txt`
+ * is small but is read the same way: by a researcher over HTTP, never by the
+ * running application. Both are in `static/`, so `files` offers them and the
+ * precache would take them without this.
+ *
+ * Kept separate from HOST_CONFIG_FILES because the reason differs: those two
+ * are deploy-time configuration the host itself consumes and never serves,
+ * these are served, just never to the app. (`robots.txt` and `llms.txt` are
+ * arguably the same category and ARE still precached — a few KB each,
+ * predating this list, and left alone rather than changed in passing.)
+ */
+const CRAWLER_FILES = ['/sitemap.xml', '/.well-known/security.txt'];
+
 export interface PartitionInput {
 	/** `$service-worker`'s `build` — EVERY emitted build asset, corpus JSON
 	 *  included, which is exactly why this partition has to exist. */
@@ -172,7 +190,9 @@ export function partitionAssets(input: PartitionInput): AssetPartition {
 
 	const precacheUrls = [
 		...build.filter((url) => !contentUrls.has(contentPath(url, baseHref))),
-		...files.filter((url) => !HOST_CONFIG_FILES.some((name) => url.endsWith(name))),
+		...files.filter(
+			(url) => ![...HOST_CONFIG_FILES, ...CRAWLER_FILES].some((name) => url.endsWith(name))
+		),
 		shellDocumentUrl
 	];
 

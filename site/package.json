@@ -5,9 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"sync-corpus": "node scripts/sync-corpus.mjs",
-		"predev": "npm run sync-corpus",
+		"security-txt": "node scripts/write-security-txt.mjs",
+		"predev": "npm run sync-corpus && npm run security-txt",
 		"dev": "vite dev",
-		"prebuild": "npm run sync-corpus",
+		"prebuild": "npm run sync-corpus && npm run security-txt",
 		"build": "vite build",
 		"preview": "vite preview",
 		"preflight": "node scripts/preflight-deploy.mjs",

@@ -72,6 +72,7 @@ import {
 } from './build-xrefs.mjs';
 import { summaPartSlug } from '../src/lib/route-manifest.ts';
 import { setDocumentTitleSource } from '../src/lib/refs-grammar.ts';
+import { sitemapXml } from './sitemap.mjs';
 import {
 	CoverageMeter,
 	compareCoverage,
@@ -89,6 +90,10 @@ const contentDir = path.join(destDir, 'content');
 // serves the SPA shell, so an existing citation receives 200 while a typo
 // remains a real 404. It is generated alongside corpus-data, never edited.
 const routeManifestPath = path.join(siteRoot, 'static/corpus-routes.json');
+// Derived from the same manifest, one line below where it is written. The
+// SPA shell means a crawler can otherwise reach the corpus only by rendering
+// the app and walking JavaScript-written links; see scripts/sitemap.mjs.
+const sitemapPath = path.join(siteRoot, 'static/sitemap.xml');
 
 /** CCC/Compendium `paragraphs.json`/`questions.json` are per-language single
  *  arrays ordered by `n`; Bible books split naturally along the print
@@ -244,6 +249,7 @@ if (!existsSync(worksSrc)) {
 	// beside fixture client assets and could approve exactly the deploy it is
 	// meant to stop. This is generated site output, never corpus/raw.
 	rmSync(routeManifestPath, { force: true });
+	rmSync(sitemapPath, { force: true });
 	console.warn(
 		`[sync-corpus] No corpus found at ${worksSrc} -- corpus.ts will fall back to its bundled ` +
 			`fixtures. The corpus is a separate, private repository (docs/decisions.md, ` +
@@ -1244,6 +1250,11 @@ const routeManifest = {
 };
 
 writeJson(routeManifestPath, routeManifest);
+
+// Throws rather than warns if any address it derives is one the edge worker
+// would 404: the two are generated from the same object in the same pass, so
+// a disagreement between them is a bug here and not a corpus condition.
+writeFileSync(sitemapPath, sitemapXml(routeManifest));
 
 // IDS ONLY, not the entries. The site's one question is "is this work
 // switched off", which it asks to keep from offering an address whose content

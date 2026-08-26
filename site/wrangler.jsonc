@@ -89,7 +89,14 @@
 			"!/service-worker.js",
 			"!/corpus-routes.json",
 			"!/reference-coverage.json",
-			"!/offline.html"
+			"!/offline.html",
+			"!/sitemap.xml",
+			// Not just the file that exists. `/.well-known/*` is where every scanner
+			// probes -- security.txt, then a dozen paths we will never serve -- and
+			// a miss handled here is a static 404 rather than a Worker invocation
+			// spent to reach the same answer. The wildcard is the point: negating
+			// only security.txt would leave the misses billable.
+			"!/.well-known/*"
 		]
 	}
 }

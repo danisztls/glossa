@@ -17,3 +17,11 @@
 
 User-agent: *
 Disallow:
+
+# The site is one SPA shell: every address returns the same document, and the
+# cross-reference links between texts are written by JavaScript. So the corpus
+# is not discoverable by following links unless the crawler renders, and the
+# sitemap is the only flat statement of the ~5,800 canonical citations.
+# Generated from the same route manifest the edge worker validates against
+# (site/scripts/sitemap.mjs), so it cannot advertise an address that 404s.
+Sitemap: https://glossacatholica.org/sitemap.xml

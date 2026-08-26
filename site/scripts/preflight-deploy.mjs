@@ -142,4 +142,33 @@ if (files > MAX_FILES) {
 	);
 }
 
+// 3. THE CRAWLER-FACING FILES. Both are generated (sitemap.xml by the corpus
+//    sync, security.txt by its own prebuild step) and both are gitignored, so
+//    neither can be spotted missing by reading the tree. A build made with a
+//    prebuild step that did not run ships without them and looks entirely
+//    normal; what breaks is discovery and a disclosure route, neither of which
+//    surfaces as an error anyone here would see.
+const sitemapPath = path.join(buildDir, 'sitemap.xml');
+if (!existsSync(sitemapPath)) {
+	fail('missing sitemap.xml — the build predates the sitemap, or prebuild did not run. Rebuild.');
+}
+
+const securityTxtPath = path.join(buildDir, '.well-known/security.txt');
+if (!existsSync(securityTxtPath)) {
+	fail(
+		'missing .well-known/security.txt — run `npm run security-txt`, or rebuild so prebuild does.'
+	);
+}
+
+// RFC 9116 §2.5.5: past `Expires`, the file is to be disregarded. It rolls
+// forward on every build, so an expired one here means the file in `build/`
+// is over a year stale — i.e. this is not the build the prebuild step wrote.
+const expires = /^Expires:\s*(\S+)$/m.exec(readFileSync(securityTxtPath, 'utf8'))?.[1];
+const expiresAt = expires ? Date.parse(expires) : NaN;
+if (Number.isNaN(expiresAt)) {
+	fail(`security.txt has no parseable Expires field (RFC 9116 requires one). Rebuild.`);
+} else if (expiresAt <= Date.now()) {
+	fail(`security.txt expired at ${expires}, so it is stale build output. Rebuild.`);
+}
+
 console.log('[preflight] ok');

@@ -18,6 +18,13 @@ node_modules
 /static/corpus-routes.json
 /static/reference-coverage.json
 
+# Also generated, and for the same reason kept out of the tree: sitemap.xml is
+# derived from the route manifest by the same sync pass, and security.txt's
+# `Expires` rolls forward on every build (scripts/write-security-txt.mjs). A
+# committed copy of either would be a stale duplicate of build output.
+/static/sitemap.xml
+/static/.well-known/
+
 # OS
 .DS_Store
 Thumbs.db
