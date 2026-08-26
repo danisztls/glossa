@@ -38,6 +38,7 @@
 	import { t } from '$lib/i18n.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import type { SummaManifest } from '$lib/types';
 
 	const workId = $derived(defaultSummaWorkId(content.langFor('summa')));
@@ -84,6 +85,14 @@
 
 <div class="reading-layout">
 	<article class="content-column">
+		<!-- The edition picker alone — see `ReadingBar`. It does more here than
+		     on the other indexes: this page's PARTS come from the manifest, so
+		     switching to Latin drops the Supplementum and the treatise headings
+		     with it, which is the work's shape rather than a gap. Guarded on
+		     `work` like the copyright notice at the foot. -->
+		{#if work}
+			<ReadingBar print={false} />
+		{/if}
 		<header>
 			<h1>{t('summa.landing.title')}</h1>
 			<p class="tagline">{t('summa.landing.tagline')}</p>

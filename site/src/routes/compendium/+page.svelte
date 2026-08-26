@@ -2,6 +2,7 @@
 	import { getCompendiumStructure, getWork } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import StructureIndex from '$lib/components/StructureIndex.svelte';
 	import { indexSidebarItems } from '$lib/components/indexToc';
 	import { content } from '$lib/content.svelte';
@@ -19,6 +20,13 @@
 
 <div class="reading-layout">
 	<div class="content-column">
+		<!-- The edition picker alone, sticky over a table of contents that is
+		     itself written in that edition — see `ReadingBar`. Guarded on
+		     `work` for the same reason the notice below it is: with no manifest
+		     there is no edition to offer and the bar would be an empty rule. -->
+		{#if work}
+			<ReadingBar print={false} />
+		{/if}
 		<h1>{t('compendium.landing.title')}</h1>
 		<p class="tagline">{t('compendium.landing.tagline')}</p>
 		{#if work}

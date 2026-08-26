@@ -44,6 +44,19 @@
 	boolean. What was left was eight copies of one `ComparisonEditionMenu`
 	call differing only in where the array came from, so the bar builds it.
 
+	THE INDEX ROUTES CARRY THE SAME BAR WITH MOST OF IT ABSENT. `/scriptura`,
+	`/catechismus`, `/compendium` and `/summa` are tables of contents, and the
+	one control in this row that still means something there is the edition
+	picker: which edition a reader is browsing decides which book list, which
+	chapter titles and which parts they see (the Summa has four under Latin
+	and five under English), and before this it could only be changed by
+	opening a text first. The rest drops out — an index page has no unit to
+	bookmark, and `PrintButton`'s own docblock is the argument against
+	printing one — so `bookmarkHref` and `print` are optional and those pages
+	pass neither. Scripture keeps the roll, which is a page-level action on a
+	page that IS scripture: from `/scriptura` it is the one entry point that
+	needs no decision, next to a book list asking for eighty of them.
+
 	Sticks BELOW the site header, not at the viewport top, using
 	`--site-header-height` — published by `+layout.svelte` from a
 	ResizeObserver, since that header's height is scroll-animated and wraps at
@@ -76,13 +89,23 @@
 	}
 
 	interface Props {
-		/** The page's own canonical address, for the bookmark. */
-		bookmarkHref: string;
+		/** The page's own canonical address, for the bookmark. Omitted by the
+		 *  index routes: a table of contents is not an address a reader saves,
+		 *  and the bookmark list is of passages. */
+		bookmarkHref?: string;
+		/** Offer the print button. On everywhere a text is being read, and off
+		 *  on the index routes for the reason `PrintButton` gives for not
+		 *  living in the site header — the print stylesheet is written about
+		 *  reading layouts, so on an index the button has nothing
+		 *  page-specific to ask for. */
+		print?: boolean;
 		/** Whether there is anything to compare against at all. False hides the
 		 *  toggle outright rather than disabling it — the same "hide, don't
-		 *  disable" posture `EditionMenu` and `CompareToggle` already take. */
-		canCompare: boolean;
-		compareActive: boolean;
+		 *  disable" posture `EditionMenu` and `CompareToggle` already take.
+		 *  Defaults to false, which is what an index route wants and what a
+		 *  single-edition address passes explicitly. */
+		canCompare?: boolean;
+		compareActive?: boolean;
 		/** Omitted by routes that pass `canCompare: false` and therefore never
 		 *  render the toggle — a book introduction (`/scriptura/{book}/0`) has
 		 *  no second edition to align against. Required in spirit whenever
@@ -101,8 +124,9 @@
 
 	let {
 		bookmarkHref,
-		canCompare,
-		compareActive,
+		print = true,
+		canCompare = false,
+		compareActive = false,
 		onToggleCompare,
 		comparison,
 		randomVerse = false
@@ -130,8 +154,12 @@
 </script>
 
 <div class="reading-bar" bind:this={barEl}>
-	<BookmarkButton href={bookmarkHref} />
-	<PrintButton />
+	{#if bookmarkHref}
+		<BookmarkButton href={bookmarkHref} />
+	{/if}
+	{#if print}
+		<PrintButton />
+	{/if}
 	{#if randomVerse}
 		<RandomVerseButton />
 	{/if}

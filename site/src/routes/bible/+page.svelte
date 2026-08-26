@@ -7,10 +7,17 @@
 	 * every route client-rendered. Offers the reader's edition + its
 	 * copyright notice, a single entry point (continue reading if a
 	 * position is stored for this edition, else the edition's first
-	 * chapter — Genesis 1 for both v1 editions), the dice button that draws
-	 * one verse at random from that same edition (`RandomVerseButton`, which
-	 * the scripture reader carries in its own bar), and the canonical
+	 * chapter — Genesis 1 for both v1 editions), and the canonical
 	 * book/chapter structure via `BookChapterPicker`.
+	 *
+	 * THE EDITION PICKER AND THE ROLL SIT IN `ReadingBar`, the same sticky bar
+	 * the scripture reader carries, rather than in this page's own body. Both
+	 * belong to the whole page and not to any one line of it: which edition
+	 * this is decides the book list beneath as much as it decides a chapter's
+	 * text, and the roll opens a verse from that same edition. The dice used
+	 * to sit inline at the end of the entry-point sentence, which put it out
+	 * of reach the moment a reader scrolled into the seventy-three books —
+	 * exactly where an undecided reader is.
 	 */
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
@@ -18,7 +25,7 @@
 	import { getWork, listBooks } from '$lib/corpus';
 	import { getPosition, type ReadingPosition } from '$lib/reading-position';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
-	import RandomVerseButton from '$lib/components/RandomVerseButton.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	const workId = $derived(content.workIdFor('bible'));
@@ -51,6 +58,12 @@
 </svelte:head>
 
 <div class="content-column">
+	<!-- Edition and roll, and nothing else: there is no chapter here to
+	     bookmark or print — see `ReadingBar`. Guarded on `work` like the
+	     notice below, so a corpus that failed to sync leaves no empty rule. -->
+	{#if work}
+		<ReadingBar print={false} randomVerse />
+	{/if}
 	<h1>{t('bible.landing.title')}</h1>
 	<p class="tagline">{t('bible.landing.tagline')}</p>
 
@@ -66,7 +79,6 @@
 		{:else if firstChapterHref}
 			<a href={firstChapterHref} class="entry-link">{t('bible.landing.start')}</a>
 		{/if}
-		<RandomVerseButton />
 	</p>
 
 	{#if workId}
@@ -101,14 +113,6 @@
 
 	.entry-link {
 		font-weight: 600;
-	}
-
-	/* The button brings its own `.menu-trigger` box; only its place in this
-	   sentence is this page's business. `:global` because the class is on the
-	   component's own element, out of reach of this stylesheet's scoping. */
-	.entry-point :global(.random-verse) {
-		margin-inline-start: 0.5rem;
-		vertical-align: middle;
 	}
 
 	.entry-detail {
