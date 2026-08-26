@@ -207,15 +207,25 @@ downstream notices. The bytes land in the boot chunk every route
 the file belongs to no download wave, and `fetch()`ing it still works, so
 nothing errors.
 
-**And there must be exactly one such glob** (`site/src/lib/content-urls.ts`).
-An eager glob is one static import per matched file, which the BUILD resolves
-into a chunk of strings and the DEV SERVER serves as one module request each.
-`corpus-index.ts` and `corpus-assets.ts` each kept their own copy until
-2026-08-26 — free in production, and ~5,180 requests before boot under
-`npm run dev`, which Chrome answers with `net::ERR_INSUFFICIENT_RESOURCES`
-rather than a queue: the module graph fails midway, `nodes/0.js` never arrives,
-the service worker will not start, and the page 500s while `npm run preview` is
-perfectly fine. Import the map; do not write a second glob.
+**And the glob must not run under `npm run dev` at all.** An eager glob is one
+static import per matched file: the BUILD folds those into a chunk of strings,
+the DEV SERVER answers each with its own module request. At 2,590 content files
+that is past what a browser will open — Chrome fails the surplus with
+`net::ERR_INSUFFICIENT_RESOURCES` rather than queueing, and what breaks is the
+app, not the corpus: the module graph tears midway, `nodes/0.js` never arrives,
+the page 500s, and the service worker (same inventory, smaller connection
+budget) reports only `ServiceWorker cannot be started`. `npm run preview` is
+always fine, which is the tell.
+
+So there is exactly one glob (`site/src/lib/content-urls.ts`) — it was written
+twice until 2026-08-26, free in production and 5,180 requests in dev — and in
+`vite dev` even that one is replaced by `content-urls.dev.ts`, which derives
+the same map from `content-manifest.json` in a single request. Dev URLs are
+unhashed, so the glob buys no information there. `vite.config.ts`'s
+`glossa:dev-content-urls` plugin performs the substitution and explains why it
+matches the RELATIVE specifier: `vite:alias` is itself an `enforce: 'pre'`
+plugin and resolves `$lib/...` before any other hook sees it, so the first
+attempt silently did nothing at all.
 
 `vite.config.ts` disables inlining for anything under `corpus-data/` and says
 so at length. It was found when the document outlines moved to the content tier

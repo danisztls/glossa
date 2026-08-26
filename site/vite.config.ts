@@ -2,7 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 
 // Absolute, build-time-baked path to src/lib/corpus-data/, read by
 // corpus.ts's SSR content fetcher (see that file's docblock on why:
@@ -17,6 +17,48 @@ const corpusDataDir = path.resolve(
 	fileURLToPath(new URL('.', import.meta.url)),
 	'src/lib/corpus-data'
 );
+
+/**
+ * In `vite dev` only, resolve `./content-urls` to `content-urls.dev.ts`.
+ *
+ * The real module is one eager `import.meta.glob` over the content tier, which
+ * a build folds into a chunk of strings and the dev server expands into 2,590
+ * separate module requests — past what a browser will open, so the app's own
+ * module graph tears and the page 500s. The dev twin derives the same map from
+ * `content-manifest.json` in one request; its docblock argues why that is
+ * equivalent rather than approximate.
+ *
+ * A plugin rather than a `resolve.alias` entry, and matching the RELATIVE
+ * specifier rather than `$lib/content-urls`. Both details are load-bearing and
+ * both were got wrong first: `vite:alias` is itself an `enforce: 'pre'` plugin
+ * and runs ahead of every other one, so a `$lib/...` specifier is already an
+ * absolute path by the time a hook here could see it — the substitution simply
+ * never happened, silently, and dev still asked for 2,590 modules. `vite:alias`
+ * does not touch relative specifiers, so this hook is genuinely first for them.
+ *
+ * `apply: 'serve'` is what makes "never in a build" a fact rather than an
+ * intention; the two consumers import `./content-urls` and get the real module
+ * everywhere else, with no plugin involved.
+ */
+function devContentUrls(): Plugin {
+	const devModule = path.resolve(
+		fileURLToPath(new URL('.', import.meta.url)),
+		'src/lib/content-urls.dev.ts'
+	);
+	return {
+		name: 'glossa:dev-content-urls',
+		apply: 'serve',
+		enforce: 'pre',
+		resolveId(source, importer) {
+			if (source !== './content-urls' || !importer) return null;
+			// Only the two modules that own this map, so an unrelated
+			// `./content-urls` elsewhere in the tree could never be captured.
+			return importer.endsWith('corpus-index.ts') || importer.endsWith('corpus-assets.ts')
+				? devModule
+				: null;
+		}
+	};
+}
 
 export default defineConfig({
 	define: {
@@ -54,6 +96,7 @@ export default defineConfig({
 			filePath.includes('/corpus-data/') ? false : undefined
 	},
 	plugins: [
+		devContentUrls(),
 		sveltekit({
 			compilerOptions: {
 				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
