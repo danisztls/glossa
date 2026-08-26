@@ -175,6 +175,37 @@ export function parseInlineHtml(html: string): InlineNode[] {
  * every block of every prayer edition, vernacular and Latin, along with
  * leading, trailing and doubled breaks, all of which are likewise absent.
  */
+/** The CCC's and the Compendium's footnote token — see `parseInlineMarked`. */
+const MARKER_RE = /⟦([^⟧]+)⟧/g;
+
+/**
+ * The OTHER stored form, and the sibling of `parseInlineHtml`: `text_marked`,
+ * which carries no markup at all, only `⟦N⟧` footnote tokens (the CCC and the
+ * Compendium have not been migrated to `html` — `docs/corpus-schema.md`).
+ *
+ * It lives here, beside the parser it parallels, rather than inside the one
+ * component that reads it, because the pairing is the point. A caller renders
+ * a block by parsing it and then linkifying it, and while this half was a
+ * private helper in `ProseBlocks.svelte` the two halves drifted: the `html`
+ * branch ran `linkifyInline` and this one returned its nodes raw, so from
+ * 2026-08-22 the Catechism drew none of the 18,831 references its prose names
+ * (`parseInlineMarked` + `linkifyInline` in `inline-html.test.ts` is the test
+ * that would have caught it). Same shape, same file, one test each.
+ */
+export function parseInlineMarked(marked: string): InlineNode[] {
+	const nodes: InlineNode[] = [];
+	let lastIndex = 0;
+	let seq = 0;
+	for (const match of marked.matchAll(MARKER_RE)) {
+		const index = match.index ?? 0;
+		if (index > lastIndex) nodes.push({ kind: 'text', text: marked.slice(lastIndex, index) });
+		nodes.push({ kind: 'marker', marker: match[1], seq: seq++ });
+		lastIndex = index + match[0].length;
+	}
+	if (lastIndex < marked.length) nodes.push({ kind: 'text', text: marked.slice(lastIndex) });
+	return nodes;
+}
+
 export function splitLines(nodes: InlineNode[]): InlineNode[][] {
 	const lines: InlineNode[][] = [[]];
 	for (const node of nodes) {

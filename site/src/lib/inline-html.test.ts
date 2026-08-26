@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
 	parseInlineHtml,
+	parseInlineMarked,
 	inlineText,
 	textRuns,
 	withTextRuns,
@@ -106,6 +107,69 @@ describe('textRuns / withTextRuns', () => {
  * separately handed the matcher "Ezek " and "47:7-9)." and matched neither.
  * 3,590 references across 88 works were affected.
  */
+/**
+ * `text_marked` is the OTHER stored form — the CCC's and the Compendium's,
+ * with `⟦N⟧` where a document has `<sup data-fn>`. The suite below is here
+ * because the two forms have to reach the renderer as the same node list and
+ * go through the same linkify step, and for four days they did not: the
+ * marker walk lived inside `ProseBlocks.svelte` where nothing could test it,
+ * and it returned its nodes unlinkified. Every one of the 18,831 references
+ * the eight Catechism editions name in running prose went undrawn — total in
+ * German, French and Spanish, which print no footnotes at all and so had no
+ * other apparatus to fall back on.
+ */
+describe('parseInlineMarked', () => {
+	it('reads a footnote token as a marker between its text runs', () => {
+		expect(parseInlineMarked('word⟦12⟧ tail')).toEqual([
+			{ kind: 'text', text: 'word' },
+			{ kind: 'marker', marker: '12', seq: 0 },
+			{ kind: 'text', text: ' tail' }
+		]);
+	});
+
+	it('numbers repeats by position, so each discloses independently', () => {
+		expect(parseInlineMarked('a⟦4⟧b⟦4⟧')).toEqual([
+			{ kind: 'text', text: 'a' },
+			{ kind: 'marker', marker: '4', seq: 0 },
+			{ kind: 'text', text: 'b' },
+			{ kind: 'marker', marker: '4', seq: 1 }
+		]);
+	});
+
+	it('returns one text run for prose carrying no apparatus', () => {
+		expect(parseInlineMarked('plain prose')).toEqual([{ kind: 'text', text: 'plain prose' }]);
+		expect(parseInlineMarked('')).toEqual([]);
+	});
+
+	it('links the references a marked block names in its prose', () => {
+		// ccc.de 145, verbatim: this edition footnotes nothing, so its whole
+		// apparatus is in the running text and an unlinkified block is an
+		// unlinked paragraph.
+		const marked =
+			'ohne zu wissen, wohin er kommen würde" (Hebr 11, 8) [Vgl. Gen 12,1-4.]. ' +
+			'Aufgrund des Glaubens hielt er sich als Fremder und Pilger im verheißenen Land [Vgl. Gen 23,4.] auf.';
+		const nodes = linkifyInline(parseInlineMarked(marked), (t) => linkifyProse(t, { lang: 'de' }));
+		const found = nodes.filter((n) => n.kind === 'ref');
+		expect(found.map((n) => (n.kind === 'ref' ? n.seg : null))).toMatchObject([
+			{ kind: 'scripture', osis: 'heb', chapter: 11 },
+			{ kind: 'scripture', osis: 'gen', chapter: 12 },
+			{ kind: 'scripture', osis: 'gen', chapter: 23 }
+		]);
+	});
+
+	it('links across a footnote marker without swallowing it', () => {
+		// ccc.la 145: the locus is printed inline AND a note follows it, which
+		// is the shape `inlineText` has to skip over for the offsets to line up.
+		const marked = 'nesciens quo iret » (Heb 11,8).⟦144⟧ Fide ut advena';
+		const nodes = linkifyInline(parseInlineMarked(marked), (t) => linkifyProse(t, { lang: 'la' }));
+		expect(nodes.filter((n) => n.kind === 'marker')).toHaveLength(1);
+		const found = nodes.filter((n) => n.kind === 'ref');
+		expect(found).toHaveLength(1);
+		expect(found[0].kind === 'ref' && found[0].seg).toMatchObject({ osis: 'heb', chapter: 11 });
+		expect(inlineText(nodes)).toBe(inlineText(parseInlineMarked(marked)));
+	});
+});
+
 describe('linkifyInline', () => {
 	const link = (html: string) =>
 		linkifyInline(parseInlineHtml(html), (t) => linkifyProse(t, { lang: 'en' }));

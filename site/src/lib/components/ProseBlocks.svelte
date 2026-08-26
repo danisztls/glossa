@@ -1,6 +1,11 @@
 <script lang="ts">
 	import type { CccBlock, CccCitation } from '$lib/types';
-	import { parseInlineHtml, linkifyInline, type InlineNode } from '$lib/inline-html';
+	import {
+		parseInlineHtml,
+		parseInlineMarked,
+		linkifyInline,
+		type InlineNode
+	} from '$lib/inline-html';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
 	import { splitDropCap } from '$lib/dropcap';
@@ -75,8 +80,6 @@
 	// part of the sentence in both the source DOM and the rendered layout.
 	let openMarkers = $state(new SvelteSet<string>());
 
-	const MARKER_RE = /⟦([^⟧]+)⟧/g;
-
 	/**
 	 * The block as inline nodes.
 	 *
@@ -87,28 +90,24 @@
 	 * a markup-aware branch and a plain one drifting apart.
 	 */
 	function nodesFor(block: CccBlock): InlineNode[] {
-		if (block.html) return linkifyInline(parseInlineHtml(block.html), proseSegments);
 		// Exactly one of the two is present (types.ts, `CccBlock.text_marked`):
 		// a shipped document block has `html` and no `text_marked`, the CCC and
 		// Compendium the reverse. `?? ''` is the unreachable third case, kept
 		// so a block that somehow arrives with neither renders empty instead
 		// of throwing inside the render.
-		const marked = block.text_marked ?? '';
-		const nodes: InlineNode[] = [];
-		let lastIndex = 0;
-		let seq = 0;
-		for (const match of marked.matchAll(MARKER_RE)) {
-			const index = match.index ?? 0;
-			if (index > lastIndex) {
-				nodes.push({ kind: 'text', text: marked.slice(lastIndex, index) });
-			}
-			nodes.push({ kind: 'marker', marker: match[1], seq: seq++ });
-			lastIndex = index + match[0].length;
-		}
-		if (lastIndex < marked.length) {
-			nodes.push({ kind: 'text', text: marked.slice(lastIndex) });
-		}
-		return nodes;
+		//
+		// PARSE, THEN LINKIFY -- both branches, which is why they are written
+		// as one line each. Splitting the marker walk out into `parseInlineMarked`
+		// is what makes that visible: while it was inlined here, this branch
+		// returned its nodes without the linkify step and the Catechism drew
+		// none of the references its prose names. Nothing caught it, because
+		// `reference-coverage.mjs` and `build-xrefs.mjs` call `linkifyProse`
+		// themselves -- the coverage table and the scripture index went on
+		// counting what the page had stopped drawing.
+		const parsed = block.html
+			? parseInlineHtml(block.html)
+			: parseInlineMarked(block.text_marked ?? '');
+		return linkifyInline(parsed, proseSegments);
 	}
 
 	function citationFor(marker: string) {

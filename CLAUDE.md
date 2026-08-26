@@ -483,6 +483,26 @@ brackets its references, French and Spanish parenthesize them — so everything
 is the whole reason its **document-siglum scan** (added 2026-08-26) is worth
 3,624 references in those three editions against 82 in English.
 
+**The counters that measure this scan do not render it, and for four days
+that mattered.** `reference-coverage.mjs` and `build-xrefs.mjs` call
+`linkifyProse` themselves, so the coverage table and the scripture index kept
+counting references the page had stopped drawing: the walk-the-markup refactor
+(2026-08-22) gave `ProseBlocks`' new `html` branch `linkifyInline` and left its
+`text_marked` branch returning nodes raw, and the CCC's 18,831 in-prose
+references went undrawn until 2026-08-26 — total in German, French and Spanish,
+which have no footnote apparatus to fall back on. The marker walk now lives in
+`inline-html.ts` as `parseInlineMarked`, beside the `parseInlineHtml` it
+parallels, so both branches read `linkifyInline(parse…(block), proseSegments)`
+and both are unit-testable. There is no component test harness in this repo;
+keeping renderable logic out of `.svelte` files is the only way it gets tested
+at all.
+
+**The Compendium's answers are still rendered as plain text.**
+`CompendiumAnswer.svelte` prints `block.text` directly — no
+`parseInlineMarked`, no `linkifyInline` — so the 1,436 Scripture references its
+ten editions name in prose ("(Galatians 5:22)") link nowhere. That is a gap,
+not a regression: it has never linkified.
+
 **A siglum in prose must sit inside a bracket**, and that is a measurement
 rather than a hunch: of the 3,712 siglum-shaped tokens those four editions
 print in prose, 3,708 are inside a `(` or a `[`, and the four that are not are
