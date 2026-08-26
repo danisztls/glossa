@@ -260,7 +260,11 @@ describe('suggest', () => {
 			'ii-ii 184',
 			'perfection',
 			'catech',
-			'prayers'
+			'prayers',
+			// A misspelling completes to the real spelling, which is then read
+			// literally — the property that makes the loose tier safe to Tab.
+			'jonh',
+			'genesus'
 		];
 
 		it('re-offers the same address, first', () => {
@@ -310,6 +314,58 @@ describe('suggest', () => {
 		});
 	});
 
+	describe('misspelled books', () => {
+		// Bounded edit distance, and a separate matcher from the one above:
+		// fuzzysort reads a subsequence, and a transposition is not one. It is
+		// also NOT behind the lazy import — it is twenty lines in this module,
+		// so it answers on the first keystroke.
+
+		it('reads a transposition, which fuzzysort structurally cannot', () => {
+			expect(suggest('jonh', { lang: 'en' })[0]?.label).toBe('John 1');
+			expect(suggest('jhon', { lang: 'en' })[0]?.label).toBe('John 1');
+		});
+
+		it('ranks the right letters in the wrong order above a wrong letter', () => {
+			// The real corpus is what makes this matter: `jonh` is one edit from
+			// Joshua, Jonah AND John, and only John is reached by rearranging the
+			// letters that were actually typed. All three are offered; the
+			// rearrangement leads.
+			expect(suggest('jonh', { lang: 'en' })[0]?.href).toBe('/scriptura/john/1');
+		});
+
+		it('reads a substitution and a deletion', () => {
+			expect(suggest('genesus', { lang: 'en' })[0]?.label).toBe('Genesis 1');
+			expect(suggest('gnesis', { lang: 'en' })[0]?.label).toBe('Genesis 1');
+		});
+
+		it('carries the number through', () => {
+			expect(suggest('jonh 3', { lang: 'en' })[0]?.label).toBe('John 3');
+			expect(suggest('jonh 3:16', { lang: 'en' })[0]?.label).toBe('John 3:16');
+		});
+
+		it('does not run below four characters', () => {
+			// At three, one edit reaches most of the canon — and `jo` is a
+			// LITERAL reading of John, which is the inversion `book-token.ts`
+			// warns about.
+			expect(suggest('gne', { lang: 'en' }).filter((row) => row.kind === 'bible')).toEqual([]);
+		});
+
+		it('does not run when the token spells a real book', () => {
+			// A token that reads is never also a near-miss of something else.
+			const rows = suggest('joh', { lang: 'en' }).filter((row) => row.kind === 'bible');
+			expect(rows.length).toBeGreaterThan(0);
+			for (const row of rows) expect(row.href).toMatch(/^\/scriptura\/john\b/);
+		});
+
+		it('is refused by the shapes that promise an exact address', () => {
+			// `exactReference` sits in the top band and confirms what the reader
+			// typed. A guessed book with a verse range attached is a guess wearing
+			// a certainty, so it is declined rather than demoted.
+			expect(suggest('jonh 3:1-5', { lang: 'en' }).filter((r) => r.kind === 'bible')).toEqual([]);
+			expect(suggest('john 3:1-5', { lang: 'en' })[0]?.kind).toBe('bible');
+		});
+	});
+
 	describe('fuzzy', () => {
 		it('is absent until a ranker is injected', () => {
 			// The module never imports one: `fuzzysort` is 7.5 KB gzipped and this
@@ -343,7 +399,10 @@ describe('suggest', () => {
 			// does not, because its `o` precedes its `i` and the target's does not.
 			// Stated as a test rather than left as folklore — the next person to
 			// see it will otherwise file it as a bug and tune the threshold, which
-			// cannot fix it at any value.
+			// cannot fix it at any value. BOOKS are the exception and have their
+			// own matcher for exactly this reason (`misspelled books` below);
+			// titles do not, because a distance-2 window over hundreds of long
+			// names has not been measured.
 			installFuzzyRanker();
 			expect(suggest('perfectoin', { lang: 'en' })).toEqual([]);
 		});

@@ -1035,6 +1035,35 @@ regression appears and the lists start filling with noise. The cost side is real
 recorded — `perfecton` against the Summa's fifty-character titles scores 0.282 and is
 missed.
 
+**Books get a SECOND matcher, because a transposition is not a weak subsequence — it is
+none.** `fuzzysort.single('jonh', 'john')` returns `null`, not a low score, since the `h`
+the needle wants after the `n` is behind it in the target; and transposing two letters is
+the commonest way to mistype a word one knows. Bible books were also not in the fuzzy
+haystack at all, which was a plain gap: `gnesis` scores 0.358 against "genesis", over the
+threshold, and was thrown away. Both are answered by bounded Optimal String Alignment over
+the book forms — twenty lines, no dependency, and not behind the lazy import, so it answers
+on the first keystroke. It runs only where no form was read literally, at four characters
+or more, one edit to six and two above: `jonh`, `jhon`, `psalsm`, `mathew` are one and
+`corinthans` is two, while `jo` alone is within one of Joshua, Job, Jeremiah and John and
+is a literal reading of John — the inversion `book-token.ts` warns about, and the reason
+for the gate. Titles keep fuzzysort alone: a distance-2 window over hundreds of long names
+has not been measured, so `perfectoin` still reads as nothing.
+
+**The right letters in the wrong order outrank a wrong letter.** `jonh` is one edit from
+Joshua, Jonah and John at once, and distance alone cannot separate them. Joshua and Jonah
+are reached by changing or dropping a letter, which is also how one reaches a DIFFERENT
+book; John is reached by rearranging the letters actually typed, which is only how one
+mistypes the word one meant. Same length and same multiset is the whole test, and it needs
+no backtrack through the matrix. All three are still offered — the box is a list.
+
+**Everything built on a book read loosely is demoted as a block, and the exact shapes
+refuse it outright.** The numeric tiers still say which chapter was meant, so the block
+keeps its own order, but `SCORE.exactUnit` is 900 and `jonh 3` is not an exact anything —
+it lands in the same band as every other loose reading. `exactReference`, which confirms
+verse ranges in the top band, declines a misspelled book rather than demoting it: a guess
+with a range attached is a guess wearing a certainty. Cost is 0.70 ms per keystroke against
+0.49 for a token that reads literally, since the tier only runs when nothing did.
+
 **Subsequence matching cannot read a transposition, at any threshold.** `perfecton` reads
 and `perfectoin` does not, because its `o` precedes its `i` and the target's does not.
 Written down as a test rather than left as folklore, since the next person to meet it will

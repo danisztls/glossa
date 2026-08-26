@@ -425,6 +425,69 @@ function bookForms(lang: string): BookForm[] {
 }
 
 /**
+ * Restricted edit distance, abandoned as soon as it cannot come in under `max`.
+ *
+ * WHY A SECOND MATCHER EXISTS AT ALL. `fuzzysort` matches a SUBSEQUENCE, so a
+ * transposition is not a weak match to it — it is no match: `jonh` against
+ * "john" scores `null`, not 0.2, because the `h` the needle wants after the
+ * `n` is behind it in the target. No threshold reaches that, and transposing
+ * two letters is the commonest way there is to mistype a word one knows. The
+ * adjacent-swap row below is the whole reason this is Optimal String Alignment
+ * rather than plain Levenshtein.
+ *
+ * It is bounded, and the bound is what makes it cheap: a row whose best cell
+ * already exceeds `max` can only get worse, so most forms are abandoned after
+ * one row and forms of the wrong length never start.
+ */
+function boundedEdit(a: string, b: string, max: number): number | null {
+	if (Math.abs(a.length - b.length) > max) return null;
+	let prev2: number[] = [];
+	let prev: number[] = Array.from({ length: b.length + 1 }, (_, j) => j);
+	for (let i = 1; i <= a.length; i++) {
+		const cur = [i];
+		let rowBest = i;
+		for (let j = 1; j <= b.length; j++) {
+			const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+			let v = Math.min(cur[j - 1] + 1, prev[j] + 1, prev[j - 1] + cost);
+			// The adjacent swap. Without this row `jonh` is two edits from
+			// "john" and reads no better than half the canon.
+			if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+				v = Math.min(v, prev2[j - 2] + 1);
+			}
+			cur.push(v);
+			if (v < rowBest) rowBest = v;
+		}
+		if (rowBest > max) return null;
+		prev2 = prev;
+		prev = cur;
+	}
+	return prev[b.length] <= max ? prev[b.length] : null;
+}
+
+/**
+ * How wrong a book token may be, by how much of it there is.
+ *
+ * Measured against the 258 forms the English editions carry. Nothing below
+ * four characters is read loosely at all, because at three a single edit
+ * reaches most of the canon — `jo` alone is within one of Joshua, Job,
+ * Jeremiah and John, and it is a LITERAL reading of John, which is exactly the
+ * inversion `book-token.ts` warns about. One edit up to six characters and two
+ * above: `jonh`, `jhon`, `psalsm` and `mathew` are one; `corinthans` is two
+ * (an `i` and the missing ordinal), and at ten characters two edits still
+ * reach nothing else.
+ */
+/** A string's characters in a fixed order — two strings share one exactly when
+ *  each is a rearrangement of the other. */
+function sortedLetters(s: string): string {
+	return [...s].sort().join('');
+}
+
+function maxBookEdits(length: number): number {
+	if (length < 4) return 0;
+	return length <= 6 ? 1 : 2;
+}
+
+/**
  * The books a partly-typed token could name, best first.
  *
  * The tiers are `book-token.ts`'s, one rung finer: an exact reading still
@@ -433,13 +496,23 @@ function bookForms(lang: string): BookForm[] {
  * of a suggester — `gene` is not a book and Genesis is the only thing it can
  * become.
  */
-function matchBooks(token: string, ctx: Context): { osis: string; score: number }[] {
+interface BookMatch {
+	osis: string;
+	score: number;
+	/** Read through a misspelling rather than read. Every row built on one is
+	 *  demoted into the fuzzy band as a block, and the shapes that promise an
+	 *  exact address (`exactReference`) refuse it outright. */
+	loose: boolean;
+}
+
+function matchBooks(token: string, ctx: Context): BookMatch[] {
 	const norm = normalizeBookToken(token);
 	if (!norm) return [];
 	const folded = fold(norm);
+	const forms = bookForms(ctx.lang);
 	const best = new Map<string, number>();
 
-	for (const form of bookForms(ctx.lang)) {
+	for (const form of forms) {
 		let score: number;
 		if (form.norm === norm) score = 100;
 		else if (form.norm.startsWith(norm)) score = 70;
@@ -452,8 +525,38 @@ function matchBooks(token: string, ctx: Context): { osis: string; score: number 
 		best.set(form.osis, Math.max(best.get(form.osis) ?? 0, score));
 	}
 
+	// ONLY WHEN NOTHING WAS READ. A misspelling is evidence of last resort, and
+	// a token that spells a real book is never also a near-miss of another one
+	// — `jo` would otherwise drag Joshua, Job and Jeremiah in behind the John
+	// it actually names.
+	const loose = best.size === 0;
+	if (loose) {
+		const max = maxBookEdits(folded.length);
+		const letters = sortedLetters(folded);
+		for (const form of forms) {
+			if (max === 0) break;
+			const distance = boundedEdit(folded, form.folded, max);
+			if (distance === null) continue;
+			// THE RIGHT LETTERS IN THE WRONG ORDER BEAT A WRONG LETTER, and it
+			// is what separates the three books `jonh` is one edit from. Joshua
+			// and Jonah are reached by changing a letter or dropping one, which
+			// is also how one reaches a DIFFERENT book; John is reached by
+			// rearranging the letters that were typed, which is only how one
+			// mistypes the word one meant. Same letters and same length is the
+			// cheap test for that, and it needs no backtrack through the matrix.
+			const rearranged =
+				folded.length === form.folded.length && sortedLetters(form.folded) === letters;
+			// 0..100 like the tiers above, so the caller's `score / 100`
+			// tie-break keeps working; nearer is better, and a form the grammar
+			// table carries still edges out one only an edition knows.
+			const score =
+				Math.round(100 * (1 - distance / (folded.length + 1))) - form.tier + (rearranged ? 2 : 0);
+			best.set(form.osis, Math.max(best.get(form.osis) ?? 0, score));
+		}
+	}
+
 	return [...best.entries()]
-		.map(([osis, score]) => ({ osis, score }))
+		.map(([osis, score]) => ({ osis, score, loose }))
 		.sort(
 			(a, b) =>
 				b.score - a.score ||
@@ -663,6 +766,7 @@ function bibleSuggestions(query: string, ctx: Context): Scored[] {
 
 	const books = matchBooks(bookRaw, ctx);
 	if (books.length === 0) return [];
+	const loose = books[0].loose;
 
 	const out: Scored[] = [];
 	let order = 0;
@@ -681,7 +785,7 @@ function bibleSuggestions(query: string, ctx: Context): Scored[] {
 				out.push(bibleRow(osis, 0, undefined, SCORE.bookOnly - 1, order++, ctx));
 			}
 		}
-		return out;
+		return demote(out, loose);
 	}
 
 	// A number narrows the intent sharply, so fewer books stay in the running.
@@ -770,7 +874,28 @@ function bibleSuggestions(query: string, ctx: Context): Scored[] {
 		}
 	}
 
-	return out;
+	return demote(out, loose);
+}
+
+/**
+ * Every row built on a book that was only read through a misspelling, moved as
+ * a block into the band loose matching already occupies.
+ *
+ * Their own order is kept — the numeric tiers still say which chapter the
+ * reader most likely meant — but nothing here may sit beside a row something
+ * actually read. `SCORE.exactUnit` is 900 and `jonh 3` is not an exact
+ * anything; the quality of the reading (`score / 100`, so one edit in four
+ * characters is 0.8) is what places the block among the other fuzzy rows, and
+ * the thousandths keep the block's own order inside it.
+ */
+function demote(rows: Scored[], loose: boolean): Scored[] {
+	if (!loose) return rows;
+	const ordered = [...rows].sort((a, b) => b.score - a.score || a.order - b.order);
+	return ordered.map((row, rank) => ({
+		...row,
+		score: SCORE.titleFuzzy + (row.score % 1) - rank / 1000,
+		order: rank
+	}));
 }
 
 /**
@@ -797,7 +922,11 @@ function exactReference(query: string, ctx: Context): Scored[] {
 	// shapes it cannot express are worth confirming here.
 	if (ref.verseEnd === undefined && ref.chapterEnd === undefined) return [];
 
-	const book = matchBooks(ref.book, ctx)[0];
+	// A LITERAL book only: this producer's whole promise is that the address it
+	// confirms is the one the reader typed, and `SCORE.exactReference` is the
+	// top band. A misspelled book with a verse range attached is a guess
+	// wearing a certainty, so it is declined rather than demoted.
+	const book = matchBooks(ref.book, ctx).find((match) => !match.loose);
 	if (!book) return [];
 	const canonical = getCanonicalBook(book.osis);
 	if (!canonical) return [];
