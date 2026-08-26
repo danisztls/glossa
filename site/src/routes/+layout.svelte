@@ -17,6 +17,8 @@
 	import LinkPreview from '$lib/components/LinkPreview.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { publishHeight } from '$lib/sticky-height';
+	import { serviceWorker } from '$lib/sw.svelte';
+	import UpdateBanner from '$lib/components/UpdateBanner.svelte';
 
 	let { children } = $props();
 
@@ -57,48 +59,16 @@
 	}
 
 	/**
-	 * First paint fetches only the route's own content. Once that work is out
-	 * of the way, ask the service worker to fill its immutable content cache in
-	 * the background. This is intentionally a request, not an install-time
-	 * precache: it leaves the initial visit small and lets the worker resume any
-	 * interrupted library download on a later visit.
+	 * The service worker conversation: update detection, and the deferred
+	 * background fill. Both live in `$lib/sw.svelte.ts`; see its docblock.
 	 *
-	 * Honour the browser's explicit data-saver signal. The ordinary Cache
-	 * Storage quota remains the browser's authority; the worker already treats
-	 * every asset independently and logs failed entries rather than breaking
-	 * reading when storage is tight.
+	 * This used to post `CACHE_CONTENT` here directly, which asked the worker
+	 * for the WHOLE library in EVERY language — 2,236 files and ~26 MB gzipped
+	 * — 1.5s after first render, on every visit, gated only by `saveData`,
+	 * which almost nobody sets. It now asks for the automatic waves in the
+	 * reader's own languages and stops; the rest is offered, not taken.
 	 */
-	onMount(() => {
-		if (!('serviceWorker' in navigator)) return;
-
-		const connection = (navigator as Navigator & { connection?: { saveData?: boolean } })
-			.connection;
-		if (connection?.saveData) return;
-
-		let cancelled = false;
-		const requestPreload = () => {
-			if (!cancelled) navigator.serviceWorker.controller?.postMessage({ type: 'CACHE_CONTENT' });
-		};
-
-		// Give route loading and the first interaction a clear head start. A
-		// reload deliberately asks again: cacheContent skips what it already has
-		// and thereby resumes if the browser previously stopped the worker.
-		const timer = window.setTimeout(() => {
-			if (navigator.serviceWorker.controller) {
-				requestPreload();
-			} else {
-				navigator.serviceWorker.addEventListener('controllerchange', requestPreload, {
-					once: true
-				});
-			}
-		}, 1_500);
-
-		return () => {
-			cancelled = true;
-			window.clearTimeout(timer);
-			navigator.serviceWorker.removeEventListener('controllerchange', requestPreload);
-		};
-	});
+	onMount(() => serviceWorker.start());
 
 	/**
 	 * Accumulate visible reading time, which is the gate on the iOS
@@ -228,6 +198,7 @@
 
 <LinkPreview />
 <InstallHint />
+<UpdateBanner />
 
 <style>
 	.app-shell {

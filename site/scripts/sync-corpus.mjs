@@ -978,6 +978,35 @@ if (xrefsSynced) {
 	}
 }
 
+/**
+ * Two fields the writers above can't fill in, decorated on afterwards.
+ *
+ * `lang` because the service worker's download waves are per-language and
+ * work ids only *look* parseable: `bible.cpdv.en`, `ccc.pt`, `summa.la`,
+ * `encyclical.rerum-novarum.pt` and `prayer.common.en-gb` all put the tag
+ * last, but that is a coincidence of five naming schemes rather than a rule,
+ * and `manifests` holds the language the work actually declares. Deriving it
+ * would be a guess that fails silently — a work in the wrong wave downloads
+ * fine, just for the wrong reader.
+ *
+ * `citedBy` because it is the only ordering signal the corpus already
+ * contains for documents. There are ~400 of them and they will not all be
+ * downloaded; how often the rest of the corpus cites a document is a far
+ * better guess at what a reader wants offline than alphabet or date. Zero for
+ * everything that is not a document, which is what keeps this a plain data
+ * field rather than a ranking policy — the ordering itself lives in
+ * `sw-policy.ts`, where it can be read and tested.
+ */
+const citersBySlug = new Map();
+for (const entry of citationXrefs.documents) {
+	citersBySlug.set(entry.work, (citersBySlug.get(entry.work) ?? 0) + entry.cited_by.length);
+}
+for (const entry of contentManifest) {
+	entry.lang = manifests[entry.workId]?.language ?? '';
+	const slug = /^[a-z0-9-]+\.([a-z0-9-]+)\.[a-z]{2,3}(-[a-z]{2,3})?$/.exec(entry.workId)?.[1];
+	entry.citedBy = (slug && citersBySlug.get(slug)) || 0;
+}
+
 writeJson(path.join(indexDir, 'content-manifest.json'), contentManifest);
 
 /** Whole-reading routes are addressed by their unit's first number. Keep

@@ -61,6 +61,12 @@ export const pt: Dictionary = {
 	'install.hint.stepAfter': 'e depois em «Adicionar ao Ecrã Principal».',
 	'install.hint.dismiss': 'Dispensar',
 
+	'update.label': 'Está disponível uma nova edição',
+	'update.title': 'Nova edição pronta',
+	'update.body': 'Recarregue para receber os textos e as correções mais recentes.',
+	'update.action': 'Recarregar',
+	'update.dismiss': 'Agora não',
+
 	'edition.label': 'Edição',
 	'edition.select': 'Escolher edição',
 	'edition.current': 'Edição atual',

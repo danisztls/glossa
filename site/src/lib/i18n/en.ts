@@ -86,6 +86,16 @@ export const en: Dictionary = {
 	'install.hint.stepAfter': 'then “Add to Home Screen”.',
 	'install.hint.dismiss': 'Dismiss',
 
+	// The update offer — UpdateBanner.svelte. Worded as an EDITION rather than
+	// a version because that is what a reader of this site is actually being
+	// offered: the corpus index ships inside the app bundle, so a superseded
+	// copy is a superseded table of contents, not merely older code.
+	'update.label': 'A new edition is available',
+	'update.title': 'A new edition is ready',
+	'update.body': 'Reload to pick up the latest texts and corrections.',
+	'update.action': 'Reload',
+	'update.dismiss': 'Not now',
+
 	// Edition/version selector — EditionMenu.svelte is the consumer; store is content.svelte.ts.
 	'edition.label': 'Edition',
 	'edition.select': 'Choose edition',

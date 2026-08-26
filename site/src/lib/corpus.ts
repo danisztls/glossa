@@ -265,6 +265,20 @@ export function listEditions(type: WorkType): WorkManifest[] {
 const CONTENT_LANG_FALLBACK = ['en', 'la'];
 
 /**
+ * A reader's content languages in preference order: their own, then the
+ * fallback chain, deduped.
+ *
+ * Exported for the service worker's download planner, which is per-language by
+ * design — the corpus is 82.6 MB raw across fourteen languages and a reader
+ * speaks one or two of them. `editionInLang` already walks this chain one
+ * edition at a time; this is the same chain as a list, so the two cannot
+ * disagree about what a reader's languages are.
+ */
+export function contentLangChain(lang: string): string[] {
+	return [...new Set([lang, ...CONTENT_LANG_FALLBACK])];
+}
+
+/**
  * Which edition a content language resolves to when it has more than one,
  * keyed `"{type}:{base language}"`.
  *
@@ -698,7 +712,34 @@ declare const __CORPUS_DATA_DIR__: string;
  *  disk read / fetch. */
 const contentCache = new Map<string, Promise<unknown>>();
 
+/**
+ * The content file most recently read in this tab, as the service worker's
+ * wave planner wants it (see `planWaves`'s `current`).
+ *
+ * Recorded here because this is the only place that resolves an address to a
+ * content file, and the root layout — which is what talks to the worker — has
+ * no idea which file the route it just rendered needed. Threading it up
+ * through every `+page.ts` would touch a dozen routes to say something one
+ * function already knows.
+ *
+ * The work id is recovered from `relPath` (`content/{workId}/...`), which is
+ * the shape `sync-corpus.mjs` writes and `contentKey` preserves.
+ */
+let lastRead: { workId: string; path: string } | undefined;
+
+export function lastContentRead(): { workId: string; path: string } | undefined {
+	return lastRead;
+}
+
 async function readContent<T>(location: ContentLocation): Promise<T> {
+	// `globalThis.location`, not the bare name: the parameter above shadows it.
+	const here = globalThis.location?.href;
+	if (!import.meta.env.SSR && here) {
+		lastRead = {
+			workId: location.relPath.split('/')[1] ?? '',
+			path: new URL(location.url, here).pathname
+		};
+	}
 	let pending = contentCache.get(location.relPath) as Promise<T> | undefined;
 	if (!pending) {
 		pending = import.meta.env.SSR
