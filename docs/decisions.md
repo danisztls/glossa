@@ -805,6 +805,42 @@ a title derived from an address is not corpus text but is not nothing either. An
 `HTMLRewriter` work to every navigation, against a CPU limit that has never yet been the
 binding constraint and would want measuring before it is.
 
+**The sitemap dates each URL from the English text, because that is the text the URL
+serves a crawler** (2026-08-26). `<lastmod>` comes from a committed ledger of per-address
+fingerprints (`site/scripts/lastmod.mjs`) rather than the build clock — git's granularity
+is the work, so `git log -1 -- works/ccc.en/paragraphs.json` would call a one-paragraph
+correction a change to all 2,865 CCC addresses, which is the lie the element is discounted
+for.
+
+The ledger first unioned every edition answering at an address, and that was the same lie
+one level down. **There is exactly one URL per address and no `hreflang` alternates** —
+the reader's language is a stored preference, not part of the path — so the page a crawler
+is told about is the page a crawler gets, and a crawler arrives with no preference. It
+gets English, or Latin where the corpus has no English. A Malagasy re-parse moving 2,865
+dates would have been 2,865 claims about a text no consumer of the sitemap can see.
+`SITEMAP_LANGS` is `CONTENT_LANG_FALLBACK.en`, a test asserts the two agree, and the sync
+prints which language each address was read from — today 5,797 English and 7 from neither
+(the documents held only in Italian and Portuguese, which follow `defaultWorkId` in
+rendering _something_ rather than refusing). The other fourteen languages are not
+unadvertised; they are one preference away at the same URL, and simply get no vote on when
+it changed. If a language ever becomes addressable, this is the decision to revisit.
+
+Narrowing the basis moved every multi-edition hash at once, which is exactly the shape the
+change ceiling exists to refuse. The migration was a `LEDGER_VERSION` bump instead: an
+unrecognised version re-seeds from each work's own corpus commit date, which is true, where
+carrying the ledger forward would have stamped 5,804 addresses as changed today. It
+produced **identical dates** — the narrowing is invisible in this build and entirely about
+the next one.
+
+The eight static pages carry no `lastmod` at all, deliberately: they are chrome, whose
+content changes with the app, and the ledger does not fingerprint the app. The **file**
+carries none either, and cannot — a sitemap's own date exists only inside a
+`<sitemapindex>`, and 5,812 URLs against a 50,000 cap do not warrant one. Cloudflare
+serves it with a strong `ETag` and no `Last-Modified`; adding the latter would mean routing
+the file through the Worker that `run_worker_first` deliberately negates, at an invocation
+per fetch. The ledger already makes the ETag mean something, since a rebuild over an
+unchanged corpus produces a byte-identical file.
+
 **Deploy guards measure the corpus, not the page count.** Preflight refuses a
 fixture-sized build, and refuses a build whose reference coverage fell more than 3% below
 the committed baseline in any family — every grammar regression so far was silent. A

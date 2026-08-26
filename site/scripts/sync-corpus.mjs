@@ -447,7 +447,7 @@ const coverage = new CoverageMeter();
 const CCC_CHAPTER_KINDS = new Set(['chapter', 'prologue', 'section', 'part']);
 const COMPENDIUM_CHAPTER_KINDS = new Set(['chapter', 'section', 'part']);
 
-/** Canonical path -> the per-edition fingerprints of the text stored there.
+/** Canonical path -> language -> the fingerprints of the text stored there.
  *  Filled by `mark()` below as each work is read; resolved against the
  *  committed ledger once the address space is complete. */
 const addressFingerprints = new Map();
@@ -460,12 +460,18 @@ const addressFingerprints = new Map();
  * spells differently is a date that silently attaches to nothing. Passing the
  * same builder both consumers use is what keeps them joined.
  *
+ * `lang` is `manifest.language` rather than the tail of the work id, because
+ * the manifest is what the site itself reads and the id is a filename. It
+ * decides which editions the date is drawn from at all — see `SITEMAP_LANGS`
+ * in `scripts/lastmod.mjs`.
+ *
  * @param {Parameters<typeof hrefFor>[0]} address
  * @param {unknown} value
  * @param {string} workId
+ * @param {string} lang
  */
-function mark(address, value, workId) {
-	fingerprint(addressFingerprints, hrefFor(address), value, corpusDateFor(workId));
+function mark(address, value, workId, lang) {
+	fingerprint(addressFingerprints, hrefFor(address), value, corpusDateFor(workId), lang);
 }
 
 /**
@@ -607,7 +613,12 @@ for (const workId of workIds) {
 			// showing whichever edition the reader has, so a correction to any
 			// of the three is a change at that address.
 			for (const chapter of book.chapters) {
-				mark({ kind: 'bible', osis: book.osis, chapter: chapter.n }, chapter, workId);
+				mark(
+					{ kind: 'bible', osis: book.osis, chapter: chapter.n },
+					chapter,
+					workId,
+					manifest.language
+				);
 			}
 			// Chapter text, chunked by CHAPTER (see `BIBLE_CHAPTER_CHUNK_SIZE`).
 			// The chunk is the bare `Chapter[]` for its range, not a trimmed
@@ -655,7 +666,7 @@ for (const workId of workIds) {
 		// the same terms as any other chapter (docs/corpus-schema.md §Book
 		// introductions) — including this one.
 		for (const entry of intros) {
-			mark({ kind: 'bible', osis: entry.osis, chapter: 0 }, entry, workId);
+			mark({ kind: 'bible', osis: entry.osis, chapter: 0 }, entry, workId, manifest.language);
 		}
 
 		// Kept WHOLE per language, like the prayers: one fetch the first time a
@@ -690,14 +701,14 @@ for (const workId of workIds) {
 		cccEditions.push({ lang, work: workId, paragraphs });
 
 		for (const paragraph of paragraphs) {
-			mark({ kind: 'ccc', n: paragraph.n }, paragraph, workId);
+			mark({ kind: 'ccc', n: paragraph.n }, paragraph, workId, manifest.language);
 		}
 		// The chapter page renders its whole span, so its fingerprint is that
 		// span's paragraphs — not the outline. A correction inside a chapter
 		// changes the chapter page as surely as it changes the paragraph page.
 		for (const [from, to] of chapterSpans(structure, CCC_CHAPTER_KINDS)) {
 			const span = paragraphs.filter((p) => p.n >= from && p.n <= to);
-			mark({ kind: 'cccChapter', n: from }, span, workId);
+			mark({ kind: 'cccChapter', n: from }, span, workId, manifest.language);
 		}
 
 		const maxN = paragraphNumbers[paragraphNumbers.length - 1] ?? 0;
@@ -730,11 +741,11 @@ for (const workId of workIds) {
 		compendiumQuestionNumbers.push(...questions.map((question) => question.n));
 
 		for (const question of questions) {
-			mark({ kind: 'compendium', n: question.n }, question, workId);
+			mark({ kind: 'compendium', n: question.n }, question, workId, manifest.language);
 		}
 		for (const [from, to] of chapterSpans(structure, COMPENDIUM_CHAPTER_KINDS)) {
 			const span = questions.filter((q) => q.n >= from && q.n <= to);
-			mark({ kind: 'compendiumChapter', n: from }, span, workId);
+			mark({ kind: 'compendiumChapter', n: from }, span, workId, manifest.language);
 		}
 
 		// Chunked by question, exactly as the CCC is by paragraph — see
@@ -784,7 +795,7 @@ for (const workId of workIds) {
 		};
 
 		for (const prayer of prayers) {
-			mark({ kind: 'prayer', slug: prayer.slug }, prayer, workId);
+			mark({ kind: 'prayer', slug: prayer.slug }, prayer, workId, manifest.language);
 		}
 
 		// Kept WHOLE per language (see this module's docblock) -- ~40 KB raw
@@ -848,7 +859,12 @@ for (const workId of workIds) {
 			// SLUG (`summaAddresses` above, and the route manifest the sitemap
 			// reads). Passing the raw part here files the fingerprint under a
 			// path the sitemap never spells, and the date attaches to nothing.
-			mark({ kind: 'summa', part: slug, question: question.n, article: null }, question, workId);
+			mark(
+				{ kind: 'summa', part: slug, question: question.n, article: null },
+				question,
+				workId,
+				manifest.language
+			);
 			const relPath = `content/${workId}/questions/${slug}/${question.n}.json`;
 			writeJson(path.join(destDir, relPath), question);
 			contentManifest.push({
@@ -905,7 +921,7 @@ for (const workId of workIds) {
 		// route manifest reads it, from the middle segment of the work id.
 		{
 			const slug = /^([a-z0-9-]+)\.([a-z0-9-]+)\.([a-z]{2,3})$/.exec(workId)?.[2];
-			if (slug) mark({ kind: 'document', slug }, [sections, appendix], workId);
+			if (slug) mark({ kind: 'document', slug }, [sections, appendix], workId, manifest.language);
 		}
 		{
 			// Averages 1.2 KB. Written even when empty, so an absent file
@@ -1408,7 +1424,7 @@ const lastmod = resolveLastmod({
 	today: new Date().toISOString().slice(0, 10)
 });
 {
-	const { total, added, changed, removed, unseeded } = lastmod.stats;
+	const { total, added, changed, removed, unseeded, basis } = lastmod.stats;
 	const known = total - added;
 	const share = known === 0 ? 0 : changed / known;
 	if (share > CHANGE_CEILING && !process.argv.includes('--accept-lastmod')) {
@@ -1424,9 +1440,18 @@ const lastmod = resolveLastmod({
 		process.exit(1);
 	}
 	writeLedger(lastmodPath, lastmod.entries);
+	// The basis tally is the line that says the dates describe the page a
+	// crawler is served rather than the newest edition at the address; a shift
+	// in it is the only signal that the English chain stopped answering
+	// somewhere it used to.
+	const read = Object.entries(basis)
+		.sort(([, a], [, b]) => b - a)
+		.map(([lang, n]) => `${n} ${lang}`)
+		.join(', ');
 	console.log(
 		`lastmod: ${total} addresses — ${changed} changed, ${added} new, ${removed} withdrawn` +
-			(unseeded ? `, ${unseeded} dated from the build clock (corpus is not a git checkout)` : '')
+			(unseeded ? `, ${unseeded} dated from the build clock (corpus is not a git checkout)` : '') +
+			`; read from ${read}`
 	);
 }
 
