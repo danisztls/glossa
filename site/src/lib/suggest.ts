@@ -168,8 +168,17 @@ const SCORE = {
 	titlePrefix: 600,
 	titleWord: 480,
 	titleSubstring: 380,
+	/** A name matched loosely — a typo, or an abbreviation of the reader's own
+	 *  invention ("lumgen"). Below every literal reading, and one band, so
+	 *  fuzzy rows are ordered among THEMSELVES by the matcher's score and can
+	 *  never interleave with rows something actually read. */
+	titleFuzzy: 340,
 	/** A section's own landing page. */
-	landing: 300
+	landing: 300,
+	/** The same, matched loosely. Below the prefix band, unlike titles: there
+	 *  are six sections and their names are short, so a loose reading of one is
+	 *  the weakest thing this module offers. */
+	landingFuzzy: 290
 } as const;
 
 /** How many rows one producer may contribute before it starts crowding the others. */
@@ -183,6 +192,70 @@ function fold(s: string): string {
 		.normalize('NFD')
 		.replace(/\p{Mn}/gu, '')
 		.toLowerCase();
+}
+
+/**
+ * Loose matching, injected rather than imported.
+ *
+ * WHY INJECTED. `fuzzysort` is 7.5 KB gzipped and `JumpBox` sits in the layout
+ * header, so importing it here would put it in the boot chunk every route
+ * `modulepreload`s — the same cost `corpus-index.ts` goes to such lengths to
+ * keep the corpus out of. The box loads it when it OPENS and calls
+ * `setFuzzyRanker`; until then the literal tiers below answer alone, which is
+ * what a reader sees for the first keystroke and never notices. This is
+ * `refs-grammar.ts`'s `setDocumentTitleSource` arrangement, for the same
+ * reason: the module that must stay cheap declares what it needs and the
+ * caller supplies it.
+ *
+ * OFFLINE IS NOT THE CASUALTY IT LOOKS LIKE. `sw-policy.ts` precaches every
+ * emitted build asset except corpus content, and a lazily-imported chunk is an
+ * ordinary build asset, so the ranker is on disk before a reader is ever
+ * offline.
+ *
+ * THE RANKER SCORES, IT DOES NOT RANK THE LIST. Everything it returns lands in
+ * one score band beneath every literal reading (see `SCORE.titleFuzzy`), so a
+ * matcher that is confidently wrong can reorder its own rows and nothing else.
+ * That is deliberate: fuzzy matching is a long tail competing for eight
+ * visible rows, and the tiers above it are evidence rather than guesses.
+ */
+export interface FuzzyTarget {
+	/** Folded text to match against — see `fold`. */
+	text: string;
+	/** Which candidate this form belongs to; several forms share one. */
+	index: number;
+}
+
+export type FuzzyRanker = (
+	needle: string,
+	haystack: readonly FuzzyTarget[]
+) => { index: number; score: number }[];
+
+let fuzzyRanker: FuzzyRanker | undefined;
+
+/** Supply (or, with `undefined`, withdraw) the loose matcher. */
+export function setFuzzyRanker(ranker: FuzzyRanker | undefined): void {
+	fuzzyRanker = ranker;
+}
+
+/**
+ * Below this, a query is too short to be matched loosely.
+ *
+ * Two characters already reach most of a 450-document corpus by prefix alone,
+ * which is why the interior-substring tier needs four; a loose reading of two
+ * characters reaches all of it. Three is where a query starts to carry enough
+ * shape for a gap-penalised match to mean anything.
+ */
+const MIN_FUZZY_LENGTH = 3;
+
+/** Rank one haystack, best score per candidate index. `[]` when no ranker has
+ *  been supplied, which is the whole of what "fuzzy is optional" means here. */
+function fuzzyHits(needle: string, haystack: readonly FuzzyTarget[]): Map<number, number> {
+	const best = new Map<number, number>();
+	if (!fuzzyRanker || needle.length < MIN_FUZZY_LENGTH) return best;
+	for (const hit of fuzzyRanker(needle, haystack)) {
+		best.set(hit.index, Math.max(best.get(hit.index) ?? 0, hit.score));
+	}
+	return best;
 }
 
 /** Split a folded string into the words a "matches at a word start" test needs. */
@@ -833,19 +906,41 @@ const sectionForms: { form: string; section: SectionWords }[] = (() => {
 	return out;
 })();
 
+/** The section names as one flat haystack, in `sectionForms` order — so a hit's
+ *  index names the form, and that form names its section. */
+const sectionHaystack: FuzzyTarget[] = sectionForms.map(({ form }, index) => ({
+	text: form,
+	index
+}));
+
 /** A leading keyword and the number after it, either of which may be absent. */
 const KEYWORD_RE = /^([^\d]*?)\s*(\d{1,4})?\s*$/u;
 
-/** The sections whose name this text is a prefix of, exact spellings first. */
-function matchSections(text: string): { section: SectionWords; score: number }[] {
+/**
+ * The sections this text names: 2 for an exact spelling, 1 for a prefix, 0 for
+ * a loose reading — which is how `catechsim` still reaches the Catechism.
+ *
+ * The loose tier runs only when the literal ones find nothing at all. Section
+ * names are short and there are six of them across fourteen dictionaries, so a
+ * gap-penalised match on one is nearly always also a prefix match on another,
+ * and mixing the two produces a list that reorders itself as the reader types.
+ */
+function matchSections(text: string): { section: SectionWords; score: 0 | 1 | 2 }[] {
 	const needle = fold(text).trim();
 	if (!needle) return [];
-	const best = new Map<SectionWords, number>();
+	const best = new Map<SectionWords, 0 | 1 | 2>();
 	for (const { form, section } of sectionForms) {
 		const score = form === needle ? 2 : form.startsWith(needle) ? 1 : 0;
 		if (score === 0) continue;
-		best.set(section, Math.max(best.get(section) ?? 0, score));
+		best.set(section, Math.max(best.get(section) ?? 0, score) as 1 | 2);
 	}
+
+	if (best.size === 0) {
+		for (const position of fuzzyHits(needle, sectionHaystack).keys()) {
+			best.set(sectionForms[position].section, 0);
+		}
+	}
+
 	return [...best.entries()]
 		.map(([section, score]) => ({ section, score }))
 		.sort((a, b) => b.score - a.score);
@@ -933,6 +1028,12 @@ function numberedWorkSuggestions(query: string, ctx: Context): Scored[] {
 	for (const { section, score } of matchSections(keyword)) {
 		const exactName = score === 2;
 		const bump = exactName ? 2 : 0;
+		// A NUMBER is only ever attached to a section the reader actually
+		// spelled. "ctechism 27" reaching ¶27 would be two guesses stacked —
+		// which work was meant, and that the digits are its unit number — and
+		// the second is not a guess this module is entitled to make. The
+		// landing row below still offers the section itself.
+		if (score === 0 && numberRaw) continue;
 
 		if (!numberRaw) {
 			out.push({
@@ -942,12 +1043,13 @@ function numberedWorkSuggestions(query: string, ctx: Context): Scored[] {
 				completion: tr(section.titleKey, ctx.lang),
 				badge: tr(section.titleKey, ctx.lang),
 				// A landing page is the coarsest thing the box can offer, so a
-				// PREFIX of one sits at the bottom of the list. Its full NAME does
-				// not: "Prayers" typed in full is the prayers section, not a Summa
-				// question whose title contains the word — which is what it
-				// resolved to at the landing band, and which made Tab move the
-				// reader's own chosen row down the list they picked it from.
-				score: exactName ? SCORE.titleExact + 1 : SCORE.landing,
+				// PREFIX of one sits at the bottom of the list and a loose reading
+				// of one sits below that. Its full NAME does not: "Prayers" typed
+				// in full is the prayers section, not a Summa question whose title
+				// contains the word — which is what it resolved to at the landing
+				// band, and which made Tab move the reader's own chosen row down
+				// the list they picked it from.
+				score: exactName ? SCORE.titleExact + 1 : score === 1 ? SCORE.landing : SCORE.landingFuzzy,
 				order: order++
 			});
 			continue;
@@ -1075,9 +1177,17 @@ interface TitleCandidate {
  * Memoized on the languages it was built for, not rebuilt per keystroke: the
  * document half alone walks ~450 groups and resolves an edition for each.
  */
-const titleIndexByKey = new Map<string, TitleCandidate[]>();
+interface TitleIndex {
+	candidates: TitleCandidate[];
+	/** Every candidate's every form, flattened, for the loose matcher — which
+	 *  wants one array to scan rather than a call per string. Built with the
+	 *  index because it is the same walk and the same lifetime. */
+	haystack: FuzzyTarget[];
+}
 
-function titleIndex(ctx: Context): TitleCandidate[] {
+const titleIndexByKey = new Map<string, TitleIndex>();
+
+function titleIndex(ctx: Context): TitleIndex {
 	const key = [ctx.lang, ctx.cccLang, ctx.compendiumLang, ctx.prayerLang, ctx.summaLang].join('|');
 	const cached = titleIndexByKey.get(key);
 	if (cached) return cached;
@@ -1196,8 +1306,14 @@ function titleIndex(ctx: Context): TitleCandidate[] {
 		});
 	}
 
-	titleIndexByKey.set(key, out);
-	return out;
+	const index: TitleIndex = {
+		candidates: out,
+		haystack: out.flatMap((candidate, position) =>
+			candidate.forms.map((form) => ({ text: form.folded, index: position }))
+		)
+	};
+	titleIndexByKey.set(key, index);
+	return index;
 }
 
 /**
@@ -1246,8 +1362,10 @@ function titleSuggestions(query: string, ctx: Context): Scored[] {
 	const namePart = locus?.[1];
 	const section = locus ? Number(locus[2]) : undefined;
 
+	const index = titleIndex(ctx);
 	const hits: Scored[] = [];
-	for (const candidate of titleIndex(ctx)) {
+	const literal = new Set<number>();
+	for (const [position, candidate] of index.candidates.entries()) {
 		if (namePart !== undefined && section !== undefined && candidate.sectionsOf) {
 			const named = titleScore(candidate.forms, namePart);
 			if (named > 0 && documentSectionExists(candidate.sectionsOf, section)) {
@@ -1267,6 +1385,7 @@ function titleSuggestions(query: string, ctx: Context): Scored[] {
 
 		const score = titleScore(candidate.forms, needle);
 		if (score <= 0) continue;
+		literal.add(position);
 		hits.push({
 			href: candidate.href,
 			kind: candidate.kind,
@@ -1278,6 +1397,30 @@ function titleSuggestions(query: string, ctx: Context): Scored[] {
 			detail: candidate.detail,
 			badge: candidate.badge,
 			score,
+			order: candidate.order
+		});
+	}
+
+	// The loose pass runs over the WHOLE query, never over the locus split
+	// above: `NAMED_LOCUS_RE` is an exact grammar, and letting a fuzzy reading
+	// invent a section number would offer an address on the strength of a
+	// guess about which document was meant AND a guess about which paragraph.
+	//
+	// Candidates the literal tiers already found are skipped rather than
+	// scored again — a row cannot improve by being read more loosely, and
+	// `suggest`'s dedupe would drop the weaker copy anyway.
+	for (const [position, score] of fuzzyHits(needle, index.haystack)) {
+		if (literal.has(position)) continue;
+		const candidate = index.candidates[position];
+		hits.push({
+			href: candidate.href,
+			kind: candidate.kind,
+			label: candidate.label,
+			completion: candidate.label,
+			detail: candidate.detail,
+			badge: candidate.badge,
+			// One band, ordered within itself by the matcher — see `SCORE`.
+			score: SCORE.titleFuzzy + score,
 			order: candidate.order
 		});
 	}

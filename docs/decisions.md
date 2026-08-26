@@ -964,6 +964,47 @@ fourteen languages' worth of labels. Enter still runs the parser when no row is 
 a complete citation stays a one-keystroke operation and the shapes the suggester declines
 to complete — a verse list, an `ff` tail — keep working.
 
+**Loose matching is a dependency, and it is the site's second one.** `fuzzysort` (MIT,
+zero deps, 7.5 KB gzipped) against ~70 lines of hand-rolled subsequence scoring: the
+algorithm is textbook and the TUNING is not, and the tuning is what decides whether a
+list of eight rows is useful. Buying a scorer somebody else has already tuned, and
+spending the saved effort on measuring it against this corpus, is the better trade. It
+also folds diacritics and reads Cyrillic and Arabic, which a first attempt would have got
+wrong here and nowhere it was tested.
+
+**It is injected, not imported, so it stays out of the boot chunk.** `JumpBox` sits in the
+layout header, so a static import would put 7.5 KB in the chunk every route
+`modulepreload`s — for a tier only some readers reach. The box loads it when it first opens
+and calls `setFuzzyRanker`; until then the literal tiers answer alone, which is what the
+first keystroke sees and nobody notices. Offline is not the casualty it looks like:
+`sw-policy.ts` precaches every build asset that is not corpus content, and a lazily
+imported chunk is an ordinary build asset. Verified in the build — fuzzysort is its own
+8 KB chunk and appears in none of the 17 boot modules. This is `refs-grammar.ts`'s
+`setDocumentTitleSource` arrangement, for the same reason.
+
+**Fuzzy sits in one band below every literal reading, and may not stack a guess on a
+guess.** It adds rows; it never reorders the ones something actually read, and a test
+asserts that over five queries. A section reached only loosely will not then attach a unit
+number to itself — `ctechism 27` offers the Catechism and not paragraph 27, because which
+work was meant and what the digits are would be two guesses, and the second is not one to
+make. Its rows complete to the real title, so Tab turns a guess into something the literal
+tiers read.
+
+**The threshold is 0.3, measured, not fuzzysort's default 0.5.** fuzzysort penalises by
+target length and this corpus's names are long, so a real typo lands between 0.33 and 0.39
+(`rerm novarum` 0.386, `magnifca` 0.345, `sacrosanctm` 0.337, `rosry` 0.336). Swept over
+sixteen plausible misspellings and thirteen queries whose literal reading must not move:
+0.5 found four, 0.35 found ten, 0.3 found fourteen with no literal row displaced and
+almost no rows added to queries that already had an answer. 0.25 is where the first
+regression appears and the lists start filling with noise. The cost side is real and
+recorded — `perfecton` against the Summa's fifty-character titles scores 0.282 and is
+missed.
+
+**Subsequence matching cannot read a transposition, at any threshold.** `perfecton` reads
+and `perfectoin` does not, because its `o` precedes its `i` and the target's does not.
+Written down as a test rather than left as folklore, since the next person to meet it will
+otherwise file it as a bug and tune the threshold, which cannot fix it.
+
 **Theme is independent axes, not one list.** `auto / light / dark / sepia` made one value
 answer two questions and cost the reader a real combination. Sepia yields to dark because
 no dark-sepia palette exists, and it is **suspended, not cleared** — a dark control that

@@ -483,6 +483,14 @@ does not exist. Two consequences worth knowing before you touch either:
 - **`suggest()` takes its language as an argument**, never from the `i18n`
   store, and memoizes its book and title indexes per language. A test that
   switches language calls `resetSuggestCaches()`; the app never needs to.
+- **Loose matching is injected and must stay that way.** `fuzzysort` is the
+  site's only dependency besides the icon set, and `JumpBox` lazy-imports it on
+  open and calls `setFuzzyRanker` — a static import in `suggest.ts` would put
+  7.5 KB in the boot chunk of every route. If you add a caller, inject the same
+  ranker with the same 0.3 threshold; the number is measured against this
+  corpus (`docs/decisions.md`) and a different one silently changes what a
+  reader is offered. `suggest()` with no ranker is the literal tiers alone,
+  which is a supported state, not a broken one.
 
 The five tags with **no** config (`hu`, `ro`, `sl`, `sv`, `en-gb`) fall to
 English, and that is measured rather than assumed: the four Compendium-only

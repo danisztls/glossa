@@ -16,16 +16,32 @@
  * lives, are real in every environment: `refs-grammar.ts` imports nothing.
  */
 
+import fuzzysort from 'fuzzysort';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { dictionaryFor, i18n } from './i18n.svelte';
-import { resetSuggestCaches, suggest } from './suggest';
+import { resetSuggestCaches, setFuzzyRanker, suggest } from './suggest';
 
 /** The caches are keyed by language, and `t()` reads the store — so a test
  *  that switches language must not see the previous one's rows. */
 beforeEach(() => {
 	i18n.lang = 'en';
 	resetSuggestCaches();
+	// No loose matcher by default. That is the state a reader is in for the
+	// first few milliseconds after the box opens, and every assertion outside
+	// the `fuzzy` block below is about what the LITERAL tiers answer — so a
+	// suite that left the matcher installed would stop testing them.
+	setFuzzyRanker(undefined);
 });
+
+/** The ranker `JumpBox` injects, threshold and all. Kept identical on purpose:
+ *  a test against different settings tests nothing anyone runs. */
+function installFuzzyRanker() {
+	setFuzzyRanker((needle, haystack) =>
+		fuzzysort
+			.go(needle, haystack, { key: 'text', limit: 40, threshold: 0.3 })
+			.map((hit) => ({ index: hit.obj.index, score: hit.score }))
+	);
+}
 
 const hrefs = (query: string, opts = {}) =>
 	suggest(query, { lang: 'en', ...opts }).map((s) => s.href);
@@ -291,6 +307,99 @@ describe('suggest', () => {
 			// "Genesis · Introduction" is not a chapter number.
 			const intro = suggest('genesis', { lang: 'en' }).find((s) => s.href.endsWith('/0'));
 			expect(intro?.completion).toBe('Genesis 0');
+		});
+	});
+
+	describe('fuzzy', () => {
+		it('is absent until a ranker is injected', () => {
+			// The module never imports one: `fuzzysort` is 7.5 KB gzipped and this
+			// runs in the boot chunk (see the module docblock). Everything below
+			// must therefore also be true of a box whose lazy import has not
+			// landed yet — which is to say, nothing extra is offered.
+			expect(suggest('capcity', { lang: 'en' })).toEqual([]);
+		});
+
+		it('reads through a typo once one is', () => {
+			installFuzzyRanker();
+			const found = suggest('capcity', { lang: 'en' });
+			expect(found.map((s) => s.href)).toContain('/catechismus/caput/27');
+		});
+
+		it('gives up on a long title before a short one, which the threshold buys', () => {
+			// fuzzysort penalises by target length, so the same class of typo
+			// scores differently against different names: `capcity` against "Man's
+			// Capacity for God" is 0.327 and `perfecton` against the Summa's "Of
+			// the State of Perfection in General (Eight Articles)" is 0.282, just
+			// under the 0.3 the threshold sweep settled on. That is the cost side
+			// of the number and it is real — 0.25 recovers this one and starts
+			// filling the list with noise, which is the trade `JumpBox` records.
+			installFuzzyRanker();
+			expect(suggest('perfecton', { lang: 'en' })).toEqual([]);
+		});
+
+		it('cannot read through a TRANSPOSITION, and that is the algorithm', () => {
+			// fuzzysort matches a subsequence, so a dropped or inserted letter is
+			// forgiven and two swapped ones are not: `perfecton` reads, `perfectoin`
+			// does not, because its `o` precedes its `i` and the target's does not.
+			// Stated as a test rather than left as folklore — the next person to
+			// see it will otherwise file it as a bug and tune the threshold, which
+			// cannot fix it at any value.
+			installFuzzyRanker();
+			expect(suggest('perfectoin', { lang: 'en' })).toEqual([]);
+		});
+
+		it('reads a section name loosely', () => {
+			installFuzzyRanker();
+			expect(suggest('ctechism', { lang: 'en' })[0]?.href).toBe('/catechismus');
+		});
+
+		it('will not mint a unit number from a section it only guessed at', () => {
+			// Two guesses stacked — which work was meant, and that the digits are
+			// its unit number. The second is not one this module may make.
+			installFuzzyRanker();
+			expect(suggest('ctechism 27', { lang: 'en' }).map((s) => s.href)).not.toContain(
+				'/catechismus/27'
+			);
+		});
+
+		it('never displaces a literal reading', () => {
+			// The whole of why fuzzy sits in its own band: it may add rows below
+			// what something actually read, never reorder them.
+			for (const [query, first] of [
+				['gen', '/scriptura/gen/1'],
+				['john 3:16', '/scriptura/john/3#v16'],
+				['ccc 27', '/catechismus/27'],
+				['catech', '/catechismus'],
+				['ii-ii 184', '/summa/ii-ii/184']
+			] as const) {
+				setFuzzyRanker(undefined);
+				const literal = suggest(query, { lang: 'en' });
+				installFuzzyRanker();
+				const withFuzzy = suggest(query, { lang: 'en' });
+				expect(withFuzzy[0]?.href, query).toBe(first);
+				// Every row the literal tiers produced is still there, in order.
+				expect(
+					withFuzzy.slice(0, literal.length).map((s) => s.href),
+					query
+				).toEqual(literal.map((s) => s.href));
+			}
+		});
+
+		it('takes three characters before it will guess at all', () => {
+			// Two characters read loosely reach most of a corpus. `MIN_FUZZY_LENGTH`
+			// is what stops the list turning over on every keystroke of a word.
+			installFuzzyRanker();
+			const two = suggest('xq', { lang: 'en' });
+			expect(two).toEqual([]);
+		});
+
+		it('completes what it guessed, and the completion is exact', () => {
+			// A fuzzy row's completion is the real title, so Tab converts a guess
+			// into something the literal tiers read — the round trip holds even
+			// where the first reading did not.
+			installFuzzyRanker();
+			const row = suggest('capcity', { lang: 'en' })[0];
+			expect(suggest(row.completion, { lang: 'en' })[0].href).toBe(row.href);
 		});
 	});
 

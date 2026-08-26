@@ -30,7 +30,7 @@
 	import { cccParagraphExists, getCanonicalBook, prayerIndexLang } from '$lib/corpus';
 	import type { BibleBookMeta } from '$lib/corpus-index';
 	import { content } from '$lib/content.svelte';
-	import { suggest } from '$lib/suggest';
+	import { setFuzzyRanker, suggest } from '$lib/suggest';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
 
@@ -51,13 +51,62 @@
 	let listEl: HTMLUListElement | undefined = $state();
 
 	/**
+	 * Loose matching arrives after the box does.
+	 *
+	 * `fuzzysort` is 7.5 KB gzipped and this component sits in the layout
+	 * header, so a static import would put it in the boot chunk of every route
+	 * — paid by every reader for a tier only some of them reach. It is fetched
+	 * when the box first opens instead, which is hundreds of milliseconds
+	 * before anyone has typed the three characters `suggest.ts` requires before
+	 * it consults a matcher at all, and it stays in the shell precache
+	 * afterwards (`sw-policy.ts` takes every build asset that is not corpus
+	 * content), so the second open and every offline one are instant.
+	 *
+	 * `fuzzyReady` exists only to re-run the query: injecting the ranker
+	 * mutates module state that `$derived` cannot see, and without a signal a
+	 * list already on screen would keep the answer it computed a moment before
+	 * the matcher landed.
+	 */
+	let fuzzyReady = $state(false);
+
+	async function loadFuzzy() {
+		if (fuzzyReady) return;
+		const { default: fuzzysort } = await import('fuzzysort');
+		setFuzzyRanker((needle, haystack) =>
+			fuzzysort
+				// 0.3, NOT fuzzysort's default 0.5, and the number is measured
+				// rather than taste. fuzzysort penalises by target length, and this
+				// corpus's names are long: a real typo lands between 0.33 and 0.39
+				// ("rerm novarum" 0.386, "magnifca" 0.345, "sacrosanctm" 0.337,
+				// "rosry" 0.336), so 0.5 found four of sixteen plausible
+				// misspellings and 0.35 found ten. Swept over a battery of
+				// sixteen typos and thirteen queries whose literal reading must
+				// not move, 0.3 is the knee: fourteen right answers on top, no
+				// literal row displaced, and queries that already had a good
+				// answer gain almost no rows. 0.25 is where the first regression
+				// appears and the lists start filling with noise.
+				//
+				// `limit` is generous rather than tight: `suggest.ts` caps rows per
+				// kind afterwards, and a cap applied before scoring would silently
+				// drop the good match sitting behind forty documents that happen to
+				// share a letter.
+				.go(needle, haystack, { key: 'text', limit: 40, threshold: 0.3 })
+				.map((hit) => ({ index: hit.obj.index, score: hit.score }))
+		);
+		fuzzyReady = true;
+	}
+
+	/**
 	 * Recomputed on every keystroke, from indexes already in memory — no fetch,
 	 * no debounce. `content.workIdFor`/`langFor` are read here rather than
 	 * inside `suggest` so the store stays the component's dependency and the
 	 * suggester stays a pure function of its arguments.
 	 */
-	const suggestions = $derived(
-		open
+	const suggestions = $derived.by(() => {
+		// Read so the list recomputes when the loose matcher lands — see
+		// `fuzzyReady`. The value itself says nothing this expression wants.
+		void fuzzyReady;
+		return open
 			? suggest(query, {
 					lang: i18n.lang,
 					bibleWorkId: content.workIdFor('bible'),
@@ -71,8 +120,8 @@
 					prayerLang: prayerIndexLang(content.langFor('prayer')),
 					summaLang: content.langFor('summa')
 				})
-			: []
-	);
+			: [];
+	});
 
 	// The active row cannot outlive the list it indexes: a keystroke that
 	// shortens the results would otherwise leave `aria-activedescendant`
@@ -110,6 +159,7 @@
 		query = '';
 		active = -1;
 		open = true;
+		void loadFuzzy();
 		dialogEl?.showModal();
 		// `showModal()` focuses the first focusable descendant, which is this
 		// input — said explicitly because that is a fact about the field's
