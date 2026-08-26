@@ -42,6 +42,10 @@
 		unit: string | number;
 		/** The edition's language, for the notes. */
 		lang: string;
+		/** The edition's work id, for the notes — see `Sidenote`'s `work`. The
+		    verse text itself is never linkified, so this reaches the apparatus
+		    and nothing else. */
+		work?: string;
 		/** Promote the opening letter — the caller's decision, since only it
 		    knows whether this unit opens the chapter. */
 		dropCap?: boolean;
@@ -51,7 +55,16 @@
 		noteOffset?: number;
 	}
 
-	let { text, textMarked, notes, unit, lang, dropCap = false, noteOffset = 0 }: Props = $props();
+	let {
+		text,
+		textMarked,
+		notes,
+		unit,
+		lang,
+		work,
+		dropCap = false,
+		noteOffset = 0
+	}: Props = $props();
 
 	const pieces = $derived(splitMarkers(text, textMarked));
 
@@ -120,6 +133,7 @@
 			label={labelOf(piece.marker)}
 			note={byMarker.get(piece.marker)}
 			{lang}
+			{work}
 			open={open.has(noteKey(unit, piece.marker, piece.seq))}
 			onToggle={() => toggle(noteKey(unit, piece.marker, piece.seq))}
 		/>{:else if dropCap && i === firstTextIndex}{@const cap = splitDropCap(
@@ -130,6 +144,7 @@
 		label={labelOf(note.marker)}
 		{note}
 		{lang}
+		{work}
 		open={open.has(noteKey(unit, note.marker, -1 - i))}
 		onToggle={() => toggle(noteKey(unit, note.marker, -1 - i))}
 	/>{/each}

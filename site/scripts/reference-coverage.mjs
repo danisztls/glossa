@@ -160,15 +160,38 @@ export class CoverageMeter {
 				bucket.citations.push(node.citation.text);
 			}
 			if (typeof node.ccc_refs === 'string') bucket.citations.push(node.ccc_refs);
-			if (Array.isArray(node.blocks)) {
-				for (const block of node.blocks) {
+			// `answer_blocks` is the Compendium's name for `blocks`, and
+			// `question` is prose the reader meets BEFORE the answer — eight
+			// questions quote a verse and print its locator. `notes[].text` is
+			// an annotated Bible edition's commentary, which cites Scripture
+			// 435 times across the two editions that carry it.
+			//
+			// All three were walked past until 2026-08-26, and all three were
+			// rendered as inert text on the page until the same day. That is
+			// not a coincidence worth shrugging at: this meter and the renderer
+			// have to see the same text or the drop guard in
+			// `preflight-deploy.mjs` guards something nobody reads. The CCC
+			// went the other way that week — measured here, undrawn there —
+			// which is the same failure with the operands swapped.
+			for (const list of [node.blocks, node.answer_blocks]) {
+				if (!Array.isArray(list)) continue;
+				for (const block of list) {
 					if (!block || typeof block !== 'object') continue;
 					bucket.prose.push(blockProse(block));
 					if (block.html) bucket.stored += (block.html.match(/<a data-ref=/g) ?? []).length;
 				}
 			}
+			if (typeof node.question === 'string') bucket.prose.push(node.question);
+			if (Array.isArray(node.notes)) {
+				for (const note of node.notes) {
+					if (note && typeof note === 'object' && typeof note.text === 'string') {
+						bucket.prose.push(note.text);
+					}
+				}
+			}
 			for (const [key, value] of Object.entries(node)) {
-				if (key === 'citations' || key === 'blocks' || key === 'citation') continue;
+				if (key === 'citations' || key === 'citation') continue;
+				if (key === 'blocks' || key === 'answer_blocks' || key === 'notes') continue;
 				if (value && typeof value === 'object') walk(value);
 			}
 		};

@@ -2076,9 +2076,23 @@ const CONFIGS: Record<string, LangConfig> = {
  * evidence goes in the comment beside it — the same standard
  * `pipeline/corrections/` holds a source defect to.
  *
- * All three entries are the Douay numbering of Kings, verified reference by
+ * All four entries are the Douay numbering of Kings, verified reference by
  * reference against the verse each one actually names (2026-08-26):
  *
+ *   `bible.douay-rheims.en`   4 references, in CHALLONER'S NOTES rather than
+ *                   in the text — the edition that gives the convention its
+ *                   name, and the last one added, because its apparatus was
+ *                   not being read at all until the notes were linkified.
+ *                   Two are read wrong without this and both are settled by
+ *                   the note's own sentence: at 1 Chronicles 21 he writes
+ *                   "the difference of the numbers here and 2 Kings 24",
+ *                   which is the census in 2 Samuel 24 and not Jehoiachin;
+ *                   at Isaiah 28 "the Lord fought against the Philistines in
+ *                   Baal Pharasim, 2 Kings 5." is David at Baal-perazim,
+ *                   2 Samuel 5:20, and not Naaman. The other two read the
+ *                   same either way ("3 Kings 22", "2Sam. 21"), and the
+ *                   edition's own book names say the rest: it prints
+ *                   1-2 Samuel AS 1-2 Kings.
  *   `summa.en`      50 references. CCEL quotes Scripture in Douay-Rheims
  *                   throughout, and prints all four books of Kings — 38 "1
  *                   Kings", 17 "2 Kings", 37 "3 Kings", 30 "4 Kings". The
@@ -2096,6 +2110,7 @@ const CONFIGS: Record<string, LangConfig> = {
  * `encyclical.mysterium.en` ("3 Kgs 19.8").
  */
 const WORK_CONFIGS: Record<string, LangConfig> = {
+	'bible.douay-rheims.en': CONFIG_EN_DOUAY,
 	'summa.en': CONFIG_EN_DOUAY,
 	'encyclical.aeterni-patris.en': CONFIG_EN_DOUAY,
 	'encyclical.diuturnum.en': CONFIG_EN_DOUAY

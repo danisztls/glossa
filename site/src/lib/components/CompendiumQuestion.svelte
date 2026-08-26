@@ -10,7 +10,11 @@
 	import RefText from './RefText.svelte';
 	import ReferenceNumber from './ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
-	import { hrefFor } from '$lib/address';
+	import { hrefFor as addressHrefFor } from '$lib/address';
+	import { linkifyInline, plainTextNodes } from '$lib/inline-html';
+	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
+	import { content } from '$lib/content.svelte';
+	import InlineNodes from './InlineNodes.svelte';
 
 	interface Props {
 		question: CompendiumQuestion;
@@ -37,20 +41,36 @@
 	/** The question's own page — its canonical address, and what `href` points
 	 *  at in the chapter reader. Derived rather than taken as a prop so the
 	 *  single-question view and the chapter view cannot disagree about it. */
-	const canonicalHref = $derived(hrefFor({ kind: 'compendium', n: question.n }));
+	const canonicalHref = $derived(addressHrefFor({ kind: 'compendium', n: question.n }));
+
+	/**
+	 * THE QUESTION CARRIES REFERENCES TOO — eight of them do, in every edition
+	 * that has those questions (65 across the ten): the Compendium asks about a
+	 * verse by quoting it, and prints the locator in the question itself.
+	 * "Why is it important to affirm 'In the beginning God created the heavens
+	 * and the earth' (Genesis 1:1)?" is not chrome around the answer, it is the
+	 * first place the reader meets the reference.
+	 */
+	const questionNodes = $derived(
+		linkifyInline(plainTextNodes(question.question), (text) => linkifyProse(text, { lang, work }))
+	);
+
+	function refHrefFor(seg: RefSegment): string | undefined {
+		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang });
+	}
 </script>
 
 {#snippet qa()}
 	<p class="qa-question">
 		<span class="qa-label" aria-hidden="true">Q</span>
-		<span>{question.question}</span>
+		<span><InlineNodes nodes={questionNodes} hrefFor={refHrefFor} /></span>
 	</p>
 
 	<div class="qa-answer">
 		<span class="qa-label" aria-hidden="true">A</span>
 		<span class="visually-hidden">{t('compendium.answer')}</span>
 		<div class="qa-answer-body">
-			<CompendiumAnswer blocks={question.answer_blocks} />
+			<CompendiumAnswer blocks={question.answer_blocks} {lang} {work} />
 		</div>
 	</div>
 

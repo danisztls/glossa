@@ -31,6 +31,10 @@
 	import type { VerseNote } from '$lib/types';
 	import { sidenoteRoom } from '$lib/sidenotes.svelte';
 	import { t } from '$lib/i18n.svelte';
+	import { linkifyInline, plainTextNodes } from '$lib/inline-html';
+	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
+	import { content } from '$lib/content.svelte';
+	import InlineNodes from './InlineNodes.svelte';
 
 	interface Props {
 		/** What the note is PRINTED as — "a", "b" — shown in the superscript and
@@ -50,11 +54,38 @@
 		    reader's. Set on the note so `app.css`'s two direction rules resolve
 		    it from the text rather than from the interface. */
 		lang: string;
+		/** The annotated edition's work id, which the grammar needs here more
+		    than anywhere else in the corpus: Challoner writes "2 Kings 24" for
+		    2 Samuel 24, and `bible.douay-rheims.en` is in `WORK_CONFIGS` for
+		    exactly that reason. Dropping it reads two of his notes into the
+		    wrong book. */
+		work?: string;
 		open: boolean;
 		onToggle: () => void;
 	}
 
-	let { label, note, lang, open, onToggle }: Props = $props();
+	let { label, note, lang, work, open, onToggle }: Props = $props();
+
+	/**
+	 * A GLOSS NAMES OTHER PLACES IN THE BOOK, and that is most of what a gloss
+	 * is for: Challoner's notes cite Scripture 168 times and Matos Soares's
+	 * 267, "See Nm. 18,19", "the annotations, 3 Kings 22". They rendered as
+	 * inert text until 2026-08-26, which made the apparatus a dead end exactly
+	 * where it was pointing somewhere.
+	 *
+	 * The VERSE is not linkified and must not be — `AnnotatedText` renders it
+	 * as plain runs. Scripture is the text being read, not an apparatus over
+	 * it, and a locator-shaped phrase inside a verse ("in the third year of
+	 * Osee") is prose, not a citation. The note is the only part of the page
+	 * that is commentary.
+	 */
+	const nodes = $derived(
+		linkifyInline(plainTextNodes(note?.text ?? ''), (text) => linkifyProse(text, { lang, work }))
+	);
+
+	function hrefFor(seg: RefSegment): string | undefined {
+		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang });
+	}
 
 	// In the margin the note is on screen no matter what `open` says, so the
 	// marker is not a disclosure control and does not claim to be one.
@@ -83,7 +114,7 @@
 		<span class="sidenote-marker" aria-hidden="true">{label}</span>
 		{#if note}
 			{#if note.lemma}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span class="sidenote-text"
-				>{note.text}</span
+				><InlineNodes {nodes} {hrefFor} /></span
 			>
 		{:else}
 			<span class="sidenote-text sidenote-missing">{t('bible.noteMissing')}</span>

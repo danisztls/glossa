@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
 	parseInlineHtml,
 	parseInlineMarked,
+	plainTextNodes,
 	inlineText,
 	textRuns,
 	withTextRuns,
@@ -167,6 +168,50 @@ describe('parseInlineMarked', () => {
 		expect(found).toHaveLength(1);
 		expect(found[0].kind === 'ref' && found[0].seg).toMatchObject({ osis: 'heb', chapter: 11 });
 		expect(inlineText(nodes)).toBe(inlineText(parseInlineMarked(marked)));
+	});
+});
+
+/**
+ * The third stored form: a bare string with neither markup nor markers — a
+ * Compendium answer, a Compendium question, an annotated Bible edition's
+ * note. Each was rendered as inert text until 2026-08-26 on the reasoning
+ * that a text with no footnote apparatus has nothing to link, which is
+ * exactly backwards: those are the texts that print their locators in the
+ * sentence.
+ */
+describe('plainTextNodes', () => {
+	it('is one run, and nothing for an empty string', () => {
+		expect(plainTextNodes('a plain answer')).toEqual([{ kind: 'text', text: 'a plain answer' }]);
+		expect(plainTextNodes('')).toEqual([]);
+	});
+
+	it('links the locator a Compendium answer prints in its own sentence', () => {
+		// compendium.en 145, verbatim — the Compendium footnotes nothing.
+		const text = 'so that all might bear “the fruit of the Spirit” (Galatians 5:22).';
+		const nodes = linkifyInline(plainTextNodes(text), (t) => linkifyProse(t, { lang: 'en' }));
+		const found = nodes.filter((n) => n.kind === 'ref');
+		expect(found).toHaveLength(1);
+		expect(found[0].kind === 'ref' && found[0].seg).toMatchObject({
+			osis: 'gal',
+			chapter: 5,
+			verses: [22]
+		});
+		expect(inlineText(nodes)).toBe(text);
+	});
+
+	it("reads a Douay note's Kings as Samuel, and only because the work says so", () => {
+		// bible.douay-rheims.en, Challoner at 1 Chronicles 21 — the census,
+		// which is 2 Samuel 24. Under the modern reading it is Jehoiachin.
+		const text = 'The difference of the numbers here and 2 Kings 24. is to be accounted for';
+		const osisOf = (work?: string) => {
+			const nodes = linkifyInline(plainTextNodes(text), (t) =>
+				linkifyProse(t, { lang: 'en', work })
+			);
+			const ref = nodes.find((n) => n.kind === 'ref');
+			return ref?.kind === 'ref' && ref.seg.kind === 'scripture' ? ref.seg.osis : undefined;
+		};
+		expect(osisOf()).toBe('2kgs');
+		expect(osisOf('bible.douay-rheims.en')).toBe('2sam');
 	});
 });
 

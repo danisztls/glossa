@@ -486,7 +486,10 @@ is the whole reason its **document-siglum scan** (added 2026-08-26) is worth
 **The counters that measure this scan do not render it, and for four days
 that mattered.** `reference-coverage.mjs` and `build-xrefs.mjs` call
 `linkifyProse` themselves, so the coverage table and the scripture index kept
-counting references the page had stopped drawing: the walk-the-markup refactor
+counting references the page had stopped drawing (and, in the other direction,
+the meter walked past `answer_blocks`, `question` and `notes` for as long as
+the page did — it reads all three now, and `coverage:accept` recorded the
+floor): the walk-the-markup refactor
 (2026-08-22) gave `ProseBlocks`' new `html` branch `linkifyInline` and left its
 `text_marked` branch returning nodes raw, and the CCC's 18,831 in-prose
 references went undrawn until 2026-08-26 — total in German, French and Spanish,
@@ -497,11 +500,29 @@ and both are unit-testable. There is no component test harness in this repo;
 keeping renderable logic out of `.svelte` files is the only way it gets tested
 at all.
 
-**The Compendium's answers are still rendered as plain text.**
-`CompendiumAnswer.svelte` prints `block.text` directly — no
-`parseInlineMarked`, no `linkifyInline` — so the 1,436 Scripture references its
-ten editions name in prose ("(Galatians 5:22)") link nowhere. That is a gap,
-not a regression: it has never linkified.
+**Three surfaces store plain strings, and all three were inert for the same
+bad reason.** A Compendium answer, a Compendium question and an annotated
+Bible edition's note carry no markup and no `⟦N⟧` tokens, and each was
+rendered as text on the reasoning that a text with no footnote apparatus has
+nothing to link — which is backwards, since those are precisely the texts
+that print their locators in the sentence. 1,436 references in the ten
+Compendium answers, 65 in the questions (eight questions quote a verse and
+name it), 435 in Challoner's and Matos Soares's notes. `plainTextNodes` in
+`inline-html.ts` is the third parser beside `parseInlineHtml` and
+`parseInlineMarked`; it exists so that reaching for the wrong one is a
+compile-time question rather than an accident that works.
+
+**The Bible's VERSES are still not linkified, and must not be.** Scripture is
+the text being read, not an apparatus over it — a locator-shaped phrase inside
+a verse is prose. Only `Sidenote` linkifies, because only the note is
+commentary.
+
+**Adding the notes is what put `bible.douay-rheims.en` in `WORK_CONFIGS`.**
+Challoner writes "2 Kings 24" for the census in 2 Samuel 24 and "2 Kings 5"
+for David at Baal-perazim; two of his four Kings citations read into the wrong
+book without the entry, and the evidence is in each note's own sentence. Matos
+Soares was checked the same way and reads MODERN — "1Rs. 16, 34" is Jericho
+rebuilt under Ahab, "2Rs. 20, 8-11" the sundial — so PT needs no entry.
 
 **A siglum in prose must sit inside a bracket**, and that is a measurement
 rather than a hunch: of the 3,712 siglum-shaped tokens those four editions

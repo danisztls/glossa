@@ -175,6 +175,21 @@ export function parseInlineHtml(html: string): InlineNode[] {
  * every block of every prayer edition, vernacular and Latin, along with
  * leading, trailing and doubled breaks, all of which are likewise absent.
  */
+/**
+ * Plain corpus text — no markup, no `⟦N⟧` tokens — as the one-node list
+ * `linkifyInline` and `InlineNodes` both take.
+ *
+ * The third stored form, and the reason it needs a name of its own: a
+ * Compendium answer, a Compendium question and an annotated Bible edition's
+ * note are all stored as bare strings, so a caller reaching for
+ * `parseInlineHtml` would parse a `<` the source printed and a caller
+ * reaching for `parseInlineMarked` would claim an apparatus that is not
+ * there. Both would work today by accident. This says what the string is.
+ */
+export function plainTextNodes(text: string): InlineNode[] {
+	return text ? [{ kind: 'text', text }] : [];
+}
+
 /** The CCC's and the Compendium's footnote token — see `parseInlineMarked`. */
 const MARKER_RE = /⟦([^⟧]+)⟧/g;
 

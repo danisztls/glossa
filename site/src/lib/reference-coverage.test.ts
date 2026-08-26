@@ -51,6 +51,48 @@ describe('CoverageMeter', () => {
 	});
 });
 
+/**
+ * The three shapes the walk used to skip, added 2026-08-26 in the same change
+ * that made the page draw them. A meter that reads what the renderer does not
+ * (or the reverse) makes `preflight-deploy.mjs`'s drop guard a guard over
+ * nothing — the CCC had that failure in one direction the same week, the
+ * Compendium and the Bible's notes in the other.
+ */
+describe('CoverageMeter — the prose surfaces that are not `blocks`', () => {
+	it("reads a Compendium answer's blocks and its question", () => {
+		const meter = new CoverageMeter();
+		meter.addUnits('compendium', 'en', [
+			{
+				n: 51,
+				question: 'What is the importance of “In the beginning” (Genesis 1:1)?',
+				answer_blocks: [{ text: 'They bear “the fruit of the Spirit” (Galatians 5:22).' }]
+			}
+		]);
+		const { families } = meter.report();
+		expect(families.compendium.prose.scripture).toBe(2);
+	});
+
+	it("reads an annotated edition's notes, which is where its commentary cites", () => {
+		const meter = new CoverageMeter();
+		meter.addUnits('bible', 'en', {
+			chapters: [
+				{
+					verses: [
+						{
+							n: 1,
+							text: 'And it came to pass.',
+							notes: [{ marker: '1', text: 'That is, a firm covenant. See Nm. 18,19.' }]
+						}
+					]
+				}
+			]
+		});
+		const { families } = meter.report();
+		// The VERSE is not counted — it is the text, not an apparatus over it.
+		expect(families.bible.prose.scripture).toBe(1);
+	});
+});
+
 describe('compareCoverage', () => {
 	const baseline = {
 		families: {
