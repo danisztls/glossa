@@ -4,11 +4,21 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!-- The shell had NO `<title>` at all until now, which is a stronger
-		     statement than it looks: `%sveltekit.head%` is empty in an SPA build,
-		     so every consumer that does not run JavaScript received an untitled
-		     document — 5,812 of them, identical, one per canonical address. A
-		     search result, a link unfurl or a chat preview then falls back to
-		     showing the URL.
+		     statement than it looks: the head placeholder at the foot of this
+		     `<head>` interpolates to nothing in an SPA build, so every consumer
+		     that does not run JavaScript received an untitled document — 5,812
+		     of them, identical, one per canonical address. A search result, a
+		     link unfurl or a chat preview then falls back to showing the URL.
+
+		     Note the placeholder is NAMED rather than spelled here: SvelteKit
+		     substitutes it with a plain `String.replace(string, …)`, which
+		     rewrites the FIRST occurrence in the file and no other (see
+		     @sveltejs/kit's core/sync/write_server.js). Writing it literally in
+		     this comment fed the head into the comment and left the real one at
+		     the foot of the `<head>` as text — which the parser then moved into
+		     the body, so the shell printed the token at the top of the page and
+		     the boot script never ran. src/lib/shell-meta.test.ts now counts
+		     the occurrences.
 
 		     Safe to state statically because Svelte compiles a `<title>` inside
 		     `<svelte:head>` to an assignment to `document.title` rather than to

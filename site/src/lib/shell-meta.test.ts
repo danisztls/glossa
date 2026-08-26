@@ -37,6 +37,21 @@ describe('app.html', () => {
 		expect(declared?.trim()).not.toBe('');
 	});
 
+	// SvelteKit fills the head and body placeholders with
+	// `String.replace(string, …)` (core/sync/write_server.js), which rewrites
+	// the first occurrence in the file and no other. So a second one anywhere
+	// — a comment explaining the shell is how it happened — swallows the real
+	// substitution and leaves the token at the foot of the `<head>` as text,
+	// which the parser moves into the body: the page prints `%sveltekit.head%`
+	// at the top and never boots, because the module script went into the
+	// comment. Nothing else fails; the build succeeds and every test but this
+	// one passes.
+	it.each(['head', 'body'])('spells the %s placeholder exactly once', (name) => {
+		const token = `%sveltekit.${name}%`;
+		const occurrences = read('src/app.html').split(token).length - 1;
+		expect(occurrences, `\`${token}\` must appear once in src/app.html`).toBe(1);
+	});
+
 	// Equal to the English `home.title`, which the root layout assigns at
 	// hydration: if they drift, the title visibly changes as the app boots.
 	it('titles the shell the same as the root layout does', () => {
