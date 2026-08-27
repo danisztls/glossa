@@ -2780,12 +2780,27 @@ input {
  * one of those is the shape `menu.svelte.ts` records this codebase avoiding.
  * A class for what is genuinely identical is not that shape.
  *
- * `.menu-panel` below repeats four of the five and is deliberately NOT this.
- * It is positioned in CSS from its own trigger rather than measured against
- * one, which `floating.ts`'s docblock draws as the real line between the two
- * families, and it carries its own scrolling, sizing and list reset besides.
+ * ALL THREE ARE IN THE TOP LAYER, which is why the positioning is here too.
+ * Each is a native `popover`, so `position: fixed` and the `inset`/`margin`
+ * resets are against the UA's `[popover]` rule — it wants to centre the panel
+ * in the viewport (`inset: 0; margin: auto`), and `floating.ts` supplies the
+ * real coordinates instead. The top layer is also why none of them carries a
+ * `z-index`: it sits above every stacking context on the page, and what
+ * decides which of two open panels is in front is the order they were shown
+ * in. That is the property that lets a link preview appear OVER an open
+ * citation — see `LinkPreview`, which is a `manual` popover for exactly that
+ * reason and no other.
+ *
+ * `.menu-panel` below repeats four of the declarations and is deliberately
+ * NOT this. It is positioned in CSS from its own trigger rather than measured
+ * against one, which `floating.ts`'s docblock draws as the real line between
+ * the two families, and it carries its own scrolling, sizing and list reset
+ * besides.
  */
 .floating-panel {
+	position: fixed;
+	inset: auto;
+	margin: 0;
 	background: var(--color-bg);
 	border: 1px solid var(--color-border);
 	border-radius: 0.5rem;

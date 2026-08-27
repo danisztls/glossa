@@ -1,5 +1,7 @@
 /**
- * Where a floating panel goes, given what it is anchored to.
+ * The machinery a floating panel needs that is not its own content: where it
+ * goes, whether it follows, and how long a pointer has to rest before one
+ * appears at all.
  *
  * Extracted from `LinkPreview.svelte`, which had the only viewport-clamping
  * positioner on the site, when the anchor popover became the second consumer.
@@ -20,6 +22,44 @@
 
 /** Breathing room from the viewport edge, and between anchor and panel. */
 const GAP = 8;
+
+/**
+ * How long the pointer must rest on something before its panel appears.
+ *
+ * Long enough that a pointer merely crossing a citation-dense paragraph never
+ * strobes a card per link — `RefText` renders a handful per footnote line, and
+ * a Catechism paragraph can raise a dozen footnotes — and short enough that a
+ * reader who actually pauses on one does not feel a lag. 350ms sits between
+ * the ~150-200ms convention for "acknowledge instantly" and the ~500ms that
+ * starts to read as unresponsive.
+ *
+ * SHARED BY THE TWO THINGS A READER CAN HOVER: an internal link, which shows
+ * the content behind it (`LinkPreview`), and a footnote marker, which shows
+ * the source it names (`CitationDisclosure`). They are the same gesture over
+ * the same prose and cannot want different numbers — a paragraph where the
+ * two disagreed would feel like two different pages.
+ */
+export const HOVER_OPEN_MS = 350;
+
+/**
+ * How long a panel survives the pointer leaving.
+ *
+ * Deliberately shorter than `HOVER_OPEN_MS`: this only has to cover the gap
+ * between leaving one link and entering an adjacent one — two citations
+ * separated by a comma and a space — or the `GAP` between a marker and the
+ * card it just opened, which the reader crosses to click a reference inside
+ * it. It is not a pause to read.
+ */
+export const HOVER_CLOSE_MS = 200;
+
+/** Whether the reader's pointer can hover at all. Checked per event rather
+ *  than cached at mount: a mouse plugged into a tablet changes the answer
+ *  mid-session, and `matchMedia` is cheap next to the DOM walk that follows
+ *  it. On a touch screen there is no state between "not touching" and
+ *  "activated", so everything below is a click instead. */
+export function canHover(): boolean {
+	return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+}
 
 /**
  * Viewport coordinates for a `position: fixed` panel of size `box` anchored

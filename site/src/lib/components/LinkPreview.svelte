@@ -27,6 +27,19 @@
 	 * fixed-position node reused across every hover avoids mounting/unmounting
 	 * a component on every pointer move.
 	 *
+	 * `popover="manual"` AND NOT `auto`, for one reason: the top layer. A
+	 * citation's own card (`CitationDisclosure`) is an `auto` popover, and
+	 * anything in the top layer paints above the whole ordinary document
+	 * however high its `z-index` — so while this was a plain `z-index: 70`
+	 * div, a preview raised from a link INSIDE an open citation rendered
+	 * behind the card that raised it, and the links in there had to be opted
+	 * out of previewing altogether. In the top layer the two are ordered by
+	 * when they were shown, and this is always shown second. `manual` is what
+	 * makes that safe: an `auto` popover would light-dismiss the citation it
+	 * was opened from, and this component already owns every path that closes
+	 * it — a timer, a pointer leaving, Escape, a scroll. It wants the layer
+	 * and none of the behaviour.
+	 *
 	 * SSR / no-JS: this dates from when every route was prerendered, when
 	 * this component's `<script>` ran during that pass too (every Svelte
 	 * component's did), so every `window`/`document` read below had to
@@ -52,19 +65,12 @@
 	import { goto } from '$app/navigation';
 	import { previewTarget, type PreviewTarget } from '$lib/address';
 	import { resolvePreview, type ResolvedPreview } from '$lib/linkPreviewContent';
-	import { computePanelPosition } from '$lib/floating';
+	import { computePanelPosition, canHover, HOVER_OPEN_MS, HOVER_CLOSE_MS } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
 
-	// Long enough that a pointer merely crossing a citation-dense paragraph
-	// (RefText.svelte renders a handful of links per footnote line) never
-	// strobes a popup per link; short enough that a reader who actually pauses
-	// on one doesn't feel a lag. 350ms sits between the ~150-200ms UI convention
-	// for "acknowledge instantly" and the ~500ms+ that starts to feel unresponsive.
-	const SHOW_DELAY_MS = 350;
-	// Deliberately shorter than SHOW_DELAY_MS: this only has to survive the
-	// gap between leaving one link and entering an adjacent one (two citations
-	// separated by a comma and a space), not a real pause to read.
-	const HIDE_GRACE_MS = 200;
+	// The two delays and the pointer-capability test live in `floating.ts`,
+	// shared with the footnote marker's own hover card: the same gesture over
+	// the same prose, which cannot want two different numbers.
 	const TOOLTIP_ID = 'link-preview-tooltip';
 
 	// The one place this component knows anything about a specific link, and
@@ -210,7 +216,7 @@
 			// Escape, a scroll) between this timer being scheduled and firing.
 			if (anchorEl !== el) return;
 			load(el, matchedTarget, dismiss);
-		}, SHOW_DELAY_MS);
+		}, HOVER_OPEN_MS);
 	}
 
 	function scheduleHide(el: HTMLAnchorElement) {
@@ -221,22 +227,13 @@
 		}
 		hideTimer = setTimeout(() => {
 			if (anchorEl === el) dismiss();
-		}, HIDE_GRACE_MS);
+		}, HOVER_CLOSE_MS);
 	}
 
 	// --- Pointer path — gated behind a hover-capable, fine pointer -----------
-	//
-	// Checked on every `pointerover` rather than cached once at mount: the
-	// capability can change mid-session (a mouse plugged into a tablet), and
-	// `matchMedia(...).matches` is cheap enough that re-checking it here costs
-	// nothing measurable next to the DOM walk `findMatch` already does.
-
-	function supportsHoverPreview(): boolean {
-		return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-	}
 
 	function onPointerOver(e: PointerEvent) {
-		if (!supportsHoverPreview()) return;
+		if (!canHover()) return;
 		const match = findMatch(e.target);
 		if (!match) return;
 		beginShow(match.el, match.target);
@@ -284,7 +281,7 @@
 			dismiss();
 			return;
 		}
-		if (supportsHoverPreview()) return;
+		if (canHover()) return;
 		// `detail === 0` is a synthetic activation — Enter/Space on a focused
 		// link, or a screen reader's activate gesture. Those users are on the
 		// keyboard/focus path already (which has its own preview) and are
@@ -314,7 +311,7 @@
 		target = match.target;
 		openedByTap = true;
 		tapHref = href ?? undefined;
-		// No SHOW_DELAY_MS: a tap is a deliberate request, and the delay
+		// No HOVER_OPEN_MS: a tap is a deliberate request, and the delay
 		// exists only to keep a travelling cursor from strobing popups.
 		load(match.el, match.target, () => {
 			// Nothing to preview after all — honour the tap as the navigation
@@ -377,8 +374,16 @@
 	$effect(() => {
 		if (!anchorEl || phase === 'pending' || !overlayEl) {
 			coords = undefined;
+			if (overlayEl?.matches(':popover-open')) overlayEl.hidePopover();
 			return;
 		}
+		// SHOWN BEFORE IT IS MEASURED, and the order is forced: a closed
+		// popover is `display: none`, so its own box — half of what
+		// `computePanelPosition` needs — reads as zero until it is open. The
+		// frame between is not visible, because `.visible` (and with it the
+		// opacity this fades in from) is driven by `coords`, which is set in
+		// the same synchronous turn.
+		if (!overlayEl.matches(':popover-open')) overlayEl.showPopover();
 		coords = computePanelPosition(
 			anchorEl.getBoundingClientRect(),
 			overlayEl.getBoundingClientRect()
@@ -422,7 +427,9 @@
 	`pointer-events: none` (in the stylesheet below) is what makes "no
 	interactive elements" actually true rather than merely asserted — nothing
 	inside can ever receive a click or a hover of its own, so there is no
-	separate mechanism needed to keep it non-interactive.
+	separate mechanism needed to keep it non-interactive. It matters more now
+	that this sits in the top layer: without it the hover card could cover the
+	very thing it was opened from.
 
 	ALL OF WHICH APPLIES TO THE HOVER CARD ONLY. The tap card is the same box
 	wearing a different hat: an ordinary `<a>` filling it, no tooltip role, no
@@ -434,6 +441,7 @@
 <div
 	bind:this={overlayEl}
 	id={TOOLTIP_ID}
+	popover="manual"
 	class="floating-panel link-preview"
 	class:visible={coords !== undefined}
 	class:tappable={openedByTap}
@@ -484,10 +492,6 @@
 	 * pointer events unless it was opened by a tap.
 	 */
 	.link-preview {
-		position: fixed;
-		z-index: 70; /* above .menu-panel (50) and .chapters (20) — a preview opened from inside either must not render behind it */
-		inset-block-start: 0;
-		inset-inline-start: 0;
 		pointer-events: none;
 		max-width: min(24rem, calc(100vw - 1rem));
 		padding: 0.6rem 0.8rem;
@@ -501,10 +505,16 @@
 
 	@media (prefers-reduced-motion: no-preference) {
 		.link-preview {
+			/* `display` and `overlay` are discrete properties, and a popover
+			   drops out of the top layer the instant it is hidden — so without
+			   `allow-discrete` on both, the card would vanish rather than fade
+			   and only the entrance would animate. */
 			transition:
 				opacity 120ms ease,
 				transform 120ms ease,
-				visibility 120ms;
+				visibility 120ms,
+				overlay 120ms allow-discrete,
+				display 120ms allow-discrete;
 		}
 	}
 

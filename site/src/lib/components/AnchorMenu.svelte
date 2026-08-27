@@ -259,28 +259,15 @@
 
 <style>
 	/*
-	 * Fixed, not absolute: the trigger can be a verse number mid-line or a
-	 * paragraph number in the margin at `-3.25rem`, and only measured
-	 * coordinates (`floating.ts`) can know whether the panel fits. The UA
-	 * stylesheet's `[popover]` rule wants to centre it instead (`inset: 0;
-	 * margin: auto`), so both are reset here; its `border` and `padding`
-	 * defaults are already overridden by the declarations below.
-	 *
-	 * The card itself is `.floating-panel` (app.css), the chrome this shares
-	 * with `LinkPreview` and with the popover a footnote marker opens.
-	 *
-	 * No `z-index`. An open popover is in the top layer, which sits above
-	 * every stacking context on the page, so the old 50/60/70 ladder against
-	 * `.menu-panel` and `LinkPreview` no longer decides this. Nothing is lost:
-	 * the two orderings that ladder expressed still hold — a header dropdown
-	 * is below because it is not in the top layer, and a hover preview cannot
-	 * be showing over this panel anyway, since reaching the number means
-	 * leaving whatever link was being previewed.
+	 * Everything about WHERE this panel sits — fixed, the UA `[popover]`
+	 * centring reset, no `z-index` because the top layer decides — is
+	 * `.floating-panel` in app.css, shared with `LinkPreview` and with the
+	 * card a footnote marker opens. The trigger can be a verse number mid-line
+	 * or a paragraph number out in the margin at `-3.25rem`, so only measured
+	 * coordinates (`floating.ts`) can know whether the panel fits; all that is
+	 * left here is the room a row of icon buttons wants.
 	 */
 	.anchor-menu-panel {
-		position: fixed;
-		inset: auto;
-		margin: 0;
 		padding: 0.3rem 0.35rem;
 	}
 

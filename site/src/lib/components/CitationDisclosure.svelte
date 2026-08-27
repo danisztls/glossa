@@ -26,6 +26,13 @@
 	 * that at the number. Below the breakpoint the popover is the whole
 	 * apparatus; above it, it is a second way to the same words.
 	 *
+	 * IT OPENS ON HOVER TOO, on the delays `floating.ts` holds for both cards
+	 * a reader can raise from running prose. A link says where it goes and a
+	 * footnote marker does not — it names a source without saying what — so if
+	 * either of the two deserves a pointer that rests on it, this is the one.
+	 * A click still opens it, and a clicked card stays until it is dismissed;
+	 * see `byHover`.
+	 *
 	 * THE CARD REPLACED A BOX INSIDE THE SENTENCE, which is the one thing an
 	 * apparatus must not be: opening it reflowed the words around it, so the
 	 * sentence the reader was in the middle of moved while they were reading
@@ -83,7 +90,13 @@
 	import type { CccCitation } from '$lib/types';
 	import RefText from '$lib/components/RefText.svelte';
 	import { sidenoteRoom } from '$lib/sidenotes.svelte';
-	import { computePanelPosition, trackAnchor } from '$lib/floating';
+	import {
+		computePanelPosition,
+		trackAnchor,
+		canHover,
+		HOVER_OPEN_MS,
+		HOVER_CLOSE_MS
+	} from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
@@ -154,14 +167,85 @@
 	 */
 	function onToggle(e: ToggleEvent) {
 		open = e.newState === 'open';
-		if (open) place();
-		else if (panelEl) panelEl.style.visibility = 'hidden';
+		if (open) {
+			place();
+			return;
+		}
+		// Every close path lands here, the reader clicking the marker of a
+		// card the pointer had opened among them — so the hover claim is
+		// dropped on all of them rather than only on the one that set it.
+		byHover = false;
+		openTimer = cancel(openTimer);
+		closeTimer = cancel(closeTimer);
+		if (panelEl) panelEl.style.visibility = 'hidden';
 	}
 
 	// Only while something is open: this component is mounted once per
 	// citation, and a long document section has dozens. A scroll listener per
 	// rendered marker is the mistake `AnchorMenu` records not making.
 	$effect(() => (open ? trackAnchor(place) : undefined));
+
+	/**
+	 * THE POINTER RESTING ON THE MARKER OPENS IT, on the same two delays and
+	 * behind the same capability test as a link's preview (`floating.ts`).
+	 * Hovering costs the reader nothing, and a footnote marker is the one mark
+	 * in running text that names a source without saying what it is — the same
+	 * argument `LinkPreview` makes for a link, about the other kind of
+	 * reference a sentence can carry. On a touch screen `canHover` is false
+	 * and the marker is the tap target it already was.
+	 *
+	 * `byHover` IS WHAT KEEPS A CLICKED CARD OPEN. The two ways in want
+	 * opposite things on the way out: a card the pointer merely summoned
+	 * should leave with the pointer, and one the reader clicked for should
+	 * stay until they dismiss it. Without the flag the click would be worth
+	 * nothing on a hover-capable pointer, since every deliberately-opened card
+	 * would evaporate the moment the reader looked away from the number.
+	 */
+	let byHover = false;
+	let openTimer: ReturnType<typeof setTimeout> | undefined;
+	let closeTimer: ReturnType<typeof setTimeout> | undefined;
+
+	function cancel(timer: ReturnType<typeof setTimeout> | undefined) {
+		if (timer !== undefined) clearTimeout(timer);
+		return undefined;
+	}
+
+	/**
+	 * ENTERING THE CARD COUNTS AS ENTERING THE MARKER, and has to: the two are
+	 * `GAP` pixels apart, and the reader crosses that gap to reach a reference
+	 * inside the card. Both elements call this, so the pair behaves as one
+	 * region — which is also why the close is on a grace period rather than
+	 * immediate.
+	 */
+	function onPointerEnter() {
+		if (!canHover()) return;
+		closeTimer = cancel(closeTimer);
+		if (open || openTimer !== undefined) return;
+		openTimer = setTimeout(() => {
+			openTimer = undefined;
+			// `showPopover()` on an already-open popover throws
+			// `InvalidStateError`, and a click can have opened it while this
+			// timer was running.
+			if (!panelEl || panelEl.matches(':popover-open')) return;
+			byHover = true;
+			panelEl.showPopover();
+		}, HOVER_OPEN_MS);
+	}
+
+	function onPointerLeave() {
+		openTimer = cancel(openTimer);
+		if (!byHover) return;
+		closeTimer = cancel(closeTimer);
+		closeTimer = setTimeout(() => {
+			closeTimer = undefined;
+			if (byHover && panelEl?.matches(':popover-open')) panelEl.hidePopover();
+		}, HOVER_CLOSE_MS);
+	}
+
+	$effect(() => () => {
+		cancel(openTimer);
+		cancel(closeTimer);
+	});
 </script>
 
 {#snippet source(labelled: boolean)}{#if citation && citation.text.trim() !== ''}<RefText
@@ -184,7 +268,7 @@
 		     does not. Nothing here claims the source is defective when what is
 		     missing is our entry for it. -->{marker}{/if}{/snippet}
 
-<sup class="citation-marker">
+<sup class="citation-marker" onpointerenter={onPointerEnter} onpointerleave={onPointerLeave}>
 	<button
 		bind:this={triggerEl}
 		type="button"
@@ -197,18 +281,25 @@
 </sup>{#if inMargin}<small class="margin-note"
 		><span class="margin-note-label" aria-hidden="true">{marker}</span>{@render source(true)}</small
 	>{/if}
-<!-- `data-link-preview="off"` is inherited by everything inside, so a
-     scripture link in the citation cannot raise a hover preview of its own
-     — which would render BEHIND this card rather than over it, since an
-     open popover is in the top layer and the preview overlay is not.
-     The links themselves still work; only the peek at them is suppressed. -->
+<!-- `role="note"`, which is ARIA's own word for content ancillary to the
+     text it hangs off, and the honest one here: a citation is exactly that.
+     NOT `tooltip`, the role `LinkPreview`'s hover card carries — that one
+     describes the thing it is anchored to and must hold nothing interactive,
+     where this holds the references the reader came for.
+
+     A scripture reference in here previews like any other link, which it
+     could not while this card was the only thing in the top layer: the
+     preview overlay is a `manual` popover now and is always shown second, so
+     it lands above this card rather than behind it. -->
 <span
 	bind:this={panelEl}
 	id={panelId}
 	popover="auto"
+	role="note"
 	ontoggle={onToggle}
-	class="floating-panel citation-popover"
-	data-link-preview="off">{@render source(false)}</span
+	onpointerenter={onPointerEnter}
+	onpointerleave={onPointerLeave}
+	class="floating-panel citation-popover">{@render source(false)}</span
 >
 
 <style>
@@ -222,14 +313,10 @@
 	}
 
 	/*
-	 * The card. `position: fixed` and the `inset`/`margin` resets are against
-	 * the UA's `[popover]` rule, which wants to centre it in the viewport
-	 * instead; `place()` supplies the real coordinates. Hidden until it has
-	 * them — see `place()` for why that has to be CSS's starting point rather
-	 * than something the template decides.
-	 *
-	 * No `z-index`: an open popover is in the top layer, above every stacking
-	 * context on the page.
+	 * The card. Where it sits — fixed, the UA `[popover]` centring reset, no
+	 * `z-index` because the top layer decides — is `.floating-panel` in
+	 * app.css. Hidden until `place()` has measured it; see there for why that
+	 * has to be the stylesheet's starting point rather than the template's.
 	 *
 	 * CHROME SIZE, NOT READING SIZE — a fixed `rem`, the same as `.margin-note`
 	 * and the same as the preview card this borrows its look from. The
@@ -237,9 +324,6 @@
 	 * growing with the words around it. Nothing around it now.
 	 */
 	.citation-popover {
-		position: fixed;
-		inset: auto;
-		margin: 0;
 		visibility: hidden;
 		max-width: min(24rem, calc(100vw - 1rem));
 		padding: 0.5rem 0.7rem;

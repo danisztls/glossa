@@ -1177,10 +1177,22 @@ pointer events or none, padding — because a modifier for each is the shape
 `menu.svelte.ts` records this codebase avoiding. `.menu-panel` is not in the family: it is
 positioned in CSS from its own trigger rather than measured against one.
 
-The one cost is that the popover carries `data-link-preview="off"`, so a scripture link
-inside a citation no longer offers a peek at the verse. It still links. An open popover is
-in the top layer and the preview overlay is not, so the peek would have rendered behind
-the card that raised it.
+**The card opens on hover as well, and a preview can open on top of it.** These were one
+problem. A footnote marker names a source without saying what it is, which is the same
+case `LinkPreview` already makes for a link, so the two share their delays and their
+pointer-capability test (`floating.ts`) rather than each choosing numbers — a paragraph
+where the two disagreed would read as two different pages. `byHover` is what keeps the
+click meaningful: a card the pointer summoned leaves with the pointer, one the reader
+clicked for stays.
+
+What blocked a preview inside the citation was the top layer, not nesting. Anything in it
+paints above the whole ordinary document however high a `z-index` the rest is given, so
+while the preview overlay was a plain positioned `div` it rendered BEHIND the card that
+raised it, and the references in there were opted out of previewing altogether. Making the
+overlay a popover puts both in the layer, where order of showing decides — and it is
+`manual` rather than `auto` for one reason: an `auto` popover light-dismisses the one it
+was opened from. `LinkPreview` already owns every path that closes it (a timer, a pointer
+leaving, Escape, a scroll); it wants the layer and none of the behaviour.
 
 **Fixtures deliberately encode absent chapters and out-of-range cross-references** to
 exercise the not-in-corpus paths, and a second English Bible to exercise the
