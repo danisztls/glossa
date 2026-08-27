@@ -205,7 +205,7 @@ export const pt: Dictionary = {
 	'colophon.pointNoAds': 'Sem publicidade nem qualquer conte\u00fado patrocinado.',
 	'colophon.pointNoAccounts': 'Sem contas. Nada para registar, nada para iniciar sess\u00e3o.',
 	'colophon.pointNoTracking':
-		'Sem an\u00e1lises de tr\u00e1fego, sem scripts de rastreio, sem c\u00f3digo de terceiros. O servidor que lhe envia estas p\u00e1ginas guarda registos de pedidos, como qualquer servidor web; nada al\u00e9m disso observa o que l\u00ea.',
+		'Sem scripts de rastreio, sem código de terceiros, sem cookies. Apenas contagens de utilização anónimas, sem nada que o identifique.',
 	'colophon.pointOffline':
 		'Feito para continuar a funcionar sem liga\u00e7\u00e3o depois da primeira visita, para que uma liga\u00e7\u00e3o fraca n\u00e3o tenha de impedir a leitura.',
 	'colophon.textsTitle': 'Os textos',

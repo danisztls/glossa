@@ -183,7 +183,7 @@ export const sv: Dictionary = {
 	'colophon.pointNoAccounts':
 		'Inga konton. Ingenting att registrera sig för, ingenting att logga in på.',
 	'colophon.pointNoTracking':
-		'Ingen analys, inga spårningsskript, ingen kod från tredje part. Servern som skickar dig de här sidorna för vanliga förfrågningsloggar, som varje webbserver gör; utöver det är det ingenting som bevakar vad du läser.',
+		'Inga spårningsskript, ingen kod från tredje part, inga kakor. Endast anonym användningsstatistik, ingenting som identifierar dig.',
 	'colophon.pointOffline':
 		'Byggd för att fortsätta fungera offline när du väl har besökt den, så att en dålig uppkoppling inte behöver vara ett hinder för läsningen.',
 	'colophon.textsTitle': 'Texterna',

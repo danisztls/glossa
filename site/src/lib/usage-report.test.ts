@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-// @ts-expect-error -- plain .mjs script, no types, imported the way
-// `sitemap.test.ts` and `build-xrefs.test.ts` import theirs.
+// Plain .mjs script, imported the way `sitemap.test.ts` and `build-xrefs.test.ts`
+// import theirs; it carries JSDoc types, so no directive is needed.
 import { render } from '../../scripts/usage.mjs';
 
 /** A report's worth of rows, shaped as `collect()` returns them. */

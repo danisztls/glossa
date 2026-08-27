@@ -28,17 +28,40 @@ import { pathToFileURL } from 'node:url';
 
 const ARGV = process.argv.slice(2);
 
+/**
+ * One row of a breakdown. `bucket` for a scalar column, `value` for a tag;
+ * `bar` reads whichever is present so the two shapes render identically.
+ *
+ * @typedef {{ bucket?: string, value?: string, n: number, withRefs?: number }} Row
+ * @typedef {{ country: string, ui: string, content: string, n: number }} GeoRow
+ * @typedef {{
+ *   since: number,
+ *   totals: Record<string, number>,
+ *   daily: { day: string, n: number }[],
+ *   days28: Row[], visits: Row[], age: Row[], entry: Row[], minutes: Row[],
+ *   behind: Row[], swFail: Row[], missKind: Row[], missBook: Row[],
+ *   works: Row[], sections: Row[], refKinds: Row[],
+ *   geo: GeoRow[]
+ * }} Report
+ */
+
+/** @param {string} name */
 function flag(name) {
 	return ARGV.includes(`--${name}`);
 }
 
+/**
+ * @param {string} name
+ * @param {string} [fallback]
+ * @returns {string | undefined}
+ */
 function option(name, fallback) {
 	const at = ARGV.indexOf(`--${name}`);
 	return at >= 0 && ARGV[at + 1] ? ARGV[at + 1] : fallback;
 }
 
-const DATABASE = option('db', 'glossa-usage');
-const DAYS = Number(option('days', '30'));
+const DATABASE = option('db') ?? 'glossa-usage';
+const DAYS = Number(option('days') ?? '30');
 const SHOW_ALL = flag('all');
 /** Rows in a breakdown below this are folded away unless `--all`. */
 const FLOOR = 5;
@@ -51,7 +74,12 @@ if (!Number.isFinite(DAYS) || DAYS <= 0) {
 	process.exit(1);
 }
 
-/** Run one statement and return its rows. */
+/**
+ * Run one statement and return its rows.
+ *
+ * @param {string} sql
+ * @returns {any[]}
+ */
 function query(sql) {
 	let raw;
 	try {
@@ -61,7 +89,8 @@ function query(sql) {
 			{ encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 32 * 1024 * 1024 }
 		);
 	} catch (err) {
-		const detail = (err.stderr || err.stdout || err.message || '').toString().trim();
+		const e = /** @type {{ stderr?: string, stdout?: string, message?: string }} */ (err);
+		const detail = (e.stderr || e.stdout || e.message || '').toString().trim();
 		console.error(`\nCould not reach D1 (${DATABASE}).\n${detail}\n`);
 		console.error(
 			'If the database does not exist yet:\n' +
@@ -80,6 +109,7 @@ const SINCE = `date('now', '-${DAYS} day')`;
 
 // --- Queries --------------------------------------------------------------
 
+/** @param {string} column @returns {Row[]} */
 function scalarBreakdown(column) {
 	return query(
 		`select ${column} as bucket, count(*) as n from session
@@ -87,6 +117,7 @@ function scalarBreakdown(column) {
 	);
 }
 
+/** @param {string} kind @param {number} [limit] @returns {Row[]} */
 function tagBreakdown(kind, limit = 25) {
 	return query(
 		`select t.value as value, count(*) as n from session_tag t
@@ -96,6 +127,7 @@ function tagBreakdown(kind, limit = 25) {
 	);
 }
 
+/** @returns {Report} */
 function collect() {
 	const totals =
 		query(
@@ -154,12 +186,15 @@ function collect() {
 
 // --- Rendering ------------------------------------------------------------
 
+/** @param {number} part @param {number} whole */
 const pct = (part, whole) => (whole > 0 ? `${Math.round((part / whole) * 100)}%` : '—');
 
+/** @param {string} title @param {string} body */
 function section(title, body) {
 	return `\n${title}\n${body}`;
 }
 
+/** @param {{ day: string, n: number }[]} daily */
 function sparkline(daily) {
 	if (daily.length === 0) return '  —';
 	const marks = '▁▂▃▄▅▆▇█';
@@ -172,6 +207,10 @@ function sparkline(daily) {
 	return `  ${line}  peak ${peak}/day over ${daily.length} day(s)`;
 }
 
+/**
+ * @param {Report} data
+ * @param {{ days?: number, all?: boolean, floor?: number }} [opts]
+ */
 export function render(data, opts = {}) {
 	const DAYS = opts.days ?? data.since;
 	const SHOW_ALL = opts.all ?? false;
@@ -191,6 +230,7 @@ export function render(data, opts = {}) {
 	 * tested without a database, and a `bar` closing over the module-level
 	 * constants would silently ignore both.
 	 */
+	/** @param {Row[]} rows @param {number} total @param {number} [floor] */
 	const bar = (rows, total, floor = FLOOR) => {
 		const visible = SHOW_ALL || floor === 0 ? rows : rows.filter((row) => row.n >= floor);
 		const hidden = rows.length - visible.length;
@@ -259,7 +299,7 @@ export function render(data, opts = {}) {
 					const label = String(row.value).padEnd(
 						Math.max(...data.works.map((r) => String(r.value).length))
 					);
-					return `  ${label}  ${String(row.n).padStart(6)}  refs ${pct(row.withRefs, row.n).padStart(4)}`;
+					return `  ${label}  ${String(row.n).padStart(6)}  refs ${pct(row.withRefs ?? 0, row.n).padStart(4)}`;
 				})
 				.join('\n') || '  —'
 		)
@@ -288,6 +328,7 @@ export function render(data, opts = {}) {
 	// The cross-tab this table was added for: interface language and content
 	// language diverging is `CONTENT_LANG_FALLBACK` doing the work, and this is
 	// the only place the number of readers living in that state is visible.
+	/** @type {Map<string, { total: number, ui: Map<string, number>, content: Map<string, number> }>} */
 	const byCountry = new Map();
 	for (const row of data.geo) {
 		const entry = byCountry.get(row.country) ?? { total: 0, ui: new Map(), content: new Map() };
@@ -300,6 +341,7 @@ export function render(data, opts = {}) {
 		.filter(([, entry]) => SHOW_ALL || entry.total >= FLOOR)
 		.sort((a, b) => b[1].total - a[1].total)
 		.map(([country, entry]) => {
+			/** @param {Map<string, number>} map */
 			const list = (map) =>
 				[...map.entries()]
 					.sort((a, b) => b[1] - a[1])

@@ -183,7 +183,7 @@ export const de: Dictionary = {
 	'colophon.pointNoAccounts':
 		'Keine Konten. Nichts, wofür man sich registriert, nichts, wo man sich anmeldet.',
 	'colophon.pointNoTracking':
-		'Keine Analyse, keine Tracking-Skripte, kein Code von Dritten. Der Server, der Ihnen diese Seiten schickt, führt gewöhnliche Zugriffsprotokolle, wie jeder Webserver; darüber hinaus beobachtet nichts, was Sie lesen.',
+		'Keine Tracking-Skripte, kein Code von Dritten, keine Cookies. Nur anonyme Nutzungszahlen, nichts, was Sie identifiziert.',
 	'colophon.pointOffline':
 		'So gebaut, dass sie nach einem Besuch offline weiterarbeitet, damit eine schlechte Verbindung kein Hindernis fürs Lesen ist.',
 	'colophon.textsTitle': 'Die Texte',

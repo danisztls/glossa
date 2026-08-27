@@ -30,9 +30,18 @@
  * Neither is ever offered to a reader who is already running the installed app
  * (`isStandalone`), and the hint's dismissal is permanent.
  *
- * No part of this reports anything anywhere: the counter is a single integer
- * in localStorage, alongside `glossa:dark-mode` and `glossa:font-scale`, and the
- * colophon's "no analytics, no tracking scripts" promise stays true.
+ * The engagement counter itself still reports nothing anywhere: it is a single
+ * integer in localStorage, alongside `glossa:dark-mode` and
+ * `glossa:font-scale`, and the fifteen-minute threshold is decided entirely on
+ * the device.
+ *
+ * What DID change on 2026-08-27 is that the prompt's outcome is counted. This
+ * module tells `usage.ts` whether the offer was shown, taken or refused —
+ * three buckets, no identifier, no timing — because a hint gated on fifteen
+ * minutes of reading is a decision that ought to be measurable, and nothing
+ * measured it. The colophon's promise moved with it and is stated there rather
+ * than restated here; the standing rule is that this file may report an
+ * OUTCOME and never a reader.
  */
 
 import { browser } from '$app/environment';

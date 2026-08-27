@@ -269,7 +269,7 @@ export const en: Dictionary = {
 	'colophon.pointNoAds': 'No advertising, and no sponsored placement of any kind.',
 	'colophon.pointNoAccounts': 'No accounts. Nothing to sign up for, nothing to log in to.',
 	'colophon.pointNoTracking':
-		'No analytics, no tracking scripts, no third-party code. The server that sends you these pages keeps ordinary request logs, as any web server does; nothing beyond that watches what you read.',
+		'No tracking scripts, no third-party code, no cookies. Anonymous usage counts only, with nothing that identifies you.',
 	'colophon.pointOffline':
 		'Built to keep working offline once you have visited it, so a poor connection need not be a barrier to reading.',
 	'colophon.textsTitle': 'The texts',

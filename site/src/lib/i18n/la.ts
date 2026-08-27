@@ -220,7 +220,7 @@ export const la: Dictionary = {
 	'colophon.pointNoAccounts':
 		'Nulla nomina danda. Nihil est quo te adscribas, nihil quo te introducas.',
 	'colophon.pointNoTracking':
-		'Nulla vestigia, nulla scripta quae te sequantur, nullus alienus codex. Machina quae has paginas mittit commentarios petitionum servat, ut machinae omnes; praeter hos nihil observat quid legas.',
+		'Nulla scripta quae te sequantur, nullus alienus codex, nulla crustula. Numeri tantum usus anonymi, nihil quod te designet.',
 	'colophon.pointOffline':
 		'Ita facta ut sine rete legi possit postquam semel adisti, ne infirma coniunctio lectioni obstet.',
 	'colophon.textsTitle': 'De textibus',

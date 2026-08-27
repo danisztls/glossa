@@ -182,7 +182,7 @@ export const sl: Dictionary = {
 	'colophon.pointNoAds': 'Brez oglasov in brez kakršnega koli sponzoriranega umeščanja.',
 	'colophon.pointNoAccounts': 'Brez računov. Nikamor se ni treba vpisati, nikamor prijaviti.',
 	'colophon.pointNoTracking':
-		'Brez analitike, brez sledilnih skriptov, brez kode tretjih oseb. Strežnik, ki vam pošilja te strani, vodi običajne dnevnike zahtevkov, kakor vsak spletni strežnik; onkraj tega nič ne opazuje, kaj berete.',
+		'Brez sledilnih skriptov, brez kode tretjih oseb, brez piškotkov. Le anonimna štetja uporabe, nič, kar bi vas identificiralo.',
 	'colophon.pointOffline':
 		'Zgrajeno tako, da po enem obisku deluje tudi brez povezave, da slaba povezava ne bi bila ovira za branje.',
 	'colophon.textsTitle': 'Besedila',

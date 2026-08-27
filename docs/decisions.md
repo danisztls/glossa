@@ -23,8 +23,11 @@ publisher is outside it and must be public domain; Matos Soares 1956 (PD 1 Jan 2
 one knowingly accepted, self-resolving exposure, and Alexandre Correia's Summa
 (PD 2055) and Paulus's _Coleção Patrística_ are blockers rather than exposures.
 
-**Free, ad-free, account-free, no analytics.** The absence of analytics is what lets the
-colophon state a privacy position without qualification.
+**Free, ad-free, account-free.** No advertising, no accounts, no third-party code, no
+cookies, and nothing that identifies a reader. There IS a usage measurement as of
+2026-08-27 — first-party, bucketed, unlinkable — and §Usage measurement below is the
+argument for why it does not cost the privacy position anything the colophon has to
+qualify.
 
 **Indexable, and a duplicate of vatican.va on purpose.** Every page reproduces text with a
 canonical home on someone else's server, so the site competes with that server for its own
@@ -1148,6 +1151,101 @@ testing them.
 
 **Do not drive the site with browser automation to check UI changes.** The person
 directing the work does that verification themselves.
+
+## Usage measurement
+
+**Nothing measured usage until 2026-08-27, and the reason it had to change is the
+offline-first design itself.** `/` is precached and served cache-first, an installed app
+launching at `start_url` makes no document request at all, and an in-app route change is
+a `pushState` that never reaches the edge. So request logs can count arrivals and nothing
+else: they cannot tell a reader who came once from one who has read daily for a year.
+That question — "is anyone using this, and do they come back" — had no instrument.
+
+**Retention is measured without an identifier, by making the device count itself.**
+`usage-device.ts` keeps a 28-bit integer in localStorage, one bit per day, "did this
+device open the site". What leaves the device is the bucket that count falls in
+(`15-28`, `4-7`, `1`), never the bitmask, never a date, never a number assigned to
+anyone. Two sessions from the same device carry no field that joins them.
+
+The cost is classic cohort retention — of the devices first seen in March, how many
+survived to April — which genuinely does need identity. What it buys is the age
+distribution of the active population, which is what the question actually asks. That
+trade was made deliberately and is not a gap to close later.
+
+**One beacon per session, and only for a reader.** Nothing is sent until the session has
+had five seconds of visible time and at least one real interaction. That gate is the bot
+defence, not politeness: a JS-rendering crawler loads, snapshots the DOM and leaves
+without scrolling or clicking, and because it keeps no localStorage between crawls every
+visit looks like a brand-new device that came once and never returned — precisely the row
+this exists to count. Letting crawlers write it would poison the one number that matters.
+Edge logs still count arrivals; the beacon counts readers.
+
+**The country is recorded and never meets the session.** Eighteen bucketed fields in one
+row is already a weak quasi-identifier; adding the country makes an unusual reader — a
+tablet in a small country reading a rare edition — unique in the table. So `geo_lang` is
+a separate counter with no key back to `session`, and the cross-tab it answers (which
+languages each country reads in, and where interface language and content language
+diverge because `CONTENT_LANG_FALLBACK` is doing the work) costs nothing in linkage.
+
+**Work level, never passage level, and never free text.** Which text someone opened is a
+corpus-priority signal; which paragraph they read is their business. The jump box records
+that a query missed and, where the grammar recognised one, which book — an identifier
+from our own tables. The query itself is the one thing on a site of these texts that must
+not be stored.
+
+**Every field is an enum, validated at the edge, because `/a` is an open POST endpoint.**
+`usage-schema.ts` is one module shared by the sender and the receiver rather than two
+lists, since the whole defence rests on their vocabularies being the same object; two
+copies drift, and the failure is silent in the worst direction. Every outcome is 204, so
+a prober learns nothing about what the validator accepts.
+
+**The damage worth preventing is not a skewed statistic but an eaten quota.** A poisoned
+window is dropped with one `delete ... where day = ?`. D1's free tier allows 100,000 row
+writes a day, and exhausting it stops genuine rows being written — the same shape of
+failure as the `run_worker_first` outage, a free-tier ceiling reached quietly. So
+`usage-store.ts` holds a 20,000-row daily cap, read from D1 at most once a minute per
+isolate and incremented locally between reads.
+
+**Three pieces live in the Cloudflare dashboard and nothing in the repository can assert
+they agree. This is their record.**
+
+1. **A WAF custom rule** (one of the free plan's five) blocking `/a` for verified bots,
+   non-`POST` methods and non-same-origin requests:
+
+   ```
+   (http.request.uri.path eq "/a")
+   and (
+     cf.client.bot
+     or http.request.method ne "POST"
+     or any(http.request.headers["sec-fetch-site"][*] ne "same-origin")
+   )
+   ```
+
+   `http.request.uri.path`, not `http.request.uri`, which carries the query string and
+   would miss `/a?x=1`. `eq`, not `wildcard` — with no `*` the two are the same match,
+   and on a path this short a later "fix" to `r"/a*"` would swallow every route
+   beginning with `a`.
+
+2. **The zone's single rate limiting rule already covers `/a`**, since its expression
+   excludes only `/_app/`, `/fonts/` and `/icons/`. The free plan allows exactly one, and
+   it is spent; that is why the write ceiling is enforced in the worker instead.
+
+3. **The kill switch is a third custom rule blocking `/a` outright.** A dashboard change
+   rather than a deploy on purpose: a client-side stop needs the service worker to
+   propagate, and an installed PWA can sit on a superseded shell indefinitely.
+
+**AI Labyrinth is off, and the reason is specific rather than general.** It works by
+adding invisible honeypot links so unauthorised crawlers follow an endless chain — more
+requests to a zone whose documented failure mode is too many navigations, 100,000
+invocations, and 429 on everything until 00:00 UTC. It also injects into HTML, and this
+site serves exactly one HTML file, precached by the service worker.
+
+**The report is a terminal report** (`npm run usage`), beside `audit.py`,
+`census.py` and `reference-coverage.mjs`, and for the same reason: a number worth acting
+on is a number worth printing beside the others. It suppresses population cells below
+five — not because a count of three is dangerous but because a single-reader cell invites
+you to read a person into it — and deliberately does NOT suppress diagnostics, where a
+long tail of three quota failures or one unserved book is the entire value.
 
 ## Scope
 

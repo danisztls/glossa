@@ -184,7 +184,7 @@ export const ro: Dictionary = {
 	'colophon.pointNoAccounts':
 		'Fără conturi. Nimic la care să vă înregistrați, nimic în care să vă autentificați.',
 	'colophon.pointNoTracking':
-		'Fără analitică, fără scripturi de urmărire, fără cod de la terți. Serverul care vă trimite aceste pagini ține jurnale obișnuite de cereri, ca orice server web; dincolo de asta, nimic nu urmărește ce citiți.',
+		'Fără scripturi de urmărire, fără cod de la terți, fără cookie-uri. Doar numărători de utilizare anonime, nimic care să vă identifice.',
 	'colophon.pointOffline':
 		'Construit ca să funcționeze offline după ce l-ați vizitat o dată, astfel încât o conexiune slabă să nu fie o piedică în calea lecturii.',
 	'colophon.textsTitle': 'Textele',

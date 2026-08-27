@@ -388,6 +388,54 @@ npm run deploy      # build -> preflight -> wrangler deploy
   it. `REFERENCE_COVERAGE=verbose npm run sync-corpus` prints what the grammar
   recognized nothing in, which is where coverage work starts.
 
+## Usage measurement: one beacon, three dashboard rules, and a shared vocabulary
+
+Added 2026-08-27 (`docs/decisions.md` §Usage measurement). The site now counts
+how it is used — first-party, bucketed, with no identifier. Four things about
+it will bite before the design will.
+
+**`/a` must stay OUT of `run_worker_first`'s negation list.** It is the one
+path besides navigations that the worker has to answer itself, and it is
+covered by the leading `/*`. Negating it (the reflex, since everything else
+static is negated) does not fail loudly — the worker simply never sees a
+beacon and the tables stay empty.
+
+**`usage-schema.ts` is ONE module read by both ends on purpose.** The client
+fills a payload from it and `src/worker.ts` validates against it, and the whole
+defence of an open POST endpoint is that the two vocabularies are literally the
+same object. Splitting it into "a client copy and a worker copy" drifts, and
+the failure is silent in the worst direction: the page keeps sending a bucket
+the worker has started dropping, and the metric reads zero rather than erroring.
+
+**Three rules live in the Cloudflare dashboard and nothing here can assert
+them** — a custom rule guarding `/a`, the zone's single (already-spent) rate
+limiting rule which happens to cover it, and the kill switch. All three are
+written out in `docs/decisions.md` §Usage measurement, which is their only
+record. The free plan allows five custom rules and exactly one rate limiting
+rule; that is why the write ceiling is a counter in `usage-store.ts` rather
+than a second rate limit.
+
+**`npm run usage` needs a database that does not exist in a fresh clone.**
+
+```sh
+cd site
+npx wrangler d1 create glossa-usage                        # once; paste the id
+npx wrangler d1 migrations apply glossa-usage --remote     # once
+npm run usage -- --days 30
+```
+
+`wrangler.jsonc`'s `database_id` ships as a placeholder. The binding is
+optional in `src/worker.ts`, so a deploy without it serves the site normally
+and drops beacons — right for a statistic, and the reason a missing database
+is not a build error.
+
+**The colophon's promise moved with the code, in fourteen dictionaries.**
+`colophon.pointNoTracking` used to say "no analytics"; it now states what is
+actually collected. Anything that changes what the beacon sends has to be
+checked against that string, and the string is the reason the payload holds no
+free text, no sequence and no passage-level position — see the "deliberately
+not" list in `docs/decisions.md`.
+
 ## Sandbox quirks that waste time
 
 - **`rm` is aliased to `trash`**, which cannot write `~/.local/share/Trash`

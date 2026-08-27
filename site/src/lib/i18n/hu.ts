@@ -186,7 +186,7 @@ export const hu: Dictionary = {
 	'colophon.pointNoAccounts':
 		'Nincsenek fiókok. Nincs mire regisztrálni, nincs hová bejelentkezni.',
 	'colophon.pointNoTracking':
-		'Nincs analitika, nincsenek nyomkövető szkriptek, nincs harmadik féltől származó kód. A kiszolgáló, amely ezeket az oldalakat küldi, a szokásos kéréseket naplózza, ahogyan minden webkiszolgáló; ezen túl semmi sem figyeli, mit olvas.',
+		'Nincsenek nyomkövető szkriptek, nincs harmadik féltől származó kód, nincsenek sütik. Csak névtelen használati számlálók, semmi, ami azonosítaná Önt.',
 	'colophon.pointOffline':
 		'Úgy készült, hogy egyetlen látogatás után kapcsolat nélkül is működjön, így a gyenge internet ne legyen akadálya az olvasásnak.',
 	'colophon.textsTitle': 'A szövegek',
