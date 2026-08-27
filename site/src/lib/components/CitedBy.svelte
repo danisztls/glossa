@@ -65,7 +65,7 @@
 								>({#each source.refs as ref, i (ref.key)}{#if i > 0}<span
 											class="sep"
 											aria-hidden="true">·</span
-										>{/if}<a href={ref.href}>{ref.label}</a>{/each})</span
+										><wbr />{/if}<a href={ref.href}>{ref.label}</a>{/each})</span
 							>
 						</span>
 					{/each}
@@ -113,7 +113,7 @@
 		display: grid;
 		/* The address in a fixed column so the reference lists line up, which
 		   is what makes a long concordance scannable rather than a wall. */
-		grid-template-columns: max-content 1fr;
+		grid-template-columns: max-content minmax(0, 1fr);
 		gap: 0.3rem 0.9rem;
 	}
 
@@ -133,16 +133,22 @@
 		text-decoration-color: var(--color-border);
 	}
 
-	/* Groups wrap as a unit — a work's name must never end a line with its
-	   own references orphaned onto the next one. */
+	/* Groups are laid out as units so one work's references sit together. A
+	   work's name can never end a line with its own references orphaned onto
+	   the next one, whatever wraps: there is no whitespace between the label
+	   and the `(` that follows it, so there is nothing to break on. */
 	.sources {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.15rem 0.7rem;
 	}
 
+	/* A group breaks only at the `<wbr />` after each separator, so a work's
+	   name and its first reference stay together (there is no whitespace
+	   between them to break on) while a long run of numbers wraps instead of
+	   running off a phone's right edge. `nowrap` here was the overflow: the
+	   CCC cites some Bible verses twenty times, and that is one line. */
 	.source {
-		white-space: nowrap;
 		font-variant-numeric: tabular-nums;
 	}
 
