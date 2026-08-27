@@ -16,7 +16,6 @@
 	// component (RefText, linkifyProse, route TOCs, ...) has to opt into.
 	import LinkPreview from '$lib/components/LinkPreview.svelte';
 	import { t } from '$lib/i18n.svelte';
-	import { publishHeight } from '$lib/sticky-height';
 	import { serviceWorker } from '$lib/sw.svelte';
 	import UpdateBanner from '$lib/components/UpdateBanner.svelte';
 	import ToTopButton from '$lib/components/ToTopButton.svelte';
@@ -86,33 +85,6 @@
 	 * returns a no-op without starting a timer.
 	 */
 	onMount(() => install.track());
-
-	/**
-	 * Publish the site header's height as `--site-header-height` on <html>, so
-	 * a SECOND sticky element can sit directly beneath it instead of sliding
-	 * underneath (`ReadingBar`, on every reading page, is the first).
-	 *
-	 * Measured rather than declared, because this header has no fixed height
-	 * to declare: the wordmark is two lines and drops to a monogram on scroll,
-	 * `.header-bar`'s block padding is animated over the first 96px by a
-	 * scroll-driven animation, and the whole bar wraps to two rows at phone
-	 * width. A `ResizeObserver` is the only thing that sees all three, and it
-	 * sees the shrink continuously rather than at a threshold — the same
-	 * reason that animation is scroll-timeline-driven and not a JS flag.
-	 * `publishHeight` measures once up front as well, which is what makes the
-	 * value there in time for a deep link on a cold load; its docblock has
-	 * the timing.
-	 *
-	 * Written to the document element, not to a wrapper, so it is in scope for
-	 * anything on the page regardless of which route rendered it.
-	 */
-	let headerEl: HTMLElement | undefined = $state();
-
-	$effect(() => {
-		const el = headerEl;
-		if (!el) return;
-		return publishHeight(el, '--site-header-height');
-	});
 </script>
 
 <svelte:head>
@@ -121,7 +93,7 @@
 </svelte:head>
 
 <div class="app-shell">
-	<header class="site-header" bind:this={headerEl}>
+	<header class="site-header">
 		<div class="header-bar">
 			<a class="brand" href="/"><Wordmark variant="brand" /></a>
 
@@ -212,24 +184,31 @@
 		flex-direction: column;
 	}
 
+	/*
+	 * IN FLOW, NOT STICKY, and that is the decision the rest of this file is
+	 * written around. The brand, the six sections and the reading controls
+	 * are what a reader needs on arrival and rarely again: a text is read from
+	 * `ReadingBar` — which IS sticky, and is the only chrome that stays — and
+	 * from the page itself. Pinned, this bar charged every route a band across
+	 * the top of the viewport for the whole session, and the shrink-on-scroll
+	 * animation that used to live here was the interest paid on that: a
+	 * compact state is something only a header that never leaves needs. This
+	 * one leaves. (Wordmark.svelte keeps its monogram swap at phone width,
+	 * which is about width and not about scroll.)
+	 *
+	 * Nothing here declares a `z-index` any more. It carried 40 to order its
+	 * open dropdowns against the reading bar's 30, which was necessary only
+	 * because `position: sticky` plus that number made this element a stacking
+	 * context, trapping `.menu-panel`'s own 50 inside it. Unpositioned, it is
+	 * no stacking context at all, so each panel's 50 now orders it directly —
+	 * over the bar, and over `.reading-aside`/`.index-aside`, which carry no
+	 * z-index of their own.
+	 */
 	.site-header {
-		/* Above `.reading-aside`/`.index-aside`'s own `position: sticky`, and
-		   above `.reading-bar`'s 30 — this element is a stacking context, so
-		   its open dropdowns are ordered against that bar by THIS number, not
-		   by `.menu-panel`'s 50. (50 is `.menu-panel`'s, which must still win
-		   over both asides.) */
-		position: sticky;
-		top: 0;
-		z-index: 40;
 		border-bottom: 1px solid var(--color-border);
 		/* Not `--color-bg-elevated` directly: OLED takes this to true black
 		   while leaving that surface lifted — see app.css. */
 		background: var(--color-bg-chrome);
-		/* A scroll-linked animation changes this element's own height below
-		   (`.header-bar`'s shrink) — without this the browser's scroll
-		   anchoring "corrects" for that shrink by nudging `scrollY`, which
-		   would then feed back into the very animation causing the nudge. */
-		overflow-anchor: none;
 	}
 
 	.header-bar {
@@ -239,60 +218,12 @@
 		gap: 0.6rem 0.75rem;
 		/* A little more block padding than the old single-line brand needed: the
 		   wordmark is two lines now, and letting it sit tight against the rule
-		   makes the header read as cramped rather than as compact. Also the
-		   unanimated fallback: browsers without scroll-driven animation support
-		   (see below) just keep this value at every scroll position. */
+		   makes the header read as cramped rather than as compact. One value at
+		   every scroll position: the scroll-driven shrink that used to animate
+		   this went with the sticky positioning above. */
 		padding: 0.75rem 1rem;
 		max-width: 90rem;
 		margin-inline: auto;
-		/* Containing block for header dropdowns at phone width — see app.css's
-		   `.site-header .menu` rule, which re-anchors the panels here so a
-		   trigger sitting well left of the edge cannot throw its panel off
-		   the side of the screen. */
-		position: relative;
-	}
-
-	/*
-	 * Streamlines the header once the reader has actually left the top of the
-	 * page: the bar's padding shrinks, and Wordmark.svelte's own rule (see
-	 * `.is-brand .lockup`/`.monogram` there) drops the wordmark to the "GC"
-	 * monogram over the same range, at any width — the mobile header's
-	 * proportions, triggered by scroll instead of viewport width.
-	 *
-	 * `animation-timeline: scroll()` reads scroll position as the animation's
-	 * clock directly, so the state is just a function of the current scroll
-	 * offset — no listener, no stored "am I compact" flag, and so nothing that
-	 * can desync from the actual scroll position or flicker between two states
-	 * at a boundary the way a JS-computed threshold could.
-	 *
-	 * Guarded by `@supports`: a browser that doesn't understand
-	 * `animation-timeline: scroll()` would otherwise still run the `animation`
-	 * shorthand against the default document timeline, and with no duration
-	 * set that plays out instantly to the `to` keyframe — i.e. the header
-	 * would render permanently compact, at the very top of the page, on any
-	 * browser that hasn't shipped this yet. The guard keeps that case at
-	 * today's plain, unanimated header instead.
-	 *
-	 * The `0 96px` range is duplicated in Wordmark.svelte's matching rule
-	 * (search that file for "96px") — the bar and the mark have to finish
-	 * shrinking at the same scroll offset or the two visibly disagree partway
-	 * through.
-	 */
-	@supports (animation-timeline: scroll()) {
-		@keyframes shrink-header-bar {
-			from {
-				padding-block: 0.75rem;
-			}
-			to {
-				padding-block: 0.35rem;
-			}
-		}
-
-		.header-bar {
-			animation: shrink-header-bar linear both;
-			animation-timeline: scroll(root block);
-			animation-range: 0 96px;
-		}
 	}
 
 	.brand {

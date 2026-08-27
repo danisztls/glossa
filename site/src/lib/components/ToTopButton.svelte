@@ -9,10 +9,9 @@
 	one of them wants the same thing from all three. So it is mounted once in
 	the root layout beside the other ambient overlays.
 
-	WHY A SCROLL LISTENER RATHER THAN `animation-timeline: scroll()`, which is
-	how the header's shrink reads the same scroll position (see
-	`+layout.svelte`). Two reasons, both about this being a control rather than
-	a decoration:
+	WHY A SCROLL LISTENER RATHER THAN `animation-timeline: scroll()`, the CSS
+	way of reading the same scroll position without one. Two reasons, both
+	about this being a control rather than a decoration:
 
 	  - A control the reader cannot see must not be tabbable, and that is a
 	    property of the accessibility tree, not of opacity. `visibility` is the
@@ -20,16 +19,15 @@
 	    the layout to fade, and animating it from a scroll timeline means
 	    flipping a discrete property at some arbitrary fraction of a range
 	    rather than at a stated scroll offset.
-	  - The header's `@supports` fallback is a header that never shrinks, which
-	    costs nothing. The fallback here would be a button pinned over the text
-	    at the very top of the page, where it is both useless and in the way.
+	  - A scroll-driven animation needs an `@supports` guard, and what a browser
+	    without one would get here is a button pinned over the text at the very
+	    top of the page, where it is both useless and in the way.
 
 	The threshold is one viewport height: the button appears exactly when the
 	top of the page is no longer on screen, which is also when scrolling back
 	to it stops being a flick. No hysteresis, deliberately — the button is
 	`position: fixed`, so appearing and disappearing moves nothing in flow and
-	cannot feed back into the scroll position that summoned it. (That feedback
-	is real for the header, which is why it also sets `overflow-anchor: none`.)
+	cannot feed back into the scroll position that summoned it.
 
 	Focus after the jump is left to the browser on purpose. The button hides
 	itself on arrival, focus reverts to the body, and the next Tab therefore

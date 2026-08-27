@@ -70,8 +70,9 @@
 		   the other; opposite edges keeps both readable and keeps the more
 		   ambient of the two (the install hint) out of the way of this one. */
 		top: 0;
-		/* Above the header (which is sticky, not fixed) but below every panel
-		   the reader opens on purpose — `.menu-panel` (50), the link preview
+		/* Above both the site header and the reading bar — neither is fixed, so
+		   this overlays whichever of them the top edge is showing — but below
+		   every panel the reader opens on purpose — `.menu-panel` (50), the link preview
 		   (70), the jump box's suggestions (100). Same courtesy `InstallHint`
 		   extends, for the same reason: this is ambient, those are answers to
 		   a deliberate action. */

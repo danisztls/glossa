@@ -1,9 +1,13 @@
 /**
  * Publishes a sticky element's measured height as a CSS variable on <html>,
  * for the things that have to be laid out against a height nobody can
- * declare: the next sticky down (`ReadingBar`, which hangs off the site
- * header's), and `html`'s `scroll-padding-top` (app.css), which has to clear
- * both of them at once.
+ * declare: `html`'s `scroll-padding-top` and the two sticky sidebars
+ * (app.css), which all inset themselves by the chrome above them.
+ *
+ * `ReadingBar` is the only caller. The site header was the other, publishing
+ * a height this one used to stick below; it is in flow now
+ * (`routes/+layout.svelte`), which is why nothing sums two variables any
+ * more.
  *
  * MEASURED ONCE SYNCHRONOUSLY, THEN OBSERVED. That first write is not an
  * optimisation, it is the whole correctness of anchor navigation. SvelteKit

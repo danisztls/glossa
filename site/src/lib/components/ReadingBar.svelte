@@ -57,12 +57,13 @@
 	page that IS scripture: from `/scriptura` it is the one entry point that
 	needs no decision, next to a book list asking for eighty of them.
 
-	Sticks BELOW the site header, not at the viewport top, using
-	`--site-header-height` — published by `+layout.svelte` from a
-	ResizeObserver, since that header's height is scroll-animated and wraps at
-	phone width. The `0px` fallback covers the first frame before the observer
-	has fired. It publishes its OWN height back the same way; see the effect
-	below for who needs it.
+	Sticks at the viewport top, and is the ONLY chrome that stays there. It used
+	to sit below the site header, offset by that header's measured height
+	(`--site-header-height`); the header is in flow now — see `+layout.svelte`
+	for why — so everything above this bar has scrolled past by the time it
+	reaches the top edge, and there is nothing left to offset against. It still
+	publishes its OWN height, which `scroll-padding-top` and the two sticky
+	sidebars are laid out against; see the effect below.
 -->
 <script lang="ts">
 	import EditionMenu from './EditionMenu.svelte';
@@ -133,16 +134,17 @@
 	}: Props = $props();
 
 	/**
-	 * Publish this bar's height as `--reading-bar-height` on <html>, exactly
-	 * as `+layout.svelte` publishes the header's. `app.css`'s
-	 * `scroll-padding-top` adds the two: a fragment target has to clear BOTH
-	 * stickies, and this is the one of them that only some routes render — so
-	 * it is also the one whose variable has to disappear again, which the
-	 * helper's teardown does.
+	 * Publish this bar's height as `--reading-bar-height` on <html>, which is
+	 * what `app.css`'s `scroll-padding-top` and the two sticky sidebars inset
+	 * themselves by. `+layout.svelte` published the site header's the same way
+	 * and the two were summed; the header is in flow now, so this is the whole
+	 * of the sticky chrome — and, as before, the one only some routes render,
+	 * so its variable has to disappear again on the ones that don't. The
+	 * helper's teardown does that.
 	 *
-	 * Measured rather than declared for the same reason the header is — the
-	 * row wraps at phone width, and the edition it names can be as wide as
-	 * "Bíblia Sagrada (Matos Soares)", so there is no single height to state.
+	 * Measured rather than declared, because the row wraps at phone width and
+	 * the edition it names can be as wide as "Bíblia Sagrada (Matos Soares)":
+	 * there is no single height to state.
 	 */
 	let barEl: HTMLElement | undefined = $state();
 
@@ -181,23 +183,20 @@
 
 <style>
 	/*
-	 * Opaque background because reading text scrolls under it. z-index 30 is
-	 * BELOW `.site-header`'s 40, and deliberately: the bars themselves never
-	 * overlap, since this one starts where that one ends, but a menu opened
-	 * from the header drops past the header's own box and over this bar. The
-	 * panel's z-index 50 cannot settle that on its own — `.site-header` is a
-	 * stacking context (sticky + z-index), so the panel's 50 only orders it
-	 * against the header's other children, and against this bar the header
-	 * competes as a whole. At an equal 40 the later sibling won and the bar
-	 * painted over the open menu.
+	 * Opaque background because reading text scrolls under it. z-index 30 lifts
+	 * it over the article's own flow and sits below `.menu-panel`'s 50, which
+	 * is what lets a picker opened FROM this bar draw over it — that 50 orders
+	 * the panel within this bar's own stacking context (sticky + z-index).
 	 *
-	 * A picker opened FROM this bar still draws over it: `.menu-panel`'s 50
-	 * orders it within this bar's own stacking context, and it opens
-	 * downward, away from the header.
+	 * The site header no longer competes for this ordering. It used to carry a
+	 * 40 here, above this bar, because a menu opened from it dropped past its
+	 * own box and over this bar while both were pinned. In flow it is off
+	 * screen by the time this bar is stuck, and its panels are ordered by their
+	 * own 50 against an element that is no longer a stacking context.
 	 */
 	.reading-bar {
 		position: sticky;
-		top: var(--site-header-height, 0px);
+		top: 0;
 		z-index: 30;
 		display: flex;
 		align-items: center;

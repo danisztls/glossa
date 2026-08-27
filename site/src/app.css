@@ -739,7 +739,7 @@
 	 */
 
 	/*
-	 * The sticky site header's ground. It follows `--color-bg-elevated` in
+	 * The site header's ground. It follows `--color-bg-elevated` in
 	 * every theme and is a token of its own for exactly one reason: OLED
 	 * takes it to true black while leaving the elevated surface lifted. The
 	 * two cannot be the same variable there, because a handful of hover and
@@ -1036,10 +1036,12 @@ html {
 	font-size: 112.5%;
 	color-scheme: light dark;
 	/*
-	 * WHAT KEEPS A FRAGMENT FROM LANDING UNDER THE STICKY CHROME. Two sticky
-	 * elements stack on this scrollport: `.site-header` at `top: 0` and
-	 * `.reading-bar` directly beneath it. An anchor left to itself puts the
-	 * heading at scroll offset 0 — behind both of them.
+	 * WHAT KEEPS A FRAGMENT FROM LANDING UNDER THE STICKY CHROME. One sticky
+	 * element remains on this scrollport: `.reading-bar`, at `top: 0`. The
+	 * site header used to stack above it and no longer does — it is in flow
+	 * (`+layout.svelte`), so it is off screen wherever this inset matters. An
+	 * anchor left to itself puts the heading at scroll offset 0 — behind the
+	 * bar.
 	 *
 	 * Insetting the SCROLLPORT rather than compensating at each target is
 	 * what makes it hold for every way a scroll can be asked for: a `#s12`
@@ -1047,21 +1049,22 @@ html {
 	 * SvelteKit deep-links, deliberately — see its client runtime, which
 	 * comments that it chose that over `scrollTo` for exactly this reason),
 	 * and sequential focus navigation. It is also the only form that can
-	 * follow chrome whose height is measured rather than declared: both
-	 * variables are published by `$lib/sticky-height`'s `publishHeight`
-	 * (from `+layout.svelte` and `ReadingBar.svelte`), which measures on
-	 * mount and observes thereafter — see its docblock for why the mount
-	 * measurement is what a deep link actually reads. `--reading-bar-height`
-	 * is simply absent — hence `0px` — on every route that renders no bar.
+	 * follow chrome whose height is measured rather than declared:
+	 * `--reading-bar-height` is published by `$lib/sticky-height`'s
+	 * `publishHeight` (from `ReadingBar.svelte`), which measures on mount and
+	 * observes thereafter — see its docblock for why the mount measurement is
+	 * what a deep link actually reads. It is simply absent — hence `0px` — on
+	 * every route that renders no bar.
 	 *
-	 * THE 1rem IS NOT DECORATION. The header's block padding is scroll-
-	 * animated over the first 96px (`+layout.svelte`), and the browser reads
-	 * this value at the moment it scrolls, i.e. against the header height
-	 * BEFORE the jump. Scrolling down, that overshoots by the shrink delta,
-	 * which only costs a little space; scrolling UP to a target near the top,
-	 * the header re-expands afterwards and would cover the heading by that
-	 * same delta. It is 0.8rem (0.75rem → 0.35rem, both sides), so a gap at
-	 * or above it makes the second case impossible. Don't shrink it below.
+	 * THE 1rem IS BREATHING ROOM, and now only that. It used to carry a second
+	 * job with a floor under it: the header's block padding was scroll-animated
+	 * over the first 96px, the browser reads this value at the moment it
+	 * scrolls (i.e. against the height BEFORE the jump), and scrolling UP to a
+	 * target near the top let the header re-expand over the heading by the
+	 * 0.8rem shrink delta — so the gap had to clear that. Nothing on this
+	 * scrollport changes height with scroll any more, so the number is spacing
+	 * again: a heading landing flush against the bar's underside reads as
+	 * clipped.
 	 *
 	 * The per-element `scroll-margin-top` rules this replaced are gone rather
 	 * than left to compose. They ran 1rem to 4rem across five files, the
@@ -1069,13 +1072,15 @@ html {
 	 * existed, and additively they would have pushed a heading further down
 	 * the viewport the more carefully someone had tuned one.
 	 */
-	/* The two stacked stickies' combined height, as one token: the scroll
-	   inset below and the sidebars' own `top`/`max-height` (`.reading-aside`,
-	   `.index-aside`) all have to clear the same chrome, and three copies of
-	   the same sum drift. Both variables are published at runtime on this very
-	   element, so the fallbacks here are what a route with no bar (or a frame
-	   before the first measurement) evaluates against. */
-	--sticky-chrome-height: calc(var(--site-header-height, 0px) + var(--reading-bar-height, 0px));
+	/* The sticky chrome's height, as one token: the scroll inset below and the
+	   sidebars' own `top`/`max-height` (`.reading-aside`, `.index-aside`) all
+	   have to clear the same chrome, and three copies of one expression drift.
+	   It is a single term today — it was a sum while the site header was
+	   sticky too — and stays a token for that reason and for the fallback,
+	   which belongs in one place: the variable is published at runtime on this
+	   very element, so a route with no bar (or a frame before the first
+	   measurement) evaluates against the `0px` here. */
+	--sticky-chrome-height: var(--reading-bar-height, 0px);
 	scroll-padding-top: calc(var(--sticky-chrome-height) + 1rem);
 }
 
@@ -1289,10 +1294,10 @@ input {
 	.reading-aside {
 		position: sticky;
 		/* Offset by the same chrome `scroll-padding-top` clears. A bare
-		   `1.5rem` sticks the aside to the viewport's top edge, which is
-		   BEHIND the site header (and, on a reader route, the reading bar
-		   below it) — so the sidebar's first rows, its heading among them,
-		   disappear under the chrome the moment the page scrolls. The
+		   `1.5rem` sticks the aside to the viewport's top edge, which on a
+		   reader route is BEHIND the reading bar — so the sidebar's first
+		   rows, its heading among them, disappear under the chrome the
+		   moment the page scrolls. The
 		   max-height loses the same amount, or the aside's own scroll
 		   container would run off the bottom of the screen by however much
 		   it was pushed down. */

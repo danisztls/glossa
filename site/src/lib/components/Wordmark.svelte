@@ -5,9 +5,10 @@
 	  - `hero` (default) — the home page's h1.
 	  - `brand` — the header. Below 30rem this swaps to a "GC" monogram, the same
 	    two initials in the same two colours as the favicon, so the tab and the
-	    phone header carry one mark. The same swap also fires at any width once
-	    the reader scrolls away from the top of the page — a scroll-driven CSS
-	    animation, not a media query; see the rule below the phone breakpoint.
+	    phone header carry one mark. Width is the only trigger: the swap also
+	    used to fire at any width once the reader scrolled, which was there to
+	    make a pinned header cheaper to keep on screen and went when that header
+	    stopped being sticky (see `+layout.svelte`).
 
 	The variants differ by exactly one declaration each: the wrapper's
 	`font-size`. Everything inside is expressed in `em`, so the lockup is one
@@ -171,118 +172,6 @@
 		.is-brand .monogram {
 			display: block;
 			font-size: 1.15em;
-		}
-	}
-
-	/*
-	 * The scroll-triggered equivalent of the media query above — same swap,
-	 * same declarations, driven by scroll position instead of viewport width
-	 * (see +layout.svelte's matching `.header-bar` rule, which explains the
-	 * mechanism and the @supports guard in full).
-	 *
-	 * Nested inside `(min-width: 30.0625rem)` — one pixel past the phone
-	 * breakpoint above — so the two triggers stay mutually exclusive. A
-	 * running CSS animation's value always wins over a plain rule, regardless
-	 * of specificity or source order, so an unguarded copy of this animation
-	 * would override the phone breakpoint's permanent monogram with a visible
-	 * lockup for the instant before any scrolling happens.
-	 *
-	 * The `0 96px` range must match `.header-bar`'s exactly (search
-	 * +layout.svelte for "96px") — the mark and the bar should finish
-	 * shrinking at the same scroll offset.
-	 */
-	@supports (animation-timeline: scroll()) {
-		@media (min-width: 30.0625rem) {
-			@keyframes brand-monogram-swap-lockup {
-				from {
-					position: static;
-					width: auto;
-					height: auto;
-					overflow: visible;
-					clip-path: none;
-					white-space: normal;
-				}
-				to {
-					position: absolute;
-					width: 1px;
-					height: 1px;
-					overflow: hidden;
-					clip-path: inset(50%);
-					white-space: nowrap;
-				}
-			}
-
-			/*
-			 * Mirrors the lockup's animation exactly — visually-hidden and
-			 * clipped at rest, static and full-size once compact — rather than
-			 * toggling `display` the way the phone breakpoint above does. A
-			 * scroll-driven animation cannot bring an element out of
-			 * `display: none`: unlike a time-based animation kicked off by a
-			 * class toggle, there's no discrete "start" event, so an element
-			 * whose resting style is `display: none` never gets laid out and
-			 * the browser never evaluates its scroll-linked animation at all
-			 * (verified: with `display: none` here, the monogram's computed
-			 * style never changed at any scroll offset). Giving it the same
-			 * "visually hidden, not display:none" treatment the lockup already
-			 * uses keeps it in the render tree — and therefore keeps its
-			 * animation actually running.
-			 */
-			@keyframes brand-monogram-swap-monogram {
-				from {
-					position: absolute;
-					width: 1px;
-					height: 1px;
-					overflow: hidden;
-					clip-path: inset(50%);
-					white-space: nowrap;
-				}
-				to {
-					position: static;
-					width: auto;
-					height: auto;
-					overflow: visible;
-					clip-path: none;
-					white-space: normal;
-				}
-			}
-
-			.is-brand .lockup {
-				animation: brand-monogram-swap-lockup linear both;
-				animation-timeline: scroll(root block);
-				animation-range: 0 96px;
-			}
-
-			.is-brand .monogram {
-				/*
-				 * `display` is constant, not animated — see the comment above.
-				 * Everything else here restates the `from` keyframe, and it has
-				 * to: a scroll timeline whose scroller has no scrollable
-				 * overflow is INACTIVE, and an animation attached to an
-				 * inactive timeline is not in effect at all — `both` fill does
-				 * not save it, because there is no timeline to fill from. The
-				 * element then renders at its base style, so a base style of
-				 * "visible" put the monogram on screen beside the full lockup
-				 * ("GlossaGC / Catholica") on every page short enough not to
-				 * scroll, and for the instant before any route's content
-				 * renders into this SPA's empty shell.
-				 *
-				 * The lockup above never showed this because its base style
-				 * already IS its `from` keyframe. Matching that here is the
-				 * whole fix: at rest the mark is the lockup, with or without a
-				 * working timeline.
-				 */
-				display: block;
-				position: absolute;
-				width: 1px;
-				height: 1px;
-				overflow: hidden;
-				clip-path: inset(50%);
-				white-space: nowrap;
-				font-size: 1.15em;
-				animation: brand-monogram-swap-monogram linear both;
-				animation-timeline: scroll(root block);
-				animation-range: 0 96px;
-			}
 		}
 	}
 </style>
