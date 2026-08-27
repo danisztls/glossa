@@ -28,6 +28,12 @@
 	edition name that can be "Bíblia Sagrada (Matos Soares)") at the end of a
 	line whose left half was empty.
 
+	The row as a whole is packed against the inline END of the measure, which
+	is where the site header keeps its own controls — the two bands of chrome
+	line up on one edge rather than each starting from a different side. That
+	is alignment of the group, not separation within it; see the
+	`justify-content` comment on `.reading-bar` below.
+
 	THE TOGGLE SITS BETWEEN THE TWO EDITIONS, and that placement is the point:
 	it is the control that put the second one there, so it reads as the seam
 	between them rather than as one more button in a row. Left to right that
@@ -202,6 +208,19 @@
 		align-items: center;
 		gap: 0.5rem;
 		flex-wrap: wrap;
+		/* Packed against the inline END, under the site header's own controls,
+		   which sit there for the same reason (`.controls` in `+layout.svelte`
+		   takes the free space with one auto margin). The two rows of chrome
+		   then share an edge instead of starting from opposite sides of the
+		   measure. `flex-end` rather than a physical value: in a row flex
+		   container it already follows `direction`, so the Arabic interface
+		   packs against the left without a second rule.
+
+		   NOT `space-between`, which an earlier version used to pin the page
+		   controls and the edition controls to opposite ends — see the
+		   docblock above for why that read as two bars. The group stays
+		   contiguous and evenly spaced; only where it sits changes. */
+		justify-content: flex-end;
 		background: var(--color-bg);
 		border-block-end: 1px solid var(--color-border);
 		padding-block: 0.5rem;
