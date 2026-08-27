@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { validatePayload, SCHEMA_VERSION } from './usage-schema';
 import {
 	DAILY_CAP,
+	RETENTION_DAYS,
+	pruneExpired,
 	recordSession,
 	resetUsageCap,
 	utcDay,
@@ -175,5 +177,48 @@ describe('recordSession', () => {
 		const db = new FakeDb();
 		db.throws = true;
 		expect(await recordSession(db, payload(), 'BR', NOW)).toBe('failed');
+	});
+});
+
+describe('pruneExpired', () => {
+	it('drops every table past the window, tags first', () => {
+		// Tags before sessions, and selected by their session's DAY rather than
+		// by a list of ids: the other order orphans tags the instant the session
+		// rows are gone, and nothing would ever collect them.
+		const db = new FakeDb();
+		return pruneExpired(db, NOW).then((outcome) => {
+			expect(outcome).toBe('pruned');
+			const sql = db.written.map((row) => row.sql);
+			expect(sql).toHaveLength(3);
+			expect(sql[0]).toContain('session_tag');
+			expect(sql[1]).toContain('delete from session where');
+			expect(sql[2]).toContain('geo_lang');
+		});
+	});
+
+	it('cuts at the retention window, not at an arbitrary date', async () => {
+		const db = new FakeDb();
+		await pruneExpired(db, NOW);
+		const cutoff = utcDay(NOW - RETENTION_DAYS * 86_400_000);
+		for (const row of db.written) expect(row.args).toEqual([cutoff]);
+		// Thirteen months, not twelve: comparing a month against the same month a
+		// year earlier needs both endpoints present.
+		expect(RETENTION_DAYS).toBeGreaterThan(365);
+	});
+
+	it('keeps a row from the day before the cutoff', async () => {
+		const db = new FakeDb();
+		await pruneExpired(db, NOW);
+		const cutoff = String(db.written[0].args[0]);
+		// `day < cutoff`, so the cutoff day itself survives — an off-by-one here
+		// silently deletes a day of data every day.
+		expect(db.written[0].sql).toContain('day < ?');
+		expect(cutoff).toBe(utcDay(NOW - RETENTION_DAYS * 86_400_000));
+	});
+
+	it('never throws when D1 does', async () => {
+		const db = new FakeDb();
+		db.throws = true;
+		expect(await pruneExpired(db, NOW)).toBe('failed');
 	});
 });

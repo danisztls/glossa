@@ -13,7 +13,8 @@
  *   npm run usage -- --all           include cells below the suppression floor
  *   npm run usage -- --json          the same figures, unformatted
  *   npm run usage -- --sql "..."     one ad-hoc query
- *   npm run usage -- --prune         drop rows past the retention window
+ *   npm run usage -- --prune         force the retention prune (the worker's
+ *                                    daily cron is what normally does it)
  *
  * WHY CELLS BELOW FIVE ARE HIDDEN BY DEFAULT. Not because a count of three is
  * dangerous — nothing here identifies anyone — but because a single-reader cell
@@ -65,8 +66,18 @@ const DAYS = Number(option('days') ?? '30');
 const SHOW_ALL = flag('all');
 /** Rows in a breakdown below this are folded away unless `--all`. */
 const FLOOR = 5;
-/** Retention window. A rolling record, not an archive — which is both good
- *  hygiene and consistent with what the colophon tells readers. */
+/**
+ * Retention window, in days. MUST equal `RETENTION_DAYS` in
+ * `src/lib/usage-store.ts` — this script runs in plain Node and cannot import
+ * the TypeScript, so the number is duplicated and `usage-report.test.ts`
+ * asserts the two agree.
+ *
+ * The POLICY is the worker's daily cron (`scheduled()` in `src/worker.ts`,
+ * declared in `wrangler.jsonc`); `--prune` here is a manual way to force it,
+ * not the mechanism. A retention period that only ran when someone remembered
+ * to type a flag would be an indeterminate retention period however firmly the
+ * constant were written down.
+ */
 const KEEP_DAYS = 400;
 
 if (!Number.isFinite(DAYS) || DAYS <= 0) {

@@ -415,6 +415,15 @@ record. The free plan allows five custom rules and exactly one rate limiting
 rule; that is why the write ceiling is a counter in `usage-store.ts` rather
 than a second rate limit.
 
+**Retention is a cron, and `--prune` is not it.** `scheduled()` in
+`src/worker.ts` drops rows past `RETENTION_DAYS` daily, on the trigger in
+`wrangler.jsonc`. `npm run usage -- --prune` forces the same thing by hand. The
+script duplicates the constant because it runs in plain Node and cannot import
+the `.ts`; `usage-report.test.ts` asserts the two agree, and a drift there
+silently deletes data the stated policy says to keep. Note the two retention
+numbers are NOT the same and are not meant to be — 365 on the device
+(`RECORD_MAX_DAYS`), 400 in D1 (`RETENTION_DAYS`).
+
 **`npm run usage` needs a database that does not exist in a fresh clone.**
 
 ```sh

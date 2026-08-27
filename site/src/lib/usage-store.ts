@@ -79,6 +79,53 @@ async function claimSlot(db: D1Database, day: string, now: number): Promise<bool
 	return true;
 }
 
+/**
+ * How long a stored row lives. THIRTEEN MONTHS, and the extra month past a year
+ * is the whole reason for the number: comparing a month against the same month
+ * a year earlier needs both endpoints present, which twelve months exactly does
+ * not give you.
+ *
+ * The ANPD cookie guide asks for a retention period proportionate to the
+ * purpose and rejects indeterminate durations outright. A period that is only
+ * applied when someone remembers to type `--prune` IS indeterminate, whatever
+ * the constant says — which is why `scheduled()` in `src/worker.ts` runs this
+ * daily and the script's flag is only a manual escape hatch.
+ *
+ * Deliberately NOT the same as `RECORD_MAX_DAYS` (365, in `usage-device.ts`).
+ * They bound different things for different reasons: that one is how long a
+ * device may remember itself, this one is how long an anonymous aggregate is
+ * useful. Collapsing them into one number would make both harder to argue.
+ */
+export const RETENTION_DAYS = 400;
+
+/**
+ * Drop everything past the retention window.
+ *
+ * Tags go first and are selected by their session's day rather than by a list
+ * of ids: doing it the other way round leaves orphaned tags behind the moment
+ * the session rows are gone, and nothing would ever collect them.
+ *
+ * Never throws, for the same reason `recordSession` does not — this runs from a
+ * cron handler with nobody watching, and a failed prune is a retry tomorrow.
+ */
+export async function pruneExpired(db: D1Database, now: number): Promise<'pruned' | 'failed'> {
+	const cutoff = utcDay(now - RETENTION_DAYS * 86_400_000);
+	try {
+		await db.batch([
+			db
+				.prepare(
+					'delete from session_tag where session_id in (select id from session where day < ?)'
+				)
+				.bind(cutoff),
+			db.prepare('delete from session where day < ?').bind(cutoff),
+			db.prepare('delete from geo_lang where day < ?').bind(cutoff)
+		]);
+		return 'pruned';
+	} catch {
+		return 'failed';
+	}
+}
+
 export type RecordOutcome = 'stored' | 'capped' | 'failed';
 
 /**

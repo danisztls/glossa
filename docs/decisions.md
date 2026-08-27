@@ -1275,6 +1275,21 @@ report a monthly reader as a brand-new device three times a year, inflating the 
 the whole measurement exists to establish. A year is the shortest window that does not
 corrupt the answer.
 
+**Stored rows are pruned by a daily cron, not by a flag someone remembers.** The retention
+period the guide asks for is 400 days — thirteen months, because comparing a month against
+the same month a year earlier needs both endpoints present — and it is enforced by
+`scheduled()` in `src/worker.ts`, on a trigger declared in `wrangler.jsonc` and versioned
+with the deploy. `npm run usage -- --prune` still exists as a way to force it; it is not
+the mechanism. This distinction is the whole point rather than tidiness: a period applied
+only when someone types a flag IS an indeterminate retention period, however firmly the
+constant is written down, and indeterminate is the one thing the ANPD guide refuses
+outright.
+
+The two windows are deliberately different numbers. `RECORD_MAX_DAYS` (365, on the device)
+bounds how long a device may remember itself; `RETENTION_DAYS` (400, in D1) bounds how
+long an anonymous aggregate stays useful. They answer to different purposes, and
+collapsing them into one constant would make both harder to argue.
+
 It is an ABSOLUTE lifetime, never renewed by a visit: a sliding window would keep a record
 alive indefinitely for exactly the readers who visit most, which is what a retention limit
 is for. The cost is one distorted number, and the report prints the caveat beside it — a

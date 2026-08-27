@@ -162,6 +162,19 @@
 	// needs the service worker to propagate, and `sw.svelte.ts` documents that
 	// an installed PWA can sit on a superseded shell indefinitely.
 	//
+	// Retention, enforced rather than remembered. `scheduled()` in
+	// `src/worker.ts` drops rows past `RETENTION_DAYS`; a policy that only runs
+	// when someone types `--prune` is an indeterminate retention period however
+	// firmly the constant is written down, and that is the one thing the ANPD
+	// cookie guide refuses.
+	//
+	// 04:10 UTC: off the hour, because every cron on the platform fires on it,
+	// and after 00:00 UTC so the day the prune reads is a finished one. One
+	// invocation a day against the free plan's 100,000 is not worth a thought;
+	// the reason it is declared here rather than in the dashboard is that this
+	// file, not an account nobody else can see, should be the record of it.
+	"triggers": { "crons": ["10 4 * * *"] },
+
 	// `database_id` comes from `npx wrangler d1 create glossa-usage`; apply the
 	// schema with `npx wrangler d1 migrations apply glossa-usage --remote`.
 	"d1_databases": [

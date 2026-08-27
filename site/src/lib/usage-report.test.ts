@@ -1,4 +1,6 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { RETENTION_DAYS } from './usage-store';
 // Plain .mjs script, imported the way `sitemap.test.ts` and `build-xrefs.test.ts`
 // import theirs; it carries JSDoc types, so no directive is needed.
 import { render } from '../../scripts/usage.mjs';
@@ -96,5 +98,18 @@ describe('render', () => {
 		const out = render(data(), { days: 30 });
 		expect(out).toContain('sw install failed');
 		expect(out).toContain('quota');
+	});
+});
+
+describe('retention', () => {
+	it('keeps the script’s window equal to the worker’s', () => {
+		// `scripts/usage.mjs` runs in plain Node and cannot import the .ts store,
+		// so the number is duplicated. The policy is enforced by the worker's
+		// daily cron; `--prune` is a manual escape hatch, and a script pruning to
+		// a DIFFERENT window than the cron would quietly delete data the policy
+		// says to keep. Same arrangement as `CONTENT_CACHE` in `usage.test.ts`.
+		const source = readFileSync('scripts/usage.mjs', 'utf8');
+		const match = source.match(/const KEEP_DAYS = (\d+)/);
+		expect(Number(match?.[1])).toBe(RETENTION_DAYS);
 	});
 });

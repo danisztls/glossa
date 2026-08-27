@@ -1,7 +1,7 @@
 import { isCanonicalPath, type RouteManifest } from './lib/route-manifest';
 import { isLocalHost } from './lib/usage-device';
 import { MAX_BODY_BYTES, validatePayload } from './lib/usage-schema';
-import { recordSession, type D1Database } from './lib/usage-store';
+import { pruneExpired, recordSession, type D1Database } from './lib/usage-store';
 
 interface AssetFetcher {
 	fetch(request: Request): Promise<Response>;
@@ -18,6 +18,10 @@ interface Env {
 
 interface ExecutionContext {
 	waitUntil(promise: Promise<unknown>): void;
+}
+
+interface ScheduledEvent {
+	scheduledTime: number;
 }
 
 /** Where the usage beacon posts. Short because `sendBeacon` bodies are small
@@ -140,5 +144,23 @@ export default {
 		return isCanonicalPath(url.pathname, manifest)
 			? env.ASSETS.fetch(shellRequest(request))
 			: notFoundShell(request, env.ASSETS);
+	},
+
+	/**
+	 * Enforce the usage measurement's retention window, daily.
+	 *
+	 * THIS IS THE POLICY. A retention period applied only when someone
+	 * remembers to run a script is an indeterminate retention period, which is
+	 * the one thing the ANPD cookie guide rejects outright — so it runs on a
+	 * schedule declared in `wrangler.jsonc`, versioned with the deploy, rather
+	 * than living in anyone's memory. `npm run usage -- --prune` still exists,
+	 * as a way to force it, not as the mechanism.
+	 *
+	 * Cheap by construction: one `DELETE` batch a day against rows that are
+	 * mostly already gone, on a table bounded at 20,000 rows a day.
+	 */
+	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+		if (!env.USAGE) return;
+		ctx.waitUntil(pruneExpired(env.USAGE, event.scheduledTime));
 	}
 };
