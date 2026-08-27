@@ -434,7 +434,7 @@
 <div
 	bind:this={overlayEl}
 	id={TOOLTIP_ID}
-	class="link-preview"
+	class="floating-panel link-preview"
 	class:visible={coords !== undefined}
 	class:tappable={openedByTap}
 	role={openedByTap ? undefined : 'tooltip'}
@@ -476,6 +476,12 @@
 	 * positioning math (computePosition, sized off the ALREADY-RENDERED box)
 	 * fight a font size that changes independently of anything this component
 	 * observes.
+	 *
+	 * The card itself — fill, hairline, corner, shadow, sans face — is
+	 * `.floating-panel` in app.css, shared with the two popovers that are the
+	 * same object seen from elsewhere. What is left here is what only a
+	 * preview has: it is hidden until placed, it fades, and it takes no
+	 * pointer events unless it was opened by a tap.
 	 */
 	.link-preview {
 		position: fixed;
@@ -484,12 +490,7 @@
 		inset-inline-start: 0;
 		pointer-events: none;
 		max-width: min(24rem, calc(100vw - 1rem));
-		background: var(--color-bg);
-		border: 1px solid var(--color-border);
-		border-radius: 0.5rem;
-		box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
 		padding: 0.6rem 0.8rem;
-		font-family: var(--font-sans);
 		font-size: 0.85rem;
 		line-height: 1.5;
 		color: var(--color-text);

@@ -1125,7 +1125,7 @@ That was reasoning about a disclosure which pushes the page down, and it stops a
 where the note costs the text nothing: the Catechism's 3,698 citations average 26
 characters, and where a quoted sentence comes from is what a reader wants of it. One
 arrangement (`.margin-note`), two apparatuses; each keeps its own fallback where there is
-no margin — a gloss becomes a block, a citation stays a boxed span inside its sentence.
+no margin — a gloss becomes a block, a citation becomes a popover.
 
 **The note's width is derived from the margin there actually is, not assumed.** The
 reading column grows with the reader's size setting, so the margin shrinks as the text
@@ -1142,6 +1142,34 @@ tracks — about 6.5rem either side at 100rem with two columns up, against the 1
 note wants at full width. `CompareGrid` claims it while mounted; the reader's compare
 _preference_ would be the wrong signal, since a work with one edition has it on and still
 reads in one column.
+
+**Below the margin, a citation opens over the page rather than inside the sentence.** It
+was a boxed span that appeared in the flow, which is the one thing an apparatus must not
+do: opening it reflowed the words around it, so the sentence being read moved while it
+was being read, and closing it moved back. It is now a native `popover` anchored to its
+marker — the browser owns the open state, the light dismiss, Escape, the top layer and
+focus restoration, and `popovertarget` invokes it declaratively because the trigger is a
+real `<button>` (`ReferenceNumber`'s is an `<a href>`, which is why `AnchorMenu` has to
+show its own). Two things follow. `ProseBlocks` and `HeadingText` each kept a set of open
+markers keyed by block and position, because a source can cite the same footnote twice in
+one paragraph; both sets are gone, since `$props.id()` is per instance and there is one
+instance per occurrence. And the card is the one `LinkPreview` already shows — same
+chrome, same positioner — because a reader who has learned what a small box over the page
+means should not have to learn a second one.
+
+**A panel placed by measurement is a family, and it now shares its chrome.**
+`.floating-panel` (app.css) holds the five declarations `LinkPreview`, `AnchorMenu` and
+the citation popover had each written out; `floating.ts` holds where they go, and
+`trackAnchor` the scroll-and-resize tracking two of the three want. What deliberately did
+not move is everything that differs — top layer or z-index, tracking or dismissing,
+pointer events or none, padding — because a modifier for each is the shape
+`menu.svelte.ts` records this codebase avoiding. `.menu-panel` is not in the family: it is
+positioned in CSS from its own trigger rather than measured against one.
+
+The one cost is that the popover carries `data-link-preview="off"`, so a scripture link
+inside a citation no longer offers a peek at the verse. It still links. An open popover is
+in the top layer and the preview overlay is not, so the peek would have rendered behind
+the card that raised it.
 
 **Fixtures deliberately encode absent chapters and out-of-range cross-references** to
 exercise the not-in-corpus paths, and a second English Bible to exercise the

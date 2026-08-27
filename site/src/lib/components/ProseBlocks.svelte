@@ -6,7 +6,6 @@
 		linkifyInline,
 		type InlineNode
 	} from '$lib/inline-html';
-	import { SvelteSet } from 'svelte/reactivity';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
 	import { splitDropCap } from '$lib/dropcap';
 	import { content } from '$lib/content.svelte';
@@ -72,14 +71,6 @@
 		const rest: InlineNode[] = [{ kind: 'text', text: split.rest }, ...nodes.slice(1)];
 		return { ...split, restNodes: rest };
 	});
-	// A marker has to stay phrasing content: this component is rendered inside
-	// prose <p>s.  The previous <sup><details>...</details></sup> looked inline
-	// in CSS but was invalid HTML (`details` is flow content), so browsers
-	// repaired the DOM by ending the surrounding paragraph at a footnote.
-	// Keeping the disclosure state here lets the citation remain a real inline
-	// part of the sentence in both the source DOM and the rendered layout.
-	let openMarkers = $state(new SvelteSet<string>());
-
 	/**
 	 * The block as inline nodes.
 	 *
@@ -129,11 +120,6 @@
 		return typeof citation?.label === 'string';
 	}
 
-	function toggleCitation(marker: string) {
-		if (openMarkers.has(marker)) openMarkers.delete(marker);
-		else openMarkers.add(marker);
-	}
-
 	/**
 	 * In-prose "cf. 1212" / "cf. Jn 3:16" mentions inside the CCC's own body
 	 * text (docs/link-surface.md #3) are a different grammar from a footnote
@@ -154,6 +140,27 @@
 	}
 </script>
 
+<!-- ONE SNIPPET FOR EVERY BLOCK, which it could not be until recently. It was
+     declared inside the `{#each}` below so that it closed over `blockIndex`:
+     the source can cite the same numbered footnote twice in one paragraph, and
+     the two disclosures had to open independently, so this component kept a set
+     of open markers keyed by block and position on their behalf. That state is
+     the browser's now — the citation is a native popover, and `$props.id()`
+     gives each occurrence its own — so nothing here needs to know which block
+     raised a marker, and `seq` goes unread. `InlineNodes` still passes it: the
+     snippet type is `Snippet<[marker, seq]>` for `InlineProse`'s sake as much
+     as this one's, and a snippet is free to take fewer arguments than it is
+     handed. -->
+{#snippet marker(marker: string)}
+	{@const citation = citationFor(marker)}
+	{#if isInline(citation)}<RefText text={citation.label} {lang} {work} />{:else}<CitationDisclosure
+			{marker}
+			{citation}
+			{lang}
+			{work}
+		/>{/if}
+{/snippet}
+
 <!-- Keyed by POSITION, not by text. `text_marked` was the key until documents
      started shipping without it (types.ts) — every document block would have
      keyed on `undefined`, and Svelte rejects a duplicate key at runtime, so a
@@ -161,26 +168,6 @@
      right key regardless: a unit's blocks are a fixed ordered list that
      is never reordered, inserted into, or filtered. -->
 {#each unit.blocks as block, blockIndex (blockIndex)}
-	<!-- The source can cite the same numbered footnote twice in one paragraph;
-	     the key stays independent per occurrence, as <details> did. Declared
-	     per block so it closes over `blockIndex` — `InlineNodes`'s `marker`
-	     snippet is `Snippet<[marker, seq]>` only, with no block of its own. -->
-	{#snippet marker(marker: string, seq: number)}
-		{@const disclosureKey = `${blockIndex}:${seq}`}
-		{@const citation = citationFor(marker)}
-		{#if isInline(citation)}<RefText
-				text={citation.label}
-				{lang}
-				{work}
-			/>{:else}<CitationDisclosure
-				{marker}
-				{citation}
-				{lang}
-				{work}
-				open={openMarkers.has(disclosureKey)}
-				onToggle={() => toggleCitation(disclosureKey)}
-			/>{/if}
-	{/snippet}
 	{#if block.kind === 'quote'}
 		<blockquote class="prose-quote">
 			<p><InlineNodes nodes={nodesFor(block)} {hrefFor} {marker} /></p>

@@ -45,7 +45,7 @@
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import { parseHref } from '$lib/address';
 	import { resolveBookmark } from '$lib/bookmarkContent';
-	import { computePanelPosition } from '$lib/floating';
+	import { computePanelPosition, trackAnchor } from '$lib/floating';
 	import Icon from './Icon.svelte';
 	import type { Menu } from './menu.svelte';
 
@@ -141,42 +141,34 @@
 		if (e.newState === 'closed') menu.close();
 	}
 
-	// Measured once the panel is in the DOM — its own size is the input, so
-	// this cannot run before it renders. Nothing inside the row resizes it
-	// afterwards: every action is a fixed square, and the confirmation is a
-	// glyph swap rather than a line of text appearing under the row. That is
-	// what the icon-only confirmation buys, since a panel flipped above its
-	// anchor has its top edge moved by any height change at all.
-	$effect(() => {
+	function reposition() {
 		if (!panelEl || !menu.triggerEl) return;
 		coords = computePanelPosition(
 			menu.triggerEl.getBoundingClientRect(),
 			panelEl.getBoundingClientRect()
 		);
+	}
+
+	// Measured once the panel is in the DOM — its own size is the input, so
+	// this cannot run before it renders. Nothing inside the row resizes it
+	// afterwards: every action is a fixed square, and the confirmation is a
+	// glyph swap rather than a line of text appearing under the row. That is
+	// what the icon-only confirmation buys, since a panel flipped above its
+	// anchor has its top edge moved by any height change at all. `reposition`
+	// reads both `$state`s, so this tracks them and re-measures if either
+	// arrives late.
+	$effect(() => {
+		reposition();
 	});
 
 	// Unlike `LinkPreview`, which dismisses on scroll because a hover preview
 	// the reader never asked for should not follow them, this panel was opened
-	// deliberately: it tracks instead. `capture: true` is required for the same
-	// reason it is there — `scroll` doesn't bubble, so a plain window listener
-	// never sees the reading aside's own scrolling.
-	let frame: number | undefined;
-	function reposition() {
-		if (frame !== undefined) return;
-		frame = requestAnimationFrame(() => {
-			frame = undefined;
-			if (!panelEl || !menu.triggerEl) return;
-			coords = computePanelPosition(
-				menu.triggerEl.getBoundingClientRect(),
-				panelEl.getBoundingClientRect()
-			);
-		});
-	}
+	// deliberately: it tracks instead. The rAF coalescing and the capturing
+	// scroll listener that needs are `trackAnchor`'s, shared with the popover
+	// a footnote marker opens; what stays here is only what to re-measure.
+	$effect(() => trackAnchor(reposition));
 
-	$effect(() => () => {
-		clearTimeout(statusTimer);
-		if (frame !== undefined) cancelAnimationFrame(frame);
-	});
+	$effect(() => () => clearTimeout(statusTimer));
 </script>
 
 <!-- No outside-click listener: light dismiss is the browser's. That deletes
@@ -185,8 +177,8 @@
      have been one window listener per rendered unit number, a hundred-odd of
      them on a long Bible chapter, all but one returning immediately. What is
      left is scroll and resize, which are about where the panel is, not
-     whether it is open. -->
-<svelte:window onscrollcapture={reposition} onresize={reposition} />
+     whether it is open, and `trackAnchor` holds them for exactly as long as
+     this component is mounted — which is exactly as long as it is open. -->
 
 <!-- The `<ul role="menu">` with `role="none"` wrappers is the same accessible
      structure every other menu on the site uses (`LanguageMenu` et al.):
@@ -199,7 +191,7 @@
 	bind:this={panelEl}
 	popover="auto"
 	ontoggle={onToggle}
-	class="anchor-menu-panel"
+	class="floating-panel anchor-menu-panel"
 	data-link-preview="off"
 	style:top={coords ? `${coords.top}px` : '0'}
 	style:left={coords ? `${coords.left}px` : '0'}
@@ -274,6 +266,9 @@
 	 * margin: auto`), so both are reset here; its `border` and `padding`
 	 * defaults are already overridden by the declarations below.
 	 *
+	 * The card itself is `.floating-panel` (app.css), the chrome this shares
+	 * with `LinkPreview` and with the popover a footnote marker opens.
+	 *
 	 * No `z-index`. An open popover is in the top layer, which sits above
 	 * every stacking context on the page, so the old 50/60/70 ladder against
 	 * `.menu-panel` and `LinkPreview` no longer decides this. Nothing is lost:
@@ -286,12 +281,7 @@
 		position: fixed;
 		inset: auto;
 		margin: 0;
-		background: var(--color-bg);
-		border: 1px solid var(--color-border);
-		border-radius: 0.5rem;
-		box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
 		padding: 0.3rem 0.35rem;
-		font-family: var(--font-sans);
 	}
 
 	.anchor-menu-row {

@@ -2763,6 +2763,37 @@ input {
 }
 
 /*
+ * A PANEL PLACED BY MEASUREMENT — the chrome the three of them share.
+ *
+ * `LinkPreview`'s card, the popover a unit number opens (`AnchorMenu`) and the
+ * one a footnote marker opens (`CitationDisclosure`) are the same object seen
+ * three times: a small floating box of text over the page, lifted off it by a
+ * hairline and a shadow. Each carried its own copy of these five
+ * declarations, and the copies had agreed by hand for long enough that the
+ * third consumer was already a coincidence rather than a rule.
+ *
+ * WHAT IS NOT HERE IS EVERYTHING THAT ACTUALLY DIFFERS, and it is more than
+ * the padding: where the panel goes (`floating.ts` measures it, and whether it
+ * then tracks or dismisses is a statement about what the panel is), whether it
+ * sits in the top layer as a native `popover` or at a `z-index`, and whether
+ * it takes pointer events at all. A prop — or a modifier class — for every
+ * one of those is the shape `menu.svelte.ts` records this codebase avoiding.
+ * A class for what is genuinely identical is not that shape.
+ *
+ * `.menu-panel` below repeats four of the five and is deliberately NOT this.
+ * It is positioned in CSS from its own trigger rather than measured against
+ * one, which `floating.ts`'s docblock draws as the real line between the two
+ * families, and it carries its own scrolling, sizing and list reset besides.
+ */
+.floating-panel {
+	background: var(--color-bg);
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+	font-family: var(--font-sans);
+}
+
+/*
  * A dropdown panel is placed here and CORRECTED in JS.
  *
  * `.menu-panel` anchors its RIGHT edge to its trigger and grows leftward by at

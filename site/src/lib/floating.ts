@@ -111,3 +111,41 @@ export function inlineShift(box: { left: number; right: number }, width: number)
 	if (box.left + shift < GAP) shift = GAP - box.left;
 	return shift;
 }
+
+/**
+ * Keeps a panel with its anchor: runs `place` on every scroll and every
+ * resize, coalesced to one call per frame, and hands back the teardown —
+ * shaped for `$effect`, whose return value is its cleanup, so a caller is one
+ * line and cannot forget the other half.
+ *
+ * `capture: true` on `scroll` is required rather than tidy. `scroll` does not
+ * bubble, so a plain window listener never sees `.reading-aside`'s own
+ * `overflow-y: auto` container (app.css), and a panel opened from inside the
+ * sidebar would sit still while the sidebar scrolled out from under it. Only
+ * the capture phase reaches every scrollable ancestor on the way down.
+ *
+ * TRACKING RATHER THAN DISMISSING IS A STATEMENT ABOUT WHAT THE PANEL IS, and
+ * `LinkPreview` deliberately does the opposite: a hover card the reader never
+ * asked for should disappear when the page moves, not follow them down it. So
+ * that component calls `computePanelPosition` directly and does not come
+ * through here. Everything that does was opened on purpose — a unit number's
+ * menu, a footnote's popover — and a panel the reader asked for that jumps
+ * away from its own anchor on the first scroll is a bug, not a dismissal.
+ */
+export function trackAnchor(place: () => void): () => void {
+	let frame: number | undefined;
+	const onMove = () => {
+		if (frame !== undefined) return;
+		frame = requestAnimationFrame(() => {
+			frame = undefined;
+			place();
+		});
+	};
+	window.addEventListener('scroll', onMove, true);
+	window.addEventListener('resize', onMove);
+	return () => {
+		if (frame !== undefined) cancelAnimationFrame(frame);
+		window.removeEventListener('scroll', onMove, true);
+		window.removeEventListener('resize', onMove);
+	};
+}

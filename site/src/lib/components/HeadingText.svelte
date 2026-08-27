@@ -23,7 +23,6 @@
 	 * renders as its plain title and nothing else.
 	 */
 	import type { StructureNode } from '$lib/types';
-	import { SvelteSet } from 'svelte/reactivity';
 	import CitationDisclosure from './CitationDisclosure.svelte';
 	import { splitMarkers } from '$lib/inline-markers';
 
@@ -47,17 +46,10 @@
 
 	let { title, node, lang, work }: Props = $props();
 
-	let openMarkers = $state(new SvelteSet<number>());
-
 	const pieces = $derived(splitMarkers(title, node.title_marked));
 
 	function citationFor(marker: string) {
 		return node.citations?.find((c) => c.marker === marker);
-	}
-
-	function toggle(seq: number) {
-		if (openMarkers.has(seq)) openMarkers.delete(seq);
-		else openMarkers.add(seq);
 	}
 </script>
 
@@ -66,6 +58,4 @@
 			citation={citationFor(piece.marker)}
 			{lang}
 			{work}
-			open={openMarkers.has(piece.seq)}
-			onToggle={() => toggle(piece.seq)}
 		/>{/if}{/each}
