@@ -429,6 +429,12 @@ optional in `src/worker.ts`, so a deploy without it serves the site normally
 and drops beacons — right for a statistic, and the reason a missing database
 is not a build error.
 
+**The device record expires after a year and that number is load-bearing in two
+directions** — see `RECORD_MAX_DAYS`. Shortening it is not free (it inflates the
+`new` bucket, worst for infrequent readers) and lengthening it walks toward the
+thirteen-month figure the ePrivacy exemption argument rests on. Change it only
+with both halves in view.
+
 **The colophon's promise moved with the code, in fourteen dictionaries.**
 `colophon.pointNoTracking` used to say "no analytics"; it now states what is
 actually collected. Anything that changes what the beacon sends has to be

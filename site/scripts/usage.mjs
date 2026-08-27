@@ -267,7 +267,12 @@ export function render(data, opts = {}) {
 
 	out.push(section('RETURN — days active of the last 28', bar(data.days28, sessions)));
 	out.push(section('RETURN — lifetime visits', bar(data.visits, sessions)));
-	out.push(section('RETURN — device age', bar(data.age, sessions)));
+	out.push(
+		section('RETURN — device age', bar(data.age, sessions)) +
+			'\n  (a device record expires after a year, so `new` over-counts by about\n' +
+			'   one session per device per year — 0.3% of a daily reader\u2019s sessions,\n' +
+			'   8% of a monthly one\u2019s)'
+	);
 	out.push(section('SESSION — visible minutes', bar(data.minutes, sessions)));
 	out.push(section('SESSION — entry', bar(data.entry, sessions)));
 

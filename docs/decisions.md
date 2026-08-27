@@ -1240,6 +1240,26 @@ requests to a zone whose documented failure mode is too many navigations, 100,00
 invocations, and 429 on everything until 00:00 UTC. It also injects into HTML, and this
 site serves exactly one HTML file, precached by the service worker.
 
+**The device record expires after twelve months, absolutely.** The record is written
+purely for measurement, so it is not "strictly necessary for a service the user
+requested" and lives or dies by the first-party audience-measurement exemption several
+DPAs allow; a limited storage lifetime is one of that exemption's conditions, and CNIL's
+reference figure is thirteen months. A year is clearly inside it rather than sitting on
+it.
+
+The window is bounded from below too, by what the buckets can express. `age` tops out at
+`90d+`, so any expiry past three months costs that field nothing at all — which is the
+argument against cutting this to six months, since the only field that wants the room is
+`visits`, whose top bucket a daily reader reaches inside four months. And it is an
+ABSOLUTE lifetime, never renewed by a visit: a sliding window would keep a record alive
+forever for exactly the readers who visit most, which is what the condition exists to
+prevent.
+
+The cost is one distorted number, and the report prints the caveat beside it: a returning
+device whose record has expired reports `age: new, visits: 1` for one session, so `new`
+is over-counted by roughly one session per device per year — 0.3% of a daily reader's
+sessions, 8% of a monthly one's.
+
 **Nothing is collected from a developer's machine, and `dev` alone does not
 establish that.** `$app/environment`'s `dev` is `import.meta.env.DEV`, so it is false
 under `npm run preview` and false under `wrangler dev` — both of which serve a production

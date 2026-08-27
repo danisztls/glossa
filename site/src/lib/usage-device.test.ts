@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+	RECORD_MAX_DAYS,
 	WINDOW_DAYS,
 	classifyDevice,
 	classifyEntry,
@@ -13,6 +14,7 @@ import {
 	shouldCollect,
 	type DeviceRecord
 } from './usage-device';
+import { bucketAge, bucketVisits } from './usage-schema';
 
 describe('rollDevice', () => {
 	it('starts a device on its first session', () => {
@@ -268,5 +270,63 @@ describe('shouldCollect', () => {
 		for (const host of ['notlocalhost.com', 'localhost.evil.net', 'my127.0.0.1.example']) {
 			expect(isLocalHost(host), host).toBe(false);
 		}
+	});
+});
+
+describe('record expiry', () => {
+	it('keeps a record for its whole permitted life', () => {
+		let record = rollDevice(undefined, '2026-01-01');
+		record = rollDevice(record, '2026-06-01');
+		expect(record.first).toBe('2026-01-01');
+		expect(record.visits).toBe(2);
+
+		// The day before it expires, it is still the same record.
+		const lastDay = new Date(
+			Date.parse('2026-01-01T00:00:00Z') + (RECORD_MAX_DAYS - 1) * 86_400_000
+		)
+			.toISOString()
+			.slice(0, 10);
+		record = rollDevice(record, lastDay);
+		expect(record.first).toBe('2026-01-01');
+		expect(record.visits).toBe(3);
+	});
+
+	it('discards the whole record once it is a year old', () => {
+		let record = rollDevice(undefined, '2026-01-01');
+		record = rollDevice(record, '2026-06-01');
+		const expiryDay = new Date(Date.parse('2026-01-01T00:00:00Z') + RECORD_MAX_DAYS * 86_400_000)
+			.toISOString()
+			.slice(0, 10);
+		record = rollDevice(record, expiryDay);
+		// Started over, not trimmed: half a record is not a shorter-lived one.
+		expect(record).toEqual({ first: expiryDay, visits: 1, anchor: expiryDay, mask: 1 });
+	});
+
+	it('is an absolute lifetime, never renewed by visiting', () => {
+		// A sliding window would keep a record alive forever for the readers who
+		// visit most, which is what the lifetime condition exists to prevent.
+		let record = rollDevice(undefined, '2026-01-01');
+		for (let day = 0; day <= RECORD_MAX_DAYS; day += 1) {
+			const date = new Date(Date.parse('2026-01-01T00:00:00Z') + day * 86_400_000)
+				.toISOString()
+				.slice(0, 10);
+			record = rollDevice(record, date);
+		}
+		// Visited every single day, and it still expires on schedule.
+		expect(record.first).not.toBe('2026-01-01');
+		expect(record.visits).toBe(1);
+	});
+
+	it('costs the age bucket nothing, which is why a year is enough', () => {
+		// `age` tops out at `90d+`, so any expiry past three months is invisible
+		// to it. This is the argument for not cutting the window further.
+		expect(bucketAge(RECORD_MAX_DAYS - 1)).toBe('90d+');
+		expect(bucketAge(91)).toBe('90d+');
+	});
+
+	it('leaves a daily reader saturating the visits bucket before expiry', () => {
+		// The field that actually wants the room. A daily reader reaches `100+`
+		// inside four months and stays there.
+		expect(bucketVisits(RECORD_MAX_DAYS)).toBe('100+');
 	});
 });

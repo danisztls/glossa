@@ -29,6 +29,37 @@ const WINDOW_MASK = (1 << WINDOW_DAYS) - 1;
 
 const MS_PER_DAY = 86_400_000;
 
+/**
+ * How long a device's record may live before it is discarded and started over.
+ *
+ * TWELVE MONTHS, and the number is bounded from both directions.
+ *
+ * FROM ABOVE, by ePrivacy: a record written purely for measurement is not
+ * "strictly necessary for a service the user requested", so it lives or dies by
+ * the first-party audience-measurement exemption several DPAs allow — and a
+ * limited storage lifetime is one of that exemption's conditions. CNIL's
+ * reference figure is thirteen months. A year is clearly inside it rather than
+ * sitting on it, which is the difference between an argument and a technicality.
+ *
+ * FROM BELOW, by what the buckets can actually express. `age` tops out at
+ * `90d+`, so ANY expiry past three months costs that field literally nothing —
+ * a two-year reader and a four-month reader already report the same thing. The
+ * only field that wants more room is `visits`, whose top bucket is `100+`: a
+ * daily reader reaches it inside four months, a weekly reader would want two
+ * years. A year is the compromise, and it is the reason not to cut this to six.
+ *
+ * THE EXPIRY DOES DISTORT ONE NUMBER, and the report says so. A returning
+ * device whose record has expired reports `age: new, visits: 1` for exactly one
+ * session, so `new` is over-counted by roughly one session per device per year.
+ * For a daily reader that is 0.3% of their sessions; for a monthly reader it is
+ * 8%. Read a small `new` share as real and a large one with this in mind.
+ *
+ * IT IS AN ABSOLUTE LIFETIME, NOT A SLIDING ONE. Renewing it on every visit
+ * would keep a record alive forever for the readers who visit most, which is
+ * the specific thing the exemption's lifetime condition exists to prevent.
+ */
+export const RECORD_MAX_DAYS = 365;
+
 export interface DeviceRecord {
 	/** UTC date of this device's first session, for the `age` bucket. */
 	first: string;
@@ -74,7 +105,11 @@ export function countDays(mask: number): number {
  * boundary is precise enough to notice.
  */
 export function rollDevice(stored: DeviceRecord | undefined, today: string): DeviceRecord {
-	if (!stored) return { first: today, visits: 1, anchor: today, mask: 1 };
+	const fresh = { first: today, visits: 1, anchor: today, mask: 1 };
+	if (!stored) return fresh;
+	// Expired: discard and start over, rather than trimming a field. Half a
+	// record is not a shorter-lived record.
+	if (daysBetween(stored.first, today) >= RECORD_MAX_DAYS) return fresh;
 
 	const delta = Math.max(0, daysBetween(stored.anchor, today));
 	// A gap of a whole window leaves nothing to keep: shifting by 28 or more
