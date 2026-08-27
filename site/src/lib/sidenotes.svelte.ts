@@ -1,3 +1,5 @@
+import { untrack } from 'svelte';
+
 /**
  * Whether the reader's viewport has room to set notes in the margin.
  *
@@ -98,14 +100,38 @@ class SidenoteRoom {
 	 * Take the margin for this surface's own layout, and hand back the release
 	 * — shaped for `$effect`, whose return value is its teardown, so a caller
 	 * is one line and cannot forget the other half.
+	 *
+	 * BOTH HALVES MUTATE UNTRACKED, AND THAT IS LOAD-BEARING RATHER THAN
+	 * TIDY. `#claims += 1` READS `#claims` as well as writing it, so
+	 * `$effect(() => sidenoteRoom.claim())` — the one line this method is
+	 * shaped for — made the effect depend on the very state it was setting.
+	 * Mounted, that re-entered until Svelte gave up with
+	 * `effect_update_depth_exceeded`, which is thrown during hydration and
+	 * leaves the route blank. It took down every compare view and nothing
+	 * else, because `CompareGrid` is the only claimant.
+	 *
+	 * THE FIX BELONGS HERE AND NOT AT THE CALL SITE. A method whose whole
+	 * documented shape is "hand this to `$effect`" has to be safe to hand to
+	 * one; an `untrack` the caller must remember is the same trap with an
+	 * extra step. `#claims` stays `$state` because `margin` is derived from
+	 * it — what must not be tracked is the increment, not the value.
+	 *
+	 * IT REPRODUCES ONLY FROM A MOUNTED COMPONENT, which is why there is no
+	 * test below it. The same two lines under a bare `$effect.root`, nested
+	 * or not, run clean and pass against the broken code; what fails is
+	 * mounting a component that carries the effect, and this repository has no
+	 * component harness to write that in (CLAUDE.md). It was confirmed against
+	 * a temporary one — `jsdom`, a two-line wrapper component, the throw
+	 * present without these two `untrack`s and absent with them — rather than
+	 * argued from the runtime's semantics.
 	 */
 	claim(): () => void {
-		this.#claims += 1;
+		untrack(() => (this.#claims += 1));
 		let released = false;
 		return () => {
 			if (released) return;
 			released = true;
-			this.#claims -= 1;
+			untrack(() => (this.#claims -= 1));
 		};
 	}
 }
