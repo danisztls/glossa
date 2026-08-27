@@ -39,8 +39,9 @@
 	 * background, a focus trap and Escape — which is mandatory rather than
 	 * convenient once a panel covers the screen: an overlay a reader can tab
 	 * out of into text they cannot see is worse than no overlay. This is the
-	 * third dialog on the site after `JumpBox` and `TocMenu`, and follows
-	 * both.
+	 * third dialog on the site after `JumpBox` and `TocMenu`, and wears the
+	 * shell and sheet chrome all three share (`.dialog-bare`, `.sheet`,
+	 * `.sheet-*` in app.css) — it declares no dialog CSS of its own.
 	 *
 	 * Unlike `TocMenu` it has exactly ONE form. That component becomes an
 	 * anchored card at 48rem because a screen with room to read around a
@@ -263,21 +264,21 @@
 		<dialog
 			bind:this={navDialog}
 			id="nav-sheet"
-			class="nav-sheet"
+			class="dialog-bare sheet"
 			aria-label={t('nav.menu')}
 			onclose={onNavClose}
 		>
 			{#if navOpen}
-				<div class="nav-sheet-panel">
+				<div class="sheet-panel">
 					<!-- The way out, and on a phone the ONLY one: the sheet is
-					     full-bleed, so there is no backdrop to tap, and there
-					     is no Escape key. `flex: none` above a scrolling body
-					     is what keeps it from being scrolled away. -->
-					<div class="nav-sheet-head">
-						<h2 class="nav-sheet-title">{t('nav.menu')}</h2>
+					     full-bleed, so there is no backdrop to tap and there is
+					     no Escape key. Why the head may not scroll away with
+					     it is `app.css`'s `.sheet-head`. -->
+					<div class="sheet-head">
+						<h2 class="sheet-title">{t('nav.menu')}</h2>
 						<button
 							type="button"
-							class="nav-sheet-close"
+							class="sheet-close"
 							aria-label={t('ui.close')}
 							title={t('ui.close')}
 							onclick={() => navDialog?.close()}
@@ -285,7 +286,9 @@
 							<Icon name="x" />
 						</button>
 					</div>
-					<nav class="nav-sheet-links">
+					<!-- The `<nav>` IS the sheet's scroll body; there is no
+					     wrapper between them, so it carries both classes. -->
+					<nav class="sheet-body nav-links">
 						{@render navLinks()}
 					</nav>
 				</div>
@@ -410,8 +413,8 @@
 
 	/*
 	 * THE HEADER'S ROW OF SECTIONS, AND ONLY THAT. Below 720px it is hidden
-	 * outright — not collapsed, not `height: 0` — and `.nav-sheet` is what
-	 * opens instead. It used to be one element in both roles, a
+	 * outright — not collapsed, not `height: 0` — and the sheet is what opens
+	 * instead. It used to be one element in both roles, a
 	 * `flex-basis: 100%` panel taking `order: 4` so that it wrapped onto a
 	 * second line of `.header-bar` when open; being part of the bar's layout
 	 * is precisely what made opening it move the page.
@@ -428,20 +431,43 @@
 	   a section that reads as current in the header must read as current in
 	   the sheet. Only the box around each row differs, below. */
 	.primary-nav a,
-	.nav-sheet-links a {
+	.nav-links a {
 		text-decoration: none;
 		color: var(--color-text-muted);
 	}
 
 	.primary-nav a[aria-current='page'],
-	.nav-sheet-links a[aria-current='page'] {
+	.nav-links a[aria-current='page'] {
 		color: var(--color-text);
 		font-weight: 600;
 	}
 
 	.primary-nav a:hover,
-	.nav-sheet-links a:hover {
+	.nav-links a:hover {
 		color: var(--color-text);
+	}
+
+	/* The sheet's own list. Everything else it wears — the dialog shell, the
+	   panel, the head, the title, the close button, the scroll body — is
+	   `app.css`'s `.dialog-bare`/`.sheet`/`.sheet-*`, shared with `TocMenu`
+	   and `JumpBox`. A column because these six rows are a stack, which a
+	   plain block body does not assume. */
+	.nav-links {
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* Sized for a thumb rather than for a pointer, which the header's own
+	   copy of these links is: six rows have the room on a sheet that owns the
+	   whole viewport, and this is the only rendering a touch reader gets. */
+	.nav-links a {
+		padding: 0.85rem 0.5rem;
+		border-radius: 0.4rem;
+		font-size: 1.05rem;
+	}
+
+	.nav-links a:hover {
+		background: var(--color-bg-elevated);
 	}
 
 	@media (min-width: 720px) {
@@ -469,133 +495,6 @@
 		.controls {
 			order: 3;
 		}
-	}
-
-	/*
-	 * ## THE SHEET
-	 *
-	 * Modelled on `TocMenu`'s, deliberately and down to the class shapes:
-	 * they are the site's two full-viewport panels and a reader meets them
-	 * within one tap of each other, so a second visual language here would
-	 * read as a second kind of thing. The styles are copied rather than
-	 * shared because Svelte scopes them per component and the alternative is
-	 * a global `.sheet-*` primitive with two callers — worth writing on the
-	 * third, not the second.
-	 *
-	 * THE DIALOG IS POSITION AND NOTHING ELSE, so that every visible pixel
-	 * belongs to `.nav-sheet-panel` inside it. No `z-index`: an open modal
-	 * dialog is in the top layer, above every stacking context there is —
-	 * including the reading bar's, and including whatever `.site-header` may
-	 * grow back one day.
-	 */
-	.nav-sheet {
-		position: fixed;
-		inset: 0;
-		inline-size: 100%;
-		max-inline-size: none;
-		block-size: 100%;
-		max-block-size: none;
-		margin: 0;
-		border: none;
-		padding: 0;
-		background: transparent;
-		color: inherit;
-	}
-
-	/*
-	 * `[open]` is not decoration on this selector: a closed `<dialog>` is
-	 * `display: none` from the UA stylesheet, and a bare `.nav-sheet { display:
-	 * flex }` would override it and leave the sheet on screen permanently.
-	 *
-	 * The column starts here rather than on the panel so that the panel's
-	 * `min-block-size: 0` has a bounded parent to resolve against — which is
-	 * what makes the link list a scroll box rather than something the dialog
-	 * silently clips.
-	 */
-	.nav-sheet[open] {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.nav-sheet-panel {
-		flex: 1 1 auto;
-		min-block-size: 0;
-		display: flex;
-		flex-direction: column;
-		background: var(--color-bg);
-	}
-
-	.nav-sheet-head {
-		flex: none;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem;
-		padding: 0.5rem 0.75rem;
-		border-block-end: 1px solid var(--color-border);
-	}
-
-	/* The muted, letter-spaced capitals the site gives a panel's own heading
-	   (`.sidebar-toc-heading` in app.css, `.toc-panel-title` in `TocMenu`) —
-	   a label over the list, not a title competing with the wordmark. */
-	.nav-sheet-title {
-		margin: 0;
-		font-family: var(--font-sans);
-		font-size: 0.85rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.03em;
-		color: var(--color-text-muted);
-	}
-
-	/* Borderless, unlike `.menu-trigger`: it sits inside the surface it
-	   closes rather than on the page, and a boxed control there reads as a
-	   second action to weigh rather than as the way out. Sized for a thumb
-	   regardless of pointer — it is the sheet's only exit. */
-	.nav-sheet-close {
-		flex: none;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		inline-size: 2.5rem;
-		block-size: 2.5rem;
-		padding: 0;
-		border: none;
-		border-radius: 0.4rem;
-		background: none;
-		color: var(--color-text-muted);
-		font-size: 1.1rem;
-		cursor: pointer;
-	}
-
-	.nav-sheet-close:hover {
-		color: var(--color-accent);
-		background: var(--color-bg-elevated);
-	}
-
-	.nav-sheet-links {
-		flex: 1 1 auto;
-		min-block-size: 0;
-		overflow-y: auto;
-		/* The page behind is inert, but iOS still chains a scroll that runs
-		   off the end of this box to the document underneath. */
-		overscroll-behavior: contain;
-		display: flex;
-		flex-direction: column;
-		padding: 0.5rem 0.75rem 1.5rem;
-	}
-
-	/* Sized for a thumb rather than for a pointer, which the header's own
-	   copy of these links is: six rows have the room on a sheet that owns the
-	   whole viewport, and this is the only rendering a touch reader gets. */
-	.nav-sheet-links a {
-		padding: 0.85rem 0.5rem;
-		border-radius: 0.4rem;
-		font-size: 1.05rem;
-	}
-
-	.nav-sheet-links a:hover {
-		background: var(--color-bg-elevated);
 	}
 
 	main {

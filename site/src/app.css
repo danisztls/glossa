@@ -2666,6 +2666,144 @@ input {
 }
 
 /* ---------------------------------------------------------------------------
+   Modal dialogs: the bare shell, and the full-viewport sheet
+
+   The `.menu-*` primitive above is the dropdown; this is what a panel becomes
+   when it stops being one. Same reasoning for defining it here: Svelte's
+   per-component scoping has no mechanism to share a block across files, and
+   these rules had been written three times (`JumpBox`, `TocMenu`, and the
+   header's navigation sheet in `+layout.svelte`) with the third copy taken
+   from the second. Each component still owns its own `showModal()`, its own
+   dismissal and its own focus handling; this standardizes only what the
+   shell looks like.
+   --------------------------------------------------------------------------- */
+
+/*
+ * A DIALOG IS POSITION AND NOTHING ELSE. The UA stylesheet's border, padding
+ * and background are cleared so that every visible pixel belongs to the box
+ * INSIDE the dialog — which is what makes each component's
+ * `e.target === dialogEl` test mean "the reader clicked the backdrop" rather
+ * than "the reader clicked the panel's own margin".
+ *
+ * No `z-index` anywhere in here: a dialog opened with `showModal()` is in the
+ * top layer, above every stacking context there is.
+ */
+.dialog-bare {
+	max-inline-size: none;
+	border: none;
+	padding: 0;
+	background: transparent;
+	color: inherit;
+}
+
+.dialog-bare::backdrop {
+	background: rgb(0 0 0 / 35%);
+}
+
+/*
+ * THE SHEET: a dialog that IS the viewport. What a panel becomes on a phone,
+ * where an anchored card is a fiction — the surround it leaves is a sliver
+ * too narrow to read, and that sliver is also the only target for the
+ * outside-click that dismisses it. A sheet says what such a panel already
+ * was, and turns the dismissal into a control instead of a margin.
+ *
+ * `[open]` is not decoration on the second selector: a closed `<dialog>` is
+ * `display: none` from the UA stylesheet, and a bare `.sheet { display: flex }`
+ * would override it and leave the panel on screen permanently. The flex column
+ * has to start on the dialog rather than on `.sheet-panel`, because a
+ * component that gives the dialog a `max-block-size` (the card form
+ * `TocMenu` takes above 48rem) leaves the panel in an auto-height box, where
+ * a percentage height resolves to `auto`: the panel would grow to its content,
+ * `.sheet-body` would never become a scroll box, and the last rows would be
+ * silently clipped. Bounding the flex container is what makes the body scroll
+ * in both forms.
+ */
+.sheet {
+	position: fixed;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	max-block-size: none;
+	margin: 0;
+}
+
+.sheet[open] {
+	display: flex;
+	flex-direction: column;
+}
+
+.sheet-panel {
+	flex: 1 1 auto;
+	min-block-size: 0;
+	display: flex;
+	flex-direction: column;
+	background: var(--color-bg);
+}
+
+/* `flex: none` above a scrolling body, and that is load-bearing rather than
+   tidy: in sheet form the close button below is the ONLY way out — there is
+   no backdrop to tap and a phone has no Escape key — so a head that scrolled
+   away past row 40 of 189 would leave a reader shut in. Opaque for the same
+   reason, since the body scrolls under it. */
+.sheet-head {
+	flex: none;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	padding: 0.5rem 0.75rem;
+	border-block-end: 1px solid var(--color-border);
+	background: var(--color-bg);
+}
+
+/* The muted, letter-spaced capitals `.sidebar-toc-heading` above takes: the
+   panel's own label, not a title competing with the content under it. */
+.sheet-title {
+	margin: 0;
+	font-family: var(--font-sans);
+	font-size: 0.85rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: var(--color-text-muted);
+}
+
+/* Borderless, unlike `.menu-trigger`: it sits inside the surface it closes
+   rather than on the page, and a boxed control there reads as a second action
+   to weigh rather than as the way out. Sized for a thumb regardless of
+   pointer — it is the sheet's only exit. */
+.sheet-close {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 2.5rem;
+	block-size: 2.5rem;
+	padding: 0;
+	border: none;
+	border-radius: 0.4rem;
+	background: none;
+	color: var(--color-text-muted);
+	font-size: 1.1rem;
+	cursor: pointer;
+}
+
+.sheet-close:hover {
+	color: var(--color-accent);
+	background: var(--color-bg-elevated);
+}
+
+.sheet-body {
+	flex: 1 1 auto;
+	min-block-size: 0;
+	overflow-y: auto;
+	/* The page behind an open modal is inert, but iOS still chains a scroll
+	   that runs off the end of this box to the document underneath. */
+	overscroll-behavior: contain;
+	padding: 0.6rem 0.75rem 1rem;
+}
+
+/* ---------------------------------------------------------------------------
    Writing direction, taken from the CONTENT language
 
    `<html dir>` follows the INTERFACE language (i18n.svelte.ts, and app.html

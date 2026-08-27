@@ -429,6 +429,7 @@
 -->
 <dialog
 	bind:this={dialogEl}
+	class="dialog-bare"
 	aria-label={t('jumpbox.placeholder')}
 	onclose={onClose}
 	onclick={onDialogClick}
@@ -573,12 +574,12 @@
 	}
 
 	/*
-	 * The dialog element itself is nothing but position: the UA stylesheet's
-	 * border, padding and background are all cleared, and the visible box is
-	 * `.panel` inside it. That split is what makes `onDialogClick`'s
-	 * `e.target === dialogEl` test mean "the reader clicked the backdrop" —
-	 * with padding here, the panel's own margin would be part of the dialog's
-	 * box and clicking it would dismiss.
+	 * The dialog element itself is nothing but position — the UA stylesheet's
+	 * border, padding and background cleared, the visible box `.panel` inside
+	 * it, which is what makes `onDialogClick`'s `e.target === dialogEl` test
+	 * mean "the reader clicked the backdrop". That reset and the backdrop's
+	 * tint are `app.css`'s `.dialog-bare`, shared with `TocMenu` and the
+	 * header's navigation sheet; what is left here is where this one sits.
 	 *
 	 * `margin` replaces the old flex backdrop: `auto` on three sides is the
 	 * UA's centring, and 12vh on the block start is the same "sits high, not
@@ -588,16 +589,7 @@
 	 */
 	dialog {
 		width: min(32rem, 90vw);
-		max-width: none;
 		margin: 12vh auto auto;
-		border: none;
-		padding: 0;
-		background: transparent;
-		color: inherit;
-	}
-
-	dialog::backdrop {
-		background: rgb(0 0 0 / 35%);
 	}
 
 	.panel {

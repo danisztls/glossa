@@ -52,6 +52,12 @@
 	visible box is a child (see its own docblock for why the padding must live
 	on the child and not here).
 
+	THE SHELL AND THE SHEET CHROME ARE `app.css`'s — `.dialog-bare`, `.sheet`
+	and the `.sheet-*` parts — shared with `JumpBox` and with the header's
+	navigation sheet in `+layout.svelte`. Only the CARD is this component's
+	own, because only this component has one, and this file's stylesheet is
+	that media query and almost nothing else.
+
 	What that replaces is the `Menu` class this used first: `onWindowClick`,
 	`onPanelKeydown`, and a window-level Escape handler written here because a
 	trigger keeps focus and the panel's own `keydown` therefore never fires.
@@ -176,7 +182,7 @@
 	 * they are.
 	 */
 	function revealCurrent() {
-		const box = dialogEl?.querySelector<HTMLElement>('.toc-panel-body');
+		const box = dialogEl?.querySelector<HTMLElement>('.sheet-body');
 		const row = box?.querySelector<HTMLElement>('[aria-current="page"]');
 		if (!box || !row) return;
 		const rowBox = row.getBoundingClientRect();
@@ -198,7 +204,7 @@
 
 	/* A click that lands on the dialog ITSELF is a click on the backdrop: the
 	   dialog is transparent and has no padding, so every visible pixel belongs
-	   to `.toc-panel` inside it. Same test, and the same reason for it, as
+	   to `.sheet-panel` inside it. Same test, and the same reason for it, as
 	   `JumpBox`'s `onDialogClick`. Never fires in sheet form, where the panel
 	   fills the dialog and there is no backdrop to hit. */
 	function onDialogClick(e: MouseEvent) {
@@ -259,7 +265,7 @@
 	     sets its heading from. -->
 	<dialog
 		bind:this={dialogEl}
-		class="toc-dialog"
+		class="dialog-bare sheet toc-dialog"
 		aria-label={label}
 		style:--toc-top={coords ? `${coords.top}px` : '0px'}
 		style:--toc-left={coords ? `${coords.left}px` : '0px'}
@@ -267,20 +273,18 @@
 		onclick={onDialogClick}
 	>
 		{#if open}
-			<div class="toc-panel">
-				<!-- STICKY, AND THAT IS LOAD-BEARING RATHER THAN TIDY. In sheet
-				     form this button is the ONLY way out — there is no backdrop
-				     to tap and a phone has no Escape key — so a header that
-				     scrolled away past row 40 of 189 would leave a reader shut
-				     in. It carries the list's own title because the child's
-				     heading is hidden inside this panel (see the `:global` rule
-				     below), which is what keeps the words from appearing twice
-				     in the first two lines of the sheet. -->
-				<div class="toc-panel-head">
-					<h2 class="toc-panel-title">{label}</h2>
+			<div class="sheet-panel">
+				<!-- The head carries the list's own title because the child's
+				     heading is hidden inside this panel (see the `:global`
+				     rule below), which is what keeps the words from appearing
+				     twice in the first two lines of the sheet. Why it may not
+				     scroll away with the list is `app.css`'s `.sheet-head`:
+				     in sheet form this button is the only way out. -->
+				<div class="sheet-head">
+					<h2 class="sheet-title">{label}</h2>
 					<button
 						type="button"
-						class="toc-close"
+						class="sheet-close"
 						aria-label={t('ui.close')}
 						title={t('ui.close')}
 						onclick={() => dialogEl?.close()}
@@ -288,7 +292,7 @@
 						<Icon name="x" />
 					</button>
 				</div>
-				<div class="toc-panel-body" use:closeOnFollow>
+				<div class="sheet-body" use:closeOnFollow>
 					{@render content()}
 				</div>
 			</div>
@@ -306,131 +310,16 @@
 	   wrapper's whole story is where it appears, so it is stated where the
 	   rest of that story is.
 
-	   Everything below is inside the dialog, which app.css never names. */
+	   The dialog and its panel are `.dialog-bare`/`.sheet`/`.sheet-*`, also
+	   from app.css, where the sheet is written as the default because the
+	   phone is the case it exists for. Everything below is this component's
+	   departure from it. */
 
 	/*
-	 * THE DIALOG IS POSITION AND NOTHING ELSE, so that every visible pixel
-	 * belongs to `.toc-panel` and `onDialogClick`'s backdrop test means what it
-	 * says. `JumpBox` makes the same split for the same reason.
-	 *
-	 * The default here is the SHEET — the phone case is the one this exists
-	 * for, and writing it as the base rather than as an override is what keeps
-	 * it from depending on a query to be correct. No `z-index`: an open modal
-	 * dialog is in the top layer, above every stacking context there is,
-	 * including the reading bar's own.
-	 */
-	.toc-dialog {
-		position: fixed;
-		inset: 0;
-		inline-size: 100%;
-		max-inline-size: none;
-		block-size: 100%;
-		max-block-size: none;
-		margin: 0;
-		border: none;
-		padding: 0;
-		background: transparent;
-		color: inherit;
-	}
-
-	/* Only ever seen in card form; in sheet form the panel covers it. */
-	.toc-dialog::backdrop {
-		background: rgb(0 0 0 / 35%);
-	}
-
-	/*
-	 * THE DIALOG IS THE FLEX COLUMN, and `[open]` is not decoration on that
-	 * selector. A closed `<dialog>` is `display: none` from the UA stylesheet;
-	 * a bare `.toc-dialog { display: flex }` would override it and leave the
-	 * panel on screen permanently.
-	 *
-	 * The column has to start here rather than on `.toc-panel` because the
-	 * card's height is `max-block-size`, and a percentage height on a child of
-	 * an auto-height box resolves to `auto` — `.toc-panel` would have grown to
-	 * its content, `.toc-panel-body` would never have become a scroll box, and
-	 * the dialog's `overflow: hidden` would have silently cut the last rows off
-	 * instead. Bounding the flex container is what makes the body scroll in
-	 * both forms.
-	 */
-	.toc-dialog[open] {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.toc-panel {
-		flex: 1 1 auto;
-		min-block-size: 0;
-		display: flex;
-		flex-direction: column;
-		background: var(--color-bg);
-	}
-
-	.toc-panel-head {
-		flex: none;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem;
-		padding: 0.5rem 0.75rem;
-		border-block-end: 1px solid var(--color-border);
-		background: var(--color-bg);
-	}
-
-	/* The interface face and the muted, letter-spaced capitals the sidebar's
-	   own heading takes (`.sidebar-toc-heading`, app.css) — this replaces that
-	   heading inside the panel, so it should not read as a different kind of
-	   thing from the one it stands in for. */
-	.toc-panel-title {
-		margin: 0;
-		font-family: var(--font-sans);
-		font-size: 0.85rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.03em;
-		color: var(--color-text-muted);
-	}
-
-	/* Borderless, like `InstallHint`'s dismiss and unlike `.menu-trigger`: it
-	   sits inside the surface it closes rather than on the page, and a boxed
-	   control there reads as a second action to weigh rather than as the way
-	   out. Sized for a thumb regardless of pointer — it is the sheet's only
-	   exit. */
-	.toc-close {
-		flex: none;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		inline-size: 2.5rem;
-		block-size: 2.5rem;
-		padding: 0;
-		border: none;
-		border-radius: 0.4rem;
-		background: none;
-		color: var(--color-text-muted);
-		font-size: 1.1rem;
-		cursor: pointer;
-	}
-
-	.toc-close:hover {
-		color: var(--color-accent);
-		background: var(--color-bg-elevated);
-	}
-
-	.toc-panel-body {
-		flex: 1 1 auto;
-		min-block-size: 0;
-		overflow-y: auto;
-		/* The page behind is inert, but iOS still chains a scroll that runs
-		   off the end of this box to the document underneath. */
-		overscroll-behavior: contain;
-		padding: 0.6rem 0.75rem 1rem;
-	}
-
-	/*
-	 * The list's own heading, suppressed — `.toc-panel-head` above says the
-	 * same words and stays put while the list scrolls under it, which a
-	 * heading inside the scroll area cannot do. Reaching into the child is the
-	 * price of the sticky header; the alternative was a presentation prop on
+	 * The list's own heading, suppressed — `.sheet-head` says the same words
+	 * and stays put while the list scrolls under it, which a heading inside
+	 * the scroll area cannot do. Reaching into the child is the price of the
+	 * sticky header; the alternative was a presentation prop on
 	 * `StructureSidebarToc` describing where it was being rendered, which is
 	 * the kind of knowledge a component should not have about its caller.
 	 *
@@ -438,7 +327,7 @@
 	 * against hidden text by specification, so the heading still names the
 	 * landmark it is `display: none` for.
 	 */
-	.toc-panel-body :global(.sidebar-toc-heading) {
+	.sheet-body :global(.sidebar-toc-heading) {
 		display: none;
 	}
 
@@ -447,6 +336,10 @@
 	 * `reposition()`. See the docblock for why the line is here and not at the
 	 * sidebar's own 80rem: a screen with room to read around the panel should
 	 * still show the text.
+	 *
+	 * These are the declarations that overrule the shared `.sheet`, and they
+	 * do it without `!important`: a scoped selector compiles to
+	 * `.toc-dialog.svelte-hash`, which outranks a global single class.
 	 *
 	 * `inset: auto` first, or the sheet's `inset: 0` keeps winning over `top`
 	 * and `left` — a `<dialog>` is `position: fixed` in both forms and all four
