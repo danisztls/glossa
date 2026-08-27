@@ -1220,6 +1220,17 @@ different notes `1` down a single chapter; `noteKey` existed for that and is gon
 along with the `unit` prop whose only reader it was. `$props.id()` is per instance, and
 there is one instance per note.
 
+**And it is what let the Bible's comparison stop stripping the apparatus.** That route's
+compare cell printed `verse.text` and nothing else — the one place on the site where
+comparing cost the reader something the single column gave them, and precisely where they
+have most reason to want it, since Challoner is often explaining why his verse says what
+the column beside it does not. A gloss that opened as a block in the flow could not have
+been restored there: it would have pushed one column's verses out of alignment with the
+other's, which is the one thing a comparison cannot survive. A card costs the grid no
+layout. The cell also had to become two — each column's notes are written in that
+edition's language, resolve against that edition's work id, and take their letters from
+that chapter's own run, none of which one shared snippet could carry.
+
 **Fixtures deliberately encode absent chapters and out-of-range cross-references** to
 exercise the not-in-corpus paths, and a second English Bible to exercise the
 preferred-edition table. `npm test` always uses them (`corpus.ts` checks

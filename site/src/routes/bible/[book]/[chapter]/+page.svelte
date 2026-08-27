@@ -193,9 +193,18 @@
 	}
 
 	/** Where each unit's notes start in the chapter's lettered run — see
-	 *  `chapterNoteOffsets`, which is the reading-order rule this depends on. */
+	 *  `chapterNoteOffsets`, which is the reading-order rule this depends on.
+	 *
+	 *  ONE PER EDITION, because the lettering is a property of the chapter
+	 *  being read and the two columns are two different chapters: the
+	 *  Douay-Rheims annotates John 3 twenty-one times where Matos Soares
+	 *  annotates it four, so a single run of letters shared between them would
+	 *  label the right column out of its own sequence. */
 	const noteOffsets = $derived(
 		current ? chapterNoteOffsets(current.chapter) : new Map<string, number>()
+	);
+	const secondaryNoteOffsets = $derived(
+		secondary ? chapterNoteOffsets(secondary.chapter) : new Map<string, number>()
 	);
 
 	/**
@@ -396,8 +405,52 @@
      in `$lib/compare.ts`, and the `unit` prop passed to `CompareGrid` below
      for this route's addresses. -->
 
-{#snippet verseCell(verse: Verse)}
-	<p class="compare-verse">{verse.text}</p>
+<!--
+	A verse as a compare cell. TWO SNIPPETS RATHER THAN ONE, because the two
+	columns are two editions: each note is written in its own edition's
+	language, resolves its references against its own work id (Challoner writes
+	"2 Kings 24" for 2 Samuel 24 — `bible.douay-rheims.en` is in `WORK_CONFIGS`
+	for it) and takes its label from its own chapter's run of letters. A single
+	shared cell could carry none of that, which is why this printed
+	`verse.text` and nothing else.
+
+	IT PRINTED THE TEXT AND DROPPED THE APPARATUS, and that was the one place
+	on the site where comparing cost the reader something the single column
+	gave them: an annotated edition's whole point is the annotation, and this
+	is exactly where a reader has reason to want it — Challoner explaining why
+	his verse says what the column beside it does not. It is restored now that
+	a note is a card rather than a block: a gloss opening in the flow would
+	have pushed one column's verses out of alignment with the other's, which
+	is the one thing a comparison cannot survive. The card costs the grid no
+	layout at all.
+
+	No drop cap: the single-column reader promotes the chapter's first letter,
+	and two of them side by side read as two beginnings rather than one.
+-->
+{#snippet leftVerseCell(verse: Verse)}
+	<p class="compare-verse">
+		<AnnotatedText
+			text={verse.text}
+			textMarked={verse.text_marked}
+			notes={verse.notes}
+			lang={current?.work.language ?? 'en'}
+			work={workId}
+			noteOffset={noteOffsets.get(`v${verse.n}`) ?? 0}
+		/>
+	</p>
+{/snippet}
+
+{#snippet rightVerseCell(verse: Verse)}
+	<p class="compare-verse">
+		<AnnotatedText
+			text={verse.text}
+			textMarked={verse.text_marked}
+			notes={verse.notes}
+			lang={secondary?.work.language ?? 'en'}
+			work={secondaryWorkId}
+			noteOffset={secondaryNoteOffsets.get(`v${verse.n}`) ?? 0}
+		/>
+	</p>
 {/snippet}
 
 {#if introMode}
@@ -557,8 +610,8 @@
 					rightLang={secondary.work.language}
 					leftLabel={compareColumnLabel(current.work, true)}
 					rightLabel={compareColumnLabel(secondary.work, true)}
-					left={verseCell}
-					right={verseCell}
+					left={leftVerseCell}
+					right={rightVerseCell}
 					unit={(n) => ({
 						href: `#v${n}`,
 						canonicalHref: verseHref(n),
