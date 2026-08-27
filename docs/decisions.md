@@ -1240,25 +1240,54 @@ requests to a zone whose documented failure mode is too many navigations, 100,00
 invocations, and 429 on everything until 00:00 UTC. It also injects into HTML, and this
 site serves exactly one HTML file, precached by the service worker.
 
-**The device record expires after twelve months, absolutely.** The record is written
-purely for measurement, so it is not "strictly necessary for a service the user
-requested" and lives or dies by the first-party audience-measurement exemption several
-DPAs allow; a limited storage lifetime is one of that exemption's conditions, and CNIL's
-reference figure is thirteen months. A year is clearly inside it rather than sitting on
-it.
+**The law this is built to is the LGPD, and it is a better fit than the one the design
+was first argued against.** The site's author is in Brazil. There is no Brazilian analogue
+to ePrivacy's Art. 5(3) — the rule that storing information on a device is regulated
+whether or not it is personal data — so the localStorage counter, which under the European
+reading was the whole exposure, is not itself a regulated act here. What matters is
+whether what is transmitted is _dados pessoais_ at all (Art. 12: anonymised data is not,
+unless reversible by reasonable means), and on what legal basis.
 
-The window is bounded from below too, by what the buckets can express. `age` tops out at
-`90d+`, so any expiry past three months costs that field nothing at all — which is the
-argument against cutting this to six months, since the only field that wants the room is
-`visits`, whose top bucket a daily reader reaches inside four months. And it is an
-ABSOLUTE lifetime, never renewed by a visit: a sliding window would keep a record alive
-forever for exactly the readers who visit most, which is what the condition exists to
-prevent.
+The ANPD's `Guia Orientativo — Cookies e Proteção de Dados Pessoais` (2022) is directly on
+point: **legítimo interesse** (Art. 7, IX) supports first-party audience measurement
+without consent, provided the processing is limited to patterns and trends over
+**aggregated** data, is not combined with other tracking mechanisms, and does not build
+profiles. It names aggregation into anonymous statistics as something that _supports_ the
+basis rather than merely permitting it. Every condition is satisfied here by construction
+— one first-party origin, no third party, no identifier, buckets instead of values, and a
+`geo_lang` table with no key back to `session`. That last separation is what makes Art. 12
+an argument rather than an assertion: it is the reason an unusual reader is not unique in
+the table.
 
-The cost is one distorted number, and the report prints the caveat beside it: a returning
-device whose record has expired reports `age: new, visits: 1` for one session, so `new`
-is over-counted by roughly one session per device per year — 0.3% of a daily reader's
-sessions, 8% of a monthly one's.
+**This section is the legitimate-interest assessment.** ANPD's 2024 legitimate-interest
+guidance expects the balancing to be documented rather than assumed, and this is that
+document: the purpose, the alternatives rejected, the data deliberately not collected, and
+the measures that lower the risk. If it is ever asked for, it exists.
+
+**The device record expires after twelve months, absolutely.** The same ANPD guide
+requires a retention period proportionate to the purpose, rejects indeterminate durations
+outright, and asks that persistent storage be limited in time as far as the purpose
+allows. Twelve months is where that lands, and the window is bounded from below as well as
+above: `age` tops out at `90d+`, so any expiry past three months costs that field nothing,
+and the field that needs the room is `visits` — where the binding case is the INFREQUENT
+reader, who takes a year to reach twelve visits at all. Cutting to four months would
+report a monthly reader as a brand-new device three times a year, inflating the one number
+the whole measurement exists to establish. A year is the shortest window that does not
+corrupt the answer.
+
+It is an ABSOLUTE lifetime, never renewed by a visit: a sliding window would keep a record
+alive indefinitely for exactly the readers who visit most, which is what a retention limit
+is for. The cost is one distorted number, and the report prints the caveat beside it — a
+returning device whose record has expired reports `age: new, visits: 1` for one session,
+so `new` is over-counted by about one session per device per year (0.3% of a daily
+reader's sessions, 8% of a monthly one's).
+
+**EU readers are a real secondary exposure and the design is left at the stricter
+reading.** The interface is in fourteen languages, most of them European, which is the
+kind of evidence GDPR Art. 3(2) treats as offering a service into the Union; ePrivacy's
+consent rule is stricter than anything above. Nothing here was relaxed on discovering that
+the LGPD is the primary law — the point of recording it is to know which argument answers
+which regulator.
 
 **Nothing is collected from a developer's machine, and `dev` alone does not
 establish that.** `$app/environment`'s `dev` is `import.meta.env.DEV`, so it is false

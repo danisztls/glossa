@@ -34,29 +34,45 @@ const MS_PER_DAY = 86_400_000;
  *
  * TWELVE MONTHS, and the number is bounded from both directions.
  *
- * FROM ABOVE, by ePrivacy: a record written purely for measurement is not
- * "strictly necessary for a service the user requested", so it lives or dies by
- * the first-party audience-measurement exemption several DPAs allow — and a
- * limited storage lifetime is one of that exemption's conditions. CNIL's
- * reference figure is thirteen months. A year is clearly inside it rather than
- * sitting on it, which is the difference between an argument and a technicality.
+ * FROM ABOVE, by the LGPD — which is the law this site is actually exposed to,
+ * its author being in Brazil. There is NO Brazilian analogue to ePrivacy's
+ * Art. 5(3): writing to a device is not itself a regulated act here, and what
+ * matters is whether what is transmitted is dados pessoais at all. The ANPD's
+ * `Guia Orientativo — Cookies e Proteção de Dados Pessoais` (2022) accepts
+ * legítimo interesse (Art. 7, IX) for first-party audience measurement without
+ * consent, provided the processing is limited to patterns and trends over
+ * AGGREGATED data, is not combined with other tracking, and does not build
+ * profiles — all three of which this design satisfies by construction. What the
+ * same guide does require is a retention period proportionate to the purpose:
+ * indeterminate durations are rejected outright, and persistent storage is to
+ * be limited in time as far as the purpose allows. That is what this constant
+ * is, and the paragraph below is why the purpose does not allow less.
  *
  * FROM BELOW, by what the buckets can actually express. `age` tops out at
- * `90d+`, so ANY expiry past three months costs that field literally nothing —
- * a two-year reader and a four-month reader already report the same thing. The
- * only field that wants more room is `visits`, whose top bucket is `100+`: a
- * daily reader reaches it inside four months, a weekly reader would want two
- * years. A year is the compromise, and it is the reason not to cut this to six.
+ * `90d+`, so any expiry past three months costs that field literally nothing —
+ * a two-year reader and a four-month reader already report the same value. The
+ * field that needs the room is `visits`, and the binding case is the INFREQUENT
+ * reader: someone visiting monthly takes a year to reach twelve visits at all.
+ * Cutting the window to four months would not merely lose their history, it
+ * would report them as a brand-new device three times a year — inflating the
+ * one number this whole measurement exists to establish. A year is the shortest
+ * window that does not corrupt the answer.
  *
- * THE EXPIRY DOES DISTORT ONE NUMBER, and the report says so. A returning
- * device whose record has expired reports `age: new, visits: 1` for exactly one
- * session, so `new` is over-counted by roughly one session per device per year.
- * For a daily reader that is 0.3% of their sessions; for a monthly reader it is
- * 8%. Read a small `new` share as real and a large one with this in mind.
+ * THE EXPIRY STILL DISTORTS THAT NUMBER, and the report prints the caveat
+ * beside it. A returning device whose record has expired reports
+ * `age: new, visits: 1` for exactly one session, so `new` is over-counted by
+ * roughly one session per device per year — 0.3% of a daily reader's sessions,
+ * 8% of a monthly one's.
  *
  * IT IS AN ABSOLUTE LIFETIME, NOT A SLIDING ONE. Renewing it on every visit
- * would keep a record alive forever for the readers who visit most, which is
- * the specific thing the exemption's lifetime condition exists to prevent.
+ * would keep a record alive indefinitely for exactly the readers who visit
+ * most, which is what a retention limit is for.
+ *
+ * (EU readers are a real secondary exposure — the interface is in fourteen
+ * languages, most of them European — and ePrivacy's consent rule is stricter
+ * than any of the above. The design was built to the stricter reading and is
+ * left there; this comment records which law is the primary one, not a
+ * relaxation.)
  */
 export const RECORD_MAX_DAYS = 365;
 

@@ -431,9 +431,13 @@ is not a build error.
 
 **The device record expires after a year and that number is load-bearing in two
 directions** — see `RECORD_MAX_DAYS`. Shortening it is not free (it inflates the
-`new` bucket, worst for infrequent readers) and lengthening it walks toward the
-thirteen-month figure the ePrivacy exemption argument rests on. Change it only
-with both halves in view.
+`new` bucket, worst for infrequent readers, who are the readers the measurement
+is least able to judge); lengthening it walks away from the retention
+proportionality the ANPD cookie guide asks for. The governing law is the
+**LGPD**, not the GDPR/ePrivacy pair the design was first argued against —
+`docs/decisions.md` §Usage measurement says which argument answers which
+regulator, and doubles as the legitimate-interest assessment. Change the number
+only with both halves in view.
 
 **The colophon's promise moved with the code, in fourteen dictionaries.**
 `colophon.pointNoTracking` used to say "no analytics"; it now states what is
