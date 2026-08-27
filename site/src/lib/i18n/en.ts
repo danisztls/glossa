@@ -153,7 +153,13 @@ export const en: Dictionary = {
 	// says nothing the position does not.
 	'summa.questionShort': 'Q',
 	'summa.articleShort': 'Art.',
+	// A tooltip on one borrowed title, and the line that STATES the same
+	// thing for a page where every title is borrowed. The Corpus
+	// Thomisticum prints no question or article titles at all, so under
+	// Latin that is all of them, and marking each row typographically
+	// distinguished nothing from nothing.
 	'summa.titleFromEdition': 'Title from the {lang} edition',
+	'summa.titlesFromEdition': 'Titles from the {lang} edition — this one prints none',
 	'summa.prologue': 'Prologue',
 	// The division names are kept in the Latin every citation uses: a
 	// footnote reads `ad 3` and `co.`, and translating the heading would

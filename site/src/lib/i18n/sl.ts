@@ -97,6 +97,7 @@ export const sl: Dictionary = {
 	'summa.questionShort': 'Vpr.',
 	'summa.articleShort': 'Čl.',
 	'summa.titleFromEdition': 'Naslov iz izdaje v jeziku {lang}',
+	'summa.titlesFromEdition': 'Naslovi iz izdaje v jeziku {lang} — ta izdaja jih nima',
 	'summa.prologue': 'Prolog',
 	'summa.objection': 'Ugovor',
 	'summa.sedContra': 'Nasprotno',

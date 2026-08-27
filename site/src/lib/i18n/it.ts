@@ -97,6 +97,7 @@ export const it: Dictionary = {
 	'summa.questionShort': 'Q',
 	'summa.articleShort': 'Art.',
 	'summa.titleFromEdition': 'Titolo dall’edizione in {lang}',
+	'summa.titlesFromEdition': 'Titoli dall’edizione in {lang} — questa non ne stampa',
 	'summa.prologue': 'Prologo',
 	'summa.objection': 'Obiezione',
 	'summa.sedContra': 'In contrario',

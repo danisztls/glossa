@@ -97,6 +97,7 @@ export const ro: Dictionary = {
 	'summa.questionShort': 'Î.',
 	'summa.articleShort': 'Art.',
 	'summa.titleFromEdition': 'Titlu din ediția în {lang}',
+	'summa.titlesFromEdition': 'Titluri din ediția în {lang} — aceasta nu are titluri',
 	'summa.prologue': 'Prolog',
 	'summa.objection': 'Obiecție',
 	'summa.sedContra': 'Dimpotrivă',

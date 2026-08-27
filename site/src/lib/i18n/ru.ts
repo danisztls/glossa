@@ -97,6 +97,7 @@ export const ru: Dictionary = {
 	'summa.questionShort': 'Вопр.',
 	'summa.articleShort': 'Разд.',
 	'summa.titleFromEdition': 'Заглавие из издания на языке: {lang}',
+	'summa.titlesFromEdition': 'Заглавия из издания на языке: {lang} — в этом издании их нет',
 	'summa.prologue': 'Пролог',
 	'summa.objection': 'Возражение',
 	'summa.sedContra': 'Напротив',

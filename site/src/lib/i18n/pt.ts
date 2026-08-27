@@ -114,6 +114,7 @@ export const pt: Dictionary = {
 	'summa.questionShort': 'Q',
 	'summa.articleShort': 'Art.',
 	'summa.titleFromEdition': 'Título da edição em {lang}',
+	'summa.titlesFromEdition': 'Títulos da edição em {lang} — esta não os imprime',
 	'summa.prologue': 'Prólogo',
 	'summa.objection': 'Objecção',
 	'summa.sedContra': 'Em sentido contrário',

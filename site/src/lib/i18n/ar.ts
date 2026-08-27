@@ -96,6 +96,7 @@ export const ar: Dictionary = {
 	'summa.questionShort': 'مسألة',
 	'summa.articleShort': 'مقالة',
 	'summa.titleFromEdition': 'العنوان من الطبعة بلغة {lang}',
+	'summa.titlesFromEdition': 'العناوين من الطبعة بلغة {lang} — هذه الطبعة لا تذكر عناوين',
 	'summa.prologue': 'تمهيد',
 	'summa.objection': 'اعتراض',
 	'summa.sedContra': 'في المقابل',

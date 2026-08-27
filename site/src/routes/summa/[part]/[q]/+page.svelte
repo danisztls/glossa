@@ -118,6 +118,23 @@
 	const articleNumbers = $derived(articleRows.map((row) => row.n));
 
 	/**
+	 * The edition every title on this page came from, when it is not the one
+	 * being read — the Corpus Thomisticum prints no question or article titles
+	 * at all, so under Latin that is all of them and under English it is none.
+	 *
+	 * SAID IN WORDS, not in italic. Borrowed titles used to be set italic and
+	 * muted here and in the sidebar, which asked the reader to know a
+	 * convention and then, on the only pages where it fired, applied it to
+	 * every title on the page — a mark with nothing to contrast against. It is
+	 * an all-or-nothing property of the edition, so one line states it, the way
+	 * `fellBack` above states the other thing this work's asymmetry costs a
+	 * reader.
+	 */
+	const titlesFrom = $derived(
+		named?.borrowed ? named.lang : articleRows.find((row) => row.titleLang)?.titleLang
+	);
+
+	/**
 	 * The sidebar's outline, taken from the SHOWN edition rather than the
 	 * preferred one. On the Supplement that is the difference between a Latin
 	 * reader seeing the English part they are actually reading and seeing an
@@ -222,7 +239,6 @@
 		{#if at && parts}
 			<span
 				class="article-title"
-				class:borrowed={at.borrowed}
 				lang={at.borrowed ? at.lang : undefined}
 				title={at.borrowed ? borrowedLabel(at.lang) : undefined}>{parts.title}</span
 			>
@@ -336,12 +352,12 @@
 					{data.n}
 				</p>
 				<!-- The Latin prints no question titles, so under it every one of
-				     these is the English edition's, marked as such rather than
-				     passed off as this source's own — see `summaTitleFor`. -->
+				     these is the English edition's, said so under the title
+				     rather than passed off as this source's own — see
+				     `summaTitleFor` and `titlesFrom`. -->
 				{#if named}
 					{@const parts = summaTitleParts(named.title)}
 					<h1
-						class:borrowed={named.borrowed}
 						lang={named.borrowed ? named.lang : undefined}
 						title={named.borrowed ? borrowedLabel(named.lang) : undefined}
 					>
@@ -356,6 +372,13 @@
 						{data.part} — {t('summa.question')}
 						{data.n}
 					</h1>
+				{/if}
+				<!-- Stated once, because it is true of every title on the page — see
+				     `titlesFrom`. -->
+				{#if titlesFrom}
+					<p class="titles-note">
+						{t('summa.titlesFromEdition').replace('{lang}', languageDisplayName(titlesFrom))}
+					</p>
 				{/if}
 			</header>
 
@@ -536,15 +559,16 @@
 	}
 
 	/*
-	 * A title this edition does not print, shown so a Latin reader is not left
-	 * with a bare number (`summaTitleFor`). Italic and muted rather than
-	 * badged: it is the same address named in another language, not a second
-	 * thing to read. The `lang` attribute on the element is what actually
-	 * tells a screen reader the language changed.
+	 * Where the italic on every borrowed title used to be — see `titlesFrom`.
+	 * Set like `.title-note` below it: the same small muted sans that says
+	 * "this is apparatus about the title, not part of it". The `lang`
+	 * attribute stays on the title itself, which is what actually tells a
+	 * screen reader the language changed.
 	 */
-	.question-header h1.borrowed,
-	.article-title.borrowed {
-		font-style: italic;
+	.titles-note {
+		margin: 0.35rem 0 0;
+		font-family: var(--font-sans);
+		font-size: 0.8rem;
 		color: var(--color-text-muted);
 	}
 

@@ -99,6 +99,7 @@ export const hu: Dictionary = {
 	'summa.questionShort': 'K.',
 	'summa.articleShort': 'Cikk.',
 	'summa.titleFromEdition': 'A cím a(z) {lang} kiadásból',
+	'summa.titlesFromEdition': 'A címek a(z) {lang} kiadásból — ez a kiadás nem közöl címeket',
 	'summa.prologue': 'Prológus',
 	'summa.objection': 'Ellenvetés',
 	'summa.sedContra': 'Ezzel szemben áll',

@@ -128,6 +128,7 @@ export const la: Dictionary = {
 	'summa.questionShort': 'Q',
 	'summa.articleShort': 'Art.',
 	'summa.titleFromEdition': 'Titulus ex editione {lang}',
+	'summa.titlesFromEdition': 'Tituli ex editione {lang} — haec nullos praebet',
 	'summa.prologue': 'Prologus',
 	// The Summa's own headings, which the English module also keeps in
 	// Latin and for the same reason: a footnote reads `ad 3` and `co.`, and

@@ -174,7 +174,15 @@
 		 *  (`StructureNode.titleLang`), given that edition's language tag.
 		 *  Passed in rather than read from i18n here so this component stays
 		 *  a pure view of what it is handed — the same reason the heading is.
-		 *  Only the Summa has such rows. */
+		 *  Only the Summa has such rows.
+		 *
+		 *  IT IS A TOOLTIP AND A `lang`, AND NOTHING VISIBLE. Borrowed rows
+		 *  used to be set in italic here as well; that mark cost the reader a
+		 *  convention to know and repaid it only where borrowed and unborrowed
+		 *  rows sat side by side, which never happens — an edition prints
+		 *  titles or it does not, so under Latin the italic was the whole
+		 *  sidebar and distinguished nothing. The page that knows every row is
+		 *  borrowed says so in words instead (`summa.titlesFromEdition`). */
 		borrowedTitleLabel?: (lang: string) => string;
 		/** Rows the PAGE renders a heading for even though they bound no
 		 *  numbered unit — a document's tail matter, whose text is unnumbered
@@ -239,7 +247,6 @@
 						{#if label}<span class="kind-label">{label}</span>{/if}
 						<span
 							class="row-title"
-							class:borrowed={node.titleLang !== undefined}
 							lang={node.titleLang}
 							title={node.titleLang ? borrowedTitleLabel?.(node.titleLang) : undefined}
 							><InlineText nodes={inlineTitleNodes(dt.title, node.titleHtml, lang)} /></span
@@ -411,17 +418,5 @@
 	   that happens to also work here. */
 	a.current .kind-label {
 		color: inherit;
-	}
-	/*
-	 * A title this edition does not print, shown so a reader is not left with
-	 * a bare number (`summaTitleFor`). Italic and muted rather than badged: it
-	 * is the same address named in another language, not a second thing to
-	 * read — the same treatment the reader already meets on the question
-	 * heading itself. The `lang` attribute on the element is what actually
-	 * tells a screen reader the language changed.
-	 */
-	.row-title.borrowed {
-		font-style: italic;
-		opacity: 0.85;
 	}
 </style>

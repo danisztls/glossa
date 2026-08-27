@@ -96,6 +96,7 @@ export const sv: Dictionary = {
 	'summa.questionShort': 'Fr.',
 	'summa.articleShort': 'Art.',
 	'summa.titleFromEdition': 'Titel från utgåvan på {lang}',
+	'summa.titlesFromEdition': 'Titlar från utgåvan på {lang} — denna utgåva har inga',
 	'summa.prologue': 'Prolog',
 	'summa.objection': 'Invändning',
 	'summa.sedContra': 'Häremot står',

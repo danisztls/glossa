@@ -71,6 +71,24 @@
 	const borrowedLabel = (borrowedFrom: string) =>
 		t('summa.titleFromEdition').replace('{lang}', languageDisplayName(borrowedFrom));
 
+	/**
+	 * The edition these question titles came from, when this one prints none —
+	 * all 611 rows under Latin, and no row under English, because it is a
+	 * property of the edition rather than of the question. Stated once beneath
+	 * the tagline; the reading page states the same thing the same way, and
+	 * neither marks the titles typographically any more (see `titlesFrom`
+	 * there for what the italic cost and bought).
+	 */
+	const titlesFrom = $derived.by(() => {
+		for (const question of questions) {
+			// The first row this edition titles itself settles it for all of them.
+			if (question.title) return undefined;
+			const named = summaTitleFor(lang, question.part, question.n);
+			if (named?.borrowed) return named.lang;
+		}
+		return undefined;
+	});
+
 	const sidebarItems = $derived(
 		parts.map(({ part, slug }) => ({
 			href: `#part-${slug}`,
@@ -96,6 +114,11 @@
 		<header>
 			<h1>{t('summa.landing.title')}</h1>
 			<p class="tagline">{t('summa.landing.tagline')}</p>
+			{#if titlesFrom}
+				<p class="titles-note">
+					{t('summa.titlesFromEdition').replace('{lang}', languageDisplayName(titlesFrom))}
+				</p>
+			{/if}
 		</header>
 
 		{#each parts as { part, slug, headings, questions: partQuestions } (part)}
@@ -145,7 +168,6 @@
 								     numbers while `summaTitleFor` sat imported and unused. -->
 								{#if named}<span
 										class="q-title"
-										class:borrowed={named.borrowed}
 										lang={named.borrowed ? named.lang : undefined}
 										title={named.borrowed ? borrowedLabel(named.lang) : undefined}
 										>{summaQuestionLabel(named.title)}</span
@@ -213,15 +235,10 @@
 		text-underline-offset: 0.15em;
 	}
 
-	/*
-	 * A title this edition does not print, shown so a reader is not left with a
-	 * bare number (`summaTitleFor`). Italic and muted rather than badged — the
-	 * same treatment the reading page's heading and the sidebar row already
-	 * give it; the `lang` attribute is what tells a screen reader the language
-	 * changed.
-	 */
-	.q-title.borrowed {
-		font-style: italic;
+	/* Where the italic on every borrowed title used to be — see `titlesFrom`. */
+	.titles-note {
+		margin: 0.35rem 0 0;
+		font-size: 0.85rem;
 		color: var(--color-text-muted);
 	}
 </style>
