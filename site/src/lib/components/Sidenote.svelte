@@ -3,33 +3,34 @@
 	 * One note of an annotated edition's apparatus: the marker where the
 	 * source sets it, and the gloss it points at.
 	 *
-	 * STILL NOT `CitationDisclosure.svelte`, though the two now share a
-	 * margin. What this one carries is COMMENTARY — Challoner glossing a verse
-	 * at the length of a sentence or a paragraph, with a lemma quoting the
-	 * words it glosses — where that one carries a SOURCE, and each keeps its
-	 * own reading of what a marker is and of what to do where no margin
-	 * exists. What they stopped disagreeing about is the margin itself: an
-	 * apparatus the reader can see beside the line that raises it is the
-	 * *Glossa Ordinaria* arrangement the project is named for
-	 * (docs/decisions.md §Posture), and it is no less right for a footnote's
-	 * source than for a gloss. `.margin-note` in app.css is the one
-	 * arrangement both use.
+	 * STILL NOT `CitationDisclosure.svelte`, though the two now share
+	 * everything about how a note BEHAVES (`NoteCard` in
+	 * `sidenotes.svelte.ts`). What this one carries is COMMENTARY —
+	 * Challoner glossing a verse at the length of a sentence or a paragraph,
+	 * with a lemma quoting the words it glosses — where that one carries a
+	 * SOURCE. Each keeps its own marker, its own ARIA and its own content;
+	 * what stopped being different is the apparatus around them.
+	 *
+	 * WHERE THERE IS A MARGIN, THE GLOSS IS SET IN IT, open, beside the line
+	 * that raises it — the *Glossa Ordinaria* arrangement the project is named
+	 * for (docs/decisions.md §Posture). `.margin-note` in app.css is the one
+	 * arrangement both apparatuses use.
+	 *
+	 * WHERE THERE IS NOT, IT IS A CARD OVER THE PAGE, and that is the change a
+	 * phone reader feels. It used to open as a block under the line it belongs
+	 * to, which broke the verse at the marker and pushed everything after it
+	 * down — so opening a note moved the sentence being read, and closing it
+	 * moved it back. A note here is a paragraph rather than a phrase, so it
+	 * scrolls inside the card instead of resizing it.
 	 *
 	 * A GLOSS MUST NEVER BE CONFUSABLE WITH ITS SOURCE, the naming rule from
 	 * that same entry, is why the note is set smaller, in the sans face, and
 	 * (in the margin) physically outside the text column rather than merely
 	 * indented within it. Challoner's commentary is not Scripture and must not
 	 * be able to be read as though it were.
-	 *
-	 * WHERE THERE IS NOT ROOM the same note becomes a disclosure after all —
-	 * on a phone there is no margin to put anything in. `sidenoteRoom.margin`
-	 * decides, and decides in JavaScript rather than in CSS alone because the
-	 * marker is a different KIND of thing in the two layouts: a control that
-	 * opens something, or a plain reference to something already visible. See
-	 * that module for why that distinction cannot live in a media query.
 	 */
 	import type { VerseNote } from '$lib/types';
-	import { sidenoteRoom } from '$lib/sidenotes.svelte';
+	import { NoteCard, sidenoteRoom } from '$lib/sidenotes.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { linkifyInline, plainTextNodes } from '$lib/inline-html';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
@@ -38,10 +39,12 @@
 
 	interface Props {
 		/** What the note is PRINTED as — "a", "b" — shown in the superscript and
-		    again at the head of the note, so a note read in isolation still names
-		    itself. NOT `VerseNote.marker`, which is the source's own ordinal and
-		    stays in the corpus: the label is lettered per chapter so it cannot be
-		    mistaken for a verse number. See `noteLetter`. */
+		    again at the head of the note IN THE MARGIN, where a column of them
+		    stacks and each has to name itself. The card needs no label: it is
+		    anchored to the marker that opened it. NOT `VerseNote.marker`, which
+		    is the source's own ordinal and stays in the corpus: the label is
+		    lettered per chapter so it cannot be mistaken for a verse number.
+		    See `noteLetter`. */
 		label: string;
 		/** The note itself. `undefined` means the corpus has a token with no
 		    note behind it, which the pipeline validates against — so it is a bug
@@ -60,11 +63,9 @@
 		    exactly that reason. Dropping it reads two of his notes into the
 		    wrong book. */
 		work?: string;
-		open: boolean;
-		onToggle: () => void;
 	}
 
-	let { label, note, lang, work, open, onToggle }: Props = $props();
+	let { label, note, lang, work }: Props = $props();
 
 	/**
 	 * A GLOSS NAMES OTHER PLACES IN THE BOOK, and that is most of what a gloss
@@ -87,42 +88,65 @@
 		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang });
 	}
 
-	// In the margin the note is on screen no matter what `open` says, so the
-	// marker is not a disclosure control and does not claim to be one.
 	const inMargin = $derived(sidenoteRoom.margin);
-	const shown = $derived(inMargin || open);
+
+	// See `CitationDisclosure` on why this is a bare top-level declaration.
+	const uid = $props.id();
+	const card = new NoteCard(uid);
 </script>
 
-{#if inMargin}
-	<sup class="note-marker note-marker-static" aria-hidden="true">{label}</sup>
-{:else}
-	<sup class="note-marker">
-		<button
-			type="button"
-			class="note-trigger"
-			aria-expanded={open}
-			aria-label={`${t('bible.note')} ${label}`}
-			onclick={onToggle}
+{#snippet gloss()}
+	{#if note}
+		{#if note.lemma}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span class="sidenote-text"
+			><InlineNodes {nodes} {hrefFor} /></span
 		>
-			{label}
-		</button>
-	</sup>
+	{:else}
+		<span class="sidenote-text sidenote-missing">{t('bible.noteMissing')}</span>
+	{/if}
+{/snippet}
+
+<sup
+	class="note-marker"
+	class:highlighted={card.lit}
+	onpointerenter={card.onPointerEnter}
+	onpointerleave={card.onPointerLeave}
+>
+	<button
+		bind:this={card.trigger}
+		type="button"
+		class="note-trigger"
+		popovertarget={card.popovertarget}
+		aria-expanded={card.expanded}
+		aria-label={`${t('bible.note')} ${label}`}
+		onclick={card.onClick}
+	>
+		{label}
+	</button>
+</sup>
+
+{#if inMargin}
+	<small class="margin-note" class:highlighted={card.lit} {lang}
+		><span class="margin-note-label" aria-hidden="true">{label}</span>{@render gloss()}</small
+	>
 {/if}
 
-{#if shown}
-	<small class:margin-note={inMargin} class:sidenote={!inMargin} {lang}>
-		<span class:margin-note-label={inMargin} class:sidenote-marker={!inMargin} aria-hidden="true"
-			>{label}</span
-		>
-		{#if note}
-			{#if note.lemma}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span class="sidenote-text"
-				><InlineNodes {nodes} {hrefFor} /></span
-			>
-		{:else}
-			<span class="sidenote-text sidenote-missing">{t('bible.noteMissing')}</span>
-		{/if}
-	</small>
-{/if}
+<!-- `role="note"` for the reason `CitationDisclosure` gives: ARIA's own word
+     for content ancillary to the text it hangs off, and not `tooltip`, which
+     must hold nothing interactive where this holds the verses the gloss
+     names. `lang` because a gloss is written in its edition's language, not
+     the reader's — the card is in the top layer, outside every `lang` the
+     page has already declared, so it has to say so itself. -->
+<span
+	bind:this={card.panel}
+	id={card.id}
+	popover="auto"
+	role="note"
+	{lang}
+	ontoggle={card.onToggle}
+	onpointerenter={card.onPointerEnter}
+	onpointerleave={card.onPointerLeave}
+	class="floating-panel note-popover">{@render gloss()}</span
+>
 
 <style>
 	/*
@@ -140,6 +164,9 @@
 	 * too, and it earns its keep here: a marker set purely in `em` shrinks
 	 * with the text around it and these sit inside verses, which is the
 	 * smallest type on the page.
+	 *
+	 * Its lit state is app.css's, shared with `.citation-marker` for the same
+	 * reason the rest of this rule copies one: the two marks must not diverge.
 	 */
 	.note-marker {
 		font-family: var(--font-sans);
@@ -152,13 +179,6 @@
 		   this, and a full space would misrepresent the printed page. */
 		padding-inline-start: 0.08em;
 		vertical-align: super;
-	}
-
-	.note-marker-static {
-		/* Hidden from assistive technology: in the margin layout the note it
-		   points at is already in the reading order right behind it, and the
-		   number is then decoration rather than information. */
-		user-select: none;
 	}
 
 	.note-trigger {
@@ -191,24 +211,33 @@
 	}
 
 	/*
-	 * The note where there is NO margin to set it in. In the margin it is
-	 * `.margin-note` (app.css), which carries the same three signals — sans,
-	 * smaller, muted — because any one of them alone is the kind of difference
-	 * a reader stops seeing after a page.
+	 * The card, where there is no margin to set the gloss in. Where it sits is
+	 * `.floating-panel` (app.css); what is here is what a GLOSS needs and a
+	 * citation does not.
+	 *
+	 * IT SCROLLS RATHER THAN GROWING. A citation is a phrase and its card is
+	 * whatever size the phrase is; a Challoner note runs to a paragraph, and
+	 * on the phone this exists for, a card free to grow would cover the verse
+	 * it belongs to. `computePanelPosition` pins a panel taller than the
+	 * viewport rather than letting it run off, so the cap is what keeps the
+	 * card beside its line instead of over the whole page.
+	 *
+	 * The three signals that keep a gloss from reading as Scripture — sans,
+	 * smaller, muted — are the same ones `.margin-note` carries, because any
+	 * one of them alone is the kind of difference a reader stops seeing after
+	 * a page.
 	 */
-	.sidenote {
-		font-family: var(--font-sans);
-		font-size: 0.78rem;
+	.note-popover {
+		visibility: hidden;
+		max-inline-size: min(26rem, calc(100vw - 1rem));
+		max-block-size: min(24rem, 60vh);
+		overflow-y: auto;
+		padding: 0.5rem 0.7rem;
+		font-size: 0.85rem;
+		font-style: normal;
 		line-height: 1.5;
 		color: var(--color-text-muted);
-	}
-
-	.sidenote-marker {
-		font-weight: 600;
-		/* The same colour as the marker in the text: the pairing of the two
-		   identical letters is what ties a note to the place it belongs. */
-		color: var(--color-accent);
-		padding-inline-end: 0.35em;
+		overflow-wrap: break-word;
 	}
 
 	.sidenote-lemma {
@@ -223,17 +252,5 @@
 
 	.sidenote-missing {
 		font-style: italic;
-	}
-
-	/*
-	 * BELOW THE MARGIN BREAKPOINT: a block that opens under the line it
-	 * belongs to. `display: block` inside the flowing verse text breaks the
-	 * line at exactly the marker, which is where the reader just tapped.
-	 */
-	.sidenote {
-		display: block;
-		margin-block: 0.5rem;
-		padding-inline-start: 0.75rem;
-		border-inline-start: 2px solid var(--color-border);
 	}
 </style>

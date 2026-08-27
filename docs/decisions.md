@@ -1194,6 +1194,32 @@ overlay a popover puts both in the layer, where order of showing decides — and
 was opened from. `LinkPreview` already owns every path that closes it (a timer, a pointer
 leaving, Escape, a scroll); it wants the layer and none of the behaviour.
 
+**Where there is a margin, the click has a better answer than the card.** A card over the
+page duplicates a note already set beside the line; what a reader cannot get any other way
+is which of the notes stacked in the gutter belongs to the number just passed — marker and
+note are separated by the whole width of the margin, and the only thing pairing them is
+that they print the same character. So above the breakpoint the marker drops
+`popovertarget` and a click lights the note instead, in the accent wash
+`.compare-row.highlighted` already uses for "this is the one you asked about". At most one
+is lit, which is the whole question it answers. Hover still opens the card everywhere,
+because a peek at the marker is cheaper than a glance across the gutter.
+
+**And all of it generalized to the annotated editions' notes, where the phone was the
+point.** A Challoner gloss used to open as a block under its line, breaking the verse at
+the marker and pushing the rest of the chapter down — opening a note moved the sentence
+being read, and closing it moved it back. It is the same card now, capped and scrolling
+rather than growing, since a gloss is a paragraph where a citation is a phrase. The two
+apparatuses had been diverging one behaviour at a time; `NoteCard` in `sidenotes.svelte.ts`
+is now the whole of what they share — placement, hover intent, the popover's state, the
+highlight — on `menu.svelte.ts`'s pattern and for its stated reason. Each component keeps
+what it actually is: a number against a letter, a source against a gloss.
+
+That deleted the last of the caller-side bookkeeping. `AnnotatedText` kept a `SvelteSet` of
+open notes keyed by unit, marker and position, because the Douay-Rheims numbers four
+different notes `1` down a single chapter; `noteKey` existed for that and is gone with it,
+along with the `unit` prop whose only reader it was. `$props.id()` is per instance, and
+there is one instance per note.
+
 **Fixtures deliberately encode absent chapters and out-of-range cross-references** to
 exercise the not-in-corpus paths, and a second English Bible to exercise the
 preferred-edition table. `npm test` always uses them (`corpus.ts` checks

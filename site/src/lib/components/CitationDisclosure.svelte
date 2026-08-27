@@ -26,12 +26,13 @@
 	 * that at the number. Below the breakpoint the popover is the whole
 	 * apparatus; above it, it is a second way to the same words.
 	 *
-	 * IT OPENS ON HOVER TOO, on the delays `floating.ts` holds for both cards
-	 * a reader can raise from running prose. A link says where it goes and a
-	 * footnote marker does not — it names a source without saying what — so if
-	 * either of the two deserves a pointer that rests on it, this is the one.
-	 * A click still opens it, and a clicked card stays until it is dismissed;
-	 * see `byHover`.
+	 * IT OPENS ON HOVER TOO, and WHERE THERE IS A MARGIN A CLICK LIGHTS THE
+	 * NOTE IN IT instead of opening a duplicate over the page. Both of those,
+	 * and the timers and placement behind them, are `NoteCard` in
+	 * `sidenotes.svelte.ts` — shared entire with the other apparatus, which
+	 * wanted all of it for the same reasons. What is left in this file is what
+	 * a CITATION is: a number rather than a letter, a source rather than a
+	 * gloss, and the three ways the corpus can fail to have one.
 	 *
 	 * THE CARD REPLACED A BOX INSIDE THE SENTENCE, which is the one thing an
 	 * apparatus must not be: opening it reflowed the words around it, so the
@@ -89,14 +90,7 @@
 	 */
 	import type { CccCitation } from '$lib/types';
 	import RefText from '$lib/components/RefText.svelte';
-	import { sidenoteRoom } from '$lib/sidenotes.svelte';
-	import {
-		computePanelPosition,
-		trackAnchor,
-		canHover,
-		HOVER_OPEN_MS,
-		HOVER_CLOSE_MS
-	} from '$lib/floating';
+	import { NoteCard, sidenoteRoom } from '$lib/sidenotes.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
@@ -118,134 +112,17 @@
 
 	let { marker, citation, lang, work }: Props = $props();
 
-	// Whether the citation is ALSO set beside the line that raises it. It no
-	// longer decides what the marker is — that is a button either way — only
-	// whether the margin gets its copy.
+	// Whether the citation is ALSO set beside the line that raises it. It does
+	// not decide what the marker is — that is a button either way — only
+	// whether the margin gets its copy, and (through `NoteCard`) what a click
+	// on the marker is for.
 	const inMargin = $derived(sidenoteRoom.margin);
 
-	/** Per INSTANCE, which is per occurrence — see the docblock on why that is
-	 *  the whole of the keying problem this used to hand to its callers. */
-	const panelId = $props.id();
-
-	let triggerEl: HTMLElement | undefined = $state();
-	let panelEl: HTMLElement | undefined = $state();
-	/** Mirrors the popover's own state. Read for `aria-expanded` — the browser
-	 *  exposes that implicitly for a `popovertarget` invoker, but not every
-	 *  engine's mapping has landed, and a control whose state is only implied
-	 *  is worth two attributes. */
-	let open = $state(false);
-
-	/**
-	 * PLACED IMPERATIVELY, not through the template, because the ordering is
-	 * the whole difficulty. `toggle` fires AFTER the popover is shown, so a
-	 * coordinate that travelled back through Svelte's update cycle would leave
-	 * one painted frame at the panel's static position — which for a marker
-	 * mid-paragraph is the middle of the sentence. The panel starts
-	 * `visibility: hidden` in CSS and is revealed here, in the same
-	 * synchronous turn that measures it, so there is no such frame to see.
-	 *
-	 * It cannot be measured any earlier either: a closed popover is
-	 * `display: none`, and `getBoundingClientRect` on one is all zeroes.
-	 */
-	function place() {
-		if (!panelEl || !triggerEl) return;
-		const at = computePanelPosition(
-			triggerEl.getBoundingClientRect(),
-			panelEl.getBoundingClientRect()
-		);
-		panelEl.style.top = `${at.top}px`;
-		panelEl.style.left = `${at.left}px`;
-		panelEl.style.visibility = 'visible';
-	}
-
-	/**
-	 * The one thing native dismissal does NOT do is tell Svelte. Escape, a
-	 * light dismiss and another popover superseding this one all hide the
-	 * element without touching anything here, which would leave the marker's
-	 * `aria-expanded` reading `true` over a card nobody can see. `toggle` is
-	 * the one event every close path fires.
-	 */
-	function onToggle(e: ToggleEvent) {
-		open = e.newState === 'open';
-		if (open) {
-			place();
-			return;
-		}
-		// Every close path lands here, the reader clicking the marker of a
-		// card the pointer had opened among them — so the hover claim is
-		// dropped on all of them rather than only on the one that set it.
-		byHover = false;
-		openTimer = cancel(openTimer);
-		closeTimer = cancel(closeTimer);
-		if (panelEl) panelEl.style.visibility = 'hidden';
-	}
-
-	// Only while something is open: this component is mounted once per
-	// citation, and a long document section has dozens. A scroll listener per
-	// rendered marker is the mistake `AnchorMenu` records not making.
-	$effect(() => (open ? trackAnchor(place) : undefined));
-
-	/**
-	 * THE POINTER RESTING ON THE MARKER OPENS IT, on the same two delays and
-	 * behind the same capability test as a link's preview (`floating.ts`).
-	 * Hovering costs the reader nothing, and a footnote marker is the one mark
-	 * in running text that names a source without saying what it is — the same
-	 * argument `LinkPreview` makes for a link, about the other kind of
-	 * reference a sentence can carry. On a touch screen `canHover` is false
-	 * and the marker is the tap target it already was.
-	 *
-	 * `byHover` IS WHAT KEEPS A CLICKED CARD OPEN. The two ways in want
-	 * opposite things on the way out: a card the pointer merely summoned
-	 * should leave with the pointer, and one the reader clicked for should
-	 * stay until they dismiss it. Without the flag the click would be worth
-	 * nothing on a hover-capable pointer, since every deliberately-opened card
-	 * would evaporate the moment the reader looked away from the number.
-	 */
-	let byHover = false;
-	let openTimer: ReturnType<typeof setTimeout> | undefined;
-	let closeTimer: ReturnType<typeof setTimeout> | undefined;
-
-	function cancel(timer: ReturnType<typeof setTimeout> | undefined) {
-		if (timer !== undefined) clearTimeout(timer);
-		return undefined;
-	}
-
-	/**
-	 * ENTERING THE CARD COUNTS AS ENTERING THE MARKER, and has to: the two are
-	 * `GAP` pixels apart, and the reader crosses that gap to reach a reference
-	 * inside the card. Both elements call this, so the pair behaves as one
-	 * region — which is also why the close is on a grace period rather than
-	 * immediate.
-	 */
-	function onPointerEnter() {
-		if (!canHover()) return;
-		closeTimer = cancel(closeTimer);
-		if (open || openTimer !== undefined) return;
-		openTimer = setTimeout(() => {
-			openTimer = undefined;
-			// `showPopover()` on an already-open popover throws
-			// `InvalidStateError`, and a click can have opened it while this
-			// timer was running.
-			if (!panelEl || panelEl.matches(':popover-open')) return;
-			byHover = true;
-			panelEl.showPopover();
-		}, HOVER_OPEN_MS);
-	}
-
-	function onPointerLeave() {
-		openTimer = cancel(openTimer);
-		if (!byHover) return;
-		closeTimer = cancel(closeTimer);
-		closeTimer = setTimeout(() => {
-			closeTimer = undefined;
-			if (byHover && panelEl?.matches(':popover-open')) panelEl.hidePopover();
-		}, HOVER_CLOSE_MS);
-	}
-
-	$effect(() => () => {
-		cancel(openTimer);
-		cancel(closeTimer);
-	});
+	// `$props.id()` has to be a bare variable initializer at the top level,
+	// which is also the right shape: the id names this instance for the whole
+	// of its life, and the card is only its first user.
+	const uid = $props.id();
+	const card = new NoteCard(uid);
 </script>
 
 {#snippet source(labelled: boolean)}{#if citation && citation.text.trim() !== ''}<RefText
@@ -268,17 +145,23 @@
 		     does not. Nothing here claims the source is defective when what is
 		     missing is our entry for it. -->{marker}{/if}{/snippet}
 
-<sup class="citation-marker" onpointerenter={onPointerEnter} onpointerleave={onPointerLeave}>
+<sup
+	class="citation-marker"
+	class:highlighted={card.lit}
+	onpointerenter={card.onPointerEnter}
+	onpointerleave={card.onPointerLeave}
+>
 	<button
-		bind:this={triggerEl}
+		bind:this={card.trigger}
 		type="button"
 		class="citation-trigger"
-		popovertarget={panelId}
-		aria-expanded={open}
+		popovertarget={card.popovertarget}
+		aria-expanded={card.expanded}
+		onclick={card.onClick}
 	>
 		{marker}
 	</button>
-</sup>{#if inMargin}<small class="margin-note"
+</sup>{#if inMargin}<small class="margin-note" class:highlighted={card.lit}
 		><span class="margin-note-label" aria-hidden="true">{marker}</span>{@render source(true)}</small
 	>{/if}
 <!-- `role="note"`, which is ARIA's own word for content ancillary to the
@@ -292,13 +175,13 @@
      preview overlay is a `manual` popover now and is always shown second, so
      it lands above this card rather than behind it. -->
 <span
-	bind:this={panelEl}
-	id={panelId}
+	bind:this={card.panel}
+	id={card.id}
 	popover="auto"
 	role="note"
-	ontoggle={onToggle}
-	onpointerenter={onPointerEnter}
-	onpointerleave={onPointerLeave}
+	ontoggle={card.onToggle}
+	onpointerenter={card.onPointerEnter}
+	onpointerleave={card.onPointerLeave}
 	class="floating-panel citation-popover">{@render source(false)}</span
 >
 
@@ -325,7 +208,7 @@
 	 */
 	.citation-popover {
 		visibility: hidden;
-		max-width: min(24rem, calc(100vw - 1rem));
+		max-inline-size: min(24rem, calc(100vw - 1rem));
 		padding: 0.5rem 0.7rem;
 		font-size: 0.85rem;
 		font-style: normal;

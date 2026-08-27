@@ -1,4 +1,11 @@
 import { untrack } from 'svelte';
+import {
+	canHover,
+	computePanelPosition,
+	trackAnchor,
+	HOVER_OPEN_MS,
+	HOVER_CLOSE_MS
+} from './floating';
 
 /**
  * Whether the reader's viewport has room to set notes in the margin.
@@ -88,6 +95,41 @@ class SidenoteRoom {
 
 	margin: boolean = $derived(this.#wide && this.#claims === 0);
 
+	/**
+	 * Which margin note the reader last named, by the id of the `NoteCard`
+	 * that owns it — or nothing, which is the resting state.
+	 *
+	 * AT MOST ONE, because the question it answers is "which of these is the
+	 * one I just clicked". A column of notes beside a densely-annotated
+	 * paragraph is exactly where a marker and its note stop being obviously
+	 * paired: they are separated by the whole width of the gutter, with other
+	 * notes stacked between. Lighting two would answer nothing.
+	 *
+	 * HELD HERE RATHER THAN IN THE NOTE because only one note can hold it and
+	 * a note cannot know that on its own — the same reason `#claims` is here.
+	 * It is written from a click handler, which is not a reactive context, so
+	 * unlike `claim()` a plain assignment is safe; `unhighlight` is the one
+	 * path that reads before writing, and it says why below.
+	 */
+	highlighted: string | undefined = $state();
+
+	/**
+	 * Drop the highlight if `id` still holds it — for a note leaving the page.
+	 *
+	 * A NOTE MUST NOT OUTLIVE ITS HIGHLIGHT, and the failure if it does is not
+	 * a stale glow but a wrong one: `$props.id()` counts per root, so the same
+	 * string is handed out again on the next page and would light a note that
+	 * has nothing to do with the one the reader clicked.
+	 *
+	 * Untracked for the reason `claim()` gives at length: this reads the state
+	 * it writes, and it is called from an effect's teardown.
+	 */
+	unhighlight(id: string) {
+		untrack(() => {
+			if (this.highlighted === id) this.highlighted = undefined;
+		});
+	}
+
 	constructor() {
 		if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
 			window.matchMedia(MARGIN_QUERY).addEventListener('change', (e) => {
@@ -139,19 +181,198 @@ class SidenoteRoom {
 export const sidenoteRoom = new SidenoteRoom();
 
 /**
- * The key that keeps one note's open state apart from another's.
+ * One note of an apparatus, as a thing the reader can open — the behaviour
+ * `CitationDisclosure` and `Sidenote` now share entirely.
  *
- * BY UNIT AND POSITION, NOT BY MARKER. A marker is unique within its unit and
- * not within its chapter (docs/corpus-schema.md), so `⟦1⟧` recurs down a
- * chapter of the Douay-Rheims meaning something different each time — John
- * 3:5 and 3:18 both carry a note numbered 1. Keying on the marker alone would
- * make every "1" in a chapter open and close together, showing the reader
- * Nicodemus's note against a verse thirteen verses later. `seq` then separates
- * two occurrences of one marker inside a single unit, the same way
- * `ProseBlocks` keys a paragraph that cites one footnote twice.
+ * The two components differ in what a note IS (a source; a gloss), what its
+ * marker is printed as (a number; a letter), and what it renders. They no
+ * longer differ in any of what is here: a floating card that opens on the
+ * pointer resting, on a click where there is no margin, and on nothing at all
+ * where there is one — because there the click has a better answer, which is
+ * to say WHICH of the notes stacked in the gutter is the one just named.
+ *
+ * THIS IS `menu.svelte.ts`'S SHAPE, and for its reason. Svelte 4 had no unit
+ * of reuse below a whole component, so this would have been a wrapper with a
+ * prop per difference; `$state` in a `.svelte.ts` module means a plain object
+ * can hold reactive state on a component's behalf while the component keeps
+ * its own markup, its own ARIA and its own content. What lives here is only
+ * what was genuinely identical.
+ *
+ * CONSTRUCTED DURING COMPONENT INITIALISATION, which is not decoration: the
+ * constructor declares the two `$effect`s that own this card's lifetime, and
+ * a rune outside init has no component to attach to.
  */
-export function noteKey(unit: string | number, marker: string, seq: number): string {
-	return `${unit}:${marker}:${seq}`;
+export class NoteCard {
+	/** The popover's element id, and the key the highlight is held by. Comes
+	 *  from `$props.id()`, so it is per INSTANCE — which is per occurrence,
+	 *  and that is the whole of the keying problem this used to hand to its
+	 *  callers. A source can cite one footnote twice in a paragraph, and the
+	 *  Douay-Rheims numbers four different notes `1` down a single chapter. */
+	readonly id: string;
+
+	/** The marker, which the card is measured against. */
+	trigger: HTMLElement | undefined = $state();
+	/** The card itself. */
+	panel: HTMLElement | undefined = $state();
+
+	/** Mirrors the popover's own state, for `aria-expanded` and to decide
+	 *  whether tracking the anchor is worth a listener. */
+	open: boolean = $state(false);
+
+	/**
+	 * Opened by the pointer resting on the marker rather than by a click.
+	 *
+	 * THE TWO WAYS IN WANT OPPOSITE THINGS ON THE WAY OUT: a card the pointer
+	 * merely summoned should leave with the pointer, and one the reader
+	 * clicked for should stay until they dismiss it. Without this the click
+	 * would be worth nothing on a hover-capable pointer, since every
+	 * deliberately-opened card would evaporate the moment the reader looked
+	 * away from the marker.
+	 */
+	#byHover = false;
+	#openTimer: ReturnType<typeof setTimeout> | undefined;
+	#closeTimer: ReturnType<typeof setTimeout> | undefined;
+
+	constructor(id: string) {
+		this.id = id;
+		// Only while something is open: a component per note means a long
+		// chapter has dozens, and a scroll listener per rendered marker is the
+		// mistake `AnchorMenu` records not making.
+		$effect(() => (this.open ? trackAnchor(() => this.place()) : undefined));
+		$effect(() => () => {
+			this.#cancel();
+			sidenoteRoom.unhighlight(this.id);
+		});
+	}
+
+	/** Whether this is the note the reader named in the margin. False wherever
+	 *  there is no margin, so the state cannot survive a viewport narrowing
+	 *  into a highlight on something the reader cannot see. */
+	get lit(): boolean {
+		return sidenoteRoom.margin && sidenoteRoom.highlighted === this.id;
+	}
+
+	/**
+	 * The card's id when a click should OPEN it, and nothing when a click has
+	 * something better to do.
+	 *
+	 * WHERE THERE IS A MARGIN THE CARD IS A DUPLICATE, since the note is
+	 * already set beside the line — so a click there lights the note in the
+	 * gutter instead, which is the one thing the reader cannot get any other
+	 * way once several are stacked. Dropping the attribute is what hands the
+	 * click to `onClick`; the browser's own invoker would otherwise toggle the
+	 * popover before anything here saw it.
+	 */
+	get popovertarget(): string | undefined {
+		return sidenoteRoom.margin ? undefined : this.id;
+	}
+
+	/** `aria-expanded` only where activating the marker really does expand
+	 *  something. In the margin it discloses nothing — the note is already in
+	 *  the reading order behind it — and a control claiming a state its
+	 *  activation cannot change is worse than one claiming none. */
+	get expanded(): boolean | undefined {
+		return sidenoteRoom.margin ? undefined : this.open;
+	}
+
+	/**
+	 * PLACED IMPERATIVELY, not through a template, because the ordering is the
+	 * whole difficulty. `toggle` fires AFTER the popover is shown, so a
+	 * coordinate that travelled back through Svelte's update cycle would leave
+	 * one painted frame at the card's static position — which for a marker
+	 * mid-paragraph is the middle of the sentence. The card starts
+	 * `visibility: hidden` in CSS and is revealed here, in the same
+	 * synchronous turn that measures it, so there is no such frame to see.
+	 *
+	 * It cannot be measured any earlier either: a closed popover is
+	 * `display: none`, and `getBoundingClientRect` on one is all zeroes.
+	 */
+	place() {
+		if (!this.panel || !this.trigger) return;
+		const at = computePanelPosition(
+			this.trigger.getBoundingClientRect(),
+			this.panel.getBoundingClientRect()
+		);
+		this.panel.style.top = `${at.top}px`;
+		this.panel.style.left = `${at.left}px`;
+		this.panel.style.visibility = 'visible';
+	}
+
+	/**
+	 * The one thing native dismissal does NOT do is tell Svelte. Escape, a
+	 * light dismiss and another popover superseding this one all hide the
+	 * element without touching anything here, which would leave the marker's
+	 * `aria-expanded` reading `true` over a card nobody can see. `toggle` is
+	 * the one event every close path fires, which is also why the hover claim
+	 * is dropped here rather than in the handler that set it.
+	 */
+	onToggle = (e: ToggleEvent) => {
+		this.open = e.newState === 'open';
+		if (this.open) {
+			this.place();
+			return;
+		}
+		this.#byHover = false;
+		this.#cancel();
+		if (this.panel) this.panel.style.visibility = 'hidden';
+	};
+
+	/**
+	 * ENTERING THE CARD COUNTS AS ENTERING THE MARKER, and has to: the two are
+	 * `GAP` pixels apart, and the reader crosses that gap to reach a reference
+	 * inside the card. Both elements call this, so the pair behaves as one
+	 * region — which is also why leaving is on a grace period rather than
+	 * immediate.
+	 */
+	onPointerEnter = () => {
+		if (!canHover()) return;
+		this.#closeTimer = clear(this.#closeTimer);
+		if (this.open || this.#openTimer !== undefined) return;
+		this.#openTimer = setTimeout(() => {
+			this.#openTimer = undefined;
+			// `showPopover()` on an already-open popover throws
+			// `InvalidStateError`, and a click can have opened it while this
+			// timer was running.
+			if (!this.panel || this.panel.matches(':popover-open')) return;
+			this.#byHover = true;
+			this.panel.showPopover();
+		}, HOVER_OPEN_MS);
+	};
+
+	onPointerLeave = () => {
+		this.#openTimer = clear(this.#openTimer);
+		if (!this.#byHover) return;
+		this.#closeTimer = clear(this.#closeTimer);
+		this.#closeTimer = setTimeout(() => {
+			this.#closeTimer = undefined;
+			if (this.#byHover && this.panel?.matches(':popover-open')) this.panel.hidePopover();
+		}, HOVER_CLOSE_MS);
+	};
+
+	/**
+	 * Only ever reached where there is a margin — everywhere else the browser
+	 * has already toggled the popover through `popovertarget` and this stands
+	 * down. Clicking the lit note again puts it out, which is the reader's way
+	 * back to a quiet page without a listener on the window.
+	 *
+	 * A hover card standing open is dismissed with the same click: it was a
+	 * peek, and the click just asked for the margin instead.
+	 */
+	onClick = () => {
+		if (!sidenoteRoom.margin) return;
+		sidenoteRoom.highlighted = this.lit ? undefined : this.id;
+		if (this.panel?.matches(':popover-open')) this.panel.hidePopover();
+	};
+
+	#cancel() {
+		this.#openTimer = clear(this.#openTimer);
+		this.#closeTimer = clear(this.#closeTimer);
+	}
+}
+
+function clear(timer: ReturnType<typeof setTimeout> | undefined) {
+	if (timer !== undefined) clearTimeout(timer);
+	return undefined;
 }
 
 /**

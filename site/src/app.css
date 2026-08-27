@@ -2406,6 +2406,16 @@ input {
 		padding-inline-end: 0.35em;
 	}
 
+	/* A highlight says "the one you just clicked", which is a fact about a
+	   session and not about the page. */
+	.margin-note.highlighted,
+	.citation-marker.highlighted,
+	.note-marker.highlighted {
+		background: none !important;
+		outline: none !important;
+		padding-inline: 0 !important;
+	}
+
 	a {
 		color: inherit;
 	}
@@ -2575,6 +2585,52 @@ input {
 	font-size: 0.78rem;
 	line-height: 1.5;
 	color: var(--color-text-muted);
+}
+
+/*
+ * THE NOTE THE READER JUST NAMED, and the marker that named it.
+ *
+ * Clicking a marker where there IS a margin does not open the card — the note
+ * is already set beside the line, so a duplicate over the page answers
+ * nothing. What it cannot answer without help is WHICH of the notes stacked
+ * in the gutter belongs to the number just passed: marker and note are
+ * separated by the whole width of the margin, with others above and below,
+ * and the only thing pairing them is that they print the same character.
+ * Lighting both says it outright. See `NoteCard.onClick`.
+ *
+ * THE ACCENT WASH IS ALREADY THE SITE'S WORD FOR THIS. `.compare-row.highlighted`
+ * uses the same colour at the same strength for an arriving citation naming a
+ * row, which is the same statement — "this is the one you asked about" — and
+ * a second vocabulary for it would be a second thing to learn.
+ *
+ * `outline` rather than padding, and the reason is arithmetic: `.margin-note`
+ * is displaced by a negative `margin-inline-start` computed from its own
+ * width, and its label hangs at `inset-inline-end: 100%` off that box. Any
+ * padding here would move the text away from the label and the whole column
+ * off its measure. An outline is drawn outside the border box, follows the
+ * `border-radius`, and takes no space at all — and unlike a spread
+ * `box-shadow` it does not paint under the background, where two translucent
+ * layers would stack into a darker rectangle.
+ */
+.margin-note.highlighted {
+	background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+	outline: 0.3rem solid color-mix(in srgb, var(--color-accent) 12%, transparent);
+	border-radius: 0.2rem;
+	/* Out of muted: the lit note is the one being read, not one of the ones
+	   being skimmed past. */
+	color: var(--color-text);
+}
+
+/* Both markers, in one rule, because they must not diverge — `.note-marker`
+   is otherwise scoped to `Sidenote.svelte`, whose own docblock records that
+   it copies `.citation-marker` deliberately so that a reader who has learned
+   one raised mark has learned both. A superscript can take the padding the
+   note cannot. */
+.citation-marker.highlighted,
+.note-marker.highlighted {
+	background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+	border-radius: 0.2rem;
+	padding-inline: 0.15em;
 }
 
 /*

@@ -26,9 +26,8 @@
 	import type { VerseNote } from '$lib/types';
 	import { splitMarkers } from '$lib/inline-markers';
 	import { splitDropCap } from '$lib/dropcap';
-	import { noteKey, noteLetter } from '$lib/sidenotes.svelte';
+	import { noteLetter } from '$lib/sidenotes.svelte';
 	import Sidenote from '$lib/components/Sidenote.svelte';
-	import { SvelteSet } from 'svelte/reactivity';
 
 	interface Props {
 		/** The unit's plain text — what is shown. */
@@ -36,10 +35,6 @@
 		/** The same string with `⟦marker⟧` tokens, when the unit is annotated. */
 		textMarked?: string;
 		notes?: VerseNote[];
-		/** Distinguishes this unit's note state from its neighbours' — a verse
-		    number, or a heading's position. See `noteKey`: markers repeat down a
-		    chapter, so a chapter-wide key would open four notes at once. */
-		unit: string | number;
 		/** The edition's language, for the notes. */
 		lang: string;
 		/** The edition's work id, for the notes — see `Sidenote`'s `work`. The
@@ -55,20 +50,13 @@
 		noteOffset?: number;
 	}
 
-	let {
-		text,
-		textMarked,
-		notes,
-		unit,
-		lang,
-		work,
-		dropCap = false,
-		noteOffset = 0
-	}: Props = $props();
+	let { text, textMarked, notes, lang, work, dropCap = false, noteOffset = 0 }: Props = $props();
 
 	const pieces = $derived(splitMarkers(text, textMarked));
 
-	/** Resolved against this unit's OWN notes — see `noteKey`. */
+	/** Resolved against this unit's OWN notes: a marker is unique within its
+	 *  unit and not within its chapter (docs/corpus-schema.md), so John 3
+	 *  carries four notes and every one of them is numbered 1. */
 	const byMarker = $derived(new Map((notes ?? []).map((note) => [note.marker, note])));
 
 	/** The notes no token in `textMarked` points at, in corpus order. */
@@ -118,13 +106,6 @@
 		return at < 0 ? marker : noteLetter(noteOffset + at);
 	}
 
-	const open = new SvelteSet<string>();
-
-	function toggle(key: string) {
-		if (open.has(key)) open.delete(key);
-		else open.add(key);
-	}
-
 	/** The first text run, which is the only one a drop cap can apply to. */
 	const firstTextIndex = $derived(pieces.findIndex((piece) => 'text' in piece));
 </script>
@@ -134,8 +115,6 @@
 			note={byMarker.get(piece.marker)}
 			{lang}
 			{work}
-			open={open.has(noteKey(unit, piece.marker, piece.seq))}
-			onToggle={() => toggle(noteKey(unit, piece.marker, piece.seq))}
 		/>{:else if dropCap && i === firstTextIndex}{@const cap = splitDropCap(
 			piece.text
 		)}{#if cap.first}<span class="drop-cap-letter"
@@ -145,6 +124,4 @@
 		{note}
 		{lang}
 		{work}
-		open={open.has(noteKey(unit, note.marker, -1 - i))}
-		onToggle={() => toggle(noteKey(unit, note.marker, -1 - i))}
 	/>{/each}

@@ -594,7 +594,6 @@
 									text={heading.text}
 									textMarked={heading.text_marked}
 									notes={heading.notes}
-									unit={`h${verse.n}.${hi}`}
 									lang={current.work.language}
 									work={current.work.id}
 									noteOffset={noteOffsets.get(`h${verse.n}.${hi}`) ?? 0}
@@ -618,7 +617,6 @@
 								text={verse.text}
 								textMarked={verse.text_marked}
 								notes={verse.notes}
-								unit={verse.n}
 								lang={current.work.language}
 								work={current.work.id}
 								dropCap={i === 0 && headingsBefore(verse.n).length === 0}
