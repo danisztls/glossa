@@ -13,6 +13,7 @@
 		"preview": "vite preview",
 		"preflight": "node scripts/preflight-deploy.mjs",
 		"coverage:accept": "node scripts/reference-coverage.mjs --accept",
+		"usage": "node scripts/usage.mjs",
 		"lastmod:accept": "node scripts/sync-corpus.mjs --accept-lastmod",
 		"deploy": "npm run build && npm run preflight && wrangler deploy",
 		"prepare": "svelte-kit sync || echo ''",
