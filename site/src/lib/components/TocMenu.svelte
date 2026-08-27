@@ -21,12 +21,52 @@
 	and roll act on the page in view; the edition controls change what that
 	page is made of. Navigation sits ahead of both.
 
-	NOT A `role="menu"`, unlike the four pickers beside it. Those offer a fixed
-	set of commands and are driven with the arrow keys; this is a tree of links
-	to elsewhere in the work, so it stays ordinary navigation — a button with
-	`aria-expanded` opening a panel whose content is the same `<nav>` the
-	sidebar renders, named by the same heading. Giving it menu semantics would
-	promise arrow-key roving that a nested list of anchors does not have.
+	## ON A PHONE IT IS THE WHOLE VIEWPORT, AND THAT IS AN ADMISSION
+
+	This began as a `.menu-panel` dropdown, the primitive the four edition and
+	appearance pickers use. At a laptop width that is the right object. At
+	24rem it was a fiction: the panel is `88vw`, so what surrounds it is a
+	sliver of text too narrow to read — and that sliver was also the only
+	target for the outside-click that dismissed it. A list of 189 questions
+	scrolled inside a nested box, with no visible way out, behind a gesture
+	aimed at a strip. Full-bleed is not a bigger version of that panel; it is
+	the same panel finally saying what it already was, with the dismissal made
+	into a control instead of a margin.
+
+	The breakpoint is 48rem, and it is NOT the sidebar's 80rem. Above 48rem
+	the anchored card still leaves the text readable around it, which is this
+	site's whole posture toward apparatus — a gloss stands beside the text, it
+	does not replace it (`Sidenote`, `CitationDisclosure`, the sidebar
+	itself). Navigation should not become a MODE any earlier than the screen
+	forces it to. Between 48rem and the sidebar's own handover the card is
+	what a tablet gets.
+
+	## `<dialog>`, NOT A HAND-ROLLED OVERLAY
+
+	`showModal()` carries the top layer, `::backdrop`, an inert background, a
+	focus trap and Escape — all of it native, none of it ours, and all of it
+	mandatory once a panel covers the screen: an overlay a reader can tab out
+	of into text they cannot see is worse than no overlay. `JumpBox` is the
+	other dialog on the site and this follows it exactly, down to the
+	`e.target === dialogEl` backdrop test and the transparent dialog whose
+	visible box is a child (see its own docblock for why the padding must live
+	on the child and not here).
+
+	What that replaces is the `Menu` class this used first: `onWindowClick`,
+	`onPanelKeydown`, and a window-level Escape handler written here because a
+	trigger keeps focus and the panel's own `keydown` therefore never fires.
+	All three are the browser's job now. `keepInViewport` goes too — the top
+	layer is not `.reading-bar`'s stacking context, so there is nothing left
+	to be clipped by and nothing to correct.
+
+	THE CARD IS MODAL TOO, and that is the one thing given up rather than
+	gained. Between 48 and 80rem a reader cannot tap a footnote in the text
+	while the list is open. That is the price of one code path — one element,
+	one open, one close, two stylings — and for a control whose only purpose is
+	to take the reader elsewhere it is a price worth paying. The alternative
+	was a non-modal `popover` above the breakpoint and a dialog below it: two
+	dismissal contracts, two focus stories, one component pretending to be
+	both.
 
 	IT RENDERS THE SAME COMPONENT THE SIDEBAR DOES, passed in as a snippet
 	rather than rebuilt from props. The call has ten arguments and five of them
@@ -37,16 +77,17 @@
 	route writes the call once and renders it in both places.
 -->
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+	import { tick, type Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
-	import { Menu } from './menu.svelte';
-	import { keepInViewport } from '$lib/floating';
+	import { computePanelPosition } from '$lib/floating';
+	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
-		/** The list's own heading — the trigger's accessible name too, so the
-		    button and the panel it opens say the same word. The routes already
-		    hold this string for `StructureSidebarToc`'s `heading`; passing it
-		    rather than deriving one here keeps the two from drifting. */
+		/** The list's own heading — the trigger's accessible name, and the
+		    title of the panel it opens, so the button and the thing it opens
+		    say the same word. The routes already hold this string for
+		    `StructureSidebarToc`'s `heading`; passing it rather than deriving
+		    one here keeps the two from drifting. */
 		label: string;
 		/** The table of contents itself, rendered only while the panel is
 		    open. Deliberately not rendered closed: this is the second instance
@@ -57,35 +98,115 @@
 
 	let { label, content }: Props = $props();
 
-	const menu = new Menu();
+	let dialogEl: HTMLDialogElement | undefined = $state();
+	let triggerEl: HTMLButtonElement | undefined = $state();
+	let open = $state(false);
+	/** Where the anchored card sits, in viewport coordinates. Unread below
+	 *  the breakpoint, where the dialog IS the viewport — see the CSS. */
+	let coords: { top: number; left: number } | undefined = $state();
 
-	/* Names the panel for `aria-controls`, so the trigger's `aria-expanded`
-	   says what it expanded rather than only that something did. Per-instance
-	   for the same reason `StructureSidebarToc`'s own ids are: two reading
-	   layouts never coexist today, but a fixed literal here would be one more
-	   thing that only holds while that stays true. */
-	const uid = $props.id();
-	const panelId = `${uid}-panel`;
+	/** The width at which the panel stops being the screen and becomes a card
+	 *  beside the text. Duplicated in the media query below, which cannot read
+	 *  it; the two are one decision and are commented as one. */
+	const CARD_QUERY = '(min-width: 48rem)';
+
+	const isCard = () => typeof window !== 'undefined' && window.matchMedia(CARD_QUERY).matches;
 
 	/**
-	 * Escape, from wherever focus happens to be.
+	 * Measure the card against its trigger. `computePanelPosition` puts it
+	 * below when it fits and above when it does not, and clamps it inside the
+	 * viewport either way — the same positioner `AnchorMenu` and `LinkPreview`
+	 * use for panels hung off arbitrary points.
 	 *
-	 * The four header pickers hang `onPanelKeydown` on the panel element, which
-	 * only fires once focus is already inside it — and clicking a trigger
-	 * leaves focus on the trigger, which is the panel's SIBLING inside `.menu`,
-	 * so the key never reaches the handler. On the window it does, and the
-	 * `open` guard is what keeps this from acting on anyone else's Escape.
+	 * Nothing to do in sheet form: the dialog is `inset: 0` there and the
+	 * coordinates are not read at all. Clearing them rather than leaving them
+	 * stale is what makes a rotation from card to sheet and back re-measure
+	 * instead of restoring a position from the previous orientation.
 	 */
-	const onWindowKeydown = (e: KeyboardEvent) => {
-		if (!menu.open || e.key !== 'Escape') return;
-		e.preventDefault();
-		menu.closeAndRefocus();
-	};
+	function reposition() {
+		if (!open || !dialogEl || !triggerEl) return;
+		if (!isCard()) {
+			coords = undefined;
+			return;
+		}
+		coords = computePanelPosition(
+			triggerEl.getBoundingClientRect(),
+			dialogEl.getBoundingClientRect()
+		);
+	}
 
 	/**
-	 * A panel whose rows are links has to close when one is followed, and
-	 * `onWindowClick` cannot do it: a click on a row is INSIDE the container,
-	 * which is exactly what that handler treats as "leave it open".
+	 * `await tick()` before `showModal()`, because the list inside is rendered
+	 * by `{#if open}` and the dialog has to hold its real size before it can
+	 * be measured against the trigger. Both happen in the same task, so there
+	 * is no frame in which the card is painted in the wrong place — which is
+	 * the flash `AnchorMenu` has to hide with a `visibility` toggle, its own
+	 * popover being opened asynchronously by `ontoggle`.
+	 */
+	async function openPanel() {
+		if (dialogEl?.open) return;
+		open = true;
+		await tick();
+		dialogEl?.showModal();
+		reposition();
+		revealCurrent();
+	}
+
+	/**
+	 * Open on the reader's own row, not at row 1.
+	 *
+	 * `StructureSidebarToc` already scrolls its current row into view on
+	 * mount, and that effect cannot do this job here: the list mounts while
+	 * the dialog is still closed, and a closed `<dialog>` is `display: none`,
+	 * where scrolling anything is a no-op. So the panel does it itself, after
+	 * `showModal()`. Found by `aria-current`, which the row carries anyway,
+	 * rather than by the child's element id — that id is per-instance
+	 * (`$props.id()`) and deliberately unknowable from out here.
+	 *
+	 * Sets `scrollTop` rather than calling `scrollIntoView`, for the reason
+	 * `IndexSidebarToc` gives at length: `scrollIntoView` walks every
+	 * scrollable ancestor up to the viewport, and the document behind an open
+	 * modal is inert but still scrollable — a reader who closed the panel
+	 * would find the page somewhere else. Setting one container's `scrollTop`
+	 * cannot move the page.
+	 *
+	 * Centred, not `nearest`: the box has just rendered scrolled to the top,
+	 * so `nearest` would bring the row to the bottom edge with the whole list
+	 * above it and nothing below. The reader wants to see what surrounds where
+	 * they are.
+	 */
+	function revealCurrent() {
+		const box = dialogEl?.querySelector<HTMLElement>('.toc-panel-body');
+		const row = box?.querySelector<HTMLElement>('[aria-current="page"]');
+		if (!box || !row) return;
+		const rowBox = row.getBoundingClientRect();
+		const boxBox = box.getBoundingClientRect();
+		box.scrollTop += rowBox.top - boxBox.top - (boxBox.height - rowBox.height) / 2;
+	}
+
+	/* Escape and the backdrop both close the dialog natively, so `onclose` is
+	   the one place that runs on every dismissal — including the two this
+	   component never hears about directly. Focus goes back to the trigger
+	   from here for the same reason: otherwise it lands on `<body>` and a
+	   keyboard reader is returned to the top of the document rather than to
+	   the control they opened. */
+	function onClose() {
+		open = false;
+		coords = undefined;
+		triggerEl?.focus();
+	}
+
+	/* A click that lands on the dialog ITSELF is a click on the backdrop: the
+	   dialog is transparent and has no padding, so every visible pixel belongs
+	   to `.toc-panel` inside it. Same test, and the same reason for it, as
+	   `JumpBox`'s `onDialogClick`. Never fires in sheet form, where the panel
+	   fills the dialog and there is no backdrop to hit. */
+	function onDialogClick(e: MouseEvent) {
+		if (e.target === dialogEl) dialogEl.close();
+	}
+
+	/**
+	 * A panel whose rows are links has to close when one is followed.
 	 *
 	 * An action rather than an `onclick` on the panel `<div>`, because a click
 	 * handler on a non-interactive element is what
@@ -99,53 +220,250 @@
 	function closeOnFollow(node: HTMLElement) {
 		const onclick = (e: MouseEvent) => {
 			if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-			if (e.target instanceof Element && e.target.closest('a[href]')) menu.close();
+			if (e.target instanceof Element && e.target.closest('a[href]')) dialogEl?.close();
 		};
 		node.addEventListener('click', onclick);
 		return { destroy: () => node.removeEventListener('click', onclick) };
 	}
 </script>
 
-<svelte:window onclick={menu.onWindowClick} onkeydown={onWindowKeydown} />
+<!-- Scroll as well as resize: the card is anchored to a control in a STICKY
+     bar, so the trigger moves under the page rather than with it, and a card
+     left where it opened drifts off its anchor. The sheet ignores both. -->
+<svelte:window onresize={reposition} onscrollcapture={reposition} />
 
-<div class="menu toc-menu" bind:this={menu.containerEl}>
+<div class="toc-menu">
 	<button
 		type="button"
-		bind:this={menu.triggerEl}
+		bind:this={triggerEl}
 		class="menu-trigger"
-		aria-expanded={menu.open}
-		aria-controls={panelId}
+		aria-haspopup="dialog"
+		aria-expanded={open}
 		aria-label={label}
 		title={label}
-		onclick={menu.toggle}
+		onclick={openPanel}
 	>
 		<Icon name="table-of-contents" />
 	</button>
-	{#if menu.open}
-		<div id={panelId} class="menu-panel toc-panel" use:keepInViewport use:closeOnFollow>
-			{@render content()}
-		</div>
-	{/if}
+
+	<!-- Always in the markup, empty until opened: `showModal()` needs an
+	     element to be called on, and a closed `<dialog>` is `display: none`, so
+	     nothing inside is reachable, focusable or announced meanwhile. The
+	     `{#if}` is what keeps the tree itself from being built twice on every
+	     page — see `content`'s own note.
+
+	     No `role="dialog"`, no `aria-modal`: `showModal()` carries both.
+	     `aria-labelledby` would be the natural name, but the heading it would
+	     point at is rendered by the child component under an id this one
+	     cannot know, so the label is stated here — the same string the child
+	     sets its heading from. -->
+	<dialog
+		bind:this={dialogEl}
+		class="toc-dialog"
+		aria-label={label}
+		style:--toc-top={coords ? `${coords.top}px` : '0px'}
+		style:--toc-left={coords ? `${coords.left}px` : '0px'}
+		onclose={onClose}
+		onclick={onDialogClick}
+	>
+		{#if open}
+			<div class="toc-panel">
+				<!-- STICKY, AND THAT IS LOAD-BEARING RATHER THAN TIDY. In sheet
+				     form this button is the ONLY way out — there is no backdrop
+				     to tap and a phone has no Escape key — so a header that
+				     scrolled away past row 40 of 189 would leave a reader shut
+				     in. It carries the list's own title because the child's
+				     heading is hidden inside this panel (see the `:global` rule
+				     below), which is what keeps the words from appearing twice
+				     in the first two lines of the sheet. -->
+				<div class="toc-panel-head">
+					<h2 class="toc-panel-title">{label}</h2>
+					<button
+						type="button"
+						class="toc-close"
+						aria-label={t('toc.close')}
+						title={t('toc.close')}
+						onclick={() => dialogEl?.close()}
+					>
+						<Icon name="x" />
+					</button>
+				</div>
+				<div class="toc-panel-body" use:closeOnFollow>
+					{@render content()}
+				</div>
+			</div>
+		{/if}
+	</dialog>
 </div>
 
 <style>
+	/* `.toc-menu` ITSELF IS STYLED IN app.css, NOT HERE, and that is a
+	   specificity fact rather than a filing preference: Svelte compiles a
+	   scoped rule to `.toc-menu.svelte-hash`, which outranks the plain
+	   `.toc-menu { display: none }` that hides this control once the sidebar
+	   comes back — so a `display` declared here would quietly win, and the
+	   trigger would sit in the bar beside the sidebar it stands in for. The
+	   wrapper's whole story is where it appears, so it is stated where the
+	   rest of that story is.
+
+	   Everything below is inside the dialog, which app.css never names. */
+
 	/*
-	 * Wider and taller than the `.menu-panel` default, which is sized for a
-	 * handful of one-line rows. This holds a nested tree whose rows are
-	 * sentence-length titles, so a 14rem panel would set nearly every one of
-	 * them over three lines; 22rem is the sidebar's own 17rem plus the room
-	 * the indent of a fourth level needs. `inline-size` rather than
-	 * `min-inline-size` so the panel is the same width on every unit of the
-	 * work instead of breathing with whichever titles the reader's branch
-	 * happens to contain.
+	 * THE DIALOG IS POSITION AND NOTHING ELSE, so that every visible pixel
+	 * belongs to `.toc-panel` and `onDialogClick`'s backdrop test means what it
+	 * says. `JumpBox` makes the same split for the same reason.
+	 *
+	 * The default here is the SHEET — the phone case is the one this exists
+	 * for, and writing it as the base rather than as an override is what keeps
+	 * it from depending on a query to be correct. No `z-index`: an open modal
+	 * dialog is in the top layer, above every stacking context there is,
+	 * including the reading bar's own.
 	 */
-	.toc-panel {
-		inline-size: min(22rem, 88vw);
+	.toc-dialog {
+		position: fixed;
+		inset: 0;
+		inline-size: 100%;
 		max-inline-size: none;
-		max-block-size: min(30rem, 70vh);
-		/* The panel scrolls; the page behind it must not scroll with it once
-		   the list hits its end. Same rule both sidebars take (app.css). */
+		block-size: 100%;
+		max-block-size: none;
+		margin: 0;
+		border: none;
+		padding: 0;
+		background: transparent;
+		color: inherit;
+	}
+
+	/* Only ever seen in card form; in sheet form the panel covers it. */
+	.toc-dialog::backdrop {
+		background: rgb(0 0 0 / 35%);
+	}
+
+	/*
+	 * THE DIALOG IS THE FLEX COLUMN, and `[open]` is not decoration on that
+	 * selector. A closed `<dialog>` is `display: none` from the UA stylesheet;
+	 * a bare `.toc-dialog { display: flex }` would override it and leave the
+	 * panel on screen permanently.
+	 *
+	 * The column has to start here rather than on `.toc-panel` because the
+	 * card's height is `max-block-size`, and a percentage height on a child of
+	 * an auto-height box resolves to `auto` — `.toc-panel` would have grown to
+	 * its content, `.toc-panel-body` would never have become a scroll box, and
+	 * the dialog's `overflow: hidden` would have silently cut the last rows off
+	 * instead. Bounding the flex container is what makes the body scroll in
+	 * both forms.
+	 */
+	.toc-dialog[open] {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.toc-panel {
+		flex: 1 1 auto;
+		min-block-size: 0;
+		display: flex;
+		flex-direction: column;
+		background: var(--color-bg);
+	}
+
+	.toc-panel-head {
+		flex: none;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		border-block-end: 1px solid var(--color-border);
+		background: var(--color-bg);
+	}
+
+	/* The interface face and the muted, letter-spaced capitals the sidebar's
+	   own heading takes (`.sidebar-toc-heading`, app.css) — this replaces that
+	   heading inside the panel, so it should not read as a different kind of
+	   thing from the one it stands in for. */
+	.toc-panel-title {
+		margin: 0;
+		font-family: var(--font-sans);
+		font-size: 0.85rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		color: var(--color-text-muted);
+	}
+
+	/* Borderless, like `InstallHint`'s dismiss and unlike `.menu-trigger`: it
+	   sits inside the surface it closes rather than on the page, and a boxed
+	   control there reads as a second action to weigh rather than as the way
+	   out. Sized for a thumb regardless of pointer — it is the sheet's only
+	   exit. */
+	.toc-close {
+		flex: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: 2.5rem;
+		block-size: 2.5rem;
+		padding: 0;
+		border: none;
+		border-radius: 0.4rem;
+		background: none;
+		color: var(--color-text-muted);
+		font-size: 1.1rem;
+		cursor: pointer;
+	}
+
+	.toc-close:hover {
+		color: var(--color-accent);
+		background: var(--color-bg-elevated);
+	}
+
+	.toc-panel-body {
+		flex: 1 1 auto;
+		min-block-size: 0;
+		overflow-y: auto;
+		/* The page behind is inert, but iOS still chains a scroll that runs
+		   off the end of this box to the document underneath. */
 		overscroll-behavior: contain;
-		padding: 0.6rem 0.7rem;
+		padding: 0.6rem 0.75rem 1rem;
+	}
+
+	/*
+	 * The list's own heading, suppressed — `.toc-panel-head` above says the
+	 * same words and stays put while the list scrolls under it, which a
+	 * heading inside the scroll area cannot do. Reaching into the child is the
+	 * price of the sticky header; the alternative was a presentation prop on
+	 * `StructureSidebarToc` describing where it was being rendered, which is
+	 * the kind of knowledge a component should not have about its caller.
+	 *
+	 * The `<nav>` keeps its accessible name: `aria-labelledby` resolves
+	 * against hidden text by specification, so the heading still names the
+	 * landmark it is `display: none` for.
+	 */
+	.toc-panel-body :global(.sidebar-toc-heading) {
+		display: none;
+	}
+
+	/*
+	 * ...AND ABOVE 48rem IT IS A CARD AGAIN, anchored to the trigger by
+	 * `reposition()`. See the docblock for why the line is here and not at the
+	 * sidebar's own 80rem: a screen with room to read around the panel should
+	 * still show the text.
+	 *
+	 * `inset: auto` first, or the sheet's `inset: 0` keeps winning over `top`
+	 * and `left` — a `<dialog>` is `position: fixed` in both forms and all four
+	 * insets resolve, not just the two named here.
+	 */
+	@media (min-width: 48rem) {
+		.toc-dialog {
+			inset: auto;
+			top: var(--toc-top);
+			left: var(--toc-left);
+			inline-size: 22rem;
+			block-size: auto;
+			max-block-size: min(30rem, 70vh);
+			border: 1px solid var(--color-border);
+			border-radius: 0.5rem;
+			box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+			overflow: hidden;
+		}
 	}
 </style>

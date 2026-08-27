@@ -276,5 +276,6 @@ export const la: Dictionary = {
 	'compare.missing': 'In hac editione non est',
 	'compare.versificationNote':
 		'Hae duae editiones versus huius capitis alicubi aliter dividunt (varietas textus, non consilium interpretis) — idem numerus versus non semper eandem sententiam in utraque columna signat.',
-	'compare.loading': 'Altera lingua legitur…'
+	'compare.loading': 'Altera lingua legitur…',
+	'toc.close': 'Claude'
 };

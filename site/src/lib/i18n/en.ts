@@ -338,5 +338,10 @@ export const en: Dictionary = {
 	'compare.missing': 'Not present in this edition',
 	'compare.versificationNote':
 		'These two editions divide this chapter’s verses differently in places (a textual variant, not a translation choice) — the same verse number does not always mark the same sentence in both columns.',
-	'compare.loading': 'Loading the second language…'
+	'compare.loading': 'Loading the second language…',
+	// The table of contents panel's dismiss control (`TocMenu`). Its own
+	// name, not the panel's: below 48rem the panel is the whole viewport
+	// and this button is the only way out of it, so it says what it does
+	// rather than repeating the heading beside it.
+	'toc.close': 'Close'
 };

@@ -236,5 +236,6 @@ export const ro: Dictionary = {
 	'compare.missing': 'Nu se află în această ediție',
 	'compare.versificationNote':
 		'Aceste două ediții împart pe alocuri altfel versetele acestui capitol (o variantă textuală, nu o alegere de traducere) — același număr de verset nu marchează întotdeauna aceeași frază în ambele coloane.',
-	'compare.loading': 'Se încarcă a doua limbă…'
+	'compare.loading': 'Se încarcă a doua limbă…',
+	'toc.close': 'Închide'
 };

@@ -1279,21 +1279,28 @@ input {
  * sidebar is actually coming back.
  *
  * Stated here rather than in the component so that both halves of "who shows
- * the table of contents at this width" are one block of CSS. The cost is the
- * compound selector: `.menu` (further down this file, and therefore later)
- * sets `display: inline-flex` on the same element at the same specificity, so
- * `.toc-menu` alone would lose to it. `.menu.toc-menu` is not a hack looking
- * for a home — it is this rule saying it must beat the primitive it is built
- * on.
+ * the table of contents at this width" are one block of CSS — and because
+ * hiding the wrapper is what hides the `<dialog>` with it: a modal dialog is
+ * in the top layer, above every stacking context, but it is still a
+ * descendant, so `display: none` on an ancestor removes it as it would remove
+ * anything else. That is also what keeps the panel out of print, where
+ * `.reading-bar` is already hidden.
  */
+/* Sits in `ReadingBar`'s flex row like every other control. Declared here
+   rather than in the component so the two rules below can hide it — a scoped
+   Svelte rule carries an extra class and would outrank them. */
+.toc-menu {
+	display: inline-flex;
+}
+
 @media (min-width: 80rem) {
-	.reading-layout:not(.compare) .menu.toc-menu {
+	.reading-layout:not(.compare) .toc-menu {
 		display: none;
 	}
 }
 
 @media (min-width: 100rem) {
-	.menu.toc-menu {
+	.toc-menu {
 		display: none;
 	}
 }

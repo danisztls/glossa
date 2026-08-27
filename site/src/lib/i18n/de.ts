@@ -234,5 +234,6 @@ export const de: Dictionary = {
 	'compare.missing': 'In dieser Ausgabe nicht vorhanden',
 	'compare.versificationNote':
 		'Diese beiden Ausgaben teilen die Verse dieses Kapitels stellenweise verschieden ein (eine Textvariante, keine Übersetzungsentscheidung) — dieselbe Versnummer bezeichnet nicht immer denselben Satz in beiden Spalten.',
-	'compare.loading': 'Die zweite Sprache wird geladen…'
+	'compare.loading': 'Die zweite Sprache wird geladen…',
+	'toc.close': 'Schließen'
 };

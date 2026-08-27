@@ -233,5 +233,6 @@ export const it: Dictionary = {
 	'compare.missing': 'Non presente in questa edizione',
 	'compare.versificationNote':
 		'Queste due edizioni dividono in alcuni punti i versetti di questo capitolo in modo diverso (una variante testuale, non una scelta di traduzione) — lo stesso numero di versetto non segna sempre la stessa frase nelle due colonne.',
-	'compare.loading': 'Caricamento della seconda lingua…'
+	'compare.loading': 'Caricamento della seconda lingua…',
+	'toc.close': 'Chiudi'
 };
