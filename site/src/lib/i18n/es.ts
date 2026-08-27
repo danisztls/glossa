@@ -222,9 +222,10 @@ export const es: Dictionary = {
 	'notFound.title': 'No hay nada en esta dirección',
 	'notFound.lede': 'La página que pediste no está aquí.',
 	'notFound.body':
-		'El enlace puede estar mal escrito o anticuado, o puede apuntar a un texto que este sitio no tiene. Aquí nada está tras un acceso ni un muro de pago, así que si una página existe, se puede llegar a ella.',
+		'El enlace puede estar mal escrito o anticuado, o puede apuntar a un texto que este sitio no tiene.',
 	'notFound.searchHint':
 		'Si sabes la referencia que quieres —un libro y un capítulo, un párrafo del Catecismo—, escríbela en el cuadro de búsqueda de la parte superior de esta página.',
+	'notFound.credit': 'Basado en British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'O empieza por una de estas:',
 	'notFound.home': 'Inicio',
 	'compare.enter': 'Comparar ediciones',

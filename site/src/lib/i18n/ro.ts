@@ -226,9 +226,10 @@ export const ro: Dictionary = {
 	'notFound.title': 'Nimic la această adresă',
 	'notFound.lede': 'Pagina pe care ați cerut-o nu este aici.',
 	'notFound.body':
-		'Linkul poate fi greșit tastat sau învechit, ori poate trimite la un text pe care acest sit nu îl are. Nimic de aici nu se află în spatele unei autentificări sau al unui zid de plată, așa că, dacă o pagină există, ea poate fi ajunsă.',
+		'Linkul poate fi greșit tastat sau învechit, ori poate trimite la un text pe care acest sit nu îl are.',
 	'notFound.searchHint':
 		'Dacă știți referința pe care o căutați — o carte și un capitol, un paragraf din Catehism — scrieți-o în caseta de căutare din capul acestei pagini.',
+	'notFound.credit': 'Dup\u0103 British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'Sau porniți de la una dintre acestea:',
 	'notFound.home': 'Pagina principală',
 	'compare.enter': 'Comparați edițiile',

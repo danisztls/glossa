@@ -325,9 +325,22 @@ export const en: Dictionary = {
 	'notFound.title': 'Nothing at this address',
 	'notFound.lede': 'The page you asked for is not here.',
 	'notFound.body':
-		'The link may be mistyped or out of date, or it may point to a text this site does not carry. Nothing here is behind a login or a paywall, so if a page exists, it can be reached.',
+		'The link may be mistyped or out of date, or it may point to a text this site does not carry.',
 	'notFound.searchHint':
 		'If you know the reference you want — a book and chapter, a paragraph of the Catechism — type it into the search box at the top of this page.',
+	// The 404 illustration's credit line. ONE STRING PER LANGUAGE INCLUDING THE
+	// SHELFMARK, rather than a "Based on" prefix with the shelfmark appended in
+	// the markup, because the word order is not the same everywhere: Hungarian
+	// puts `nyom\u00e1n` AFTER the source it qualifies, so a prefix would read
+	// backwards there. Several languages use the art-credit convention for
+	// this rather than a literal "based on" -- French `D\u2019apr\u00e8s`, German
+	// `Nach`, Swedish `Efter` -- which is the register a museum label uses.
+	//
+	// It says "based on" and not the bare shelfmark because the image is an
+	// AI-retouched version of the folio, not a reproduction of it: the mitre
+	// and crozier carry ornament the manuscript does not have. Naming the
+	// source without that qualifier would claim to BE f. 49v.
+	'notFound.credit': 'Based on British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'Or start from one of these:',
 	'notFound.home': 'Home',
 

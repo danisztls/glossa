@@ -266,9 +266,10 @@ export const la: Dictionary = {
 	'notFound.title': 'Nihil hac in inscriptione',
 	'notFound.lede': 'Pagina quam petisti hic non est.',
 	'notFound.body':
-		'Nexus fortasse perperam scriptus est aut obsoletus, aut ad textum ducit quem haec sedes non habet. Nihil hic post ianuam aut pretium latet: si pagina est, adiri potest.',
+		'Nexus fortasse perperam scriptus est aut obsoletus, aut ad textum ducit quem haec sedes non habet.',
 	'notFound.searchHint':
 		'Si locum quem quaeris nosti — librum et caput, paragraphum Catechismi — in arcam quaerendi supra eum scribe.',
+	'notFound.credit': 'Ad exemplar British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'Vel hinc incipe:',
 	'notFound.home': 'Prima pagina',
 	'compare.enter': 'Editiones confer',

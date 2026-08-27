@@ -228,9 +228,10 @@ export const hu: Dictionary = {
 	'notFound.title': 'Ezen a címen nincs semmi',
 	'notFound.lede': 'A kért oldal nincs itt.',
 	'notFound.body':
-		'A hivatkozás elgépelt vagy elavult lehet, vagy olyan szövegre mutat, amelyet ez az oldal nem tartalmaz. Itt semmi sincs bejelentkezés vagy fizetőfal mögött, így ha egy oldal létezik, el is érhető.',
+		'A hivatkozás elgépelt vagy elavult lehet, vagy olyan szövegre mutat, amelyet ez az oldal nem tartalmaz.',
 	'notFound.searchHint':
 		'Ha tudja, melyik helyet keresi — egy könyvet és fejezetet, a Katekizmus egy szakaszát —, írja be az oldal tetején lévő keresőmezőbe.',
+	'notFound.credit': 'A British Library, Royal MS 10 E IV, f.\u200a49v nyom\u00e1n',
 	'notFound.elsewhere': 'Vagy induljon el ezek egyikéről:',
 	'notFound.home': 'Kezdőlap',
 	'compare.enter': 'Kiadások összehasonlítása',

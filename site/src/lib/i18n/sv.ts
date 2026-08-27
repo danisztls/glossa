@@ -225,9 +225,10 @@ export const sv: Dictionary = {
 	'notFound.title': 'Ingenting på den här adressen',
 	'notFound.lede': 'Sidan du bad om finns inte här.',
 	'notFound.body':
-		'Länken kan vara felskriven eller föråldrad, eller peka på en text som den här sajten inte har. Ingenting här ligger bakom en inloggning eller en betalvägg, så om en sida finns går den att nå.',
+		'Länken kan vara felskriven eller föråldrad, eller peka på en text som den här sajten inte har.',
 	'notFound.searchHint':
 		'Om du vet vilken hänvisning du vill ha — en bok och ett kapitel, ett stycke i katekesen — skriv in den i sökrutan högst upp på sidan.',
+	'notFound.credit': 'Efter British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'Eller börja från någon av dessa:',
 	'notFound.home': 'Startsida',
 	'compare.enter': 'Jämför utgåvor',

@@ -223,9 +223,10 @@ export const it: Dictionary = {
 	'notFound.title': 'Non c’è nulla a questo indirizzo',
 	'notFound.lede': 'La pagina che hai chiesto non è qui.',
 	'notFound.body':
-		'Il collegamento può essere scritto male o non più valido, oppure può puntare a un testo che questo sito non porta. Qui nulla sta dietro un accesso o un pagamento, quindi se una pagina esiste, la si può raggiungere.',
+		'Il collegamento può essere scritto male o non più valido, oppure può puntare a un testo che questo sito non porta.',
 	'notFound.searchHint':
 		'Se conosci il riferimento che cerchi — un libro e un capitolo, un paragrafo del Catechismo — scrivilo nel campo di ricerca in cima a questa pagina.',
+	'notFound.credit': 'Da British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'Oppure parti da una di queste:',
 	'notFound.home': 'Home',
 	'compare.enter': 'Confronta le edizioni',

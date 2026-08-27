@@ -221,9 +221,10 @@ export const pl: Dictionary = {
 	'notFound.title': 'Pod tym adresem nic nie ma',
 	'notFound.lede': 'Strony, o którą prosiłeś, tutaj nie ma.',
 	'notFound.body':
-		'Odnośnik może być błędnie wpisany lub nieaktualny, albo wskazywać tekst, którego ta strona nie zawiera. Nic tutaj nie jest za logowaniem ani opłatą, więc jeśli strona istnieje, można do niej dotrzeć.',
+		'Odnośnik może być błędnie wpisany lub nieaktualny, albo wskazywać tekst, którego ta strona nie zawiera.',
 	'notFound.searchHint':
 		'Jeśli znasz szukane miejsce — księgę i rozdział, numer akapitu Katechizmu — wpisz je w pole wyszukiwania na górze tej strony.',
+	'notFound.credit': 'Na podstawie British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'Albo zacznij od jednego z tych:',
 	'notFound.home': 'Strona główna',
 	'compare.enter': 'Porównaj wydania',

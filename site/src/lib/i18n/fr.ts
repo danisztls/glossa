@@ -223,9 +223,10 @@ export const fr: Dictionary = {
 	'notFound.title': 'Rien à cette adresse',
 	'notFound.lede': 'La page que vous avez demandée n’est pas ici.',
 	'notFound.body':
-		'Le lien est peut-être mal saisi ou périmé, ou il pointe vers un texte que ce site ne porte pas. Rien ici n’est derrière une connexion ou un péage : si une page existe, on peut l’atteindre.',
+		'Le lien est peut-être mal saisi ou périmé, ou il pointe vers un texte que ce site ne porte pas.',
 	'notFound.searchHint':
 		'Si vous connaissez la référence voulue — un livre et un chapitre, un paragraphe du Catéchisme — tapez-la dans le champ de recherche en haut de cette page.',
+	'notFound.credit': 'D\u2019apr\u00e8s British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'Ou partez de l’une de celles-ci :',
 	'notFound.home': 'Accueil',
 	'compare.enter': 'Comparer les éditions',

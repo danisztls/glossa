@@ -223,9 +223,10 @@ export const sl: Dictionary = {
 	'notFound.title': 'Na tem naslovu ni ničesar',
 	'notFound.lede': 'Strani, ki ste jo zahtevali, ni tukaj.',
 	'notFound.body':
-		'Povezava je morda napačno vtipkana ali zastarela, morda pa kaže na besedilo, ki ga to spletišče nima. Nič tukaj ni za prijavo ali plačljivim zidom, zato je vsaka stran, ki obstaja, tudi dosegljiva.',
+		'Povezava je morda napačno vtipkana ali zastarela, morda pa kaže na besedilo, ki ga to spletišče nima.',
 	'notFound.searchHint':
 		'Če veste, katero navedbo iščete — knjigo in poglavje, odstavek katekizma —, jo vtipkajte v iskalno polje na vrhu te strani.',
+	'notFound.credit': 'Po British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'Ali pa začnite pri enem od teh:',
 	'notFound.home': 'Domov',
 	'compare.enter': 'Primerjaj izdaji',

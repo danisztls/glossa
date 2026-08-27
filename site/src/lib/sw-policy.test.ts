@@ -183,6 +183,33 @@ describe('partitionAssets', () => {
 		);
 	});
 
+	/**
+	 * The 404 page's illustration is 80 KB that a reader who never mistypes an
+	 * address never needs. Content-hashed, so the content cache's terms suit it
+	 * exactly; but the favicon is an SVG the document head asks for on the
+	 * first offline load, and the fonts are what the shell renders with, so
+	 * neither may follow it out of the precache.
+	 */
+	it('defers raster images to the content cache but keeps the favicon and fonts', () => {
+		const img = '/_app/immutable/assets/reynard-preaching.hash.webp';
+		const favicon = '/_app/immutable/assets/favicon.hash.svg';
+		const font = '/_app/immutable/assets/eb-garamond.hash.woff2';
+		const withMedia = partitionAssets({
+			build: [...build, img, favicon, font],
+			files,
+			base: '',
+			contentAssets,
+			baseHref: BASE_HREF
+		});
+		expect(withMedia.contentUrls.has(img)).toBe(true);
+		expect(withMedia.precacheUrls).not.toContain(img);
+		// Not corpus, so the download waves must not plan over it either.
+		expect(withMedia.contentEntries.map((e) => e.path)).not.toContain(img);
+
+		expect(withMedia.precacheUrls).toContain(favicon);
+		expect(withMedia.precacheUrls).toContain(font);
+	});
+
 	/** SvelteKit's update-poll target. Caching it at all would make the poll
 	 *  answer from cache, which is the one thing it exists not to do. */
 	it('leaves _app/version.json to the network', () => {

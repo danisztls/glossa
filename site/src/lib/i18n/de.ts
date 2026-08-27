@@ -224,9 +224,10 @@ export const de: Dictionary = {
 	'notFound.title': 'Unter dieser Adresse ist nichts',
 	'notFound.lede': 'Die Seite, nach der Sie gefragt haben, ist nicht hier.',
 	'notFound.body':
-		'Der Link kann vertippt oder veraltet sein, oder er verweist auf einen Text, den diese Seite nicht führt. Nichts hier liegt hinter einer Anmeldung oder einer Bezahlschranke; wenn es eine Seite gibt, ist sie erreichbar.',
+		'Der Link kann vertippt oder veraltet sein, oder er verweist auf einen Text, den diese Seite nicht führt.',
 	'notFound.searchHint':
 		'Wenn Sie die gesuchte Stelle kennen — ein Buch und ein Kapitel, einen Absatz des Katechismus — tippen Sie sie in das Suchfeld oben auf dieser Seite.',
+	'notFound.credit': 'Nach British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'Oder beginnen Sie bei einem davon:',
 	'notFound.home': 'Startseite',
 	'compare.enter': 'Ausgaben vergleichen',

@@ -247,9 +247,10 @@ export const pt: Dictionary = {
 	'notFound.title': 'Nada neste endereço',
 	'notFound.lede': 'A página que pediu não está aqui.',
 	'notFound.body':
-		'A ligação pode estar mal escrita ou desatualizada, ou pode apontar para um texto que este sítio não contém. Nada aqui exige conta nem pagamento, por isso, se uma página existe, é acessível.',
+		'A ligação pode estar mal escrita ou desatualizada, ou pode apontar para um texto que este sítio não contém.',
 	'notFound.searchHint':
 		'Se souber a referência que procura — um livro e capítulo, um parágrafo do Catecismo — escreva-a na caixa de pesquisa no topo desta página.',
+	'notFound.credit': 'Baseado em British Library, Royal MS 10 E IV, f.\u200a49v',
 	'notFound.elsewhere': 'Ou comece por uma destas:',
 	'notFound.home': 'Início',
 

@@ -109,6 +109,11 @@ const HOST_CONFIG_FILES = ['/_headers', '/_redirects'];
  */
 const CRAWLER_FILES = ['/sitemap.xml', '/.well-known/security.txt', '/og.png'];
 
+/** Raster image extensions that belong in the content cache rather than the
+ *  install precache. Deliberately excludes `.svg` (the favicon is one, and the
+ *  document head asks for it before anything else) and every font format. */
+const DEFERRED_MEDIA = ['.webp', '.png', '.jpg', '.jpeg', '.avif'];
+
 export interface PartitionInput {
 	/** `$service-worker`'s `build` — EVERY emitted build asset, corpus JSON
 	 *  included, which is exactly why this partition has to exist. */
@@ -179,12 +184,22 @@ export function partitionAssets(input: PartitionInput): AssetPartition {
 	// fetches. (`_app/version.json` is the one JSON outside that directory,
 	// and it is SvelteKit's poll target, which must never be cached at all —
 	// hence matching on the immutable prefix rather than on `.json` alone.)
-	const isDeferredData = (url: string) => {
+	//
+	// Raster IMAGES go the same way, for the same reason at a smaller scale:
+	// the 404 page's drollery is 80 KB that a reader who never mistypes an
+	// address never needs, and it is content-hashed, so the content cache's
+	// terms (stored on first read, never revalidated, outliving deploys) are
+	// exactly right for it. `.svg` is deliberately NOT here — the favicon is
+	// one, it is referenced from the document head, and it is wanted on the
+	// first offline load. Fonts are not here either, for the stronger version
+	// of the same point: the shell cannot render without them.
+	const isDeferred = (url: string) => {
 		const path = contentPath(url, baseHref);
-		return path.endsWith('.json') && path.includes('/immutable/') && !contentUrls.has(path);
+		if (!path.includes('/immutable/') || contentUrls.has(path)) return false;
+		return path.endsWith('.json') || DEFERRED_MEDIA.some((ext) => path.endsWith(ext));
 	};
 	for (const url of build) {
-		if (isDeferredData(url)) contentUrls.add(contentPath(url, baseHref));
+		if (isDeferred(url)) contentUrls.add(contentPath(url, baseHref));
 	}
 
 	const shellDocumentUrl = `${base}/`;
