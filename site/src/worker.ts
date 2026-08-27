@@ -1,4 +1,6 @@
 import { isCanonicalPath, type RouteManifest } from './lib/route-manifest';
+import { MAX_BODY_BYTES, validatePayload } from './lib/usage-schema';
+import { recordSession, type D1Database } from './lib/usage-store';
 
 interface AssetFetcher {
 	fetch(request: Request): Promise<Response>;
@@ -6,6 +8,59 @@ interface AssetFetcher {
 
 interface Env {
 	ASSETS: AssetFetcher;
+	/** Optional so that a deploy without the binding — a preview, a fresh
+	 *  clone, `wrangler dev` before `wrangler d1 create` — serves the site
+	 *  normally and silently drops beacons, rather than failing a navigation
+	 *  over a statistic. */
+	USAGE?: D1Database;
+}
+
+interface ExecutionContext {
+	waitUntil(promise: Promise<unknown>): void;
+}
+
+/** Where the usage beacon posts. Short because `sendBeacon` bodies are small
+ *  and this is one of only two paths the worker answers itself. Note the WAF
+ *  custom rule that guards it matches this literal path — see
+ *  docs/decisions.md §Usage measurement. */
+const BEACON_PATH = '/a';
+
+/**
+ * Take one usage beacon.
+ *
+ * EVERY OUTCOME IS 204. A malformed payload, an unknown schema version, a
+ * missing binding, a capped day and a stored row are indistinguishable from
+ * the outside. That is deliberate on an open endpoint: distinct answers would
+ * tell someone probing it exactly which shape the validator accepts, and the
+ * sender is a `sendBeacon` that discarded the response before it arrived.
+ */
+async function handleBeacon(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+	const accepted = new Response(null, { status: 204 });
+	if (!env.USAGE) return accepted;
+
+	// Refuse on the declared length before reading, then again on what
+	// actually arrived: `content-length` is the sender's claim, not a fact.
+	if (Number(request.headers.get('content-length') ?? '0') > MAX_BODY_BYTES) return accepted;
+
+	let body: unknown;
+	try {
+		const text = await request.text();
+		if (text.length > MAX_BODY_BYTES) return accepted;
+		body = JSON.parse(text);
+	} catch {
+		return accepted;
+	}
+
+	const payload = validatePayload(body);
+	if (!payload) return accepted;
+
+	// The one field the client does not send and cannot influence. `XX` when
+	// Cloudflare has no answer, so the column is never null and the report
+	// never has to special-case it.
+	const country = (request as Request & { cf?: { country?: string } }).cf?.country ?? 'XX';
+
+	ctx.waitUntil(recordSession(env.USAGE, payload, country, Date.now()));
+	return accepted;
 }
 
 let manifestPromise: Promise<RouteManifest | undefined> | undefined;
@@ -52,7 +107,16 @@ async function notFoundShell(request: Request, assets: AssetFetcher): Promise<Re
 }
 
 export default {
-	async fetch(request: Request, env: Env): Promise<Response> {
+	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+		// Before the navigation test, and cheaply: the site makes no other POST
+		// request of any kind (no forms, no mutation — see the account-free
+		// posture in docs/decisions.md), so a POST is either the beacon or is
+		// not ours, and only a POST pays for the extra URL parse.
+		if (request.method === 'POST') {
+			return new URL(request.url).pathname === BEACON_PATH
+				? handleBeacon(request, env, ctx)
+				: new Response(null, { status: 405 });
+		}
 		if (!isNavigation(request)) return env.ASSETS.fetch(request);
 		const url = new URL(request.url);
 		// The public route grammar has no trailing slash. `run_worker_first`
