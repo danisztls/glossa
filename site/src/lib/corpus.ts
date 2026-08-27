@@ -866,6 +866,21 @@ export function lastContentRead(): { workId: string; path: string } | undefined 
 	return lastRead;
 }
 
+/**
+ * Told which work was read, if anyone is listening.
+ *
+ * INJECTED RATHER THAN IMPORTED, the same way `suggest.ts` takes its fuzzy
+ * ranker: `usage.ts` wants exactly the fact the line below already computes,
+ * and importing the collector here would make the module every reading route
+ * depends on depend on the measurement. Nothing registers one under test or in
+ * a build, and an unobserved read costs a single optional call.
+ */
+let contentReadObserver: ((workId: string) => void) | undefined;
+
+export function setContentReadObserver(observer: (workId: string) => void): void {
+	contentReadObserver = observer;
+}
+
 async function readContent<T>(location: ContentLocation): Promise<T> {
 	// `globalThis.location`, not the bare name: the parameter above shadows it.
 	const here = globalThis.location?.href;
@@ -874,6 +889,7 @@ async function readContent<T>(location: ContentLocation): Promise<T> {
 			workId: location.relPath.split('/')[1] ?? '',
 			path: new URL(location.url, here).pathname
 		};
+		contentReadObserver?.(lastRead.workId);
 	}
 	let pending = contentCache.get(location.relPath) as Promise<T> | undefined;
 	if (!pending) {

@@ -17,6 +17,8 @@
 	import LinkPreview from '$lib/components/LinkPreview.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { serviceWorker } from '$lib/sw.svelte';
+	import { usage } from '$lib/usage';
+	import { version } from '$app/environment';
 	import UpdateBanner from '$lib/components/UpdateBanner.svelte';
 	import ToTopButton from '$lib/components/ToTopButton.svelte';
 
@@ -163,6 +165,27 @@
 	 * returns a no-op without starting a timer.
 	 */
 	onMount(() => install.track());
+
+	/**
+	 * Usage measurement — one bucketed summary per session, sent once on the
+	 * way out. See `$lib/usage.ts` for what it sends and, more to the point,
+	 * what it deliberately does not.
+	 *
+	 * Here for the same reason as the two above: the layout mounts once for the
+	 * whole session, and a session is exactly what this counts. `version` is
+	 * the shell build the reader is running, which is how the collector knows
+	 * an update has actually landed rather than merely been offered again.
+	 */
+	onMount(() => usage.start(version));
+
+	/**
+	 * Sections visited, from the one place that already knows about every
+	 * navigation. An in-app route change is a `pushState` the edge never sees,
+	 * so this is the only way a section is counted at all.
+	 */
+	$effect(() => {
+		usage.notePath(page.url.pathname);
+	});
 </script>
 
 <svelte:head>

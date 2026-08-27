@@ -27,6 +27,7 @@
 	import { hrefFor } from '$lib/address';
 	import { parseReference, type ParsedBibleReference } from '$lib/refparse';
 	import { resolveBookToken } from '$lib/book-token';
+	import { usage } from '$lib/usage';
 	import { cccParagraphExists, getCanonicalBook, prayerIndexLang } from '$lib/corpus';
 	import type { BibleBookMeta } from '$lib/corpus-index';
 	import { content } from '$lib/content.svelte';
@@ -263,6 +264,10 @@
 	}
 
 	function choose(href: string) {
+		// A jump box that answers is the whole point of the jump box; a jump box
+		// that does not is the best expansion signal the site produces. Both
+		// outcomes are counted, never the query — see `usage.noteJump`.
+		usage.noteJump('hit');
 		closeBox();
 		goto(href);
 	}
@@ -321,6 +326,7 @@
 
 		if (ref.kind === 'ccc') {
 			if (!cccParagraphExists(DEFAULT_CCC_LANG, ref.n)) {
+				usage.noteJump('miss', 'out-of-range', 'ccc');
 				notFound = true;
 				return;
 			}
@@ -338,12 +344,17 @@
 			// preference, not this lookup's to decide.
 			const resolved = resolveBookToken(ref.book, { preferWorkId: content.workIdFor('bible') });
 			if (!resolved) {
+				usage.noteJump('miss', 'unknown-book');
 				notFound = true;
 				return;
 			}
 
 			const target = singleChapterFixup(resolved.book, ref);
 			if (!chapterExists(resolved.book.osis, target.chapter)) {
+				// The book IS named, and the chapter is not ours to serve — the
+				// one miss that says which text to look at. Lower-cased because
+				// the schema stores identifiers, not OSIS spelling.
+				usage.noteJump('miss', 'out-of-range', resolved.book.osis.toLowerCase());
 				notFound = true;
 				return;
 			}
@@ -379,6 +390,7 @@
 			return;
 		}
 
+		usage.noteJump('miss', 'no-match');
 		notFound = true;
 	}
 

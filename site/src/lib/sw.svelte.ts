@@ -35,6 +35,7 @@
 
 import { contentLangChain, lastContentRead } from './corpus';
 import { content, type WorkTypeKey } from './content.svelte';
+import { usage } from './usage';
 import type { WaveId } from './sw-policy';
 
 /** How long to wait between `registration.update()` checks. Six hours: long
@@ -132,7 +133,7 @@ class ServiceWorkerStore {
 	 * which is the common case for the reader this exists to help.
 	 */
 	#watchForUpdate(registration: ServiceWorkerRegistration, signal: AbortSignal): void {
-		if (registration.waiting && navigator.serviceWorker.controller) this.updateReady = true;
+		if (registration.waiting && navigator.serviceWorker.controller) this.#offerUpdate();
 
 		registration.addEventListener(
 			'updatefound',
@@ -141,7 +142,7 @@ class ServiceWorkerStore {
 				if (!installing) return;
 				installing.addEventListener('statechange', () => {
 					if (installing.state === 'installed' && navigator.serviceWorker.controller) {
-						this.updateReady = true;
+						this.#offerUpdate();
 					}
 				});
 			},
@@ -214,8 +215,21 @@ class ServiceWorkerStore {
 		});
 	}
 
+	/** Raise the banner, and record that an offer was made. The counter behind
+	 *  `usage`'s `behind` bucket asks whether `UpdateBanner` actually moves
+	 *  anyone off a superseded shell, which needs to know an offer happened —
+	 *  not merely that one was pending somewhere. */
+	#offerUpdate(): void {
+		this.updateReady = true;
+		usage.noteUpdateOffered();
+	}
+
 	#onMessage(event: MessageEvent): void {
-		const data = event.data as { type?: string } & Partial<WaveProgress>;
+		const data = event.data as { type?: string; reason?: string } & Partial<WaveProgress>;
+		if (data?.type === 'SW:install-failed') {
+			usage.noteSwFailure(typeof data.reason === 'string' ? data.reason : 'other');
+			return;
+		}
 		if (data?.type === 'CACHE_CONTENT:progress' && data.wave) {
 			this.progress = {
 				wave: data.wave,

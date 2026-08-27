@@ -22,6 +22,7 @@
 	import { page } from '$app/state';
 	import Icon from './Icon.svelte';
 	import { install } from '$lib/install.svelte';
+	import { usage } from '$lib/usage';
 	import { t } from '$lib/i18n.svelte';
 
 	let visible = $state(false);
@@ -63,7 +64,10 @@
 			return;
 		}
 		page.url.pathname;
-		if (untrack(() => install.iosHintEligible)) visible = true;
+		if (untrack(() => install.iosHintEligible)) {
+			visible = true;
+			untrack(() => usage.noteInstallPrompt('shown'));
+		}
 	});
 
 	function dismiss() {

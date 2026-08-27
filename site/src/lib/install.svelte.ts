@@ -37,6 +37,9 @@
 
 import { browser } from '$app/environment';
 import { readStoredString, writeStoredString } from './storage';
+// One-directional: this module reports the prompt's outcome, and `usage.ts`
+// keeps its own copy of `isStandalone` rather than importing back from here.
+import { usage } from './usage';
 
 /** Visible reading time a reader must accumulate before the iOS hint appears. */
 export const ENGAGEMENT_THRESHOLD_MS = 15 * 60 * 1000;
@@ -165,10 +168,12 @@ class InstallStore {
 		this.promptEvent = null;
 		await event.prompt();
 		const { outcome } = await event.userChoice;
+		usage.noteInstallPrompt(outcome === 'accepted' ? 'accepted' : 'dismissed');
 		if (outcome === 'accepted') this.installed = true;
 	}
 
 	dismissHint() {
+		usage.noteInstallPrompt('dismissed');
 		this.hintDismissed = true;
 		writeStoredString(DISMISSED_KEY, '1');
 	}

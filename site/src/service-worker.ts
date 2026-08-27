@@ -126,6 +126,45 @@ function announce(message: Record<string, unknown>): Promise<void> {
 }
 
 /**
+ * Report a failure that leaves the reader without the library this worker just
+ * reported installing — the silent failure `sw-policy.ts`'s docblock names
+ * ("installs cleanly, reports success, and leaves the reader with no library
+ * offline") and which, until this existed, went to `console.error` and nowhere
+ * a reader or a maintainer would ever see it.
+ *
+ * `includeUncontrolled`, unlike `announce`: on a FIRST install there is no
+ * controlled client yet, and the page that registered this worker is exactly
+ * the one that should hear about it. A failure with no page open at all is
+ * still missed, which is the honest limit of reporting from here.
+ */
+function announceFailure(reason: string): Promise<void> {
+	return sw.clients
+		.matchAll({ includeUncontrolled: true })
+		.then((clients) => {
+			for (const client of clients) client.postMessage({ type: 'SW:install-failed', reason });
+		})
+		.catch(() => {});
+}
+
+/** Why an install failed, in the vocabulary `usage-schema.ts` accepts. A failed
+ *  `fetch` in a worker throws `TypeError`, which is why that maps to the
+ *  network rather than to a parse. */
+function failureReason(err: unknown): string {
+	switch ((err as { name?: string })?.name) {
+		case 'QuotaExceededError':
+			return 'quota';
+		case 'TypeError':
+		case 'NetworkError':
+		case 'AbortError':
+			return 'network';
+		case 'SyntaxError':
+			return 'parse';
+		default:
+			return 'other';
+	}
+}
+
+/**
  * Whether it is reasonable to spend a reader's bandwidth and storage without
  * being asked. Governs the AUTOMATIC waves only; an explicit CACHE_WAVE or a
  * per-work request is the reader speaking for themselves and is not gated.
@@ -202,6 +241,7 @@ sw.addEventListener('install', (event) => {
 				);
 			} catch (err) {
 				console.error('[service-worker] install failed', err);
+				await announceFailure(failureReason(err));
 			}
 		})()
 	);

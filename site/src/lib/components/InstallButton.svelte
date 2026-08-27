@@ -16,8 +16,17 @@
 	import Icon from './Icon.svelte';
 	import { install } from '$lib/install.svelte';
 	import { t } from '$lib/i18n.svelte';
+	import { usage } from '$lib/usage';
 
 	const label = $derived(t('install.label'));
+
+	// The offer was actually made. Counted so `installPrompt` can distinguish a
+	// reader who declined from one who was never asked — on Firefox, on iOS, or
+	// on a Chromium that decided the site is not installable, this button never
+	// renders and there is nothing to decline.
+	$effect(() => {
+		if (install.canInstall) usage.noteInstallPrompt('shown');
+	});
 </script>
 
 {#if install.canInstall}
