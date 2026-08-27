@@ -1116,6 +1116,21 @@ is not**, and the breakpoint is legible to the markup, not only to the styleshee
 visible margin note is not a disclosure control, and `aria-expanded` on a button whose
 content is on screen is a lie.
 
+**A footnote's source is a note, so it goes there too.** The margin was an annotated
+edition's gloss only, on the reasoning that a citation is a few words wanted on demand.
+That was reasoning about a disclosure which pushes the page down, and it stops applying
+where the note costs the text nothing: the Catechism's 3,698 citations average 26
+characters, and where a quoted sentence comes from is what a reader wants of it. One
+arrangement (`.margin-note`), two apparatuses; each keeps its own fallback where there is
+no margin — a gloss becomes a block, a citation stays a boxed span inside its sentence.
+
+**Compare mode spends the slack the notes live in, so it takes the margin back.** The
+margin is not a reserved gutter but whatever is left after `.reading-layout` centres its
+tracks — about 6.5rem either side at 100rem with two columns up, against the 17rem a
+note is displaced by. `CompareGrid` claims it while mounted; the reader's compare
+_preference_ would be the wrong signal, since a work with one edition has it on and still
+reads in one column.
+
 **Fixtures deliberately encode absent chapters and out-of-range cross-references** to
 exercise the not-in-corpus paths, and a second English Bible to exercise the
 preferred-edition table. `npm test` always uses them (`corpus.ts` checks

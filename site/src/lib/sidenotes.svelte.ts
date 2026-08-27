@@ -1,6 +1,16 @@
 /**
  * Whether the reader's viewport has room to set notes in the margin.
  *
+ * TWO APPARATUSES USE IT, and they are different kinds of note. `Sidenote`
+ * sets an annotated edition's GLOSS there — Challoner at the length of a
+ * sentence — and `CitationDisclosure` a numbered footnote's SOURCE, which is
+ * shorter (26 characters on average across the Catechism's 3,698, 53 at the
+ * ninetieth percentile) and far commoner. Both are apparatus over a text
+ * rather than the text, both are wanted beside the line that raises them, and
+ * once there is a margin to put them in neither has any reason to be a
+ * disclosure. So the arrangement is one arrangement — `.margin-note` in
+ * app.css — and this module is what decides, for both, that it applies.
+ *
  * WHY THIS IS JAVASCRIPT AND NOT PURELY A MEDIA QUERY. The CSS could place
  * the notes on its own; what it cannot do is tell the marker what to say
  * about itself. A margin note is *already visible*, so its marker is not a
@@ -41,14 +51,54 @@ class SidenoteRoom {
 	 * conservative one — the site renders no HTML on the server (`ssr = false`,
 	 * CLAUDE.md), so there is no first paint this could be wrong for.
 	 */
-	margin: boolean = $state(hasRoom());
+	#wide: boolean = $state(hasRoom());
+
+	/**
+	 * How many surfaces currently on the page have taken the margin for
+	 * something else — in practice zero or one, since the only claimant is
+	 * `CompareGrid` and a page compares or it does not.
+	 *
+	 * COMPARE MODE SPENDS THE SLACK THE NOTES LIVE IN. The margin is not a
+	 * fixed gutter; it is whatever is left over once `.reading-layout` has
+	 * centred its tracks, and two reading columns plus the aside consume all
+	 * of it — about 6.5rem either side at 100rem, against the 17rem a note
+	 * is displaced by. A note floated there would sit off the edge of the
+	 * viewport rather than beside its line.
+	 *
+	 * A COUNT, AND NOT THE `compare` PREFERENCE. That store says what the
+	 * reader wants; it does not say whether this page could honour it, and a
+	 * work with one edition (most of the encyclicals) compares in one column
+	 * with the margin free. What is true exactly when the margin is gone is
+	 * that a `CompareGrid` is mounted, so that is what claims it. Counted
+	 * rather than flagged so that two overlapping lifetimes — a grid mounting
+	 * before its predecessor tears down — cannot leave the margin claimed by
+	 * nothing.
+	 */
+	#claims: number = $state(0);
+
+	margin: boolean = $derived(this.#wide && this.#claims === 0);
 
 	constructor() {
 		if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
 			window.matchMedia(MARGIN_QUERY).addEventListener('change', (e) => {
-				this.margin = e.matches;
+				this.#wide = e.matches;
 			});
 		}
+	}
+
+	/**
+	 * Take the margin for this surface's own layout, and hand back the release
+	 * — shaped for `$effect`, whose return value is its teardown, so a caller
+	 * is one line and cannot forget the other half.
+	 */
+	claim(): () => void {
+		this.#claims += 1;
+		let released = false;
+		return () => {
+			if (released) return;
+			released = true;
+			this.#claims -= 1;
+		};
 	}
 }
 

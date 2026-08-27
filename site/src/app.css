@@ -1208,9 +1208,11 @@ input {
 	--aside-gap: 4.5rem;
 
 	/*
-	 * The margin an annotated edition's notes are set in — `Sidenote.svelte`,
-	 * which floats them out of the reading column by exactly
-	 * `--sidenote-width + --sidenote-gap`.
+	 * The margin the apparatus is set in — `.margin-note` below, which floats
+	 * a note out of the reading column by exactly
+	 * `--sidenote-width + --sidenote-gap`. An annotated edition's gloss
+	 * (`Sidenote.svelte`) and a numbered footnote's source
+	 * (`CitationDisclosure.svelte`) both go there.
 	 *
 	 * INLINE-START, so it does not fight `.reading-aside` for the end margin.
 	 * Held here rather than in the component because the width is a fact about
@@ -1222,9 +1224,19 @@ input {
 	 * Only ever consumed above `sidenotes.svelte.ts`'s own 100rem query, which
 	 * is where the notes move into the margin at all. Below it they are a
 	 * disclosure inside the column and neither token is read.
+	 *
+	 * THE GAP CLEARS THE UNIT NUMBER'S LANE, which is why it is wider than a
+	 * gap needs to be. `.reference-number.margin` hangs a CCC paragraph's or a
+	 * document section's number in the nearest 3.25rem of this same margin, and
+	 * it is sized in `em` against the reading text — so it GROWS with the
+	 * reader's size setting while a note's displacement does not. At 2.5rem a
+	 * full-width note line ran up against a three-digit number at the default
+	 * setting and under it well before the maximum. The Bible pays 1.5rem of
+	 * displacement it does not need (its verse numbers are inline), which is
+	 * cheaper than a second token for the routes that do.
 	 */
 	--sidenote-width: 13rem;
-	--sidenote-gap: 2.5rem;
+	--sidenote-gap: 4rem;
 }
 
 /* Index pages use the same wide-screen grid as readers, but their full
@@ -2301,6 +2313,36 @@ input {
 		break-inside: avoid;
 	}
 
+	/*
+	 * PAPER HAS NO SLACK TO HANG A NOTE IN. `.margin-note`'s displacement is
+	 * measured against a viewport that centres the reading column with room
+	 * either side; the rules above have already taken `.reading-layout` down
+	 * to a full-bleed block, so a note left floating would print 17rem off
+	 * the edge of the sheet and simply be lost. Which layout the markup is in
+	 * was settled on screen — `sidenoteRoom` reads a `matchMedia` query, not
+	 * the print context — so this is the stylesheet's to undo.
+	 *
+	 * It lands as the block the narrow breakpoint already gives it, which is
+	 * the same answer for the same reason: the note goes under the line that
+	 * raised it, set off by a rule rather than by position.
+	 */
+	.margin-note {
+		float: none !important;
+		display: block;
+		inline-size: auto !important;
+		margin-inline: 0 !important;
+		margin-block: 0.5rem !important;
+		padding-inline-start: 0.75rem;
+		border-inline-start: 2px solid #000;
+	}
+
+	/* Back into the flow with it: there is no margin to hang off, and left
+	   absolute it would print on top of the line above. */
+	.margin-note-label {
+		position: static !important;
+		padding-inline-end: 0.35em;
+	}
+
 	a {
 		color: inherit;
 	}
@@ -2423,6 +2465,85 @@ input {
 	outline: 2px solid var(--color-focus-ring);
 	outline-offset: 2px;
 	border-radius: 2px;
+}
+
+/*
+ * A NOTE SET IN THE MARGIN — the arrangement `Sidenote` gives an annotated
+ * edition's gloss and `CitationDisclosure` a numbered footnote's source, once
+ * `sidenotes.svelte.ts` says there is room for it. The two are different
+ * apparatuses over different texts, and this is deliberately ONE treatment
+ * for both: a reader who has learned what hangs in the margin of a Catechism
+ * paragraph should not have to learn it again in the Douay-Rheims.
+ *
+ * Global rather than scoped for the reason `.reading-layout` is — two
+ * components want the identical block and Svelte's per-component style
+ * scoping has no mechanism to share one across files. What each of them keeps
+ * is what genuinely differs: what the marker left in the text IS (a plain
+ * reference here, a disclosure button below the breakpoint), and what the
+ * note falls back to where there is no margin to set it in.
+ *
+ * Sans, smaller, and in the muted colour: three signals at once that this is
+ * apparatus and not text, because any one of them alone is the kind of
+ * difference a reader stops seeing after a page. And physically outside the
+ * reading column rather than merely indented within it — a gloss must never
+ * be confusable with its source (docs/decisions.md §Posture).
+ *
+ * FLOATS ARE WHAT MAKE THIS WORK WITHOUT MEASURING ANYTHING: several notes
+ * raised by nearby lines stack down the margin instead of overlapping, which
+ * absolute positioning would need JavaScript to achieve. The negative start
+ * margin is the whole displacement — the float is pulled its own width plus
+ * the gap clear of the column, so it ends 4rem short of the text and no
+ * line box is ever shortened by it. That gap is also what keeps it off the
+ * unit number, which hangs in the nearest 3.25rem and sets flush to the
+ * column's edge within it (`.reference-number.margin`).
+ */
+.margin-note {
+	float: inline-start;
+	clear: inline-start;
+	/* The containing block for the marker, which hangs off the start edge. */
+	position: relative;
+	inline-size: var(--sidenote-width);
+	margin-inline-start: calc(-1 * (var(--sidenote-width) + var(--sidenote-gap)));
+	/* Aligns the note's first line with the line of text carrying its marker,
+	   rather than with the top of the line box. */
+	margin-block-start: 0.25rem;
+	text-align: start;
+	font-family: var(--font-sans);
+	font-size: 0.78rem;
+	line-height: 1.5;
+	color: var(--color-text-muted);
+}
+
+/*
+ * The marker repeated at the head of the note, so a note read on its own
+ * still names itself.
+ *
+ * THE SAME COLOUR AS THE MARKER IN THE TEXT, because the pairing of the two
+ * identical marks is the ONLY thing tying a note to the place it belongs —
+ * here they are separated by the whole width of the gutter, with other notes
+ * stacked below. Colour them differently and the reader has to match on shape
+ * alone. It hangs outside the note's own measure so the note sets flush and
+ * the column of markers reads down the page.
+ *
+ * IT HANGS BY ITS END EDGE, NOT ITS START ONE, which is the difference between
+ * a column of markers and a ragged one: a footnote number restarts at every
+ * paragraph, so `1` and `14` sit above each other in the same margin, and
+ * floating both from the same start edge left the shorter one adrift half a
+ * character-width from its own note. `inset-inline-end: 100%` pins the edge
+ * that matters — the one the note text begins at — and lets the box grow
+ * leftward for however many digits the source printed. Out of flow rather than
+ * floated for the same reason: a two-digit marker was wide enough to push the
+ * note's first line, and only its first line, in by a couple of pixels.
+ *
+ * The same treatment `.reference-number.margin` gives the unit number in this
+ * margin, and for the same reason.
+ */
+.margin-note-label {
+	position: absolute;
+	inset-inline-end: 100%;
+	padding-inline-end: 0.4em;
+	font-weight: 600;
+	color: var(--color-accent);
 }
 
 /*

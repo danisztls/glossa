@@ -82,6 +82,7 @@
 	import type { AlignedRow, CompareUnit } from '$lib/compare';
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import ReferenceNumber from './ReferenceNumber.svelte';
+	import { sidenoteRoom } from '$lib/sidenotes.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
@@ -135,6 +136,28 @@
 		apparatus,
 		note
 	}: Props = $props();
+
+	/**
+	 * TWO COLUMNS SPEND THE SLACK THE MARGIN NOTES LIVE IN, so while this grid
+	 * is on the page the apparatus goes back to being a disclosure inside the
+	 * text (`sidenotes.svelte.ts`, `#claims`). The margin is not a reserved
+	 * gutter — it is whatever is left after `.reading-layout` centres its
+	 * tracks, and this component's own docblock is the reason there is nothing
+	 * left: a second reading measure at the full width, plus the aside above
+	 * 100rem, comes to about 6.5rem of slack against the 17rem a note is
+	 * displaced by. Floated there, every citation in both columns would sit
+	 * off the edge of the viewport.
+	 *
+	 * DECLARED HERE RATHER THAN PASSED DOWN because this component is compare
+	 * mode's one rendering shell across all six routes, and the alternative is
+	 * a prop threaded through `ProseBlocks`, `HeadingText`, `SummaDivisions`
+	 * and a dozen cell snippets to tell each of them a fact about the layout
+	 * they are in. The reader's `compare` PREFERENCE is the wrong signal for
+	 * the same reason it is the wrong signal anywhere: a work with one edition
+	 * (most of the encyclicals) has it on and still reads in one column, with
+	 * the margin free.
+	 */
+	$effect(() => sidenoteRoom.claim());
 </script>
 
 {#if note}

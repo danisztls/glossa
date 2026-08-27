@@ -3,17 +3,17 @@
 	 * One note of an annotated edition's apparatus: the marker where the
 	 * source sets it, and the gloss it points at.
 	 *
-	 * NOT `CitationDisclosure.svelte`, and the difference is the point.
-	 * That component discloses a CITATION — the source of a phrase, a few
-	 * words long, wanted only on demand — and it does so by pushing the rest
-	 * of the page down, which `PLAN.md` #3 names as the mechanism the
-	 * designed reading experience replaces rather than extends. This one
-	 * carries COMMENTARY: Challoner glossing a verse at the length of a
-	 * sentence or a paragraph, which the edition prints for the reader to
-	 * have in view while reading the text it belongs to, not to go and fetch.
-	 * Where there is room it therefore sits in the margin, open, beside its
-	 * own line — the *Glossa Ordinaria* arrangement the project is named for
-	 * (docs/decisions.md §Posture).
+	 * STILL NOT `CitationDisclosure.svelte`, though the two now share a
+	 * margin. What this one carries is COMMENTARY — Challoner glossing a verse
+	 * at the length of a sentence or a paragraph, with a lemma quoting the
+	 * words it glosses — where that one carries a SOURCE, and each keeps its
+	 * own reading of what a marker is and of what to do where no margin
+	 * exists. What they stopped disagreeing about is the margin itself: an
+	 * apparatus the reader can see beside the line that raises it is the
+	 * *Glossa Ordinaria* arrangement the project is named for
+	 * (docs/decisions.md §Posture), and it is no less right for a footnote's
+	 * source than for a gloss. `.margin-note` in app.css is the one
+	 * arrangement both use.
 	 *
 	 * A GLOSS MUST NEVER BE CONFUSABLE WITH ITS SOURCE, the naming rule from
 	 * that same entry, is why the note is set smaller, in the sans face, and
@@ -110,8 +110,10 @@
 {/if}
 
 {#if shown}
-	<small class="sidenote" class:sidenote-margin={inMargin} {lang}>
-		<span class="sidenote-marker" aria-hidden="true">{label}</span>
+	<small class:margin-note={inMargin} class:sidenote={!inMargin} {lang}>
+		<span class:margin-note-label={inMargin} class:sidenote-marker={!inMargin} aria-hidden="true"
+			>{label}</span
+		>
 		{#if note}
 			{#if note.lemma}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span class="sidenote-text"
 				><InlineNodes {nodes} {hrefFor} /></span
@@ -189,11 +191,10 @@
 	}
 
 	/*
-	 * The note itself.
-	 *
-	 * Sans, smaller, and in the muted colour: three signals at once that this
-	 * is apparatus and not text, because any one of them alone is the kind of
-	 * difference a reader stops seeing after a page.
+	 * The note where there is NO margin to set it in. In the margin it is
+	 * `.margin-note` (app.css), which carries the same three signals — sans,
+	 * smaller, muted — because any one of them alone is the kind of difference
+	 * a reader stops seeing after a page.
 	 */
 	.sidenote {
 		font-family: var(--font-sans);
@@ -204,11 +205,8 @@
 
 	.sidenote-marker {
 		font-weight: 600;
-		/* The same colour as the marker in the text, because the pairing of
-		   the two identical letters is the ONLY thing tying a note to the
-		   place it belongs — in the margin layout they are separated by the
-		   whole width of the gutter, with other notes stacked below. Colour
-		   them differently and the reader has to match on shape alone. */
+		/* The same colour as the marker in the text: the pairing of the two
+		   identical letters is what ties a note to the place it belongs. */
 		color: var(--color-accent);
 		padding-inline-end: 0.35em;
 	}
@@ -232,36 +230,10 @@
 	 * belongs to. `display: block` inside the flowing verse text breaks the
 	 * line at exactly the marker, which is where the reader just tapped.
 	 */
-	.sidenote:not(.sidenote-margin) {
+	.sidenote {
 		display: block;
 		margin-block: 0.5rem;
 		padding-inline-start: 0.75rem;
 		border-inline-start: 2px solid var(--color-border);
-	}
-
-	/*
-	 * IN THE MARGIN: floated into the inline-start slack outside the reading
-	 * column. Floats are what make this work without measuring anything —
-	 * several notes against nearby verses stack down the margin instead of
-	 * overlapping, which absolute positioning would need JavaScript to
-	 * achieve. The negative start margin is the whole displacement: the float
-	 * is pulled its own width plus the gap clear of the text column.
-	 */
-	.sidenote-margin {
-		float: inline-start;
-		clear: inline-start;
-		inline-size: var(--sidenote-width);
-		margin-inline-start: calc(-1 * (var(--sidenote-width) + var(--sidenote-gap)));
-		/* Aligns the note's first line with the line of text carrying its
-		   marker, rather than with the top of the line box. */
-		margin-block-start: 0.25rem;
-		text-align: start;
-	}
-
-	.sidenote-margin .sidenote-marker {
-		/* In the margin the number hangs outside the note's own measure, so
-		   the gloss sets flush and the column of markers reads down the page. */
-		float: inline-start;
-		margin-inline-start: -1.1em;
 	}
 </style>
