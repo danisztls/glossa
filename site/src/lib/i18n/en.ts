@@ -339,9 +339,11 @@ export const en: Dictionary = {
 	'compare.versificationNote':
 		'These two editions divide this chapter’s verses differently in places (a textual variant, not a translation choice) — the same verse number does not always mark the same sentence in both columns.',
 	'compare.loading': 'Loading the second language…',
-	// The table of contents panel's dismiss control (`TocMenu`). Its own
-	// name, not the panel's: below 48rem the panel is the whole viewport
-	// and this button is the only way out of it, so it says what it does
-	// rather than repeating the heading beside it.
-	'toc.close': 'Close'
+	// The dismiss control on a panel that covers the screen — the table of
+	// contents sheet (`TocMenu`) and the navigation sheet (`+layout.svelte`).
+	// Its own name, not the panel's: below the breakpoint the panel IS the
+	// viewport and this button is the only way out of it, so it says what it
+	// does rather than repeating the heading beside it. Named `ui.` because
+	// the second consumer proved it was never the table of contents' string.
+	'ui.close': 'Close'
 };

@@ -236,5 +236,5 @@ export const sv: Dictionary = {
 	'compare.versificationNote':
 		'De här två utgåvorna delar in kapitlets verser olika på sina ställen (en textvariant, inte ett översättningsval) — samma versnummer markerar inte alltid samma mening i båda spalterna.',
 	'compare.loading': 'Läser in det andra språket…',
-	'toc.close': 'Stäng'
+	'ui.close': 'Stäng'
 };

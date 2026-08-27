@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
@@ -22,11 +22,40 @@
 
 	let { children } = $props();
 
-	// Collapsible on narrow screens only (see .nav-toggle / .primary-nav
-	// below) — the header grew from 3 controls to 6 plus a 4th nav link, so
-	// something has to give on a phone-width viewport. Desktop CSS forces
-	// the nav open regardless of this flag.
+	/**
+	 * BELOW THE BREAKPOINT THE SECTIONS ARE A MODAL SHEET, not a row that
+	 * unfolds inside the header. The header grew from 3 controls to 6 plus a
+	 * 6th section, so something has to give on a phone; what gave first was
+	 * the page. As a `flex-basis: 100%` panel wrapping onto a second line of
+	 * `.header-bar`, the open nav was part of the header's own layout — so
+	 * tapping the hamburger mid-chapter grew the header and pushed the text
+	 * down the screen, and dismissing it pulled the text back up. A reader
+	 * navigating away pays that twice; a reader who opened it to look and
+	 * changed their mind pays it for nothing.
+	 *
+	 * A `<dialog>` in the top layer costs the page no space at all: the text
+	 * stays exactly where it was and comes back untouched. `showModal()`
+	 * carries the rest of the contract natively — `::backdrop`, an inert
+	 * background, a focus trap and Escape — which is mandatory rather than
+	 * convenient once a panel covers the screen: an overlay a reader can tab
+	 * out of into text they cannot see is worse than no overlay. This is the
+	 * third dialog on the site after `JumpBox` and `TocMenu`, and follows
+	 * both.
+	 *
+	 * Unlike `TocMenu` it has exactly ONE form. That component becomes an
+	 * anchored card at 48rem because a screen with room to read around a
+	 * gloss should still show the text; here the breakpoint is the width at
+	 * which the six links stop hiding and become the header's own row, so
+	 * there is no width at which a card would be the thing to draw.
+	 */
 	let navOpen = $state(false);
+	let navDialog: HTMLDialogElement | undefined = $state();
+	let navToggle: HTMLButtonElement | undefined = $state();
+
+	/** The width at which the sections move into the header bar and the
+	 *  hamburger disappears. Duplicated in the media query below, which cannot
+	 *  read it; the two are one decision and are commented as one. */
+	const BAR_QUERY = '(min-width: 720px)';
 
 	// No "Home" entry: the brand link above is already a link to `/`, and two
 	// controls one tab-stop apart doing the identical thing is redundancy, not
@@ -56,6 +85,54 @@
 	// every href here is a real section prefix.
 	function isActive(href: string): boolean {
 		return page.url.pathname === href || page.url.pathname.startsWith(href + '/');
+	}
+
+	/**
+	 * `await tick()` before `showModal()`: the sheet's copy of the links is
+	 * rendered by `{#if navOpen}`, so the element `showModal()` is called on
+	 * has to be given its content first. Rendering it only while open is also
+	 * what keeps the six anchors from existing twice in the document — the
+	 * header's own row is the other copy, and above 720px it is the real one.
+	 */
+	async function openNav() {
+		if (navDialog?.open) return;
+		navOpen = true;
+		await tick();
+		navDialog?.showModal();
+	}
+
+	/* Escape and the backdrop both close a modal dialog natively, so `onclose`
+	   is the one place that runs on every dismissal — including the two this
+	   file never hears about directly. Focus goes back to the toggle from
+	   here because otherwise it lands on `<body>`, returning a keyboard reader
+	   to the top of the document rather than to the control they opened. */
+	function onNavClose() {
+		navOpen = false;
+		navToggle?.focus();
+	}
+
+	/**
+	 * A sheet whose rows are links has to close when one is followed: the app
+	 * navigates in place, so nothing else would take it away.
+	 *
+	 * Modified clicks are left alone. ⌘/Ctrl/shift-click opens the section in
+	 * a new tab and THIS page does not move, so closing would take away the
+	 * menu a reader is opening two sections from. On the header's own copy of
+	 * the links `navDialog` is closed and `close()` is a no-op, which is what
+	 * lets one handler serve both renderings of the snippet.
+	 */
+	function onNavFollow(e: MouseEvent) {
+		if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+		navDialog?.close();
+	}
+
+	/* A rotation into landscape, or a window dragged wider, would otherwise
+	   leave the sheet covering a layout that is already showing the same six
+	   links in its header — with the only control that closes it (the
+	   hamburger) now `display: none`. Guarded on the media query rather than
+	   on the event, so an iOS URL-bar collapse does nothing. */
+	function onViewportResize() {
+		if (navDialog?.open && window.matchMedia(BAR_QUERY).matches) navDialog.close();
 	}
 
 	/**
@@ -92,21 +169,36 @@
 	<title>{t('home.title')}</title>
 </svelte:head>
 
+<svelte:window onresize={onViewportResize} />
+
+<!-- ONE list, rendered in two places: the header's row above 720px and the
+     sheet below it. Written as a snippet rather than as two `{#each}` blocks
+     because the pair would have drifted — `aria-current`, the dismissal
+     handler and the six hrefs are the same decision in both, and the copy
+     that is wrong is the one nobody is looking at. -->
+{#snippet navLinks()}
+	{#each NAV_ITEMS as item (item.href)}
+		<a
+			href={item.href}
+			aria-current={isActive(item.href) ? 'page' : undefined}
+			onclick={onNavFollow}
+		>
+			{t(item.key)}
+		</a>
+	{/each}
+{/snippet}
+
 <div class="app-shell">
 	<header class="site-header">
 		<div class="header-bar">
 			<a class="brand" href="/"><Wordmark variant="brand" /></a>
 
-			<nav id="primary-nav" class="primary-nav" class:open={navOpen} aria-label={t('nav.menu')}>
-				{#each NAV_ITEMS as item (item.href)}
-					<a
-						href={item.href}
-						aria-current={isActive(item.href) ? 'page' : undefined}
-						onclick={() => (navOpen = false)}
-					>
-						{t(item.key)}
-					</a>
-				{/each}
+			<!-- The header's own copy of the sections, and the only one above
+			     720px. Below it this is `display: none` and the sheet at the
+			     foot of the header is what a reader sees, so the two are never
+			     both in the accessibility tree under the same name. -->
+			<nav class="primary-nav" aria-label={t('nav.menu')}>
+				{@render navLinks()}
 			</nav>
 
 			<!--
@@ -143,15 +235,62 @@
 				<button
 					type="button"
 					class="menu-trigger nav-toggle"
+					bind:this={navToggle}
+					aria-haspopup="dialog"
 					aria-expanded={navOpen}
-					aria-controls="primary-nav"
+					aria-controls="nav-sheet"
 					aria-label={t('nav.menu')}
-					onclick={() => (navOpen = !navOpen)}
+					onclick={openNav}
 				>
 					<Icon name="menu" />
 				</button>
 			</div>
 		</div>
+
+		<!--
+			Always in the markup, empty until opened: `showModal()` needs an
+			element to be called on, and a closed `<dialog>` is `display:
+			none`, so nothing inside is reachable, focusable or announced
+			meanwhile. Where it sits in the document is a readability choice
+			and nothing else — an open modal renders in the top layer, out of
+			the header's flow and above every stacking context on the page.
+
+			No `role="dialog"`, no `aria-modal`: `showModal()` carries both.
+			The `<nav>` inside takes no name of its own; the dialog is the
+			landmark a reader is announced into, and labelling both would say
+			"Menu" twice on the way in.
+		-->
+		<dialog
+			bind:this={navDialog}
+			id="nav-sheet"
+			class="nav-sheet"
+			aria-label={t('nav.menu')}
+			onclose={onNavClose}
+		>
+			{#if navOpen}
+				<div class="nav-sheet-panel">
+					<!-- The way out, and on a phone the ONLY one: the sheet is
+					     full-bleed, so there is no backdrop to tap, and there
+					     is no Escape key. `flex: none` above a scrolling body
+					     is what keeps it from being scrolled away. -->
+					<div class="nav-sheet-head">
+						<h2 class="nav-sheet-title">{t('nav.menu')}</h2>
+						<button
+							type="button"
+							class="nav-sheet-close"
+							aria-label={t('ui.close')}
+							title={t('ui.close')}
+							onclick={() => navDialog?.close()}
+						>
+							<Icon name="x" />
+						</button>
+					</div>
+					<nav class="nav-sheet-links">
+						{@render navLinks()}
+					</nav>
+				</div>
+			{/if}
+		</dialog>
 	</header>
 
 	<main>
@@ -269,33 +408,39 @@
 		border-color: var(--color-accent);
 	}
 
+	/*
+	 * THE HEADER'S ROW OF SECTIONS, AND ONLY THAT. Below 720px it is hidden
+	 * outright — not collapsed, not `height: 0` — and `.nav-sheet` is what
+	 * opens instead. It used to be one element in both roles, a
+	 * `flex-basis: 100%` panel taking `order: 4` so that it wrapped onto a
+	 * second line of `.header-bar` when open; being part of the bar's layout
+	 * is precisely what made opening it move the page.
+	 */
 	.primary-nav {
-		order: 4;
-		flex-basis: 100%;
 		display: none;
-		flex-direction: column;
-		gap: 0.1rem;
-		border-top: 1px solid var(--color-border);
-		padding-top: 0.5rem;
-	}
-
-	.primary-nav.open {
-		display: flex;
 	}
 
 	.primary-nav a {
-		padding: 0.55rem 0.4rem;
-		border-radius: 0.3rem;
+		padding: 0.3rem 0;
+	}
+
+	/* Shared by both renderings of the snippet, because they are one list and
+	   a section that reads as current in the header must read as current in
+	   the sheet. Only the box around each row differs, below. */
+	.primary-nav a,
+	.nav-sheet-links a {
 		text-decoration: none;
 		color: var(--color-text-muted);
 	}
 
-	.primary-nav a[aria-current='page'] {
+	.primary-nav a[aria-current='page'],
+	.nav-sheet-links a[aria-current='page'] {
 		color: var(--color-text);
 		font-weight: 600;
 	}
 
-	.primary-nav a:hover {
+	.primary-nav a:hover,
+	.nav-sheet-links a:hover {
 		color: var(--color-text);
 	}
 
@@ -311,27 +456,146 @@
 			margin-inline-end: 1.75rem;
 		}
 
-		/* Wide layout is a single row: brand, nav, controls. The nav stops being
-		   a wrapped panel and slots between the other two, so it takes order 2
+		/* Wide layout is a single row: brand, nav, controls. The sections
+		   appear here and slot between the other two, so the nav takes order 2
 		   and the controls move to 3 — stated explicitly rather than left to
 		   tie-break on DOM order, which is what happened when both were 2. */
 		.primary-nav {
 			order: 2;
-			flex-basis: auto;
-			display: flex !important;
-			flex-direction: row;
+			display: flex;
 			gap: 1.25rem;
-			border-top: none;
-			padding-top: 0;
 		}
 
 		.controls {
 			order: 3;
 		}
+	}
 
-		.primary-nav a {
-			padding: 0.3rem 0;
-		}
+	/*
+	 * ## THE SHEET
+	 *
+	 * Modelled on `TocMenu`'s, deliberately and down to the class shapes:
+	 * they are the site's two full-viewport panels and a reader meets them
+	 * within one tap of each other, so a second visual language here would
+	 * read as a second kind of thing. The styles are copied rather than
+	 * shared because Svelte scopes them per component and the alternative is
+	 * a global `.sheet-*` primitive with two callers — worth writing on the
+	 * third, not the second.
+	 *
+	 * THE DIALOG IS POSITION AND NOTHING ELSE, so that every visible pixel
+	 * belongs to `.nav-sheet-panel` inside it. No `z-index`: an open modal
+	 * dialog is in the top layer, above every stacking context there is —
+	 * including the reading bar's, and including whatever `.site-header` may
+	 * grow back one day.
+	 */
+	.nav-sheet {
+		position: fixed;
+		inset: 0;
+		inline-size: 100%;
+		max-inline-size: none;
+		block-size: 100%;
+		max-block-size: none;
+		margin: 0;
+		border: none;
+		padding: 0;
+		background: transparent;
+		color: inherit;
+	}
+
+	/*
+	 * `[open]` is not decoration on this selector: a closed `<dialog>` is
+	 * `display: none` from the UA stylesheet, and a bare `.nav-sheet { display:
+	 * flex }` would override it and leave the sheet on screen permanently.
+	 *
+	 * The column starts here rather than on the panel so that the panel's
+	 * `min-block-size: 0` has a bounded parent to resolve against — which is
+	 * what makes the link list a scroll box rather than something the dialog
+	 * silently clips.
+	 */
+	.nav-sheet[open] {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.nav-sheet-panel {
+		flex: 1 1 auto;
+		min-block-size: 0;
+		display: flex;
+		flex-direction: column;
+		background: var(--color-bg);
+	}
+
+	.nav-sheet-head {
+		flex: none;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		border-block-end: 1px solid var(--color-border);
+	}
+
+	/* The muted, letter-spaced capitals the site gives a panel's own heading
+	   (`.sidebar-toc-heading` in app.css, `.toc-panel-title` in `TocMenu`) —
+	   a label over the list, not a title competing with the wordmark. */
+	.nav-sheet-title {
+		margin: 0;
+		font-family: var(--font-sans);
+		font-size: 0.85rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		color: var(--color-text-muted);
+	}
+
+	/* Borderless, unlike `.menu-trigger`: it sits inside the surface it
+	   closes rather than on the page, and a boxed control there reads as a
+	   second action to weigh rather than as the way out. Sized for a thumb
+	   regardless of pointer — it is the sheet's only exit. */
+	.nav-sheet-close {
+		flex: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: 2.5rem;
+		block-size: 2.5rem;
+		padding: 0;
+		border: none;
+		border-radius: 0.4rem;
+		background: none;
+		color: var(--color-text-muted);
+		font-size: 1.1rem;
+		cursor: pointer;
+	}
+
+	.nav-sheet-close:hover {
+		color: var(--color-accent);
+		background: var(--color-bg-elevated);
+	}
+
+	.nav-sheet-links {
+		flex: 1 1 auto;
+		min-block-size: 0;
+		overflow-y: auto;
+		/* The page behind is inert, but iOS still chains a scroll that runs
+		   off the end of this box to the document underneath. */
+		overscroll-behavior: contain;
+		display: flex;
+		flex-direction: column;
+		padding: 0.5rem 0.75rem 1.5rem;
+	}
+
+	/* Sized for a thumb rather than for a pointer, which the header's own
+	   copy of these links is: six rows have the room on a sheet that owns the
+	   whole viewport, and this is the only rendering a touch reader gets. */
+	.nav-sheet-links a {
+		padding: 0.85rem 0.5rem;
+		border-radius: 0.4rem;
+		font-size: 1.05rem;
+	}
+
+	.nav-sheet-links a:hover {
+		background: var(--color-bg-elevated);
 	}
 
 	main {

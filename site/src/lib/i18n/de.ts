@@ -235,5 +235,5 @@ export const de: Dictionary = {
 	'compare.versificationNote':
 		'Diese beiden Ausgaben teilen die Verse dieses Kapitels stellenweise verschieden ein (eine Textvariante, keine Übersetzungsentscheidung) — dieselbe Versnummer bezeichnet nicht immer denselben Satz in beiden Spalten.',
 	'compare.loading': 'Die zweite Sprache wird geladen…',
-	'toc.close': 'Schließen'
+	'ui.close': 'Schließen'
 };

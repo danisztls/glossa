@@ -281,8 +281,8 @@
 					<button
 						type="button"
 						class="toc-close"
-						aria-label={t('toc.close')}
-						title={t('toc.close')}
+						aria-label={t('ui.close')}
+						title={t('ui.close')}
 						onclick={() => dialogEl?.close()}
 					>
 						<Icon name="x" />

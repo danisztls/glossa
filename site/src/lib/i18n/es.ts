@@ -233,5 +233,5 @@ export const es: Dictionary = {
 	'compare.versificationNote':
 		'Estas dos ediciones dividen en algunos puntos los versículos de este capítulo de manera distinta (una variante textual, no una decisión de traducción): el mismo número de versículo no siempre señala la misma frase en ambas columnas.',
 	'compare.loading': 'Cargando la segunda lengua…',
-	'toc.close': 'Cerrar'
+	'ui.close': 'Cerrar'
 };
