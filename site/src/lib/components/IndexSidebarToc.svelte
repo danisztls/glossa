@@ -21,14 +21,19 @@
 	 * their own, and the spy only ever hands the number back.
 	 */
 	import { browser } from '$app/environment';
+	import Icon from './Icon.svelte';
 	import { useScrollSpy, type SpyTarget } from '$lib/scroll-spy.svelte';
 
 	interface Props {
 		heading: string;
+		/** A caveat true of the index beside this list, on an info glyph by the
+		    heading — see `StructureSidebarToc`'s own `headingNote`, which this
+		    mirrors so the two sidebars carry it identically. */
+		headingNote?: string;
 		items: { href: string; label: string }[];
 	}
 
-	let { heading, items }: Props = $props();
+	let { heading, headingNote, items }: Props = $props();
 
 	/* Only same-page fragments can be spied on. An item pointing anywhere else
 	   is kept in the list and simply never becomes current, rather than
@@ -70,7 +75,15 @@
 </script>
 
 <nav class="index-sidebar-toc" aria-label={heading} data-link-preview="off">
-	<h2 class="sidebar-toc-heading">{heading}</h2>
+	<h2 class="sidebar-toc-heading">
+		<span>{heading}</span>
+		{#if headingNote}
+			<span class="sidebar-toc-note" title={headingNote}>
+				<Icon name="info" />
+				<span class="visually-hidden">{headingNote}</span>
+			</span>
+		{/if}
+	</h2>
 	<ol class="sidebar-toc-list">
 		{#each items as item, i (item.href)}
 			{@const isCurrent = i === currentIndex}

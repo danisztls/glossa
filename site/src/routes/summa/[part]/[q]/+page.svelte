@@ -126,12 +126,18 @@
 	 * muted here and in the sidebar, which asked the reader to know a
 	 * convention and then, on the only pages where it fired, applied it to
 	 * every title on the page — a mark with nothing to contrast against. It is
-	 * an all-or-nothing property of the edition, so one line states it, the way
-	 * `fellBack` above states the other thing this work's asymmetry costs a
-	 * reader.
+	 * an all-or-nothing property of the edition, so it is stated once, on the
+	 * info glyph beside the table of contents' heading (`headingNote`), where
+	 * a reader who wonders about the titles is already looking and one who
+	 * does not is not made to read a caveat on every question.
 	 */
 	const titlesFrom = $derived(
 		named?.borrowed ? named.lang : articleRows.find((row) => row.titleLang)?.titleLang
+	);
+	const titlesNote = $derived(
+		titlesFrom
+			? t('summa.titlesFromEdition').replace('{lang}', languageDisplayName(titlesFrom))
+			: undefined
 	);
 
 	/**
@@ -352,9 +358,9 @@
 					{data.n}
 				</p>
 				<!-- The Latin prints no question titles, so under it every one of
-				     these is the English edition's, said so under the title
-				     rather than passed off as this source's own — see
-				     `summaTitleFor` and `titlesFrom`. -->
+				     these is the English edition's — said so on the table of
+				     contents' own heading rather than passed off as this
+				     source's own, see `summaTitleFor` and `titlesFrom`. -->
 				{#if named}
 					{@const parts = summaTitleParts(named.title)}
 					<h1
@@ -372,13 +378,6 @@
 						{data.part} — {t('summa.question')}
 						{data.n}
 					</h1>
-				{/if}
-				<!-- Stated once, because it is true of every title on the page — see
-				     `titlesFrom`. -->
-				{#if titlesFrom}
-					<p class="titles-note">
-						{t('summa.titlesFromEdition').replace('{lang}', languageDisplayName(titlesFrom))}
-					</p>
 				{/if}
 			</header>
 
@@ -518,6 +517,7 @@
 				currentN={data.n}
 				lang={editions.lang}
 				heading={t('summa.tableOfContents')}
+				headingNote={titlesNote}
 				basePath={`/summa/${partSlug}`}
 				{linkableAnchors}
 				borrowedTitleLabel={(from) =>
@@ -556,20 +556,6 @@
 
 	.copyright-notice {
 		margin: 0 0 1.25rem;
-	}
-
-	/*
-	 * Where the italic on every borrowed title used to be — see `titlesFrom`.
-	 * Set like `.title-note` below it: the same small muted sans that says
-	 * "this is apparatus about the title, not part of it". The `lang`
-	 * attribute stays on the title itself, which is what actually tells a
-	 * screen reader the language changed.
-	 */
-	.titles-note {
-		margin: 0.35rem 0 0;
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
 	}
 
 	.prologue {

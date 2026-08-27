@@ -2396,6 +2396,13 @@ input {
    wrote — so it names the interface face rather than taking the text face the
    base heading rule above hands every other `h2`. */
 .sidebar-toc-heading {
+	/* A row, so an optional note glyph (`.sidebar-toc-note`) can sit at the
+	   far end of the rule under the heading rather than after its last word.
+	   With no glyph this lays out exactly as the plain block heading did. */
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0.5rem;
 	margin: 0 0 0.5rem;
 	font-family: var(--font-sans);
 	font-size: 0.85rem;
@@ -2404,6 +2411,32 @@ input {
 	color: var(--color-text-muted);
 	border-bottom: 1px solid var(--color-border);
 	padding-bottom: 0.4rem;
+}
+
+/*
+ * "There is something to know about every row below this." Both sidebars
+ * render it (`StructureSidebarToc`, `IndexSidebarToc`) and only the Summa
+ * passes one — under Latin, that the titles are the English edition's.
+ *
+ * The note itself is the glyph's `title`, which is the same place the
+ * copyright notice keeps a source's full boilerplate: one hover away rather
+ * than set beneath every heading it applies to. `cursor: help` is what says
+ * the hover is there; the note is also carried visually-hidden inside, since
+ * a `title` reaches a pointer and not much else.
+ */
+.sidebar-toc-note {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	cursor: help;
+	/* Against the heading's letter-spaced capitals the glyph reads small; a
+	   shade over 1em brings the circle back to the cap height beside it. */
+	font-size: 1.1em;
+	opacity: 0.75;
+}
+
+.sidebar-toc-note:hover {
+	opacity: 1;
 }
 
 .sidebar-toc-list {

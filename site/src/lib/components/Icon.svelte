@@ -51,6 +51,11 @@
 	// number — the five — where the pair reads as the act of rolling, which
 	// is what the control does.
 	import Dices from '@lucide/svelte/icons/dices';
+	// The one affordance in the app that means "there is an explanation here":
+	// a heading whose rows need a caveat carries it as a `title` on this glyph
+	// rather than as a line of prose beside them (StructureSidebarToc's
+	// `headingNote`).
+	import Info from '@lucide/svelte/icons/info';
 	// The plain arrow, not `arrow-up-to-line` or `chevron-up`: it is the same
 	// shape UnitNav draws for "back" and "onward", rotated, so movement through
 	// the text reads as one vocabulary wherever the control appears. Those two
@@ -81,6 +86,7 @@
 		'trash-2': Trash2,
 		'external-link': ExternalLink,
 		dices: Dices,
+		info: Info,
 		'arrow-up': ArrowUp,
 		'arrow-left': ArrowLeft,
 		'arrow-right': ArrowRight

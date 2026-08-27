@@ -74,10 +74,11 @@
 	/**
 	 * The edition these question titles came from, when this one prints none —
 	 * all 611 rows under Latin, and no row under English, because it is a
-	 * property of the edition rather than of the question. Stated once beneath
-	 * the tagline; the reading page states the same thing the same way, and
-	 * neither marks the titles typographically any more (see `titlesFrom`
-	 * there for what the italic cost and bought).
+	 * property of the edition rather than of the question. Stated once, on the
+	 * info glyph beside the sidebar's heading; the reading page states the
+	 * same thing in the same place, and neither marks the titles
+	 * typographically any more (see `titlesFrom` there for what the italic
+	 * cost and bought).
 	 */
 	const titlesFrom = $derived.by(() => {
 		for (const question of questions) {
@@ -114,11 +115,6 @@
 		<header>
 			<h1>{t('summa.landing.title')}</h1>
 			<p class="tagline">{t('summa.landing.tagline')}</p>
-			{#if titlesFrom}
-				<p class="titles-note">
-					{t('summa.titlesFromEdition').replace('{lang}', languageDisplayName(titlesFrom))}
-				</p>
-			{/if}
 		</header>
 
 		{#each parts as { part, slug, headings, questions: partQuestions } (part)}
@@ -185,7 +181,13 @@
 	</article>
 
 	<aside class="index-aside">
-		<IndexSidebarToc heading={t('summa.tableOfContents')} items={sidebarItems} />
+		<IndexSidebarToc
+			heading={t('summa.tableOfContents')}
+			headingNote={titlesFrom
+				? t('summa.titlesFromEdition').replace('{lang}', languageDisplayName(titlesFrom))
+				: undefined}
+			items={sidebarItems}
+		/>
 	</aside>
 </div>
 
@@ -233,12 +235,5 @@
 		text-decoration: underline;
 		text-decoration-color: var(--color-border);
 		text-underline-offset: 0.15em;
-	}
-
-	/* Where the italic on every borrowed title used to be — see `titlesFrom`. */
-	.titles-note {
-		margin: 0.35rem 0 0;
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
 	}
 </style>

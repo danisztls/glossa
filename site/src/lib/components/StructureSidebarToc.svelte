@@ -117,6 +117,7 @@
 	import { browser } from '$app/environment';
 	import type { StructureNode } from '$lib/types';
 	import { displayTitle, inlineTitleNodes } from '$lib/titles';
+	import Icon from './Icon.svelte';
 	import InlineText from './InlineText.svelte';
 	import {
 		currentIndex,
@@ -143,6 +144,24 @@
 		    "current" and no one row is more so than another. */
 		currentN: number | undefined;
 		lang: string;
+		/** A caveat true of every row in this list, hung on an info glyph
+		    beside the heading and shown on hover as its `title` — the same
+		    "the long form is one hover away" the copyright notice uses for the
+		    source's own boilerplate. Only the Summa passes one: the Corpus
+		    Thomisticum prints no question or article titles, so under Latin
+		    every row is another edition's words. Saying that once above the
+		    list beats marking 611 rows that have nothing to be marked against;
+		    saying it as a line of prose beside them, which is what this
+		    replaced, spends four lines of a 17rem column on a caveat the
+		    reader needs once. Undefined leaves the heading exactly as it was.
+
+		    The glyph carries the note visually-hidden as well, because a
+		    `title` is not reliably announced; the heading's own text is in its
+		    own span so the `<nav>`'s accessible name stays the heading alone.
+		    Hover is desktop-only and so is this sidebar (`.reading-aside` is
+		    `display: none` below 80rem — app.css), so nothing is lost on a
+		    phone that was ever offered there. */
+		headingNote?: string;
 		/** Rendered as both the sidebar's visible heading and its `<nav>`'s
 		    accessible name (`aria-labelledby`) — one string doing both jobs.
 		    The existing `ccc.tableOfContents`/`compendium.tableOfContents`/
@@ -198,6 +217,7 @@
 		currentN,
 		lang,
 		heading,
+		headingNote,
 		basePath,
 		linkMode = 'route',
 		outlineKinds,
@@ -291,7 +311,15 @@
 {/snippet}
 
 <nav aria-labelledby={HEADING_ID} data-link-preview="off">
-	<h2 id={HEADING_ID} class="sidebar-toc-heading">{heading}</h2>
+	<h2 class="sidebar-toc-heading">
+		<span id={HEADING_ID}>{heading}</span>
+		{#if headingNote}
+			<span class="sidebar-toc-note" title={headingNote}>
+				<Icon name="info" />
+				<span class="visually-hidden">{headingNote}</span>
+			</span>
+		{/if}
+	</h2>
 	{@render level(roots)}
 </nav>
 
