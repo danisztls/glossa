@@ -23,11 +23,16 @@
 	    without one would get here is a button pinned over the text at the very
 	    top of the page, where it is both useless and in the way.
 
-	The threshold is one viewport height: the button appears exactly when the
-	top of the page is no longer on screen, which is also when scrolling back
-	to it stops being a flick. No hysteresis, deliberately — the button is
-	`position: fixed`, so appearing and disappearing moves nothing in flow and
-	cannot feed back into the scroll position that summoned it.
+	The threshold is half a viewport height. It was a full one — the offset at
+	which the top of the page is exactly no longer on screen — which reads as
+	the obvious line to draw and sits later than the moment a reader wants the
+	control: by half a screen the site header has been gone for most of the
+	scroll (it is in flow, not sticky — see `+layout.svelte`), the top is far
+	enough off that returning to it is no longer a flick, and on the short
+	pages this button exists for at all a full viewport can be most of the
+	document. No hysteresis, deliberately — the button is `position: fixed`, so
+	appearing and disappearing moves nothing in flow and cannot feed back into
+	the scroll position that summoned it.
 
 	Focus after the jump is left to the browser on purpose. The button hides
 	itself on arrival, focus reverts to the body, and the next Tab therefore
@@ -49,7 +54,7 @@
 		let frame = 0;
 
 		function measure() {
-			visible = window.scrollY > window.innerHeight;
+			visible = window.scrollY > window.innerHeight * 0.5;
 		}
 
 		function schedule() {
