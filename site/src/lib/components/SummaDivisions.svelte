@@ -41,9 +41,26 @@
 		work?: string;
 		/** Prefix for the generated ids, so two articles on one page cannot collide. */
 		idPrefix?: string;
+		/** Set an illuminated initial on the opening of the argument — the caller
+		    decides, because it is the one that knows these divisions open an
+		    article rather than sitting inside a compare column. */
+		dropCap?: boolean;
 	}
 
-	let { divisions, lang, work, idPrefix = '' }: Props = $props();
+	let { divisions, lang, work, idPrefix = '', dropCap = false }: Props = $props();
+
+	/**
+	 * Which division the initial opens on: the first one that is AQUINAS'S.
+	 *
+	 * Not simply the first, because `preamble` is the translator's bracketed
+	 * remark before the argument starts (2 articles of 3,113 carry one), and an
+	 * initial there would illuminate the edition's aside and leave the objection
+	 * beneath it opening on nothing. `ProseBlocks` makes the same call one level
+	 * down for a `quote` block, and for the same reason.
+	 */
+	const capIndex = $derived(
+		dropCap ? divisions.findIndex((division) => division.kind !== 'preamble') : -1
+	);
 
 	function label(division: SummaDivision): string {
 		switch (division.kind) {
@@ -90,7 +107,12 @@
 {#each divisions as division, i (i)}
 	<section class="division" class:body={division.kind === 'corpus'} id={anchor(division)}>
 		<h3 class="division-label">{label(division)}</h3>
-		<ProseBlocks unit={{ blocks: division.blocks, citations: [] }} {lang} {work} />
+		<ProseBlocks
+			unit={{ blocks: division.blocks, citations: [] }}
+			{lang}
+			{work}
+			dropCap={i === capIndex}
+		/>
 	</section>
 {/each}
 

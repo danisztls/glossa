@@ -127,6 +127,7 @@
 
 				<ol class="questions">
 					{#each partQuestions as question (question.n)}
+						{@const named = summaTitleFor(lang, part, question.n)}
 						<li>
 							<a
 								href={hrefFor({
@@ -137,7 +138,17 @@
 								})}
 							>
 								<span class="q-number">{question.n}</span>
-								{#if question.title}<span class="q-title">{summaQuestionLabel(question.title)}</span
+								<!-- Borrowed where this edition prints none, which under Latin
+								     is every row — the docblock's own rule, which this page
+								     stated and then did not follow: it read `question.title`
+								     straight off the index, so a Latin reader met 611 bare
+								     numbers while `summaTitleFor` sat imported and unused. -->
+								{#if named}<span
+										class="q-title"
+										class:borrowed={named.borrowed}
+										lang={named.borrowed ? named.lang : undefined}
+										title={named.borrowed ? borrowedLabel(named.lang) : undefined}
+										>{summaQuestionLabel(named.title)}</span
 									>{/if}
 							</a>
 						</li>
@@ -200,5 +211,17 @@
 		text-decoration: underline;
 		text-decoration-color: var(--color-border);
 		text-underline-offset: 0.15em;
+	}
+
+	/*
+	 * A title this edition does not print, shown so a reader is not left with a
+	 * bare number (`summaTitleFor`). Italic and muted rather than badged — the
+	 * same treatment the reading page's heading and the sidebar row already
+	 * give it; the `lang` attribute is what tells a screen reader the language
+	 * changed.
+	 */
+	.q-title.borrowed {
+		font-style: italic;
+		color: var(--color-text-muted);
 	}
 </style>

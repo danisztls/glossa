@@ -100,13 +100,30 @@
 	const named = $derived(summaTitleFor(editions.lang, data.part, data.n));
 
 	/**
+	 * This question's articles, each carrying the title it is HEADED with a
+	 * few inches to the left. The index tier the sidebar is otherwise built
+	 * from holds article NUMBERS and nothing else (`SummaQuestionMeta`), so
+	 * passing those alone left the table of contents listing bare ordinals
+	 * beside titled headings; the titles are already on the page, in the
+	 * question it loaded, and are borrowed from the other edition by the same
+	 * `articleTitle` the heading uses, so the two cannot name one article
+	 * differently.
+	 */
+	const articleRows = $derived(
+		(question?.articles ?? []).map((a) => {
+			const at = articleTitle(a, editions.lang);
+			return { n: a.n, title: at?.title, titleLang: at?.borrowed ? at.lang : undefined };
+		})
+	);
+	const articleNumbers = $derived(articleRows.map((row) => row.n));
+
+	/**
 	 * The sidebar's outline, taken from the SHOWN edition rather than the
 	 * preferred one. On the Supplement that is the difference between a Latin
 	 * reader seeing the English part they are actually reading and seeing an
 	 * outline for a part their preferred edition does not have.
 	 */
-	const articleNumbers = $derived((question?.articles ?? []).map((a) => a.n));
-	const outline = $derived(summaOutline(editions.lang, data.part, data.n, articleNumbers));
+	const outline = $derived(summaOutline(editions.lang, data.part, data.n, articleRows));
 	/**
 	 * The treatise this question sits in, for the breadcrumb — read off the
 	 * sidebar's own `outline` rather than derived a second time, so the crumb
@@ -384,7 +401,12 @@
 					     divisions off the question itself; both sources agree they
 					     have no articles, so none is invented. -->
 					{#if question.divisions}
-						<SummaDivisions divisions={question.divisions} lang={editions.lang} work={workId} />
+						<SummaDivisions
+							divisions={question.divisions}
+							lang={editions.lang}
+							work={workId}
+							dropCap
+						/>
 					{/if}
 
 					{#each question.articles as article (article.n)}
@@ -413,7 +435,19 @@
 								placement="margin"
 							/>
 							{@render articleHeading(article, editions.lang)}
-							<SummaDivisions divisions={article.divisions} lang={editions.lang} work={workId} />
+							<!-- An initial per ARTICLE, not per page: the article is the unit a
+							     reader arrives at (`#a3`), the unit a citation names, and the
+							     one whose opening words are Aquinas's rather than the
+							     question's prologue. The document reader draws one at every
+							     division start for the same reason. Compare mode draws none, as
+							     it does everywhere — a 4.98em initial in a half-width column
+							     eats the measure the comparison needs. -->
+							<SummaDivisions
+								divisions={article.divisions}
+								lang={editions.lang}
+								work={workId}
+								dropCap
+							/>
 						</section>
 					{/each}
 				</div>

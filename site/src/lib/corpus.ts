@@ -2170,6 +2170,28 @@ export function summaHeadingsForPart(lang: string, part: string): SummaNode[] {
 }
 
 /**
+ * One article of the question being read, as the reading page hands it to
+ * `summaOutline` for the sidebar.
+ *
+ * `title` is the article's own where its edition prints one and the other
+ * edition's where it does not — the Corpus Thomisticum prints no article
+ * titles at all, so under Latin every one of these is borrowed, and
+ * `titleLang` is what lets the row say so rather than passing English words
+ * off as this source's. The page already resolves that for its own headings
+ * (`articleTitle`), so it is passed in rather than resolved a second time
+ * here: the sidebar and the heading naming the same article differently
+ * would be worse than either naming it badly.
+ */
+export interface SummaOutlineArticle {
+	n: number;
+	/** Verbatim from the edition — recased and stripped of its translator's
+	    note by `summaQuestionLabel`, the same pass a question title gets. */
+	title?: string;
+	/** Set only when `title` came from another edition. */
+	titleLang?: string;
+}
+
+/**
  * The Summa's outline for one part, as the SAME `StructureNode` tree every
  * other reader's sidebar walks.
  *
@@ -2213,12 +2235,22 @@ export function summaHeadingsForPart(lang: string, part: string): SummaNode[] {
  * their own question, so the shared component's "only the reader's own
  * branch expands" rule already shows them for the question being read and
  * for no other — the same rule the bespoke component implemented by hand.
+ *
+ * THEIR TITLES COME FROM THE CALLER, because they are not in this tier at
+ * all: `SummaQuestionMeta.articles` is a run of NUMBERS (corpus-index.ts),
+ * kept that way so a table of contents costs no content fetch, and an
+ * article's "Whether God exists?" lives in the question file the reading
+ * page has already loaded. Passing the numbers alone was what left every
+ * article row in the sidebar reading as a bare ordinal while the heading
+ * three inches to its left printed the title — `title: String(a)` under a
+ * `sub` kind, which `displayTitle` then read as the ordinal it had already
+ * shown and rendered as nothing at all.
  */
 export function summaOutline(
 	lang: string,
 	part: string,
 	currentN?: number,
-	articles: number[] = []
+	articles: SummaOutlineArticle[] = []
 ): StructureNode[] {
 	const questions = listSummaQuestions(lang).filter((q) => q.part === part);
 	if (questions.length === 0) return [];
@@ -2229,15 +2261,23 @@ export function summaOutline(
 		const kids: StructureNode[] =
 			meta.n === currentN
 				? articles.map((a) => ({
-						kind: 'sub',
-						n: a,
-						title: String(a),
+						// `article`, not `sub`: it is one, and the kind is what earns
+						// the row its "Art. 3" marker from the shared table
+						// (`kindOrdinalLabel`, titles.ts), which has no entry for
+						// `sub` and so numbered these by falling through to
+						// `displayTitle`'s ordinal.
+						kind: 'article',
+						n: a.n,
+						// Empty only where no edition on the page prints one; the row
+						// is still a number and a link, exactly as before.
+						title: a.title ? summaQuestionLabel(a.title) : '',
 						// Null bounds: an article is not addressed by a question
 						// number. `anchor` is what addresses it, and the shared
 						// row renders that as an in-page link.
 						paragraphs: [null, null],
 						children: [],
-						anchor: `a${a}`
+						anchor: `a${a.n}`,
+						titleLang: a.titleLang
 					}))
 				: [];
 		return {

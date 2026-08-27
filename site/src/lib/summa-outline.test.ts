@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { summaOutline } from './corpus';
-import { contains, hrefFor, rowState } from './components/structureToc';
+import { contains, hrefFor, marker, rowState } from './components/structureToc';
+import { displayTitle } from './titles';
 import type { StructureNode } from './types';
 
 /**
@@ -102,7 +103,12 @@ describe('question numbering restarts per part', () => {
 });
 
 describe('articles are fragments of the question page', () => {
-	const outline = () => summaOutline('en', 'II-II', 184, [1, 2, 3]);
+	const outline = () =>
+		summaOutline('en', 'II-II', 184, [
+			{ n: 1, title: 'Whether perfection consists in charity?' },
+			{ n: 2, title: 'OF THE STATE OF PERFECTION (SIX ARTICLES)' },
+			{ n: 3, titleLang: 'en' }
+		]);
 
 	it('hangs only under the question being read', () => {
 		expect(question(outline(), 184)?.children.map((c) => c.anchor)).toEqual(['a1', 'a2', 'a3']);
@@ -120,14 +126,44 @@ describe('articles are fragments of the question page', () => {
 
 	it('is addressed by its anchor, not by a route', () => {
 		const article: StructureNode = {
-			kind: 'sub',
+			kind: 'article',
 			n: 3,
-			title: '3',
+			title: '',
 			paragraphs: [null, null],
 			children: [],
 			anchor: 'a3'
 		};
 		expect(hrefFor(article, NaN, 'route', '/summa/ii-ii')).toBe('#a3');
+	});
+
+	/**
+	 * The index tier holds article NUMBERS and no titles, so a sidebar built
+	 * from it alone listed bare ordinals beside titled headings. The titles
+	 * come from the question the reading page already loaded, through the same
+	 * display pass a question title gets — `(SIX ARTICLES)` and the shouting
+	 * both come off — and a borrowed one still says where it came from.
+	 */
+	it('carries the title the page headed the article with', () => {
+		const kids = question(outline(), 184)!.children;
+		expect(kids.map((c) => c.title)).toEqual([
+			// Sentence case in the source, and left alone; only the shouted
+			// heading beneath it is recased.
+			'Whether perfection consists in charity?',
+			'Of the State of Perfection',
+			''
+		]);
+		expect(kids.map((c) => c.titleLang)).toEqual([undefined, undefined, 'en']);
+	});
+
+	it('is an `article`, so the row gets a kind marker rather than a bare ordinal', () => {
+		const kids = question(outline(), 184)!.children;
+		expect(kids.map((c) => c.kind)).toEqual(['article', 'article', 'article']);
+		expect(marker(kids[0], 'en')).toBe('Art. 1');
+		expect(displayTitle(kids[0], 'en').title).toBe('Whether perfection consists in charity?');
+		// `sub` had no entry in that table, so the old rows fell through to
+		// `displayTitle`'s ordinal — which, against a title that WAS the
+		// ordinal, left the row with a number and no text at all.
+		expect(displayTitle(kids[2], 'en').title).toBe('');
 	});
 
 	it('never steals the current-row highlight from its question', () => {
