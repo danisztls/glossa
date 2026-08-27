@@ -39,6 +39,7 @@
 	import { t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
+	import { keepInViewport } from '$lib/floating';
 	import type { WorkManifest } from '$lib/types';
 
 	interface Props {
@@ -92,6 +93,7 @@
 	{#if menu.open}
 		<ul
 			class="menu-panel"
+			use:keepInViewport
 			role="menu"
 			aria-label={t('edition.label')}
 			onkeydown={menu.onPanelKeydown}

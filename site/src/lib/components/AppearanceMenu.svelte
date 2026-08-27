@@ -50,6 +50,7 @@
 	import { fontScale, MIN_FONT_SCALE, MAX_FONT_SCALE } from '$lib/prefs.svelte';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
+	import { keepInViewport } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
 
 	const menu = new Menu();
@@ -91,6 +92,7 @@
 	{#if menu.open}
 		<div
 			class="menu-panel appearance-panel"
+			use:keepInViewport
 			role="menu"
 			tabindex="-1"
 			aria-label={t('appearance.label')}

@@ -2493,35 +2493,25 @@ input {
 }
 
 /*
- * Header dropdowns at phone width.
+ * A dropdown panel is placed here and CORRECTED in JS.
  *
  * `.menu-panel` anchors its RIGHT edge to its trigger and grows leftward by at
- * least `min-width` (14rem). That is fine for a trigger near the right edge and
- * broken for one that is not: on a 380px viewport the language trigger's right
- * edge sits around x=140, so a 224px panel would start at x=-84 and hang off
- * the side of the screen. Nothing in the rule could notice — CSS cannot measure
- * the distance from an element to the viewport edge.
+ * least `min-width` (14rem). That is fine for a trigger with room to its start
+ * side and broken for one without: at phone width the header wraps and the
+ * language trigger's right edge sits around x=140, so a 224px panel would start
+ * at x=-84 and hang off the side of the screen; `ReadingBar`'s edition picker
+ * is the first control in its row and does the same at any width narrow enough.
+ * Nothing in this rule can notice — CSS cannot measure the distance from an
+ * element to the viewport edge.
  *
- * So at phone width the header's menus stop being the containing block, and the
- * panels resolve against `.header-bar` instead: every one of them drops from the
- * bottom-right of the header, lined up with the bar's own 1rem gutter, wherever
- * its trigger happens to be. `position: static` on `.menu` is what hands the
- * job over.
- *
- * Deliberately scoped to `.site-header`. The same `.menu` primitives are used
- * in the page body (ComparisonEditionMenu), where the trigger is the correct
- * anchor and this would be wrong.
+ * This used to be answered here, for the header alone, by making its menus
+ * `position: static` below 30rem so the panels resolved against `.header-bar`
+ * and dropped from its gutter wherever their trigger was. That could only ever
+ * cover the menus it named, and it did not cover the reading bar. The clamp is
+ * now `floating.ts`'s `keepInViewport`, applied to every `.menu-panel` there
+ * is: the panel keeps its trigger as its anchor everywhere, and slides back in
+ * by exactly what it overflowed, or not at all.
  */
-@media (max-width: 30rem) {
-	.site-header .menu {
-		position: static;
-	}
-
-	.site-header .menu-panel {
-		inset-inline-end: 1rem;
-	}
-}
-
 .menu-panel {
 	position: absolute;
 	inset-block-start: calc(100% + 0.4rem);

@@ -57,6 +57,7 @@
 	import { copyrightLabel } from '$lib/copyright';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
+	import { keepInViewport } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentManifest } from '$lib/types';
 
@@ -201,6 +202,7 @@
 		{#if menu.open}
 			<ul
 				class="menu-panel"
+				use:keepInViewport
 				role="menu"
 				aria-label={t('edition.label')}
 				onkeydown={menu.onPanelKeydown}

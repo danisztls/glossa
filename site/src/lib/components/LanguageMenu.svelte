@@ -28,6 +28,7 @@
 	import type { UiLang } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
+	import { keepInViewport } from '$lib/floating';
 
 	// Each label is written in its OWN language, not translated into the
 	// current one: a reader who has landed on the wrong interface language
@@ -89,6 +90,7 @@
 	{#if menu.open}
 		<ul
 			class="menu-panel lang-panel"
+			use:keepInViewport
 			role="menu"
 			aria-label={t('lang.label')}
 			onkeydown={menu.onPanelKeydown}
