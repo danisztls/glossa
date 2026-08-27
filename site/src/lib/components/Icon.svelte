@@ -62,6 +62,11 @@
 	// were the text characters `&larr;`/`&rarr;` until they became icons here;
 	// `arrow-left`/`arrow-right` are what keeps that vocabulary one drawing
 	// rather than a glyph beside a font's idea of the same glyph.
+	// Three ruled lines with a leader dot at the end of each: a printed
+	// contents page, which is what the panel it opens is. `list` would have
+	// said "a list" of anything at all, and `list-tree` draws the nesting at a
+	// size where the branches close up into a smudge.
+	import TableOfContents from '@lucide/svelte/icons/table-of-contents';
 	import ArrowUp from '@lucide/svelte/icons/arrow-up';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
@@ -87,6 +92,7 @@
 		'external-link': ExternalLink,
 		dices: Dices,
 		info: Info,
+		'table-of-contents': TableOfContents,
 		'arrow-up': ArrowUp,
 		'arrow-left': ArrowLeft,
 		'arrow-right': ArrowRight

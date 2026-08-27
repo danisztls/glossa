@@ -225,6 +225,20 @@
 {#if editions.current && heading}
 	{@const from = editions.current.chapter.paragraphs[0]}
 	{@const to = editions.current.chapter.paragraphs[1]}
+	<!-- One list, two places: the desktop sidebar below and the reading bar's
+	     narrow-screen panel (`TocMenu`). Declared inside this block rather
+	     than at the top of the file because `from` is a `{@const}` of it. -->
+	{#snippet tocList()}
+		<StructureSidebarToc
+			{structure}
+			currentN={spy.current ?? from ?? undefined}
+			lang={editions.lang}
+			heading={t('ccc.tableOfContents')}
+			basePath="/catechismus/caput"
+			outlineKinds={OUTLINE_KINDS}
+			{anchorFor}
+		/>
+	{/snippet}
 	<div class="reading-layout" class:compare={editions.compareActive}>
 		<article class="content-column">
 			<div class="breadcrumb-row">
@@ -258,6 +272,7 @@
 			     modes — see `ReadingBar`. Everything it carries used to be spread
 			     across the breadcrumb row, the title row and the site header. -->
 			<ReadingBar
+				toc={{ label: t('ccc.tableOfContents'), content: tocList }}
 				bookmarkHref={chapterHref}
 				canCompare={editions.others.length > 0}
 				compareActive={editions.compareActive}
@@ -395,22 +410,15 @@
 			{/if}
 		</article>
 
-		<!-- Same treatment as `/catechismus/[n]` — hidden below 80rem, no mobile
-	     counterpart to preserve, and omitted entirely in compare mode (see
-	     app.css's `.reading-layout.compare` docblock). `from` is this
-	     language's actual matched chapter start (`getCccChapterFor`,
-	     +page.ts), not the URL's `n`, which may fall mid-chapter in a
-	     language whose tree diverges from the one `n` was minted against. -->
+		<!-- Same treatment as `/catechismus/[n]` — hidden below 80rem, where the
+	     reading bar's panel carries the same list, and omitted entirely in
+	     compare mode (see app.css's `.reading-layout.compare` docblock).
+	     `from`, in the snippet above, is this language's actual matched
+	     chapter start (`getCccChapterFor`, +page.ts), not the URL's `n`,
+	     which may fall mid-chapter in a language whose tree diverges from the
+	     one `n` was minted against. -->
 		<aside class="reading-aside">
-			<StructureSidebarToc
-				{structure}
-				currentN={spy.current ?? from ?? undefined}
-				lang={editions.lang}
-				heading={t('ccc.tableOfContents')}
-				basePath="/catechismus/caput"
-				outlineKinds={OUTLINE_KINDS}
-				{anchorFor}
-			/>
+			{@render tocList()}
 		</aside>
 	</div>
 {/if}

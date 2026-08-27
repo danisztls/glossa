@@ -118,6 +118,18 @@
 {/snippet}
 
 {#if editions.current}
+	<!-- One list, two places: the desktop sidebar below and the reading bar's
+	     narrow-screen panel (`TocMenu`). -->
+	{#snippet tocList()}
+		<StructureSidebarToc
+			{structure}
+			currentN={data.n}
+			lang={editions.lang}
+			heading={t('compendium.tableOfContents')}
+			basePath="/compendium"
+			outlineKinds={OUTLINE_KINDS}
+		/>
+	{/snippet}
 	<div class="reading-layout" class:compare={editions.compareActive}>
 		<article class="content-column">
 			<div class="breadcrumb-row">
@@ -140,6 +152,7 @@
 			     modes — see `ReadingBar`. Everything it carries used to be spread
 			     across the breadcrumb row, the title row and the site header. -->
 			<ReadingBar
+				toc={{ label: t('compendium.tableOfContents'), content: tocList }}
 				bookmarkHref={hrefFor({ kind: 'compendium', n: data.n })}
 				canCompare={editions.others.length > 0}
 				compareActive={editions.compareActive}
@@ -212,21 +225,13 @@
 			/>
 		</article>
 
-		<!-- No mobile counterpart to preserve — this route had no chapter/TOC
-		     navigation in the reading view before this sidebar existed, so it's
-		     hidden below `.reading-layout`'s own 80rem breakpoint (app.css and
-		     the media query below) rather than shown as a plain block after
-		     the text. Omitted entirely in compare mode — see app.css's
-		     `.reading-layout.compare` docblock. -->
+		<!-- Hidden below `.reading-layout`'s own 80rem breakpoint (app.css)
+		     rather than shown as a plain block after the text, and omitted
+		     entirely in compare mode — see app.css's `.reading-layout.compare`
+		     docblock. Below those widths the reading bar's panel renders the
+		     same snippet. -->
 		<aside class="reading-aside">
-			<StructureSidebarToc
-				{structure}
-				currentN={data.n}
-				lang={editions.lang}
-				heading={t('compendium.tableOfContents')}
-				basePath="/compendium"
-				outlineKinds={OUTLINE_KINDS}
-			/>
+			{@render tocList()}
 		</aside>
 	</div>
 {/if}

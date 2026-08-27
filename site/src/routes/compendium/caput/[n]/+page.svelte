@@ -144,6 +144,19 @@
 {#if editions.current && heading}
 	{@const from = editions.current.chapter.paragraphs[0]}
 	{@const to = editions.current.chapter.paragraphs[1]}
+	<!-- One list, two places: the desktop sidebar below and the reading bar's
+	     narrow-screen panel (`TocMenu`). Declared inside this block rather
+	     than at the top of the file because `from` is a `{@const}` of it. -->
+	{#snippet tocList()}
+		<StructureSidebarToc
+			{structure}
+			currentN={spy.current ?? from ?? undefined}
+			lang={editions.lang}
+			heading={t('compendium.tableOfContents')}
+			basePath="/compendium/caput"
+			outlineKinds={OUTLINE_KINDS}
+		/>
+	{/snippet}
 	<div class="reading-layout" class:compare={editions.compareActive}>
 		<article class="content-column">
 			<div class="breadcrumb-row">
@@ -175,6 +188,7 @@
 			     modes — see `ReadingBar`. Everything it carries used to be spread
 			     across the breadcrumb row, the title row and the site header. -->
 			<ReadingBar
+				toc={{ label: t('compendium.tableOfContents'), content: tocList }}
 				bookmarkHref={chapterHref}
 				canCompare={editions.others.length > 0}
 				compareActive={editions.compareActive}
@@ -268,14 +282,7 @@
 		</article>
 
 		<aside class="reading-aside">
-			<StructureSidebarToc
-				{structure}
-				currentN={spy.current ?? from ?? undefined}
-				lang={editions.lang}
-				heading={t('compendium.tableOfContents')}
-				basePath="/compendium/caput"
-				outlineKinds={OUTLINE_KINDS}
-			/>
+			{@render tocList()}
 		</aside>
 	</div>
 {/if}

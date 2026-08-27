@@ -13,11 +13,16 @@
 	Gathering them here means the bar is the same object before and after —
 	only the comparison picker appears, next to the toggle that summoned it.
 
-	ONE FLAT ROW, IN A FIXED ORDER: bookmark, print, roll, edition, compare,
-	second edition. The page-level buttons come first and the text-level
-	controls follow, so the row runs from what is being read to how it is
-	being read. The roll joins the first group and sits last in it: it is the
-	only one of the three that leaves the page, and the only one not every
+	ONE FLAT ROW, IN A FIXED ORDER: contents, bookmark, print, roll, edition,
+	compare, second edition. The page-level buttons come first and the
+	text-level controls follow, so the row runs from what is being read to how
+	it is being read. The table of contents sits ahead of all of them because
+	it is the one control that does not act on this page at all — it leaves
+	it — and because it is the sidebar's narrow-screen stand-in (`TocMenu`),
+	which is a thing a reader looks for at the start of the chrome rather than
+	among the controls that change how the page is set.
+	The roll joins the second group and sits last in it: it is the
+	only one of those that leaves the page, and the only one not every
 	route renders (see `randomVerse` below), so putting it at that group's
 	edge keeps bookmark and print in the same place whether or not it is
 	there.
@@ -73,6 +78,7 @@
 -->
 <script lang="ts">
 	import EditionMenu from './EditionMenu.svelte';
+	import TocMenu from './TocMenu.svelte';
 	import ComparisonEditionMenu from './ComparisonEditionMenu.svelte';
 	import type { WorkManifest } from '$lib/types';
 	import CompareToggle from './CompareToggle.svelte';
@@ -80,6 +86,7 @@
 	import PrintButton from './PrintButton.svelte';
 	import RandomVerseButton from './RandomVerseButton.svelte';
 	import { publishHeight } from '$lib/sticky-height';
+	import type { Snippet } from 'svelte';
 
 	/** What the second column shows, and how the reader changes it. The
 	 *  caller supplies the list because only it knows which editions this
@@ -93,6 +100,16 @@
 		 *  work that can carry two editions in the same language, so its
 		 *  picker has something to disambiguate. */
 		editionStyle?: boolean;
+	}
+
+	/** The work's table of contents, for the routes whose sidebar is hidden at
+	 *  this width — see `TocMenu`, which owns why it is a panel here rather
+	 *  than a list in the reading column. An object rather than two props for
+	 *  the same reason `comparison` is one: the pair is meaningless apart. */
+	export interface TableOfContents {
+		/** The list's heading, reused as the trigger's accessible name. */
+		label: string;
+		content: Snippet;
 	}
 
 	interface Props {
@@ -122,6 +139,13 @@
 		/** The picker that names and chooses the second column. Rendered only
 		 *  while comparing. */
 		comparison?: ComparisonPicker;
+		/** The table of contents the sidebar shows at desktop widths. Passed
+		 *  only by the reading routes that HAVE a sidebar; omitted by the
+		 *  index routes, which are already a table of contents, and by
+		 *  `/documenta`, whose narrow-screen list is `.toc-inline` and is a
+		 *  flat walk of every heading rather than this component's
+		 *  current-branch-only tree. */
+		toc?: TableOfContents;
 		/** Offer the random-verse roll beside print. Opt-in, and taken up by
 		 *  the scripture routes alone: it opens a Bible verse, which is a
 		 *  page-level action where the page IS scripture and a non-sequitur
@@ -130,6 +154,7 @@
 	}
 
 	let {
+		toc,
 		bookmarkHref,
 		print = true,
 		canCompare = false,
@@ -162,6 +187,9 @@
 </script>
 
 <div class="reading-bar" bind:this={barEl}>
+	{#if toc}
+		<TocMenu label={toc.label} content={toc.content} />
+	{/if}
 	{#if bookmarkHref}
 		<BookmarkButton href={bookmarkHref} />
 	{/if}

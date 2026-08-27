@@ -1265,6 +1265,39 @@ input {
 	}
 }
 
+/*
+ * ...AND THE OTHER HALF OF THAT HANDOVER: THE READING BAR'S CONTENTS PANEL.
+ *
+ * `TocMenu` is what a reader gets where the sidebar is not, so it appears
+ * exactly and only where the rule above has taken the sidebar away. That is
+ * not one width, because compare mode moves the boundary: the aside yields
+ * until 100rem while two columns are on screen (see
+ * `.reading-layout.compare` below), so between 80 and 100rem a comparing
+ * reader still has no sidebar and still needs the panel. The two queries
+ * below are the same pair `/documenta`'s `.toc-inline` carries, for the same
+ * reason and at the same widths — the handover width follows whichever
+ * sidebar is actually coming back.
+ *
+ * Stated here rather than in the component so that both halves of "who shows
+ * the table of contents at this width" are one block of CSS. The cost is the
+ * compound selector: `.menu` (further down this file, and therefore later)
+ * sets `display: inline-flex` on the same element at the same specificity, so
+ * `.toc-menu` alone would lose to it. `.menu.toc-menu` is not a hack looking
+ * for a home — it is this rule saying it must beat the primitive it is built
+ * on.
+ */
+@media (min-width: 80rem) {
+	.reading-layout:not(.compare) .menu.toc-menu {
+		display: none;
+	}
+}
+
+@media (min-width: 100rem) {
+	.menu.toc-menu {
+		display: none;
+	}
+}
+
 @media (min-width: 80rem) {
 	.reading-layout {
 		display: grid;
@@ -2442,6 +2475,47 @@ input {
 
 .sidebar-toc-note:hover {
 	opacity: 1;
+}
+
+/*
+ * THE SAME NOTE, FOR A READER WHO CANNOT HOVER.
+ *
+ * The glyph above puts the note one hover away, which was a complete answer
+ * for as long as this sidebar was desktop-only — `.reading-aside` is
+ * `display: none` below 80rem, so a phone was never offered the affordance in
+ * the first place. `TocMenu` ended that: the reading bar's panel renders the
+ * identical list on a phone, and a `title` on a touch screen is an icon that
+ * does nothing when tapped, which is worse than no icon at all.
+ *
+ * So the two swap on `hover: none` — the pointer's own answer to the only
+ * question being asked, rather than `pointer: coarse`, which would also catch
+ * the touchscreen laptop whose mouse can hover perfectly well. Exactly one of
+ * the two is ever rendered; the other is `display: none`, and so out of the
+ * accessibility tree along with the visually-hidden copy inside the glyph —
+ * no reader is told this twice.
+ *
+ * Set as apparatus, like every other one of our remarks about a text: the
+ * interface face, muted, small. It sits under the heading's rule rather than
+ * above it, so the caveat reads as belonging to the rows it is about.
+ */
+.sidebar-toc-note-prose {
+	display: none;
+	margin: -0.25rem 0 0.5rem;
+	font-family: var(--font-sans);
+	font-size: 0.75rem;
+	line-height: 1.35;
+	color: var(--color-text-muted);
+	text-wrap: pretty;
+}
+
+@media (hover: none) {
+	.sidebar-toc-note {
+		display: none;
+	}
+
+	.sidebar-toc-note-prose {
+		display: block;
+	}
 }
 
 .sidebar-toc-list {

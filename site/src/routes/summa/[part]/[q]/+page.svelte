@@ -292,6 +292,30 @@
 {/snippet}
 
 {#if editions.current && question}
+	<!-- One list, two places: the desktop sidebar below and the reading bar's
+	     narrow-screen panel (`TocMenu`). This is the route that most wants the
+	     panel — a part's outline is every question in it, 90 for the Tertia
+	     and 189 for the Secunda Secundae, so there has never been a sensible
+	     way to put that list in the reading column on a phone. -->
+	{#snippet tocList()}
+		<!-- The same sidebar every other reader has, over the same
+		     `StructureNode` tree — see `summaOutline` (corpus.ts) for why
+		     the bespoke component this replaced was an accidental
+		     divergence rather than a requirement. `outlineKinds` is
+		     omitted, as for a document: the Summa's tree is two levels
+		     deep and has no "chapter-sized" floor to cut it to. -->
+		<StructureSidebarToc
+			structure={outline.map((node) => ({ node, depth: 0 }))}
+			currentN={data.n}
+			lang={editions.lang}
+			heading={t('summa.tableOfContents')}
+			headingNote={titlesNote}
+			basePath={`/summa/${partSlug}`}
+			{linkableAnchors}
+			borrowedTitleLabel={(from) =>
+				t('summa.titleFromEdition').replace('{lang}', languageDisplayName(from))}
+		/>
+	{/snippet}
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
 			<div class="breadcrumb-row">
@@ -327,6 +351,7 @@
 				unreachable.
 			-->
 			<ReadingBar
+				toc={{ label: t('summa.tableOfContents'), content: tocList }}
 				bookmarkHref={hrefFor({ kind: 'summa', part: partSlug, question: data.n, article: null })}
 				{canCompare}
 				{compareActive}
@@ -500,29 +525,11 @@
 			/>
 		</article>
 
-		<!-- Hidden below `.reading-layout`'s own 80rem breakpoint rather than
-		     shown as a plain block after the text: this route had no in-reader
-		     navigation before the sidebar existed, so there is no mobile
-		     counterpart to preserve — the same call `/compendium/[n]` made.
-		     Omitted entirely in compare mode, per `.reading-layout.compare`. -->
+		<!-- Hidden below `.reading-layout`'s own 80rem breakpoint, where the
+		     reading bar's panel renders the snippet above instead, and omitted
+		     entirely in compare mode, per `.reading-layout.compare`. -->
 		<aside class="reading-aside">
-			<!-- The same sidebar every other reader has, over the same
-			     `StructureNode` tree — see `summaOutline` (corpus.ts) for why
-			     the bespoke component this replaced was an accidental
-			     divergence rather than a requirement. `outlineKinds` is
-			     omitted, as for a document: the Summa's tree is two levels
-			     deep and has no "chapter-sized" floor to cut it to. -->
-			<StructureSidebarToc
-				structure={outline.map((node) => ({ node, depth: 0 }))}
-				currentN={data.n}
-				lang={editions.lang}
-				heading={t('summa.tableOfContents')}
-				headingNote={titlesNote}
-				basePath={`/summa/${partSlug}`}
-				{linkableAnchors}
-				borrowedTitleLabel={(from) =>
-					t('summa.titleFromEdition').replace('{lang}', languageDisplayName(from))}
-			/>
+			{@render tocList()}
 		</aside>
 	</div>
 {/if}

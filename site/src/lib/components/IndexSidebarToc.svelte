@@ -84,6 +84,13 @@
 			</span>
 		{/if}
 	</h2>
+	<!-- The same note as prose, for a reader who cannot hover — see
+	     `.sidebar-toc-note-prose` (app.css). Exactly one of the two is ever
+	     rendered, so nothing is announced twice; a `<p>` rather than a third
+	     span inside the `<h2>`, whose content model does not allow one. -->
+	{#if headingNote}
+		<p class="sidebar-toc-note-prose">{headingNote}</p>
+	{/if}
 	<ol class="sidebar-toc-list">
 		{#each items as item, i (item.href)}
 			{@const isCurrent = i === currentIndex}

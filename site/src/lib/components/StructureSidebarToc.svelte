@@ -158,9 +158,14 @@
 		    The glyph carries the note visually-hidden as well, because a
 		    `title` is not reliably announced; the heading's own text is in its
 		    own span so the `<nav>`'s accessible name stays the heading alone.
-		    Hover is desktop-only and so is this sidebar (`.reading-aside` is
-		    `display: none` below 80rem — app.css), so nothing is lost on a
-		    phone that was ever offered there. */
+
+		    THE HOVER IS NO LONGER THE WHOLE ANSWER. This used to read "hover is
+		    desktop-only and so is this sidebar, so nothing is lost on a phone
+		    that was ever offered there" — true while `.reading-aside` was the
+		    only place these rows rendered, and false the moment `TocMenu` put
+		    the same list in the reading bar's panel. Where the pointer cannot
+		    hover, the glyph is hidden and the note is set as prose under the
+		    heading instead; see `.sidebar-toc-note-prose` (app.css). */
 		headingNote?: string;
 		/** Rendered as both the sidebar's visible heading and its `<nav>`'s
 		    accessible name (`aria-labelledby`) — one string doing both jobs.
@@ -228,8 +233,27 @@
 
 	const roots = $derived(structure.filter((row) => row.depth === 0).map((row) => row.node));
 
-	const CURRENT_ID = 'reading-toc-current';
-	const HEADING_ID = 'reading-toc-heading';
+	/*
+	 * PER-INSTANCE, BECAUSE THERE ARE TWO INSTANCES NOW. These were the
+	 * literals `reading-toc-current`/`reading-toc-heading`, which was fine
+	 * while the sidebar was the only place this rendered — and is what
+	 * `/documenta` cited as the reason it wrote its narrow-screen table of
+	 * contents (`.toc-inline`) as separate markup rather than a second copy
+	 * of this component.
+	 *
+	 * `TocMenu` is that second copy: the reading bar's narrow-screen panel
+	 * renders this alongside the sidebar's own hidden instance, and two
+	 * elements sharing an id make `aria-labelledby` ambiguous and
+	 * `getElementById` below answer for whichever came first — which, the
+	 * aside being last in source order, would have been the panel scrolling
+	 * the sidebar's hidden row into view and never its own.
+	 *
+	 * `$props.id()` is Svelte's own per-instance id, so the two never
+	 * collide and neither has to be told which one it is.
+	 */
+	const uid = $props.id();
+	const CURRENT_ID = `${uid}-current`;
+	const HEADING_ID = `${uid}-heading`;
 
 	// Scrolls the reader's current row into view within the aside's OWN
 	// scroll container (`.reading-aside` is `overflow-y: auto` — app.css)
@@ -320,6 +344,13 @@
 			</span>
 		{/if}
 	</h2>
+	<!-- The same note as prose, for a reader who cannot hover — see
+	     `.sidebar-toc-note-prose` (app.css). Exactly one of the two is ever
+	     rendered, so nothing is announced twice; a `<p>` rather than a third
+	     span inside the `<h2>`, whose content model does not allow one. -->
+	{#if headingNote}
+		<p class="sidebar-toc-note-prose">{headingNote}</p>
+	{/if}
 	{@render level(roots)}
 </nav>
 
@@ -367,6 +398,24 @@
 		color: var(--color-text-muted);
 		text-decoration: underline dotted;
 		text-decoration-color: var(--color-border);
+	}
+
+	/* A row big enough to hit with a thumb, and only where there is a thumb —
+	   the same rule and the same 0.5rem `/documenta`'s `.toc-disclosure`
+	   summary takes. This list was desktop-only when it was written, so the
+	   0.2rem above was sized for a mouse and nothing else; `TocMenu` now puts
+	   the identical rows on a phone. Applied to the component rather than to
+	   the panel because it is a fact about the rows, not about where they are:
+	   a touchscreen laptop taps the sidebar with the same thumb.
+
+	   `.unlinked` grows too, though nothing taps it. Its rows are interleaved
+	   with real ones, and a list whose untappable entries are visibly shorter
+	   reads as a rendering fault rather than as a distinction. */
+	@media (pointer: coarse) {
+		a,
+		.unlinked {
+			padding-block: 0.5rem;
+		}
 	}
 
 	.kind-part > a,

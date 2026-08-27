@@ -744,9 +744,15 @@
 				     table of contents and the text lived one tap further on. This
 				     restores that: the aside is hidden below 80rem and this takes
 				     over, as plain markup rather than a second
-				     `StructureSidebarToc` — that component owns fixed element ids
-				     (`reading-toc-heading`) and rendering it twice would duplicate
-				     them in one document. -->
+				     `StructureSidebarToc`. The reason used to be that that
+				     component owned fixed element ids and could not be rendered
+				     twice in one document; it takes `$props.id()` now, and the
+				     other reading routes do render it twice (`TocMenu`). What
+				     keeps this list its own markup is the LIST, not the ids:
+				     this one is a flat walk of every heading the document has,
+				     and the sidebar's is a tree with only the reader's own
+				     branch expanded. On a phone, where there is no second
+				     column to keep short, the whole list is the useful one. -->
 				<!-- IT IS A DISCLOSURE, AND CLOSED IS THE RIGHT DEFAULT HERE. Open,
 				     Magnifica Humanitas' 60-odd headings are several phone screens of
 				     list standing between the masthead and the document's first word —

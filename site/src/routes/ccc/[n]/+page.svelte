@@ -162,6 +162,21 @@
 {/snippet}
 
 {#if editions.current}
+	<!-- Written once and rendered twice: as the desktop sidebar below, and as
+	     the reading bar's panel at the widths where that sidebar is hidden
+	     (`TocMenu`). The snippet is what keeps the two from becoming two
+	     lists — a second call would have to be kept in step with this one by
+	     hand, and the panel is exactly where a divergence would go unseen. -->
+	{#snippet tocList()}
+		<StructureSidebarToc
+			{structure}
+			currentN={data.n}
+			lang={editions.lang}
+			heading={t('ccc.tableOfContents')}
+			basePath="/catechismus"
+			outlineKinds={OUTLINE_KINDS}
+		/>
+	{/snippet}
 	<div class="reading-layout" class:compare={editions.compareActive}>
 		<article class="content-column">
 			<div class="breadcrumb-row">
@@ -186,6 +201,7 @@
 			     modes — see `ReadingBar`. Everything it carries used to be spread
 			     across the breadcrumb row, the title row and the site header. -->
 			<ReadingBar
+				toc={{ label: t('ccc.tableOfContents'), content: tocList }}
 				bookmarkHref={hrefFor({ kind: 'ccc', n: data.n })}
 				canCompare={editions.others.length > 0}
 				compareActive={editions.compareActive}
@@ -326,21 +342,13 @@
 		</article>
 
 		<!-- Hidden below 80rem, alongside `.reading-layout`'s own breakpoint
-	     (app.css) — there is no pre-existing mobile presentation to preserve
-	     here (this route had no chapter/TOC navigation in the reading view
-	     before this sidebar existed), so the desktop-only addition is simply
-	     absent on narrow viewports rather than duplicated like the Bible
-	     picker. Omitted entirely in compare mode — see app.css's
-	     `.reading-layout.compare` docblock. -->
+	     (app.css), and omitted entirely in compare mode — see app.css's
+	     `.reading-layout.compare` docblock. It is no longer simply absent
+	     there: the reading bar carries the same list as a panel at exactly
+	     the widths this is hidden at, which is the other half of the rule
+	     beside `.reading-aside`'s own in app.css. -->
 		<aside class="reading-aside">
-			<StructureSidebarToc
-				{structure}
-				currentN={data.n}
-				lang={editions.lang}
-				heading={t('ccc.tableOfContents')}
-				basePath="/catechismus"
-				outlineKinds={OUTLINE_KINDS}
-			/>
+			{@render tocList()}
 		</aside>
 	</div>
 {/if}
