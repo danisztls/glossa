@@ -1235,8 +1235,52 @@ input {
 	 * displacement it does not need (its verse numbers are inline), which is
 	 * cheaper than a second token for the routes that do.
 	 */
-	--sidenote-width: 13rem;
 	--sidenote-gap: 4rem;
+
+	/*
+	 * HOW MUCH START MARGIN THERE ACTUALLY IS, which is not a constant and was
+	 * being treated as one.
+	 *
+	 * The grid is centred (`justify-content: center`), so the slack either side
+	 * is half of whatever the two tracks and their gutter leave over — and the
+	 * page's own padding cancels out of that arithmetic exactly, which is why
+	 * none of it appears here. What does appear is `--content-width`, and that
+	 * is the whole problem: the reading column GROWS with the reader's size
+	 * setting, so the margin shrinks as the text grows, and a note displaced by
+	 * a fixed 15.5rem walked off the left edge of the viewport at the sizes
+	 * where the reader can least afford it. The 100rem query
+	 * (`sidenotes.svelte.ts`) cannot see any of this: a media query reads the
+	 * root font size, which `--reading-scale` does not touch.
+	 *
+	 * The 1rem is a scrollbar allowance. `100vw` includes the scrollbar and the
+	 * centring does not, so the true slack is half a scrollbar narrower than
+	 * this arithmetic thinks — half a rem, on the side the notes are on, at
+	 * exactly the sizes where there is nothing to spare. Systems with overlay
+	 * scrollbars pay it for nothing, which is the cheaper of the two mistakes.
+	 */
+	--sidenote-room: calc(
+		(100vw - 1rem - var(--content-width) - var(--aside-width) - var(--aside-gap)) / 2
+	);
+
+	/*
+	 * SO THE WIDTH IS A CEILING, NOT A WIDTH — the same shape `--content-width`
+	 * itself has, and for the same reason: a rail that does not bind until it
+	 * has to.
+	 *
+	 * It binds at a reading scale of about 1.42 on a 100rem viewport, which is
+	 * where the column has grown enough to eat the 13rem the notes want. From
+	 * there the gloss column narrows rather than the page overflowing, down to
+	 * about 7.1rem at the 1.8 maximum — cramped for one of Challoner's
+	 * paragraphs, unremarkable for a citation, and it never binds at all on a
+	 * viewport wide enough to have the room (at 120rem the ceiling holds across
+	 * the whole range `prefs.svelte.ts` offers).
+	 *
+	 * The `0px` floor is a guard rather than a design: a negative length is
+	 * invalid, and an invalid `inline-size` falls back to `auto`, which would
+	 * put a full-measure note in the margin — the one failure this whole
+	 * calculation exists to prevent. It is unreachable above 100rem.
+	 */
+	--sidenote-width: clamp(0px, calc(var(--sidenote-room) - var(--sidenote-gap)), 13rem);
 }
 
 /* Index pages use the same wide-screen grid as readers, but their full
@@ -1466,6 +1510,25 @@ input {
  */
 .reading-layout.compare > .content-column {
 	max-width: calc(var(--content-width) * 2 + var(--compare-gutter));
+}
+
+/*
+ * The same slack arithmetic against the wider thing being centred. `CompareGrid`
+ * takes the margin away from the notes entirely while it is mounted
+ * (`sidenotes.svelte.ts`), so this governs exactly one state: the moment before
+ * it is — `/documenta` renders its single column, and its citations, while the
+ * second edition is still in flight, with `.compare` already on the layout.
+ * Without this the notes would be measured against a margin twice the width of
+ * the one actually there, for as long as the fetch takes.
+ */
+.reading-layout.compare {
+	--sidenote-room: calc(
+		(
+				100vw - 1rem - (var(--content-width) * 2 + var(--compare-gutter)) - var(--aside-width) -
+					var(--aside-gap)
+			) /
+			2
+	);
 }
 
 @media (min-width: 80rem) {
@@ -2317,7 +2380,7 @@ input {
 	 * PAPER HAS NO SLACK TO HANG A NOTE IN. `.margin-note`'s displacement is
 	 * measured against a viewport that centres the reading column with room
 	 * either side; the rules above have already taken `.reading-layout` down
-	 * to a full-bleed block, so a note left floating would print 17rem off
+	 * to a full-bleed block, so a note left floating would print up to 17rem off
 	 * the edge of the sheet and simply be lost. Which layout the markup is in
 	 * was settled on screen — `sidenoteRoom` reads a `matchMedia` query, not
 	 * the print context — so this is the stylesheet's to undo.

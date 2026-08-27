@@ -62,7 +62,7 @@ class SidenoteRoom {
 	 * fixed gutter; it is whatever is left over once `.reading-layout` has
 	 * centred its tracks, and two reading columns plus the aside consume all
 	 * of it — about 6.5rem either side at 100rem, against the 17rem a note
-	 * is displaced by. A note floated there would sit off the edge of the
+	 * wants at full width. A note floated there would sit off the edge of the
 	 * viewport rather than beside its line.
 	 *
 	 * A COUNT, AND NOT THE `compare` PREFERENCE. That store says what the

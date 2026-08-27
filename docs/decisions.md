@@ -1124,10 +1124,19 @@ characters, and where a quoted sentence comes from is what a reader wants of it.
 arrangement (`.margin-note`), two apparatuses; each keeps its own fallback where there is
 no margin — a gloss becomes a block, a citation stays a boxed span inside its sentence.
 
+**The note's width is derived from the margin there actually is, not assumed.** The
+reading column grows with the reader's size setting, so the margin shrinks as the text
+grows and a fixed displacement walked off the left edge of the viewport at the sizes
+where the reader can least afford it. The 100rem query cannot see that — a media query
+reads the root font size, which `--reading-scale` does not touch — so the width is a
+ceiling CSS clamps against the real slack (`--sidenote-room`). It binds at about 142% on
+a 100rem viewport and narrows the gloss column from there — to about 7rem at the maximum —
+rather than overflowing.
+
 **Compare mode spends the slack the notes live in, so it takes the margin back.** The
 margin is not a reserved gutter but whatever is left after `.reading-layout` centres its
 tracks — about 6.5rem either side at 100rem with two columns up, against the 17rem a
-note is displaced by. `CompareGrid` claims it while mounted; the reader's compare
+note wants at full width. `CompareGrid` claims it while mounted; the reader's compare
 _preference_ would be the wrong signal, since a work with one edition has it on and still
 reads in one column.
 

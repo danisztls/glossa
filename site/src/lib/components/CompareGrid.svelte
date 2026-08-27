@@ -144,8 +144,8 @@
 	 * gutter — it is whatever is left after `.reading-layout` centres its
 	 * tracks, and this component's own docblock is the reason there is nothing
 	 * left: a second reading measure at the full width, plus the aside above
-	 * 100rem, comes to about 6.5rem of slack against the 17rem a note is
-	 * displaced by. Floated there, every citation in both columns would sit
+	 * 100rem, comes to about 6.5rem of slack against the 17rem a note wants
+	 * at full width. Floated there, every citation in both columns would sit
 	 * off the edge of the viewport.
 	 *
 	 * DECLARED HERE RATHER THAN PASSED DOWN because this component is compare
