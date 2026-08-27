@@ -178,3 +178,36 @@ export function sectionFor(pathname: string): string {
 	];
 	return KNOWN.includes(root) ? root : 'other';
 }
+
+/**
+ * Hostnames that are a developer's machine rather than a deployment.
+ *
+ * `$app/environment`'s `dev` is NOT enough on its own: it is
+ * `import.meta.env.DEV`, so it is false under `npm run preview` and false
+ * under `wrangler dev`, both of which serve a production build from a laptop.
+ * The host is what actually separates the two.
+ *
+ * DENY-LOCAL RATHER THAN ALLOW-CANONICAL, deliberately. Listing the real
+ * hostname and refusing everything else fails in the worse direction: move the
+ * site to another domain and measurement stops silently, with a report that
+ * reads as "nobody visited" rather than as an error. This way a domain change
+ * keeps working and only a laptop is refused.
+ */
+const LOCAL_HOSTS = /^(localhost|127(\.\d{1,3}){3}|0\.0\.0\.0|\[?::1\]?|.*\.local(host)?)$/i;
+
+export function isLocalHost(hostname: string): boolean {
+	return LOCAL_HOSTS.test(hostname);
+}
+
+/**
+ * Whether this page should report anything at all.
+ *
+ * `forced` is the escape hatch for testing the beacon deliberately — the same
+ * shape as `InstallHint`'s `?install-hint=reset`, since a measurement nobody
+ * can exercise by hand is a measurement nobody checks.
+ */
+export function shouldCollect(hostname: string, isDev: boolean, forced: boolean): boolean {
+	if (forced) return true;
+	if (isDev) return false;
+	return !isLocalHost(hostname);
+}

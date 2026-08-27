@@ -26,7 +26,7 @@
  * are still counted by the edge logs; this counts readers.
  */
 
-import { browser } from '$app/environment';
+import { browser, dev } from '$app/environment';
 import { compare } from './compare-pref.svelte';
 import { setContentReadObserver } from './corpus';
 import { listContentAssets } from './corpus-assets';
@@ -51,12 +51,17 @@ import {
 	refKindFor,
 	rollDevice,
 	sectionFor,
+	shouldCollect,
 	type DeviceRecord
 } from './usage-device';
 
 /** Where the beacon posts. Matches `BEACON_PATH` in `src/worker.ts` and the
  *  WAF custom rule that guards it. */
 const ENDPOINT = '/a';
+
+/** Turn the beacon on where it would otherwise be off, for testing it by hand.
+ *  Same shape as `InstallHint`'s `?install-hint=reset`. */
+const FORCE_PARAM = 'usage';
 
 /** Visible time before a session is worth reporting. Five seconds is above
  *  what a renderer spends on a page and below what a reader spends on a
@@ -179,6 +184,18 @@ class UsageSession {
 	 */
 	start(shellVersion: string): () => void {
 		if (!browser || this.#started) return () => {};
+
+		// NOTHING IS COLLECTED FROM A DEVELOPER'S MACHINE. Not merely tidiness:
+		// without this, clicking around in `npm run dev` accumulates a device
+		// record in the same localStorage a later real visit would read, so the
+		// machine that built the site reads as a long-standing daily reader —
+		// and `npm run preview` and `wrangler dev` serve production builds where
+		// `dev` is already false, so the host has to be part of the test.
+		// `?usage=on` overrides it, because a measurement nobody can exercise by
+		// hand is a measurement nobody checks.
+		const forced = new URLSearchParams(location.search).get(FORCE_PARAM) === 'on';
+		if (!shouldCollect(location.hostname, dev, forced)) return () => {};
+
 		this.#started = true;
 
 		const today = utcToday(Date.now());

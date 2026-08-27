@@ -1,4 +1,5 @@
 import { isCanonicalPath, type RouteManifest } from './lib/route-manifest';
+import { isLocalHost } from './lib/usage-device';
 import { MAX_BODY_BYTES, validatePayload } from './lib/usage-schema';
 import { recordSession, type D1Database } from './lib/usage-store';
 
@@ -37,6 +38,12 @@ const BEACON_PATH = '/a';
 async function handleBeacon(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 	const accepted = new Response(null, { status: 204 });
 	if (!env.USAGE) return accepted;
+
+	// `wrangler dev --remote` runs this worker, on localhost, against the REAL
+	// database — the one path by which a working tree can write production
+	// rows. The client refuses to send from a local host and this refuses to
+	// store from one; either alone would be enough, and neither costs anything.
+	if (isLocalHost(new URL(request.url).hostname)) return accepted;
 
 	// Refuse on the declared length before reading, then again on what
 	// actually arrived: `content-length` is the sender's claim, not a fact.

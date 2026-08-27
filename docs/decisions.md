@@ -1240,6 +1240,17 @@ requests to a zone whose documented failure mode is too many navigations, 100,00
 invocations, and 429 on everything until 00:00 UTC. It also injects into HTML, and this
 site serves exactly one HTML file, precached by the service worker.
 
+**Nothing is collected from a developer's machine, and `dev` alone does not
+establish that.** `$app/environment`'s `dev` is `import.meta.env.DEV`, so it is false
+under `npm run preview` and false under `wrangler dev` — both of which serve a production
+build from a laptop. The test is the hostname, and it is spelled deny-local rather than
+allow-canonical: listing the real domain would fail in the worse direction, since moving
+the site would stop measurement silently and the report would read as "nobody visited"
+rather than as an error. `?usage=on` overrides it, because a measurement nobody can
+exercise by hand is a measurement nobody checks. The worker refuses a local hostname too
+— `wrangler dev --remote` is the one path by which a working tree can write production
+rows, and either guard alone would stop it.
+
 **The report is a terminal report** (`npm run usage`), beside `audit.py`,
 `census.py` and `reference-coverage.mjs`, and for the same reason: a number worth acting
 on is a number worth printing beside the others. It suppresses population cells below

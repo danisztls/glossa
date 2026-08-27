@@ -8,7 +8,9 @@ import {
 	parseDevice,
 	refKindFor,
 	rollDevice,
+	isLocalHost,
 	sectionFor,
+	shouldCollect,
 	type DeviceRecord
 } from './usage-device';
 
@@ -230,6 +232,41 @@ describe('SEARCH_HOSTS, via classifyEntry', () => {
 			'mybing.com.evil.net'
 		]) {
 			expect(from(host), host).toBe('deep');
+		}
+	});
+});
+
+describe('shouldCollect', () => {
+	it('collects nothing from a developer machine', () => {
+		// Three separate contexts, and only the first is caught by `dev`:
+		// `npm run preview` and `wrangler dev` both serve production builds from
+		// a laptop, where `import.meta.env.DEV` is already false.
+		expect(shouldCollect('localhost', true, false)).toBe(false);
+		expect(shouldCollect('localhost', false, false)).toBe(false);
+		expect(shouldCollect('127.0.0.1', false, false)).toBe(false);
+		expect(shouldCollect('[::1]', false, false)).toBe(false);
+		expect(shouldCollect('glossa.local', false, false)).toBe(false);
+	});
+
+	it('collects from a real deployment', () => {
+		expect(shouldCollect('glossacatholica.org', false, false)).toBe(true);
+	});
+
+	it('keeps collecting if the site moves to another domain', () => {
+		// Deny-local, not allow-canonical. Listing the real hostname would fail
+		// silently on a domain change, with a report that reads as "nobody
+		// visited" rather than as an error.
+		expect(shouldCollect('example.org', false, false)).toBe(true);
+		expect(shouldCollect('glossa.pages.dev', false, false)).toBe(true);
+	});
+
+	it('can be forced on by hand for testing', () => {
+		expect(shouldCollect('localhost', true, true)).toBe(true);
+	});
+
+	it('does not mistake a real host for a local one', () => {
+		for (const host of ['notlocalhost.com', 'localhost.evil.net', 'my127.0.0.1.example']) {
+			expect(isLocalHost(host), host).toBe(false);
 		}
 	});
 });
