@@ -13,13 +13,21 @@
  *
  * WHY THIS IS JAVASCRIPT AND NOT PURELY A MEDIA QUERY. The CSS could place
  * the notes on its own; what it cannot do is tell the marker what to say
- * about itself. A margin note is *already visible*, so its marker is not a
- * disclosure control and must not claim to be one — `aria-expanded` on a
- * button whose content is on screen regardless is a lie to a screen reader,
- * and the reverse (no state at all on a phone, where the note really is
- * hidden until tapped) is a control with no state. The two layouts genuinely
- * differ in what the marker IS, so the breakpoint has to be legible to the
- * markup and not only to the stylesheet.
+ * about itself. A margin note is *already visible*, so `Sidenote`'s marker is
+ * not a disclosure control there and must not claim to be one —
+ * `aria-expanded` on a button whose content is on screen regardless is a lie
+ * to a screen reader, and the reverse (no state at all on a phone, where the
+ * gloss really is hidden until tapped) is a control with no state. The two
+ * layouts genuinely differ in what that marker IS, so the breakpoint has to
+ * be legible to the markup and not only to the stylesheet.
+ *
+ * `CitationDisclosure` reads the same value for a different question, and it
+ * is the plainer of the two: its marker opens a popover at every width, so
+ * only whether the margin ALSO gets a copy is in doubt. The two apparatuses
+ * agree on where a note goes and disagree about what a second route to it is
+ * worth — a gloss beside its line is read there and wants nothing further,
+ * where a citation's column narrows with the reader's text and stacks up
+ * beside a densely-cited paragraph.
  *
  * `MARGIN_QUERY` is deliberately wider than `.reading-layout`'s own 80rem
  * grid breakpoint. At exactly 80rem the reading column and the navigation

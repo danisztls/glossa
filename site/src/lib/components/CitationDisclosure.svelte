@@ -16,17 +16,33 @@
 	 * citations average 26 characters: short enough to sit in a 13rem column
 	 * without ever being fetched.
 	 *
-	 * BELOW THE BREAKPOINT IT IS A POPOVER, and here the two apparatuses part
-	 * company. A gloss becomes a block under its line, because a gloss is a
-	 * paragraph and a paragraph wants the width. A citation is a phrase, and
-	 * it used to open as a boxed span INSIDE the sentence — which is the one
-	 * thing an apparatus must not do: opening it reflowed the words around it,
-	 * so the sentence the reader was in the middle of moved while they were
-	 * reading it, and closing it moved them back. The floating card costs the
-	 * page no layout at all. It is the same card a link's preview appears in
+	 * AND THE MARKER STILL OPENS A POPOVER, at every width — this is the one
+	 * place the two apparatuses part company, since a gloss in the margin is
+	 * simply read there. A citation is not always read there: the margin is
+	 * whatever slack the layout has left, so it narrows as the reader's text
+	 * grows (to about 7rem at the largest setting), and a column of stacked
+	 * notes beside a densely-cited paragraph does not always say plainly which
+	 * of them belongs to the number just passed. Clicking the number answers
+	 * that at the number. Below the breakpoint the popover is the whole
+	 * apparatus; above it, it is a second way to the same words.
+	 *
+	 * THE CARD REPLACED A BOX INSIDE THE SENTENCE, which is the one thing an
+	 * apparatus must not be: opening it reflowed the words around it, so the
+	 * sentence the reader was in the middle of moved while they were reading
+	 * it, and closing it moved them back. A floating card costs the page no
+	 * layout at all. It is the same card a link's preview appears in
 	 * (`LinkPreview`, `.floating-panel` in app.css, `floating.ts` for where it
 	 * goes), which is the point: a reader who has learned what a small box
 	 * over the page means should not have to learn a second one.
+	 *
+	 * WHAT A SCREEN READER HEARS is the reason the margin note is not hidden
+	 * now that its text is reachable twice over. The note stays in the reading
+	 * order, right behind the marker, so the citation is still read without
+	 * anyone having to open anything; the popover only ever repeats it. The
+	 * cost is one extra "collapsed" on the marker, which is a truthful thing
+	 * to say about a control that really does open something. The reverse
+	 * trade — hiding the note and leaving the popover as the only route —
+	 * would charge an interaction for text already on the screen.
 	 *
 	 * NATIVE `popover`, DECLARATIVELY INVOKED, and that is what deleted the
 	 * awkward part of this component. `popovertarget` is valid on `<button>`
@@ -89,8 +105,9 @@
 
 	let { marker, citation, lang, work }: Props = $props();
 
-	// In the margin the citation is on screen no matter what, so the marker is
-	// not a disclosure control and does not claim to be one.
+	// Whether the citation is ALSO set beside the line that raises it. It no
+	// longer decides what the marker is — that is a button either way — only
+	// whether the margin gets its copy.
 	const inMargin = $derived(sidenoteRoom.margin);
 
 	/** Per INSTANCE, which is per occurrence — see the docblock on why that is
@@ -144,15 +161,10 @@
 	// Only while something is open: this component is mounted once per
 	// citation, and a long document section has dozens. A scroll listener per
 	// rendered marker is the mistake `AnchorMenu` records not making.
-	//
-	// `inMargin` is in the condition because a viewport widening past the
-	// breakpoint takes the whole `{:else}` branch away, and removing an open
-	// popover from the document closes it without firing `toggle` — which
-	// would otherwise leave this tracking a panel that no longer exists.
-	$effect(() => (open && !inMargin ? trackAnchor(place) : undefined));
+	$effect(() => (open ? trackAnchor(place) : undefined));
 </script>
 
-{#snippet source()}{#if citation && citation.text.trim() !== ''}<RefText
+{#snippet source(labelled: boolean)}{#if citation && citation.text.trim() !== ''}<RefText
 			text={citation.text}
 			{lang}
 			{work}
@@ -163,61 +175,47 @@
 		     confirmed cases). No fabricated text to show, so say so rather than
 		     rendering a dead-looking empty box. --><span
 			class="citation-empty">{t('citation.unavailable')}</span
-		>{:else if !inMargin}<!-- No entry at all for this marker — a case the pipeline validates
+		>{:else if !labelled}<!-- No entry at all for this marker — a case the pipeline validates
 		     against, so a bug rather than a shrug. The marker itself is shown
 		     in its place, which is strictly more than nothing: it is what the
-		     source printed. In the margin the note's own label is already
-		     that marker, so this branch would print it twice; the label
-		     stands alone instead, and nothing here claims the source is
-		     defective when what is missing is our entry for it. -->{marker}{/if}{/snippet}
+		     source printed. The margin note prints that number as its own
+		     label, so it passes `labelled` and this branch stands down there
+		     rather than saying it twice; the popover, which carries no label,
+		     does not. Nothing here claims the source is defective when what is
+		     missing is our entry for it. -->{marker}{/if}{/snippet}
 
-{#if inMargin}
-	<sup class="citation-marker citation-marker-static" aria-hidden="true">{marker}</sup>
-	<small class="margin-note"
-		><span class="margin-note-label" aria-hidden="true">{marker}</span>{@render source()}</small
+<sup class="citation-marker">
+	<button
+		bind:this={triggerEl}
+		type="button"
+		class="citation-trigger"
+		popovertarget={panelId}
+		aria-expanded={open}
 	>
-{:else}
-	<sup class="citation-marker">
-		<button
-			bind:this={triggerEl}
-			type="button"
-			class="citation-trigger"
-			popovertarget={panelId}
-			aria-expanded={open}
-		>
-			{marker}
-		</button>
-	</sup>
-	<!-- `data-link-preview="off"` is inherited by everything inside, so a
-	     scripture link in the citation cannot raise a hover preview of its own
-	     — which would render BEHIND this card rather than over it, since an
-	     open popover is in the top layer and the preview overlay is not.
-	     The links themselves still work; only the peek at them is suppressed. -->
-	<span
-		bind:this={panelEl}
-		id={panelId}
-		popover="auto"
-		ontoggle={onToggle}
-		class="floating-panel citation-popover"
-		data-link-preview="off">{@render source()}</span
-	>
-{/if}
+		{marker}
+	</button>
+</sup>{#if inMargin}<small class="margin-note"
+		><span class="margin-note-label" aria-hidden="true">{marker}</span>{@render source(true)}</small
+	>{/if}
+<!-- `data-link-preview="off"` is inherited by everything inside, so a
+     scripture link in the citation cannot raise a hover preview of its own
+     — which would render BEHIND this card rather than over it, since an
+     open popover is in the top layer and the preview overlay is not.
+     The links themselves still work; only the peek at them is suppressed. -->
+<span
+	bind:this={panelEl}
+	id={panelId}
+	popover="auto"
+	ontoggle={onToggle}
+	class="floating-panel citation-popover"
+	data-link-preview="off">{@render source(false)}</span
+>
 
 <style>
 	/* `.citation-marker` and `.citation-trigger` are global (app.css), shared
 	   with `PrayerMystery`, as are `.margin-note` (shared with `Sidenote`) and
 	   `.floating-panel` (shared with `LinkPreview` and `AnchorMenu`). What is
 	   left here is what only a citation has. */
-
-	/* Static in the margin layout: no button, so the accent colour
-	   `.citation-trigger` carries has to come from somewhere, and the mark is
-	   no longer something to click. Hidden from assistive technology, since the
-	   citation it points at is already next in the reading order and the number
-	   is then decoration. */
-	.citation-marker-static {
-		color: var(--color-accent);
-		user-select: none;
-	}
 
 	.citation-empty {
 		font-style: italic;

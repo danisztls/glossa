@@ -1125,7 +1125,8 @@ That was reasoning about a disclosure which pushes the page down, and it stops a
 where the note costs the text nothing: the Catechism's 3,698 citations average 26
 characters, and where a quoted sentence comes from is what a reader wants of it. One
 arrangement (`.margin-note`), two apparatuses; each keeps its own fallback where there is
-no margin — a gloss becomes a block, a citation becomes a popover.
+no margin — a gloss becomes a block, a citation becomes a popover it also keeps above the
+breakpoint.
 
 **The note's width is derived from the margin there actually is, not assumed.** The
 reading column grows with the reader's size setting, so the margin shrinks as the text
@@ -1143,11 +1144,11 @@ note wants at full width. `CompareGrid` claims it while mounted; the reader's co
 _preference_ would be the wrong signal, since a work with one edition has it on and still
 reads in one column.
 
-**Below the margin, a citation opens over the page rather than inside the sentence.** It
-was a boxed span that appeared in the flow, which is the one thing an apparatus must not
-do: opening it reflowed the words around it, so the sentence being read moved while it
-was being read, and closing it moved back. It is now a native `popover` anchored to its
-marker — the browser owns the open state, the light dismiss, Escape, the top layer and
+**A citation opens over the page rather than inside the sentence, and it does so at every
+width.** It was a boxed span that appeared in the flow, which is the one thing an
+apparatus must not do: opening it reflowed the words around it, so the sentence being read
+moved while it was being read, and closing it moved back. It is now a native `popover`
+anchored to its marker — the browser owns the open state, the light dismiss, Escape, the top layer and
 focus restoration, and `popovertarget` invokes it declaratively because the trigger is a
 real `<button>` (`ReferenceNumber`'s is an `<a href>`, which is why `AnchorMenu` has to
 show its own). Two things follow. `ProseBlocks` and `HeadingText` each kept a set of open
@@ -1156,6 +1157,16 @@ one paragraph; both sets are gone, since `$props.id()` is per instance and there
 instance per occurrence. And the card is the one `LinkPreview` already shows — same
 chrome, same positioner — because a reader who has learned what a small box over the page
 means should not have to learn a second one.
+
+**The desktop marker keeps the popover even though the citation is already in the
+margin**, which is where this apparatus stops matching the gloss. The margin is not a
+reserved gutter but leftover slack, so it narrows as the reader's text grows — to about
+7rem at the largest setting — and a column of stacked notes beside a densely-cited
+paragraph does not say plainly which one belongs to the number just passed. Clicking the
+number answers that at the number. The margin note stays in the accessibility tree rather
+than being hidden as a duplicate: it is read right behind the marker for free, and hiding
+it would charge an interaction for text already on the screen. The price is one extra
+"collapsed" announced on a control that genuinely does open something.
 
 **A panel placed by measurement is a family, and it now shares its chrome.**
 `.floating-panel` (app.css) holds the five declarations `LinkPreview`, `AnchorMenu` and
