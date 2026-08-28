@@ -28,15 +28,34 @@ behaviour of warning and falling back to fixtures.
 
 Inside the corpus repo, the old distinction still governs what may be deleted:
 
-| Path     | Value                                                                    | Rule                               |
-| -------- | ------------------------------------------------------------------------ | ---------------------------------- |
-| `works/` | Parsed output. Regenerable from cache in minutes, zero network.          | Safe to rebuild.                   |
-| `raw/`   | Every scraped source page. The **only** artifact that cost real fetches. | Treat as write-once. Never delete. |
+| Path       | Value                                                                        | Rule                                |
+| ---------- | ---------------------------------------------------------------------------- | ----------------------------------- |
+| `works/`   | Parsed output. Rebuilt from cache in ~16s, zero network. **Untracked.**      | Safe to rebuild. Git holds no copy. |
+| `oracles/` | Tables of contents read off the raw pages by hand. Nothing regenerates them. | Tracked. Treat like `raw/`.         |
+| `raw/`     | Every scraped source page. The **only** artifact that cost real fetches.     | Treat as write-once. Never delete.  |
+
+**`works/` left git on 2026-08-27** (`docs/decisions.md` §The corpus). It is no
+longer two copies with one of them in git; it is one copy plus the rebuild
+recipe in the corpus repo's `README.md`, which is now the only way back to it.
+That recipe was broken when the change was made — six of its eight commands
+named pre-reorganisation paths, and it omitted four works entirely — so the
+rule is: **if you change what a scraper writes or where it lives, the recipe
+is part of the change.** Nothing fails when it rots.
 
 The project's stated insurance policy is that any capture regret is fixed by
 **re-parsing, never re-crawling** (`docs/link-surface.md`). That only holds while
 `raw/` is intact. When judging whether a deletion is safe, the question is never
 "is this corpus data" but _which of the two it is_.
+
+**A rebuild needs two inputs that live HERE, not in the corpus.**
+`pipeline/absent-sources.json` (URLs the source answered 404 for) and
+`pipeline/translations-checked.json` (what a missing sibling-language edition
+turned out to be, for 125 documents). The second was not a file until
+2026-08-27: it survived only by `vatican_docs.py` copying it off the
+`manifest.json` already on disk, so it protected a `--overwrite` re-parse and
+not a rebuild into an empty `works/`, which dropped all 125 entries with
+nothing reporting it. That is the shape of the bug to watch for — output that
+is only regenerable from a previous copy of itself.
 
 **Deleting generated works is a decision for the person directing the work, not
 a judgment call to make mid-task.** An agent once removed 105 empty work

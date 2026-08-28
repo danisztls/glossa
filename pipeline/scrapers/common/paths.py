@@ -25,6 +25,7 @@ assert (_REPO_ROOT / "pipeline" / "scrapers").is_dir(), (
 CORRECTIONS_DIR = _REPO_ROOT / "pipeline" / "corrections"
 OVERRIDES_DIR = _REPO_ROOT / "pipeline" / "overrides"
 ABSENT_SOURCES_PATH = _REPO_ROOT / "pipeline" / "absent-sources.json"
+TRANSLATIONS_CHECKED_PATH = _REPO_ROOT / "pipeline" / "translations-checked.json"
 
 #: Default corpus location: a sibling checkout of the private corpus repository.
 _DEFAULT_CORPUS_DIR = _REPO_ROOT.parent / "glossa-corpus"

@@ -487,6 +487,17 @@ function mark(address, value, workId, lang) {
  * Best-effort by design: `CORPUS_DIR` may point at something that is not a git
  * checkout at all, and the fixtures never are.
  *
+ * SINCE 2026-08-27 IT ESSENTIALLY ALWAYS RETURNS UNDEFINED, and that is not a
+ * regression to chase. `works/` is no longer tracked in the corpus repository
+ * (`docs/decisions.md` §The corpus), so there is no commit touching a work to
+ * ask about. Kept rather than deleted because the call costs nothing, still
+ * answers for anyone holding a pre-rewrite clone, and would answer again if
+ * the corpus were ever laid out differently. The ledger is the durable record:
+ * every address it has already seen keeps its date, and only a NEWLY added
+ * work loses its seed and is stamped with the build date instead -- which is
+ * roughly right for a work that is new. Watch `resolveLastmod`'s `unseeded`
+ * count if that assumption ever needs checking.
+ *
  * @param {string} workId
  * @returns {string | undefined}
  */

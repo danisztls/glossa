@@ -107,6 +107,7 @@ from .paths import (
     ABSENT_SOURCES_PATH,
     CORRECTIONS_DIR,
     OVERRIDES_DIR,
+    TRANSLATIONS_CHECKED_PATH,
     corpus_dir,
     raw_root,
     require_corpus,
@@ -120,6 +121,7 @@ from .text import (
     looks_like_number_typo,
     roman_to_int,
 )
+from .translations import load_translations_checked
 
 __all__ = [
     "ABSENT_SOURCES_PATH",
@@ -128,6 +130,7 @@ __all__ = [
     "CORRECTIONS_DIR",
     "DEFINITIVE_ABSENCE",
     "OVERRIDES_DIR",
+    "TRANSLATIONS_CHECKED_PATH",
     "AbsentSources",
     "CorrectionDriftError",
     "FetchError",
@@ -150,6 +153,7 @@ __all__ = [
     "json_text",
     "load_corrections",
     "load_overrides",
+    "load_translations_checked",
     "looks_like_number_typo",
     "raw_root",
     "read_bytes_or_none",

@@ -70,6 +70,33 @@ is that capture regret is fixed by **re-parsing, never re-crawling**, and that h
 only while `raw/` is intact. When judging whether a deletion is safe the question is
 never "is this corpus data" but which of the two it is.
 
+**So `works/` is no longer tracked** (2026-08-27). It was, on the reasoning that a
+byte-for-byte reproducible rebuild made the commit free and bought a diffable history
+across parser changes. What it bought was a history of OUTPUT — 42 of the repository's
+71 commits touched nothing else — over a repository that exists for the pages someone
+else's server was asked for and the readings a person made by hand. `raw/` and
+`oracles/` stay; `works/` is ignored, and the history carrying it was rewritten out.
+The pack fell from 182 MB to 137 MB, which is the smaller half of the point.
+
+**The precondition was a measurement, not the claim already in the README.** That
+claim — reproducible, therefore safe to drop — had never been tested against the
+corpus as it stood, and it did not hold three ways. The documented recipe named
+pre-reorganisation paths for six of its eight commands; it omitted `summa.py`,
+`douay_rheims.py` and `introductions.py`, so it built 369 of 383 works and said
+nothing was wrong; and a rebuild into an empty directory silently dropped the
+`translations` field from 125 manifests, because the only thing that had ever
+preserved it was the scraper reading the previous output. **Output regenerable only
+from a copy of itself is not regenerable**, and untracking is what turns that from a
+latent defect into a loss. Each was fixed and then the rebuild was verified in full:
+383 works, 1,850 files, zero differences outside the three timestamps, zero network
+requests, 16 seconds.
+
+**A status the source answered is an input.** `translations` records what a missing
+sibling-language edition turned out to BE — a page shell with no translation, a
+measured 404 — and that is knowledge bought with requests against vatican.va, the same
+class as `absent-sources.json`. It now lives beside it in `pipeline/`, tracked and
+diffable in the public repository, and the parser reads it rather than remembering it.
+
 **Every edition the source publishes as HTML is parsed, not just the two with
 a dictionary.** The Compendium is ten editions as of 2026-08-25 — de, en, es,
 fr, hu, it, pt, ro, sl, sv — because they exist, they are the same 598

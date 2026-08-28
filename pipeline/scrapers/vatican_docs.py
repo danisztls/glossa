@@ -245,6 +245,7 @@ from common import (
     fold_index,
     load_corrections,
     load_overrides,
+    load_translations_checked,
     looks_like_number_typo,
     read_text_or_none,
     require_corpus,
@@ -273,6 +274,12 @@ SOURCE_ROOT = (
 )  # tracked source; follows this file's checkout
 RAW_ROOT = DATA_ROOT / "raw" / "vatican-docs"
 WORKS_ROOT = DATA_ROOT / "works"
+
+#: `work_id -> {lang: status record}`, read once. Lives in THIS checkout,
+#: not the corpus, because it is knowledge derived about the sources rather
+#: than a page fetched from them -- the same argument absent-sources.json is
+#: kept here by, and the reason a rebuilt `works/` still carries the field.
+TRANSLATIONS_CHECKED = load_translations_checked()
 CRAWL_LOCK_PATH = (
     RAW_ROOT / ".crawl.lock"
 )  # see acquire_crawl_lock/touch_crawl_lock below
@@ -5636,18 +5643,27 @@ def write_document_outputs(
     # build_manifest constructs a fresh dict every call, with no knowledge
     # of what was already on disk -- fine for every field it owns, but
     # `translations` (docs/corpus-schema.md #Documents) is recorded by a
-    # SEPARATE post-hoc reconciliation pass, not by this scrape itself, so
-    # a --overwrite re-parse of this exact document (a routine, expected
-    # operation -- e.g. after a parser fix) would otherwise silently wipe
-    # it. Preserved here rather than trusting every future caller to
-    # remember to re-run reconciliation afterward.
+    # SEPARATE post-hoc reconciliation pass, not by this scrape itself.
+    #
+    # It comes from `pipeline/translations-checked.json` FIRST, and off the
+    # manifest already on disk only as a fallback. That order is the fix for
+    # 2026-08-27: reading the previous output was the ONLY way the field
+    # survived, so it protected a --overwrite re-parse (which is what it was
+    # written for) and not a rebuild into an empty `works/`, which dropped
+    # all 125 records. Now that `works/` is untracked and a rebuild is the
+    # supported way to get a corpus, the ledger is the record and the
+    # carry-forward is the belt-and-braces -- see common/translations.py.
     raw_manifest = read_text_or_none(out_dir / "manifest.json")
     try:
         existing = json.loads(raw_manifest) if raw_manifest else None
     except json.JSONDecodeError:
         existing = None
-    if existing and "translations" not in manifest and "translations" in existing:
-        manifest["translations"] = existing["translations"]
+    if "translations" not in manifest:
+        recorded = TRANSLATIONS_CHECKED.get(work_id)
+        if recorded:
+            manifest["translations"] = recorded
+        elif existing and "translations" in existing:
+            manifest["translations"] = existing["translations"]
 
     files: dict[str, object] = {
         "manifest.json": manifest,
