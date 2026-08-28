@@ -39,9 +39,11 @@ caption, parses an index or asks Wikipedia anything. Not merely to save the
 a file, so re-deriving those anchors on every rebuild was a re-decision
 wearing a rebuild's clothes -- and `plates.json` lives in `build/`, which is
 untracked, so nothing would have shown a verse moving. A vote whose result is
-written down has nothing left to decide. The evidence did not go with the
-code; every reading each witness gave is kept in the anchors file, won or
-lost, and git history holds the machinery.
+written down has nothing left to decide. The anchors file kept every witness's
+reading at first and no longer does: with the code that weighed them gone,
+nothing read them either, so they went the same way it did. Both are in git
+history (`ca1b76d`), which is where the evidence for a decision already taken
+belongs.
 
 WHAT IS LEFT IS ENCODING, and that is here because it genuinely is not
 settled: the AVIF quality ladder, the crop, the served widths and the masters
@@ -92,6 +94,13 @@ def work_dir() -> Path:
     return build_root() / WORK_ID
 
 
+#: Where a master lives, one per plate id. A template rather than 241 stored
+#: URLs: every one of them was `.../Dore/Images/{plate_id}.jpg`, so the strings
+#: were a third of `dore-anchors.json` restating the id beside it. If the site
+#: ever rearranges, this is the one line to change -- and the masters are in
+#: `raw/` already, so nothing routine reads it.
+MASTER_URL = "https://catholic-resources.org/Dore/Images/{plate_id}.jpg"
+
 #: The two index pages, kept for the manifest alone: they are where the
 #: collection came from and `captured_at` reads the day each was fetched off
 #: the copy in `raw/`. Nothing parses them any more -- what they were parsed
@@ -120,17 +129,15 @@ OUTPUT_SIZES = ((800, 60), (1200, 58))
 def load_anchors() -> tuple[list[dict], dict]:
     """The 241 committed anchors, and the provenance recorded with them.
 
-    Each record is one plate: the elected address (`osis`, `chapter`, `verse`,
-    `anchor`), the mechanical facts the index page gave (`number`, `title`,
-    `source_url`, `alternate`), and every witness's reading kept whether it won
-    or lost (`caption`, `wiki`, `index`, `book_source`, `verse_source`,
-    `agreement`). They go into `plates.json` verbatim, which is why nothing
-    here reshapes them -- the file IS the payload, and a transformation in
-    between would be one more thing that could move an anchor.
+    Each record is one plate and five fields: `plate_id`, the address it was
+    anchored to (`osis`, `chapter`, `verse`), and the `title` the site prints
+    under it. They go into `plates.json` verbatim, which is why nothing here
+    reshapes them -- the file IS the payload, and a transformation in between
+    would be one more thing that could move an anchor.
 
     Read from the site repository rather than the corpus, because this is the
     one input to `plates.json` that does not regenerate from `raw/`. See the
-    file's own header.
+    file's own header, which also says where the witnesses' readings went.
     """
     data = json.loads(DORE_ANCHORS_PATH.read_text(encoding="utf-8"))
     plates = data["plates"]
@@ -148,9 +155,9 @@ def fetch_plates(anchors: list[dict], *, limit: int | None = None) -> list[str]:
     each: a whole-response read that drops at 90% starts again from zero, and
     241 of those is a lot of somebody else's bandwidth to spend twice.
 
-    Each master's URL comes from the anchors file, which is the only remaining
-    reason this can still run at all: nothing here parses the index page that
-    used to supply them.
+    Each master's URL is `MASTER_URL` over the plate id, which is the only
+    remaining reason this can still run at all: nothing here parses the index
+    page that used to supply them.
 
     THESE ARE THE ONLY ARTIFACT HERE THAT COST A REAL FETCH, and the only one
     git tracks: `build/` rebuilds from them in minutes with no network and is
@@ -167,7 +174,7 @@ def fetch_plates(anchors: list[dict], *, limit: int | None = None) -> list[str]:
         if target.exists():
             continue
         size, error = download_resumable(
-            plate["source_url"],
+            MASTER_URL.format(plate_id=plate_id),
             target,
             policy=FetchPolicy(user_agent=USER_AGENT, delay=CRAWL_DELAY, timeout=120.0),
         )
@@ -244,10 +251,12 @@ def main() -> int:
         f"anchors: {len(anchors)} plates, decided {provenance['decided_at']} "
         f"({provenance['ocr_engine']})"
     )
-    tally: dict[str, int] = {}
-    for anchor in anchors:
-        tally[anchor["agreement"]] = tally.get(anchor["agreement"], 0) + 1
-    print("agreement: " + "  ".join(f"{k}={v}" for k, v in sorted(tally.items())))
+    chapters = {(a["osis"], a["chapter"]) for a in anchors}
+    print(
+        f"anchored to a verse: {sum(1 for a in anchors if a['verse'] is not None)}   "
+        f"to a chapter: {sum(1 for a in anchors if a['verse'] is None)}   "
+        f"across {len(chapters)} chapters"
+    )
 
     if args.fetch_plates:
         print("fetching masters (2s floor, resumable):")
@@ -314,24 +323,27 @@ def main() -> int:
                     "Wikipedia table, and catholic-resources.org's own index. "
                     "That reconciliation ran once and its result is committed "
                     "as pipeline/dore-anchors.json in the site repository; the "
-                    "code that produced it has been deleted, and every reading "
-                    "it weighed is kept there whether it won or lost. This "
+                    "code that produced it, and the witnesses' individual "
+                    "readings, are in that repository's git history. This "
                     "scraper now encodes the images and writes this manifest."
                 ),
                 "generated_at": generated_at,
             },
+            # THE ANCHORS, AND NOTHING THE MANIFEST ALREADY SAYS. This
+            # carried a second copy of the artist, edition, reproduction,
+            # source and credit lines, which `manifest.json` above holds and
+            # is the only place the sync reads them from -- two records of one
+            # fact, and the wrong one to correct is the one nothing reads.
             "plates.json": {
                 "work": WORK_ID,
                 "generated_at": generated_at,
-                # The engine that READ THESE CAPTIONS, from the anchors file
-                # -- not whatever tesseract happens to be installed today,
-                # which no longer runs and has produced none of this.
+                # How the anchors were arrived at, carried so the corpus says
+                # it on its own: the day they were decided, and the engine
+                # that read the captions behind them -- not whatever tesseract
+                # happens to be installed today, which no longer runs and has
+                # produced none of this.
+                "anchors_decided": provenance["decided_at"],
                 "ocr_engine": provenance["ocr_engine"],
-                "artist": "Gustave Doré (1832-1883)",
-                "edition": "La Grande Bible de Tours (Mame, Tours, 1866)",
-                "reproduction": "The Doré Bible Illustrations (Dover, 1974)",
-                "source": "https://catholic-resources.org/Art/Dore-OT.htm",
-                "credit": "Material provided by Rev. Felix Just, S.J., at https://catholic-resources.org",
                 "plates": anchors,
             },
         },

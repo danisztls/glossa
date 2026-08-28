@@ -89,9 +89,11 @@ engine build reads a digit differently. So a rebuild could move a plate to a
 verse nobody chose, silently, with no diff anywhere to show it, because
 `plates.json` lives in `build/`. The answer was not to cache the read but to
 recognise that the reconciliation had finished: the vote ran once, its result
-and every reading behind it are committed, and the ~600 lines that produced
-them (`dore/sources.py`, the OCR, the pairing, the election) were deleted on
-2026-08-28. `dore.py` kept only the image encoding, because THAT is not
+is committed, and the ~600 lines that produced it (`dore/sources.py`, the OCR,
+the pairing, the election) were deleted on 2026-08-28. The witnesses' readings
+went with them a commit later, for the same reason one step on — with nothing
+left to weigh them, nothing read them, and evidence for a decision already
+taken belongs in git history rather than in five sixths of a live file. `dore.py` kept only the image encoding, because THAT is not
 settled — the AVIF ladder, the crop and the widths can all change and have to
 be able to run over the masters again. **A pipeline stage that can only ever
 reproduce its own committed output is not a pipeline stage.\*\*
