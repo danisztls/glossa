@@ -1,0 +1,317 @@
+[
+  {
+    "id": "straubinger.es-1chr15.6-mislabeled-8",
+    "locator": {
+      "osis": "1chr",
+      "chapter": 15,
+      "verse": 6,
+      "occurrence": 1
+    },
+    "field": "verse_number",
+    "from": 8,
+    "to": 6,
+    "reason": "The source lists Levite clan totals in order (Caat, Merarí, Gersón, Elisafán, ...). The first of two verses printed as data-v=\"8\" duplicates the label the fourth clan's verse uses two slots later; context (..., 5, _, 7, 8, ...) and the two correctly-labelled verses immediately following (7, 8) show the missing number is 6.",
+    "evidence": "raw/straubinger/1cronicas/15.html, the first <span class=\"v-texto\" data-v=\"8\">…</span> in the chapter: \"de los hijos de Merarí: a Asayá, el jefe, y sus hermanos: doscientos veinte;\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-eccl2.6-mislabeled-8",
+    "locator": {
+      "osis": "eccl",
+      "chapter": 2,
+      "verse": 6,
+      "occurrence": 1
+    },
+    "field": "verse_number",
+    "from": 8,
+    "to": 6,
+    "reason": "\"...5, 8, 7, 8, 9...\": the first data-v=\"8\" duplicates the label used two slots later by the real verse 8. Context (5, _, 7, 8) shows the missing number is 6.",
+    "evidence": "raw/straubinger/eclesiastes/2.html, the first <span class=\"v-texto\" data-v=\"8\">…</span> in the chapter: \"Me construí estanques de agua, para regar con ella el parque donde crecían los árboles\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-ps76.6-mislabeled-8",
+    "locator": {
+      "osis": "ps",
+      "chapter": 76,
+      "verse": 6,
+      "occurrence": 1
+    },
+    "field": "verse_number",
+    "from": 8,
+    "to": 6,
+    "reason": "\"...5, 8, 7, 8...\": the first data-v=\"8\" duplicates the label used two slots later by the real verse 8. Context (5, _, 7, 8) shows the missing number is 6.",
+    "evidence": "raw/straubinger/salmos/76.html, the first <span class=\"v-texto\" data-v=\"8\">…</span> in the chapter: \"Pienso en los días antiguos y considero los años eternos\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-1sam30.6-mislabeled-5",
+    "locator": {
+      "osis": "1sam",
+      "chapter": 30,
+      "verse": 6,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 5,
+    "to": 6,
+    "reason": "\"...4, 5, 5, 7...\": the second data-v=\"5\" duplicates the label the preceding verse already carries. Context (4, 5, _, 7) shows the missing number is 6.",
+    "evidence": "raw/straubinger/1samuel/30.html, the second <span class=\"v-texto\" data-v=\"5\">…</span> in the chapter: \"David se halló en grandes angustias, porque el pueblo hablaba de apedrearle; pues el espíritu de toda la gente estaba amargado, cada cual a …\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-2macc5.1-mislabeled-5",
+    "locator": {
+      "osis": "2macc",
+      "chapter": 5,
+      "verse": 1,
+      "occurrence": 1
+    },
+    "field": "verse_number",
+    "from": 5,
+    "to": 1,
+    "reason": "The chapter's very first printed verse (its own opening sentence, about Antiochus's second Egyptian campaign) is mislabelled with the number its real position-5 verse later carries correctly; that later verse is printed again, correctly, in its own place.",
+    "evidence": "raw/straubinger/2macabeos/5.html, the first <span class=\"v-texto\" data-v=\"5\">…</span> in the chapter: \"Hallábase Antíoco por este mismo tiempo haciendo los preparativos para la segunda expedición contra Egipto\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-exod6.23-mislabeled-22",
+    "locator": {
+      "osis": "exod",
+      "chapter": 6,
+      "verse": 23,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 22,
+    "to": 23,
+    "reason": "\"...21, 22, 22, 24...\": the second data-v=\"22\" duplicates the label the preceding verse already carries. Context (21, 22, _, 24) shows the missing number is 23.",
+    "evidence": "raw/straubinger/exodo/6.html, the second <span class=\"v-texto\" data-v=\"22\">…</span> in the chapter: \"Aarón tomó por mujer a Elisábet, hija de Aminadab, hermana de Naasón; de la cual le nacieron Nadab, Abiú, Eleazar e Itamar\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-isa19.9-mislabeled-8",
+    "locator": {
+      "osis": "isa",
+      "chapter": 19,
+      "verse": 9,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 8,
+    "to": 9,
+    "reason": "\"...7, 8, 8, 10...\": the second data-v=\"8\" duplicates the label the preceding verse already carries. Context (7, 8, _, 10) shows the missing number is 9.",
+    "evidence": "raw/straubinger/isaias/19.html, the second <span class=\"v-texto\" data-v=\"8\">…</span> in the chapter: \"Quedarán consternados los que labran el lino, las peinadoras y los tejedores de tela fina\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-ps71.19-mislabeled-18",
+    "locator": {
+      "osis": "ps",
+      "chapter": 71,
+      "verse": 19,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 18,
+    "to": 19,
+    "reason": "\"...17, 18, 18, 20...\": the second data-v=\"18\" duplicates the label the preceding verse already carries. Context (17, 18, _, 20) shows the missing number is 19.",
+    "evidence": "raw/straubinger/salmos/71.html, the second <span class=\"v-texto\" data-v=\"18\">…</span> in the chapter: \"y bendito sea por siempre su glorioso Nombre; llénese de su gloria toda la tierra. ¡Así sea; así sea!\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-jer8.3-mislabeled-2",
+    "locator": {
+      "osis": "jer",
+      "chapter": 8,
+      "verse": 3,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 2,
+    "to": 3,
+    "reason": "\"...1, 2, 2, 4...\": the second data-v=\"2\" duplicates the label the preceding verse already carries. Context (1, 2, _, 4) shows the missing number is 3.",
+    "evidence": "raw/straubinger/jeremias/8.html, the second <span class=\"v-texto\" data-v=\"2\">…</span> in the chapter: \"Y todos los que quedaren de esta raza perversa, en todos los lugares a donde los habré arrojado, preferirán la muerte a la vida, dice Yahvé …\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-judg20.9-mislabeled-8",
+    "locator": {
+      "osis": "judg",
+      "chapter": 20,
+      "verse": 9,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 8,
+    "to": 9,
+    "reason": "\"...7, 8, 8, 10...\": the second data-v=\"8\" duplicates the label the preceding verse already carries. Context (7, 8, _, 10) shows the missing number is 9.",
+    "evidence": "raw/straubinger/jueces/20.html, the second <span class=\"v-texto\" data-v=\"8\">…</span> in the chapter: \"Lo que ahora tenemos que hacer a Gabaá es esto: (Iremos) contra ella por sorteo;\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-judg20.48-mislabeled-38",
+    "locator": {
+      "osis": "judg",
+      "chapter": 20,
+      "verse": 48,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 38,
+    "to": 48,
+    "reason": "The chapter's real final verse is mislabelled \"38\", duplicating a label already used earlier in the same chapter. Judges 20 has 48 verses (bible.clementina.la agrees); context (..., 46, 47, _) shows the missing number is 48.",
+    "evidence": "raw/straubinger/jueces/20.html, the second <span class=\"v-texto\" data-v=\"38\">…</span> in the chapter: \"Luego los hombres de Israel se volvieron contra (el resto de) los hijos de Benjamín, y los pasaron a filo de espada, así las ciudades, hombr…\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-lam5.22-mislabeled-21",
+    "locator": {
+      "osis": "lam",
+      "chapter": 5,
+      "verse": 22,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 21,
+    "to": 22,
+    "reason": "The chapter's real final verse is mislabelled \"21\", duplicating the verse before it. Lamentations 5 has 22 verses (bible.clementina.la agrees); context (..., 20, 21, _) shows the missing number is 22.",
+    "evidence": "raw/straubinger/lamentaciones/5.html, the second <span class=\"v-texto\" data-v=\"21\">…</span> in the chapter: \"¿O nos has rechazado por completo? ¿Te has airado contra nosotros hasta el extremo? if !supportFootnotes endif\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-lev11.17-mislabeled-16",
+    "locator": {
+      "osis": "lev",
+      "chapter": 11,
+      "verse": 17,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 16,
+    "to": 17,
+    "reason": "\"...15, 16, 16, 18...\": the second data-v=\"16\" duplicates the label the preceding verse already carries. Context (15, 16, _, 18) shows the missing number is 17.",
+    "evidence": "raw/straubinger/levitico/11.html, the second <span class=\"v-texto\" data-v=\"16\">…</span> in the chapter: \"el búho, el somormujo, el ibis,\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-lev11.19-mislabeled-18",
+    "locator": {
+      "osis": "lev",
+      "chapter": 11,
+      "verse": 19,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 18,
+    "to": 19,
+    "reason": "\"...17, 18, 18, 20...\": the second data-v=\"18\" duplicates the label the preceding verse already carries. Context (17, 18, _, 20) shows the missing number is 19.",
+    "evidence": "raw/straubinger/levitico/11.html, the second <span class=\"v-texto\" data-v=\"18\">…</span> in the chapter: \"la cigüeña, la garza en sus especies todas, la abubilla y el murciélago\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-lev15.5-mislabeled-8",
+    "locator": {
+      "osis": "lev",
+      "chapter": 15,
+      "verse": 5,
+      "occurrence": 1
+    },
+    "field": "verse_number",
+    "from": 8,
+    "to": 5,
+    "reason": "\"...4, 8, 6, 7...\": the data-v=\"8\" sits between verses 4 and 6, and the two verses immediately following (6, 7) are correctly labelled. Context (4, _, 6, 7) shows the missing number is 5.",
+    "evidence": "raw/straubinger/levitico/15.html, the first <span class=\"v-texto\" data-v=\"8\">…</span> in the chapter: \"Quien tocare su cama lavará sus vestidos, se bañará en agua y quedará impuro hasta la tarde\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-lev4.5-mislabeled-6",
+    "locator": {
+      "osis": "lev",
+      "chapter": 4,
+      "verse": 5,
+      "occurrence": 1
+    },
+    "field": "verse_number",
+    "from": 6,
+    "to": 5,
+    "reason": "\"...4, 6, 6, 7...\": the first data-v=\"6\" duplicates the label the following verse already carries. Context (4, _, 6, 7) shows the missing number is 5.",
+    "evidence": "raw/straubinger/levitico/4.html, the first <span class=\"v-texto\" data-v=\"6\">…</span> in the chapter: \"El sacerdote ungido tomará de la sangre del becerro, y la llevará al Tabernáculo de la Reunión;\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-luke13.29-mislabeled-22",
+    "locator": {
+      "osis": "luke",
+      "chapter": 13,
+      "verse": 29,
+      "occurrence": 2
+    },
+    "field": "verse_number",
+    "from": 22,
+    "to": 29,
+    "reason": "\"...27, 28, 22, 30...\": the second data-v=\"22\" duplicates an earlier real verse's label. Context (27, 28, _, 30) shows the missing number is 29.",
+    "evidence": "raw/straubinger/lucas/13.html, the second <span class=\"v-texto\" data-v=\"22\">…</span> in the chapter: \"Y del oriente y del occidente, del norte y del mediodía vendrán a sentarse a la mesa en el reino de Dios\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-ps108.26-mislabeled-28",
+    "locator": {
+      "osis": "ps",
+      "chapter": 108,
+      "verse": 26,
+      "occurrence": 1
+    },
+    "field": "verse_number",
+    "from": 28,
+    "to": 26,
+    "reason": "\"...25, 28, 27, 28...\": the first data-v=\"28\" duplicates the label the verse two slots later already carries. Context (25, _, 27, 28) shows the missing number is 26.",
+    "evidence": "raw/straubinger/salmos/108.html, the first <span class=\"v-texto\" data-v=\"28\">…</span> in the chapter: \"Ayúdame, Yahvé, Dios mío, sálvame conforme a tu misericordia\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-tob5.14-mislabeled-15",
+    "locator": {
+      "osis": "tob",
+      "chapter": 5,
+      "verse": 14,
+      "occurrence": 1
+    },
+    "field": "verse_number",
+    "from": 15,
+    "to": 14,
+    "reason": "Two consecutive verses are each labelled one too high, self-correcting at the third: \"...13, 15, 16, 16, 17...\". The chapter's own note keyed \"17\" -- unchanged by this correction -- comments on the angel's reply about the young man's lineage, exactly the verse printed at raw label 17; that anchor is what shows the fix must stop there rather than cascade through the rest of the chapter. Context (13, _, 16, 16, 17) shows the missing number is 14.",
+    "evidence": "raw/straubinger/tobias/5.html, the first <span class=\"v-texto\" data-v=\"15\">…</span> in the chapter: \"Tobías le preguntó: “¿Podrás acaso llevar a mi hijo a casa de Gabelo, en Rages, ciudad de los medos? Yo te pagaré tu salario cuando vuelvas.…\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-tob5.15-mislabeled-16",
+    "locator": {
+      "osis": "tob",
+      "chapter": 5,
+      "verse": 15,
+      "occurrence": 1
+    },
+    "field": "verse_number",
+    "from": 16,
+    "to": 15,
+    "reason": "The second of two consecutive verses each labelled one too high (see the companion correction at v.14): \"...13, 15, 16, 16, 17...\". The chapter's own note keyed \"17\" anchors the fix at the third element rather than a further cascade. Context (13, 14[was 15], _, 16, 17) shows the missing number is 15.",
+    "evidence": "raw/straubinger/tobias/5.html, the first <span class=\"v-texto\" data-v=\"16\">…</span> in the chapter: \"Contestó el ángel: “Yo le llevaré, y te lo volveré a traer acá.”\"",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-exod20.26-mislabeled-28",
+    "locator": {
+      "osis": "exod",
+      "chapter": 20,
+      "verse": 26,
+      "occurrence": 1
+    },
+    "field": "verse_number",
+    "from": 28,
+    "to": 26,
+    "reason": "A forward-jump mislabel, not a duplicate: \"...24, 25, 28\" with nothing labelled 26 or 27 anywhere on the page. 26 elements total on the page, matching both the Decalogue's usual count and bible.clementina.la's Exodus 20 (26 verses).",
+    "evidence": "raw/straubinger/exodo/20.html, the first <span class=\"v-texto\" data-v=\"28\">…</span> in the chapter: \"Tampoco subirás por gradas a mi altar, para que no se descubra allí tu desnudez.” if !supportFootnotes endif\"",
+    "added": "2026-08-28"
+  }
+]
