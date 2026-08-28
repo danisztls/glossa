@@ -7,11 +7,19 @@
 	them. The browser's own rule for when the waiting worker takes over is
 	"once every client on the old version has gone", and that is not a thing a
 	reader can do on purpose: a plain reload does not release the old worker,
-	and an installed PWA may never be fully closed. So without this bar the new
-	version simply waits, indefinitely, with nothing to say so. Because the
-	corpus index ships inside the app bundle, that means a stale table of
-	contents — new works and corrections that exist on the server and cannot be
-	reached.
+	and an installed PWA may never be fully closed. So a waiting version waits
+	indefinitely unless something moves it. Because the corpus index ships
+	inside the app bundle, that means a stale table of contents — new works and
+	corrections that exist on the server and cannot be reached.
+
+	IT IS THE THIRD PATH NOW, NOT THE ONLY ONE. Since 2026-08-28 the update is
+	taken without asking at the two moments it costs nothing — the tab hidden,
+	and the reader following a link away from this page — which is moments 1
+	and 2 of `$lib/sw.svelte.ts`'s docblock. What is left for this bar is the
+	reader who is neither: parked on one chapter, reading, not navigating. That
+	is the one case where the ground genuinely would move under someone, and it
+	is the case consent was always the right answer to. Expect to see this
+	rarely; that is the design working, not the banner failing.
 
 	SAME SHAPE AS `InstallHint`, and for the same reasons: not a dialog, no
 	backdrop, no focus trap, the page behind it stays fully usable, and a reader
@@ -20,11 +28,13 @@
 
 	It differs from `InstallHint` in two ways, both deliberate:
 
-	  - It appears as soon as the update is ready rather than waiting for the
-	    next navigation. `InstallHint` waits because it fires on a timer and
-	    could otherwise materialise under a reader's thumb mid-paragraph; this
-	    one is rare (a deploy), and the offer is worth making while the reader
-	    is still in a position to accept it.
+	  - It appears as soon as the update is ready rather than waiting for a
+	    navigation. `InstallHint` waits because it fires on a timer and could
+	    otherwise materialise under a reader's thumb mid-paragraph; this one is
+	    rare (a deploy), and the offer is worth making while the reader is
+	    still in a position to accept it. Waiting for a navigation would also
+	    now be waiting for something that resolves itself: a navigation takes
+	    the update on its own, and there would be nothing left to offer.
 
 	  - Dismissal is for this page only, not remembered. A reader saying "not
 	    now" is answering about this moment; the offer should come back on the

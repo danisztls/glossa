@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import adapter from '@sveltejs/adapter-static';
@@ -17,6 +18,73 @@ const corpusDataDir = path.resolve(
 	fileURLToPath(new URL('.', import.meta.url)),
 	'src/lib/corpus-data'
 );
+
+/**
+ * The build id, and the only place it is decided.
+ *
+ * It becomes `kit.version.name`, which is three things at once: the suffix of
+ * the shell cache (`glossa-shell-${version}` in `src/service-worker.ts`), the
+ * string `usage.ts` stores to tell an update that LANDED from one merely
+ * offered again, and — since 2026-08-28 — the line printed in the site footer,
+ * which is why it is legible rather than SvelteKit's default `Date.now()`.
+ *
+ * BOTH HALVES ARE LOAD-BEARING, in opposite directions:
+ *
+ *   - The minute makes it unique. A deploy ships one person's working tree
+ *     (CLAUDE.md, "Deploying"), so two builds from one commit are the normal
+ *     case, not an edge one. Were the sha alone the name, the second build
+ *     would inherit the first's shell cache and its `activate` sweep would
+ *     keep rather than drop it — an update that never announces itself and
+ *     never arrives, which is exactly the failure the footer line exists to
+ *     make visible.
+ *   - The sha makes it mean something. `2026-08-28.1432` says when; only
+ *     `f49a3c1` says what, and `-dirty` says the tree held changes that sha
+ *     does not describe.
+ *
+ * Sorted lexically it sorts chronologically, which is the whole reason the
+ * date leads.
+ *
+ * No git (a source tarball, a CI checkout without history) is not an error:
+ * the minute alone still satisfies the uniqueness the cache name needs, and
+ * `nogit` says why the rest is missing rather than leaving a gap to guess at.
+ *
+ * THE ENVIRONMENT VARIABLE IS NOT A CONVENIENCE. One `vite build` evaluates
+ * this file FOUR times in four processes — the client pass, the server pass,
+ * and SvelteKit's `analyse` and `prerender` steps — so a freshly computed
+ * minute disagrees with itself across a minute boundary, and the first build
+ * that proved this shipped `…1735…` in the service worker's cache name and
+ * `…1736…` in `version.json` and the footer. One build, two identities: the
+ * footer would then be reporting a build the shell cache had never heard of,
+ * which is worse than no footer line at all.
+ *
+ * The first pass to get here decides and writes the answer into the
+ * environment; every process spawned after inherits it. Exporting it by hand
+ * is therefore also how a caller pins the id — a reproducible build, or a
+ * rebuild that deliberately means to reuse a shell cache.
+ */
+const BUILD_ID_ENV = 'GLOSSA_BUILD_ID';
+
+function buildId(): string {
+	const inherited = process.env[BUILD_ID_ENV];
+	if (inherited) return inherited;
+	const id = computeBuildId();
+	process.env[BUILD_ID_ENV] = id;
+	return id;
+}
+
+function computeBuildId(): string {
+	const iso = new Date().toISOString();
+	const stamp = `${iso.slice(0, 10)}.${iso.slice(11, 13)}${iso.slice(14, 16)}`;
+	const git = (...args: string[]): string =>
+		execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+	try {
+		const sha = git('rev-parse', '--short=7', 'HEAD');
+		const dirty = git('status', '--porcelain') !== '';
+		return `${stamp}-${sha}${dirty ? '-dirty' : ''}`;
+	} catch {
+		return `${stamp}-nogit`;
+	}
+}
 
 /**
  * In `vite dev` only, resolve each `?url` glob module to its dev twin —
@@ -106,6 +174,9 @@ export default defineConfig({
 	plugins: [
 		devContentUrls(),
 		sveltekit({
+			// See `buildId` above for why this is not SvelteKit's default
+			// timestamp, and why dropping either half of it breaks something.
+			version: { name: buildId() },
 			compilerOptions: {
 				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
 				runes: ({ filename }) =>

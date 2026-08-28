@@ -16,7 +16,8 @@
 	// component (RefText, linkifyProse, route TOCs, ...) has to opt into.
 	import LinkPreview from '$lib/components/LinkPreview.svelte';
 	import { t } from '$lib/i18n.svelte';
-	import { serviceWorker } from '$lib/sw.svelte';
+	import { beforeNavigate } from '$app/navigation';
+	import { carriesUpdate, serviceWorker } from '$lib/sw.svelte';
 	import { usage } from '$lib/usage';
 	import { version } from '$app/environment';
 	import UpdateBanner from '$lib/components/UpdateBanner.svelte';
@@ -151,6 +152,34 @@
 	 * language — and stops; the rest is offered, not taken.
 	 */
 	onMount(() => serviceWorker.start());
+
+	/**
+	 * A waiting update rides out on the next link the reader follows.
+	 *
+	 * This is moment 2 of the three in `$lib/sw.svelte.ts`'s docblock, and the
+	 * one that does most of the work in practice: a reader moves between
+	 * chapters constantly, and each of those moves is a free chance to change
+	 * shell. They pay a document load where a soft transition would have been,
+	 * at an address they have not arrived at yet — no scroll position exists
+	 * there to lose, and nothing is on screen to shift under them.
+	 *
+	 * `carriesUpdate` decides which navigations qualify and argues each
+	 * exclusion; it lives there rather than here because a predicate in a
+	 * `.svelte` file is a predicate no test in this repo can reach.
+	 *
+	 * Here rather than in `serviceWorker.start()` because `beforeNavigate` is a
+	 * lifecycle function: it has to be called while this component initialises,
+	 * not from the `onMount` above.
+	 */
+	beforeNavigate((nav) => {
+		if (!serviceWorker.updateReady) return;
+		const to = nav.to?.url;
+		if (!to) return;
+		if (!carriesUpdate({ type: nav.type, from: nav.from?.url, to, willUnload: nav.willUnload }))
+			return;
+		nav.cancel();
+		serviceWorker.applyOnNavigation(to.href);
+	});
 
 	/**
 	 * Accumulate visible reading time, which is the gate on the iOS
@@ -337,6 +366,18 @@
 	-->
 	<footer class="site-footer">
 		<a href="/colophon">{t('colophon.title')}</a>
+		<!--
+			The build this page is running, and the reason it is not behind the
+			colophon link: what it answers is "did the update actually land",
+			which is a question asked WHILE looking at a page that might be
+			stale, about that page. A number one navigation away answers it
+			about the document you had to load to read it.
+
+			Untranslated on purpose. `vite.config.ts`'s `buildId` is a date and
+			a commit — the same string in every language, and the string
+			`usage.ts` stores to tell a landed update from an offered one.
+		-->
+		<span class="build">{version}</span>
 	</footer>
 </div>
 
@@ -579,5 +620,17 @@
 	.site-footer a:hover {
 		color: var(--color-text);
 		text-decoration: underline;
+	}
+
+	/* Its own line under the colophon link, quieter than it and quieter than
+	   the body: it is for the person maintaining the site, and a reader who
+	   never wonders about it should be able to not see it. */
+	.build {
+		display: block;
+		margin-block-start: 0.4rem;
+		color: var(--color-text-muted);
+		opacity: 0.65;
+		font-size: 0.7rem;
+		font-variant-numeric: tabular-nums;
 	}
 </style>

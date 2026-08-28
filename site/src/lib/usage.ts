@@ -328,8 +328,18 @@ class UsageSession {
 		this.#swFail ??= reason;
 	}
 
-	/** An update is waiting. Recorded so the NEXT session's `behind` counts a
-	 *  reader who was offered one and did not take it. */
+	/** An update is waiting AND the bar went up for it. Recorded so the NEXT
+	 *  session's `behind` counts a reader who was offered one and did not take
+	 *  it.
+	 *
+	 *  Since 2026-08-28 that is a much smaller population than "a reader who
+	 *  had an update waiting": `sw.svelte.ts` takes the update without asking
+	 *  when the tab is hidden or the reader follows a link, and calls this only
+	 *  on the path that actually shows the bar. The bucket therefore still
+	 *  measures exactly what its name says and what `#rollStaleness` documents
+	 *  — offered, and left — and should now read near zero. A `behind` that
+	 *  climbs after that change is the interesting signal it always was: it
+	 *  means readers are reaching the third path and declining there. */
 	noteUpdateOffered(): void {
 		this.#updateOffered = true;
 	}

@@ -61,9 +61,15 @@ export async function sweepShellCaches(
  * unreachable forever; nothing ever removed them, so the cache grew by a
  * corpus generation every time the corpus changed.
  *
- * Safe to run in `activate` precisely BECAUSE install does not `skipWaiting`:
- * by then every client on the old version is gone, so no open page can still
- * be holding a URL this build dropped.
+ * Safe to run in `activate` because nothing survives it holding a dropped URL.
+ * That USED to be a consequence of install never calling `skipWaiting()` —
+ * activate meant every client on the old version had already closed — and
+ * since 2026-08-28 it is a consequence of what replaced that: every route to
+ * activation goes through `$lib/sw.svelte.ts`, every client hears
+ * `controllerchange`, and every client answers it by loading the new version
+ * (`#land`). The window in which a page holds a URL this build dropped is now
+ * the length of that load rather than zero, and a page in it is either hidden
+ * or already navigating away.
  */
 export async function sweepOrphanedContent(
 	env: CacheEnv,

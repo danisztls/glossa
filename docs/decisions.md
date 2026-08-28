@@ -838,9 +838,50 @@ rule for when a waiting worker takes over ("once every client on the old version
 is not something a reader can act on: a plain reload does not release the old worker, and
 an installed PWA can sit on a superseded version indefinitely. Since the corpus index
 ships inside the shell bundle, that is a stale table of contents, not merely stale code.
-The page watches for the waiting worker and offers a reload; nothing moves until the
-reader accepts. Announcing it requires an existing controller, or a first-time visitor is
-told a version they have never seen is out of date.
+The page watches for the waiting worker and takes it. Announcing it requires an existing
+controller, or a first-time visitor is told a version they have never seen is out of date.
+
+**Asking was the first answer and is now the last of three** (2026-08-28). The reason not
+to `skipWaiting()` is that the ground must not move under a reader standing on it, and
+consent is one way to honour that, not the only one. There are two moments where nothing
+is standing on it: the tab is hidden, and the reader has just clicked a link away from
+this page. So the update is applied silently at both — on the second by cancelling the
+client-side navigation and landing the full load on the destination, where there is no
+scroll position yet to lose and nothing on screen to shift. `UpdateBanner` is what is left
+for the reader who does neither: parked on one chapter, reading, not navigating. That is
+the one case where the ground genuinely would move, and the case consent was always the
+right answer to. At one to two deploys a day, the bar was a near-daily interruption
+offering something the reader had no reason to refuse.
+
+Three details are load-bearing. The navigation must be a real `link` to a different
+address: a `goto` is often a button wearing a URL (a compare toggle, an edition switch),
+`popstate` must stay soft or Back stops meaning back, and a `#`-jump to a footnote is a
+navigation to the page already being read — the commonest one in the corpus, and the one
+a reload costs the most. The update must be applied BEFORE the new document opens, not
+alongside it: a document opened while the old worker still controls the scope is claimed
+by it, so the reader would pay a full load and arrive on the same stale shell. And the
+wait for `controllerchange` times out, because `activate` sweeps two caches first and a
+reader who clicked a link is watching nothing happen; on a timeout the navigation
+completes on the old shell and the next link tries again.
+
+`usage.ts`'s `behind` bucket is unchanged and now measures a much smaller population —
+readers who saw the bar and left it, rather than readers who had an update waiting. It
+should read near zero; a `behind` that climbs is readers reaching the third path and
+declining there, which is the signal it always was.
+
+**The build id is legible, and printed in the footer.** SvelteKit's default version name
+is `Date.now()`, which names the shell cache and is what `usage.ts` compares to tell a
+landed update from an offered one — all correct, and unreadable. It is now
+`2026-08-28.1740-01eabd8`, a UTC minute and the commit, `-dirty` when the tree held
+changes that commit does not describe, and the footer prints it. The minute cannot be
+dropped in favour of the sha: a deploy ships one person's working tree, so two builds from
+one commit are the normal case, and sharing a cache name between them is an update that
+never arrives. `vite.config.ts` is evaluated four times per build in four processes, so
+the first one to compute the id exports it and the rest inherit it — without that, one
+build shipped two identities, `…1735…` in the service worker and `…1736…` in the footer.
+The line is in the footer rather than behind the colophon link because the question it
+answers ("did the update land?") is asked while looking at a page that might be stale,
+about that page.
 
 **The background fill is per-language, ordered, and opt-in past the Catechism.** The
 corpus is 82.6 MB raw / ~26 MB gzipped across fifteen languages, and a reader speaks one

@@ -258,11 +258,17 @@ sw.addEventListener('install', (event) => {
 	// worker (the new document is claimed by it, so there is never a moment
 	// with zero clients), and an installed PWA can sit on a superseded version
 	// for weeks. Since the corpus index is baked into the shell, that is a
-	// stale table of contents, not just stale code. So the client now watches
-	// for `updatefound`, offers the reader a reload, and only then sends
-	// SKIP_WAITING — see the message handler below and `$lib/sw.svelte.ts`.
-	// The reader decides when the ground moves; they are no longer unable to
-	// move it.
+	// stale table of contents, not just stale code. So the client watches for
+	// `updatefound` and sends SKIP_WAITING itself — see the message handler
+	// below and `$lib/sw.svelte.ts`.
+	//
+	// WHEN it sends it is the part worth reading over there, and it changed on
+	// 2026-08-28. Asking the reader was the first answer and is now the last
+	// of three: the update is taken silently while the tab is hidden, or on
+	// the next link the reader follows, and only a reader who does neither —
+	// parked on one chapter — is asked. What this comment refuses is
+	// unchanged, and all three obey it: the ground never moves under someone
+	// standing on it.
 });
 
 sw.addEventListener('activate', (event) => {

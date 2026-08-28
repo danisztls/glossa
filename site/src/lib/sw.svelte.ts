@@ -18,10 +18,23 @@
  * work, a new translation or a correction never appears. The reader is not
  * looking at an old stylesheet, they are looking at an old library.
  *
- * So: watch for the waiting worker, tell the reader, and let them decide. On
- * accept, `SKIP_WAITING` goes to the worker and `controllerchange` reloads the
- * page. Nothing happens without the reader asking, which is the same principle
- * the no-`skipWaiting` decision was protecting in the first place.
+ * So: watch for the waiting worker, and take it at a moment that costs the
+ * reader nothing. There are three such moments, tried in that order:
+ *
+ *   1. THE READER IS NOT LOOKING. Tab hidden, `applyUpdate` straight away.
+ *      Nothing is on screen to shift.
+ *   2. THE READER IS LEAVING THIS PAGE ANYWAY. `carriesUpdate` below says
+ *      which navigations qualify; the root layout cancels one and hands the
+ *      destination to `applyOnNavigation`, which applies the update and lands
+ *      there instead of where it started. A full load where a soft transition
+ *      would have been, at the one instant the reader has no place to lose.
+ *   3. NEITHER, so ask. `UpdateBanner` is the fallback now rather than the
+ *      only path — for the reader parked on one chapter who never navigates,
+ *      which is the case where consent is genuinely the right answer.
+ *
+ * In all three the ground moves only where there is nothing standing on it.
+ * That is the same principle the no-`skipWaiting` decision was protecting; 1
+ * and 2 are the observation that consent is not the only way to honour it.
  *
  * `registration.update()` runs on tab focus with a floor between checks, since
  * an installed PWA may go months without a cold navigation and the browser's
@@ -47,6 +60,56 @@ const UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
  *  asking for anything in the background. */
 const PRELOAD_DELAY_MS = 1_500;
 
+/** How long `applyOnNavigation` waits for the new worker before giving up and
+ *  going where the reader asked anyway.
+ *
+ *  `activate` sweeps two caches before `controllerchange` fires, and one of
+ *  them walks every key in the content cache — normally milliseconds, but it
+ *  is work, and a reader who clicked a link is watching nothing happen while
+ *  it runs. Three seconds is far past the normal case and far short of a
+ *  reader deciding the site is broken. Timing out is not a failure: the
+ *  navigation completes on the old shell, the new worker stays waiting, and
+ *  the next link tries again. */
+const APPLY_TIMEOUT_MS = 3_000;
+
+/**
+ * Whether a pending navigation is one the update can ride on.
+ *
+ * Exported and pure because the alternative is this judgment living inside
+ * `+layout.svelte`, where nothing in this repo can test it — the same reason
+ * `inline-html.ts` exists (CLAUDE.md, "Running prose is an apparatus").
+ *
+ * Three exclusions, each a way to turn a free update into a cost:
+ *
+ *   - ONLY `link`. A `goto` is the app moving itself, and several of those
+ *     are state changes wearing a URL: a compare toggle, an edition switch.
+ *     Reloading the document under one would be a visible stall in the middle
+ *     of an interaction the reader thinks of as a button, not a journey.
+ *   - NEVER `popstate`. Back must stay back. A full load there pushes a
+ *     history entry and lands at the top of a page the reader had a position
+ *     in — the precise loss this whole scheme exists to avoid.
+ *   - NEVER WITHIN THE SAME DOCUMENT. A footnote anchor, a `#`-jump from the
+ *     table of contents and a sidenote link are all navigations to the page
+ *     the reader is already reading. They are the commonest navigation in the
+ *     corpus and the one where a reload costs the most.
+ */
+export interface PendingNavigation {
+	type: string;
+	from: URL | undefined;
+	to: URL | undefined;
+	willUnload: boolean;
+}
+
+export function carriesUpdate(nav: PendingNavigation): boolean {
+	if (nav.type !== 'link') return false;
+	// Already a full load (an external link, a download). There is nothing to
+	// cancel and nothing to gain — the next document decides for itself.
+	if (nav.willUnload) return false;
+	if (!nav.from || !nav.to) return false;
+	if (nav.from.origin !== nav.to.origin) return false;
+	return nav.from.pathname !== nav.to.pathname || nav.from.search !== nav.to.search;
+}
+
 export interface WaveProgress {
 	wave: WaveId;
 	count: number;
@@ -63,8 +126,13 @@ class ServiceWorkerStore {
 
 	#registration: ServiceWorkerRegistration | undefined;
 	#lastCheck = 0;
-	/** Set while reloading, so `controllerchange` cannot reload twice. */
+	/** Set once the page is on its way to the new version, so nothing sends it
+	 *  twice — `controllerchange` and the timeout below race by design. */
 	#reloading = false;
+	/** Where to land when the new worker takes over. Set only by
+	 *  `applyOnNavigation`; undefined means "back to this address". */
+	#pendingHref: string | undefined;
+	#pendingTimer: number | undefined;
 
 	/**
 	 * Wire up update detection and the deferred preload. Returns a teardown.
@@ -82,17 +150,10 @@ class ServiceWorkerStore {
 		});
 
 		// A worker that calls skipWaiting hands control to this page mid-life.
-		// That only happens because the reader accepted the offer below, so the
-		// right response is to reload onto the version they just asked for.
-		navigator.serviceWorker.addEventListener(
-			'controllerchange',
-			() => {
-				if (this.#reloading) return;
-				this.#reloading = true;
-				location.reload();
-			},
-			{ signal }
-		);
+		// Every route to that is one of the three moments in the docblock, so
+		// the right response is always to go to the new version now — either
+		// where the reader was heading, or back to where they are.
+		navigator.serviceWorker.addEventListener('controllerchange', () => this.#land(), { signal });
 
 		navigator.serviceWorker.ready
 			.then((registration) => {
@@ -106,7 +167,17 @@ class ServiceWorkerStore {
 				// Reading works; there is simply nothing to update or preload.
 			});
 
-		document.addEventListener('visibilitychange', () => this.checkForUpdate(), { signal });
+		document.addEventListener(
+			'visibilitychange',
+			() => {
+				this.checkForUpdate();
+				// An update that arrived while the reader was here, taken now
+				// that they are not. The banner stays raised underneath: if the
+				// worker never activates, they come back to the offer.
+				if (document.visibilityState === 'hidden' && this.updateReady) this.applyUpdate();
+			},
+			{ signal }
+		);
 
 		const timer = window.setTimeout(() => {
 			if (!cancelled) this.requestAutomatic();
@@ -163,18 +234,55 @@ class ServiceWorkerStore {
 		});
 	}
 
-	/** The reader accepted the update. The worker takes over, `controllerchange`
-	 *  fires, and the page reloads onto the new version. */
+	/** Take the update and come back to this same address: the reader accepted
+	 *  the offer, or the tab went to the background. The worker takes over,
+	 *  `controllerchange` fires, and `#land` reloads onto the new version. */
 	applyUpdate(): void {
 		const waiting = this.#registration?.waiting;
 		if (!waiting) {
 			// Raced away (another tab accepted first, or the worker activated on
 			// its own because every other client closed). A reload lands on the
 			// new version either way.
-			location.reload();
+			this.#land();
 			return;
 		}
 		waiting.postMessage({ type: 'SKIP_WAITING' });
+	}
+
+	/**
+	 * Moment 2: the reader clicked a link, so take the update and land THERE.
+	 *
+	 * The caller has already cancelled the client-side navigation — see
+	 * `carriesUpdate` for which ones qualify and `+layout.svelte` for the hook.
+	 * What the reader sees is a page load instead of a soft transition, at an
+	 * address they were going to anyway, so there is no scroll position to keep
+	 * and no state to carry: the destination has neither yet.
+	 *
+	 * Waiting for `controllerchange` rather than navigating immediately is the
+	 * whole point. A new document opened before the worker activates is claimed
+	 * by the OLD one, which is the trap this file's docblock opens with — the
+	 * reader would pay a full load and arrive on the same stale shell.
+	 */
+	applyOnNavigation(href: string): void {
+		this.#pendingHref = href;
+		const waiting = this.#registration?.waiting;
+		if (!waiting) {
+			this.#land();
+			return;
+		}
+		// Down before the load, so the bar cannot flash on the way out.
+		this.updateReady = false;
+		waiting.postMessage({ type: 'SKIP_WAITING' });
+		this.#pendingTimer = window.setTimeout(() => this.#land(), APPLY_TIMEOUT_MS);
+	}
+
+	/** Go to the new version, once. */
+	#land(): void {
+		if (this.#reloading) return;
+		this.#reloading = true;
+		window.clearTimeout(this.#pendingTimer);
+		if (this.#pendingHref) location.href = this.#pendingHref;
+		else location.reload();
 	}
 
 	/** The waves the worker may take without being asked, for this reader's
@@ -221,6 +329,14 @@ class ServiceWorkerStore {
 	 *  not merely that one was pending somewhere. */
 	#offerUpdate(): void {
 		this.updateReady = true;
+		if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+			// Moment 1. Deliberately WITHOUT `noteUpdateOffered`: `behind`
+			// counts readers who saw the bar and left it there, and a bar that
+			// was never on a screen anyone was looking at is not one of them.
+			// Counting it would report the measure's own success as staleness.
+			this.applyUpdate();
+			return;
+		}
 		usage.noteUpdateOffered();
 	}
 
