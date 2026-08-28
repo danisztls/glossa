@@ -66,6 +66,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.ad-salutem-humani.it": {
+			"it": {
+				"text": "Lettera enciclica di Pio XI per il XV centenario della morte di sant'Agostino d'Ippona. Ripercorre la sua conversione, la dottrina della grazia contro manichei, donatisti e pelagiani, l'immagine delle due città tratta da «Della città di Dio», e l'opera di fondatore di vita religiosa, esortando i fedeli a venerarne le reliquie a Pavia e a pregare in vista del Congresso Eucaristico di Cartagine.",
+				"origin": "read"
+			}
+		},
 		"encyclical.adiutricem.en": {
 			"en": {
 				"text": "Leo XIII's encyclical urging Catholics to devote the month of October to the Rosary, presenting it as the most effective prayer for the object then closest to his heart: the reconciliation of nations separated from the Church, above all in the Christian East. He recounts Mary's historic role as guardian of Church unity, from Dominic Guzman's preaching to earlier popes' efforts to spread the devotion in the East.",
@@ -99,6 +105,12 @@
 		"encyclical.arcanum.en": {
 			"en": {
 				"text": "Leo XIII's encyclical on Christian marriage: Christ raised it to a sacrament and restored the unity and indissolubility it had lost, so the Church holds authority over the marriages of the baptized. It argues against treating marriage as a merely civil contract subject to the state, sets out the evils that follow from divorce, and closes commending to the bishops those living outside a lawful bond.",
+				"origin": "read"
+			}
+		},
+		"encyclical.au-milieu-des-sollicitudes.en": {
+			"en": {
+				"text": "Leo XIII's 1892 letter to the archbishops, bishops, clergy and faithful of France, urging Catholics to accept the Republic as the nation's constituted civil power while reserving the right to oppose unjust legislation. He rebuts the charge that Catholics seek political domination, upholds the Concordat, and condemns the proposed separation of Church and State as denying government's duty toward God.",
 				"origin": "read"
 			}
 		},
@@ -204,6 +216,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.dives-in-misericordia.pt": {
+			"pt": {
+				"text": "Encíclica de João Paulo II sobre a misericórdia de Deus revelada por Cristo — «quem me vê, vê o Pai». Percorre a misericórdia no Antigo Testamento, a parábola do filho pródigo como sua imagem central, e o mistério pascal como sua plenitude. Considera as ameaças do mundo contemporâneo e conclui apelando à Igreja para invocar, pela oração, a misericórdia divina diante do mal que ameaça a humanidade.",
+				"origin": "read"
+			}
+		},
 		"encyclical.divini-redemptoris.en": {
 			"en": {
 				"text": "Pius XI's encyclical on atheistic communism, written as its persecution intensified in Russia, Mexico and Spain. It traces communism's Marxist materialism, how it strips man of liberty and dignity and would dissolve family and property into a collectivity built for production, opposes to it the Church's teaching on God, man and society, and prescribes remedies — renewed Christian life, social justice, Catholic Action — under St. Joseph's protection.",
@@ -240,6 +258,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.ecclesiae-fastos.en": {
+			"en": {
+				"text": "Pius XII's 1954 encyclical for the twelfth centenary of the martyrdom of St. Boniface, apostle of Germany. It recounts his mission from England under Rome's mandate, his preaching in Friesland, Thuringia, Franconia and Bavaria, the founding of Fulda as a house of prayer and learning, his reform of the Frankish church as papal legate, and his death at pagan hands — holding up his obedience to the Holy See as the model.",
+				"origin": "read"
+			}
+		},
 		"encyclical.ecclesiam-dei.it": {
 			"it": {
 				"text": "Nel terzo centenario del martirio di san Giosafat, arcivescovo di Polock, l'enciclica ripercorre lo scisma bizantino degli Slavi orientali e l'unione di Brest del 1596, poi la vita di Giosafat, monaco basiliano e vescovo, ucciso nel 1623 per la causa dell'unità. Pio XI lo propone come patrono dei cattolici e dei dissidenti orientali, invitandoli alla preghiera e alla reciproca conoscenza in vista del ritorno alla piena comunione con la Sede Apostolica.",
@@ -249,6 +273,12 @@
 		"encyclical.ecclesiam.en": {
 			"en": {
 				"text": "Paul VI's first encyclical, written one year into his pontificate as a statement of governing priorities: the Church's need for deeper self-awareness, the renewal called for by the Second Vatican Council, and dialogue with the world. The final and longest part elaborates dialogue as method, extending it outward through concentric circles — from all mankind, to believers in one God, to other Christians, to Catholics themselves.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ecclesiam.pt": {
+			"pt": {
+				"text": "Carta encíclica de Paulo VI sobre os caminhos que a Igreja deve seguir no mundo contemporâneo. Divide-se em três partes: a consciência que a Igreja deve aprofundar de si mesma e da sua missão, a renovação da sua vida interior, e o diálogo da salvação com a humanidade, distinguindo três círculos concêntricos — tudo o que é humano, os crentes em Deus e os cristãos separados.",
 				"origin": "read"
 			}
 		},
@@ -456,6 +486,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.le-pelerinage-de-lourdes.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII ao episcopado da França, por ocasião do centenário das aparições de Nossa Senhora em Lourdes. Situa Lourdes na tradição mariana francesa e relembra os laços entre a Santa Sé e o santuário desde Pio IX. Extrai das aparições lições espirituais — conversão pessoal e penitência, renovação cristã da sociedade, predileção de Maria pelos pequenos e enfermos — como programa para o ano jubilar.",
+				"origin": "read"
+			}
+		},
 		"encyclical.libertas.en": {
 			"en": {
 				"text": "Leo XIII's encyclical on the nature of human liberty, arguing true freedom lies in the will's conformity to the eternal law of God, not in acting simply as one pleases. It examines and limits the liberties liberalism champions — of worship, of speech and the press, of teaching, and of conscience — rejects unconditional separation of Church and State, and allows that Catholics may licitly prefer democratic government.",
@@ -471,6 +507,18 @@
 		"encyclical.lumen-fidei.en": {
 			"en": {
 				"text": "On faith as the light of Christ by which human life is guided — the encyclical that completes the trilogy on the theological virtues, drafted by Benedict XVI before his resignation and finished by Francis. It follows faith from Abraham and Israel to Christ, examines its bond with truth and with reason, its transmission through the Church's creed and sacraments, and its power to sustain the family, society and those who suffer.",
+				"origin": "read"
+			}
+		},
+		"encyclical.lumen-fidei.pt": {
+			"pt": {
+				"text": "Carta encíclica de Francisco, que retoma um esboço de Bento XVI e completa a trilogia sobre as virtudes teológicas iniciada com Deus Caritas Est e Spe Salvi. Descreve a fé como luz que guia o caminho humano, de Abraão à plenitude em Cristo, articula fé, verdade e razão, mostra a Igreja como mãe da fé pelos sacramentos, e trata da fé no bem comum, na família e no sofrimento.",
+				"origin": "read"
+			}
+		},
+		"encyclical.magni-nobis.en": {
+			"en": {
+				"text": "Leo XIII's 1889 letter approving the statutes of the newly founded Catholic University of America in Washington, D.C. It grants the university the right to confer academic degrees, including in philosophy, theology and canon law, names the Archbishop of Baltimore its chancellor, requires its course of studies be submitted to Rome for approval, and asks that no similar university be established without consulting the Holy See.",
 				"origin": "read"
 			}
 		},
@@ -561,6 +609,12 @@
 		"encyclical.nobilissima-gallorum-gens.en": {
 			"en": {
 				"text": "Leo XIII to the bishops of France on the anti-clerical measures then underway, the suppression of religious orders and the secularizing laws. He urges the French, “eldest daughter of the Church”, to keep religious instruction within the family, to respect the distinct but harmonious authority of Church and State, to preserve unity among Catholics under their bishops, and to answer persecution with prayer and constancy.",
+				"origin": "read"
+			}
+		},
+		"encyclical.nos-es-muy-conocida.en": {
+			"en": {
+				"text": "Pius XI writes to Mexico's bishops during the country's anti-Catholic persecution, praising the fidelity of clergy and faithful and urging two remedies: holier priests, and lay Catholic Action organized to reach workers, peasants and indigenous Mexicans, students, and emigrants to the United States. It calls for pursuing social justice without violent upheaval, for civic engagement including voting, and entrusts Mexico to Our Lady of Guadalupe.",
 				"origin": "read"
 			}
 		},
@@ -1006,6 +1060,12 @@
 				"origin": "read"
 			}
 		},
+		"vatii.optatam-totius.pt": {
+			"pt": {
+				"text": "Decreto do Concílio Vaticano II sobre a formação sacerdotal. Situa o dever de promover as vocações em toda a comunidade cristã, propõe um plano nacional de formação adaptável pelas Conferências episcopais e organiza os seminários maiores em torno de quatro eixos: formação espiritual cristocêntrica, revisão dos estudos eclesiásticos (filosofia e teologia), formação estritamente pastoral e formação complementar após o curso do seminário.",
+				"origin": "read"
+			}
+		},
 		"vatii.orientalium-ecclesiarum.en": {
 			"en": {
 				"text": "The Council's decree on the Eastern Catholic Churches — those in communion with Rome that follow the Byzantine, Alexandrian, Antiochene, Armenian or Chaldean rites rather than the Latin. It affirms their equal dignity with the Latin Church and their right to keep their own liturgical, disciplinary and spiritual patrimony, then treats patriarchal precedence, the discipline of the sacraments, worship and the calendar, and what common prayer with separated Eastern Christians is permitted.",
@@ -1015,6 +1075,12 @@
 		"vatii.perfectae-caritatis.en": {
 			"en": {
 				"text": "Vatican II's decree on the renewal and adaptation of religious life, addressed to institutes of consecrated chastity, poverty and obedience. It lays down general principles of renewal — return to the Gospel and to each institute's founding spirit, adaptation to modern conditions — treats the contemplative, active, monastic, lay and secular-institute forms in turn, and gives norms on formation, cloister, habit, vocations, and the union of small communities.",
+				"origin": "read"
+			}
+		},
+		"vatii.perfectae-caritatis.pt": {
+			"pt": {
+				"text": "Decreto do Concílio Vaticano II sobre a renovação da vida religiosa, ligada ao regresso às fontes evangélicas e ao espírito dos fundadores. Percorre os institutos contemplativos, apostólicos e monásticos, a vida religiosa laical e os institutos seculares, os votos de castidade, pobreza e obediência, a vida comum, a clausura, o hábito e a formação, e conclui exortando os religiosos a corresponder com generosidade à sua vocação.",
 				"origin": "read"
 			}
 		},
@@ -1039,6 +1105,12 @@
 		"vatii.unitatis-redintegratio.en": {
 			"en": {
 				"text": "The Council's decree on the restoration of unity among Christians, whose divisions it holds to be against Christ's will. It sets out the Catholic principles of ecumenism, including the elements of sanctification found in separated communities, treats its practice as rooted in interior conversion and dialogue, and considers separately the Eastern Churches and the communities separated from Rome in the West.",
+				"origin": "read"
+			}
+		},
+		"vatii.unitatis-redintegratio.pt": {
+			"pt": {
+				"text": "Decreto do Concílio Vaticano II sobre o ecumenismo. Parte da unidade que Cristo quis para a Igreja e das rupturas surgidas desde os primeiros séculos — no Oriente por controvérsias dogmáticas, no Ocidente pela Reforma — para expor os princípios católicos do movimento ecuménico: renovação interior, conversão do coração, oração e diálogo com os irmãos separados. Examina depois, em separado, as Igrejas orientais e as comunidades ocidentais separadas de Roma.",
 				"origin": "read"
 			}
 		}

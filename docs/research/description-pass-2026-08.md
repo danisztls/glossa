@@ -21,8 +21,8 @@ fix. The corpus uses exactly two page shells: all 32 `vatii` works are the
 **Scope is 354 document works** (322 `encyclical`, 32 `vatii`), not the 339
 this file opened with. It moves as editions land, so it is measured rather
 than remembered — and `site/unpublished.json` withholds nothing today, so all
-354 are describable. **161 are described** and **156 carry a ToC oracle**;
-what remains is 193 works with no description and 198 with none of either.
+354 are describable. **173 are described** and **168 carry a ToC oracle**;
+what remains is 181 works with no description and 186 with no oracle.
 
 **Batches 4 through 8 are not written up here.** They landed between
 2026-08-24 and 2026-08-26 and were recorded in their commit messages instead
@@ -816,3 +816,84 @@ one disagreement is a real parser defect — but an oracle derived from the
 output cannot contradict the output, which is the whole reason the brief asks
 for the other order. Worth restating in the batch prompt rather than trusting
 the procedure doc to carry it.
+
+## Batch 10 (12 works) — 2026-08-28
+
+`vatii.unitatis-redintegratio.pt`, `vatii.optatam-totius.pt`,
+`vatii.perfectae-caritatis.pt`, `encyclical.au-milieu-des-sollicitudes.en`,
+`encyclical.magni-nobis.en`, `encyclical.ecclesiae-fastos.en`,
+`encyclical.le-pelerinage-de-lourdes.pt`, `encyclical.nos-es-muy-conocida.en`,
+`encyclical.ad-salutem-humani.it`, `encyclical.dives-in-misericordia.pt`,
+`encyclical.ecclesiam.pt`, `encyclical.lumen-fidei.pt`.
+
+All 12 described and oracled. **173 of 354 described, 168 oracles.** The batch
+carries the corpus's first Italian-only description: `ad-salutem-humani` has
+no other edition, so its entry is keyed `it`, written from the Italian — the
+same rule that keeps a Portuguese description prose about the Portuguese text.
+
+### A source misprint, filed
+
+`vatii.unitatis-redintegratio.pt` prints its third chapter's label as
+`CAPÍTULO IlII` — a lowercase `l` where the second `I` belongs, the same
+class as `ecclesiam.en`'s `Modem` for `Modern`. It is not cosmetic: the string
+reached the reader verbatim as a structure node's label, and `IlII` is not a
+roman numeral the division-label matcher can read, so of the decree's three
+chapters exactly one had a number nothing downstream could resolve. Filed as
+`pipeline/corrections/vatii.unitatis-redintegratio.pt.json` against the two
+chapters above it and the English sibling's `CHAPTER III`; the re-parse
+changes that one work and nothing else.
+
+### `<strong>` is invisible to heading detection — measured, and NOT fixed
+
+`pacem.pt` drops `INTRODUÇÃO` outright, and the cause generalises: heading
+detection reads a block's RAW html, where `_BOLD_SPAN_RE` matches `<b>` and
+not `<strong>`. The storage layer has folded the two together since it existed
+(`_HTML_ALLOWED_SIMPLE`), but the fold happens after the decision. **103 raw
+pages write `<strong>`.**
+
+Widening the regex the way `_ITALIC_SPAN_RE` already covers `<em>` was tried
+and reverted, because the measurement said it is not one fix but two:
+
+- **It gains.** `pascendi-dominici-gregis.pt` recovered its whole outline —
+  `INTRODUÇÃO`, `EXPOSIÇÃO DO SISTEMA E SUA DIVISÃO`, `AS CAUSAS DO
+MODERNISMO`, `REMÉDIOS`, `CONCLUSÃO`, five headings its oracle had recorded
+  as missing — and lost a false one (its salutation). `pacem.pt` gained
+  `INTRODUÇÃO`. Ten works changed in all.
+- **It loses.** In `pacem.pt` the recovered heading joins a style class the
+  parser had been reading as two tiers, and the tree flattens: 59 of its 67
+  headings drop a level, against an oracle that agreed with the parse
+  completely before. `dives-in-misericordia.pt` gains a false heading its
+  reader had explicitly checked and rejected.
+
+The flattening is the levelling walk's "a LABEL beats appearance" rule not
+holding once appearance stops distinguishing `Iª PARTE` from `DIREITOS`. So
+the recognition fix has to land WITH a levelling fix or not at all, and that
+is a decision rather than a defect — recorded here with its evidence so the
+next attempt starts from the measurement instead of the regex.
+
+### Open, carried forward
+
+- **A sub-heading directly under a top-level heading is parsed at level 1.**
+  `ecclesiam.pt` (three, all under `PRÓLOGO`), `optatam-totius.pt` (two, under
+  `PROÉMIO` and `CONCLUSÃO`). In both, the demoted headings print in the same
+  `all-bold,all-italic` as every correctly-nested level-2 sibling elsewhere in
+  the same document. Same family as the trailing-heading demotions in the five
+  old-shell EN works from batch 9.
+- **`lumen-fidei.pt` loses its chapter epigraphs**, and in two different ways:
+  before Chapter I and before the conclusion, where no paragraph is open, the
+  two-line scriptural epigraph is dropped outright (`ACREDITÁMOS NO AMOR (cf.
+1 Jo 4, 16)`, `FELIZ DAQUELA QUE ACREDITOU (cf. Lc 1, 45)`); before Chapters
+  II, III and IV it is appended to the tail of the PREVIOUS chapter's last
+  paragraph (§22, §36, §49). Text loss and misattribution from one cause.
+
+### Clean negatives, recorded so nobody re-derives them
+
+`au-milieu-des-sollicitudes.en` (32 sections), `ecclesiae-fastos.en` (41) and
+`nos-es-muy-conocida.en` (39, published under the Latin title _Firmissimam
+Constantiam_) are genuinely undivided numbered prose, each verified at raw
+level rather than from an empty `structure.json`. `ad-salutem-humani.it` is
+unnumbered as well as undivided — one appendix block of ~12,400 words, no
+paragraph numbers anywhere on the page — and its `numbered: false` was checked
+against the raw page, not inferred. `fidei-donum.en`'s source numbering jumps
+from 27 to 35 in the raw HTML itself, with no block in between: the parse
+reproduces the page, and there is nothing missing to find.

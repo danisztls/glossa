@@ -1,0 +1,14 @@
+[
+  {
+    "id": "unitatis-redintegratio.pt-chapter-3-label-lowercase-l",
+    "locator": {
+      "raw_substring": "<b>CAP&Iacute;TULO IlII </b>"
+    },
+    "field": "raw_text",
+    "from": "<b>CAP&Iacute;TULO IlII </b>",
+    "to": "<b>CAP&Iacute;TULO III </b>",
+    "reason": "The third chapter's label is printed 'CAPITULO IlII' -- a lowercase l where the second I belongs, the l-read-as-I artifact of the same family as ecclesiam.en's 'Modem' for 'Modern'. The correct value is fixed by the page itself and not inferred: the two chapters above it print 'CAPITULO I' and 'CAPITULO II' in the same markup, and the decree has exactly three chapters, so the third is III. The defect is not cosmetic -- the string reaches the reader verbatim as the label of a structure node, and 'IlII' is not a roman numeral the division-label matcher can read, so the chapter is the one of the three whose number nothing downstream can resolve.",
+    "evidence": "corpus/raw/vatican-docs/vatii__unitatis-redintegratio__pt.html: '...istaos.</p> <p align=\"center\"><b>CAP&Iacute;TULO IlII </b></p> <p align=\"center\"><b>IGREJAS E COMUNIDADES ECLESIAIS SEPARADAS DA SE APOSTOLICA...' -- against 'CAP&Iacute;TULO I ' and 'CAP&Iacute;TULO II ' earlier in the same page, and the EN sibling (vatii__unitatis-redintegratio__en.html), which prints 'CHAPTER I', 'CHAPTER II', 'CHAPTER III'.",
+    "added": "2026-08-28"
+  }
+]
