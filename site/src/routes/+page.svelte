@@ -33,6 +33,8 @@
 		listPrayerGroups
 	} from '$lib/corpus';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
+	import BookText from '@lucide/svelte/icons/book-text';
+	import MessageCircleQuestionMark from '@lucide/svelte/icons/message-circle-question-mark';
 	import StructureIndex from '$lib/components/StructureIndex.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
 	import { catechismRowLinks } from '$lib/components/catechismRows';
@@ -47,14 +49,13 @@
 		const id = content.workIdFor('bible');
 		return id ? getWork(id) : undefined;
 	});
-	const cccWork = $derived.by(() => {
-		const id = content.workIdFor('catechism');
-		return id ? getWork(id) : undefined;
-	});
-	const compendiumWork = $derived.by(() => {
-		const id = content.workIdFor('compendium');
-		return id ? getWork(id) : undefined;
-	});
+	// The Catechism and its Compendium resolve through ONE language, not two —
+	// the rule `/catechismus` applies and for the same reason: a reader whose
+	// language carries one of the two gets that one, never an English column
+	// beside their own. See `content.catechismPairLang`.
+	const cccLang = $derived(content.catechismPairLang());
+	const cccWork = $derived(getWork(`ccc.${cccLang}`));
+	const compendiumWork = $derived(getWork(`compendium.${cccLang}`));
 	const prayerWork = $derived.by(() => {
 		const id = content.workIdFor('prayer');
 		return id ? getWork(id) : undefined;
@@ -90,8 +91,6 @@
 	// slot. Nothing STRUCTURALLY pairs it — the Compendium has no Prologue —
 	// but the condensation vote knows its ¶1-25 are what question 1 condenses,
 	// and `catechismRows.ts` falls back to that.
-	const cccLang = $derived(content.langFor('catechism'));
-	const compendiumLang = $derived(content.langFor('compendium'));
 
 	// --- Prayers: a compact pointer, not a sixth table of contents --------------
 	//
@@ -109,18 +108,31 @@
 	// work's tree degrades to `[]`, which `pairDivisionsCached` reads as "no
 	// divisions to pair with" and every row then falls through to the
 	// condensation vote, never a crash.
-	const cccRoot = $derived(cccWork ? getCccStructure(cccLang) : []);
-	const compendiumRoot = $derived(compendiumWork ? getCompendiumStructure(compendiumLang) : []);
-	const pairs = $derived(pairDivisionsCached(cccRoot, compendiumRoot));
+	const cccRoot = $derived(
+		cccWork ? getCccStructure(cccLang) : compendiumWork ? getCompendiumStructure(cccLang) : []
+	);
+	const compendiumRoot = $derived(compendiumWork ? getCompendiumStructure(cccLang) : []);
+	const pairs = $derived(
+		cccWork && compendiumWork ? pairDivisionsCached(cccRoot, compendiumRoot) : new Map()
+	);
+
+	// The same one-language rule `/catechismus` applies, and for the same
+	// reason: a language carrying one of the two works gets that work's column
+	// and not the other's — never a link into an edition the reader did not
+	// ask for. See `content.catechismPairLang`.
+	const cccColumns = $derived([
+		...(cccWork ? (['ccc'] as const) : []),
+		...(compendiumWork ? (['compendium'] as const) : [])
+	]);
 
 	const cccLinks = $derived((node: StructureNode) =>
 		catechismRowLinks(node, {
-			cccLang,
+			tree: cccWork ? 'ccc' : 'compendium',
+			lang: cccLang,
+			columns: cccColumns,
 			pairs,
 			labels: {
-				cccAbbrev: t('ccc.abbrev'),
 				cccTitle: t('ccc.landing.title'),
-				compendiumAbbrev: t('compendium.abbrev'),
 				compendiumTitle: t('compendium.landing.title')
 			}
 		})
@@ -254,6 +266,11 @@
 				links={cccLinks}
 				maxDepth={2}
 				subsections={false}
+				workColumns={cccColumns.map((column) =>
+					column === 'ccc'
+						? { label: t('nav.ccc'), icon: BookText }
+						: { label: t('nav.compendium'), icon: MessageCircleQuestionMark }
+				)}
 				noCounterpartLabel={t('ccc.noCounterpart')}
 			/>
 		</section>

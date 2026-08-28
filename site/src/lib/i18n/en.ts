@@ -126,7 +126,12 @@ export const en: Dictionary = {
 	'ccc.nextParagraph': 'Next',
 	'ccc.inBrief': 'In Brief',
 	'ccc.landing.title': 'Catechism of the Catholic Church',
-	'ccc.landing.tagline': 'The complete Catechism.',
+	// The page's whole description: `/catechismus` indexes BOTH works, the
+	// Compendium having no index of its own. `**` marks the two names for
+	// emphasis (`boldMarkup.ts`) — inside the sentence rather than around it,
+	// because thirteen translations do not share English word order.
+	'ccc.landing.tagline':
+		'<strong>The Catechism</strong> sets out Catholic doctrine in 2,865 numbered paragraphs. <strong>The Compendium</strong> restates the same doctrine as 598 questions and answers, on the same outline.',
 	'ccc.tableOfContents': 'Table of Contents',
 	'ccc.related': 'See also',
 
@@ -180,6 +185,10 @@ export const en: Dictionary = {
 	'summa.noEditionInYourLanguage': 'The Summa has no edition in your language. Shown in {lang}.',
 	'summa.noLatinSupplement':
 		'The Supplement exists in English only — it was compiled after Aquinas’ death.',
+	// The index table's first column, for a screen reader only — the column of
+	// titles needs no label on screen, but a table whose row-header column has
+	// no name at all reads as though the works are the only variable.
+	'index.division': 'Division',
 	'index.showSubsections': 'Show subsections',
 	'index.hideSubsections': 'Hide subsections',
 

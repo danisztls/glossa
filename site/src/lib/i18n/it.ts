@@ -74,7 +74,8 @@ export const it: Dictionary = {
 	'ccc.nextParagraph': 'Successivo',
 	'ccc.inBrief': 'In sintesi',
 	'ccc.landing.title': 'Catechismo della Chiesa Cattolica',
-	'ccc.landing.tagline': 'Il Catechismo completo.',
+	'ccc.landing.tagline':
+		'<strong>Il Catechismo</strong> espone la dottrina cattolica in 2.865 numeri. <strong>Il Compendio</strong> ripropone la stessa dottrina in 598 domande e risposte, secondo lo stesso ordine.',
 	'ccc.tableOfContents': 'Indice',
 	'ccc.related': 'Vedi anche',
 	'compendium.landing.title': 'Compendio del Catechismo',

@@ -74,7 +74,8 @@ export const ro: Dictionary = {
 	'ccc.nextParagraph': 'Înainte',
 	'ccc.inBrief': 'Pe scurt',
 	'ccc.landing.title': 'Catehismul Bisericii Catolice',
-	'ccc.landing.tagline': 'Catehismul integral.',
+	'ccc.landing.tagline':
+		'<strong>Catehismul</strong> expune învățătura catolică în 2.865 de paragrafe numerotate. <strong>Compendiul</strong> reia aceeași învățătură în 598 de întrebări și răspunsuri, după aceeași structură.',
 	'ccc.tableOfContents': 'Cuprins',
 	'ccc.related': 'Vezi și',
 	'compendium.landing.title': 'Compendiul Catehismului',

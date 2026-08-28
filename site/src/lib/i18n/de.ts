@@ -74,7 +74,8 @@ export const de: Dictionary = {
 	'ccc.nextParagraph': 'Weiter',
 	'ccc.inBrief': 'Kurztext',
 	'ccc.landing.title': 'Katechismus der Katholischen Kirche',
-	'ccc.landing.tagline': 'Der vollständige Katechismus.',
+	'ccc.landing.tagline':
+		'<strong>Der Katechismus</strong> legt die katholische Lehre in 2.865 nummerierten Abschnitten dar. <strong>Das Kompendium</strong> gibt dieselbe Lehre in 598 Fragen und Antworten wieder, nach derselben Gliederung.',
 	'ccc.tableOfContents': 'Inhaltsverzeichnis',
 	'ccc.related': 'Siehe auch',
 	'compendium.landing.title': 'Kompendium des Katechismus',

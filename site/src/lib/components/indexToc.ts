@@ -5,12 +5,10 @@
  * their indexes from quietly growing apart again.
  */
 import type { StructureNode } from '../types';
-import { displayTitle } from '../titles';
-import { marker } from './structureToc';
 
-/** Headings that make up the readable outline. `sub` headings remain
- * available behind each parent disclosure; `in-brief` is reading content,
- * not a useful index destination. */
+/** The NUMBERED spine of the outline. `in-brief` is reading content rather
+ * than an index destination, and `sub` is handled apart — see
+ * `indexDetailChildren`. */
 export const INDEX_OUTLINE_KINDS = new Set<StructureNode['kind']>([
 	'prologue',
 	'part',
@@ -27,8 +25,11 @@ export function indexOutlineChildren(node: StructureNode): StructureNode[] {
 	return (node.children ?? []).filter(isIndexOutline);
 }
 
-/** A source can print an unnumbered `sub` heading. Keep it as context in the
- * disclosure, but leave it unlinked because null bounds are unaddressable. */
+/** A source can print an unnumbered `sub` heading. It is a row like any
+ * other — it has a paragraph span, so it has an address — just one level
+ * further in and behind its parent's disclosure. It was drawn as a list
+ * INSIDE the parent's title cell until 2026-08-28, which put its range at the
+ * title column's edge rather than under the work it belongs to. */
 export function indexDetailChildren(node: StructureNode): StructureNode[] {
 	return (node.children ?? []).filter((child) => child.kind === 'sub');
 }
@@ -46,20 +47,69 @@ export function runLabel(from: number, to: number | null | undefined, unit: stri
 	return from === to ? `${unit}${from}` : `${unit}${from}–${to ?? '?'}`;
 }
 
-export interface IndexSidebarItem {
-	href: string;
-	label: string;
+/**
+ * The outline flattened to rows, each carrying the depth it was found at and
+ * the ancestors it hangs off.
+ *
+ * WHY FLAT. The index is a table of two variables — a division, and what each
+ * of the two works has at it — so it is drawn as one: a real `<table>` whose
+ * columns are the works. Nested `<ol>`s cannot do that. Each level is its own
+ * formatting context, so the chips in it right-align against ITS box and not
+ * the page's, which is why the two columns were ragged and why no amount of
+ * per-row flexbox could straighten them. Depth becomes an indent on the title
+ * cell instead, and the recursion happens here where it can be tested.
+ *
+ * WHY ANCESTORS. Collapsing is what a flat list gives up and has to buy back:
+ * a row is on screen only while every row above it in the tree is open, and
+ * `ancestors` is that chain, outermost first. It is a list of KEYS rather than
+ * nodes so the caller can answer "is this open?" from a set of strings that
+ * survives a language switch — `ancestors[i]` is always the ancestor at depth
+ * `i`, which is what lets openness be decided per depth without storing a row
+ * for every closed one.
+ *
+ * `maxDepth` is exclusive of the level it names: 1 is the top level alone, 2
+ * adds its children.
+ */
+export interface IndexRow {
+	node: StructureNode;
+	depth: number;
+	/** `rowKey` of every ancestor, outermost first. */
+	ancestors: string[];
+	/** Whether opening this row would reveal anything. */
+	expandable: boolean;
 }
 
-/** The sidebar mirrors only the root divisions; duplicating a whole long
- * index there would make the navigation harder, not easier, to scan. */
-export function indexSidebarItems(tree: StructureNode[], lang: string): IndexSidebarItem[] {
-	return tree
-		.filter((node) => isIndexOutline(node) && Number.isFinite(node.paragraphs[0]))
-		.map((node) => ({
-			href: `#toc-${node.paragraphs[0]}`,
-			label: `${marker(node, lang) ?? ''} ${displayTitle(node, lang).title}`.trim()
-		}));
+/** A row's identity. Title plus span, because a `StructureNode` carries no id
+ *  and the same object is not handed back across a language switch. */
+export function rowKey(node: StructureNode): string {
+	return `${node.title}|${node.paragraphs.join('-')}`;
+}
+
+export function indexRows(
+	tree: StructureNode[],
+	opts: { maxDepth?: number; subsections?: boolean } = {}
+): IndexRow[] {
+	const maxDepth = opts.maxDepth ?? Number.POSITIVE_INFINITY;
+	// A `sub` is a row at the next depth down, not something hung off the row
+	// above it — so an overview drops it by not walking into it at all. Merged
+	// in paragraph order rather than appended: the one section that prints both
+	// a sub-heading and chapters prints the sub-heading first.
+	const childrenOf = (node: StructureNode) =>
+		opts.subsections === false
+			? indexOutlineChildren(node)
+			: [...indexOutlineChildren(node), ...indexDetailChildren(node)].sort(
+					(a, b) => (a.paragraphs[0] ?? 0) - (b.paragraphs[0] ?? 0)
+				);
+	const rows: IndexRow[] = [];
+	const walk = (nodes: StructureNode[], depth: number, ancestors: string[]) => {
+		for (const node of nodes) {
+			const kids = depth + 1 < maxDepth ? childrenOf(node) : [];
+			rows.push({ node, depth, ancestors, expandable: kids.length > 0 });
+			if (kids.length > 0) walk(kids, depth + 1, [...ancestors, rowKey(node)]);
+		}
+	};
+	walk(tree.filter(isIndexOutline), 0, []);
+	return rows;
 }
 
 /**
@@ -71,19 +121,21 @@ export function indexSidebarItems(tree: StructureNode[], lang: string): IndexSid
  * title to one of them and badged the other would be answering a question the
  * reader has not asked yet. So the title is not a link and both works are.
  *
- * `work` and `range` are separate because they are read differently: the
- * abbreviation says which book, the range says how much, and the range is set
- * in tabular numerals so a column of them lines up. `title` carries the full
- * name for the hover and the accessible name, since "Comp. Q251-294" is only
- * legible to a reader who already knows which of the two books it names.
+ * THE CHIP SHOWS THE RANGE AND NOT THE WORK'S NAME. It carried the siglum too
+ * until 2026-08-28 — `CCC ¶198–421`, `Comp. Q36–95` — and reading a hundred
+ * rows of it is reading `CCC` a hundred times to learn nothing: the slots are
+ * in a fixed order down the whole page, and the range already opens with the
+ * unit that names the work (`¶` for a paragraph, `Q` for a question). What
+ * the abbreviation was carrying for the reader who does not yet know that is
+ * kept in `title`, which is both the hover and the accessible name.
  */
 export interface RowLink {
 	href: string;
-	/** The work's siglum — `CCC`, `Comp.` */
-	work: string;
-	/** Its extent in its OWN numbering — `¶198–421`, `Q36–95`. */
+	/** Its extent in its OWN numbering — `¶198–421`, `Q36–95`. Set in tabular
+	 *  numerals so a column of them lines up. */
 	range: string;
-	/** `"Compendium — Q251–294"`, for the hover and the accessible name. */
+	/** `"Compendium of the Catechism — Q251–294"`, for the hover and the
+	 *  accessible name. The only place the work is named in full. */
 	title: string;
 }
 
@@ -102,7 +154,6 @@ export function workLink(
 		/** The address of the span's first unit, from `hrefFor`. */
 		href: (n: number) => string;
 		unit: string;
-		abbrev: string;
 		workTitle: string;
 	}
 ): RowLink | undefined {
@@ -112,7 +163,6 @@ export function workLink(
 	const range = runLabel(from as number, to, opts.unit);
 	return {
 		href: opts.href(from as number),
-		work: opts.abbrev,
 		range,
 		title: `${opts.workTitle} — ${range}`
 	};

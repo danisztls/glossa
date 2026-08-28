@@ -74,7 +74,8 @@ export const sv: Dictionary = {
 	'ccc.nextParagraph': 'Nästa',
 	'ccc.inBrief': 'I korthet',
 	'ccc.landing.title': 'Katolska kyrkans katekes',
-	'ccc.landing.tagline': 'Hela katekesen.',
+	'ccc.landing.tagline':
+		'<strong>Katekesen</strong> framställer den katolska läran i 2 865 numrerade punkter. <strong>Kompendiet</strong> återger samma lära i 598 frågor och svar, efter samma disposition.',
 	'ccc.tableOfContents': 'Innehåll',
 	'ccc.related': 'Se även',
 	'compendium.landing.title': 'Katekesens kompendium',

@@ -4,7 +4,8 @@ import {
 	INDEX_OUTLINE_KINDS,
 	indexDetailChildren,
 	indexOutlineChildren,
-	indexSidebarItems,
+	indexRows,
+	rowKey,
 	isIndexOutline,
 	rangeLabel,
 	workLink
@@ -50,13 +51,76 @@ describe('index outline', () => {
 		expect(rangeLabel(node('chapter', 1, 'X', [27, 49]), '¶')).toBe('¶27–49');
 		expect(rangeLabel(node('sub', null, 'X', [null, null]), 'Q')).toBe('');
 	});
+});
 
-	it('gives the sidebar explicit, kind-aware labels for root divisions', () => {
-		const items = indexSidebarItems(
-			[node('part', 1, 'PART ONE: THE PROFESSION OF FAITH', [1, 100])],
-			'en'
+// The recursion the nested `<ol>`s used to do in markup, moved here so the
+// table can be one flat list of rows and so the depth rule is testable at all.
+describe('indexRows', () => {
+	const tree = [
+		node(
+			'part',
+			1,
+			'Part',
+			[1, 100],
+			[
+				node(
+					'section',
+					1,
+					'Section',
+					[1, 50],
+					[node('chapter', 1, 'Chapter', [1, 20], []), node('sub', null, 'An epigraph', [1, 2], [])]
+				)
+			]
+		)
+	];
+
+	it('flattens the outline, carrying the depth each row was found at', () => {
+		expect(
+			indexRows(tree, { subsections: false }).map((row) => [row.node.kind, row.depth])
+		).toEqual([
+			['part', 0],
+			['section', 1],
+			['chapter', 2]
+		]);
+	});
+
+	// Exclusive of the level it names: 1 is the top level alone.
+	it('stops at maxDepth', () => {
+		expect(indexRows(tree, { maxDepth: 1 }).map((row) => row.node.kind)).toEqual(['part']);
+		expect(indexRows(tree, { maxDepth: 2 }).map((row) => row.node.kind)).toEqual([
+			'part',
+			'section'
+		]);
+	});
+
+	// The chain the table collapses on: a row is on screen only while every
+	// ancestor is open, and `ancestors[i]` is the one at depth `i`.
+	it('names each row\u2019s ancestors, outermost first', () => {
+		expect(indexRows(tree).map((row) => row.ancestors.length)).toEqual([0, 1, 2, 2]);
+		expect(indexRows(tree)[2].ancestors[0]).toBe(rowKey(tree[0]));
+	});
+
+	// A row is worth a disclosure arrow when opening it would reveal something
+	// — child divisions, or sub-headings. `maxDepth` truncating the children
+	// takes the arrow with them.
+	it('marks a row expandable only when it has something to reveal', () => {
+		expect(indexRows(tree).map((row) => row.expandable)).toEqual([true, true, false, false]);
+		expect(indexRows(tree, { maxDepth: 1 })[0].expandable).toBe(false);
+	});
+
+	// A `sub` is a row one level further in, not something hung off the row
+	// above it: it has a paragraph span, so it has an address, and it is only
+	// behind its parent's disclosure. An overview drops it by never walking in.
+	it('walks sub-headings as rows of their own, in paragraph order', () => {
+		expect(indexRows(tree).map((row) => [row.node.kind, row.depth])).toEqual([
+			['part', 0],
+			['section', 1],
+			['chapter', 2],
+			['sub', 2]
+		]);
+		expect(indexRows(tree, { subsections: false }).some((row) => row.node.kind === 'sub')).toBe(
+			false
 		);
-		expect(items).toEqual([{ href: '#toc-1', label: 'Part 1 The Profession of Faith' }]);
 	});
 });
 
@@ -68,14 +132,15 @@ describe('workLink', () => {
 	const opts = {
 		href: (n: number) => hrefFor({ kind: 'compendiumChapter', n }),
 		unit: 'Q',
-		abbrev: 'Comp.',
 		workTitle: 'Compendium'
 	};
 
-	it('names the work and its extent, and addresses the first unit', () => {
+	// The chip shows the range alone; the work is named in `title`, which is
+	// both the hover and the accessible name. It printed the siglum too until
+	// 2026-08-28 — see `RowLink`.
+	it('shows the extent, names the work only in the accessible name', () => {
 		expect(workLink([251, 294], opts)).toEqual({
 			href: '/catechismus/compendium/caput/251',
-			work: 'Comp.',
 			range: 'Q251–294',
 			title: 'Compendium — Q251–294'
 		});

@@ -74,7 +74,8 @@ export const fr: Dictionary = {
 	'ccc.nextParagraph': 'Suivant',
 	'ccc.inBrief': 'En bref',
 	'ccc.landing.title': 'Catéchisme de l’Église catholique',
-	'ccc.landing.tagline': 'Le Catéchisme intégral.',
+	'ccc.landing.tagline':
+		'<strong>Le Catéchisme</strong> expose la doctrine catholique en 2 865 numéros. <strong>Le Compendium</strong> reprend la même doctrine en 598 questions et réponses, selon le même plan.',
 	'ccc.tableOfContents': 'Table des matières',
 	'ccc.related': 'Voir aussi',
 	'compendium.landing.title': 'Abrégé du Catéchisme',

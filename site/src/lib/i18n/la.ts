@@ -105,7 +105,8 @@ export const la: Dictionary = {
 	// one. `Breviter` says the same thing and cannot be misread.
 	'ccc.inBrief': 'Breviter',
 	'ccc.landing.title': 'Catechismus Catholicae Ecclesiae',
-	'ccc.landing.tagline': 'Catechismus integer.',
+	'ccc.landing.tagline':
+		'<strong>Catechismus</strong> doctrinam catholicam 2.865 numeris distinctis exponit. <strong>Compendium</strong> eandem doctrinam 598 quaestionibus et responsionibus, eodem ordine servato, refert.',
 	'ccc.tableOfContents': 'Index capitum',
 	'ccc.related': 'Vide etiam',
 	'compendium.landing.title': 'Compendium Catechismi',

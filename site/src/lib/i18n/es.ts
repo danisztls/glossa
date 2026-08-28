@@ -74,7 +74,8 @@ export const es: Dictionary = {
 	'ccc.nextParagraph': 'Siguiente',
 	'ccc.inBrief': 'Resumen',
 	'ccc.landing.title': 'Catecismo de la Iglesia Católica',
-	'ccc.landing.tagline': 'El Catecismo completo.',
+	'ccc.landing.tagline':
+		'<strong>El Catecismo</strong> expone la doctrina católica en 2.865 números. <strong>El Compendio</strong> presenta la misma doctrina en 598 preguntas y respuestas, según el mismo plan.',
 	'ccc.tableOfContents': 'Índice',
 	'ccc.related': 'Véase también',
 	'compendium.landing.title': 'Compendio del Catecismo',

@@ -76,7 +76,8 @@ export const hu: Dictionary = {
 	'ccc.nextParagraph': 'Következő',
 	'ccc.inBrief': 'Összefoglalás',
 	'ccc.landing.title': 'A Katolikus Egyház Katekizmusa',
-	'ccc.landing.tagline': 'A teljes Katekizmus.',
+	'ccc.landing.tagline':
+		'<strong>A Katekizmus</strong> 2865 számozott pontban fejti ki a katolikus tanítást. <strong>A Kompendium</strong> ugyanezt a tanítást 598 kérdésben és feleletben adja elő, ugyanazt a szerkezetet követve.',
 	'ccc.tableOfContents': 'Tartalomjegyzék',
 	'ccc.related': 'Lásd még',
 	'compendium.landing.title': 'A Katekizmus Kompendiuma',

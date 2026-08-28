@@ -74,7 +74,8 @@ export const pl: Dictionary = {
 	'ccc.nextParagraph': 'Następny',
 	'ccc.inBrief': 'W skrócie',
 	'ccc.landing.title': 'Katechizm Kościoła Katolickiego',
-	'ccc.landing.tagline': 'Pełny Katechizm.',
+	'ccc.landing.tagline':
+		'<strong>Katechizm</strong> wykłada naukę katolicką w 2865 numerowanych punktach. <strong>Kompendium</strong> przedstawia tę samą naukę w 598 pytaniach i odpowiedziach, według tego samego układu.',
 	'ccc.tableOfContents': 'Spis treści',
 	'ccc.related': 'Zobacz także',
 	'compendium.landing.title': 'Kompendium Katechizmu',

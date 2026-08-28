@@ -74,7 +74,8 @@ export const ru: Dictionary = {
 	'ccc.nextParagraph': 'Вперёд',
 	'ccc.inBrief': 'Кратко',
 	'ccc.landing.title': 'Катехизис Католической Церкви',
-	'ccc.landing.tagline': 'Полный Катехизис.',
+	'ccc.landing.tagline':
+		'<strong>Катехизис</strong> излагает католическое вероучение в 2865 пронумерованных параграфах. <strong>Компендиум</strong> передаёт то же учение в 598 вопросах и ответах, по тому же плану.',
 	'ccc.tableOfContents': 'Оглавление',
 	'ccc.related': 'См. также',
 	'compendium.landing.title': 'Компендиум Катехизиса',

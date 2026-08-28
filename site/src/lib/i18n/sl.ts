@@ -75,7 +75,8 @@ export const sl: Dictionary = {
 	'ccc.nextParagraph': 'Naprej',
 	'ccc.inBrief': 'Na kratko',
 	'ccc.landing.title': 'Katekizem katoliške Cerkve',
-	'ccc.landing.tagline': 'Celoten katekizem.',
+	'ccc.landing.tagline':
+		'<strong>Katekizem</strong> predstavlja katoliški nauk v 2865 oštevilčenih členih. <strong>Kompendij</strong> isti nauk podaja v 598 vprašanjih in odgovorih, po isti razčlenitvi.',
 	'ccc.tableOfContents': 'Kazalo',
 	'ccc.related': 'Glej tudi',
 	'compendium.landing.title': 'Kompendij katekizma',

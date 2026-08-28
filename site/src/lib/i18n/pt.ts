@@ -91,7 +91,8 @@ export const pt: Dictionary = {
 	'ccc.nextParagraph': 'Próximo',
 	'ccc.inBrief': 'Resumindo',
 	'ccc.landing.title': 'Catecismo da Igreja Católica',
-	'ccc.landing.tagline': 'O Catecismo completo.',
+	'ccc.landing.tagline':
+		'<strong>O Catecismo</strong> expõe a doutrina católica em 2.865 parágrafos numerados. <strong>O Compêndio</strong> retoma a mesma doutrina em 598 perguntas e respostas, segundo o mesmo plano.',
 	'ccc.tableOfContents': 'Índice',
 	'ccc.related': 'Veja também',
 

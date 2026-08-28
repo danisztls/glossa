@@ -4,12 +4,7 @@ import { pairDivisionsCached } from '../toc-pairing';
 import type { StructureNode } from '../types';
 import { catechismRowLinks, cccRowHref } from './catechismRows';
 
-const LABELS = {
-	cccAbbrev: 'CCC',
-	cccTitle: 'Catechism',
-	compendiumAbbrev: 'Comp.',
-	compendiumTitle: 'Compendium'
-};
+const LABELS = { cccTitle: 'Catechism', compendiumTitle: 'Compendium' };
 
 function find(nodes: StructureNode[], kind: StructureNode['kind']): StructureNode {
 	for (const node of nodes) {
@@ -32,7 +27,13 @@ function tryFind(nodes: StructureNode[], kind: StructureNode['kind']): Structure
 const tree = getCccStructure('en');
 const pairs = pairDivisionsCached(tree, getCompendiumStructure('en'));
 const links = (node: StructureNode) =>
-	catechismRowLinks(node, { cccLang: 'en', pairs, labels: LABELS });
+	catechismRowLinks(node, {
+		tree: 'ccc',
+		lang: 'en',
+		columns: ['ccc', 'compendium'],
+		pairs,
+		labels: LABELS
+	});
 
 // The rule that was wrong until 2026-08-28, in both works at once: 65 of the
 // Catechism index's 100 rows and 60 of its Compendium chips addressed pages
@@ -55,11 +56,16 @@ describe('a row addresses each work the way that work is addressable', () => {
 		);
 	});
 
+	// Fixed order is what identifies the two, now that the chips print the
+	// range alone: the Catechism's slot first, the Compendium's second, on
+	// every row down the page. The work's full name is in `title`.
 	it('gives both works a chip, in a fixed order', () => {
 		const [ccc, compendium] = links(find(tree, 'chapter'));
-		expect(ccc?.work).toBe('CCC');
+		expect(ccc?.range.startsWith('¶')).toBe(true);
+		expect(ccc?.title).toBe('Catechism — ¶27–49');
 		expect(ccc?.href.startsWith('/catechismus/caput/')).toBe(true);
-		expect(compendium?.work).toBe('Comp.');
+		expect(compendium?.range.startsWith('Q')).toBe(true);
+		expect(compendium?.title.startsWith('Compendium — Q')).toBe(true);
 	});
 
 	// A structurally paired division is a chapter-level page in the Compendium

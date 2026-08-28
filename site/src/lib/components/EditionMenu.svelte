@@ -59,19 +59,39 @@
 	import { Menu } from './menu.svelte';
 	import { keepInViewport } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
-	import type { DocumentManifest } from '$lib/types';
+	import type { DocumentManifest, WorkManifest } from '$lib/types';
 
-	type Context = { kind: 'type'; type: WorkTypeKey } | { kind: 'document'; slug: string };
+	/**
+	 * `pair` is `/catechismus` itself, which indexes the Catechism AND its
+	 * Compendium — so its picker offers every language carrying EITHER, and
+	 * choosing one sets both (see `choose`). The reading routes under it stay
+	 * single-work contexts.
+	 */
+	type Context =
+		| { kind: 'type'; type: WorkTypeKey }
+		| { kind: 'document'; slug: string }
+		| { kind: 'pair'; types: readonly [WorkTypeKey, WorkTypeKey] };
+
+	const CATECHISM_PAIR = ['catechism', 'compendium'] as const;
 
 	function context(pathname: string): Context | undefined {
 		if (pathname === '/scriptura' || pathname.startsWith('/scriptura/')) {
 			return { kind: 'type', type: 'bible' };
 		}
-		if (pathname === '/catechismus' || pathname.startsWith('/catechismus/')) {
-			return { kind: 'type', type: 'catechism' };
-		}
+		// BEFORE the Catechism's own prefix, which would otherwise swallow it:
+		// `/catechismus/compendium/12` starts with `/catechismus/`, so from the
+		// day the Compendium moved under the Catechism (2026-08-28) until this
+		// was reordered, a reader on a Compendium question was offered the
+		// CATECHISM's editions and picking one changed nothing on the page.
 		if (pathname === '/catechismus/compendium' || pathname.startsWith('/catechismus/compendium/')) {
 			return { kind: 'type', type: 'compendium' };
+		}
+		// The index presents both works; everything under it is one or the other.
+		if (pathname === '/catechismus') {
+			return { kind: 'pair', types: CATECHISM_PAIR };
+		}
+		if (pathname.startsWith('/catechismus/')) {
+			return { kind: 'type', type: 'catechism' };
 		}
 		if (pathname === '/preces' || pathname.startsWith('/preces/')) {
 			return { kind: 'type', type: 'prayer' };
@@ -114,6 +134,30 @@
 				? listPrayerEditions(page.params.slug)
 				: listEditions(ctx.type)
 	);
+
+	/**
+	 * ONE ROW PER LANGUAGE ACROSS BOTH WORKS, first work wins.
+	 *
+	 * The union rather than either list: `la` and `mg` have a Catechism and no
+	 * Compendium, `hu`/`ro`/`sl`/`sv` the reverse, and the page carries
+	 * whichever of the two a language has. Offering only the Catechism's eight
+	 * would hide the four languages whose reader has a whole work here; the
+	 * row's manifest is only ever read for its language and its display name,
+	 * so which of the two provides it does not matter.
+	 */
+	const pairEditions = $derived.by(() => {
+		if (ctx?.kind !== 'pair') return [];
+		const byLang = new Map<string, WorkManifest>();
+		for (const type of ctx.types) {
+			for (const edition of listEditions(type)) {
+				const lang = baseLang(edition.language);
+				if (!byLang.has(lang)) byLang.set(lang, edition);
+			}
+		}
+		return [...byLang.values()].sort((a, b) =>
+			baseLang(a.language).localeCompare(baseLang(b.language))
+		);
+	});
 	const documentGroup = $derived(ctx?.kind === 'document' ? getDocumentGroup(ctx.slug) : undefined);
 	// A document's editions, sorted like `listEditions` (docs/decisions.md #1:
 	// language then id) rather than however `Object.values` happens to order
@@ -129,7 +173,9 @@
 					)
 			: []
 	);
-	const editions = $derived(ctx?.kind === 'document' ? documentEditions : typeEditions);
+	const editions = $derived(
+		ctx?.kind === 'document' ? documentEditions : ctx?.kind === 'pair' ? pairEditions : typeEditions
+	);
 
 	// The content store is the only source of truth for every context now —
 	// no URL anywhere carries an edition, so there is nothing for it to
@@ -141,14 +187,18 @@
 	// naming a wording nothing on the page came from. `currentPrayerEditionId`
 	// resolves the preference against this address the same way the route
 	// resolves it against `byLang`.
+	// The pair picker is choosing a LANGUAGE, and its rows are one work or the
+	// other, so "current" is matched on the language rather than on a work id.
 	const currentWorkId = $derived(
-		ctx?.kind === 'type'
-			? ctx.type === 'prayer'
-				? currentPrayerEditionId(content.tagFor('prayer'), page.params.slug)
-				: content.workIdFor(ctx.type)
-			: ctx?.kind === 'document'
-				? content.documentWorkIdFor(ctx.slug)
-				: undefined
+		ctx?.kind === 'pair'
+			? editions.find((w) => baseLang(w.language) === content.catechismPairLang())?.id
+			: ctx?.kind === 'type'
+				? ctx.type === 'prayer'
+					? currentPrayerEditionId(content.tagFor('prayer'), page.params.slug)
+					: content.workIdFor(ctx.type)
+				: ctx?.kind === 'document'
+					? content.documentWorkIdFor(ctx.slug)
+					: undefined
 	);
 
 	const currentEdition = $derived(editions.find((w) => w.id === currentWorkId));
@@ -172,8 +222,28 @@
 	function choose(workId: string) {
 		if (!ctx) return;
 		if (ctx.kind === 'document') content.setDocument(ctx.slug, workId);
+		else if (ctx.kind === 'pair') choosePairLang(workId);
 		else content.set(ctx.type, workId);
 		menu.closeAndRefocus();
+	}
+
+	/**
+	 * Picking a language on `/catechismus` sets EACH work that has one and
+	 * CLEARS the other, rather than leaving a stale override behind. Clearing
+	 * is what makes the absence readable: `catechismPairLang` looks for an
+	 * explicit choice and finds only the one that could be made, so a reader
+	 * choosing Hungarian gets the Hungarian Compendium and no Catechism column
+	 * — where a leftover `ccc.en` override would have put an English one there.
+	 */
+	function choosePairLang(workId: string) {
+		if (ctx?.kind !== 'pair') return;
+		const lang = baseLang(
+			editions.find((w) => w.id === workId)?.language ?? content.catechismPairLang()
+		);
+		for (const type of ctx.types) {
+			const edition = listEditions(type).find((w) => baseLang(w.language) === lang);
+			content.set(type, edition?.id ?? null);
+		}
 	}
 </script>
 

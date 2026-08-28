@@ -155,6 +155,37 @@ class ContentStore {
 		return edition ? edition.language : i18n.lang;
 	}
 
+	/**
+	 * The ONE language a page presenting the Catechism and its Compendium
+	 * together is in — `/catechismus`, which indexes both because they are one
+	 * outline at two lengths.
+	 *
+	 * It cannot be `langFor` of either type, and the reason is the fallback:
+	 * six languages carry one work and not the other (`la` and `mg` have the
+	 * Catechism, `hu`/`ro`/`sl`/`sv` the Compendium), so `langFor('catechism')`
+	 * answers "en" for a Hungarian reader and the page would then show an
+	 * English Catechism column beside their Hungarian Compendium — an edition
+	 * they did not ask for, next to one they did.
+	 *
+	 * So it reads the reader's EXPLICIT choice, from whichever of the two they
+	 * have one for, and falls back to the interface language rather than to an
+	 * edition. Picking a language on that page writes an override for each work
+	 * that HAS one and clears the other (`EditionMenu`), which is what keeps the
+	 * two in step and what makes reading either of them here equivalent.
+	 */
+	catechismPairLang(): string {
+		return this.overrideLangFor('catechism') ?? this.overrideLangFor('compendium') ?? i18n.lang;
+	}
+
+	/** The bare language of an EXPLICIT override for `type`, or undefined when
+	 *  the reader has never picked one — `tagFor` without the fallback. */
+	overrideLangFor(type: WorkTypeKey): string | undefined {
+		const workId = this.#activeOverride(type)?.workId;
+		if (!workId) return undefined;
+		const edition = listEditions(type).find((w) => w.id === workId);
+		return edition ? baseLang(edition.language) : undefined;
+	}
+
 	/** Set (or clear, with null) the reader's explicit edition override. */
 	set(type: WorkTypeKey, workId: string | null) {
 		const next: OverrideMap = { ...this.#overrides };

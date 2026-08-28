@@ -74,7 +74,8 @@ export const ar: Dictionary = {
 	'ccc.nextParagraph': 'التالي',
 	'ccc.inBrief': 'بإيجاز',
 	'ccc.landing.title': 'التعليم المسيحي للكنيسة الكاثوليكيّة',
-	'ccc.landing.tagline': 'التعليم المسيحي كاملًا.',
+	'ccc.landing.tagline':
+		'<strong>التعليم المسيحي</strong> يعرض العقيدة الكاثوليكية في 2865 فقرة مرقَّمة. <strong>الموجز</strong> يعيد عرض العقيدة نفسها في 598 سؤالاً وجواباً، وفق الترتيب نفسه.',
 	'ccc.tableOfContents': 'الفهرس',
 	'ccc.related': 'انظر أيضًا',
 	'compendium.landing.title': 'موجز التعليم المسيحي',
