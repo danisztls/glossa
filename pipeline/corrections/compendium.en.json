@@ -1,0 +1,14 @@
+[
+  {
+    "id": "compendium.en-39-refs-2112-for-212",
+    "locator": {
+      "question": 39
+    },
+    "field": "refs_html",
+    "from": "<p>2112-213&nbsp;</p>",
+    "to": "<p>212-213&nbsp;</p>",
+    "reason": "The reference line for question 39 prints '2112-213', which is not a well-formed range at all -- its first number is larger than its second, so it names no paragraphs and the question's only cross-reference does not link. An intrusive '1' after the leading '2' is a mechanical single-character defect of the kind docs/decisions.md's source-defect policy admits: no reference is added or removed, and '212-213' is the only reading the remaining digits can carry in order.",
+    "evidence": "Nine of the ten editions print 212-213 in this position and none prints 2112: DE/ES/FR/HU/IT/PT '212-213', RO '212‑213' (non-breaking hyphen), SL '212-213 229', SV '206-213'. The doctrine settles it independently of the vote: question 39 asks 'Is God the only One who “is”?' (PT 'Só Deus «é»?', IT 'Solo Dio «è»?'), and CCC ¶213 reads 'The revelation of the ineffable name \"I AM WHO AM\" contains then the truth that God alone IS', with ¶212 on the uniqueness of God -- while ¶2112 is in Part Three and condemns polytheism under the first commandment, a subject the question does not touch. The anchor '2112' occurs exactly once in the fetched page.",
+    "added": "2026-08-28"
+  }
+]
