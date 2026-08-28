@@ -453,6 +453,21 @@
 	</p>
 {/snippet}
 
+<!-- Written once and rendered twice, the way every other reading route
+     renders its table of contents (`TocMenu`): as the desktop sidebar at the
+     foot of each branch below, and as the reading bar's panel at the widths
+     where that sidebar is hidden. A second call would be a second list to keep
+     in step by hand, and the panel is exactly where a divergence would go
+     unseen. -->
+{#snippet bookList()}
+	<BookChapterPicker
+		currentWorkId={workId}
+		currentOsis={data.osis}
+		currentChapter={data.chapterN}
+		variant="panel"
+	/>
+{/snippet}
+
 {#if introMode}
 	<!-- Chapter 0: the book's introduction. A single column always — there is
 	     nothing to compare (no verse numbers to align by, and one introduction
@@ -463,7 +478,13 @@
 	     from. -->
 	<div class="reading-layout">
 		<article class="content-column">
-			<ReadingBar bookmarkHref={chapterHref} canCompare={false} compareActive={false} randomVerse />
+			<ReadingBar
+				toc={{ label: t('bible.pickBook'), content: bookList }}
+				bookmarkHref={chapterHref}
+				canCompare={false}
+				compareActive={false}
+				randomVerse
+			/>
 
 			{#if intro && introWork}
 				<p class="edition-label">{introWork.title}</p>
@@ -471,14 +492,6 @@
 			{/if}
 			<h1>{introBookName}</h1>
 			<p class="intro-kicker">{t('bible.introduction')}</p>
-
-			<div class="mobile-picker">
-				<BookChapterPicker
-					currentWorkId={workId}
-					currentOsis={data.osis}
-					currentChapter={data.chapterN}
-				/>
-			</div>
 
 			{#if intro}
 				<div class="reading-text" lang={introLang}>
@@ -524,6 +537,7 @@
 			     carries used to be spread across the breadcrumb row, the title row
 			     and the site header. -->
 			<ReadingBar
+				toc={{ label: t('bible.pickBook'), content: bookList }}
 				bookmarkHref={chapterHref}
 				canCompare={otherEditions.length > 0}
 				{compareActive}
@@ -587,21 +601,6 @@
 					</p>
 				{/if}
 			{/if}
-
-			<!-- Kept exactly as it was before the sidebar existed — collapsed
-		     behind `<summary>`, right under the heading. Hidden at >= 80rem
-		     (see `.mobile-picker` below) in favour of the always-open copy in
-		     `.reading-aside`, but below that width nothing here changes: a
-		     reader on a narrow viewport gets the identical picker in the
-		     identical place they always have. Shown in compare mode too —
-		     navigation isn't a compare-mode concern. -->
-			<div class="mobile-picker">
-				<BookChapterPicker
-					currentWorkId={workId}
-					currentOsis={data.osis}
-					currentChapter={data.chapterN}
-				/>
-			</div>
 
 			{#if compareActive && secondary}
 				<CompareGrid
@@ -697,13 +696,14 @@
 			/>
 		</article>
 
-		<!-- Hidden below 80rem — `.mobile-picker` above is this component's
-	     mobile-unchanged counterpart. `variant="sidebar"` still wraps books
-	     into the same grid as the mobile copy, but its open chapter panel is
-	     `position: fixed` rather than `'grid'`'s `absolute` (BookChapterPicker's
-	     own docblock) — the 17rem sticky column here is its own
-	     `overflow-y: auto` scroll container, which would clip an `absolute`
-	     panel, so this variant escapes to the viewport instead. Omitted
+		<!-- Hidden below 80rem (app.css), where `bookList` above stands in for
+	     it inside the reading bar's contents panel. `variant="sidebar"` packs
+	     the books into a denser grid than that panel's chips, since it has a
+	     17rem column rather than a phone's width to put them in; both hang
+	     their open chapter panel off the viewport with `position: fixed`
+	     rather than `'grid'`'s `absolute` (BookChapterPicker's own docblock),
+	     because this sticky column and that panel's body are each their own
+	     `overflow-y: auto` scroll container and would clip it. Omitted
 	     entirely in compare mode — see app.css's `.reading-layout.compare`
 	     docblock: the second text column takes the room the sidebar would
 	     have used, at every width, rather than the other way around. -->
@@ -891,20 +891,12 @@
 	   cites the chapter, not one per work type: the reader looks up a verse,
 	   so the verse scaffold is built once and each work names itself inside
 	   the row. */
-	/* Two BookChapterPicker instances, CSS-swapped by breakpoint rather than
-	   one instance whose variant is decided in JS: a JS-decided swap would
-	   have to pick a default before hydration resolves the real viewport,
-	   then possibly relocate the picker across the page once it does — this
-	   used to also matter for reading without JavaScript at all, back when
-	   every route was prerendered (see `citedRange`'s docblock above, which
-	   no longer makes that claim now that `ssr = false` means the whole
-	   chapter needs JavaScript to render), which is both a layout jump and
-	   a NOOP on a viewport where the guess was already right. Two static
-	   instances plus a boundary that exactly matches `.reading-layout`'s own
-	   80rem (app.css) cost one extra hidden DOM subtree instead. */
-	@media (min-width: 80rem) {
-		.mobile-picker {
-			display: none;
-		}
-	}
+	/* The narrow-screen picker is no longer here to hide: it moved into the
+	   reading bar's contents panel (`TocMenu`), which app.css shows and hides
+	   against the same handover as `.reading-aside` — including the wider
+	   boundary compare mode moves it to, which this rule never knew about.
+	   Two BookChapterPicker instances are still mounted at once and swapped by
+	   breakpoint rather than one whose variant is decided in JS; that part of
+	   the arrangement is unchanged, and its reasoning now lives with the CSS
+	   that performs it. */
 </style>

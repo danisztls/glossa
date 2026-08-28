@@ -1307,8 +1307,8 @@ input {
  * the route puts the aside FIRST in source order so a phone reader meets it
  * ahead of the Rosary's text. `/documenta` solves the same problem the other
  * way, with `.toc-inline` as separate markup, because a document's tree is
- * too long to lead with. The remaining five have no mobile counterpart at
- * all — which is a real gap, not a decision (see docs/decisions.md).
+ * too long to lead with. The remaining five hand their list to the reading
+ * bar instead — see the block below, which is where that gap was closed.
  *
  * Hidden in CSS rather than by the routes omitting the element, for the same
  * reason `.reading-layout.compare` gives below: keeping it in the markup is

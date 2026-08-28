@@ -167,7 +167,14 @@
 	 * where scrolling anything is a no-op. So the panel does it itself, after
 	 * `showModal()`. Found by `aria-current`, which the row carries anyway,
 	 * rather than by the child's element id — that id is per-instance
-	 * (`$props.id()`) and deliberately unknowable from out here.
+	 * (`$props.id()`) and deliberately unknowable from out here. ANY value of
+	 * it, not `page` alone: the three lists that render in here mark their
+	 * current row with the value that describes what the row is —
+	 * `StructureSidebarToc` a `page`, `IndexSidebarToc` a `location` (a
+	 * heading within this page), `BookChapterPicker` a plain `true` (the book
+	 * whose chapter is open, on a button that opens a panel rather than
+	 * navigating). All three are the row the reader is standing on, which is
+	 * the only thing this asks.
 	 *
 	 * Sets `scrollTop` rather than calling `scrollIntoView`, for the reason
 	 * `IndexSidebarToc` gives at length: `scrollIntoView` walks every
@@ -183,7 +190,7 @@
 	 */
 	function revealCurrent() {
 		const box = dialogEl?.querySelector<HTMLElement>('.sheet-body');
-		const row = box?.querySelector<HTMLElement>('[aria-current="page"]');
+		const row = box?.querySelector<HTMLElement>('[aria-current]:not([aria-current="false"])');
 		if (!box || !row) return;
 		const rowBox = row.getBoundingClientRect();
 		const boxBox = box.getBoundingClientRect();

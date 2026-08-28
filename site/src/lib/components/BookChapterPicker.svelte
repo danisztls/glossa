@@ -19,7 +19,7 @@
 	 * page ever renders more than one book's worth of chapter links.
 	 *
 	 * The chapter grid is an OUT-OF-FLOW panel anchored to its book button,
-	 * not an in-flow block, in BOTH variants (see `variant` below). In flow,
+	 * not an in-flow block, in EVERY variant (see `variant` below). In flow,
 	 * on a wrapped grid of book chips, opening a book mid-grid pushed every
 	 * later book onto a new row (or further down a column) and the whole
 	 * list jumped under the reader's cursor — the book they were aiming at
@@ -41,36 +41,50 @@
 	 * it is redundant, and at 73 buttons the glyphs were most of the grid's
 	 * visual noise.
 	 *
-	 * TWO VARIANTS, because the two places this component is used differ in
-	 * one thing: what the panel has to escape INTO. `'grid'` (default) is
-	 * the `/scriptura` landing route and the reading view's mobile/collapsed
-	 * picker — both sit in ordinary document flow, so the panel is
-	 * `position: absolute`, anchored to its own `.book-item` and scrolling
-	 * with the page exactly as the button does. `'sidebar'` is the reading
-	 * view's desktop right column (`.reading-aside`, app.css) — its own
-	 * `overflow-y: auto` scroll container, which would clip an `absolute`
-	 * panel the moment it needed to be wider or taller than the 17rem column
-	 * it lives in. `position: fixed` escapes that: nothing between the
-	 * button and the viewport sets `transform`, `filter`, `contain` or
-	 * `will-change` (any of which would re-capture a fixed descendant into
-	 * its own containing block instead), so the sidebar's panel floats over
-	 * the page next to the aside rather than being cut off at its edge, and
-	 * opening it cannot resize the aside itself either.
+	 * THREE VARIANTS, differing in two things: what the chapter panel has to
+	 * escape INTO, and whether the books need a disclosure of their own.
 	 *
-	 * Both variants share the same `Placement` measurement and dismiss
+	 * `'grid'` (default) is the `/scriptura` landing route — ordinary
+	 * document flow, so the chapter panel is `position: absolute`, anchored
+	 * to its own `.book-item` and scrolling with the page exactly as the
+	 * button does.
+	 *
+	 * `'sidebar'` is the reading view's desktop right column
+	 * (`.reading-aside`, app.css) and `'panel'` is the reading bar's
+	 * contents sheet (`TocMenu`, rendered into `.sheet-body`). Both of those
+	 * are their own `overflow-y: auto` scroll containers, which would clip an
+	 * `absolute` panel the moment it needed to be wider or taller than the
+	 * box it lives in — the 17rem column, or the 22rem card the sheet becomes
+	 * above 48rem. `position: fixed` escapes both: nothing between the button
+	 * and the viewport sets `transform`, `filter`, `contain` or `will-change`
+	 * (any of which would re-capture a fixed descendant into its own
+	 * containing block instead), so the panel floats over the page rather
+	 * than being cut off, and opening it cannot resize its host either. A
+	 * `<dialog>` in the top layer is no exception: `.sheet` and
+	 * `.sheet-panel` set position and flex and nothing that establishes a
+	 * containing block, and the panel still PAINTS inside the dialog's own
+	 * stacking context, which is above everything.
+	 *
+	 * All three share the same `Placement` measurement and dismiss
 	 * machinery; only the positioning mode and the coordinate space differ —
 	 * `offsetPx`, relative to `.book-item`'s own box, for `'grid'`'s
 	 * `absolute`; `leftPx`/`topPx`/`bottomPx`, measured against the viewport,
-	 * for `'sidebar'`'s `fixed`. See `measurePlacement`.
+	 * for the two `fixed` ones. See `measurePlacement`.
 	 *
-	 * `collapsible` is ignored when `variant === 'sidebar'`: the sidebar is
-	 * the reading view's persistent nav column, so it always renders open
-	 * and browsable rather than behind a `<summary>` — the reading route
-	 * that uses it renders TWO instances (one `'grid'`/collapsible, hidden
-	 * above the desktop breakpoint; one `'sidebar'`, hidden below it) rather
-	 * than switching one instance's variant at runtime, so a reader with no
-	 * JavaScript still gets the right one on first paint and nothing ever
-	 * has to relocate itself across the page after the fact.
+	 * What separates `'panel'` from `'sidebar'` is only the BOOK list, not
+	 * the chapter panel: the sheet is as wide as the phone, so it keeps
+	 * `'grid'`'s wrapped chips with the books' full names, where the sidebar
+	 * has to compress 73 of them into a 17rem column of truncated cells.
+	 *
+	 * `collapsible` is ignored by both of those: each is already inside
+	 * something a reader opened — a persistent nav column, or a sheet summoned
+	 * from the reading bar — so a `<summary>` there would be a disclosure
+	 * inside a disclosure. The reading route renders a `'sidebar'` and a
+	 * `'panel'` instance at once, one hidden by the breakpoint that reveals
+	 * the other (app.css, `.reading-aside`/`.toc-menu`), rather than
+	 * switching one instance's variant at runtime: a reader gets the right
+	 * one on first paint and nothing ever has to relocate itself across the
+	 * page after the fact.
 	 */
 	import { afterNavigate } from '$app/navigation';
 	import { getBook, hasIntroForWork, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
@@ -84,10 +98,12 @@
 		currentOsis?: string;
 		currentChapter?: number;
 		collapsible?: boolean;
-		/** `'grid'` (default): wrapped flex grid + `absolute` popover anchored
-		    to `.book-item`. `'sidebar'`: wrapped grid too, but a `fixed`
-		    popover anchored to the viewport, for `.reading-aside`. */
-		variant?: 'grid' | 'sidebar';
+		/** `'grid'` (default): wrapped flex grid of chips + an `absolute`
+		    popover anchored to `.book-item`. `'sidebar'`: a compact grid of
+		    truncated cells + a `fixed` popover anchored to the viewport, for
+		    `.reading-aside`. `'panel'`: `'grid'`'s chips with `'sidebar'`'s
+		    `fixed` popover, for the reading bar's contents sheet. */
+		variant?: 'grid' | 'sidebar' | 'panel';
 	}
 
 	let {
@@ -99,6 +115,10 @@
 	}: Props = $props();
 
 	const workId = $derived(currentWorkId);
+	/** Whether the chapter panel is `fixed` rather than `absolute` — true for
+	 *  the two variants that live inside a scroll container of their own. The
+	 *  book list's own layout is a separate question; see the docblock. */
+	const floating = $derived(variant !== 'grid');
 	const books = listCanonicalBooks();
 
 	/** 46 OT + 27 NT = 73, in that fixed order — docs/corpus-schema.md "Canonical book order". */
@@ -205,15 +225,15 @@
 
 	let placement: Placement | null = $state(null);
 
-	// `variant` is part of the id: the reading route mounts a `'grid'` and a
+	// `variant` is part of the id: the reading route mounts a `'panel'` and a
 	// `'sidebar'` instance of this component AT THE SAME TIME, one hidden by
-	// a CSS breakpoint rather than unmounted (see that route's own comment on
-	// `.mobile-picker`/`.desktop-picker`), so a plain `book-btn-${osis}` would
-	// exist twice in the DOM — and `getElementById` returns whichever comes
-	// first in source order, hidden or not. On desktop that was the mobile
-	// instance's (CSS-`display:none`) button, whose `getBoundingClientRect()`
-	// is all zeros — every sidebar panel opened anchored to the viewport's
-	// top-left corner instead of its own button.
+	// a CSS breakpoint rather than unmounted (`.reading-aside`/`.toc-menu`,
+	// app.css), so a plain `book-btn-${osis}` would exist twice in the DOM —
+	// and `getElementById` returns whichever comes first in source order,
+	// hidden or not. On desktop that was the narrow-screen instance's
+	// (CSS-`display:none`) button, whose `getBoundingClientRect()` is all
+	// zeros — every sidebar panel opened anchored to the viewport's top-left
+	// corner instead of its own button.
 	function measurePlacement(osis: string): Placement | null {
 		const item = document.getElementById(`book-btn-${variant}-${osis}`)?.closest('.book-item');
 		if (!(item instanceof HTMLElement)) return null;
@@ -311,8 +331,16 @@
 		closePanel();
 	}
 
+	// `preventDefault` because this component is now rendered inside a modal
+	// `<dialog>` too (`TocMenu`'s contents sheet), where Escape is ALSO the way
+	// out of the sheet: without it one keystroke dismisses both, and a reader
+	// closing a chapter panel loses the book list behind it. A prevented
+	// keydown is what suppresses the browser's close request; where a browser
+	// declines to honour that, the outcome is the one this replaces.
 	function onWindowKeydown(e: KeyboardEvent) {
-		if (openOsis && e.key === 'Escape') closePanel();
+		if (!openOsis || e.key !== 'Escape') return;
+		e.preventDefault();
+		closePanel();
 	}
 
 	// A resize (or a phone rotating, or a browser zoom step) changes every
@@ -325,6 +353,16 @@
 		placement = measurePlacement(openOsis);
 	}
 
+	// The same correction for the other way an anchor moves under a panel that
+	// was placed against the viewport. `'grid'` is excluded rather than merely
+	// left harmless: its panel is `absolute` inside `.book-item`, so it is
+	// already carried along by whatever scrolled, and re-measuring would be
+	// work done on every scroll event of every page this component sits on.
+	function onWindowScroll() {
+		if (!openOsis || !floating) return;
+		placement = measurePlacement(openOsis);
+	}
+
 	/**
 	 * The panel's inline styles.
 	 *
@@ -334,11 +372,11 @@
 	 * with no JavaScript. Everything else here is `placement`, which
 	 * supersedes that CSS with numbers measured against the real viewport.
 	 *
-	 * The two variants diverge only in WHICH coordinates they emit:
-	 * `'grid'`'s `absolute` panel takes `inset-inline-start` relative to
-	 * `.book-item`; `'sidebar'`'s `fixed` panel takes an absolute
-	 * `inset-inline-start` plus a `top` or `bottom`, since it has no
-	 * containing block of its own to measure against.
+	 * The variants diverge only in WHICH coordinates they emit: `'grid'`'s
+	 * `absolute` panel takes `inset-inline-start` relative to `.book-item`;
+	 * a `fixed` panel takes an absolute `inset-inline-start` plus a `top` or
+	 * `bottom`, since it has no containing block of its own to measure
+	 * against.
 	 */
 	function panelStyle(book: CanonicalBook): string {
 		const decls = [`--chapter-cols: ${Math.min(MAX_CHAPTER_COLS, book.chapters.length)}`];
@@ -379,7 +417,19 @@
 	}
 </script>
 
-<svelte:window onclick={onWindowClick} onkeydown={onWindowKeydown} onresize={onWindowResize} />
+<!-- Scroll in the CAPTURE phase, because a `scroll` event does not bubble:
+     the two `fixed` variants are anchored to a button inside a scroll box of
+     their own (`.reading-aside`, `.sheet-body`), and a panel measured against
+     the viewport does not follow that box when it scrolls. Capturing is what
+     lets one window listener hear a descendant's scroll — and `onWindowScroll`
+     is a no-op for `'grid'`, whose `absolute` panel scrolls with its own
+     anchor and has nothing to correct. -->
+<svelte:window
+	onclick={onWindowClick}
+	onkeydown={onWindowKeydown}
+	onresize={onWindowResize}
+	onscrollcapture={onWindowScroll}
+/>
 
 {#snippet groups()}
 	{#each testaments as group (group.key)}
@@ -396,6 +446,7 @@
 							class:sidebar={variant === 'sidebar'}
 							class:current={book.osis === currentOsis}
 							class:open={isOpen}
+							aria-current={book.osis === currentOsis ? 'true' : undefined}
 							aria-expanded={isOpen}
 							aria-controls={`chapters-${variant}-${book.osis}`}
 							onclick={() => toggleBook(book.osis)}
@@ -417,7 +468,7 @@
 	<div
 		id={`chapters-${variant}-${book.osis}`}
 		class="chapters"
-		class:sidebar={variant === 'sidebar'}
+		class:floating
 		class:flip={placement?.flip}
 		style={panelStyle(book)}
 		role="group"
@@ -447,9 +498,14 @@
 	</div>
 {/snippet}
 
-{#if variant === 'sidebar'}
+{#if variant !== 'grid'}
 	<!-- Always open — see the docblock's "collapsible is ignored" note. -->
-	<div class="picker-body sidebar" data-link-preview="off">
+	<div
+		class="picker-body"
+		class:sidebar={variant === 'sidebar'}
+		class:panel={variant === 'panel'}
+		data-link-preview="off"
+	>
 		{@render groups()}
 	</div>
 {:else if collapsible}
@@ -482,6 +538,14 @@
 
 	.picker-body.standalone {
 		font-size: 0.95rem;
+	}
+
+	/* No top margin in the sheet: `.sheet-head` and `.sheet-body`'s own padding
+	   (app.css) already set this list off from the panel's title. The margin
+	   the other forms carry is what separates them from the text or the
+	   `<summary>` above them, and neither is there. */
+	.picker-body.panel {
+		margin-top: 0;
 	}
 
 	/* The sidebar copy lives inside `.reading-aside`, already at 0.9rem
@@ -665,9 +729,9 @@
 	/* Opens upward instead of downward, for a book low enough on the screen
 	   that there is more room above it than below. Which way round is
 	   `measurePlacement`'s call — this is only the two anchors, and only
-	   applies to `'grid'`: `'sidebar'` sets `top`/`bottom` directly as an
-	   inline style instead (`panelStyle`), since a `fixed` panel's flip has
-	   no shared `100%` reference to offset from. */
+	   applies to `'grid'`: the floating variants set `top`/`bottom` directly
+	   as an inline style instead (`panelStyle`), since a `fixed` panel's flip
+	   has no shared `100%` reference to offset from. */
 	.chapters.flip {
 		top: auto;
 		bottom: calc(100% + 0.35rem);
@@ -678,17 +742,22 @@
 	   `panelStyle`, from `measurePlacement`'s `leftPx`/`topPx`/`bottomPx`)
 	   instead of an offset from `.book-item`.
 
-	   `.reading-aside` (app.css) is its own `overflow-y: auto` scroll
-	   container, which clips anything `absolute` the moment it escapes the
-	   aside's own box — exactly what a chapter panel wider than the 17rem
-	   column needs to do for most books. `fixed` doesn't have that problem:
-	   its containing block is the viewport, not the nearest scrolling
-	   ancestor, so the panel floats over the page next to the aside instead
-	   of being cut off at its edge. (Confirmed nothing between here and the
+	   `.reading-aside` and `.sheet-body` (both app.css) are each their own
+	   `overflow-y: auto` scroll container, which clips anything `absolute`
+	   the moment it escapes that box — exactly what a chapter panel wider
+	   than the 17rem column, or than the 22rem card the contents sheet
+	   becomes above 48rem, needs to do for most books. `fixed` doesn't have
+	   that problem: its containing block is the viewport, not the nearest
+	   scrolling ancestor, so the panel floats over the page instead of being
+	   cut off at its host's edge. (Confirmed nothing between here and the
 	   viewport sets `transform`, `filter`, `contain` or `will-change` — any
 	   of those would re-capture a `fixed` descendant into a containing block
 	   of their own instead of the viewport, and quietly reintroduce the
-	   clipping this is meant to avoid.)
+	   clipping this is meant to avoid. That includes the sheet: `.sheet` and
+	   `.sheet-panel` set position and flex and nothing else. A `<dialog>`
+	   opened with `showModal()` is in the TOP LAYER, which is a stacking
+	   context but not a containing block for fixed descendants — so the panel
+	   is positioned against the viewport and painted above the page.)
 
 	   `top`/`bottom`/`inset-inline-start` are left `auto` here rather than
 	   given a CSS fallback the way `'grid'`'s are: a `fixed` box with no
@@ -698,7 +767,7 @@
 	   at some nonsensical position computed from a `calc(100%, …)` that
 	   would resolve against the viewport instead of `.book-item` once
 	   `position` is `fixed`. */
-	.chapters.sidebar {
+	.chapters.floating {
 		position: fixed;
 		top: auto;
 		bottom: auto;
