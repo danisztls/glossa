@@ -107,6 +107,7 @@ from .overrides import OverrideDriftError, apply_overrides, load_overrides
 from .paths import (
     ABSENT_SOURCES_PATH,
     CORRECTIONS_DIR,
+    DORE_ANCHORS_PATH,
     OVERRIDES_DIR,
     TRANSLATIONS_CHECKED_PATH,
     build_root,
@@ -135,6 +136,7 @@ __all__ = [
     "CHAPTER_OPENING_PUNCT",
     "CORRECTIONS_DIR",
     "DEFINITIVE_ABSENCE",
+    "DORE_ANCHORS_PATH",
     "OVERRIDES_DIR",
     "TRANSLATIONS_CHECKED_PATH",
     "AbsentSources",

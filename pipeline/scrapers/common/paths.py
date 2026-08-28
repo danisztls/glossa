@@ -26,6 +26,7 @@ CORRECTIONS_DIR = _REPO_ROOT / "pipeline" / "corrections"
 OVERRIDES_DIR = _REPO_ROOT / "pipeline" / "overrides"
 ABSENT_SOURCES_PATH = _REPO_ROOT / "pipeline" / "absent-sources.json"
 TRANSLATIONS_CHECKED_PATH = _REPO_ROOT / "pipeline" / "translations-checked.json"
+DORE_ANCHORS_PATH = _REPO_ROOT / "pipeline" / "dore-anchors.json"
 
 #: Default corpus location: a sibling checkout of the private corpus repository.
 _DEFAULT_CORPUS_DIR = _REPO_ROOT.parent / "glossa-corpus"

@@ -1,0 +1,7506 @@
+{
+  "_": [
+    "The 241 Doré plates, each resolved to the verse it depicts.",
+    "",
+    "THIS FILE IS THE DECISION, not a cache of one. It was produced once, on",
+    "2026-08-28, by a reconciliation that read the caption printed under each",
+    "plate with OCR and voted it against the Wikipedia table and",
+    "catholic-resources.org's own index; that code has been deleted, because a",
+    "vote whose result is written down here has nothing left to decide. Its",
+    "evidence did not go with it: every reading is kept below, whether it won",
+    "or lost, so a disagreement can still be argued from what was actually",
+    "read. See git history for the machinery, and docs/decisions.md.",
+    "",
+    "WHY IT IS TRACKED HERE rather than in the corpus. `build/` is untracked",
+    "and regenerates from `raw/`; this does not regenerate from anything. OCR",
+    "is not a pure function of a file -- a different tesseract build reads a",
+    "digit differently -- so re-deriving these would have been a re-decision",
+    "wearing a rebuild's clothes, with no diff anywhere to show it. It sits",
+    "beside absent-sources.json and translations-checked.json, which are the",
+    "project's other two records of knowledge derived where there is no page",
+    "for it to sit beside (CLAUDE.md, 'The corpus').",
+    "",
+    "TO CHANGE AN ANCHOR, edit it here and say why in the commit. A plate",
+    "whose verse is wrong is a one-line fix; there is no pipeline to re-run."
+  ],
+  "decided_at": "2026-08-28",
+  "ocr_engine": "tesseract 5.5.3",
+  "witnesses": {
+    "caption": "The caption printed under the plate in the Dover reproduction, read by OCR. Preferred for the verse: it is the plate's own statement of what it depicts.",
+    "wikipedia": "en.wikipedia.org's table of the Doré Bible illustrations, paired to a plate by caption title rather than by number -- the two indexes number the set differently.",
+    "index": "catholic-resources.org's own index page, which names a book and chapter but no verse."
+  },
+  "plates": [
+    {
+      "plate_id": "OT-001",
+      "number": 1,
+      "osis": "gen",
+      "chapter": 1,
+      "verse": 2,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Creation of Light",
+      "caption_title": "THE CREATION OF LIGHT",
+      "caption": {
+        "osis": "gen",
+        "chapter": 1,
+        "verse": 2
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 1,
+        "verse": 3
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 1,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-001.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-002",
+      "number": 2,
+      "osis": "gen",
+      "chapter": 2,
+      "verse": 23,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Creation of Eve",
+      "caption_title": "THE FORMATION OF EVE",
+      "caption": {
+        "osis": "gen",
+        "chapter": 2,
+        "verse": 23
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 2,
+        "verse": 21
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 2,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-002.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-003",
+      "number": 3,
+      "osis": "gen",
+      "chapter": 3,
+      "verse": 24,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Adam and Eve Are Driven out of Eden",
+      "caption_title": "ADAM AND EVE DRIVEN OUT OF EDEN",
+      "caption": {
+        "osis": "gen",
+        "chapter": 3,
+        "verse": 24
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 3,
+        "verse": 24
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 3,
+        "verse": null
+      },
+      "wiki_number": 3,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-003.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-004",
+      "number": 4,
+      "osis": "gen",
+      "chapter": 4,
+      "verse": 2,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Cain and Abel Offer Their Sacrifices",
+      "caption_title": "CAIN AND ABEL OFFERING THEIR SACRIFICES",
+      "caption": {
+        "osis": "gen",
+        "chapter": 4,
+        "verse": 2
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 4,
+        "verse": 3
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 4,
+        "verse": null
+      },
+      "wiki_number": 4,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-004.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-005",
+      "number": 5,
+      "osis": "gen",
+      "chapter": 4,
+      "verse": 8,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Cain Slays Abel",
+      "caption_title": "THE DEATH OF ABEL",
+      "caption": {
+        "osis": "gen",
+        "chapter": 4,
+        "verse": 8
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 4,
+        "verse": 8
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 4,
+        "verse": null
+      },
+      "wiki_number": 5,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-005.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-006",
+      "number": 6,
+      "osis": "gen",
+      "chapter": 6,
+      "verse": 7,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The World Is Destroyed by Water",
+      "caption_title": "THE WORLD DESTROYED BY WATER",
+      "caption": {
+        "osis": "gen",
+        "chapter": 6,
+        "verse": 7
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 7,
+        "verse": 24
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 6,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-006.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-007",
+      "number": 7,
+      "osis": "gen",
+      "chapter": 7,
+      "verse": 23,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Great Flood",
+      "caption_title": null,
+      "caption": {
+        "osis": "gen",
+        "chapter": 7,
+        "verse": 23
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 8,
+        "verse": 3
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 7,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-007.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-008",
+      "number": 8,
+      "osis": "gen",
+      "chapter": 8,
+      "verse": 11,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "A Dove Is Sent Forth from the Ark",
+      "caption_title": "THE DOVE SENT FORTH FROM THE ARK",
+      "caption": {
+        "osis": "gen",
+        "chapter": 8,
+        "verse": 11
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 8,
+        "verse": 11
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 8,
+        "verse": null
+      },
+      "wiki_number": 8,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-008.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-009",
+      "number": 9,
+      "osis": "gen",
+      "chapter": 9,
+      "verse": 22,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Noah Curses Ham and Canaan",
+      "caption_title": "NOAH CURSING CANAAN",
+      "caption": {
+        "osis": "gen",
+        "chapter": 9,
+        "verse": 22
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 9,
+        "verse": 24
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 9,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-009.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-010",
+      "number": 10,
+      "osis": "gen",
+      "chapter": 11,
+      "verse": 4,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Tower of Babel",
+      "caption_title": "THE CONFUSION OF TONGUES",
+      "caption": {
+        "osis": "gen",
+        "chapter": 11,
+        "verse": 4
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 11,
+        "verse": 6
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 11,
+        "verse": null
+      },
+      "wiki_number": 10,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-010.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-011",
+      "number": 11,
+      "osis": "gen",
+      "chapter": 12,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Abraham Goes to the Land of Canaan",
+      "caption_title": "ABRAHAM JOURNEYING INTO THE LAND OF CANAAN",
+      "caption": {
+        "osis": "gen",
+        "chapter": 12,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 12,
+        "verse": 1
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 12,
+        "verse": null
+      },
+      "wiki_number": 11,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-011.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-012",
+      "number": 12,
+      "osis": "gen",
+      "chapter": 18,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Abraham and the Three Angels",
+      "caption_title": "ABRAHAM AND THE THREE ANGELS",
+      "caption": {
+        "osis": "gen",
+        "chapter": 18,
+        "verse": 9
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 18,
+        "verse": 9
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 18,
+        "verse": null
+      },
+      "wiki_number": 12,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-012.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-013",
+      "number": 13,
+      "osis": "gen",
+      "chapter": 19,
+      "verse": 24,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Lot Flees as Sodom and Gomorrah Burn",
+      "caption_title": "THE FLIGHT OF LOT",
+      "caption": {
+        "osis": "gen",
+        "chapter": 19,
+        "verse": 24
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 19,
+        "verse": 24
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 13,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-013.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-014",
+      "number": 14,
+      "osis": "gen",
+      "chapter": 21,
+      "verse": 14,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Abraham Sends Hagar and Ishmael Away",
+      "caption_title": "THE EXPULSION OF ISHMAEL AND HIS MOTHER",
+      "caption": {
+        "osis": "gen",
+        "chapter": 21,
+        "verse": 14
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 21,
+        "verse": 14
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 14,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-014.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-015",
+      "number": 15,
+      "osis": "gen",
+      "chapter": 21,
+      "verse": 17,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Hagar and Ishmael in the Wilderness",
+      "caption_title": "HAGAR AND ISHMAEL IN THE WILDERNESS",
+      "caption": {
+        "osis": "gen",
+        "chapter": 21,
+        "verse": 17
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 21,
+        "verse": 17
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 15,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-015.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-016",
+      "number": 16,
+      "osis": "gen",
+      "chapter": 22,
+      "verse": 11,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Testing of Abraham's Faith",
+      "caption_title": "THE TRIAL OF ABRAHAM’S FAITH",
+      "caption": {
+        "osis": "gen",
+        "chapter": 22,
+        "verse": 11
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 22,
+        "verse": 10
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 22,
+        "verse": null
+      },
+      "wiki_number": 16,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-016.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-017",
+      "number": 17,
+      "osis": "gen",
+      "chapter": 23,
+      "verse": 19,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Burial of Sarah",
+      "caption_title": "THE BURIAL OF SARAH",
+      "caption": {
+        "osis": "gen",
+        "chapter": 23,
+        "verse": 19
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 23,
+        "verse": 19
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 23,
+        "verse": null
+      },
+      "wiki_number": 17,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-017.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-018",
+      "number": 18,
+      "osis": "gen",
+      "chapter": 24,
+      "verse": 16,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Eliezer and Rebekah at the Well",
+      "caption_title": "ELIEZER AND REBEKAH",
+      "caption": {
+        "osis": "gen",
+        "chapter": 24,
+        "verse": 16
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 24,
+        "verse": 16
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 24,
+        "verse": null
+      },
+      "wiki_number": 18,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-018.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-019",
+      "number": 19,
+      "osis": "gen",
+      "chapter": 24,
+      "verse": 65,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Meeting of Isaac and Rebekah",
+      "caption_title": "THE MEETING OF ISAAC AND REBEKAH",
+      "caption": {
+        "osis": "gen",
+        "chapter": 24,
+        "verse": 65
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 24,
+        "verse": 65
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 24,
+        "verse": null
+      },
+      "wiki_number": 19,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-019.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-020",
+      "number": 20,
+      "osis": "gen",
+      "chapter": 27,
+      "verse": 22,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Isaac Blesses Jacob",
+      "caption_title": "ISAAC BLESSING JACOB",
+      "caption": {
+        "osis": "gen",
+        "chapter": 27,
+        "verse": 22
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 27,
+        "verse": 29
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 27,
+        "verse": null
+      },
+      "wiki_number": 20,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-020.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-021",
+      "number": 21,
+      "osis": "gen",
+      "chapter": 28,
+      "verse": 12,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jacob's Dream",
+      "caption_title": "g | JACOB’S DREAM",
+      "caption": {
+        "osis": "gen",
+        "chapter": 28,
+        "verse": 12
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 28,
+        "verse": 12
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 28,
+        "verse": null
+      },
+      "wiki_number": 21,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-021.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-022",
+      "number": 22,
+      "osis": "gen",
+      "chapter": 29,
+      "verse": 20,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jacob Tends Laban's Flocks and Meets Rachel",
+      "caption_title": "JACOB KEEPING LABAN’S FLOCKS",
+      "caption": {
+        "osis": "gen",
+        "chapter": 29,
+        "verse": 20
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 29,
+        "verse": 1
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 29,
+        "verse": null
+      },
+      "wiki_number": 22,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-022.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-023",
+      "number": 23,
+      "osis": "gen",
+      "chapter": 32,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jacob Prays for Protection",
+      "caption_title": "THE PRAYER OF JACOB",
+      "caption": {
+        "osis": "gen",
+        "chapter": 32,
+        "verse": 9
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 32,
+        "verse": 11
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 32,
+        "verse": null
+      },
+      "wiki_number": 23,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-023.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-024",
+      "number": 24,
+      "osis": "gen",
+      "chapter": 32,
+      "verse": 24,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jacob Wrestles with the Angel",
+      "caption_title": "JACOB WRESTLING WITH THE ANGEL",
+      "caption": {
+        "osis": "gen",
+        "chapter": 32,
+        "verse": 24
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 32,
+        "verse": 24
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 32,
+        "verse": null
+      },
+      "wiki_number": 24,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-024.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-025",
+      "number": 25,
+      "osis": "gen",
+      "chapter": 33,
+      "verse": 4,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jacob and Esau Meet",
+      "caption_title": "THE MEETING OF JACOB AND ESAU",
+      "caption": {
+        "osis": "gen",
+        "chapter": 33,
+        "verse": 4
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 33,
+        "verse": 3
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 33,
+        "verse": null
+      },
+      "wiki_number": 25,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-025.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-026",
+      "number": 26,
+      "osis": "gen",
+      "chapter": 37,
+      "verse": 28,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Joseph Is Sold by His Brothers",
+      "caption_title": "JOSEPH SOLD BY HIS BRETHREN",
+      "caption": {
+        "osis": "gen",
+        "chapter": 37,
+        "verse": 28
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 37,
+        "verse": 28
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 37,
+        "verse": null
+      },
+      "wiki_number": 26,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-026.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-027",
+      "number": 27,
+      "osis": "gen",
+      "chapter": 41,
+      "verse": 25,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Joseph Interprets Pharaoh's Dream",
+      "caption_title": "JOSEPH INTERPRETING PHARAOH’S DREAM",
+      "caption": {
+        "osis": "gen",
+        "chapter": 41,
+        "verse": 25
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 41,
+        "verse": 25
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 41,
+        "verse": null
+      },
+      "wiki_number": 27,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-027.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-028",
+      "number": 28,
+      "osis": "gen",
+      "chapter": 45,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Joseph Reveals Himself to His Brothers",
+      "caption_title": "JOSEPH MAKES HIMSELF ’KNOWN TO HIS BRETHREN",
+      "caption": {
+        "osis": "gen",
+        "chapter": 45,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 45,
+        "verse": 1
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 45,
+        "verse": null
+      },
+      "wiki_number": 28,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-028.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-029",
+      "number": 29,
+      "osis": "gen",
+      "chapter": 46,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jacob Goes to Egypt",
+      "caption_title": "JACOB GOETH INTO EGYPT",
+      "caption": {
+        "osis": "gen",
+        "chapter": 46,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "gen",
+        "chapter": 46,
+        "verse": 5
+      },
+      "index": {
+        "osis": "gen",
+        "chapter": 46,
+        "verse": null
+      },
+      "wiki_number": 29,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-029.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-030",
+      "number": 30,
+      "osis": "exod",
+      "chapter": 2,
+      "verse": 3,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Child Moses on the Nile",
+      "caption_title": "THE CHILD MQSES ‘ON: THE NILE",
+      "caption": {
+        "osis": "exod",
+        "chapter": 2,
+        "verse": 3
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 2,
+        "verse": 3
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 30,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-030.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-031",
+      "number": 31,
+      "osis": "exod",
+      "chapter": 2,
+      "verse": 6,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Finding of Moses",
+      "caption_title": "THE FINDING OF MOSES",
+      "caption": {
+        "osis": "exod",
+        "chapter": 2,
+        "verse": 6
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 2,
+        "verse": 6
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 31,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-031.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-032",
+      "number": 32,
+      "osis": "exod",
+      "chapter": 7,
+      "verse": 10,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Moses and Aaron Appear before Pharaoh",
+      "caption_title": "MOSES AND AARON BEFORE PHARAOH",
+      "caption": {
+        "osis": "exod",
+        "chapter": 7,
+        "verse": 10
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 7,
+        "verse": 10
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 32,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-032.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-033",
+      "number": 33,
+      "osis": "exod",
+      "chapter": 9,
+      "verse": 2,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Fifth Plague: Livestock Disease",
+      "caption_title": "THE MURRAIN OF BEASTS",
+      "caption": {
+        "osis": "exod",
+        "chapter": 9,
+        "verse": 2
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 9,
+        "verse": 2
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 33,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-033.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-034",
+      "number": 34,
+      "osis": "exod",
+      "chapter": 10,
+      "verse": 22,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Ninth Plague: Darkness",
+      "caption_title": "THE PLAGUE OF DARKNESS",
+      "caption": {
+        "osis": "exod",
+        "chapter": 10,
+        "verse": 22
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 10,
+        "verse": 22
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 34,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-034.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-035",
+      "number": 35,
+      "osis": "exod",
+      "chapter": 12,
+      "verse": 29,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Firstborn of the Egyptians Are Slain",
+      "caption_title": "THE FIRSTBORN SLAIN",
+      "caption": {
+        "osis": "exod",
+        "chapter": 12,
+        "verse": 29
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 12,
+        "verse": 29
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 12,
+        "verse": null
+      },
+      "wiki_number": 35,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-035.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-036",
+      "number": 36,
+      "osis": "exod",
+      "chapter": 12,
+      "verse": 31,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Egyptians Ask Moses to Depart",
+      "caption_title": "THE EGYPTIANS URGE MOSES TO DEPART",
+      "caption": {
+        "osis": "exod",
+        "chapter": 12,
+        "verse": 31
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 12,
+        "verse": 31
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 12,
+        "verse": null
+      },
+      "wiki_number": 36,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-036.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-037",
+      "number": 37,
+      "osis": "exod",
+      "chapter": 14,
+      "verse": 27,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Egyptians Drown in the Sea",
+      "caption_title": "THE EGYPTIANS DROWNED IN THE RED SEA",
+      "caption": {
+        "osis": "exod",
+        "chapter": 14,
+        "verse": 27
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 14,
+        "verse": 27
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 14,
+        "verse": null
+      },
+      "wiki_number": 37,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-037.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-038",
+      "number": 38,
+      "osis": "exod",
+      "chapter": 17,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Moses Strikes the Rock at Horeb",
+      "caption_title": "MQOSES STRIKING THE ROCK IN HOREB",
+      "caption": {
+        "osis": "exod",
+        "chapter": 17,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 17,
+        "verse": 6
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 17,
+        "verse": null
+      },
+      "wiki_number": 38,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-038.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-039",
+      "number": 39,
+      "osis": "exod",
+      "chapter": 19,
+      "verse": 16,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Giving of the Law on Mount Sinai",
+      "caption_title": "THE GIVING OF THE LAW UPON MOUNT SINAI",
+      "caption": {
+        "osis": "exod",
+        "chapter": 19,
+        "verse": 16
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 19,
+        "verse": 18
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 39,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-039.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-040",
+      "number": 40,
+      "osis": "exod",
+      "chapter": 32,
+      "verse": 15,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Moses Comes Down from Mount Sinai",
+      "caption_title": "MOSES COMING DOWN FROM MOUNT SINAI",
+      "caption": {
+        "osis": "exod",
+        "chapter": 32,
+        "verse": 15
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 32,
+        "verse": 15
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 32,
+        "verse": null
+      },
+      "wiki_number": 40,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-040.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-041",
+      "number": 41,
+      "osis": "exod",
+      "chapter": 32,
+      "verse": 19,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Moses Breaks the Tables of the Law",
+      "caption_title": "MQOSES BREAKING THE TABLES OF THE LAW",
+      "caption": {
+        "osis": "exod",
+        "chapter": 32,
+        "verse": 19
+      },
+      "wiki": {
+        "osis": "exod",
+        "chapter": 32,
+        "verse": 19
+      },
+      "index": {
+        "osis": "exod",
+        "chapter": 32,
+        "verse": null
+      },
+      "wiki_number": 41,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-041.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-042",
+      "number": 42,
+      "osis": "num",
+      "chapter": 13,
+      "verse": 26,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Spies Return from the Promised Land",
+      "caption_title": "RETURN OF THE SPIES FROM THE LAND OF PROMISE",
+      "caption": {
+        "osis": "num",
+        "chapter": 13,
+        "verse": 26
+      },
+      "wiki": {
+        "osis": "num",
+        "chapter": 13,
+        "verse": 27
+      },
+      "index": {
+        "osis": "num",
+        "chapter": 13,
+        "verse": null
+      },
+      "wiki_number": 42,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-042.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-043",
+      "number": 43,
+      "osis": "num",
+      "chapter": 16,
+      "verse": 31,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Death of Korah, Dathan, and Abiram",
+      "caption_title": "DEATH OF KORAH, DATHAN, AND ABIRAM",
+      "caption": {
+        "osis": "num",
+        "chapter": 16,
+        "verse": 31
+      },
+      "wiki": {
+        "osis": "num",
+        "chapter": 16,
+        "verse": 32
+      },
+      "index": {
+        "osis": "num",
+        "chapter": 16,
+        "verse": null
+      },
+      "wiki_number": 43,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-043.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-044",
+      "number": 44,
+      "osis": "num",
+      "chapter": 21,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Bronze Serpent",
+      "caption_title": "THE BRAZEN SERPENT",
+      "caption": {
+        "osis": "num",
+        "chapter": 21,
+        "verse": 9
+      },
+      "wiki": {
+        "osis": "num",
+        "chapter": 21,
+        "verse": 9
+      },
+      "index": {
+        "osis": "num",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 44,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-044.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-045",
+      "number": 45,
+      "osis": "num",
+      "chapter": 22,
+      "verse": 23,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "An Angel Appears to Balaam",
+      "caption_title": "THE ANGEL APPEARING TO BALAAM",
+      "caption": {
+        "osis": "num",
+        "chapter": 22,
+        "verse": 23
+      },
+      "wiki": {
+        "osis": "num",
+        "chapter": 22,
+        "verse": 23
+      },
+      "index": {
+        "osis": "num",
+        "chapter": 22,
+        "verse": null
+      },
+      "wiki_number": 45,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-045.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-046",
+      "number": 46,
+      "osis": "josh",
+      "chapter": 3,
+      "verse": 14,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Israelites Cross the Jordan River",
+      "caption_title": "THE CHILDREN OF ISRAEL CROSSING JORDAN",
+      "caption": {
+        "osis": "josh",
+        "chapter": 3,
+        "verse": 14
+      },
+      "wiki": {
+        "osis": "josh",
+        "chapter": 3,
+        "verse": 17
+      },
+      "index": {
+        "osis": "josh",
+        "chapter": 3,
+        "verse": null
+      },
+      "wiki_number": 46,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-046.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-048",
+      "number": 48,
+      "osis": "josh",
+      "chapter": 6,
+      "verse": 20,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Walls of Jericho Fall Down",
+      "caption_title": "THE WALLS OF JERICHO FALLING DOWN",
+      "caption": {
+        "osis": "josh",
+        "chapter": 6,
+        "verse": 20
+      },
+      "wiki": {
+        "osis": "josh",
+        "chapter": 6,
+        "verse": 20
+      },
+      "index": {
+        "osis": "josh",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 48,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-048.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-049",
+      "number": 49,
+      "osis": "josh",
+      "chapter": 6,
+      "verse": 25,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Joshua Spares Rahab",
+      "caption_title": "JOSHUA SPARES RAHAB",
+      "caption": {
+        "osis": "josh",
+        "chapter": 6,
+        "verse": 25
+      },
+      "wiki": {
+        "osis": "josh",
+        "chapter": 6,
+        "verse": 25
+      },
+      "index": {
+        "osis": "josh",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 49,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-049.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-050",
+      "number": 50,
+      "osis": "josh",
+      "chapter": 7,
+      "verse": 12,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Achan Is Stoned to Death",
+      "caption_title": "THE STONING OF ACHAN",
+      "caption": {
+        "osis": "josh",
+        "chapter": 7,
+        "verse": 12
+      },
+      "wiki": {
+        "osis": "josh",
+        "chapter": 7,
+        "verse": 25
+      },
+      "index": {
+        "osis": "josh",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 50,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-050.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-051",
+      "number": 51,
+      "osis": "josh",
+      "chapter": 8,
+      "verse": 18,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Joshua Burns the Town of Ai",
+      "caption_title": "JOSHUA COMMITTING THE TOWN OF AI TO THE FLAMES",
+      "caption": {
+        "osis": "josh",
+        "chapter": 8,
+        "verse": 18
+      },
+      "wiki": {
+        "osis": "josh",
+        "chapter": 8,
+        "verse": 20
+      },
+      "index": {
+        "osis": "josh",
+        "chapter": 8,
+        "verse": null
+      },
+      "wiki_number": 51,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-051.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-052",
+      "number": 52,
+      "osis": "josh",
+      "chapter": 10,
+      "verse": 11,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Army of the Amorites Is Destroyed",
+      "caption_title": "DESTRUCTION OF THE ARMY OF THE AMORITES",
+      "caption": {
+        "osis": "josh",
+        "chapter": 10,
+        "verse": 11
+      },
+      "wiki": {
+        "osis": "josh",
+        "chapter": 10,
+        "verse": 11
+      },
+      "index": {
+        "osis": "josh",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 52,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-052.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-053",
+      "number": 53,
+      "osis": "josh",
+      "chapter": 10,
+      "verse": 13,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Joshua Commands the Sun to Stand Still",
+      "caption_title": "~ JOSHUA COMMANDING THE SUN TO STAND STILL",
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "josh",
+        "chapter": 10,
+        "verse": 13
+      },
+      "index": {
+        "osis": "josh",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 53,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-053.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-047",
+      "number": 47,
+      "osis": "josh",
+      "chapter": 5,
+      "verse": 15,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "An Angel Appears to the Israelites",
+      "caption_title": "THE ANGEL APPEARING TO JOSHUA",
+      "caption": {
+        "osis": "josh",
+        "chapter": 5,
+        "verse": 15
+      },
+      "wiki": {
+        "osis": "josh",
+        "chapter": 5,
+        "verse": 9
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 47,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-047.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-054",
+      "number": 54,
+      "osis": "judg",
+      "chapter": 4,
+      "verse": 21,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jael Kills Sisera",
+      "caption_title": "JAEL AND SISERA",
+      "caption": {
+        "osis": "judg",
+        "chapter": 4,
+        "verse": 21
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 4,
+        "verse": 21
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 4,
+        "verse": null
+      },
+      "wiki_number": 54,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-054.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-055",
+      "number": 55,
+      "osis": "judg",
+      "chapter": 5,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Deborah Praises Jael",
+      "caption_title": "DEBORAH",
+      "caption": {
+        "osis": "judg",
+        "chapter": 5,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 5,
+        "verse": 7
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 5,
+        "verse": null
+      },
+      "wiki_number": 55,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-055.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-056",
+      "number": 56,
+      "osis": "judg",
+      "chapter": 7,
+      "verse": 7,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Gideon Chooses 300 Soldiers",
+      "caption_title": "GIDEON CHOOSING HIS SOLDIERS",
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 7,
+        "verse": 7
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 56,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-056.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-057",
+      "number": 57,
+      "osis": "judg",
+      "chapter": 7,
+      "verse": 20,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Midianites Are Routed",
+      "caption_title": "THE MIDIANITES PUT TO FLIGHT",
+      "caption": {
+        "osis": "judg",
+        "chapter": 7,
+        "verse": 20
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 7,
+        "verse": 22
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 57,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-057.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-058",
+      "number": 58,
+      "osis": "judg",
+      "chapter": 9,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Death of Gideon's Sons",
+      "caption_title": "DEATH OF THE SONS OF GIDEON",
+      "caption": {
+        "osis": "judg",
+        "chapter": 9,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 9,
+        "verse": 5
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 58,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-058.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-059",
+      "number": 59,
+      "osis": "judg",
+      "chapter": 9,
+      "verse": 54,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Death of Abimelech",
+      "caption_title": "DEATH OF ABIMELECH",
+      "caption": {
+        "osis": "judg",
+        "chapter": 9,
+        "verse": 54
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 9,
+        "verse": 52
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 59,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-059.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-060",
+      "number": 60,
+      "osis": "judg",
+      "chapter": 11,
+      "verse": 30,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jephthah's Daughter Comes to Meet Her Father",
+      "caption_title": "JEPHTHAH’S DAUGHTER COMING TO MEET HER FATHER",
+      "caption": {
+        "osis": "judg",
+        "chapter": 11,
+        "verse": 30
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 11,
+        "verse": 34
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 11,
+        "verse": null
+      },
+      "wiki_number": 60,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-060.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-061",
+      "number": 61,
+      "osis": "judg",
+      "chapter": 11,
+      "verse": 37,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Israelite Women Mourn with Jephthah's Daughter",
+      "caption_title": "THE DAUGHTERS OF ISRAEL LAMENTING THE DAUGHTER OF JEPHTHAH",
+      "caption": {
+        "osis": "judg",
+        "chapter": 11,
+        "verse": 37
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 11,
+        "verse": 40
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 11,
+        "verse": null
+      },
+      "wiki_number": 61,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-061.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-062",
+      "number": 62,
+      "osis": "judg",
+      "chapter": 14,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Samson Slays a Lion",
+      "caption_title": "SAMSON SLAYING A LION",
+      "caption": {
+        "osis": "judg",
+        "chapter": 14,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 14,
+        "verse": 5
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 14,
+        "verse": null
+      },
+      "wiki_number": 62,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-062.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-063",
+      "number": 63,
+      "osis": "judg",
+      "chapter": 15,
+      "verse": 15,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Samson Destroys the Philistines with an Ass' Jawbone",
+      "caption_title": "SAMSON DESTROYING THE PHILI‘STINES WITH THE JAWBONE OF AN ASS",
+      "caption": {
+        "osis": "judg",
+        "chapter": 15,
+        "verse": 15
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 15,
+        "verse": 15
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 15,
+        "verse": null
+      },
+      "wiki_number": 63,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-063.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-064",
+      "number": 64,
+      "osis": "judg",
+      "chapter": 16,
+      "verse": 3,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "caption",
+      "title": "Samson Carries away the Gates of Gaza",
+      "caption_title": "SAMSON CARRYING AWAY THE GATES OF GAZA",
+      "caption": {
+        "osis": null,
+        "chapter": 16,
+        "verse": 3
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 16,
+        "verse": 3
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 16,
+        "verse": null
+      },
+      "wiki_number": 64,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-064.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-065",
+      "number": 65,
+      "osis": "judg",
+      "chapter": 16,
+      "verse": 16,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Samson and Delilah",
+      "caption_title": "SAMSON AND DELILAH",
+      "caption": {
+        "osis": "judg",
+        "chapter": 16,
+        "verse": 16
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 16,
+        "verse": 17
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 16,
+        "verse": null
+      },
+      "wiki_number": 65,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-065.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-066",
+      "number": 66,
+      "osis": "judg",
+      "chapter": 16,
+      "verse": 30,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Death of Samson",
+      "caption_title": "DEATH OF SAMSON",
+      "caption": {
+        "osis": "judg",
+        "chapter": 16,
+        "verse": 30
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 16,
+        "verse": 30
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 16,
+        "verse": null
+      },
+      "wiki_number": 66,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-066.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-067",
+      "number": 67,
+      "osis": "judg",
+      "chapter": 19,
+      "verse": 26,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "A Levite Finds a Woman's Corpse",
+      "caption_title": "THE LEVITE FINDING THE CORPSE OF THE WOMAN",
+      "caption": {
+        "osis": "judg",
+        "chapter": 19,
+        "verse": 26
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 19,
+        "verse": 25
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 67,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-067.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-068",
+      "number": 68,
+      "osis": "judg",
+      "chapter": 19,
+      "verse": 28,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Levite Carries the Woman's Body Away",
+      "caption_title": "THE LEVITE BEARING AWAY THE BODY OF THE WOMAN",
+      "caption": {
+        "osis": "judg",
+        "chapter": 19,
+        "verse": 28
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 19,
+        "verse": 30
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 68,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-068.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-069",
+      "number": 69,
+      "osis": "judg",
+      "chapter": 21,
+      "verse": 12,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Benjaminites Take the Virgins of Jabesh-gilead",
+      "caption_title": "THE CHILDREN OF BENJAMIN",
+      "caption": {
+        "osis": "judg",
+        "chapter": 21,
+        "verse": 12
+      },
+      "wiki": {
+        "osis": "judg",
+        "chapter": 21,
+        "verse": 12
+      },
+      "index": {
+        "osis": "judg",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 69,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-069.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-070",
+      "number": 70,
+      "osis": "ruth",
+      "chapter": 1,
+      "verse": 16,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Naomi and Her Daughters-in-Law",
+      "caption_title": "NAOMI AND HER DAUGHTERS-IN-LAW",
+      "caption": {
+        "osis": "ruth",
+        "chapter": 1,
+        "verse": 16
+      },
+      "wiki": {
+        "osis": "ruth",
+        "chapter": 1,
+        "verse": 16
+      },
+      "index": {
+        "osis": "ruth",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 70,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-070.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-071",
+      "number": 71,
+      "osis": "ruth",
+      "chapter": 2,
+      "verse": 15,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Ruth and Boaz",
+      "caption_title": "BOAZ AND RUTH",
+      "caption": {
+        "osis": "ruth",
+        "chapter": 2,
+        "verse": 15
+      },
+      "wiki": {
+        "osis": "ruth",
+        "chapter": 2,
+        "verse": 22
+      },
+      "index": {
+        "osis": "ruth",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 71,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-071.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-072",
+      "number": 72,
+      "osis": "1sam",
+      "chapter": 6,
+      "verse": 13,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Ark Is Returned to Beth-shemesh",
+      "caption_title": "RETURN OF THE ARK TO BETH-SHEMESH",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 6,
+        "verse": 13
+      },
+      "wiki": {
+        "osis": "1sam",
+        "chapter": 6,
+        "verse": 13
+      },
+      "index": {
+        "osis": "1sam",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 72,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-072.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-073",
+      "number": 73,
+      "osis": "1sam",
+      "chapter": 9,
+      "verse": 17,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Samuel Blesses Saul",
+      "caption_title": "SAMUEL BLESSING SAUL",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 9,
+        "verse": 17
+      },
+      "wiki": {
+        "osis": "1sam",
+        "chapter": 9,
+        "verse": 21
+      },
+      "index": {
+        "osis": "1sam",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 73,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-073.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-074",
+      "number": 74,
+      "osis": "1sam",
+      "chapter": 15,
+      "verse": 33,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Death of Agag",
+      "caption_title": "DEATH OF AGAG",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 15,
+        "verse": 33
+      },
+      "wiki": {
+        "osis": "1sam",
+        "chapter": 15,
+        "verse": 33
+      },
+      "index": {
+        "osis": "1sam",
+        "chapter": 15,
+        "verse": null
+      },
+      "wiki_number": 74,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-074.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-075",
+      "number": 75,
+      "osis": "1sam",
+      "chapter": 17,
+      "verse": 49,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "David Slays Goliath",
+      "caption_title": "DAVID AND GOLIATH",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 17,
+        "verse": 49
+      },
+      "wiki": {
+        "osis": "1sam",
+        "chapter": 17,
+        "verse": 50
+      },
+      "index": {
+        "osis": "1sam",
+        "chapter": 17,
+        "verse": null
+      },
+      "wiki_number": 75,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-075.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-076",
+      "number": 76,
+      "osis": "1sam",
+      "chapter": 18,
+      "verse": 11,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Saul Attempts to Kill David",
+      "caption_title": "SAUL ATTEMPTS THE LIFE OF DAVID",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 18,
+        "verse": 11
+      },
+      "wiki": {
+        "osis": "1sam",
+        "chapter": 18,
+        "verse": 11
+      },
+      "index": {
+        "osis": "1sam",
+        "chapter": 18,
+        "verse": null
+      },
+      "wiki_number": 76,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-076.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-077",
+      "number": 77,
+      "osis": "1sam",
+      "chapter": 19,
+      "verse": 12,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "David Escapes through a Window",
+      "caption_title": "THE ESCAPE OF DAVID THROUGH THE WINDOW",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 19,
+        "verse": 12
+      },
+      "wiki": {
+        "osis": "1sam",
+        "chapter": 19,
+        "verse": 11
+      },
+      "index": {
+        "osis": "1sam",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 77,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-077.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-078",
+      "number": 78,
+      "osis": "1sam",
+      "chapter": 20,
+      "verse": 42,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "David and Jonathan",
+      "caption_title": "DAVID AND JONATHAN",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 20,
+        "verse": 42
+      },
+      "wiki": {
+        "osis": "1sam",
+        "chapter": 20,
+        "verse": 42
+      },
+      "index": {
+        "osis": "1sam",
+        "chapter": 20,
+        "verse": null
+      },
+      "wiki_number": 78,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-078.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-079",
+      "number": 79,
+      "osis": "1sam",
+      "chapter": 24,
+      "verse": 11,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "David Shows Saul How He Spared His Life",
+      "caption_title": "DAVID SHOWING SAUL THAT HE HAD SPARED HIS LIFE",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 24,
+        "verse": 11
+      },
+      "wiki": {
+        "osis": "1sam",
+        "chapter": 24,
+        "verse": 10
+      },
+      "index": {
+        "osis": "1sam",
+        "chapter": 24,
+        "verse": null
+      },
+      "wiki_number": 79,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-079.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-080",
+      "number": 80,
+      "osis": "1sam",
+      "chapter": 28,
+      "verse": 11,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Saul and the Witch of Endor",
+      "caption_title": "SAUL AND THE WITCH OF ENDOR",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 28,
+        "verse": 11
+      },
+      "wiki": {
+        "osis": "1sam",
+        "chapter": 28,
+        "verse": 7
+      },
+      "index": {
+        "osis": "1sam",
+        "chapter": 28,
+        "verse": null
+      },
+      "wiki_number": 80,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-080.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-081",
+      "number": 81,
+      "osis": "1sam",
+      "chapter": 31,
+      "verse": 4,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Death of Saul",
+      "caption_title": "DEATH OF SAUL",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 31,
+        "verse": 4
+      },
+      "wiki": {
+        "osis": "1sam",
+        "chapter": 31,
+        "verse": 5
+      },
+      "index": {
+        "osis": "1sam",
+        "chapter": 31,
+        "verse": null
+      },
+      "wiki_number": 81,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-081.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-083",
+      "number": 83,
+      "osis": "2sam",
+      "chapter": 2,
+      "verse": 15,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Combat between Soldiers of Ish-bosheth and David",
+      "caption_title": "COMBAT BETWEEN THE CHAMPIONS OF ISH-BOSHETH AND DAVID",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 2,
+        "verse": 15
+      },
+      "wiki": {
+        "osis": "2sam",
+        "chapter": 2,
+        "verse": 15
+      },
+      "index": {
+        "osis": "2sam",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 82,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-083.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-084",
+      "number": 84,
+      "osis": "2sam",
+      "chapter": 12,
+      "verse": 31,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "David Attacks the Ammonites",
+      "caption_title": "DAVID PUNISHING THE AMMONITES",
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "2sam",
+        "chapter": 12,
+        "verse": 31
+      },
+      "index": {
+        "osis": "2sam",
+        "chapter": 12,
+        "verse": null
+      },
+      "wiki_number": 83,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-084.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-085",
+      "number": 85,
+      "osis": "2sam",
+      "chapter": 18,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "The Death of Absalom",
+      "caption_title": "DEATH OF ABSALOM",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 18,
+        "verse": 9
+      },
+      "wiki": {
+        "osis": "2sam",
+        "chapter": 18,
+        "verse": 9
+      },
+      "index": {
+        "osis": "2sam",
+        "chapter": 18,
+        "verse": null
+      },
+      "wiki_number": 84,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-085.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-086",
+      "number": 86,
+      "osis": "2sam",
+      "chapter": 18,
+      "verse": 33,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "David Mourns the Death of Absalom",
+      "caption_title": "DAVID MOURNING THE DEATH OF ABSALOM",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 18,
+        "verse": 33
+      },
+      "wiki": {
+        "osis": "2sam",
+        "chapter": 18,
+        "verse": 33
+      },
+      "index": {
+        "osis": "2sam",
+        "chapter": 18,
+        "verse": null
+      },
+      "wiki_number": 85,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-086.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-087",
+      "number": 87,
+      "osis": "2sam",
+      "chapter": 21,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Rizpah’s Kindness toward the Dead",
+      "caption_title": "RIZPAH’S KINDNESS UNTO THE DEAD",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 21,
+        "verse": 10
+      },
+      "wiki": {
+        "osis": "2sam",
+        "chapter": 21,
+        "verse": 9
+      },
+      "index": {
+        "osis": "2sam",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 86,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-087.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-089",
+      "number": 89,
+      "osis": "2sam",
+      "chapter": 21,
+      "verse": 17,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Abishai Saves David's Life",
+      "caption_title": "ABISHAI SAVES THE LIFE OF DAVID",
+      "caption": {
+        "osis": "1sam",
+        "chapter": 21,
+        "verse": 17
+      },
+      "wiki": {
+        "osis": "2sam",
+        "chapter": 21,
+        "verse": 17
+      },
+      "index": {
+        "osis": "2sam",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 87,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-089.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-090",
+      "number": 90,
+      "osis": "1kgs",
+      "chapter": 3,
+      "verse": 27,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Judgment of Solomon",
+      "caption_title": "JUDGMENT OF SOLOMON",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 3,
+        "verse": 27
+      },
+      "wiki": {
+        "osis": "1kgs",
+        "chapter": 3,
+        "verse": 25
+      },
+      "index": {
+        "osis": "1kgs",
+        "chapter": 3,
+        "verse": null
+      },
+      "wiki_number": 88,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-090.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-091",
+      "number": 91,
+      "osis": "1kgs",
+      "chapter": 5,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Cedars Are Cut Down for the Jerusalem Temple",
+      "caption_title": "CUTTING DOWN CEDARS FOR THE CONSTRUCTION",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 5,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "1kgs",
+        "chapter": 5,
+        "verse": 5
+      },
+      "index": {
+        "osis": "1kgs",
+        "chapter": 5,
+        "verse": null
+      },
+      "wiki_number": 89,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-091.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-094",
+      "number": 94,
+      "osis": "1kgs",
+      "chapter": 13,
+      "verse": 24,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Disobedient Prophet Is Slain by a Lion",
+      "caption_title": "THE DISOBEDIENT PROPHET SLAIN BY A LION '",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 13,
+        "verse": 24
+      },
+      "wiki": {
+        "osis": "1kgs",
+        "chapter": 13,
+        "verse": 24
+      },
+      "index": {
+        "osis": "1kgs",
+        "chapter": 13,
+        "verse": null
+      },
+      "wiki_number": 90,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-094.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-095",
+      "number": 95,
+      "osis": "1kgs",
+      "chapter": 17,
+      "verse": 22,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Elijah Raises the Son of the Widow of Zarephath",
+      "caption_title": "ELIJAH RAISETH THE SON OF THE WIDOW OF ZAREPHATH",
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "1kgs",
+        "chapter": 17,
+        "verse": 22
+      },
+      "index": {
+        "osis": "1kgs",
+        "chapter": 17,
+        "verse": null
+      },
+      "wiki_number": 91,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-095.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-096",
+      "number": 96,
+      "osis": "1kgs",
+      "chapter": 18,
+      "verse": 40,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Prophets of Baal Are Slaughtered",
+      "caption_title": "SLAUGHTER OF THE PROPHETS OF BAAL",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 18,
+        "verse": 40
+      },
+      "wiki": {
+        "osis": "1kgs",
+        "chapter": 18,
+        "verse": 38
+      },
+      "index": {
+        "osis": "1kgs",
+        "chapter": 18,
+        "verse": null
+      },
+      "wiki_number": 92,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-096.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-097",
+      "number": 97,
+      "osis": "1kgs",
+      "chapter": 19,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Elijah Is Nourished by an Angel",
+      "caption_title": "ELIJAH NOURISHED BY AN ANGEL",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 19,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "1kgs",
+        "chapter": 19,
+        "verse": 5
+      },
+      "index": {
+        "osis": "1kgs",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 93,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-097.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-098",
+      "number": 98,
+      "osis": "1kgs",
+      "chapter": 20,
+      "verse": 29,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Israelites Slaughter the Syrians",
+      "caption_title": "SLAUGHTER OF THE SYRIANS BY THE CHILDREN OF ISRAEL",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 20,
+        "verse": 29
+      },
+      "wiki": {
+        "osis": "1kgs",
+        "chapter": 20,
+        "verse": 29
+      },
+      "index": {
+        "osis": "1kgs",
+        "chapter": 20,
+        "verse": null
+      },
+      "wiki_number": 94,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-098.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-100",
+      "number": 100,
+      "osis": "1kgs",
+      "chapter": 22,
+      "verse": 34,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Death of Ahab",
+      "caption_title": "DEATH OF AHAB",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 22,
+        "verse": 34
+      },
+      "wiki": {
+        "osis": "1kgs",
+        "chapter": 22,
+        "verse": 35
+      },
+      "index": {
+        "osis": "1kgs",
+        "chapter": 22,
+        "verse": null
+      },
+      "wiki_number": 95,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-100.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-101",
+      "number": 101,
+      "osis": "2kgs",
+      "chapter": 1,
+      "verse": 10,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Elijah Destroys the Messengers of Ahaziah",
+      "caption_title": "ELIJAH DESTROYS THE MESSENGERS OF AHAZIAH BY FIRE",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 1,
+        "verse": 10
+      },
+      "wiki": {
+        "osis": "2kgs",
+        "chapter": 1,
+        "verse": 10
+      },
+      "index": {
+        "osis": "2kgs",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 96,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-101.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-102",
+      "number": 102,
+      "osis": "2kgs",
+      "chapter": 2,
+      "verse": 11,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Elijah Ascends to Heaven in a Chariot of Fire",
+      "caption_title": "ELIJAH TAKEN UP TO HEAVEN IN A CHARIOT OF FIRE",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 2,
+        "verse": 11
+      },
+      "wiki": {
+        "osis": "2kgs",
+        "chapter": 2,
+        "verse": 11
+      },
+      "index": {
+        "osis": "2kgs",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 97,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-102.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-103",
+      "number": 103,
+      "osis": "2kgs",
+      "chapter": 2,
+      "verse": 23,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Some Children Are Destroyed by Bears",
+      "caption_title": "THE CHILDREN DESTROYED BY BEARS",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 2,
+        "verse": 23
+      },
+      "wiki": {
+        "osis": "2kgs",
+        "chapter": 2,
+        "verse": 23
+      },
+      "index": {
+        "osis": "2kgs",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 98,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-103.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-104",
+      "number": 104,
+      "osis": "2kgs",
+      "chapter": 6,
+      "verse": 25,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "A Famine in Samaria",
+      "caption_title": "THE FAMINE IN SAMARIA",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 6,
+        "verse": 28
+      },
+      "wiki": {
+        "osis": "2kgs",
+        "chapter": 6,
+        "verse": 25
+      },
+      "index": {
+        "osis": "2kgs",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 99,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-104.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-105",
+      "number": 105,
+      "osis": "2kgs",
+      "chapter": 9,
+      "verse": 33,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "The Death of Jezebel",
+      "caption_title": "THE DEATH OF JEZEBEL",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 9,
+        "verse": 33
+      },
+      "wiki": {
+        "osis": "2kgs",
+        "chapter": 9,
+        "verse": 33
+      },
+      "index": {
+        "osis": "2kgs",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 100,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-105.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-106",
+      "number": 106,
+      "osis": "2kgs",
+      "chapter": 9,
+      "verse": 34,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Jehu's Companions Find Jezebel's Remains",
+      "caption_title": "JEHU’'S COMPANIONS FINDING THE REMAINS OF JEZEBEL",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 9,
+        "verse": 35
+      },
+      "wiki": {
+        "osis": "2kgs",
+        "chapter": 9,
+        "verse": 34
+      },
+      "index": {
+        "osis": "2kgs",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 101,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-106.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-108",
+      "number": 108,
+      "osis": "2kgs",
+      "chapter": 17,
+      "verse": 25,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Foreign Nations Are Slain by Lions in Samaria",
+      "caption_title": "THE STRANGE NATIONS SLAIN BY THE LIONS OF SAMARIA",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 17,
+        "verse": 26
+      },
+      "wiki": {
+        "osis": "2kgs",
+        "chapter": 17,
+        "verse": 25
+      },
+      "index": {
+        "osis": "2kgs",
+        "chapter": 17,
+        "verse": null
+      },
+      "wiki_number": 102,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-108.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-112",
+      "number": 112,
+      "osis": "2kgs",
+      "chapter": 19,
+      "verse": 35,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Sennacherib's Army Is Destroyed",
+      "caption_title": "DESTRUCTION OF THE ARMY OF SENNACHERIB",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 19,
+        "verse": 35
+      },
+      "wiki": {
+        "osis": "2kgs",
+        "chapter": 19,
+        "verse": 35
+      },
+      "index": {
+        "osis": "2kgs",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 103,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-112.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-113",
+      "number": 113,
+      "osis": "2kgs",
+      "chapter": 25,
+      "verse": 7,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Zedekiah's Sons Are Slaughtered before His Eyes",
+      "caption_title": "SLAUGHTER OF THE SONS OF ZEDEKIAH BEFORE THEIR FATHER",
+      "caption": {
+        "osis": "1kgs",
+        "chapter": 25,
+        "verse": 7
+      },
+      "wiki": {
+        "osis": "2kgs",
+        "chapter": 25,
+        "verse": 7
+      },
+      "index": {
+        "osis": "2kgs",
+        "chapter": 25,
+        "verse": null
+      },
+      "wiki_number": 104,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-113.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-082",
+      "number": 82,
+      "osis": "1chr",
+      "chapter": 10,
+      "verse": 11,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jabesh-Gileadites Recover the Bodies of Saul and His Sons",
+      "caption_title": "THE INHABITANTS OF JABESH-GILEAD RECOVERING",
+      "caption": {
+        "osis": "1chr",
+        "chapter": 10,
+        "verse": 11
+      },
+      "wiki": {
+        "osis": "1chr",
+        "chapter": 10,
+        "verse": 12
+      },
+      "index": {
+        "osis": "1chr",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 105,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-082.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-088",
+      "number": 88,
+      "osis": "1chr",
+      "chapter": 21,
+      "verse": 15,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Plague of Jerusalem",
+      "caption_title": "PLAGUE OF JERUSALEM",
+      "caption": {
+        "osis": "1chr",
+        "chapter": 21,
+        "verse": 15
+      },
+      "wiki": {
+        "osis": "1chr",
+        "chapter": 21,
+        "verse": 16
+      },
+      "index": {
+        "osis": "1chr",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 106,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-088.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-092",
+      "number": 92,
+      "osis": "2chr",
+      "chapter": 9,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Solomon Receives the Queen of Sheba",
+      "caption_title": "SOLOMON RECEIVING THE QUEEN OF SHEBA",
+      "caption": {
+        "osis": "1chr",
+        "chapter": 9,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "2chr",
+        "chapter": 9,
+        "verse": 1
+      },
+      "index": {
+        "osis": "2chr",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 108,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-092.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-093",
+      "number": 93,
+      "osis": "2chr",
+      "chapter": 1,
+      "verse": 10,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "King Solomon in Old Age",
+      "caption_title": "SOLOMON",
+      "caption": {
+        "osis": "1chr",
+        "chapter": 1,
+        "verse": 10
+      },
+      "wiki": {
+        "osis": "2chr",
+        "chapter": 1,
+        "verse": 10
+      },
+      "index": {
+        "osis": "2chr",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 107,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-093.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-099",
+      "number": 99,
+      "osis": "2chr",
+      "chapter": 20,
+      "verse": 22,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "The Ammonite and Moabite Armies Are Destroyed",
+      "caption_title": "THE DESTRUCTION OF THE ARMIES OF THE",
+      "caption": {
+        "osis": "1chr",
+        "chapter": 20,
+        "verse": 24
+      },
+      "wiki": {
+        "osis": "2chr",
+        "chapter": 20,
+        "verse": 22
+      },
+      "index": {
+        "osis": "2chr",
+        "chapter": 20,
+        "verse": null
+      },
+      "wiki_number": 109,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-099.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-107",
+      "number": 107,
+      "osis": "2chr",
+      "chapter": 23,
+      "verse": 13,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "The Death of Athaliah",
+      "caption_title": "DEATH OF ATHALIAH",
+      "caption": {
+        "osis": "1chr",
+        "chapter": 22,
+        "verse": 10
+      },
+      "wiki": {
+        "osis": "2chr",
+        "chapter": 23,
+        "verse": 13
+      },
+      "index": {
+        "osis": "2chr",
+        "chapter": 22,
+        "verse": null
+      },
+      "wiki_number": 110,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-107.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-130",
+      "number": 130,
+      "osis": "ezra",
+      "chapter": 1,
+      "verse": 7,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "caption",
+      "title": "Cyrus Restores the Vessels of the Temple",
+      "caption_title": "CYRUS RESTORING THE VESSELS OF THE TEMPLE",
+      "caption": {
+        "osis": null,
+        "chapter": 1,
+        "verse": 7
+      },
+      "wiki": {
+        "osis": "ezra",
+        "chapter": 1,
+        "verse": 7
+      },
+      "index": {
+        "osis": "ezra",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 111,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-130.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-135",
+      "number": 135,
+      "osis": "ezra",
+      "chapter": 3,
+      "verse": 12,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Rebuilding of the Temple Is Begun",
+      "caption_title": "THE REBUILDING OF THE TEMPLE",
+      "caption": {
+        "osis": "ezra",
+        "chapter": 3,
+        "verse": 12
+      },
+      "wiki": {
+        "osis": "ezra",
+        "chapter": 3,
+        "verse": 11
+      },
+      "index": {
+        "osis": "ezra",
+        "chapter": 3,
+        "verse": null
+      },
+      "wiki_number": 112,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-135.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-131",
+      "number": 131,
+      "osis": "ezra",
+      "chapter": 7,
+      "verse": 13,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Artaxerxes Grants Freedom to the Jews",
+      "caption_title": "ARTAXERXES GRANTING LIBERTY TO THE JEWS",
+      "caption": {
+        "osis": "ezra",
+        "chapter": 7,
+        "verse": 13
+      },
+      "wiki": {
+        "osis": "ezra",
+        "chapter": 7,
+        "verse": 13
+      },
+      "index": {
+        "osis": "ezra",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 113,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-131.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-132",
+      "number": 132,
+      "osis": "ezra",
+      "chapter": 9,
+      "verse": 6,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Ezra Kneels in Prayer",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "ezra",
+        "chapter": 9,
+        "verse": 6
+      },
+      "index": {
+        "osis": "ezra",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 114,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-132.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-134",
+      "number": 134,
+      "osis": "neh",
+      "chapter": 2,
+      "verse": 17,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Nehemiah Views the Ruins of Jerusalem's Walls",
+      "caption_title": "NEHEMIAH VIEWING SECRETLY THE RUINS OF",
+      "caption": {
+        "osis": "neh",
+        "chapter": 2,
+        "verse": 17
+      },
+      "wiki": {
+        "osis": "neh",
+        "chapter": 2,
+        "verse": 13
+      },
+      "index": {
+        "osis": "neh",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 115,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-134.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-133",
+      "number": 133,
+      "osis": "neh",
+      "chapter": 8,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Ezra Reads the Law to the People",
+      "caption_title": "EZRA READING THE LAW IN THE HEARING OF THE PEOPLE",
+      "caption": {
+        "osis": "neh",
+        "chapter": 8,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "neh",
+        "chapter": 8,
+        "verse": 5
+      },
+      "index": {
+        "osis": "neh",
+        "chapter": 8,
+        "verse": null
+      },
+      "wiki_number": 116,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-133.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-140",
+      "number": 140,
+      "osis": "tob",
+      "chapter": 6,
+      "verse": 4,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Tobias and the Angel",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "tob",
+        "chapter": 6,
+        "verse": 4
+      },
+      "index": {
+        "osis": "tob",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 140,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-140.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-141",
+      "number": 141,
+      "osis": "tob",
+      "chapter": 12,
+      "verse": 15,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Angel Raphael and the Family of Tobit",
+      "caption_title": "THE ANGEL RAPHAEL AND THE FAMILY OF TOBIT",
+      "caption": {
+        "osis": "tob",
+        "chapter": 12,
+        "verse": 15
+      },
+      "wiki": {
+        "osis": "tob",
+        "chapter": 12,
+        "verse": 15
+      },
+      "index": {
+        "osis": "tob",
+        "chapter": 12,
+        "verse": null
+      },
+      "wiki_number": 141,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-141.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-142",
+      "number": 142,
+      "osis": "jdt",
+      "chapter": 13,
+      "verse": 8,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Judith and Holofernes",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "jdt",
+        "chapter": 13,
+        "verse": 8
+      },
+      "index": {
+        "osis": "jdt",
+        "chapter": 13,
+        "verse": null
+      },
+      "wiki_number": 142,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-142.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-143",
+      "number": 143,
+      "osis": "jdt",
+      "chapter": 13,
+      "verse": 14,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Judith Shows the Head of Holofernes",
+      "caption_title": "JUDITH SHOWING THE HEAD OF HOLOFERNES",
+      "caption": {
+        "osis": "jdt",
+        "chapter": 13,
+        "verse": 14
+      },
+      "wiki": {
+        "osis": "jdt",
+        "chapter": 13,
+        "verse": 14
+      },
+      "index": {
+        "osis": "jdt",
+        "chapter": 13,
+        "verse": null
+      },
+      "wiki_number": 143,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-143.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-119",
+      "number": 119,
+      "osis": "esth",
+      "chapter": 1,
+      "verse": 10,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Queen Vashti Refuses to Obey Ahasuerus' Command",
+      "caption_title": "THE QUEEN VASHTI REFUSING TO OBEY THE COMMAND",
+      "caption": {
+        "osis": "esth",
+        "chapter": 1,
+        "verse": 10
+      },
+      "wiki": {
+        "osis": "esth",
+        "chapter": 1,
+        "verse": 11
+      },
+      "index": {
+        "osis": "esth",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 117,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-119.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-120",
+      "number": 120,
+      "osis": "esth",
+      "chapter": 6,
+      "verse": 10,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "caption",
+      "title": "The Triumph of Mordecai",
+      "caption_title": "TRIUMPH OF MORDECAI",
+      "caption": {
+        "osis": null,
+        "chapter": 6,
+        "verse": 10
+      },
+      "wiki": {
+        "osis": "esth",
+        "chapter": 6,
+        "verse": 11
+      },
+      "index": {
+        "osis": "esth",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 118,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-120.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-121",
+      "number": 121,
+      "osis": "esth",
+      "chapter": 7,
+      "verse": 4,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Esther Accuses Haman",
+      "caption_title": "ESTHER ACCUSING HAMAN",
+      "caption": {
+        "osis": "esth",
+        "chapter": 7,
+        "verse": 4
+      },
+      "wiki": {
+        "osis": "esth",
+        "chapter": 7,
+        "verse": 5
+      },
+      "index": {
+        "osis": "esth",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 119,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-121.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-144",
+      "number": 144,
+      "osis": "esth",
+      "chapter": 15,
+      "verse": 6,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Esther Before the King",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "esth",
+        "chapter": 15,
+        "verse": 6
+      },
+      "index": {
+        "osis": "esth",
+        "chapter": 15,
+        "verse": null
+      },
+      "wiki_number": 144,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-144.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-149",
+      "number": 149,
+      "osis": "1macc",
+      "chapter": 2,
+      "verse": 23,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Mattathias and the Apostate",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "1macc",
+        "chapter": 2,
+        "verse": 23
+      },
+      "index": {
+        "osis": "1macc",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 145,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-149.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-150",
+      "number": 150,
+      "osis": "1macc",
+      "chapter": 2,
+      "verse": 50,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Mattathias Appeals to the Jewish Refugees",
+      "caption_title": "MATTATHIAS APPEALING TO THE JEWISH REFUGEES",
+      "caption": {
+        "osis": "1macc",
+        "chapter": 2,
+        "verse": 50
+      },
+      "wiki": {
+        "osis": "1macc",
+        "chapter": 2,
+        "verse": 50
+      },
+      "index": {
+        "osis": "1macc",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 146,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-150.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-151",
+      "number": 151,
+      "osis": "1macc",
+      "chapter": 5,
+      "verse": 42,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Judas Maccabeus Pursues Timotheus",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "1macc",
+        "chapter": 5,
+        "verse": 42
+      },
+      "index": {
+        "osis": "1macc",
+        "chapter": 5,
+        "verse": null
+      },
+      "wiki_number": 147,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-151.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-152",
+      "number": 152,
+      "osis": "1macc",
+      "chapter": 6,
+      "verse": 43,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Death of Eleazar",
+      "caption_title": "DEATH OF ELEAZAR",
+      "caption": {
+        "osis": "1macc",
+        "chapter": 6,
+        "verse": 43
+      },
+      "wiki": {
+        "osis": "1macc",
+        "chapter": 6,
+        "verse": 43
+      },
+      "index": {
+        "osis": "1macc",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 148,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-152.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-153",
+      "number": 153,
+      "osis": "1macc",
+      "chapter": 10,
+      "verse": 84,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Jonathan Destroys the Temple of Dagon",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "1macc",
+        "chapter": 10,
+        "verse": 84
+      },
+      "index": {
+        "osis": "1macc",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 149,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-153.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-154",
+      "number": 154,
+      "osis": "2macc",
+      "chapter": 3,
+      "verse": 25,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Heliodorus Is Cast Down",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "2macc",
+        "chapter": 3,
+        "verse": 25
+      },
+      "index": {
+        "osis": "2macc",
+        "chapter": 3,
+        "verse": null
+      },
+      "wiki_number": 150,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-154.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-155",
+      "number": 155,
+      "osis": "2macc",
+      "chapter": 5,
+      "verse": 2,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "The Army Appears in the Heavens",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "2macc",
+        "chapter": 5,
+        "verse": 2
+      },
+      "index": {
+        "osis": "2macc",
+        "chapter": 5,
+        "verse": null
+      },
+      "wiki_number": 151,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-155.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-156",
+      "number": 156,
+      "osis": "2macc",
+      "chapter": 6,
+      "verse": 30,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "The Martyrdom of Eleazar the Scribe",
+      "caption_title": null,
+      "caption": {
+        "osis": "1macc",
+        "chapter": 6,
+        "verse": 30
+      },
+      "wiki": {
+        "osis": "2macc",
+        "chapter": 6,
+        "verse": 30
+      },
+      "index": {
+        "osis": "2macc",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 152,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-156.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-157",
+      "number": 157,
+      "osis": "2macc",
+      "chapter": 7,
+      "verse": 29,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "The Courage of a Mother",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "2macc",
+        "chapter": 7,
+        "verse": 29
+      },
+      "index": {
+        "osis": "2macc",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 153,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-157.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-158",
+      "number": 158,
+      "osis": "2macc",
+      "chapter": 9,
+      "verse": 7,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "The Punishment of Antiochus",
+      "caption_title": "THE PUNISHMENT OF ANTIOCHUS",
+      "caption": {
+        "osis": "1macc",
+        "chapter": 9,
+        "verse": 7
+      },
+      "wiki": {
+        "osis": "2macc",
+        "chapter": 9,
+        "verse": 7
+      },
+      "index": {
+        "osis": "2macc",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 154,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-158.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-159",
+      "number": 159,
+      "osis": "2macc",
+      "chapter": 11,
+      "verse": 8,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "The Angel Is Sent to Deliver Israel",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "2macc",
+        "chapter": 11,
+        "verse": 8
+      },
+      "index": {
+        "osis": "2macc",
+        "chapter": 11,
+        "verse": null
+      },
+      "wiki_number": 155,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-159.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-160",
+      "number": 160,
+      "osis": "2macc",
+      "chapter": 15,
+      "verse": 21,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Judas Maccabeus before the Army of Nicanor",
+      "caption_title": "JUDAS MACCABEUS BEFORE THE ARMY OF NICANOR",
+      "caption": {
+        "osis": "1macc",
+        "chapter": 15,
+        "verse": 21
+      },
+      "wiki": {
+        "osis": "2macc",
+        "chapter": 15,
+        "verse": 21
+      },
+      "index": {
+        "osis": "2macc",
+        "chapter": 15,
+        "verse": null
+      },
+      "wiki_number": 156,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-160.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-136",
+      "number": 136,
+      "osis": "job",
+      "chapter": 1,
+      "verse": 21,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Job Hears of His Misfortunes",
+      "caption_title": "JOB HEARING OF HIS RUIN",
+      "caption": {
+        "osis": "job",
+        "chapter": 1,
+        "verse": 21
+      },
+      "wiki": {
+        "osis": "job",
+        "chapter": 1,
+        "verse": 20
+      },
+      "index": {
+        "osis": "job",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 120,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-136.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-137",
+      "number": 137,
+      "osis": "job",
+      "chapter": 14,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Job Speaks with His Friends",
+      "caption_title": "JOB AND HIS FRIENDS",
+      "caption": {
+        "osis": "job",
+        "chapter": 14,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "job",
+        "chapter": 2,
+        "verse": 11
+      },
+      "index": {
+        "osis": "job",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 121,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-137.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-110",
+      "number": 110,
+      "osis": "isa",
+      "chapter": 6,
+      "verse": 8,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Prophet Isaiah",
+      "caption_title": "ISAIAH",
+      "caption": {
+        "osis": "isa",
+        "chapter": 6,
+        "verse": 8
+      },
+      "wiki": {
+        "osis": "isa",
+        "chapter": 6,
+        "verse": 8
+      },
+      "index": {
+        "osis": "isa",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 122,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-110.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-127",
+      "number": 127,
+      "osis": "isa",
+      "chapter": 13,
+      "verse": 20,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Isaiah's Vision of the Destruction of Babylon",
+      "caption_title": "ISAIAH’S VISION OF THE DESTRUCTION OF BABYLON",
+      "caption": {
+        "osis": "isa",
+        "chapter": 13,
+        "verse": 20
+      },
+      "wiki": {
+        "osis": "isa",
+        "chapter": 13,
+        "verse": 20
+      },
+      "index": {
+        "osis": "isa",
+        "chapter": 13,
+        "verse": null
+      },
+      "wiki_number": 123,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-127.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-128",
+      "number": 128,
+      "osis": "isa",
+      "chapter": 27,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Destruction of Leviathan",
+      "caption_title": "THE DESTRUCTION OF LEVIATHAN",
+      "caption": {
+        "osis": "isa",
+        "chapter": 27,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "isa",
+        "chapter": 27,
+        "verse": 1
+      },
+      "index": {
+        "osis": "isa",
+        "chapter": 27,
+        "verse": null
+      },
+      "wiki_number": 124,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-128.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-114",
+      "number": 114,
+      "osis": "jer",
+      "chapter": 1,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Prophet Jeremiah",
+      "caption_title": "JEREMIAH",
+      "caption": {
+        "osis": "jer",
+        "chapter": 1,
+        "verse": 9
+      },
+      "wiki": {
+        "osis": "jer",
+        "chapter": 1,
+        "verse": 14
+      },
+      "index": {
+        "osis": "jer",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 125,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-114.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-115",
+      "number": 115,
+      "osis": "jer",
+      "chapter": 36,
+      "verse": 4,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Baruch Writes Jeremiah's Prophecies",
+      "caption_title": "BARUCH WRITING JEREMIAH’S PROPHECIES",
+      "caption": {
+        "osis": "jer",
+        "chapter": 36,
+        "verse": 4
+      },
+      "wiki": {
+        "osis": "jer",
+        "chapter": 36,
+        "verse": 4
+      },
+      "index": {
+        "osis": "jer",
+        "chapter": 36,
+        "verse": null
+      },
+      "wiki_number": 126,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-115.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-116",
+      "number": 116,
+      "osis": "lam",
+      "chapter": 1,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "People Mourn over the Destruction of Jerusalem",
+      "caption_title": "THE PEOPLE MOURNING OVER THE RUINS OF JERUSALEM",
+      "caption": {
+        "osis": "lam",
+        "chapter": 1,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "lam",
+        "chapter": 1,
+        "verse": 8
+      },
+      "index": {
+        "osis": "jer",
+        "chapter": 39,
+        "verse": null
+      },
+      "wiki_number": 127,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-116.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-145",
+      "number": 145,
+      "osis": "bar",
+      "chapter": 3,
+      "verse": 14,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Baruch",
+      "caption_title": "BARUCH",
+      "caption": {
+        "osis": "bar",
+        "chapter": 3,
+        "verse": 14
+      },
+      "wiki": {
+        "osis": "bar",
+        "chapter": 3,
+        "verse": 14
+      },
+      "index": {
+        "osis": "bar",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 157,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-145.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-117",
+      "number": 117,
+      "osis": "ezek",
+      "chapter": 1,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Prophet Ezekiel",
+      "caption_title": "EZEKIEL PROPHESYING v",
+      "caption": {
+        "osis": "ezek",
+        "chapter": 1,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "ezek",
+        "chapter": 1,
+        "verse": 3
+      },
+      "index": {
+        "osis": "ezek",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 128,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-117.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-118",
+      "number": 118,
+      "osis": "ezek",
+      "chapter": 37,
+      "verse": 3,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Ezekiel’s Vision of the Valley of Dry Bones",
+      "caption_title": "THE VISION OF THE VALLEY OF DRY BONES",
+      "caption": {
+        "osis": "ezek",
+        "chapter": 37,
+        "verse": 3
+      },
+      "wiki": {
+        "osis": "ezek",
+        "chapter": 37,
+        "verse": 4
+      },
+      "index": {
+        "osis": "ezek",
+        "chapter": 37,
+        "verse": null
+      },
+      "wiki_number": 129,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-118.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-122",
+      "number": 122,
+      "osis": "dan",
+      "chapter": 2,
+      "verse": 25,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Daniel among the Exiles",
+      "caption_title": "DANIEL",
+      "caption": {
+        "osis": "dan",
+        "chapter": 2,
+        "verse": 25
+      },
+      "wiki": {
+        "osis": "dan",
+        "chapter": 2,
+        "verse": 20
+      },
+      "index": {
+        "osis": "dan",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 130,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-122.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-123",
+      "number": 123,
+      "osis": "dan",
+      "chapter": 3,
+      "verse": 24,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Shadrach, Meshach and Abednego in the Furnace",
+      "caption_title": "SHADRACH, MESHACH, AND ABED-NEGO IN THE FIERY FURNACE",
+      "caption": {
+        "osis": "dan",
+        "chapter": 3,
+        "verse": 24
+      },
+      "wiki": {
+        "osis": "dan",
+        "chapter": 3,
+        "verse": 28
+      },
+      "index": {
+        "osis": "dan",
+        "chapter": 3,
+        "verse": null
+      },
+      "wiki_number": 131,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-123.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-124",
+      "number": 124,
+      "osis": "dan",
+      "chapter": 5,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Daniel Interprets the Writing on the Wall",
+      "caption_title": "DANIEL INTERPRETING THE WRITING ON THE WALL",
+      "caption": {
+        "osis": "dan",
+        "chapter": 5,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "dan",
+        "chapter": 5,
+        "verse": 5
+      },
+      "index": {
+        "osis": "dan",
+        "chapter": 5,
+        "verse": null
+      },
+      "wiki_number": 132,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-124.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-125",
+      "number": 125,
+      "osis": "dan",
+      "chapter": 6,
+      "verse": 22,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Daniel in the Lions' Den",
+      "caption_title": "DANIEL IN THE DEN OF LIONS",
+      "caption": {
+        "osis": "dan",
+        "chapter": 6,
+        "verse": 22
+      },
+      "wiki": {
+        "osis": "dan",
+        "chapter": 6,
+        "verse": 20
+      },
+      "index": {
+        "osis": "dan",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 133,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-125.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-126",
+      "number": 126,
+      "osis": "dan",
+      "chapter": 7,
+      "verse": 2,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Daniel's Vision of the Four Beasts",
+      "caption_title": "THE VISION OF THE FOUR BEASTS _",
+      "caption": {
+        "osis": "dan",
+        "chapter": 7,
+        "verse": 2
+      },
+      "wiki": {
+        "osis": "dan",
+        "chapter": 7,
+        "verse": 2
+      },
+      "index": {
+        "osis": "dan",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 134,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-126.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-146",
+      "number": 146,
+      "osis": "dan",
+      "chapter": 13,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Susanna in the Bath",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "dan",
+        "chapter": 13,
+        "verse": 1
+      },
+      "index": {
+        "osis": "dan",
+        "chapter": 13,
+        "verse": null
+      },
+      "wiki_number": 158,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-146.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-147",
+      "number": 147,
+      "osis": "dan",
+      "chapter": 13,
+      "verse": 36,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "The Justification of Susanna",
+      "caption_title": "JUSTIFICATION OF SUSANNA",
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "dan",
+        "chapter": 13,
+        "verse": 36
+      },
+      "index": {
+        "osis": "dan",
+        "chapter": 13,
+        "verse": null
+      },
+      "wiki_number": 159,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-147.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-148",
+      "number": 148,
+      "osis": "dan",
+      "chapter": 14,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "wikipedia",
+      "title": "Daniel Confounds the Priests of Bel",
+      "caption_title": null,
+      "caption": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "wiki": {
+        "osis": "dan",
+        "chapter": 14,
+        "verse": 1
+      },
+      "index": {
+        "osis": "dan",
+        "chapter": 14,
+        "verse": null
+      },
+      "wiki_number": 160,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-148.jpg",
+      "agreement": "wiki-only"
+    },
+    {
+      "plate_id": "OT-109",
+      "number": 109,
+      "osis": "amos",
+      "chapter": 1,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Prophet Amos",
+      "caption_title": null,
+      "caption": {
+        "osis": "amos",
+        "chapter": 1,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "amos",
+        "chapter": 1,
+        "verse": 1
+      },
+      "index": {
+        "osis": "amos",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 135,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-109.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "OT-138",
+      "number": 138,
+      "osis": "jonah",
+      "chapter": 2,
+      "verse": 10,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jonah Is Spewed Forth by the Whale",
+      "caption_title": "JONAH CAST FORTH BY THE WHALE",
+      "caption": {
+        "osis": "jonah",
+        "chapter": 2,
+        "verse": 10
+      },
+      "wiki": {
+        "osis": "jonah",
+        "chapter": 2,
+        "verse": 1
+      },
+      "index": {
+        "osis": "jonah",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 136,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-138.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-139",
+      "number": 139,
+      "osis": "jonah",
+      "chapter": 3,
+      "verse": 3,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jonah Preaches to the Ninevites",
+      "caption_title": "JONAH PREACHING TO THE NINEVITES",
+      "caption": {
+        "osis": "jonah",
+        "chapter": 3,
+        "verse": 3
+      },
+      "wiki": {
+        "osis": "jonah",
+        "chapter": 3,
+        "verse": 4
+      },
+      "index": {
+        "osis": "jonah",
+        "chapter": 3,
+        "verse": null
+      },
+      "wiki_number": 137,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-139.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-111",
+      "number": 111,
+      "osis": "mic",
+      "chapter": 4,
+      "verse": 3,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Micah Exhorts the Israelites to Repent",
+      "caption_title": "MICAH EXHORTING THE ISRAELITES TO REPENTANCE",
+      "caption": {
+        "osis": "mic",
+        "chapter": 4,
+        "verse": 3
+      },
+      "wiki": {
+        "osis": "mic",
+        "chapter": 6,
+        "verse": 7
+      },
+      "index": {
+        "osis": "mic",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 138,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-111.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "OT-129",
+      "number": 129,
+      "osis": "zech",
+      "chapter": 6,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Zechariah's Vision of Four Chariots",
+      "caption_title": "THE VISION OF THE FOUR CHARIOTS",
+      "caption": {
+        "osis": "zech",
+        "chapter": 6,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "zech",
+        "chapter": 6,
+        "verse": 1
+      },
+      "index": {
+        "osis": "zech",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 139,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/OT-129.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-163",
+      "number": 163,
+      "osis": "matt",
+      "chapter": 2,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Wise Men Are Guided by a Star",
+      "caption_title": "THE WISE MEN GUIDED BY THE STAR",
+      "caption": {
+        "osis": "matt",
+        "chapter": 2,
+        "verse": 9
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 2,
+        "verse": 1
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 161,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-163.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-164",
+      "number": 164,
+      "osis": "matt",
+      "chapter": 2,
+      "verse": 13,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Joseph Leads Mary and Jesus into Egypt",
+      "caption_title": "' | THE FLIGHT INTO EGYPT",
+      "caption": {
+        "osis": "matt",
+        "chapter": 2,
+        "verse": 13
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 2,
+        "verse": 13
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 162,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-164.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-165",
+      "number": 165,
+      "osis": "matt",
+      "chapter": 2,
+      "verse": 16,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Children of Bethlehem Are Massacred",
+      "caption_title": "THE MASSACRE OF THE INNOCENTS",
+      "caption": {
+        "osis": "matt",
+        "chapter": 2,
+        "verse": 16
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 2,
+        "verse": 16
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 163,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-165.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-175",
+      "number": 175,
+      "osis": "matt",
+      "chapter": 6,
+      "verse": 28,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Sermon on the Mount",
+      "caption_title": "THE SERMON ON THE MOUNT",
+      "caption": {
+        "osis": "matt",
+        "chapter": 6,
+        "verse": 28
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 5,
+        "verse": 7
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 164,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-175.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-178",
+      "number": 178,
+      "osis": "matt",
+      "chapter": 12,
+      "verse": 22,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Heals a Cripple",
+      "caption_title": "THE DUMB MAN POSSESSED",
+      "caption": {
+        "osis": "matt",
+        "chapter": 12,
+        "verse": 22
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 12,
+        "verse": 22
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 12,
+        "verse": null
+      },
+      "wiki_number": 165,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-178.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-182",
+      "number": 182,
+      "osis": "matt",
+      "chapter": 14,
+      "verse": 6,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Herod's Daughter Receives the Head of John the Baptist",
+      "caption_title": "THE DAUGHTER OF HEROD RECEIVING THE HEAD",
+      "caption": {
+        "osis": "matt",
+        "chapter": 14,
+        "verse": 6
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 14,
+        "verse": 8
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 14,
+        "verse": null
+      },
+      "wiki_number": 167,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-182.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-184",
+      "number": 184,
+      "osis": "matt",
+      "chapter": 14,
+      "verse": 17,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Feeds the Multitudes",
+      "caption_title": "CHRIST FEEDING THE MULTITUDE",
+      "caption": {
+        "osis": "matt",
+        "chapter": 14,
+        "verse": 17
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 14,
+        "verse": 19
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 14,
+        "verse": null
+      },
+      "wiki_number": 168,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-184.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-186",
+      "number": 186,
+      "osis": "matt",
+      "chapter": 15,
+      "verse": 30,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Heals the Sick",
+      "caption_title": "JESUS HEALING THE SICK",
+      "caption": {
+        "osis": "matt",
+        "chapter": 15,
+        "verse": 30
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 15,
+        "verse": 31
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 15,
+        "verse": null
+      },
+      "wiki_number": 169,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-186.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-188",
+      "number": 188,
+      "osis": "matt",
+      "chapter": 17,
+      "verse": 15,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "caption",
+      "title": "Jesus Heals the Epileptic Demoniac",
+      "caption_title": "JESUS HEALING THE LUNATIC",
+      "caption": {
+        "osis": null,
+        "chapter": 17,
+        "verse": 15
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 17,
+        "verse": 14
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 17,
+        "verse": null
+      },
+      "wiki_number": 171,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-188.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-198",
+      "number": 198,
+      "osis": "matt",
+      "chapter": 21,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Enters into Jerusalem",
+      "caption_title": "ENTRY OF JESUS INTO JERUSALEM",
+      "caption": {
+        "osis": "matt",
+        "chapter": 21,
+        "verse": 9
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 21,
+        "verse": 7
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 172,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-198.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-200",
+      "number": 200,
+      "osis": "matt",
+      "chapter": 22,
+      "verse": 21,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Replies about the Tribute Money",
+      "caption_title": "CHRIST AND THE TRIBUTE MONEY \"",
+      "caption": {
+        "osis": "matt",
+        "chapter": 22,
+        "verse": 21
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 22,
+        "verse": 20
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 22,
+        "verse": null
+      },
+      "wiki_number": 173,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-200.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-203",
+      "number": 203,
+      "osis": "matt",
+      "chapter": 26,
+      "verse": 39,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Prays in the Garden",
+      "caption_title": "JESUS PRAYING IN THE GARDEN",
+      "caption": {
+        "osis": "matt",
+        "chapter": 26,
+        "verse": 39
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 26,
+        "verse": 40
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 26,
+        "verse": null
+      },
+      "wiki_number": 174,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-203.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-208",
+      "number": 208,
+      "osis": "john",
+      "chapter": 19,
+      "verse": 2,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Is Crowned with Thorns",
+      "caption_title": "THE CROWN OF THORNS",
+      "caption": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": 2
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": 60
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": null
+      },
+      "wiki_number": 181,
+      "alternate": "John 19B",
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-208.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-209",
+      "number": 209,
+      "osis": "matt",
+      "chapter": 27,
+      "verse": 29,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Is Mocked",
+      "caption_title": "CHRIST MOCKED",
+      "caption": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": 29
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": 29
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": null
+      },
+      "wiki_number": 176,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-209.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-215",
+      "number": 215,
+      "osis": "luke",
+      "chapter": 23,
+      "verse": 34,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Crucifixion of Jesus and Two Criminals",
+      "caption_title": "THE CRUCIFIXION",
+      "caption": {
+        "osis": "luke",
+        "chapter": 23,
+        "verse": 34
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": 59
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": null
+      },
+      "wiki_number": 180,
+      "alternate": "Luke 23B",
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-215.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-220",
+      "number": 220,
+      "osis": "matt",
+      "chapter": 28,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Angel and Women at the Empty Tomb",
+      "caption_title": "THE RESURRECTION",
+      "caption": {
+        "osis": "matt",
+        "chapter": 28,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 28,
+        "verse": 5
+      },
+      "index": {
+        "osis": "matt",
+        "chapter": 28,
+        "verse": null
+      },
+      "wiki_number": 182,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-220.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-167",
+      "number": 167,
+      "osis": "mark",
+      "chapter": 1,
+      "verse": 4,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "John the Baptist Preaches in the Wilderness",
+      "caption_title": "JOHN THE BAPTIST PREACHING IN THE WILDERNESS",
+      "caption": {
+        "osis": "mark",
+        "chapter": 1,
+        "verse": 4
+      },
+      "wiki": {
+        "osis": "mark",
+        "chapter": 1,
+        "verse": 6
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 183,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-167.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-172",
+      "number": 172,
+      "osis": "matt",
+      "chapter": 13,
+      "verse": 54,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Preaches in the Synagogue",
+      "caption_title": "CHRIST IN THE SYNAGOGUE",
+      "caption": {
+        "osis": "matt",
+        "chapter": 13,
+        "verse": 54
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 13,
+        "verse": 54
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 166,
+      "alternate": "Matt 13",
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-172.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-176",
+      "number": 176,
+      "osis": "mark",
+      "chapter": 2,
+      "verse": 27,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Disciples Pluck Grain on the Sabbath",
+      "caption_title": "THE DISCIPLES PLUCKING CORN ON THE SABBATH",
+      "caption": {
+        "osis": "mark",
+        "chapter": 2,
+        "verse": 27
+      },
+      "wiki": {
+        "osis": "mark",
+        "chapter": 2,
+        "verse": 23
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 185,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-176.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-179",
+      "number": 179,
+      "osis": "mark",
+      "chapter": 4,
+      "verse": 39,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Storm at Sea",
+      "caption_title": "JESUS STILLING THE TEMPEST",
+      "caption": {
+        "osis": "mark",
+        "chapter": 4,
+        "verse": 39
+      },
+      "wiki": {
+        "osis": "mark",
+        "chapter": 4,
+        "verse": 37
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 4,
+        "verse": null
+      },
+      "wiki_number": 186,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-179.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-187",
+      "number": 187,
+      "osis": "mark",
+      "chapter": 9,
+      "verse": 4,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Transfiguration",
+      "caption_title": "THE TRANSFIGURATION",
+      "caption": {
+        "osis": "mark",
+        "chapter": 9,
+        "verse": 4
+      },
+      "wiki": {
+        "osis": "mark",
+        "chapter": 16,
+        "verse": 19
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 192,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-187.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-192",
+      "number": 192,
+      "osis": "mark",
+      "chapter": 10,
+      "verse": 14,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Blesses the Little Children",
+      "caption_title": "JESUS BLESSING THE LITTLE CHILDREN",
+      "caption": {
+        "osis": "mark",
+        "chapter": 10,
+        "verse": 14
+      },
+      "wiki": {
+        "osis": "mark",
+        "chapter": 10,
+        "verse": 13
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 187,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-192.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-201",
+      "number": 201,
+      "osis": "mark",
+      "chapter": 12,
+      "verse": 43,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Widow's Mite",
+      "caption_title": "THE WIDOW’S MITE",
+      "caption": {
+        "osis": "mark",
+        "chapter": 12,
+        "verse": 43
+      },
+      "wiki": {
+        "osis": "mark",
+        "chapter": 12,
+        "verse": 42
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 12,
+        "verse": null
+      },
+      "wiki_number": 188,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-201.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-205",
+      "number": 205,
+      "osis": "mark",
+      "chapter": 14,
+      "verse": 44,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Judas Betrays Jesus",
+      "caption_title": "THE JUDAS KISS",
+      "caption": {
+        "osis": "mark",
+        "chapter": 14,
+        "verse": 44
+      },
+      "wiki": {
+        "osis": "mark",
+        "chapter": 14,
+        "verse": 45
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 14,
+        "verse": null
+      },
+      "wiki_number": 190,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-205.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-207",
+      "number": 207,
+      "osis": "john",
+      "chapter": 19,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Is Scourged",
+      "caption_title": "JESUS SCOURGED",
+      "caption": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": 26
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 15,
+        "verse": null
+      },
+      "wiki_number": 175,
+      "alternate": "John 19A",
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-207.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-211",
+      "number": 211,
+      "osis": "mark",
+      "chapter": 15,
+      "verse": 21,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Falls Beneath the Cross",
+      "caption_title": "JESUS FALLING BENEATH THE CROSS",
+      "caption": {
+        "osis": "mark",
+        "chapter": 15,
+        "verse": 21
+      },
+      "wiki": {
+        "osis": "mark",
+        "chapter": 15,
+        "verse": 21
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 15,
+        "verse": null
+      },
+      "wiki_number": 191,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-211.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-217",
+      "number": 217,
+      "osis": "mark",
+      "chapter": 15,
+      "verse": 43,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus' Body Is Removed from the Cross",
+      "caption_title": "THE DESCENT FROM THE CROSS",
+      "caption": {
+        "osis": "mark",
+        "chapter": 15,
+        "verse": 43
+      },
+      "wiki": {
+        "osis": "mark",
+        "chapter": 14,
+        "verse": 22
+      },
+      "index": {
+        "osis": "mark",
+        "chapter": 15,
+        "verse": null
+      },
+      "wiki_number": 189,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-217.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-161",
+      "number": 161,
+      "osis": "luke",
+      "chapter": 1,
+      "verse": 30,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Annunciation",
+      "caption_title": "THE ANNUNCIATION",
+      "caption": {
+        "osis": "luke",
+        "chapter": 1,
+        "verse": 30
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 1,
+        "verse": 26
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 193,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-161.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-162",
+      "number": 162,
+      "osis": "luke",
+      "chapter": 2,
+      "verse": 16,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Birth of Jesus",
+      "caption_title": "THE NATIVITY",
+      "caption": {
+        "osis": "luke",
+        "chapter": 2,
+        "verse": 16
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 2,
+        "verse": 15
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 194,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-162.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-166",
+      "number": 166,
+      "osis": "luke",
+      "chapter": 2,
+      "verse": 49,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Questions the Doctors",
+      "caption_title": "JESUS WITH THE DOCTORS",
+      "caption": {
+        "osis": "luke",
+        "chapter": 2,
+        "verse": 49
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 2,
+        "verse": 46
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 195,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-166.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-169",
+      "number": 169,
+      "osis": "luke",
+      "chapter": 4,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Temptation of Jesus",
+      "caption_title": "THE TEMPTATION OF JESUS",
+      "caption": {
+        "osis": "luke",
+        "chapter": 4,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 4,
+        "verse": 7
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 4,
+        "verse": null
+      },
+      "wiki_number": 196,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-169.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-173",
+      "number": 173,
+      "osis": "luke",
+      "chapter": 4,
+      "verse": 36,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Heals a Demoniac",
+      "caption_title": "JESUS HEALING THE MAN POSSESSED WITH A DEVIL",
+      "caption": {
+        "osis": "luke",
+        "chapter": 4,
+        "verse": 36
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 4,
+        "verse": 36
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 4,
+        "verse": null
+      },
+      "wiki_number": 197,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-173.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-174",
+      "number": 174,
+      "osis": "luke",
+      "chapter": 5,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Preaches at the Sea of Galilee",
+      "caption_title": "JESUS PREACHING AT THE SEA OF GALILEE",
+      "caption": {
+        "osis": "luke",
+        "chapter": 5,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 5,
+        "verse": 3
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 5,
+        "verse": null
+      },
+      "wiki_number": 198,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-174.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-177",
+      "number": 177,
+      "osis": "luke",
+      "chapter": 7,
+      "verse": 47,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "A Sinful Woman Repents",
+      "caption_title": "MARY MAGDALENE REPENTANT",
+      "caption": {
+        "osis": "luke",
+        "chapter": 7,
+        "verse": 47
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 8,
+        "verse": 2
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 199,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-177.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-180",
+      "number": 180,
+      "osis": "luke",
+      "chapter": 8,
+      "verse": 54,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Raises the Daughter of Jairus",
+      "caption_title": "JESUS RAISING UP THE DAUGHTER OF JAIRUS",
+      "caption": {
+        "osis": "luke",
+        "chapter": 8,
+        "verse": 54
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 8,
+        "verse": 52
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 8,
+        "verse": null
+      },
+      "wiki_number": 200,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-180.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-190",
+      "number": 190,
+      "osis": "luke",
+      "chapter": 10,
+      "verse": 33,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Parable of the Good Samaritan",
+      "caption_title": "THE GOOD SAMARITAN",
+      "caption": {
+        "osis": "luke",
+        "chapter": 10,
+        "verse": 33
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 10,
+        "verse": 33
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 201,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-190.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-191",
+      "number": 191,
+      "osis": "luke",
+      "chapter": 10,
+      "verse": 34,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Good Samaritan Arrives at the Inn",
+      "caption_title": "ARRIVAL OF THE GOOD SAMARITAN AT THE INN",
+      "caption": {
+        "osis": "luke",
+        "chapter": 10,
+        "verse": 34
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 10,
+        "verse": 34
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 202,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-191.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-181",
+      "number": 181,
+      "osis": "luke",
+      "chapter": 10,
+      "verse": 41,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus at the House of Martha and Mary",
+      "caption_title": "JESUS AT THE HOUSE OF MARTHA AND MARY",
+      "caption": {
+        "osis": "luke",
+        "chapter": 10,
+        "verse": 41
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 10,
+        "verse": 41
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 203,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-181.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-183",
+      "number": 183,
+      "osis": "luke",
+      "chapter": 12,
+      "verse": 23,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Preaches to the Multitude",
+      "caption_title": "JESUS PREACHING TO THE MULTITUDE",
+      "caption": {
+        "osis": "luke",
+        "chapter": 12,
+        "verse": 23
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 12,
+        "verse": 29
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 12,
+        "verse": null
+      },
+      "wiki_number": 204,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-183.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-193",
+      "number": 193,
+      "osis": "luke",
+      "chapter": 15,
+      "verse": 18,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Prodigal Son Returns Home",
+      "caption_title": "THE RETURN OF THE PRODIGAL SON",
+      "caption": {
+        "osis": "luke",
+        "chapter": 15,
+        "verse": 18
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 15,
+        "verse": 17
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 15,
+        "verse": null
+      },
+      "wiki_number": 205,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-193.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-194",
+      "number": 194,
+      "osis": "luke",
+      "chapter": 15,
+      "verse": 20,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Prodigal Son in His Father's Arms",
+      "caption_title": "THE PRODIGAL SON IN THE ARMS OF HIS FATHER",
+      "caption": {
+        "osis": "luke",
+        "chapter": 15,
+        "verse": 20
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 15,
+        "verse": 20
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 15,
+        "verse": null
+      },
+      "wiki_number": 206,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-194.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-195",
+      "number": 195,
+      "osis": "luke",
+      "chapter": 16,
+      "verse": 20,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Lazarus outside the Rich Man's House",
+      "caption_title": "LAZARUS AT THE RICH MAN’S HOUSE",
+      "caption": {
+        "osis": "luke",
+        "chapter": 16,
+        "verse": 20
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 16,
+        "verse": 20
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 16,
+        "verse": null
+      },
+      "wiki_number": 207,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-195.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-196",
+      "number": 196,
+      "osis": "luke",
+      "chapter": 18,
+      "verse": 11,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Pharisee and the Publican",
+      "caption_title": "THE PHARISEE AND THE PUBLICAN",
+      "caption": {
+        "osis": "luke",
+        "chapter": 18,
+        "verse": 11
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 18,
+        "verse": 11
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 18,
+        "verse": null
+      },
+      "wiki_number": 208,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-196.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-199",
+      "number": 199,
+      "osis": "luke",
+      "chapter": 19,
+      "verse": 46,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Buyers and Sellers Are Driven Out of the Temple",
+      "caption_title": "THE BUYERS AND SELLERS DRIVEN OUT OF THE TEMPLE",
+      "caption": {
+        "osis": "luke",
+        "chapter": 19,
+        "verse": 46
+      },
+      "wiki": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": null,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-199.jpg",
+      "agreement": "caption-only"
+    },
+    {
+      "plate_id": "NT-204",
+      "number": 204,
+      "osis": "luke",
+      "chapter": 22,
+      "verse": 43,
+      "anchor": "verse",
+      "book_source": "wikipedia",
+      "verse_source": "caption",
+      "title": "An Angel Appears to Jesus in the Garden",
+      "caption_title": "THE AGONY IN THE GARDEN",
+      "caption": {
+        "osis": null,
+        "chapter": 22,
+        "verse": 43
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 22,
+        "verse": 43
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 22,
+        "verse": null
+      },
+      "wiki_number": 209,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-204.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-212",
+      "number": 212,
+      "osis": "luke",
+      "chapter": 23,
+      "verse": 28,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Arrives at Calvary",
+      "caption_title": "THE ARRIVAL AT CALVARY",
+      "caption": {
+        "osis": "luke",
+        "chapter": 23,
+        "verse": 28
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 23,
+        "verse": 34
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 23,
+        "verse": null
+      },
+      "wiki_number": 210,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-212.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-214",
+      "number": 214,
+      "osis": "matt",
+      "chapter": 27,
+      "verse": 35,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Cross Is Lifted Up",
+      "caption_title": "THE ERECTION OF THE CROSS",
+      "caption": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": 35
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": 35
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 23,
+        "verse": null
+      },
+      "wiki_number": 178,
+      "alternate": "Matt 27A",
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-214.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-216",
+      "number": 216,
+      "osis": "luke",
+      "chapter": 23,
+      "verse": 44,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Darkness at the Crucifixion",
+      "caption_title": "THE DARKNESS AT THE CRUCIFIXION",
+      "caption": {
+        "osis": "luke",
+        "chapter": 23,
+        "verse": 44
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 23,
+        "verse": 44
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 23,
+        "verse": null
+      },
+      "wiki_number": 211,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-216.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-221",
+      "number": 221,
+      "osis": "luke",
+      "chapter": 24,
+      "verse": 31,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus and Two Disciples Go to Emmaus",
+      "caption_title": "JESUS AND THE DISCIPLES GOING TO EMMAUS",
+      "caption": {
+        "osis": "luke",
+        "chapter": 24,
+        "verse": 31
+      },
+      "wiki": {
+        "osis": "luke",
+        "chapter": 24,
+        "verse": 26
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 24,
+        "verse": null
+      },
+      "wiki_number": 212,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-221.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-223",
+      "number": 223,
+      "osis": "luke",
+      "chapter": 24,
+      "verse": 51,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Ascends to Heaven",
+      "caption_title": null,
+      "caption": {
+        "osis": "luke",
+        "chapter": 24,
+        "verse": 51
+      },
+      "wiki": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "index": {
+        "osis": "luke",
+        "chapter": 24,
+        "verse": null
+      },
+      "wiki_number": null,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-223.jpg",
+      "agreement": "caption-only"
+    },
+    {
+      "plate_id": "NT-168",
+      "number": 168,
+      "osis": "matt",
+      "chapter": 3,
+      "verse": 16,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Baptism of Jesus",
+      "caption_title": "THE BAPTISM OF JESUS",
+      "caption": {
+        "osis": "matt",
+        "chapter": 3,
+        "verse": 16
+      },
+      "wiki": {
+        "osis": "matt",
+        "chapter": 27,
+        "verse": 57
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 179,
+      "alternate": "Matt 3",
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-168.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-170",
+      "number": 170,
+      "osis": "john",
+      "chapter": 2,
+      "verse": 7,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Wedding at Cana",
+      "caption_title": "THE MARRIAGE IN CANA",
+      "caption": {
+        "osis": "john",
+        "chapter": 2,
+        "verse": 7
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 2,
+        "verse": 5
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 213,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-170.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-171",
+      "number": 171,
+      "osis": "john",
+      "chapter": 4,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus and the Woman of Samaria",
+      "caption_title": "JESUS AND THE WOMAN OF SAMARIA",
+      "caption": {
+        "osis": "john",
+        "chapter": 4,
+        "verse": 9
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 4,
+        "verse": 13
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 4,
+        "verse": null
+      },
+      "wiki_number": 215,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-171.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-185",
+      "number": 185,
+      "osis": "john",
+      "chapter": 6,
+      "verse": 20,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Walks on the Sea",
+      "caption_title": "JESUS WALKING ON THE SEA",
+      "caption": {
+        "osis": "john",
+        "chapter": 6,
+        "verse": 20
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 6,
+        "verse": 19
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 216,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-185.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-189",
+      "number": 189,
+      "osis": "john",
+      "chapter": 8,
+      "verse": 6,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus and the Woman Taken in Adultery",
+      "caption_title": "JESUS AND THE WOMAN TAKEN IN ADULTERY",
+      "caption": {
+        "osis": "john",
+        "chapter": 8,
+        "verse": 6
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 8,
+        "verse": 3
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 8,
+        "verse": null
+      },
+      "wiki_number": 217,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-189.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-197",
+      "number": 197,
+      "osis": "john",
+      "chapter": 11,
+      "verse": 43,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Raising of Lazarus",
+      "caption_title": "RESURRECTION OF LAZARUS",
+      "caption": {
+        "osis": "john",
+        "chapter": 11,
+        "verse": 43
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 11,
+        "verse": 41
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 11,
+        "verse": null
+      },
+      "wiki_number": 218,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-197.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-202",
+      "number": 202,
+      "osis": "john",
+      "chapter": 13,
+      "verse": 31,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Last Supper",
+      "caption_title": "10E LAST SUPFER",
+      "caption": {
+        "osis": "john",
+        "chapter": 13,
+        "verse": 31
+      },
+      "wiki": {
+        "osis": null,
+        "chapter": null,
+        "verse": null
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 13,
+        "verse": null
+      },
+      "wiki_number": null,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-202.jpg",
+      "agreement": "caption-only"
+    },
+    {
+      "plate_id": "NT-206",
+      "number": 206,
+      "osis": "john",
+      "chapter": 18,
+      "verse": 25,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Peter Denies Knowing Jesus",
+      "caption_title": "ST. PETER DENYING CHRIST",
+      "caption": {
+        "osis": "john",
+        "chapter": 18,
+        "verse": 25
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 18,
+        "verse": 26
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 18,
+        "verse": null
+      },
+      "wiki_number": 219,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-206.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-210",
+      "number": 210,
+      "osis": "john",
+      "chapter": 19,
+      "verse": 15,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Is Presented to the People",
+      "caption_title": "CHRIST PRESENTED TO THE PEOPLE",
+      "caption": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": 15
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": 15
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 221,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-210.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-213",
+      "number": 213,
+      "osis": "john",
+      "chapter": 19,
+      "verse": 18,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Is Nailed to the Cross",
+      "caption_title": "' NAILING CHRIST TO THE CROSS",
+      "caption": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": 18
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": 18
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 222,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-213.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-218",
+      "number": 218,
+      "osis": "john",
+      "chapter": 19,
+      "verse": 40,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Disciples Mourn over the Dead Jesus",
+      "caption_title": "THE DEAD CHRIST",
+      "caption": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": 40
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 2,
+        "verse": 15
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 214,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-218.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-219",
+      "number": 219,
+      "osis": "john",
+      "chapter": 19,
+      "verse": 41,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Jesus Is Buried in the Tomb",
+      "caption_title": "THE BURIAL OF CHRIST",
+      "caption": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": 41
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": 2
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 220,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-219.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-222",
+      "number": 222,
+      "osis": "john",
+      "chapter": 21,
+      "verse": 6,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Miraculous Catch of Fish",
+      "caption_title": "THE MIRACULOUS DRAUGHT OF FISHES",
+      "caption": {
+        "osis": "john",
+        "chapter": 21,
+        "verse": 6
+      },
+      "wiki": {
+        "osis": "john",
+        "chapter": 21,
+        "verse": 10
+      },
+      "index": {
+        "osis": "john",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 223,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-222.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-224",
+      "number": 224,
+      "osis": "acts",
+      "chapter": 2,
+      "verse": 4,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Holy Spirit Descends on the Disciples",
+      "caption_title": "THE DESCENT OF THE SPIRIT j",
+      "caption": {
+        "osis": "acts",
+        "chapter": 2,
+        "verse": 4
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 2,
+        "verse": 2
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 224,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-224.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-225",
+      "number": 225,
+      "osis": "acts",
+      "chapter": 2,
+      "verse": 14,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Apostles Preach the Gospel",
+      "caption_title": "THE APOSTLES PREACHING THE GOSPEL",
+      "caption": {
+        "osis": "acts",
+        "chapter": 2,
+        "verse": 14
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 2,
+        "verse": 32
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 2,
+        "verse": null
+      },
+      "wiki_number": 225,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-225.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-226",
+      "number": 226,
+      "osis": "acts",
+      "chapter": 3,
+      "verse": 6,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Peter and John at the Beautiful Gate",
+      "caption_title": "ST. PETER AND ST. JOHN AT THE BEAUTIFUL GATE",
+      "caption": {
+        "osis": "acts",
+        "chapter": 3,
+        "verse": 6
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 3,
+        "verse": 6
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 3,
+        "verse": null
+      },
+      "wiki_number": 226,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-226.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-227",
+      "number": 227,
+      "osis": "acts",
+      "chapter": 5,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Death of Ananias",
+      "caption_title": "DEATH OF ANANIAS",
+      "caption": {
+        "osis": "acts",
+        "chapter": 5,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 5,
+        "verse": 4
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 5,
+        "verse": null
+      },
+      "wiki_number": 227,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-227.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-228",
+      "number": 228,
+      "osis": "acts",
+      "chapter": 7,
+      "verse": 59,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Martyrdom of St. Stephen",
+      "caption_title": "MARTYRDOM OF ST. STEPHEN",
+      "caption": {
+        "osis": "acts",
+        "chapter": 7,
+        "verse": 60
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 7,
+        "verse": 59
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 7,
+        "verse": null
+      },
+      "wiki_number": 228,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-228.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-229",
+      "number": 229,
+      "osis": "acts",
+      "chapter": 9,
+      "verse": 4,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Conversion of Saul",
+      "caption_title": "CONVERSION OF SAUL",
+      "caption": {
+        "osis": "acts",
+        "chapter": 9,
+        "verse": 4
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 9,
+        "verse": 3
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 9,
+        "verse": null
+      },
+      "wiki_number": 229,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-229.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-230",
+      "number": 230,
+      "osis": "acts",
+      "chapter": 10,
+      "verse": 25,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Peter Preaches in the House of Cornelius",
+      "caption_title": "ST. PETER IN THE HOUSE OF CORNELIUS",
+      "caption": {
+        "osis": "acts",
+        "chapter": 10,
+        "verse": 25
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 10,
+        "verse": 28
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 10,
+        "verse": null
+      },
+      "wiki_number": 230,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-230.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-231",
+      "number": 231,
+      "osis": "acts",
+      "chapter": 12,
+      "verse": 7,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Peter Is Delivered from Prison",
+      "caption_title": ", . ST. PETER DELIVERED FROM PRISON",
+      "caption": {
+        "osis": "acts",
+        "chapter": 12,
+        "verse": 7
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 12,
+        "verse": 7
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 12,
+        "verse": null
+      },
+      "wiki_number": 231,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-231.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-232",
+      "number": 232,
+      "osis": "1thess",
+      "chapter": 2,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Paul Preaches to the Thessalonians",
+      "caption_title": "ST. PAUL PREACHING TO THE THESSALONIANS",
+      "caption": {
+        "osis": "1thess",
+        "chapter": 2,
+        "verse": 9
+      },
+      "wiki": {
+        "osis": "1thess",
+        "chapter": 2,
+        "verse": 11
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 17,
+        "verse": null
+      },
+      "wiki_number": 235,
+      "alternate": "1 Thess 2",
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-232.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-233",
+      "number": 233,
+      "osis": "acts",
+      "chapter": 19,
+      "verse": 19,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Paul Preaches at Ephesus",
+      "caption_title": "ST. PAUL AT EPHESUS",
+      "caption": {
+        "osis": "acts",
+        "chapter": 19,
+        "verse": 19
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 19,
+        "verse": 19
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 19,
+        "verse": null
+      },
+      "wiki_number": 232,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-233.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-234",
+      "number": 234,
+      "osis": "acts",
+      "chapter": 21,
+      "verse": 39,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Paul Is Rescued from the Crowd",
+      "caption_title": "ST. PAUL RESCUED FROM THE MULTITUDE",
+      "caption": {
+        "osis": "acts",
+        "chapter": 21,
+        "verse": 39
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 21,
+        "verse": 34
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 233,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-234.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-235",
+      "number": 235,
+      "osis": "acts",
+      "chapter": 27,
+      "verse": 44,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Paul Is Shipwrecked",
+      "caption_title": "ST. PAUL SHIPWRECKED",
+      "caption": {
+        "osis": "acts",
+        "chapter": 27,
+        "verse": 44
+      },
+      "wiki": {
+        "osis": "acts",
+        "chapter": 27,
+        "verse": 43
+      },
+      "index": {
+        "osis": "acts",
+        "chapter": 27,
+        "verse": null
+      },
+      "wiki_number": 234,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-235.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-236",
+      "number": 236,
+      "osis": "rev",
+      "chapter": 1,
+      "verse": 9,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "John on Patmos",
+      "caption_title": "ST. JOHN AT PATMOS",
+      "caption": {
+        "osis": "rev",
+        "chapter": 1,
+        "verse": 9
+      },
+      "wiki": {
+        "osis": "rev",
+        "chapter": 1,
+        "verse": 9
+      },
+      "index": {
+        "osis": "rev",
+        "chapter": 1,
+        "verse": null
+      },
+      "wiki_number": 236,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-236.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-237",
+      "number": 237,
+      "osis": "rev",
+      "chapter": 6,
+      "verse": 8,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Pale Horse of Death",
+      "caption_title": "THE VISION OF DEATH",
+      "caption": {
+        "osis": "rev",
+        "chapter": 6,
+        "verse": 8
+      },
+      "wiki": {
+        "osis": "rev",
+        "chapter": 6,
+        "verse": 7
+      },
+      "index": {
+        "osis": "rev",
+        "chapter": 6,
+        "verse": null
+      },
+      "wiki_number": 237,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-237.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-238",
+      "number": 238,
+      "osis": "rev",
+      "chapter": 12,
+      "verse": 1,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Virgin Is Crowned",
+      "caption_title": "THE CROWNED VIRGIN: A VISION OF JOHN",
+      "caption": {
+        "osis": "rev",
+        "chapter": 12,
+        "verse": 1
+      },
+      "wiki": {
+        "osis": "rev",
+        "chapter": 12,
+        "verse": 1
+      },
+      "index": {
+        "osis": "rev",
+        "chapter": 12,
+        "verse": null
+      },
+      "wiki_number": 238,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-238.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-239",
+      "number": 239,
+      "osis": "rev",
+      "chapter": 18,
+      "verse": 5,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "Babylon Has Fallen",
+      "caption_title": "BABYLON FALLEN",
+      "caption": {
+        "osis": "rev",
+        "chapter": 18,
+        "verse": 5
+      },
+      "wiki": {
+        "osis": "rev",
+        "chapter": 18,
+        "verse": 2
+      },
+      "index": {
+        "osis": "rev",
+        "chapter": 18,
+        "verse": null
+      },
+      "wiki_number": 239,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-239.jpg",
+      "agreement": "disputed"
+    },
+    {
+      "plate_id": "NT-240",
+      "number": 240,
+      "osis": "rev",
+      "chapter": 20,
+      "verse": 12,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The Last Judgment",
+      "caption_title": "THE LAST JUDGMENT '",
+      "caption": {
+        "osis": "rev",
+        "chapter": 20,
+        "verse": 12
+      },
+      "wiki": {
+        "osis": "rev",
+        "chapter": 20,
+        "verse": 12
+      },
+      "index": {
+        "osis": "rev",
+        "chapter": 20,
+        "verse": null
+      },
+      "wiki_number": 240,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-240.jpg",
+      "agreement": "confirmed"
+    },
+    {
+      "plate_id": "NT-241",
+      "number": 241,
+      "osis": "rev",
+      "chapter": 21,
+      "verse": 2,
+      "anchor": "verse",
+      "book_source": "caption",
+      "verse_source": "caption",
+      "title": "The New Jerusalem",
+      "caption_title": "THE NEW JERUSALEM",
+      "caption": {
+        "osis": "rev",
+        "chapter": 21,
+        "verse": 2
+      },
+      "wiki": {
+        "osis": "rev",
+        "chapter": 21,
+        "verse": 1
+      },
+      "index": {
+        "osis": "rev",
+        "chapter": 21,
+        "verse": null
+      },
+      "wiki_number": 241,
+      "alternate": null,
+      "source_url": "https://catholic-resources.org/Dore/Images/NT-241.jpg",
+      "agreement": "disputed"
+    }
+  ]
+}

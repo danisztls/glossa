@@ -71,6 +71,7 @@ to get a corpus at all:
 | definitive 404s                                          | `pipeline/absent-sources.json`                 | 746 URLs      |
 | what a missing sibling-language edition turned out to BE | `pipeline/translations-checked.json`           | 125 documents |
 | the day each page was fetched (`retrieved_at`)           | `raw/<source>/captured-at.json`, in the corpus | 6,328 pages   |
+| which verse each Doré plate depicts                      | `pipeline/dore-anchors.json`                   | 241 plates    |
 
 The first two are knowledge derived where there is no page to sit beside, so
 they are tracked here. The third belongs to the page, so it sits in `raw/`,
@@ -79,6 +80,21 @@ the answer is certain, since a cache hit never reaches it. Those dates were
 recovered from filesystem mtimes, **which git does not preserve**; they were
 also finer than the manifests', which carried one date per work and had 354
 works claiming a retrieval days after the real fetch.
+
+**The fourth is the one that arrived by a different route, and it is worth
+reading as its own lesson: it WAS regenerable from `raw/`, and that was the
+problem. 202 of the 241 anchors came from tesseract reading the caption
+printed under a plate, and OCR is not a pure function of a file — a different
+engine build reads a digit differently. So a rebuild could move a plate to a
+verse nobody chose, silently, with no diff anywhere to show it, because
+`plates.json` lives in `build/`. The answer was not to cache the read but to
+recognise that the reconciliation had finished: the vote ran once, its result
+and every reading behind it are committed, and the ~600 lines that produced
+them (`dore/sources.py`, the OCR, the pairing, the election) were deleted on
+2026-08-28. `dore.py` kept only the image encoding, because THAT is not
+settled — the AVIF ladder, the crop and the widths can all change and have to
+be able to run over the masters again. **A pipeline stage that can only ever
+reproduce its own committed output is not a pipeline stage.\*\*
 
 **The check that misses this class is a normalised field.** The rebuild
 comparison excluded `retrieved_at` because the corpus README asserted it
@@ -108,6 +124,11 @@ pipeline/scrapers/
                      two share (the only scrapers here reading JSON, not HTML)
   ccc/               ccc, compendium
   summa/             the Summa, EN from CCEL + LA from Corpus Thomisticum
+  dore/              Doré's 241 engravings: `plates.py` is the image
+                     pipeline (crop, level, resize, AVIF), `dore.py` the
+                     script over it. It reads its anchors from
+                     `pipeline/dore-anchors.json` rather than deriving them --
+                     see "Output that is only regenerable" above.
   vatican_docs.py    encyclicals, Vatican II, exhortations
   prayers.py
   audit.py census.py apply_sweep.py   tools over already-written output
