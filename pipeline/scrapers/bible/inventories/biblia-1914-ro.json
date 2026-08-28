@@ -1,0 +1,334 @@
+{
+  "source": "biblia-1914-ro",
+  "note": "ro.wikisource.org, Biblia 1914 (Orthodox Synodal), one page per book, wikitext via action=raw",
+  "user_agent": "Glossa Catholica corpus builder (+https://glossacatholica.org)",
+  "delay": 1.5,
+  "attempts": 3,
+  "backoff": [
+    3.0,
+    8.0
+  ],
+  "timeout": 60.0,
+  "pages": [
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/1_Corinteni?action=raw",
+      "path": "1-corinteni.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/1_Ioan?action=raw",
+      "path": "1-ioan.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/1_Macavei?action=raw",
+      "path": "1-macavei.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/1_Paralipomene?action=raw",
+      "path": "1-paralipomene.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/1_Petru?action=raw",
+      "path": "1-petru.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/1_Tesalonicheni?action=raw",
+      "path": "1-tesalonicheni.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/1_Timotei?action=raw",
+      "path": "1-timotei.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/1_%C3%8Emp%C4%83ra%C8%9Bi?action=raw",
+      "path": "1-imparati.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/2_Corinteni?action=raw",
+      "path": "2-corinteni.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/2_Ioan?action=raw",
+      "path": "2-ioan.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/2_Macavei?action=raw",
+      "path": "2-macavei.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/2_Paralipomene?action=raw",
+      "path": "2-paralipomene.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/2_Petru?action=raw",
+      "path": "2-petru.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/2_Tesalonicheni?action=raw",
+      "path": "2-tesalonicheni.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/2_Timotei?action=raw",
+      "path": "2-timotei.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/2_%C3%8Emp%C4%83ra%C8%9Bi?action=raw",
+      "path": "2-imparati.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/3_Esdra?action=raw",
+      "path": "3-esdra.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/3_Ioan?action=raw",
+      "path": "3-ioan.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/3_Macavei?action=raw",
+      "path": "3-macavei.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/3_%C3%8Emp%C4%83ra%C8%9Bi?action=raw",
+      "path": "3-imparati.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/4_%C3%8Emp%C4%83ra%C8%9Bi?action=raw",
+      "path": "4-imparati.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/A_doua_lege?action=raw",
+      "path": "a-doua-lege.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Agheu?action=raw",
+      "path": "agheu.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Amos?action=raw",
+      "path": "amos.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Apocalipsis?action=raw",
+      "path": "apocalipsis.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Avacum?action=raw",
+      "path": "avacum.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Avdie?action=raw",
+      "path": "avdie.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Cartea_Ieremiei?action=raw",
+      "path": "cartea-ieremiei.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Colaseni?action=raw",
+      "path": "colaseni.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/C%C3%A2ntarea_celor_trei_tineri?action=raw",
+      "path": "cantarea-celor-trei-tineri.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/C%C3%A2ntarea_c%C3%A2nt%C4%83rilor?action=raw",
+      "path": "cantarea-cantarilor.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Daniil?action=raw",
+      "path": "daniil.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Eclisiastul?action=raw",
+      "path": "eclisiastul.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Efeseni?action=raw",
+      "path": "efeseni.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Esdra?action=raw",
+      "path": "esdra.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Estir?action=raw",
+      "path": "estir.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Evrei?action=raw",
+      "path": "evrei.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/E%C8%99irea?action=raw",
+      "path": "esirea.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Facerea?action=raw",
+      "path": "facerea.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Faptele_Apostolilor?action=raw",
+      "path": "faptele-apostolilor.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Filimon?action=raw",
+      "path": "filimon.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Filippiseni?action=raw",
+      "path": "filippiseni.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Galateni?action=raw",
+      "path": "galateni.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Iacov?action=raw",
+      "path": "iacov.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Ieremia?action=raw",
+      "path": "ieremia.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Iezechiil?action=raw",
+      "path": "iezechiil.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Ioan?action=raw",
+      "path": "ioan.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Ioil?action=raw",
+      "path": "ioil.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Ion%C3%A0?action=raw",
+      "path": "iona.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Iov?action=raw",
+      "path": "iov.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Isaia?action=raw",
+      "path": "isaia.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Istoria_omor%C3%AErei_balaurului_%C8%99i_a_sf%C4%83r%C3%A2m%C4%83rii_lui_Vil?action=raw",
+      "path": "istoria-omorirei-balaurului-si-a-sfaramarii-lui-vil.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Isus_Nav%C3%AC?action=raw",
+      "path": "isus-navi.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Iuda?action=raw",
+      "path": "iuda.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Iudita?action=raw",
+      "path": "iudita.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Judec%C4%83torii?action=raw",
+      "path": "judecatorii.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Leviticul?action=raw",
+      "path": "leviticul.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Luca?action=raw",
+      "path": "luca.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Malahia?action=raw",
+      "path": "malahia.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Marcu?action=raw",
+      "path": "marcu.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Matei?action=raw",
+      "path": "matei.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Miheea?action=raw",
+      "path": "miheea.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Naum?action=raw",
+      "path": "naum.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Neemia?action=raw",
+      "path": "neemia.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Numerii?action=raw",
+      "path": "numerii.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Osie?action=raw",
+      "path": "osie.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Pilde?action=raw",
+      "path": "pilde.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Pl%C3%A2ngerile_Ieremiei?action=raw",
+      "path": "plangerile-ieremiei.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Psaltirea?action=raw",
+      "path": "psaltirea.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Romani?action=raw",
+      "path": "romani.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Rug%C4%83ciunea_lui_Manas%C3%AC?action=raw",
+      "path": "rugaciunea-lui-manasi.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Rut?action=raw",
+      "path": "rut.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Sirah?action=raw",
+      "path": "sirah.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Sofonie?action=raw",
+      "path": "sofonie.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Susana?action=raw",
+      "path": "susana.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Tit?action=raw",
+      "path": "tit.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Tovit?action=raw",
+      "path": "tovit.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Varuh?action=raw",
+      "path": "varuh.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/Zaharia?action=raw",
+      "path": "zaharia.wikitext"
+    },
+    {
+      "url": "https://ro.wikisource.org/wiki/Biblia_1914/%C3%8En%C8%9Belepciunea_lui_Solomon?action=raw",
+      "path": "intelepciunea-lui-solomon.wikitext"
+    }
+  ]
+}

@@ -1,0 +1,314 @@
+{
+  "source": "wujek",
+  "note": "biblia.info.pl, Biblia Jakuba Wujka (1599) in modernised orthography („transkrypcja typu B”), one whole-book page per file. Base text: pl.wikisource transcription B, on the Polish and Foreign Bible Society's 1923 printing, which itself omitted Baruch, Judith, 1-2 Maccabees, Wisdom, Sirach and Tobit; those six were supplied by this site from the original 1599 edition (see colophon.html). robots.txt is Cloudflare's managed content-signal file: 'User-agent: * / Content-Signal: search=yes,ai-train=no,use=reference / Allow: /', with named AI crawlers (ClaudeBot, GPTBot, CCBot, Bytespider, Amazonbot, Applebot-Extended, Google-Extended, meta-externalagent, CloudflareBrowserRenderingCrawler) Disallow: / by name. Reproducing this public-domain text in a reference site is the search/reference use the signal permits, not the ai-train use it refuses; captured under the project's own User-Agent, never a ClaudeBot identity, checked 2026-08-28. Biblia.html (added after the initial capture) is the site's own account of the translation's history and names three transcription types of Wujek in circulation -- 'A' (the 1599 text, original orthography, unmodernised, including Wujek's own commentaries), 'B' (this modernised transcription, sourced upstream as '[bez ksiag deuterokanonicznych]'), 'C' (a 1962 Jesuit revision) -- and links Wielkopolska/Dolnoslaska digital libraries and Polona for 'A'. It is what led to locating raw/wujek_1599_ia/, the actual 1599 print, which alone (of every source examined) carries Esther's Vulgate chapters XI-XVI.",
+  "user_agent": "Glossa Catholica corpus builder (+https://glossacatholica.org)",
+  "delay": 2.0,
+  "attempts": 3,
+  "backoff": [
+    3.0,
+    8.0
+  ],
+  "timeout": 60.0,
+  "pages": [
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Rdz.html",
+      "path": "Rdz.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Wj.html",
+      "path": "Wj.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Kpl.html",
+      "path": "Kpl.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Lb.html",
+      "path": "Lb.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Pwt.html",
+      "path": "Pwt.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Joz.html",
+      "path": "Joz.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Sdz.html",
+      "path": "Sdz.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Rt.html",
+      "path": "Rt.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/1Sm.html",
+      "path": "1Sm.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/2Sm.html",
+      "path": "2Sm.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/1Krl.html",
+      "path": "1Krl.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/2Krl.html",
+      "path": "2Krl.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/1Krn.html",
+      "path": "1Krn.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/2Krn.html",
+      "path": "2Krn.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ezd.html",
+      "path": "Ezd.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ne.html",
+      "path": "Ne.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Tb.html",
+      "path": "Tb.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Jdt.html",
+      "path": "Jdt.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Es.html",
+      "path": "Es.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Hi.html",
+      "path": "Hi.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ps.html",
+      "path": "Ps.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Prz.html",
+      "path": "Prz.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Koh.html",
+      "path": "Koh.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Pnp.html",
+      "path": "Pnp.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Mdr.html",
+      "path": "Mdr.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Syr.html",
+      "path": "Syr.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Iz.html",
+      "path": "Iz.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Jr.html",
+      "path": "Jr.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Lm.html",
+      "path": "Lm.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ba.html",
+      "path": "Ba.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ez.html",
+      "path": "Ez.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Dn.html",
+      "path": "Dn.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Oz.html",
+      "path": "Oz.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Jo.html",
+      "path": "Jo.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Am.html",
+      "path": "Am.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ab.html",
+      "path": "Ab.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Jon.html",
+      "path": "Jon.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Mi.html",
+      "path": "Mi.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Na.html",
+      "path": "Na.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ha.html",
+      "path": "Ha.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/So.html",
+      "path": "So.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ag.html",
+      "path": "Ag.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Za.html",
+      "path": "Za.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ml.html",
+      "path": "Ml.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/1Mch.html",
+      "path": "1Mch.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/2Mch.html",
+      "path": "2Mch.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Mt.html",
+      "path": "Mt.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Mk.html",
+      "path": "Mk.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Lk.html",
+      "path": "Lk.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/J.html",
+      "path": "J.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Dz.html",
+      "path": "Dz.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Rz.html",
+      "path": "Rz.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/1Kor.html",
+      "path": "1Kor.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/2Kor.html",
+      "path": "2Kor.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ga.html",
+      "path": "Ga.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ef.html",
+      "path": "Ef.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Flp.html",
+      "path": "Flp.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Kol.html",
+      "path": "Kol.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/1Tes.html",
+      "path": "1Tes.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/2Tes.html",
+      "path": "2Tes.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/1Tm.html",
+      "path": "1Tm.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/2Tm.html",
+      "path": "2Tm.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Tt.html",
+      "path": "Tt.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Flm.html",
+      "path": "Flm.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Hbr.html",
+      "path": "Hbr.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Jk.html",
+      "path": "Jk.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/1P.html",
+      "path": "1P.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/2P.html",
+      "path": "2P.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/1J.html",
+      "path": "1J.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/2J.html",
+      "path": "2J.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/3J.html",
+      "path": "3J.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Jd.html",
+      "path": "Jd.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Ap.html",
+      "path": "Ap.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/colophon.html",
+      "path": "colophon.html"
+    },
+    {
+      "url": "https://www.biblia.info.pl/bibliawujka/Biblia.html",
+      "path": "Biblia.html"
+    }
+  ]
+}

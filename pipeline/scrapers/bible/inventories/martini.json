@@ -1,0 +1,5354 @@
+{
+  "source": "martini",
+  "note": "scrutatio.it, Bibbia Martini (Card. Antonio Martini, 1775-1781, tradotta dalla Vulgata) -- one page per chapter at /bibbia/lettura/it/martini/{id}/{chapter}, id 1-73 in the site's own book order (verified against the landing page's book grid, which names every book in full and lists its chapters; see index.html). robots.txt: 'User-agent: *' with an empty 'Disallow:' -- everything permitted, checked 2026-08-28. This capture is restricted to the /it/martini/ path only: the host also republishes several actively-copyrighted translations (CEI, NJB, NAB, Tysiaclecia, Ave Maria) under sibling paths, which are deliberately not captured here. Cross-reference popovers (Bootstrap data-bs-content) and Martini's footnote commentary (<p id=\"nN\">) are both server-rendered in the same page as the verses -- no separate request needed.",
+  "user_agent": "Glossa Catholica corpus builder (+https://glossacatholica.org)",
+  "delay": 2.0,
+  "attempts": 3,
+  "backoff": [
+    3.0,
+    8.0
+  ],
+  "timeout": 60.0,
+  "pages": [
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini",
+      "path": "index.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/1",
+      "path": "genesi/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/2",
+      "path": "genesi/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/3",
+      "path": "genesi/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/4",
+      "path": "genesi/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/5",
+      "path": "genesi/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/6",
+      "path": "genesi/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/7",
+      "path": "genesi/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/8",
+      "path": "genesi/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/9",
+      "path": "genesi/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/10",
+      "path": "genesi/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/11",
+      "path": "genesi/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/12",
+      "path": "genesi/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/13",
+      "path": "genesi/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/14",
+      "path": "genesi/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/15",
+      "path": "genesi/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/16",
+      "path": "genesi/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/17",
+      "path": "genesi/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/18",
+      "path": "genesi/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/19",
+      "path": "genesi/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/20",
+      "path": "genesi/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/21",
+      "path": "genesi/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/22",
+      "path": "genesi/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/23",
+      "path": "genesi/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/24",
+      "path": "genesi/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/25",
+      "path": "genesi/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/26",
+      "path": "genesi/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/27",
+      "path": "genesi/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/28",
+      "path": "genesi/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/29",
+      "path": "genesi/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/30",
+      "path": "genesi/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/31",
+      "path": "genesi/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/32",
+      "path": "genesi/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/33",
+      "path": "genesi/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/34",
+      "path": "genesi/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/35",
+      "path": "genesi/035.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/36",
+      "path": "genesi/036.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/37",
+      "path": "genesi/037.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/38",
+      "path": "genesi/038.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/39",
+      "path": "genesi/039.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/40",
+      "path": "genesi/040.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/41",
+      "path": "genesi/041.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/42",
+      "path": "genesi/042.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/43",
+      "path": "genesi/043.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/44",
+      "path": "genesi/044.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/45",
+      "path": "genesi/045.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/46",
+      "path": "genesi/046.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/47",
+      "path": "genesi/047.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/48",
+      "path": "genesi/048.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/49",
+      "path": "genesi/049.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/1/50",
+      "path": "genesi/050.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/1",
+      "path": "esodo/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/2",
+      "path": "esodo/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/3",
+      "path": "esodo/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/4",
+      "path": "esodo/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/5",
+      "path": "esodo/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/6",
+      "path": "esodo/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/7",
+      "path": "esodo/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/8",
+      "path": "esodo/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/9",
+      "path": "esodo/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/10",
+      "path": "esodo/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/11",
+      "path": "esodo/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/12",
+      "path": "esodo/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/13",
+      "path": "esodo/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/14",
+      "path": "esodo/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/15",
+      "path": "esodo/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/16",
+      "path": "esodo/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/17",
+      "path": "esodo/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/18",
+      "path": "esodo/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/19",
+      "path": "esodo/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/20",
+      "path": "esodo/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/21",
+      "path": "esodo/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/22",
+      "path": "esodo/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/23",
+      "path": "esodo/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/24",
+      "path": "esodo/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/25",
+      "path": "esodo/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/26",
+      "path": "esodo/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/27",
+      "path": "esodo/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/28",
+      "path": "esodo/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/29",
+      "path": "esodo/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/30",
+      "path": "esodo/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/31",
+      "path": "esodo/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/32",
+      "path": "esodo/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/33",
+      "path": "esodo/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/34",
+      "path": "esodo/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/35",
+      "path": "esodo/035.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/36",
+      "path": "esodo/036.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/37",
+      "path": "esodo/037.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/38",
+      "path": "esodo/038.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/39",
+      "path": "esodo/039.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/2/40",
+      "path": "esodo/040.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/1",
+      "path": "levitico/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/2",
+      "path": "levitico/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/3",
+      "path": "levitico/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/4",
+      "path": "levitico/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/5",
+      "path": "levitico/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/6",
+      "path": "levitico/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/7",
+      "path": "levitico/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/8",
+      "path": "levitico/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/9",
+      "path": "levitico/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/10",
+      "path": "levitico/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/11",
+      "path": "levitico/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/12",
+      "path": "levitico/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/13",
+      "path": "levitico/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/14",
+      "path": "levitico/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/15",
+      "path": "levitico/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/16",
+      "path": "levitico/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/17",
+      "path": "levitico/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/18",
+      "path": "levitico/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/19",
+      "path": "levitico/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/20",
+      "path": "levitico/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/21",
+      "path": "levitico/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/22",
+      "path": "levitico/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/23",
+      "path": "levitico/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/24",
+      "path": "levitico/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/25",
+      "path": "levitico/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/26",
+      "path": "levitico/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/3/27",
+      "path": "levitico/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/1",
+      "path": "numeri/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/2",
+      "path": "numeri/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/3",
+      "path": "numeri/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/4",
+      "path": "numeri/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/5",
+      "path": "numeri/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/6",
+      "path": "numeri/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/7",
+      "path": "numeri/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/8",
+      "path": "numeri/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/9",
+      "path": "numeri/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/10",
+      "path": "numeri/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/11",
+      "path": "numeri/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/12",
+      "path": "numeri/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/13",
+      "path": "numeri/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/14",
+      "path": "numeri/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/15",
+      "path": "numeri/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/16",
+      "path": "numeri/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/17",
+      "path": "numeri/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/18",
+      "path": "numeri/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/19",
+      "path": "numeri/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/20",
+      "path": "numeri/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/21",
+      "path": "numeri/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/22",
+      "path": "numeri/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/23",
+      "path": "numeri/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/24",
+      "path": "numeri/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/25",
+      "path": "numeri/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/26",
+      "path": "numeri/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/27",
+      "path": "numeri/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/28",
+      "path": "numeri/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/29",
+      "path": "numeri/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/30",
+      "path": "numeri/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/31",
+      "path": "numeri/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/32",
+      "path": "numeri/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/33",
+      "path": "numeri/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/34",
+      "path": "numeri/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/35",
+      "path": "numeri/035.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/4/36",
+      "path": "numeri/036.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/1",
+      "path": "deuteronomio/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/2",
+      "path": "deuteronomio/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/3",
+      "path": "deuteronomio/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/4",
+      "path": "deuteronomio/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/5",
+      "path": "deuteronomio/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/6",
+      "path": "deuteronomio/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/7",
+      "path": "deuteronomio/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/8",
+      "path": "deuteronomio/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/9",
+      "path": "deuteronomio/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/10",
+      "path": "deuteronomio/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/11",
+      "path": "deuteronomio/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/12",
+      "path": "deuteronomio/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/13",
+      "path": "deuteronomio/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/14",
+      "path": "deuteronomio/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/15",
+      "path": "deuteronomio/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/16",
+      "path": "deuteronomio/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/17",
+      "path": "deuteronomio/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/18",
+      "path": "deuteronomio/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/19",
+      "path": "deuteronomio/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/20",
+      "path": "deuteronomio/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/21",
+      "path": "deuteronomio/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/22",
+      "path": "deuteronomio/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/23",
+      "path": "deuteronomio/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/24",
+      "path": "deuteronomio/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/25",
+      "path": "deuteronomio/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/26",
+      "path": "deuteronomio/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/27",
+      "path": "deuteronomio/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/28",
+      "path": "deuteronomio/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/29",
+      "path": "deuteronomio/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/30",
+      "path": "deuteronomio/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/31",
+      "path": "deuteronomio/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/32",
+      "path": "deuteronomio/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/33",
+      "path": "deuteronomio/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/5/34",
+      "path": "deuteronomio/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/1",
+      "path": "giosue/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/2",
+      "path": "giosue/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/3",
+      "path": "giosue/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/4",
+      "path": "giosue/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/5",
+      "path": "giosue/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/6",
+      "path": "giosue/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/7",
+      "path": "giosue/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/8",
+      "path": "giosue/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/9",
+      "path": "giosue/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/10",
+      "path": "giosue/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/11",
+      "path": "giosue/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/12",
+      "path": "giosue/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/13",
+      "path": "giosue/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/14",
+      "path": "giosue/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/15",
+      "path": "giosue/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/16",
+      "path": "giosue/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/17",
+      "path": "giosue/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/18",
+      "path": "giosue/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/19",
+      "path": "giosue/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/20",
+      "path": "giosue/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/21",
+      "path": "giosue/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/22",
+      "path": "giosue/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/23",
+      "path": "giosue/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/6/24",
+      "path": "giosue/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/1",
+      "path": "giudici/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/2",
+      "path": "giudici/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/3",
+      "path": "giudici/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/4",
+      "path": "giudici/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/5",
+      "path": "giudici/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/6",
+      "path": "giudici/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/7",
+      "path": "giudici/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/8",
+      "path": "giudici/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/9",
+      "path": "giudici/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/10",
+      "path": "giudici/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/11",
+      "path": "giudici/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/12",
+      "path": "giudici/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/13",
+      "path": "giudici/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/14",
+      "path": "giudici/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/15",
+      "path": "giudici/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/16",
+      "path": "giudici/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/17",
+      "path": "giudici/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/18",
+      "path": "giudici/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/19",
+      "path": "giudici/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/20",
+      "path": "giudici/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/7/21",
+      "path": "giudici/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/8/1",
+      "path": "rut/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/8/2",
+      "path": "rut/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/8/3",
+      "path": "rut/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/8/4",
+      "path": "rut/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/1",
+      "path": "1-samuele/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/2",
+      "path": "1-samuele/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/3",
+      "path": "1-samuele/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/4",
+      "path": "1-samuele/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/5",
+      "path": "1-samuele/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/6",
+      "path": "1-samuele/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/7",
+      "path": "1-samuele/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/8",
+      "path": "1-samuele/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/9",
+      "path": "1-samuele/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/10",
+      "path": "1-samuele/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/11",
+      "path": "1-samuele/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/12",
+      "path": "1-samuele/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/13",
+      "path": "1-samuele/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/14",
+      "path": "1-samuele/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/15",
+      "path": "1-samuele/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/16",
+      "path": "1-samuele/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/17",
+      "path": "1-samuele/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/18",
+      "path": "1-samuele/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/19",
+      "path": "1-samuele/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/20",
+      "path": "1-samuele/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/21",
+      "path": "1-samuele/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/22",
+      "path": "1-samuele/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/23",
+      "path": "1-samuele/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/24",
+      "path": "1-samuele/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/25",
+      "path": "1-samuele/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/26",
+      "path": "1-samuele/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/27",
+      "path": "1-samuele/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/28",
+      "path": "1-samuele/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/29",
+      "path": "1-samuele/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/30",
+      "path": "1-samuele/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/9/31",
+      "path": "1-samuele/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/1",
+      "path": "2-samuele/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/2",
+      "path": "2-samuele/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/3",
+      "path": "2-samuele/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/4",
+      "path": "2-samuele/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/5",
+      "path": "2-samuele/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/6",
+      "path": "2-samuele/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/7",
+      "path": "2-samuele/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/8",
+      "path": "2-samuele/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/9",
+      "path": "2-samuele/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/10",
+      "path": "2-samuele/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/11",
+      "path": "2-samuele/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/12",
+      "path": "2-samuele/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/13",
+      "path": "2-samuele/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/14",
+      "path": "2-samuele/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/15",
+      "path": "2-samuele/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/16",
+      "path": "2-samuele/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/17",
+      "path": "2-samuele/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/18",
+      "path": "2-samuele/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/19",
+      "path": "2-samuele/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/20",
+      "path": "2-samuele/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/21",
+      "path": "2-samuele/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/22",
+      "path": "2-samuele/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/23",
+      "path": "2-samuele/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/10/24",
+      "path": "2-samuele/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/1",
+      "path": "1-re/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/2",
+      "path": "1-re/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/3",
+      "path": "1-re/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/4",
+      "path": "1-re/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/5",
+      "path": "1-re/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/6",
+      "path": "1-re/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/7",
+      "path": "1-re/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/8",
+      "path": "1-re/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/9",
+      "path": "1-re/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/10",
+      "path": "1-re/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/11",
+      "path": "1-re/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/12",
+      "path": "1-re/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/13",
+      "path": "1-re/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/14",
+      "path": "1-re/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/15",
+      "path": "1-re/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/16",
+      "path": "1-re/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/17",
+      "path": "1-re/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/18",
+      "path": "1-re/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/19",
+      "path": "1-re/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/20",
+      "path": "1-re/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/21",
+      "path": "1-re/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/11/22",
+      "path": "1-re/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/1",
+      "path": "2-re/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/2",
+      "path": "2-re/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/3",
+      "path": "2-re/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/4",
+      "path": "2-re/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/5",
+      "path": "2-re/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/6",
+      "path": "2-re/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/7",
+      "path": "2-re/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/8",
+      "path": "2-re/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/9",
+      "path": "2-re/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/10",
+      "path": "2-re/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/11",
+      "path": "2-re/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/12",
+      "path": "2-re/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/13",
+      "path": "2-re/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/14",
+      "path": "2-re/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/15",
+      "path": "2-re/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/16",
+      "path": "2-re/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/17",
+      "path": "2-re/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/18",
+      "path": "2-re/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/19",
+      "path": "2-re/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/20",
+      "path": "2-re/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/21",
+      "path": "2-re/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/22",
+      "path": "2-re/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/23",
+      "path": "2-re/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/24",
+      "path": "2-re/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/12/25",
+      "path": "2-re/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/1",
+      "path": "1-cronache/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/2",
+      "path": "1-cronache/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/3",
+      "path": "1-cronache/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/4",
+      "path": "1-cronache/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/5",
+      "path": "1-cronache/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/6",
+      "path": "1-cronache/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/7",
+      "path": "1-cronache/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/8",
+      "path": "1-cronache/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/9",
+      "path": "1-cronache/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/10",
+      "path": "1-cronache/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/11",
+      "path": "1-cronache/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/12",
+      "path": "1-cronache/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/13",
+      "path": "1-cronache/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/14",
+      "path": "1-cronache/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/15",
+      "path": "1-cronache/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/16",
+      "path": "1-cronache/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/17",
+      "path": "1-cronache/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/18",
+      "path": "1-cronache/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/19",
+      "path": "1-cronache/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/20",
+      "path": "1-cronache/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/21",
+      "path": "1-cronache/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/22",
+      "path": "1-cronache/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/23",
+      "path": "1-cronache/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/24",
+      "path": "1-cronache/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/25",
+      "path": "1-cronache/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/26",
+      "path": "1-cronache/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/27",
+      "path": "1-cronache/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/28",
+      "path": "1-cronache/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/13/29",
+      "path": "1-cronache/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/1",
+      "path": "2-cronache/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/2",
+      "path": "2-cronache/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/3",
+      "path": "2-cronache/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/4",
+      "path": "2-cronache/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/5",
+      "path": "2-cronache/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/6",
+      "path": "2-cronache/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/7",
+      "path": "2-cronache/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/8",
+      "path": "2-cronache/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/9",
+      "path": "2-cronache/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/10",
+      "path": "2-cronache/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/11",
+      "path": "2-cronache/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/12",
+      "path": "2-cronache/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/13",
+      "path": "2-cronache/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/14",
+      "path": "2-cronache/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/15",
+      "path": "2-cronache/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/16",
+      "path": "2-cronache/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/17",
+      "path": "2-cronache/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/18",
+      "path": "2-cronache/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/19",
+      "path": "2-cronache/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/20",
+      "path": "2-cronache/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/21",
+      "path": "2-cronache/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/22",
+      "path": "2-cronache/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/23",
+      "path": "2-cronache/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/24",
+      "path": "2-cronache/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/25",
+      "path": "2-cronache/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/26",
+      "path": "2-cronache/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/27",
+      "path": "2-cronache/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/28",
+      "path": "2-cronache/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/29",
+      "path": "2-cronache/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/30",
+      "path": "2-cronache/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/31",
+      "path": "2-cronache/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/32",
+      "path": "2-cronache/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/33",
+      "path": "2-cronache/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/34",
+      "path": "2-cronache/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/35",
+      "path": "2-cronache/035.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/14/36",
+      "path": "2-cronache/036.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/15/1",
+      "path": "esdra/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/15/2",
+      "path": "esdra/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/15/3",
+      "path": "esdra/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/15/4",
+      "path": "esdra/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/15/5",
+      "path": "esdra/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/15/6",
+      "path": "esdra/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/15/7",
+      "path": "esdra/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/15/8",
+      "path": "esdra/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/15/9",
+      "path": "esdra/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/15/10",
+      "path": "esdra/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/1",
+      "path": "neemia/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/2",
+      "path": "neemia/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/3",
+      "path": "neemia/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/4",
+      "path": "neemia/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/5",
+      "path": "neemia/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/6",
+      "path": "neemia/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/7",
+      "path": "neemia/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/8",
+      "path": "neemia/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/9",
+      "path": "neemia/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/10",
+      "path": "neemia/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/11",
+      "path": "neemia/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/12",
+      "path": "neemia/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/16/13",
+      "path": "neemia/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/1",
+      "path": "tobia/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/2",
+      "path": "tobia/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/3",
+      "path": "tobia/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/4",
+      "path": "tobia/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/5",
+      "path": "tobia/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/6",
+      "path": "tobia/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/7",
+      "path": "tobia/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/8",
+      "path": "tobia/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/9",
+      "path": "tobia/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/10",
+      "path": "tobia/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/11",
+      "path": "tobia/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/12",
+      "path": "tobia/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/13",
+      "path": "tobia/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/17/14",
+      "path": "tobia/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/1",
+      "path": "giuditta/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/2",
+      "path": "giuditta/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/3",
+      "path": "giuditta/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/4",
+      "path": "giuditta/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/5",
+      "path": "giuditta/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/6",
+      "path": "giuditta/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/7",
+      "path": "giuditta/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/8",
+      "path": "giuditta/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/9",
+      "path": "giuditta/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/10",
+      "path": "giuditta/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/11",
+      "path": "giuditta/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/12",
+      "path": "giuditta/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/13",
+      "path": "giuditta/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/14",
+      "path": "giuditta/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/15",
+      "path": "giuditta/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/18/16",
+      "path": "giuditta/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/1",
+      "path": "ester/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/2",
+      "path": "ester/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/3",
+      "path": "ester/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/4",
+      "path": "ester/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/5",
+      "path": "ester/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/6",
+      "path": "ester/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/7",
+      "path": "ester/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/8",
+      "path": "ester/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/9",
+      "path": "ester/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/10",
+      "path": "ester/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/11",
+      "path": "ester/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/12",
+      "path": "ester/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/13",
+      "path": "ester/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/14",
+      "path": "ester/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/15",
+      "path": "ester/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/19/16",
+      "path": "ester/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/1",
+      "path": "1-maccabei/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/2",
+      "path": "1-maccabei/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/3",
+      "path": "1-maccabei/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/4",
+      "path": "1-maccabei/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/5",
+      "path": "1-maccabei/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/6",
+      "path": "1-maccabei/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/7",
+      "path": "1-maccabei/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/8",
+      "path": "1-maccabei/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/9",
+      "path": "1-maccabei/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/10",
+      "path": "1-maccabei/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/11",
+      "path": "1-maccabei/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/12",
+      "path": "1-maccabei/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/13",
+      "path": "1-maccabei/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/14",
+      "path": "1-maccabei/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/15",
+      "path": "1-maccabei/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/20/16",
+      "path": "1-maccabei/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/1",
+      "path": "2-maccabei/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/2",
+      "path": "2-maccabei/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/3",
+      "path": "2-maccabei/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/4",
+      "path": "2-maccabei/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/5",
+      "path": "2-maccabei/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/6",
+      "path": "2-maccabei/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/7",
+      "path": "2-maccabei/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/8",
+      "path": "2-maccabei/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/9",
+      "path": "2-maccabei/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/10",
+      "path": "2-maccabei/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/11",
+      "path": "2-maccabei/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/12",
+      "path": "2-maccabei/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/13",
+      "path": "2-maccabei/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/14",
+      "path": "2-maccabei/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/21/15",
+      "path": "2-maccabei/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/1",
+      "path": "giobbe/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/2",
+      "path": "giobbe/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/3",
+      "path": "giobbe/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/4",
+      "path": "giobbe/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/5",
+      "path": "giobbe/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/6",
+      "path": "giobbe/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/7",
+      "path": "giobbe/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/8",
+      "path": "giobbe/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/9",
+      "path": "giobbe/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/10",
+      "path": "giobbe/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/11",
+      "path": "giobbe/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/12",
+      "path": "giobbe/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/13",
+      "path": "giobbe/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/14",
+      "path": "giobbe/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/15",
+      "path": "giobbe/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/16",
+      "path": "giobbe/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/17",
+      "path": "giobbe/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/18",
+      "path": "giobbe/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/19",
+      "path": "giobbe/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/20",
+      "path": "giobbe/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/21",
+      "path": "giobbe/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/22",
+      "path": "giobbe/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/23",
+      "path": "giobbe/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/24",
+      "path": "giobbe/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/25",
+      "path": "giobbe/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/26",
+      "path": "giobbe/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/27",
+      "path": "giobbe/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/28",
+      "path": "giobbe/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/29",
+      "path": "giobbe/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/30",
+      "path": "giobbe/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/31",
+      "path": "giobbe/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/32",
+      "path": "giobbe/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/33",
+      "path": "giobbe/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/34",
+      "path": "giobbe/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/35",
+      "path": "giobbe/035.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/36",
+      "path": "giobbe/036.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/37",
+      "path": "giobbe/037.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/38",
+      "path": "giobbe/038.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/39",
+      "path": "giobbe/039.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/40",
+      "path": "giobbe/040.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/41",
+      "path": "giobbe/041.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/22/42",
+      "path": "giobbe/042.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/1",
+      "path": "salmi/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/2",
+      "path": "salmi/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/3",
+      "path": "salmi/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/4",
+      "path": "salmi/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/5",
+      "path": "salmi/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/6",
+      "path": "salmi/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/7",
+      "path": "salmi/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/8",
+      "path": "salmi/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/9",
+      "path": "salmi/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/10",
+      "path": "salmi/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/11",
+      "path": "salmi/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/12",
+      "path": "salmi/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/13",
+      "path": "salmi/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/14",
+      "path": "salmi/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/15",
+      "path": "salmi/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/16",
+      "path": "salmi/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/17",
+      "path": "salmi/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/18",
+      "path": "salmi/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/19",
+      "path": "salmi/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/20",
+      "path": "salmi/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/21",
+      "path": "salmi/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/22",
+      "path": "salmi/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/23",
+      "path": "salmi/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/24",
+      "path": "salmi/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/25",
+      "path": "salmi/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/26",
+      "path": "salmi/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/27",
+      "path": "salmi/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/28",
+      "path": "salmi/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/29",
+      "path": "salmi/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/30",
+      "path": "salmi/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/31",
+      "path": "salmi/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/32",
+      "path": "salmi/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/33",
+      "path": "salmi/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/34",
+      "path": "salmi/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/35",
+      "path": "salmi/035.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/36",
+      "path": "salmi/036.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/37",
+      "path": "salmi/037.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/38",
+      "path": "salmi/038.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/39",
+      "path": "salmi/039.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/40",
+      "path": "salmi/040.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/41",
+      "path": "salmi/041.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/42",
+      "path": "salmi/042.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/43",
+      "path": "salmi/043.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/44",
+      "path": "salmi/044.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/45",
+      "path": "salmi/045.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/46",
+      "path": "salmi/046.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/47",
+      "path": "salmi/047.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/48",
+      "path": "salmi/048.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/49",
+      "path": "salmi/049.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/50",
+      "path": "salmi/050.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/51",
+      "path": "salmi/051.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/52",
+      "path": "salmi/052.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/53",
+      "path": "salmi/053.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/54",
+      "path": "salmi/054.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/55",
+      "path": "salmi/055.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/56",
+      "path": "salmi/056.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/57",
+      "path": "salmi/057.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/58",
+      "path": "salmi/058.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/59",
+      "path": "salmi/059.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/60",
+      "path": "salmi/060.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/61",
+      "path": "salmi/061.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/62",
+      "path": "salmi/062.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/63",
+      "path": "salmi/063.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/64",
+      "path": "salmi/064.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/65",
+      "path": "salmi/065.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/66",
+      "path": "salmi/066.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/67",
+      "path": "salmi/067.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/68",
+      "path": "salmi/068.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/69",
+      "path": "salmi/069.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/70",
+      "path": "salmi/070.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/71",
+      "path": "salmi/071.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/72",
+      "path": "salmi/072.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/73",
+      "path": "salmi/073.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/74",
+      "path": "salmi/074.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/75",
+      "path": "salmi/075.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/76",
+      "path": "salmi/076.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/77",
+      "path": "salmi/077.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/78",
+      "path": "salmi/078.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/79",
+      "path": "salmi/079.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/80",
+      "path": "salmi/080.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/81",
+      "path": "salmi/081.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/82",
+      "path": "salmi/082.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/83",
+      "path": "salmi/083.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/84",
+      "path": "salmi/084.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/85",
+      "path": "salmi/085.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/86",
+      "path": "salmi/086.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/87",
+      "path": "salmi/087.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/88",
+      "path": "salmi/088.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/89",
+      "path": "salmi/089.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/90",
+      "path": "salmi/090.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/91",
+      "path": "salmi/091.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/92",
+      "path": "salmi/092.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/93",
+      "path": "salmi/093.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/94",
+      "path": "salmi/094.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/95",
+      "path": "salmi/095.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/96",
+      "path": "salmi/096.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/97",
+      "path": "salmi/097.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/98",
+      "path": "salmi/098.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/99",
+      "path": "salmi/099.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/100",
+      "path": "salmi/100.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/101",
+      "path": "salmi/101.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/102",
+      "path": "salmi/102.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/103",
+      "path": "salmi/103.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/104",
+      "path": "salmi/104.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/105",
+      "path": "salmi/105.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/106",
+      "path": "salmi/106.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/107",
+      "path": "salmi/107.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/108",
+      "path": "salmi/108.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/109",
+      "path": "salmi/109.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/110",
+      "path": "salmi/110.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/111",
+      "path": "salmi/111.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/112",
+      "path": "salmi/112.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/113",
+      "path": "salmi/113.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/114",
+      "path": "salmi/114.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/115",
+      "path": "salmi/115.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/116",
+      "path": "salmi/116.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/117",
+      "path": "salmi/117.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/118",
+      "path": "salmi/118.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/119",
+      "path": "salmi/119.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/120",
+      "path": "salmi/120.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/121",
+      "path": "salmi/121.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/122",
+      "path": "salmi/122.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/123",
+      "path": "salmi/123.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/124",
+      "path": "salmi/124.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/125",
+      "path": "salmi/125.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/126",
+      "path": "salmi/126.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/127",
+      "path": "salmi/127.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/128",
+      "path": "salmi/128.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/129",
+      "path": "salmi/129.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/130",
+      "path": "salmi/130.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/131",
+      "path": "salmi/131.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/132",
+      "path": "salmi/132.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/133",
+      "path": "salmi/133.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/134",
+      "path": "salmi/134.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/135",
+      "path": "salmi/135.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/136",
+      "path": "salmi/136.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/137",
+      "path": "salmi/137.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/138",
+      "path": "salmi/138.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/139",
+      "path": "salmi/139.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/140",
+      "path": "salmi/140.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/141",
+      "path": "salmi/141.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/142",
+      "path": "salmi/142.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/143",
+      "path": "salmi/143.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/144",
+      "path": "salmi/144.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/145",
+      "path": "salmi/145.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/146",
+      "path": "salmi/146.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/147",
+      "path": "salmi/147.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/148",
+      "path": "salmi/148.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/149",
+      "path": "salmi/149.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/23/150",
+      "path": "salmi/150.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/1",
+      "path": "proverbi/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/2",
+      "path": "proverbi/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/3",
+      "path": "proverbi/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/4",
+      "path": "proverbi/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/5",
+      "path": "proverbi/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/6",
+      "path": "proverbi/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/7",
+      "path": "proverbi/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/8",
+      "path": "proverbi/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/9",
+      "path": "proverbi/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/10",
+      "path": "proverbi/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/11",
+      "path": "proverbi/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/12",
+      "path": "proverbi/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/13",
+      "path": "proverbi/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/14",
+      "path": "proverbi/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/15",
+      "path": "proverbi/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/16",
+      "path": "proverbi/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/17",
+      "path": "proverbi/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/18",
+      "path": "proverbi/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/19",
+      "path": "proverbi/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/20",
+      "path": "proverbi/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/21",
+      "path": "proverbi/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/22",
+      "path": "proverbi/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/23",
+      "path": "proverbi/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/24",
+      "path": "proverbi/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/25",
+      "path": "proverbi/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/26",
+      "path": "proverbi/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/27",
+      "path": "proverbi/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/28",
+      "path": "proverbi/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/29",
+      "path": "proverbi/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/30",
+      "path": "proverbi/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/24/31",
+      "path": "proverbi/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/1",
+      "path": "qoelet/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/2",
+      "path": "qoelet/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/3",
+      "path": "qoelet/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/4",
+      "path": "qoelet/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/5",
+      "path": "qoelet/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/6",
+      "path": "qoelet/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/7",
+      "path": "qoelet/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/8",
+      "path": "qoelet/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/9",
+      "path": "qoelet/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/10",
+      "path": "qoelet/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/11",
+      "path": "qoelet/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/25/12",
+      "path": "qoelet/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/26/1",
+      "path": "cantico/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/26/2",
+      "path": "cantico/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/26/3",
+      "path": "cantico/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/26/4",
+      "path": "cantico/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/26/5",
+      "path": "cantico/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/26/6",
+      "path": "cantico/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/26/7",
+      "path": "cantico/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/26/8",
+      "path": "cantico/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/1",
+      "path": "sapienza/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/2",
+      "path": "sapienza/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/3",
+      "path": "sapienza/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/4",
+      "path": "sapienza/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/5",
+      "path": "sapienza/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/6",
+      "path": "sapienza/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/7",
+      "path": "sapienza/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/8",
+      "path": "sapienza/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/9",
+      "path": "sapienza/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/10",
+      "path": "sapienza/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/11",
+      "path": "sapienza/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/12",
+      "path": "sapienza/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/13",
+      "path": "sapienza/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/14",
+      "path": "sapienza/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/15",
+      "path": "sapienza/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/16",
+      "path": "sapienza/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/17",
+      "path": "sapienza/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/18",
+      "path": "sapienza/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/27/19",
+      "path": "sapienza/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/1",
+      "path": "siracide/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/2",
+      "path": "siracide/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/3",
+      "path": "siracide/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/4",
+      "path": "siracide/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/5",
+      "path": "siracide/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/6",
+      "path": "siracide/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/7",
+      "path": "siracide/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/8",
+      "path": "siracide/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/9",
+      "path": "siracide/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/10",
+      "path": "siracide/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/11",
+      "path": "siracide/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/12",
+      "path": "siracide/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/13",
+      "path": "siracide/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/14",
+      "path": "siracide/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/15",
+      "path": "siracide/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/16",
+      "path": "siracide/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/17",
+      "path": "siracide/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/18",
+      "path": "siracide/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/19",
+      "path": "siracide/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/20",
+      "path": "siracide/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/21",
+      "path": "siracide/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/22",
+      "path": "siracide/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/23",
+      "path": "siracide/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/24",
+      "path": "siracide/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/25",
+      "path": "siracide/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/26",
+      "path": "siracide/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/27",
+      "path": "siracide/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/28",
+      "path": "siracide/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/29",
+      "path": "siracide/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/30",
+      "path": "siracide/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/31",
+      "path": "siracide/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/32",
+      "path": "siracide/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/33",
+      "path": "siracide/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/34",
+      "path": "siracide/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/35",
+      "path": "siracide/035.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/36",
+      "path": "siracide/036.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/37",
+      "path": "siracide/037.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/38",
+      "path": "siracide/038.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/39",
+      "path": "siracide/039.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/40",
+      "path": "siracide/040.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/41",
+      "path": "siracide/041.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/42",
+      "path": "siracide/042.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/43",
+      "path": "siracide/043.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/44",
+      "path": "siracide/044.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/45",
+      "path": "siracide/045.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/46",
+      "path": "siracide/046.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/47",
+      "path": "siracide/047.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/48",
+      "path": "siracide/048.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/49",
+      "path": "siracide/049.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/50",
+      "path": "siracide/050.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/28/51",
+      "path": "siracide/051.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/1",
+      "path": "isaia/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/2",
+      "path": "isaia/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/3",
+      "path": "isaia/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/4",
+      "path": "isaia/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/5",
+      "path": "isaia/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/6",
+      "path": "isaia/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/7",
+      "path": "isaia/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/8",
+      "path": "isaia/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/9",
+      "path": "isaia/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/10",
+      "path": "isaia/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/11",
+      "path": "isaia/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/12",
+      "path": "isaia/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/13",
+      "path": "isaia/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/14",
+      "path": "isaia/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/15",
+      "path": "isaia/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/16",
+      "path": "isaia/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/17",
+      "path": "isaia/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/18",
+      "path": "isaia/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/19",
+      "path": "isaia/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/20",
+      "path": "isaia/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/21",
+      "path": "isaia/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/22",
+      "path": "isaia/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/23",
+      "path": "isaia/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/24",
+      "path": "isaia/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/25",
+      "path": "isaia/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/26",
+      "path": "isaia/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/27",
+      "path": "isaia/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/28",
+      "path": "isaia/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/29",
+      "path": "isaia/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/30",
+      "path": "isaia/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/31",
+      "path": "isaia/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/32",
+      "path": "isaia/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/33",
+      "path": "isaia/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/34",
+      "path": "isaia/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/35",
+      "path": "isaia/035.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/36",
+      "path": "isaia/036.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/37",
+      "path": "isaia/037.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/38",
+      "path": "isaia/038.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/39",
+      "path": "isaia/039.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/40",
+      "path": "isaia/040.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/41",
+      "path": "isaia/041.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/42",
+      "path": "isaia/042.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/43",
+      "path": "isaia/043.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/44",
+      "path": "isaia/044.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/45",
+      "path": "isaia/045.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/46",
+      "path": "isaia/046.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/47",
+      "path": "isaia/047.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/48",
+      "path": "isaia/048.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/49",
+      "path": "isaia/049.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/50",
+      "path": "isaia/050.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/51",
+      "path": "isaia/051.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/52",
+      "path": "isaia/052.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/53",
+      "path": "isaia/053.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/54",
+      "path": "isaia/054.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/55",
+      "path": "isaia/055.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/56",
+      "path": "isaia/056.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/57",
+      "path": "isaia/057.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/58",
+      "path": "isaia/058.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/59",
+      "path": "isaia/059.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/60",
+      "path": "isaia/060.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/61",
+      "path": "isaia/061.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/62",
+      "path": "isaia/062.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/63",
+      "path": "isaia/063.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/64",
+      "path": "isaia/064.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/65",
+      "path": "isaia/065.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/29/66",
+      "path": "isaia/066.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/1",
+      "path": "geremia/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/2",
+      "path": "geremia/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/3",
+      "path": "geremia/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/4",
+      "path": "geremia/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/5",
+      "path": "geremia/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/6",
+      "path": "geremia/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/7",
+      "path": "geremia/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/8",
+      "path": "geremia/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/9",
+      "path": "geremia/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/10",
+      "path": "geremia/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/11",
+      "path": "geremia/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/12",
+      "path": "geremia/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/13",
+      "path": "geremia/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/14",
+      "path": "geremia/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/15",
+      "path": "geremia/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/16",
+      "path": "geremia/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/17",
+      "path": "geremia/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/18",
+      "path": "geremia/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/19",
+      "path": "geremia/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/20",
+      "path": "geremia/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/21",
+      "path": "geremia/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/22",
+      "path": "geremia/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/23",
+      "path": "geremia/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/24",
+      "path": "geremia/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/25",
+      "path": "geremia/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/26",
+      "path": "geremia/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/27",
+      "path": "geremia/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/28",
+      "path": "geremia/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/29",
+      "path": "geremia/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/30",
+      "path": "geremia/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/31",
+      "path": "geremia/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/32",
+      "path": "geremia/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/33",
+      "path": "geremia/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/34",
+      "path": "geremia/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/35",
+      "path": "geremia/035.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/36",
+      "path": "geremia/036.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/37",
+      "path": "geremia/037.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/38",
+      "path": "geremia/038.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/39",
+      "path": "geremia/039.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/40",
+      "path": "geremia/040.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/41",
+      "path": "geremia/041.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/42",
+      "path": "geremia/042.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/43",
+      "path": "geremia/043.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/44",
+      "path": "geremia/044.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/45",
+      "path": "geremia/045.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/46",
+      "path": "geremia/046.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/47",
+      "path": "geremia/047.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/48",
+      "path": "geremia/048.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/49",
+      "path": "geremia/049.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/50",
+      "path": "geremia/050.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/51",
+      "path": "geremia/051.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/30/52",
+      "path": "geremia/052.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/31/1",
+      "path": "lamentazioni/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/31/2",
+      "path": "lamentazioni/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/31/3",
+      "path": "lamentazioni/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/31/4",
+      "path": "lamentazioni/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/31/5",
+      "path": "lamentazioni/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/32/1",
+      "path": "baruc/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/32/2",
+      "path": "baruc/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/32/3",
+      "path": "baruc/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/32/4",
+      "path": "baruc/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/32/5",
+      "path": "baruc/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/32/6",
+      "path": "baruc/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/1",
+      "path": "ezechiele/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/2",
+      "path": "ezechiele/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/3",
+      "path": "ezechiele/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/4",
+      "path": "ezechiele/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/5",
+      "path": "ezechiele/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/6",
+      "path": "ezechiele/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/7",
+      "path": "ezechiele/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/8",
+      "path": "ezechiele/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/9",
+      "path": "ezechiele/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/10",
+      "path": "ezechiele/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/11",
+      "path": "ezechiele/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/12",
+      "path": "ezechiele/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/13",
+      "path": "ezechiele/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/14",
+      "path": "ezechiele/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/15",
+      "path": "ezechiele/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/16",
+      "path": "ezechiele/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/17",
+      "path": "ezechiele/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/18",
+      "path": "ezechiele/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/19",
+      "path": "ezechiele/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/20",
+      "path": "ezechiele/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/21",
+      "path": "ezechiele/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/22",
+      "path": "ezechiele/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/23",
+      "path": "ezechiele/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/24",
+      "path": "ezechiele/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/25",
+      "path": "ezechiele/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/26",
+      "path": "ezechiele/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/27",
+      "path": "ezechiele/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/28",
+      "path": "ezechiele/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/29",
+      "path": "ezechiele/029.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/30",
+      "path": "ezechiele/030.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/31",
+      "path": "ezechiele/031.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/32",
+      "path": "ezechiele/032.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/33",
+      "path": "ezechiele/033.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/34",
+      "path": "ezechiele/034.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/35",
+      "path": "ezechiele/035.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/36",
+      "path": "ezechiele/036.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/37",
+      "path": "ezechiele/037.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/38",
+      "path": "ezechiele/038.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/39",
+      "path": "ezechiele/039.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/40",
+      "path": "ezechiele/040.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/41",
+      "path": "ezechiele/041.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/42",
+      "path": "ezechiele/042.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/43",
+      "path": "ezechiele/043.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/44",
+      "path": "ezechiele/044.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/45",
+      "path": "ezechiele/045.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/46",
+      "path": "ezechiele/046.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/47",
+      "path": "ezechiele/047.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/33/48",
+      "path": "ezechiele/048.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/1",
+      "path": "daniele/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/2",
+      "path": "daniele/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/3",
+      "path": "daniele/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/4",
+      "path": "daniele/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/5",
+      "path": "daniele/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/6",
+      "path": "daniele/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/7",
+      "path": "daniele/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/8",
+      "path": "daniele/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/9",
+      "path": "daniele/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/10",
+      "path": "daniele/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/11",
+      "path": "daniele/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/12",
+      "path": "daniele/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/13",
+      "path": "daniele/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/34/14",
+      "path": "daniele/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/1",
+      "path": "osea/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/2",
+      "path": "osea/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/3",
+      "path": "osea/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/4",
+      "path": "osea/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/5",
+      "path": "osea/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/6",
+      "path": "osea/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/7",
+      "path": "osea/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/8",
+      "path": "osea/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/9",
+      "path": "osea/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/10",
+      "path": "osea/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/11",
+      "path": "osea/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/12",
+      "path": "osea/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/13",
+      "path": "osea/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/35/14",
+      "path": "osea/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/36/1",
+      "path": "gioele/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/36/2",
+      "path": "gioele/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/36/3",
+      "path": "gioele/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/37/1",
+      "path": "amos/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/37/2",
+      "path": "amos/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/37/3",
+      "path": "amos/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/37/4",
+      "path": "amos/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/37/5",
+      "path": "amos/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/37/6",
+      "path": "amos/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/37/7",
+      "path": "amos/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/37/8",
+      "path": "amos/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/37/9",
+      "path": "amos/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/38/1",
+      "path": "abdia/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/39/1",
+      "path": "giona/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/39/2",
+      "path": "giona/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/39/3",
+      "path": "giona/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/39/4",
+      "path": "giona/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/40/1",
+      "path": "michea/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/40/2",
+      "path": "michea/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/40/3",
+      "path": "michea/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/40/4",
+      "path": "michea/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/40/5",
+      "path": "michea/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/40/6",
+      "path": "michea/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/40/7",
+      "path": "michea/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/41/1",
+      "path": "naum/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/41/2",
+      "path": "naum/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/41/3",
+      "path": "naum/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/42/1",
+      "path": "abacuc/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/42/2",
+      "path": "abacuc/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/42/3",
+      "path": "abacuc/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/43/1",
+      "path": "sofonia/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/43/2",
+      "path": "sofonia/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/43/3",
+      "path": "sofonia/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/44/1",
+      "path": "aggeo/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/44/2",
+      "path": "aggeo/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/1",
+      "path": "zaccaria/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/2",
+      "path": "zaccaria/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/3",
+      "path": "zaccaria/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/4",
+      "path": "zaccaria/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/5",
+      "path": "zaccaria/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/6",
+      "path": "zaccaria/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/7",
+      "path": "zaccaria/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/8",
+      "path": "zaccaria/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/9",
+      "path": "zaccaria/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/10",
+      "path": "zaccaria/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/11",
+      "path": "zaccaria/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/12",
+      "path": "zaccaria/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/13",
+      "path": "zaccaria/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/45/14",
+      "path": "zaccaria/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/46/1",
+      "path": "malachia/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/46/2",
+      "path": "malachia/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/46/3",
+      "path": "malachia/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/46/4",
+      "path": "malachia/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/1",
+      "path": "matteo/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/2",
+      "path": "matteo/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/3",
+      "path": "matteo/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/4",
+      "path": "matteo/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/5",
+      "path": "matteo/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/6",
+      "path": "matteo/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/7",
+      "path": "matteo/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/8",
+      "path": "matteo/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/9",
+      "path": "matteo/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/10",
+      "path": "matteo/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/11",
+      "path": "matteo/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/12",
+      "path": "matteo/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/13",
+      "path": "matteo/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/14",
+      "path": "matteo/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/15",
+      "path": "matteo/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/16",
+      "path": "matteo/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/17",
+      "path": "matteo/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/18",
+      "path": "matteo/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/19",
+      "path": "matteo/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/20",
+      "path": "matteo/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/21",
+      "path": "matteo/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/22",
+      "path": "matteo/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/23",
+      "path": "matteo/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/24",
+      "path": "matteo/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/25",
+      "path": "matteo/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/26",
+      "path": "matteo/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/27",
+      "path": "matteo/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/47/28",
+      "path": "matteo/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/1",
+      "path": "marco/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/2",
+      "path": "marco/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/3",
+      "path": "marco/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/4",
+      "path": "marco/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/5",
+      "path": "marco/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/6",
+      "path": "marco/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/7",
+      "path": "marco/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/8",
+      "path": "marco/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/9",
+      "path": "marco/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/10",
+      "path": "marco/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/11",
+      "path": "marco/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/12",
+      "path": "marco/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/13",
+      "path": "marco/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/14",
+      "path": "marco/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/15",
+      "path": "marco/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/48/16",
+      "path": "marco/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/1",
+      "path": "luca/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/2",
+      "path": "luca/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/3",
+      "path": "luca/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/4",
+      "path": "luca/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/5",
+      "path": "luca/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/6",
+      "path": "luca/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/7",
+      "path": "luca/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/8",
+      "path": "luca/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/9",
+      "path": "luca/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/10",
+      "path": "luca/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/11",
+      "path": "luca/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/12",
+      "path": "luca/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/13",
+      "path": "luca/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/14",
+      "path": "luca/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/15",
+      "path": "luca/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/16",
+      "path": "luca/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/17",
+      "path": "luca/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/18",
+      "path": "luca/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/19",
+      "path": "luca/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/20",
+      "path": "luca/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/21",
+      "path": "luca/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/22",
+      "path": "luca/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/23",
+      "path": "luca/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/49/24",
+      "path": "luca/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/1",
+      "path": "giovanni/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/2",
+      "path": "giovanni/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/3",
+      "path": "giovanni/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/4",
+      "path": "giovanni/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/5",
+      "path": "giovanni/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/6",
+      "path": "giovanni/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/7",
+      "path": "giovanni/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/8",
+      "path": "giovanni/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/9",
+      "path": "giovanni/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/10",
+      "path": "giovanni/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/11",
+      "path": "giovanni/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/12",
+      "path": "giovanni/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/13",
+      "path": "giovanni/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/14",
+      "path": "giovanni/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/15",
+      "path": "giovanni/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/16",
+      "path": "giovanni/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/17",
+      "path": "giovanni/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/18",
+      "path": "giovanni/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/19",
+      "path": "giovanni/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/20",
+      "path": "giovanni/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/50/21",
+      "path": "giovanni/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/1",
+      "path": "atti-degli-apostoli/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/2",
+      "path": "atti-degli-apostoli/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/3",
+      "path": "atti-degli-apostoli/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/4",
+      "path": "atti-degli-apostoli/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/5",
+      "path": "atti-degli-apostoli/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/6",
+      "path": "atti-degli-apostoli/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/7",
+      "path": "atti-degli-apostoli/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/8",
+      "path": "atti-degli-apostoli/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/9",
+      "path": "atti-degli-apostoli/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/10",
+      "path": "atti-degli-apostoli/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/11",
+      "path": "atti-degli-apostoli/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/12",
+      "path": "atti-degli-apostoli/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/13",
+      "path": "atti-degli-apostoli/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/14",
+      "path": "atti-degli-apostoli/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/15",
+      "path": "atti-degli-apostoli/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/16",
+      "path": "atti-degli-apostoli/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/17",
+      "path": "atti-degli-apostoli/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/18",
+      "path": "atti-degli-apostoli/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/19",
+      "path": "atti-degli-apostoli/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/20",
+      "path": "atti-degli-apostoli/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/21",
+      "path": "atti-degli-apostoli/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/22",
+      "path": "atti-degli-apostoli/022.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/23",
+      "path": "atti-degli-apostoli/023.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/24",
+      "path": "atti-degli-apostoli/024.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/25",
+      "path": "atti-degli-apostoli/025.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/26",
+      "path": "atti-degli-apostoli/026.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/27",
+      "path": "atti-degli-apostoli/027.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/51/28",
+      "path": "atti-degli-apostoli/028.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/1",
+      "path": "romani/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/2",
+      "path": "romani/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/3",
+      "path": "romani/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/4",
+      "path": "romani/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/5",
+      "path": "romani/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/6",
+      "path": "romani/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/7",
+      "path": "romani/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/8",
+      "path": "romani/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/9",
+      "path": "romani/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/10",
+      "path": "romani/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/11",
+      "path": "romani/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/12",
+      "path": "romani/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/13",
+      "path": "romani/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/14",
+      "path": "romani/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/15",
+      "path": "romani/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/52/16",
+      "path": "romani/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/1",
+      "path": "1-corinzi/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/2",
+      "path": "1-corinzi/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/3",
+      "path": "1-corinzi/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/4",
+      "path": "1-corinzi/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/5",
+      "path": "1-corinzi/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/6",
+      "path": "1-corinzi/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/7",
+      "path": "1-corinzi/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/8",
+      "path": "1-corinzi/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/9",
+      "path": "1-corinzi/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/10",
+      "path": "1-corinzi/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/11",
+      "path": "1-corinzi/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/12",
+      "path": "1-corinzi/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/13",
+      "path": "1-corinzi/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/14",
+      "path": "1-corinzi/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/15",
+      "path": "1-corinzi/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/53/16",
+      "path": "1-corinzi/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/1",
+      "path": "2-corinzi/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/2",
+      "path": "2-corinzi/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/3",
+      "path": "2-corinzi/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/4",
+      "path": "2-corinzi/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/5",
+      "path": "2-corinzi/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/6",
+      "path": "2-corinzi/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/7",
+      "path": "2-corinzi/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/8",
+      "path": "2-corinzi/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/9",
+      "path": "2-corinzi/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/10",
+      "path": "2-corinzi/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/11",
+      "path": "2-corinzi/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/12",
+      "path": "2-corinzi/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/54/13",
+      "path": "2-corinzi/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/55/1",
+      "path": "galati/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/55/2",
+      "path": "galati/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/55/3",
+      "path": "galati/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/55/4",
+      "path": "galati/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/55/5",
+      "path": "galati/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/55/6",
+      "path": "galati/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/56/1",
+      "path": "efesini/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/56/2",
+      "path": "efesini/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/56/3",
+      "path": "efesini/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/56/4",
+      "path": "efesini/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/56/5",
+      "path": "efesini/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/56/6",
+      "path": "efesini/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/57/1",
+      "path": "filippesi/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/57/2",
+      "path": "filippesi/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/57/3",
+      "path": "filippesi/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/57/4",
+      "path": "filippesi/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/58/1",
+      "path": "colossesi/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/58/2",
+      "path": "colossesi/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/58/3",
+      "path": "colossesi/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/58/4",
+      "path": "colossesi/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/59/1",
+      "path": "1-tessalonicesi/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/59/2",
+      "path": "1-tessalonicesi/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/59/3",
+      "path": "1-tessalonicesi/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/59/4",
+      "path": "1-tessalonicesi/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/59/5",
+      "path": "1-tessalonicesi/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/60/1",
+      "path": "2-tessalonicesi/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/60/2",
+      "path": "2-tessalonicesi/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/60/3",
+      "path": "2-tessalonicesi/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/61/1",
+      "path": "1-timoteo/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/61/2",
+      "path": "1-timoteo/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/61/3",
+      "path": "1-timoteo/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/61/4",
+      "path": "1-timoteo/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/61/5",
+      "path": "1-timoteo/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/61/6",
+      "path": "1-timoteo/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/62/1",
+      "path": "2-timoteo/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/62/2",
+      "path": "2-timoteo/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/62/3",
+      "path": "2-timoteo/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/62/4",
+      "path": "2-timoteo/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/63/1",
+      "path": "tito/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/63/2",
+      "path": "tito/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/63/3",
+      "path": "tito/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/64/1",
+      "path": "filemone/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/1",
+      "path": "ebrei/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/2",
+      "path": "ebrei/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/3",
+      "path": "ebrei/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/4",
+      "path": "ebrei/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/5",
+      "path": "ebrei/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/6",
+      "path": "ebrei/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/7",
+      "path": "ebrei/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/8",
+      "path": "ebrei/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/9",
+      "path": "ebrei/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/10",
+      "path": "ebrei/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/11",
+      "path": "ebrei/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/12",
+      "path": "ebrei/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/65/13",
+      "path": "ebrei/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/66/1",
+      "path": "giacomo/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/66/2",
+      "path": "giacomo/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/66/3",
+      "path": "giacomo/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/66/4",
+      "path": "giacomo/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/66/5",
+      "path": "giacomo/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/67/1",
+      "path": "1-pietro/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/67/2",
+      "path": "1-pietro/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/67/3",
+      "path": "1-pietro/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/67/4",
+      "path": "1-pietro/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/67/5",
+      "path": "1-pietro/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/68/1",
+      "path": "2-pietro/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/68/2",
+      "path": "2-pietro/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/68/3",
+      "path": "2-pietro/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/69/1",
+      "path": "1-giovanni/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/69/2",
+      "path": "1-giovanni/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/69/3",
+      "path": "1-giovanni/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/69/4",
+      "path": "1-giovanni/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/69/5",
+      "path": "1-giovanni/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/70/1",
+      "path": "2-giovanni/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/71/1",
+      "path": "3-giovanni/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/72/1",
+      "path": "giuda/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/1",
+      "path": "apocalisse/001.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/2",
+      "path": "apocalisse/002.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/3",
+      "path": "apocalisse/003.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/4",
+      "path": "apocalisse/004.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/5",
+      "path": "apocalisse/005.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/6",
+      "path": "apocalisse/006.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/7",
+      "path": "apocalisse/007.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/8",
+      "path": "apocalisse/008.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/9",
+      "path": "apocalisse/009.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/10",
+      "path": "apocalisse/010.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/11",
+      "path": "apocalisse/011.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/12",
+      "path": "apocalisse/012.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/13",
+      "path": "apocalisse/013.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/14",
+      "path": "apocalisse/014.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/15",
+      "path": "apocalisse/015.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/16",
+      "path": "apocalisse/016.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/17",
+      "path": "apocalisse/017.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/18",
+      "path": "apocalisse/018.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/19",
+      "path": "apocalisse/019.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/20",
+      "path": "apocalisse/020.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/21",
+      "path": "apocalisse/021.html"
+    },
+    {
+      "url": "https://www.scrutatio.it/bibbia/lettura/it/martini/73/22",
+      "path": "apocalisse/022.html"
+    }
+  ]
+}

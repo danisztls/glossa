@@ -1,0 +1,418 @@
+{
+  "source": "crampon",
+  "note": "fr.wikisource.org, Bible Crampon 1923 (trad. Augustin Crampon, Desclée, 1923) -- ProofreadPage transclusion: the wiki page's ?action=raw is a <pages> transclusion directive with no scripture text at all, so every URL below is ?action=render (expanded HTML), which carries the verse anchors (id=\"{chapter}-{verse}\") and Crampon's own footnotes. One page per book except Psaumes, split by the edition itself into 5 'Livre' parts (1-41, 42-72, 73-89, 90-106, 107-150) behind an index page; both the index and all 5 parts are captured. Also captures the root index, front matter (Avant-propos, Ancien/Nouveau Testament summaries, Livres table of contents, the Wikisource navigation note, and the New Testament dictionary/glossary) and the 16 Illustrations plate pages. robots.txt disallows /w/ for User-agent: *, but action=render is requested via the /wiki/ path, which carries no such disallow -- checked 2026-08-28. Litmus: Luke 1:28 renders 'Je vous salue, pleine de grace ; le Seigneur est avec vous, vous etes benie entre les femmes.' Psalter is numbered Hebrew, not Vulgate (Ps 10 opens 'Pourquoi, Yahweh, te tiens-tu eloigne ?', Vulgate's Ps 9:22; Ps 9 has 21 verses, not the Vulgate's 39), and a footnote at Ps 9/10 in the text itself says so. 'Yahweh' is printed throughout the Old Testament. Deuterocanonical chapter counts follow the Vulgate, not the Hebrew/Greek short forms: Tobit 14, Esther 16, Baruch 6 (incl. the Letter of Jeremiah as ch. 6), Sirach 51, Daniel 14 (incl. Susanna and Bel and the Dragon) -- so only the Psalter's numbering diverges, not which books or chapters are included.",
+  "user_agent": "Glossa Catholica corpus builder (+https://glossacatholica.org)",
+  "delay": 1.5,
+  "attempts": 3,
+  "backoff": [
+    3.0,
+    8.0
+  ],
+  "timeout": 60.0,
+  "pages": [
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923?action=render",
+      "path": "Bible_Crampon_1923.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Avant-propos?action=render",
+      "path": "Avant-propos.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Ancien_Testament?action=render",
+      "path": "Ancien_Testament.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Nouveau_Testament?action=render",
+      "path": "Nouveau_Testament.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Livres?action=render",
+      "path": "Livres.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Navigation?action=render",
+      "path": "Navigation.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Dictionnaire_du_Nouveau_Testament?action=render",
+      "path": "Dictionnaire_du_Nouveau_Testament.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Psaumes?action=render",
+      "path": "Psaumes.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Psaumes_1?action=render",
+      "path": "Psaumes_1.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Psaumes_2?action=render",
+      "path": "Psaumes_2.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Psaumes_3?action=render",
+      "path": "Psaumes_3.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Psaumes_4?action=render",
+      "path": "Psaumes_4.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Psaumes_5?action=render",
+      "path": "Psaumes_5.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/1?action=render",
+      "path": "Illustrations/1.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/2?action=render",
+      "path": "Illustrations/2.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/3?action=render",
+      "path": "Illustrations/3.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/4?action=render",
+      "path": "Illustrations/4.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/5?action=render",
+      "path": "Illustrations/5.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/6?action=render",
+      "path": "Illustrations/6.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/7?action=render",
+      "path": "Illustrations/7.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/8?action=render",
+      "path": "Illustrations/8.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/9?action=render",
+      "path": "Illustrations/9.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/10?action=render",
+      "path": "Illustrations/10.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/11?action=render",
+      "path": "Illustrations/11.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/12?action=render",
+      "path": "Illustrations/12.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/13?action=render",
+      "path": "Illustrations/13.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/14?action=render",
+      "path": "Illustrations/14.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/15?action=render",
+      "path": "Illustrations/15.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Illustrations/16?action=render",
+      "path": "Illustrations/16.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Gen%C3%A8se?action=render",
+      "path": "Genèse.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Exode?action=render",
+      "path": "Exode.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/L%C3%A9vitique?action=render",
+      "path": "Lévitique.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Nombres?action=render",
+      "path": "Nombres.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Deut%C3%A9ronome?action=render",
+      "path": "Deutéronome.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Josu%C3%A9?action=render",
+      "path": "Josué.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Juges?action=render",
+      "path": "Juges.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Ruth?action=render",
+      "path": "Ruth.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/1_Samuel?action=render",
+      "path": "1_Samuel.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/2_Samuel?action=render",
+      "path": "2_Samuel.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/1_Rois?action=render",
+      "path": "1_Rois.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/2_Rois?action=render",
+      "path": "2_Rois.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/1_Chroniques?action=render",
+      "path": "1_Chroniques.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/2_Chroniques?action=render",
+      "path": "2_Chroniques.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Esdras?action=render",
+      "path": "Esdras.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/N%C3%A9h%C3%A9mie?action=render",
+      "path": "Néhémie.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Tobie?action=render",
+      "path": "Tobie.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Judith?action=render",
+      "path": "Judith.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Esther?action=render",
+      "path": "Esther.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/1_Machab%C3%A9es?action=render",
+      "path": "1_Machabées.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/2_Machab%C3%A9es?action=render",
+      "path": "2_Machabées.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Job?action=render",
+      "path": "Job.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Proverbes?action=render",
+      "path": "Proverbes.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Eccl%C3%A9siaste?action=render",
+      "path": "Ecclésiaste.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Cantique?action=render",
+      "path": "Cantique.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Sagesse?action=render",
+      "path": "Sagesse.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Eccl%C3%A9siastique?action=render",
+      "path": "Ecclésiastique.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Isa%C3%AFe?action=render",
+      "path": "Isaïe.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/J%C3%A9r%C3%A9mie?action=render",
+      "path": "Jérémie.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Lamentations?action=render",
+      "path": "Lamentations.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Baruch?action=render",
+      "path": "Baruch.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/%C3%89z%C3%A9chiel?action=render",
+      "path": "Ézéchiel.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Daniel?action=render",
+      "path": "Daniel.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Os%C3%A9e?action=render",
+      "path": "Osée.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Jo%C3%ABl?action=render",
+      "path": "Joël.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Amos?action=render",
+      "path": "Amos.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Abdias?action=render",
+      "path": "Abdias.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Jonas?action=render",
+      "path": "Jonas.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Mich%C3%A9e?action=render",
+      "path": "Michée.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Nahum?action=render",
+      "path": "Nahum.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Habacuc?action=render",
+      "path": "Habacuc.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Sophonie?action=render",
+      "path": "Sophonie.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Agg%C3%A9e?action=render",
+      "path": "Aggée.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Zacharie?action=render",
+      "path": "Zacharie.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Malachie?action=render",
+      "path": "Malachie.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Matthieu?action=render",
+      "path": "Matthieu.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Marc?action=render",
+      "path": "Marc.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Luc?action=render",
+      "path": "Luc.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Jean?action=render",
+      "path": "Jean.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Actes?action=render",
+      "path": "Actes.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Romains?action=render",
+      "path": "Romains.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/1_Corinthiens?action=render",
+      "path": "1_Corinthiens.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/2_Corinthiens?action=render",
+      "path": "2_Corinthiens.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Galates?action=render",
+      "path": "Galates.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/%C3%89ph%C3%A9siens?action=render",
+      "path": "Éphésiens.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Philippiens?action=render",
+      "path": "Philippiens.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Colossiens?action=render",
+      "path": "Colossiens.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/1_Thessaloniciens?action=render",
+      "path": "1_Thessaloniciens.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/2_Thessaloniciens?action=render",
+      "path": "2_Thessaloniciens.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/1_Timoth%C3%A9e?action=render",
+      "path": "1_Timothée.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/2_Timoth%C3%A9e?action=render",
+      "path": "2_Timothée.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Tite?action=render",
+      "path": "Tite.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Phil%C3%A9mon?action=render",
+      "path": "Philémon.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/H%C3%A9breux?action=render",
+      "path": "Hébreux.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Jacques?action=render",
+      "path": "Jacques.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/1_Pierre?action=render",
+      "path": "1_Pierre.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/2_Pierre?action=render",
+      "path": "2_Pierre.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/1_Jean?action=render",
+      "path": "1_Jean.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/2_Jean?action=render",
+      "path": "2_Jean.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/3_Jean?action=render",
+      "path": "3_Jean.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Jude?action=render",
+      "path": "Jude.html"
+    },
+    {
+      "url": "https://fr.wikisource.org/wiki/Bible_Crampon_1923/Apocalypse?action=render",
+      "path": "Apocalypse.html"
+    }
+  ]
+}

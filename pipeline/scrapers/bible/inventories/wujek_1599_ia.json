@@ -1,0 +1,23 @@
+{
+  "source": "wujek_1599_ia",
+  "note": "Internet Archive item 'biblia-ks.-jakuba-wujka' (identifier biblia-ks.-jakuba-wujka), an image-container scan of the actual 1599 editio princeps of Jakub Wujek's Bible, dated 1599 in the item metadata, Tesseract-OCR'd by archive.org's own derivative pipeline (lang-pol). Found because biblia.info.pl's own Biblia.html page (see raw/wujek/Biblia.html) names three transcription types of Wujek -- 'A' (original 1599 text/orthography, unmodernised), 'B' (the modernised transcription biblia.info.pl itself hosts, explicitly '[bez ksiag deuterokanonicznych]' upstream, six books patched in from 1599), 'C' (a 1962 Jesuit revision) -- and the source biblia.info.pl and pl.wikisource(1923) both trace back to for 'A' is this 1599 print, which -- unlike the 1923 Bible Society printing used everywhere else -- prints Esther complete, ROZDZIAL I-XVI (confirmed: Wujek's own marginal note at the seam, 'To iest w ksiegach zydowskich, wiernie przelozyl. Lecz to co po tem idzie, nalazlem napisane w Edycyej pospolitej...' -- 'What is in the Hebrew books [I have] faithfully translated. But what follows, I found written in the common [Greek/Vulgate] edition...' -- introduces ROZDZIAL XI onward, i.e. exactly the Greek/Vulgate additions absent from raw/wujek/Es.html). This is raw 1599-print OCR, not a proofread transcription: expect the archaic typeface (long s, ligatures, 'y' for 'i', etc.) to have produced meaningfully more OCR noise than biblia.info.pl's curated modernisation -- a future parser must treat it accordingly and MUST NOT silently present it as clean text. robots.txt for archive.org (https://archive.org/robots.txt) disallows only /control/ and /report/; the actual file bytes are served from a dn*.ca.archive.org CDN host via a 302 redirect, which urllib follows, and that CDN serves public-domain downloads with no further restriction. Captured under the project's own User-Agent, 2026-08-28.",
+  "user_agent": "Glossa Catholica corpus builder (+https://glossacatholica.org)",
+  "delay": 2.0,
+  "attempts": 3,
+  "backoff": [3.0, 8.0],
+  "timeout": 180.0,
+  "pages": [
+    {
+      "url": "https://archive.org/metadata/biblia-ks.-jakuba-wujka",
+      "path": "metadata.json"
+    },
+    {
+      "url": "https://archive.org/download/biblia-ks.-jakuba-wujka/Biblia%20ks.%20Jakuba%20Wujka_djvu.txt",
+      "path": "biblia-ks-jakuba-wujka_djvu.txt"
+    },
+    {
+      "url": "https://archive.org/download/biblia-ks.-jakuba-wujka/Biblia%20ks.%20Jakuba%20Wujka.pdf",
+      "path": "biblia-ks-jakuba-wujka.pdf"
+    }
+  ]
+}

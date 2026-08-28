@@ -1,0 +1,334 @@
+{
+  "source": "synodal",
+  "note": "ru.wikisource.org, Sinodal'nyi perevod 1876 (Russian Orthodox Synodal translation). Captured as rendered /wiki/<title> pages (action=raw and action=render both live under /w/, which robots.txt disallows for User-agent: * except two unrelated paths; /wiki/<title> is a distinct, unrestricted path and the pages are native wikitext articles, not ProofreadPage transclusions, so the rendered page carries the same verse template structure -- stих anchors, bible-parallels cross-references and <ref> footnotes -- as the source wikitext). Includes 3 front-matter/index pages and all 77 book pages the index lists, including the 11 books outside the Catholic 73 that the Orthodox canon carries as 'nekanonicheskie' (deuterocanon plus 2 Esdras, 3 Maccabees, 3 Ezra); Psalm 151 is chapter 151 of the single Psalter page, not a separate page.",
+  "user_agent": "Glossa Catholica corpus builder (+https://glossacatholica.org)",
+  "delay": 1.5,
+  "attempts": 3,
+  "backoff": [
+    3.0,
+    8.0
+  ],
+  "timeout": 60.0,
+  "pages": [
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%91%D0%B8%D0%B1%D0%BB%D0%B8%D1%8F_%28%D0%A1%D0%B8%D0%BD%D0%BE%D0%B4%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9_%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%29",
+      "path": "front-matter/bibliia-sinodalnyi-perevod.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D0%B5%D1%82%D1%85%D0%B8%D0%B9_%D0%97%D0%B0%D0%B2%D0%B5%D1%82",
+      "path": "front-matter/vetkhii-zavet.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9D%D0%BE%D0%B2%D1%8B%D0%B9_%D0%97%D0%B0%D0%B2%D0%B5%D1%82",
+      "path": "front-matter/novyi-zavet.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%91%D1%8B%D1%82%D0%B8%D0%B5",
+      "path": "old-testament/bytie.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%98%D1%81%D1%85%D0%BE%D0%B4",
+      "path": "old-testament/iskhod.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9B%D0%B5%D0%B2%D0%B8%D1%82",
+      "path": "old-testament/levit.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%A7%D0%B8%D1%81%D0%BB%D0%B0",
+      "path": "old-testament/chisla.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D1%82%D0%BE%D1%80%D0%BE%D0%B7%D0%B0%D0%BA%D0%BE%D0%BD%D0%B8%D0%B5",
+      "path": "old-testament/vtorozakonie.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%98%D0%B8%D1%81%D1%83%D1%81%D0%B0_%D0%9D%D0%B0%D0%B2%D0%B8%D0%BD%D0%B0",
+      "path": "old-testament/kniga-iisusa-navina.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%A1%D1%83%D0%B4%D0%B5%D0%B9_%D0%98%D0%B7%D1%80%D0%B0%D0%B8%D0%BB%D0%B5%D0%B2%D1%8B%D1%85",
+      "path": "old-testament/kniga-sudei-izrailevykh.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%A0%D1%83%D1%84%D0%B8",
+      "path": "old-testament/kniga-rufi.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%B0%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%A6%D0%B0%D1%80%D1%81%D1%82%D0%B2",
+      "path": "old-testament/pervaia-kniga-tsarstv.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D1%82%D0%BE%D1%80%D0%B0%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%A6%D0%B0%D1%80%D1%81%D1%82%D0%B2",
+      "path": "old-testament/vtoraia-kniga-tsarstv.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%A2%D1%80%D0%B5%D1%82%D1%8C%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%A6%D0%B0%D1%80%D1%81%D1%82%D0%B2",
+      "path": "old-testament/tretia-kniga-tsarstv.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%A7%D0%B5%D1%82%D0%B2%D1%91%D1%80%D1%82%D0%B0%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%A6%D0%B0%D1%80%D1%81%D1%82%D0%B2",
+      "path": "old-testament/chetvertaia-kniga-tsarstv.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%B0%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%9F%D0%B0%D1%80%D0%B0%D0%BB%D0%B8%D0%BF%D0%BE%D0%BC%D0%B5%D0%BD%D0%BE%D0%BD",
+      "path": "old-testament/pervaia-kniga-paralipomenon.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D1%82%D0%BE%D1%80%D0%B0%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%9F%D0%B0%D1%80%D0%B0%D0%BB%D0%B8%D0%BF%D0%BE%D0%BC%D0%B5%D0%BD%D0%BE%D0%BD",
+      "path": "old-testament/vtoraia-kniga-paralipomenon.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%B0%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%95%D0%B7%D0%B4%D1%80%D1%8B",
+      "path": "old-testament/pervaia-kniga-ezdry.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%9D%D0%B5%D0%B5%D0%BC%D0%B8%D0%B8",
+      "path": "old-testament/kniga-neemii.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D1%82%D0%BE%D1%80%D0%B0%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%95%D0%B7%D0%B4%D1%80%D1%8B",
+      "path": "old-testament/vtoraia-kniga-ezdry.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%A2%D0%BE%D0%B2%D0%B8%D1%82%D0%B0",
+      "path": "old-testament/kniga-tovita.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%98%D1%83%D0%B4%D0%B8%D1%84%D0%B8",
+      "path": "old-testament/kniga-iudifi.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%95%D1%81%D1%84%D0%B8%D1%80%D0%B8",
+      "path": "old-testament/kniga-esfiri.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%98%D0%BE%D0%B2%D0%B0",
+      "path": "old-testament/kniga-iova.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D1%81%D0%B0%D0%BB%D1%82%D0%B8%D1%80%D1%8C",
+      "path": "old-testament/psaltir.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%9F%D1%80%D0%B8%D1%82%D1%87%D0%B5%D0%B9_%D0%A1%D0%BE%D0%BB%D0%BE%D0%BC%D0%BE%D0%BD%D0%BE%D0%B2%D1%8B%D1%85",
+      "path": "old-testament/kniga-pritchei-solomonovykh.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%95%D0%BA%D0%BA%D0%BB%D0%B5%D0%B7%D0%B8%D0%B0%D1%81%D1%82%D0%B0%2C_%D0%B8%D0%BB%D0%B8_%D0%9F%D1%80%D0%BE%D0%BF%D0%BE%D0%B2%D0%B5%D0%B4%D0%BD%D0%B8%D0%BA%D0%B0",
+      "path": "old-testament/kniga-ekkleziasta-ili-propovednika.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%B5%D1%81%D0%BD%D1%8C_%D0%BF%D0%B5%D1%81%D0%BD%D0%B5%D0%B9_%D0%A1%D0%BE%D0%BB%D0%BE%D0%BC%D0%BE%D0%BD%D0%B0",
+      "path": "old-testament/pesn-pesnei-solomona.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%9F%D1%80%D0%B5%D0%BC%D1%83%D0%B4%D1%80%D0%BE%D1%81%D1%82%D0%B8_%D0%A1%D0%BE%D0%BB%D0%BE%D0%BC%D0%BE%D0%BD%D0%B0",
+      "path": "old-testament/kniga-premudrosti-solomona.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%9F%D1%80%D0%B5%D0%BC%D1%83%D0%B4%D1%80%D0%BE%D1%81%D1%82%D0%B8_%D0%98%D0%B8%D1%81%D1%83%D1%81%D0%B0%2C_%D1%81%D1%8B%D0%BD%D0%B0_%D0%A1%D0%B8%D1%80%D0%B0%D1%85%D0%BE%D0%B2%D0%B0",
+      "path": "old-testament/kniga-premudrosti-iisusa-syna-sirakhova.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%98%D1%81%D0%B0%D0%B8%D0%B8",
+      "path": "old-testament/kniga-proroka-isaii.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%98%D0%B5%D1%80%D0%B5%D0%BC%D0%B8%D0%B8",
+      "path": "old-testament/kniga-proroka-ieremii.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%BB%D0%B0%D1%87_%D0%98%D0%B5%D1%80%D0%B5%D0%BC%D0%B8%D0%B8",
+      "path": "old-testament/plach-ieremii.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%98%D0%B5%D1%80%D0%B5%D0%BC%D0%B8%D0%B8",
+      "path": "old-testament/poslanie-ieremii.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%92%D0%B0%D1%80%D1%83%D1%85%D0%B0",
+      "path": "old-testament/kniga-proroka-varukha.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%98%D0%B5%D0%B7%D0%B5%D0%BA%D0%B8%D0%B8%D0%BB%D1%8F",
+      "path": "old-testament/kniga-proroka-iezekiilia.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%94%D0%B0%D0%BD%D0%B8%D0%B8%D0%BB%D0%B0",
+      "path": "old-testament/kniga-proroka-daniila.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%9E%D1%81%D0%B8%D0%B8",
+      "path": "old-testament/kniga-proroka-osii.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%98%D0%BE%D0%B8%D0%BB%D1%8F",
+      "path": "old-testament/kniga-proroka-ioilia.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%90%D0%BC%D0%BE%D1%81%D0%B0",
+      "path": "old-testament/kniga-proroka-amosa.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%90%D0%B2%D0%B4%D0%B8%D1%8F",
+      "path": "old-testament/kniga-proroka-avdiia.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%98%D0%BE%D0%BD%D1%8B",
+      "path": "old-testament/kniga-proroka-iony.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%9C%D0%B8%D1%85%D0%B5%D1%8F",
+      "path": "old-testament/kniga-proroka-mikheia.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%9D%D0%B0%D1%83%D0%BC%D0%B0",
+      "path": "old-testament/kniga-proroka-nauma.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%90%D0%B2%D0%B2%D0%B0%D0%BA%D1%83%D0%BC%D0%B0",
+      "path": "old-testament/kniga-proroka-avvakuma.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%A1%D0%BE%D1%84%D0%BE%D0%BD%D0%B8%D0%B8",
+      "path": "old-testament/kniga-proroka-sofonii.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%90%D0%B3%D0%B3%D0%B5%D1%8F",
+      "path": "old-testament/kniga-proroka-aggeia.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%97%D0%B0%D1%85%D0%B0%D1%80%D0%B8%D0%B8",
+      "path": "old-testament/kniga-proroka-zakharii.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9A%D0%BD%D0%B8%D0%B3%D0%B0_%D0%BF%D1%80%D0%BE%D1%80%D0%BE%D0%BA%D0%B0_%D0%9C%D0%B0%D0%BB%D0%B0%D1%85%D0%B8%D0%B8",
+      "path": "old-testament/kniga-proroka-malakhii.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%B0%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%9C%D0%B0%D0%BA%D0%BA%D0%B0%D0%B2%D0%B5%D0%B9%D1%81%D0%BA%D0%B0%D1%8F",
+      "path": "old-testament/pervaia-kniga-makkaveiskaia.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D1%82%D0%BE%D1%80%D0%B0%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%9C%D0%B0%D0%BA%D0%BA%D0%B0%D0%B2%D0%B5%D0%B9%D1%81%D0%BA%D0%B0%D1%8F",
+      "path": "old-testament/vtoraia-kniga-makkaveiskaia.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%A2%D1%80%D0%B5%D1%82%D1%8C%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%9C%D0%B0%D0%BA%D0%BA%D0%B0%D0%B2%D0%B5%D0%B9%D1%81%D0%BA%D0%B0%D1%8F",
+      "path": "old-testament/tretia-kniga-makkaveiskaia.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%A2%D1%80%D0%B5%D1%82%D1%8C%D1%8F_%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0_%D0%95%D0%B7%D0%B4%D1%80%D1%8B",
+      "path": "old-testament/tretia-kniga-ezdry.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9E%D1%82_%D0%9C%D0%B0%D1%82%D1%84%D0%B5%D1%8F_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B5_%D0%B1%D0%BB%D0%B0%D0%B3%D0%BE%D0%B2%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5",
+      "path": "new-testament/ot-matfeia-sviatoe-blagovestvovanie.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9E%D1%82_%D0%9C%D0%B0%D1%80%D0%BA%D0%B0_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B5_%D0%B1%D0%BB%D0%B0%D0%B3%D0%BE%D0%B2%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5",
+      "path": "new-testament/ot-marka-sviatoe-blagovestvovanie.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9E%D1%82_%D0%9B%D1%83%D0%BA%D0%B8_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B5_%D0%B1%D0%BB%D0%B0%D0%B3%D0%BE%D0%B2%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5",
+      "path": "new-testament/ot-luki-sviatoe-blagovestvovanie.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9E%D1%82_%D0%98%D0%BE%D0%B0%D0%BD%D0%BD%D0%B0_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B5_%D0%B1%D0%BB%D0%B0%D0%B3%D0%BE%D0%B2%D0%B5%D1%81%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5",
+      "path": "new-testament/ot-ioanna-sviatoe-blagovestvovanie.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%94%D0%B5%D1%8F%D0%BD%D0%B8%D1%8F_%D1%81%D0%B2%D1%8F%D1%82%D1%8B%D1%85_%D0%B0%D0%BF%D0%BE%D1%81%D1%82%D0%BE%D0%BB%D0%BE%D0%B2",
+      "path": "new-testament/deianiia-sviatykh-apostolov.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%A1%D0%BE%D0%B1%D0%BE%D1%80%D0%BD%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B3%D0%BE_%D0%B0%D0%BF%D0%BE%D1%81%D1%82%D0%BE%D0%BB%D0%B0_%D0%98%D0%B0%D0%BA%D0%BE%D0%B2%D0%B0",
+      "path": "new-testament/sobornoe-poslanie-sviatogo-apostola-iakova.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%BE%D0%B5_%D1%81%D0%BE%D0%B1%D0%BE%D1%80%D0%BD%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B3%D0%BE_%D0%B0%D0%BF%D0%BE%D1%81%D1%82%D0%BE%D0%BB%D0%B0_%D0%9F%D0%B5%D1%82%D1%80%D0%B0",
+      "path": "new-testament/pervoe-sobornoe-poslanie-sviatogo-apostola-petra.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D1%82%D0%BE%D1%80%D0%BE%D0%B5_%D1%81%D0%BE%D0%B1%D0%BE%D1%80%D0%BD%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B3%D0%BE_%D0%B0%D0%BF%D0%BE%D1%81%D1%82%D0%BE%D0%BB%D0%B0_%D0%9F%D0%B5%D1%82%D1%80%D0%B0",
+      "path": "new-testament/vtoroe-sobornoe-poslanie-sviatogo-apostola-petra.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%BE%D0%B5_%D1%81%D0%BE%D0%B1%D0%BE%D1%80%D0%BD%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B3%D0%BE_%D0%B0%D0%BF%D0%BE%D1%81%D1%82%D0%BE%D0%BB%D0%B0_%D0%98%D0%BE%D0%B0%D0%BD%D0%BD%D0%B0_%D0%91%D0%BE%D0%B3%D0%BE%D1%81%D0%BB%D0%BE%D0%B2%D0%B0",
+      "path": "new-testament/pervoe-sobornoe-poslanie-sviatogo-apostola-ioanna-bogoslova.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D1%82%D0%BE%D1%80%D0%BE%D0%B5_%D1%81%D0%BE%D0%B1%D0%BE%D1%80%D0%BD%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B3%D0%BE_%D0%B0%D0%BF%D0%BE%D1%81%D1%82%D0%BE%D0%BB%D0%B0_%D0%98%D0%BE%D0%B0%D0%BD%D0%BD%D0%B0_%D0%91%D0%BE%D0%B3%D0%BE%D1%81%D0%BB%D0%BE%D0%B2%D0%B0",
+      "path": "new-testament/vtoroe-sobornoe-poslanie-sviatogo-apostola-ioanna-bogoslova.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%A2%D1%80%D0%B5%D1%82%D1%8C%D0%B5_%D1%81%D0%BE%D0%B1%D0%BE%D1%80%D0%BD%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B3%D0%BE_%D0%B0%D0%BF%D0%BE%D1%81%D1%82%D0%BE%D0%BB%D0%B0_%D0%98%D0%BE%D0%B0%D0%BD%D0%BD%D0%B0_%D0%91%D0%BE%D0%B3%D0%BE%D1%81%D0%BB%D0%BE%D0%B2%D0%B0",
+      "path": "new-testament/trete-sobornoe-poslanie-sviatogo-apostola-ioanna-bogoslova.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%A1%D0%BE%D0%B1%D0%BE%D1%80%D0%BD%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B3%D0%BE_%D0%B0%D0%BF%D0%BE%D1%81%D1%82%D0%BE%D0%BB%D0%B0_%D0%98%D1%83%D0%B4%D1%8B",
+      "path": "new-testament/sobornoe-poslanie-sviatogo-apostola-iudy.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%A0%D0%B8%D0%BC%D0%BB%D1%8F%D0%BD%D0%B0%D0%BC",
+      "path": "new-testament/poslanie-k-rimlianam.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%9A%D0%BE%D1%80%D0%B8%D0%BD%D1%84%D1%8F%D0%BD%D0%B0%D0%BC",
+      "path": "new-testament/pervoe-poslanie-k-korinfianam.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D1%82%D0%BE%D1%80%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%9A%D0%BE%D1%80%D0%B8%D0%BD%D1%84%D1%8F%D0%BD%D0%B0%D0%BC",
+      "path": "new-testament/vtoroe-poslanie-k-korinfianam.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%93%D0%B0%D0%BB%D0%B0%D1%82%D0%B0%D0%BC",
+      "path": "new-testament/poslanie-k-galatam.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%95%D1%84%D0%B5%D1%81%D1%8F%D0%BD%D0%B0%D0%BC",
+      "path": "new-testament/poslanie-k-efesianam.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%A4%D0%B8%D0%BB%D0%B8%D0%BF%D0%BF%D0%B8%D0%B9%D1%86%D0%B0%D0%BC",
+      "path": "new-testament/poslanie-k-filippiitsam.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%9A%D0%BE%D0%BB%D0%BE%D1%81%D1%81%D1%8F%D0%BD%D0%B0%D0%BC",
+      "path": "new-testament/poslanie-k-kolossianam.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%A4%D0%B5%D1%81%D1%81%D0%B0%D0%BB%D0%BE%D0%BD%D0%B8%D0%BA%D0%B8%D0%B9%D1%86%D0%B0%D0%BC_%28%D0%A1%D0%BE%D0%BB%D1%83%D0%BD%D1%8F%D0%BD%D0%B0%D0%BC%29",
+      "path": "new-testament/pervoe-poslanie-k-fessalonikiitsam-solunianam.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D1%82%D0%BE%D1%80%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%A4%D0%B5%D1%81%D1%81%D0%B0%D0%BB%D0%BE%D0%BD%D0%B8%D0%BA%D0%B8%D0%B9%D1%86%D0%B0%D0%BC_%28%D0%A1%D0%BE%D0%BB%D1%83%D0%BD%D1%8F%D0%BD%D0%B0%D0%BC%29",
+      "path": "new-testament/vtoroe-poslanie-k-fessalonikiitsam-solunianam.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%B5%D1%80%D0%B2%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%A2%D0%B8%D0%BC%D0%BE%D1%84%D0%B5%D1%8E",
+      "path": "new-testament/pervoe-poslanie-k-timofeiu.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%92%D1%82%D0%BE%D1%80%D0%BE%D0%B5_%D0%BF%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%A2%D0%B8%D0%BC%D0%BE%D1%84%D0%B5%D1%8E",
+      "path": "new-testament/vtoroe-poslanie-k-timofeiu.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%A2%D0%B8%D1%82%D1%83",
+      "path": "new-testament/poslanie-k-titu.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%A4%D0%B8%D0%BB%D0%B8%D0%BC%D0%BE%D0%BD%D1%83",
+      "path": "new-testament/poslanie-k-filimonu.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9F%D0%BE%D1%81%D0%BB%D0%B0%D0%BD%D0%B8%D0%B5_%D0%BA_%D0%95%D0%B2%D1%80%D0%B5%D1%8F%D0%BC",
+      "path": "new-testament/poslanie-k-evreiam.html"
+    },
+    {
+      "url": "https://ru.wikisource.org/wiki/%D0%9E%D1%82%D0%BA%D1%80%D0%BE%D0%B2%D0%B5%D0%BD%D0%B8%D0%B5_%D1%81%D0%B2%D1%8F%D1%82%D0%BE%D0%B3%D0%BE_%D0%98%D0%BE%D0%B0%D0%BD%D0%BD%D0%B0_%D0%91%D0%BE%D0%B3%D0%BE%D1%81%D0%BB%D0%BE%D0%B2%D0%B0",
+      "path": "new-testament/otkrovenie-sviatogo-ioanna-bogoslova.html"
+    }
+  ]
+}

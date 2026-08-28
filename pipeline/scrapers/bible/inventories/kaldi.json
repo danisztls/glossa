@@ -1,0 +1,914 @@
+{
+  "source": "kaldi",
+  "note": "biblia.kapisztran.info, Kaldi-Tarkanyi Hungarian Catholic Bible (Vulgate translation, Kaldi Gyorgy 1626, third revision by Tarkanyi Bela, Eger 1865, 'Az Apostoli Szek jovahagyasaval' -- the Hungarian Catholic Bible until the 1973 translation). robots.txt does not exist at this host (404, served by the GitLab Pages 404 page -- the site is a static GitLab Pages deployment with no robots.txt file at all, so no crawl-delay or disallow is stated by the source; the project's own floor of 2.0s is applied regardless). Site is a frameset: '/' loads tartalom.html (book index) in one frame and the first book's szoveg.html in the other. Each of the 73 canonical books has three sibling pages under /{slug}/: szoveg.html (Word-exported whole-book text, verse-anchored 'name=\"{bb}:{ccc}.{vvv}\"'), jegyzet.html (short per-verse notes, same anchor scheme), and jegyzet2.html (extended verse-by-verse commentary, 'kommentarjai'). Confirmed exhaustively via /sitemap.xml (227 URLs = 73*3 book pages + 8 site pages: tartalom.html, index.html, kaldi.jpg, sitemap.xml, and four cross-book introductions -- prof.html 'Bevezetes a profetakhoz', kprof.html 'Bevezetes a kisebb profetakhoz', ev.html 'Bevezetes az evangeliomokhoz', aplev.html 'Bevezetes az apostolok leveleihez'. kaldi.jpg (cover image) and sitemap.xml itself are not captured as they carry no text. Checked 2026-08-28.",
+  "user_agent": "Glossa Catholica corpus builder (+https://glossacatholica.org)",
+  "delay": 2.0,
+  "attempts": 3,
+  "backoff": [
+    3.0,
+    8.0
+  ],
+  "timeout": 60.0,
+  "pages": [
+    {
+      "url": "https://biblia.kapisztran.info/tartalom.html",
+      "path": "tartalom.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/index.html",
+      "path": "index.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/prof.html",
+      "path": "prof.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/kprof.html",
+      "path": "kprof.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ev.html",
+      "path": "ev.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/aplev.html",
+      "path": "aplev.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1moz/szoveg.html",
+      "path": "1moz/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1moz/jegyzet.html",
+      "path": "1moz/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1moz/jegyzet2.html",
+      "path": "1moz/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2moz/szoveg.html",
+      "path": "2moz/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2moz/jegyzet.html",
+      "path": "2moz/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2moz/jegyzet2.html",
+      "path": "2moz/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/3moz/szoveg.html",
+      "path": "3moz/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/3moz/jegyzet.html",
+      "path": "3moz/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/3moz/jegyzet2.html",
+      "path": "3moz/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/4moz/szoveg.html",
+      "path": "4moz/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/4moz/jegyzet.html",
+      "path": "4moz/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/4moz/jegyzet2.html",
+      "path": "4moz/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/5moz/szoveg.html",
+      "path": "5moz/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/5moz/jegyzet.html",
+      "path": "5moz/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/5moz/jegyzet2.html",
+      "path": "5moz/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jozs/szoveg.html",
+      "path": "jozs/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jozs/jegyzet.html",
+      "path": "jozs/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jozs/jegyzet2.html",
+      "path": "jozs/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/bir/szoveg.html",
+      "path": "bir/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/bir/jegyzet.html",
+      "path": "bir/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/bir/jegyzet2.html",
+      "path": "bir/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/rut/szoveg.html",
+      "path": "rut/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/rut/jegyzet.html",
+      "path": "rut/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/rut/jegyzet2.html",
+      "path": "rut/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1sam/szoveg.html",
+      "path": "1sam/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1sam/jegyzet.html",
+      "path": "1sam/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1sam/jegyzet2.html",
+      "path": "1sam/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2sam/szoveg.html",
+      "path": "2sam/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2sam/jegyzet.html",
+      "path": "2sam/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2sam/jegyzet2.html",
+      "path": "2sam/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1kir/szoveg.html",
+      "path": "1kir/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1kir/jegyzet.html",
+      "path": "1kir/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1kir/jegyzet2.html",
+      "path": "1kir/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2kir/szoveg.html",
+      "path": "2kir/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2kir/jegyzet.html",
+      "path": "2kir/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2kir/jegyzet2.html",
+      "path": "2kir/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1kron/szoveg.html",
+      "path": "1kron/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1kron/jegyzet.html",
+      "path": "1kron/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1kron/jegyzet2.html",
+      "path": "1kron/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2kron/szoveg.html",
+      "path": "2kron/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2kron/jegyzet.html",
+      "path": "2kron/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2kron/jegyzet2.html",
+      "path": "2kron/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ezd/szoveg.html",
+      "path": "ezd/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ezd/jegyzet.html",
+      "path": "ezd/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ezd/jegyzet2.html",
+      "path": "ezd/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/neh/szoveg.html",
+      "path": "neh/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/neh/jegyzet.html",
+      "path": "neh/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/neh/jegyzet2.html",
+      "path": "neh/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/tob/szoveg.html",
+      "path": "tob/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/tob/jegyzet.html",
+      "path": "tob/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/tob/jegyzet2.html",
+      "path": "tob/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jud/szoveg.html",
+      "path": "jud/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jud/jegyzet.html",
+      "path": "jud/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jud/jegyzet2.html",
+      "path": "jud/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/eszt/szoveg.html",
+      "path": "eszt/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/eszt/jegyzet.html",
+      "path": "eszt/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/eszt/jegyzet2.html",
+      "path": "eszt/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/job/szoveg.html",
+      "path": "job/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/job/jegyzet.html",
+      "path": "job/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/job/jegyzet2.html",
+      "path": "job/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/zsolt/szoveg.html",
+      "path": "zsolt/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/zsolt/jegyzet.html",
+      "path": "zsolt/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/zsolt/jegyzet2.html",
+      "path": "zsolt/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/peld/szoveg.html",
+      "path": "peld/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/peld/jegyzet.html",
+      "path": "peld/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/peld/jegyzet2.html",
+      "path": "peld/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/pred/szoveg.html",
+      "path": "pred/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/pred/jegyzet.html",
+      "path": "pred/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/pred/jegyzet2.html",
+      "path": "pred/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/en/szoveg.html",
+      "path": "en/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/en/jegyzet.html",
+      "path": "en/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/en/jegyzet2.html",
+      "path": "en/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/bolcs/szoveg.html",
+      "path": "bolcs/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/bolcs/jegyzet.html",
+      "path": "bolcs/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/bolcs/jegyzet2.html",
+      "path": "bolcs/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/sir/szoveg.html",
+      "path": "sir/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/sir/jegyzet.html",
+      "path": "sir/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/sir/jegyzet2.html",
+      "path": "sir/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/iz/szoveg.html",
+      "path": "iz/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/iz/jegyzet.html",
+      "path": "iz/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/iz/jegyzet2.html",
+      "path": "iz/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jer/szoveg.html",
+      "path": "jer/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jer/jegyzet.html",
+      "path": "jer/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jer/jegyzet2.html",
+      "path": "jer/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/siral/szoveg.html",
+      "path": "siral/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/siral/jegyzet.html",
+      "path": "siral/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/siral/jegyzet2.html",
+      "path": "siral/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/bar/szoveg.html",
+      "path": "bar/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/bar/jegyzet.html",
+      "path": "bar/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/bar/jegyzet2.html",
+      "path": "bar/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ez/szoveg.html",
+      "path": "ez/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ez/jegyzet.html",
+      "path": "ez/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ez/jegyzet2.html",
+      "path": "ez/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/dan/szoveg.html",
+      "path": "dan/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/dan/jegyzet.html",
+      "path": "dan/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/dan/jegyzet2.html",
+      "path": "dan/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/oz/szoveg.html",
+      "path": "oz/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/oz/jegyzet.html",
+      "path": "oz/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/oz/jegyzet2.html",
+      "path": "oz/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jo/szoveg.html",
+      "path": "jo/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jo/jegyzet.html",
+      "path": "jo/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jo/jegyzet2.html",
+      "path": "jo/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/am/szoveg.html",
+      "path": "am/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/am/jegyzet.html",
+      "path": "am/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/am/jegyzet2.html",
+      "path": "am/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/abd/szoveg.html",
+      "path": "abd/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/abd/jegyzet.html",
+      "path": "abd/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/abd/jegyzet2.html",
+      "path": "abd/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jon/szoveg.html",
+      "path": "jon/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jon/jegyzet.html",
+      "path": "jon/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jon/jegyzet2.html",
+      "path": "jon/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mik/szoveg.html",
+      "path": "mik/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mik/jegyzet.html",
+      "path": "mik/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mik/jegyzet2.html",
+      "path": "mik/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/nah/szoveg.html",
+      "path": "nah/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/nah/jegyzet.html",
+      "path": "nah/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/nah/jegyzet2.html",
+      "path": "nah/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/hab/szoveg.html",
+      "path": "hab/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/hab/jegyzet.html",
+      "path": "hab/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/hab/jegyzet2.html",
+      "path": "hab/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/szof/szoveg.html",
+      "path": "szof/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/szof/jegyzet.html",
+      "path": "szof/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/szof/jegyzet2.html",
+      "path": "szof/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ag/szoveg.html",
+      "path": "ag/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ag/jegyzet.html",
+      "path": "ag/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ag/jegyzet2.html",
+      "path": "ag/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/zak/szoveg.html",
+      "path": "zak/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/zak/jegyzet.html",
+      "path": "zak/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/zak/jegyzet2.html",
+      "path": "zak/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mal/szoveg.html",
+      "path": "mal/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mal/jegyzet.html",
+      "path": "mal/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mal/jegyzet2.html",
+      "path": "mal/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1mak/szoveg.html",
+      "path": "1mak/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1mak/jegyzet.html",
+      "path": "1mak/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1mak/jegyzet2.html",
+      "path": "1mak/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2mak/szoveg.html",
+      "path": "2mak/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2mak/jegyzet.html",
+      "path": "2mak/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2mak/jegyzet2.html",
+      "path": "2mak/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mt/szoveg.html",
+      "path": "mt/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mt/jegyzet.html",
+      "path": "mt/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mt/jegyzet2.html",
+      "path": "mt/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mk/szoveg.html",
+      "path": "mk/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mk/jegyzet.html",
+      "path": "mk/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/mk/jegyzet2.html",
+      "path": "mk/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/lk/szoveg.html",
+      "path": "lk/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/lk/jegyzet.html",
+      "path": "lk/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/lk/jegyzet2.html",
+      "path": "lk/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jn/szoveg.html",
+      "path": "jn/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jn/jegyzet.html",
+      "path": "jn/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jn/jegyzet2.html",
+      "path": "jn/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/apcsel/szoveg.html",
+      "path": "apcsel/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/apcsel/jegyzet.html",
+      "path": "apcsel/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/apcsel/jegyzet2.html",
+      "path": "apcsel/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/rom/szoveg.html",
+      "path": "rom/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/rom/jegyzet.html",
+      "path": "rom/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/rom/jegyzet2.html",
+      "path": "rom/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1kor/szoveg.html",
+      "path": "1kor/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1kor/jegyzet.html",
+      "path": "1kor/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1kor/jegyzet2.html",
+      "path": "1kor/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2kor/szoveg.html",
+      "path": "2kor/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2kor/jegyzet.html",
+      "path": "2kor/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2kor/jegyzet2.html",
+      "path": "2kor/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/gal/szoveg.html",
+      "path": "gal/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/gal/jegyzet.html",
+      "path": "gal/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/gal/jegyzet2.html",
+      "path": "gal/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ef/szoveg.html",
+      "path": "ef/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ef/jegyzet.html",
+      "path": "ef/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ef/jegyzet2.html",
+      "path": "ef/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/fil/szoveg.html",
+      "path": "fil/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/fil/jegyzet.html",
+      "path": "fil/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/fil/jegyzet2.html",
+      "path": "fil/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/kol/szoveg.html",
+      "path": "kol/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/kol/jegyzet.html",
+      "path": "kol/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/kol/jegyzet2.html",
+      "path": "kol/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1tessz/szoveg.html",
+      "path": "1tessz/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1tessz/jegyzet.html",
+      "path": "1tessz/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1tessz/jegyzet2.html",
+      "path": "1tessz/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2tessz/szoveg.html",
+      "path": "2tessz/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2tessz/jegyzet.html",
+      "path": "2tessz/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2tessz/jegyzet2.html",
+      "path": "2tessz/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1tim/szoveg.html",
+      "path": "1tim/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1tim/jegyzet.html",
+      "path": "1tim/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1tim/jegyzet2.html",
+      "path": "1tim/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2tim/szoveg.html",
+      "path": "2tim/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2tim/jegyzet.html",
+      "path": "2tim/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2tim/jegyzet2.html",
+      "path": "2tim/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/tit/szoveg.html",
+      "path": "tit/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/tit/jegyzet.html",
+      "path": "tit/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/tit/jegyzet2.html",
+      "path": "tit/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/filem/szoveg.html",
+      "path": "filem/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/filem/jegyzet.html",
+      "path": "filem/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/filem/jegyzet2.html",
+      "path": "filem/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/zsid/szoveg.html",
+      "path": "zsid/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/zsid/jegyzet.html",
+      "path": "zsid/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/zsid/jegyzet2.html",
+      "path": "zsid/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jak/szoveg.html",
+      "path": "jak/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jak/jegyzet.html",
+      "path": "jak/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jak/jegyzet2.html",
+      "path": "jak/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1pet/szoveg.html",
+      "path": "1pet/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1pet/jegyzet.html",
+      "path": "1pet/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1pet/jegyzet2.html",
+      "path": "1pet/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2pet/szoveg.html",
+      "path": "2pet/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2pet/jegyzet.html",
+      "path": "2pet/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2pet/jegyzet2.html",
+      "path": "2pet/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1jn/szoveg.html",
+      "path": "1jn/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1jn/jegyzet.html",
+      "path": "1jn/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/1jn/jegyzet2.html",
+      "path": "1jn/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2jn/szoveg.html",
+      "path": "2jn/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2jn/jegyzet.html",
+      "path": "2jn/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/2jn/jegyzet2.html",
+      "path": "2jn/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/3jn/szoveg.html",
+      "path": "3jn/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/3jn/jegyzet.html",
+      "path": "3jn/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/3jn/jegyzet2.html",
+      "path": "3jn/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ju/szoveg.html",
+      "path": "ju/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ju/jegyzet.html",
+      "path": "ju/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/ju/jegyzet2.html",
+      "path": "ju/jegyzet2.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jel/szoveg.html",
+      "path": "jel/szoveg.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jel/jegyzet.html",
+      "path": "jel/jegyzet.html"
+    },
+    {
+      "url": "https://biblia.kapisztran.info/jel/jegyzet2.html",
+      "path": "jel/jegyzet2.html"
+    }
+  ]
+}
