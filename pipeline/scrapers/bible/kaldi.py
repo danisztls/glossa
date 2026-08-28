@@ -421,8 +421,15 @@ def parse_book(osis: str, html_text: str, anomalies: list[Anomaly]) -> ParsedBoo
                 )
                 continue
             skipping = False
-            seen_first_chapter_title = True
-            if pending_orphans:
+            if pending_orphans and seen_first_chapter_title:
+                # Genuinely stranded: text collected since the PREVIOUS
+                # chapter's last verse, with no verse of its own chapter left
+                # to attach to. Left alone (not dropped here) when this is
+                # the book's FIRST chapter division: pending_orphans in that
+                # case is book-level front matter printed before chapter 1
+                # even starts (Lamentations' "And it came to pass...Jeremiah
+                # sat weeping" preface, between the Jegyzet links and "Siralm
+                # 1") and belongs to chapter 1 as its summary, not to nothing.
                 anomalies.append(
                     Anomaly(
                         osis,
@@ -432,6 +439,7 @@ def parse_book(osis: str, html_text: str, anomalies: list[Anomaly]) -> ParsedBoo
                     )
                 )
                 pending_orphans = []
+            seen_first_chapter_title = True
             if cur is not None:
                 book.chapters[cur.n] = cur
             cur = None  # created once the first verse anchor names the chapter
