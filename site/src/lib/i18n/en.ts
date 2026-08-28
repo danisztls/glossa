@@ -344,6 +344,7 @@ export const en: Dictionary = {
 	// unlabelled paragraph — so this string reaches only assistive technology.
 	'bible.note': 'Note',
 	'bible.noteMissing': 'This note is missing from the corpus',
+	'bible.readMore': 'Read more',
 	'bible.chapterArgument': 'Argument',
 	'ccc.readFullChapter': 'Read the full chapter',
 	'ccc.noParagraphNumber': 'No paragraph number in this corpus',

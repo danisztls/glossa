@@ -1481,6 +1481,57 @@ ceiling CSS clamps against the real slack (`--sidenote-room`). It binds at about
 a 100rem viewport and narrows the gloss column from there — to about 7rem at the maximum —
 rather than overflowing.
 
+**The margin sets a gloss open until it stops being a gloss, and then it sets a preview**
+(2026-08-28). `.margin-note` was calibrated on the apparatus the site had: Challoner's
+notes are 126 characters at the median and 343 at the ninetieth percentile, a citation's
+source 26. The continental annotated editions print something else — Straubinger 248/814,
+Martini 361/1,051, single notes at 4,830 and 10,243 — and per chapter their apparatus
+comes to as many characters as the Scripture beside it (1.03 and 1.90 times the verse
+text at the median, 46 in the Song of Songs). The gloss column sets about 33 characters a
+line against the reading measure's 62.4, so parity of characters is already near twice
+the height, and `clear: inline-start` starts each note below wherever the last one ended.
+What that breaks is not the look of the page but the arrangement's premise: by the eighth
+verse the gloss is pages below the line that raises it, and a gloss BESIDE its line is
+the whole of why the margin exists. So a note past 200 characters is clamped to six
+lines, with "read more" under it — six and not the twelve first tried, because a margin
+holds a remark, and a gloss the reader has to scroll past to reach the next one has stopped being
+one. Most of the apparatus the margin was written for still sets open — 66% of
+Challoner's notes, 83% of Matos Soares's, every citation in the Catechism — against 41%
+of Straubinger's and 20% of Martini's, which is the asymmetry the clamp is for.
+
+**Nothing about the marker changes, and that is the point.** A marker that opened a card
+for the long notes and lit the gutter for the short ones would be two controls printed as
+one mark, and the pointer would go back to raising a card over prose it was merely
+crossing. Where there is a margin the marker still discloses nothing and a click still
+lights the note it belongs to; the way to a clamped note's tail is in the note itself.
+
+**And the tail opens as a modal, not as the card.** The card is anchored beside a marker,
+which is a shape for a paragraph — these notes run to 4,830 and 10,243 characters, and a
+card holding an essay covers the text it is glossing while pointing at it. A dialog
+centred over the page is what the site already does with a panel that has stopped being
+anchored to anything: `.dialog-bare` and the `.sheet-*` chrome in `menus.css`, shared with
+the plate viewer and the tables of contents, with `showModal()` carrying the top layer,
+the inert page, Escape and focus restoration. It is built only for the notes that need it
+and only rendered while open, since a chapter of Straubinger raises forty of them.
+
+**The clamp is counted, not measured**, and the count and the line limit are one decision
+written twice (`MARGIN_CLAMP_CHARS`, `--sidenote-clamp`). Whether a note overflows is a
+question for layout — `scrollHeight > clientHeight`, measured after a paint, per note, on
+every resize and every change of reading size — where what the markup actually needs to
+know is whether to render a way to the rest at all. `--sidenote-width` narrows with the
+reader's text size, so there is no one width to have measured against in any case. A
+character count is wrong only at the boundary, where it decides between a note set open
+and a note set open to within a line of its end.
+
+**An apparatus must not move the text, and that includes the apparatus saying "this
+one".** The highlight lit on a marker was a background plus `padding-inline`, which is
+inline size a superscript in running text did not have: clicking a note re-broke its line
+and pushed every word after it along, with the floated notes beside those lines moving
+too. A click that shifts the sentence being read is the exact failure the citation
+disclosure was rewritten to stop making, arriving by a different door. It is an outline
+now — drawn outside the border box, following the radius, taking no space — which is what
+`.margin-note.highlighted` had already been reasoned into for the same arithmetic.
+
 **Compare mode spends the slack the notes live in, so it takes the margin back.** The
 margin is not a reserved gutter but whatever is left after `.reading-layout` centres its
 tracks — about 6.5rem either side at 100rem with two columns up, against the 17rem a
@@ -1545,8 +1596,9 @@ note are separated by the whole width of the margin, and the only thing pairing 
 that they print the same character. So above the breakpoint the marker drops
 `popovertarget` and a click lights the note instead, in the accent wash
 `.compare-row.highlighted` already uses for "this is the one you asked about". At most one
-is lit, which is the whole question it answers. Hover still opens the card everywhere,
-because a peek at the marker is cheaper than a glance across the gutter.
+is lit, which is the whole question it answers. Hover stopped opening the card there for
+the same reason the click did: it raised a card over the prose to repeat words already a
+hand's width to the left, and it did it while the pointer was merely passing through.
 
 **And all of it generalized to the annotated editions' notes, where the phone was the
 point.** A Challoner gloss used to open as a block under its line, breaking the verse at
@@ -1574,6 +1626,57 @@ other's, which is the one thing a comparison cannot survive. A card costs the gr
 layout. The cell also had to become two — each column's notes are written in that
 edition's language, resolve against that edition's work id, and take their letters from
 that chapter's own run, none of which one shared snippet could carry.
+
+**A plate opens over the page, and the argument for it is arithmetic rather than taste**
+(2026-08-28). `PLATE_SIZES` draws an engraving at 640 CSS px in the reading column and at
+about 390 on a phone, where `srcset` therefore hands the browser the 800px rendition — so
+the reader is already holding roughly twice the detail on their screen, and had no way to
+reach any of it. That is what the viewer spends: it shows the file the page already
+downloaded, read off the inline image's own `currentSrc`, and never asks for a larger
+one. Opening it costs no request, no wait and no spinner, and it works offline in exactly
+the cases the plate itself did — the plates being deliberately in no service-worker
+download wave, an offline reader has the ones they have already seen, and a viewer that
+fetched on tap would be the one control that breaks when the picture under it does not.
+
+**A detail rendition is a separate decision and is deliberately not taken.** 1800–2000px
+from the masters is what the engravings would support and what the ceiling is really
+worth; at ~590 KB a plate that is about 140 MB on top of a 110 MB deploy, and per-reader
+it is free only until someone taps. The measurement above says the free version is worth
+shipping first, and the expensive one should be argued from what readers do with it.
+
+**Two states, not a continuous zoom.** Fit, and the loaded file's own natural width, which
+is the point past which the browser is inventing pixels. Pinch-zoom with momentum, bounds
+and a transform matrix is a great deal of machinery around a question asked once; two
+states answer it with a scroll container the browser already knows how to pan, and native
+pinch still works over the top of it. The zoom is offered only where there is headroom to
+gain — on a 1440px-tall viewport, fit is already about 1155px of a 1200px file, and a
+control that magnifies by 4% reads as broken rather than as finished.
+
+**It is the one modal on a site whose whole apparatus vocabulary is popovers.** A
+citation, a link preview and the plate's own credit card float beside the text because
+they gloss it and the text has to stay readable; the picture is not apparatus over the
+text, it IS the thing being read, and covering the page is the point. `showModal()` then
+pays for itself twice: the top layer, `::backdrop`, an inert background, a focus trap,
+Escape and focus return are all native — and so is the Android back button, since a modal
+dialog closes on a platform close request. No history entry, no shallow routing, nothing
+to unwind. A reader who taps a plate and then taps back is still in their chapter.
+
+**The surround is dark in all three appearances, so its chrome is written in fixed light
+values** rather than in the palette — close to the only place in the stylesheet that does
+that, and deliberate: a viewer's backdrop is dark for the reason a cinema is. `--color-bg`
+stays load-bearing exactly where it always was, behind the plate itself, because
+`--plate-blend` is `multiply` on light and sepia and multiplying a scan's paper into a
+dark backdrop yields a black square. The picture's own box paints the page colour and
+isolates, so the blend resolves against paper.
+
+**The fit size is computed in JS, and the reason is a CSS trap worth recording.** A
+percentage height resolves against the containing block's height, and wrapping the picture
+in a control — which is what makes it a tab stop, Enter-and-Space activatable and
+announced as a control at all — puts a shrink-to-fit box of `auto` height in between. So
+`max-block-size: 100%` resolves to nothing, silently, and the clamp meant to letterbox a
+portrait plate on a phone never applies. No arrangement of `aspect-ratio` and `max-*`
+across the two elements avoids it without either distorting the plate or making the whole
+stage a click target. The stage is measured instead and the width set outright.
 
 **Fixtures deliberately encode absent chapters and out-of-range cross-references** to
 exercise the not-in-corpus paths, and a second English Bible to exercise the

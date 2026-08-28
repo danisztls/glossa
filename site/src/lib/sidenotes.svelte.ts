@@ -176,6 +176,61 @@ class SidenoteRoom {
 export const sidenoteRoom = new SidenoteRoom();
 
 /**
+ * How much gloss the margin sets open before it becomes a preview, counted in
+ * characters of the note as stored.
+ *
+ * THE ARRANGEMENT WAS CALIBRATED ON AN EDITION THAT NO LONGER REPRESENTS THE
+ * CORPUS. `.margin-note` was written for Challoner — a gloss at the length of
+ * a sentence, 126 characters at the median and 343 at the ninetieth
+ * percentile — and for a numbered footnote's source, shorter again at 26. The
+ * continental annotated editions print an apparatus of another order
+ * entirely: Straubinger's notes run 248/814 and Martini's 361/1,051, with
+ * single notes at 4,830 and 10,243. Per chapter their apparatus comes to as
+ * many characters as the Scripture beside it — 1.03 and 1.90 times the verse
+ * text at the median, 3.0 and 5.7 at the ninetieth percentile, 46 in the
+ * Song of Songs — and the gloss column sets about 33 characters a line
+ * against the reading measure's 62.4, so parity of characters is already
+ * something near twice the height.
+ *
+ * WHAT THAT BREAKS IS THE ARRANGEMENT'S OWN PREMISE, not merely the look of
+ * the page. `.margin-note` floats with `clear: inline-start`, so each note
+ * begins below wherever the last one ended: at these lengths the eighth
+ * verse's gloss is pages below the line that raises it, and a gloss BESIDE
+ * its line is the whole of what the margin is for. Clamping is what keeps the
+ * column anchored to the text rather than merely shorter.
+ *
+ * SO THE LONG ONES ARE CLAMPED AND THE READER IS GIVEN A WAY TO THE REST. 200
+ * characters is about six lines of the gloss column, which is
+ * `--sidenote-clamp` in `layout.css`: the two numbers are one decision written
+ * twice and have to move together. It is deliberately short — a margin holds a
+ * remark, and a gloss that has to be scrolled past to reach the next one has
+ * stopped being one. At six lines the editions the margin was written for
+ * still set most of their apparatus open (66% of Challoner's notes, 83% of
+ * Matos Soares's, every citation in the Catechism) and the essayists set an
+ * incipit (41% of Straubinger's notes open, 20% of Martini's).
+ */
+export const MARGIN_CLAMP_CHARS = 200;
+
+/**
+ * Whether a gloss this long is more than the margin will set open.
+ *
+ * COUNTED, NOT MEASURED. Whether a note overflows is a question for layout —
+ * `scrollHeight > clientHeight` — and a character count is deterministic,
+ * costs no layout read, and needs no width to have been resolved:
+ * `--sidenote-width` narrows with the reader's text size, so there is no one
+ * width to measure against in any case. It is wrong only at the boundary,
+ * where it decides between a note set open and a note set open to within a
+ * line of its end.
+ *
+ * The lemma counts because it is set in the same column, in bold, ahead of
+ * the gloss.
+ */
+export function marginOverflows(note: { lemma?: string; text?: string } | undefined): boolean {
+	if (!note) return false;
+	return (note.lemma?.length ?? 0) + (note.text?.length ?? 0) > MARGIN_CLAMP_CHARS;
+}
+
+/**
  * One note of an apparatus, as a thing the reader can open — the behaviour
  * `CitationDisclosure` and `Sidenote` now share entirely.
  *

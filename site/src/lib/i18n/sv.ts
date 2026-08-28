@@ -236,6 +236,7 @@ export const sv: Dictionary = {
 	'bible.verseAbbrev': 'v.',
 	'bible.note': 'Not',
 	'bible.noteMissing': 'Den här noten saknas i korpuset',
+	'bible.readMore': 'Läs mer',
 	'bible.chapterArgument': 'Innehållsöversikt',
 	'ccc.readFullChapter': 'Läs hela kapitlet',
 	'ccc.noParagraphNumber': 'Inget styckenummer i detta korpus',

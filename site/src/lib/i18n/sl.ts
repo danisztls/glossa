@@ -234,6 +234,7 @@ export const sl: Dictionary = {
 	'bible.verseAbbrev': 'v.',
 	'bible.note': 'Opomba',
 	'bible.noteMissing': 'Ta opomba manjka v korpusu',
+	'bible.readMore': 'Preberite več',
 	'bible.chapterArgument': 'Povzetek',
 	'ccc.readFullChapter': 'Preberite celotno poglavje',
 	'ccc.noParagraphNumber': 'V tem korpusu ni številke odstavka',

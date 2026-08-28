@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { chapterNoteOffsets, noteLetter } from './sidenotes.svelte';
+import {
+	chapterNoteOffsets,
+	marginOverflows,
+	MARGIN_CLAMP_CHARS,
+	noteLetter
+} from './sidenotes.svelte';
 
 describe('noteLetter', () => {
 	it('letters a chapter from a', () => {
@@ -57,5 +62,41 @@ describe('chapterNoteOffsets', () => {
 	it('is all zeroes for the unannotated editions, which are most of them', () => {
 		const offsets = chapterNoteOffsets({ verses: [{ n: 1 }, { n: 2 }] });
 		expect([...offsets.values()]).toEqual([0, 0]);
+	});
+});
+
+describe('marginOverflows', () => {
+	const note = (chars: number, lemma?: string) => ({
+		marker: '1',
+		lemma,
+		text: 'x'.repeat(chars)
+	});
+
+	// The gloss the margin was written for: Challoner's median note is 126
+	// characters, a citation's source 26. Clamping those would be the change
+	// costing something and buying nothing.
+	it('sets a remark-length gloss open', () => {
+		expect(marginOverflows(note(26))).toBe(false);
+		expect(marginOverflows(note(126))).toBe(false);
+	});
+
+	// And the one it was not: Straubinger's median note is 248 characters, its
+	// ninetieth percentile 814, its longest 4,830.
+	it('clamps an essay-length one', () => {
+		expect(marginOverflows(note(248))).toBe(true);
+		expect(marginOverflows(note(4830))).toBe(true);
+	});
+
+	// The lemma is set in the same column, in bold, ahead of the gloss — so a
+	// note just under the limit with a long lemma is over it.
+	it('counts the lemma, which is set in the same column', () => {
+		expect(marginOverflows(note(MARGIN_CLAMP_CHARS))).toBe(false);
+		expect(marginOverflows(note(MARGIN_CLAMP_CHARS, 'And the judgment:'))).toBe(true);
+	});
+
+	// A token with no note behind it is a corpus bug the component renders a
+	// message for; there is nothing to clamp and nothing to disclose.
+	it('has nothing to say about a note that is not there', () => {
+		expect(marginOverflows(undefined)).toBe(false);
 	});
 });

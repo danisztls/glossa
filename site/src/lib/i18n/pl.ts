@@ -233,6 +233,7 @@ export const pl: Dictionary = {
 	'bible.verseAbbrev': 'w.',
 	'bible.note': 'Przypis',
 	'bible.noteMissing': 'Brak tego przypisu w korpusie',
+	'bible.readMore': 'Czytaj dalej',
 	'bible.chapterArgument': 'Streszczenie',
 	'ccc.readFullChapter': 'Czytaj cały rozdział',
 	'ccc.noParagraphNumber': 'Brak numeru akapitu w tym korpusie',

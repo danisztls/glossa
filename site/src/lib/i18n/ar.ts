@@ -228,6 +228,7 @@ export const ar: Dictionary = {
 	'bible.verseAbbrev': 'آية',
 	'bible.note': 'حاشية',
 	'bible.noteMissing': 'هذه الحاشية غير موجودة في المدونة',
+	'bible.readMore': 'اقرأ المزيد',
 	'bible.chapterArgument': 'ملخص',
 	'ccc.readFullChapter': 'اقرأ الفصل كاملًا',
 	'ccc.noParagraphNumber': 'لا رقم فقرة في هذه المدوّنة',

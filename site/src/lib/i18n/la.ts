@@ -277,6 +277,7 @@ export const la: Dictionary = {
 	'bible.verseAbbrev': 'v.',
 	'bible.note': 'Nota',
 	'bible.noteMissing': 'Haec nota in corpore deest',
+	'bible.readMore': 'Lege plura',
 	'bible.chapterArgument': 'Argumentum',
 	'ccc.readFullChapter': 'Lege caput integrum',
 	'ccc.noParagraphNumber': 'Numerus paragraphi in hoc corpore deest',

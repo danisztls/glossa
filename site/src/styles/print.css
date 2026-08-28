@@ -153,6 +153,26 @@
 		border-inline-start: 2px solid #000;
 	}
 
+	/*
+	 * NOTHING ON PAPER OPENS A CARD, so the clamp would not shorten a gloss
+	 * here but lose its tail outright — the remainder lives in the popover and
+	 * a popover does not print. A sheet also has no floated gutter to overrun
+	 * (the rule above has already put the note in the flow), which is the only
+	 * thing the clamp was protecting.
+	 */
+	.margin-note-body.clamped {
+		display: block !important;
+		overflow: visible !important;
+		-webkit-line-clamp: none !important;
+		line-clamp: none !important;
+	}
+
+	/* And with the whole note printed, the way to the rest of it is an
+	   instruction to press something that is not there. */
+	.margin-note-more {
+		display: none !important;
+	}
+
 	/* Back into the flow with it: there is no margin to hang off, and left
 	   absolute it would print on top of the line above. */
 	.margin-note-label {

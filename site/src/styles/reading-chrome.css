@@ -248,16 +248,28 @@
 	color: var(--color-text);
 }
 
-/* Both markers, in one rule, because they must not diverge — `.note-marker`
-   is otherwise scoped to `Sidenote.svelte`, whose own docblock records that
-   it copies `.citation-marker` deliberately so that a reader who has learned
-   one raised mark has learned both. A superscript can take the padding the
-   note cannot. */
+/*
+ * Both markers, in one rule, because they must not diverge — `.note-marker`
+ * is otherwise scoped to `Sidenote.svelte`, whose own docblock records that
+ * it copies `.citation-marker` deliberately so that a reader who has learned
+ * one raised mark has learned both.
+ *
+ * AND AN OUTLINE, NOT PADDING, which is `.margin-note.highlighted`'s reason
+ * one step further on. The marker sits INSIDE running text, so padding on it
+ * is inline size the line did not have: lighting a note re-broke the line and
+ * pushed every word after it along, and with the notes floated beside those
+ * lines the paragraph moved too. A click that shifts the sentence being read
+ * is the one thing this highlight must not do — it exists to say "this is the
+ * one you asked about", and the reader was looking at it. An outline is drawn
+ * outside the border box, follows the radius, takes no space at all, and
+ * unlike a spread `box-shadow` does not paint under the background where two
+ * translucent layers would stack.
+ */
 .citation-marker.highlighted,
 .note-marker.highlighted {
 	background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+	outline: 0.15em solid color-mix(in srgb, var(--color-accent) 18%, transparent);
 	border-radius: var(--radius-sm);
-	padding-inline: 0.15em;
 }
 
 /*

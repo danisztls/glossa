@@ -131,6 +131,26 @@
 	 * calculation exists to prevent. It is unreachable above 100rem.
 	 */
 	--sidenote-width: clamp(0px, calc(var(--sidenote-room) - var(--sidenote-gap)), 13rem);
+
+	/*
+	 * HOW MANY LINES OF A GLOSS THE MARGIN SETS BEFORE IT IS A PREVIEW — the
+	 * clamp `Sidenote.svelte` applies, and the same decision as
+	 * `MARGIN_CLAMP_CHARS` in `sidenotes.svelte.ts` written in the other unit.
+	 * 200 characters is about six lines of this column (13rem of 0.78rem sans
+	 * is near 33 characters a line), and the two numbers have to move
+	 * together: the count decides whether the note renders a way to its rest,
+	 * the lines decide what the reader sees, and a clamp shorter than the
+	 * count cuts a note off with nothing under it to open.
+	 *
+	 * SIX AND NOT TWELVE, which was the first answer. A margin holds a remark;
+	 * a gloss the reader has to scroll past to reach the next one has stopped
+	 * being one, and at these editions' lengths twelve lines still ran the
+	 * gutter column past the chapter. The tail is one press away.
+	 *
+	 * Here rather than in the component because the arithmetic behind it is
+	 * this file's — it is the width above, read as a measure.
+	 */
+	--sidenote-clamp: 6;
 }
 
 /* Index pages use the same wide-screen grid as readers, but their full

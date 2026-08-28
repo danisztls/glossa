@@ -232,6 +232,7 @@ export const ru: Dictionary = {
 	'bible.verseAbbrev': 'ст.',
 	'bible.note': 'Примечание',
 	'bible.noteMissing': 'Это примечание отсутствует в корпусе',
+	'bible.readMore': 'Читать далее',
 	'bible.chapterArgument': 'Краткое содержание',
 	'ccc.readFullChapter': 'Читать главу целиком',
 	'ccc.noParagraphNumber': 'В этом корпусе нет номера абзаца',
