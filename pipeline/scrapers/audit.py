@@ -375,10 +375,9 @@ def compare_toc(
     # nodes deviating from it are called out -- those are the real anomalies.
     deltas: collections.Counter = collections.Counter()
     for title, nodes in read_by.items():
-        if title in parsed_by and nodes[0].get("level") is not None:
-            got_level = parsed_by[title][0].get("level")
-            if got_level is not None:
-                deltas[got_level - nodes[0]["level"]] += 1
+        for want, got in zip(nodes, parsed_by.get(title, ()), strict=False):
+            if want.get("level") is not None and got.get("level") is not None:
+                deltas[got["level"] - want["level"]] += 1
     offset = deltas.most_common(1)[0][0] if deltas else 0
     if offset and len(deltas) == 1:
         problems.append(
@@ -389,22 +388,35 @@ def compare_toc(
             f"OFFSET   most headings are parsed {offset:+d} level(s); outliers below"
         )
 
+    # EVERY OCCURRENCE, NOT THE FIRST. A document may print the same heading
+    # twice -- Quadragesimo Anno PT has a level-3 `Rem\u00e9dios` under
+    # `Despotismo econ\u00f3mico` and a level-2 `REM\u00c9DIOS` under `Reforma dos
+    # costumes`, which casefold to one key. Comparing `[0]` against `[0]` left
+    # the second pair unchecked in both directions and reported nothing, so a
+    # real defect could hide behind a repeated title. The two lists are in
+    # document order, so pairing them positionally is the reading a person
+    # would make; a length mismatch is itself the finding.
     for title, nodes in read_by.items():
         if title not in parsed_by:
             continue
-        want, got = nodes[0], parsed_by[title][0]
-        if want.get("level") is None or got.get("level") is None:
-            continue
-        if got["level"] - want["level"] != offset:
+        seen = parsed_by[title]
+        if len(seen) != len(nodes):
             problems.append(
-                f"LEVEL    {want.get('title')!r}: read {want['level']}, parsed {got['level']}"
-                f" (others {offset:+d})"
+                f"COUNT    {nodes[0].get('title')!r}: read {len(nodes)}x, parsed {len(seen)}x"
             )
-        if want.get("before") is not None and want["before"] != got.get("before"):
-            problems.append(
-                f"POSITION {want.get('title')!r}: read before \u00a7{want['before']}, "
-                f"parsed before \u00a7{got.get('before')}"
-            )
+        for want, got in zip(nodes, seen, strict=False):
+            if want.get("level") is None or got.get("level") is None:
+                continue
+            if got["level"] - want["level"] != offset:
+                problems.append(
+                    f"LEVEL    {want.get('title')!r}: read {want['level']}, "
+                    f"parsed {got['level']} (others {offset:+d})"
+                )
+            if want.get("before") is not None and want["before"] != got.get("before"):
+                problems.append(
+                    f"POSITION {want.get('title')!r}: read before \u00a7{want['before']}, "
+                    f"parsed before \u00a7{got.get('before')}"
+                )
     return problems
 
 

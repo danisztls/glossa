@@ -21,8 +21,8 @@ fix. The corpus uses exactly two page shells: all 32 `vatii` works are the
 **Scope is 354 document works** (322 `encyclical`, 32 `vatii`), not the 339
 this file opened with. It moves as editions land, so it is measured rather
 than remembered — and `site/unpublished.json` withholds nothing today, so all
-354 are describable. **173 are described** and **168 carry a ToC oracle**;
-what remains is 181 works with no description and 186 with no oracle.
+354 are describable. **185 are described** and **178 carry a ToC oracle**;
+what remains is 169 works with no description and 176 with no oracle.
 
 **Batches 4 through 8 are not written up here.** They landed between
 2026-08-24 and 2026-08-26 and were recorded in their commit messages instead
@@ -897,3 +897,83 @@ paragraph numbers anywhere on the page — and its `numbered: false` was checked
 against the raw page, not inferred. `fidei-donum.en`'s source numbering jumps
 from 27 to 35 in the raw HTML itself, with no block in between: the parse
 reproduces the page, and there is nothing missing to find.
+
+## Batch 11 (12 works) — 2026-08-28
+
+`vatii.apostolicam-actuositatem.pt`, `vatii.inter-mirifica.pt`,
+`vatii.orientalium-ecclesiarum.pt`, `encyclical.fides-et-ratio.en`,
+`encyclical.laborem-exercens.pt`, `encyclical.caritas-in-veritate.pt`,
+`encyclical.mysterium.pt`, `encyclical.aeterna-dei.pt`,
+`encyclical.satis-cognitum.en`, `encyclical.divino-afflante-spiritu.pt`,
+`encyclical.quadragesimo-anno.pt`, `encyclical.sollicitudo-rei-socialis.en`.
+
+**185 of 354 described, 178 oracles.** Two of the twelve already had an oracle
+from an earlier batch and were read for the description and an adjudication
+instead; that is the shape to use for the three works whose oracle arrived
+before their description.
+
+### The comparison checked the first occurrence of a repeated title and no more
+
+`quadragesimo-anno.pt` prints `Remédios` twice — once at level 3 under
+`Despotismo económico`, once at level 2 under `Reforma dos costumes` — and
+they casefold to one key. `compare_toc` grouped both sides by that key and
+then compared `[0]` against `[0]`, so the second pair was never checked in
+either direction and the counts agreeing was enough to report nothing. The
+lists are in document order, so they now pair positionally, and a length
+mismatch is reported as `COUNT` rather than silently truncated. One new
+finding across 178 oracles (`REMÉDIOS`, read 2 parsed 3), no noise: the
+defect this closes is the one that would have hidden behind a repeated title.
+
+### `<a>` inside a heading spaces the words it links — and the fix is not here
+
+`divino-afflante-spiritu.pt` stores `1. 50° aniversário da encíclica "
+Providentissimus Deus "`, where the page prints no space inside the quotes:
+the title is an anchor, `strip_tags` turns every non-emphasis tag into a
+space, and the two spaces are ours. Corpus-wide it is two headings, the other
+being `princeps.pt`'s `Apelo da epístola " Maximum illud "`.
+
+Adding `a` to `_INLINE_TEXT_TAGS` fixes both and **takes validation failures
+from 72 to 171**, which is the tag set's own docstring being right: it is held
+in step with what `narrow_html` keeps, and the round-trip invariant
+`html_to_text(html) == text` is what that buys. The fix belongs where a
+heading's TITLE text is derived, not in the shared tag rule — recorded rather
+than attempted.
+
+### Open, carried forward — and two of them now have a shape
+
+- **The trailing top-tier heading, demoted, is seven works and both
+  languages.** `EXORTAÇÃO` (`apostolicam-actuositatem.pt`) and `CLÁUSULAS`
+  (`inter-mirifica.pt`) join `EXHORTATION`, `APPENDICES`, `GENERAL DIRECTIVE`,
+  `INTRODUCTORY STATEMENT` and `CONCLUSION AND EXHORTATION` from batch 9. In
+  every one the demoted heading prints in the same `center,all-bold` as the
+  document's `CAPÍTULO`/`CHAPTER` labels, and the discriminator is that a
+  chapter's label is followed by a second line the parser merges into it while
+  these stand alone. `INTRODUCTION - "KNOW YOURSELF"` in `fides-et-ratio.en`
+  is the same defect at the front of the document, and `vatican_docs.py`'s own
+  `_FRONT_BACK_MATTER` comment says such a heading should rank as a peer of
+  the shallowest division the document prints.
+- **A whole tier collapses in several PT editions.**
+  `orientalium-ecclesiarum.pt` stores all 34 headings at level 1 where the page
+  prints two tiers; `divino-afflante-spiritu.pt` stores three tiers as two;
+  `quadragesimo-anno.pt`'s levels run roughly opposite to its typography, and
+  its reader's hypothesis is worth keeping — that document opens with four
+  bold-italic sub-headings before its first centred-bold heading, so a rank
+  bootstrapped from first encounter starts from the wrong style. `ecclesiam.pt`
+  and `optatam-totius.pt` from batch 10 are the same family.
+- **An epigraph that quotes Scripture is dropped, in two editions and one
+  way.** `fides-et-ratio.en` loses both of Chapter II's
+  (`"Wisdom knows all and understands all" (Wis 9:11)`, `"Acquire wisdom,
+acquire understanding" (Prov 4:5)`): the quotation is bold-italic and the
+  citation after it is italic-only, so `is_full_bold` fails on the block and it
+  is discarded rather than absorbed — its own manifest logs them as two
+  unattached blocks. `lumen-fidei.pt`'s chapter epigraphs (batch 10) fail the
+  same way. `_emphasis_covers` already tolerates an enumerator, punctuation and
+  a footnote marker outside the run; a parenthetical citation is the fourth
+  thing this corpus sets there.
+- **`quadragesimo-anno.pt` prints one footnote marker with no anchor at all**
+  (`sob a autoridade ordenada por Deus, 54 cultive`, raw line 927, against the
+  `<a name="fnref54">` pattern every other marker uses and a footnote 54 that
+  exists and matches). A bare digit therefore survives into the stored prose.
+  Broken markup rather than wrong words, so it is the parser's business by
+  `CLAUDE.md`'s rule and not a `corrections/` entry — but it is one document,
+  and the class is worth a sweep before anyone writes code for it.

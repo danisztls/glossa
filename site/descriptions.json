@@ -90,6 +90,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.aeterna-dei.pt": {
+			"pt": {
+				"text": "Carta encíclica de João XXIII pelo XV centenário da morte de são Leão Magno, papa e doutor da Igreja: sua vida, sua obra de pastor universal e luzeiro de doutrina, e a doutrina leonina sobre a unidade da Igreja em torno do bispo de Roma, sucessor de Pedro, evocada às vésperas do Concílio Vaticano II. Termina exortando ao retorno dos irmãos separados à unidade católica.",
+				"origin": "read"
+			}
+		},
 		"encyclical.aeterni-patris.en": {
 			"en": {
 				"text": "On the restoration of Christian philosophy, and specifically of St Thomas Aquinas, in Catholic schools. Leo XIII sets out philosophy's proper office as handmaid to faith, surveys what the Fathers and the Scholastics made of it, singles out Thomas as the master whose method keeps faith and reason each in its right, and directs bishops to make his doctrine the foundation of clerical and university teaching.",
@@ -135,6 +141,12 @@
 		"encyclical.caritas-in-veritate.en": {
 			"en": {
 				"text": "On integral human development in charity and truth, taking up Paul VI's Populorum Progressio forty years on. Charity in truth is set out as the principle of the Church's social doctrine and then applied: to the global financial crisis, to the ethics of business and the market, to gratuitousness and gift, to the environment, to cooperation between peoples, and to the human meaning of technology and bioethics.",
+				"origin": "read"
+			}
+		},
+		"encyclical.caritas-in-veritate.pt": {
+			"pt": {
+				"text": "Carta encíclica de Bento XVI que retoma a Populorum Progressio de Paulo VI, quarenta anos depois, para pensar o desenvolvimento integral dos povos à luz da caridade na verdade. Percorre a globalização, os direitos e deveres ligados ao ambiente, a colaboração entre nações e pessoas, e os riscos de um progresso técnico desligado de Deus e da verdade sobre o homem.",
 				"origin": "read"
 			}
 		},
@@ -240,6 +252,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.divino-afflante-spiritu.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII, publicada no cinquentenário da Providentissimus Deus de Leão XIII, sobre os estudos bíblicos. Recorda o incentivo dado por Leão XIII, Pio X e Pio XI à ciência bíblica e fixa critérios hermenêuticos para a exegese católica: uso dos textos originais e da crítica textual, busca do sentido literal antes do espiritual, atenção aos géneros literários e uso da Escritura no ensino dos fiéis.",
+				"origin": "read"
+			}
+		},
 		"encyclical.doctor-mellifluus.pt": {
 			"pt": {
 				"text": "Carta encíclica de Pio XII pelo VIII centenário da morte de São Bernardo de Claraval, louvando o \"doutor melífluo\": sua doutrina extraída da Escritura e dos Padres, seu estilo suave e ardente, sua vida contemplativa unida à ação enérgica na defesa da autoridade pontifícia e da fé, seu amor a Cristo e devoção filial à Mãe de Deus — convidando todos a imitar suas virtudes.",
@@ -315,6 +333,12 @@
 		"encyclical.fidei-donum.en": {
 			"en": {
 				"text": "Pius XII's 1957 encyclical on the missions, especially in Africa, describing the continent's rapid political and social change, the shortage of priests and material means in newly founded mission stations, and appealing to bishops of the older Christian nations to send diocesan priests, prayer, and financial support, plus lay Catholic Action workers, to the African missions.",
+				"origin": "read"
+			}
+		},
+		"encyclical.fides-et-ratio.en": {
+			"en": {
+				"text": "John Paul II's 1998 encyclical on the relationship between faith and reason, opened by the image of ‘two wings’ lifting the human spirit toward truth. It traces their kinship in Scripture's wisdom literature, the Church's engagement with Greek philosophy, Aquinas's harmony of the two and their modern separation, then turns to the Magisterium's care for philosophy and to theology's present tasks, a century after Aeterni Patris.",
 				"origin": "read"
 			}
 		},
@@ -468,6 +492,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.laborem-exercens.pt": {
+			"pt": {
+				"text": "Carta encíclica de João Paulo II, publicada no nonagésimo aniversário da Rerum Novarum, sobre o trabalho humano como dimensão fundamental da existência do homem. Distingue o sentido objectivo e subjectivo do trabalho, afirma a prioridade do trabalho sobre o capital face ao conflito moderno entre ambos, enumera os direitos dos trabalhadores — emprego, salário, sindicatos — e conclui com uma espiritualidade do trabalho centrada em Cristo, o homem do trabalho.",
+				"origin": "read"
+			}
+		},
 		"encyclical.lacrimabili-statu.en": {
 			"en": {
 				"text": "Pius X's 1912 letter to the bishops of Latin America denouncing the continued enslavement, branding, massacre and trafficking of South American Indians despite slavery's formal abolition, and attributing the cruelty to greed and to remoteness from civil and religious oversight. He asks the bishops to sustain the Indian missions by preaching, alms and prayer, and renews Benedict XIV's condemnation of the trade.",
@@ -594,6 +624,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.mysterium.pt": {
+			"pt": {
+				"text": "Carta encíclica de Paulo VI sobre o culto da Sagrada Eucaristia, escrita para corrigir opiniões que confundiam os fiéis quanto à Missa, à transubstanciação e ao culto eucarístico. Reafirma a doutrina de Trento sobre o Sacrifício da Missa e a presença real de Cristo pela transubstanciação, defende a linguagem tradicional da fé e exorta à adoração do Santíssimo Sacramento reservado e exposto à veneração dos fiéis.",
+				"origin": "read"
+			}
+		},
 		"encyclical.mystici-corporis-christi.en": {
 			"en": {
 				"text": "On the Church as the Mystical Body of Christ: a single visible Body with Christ as Head, animated by the Holy Spirit and built up through the sacraments and the juridical bonds of faith, hope and charity. It refutes rationalist, naturalist and mystical errors about the Church's nature and closes by entrusting her peace to the Virgin Mary.",
@@ -705,6 +741,12 @@
 		"encyclical.quadragesimo-anno.en": {
 			"en": {
 				"text": "Pius XI's encyclical for the fortieth anniversary of Leo XIII's On the Condition of Workers, treated under three headings: that encyclical's fruits, Catholic teaching on property's individual and social character and on just wages, and a verdict on the present economic order — wealth concentrated into an “economic dictatorship,” free competition's self-destruction, and Socialism's irreconcilability with Christianity — closing with a call to restore society through vocational guilds and reform of morals.",
+				"origin": "read"
+			}
+		},
+		"encyclical.quadragesimo-anno.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XI no quadragésimo aniversário da Rerum Novarum: reafirma o direito de propriedade e a justiça do salário, propõe corporações profissionais que reúnam patrões e operários para restaurar a ordem social, e examina as mudanças na economia — o despotismo económico do capitalismo — e no socialismo, incompatível com o catolicismo. Termina apelando à reforma cristã dos costumes, pela justiça e caridade sociais.",
 				"origin": "read"
 			}
 		},
@@ -842,6 +884,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.satis-cognitum.en": {
+			"en": {
+				"text": "Leo XIII's encyclical on the unity of the Church, describing it as one visible society and mystical body founded by Christ, bound by unity of faith under a perpetual teaching Magisterium. It grounds supreme authority in Peter's primacy, inherited jure divino by the Roman Pontiffs, holds bishops united to the Church only while joined to Peter's successors, and appeals to those outside the fold to return.",
+				"origin": "read"
+			}
+		},
 		"encyclical.sertum-laetitiae.en": {
 			"en": {
 				"text": "Written to the American hierarchy for the hundred-and-fiftieth anniversary of its establishment, recalling the growth of the Church in the United States from John Carroll's appointment as its first bishop to its present schools, missions and lay associations. It then warns against materialism in education and the breakdown of marriage, and asks for a just settlement of the labour question.",
@@ -857,6 +905,12 @@
 		"encyclical.slavorum-apostoli.en": {
 			"en": {
 				"text": "For the eleventh centenary of the death of St Methodius, presenting him with his brother Cyril as the apostles of the Slavs. It follows their lives and their peaceable missionary method — preaching and celebrating the liturgy in the language of the people they came to — and reads them as pioneers of what would later be called inculturation, who bound the Slav peoples into the Church's catholicity and into the common civilization of Christian Europe.",
+				"origin": "read"
+			}
+		},
+		"encyclical.sollicitudo-rei-socialis.en": {
+			"en": {
+				"text": "A rereading of Paul VI's Populorum Progressio on its twentieth anniversary, surveying how the development of peoples has fared since 1967: East-West bloc rivalry, the arms race, international debt, and unemployment. It diagnoses ‘structures of sin’ behind these failures and proposes solidarity and a preferential love for the poor as the path to authentic human development.",
 				"origin": "read"
 			}
 		},
@@ -970,6 +1024,12 @@
 				"origin": "read"
 			}
 		},
+		"vatii.apostolicam-actuositatem.pt": {
+			"pt": {
+				"text": "Decreto do Concílio Vaticano II sobre o apostolado dos leigos: a vocação apostólica que brota da vocação cristã comum, os fins do apostolado — evangelização e santificação do mundo, instauração cristã da ordem temporal, acção caritativa —, os campos em que se exerce (família, juventude, meio social, ordem nacional e internacional), as formas individuais e associadas, a relação com a Hierarquia e a formação exigida aos leigos.",
+				"origin": "read"
+			}
+		},
 		"vatii.christus-dominus.en": {
 			"en": {
 				"text": "Vatican II's decree on the pastoral office of bishops. It treats first their place in the college united with the pope — instituting the Synod of Bishops and calling for a reorganized Roman Curia — then the diocesan bishop's governance of his own particular church, in its boundaries, auxiliaries, curia, clergy and religious, and finally cooperation among bishops through episcopal conferences, ecclesiastical provinces, and inter-diocesan offices such as military vicariates.",
@@ -1030,6 +1090,12 @@
 				"origin": "read"
 			}
 		},
+		"vatii.inter-mirifica.pt": {
+			"pt": {
+				"text": "Decreto do Vaticano II sobre a imprensa, o cinema, o rádio e a televisão. Reconhece nestes meios um dom que a Igreja usa para a evangelização, mas que pode voltar-se contra o homem, e fixa normas morais para o seu recto uso — a formação da consciência, a relação entre arte e moral, os deveres de autores e destinatários. Propõe ainda a imprensa católica e um dia mundial em seu favor.",
+				"origin": "read"
+			}
+		},
 		"vatii.lumen-gentium.en": {
 			"en": {
 				"text": "The Council's dogmatic constitution on the Church: the mystery of the Church as sacrament and as People of God, then her hierarchical structure and the episcopate, the vocation of the laity, the universal call to holiness, the religious life, the pilgrim Church's bond with the Church in heaven, and last the place of Mary in the mystery of Christ and the Church.",
@@ -1069,6 +1135,12 @@
 		"vatii.orientalium-ecclesiarum.en": {
 			"en": {
 				"text": "The Council's decree on the Eastern Catholic Churches — those in communion with Rome that follow the Byzantine, Alexandrian, Antiochene, Armenian or Chaldean rites rather than the Latin. It affirms their equal dignity with the Latin Church and their right to keep their own liturgical, disciplinary and spiritual patrimony, then treats patriarchal precedence, the discipline of the sacraments, worship and the calendar, and what common prayer with separated Eastern Christians is permitted.",
+				"origin": "read"
+			}
+		},
+		"vatii.orientalium-ecclesiarum.pt": {
+			"pt": {
+				"text": "Decreto do Concílio Vaticano II sobre as Igrejas Orientais Católicas: afirma a igual dignidade dos seus ritos e patriarcas, defende a conservação e restauração do património litúrgico e disciplinar oriental — sacramentos, calendário pascal, línguas vernáculas —, e estabelece normas sobre matrimónios mistos e sobre a communicatio in sacris com os irmãos orientais separados, em vista da unidade plena.",
 				"origin": "read"
 			}
 		},
