@@ -10,6 +10,7 @@
 		"dev": "vite dev",
 		"prebuild": "npm run sync-corpus && npm run security-txt",
 		"build": "vite build",
+		"postbuild": "node scripts/strip-comments.mjs",
 		"preview": "vite preview",
 		"preflight": "node scripts/preflight-deploy.mjs",
 		"coverage:accept": "node scripts/reference-coverage.mjs --accept",

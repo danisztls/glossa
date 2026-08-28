@@ -461,6 +461,23 @@ npm run deploy      # build -> preflight -> wrangler deploy
   it. `REFERENCE_COVERAGE=verbose npm run sync-corpus` prints what the grammar
   recognized nothing in, which is where coverage work starts.
 
+- **`postbuild` strips comments from the built HTML and then refuses a build
+  that still ships one.** `src/app.html` is the most heavily commented file in
+  the repository AND the one document served at every address, so its notes were
+  7,383 bytes of `index.html`'s 15,063 (49%) on every cold visit;
+  `scripts/strip-comments.mjs` removes them from `build/` and leaves `src/`
+  alone. HTML was the only place they survived — the minifier already leaves
+  zero in 85 JS files and 31 CSS — and the audit half exists because
+  `vite.config.ts` names no `minify`, so that is a default rather than a
+  promise. It scans HTML, JS, CSS and XML and **deliberately not JSON**: 87
+  built corpus files carry a bare `<!--` as stored document text, so a JSON scan
+  would one day refuse a build over a source page. A vendor licence banner is
+  the realistic first failure; keep it and record it in the script's `ALLOWED`
+  rather than deleting a copyright notice to quiet a build. `robots.txt`,
+  `.well-known/security.txt`, the `fonts/OFL-*.txt` licences and `_headers`
+  keep their comments on purpose — in each the comment is the file's substance,
+  and `_headers` is never served at all.
+
 ## The edge writes the head, from names and never from text
 
 Added 2026-08-28 (`docs/decisions.md` §The site). `ssr = false` means one document
