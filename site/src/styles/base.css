@@ -1,0 +1,203 @@
+/*
+ * THE ELEMENTS THEMSELVES — the box model, the document, and the four bare
+ * selectors the whole site inherits from: headings, links, the focus ring
+ * and the form controls.
+ *
+ * Everything here answers for markup nobody wrote a class for. A rule that
+ * needs a class belongs in one of the files after this one.
+ */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	/* Global lift from the browser default (typically 16px → 18px).
+	   Percentage keeps visitors' chosen default font size intact. */
+	font-size: 112.5%;
+	color-scheme: light dark;
+	/*
+	 * WHAT KEEPS A FRAGMENT FROM LANDING UNDER THE STICKY CHROME. One sticky
+	 * element remains on this scrollport: `.reading-bar`, at `top: 0`. The
+	 * site header used to stack above it and no longer does — it is in flow
+	 * (`+layout.svelte`), so it is off screen wherever this inset matters. An
+	 * anchor left to itself puts the heading at scroll offset 0 — behind the
+	 * bar.
+	 *
+	 * Insetting the SCROLLPORT rather than compensating at each target is
+	 * what makes it hold for every way a scroll can be asked for: a `#s12`
+	 * typed into the address bar, `:target`, `scrollIntoView()` (which is how
+	 * SvelteKit deep-links, deliberately — see its client runtime, which
+	 * comments that it chose that over `scrollTo` for exactly this reason),
+	 * and sequential focus navigation. It is also the only form that can
+	 * follow chrome whose height is measured rather than declared:
+	 * `--reading-bar-height` is published by `$lib/sticky-height`'s
+	 * `publishHeight` (from `ReadingBar.svelte`), which measures on mount and
+	 * observes thereafter — see its docblock for why the mount measurement is
+	 * what a deep link actually reads. It is simply absent — hence `0px` — on
+	 * every route that renders no bar.
+	 *
+	 * THE 1rem IS BREATHING ROOM, and now only that. It used to carry a second
+	 * job with a floor under it: the header's block padding was scroll-animated
+	 * over the first 96px, the browser reads this value at the moment it
+	 * scrolls (i.e. against the height BEFORE the jump), and scrolling UP to a
+	 * target near the top let the header re-expand over the heading by the
+	 * 0.8rem shrink delta — so the gap had to clear that. Nothing on this
+	 * scrollport changes height with scroll any more, so the number is spacing
+	 * again: a heading landing flush against the bar's underside reads as
+	 * clipped.
+	 *
+	 * The per-element `scroll-margin-top` rules this replaced are gone rather
+	 * than left to compose. They ran 1rem to 4rem across five files, the
+	 * 4rems being hand-guessed header compensation written before this bar
+	 * existed, and additively they would have pushed a heading further down
+	 * the viewport the more carefully someone had tuned one.
+	 */
+	/* The sticky chrome's height, as one token: the scroll inset below and the
+	   sidebars' own `top`/`max-height` (`.reading-aside`, `.index-aside`) all
+	   have to clear the same chrome, and three copies of one expression drift.
+	   It is a single term today — it was a sum while the site header was
+	   sticky too — and stays a token for that reason and for the fallback,
+	   which belongs in one place: the variable is published at runtime on this
+	   very element, so a route with no bar (or a frame before the first
+	   measurement) evaluates against the `0px` here. */
+	--sticky-chrome-height: var(--reading-bar-height, 0px);
+	scroll-padding-top: calc(var(--sticky-chrome-height) + 1rem);
+
+	/*
+	 * THE SCROLLBAR'S LANE IS RESERVED WHETHER OR NOT THERE IS A SCROLLBAR IN
+	 * IT, because a page that does not scroll is otherwise a page laid out in
+	 * a viewport a scrollbar wider than every page that does — and that
+	 * difference reaches the reader as the whole site stepping sideways on
+	 * navigation: the centred reading column by half a scrollbar, the header's
+	 * end-packed controls by a whole one.
+	 *
+	 * `/scriptura` is the route that showed it, and the only one that could.
+	 * Seventy-three books as chips is the single index short enough to fit a
+	 * desktop viewport, so arriving there took the scrollbar away and every
+	 * route around it put it back. Its chapters never did, which is why the
+	 * shift looked like something about the landing page rather than about
+	 * the window.
+	 *
+	 * On a system with overlay scrollbars this reserves nothing, which is
+	 * correct rather than a shortcoming — there is no gutter there to be
+	 * inconsistent about. It also keeps a modal sheet from moving the page
+	 * under itself at the moment it takes the document's scroll away.
+	 */
+	scrollbar-gutter: stable;
+}
+
+body {
+	margin: 0;
+	/* `.reading-aside`/`.index-aside` below can render as tall as
+	   `calc(100vh - 3rem)`. `.app-shell` (+layout.svelte) already carries a
+	   `min-height: 100vh` that's numerically taller than that, but nothing
+	   ties the two together — a page whose article is shorter than the
+	   sidebar let the reading-layout grid row size to the sidebar's height
+	   while body itself had no floor of its own beyond what its flex child
+	   happened to need, which is where an unwanted scrollbar crept in.
+	   Stating the same floor here directly, on the element the viewport
+	   actually scrolls, keeps body from ever coming out shorter than the
+	   sidebar it contains. */
+	min-height: 100vh;
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-family: var(--font-sans);
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+/*
+ * A HEADING IS A TITLE UNTIL IT SAYS OTHERWISE.
+ *
+ * `body` carries the interface face, so without this every heading that never
+ * named a family would have followed the chrome into the sans — and about
+ * fifteen of them never named one, which is why the landing pages, the Summa's
+ * article heads and a prayer's mystery names came out set differently from
+ * the CCC's and a document's, which did name it. The split was never a rule,
+ * only a habit that some files had and others did not.
+ *
+ * The rule, stated once: a heading names a division of the work, so it takes
+ * the text face. What is set in the interface face is the identifier BESIDE
+ * the title — the `CHAPTER TWO` above it, the ordinal in front of it, the
+ * `ARTICLE 3`, the `CITED IN` — because those are our words for where the
+ * reader is, not the work's words for what this is. Each of those names
+ * `--font-sans` at its own rule, and a scoped component selector outranks
+ * this one, so saying it there is all it takes.
+ *
+ * A heading that is entirely OUR label rather than the work's title — a
+ * sidebar's `Table of Contents`, a picker's `Old Testament` — names
+ * `--font-sans` too, for the same reason and by the same mechanism.
+ *
+ * The per-file `font-family: var(--font-serif)` declarations on individual
+ * headings predate this rule and are now redundant. They are kept, not
+ * cleaned up: they were written as a defence against exactly this change, and
+ * a heading that states its face is not wrong, only wordy.
+ */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--font-serif);
+}
+
+/*
+ * THE UNDERLINE IS DEMOTED, NOT DELETED, AND HOVER PROMOTES IT.
+ *
+ * This rule governs far less than it looks like it does: every list-shaped
+ * link surface on the site has already opted out by hand — `.breadcrumb a`
+ * and `.unit-nav a` below, the header's nav, the index cards, the document
+ * and prayer rows, the jump box. What is left underlined is a link sitting
+ * inside a sentence, which is the one place the mark is doing work.
+ *
+ * So it stays, at 35% of the link's own colour: at reading distance it is
+ * a tint under the word rather than a rule through the page, and hover
+ * takes it to full strength. The interaction is the underline ARRIVING,
+ * which is the visible event the previous rule was reaching for by
+ * thickening it from `from-font` to the browser's default — a change most
+ * readers never saw, on a property that is a font metric on one side and a
+ * UA guess on the other.
+ *
+ * DROPPING IT AT REST WAS THE OTHER OPTION AND IS THE WRONG ONE HERE, for
+ * two reasons that are both about readers who never get the hover state.
+ * A phone has no hover at all, so the affordance would collapse to colour,
+ * which is WCAG 1.4.1. And `data-mono` has no colour either: the note above
+ * the monochrome palette measures its link grey at dE 8.6 from body text
+ * and calls that the ceiling of what a single hue can buy, so the underline
+ * is most of what says `link` in that mode.
+ *
+ * MIXED FROM `currentColor` RATHER THAN `--color-border`, which is what
+ * `RefText`'s `.ref-link` and `InlineNodes`' `.inline-ref` use for the same
+ * effect in body prose. Those two are set in the reader's own text colour
+ * and want an underline that reads as apparatus; a link here carries the
+ * rubric red, and a grey rule under a red word reads as a mistake. Mixing
+ * the link's own colour also needs no second token and follows the palette
+ * into all four themes, sepia and OLED included.
+ */
+a {
+	color: var(--color-link);
+	text-decoration-thickness: from-font;
+	text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+	text-underline-offset: 0.15em;
+}
+
+a:hover,
+a:focus-visible {
+	text-decoration-color: currentColor;
+}
+
+:focus-visible {
+	outline: 2px solid var(--color-focus-ring);
+	outline-offset: 2px;
+}
+
+button,
+input {
+	font-family: inherit;
+	color: inherit;
+}

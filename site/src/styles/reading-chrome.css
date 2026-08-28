@@ -1,0 +1,403 @@
+/*
+ * THE APPARATUS AROUND THE TEXT — breadcrumb, prev/next nav, copyright
+ * line, citation markers, the margin note, and the reading sidebar's table
+ * of contents.
+ *
+ * All of it shared verbatim by six or seven routes apiece, which is why
+ * none of it is scoped to a component: the same reason `.reading-layout`
+ * is global. A rule that only one route renders does NOT belong here.
+ */
+
+/*
+ * Breadcrumb trail atop a reading page — identical across every route that
+ * has one (CCC paragraph/chapter, Compendium question/chapter, documents,
+ * prayers), for the same reason `.reading-layout` lives here and not in any
+ * one of its six callers: Svelte's per-component style scoping has no
+ * mechanism to share a block across files. `.breadcrumb .sep` is only
+ * rendered by the routes that print a trail rather than a single root crumb
+ * (the others have nothing to separate), and `.breadcrumb .ordinal` came
+ * here from `ccc/[n]`'s own `<style>` when the whole-chapter view started
+ * printing the same trail — a structure node's ordinal is set apart from its
+ * title identically wherever a crumb carries one. See the print media query
+ * above for why `.breadcrumb` itself is deliberately never hidden.
+ *
+ * NO LINK PREVIEW ON A CRUMB, which is why all seven callers carry
+ * `data-link-preview="off"` on the `<nav>` (the markup is the one part of
+ * this that cannot live here). A crumb is not a citation the reader is
+ * deciding whether to follow — it is where they already are, one level up,
+ * and the ancestors it names are the chapter the paragraph on screen is
+ * PART OF. Previewing it offers a peek at the page the reader is looking
+ * at, over the top of the page they are looking at. It is the same
+ * reasoning `UnitNav` and the tables of contents give for opting out: the
+ * reader who reaches for a crumb reached for it in order to GO there.
+ */
+.breadcrumb {
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+	margin-bottom: 0.75rem;
+}
+
+.breadcrumb a {
+	text-decoration: none;
+	color: var(--color-text-muted);
+}
+
+/*
+ * The crumb is the muted grey of the metadata line it sits on, so hover has
+ * to say two things at once — that this word is a link at all, and which one
+ * the pointer is on. It takes the link colour AND the underline the global
+ * rule above suppressed here, which is the same promotion every list-shaped
+ * link on the site makes: nothing at rest, the full mark on hover.
+ *
+ * `a[href]`, not `a`. The last crumb is the page itself and several routes
+ * render it as an `<a>` with no `href` and `aria-current="page"` (a node
+ * with no address does the same) — a bare `a:hover` matches those too, and
+ * would offer a link where there is nothing to follow.
+ */
+.breadcrumb a[href]:hover,
+.breadcrumb a[href]:focus-visible {
+	color: var(--color-link);
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+.breadcrumb .sep {
+	margin: 0 0.35em;
+}
+
+.breadcrumb .ordinal {
+	margin-inline-end: 0.3em;
+}
+
+/*
+ * The breadcrumb's own row also carries the bookmark and compare-toggle
+ * controls, on the same line rather than a second row above the title —
+ * two small buttons don't need a whole row of their own. Unlike
+ * `.title-row`'s toolbar (still per-route, since what else shares that row
+ * varies — an edition menu, nothing at all), this one is identical
+ * everywhere it appears, so it lives here with `.breadcrumb` itself.
+ * `.breadcrumb`'s own `margin-bottom` is cancelled in favour of the row's,
+ * so the space below is set once, not doubled.
+ */
+.breadcrumb-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 0.75rem;
+}
+
+.breadcrumb-row .breadcrumb {
+	margin-bottom: 0;
+}
+
+.breadcrumb-row .compare-toolbar {
+	margin: 0;
+	flex-shrink: 0;
+}
+
+/*
+ * Prev/next unit navigation at the foot of a reading page — same shape for
+ * the Bible chapter, CCC paragraph, Compendium question and prayer routes,
+ * shared here for the same reason as `.breadcrumb` just above. `margin-top`
+ * is the one property that isn't actually uniform: the Bible chapter route
+ * keeps 2.5rem instead of 2rem as a scoped override.
+ *
+ * `gap` and the `min-width: 0` below are what stop this row from scrolling
+ * the whole page sideways, and they are here rather than in UnitNav because
+ * the failure was never about one string being long. A flex item's default
+ * `min-width: auto` refuses to shrink below its own min-content, and no rule
+ * anywhere in this stylesheet caps horizontal overflow, so the two links
+ * simply pushed the document wider than the phone holding it. Shortening the
+ * labels (UnitNav's docblock) fixed the strings we knew about; this fixes the
+ * next one.
+ */
+.unit-nav {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-top: 2rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--color-border);
+	font-size: 0.95rem;
+}
+
+.unit-nav a {
+	min-width: 0;
+	text-decoration: none;
+}
+
+/*
+ * Copyright/license line under a work's title. `font-size` and `color` are
+ * uniform across every route that shows one; `margin` genuinely varies per
+ * page (context above and below the notice differs route to route), so it
+ * stays as a scoped override in each caller. 0.75rem is the size used by
+ * eight of the eleven routes; the three library-index pages (ccc, compendium,
+ * prayers landing) keep 0.8rem as an explicit scoped override rather than
+ * being silently resized to match.
+ */
+.copyright-notice {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+}
+
+/*
+ * Inline citation marker + trigger button, shared verbatim by
+ * ProseBlocks and PrayerMystery. Their citation *behavior* differs on
+ * purpose (a Set of open markers vs. a single boolean) and stays in each
+ * component; only this purely visual shell is identical.
+ */
+.citation-marker {
+	font-size: max(var(--font-size-min), 0.7em);
+}
+
+.citation-trigger {
+	appearance: none;
+	padding: 0;
+	border: 0;
+	background: none;
+	font: inherit;
+	cursor: pointer;
+	color: var(--color-accent);
+}
+
+.citation-trigger:focus-visible {
+	outline: 2px solid var(--color-focus-ring);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+/*
+ * A NOTE SET IN THE MARGIN — the arrangement `Sidenote` gives an annotated
+ * edition's gloss and `CitationDisclosure` a numbered footnote's source, once
+ * `sidenotes.svelte.ts` says there is room for it. The two are different
+ * apparatuses over different texts, and this is deliberately ONE treatment
+ * for both: a reader who has learned what hangs in the margin of a Catechism
+ * paragraph should not have to learn it again in the Douay-Rheims.
+ *
+ * Global rather than scoped for the reason `.reading-layout` is — two
+ * components want the identical block and Svelte's per-component style
+ * scoping has no mechanism to share one across files. What each of them keeps
+ * is what genuinely differs: what the marker left in the text IS (a plain
+ * reference here, a disclosure button below the breakpoint), and what the
+ * note falls back to where there is no margin to set it in.
+ *
+ * Sans, smaller, and in the muted colour: three signals at once that this is
+ * apparatus and not text, because any one of them alone is the kind of
+ * difference a reader stops seeing after a page. And physically outside the
+ * reading column rather than merely indented within it — a gloss must never
+ * be confusable with its source (docs/decisions.md §Posture).
+ *
+ * FLOATS ARE WHAT MAKE THIS WORK WITHOUT MEASURING ANYTHING: several notes
+ * raised by nearby lines stack down the margin instead of overlapping, which
+ * absolute positioning would need JavaScript to achieve. The negative start
+ * margin is the whole displacement — the float is pulled its own width plus
+ * the gap clear of the column, so it ends 4rem short of the text and no
+ * line box is ever shortened by it. That gap is also what keeps it off the
+ * unit number, which hangs in the nearest 3.25rem and sets flush to the
+ * column's edge within it (`.reference-number.margin`).
+ */
+.margin-note {
+	float: inline-start;
+	clear: inline-start;
+	/* The containing block for the marker, which hangs off the start edge. */
+	position: relative;
+	inline-size: var(--sidenote-width);
+	margin-inline-start: calc(-1 * (var(--sidenote-width) + var(--sidenote-gap)));
+	/* Aligns the note's first line with the line of text carrying its marker,
+	   rather than with the top of the line box. */
+	margin-block-start: 0.25rem;
+	text-align: start;
+	font-family: var(--font-sans);
+	font-size: 0.78rem;
+	line-height: 1.5;
+	color: var(--color-text-muted);
+}
+
+/*
+ * THE NOTE THE READER JUST NAMED, and the marker that named it.
+ *
+ * Clicking a marker where there IS a margin does not open the card — the note
+ * is already set beside the line, so a duplicate over the page answers
+ * nothing. What it cannot answer without help is WHICH of the notes stacked
+ * in the gutter belongs to the number just passed: marker and note are
+ * separated by the whole width of the margin, with others above and below,
+ * and the only thing pairing them is that they print the same character.
+ * Lighting both says it outright. See `NoteCard.onClick`.
+ *
+ * THE ACCENT WASH IS ALREADY THE SITE'S WORD FOR THIS. `.compare-row.highlighted`
+ * uses the same colour at the same strength for an arriving citation naming a
+ * row, which is the same statement — "this is the one you asked about" — and
+ * a second vocabulary for it would be a second thing to learn.
+ *
+ * `outline` rather than padding, and the reason is arithmetic: `.margin-note`
+ * is displaced by a negative `margin-inline-start` computed from its own
+ * width, and its label hangs at `inset-inline-end: 100%` off that box. Any
+ * padding here would move the text away from the label and the whole column
+ * off its measure. An outline is drawn outside the border box, follows the
+ * `border-radius`, and takes no space at all — and unlike a spread
+ * `box-shadow` it does not paint under the background, where two translucent
+ * layers would stack into a darker rectangle.
+ */
+.margin-note.highlighted {
+	background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+	outline: 0.3rem solid color-mix(in srgb, var(--color-accent) 12%, transparent);
+	border-radius: 0.2rem;
+	/* Out of muted: the lit note is the one being read, not one of the ones
+	   being skimmed past. */
+	color: var(--color-text);
+}
+
+/* Both markers, in one rule, because they must not diverge — `.note-marker`
+   is otherwise scoped to `Sidenote.svelte`, whose own docblock records that
+   it copies `.citation-marker` deliberately so that a reader who has learned
+   one raised mark has learned both. A superscript can take the padding the
+   note cannot. */
+.citation-marker.highlighted,
+.note-marker.highlighted {
+	background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+	border-radius: 0.2rem;
+	padding-inline: 0.15em;
+}
+
+/*
+ * The marker repeated at the head of the note, so a note read on its own
+ * still names itself.
+ *
+ * THE SAME COLOUR AS THE MARKER IN THE TEXT, because the pairing of the two
+ * identical marks is the ONLY thing tying a note to the place it belongs —
+ * here they are separated by the whole width of the gutter, with other notes
+ * stacked below. Colour them differently and the reader has to match on shape
+ * alone. It hangs outside the note's own measure so the note sets flush and
+ * the column of markers reads down the page.
+ *
+ * IT HANGS BY ITS END EDGE, NOT ITS START ONE, which is the difference between
+ * a column of markers and a ragged one: a footnote number restarts at every
+ * paragraph, so `1` and `14` sit above each other in the same margin, and
+ * floating both from the same start edge left the shorter one adrift half a
+ * character-width from its own note. `inset-inline-end: 100%` pins the edge
+ * that matters — the one the note text begins at — and lets the box grow
+ * leftward for however many digits the source printed. Out of flow rather than
+ * floated for the same reason: a two-digit marker was wide enough to push the
+ * note's first line, and only its first line, in by a couple of pixels.
+ *
+ * The same treatment `.reference-number.margin` gives the unit number in this
+ * margin, and for the same reason.
+ */
+.margin-note-label {
+	position: absolute;
+	inset-inline-end: 100%;
+	padding-inline-end: 0.4em;
+	font-weight: 600;
+	color: var(--color-accent);
+}
+
+/*
+ * Reading-sidebar table-of-contents shell — the heading treatment and list
+ * reset that IndexSidebarToc (index pages) and StructureSidebarToc (reading
+ * pages) render identically. Deliberately NOT named `.toc-heading` /
+ * `.toc-level`: those names are already taken by unrelated, differently-
+ * styled elements (the page-body ToC heading in ccc/+page.svelte and
+ * compendium/+page.svelte; the list reset in StructureIndex.svelte, whose
+ * own nested-indent values differ from this one) — reusing them here would
+ * have silently restyled elements outside this task's scope. Everything
+ * beyond heading + list reset (on-path/current row states, etc.) is real
+ * divergence between the two components and stays where it is.
+ */
+/* Our label for the list below it ("Table of Contents"), not a title the work
+   wrote — so it names the interface face rather than taking the text face the
+   base heading rule above hands every other `h2`. */
+.sidebar-toc-heading {
+	/* A row, so an optional note glyph (`.sidebar-toc-note`) can sit at the
+	   far end of the rule under the heading rather than after its last word.
+	   With no glyph this lays out exactly as the plain block heading did. */
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0.5rem;
+	margin: 0 0 0.5rem;
+	font-family: var(--font-sans);
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: var(--color-text-muted);
+	border-bottom: 1px solid var(--color-border);
+	padding-bottom: 0.4rem;
+}
+
+/*
+ * "There is something to know about every row below this." Both sidebars
+ * render it (`StructureSidebarToc`, `IndexSidebarToc`) and only the Summa
+ * passes one — under Latin, that the titles are the English edition's.
+ *
+ * The note itself is the glyph's `title`, which is the same place the
+ * copyright notice keeps a source's full boilerplate: one hover away rather
+ * than set beneath every heading it applies to. `cursor: help` is what says
+ * the hover is there; the note is also carried visually-hidden inside, since
+ * a `title` reaches a pointer and not much else.
+ */
+.sidebar-toc-note {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	cursor: help;
+	/* Against the heading's letter-spaced capitals the glyph reads small; a
+	   shade over 1em brings the circle back to the cap height beside it. */
+	font-size: 1.1em;
+	opacity: 0.75;
+}
+
+.sidebar-toc-note:hover {
+	opacity: 1;
+}
+
+/*
+ * THE SAME NOTE, FOR A READER WHO CANNOT HOVER.
+ *
+ * The glyph above puts the note one hover away, which was a complete answer
+ * for as long as this sidebar was desktop-only — `.reading-aside` is
+ * `display: none` below 80rem, so a phone was never offered the affordance in
+ * the first place. `TocMenu` ended that: the reading bar's panel renders the
+ * identical list on a phone, and a `title` on a touch screen is an icon that
+ * does nothing when tapped, which is worse than no icon at all.
+ *
+ * So the two swap on `hover: none` — the pointer's own answer to the only
+ * question being asked, rather than `pointer: coarse`, which would also catch
+ * the touchscreen laptop whose mouse can hover perfectly well. Exactly one of
+ * the two is ever rendered; the other is `display: none`, and so out of the
+ * accessibility tree along with the visually-hidden copy inside the glyph —
+ * no reader is told this twice.
+ *
+ * Set as apparatus, like every other one of our remarks about a text: the
+ * interface face, muted, small. It sits under the heading's rule rather than
+ * above it, so the caveat reads as belonging to the rows it is about.
+ */
+.sidebar-toc-note-prose {
+	display: none;
+	margin: -0.25rem 0 0.5rem;
+	font-family: var(--font-sans);
+	font-size: 0.75rem;
+	line-height: 1.35;
+	color: var(--color-text-muted);
+	text-wrap: pretty;
+}
+
+@media (hover: none) {
+	.sidebar-toc-note {
+		display: none;
+	}
+
+	.sidebar-toc-note-prose {
+		display: block;
+	}
+}
+
+.sidebar-toc-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.sidebar-toc-list li {
+	margin: 0.1rem 0;
+}

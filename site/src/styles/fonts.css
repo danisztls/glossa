@@ -1,0 +1,528 @@
+/*
+ * THE FACES, AND NOTHING ELSE. Eleven `@font-face` blocks over six scripts:
+ * EB Garamond (the text face, in six unicode-range subsets), Amiri for
+ * Arabic, Source Sans 3 for the interface, and the two drop-cap faces.
+ *
+ * The largest file here and the one least often opened — it is data, not
+ * design. Every rule that USES a face names `--font-serif` / `--font-sans`
+ * / `--font-display` from `tokens.css`; nothing outside this file names a
+ * family directly.
+ */
+
+/*
+ * EB Garamond (Duffner/Pardo's revival of Garamont's 1590s types), self-hosted
+ * from `static/fonts/` rather than imported from the `@fontsource-variable`
+ * package. The package's own CSS would work, but Vite hashes assets it
+ * references from `url()`, and SvelteKit's `preload` filter only sees its own
+ * module graph — neither can produce the stable path `app.html`'s explicit
+ * <link rel="preload"> needs. So the files are copied in and declared here.
+ *
+ * Six subsets are declared, not seven. Which ones is an empirical question,
+ * and the corpus answers it:
+ *
+ *   latin       every page. Covers ALL Portuguese on its own — the accents
+ *               Portuguese uses are Latin-1 Supplement, inside U+0000-00FF.
+ *   latin-ext   `ǽ` (U+01FD, 19x in Latin liturgical text) and the Polish /
+ *               Czech letters in saints' names (ł ć ż š).
+ *   greek       ~80 chars, all monotonic — so `greek-ext` (polytonic) is
+ *               deliberately absent.
+ *   vietnamese  `ễ ậ` in "Nguyễn Văn Thuận" (encyclical.magnifica-humanitas,
+ *               both editions). U+1EA0-1EF9 is NOT covered by latin-ext, so
+ *               without this subset that name renders as tofu.
+ *
+ *   cyrillic    the Russian edition of Magnifica Humanitas, 250,526
+ *               characters. EB Garamond covers it 100% — the Cyrillic here is
+ *               a modern extension by Duffner/Pardo, not a Garamont form (no
+ *               historical Cyrillic Garamond exists), but it harmonises by
+ *               construction because it is the same hand.
+ *   cyrillic-ext  `№` (U+2116) is in `cyrillic`, but the ext range is what
+ *               carries the Church Slavonic letters, and it is 33 KB that
+ *               only downloads if one appears. Declared for the same reason
+ *               `vietnamese` is: the cost of being wrong is tofu.
+ *
+ * `greek-ext` remains the only omission. Arabic is not a subset question at
+ * all — EB Garamond has no Arabic, so the Arabic edition is served by Amiri
+ * through `--font-serif`'s fallback chain. See the Amiri block below.
+ *
+ * Declaring a subset is close to free: `unicode-range` means the browser only
+ * downloads a file when a character in its range is actually on the page. A
+ * plain English chapter pulls the 43k latin file and nothing else, even though
+ * 347k is on disk. The ranges below are copied verbatim from the package's
+ * `wght.css` / `wght-italic.css` — do not hand-edit them.
+ *
+ * One family name covers both styles and the whole 400-800 axis; `font-weight:
+ * 400 800` on each block is what makes a variable font work through the
+ * `@font-face` route.
+ */
+
+/* latin */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-latin-wght-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-latin-wght-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin-ext */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-latin-ext-wght-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+		U+A720-A7FF;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-latin-ext-wght-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+		U+A720-A7FF;
+}
+
+/* greek */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-greek-wght-normal.woff2') format('woff2-variations');
+	unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-greek-wght-italic.woff2') format('woff2-variations');
+	unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+/* vietnamese */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-vietnamese-wght-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+		U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-vietnamese-wght-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301,
+		U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+/* cyrillic */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-cyrillic-wght-normal.woff2') format('woff2-variations');
+	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-cyrillic-wght-italic.woff2') format('woff2-variations');
+	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/* cyrillic-ext */
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-cyrillic-ext-wght-normal.woff2') format('woff2-variations');
+	unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+	font-family: 'EB Garamond Variable';
+	font-style: italic;
+	font-weight: 400 800;
+	font-display: swap;
+	src: url('/fonts/eb-garamond-cyrillic-ext-wght-italic.woff2') format('woff2-variations');
+	unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+/*
+ * AMIRI, for the one script EB Garamond does not reach at all.
+ *
+ * Chosen on the same logic that chose EB Garamond: it is a revival of one
+ * specific historical book type — the 1905 Naskh of the Bulaq (Amiria) Press
+ * in Cairo — rather than a contemporary drawing. Khaled Hosny, SIL OFL. Its
+ * cap height is 0.646em against EB Garamond's 0.650, so the two sit at the
+ * same optical size with no `size-adjust`, which is luck rather than design.
+ *
+ * No `:lang()` rule routes it. `--font-serif` lists it after EB Garamond and
+ * font fallback is per-glyph, so an Arabic codepoint finds no EB Garamond
+ * `@font-face` covering it and falls through to Amiri on its own — in reader
+ * text and in the interface chrome alike, which matters because `ar` is a UI
+ * language and the chrome was rendering tofu for it.
+ *
+ * Static weights, not variable: Amiri ships 400/700 rather than an axis, so
+ * both are declared. The Quran-specific companions in the family (Amiri Quran,
+ * Amiri Quran Colored) are deliberately NOT vendored — the model for the plain
+ * face is the Bulaq state press, which printed gazettes and science, and that
+ * is the register this corpus wants.
+ *
+ * There is a better answer that does not exist yet. Robert Granjon cut Arabic
+ * in Rome between 1580 and 1586 for the Typographia Vaticana and the Medici
+ * Oriental Press, expressly for Catholic publishing — the same generation and
+ * milieu as the Garamont types this site's text face revives. No digital
+ * revival of it exists, open or commercial. If original type is ever
+ * commissioned here, that is the brief.
+ */
+@font-face {
+	font-family: 'Amiri';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/amiri-arabic-400-normal.woff2') format('woff2');
+	unicode-range:
+		U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
+		U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
+@font-face {
+	font-family: 'Amiri';
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/amiri-arabic-400-italic.woff2') format('woff2');
+	unicode-range:
+		U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
+		U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
+@font-face {
+	font-family: 'Amiri';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/amiri-arabic-700-normal.woff2') format('woff2');
+	unicode-range:
+		U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
+		U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
+@font-face {
+	font-family: 'Amiri';
+	font-style: italic;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/amiri-arabic-700-italic.woff2') format('woff2');
+	unicode-range:
+		U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
+		U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+/*
+ * SOURCE SANS 3, the interface face — and the only face here that revives
+ * nothing.
+ *
+ * The chrome is not the book. A menu, a keycap, a "CH. 4" marker, the
+ * sidebar's navigation rows: those are our words about the text, not the
+ * text's own, and until now they were set in EB Garamond only because
+ * `--font-sans` was an alias for `--font-serif`. What stays in the text face
+ * is everything the work itself wrote — every page `h1`, every
+ * `.structure-heading`, the index and the inline table of contents — each of
+ * which names `var(--font-serif)` explicitly, and did so before this face
+ * existed, precisely so that this change could not move them.
+ *
+ * Slimbach's Source Sans is a humanist sans with an old-style skeleton, drawn
+ * by the hand that also drew Garamond Premier, which is why it sits beside a
+ * Garamond without arguing; it was drawn for interfaces at small sizes, which
+ * is the whole of its job here. Adobe, SIL OFL. One variable master, `wght`
+ * 200-900, so the letterspaced labels at 600 come off a real axis rather than
+ * a synthetic bold.
+ *
+ * THREE SUBSETS, and unlike the text face's six the interface dictionaries
+ * decide them outright: the chrome's strings are `src/lib/i18n/*.ts`, so its
+ * glyph inventory is countable rather than estimated. Across all fourteen:
+ *
+ *   latin       every language — Swedish included, whose å ä ö are all
+ *               Latin-1 Supplement, so it added nothing outside this file.
+ *   latin-ext   19 glyphs: Polish 9 (ł ź ś ć ą ń ę ż Ś), Slovenian 5
+ *               (č š ž Č Š), Romanian 3 (ă ș ț) and Hungarian 2 (ő ű).
+ *   cyrillic    55 glyphs, Russian.
+ *   arabic      47 glyphs — and Source Sans has none. `ar` chrome keeps
+ *               falling through to Amiri, which is where it already was and
+ *               where it belongs: Arabic does not carry the serif/sans
+ *               distinction this face exists to draw, so there is nothing
+ *               here for it to be excluded from.
+ *
+ * No greek, no vietnamese, no cyrillic-ext — nothing in the fourteen
+ * dictionaries reaches them. The sidebar tables of contents do set corpus
+ * titles in this face, and those are NOT countable, so the omission is a
+ * real bet: a Vietnamese name in a heading finds no `@font-face` here and
+ * falls to EB Garamond through `--font-sans`'s own chain. One word in the
+ * text face is the failure mode, not tofu — which is what makes the bet
+ * cheap, and cheap to reverse if a sidebar ever looks mixed.
+ *
+ * `size-adjust: 95%`, and the number is a compromise between two facts.
+ * Source Sans's x-height is 0.478em against EB Garamond's 0.400 — 19.5%
+ * larger at the same `font-size` — so mixed-case chrome set at sizes chosen
+ * for the serif (the sidebar's rows at 0.85rem, the menus) came out reading
+ * bigger than the page around it. Matching x-heights outright would mean 84%,
+ * which throws away the large x-height a UI face is chosen for and leaves
+ * 12px labels genuinely small. 95% takes the edge off and keeps the
+ * advantage: x-height lands at 0.454 (still 13% over the serif's) and cap
+ * height at 0.627 against 0.650, a 3.5% difference nobody will see in the
+ * uppercase letterspaced labels that are most of the call sites.
+ *
+ * It is declared on the face rather than spent adjusting `font-size` at each
+ * call site, because the mismatch is a property of the face and would
+ * otherwise have to be re-derived every time a new surface takes the sans.
+ *
+ * Italic is declared for all three because the chrome genuinely uses it
+ * (`.row-title.borrowed` in the structure sidebar, `.sidenote-missing`), and
+ * a declared italic beats the synthetic oblique a missing one produces.
+ * Ranges are copied verbatim from the package's `wght.css` /
+ * `wght-italic.css` — do not hand-edit them.
+ */
+
+/* latin */
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: normal;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-wght-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: italic;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-wght-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin-ext */
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: normal;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-ext-wght-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+		U+A720-A7FF;
+}
+
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: italic;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-ext-wght-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+		U+A720-A7FF;
+}
+
+/* cyrillic */
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: normal;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-cyrillic-wght-normal.woff2') format('woff2-variations');
+	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+	font-family: 'Source Sans 3 Variable';
+	font-style: italic;
+	font-weight: 200 900;
+	font-display: swap;
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-cyrillic-wght-italic.woff2') format('woff2-variations');
+	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/*
+ * The illuminated initial, and the only place the reading text is set in
+ * anything but the text face. Pirata One is a blackletter with roman-derived capitals.
+ *
+ * It replaced UnifrakturMaguntia, and the reason is worth recording because it
+ * is not a matter of taste. Maguntia is a true Mainz fraktur, and fraktur
+ * MAJUSCULES are only decipherable from surrounding context — set one alone at
+ * 5em and its D reads as a spiral, its O as a D, its A as a U, its M as a W.
+ * A drop cap has no context by construction: the rest of the word is a
+ * different face at a different size. Judges 1 opened as "⟨spiral⟩epois"
+ * instead of "Depois". Pirata One keeps the blackletter texture while its
+ * capitals stay unambiguous, which is the whole job here.
+ *
+ * Subset hard, because a drop cap needs a vanishingly small part of a font:
+ * 137 codepoints, 5.9 KB, down from 40 KB. The inventory is A-Z, a-z, 0-9, the
+ * Latin-1 letter block, and the opening punctuation from `dropcap.ts`'s
+ * LEADING_PUNCT. It is deliberately wider than what the corpus exhibits today
+ * (which needs only ÀÁÂÉÓÚ of the accents) so that a newly-parsed work opening
+ * on Ç or Ñ does not ship a tofu box; `dropcap.test.ts` asserts the inventory
+ * still covers the corpus.
+ *
+ * PART OF THAT INVENTORY IS NO LONGER REACHABLE FROM A CAP, and is kept
+ * anyway. `splitDropCap` stopped promoting digits and lowercase letters, and
+ * the punctuation that leads into a cap is now set in the TEXT face beside it
+ * (`.drop-cap-lead`), so 0-9, a-z and the quote/bracket/dash codepoints below
+ * are all dead weight as far as drop caps are concerned. Narrowing the range
+ * would save nothing worth having — the file is 5.9 KB and only actually
+ * shrinks if it is regenerated — and a-z is load-bearing for the OTHER call
+ * site: the wordmark sets "Glossa Catholica" in this same subset
+ * (`components/Wordmark.svelte`), which is the reason U+0061-007A is here.
+ *
+ * WHY A LOWERCASE OPENING IS NOT UPPERCASED. Five chapter openings in
+ * bible.matos-soares.pt begin with a lowercase letter (Exod 14:1, Exod 25:1,
+ * Num 18:1, Num 34:1 — all "o Senhor..." — and Sir 41:1, "ó morte"). Those are
+ * defects in the transcription, not in the parser: the raw HTML has them
+ * lowercase while the other eleven "O Senhor falou a Moisés" in the same book
+ * are capitalised.
+ *
+ * The tempting fix is `text-transform: uppercase` on the cap, which would make
+ * the five read correctly. It is NOT used, because that silently corrects the
+ * corpus in the presentation layer — exactly what the colophon promises this
+ * project does not do ("no text is ever silently changed"). Source defects
+ * belong in `pipeline/corrections/` with a locator and evidence. `splitDropCap`
+ * declines to set a cap at all on a lowercase opening instead: the letter
+ * renders exactly as the corpus has it, at body size, and an opening with no
+ * initial where every neighbouring chapter has one leaves the defect as
+ * visible as a giant lowercase blackletter did — without printing a letterform
+ * the source never had.
+ *
+ * Regenerate with:
+ *   uv run --with "fonttools[woff]" pyftsubset \
+ *     node_modules/@fontsource/pirata-one/files/pirata-one-latin-400-normal.woff2 \
+ *     --output-file=static/fonts/pirata-one-dropcap.woff2 --flavor=woff2 \
+ *     --layout-features='' --no-hinting --desubroutinize \
+ *     --unicodes='U+0020,U+0022,U+0027,U+0028,U+002D,U+0030-0039,U+0041-005A,U+005B,U+007B,U+00A1,U+00AB,U+00BB,U+00BF,U+00C0-00D6,U+00D8-00F6,U+00F8-00FF,U+0061-007A,U+2013,U+2014,U+2018,U+2019,U+201C,U+201D'
+ *
+ * `font-display: block` rather than `swap`: this is one large glyph in an
+ * accent colour, and swapping it in late produces a visible lurch at the top
+ * of the passage. Blocking briefly on 5.9 KB is the better trade, and the
+ * fallback below keeps it legible if the file never arrives.
+ */
+@font-face {
+	font-family: 'Pirata One Subset';
+	font-style: normal;
+	font-weight: 400;
+	font-display: block;
+	src: url('/fonts/pirata-one-dropcap.woff2') format('woff2');
+	unicode-range:
+		U+0020, U+0022, U+0027, U+0028, U+002D, U+0030-0039, U+0041-005A, U+005B, U+0061-007A, U+007B,
+		U+00A1, U+00AB, U+00BB, U+00BF, U+00C0-00D6, U+00D8-00F6, U+00F8-00FF, U+2013, U+2014, U+2018,
+		U+2019, U+201C, U+201D;
+}
+
+/*
+ * THE CYRILLIC INITIAL, and the one place the site sets a second display face.
+ *
+ * Ponomar reproduces the type of the Synodal Press of the Russian Orthodox
+ * Church in the early twentieth century (Slavonic Computing Initiative, SIL
+ * OFL). It is a CHURCH SLAVONIC face, which is a liturgical register and not
+ * an antiquarian one — the distinction from OLD Church Slavonic matters: that
+ * is the 9th-10th century literary language, a philological object, and its
+ * font is SIL's Shafarik with the Glagolitic.
+ *
+ * Which is why it sets the INITIAL and not the text. The Russian edition here
+ * is a 2026 encyclical in modern civil orthography; setting its running text
+ * in Synodal type would say something untrue about what the text is, roughly
+ * as a press release in blackletter would. At display size the association is
+ * an ornament rather than a claim — exactly the trade Pirata One already makes
+ * against EB Garamond above. If a Church Slavonic edition of `/preces` ever
+ * lands, that is liturgical text and this face may set all of it.
+ *
+ * TWO FILES, ONE FAMILY, because the Russian edition's 245 drop-cap positions
+ * open on 26 distinct letters and one of them is a Latin `R` ("Res novae").
+ * Without the latin range that initial alone would fall through to Pirata One
+ * and set one blackletter capital among twenty-five Slavonic ones.
+ *
+ * `size-adjust` IS THE WHOLE GEOMETRY FIX. The drop cap's scale is derived
+ * from Pirata One's 0.793em cap height (see `.drop-cap-letter`); Ponomar's is
+ * 0.700em, so the same scale would set a cap 12% short and break the
+ * three-line alignment. 0.793 / 0.700 = 113.29% normalises Ponomar to the
+ * height the existing derivation already assumes, which keeps that whole
+ * calculation — and the phone breakpoint that overrides it — true for both
+ * faces without a second set of numbers to maintain.
+ *
+ * Regenerate with:
+ *   uv run --with "fonttools[woff]" pyftsubset \
+ *     node_modules/@fontsource/ponomar/files/ponomar-cyrillic-400-normal.woff2 \
+ *     --output-file=static/fonts/ponomar-dropcap-cyrillic.woff2 --flavor=woff2 \
+ *     --layout-features='' --no-hinting --desubroutinize --unicodes='U+0400-042F'
+ *   uv run --with "fonttools[woff]" pyftsubset \
+ *     node_modules/@fontsource/ponomar/files/ponomar-latin-400-normal.woff2 \
+ *     --output-file=static/fonts/ponomar-dropcap-latin.woff2 --flavor=woff2 \
+ *     --layout-features='' --no-hinting --desubroutinize \
+ *     --unicodes='U+0041-005A,U+00C0-00D6,U+00D8-00DE'
+ */
+@font-face {
+	font-family: 'Ponomar Dropcap';
+	font-style: normal;
+	font-weight: 400;
+	font-display: block;
+	size-adjust: 113.29%;
+	src: url('/fonts/ponomar-dropcap-cyrillic.woff2') format('woff2');
+	unicode-range: U+0400-042F;
+}
+
+@font-face {
+	font-family: 'Ponomar Dropcap';
+	font-style: normal;
+	font-weight: 400;
+	font-display: block;
+	size-adjust: 113.29%;
+	src: url('/fonts/ponomar-dropcap-latin.woff2') format('woff2');
+	unicode-range: U+0041-005A, U+00C0-00D6, U+00D8-00DE;
+}

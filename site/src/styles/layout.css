@@ -1,0 +1,305 @@
+/*
+ * THE READING PAGE'S SHAPE — the centred column, the two-column reading
+ * layout and its aside, the breakpoints that hand the sidebar over to the
+ * reading bar's contents panel, and (at the foot of the file) the reading
+ * text's own setting.
+ *
+ * These are shared PRIMITIVES rather than any one route's CSS: four reading
+ * views want the identical geometry, and Svelte's per-component scoping has
+ * no mechanism to share a block. Each rule's own docblock says which routes
+ * it answers for.
+ */
+
+/* Centered reading column, used by prose/reading views. */
+.content-column {
+	max-width: var(--content-width);
+	margin-inline: auto;
+	padding-inline: 1.25rem;
+}
+
+/*
+ * Reading page with a persistent navigation column on the right.
+ *
+ * Shared primitive, not per-route CSS, because four reading views want the
+ * identical shape (Bible chapter, CCC paragraph, CCC chapter, document
+ * section) and Svelte's per-component scoping has no way to share a block.
+ *
+ * Markup contract:
+ *
+ *   <div class="reading-layout">
+ *     <article class="content-column"> …the text… </article>
+ *     <aside class="reading-aside"> …TOC / books & chapters… </aside>
+ *   </div>
+ *
+ * Below the breakpoint this is a no-op: the aside is a plain block after the
+ * text, which is where a collapsed picker already lived, so nothing about
+ * the phone layout changes. The two-column form only appears once there is
+ * genuinely room for the reading measure AND a sidebar side by side —
+ * 80rem, i.e. the content column at its full `--content-width` plus the
+ * aside plus gutters, rather than a width where one of them has to shrink.
+ * That arithmetic is why `--content-width` carries a 56rem ceiling: the
+ * column now grows with the reader's font-size setting, and 80rem minus
+ * `--aside-width` minus `--aside-gap` minus the page padding is exactly the
+ * width past which it would start eating this track.
+ *
+ * The pair is centred as a UNIT: the reading column sits left of centre when
+ * the aside is present. Centring the text and hanging the aside off the
+ * right edge instead was tried and reads as two unrelated pages.
+ */
+.reading-layout {
+	--aside-width: 17rem;
+	/* The gutter between the reading column and the navigation column.
+	   Deliberately wider than a normal layout gap: the two are different
+	   KINDS of thing — continuous prose on one side, a dense list of links
+	   on the other — and set too close they read as one crowded column with
+	   a ragged edge rather than as text with navigation beside it. Held as a
+	   token because both the plain and the compare grid use it, and two
+	   copies of the same number drift. */
+	--aside-gap: 4.5rem;
+
+	/*
+	 * The margin the apparatus is set in — `.margin-note` below, which floats
+	 * a note out of the reading column by exactly
+	 * `--sidenote-width + --sidenote-gap`. An annotated edition's gloss
+	 * (`Sidenote.svelte`) and a numbered footnote's source
+	 * (`CitationDisclosure.svelte`) both go there.
+	 *
+	 * INLINE-START, so it does not fight `.reading-aside` for the end margin.
+	 * Held here rather than in the component because the width is a fact about
+	 * this layout, not about a note: it is the slack either side of a pair
+	 * centred as a unit, and the component cannot see how much of that there
+	 * is. Narrower than the aside on purpose — a gloss is subordinate to the
+	 * text and reads as apparatus partly BY being a narrower column.
+	 *
+	 * Only ever consumed above `sidenotes.svelte.ts`'s own 100rem query, which
+	 * is where the notes move into the margin at all. Below it they are a
+	 * disclosure inside the column and neither token is read.
+	 *
+	 * THE GAP CLEARS THE UNIT NUMBER'S LANE, which is why it is wider than a
+	 * gap needs to be. `.reference-number.margin` hangs a CCC paragraph's or a
+	 * document section's number in the nearest 3.25rem of this same margin, and
+	 * it is sized in `em` against the reading text — so it GROWS with the
+	 * reader's size setting while a note's displacement does not. At 2.5rem a
+	 * full-width note line ran up against a three-digit number at the default
+	 * setting and under it well before the maximum. The Bible pays 1.5rem of
+	 * displacement it does not need (its verse numbers are inline), which is
+	 * cheaper than a second token for the routes that do.
+	 */
+	--sidenote-gap: 4rem;
+
+	/*
+	 * HOW MUCH START MARGIN THERE ACTUALLY IS, which is not a constant and was
+	 * being treated as one.
+	 *
+	 * The grid is centred (`justify-content: center`), so the slack either side
+	 * is half of whatever the two tracks and their gutter leave over — and the
+	 * page's own padding cancels out of that arithmetic exactly, which is why
+	 * none of it appears here. What does appear is `--content-width`, and that
+	 * is the whole problem: the reading column GROWS with the reader's size
+	 * setting, so the margin shrinks as the text grows, and a note displaced by
+	 * a fixed 15.5rem walked off the left edge of the viewport at the sizes
+	 * where the reader can least afford it. The 100rem query
+	 * (`sidenotes.svelte.ts`) cannot see any of this: a media query reads the
+	 * root font size, which `--reading-scale` does not touch.
+	 *
+	 * The 1rem is a scrollbar allowance. `100vw` includes the scrollbar and the
+	 * centring does not, so the true slack is half a scrollbar narrower than
+	 * this arithmetic thinks — half a rem, on the side the notes are on, at
+	 * exactly the sizes where there is nothing to spare. Systems with overlay
+	 * scrollbars pay it for nothing, which is the cheaper of the two mistakes.
+	 */
+	--sidenote-room: calc(
+		(100vw - 1rem - var(--content-width) - var(--aside-width) - var(--aside-gap)) / 2
+	);
+
+	/*
+	 * SO THE WIDTH IS A CEILING, NOT A WIDTH — the same shape `--content-width`
+	 * itself has, and for the same reason: a rail that does not bind until it
+	 * has to.
+	 *
+	 * It binds at a reading scale of about 1.42 on a 100rem viewport, which is
+	 * where the column has grown enough to eat the 13rem the notes want. From
+	 * there the gloss column narrows rather than the page overflowing, down to
+	 * about 7.1rem at the 1.8 maximum — cramped for one of Challoner's
+	 * paragraphs, unremarkable for a citation, and it never binds at all on a
+	 * viewport wide enough to have the room (at 120rem the ceiling holds across
+	 * the whole range `prefs.svelte.ts` offers).
+	 *
+	 * The `0px` floor is a guard rather than a design: a negative length is
+	 * invalid, and an invalid `inline-size` falls back to `auto`, which would
+	 * put a full-measure note in the margin — the one failure this whole
+	 * calculation exists to prevent. It is unreachable above 100rem.
+	 */
+	--sidenote-width: clamp(0px, calc(var(--sidenote-room) - var(--sidenote-gap)), 13rem);
+}
+
+/* Index pages use the same wide-screen grid as readers, but their full
+   contents are already navigation. Hiding this compact secondary TOC below
+   the grid breakpoint avoids appending a redundant second list after a long
+   index on phones and tablets. */
+.index-aside {
+	display: none;
+}
+
+/*
+ * THE READER'S SIDEBAR IS DESKTOP-ONLY, AND THAT IS THE DEFAULT RATHER THAN
+ * A PER-ROUTE DECISION.
+ *
+ * Below 80rem `.reading-layout` stops being a grid, so an aside left visible
+ * falls to the bottom of the document — past a 287-section encyclical, i.e.
+ * nowhere. Six routes each carried their own copy of this rule (five at
+ * 79.9375rem, `/documenta` at 79.99rem — a divergence with no reason behind
+ * it), and the Bible spelled the same rule as `.desktop-picker`. One rule
+ * here replaces all seven.
+ *
+ * A ROUTE OPTS BACK IN when it has a mobile counterpart worth keeping, which
+ * is `/preces` and only `/preces`: its prayer table of contents is short, and
+ * the route puts the aside FIRST in source order so a phone reader meets it
+ * ahead of the Rosary's text. `/documenta` solves the same problem the other
+ * way, with `.toc-inline` as separate markup, because a document's tree is
+ * too long to lead with. The remaining five hand their list to the reading
+ * bar instead — see the block below, which is where that gap was closed.
+ *
+ * Hidden in CSS rather than by the routes omitting the element, for the same
+ * reason `.reading-layout.compare` gives below: keeping it in the markup is
+ * what lets a wider viewport place it, and it costs a hidden subtree, not a
+ * fetch — every sidebar's tree is index tier and already inlined.
+ */
+@media (max-width: 79.9375rem) {
+	.reading-aside:not(.reading-aside-mobile) {
+		display: none;
+	}
+}
+
+/*
+ * ...AND THE OTHER HALF OF THAT HANDOVER: THE READING BAR'S CONTENTS PANEL.
+ *
+ * `TocMenu` is what a reader gets where the sidebar is not, so it appears
+ * exactly and only where the rule above has taken the sidebar away. That is
+ * not one width, because compare mode moves the boundary: the aside yields
+ * until 100rem while two columns are on screen (see
+ * `.reading-layout.compare` below), so between 80 and 100rem a comparing
+ * reader still has no sidebar and still needs the panel. The two queries
+ * below are the same pair `/documenta`'s `.toc-inline` carries, for the same
+ * reason and at the same widths — the handover width follows whichever
+ * sidebar is actually coming back.
+ *
+ * Stated here rather than in the component so that both halves of "who shows
+ * the table of contents at this width" are one block of CSS — and because
+ * hiding the wrapper is what hides the `<dialog>` with it: a modal dialog is
+ * in the top layer, above every stacking context, but it is still a
+ * descendant, so `display: none` on an ancestor removes it as it would remove
+ * anything else. That is also what keeps the panel out of print, where
+ * `.reading-bar` is already hidden.
+ */
+/* Sits in `ReadingBar`'s flex row like every other control. Declared here
+   rather than in the component so the two rules below can hide it — a scoped
+   Svelte rule carries an extra class and would outrank them. */
+.toc-menu {
+	display: inline-flex;
+}
+
+@media (min-width: 80rem) {
+	.reading-layout:not(.compare) .toc-menu {
+		display: none;
+	}
+}
+
+@media (min-width: 100rem) {
+	.toc-menu {
+		display: none;
+	}
+}
+
+@media (min-width: 80rem) {
+	.reading-layout {
+		display: grid;
+		grid-template-columns: minmax(0, var(--content-width)) var(--aside-width);
+		justify-content: center;
+		align-items: start;
+		gap: var(--aside-gap);
+		padding-inline: 1.25rem;
+	}
+
+	/* `.content-column` still owns the measure everywhere else it's used; in
+	   here the grid track is doing that job, so its own centring margins and
+	   side padding would only add a second, competing set of gutters. */
+	.reading-layout > .content-column {
+		max-width: none;
+		margin-inline: 0;
+		padding-inline: 0;
+	}
+
+	/* Sticks alongside the text through a long chapter. `overflow-y: auto`
+	   makes the aside its own scroll container, so an `absolute`ly-positioned
+	   popover nested inside it would get clipped the moment it grew past the
+	   aside's own box — which is why the Bible reader's sidebar book/chapter
+	   picker (`BookChapterPicker.svelte`) anchors its open panel with
+	   `position: fixed` instead, escaping this element's clipping rather than
+	   expanding in flow within it. */
+	.reading-aside {
+		position: sticky;
+		/* Offset by the same chrome `scroll-padding-top` clears. A bare
+		   `1.5rem` sticks the aside to the viewport's top edge, which on a
+		   reader route is BEHIND the reading bar — so the sidebar's first
+		   rows, its heading among them, disappear under the chrome the
+		   moment the page scrolls. The
+		   max-height loses the same amount, or the aside's own scroll
+		   container would run off the bottom of the screen by however much
+		   it was pushed down. */
+		top: calc(var(--sticky-chrome-height) + 1.5rem);
+		max-height: calc(100vh - var(--sticky-chrome-height) - 3rem);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		font-size: 0.9rem;
+	}
+
+	.index-aside {
+		display: block;
+		position: sticky;
+		/* Same chrome compensation as `.reading-aside` above. */
+		top: calc(var(--sticky-chrome-height) + 1.5rem);
+		max-height: calc(100vh - var(--sticky-chrome-height) - 3rem);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		font-size: 0.9rem;
+	}
+}
+
+/*
+ * The chapter argument — an annotated edition's summary of what the chapter
+ * contains, printed under the chapter number (`summary` in the corpus; the
+ * Douay-Rheims carries 1,307 of them).
+ *
+ * SET AS APPARATUS, NOT AS TEXT. It is Challoner writing about Scripture, and
+ * the naming rule (docs/decisions.md §Posture) is that a gloss must never be
+ * confusable with its source. So it takes the sans face and the muted colour
+ * the notes take, and closes with the rule that opens the reading column
+ * rather than sitting inside it. Italic on top of that would be a fourth
+ * signal and starts to look like emphasis, which it is not.
+ *
+ * Unlabelled, because that is how the editions print it. `aria-label` carries
+ * the word "Argument" for a reader who cannot see that it is set apart.
+ */
+.chapter-argument {
+	font-family: var(--font-sans);
+	font-size: 0.85rem;
+	line-height: 1.55;
+	color: var(--color-text-muted);
+	margin-block: 0.75rem 1.5rem;
+	padding-block-end: 1rem;
+	border-block-end: 1px solid var(--color-border);
+	max-width: 34rem;
+}
+
+.reading-text {
+	font-family: var(--font-serif);
+	/* Multiplied by the reader's fine-adjustment (AppearanceMenu.svelte /
+	   prefs.svelte.ts), never applied to chrome — this custom property is
+	   only ever read here, so nothing outside the reading column resizes
+	   when the reader adjusts text size. The `, 1` fallback covers the
+	   (vanishingly rare) case of this rule evaluating before either the
+	   :root default above or the inline style has taken effect. */
+	font-size: calc(var(--reading-base) * var(--reading-scale, 1));
+	line-height: 1.65;
+}

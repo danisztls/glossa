@@ -1,0 +1,540 @@
+/*
+ * THE TOKENS, AND THE FOUR APPEARANCE AXES THAT REWRITE THEM.
+ *
+ * Four independent axes on <html>: `data-theme` (absent = auto, so
+ * `prefers-color-scheme` decides; else 'light' / 'dark'), `data-sepia` (a
+ * presence-only paper tint that yields to dark), `data-oled` (a
+ * presence-only true black that needs it) and `data-mono` (a presence-only
+ * single-hue palette, which suspends sepia for the same reason dark does).
+ * See `src/lib/theme.svelte.ts`.
+ *
+ * The colours are the palette, not a stand-in for one. The design is made
+ * here, against the running site, and the reasoning for every value lives
+ * beside it. Read "THREE REDS AND A BLUE" below before changing one: what
+ * has to survive an edit is the ROLE (sober red for small text, vermilion
+ * for the initial, lapis for the reference apparatus) and the contrast bar
+ * each colour was picked to clear, neither of which is recoverable from the
+ * hex alone.
+ *
+ * THIS FILE IS ORDERED AND MUST NOT BE SPLIT FURTHER. The palette blocks
+ * below resolve against each other by SOURCE ORDER at equal specificity —
+ * "THE PALETTE BLOCKS BELOW ARE ORDERED, AND THE ORDER IS THE RULE" says
+ * which and why. While they sat in one 3,300-line file that order was
+ * guaranteed by adjacency; it is now guaranteed by this file's own extent
+ * plus `app.css`'s import order, and by nothing else. Splitting sepia from
+ * dark, or dark from mono, would break the site's appearance in a way no
+ * test here can see.
+ */
+
+:root {
+	--font-serif:
+		'EB Garamond Variable', 'Amiri', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
+		serif;
+	/* Two call sites, and only two: the `.drop-cap-letter` rule near the bottom
+	   of this file, and the wordmark (`components/Wordmark.svelte`). Both are single
+	   large glyphs or a short display lockup in the one weight the subset
+	   ships; neither is safe to use for running text, and the subset's
+	   `unicode-range` is scoped to what those two need. */
+	--font-display: 'Pirata One Subset', var(--font-serif);
+	/*
+	 * The interface face (see the Source Sans 3 block above). `body` carries
+	 * it, so the chrome takes it by inheritance and only the surfaces that
+	 * name `--font-serif` stand outside it — which is the whole of the
+	 * distinction: what the work wrote is set in the text face, what we wrote
+	 * about it is set in this one.
+	 *
+	 * Falling back to `--font-serif` rather than to a generic `sans-serif` is
+	 * deliberate, and does two things. A glyph outside the three declared
+	 * subsets lands on EB Garamond, and Arabic lands on Amiri, instead of on
+	 * whatever the system calls a sans; and if the file never arrives the
+	 * chrome renders exactly as it did before this face was added, rather
+	 * than in a face nobody chose.
+	 */
+	--font-sans: 'Source Sans 3 Variable', var(--font-serif);
+	/* Compact metadata may be smaller than body text, but never below 13.5px
+	   at the site's 18px root size. Use this in any relative reduction so a
+	   nested label cannot become illegibly small. */
+	--font-size-min: 0.75rem;
+
+	/* The track BETWEEN compare mode's two reading measures: the divider runs
+	   down its centre and each row's unit number rides it (`.compare-gutter`
+	   below). Wide enough that the corpus's longest address — CCC ¶2865, four
+	   tabular digits plus the number's own padding — clears the text on both
+	   sides. It was 3rem of pure whitespace before the number moved in, split
+	   between the left cell's padding and a column gap; keeping it one named
+	   track is what lets the header block above the grid line its own divider
+	   up with the one below without restating the arithmetic.
+
+	   Scaled by `--reading-scale` for the same reason `--content-width` below
+	   is: `CompareGrid.svelte` puts `.reading-text` on the gutter so the unit
+	   number riding it grows with the reader's setting, but the track holding
+	   that number did not, so at 180% a four-digit address was being asked to
+	   fit a width measured for 100%. */
+	--compare-gutter: calc(3.5rem * var(--reading-scale, 1));
+
+	/* Base reading size before the reader's fine adjustment is applied —
+	   see `.reading-text` below and `$lib/prefs.svelte.ts`. */
+	--reading-base: 1.3rem;
+	/* Prayers are set larger than the rest of the reading text at the same
+	   column width — the reasoning and the characters-per-line arithmetic that
+	   bounds the 1.1 are in `routes/prayers/[slug]/+page.svelte`, which is the
+	   only consumer. It is derived HERE rather than there because a
+	   `var(--reading-base)` reference inside a `--reading-base` declaration is
+	   a self-reference on that element, which is a cycle and invalid at
+	   computed-value time; deriving it under its own name is what lets the
+	   route override the base without restating the length. */
+	--reading-base-prayer: calc(1.1 * var(--reading-base));
+	/* Reading font-size multiplier, written directly onto <html> by
+	   `$lib/prefs.svelte.ts` (and by `app.html`'s pre-hydration script from
+	   the persisted value, to avoid a flash of the wrong size). Defaulted
+	   here too so `.reading-text` has a defined multiplier even before any
+	   JS has run on a first-ever visit (inline style on <html> always wins
+	   over this once it's set, regardless of specificity). */
+	--reading-scale: 1;
+
+	/*
+	 * THE MEASURE IS DENOMINATED IN THE READING FONT, NOT IN `ch`.
+	 *
+	 * Characters-per-line is what governs readability, so the width is stated
+	 * as one: `--measure-cpl` characters of running prose at whatever size
+	 * `.reading-text` is currently set to. The rest is arithmetic turning that
+	 * into a length, and it has to sit below `--reading-base` and
+	 * `--reading-scale` to read in dependency order (resolution is a graph,
+	 * not source order, so it would work anywhere — but nobody reads it that
+	 * way).
+	 *
+	 * It was `64ch`, and `ch` was a proxy twice over. It is the width of "0"
+	 * (0.480em here), not of an average character (0.3787em), so the 64 was
+	 * reached by dividing one by the other in a comment. Worse, it resolved
+	 * against `.content-column`'s own 18px — NOT `.reading-text`'s larger
+	 * size, since the two are different elements and `ch` doesn't inherit
+	 * across that boundary. So the column was pinned while the prose inside it
+	 * scaled, and cpl ran 78.6 at the reader's 80% setting down to 34.9 at
+	 * 180% — on target at exactly one of eleven steps. Multiplying through by
+	 * `--reading-scale` is the fix; deriving from `--reading-base` too is what
+	 * retires the old note here telling a human to recompute both by hand.
+	 *
+	 * 62.4 x 0.3787 x 1.3rem = 30.72rem, which is what `64ch` computed to.
+	 * This is a no-op at the default setting, by construction.
+	 */
+	/* Frequency-weighted mean advance of EB Garamond wght 400 over the whole
+	   corpus — 65.5M characters of Latin-script prose. EN 0.3753, PT 0.3822,
+	   LA 0.3838, and the seven single-work languages between 0.3695 (it) and
+	   0.3904 (de): a ±3% band, so no language leaves the 55-65 range. Unitless
+	   em; remeasure if the text face changes.
+
+	   NOT valid for `ar` or `ru`. EB Garamond ships no Arabic or Cyrillic
+	   subset, so those fall through `--font-serif` to a system face whose
+	   metrics we don't have. `64ch` was no better there — "0" came from EB
+	   Garamond either way — so this is a standing limitation rather than a
+	   regression, and it is two works out of 359. */
+	--prose-char-advance: 0.3787;
+	/* Target characters per line. 55-65 is where this type sets well; 62.4 is
+	   what the corpus actually measured at under the old 64ch, kept so the
+	   default column does not move. */
+	--measure-cpl: 62.4;
+	/*
+	 * The ceiling is the grid arithmetic rather than a taste call: 80rem,
+	 * where `.reading-layout` becomes two tracks, minus `--aside-width` 17rem,
+	 * minus `--aside-gap` 4.5rem, minus 2.5rem of page padding = 56rem.
+	 * Holding the column at or under that is what keeps the 80rem breakpoint's
+	 * own comment true — the aside never shrinks to make room for the text.
+	 *
+	 * It is a rail, not a constraint. At `MAX_FONT_SCALE` 1.8 the column wants
+	 * 55.3rem, so across the range `prefs.svelte.ts` offers it never binds; it
+	 * starts binding at 1.83, i.e. only if that maximum is ever raised.
+	 *
+	 * No floor, though one was considered. Clamping the low end up would put
+	 * the 80% setting at 66.4 cpl — outside the band this token exists to
+	 * hold. 24.6rem at 62.4 cpl is an ordinary book measure.
+	 */
+	--content-width: min(
+		calc(
+			var(--measure-cpl) * var(--prose-char-advance) * var(--reading-base) * var(--reading-scale, 1)
+		),
+		56rem
+	);
+
+	/*
+	 * THREE REDS AND A BLUE, and the split is the point.
+	 *
+	 * A rubricator did not use one red for everything, and neither does this
+	 * palette. `--color-accent` / `--color-link` carry small text, so they are
+	 * the deep, sober red: high contrast, easy on the eye at 0.9rem, and close
+	 * (dE2000 ~5) to red ochre and to the darkened state surviving vermilion
+	 * rubrics have actually aged into. `--color-initial` is the opposite job —
+	 * one large decorative glyph per chapter — and gets fresh vermilion, which
+	 * is what that pigment was ground for. An illuminated initial was never
+	 * muted, and inheriting the link colour made it so.
+	 *
+	 * `--color-apparatus` is ground lapis. Red-and-ultramarine is the
+	 * high-status manuscript pairing, and the blue's traditional job is the
+	 * reference apparatus (paraph marks, alternating initials) rather than the
+	 * text — hence the Catechism's marginal paragraph numbers, which sit once
+	 * per paragraph and are structurally the closest thing this site has to a
+	 * paraph mark. It is deliberately NOT put on Bible verse numbers: those
+	 * recur every few words at 0.65em, and the convention was never to colour
+	 * an apparatus that dense.
+	 *
+	 * Same value as `--color-focus-ring` in every theme today, and still a
+	 * separate token: one is a decorative choice, the other an accessibility
+	 * affordance bound by WCAG 1.4.11, and they should be free to diverge
+	 * without one silently dragging the other along (`--color-accent` and
+	 * `--color-link` are held apart for the same reason).
+	 *
+	 * SATURATION IS SPENT FIRST AND LIGHTNESS ONLY AS THE BILL REQUIRES. That
+	 * is the rule for picking a red here, and it is worth stating because the
+	 * intuition runs the other way: chroma does not BUY contrast, it costs it.
+	 * A pure red carries less luminance than the grey at its own lightness, so
+	 * at OKLCH L 0.643 and hue 28.6, walking chroma from 0.10 up to 0.227
+	 * takes the ratio against `--color-bg-elevated` DOWN from 4.91:1 to
+	 * 4.61:1. The only thing that lifts a red off a dark ground is lightness.
+	 *
+	 * So each of dark's reds is the MOST SATURATED colour its own bar allows,
+	 * with lightness raised no further than that bar demands:
+	 *
+	 *   `--color-initial`  #df1212 — one glyph per chapter at 4.98em, so it
+	 *                      owes 3:1 and clears it at 3.7:1 (4.2:1 on OLED).
+	 *                      Deep, and it can stay deep; nothing is spent.
+	 *   `--color-accent`   #ff2f27 — 0.9rem text, so it owes 4.5:1 over
+	 *   `--color-link`     `--color-bg-elevated`, the binding surface, in
+	 *                      dark AND OLED. This is chroma 0.240 at L 0.646:
+	 *                      the maximum chroma anywhere in sRGB that still
+	 *                      clears the bar on this hue. It lands at 4.62:1.
+	 *
+	 * The accent cannot simply be #df1212 lifted a little, and cannot be
+	 * #df1212 at all: that colour reaches 4.23:1 against PURE BLACK, the most
+	 * generous ground there is, and no background can take it further. The
+	 * lightness gap between the two reds is the size of that shortfall, not a
+	 * design gesture. Light's pair still splits by pigment (see above); dark's
+	 * splits by what its two bars will each pay for.
+	 *
+	 * THE DARK GROUND IS BARELY WARM — `hsl(0 7% 8%)` and its two lifts
+	 * (#161313 / #1f1b1b / #3a3333) — and the reds above carry the period
+	 * feel, not the ground. Three grounds were tried under them before this
+	 * one: a warm near-black at hue ~32, saturated enough to argue with the
+	 * rubric rather than set it off; a cool violet-grey at hue ~300, which
+	 * pulled against the reds from the other side; and a true neutral, which
+	 * settled the argument by leaving the page cold under a warm cream text.
+	 * Seven percent is the settlement — a red hue at a saturation too low to
+	 * name, which reads as paper-in-shadow beside `--color-text` and as
+	 * nothing at all beside `--color-accent`.
+	 *
+	 * The two lifts are picked by luminance, not by eye: each holds the ratio
+	 * against the page that this palette has always had (1.08:1 and 1.50:1),
+	 * at the lowest 8-bit pair whose HSL saturation still rounds to 7%. The
+	 * ground going darker than the neutral it replaced gave the accent room
+	 * it did not have there — 4.62:1 over the elevated surface, against a
+	 * 4.5:1 bar that used to need the surface shaved a step to clear.
+	 */
+
+	/*
+	 * The site header's ground. It follows `--color-bg-elevated` in
+	 * every theme and is a token of its own for exactly one reason: OLED
+	 * takes it to true black while leaving the elevated surface lifted. The
+	 * two cannot be the same variable there, because a handful of hover and
+	 * selection fills (`AnchorMenu`, `IndexSidebarToc`, the prayer TOC) are
+	 * borderless and have nothing BUT that lift to show themselves with —
+	 * flattening it to the page would delete them rather than darken them.
+	 */
+	--color-bg-chrome: var(--color-bg-elevated);
+
+	/* Light theme (default) */
+	--color-bg: #ffffff;
+	--color-bg-elevated: #f6f5f1;
+	--color-border: #ddd9d0;
+	--color-text: #1c1a17;
+	--color-text-muted: #6b6559;
+	--color-accent: #8f2119;
+	--color-accent-contrast: #ffffff;
+	--color-link: #8f2119;
+	--color-initial: #b03024;
+	--color-apparatus: #22409a;
+	--color-focus-ring: #22409a;
+	/* A bookmark is the reader's own mark, and has to read as a different
+	   KIND of thing from an arriving citation's accent wash — the two can
+	   land on the same unit and each has to stay legible. Gold rather than
+	   another red: it is the one hue this palette does not already spend on
+	   meaning (accent, initials, apparatus blue). Provisional like the rest
+	   of these values — see PLAN.md's design pass. */
+	--color-bookmark: #8a6410;
+
+	/*
+	 * How an engraving sits on the page. Doré's plates are ink on paper, and
+	 * the scan carries the paper with it — `plates.py` normalizes it to a
+	 * near-white 252 rather than clipping it, so the tone is real and
+	 * uniform.
+	 *
+	 * `multiply` is what makes that paper disappear: white multiplies to
+	 * whatever is beneath it and the ink stays ink, so the plate takes the
+	 * reader's page colour instead of punching a white rectangle through it.
+	 * That is the whole reason sepia needs no rule of its own here — it is a
+	 * warmer `--color-bg` and the plate warms with it.
+	 *
+	 * Dark is the case multiply cannot serve (everything multiplies to
+	 * black), and inverting is not the answer either: these are pictures, not
+	 * diagrams, and an inverted engraving reads as a photographic negative.
+	 * So the dark blocks below keep the plate on its own paper and take the
+	 * glare off it instead.
+	 */
+	--plate-blend: multiply;
+	--plate-filter: none;
+}
+
+/*
+ * THE PALETTE BLOCKS BELOW ARE ORDERED, AND THE ORDER IS THE RULE.
+ *
+ * Light is the base above. Sepia comes next, then dark — and each of those
+ * selectors has the same specificity (0,2,0), so what resolves a conflict
+ * between them is source order alone. That is deliberate: it encodes "sepia
+ * is a light-mode paper tint, and anything resolving to dark beats it",
+ * which is exactly the semantics `theme.svelte.ts` documents. Moving the
+ * sepia block below the dark ones would silently give a reader with dark on
+ * and sepia left enabled a light screen at night.
+ *
+ * OLED comes next, and it is the mirror image: a dark-mode-only modifier
+ * that has to beat dark, so it both follows the dark blocks AND outranks
+ * them at (0,3,0). It does not rely on order the way sepia does, because it
+ * cannot: it must lose to nothing and apply to nothing but dark, so the
+ * light case is excluded in the selector itself rather than by position.
+ *
+ * MONOCHROME COMES LAST and beats all of them, also at (0,3,0) and also by
+ * selector rather than by position — it applies in both halves of the
+ * light/dark axis, so it cannot borrow either one's exclusion. Its light
+ * blocks restate the plain ground because suspending sepia is part of what
+ * it means; its dark blocks restate none, so OLED still shows through.
+ *
+ * `color-scheme` is pinned per block rather than left at `html`'s
+ * `light dark`: once the reader has made an explicit choice, the browser's
+ * own furniture (scrollbars, form controls, the canvas behind the page)
+ * has to follow it, or `data-theme='light'` on a dark-preferring OS gets
+ * dark scrollbars framing a white page. `:root` outranks `html`, so these
+ * win over that declaration regardless of where it sits in the file.
+ */
+
+/* Sepia paper. Presence-only attribute, independent of `data-theme` —
+   see `theme.svelte.ts` on why the two axes are separate. */
+:root[data-sepia] {
+	color-scheme: light;
+	--color-bg: #f4ecd8;
+	--color-bg-elevated: #ecdfc2;
+	--color-border: #d9c9a3;
+	--color-text: #3b2f22;
+	--color-text-muted: #7a6a51;
+	--color-accent: #8f2119;
+	--color-accent-contrast: #f4ecd8;
+	--color-link: #8f2119;
+	--color-initial: #b03024;
+	--color-apparatus: #22409a;
+	--color-focus-ring: #22409a;
+	--color-bookmark: #8a6410;
+}
+
+/* Explicit light: nothing to restate but the scheme, since light is the
+   base — this exists only to stop a dark-preferring OS from styling the
+   browser furniture around it. Sepia above may still tint it. */
+:root[data-theme='light'] {
+	color-scheme: light;
+}
+
+/* Auto (no `data-theme`) under a dark system. */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) {
+		color-scheme: dark;
+		--color-bg: #161313;
+		--color-bg-elevated: #1f1b1b;
+		--color-border: #3a3333;
+		--color-text: #e9e6de;
+		--color-text-muted: #9e9187;
+		--color-accent: #ff2f27;
+		--color-accent-contrast: #161313;
+		--color-link: #ff2f27;
+		--color-initial: #df1212;
+		--color-apparatus: #8fa8e8;
+		--color-focus-ring: #8fa8e8;
+		--color-bookmark: #d9a94a;
+		--plate-blend: normal;
+		--plate-filter: brightness(0.82) contrast(0.94);
+	}
+}
+
+/* Explicit dark, regardless of what the system prefers. */
+:root[data-theme='dark'] {
+	color-scheme: dark;
+	--color-bg: #161313;
+	--color-bg-elevated: #1f1b1b;
+	--color-border: #3a3333;
+	--color-text: #e9e6de;
+	--color-text-muted: #9e9187;
+	--color-accent: #ff2f27;
+	--color-accent-contrast: #161313;
+	--color-link: #ff2f27;
+	--color-initial: #df1212;
+	--color-apparatus: #8fa8e8;
+	--color-focus-ring: #8fa8e8;
+	--color-bookmark: #d9a94a;
+	--plate-blend: normal;
+	--plate-filter: brightness(0.82) contrast(0.94);
+}
+
+/*
+ * OLED: the dark ground goes to true black, and only five tokens move.
+ *
+ * WHY SO FEW. An OLED panel spends no power on a black pixel and there is no
+ * backlight to leak, so what this setting is actually buying is #000 behind
+ * the text — everything else about dark mode was already right. The three
+ * greys are re-derived rather than re-invented: `--color-bg-elevated` and
+ * `--color-border` keep their EXACT contrast ratios against the ground that
+ * they have in ordinary dark (1.08:1 and 1.50:1), so the header, the panels
+ * and every hairline sit at the same visual distance from the page. Only the
+ * floor they are measured from moved. `--color-accent-contrast` follows the
+ * ground because that is what it is — the colour of text printed ON the
+ * accent, which is the page showing through.
+ *
+ * THE HEADER GOES BLACK TOO, via `--color-bg-chrome`, which is the whole
+ * reason that token exists (see its declaration above). It is the one
+ * surface a reader asked to disappear into the page, and it can afford to:
+ * it carries a bottom border, so flattening its fill leaves the hairline to
+ * separate it — at the same 1.50:1 the border has against the page anywhere
+ * else. The floating panels keep their lift, because a popover with no fill
+ * over a page with no fill is a card that has come apart.
+ *
+ * Every foreground token is left alone and every one of them gains contrast
+ * (text 16.8:1, accent 5.9:1, the drop-cap initial 5.1:1), so nothing here
+ * can push a value under the floor the reds are pinned to above.
+ *
+ * NO PURE-BLACK VARIANT OF THE LIGHT PALETTE EXISTS, and the selectors say
+ * so: `data-oled` is inert unless dark is what is actually showing. That is
+ * the exact mirror of `data-sepia`, which is inert unless light is.
+ */
+@media (prefers-color-scheme: dark) {
+	:root[data-oled]:not([data-theme='light']) {
+		--color-bg: #000000;
+		--color-bg-chrome: #000000;
+		--color-bg-elevated: #0f0d0d;
+		--color-border: #312a2a;
+		--color-accent-contrast: #000000;
+	}
+}
+
+:root[data-theme='dark'][data-oled] {
+	--color-bg: #000000;
+	--color-bg-chrome: #000000;
+	--color-bg-elevated: #0f0d0d;
+	--color-border: #312a2a;
+	--color-accent-contrast: #000000;
+}
+
+/*
+ * MONOCHROME: the whole page in a single grey, so nothing anywhere is told
+ * apart by hue. Presence-only `data-mono`, off by default.
+ *
+ * WHY A PALETTE AND NOTHING ELSE. This replaced a mode that added marks —
+ * underlines on links and reference numbers, a box on a saved unit, a rule
+ * beside a cited passage — on the argument that a dichromat's colour space
+ * is two-dimensional and three signals do not fit in it. The measurements
+ * behind that are still true and still worth keeping, because they are what
+ * this mode's numbers have to be read against:
+ *
+ *   accent vs bookmark    dE 29.0 light / 36.4 dark, falling to 10.6 / 10.3
+ *                         under deuteranopia (Brettel 1997)
+ *   the two 12% washes    7.2 / 13.1, falling to 2.6 / 2.0
+ *   apparatus vs both     39-55 under every deficiency — the blue is fine
+ *
+ * But decoration is a cost paid on every page by a reader who wanted a
+ * palette, and this is a reading site before it is a demonstration of
+ * WCAG 1.4.1. So the mode is now exactly what its name says: one hue.
+ *
+ * WHERE THE GREYS COME FROM. A single hue at near-zero chroma — 60 in the
+ * light family, 45 in the dark one — sampled every 0.005 in OKLCH L, kept
+ * only where it clears 4.5:1 on every ground the family has and dE 12 from
+ * that family's body text, then the three furthest apart:
+ *
+ *   light   #443f3b  #5e5854  #756f6a     mutual dE 8.6
+ *   dark    #8e847f  #a69c97  #c1b6b2     mutual dE 7.6
+ *
+ * THAT SEPARATION IS THE CEILING, NOT A CHOICE, and it is worth being plain
+ * about: 8.6 is a fifth of what the colours manage for a reader who can see
+ * them, and about what red and gold already collapse to under deuteranopia.
+ * A grey has only lightness to spend, the AA floor sets one end of the band
+ * and body text sits at the other, and what is left between them is this
+ * wide. Monochrome buys freedom from hue, not a sharper distinction.
+ *
+ * The dark family's hue 45 sits on a ground tinted 7% at hue 0, and stays
+ * that way, because at these saturations there is no hue to read on either
+ * side: what the mode owes is that nothing is told apart BY hue, and a ramp
+ * with one step per role tells them apart by lightness alone. The four dark
+ * grounds have been re-tinted under it three times while the ramp held
+ * still, every move being sideways in chroma rather than in lightness: its
+ * tightest ratio is the quietest grey on the elevated surface, 4.68:1.
+ *
+ * ROLES ARE ASSIGNED BY WEIGHT, mirrored between the two families so the
+ * mode means the same thing in both: the apparatus is the quietest step
+ * (furthest from body text), the accent and links take the middle, and a
+ * bookmark — the reader's own mark — takes the strongest, which is the
+ * darkest grey on paper and the brightest on a dark ground.
+ *
+ * IT SUSPENDS SEPIA, because a paper tint is a hue and this mode is the
+ * claim that there are none. That is why the light blocks below restate the
+ * plain light ground rather than only the six semantic tokens — and why
+ * they are split in two, one per `prefers-color-scheme`, instead of the
+ * single `:not([data-theme='dark'])` that would read more naturally: such a
+ * rule would also match a reader on `auto` under a dark system, and paint
+ * their page white before the dark block below got to the accent. The dark
+ * blocks restate no ground at all, which is what leaves OLED's true black
+ * standing underneath them.
+ */
+
+@media (prefers-color-scheme: light) {
+	:root[data-mono]:not([data-theme='dark']) {
+		color-scheme: light;
+		--color-bg: #ffffff;
+		--color-bg-elevated: #f6f5f1;
+		--color-border: #ddd9d0;
+		--color-text: #1c1a17;
+		--color-text-muted: #6b6559;
+		--color-accent: #5e5854;
+		--color-accent-contrast: #ffffff;
+		--color-link: #5e5854;
+		--color-initial: #5e5854;
+		--color-apparatus: #756f6a;
+		--color-focus-ring: #756f6a;
+		--color-bookmark: #443f3b;
+	}
+}
+
+:root[data-mono][data-theme='light'] {
+	color-scheme: light;
+	--color-bg: #ffffff;
+	--color-bg-elevated: #f6f5f1;
+	--color-border: #ddd9d0;
+	--color-text: #1c1a17;
+	--color-text-muted: #6b6559;
+	--color-accent: #5e5854;
+	--color-accent-contrast: #ffffff;
+	--color-link: #5e5854;
+	--color-initial: #5e5854;
+	--color-apparatus: #756f6a;
+	--color-focus-ring: #756f6a;
+	--color-bookmark: #443f3b;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root[data-mono]:not([data-theme='light']) {
+		--color-accent: #a69c97;
+		--color-link: #a69c97;
+		--color-initial: #a69c97;
+		--color-apparatus: #8e847f;
+		--color-focus-ring: #8e847f;
+		--color-bookmark: #c1b6b2;
+	}
+}
+
+:root[data-mono][data-theme='dark'] {
+	--color-accent: #a69c97;
+	--color-link: #a69c97;
+	--color-initial: #a69c97;
+	--color-apparatus: #8e847f;
+	--color-focus-ring: #8e847f;
+	--color-bookmark: #c1b6b2;
+}

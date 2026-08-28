@@ -1,0 +1,82 @@
+/*
+ * WRITING DIRECTION AND PER-SCRIPT SETTING, taken from the CONTENT language
+ * rather than the interface one.
+ *
+ * LAST, deliberately: these rules correct the setting of a text region
+ * whatever else has claimed it, and every selector here is qualified by a
+ * `lang` the rest of the stylesheet never mentions.
+ */
+
+/* ---------------------------------------------------------------------------
+   Writing direction, taken from the CONTENT language
+
+   `<html dir>` follows the INTERFACE language (i18n.svelte.ts, and app.html
+   before first paint), which is the right answer for the chrome and the wrong
+   one for the text: the corpus and the interface are different sets of
+   languages, and the two disagree constantly. A reader with the interface in
+   English opening the Arabic edition of Magnifica Humanitas needs that
+   edition's text right-to-left inside a left-to-right page; a reader with the
+   interface in Arabic needs the opposite for all 351 other works, which have
+   no Arabic edition at all.
+
+   Every reader page already declares the content language on the region it
+   renders — `lang={current.work.language}`, 74 of them across ten route and
+   component files — so the direction is already stated there and only needs
+   to be honoured. Deriving it here, once, is what keeps the derivation from
+   being repeated (and eventually forgotten) at each of those 74 sites.
+
+   `unicode-bidi: isolate` is what makes this equivalent to the `dir`
+   attribute rather than merely similar: without it a right-to-left run
+   reorders the neutral characters on either side of it — the punctuation and
+   the verse numbers around a quotation — against its neighbours.
+
+   Keep the Arabic selector in step with `RTL_LANGS` in i18n.svelte.ts. Scoped
+   off `:root` because the document element's direction is set as an
+   attribute, and a stylesheet fighting it would only be able to lose. */
+:not(:root)[lang] {
+	direction: ltr;
+	unicode-bidi: isolate;
+	/*
+	 * THE MEASURE IS PER-SCRIPT, and this reset is what keeps it from leaking.
+	 *
+	 * `--prose-char-advance` (see the token's own docblock) is a property of
+	 * the script, not of the site: measured over the corpus editions
+	 * themselves, Latin runs 0.3787em per character, Cyrillic 0.4331 and
+	 * Arabic 0.4774. Left at the Latin figure, the column tuned to 62.4
+	 * characters delivers 54.6 in Russian and 49.5 in Arabic — the second of
+	 * those well outside the 55-65 band the whole derivation exists to hold.
+	 *
+	 * Restating the Latin default HERE rather than relying on `:root` is the
+	 * point of the rule. An Arabic interface sets `lang="ar"` on the document
+	 * element, and every one of the 351 works with no Arabic edition then
+	 * renders inside it in a region declaring its own `lang`. Without this
+	 * line those regions would inherit Arabic's advance and set English at a
+	 * measure computed for Naskh.
+	 */
+	--prose-char-advance: 0.3787;
+}
+
+:not(:root)[lang='ru'] {
+	--prose-char-advance: 0.4331;
+}
+
+:not(:root)[lang='ar'] {
+	direction: rtl;
+	--prose-char-advance: 0.4774;
+}
+
+/*
+ * Arabic is leaded looser, and here it has to be. Naskh carries its meaning in
+ * strokes that swing well below the baseline and in marks that stack above, so
+ * Amiri's own ascender-to-descender extent is 1.758em against EB Garamond's
+ * 1.305 — it does not fit the 1.65 line box `.reading-text` sets, and lines
+ * would touch. 1.9 clears the extent with room for the diacritics, and matches
+ * how the script is set in print anyway.
+ *
+ * On `.reading-text` specifically rather than the region: the same element
+ * carries both, so this is the narrowest selector that reaches the running
+ * prose without also loosening the chrome.
+ */
+.reading-text[lang='ar'] {
+	line-height: 1.9;
+}

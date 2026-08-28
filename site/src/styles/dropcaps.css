@@ -1,0 +1,190 @@
+/*
+ * THE ILLUMINATED INITIAL. Promised in `docs/decisions.md`'s original
+ * design decision, alongside ornaments and a print stylesheet, and the one
+ * place the reading text is set in anything but the text face.
+ */
+
+/* --- Drop caps --------------------------------------------------------- *
+ *
+ * Promised in docs/decisions.md's original design decision, alongside
+ * ornaments and a print stylesheet.
+ *
+ * ONE MECHANISM: `.drop-cap-letter` and `.drop-cap-lead`, two explicit spans
+ * the template wraps the opening of the passage in, filled by `splitDropCap`
+ * ($lib/dropcap.ts). Every reading view uses it — the Bible reader, the CCC
+ * chapter view, the document view.
+ *
+ * There used to be a second one: `.drop-cap` with `::first-letter`, for the
+ * views whose paragraph numbers hang in the margin via `position: absolute`
+ * and so leave the prose's first letter genuinely first in the inline flow.
+ * It is gone, and not for tidiness. CSS defines the first letter as including
+ * any punctuation that PRECEDES it (css-pseudo-4 §3.2: categories Ps, Pe, Pi,
+ * Pf, Po), with no property to opt out. So every passage opening `«Ninguém…`
+ * — 322 of them in the PT catechism alone — dragged the chevrons into the
+ * 4.98em cap, and no stylesheet could separate them. Deciding what the cap
+ * contains has to happen in the template, which is what the Bible reader's
+ * span already did; the other two views now do it too.
+ *
+ * `initial-letter` is deliberately not used: Firefox still doesn't support
+ * it (as of this writing), and its absence degrades to a normal-size letter
+ * rather than to the float fallback below, so the float IS the
+ * implementation rather than a progressive enhancement on top of it. */
+.drop-cap-letter {
+	/*
+	 * ONE NUMBER GOVERNS THE CAP: the letter's size, the box the text wraps
+	 * around, and — by dividing back out — the lead punctuation's return to
+	 * body size. The phone breakpoint at the bottom changes only this.
+	 */
+	--drop-cap-scale: 4.98;
+	float: inline-start;
+	/* A floated cap inside a `<span>` (the Bible's verse markup) needs the span
+	   to establish nothing of its own — the float has to escape into the
+	   surrounding block for the text to wrap around it. */
+	display: inline-block;
+	font-family: var(--font-display);
+	/*
+	 * A three-line drop cap, with both numbers derived from font metrics rather
+	 * than eyeballed. Everything below is in units of body text em.
+	 *
+	 * The old values (3.1em / 0.82, inherited from the system-serif placeholder)
+	 * produced a float box of 3.1 x 0.82 = 2.542em against `.reading-text`'s
+	 * 1.65 line-height — barely 1.5 lines. That is why the cap read as an odd
+	 * ornament rather than a drop cap, and it never matched the comment that
+	 * used to sit here claiming a baseline on the third line.
+	 *
+	 * Sizing. For the cap to span three lines, its cap height must reach from
+	 * line 3's baseline up to line 1's cap height: two line-heights plus one
+	 * body cap height = 2 x 1.65 + 0.650 = 3.950em. Pirata One's cap height is
+	 * 0.793em, so font-size = 3.950 / 0.793 = 4.98em.
+	 *
+	 * Wrapping. Text wraps around a float's margin BOX, not around its glyph, so
+	 * the box governs how many lines indent. Sizing it to exactly three lines
+	 * (line-height 0.994 -> 4.950em) is a trap: that equals 3 x 1.65 precisely,
+	 * and any padding on top spills into the fourth line box and indents it too.
+	 * A 0.02em block-start padding was enough to do it — 2px against a 102.96px
+	 * budget — and the cap wrapped four lines instead of three.
+	 *
+	 * So the box is deliberately a shade UNDER three lines, with no block-start
+	 * padding to eat the margin: 4.98 x 0.98 = 4.880em against a 4.950em budget,
+	 * about 1.5px of clearance at the default reading size. The glyph's size is
+	 * unaffected — font-size governs that, line-height only governs the box.
+	 *
+	 * All of it depends on `.reading-text`'s 1.65 line-height and on the text
+	 * face's cap height. Change either and recompute — these are not independent
+	 * constants, and the failure mode is subtle (one extra indented line).
+	 */
+	font-size: calc(1em * var(--drop-cap-scale));
+	line-height: 0.98;
+	padding-inline-end: 0.08em;
+	/* Fresh vermilion, NOT the link red — see the palette docblock above. */
+	color: var(--color-initial);
+	/* No `font-weight` — the subset is a single 400 master, so 600 would get a
+	   synthesized bold that thickens an already-heavy blackletter into an
+	   inkblot. The previous rule's `font-weight: 600` was meaningful only
+	   because the cap was then set in the variable text face. */
+}
+
+/*
+ * The Cyrillic initial is Ponomar, not Pirata One. Routed by an explicit rule
+ * rather than by appending Ponomar to `--font-display`'s fallback chain,
+ * because that chain would never reach it: Pirata One's subset already covers
+ * U+0041-005A, so the Latin `R` of "Res novae" — one of the Russian edition's
+ * 26 opening letters — would set in blackletter while its 25 Cyrillic
+ * neighbours set in Slavonic type. Per-glyph fallback cannot express "this
+ * work's initials", only "this codepoint's face".
+ *
+ * `[lang='ru']` and not `:lang(ru)`: the reader pages declare the content
+ * language on the region (`lang={current.work.language}` on `.reading-text`),
+ * which is the same convention the direction rules at the foot of this file
+ * use, and it keeps an inherited language from reaching into a nested region
+ * set in another one.
+ *
+ * `:not(:root)` for the same reason those rules carry it, and it is not
+ * decoration: `<html lang>` follows the INTERFACE language (i18n.svelte.ts,
+ * and app.html before first paint), so a bare `[lang='ru']` also matches the
+ * document element. A reader with the interface in Russian would then get
+ * every initial in the corpus set in Slavonic type — the Latin `A` opening an
+ * English or Portuguese work included, which Ponomar's Latin file covers and
+ * so renders as a wrong face rather than as tofu. The face follows the
+ * language of the TEXT, never the language of the chrome.
+ *
+ * Only the family changes. `size-adjust` on the @font-face normalises
+ * Ponomar's cap height to the one the scale above is derived from, so the
+ * three-line arithmetic and the phone breakpoint below both stay correct
+ * without a second set of constants.
+ */
+:not(:root)[lang='ru'] .drop-cap-letter {
+	font-family: 'Ponomar Dropcap', var(--font-serif);
+}
+
+/*
+ * THE PUNCTUATION THAT LEADS INTO THE CAP, and why it is not part of it.
+ *
+ * A passage opening on a quotation mark is the common case, not an edge one:
+ * 322 PT and 335 EN drop-cap positions in the corpus start with one. Set in
+ * the display face at cap size, a `«` is two chevrons about as wide as the
+ * letter beside it, and the opening read as an enormous quotation mark with a
+ * letter after it rather than as an initial. So the mark sets at body size, in
+ * the text face, at the cap's shoulder — which is what the printed editions
+ * do. `$lib/dropcap.ts` decides what lands here.
+ *
+ * Inside the float rather than hanging in the margin beside it, deliberately.
+ * Hanging would align the letter itself flush to the measure, which is the
+ * finer setting, but both gutters are already occupied: the CCC and document
+ * views hang their paragraph number there (`position: absolute`), and the
+ * Bible reader's verse number is inline immediately before the float, so a
+ * mark pulled left would land on top of it. In the flow the cap starts about
+ * a third of an em further in and nothing can collide.
+ */
+.drop-cap-lead {
+	/* Back to exactly body size. This element's `em` is the cap's font-size,
+	   which is `--drop-cap-scale` body ems, so dividing by the same number
+	   lands on one body em at either breakpoint — no second set of numbers to
+	   keep in step with the block above. */
+	font-size: calc(1em / var(--drop-cap-scale));
+	font-family: var(--font-serif);
+	/* Top of the cap, not the baseline of the cap's line box — that baseline
+	   is three lines down, which would drop the mark to the cap's foot. This
+	   is the knob if the mark ever needs nudging against a different face. */
+	display: inline-block;
+	vertical-align: top;
+	padding-inline-end: 0.1em;
+}
+
+/*
+ * TWO LINES ON A PHONE, not three, and not none.
+ *
+ * The measure is the constraint, and it constrains the cap's SIZE rather than
+ * its existence. At 375px the reading column is 335px (`.content-column`'s
+ * 1.25rem gutters), which is about 36 characters at the 1.3rem reading base.
+ * A three-line cap renders about 104px wide there — nearly a third of the
+ * measure — so the three indented lines carry ~24 characters each and read as
+ * damage. A two-line cap is ~60px, leaves ~29, and is what a typesetter would
+ * have set in a narrow column anyway. Dropping the cap entirely (what this
+ * rule used to do) throws away the flourish to solve a sizing problem.
+ *
+ * Same derivation as the block above, with two lines instead of three, and it
+ * has the same dependency on `.reading-text`'s 1.65 line-height — recompute
+ * both together.
+ *
+ * Sizing. Cap height must reach from line 2's baseline to line 1's cap
+ * height: one line-height plus one body cap height = 1.65 + 0.650 = 2.300em.
+ * Pirata One's cap height is 0.793em, so font-size = 2.300 / 0.793 = 2.90em.
+ *
+ * Wrapping. Budget is 2 x 1.65 = 3.300em of body text. The box is 2.90 x 1.11
+ * = 3.219em, keeping the same ~0.08em (about 1.7px at the default reading
+ * size) of clearance the three-line rule leaves — enough that the box cannot
+ * spill into the third line, which is the failure mode the block above
+ * documents.
+ *
+ * Everything else — colour, family, the padding that keeps the glyph off the
+ * text — inherits from the rule above unchanged.
+ */
+@media (max-width: 30rem) {
+	.drop-cap-letter {
+		/* The lead punctuation follows from this on its own — see the rule
+		   above, which divides by the same variable. */
+		--drop-cap-scale: 2.9;
+		line-height: 1.11;
+	}
+}

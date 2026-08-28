@@ -1,0 +1,22 @@
+/*
+ * UTILITIES — a class that describes what a thing IS to a machine rather
+ * than what it looks like.
+ *
+ * One rule today. It sits in this order slot (after the drop caps, before
+ * print) because that is where it was when this stylesheet was one file,
+ * and the split preserved source order exactly rather than tidying it: the
+ * built CSS is byte-identical to what it replaced, which is the only cheap
+ * proof a 3,300-line cut went cleanly.
+ */
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}

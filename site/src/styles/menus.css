@@ -1,0 +1,339 @@
+/*
+ * THE CHROME'S OWN CONTROLS — the icon-button + dropdown-panel primitive
+ * shared by AppearanceMenu, LanguageMenu, EditionMenu and the header's nav
+ * toggle, the measured floating panel underneath them, and the dialog and
+ * phone sheet those panels become.
+ *
+ * Defined once here rather than duplicated into four scoped `<style>`
+ * blocks; each component supplies only what is genuinely its own.
+ */
+
+/*
+ * Icon-button + dropdown-panel primitive shared by AppearanceMenu, LanguageMenu
+ * and EditionMenu (and reused by the header's nav toggle in +layout.svelte)
+ * — defined globally once here rather than duplicated in each component's
+ * scoped <style>, since Svelte's per-component style scoping has no
+ * mechanism to share a block across files. Each component still owns its
+ * own open/close state, outside-click handling and Escape handling; this
+ * only standardizes how the trigger and panel look.
+ */
+.menu {
+	position: relative;
+	display: inline-flex;
+}
+
+.menu-trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	border: 1px solid var(--color-border);
+	border-radius: 0.4rem;
+	background: var(--color-bg-elevated);
+	color: var(--color-text);
+	font-size: 1rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.menu-trigger:hover {
+	color: var(--color-accent);
+	border-color: var(--color-accent);
+}
+
+/* EditionMenu's trigger also carries a text label (the current edition's
+   short title), so it can't be the fixed icon-button square the others are. */
+.menu-trigger.wide {
+	width: auto;
+	padding-inline: 0.6rem;
+}
+
+/*
+ * A PANEL PLACED BY MEASUREMENT — the chrome the three of them share.
+ *
+ * `LinkPreview`'s card, the popover a unit number opens (`AnchorMenu`) and the
+ * one a footnote marker opens (`CitationDisclosure`) are the same object seen
+ * three times: a small floating box of text over the page, lifted off it by a
+ * hairline and a shadow. Each carried its own copy of these five
+ * declarations, and the copies had agreed by hand for long enough that the
+ * third consumer was already a coincidence rather than a rule.
+ *
+ * WHAT IS NOT HERE IS EVERYTHING THAT ACTUALLY DIFFERS, and it is more than
+ * the padding: where the panel goes (`floating.ts` measures it, and whether it
+ * then tracks or dismisses is a statement about what the panel is), whether it
+ * sits in the top layer as a native `popover` or at a `z-index`, and whether
+ * it takes pointer events at all. A prop — or a modifier class — for every
+ * one of those is the shape `menu.svelte.ts` records this codebase avoiding.
+ * A class for what is genuinely identical is not that shape.
+ *
+ * ALL THREE ARE IN THE TOP LAYER, which is why the positioning is here too.
+ * Each is a native `popover`, so `position: fixed` and the `inset`/`margin`
+ * resets are against the UA's `[popover]` rule — it wants to centre the panel
+ * in the viewport (`inset: 0; margin: auto`), and `floating.ts` supplies the
+ * real coordinates instead. The top layer is also why none of them carries a
+ * `z-index`: it sits above every stacking context on the page, and what
+ * decides which of two open panels is in front is the order they were shown
+ * in. That is the property that lets a link preview appear OVER an open
+ * citation — see `LinkPreview`, which is a `manual` popover for exactly that
+ * reason and no other.
+ *
+ * `.menu-panel` below repeats four of the declarations and is deliberately
+ * NOT this. It is positioned in CSS from its own trigger rather than measured
+ * against one, which `floating.ts`'s docblock draws as the real line between
+ * the two families, and it carries its own scrolling, sizing and list reset
+ * besides.
+ */
+.floating-panel {
+	position: fixed;
+	inset: auto;
+	margin: 0;
+	/*
+	 * HIDDEN UNTIL IT HAS BEEN PLACED, which is the stylesheet's job and not
+	 * the template's. A popover cannot be measured before it is shown — a
+	 * closed one is `display: none` and reads as all zeroes — and `toggle`
+	 * fires AFTER it is shown, so there is one painted frame between the two
+	 * in which the panel sits at its static position, which for a marker
+	 * mid-paragraph is the middle of the sentence. `AnchoredPanel.place()`
+	 * (floating.svelte.ts) measures and reveals it in the same synchronous
+	 * turn, so that frame never exists; this is where it starts.
+	 *
+	 * Every `.floating-panel` on the site is positioned in JS — there is no
+	 * such thing as one CSS alone can place, since the anchors are arbitrary
+	 * points in flowing prose. `LinkPreview` restates it because for that one
+	 * it is also the end state of a transition.
+	 */
+	visibility: hidden;
+	background: var(--color-bg);
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+	font-family: var(--font-sans);
+}
+
+/*
+ * A dropdown panel is placed here and CORRECTED in JS.
+ *
+ * `.menu-panel` anchors its RIGHT edge to its trigger and grows leftward by at
+ * least `min-width` (14rem). That is fine for a trigger with room to its start
+ * side and broken for one without: at phone width the header wraps and the
+ * language trigger's right edge sits around x=140, so a 224px panel would start
+ * at x=-84 and hang off the side of the screen; `ReadingBar`'s edition picker
+ * is the first control in its row and does the same at any width narrow enough.
+ * Nothing in this rule can notice — CSS cannot measure the distance from an
+ * element to the viewport edge.
+ *
+ * This used to be answered here, for the header alone, by making its menus
+ * `position: static` below 30rem so the panels resolved against `.header-bar`
+ * and dropped from its gutter wherever their trigger was. That could only ever
+ * cover the menus it named, and it did not cover the reading bar. The clamp is
+ * now `floating.ts`'s `keepInViewport`, applied to every `.menu-panel` there
+ * is: the panel keeps its trigger as its anchor everywhere, and slides back in
+ * by exactly what it overflowed, or not at all.
+ */
+.menu-panel {
+	position: absolute;
+	inset-block-start: calc(100% + 0.4rem);
+	inset-inline-end: 0;
+	z-index: 50;
+	min-width: 14rem;
+	max-width: min(22rem, 90vw);
+	max-height: min(24rem, 70vh);
+	overflow-y: auto;
+	background: var(--color-bg);
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+	padding: 0.35rem;
+	list-style: none;
+	margin: 0;
+}
+
+.menu-item {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.1rem;
+	width: 100%;
+	padding: 0.45rem 0.6rem;
+	border: none;
+	border-radius: 0.35rem;
+	background: transparent;
+	color: var(--color-text);
+	font-size: 0.9rem;
+	text-align: start;
+	cursor: pointer;
+}
+
+.menu-item:hover {
+	background: var(--color-bg-elevated);
+}
+
+.menu-item.current {
+	background: var(--color-bg-elevated);
+	color: var(--color-accent);
+}
+
+.menu-item-main {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.menu-item-meta {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+}
+
+/* The small language-code badge ("EN", "PT") beside an edition's title in a
+   `.menu-item` row — shared by EditionMenu and ComparisonEditionMenu, which
+   each listed editions this way while carrying a character-for-character
+   identical scoped copy of this rule. */
+.edition-lang {
+	font-size: var(--font-size-min);
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+	border: 1px solid var(--color-border);
+	border-radius: 0.25rem;
+	padding: 0 0.3rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Modal dialogs: the bare shell, and the full-viewport sheet
+
+   The `.menu-*` primitive above is the dropdown; this is what a panel becomes
+   when it stops being one. Same reasoning for defining it here: Svelte's
+   per-component scoping has no mechanism to share a block across files, and
+   these rules had been written three times (`JumpBox`, `TocMenu`, and the
+   header's navigation sheet in `+layout.svelte`) with the third copy taken
+   from the second. Each component still owns its own `showModal()`, its own
+   dismissal and its own focus handling; this standardizes only what the
+   shell looks like.
+   --------------------------------------------------------------------------- */
+
+/*
+ * A DIALOG IS POSITION AND NOTHING ELSE. The UA stylesheet's border, padding
+ * and background are cleared so that every visible pixel belongs to the box
+ * INSIDE the dialog — which is what makes each component's
+ * `e.target === dialogEl` test mean "the reader clicked the backdrop" rather
+ * than "the reader clicked the panel's own margin".
+ *
+ * No `z-index` anywhere in here: a dialog opened with `showModal()` is in the
+ * top layer, above every stacking context there is.
+ */
+.dialog-bare {
+	max-inline-size: none;
+	border: none;
+	padding: 0;
+	background: transparent;
+	color: inherit;
+}
+
+.dialog-bare::backdrop {
+	background: rgb(0 0 0 / 35%);
+}
+
+/*
+ * THE SHEET: a dialog that IS the viewport. What a panel becomes on a phone,
+ * where an anchored card is a fiction — the surround it leaves is a sliver
+ * too narrow to read, and that sliver is also the only target for the
+ * outside-click that dismisses it. A sheet says what such a panel already
+ * was, and turns the dismissal into a control instead of a margin.
+ *
+ * `[open]` is not decoration on the second selector: a closed `<dialog>` is
+ * `display: none` from the UA stylesheet, and a bare `.sheet { display: flex }`
+ * would override it and leave the panel on screen permanently. The flex column
+ * has to start on the dialog rather than on `.sheet-panel`, because a
+ * component that gives the dialog a `max-block-size` (the card form
+ * `TocMenu` takes above 48rem) leaves the panel in an auto-height box, where
+ * a percentage height resolves to `auto`: the panel would grow to its content,
+ * `.sheet-body` would never become a scroll box, and the last rows would be
+ * silently clipped. Bounding the flex container is what makes the body scroll
+ * in both forms.
+ */
+.sheet {
+	position: fixed;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	max-block-size: none;
+	margin: 0;
+}
+
+.sheet[open] {
+	display: flex;
+	flex-direction: column;
+}
+
+.sheet-panel {
+	flex: 1 1 auto;
+	min-block-size: 0;
+	display: flex;
+	flex-direction: column;
+	background: var(--color-bg);
+}
+
+/* `flex: none` above a scrolling body, and that is load-bearing rather than
+   tidy: in sheet form the close button below is the ONLY way out — there is
+   no backdrop to tap and a phone has no Escape key — so a head that scrolled
+   away past row 40 of 189 would leave a reader shut in. Opaque for the same
+   reason, since the body scrolls under it. */
+.sheet-head {
+	flex: none;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	padding: 0.5rem 0.75rem;
+	border-block-end: 1px solid var(--color-border);
+	background: var(--color-bg);
+}
+
+/* The muted, letter-spaced capitals `.sidebar-toc-heading` above takes: the
+   panel's own label, not a title competing with the content under it. */
+.sheet-title {
+	margin: 0;
+	font-family: var(--font-sans);
+	font-size: 0.85rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: var(--color-text-muted);
+}
+
+/* Borderless, unlike `.menu-trigger`: it sits inside the surface it closes
+   rather than on the page, and a boxed control there reads as a second action
+   to weigh rather than as the way out. Sized for a thumb regardless of
+   pointer — it is the sheet's only exit. */
+.sheet-close {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 2.5rem;
+	block-size: 2.5rem;
+	padding: 0;
+	border: none;
+	border-radius: 0.4rem;
+	background: none;
+	color: var(--color-text-muted);
+	font-size: 1.1rem;
+	cursor: pointer;
+}
+
+.sheet-close:hover {
+	color: var(--color-accent);
+	background: var(--color-bg-elevated);
+}
+
+.sheet-body {
+	flex: 1 1 auto;
+	min-block-size: 0;
+	overflow-y: auto;
+	/* The page behind an open modal is inert, but iOS still chains a scroll
+	   that runs off the end of this box to the document underneath. */
+	overscroll-behavior: contain;
+	padding: 0.6rem 0.75rem 1rem;
+}

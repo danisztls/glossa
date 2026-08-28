@@ -1,0 +1,176 @@
+/*
+ * PRINT. Printing is a view of the page already being read, not a separate
+ * export format: the browser supplies its own destination picker while this
+ * sheet removes the controls and wayfinding that are useful on screen but
+ * only consume paper.
+ *
+ * LAST-ISH IN THE CASCADE ON PURPOSE — everything it overrides is defined
+ * above it, and the two files after it (`reading-chrome.css`, `menus.css`)
+ * are addressed by name here rather than relying on order.
+ */
+
+/* --- Print ------------------------------------------------------------- */
+
+/*
+ * Printing is a view of the page already being read, not a separate export
+ * format: the browser supplies its own destination picker while this sheet
+ * removes the controls and wayfinding that are useful on screen but only
+ * consume paper. The reader's text, including a deliberately selected
+ * comparison, remains in normal flow.
+ */
+@media print {
+	@page {
+		margin: 1.5cm;
+	}
+
+	html,
+	body {
+		color-scheme: light;
+		background: #fff !important;
+		color: #000 !important;
+	}
+
+	.site-header,
+	.site-footer,
+	.install-hint,
+	/* Paper does not scroll. */
+	.to-top,
+	.reading-aside,
+	.index-aside,
+	.mobile-picker,
+	.unit-nav,
+	.compare-toolbar,
+	/* The reading bar is a screen affordance end to end: two edition pickers, a
+	   bookmark button, a toggle out of compare mode and the print control that
+	   produced this page. The editions it names are already stated by the
+	   copyright notices below it. */
+	.reading-bar,
+	/* Every edition/comparison picker trigger (`EditionMenu`,
+	   `ComparisonEditionMenu`), wherever it's placed — the bar above is not
+	   their only home, since `.compare-unit-field` may still hang one in the
+	   reading chrome, so this needs its own rule rather than relying on a
+	   container they may not be inside any more. */
+	.menu,
+	.toc-inline,
+	/* "Read the full chapter" (ccc/[n]/+page.svelte) exists to send a reader
+	   who followed a single-paragraph link onward to more context online — a
+	   printed page can't be followed anywhere, so it prints as a dead
+	   instruction rather than a link. `.breadcrumb` is deliberately NOT in
+	   this list: unlike the rest, it's where a printed single-paragraph page
+	   states what it actually is (which chapter, which work), and that
+	   context is worth the two lines of paper it costs. */
+	.read-chapter {
+		display: none !important;
+	}
+
+	main {
+		padding: 0 !important;
+	}
+
+	.content-column,
+	.reading-layout,
+	.reading-layout.compare > .content-column {
+		max-width: none !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	.reading-layout,
+	.reading-layout.compare,
+	.compare-row,
+	.compare-unit-header {
+		display: block !important;
+	}
+
+	.compare-unit-field-left::after,
+	.compare-gutter::before {
+		display: none !important;
+	}
+
+	.compare-unit-field-left {
+		border-block-end: 1px dashed #000;
+		padding-block-end: 0.75rem;
+		margin-block-end: 0.75rem;
+	}
+
+	/* The unit number stays — on paper it is the citation, the one thing a
+	   reader can carry off the page — but as a plain line heading its pair,
+	   the same shape the narrow breakpoint gives it. */
+	.compare-gutter {
+		justify-content: start !important;
+		padding-block: 0 0.25rem !important;
+		margin-inline-start: -0.3rem;
+	}
+
+	/*
+	 * Compare mode gets the SAME "doesn't fit side by side" fallback the
+	 * narrow breakpoint already uses (`.compare-row`'s own rules
+	 * above), not a bespoke print treatment: a printed page is narrower than
+	 * two reading measures for the same reason a phone screen is, and the
+	 * stacked-pairs layout that solves it there solves it here too. Forcing
+	 * `.compare-row` to `display: block` above also means its `column-gap` no
+	 * longer does anything (`gap` has no effect outside flex/grid), which is
+	 * why cell spacing is redone as margin below rather than left to that
+	 * rule to (silently) stop working on paper.
+	 */
+	.compare-cell-tag {
+		display: block !important;
+	}
+
+	.compare-cell-left {
+		border-block-end: 1px dashed #000;
+		padding-block-end: 0.75rem;
+	}
+
+	.compare-cell-right {
+		margin-block-end: 1rem;
+	}
+
+	.compare-cell {
+		break-inside: avoid;
+	}
+
+	/*
+	 * PAPER HAS NO SLACK TO HANG A NOTE IN. `.margin-note`'s displacement is
+	 * measured against a viewport that centres the reading column with room
+	 * either side; the rules above have already taken `.reading-layout` down
+	 * to a full-bleed block, so a note left floating would print up to 17rem off
+	 * the edge of the sheet and simply be lost. Which layout the markup is in
+	 * was settled on screen — `sidenoteRoom` reads a `matchMedia` query, not
+	 * the print context — so this is the stylesheet's to undo.
+	 *
+	 * It lands as the block the narrow breakpoint already gives it, which is
+	 * the same answer for the same reason: the note goes under the line that
+	 * raised it, set off by a rule rather than by position.
+	 */
+	.margin-note {
+		float: none !important;
+		display: block;
+		inline-size: auto !important;
+		margin-inline: 0 !important;
+		margin-block: 0.5rem !important;
+		padding-inline-start: 0.75rem;
+		border-inline-start: 2px solid #000;
+	}
+
+	/* Back into the flow with it: there is no margin to hang off, and left
+	   absolute it would print on top of the line above. */
+	.margin-note-label {
+		position: static !important;
+		padding-inline-end: 0.35em;
+	}
+
+	/* A highlight says "the one you just clicked", which is a fact about a
+	   session and not about the page. */
+	.margin-note.highlighted,
+	.citation-marker.highlighted,
+	.note-marker.highlighted {
+		background: none !important;
+		outline: none !important;
+		padding-inline: 0 !important;
+	}
+
+	a {
+		color: inherit;
+	}
+}

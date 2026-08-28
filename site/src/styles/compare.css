@@ -1,0 +1,615 @@
+/*
+ * COMPARE MODE — side-by-side, unit-aligned comparison. One feature, one
+ * consumer (`CompareGrid.svelte`; `$lib/compare.ts` is the alignment
+ * logic), and the largest single thing in this stylesheet: a whole second
+ * geometry for the reading page, with its own measure arithmetic, its own
+ * breakpoints and its own narrow-screen collapse.
+ *
+ * It lives here rather than in the component for the reason the file above
+ * gives — the rules interleave with `.reading-layout`'s own breakpoints,
+ * which are global.
+ */
+
+/*
+ * Compare mode — side-by-side, unit-aligned comparison (`CompareGrid.svelte`
+ * is the sole consumer; `$lib/compare.ts` is the alignment logic). Shared
+ * here rather than in that component's own `<style>` for the same reason
+ * `.reading-layout` lives here and not in one of its four callers: six
+ * routes (Bible, CCC paragraph, CCC chapter, Compendium, document section,
+ * document read) want the identical shape, and Svelte's per-component style
+ * scoping has no mechanism to share a block across files.
+ *
+ * THE SIDEBAR YIELDS TO COMPARE MODE, UNCONDITIONALLY, AT EVERY WIDTH — the
+ * decision this primitive encodes for the "three columns won't fit at 80rem"
+ * problem the task brief raises. A wider breakpoint for a genuine three-track
+ * grid was the other option on the table; rejected because it only helps
+ * above that new width and does nothing for the phone/tablet range where the
+ * sidebar was already the first thing to go. Hiding the aside instead works
+ * at every width with one rule, and a reader who wants the sidebar back has
+ * a one-click way to get it (turn compare mode off) that a width-dependent
+ * layout can't offer on a viewport that's simply too narrow regardless.
+ * `.reading-layout.compare` cancels the two-track grid `.reading-layout`
+ * normally sets up at >= 80rem (there is no `.reading-aside` for the second
+ * track to hold — every route omits it, not just hides it, while comparing),
+ * and restores `.content-column`'s own standalone centring, which the base
+ * `.reading-layout > .content-column` rule above otherwise overrides.
+ */
+/*
+ * TWO COLUMNS NEED TWICE THE MEASURE, NOT HALF OF IT.
+ *
+ * `--content-width` is one reading column, `--measure-cpl` characters wide.
+ * Compare mode puts a `1fr 1fr` grid inside `.content-column`, so leaving
+ * that container at `--content-width` gave each column half the measure —
+ * about 31 characters, well under any readable one. This is the width the
+ * container has to be for the COLUMNS to come out at the measure the rest of
+ * the site is built around.
+ *
+ * Deriving from the token rather than hard-coding a width is also what keeps
+ * this correct across a type change: retuning `--content-width` for a new
+ * face moves both the single and the two-up measure by the same factor. It
+ * now does the same across the reader's font-size setting, which both tokens
+ * track. The `+ var(--compare-gutter)` is the middle track the two measures
+ * are separated by, added rather than taken out of them for the same reason.
+ *
+ * KNOWN LIMIT: at the 100rem breakpoint below, where compare mode regains the
+ * aside, the budget is 76rem and two scaled columns plus the gutter exceed it
+ * past a reading scale of about 1.17. `minmax(0, …)` shrinks rather than
+ * overflows, so the failure is graceful — each column lands near 39
+ * characters at the 1.8 maximum, better than the 34.9 the pinned column gave
+ * but under target. Raising that breakpoint is a separate decision.
+ *
+ * Applied at every width rather than inside the 80rem query: below that
+ * breakpoint `.reading-layout` is not a grid, so `.content-column` kept its
+ * single-column measure and halved it just the same. `max-width` still lets the
+ * whole thing shrink on a narrow viewport, where the grid stacks to one
+ * column anyway (see `.compare-row`'s own media query).
+ */
+.reading-layout.compare > .content-column {
+	max-width: calc(var(--content-width) * 2 + var(--compare-gutter));
+}
+
+/*
+ * The same slack arithmetic against the wider thing being centred. `CompareGrid`
+ * takes the margin away from the notes entirely while it is mounted
+ * (`sidenotes.svelte.ts`), so this governs exactly one state: the moment before
+ * it is — `/documenta` renders its single column, and its citations, while the
+ * second edition is still in flight, with `.compare` already on the layout.
+ * Without this the notes would be measured against a margin twice the width of
+ * the one actually there, for as long as the fetch takes.
+ */
+.reading-layout.compare {
+	--sidenote-room: calc(
+		(
+				100vw - 1rem - (var(--content-width) * 2 + var(--compare-gutter)) - var(--aside-width) -
+					var(--aside-gap)
+			) /
+			2
+	);
+}
+
+@media (min-width: 80rem) {
+	.reading-layout.compare {
+		display: block;
+	}
+
+	.reading-layout.compare > .content-column {
+		margin-inline: auto;
+		padding-inline: 1.25rem;
+	}
+}
+
+/*
+ * ...BUT ON A GENUINELY WIDE SCREEN, NOTHING HAS TO YIELD.
+ *
+ * The rule above drops the sidebar while comparing, which is right when two
+ * reading columns and a sidebar cannot all fit. On a wide display they fit
+ * easily, and dropping the table of contents there is a cost paid for no
+ * reason — the space is simply going unused.
+ *
+ * 100rem is where the arithmetic clears with room to spare: two columns at
+ * ~34rem each, a 1.5rem column gap, the 17rem aside, its 2.75rem gutter and
+ * the page's own padding come to ~92rem. Below this the sidebar still
+ * yields, because below this it genuinely has to.
+ */
+/* Below the three-column breakpoint the sidebar really does have to go, and
+   it goes in CSS rather than by the routes omitting the element: keeping it
+   in the markup is what lets the rule above place it once there IS room, and
+   it costs a hidden subtree, not a fetch — the tree is index tier and already
+   inlined on the page either way. */
+@media (max-width: 99.99rem) {
+	.reading-layout.compare > .reading-aside {
+		display: none;
+	}
+}
+
+@media (min-width: 100rem) {
+	.reading-layout.compare {
+		display: grid;
+		grid-template-columns:
+			minmax(0, calc(var(--content-width) * 2 + var(--compare-gutter)))
+			var(--aside-width);
+		justify-content: center;
+		align-items: start;
+		gap: var(--aside-gap);
+		padding-inline: 1.25rem;
+	}
+
+	.reading-layout.compare > .content-column {
+		max-width: none;
+		margin-inline: 0;
+		padding-inline: 0;
+	}
+}
+
+.compare-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.4rem;
+	margin: 0 0 0.75rem;
+}
+
+.compare-note {
+	margin: 0 0 1rem;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+	font-style: italic;
+}
+
+/*
+ * One GRID PER ROW rather than one grid for the whole view — see
+ * CompareGrid.svelte's docblock for the full reasoning, in short: every track
+ * here is a fixed width or an equal `1fr`, so per-row grids come out with
+ * identical columns anyway, and a row that is a real element is what an `id`,
+ * a saved-state wash and a phone-friendly source order all need.
+ *
+ * There is no row gap: vertical spacing between rows lives INSIDE each cell
+ * as `padding-block`, so the divider running down the gutter meets the next
+ * row's flush and reads as one continuous line rather than a dashed one
+ * broken at every gap.
+ */
+.compare-grid {
+	margin-top: 0.5rem;
+}
+
+.compare-row {
+	display: grid;
+	grid-template-columns: 1fr var(--compare-gutter) 1fr;
+	column-gap: 0;
+}
+
+/*
+ * EVERY CELL IS PLACED EXPLICITLY, including its row. The gutter comes first
+ * in the markup (CompareGrid.svelte's docblock: source order is what survives
+ * the phone stack) and belongs in the middle column, and auto-placement
+ * cannot express that — its cursor never moves backwards within a row, so the
+ * left cell that follows a column-2 item would be pushed onto a second row.
+ */
+.compare-row > .compare-gutter {
+	grid-column: 2;
+	grid-row: 1;
+}
+
+.compare-row > .compare-cell-left {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+.compare-row > .compare-cell-right {
+	grid-column: 3;
+	grid-row: 1;
+}
+
+/*
+ * The divider, and the seat for the row's unit number. The rule is drawn by
+ * the pseudo rather than as a border on either neighbour so it lands on the
+ * gutter's CENTRE LINE, equidistant from both measures; `inset-block: 0` with
+ * no row gap is what joins each row's segment to the next into one line.
+ *
+ * `align-items: start` keeps the number level with the first line of the
+ * taller cell's text instead of floating down the middle of a long row.
+ */
+.compare-gutter {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: start;
+	padding-block: 0.4rem;
+}
+
+.compare-gutter::before {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: calc(50% - 0.5px);
+	width: 1px;
+	background: var(--color-border);
+}
+
+/*
+ * THE BLOCK-LEVEL FORM OF THE READER'S OWN MARK, shared by every
+ * single-column reader whose unit is its own block: a document section, a
+ * Summa article, a CCC paragraph in the chapter view, a Compendium question.
+ * All four had written it out identically — same 12%, same radius, same two
+ * print-colour properties — under four different element class names.
+ *
+ * The wash covers the TEXT only; the margin number hangs outside it on the
+ * page's own ground and marks itself (`ReferenceNumber`'s `.bookmarked`).
+ *
+ * THE BIBLE IS NOT ONE OF THESE and keeps its own rule. A verse is an inline
+ * span inside a continuous paragraph, so its wash needs `box-decoration-break`
+ * to survive a line break and sits a shade stronger (14%) to read at all
+ * against the text flowing around it — a genuinely different treatment for a
+ * genuinely different unit, not a fifth copy.
+ */
+.unit-bookmarked {
+	background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
+	border-radius: 0.25rem;
+	print-color-adjust: exact;
+	-webkit-print-color-adjust: exact;
+}
+
+/*
+ * A row the reader has saved, and a row an arriving citation named. Washes on
+ * the two TEXT cells only, never on the row: the gutter has to stay page
+ * background for the number's own background to punch cleanly through the
+ * divider (see `.reference-number.gutter`), and this is also exactly where
+ * the single-column readers put it — `.unit-bookmarked` and
+ * `.verse.bookmarked` cover the text, while the margin number hangs outside
+ * at `-3.25rem` on the page's own ground.
+ *
+ * `.highlighted` is written AFTER `.bookmarked` so an arriving citation wins
+ * the background when a unit is both, matching the order the Bible chapter
+ * reader already settled on. Nothing is lost when it does: the number itself
+ * stays gold, because `ReferenceNumber`'s `.bookmarked` is written after its
+ * own `.emphasized` for exactly this reason.
+ */
+.compare-row.bookmarked > .compare-cell {
+	background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
+	print-color-adjust: exact;
+	-webkit-print-color-adjust: exact;
+}
+
+/* A dividing band (`CompareGrid`'s `interlude`) brings its own vertical
+   rhythm — a `.structure-heading`'s margins, in the one caller that uses it —
+   so the per-row padding that spaces units apart would only add to it. */
+.compare-row-interlude > .compare-cell {
+	padding-block: 0;
+}
+
+.compare-row.highlighted > .compare-cell {
+	background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+	print-color-adjust: exact;
+	-webkit-print-color-adjust: exact;
+}
+
+/*
+ * A line both editions state identically, printed once beneath the pair
+ * (`CompareGrid`'s `apparatus`). One cell across all three tracks, which is
+ * also what stops the divider through it — correctly, since the line is about
+ * the unit above rather than divided between the two columns.
+ */
+.compare-row-apparatus > .compare-cell-shared {
+	grid-column: 1 / -1;
+	grid-row: 1;
+	padding-block: 0 0.4rem;
+}
+
+/*
+ * The Compendium's "Condenses CCC ¶¶..." in its shared form. Deliberately a
+ * near-copy of `.ccc-refs` in `CompendiumQuestion.svelte` rather than a reuse
+ * of it: that rule is scoped to the component, this line is rendered by the
+ * ROUTE (it has to be, since it stands outside both columns), and Svelte's
+ * per-component scoping has no way to lend one to the other. Keeping the two
+ * looking identical is the point — a reader should not be able to tell that
+ * the shared line and the per-column line come from different files.
+ */
+.ccc-refs-shared {
+	margin: 0;
+	border-block-start: 1px solid var(--color-border);
+	padding-block-start: 0.75rem;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+}
+
+.ccc-refs-shared .refs-label {
+	margin-inline-end: 0.4em;
+}
+
+/*
+ * The header block above a `CompareGrid` — title, whatever subtitle/range line
+ * the unit has, copyright notice, edition picker, source masthead — shared
+ * across every route that compares (documents, Bible, CCC paragraph/chapter,
+ * Compendium question/chapter; not `/preces`, whose second column is a Latin
+ * FIELD on the one work, not a second `WorkManifest` with its own
+ * title/copyright to show). Lives here rather than in each route's own
+ * `<style>` for the same reason `.breadcrumb` does (see that rule's docblock)
+ * — Svelte's per-component scoping can't share a block across files, and six
+ * near-identical copies of a two-column grid is exactly the drift that
+ * invites. Its tracks are `.compare-row`'s, `--compare-gutter` and all, so the
+ * divider running down it continues, unbroken, into the aligned rows beneath.
+ *
+ * IT IS LAID OUT FIELD BY FIELD, NOT COLUMN BY COLUMN, and that is the whole
+ * point of the rewrite. It used to be two `.compare-unit-header-col` blocks,
+ * each stacking every field for one language, which meant a field whose two
+ * languages print the SAME STRING was printed twice side by side — an
+ * encyclical is addressed by its Latin incipit, so `Magnifica Humanitas` was
+ * set as an `<h1>` twice, and `CCC 12`, `¶1–25` and `Q1–Q25` fared the same.
+ * One row per field lets an identical pair collapse into a single cell
+ * spanning both columns (`.compare-unit-field-shared`), while a genuinely
+ * differing pair still splits. The routes decide, per field, with a plain
+ * equality test; nothing here guesses.
+ *
+ * WHAT DELIBERATELY DOES NOT COLLAPSE: the copyright notice, whose two
+ * editions print the same words and link to DIFFERENT source pages. Collapsing
+ * on the visible text would silently drop one edition's provenance link, which
+ * `CopyrightNotice.svelte`'s docblock is explicit is the part that matters.
+ * The rule is "the same thing", not "the same string".
+ *
+ * Each ROUTE's own `<style>` still owns the vertical spacing inside a field (a
+ * title's margin, a range line's) — this only owns the row shape and the
+ * divider.
+ */
+.compare-unit-header {
+	display: grid;
+	grid-template-columns: 1fr var(--compare-gutter) 1fr;
+	column-gap: 0;
+	margin-top: 0.5rem;
+}
+
+.compare-unit-field {
+	min-width: 0;
+}
+
+/*
+ * A FIELD'S OWN VERTICAL RHYTHM, ONCE, INSTEAD OF PER ROUTE.
+ *
+ * Five routes each restated these: the heading at `0 0 0.5rem` in three and
+ * `0 0 0.25rem` in the fourth, the copyright notice at `0 0 0.75rem` in one
+ * and `0 0 0.5rem` in two. Nothing in the markup those values sat next to
+ * accounts for the difference — the fields are the same fields, stacked the
+ * same way, and the spread is drift from five separate authorings rather than
+ * five decisions. Settled on the majority value in each case.
+ *
+ * The tighter spacing than the single-column header's is the one deliberate
+ * part: a field here is one line of a two-column block that already reads as
+ * a unit, so it needs separating from its neighbour, not framing.
+ */
+.compare-unit-field h1 {
+	margin: 0 0 0.5rem;
+}
+
+.compare-unit-field .copyright-notice {
+	margin: 0 0 0.5rem;
+}
+
+.compare-unit-field-shared {
+	grid-column: 1 / -1;
+}
+
+.compare-unit-field-left {
+	position: relative;
+	grid-column: 1;
+}
+
+.compare-unit-field-right {
+	grid-column: 3;
+}
+
+/*
+ * The divider, drawn per SPLIT field rather than once down the whole block,
+ * because a shared field spans the gutter and a rule through it would cut its
+ * title in half. Consecutive split fields stretch to their row's height and so
+ * butt together into one continuous line — and into `.compare-gutter`'s below,
+ * which is drawn at the same offset from the same track.
+ */
+.compare-unit-field-left::after {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-end: calc(var(--compare-gutter) * -0.5);
+	width: 1px;
+	background: var(--color-border);
+}
+
+/*
+ * Narrow: one column, and the header regroups by LANGUAGE — one edition's
+ * title, range and copyright notice, then the other's (see `order` below).
+ *
+ * NOTE THAT THIS DIVERGES FROM `.compare-row`, which stacks the same content
+ * one level down and stays field-major: unit 26 in English immediately above
+ * unit 26 in Portuguese. The two are not inconsistent. A UNIT is what the
+ * reader is comparing — putting the same passage's two versions next to each
+ * other is the whole feature, and the gap between them has to stay one line.
+ * A HEADER is what they are comparing IN; nobody reads two copyright notices
+ * against each other. So the body keeps the pairs and the header keeps the
+ * editions whole.
+ */
+@media (max-width: 59.99rem) {
+	.compare-unit-header {
+		grid-template-columns: 1fr;
+	}
+
+	.compare-unit-field-left,
+	.compare-unit-field-right,
+	.compare-unit-field-shared {
+		grid-column: 1;
+	}
+
+	.compare-unit-field-left::after {
+		display: none;
+	}
+
+	/*
+	 * STACKED, THE HEADER GOES LANGUAGE-MAJOR: each edition's title, range and
+	 * copyright notice together, then the other edition's. Field-major is the
+	 * right grouping side by side — that is what puts a title beside a title —
+	 * but read top to bottom it interleaves two documents' worth of metadata
+	 * (title, title, range, notice, notice) and a reader has to count to work
+	 * out whose notice is whose.
+	 *
+	 * `order` RATHER THAN LANGUAGE-MAJOR MARKUP, because the markup cannot be:
+	 * the wide grid places fields by `grid-column` alone and relies on sparse
+	 * auto-placement to pair them into rows, and that cursor never moves
+	 * backwards — so `L L L R R R` in source would drop the right column three
+	 * rows below its own left half instead of beside it. Field-major source is
+	 * load-bearing at full width; this reorders only the paint.
+	 *
+	 * WHAT THAT COSTS, recorded rather than discovered later: `order` moves
+	 * nothing in the DOM, so a screen reader and the tab key still walk the
+	 * field-major sequence. Accepted here because these fields hold prose and
+	 * two provenance links, no controls whose order carries meaning, and the
+	 * DOM sequence is still a coherent reading of the same content — it is the
+	 * one every wider viewport shows.
+	 *
+	 * A shared field joins the FIRST block (same `order` as the left half,
+	 * source order breaking the tie) rather than getting a group of its own:
+	 * a shared `¶26–184` under the English title is exactly where the
+	 * single-column view puts it, and a document's shared `<h1>` stays at the
+	 * top of the page where a title belongs.
+	 */
+	.compare-unit-field-left,
+	.compare-unit-field-shared {
+		order: 1;
+	}
+
+	.compare-unit-field-right {
+		order: 2;
+	}
+
+	/*
+	 * The seam between the two blocks, on the first right field only — which
+	 * `~` identifies without anyone knowing the header's shape: every right
+	 * field that already has a right field somewhere before it gives the
+	 * margin back, leaving it on the one that opens the group. Spacing INSIDE
+	 * a block stays each route's own, as it is at every other width.
+	 */
+	.compare-unit-field-right {
+		margin-block-start: 1rem;
+	}
+
+	.compare-unit-field-right ~ .compare-unit-field-right {
+		margin-block-start: 0;
+	}
+
+	/*
+	 * A translated title is set as an `<h1>` in BOTH halves, and at the
+	 * document-title scale that is two headings of two or three lines each —
+	 * most of a phone screen spent on one title before a word of the text.
+	 * They are still the page's heading, so they stay an `h1` and stay first;
+	 * they just stop being sized as though only one of them were there.
+	 */
+	.compare-unit-header h1 {
+		font-size: 1.5rem;
+		line-height: 1.2;
+	}
+}
+
+/* The gutter track supplies the space that used to be `padding-inline-end`
+   here, and `.compare-gutter::before` the rule that used to be this cell's
+   `border-inline-end` — see `.compare-row` above. */
+.compare-cell {
+	min-width: 0;
+	padding-block: 0.4rem;
+}
+
+/* Repeats each cell's edition label — redundant with `ReadingBar`'s two
+   normal widths (hidden there, see below) but the only column identifier
+   left once the grid stacks to one column on a phone and the header has
+   long since scrolled out of view (see the max-width query below).
+
+   ALSO USED BY THE UNIT HEADER, on the split title pair (`ccc/chapter/[n]`,
+   `compendium/caput/[n]`) — the same class rather than a second one that
+   looks like it, because it is the same problem: a stacked half has lost the
+   position that identified it. Its content is `compareColumnLabel` at every
+   site. */
+.compare-cell-tag {
+	display: none;
+	font-size: var(--font-size-min);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--color-text-muted);
+	margin-bottom: 0.3rem;
+}
+
+.compare-missing {
+	margin: 0;
+	color: var(--color-text-muted);
+	font-style: italic;
+	font-size: max(var(--font-size-min), 0.9em);
+}
+
+/*
+ * Narrow: two reading columns do not fit — each `.compare-row` stops being a
+ * grid, so its three children stack in SOURCE order, which is
+ * gutter-then-left-then-right: the unit's number heads its own pair, and the
+ * pair's two texts sit immediately next to each other rather than in two long
+ * independent columns a phone would force the reader to scroll between. That
+ * source order is the whole reason the gutter is written first in
+ * `CompareGrid.svelte` and placed into column 2 explicitly above; a
+ * visual-order markup would strand the number BETWEEN the two texts here,
+ * where it reads as belonging to neither.
+ *
+ * This is a stacked-pairs layout, not "compare mode unavailable" — the
+ * alignment still holds, it's just vertical instead of side-by-side, and
+ * `.compare-cell-tag` reappears per pair since the sticky bar names the
+ * columns positionally, which means nothing once they are stacked.
+ *
+ * IT HANDS OVER AT 60rem, NOT 40rem, AND THAT IS A READING-MEASURE DECISION.
+ * `--measure-cpl` is 62.4 precisely because 55-65 characters per line is
+ * where this type sets well. Two columns inside a 40rem viewport are about 35
+ * characters each — nowhere near it, and worse than the stacked pairs that
+ * were already available below. 60rem is roughly where each column clears the
+ * low 40s and side-by-side starts being the better of the two, so that is
+ * where the switch belongs.
+ *
+ * Those counts assume a reading scale of 1, and cannot do otherwise: a media
+ * query can't read a custom property, so this breakpoint is fixed while the
+ * measure it reasons about is not. A reader at 180% gets side-by-side from
+ * 60rem on a pair of columns narrower than the argument above allows for.
+ * Making it scale-aware needs JS, which is not worth it for the stacking
+ * threshold alone.
+ */
+@media (max-width: 59.99rem) {
+	.compare-row {
+		display: block;
+	}
+
+	/* `gap` does nothing outside grid/flex, so the spacing between pairs is
+	   redone as a margin rather than left to silently stop working. */
+	.compare-row + .compare-row {
+		margin-top: 1rem;
+	}
+
+	/* Apparatus belongs to the pair right above it, not to the next one. */
+	.compare-row.compare-row-apparatus {
+		margin-top: 0;
+	}
+
+	/* No rule to punch through and nothing to centre on: the number becomes an
+	   ordinary line above the pair, flush with the text it heads. The negative
+	   margin cancels the number's own `padding-inline`, which exists to clear
+	   the divider and has nothing left to clear here — done from this side
+	   rather than by overriding the number's padding, since that property
+	   belongs to a scoped component style this sheet shouldn't be racing on
+	   specificity. */
+	.compare-gutter {
+		justify-content: start;
+		padding-block: 0 0.25rem;
+		margin-inline-start: -0.3rem;
+	}
+
+	.compare-gutter::before {
+		display: none;
+	}
+
+	.compare-cell-left {
+		border-block-end: 1px dashed var(--color-border);
+		padding-block-end: 1rem;
+	}
+
+	.compare-cell-tag {
+		display: block;
+	}
+}
