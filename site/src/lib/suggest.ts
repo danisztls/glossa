@@ -995,7 +995,12 @@ function exactReference(query: string, ctx: Context): Scored[] {
  */
 interface SectionWords {
 	kind: SuggestionKind;
-	/** The section's own landing page. */
+	/**
+	 * Where a bare keyword lands. Not necessarily this section's OWN page:
+	 * the Compendium has no index, and points at the Catechism's, which
+	 * presents both works a row at a time. Two sections naming one address is
+	 * why the landing rows below dedupe on it.
+	 */
 	path: string;
 	titleKey: string;
 	/**
@@ -1035,7 +1040,7 @@ const SECTIONS: SectionWords[] = [
 	},
 	{
 		kind: 'compendium',
-		path: '/catechismus/compendium',
+		path: '/catechismus',
 		titleKey: 'nav.compendium',
 		abbrevKey: 'compendium.abbrev',
 		extra: ['compendium', 'comp']
@@ -1211,6 +1216,8 @@ function numberedWorkSuggestions(query: string, ctx: Context): Scored[] {
 		return out;
 	}
 
+	/** Landing pages already offered, so two sections cannot name one twice. */
+	const landed = new Set<string>();
 	for (const { section, score } of matchSections(keyword)) {
 		const exactName = score === 2;
 		const bump = exactName ? 2 : 0;
@@ -1222,6 +1229,12 @@ function numberedWorkSuggestions(query: string, ctx: Context): Scored[] {
 		if (score === 0 && numberRaw) continue;
 
 		if (!numberRaw) {
+			// `matchSections` is sorted by score, so the better-named section
+			// keeps the row: typing `comp` reaches only the Compendium and is
+			// unaffected, while a bare `c` prefixes both and would otherwise
+			// offer the same index under two names.
+			if (landed.has(section.path)) continue;
+			landed.add(section.path);
 			out.push({
 				href: section.path,
 				kind: 'section',

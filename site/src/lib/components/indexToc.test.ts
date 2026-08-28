@@ -6,8 +6,10 @@ import {
 	indexOutlineChildren,
 	indexSidebarItems,
 	isIndexOutline,
-	rangeLabel
+	rangeLabel,
+	siblingLink
 } from './indexToc';
+import { hrefFor } from '../address';
 
 function node(
 	kind: StructureNode['kind'],
@@ -55,5 +57,37 @@ describe('index outline', () => {
 			'en'
 		);
 		expect(items).toEqual([{ href: '#toc-1', label: 'Part 1 The Profession of Faith' }]);
+	});
+});
+
+// The badge a Catechism row carries for the Compendium and vice versa. Its
+// address comes from `hrefFor` rather than a base path to concatenate: that
+// is what makes an address change one edit instead of a grep.
+describe('siblingLink', () => {
+	const opts = {
+		href: (n: number) => hrefFor({ kind: 'compendiumChapter', n }),
+		unit: 'Q',
+		abbrev: 'Comp.',
+		workTitle: 'Compendium'
+	};
+
+	it('labels a span and addresses its first unit', () => {
+		expect(siblingLink([251, 294], opts)).toEqual({
+			href: '/catechismus/compendium/caput/251',
+			label: 'Comp. Q251–294',
+			title: 'Compendium — Q251–294'
+		});
+	});
+
+	it('drops the dash when the span is a single unit', () => {
+		expect(siblingLink([1, 1], opts)?.label).toBe('Comp. Q1');
+	});
+
+	// A row the companion work has no counterpart for, and a division whose
+	// own bounds the source never numbered. Both are "no badge", not a badge
+	// pointing nowhere.
+	it('offers nothing without a span, or without a lower bound', () => {
+		expect(siblingLink(undefined, opts)).toBeUndefined();
+		expect(siblingLink([null, 294], opts)).toBeUndefined();
 	});
 });

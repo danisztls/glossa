@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { summaOutline } from './corpus';
-import { contains, hrefFor, marker, rowState } from './components/structureToc';
+import { contains, marker, rowHref, rowState } from './components/structureToc';
 import { displayTitle } from './titles';
 import type { StructureNode } from './types';
 
@@ -133,7 +133,7 @@ describe('articles are fragments of the question page', () => {
 			children: [],
 			anchor: 'a3'
 		};
-		expect(hrefFor(article, NaN, 'route', '/summa/ii-ii')).toBe('#a3');
+		expect(rowHref(article, NaN, 'route', (n) => `/summa/ii-ii/${n}`)).toBe('#a3');
 	});
 
 	/**

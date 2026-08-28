@@ -3,7 +3,7 @@ import {
 	OUTLINE_KINDS,
 	contains,
 	currentIndex,
-	hrefFor,
+	rowHref,
 	marker,
 	outlineChildren,
 	rowState
@@ -133,19 +133,19 @@ describe('marker', () => {
 	});
 });
 
-describe('hrefFor', () => {
+describe('rowHref', () => {
 	const plain = node('chapter', 1, 'X', [1, 9]);
 
-	it('route mode: basePath + the anchor number', () => {
-		expect(hrefFor(plain, 27, 'route', '/catechismus')).toBe('/catechismus/27');
-		expect(hrefFor(plain, 19, 'route', '/documenta/gaudium-et-spes')).toBe(
+	it('route mode: whatever the caller addresses that number as', () => {
+		expect(rowHref(plain, 27, 'route', (n) => `/catechismus/${n}`)).toBe('/catechismus/27');
+		expect(rowHref(plain, 19, 'route', (n) => `/documenta/gaudium-et-spes/${n}`)).toBe(
 			'/documenta/gaudium-et-spes/19'
 		);
 	});
 
-	it('anchor mode: an #s{n} fragment, ignoring basePath', () => {
-		expect(hrefFor(plain, 19, 'anchor', '/documenta/gaudium-et-spes')).toBe('#s19');
-		expect(hrefFor(plain, 19, 'anchor', undefined)).toBe('#s19');
+	it('anchor mode: an #s{n} fragment, never asking for an address', () => {
+		expect(rowHref(plain, 19, 'anchor', (n) => `/documenta/gaudium-et-spes/${n}`)).toBe('#s19');
+		expect(rowHref(plain, 19, 'anchor', undefined)).toBe('#s19');
 	});
 
 	// The heading and the section after it are different places on the page.
@@ -153,22 +153,24 @@ describe('hrefFor', () => {
 	// past it to the first paragraph underneath.
 	it('anchor mode: a row carrying its own heading anchor uses that instead', () => {
 		const withAnchor = { ...node('sub', null, 'CHAPTER THREE', [90, 130]), anchor: 'h12' };
-		expect(hrefFor(withAnchor, 90, 'anchor', undefined)).toBe('#h12');
+		expect(rowHref(withAnchor, 90, 'anchor', undefined)).toBe('#h12');
 	});
 
 	it('route mode ignores the heading anchor — those rows are their own pages', () => {
 		const withAnchor = { ...node('sub', null, 'CHAPTER THREE', [90, 130]), anchor: 'h12' };
-		expect(hrefFor(withAnchor, 90, 'route', '/documenta/x')).toBe('/documenta/x/90');
+		expect(rowHref(withAnchor, 90, 'route', (n) => `/documenta/x/${n}`)).toBe('/documenta/x/90');
 	});
 
 	// The CCC's whole-chapter route: every article in the chapter loads the
 	// same page, so without a fragment they would all be the same address.
 	it("route mode appends the caller's fragment when it supplies one", () => {
 		const article = node('article', 1, 'ARTICLE 1', [2084, 2141]);
-		expect(hrefFor(article, 2084, 'route', '/catechismus/caput', 's2084')).toBe(
+		expect(rowHref(article, 2084, 'route', (n) => `/catechismus/caput/${n}`, 's2084')).toBe(
 			'/catechismus/caput/2084#s2084'
 		);
-		expect(hrefFor(article, 2084, 'route', '/catechismus/caput')).toBe('/catechismus/caput/2084');
+		expect(rowHref(article, 2084, 'route', (n) => `/catechismus/caput/${n}`)).toBe(
+			'/catechismus/caput/2084'
+		);
 	});
 });
 

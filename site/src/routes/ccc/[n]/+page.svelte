@@ -184,7 +184,7 @@
 			currentN={data.n}
 			lang={editions.lang}
 			heading={t('ccc.tableOfContents')}
-			basePath="/catechismus"
+			routeHref={(n) => hrefFor({ kind: 'ccc', n })}
 			outlineKinds={OUTLINE_KINDS}
 		/>
 	{/snippet}

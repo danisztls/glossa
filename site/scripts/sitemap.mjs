@@ -61,7 +61,6 @@ const STATIC_URLS = [
 	'/',
 	'/scriptura',
 	'/catechismus',
-	'/catechismus/compendium',
 	'/documenta',
 	'/summa',
 	'/preces',

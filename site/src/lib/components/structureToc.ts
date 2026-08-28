@@ -218,18 +218,26 @@ export function currentIndex(
 export type LinkMode = 'route' | 'anchor';
 
 /**
- * `'route'` (default): `${basePath}/{n}` — the CCC/Compendium/per-section
- * document routes, where each row is its own page.
+ * `'route'`: whatever `routeHref` returns for the row's number — the
+ * CCC/Compendium/Summa routes, where each row is its own page.
  *
  * `'anchor'`: `#s{n}` — `/documents/[slug]`, where the whole document
  * is already one page and a row navigates within it instead of away from
- * it. `basePath` is unused in this mode.
+ * it. `routeHref` is unused in this mode.
+ *
+ * IT TAKES A FUNCTION AND NOT A BASE PATH, so this module appends fragments
+ * and writes no addresses. It used to build `${basePath}/${n}` itself, which
+ * made it one of five places a canonical URL was spelled out — against
+ * `address.ts`'s standing claim that `hrefFor` is the only one — and that is
+ * exactly how moving the Compendium under the Catechism on 2026-08-28 left
+ * four live 404s behind: a grep for the old prefix cannot see a URL that is
+ * assembled from a prop.
  */
-export function hrefFor(
+export function rowHref(
 	node: StructureNode,
 	n: number,
 	linkMode: LinkMode,
-	basePath: string | undefined,
+	routeHref: ((n: number) => string) | undefined,
 	routeAnchor?: string
 ): string {
 	// A row carrying its own `anchor` addresses the heading it names. Only
@@ -249,8 +257,9 @@ export function hrefFor(
 	if (linkMode === 'anchor') return `#s${n}`;
 	// `routeAnchor` is the same idea for a route whose PAGE is bigger than one
 	// row — the CCC's whole-chapter view, where every article in the chapter
-	// is already on screen and `${basePath}/${n}` alone would send all of them
-	// to the same page top. The caller supplies it (`anchorFor`) because only
-	// the caller knows which of its own rows it renders a heading for.
-	return routeAnchor ? `${basePath}/${n}#${routeAnchor}` : `${basePath}/${n}`;
+	// is already on screen and the row's own address alone would send all of
+	// them to the same page top. The caller supplies it (`anchorFor`) because
+	// only the caller knows which of its own rows it renders a heading for.
+	const route = routeHref?.(n) ?? '';
+	return routeAnchor ? `${route}#${routeAnchor}` : route;
 }

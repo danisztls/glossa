@@ -126,7 +126,7 @@
 			currentN={data.n}
 			lang={editions.lang}
 			heading={t('compendium.tableOfContents')}
-			basePath="/catechismus/compendium"
+			routeHref={(n) => hrefFor({ kind: 'compendium', n })}
 			outlineKinds={OUTLINE_KINDS}
 		/>
 	{/snippet}
@@ -134,7 +134,13 @@
 		<article class="content-column">
 			<div class="breadcrumb-row">
 				<nav class="breadcrumb" aria-label="Breadcrumb">
-					<a href="/catechismus/compendium">{t('nav.compendium')}</a>
+					<a href="/catechismus">{t('nav.ccc')}</a>
+					<span class="sep">›</span>
+					<!-- Unlinked, and not an oversight: the Compendium has no index of
+					     its own -- the Catechism's presents both works -- so this crumb
+					     names the work the reader is in and points nowhere, the way a
+					     crumb with no address already does below. -->
+					<a href={undefined}>{t('nav.compendium')}</a>
 					{#each editions.current.breadcrumb as node (node.title + node.paragraphs.join('-'))}
 						{@const dt = displayTitle(node, editions.lang)}
 						{@const from = node.paragraphs[0]}

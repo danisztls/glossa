@@ -39,10 +39,10 @@ const STATIC_PATHS = new Set([
 	'/',
 	'/scriptura',
 	'/catechismus',
-	// The Compendium's landing page. A static segment, so SvelteKit and
-	// `parseHref` both rank it above `/catechismus/{n}`, which admits digits
-	// only.
-	'/catechismus/compendium',
+	// NOT `/catechismus/compendium`: the Compendium has no index of its own,
+	// because the Catechism's presents both works a row at a time
+	// (`CatechismIndex.svelte`, 2026-08-28). It is a path segment that groups
+	// addresses rather than a page, exactly as `/catechismus/caput` is.
 	'/documenta',
 	'/summa',
 	'/preces',

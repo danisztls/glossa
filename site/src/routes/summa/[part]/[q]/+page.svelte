@@ -310,7 +310,7 @@
 			lang={editions.lang}
 			heading={t('summa.tableOfContents')}
 			headingNote={titlesNote}
-			basePath={`/summa/${partSlug}`}
+			routeHref={(n) => hrefFor({ kind: 'summa', part: partSlug, question: n, article: null })}
 			{linkableAnchors}
 			borrowedTitleLabel={(from) =>
 				t('summa.titleFromEdition').replace('{lang}', languageDisplayName(from))}

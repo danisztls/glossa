@@ -1,24 +1,31 @@
 <script lang="ts">
 	/**
-	 * The index page for the Catechism and for its Compendium.
+	 * The index of the Catechism — and of its Compendium, which has no index
+	 * of its own.
 	 *
-	 * ONE COMPONENT, because the two are one outline published at two lengths
-	 * and their landing pages had become near-identical copies — same layout,
-	 * same four components, same styles, differing only in a table of facts
-	 * about which work is being shown. `indexToc.ts` already exists to keep
-	 * "their indexes from quietly growing apart again"; this is the same
-	 * argument applied to the page around them.
+	 * ONE PAGE FOR BOTH WORKS, because they are one outline published at two
+	 * lengths. `toc-pairing.ts` establishes that structurally (every part,
+	 * section and chapter pairs, across all 80 edition pairs) and
+	 * `condensation.ts` corroborates it from the questions' own `ccc_refs`, so
+	 * a row can carry the Catechism's paragraph range and the Compendium's
+	 * question range at once. Two landing pages showing the same outline at
+	 * two resolutions was the same page written twice, and they had already
+	 * drifted: their `<title>` tags disagreed about whether they named the
+	 * work or its table of contents.
 	 *
-	 * THE SIBLING RESOLVER IS DELIBERATELY NOT SYMMETRIC, and the asymmetry is
-	 * a property of the works rather than an omission. The Catechism's index
-	 * has 100 rows and 68 of them — the Prologue and all 67 articles — have no
-	 * counterpart DIVISION, because the Compendium prints no articles; those
-	 * fall back to the condensation vote, which answers "which questions
-	 * condense these paragraphs" instead. The Compendium's index has 32 rows,
-	 * every one a part, section or chapter, and every one pairs structurally
-	 * (`toc-pairing.ts`, corroborated by the sync's 2,560 paired divisions over
-	 * all 80 edition pairs). So the fallback is reachable in one direction only
-	 * and the mirror of it would be dead code.
+	 * What the Compendium keeps is everything a reader needs where they
+	 * actually read it: its own edition picker and copyright notice live on
+	 * `/catechismus/compendium/{n}` and `/caput/{n}`, which is where choosing
+	 * among its ten editions belongs. What it loses is a page that listed 32
+	 * divisions this one already lists, with a badge each.
+	 *
+	 * THE COMPANION LOOKUP IS NOT SYMMETRIC, and that is a property of the
+	 * works rather than an omission. 68 of the Catechism's 100 index rows —
+	 * the Prologue and all 67 articles — have no counterpart DIVISION, because
+	 * the Compendium prints no articles; those fall back to the condensation
+	 * vote, which answers "which questions condense these paragraphs" instead.
+	 * All 32 of the Compendium's own divisions pair structurally, so nothing
+	 * needs the fallback in the other direction.
 	 */
 	import {
 		condensingQuestionRun,
@@ -26,6 +33,7 @@
 		getCompendiumStructure,
 		getWork
 	} from '$lib/corpus';
+	import { hrefFor } from '$lib/address';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { pairDivisionsCached } from '$lib/toc-pairing';
@@ -36,87 +44,44 @@
 	import StructureIndex from './StructureIndex.svelte';
 	import { indexSidebarItems, siblingLink } from './indexToc';
 
-	/**
-	 * Everything the page needs that differs between the two works.
-	 *
-	 * `langKey` is not `workPrefix`: which edition a reader gets is resolved
-	 * per work through `CONTENT_LANG_FALLBACK`, and the two works do not cover
-	 * the same languages — `la` and `mg` have a Catechism and no Compendium,
-	 * `hu`/`ro`/`sl`/`sv` the reverse. So each side resolves its own, and the
-	 * companion's tree is read in the companion's language. The pairing is
-	 * language-independent (every edition of both works reports the same
-	 * spans), so a fallback edition gives the same answer.
-	 */
-	const WORKS = {
-		catechism: {
-			langKey: 'catechism',
-			workPrefix: 'ccc',
-			structure: getCccStructure,
-			/** Where a ROW links, and where the companion's badge links from the
-			 *  other page — the same base serves both roles. */
-			chapterBase: '/catechismus/caput',
-			unit: '¶',
-			titleKey: 'ccc.landing.title',
-			taglineKey: 'ccc.landing.tagline',
-			tocKey: 'ccc.tableOfContents',
-			noAddressKey: 'ccc.noParagraphNumber',
-			abbrevKey: 'ccc.abbrev'
-		},
-		compendium: {
-			langKey: 'compendium',
-			workPrefix: 'compendium',
-			structure: getCompendiumStructure,
-			chapterBase: '/catechismus/compendium/caput',
-			unit: 'Q',
-			titleKey: 'compendium.landing.title',
-			taglineKey: 'compendium.landing.tagline',
-			tocKey: 'compendium.tableOfContents',
-			noAddressKey: 'compendium.noQuestionNumber',
-			abbrevKey: 'compendium.abbrev'
-		}
-	} as const;
+	// The two works resolve their editions SEPARATELY, and must: they do not
+	// cover the same languages — `la` and `mg` have a Catechism and no
+	// Compendium, `hu`/`ro`/`sl`/`sv` the reverse — so each side runs its own
+	// `CONTENT_LANG_FALLBACK` chain. The pairing itself is
+	// language-independent (every edition of both works reports the same
+	// spans), so a fallback edition gives the same answer.
+	const lang = $derived(content.langFor('catechism'));
+	const compendiumLang = $derived(content.langFor('compendium'));
 
-	interface Props {
-		/** Which of the two works this page is the index of. */
-		primary: keyof typeof WORKS;
-	}
-
-	let { primary }: Props = $props();
-
-	const self = $derived(WORKS[primary]);
-	const other = $derived(WORKS[primary === 'catechism' ? 'compendium' : 'catechism']);
-
-	const lang = $derived(content.langFor(self.langKey));
-	const tree = $derived(self.structure(lang));
-	const work = $derived(getWork(`${self.workPrefix}.${lang}`));
+	const tree = $derived(getCccStructure(lang));
+	const work = $derived(getWork(`ccc.${lang}`));
 	const sidebarItems = $derived(indexSidebarItems(tree, lang));
 
-	const pairs = $derived(
-		pairDivisionsCached(tree, other.structure(content.langFor(other.langKey)))
-	);
+	const pairs = $derived(pairDivisionsCached(tree, getCompendiumStructure(compendiumLang)));
 
 	// Structural pairing first, then the condensation vote. The order is not
-	// arbitrary: a part, section or chapter has a counterpart DIVISION, which
-	// is a stronger statement than "these questions cite these paragraphs".
+	// arbitrary: a part, section or chapter has a counterpart DIVISION in the
+	// Compendium, which is a stronger statement than "these questions cite
+	// these paragraphs".
 	const sibling = $derived((node: StructureNode) => {
 		let span: readonly [number | null, number | null] | undefined = pairs.get(node)?.paragraphs;
-		if (!span && primary === 'catechism') {
+		if (!span) {
 			const [from, to] = node.paragraphs;
 			if (Number.isFinite(from) && Number.isFinite(to)) {
 				span = condensingQuestionRun(from as number, to as number);
 			}
 		}
 		return siblingLink(span, {
-			hrefBase: other.chapterBase,
-			unit: other.unit,
-			abbrev: t(other.abbrevKey),
-			workTitle: t(other.titleKey)
+			href: (n) => hrefFor({ kind: 'compendiumChapter', n }),
+			unit: 'Q',
+			abbrev: t('compendium.abbrev'),
+			workTitle: t('compendium.landing.title')
 		});
 	});
 </script>
 
 <svelte:head>
-	<title>{t(self.titleKey)} — {t('home.title')}</title>
+	<title>{t('ccc.landing.title')} — {t('home.title')}</title>
 </svelte:head>
 
 <div class="reading-layout">
@@ -128,24 +93,24 @@
 		{#if work}
 			<ReadingBar print={false} />
 		{/if}
-		<h1>{t(self.titleKey)}</h1>
-		<p class="tagline">{t(self.taglineKey)}</p>
+		<h1>{t('ccc.landing.title')}</h1>
+		<p class="tagline">{t('ccc.landing.tagline')}</p>
 		{#if work}
 			<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
 		{/if}
 
-		<h2 class="toc-heading">{t(self.tocKey)}</h2>
+		<h2 class="toc-heading">{t('ccc.tableOfContents')}</h2>
 		<StructureIndex
 			{tree}
 			{lang}
-			hrefBase={self.chapterBase}
-			unit={self.unit}
-			noAddressLabel={t(self.noAddressKey)}
+			href={(n) => hrefFor({ kind: 'cccChapter', n })}
+			unit="¶"
+			noAddressLabel={t('ccc.noParagraphNumber')}
 			{sibling}
 		/>
 	</div>
 	<aside class="index-aside">
-		<IndexSidebarToc heading={t(self.tocKey)} items={sidebarItems} />
+		<IndexSidebarToc heading={t('ccc.tableOfContents')} items={sidebarItems} />
 	</aside>
 </div>
 

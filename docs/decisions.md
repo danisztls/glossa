@@ -577,6 +577,22 @@ knowingly: every reader's saved Compendium bookmarks are dropped, because
 `bookmarks.svelte.ts` keys them by href and `load()` discards an href the current grammar
 rejects.
 
+**And the Compendium has no index of its own.** The Catechism's presents both works, a row
+at a time: every part, section and chapter carries its paragraph range and its question
+range together. Two landing pages showing one outline at two resolutions was the same page
+written twice, and they had already drifted apart in their `<title>` tags. So there is one
+nav entry, `/catechismus/compendium` is a path segment rather than a page — the way
+`/catechismus/caput` already was — and the Compendium's own edition picker and copyright
+notice live on the pages where a reader actually reads it.
+
+**A canonical URL is written in `hrefFor` and nowhere else, and that is now true rather
+than merely stated.** `StructureIndex` and `StructureSidebarToc` took a `hrefBase` /
+`basePath` string and built `${base}/${n}` themselves, which made five call sites into
+five more places the grammar was spelled out. Moving the Compendium left four live 404s
+behind precisely there, because a grep for the old prefix cannot see a URL assembled from
+a prop. Both components now take the address as a function, and the five callers pass
+their own `hrefFor`.
+
 **`src/lib/address.ts` is the only place a reader URL is written or read.** The grammar
 was known in six places and four unions described the same thing; serializing an address
 to a string and regex-parsing it back inside one process is not an architecture.

@@ -18,8 +18,8 @@
 	 *  - ANCHOR MODE. `/documents/[slug]` is the whole document on one
 	 *    page, so its TOC has to link to `#s{n}` fragments instead of a
 	 *    separate route. Genuine requirement, kept as `linkMode="anchor"`
-	 *    below — `hrefFor` (structureToc.ts) is the one place that decides
-	 *    between that and `${basePath}/{n}`.
+	 *    below — `rowHref` (structureToc.ts) is the one place that decides
+	 *    between that and the row's own address.
 	 *
 	 *  - WHICH NODE KINDS RENDER. The CCC/Compendium version rendered only
 	 *    prologue/part/section/chapter — a "chapter-sized" floor measured
@@ -121,7 +121,7 @@
 	import InlineText from './InlineText.svelte';
 	import {
 		currentIndex,
-		hrefFor,
+		rowHref,
 		marker,
 		outlineChildren,
 		rowState,
@@ -174,11 +174,16 @@
 		heading: string;
 		/** `/ccc`, `/catechismus/compendium`, or `/documents/{slug}` — combined with a
 		    node's own first paragraph/question/section number to build its
-		    href. Unused, may be omitted, when `linkMode` is `"anchor"`. */
-		basePath?: string;
-		/** `"route"` (default): each row links to its own page,
-		    `${basePath}/{n}`. `"anchor"`: each row links to `#s{n}` on the
-		    current page instead — see the docblock's ANCHOR MODE note. */
+		    href. Unused, may be omitted, when `linkMode` is `"anchor"`.
+
+		    A FUNCTION, not a base path: it is the caller's `hrefFor` from
+		    `address.ts`, so a row's address is written where every other one
+		    is. Concatenating a prop here is how the Compendium's move left
+		    four 404s that no grep for the old prefix could have found. */
+		routeHref?: (n: number) => string;
+		/** `"route"` (default): each row links to its own page. `"anchor"`:
+		    each row links to `#s{n}` on the current page instead — see the
+		    docblock's ANCHOR MODE note. */
 		linkMode?: LinkMode;
 		/** Restricts which child kinds are descended into (and rendered) at
 		    every level, along with everything beneath a pruned-out child.
@@ -223,7 +228,7 @@
 		lang,
 		heading,
 		headingNote,
-		basePath,
+		routeHref,
 		linkMode = 'route',
 		outlineKinds,
 		anchorFor,
@@ -284,7 +289,7 @@
 				{#if Number.isFinite(anchor) || (node.anchor && linkableAnchors?.has(node.anchor))}
 					<a
 						id={state.isCurrent ? CURRENT_ID : undefined}
-						href={hrefFor(node, anchor as number, linkMode, basePath, anchorFor?.(node))}
+						href={rowHref(node, anchor as number, linkMode, routeHref, anchorFor?.(node))}
 						class:current={state.isCurrent}
 						aria-current={state.isCurrent ? 'page' : undefined}
 					>

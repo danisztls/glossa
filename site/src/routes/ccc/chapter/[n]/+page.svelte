@@ -261,7 +261,7 @@
 			currentN={spy.current ?? from ?? undefined}
 			lang={editions.lang}
 			heading={t('ccc.tableOfContents')}
-			basePath="/catechismus/caput"
+			routeHref={(n) => hrefFor({ kind: 'cccChapter', n })}
 			outlineKinds={OUTLINE_KINDS}
 			{anchorFor}
 		/>

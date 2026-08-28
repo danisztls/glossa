@@ -66,8 +66,9 @@
 	// case (see below).
 	const NAV_ITEMS = [
 		{ href: '/scriptura', key: 'nav.bible' },
+		// One entry for both the Catechism and its Compendium: they share an
+		// index, which offers every division in both works at once.
 		{ href: '/catechismus', key: 'nav.ccc' },
-		{ href: '/catechismus/compendium', key: 'nav.compendium' },
 		// 28 prayers is not a fifth pillar alongside four works running to
 		// thousands of pages each — but a corpus nobody can find from the nav
 		// is a corpus nobody reads, so it gets the same one-click-away

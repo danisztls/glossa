@@ -5,7 +5,6 @@
 	const SECTIONS = [
 		{ href: '/scriptura', key: 'nav.bible' },
 		{ href: '/catechismus', key: 'nav.ccc' },
-		{ href: '/catechismus/compendium', key: 'nav.compendium' },
 		{ href: '/summa', key: 'nav.summa' },
 		{ href: '/preces', key: 'nav.prayers' },
 		{ href: '/documenta', key: 'nav.magisterium' }

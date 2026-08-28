@@ -30,9 +30,11 @@ describe('sitemapPaths', () => {
 
 	it('covers every address in the manifest exactly once', () => {
 		const paths = sitemapPaths(manifest);
-		// 8 static + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
-		// + 2 compendium + 1 document + 1 prayer + 3 summa
-		expect(paths).toHaveLength(25);
+		// 7 static + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
+		// + 2 compendium + 1 document + 1 prayer + 3 summa. Seven, not eight:
+		// the Compendium has no landing page of its own -- the Catechism's
+		// index presents both works (`CatechismIndex.svelte`).
+		expect(paths).toHaveLength(24);
 		expect(new Set(paths).size).toBe(paths.length);
 	});
 

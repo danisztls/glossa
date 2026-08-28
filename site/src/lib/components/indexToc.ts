@@ -87,14 +87,20 @@ export interface SiblingLink {
  */
 export function siblingLink(
 	span: readonly [number | null, number | null] | undefined,
-	opts: { hrefBase: string; unit: string; abbrev: string; workTitle: string }
+	opts: {
+		/** The companion row's address, from `hrefFor`. */
+		href: (n: number) => string;
+		unit: string;
+		abbrev: string;
+		workTitle: string;
+	}
 ): SiblingLink | undefined {
 	if (!span) return undefined;
 	const [from, to] = span;
 	if (!Number.isFinite(from)) return undefined;
 	const range = runLabel(from as number, to, opts.unit);
 	return {
-		href: `${opts.hrefBase}/${from}`,
+		href: opts.href(from as number),
 		label: `${opts.abbrev} ${range}`,
 		title: `${opts.workTitle} — ${range}`
 	};

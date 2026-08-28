@@ -21,7 +21,9 @@
 	interface Props {
 		tree: StructureNode[];
 		lang: string;
-		hrefBase: string;
+		/** A row's address, from the caller's `hrefFor` — never a base path to
+		 *  concatenate. See `structureToc.ts`'s `rowHref` for why. */
+		href: (n: number) => string;
 		unit: string;
 		noAddressLabel: string;
 		/**
@@ -37,7 +39,7 @@
 		sibling?: (node: StructureNode) => SiblingLink | undefined;
 	}
 
-	let { tree, lang, hrefBase, unit, noAddressLabel, sibling }: Props = $props();
+	let { tree, lang, href, unit, noAddressLabel, sibling }: Props = $props();
 	let expanded = $state(new SvelteSet<string>());
 
 	function nodeKey(node: StructureNode): string {
@@ -82,7 +84,7 @@
 					{/if}
 
 					{#if Number.isFinite(anchor)}
-						<a class="row-title" href={`${hrefBase}/${anchor}`}>
+						<a class="row-title" href={href(anchor as number)}>
 							{#if label}<span class="kind-label">{label}</span>{/if}
 							{dt.title}
 						</a>
@@ -114,7 +116,7 @@
 							{@const destination = Number.isFinite(anchor) ? anchor : subAnchor}
 							<li>
 								{#if Number.isFinite(destination)}
-									<a href={`${hrefBase}/${destination}`}>
+									<a href={href(destination as number)}>
 										{#if sdt.ordinal}<span class="kind-label">{sdt.ordinal}</span>{/if}
 										{sdt.title}
 									</a>
