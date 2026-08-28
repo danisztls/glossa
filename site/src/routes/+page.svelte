@@ -428,26 +428,39 @@
 
 	/* --- Prayers --------------------------------------------------------- */
 
+	/* `.book-grid`'s gap, for `.book-btn`'s chips -- see below. */
 	.prayers-groups {
 		list-style: none;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: 0.4rem;
 		margin: 0 0 0.9rem;
 		padding: 0;
 	}
 
-	/* Same chip language as `.ccc-link` above -- a bordered tag reads as "one
-	   of several entry points" more clearly than a bare inline link list
-	   would for 5 section names sitting side by side. */
+	/* `.book-btn` (BookChapterPicker), which is the section directly above
+	   this one on this very page -- so two rows of chips that a reader sees
+	   one after the other were a filled surface with one padding and an
+	   unfilled one with another, differing in nothing that means anything. A
+	   prayer section and a book of the Bible are the same kind of target: a
+	   name out of a wrapped grid, leading into the text. The hover was
+	   already shared in the other direction (that component's comment names
+	   this class as where it copied its border-and-colour hover from); this
+	   is the rest of it -- ground, padding, height. Kept as a copy rather
+	   than lifted into `components.css`: `.book-btn` is a `<button>` with
+	   three state modifiers on top of this (`.current`, `.open`,
+	   `.sidebar`), and only its resting surface is what a chip here wants. */
 	.prayers-chip {
 		display: inline-flex;
+		align-items: center;
 		font-size: 0.85rem;
 		text-decoration: none;
 		color: var(--color-text);
+		background: var(--color-bg-elevated);
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
-		padding: 0.3rem 0.65rem;
+		padding: 0.35rem 0.55rem;
+		min-height: 2.1rem;
 	}
 
 	a.prayers-chip:hover {
