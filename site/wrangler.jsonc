@@ -181,7 +181,7 @@
 		{
 			"binding": "USAGE",
 			"database_name": "glossa-usage",
-			"database_id": "REPLACE_WITH_ID_FROM_WRANGLER_D1_CREATE",
+			"database_id": "a5525a74-9f55-4649-8fec-84b553acdbdc",
 			"migrations_dir": "migrations"
 		}
 	]

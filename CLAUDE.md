@@ -472,19 +472,23 @@ silently deletes data the stated policy says to keep. Note the two retention
 numbers are NOT the same and are not meant to be — 365 on the device
 (`RECORD_MAX_DAYS`), 400 in D1 (`RETENTION_DAYS`).
 
-**`npm run usage` needs a database that does not exist in a fresh clone.**
+**`npm run usage` needs a database whose schema a fresh clone has not
+applied.**
 
 ```sh
 cd site
-npx wrangler d1 create glossa-usage                        # once; paste the id
 npx wrangler d1 migrations apply glossa-usage --remote     # once
 npm run usage -- --days 30
 ```
 
-`wrangler.jsonc`'s `database_id` ships as a placeholder. The binding is
-optional in `src/worker.ts`, so a deploy without it serves the site normally
-and drops beacons — right for a statistic, and the reason a missing database
-is not a build error.
+The database exists and `wrangler.jsonc` carries its real `database_id` — it
+was a `REPLACE_WITH_ID_FROM_WRANGLER_D1_CREATE` placeholder until 2026-08-28,
+and while it was, the deployed worker dropped every beacon it received. The
+binding is optional in `src/worker.ts`, so a deploy without it serves the site
+normally and drops beacons — right for a statistic, the reason a missing
+database is not a build error, and the reason nothing reported the loss. What
+says the measurement is live is `npm run usage` returning rows; "no sessions
+recorded" reads the same whether nobody visited or nothing was ever written.
 
 **The device record expires after a year and that number is load-bearing in two
 directions** — see `RECORD_MAX_DAYS`. Shortening it is not free (it inflates the
