@@ -184,14 +184,14 @@ describe('partitionAssets', () => {
 	});
 
 	/**
-	 * The 404 page's illustration is 80 KB that a reader who never mistypes an
+	 * The 404 page's illustration is 77 KB that a reader who never mistypes an
 	 * address never needs. Content-hashed, so the content cache's terms suit it
 	 * exactly; but the favicon is an SVG the document head asks for on the
 	 * first offline load, and the fonts are what the shell renders with, so
 	 * neither may follow it out of the precache.
 	 */
 	it('defers raster images to the content cache but keeps the favicon and fonts', () => {
-		const img = '/_app/immutable/assets/reynard-preaching.hash.webp';
+		const img = '/_app/immutable/assets/reynard-preaching.hash.avif';
 		const favicon = '/_app/immutable/assets/favicon.hash.svg';
 		const font = '/_app/immutable/assets/eb-garamond.hash.woff2';
 		const withMedia = partitionAssets({

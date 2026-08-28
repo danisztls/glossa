@@ -25,17 +25,36 @@ on", translated per language — rather than a bare shelfmark, which would claim
 to _be_ f. 49v. Anything that replaces this with a faithful cut of the folio
 should change that string back.
 
-Encoding the shipped WebP:
+Encoding the shipped AVIF:
 
 ```sh
-magick assets/reynard-preaching.png -strip -define webp:method=6 \
-  -define webp:alpha-quality=100 -quality 80 \
-  site/src/lib/assets/reynard-preaching.webp
+avifenc -q 65 -s 0 --qalpha 100 -y 444 --jobs all \
+  assets/reynard-preaching.png site/src/lib/assets/reynard-preaching.avif
 ```
 
-`alpha-quality=100` is nearly free because the alpha is already a hard mask
-(0.1% of pixels are partially transparent), and quality 80 is indistinguishable
-from the master at 4× zoom.
+`--qalpha 100` is nearly free because the alpha is already a hard mask (0.1% of
+pixels are partially transparent) and encodes losslessly at 7 KB — the decoded
+alpha is bit-identical to the master's. `-y 444` rather than the encoder's usual
+4:2:0 because the invented gold filigree is fine chroma detail; 4:2:0 saved 1 KB
+and is not worth it. `-s 0` because this is encoded by hand once, so the slowest
+speed is free (it buys 2% over the plates' `-s 4`).
+
+Quality 65 was chosen by measuring, not by eye: DSSIM against the master,
+composited over both a white and a near-black ground because the picture is a
+cut-out and the mask is what it is for.
+
+| encoding                            | bytes  | DSSIM (white) |
+| ----------------------------------- | ------ | ------------- |
+| WebP q80 (shipped until 2026-08-28) | 91,376 | 0.00445       |
+| AVIF q50                            | 56,014 | 0.00871       |
+| AVIF q63                            | 75,833 | 0.00440       |
+| **AVIF q65**                        | 78,347 | 0.00409       |
+| AVIF q70                            | 94,719 | 0.00291       |
+
+The WebP is gone and nothing falls back to it. A browser that cannot render the
+AVIF is shown no illustration at all — `NotFound.svelte` drops the whole figure,
+caption included, on the image's `error` event. Its comment has the reasoning;
+the short version is that a credit line must not outlive the picture it credits.
 
 **If you ever cut a fresh version off the Commons scan, do not threshold its
 alpha at 255.** In a plain cut-out only about 18% of pixels are fully opaque —

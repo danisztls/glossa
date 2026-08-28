@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { t } from '$lib/i18n.svelte';
-	import reynard from '$lib/assets/reynard-preaching.webp';
+	import reynard from '$lib/assets/reynard-preaching.avif';
+
+	/** Set when the one `<img>` below fails to render -- see the comment on the
+	 *  figure. Never reset: nothing re-tries, and a second attempt in the same
+	 *  page view would fail for the same reason. */
+	let unavailable = $state(false);
 
 	const SECTIONS = [
 		{ href: '/scriptura', key: 'nav.bible' },
@@ -28,8 +33,43 @@
 	wrong one. This is a pen-and-wash painting, not line art: posterizing it
 	merged the fox's cream mitre into the cream ground, so the trace quietly
 	removed the bishop -- the one detail the picture is about -- and cost 656 KB
-	to do it. The WebP is 89 KB, keeps the mitre, and takes its
+	to do it. The AVIF is 77 KB, keeps the mitre, and takes its
 	theme-independence from the alpha channel instead.
+
+	AVIF AND NOT WEBP, which is what shipped until 2026-08-28. Both encode this
+	alpha losslessly -- it is a hard mask, 0.1% partially transparent -- and
+	both keep the mitre; AVIF is simply 14% smaller at a slightly lower DSSIM
+	against the master (0.0041 against 0.0044, measured composited over a white
+	AND a near-black ground, since the mask is the whole point). It also stops
+	this being the one image on the site that is not AVIF: Dore's 482 plates
+	already are, for a different and stronger reason -- they are grayscale, and
+	lossy WebP has no monochrome mode, so it carries two flat chroma planes for
+	nothing (`pipeline/scrapers/dore/plates.py`).
+
+	NO `<picture>` FALLBACK, AND NO EMPTY BOX EITHER. The browsers without
+	AVIF-and-alpha are Safari before 16.4, and a second encoding of a
+	decorative image on the error route is not worth the build asset. What
+	they get instead is nothing at all: the `onerror` below drops the whole
+	`<figure>`, caption included, because a credit line is the one part that
+	must not outlive the picture it credits -- "based on Royal MS 10 E IV"
+	standing alone over a gap reads as a claim about the page rather than
+	about an illustration.
+
+	It is `onerror` and not a feature probe on purpose. A probe answers only
+	the question asked (does this engine decode AVIF), and asks it a frame
+	late; the error event answers the question that actually matters -- did
+	THIS image render -- for every reason it can fail. The reason that is not
+	hypothetical here is the service worker: the file is DEFERRED_MEDIA
+	(`sw-policy.ts`), cached on first read and in no download wave, so a
+	reader who fills the offline library and later mistypes an address while
+	offline has never fetched it. That reader is on a browser that supports
+	AVIF perfectly well, and a probe would have shown them the empty box this
+	is here to prevent.
+
+	Keeping `width`/`height` on the element is what makes the supported path
+	free: the box is reserved from the attributes, the image loads into it,
+	and nothing moves. The collapse costs one reflow, and it costs it only on
+	the paths that were going to show a hole anyway.
 
 	IT IS NOT A REPRODUCTION, and the caption says so. The retouching invented
 	ornament the manuscript does not carry -- the mitre is plain cream with a
@@ -48,10 +88,12 @@
 	read out.
 -->
 <article class="content-column not-found">
-	<figure class="drollery">
-		<img src={reynard} alt="" width="1368" height="768" />
-		<figcaption>{t('notFound.credit')}</figcaption>
-	</figure>
+	{#if !unavailable}
+		<figure class="drollery">
+			<img src={reynard} alt="" width="1368" height="768" onerror={() => (unavailable = true)} />
+			<figcaption>{t('notFound.credit')}</figcaption>
+		</figure>
+	{/if}
 
 	<h1>{t('notFound.title')}</h1>
 	<p class="lede">{t('notFound.lede')}</p>
