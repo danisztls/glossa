@@ -222,6 +222,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.doctor-mellifluus.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII pelo VIII centenário da morte de São Bernardo de Claraval, louvando o \"doutor melífluo\": sua doutrina extraída da Escritura e dos Padres, seu estilo suave e ardente, sua vida contemplativa unida à ação enérgica na defesa da autoridade pontifícia e da fé, seu amor a Cristo e devoção filial à Mãe de Deus — convidando todos a imitar suas virtudes.",
+				"origin": "read"
+			}
+		},
 		"encyclical.dominum-et-vivificantem.en": {
 			"en": {
 				"text": "On the Holy Spirit, completing the Trinitarian sequence begun with Redemptor Hominis on the Son and Dives in Misericordia on the Father. In three parts it follows the Spirit given at the Supper and at Pentecost, his work of convincing the world concerning sin — including the sin against the Holy Spirit — and his office as the giver of life, with the Jubilee of the third millennium in view.",
@@ -273,6 +279,12 @@
 		"encyclical.fausto-appetente-die.en": {
 			"en": {
 				"text": "Benedict XV's encyclical for the seventh centenary of the death of St. Dominic, commending the Order of Preachers to the whole Church. It traces three marks of Dominican preaching — solid doctrine, fidelity to the Apostolic See, and devotion to the Virgin through the Rosary — recalling Dominic's disputations against heresy at Toulouse, the four popes drawn from his order, and St. Pius V's victory at Lepanto.",
+				"origin": "read"
+			}
+		},
+		"encyclical.fidei-donum.en": {
+			"en": {
+				"text": "Pius XII's 1957 encyclical on the missions, especially in Africa, describing the continent's rapid political and social change, the shortage of priests and material means in newly founded mission stations, and appealing to bishops of the older Christian nations to send diocesan priests, prayer, and financial support, plus lay Catholic Action workers, to the African missions.",
 				"origin": "read"
 			}
 		},
@@ -384,6 +396,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.in-plurimis.en": {
+			"en": {
+				"text": "Leo XIII's letter to the bishops of Brazil, prompted by Brazil's abolition of slavery, arguing that slavery contradicts the natural and divine order and surveying the Church's campaign against it — patristic teaching on Christian equality, papal condemnations of the trade under Pius II, Paul III and Gregory XVI — before denouncing the overland slave trade still running in Africa and counselling the newly freed and their former masters.",
+				"origin": "read"
+			}
+		},
 		"encyclical.in-praeclara-summorum.en": {
 			"en": {
 				"text": "Benedict XV's encyclical for the sixth centenary of Dante Alighieri's death, addressed to Catholic professors and students of literature. It presents Dante as a lifelong exemplar of Catholic faith whose Divine Comedy embodies Scripture, Christian philosophy and theology, and sound principles of civil government, and urges renewed devotion to his study against systems of education that exclude God.",
@@ -402,6 +420,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.insignes.en": {
+			"en": {
+				"text": "Leo XIII's 1896 encyclical to the bishops of Hungary, marking the thousandth anniversary of the Magyar settlement that founded the nation. Recalling the country's conversion under Prince Géza and St. Stephen, the royal crown sent by Sylvester II, and the Church's aid through crises — Innocent XI at Vienna and Buda, Gregory XIII's Roman college — it exhorts Hungarians to renewed Catholic fidelity amid the age's growing religious indifference.",
+				"origin": "read"
+			}
+		},
 		"encyclical.iucunda-sane.en": {
 			"en": {
 				"text": "Written for the thirteenth centenary of the death of St Gregory the Great, holding up his pastoral government — restoring faith and discipline while Rome collapsed around him — as the pattern for an age in crisis of unbelief. Pius X traces how rationalism and a misapplied critical science wear faith away, insists that only a return to Christ can save society, and asks for careful formation of candidates for the priesthood.",
@@ -411,6 +435,12 @@
 		"encyclical.laborem-exercens.en": {
 			"en": {
 				"text": "On human work as a fundamental dimension of man's existence, ninety years after Rerum Novarum. It separates work's objective sense — technology, the thing made — from its subjective sense, the person working, argues from that the priority of labour over capital, sets out the rights it founds in wages, unions, disabled and migrant workers, and closes on a spirituality of work drawn from Genesis and from Christ, himself a man of work.",
+				"origin": "read"
+			}
+		},
+		"encyclical.lacrimabili-statu.en": {
+			"en": {
+				"text": "Pius X's 1912 letter to the bishops of Latin America denouncing the continued enslavement, branding, massacre and trafficking of South American Indians despite slavery's formal abolition, and attributing the cruelty to greed and to remoteness from civil and religious oversight. He asks the bishops to sustain the Indian missions by preaching, alms and prayer, and renews Benedict XIV's condemnation of the trade.",
 				"origin": "read"
 			}
 		},
@@ -486,6 +516,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.mense-maio.pt": {
+			"pt": {
+				"text": "Carta encíclica de Paulo VI, publicada às vésperas do mês mariano de maio de 1965, convocando os fiéis à oração — especialmente ao Rosário — por duas intenções: o bom êxito da última sessão do Concílio Vaticano II e a paz mundial, ameaçada por conflitos armados, guerrilhas e atos de terrorismo. Termina confiando ambas as causas à intercessão de Maria, Rainha da paz.",
+				"origin": "read"
+			}
+		},
 		"encyclical.miserentissimus-redemptor.en": {
 			"en": {
 				"text": "Pius XI's encyclical on reparation to the Sacred Heart of Jesus, presented as completing the consecration he had established through Quas Primas and the feast of Christ the King. It grounds the duty of expiatory reparation in Christ's continuing sufferings within his Mystical Body, laments the era's apostasy and ingratitude toward the Sacred Heart, and decrees an annual Act of Reparation to be recited in every church.",
@@ -555,6 +591,12 @@
 		"encyclical.pacem.en": {
 			"en": {
 				"text": "John XXIII grounds peace in an order willed by God, traced through four relations: the rights and duties of the individual person; citizens and the public authority over them; states with one another, owed truth, justice, solidarity and an end to the arms race; and political communities with a still-forming world community, whose own public authority he sees the United Nations beginning to supply.",
+				"origin": "read"
+			}
+		},
+		"encyclical.pacem.pt": {
+			"pt": {
+				"text": "Carta encíclica de João XXIII (1963) sobre a paz entre todos os povos, fundada na verdade, na justiça, na caridade e na liberdade. Expõe direitos e deveres da pessoa humana, a origem e função da autoridade nos poderes públicos, as relações entre comunidades políticas e destas com a comunidade mundial, e conclui com diretrizes pastorais para a ação dos católicos na vida pública.",
 				"origin": "read"
 			}
 		},
@@ -770,6 +812,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.spe-salvi.pt": {
+			"pt": {
+				"text": "Carta encíclica de Bento XVI sobre a esperança cristã, partindo de «Spe salvi facti sumus» (Rm 8,24) para mostrar que a fé é uma esperança performativa, não mera informação. Percorre a Escritura e a Igreja primitiva, critica a redução moderna da esperança ao progresso material, e indica três «lugares» onde ela se aprende e exerce: a oração, o agir e sofrer, e o Juízo. Termina invocando Maria, estrela da esperança.",
+				"origin": "read"
+			}
+		},
 		"encyclical.spiritus-paraclitus.en": {
 			"en": {
 				"text": "On St Jerome as the model and teacher of scriptural study, for the fifteenth centenary of his death: his life, his defence of the full divine inspiration and inerrancy of Scripture against those who would limit it, his rules for the literal and the spiritual senses, and his insistence that clergy, religious and laity alike read Scripture daily and find in it the person of Christ.",
@@ -812,6 +860,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.ut-unum-sint.en": {
+			"en": {
+				"text": "John Paul II's 1995 encyclical on ecumenism, tracing the Catholic Church's own commitment to Christian unity through renewal, prayer, and dialogue with the Eastern and Western churches and ecclesial communities. Its final chapter, \"Quanta est nobis via?\", includes his invitation to other Christian leaders to help him find a way of exercising the papacy's ministry of unity that serves reconciliation rather than division.",
+				"origin": "read"
+			}
+		},
 		"encyclical.vehementer-nos.en": {
 			"en": {
 				"text": "Pius X's protest against the 1905 French Law of Separation, addressed to the cardinals, bishops, clergy and people of France. It rejects separation of Church and state as “a thesis absolutely false” that denies God public worship and confines the state to this life alone, then itemises the law's injuries — the seizure of ecclesiastical property and pious foundations — before calling French Catholics to unity with their bishops and the Holy See.",
@@ -847,6 +901,12 @@
 		"vatii.ad-gentes.en": {
 			"en": {
 				"text": "Vatican II's decree on the Church's missionary activity, grounded in the Trinitarian missions of the Son and the Spirit. It treats mission work itself — witness, preaching, and the gathering of a Christian community — then the young particular churches it plants, the calling and training of missionaries, the planning of missionary work, and the cooperation owed by bishops, priests, religious, and laity.",
+				"origin": "read"
+			}
+		},
+		"vatii.ad-gentes.pt": {
+			"pt": {
+				"text": "Decreto conciliar sobre a actividade missionária da Igreja: funda a missão no desígnio do Pai e no envio do Filho e do Espírito Santo, e trata do testemunho cristão, da pregação do Evangelho e da formação das comunidades cristãs, das Igrejas particulares, da vocação e formação dos missionários, da organização da obra missionária e do dever de cooperação de bispos, sacerdotes, institutos e leigos.",
 				"origin": "read"
 			}
 		},
@@ -934,6 +994,12 @@
 				"origin": "read"
 			}
 		},
+		"vatii.nostra-aetate.pt": {
+			"pt": {
+				"text": "Sobre a relação da Igreja com as religiões não-cristãs: parte das origens comuns da humanidade e das grandes perguntas existenciais, passa pelo hinduísmo, o budismo e o islão, detém-se longamente no vínculo espiritual entre cristãos e judeus — repudiando a culpa coletiva pela morte de Cristo e todo antissemitismo — e termina exortando à fraternidade universal contra a discriminação racial ou religiosa.",
+				"origin": "read"
+			}
+		},
 		"vatii.optatam-totius.en": {
 			"en": {
 				"text": "Vatican II's decree on the training of future priests, requiring each episcopal conference to draft a national program adapting formation to local conditions. It treats the fostering of vocations, the organization of major seminaries, and a spiritual formation modeled on Christ the priest, then calls for ecclesiastical studies reorganized around the mystery of Christ with Scripture as theology's soul, adding pastoral training and formation continuing after ordination.",
@@ -949,6 +1015,12 @@
 		"vatii.perfectae-caritatis.en": {
 			"en": {
 				"text": "Vatican II's decree on the renewal and adaptation of religious life, addressed to institutes of consecrated chastity, poverty and obedience. It lays down general principles of renewal — return to the Gospel and to each institute's founding spirit, adaptation to modern conditions — treats the contemplative, active, monastic, lay and secular-institute forms in turn, and gives norms on formation, cloister, habit, vocations, and the union of small communities.",
+				"origin": "read"
+			}
+		},
+		"vatii.presbyterorum-ordinis.en": {
+			"en": {
+				"text": "Vatican II's decree on the ministry and life of priests. It grounds the priesthood in Christ's own priestly office, then treats priests' ministry of preaching, sacraments and pastoral leadership, their relationships with bishops, fellow priests and the laity, and the vocation to holiness through obedience, celibacy and poverty, closing with an exhortation amid the difficulties of contemporary priestly life.",
 				"origin": "read"
 			}
 		},

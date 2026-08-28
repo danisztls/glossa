@@ -16,7 +16,21 @@ alphabetical, so that defects surface while batches remain to benefit from a
 fix. The corpus uses exactly two page shells: all 32 `vatii` works are the
 **old** shell, all 307 encyclicals the **modern** one.
 
-## STATE AS OF 2026-08-21 — read this first
+## STATE AS OF 2026-08-28 — read this first
+
+**Scope is 354 document works** (322 `encyclical`, 32 `vatii`), not the 339
+this file opened with. It moves as editions land, so it is measured rather
+than remembered — and `site/unpublished.json` withholds nothing today, so all
+354 are describable. **161 are described** and **156 carry a ToC oracle**;
+what remains is 193 works with no description and 198 with none of either.
+
+**Batches 4 through 8 are not written up here.** They landed between
+2026-08-24 and 2026-08-26 and were recorded in their commit messages instead
+(`git log site/descriptions.json`), which is where their findings are.
+Nothing has been reconstructed for them below: the file resumes at batch 9,
+and the count above is what says where the sweep stands.
+
+## State as of 2026-08-21
 
 **The schema migration is COMPLETE for the document works.** `sections.json`
 carries `html`; `structure.json` is the flat `{level, title, before}` array;
@@ -698,3 +712,107 @@ the six false demotions and the one mis-anchored heading in `ecclesiam.en`,
 and the five verse lines in `dilexit-nos.en`. Five works agree completely.
 One new finding the agents missed: `laudato-si.en` promotes a `* * * * *`
 separator to a heading.
+
+## Batch 9 (12 works) — 2026-08-28
+
+`vatii.presbyterorum-ordinis.en`, `vatii.ad-gentes.pt`,
+`vatii.nostra-aetate.pt`, `encyclical.pacem.pt`,
+`encyclical.lacrimabili-statu.en`, `encyclical.mense-maio.pt`,
+`encyclical.spe-salvi.pt`, `encyclical.in-plurimis.en`,
+`encyclical.insignes.en`, `encyclical.fidei-donum.en`,
+`encyclical.doctor-mellifluus.pt`, `encyclical.ut-unum-sint.en`.
+
+All 12 described and all 12 carry a ToC oracle. Stratified across both page
+shells (3 old, 9 modern), eight pontificates, six EN and six PT, and sizes
+from 5 sections to 219 — including one unnumbered edition (`mense-maio.pt`,
+whose text lives in `appendix.json`) to exercise the `numbered: false` path,
+which it did: the reader confirmed the absence of numbering against the raw
+page rather than inferring it from an empty `sections.json`.
+
+### The check was reading a field nobody writes any more
+
+`audit.py toc` reported 41 of 144 oracles disagreeing with the parse before
+the batch, and a third of that was the check's own defect. The heading field
+`ident` was renamed `label` on 2026-08-25 in the parser, in `structure.json`
+and in the brief — but not in the 32 oracle files already written with it,
+and `compare_toc` flattens `label`/`title`/`subtitle` and nothing else. So
+every labelled heading produced a different key on each side and came back as
+a `MISSING` and an `EXTRA` of the same title: `caritas-in-veritate.en`
+reported 12 differences that were six chapter headings matching perfectly.
+Renaming the key in the 189 affected headings took the count to **28 of 144**,
+and what remains is real.
+
+**A rename that leaves data behind is invisible to every check that reads the
+data through the new name.** Nothing failed; the audit simply reported the
+gap as though the parser had produced it.
+
+### The dateline was in seventeen tables of contents
+
+Read off the batch and then measured corpus-wide: **17 works published their
+own closing dateline as the last entry of their outline** — `Given in Rome at
+St. Peter's, 1 May 1896...`, `Dado em Roma, junto de São Pedro...`, `From the
+Vatican, 16 August 1898` — an entry with nothing under it, in four languages.
+
+The cause is `promote_italic_heading_run`. Its docstring already warns that a
+document's salutation and its dateline wear the same italics as its
+sub-headings, and the run rule is what keeps them out — but the run rule only
+asks whether the document has a run, not whether a given member of it heads
+anything. Where a document really does title its sub-sections, the dateline
+joins them on the strength of their number.
+
+The fix is positional, in the same shape `_opens_a_numbered_paragraph` uses at
+the other end of the document: **a heading is followed by the text it heads.**
+`_heads_nothing` refuses a candidate with no content after it — the signature,
+the language bar, the publisher's notice and the blank rule are furniture and
+do not count. A vocabulary of closing formulas would have been the wrong
+instrument at four languages and counting.
+
+Blast radius, measured as `writing-descriptions.md` prescribes (md5 of every
+`structure.json`/`sections.json`/`appendix.json` before and after a full
+re-parse, zero network fetches): **33 files across 17 works, all of them a
+dateline leaving the outline and nothing else.** No other work changed, and
+the text itself is not lost — it stays in the section as the closing prose it
+is. The audit's before/after diff shows only the intended removals.
+
+### Open, and each one evidence for a decision rather than a fix taken
+
+- **A masthead subtitle becomes a top-level heading** — `rerum-novarum.en`
+  ("Rights and Duties of Capital and Labor", its whole outline),
+  `ut-unum-sint.en` ("On commitment to Ecumenism"),
+  `dominum-et-vivificantem.en`, `redemptoris-missio.en`.
+  `extract_document_header` ends the masthead at the first block that neither
+  names the document nor names its author, and a subtitle names neither. The
+  docstring cites Rerum Novarum's two-node outline as the defect it fixed;
+  half of it survived.
+- **A trailing top-tier heading is demoted** — `EXHORTATION`
+  (`apostolicam-actuositatem.en`), `APPENDICES` (`inter-mirifica.en`),
+  `GENERAL DIRECTIVE` (`christus-dominus.en`), `INTRODUCTORY STATEMENT`
+  (`gaudium-et-spes.en`), `CONCLUSION AND EXHORTATION`
+  (`presbyterorum-ordinis.en`, at level 3). Five old-shell works, one shape:
+  the chapters arrive as `CHAPTER N` + title on two lines and are merged, and
+  a heading printed in the label's own style with no title line after it does
+  not get the level the merge gives its siblings. This is the levelling run
+  rule batch 2 recorded, seen from a new side.
+- **`pacem.pt` drops `INTRODUÇÃO` outright** — `<p align="center"><strong>`,
+  identical to the `Iª PARTE` labels the parser keeps two paragraphs later,
+  and identical to the `INTRODUÇÃO` every other PT encyclical records. One
+  document, in the window the masthead scan runs over.
+- **`ad-gentes.pt` does not merge its `Art. N` headings** with the titles
+  under them, because those title lines are wrapped in `<font size="2">`
+  where the `CAPÍTULO` titles are not. The label and the title land as two
+  flat level-2 nodes, and the eight sub-headings below them lose the tier
+  that would have distinguished them — 17 of the batch's differences are this
+  one defect.
+- **`quam-religiosa.en` loses "Peru and Christianity"**, a real italic heading
+  before the first numbered paragraph, dropped outright rather than demoted.
+  Pre-existing: verified by re-parsing the work with the dateline fix stashed.
+
+### One brief compliance note
+
+`ut-unum-sint.en`'s oracle was assembled from the parse minus the masthead
+nodes and then checked against the census, rather than read off the raw page
+and then compared. It agrees with the raw page where it was checked, and its
+one disagreement is a real parser defect — but an oracle derived from the
+output cannot contradict the output, which is the whole reason the brief asks
+for the other order. Worth restating in the batch prompt rather than trusting
+the procedure doc to carry it.
