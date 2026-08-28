@@ -29,37 +29,74 @@
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { getWork } from '$lib/corpus';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
+	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	const workId = $derived(content.workIdFor('bible'));
 	const work = $derived(workId ? getWork(workId) : undefined);
+
+	/* The book list's two divisions, which is the whole of this index's
+	   structure — `BookChapterPicker` prints these headings and, in its `'grid'`
+	   variant, gives them these ids. Written out rather than read off the
+	   picker because the corpus knows of no grouping finer than the testament
+	   (`CanonicalBook` carries an order and nothing else), so there is no tree
+	   here for `indexSidebarItems` to walk the way the Catechism's index has. */
+	const sidebarItems = $derived([
+		{ href: '#toc-ot', label: t('bible.testament.ot') },
+		{ href: '#toc-nt', label: t('bible.testament.nt') }
+	]);
 </script>
 
 <svelte:head>
 	<title>{t('bible.landing.title')} — {t('home.title')}</title>
 </svelte:head>
 
-<div class="content-column">
-	<!-- Edition and roll, and nothing else: there is no chapter here to
-	     bookmark or print — see `ReadingBar`. Guarded on `work` like the
-	     notice below, so a corpus that failed to sync leaves no empty rule. -->
-	{#if work}
-		<ReadingBar print={false} randomVerse />
-	{/if}
-	<h1>{t('bible.landing.title')}</h1>
-	<p class="tagline">{t('bible.landing.tagline')}</p>
+<div class="reading-layout">
+	<div class="content-column">
+		<!-- Edition and roll, and nothing else: there is no chapter here to
+		     bookmark or print — see `ReadingBar`. Guarded on `work` like the
+		     notice below, so a corpus that failed to sync leaves no empty rule. -->
+		{#if work}
+			<ReadingBar print={false} randomVerse />
+		{/if}
+		<h1>{t('bible.landing.title')}</h1>
+		<p class="tagline">{t('bible.landing.tagline')}</p>
 
-	{#if work}
-		<p class="edition-label">{work.title}</p>
-		<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
-	{/if}
+		{#if work}
+			<p class="edition-label">{work.title}</p>
+			<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
+		{/if}
 
+		{#if workId}
+			<section aria-labelledby="books-heading">
+				<h2 id="books-heading">{t('bible.landing.books')}</h2>
+				<BookChapterPicker currentWorkId={workId} collapsible={false} />
+			</section>
+		{/if}
+	</div>
+	<!--
+		THE SAME SHELL EVERY OTHER LIBRARY INDEX WEARS, and until now the one
+		this route did not. `/catechismus`, `/compendium` and `/summa` are all
+		`.reading-layout` with a sidebar; this page was a bare
+		`.content-column`. Above 80rem that grid centres the text column and the
+		aside AS A UNIT (app.css), so a page without one drew its column half an
+		aside-plus-gutter further along — and moving between `/scriptura` and any
+		chapter under it, which IS a `.reading-layout`, slid the whole page
+		sideways under the reader.
+
+		Two rows is the whole of this index's structure, and enough: seventy-three
+		books is a long page, and skipping forty-six of them to reach the New
+		Testament is the one jump it has to offer. `IndexSidebarToc` spies on the
+		fragments, so the row also says which testament is on screen.
+
+		Guarded on `workId` like the list it points at — the empty grid track
+		stays either way, so the column does not move when there is no corpus.
+	-->
 	{#if workId}
-		<section aria-labelledby="books-heading">
-			<h2 id="books-heading">{t('bible.landing.books')}</h2>
-			<BookChapterPicker currentWorkId={workId} collapsible={false} />
-		</section>
+		<aside class="index-aside">
+			<IndexSidebarToc heading={t('bible.landing.books')} items={sidebarItems} />
+		</aside>
 	{/if}
 </div>
 

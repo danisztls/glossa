@@ -433,7 +433,14 @@
 
 {#snippet groups()}
 	{#each testaments as group (group.key)}
-		<section class="testament">
+		<!-- A fragment target for `/scriptura`'s own sidebar, which lists these
+		     two divisions and spies on them as the page scrolls. Only in
+		     `'grid'`: that is the sole variant ever rendered on a page carrying
+		     such a sidebar, and the reading route mounts `'sidebar'` and
+		     `'panel'` at once — so an unconditional id would sit in the
+		     document twice, the collision `book-btn-` already puts the variant
+		     in its own id to avoid. -->
+		<section class="testament" id={variant === 'grid' ? `toc-${group.key}` : undefined}>
 			<h3>{t(`bible.testament.${group.key}`)}</h3>
 			<ul class="book-grid" class:sidebar={variant === 'sidebar'}>
 				{#each group.books as book (book.osis)}
