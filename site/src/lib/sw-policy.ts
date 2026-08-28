@@ -109,6 +109,27 @@ const HOST_CONFIG_FILES = ['/_headers', '/_redirects'];
  */
 const CRAWLER_FILES = ['/sitemap.xml', '/.well-known/security.txt', '/og.png'];
 
+/**
+ * Static files served over HTTP to this project's own infrastructure.
+ *
+ * A third list rather than more entries on the second, because the reason
+ * differs again: CRAWLER_FILES are read by a stranger's machine, these are
+ * read by ours. `corpus-routes.json` is fetched once per Worker isolate by
+ * `src/worker.ts` to decide whether an address exists;
+ * `reference-coverage.json` is read out of `build/` by
+ * `scripts/preflight-deploy.mjs` before an upload. Neither is fetched by any
+ * code that runs in a browser, and grep is the whole proof — no `.svelte` or
+ * client `.ts` names either.
+ *
+ * They were precached anyway, for as long as this partition has existed:
+ * `files` offers everything in `static/`, and a file is taken unless a list
+ * here refuses it. That is 39 KB spent at install by every reader on two files
+ * that reader will never read. Found 2026-08-28 while adding a third file of
+ * the same kind (`route-titles.json`), which is what made the category worth
+ * naming rather than fixing one file quietly.
+ */
+const INFRASTRUCTURE_FILES = ['/corpus-routes.json', '/reference-coverage.json'];
+
 /** Raster image extensions that belong in the content cache rather than the
  *  install precache. Deliberately excludes `.svg` (the favicon is one, and the
  *  document head asks for it before anything else) and every font format. */
@@ -208,7 +229,10 @@ export function partitionAssets(input: PartitionInput): AssetPartition {
 	const precacheUrls = [
 		...build.filter((url) => !contentUrls.has(contentPath(url, baseHref))),
 		...files.filter(
-			(url) => ![...HOST_CONFIG_FILES, ...CRAWLER_FILES].some((name) => url.endsWith(name))
+			(url) =>
+				![...HOST_CONFIG_FILES, ...CRAWLER_FILES, ...INFRASTRUCTURE_FILES].some((name) =>
+					url.endsWith(name)
+				)
 		),
 		shellDocumentUrl
 	];

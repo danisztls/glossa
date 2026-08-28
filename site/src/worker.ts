@@ -94,8 +94,26 @@ function getManifest(request: Request, assets: AssetFetcher): Promise<RouteManif
 	return manifestPromise;
 }
 
-function isNavigation(request: Request): boolean {
-	return request.method === 'GET' && request.headers.get('accept')?.includes('text/html') === true;
+/**
+ * Whether this request is asking for a page rather than a file.
+ *
+ * HEAD COUNTS, and it was excluded until 2026-08-28 — `method === 'GET'`
+ * alone. A HEAD then fell through to the asset binding, which has no file at
+ * `/catechismus/330`, so **every canonical address in the corpus answered 404
+ * to a HEAD while answering 200 to the GET of the same URL**. Nothing on this
+ * site issues one, which is why it went unseen; what does is exactly the
+ * traffic the address space exists to serve — link checkers, several
+ * unfurlers, and crawlers probing before they fetch.
+ *
+ * Nothing else needs to change to support it: the asset binding answers a HEAD
+ * with the shell's headers and a null body on its own, and `notFoundShell`
+ * passes that null body through unaltered.
+ */
+export function isNavigation(request: Request): boolean {
+	return (
+		(request.method === 'GET' || request.method === 'HEAD') &&
+		request.headers.get('accept')?.includes('text/html') === true
+	);
 }
 
 /** Fetch the SPA shell without changing the reader-visible address. */

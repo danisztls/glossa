@@ -82,7 +82,9 @@ describe('partitionAssets', () => {
 		'/_redirects',
 		'/sitemap.xml',
 		'/.well-known/security.txt',
-		'/og.png'
+		'/og.png',
+		'/corpus-routes.json',
+		'/reference-coverage.json'
 	];
 	const contentAssets = [
 		asset({ url: '_app/immutable/assets/ccc.hash.json' }),
@@ -142,6 +144,18 @@ describe('partitionAssets', () => {
 		expect(partition.shellUrls.has('/og.png')).toBe(false);
 		expect(partition.shellUrls.has('/manifest.webmanifest')).toBe(true);
 		expect(partition.shellUrls.has('/offline.html')).toBe(true);
+	});
+
+	/**
+	 * Served over HTTP, but only to this project's own infrastructure: the edge
+	 * worker reads the route manifest once per isolate, preflight reads the
+	 * coverage report out of `build/`, and nothing that runs in a browser
+	 * fetches either. Both were precached until 2026-08-28 — 39 KB spent at
+	 * install by every reader on two files no module names.
+	 */
+	it('drops the files only the edge worker and the deploy read', () => {
+		expect(partition.shellUrls.has('/corpus-routes.json')).toBe(false);
+		expect(partition.shellUrls.has('/reference-coverage.json')).toBe(false);
 	});
 
 	it('precaches the boot document', () => {
