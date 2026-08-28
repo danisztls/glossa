@@ -87,6 +87,7 @@ import { hrefFor } from '../src/lib/address.ts';
 import { buildCondensationMap } from '../src/lib/condensation.ts';
 import { PLATE_INTRINSIC_WIDTH, PLATE_WIDTHS } from '../src/lib/plates.ts';
 import { pairDivisions } from '../src/lib/toc-pairing.ts';
+import { isDivergentBook, toVulgateCandidates } from '../src/lib/versification.ts';
 import { assertNamed, buildRouteTitles, readDictionaries } from './route-titles.mjs';
 import { sitemapPaths, sitemapXml } from './sitemap.mjs';
 import {
@@ -248,6 +249,73 @@ const BIBLE_CHAPTER_CHUNK_TARGET_BYTES = 150_000;
  *  all — but it should be a decision someone makes and records here, which is
  *  the entire purpose of the check. */
 const CONTENT_FILE_CEILING_BYTES = 200_000;
+
+/**
+ * One book's chapters re-addressed from Hebrew numbering into the Vulgate.
+ *
+ * Verse by verse, through `toVulgateCandidates` — the same function
+ * `refs.ts` resolves a citation with, so an edition's own text and a citation
+ * into it cannot disagree about where a verse lives. At VERSE level the mapper
+ * is unambiguous (it returns two candidates only for a whole-chapter reference
+ * with no verse, which never occurs here), so the single candidate is taken and
+ * a second one would be a bug worth hearing about rather than a choice.
+ *
+ * A Hebrew chapter can SPLIT across two Vulgate chapters and two can MERGE into
+ * one, so chapters are rebuilt from scratch rather than relabelled: Heb 9 and
+ * Heb 10 both land in Vulg 9, and Heb 116 lands partly in Vulg 114 and partly
+ * in Vulg 115. Verse-level `notes`/`text_marked` ride along on the verse object
+ * untouched — they belong to the verse, not to its number.
+ *
+ * `summary` and `headings` follow the verse they sit before, which is the only
+ * defensible rule when a chapter splits: a heading is addressed by its verse
+ * (docs/corpus-schema.md, "Headings are presentation"), and a summary belongs
+ * to whichever Vulgate chapter its chapter's first verse landed in.
+ */
+function toVulgateChapters(osis, chapters, workId) {
+	const byChapter = new Map();
+	const chapterOf = (n) => {
+		let ch = byChapter.get(n);
+		if (!ch) byChapter.set(n, (ch = { n, verses: [] }));
+		return ch;
+	};
+	for (const source of chapters) {
+		let firstTarget;
+		for (const verse of source.verses) {
+			const candidates = toVulgateCandidates(osis, source.n, verse.n);
+			if (candidates.length !== 1) {
+				throw new Error(
+					`${workId} ${osis} ${source.n}:${verse.n}: ${candidates.length} Vulgate ` +
+						`candidates for one verse — the mapper should be unambiguous here`
+				);
+			}
+			const { chapter, verse: n } = candidates[0];
+			firstTarget ??= chapter;
+			chapterOf(chapter).verses.push({ ...verse, n });
+		}
+		for (const heading of source.headings ?? []) {
+			const [target] = toVulgateCandidates(osis, source.n, heading.before_verse);
+			const ch = chapterOf(target.chapter);
+			(ch.headings ??= []).push({ ...heading, before_verse: target.verse });
+		}
+		if (source.summary !== undefined && firstTarget !== undefined) {
+			const ch = chapterOf(firstTarget);
+			// A merge puts two source summaries on one Vulgate chapter. Keep the
+			// first and drop the second rather than concatenating: the field is
+			// what the source printed above a chapter, and a joined pair is a
+			// sentence no edition printed.
+			ch.summary ??= source.summary;
+		}
+	}
+	return [...byChapter.values()]
+		.sort((a, b) => a.n - b.n)
+		.map((ch) => ({
+			...ch,
+			verses: ch.verses.sort((a, b) => a.n - b.n),
+			...(ch.headings
+				? { headings: ch.headings.sort((a, b) => a.before_verse - b.before_verse) }
+				: {})
+		}));
+}
 
 function readJson(p) {
 	return JSON.parse(readFileSync(p, 'utf8'));
@@ -913,9 +981,27 @@ for (const workId of workIds) {
 	if (workId.startsWith('bible.')) {
 		const booksDir = path.join(workDir, 'books');
 		const books = [];
+		// An edition may store the numbering its SOURCE printed rather than the
+		// corpus's. `bible.crampon.fr` is the first: Crampon numbers the
+		// Psalter the Hebrew way and says so in his own footnote, and the
+		// scraper stores what the page says because `raw/` is the record of
+		// what the source said. Converting there was not an option — the
+		// mappers for the three wholesale-divergent books are an ALGORITHM and
+		// live only in `versification.ts`, and `common/versification.py`
+		// refuses those books outright rather than growing a second copy (see
+		// its docstring, and the twin it records deleting).
+		//
+		// So the conversion happens HERE, which is the first point downstream
+		// of the corpus that can import the real mapper. Everything below this
+		// line — both tiers, the routes, the xref index — then sees one address
+		// space, which is what every consumer already assumes.
+		const storedHebrew = manifest.psalm_numbering === 'hebrew';
 		for (const entry of readdirSync(booksDir).sort()) {
 			if (!entry.endsWith('.json')) continue;
 			const book = readJson(path.join(booksDir, entry));
+			if (storedHebrew && isDivergentBook(book.osis)) {
+				book.chapters = toVulgateChapters(book.osis, book.chapters, workId);
+			}
 			books.push({
 				osis: book.osis,
 				name: book.name,

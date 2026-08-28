@@ -91,7 +91,30 @@ interface WorkManifestBase {
 	generated_at: IsoDate;
 }
 
-export type PsalmNumbering = 'vulgate';
+/**
+ * Which numbering an edition's STORED text follows.
+ *
+ * Not a property of the corpus's address space, which is always the Vulgate:
+ * it is a property of one edition's own pages, recorded so the sync can
+ * convert. `bible.crampon.fr` is the first `'hebrew'` — Crampon numbers the
+ * Psalter the Hebrew way and states the policy in his own footnote, and the
+ * scraper stores what the page prints because `raw/` and `build/` are the
+ * record of what the source said.
+ *
+ * The conversion happens in `scripts/sync-corpus.mjs`, which is the first
+ * point downstream that can import `versification.ts` — the three
+ * wholesale-divergent books are converted by an ALGORITHM that deliberately
+ * exists nowhere else (`common/versification.py` refuses them rather than
+ * growing a second copy). So everything reading the content tier sees Vulgate
+ * addresses and no consumer needs to know this field exists.
+ *
+ * NOTE the field is named for the Psalter and the divergence is not confined
+ * to it: Crampon runs Hebrew verse division through the Old Testament
+ * generally — 156 of its 294 diverging chapters lie outside Psalms, Malachi
+ * and Joel. Renaming it is a schema decision nobody has taken yet; see
+ * PLAN.md.
+ */
+export type PsalmNumbering = 'vulgate' | 'hebrew';
 
 export interface BibleManifest extends WorkManifestBase {
 	type: 'bible';
