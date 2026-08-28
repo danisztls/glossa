@@ -1,0 +1,375 @@
+[
+  {
+    "id": "kaldi.hu-1sam15.34-mislabeled-43",
+    "locator": {
+      "osis": "1sam",
+      "chapter": 15,
+      "verse": 34
+    },
+    "field": "verse_number",
+    "from": 43,
+    "to": 34,
+    "reason": "The source anchors and prints this verse's locator as '1 Sám 15,43'. Chapter 15 has only 35 verses (bible.clementina.la agrees), so '43' addresses nothing and leaves verse 34 unprinted. A plausible digit transposition (34 -> 43) in the Word-exported transcription; content is the deciding evidence, not the label.",
+    "evidence": "raw/kaldi/1sam/szoveg.html:2432-2433: `<p class=vers><a name=\"09:015.043\"></a>1 Sám 15,43</p><p class=MsoNormal>Sámuel azután elméne Ramatába, Saul pedig fölméne házába Gábaába.</p>` -- bible.clementina.la 1sam 15:34: 'Abiit autem Samuel in Ramatha: Saul vero ascendit in domum suam in Gabaa' (Samuel departed to Ramah, and Saul went up to his house in Gabaa) -- the same sentence.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-lev18.25-mislabeled-35",
+    "locator": {
+      "osis": "lev",
+      "chapter": 18,
+      "verse": 25
+    },
+    "field": "verse_number",
+    "from": 35,
+    "to": 25,
+    "reason": "The source anchors and prints this verse's locator as '3 Móz. 18,35'. Chapter 18 has only 30 verses (bible.clementina.la agrees), so '35' addresses nothing and leaves verse 25 unprinted. A plausible digit transposition (25 -> 35); content is the deciding evidence, not the label.",
+    "evidence": "raw/kaldi/3moz/szoveg.html:3043-3044: `<p class=vers><a name=\"03:018.035\"></a>3 Móz. 18,35</p><p class=MsoNormal>és mikkel megfertőztetett a föld, melynek bűneit én meglátogatom, hogy kihányja lakóit.</p>` -- bible.clementina.la lev 18:25: 'et polluta est terra, cuius ego scelera visitabo, ut evomat habitatores suos' (and the land is polluted, whose iniquities I will visit, so that it may vomit out its inhabitants) -- the same sentence.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-luke23.6-mislabeled-61",
+    "locator": {
+      "osis": "luke",
+      "chapter": 23,
+      "verse": 6
+    },
+    "field": "verse_number",
+    "from": 61,
+    "to": 6,
+    "reason": "The source anchors and prints this verse's locator as 'Lk 23,61'. Chapter 23 has only 56 verses (bible.clementina.la agrees), so '61' addresses nothing and leaves verse 6 unprinted. A plausible digit insertion (6 -> 61); content is the deciding evidence, not the label.",
+    "evidence": "raw/kaldi/lk/szoveg.html:6176-6177: `<p class=vers><a name=\"49:023.061\"></a>Lk 23,61</p><p class=MsoNormal>Pilátus pedig hallván Galileát, kérdezé, vajjon galileai ember-e?</p>` -- bible.clementina.la luke 23:6: 'Pilatus autem audiens Galilaeam, interrogavit si homo Galilaeus esset' (But Pilate, hearing of Galilee, asked whether the man was a Galilean) -- the same sentence.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-ps99.4-mislabeled-46",
+    "locator": {
+      "osis": "ps",
+      "chapter": 99,
+      "verse": 4
+    },
+    "field": "verse_number",
+    "from": 46,
+    "to": 4,
+    "reason": "The source anchors and prints this verse's locator as 'Zsolt 99,46'. Psalm 99 has only 5 verses (bible.clementina.la agrees), so '46' addresses nothing and leaves verse 4 unprinted. A plausible digit insertion (4 -> 46); content is the deciding evidence, not the label.",
+    "evidence": "raw/kaldi/zsolt/szoveg.html:9339-9340: `<p class=vers><a name=\"23:099.046\"></a>Zsolt 99,46</p><p class=MsoNormal>Menjetek be az ő kapuin hálaadással, tornáczaiba dicséretekkel; adjatok hálát neki, dicsérjétek az ő nevét,</p>` -- bible.clementina.la ps 99:4: 'introite portas eius in confessione, atria eius in hymnis: confitemini illi. Laudate nomen eius' (enter his gates with confession, his courts with hymns; give thanks to him, praise his name) -- the same sentence.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-exod27-dup4-is-5",
+    "locator": {
+      "osis": "exod",
+      "chapter": 27
+    },
+    "field": "verse_duplicate",
+    "from": 4,
+    "to": 5,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 4 and the second is verse 5 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/2moz/szoveg.html:4636 anchors the second '2 Móz. 27,4' ('...és tedd az oltár kerülete alá, hogy a róstély az oltár közepéig érjen.') -- bible.clementina.la exod 27:5: 'quos pones subter arulam altaris: eritque craticula usque ad altaris medium.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-lev14-dup46-is-47",
+    "locator": {
+      "osis": "lev",
+      "chapter": 14
+    },
+    "field": "verse_duplicate",
+    "from": 46,
+    "to": 47,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 46 and the second is verse 47 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/3moz/szoveg.html:2397 anchors the second '3 Móz. 14,46' ('...és a ki abban hál, és eszik valamit, mossa meg ruháit.') -- bible.clementina.la lev 14:47: 'et qui dormierit in ea, et comederit quippiam, lavabit vestimenta sua.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-1sam30-dup4-is-14",
+    "locator": {
+      "osis": "1sam",
+      "chapter": 30
+    },
+    "field": "verse_duplicate",
+    "from": 4,
+    "to": 14,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 4 and the second is verse 14 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/1sam/szoveg.html:4793 anchors the second '1 Sám 30,4' ('Mivelhogy mi ütöttünk be Ceretinek déli részére és Júda ellen és Kálebnek déli részére, és Sziceleget meggyujtottuk tűzzel.'), printed between the real verses 13 and 15 -- bible.clementina.la 1sam 30:14: 'quia irruimus ad australem plagam Cerethi, et super Iudam, et ad meridiem Caleb, et Siceleg succendimus igni.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-1sam30-dup23-is-24",
+    "locator": {
+      "osis": "1sam",
+      "chapter": 30
+    },
+    "field": "verse_duplicate",
+    "from": 23,
+    "to": 24,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 23 and the second is verse 24 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/1sam/szoveg.html:4853 anchors the second '1 Sám 30,23' ('és senki se hallgasson közőletek e beszédre; mert egyenlő része lesz a harczra menőnek és a poggyásznál maradónak, és egyaránt osztozzanak.') -- bible.clementina.la 1sam 30:24: 'nec audiet vos quisquam super sermone hoc: aequa enim pars erit descendentis ad praelium, et remanentis ad sarcinas, et similiter divident.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-1sam31-dup3-is-13",
+    "locator": {
+      "osis": "1sam",
+      "chapter": 31
+    },
+    "field": "verse_duplicate",
+    "from": 3,
+    "to": 13,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 3 and the second is verse 13 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/1sam/szoveg.html:4969 anchors the second '1 Sám 31,3', printed after the real verse 12, at the very end of the chapter ('És vevék csontjaikat és a jábeszi berekbe temeték, és hét napig böjtölének.') -- bible.clementina.la 1sam 31:13: 'tuleruntque ossa eorum, et sepelierunt in nemore Iabes, et ieiunaverunt septem diebus.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-2sam18-dup21-is-29",
+    "locator": {
+      "osis": "2sam",
+      "chapter": 18
+    },
+    "field": "verse_duplicate",
+    "from": 21,
+    "to": 29,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 21 and the second is verse 29 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/2sam/szoveg.html:3014 anchors the second '2 Sám 18,21' ('És mondá a király: Békével van-e a gyermek Absalom? És mondá Akimaas: Nagy tolongást láttam...') -- bible.clementina.la 2sam 18:29: 'Et ait rex: Estne pax puero Absalom? Dixitque Achimaas: Vidi tumultum magnum...'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-2kgs21-dup2-is-22",
+    "locator": {
+      "osis": "2kgs",
+      "chapter": 21
+    },
+    "field": "verse_duplicate",
+    "from": 2,
+    "to": 22,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 2 and the second is verse 22 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/2kir/szoveg.html:3761 anchors the second '2 Kir 21,2' ('és elhagyá atyái Urát Istenét, és nem jára az Úr útján.') -- bible.clementina.la 2kgs 21:22: 'et dereliquit Dominum Deum patrum suorum, et non ambulavit in via Domini.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-2chr20-dup30-is-31",
+    "locator": {
+      "osis": "2chr",
+      "chapter": 20
+    },
+    "field": "verse_duplicate",
+    "from": 30,
+    "to": 31,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 30 and the second is verse 31 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/2kron/szoveg.html:2703 anchors the second '2 Krón 20,30' ('S igy országla Josafát Júda fölött; harminczöt esztendős vala...') -- bible.clementina.la 2chr 20:31: 'Regnavit igitur Iosaphat super Iudam, et erat triginta quinque annorum cum regnare coepisset...'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-jdt7-dup20-is-21",
+    "locator": {
+      "osis": "jdt",
+      "chapter": 7
+    },
+    "field": "verse_duplicate",
+    "from": 20,
+    "to": 21,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 20 and the second is verse 21 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/jud/szoveg.html:946 anchors the second 'Judit 7,20' ('hogy ne mondják a pogányok között: Hol vagyon az ő Istenök?') -- bible.clementina.la jdt 7:21: 'ut non dicant inter Gentes: Ubi est Deus eorum?'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-luke16-dup9-is-19",
+    "locator": {
+      "osis": "luke",
+      "chapter": 16
+    },
+    "field": "verse_duplicate",
+    "from": 9,
+    "to": 19,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 9 and the second is verse 19 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/lk/szoveg.html:4543 anchors the second 'Lk 16,9' ('Vala egy gazdag ember, bársonyba és bíborba öltözködő, és mindennap fényesen lakmározó.') -- bible.clementina.la luke 16:19: 'Homo quidam erat dives, qui induebatur purpura, et bysso: et epulabatur quotidie splendide.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-acts7-dup35-is-36",
+    "locator": {
+      "osis": "acts",
+      "chapter": 7
+    },
+    "field": "verse_duplicate",
+    "from": 35,
+    "to": 36,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 35 and the second is verse 36 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/apcsel/szoveg.html:1436 anchors the second 'Csel 7,35' ('Ez hozta ki őket, csodákat és jeleket tévén Egyiptom földén és a vörös tengeren és a pusztában negyven esztendeig.') -- bible.clementina.la acts 7:36: 'Hic eduxit illos faciens prodigia, et signa in terra Aegypti, et in rubro mari, et in deserto annis quadraginta.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-acts10-dup37-is-47",
+    "locator": {
+      "osis": "acts",
+      "chapter": 10
+    },
+    "field": "verse_duplicate",
+    "from": 37,
+    "to": 47,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 37 and the second is verse 47 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/apcsel/szoveg.html:2272 anchors the second 'Csel 10,37' ('Akkor szóla Péter: Vajjon megtagadhatja-e valaki a vizet, hogy meg ne kereszteltessenek ezek, kik a Szentlelket úgy vették, mint mi is?') -- bible.clementina.la acts 10:47: 'Tunc respondit Petrus: Numquid aquam quis prohibere potest ut non baptizentur hi, qui Spiritum sanctum acceperunt sicut et nos?'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-gal2-dup17-is-18",
+    "locator": {
+      "osis": "gal",
+      "chapter": 2
+    },
+    "field": "verse_duplicate",
+    "from": 17,
+    "to": 18,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 17 and the second is verse 18 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/gal/szoveg.html:418 anchors the second 'Gal 2,17' ('Mert, ha a miket lerontottam, ismét azokat építem föl, magamat vallom bűnösnek:') -- bible.clementina.la gal 2:18: 'Si enim quae destruxi, iterum haec aedifico: praevaricatorem me constituo.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-phil3-dup20-is-21",
+    "locator": {
+      "osis": "phil",
+      "chapter": 3
+    },
+    "field": "verse_duplicate",
+    "from": 20,
+    "to": 21,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 20 and the second is verse 21 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/fil/szoveg.html:635 anchors the second 'Fil 3,20' ('ki megújítja a mi alázatos testünket, hasonlóvá tévén az ő dicsőséges testéhez, azon erejénél fogva, melylyel mindent is alá vethet magának.') -- bible.clementina.la phil 3:21: 'qui reformabit corpus humilitatis nostrae, configuratum corpori claritatis suae, secundum operationem...'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-rev18-dup20-is-21",
+    "locator": {
+      "osis": "rev",
+      "chapter": 18
+    },
+    "field": "verse_duplicate",
+    "from": 20,
+    "to": 21,
+    "reason": "The source prints this verse's paragraph twice under the same locator number; the first occurrence is verse 20 and the second is verse 21 (verified against bible.clementina.la), so the second occurrence is promoted there rather than dropped.",
+    "evidence": "raw/kaldi/jel/szoveg.html:2066 anchors the second 'Jel 18,20' ('És egy erős angyal felvőn oly nagy követ, mint egy malomkő, és a tengerbe veté...') -- bible.clementina.la rev 18:21: 'Et sustulit unus Angelus fortis lapidem quasi molarem magnum, et misit in mare...'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-1sam20.10-mislabeled-11",
+    "locator": {
+      "osis": "1sam",
+      "chapter": 20,
+      "verse": 10
+    },
+    "field": "verse_number",
+    "from": 11,
+    "to": 10,
+    "reason": "Two paragraphs print as '1 Sám 20,11'; the first (kept by document order) is actually verse 10's content, and the second (held as a duplicate, see kaldi.hu-1sam20-dup11-is-11) is the real verse 11. Content is the deciding evidence for both.",
+    "evidence": "raw/kaldi/1sam/szoveg.html:3291 anchors the first '1 Sám 20,11' ('És felelé Dávid Jonatásnak: Ki hozza hírűl nekem, hatalán atyád valamit keményen felel neked felőlem?') -- bible.clementina.la 1sam 20:10: 'Responditque David ad Ionathan: Quis renunciabit mihi, si quid forte responderit tibi pater tuus dure?'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-1sam20-dup11-is-11",
+    "locator": {
+      "osis": "1sam",
+      "chapter": 20
+    },
+    "field": "verse_duplicate",
+    "from": 11,
+    "to": 11,
+    "reason": "The second '1 Sám 20,11' paragraph is the real verse 11 -- see kaldi.hu-1sam20.10-mislabeled-11, which is what frees this number for it.",
+    "evidence": "raw/kaldi/1sam/szoveg.html: the paragraph following the one at line 3291 ('És Jonatás mondá Dávidnak: Jer és menjünk ki a mezőre. És mikor mindketten kimentek a mezőre,') -- bible.clementina.la 1sam 20:11: 'Et ait Ionathas ad David: Veni, et egrediamur foras in agrum. Cumque exissent ambo in agrum,'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-ps89.2-mislabeled-9",
+    "locator": {
+      "osis": "ps",
+      "chapter": 89,
+      "verse": 2
+    },
+    "field": "verse_number",
+    "from": 9,
+    "to": 2,
+    "reason": "Two paragraphs print as 'Zsolt 89,9'; the first (kept by document order) is actually verse 2's content, and the second (held as a duplicate, see kaldi.hu-ps89-dup9-is-9) is the real verse 9. Content is the deciding evidence for both.",
+    "evidence": "raw/kaldi/zsolt/szoveg.html:8637 anchors the first 'Zsolt 89,9' ('Mielőtt a hegyek lettek, vagy a föld alkottatott és a világ, öröktől fogva és örökké vagy te, Isten!') -- bible.clementina.la ps 89:2: 'Priusquam montes fierent, aut formaretur terra et orbis... a saeculo et usque in saeculum tu es Deus.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-ps89-dup9-is-9",
+    "locator": {
+      "osis": "ps",
+      "chapter": 89
+    },
+    "field": "verse_duplicate",
+    "from": 9,
+    "to": 9,
+    "reason": "The second 'Zsolt 89,9' paragraph is the real verse 9 -- see kaldi.hu-ps89.2-mislabeled-9, which is what frees this number for it.",
+    "evidence": "raw/kaldi/zsolt/szoveg.html: the paragraph following the one at line 8637 ('Mert napjaink mind elenyésznek, és haragod miatt elfogyunk; a mi esztendeink pókhálók gyanánt tekinthetők;') -- bible.clementina.la ps 89:9: 'Quoniam omnes dies nostri defecerunt: et in ira tua defecimus. Anni nostri sicut aranea meditabuntur.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-john20.20-mislabeled-21",
+    "locator": {
+      "osis": "john",
+      "chapter": 20,
+      "verse": 20
+    },
+    "field": "verse_number",
+    "from": 21,
+    "to": 20,
+    "reason": "Two paragraphs print as 'Jn 20,21'; the first (kept by document order) is actually verse 20's content, and the second (held as a duplicate, see kaldi.hu-john20-dup21-is-21) is the real verse 21. Content is the deciding evidence for both.",
+    "evidence": "raw/kaldi/jn/szoveg.html:4713 anchors the first 'Jn 20,21' ('És midőn ezt mondotta, megmutatá nekik kezeit és oldalát. Örvendének a tanítványok, látván az Urat.') -- bible.clementina.la john 20:20: 'Et cum hoc dixisset, ostendit eis manus, et latus. Gavisi sunt ergo discipuli, viso Domino.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-john20-dup21-is-21",
+    "locator": {
+      "osis": "john",
+      "chapter": 20
+    },
+    "field": "verse_duplicate",
+    "from": 21,
+    "to": 21,
+    "reason": "The second 'Jn 20,21' paragraph is the real verse 21 -- see kaldi.hu-john20.20-mislabeled-21, which is what frees this number for it.",
+    "evidence": "raw/kaldi/jn/szoveg.html: the paragraph following the one at line 4713 ('Mondá azért nekik ismét: Békeség nektek! A mint engem küldött az Atya, én is küldelek titeket.') -- bible.clementina.la john 20:21: 'Dixit ergo eis iterum: Pax vobis. Sicut misit me Pater, et ego mitto vos.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-ezek40.21-mislabeled-24",
+    "locator": {
+      "osis": "ezek",
+      "chapter": 40,
+      "verse": 21
+    },
+    "field": "verse_number",
+    "from": 24,
+    "to": 21,
+    "reason": "Two paragraphs print as 'Ez 40,24'; the first (kept by document order) is actually verse 21's content, and the second (held as a duplicate, see kaldi.hu-ezek40-dup24-is-24) is the real verse 24. Content is the deciding evidence for both.",
+    "evidence": "raw/kaldi/ez/szoveg.html:6556 anchors the first 'Ez 40,24' ('és annak kamaráit, hármat innen és hármat amonnan, és annak pártázatát és tornáczát, az első kapu mértéke szerint, hosszát ötven könyöknyire, szélességét huszonöt könyöknyire.') -- bible.clementina.la ezek 40:21: 'Et thalamos eius tres hinc, et tres inde: et frontem eius, et vestibulum eius secundum mensuram portae prioris, quinquaginta cubitorum longitudinem eius, et latitudinem viginti quinque cubitorum.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-ezek40-dup24-is-24",
+    "locator": {
+      "osis": "ezek",
+      "chapter": 40
+    },
+    "field": "verse_duplicate",
+    "from": 24,
+    "to": 24,
+    "reason": "The second 'Ez 40,24' paragraph is the real verse 24 -- see kaldi.hu-ezek40.21-mislabeled-24, which is what frees this number for it.",
+    "evidence": "raw/kaldi/ez/szoveg.html: the paragraph following the one at line 6556 ('És kivive engem a déli útra, és ime kapu vala ott, mely délre nézett, és megméré annak pártázatát és tornáczát a fönebbi mértékek szerint;') -- bible.clementina.la ezek 40:24: 'Et eduxit me ad viam australem, et ecce porta, quae respiciebat ad Austrum: et mensus est frontem eius, et vestibulum eius iuxta mensuras superiores.'",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-heb13.25-mislabeled-26",
+    "locator": {
+      "osis": "heb",
+      "chapter": 13,
+      "verse": 25
+    },
+    "field": "verse_number",
+    "from": 26,
+    "to": 25,
+    "reason": "The source anchors and prints this verse's locator as 'Zsid 13,26'. Chapter 13 has only 25 verses (bible.clementina.la agrees), so '26' addresses nothing and leaves verse 25 unprinted. A plausible digit transposition (25 -> 26); content is the deciding evidence, not the label.",
+    "evidence": "raw/kaldi/zsid/szoveg.html:1989-1991: `<p class=vers><a name=\"65:013.026\"></a>Zsid 13,26</p><p class=MsoNormal>Kegyelem mindnyájotokkal. Amen.</p>` -- bible.clementina.la heb 13:25: 'Gratia cum omnibus vobis. Amen.' -- the same sentence.",
+    "added": "2026-08-28"
+  }
+]
