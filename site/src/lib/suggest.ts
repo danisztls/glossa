@@ -1052,7 +1052,12 @@ const SECTIONS: SectionWords[] = [
 		extra: ['documenta', 'documents', 'documentos']
 	},
 	{ kind: 'prayer', path: '/preces', titleKey: 'nav.prayers', extra: ['preces'] },
-	{ kind: 'summa', path: '/summa', titleKey: 'nav.summa', extra: ['summa', 'sth', 'stheol'] }
+	{
+		kind: 'summa',
+		path: '/doctores/summa',
+		titleKey: 'nav.summa',
+		extra: ['summa', 'sth', 'stheol']
+	}
 ];
 
 /** Folded forms -> section, built once: fourteen dictionaries do not change at

@@ -7,7 +7,7 @@ import { isUiLang } from '$lib/ui-langs';
  * ARRIVING AT ONE OF THESE IS AN EXPLICIT LANGUAGE CHOICE, and `i18n.set`
  * persists it exactly as the language switcher does. That is deliberate and it
  * has a cost worth stating: a reader who has chosen English and follows a
- * shared `/pt/summa` link has their stored choice changed. The alternative —
+ * shared `/pt/preces` link has their stored choice changed. The alternative —
  * render Portuguese without remembering it — is worse, not better, because
  * every link on the page that follows is UNPREFIXED (see `CHROME_PATHS`), so
  * the reader would be thrown back into English on their first click. These

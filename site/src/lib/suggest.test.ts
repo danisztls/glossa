@@ -159,7 +159,7 @@ describe('suggest', () => {
 			expect(hrefs('comp. 1')).toEqual(hrefs('comp 1'));
 			expect(hrefs('Comp. 1')).toEqual(hrefs('comp 1'));
 			expect(hrefs('ccc. 27')).toEqual(hrefs('ccc 27'));
-			expect(hrefs('s.th.')).toEqual(['/summa']);
+			expect(hrefs('s.th.')).toEqual(['/doctores/summa']);
 		});
 
 		it('offers the section’s landing page for a bare keyword', () => {
@@ -197,11 +197,11 @@ describe('suggest', () => {
 
 	describe('the Summa', () => {
 		it('reads a part and a question', () => {
-			expect(hrefs('sth i 1')[0]).toBe('/summa/i/1');
+			expect(hrefs('sth i 1')[0]).toBe('/doctores/summa/i/1');
 		});
 
 		it('reads an unambiguous part with no work named', () => {
-			expect(hrefs('ii-ii 184')[0]).toBe('/summa/ii-ii/184');
+			expect(hrefs('ii-ii 184')[0]).toBe('/doctores/summa/ii-ii/184');
 		});
 
 		it('will not read a lone Roman numeral as a part', () => {
@@ -221,7 +221,7 @@ describe('suggest', () => {
 	describe('titles', () => {
 		it('matches a question by a word inside its title', () => {
 			const found = suggest('perfection', { lang: 'en' });
-			expect(found.map((s) => s.href)).toContain('/summa/ii-ii/184');
+			expect(found.map((s) => s.href)).toContain('/doctores/summa/ii-ii/184');
 		});
 
 		it('will not match a title on one letter', () => {
@@ -234,8 +234,10 @@ describe('suggest', () => {
 			// Two letters match most of a corpus; the specific rows above would be
 			// pushed off the end of a list the reader can only see eight of.
 			const two = suggest('rf', { lang: 'en' }).map((s) => s.href);
-			expect(two).not.toContain('/summa/ii-ii/184');
-			expect(suggest('rfec', { lang: 'en' }).map((s) => s.href)).toContain('/summa/ii-ii/184');
+			expect(two).not.toContain('/doctores/summa/ii-ii/184');
+			expect(suggest('rfec', { lang: 'en' }).map((s) => s.href)).toContain(
+				'/doctores/summa/ii-ii/184'
+			);
 		});
 	});
 
@@ -453,7 +455,7 @@ describe('suggest', () => {
 				['john 3:16', '/scriptura/john/3#v16'],
 				['ccc 27', '/catechismus/27'],
 				['catech', '/catechismus'],
-				['ii-ii 184', '/summa/ii-ii/184']
+				['ii-ii 184', '/doctores/summa/ii-ii/184']
 			] as const) {
 				setFuzzyRanker(undefined);
 				const literal = suggest(query, { lang: 'en' });

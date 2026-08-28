@@ -94,6 +94,8 @@ export const es: Dictionary = {
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Sin número de pregunta en este corpus',
 	'nav.summa': 'Suma',
+	'doctores.landing.title': 'Doctores de la Iglesia',
+	'doctores.landing.tagline': 'Las obras teológicas de los Padres y Doctores de la Iglesia.',
 	'summa.landing.title': 'Suma Teológica',
 	'summa.landing.tagline': 'Tomás de Aquino, en inglés y en el latín en que escribió.',
 	'summa.tableOfContents': 'Índice',

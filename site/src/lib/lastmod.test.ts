@@ -121,17 +121,17 @@ describe('resolveLastmod', () => {
 		// resolves per address rather than per work — and an address English does
 		// not answer at is still a real page, in Latin.
 		const before = resolveLastmod({
-			fingerprints: build([['/summa/i/1', { text: 'a' }, '2026-08-23', 'la']]),
+			fingerprints: build([['/doctores/summa/i/1', { text: 'a' }, '2026-08-23', 'la']]),
 			ledger: {},
 			today: TODAY
 		});
-		expect(before.dates['/summa/i/1']).toBe('2026-08-23');
+		expect(before.dates['/doctores/summa/i/1']).toBe('2026-08-23');
 		const after = resolveLastmod({
-			fingerprints: build([['/summa/i/1', { text: 'CORRECTED' }, '2026-08-23', 'la']]),
+			fingerprints: build([['/doctores/summa/i/1', { text: 'CORRECTED' }, '2026-08-23', 'la']]),
 			ledger: before.entries,
 			today: TODAY
 		});
-		expect(after.dates['/summa/i/1']).toBe(TODAY);
+		expect(after.dates['/doctores/summa/i/1']).toBe(TODAY);
 	});
 
 	it('falls through to whatever answers, for a work in neither language', () => {
@@ -197,11 +197,11 @@ describe('resolveLastmod', () => {
 
 	it('seeds a new address from the corpus rather than from the build clock', () => {
 		const resolved = resolveLastmod({
-			fingerprints: build([['/summa/i/1', { n: 1 }, '2026-08-23']]),
+			fingerprints: build([['/doctores/summa/i/1', { n: 1 }, '2026-08-23']]),
 			ledger: {},
 			today: TODAY
 		});
-		expect(resolved.dates['/summa/i/1']).toBe('2026-08-23');
+		expect(resolved.dates['/doctores/summa/i/1']).toBe('2026-08-23');
 		expect(resolved.stats.unseeded).toBe(0);
 	});
 

@@ -101,6 +101,34 @@ export function summaPartFromSlug(slug: string): string | undefined {
 	return Object.keys(SUMMA_PART_SLUGS).find((part) => SUMMA_PART_SLUGS[part] === slug);
 }
 
+/**
+ * The id of a pontificate's section on `/documenta`, from the manifest's
+ * `pontiff_or_council` string ("Leo XIII" -> `pontiff-leo-xiii`).
+ *
+ * NOT AN `Address`, and it is here anyway. It addresses nothing in the
+ * corpus — a pontificate is a grouping the library page invents, not a work
+ * or a unit — so it gets no `kind` and `parseHref` never reads it. What puts
+ * it in this module is the rule the module exists to enforce: it is written
+ * in one place (`/documenta`, as the `id` on the group's `<details>` and in
+ * its sidebar) and read in another (the home page's Magisterium list, which
+ * links into that group), and a fragment written by two functions that
+ * merely agree today is the same defect `Address` was made to end. The
+ * pontiff string both sides pass comes from the same manifest field, so the
+ * derivation is all that has to hold.
+ *
+ * Diacritics are folded and everything that is not a letter or a digit
+ * becomes a hyphen, which keeps a Roman numeral ("Pius XI") and a name with
+ * an accent ("François") in the ASCII an `id` is safest as.
+ */
+export function pontiffAnchor(pontiff: string): string {
+	return `pontiff-${pontiff
+		.normalize('NFD')
+		.replace(/\p{Diacritic}/gu, '')
+		.toLowerCase()
+		.replace(/[^\p{Letter}\p{Number}]+/gu, '-')
+		.replace(/^-|-$/g, '')}`;
+}
+
 /** The canonical URL for an address. The only place one is written. */
 export function hrefFor(a: Address): string {
 	switch (a.kind) {
@@ -134,8 +162,13 @@ export function hrefFor(a: Address): string {
 			return `/catechismus/compendium/caput/${a.n}`;
 		case 'document':
 			return a.n === undefined ? `/documenta/${a.slug}` : `/documenta/${a.slug}#s${a.n}`;
+		// Nested under `/doctores`, the shelf for the Fathers and Doctors of the
+		// Church, because a work by one theologian is not a peer of Scripture,
+		// the Catechism or the Magisterium — see docs/decisions.md §Addresses
+		// and editions. It was `/summa/{part}/{question}` until 2026-08-28, and
+		// there is no compatibility layer, exactly as with `/compendium/{n}`.
 		case 'summa': {
-			const base = `/summa/${a.part}/${a.question}`;
+			const base = `/doctores/summa/${a.part}/${a.question}`;
 			return a.article === null ? base : `${base}#a${a.article}`;
 		}
 		case 'prayer':
@@ -160,7 +193,7 @@ const COMPENDIUM_CHAPTER_RE = /^\/catechismus\/compendium\/caput\/(\d+)$/;
 const COMPENDIUM_RE = /^\/catechismus\/compendium\/(\d+)$/;
 const DOCUMENT_RE = /^\/documenta\/([a-z0-9-]+)$/;
 const PRAYER_RE = /^\/preces\/([a-z0-9-]+)$/;
-const SUMMA_RE = /^\/summa\/([a-z-]+)\/(\d+)$/;
+const SUMMA_RE = /^\/doctores\/summa\/([a-z-]+)\/(\d+)$/;
 const ARTICLE_ANCHOR_RE = /^#a(\d+)$/;
 const SECTION_ANCHOR_RE = /^#s(\d+)$/;
 const VERSE_SPAN_RE = /^(\d+)-(\d+)$/;

@@ -93,6 +93,8 @@ export const sv: Dictionary = {
 	'compendium.abbrev': 'Komp.',
 	'compendium.noQuestionNumber': 'Inget frågenummer i detta korpus',
 	'nav.summa': 'Summa',
+	'doctores.landing.title': 'Kyrkolärare',
+	'doctores.landing.tagline': 'Kyrkofädernas och kyrkolärarnas teologiska verk.',
 	'summa.landing.title': 'Summa theologiae',
 	'summa.landing.tagline': 'Thomas av Aquino, på engelska och på det latin han skrev.',
 	'summa.tableOfContents': 'Innehåll',

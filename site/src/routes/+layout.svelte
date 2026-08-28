@@ -70,7 +70,7 @@
 		// One entry for both the Catechism and its Compendium: they share an
 		// index, which offers every division in both works at once.
 		{ href: '/catechismus', key: 'nav.ccc' },
-		// 28 prayers is not a fifth pillar alongside four works running to
+		// 28 prayers is not a pillar alongside three works running to
 		// thousands of pages each — but a corpus nobody can find from the nav
 		// is a corpus nobody reads, so it gets the same one-click-away
 		// treatment as everything else rather than being reachable only from
@@ -79,10 +79,16 @@
 		// The canonical route is Latin while the displayed label is
 		// "Magisterium" — URL identity and localised display language are
 		// intentionally independent.
-		{ href: '/documenta', key: 'nav.magisterium' },
-		// `/summa` is already Latin, so there is no English directory to
-		// re-export from here the way the four above have.
-		{ href: '/summa', key: 'nav.summa' }
+		{ href: '/documenta', key: 'nav.magisterium' }
+		// NO `/doctores` ENTRY, and that is deliberate (2026-08-28). The Summa
+		// moved off this bar and under the shelf for the Fathers and Doctors of
+		// the Church, where it belongs by category: the four above are the
+		// Church's own texts, and the Summa is one Doctor writing about them.
+		// The shelf stays unlisted — nothing on the site links to it — until it
+		// holds more than one work and that one has had its quality pass. It is
+		// still reachable by address, by the jump box, by a cross-reference and
+		// through the sitemap. Restoring it is this line:
+		//   { href: '/doctores', key: 'doctores.landing.title' }
 	] as const;
 
 	// A section is "active" for its whole subtree (`/scriptura/...` counts as
@@ -96,7 +102,7 @@
 	 * `await tick()` before `showModal()`: the sheet's copy of the links is
 	 * rendered by `{#if navOpen}`, so the element `showModal()` is called on
 	 * has to be given its content first. Rendering it only while open is also
-	 * what keeps the six anchors from existing twice in the document — the
+	 * what keeps the four anchors from existing twice in the document — the
 	 * header's own row is the other copy, and above 720px it is the real one.
 	 */
 	async function openNav() {

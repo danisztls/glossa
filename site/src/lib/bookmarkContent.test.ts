@@ -16,8 +16,8 @@ describe('bookmarkGroup', () => {
 	});
 
 	it('files a question and one of its articles under one work', () => {
-		expect(at('/summa/ii-ii/184').key).toBe('summa');
-		expect(at('/summa/ii-ii/184#a3').key).toBe('summa');
+		expect(at('/doctores/summa/ii-ii/184').key).toBe('summa');
+		expect(at('/doctores/summa/ii-ii/184#a3').key).toBe('summa');
 	});
 
 	// The Summa files with the doctrinal works rather than after them: the
@@ -28,7 +28,7 @@ describe('bookmarkGroup', () => {
 			at('/scriptura/gen/1').order,
 			at('/catechismus/1').order,
 			at('/catechismus/compendium/1').order,
-			at('/summa/i/1').order,
+			at('/doctores/summa/i/1').order,
 			at('/preces/our-father').order,
 			at('/documenta/lumen-gentium').order
 		]).toEqual([0, 1, 2, 3, 4, 5]);

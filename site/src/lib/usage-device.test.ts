@@ -199,7 +199,7 @@ describe('sectionFor', () => {
 	it('names the canonical sections and nothing else', () => {
 		expect(sectionFor('/')).toBe('home');
 		expect(sectionFor('/scriptura/gen/1')).toBe('scriptura');
-		expect(sectionFor('/summa')).toBe('summa');
+		expect(sectionFor('/doctores/summa')).toBe('summa');
 		expect(sectionFor('/catechismus/1234')).toBe('catechismus');
 		// The Compendium is not its path's first segment; it keeps its own
 		// bucket anyway, or the series reads zero instead of erroring.

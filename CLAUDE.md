@@ -231,6 +231,13 @@ decides _when_ something runs.
   before/after, reason and evidence — never a code special-case, and never
   invented text. A defect with no known correct value gets documented, not
   fixed (`docs/decisions.md` §Corrections and overrides).
+- **That rule is about PROSE. Broken markup is the parser's business**, however
+  few instances there are, and the class-vs-instance test does not reach it.
+  A correction amends what the source _said_ and so must be auditable; a
+  mangled tag changes nothing a reader reads and only decides whether the
+  parser can find the text at all, so repairing it restores the source rather
+  than amending it. `martini.py` normalises three (`<em<`, `<br<`, one `zem>`)
+  in code with the locators in its docstring, and that is correct.
 - **`pipeline/corrections/` and `pipeline/overrides/` are different layers.**
   A correction says the _source_ is wrong and edits the fetched HTML before
   parsing; an override says the source is fine and our _derivation_ is not,
@@ -372,11 +379,16 @@ with a 404. `src/lib/route-manifest.ts` holds that grammar and is unit-tested.
 Canonical reader URLs are Latin and do not vary with interface language:
 `/scriptura/{osis}/{chapter}`, `/catechismus/{n}`, `/catechismus/caput/{n}`,
 `/catechismus/compendium/{n}`, `/catechismus/compendium/caput/{n}`,
-`/documenta/{slug}`, `/preces/{slug}`, `/colophon`. The English roots
-(`/bible`, `/ccc`, `/documents`, `/prayers`) deliberately resolve as invalid —
-there is no compatibility layer, and **`/compendium/{n}` joined them on
-2026-08-28** when the Compendium moved under the Catechism it condenses
-(`docs/decisions.md` §Addresses and editions). Note the route directories under `src/routes/` are still
+`/documenta/{slug}`, `/doctores/summa/{part}/{question}`, `/preces/{slug}`,
+`/colophon`. The English roots (`/bible`, `/ccc`, `/documents`, `/prayers`)
+deliberately resolve as invalid — there is no compatibility layer, and
+**`/compendium/{n}` and `/summa/{part}/{question}` both joined them on
+2026-08-28**, when the Compendium moved under the Catechism it condenses and the
+Summa moved under `/doctores`, the shelf for the Fathers and Doctors of the
+Church (`docs/decisions.md` §Addresses and editions). **`/doctores` is not in
+the nav**, deliberately: the Summa is awaiting a quality pass and the shelf holds
+nothing else yet, so nothing in the reading interface links to it. Restoring the
+entry is one line in `+layout.svelte`, where the comment says so. Note the route directories under `src/routes/` are still
 named in English, with the Latin ones as thin re-exports; the canonical name
 and the directory name do not match.
 
@@ -485,10 +497,11 @@ answers all ~6,000 addresses, so everything a consumer that does not render lear
 comes from `src/worker.ts`, which now rewrites the shell's `<head>` per address.
 Five things about it will bite before the design will.
 
-**Seven pages take a language prefix and ~5,800 do not, and the line is not
+**Eight pages take a language prefix and ~5,800 do not, and the line is not
 cosmetic.** `CHROME_PATHS` in `route-manifest.ts` lists them — `/`,
-`/scriptura`, `/catechismus`, `/documenta`, `/summa`, `/preces`, `/colophon` —
-and they are the pages whose every word IS the interface, so the Portuguese one
+`/scriptura`, `/catechismus`, `/documenta`, `/doctores`, `/doctores/summa`,
+`/preces`, `/colophon` — and they are the pages whose every word IS the
+interface, so the Portuguese one
 is a different page rather than the same page relabelled. A reading address
 names a citation, the same citation in every language, and takes no prefix:
 `/pt/catechismus/330` is a 404 on purpose. Prefixing those would publish
@@ -498,20 +511,23 @@ other while serving byte-identical English text through
 
 **A cluster is fifteen URLs, and the unprefixed one is not the English page.**
 Fourteen prefixed plus the bare path, which is `x-default` because it
-NEGOTIATES; `/en/summa` exists separately because pinning English is not the
+NEGOTIATES; `/en/doctores` exists separately because pinning English is not the
 same as negotiating and happening to get it. Every member declares the whole
 cluster including itself, and every member self-canonicalizes — a prefixed page
 canonicalizing to the bare path asks to be de-indexed, which leaves a cluster of
 one.
 
 **The chrome heads are read out of the dictionaries, never written.**
-`CHROME_KEYS` in `scripts/route-titles.mjs` names the keys, all of which every
-one of the fourteen dictionaries already carries, so adding a chrome page means
-finding the key a translator has already written rather than commissioning
+`CHROME_KEYS` in `scripts/route-titles.mjs` names the keys, and every one of the
+fourteen dictionaries has to carry all of them, so the cheap way to add a chrome
+page is to find a key a translator has already written rather than commission
 fourteen new strings. `chromeNames` deliberately does NOT fall back to English
 the way `t()` does: a cluster whose Portuguese member is described in English is
 the one failure an `hreflang` set is checked for, so a missing key fails the
-sync instead.
+sync instead. `/doctores` is the one page that could not reuse a key
+(2026-08-28) and cost two new strings in fourteen languages — pick a name with
+an established translation, or that number is fourteen inventions rather than
+fourteen lookups.
 
 **`UI_LANGS` lives in `src/lib/ui-langs.ts`, a plain module.** `i18n.svelte.ts`
 constructs its store at module scope, so importing it reads `localStorage` and

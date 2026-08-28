@@ -93,6 +93,8 @@ export const ar: Dictionary = {
 	'compendium.abbrev': 'المختصر',
 	'compendium.noQuestionNumber': 'لا رقم سؤال في هذه المدوّنة',
 	'nav.summa': 'الخلاصة',
+	'doctores.landing.title': 'ملافنة الكنيسة',
+	'doctores.landing.tagline': 'الأعمال اللاهوتية لآباء الكنيسة وملافنتها.',
 	'summa.landing.title': 'الخلاصة اللاهوتيّة',
 	'summa.landing.tagline': 'توما الأكويني، بالإنكليزيّة وباللاتينيّة التي كتب بها.',
 	'summa.tableOfContents': 'الفهرس',

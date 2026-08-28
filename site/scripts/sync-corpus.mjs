@@ -1806,7 +1806,7 @@ const routeManifest = {
 	// Unioned across editions, like `bible` above and for the same reason:
 	// the edge answers "is this an address?", and which edition has text for
 	// it is the reader's own language fallback to decide. The Supplement
-	// exists in English only, and `/summa/suppl/77` is a real address on that
+	// exists in English only, and `/doctores/summa/suppl/77` is a real address on that
 	// basis alone.
 	summa: Object.fromEntries(
 		Object.entries(summaAddresses)

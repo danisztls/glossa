@@ -125,6 +125,7 @@ const SCRIPTURE = 'Sacred Scripture';
 const CATECHISM = 'Catechism of the Catholic Church';
 const COMPENDIUM = 'Compendium of the Catechism';
 const SUMMA = 'Summa Theologiae';
+const DOCTORES = 'Doctors of the Church';
 const MAGISTERIUM = 'Documents of the Magisterium';
 const PRAYERS = 'Prayers';
 
@@ -155,7 +156,11 @@ const STATIC_HEADS: Record<
 		title: `${MAGISTERIUM} — ${SITE_NAME}`,
 		description: `Encyclicals, the documents of the Second Vatican Council, and apostolic exhortations, with their citations linked to the texts they name.`
 	},
-	'/summa': {
+	'/doctores': {
+		title: `${DOCTORES} — ${SITE_NAME}`,
+		description: `The theological works of the Fathers and Doctors of the Church, read at the source with their citations linked to the texts they name.`
+	},
+	'/doctores/summa': {
 		title: `${SUMMA} — ${SITE_NAME}`,
 		description: `Thomas Aquinas's Summa Theologiae in English and Latin, question by question, with its citations linked to Scripture and the Fathers.`
 	},
@@ -310,19 +315,27 @@ function chromeHead(
 	};
 }
 
-/** `('pt', '/')` -> `/pt`; `('pt', '/summa')` -> `/pt/summa`. */
+/** `('pt', '/')` -> `/pt`; `('pt', '/doctores')` -> `/pt/doctores`. */
 function chromeHref(lang: string, path: string): string {
 	return path === '/' ? `/${lang}` : `/${lang}${path}`;
 }
 
 /** The site's own sections, for the `<noscript>` on the home page: the six
- *  places a crawler with no script can start from. */
+ *  places a crawler with no script can start from. Six, not the four in
+ *  `NAV_ITEMS` — this list is a map of what is published, and `/colophon` has
+ *  never been in the bar either. */
 function sectionLinks(): Crumb[] {
 	return [
 		{ name: SCRIPTURE, href: '/scriptura' },
 		{ name: CATECHISM, href: '/catechismus' },
 		{ name: MAGISTERIUM, href: '/documenta' },
-		{ name: SUMMA, href: '/summa' },
+		// The shelf, not the Summa on it. This list is what a crawler with no
+		// script can walk, and the shelf is the address that will still name
+		// the right page once it holds more than one work. It is here and NOT
+		// in `NAV_ITEMS` on purpose: the sitemap already publishes it, so
+		// leaving it out would make this map poorer than the sitemap for no
+		// gain, while the readable navigation stays as the reader chose.
+		{ name: DOCTORES, href: '/doctores' },
 		{ name: PRAYERS, href: '/preces' },
 		{ name: 'Colophon', href: '/colophon' }
 	];
@@ -468,9 +481,14 @@ function bodyHead(
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
-				crumbs: [ROOT, { name: SUMMA, href: '/summa' }, { name: label, href: pathname }],
+				crumbs: [
+					ROOT,
+					{ name: DOCTORES, href: '/doctores' },
+					{ name: SUMMA, href: '/doctores/summa' },
+					{ name: label, href: pathname }
+				],
 				links: [
-					{ name: SUMMA, href: '/summa' },
+					{ name: SUMMA, href: '/doctores/summa' },
 					...summaLink(part, address.part, prev),
 					...summaLink(part, address.part, next)
 				]
@@ -496,7 +514,7 @@ function numberLink(label: string, base: string, n: number | undefined): Crumb[]
 function summaLink(part: string, slug: string, question: number | undefined): Crumb[] {
 	return question === undefined
 		? []
-		: [{ name: `Summa ${part} q. ${question}`, href: `/summa/${slug}/${question}` }];
+		: [{ name: `Summa ${part} q. ${question}`, href: `/doctores/summa/${slug}/${question}` }];
 }
 
 /**

@@ -125,6 +125,8 @@ export const la: Dictionary = {
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Numerus interrogationis in hoc corpore deest',
 	'nav.summa': 'Summa',
+	'doctores.landing.title': 'Doctores Ecclesiae',
+	'doctores.landing.tagline': 'Opera theologica Patrum et Doctorum Ecclesiae.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline': 'Sancti Thomae Aquinatis, Latine ut scripsit et Anglice.',
 	'summa.tableOfContents': 'Index quaestionum',

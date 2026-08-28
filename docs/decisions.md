@@ -271,6 +271,20 @@ discriminator is cross-language and the parser reads one document at a time.
 parser improving is the _expected_ way for one to stop matching — indistinguishable from
 being aimed at the wrong unit unless the run says which entry and why.
 
+**Broken markup is the parser's business, not a correction, however few instances there
+are.** The axis is what the defect is made of, not how many there are — the class-vs-instance
+test in the table above sorts _prose_ defects and does not reach this one. A correction is
+about the text a reader reads: a wrong word, a wrong number, a mismatched marker. It earns a
+locator, evidence and loud drift-failure because someone must be able to audit a change to
+what the source said. A corrupted **tag** changes nothing a reader reads. It changes only
+whether the parser can find the text at all, and repairing it restores the source rather than
+amending it. `bible.martini.it` meets three — `<em<` for `<em>` ten times, one `<br<`, and one
+`zem>` — each an opening tag whose own `>` is missing or mangled, which a permissive stripper
+swallows real words across. All three are normalised in `martini.py` before parsing, the
+single instance included, with the locators in its module docstring. Filing them would put a
+byte sequence with no address into a layer whose every entry is locator-plus-field, to record
+an edit that leaves the text identical.
+
 **Presentation is not a corrections matter.** The mirrors' loose citation spacing is a
 typesetting habit of the source (thousands of instances), tidied at render,
 whitespace-only, verified to add and remove no mark. The corpus keeps what was printed.
@@ -559,10 +573,10 @@ grammar built on "," reads none of its 62 references.
 **A canonical URL selects a reference; the reader's preference selects the edition.**
 So every reader URL is **edition-free** and Latin, and does not vary with interface
 language: `/scriptura/{osis}/{chapter}`, `/catechismus/{n}`, `/catechismus/caput/{n}`,
-`/catechismus/compendium/{n}`, `/documenta/{slug}`, `/preces/{slug}`, `/signata`,
-`/colophon`. The English roots deliberately resolve as invalid; there is no compatibility
-layer. (Route directories under `src/routes/` are still named in English, with Latin
-re-exports.)
+`/catechismus/compendium/{n}`, `/documenta/{slug}`, `/doctores/summa/{part}/{question}`,
+`/preces/{slug}`, `/signata`, `/colophon`. The English roots deliberately resolve as
+invalid; there is no compatibility layer. (Route directories under `src/routes/` are still
+named in English, with Latin re-exports.)
 
 **The Compendium is addressed under the Catechism** (2026-08-28). It was `/compendium/{n}`
 until then, and the move is what the work is: the _Compendium Catechismi Catholicae
@@ -584,6 +598,52 @@ written twice, and they had already drifted apart in their `<title>` tags. So th
 nav entry, `/catechismus/compendium` is a path segment rather than a page — the way
 `/catechismus/caput` already was — and the Compendium's own edition picker and copyright
 notice live on the pages where a reader actually reads it.
+
+**The Summa is addressed under `/doctores`, a shelf for the Fathers and Doctors of the
+Church** (2026-08-28). It was `/summa/{part}/{question}` and a fifth entry in the main
+navigation, sitting as a peer of Scripture, the Catechism, the Magisterium and the
+prayers. Those four are the Church's own texts; the Summa is one Doctor writing about
+them, and the corpus already draws that line internally — `research/summa-and-fathers.md`
+§5 says the Summa and the Fathers "need a new work type", and `research/copyright.md` §5's
+posture toward Church-owned texts explicitly does not transfer to an eight-centuries-dead
+theologian whose modern translators are ordinary commercial publishers. The shelf is the
+category that was missing.
+
+`/doctores` and not `/patres` or `/traditio`. `patres` excludes Aquinas, who is a Doctor
+and not a Father; `traditio` is the elegant one and the wrong one, because it would label
+a private theologian's writings with the name of a source of revelation. `doctores` also
+has an established translation in all fourteen interface languages, which matters because
+`chromeNames` does not fall back to English — a coined category would have meant
+commissioning fourteen inventions rather than looking up fourteen terms. The realistic
+patristic ingest (Augustine, Jerome, Ambrose, Gregory, Chrysostom, Damascene) are all
+Doctors as well as Fathers, so the name covers the shelf it will hold.
+
+The nested spelling, `/doctores/summa/{part}/{question}`, rather than renaming the
+existing prefix: the shelf and the work have to be different addresses, or the second work
+on the shelf has nowhere to go. `/doctores` is a shelf like `/documenta`, and
+`/doctores/summa` is a work index like `/catechismus`. Both are chrome — every word on
+either is the interface — so both take the fourteen language prefixes, and
+`/doctores/summa` is the first two-segment member of `CHROME_PATHS`. The cost is the same
+one the Compendium's move accepted three paragraphs up and is accepted for the same
+reason: every saved Summa bookmark is dropped, and there is no compatibility layer.
+`scripts/lastmod.json`'s 611 Summa entries were re-keyed rather than left to expire,
+because `<lastmod>` means "when the text last changed" and the text did not change.
+
+**The shelf is unlisted, and that is a separate decision from the move** (2026-08-28).
+`NAV_ITEMS` is four entries now and names no shelf: the Summa is awaiting a quality pass,
+and until it has had one and has company on the shelf, nothing in the reading interface
+links to `/doctores`. It stays reachable by address, by the jump box, by a cross-reference
+from the Catechism, and through the sitemap; `shell-head.ts`'s `sectionLinks` still names
+it for a crawler with no script, because the sitemap publishes it either way and a
+`<noscript>` map poorer than the sitemap buys nothing. This cuts against the rule the
+prayers entry states in the same file — "a corpus nobody can find from the nav is a corpus
+nobody reads" — and is meant to: the Summa is being held back deliberately, not filed
+badly. Restoring it is one line, named in the comment where the entry used to be.
+
+The usage beacon keeps `summa` as its own bucket and adds `doctores` for the shelf
+(`usage-schema.ts`), by the same special case `/catechismus/compendium` already has. A
+series that broke at the move would read as a collapse in readership rather than a change
+of address.
 
 **A canonical URL is written in `hrefFor` and nowhere else, and that is now true rather
 than merely stated.** `StructureIndex` and `StructureSidebarToc` took a `hrefBase` /

@@ -118,7 +118,7 @@ describe('refHref', () => {
 
 	it('links an article as a fragment on its question’s page', () => {
 		const [seg] = summaSegments('STh II-II, 184, 3');
-		expect(refHref(seg, ctx)).toBe('/summa/ii-ii/184#a3');
+		expect(refHref(seg, ctx)).toBe('/doctores/summa/ii-ii/184#a3');
 	});
 
 	it('is edition-free, so a Portuguese reader gets a live link', () => {
@@ -128,7 +128,7 @@ describe('refHref', () => {
 
 	it('degrades to the question page when the article does not exist', () => {
 		const [seg] = summaSegments('STh II-II, 184, 97');
-		expect(refHref(seg, ctx)).toBe('/summa/ii-ii/184');
+		expect(refHref(seg, ctx)).toBe('/doctores/summa/ii-ii/184');
 	});
 
 	it('emits no link at all for a question no edition has', () => {
@@ -138,7 +138,7 @@ describe('refHref', () => {
 
 	it('links the Supplement, which only English has', () => {
 		const [seg] = summaSegments('STh Suppl, 77, 4');
-		expect(refHref(seg, ctx)).toBe('/summa/suppl/77#a4');
+		expect(refHref(seg, ctx)).toBe('/doctores/summa/suppl/77#a4');
 	});
 });
 
@@ -175,12 +175,12 @@ describe('addresses', () => {
 			prayers: [],
 			summa: { i: [1, 71], 'ii-ii': [184], suppl: [77] }
 		};
-		expect(isCanonicalPath('/summa/ii-ii/184', manifest)).toBe(true);
-		expect(isCanonicalPath('/summa/suppl/77', manifest)).toBe(true);
-		expect(isCanonicalPath('/summa/ii-ii/999', manifest)).toBe(false);
-		expect(isCanonicalPath('/summa/iv/1', manifest)).toBe(false);
+		expect(isCanonicalPath('/doctores/summa/ii-ii/184', manifest)).toBe(true);
+		expect(isCanonicalPath('/doctores/summa/suppl/77', manifest)).toBe(true);
+		expect(isCanonicalPath('/doctores/summa/ii-ii/999', manifest)).toBe(false);
+		expect(isCanonicalPath('/doctores/summa/iv/1', manifest)).toBe(false);
 		// An article is a fragment, never a path segment.
-		expect(isCanonicalPath('/summa/ii-ii/184/3', manifest)).toBe(false);
+		expect(isCanonicalPath('/doctores/summa/ii-ii/184/3', manifest)).toBe(false);
 	});
 });
 
@@ -256,7 +256,7 @@ describe('stored self-references', () => {
 	it('resolves an anchor to a link into the right article', () => {
 		const seg = parseStoredRef('summa:I:1:2', 'Q[1], A[2]');
 		expect(seg).toMatchObject({ kind: 'summa', part: 'I', question: 1, article: 2 });
-		expect(refHref(seg!, { lang: 'en' })).toBe('/summa/i/1#a2');
+		expect(refHref(seg!, { lang: 'en' })).toBe('/doctores/summa/i/1#a2');
 	});
 
 	it('under-links an anchor whose address this corpus does not carry', () => {
@@ -270,7 +270,7 @@ describe('stored self-references', () => {
 
 	it('resolves a question-level anchor to the question, with no fragment', () => {
 		const seg = parseStoredRef('summa:II-II:184', 'Q[184]');
-		expect(refHref(seg!, { lang: 'en' })).toBe('/summa/ii-ii/184');
+		expect(refHref(seg!, { lang: 'en' })).toBe('/doctores/summa/ii-ii/184');
 	});
 
 	it('reads every part siglum the source uses', () => {
@@ -302,13 +302,13 @@ describe('stored self-references', () => {
 /** The hover preview, which this work earns more than any other. */
 describe('summa hover previews', () => {
 	it('previews a question and an article', () => {
-		expect(previewTarget('/summa/ii-ii/184')).toEqual({
+		expect(previewTarget('/doctores/summa/ii-ii/184')).toEqual({
 			kind: 'summa',
 			part: 'ii-ii',
 			question: 184,
 			article: null
 		});
-		expect(previewTarget('/summa/ii-ii/184#a3')).toEqual({
+		expect(previewTarget('/doctores/summa/ii-ii/184#a3')).toEqual({
 			kind: 'summa',
 			part: 'ii-ii',
 			question: 184,
@@ -317,7 +317,7 @@ describe('summa hover previews', () => {
 	});
 
 	it('declines an address with no question', () => {
-		expect(previewTarget('/summa')).toBeUndefined();
-		expect(previewTarget('/summa/ii-ii')).toBeUndefined();
+		expect(previewTarget('/doctores/summa')).toBeUndefined();
+		expect(previewTarget('/doctores/summa/ii-ii')).toBeUndefined();
 	});
 });

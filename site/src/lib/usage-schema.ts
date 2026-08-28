@@ -108,6 +108,10 @@ export const SETS = {
 		'catechismus',
 		'compendium',
 		'documenta',
+		// The shelf for the Fathers and Doctors (2026-08-28). `summa` stays a
+		// bucket of its own — the work moved under the shelf, and a series that
+		// broke at the move would read as a collapse in readership.
+		'doctores',
 		'preces',
 		'summa',
 		'colophon',

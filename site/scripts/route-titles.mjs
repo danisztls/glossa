@@ -216,7 +216,7 @@ function prayerNames(prayerIndex) {
  *
  * FILLED IN LANGUAGE ORDER RATHER THAN FROM ONE EDITION, because the Summa's
  * two editions cover different parts: the Corpus Thomisticum publishes no
- * Supplementum, so `/summa/suppl/77` exists in English alone (CLAUDE.md,
+ * Supplementum, so `/doctores/summa/suppl/77` exists in English alone (CLAUDE.md,
  * "The Summa is the exception to two rules at once"). Taking the served
  * language and stopping would leave 99 addresses unnamed the day Latin sorts
  * first for some reason; filling forward names each question from the first
@@ -322,7 +322,8 @@ const CHROME_KEYS = {
 	'/scriptura': { title: 'bible.landing.title', description: 'bible.landing.tagline' },
 	'/catechismus': { title: 'ccc.landing.title', description: 'ccc.landing.tagline' },
 	'/documenta': { title: 'nav.magisterium', description: 'document.library.tagline' },
-	'/summa': { title: 'summa.landing.title', description: 'summa.landing.tagline' },
+	'/doctores': { title: 'doctores.landing.title', description: 'doctores.landing.tagline' },
+	'/doctores/summa': { title: 'summa.landing.title', description: 'summa.landing.tagline' },
 	'/preces': { title: 'prayers.landing.title', description: 'prayers.landing.tagline' },
 	'/colophon': { title: 'colophon.title', description: 'colophon.lede' }
 };
@@ -331,7 +332,7 @@ const CHROME_KEYS = {
 const HOME_SECTION_KEYS = [
 	'bible.landing.title',
 	'ccc.landing.title',
-	'summa.landing.title',
+	'doctores.landing.title',
 	'nav.magisterium',
 	'prayers.landing.title'
 ];

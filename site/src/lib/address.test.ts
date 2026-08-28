@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hrefFor, parseHref, previewTarget, type Address } from './address';
+import { hrefFor, parseHref, pontiffAnchor, previewTarget, type Address } from './address';
 
 describe('parseHref', () => {
 	describe('bible', () => {
@@ -179,13 +179,13 @@ describe('parseHref', () => {
 
 	describe('summa', () => {
 		it('parses a question and an article fragment', () => {
-			expect(parseHref('/summa/ii-ii/184')).toEqual({
+			expect(parseHref('/doctores/summa/ii-ii/184')).toEqual({
 				kind: 'summa',
 				part: 'ii-ii',
 				question: 184,
 				article: null
 			});
-			expect(parseHref('/summa/ii-ii/184#a3')).toEqual({
+			expect(parseHref('/doctores/summa/ii-ii/184#a3')).toEqual({
 				kind: 'summa',
 				part: 'ii-ii',
 				question: 184,
@@ -194,10 +194,10 @@ describe('parseHref', () => {
 		});
 
 		it('drops an address with no usable question number', () => {
-			expect(parseHref('/summa')).toBeUndefined();
-			expect(parseHref('/summa/ii-ii')).toBeUndefined();
-			expect(parseHref('/summa/i')).toBeUndefined();
-			expect(parseHref('/summa/i/0')).toBeUndefined();
+			expect(parseHref('/doctores/summa')).toBeUndefined();
+			expect(parseHref('/doctores/summa/ii-ii')).toBeUndefined();
+			expect(parseHref('/doctores/summa/i')).toBeUndefined();
+			expect(parseHref('/doctores/summa/i/0')).toBeUndefined();
 		});
 	});
 
@@ -290,8 +290,8 @@ describe('hrefFor / parseHref round trip', () => {
 		['/catechismus/compendium/caput/1', { kind: 'compendiumChapter', n: 1 }],
 		['/documenta/lumen-gentium', { kind: 'document', slug: 'lumen-gentium' }],
 		['/documenta/lumen-gentium#s12', { kind: 'document', slug: 'lumen-gentium', n: 12 }],
-		['/summa/i/1', { kind: 'summa', part: 'i', question: 1, article: null }],
-		['/summa/ii-ii/184#a3', { kind: 'summa', part: 'ii-ii', question: 184, article: 3 }],
+		['/doctores/summa/i/1', { kind: 'summa', part: 'i', question: 1, article: null }],
+		['/doctores/summa/ii-ii/184#a3', { kind: 'summa', part: 'ii-ii', question: 184, article: 3 }],
 		['/preces/our-father', { kind: 'prayer', slug: 'our-father' }]
 	];
 
@@ -329,13 +329,13 @@ describe('previewTarget', () => {
 	// A Summa question is a page, but it is also a unit: this work cites itself
 	// 5,180 times, which is what earned it a preview.
 	it('accepts a Summa question and one of its articles', () => {
-		expect(previewTarget('/summa/ii-ii/184')).toEqual({
+		expect(previewTarget('/doctores/summa/ii-ii/184')).toEqual({
 			kind: 'summa',
 			part: 'ii-ii',
 			question: 184,
 			article: null
 		});
-		expect(previewTarget('/summa/ii-ii/184#a3')).toEqual({
+		expect(previewTarget('/doctores/summa/ii-ii/184#a3')).toEqual({
 			kind: 'summa',
 			part: 'ii-ii',
 			question: 184,
@@ -351,5 +351,33 @@ describe('previewTarget', () => {
 			from: 12,
 			to: 12
 		});
+	});
+});
+
+/**
+ * The home page's Magisterium list links into `/documenta`'s group ids with
+ * this, and the library page writes those ids with it. The two only agree
+ * because it is one function; these cases are the shapes the corpus's
+ * `pontiff_or_council` field actually holds.
+ */
+describe('pontiffAnchor', () => {
+	it('lowercases and hyphenates a pontiff with a Roman numeral', () => {
+		expect(pontiffAnchor('Leo XIII')).toBe('pontiff-leo-xiii');
+		expect(pontiffAnchor('Pius XI')).toBe('pontiff-pius-xi');
+	});
+
+	it('names a council, which is the other thing the field holds', () => {
+		expect(pontiffAnchor('Second Vatican Council')).toBe('pontiff-second-vatican-council');
+	});
+
+	it('folds diacritics rather than emitting them into an id', () => {
+		expect(pontiffAnchor('Francois')).toBe('pontiff-francois');
+		expect(pontiffAnchor('Fran\u00e7ois')).toBe('pontiff-francois');
+		expect(pontiffAnchor('Jo\u00e3o Paulo II')).toBe('pontiff-joao-paulo-ii');
+	});
+
+	it('collapses runs of punctuation and trims the hyphens off both ends', () => {
+		expect(pontiffAnchor('  John Paul II  ')).toBe('pontiff-john-paul-ii');
+		expect(pontiffAnchor('Benedict XVI (emeritus)')).toBe('pontiff-benedict-xvi-emeritus');
 	});
 });

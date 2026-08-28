@@ -120,7 +120,7 @@ describe('navigation', () => {
 			'/catechismus/compendium/caput/40',
 			'/documenta/lumen-gentium',
 			'/preces/pater-noster',
-			'/summa/i/2'
+			'/doctores/summa/i/2'
 		];
 		for (const path of paths) {
 			expect((await navigate(path)).status, path).toBe(200);
@@ -136,7 +136,12 @@ describe('navigation', () => {
 	 * worker has existed; link checkers and unfurlers issue little else.
 	 */
 	it('answers a HEAD exactly as it answers the GET of the same address', async () => {
-		for (const path of ['/', '/catechismus/330', '/summa/i/2', '/documenta/lumen-gentium']) {
+		for (const path of [
+			'/',
+			'/catechismus/330',
+			'/doctores/summa/i/2',
+			'/documenta/lumen-gentium'
+		]) {
 			const get = await navigate(path, 'GET');
 			const head = await navigate(path, 'HEAD');
 			expect(head.status, path).toBe(get.status);
@@ -153,7 +158,7 @@ describe('navigation', () => {
 	/** Seven chrome pages times fourteen interface languages. A reading address
 	 *  takes no prefix — it names a citation, not a page of interface. */
 	it('serves the language-prefixed chrome pages and nothing else under a prefix', async () => {
-		for (const path of ['/pt', '/ar/catechismus', '/la/summa', '/sv/colophon']) {
+		for (const path of ['/pt', '/ar/catechismus', '/la/doctores/summa', '/sv/colophon']) {
 			expect((await navigate(path)).status, path).toBe(200);
 		}
 		for (const path of ['/xx', '/xx/catechismus', '/pt/catechismus/330', '/pt/signata']) {

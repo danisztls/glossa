@@ -133,7 +133,7 @@ describe('articles are fragments of the question page', () => {
 			children: [],
 			anchor: 'a3'
 		};
-		expect(rowHref(article, NaN, 'route', (n) => `/summa/ii-ii/${n}`)).toBe('#a3');
+		expect(rowHref(article, NaN, 'route', (n) => `/doctores/summa/ii-ii/${n}`)).toBe('#a3');
 	});
 
 	/**

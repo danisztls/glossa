@@ -158,6 +158,8 @@ export const en: Dictionary = {
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'No question number in this corpus',
 	'nav.summa': 'Summa',
+	'doctores.landing.title': 'Doctors of the Church',
+	'doctores.landing.tagline': 'The theological works of the Fathers and Doctors of the Church.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline': 'Thomas Aquinas, in English and in the Latin he wrote.',
 	'summa.tableOfContents': 'Table of Contents',

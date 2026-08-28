@@ -94,6 +94,8 @@ export const fr: Dictionary = {
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Pas de numéro de question dans ce corpus',
 	'nav.summa': 'Somme',
+	'doctores.landing.title': 'Docteurs de l’Église',
+	'doctores.landing.tagline': 'Les œuvres théologiques des Pères et Docteurs de l’Église.',
 	'summa.landing.title': 'Somme théologique',
 	'summa.landing.tagline': 'Thomas d’Aquin, en anglais et dans le latin qu’il a écrit.',
 	'summa.tableOfContents': 'Table des matières',

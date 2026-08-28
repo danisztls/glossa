@@ -94,6 +94,8 @@ export const pl: Dictionary = {
 	'compendium.abbrev': 'Komp.',
 	'compendium.noQuestionNumber': 'Brak numeru pytania w tym korpusie',
 	'nav.summa': 'Suma',
+	'doctores.landing.title': 'Doktorzy Kościoła',
+	'doctores.landing.tagline': 'Dzieła teologiczne Ojców i Doktorów Kościoła.',
 	'summa.landing.title': 'Suma teologiczna',
 	'summa.landing.tagline': 'Tomasz z Akwinu, po angielsku i po łacinie, w której pisał.',
 	'summa.tableOfContents': 'Spis treści',

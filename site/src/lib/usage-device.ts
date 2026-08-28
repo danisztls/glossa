@@ -230,12 +230,18 @@ export function sectionFor(pathname: string): string {
 	if (pathname === '/') return 'home';
 	if (pathname === '/catechismus/compendium' || pathname.startsWith('/catechismus/compendium/'))
 		return 'compendium';
+	// Same shape, same reason: the Summa moved under `/doctores` on 2026-08-28
+	// and keeps its own bucket, so the series does not break at the move. The
+	// shelf itself counts as `doctores`, which is a different question (did
+	// anyone find the shelf) from how much the Summa is read.
+	if (pathname === '/doctores/summa' || pathname.startsWith('/doctores/summa/')) return 'summa';
 	const root = pathname.split('/')[1] ?? '';
 	const KNOWN = [
 		'scriptura',
 		'catechismus',
 		'compendium',
 		'documenta',
+		'doctores',
 		'preces',
 		'summa',
 		'colophon'

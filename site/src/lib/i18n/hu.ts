@@ -96,6 +96,8 @@ export const hu: Dictionary = {
 	'compendium.abbrev': 'Komp.',
 	'compendium.noQuestionNumber': 'Ebben a korpuszban nincs kérdésszám',
 	'nav.summa': 'Summa',
+	'doctores.landing.title': 'Egyháztanítók',
+	'doctores.landing.tagline': 'Az egyházatyák és egyháztanítók teológiai művei.',
 	'summa.landing.title': 'Summa theologiae',
 	'summa.landing.tagline': 'Aquinói Szent Tamás, angolul és azon a latinon, amelyen írt.',
 	'summa.tableOfContents': 'Tartalomjegyzék',

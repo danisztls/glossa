@@ -2111,7 +2111,7 @@ export async function getPrayerAsync(lang: string, slug: string): Promise<Prayer
 // Addressed by (part, question, article), which is three levels rather than
 // the CCC's one, and the question number RESTARTS in each part -- so nothing
 // here takes a bare number the way `cccParagraphExists` can. An article is a
-// FRAGMENT on its question's page (`/summa/ii-ii/184#a3`), not a page of its
+// FRAGMENT on its question's page (`/doctores/summa/ii-ii/184#a3`), not a page of its
 // own: 3,113 articles would be 3,113 addresses for one article of text each,
 // which is the trade documents already made and reversed (docs/decisions.md
 // §The site).
@@ -2279,7 +2279,7 @@ export interface SummaOutlineArticle {
  *
  * ARTICLES ARE FRAGMENTS, NOT ROUTES, and they say so with null bounds plus
  * an `anchor`: an article is genuinely not addressed by a question number,
- * and `/summa/ii-ii/184#a3` is the address that reaches it. They hang under
+ * and `/doctores/summa/ii-ii/184#a3` is the address that reaches it. They hang under
  * their own question, so the shared component's "only the reader's own
  * branch expands" rule already shows them for the question being read and
  * for no other — the same rule the bespoke component implemented by hand.

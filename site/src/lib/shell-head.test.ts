@@ -55,7 +55,8 @@ function chromeFixture(): RouteTitles['chrome'] {
 			'Doctrine in 2,865 paragraphs.'
 		],
 		'/documenta': ['Magisterium — Glossa Catholica', 'Encyclicals and conciliar documents.'],
-		'/summa': ['Summa Theologiae — Glossa Catholica', 'Thomas Aquinas.'],
+		'/doctores': ['Doctors of the Church — Glossa Catholica', 'The Fathers and Doctors.'],
+		'/doctores/summa': ['Summa Theologiae — Glossa Catholica', 'Thomas Aquinas.'],
 		'/preces': ['Common Prayers — Glossa Catholica', 'Prayers with the Latin alongside.'],
 		'/colophon': ['Colophon — Glossa Catholica', 'What this site is.']
 	};
@@ -134,7 +135,8 @@ describe('headFor, static pages', () => {
 			'/scriptura',
 			'/catechismus',
 			'/documenta',
-			'/summa',
+			'/doctores',
+			'/doctores/summa',
 			'/preces',
 			'/colophon'
 		]) {
@@ -196,10 +198,10 @@ describe('headFor, the corpus', () => {
 	/** The Supplementum exists in English alone, so its titles come from the
 	 *  edition that has it rather than from the served language wholesale. */
 	it('names a Summa question, Supplement included', () => {
-		expect(head('/summa/i/2')?.title).toBe(
+		expect(head('/doctores/summa/i/2')?.title).toBe(
 			'Summa I q. 2 · The Existence of God — Glossa Catholica'
 		);
-		expect(head('/summa/suppl/77')?.title).toContain('Summa Suppl q. 77');
+		expect(head('/doctores/summa/suppl/77')?.title).toContain('Summa Suppl q. 77');
 	});
 
 	it('walks to the neighbouring address, so the corpus has a link graph without script', () => {
@@ -408,43 +410,43 @@ describe('the interface-language cluster', () => {
 	});
 
 	it('points x-default at the unprefixed path, which negotiates', () => {
-		const xd = head('/pt/summa')?.alternates.find((a) => a.hreflang === 'x-default');
-		expect(xd?.href).toBe('/summa');
+		const xd = head('/pt/doctores/summa')?.alternates.find((a) => a.hreflang === 'x-default');
+		expect(xd?.href).toBe('/doctores/summa');
 	});
 
 	it('has every member self-canonicalize', () => {
-		expect(head('/pt/summa')?.canonical).toBe('/pt/summa');
-		expect(head('/summa')?.canonical).toBe('/summa');
+		expect(head('/pt/doctores/summa')?.canonical).toBe('/pt/doctores/summa');
+		expect(head('/doctores/summa')?.canonical).toBe('/doctores/summa');
 		expect(head('/pt')?.canonical).toBe('/pt');
 	});
 
 	/** `dir` is the half that has to reach a consumer before hydration: an
 	 *  Arabic reader would otherwise watch the page flip sides. */
 	it('gives a prefixed page its own lang and direction', () => {
-		expect(htmlAttrs(head('/ar/summa')!)).toEqual({ lang: 'ar', dir: 'rtl' });
-		expect(htmlAttrs(head('/pt/summa')!)).toEqual({ lang: 'pt', dir: 'ltr' });
+		expect(htmlAttrs(head('/ar/doctores/summa')!)).toEqual({ lang: 'ar', dir: 'rtl' });
+		expect(htmlAttrs(head('/pt/doctores/summa')!)).toEqual({ lang: 'pt', dir: 'ltr' });
 	});
 
 	/** The unprefixed path is not "the English page" — it negotiates, which is
 	 *  what x-default names — so it declares no language of its own. */
 	it('leaves the unprefixed path and every reading address unlanguaged', () => {
-		expect(htmlAttrs(head('/summa')!)).toBeUndefined();
+		expect(htmlAttrs(head('/doctores/summa')!)).toBeUndefined();
 		expect(htmlAttrs(head('/catechismus/330')!)).toBeUndefined();
 		expect(head('/catechismus/330')?.alternates).toEqual([]);
 	});
 
 	it('emits each alternate as an absolute hreflang link', () => {
-		const html = headHtml(head('/pt/summa')!, ORIGIN);
+		const html = headHtml(head('/pt/doctores/summa')!, ORIGIN);
 		expect(html).toContain(
-			'<link rel="alternate" hreflang="pt" href="https://glossacatholica.org/pt/summa">'
+			'<link rel="alternate" hreflang="pt" href="https://glossacatholica.org/pt/doctores/summa">'
 		);
 		expect(html).toContain(
-			'<link rel="alternate" hreflang="x-default" href="https://glossacatholica.org/summa">'
+			'<link rel="alternate" hreflang="x-default" href="https://glossacatholica.org/doctores/summa">'
 		);
 	});
 
 	it('refuses a language the interface does not have', () => {
-		expect(head('/xx/summa')).toBeUndefined();
+		expect(head('/xx/doctores')).toBeUndefined();
 		// A reading address takes no prefix, whatever language is named.
 		expect(head('/pt/catechismus/330')).toBeUndefined();
 	});

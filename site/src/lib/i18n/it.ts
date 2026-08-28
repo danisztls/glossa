@@ -94,6 +94,8 @@ export const it: Dictionary = {
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Nessun numero di domanda in questo corpus',
 	'nav.summa': 'Somma',
+	'doctores.landing.title': 'Dottori della Chiesa',
+	'doctores.landing.tagline': 'Le opere teologiche dei Padri e Dottori della Chiesa.',
 	'summa.landing.title': 'Somma teologica',
 	'summa.landing.tagline': 'Tommaso d’Aquino, in inglese e nel latino in cui scrisse.',
 	'summa.tableOfContents': 'Indice',

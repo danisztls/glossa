@@ -39,7 +39,7 @@ export interface RouteManifest {
 /**
  * The pages whose content IS the interface, in the order the sitemap lists them.
  *
- * These seven are the only addresses that take an interface-language prefix
+ * These eight are the only addresses that take an interface-language prefix
  * (`/pt/catechismus`), and the reason is the distinction the whole URL grammar
  * rests on: a reading address names a citation, which is the same citation in
  * every language and takes no prefix, while these name a page whose every word
@@ -55,7 +55,12 @@ export const CHROME_PATHS = [
 	'/scriptura',
 	'/catechismus',
 	'/documenta',
-	'/summa',
+	// The shelf and the one work on it. Both are chrome by the same test as
+	// the rest: every word on either page is the interface. `/doctores/summa`
+	// is the only two-segment member, which `parseChromePath` handles because
+	// it splits on the FIRST slash and matches the remainder whole.
+	'/doctores',
+	'/doctores/summa',
 	'/preces',
 	'/colophon'
 ] as const;
@@ -87,7 +92,8 @@ const STATIC_PATHS = new Set([
 	// (`CatechismIndex.svelte`, 2026-08-28). It is a path segment that groups
 	// addresses rather than a page, exactly as `/catechismus/caput` is.
 	'/documenta',
-	'/summa',
+	'/doctores',
+	'/doctores/summa',
 	'/preces',
 	// The reader's own bookmark library. Static and corpus-free, like
 	// `/colophon`: what it lists lives in this browser's localStorage, so
@@ -127,7 +133,7 @@ export function isCanonicalPath(pathname: string, manifest: RouteManifest): bool
 			return manifest.documents.includes(address.slug);
 		case 'prayer':
 			return manifest.prayers.includes(address.slug);
-		// `/summa/{part}/{question}` — an article is a FRAGMENT on the
+		// `/doctores/summa/{part}/{question}` — an article is a FRAGMENT on the
 		// question's page (`#a3`), so a part slug naming no part simply finds no
 		// question list here.
 		case 'summa':

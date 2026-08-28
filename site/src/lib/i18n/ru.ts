@@ -94,6 +94,8 @@ export const ru: Dictionary = {
 	'compendium.abbrev': 'Комп.',
 	'compendium.noQuestionNumber': 'В этом корпусе нет номера вопроса',
 	'nav.summa': 'Сумма',
+	'doctores.landing.title': 'Учители Церкви',
+	'doctores.landing.tagline': 'Богословские труды отцов и учителей Церкви.',
 	'summa.landing.title': 'Сумма теологии',
 	'summa.landing.tagline': 'Фома Аквинский, по-английски и на латыни, на которой он писал.',
 	'summa.tableOfContents': 'Оглавление',

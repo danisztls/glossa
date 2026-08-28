@@ -94,6 +94,8 @@ export const de: Dictionary = {
 	'compendium.abbrev': 'Komp.',
 	'compendium.noQuestionNumber': 'Keine Fragenummer in diesem Korpus',
 	'nav.summa': 'Summa',
+	'doctores.landing.title': 'Kirchenlehrer',
+	'doctores.landing.tagline': 'Die theologischen Werke der Kirchenväter und Kirchenlehrer.',
 	'summa.landing.title': 'Summa theologiae',
 	'summa.landing.tagline': 'Thomas von Aquin, auf Englisch und in dem Latein, in dem er schrieb.',
 	'summa.tableOfContents': 'Inhaltsverzeichnis',

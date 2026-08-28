@@ -7,10 +7,13 @@
 	 *  page view would fail for the same reason. */
 	let unavailable = $state(false);
 
+	/** The same four the header bar offers, and for the same reason: this is
+	 *  where a lost reader is sent, so it should not name a section the
+	 *  navigation they came from does not have. `/doctores` is unlisted until
+	 *  the Summa's quality pass (see `+layout.svelte`). */
 	const SECTIONS = [
 		{ href: '/scriptura', key: 'nav.bible' },
 		{ href: '/catechismus', key: 'nav.ccc' },
-		{ href: '/summa', key: 'nav.summa' },
 		{ href: '/preces', key: 'nav.prayers' },
 		{ href: '/documenta', key: 'nav.magisterium' }
 	] as const;

@@ -85,7 +85,7 @@ describe('parseChromePath', () => {
 	});
 
 	it('refuses a language the interface does not have', () => {
-		expect(parseChromePath('/xx/summa')).toBeUndefined();
-		expect(parseChromePath('/mg/summa')).toBeUndefined();
+		expect(parseChromePath('/xx/doctores')).toBeUndefined();
+		expect(parseChromePath('/mg/doctores')).toBeUndefined();
 	});
 });

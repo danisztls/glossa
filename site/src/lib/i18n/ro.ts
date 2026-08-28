@@ -94,6 +94,8 @@ export const ro: Dictionary = {
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Fără număr de întrebare în acest corpus',
 	'nav.summa': 'Summa',
+	'doctores.landing.title': 'Învățătorii Bisericii',
+	'doctores.landing.tagline': 'Operele teologice ale Părinților și Învățătorilor Bisericii.',
 	'summa.landing.title': 'Summa theologiae',
 	'summa.landing.tagline': 'Toma de Aquino, în engleză și în latina în care a scris.',
 	'summa.tableOfContents': 'Cuprins',

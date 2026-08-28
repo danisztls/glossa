@@ -100,7 +100,7 @@
 		// is the work's permanent shape rather than a gap (docs/decisions.md
 		// §Scope). `listEditions` is already language-agnostic, so the
 		// menu needs nothing beyond being told this route has a work type.
-		if (pathname === '/summa' || pathname.startsWith('/summa/')) {
+		if (pathname === '/doctores/summa' || pathname.startsWith('/doctores/summa/')) {
 			return { kind: 'type', type: 'summa' };
 		}
 		// `/documenta` itself (the library) has no single document in view —

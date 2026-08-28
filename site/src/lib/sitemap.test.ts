@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { assertCanonical, sitemapPaths, sitemapXml, ORIGIN } from '../../scripts/sitemap.mjs';
+import { parseChromePath } from './route-manifest';
 import { isCanonicalPath, type RouteManifest } from './route-manifest';
 
 /**
@@ -30,15 +31,17 @@ describe('sitemapPaths', () => {
 
 	it('covers every address in the manifest exactly once', () => {
 		const paths = sitemapPaths(manifest);
-		// 105 chrome + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
+		// 120 chrome + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
 		// + 2 compendium + 1 document + 1 prayer + 3 summa.
 		//
-		// The chrome is SEVEN PAGES ONCE PLUS ONCE PER INTERFACE LANGUAGE
-		// (2026-08-28): seven unprefixed, which are the cluster's `x-default`,
-		// and seven under each of the fourteen tags in `UI_LANGS`. Seven and not
-		// eight because the Compendium has no landing page of its own -- the
-		// Catechism's index presents both works (`CatechismIndex.svelte`).
-		expect(paths).toHaveLength(105 + 17);
+		// The chrome is EIGHT PAGES ONCE PLUS ONCE PER INTERFACE LANGUAGE
+		// (2026-08-28): eight unprefixed, which are the cluster's `x-default`,
+		// and eight under each of the fourteen tags in `UI_LANGS`. It was seven
+		// until the Summa moved under `/doctores` the same day, which added the
+		// shelf and its one work and took nothing away. Still no Compendium
+		// landing page -- the Catechism's index presents both works
+		// (`CatechismIndex.svelte`).
+		expect(paths).toHaveLength(120 + 17);
 		expect(new Set(paths).size).toBe(paths.length);
 	});
 
@@ -46,8 +49,12 @@ describe('sitemapPaths', () => {
 	 *  language, so it is listed once and takes no prefix. */
 	it('prefixes the chrome pages and nothing else', () => {
 		const prefixed = sitemapPaths(manifest).filter((p) => /^\/(pt|ar|la)(\/|$)/.test(p));
-		expect(prefixed).toHaveLength(21);
-		expect(prefixed.filter((p) => p.split('/').length > 3)).toEqual([]);
+		expect(prefixed).toHaveLength(24);
+		// Every prefixed path is a chrome page and nothing else. Depth is no
+		// longer the discriminator: `/pt/doctores/summa` is three segments and
+		// is chrome, so the test asks what the path IS rather than how long it
+		// is (`/pt/doctores/summa/i/1` would fail this, which is the point).
+		expect(prefixed.filter((p) => !parseChromePath(p))).toEqual([]);
 	});
 
 	it('lists a book introduction as chapter 0, like any other chapter', () => {
@@ -55,8 +62,12 @@ describe('sitemapPaths', () => {
 	});
 
 	it('addresses a Summa question, not its articles — an article is a fragment', () => {
-		const summa = sitemapPaths(manifest).filter((p) => p.startsWith('/summa/'));
-		expect(summa).toEqual(['/summa/i/1', '/summa/i/2', '/summa/suppl/77']);
+		const summa = sitemapPaths(manifest).filter((p) => p.startsWith('/doctores/summa/'));
+		expect(summa).toEqual([
+			'/doctores/summa/i/1',
+			'/doctores/summa/i/2',
+			'/doctores/summa/suppl/77'
+		]);
 	});
 
 	it('omits the routes that are not addresses to visit', () => {
@@ -106,7 +117,7 @@ describe('sitemapXml', () => {
 		// and existence-invalid is the only way the two can disagree.
 		const shipped = { ...manifest, summa: { i: manifest.summa.i } };
 		expect(() => assertCanonical(sitemapPaths(manifest), shipped)).toThrow(
-			/edge worker would 404.*\/summa\/suppl\/77/s
+			/edge worker would 404.*\/doctores\/summa\/suppl\/77/s
 		);
 	});
 });

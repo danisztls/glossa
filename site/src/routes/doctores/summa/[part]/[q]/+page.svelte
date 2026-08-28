@@ -336,12 +336,12 @@
 		<article class="content-column">
 			<div class="breadcrumb-row">
 				<nav class="breadcrumb" aria-label="Breadcrumb">
-					<a href="/summa">{t('summa.landing.title')}</a>
+					<a href="/doctores/summa">{t('summa.landing.title')}</a>
 					<span class="sep">›</span>
 					<!-- The part is a section of the landing page, which is the whole
 					     table of contents — the same shape `/preces`' group crumb
 					     links to, and the anchor that page already puts on it. -->
-					<a href={`/summa#part-${partSlug}`}>{t('summa.part')} {data.part}</a>
+					<a href={`/doctores/summa#part-${partSlug}`}>{t('summa.part')} {data.part}</a>
 					{#if treatise}
 						{@const from = treatise.paragraphs[0]}
 						<span class="sep">›</span>
@@ -361,7 +361,7 @@
 			<!--
 				Bookmark, print, edition, compare, second edition — in that fixed
 				order and in both modes, exactly as every other reader carries
-				them. `EditionMenu` has known about `/summa` since the route was
+				them. `EditionMenu` has known about this route since it was
 				built; nothing rendered it here, so `content.langFor('summa')`
 				could never move off the default and the Latin edition was
 				unreachable.

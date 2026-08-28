@@ -94,6 +94,8 @@ export const sl: Dictionary = {
 	'compendium.abbrev': 'Komp.',
 	'compendium.noQuestionNumber': 'V tem korpusu ni številke vprašanja',
 	'nav.summa': 'Summa',
+	'doctores.landing.title': 'Cerkveni učitelji',
+	'doctores.landing.tagline': 'Teološka dela cerkvenih očetov in učiteljev.',
 	'summa.landing.title': 'Summa theologiae',
 	'summa.landing.tagline': 'Tomaž Akvinski, v angleščini in v latinščini, v kateri je pisal.',
 	'summa.tableOfContents': 'Kazalo',
