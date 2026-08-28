@@ -47,7 +47,7 @@
 	 *  that need it now. */
 	const workId = $derived(editions.current?.work.id);
 
-	// Same index-backed, no-fetch call `/compendium/+page.svelte` makes for
+	// Same index-backed, no-fetch call `/catechismus/compendium/+page.svelte` makes for
 	// the full table of contents, just recomputed for whichever language is
 	// active on this page.
 	const structure = $derived(flattenCompendiumStructure(editions.lang));
@@ -126,7 +126,7 @@
 			currentN={data.n}
 			lang={editions.lang}
 			heading={t('compendium.tableOfContents')}
-			basePath="/compendium"
+			basePath="/catechismus/compendium"
 			outlineKinds={OUTLINE_KINDS}
 		/>
 	{/snippet}
@@ -134,7 +134,7 @@
 		<article class="content-column">
 			<div class="breadcrumb-row">
 				<nav class="breadcrumb" aria-label="Breadcrumb">
-					<a href="/compendium">{t('nav.compendium')}</a>
+					<a href="/catechismus/compendium">{t('nav.compendium')}</a>
 					{#each editions.current.breadcrumb as node (node.title + node.paragraphs.join('-'))}
 						{@const dt = displayTitle(node, editions.lang)}
 						{@const from = node.paragraphs[0]}

@@ -153,7 +153,7 @@
 			currentN={spy.current ?? from ?? undefined}
 			lang={editions.lang}
 			heading={t('compendium.tableOfContents')}
-			basePath="/compendium/caput"
+			basePath="/catechismus/compendium/caput"
 			outlineKinds={OUTLINE_KINDS}
 		/>
 	{/snippet}
@@ -161,7 +161,7 @@
 		<article class="content-column">
 			<div class="breadcrumb-row">
 				<nav class="breadcrumb" aria-label="Breadcrumb">
-					<a href="/compendium">{t('nav.compendium')}</a>
+					<a href="/catechismus/compendium">{t('nav.compendium')}</a>
 					<!-- The unit's ancestors, ending in the unit itself — the same
 					     trail `/catechismus/caput/[n]` prints, and stopping in the same
 					     place: what lies below this unit is on the page already, not
@@ -172,7 +172,7 @@
 						{@const from = node.paragraphs[0]}
 						{@const here = i === editions.current.breadcrumb.length - 1}
 						<span class="sep">›</span>
-						<!-- Nullable bounds, as on the `/compendium/[n]` breadcrumb: no
+						<!-- Nullable bounds, as on the `/catechismus/compendium/[n]` breadcrumb: no
 						     lower bound, no address, so the crumb carries no link. -->
 						<a
 							href={here || from === null ? undefined : hrefFor({ kind: 'compendium', n: from })}
