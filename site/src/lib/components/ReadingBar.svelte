@@ -33,10 +33,13 @@
 	edition name that can be "Bíblia Sagrada (Matos Soares)") at the end of a
 	line whose left half was empty.
 
-	The row as a whole is packed against the inline END of the measure, which
-	is where the site header keeps its own controls — the two bands of chrome
-	line up on one edge rather than each starting from a different side. That
-	is alignment of the group, not separation within it; see the
+	The row as a whole is packed against the inline START of the measure, on
+	the edge every line of the text below it begins from. It used to sit at
+	the inline end, under the site header's own controls, so that the two
+	bands of chrome shared one edge; lining up with the text won over lining
+	up with a band that has scrolled off by the time this bar is stuck to the
+	top, and which is therefore never beside it while it is doing its job.
+	That is alignment of the group, not separation within it; see the
 	`justify-content` comment on `.reading-bar` below.
 
 	THE TOGGLE SITS BETWEEN THE TWO EDITIONS, and that placement is the point:
@@ -236,19 +239,23 @@
 		align-items: center;
 		gap: 0.5rem;
 		flex-wrap: wrap;
-		/* Packed against the inline END, under the site header's own controls,
-		   which sit there for the same reason (`.controls` in `+layout.svelte`
-		   takes the free space with one auto margin). The two rows of chrome
-		   then share an edge instead of starting from opposite sides of the
-		   measure. `flex-end` rather than a physical value: in a row flex
-		   container it already follows `direction`, so the Arabic interface
-		   packs against the left without a second rule.
+		/* Packed against the inline START, the edge the measure itself
+		   begins from, so the bar lines up with the first word of every line
+		   under it. The site header's controls stay at the inline end
+		   (`.controls` in `+layout.svelte` takes the free space with one auto
+		   margin) and the two bands no longer share an edge — which costs
+		   nothing, since the header is in flow and has scrolled past by the
+		   time this bar is pinned. Stated rather than left to the initial
+		   value, because it is a choice with a history. `flex-start` rather
+		   than a physical value: in a row flex container it already follows
+		   `direction`, so the Arabic interface packs against the right
+		   without a second rule.
 
 		   NOT `space-between`, which an earlier version used to pin the page
 		   controls and the edition controls to opposite ends — see the
 		   docblock above for why that read as two bars. The group stays
 		   contiguous and evenly spaced; only where it sits changes. */
-		justify-content: flex-end;
+		justify-content: flex-start;
 		background: var(--color-bg);
 		border-block-end: 1px solid var(--color-border);
 		padding-block: 0.5rem;
