@@ -90,23 +90,41 @@ repeat; nothing below relies on repeating it.
 Every reading in the tables was fetched from the source proposed for it, not
 from a secondary description of the translation.
 
+**All eight sources were then captured in full on 2026-08-28** — 4,714 pages,
+568 MB, nine source directories under `raw/` — and the capture corrected four of
+the judgements this section had already reached. Where the survey and the
+capture disagree, the capture is the later and better evidence and wins; the
+superseded reading is left in place with its correction beside it, because the
+_shape_ of each mistake is the reusable part. See §What the capture found.
+
 ### Decision
 
 Eight languages have an answer. Three do not.
 
-| UI lang | Edition                               | Basis         | PD since           | Source                   | 73 books     |
-| ------- | ------------------------------------- | ------------- | ------------------ | ------------------------ | ------------ |
-| `de`    | **Allioli–Arndt** (1830–34, rev 1914) | Vulgate       | 1988 (Arndt †1917) | `vulgata.info`           | ✓            |
-| `fr`    | **Crampon 1923**                      | Hebrew/Greek  | see note           | `fr.wikisource.org`      | ✓            |
-| `es`    | **Straubinger** (1944–51)             | Hebrew/Greek  | 1 Jan 2027 (†1956) | `lasantabiblia.com.ar`   | ✓            |
-| `it`    | **Martini** (1775–81)                 | Vulgate       | long PD            | `scrutatio.it`           | ✓            |
-| `pl`    | **Wujek** (1599, 1923 orthography)    | Vulgate       | long PD            | `biblia.info.pl`         | ✓            |
-| `hu`    | **Káldi–Tárkányi** (1626, rev 1865)   | Vulgate       | long PD            | `biblia.kapisztran.info` | ✓            |
-| `ru`    | **Synodal 1876**                      | Masoretic/LXX | long PD            | `ru.wikisource.org`      | ✓ (superset) |
-| `ro`    | **Biblia 1914** (Orthodox Synodal)    | LXX           | long PD            | `ro.wikisource.org`      | ✓ (superset) |
-| `ar`    | —                                     |               |                    |                          | **blocked**  |
-| `sl`    | —                                     |               |                    |                          | **blocked**  |
-| `sv`    | —                                     |               |                    |                          | **blocked**  |
+Ordered by what the capture found, not by language. The canon column below is
+a **measurement taken from the captured bytes**, not a claim read off a book
+list — which is the distinction the whole exercise turned on, since two sources
+have all 73 book files and do not have all 73 books.
+
+| UI lang | Edition                               | Basis         | PD since           | Source                   | Canon, as captured                                |
+| ------- | ------------------------------------- | ------------- | ------------------ | ------------------------ | ------------------------------------------------- |
+| `de`    | **Allioli–Arndt** (1830–34, rev 1914) | Vulgate       | 1988 (Arndt †1917) | `vulgata.info`           | **complete**, and carries the Clementine Latin    |
+| `fr`    | **Crampon 1923**                      | Hebrew/Greek  | see note           | `fr.wikisource.org`      | **complete**; Hebrew-numbered Psalter             |
+| `es`    | **Straubinger** (1944–51)             | Hebrew/Greek  | 1 Jan 2027 (†1956) | `lasantabiblia.com.ar`   | **complete**                                      |
+| `it`    | **Martini** (1775–81)                 | Vulgate       | long PD            | `scrutatio.it`           | **complete**                                      |
+| `hu`    | **Káldi–Tárkányi** (1626, rev 1865)   | Vulgate       | long PD            | `biblia.kapisztran.info` | **complete**                                      |
+| `ru`    | **Synodal 1876**                      | Masoretic/LXX | long PD            | `ru.wikisource.org`      | text complete, **Esther not addressable**         |
+| `pl`    | **Wujek** (1599, 1923 orthography)    | Vulgate       | long PD            | `biblia.info.pl`         | **Esther 11–16 absent**                           |
+| `ro`    | **Biblia 1914** (Orthodox Synodal)    | LXX           | long PD            | `ro.wikisource.org`      | Esther 11–16 absent; **23 % of chapters diverge** |
+| `ar`    | —                                     |               |                    |                          | **blocked**                                       |
+| `sl`    | —                                     |               |                    |                          | **blocked**                                       |
+| `sv`    | —                                     |               |                    |                          | **blocked**                                       |
+
+**Five are ready to parse; three are not, for three different reasons.** German,
+French, Spanish, Italian and Hungarian carry the whole canon and their remaining
+quirks are parser work. Russian's Esther exists but cannot be addressed at
+Vulgate coordinates, Polish's is simply missing, and Romanian needs a
+versification table an order of magnitude larger than the one the corpus has.
 
 Six of the eight are Vulgate translations, which is not a preference imposed on
 the search — it is what "complete Catholic canon, public domain, in this
@@ -119,13 +137,98 @@ a complete, free, doctrinally settled text — is the trade available in eight
 languages and unavailable in three.
 
 **`ru` and `ro` are Orthodox texts and the table should not hide it.** Neither
-is a Catholic translation; both carry the full 73 as a subset of a larger canon
-(the Synodal adds 2 Esdras, 3 Maccabees, Ps 151; the Romanian 1914 adds
-3 Esdra, 3 Macavei, the Prayer of Manasseh, and splits Daniel's additions into
-free-standing books). The Synodal is what Russian Catholics actually read —
-there is no Catholic Russian Bible in print or in the public domain — so
-shipping it is descriptive rather than a compromise. Romanian is the weaker
-call and is set out separately below.
+is a Catholic translation, and each carries a larger canon than the 73 — the
+Synodal adds 2 Esdras, **3 Esdras** (which the survey missed and the capture
+found) and 3 Maccabees, and keeps Psalm 151 as a chapter of the Psalter rather
+than a separate work; the Romanian 1914 adds 3 Esdra, 3 Macavei and the Prayer
+of Manasseh, splits Daniel's additions into four free-standing books, and gives
+the Letter of Jeremiah its own page. The Synodal is what Russian Catholics
+actually read — there is no Catholic Russian Bible in print or in the public
+domain — so shipping it would be descriptive rather than a compromise.
+
+**But "superset" was the wrong word for both, and the capture is what showed
+it.** A superset cannot be missing anything, and both are: neither prints
+Esther's Greek additions as chapters 11–16. Russian folds them into chapters
+1–10 as unnumbered bracketed prose, so the text is present and no Vulgate
+coordinate reaches it; Romanian simply does not have them, and unlike Daniel's
+additions — which it does split into their own books — nothing else holds them.
+A canon can be simultaneously larger and smaller than the one you are checking
+against, and counting books cannot see it.
+
+### What the capture found (2026-08-28)
+
+All eight sources were captured before any parser was written, which is the
+order `link-surface.md`'s "re-parse, never re-crawl" policy implies and which
+paid for itself immediately: **three findings below are invisible from any one
+source and only appear when eight are read side by side.** None of them is a
+markup detail; each changes what may be shipped.
+
+**Canon completeness is decided in Esther, and it fails five different ways.**
+The Greek additions (Vulgate 10:4–16:24) are the most-dropped text in the
+Christian canon, and every source in this batch handled them differently:
+
+| Source           | Esther 10:4–16:24                                         |
+| ---------------- | --------------------------------------------------------- |
+| `de`, `it`, `hu` | printed as chapters 11–16, ending at 16:24                |
+| `es`             | chapter 10 runs to v. 13, then chapters 11–16             |
+| `ru`             | **present as unnumbered bracketed prose inside ch. 1–10** |
+| `pl`, `ro`       | **absent** — 108 verses simply not there                  |
+
+The Russian row is the one that matters for method. Its text is complete and
+its addresses are not, so a verse-count check, a book-count check and a
+round-trip all pass while a citation to Est 11:2 resolves to nothing. **Only
+reading the text separates loss from divergence**, and this document already
+says as much about Esther in another register — it is the reason the Bible is
+excluded from `audit.py balance` ("Esther is versification divergence, not
+loss"). The capture shows both living in the same book at once.
+
+**The Psalm 9/10 seam breaks differently in every edition, and each break is
+silent.** Where the Vulgate combines Hebrew 9 and 10 into one 39-verse psalm,
+the eight sources do five different things:
+
+| Source | At Vulgate Ps 9                                                                                     |
+| ------ | --------------------------------------------------------------------------------------------------- |
+| `de`   | a **second heading block** — `Psalmus X. secundum Hebrœos` — with its own table                     |
+| `hu`   | an **unanchored editorial appendix**, `Zsolt 10. A ZSIDÓK SZERINT.`, 8 verses with no anchor at all |
+| `es`   | the verse counter **silently resets to 1** mid-page (21 + 18)                                       |
+| `it`   | merged, continuous, and **one verse short** of the Clementine (38 against 39)                       |
+| `fr`   | Hebrew-numbered outright, and says so in its own footnote                                           |
+
+Every one of those yields a plausible-looking Psalter when parsed naively — a
+split into two chapters, eight unreachable verses, a truncated psalm, an
+off-by-one. The seam is one address in one book, and it is the single most
+dangerous address in this whole ingestion.
+
+**The Kings collision is a pattern, and it hides one layer below where anyone
+would look.** `CLAUDE.md` documents `WORK_CONFIGS` as a short list of works whose
+own text contradicts their language's table, with `bible.douay-rheims.en` as the
+case. Two of the eight sources are the same case, and **both hide it in the
+apparatus while their chrome says the opposite**:
+
+| Source | Book titles print     | Footnotes cite                                     | Volume                 |
+| ------ | --------------------- | -------------------------------------------------- | ---------------------- |
+| `es`   | `1 Samuel`, `2 Reyes` | `I`–`IV Reyes` (four Kingdoms)                     | 1,008 across 489 files |
+| `it`   | `1-samuele`, `2-re`   | `I.`–`IV. Reg.` (Latin, and Arabic `1.`–`4. Reg.`) | 447 across 295 files   |
+
+In both, `III`/`IV` land on the modern book and prove the scheme; `I`/`II`
+collide with it and resolve into the wrong book. Verified against content in
+each: Martini's note citing `I. Reg. IV` for the Philistines and the Ark is
+1 Samuel 4, while his own site files `1-re/004` as Solomon's ministers.
+**German is the clean negative** — no `3Koe`/`4Koe` pages exist and every
+apparent old-scheme hit in its footnotes was a verse number followed by an
+unrelated German word.
+
+The lesson generalises past Kings: **an edition's book titles are not evidence
+about its citation scheme.** Checking the titles is the obvious move and it
+returns the wrong answer in two of eight editions.
+
+**What the capture cost, and what it bought.** 4,714 pages, 568 MB, nine source
+directories, **zero failed fetches**, and `pipeline/absent-sources.json`
+untouched — not one definitive 404 across nine hosts. Fetching went through one
+shared tool (`pipeline/scrapers/bible/capture.py`), which takes an inventory of
+`{url, path}` pairs and drives `common.Fetcher`, so every page carries a
+capture date in `captured-at.json` written at the moment of the request. The
+inventories are tracked in `pipeline/scrapers/bible/inventories/`.
 
 ### The litmus, verse by verse
 
@@ -180,6 +283,32 @@ versification throughout (Tobit 14, Esther 16, Baruch 6, Sirach 51, Psalms 150),
 so it needs no conversion. Allioli was the first German translation with papal
 approbation and the dominant Catholic German Bible for a century.
 
+**The capture confirms the parallel Latin and adds three things.** Each chapter
+page is a two-column wikitable — Clementine Latin first, Allioli–Arndt German
+second, position being the only discriminator, with no inline label. The Latin
+is present in **1,339 of 1,340 chapters**; the single exception is a genuinely
+empty page upstream. Pages carry no MediaWiki templates at all, so `action=raw`
+wikitext is the complete and higher-fidelity capture and `action=render` adds
+only wrapping. Verses are plain `N. text <br/>` with no anchors, footnotes are
+German-only and restart at 1 per chapter under a `===Fußnote===` heading, and
+cross-reference wiki-links already carry a modern-scheme abbreviation in their
+display text.
+
+**German is the batch's clean negative on the Kings axis** and the negative is
+worth as much as the two positives: no `3Koe`/`4Koe` pages exist, the string
+"Kön" appears in no footnote, and every apparent four-Kingdoms hit was a verse
+number followed by an unrelated German word ("3." + "Samuels", "I." + "Regina").
+Allioli needs no `WORK_CONFIGS` entry, and that was established by looking
+rather than assumed from its being a Vulgate translation — which is what the
+Italian source, also a Vulgate translation, turned out to disprove as a rule.
+
+At the Psalm 9/10 seam it does the most legible thing of the eight: a second
+full heading block, `Psalmus X. secundum Hebrœos` / `Psalm 10 nach Zählung der
+Juden`, with its own table and footnotes. The German column is safe to key off;
+at Ps 113 the **Latin** column silently resets 1→8 then 1→18 inside one cell
+while the German runs continuously 1–26, so the parallel columns cannot be
+assumed to share a verse numbering.
+
 Ignore `k-bibel.de` for ingestion despite its better presentation: its Allioli
 1839 text is its own Tesseract OCR of Fraktur scans and the site says so
 ("Der Text ist daher ohne Gewähr"), and its chapter bodies arrive by script
@@ -209,7 +338,26 @@ Two further properties to decide about, neither disqualifying:
 - **It prints "Yahweh" throughout the Old Testament.** A deliberate choice of
   Crampon's, not a modernism, and not a fidelity problem — but it is the single
   most conspicuous thing a reader will notice, and it is worth stating in the
-  edition description rather than being asked about.
+  edition description rather than being asked about. The capture counts **7,775
+  occurrences**, absent from Esther, Judith, Tobit, Ecclesiastes and Wisdom,
+  which is those books' own convention rather than a gap.
+
+**The capture settled the Psalter question from the edition's own mouth**, and
+narrowed it. Psalm 9 carries 21 verses where the Vulgate's carries 39, and a
+footnote states the policy outright: "jusqu'au Ps. cxlvii, la numération des
+Psaumes est, sauf quelques exceptions, en avant d'une unité dans l'hebreu par
+rapport aux LXX et à la Vulg." Note "sauf quelques exceptions" — the offset is
+not uniform and the exceptions are the edition's own. **But the divergence is
+confined to the Psalter**: Tobit 14, Esther 16, Baruch 6, Sirach 51, Daniel 14
+are all Vulgate. So the conversion `versification.ts` must do here is bounded,
+not pervasive.
+
+Two structural facts: `?action=raw` returns only a ProofreadPage
+`<pages index=… />` transclusion stub with no scripture text — `?action=render`
+is required — and **Psalms is five wiki pages**, the traditional Books I–V split
+at 1–41 / 42–72 / 73–89 / 90–106 / 107–150, so book pages and logical books are
+not one-to-one. Chapters are delimited only by the verse anchors resetting;
+there are no chapter headings to walk.
 
 **Spanish — Straubinger, `lasantabiblia.com.ar`.** Revised 2026-08-28, after
 the first pass recommended Torres Amat on public-domain grounds and was
@@ -268,10 +416,25 @@ Hebrew.** Verified by verse count rather than by title — Psalm 9 has 39 verses
 `bibliastraubinger.com` prints the mapping in its page titles ("Salmo 145
 (146)"), which makes it a useful cross-check for exactly that.
 
-Straubinger also names the historical books the Douay way — "I de Reyes
-(1 Samuel)", "III de Reyes (1 Reyes)" — while giving the modern name in
-parentheses, so the edition disambiguates its own Kings citations. That is the
-`WORK_CONFIGS` axis answering itself.
+**Corrected 2026-08-28 by the capture — this paragraph originally said
+Straubinger names the historical books the Douay way, "I de Reyes (1 Samuel)",
+and concluded that the edition disambiguates its own Kings citations, "the
+`WORK_CONFIGS` axis answering itself". That is exactly backwards.** The site's
+titles are modern and unambiguous throughout (`1 Samuel`, `2 Reyes`); the
+parenthetical Douay form appears in one book's prose introduction, explaining
+the older usage historically. What the capture found is that **Straubinger's
+footnotes cite in the four-Kingdoms scheme regardless** — 1,008 Roman-numeral
+citations across 489 chapter files, `I Reyes` 216, `II Reyes` 248,
+`III Reyes` 282, `IV Reyes` 262. A note on sackcloth reads "Cf. Génesis 37, 34;
+**II Reyes** 3, 31; **III Reyes** 21, 27; **IV Reyes** 6, 30" — 2 Samuel 3:31,
+1 Kings 21:27 and 2 Kings 6:30, three sackcloth verses in a note about
+sackcloth, which corroborates the scheme from inside the citation itself.
+
+So Spanish needs a `WORK_CONFIGS` entry after all, and it earns one on the
+standard the rule actually sets: its references are measurably read wrong
+without it, and the evidence is in the note's own sentence. The mistake worth
+remembering is the method, not the conclusion — **the first pass checked the
+book titles, which is the obvious place and the wrong layer.**
 
 Keep **Torres Amat** (`paxetbon.com`, 73 books at `/biblia/{libro}/{cap}`) as the
 public-domain fallback if the exposure is ever refused, and as a second witness
@@ -287,6 +450,28 @@ disallowed). Note the site also republishes copyrighted translations (CEI, NJB,
 NAB, Tysiąclecia, Ave Maria); take Martini and nothing else, and treat the site
 as a host rather than as a rights holder.
 
+**The capture confirms Martini and finds the Kings collision.** Esther has 16
+chapters ending at 16:24, Baruch 6 with the Letter of Jeremiah as its own
+chapter 6, and **no mid-page verse-numbering reset** of the kind the Spanish
+source has. Martini's commentary is present in full — his note on Genesis 1:1
+alone runs some 600 words — and cross-references are inline in the served HTML
+rather than fetched separately. Two shapes to respect: a footnote anchor is
+**not** 1:1 with a verse (one note may cover a range, so key by its own `id`
+and resolve through the verse's href), and one verse may carry **several**
+cross-reference links, not one.
+
+Its footnotes cite the four-Kingdoms scheme in both Roman and Arabic forms —
+**447 citations across 295 files** (`I.`–`IV. Reg.`, `1.`–`4. Reg.`) — against
+modern book titles in the chrome, so Italian needs a `WORK_CONFIGS` entry on the
+same evidence Spanish does. See §What the capture found.
+
+**The Psalter diverges slightly from the Clementine and it is not an artifact.**
+Psalm 9 has 38 verses against 39, Psalm 113 has 27 against 26 — one fewer and
+one _more_, which rules out the missing-superscription explanation that would
+account for either alone. Numbering is contiguous with no duplicates. This is
+ordinary edition divergence of the kind `bible-edition-divergence.md` exists to
+stop someone "fixing", and it should be diffed at parse time and left alone.
+
 **Polish — Wujek, `biblia.info.pl/bibliawujka`.** 73 book files, whole book per
 page, verse anchors `id="{chapter}:{verse}"` — 1,531 in Genesis alone. Its
 colophon is unusually honest and should be read before ingesting: the base is
@@ -295,20 +480,81 @@ the **1923 Polish and Foreign Bible Society** printing, **which omitted Baruch,
 Judith, Maccabees, Wisdom, Sirach and Tobit** — those six were supplied from the
 original 1599 edition. That is exactly the trap this document already flagged
 for Figueiredo ("Bible Societies published revisions without deuterocanonicals —
-verify the book count"), caught and patched by the source itself. The six
-recovered books were spot-checked and read in the same modernised orthography as
-the rest, so the seam is not visible in the text; the colophon also warns that
-OCR typos remain.
+verify the book count"), caught and patched by the source itself. The colophon
+also warns that OCR typos remain.
+
+**The capture found the patch incomplete, and the disclosure is what hid it.**
+Esther stops at **10:3** — 167 verse anchors against the Clementine's 275, so
+**108 verses of the Greek additions are absent**: Mordecai's dream, both royal
+edicts, the prayers of Mordecai and Esther, Esther before the king. The
+colophon discloses six omitted _books_ and says they were supplied from 1599.
+The additions to Esther are chapters of a book that _was_ present in 1923, so
+they fell straight through a patch keyed on books — and the honesty that makes
+this source trustworthy is precisely what stops anyone looking further. "73
+book files" is not "73 books", and only this source's own frankness made the
+difference checkable at all.
+
+The gap is in the 1923 base and propagates everywhere that base is reused:
+pl.wikisource's own 1923 Esther stops at 10, and a third independent host
+renders "chapter 11" by silently falling back to chapter 1.
+
+**The text exists, in Wujek's wording, and is now captured** — `raw/wujek_1599_ia/`,
+the 1599 _editio princeps_ from archive.org (the scan, its OCR, and item
+metadata). Wujek's own marginal note stands at the seam: what precedes is what
+he found "w kśięgach żydowskich", and what follows he took from the common
+edition issued in Greek. But it is uncorrected Tesseract OCR of 16th-century
+type, and the damage reaches the structure rather than only the prose — chapter
+numerals come out `VIL`, `XIIL`, `XVL`. Capturing the PDF alongside means a
+better OCR later is a re-parse rather than a re-crawl.
+
+**So Polish is a decision, not a defect**: ship with the 1599 OCR as the source
+for 11–16, ship with a documented gap, or hold until someone proofreads it.
+That is the person directing the work's call (`CLAUDE.md` §the corpus), not a
+judgement to be taken mid-parse.
+
+**The orthographic seam IS visible, contrary to what this paragraph first
+recorded.** The six recovered books contain zero instances of `é` — 524 in
+Genesis alone — and read `wszytko`/`wszytkich` where the modernised majority
+text reads `wszystko`/`wszystkich`. They were never run through the
+transcription-B modernisation. That is a property of the source, not damage,
+and a per-unit check across this work will see it; nobody should "fix" it.
 
 **Hungarian — Káldi–Tárkányi, `biblia.kapisztran.info`.** All 73 books plus the
 edition's introductions, whole book per page, anchors `name="{book}:{ccc}.{vvv}"`
 — machine-readable to the verse. Word-exported HTML (`class=MsoNormal`), the
 same shape as the Portuguese Catechism mirror, so the parser has a precedent.
 The 1865 Eger edition, "Az Apostoli Szék jóváhagyásával", was the Hungarian
-Catholic Bible until 1973. OCR typos exist (Isaiah 7:14 prints "Emmánnelnek" for
-"Emmánuelnek") and belong in `corrections/`. Book titles are Douay-style
-("Királyok (Sámuel) I. könyve", "Királyok III. (I.) könyve"), which is a
-`WORK_CONFIGS` question, not a defect — see below.
+Catholic Bible until 1973. Book titles are Douay-style ("Királyok (Sámuel) I.
+könyve", "Királyok III. (I.) könyve"), which is a `WORK_CONFIGS` question, not a
+defect — see below.
+
+**The capture corrected three things here.** The site is **73 books × 3 pages**,
+not one page per book: `szoveg.html` (text), `jegyzet.html` (concise notes) and
+`jegyzet2.html` (extended commentary), plus four cross-book introductions — a
+two-layer apparatus, which is a schema question rather than a parsing one.
+Anchors key on a **positional book number 01–73 in Vulgate canonical order**
+(`name="19:016.024"`), not on the URL slug, so book identity survives
+independently of the site's naming.
+
+And **`malaszt` is a minority usage, which this document originally overstated
+as "the strongest signal in the set".** Counted across the whole capture: 47
+`malaszt` against 85 `kegyelem` in the running text, 161 against 571 in the
+notes. The claim that survives is narrower and still worth making — every
+post-1973 Hungarian translation dropped the word entirely, so a text still
+printing it at this volume is announcing its tradition — but this is not a
+`malaszt`-only Bible and the colophon must not say so.
+
+The Isaiah 7:14 OCR typo is confirmed present ("Emmánnelnek" for "Emmánuelnek")
+and now has its corroboration: **Matthew 1:23 quotes the same verse and spells
+it correctly**, so it is a one-page typo rather than a period-orthography
+variant. That is the locator-plus-evidence shape `pipeline/corrections/` asks
+for, recorded here and not yet filed.
+
+**One address needs a decision before parsing.** The Psalter carries a one-off
+editorial appendix at the 9/10 acrostic seam — `Zsolt 10. A ZSIDÓK SZERINT.`,
+Hebrew Psalm 10 as its own unit. Eight of its verses carry **no anchor at all**,
+and the anchored ones sit in the file _before_ the real Psalm 10's. Anything
+walking anchors in document order reads them out of numeric sequence.
 
 Note `szentiras.hu`, the obvious first stop and the site that labels this
 translation **Közkincs** (public domain), was unreachable throughout this pass
@@ -320,7 +566,25 @@ plain static HTML and needs neither.
 `{{bible parallels}}` — structured data, not prose to be pattern-matched. The
 deuterocanonicals are present and colour-marked "неканонические", the Orthodox
 designation; we would take the 73 and let the marking go. Psalms follow the
-Septuagint numbering, which is the Vulgate's, so no conversion.
+Septuagint numbering, which is the Vulgate's, so no conversion — confirmed by
+the capture, which counts 39 verses at Psalm 9 and 151 chapters in the Psalter,
+Psalm 151 being a chapter rather than a separate work.
+
+**Two structural findings move Russian out of the ready set.** Esther's Greek
+additions are present but **unaddressable** — bracketed prose folded into
+chapters 1–10, with the edition's own footnote explaining that bracketed words
+come from the Septuagint — so no citation to Est 11–16 can reach them. And
+**Baruch has five chapters**, because the Letter of Jeremiah is its own page
+rather than Baruch 6, so `Bar 6` needs mapping rather than lookup. Neither is a
+defect and neither is loss; both are decisions about how a differently-shaped
+canon maps onto Vulgate addresses, which is work rather than a judgement call,
+and it is why Russian waits.
+
+`robots.txt` disallows all of `/w/`, where both `action=raw` and `action=render`
+live, so the capture took `/wiki/{title}` — an unrestricted path — after
+confirming these are native wikitext articles rather than ProofreadPage
+transclusions. The opposite conclusion from French, reached by reading the file
+rather than copying the sibling.
 
 **Romanian — the weak case.** `Biblia 1914` on `ro.wikisource` is 80 books with
 `<span id="{c}.{v}"/>` anchors and whole-book pages, and it passes the litmus.
@@ -331,6 +595,32 @@ outside the Psalms**: the Emmanuel prophecy is printed as **Isaiah 7:13**, not
 precisely the failure mode `versification.ts` exists to prevent and which it
 currently models only for the books it knows about. Adopting Romanian means
 first measuring how wide that offset runs.
+
+**That survey has now been run, and the answer is decisive.** Comparing every
+chapter's verse count against `bible.clementina.la`, **308 of 1,321 mappable
+chapters (23 %) differ** — not confined to Isaiah, not confined to the prophets.
+Three clusters are expected and not defects: **Tobit 14/14 and Judith 15/16**
+diverge almost totally because Jerome's Vulgate is an abridged Latin paraphrase
+while this edition translates the longer Greek recension, **Sirach 37/51** is
+the standing Greek-versus-Latin numbering split, and the Psalter is already
+modelled as wholesale-divergent. What remains after setting those aside is
+low-density divergence nearly everywhere — the single-verse merge that shifts a
+chapter's tail, the Isaiah 7 shape, recurring across the Pentateuch, the
+historical books, wisdom, the minor prophets and a sparse but real tail in the
+New Testament (John 6:71 here is Vulgate John 6:72, verified by content).
+
+Against that, `versification.json` holds three wholesale-divergent books and
+fifteen individually-mapped verses. **Adopting Romanian does not mean extending
+that table; it means building one of a different order of magnitude**, and every
+entry not built is a citation resolving to real but wrong text with nothing to
+catch it. The survey is a verse-count comparison, not a content alignment, so it
+cannot see a same-count swap and it excludes the eight books with no clean
+1:1 counterpart — within those limits the scale is the finding.
+
+Romanian also **lacks Esther's Greek additions entirely** (see above), which is a
+canon question independent of the versification one. Its book order is not
+Vulgate order and Daniel is four separate pages, so a parser must read book
+identity from the page title rather than from position.
 
 The Catholic alternatives are worse: the Iași diocese's complete Bible (Editura
 Sapientia, 2013) is under copyright, and the Greek-Catholic Blaj Bibles (Aron's
@@ -383,16 +673,24 @@ What they do touch:
   what lets a reader complete a full book name in the jump box. Adding these
   editions is the cheapest available fix for the complaint recorded in
   `CLAUDE.md` that only `en`, `pt` and `la` complete full names.
-- **`WORK_CONFIGS` needs one look per edition, on the Kings axis.** Káldi prints
-  Douay-style titles ("Királyok III. (I.) könyve"); Wujek, Allioli and Martini
-  are Vulgate translations and will cite the four books of Kings the same way.
-  The rule stands as written — an entry only where the work's own references are
-  measurably read wrong without it — but these are the first works in their
-  languages, so whatever they establish becomes the default their language
-  inherits.
-- **Versification is the one real surprise.** Crampon is Hebrew-numbered in the
-  Psalter and the Romanian 1914 is offset in Isaiah. Everything else in the set
-  is Vulgate-numbered by construction.
+- **`WORK_CONFIGS` needs one look per edition, on the Kings axis — and the look
+  has now been taken.** The anticipation in this list was wrong in both
+  directions, which is the useful part. Allioli, a Vulgate translation, is a
+  **clean negative**: no old-scheme citation anywhere in its apparatus. Martini,
+  also a Vulgate translation, is a **positive at 447 citations across 295
+  files**. And Straubinger, translated from the originals and printing modern
+  titles — the edition least expected to need an entry — is the **largest
+  positive in the corpus at 1,008 across 489 files**. So "it is a Vulgate
+  translation" predicts nothing, and the rule stands exactly as written: an entry
+  only where the work's own references are measurably read wrong without it. Two
+  entries earned, one refused, one (Káldi) still to check at parse time.
+- **Versification is the one real surprise, and it is larger than this line
+  first allowed.** Crampon is Hebrew-numbered in the Psalter — bounded there, and
+  stated in the edition's own footnote. The Romanian 1914 is not "offset in
+  Isaiah" but divergent in 23 % of its chapters. Martini differs from the
+  Clementine by one verse at Ps 9 and Ps 113, in opposite directions. Everything
+  else is Vulgate-numbered, but the **Psalm 9/10 seam needs per-edition handling
+  in five of the eight** — see §What the capture found.
 - **`audit.py balance` gets a much larger matrix.** Twelve Bible editions is 66
   pairs, and the Bible is deliberately excluded from `balance` today because
   Esther divergence reads as loss. That exclusion should be revisited rather
