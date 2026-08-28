@@ -49,6 +49,23 @@
 	 * rights: the engravings are public domain and the credit is courtesy,
 	 * with the full statement on the colophon.
 	 *
+	 * THE PICTURE OPENS OVER THE PAGE TOO, and for a reason the caption's card
+	 * does not share: it is not that there is more to say about the plate, but
+	 * that there is more of the plate than is on the screen. `PLATE_SIZES`
+	 * draws it at 640 CSS px in the reading column and at about 390 on a
+	 * phone, where `srcset` has handed the browser the 800px rendition — so
+	 * the reader is holding roughly twice the detail they can see, and Doré's
+	 * hatching is what that detail is made of. `PlateViewer` is a full-viewport
+	 * `<dialog>` over the SAME file, never a larger one; its docblock carries
+	 * the rest of the argument, including why it is a modal where every other
+	 * floating thing here is a popover.
+	 *
+	 * `t` ARRIVES WITH IT, and the note above about this component needing no
+	 * language still holds where it was aimed: the CREDIT is composed by the
+	 * route, because only the route knows which collection a plate belongs to.
+	 * A control's own name is not corpus data and has nowhere else to come
+	 * from.
+	 *
 	 * IT HIDES ITSELF WHEN THE IMAGE DOES NOT ARRIVE, and that is not defensive
 	 * padding — it is the offline case, by design. The plates are enrichment
 	 * and are deliberately in no service-worker download wave (`sw-policy.ts`),
@@ -61,7 +78,9 @@
 	import { PLATE_SIZES } from '$lib/plates';
 	import { plateSrc, plateSrcset } from '$lib/plate-src';
 	import Icon from '$lib/components/Icon.svelte';
+	import PlateViewer from '$lib/components/PlateViewer.svelte';
 	import { AnchoredPanel } from '$lib/floating.svelte';
+	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
 		plate: Plate;
@@ -80,6 +99,37 @@
 
 	let failed = $state(false);
 
+	/**
+	 * The viewer, mounted only once it has been asked for.
+	 *
+	 * NOT RENDERED CLOSED, which is where this parts company with `JumpBox`.
+	 * That box is one dialog on the page and leaves its markup in the document
+	 * because a closed `<dialog>` is `display: none` and costs nothing;
+	 * Genesis renders twenty-seven of these, and twenty-seven dialogs each
+	 * holding a second `<img>` for a picture nobody has asked to see is a
+	 * different bargain. `TocMenu` renders its list the same way and for the
+	 * same reason.
+	 *
+	 * `viewerSrc` IS READ OFF THE INLINE IMAGE at the moment of the click,
+	 * never rebuilt: `currentSrc` is the rendition the browser actually chose
+	 * out of the `srcset` for this viewport and this pixel ratio, and it is
+	 * therefore the one file already in the cache. See `PlateViewer`'s
+	 * docblock for why the viewer refuses to fetch a bigger one.
+	 */
+	let imgEl: HTMLImageElement | undefined = $state();
+	let openerEl: HTMLButtonElement | undefined = $state();
+	let viewerSrc = $state('');
+	let viewing = $state(false);
+
+	/* No src, no viewer. The one way to arrive here with nothing is a click
+	   landing before the lazy image has resolved a candidate, and opening an
+	   empty dialog over the page is a worse answer than the click appearing
+	   not to have registered. */
+	function openViewer() {
+		viewerSrc = imgEl?.currentSrc || imgEl?.src || '';
+		if (viewerSrc) viewing = true;
+	}
+
 	// Per INSTANCE, which is per plate: a chapter renders up to 27 of these
 	// and each card needs an id of its own for `popovertarget` to name.
 	// `$props.id()` has to be a bare variable declaration initializer, so it
@@ -90,17 +140,33 @@
 
 {#if src && !failed}
 	<figure class="plate">
-		<img
-			{src}
-			{srcset}
-			sizes={PLATE_SIZES}
-			width={plate.width}
-			height={plate.height}
-			alt={plate.title}
-			loading="lazy"
-			decoding="async"
-			onerror={() => (failed = true)}
-		/>
+		<!-- A button and not an image with a handler on it: the picture opens a
+		     dialog, and everything that makes that reachable — the tab stop,
+		     Enter and Space, the focus ring, the announcement that this is a
+		     control at all — comes from the element being one. `aria-haspopup`
+		     says which kind, so a screen-reader user knows the page is about
+		     to change out from under them rather than navigate. -->
+		<button
+			bind:this={openerEl}
+			type="button"
+			class="plate-open"
+			aria-haspopup="dialog"
+			aria-label={t('plates.enlarge').replace('{title}', plate.title)}
+			onclick={openViewer}
+		>
+			<img
+				bind:this={imgEl}
+				{src}
+				{srcset}
+				sizes={PLATE_SIZES}
+				width={plate.width}
+				height={plate.height}
+				alt=""
+				loading="lazy"
+				decoding="async"
+				onerror={() => (failed = true)}
+			/>
+		</button>
 		<figcaption>
 			{#if credit}
 				<!-- The title IS the control's content, so its accessible name is
@@ -142,6 +208,23 @@
 			{/if}
 		</figcaption>
 	</figure>
+
+	{#if viewing}
+		<!-- Focus is put back by hand for the reason `TocMenu` gives: the
+		     dialog restores it as it closes, but this one is unmounted in the
+		     same turn, and a keyboard reader whose focus went with it is
+		     returned to the top of the document instead of to the picture they
+		     were standing on. -->
+		<PlateViewer
+			{plate}
+			{credit}
+			src={viewerSrc}
+			onclosed={() => {
+				viewing = false;
+				openerEl?.focus();
+			}}
+		/>
+	{/if}
 {/if}
 
 <style>
@@ -154,6 +237,29 @@
 		display: block;
 		margin-block: 2.5rem;
 		margin-inline: 0;
+	}
+
+	/*
+	 * The trigger is the picture and must look like nothing: no chrome, no
+	 * box, and the figure's own width. `display: block` rather than the
+	 * button default so the image inside is not sitting on a text baseline
+	 * with a descender's worth of space under it.
+	 */
+	.plate-open {
+		appearance: none;
+		display: block;
+		inline-size: 100%;
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		color: inherit;
+		cursor: zoom-in;
+	}
+
+	.plate-open:focus-visible {
+		outline: 2px solid var(--color-focus-ring);
+		outline-offset: 3px;
 	}
 
 	.plate img {
@@ -255,6 +361,10 @@
 		.plate img {
 			mix-blend-mode: normal;
 			filter: none;
+		}
+
+		.plate-open {
+			cursor: auto;
 		}
 
 		.caption-trigger {

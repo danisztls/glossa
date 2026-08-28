@@ -224,6 +224,8 @@ export const fr: Dictionary = {
 	'colophon.illustrationsRights':
 		'Elles sont dans le domaine public. Les planches ont été gravées en 1866 et Doré est mort en 1883, et la reproduction photographique fidèle d’une gravure du domaine public ne crée aucun droit d’auteur nouveau. Nous disons d’où viennent nos numérisations parce que nous en sommes reconnaissants, non par obligation.',
 	'plates.scansBy': 'Numérisations fournies par',
+	'plates.enlarge': 'Agrandir {title}',
+	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'Les caractères',
 	'colophon.typeBody':
 		'Composé en EB Garamond, la renaissance par Georg Duffner et Octavio Pardo des caractères que Claude Garamont grava dans les années 1590 — la tradition humaniste dans laquelle l’Église imprime depuis la Renaissance. Les lettrines sont en Pirata One, une gothique dont les capitales restent lisibles à la taille qu’exige une lettrine. Les deux sont sous licence SIL Open Font License et servies depuis ce site plutôt que par un tiers, de sorte que lire une page ne demande rien au serveur de personne d’autre.',

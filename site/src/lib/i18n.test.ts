@@ -67,14 +67,21 @@ describe('UI_LANGS and the dictionaries', () => {
 		}
 	});
 
-	// The placeholder is substituted by the caller with `.replace('{lang}',
-	// …)`, so a translation that drops or misspells it silently loses the
-	// language name from the sentence.
-	it('keeps the {lang} placeholder wherever English has one', () => {
-		for (const key of ['summa.titleFromEdition', 'summa.noEditionInYourLanguage']) {
+	// Every placeholder is substituted by the caller with `.replace('{x}', …)`,
+	// so a translation that drops or misspells one silently loses the word it
+	// stood for — a sentence with no language name in it, or a plate's control
+	// labelled "Enlarge" with nothing said about which plate.
+	it('keeps each placeholder wherever English has one', () => {
+		const placeholders: Record<string, string> = {
+			'summa.titleFromEdition': '{lang}',
+			'summa.noEditionInYourLanguage': '{lang}',
+			'plates.enlarge': '{title}'
+		};
+		for (const [key, placeholder] of Object.entries(placeholders)) {
+			expect(dictionaryFor('en')[key], `en: ${key}`).toContain(placeholder);
 			for (const lang of UI_LANGS) {
 				const value = dictionaryFor(lang)[key];
-				if (value !== undefined) expect(value, `${lang}: ${key}`).toContain('{lang}');
+				if (value !== undefined) expect(value, `${lang}: ${key}`).toContain(placeholder);
 			}
 		}
 	});

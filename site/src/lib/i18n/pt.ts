@@ -247,6 +247,8 @@ export const pt: Dictionary = {
 	'colophon.illustrationsRights':
 		'Estão em domínio público. As chapas foram gravadas em 1866 e Doré morreu em 1883, e a reprodução fotográfica fiel de uma gravura em domínio público não gera direito de autor novo. Dizemos de onde vieram as nossas digitalizações porque lhes somos gratos, não por obrigação.',
 	'plates.scansBy': 'Digitalizações fornecidas por',
+	'plates.enlarge': 'Ampliar {title}',
+	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'Os tipos',
 	'colophon.typeBody':
 		'Composto em EB Garamond, o renascimento por Georg Duffner e Octavio Pardo dos tipos que Claude Garamont gravou na d\u00e9cada de 1590 \u2014 a tradi\u00e7\u00e3o humanista em que a Igreja imprime desde o Renascimento. As iniciais s\u00e3o Pirata One, uma letra g\u00f3tica cujas mai\u00fasculas permanecem leg\u00edveis no tamanho que uma capitular exige. Ambas as fontes t\u00eam licen\u00e7a SIL Open Font License e s\u00e3o servidas a partir deste s\u00edtio e n\u00e3o de terceiros, de modo que ler uma p\u00e1gina nada exige do servidor de outrem.',

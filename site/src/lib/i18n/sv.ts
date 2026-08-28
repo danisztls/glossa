@@ -225,6 +225,8 @@ export const sv: Dictionary = {
 	'colophon.illustrationsRights':
 		'De är fria. Plåtarna graverades 1866 och Doré dog 1883, och en trogen fotografisk återgivning av en fri gravyr ger ingen ny upphovsrätt. Vi anger varifrån våra skanningar kommer därför att vi är tacksamma för dem, inte därför att vi måste.',
 	'plates.scansBy': 'Skanningar tillhandahållna av',
+	'plates.enlarge': 'Förstora {title}',
+	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'Typsnittet',
 	'colophon.typeBody':
 		'Satt med EB Garamond, Georg Duffners och Octavio Pardos återupplivande av de typer Claude Garamont skar på 1590-talet — den humanistiska tradition kyrkan har tryckt i sedan renässansen. Anfangerna är Pirata One, en frakturstil vars versaler förblir läsbara i den storlek en anfang kräver. Båda är licensierade under SIL Open Font License och levereras från den här sajten och inte från tredje part, så att läsa en sida begär ingenting av någon annans server.',

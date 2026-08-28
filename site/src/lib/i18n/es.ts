@@ -223,6 +223,8 @@ export const es: Dictionary = {
 	'colophon.illustrationsRights':
 		'Están en dominio público. Las planchas se grabaron en 1866 y Doré murió en 1883, y la reproducción fotográfica fiel de un grabado en dominio público no genera un derecho de autor nuevo. Decimos de dónde vienen nuestras digitalizaciones porque se lo agradecemos, no por obligación.',
 	'plates.scansBy': 'Digitalizaciones facilitadas por',
+	'plates.enlarge': 'Ampliar {title}',
+	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'La tipografía',
 	'colophon.typeBody':
 		'Compuesto en EB Garamond, el renacimiento que Georg Duffner y Octavio Pardo hicieron de los tipos que Claude Garamont grabó en la década de 1590, la tradición humanista en la que la Iglesia imprime desde el Renacimiento. Las iniciales son Pirata One, una letra gótica cuyas mayúsculas siguen siendo legibles al tamaño que exige una capitular. Ambas están licenciadas bajo la SIL Open Font License y se sirven desde este sitio y no desde un tercero, de modo que leer una página no pide nada al servidor de nadie más.',

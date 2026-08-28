@@ -224,6 +224,8 @@ export const it: Dictionary = {
 	'colophon.illustrationsRights':
 		'Sono di pubblico dominio. Le lastre furono incise nel 1866 e Doré morì nel 1883, e la riproduzione fotografica fedele di un’incisione di pubblico dominio non genera alcun nuovo diritto d’autore. Diciamo da dove vengono le nostre scansioni perché ne siamo grati, non perché siamo tenuti a farlo.',
 	'plates.scansBy': 'Scansioni fornite da',
+	'plates.enlarge': 'Ingrandisci {title}',
+	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'I caratteri',
 	'colophon.typeBody':
 		'Composto in EB Garamond, la rinascita a opera di Georg Duffner e Octavio Pardo dei caratteri che Claude Garamont incise negli anni 1590 — la tradizione umanistica in cui la Chiesa stampa fin dal Rinascimento. I capilettera sono in Pirata One, una gotica le cui maiuscole restano leggibili alla dimensione che un capolettera richiede. Entrambi sono sotto licenza SIL Open Font License e serviti da questo sito anziché da terzi, così che leggere una pagina non chieda nulla al server di nessun altro.',

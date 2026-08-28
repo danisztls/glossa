@@ -325,6 +325,14 @@ export const en: Dictionary = {
 	'colophon.illustrationsRights':
 		'They are in the public domain. The plates were cut in 1866 and Doré died in 1883, and a faithful photographic reproduction of a public-domain engraving carries no new copyright of its own. We name where our scans came from because we are grateful for them, not because we are obliged to.',
 	'plates.scansBy': 'Scans provided by',
+	// The picture in the reading column is a control that opens it over the
+	// page, and `{title}` is the plate's own name — so the label names the
+	// thing being enlarged rather than saying "enlarge image" twenty-seven
+	// times down a chapter of Genesis. `plates.zoom` is one name for a toggle
+	// in both of its states; `aria-pressed` says which state it is in, which
+	// is what saves fourteen dictionaries a second string for "zoom out".
+	'plates.enlarge': 'Enlarge {title}',
+	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'The type',
 	'colophon.typeBody':
 		'Set in EB Garamond, Georg Duffner and Octavio Pardo\u2019s revival of the types Claude Garamont cut in the 1590s \u2014 the humanist tradition the Church has printed in since the Renaissance. The opening initials are Pirata One, a blackletter whose capitals stay legible at the size a drop cap demands. Both are licensed under the SIL Open Font License and served from this site rather than from a third party, so reading a page asks nothing of anyone else\u2019s server.',

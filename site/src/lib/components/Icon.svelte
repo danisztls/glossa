@@ -67,6 +67,12 @@
 	// said "a list" of anything at all, and `list-tree` draws the nesting at a
 	// size where the branches close up into a smudge.
 	import TableOfContents from '@lucide/svelte/icons/table-of-contents';
+	// The magnifier with a sign in it, not `expand`/`maximize`: those two draw
+	// a frame growing to fill a screen, which is what a video player's
+	// fullscreen control means. This one means the picture stays where it is
+	// and the reader gets closer to it, which is what the plate viewer does.
+	import ZoomIn from '@lucide/svelte/icons/zoom-in';
+	import ZoomOut from '@lucide/svelte/icons/zoom-out';
 	import ArrowUp from '@lucide/svelte/icons/arrow-up';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
@@ -93,6 +99,8 @@
 		dices: Dices,
 		info: Info,
 		'table-of-contents': TableOfContents,
+		'zoom-in': ZoomIn,
+		'zoom-out': ZoomOut,
 		'arrow-up': ArrowUp,
 		'arrow-left': ArrowLeft,
 		'arrow-right': ArrowRight

@@ -224,6 +224,8 @@ export const sl: Dictionary = {
 	'colophon.illustrationsRights':
 		'So v javni lasti. Plošče so bile vrezane leta 1866, Doré pa je umrl leta 1883, in zvesta fotografska reprodukcija grafike v javni lasti ne ustvari nove avtorske pravice. Povemo, od kod so naši skeni, ker smo zanje hvaležni, ne ker bi morali.',
 	'plates.scansBy': 'Skene je omogočil',
+	'plates.enlarge': 'Povečaj {title}',
+	'plates.zoom': 'Povečava',
 	'colophon.typeTitle': 'Črke',
 	'colophon.typeBody':
 		'Stavljeno v EB Garamond, obuditvi črk, ki jih je v devetdesetih letih 16. stoletja rezal Claude Garamont, izpod rok Georga Duffnerja in Octavia Parda — v humanistični tradiciji, v kateri Cerkev tiska že od renesanse. Začetnice so Pirata One, gotica, katere verzalke ostanejo berljive v velikosti, ki jo zahteva inicialka. Obe sta pod licenco SIL Open Font License in ju streže to spletišče, ne tretja oseba, tako da branje strani ne zahteva ničesar od strežnika kogar koli drugega.',

@@ -226,6 +226,8 @@ export const ro: Dictionary = {
 	'colophon.illustrationsRights':
 		'Sunt în domeniul public. Plăcile au fost gravate în 1866, iar Doré a murit în 1883, și reproducerea fotografică fidelă a unei gravuri din domeniul public nu naște un drept de autor nou. Spunem de unde vin scanările noastre fiindcă le suntem recunoscători, nu fiindcă am fi obligați.',
 	'plates.scansBy': 'Scanări puse la dispoziție de',
+	'plates.enlarge': 'Mărește {title}',
+	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'Litera',
 	'colophon.typeBody':
 		'Cules cu EB Garamond, reînvierea de către Georg Duffner și Octavio Pardo a caracterelor tăiate de Claude Garamont în anii 1590 — tradiția umanistă în care Biserica tipărește încă din Renaștere. Inițialele sunt Pirata One, o literă gotică ale cărei majuscule rămân lizibile la mărimea pe care o cere o inițială. Amândouă sunt licențiate sub SIL Open Font License și sunt servite de pe acest sit, nu de la terți, așa încât citirea unei pagini nu cere nimic de la serverul nimănui altcuiva.',

@@ -228,6 +228,8 @@ export const hu: Dictionary = {
 	'colophon.illustrationsRights':
 		'Közkincsek. A lemezeket 1866-ban metszették, Doré 1883-ban halt meg, és egy közkincs metszet hű fényképi másolata nem keletkeztet új szerzői jogot. Megnevezzük, honnan valók a beolvasásaink, mert hálásak vagyunk értük, nem mert kötelesek volnánk.',
 	'plates.scansBy': 'A beolvasásokat rendelkezésre bocsátotta:',
+	'plates.enlarge': '{title} nagyítása',
+	'plates.zoom': 'Nagyítás',
 	'colophon.typeTitle': 'A betűk',
 	'colophon.typeBody':
 		'EB Garamonddal szedve, amely Georg Duffner és Octavio Pardo felújítása azokról a betűkről, amelyeket Claude Garamont metszett az 1590-es években — abban a humanista hagyományban, amelyben az Egyház a reneszánsz óta nyomtat. A kezdőbetűk Pirata One betűvel készültek: ez egy gót betűtípus, amelynek nagybetűi olvashatók maradnak abban a méretben, amelyet az iniciálé megkíván. Mindkettő SIL Open Font License alatt áll, és erről az oldalról érkezik, nem harmadik féltől, így egy oldal elolvasása senki más kiszolgálójától nem kér semmit.',

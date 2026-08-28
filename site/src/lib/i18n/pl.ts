@@ -222,6 +222,8 @@ export const pl: Dictionary = {
 	'colophon.illustrationsRights':
 		'Należą do domeny publicznej. Płyty wykonano w 1866 roku, a Doré zmarł w 1883, wierna zaś fotograficzna reprodukcja ryciny z domeny publicznej nie tworzy nowego prawa autorskiego. Podajemy, skąd pochodzą nasze skany, ponieważ jesteśmy za nie wdzięczni, a nie dlatego, że musimy.',
 	'plates.scansBy': 'Skany udostępnione przez',
+	'plates.enlarge': 'Powiększ {title}',
+	'plates.zoom': 'Powiększenie',
 	'colophon.typeTitle': 'Krój pisma',
 	'colophon.typeBody':
 		'Złożono krojem EB Garamond, odnowieniem przez Georga Duffnera i Octavia Parda czcionek, które Claude Garamont wyciął w latach dziewięćdziesiątych XVI wieku — tradycji humanistycznej, w której Kościół drukuje od czasów renesansu. Inicjały to Pirata One, gotyk, którego wersaliki pozostają czytelne w rozmiarze, jakiego wymaga inicjał. Oba są na licencji SIL Open Font License i serwowane z tej strony, a nie przez osoby trzecie, więc czytanie strony niczego nie wymaga od cudzego serwera.',

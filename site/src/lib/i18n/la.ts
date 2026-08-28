@@ -262,6 +262,8 @@ export const la: Dictionary = {
 	'colophon.illustrationsRights':
 		'In publico sunt. Laminae anno MDCCCLXVI incisae sunt et Doré anno MDCCCLXXXIII mortuus est, neque imaginis publicae fidelis photographica repetitio novum ius auctoris parit. Unde nostrae imagines venerint dicimus, quia gratias illis debemus, non quia cogimur.',
 	'plates.scansBy': 'Imagines electronicae praebitae a',
+	'plates.enlarge': 'Amplifica {title}',
+	'plates.zoom': 'Amplificatio',
 	'colophon.typeTitle': 'De litterarum forma',
 	'colophon.typeBody':
 		'Litteris EB Garamond composita, quas Georgius Duffner et Octavius Pardo ex typis a Claudio Garamont circa annum 1590 caesis renovaverunt — ea traditione humanistica qua Ecclesia ab aetate litterarum renascentium imprimit. Litterae initiales sunt Pirata One, forma Gothica cuius capitales etiam ea magnitudine quam littera initialis poscit legi possunt. Utraeque sub licentia SIL Open Font License dantur et ex hac ipsa sede mittuntur, non ex aliena, ne pagina legenda quicquam ab alterius machina petat.',
