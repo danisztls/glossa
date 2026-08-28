@@ -354,18 +354,23 @@ def is_full_italic(inner: str) -> bool:
 _ANCHOR_RE = re.compile(r"<a\b[^>]*\bname=[^>]*>(.*?)</a>", re.DOTALL | re.IGNORECASE)
 
 
-def split_anchor(inner: str) -> tuple[str, str, list[str]] | None:
-    """`inner` split around its named anchor: (before, anchor text, the
-    printed lines after it), the first two flattened to plain text. None when
-    the block carries no anchor. Slicing the raw HTML around the match can cut
-    mid-tag, which is harmless -- `strip_tags` drops tag debris either way."""
+def split_anchor(inner: str) -> tuple[str, str, str] | None:
+    """`inner` split around its named anchor: (before, anchor text, the raw
+    HTML after it), the first two flattened to plain text. None when the block
+    carries no anchor. Slicing the raw HTML around the match can cut mid-tag,
+    which is harmless -- `strip_tags` drops tag debris either way.
+
+    The tail stays HTML rather than printed lines because it may hold a
+    SECOND anchor, and only the anchor tells `fused_heading` where the next
+    heading's title ends. Callers that just want the lines call
+    `printed_lines` on it."""
     m = _ANCHOR_RE.search(inner)
     if m is None:
         return None
     return (
         strip_tags(inner[: m.start()]),
         strip_tags(m.group(1)),
-        printed_lines(inner[m.end() :]),
+        inner[m.end() :],
     )
 
 
@@ -767,10 +772,12 @@ def extract_blocks(
 
 def heading_title(
     blocks: list[Block], i: int, match_label, state: ScrapeState
-) -> tuple[str, list[str], int]:
+) -> tuple[str, list[str], int, str]:
     """The full title of the labelled heading starting at `blocks[i]`, the
-    sub-headings printed with it (usually none), and how many blocks the whole
-    thing consumed.
+    sub-headings printed with it (usually none), how many blocks the whole
+    thing consumed, and the raw HTML left over after the title (empty unless
+    the title came from an anchor -- see `fused_heading`, which is the only
+    caller that needs it).
 
     The label line and its title arrive either as one block
     ("SEGUNDA PARTE<br/>A CELEBRACAO DO MISTERIO CRISTAO") or as two
@@ -787,8 +794,8 @@ def heading_title(
 
     split = split_anchor(b.inner)
     if split is not None:
-        pre, name, after = split
-        return _join(pre, name), after, 1
+        pre, name, tail = split
+        return _join(pre, name), printed_lines(tail), 1, tail
 
     nxt = blocks[i + 1] if i + 1 < len(blocks) else None
     followable = (
@@ -800,16 +807,16 @@ def heading_title(
     if followable:
         split = split_anchor(nxt.inner)
         if split is not None:
-            pre, name, after = split
-            return _join(b.stripped, pre, name), after, 2
+            pre, name, tail = split
+            return _join(b.stripped, pre, name), printed_lines(tail), 2, tail
 
     lines = printed_lines(b.inner)
     if len(lines) > 1:
-        return _join(lines[0], lines[1]), lines[2:], 1
+        return _join(lines[0], lines[1]), lines[2:], 1, ""
     if followable:
         nlines = printed_lines(nxt.inner)
         if nlines:
-            return _join(b.stripped, nlines[0]), nlines[1:], 2
+            return _join(b.stripped, nlines[0]), nlines[1:], 2, ""
 
     # A label with nothing printed after it. Not seen in any of the ten
     # editions, so this is a "the mirror changed" path: emit the bare label as
@@ -817,7 +824,58 @@ def heading_title(
     state.anomalies.append(
         f"heading {b.stripped[:60]!r}: no title line printed after the label"
     )
-    return b.stripped, [], 1
+    return b.stripped, [], 1, ""
+
+
+def fused_heading(
+    tail: str, subs: list[str], match_label
+) -> tuple[str, int | None, str, list[str]] | None:
+    """The heading a mirror printed INSIDE another heading's paragraph:
+    (kind, number, title, the sub-headings left after it). None when the
+    leftover lines are what they usually are, plain sub-headings.
+
+    A heading's block normally holds a label and its title, and anything
+    printed after those is a sub-heading set with a `<br/>` rather than in a
+    block of its own (PT's "OS SIMBOLOS DA FE"). The Spanish mirror breaks
+    that assumption once, at Part Four: where the other nine editions print
+    the part title and the section heading as separate paragraphs, it fuses
+    them into one, using four `<br/>`s where the others use a blank
+    paragraph --
+
+        <p>CUARTA PARTE</p>
+        <p><a name=...>LA ORACION CRISTIANA</a><br/><br/><br/><br/>
+           PRIMERA SECCION <br/><a name=...>LA ORACION <br/>EN LA VIDA
+           CRISTIANA</a></p>
+
+    -- so "PRIMERA SECCION", "LA ORACION" and "EN LA VIDA CRISTIANA" arrive
+    as three leftover lines. Read as sub-headings, section one of Part Four
+    never opens and its three chapters hang off the part instead: seven
+    sections against the eight every other edition has, and `validate`'s
+    cross-edition structure check is what says so.
+
+    THE SECOND ANCHOR IS WHAT SETTLES THE TITLE, the same rule the note above
+    `split_anchor` states for the first: it wraps "LA ORACION <br/>EN LA VIDA
+    CRISTIANA" and nothing else, so the two lines are one wrapped title
+    rather than a title and a sub-heading. Without it the lines alone cannot
+    tell those apart -- the same ambiguity that makes EN's three-line chapter
+    title unreadable from lines.
+    """
+    if not subs:
+        return None
+    matched = match_label(subs[0])
+    if matched is None:
+        return None
+    kind, num = matched
+    if tail:
+        split = split_anchor(tail)
+        if split is not None:
+            pre, name, rest = split
+            return kind, num, _join(pre, name), printed_lines(rest)
+    # No anchor: fall back to the printed-line rule `heading_title` uses in
+    # the same position -- label, then title, then sub-headings.
+    if len(subs) > 1:
+        return kind, num, _join(subs[0], subs[1]), subs[2:]
+    return kind, num, subs[0], []
 
 
 def process_body(body: str, cfg: dict, state: ScrapeState) -> None:
@@ -920,8 +978,15 @@ def process_body(body: str, cfg: dict, state: ScrapeState) -> None:
         if is_heading:
             if matched is not None:
                 kind, num = matched
-                title, subs, consumed = heading_title(blocks, i, match_label, state)
+                title, subs, consumed, tail = heading_title(
+                    blocks, i, match_label, state
+                )
                 state.push_heading(kind, num, title)
+                nested = fused_heading(tail, subs, match_label)
+                if nested is not None:
+                    # Two headings in one paragraph -- see `fused_heading`.
+                    sub_kind, sub_num, sub_title, subs = nested
+                    state.push_heading(sub_kind, sub_num, sub_title)
                 for sub in subs:
                     # A third printed line in the heading's own block: a
                     # sub-heading the source set with a <br/> rather than in a
