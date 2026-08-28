@@ -29,23 +29,11 @@
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { getWork } from '$lib/corpus';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
-	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	const workId = $derived(content.workIdFor('bible'));
 	const work = $derived(workId ? getWork(workId) : undefined);
-
-	/* The book list's two divisions, which is the whole of this index's
-	   structure — `BookChapterPicker` prints these headings and, in its `'grid'`
-	   variant, gives them these ids. Written out rather than read off the
-	   picker because the corpus knows of no grouping finer than the testament
-	   (`CanonicalBook` carries an order and nothing else), so there is no tree
-	   here for `indexSidebarItems` to walk the way the Catechism's index has. */
-	const sidebarItems = $derived([
-		{ href: '#toc-ot', label: t('bible.testament.ot') },
-		{ href: '#toc-nt', label: t('bible.testament.nt') }
-	]);
 </script>
 
 <svelte:head>
@@ -76,28 +64,23 @@
 		{/if}
 	</div>
 	<!--
-		THE SAME SHELL EVERY OTHER LIBRARY INDEX WEARS, and until now the one
-		this route did not. `/catechismus`, `/compendium` and `/summa` are all
-		`.reading-layout` with a sidebar; this page was a bare
-		`.content-column`. Above 80rem that grid centres the text column and the
-		aside AS A UNIT (app.css), so a page without one drew its column half an
-		aside-plus-gutter further along — and moving between `/scriptura` and any
-		chapter under it, which IS a `.reading-layout`, slid the whole page
-		sideways under the reader.
+		AND NO SIDEBAR IN THE SECOND TRACK, deliberately. `.reading-layout` is
+		here for its geometry alone: above 80rem it centres the reading column
+		and the aside AS A UNIT (app.css), so a page laid out without it drew
+		its column half an aside-plus-gutter further along, and moving between
+		`/scriptura` and any chapter under it — which IS a `.reading-layout` —
+		slid the whole page sideways under the reader. The grid declares both
+		tracks whether or not anything occupies the second, so the column sits
+		where every other reading route puts it with no element here at all.
 
-		Two rows is the whole of this index's structure, and enough: seventy-three
-		books is a long page, and skipping forty-six of them to reach the New
-		Testament is the one jump it has to offer. `IndexSidebarToc` spies on the
-		fragments, so the row also says which testament is on screen.
-
-		Guarded on `workId` like the list it points at — the empty grid track
-		stays either way, so the column does not move when there is no corpus.
+		The three sibling indexes fill that track because each has a table of
+		contents worth carrying alongside a long scroll. This one has no such
+		tree — the corpus knows no grouping of books finer than the testament
+		(`CanonicalBook` is an order and nothing else) — and the two rows that
+		amounts to were offered here until 2026-08-28: a jump to the New
+		Testament, on the one index short enough to need no jumping. A sidebar
+		with nothing to navigate is furniture, so this track stays empty.
 	-->
-	{#if workId}
-		<aside class="index-aside">
-			<IndexSidebarToc heading={t('bible.landing.books')} items={sidebarItems} />
-		</aside>
-	{/if}
 </div>
 
 <style>
