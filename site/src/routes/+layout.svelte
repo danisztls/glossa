@@ -202,8 +202,12 @@
      that is wrong is the one nobody is looking at. -->
 {#snippet navLinks()}
 	{#each NAV_ITEMS as item (item.href)}
+		<!-- `data-label` is the same label again, for the width reservation in
+		     the header's row (see `.primary-nav a::after`). It has to be an
+		     attribute because a pseudo-element cannot read its host's text. -->
 		<a
 			href={item.href}
+			data-label={t(item.key)}
 			aria-current={isActive(item.href) ? 'page' : undefined}
 			onclick={onNavFollow}
 		>
@@ -457,12 +461,46 @@
 	.nav-links a {
 		text-decoration: none;
 		color: var(--color-text-muted);
+		/* Declared here rather than written into the two rules below because
+		   the second of them exists only to reserve the width the first will
+		   need; the two weights drifting apart is the one way this breaks. */
+		--nav-weight-current: 600;
 	}
 
 	.primary-nav a[aria-current='page'],
 	.nav-links a[aria-current='page'] {
 		color: var(--color-text);
-		font-weight: 600;
+		font-weight: var(--nav-weight-current);
+	}
+
+	/*
+	 * THE BOLD IS DRAWN OVER SPACE THAT WAS ALREADY THERE. A label at 600 is
+	 * wider than the same label at 400, so marking the current section bold
+	 * re-laid the row out on every navigation: the current link grew by a few
+	 * pixels and every link after it slid along, which is motion the reader
+	 * reads as the page shifting under them. Each anchor therefore carries its
+	 * own label a second time, in the weight it will be WHEN current, as a
+	 * zero-height box nothing can see — so the anchor is already as wide as its
+	 * bold self, and `aria-current` changes the ink and nothing else.
+	 *
+	 * `visibility: hidden` and not `display: none`: hidden visibility is the
+	 * one that still occupies width, and it is also what keeps the duplicate
+	 * label out of the accessibility tree, which a pseudo-element cannot be
+	 * told with an attribute.
+	 *
+	 * Only the header's row needs this. The sheet's copy is a column of
+	 * full-width rows, where a wider label moves nothing.
+	 */
+	.primary-nav a::after {
+		content: attr(data-label);
+		display: block;
+		height: 0;
+		overflow: hidden;
+		visibility: hidden;
+		font-weight: var(--nav-weight-current);
+		/* A reservation that wrapped where the visible label does not would
+		   reserve the wrong width. */
+		white-space: nowrap;
 	}
 
 	.primary-nav a:hover,
