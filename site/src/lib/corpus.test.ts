@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import {
-	bibleChapterChunkStartFor,
 	cccChunkStartFor,
 	compendiumChunkStartFor,
 	documentChunkStartFor,
@@ -111,12 +110,12 @@ describe('content chunking', () => {
 	const STRIDES: { name: string; constant: string; startFor: (n: number) => number }[] = [
 		{ name: 'documents', constant: 'DOCUMENT_CHUNK_SIZE', startFor: documentChunkStartFor },
 		{ name: 'CCC', constant: 'CCC_CHUNK_SIZE', startFor: cccChunkStartFor },
-		{ name: 'Compendium', constant: 'COMPENDIUM_CHUNK_SIZE', startFor: compendiumChunkStartFor },
-		{
-			name: 'Bible chapters',
-			constant: 'BIBLE_CHAPTER_CHUNK_SIZE',
-			startFor: bibleChapterChunkStartFor
-		}
+		{ name: 'Compendium', constant: 'COMPENDIUM_CHUNK_SIZE', startFor: compendiumChunkStartFor }
+		// Bible chapters were a fourth row here until 2026-08-28. They are no
+		// longer a STRIDE: chunks are packed by size, so there is no constant
+		// for the two sides to agree on and nothing for this test to pin. What
+		// replaces it is `bibleChapterChunkFor`, whose contract is a lookup
+		// over ranges the sync script named -- covered below rather than here.
 	];
 
 	for (const { name, constant, startFor } of STRIDES) {

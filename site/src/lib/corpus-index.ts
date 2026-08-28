@@ -813,16 +813,40 @@ export function compendiumChunkStartFor(n: number): number {
 	return Math.floor((n - 1) / COMPENDIUM_CHUNK_SIZE) * COMPENDIUM_CHUNK_SIZE + 1;
 }
 
-/** Must equal `BIBLE_CHAPTER_CHUNK_SIZE` in scripts/sync-corpus.mjs, which is
- *  where the choice of 20 is argued and measured. Pinned by `corpus.test.ts`
- *  like the other two. */
-const BIBLE_CHAPTER_CHUNK_SIZE = 20;
-
-/** The fixed-range chunk a Bible CHAPTER number lives in. Note this partitions
- *  chapters WITHIN one book — `Ps 23` and `Gen 23` are different files — so it
- *  is always applied together with a book's OSIS id, never on its own. */
-export function bibleChapterChunkStartFor(n: number): number {
-	return Math.floor((n - 1) / BIBLE_CHAPTER_CHUNK_SIZE) * BIBLE_CHAPTER_CHUNK_SIZE + 1;
+/**
+ * The chunk holding one Bible chapter, or undefined when nothing holds it.
+ *
+ * THIS USED TO BE ARITHMETIC. Chapters were chunked on a fixed stride of 20,
+ * so the chunk was `floor((n - 1) / 20) * 20 + 1` and needed no lookup at all.
+ * Two editions ingested on 2026-08-28 ended that: Martini prints ~600 words of
+ * commentary on a single verse, and a stride that produced 167 KB worst-case
+ * across the first four editions produced 602 KB across the next two. Chunks
+ * are now packed by size, which means their boundaries follow the text and
+ * cannot be computed from a chapter number — see sync-corpus.mjs's
+ * `BIBLE_CHAPTER_CHUNK_TARGET_BYTES`, which argues why that trade is the right
+ * one and what it costs.
+ *
+ * Nothing had to be added to the index tier to pay for it: this map is built
+ * from the content manifest that already existed, and the file names already
+ * carried both ends of their range. Bounded on both sides deliberately — a
+ * chapter past the end of a book must return undefined rather than the last
+ * chunk, which is what a nearest-start search would give.
+ */
+export function bibleChapterChunkFor(
+	workId: string,
+	osis: string,
+	n: number
+): BibleChapterChunk | undefined {
+	const byStart = bibleChapterLocations[workId]?.[osis];
+	if (!byStart) return undefined;
+	for (const key of Object.keys(byStart)) {
+		const chunk = byStart[Number(key)];
+		if (chunk.start <= n && n <= chunk.end) return chunk;
+	}
+	// A chapter in a HOLE between two chunks, or past the end of the book.
+	// Undefined is right for both: the caller renders an absent chapter, which
+	// is a state this corpus has on purpose (a book a given edition omits).
+	return undefined;
 }
 
 /**
@@ -861,10 +885,23 @@ export function translatedDescriptionsLocation(lang: string): ContentLocation | 
 	return url ? { relPath, url } : undefined;
 }
 
-/** workId -> OSIS -> chapter-chunk start -> file. Three levels: the chapter
- *  stride partitions chapters WITHIN a book, so the OSIS id is part of the
- *  key rather than something the stride could ever encode. */
-const bibleChapterLocations: Record<string, Record<string, Record<number, ContentLocation>>> = {};
+/** One packed range of chapters: the range it holds, and where the file is.
+ *
+ *  `end` is stored because chunk boundaries follow SIZE rather than a fixed
+ *  stride (see `BIBLE_CHAPTER_CHUNK_TARGET_BYTES` in sync-corpus.mjs, which
+ *  argues the change). Without it a lookup could only pick the nearest start
+ *  at or below the chapter and would silently hand back a neighbouring chunk
+ *  for a chapter past the end of the book. The path regex below always
+ *  captured it and used to discard it. */
+export interface BibleChapterChunk extends ContentLocation {
+	start: number;
+	end: number;
+}
+
+/** workId -> OSIS -> chunk start -> that chunk. Three levels: chunking
+ *  partitions chapters WITHIN a book, so the OSIS id is part of the key rather
+ *  than something a chapter number could ever encode. */
+const bibleChapterLocations: Record<string, Record<string, Record<number, BibleChapterChunk>>> = {};
 const cccChunkLocations: Record<string, Record<number, ContentLocation>> = {};
 /** workId -> question-chunk start -> file. Two levels, exactly like the CCC's
  *  paragraph chunks; it was a single whole-language file until 2026-08-25. */
@@ -910,8 +947,13 @@ for (const [relPath, url] of Object.entries(contentUrlByRelPath)) {
 	const location: ContentLocation = { relPath, url };
 	const bibleMatch = relPath.match(/^content\/([^/]+)\/books\/([^/]+)\/(\d+)-(\d+)\.json$/);
 	if (bibleMatch) {
-		const [, workId, osis, startStr] = bibleMatch;
-		((bibleChapterLocations[workId] ??= {})[osis] ??= {})[Number(startStr)] = location;
+		const [, workId, osis, startStr, endStr] = bibleMatch;
+		const start = Number(startStr);
+		((bibleChapterLocations[workId] ??= {})[osis] ??= {})[start] = {
+			...location,
+			start,
+			end: Number(endStr)
+		};
 		continue;
 	}
 	const cccMatch = relPath.match(/^content\/([^/]+)\/paragraphs\/(\d+)-(\d+)\.json$/);
@@ -985,7 +1027,7 @@ export function bibleChapterLocation(
 	osis: string,
 	n: number
 ): ContentLocation | undefined {
-	return bibleChapterLocations[workId]?.[osis]?.[bibleChapterChunkStartFor(n)];
+	return bibleChapterChunkFor(workId, osis, n);
 }
 
 /** Every chunk of one book, in chapter order — for a whole-book read. Nothing

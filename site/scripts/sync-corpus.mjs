@@ -22,7 +22,7 @@
  *   own numbering, so chunk membership stays a pure function of `n` with no
  *   lookup table to ship or keep in sync (the `*ChunkStartFor` functions in
  *   `corpus-index.ts`). Bible books split into fixed 20-chapter chunks
- *   (`BIBLE_CHAPTER_CHUNK_SIZE`), CCC paragraphs into fixed 100-paragraph
+ *   (`BIBLE_CHAPTER_CHUNK_TARGET_BYTES`), CCC paragraphs into fixed 100-paragraph
  *   chunks (29 chunks/language — shipping the 3.5 MB/language
  *   `paragraphs.json` whole would put a >500 KB gzipped file behind a single
  *   `¶1` visit), the Compendium into fixed 100-question chunks
@@ -187,7 +187,7 @@ const DOCUMENT_CHUNK_SIZE = 50;
 const COMPENDIUM_CHUNK_SIZE = 100;
 
 /** Bible books, chunked by CHAPTER on the same fixed-stride rule again
- *  (`bibleChapterChunkStartFor` in `corpus-index.ts`).
+ *  (`bibleChapterChunkFor` in `corpus-index.ts`).
  *
  *  One file per book matched the print volume's own granularity, which is a
  *  good OFFLINE unit but was never the READ unit: `/scriptura/{osis}/{chapter}`
@@ -195,19 +195,40 @@ const COMPENDIUM_CHUNK_SIZE = 100;
  *  opening Ps 23 paid for all 150 psalms — 374 KB raw in the Matos Soares
  *  edition, the largest single read in the corpus.
  *
- *  20 was measured rather than guessed (2026-08-25, all four editions, every
- *  stride from 10 to 30): it caps the worst chunk at 159 KB raw, in line with
- *  the CCC's 147 KB and the documents' 171 KB, for 444 files against 388 at
- *  stride 25 and 692 at stride 10. Below 20 the file count climbs fast for
- *  almost no reduction in the worst case, because the worst case is set by a
- *  handful of genuinely long chapters (1 Maccabees) rather than by the stride.
+ *  IT WAS A FIXED STRIDE OF 20 UNTIL 2026-08-28, measured across all four
+ *  editions then in the corpus, and the measurement was the problem: a stride
+ *  is a proxy for size, and it holds only while every edition packs about the
+ *  same amount of text into a chapter. `bible.allioli.de` and
+ *  `bible.martini.it` broke that on the day they landed — Martini carries
+ *  ~600 words of 18th-century commentary on a single verse — and 97 chunks
+ *  came out over the ceiling, the worst at 602 KB against a previous corpus
+ *  worst of 167 KB. Dropping the stride globally was the wrong fix twice over:
+ *  it would have tripled the file count for the four editions that were fine,
+ *  and Martini still exceeded the ceiling at a stride of 5.
  *
- *  Applied uniformly, not above a size threshold: a threshold would put two
- *  different path shapes in the same tier, and the whole point of a fixed
- *  stride is that chunk membership stays a pure function of the chapter
- *  number. Every book with 20 chapters or fewer — most of them — is still a
- *  single file, just at a chunked path. */
-const BIBLE_CHAPTER_CHUNK_SIZE = 20;
+ *  So chapters are PACKED BY SIZE instead, greedily, up to
+ *  `BIBLE_CHAPTER_CHUNK_TARGET_BYTES`. A chunk is still a contiguous range of
+ *  chapters within one book and is still named `{start}-{end}`, so the path
+ *  shape is unchanged and one file per read is unchanged; only the boundaries
+ *  now follow the text rather than the numbering. Nothing needs a threshold or
+ *  a per-edition constant, and an edition ingested later with a heavier
+ *  apparatus is handled without anyone re-measuring.
+ *
+ *  WHAT THIS COST, and it is the reason the old comment insisted on a fixed
+ *  stride: chunk membership is no longer a pure function of the chapter
+ *  number, so the reader can no longer compute it. It does not have to —
+ *  `corpus-index.ts` already builds a per-work, per-book map of chunk starts
+ *  from the content manifest, and `bibleChapterChunkFor` now selects from that
+ *  map the range actually containing the chapter. The path regex there already
+ *  captured the end and threw it away; it keeps it now, so the lookup is
+ *  bounded rather than a nearest-start guess.
+ *
+ *  A single chapter that exceeded the ceiling on its own could not be packed
+ *  anywhere and would have to raise it. None does: the largest in the corpus is
+ *  Martini's Song of Songs 2 at 93 KB, and Allioli's worst is Matthew 26 at
+ *  58 KB. Re-check that if an edition with a still-heavier apparatus arrives —
+ *  it is the one premise this scheme has left. */
+const BIBLE_CHAPTER_CHUNK_TARGET_BYTES = 150_000;
 
 /** No single content file may exceed this. Checked over the whole manifest at
  *  the end of the run, and a HARD failure rather than a warning.
@@ -938,17 +959,20 @@ for (const workId of workIds) {
 					manifest.language
 				);
 			}
-			// Chapter text, chunked by CHAPTER (see `BIBLE_CHAPTER_CHUNK_SIZE`).
+			// Chapter text, packed by SIZE (see `BIBLE_CHAPTER_CHUNK_TARGET_BYTES`).
 			// The chunk is the bare `Chapter[]` for its range, not a trimmed
 			// copy of the book object: `osis`/`name`/`abbrevs`/`order` are all
 			// in the index tier above, already in hand at every call site, and
 			// repeating them in each of a book's chunks would be the only
 			// thing in this tier that isn't reading text.
-			const maxChapterN = book.chapters.reduce((max, c) => Math.max(max, c.n), 0);
-			for (let start = 1; start <= maxChapterN; start += BIBLE_CHAPTER_CHUNK_SIZE) {
-				const end = start + BIBLE_CHAPTER_CHUNK_SIZE - 1;
-				const chunk = book.chapters.filter((c) => c.n >= start && c.n <= end);
-				if (chunk.length === 0) continue;
+			const ordered = [...book.chapters].sort((a, b) => a.n - b.n);
+			const emit = (chunk) => {
+				if (chunk.length === 0) return;
+				// Named by the chapters it actually holds, so the range in the
+				// filename is the range in the file — which is what lets the
+				// reader's lookup be bounded rather than a nearest guess.
+				const start = chunk[0].n;
+				const end = chunk[chunk.length - 1].n;
 				const chunkName = `${String(start).padStart(4, '0')}-${String(end).padStart(4, '0')}`;
 				const relPath = `content/${workId}/books/${book.osis}/${chunkName}.json`;
 				writeJson(path.join(destDir, relPath), chunk);
@@ -958,7 +982,23 @@ for (const workId of workIds) {
 					relPath,
 					bytes: byteLength(chunk)
 				});
+			};
+			let pack = [];
+			let packBytes = 0;
+			for (const chapter of ordered) {
+				const size = byteLength(chapter);
+				// A chapter always goes somewhere: an oversized one becomes a
+				// chunk of its own rather than being dropped or split, and the
+				// ceiling check at the end of the run is what reports it.
+				if (pack.length > 0 && packBytes + size > BIBLE_CHAPTER_CHUNK_TARGET_BYTES) {
+					emit(pack);
+					pack = [];
+					packBytes = 0;
+				}
+				pack.push(chapter);
+				packBytes += size;
 			}
+			emit(pack);
 		}
 		books.sort((a, b) => a.order - b.order);
 		bibleIndex[workId] = { books };
