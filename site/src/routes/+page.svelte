@@ -100,6 +100,13 @@
 	// small: a tagline, the 5 section names as chips (the same visual language
 	// as the CCC/Compendium row's chips above), and one link into the full
 	// listing — not a repeat of `/preces`' own grouped list of every prayer.
+	//
+	// And no edition note under it, unlike the Bible's. That line exists to say
+	// WHICH edition is being read, which it does well when the title is
+	// `Catholic Public Domain Version`; the prayer work's title is `Common
+	// Prayers` (`Orações Comuns`, `Orationes Communes`), so under a heading
+	// reading `Prayers` it restated the heading and named nothing. There is one
+	// prayer edition per language anyway, so there is no choice to disclose.
 	const prayerLang = $derived(content.langFor('prayer'));
 	const prayerGroups = $derived(prayerWork ? listPrayerGroups(prayerLang) : []);
 
@@ -287,9 +294,6 @@
 				{/each}
 			</ul>
 			<a class="prayers-browse-all" href="/preces">{t('home.prayers.browseAll')} &rarr;</a>
-			{#if prayerWork}
-				<p class="edition-note">{prayerWork.title}</p>
-			{/if}
 		</section>
 	{/if}
 
