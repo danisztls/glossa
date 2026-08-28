@@ -1,0 +1,26 @@
+[
+  {
+    "id": "compendium.de-120-refs-640-for-610",
+    "locator": {
+      "question": 120
+    },
+    "field": "refs_html",
+    "from": "<p>640-611</p>",
+    "to": "<p>610-611</p>",
+    "reason": "The reference line for question 120 prints '640-611', which its first number is larger than its second, so the range names no paragraphs and the question's only reference does not link. The end of the range is already right -- this edition's own '611' agrees with the eight that print '610-611' -- so a single digit, '4' standing for '1', is the whole defect. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 120 print: EN '610-611 621', ES '610-611 621', FR '610-611 621', HU '610-611 621', IT '610-611 620', PT '610-611 621', RO '610‑611 621', SL '610-611 621', SV '610-611, 621'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.de-339-refs-0608-for-1608",
+    "locator": {
+      "question": 339
+    },
+    "field": "refs_html",
+    "from": "<p>1606-0608</p>",
+    "to": "<p>1606-1608</p>",
+    "reason": "The reference line for question 339 prints '1606-0608', which its second number begins with a zero and is smaller than its first, so the range is empty. Nine editions print '1606-1608' and this edition's own start already agrees with them; the leading '0' stands for '1'. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 339 print: EN '1606-1608', ES '1606-1608', FR '1606-1608', HU '1606-1608', IT '1606-1608', PT '1606-1608', RO '1606‑1608', SL '1606-1608', SV '1606-1608'.",
+    "added": "2026-08-28"
+  }
+]

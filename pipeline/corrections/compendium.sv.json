@@ -23,5 +23,113 @@
     "reason": "The reference line for question 5 sets its first range with a colon where the hyphen belongs -- '(KKK 39:43; 48-49)'. A colon is not a separator in these lists; read literally the line is not a reference list at all, and neither range links.",
     "evidence": "Eight other editions print exactly this pair of ranges with a hyphen -- EN, PT, FR, HU, IT and SL all '39-43 48-49', RO '39‑43 48‑49' with its non-breaking hyphen. (DE prints only the first range and ES prints no reference line for this question.) The second range in this same Swedish line is already set with a hyphen. The anchor text occurs once in the page.",
     "added": "2026-08-25"
+  },
+  {
+    "id": "compendium.sv-205-refs-9992-for-992",
+    "locator": {
+      "question": 205
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 9992-1004, 1016-1018)</p>",
+    "to": "<p>(KKK 992-1004, 1016-1018)</p>",
+    "reason": "The reference line for question 205 prints '(KKK 9992-1004, 1016-1018)', which its first number is larger than its second, so the range is empty. Eight editions print '992-1004' and this edition's own range end already agrees; the leading '9' is doubled. No reference is added or removed.",
+    "evidence": "The other 8 editions carrying a reference line for question 205 print: DE '992-1004', EN '992-1004 1016-1018', FR '992-1004 1016-1018', HU '992-1004 1016-1018', IT '992-1004 1016-1018', PT '992 – 1004; 1016 –1018', RO '992‑1004 1016‑1018', SL '992-1004 1016-1018'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-238-refs-155-for-1155",
+    "locator": {
+      "question": 238
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 1153-155, 1190)</p>",
+    "to": "<p>(KKK 1153-1155, 1190)</p>",
+    "reason": "The reference line for question 238 prints '(KKK 1153-155, 1190)', which its second number is smaller than its first, so the range is empty. Eight editions print '1153-1155' and this edition's own start already agrees; a '1' is missing from the second number. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 238 print: DE '1153-1155', EN '1153-1155 1190', ES '1153-1155 1190', FR '1153-1155 1190', HU '1153-1155 1190', IT '1153-1155 1190', PT '1153- 1155 1190', RO '1153‑1155 1190', SL '1153-1155 1190'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-357-refs-198-for-1698",
+    "locator": {
+      "question": 357
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 1691-198)</p>",
+    "to": "<p>(KKK 1691-1698)</p>",
+    "reason": "The reference line for question 357 prints '(KKK 1691-198)', which its second number is smaller than its first, so the question's only reference names nothing. All eight other editions print '1691-1698' and this edition's own start already agrees; a '6' is missing from the second number. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 357 print: DE '1691-1698', EN '1691-1698', ES '1691-1698', FR '1691-1698', HU '1691-1698', IT '1691-1698', PT '1691 – 1698', RO '1691‑1698', SL '1691-1698'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-538-refs-2880-for-2580",
+    "locator": {
+      "question": 538
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 2578-2880, 2594)</p>",
+    "to": "<p>(KKK 2578-2580, 2594)</p>",
+    "reason": "The reference line for question 538 prints '(KKK 2578-2880, 2594)', which reaches paragraph 2880, and the Catechism ends at 2865, so 15 of the paragraphs the range names do not exist. All nine other editions print '2578-2580' and this edition's own start already agrees; the printed '8' stands for '5'. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 538 print: DE '2578-2580 2594', EN '2578-2580 2594', ES '2578-2580 2594', FR '2578-2580 2594', HU '2578-2580 2594', IT '2578-2580 2594', PT '2578-2580; 2594', RO '2578-2580 2594', SL '2578-2580 2594'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-540-refs-29996-for-2596",
+    "locator": {
+      "question": 540
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 2579,2585-2589. 29996-29997)</p>",
+    "to": "<p>(KKK 2579,2585-2589. 2596-2597)</p>",
+    "reason": "The reference line for question 540 prints '(KKK 2579,2585-2589. 29996-29997)', which both of its numbers have five digits, and the Catechism's paragraphs run from 1 to 2865. Eight editions print '2596-2597'. Each number renders its '5' as '99' -- 2596 as 29996 and 2597 as 29997 -- the same substitution twice inside one token, which is what makes it mechanical rather than a reading. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 540 print: DE '2585-2589 2596-2597', EN '2579 2585-2589 2596-2597', ES '2579 2585-2589 2596-2597', FR '2579 2585-2589 2596-2597', HU '2579 2585-2589 2596-2597', IT '2579 2585-2589 2596-2597', PT '2579; 2585-2589 2596-2597', RO '2579 2585‑2589 2596‑2597', SL '2585-2589 2596-2597'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-556-refs-3643-for-2643",
+    "locator": {
+      "question": 556
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 2639-3643, 2649)</p>",
+    "to": "<p>(KKK 2639-2643, 2649)</p>",
+    "reason": "The reference line for question 556 prints '(KKK 2639-3643, 2649)', which reaches paragraph 3643, and the Catechism ends at 2865, so 778 of the paragraphs the range names do not exist. All nine other editions print '2639-2643' and this edition's own start already agrees; the printed '3' stands for '2'. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 556 print: DE '2639-2643 2649', EN '2639-2643 2649', ES '2639-2643 2649', FR '2639-2643 2649', HU '2639-2643 2649', IT '2639-2043 2649' (itself corrected as compendium.it-556-refs-2043-for-2643), PT '2639 - 2643 2649', RO '2639-2643 2649', SL '2639-2643 2649'. The same question is mangled independently in two editions, each in its own way and each recoverable from its own range start.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-575-refs-274-for-2741",
+    "locator": {
+      "question": 575
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 2734-274, 2756) </p>",
+    "to": "<p>(KKK 2734-2741, 2756) </p>",
+    "reason": "The reference line for question 575 prints '(KKK 2734-274, 2756)', which its second number is smaller than its first, so the range is empty. All nine other editions print '2734-2741' and this edition's own start already agrees; a '1' is missing from the end of the second number. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 575 print: DE '2734-2741 2756', EN '2734-2741 2756', ES '2734-2741 2756', FR '2734-2741 2756', HU '2734-2741 2756', IT '2734-2741 2756', PT '2734-2741 2756', RO '2734‑2741 2756', SL '2734-2741 2756'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-591-refs-missing-hyphen",
+    "locator": {
+      "question": 591
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 28222827, 2861)</p>",
+    "to": "<p>(KKK 2822-2827, 2861)</p>",
+    "reason": "The reference line for question 591 prints '(KKK 28222827, 2861)', which two paragraph numbers run together with no hyphen, so eight digits read as one number that names nothing. All nine other editions print '2822-2827'. No digit is changed; only the hyphen is restored. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 591 print: DE '2822-2827 2860', EN '2822-2827 2860', ES '2822-2827 2860', FR '2822-2827 2860', HU '2822-2827 2860', IT '2822-2827 2860', PT '2822-2827 2860', RO '2822‑2827 2860', SL '2822-2827 2860'. This edition also prints '2861' where the other nine print '2860'. That is left alone deliberately: it is a well-formed reference to a real paragraph, so it is an edition disagreement for the cross-edition vote to settle, not a token that names nothing. Only the malformed half is corrected here.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-593-refs-missing-hyphen",
+    "locator": {
+      "question": 593
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 28352837, 2861)</p>",
+    "to": "<p>(KKK 2835-2837, 2861)</p>",
+    "reason": "The reference line for question 593 prints '(KKK 28352837, 2861)', which two paragraph numbers run together with no hyphen, so eight digits read as one number that names nothing. All nine other editions print '2835-2837 2861', agreeing with this edition on the second reference. No digit is changed; only the hyphen is restored. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 593 print: DE '2835-2837 2861', EN '2835-2837 2861', ES '2835-2837 2861', FR '2835-2837 2861', HU '2835-2837 2861', IT '2835-2837 2861', PT '2835-2837 2861', RO '2835‑2837 2861', SL '2835-2837 2861'.",
+    "added": "2026-08-28"
   }
 ]

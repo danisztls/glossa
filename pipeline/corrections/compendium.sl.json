@@ -1,0 +1,38 @@
+[
+  {
+    "id": "compendium.sl-268-refs-1307-for-1317",
+    "locator": {
+      "question": 268
+    },
+    "field": "refs_html",
+    "from": "<p>1302-1305 <br />1316-1307</p>",
+    "to": "<p>1302-1305 <br />1316-1317</p>",
+    "reason": "The reference line for question 268 prints '1302-1305  1316-1307', which its second number is smaller than its first, so the range is empty. Six editions print '1316-1317' and this edition's own start already agrees; the printed '0' stands for '1'. No reference is added or removed.",
+    "evidence": "The other 8 editions carrying a reference line for question 268 print: DE '1302-1305', EN '1302-1305 1316-1317', ES '1302-1305 1316-1317', FR '1302-1305 1316-1317', HU '1302-1305 1316-1317', IT '1302-1305 1316-1317', PT '1302-1305 1316 – 1317', RO '1302‑1305 1316‑1317'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sl-316-refs-15151-for-1515",
+    "locator": {
+      "question": 316
+    },
+    "field": "refs_html",
+    "from": "<p>1514-15151 <br />1528-1529</p>",
+    "to": "<p>1514-1515 <br />1528-1529</p>",
+    "reason": "The reference line for question 316 prints '1514-15151  1528-1529', which its second number has five digits, and the Catechism's paragraphs run from 1 to 2865. Nine editions print '1514-1515'; the trailing '1' is intrusive. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 316 print: DE '1514-1515 1528-1529', EN '1514-1515 1528-1529', ES '1514-1515 1528-1529', FR '1514-1515 1528-1529', HU '1514-1515 1528-1529', IT '1514-1515 1528-1529', PT '1514 –1515 1528- 1529', RO '1514‑1515 1528‑1529', SV '1514-1515, 1528-1529'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sl-427-refs-2021-for-2010",
+    "locator": {
+      "question": 427
+    },
+    "field": "refs_html",
+    "from": "<p>2021-2011 <br />2027</p>",
+    "to": "<p>2010-2011 <br />2027</p>",
+    "reason": "The reference line for question 427 prints '2021-2011  2027', which its first number is larger than its second, so the range is empty. Seven editions print '2010-2011' and this edition's own range end already agrees with them. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 427 print: DE '2010-2011 2027', EN '2010-2011 2027', ES '2010-2011 2027', FR '2010-2011 2027', HU '2010-2011 2027', IT '2010-2011; 2027', PT '2006-2009 2025-2027', RO '2010‑2011 2027', SV '2006-2009, 2025-2027'. '2021' is the number the PRECEDING question cites: question 426 in this same edition prints '1996-1998, 2005, 2021'. A number bleeding down from the question above is the shape of the defect, and it leaves the intended '2010' recoverable from the range end rather than guessed at. Note that PT and SV cite a different set here entirely ('2006-2009 2025-2027'); that is edition divergence and is not touched.",
+    "added": "2026-08-28"
+  }
+]

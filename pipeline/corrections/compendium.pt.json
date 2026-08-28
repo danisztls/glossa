@@ -1,5 +1,54 @@
 [
   {
+    "id": "compendium.pt-25-refs-43-for-143",
+    "locator": {
+      "question": 25
+    },
+    "field": "refs_html",
+    "from": "<p>142- 43</p>",
+    "to": "<p>142-143</p>",
+    "reason": "The reference line for question 25 prints '142- 43', which its second number is smaller than its first, so the range is empty and the question's only reference does not link. All nine other editions print '142-143'; the second number is missing its leading '1'. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 25 print: DE '142-143', EN '142-143', ES '142-143', FR '142-143', HU '142-143', IT '142-143', RO '142‑143', SL '142-143', SV '142-143'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.pt-69-refs-356-for-365",
+    "locator": {
+      "question": 69
+    },
+    "field": "refs_html",
+    "from": "<p>362-356 <br />382</p>",
+    "to": "<p>362-365 <br />382</p>",
+    "reason": "The reference line for question 69 prints '362-356  382', which its first number is larger than its second, so the range is empty. Eight editions print '362-365' and this edition's own start already agrees; the printed '356' is the same three digits in the wrong order. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 69 print: DE '362-365', EN '362-365 382', ES '362-365 382', FR '362-365 382', HU '362-365 382', IT '362-365 382', RO '362‑365 382', SL '362-365 382', SV '362-365, 382'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.pt-319-refs-15120-for-1520",
+    "locator": {
+      "question": 319
+    },
+    "field": "refs_html",
+    "from": "<p>15120 &#x2013; 1523 <br />1532</p>",
+    "to": "<p>1520 &#x2013; 1523 <br />1532</p>",
+    "reason": "The reference line for question 319 prints '15120 - 1523  1532', which its first number has five digits, and the Catechism's paragraphs run from 1 to 2865. Nine editions print '1520-1523'; an intrusive '1' sits between the '15' and the '20'. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 319 print: DE '1520-1523 1532', EN '1520-1523 1532', ES '1520-1523 1532', FR '1520-1523 1532', HU '1520-1523 1532', IT '1520-1523 1532', RO '1520‑1523 1532', SL '1520-1523 1532', SV '1520-1523, 1532'. This edition settles it without the vote: question 318, immediately above, cites the same paragraphs and prints the line correctly as '<p>1520 &#x2013; 1523 <br />1532</p>' -- the exact string this correction restores, character for character including the en-dash and the line break.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.pt-349-refs-wrong-question",
+    "locator": {
+      "question": 349
+    },
+    "field": "refs_html",
+    "from": null,
+    "to": null,
+    "reason": "DOCUMENTED, NOT FIXED (no mechanically certain correct value). Question 349 asks about the Church's attitude toward the divorced and remarried, and this edition prints '1655-1558 1666' for it -- a range whose first number exceeds its second, so it names nothing. It cannot be repaired the way the other twenty-four malformed reference lines can, because it is not a slipped digit in this question's own line: '1655-1658 1666' is the reference line of the NEXT question (350, on the family as the domestic church), printed here in place of this one's, with a '6' fallen to a '5'. Restoring the eight-edition reading '1650-1651 1665' would replace all three numbers, which is a substitution rather than a repair; restoring only the malformed digit would give '1655-1658', a well-formed link from a question about the divorced and remarried to the paragraphs on the domestic church -- a real reference to the wrong place, which is worse than none. Per docs/decisions.md a defect with no known correct value is documented, not fixed.",
+    "evidence": "raw HTML corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html: '<p>1655-1558 <br />1666 </p>' after question 349 and '<p>1655-1658; <br />1666</p>' after question 350 -- the only two occurrences of '1655' in the edition. The other eight editions carrying a line for 349 print: DE '1650-1651 1665', EN '1650-1651 1665', ES '1650-1651', FR '1650-1651 1665', HU '1650-1651 1665', IT '1650-1651 1665', RO '1650-1651 1665', SL '1650-1651 1665', SV '1650-1651'. CCC 1650-1651 is on the divorced and remarried and 1655-1658 on the domestic church, so the doctrine confirms which line belongs to which question but not which characters the mirror lost. The cross-edition vote in site/src/lib/condensation.ts already resolves question 349 to the eight-edition reading without this entry; what stays uncorrected is the string the Portuguese page itself prints.",
+    "resolution": "unresolved",
+    "added": "2026-08-28"
+  },
+  {
     "id": "compendium.pt-378-refs-colon-for-comma",
     "locator": {
       "question": 378
@@ -10,5 +59,41 @@
     "reason": "The reference line for question 378 separates two of its four CCC references with a colon -- '1804; 1810-1811: 1834, 1839'. A colon is not a separator in this list and is not one anywhere else in this edition's 598 reference lines; read literally the line is not a reference list at all, and its four references do not link.",
     "evidence": "The other nine editions print the same four references with a space or a comma in that position and never a colon: EN '1804 1810-1811 1834 1839', DE/ES/FR/HU/SL '1804 1810-1811 1834, 1839', IT '1804 1810-1811 1834,1839', RO '1804 1810‑1811 1834, 1839', SV '1804, 1810-1811, 1834, 1839'. The comma is taken rather than a space because this same Portuguese line already separates its last pair with one ('1834, 1839'). The anchor text occurs once in the page.",
     "added": "2026-08-25"
+  },
+  {
+    "id": "compendium.pt-406-refs-stray-hyphen",
+    "locator": {
+      "question": 406
+    },
+    "field": "refs_html",
+    "from": "<p>1903-1904- <br />1921-1922 </p>",
+    "to": "<p>1903-1904 <br />1921-1922 </p>",
+    "reason": "The reference line for question 406 prints '1903-1904-  1921-1922', which a hyphen with nothing after it closes the first range, which fuses the two ranges into a single unreadable token. Nine editions print these two ranges with no hyphen between them. No digit is changed; only the dangling hyphen is removed. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 406 print: DE '1901 1903-1904 1921-1923', EN '1901-1904 1921-1922', ES '1903-1904 1921-1922 1901', FR '1901 1903-1904 1921-1922', HU '1901 1903-1904 1921-1922', IT '1901 1903-1904 1921-1922', RO '1901 1903‑1904 1921‑1922', SL '1901 1903-1904 1921-1922', SV '1903-1904, 1921-1922'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.pt-411-refs-133-for-1933",
+    "locator": {
+      "question": 411
+    },
+    "field": "refs_html",
+    "from": "<p>1928-133 <br />1943-1944 </p>",
+    "to": "<p>1928-1933 <br />1943-1944 </p>",
+    "reason": "The reference line for question 411 prints '1928-133  1943-1944', which its second number is smaller than its first, so the range is empty. All nine other editions print '1928-1933'; a '9' is missing from the second number. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 411 print: DE '1928-1933 1943-1944', EN '1928-1933 1943-1944', ES '1928-1933 1943-1944', FR '1928-1933 1943-1944', HU '1928-1933 1943-1944', IT '1928-1933 1943-1944', RO '1928‑1933 1943‑1944', SL '1928-1933 1943-1944', SV '1928-1933, 1943-1944'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.pt-577-refs-275-for-2751",
+    "locator": {
+      "question": 577
+    },
+    "field": "refs_html",
+    "from": "<p>&nbsp;2604; <br />2746-275; <br />2758</p>",
+    "to": "<p>&nbsp;2604; <br />2746-2751; <br />2758</p>",
+    "reason": "The reference line for question 577 prints '2604;  2746-275;  2758', which its second number is smaller than its first, so the middle range is empty. All nine other editions print '2746-2751'; a '1' is missing from the end of the second number. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 577 print: DE '2604 2746-2751 2758', EN '2604 2746-2751 2758', ES '2604 2746-2751 2758', FR '2604 2746-2751 2758', HU '2604 2746-2751 2758', IT '2604 2746-2751 2658', RO '2604 2746‑2751 2758', SL '2604 2746-2751 2758', SV '2604, 2746-2751, 2758'.",
+    "added": "2026-08-28"
   }
 ]

@@ -9,6 +9,10 @@ import {
 
 const ALL = new Set(Array.from({ length: 2865 }, (_, i) => i + 1));
 
+function range(from: number, to: number): number[] {
+	return Array.from({ length: to - from + 1 }, (_, i) => from + i);
+}
+
 function edition(lang: string, refs: Record<number, string>): CondensationEdition {
 	return {
 		lang,
@@ -26,27 +30,64 @@ describe('expandCccRefs', () => {
 		expect(expandCccRefs('1804, 1810').numbers).toEqual([1804, 1810]);
 	});
 
-	// Romanian sets every range with a non-breaking hyphen, and Portuguese
-	// prints Q1's range as "1 25 –". Neither is a different reference.
+	// Romanian sets every range with a non-breaking hyphen. Neither it nor the
+	// en-dash is a different reference.
 	it('normalises the dash the source happens to use', () => {
 		expect(expandCccRefs('212‑213').numbers).toEqual([212, 213]);
 		expect(expandCccRefs('212–213').numbers).toEqual([212, 213]);
 	});
 
+	// Whitespace around the hyphen is Portuguese and German typography, not a
+	// separator, and every one of these is a range the other editions print
+	// closed up: pt Q1 "1 – 25", pt Q176 "861- 865", pt Q205
+	// "992 – 1004; 1016 –1018", de Q15 "91- 94" (which Slovenian prints
+	// as "91-94"). Splitting on whitespace first threw the second half away.
+	it('reads a range whose hyphen is spaced', () => {
+		expect(expandCccRefs('1 – 25').numbers).toEqual(range(1, 25));
+		expect(expandCccRefs('861- 865').numbers).toEqual(range(861, 865));
+		expect(expandCccRefs('992 – 1004; 1016 –1018').numbers).toEqual([
+			...range(992, 1004),
+			...range(1016, 1018)
+		]);
+		expect(expandCccRefs('84, 91- 94, 99').numbers).toEqual([84, ...range(91, 94), 99]);
+	});
+
+	// Portuguese and Spanish separate with a full stop in exactly the position
+	// the other nine print a comma -- es/pt Q12 "96.98" against English's
+	// "96, 98", pt Q57 "324. 400", pt Q206 "1005-1014. 1019". A paragraph
+	// number is an integer between 1 and 2865, so it is never a decimal point.
+	it('reads the full stop as a list separator', () => {
+		expect(expandCccRefs('96.98').numbers).toEqual([96, 98]);
+		expect(expandCccRefs('309-310 324. 400').numbers).toEqual([...range(309, 310), 324, 400]);
+		expect(expandCccRefs('1005-1014. 1019').numbers).toEqual([...range(1005, 1014), 1019]);
+		expect(expandCccRefs('1181 . 1198-1199').numbers).toEqual([1181, 1198, 1199]);
+	});
+
 	it('reports a token that names nothing rather than guessing at it', () => {
 		// The English Q39 defect, corrected 2026-08-28: first number > second.
 		expect(expandCccRefs('2112-213')).toEqual({ numbers: [], malformed: ['2112-213'] });
-		// German prints a trailing hyphen at Q15, Spanish a full stop at Q12.
+		// A hyphen with nothing after it names no range.
 		expect(expandCccRefs('91-')).toEqual({ numbers: [], malformed: ['91-'] });
-		expect(expandCccRefs('96.98')).toEqual({ numbers: [], malformed: ['96.98'] });
+		// What survives normalisation is a SOURCE DEFECT rather than
+		// punctuation: sv Q238 drops a digit from the end of its range, and
+		// hu Q554 loses the separator between two of them.
+		expect(expandCccRefs('1153-155, 1190')).toEqual({
+			numbers: [1190],
+			malformed: ['1153-155']
+		});
+		expect(expandCccRefs('2634-26362647')).toEqual({
+			numbers: [],
+			malformed: ['2634-26362647']
+		});
 		expect(expandCccRefs('').numbers).toEqual([]);
 		expect(expandCccRefs(undefined).numbers).toEqual([]);
 	});
 
 	it('keeps the readable half of a line whose other half is not', () => {
-		expect(expandCccRefs('212-213 91-')).toEqual({
-			numbers: [212, 213],
-			malformed: ['91-']
+		// pt Q577, whose middle range lost a digit.
+		expect(expandCccRefs('2604; 2746-275; 2758')).toEqual({
+			numbers: [2604, 2758],
+			malformed: ['2746-275']
 		});
 	});
 });

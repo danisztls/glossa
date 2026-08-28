@@ -1,0 +1,14 @@
+[
+  {
+    "id": "compendium.ro-353-refs-166-for-1676",
+    "locator": {
+      "question": 353
+    },
+    "field": "refs_html",
+    "from": "<p>1674&#x2011;166<br />1679</p>",
+    "to": "<p>1674&#x2011;1676<br />1679</p>",
+    "reason": "The reference line for question 353 prints '1674-166 1679', which its second number is smaller than its first, so the range is empty. All nine other editions print '1674-1676'; a '7' is missing from the second number. The non-breaking hyphen is this edition's convention throughout and is kept. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 353 print: DE '1674-1676 1679', EN '1674-1676 1679', ES '1674-1676 1679', FR '1674-1676 1679', HU '1674-1676 1679', IT '1674-1676 1679', PT '1674-1676 1679', SL '1674-1676 1679', SV '1674-1676, 1679'.",
+    "added": "2026-08-28"
+  }
+]

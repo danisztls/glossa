@@ -1,0 +1,26 @@
+[
+  {
+    "id": "compendium.hu-453-refs-missing-separator",
+    "locator": {
+      "question": 453
+    },
+    "field": "refs_html",
+    "from": "<p>2177-21852192-2193</p>",
+    "to": "<p>2177-2185 2192-2193</p>",
+    "reason": "The reference line for question 453 prints '2177-21852192-2193', which two ranges run together with no separator, so eight digits read as one number that names nothing. Nine editions print exactly these two ranges separated, and this edition separates every other question's ranges with a space. No digit is changed; only the space between them is restored. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 453 print: DE '2177-2185 2192-2193', EN '2177-2185 2192-2193', ES '2177-2185 2192-2193', FR '2177-2185 2192-2193', IT '2177-2185 2192-2193', PT '2177-2185 2192-2193', RO '2177‑2185 2192‑2193', SL '2177-2185 2192-2193', SV '2177-2185, 2192-2193'.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.hu-554-refs-missing-separator",
+    "locator": {
+      "question": 554
+    },
+    "field": "refs_html",
+    "from": "<p>2634-26362647</p>",
+    "to": "<p>2634-2636 2647</p>",
+    "reason": "The reference line for question 554 prints '2634-26362647', which a range and a single paragraph run together with no separator, so the digits read as one number that names nothing. Eight editions print '2634-2636 2647'. No digit is changed; only the space is restored. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 554 print: DE '2634-2636 2647', EN '2634-2636 2647', ES '2634-2636 2647', FR '2634-2636 2647', IT '2634-2636 2647', PT '2634 – 2636 2647', RO '2634‑2636 2647', SL '2634-2636 2647', SV '2636, 2647'.",
+    "added": "2026-08-28"
+  }
+]

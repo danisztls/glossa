@@ -1,0 +1,38 @@
+[
+  {
+    "id": "compendium.it-534-refs-2505-for-2565",
+    "locator": {
+      "question": 534
+    },
+    "field": "refs_html",
+    "from": "2558-2505<br />2590",
+    "to": "2558-2565<br />2590",
+    "reason": "The reference line for question 534 prints '2558-2505 2590', which its first number is larger than its second, so the range is empty. Eight editions print '2558-2565' and this edition's own start already agrees; the printed '0' stands for '6'. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 534 print: DE '2558-2565 2590', EN '2558-2565 2590', ES '2558-2565 2590', FR '2558-2565 2590', HU '2558-2565 2590', PT '2558-2565 2590', RO '2558‑2565 2590', SL '2558-2565 2590', SV '2558-2563, 2590'. The same single-digit slip -- '0' where the other editions read '6', in the second number of the range -- occurs three times in this edition's section on prayer (534, 544, 556), which is what makes it a mechanical defect of the mirror rather than three independent readings.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.it-544-refs-2014-for-2614",
+    "locator": {
+      "question": 544
+    },
+    "field": "refs_html",
+    "from": "<p>2608-2014<br />2621</p>",
+    "to": "<p>2608-2614<br />2621</p>",
+    "reason": "The reference line for question 544 prints '2608-2014 2621', which its second number is smaller than its first, so the range is empty. Every other edition ends this range at 2614, and this edition's own start already agrees with six of them; the printed '0' stands for '6'. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 544 print: DE '2607-2614 2621', EN '2608-2614 2621', ES '2607-2614 2621', FR '2608-2614 2621', HU '2608-2614 2621', PT '2608 – 2614 2621', RO '2608‑2614 2621', SL '2607-2614 2621', SV '2608-2614, 2621'. One of three identical '0'-for-'6' slips in this edition's section on prayer (534, 544, 556).",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.it-556-refs-2043-for-2643",
+    "locator": {
+      "question": 556
+    },
+    "field": "refs_html",
+    "from": "<p>2639-2043<br />2649</p>",
+    "to": "<p>2639-2643<br />2649</p>",
+    "reason": "The reference line for question 556 prints '2639-2043 2649', which its second number is smaller than its first, so the range is empty. Eight editions print '2639-2643' and this edition's own start already agrees; the printed '0' stands for '6'. No reference is added or removed.",
+    "evidence": "The other 9 editions carrying a reference line for question 556 print: DE '2639-2643 2649', EN '2639-2643 2649', ES '2639-2643 2649', FR '2639-2643 2649', HU '2639-2643 2649', PT '2639 – 2643 2649', RO '2639‑2643 2649', SL '2639-2643 2649', SV '2639-3643, 2649'. One of three identical '0'-for-'6' slips in this edition's section on prayer (534, 544, 556).",
+    "added": "2026-08-28"
+  }
+]

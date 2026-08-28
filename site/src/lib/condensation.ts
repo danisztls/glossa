@@ -28,9 +28,10 @@
  * The vote is PER PARAGRAPH, not per reference string, because the strings
  * are not comparable: editions punctuate them differently (Romanian uses a
  * non-breaking hyphen throughout, Italian and Swedish separate with
- * semicolons, Portuguese prints "1 25 –" for "1-25"). Expanding each to the
- * set of paragraph numbers it names and asking how many editions named each
- * one compares the only thing they agree about — the doctrine.
+ * semicolons, Portuguese spaces its dashes — "1 – 25" — and it and Spanish
+ * separate with a full stop). Expanding each to the set of paragraph numbers
+ * it names and asking how many editions named each one compares the only
+ * thing they agree about — the doctrine.
  *
  * A paragraph is kept when at least half the editions that printed anything
  * for that question named it. Half rather than a bare plurality because the
@@ -84,15 +85,34 @@ function expandToken(token: string): number[] | null {
  * tokens that named nothing.
  *
  * The separators are normalised first because the ten editions punctuate the
- * same list differently and none of that is meaning: U+2011/U+2013/U+2014 all
- * stand in for the hyphen, and commas, semicolons and bare spaces are all
- * used to separate.
+ * same list differently and none of that is meaning. Three rules, each
+ * measured against what the other nine editions print in the same position:
+ *
+ *   - U+2010–U+2015 and U+2212 all stand in for the hyphen. Romanian uses
+ *     the non-breaking one throughout.
+ *   - WHITESPACE AROUND THE HYPHEN IS NOT A SEPARATOR. Portuguese prints
+ *     "1 – 25", "861- 865" and "992 – 1004; 1016 –1018" where the other
+ *     editions print the same ranges closed up. Splitting on whitespace
+ *     first read "1016 –1018" as `1016` plus a malformed `-1018` and threw
+ *     the second half of the range away.
+ *   - THE FULL STOP IS A LIST SEPARATOR in Portuguese and Spanish, in exactly
+ *     the position the other nine print a comma: "96.98" against English's
+ *     "96, 98" (Q12), "324. 400" against "324, 400" (Q57), "1005-1014. 1019"
+ *     against "1005-1014 1019" (Q206). It is never a decimal point — these
+ *     are paragraph numbers, 1 to 2865.
+ *
+ * Together those recover 45 of the 70 tokens this function used to report as
+ * unreadable. THE 25 THAT REMAIN ARE SOURCE DEFECTS RATHER THAN PUNCTUATION:
+ * each is one edition against nine, and each is filed in
+ * `pipeline/corrections/compendium.*.json`.
  */
 export function expandCccRefs(raw: unknown): { numbers: number[]; malformed: string[] } {
 	const numbers: number[] = [];
 	const malformed: string[] = [];
-	const normalized = String(raw ?? '').replace(/[‐-―−]/g, '-');
-	for (const token of normalized.split(/[\s,;]+/)) {
+	const normalized = String(raw ?? '')
+		.replace(/[‐-―−]/g, '-')
+		.replace(/\s*-\s*/g, '-');
+	for (const token of normalized.split(/[\s,;.]+/)) {
 		if (!token || token === '-') continue;
 		const expanded = expandToken(token);
 		if (expanded === null) malformed.push(token);
