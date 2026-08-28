@@ -87,6 +87,7 @@ export const de: Dictionary = {
 	'compendium.nextQuestion': 'Nächste Frage',
 	'compendium.condenses': 'Fasst KKK ¶¶ zusammen',
 	'ccc.abbrev': 'KKK',
+	'ccc.condensedIn': 'Im Kompendium',
 	'compendium.abbrev': 'Komp.',
 	'compendium.noQuestionNumber': 'Keine Fragenummer in diesem Korpus',
 	'nav.summa': 'Summa',

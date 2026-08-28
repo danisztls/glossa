@@ -3,8 +3,10 @@
 	import {
 		cccParagraphExists,
 		compareColumnLabel,
+		compendiumQuestionExists,
 		flattenCccStructure,
-		getCccCitations
+		getCccCitations,
+		questionsCondensing
 	} from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import { setPosition } from '$lib/reading-position';
@@ -114,6 +116,15 @@
 	 * only cite the Catechism if it was written after 1992 and most of this
 	 * corpus was not. The panel is simply absent on the rest.
 	 */
+	// Filtered on existence the way `related` is, and for the same reason: the
+	// map is voted across every edition, so it can name a question no edition
+	// the reader can reach actually carries.
+	const condensedIn = $derived(
+		questionsCondensing(data.n).filter((q) =>
+			compendiumQuestionExists(content.langFor('compendium'), q)
+		)
+	);
+
 	const citedInRows: CitedByRow[] = $derived.by(() => {
 		const citers = getCccCitations(data.n);
 		if (citers.length === 0) return [];
@@ -290,6 +301,20 @@
 						{:else}
 							<span class="related-unresolved" title="Not in this fixture">¶{n}</span>
 						{/if}
+					{/each}
+				</p>
+			{/if}
+
+			<!-- The Compendium's own statement about this paragraph, not a
+			     citation: it does not quote ¶n, it condenses it, which is why
+			     this sits beside `related` rather than inside `CitedBy`. See
+			     `condensation.ts`. -->
+			{#if condensedIn.length > 0}
+				<p class="related condensed-in">
+					{t('ccc.condensedIn')}:
+					{#each condensedIn as q, i (q)}
+						{#if i > 0}·{/if}
+						<a href={hrefFor({ kind: 'compendium', n: q })}>Q{q}</a>
 					{/each}
 				</p>
 			{/if}

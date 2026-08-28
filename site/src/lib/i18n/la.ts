@@ -118,6 +118,7 @@ export const la: Dictionary = {
 	'compendium.nextQuestion': 'Interrogatio sequens',
 	'compendium.condenses': 'Complectitur CCE ¶¶',
 	'ccc.abbrev': 'CCE',
+	'ccc.condensedIn': 'In Compendio',
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Numerus interrogationis in hoc corpore deest',
 	'nav.summa': 'Summa',

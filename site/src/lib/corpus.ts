@@ -143,6 +143,7 @@ import type {
 } from './types';
 
 import { inlineText, parseInlineHtml } from './inline-html';
+import { condensingRun, reverseCondensation } from './condensation';
 // Imported rather than re-exported straight through, because this module's own
 // `flattenDocumentStructure`/`documentOutline` call it; the `export` that makes
 // it public again is beside those, in the Documents section.
@@ -152,6 +153,7 @@ import { summaHeadingTitle, summaQuestionLabel } from './summa-titles';
 import {
 	USE_REAL_CORPUS,
 	bibleIndex,
+	condensationMap,
 	bibleIntroBooks,
 	bibleIntroLocation,
 	fixtureBibleIntrosByLang,
@@ -1353,6 +1355,36 @@ export function listCompendiumChapters(lang: string): StructureNode[] {
  */
 export function flattenCompendiumStructure(lang: string): { node: StructureNode; depth: number }[] {
 	return flattenTree(getCompendiumStructure(lang));
+}
+
+// --- Catechism <-> Compendium: the condensation relation ------------------
+//
+// The one join between the two works the SOURCES state rather than we do:
+// every Compendium question prints the CCC paragraphs it condenses, and
+// `condensation.ts` votes those across all ten editions at sync time. The
+// structural pairing in `toc-pairing.ts` answers for parts, sections and
+// chapters, which the two outlines share; this answers below that level,
+// where they do not.
+
+/** Lazily built: the map arrives keyed by question, and both readers below
+ *  want it keyed by paragraph. Built once, never invalidated — the map is a
+ *  module-level constant of the build. */
+let condensationReverse: Map<number, number[]> | undefined;
+
+/** The Compendium questions condensing CCC paragraph `n`, ascending. */
+export function questionsCondensing(n: number): number[] {
+	condensationReverse ??= reverseCondensation(condensationMap);
+	return condensationReverse.get(n) ?? [];
+}
+
+/**
+ * The run of Compendium questions condensing the CCC paragraphs `[from, to]`
+ * — a Catechism ARTICLE's counterpart, since the Compendium prints no
+ * articles of its own. See `condensingRun` for why it is a contiguous run
+ * rather than the outermost pair.
+ */
+export function condensingQuestionRun(from: number, to: number): [number, number] | undefined {
+	return condensingRun(condensationMap, from, to);
 }
 
 // --- Compendium: content tier (async, read/fetched, memoized, chunked) ----

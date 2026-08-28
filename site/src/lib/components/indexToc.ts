@@ -37,6 +37,12 @@ export function indexDetailChildren(node: StructureNode): StructureNode[] {
 export function rangeLabel(node: StructureNode, unit: string): string {
 	const [from, to] = node.paragraphs;
 	if (!Number.isFinite(from)) return '';
+	return runLabel(from as number, to, unit);
+}
+
+/** The same, for a span that is not a structure node — a run of Compendium
+ *  questions condensing a Catechism article, say. */
+export function runLabel(from: number, to: number | null | undefined, unit: string): string {
 	return from === to ? `${unit}${from}` : `${unit}${from}–${to ?? '?'}`;
 }
 
@@ -74,19 +80,21 @@ export interface SiblingLink {
 }
 
 /**
- * Build that link from the paired division, or nothing when the outlines
- * do not pair here (`toc-pairing.ts` decides that; this only formats it).
+ * Build that link from the companion work's span, or nothing when there is
+ * none. This only formats: what the span IS comes from `toc-pairing.ts` for
+ * the divisions the two outlines share, and from `condensation.ts` for the
+ * Catechism articles they do not.
  */
 export function siblingLink(
-	paired: StructureNode | undefined,
+	span: readonly [number | null, number | null] | undefined,
 	opts: { hrefBase: string; unit: string; abbrev: string; workTitle: string }
 ): SiblingLink | undefined {
-	if (!paired) return undefined;
-	const anchor = paired.paragraphs[0];
-	if (!Number.isFinite(anchor)) return undefined;
-	const range = rangeLabel(paired, opts.unit);
+	if (!span) return undefined;
+	const [from, to] = span;
+	if (!Number.isFinite(from)) return undefined;
+	const range = runLabel(from as number, to, opts.unit);
 	return {
-		href: `${opts.hrefBase}/${anchor}`,
+		href: `${opts.hrefBase}/${from}`,
 		label: `${opts.abbrev} ${range}`,
 		title: `${opts.workTitle} — ${range}`
 	};

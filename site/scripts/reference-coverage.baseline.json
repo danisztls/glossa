@@ -195,7 +195,7 @@
 				"nothing": 5070
 			},
 			"prose": {
-				"blocks": 15752,
+				"blocks": 15753,
 				"scripture": 5022,
 				"document": 10,
 				"stored": 0
@@ -499,5 +499,10 @@
 				}
 			]
 		}
+	},
+	"crossWork": {
+		"pairedDivisions": 2560,
+		"condensedQuestions": 598,
+		"condensedParagraphs": 2735
 	}
 }

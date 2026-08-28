@@ -301,7 +301,7 @@ function residueKey(raw) {
  * missing is exactly the kind of build this exists to stop.
  * Structurally typed on the three counters it reads, so a baseline written by
  * an older report shape still compares.
- * @typedef {{ families: Record<string, { citations: { linkable: number }, prose: { scripture: number, document?: number, stored: number } }> }} Comparable
+ * @typedef {{ families: Record<string, { citations: { linkable: number }, prose: { scripture: number, document?: number, stored: number } }>, crossWork?: Record<string, number> }} Comparable
  * @param {Comparable} report
  * @param {Comparable} baseline
  * @param {number} tolerance
@@ -330,6 +330,41 @@ export function compareCoverage(report, baseline, tolerance = TOLERANCE) {
 			if (after < before * (1 - tolerance)) {
 				problems.push(`${family}: ${label} ${before} → ${after}`);
 			}
+		}
+	}
+	problems.push(...compareCrossWork(report, baseline, tolerance));
+	return problems;
+}
+
+/**
+ * The two counters that are not about the grammar at all: how much of the
+ * Catechism/Compendium join survives a build.
+ *
+ * They live here because they fail the same way everything else here does —
+ * silently, and only for some readers. The Catechism and Compendium indexes
+ * pair their outlines by position and DROP a whole level when the two
+ * disagree about how many divisions it has (`toc-pairing.ts`), which is a
+ * correct refusal and an invisible one: the Spanish Compendium parsed seven
+ * sections against the other nine editions' eight, and the only symptom was
+ * eight missing links on two pages in one language. The condensation map has
+ * the same property — an edition that stops printing its reference column
+ * costs links and nothing else.
+ *
+ * `?? 0` on both sides, like `prose.document` above: a baseline written
+ * before these counters existed compares as zero and passes, rather than
+ * comparing as NaN and passing for the wrong reason.
+ * @param {Comparable} report
+ * @param {Comparable} baseline
+ * @param {number} tolerance
+ * @returns {string[]}
+ */
+export function compareCrossWork(report, baseline, tolerance = TOLERANCE) {
+	/** @type {string[]} */
+	const problems = [];
+	for (const [key, before] of Object.entries(baseline.crossWork ?? {})) {
+		const after = report.crossWork?.[key] ?? 0;
+		if (after < before * (1 - tolerance)) {
+			problems.push(`cross-work: ${key} ${before} → ${after}`);
 		}
 	}
 	return problems;

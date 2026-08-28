@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { getCccStructure, getCompendiumStructure, getWork } from '$lib/corpus';
+	import {
+		condensingQuestionRun,
+		getCccStructure,
+		getCompendiumStructure,
+		getWork
+	} from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
@@ -23,14 +28,29 @@
 	// the same spans — so a fallback edition gives the same answer.
 	const compendiumLang = $derived(content.langFor('compendium'));
 	const pairs = $derived(pairDivisionsCached(tree, getCompendiumStructure(compendiumLang)));
-	const sibling = $derived((node: StructureNode) =>
-		siblingLink(pairs.get(node), {
+	// Structural pairing first, then the condensation vote. The two answer
+	// different halves of the outline and the order is not arbitrary: a part,
+	// section or chapter has a counterpart DIVISION in the Compendium, which
+	// is a stronger statement than "these questions cite these paragraphs".
+	// An article has none — the Compendium prints no articles — so there the
+	// questions condensing its paragraphs are the best answer available, and
+	// the Prologue, which the Compendium also lacks, is answered the same way
+	// (its ¶¶1-25 are what question 1 condenses).
+	const sibling = $derived((node: StructureNode) => {
+		const paired = pairs.get(node);
+		const [from, to] = node.paragraphs;
+		const span =
+			paired?.paragraphs ??
+			(Number.isFinite(from) && Number.isFinite(to)
+				? condensingQuestionRun(from as number, to as number)
+				: undefined);
+		return siblingLink(span, {
 			hrefBase: '/compendium/caput',
 			unit: 'Q',
 			abbrev: t('compendium.abbrev'),
 			workTitle: t('compendium.landing.title')
-		})
-	);
+		});
+	});
 </script>
 
 <svelte:head>

@@ -122,6 +122,7 @@ import fixtureCompendiumPtQuestions from './fixtures/compendium.pt/questions.jso
 
 import fixtureXrefs from './fixtures/xrefs/ccc-bible.json';
 
+import { buildCondensationMap, type CondensationMap } from './condensation';
 import { contentUrlByRelPath } from './content-urls';
 
 // --- Bible book metadata (index tier: chapter NUMBERS, never verse text) --
@@ -325,6 +326,11 @@ const realIndexCompendium = import.meta.glob('./corpus-data/index/compendium-ind
 	eager: true,
 	import: 'default'
 }) as Record<string, CompendiumIndexFile>;
+
+const realIndexCondensation = import.meta.glob('./corpus-data/index/ccc-compendium.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, CondensationMap>;
 
 const realIndexSumma = import.meta.glob('./corpus-data/index/summa-index.json', {
 	eager: true,
@@ -542,6 +548,40 @@ export const summaQuestionMetas: Record<string, SummaQuestionMeta[]> = USE_REAL_
 				}))
 			])
 		);
+
+/**
+ * Which Compendium questions condense which Catechism paragraphs, voted
+ * across every edition at sync time (`condensation.ts`).
+ *
+ * EAGER, unlike the four citation tables next to it, and the measurement is
+ * why: those are 715 KB of apparatus that renders BELOW the text it
+ * annotates, so arriving after first paint costs nothing. This is 16 KB, and
+ * one of its consumers is a row in the Catechism's table of contents —
+ * layout, not apparatus. Arriving late would reflow the index a reader is
+ * already scanning.
+ *
+ * DERIVED FROM THE FIXTURES rather than stubbed to `{}` under vitest, by the
+ * same function the sync calls. The fixtures carry real `ccc_refs` strings
+ * on their two Compendium editions, so the tests exercise the vote itself,
+ * and a fixture-only shape could not drift from the real one.
+ */
+export const condensationMap: CondensationMap = USE_REAL_CORPUS
+	? (single(realIndexCondensation) ?? {})
+	: buildCondensationMap(
+			[
+				{
+					lang: 'en',
+					work: 'compendium.en',
+					questions: fixtureCompendiumEnQuestions as CompendiumQuestion[]
+				},
+				{
+					lang: 'pt',
+					work: 'compendium.pt',
+					questions: fixtureCompendiumPtQuestions as CompendiumQuestion[]
+				}
+			],
+			new Set((fixtureCccEnParagraphs as CccParagraph[]).map((paragraph) => paragraph.n))
+		).map;
 
 export const compendiumStructures: Record<string, StructureNode[]> = USE_REAL_CORPUS
 	? Object.fromEntries(

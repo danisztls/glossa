@@ -87,6 +87,7 @@ export const ro: Dictionary = {
 	'compendium.nextQuestion': 'Întrebarea următoare',
 	'compendium.condenses': 'Rezumă CBC ¶¶',
 	'ccc.abbrev': 'CBC',
+	'ccc.condensedIn': 'În Compendiu',
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Fără număr de întrebare în acest corpus',
 	'nav.summa': 'Summa',

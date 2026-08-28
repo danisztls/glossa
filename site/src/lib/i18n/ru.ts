@@ -87,6 +87,7 @@ export const ru: Dictionary = {
 	'compendium.nextQuestion': 'Следующий вопрос',
 	'compendium.condenses': 'Кратко излагает ККЦ ¶¶',
 	'ccc.abbrev': 'ККЦ',
+	'ccc.condensedIn': 'В Компендиуме',
 	'compendium.abbrev': 'Комп.',
 	'compendium.noQuestionNumber': 'В этом корпусе нет номера вопроса',
 	'nav.summa': 'Сумма',

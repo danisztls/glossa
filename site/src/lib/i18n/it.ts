@@ -87,6 +87,7 @@ export const it: Dictionary = {
 	'compendium.nextQuestion': 'Domanda successiva',
 	'compendium.condenses': 'Riassume CCC ¶¶',
 	'ccc.abbrev': 'CCC',
+	'ccc.condensedIn': 'Nel Compendio',
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Nessun numero di domanda in questo corpus',
 	'nav.summa': 'Somma',

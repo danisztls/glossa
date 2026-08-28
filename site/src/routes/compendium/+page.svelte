@@ -20,7 +20,7 @@
 	let catechismLang = $derived(content.langFor('catechism'));
 	let pairs = $derived(pairDivisionsCached(tree, getCccStructure(catechismLang)));
 	let sibling = $derived((node: StructureNode) =>
-		siblingLink(pairs.get(node), {
+		siblingLink(pairs.get(node)?.paragraphs, {
 			hrefBase: '/catechismus/caput',
 			unit: '¶',
 			abbrev: t('ccc.abbrev'),

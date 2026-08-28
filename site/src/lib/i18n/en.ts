@@ -141,6 +141,7 @@ export const en: Dictionary = {
 	'compendium.nextQuestion': 'Next question',
 	'compendium.condenses': 'Condenses CCC ¶¶',
 	'ccc.abbrev': 'CCC',
+	'ccc.condensedIn': 'In the Compendium',
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'No question number in this corpus',
 	'nav.summa': 'Summa',

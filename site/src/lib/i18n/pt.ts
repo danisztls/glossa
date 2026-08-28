@@ -104,6 +104,7 @@ export const pt: Dictionary = {
 	'compendium.nextQuestion': 'Próxima pergunta',
 	'compendium.condenses': 'Condensa os §§',
 	'ccc.abbrev': 'CIC',
+	'ccc.condensedIn': 'No Compêndio',
 	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Sem número de pergunta neste corpus',
 	'nav.summa': 'Suma',

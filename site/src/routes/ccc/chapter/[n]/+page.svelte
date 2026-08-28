@@ -12,7 +12,14 @@
 	 * single paragraph can land the reader where they already were.
 	 */
 	import { page } from '$app/state';
-	import { compareColumnLabel, flattenCccStructure } from '$lib/corpus';
+	import {
+		compareColumnLabel,
+		flattenCccStructure,
+		getCccStructure,
+		getCompendiumStructure
+	} from '$lib/corpus';
+	import { pairDivisionsCached, pairedAnchor } from '$lib/toc-pairing';
+	import { runLabel } from '$lib/components/indexToc';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import ProseBlocks from '$lib/components/ProseBlocks.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
@@ -63,6 +70,26 @@
 		editions.current ? displayTitle(editions.current.chapter, editions.lang) : undefined
 	);
 	const structure = $derived(flattenCccStructure(editions.lang));
+
+	// The Compendium's parallel chapter. STRUCTURAL, not a citation: the two
+	// works publish one outline at two lengths and every part, section and
+	// chapter pairs exactly (`toc-pairing.ts`). The Compendium resolves its
+	// own language, since the two works do not cover the same set.
+	const compendiumChapter = $derived.by(() => {
+		const chapter = editions.current?.chapter;
+		if (!chapter) return undefined;
+		const pairs = pairDivisionsCached(
+			getCccStructure(editions.lang),
+			getCompendiumStructure(content.langFor('compendium'))
+		);
+		const paired = pairs.get(chapter);
+		const anchor = pairedAnchor(chapter, pairs);
+		if (paired === undefined || anchor === undefined) return undefined;
+		return {
+			href: hrefFor({ kind: 'compendiumChapter', n: anchor }),
+			label: runLabel(anchor, paired.paragraphs[1], 'Q')
+		};
+	});
 
 	/**
 	 * Compare mode, paragraph by paragraph across the whole chapter.
@@ -328,6 +355,17 @@
 				<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
 			{/if}
 
+			<!-- Set below the header rather than in it: it is a way OUT of this
+			     chapter, so it belongs with the navigation the page ends with
+			     rather than with the title it opens on. Shown in compare mode
+			     too — the Compendium is not a third column, it is one link. -->
+			{#if compendiumChapter}
+				<p class="condensed-in">
+					{t('ccc.condensedIn')}:
+					<a href={compendiumChapter.href}>{compendiumChapter.label}</a>
+				</p>
+			{/if}
+
 			{#if editions.compareActive && editions.secondary}
 				<CompareGrid
 					rows={compareRows}
@@ -442,6 +480,17 @@
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
 		font-variant-numeric: tabular-nums;
+	}
+
+	/* Quiet, and the same weight as `.related` on the single-paragraph route:
+	   an aside about where else this text lives, not part of the chapter. */
+	.condensed-in {
+		margin: 0.35rem 0 0;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+	}
+	.condensed-in a {
+		color: var(--color-text-muted);
 	}
 
 	.copyright-notice {

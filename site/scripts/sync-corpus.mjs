@@ -71,9 +71,12 @@ import {
 	buildDocumentBibleXrefs,
 	checkXrefsAgainstCorpus
 } from './build-xrefs.mjs';
+
 import { summaPartSlug } from '../src/lib/route-manifest.ts';
 import { setDocumentTitleSource } from '../src/lib/refs-grammar.ts';
 import { hrefFor } from '../src/lib/address.ts';
+import { buildCondensationMap } from '../src/lib/condensation.ts';
+import { pairDivisions } from '../src/lib/toc-pairing.ts';
 import { sitemapXml } from './sitemap.mjs';
 import {
 	CHANGE_CEILING,
@@ -413,6 +416,7 @@ const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
 const cccEditions = []; // [{ lang, work, paragraphs }] -- input to the xref pass
 const documentEditions = []; // [{ slug, lang, work, sections }] -- ditto, per document edition
 const compendiumIndex = {}; // lang -> { structure }
+const compendiumEditions = []; // [{ lang, work, questions }] -- input to the condensation vote
 const compendiumQuestionNumbers = []; // canonical URL existence, across languages
 const summaIndex = {}; // lang -> { structure, questions } -- metadata only, never article text
 const summaAddresses = {}; // partSlug -> Set(question numbers), unioned across editions
@@ -750,6 +754,10 @@ for (const workId of workIds) {
 			questionNumbers: questions.map((question) => question.n).sort((a, b) => a - b)
 		};
 		compendiumQuestionNumbers.push(...questions.map((question) => question.n));
+		// Every edition, not one: the ten disagree about a question's own
+		// reference line and none of them is complete. See
+		// `condensation.ts` for what the vote is over and why.
+		compendiumEditions.push({ lang, work: workId, questions });
 
 		for (const question of questions) {
 			mark({ kind: 'compendium', n: question.n }, question, workId, manifest.language);
@@ -1202,6 +1210,29 @@ for (const { slug, sections } of documentEditions) {
 const cccParagraphSet = new Set();
 for (const { paragraphs } of cccEditions) for (const p of paragraphs) cccParagraphSet.add(p.n);
 
+/**
+ * Which Compendium questions condense which Catechism paragraphs — the one
+ * join between the two works the sources state themselves. Derived here for
+ * the same reason the scripture xrefs are (see above): it is a reading of
+ * `ccc_refs`, and a reading belongs with the renderer rather than committed
+ * beside the corpus.
+ */
+const condensation = buildCondensationMap(compendiumEditions, cccParagraphSet);
+writeJson(path.join(indexDir, 'ccc-compendium.json'), condensation.map);
+console.log(
+	`[sync-corpus] condensation index: ${condensation.stats.questions} questions over ` +
+		`${condensation.stats.distinctParagraphs} Catechism paragraphs, voted across ` +
+		`${condensation.stats.editions} editions (${condensation.stats.contested} questions had a ` +
+		`reference the vote dropped)` +
+		(condensation.stats.malformed.length
+			? `; ${condensation.stats.malformed.length} unreadable reference token(s): ` +
+				condensation.stats.malformed.slice(0, 6).join(', ')
+			: '') +
+		(condensation.stats.absent.length
+			? `; ${condensation.stats.absent.length} reference(s) to paragraphs absent from this corpus`
+			: '')
+);
+
 const citingUnits = [];
 for (const { lang, work, paragraphs } of cccEditions) {
 	for (const p of paragraphs) {
@@ -1234,7 +1265,31 @@ console.log(
 // baseline. Loud and non-fatal here; `preflight-deploy.mjs` is where a drop
 // refuses to ship. See `reference-coverage.mjs`.
 const coverageReport = coverage.report();
+// Two counters that are not about the grammar: how much of the
+// Catechism/Compendium join this build actually carries. Both degrade
+// silently by design — see `compareCrossWork`. The pairing is counted over
+// every (Catechism edition, Compendium edition) pair rather than the pairs a
+// reader will actually see, because the fallback that picks a reader's
+// companion edition lives in the browser: an all-pairs total moves the
+// moment ANY edition's outline diverges, which is the event worth catching.
+coverageReport.crossWork = {
+	pairedDivisions: Object.values(cccIndex).reduce(
+		(total, ccc) =>
+			total +
+			Object.values(compendiumIndex).reduce(
+				(sum, compendium) => sum + pairDivisions(ccc.structure, compendium.structure).size,
+				0
+			),
+		0
+	),
+	condensedQuestions: condensation.stats.questions,
+	condensedParagraphs: condensation.stats.distinctParagraphs
+};
 writeReport(coverageReport);
+console.log(
+	`[sync-corpus] cross-work links: ${coverageReport.crossWork.pairedDivisions} paired divisions ` +
+		`over all edition pairs, ${coverageReport.crossWork.condensedQuestions} condensing questions`
+);
 console.log(`[sync-corpus] reference coverage:\n${summarize(coverageReport)}`);
 if (process.env.REFERENCE_COVERAGE === 'verbose') {
 	for (const [family, f] of Object.entries(coverageReport.families)) {

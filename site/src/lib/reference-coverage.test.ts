@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	CoverageMeter,
 	classifyCitation,
-	compareCoverage
+	compareCoverage,
+	compareCrossWork
 } from '../../scripts/reference-coverage.mjs';
 
 describe('classifyCitation', () => {
@@ -121,5 +122,55 @@ describe('compareCoverage', () => {
 			'ccc: linkable citations 1000 → 900',
 			'summa: in the baseline, absent from this build'
 		]);
+	});
+});
+
+describe('compareCrossWork', () => {
+	const baseline = {
+		families: {},
+		crossWork: { pairedDivisions: 2560, condensedQuestions: 598, condensedParagraphs: 2735 }
+	};
+
+	it('is silent within the tolerance', () => {
+		expect(
+			compareCrossWork(
+				{
+					families: {},
+					crossWork: { pairedDivisions: 2520, condensedQuestions: 598, condensedParagraphs: 2735 }
+				},
+				baseline
+			)
+		).toEqual([]);
+	});
+
+	// The Spanish Compendium parsed seven sections against the other nine
+	// editions' eight, and the pairing dropped that whole level rather than
+	// mispairing it. This is the counter that would have said so.
+	it('names a level the outlines stopped agreeing on', () => {
+		expect(
+			compareCrossWork(
+				{
+					families: {},
+					crossWork: { pairedDivisions: 2480, condensedQuestions: 598, condensedParagraphs: 2735 }
+				},
+				baseline
+			)
+		).toEqual(['cross-work: pairedDivisions 2560 → 2480']);
+	});
+
+	it('reads a counter absent from the build as zero, not as NaN', () => {
+		expect(compareCrossWork({ families: {} }, baseline)).toEqual([
+			'cross-work: pairedDivisions 2560 → 0',
+			'cross-work: condensedQuestions 598 → 0',
+			'cross-work: condensedParagraphs 2735 → 0'
+		]);
+	});
+
+	// The other direction: a baseline recorded before these counters existed
+	// must not fail every build that comes after it.
+	it('passes a baseline that predates the counters', () => {
+		expect(
+			compareCrossWork({ families: {}, crossWork: { pairedDivisions: 2560 } }, { families: {} })
+		).toEqual([]);
 	});
 });

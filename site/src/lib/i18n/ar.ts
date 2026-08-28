@@ -86,6 +86,7 @@ export const ar: Dictionary = {
 	'compendium.nextQuestion': 'السؤال التالي',
 	'compendium.condenses': 'يلخّص التعليم المسيحي ¶¶',
 	'ccc.abbrev': 'التعليم المسيحي',
+	'ccc.condensedIn': 'في المختصر',
 	'compendium.abbrev': 'المختصر',
 	'compendium.noQuestionNumber': 'لا رقم سؤال في هذه المدوّنة',
 	'nav.summa': 'الخلاصة',
