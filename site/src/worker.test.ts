@@ -1,6 +1,30 @@
 import { describe, expect, it } from 'vitest';
-import worker, { isNavigation } from './worker';
 import type { RouteManifest } from './lib/route-manifest';
+
+/**
+ * `HTMLRewriter` is a Cloudflare runtime global with no Node equivalent, and
+ * `withHead` in the worker constructs one on every navigation. A pass-through
+ * stub is the right stand-in HERE because this file tests ROUTING — which
+ * status each address and method gets — and nothing about the markup. What the
+ * rewrite actually writes is `headFor`/`headHtml`/`noscriptHtml`, which are
+ * pure and tested against strings in `shell-head.test.ts`; the transform
+ * between them is Cloudflare's, and a reimplementation of it here would be
+ * asserting our own stub.
+ *
+ * Installed before the import, since the worker module reads the global at
+ * call time but the import itself must not fail.
+ */
+class PassThroughRewriter {
+	on() {
+		return this;
+	}
+	transform(response: Response) {
+		return response;
+	}
+}
+(globalThis as Record<string, unknown>).HTMLRewriter = PassThroughRewriter;
+
+const { default: worker, isNavigation } = await import('./worker');
 
 /**
  * Enough of a corpus for the edge to have an opinion about an address. The
@@ -38,6 +62,11 @@ const ASSETS = {
 				headers: { 'content-type': 'application/json' }
 			});
 		}
+		// Deliberately absent, and the site must be entirely serviceable
+		// without it: the titles table decides what a page is CALLED, the route
+		// manifest decides whether it exists. Losing the first costs a name;
+		// losing the second would cost the address.
+		if (pathname === '/route-titles.json') return new Response('missing', { status: 404 });
 		if (pathname === '/') {
 			return new Response(SHELL, { headers: { 'content-type': 'text/html' } });
 		}
@@ -131,6 +160,14 @@ describe('navigation', () => {
 		const response = await navigate('/catechismus/9999');
 		expect(response.status).toBe(404);
 		expect(await response.text()).toBe(SHELL);
+	});
+
+	/** The degradation the two-file split exists to guarantee. `ASSETS` above
+	 *  serves no `/route-titles.json`, so every assertion in this file has
+	 *  already been made without one. */
+	it('serves every address unchanged when the titles table cannot be read', async () => {
+		expect((await navigate('/catechismus/330')).status).toBe(200);
+		expect((await navigate('/catechismus/9999')).status).toBe(404);
 	});
 
 	it('leaves anything that is not a navigation to the asset binding', async () => {

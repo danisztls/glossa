@@ -36,6 +36,26 @@ import type { RouteManifest } from './route-manifest.ts';
  */
 export const SITE_NAME = 'Glossa Catholica';
 
+/**
+ * The one origin this site's addresses are published under.
+ *
+ * `scripts/sitemap.mjs` re-exports this as its `ORIGIN`, and the two having a
+ * single definition is load-bearing rather than tidy: `<loc>` in the sitemap
+ * and `<link rel="canonical">` on the page are a CLAIM AND A CONFIRMATION
+ * about the same URL, and a crawler that finds them disagreeing resolves the
+ * disagreement against the site — usually by trusting neither.
+ *
+ * Fixed here rather than read from `request.url`, which is the tempting
+ * version and is wrong twice. A request arriving over plain HTTP would mint a
+ * canonical under `http://`, which points at a different URL from the one the
+ * sitemap advertises; and a preview or verification hostname would declare
+ * ITSELF canonical, which is precisely the duplicate the `Disallow: /` at
+ * launch existed to prevent (see static/robots.txt). Naming production is
+ * right in both cases: a preview that says "the real one is over there" is
+ * exactly what a preview should say.
+ */
+export const SITE_ORIGIN = 'https://glossacatholica.org';
+
 /** The one-sentence description of the library, for the addresses that are
  *  the library rather than a text in it. Equal to `app.html`'s static
  *  `<meta name="description">` and to `manifest.webmanifest`. */
@@ -66,9 +86,16 @@ export interface Crumb {
 export interface ShellHead {
 	title: string;
 	description: string;
-	/** Path only. A `?v=1-7` names a passage within a page, not a page, and
-	 *  collapsing the query is what keeps one text at one address. */
-	canonical: string;
+	/**
+	 * Path only. A `?v=1-7` names a passage within a page, not a page, and
+	 * collapsing the query is what keeps one text at one address.
+	 *
+	 * `null` on the not-found page, which is the one head here that answers
+	 * for a URL that does not exist. A canonical link is a claim that THIS
+	 * address is the preferred spelling of a real resource; declaring one on a
+	 * 404 says the opposite of what the status says.
+	 */
+	canonical: string | null;
 	/** True for the pages that exist but are nobody's destination — the
 	 *  bookmark library, whose contents live in one reader's localStorage, and
 	 *  the 404 route. Both are deliberately absent from `sitemap.xml` too. */
@@ -99,7 +126,10 @@ const ROOT: Crumb = { name: SITE_NAME, href: '/' };
  * row at a time (2026-08-28). It is a path segment that groups addresses,
  * exactly as `/catechismus/caput` is.
  */
-const STATIC_HEADS: Record<string, { title: string; description: string; noindex?: boolean }> = {
+const STATIC_HEADS: Record<
+	string,
+	{ title: string; description: string; noindex?: boolean; uncanonical?: boolean }
+> = {
 	'/': { title: SITE_NAME, description: SITE_DESCRIPTION },
 	'/scriptura': {
 		title: `${SCRIPTURE} — ${SITE_NAME}`,
@@ -133,7 +163,8 @@ const STATIC_HEADS: Record<string, { title: string; description: string; noindex
 	'/404': {
 		title: `Not found — ${SITE_NAME}`,
 		description: SITE_DESCRIPTION,
-		noindex: true
+		noindex: true,
+		uncanonical: true
 	}
 };
 
@@ -202,7 +233,7 @@ export function headFor(
 		return {
 			title: fixed.title,
 			description: fixed.description,
-			canonical: pathname,
+			canonical: fixed.uncanonical ? null : pathname,
 			noindex: fixed.noindex ?? false,
 			crumbs: pathname === '/' ? [ROOT] : [ROOT, { name: fixed.title, href: pathname }],
 			links: pathname === '/' ? sectionLinks() : [ROOT]
@@ -387,4 +418,98 @@ function summaLink(part: string, slug: string, question: number | undefined): Cr
 	return question === undefined
 		? []
 		: [{ name: `Summa ${part} q. ${question}`, href: `/summa/${slug}/${question}` }];
+}
+
+/**
+ * Escape text for a place inside HTML markup.
+ *
+ * Needed because the fragments below are appended with `{ html: true }`,
+ * which is HTMLRewriter's way of saying "I have already made this safe". The
+ * inputs are generated tables rather than anyone's input, but a title carrying
+ * an ampersand is ordinary and one carrying a quote is routine — several of
+ * the Compendium's divisions are a quoted article of the Creed.
+ */
+export function escapeHtml(text: string): string {
+	return text
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
+}
+
+/**
+ * JSON inside a `<script>`, which is not the same as JSON.
+ *
+ * A `</script>` sequence ends the element wherever it appears, quoted or not:
+ * the HTML tokenizer does not read JSON. Escaping every `<` as its unicode
+ * escape is the standard answer and leaves the value identical to a JSON
+ * parser.
+ */
+function jsonLd(value: unknown): string {
+	return JSON.stringify(value).replace(/</g, '\\u003c');
+}
+
+/**
+ * The elements appended to `<head>`: the canonical address, the card's URL, a
+ * robots directive where one is warranted, and the breadcrumb.
+ *
+ * `og:url` IS THE REVERSAL of the omission argued in docs/decisions.md, and
+ * the reason it was omitted is the reason it can be written now. It was left
+ * out because one document answered all 5,804 addresses, so the only value the
+ * static file could carry was the site root — which would have retitled and
+ * relinked every deep-link preview to the home page. The document is
+ * per-address here, so the tag can name the address it is actually about.
+ * `app.html` still declares none, which is still right: the static file is not
+ * about any one address.
+ */
+export function headHtml(head: ShellHead, origin: string): string {
+	const url = head.canonical === null ? null : `${origin}${head.canonical}`;
+	const parts = url
+		? [
+				`<link rel="canonical" href="${escapeHtml(url)}">`,
+				`<meta property="og:url" content="${escapeHtml(url)}">`
+			]
+		: [];
+	// `follow`, not `noindex, nofollow`: neither page is worth a result of its
+	// own, and both link into the corpus, which is.
+	if (head.noindex) parts.push('<meta name="robots" content="noindex, follow">');
+	parts.push(
+		`<script type="application/ld+json">${jsonLd({
+			'@context': 'https://schema.org',
+			'@type': 'BreadcrumbList',
+			itemListElement: head.crumbs.map((crumb, i) => ({
+				'@type': 'ListItem',
+				position: i + 1,
+				name: crumb.name,
+				item: `${origin}${crumb.href}`
+			}))
+		})}</script>`
+	);
+	return parts.join('');
+}
+
+/**
+ * The links a consumer that does not run JavaScript can follow from here.
+ *
+ * `robots.txt` already states the problem this solves: the site is one SPA
+ * shell and every cross-reference between texts is written by script, so the
+ * corpus has no link graph at all to a crawler that does not render, and
+ * `sitemap.xml` is the only flat statement that these ~5,800 addresses exist.
+ * A sitemap says what exists; it cannot say what is near what.
+ *
+ * A `<noscript>` and not a hidden `<div>`: content withheld from a rendering
+ * browser but served to a crawler is cloaking, whatever it was meant for.
+ * `<noscript>` is the element that means precisely this and is read as such.
+ */
+export function noscriptHtml(head: ShellHead): string {
+	if (!head.links.length) return '';
+	const items = head.links
+		.map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.name)}</a></li>`)
+		.join('');
+	return (
+		`<noscript><nav aria-label="${escapeHtml(head.title)}"><p>` +
+		`${escapeHtml(SITE_NAME)} renders in a browser with JavaScript enabled. ` +
+		`Every text here is reproduced from its source publisher — see the ` +
+		`<a href="/colophon">colophon</a>.</p><ul>${items}</ul></nav></noscript>`
+	);
 }

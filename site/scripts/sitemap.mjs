@@ -44,7 +44,8 @@ import { isCanonicalPath } from '../src/lib/route-manifest.ts';
  * @typedef {import('../src/lib/route-manifest.ts').RouteManifest} RouteManifest
  */
 
-export const ORIGIN = 'https://glossacatholica.org';
+export { SITE_ORIGIN as ORIGIN } from '../src/lib/shell-head.ts';
+import { SITE_ORIGIN as ORIGIN } from '../src/lib/shell-head.ts';
 
 /** A sitemap file may hold at most 50,000 URLs (sitemaps.org §index). */
 const MAX_URLS = 50_000;

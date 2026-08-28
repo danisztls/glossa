@@ -3,7 +3,16 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { assertNamed } from '../../scripts/route-titles.mjs';
 import { sitemapPaths } from '../../scripts/sitemap.mjs';
-import { clip, headFor, SITE_DESCRIPTION, SITE_NAME, type RouteTitles } from './shell-head';
+import {
+	clip,
+	escapeHtml,
+	headFor,
+	headHtml,
+	noscriptHtml,
+	SITE_DESCRIPTION,
+	SITE_NAME,
+	type RouteTitles
+} from './shell-head';
 import type { RouteManifest } from './route-manifest';
 
 const read = (p: string) => readFileSync(path.join(process.cwd(), p), 'utf8');
@@ -176,6 +185,16 @@ describe('headFor, the corpus', () => {
 		}
 	});
 
+	/** A canonical link says "this address is the preferred spelling of a real
+	 *  resource", which is the opposite of what a 404 status says. */
+	it('declares no canonical for the not-found page', () => {
+		expect(head('/404')?.canonical).toBeNull();
+		expect(headHtml(head('/404')!, ORIGIN)).not.toContain('rel="canonical"');
+		expect(headHtml(head('/404')!, ORIGIN)).not.toContain('og:url');
+		// It still breadcrumbs and still says noindex.
+		expect(headHtml(head('/404')!, ORIGIN)).toContain('BreadcrumbList');
+	});
+
 	/** A well-formed address for something the tables do not name: the caller
 	 *  serves the shell unaltered rather than titling the page after nothing. */
 	it('returns undefined for an address it has no name for', () => {
@@ -219,5 +238,94 @@ describe('clip', () => {
 
 	it('cuts mid-word only when the boundary would lose most of the text', () => {
 		expect(clip('Antidisestablishmentarianism', 10)).toBe('Antidisest…');
+	});
+});
+
+const ORIGIN = 'https://glossacatholica.org';
+
+describe('headHtml', () => {
+	const html = headHtml(head('/catechismus/330')!, ORIGIN);
+
+	it('declares the address it is being served for as canonical', () => {
+		expect(html).toContain(
+			'<link rel="canonical" href="https://glossacatholica.org/catechismus/330">'
+		);
+	});
+
+	/**
+	 * The reversal recorded in docs/decisions.md: `og:url` was omitted from
+	 * `app.html` because one document answered every address, so the only value
+	 * it could carry was the site root — which would have relinked every
+	 * deep-link preview to the home page. Per-address, it can name the address.
+	 */
+	it('names the same address as the card URL', () => {
+		expect(html).toContain(
+			'<meta property="og:url" content="https://glossacatholica.org/catechismus/330">'
+		);
+	});
+
+	it('emits the breadcrumb as parseable JSON-LD with absolute items', () => {
+		const json = /<script type="application\/ld\+json">(.*?)<\/script>/s.exec(html)?.[1];
+		expect(json, 'no JSON-LD block emitted').toBeDefined();
+		const crumbs = JSON.parse(json!.replace(/\\u003c/g, '<'));
+		expect(crumbs['@type']).toBe('BreadcrumbList');
+		expect(crumbs.itemListElement.map((i: { item: string }) => i.item)).toEqual([
+			'https://glossacatholica.org/',
+			'https://glossacatholica.org/catechismus',
+			'https://glossacatholica.org/catechismus/330'
+		]);
+		expect(crumbs.itemListElement.map((i: { position: number }) => i.position)).toEqual([1, 2, 3]);
+	});
+
+	/** A `</script>` sequence ends the element wherever it appears, quoted or
+	 *  not — the HTML tokenizer does not read JSON. */
+	it('escapes every angle bracket inside the JSON-LD', () => {
+		const evil = { ...titles, prayers: { 'ave-maria': '</script><img src=x>' } };
+		const out = headHtml(headFor('/preces/ave-maria', manifest, evil)!, ORIGIN);
+		expect(out).not.toContain('</script><img');
+		expect(out.match(/<\/script>/g)).toHaveLength(1);
+	});
+
+	it('marks a noindex page, and only a noindex page', () => {
+		expect(headHtml(head('/signata')!, ORIGIN)).toContain(
+			'name="robots" content="noindex, follow"'
+		);
+		expect(html).not.toContain('name="robots"');
+	});
+});
+
+describe('noscriptHtml', () => {
+	const html = noscriptHtml(head('/catechismus/330')!);
+
+	/** The corpus has no link graph at all to a consumer that does not render:
+	 *  every cross-reference is written by script (see static/robots.txt). */
+	it('offers the neighbouring addresses as real links', () => {
+		// The fixture's Catechism is 1, 2, 330, so 2 is what precedes 330 here.
+		expect(html).toContain('<a href="/catechismus/2">');
+		expect(html).toContain('<a href="/catechismus">');
+	});
+
+	/** Withholding content from a rendering browser while serving it to a
+	 *  crawler is cloaking; `<noscript>` is the element that means this. */
+	it('wraps them in a noscript, not a hidden element', () => {
+		expect(html.startsWith('<noscript>')).toBe(true);
+		expect(html).not.toMatch(/hidden|display:\s*none/);
+	});
+
+	it('escapes a name that carries markup characters', () => {
+		const out = noscriptHtml(head('/catechismus/caput/1')!);
+		expect(out).not.toMatch(/<a href="[^"]*"><[a-z]/);
+	});
+});
+
+describe('escapeHtml', () => {
+	it('escapes the four characters that change how markup parses', () => {
+		expect(escapeHtml('a & b < c > d " e')).toBe('a &amp; b &lt; c &gt; d &quot; e');
+	});
+
+	/** The Compendium's divisions are quoted articles of the Creed, so a
+	 *  curly quote in a title is routine and must survive untouched. */
+	it('leaves a curly quote alone', () => {
+		expect(escapeHtml('\u201cI believe\u201d')).toBe('\u201cI believe\u201d');
 	});
 });
