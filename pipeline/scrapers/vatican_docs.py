@@ -624,6 +624,23 @@ _PUNCT_OUTSIDE_RE = re.compile(r"^[\s.,;:\u2013\u2014-]*$")
 _FN_MARKER_OUTSIDE_RE = re.compile(
     r"^[\s.,;:\u2013\u2014-]*(?:\(\d{1,3}\*?\)|\[\d{1,3}\*?\])[\s.,;:\u2013\u2014-]*$"
 )
+# The fourth thing, and the same shape one step wider: a heading that QUOTES
+# Scripture prints the reference after the quotation and outside the emphasis
+# it sets the quotation in -- `<b><i>"Wisdom knows all and understands all"
+# </i></b>(<i>Wis </i>9:11)`. Fides et Ratio EN heads two of its chapters
+# that way and lost both; the footnote-marker tolerance above could not take
+# them because the bracket holds a locator rather than a bare numeral.
+#
+# Bounded so it stays a locator and cannot become a sentence: ONE bracketed
+# group, nothing nested, at most 48 characters, and at least one digit in it
+# -- a citation names a place. `cf.`, a semicolon between two references and
+# an en dash range all fit inside that; a bold lead-in followed by a
+# parenthetical remark does not, because a remark has no chapter number.
+_CITATION_OUTSIDE_RE = re.compile(
+    r"^[\s.,;:\u2013\u2014-]*"
+    r"[(\[](?=[^()\[\]]{0,48}[)\]])(?=[^()\[\]]*\d)[^()\[\]]+[)\]]"
+    r"[\s.,;:\u2013\u2014-]*$"
+)
 
 
 _BLANK_OUTSIDE_RE = re.compile(r"^\s*$")
@@ -654,7 +671,8 @@ def _emphasis_covers(
     after = strip_tags(inner_html[spans[-1].end() :])
     outside = _PUNCT_OUTSIDE_RE if tolerant else _BLANK_OUTSIDE_RE
     if not outside.match(after) and not (
-        tolerant and _FN_MARKER_OUTSIDE_RE.match(after)
+        tolerant
+        and (_FN_MARKER_OUTSIDE_RE.match(after) or _CITATION_OUTSIDE_RE.match(after))
     ):
         return False
     if outside.match(before):
@@ -756,6 +774,67 @@ def is_indented(outer_html: str, inner_html: str) -> bool:
     )
 
 
+# The old shell sets a subordinate tier by SHRINKING it, not by moving it or
+# restyling it: `<p align="center"><b><font size="2">1- FUNÇÕES DOS
+# PRESBÍTEROS</font></b></p>` under a `<p align="center"><b>CAPÍTULO II</b>`
+# set at the default size, on the same axis, in the same weight. Eight of the
+# Portuguese Vatican II decrees are typeset that way and nothing else in the
+# corpus is: a survey of every centred bold block in `raw/` finds two sizes in
+# sixteen pages, and in eight of them the larger is the masthead alone.
+#
+# Only SMALLER counts. Bigger is used once, for the document's own title, which
+# `extract_document_header` has taken before any of this runs -- so a promotion
+# term would have nothing to promote and one more way to invent a tier.
+_HTML_DEFAULT_FONT_SIZE = 3
+# The rank's bits, low to high. Italic stays at bit 0 because `parse_document`
+# finds a heading's peer-but-for-the-italics with `style ^ 1`.
+_STYLE_ITALIC = 1
+_STYLE_SMALLER = 2
+_STYLE_FLUSH_LEFT = 4
+
+_FONT_SIZE_SPAN_RE = re.compile(
+    r'<font\b[^>]*\bsize\s*=\s*["\']?([+-]?\d+)[^>]*>(.*?)</font>',
+    re.DOTALL | re.IGNORECASE,
+)
+
+
+def _font_size_value(token: str) -> int:
+    """`size="2"` is absolute, `size="-1"` relative to the default. Both
+    spellings are live -- 5,797 of the first, 301 of the second."""
+    if token[0] in "+-":
+        return _HTML_DEFAULT_FONT_SIZE + int(token)
+    return int(token)
+
+
+def heading_font_size(inner_html: str) -> int:
+    """The size the source sets over the WHOLE of a heading's text.
+
+    Anything less is not a tier signal: a `<font size="2">` around one word of
+    a heading is emphasis inside it, and two disagreeing sizes are a heading
+    whose size says nothing. Both fall back to the default, which is what a
+    block declaring no size gets. The blank-and-punctuation tolerance is
+    `_emphasis_covers`', for the same reason -- sources set the enumerator and
+    the trailing space outside the run they wrap."""
+    spans = [
+        m for m in _FONT_SIZE_SPAN_RE.finditer(inner_html) if strip_tags(m.group(2))
+    ]
+    if not spans:
+        return _HTML_DEFAULT_FONT_SIZE
+    sizes = {_font_size_value(m.group(1)) for m in spans}
+    if len(sizes) != 1:
+        return _HTML_DEFAULT_FONT_SIZE
+    for a, b in itertools.pairwise(spans):
+        if not _PUNCT_OUTSIDE_RE.match(strip_tags(inner_html[a.end() : b.start()])):
+            return _HTML_DEFAULT_FONT_SIZE
+    before = strip_tags(inner_html[: spans[0].start()])
+    after = strip_tags(inner_html[spans[-1].end() :])
+    if not _PUNCT_OUTSIDE_RE.match(after) and not _FN_MARKER_OUTSIDE_RE.match(after):
+        return _HTML_DEFAULT_FONT_SIZE
+    if not _PUNCT_OUTSIDE_RE.match(before) and not _ENUM_OUTSIDE_RE.match(before):
+        return _HTML_DEFAULT_FONT_SIZE
+    return sizes.pop()
+
+
 def heading_style_rank(
     outer_html: str, inner_html: str, is_center_tag: bool, anchor_titled: bool = False
 ) -> int:
@@ -763,7 +842,8 @@ def heading_style_rank(
 
     The corpus distinguishes heading tiers visually and does so consistently
     (docs/research/description-pass-2026-08.md): centered headings outrank
-    left-aligned ones, and within either, a plain-bold heading outranks a
+    left-aligned ones, within either a full-size heading outranks a shrunken
+    one, and within either of those a plain-bold heading outranks a
     bold-italic one. `haurietis-aquas.pt` splits 7 centered against 21 left
     bold-italic, `sacrosanctum-concilium.pt` 16 against 83,
     `deus-caritas-est.pt` 5 against 13.
@@ -771,7 +851,9 @@ def heading_style_rank(
     Ranks are compared only WITHIN one document and then compacted to
     contiguous levels, so the absolute numbers carry no meaning across works
     -- a document using only centered and left-italic headings gets levels 1
-    and 2, not 1 and 4."""
+    and 2, not 1 and 5. The bits are ordered so that `style ^ 1` still flips
+    the italic bit alone, which is what the odd-tier merge in `parse_document`
+    means by "the same style but for the italics"."""
     centered = is_center_tag or bool(_CENTERED_RE.search(outer_html))
     # An anchor-titled heading carries no emphasis of its own (see
     # `_anchor_titles_itself`), so ranked on markup alone it lands BETWEEN the
@@ -781,7 +863,12 @@ def heading_style_rank(
     # containing either -- so they are peers, and giving the anchored ones the
     # emphasised rank is what says so.
     italic = anchor_titled or bool(re.search(r"<(i|em)\b", inner_html, re.IGNORECASE))
-    return (0 if centered else 2) + (1 if italic else 0)
+    smaller = heading_font_size(inner_html) < _HTML_DEFAULT_FONT_SIZE
+    return (
+        (0 if centered else _STYLE_FLUSH_LEFT)
+        + (_STYLE_SMALLER if smaller else 0)
+        + (_STYLE_ITALIC if italic else 0)
+    )
 
 
 def is_mini_header(text: str) -> bool:
@@ -3525,7 +3612,10 @@ def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
         for i, b in enumerate(blocks)
         if lo < i < hi
         and b.kind != "quote"
-        and b.style == 0  # centred, no italic, and not bold or it would be a heading
+        # centred and not italic; not bold either, or it would be a heading
+        # already. The size bit is masked off rather than required to be 0 --
+        # a centred plain run set small is still a centred plain run.
+        and b.style in (0, _STYLE_SMALLER)
         and not is_full_bold(b.raw)
         and len(b.text) <= _ITALIC_HEADING_MAX_CHARS
         and match_para_num(b.raw) is None
@@ -4480,6 +4570,23 @@ def parse_document(
             match_label(text) is not None or _ROMAN_DIVISION_RE.match(text) is not None
         )
 
+    # THE STYLES THE DIVISIONS' OWN INTERIOR USES.
+    #
+    # A heading set in the divisions' style but outside their span is either a
+    # peer of theirs or one of their sub-sections that happens to sit past the
+    # last label, and nothing in the markup separates the two -- Lumen Fidei
+    # PT's closing `FELIZ DAQUELA QUE ACREDITOU` is printed exactly like the
+    # four chapter titles it follows, and Dilexit Nos EN's `A LAMENT AND A
+    # REQUEST` exactly like the sections inside chapters one to four. What
+    # separates them is whether the document uses that style INSIDE a
+    # division: where it does, an unlabelled heading in it is one more of
+    # those; where it does not, it has no other peers to be.
+    inside_styles = {
+        b.style
+        for i, b in enumerate(blocks)
+        if b.is_heading and label_span[0] < i < label_span[1] and not is_labelled(b)
+    }
+
     def depth_key(idx: int, b: Block) -> tuple[int, int]:
         # `label` first when the heading has one: after merge_heading_lines,
         # `text` is the division's NAME and the label that ranks it has moved
@@ -4504,8 +4611,31 @@ def parse_document(
         # it, but that runs after this walk. Gaudium et Spes PT's `PROÉMIO(1)`
         # read as `PROEMIO⟦1⟧`, missed this set, and was ranked by style: level
         # 4, under the very divisions it introduces.
+        #
+        # ONLY WHERE THE DOCUMENT LABELS SOMETHING, because this key outranks
+        # EVERY style key: where there are divisions to join it joins them,
+        # and where there are none it invents a tier above the whole document
+        # instead. `divini-illius-magistri.pt` prints INTRODUÇÃO and seven
+        # unlabelled divisions in one identical centred bold; promoted, the
+        # first of them levelled its own sub-headings from a tier its siblings
+        # were not in, and the document came out flat. `orientalium-
+        # ecclesiarum.pt` the same across eight, `ecclesiam.pt` across three.
+        # This used to be repaired after the walk, by pulling a promoted
+        # heading back down to its same-styled twins -- which fixed the
+        # heading and not the levels already assigned beneath it.
+        #
+        # NAMED, OR PRINTED IN A STYLE NO DIVISION'S INTERIOR USES. The name
+        # is the older test and the narrower one: it cannot see Lumen Fidei
+        # PT's closing `FELIZ DAQUELA QUE ACREDITOU`, a peer of the four
+        # chapter titles that is not called a conclusion, nor Presbyterorum
+        # Ordinis' `CONCLUSÃO E EXORTAÇÃO`, which is called one and then said
+        # -- and both are already answered by `inside_styles`.
         if (
-            fold(strip_markers(b.text)).strip(" .:;-") in _FRONT_BACK_MATTER
+            labelled
+            and (
+                fold(strip_markers(b.text)).strip(" .:;-") in _FRONT_BACK_MATTER
+                or b.style not in inside_styles
+            )
             and not (label_span[0] < idx < label_span[1])
             and b.style <= best_heading_style
         ):
@@ -4581,6 +4711,14 @@ def parse_document(
 
     keys = sorted({depth_key(i, b) for i, b in enumerate(blocks) if b.is_heading})
     level_of = {k: i + 1 for i, k in enumerate(keys)}
+    unlisted = sorted(
+        {
+            depth_key(i, b)
+            for i, b in enumerate(blocks)
+            if b.is_heading and i not in toc_level
+        }
+    )
+    unlisted_depth = {k: i for i, k in enumerate(unlisted)}
 
     # Levels are assigned by walking the document, not by the global rank
     # alone. vatican.va's formatting is too loose for a per-heading rank to
@@ -4653,7 +4791,17 @@ def parse_document(
             # A heading the TOC does not list sits UNDER the last one it
             # did. divini-redemptoris.pt lists only its seven parts, so its
             # ~50 unlisted headings are their sub-sections by construction.
-            lvl = max(prelim, toc_floor + 1)
+            #
+            # UNDER IT, AND THEN RANKED AMONG THEMSELVES. The floor alone
+            # flattens whatever the TOC left out onto one level, and that
+            # document's omissions are two tiers, not one -- centred capitals
+            # (`DOUTRINA`, `DIFUSÃO`) with bold-italic sub-headings beneath
+            # them. `unlisted_depth` is their own ladder, measured only over
+            # the keys the TOC does not name, so the offset a key gets is its
+            # depth below the floor rather than its rank in the whole
+            # document (where the listed parts share the capitals' key and
+            # would collapse the two tiers again).
+            lvl = max(prelim, toc_floor + 1 + unlisted_depth.get(key, 0))
         elif key in assigned:
             # RULE 2, AND IT HAS TO COME BEFORE THE TWO BRANCHES BELOW.
             #
@@ -4776,54 +4924,6 @@ def parse_document(
         heading_level[idx] = lvl
         prev_heading_idx = idx
         last_level = lvl
-
-    # A PROMOTED FRONT/BACK-MATTER HEADING MAY NOT OUTRANK ITS OWN TWINS.
-    #
-    # `depth_key` lifts a CONCLUSION or PROÉMIO to the tier of the document's
-    # labelled divisions, which is right where the page prints it as that tier
-    # (Gaudium et Spes' PROÉMIO beside its PARTE I). But the key it returns
-    # outranks EVERY style key, so in a document whose divisions are unlabelled
-    # the promotion does not join a tier -- it invents one above the whole
-    # document, and the closing heading comes out alone at level 1 with its
-    # five identically-printed siblings at 2.
-    #
-    # `aeterna-dei.en` is the clean case: six divisions in byte-identical
-    # `<p align="CENTER">`, no bold, no italic, none of them saying CHAPTER,
-    # and CONCLUSION alone lifted. `mater.en` does it across five,
-    # `orientalium-ecclesiarum.en` across eight. The audit reported each as
-    # "most headings parsed +1 level(s)" with the closing heading the lone
-    # outlier -- the signature of a phantom tier rather than a real one.
-    #
-    # The repair is stated as the constraint it is, and NOT as a guard on the
-    # promotion itself: withholding the key entirely collapses a tier in
-    # `divini-redemptoris.pt`, whose INTRODUÇÃO, seven parts and their
-    # sub-headings need three levels out of two styles and get the third from
-    # exactly this key. Here the promotion still happens; it is only stopped
-    # from rising ABOVE headings the page sets in the same style, which is
-    # `docs/writing-descriptions.md` §3 read as a post-condition -- if two
-    # headings look the same on the page they are the same level.
-    #
-    # AND ONLY WHERE THE DOCUMENT LABELS NOTHING. A page that does say PART or
-    # CHAPTER has a real top tier for the promotion to join, and there the
-    # front matter is SUPPOSED to outrank its same-styled twins: Gaudium et
-    # Spes EN sets PREFACE in the style of its chapters and means it as the
-    # peer of PARTE I, so pulling it down to the chapters cost that document
-    # two headings before this guard was added.
-    def _is_matter(b: Block) -> bool:
-        return fold(strip_markers(b.text)).strip(" .:;-") in _FRONT_BACK_MATTER
-
-    for i in list(heading_level) if not labelled else []:
-        if not _is_matter(blocks[i]):
-            continue
-        twins = [
-            heading_level[j]
-            for j in heading_level
-            if j != i
-            and blocks[j].style == blocks[i].style
-            and not _is_matter(blocks[j])
-        ]
-        if twins:
-            heading_level[i] = max(heading_level[i], min(twins))
 
     used = sorted(set(heading_level.values()))
     compact = {lvl: i + 1 for i, lvl in enumerate(used)}
@@ -5105,8 +5205,28 @@ def parse_document(
     # Section machinery the body uses -- these blocks carry footnote markers
     # like any other (Lumen Gentium's Nota Explicativa Praevia has four).
     appendix_out = []
+    # Whether this document HAS an appendix at all, which decides what a
+    # title with nothing under it means (see the loop).
+    appendix_has_text = any(u["blocks"] for u in state.appendix)
     for unit in state.appendix:
-        if not unit["blocks"]:
+        # A TITLE WITH NOTHING UNDER IT IS STILL A HEADING THE PAGE PRINTS.
+        # Dropping every block-less unit dropped the two divisions of
+        # `divini-illius-magistri.pt` whose whole content is the sub-headings
+        # beneath them -- `A QUEM PERTENCE A EDUCAÇÃO` and `SUJEITO DA
+        # EDUCAÇÃO`, alone among that document's seven. `structure.json` keeps
+        # naming them and the reader still sees them (the route pairs a tail
+        # row with no unit), so nothing looked wrong; what was missing was the
+        # title from the TEXT tier, which is what the scripture index and
+        # anything else reading stored text sees.
+        #
+        # ONLY WHERE THERE IS AN APPENDIX FOR IT TO BE PART OF. A numbered
+        # document that merely signs off ends on a block-less `PIUS XII,
+        # POPE`, and admitting that alone would give four such documents an
+        # `appendix.json` holding one name and no text -- a content-tier file
+        # for a heading `structure.json` already carries. The untitled unit
+        # stays dropped either way; that one is the empty buffer this loop
+        # opens with.
+        if not unit["blocks"] and not (unit["title"] and appendix_has_text):
             continue
         holder = Section(n=None, chapter=None)
         holder.blocks = unit["blocks"]

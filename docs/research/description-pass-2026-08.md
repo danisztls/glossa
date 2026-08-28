@@ -1048,3 +1048,161 @@ containment against the whole concatenated stored text and that phrase occurs
 inside §2's running prose. The block itself was dropped, correctly. Worth
 knowing before trusting a `kept` on a short heading-shaped string; `kept?`
 already exists for the prefix case and this is its sibling.
+
+## The parser pass — 2026-08-28
+
+Four of the classes carried forward above were taken on together, because they
+turned out to be one mechanism seen four ways. **42 disagreeing works became
+30, and 297 findings became 265, with no work getting worse.** Thirty-three
+files changed in `build/` — 22 `structure.json`, 9 `appendix.json`, 2
+`sections.json`, none added or removed — and no document's validation status
+moved in either direction. Zero network fetches.
+
+**Measure against a freshly parsed corpus, not against the one on disk.** The
+first three measurements in this pass were wrong, in both directions, because
+`build/` had not been re-parsed since some earlier code change and
+`write_if_changed` leaves an unchanged file's mtime alone, so nothing said so.
+`dilexit-nos.en` read as a six-finding regression from a change that provably
+did not touch it. The procedure that works: stash the change, re-parse
+everything, run the audit — that is the baseline — then restore and repeat.
+Doing it twice in a row also proves the parse is idempotent, which is what
+makes the file-hash diff mean anything.
+
+**A parse-in-process harness makes the loop minutes instead of an hour.**
+`parse_document` + `build_structure` + `audit.compare_toc`, over the 190
+oracles, reproduces `audit.py toc` exactly — 42 works, 297 findings — once it
+does what `parse_and_write` does: apply `raw_text` corrections before parsing,
+pass the slug and `pontiff_or_council`, and apply the overrides afterwards.
+Without those it reported 96 failing works. Every experiment below was decided
+on that harness and only then confirmed by a full re-parse.
+
+### 1. A font-size wrapper is a tier signal — confirmed, and it is small
+
+`heading_style_rank` ended `return (0 if centered else 2) + (1 if italic else
+0)`: centring and emphasis, nothing else. The old shell sets a subordinate tier
+by SHRINKING it — `<p align="center"><b><font size="2">1- FUNÇÕES DOS
+PRESBÍTEROS</font></b>` under a `<p align="center"><b>CAPÍTULO II</b>` at the
+default size — so both ranked 0 and the tier collapsed.
+
+The blast radius is narrow and was measured before the change rather than
+after: over all 1,614 raw pages, sixteen print centred bold in two sizes, and
+in eight of those the larger is the masthead alone. The eight that really carry
+two heading sizes are the Portuguese conciliar decrees. Flush-left headings mix
+sizes on exactly one page, and there the second size is `+1` — bigger — so a
+demotion-only term cannot touch it.
+
+`heading_font_size` reads the size only where it covers the block's whole text,
+with `_emphasis_covers`' own tolerance for the enumerator and the trailing
+space; a size around one word is emphasis inside a heading, and two disagreeing
+sizes say nothing. The rank became `(0 if centered else 4) + (2 if smaller
+else 0) + (1 if italic else 0)`, keeping italic at bit 0 because the odd-tier
+merge finds a heading's peer with `style ^ 1`.
+
+**It changed four documents on its own, and that is the lesson.** The signal
+was right and the levelling walk still overrode it in the three decrees the
+hypothesis was written for — `presbyterorum-ordinis.pt` came out byte-identical
+with the correct styles in hand. A style rank is an input to that walk, not a
+verdict.
+
+### 2. The front/back-matter promotion, stated as a precondition
+
+`depth_key` lifts a `CONCLUSION` or `PROÉMIO` to the tier of the document's
+labelled divisions. Two things were wrong with it.
+
+**It fired in documents that label nothing**, where the key it returns outranks
+every style key — so instead of joining a tier it invented one above the whole
+document. `divini-illius-magistri.pt` prints INTRODUÇÃO and seven unlabelled
+divisions in one identical centred bold; promoted, the first of them levelled
+its own sub-headings from a tier its siblings were not in, and all 42 headings
+came out at level 1. `orientalium-ecclesiarum.pt` the same across eight,
+`ecclesiam.pt` across three. A post-condition existed for exactly this and
+repaired the promoted heading's own level **after** the walk — by which point
+`assigned` had already handed every heading beneath it the wrong level. Made a
+precondition, all three clear; the post-condition is then provably dead (removing
+it changes nothing over 190 oracles) and is gone.
+
+**And it could only recognise front matter by its NAME**, a vocabulary test in
+nine languages. The structural replacement is `inside_styles`: the set of
+styles the document uses for unlabelled headings _inside_ the span of its
+labelled divisions. A heading outside that span, in a style that set does not
+contain, has no peers to be a sub-section of, so it is a peer of the divisions.
+That single condition subsumes every one of the eight lone-heading findings —
+`EXHORTATION`, `EXORTAÇÃO`, `APPENDICES`, `CLÁUSULAS`, `GENERAL DIRECTIVE`,
+`INTRODUCTORY STATEMENT`, `CONCLUSION AND EXHORTATION`, `fides-et-ratio.en`'s
+`INTRODUCTION` — plus Lumen Fidei PT's `FELIZ DAQUELA QUE ACREDITOU`, which no
+vocabulary could have caught, and it holds Dilexit Nos EN's six trailing
+section headings DOWN, which is the case that broke every positional rule
+tried before it. Six new words and a prefix matcher were written first and
+measured identically; they were reverted, because a rule that needs no
+vocabulary is the one to keep.
+
+### 3. A citation may sit outside a heading's emphasis run
+
+`_emphasis_covers` already tolerated an enumerator before the run and
+punctuation or a bracketed footnote marker after it. The fourth thing sources
+put there is the reference of a quotation the heading IS: `<b><i>"Wisdom knows
+all and understands all" </i></b>(<i>Wis </i>9:11)`. Bounded to one
+un-nested bracket of at most 48 characters containing a digit — a citation
+names a place, a parenthetical remark has no chapter number.
+
+It recovered twelve real headings in three documents: two chapters of
+`fides-et-ratio.en`, five in `redemptoris-missio.en`, and all five of
+`lumen-fidei.pt`'s, whose four chapter titles then merged with the `CAPÍTULO N`
+lines that had been standing alone in the outline. **Two oracles were
+incomplete and were corrected against the raw pages**, not against the parse:
+the five Redemptoris Missio epigraphs are printed in the same `<p><b><i>` as
+the section headings the reader did record, and Lumen Fidei's chapter titles in
+the same centred bold as each other.
+
+### 4. `optatam-totius.pt`'s oracle was wrong, and wrong in the way the parser was
+
+The reader recorded `PROÉMIO` and the seven `I.`–`VII.` divisions at the same
+level. The page prints PROÉMIO at the default size and every one of the seven
+in `<font size="2">` — the same signal §1 is about, missed by a person reading
+the same page. Corrected: PROÉMIO and CONCLUSÃO at 1, the seven at 2, the
+bold-italic leaves at 3. **An oracle is evidence, not scripture; where the raw
+page contradicts it, it is corrected and the correction is shown.**
+
+### 5. A title with nothing under it is still a heading the page prints
+
+`appendix_out` dropped every unit with no blocks, which dropped
+`divini-illius-magistri.pt`'s `A QUEM PERTENCE A EDUCAÇÃO` and `SUJEITO DA
+EDUCAÇÃO` — the two of its seven divisions whose entire content is the
+sub-headings beneath them. Nothing looked wrong, because `structure.json` keeps
+naming them and the route pairs a tail row that has no unit; what was missing
+was the title from the TEXT tier, which is what the scripture index and every
+other reader of stored text sees.
+
+Kept now, but **only where the document has an appendix for it to be part of**.
+Admitting every block-less title gave four numbered encyclicals an
+`appendix.json` holding one signature line — `PIUS XII, POPE` — and a
+content-tier file for a heading `structure.json` already carries is a cost with
+no reader. Eighteen title-only units corpus-wide, in nine documents.
+
+### Still open
+
+- **The masthead subtitle is still a phantom heading** in four English
+  encyclicals: `rerum-novarum.en` (its entire one-node outline),
+  `ut-unum-sint.en`, `dominum-et-vivificantem.en`, `redemptoris-missio.en`.
+  `extract_document_header` ends the masthead at the first block that names
+  neither the document nor its author, and a subtitle names neither. Three
+  candidate discriminators were tried and rejected on evidence: the page's own
+  `<meta name="description">` carries the subtitle for two of the four and not
+  the other two; absorbing one further centred block reaches three but not
+  `rerum-novarum.en`, whose subtitle sits below the salutation; and "heads
+  nothing" is false for all four. Left as four findings rather than a heuristic
+  that happens to fit.
+- **The subtitle rule levels a branch's first heading from its parent, not from
+  its tier.** `presbyterorum-ordinis.pt`'s `Intenção do Concílio` is printed
+  exactly like the 27 other bold-italic leaves and comes out one level
+  shallower because it follows PROÉMIO with no section between; the same shape
+  costs `optatam-totius.pt` two findings, `sacrosanctum-concilium.pt` and
+  `christus-dominus.pt` their modal `-1` offsets. `max(prev + 1, prelim)` was
+  tried: it fixes those (`veritatis-splendor.en` 23 → 1, `gaudium-et-spes.pt`
+  63 → 24, `presbyterorum-ordinis.pt` 12 → 0) and breaks five others
+  (`lumen-gentium.pt` 0 → 36, `unitatis-redintegratio.pt` 0 → 13), because
+  `prelim` is a rank over the whole document's keys and an intermediate tier
+  that exists elsewhere need not exist in this branch. The next attempt should
+  make `prelim` branch-local rather than lift the one-level clamp.
+- The `<strong>` and `<a>`-spacing findings from batches 10 and 11 stand as
+  recorded; neither was re-tried here.
