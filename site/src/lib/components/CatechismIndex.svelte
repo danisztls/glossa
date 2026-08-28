@@ -107,7 +107,7 @@
 	     `{@html}` is safe here on the same terms as the document masthead's
 	     (`documenta/[slug]`): the string is a literal in a checked-in
 	     dictionary, not passed through from anywhere. -->
-	<p class="tagline">{@html t('ccc.landing.tagline')}</p>
+	<p class="page-tagline">{@html t('ccc.landing.tagline')}</p>
 
 	{#if work}
 		<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
@@ -130,11 +130,8 @@
 	   works are and that the table below indexes both. Its own measure — the
 	   column is sized for a table, which is far wider than a line of text
 	   should be. */
-	.tagline {
-		color: var(--color-text-muted);
-		font-size: 1.05rem;
+	.page-tagline {
 		max-width: 40rem;
-		margin-top: 0;
 	}
 
 	/* 0.8rem, not the app.css base's 0.75rem — this index page's own outlier. */

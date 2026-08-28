@@ -99,7 +99,7 @@
 	{/if}
 
 	<h1>{t('notFound.title')}</h1>
-	<p class="lede">{t('notFound.lede')}</p>
+	<p class="page-tagline lede">{t('notFound.lede')}</p>
 	<p>{t('notFound.body')}</p>
 	<p>{t('notFound.searchHint')}</p>
 
@@ -140,10 +140,10 @@
 		color: var(--color-text-muted);
 	}
 
+	/* Larger than an index page's `.page-tagline`, for the colophon's reason:
+	   it is the sentence that carries the page. */
 	.lede {
 		font-size: 1.15rem;
-		color: var(--color-text-muted);
-		margin-top: 0;
 	}
 
 	.elsewhere {
@@ -166,7 +166,7 @@
 		display: inline-block;
 		padding: 0.35rem 0.8rem;
 		border: 1px solid var(--color-border);
-		border-radius: 0.4rem;
+		border-radius: var(--radius-md);
 		text-decoration: none;
 	}
 

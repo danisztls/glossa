@@ -45,7 +45,7 @@
 		height: 2.25rem;
 		padding: 0;
 		border: 1px solid var(--color-border);
-		border-radius: 0.4rem;
+		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
 		color: var(--color-text);
 		font-size: 1rem;

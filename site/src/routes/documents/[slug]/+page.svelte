@@ -554,7 +554,7 @@
 		<!-- Bare date, no "Promulgated" label — matching the /documents list.
 		     In a subtitle already reading "Encyclical · Francis · <date>",
 		     the only date a document has needs no naming. -->
-		<time class="promulgated" datetime={manifest.promulgated}>
+		<time class="promulgated label-micro" datetime={manifest.promulgated}>
 			{formatPromulgated(manifest.promulgated, dateLang)}
 		</time>
 	</p>
@@ -592,7 +592,7 @@
 			     precisely so they can be typeset apart here; folding them into one
 			     string is what a reader's table of contents used to show as three
 			     separate rows. -->
-			{#if node.label}<span class="heading-label">{node.label}</span>{/if}
+			{#if node.label}<span class="heading-label label-micro">{node.label}</span>{/if}
 			{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
 			<!-- `title_html` keeps the emphasis the source set inside the heading —
 			     an encyclical name, a scripture reference, a Latin phrase. Absent
@@ -993,8 +993,6 @@
 
 	.promulgated {
 		font-variant-numeric: tabular-nums;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
 		font-size: max(var(--font-size-min), 0.85em);
 	}
 
@@ -1004,7 +1002,7 @@
 		letter-spacing: 0.03em;
 		color: var(--color-accent);
 		border: 1px solid var(--color-accent);
-		border-radius: 0.25rem;
+		border-radius: var(--radius-sm);
 		padding: 0.1rem 0.4rem;
 	}
 
@@ -1201,12 +1199,8 @@
 	   subtitle sits below on its own line for the mirror reason. */
 	.structure-heading .heading-label {
 		display: block;
-		font-family: var(--font-sans);
 		font-size: 0.75em;
 		font-weight: 600;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--color-text-muted);
 		margin-bottom: 0.35rem;
 	}
 

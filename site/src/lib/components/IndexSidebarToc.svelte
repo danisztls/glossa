@@ -119,7 +119,7 @@
 	a {
 		display: block;
 		padding: 0.2rem 0.35rem;
-		border-radius: 0.3rem;
+		border-radius: var(--radius-md);
 		color: var(--color-text);
 		line-height: 1.35;
 		text-decoration: none;

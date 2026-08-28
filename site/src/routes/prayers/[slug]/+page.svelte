@@ -351,7 +351,7 @@
 
 			{#if p.instructions.blocks.length > 1}
 				<div class="prayer-opening">
-					<p class="prayer-step-label">{t('prayers.rosary.openingPrayer')}</p>
+					<p class="prayer-step-label label-micro">{t('prayers.rosary.openingPrayer')}</p>
 					<PrayerBlocks blocks={p.instructions.blocks.slice(0, 1)} />
 				</div>
 				<ol class="prayer-steps">
@@ -367,7 +367,7 @@
 
 			{#if decadePrayers.length > 0}
 				<p class="prayer-decade-links">
-					<span class="prayer-step-label">{t('prayers.rosary.decadePrayers')}</span>
+					<span class="prayer-step-label label-micro">{t('prayers.rosary.decadePrayers')}</span>
 					{#each decadePrayers as entry, i (entry.slug)}
 						{#if i > 0}<span class="sep" aria-hidden="true">·</span>{/if}
 						<a href={hrefFor({ kind: 'prayer', slug: entry.slug })}>{entry.meta?.title}</a>
@@ -382,7 +382,7 @@
 
 {#snippet prayerToc(p: Prayer)}
 	<nav class="prayer-toc" aria-label={t('prayers.tableOfContents')} data-link-preview="off">
-		<h2>{t('prayers.tableOfContents')}</h2>
+		<h2 class="label-micro">{t('prayers.tableOfContents')}</h2>
 		<ol>
 			{#each p.groups ?? [] as group (group.name)}
 				<li>
@@ -648,11 +648,7 @@
 
 	.prayer-toc h2 {
 		margin: 0 0 0.4rem;
-		font-family: var(--font-sans);
 		font-size: 0.8rem;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--color-text-muted);
 	}
 
 	.prayer-toc ol {
@@ -668,7 +664,7 @@
 	.prayer-toc a {
 		display: block;
 		padding: 0.2rem 0.35rem;
-		border-radius: 0.3rem;
+		border-radius: var(--radius-md);
 		color: var(--color-text);
 		text-decoration: none;
 	}
@@ -781,7 +777,7 @@
 		margin: 0 0 1.5rem;
 		padding: 0.6rem 0.8rem;
 		border-inline-start: 3px solid var(--color-apparatus);
-		border-radius: 0 0.3rem 0.3rem 0;
+		border-radius: 0 var(--radius-md) var(--radius-md) 0;
 		background: var(--color-bg-elevated);
 		font-family: var(--font-sans);
 		font-size: 0.9rem;
@@ -804,7 +800,7 @@
 		letter-spacing: 0.06em;
 		color: var(--color-apparatus);
 		border: 1px solid var(--color-apparatus);
-		border-radius: 0.2rem;
+		border-radius: var(--radius-sm);
 		padding: 0.05em 0.4em;
 		/* `white-space: nowrap` because in several interface languages this is
 		   two words ("I dag", "A mai titkok" shortens to "Ma" but "Aujourd’hui"
@@ -839,11 +835,6 @@
 	 */
 	.prayer-step-label {
 		display: block;
-		font-family: var(--font-sans);
-		font-size: 0.75rem;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--color-text-muted);
 		margin: 0 0 0.3rem;
 	}
 

@@ -434,7 +434,7 @@
 {#snippet groups()}
 	{#each testaments as group (group.key)}
 		<section class="testament">
-			<h3>{t(`bible.testament.${group.key}`)}</h3>
+			<h3 class="label-micro">{t(`bible.testament.${group.key}`)}</h3>
 			<ul class="book-grid" class:sidebar={variant === 'sidebar'}>
 				{#each group.books as book (book.osis)}
 					{@const isOpen = openOsis === book.osis}
@@ -557,14 +557,11 @@
 	}
 
 	/* A label the picker prints over a group of books, not a title from the
-	   text — interface face. */
+	   text — hence `.label-micro` (styles/components.css), which is what
+	   "ours, not the corpus's" is set as everywhere. Only the margin is this
+	   picker's own. */
 	.testament h3 {
 		margin: 0 0 0.5rem;
-		font-family: var(--font-sans);
-		font-size: 0.75rem;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--color-text-muted);
 	}
 
 	.book-grid {
@@ -612,7 +609,7 @@
 		gap: 0.3rem;
 		background: var(--color-bg-elevated);
 		border: 1px solid var(--color-border);
-		border-radius: 0.35rem;
+		border-radius: var(--radius-md);
 		color: var(--color-text);
 		padding: 0.35rem 0.55rem;
 		font-size: 0.85rem;
@@ -727,8 +724,8 @@
 		padding: var(--chapter-pad);
 		background: var(--color-bg-elevated);
 		border: 1px solid var(--color-border);
-		border-radius: 0.35rem;
-		box-shadow: 0 6px 20px rgb(0 0 0 / 18%);
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-panel);
 		/* One gap MORE than the columns strictly need (n chips have n-1 gaps
 		   between them), as slack: it guarantees `auto-fit` resolves to
 		   exactly `--chapter-cols` tracks rather than losing the last one to
@@ -825,7 +822,7 @@
 		min-width: var(--chapter-chip, 2rem);
 		min-height: 2rem;
 		padding: 0.1rem 0.3rem;
-		border-radius: 0.25rem;
+		border-radius: var(--radius-sm);
 		text-decoration: none;
 		font-variant-numeric: tabular-nums;
 	}

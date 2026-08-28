@@ -512,7 +512,7 @@
 												>{segment.text}</mark
 											>{:else}{segment.text}{/if}{/each}</span
 								>
-								<span class="badge">{suggestion.badge}</span>
+								<span class="badge label-micro">{suggestion.badge}</span>
 							</span>
 							{#if suggestion.detail}
 								<!--
@@ -561,7 +561,7 @@
 	.trigger kbd {
 		font-family: var(--font-sans);
 		border: 1px solid var(--color-border);
-		border-radius: 0.25rem;
+		border-radius: var(--radius-sm);
 		padding: 0 0.35rem;
 		font-size: 0.75rem;
 	}
@@ -607,8 +607,8 @@
 	.panel {
 		background: var(--color-bg);
 		border: 1px solid var(--color-border);
-		border-radius: 0.5rem;
-		box-shadow: 0 10px 40px rgb(0 0 0 / 25%);
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-panel);
 		padding: 1rem;
 	}
 
@@ -623,7 +623,7 @@
 		font-size: 1.1rem;
 		padding: 0.5rem 0.6rem;
 		border: 1px solid var(--color-border);
-		border-radius: 0.35rem;
+		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
 		color: var(--color-text);
 	}
@@ -675,7 +675,7 @@
 	a {
 		display: block;
 		padding: 0.4rem 0.5rem;
-		border-radius: 0.3rem;
+		border-radius: var(--radius-md);
 		color: var(--color-text);
 		text-decoration: none;
 	}
@@ -723,7 +723,7 @@
 		background: color-mix(in srgb, var(--color-apparatus) 18%, transparent);
 		color: inherit;
 		font-weight: 600;
-		border-radius: 0.15rem;
+		border-radius: var(--radius-sm);
 	}
 
 	/* The detail is muted and one line; a tint there would fight the ellipsis
@@ -734,10 +734,6 @@
 
 	.badge {
 		flex: none;
-		font-size: 0.72rem;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--color-text-muted);
 	}
 
 	/* One line, ellipsized: a Summa question title or a Catechism chapter

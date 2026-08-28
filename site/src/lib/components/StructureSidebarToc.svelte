@@ -293,7 +293,7 @@
 						class:current={state.isCurrent}
 						aria-current={state.isCurrent ? 'page' : undefined}
 					>
-						{#if label}<span class="kind-label">{label}</span>{/if}
+						{#if label}<span class="kind-label label-micro">{label}</span>{/if}
 						<span
 							class="row-title"
 							lang={node.titleLang}
@@ -308,7 +308,7 @@
 					     `/catechismus/compendium/+page.svelte` and `/documents/[slug]/+page.svelte`'s
 					     own tables of contents. -->
 					<span class="row-title unlinked" title="No section number in this corpus">
-						{#if label}<span class="kind-label">{label}</span>{/if}
+						{#if label}<span class="kind-label label-micro">{label}</span>{/if}
 						<InlineText nodes={inlineTitleNodes(dt.title, node.titleHtml, lang)} />
 					</span>
 				{/if}
@@ -395,7 +395,7 @@
 		text-decoration: none;
 		color: var(--color-text);
 		padding: 0.2rem 0.35rem;
-		border-radius: 0.3rem;
+		border-radius: var(--radius-md);
 		line-height: 1.35;
 	}
 
@@ -464,11 +464,7 @@
 	   document's unlabeled `sub` row gets the same small, muted treatment a
 	   "Ch. 3" gets everywhere else rather than looking like stray text. */
 	.kind-label {
-		font-family: var(--font-sans);
 		font-size: max(var(--font-size-min), 0.72em);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--color-text-muted);
 		margin-inline-end: 0.4em;
 		white-space: nowrap;
 	}

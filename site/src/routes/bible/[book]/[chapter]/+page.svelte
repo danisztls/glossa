@@ -556,7 +556,7 @@
 			/>
 
 			{#if intro && introWork}
-				<p class="edition-label">{introWork.title}</p>
+				<p class="edition-label label-micro">{introWork.title}</p>
 				<p class="copyright-notice"><CopyrightNotice manifest={introWork} /></p>
 			{/if}
 			<h1>{introBookName}</h1>
@@ -636,8 +636,10 @@
 				     collapse rule correctly declining to fire. -->
 				<div class="compare-unit-header">
 					<CompareField leftLang={current.work.language} rightLang={secondary.work.language}>
-						{#snippet left()}<p class="edition-label">{current.work.title}</p>{/snippet}
-						{#snippet right()}<p class="edition-label">{secondary.work.title}</p>{/snippet}
+						{#snippet left()}<p class="edition-label label-micro">{current.work.title}</p>{/snippet}
+						{#snippet right()}<p class="edition-label label-micro">
+								{secondary.work.title}
+							</p>{/snippet}
 					</CompareField>
 
 					<CompareCopyrightField left={current.work} right={secondary.work} />
@@ -652,7 +654,7 @@
 				     documents/CCC/Compendium/prayers) — the edition label is the
 				     topmost line here, so the bookmark/compare-toggle controls join
 				     it instead of taking a row of their own. -->
-				<p class="edition-label">{current.work.title}</p>
+				<p class="edition-label label-micro">{current.work.title}</p>
 				<p class="copyright-notice"><CopyrightNotice manifest={current.work} /></p>
 				<h1>{current.book.name} {current.chapter.n}</h1>
 				<!-- The chapter argument: an annotated edition's summary of what
@@ -806,9 +808,6 @@
 	.edition-label {
 		margin: 0;
 		font-size: 0.85rem;
-		color: var(--color-text-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
 	}
 
 	.copyright-notice {

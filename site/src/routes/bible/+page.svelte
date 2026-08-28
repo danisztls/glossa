@@ -49,10 +49,10 @@
 			<ReadingBar print={false} randomVerse />
 		{/if}
 		<h1>{t('bible.landing.title')}</h1>
-		<p class="tagline">{t('bible.landing.tagline')}</p>
+		<p class="page-tagline">{t('bible.landing.tagline')}</p>
 
 		{#if work}
-			<p class="edition-label">{work.title}</p>
+			<p class="edition-label label-micro">{work.title}</p>
 			<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
 		{/if}
 
@@ -84,17 +84,9 @@
 </div>
 
 <style>
-	.tagline {
-		color: var(--color-text-muted);
-		font-size: 1.05rem;
-	}
-
 	.edition-label {
 		margin: 1.5rem 0 0;
 		font-size: 0.85rem;
-		color: var(--color-text-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
 	}
 
 	/* The book list follows directly now that the entry-point links are gone;

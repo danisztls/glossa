@@ -415,7 +415,7 @@
 		letter-spacing: 0.05em;
 		color: var(--color-accent);
 		border: 1px solid var(--color-accent);
-		border-radius: 0.25rem;
+		border-radius: var(--radius-sm);
 		padding: 0.1rem 0.4rem;
 	}
 
@@ -437,7 +437,7 @@
 		margin: 2rem 0 0;
 		padding: 0.85rem 1rem;
 		border: 1px solid var(--color-border);
-		border-radius: 0.4rem;
+		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
 	}
 

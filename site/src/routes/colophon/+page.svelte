@@ -62,9 +62,9 @@
 
 <article class="content-column colophon">
 	<h1>{t('colophon.title')}</h1>
-	<p class="lede">{t('colophon.lede')}</p>
+	<p class="page-tagline lede">{t('colophon.lede')}</p>
 
-	<h2>{t('colophon.whatThisIs')}</h2>
+	<h2 class="label-micro">{t('colophon.whatThisIs')}</h2>
 	<p>{t('colophon.whatThisIsBody')}</p>
 	<ul class="plain">
 		<li>{t('colophon.pointFree')}</li>
@@ -74,7 +74,7 @@
 		<li>{t('colophon.pointOffline')}</li>
 	</ul>
 
-	<h2>{t('colophon.textsTitle')}</h2>
+	<h2 class="label-micro">{t('colophon.textsTitle')}</h2>
 	<p>{t('colophon.textsBody')}</p>
 	<p class="counts">
 		{bibleEditions}
@@ -82,7 +82,7 @@
 		{t('colophon.countDocuments')}
 	</p>
 
-	<h2>{t('colophon.copyrightTitle')}</h2>
+	<h2 class="label-micro">{t('colophon.copyrightTitle')}</h2>
 	<!--
 		The load-bearing paragraphs. Three claims, in this order because it is
 		the order a rights holder would want them: what we did, what we did
@@ -92,7 +92,7 @@
 	<p>{t('colophon.copyrightBody2')}</p>
 	<p><strong>{t('colophon.copyrightBody3')}</strong></p>
 
-	<h2>{t('colophon.contactTitle')}</h2>
+	<h2 class="label-micro">{t('colophon.contactTitle')}</h2>
 	{#if CONTACT_EMAIL}
 		<p>
 			{t('colophon.contactBody')}
@@ -107,14 +107,14 @@
 		<p class="pending">{t('colophon.contactPending')}</p>
 	{/if}
 
-	<h2>{t('colophon.buildTitle')}</h2>
+	<h2 class="label-micro">{t('colophon.buildTitle')}</h2>
 	<p>{t('colophon.buildBody')}</p>
 	{#if REPOSITORY_URL}
 		<p><a href={REPOSITORY_URL} rel="external noopener" target="_blank">{REPOSITORY_URL}</a></p>
 	{/if}
 
 	{#if collections.length > 0}
-		<h2>{t('colophon.illustrationsTitle')}</h2>
+		<h2 class="label-micro">{t('colophon.illustrationsTitle')}</h2>
 		<!--
 			The prose sits OUTSIDE the loop and the credit inside it, which is
 			the split that will still be right if a second collection is ever
@@ -154,7 +154,7 @@
 	     travel with them; the licence texts ship as static/fonts/OFL-*.txt and
 	     this is the human-readable half of that obligation. It also belongs on
 	     a colophon in the older sense of the word. -->
-	<h2>{t('colophon.typeTitle')}</h2>
+	<h2 class="label-micro">{t('colophon.typeTitle')}</h2>
 	<p>{t('colophon.typeBody')}</p>
 </article>
 
@@ -173,18 +173,15 @@
 		color: var(--color-text-muted);
 	}
 
+	/* A `.page-tagline` (styles/components.css) set a step larger than the
+	   index pages': this is one sentence on the page that explains the site,
+	   and it is the page's opening rather than a label on a list. */
 	.lede {
 		font-size: 1.15rem;
-		color: var(--color-text-muted);
-		margin-top: 0;
 	}
 
 	.colophon h2 {
 		font-size: 0.8rem;
-		font-family: var(--font-sans);
-		text-transform: uppercase;
-		letter-spacing: 0.07em;
-		color: var(--color-text-muted);
 		margin-top: 2.5rem;
 		padding-bottom: 0.4rem;
 		border-bottom: 1px solid var(--color-border);
@@ -221,7 +218,7 @@
 		font-size: 0.9rem;
 		padding: 0.7rem 0.9rem;
 		border: 1px dashed var(--color-accent);
-		border-radius: 0.4rem;
+		border-radius: var(--radius-md);
 		color: var(--color-text-muted);
 	}
 </style>

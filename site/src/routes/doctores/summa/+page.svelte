@@ -114,7 +114,7 @@
 		{/if}
 		<header>
 			<h1>{t('summa.landing.title')}</h1>
-			<p class="tagline">{t('summa.landing.tagline')}</p>
+			<p class="page-tagline">{t('summa.landing.tagline')}</p>
 		</header>
 
 		{#each parts as { part, slug, headings, questions: partQuestions } (part)}
@@ -122,7 +122,7 @@
 				<h2>{t('summa.part')} {part}</h2>
 
 				{#if headings.length > 0}
-					<ul class="treatises">
+					<ul class="treatises index-list">
 						{#each headings as heading (heading.title + heading.before)}
 							<li>
 								{#if heading.before !== null}
@@ -144,7 +144,7 @@
 					</ul>
 				{/if}
 
-				<ol class="questions">
+				<ol class="questions index-list">
 					{#each partQuestions as question (question.n)}
 						{@const named = summaTitleFor(lang, part, question.n)}
 						<li>
@@ -192,26 +192,20 @@
 </div>
 
 <style>
-	.tagline {
-		color: var(--color-text-muted);
-	}
-
 	.part {
 		margin-top: 2.5rem;
 	}
 
 	.treatises {
-		list-style: none;
-		padding: 0;
 		margin: 0 0 1rem;
 		color: var(--color-text-muted);
 		font-size: 0.9rem;
 	}
 
+	/* An `.index-list` laid out in columns: 616 questions down one column is a
+	   scroll nobody finishes, and unlike the other indexes a question's title
+	   is short enough that several fit across. */
 	.questions {
-		list-style: none;
-		padding: 0;
-		margin: 0;
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
 		gap: 0.15rem 1.5rem;

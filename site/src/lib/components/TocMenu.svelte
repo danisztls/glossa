@@ -361,8 +361,8 @@
 			block-size: auto;
 			max-block-size: min(30rem, 70vh);
 			border: 1px solid var(--color-border);
-			border-radius: 0.5rem;
-			box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+			border-radius: var(--radius-lg);
+			box-shadow: var(--shadow-panel);
 			overflow: hidden;
 		}
 	}

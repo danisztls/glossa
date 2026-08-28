@@ -35,9 +35,9 @@
 
 <div class="content-column">
 	<h1>{t('doctores.landing.title')}</h1>
-	<p class="tagline">{t('doctores.landing.tagline')}</p>
+	<p class="page-tagline">{t('doctores.landing.tagline')}</p>
 
-	<ul class="work-list">
+	<ul class="work-list index-list">
 		<li>
 			<a class="work-link" href="/doctores/summa">{t('summa.landing.title')}</a>
 			<p class="work-tagline">{t('summa.landing.tagline')}</p>
@@ -54,15 +54,10 @@
 		margin-inline: auto;
 	}
 
-	.tagline {
-		color: var(--color-text-muted);
+	/* `.page-tagline` (styles/components.css) plus the room this page wants
+	   under it — the work list starts straight after, with no rule between. */
+	.page-tagline {
 		margin-block-end: 2rem;
-	}
-
-	.work-list {
-		list-style: none;
-		padding: 0;
-		margin: 0;
 	}
 
 	.work-link {

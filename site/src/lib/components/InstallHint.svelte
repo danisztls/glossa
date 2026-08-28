@@ -165,7 +165,7 @@
 		height: 2.25rem;
 		padding: 0;
 		border: none;
-		border-radius: 0.4rem;
+		border-radius: var(--radius-md);
 		background: none;
 		color: var(--color-text-muted);
 		font-size: 1rem;

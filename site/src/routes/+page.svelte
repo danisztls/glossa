@@ -239,7 +239,7 @@
 	{#if continueItems.length > 0}
 		<section aria-labelledby="continue-heading">
 			<h2 id="continue-heading">{t('home.continueReading')}</h2>
-			<ul class="positions">
+			<ul class="positions index-list">
 				{#each continueItems as pos (pos.workId)}
 					<li><a href={pos.href}>{pos.label}</a></li>
 				{/each}
@@ -299,7 +299,9 @@
 
 			{#if mostRecentDoc}
 				<p class="magisterium-recent">
-					<span class="magisterium-recent-label">{t('home.magisterium.mostRecent')}</span>
+					<span class="magisterium-recent-label label-micro"
+						>{t('home.magisterium.mostRecent')}</span
+					>
 					<a href={hrefFor({ kind: 'document', slug: mostRecentDoc.slug })}>
 						{mostRecentDoc.manifest.title}
 					</a>
@@ -326,12 +328,15 @@
 				groups are `<details open>`, so the fragment always has
 				something to scroll to.
 			-->
-			<ul class="magisterium-groups">
+			<ul class="magisterium-groups index-list">
 				{#each magisteriumGroups as group (group.pontiff)}
-					<li>
-						<a href={`/documenta#${pontiffAnchor(group.pontiff)}`} class="magisterium-group-link">
-							<span class="magisterium-pontiff">{group.pontiff}</span>
-							<span class="magisterium-count">{group.count}</span>
+					<li class="index-row">
+						<a
+							href={`/documenta#${pontiffAnchor(group.pontiff)}`}
+							class="magisterium-group-link index-link"
+						>
+							<span class="magisterium-pontiff index-title">{group.pontiff}</span>
+							<span class="magisterium-count chip">{group.count}</span>
 						</a>
 					</li>
 				{/each}
@@ -366,12 +371,6 @@
 		margin: 0 0 1rem;
 	}
 
-	.positions {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-
 	.positions li {
 		padding: 0.35rem 0;
 	}
@@ -397,10 +396,6 @@
 
 	.magisterium-recent-label {
 		display: block;
-		font-size: 0.75rem;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--color-text-muted);
 		margin-bottom: 0.2rem;
 	}
 
@@ -416,63 +411,19 @@
 		margin-top: 0.15rem;
 	}
 
-	.magisterium-groups {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.magisterium-groups li {
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.magisterium-group-link {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
-		padding: 0.65rem 0;
-		text-decoration: none;
-	}
-
+	/* The list and its rows are `.index-list` / `.index-row` / `.index-link` /
+	   `.index-title` / `.chip` (styles/components.css), hover included — this
+	   section and `/documenta`'s library are the same object, which is why the
+	   count sits at the far end of both. Only two things are this page's own:
+	   the pontificate is set a step smaller than a document title, and the
+	   count is a number, so it takes tabular figures. */
 	.magisterium-pontiff {
-		font-family: var(--font-serif);
 		font-size: 1.05rem;
-		color: var(--color-text);
 	}
 
 	.magisterium-count {
-		flex-shrink: 0;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
 		font-variant-numeric: tabular-nums;
-		border: 1px solid var(--color-border);
-		border-radius: 0.25rem;
-		padding: 0 0.35rem;
-	}
-
-	/* THE ROW IS THE LINK, so hover has to answer on the row and not only
-	   under the pointer: the name takes the accent and the underline, and
-	   the count's border comes with it, which is what makes the two ends of
-	   a full-width flex row read as one target rather than as a name that
-	   lit up beside a number that did not.
-
-	   The name is `--color-text` at rest on purpose (it is a heading here,
-	   not a citation), so the accent IS the hover state — there is no
-	   colour change to fold into. Same two properties as `.prayers-chip`
-	   above and `.book-btn` in the picker; the site now has one hover idea,
-	   spelled per surface. */
-	a.magisterium-group-link:hover .magisterium-pontiff,
-	a.magisterium-group-link:focus-visible .magisterium-pontiff {
-		color: var(--color-accent);
-		text-decoration: underline;
-		text-underline-offset: 0.15em;
-	}
-
-	a.magisterium-group-link:hover .magisterium-count,
-	a.magisterium-group-link:focus-visible .magisterium-count {
-		border-color: var(--color-accent);
-		color: var(--color-accent);
+		padding-inline: 0.35rem;
 	}
 
 	/* --- Prayers --------------------------------------------------------- */
@@ -495,7 +446,7 @@
 		text-decoration: none;
 		color: var(--color-text);
 		border: 1px solid var(--color-border);
-		border-radius: 0.3rem;
+		border-radius: var(--radius-md);
 		padding: 0.3rem 0.65rem;
 	}
 

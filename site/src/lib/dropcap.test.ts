@@ -18,11 +18,23 @@ import { splitDropCap } from './dropcap';
  * Only `first` is at risk. The `lead` punctuation is set in the *text* face
  * beside the cap (`.drop-cap-lead`), so it never asks the subset for a glyph.
  *
- * So the `unicode-range` is parsed out of app.css rather than copied here. A
- * copy would drift; this fails if someone narrows the subset without widening
- * the font, or adds a fixture whose opening character falls outside it.
+ * So the `unicode-range` is parsed out of the stylesheet rather than copied
+ * here. A copy would drift; this fails if someone narrows the subset without
+ * widening the font, or adds a fixture whose opening character falls outside
+ * it.
+ *
+ * IT FOLLOWS THE IMPORTS rather than reading one file. The stylesheet became
+ * an index plus eleven files in `styles/` on 2026-08-28 and this test was the
+ * only thing in the repository that knew where a rule lived — it failed with
+ * "no @font-face for Pirata One Subset", which is exactly the right failure
+ * and exactly the wrong reason. Inlining `@import` the way Vite does asks the
+ * same question of the same stylesheet however it is filed next.
  */
-const CSS = readFileSync(fileURLToPath(new URL('../app.css', import.meta.url)), 'utf8');
+const SRC_DIR = fileURLToPath(new URL('../', import.meta.url));
+const CSS = readFileSync(join(SRC_DIR, 'app.css'), 'utf8').replace(
+	/@import '([^']+)';/g,
+	(_match, spec: string) => readFileSync(join(SRC_DIR, spec), 'utf8')
+);
 
 function familyRanges(family: string): Array<[number, number]> {
 	// Match on the family declaration, NOT on the woff2 filename: the comment
@@ -45,7 +57,7 @@ function familyRanges(family: string): Array<[number, number]> {
 		.filter((b) => /^\s*\{/.test(b))
 		.map((b) => b.slice(0, b.indexOf('}')))
 		.filter((b) => new RegExp(`font-family:\\s*'${family}'`).test(b));
-	if (blocks.length === 0) throw new Error(`no @font-face for ${family} in app.css`);
+	if (blocks.length === 0) throw new Error(`no @font-face for ${family} in the stylesheet`);
 	return blocks.flatMap((block) => {
 		const range = /unicode-range:([^;]+);/.exec(block);
 		if (!range) throw new Error(`${family} @font-face has no unicode-range`);
@@ -244,7 +256,7 @@ describe('cursive scripts get no cap', () => {
 });
 
 describe('drop-cap font coverage', () => {
-	it('parses a non-trivial unicode-range out of app.css', () => {
+	it('parses a non-trivial unicode-range out of the stylesheet', () => {
 		// Guards the guard: a regex that silently matched nothing would make
 		// every assertion below vacuously pass.
 		expect(RANGES.length).toBeGreaterThan(5);

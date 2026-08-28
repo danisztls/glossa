@@ -144,7 +144,7 @@
 <div class="reading-layout">
 	<div class="content-column">
 		<h1>{t('nav.magisterium')}</h1>
-		<p class="tagline">{t('document.library.tagline')}</p>
+		<p class="page-tagline">{t('document.library.tagline')}</p>
 
 		<!--
 		Each pontificate collapses, and every one starts OPEN. Default-open
@@ -163,15 +163,15 @@
 			<details class="doc-group" id={pontiffAnchor(group.pontiff)} open>
 				<summary>
 					<h2>{group.pontiff}</h2>
-					<span class="group-count">{group.rows.length}</span>
+					<span class="chip group-count">{group.rows.length}</span>
 				</summary>
-				<ul class="docs">
+				<ul class="docs index-list">
 					{#each group.rows as row (row.slug)}
 						{@const description = describe(row)}
-						<li>
-							<a href={hrefFor({ kind: 'document', slug: row.slug })} class="doc-link">
-								<span class="doc-title">{row.manifest.title}</span>
-								<span class="doc-kind">{documentKindLabel(row.manifest.document_kind)}</span>
+						<li class="index-row">
+							<a href={hrefFor({ kind: 'document', slug: row.slug })} class="doc-link index-link">
+								<span class="doc-title index-title">{row.manifest.title}</span>
+								<span class="doc-kind chip">{documentKindLabel(row.manifest.document_kind)}</span>
 							</a>
 							<!--
 							Date alone, no "Promulgated" label: in a list where every
@@ -192,7 +192,7 @@
 							English edition wants the Italian sentence about it, and the
 							English one is the fallback rather than the default.
 						-->
-							<p class="doc-meta">
+							<p class="doc-meta label-micro">
 								<time datetime={row.manifest.promulgated}>
 									{formatPromulgated(row.manifest.promulgated, row.manifest.language)}
 								</time>
@@ -212,12 +212,6 @@
 </div>
 
 <style>
-	.tagline {
-		color: var(--color-text-muted);
-		font-size: 1.05rem;
-		margin-top: 0;
-	}
-
 	.doc-group {
 		margin-bottom: 1.75rem;
 	}
@@ -265,72 +259,25 @@
 	}
 
 	/* How many documents are folded away when the section is closed — the one
-	   piece of information a collapsed heading can't otherwise give. */
+	   piece of information a collapsed heading can't otherwise give. A `.chip`
+	   (styles/components.css) that sits in a `<summary>` rather than at the end
+	   of a row, so it needs the auto margin to reach the far side; the tabular
+	   figures are because it holds a number and the shared chip mostly holds a
+	   word. */
 	.group-count {
 		margin-inline-start: auto;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
 		font-variant-numeric: tabular-nums;
-		border: 1px solid var(--color-border);
-		border-radius: 0.25rem;
-		padding: 0 0.35rem;
 	}
 
-	.docs {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.docs li {
-		padding: 0.75rem 0;
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.doc-link {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
-		text-decoration: none;
-	}
-
+	/* The list, its rows, the row-filling link, its title and its kind chip are
+	   all `styles/components.css` — `.index-list`, `.index-row`, `.index-link`,
+	   `.index-title`, `.chip` — including the hover that answers on both ends
+	   of the row. This page is the shape those primitives were named after, so
+	   the only thing left to say is how big a document's title is set: larger
+	   than the other index pages', because here the title IS the row and the
+	   date and description hang beneath it. */
 	.doc-title {
-		font-family: var(--font-serif);
 		font-size: 1.15rem;
-		color: var(--color-text);
-	}
-
-	.doc-kind {
-		flex-shrink: 0;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
-		border: 1px solid var(--color-border);
-		border-radius: 0.25rem;
-		padding: 0.1rem 0.4rem;
-		white-space: nowrap;
-	}
-
-	/* The row is the link, and it answers on both ends — the same hover the
-	   home page's Magisterium groups make, because it is the same object:
-	   a serif title at `--color-text` with a bordered chip pushed to the
-	   far side of a full-width flex link. The date and the description below
-	   are not part of the target and stay put.
-
-	   That this rule has to be written twice, in two files, for two lists
-	   that differ in nothing a reader can see, is the fragmentation worth
-	   fixing rather than the fragmentation worth living with. */
-	a.doc-link:hover .doc-title,
-	a.doc-link:focus-visible .doc-title {
-		color: var(--color-accent);
-		text-decoration: underline;
-		text-underline-offset: 0.15em;
-	}
-
-	a.doc-link:hover .doc-kind,
-	a.doc-link:focus-visible .doc-kind {
-		border-color: var(--color-accent);
-		color: var(--color-accent);
 	}
 
 	/* The date is the row's only metadata now, so it gets to carry a little
@@ -339,11 +286,7 @@
 	   apart from the serif title above it. */
 	.doc-meta {
 		margin: 0.3rem 0 0;
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
 		font-variant-numeric: tabular-nums;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
 	}
 
 	.doc-description {

@@ -242,7 +242,7 @@
 .margin-note.highlighted {
 	background: color-mix(in srgb, var(--color-accent) 12%, transparent);
 	outline: 0.3rem solid color-mix(in srgb, var(--color-accent) 12%, transparent);
-	border-radius: 0.2rem;
+	border-radius: var(--radius-sm);
 	/* Out of muted: the lit note is the one being read, not one of the ones
 	   being skimmed past. */
 	color: var(--color-text);
@@ -256,7 +256,7 @@
 .citation-marker.highlighted,
 .note-marker.highlighted {
 	background: color-mix(in srgb, var(--color-accent) 18%, transparent);
-	border-radius: 0.2rem;
+	border-radius: var(--radius-sm);
 	padding-inline: 0.15em;
 }
 

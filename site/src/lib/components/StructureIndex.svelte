@@ -154,7 +154,7 @@
 	style={`--index-cols: minmax(0, 1fr) repeat(${workColumns.length}, auto)`}
 	data-link-preview="off"
 >
-	<div class="index-head">
+	<div class="index-head label-micro">
 		<!-- Named for a screen reader and blank on screen: this is the title
 		     column, and printing "Division" over a column of titles labels the
 		     obvious while competing with the two headings that carry
@@ -193,10 +193,10 @@
 						     quietly picked one would make the other look like a
 						     footnote. -->
 						{#if stacked}
-							<span class="kind-label">{label}</span>
+							<span class="kind-label label-micro">{label}</span>
 						{:else}
 							<span class="row-title">
-								{#if label}<span class="kind-label">{label}</span>{/if}{dt.title}
+								{#if label}<span class="kind-label label-micro">{label}</span>{/if}{dt.title}
 							</span>
 						{/if}
 					</span>
@@ -270,11 +270,7 @@
 		background: var(--color-bg);
 		border-bottom: 1px solid var(--color-border);
 		padding-block: 0.35rem;
-		font-family: var(--font-sans);
 		font-size: max(var(--font-size-min), 0.75rem);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--color-text-muted);
 		font-weight: 600;
 	}
 	.col-head {
@@ -338,7 +334,7 @@
 		background: transparent;
 		color: var(--color-text-muted);
 		cursor: pointer;
-		border-radius: 0.2rem;
+		border-radius: var(--radius-sm);
 		transition: transform 120ms ease;
 	}
 	.toggle:hover,
@@ -365,11 +361,6 @@
 	   down the page, where `0.72em` inside a 1.2rem part title made "PART 1"
 	   larger than "CH. 1". */
 	.kind-label {
-		font-family: var(--font-sans);
-		font-size: max(var(--font-size-min), 0.75rem);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--color-text-muted);
 		margin-inline-end: 0.5em;
 		white-space: nowrap;
 	}

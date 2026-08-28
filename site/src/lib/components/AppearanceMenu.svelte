@@ -102,7 +102,7 @@
 			     still read as direct children of the menu — the same job the other
 			     menus' `<li role="none">` does. -->
 			<div class="field" role="none">
-				<span class="field-label">{t('darkMode.label')}</span>
+				<span class="field-label label-micro">{t('darkMode.label')}</span>
 				<div class="field-control segmented" role="group" aria-label={t('darkMode.label')}>
 					{#each DARK_MODES as mode (mode)}
 						{@const current = appearance.mode === mode}
@@ -121,7 +121,7 @@
 			</div>
 
 			<div class="field" role="none">
-				<span class="field-label">{t('sepia.label')}</span>
+				<span class="field-label label-micro">{t('sepia.label')}</span>
 				<div class="field-control" role="none">
 					<!-- The visible name is the label above, so the button carries the
 					     same string as its accessible name rather than wrapping it. -->
@@ -145,7 +145,7 @@
 			</div>
 
 			<div class="field" role="none">
-				<span class="field-label">{t('oled.label')}</span>
+				<span class="field-label label-micro">{t('oled.label')}</span>
 				<div class="field-control" role="none">
 					<button
 						type="button"
@@ -165,7 +165,7 @@
 			</div>
 
 			<div class="field" role="none">
-				<span class="field-label">{t('mono.label')}</span>
+				<span class="field-label label-micro">{t('mono.label')}</span>
 				<div class="field-control" role="none">
 					<button
 						type="button"
@@ -182,7 +182,7 @@
 			</div>
 
 			<div class="field" role="none">
-				<span class="field-label">{t('fontSize.label')}</span>
+				<span class="field-label label-micro">{t('fontSize.label')}</span>
 				<div class="field-control stepper" role="none">
 					<button
 						type="button"
@@ -231,18 +231,16 @@
 	}
 
 	/* Every row's title, the two switches' own labels included: they all name
-	   a setting of the same rank, so they are all set alike. Uppercase and
-	   tracked, at the same size as the segmented control's own text — these
-	   are labels on a panel of bars, and at this size mixed case reads as
-	   prose that got small rather than as a heading. */
+	   a setting of the same rank, so they are all set alike — `.label-micro`
+	   (styles/components.css), which is that setting site-wide. At this size
+	   mixed case would read as prose that got small rather than as a heading,
+	   which is why the shared label is uppercase in the first place. It ran a
+	   step smaller here (0.68rem) than everywhere else, which was not a
+	   decision anyone made. */
 	.field-label {
 		padding-inline: 0.2rem;
-		font-size: 0.68rem;
 		font-weight: 500;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
 		line-height: 1.2;
-		color: var(--color-text-muted);
 	}
 
 	/* Even spacing between the fields, and no rule between the theme rows and
@@ -264,7 +262,7 @@
 	   these" the way a radio set should. */
 	.segmented {
 		border: 1px solid var(--color-border);
-		border-radius: 0.35rem;
+		border-radius: var(--radius-md);
 		overflow: hidden;
 		gap: 0;
 	}
@@ -383,7 +381,7 @@
 		height: 100%;
 		padding: 0;
 		border: 1px solid var(--color-border);
-		border-radius: 0.35rem;
+		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
 		color: var(--color-text);
 		font-size: 0.8rem;

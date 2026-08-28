@@ -70,7 +70,7 @@
 
 <article class="content-column library">
 	<h1>{t('bookmark.library')}</h1>
-	<p class="lede">{t('bookmark.library.tagline')}</p>
+	<p class="page-tagline">{t('bookmark.library.tagline')}</p>
 
 	{#if sections.length === 0}
 		<p class="empty">{t('bookmark.empty')}</p>
@@ -79,9 +79,9 @@
 		{#each sections as section (section.key)}
 			<section class="group">
 				<h2>{section.title}</h2>
-				<ul class="rows">
+				<ul class="rows index-list">
 					{#each section.items as item (item.href)}
-						<li class="row">
+						<li class="row index-row">
 							{#await resolveBookmark(item.target)}
 								<a class="citation" href={item.href}>{item.href}</a>
 							{:then resolved}
@@ -114,10 +114,6 @@
 </article>
 
 <style>
-	.lede {
-		color: var(--color-text-muted);
-	}
-
 	.group {
 		margin-block: 2rem;
 	}
@@ -128,18 +124,15 @@
 		padding-bottom: 0.4rem;
 	}
 
-	.rows {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
+	/* An `.index-row` (styles/components.css) that is a GRID rather than a
+	   title-and-chip flex row: a bookmark carries its citation, two lines of
+	   the passage under it and a remove button spanning both, which is a
+	   shape none of the other index pages has. The row's padding and rule
+	   come from the primitive; the tracks are this page's own. */
 	.row {
 		display: grid;
 		grid-template-columns: 1fr auto;
 		gap: 0.25rem 0.75rem;
-		padding-block: 0.7rem;
-		border-bottom: 1px solid var(--color-border);
 	}
 
 	.citation {
@@ -182,7 +175,7 @@
 		width: 2rem;
 		height: 2rem;
 		border: 1px solid transparent;
-		border-radius: 0.4rem;
+		border-radius: var(--radius-md);
 		background: transparent;
 		color: var(--color-text-muted);
 		cursor: pointer;

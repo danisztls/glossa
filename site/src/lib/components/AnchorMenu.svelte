@@ -269,7 +269,7 @@
 		height: 2.4rem;
 		padding: 0;
 		border: none;
-		border-radius: 0.4rem;
+		border-radius: var(--radius-md);
 		background: transparent;
 		color: var(--color-text);
 		/* Larger than the header's icon buttons on purpose: this panel is a

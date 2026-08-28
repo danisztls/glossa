@@ -1,0 +1,160 @@
+/*
+ * THE SHARED COMPONENT PRIMITIVES — classes for objects that appear on
+ * routes which cannot share a scoped `<style>` block, the same reason
+ * `.reading-layout` and `.breadcrumb` are global.
+ *
+ * The bar for a rule here is that the OBJECT recurs, not that the
+ * declarations happen to match: two rules that agree today by coincidence
+ * should stay apart, because the next edit to one of them is not an edit to
+ * the other. Everything below was found by counting — how many places write
+ * it, and how far apart they had drifted.
+ *
+ * EARLY IN THE CASCADE, deliberately. A primitive is the floor: the files
+ * after this one (`reading-chrome.css`, `menus.css`) and every component's
+ * scoped block outrank it, so adopting a primitive never takes away a
+ * surface's ability to differ. What it takes away is the need to restate
+ * what the surface does NOT differ in.
+ */
+
+/*
+ * THE MICRO-LABEL: small, muted, letter-spaced capitals in the interface
+ * face. The most-repeated object in the stylesheet — 24 rules across 14
+ * files wrote it, and between them they used ELEVEN font sizes (0.65em to
+ * 0.85rem) and SEVEN letter-spacings (0.03em to 0.14em) for what is one
+ * thing: our label for something, as opposed to a word from the corpus.
+ *
+ * It names the testaments over the book grid, the kind of a structure row,
+ * the date under a document, the edition over a chapter, the "Table of
+ * contents" over a list. None of those words comes from a text; every one
+ * of them is the site speaking, which is why they are all set in the
+ * interface face at a size that stays out of the way.
+ *
+ * 0.75rem and 0.04em are the modal values, and the sites that were within a
+ * step of them were snapped rather than preserved — the differences were
+ * not decisions. Two kinds of site keep an override, and both are real:
+ *
+ *   AN EM-BASED SIZE, where the label sits inside the reading column and
+ *   has to scale with the reader's text (`0.72em`, `0.75em`, `0.85em`).
+ *   A rem there would drift away from the thing it labels as the reader
+ *   resizes, which is the whole reason those sites are em in the first
+ *   place.
+ *
+ *   A COLOUR THAT IS NOT MUTED — the accent-bordered badges (an in-brief
+ *   tag, a document's kind, "today" on a prayer) do not adopt this at all.
+ *   They are marks rather than labels: they say THIS ONE, where a label
+ *   says what kind of thing you are looking at.
+ */
+.label-micro {
+	font-family: var(--font-sans);
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--color-text-muted);
+}
+
+/*
+ * THE INDEX PAGE, as five classes.
+ *
+ * Six pages are the same object — a page that lists what the corpus holds:
+ * `/documenta`, `/preces`, `/doctores`, `/doctores/summa`, `/signata`, and
+ * the home page's own sections. Each was written on its own day, so each
+ * spelled the list reset nine times over, the ruled row at four different
+ * paddings, the bordered count at four, and the intro line under the `h1`
+ * under two names (`.tagline`, `.lede`) in four sizes.
+ *
+ * NONE OF THAT DIVERGENCE WAS A DECISION, and the proof is what it cost to
+ * change one thing: giving these rows a hover state took four separate edits
+ * in four files, and nothing anywhere would have reported the fifth had it
+ * been missed. That is the argument for these five classes, rather than
+ * their being tidier.
+ *
+ * WHAT STAYS PER ROUTE is anything a reader could tell apart on purpose: a
+ * title's size, a row's grid, a chip's exact padding when it holds two
+ * digits rather than a word. A scoped block outranks this file, so adopting
+ * a primitive costs a page nothing it wanted to keep.
+ *
+ * `.index-link` and not `.row-link`, which is taken: `StructureIndex`'s row
+ * link is a paragraph NUMBER in a column, not a title-and-chip row, and a
+ * global class of that name would land on it too — a scoped style cannot
+ * decline a global class it happens to share a name with.
+ */
+
+.index-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* The rule under a row is the row's own bottom border rather than a
+   separator between rows, so the last row is ruled too — the list ends on a
+   line, which is what closes it off from whatever follows. */
+.index-row {
+	padding: 0.7rem 0;
+	border-bottom: 1px solid var(--color-border);
+}
+
+/*
+ * THE WHOLE ROW IS THE LINK — a title at the start, a chip pushed to the
+ * end, and the space between them part of the target. `align-items:
+ * baseline` rather than `center` because the two are set at different sizes
+ * and it is their baselines that should agree.
+ */
+.index-link {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1rem;
+	text-decoration: none;
+}
+
+/* `--color-text`, not the link colour: in a list where every row is a link,
+   colouring every title would make the page a wall of red, and the row's
+   being a link is something hover says rather than something the page
+   shouts. The size stays with the route — a document title and a
+   pontificate are not the same weight of thing. */
+.index-title {
+	font-family: var(--font-serif);
+	color: var(--color-text);
+}
+
+/*
+ * THE CHIP: a bordered scrap at the end of a row saying what kind of thing
+ * it is, or how many. Small, muted and outlined rather than filled — a
+ * filled badge in a list of 300 rows reads as 300 marks.
+ */
+.chip {
+	flex-shrink: 0;
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	padding: 0.1rem 0.4rem;
+	white-space: nowrap;
+}
+
+/*
+ * HOVER ANSWERS ON BOTH ENDS, which is the rule this family exists to state
+ * once: the title takes the accent and the underline, and the chip's border
+ * comes with it. Without the second half the two ends of a full-width row
+ * read as a name that lit up beside a number that did not.
+ */
+.index-link:hover .index-title,
+.index-link:focus-visible .index-title {
+	color: var(--color-accent);
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+.index-link:hover .chip,
+.index-link:focus-visible .chip {
+	border-color: var(--color-accent);
+	color: var(--color-accent);
+}
+
+/* The sentence under an index page's `h1`, saying what the page holds. Was
+   `.tagline` on four pages and `.lede` on two, in three sizes. */
+.page-tagline {
+	color: var(--color-text-muted);
+	font-size: 1.05rem;
+	margin-top: 0;
+}

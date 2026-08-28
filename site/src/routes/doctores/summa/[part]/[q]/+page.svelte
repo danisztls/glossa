@@ -257,7 +257,7 @@
 	{@const at = articleTitle(article, lang)}
 	{@const parts = at ? summaTitleParts(at.title) : undefined}
 	<h2 class="article-head">
-		<span class="article-number">{t('summa.article')} {article.n}</span>
+		<span class="article-number label-micro">{t('summa.article')} {article.n}</span>
 		{#if at && parts}
 			<span
 				class="article-title"
@@ -393,7 +393,7 @@
 			{/if}
 
 			<header class="question-header">
-				<p class="question-number">
+				<p class="question-number label-micro">
 					{t('summa.part')}
 					{data.part} · {t('summa.question')}
 					{data.n}
@@ -567,9 +567,6 @@
 
 	.question-number {
 		font-size: 0.85rem;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: var(--color-text-muted);
 		margin: 0 0 0.25rem;
 	}
 
@@ -613,9 +610,5 @@
 	.article-number {
 		display: block;
 		font-size: 0.8rem;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: var(--color-text-muted);
-		font-family: var(--font-sans);
 	}
 </style>

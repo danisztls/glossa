@@ -244,7 +244,7 @@
  */
 .unit-bookmarked {
 	background: color-mix(in srgb, var(--color-bookmark) 12%, transparent);
-	border-radius: 0.25rem;
+	border-radius: var(--radius-sm);
 	print-color-adjust: exact;
 	-webkit-print-color-adjust: exact;
 }

@@ -571,7 +571,7 @@
 	   whole viewport, and this is the only rendering a touch reader gets. */
 	.nav-links a {
 		padding: 0.85rem 0.5rem;
-		border-radius: 0.4rem;
+		border-radius: var(--radius-md);
 		font-size: 1.05rem;
 	}
 

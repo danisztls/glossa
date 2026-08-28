@@ -42,7 +42,7 @@
 <div class="reading-layout">
 	<div class="content-column">
 		<h1>{t('prayers.landing.title')}</h1>
-		<p class="tagline">{t('prayers.landing.tagline')}</p>
+		<p class="page-tagline">{t('prayers.landing.tagline')}</p>
 		{#if work}
 			<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
 		{/if}
@@ -50,9 +50,9 @@
 		{#each groups as group (group.id)}
 			<section class="prayer-group" id={group.id} aria-labelledby={`${group.id}-heading`}>
 				<h2 id={`${group.id}-heading`}>{group.title}</h2>
-				<ul class="prayer-list">
+				<ul class="prayer-list index-list">
 					{#each group.prayers as meta (meta.slug)}
-						<li>
+						<li class="index-row">
 							<a class="prayer-link" href={hrefFor({ kind: 'prayer', slug: meta.slug })}>
 								{meta.title}
 							</a>
@@ -68,12 +68,6 @@
 </div>
 
 <style>
-	.tagline {
-		color: var(--color-text-muted);
-		font-size: 1.05rem;
-		margin-top: 0;
-	}
-
 	/* 0.8rem, not the app.css base's 0.75rem — this index page's own outlier. */
 	.copyright-notice {
 		margin: 0 0 1.5rem;
@@ -89,17 +83,6 @@
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 0.5rem;
 		margin: 0 0 0.5rem;
-	}
-
-	.prayer-list {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.prayer-list li {
-		padding: 0.55rem 0;
-		border-bottom: 1px solid var(--color-border);
 	}
 
 	.prayer-link {

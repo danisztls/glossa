@@ -38,7 +38,7 @@
 </script>
 
 <section class="cited-in" aria-labelledby={headingId}>
-	<h2 id={headingId}>
+	<h2 id={headingId} class="label-micro">
 		{heading}
 		<span class="count">{total}</span>
 	</h2>
@@ -87,12 +87,7 @@
 	   like every other uppercase letterspaced label. */
 	.cited-in h2 {
 		margin: 0 0 0.6rem;
-		font-family: var(--font-sans);
-		font-size: 0.75rem;
 		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--color-text-muted);
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -101,7 +96,7 @@
 	.count {
 		font-variant-numeric: tabular-nums;
 		border: 1px solid var(--color-border);
-		border-radius: 0.25rem;
+		border-radius: var(--radius-sm);
 		padding: 0 0.3rem;
 		letter-spacing: 0;
 	}

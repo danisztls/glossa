@@ -156,6 +156,37 @@
 	);
 
 	/*
+	 * THREE RADII AND ONE SHADOW, because there were thirteen and eight.
+	 *
+	 * The palette below is derived, argued and measured; shape and elevation
+	 * were neither. A corner took 0.2, 0.25, 0.3, 0.35, 0.4 and 0.5rem across
+	 * 41 declarations and a floating panel took three different shadows, and
+	 * nobody had chosen any of it — the values are simply what each file was
+	 * written with on the day. The scale below keeps the two most-used numbers
+	 * (0.25 and 0.4) and the panel's 0.5, and everything else snaps to the
+	 * nearest of the three. Nothing moves by more than 0.1rem.
+	 *
+	 * WHAT IS NOT IN THE SCALE, and why each is a literal rather than a gap:
+	 *
+	 *   50% / 999px   a circle and a pill. Not radii — shapes.
+	 *   2px           the focus ring drawn around an inline link, which sits
+	 *                 inside running text and must not round like a control.
+	 *   0.15em        the verse and reference number highlights, which are
+	 *                 EM-relative on purpose: they scale with the reading
+	 *                 text, and a rem here would drift from the thing they
+	 *                 mark as the reader resizes.
+	 *
+	 * The two chrome-edge shadows (`UpdateBanner`, `InstallHint`) also stay
+	 * literal: they differ by direction, one casting down from the top of the
+	 * viewport and the other up from the bottom, so they are two values and
+	 * not one token used twice.
+	 */
+	--radius-sm: 0.25rem;
+	--radius-md: 0.4rem;
+	--radius-lg: 0.5rem;
+	--shadow-panel: 0 10px 30px rgb(0 0 0 / 25%);
+
+	/*
 	 * THREE REDS AND A BLUE, and the split is the point.
 	 *
 	 * A rubricator did not use one red for everything, and neither does this

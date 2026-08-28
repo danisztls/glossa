@@ -120,7 +120,7 @@
 		flex: none;
 		padding: 0.35rem 0.9rem;
 		border: 1px solid var(--color-border);
-		border-radius: 0.4rem;
+		border-radius: var(--radius-md);
 		background: var(--color-bg);
 		color: var(--color-text);
 		font: inherit;
@@ -142,7 +142,7 @@
 		height: 2.25rem;
 		padding: 0;
 		border: none;
-		border-radius: 0.4rem;
+		border-radius: var(--radius-md);
 		background: none;
 		color: var(--color-text-muted);
 		font-size: 1rem;
