@@ -57,6 +57,7 @@ from common import (
     FetchPolicy,
     WholesaleDivergence,
     build_root,
+    captured_at,
     download_resumable,
     raw_root,
     require_corpus,
@@ -519,9 +520,22 @@ def reconcile(
 
 
 def derive_images(anchors: list[Anchor], out_root: Path) -> list[str]:
-    """Crop, level, resize and encode every plate at every served width."""
+    """Crop, level, resize and encode every plate at every served width.
+
+    Writes `sizes.json` beside the images: `plate_id -> width -> [w, h]`.
+
+    THE SITE CANNOT MEASURE THESE AND MUST NOT GUESS THEM. Every plate is
+    rendered at a fixed width, but the crop is the engraving's own, so the
+    HEIGHT is different for each one -- 241 aspect ratios, none of them known
+    before the ink block is found. An `<img>` without both dimensions reserves
+    no space, and a plate landing mid-chapter after the text has painted
+    shoves the verse the reader was on off the screen. The numbers exist only
+    here, at the moment the encoder is handed the pixels, so they are recorded
+    here rather than re-derived by a second decoder somewhere downstream.
+    """
     source_dir = raw_root() / "dore" / "plates"
     problems: list[str] = []
+    sizes: dict[str, dict[str, list[int]]] = {}
     for anchor in anchors:
         master = source_dir / f"{anchor.plate_id}.jpg"
         if not master.exists():
@@ -542,6 +556,12 @@ def derive_images(anchors: list[Anchor], out_root: Path) -> list[str]:
                     out_root / f"{anchor.plate_id}-{width}.avif",
                     quality=quality,
                 )
+                sizes.setdefault(anchor.plate_id, {})[str(width)] = list(rendered.size)
+    if sizes:
+        out_root.mkdir(parents=True, exist_ok=True)
+        (out_root / "sizes.json").write_text(
+            json.dumps(sizes, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
     return problems
 
 
@@ -685,6 +705,65 @@ def main() -> int:
     write_stamped_json(
         out,
         {
+            # A MANIFEST BECAUSE THAT IS WHAT MAKES A DIRECTORY VISIBLE.
+            # `sync-corpus.mjs` states the rule outright -- "a work IS its
+            # manifest" -- and reports any directory under `build/` without
+            # one as a work whose scrape did not finish. This collection is
+            # not a work in the reading sense (no language, no addresses, no
+            # text), and the sync branches on `type` to keep it out of the
+            # registry; but it is the corpus's record of where 241 images
+            # came from and who is owed credit for them, and a manifest is
+            # where the corpus keeps that for everything else.
+            "manifest.json": {
+                "id": WORK_ID,
+                "type": "plates",
+                "title": "Doré's Illustrations for La Grande Bible de Tours",
+                "short_title": "Doré Bible Illustrations",
+                # The engravings carry no language. `title` on each plate is
+                # English because the caption Doré's engraver cut into the
+                # steel is English in this reproduction, and it is a label for
+                # the picture rather than text to be read.
+                "language": None,
+                "edition": "La Grande Bible de Tours (Alfred Mame et fils, Tours, 1866)",
+                "sources": [
+                    {
+                        "url": url,
+                        "retrieved_at": captured_at(raw_root() / "dore" / name),
+                    }
+                    for name, url in INDEX_URLS.items()
+                ],
+                # PUBLIC DOMAIN TWICE OVER, AND CREDITED ANYWAY. Doré died in
+                # 1883 and the plates were published in 1866, so the
+                # engravings are out of copyright everywhere; a faithful
+                # photographic reproduction of a two-dimensional public-domain
+                # work originates no new copyright of its own (Bridgeman v.
+                # Corel), which covers both the Dover printing and the scans.
+                # The credit line below is therefore courtesy, not licence --
+                # it is what the site displays, and it is the request
+                # catholic-resources.org actually makes of anyone reusing the
+                # files.
+                "copyright": {
+                    "status": "public-domain",
+                    "holder": None,
+                    "notice": "Engraved 1866; Gustave Doré died 1883. Public domain.",
+                },
+                "credit": {
+                    "artist": "Gustave Doré (1832-1883)",
+                    "reproduction": "The Doré Bible Illustrations (Dover Publications, 1974)",
+                    "provider": "Rev. Felix Just, S.J.",
+                    "provider_url": "https://catholic-resources.org/Art/",
+                },
+                "notes": (
+                    "241 steel engravings, anchored to a verse of "
+                    "bible.douay-rheims.en by vote of three readings: the "
+                    "caption printed under each plate (read by OCR), the "
+                    "Wikipedia table, and catholic-resources.org's own index. "
+                    "See pipeline/scrapers/dore/ for the reconciliation and "
+                    "plates.json for every reading, kept whether it won or "
+                    "lost."
+                ),
+                "generated_at": generated_at,
+            },
             "plates.json": {
                 "work": WORK_ID,
                 "generated_at": generated_at,
@@ -695,11 +774,11 @@ def main() -> int:
                 "source": "https://catholic-resources.org/Art/Dore-OT.htm",
                 "credit": "Material provided by Rev. Felix Just, S.J., at https://catholic-resources.org",
                 "plates": [asdict(a) for a in anchors],
-            }
+            },
         },
         generated_at,
     )
-    print(f"wrote {out / 'plates.json'}")
+    print(f"wrote {out / 'plates.json'} and {out / 'manifest.json'}")
 
     if args.derive:
         images = out / "images"

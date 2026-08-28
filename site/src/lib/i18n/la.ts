@@ -96,6 +96,7 @@ export const la: Dictionary = {
 	'bible.introduction': 'Prooemium',
 	'bible.introUnavailable': 'Nondum est prooemium hac lingua',
 	'bible.introSource': 'Prooemia ad textum sacrum non pertinent.',
+	'bible.illustrations': 'Imagines',
 	'bible.testament.ot': 'Vetus Testamentum',
 	'bible.testament.nt': 'Novum Testamentum',
 	'ccc.prevParagraph': 'Prius',
@@ -245,6 +246,10 @@ export const la: Dictionary = {
 	'colophon.buildTitle': 'Quomodo facta sit',
 	'colophon.buildBody':
 		'Textus e fontibus editis colliguntur, in corpus digestum rediguntur, et paginis stabilibus exhibentur. Emendationes mendorum in fonte singulae notantur, cum verbis pristinis, verbis emendatis et causa — nullus textus umquam tacite mutatur.',
+	'colophon.illustrationsTitle': 'De imaginibus',
+	'colophon.illustrationsBody':
+		'Biblia imagines fert quas Gustavus Doré in Bibliam Turonensem maiorem incidit, unamquamque ad versum quem exprimit positam. In publico sunt: laminae anno MDCCCLXVI incisae sunt et Doré anno MDCCCLXXXIII mortuus est, neque imaginis publicae fidelis photographica repetitio novum ius auctoris parit. Unde nostrae imagines electronicae venerint dicimus, quia gratias illis debemus.',
+	'colophon.illustrationsScans': 'Imagines electronicae praebitae a',
 	'colophon.typeTitle': 'De litterarum forma',
 	'colophon.typeBody':
 		'Litteris EB Garamond composita, quas Georgius Duffner et Octavius Pardo ex typis a Claudio Garamont circa annum 1590 caesis renovaverunt — ea traditione humanistica qua Ecclesia ab aetate litterarum renascentium imprimit. Litterae initiales sunt Pirata One, forma Gothica cuius capitales etiam ea magnitudine quam littera initialis poscit legi possunt. Utraeque sub licentia SIL Open Font License dantur et ex hac ipsa sede mittuntur, non ex aliena, ne pagina legenda quicquam ab alterius machina petat.',

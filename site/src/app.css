@@ -768,6 +768,27 @@
 	   meaning (accent, initials, apparatus blue). Provisional like the rest
 	   of these values — see PLAN.md's design pass. */
 	--color-bookmark: #8a6410;
+
+	/*
+	 * How an engraving sits on the page. Doré's plates are ink on paper, and
+	 * the scan carries the paper with it — `plates.py` normalizes it to a
+	 * near-white 252 rather than clipping it, so the tone is real and
+	 * uniform.
+	 *
+	 * `multiply` is what makes that paper disappear: white multiplies to
+	 * whatever is beneath it and the ink stays ink, so the plate takes the
+	 * reader's page colour instead of punching a white rectangle through it.
+	 * That is the whole reason sepia needs no rule of its own here — it is a
+	 * warmer `--color-bg` and the plate warms with it.
+	 *
+	 * Dark is the case multiply cannot serve (everything multiplies to
+	 * black), and inverting is not the answer either: these are pictures, not
+	 * diagrams, and an inverted engraving reads as a photographic negative.
+	 * So the dark blocks below keep the plate on its own paper and take the
+	 * glare off it instead.
+	 */
+	--plate-blend: multiply;
+	--plate-filter: none;
 }
 
 /*
@@ -842,6 +863,8 @@
 		--color-apparatus: #8fa8e8;
 		--color-focus-ring: #8fa8e8;
 		--color-bookmark: #d9a94a;
+		--plate-blend: normal;
+		--plate-filter: brightness(0.82) contrast(0.94);
 	}
 }
 
@@ -860,6 +883,8 @@
 	--color-apparatus: #8fa8e8;
 	--color-focus-ring: #8fa8e8;
 	--color-bookmark: #d9a94a;
+	--plate-blend: normal;
+	--plate-filter: brightness(0.82) contrast(0.94);
 }
 
 /*

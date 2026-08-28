@@ -24,6 +24,10 @@
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import CitedBy from '$lib/components/CitedBy.svelte';
+	import Plate from '$lib/components/Plate.svelte';
+	import { DORE_WORK_ID, getPlates } from '$lib/plates.svelte';
+	import { plateCredits } from '$lib/corpus-index';
+	import { placePlates } from '$lib/plates';
 	import { documentCitedSource, type CitedByRow, type CitedBySource } from '$lib/cited-by';
 	import CompareField from '$lib/components/CompareField.svelte';
 	import CompareCopyrightField from '$lib/components/CompareCopyrightField.svelte';
@@ -326,6 +330,42 @@
 	 */
 	const chapterVerseNumbers = $derived(new Set(current?.chapter.verses.map((v) => v.n) ?? []));
 
+	/**
+	 * Doré's engravings for this chapter, keyed by the verse each sits before.
+	 *
+	 * `getPlates()` returns the whole collection and starts its fetch on the
+	 * first ask — reading it here registers the dependency, so this re-runs
+	 * once when the list lands and the plates appear without the page
+	 * awaiting anything. 241 plates over 195 chapters means this is empty for
+	 * five chapters in six.
+	 *
+	 * `placePlates` is handed THIS edition's verse numbers because the anchors
+	 * were decided against the Douay-Rheims and the editions disagree about
+	 * verse numbering in 31 chapters; see its docblock for where a homeless
+	 * plate goes.
+	 *
+	 * Not drawn in compare mode: two half-width columns of verse against a
+	 * full-measure engraving is not a layout, and a reader who has asked to
+	 * set two texts side by side is doing something the picture is not part of.
+	 */
+	const chapterPlates = $derived.by(() => {
+		if (!current) return new Map();
+		const here = getPlates().filter(
+			(plate) => plate.osis === data.osis && plate.chapter === data.chapterN
+		);
+		return here.length > 0
+			? placePlates(
+					here,
+					current.chapter.verses.map((v) => v.n)
+				)
+			: new Map();
+	});
+
+	/** Index tier, so it is in hand — the credit is printed only when a plate
+	 *  was actually drawn, never as a standing notice on 1,139 chapters that
+	 *  have none. */
+	const plateCredit = plateCredits[DORE_WORK_ID];
+
 	const documentCitations = $derived(getDocumentCitationsForChapter(data.osis, data.chapterN));
 
 	/**
@@ -626,7 +666,18 @@
 				/>
 			{:else}
 				<div class="reading-text" lang={current.work.language}>
+					<!-- A plate that resolved to no verse belongs to the chapter, and
+					     is drawn before the first verse. `placePlates` keys those 0;
+					     none of the 241 land there today. -->
+					{#each chapterPlates.get(0) ?? [] as plate (plate.id)}
+						<Plate {plate} />
+					{/each}
 					{#each current.chapter.verses as verse, i (verse.n)}
+						<!-- Before the verse, not after: an engraving is read as the
+						     scene the sentence under it describes. -->
+						{#each chapterPlates.get(verse.n) ?? [] as plate (plate.id)}
+							<Plate {plate} />
+						{/each}
 						<!-- A heading can carry apparatus of its own: Lamentations 1
 						     opens with Jeremias's prologue, which the Douay-Rheims prints
 						     before verse 1 with a note saying he did not write it. Keyed
@@ -677,6 +728,16 @@
 						</span>
 					{/each}
 				</div>
+				{#if plateCredit && chapterPlates.size > 0}
+					<!-- Once per chapter rather than under every plate: Genesis
+					     carries 27 of them, and a printed edition names its
+					     engraver on the title page, not beneath each picture.
+					     The colophon is where the full statement lives. -->
+					<p class="plate-credit">
+						{t('bible.illustrations')}: {plateCredit.artist}, {plateCredit.edition} —
+						<a href={plateCredit.provider_url} rel="noreferrer">{plateCredit.provider}</a>
+					</p>
+				{/if}
 			{/if}
 
 			{#if citedInRows.length > 0}
@@ -729,6 +790,16 @@
 
 	.copyright-notice {
 		margin: 0.15rem 0 0;
+	}
+
+	/* Set like the copyright notice below the text rather than like a caption:
+	   it is a statement about the chapter, not about any one picture. */
+	.plate-credit {
+		margin: 1.5rem 0 0;
+		font-family: var(--font-sans);
+		font-size: 0.8rem;
+		line-height: 1.5;
+		color: var(--color-text-muted);
 	}
 
 	/* "Introduction", under the book's name — the counterpart of the chapter

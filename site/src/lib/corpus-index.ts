@@ -348,6 +348,36 @@ const realIndexPrayers = import.meta.glob('./corpus-data/index/prayer-index.json
 }) as Record<string, PrayerIndexFile>;
 
 /**
+ * Credit for the illustration collections — index tier, ~470 bytes, and one
+ * of the few things here that is eager on purpose rather than by inheritance.
+ *
+ * The colophon prints it, and the colophon renders no plates and fetches no
+ * content; attribution that arrived over the network would be attribution
+ * that can fail to arrive, on the one page whose whole job is to state the
+ * site's position honestly (see that route's docblock). The plate LIST is
+ * content tier for the opposite reason — 29 KB that only the Bible wants.
+ */
+const realPlateCredits = import.meta.glob('./corpus-data/index/plates-credit.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, Record<string, PlateCredit>>;
+
+/** How an illustration collection is to be credited, from its manifest. */
+export interface PlateCredit {
+	title: string;
+	edition: string;
+	copyright: { status: string; holder: string | null; notice: string | null };
+	artist: string;
+	reproduction: string;
+	provider: string;
+	provider_url: string;
+}
+
+/** Every illustration collection's credit, keyed by work id. Empty under
+ *  fixtures and for a corpus with none built. */
+export const plateCredits: Record<string, PlateCredit> = Object.values(realPlateCredits)[0] ?? {};
+
+/**
  * Work ids switched off — written by `sync-corpus.mjs` from
  * `site/unpublished.json`, which documents the mechanism. Index tier, and
  * tiny: one id per disabled work, normally none at all. Ids only; the
@@ -846,6 +876,15 @@ const prayerLocations: Record<string, ContentLocation> = {};
 const summaQuestionLocations: Record<string, Record<string, Record<number, ContentLocation>>> = {};
 /** Keyed by WORK ID (`bible-intro.en`), matching every other location map. */
 const bibleIntroLocations: Record<string, ContentLocation> = {};
+/**
+ * An illustration collection's anchored plate list, keyed by work id.
+ *
+ * Content tier rather than index, though it is only ~29 KB: the index tier is
+ * eagerly inlined into every route's boot chunk, and a reader on the colophon
+ * or a prayer has no use for where 241 engravings sit in the Bible. The one
+ * route that wants it fetches it once.
+ */
+const plateLocations: Record<string, ContentLocation> = {};
 /** A document's unnumbered matter, keyed by work id. Absent for most works. */
 const documentAppendixLocations: Record<string, ContentLocation> = {};
 /**
@@ -907,6 +946,11 @@ for (const [relPath, url] of Object.entries(contentUrlByRelPath)) {
 	const prayerMatch = relPath.match(/^content\/([^/]+)\/prayers\.json$/);
 	if (prayerMatch) {
 		prayerLocations[prayerMatch[1]] = location;
+		continue;
+	}
+	const platesMatch = relPath.match(/^content\/([^/]+)\/plates\.json$/);
+	if (platesMatch) {
+		plateLocations[platesMatch[1]] = location;
 		continue;
 	}
 	// One file per question, which is one reader page -- `{part-slug}/{n}`.
@@ -1003,6 +1047,12 @@ export function documentChunkLocations(workId: string): ContentLocation[] {
 
 export function bibleIntroLocation(workId: string): ContentLocation | undefined {
 	return bibleIntroLocations[workId];
+}
+
+/** Where `workId`'s plate list lives, or undefined when the corpus has no
+ *  such collection built — the ordinary case under fixtures. */
+export function plateContentLocation(workId: string): ContentLocation | undefined {
+	return plateLocations[workId];
 }
 
 export function prayerContentLocation(workId: string): ContentLocation | undefined {

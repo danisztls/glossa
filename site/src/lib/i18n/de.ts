@@ -68,6 +68,7 @@ export const de: Dictionary = {
 	'bible.introduction': 'Einleitung',
 	'bible.introUnavailable': 'Noch keine Einleitung in dieser Sprache',
 	'bible.introSource': 'Die Einleitungen gehören nicht zum Schrifttext.',
+	'bible.illustrations': 'Illustrationen',
 	'bible.testament.ot': 'Altes Testament',
 	'bible.testament.nt': 'Neues Testament',
 	'ccc.prevParagraph': 'Zurück',
@@ -208,6 +209,10 @@ export const de: Dictionary = {
 	'colophon.buildTitle': 'Wie sie entsteht',
 	'colophon.buildBody':
 		'Die Texte werden aus ihren veröffentlichten Quellen gesammelt, zu einem strukturierten Korpus verarbeitet und als statische Seiten ausgegeben. Korrekturen an Mängeln der Quelle werden einzeln verzeichnet, mit dem ursprünglichen Wortlaut, dem korrigierten und dem Grund — kein Text wird je stillschweigend geändert.',
+	'colophon.illustrationsTitle': 'Die Illustrationen',
+	'colophon.illustrationsBody':
+		'Die Bibel trägt Gustave Dorés Stiche für La Grande Bible de Tours, jeden bei dem Vers, den er darstellt. Sie sind gemeinfrei: die Platten wurden 1866 gestochen und Doré starb 1883, und die getreue fotografische Wiedergabe eines gemeinfreien Stichs begründet kein neues Urheberrecht. Wir nennen die Herkunft unserer Scans, weil wir für sie dankbar sind.',
+	'colophon.illustrationsScans': 'Scans bereitgestellt von',
 	'colophon.typeTitle': 'Die Schrift',
 	'colophon.typeBody':
 		'Gesetzt in EB Garamond, Georg Duffners und Octavio Pardos Wiederbelebung der Typen, die Claude Garamont in den 1590er Jahren schnitt — jene humanistische Tradition, in der die Kirche seit der Renaissance druckt. Die Initialen sind Pirata One, eine gebrochene Schrift, deren Versalien in der Größe, die eine Initiale verlangt, lesbar bleiben. Beide stehen unter der SIL Open Font License und werden von dieser Seite ausgeliefert und nicht von Dritten, sodass das Lesen einer Seite von niemandes Server sonst etwas verlangt.',

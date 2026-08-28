@@ -395,6 +395,15 @@ const WAVE_FOR_KIND: Readonly<Record<string, WaveId>> = {
 	'prayer-collection': 'essentials',
 	'compendium-chunk': 'essentials',
 	'bible-intros': 'essentials',
+	// The 29 KB list of where Doré's 241 engravings sit, NOT the engravings.
+	// The images are not corpus content at all — they are ordinary build
+	// assets, classified by `isDeferred` above into the same permanent cache
+	// on first read, and in no wave, because they are enrichment rather than
+	// part of the library. But the list has to be here or the plates a reader
+	// HAS already cached cannot be placed offline: the pictures would be on
+	// the device and unreachable, which is the worse of the two failures and
+	// the silent one.
+	plates: 'essentials',
 	'ccc-chunk': 'catechism',
 	'bible-chapters': 'scripture',
 	'document-chunk': 'magisterium',
@@ -573,9 +582,18 @@ export function planWaves(
 	// everything else is planned only if it is. `rankOf` answers `undefined`
 	// for the former, so every later comparison reads the rank through
 	// `rankOrLast` rather than asserting it.
+	// A LANGUAGELESS ENTRY IS PLANNED FOR EVERYONE. `dore.tours` is the first
+	// content file with no `lang` at all — 241 engravings have no language,
+	// and `sync-corpus.mjs` leaves the field empty rather than picking one.
+	// Without this it would match no chain entry and belong to no wave, which
+	// is the quiet failure `other` is a bug for: no error, nothing in the
+	// planner, and the collection simply never offline for anybody.
 	const mine = entries.filter(
-		(entry) => rankOf(entry.lang) !== undefined || chosenIds.has(entry.workId)
+		(entry) => entry.lang === '' || rankOf(entry.lang) !== undefined || chosenIds.has(entry.workId)
 	);
+	// Languageless entries fall to the end of their wave, the same place a
+	// chosen work outside the chain lands: it is the reader's own languages
+	// that should arrive first.
 	const rankOrLast = (entry: ContentEntry) => rankOf(entry.lang) ?? OFFLINE_LANG_DEPTH;
 
 	const neighbours = current ? neighboursOf(mine, current) : [];

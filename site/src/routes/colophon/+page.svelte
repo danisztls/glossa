@@ -19,6 +19,7 @@
 	 * the way a hand-typed number would.
 	 */
 	import { isUnpublished, listDocuments, listWorks } from '$lib/corpus';
+	import { plateCredits } from '$lib/corpus-index';
 	import { CONTACT_EMAIL, REPOSITORY_URL } from '$lib/colophon';
 	import { t } from '$lib/i18n.svelte';
 
@@ -40,6 +41,19 @@
 	const documentCount = listDocuments().filter((group) =>
 		Object.values(group.manifests).some((m) => m && !isUnpublished(m.id))
 	).length;
+
+	/**
+	 * The illustration collections, credited from their own manifests rather
+	 * than from prose written here — the same rule the work counts above
+	 * follow, and for a stronger reason: this is the page that says what the
+	 * site does with other people's material, and a hand-typed attribution is
+	 * one that can quietly stop matching what is actually served.
+	 *
+	 * The section renders only when a collection is present, so a
+	 * fixture-backed or plates-free build says nothing rather than crediting
+	 * an artist whose work is not on the page.
+	 */
+	const collections = Object.values(plateCredits);
 </script>
 
 <svelte:head>
@@ -99,6 +113,22 @@
 		<p><a href={REPOSITORY_URL} rel="external noopener" target="_blank">{REPOSITORY_URL}</a></p>
 	{/if}
 
+	{#if collections.length > 0}
+		<h2>{t('colophon.illustrationsTitle')}</h2>
+		<p>{t('colophon.illustrationsBody')}</p>
+		{#each collections as collection (collection.title)}
+			<p class="credit">
+				<em>{collection.title}</em>. {collection.artist}, {collection.edition}.
+				{collection.reproduction}.
+				<br />
+				{t('colophon.illustrationsScans')}
+				<a href={collection.provider_url} rel="external noopener" target="_blank"
+					>{collection.provider}</a
+				>
+			</p>
+		{/each}
+	{/if}
+
 	<!-- Both faces are OFL, which requires the copyright notice and licence to
 	     travel with them; the licence texts ship as static/fonts/OFL-*.txt and
 	     this is the human-readable half of that obligation. It also belongs on
@@ -115,6 +145,11 @@
 
 	.colophon h1 {
 		margin-bottom: 0.5rem;
+	}
+
+	.credit {
+		font-size: 0.95em;
+		color: var(--color-text-muted);
 	}
 
 	.lede {

@@ -70,6 +70,7 @@ export const hu: Dictionary = {
 	'bible.introduction': 'Bevezetés',
 	'bible.introUnavailable': 'Ezen a nyelven még nincs bevezetés',
 	'bible.introSource': 'A bevezetések nem részei a szentírási szövegnek.',
+	'bible.illustrations': 'Illusztrációk',
 	'bible.testament.ot': 'Ószövetség',
 	'bible.testament.nt': 'Újszövetség',
 	'ccc.prevParagraph': 'Előző',
@@ -211,6 +212,10 @@ export const hu: Dictionary = {
 	'colophon.buildTitle': 'Hogyan készül',
 	'colophon.buildBody':
 		'A szövegeket a közzétett forrásaikból gyűjtjük össze, strukturált korpusszá dolgozzuk fel, és statikus oldalakként jelenítjük meg. A forráshibák javításait egyenként rögzítjük, az eredeti szöveggel, a javított szöveggel és az indoklással — egyetlen szöveget sem változtatunk meg csendben.',
+	'colophon.illustrationsTitle': 'Az illusztrációk',
+	'colophon.illustrationsBody':
+		'A Biblia Gustave Doré metszeteit hordozza a La Grande Bible de Tours számára, mindegyiket annál a versnél, amelyet ábrázol. Közkincsek: a lemezeket 1866-ban metszették, Doré 1883-ban halt meg, és egy közkincs metszet hű fényképi másolata nem keletkeztet új szerzői jogot. Megnevezzük, honnan valók a beolvasásaink, mert hálásak vagyunk értük.',
+	'colophon.illustrationsScans': 'A beolvasásokat rendelkezésre bocsátotta:',
 	'colophon.typeTitle': 'A betűk',
 	'colophon.typeBody':
 		'EB Garamonddal szedve, amely Georg Duffner és Octavio Pardo felújítása azokról a betűkről, amelyeket Claude Garamont metszett az 1590-es években — abban a humanista hagyományban, amelyben az Egyház a reneszánsz óta nyomtat. A kezdőbetűk Pirata One betűvel készültek: ez egy gót betűtípus, amelynek nagybetűi olvashatók maradnak abban a méretben, amelyet az iniciálé megkíván. Mindkettő SIL Open Font License alatt áll, és erről az oldalról érkezik, nem harmadik féltől, így egy oldal elolvasása senki más kiszolgálójától nem kér semmit.',

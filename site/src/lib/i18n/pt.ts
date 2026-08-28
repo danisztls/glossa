@@ -84,6 +84,7 @@ export const pt: Dictionary = {
 	'bible.introduction': 'Introdução',
 	'bible.introUnavailable': 'Ainda não há introdução nesta língua',
 	'bible.introSource': 'As introduções não fazem parte do texto da Escritura.',
+	'bible.illustrations': 'Ilustrações',
 	'bible.testament.ot': 'Antigo Testamento',
 	'bible.testament.nt': 'Novo Testamento',
 
@@ -230,6 +231,10 @@ export const pt: Dictionary = {
 	'colophon.buildTitle': 'Como \u00e9 feito',
 	'colophon.buildBody':
 		'Os textos s\u00e3o recolhidos das suas fontes publicadas, analisados para um corpus estruturado e apresentados como p\u00e1ginas est\u00e1ticas. As corre\u00e7\u00f5es a defeitos das fontes s\u00e3o registadas uma a uma, com a reda\u00e7\u00e3o original, a corrigida e o motivo \u2014 nenhum texto \u00e9 alterado em sil\u00eancio.',
+	'colophon.illustrationsTitle': 'As ilustrações',
+	'colophon.illustrationsBody':
+		'A Bíblia traz as gravuras de Gustave Doré para La Grande Bible de Tours, cada uma junto ao versículo que representa. Estão em domínio público: as chapas foram gravadas em 1866 e Doré morreu em 1883, e a reprodução fotográfica fiel de uma gravura em domínio público não gera direito de autor novo. Dizemos de onde vieram as nossas digitalizações porque lhes somos gratos.',
+	'colophon.illustrationsScans': 'Digitalizações fornecidas por',
 	'colophon.typeTitle': 'Os tipos',
 	'colophon.typeBody':
 		'Composto em EB Garamond, o renascimento por Georg Duffner e Octavio Pardo dos tipos que Claude Garamont gravou na d\u00e9cada de 1590 \u2014 a tradi\u00e7\u00e3o humanista em que a Igreja imprime desde o Renascimento. As iniciais s\u00e3o Pirata One, uma letra g\u00f3tica cujas mai\u00fasculas permanecem leg\u00edveis no tamanho que uma capitular exige. Ambas as fontes t\u00eam licen\u00e7a SIL Open Font License e s\u00e3o servidas a partir deste s\u00edtio e n\u00e3o de terceiros, de modo que ler uma p\u00e1gina nada exige do servidor de outrem.',

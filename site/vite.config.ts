@@ -19,7 +19,8 @@ const corpusDataDir = path.resolve(
 );
 
 /**
- * In `vite dev` only, resolve `./content-urls` to `content-urls.dev.ts`.
+ * In `vite dev` only, resolve each `?url` glob module to its dev twin —
+ * `./content-urls` and `./plate-urls`.
  *
  * The real module is one eager `import.meta.glob` over the content tier, which
  * a build folds into a chunk of strings and the dev server expands into 2,590
@@ -37,25 +38,32 @@ const corpusDataDir = path.resolve(
  * does not touch relative specifiers, so this hook is genuinely first for them.
  *
  * `apply: 'serve'` is what makes "never in a build" a fact rather than an
- * intention; the two consumers import `./content-urls` and get the real module
- * everywhere else, with no plugin involved.
+ * intention; the consumers import the relative specifier and get the real
+ * module everywhere else, with no plugin involved.
  */
 function devContentUrls(): Plugin {
-	const devModule = path.resolve(
-		fileURLToPath(new URL('.', import.meta.url)),
-		'src/lib/content-urls.dev.ts'
-	);
+	const lib = (name: string) =>
+		path.resolve(fileURLToPath(new URL('.', import.meta.url)), 'src/lib', name);
+
+	// Specifier -> [dev twin, the modules allowed to import it]. The importer
+	// list is not ceremony: it is what stops an unrelated `./content-urls`
+	// somewhere else in the tree from being silently captured.
+	const substitutions = new Map<string, [string, readonly string[]]>([
+		['./content-urls', [lib('content-urls.dev.ts'), ['corpus-index.ts', 'corpus-assets.ts']]],
+		// The plates' 482 images, on the same terms and for the same reason —
+		// see `plate-urls.dev.ts`.
+		['./plate-urls', [lib('plate-urls.dev.ts'), ['plate-src.ts']]]
+	]);
+
 	return {
 		name: 'glossa:dev-content-urls',
 		apply: 'serve',
 		enforce: 'pre',
 		resolveId(source, importer) {
-			if (source !== './content-urls' || !importer) return null;
-			// Only the two modules that own this map, so an unrelated
-			// `./content-urls` elsewhere in the tree could never be captured.
-			return importer.endsWith('corpus-index.ts') || importer.endsWith('corpus-assets.ts')
-				? devModule
-				: null;
+			const found = substitutions.get(source);
+			if (!found || !importer) return null;
+			const [devModule, importers] = found;
+			return importers.some((name) => importer.endsWith(name)) ? devModule : null;
 		}
 	};
 }

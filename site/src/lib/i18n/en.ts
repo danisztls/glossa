@@ -119,6 +119,7 @@ export const en: Dictionary = {
 	'bible.introduction': 'Introduction',
 	'bible.introUnavailable': 'No introduction in this language yet',
 	'bible.introSource': 'Introductions are not part of the scripture text.',
+	'bible.illustrations': 'Illustrations',
 	'bible.testament.ot': 'Old Testament',
 	'bible.testament.nt': 'New Testament',
 
@@ -294,6 +295,10 @@ export const en: Dictionary = {
 	'colophon.buildTitle': 'How it is made',
 	'colophon.buildBody':
 		'The texts are collected from their published sources, parsed into a structured corpus, and rendered as static pages. Corrections to source defects are recorded individually, with the original wording, the corrected wording, and the reason \u2014 no text is ever silently changed.',
+	'colophon.illustrationsTitle': 'The illustrations',
+	'colophon.illustrationsBody':
+		'The Bible carries Gustave Doré’s engravings for La Grande Bible de Tours, each one placed at the verse it depicts. They are in the public domain: the plates were cut in 1866 and Doré died in 1883, and a faithful photographic reproduction of a public-domain engraving carries no new copyright of its own. We say where our scans came from because we are grateful for them.',
+	'colophon.illustrationsScans': 'Scans provided by',
 	'colophon.typeTitle': 'The type',
 	'colophon.typeBody':
 		'Set in EB Garamond, Georg Duffner and Octavio Pardo\u2019s revival of the types Claude Garamont cut in the 1590s \u2014 the humanist tradition the Church has printed in since the Renaissance. The opening initials are Pirata One, a blackletter whose capitals stay legible at the size a drop cap demands. Both are licensed under the SIL Open Font License and served from this site rather than from a third party, so reading a page asks nothing of anyone else\u2019s server.',

@@ -68,6 +68,7 @@ export const sv: Dictionary = {
 	'bible.introduction': 'Inledning',
 	'bible.introUnavailable': 'Ingen inledning på detta språk ännu',
 	'bible.introSource': 'Inledningarna hör inte till bibeltexten.',
+	'bible.illustrations': 'Illustrationer',
 	'bible.testament.ot': 'Gamla testamentet',
 	'bible.testament.nt': 'Nya testamentet',
 	'ccc.prevParagraph': 'Föregående',
@@ -208,6 +209,10 @@ export const sv: Dictionary = {
 	'colophon.buildTitle': 'Hur den blir till',
 	'colophon.buildBody':
 		'Texterna samlas in från sina publicerade källor, tolkas till ett strukturerat korpus och återges som statiska sidor. Rättelser av fel i källan antecknas var för sig, med den ursprungliga lydelsen, den rättade lydelsen och skälet — ingen text ändras någonsin i tysthet.',
+	'colophon.illustrationsTitle': 'Illustrationerna',
+	'colophon.illustrationsBody':
+		'Bibeln bär Gustave Dorés gravyrer till La Grande Bible de Tours, var och en placerad vid den vers den skildrar. De är fria: plåtarna graverades 1866 och Doré dog 1883, och en trogen fotografisk återgivning av en fri gravyr ger ingen ny upphovsrätt. Vi anger varifrån våra skanningar kommer därför att vi är tacksamma för dem.',
+	'colophon.illustrationsScans': 'Skanningar tillhandahållna av',
 	'colophon.typeTitle': 'Typsnittet',
 	'colophon.typeBody':
 		'Satt med EB Garamond, Georg Duffners och Octavio Pardos återupplivande av de typer Claude Garamont skar på 1590-talet — den humanistiska tradition kyrkan har tryckt i sedan renässansen. Anfangerna är Pirata One, en frakturstil vars versaler förblir läsbara i den storlek en anfang kräver. Båda är licensierade under SIL Open Font License och levereras från den här sajten och inte från tredje part, så att läsa en sida begär ingenting av någon annans server.',

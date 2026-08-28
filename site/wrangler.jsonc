@@ -108,6 +108,15 @@
 		// just quietly costs an invocation per request, which is exactly the
 		// mistake this comment exists to make findable.
 		//
+		// NOTHING NEEDS ADDING FOR THE DORE PLATES, and the reflex to add
+		// `!/plates/*` is the mistake to resist -- there is no such path. The
+		// 482 images are content-hashed BUILD assets under `/_app/immutable/`
+		// (see `syncPlates` in scripts/sync-corpus.mjs for why they go through
+		// Vite rather than into `static/`), so the first negation already
+		// covers them -- and so does the zone's rate limiting rule, which
+		// excludes `/_app/` by prefix. A chapter with four plates costs the
+		// same one invocation as a chapter with none.
+		//
 		// THE FIRST THREE ARE ALSO THE ZONE'S RATE LIMITING RULE. That rule
 		// excludes `/_app/`, `/fonts/` and `/icons/` by prefix -- and verified
 		// bots, which is the SEO clause -- so it does not count the offline

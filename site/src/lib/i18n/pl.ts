@@ -68,6 +68,7 @@ export const pl: Dictionary = {
 	'bible.introduction': 'Wprowadzenie',
 	'bible.introUnavailable': 'Brak jeszcze wprowadzenia w tym języku',
 	'bible.introSource': 'Wprowadzenia nie należą do tekstu Pisma.',
+	'bible.illustrations': 'Ilustracje',
 	'bible.testament.ot': 'Stary Testament',
 	'bible.testament.nt': 'Nowy Testament',
 	'ccc.prevParagraph': 'Poprzedni',
@@ -205,6 +206,10 @@ export const pl: Dictionary = {
 	'colophon.buildTitle': 'Jak to powstaje',
 	'colophon.buildBody':
 		'Teksty są zbierane z opublikowanych źródeł, przetwarzane w uporządkowany korpus i wyświetlane jako strony statyczne. Poprawki usterek źródłowych są odnotowywane pojedynczo, wraz z pierwotnym brzmieniem, poprawionym i uzasadnieniem — żaden tekst nie jest nigdy zmieniany po cichu.',
+	'colophon.illustrationsTitle': 'Ilustracje',
+	'colophon.illustrationsBody':
+		'Biblia niesie ryciny Gustave’a Doré do La Grande Bible de Tours, każdą przy wersecie, który przedstawia. Należą do domeny publicznej: płyty wykonano w 1866 roku, a Doré zmarł w 1883, wierna zaś fotograficzna reprodukcja ryciny z domeny publicznej nie tworzy nowego prawa autorskiego. Podajemy, skąd pochodzą nasze skany, ponieważ jesteśmy za nie wdzięczni.',
+	'colophon.illustrationsScans': 'Skany udostępnione przez',
 	'colophon.typeTitle': 'Krój pisma',
 	'colophon.typeBody':
 		'Złożono krojem EB Garamond, odnowieniem przez Georga Duffnera i Octavia Parda czcionek, które Claude Garamont wyciął w latach dziewięćdziesiątych XVI wieku — tradycji humanistycznej, w której Kościół drukuje od czasów renesansu. Inicjały to Pirata One, gotyk, którego wersaliki pozostają czytelne w rozmiarze, jakiego wymaga inicjał. Oba są na licencji SIL Open Font License i serwowane z tej strony, a nie przez osoby trzecie, więc czytanie strony niczego nie wymaga od cudzego serwera.',

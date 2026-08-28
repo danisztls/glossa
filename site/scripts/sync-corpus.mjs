@@ -61,7 +61,15 @@
  * still builds.
  */
 
-import { existsSync, rmSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+	copyFileSync,
+	existsSync,
+	rmSync,
+	mkdirSync,
+	readdirSync,
+	readFileSync,
+	writeFileSync
+} from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -76,6 +84,7 @@ import { summaPartSlug } from '../src/lib/route-manifest.ts';
 import { setDocumentTitleSource } from '../src/lib/refs-grammar.ts';
 import { hrefFor } from '../src/lib/address.ts';
 import { buildCondensationMap } from '../src/lib/condensation.ts';
+import { PLATE_INTRINSIC_WIDTH, PLATE_WIDTHS } from '../src/lib/plates.ts';
 import { pairDivisions } from '../src/lib/toc-pairing.ts';
 import { sitemapXml } from './sitemap.mjs';
 import {
@@ -523,6 +532,122 @@ function corpusDateFor(workId) {
 	return date;
 }
 
+/**
+ * Credit for the illustration collections, for the colophon — index tier,
+ * because it is ~300 bytes and the page that prints it fetches nothing.
+ *
+ * Separate from the plate list itself, which is content tier: attribution has
+ * to be available on a page that renders no plates, and the plate list has to
+ * be absent from a page that renders no Bible.
+ */
+const platesCredit = {};
+
+/**
+ * The Doré plates: a credit line for the index tier, the anchored list for
+ * the content tier, and the images as ordinary build assets.
+ *
+ * THE IMAGES GO THROUGH VITE RATHER THAN `static/`, and that decision buys
+ * three behaviours the site already has rather than three it would have to
+ * add. As content-hashed assets under `_app/immutable/` they are (1) already
+ * negated in `wrangler.jsonc`'s `run_worker_first`, so a chapter with four
+ * plates costs no Worker invocations and is outside the zone's rate limiting
+ * rule; (2) already classified by `sw-policy.ts`'s `isDeferred`, which routes
+ * any `.avif` under `/immutable/` that is not corpus content to the permanent
+ * content cache — stored on first read, never precached, in no download wave,
+ * which is exactly "enrichment, not part of the offline library"; and (3)
+ * safely re-derivable, because a re-encoded plate gets a new hash and no
+ * reader is left pinned to a stale immutable copy. In `static/` all three
+ * would be the opposite by default, and the precache one is not a nuisance
+ * but a 103 MB download at install.
+ *
+ * WHAT IS DROPPED IS THE RECONCILIATION. `plates.json` in the corpus keeps
+ * every reading — caption, Wikipedia, index, which won, whether they agreed —
+ * because that is the audit trail for an anchor decided by vote. The site
+ * needs the answer and nothing else, so the content file is a sixth the size.
+ */
+function syncPlates(workId, workDir, manifest) {
+	platesCredit[workId] = {
+		title: manifest.title,
+		edition: manifest.edition,
+		copyright: manifest.copyright,
+		...manifest.credit
+	};
+
+	if (unpublishedIds.has(workId)) {
+		console.warn(`[sync-corpus] ${workId}: DISABLED — plates withheld from the build`);
+		return;
+	}
+
+	const source = readJson(path.join(workDir, 'plates.json'));
+	const imagesDir = path.join(workDir, 'images');
+	const sizesPath = path.join(imagesDir, 'sizes.json');
+	// Written by `derive_images`, at the only moment the numbers are known.
+	// Missing means the images were never derived, and a plate with no
+	// intrinsic size would reserve no space in the column — so the whole
+	// collection is withheld rather than shipped as a source of layout shift.
+	if (!existsSync(sizesPath)) {
+		console.warn(
+			`[sync-corpus] ${workId}: no images/sizes.json — plates NOT synced. ` +
+				`Run \`uv run --script pipeline/scrapers/dore/dore.py --derive\` to write it.`
+		);
+		return;
+	}
+	const sizes = readJson(sizesPath);
+
+	const missing = [];
+	const plates = [];
+	for (const plate of source.plates) {
+		const size = sizes[plate.plate_id]?.[String(PLATE_INTRINSIC_WIDTH)];
+		if (!size) {
+			missing.push(plate.plate_id);
+			continue;
+		}
+		plates.push({
+			id: plate.plate_id,
+			osis: plate.osis,
+			chapter: plate.chapter,
+			// `null` for a plate anchored to a chapter rather than a verse. No
+			// plate is, today — all 241 carry a verse — but the pipeline can
+			// still produce one and the reader has to place it somewhere, so
+			// the field stays rather than the shape being narrowed to today's
+			// data.
+			verse: plate.verse ?? null,
+			title: plate.title,
+			width: size[0],
+			height: size[1]
+		});
+	}
+	if (missing.length > 0) {
+		console.warn(
+			`[sync-corpus] ${workId}: ${missing.length} plate(s) have no derived image and were ` +
+				`skipped: ${missing.slice(0, 8).join(', ')}${missing.length > 8 ? ', …' : ''}`
+		);
+	}
+
+	const relPath = `content/${workId}/plates.json`;
+	writeJson(path.join(destDir, relPath), plates);
+	contentManifest.push({ workId, kind: 'plates', relPath, bytes: byteLength(plates) });
+
+	const wanted = new Set(
+		plates.flatMap((plate) => PLATE_WIDTHS.map((w) => `${plate.id}-${w}.avif`))
+	);
+	const imagesDest = path.join(destDir, 'plates');
+	mkdirSync(imagesDest, { recursive: true });
+	let copied = 0;
+	for (const name of readdirSync(imagesDir).sort()) {
+		if (!wanted.has(name)) continue;
+		copyFileSync(path.join(imagesDir, name), path.join(imagesDest, name));
+		copied++;
+	}
+	if (copied !== wanted.size) {
+		console.warn(
+			`[sync-corpus] ${workId}: ${wanted.size - copied} of ${wanted.size} plate image(s) ` +
+				`missing from ${imagesDir}`
+		);
+	}
+	console.log(`[sync-corpus] ${workId}: ${plates.length} plates, ${copied} images`);
+}
+
 for (const workId of workIds) {
 	const workDir = path.join(buildSrc, workId);
 	const manifestPath = path.join(workDir, 'manifest.json');
@@ -530,6 +655,28 @@ for (const workId of workIds) {
 	// have a manifest, and the ones that don't were reported up there rather
 	// than skipped in silence.
 	const manifest = readJson(manifestPath);
+
+	/*
+	 * PLATES ARE APPARATUS, NOT A WORK, and this branch is what keeps them
+	 * out of everything below.
+	 *
+	 * `dore.tours` is 241 engravings with no language, no addresses of its
+	 * own and no text — it hangs off the Bible the way `xrefs` does, at a
+	 * verse. It carries a manifest anyway, because that is the corpus's one
+	 * record of who is owed credit for the scans and because a directory
+	 * under `build/` without one is REPORTED as a work whose scrape did not
+	 * finish (see the `manifestless` warning above). So the manifest is what
+	 * makes it visible, and this branch is what stops it being mistaken for
+	 * something a reader can open: it never enters `manifests`, so it is
+	 * absent from the registry, the listings, the sitemap, the language
+	 * coverage and the work counts the colophon prints — all of which would
+	 * otherwise be one higher, describing a work with nothing to read.
+	 */
+	if (manifest.type === 'plates') {
+		syncPlates(workId, workDir, manifest);
+		continue;
+	}
+
 	coverage.addWork(workId, workDir);
 	// `notes` is free-text scraper/provenance diagnostics — sometimes several
 	// paragraphs (observed: the Vatican-document manifests, which can run to
@@ -1127,6 +1274,10 @@ const translatedCount = Object.values(translatedDescriptions).reduce(
  * So the in-memory registries stay plain and the encoding happens once, in one
  * place, where `expandRun` in `src/lib/corpus-index.ts` is the mirror image.
  */
+/** The works the site actually registers — `workIds` minus the apparatus
+ *  directories that `syncPlates` and its like handle instead. */
+const registeredWorkIds = Object.keys(manifests).sort();
+
 const mapValues = (obj, fn) => Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, fn(v)]));
 
 writeJson(path.join(indexDir, 'manifests.json'), manifests);
@@ -1153,6 +1304,7 @@ writeJson(
 	mapValues(documentIndex, (v) => ({ ...v, sectionNumbers: compactRun(v.sectionNumbers) }))
 );
 writeJson(path.join(indexDir, 'prayer-index.json'), prayerIndex);
+writeJson(path.join(indexDir, 'plates-credit.json'), platesCredit);
 writeJson(
 	path.join(indexDir, 'summa-index.json'),
 	mapValues(summaIndex, (v) => ({
@@ -1404,7 +1556,12 @@ function chapterStarts(nodes, kinds) {
  */
 const routeManifest = {
 	version: 1,
-	workCount: workIds.length,
+	// `manifests`, NOT `workIds`. Every directory under `build/` with a
+	// manifest is in `workIds`, and since 2026-08-28 one of them
+	// (`dore.tours`) is apparatus rather than a work — it never enters the
+	// registry, has no addresses, and would inflate every count that quotes
+	// this number, `preflight-deploy.mjs`'s corpus-size floor included.
+	workCount: registeredWorkIds.length,
 	contentAssetCount: contentManifest.length,
 	bible: (() => {
 		const byBook = new Map();
@@ -1554,10 +1711,10 @@ const indexBytes = [
 	.reduce((sum, p) => sum + readFileSync(p).length, 0);
 
 console.log(
-	`[sync-corpus] Built corpus-data/ from ${buildSrc}: ${workIds.length} work(s), ` +
+	`[sync-corpus] Built corpus-data/ from ${buildSrc}: ${registeredWorkIds.length} work(s), ` +
 		`${contentManifest.length} content file(s)${xrefsSynced ? `, plus ${xrefs.length} CCC and ${documentXrefs.length} document xref entries` : ''}. ` +
 		`Index tier: ${(indexBytes / 1000).toFixed(0)} KB raw. ` +
 		`Descriptions: ${describedWorks} read, ${translatedCount} translated across ` +
 		`${Object.keys(translatedDescriptions).length} language file(s). ` +
-		`Works: ${workIds.join(', ')}`
+		`Works: ${registeredWorkIds.join(', ')}`
 );

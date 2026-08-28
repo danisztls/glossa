@@ -68,6 +68,7 @@ export const ro: Dictionary = {
 	'bible.introduction': 'Introducere',
 	'bible.introUnavailable': 'Încă nicio introducere în această limbă',
 	'bible.introSource': 'Introducerile nu fac parte din textul Scripturii.',
+	'bible.illustrations': 'Ilustrații',
 	'bible.testament.ot': 'Vechiul Testament',
 	'bible.testament.nt': 'Noul Testament',
 	'ccc.prevParagraph': 'Înapoi',
@@ -209,6 +210,10 @@ export const ro: Dictionary = {
 	'colophon.buildTitle': 'Cum este făcut',
 	'colophon.buildBody':
 		'Textele sunt adunate din sursele lor publicate, prelucrate într-un corpus structurat și redate ca pagini statice. Corecturile aduse defectelor sursei sunt consemnate una câte una, cu formularea originală, cea corectată și motivul — niciun text nu este vreodată schimbat în tăcere.',
+	'colophon.illustrationsTitle': 'Ilustrațiile',
+	'colophon.illustrationsBody':
+		'Biblia poartă gravurile lui Gustave Doré pentru La Grande Bible de Tours, fiecare așezată la versetul pe care îl înfățișează. Sunt în domeniul public: plăcile au fost gravate în 1866, iar Doré a murit în 1883, și reproducerea fotografică fidelă a unei gravuri din domeniul public nu naște un drept de autor nou. Spunem de unde vin scanările noastre fiindcă le suntem recunoscători.',
+	'colophon.illustrationsScans': 'Scanări puse la dispoziție de',
 	'colophon.typeTitle': 'Litera',
 	'colophon.typeBody':
 		'Cules cu EB Garamond, reînvierea de către Georg Duffner și Octavio Pardo a caracterelor tăiate de Claude Garamont în anii 1590 — tradiția umanistă în care Biserica tipărește încă din Renaștere. Inițialele sunt Pirata One, o literă gotică ale cărei majuscule rămân lizibile la mărimea pe care o cere o inițială. Amândouă sunt licențiate sub SIL Open Font License și sunt servite de pe acest sit, nu de la terți, așa încât citirea unei pagini nu cere nimic de la serverul nimănui altcuiva.',

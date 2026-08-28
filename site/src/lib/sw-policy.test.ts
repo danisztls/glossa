@@ -406,6 +406,41 @@ describe('planWaves', () => {
 		);
 	});
 
+	/**
+	 * `dore.tours` is the first content file with no language: 241 engravings
+	 * have no language, and `sync-corpus.mjs` leaves the field empty rather
+	 * than inventing one. Every OTHER entry is admitted by matching the
+	 * reader's chain, so without an explicit rule this one matches nothing and
+	 * belongs to no wave — no error, no `other`, just a collection that is
+	 * never offline for anybody.
+	 */
+	it('plans a languageless collection for every reader', () => {
+		const plates = entry({ workId: 'dore.tours', kind: 'plates', lang: '', path: '/plates.json' });
+		for (const langs of [['en'], ['pt', 'en', 'la'], ['sv', 'en', 'la']]) {
+			const waves = planWaves([plates], { langs });
+			expect(waves.find((w) => w.id === 'essentials')!.assets.map((a) => a.workId)).toEqual([
+				'dore.tours'
+			]);
+			expect(waves.find((w) => w.id === 'other')!.assets).toEqual([]);
+		}
+	});
+
+	/** The reader's own languages first: the plate list is enrichment and must
+	 *  not push the text of the language they read behind it. */
+	it('sorts a languageless collection behind the reader’s own languages', () => {
+		const waves = planWaves(
+			[
+				entry({ workId: 'dore.tours', kind: 'plates', lang: '', path: '/plates.json' }),
+				entry({ workId: 'prayer.common.en', kind: 'prayer-collection', path: '/pr-en.json' })
+			],
+			{ langs: ['en'] }
+		);
+		expect(waves.find((w) => w.id === 'essentials')!.assets.map((a) => a.workId)).toEqual([
+			'prayer.common.en',
+			'dore.tours'
+		]);
+	});
+
 	/** A kind nobody mapped is a whole work type that never downloads. `other`
 	 *  catches it rather than dropping it, and staying empty is the property
 	 *  worth asserting. */
