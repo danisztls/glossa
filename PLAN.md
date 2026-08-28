@@ -56,6 +56,46 @@ own `validate()` was wrong; they assert things about their own source, which is
 what they are for. The general check is `pipeline/scrapers/bible/edition_check.py`
 and it should be run over any edition anyone touches.
 
+### Chapters whose verses are numbered differently — eight, across six editions
+
+Found on 2026-08-28 by teaching `edition_check.py` to compare a chapter's verse
+**count** and its **highest verse number** together. It had compared counts only,
+and the dangerous shape is the one where the counts agree:
+
+| Edition                 | Chapter  | Verses | Numbered | Clementine |
+| ----------------------- | -------- | ------ | -------- | ---------- |
+| `bible.allioli.de`      | Ps 147   | 9      | 12–20    | 1–9        |
+| `bible.douay-rheims.en` | Ps 147   | 9      | 12–20    | 1–9        |
+| `bible.kaldi.hu`        | Ps 147   | 9      | 12–20    | 1–9        |
+| `bible.douay-rheims.en` | Ps 115   | 10     | 10–19    | 1–10       |
+| `bible.crampon.fr`      | Ps 55    | 13     | 12–24    | 1–13       |
+| `bible.douay-rheims.en` | Wis 18   | 25     | 2–26     | 1–25       |
+| `bible.kaldi.hu`        | Heb 13   | 25     | 2–26     | 1–25       |
+| `bible.straubinger.es`  | 2 Sam 13 | 38     | 2–39     | 1–38       |
+
+**`Ps 147:1` resolves in the Clementine and resolves to nothing in three other
+editions.** The Psalms cases are one convention, not three bugs: where the
+Vulgate splits a Hebrew psalm across two chapters, these editions keep the
+Hebrew's continuous verse numbering in the second half rather than restarting at
+
+1. Three independent editions do it, so it is the editions being editions —
+   but the corpus's address space is the Clementine's, and nothing reconciles them.
+
+Two things follow. **This is not a parse defect and must not be "fixed" in the
+scrapers** — the stored text follows the source, which is the rule. And **it was
+invisible to every check the project had**: round-trip, coverage, symmetry and
+`balance` are all per-unit or per-count, and a chapter with the right number of
+verses under the wrong labels passes all four. `bible.douay-rheims.en` has
+carried three of these since it was ingested.
+
+It also explains that edition's two heading errors, which are the same fact seen
+twice: a heading anchored at `before_verse: 1` in a chapter whose verses start at 10. Fixing the numbering question answers the heading question for free.
+
+The open decision is where reconciliation belongs — a per-edition verse-offset
+map consulted at read time, or a conversion in `sync-corpus.mjs` alongside the
+Psalter conversion Crampon already needs. They are the same shape of problem and
+should probably get the same answer.
+
 ### Decisions, not tasks
 
 - **Polish: what to do about Esther 11–16.** `bible.info.pl`'s Wujek is missing

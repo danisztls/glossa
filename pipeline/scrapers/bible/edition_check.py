@@ -32,7 +32,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from common import build_root, require_corpus
+from common import build_root, is_wholesale_divergent, require_corpus
 
 #: The 73 lowercase OSIS codes in canonical order. Not derived from an existing
 #: edition at runtime: a new edition must be checkable against the canon even
@@ -225,8 +225,8 @@ def check_unit(rep: Report, where: str, unit: dict) -> None:
 
 def check_book(
     rep: Report, path: Path, osis: str, expect_order: int | None
-) -> dict[int, int]:
-    """One `books/{osis}.json`. Returns `{chapter: verse count}`."""
+) -> dict[int, tuple[int, int]]:
+    """One `books/{osis}.json`. Returns `{chapter: (verse count, highest verse)}`."""
     doc = json.loads(path.read_text(encoding="utf-8"))
     if doc.get("osis") != osis:
         rep.error(f"{osis}: osis field is {doc.get('osis')!r}, filename says {osis!r}")
@@ -247,7 +247,7 @@ def check_book(
         if a != a.lower():
             rep.error(f"{osis}: abbrev {a!r} is not lowercase")
 
-    shape: dict[int, int] = {}
+    shape: dict[int, tuple[int, int]] = {}
     prev = 0
     for ch in doc.get("chapters") or []:
         n = ch.get("n")
@@ -281,13 +281,19 @@ def check_book(
             if (lvl := h.get("level")) is not None and lvl not in (1, 2, 3, 4):
                 rep.error(f"{osis} {n}: heading level {lvl!r} outside 1–4")
             check_unit(rep, f"{osis} {n} heading@{bv}", h)
-        shape[n] = max(seen_v) if seen_v else 0
+        # BOTH, and the pair is the point. A chapter with the same NUMBER
+        # of verses under different LABELS is the dangerous shape: every
+        # check that counts passes and every address is wrong.
+        # `bible.allioli.de` numbers Ps 147 as verses 12-20 where the
+        # Clementine numbers the same nine verses 1-9, so a citation to
+        # Ps 147:1 finds nothing there.
+        shape[n] = (len(seen_v), max(seen_v) if seen_v else 0)
     if not shape:
         rep.error(f"{osis}: no chapters")
     return shape
 
 
-def load_reference() -> dict[str, dict[int, int]] | None:
+def load_reference() -> dict[str, dict[int, tuple[int, int]]] | None:
     root = build_root() / REFERENCE / "books"
     if not root.is_dir():
         return None
@@ -298,7 +304,10 @@ def load_reference() -> dict[str, dict[int, int]] | None:
             continue
         doc = json.loads(p.read_text(encoding="utf-8"))
         out[osis] = {
-            c["n"]: max((v["n"] for v in c.get("verses") or []), default=0)
+            c["n"]: (
+                len(c.get("verses") or []),
+                max((v["n"] for v in c.get("verses") or []), default=0),
+            )
             for c in doc.get("chapters") or []
         }
     return out
@@ -375,26 +384,67 @@ def check_work(work: str, ref: dict | None) -> Report:
     #: chapters differently (docs/research/bible-edition-divergence.md); what
     #: this is for is making the divergence VISIBLE before someone discovers it
     #: as a wrong link. A missing chapter is a different animal and is an error.
-    diverging = 0
+    #: An edition may declare that it follows the source's Hebrew numbering
+    #: rather than converting (`psalm_numbering: "hebrew"`). The field is named
+    #: for the Psalter and the divergence is not confined to it -- see the note
+    #: this check emits below.
+    hebrew = manifest.get("psalm_numbering") == "hebrew"
+    diverging = renumbered = 0
     for osis, ours in shapes.items():
         theirs = ref.get(osis) or {}
         gone = sorted(set(theirs) - set(ours))
         if gone:
-            rep.error(
+            # A Hebrew-numbered edition is SUPPOSED to be short a chapter in
+            # the three books that diverge wholesale: Hebrew Malachi has 3
+            # chapters where the Vulgate has 4 (Heb 3:19-24 = Vulg 4:1-6), and
+            # Joel is the mirror image. `bible.crampon.fr` prints Malachi 3
+            # with 24 verses and no chapter 4, which is the edition being
+            # correct, not a dropped chapter -- so this is a note there and an
+            # error everywhere else.
+            expected = hebrew and is_wholesale_divergent(osis)
+            say = rep.note if expected else rep.error
+            say(
                 f"{osis}: {len(gone)} chapter(s) present in {REFERENCE} and absent "
                 f"here: {gone[:8]}{' …' if len(gone) > 8 else ''}"
+                + (" — expected, this book diverges wholesale" if expected else "")
             )
         for n in sorted(set(ours) & set(theirs)):
-            if ours[n] != theirs[n]:
-                diverging += 1
-                if diverging <= 10:
-                    rep.note(
-                        f"{osis} {n}: {ours[n]} verses here, {theirs[n]} in {REFERENCE}"
-                    )
+            if ours[n] == theirs[n]:
+                continue
+            (n_here, hi_here), (n_ref, hi_ref) = ours[n], theirs[n]
+            diverging += 1
+            if n_here == n_ref:
+                # Same count, different labels -- flagged apart from ordinary
+                # divergence because no count-based check can see it and every
+                # citation into the chapter lands somewhere wrong.
+                renumbered += 1
+                rep.note(
+                    f"{osis} {n}: RENUMBERED — {n_here} verses in both, but "
+                    f"numbered to {hi_here} here and to {hi_ref} in {REFERENCE}; "
+                    f"citations into this chapter will not resolve"
+                )
+            elif diverging <= 10:
+                rep.note(
+                    f"{osis} {n}: {n_here} verses (to {hi_here}) here, "
+                    f"{n_ref} (to {hi_ref}) in {REFERENCE}"
+                )
     if rep.lemma_misses > 5:
         rep.note(
             f"{rep.lemma_misses} notes quote a lemma that is not literally in its "
             f"verse — at this scale that is the edition's convention, not a defect"
+        )
+    if hebrew:
+        outside = sum(
+            1
+            for osis, ours in shapes.items()
+            if not is_wholesale_divergent(osis)
+            for n in set(ours) & set(ref.get(osis) or {})
+            if ours[n] != ref[osis][n]
+        )
+        rep.note(
+            f"declares Hebrew numbering; {outside} diverging chapter(s) lie "
+            f"OUTSIDE the three wholesale-divergent books, so the divergence is "
+            f"not confined to the Psalter the field is named for"
         )
     if diverging:
         total = sum(len(v) for v in shapes.values())
