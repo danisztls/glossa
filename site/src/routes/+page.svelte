@@ -259,7 +259,7 @@
 		<section aria-labelledby="ccc-heading">
 			<h2 id="ccc-heading">{t('home.ccc.heading')}</h2>
 			<!-- Parts and their sections. `/catechismus` renders the identical
-			     table with no depth limit and the sub-heading disclosures on. -->
+			     index with no depth limit and the sub-heading disclosures on. -->
 			<StructureIndex
 				tree={cccRoot}
 				lang={cccLang}

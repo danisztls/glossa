@@ -90,7 +90,7 @@
      Every other one lists a work; this one IS the list, and mirroring its four
      parts into a 17rem column beside itself bought a reader four anchors at
      the cost of the width the two work columns need. The width goes to the
-     table instead — `.index-column` below is wider than `--content-width`,
+     index instead — `.index-column` below is wider than `--content-width`,
      which is a prose measure and not a table's. -->
 <div class="index-column">
 	<!-- The edition picker alone, sticky over a table of contents that is
