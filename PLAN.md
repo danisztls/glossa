@@ -25,6 +25,132 @@ Each stated as: what it is, why it matters, what it depends on, and sizing.
 | 15  | **A Bible in every interface language**                         | The site has fourteen interface languages and Bibles in four content languages (`en` twice, `pt`, `la`); the other eleven read Scripture in English through `CONTENT_LANG_FALLBACK`. It is the largest single coverage gap left, and it is the one a reader notices first — the Bible is the work they came for. **The research is finished** (`docs/research/bible-texts.md` §One Bible per interface language, 2026-08-28): a translation and a scrape source are chosen and litmus-tested for eight of the eleven, so what remains is ingestion, not investigation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Nothing structural — none of the eight is a new `ContentLang`, so `LANGUAGE_NAMES` needs no line and the `ccc.mg` trap does not repeat. Three real touchpoints: **versification** (Crampon is Hebrew-numbered in the Psalter, the Romanian 1914 is offset in Isaiah, everything else is Vulgate by construction); `refs-grammar.ts` book tables, which gain their first full book NAMES in eight languages from the editions' own `name`/`abbrevs`; and one `WORK_CONFIGS` look per edition on the Kings axis. Spanish additionally waits on nothing — Straubinger's copyright self-resolves 1 Jan 2027 | Not scoped end-to-end. Per language it is one scraper against a known source with a known markup shape, and four of the eight sources are MediaWiki (two readers, not one: `fr` transcludes from ProofreadPage, `ru`/`ro` are plain wikitext). Estimate: German and French are the cheapest (best-structured sources), Romanian the most expensive (versification survey first). **Three are blocked and are not sizing questions**: `sv` has no doctrinally acceptable text at all, `sl` and `ar` are blocked on digitisation (OCR projects, not ingestions)                                                                                                                                                                                                                                                                     |
 | 10  | **CIC, Denzinger, Roman Catechism, Vatican I**                  | Deliberately **out of scope**, restated for self-containedness: CIC has no Portuguese edition on vatican.va (hard language-symmetry blocker); Denzinger is Herder-copyrighted and never a vatican.va publication; the Roman Catechism and Vatican I were not found on vatican.va under any URL tried (Vatican I's absence isn't conclusively confirmed — no sitemap search attempted). Full detail: `docs/decisions.md` §Scope, `docs/research/vatican-documents.md` §2, §5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Out of scope, not sized                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
+## Loose ends from the 2026-08-28 Bible capture (gap #15)
+
+Eight editions were captured on 2026-08-28 (`docs/research/bible-texts.md`
+§What the capture found) and five parsers written against them. Everything below
+is a real, located piece of work that the batch surfaced and deliberately did
+not do. Grouped by what kind of thing it is, because the four kinds want
+different people: two are **defects in editions already live**, three are
+**decisions only the person directing the work can take**, and the rest are
+engineering or content with a known shape.
+
+### Defects in editions already shipped — found by `edition_check.py`, not by a reader
+
+- **`bible.cpdv.en` has no Esther 16, and its Esther 15 is short.** The book
+  stops at chapter 15 with 14 verses where `bible.clementina.la` has 19, so
+  roughly 29 verses of the Greek additions are missing from a live edition. It
+  has been that way since the edition was ingested on 2026-08-14 and nothing
+  caught it, because every check the corpus had was per-unit and this is a
+  missing unit. Diagnose before fixing: it may be a scraper bug (a dropped last
+  chapter) or the source's own gap, and those want different responses.
+- **`bible.douay-rheims.en` anchors headings on verses that do not exist** —
+  `ps` 115 and 147 both carry a heading at `before_verse: 1`, but those Vulgate
+  psalms begin at verses 10 and 12 respectively. Small, and the fix depends on
+  whether the source prints the heading above the psalm as a whole (in which
+  case the schema has no field for it and that is the finding) or above its
+  first real verse.
+
+Both were invisible until a **shared** schema check existed. Neither edition's
+own `validate()` was wrong; they assert things about their own source, which is
+what they are for. The general check is `pipeline/scrapers/bible/edition_check.py`
+and it should be run over any edition anyone touches.
+
+### Decisions, not tasks
+
+- **Polish: what to do about Esther 11–16.** `bible.info.pl`'s Wujek is missing
+  108 verses — the gap is in the 1923 Bible Society base and propagates to every
+  host that reuses it. The text exists in Wujek's own wording in the 1599
+  _editio princeps_, captured at `raw/wujek_1599_ia/`, but as uncorrected OCR of
+  16th-century type whose damage reaches the chapter numerals (`VIL`, `XIIL`,
+  `XVL`). Three options, and the choice is not a parser's to make: ship with the
+  1599 OCR as the source for 11–16, ship with a documented canon gap, or hold
+  Polish until someone proofreads the OCR against the scan (which is also
+  captured, so this is a re-parse rather than a re-crawl).
+- **Russian: how a differently-shaped canon maps onto Vulgate addresses.** The
+  Synodal's Esther additions exist but as unnumbered bracketed prose inside
+  chapters 1–10, so no citation to Est 11–16 can reach them; and its Baruch has
+  five chapters because the Letter of Jeremiah is a separate book, so `Bar 6`
+  needs mapping rather than lookup. Neither is loss and neither is a defect.
+  Until both are decided, Russian is captured and unparsed.
+- **Romanian: whether it is worth a versification table an order of magnitude
+  larger than the corpus's.** 308 of 1,321 chapters (23 %) differ in verse count
+  from the Clementine, against `versification.json`'s three wholesale-divergent
+  books and fifteen mapped verses. Three clusters are expected and not defects
+  (Tobit, Judith, Sirach — a longer Greek recension against Jerome's abridged
+  Latin) but low-density divergence remains nearly everywhere. It also lacks
+  Esther's additions outright. Captured, unparsed, and correctly last.
+
+### Site wiring the five parsers imply
+
+- **`PsalmNumbering` is the literal `'vulgate'` and must widen to `'hebrew'`.**
+  `bible.crampon.fr` is the corpus's first Hebrew-numbered Psalter — the edition
+  states its own policy in a footnote, "sauf quelques exceptions" — and stores
+  what the source prints, because `common/versification.py`'s `to_vulgate`
+  **deliberately refuses Psalms**: that mapper is an algorithm, lives only in
+  `site/src/lib/versification.ts`, and a Python twin already existed once and was
+  deleted as drift. So the conversion belongs in `sync-corpus.mjs`, where the
+  mapper is in scope and where the canonical-address content tier is actually
+  built. No inverse mapper is needed: the existing forward `mapPsalm` turns the
+  source's Heb 9 (21 vv) + Heb 10 (18 vv) into Vulg 9 (39 vv) directly.
+- **`WORK_CONFIGS` gains two entries, on evidence stronger than the existing
+  ones.** `bible.straubinger.es` (1,008 four-Kingdoms citations across 489 files)
+  and `bible.martini.it` (447 across 295, in Roman `I.–IV. Reg.` and Arabic
+  `1.–4. Reg.`). Both print **modern** book titles while citing the old scheme in
+  their notes, so `II Reyes` / `II. Reg.` means 2 Samuel while the site's own
+  "2 Kings" means 2 Kings. Note the surface forms differ from the English
+  entries' — `numberedVariants` already emits Roman numerals, but the Italian
+  form carries a period (`I. Reg.`) and the bases are `Reyes` / `Reg`, so this is
+  not a copy of `CONFIG_EN_DOUAY`.
+- **`bible.kaldi.hu` needs the same look and has not had it.** Káldi prints
+  Douay-style titles ("Királyok III. (I.) könyve"), which is suggestive and is
+  not evidence; the rule wants references measurably read wrong without an entry.
+- **The corpus README's rebuild recipe must name `capture.py` before the
+  parsers.** The new editions parse from `raw/` and do no fetching, so a rebuild
+  into an empty corpus now has two steps per edition, not one. `CLAUDE.md`
+  records that this recipe was already broken once, silently, and that "if you
+  change what a scraper writes or where it lives, the recipe is part of the
+  change".
+
+### Content captured and deliberately not built
+
+- **Book introductions for two languages.** `raw/allioli/front/` holds **59
+  per-book introduction essays** and `raw/straubinger/` holds Straubinger's own
+  per-book introductions (1 Samuel's runs ~1,400 words). Both belong to
+  `bible-intro.{lang}`, a separate work keyed by language rather than by edition,
+  and neither was folded into its Bible. Building `bible-intro.de` and
+  `bible-intro.es` is additive and needs no new schema.
+- **Hungarian's second apparatus layer.** The source is 73 books × 3 pages —
+  `szoveg` (text), `jegyzet` (concise notes), `jegyzet2` (extended commentary) —
+  sharing one anchor scheme. The schema's `notes` is one field. Whatever the
+  first cut carried, the other layer is captured and unread.
+- **Crampon's `Dictionnaire du Nouveau Testament`**, a 325 KB NT glossary that
+  corresponds to nothing in the corpus schema. Captured; no home decided.
+- **Cross-references have no schema field, and two editions are full of them.**
+  Martini prints 27,746 (counted and stripped), Káldi prints its own as
+  `<span class=biblink>`, and the Synodal carries `{{bible parallels}}`. The
+  Bible schema defines no field, so all of it is currently discarded at parse
+  time. Deciding whether it earns one is a schema question with three witnesses.
+
+### Checks and filings to revisit
+
+- **`audit.py balance` still excludes the Bible**, on the reasoning that Esther
+  divergence reads as loss. This batch shows the exclusion is now costing more
+  than it saves: with nine editions an edition-specific defect has eight
+  witnesses against it, which is the configuration that found all three Catechism
+  defects. It also shows the reasoning was half right — Esther holds real loss
+  _and_ real divergence at once, and only reading the text tells them apart.
+- **Source defects observed and not yet filed.** `bible.kaldi.hu`'s Isaiah 7:14
+  prints "Emmánnelnek" for "Emmánuelnek", corroborated by Matthew 1:23 quoting
+  the same verse correctly. Martini drops 13 notes whose printed locator names a
+  verse absent from their page (2 Corinthians 6's notes numbered `6,19`–`6,23`
+  are verbatim about 2 Cor 7:1–4); they are logged as anomalies by the scraper
+  and are the best candidates for hand-adjudication.
+- **The three blocked languages should say so on the colophon.** `sv` has no
+  doctrinally acceptable public-domain text at all; `sl` and `ar` are blocked on
+  digitisation rather than on rights. A reader in any of the three currently gets
+  English scripture under their own chrome with no explanation.
+
 ## Sequencing and recommendation
 
 Nothing here gates anything else; order is a priority argument, not a dependency one.
