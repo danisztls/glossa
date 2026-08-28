@@ -857,6 +857,22 @@ not starts_with(http.request.uri.path, "/_app/")
   and not cf.client.bot
 ```
 
+**`not cf.client.bot` exempts verified bots, and it is the SEO clause rather than a
+concession.** Cloudflare's own rate limiting page warns that limiting verified bots may
+affect indexing, and this site is deliberately indexable and competing with vatican.va
+for its own paragraphs (§Posture). It gives up less than it looks: on the free plan the
+rule is 10 seconds counted per IP per data centre with a 10-second timeout, so it clips
+one address's burst and never bounded a distributed crawl; what actually guards the
+invocation ceiling is `run_worker_first` above. `cf.client.bot` is Cloudflare's own
+verification, not a User-Agent, so a scraper claiming to be Googlebot is still counted.
+
+**The expression is written in the only two fields the plan allows.** A Free rate
+limiting rule may reference Path and Verified Bot and nothing else — not method, not
+User-Agent, not the source IP (rate limiting rules, Availability) — which is why the
+static exclusions are path prefixes and why the bot clause is the only other term
+available. The five WAF custom rules have the full field vocabulary; that asymmetry is
+what puts the `/a` guard in a custom rule and the burst exclusion here.
+
 **Those three exclusions are load-bearing and must stay equal to the first three
 `run_worker_first` negations in `site/wrangler.jsonc`.** A reader who accepts the offline
 library pulls ~2,240 content assets in a burst from one IP, and all of them are under
@@ -1371,9 +1387,22 @@ they agree. This is their record.**
    and on a path this short a later "fix" to `r"/a*"` would swallow every route
    beginning with `a`.
 
-2. **The zone's single rate limiting rule already covers `/a`**, since its expression
-   excludes only `/_app/`, `/fonts/` and `/icons/`. The free plan allows exactly one, and
-   it is spent; that is why the write ceiling is enforced in the worker instead.
+2. **The zone's single rate limiting rule already covers `/a`**, because it excludes
+   three static prefixes and verified bots, and `/a` is none of them:
+
+   ```
+   not starts_with(http.request.uri.path, "/_app/")
+     and not starts_with(http.request.uri.path, "/fonts/")
+     and not starts_with(http.request.uri.path, "/icons/")
+     and not cf.client.bot
+   ```
+
+   Block at 120 requests per 10 seconds per IP per data centre — §The site is the full
+   record of it, including why those three prefixes must stay equal to the first three
+   `run_worker_first` negations. The bot clause costs the beacon nothing, since rule 1
+   already blocks verified bots on `/a`; it is there for indexing. The free plan allows
+   exactly one rate limiting rule and it is spent, which is why the write ceiling is a
+   counter in `usage-store.ts` rather than a second rule.
 
 3. **The kill switch is a third custom rule blocking `/a` outright.** A dashboard change
    rather than a deploy on purpose: a client-side stop needs the service worker to

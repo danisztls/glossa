@@ -109,12 +109,13 @@
 		// mistake this comment exists to make findable.
 		//
 		// THE FIRST THREE ARE ALSO THE ZONE'S RATE LIMITING RULE. That rule
-		// excludes `/_app/`, `/fonts/` and `/icons/` by prefix so it does not
-		// count the offline library's ~2,240-asset burst against the reader who
-		// asked for it. It is dashboard state and nothing here can assert the
-		// two agree, so changing these three means changing it too --
-		// docs/decisions.md, "The zone has one rate limiting rule". Drift is
-		// silent and rate-limits the site's headline feature.
+		// excludes `/_app/`, `/fonts/` and `/icons/` by prefix -- and verified
+		// bots, which is the SEO clause -- so it does not count the offline
+		// library's ~2,240-asset burst against the reader who asked for it. It is
+		// dashboard state and nothing here can assert the two agree, so changing
+		// these three means changing it too -- docs/decisions.md, "The zone has
+		// one rate limiting rule". Drift is silent and rate-limits the site's
+		// headline feature.
 		"run_worker_first": [
 			"/*",
 			"!/_app/*",
@@ -153,9 +154,11 @@
 	//   1. A WAF custom rule (one of the free plan's five) blocking `/a` for
 	//      verified bots, non-POST methods and non-same-origin requests.
 	//   2. The zone's single rate limiting rule already covers `/a`, because
-	//      its expression excludes only /_app/, /fonts/ and /icons/. There is
-	//      no second rate limiting rule available on this plan, which is why
-	//      the write ceiling is enforced in `usage-store.ts` instead.
+	//      its expression excludes only /_app/, /fonts/ and /icons/ by prefix
+	//      and verified bots -- and a beacon is none of those, rule 1 having
+	//      blocked verified bots on /a already. There is no second rate
+	//      limiting rule available on this plan, which is why the write ceiling
+	//      is enforced in `usage-store.ts` instead.
 	//
 	// The kill switch is a third custom rule blocking `/a` outright. It is a
 	// dashboard change rather than a deploy on purpose: a client-side stop
