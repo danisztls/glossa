@@ -181,10 +181,11 @@ export const sidenoteRoom = new SidenoteRoom();
  *
  * The two components differ in what a note IS (a source; a gloss), what its
  * marker is printed as (a number; a letter), and what it renders. They no
- * longer differ in any of what is here: a floating card that opens on the
- * pointer resting, on a click where there is no margin, and on nothing at all
- * where there is one — because there the click has a better answer, which is
- * to say WHICH of the notes stacked in the gutter is the one just named.
+ * longer differ in any of what is here: a floating card, opened by the
+ * pointer resting or by a click where there is no margin, and by nothing at
+ * all where there is one — because there the note is already on the screen,
+ * and the click has a better answer than repeating it, which is to say WHICH
+ * of the notes stacked in the gutter is the one just named.
  *
  * THIS IS `menu.svelte.ts`'S SHAPE, and for its reason. Svelte 4 had no unit
  * of reuse below a whole component, so this would have been a wrapper with a
@@ -284,9 +285,21 @@ export class NoteCard extends AnchoredPanel {
 	 * inside the card. Both elements call this, so the pair behaves as one
 	 * region -- which is also why leaving is on a grace period rather than
 	 * immediate.
+	 *
+	 * AND WHERE THERE IS A MARGIN, NOTHING OPENS AT ALL, which is the last of
+	 * the three ways in to learn what `popovertarget` and `expanded` already
+	 * knew. The note is on the screen, beside the line that raises it, in the
+	 * reading order; a card raised over the text to say the same words a
+	 * hand's width to the left is not a preview of anything the reader cannot
+	 * see, and it arrives precisely when the pointer is passing through the
+	 * prose. Below the breakpoint the card is the whole apparatus -- a phone
+	 * has no margin and no hover either -- so this costs that reader nothing.
+	 * What a click is for in the margin is unchanged and is the point:
+	 * `onClick` lights WHICH of the stacked notes belongs to the number just
+	 * passed, which is the one thing the gutter cannot answer on its own.
 	 */
 	onPointerEnter = () => {
-		if (!canHover()) return;
+		if (!canHover() || sidenoteRoom.margin) return;
 		this.#closeTimer = clear(this.#closeTimer);
 		if (this.open || this.#openTimer !== undefined) return;
 		this.#openTimer = setTimeout(() => {
@@ -315,8 +328,10 @@ export class NoteCard extends AnchoredPanel {
 	 * down. Clicking the lit note again puts it out, which is the reader's way
 	 * back to a quiet page without a listener on the window.
 	 *
-	 * A hover card standing open is dismissed with the same click: it was a
-	 * peek, and the click just asked for the margin instead.
+	 * The `hide()` is for one case only, and it is a real one: a card opened
+	 * by hover BELOW the breakpoint, still standing when the window was
+	 * widened past it. Nothing opens a card on this side of the breakpoint
+	 * any more (`onPointerEnter`), so there is otherwise nothing to close.
 	 */
 	onClick = () => {
 		if (!sidenoteRoom.margin) return;

@@ -16,23 +16,29 @@
 	 * citations average 26 characters: short enough to sit in a 13rem column
 	 * without ever being fetched.
 	 *
-	 * AND THE MARKER STILL OPENS A POPOVER, at every width — this is the one
-	 * place the two apparatuses part company, since a gloss in the margin is
-	 * simply read there. A citation is not always read there: the margin is
-	 * whatever slack the layout has left, so it narrows as the reader's text
-	 * grows (to about 7rem at the largest setting), and a column of stacked
-	 * notes beside a densely-cited paragraph does not always say plainly which
-	 * of them belongs to the number just passed. Clicking the number answers
-	 * that at the number. Below the breakpoint the popover is the whole
-	 * apparatus; above it, it is a second way to the same words.
+	 * AND WHERE THERE IS ONE, THE MARKER NO LONGER OPENS A POPOVER — the two
+	 * apparatuses now agree about this, having parted company over it until
+	 * 2026-08-28. The argument for keeping the card at every width was that a
+	 * citation is not always READ in the margin: that column is whatever slack
+	 * the layout has left, so it narrows as the reader's text grows (to about
+	 * 7rem at the largest setting), and a stack of notes beside a
+	 * densely-cited paragraph does not always say plainly which of them
+	 * belongs to the number just passed. That is a real problem and the card
+	 * was the wrong answer to it — a box thrown over the sentence being read,
+	 * on a hover the reader did not ask for, carrying words already legible a
+	 * hand's width to the left. THE HIGHLIGHT IS THE RIGHT ANSWER, and it was
+	 * already here: clicking the number lights its note in the gutter, which
+	 * says which one it is without repeating what it says. Below the
+	 * breakpoint nothing changes — there is no margin, no hover either, and
+	 * the popover is still the whole apparatus.
 	 *
-	 * IT OPENS ON HOVER TOO, and WHERE THERE IS A MARGIN A CLICK LIGHTS THE
-	 * NOTE IN IT instead of opening a duplicate over the page. Both of those,
-	 * and the timers and placement behind them, are `NoteCard` in
-	 * `sidenotes.svelte.ts` — shared entire with the other apparatus, which
-	 * wanted all of it for the same reasons. What is left in this file is what
-	 * a CITATION is: a number rather than a letter, a source rather than a
-	 * gloss, and the three ways the corpus can fail to have one.
+	 * WHERE THERE IS NO MARGIN IT OPENS ON HOVER AND ON A CLICK; where there
+	 * is one, a click lights the note instead. Both of those, and the timers
+	 * and placement behind them, are `NoteCard` in `sidenotes.svelte.ts` —
+	 * shared entire with the other apparatus, which wanted all of it for the
+	 * same reasons. What is left in this file is what a CITATION is: a number
+	 * rather than a letter, a source rather than a gloss, and the three ways
+	 * the corpus can fail to have one.
 	 *
 	 * THE CARD REPLACED A BOX INSIDE THE SENTENCE, which is the one thing an
 	 * apparatus must not be: opening it reflowed the words around it, so the
@@ -43,14 +49,15 @@
 	 * goes), which is the point: a reader who has learned what a small box
 	 * over the page means should not have to learn a second one.
 	 *
-	 * WHAT A SCREEN READER HEARS is the reason the margin note is not hidden
-	 * now that its text is reachable twice over. The note stays in the reading
-	 * order, right behind the marker, so the citation is still read without
-	 * anyone having to open anything; the popover only ever repeats it. The
-	 * cost is one extra "collapsed" on the marker, which is a truthful thing
-	 * to say about a control that really does open something. The reverse
-	 * trade — hiding the note and leaving the popover as the only route —
-	 * would charge an interaction for text already on the screen.
+	 * WHAT A SCREEN READER HEARS was already the reason the margin note is not
+	 * hidden, and it is now the whole of the arrangement rather than half of
+	 * it: the note stays in the reading order, right behind the marker, so the
+	 * citation is read without anyone having to open anything. It used to cost
+	 * one extra "collapsed" on a marker that really did open something; with
+	 * the card gone above the breakpoint, `expanded` is already `undefined`
+	 * there and the marker claims no state it has not got. The reverse trade —
+	 * hiding the note and leaving the popover as the only route — would charge
+	 * an interaction for text already on the screen.
 	 *
 	 * NATIVE `popover`, DECLARATIVELY INVOKED, and that is what deleted the
 	 * awkward part of this component. `popovertarget` is valid on `<button>`
