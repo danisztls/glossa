@@ -651,7 +651,7 @@
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
 			<div class="breadcrumb-row">
-				<nav class="breadcrumb" aria-label="Breadcrumb">
+				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
 					<a href="/documenta">{t('nav.magisterium')}</a>
 				</nav>
 			</div>

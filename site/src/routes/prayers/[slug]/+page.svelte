@@ -433,7 +433,7 @@
 
 		<div class="content-column" class:compare={compareActive}>
 			<div class="breadcrumb-row">
-				<nav class="breadcrumb" aria-label="Breadcrumb">
+				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
 					<a href="/preces">{t('nav.prayers')}</a>
 					{#if current.group}
 						<span class="sep">›</span>

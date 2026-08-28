@@ -24,7 +24,7 @@
 	 */
 	import { onMount } from 'svelte';
 	import { content } from '$lib/content.svelte';
-	import { hrefFor } from '$lib/address';
+	import { hrefFor, pontiffAnchor } from '$lib/address';
 	import {
 		getCccStructure,
 		getCompendiumStructure,
@@ -316,10 +316,20 @@
 				</p>
 			{/if}
 
+			<!--
+				Each row lands ON its pontificate, not at the top of the library.
+				`/documenta` groups by the same `pontiff_or_council` field this
+				list groups by and gives every group an `id` — `pontiffAnchor`
+				is that id, shared rather than spelled twice — so a reader who
+				picked "Leo XIII" here arrives at Leo XIII rather than at
+				whichever pontificate the library happens to open on. The
+				groups are `<details open>`, so the fragment always has
+				something to scroll to.
+			-->
 			<ul class="magisterium-groups">
 				{#each magisteriumGroups as group (group.pontiff)}
 					<li>
-						<a href="/documenta" class="magisterium-group-link">
+						<a href={`/documenta#${pontiffAnchor(group.pontiff)}`} class="magisterium-group-link">
 							<span class="magisterium-pontiff">{group.pontiff}</span>
 							<span class="magisterium-count">{group.count}</span>
 						</a>
@@ -441,6 +451,30 @@
 		padding: 0 0.35rem;
 	}
 
+	/* THE ROW IS THE LINK, so hover has to answer on the row and not only
+	   under the pointer: the name takes the accent and the underline, and
+	   the count's border comes with it, which is what makes the two ends of
+	   a full-width flex row read as one target rather than as a name that
+	   lit up beside a number that did not.
+
+	   The name is `--color-text` at rest on purpose (it is a heading here,
+	   not a citation), so the accent IS the hover state — there is no
+	   colour change to fold into. Same two properties as `.prayers-chip`
+	   above and `.book-btn` in the picker; the site now has one hover idea,
+	   spelled per surface. */
+	a.magisterium-group-link:hover .magisterium-pontiff,
+	a.magisterium-group-link:focus-visible .magisterium-pontiff {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+
+	a.magisterium-group-link:hover .magisterium-count,
+	a.magisterium-group-link:focus-visible .magisterium-count {
+		border-color: var(--color-accent);
+		color: var(--color-accent);
+	}
+
 	/* --- Prayers --------------------------------------------------------- */
 
 	.prayers-groups {
@@ -474,5 +508,15 @@
 		display: inline-block;
 		font-size: 0.9rem;
 		text-decoration: none;
+	}
+
+	/* The one link in this section that is a sentence rather than a chip, so
+	   it promotes the way a sentence's link does — the underline arrives.
+	   The arrow stays put: it is part of the label, and a link that moves
+	   under the pointer is a target that moves under the pointer. */
+	.prayers-browse-all:hover,
+	.prayers-browse-all:focus-visible {
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
 	}
 </style>

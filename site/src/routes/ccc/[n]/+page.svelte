@@ -207,7 +207,7 @@
 	<div class="reading-layout" class:compare={editions.compareActive}>
 		<article class="content-column">
 			<div class="breadcrumb-row">
-				<nav class="breadcrumb" aria-label="Breadcrumb">
+				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
 					<a href="/catechismus">{t('nav.ccc')}</a>
 					{#each editions.current.breadcrumb as node (node.title)}
 						{@const dt = displayTitle(node, editions.lang)}

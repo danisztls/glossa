@@ -106,4 +106,15 @@
 		font-family: var(--font-serif);
 		text-decoration: none;
 	}
+
+	/* 28 titles down a ruled list, one per row: at rest the underline would
+	   be 28 rules under 28 rules, which is why the row carries none. Hover
+	   puts it back on the one row the pointer is over — the same promotion
+	   the breadcrumb and the Magisterium groups make, and the reason none of
+	   these lists needed a background tint to answer the pointer. */
+	.prayer-link:hover,
+	.prayer-link:focus-visible {
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
 </style>

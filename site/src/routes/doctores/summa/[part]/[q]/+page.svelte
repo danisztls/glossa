@@ -335,7 +335,7 @@
 	<div class="reading-layout" class:compare={compareActive}>
 		<article class="content-column">
 			<div class="breadcrumb-row">
-				<nav class="breadcrumb" aria-label="Breadcrumb">
+				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
 					<a href="/doctores/summa">{t('summa.landing.title')}</a>
 					<span class="sep">›</span>
 					<!-- The part is a section of the landing page, which is the whole

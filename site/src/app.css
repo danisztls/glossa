@@ -1188,12 +1188,49 @@ h6 {
 	font-family: var(--font-serif);
 }
 
+/*
+ * THE UNDERLINE IS DEMOTED, NOT DELETED, AND HOVER PROMOTES IT.
+ *
+ * This rule governs far less than it looks like it does: every list-shaped
+ * link surface on the site has already opted out by hand — `.breadcrumb a`
+ * and `.unit-nav a` below, the header's nav, the index cards, the document
+ * and prayer rows, the jump box. What is left underlined is a link sitting
+ * inside a sentence, which is the one place the mark is doing work.
+ *
+ * So it stays, at 35% of the link's own colour: at reading distance it is
+ * a tint under the word rather than a rule through the page, and hover
+ * takes it to full strength. The interaction is the underline ARRIVING,
+ * which is the visible event the previous rule was reaching for by
+ * thickening it from `from-font` to the browser's default — a change most
+ * readers never saw, on a property that is a font metric on one side and a
+ * UA guess on the other.
+ *
+ * DROPPING IT AT REST WAS THE OTHER OPTION AND IS THE WRONG ONE HERE, for
+ * two reasons that are both about readers who never get the hover state.
+ * A phone has no hover at all, so the affordance would collapse to colour,
+ * which is WCAG 1.4.1. And `data-mono` has no colour either: the note above
+ * the monochrome palette measures its link grey at dE 8.6 from body text
+ * and calls that the ceiling of what a single hue can buy, so the underline
+ * is most of what says `link` in that mode.
+ *
+ * MIXED FROM `currentColor` RATHER THAN `--color-border`, which is what
+ * `RefText`'s `.ref-link` and `InlineNodes`' `.inline-ref` use for the same
+ * effect in body prose. Those two are set in the reader's own text colour
+ * and want an underline that reads as apparatus; a link here carries the
+ * rubric red, and a grey rule under a red word reads as a mistake. Mixing
+ * the link's own colour also needs no second token and follows the palette
+ * into all four themes, sepia and OLED included.
+ */
 a {
 	color: var(--color-link);
+	text-decoration-thickness: from-font;
+	text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+	text-underline-offset: 0.15em;
 }
 
-a:not(:hover) {
-	text-decoration-thickness: from-font;
+a:hover,
+a:focus-visible {
+	text-decoration-color: currentColor;
 }
 
 :focus-visible {
@@ -2480,6 +2517,16 @@ input {
  * printing the same trail — a structure node's ordinal is set apart from its
  * title identically wherever a crumb carries one. See the print media query
  * above for why `.breadcrumb` itself is deliberately never hidden.
+ *
+ * NO LINK PREVIEW ON A CRUMB, which is why all seven callers carry
+ * `data-link-preview="off"` on the `<nav>` (the markup is the one part of
+ * this that cannot live here). A crumb is not a citation the reader is
+ * deciding whether to follow — it is where they already are, one level up,
+ * and the ancestors it names are the chapter the paragraph on screen is
+ * PART OF. Previewing it offers a peek at the page the reader is looking
+ * at, over the top of the page they are looking at. It is the same
+ * reasoning `UnitNav` and the tables of contents give for opting out: the
+ * reader who reaches for a crumb reached for it in order to GO there.
  */
 .breadcrumb {
 	font-size: 0.85rem;
@@ -2490,6 +2537,25 @@ input {
 .breadcrumb a {
 	text-decoration: none;
 	color: var(--color-text-muted);
+}
+
+/*
+ * The crumb is the muted grey of the metadata line it sits on, so hover has
+ * to say two things at once — that this word is a link at all, and which one
+ * the pointer is on. It takes the link colour AND the underline the global
+ * rule above suppressed here, which is the same promotion every list-shaped
+ * link on the site makes: nothing at rest, the full mark on hover.
+ *
+ * `a[href]`, not `a`. The last crumb is the page itself and several routes
+ * render it as an `<a>` with no `href` and `aria-current="page"` (a node
+ * with no address does the same) — a bare `a:hover` matches those too, and
+ * would offer a link where there is nothing to follow.
+ */
+.breadcrumb a[href]:hover,
+.breadcrumb a[href]:focus-visible {
+	color: var(--color-link);
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
 }
 
 .breadcrumb .sep {

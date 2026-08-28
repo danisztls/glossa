@@ -16,7 +16,7 @@
 	import { listDocuments, loadTranslatedDescriptions } from '$lib/corpus';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
-	import { hrefFor } from '$lib/address';
+	import { hrefFor, pontiffAnchor } from '$lib/address';
 	import { documentKindLabel } from '$lib/document-labels';
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
@@ -103,15 +103,6 @@
 		rows: Row[];
 	}
 
-	function groupAnchor(pontiff: string): string {
-		return `pontiff-${pontiff
-			.normalize('NFD')
-			.replace(/\p{Diacritic}/gu, '')
-			.toLowerCase()
-			.replace(/[^\p{Letter}\p{Number}]+/gu, '-')
-			.replace(/^-|-$/g, '')}`;
-	}
-
 	// REVERSE chronological throughout, at both levels. A library that opens on
 	// Leo XIII and needs ~450 rows of scrolling to reach anything a reader is
 	// likely to have heard of is ordered for the archivist, not the reader;
@@ -142,7 +133,7 @@
 	});
 
 	const sidebarItems = $derived(
-		groups.map((group) => ({ href: `#${groupAnchor(group.pontiff)}`, label: group.pontiff }))
+		groups.map((group) => ({ href: `#${pontiffAnchor(group.pontiff)}`, label: group.pontiff }))
 	);
 </script>
 
@@ -169,7 +160,7 @@
 		whole purpose is finding a document should not break Ctrl+F.
 	-->
 		{#each groups as group (group.pontiff)}
-			<details class="doc-group" id={groupAnchor(group.pontiff)} open>
+			<details class="doc-group" id={pontiffAnchor(group.pontiff)} open>
 				<summary>
 					<h2>{group.pontiff}</h2>
 					<span class="group-count">{group.rows.length}</span>
@@ -318,6 +309,28 @@
 		border-radius: 0.25rem;
 		padding: 0.1rem 0.4rem;
 		white-space: nowrap;
+	}
+
+	/* The row is the link, and it answers on both ends — the same hover the
+	   home page's Magisterium groups make, because it is the same object:
+	   a serif title at `--color-text` with a bordered chip pushed to the
+	   far side of a full-width flex link. The date and the description below
+	   are not part of the target and stay put.
+
+	   That this rule has to be written twice, in two files, for two lists
+	   that differ in nothing a reader can see, is the fragmentation worth
+	   fixing rather than the fragmentation worth living with. */
+	a.doc-link:hover .doc-title,
+	a.doc-link:focus-visible .doc-title {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+
+	a.doc-link:hover .doc-kind,
+	a.doc-link:focus-visible .doc-kind {
+		border-color: var(--color-accent);
+		color: var(--color-accent);
 	}
 
 	/* The date is the row's only metadata now, so it gets to carry a little

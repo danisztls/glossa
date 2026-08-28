@@ -621,6 +621,28 @@
 		min-height: 2.1rem;
 	}
 
+	/* THE ONLY FEEDBACK 73 BUTTONS HAD WAS THE CURSOR. A book chip is a
+	   target a reader picks out of a dense grid, and until now nothing
+	   answered the pointer at all — on a grid this size that reads as a
+	   printed table rather than as something to click.
+
+	   The border does the answering, not a fill: these chips already spend
+	   their background on state (`.open` fills, `.current` outlines), so a
+	   hover fill would be a fourth thing competing with the two that carry
+	   meaning. `.prayers-chip` on the home page states the same hover in the
+	   same two properties, and this is deliberately a copy of it rather than
+	   a second idea.
+
+	   `:not(.open)` rather than source order: the open book is already
+	   filled with the accent, and hovering it must not paint an accent
+	   border around an accent fill. `.current` is left to hover normally —
+	   its accent border is what hover would set anyway, so what changes
+	   under the pointer is just the label's weight of colour. */
+	.book-btn:not(.open):hover {
+		border-color: var(--color-accent);
+		color: var(--color-accent);
+	}
+
 	/* Fills its grid cell and centres, rather than the full-width row this
 	   was when the sidebar list ran vertically. Long names (1 Thessalonians)
 	   are clipped rather than allowed to widen the whole track — the button

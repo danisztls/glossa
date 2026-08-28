@@ -269,7 +269,7 @@
 	<div class="reading-layout" class:compare={editions.compareActive}>
 		<article class="content-column">
 			<div class="breadcrumb-row">
-				<nav class="breadcrumb" aria-label="Breadcrumb">
+				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
 					<a href="/catechismus">{t('nav.ccc')}</a>
 					<!-- The chapter's ancestors, ending in the chapter itself: this
 					     page is a whole chapter, so the trail stops where the page
