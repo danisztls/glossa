@@ -151,7 +151,8 @@
 	align-items: flex-start;
 	gap: 0.1rem;
 	width: 100%;
-	padding: 0.45rem 0.6rem;
+	padding-block: 0.45rem;
+	padding-inline: 0.4rem;
 	border: none;
 	border-radius: var(--radius-md);
 	background: transparent;
@@ -170,10 +171,39 @@
 	color: var(--color-accent);
 }
 
+/*
+ * THE ROW IS THE FULL WIDTH OF THE PANEL, and the language badge is pinned to
+ * its far edge (`.edition-lang` below) rather than trailing the title. As an
+ * `inline-flex` sized to its content the badge sat wherever the title happened
+ * to end, so a menu of editions printed its codes down a ragged diagonal —
+ * "IT" a third of the way in, "LA" against the right margin — when the one
+ * thing a reader scans that column for is the language.
+ *
+ * BASELINE, NOT CENTRE, for the same reason on the other axis: the Bible
+ * menu's rows carry a full title ("La Sainte Bible, traduction de l'abbé
+ * Crampon"), which runs to three lines in a 14rem panel, and centring put the
+ * badge halfway down the block, beside the second line. The first baseline
+ * keeps it on the first line whatever the title does, and leaves every
+ * single-line row where it was.
+ */
 .menu-item-main {
-	display: inline-flex;
-	align-items: center;
+	display: flex;
+	inline-size: 100%;
+	align-items: baseline;
 	gap: 0.4rem;
+}
+
+/*
+ * The check glyph is the one item in that row with no baseline of its own: an
+ * SVG is a replaced element, so flexbox synthesizes one from its bottom edge
+ * and the icon rides ~2px above the text it marks. Centre it on the first line
+ * explicitly instead — half the leading of a 1.5 line-height over a 1em icon.
+ * (`.check-slot` is LanguageMenu's fixed-width wrapper around the same glyph.)
+ */
+.menu-item-main > svg,
+.menu-item-main > .check-slot {
+	align-self: flex-start;
+	margin-block-start: calc((1.5em - 1em) / 2);
 }
 
 .menu-item-meta {
@@ -186,12 +216,17 @@
    each listed editions this way while carrying a character-for-character
    identical scoped copy of this rule. */
 .edition-lang {
+	/* Pinned to the row's trailing edge, and never squeezed: the title beside
+	   it is the item that wraps. */
+	margin-inline-start: auto;
+	flex: none;
 	font-size: var(--font-size-min);
 	color: var(--color-text-muted);
 	text-transform: uppercase;
 	border: 1px solid var(--color-border);
 	border-radius: var(--radius-sm);
-	padding: 0 0.3rem;
+	padding-block: 0;
+	padding-inline: 0.3rem;
 }
 
 /* ---------------------------------------------------------------------------
