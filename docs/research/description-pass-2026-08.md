@@ -1179,30 +1179,192 @@ Admitting every block-less title gave four numbered encyclicals an
 content-tier file for a heading `structure.json` already carries is a cost with
 no reader. Eighteen title-only units corpus-wide, in nine documents.
 
-### Still open
+## The thirty open works, classified — 2026-08-28
 
-- **The masthead subtitle is still a phantom heading** in four English
-  encyclicals: `rerum-novarum.en` (its entire one-node outline),
-  `ut-unum-sint.en`, `dominum-et-vivificantem.en`, `redemptoris-missio.en`.
-  `extract_document_header` ends the masthead at the first block that names
-  neither the document nor its author, and a subtitle names neither. Three
-  candidate discriminators were tried and rejected on evidence: the page's own
-  `<meta name="description">` carries the subtitle for two of the four and not
-  the other two; absorbing one further centred block reaches three but not
-  `rerum-novarum.en`, whose subtitle sits below the salutation; and "heads
-  nothing" is false for all four. Left as four findings rather than a heuristic
-  that happens to fit.
-- **The subtitle rule levels a branch's first heading from its parent, not from
-  its tier.** `presbyterorum-ordinis.pt`'s `Intenção do Concílio` is printed
-  exactly like the 27 other bold-italic leaves and comes out one level
-  shallower because it follows PROÉMIO with no section between; the same shape
-  costs `optatam-totius.pt` two findings, `sacrosanctum-concilium.pt` and
-  `christus-dominus.pt` their modal `-1` offsets. `max(prev + 1, prelim)` was
-  tried: it fixes those (`veritatis-splendor.en` 23 → 1, `gaudium-et-spes.pt`
-  63 → 24, `presbyterorum-ordinis.pt` 12 → 0) and breaks five others
-  (`lumen-gentium.pt` 0 → 36, `unitatis-redintegratio.pt` 0 → 13), because
-  `prelim` is a rank over the whole document's keys and an intermediate tier
-  that exists elsewhere need not exist in this branch. The next attempt should
-  make `prelim` branch-local rather than lift the one-level clamp.
-- The `<strong>` and `<a>`-spacing findings from batches 10 and 11 stand as
-  recorded; neither was re-tried here.
+What `audit.py toc` still reports, taken apart. **265 findings across 30 of the
+190 oracles**, and they are not thirty problems: one mechanism accounts for 181
+of them, and the whole remainder fits in six classes. Counts below are findings,
+not headings, and they sum to the total.
+
+| class                                               | findings | works |
+| --------------------------------------------------- | -------: | ----: |
+| 1. The leaf tier is levelled by branch, not by page |      181 |    13 |
+| 2. Headings never detected                          |       23 |    12 |
+| 3. Label and title left as two nodes                |       29 |     6 |
+| 4. The masthead subtitle becomes a heading          |        4 |     4 |
+| 5. A document that opens on its deepest tier        |       14 |     1 |
+| 6. The same heading, spelled differently            |        8 |     2 |
+| 7. Singletons                                       |        6 |     5 |
+
+### 1. The leaf tier is levelled by its branch, not by the page — 181 findings
+
+**The largest class by a wide margin, and one mechanism.** `evangelium-vitae.en`
+and `christus-dominus.pt` are the clean statement of it, because each prints
+exactly two heading styles and needs three levels out of them:
+
+```
+(0) INTRODUCTION                                    <- style 0, level 1
+(5)   The incomparable worth of the human person    <- style 5, level 2 by the SUBTITLE rule
+(5)   New threats to human life
+(0) CHAPTER I - THE VOICE OF YOUR BROTHER'S BLOOD   <- style 0, level 1
+(0) PRESENT-DAY THREATS TO HUMAN LIFE               <- style 0, level 2 by the SUBTITLE rule
+(5)   "Cain rose up against his brother Abel"       <- style 5, level 2 by RULE 2
+```
+
+The document's opening branch has no intermediate tier, so its first leaf is
+levelled from the heading above it — rule 1, "a heading directly following
+another heading is that heading's subtitle" — and lands at 2. Rule 2 then
+freezes style 5 at level 2 for the whole document, so in every later branch,
+where an intermediate tier _does_ exist, the leaf sits beside its own parent
+instead of under it. **Eight documents come out with fewer levels than the page
+prints:**
+
+| work                                     |  oracle | parsed |
+| ---------------------------------------- | ------: | -----: |
+| `vatii.sacrosanctum-concilium.pt`        |  9/6/83 |  10/89 |
+| `vatii.christus-dominus.pt`              | 4/13/44 |   4/57 |
+| `encyclical.evangelium-vitae.en`         |  6/4/35 |   6/39 |
+| `encyclical.divino-afflante-spiritu.pt`  | 5/12/22 |   5/34 |
+| `vatii.presbyterorum-ordinis.pt`         |  5/6/22 |   5/28 |
+| `encyclical.mystici-corporis-christi.pt` | 5/10/14 |   6/22 |
+| `vatii.lumen-gentium.en`                 |   9/6/1 |    9/8 |
+| `encyclical.pascendi-dominici-gregis.pt` |     5/7 |      8 |
+
+Five more have the right NUMBER of tiers and the wrong membership, from the same
+cause seen from the other side — `division_floor` pushes a leaf deeper inside a
+labelled division while rule 2 holds it shallow outside one, so the same style
+comes out at two, three and four depending on where it sits:
+`gaudium-et-spes.pt` (60 findings, leaves read 4 and parsed 2 or 3),
+`veritatis-splendor.en` (22), `ad-gentes.pt` (8), `optatam-totius.pt` (2),
+`magnifica-humanitas.en` (2).
+
+**One fix was tried and rejected with numbers.** Letting the subtitle rule take
+the deeper of "one under my parent" and the heading's own global rank —
+`max(prev + 1, prelim)` — fixes the class it was aimed at (`veritatis-splendor.en`
+23 → 1, `gaudium-et-spes.pt` 63 → 24, `presbyterorum-ordinis.pt` 12 → 0) and
+breaks five other documents worse (`lumen-gentium.pt` 0 → 36,
+`unitatis-redintegratio.pt` 0 → 13, `ad-gentes.pt` 17 → 26,
+`deus-caritas-est.en` 3 → 7, `lumen-gentium.en` 2 → 7). The reason is exact:
+`prelim` is a rank over every `depth_key` in the DOCUMENT, and an intermediate
+tier that exists in one branch need not exist in another — `lumen-gentium.pt`
+has four keys, so its leaves rank 4 and jump from a chapter at 1 straight to 4.
+
+**So the next attempt is to make `prelim` branch-local**: rank a heading among
+the styles seen since the enclosing division opened, not among all the
+document's keys. That keeps the one-level clamp (which is what stops the
+staircase) while letting a branch that really has three tiers use three.
+
+### 2. Headings never detected — 23 findings, 12 works
+
+Every one is a heading the page prints and the parse has no node for. Five
+distinct markups, all verified in `raw/`:
+
+- **No emphasis at all, distinguished only by sitting alone** (10). Plain text
+  in a `<p>`: `grande-munus.en` prints `<p align="left"><font size="3">Journey
+to Rome</font></p>` and loses four; `pascendi-dominici-gregis.en` prints
+  `<p align="left">Priests as Editors</p>` and loses three; `mense-maio.en` (2)
+  and `sacerdotalis.en` (1) print theirs centred and plain, which
+  `promote_plain_centered_run` would take but for its run-of-three floor.
+- **`<strong>` where the parser reads `<b>`** (6). `pacem.pt`'s `INTRODUÇÃO` and
+  all five of `pascendi-dominici-gregis.pt`'s divisions. Measured in batch 10 and
+  refused there: widening the bold test recovers these and flattens 59 headings
+  in `pacem.pt` and invents one in `dives-in-misericordia.pt`. **It should be
+  re-tried after class 1 lands**, since both of those failures are levelling
+  failures rather than detection ones.
+- **Italic with no run of three to join** (4). `populorum.en`'s `The Church's
+Concern`, `vigilanti-cura.pt`'s one italic heading among 41 bold siblings,
+  two of `mystici-corporis-christi.pt`'s lettered sub-headings. The run rule's
+  stated price; recorded, not a defect.
+- **The emphasis run closes one character early** (2). `mater.en` prints
+  `<i>Obligation of the Wealthy Nation</i>s` and `pacem.en` prints
+  `<i>Inadequacy of Modern States…</i> the ` — a letter and a stray word outside
+  the run, which `_emphasis_covers` correctly refuses because neither is
+  punctuation, an enumerator, a footnote marker or a citation. **These are source
+  defects and belong in `pipeline/corrections/`, not in a wider predicate.**
+- **A quotation mark between two bold runs** (1). `veritatis-splendor.en` prints
+  `<b>CHAPTER II</b> - <b>"DO NOT BE CONFORMED TO THIS WORLD </b>" <b><i>(Rom
+12:2)</i></b> - <b>The Church and…`, and `_PUNCT_OUTSIDE_RE` allows
+  `.,;:–—-` and whitespace between runs but not `"`. One character in one
+  document; adding the quote characters is cheap and should be measured.
+
+### 3. Label and title left as two nodes — 29 findings, 6 works
+
+The oracle records one heading carrying a `label`; the parse emits the label and
+the title as separate structure nodes, so each one costs a MISSING and two
+EXTRAs — 10 and 19 of the corpus's 37 and 29. `ad-gentes.pt` (`Art. 1` / `O TESTEMUNHO CRISTÃO`, three times),
+`quadragesimo-anno.pt` (`II.`, `III.`), `gaudium-et-spes.pt` (`INTRODUÇÃO` /
+`A CONDIÇÃO DO HOMEM NO MUNDO ACTUAL`), `mystici-corporis-christi.pt` (`EPÍLOGO`
+/ `A VIRGEM SENHORA NOSSA`), `sacrosanctum-concilium.pt` (`Apêndice` / its
+declaration), `deus-caritas-est.en` (`PART II` / `CARITAS` / a subtitle line —
+the only three-line case).
+
+`ad-gentes.pt`'s is the one already traced: its `Art. N` lines are set in
+`<font size="2">` and the title beneath them is not, so `merge_heading_lines`
+sees two different styles where every other decree gives it two of the same.
+The other five have not been read at markup level yet, and should be before any
+fix — a merge rule loosened on one document's evidence is how a label gets
+welded to a heading that is not its title.
+
+### 4. The masthead subtitle becomes a heading — 4 findings, 4 works
+
+`rerum-novarum.en` (whose oracle is `"headings": []`, so this is its entire
+outline), `ut-unum-sint.en`, `dominum-et-vivificantem.en`,
+`redemptoris-missio.en`. `extract_document_header` ends the masthead at the
+first block naming neither the document nor its author, and a subtitle names
+neither.
+
+Three discriminators were tried and rejected on evidence: the page's own
+`<meta name="description">` carries the subtitle for two of the four and not the
+other two (`redemptoris-missio.en`'s omits it; `rerum-novarum.en`'s says `ON
+CAPITAL AND LABOR` where the block says `Rights and Duties of Capital and
+Labor`); absorbing one further centred block reaches three but not
+`rerum-novarum.en`, whose subtitle sits BELOW the salutation and so is not
+adjacent to the masthead at all; and "it heads nothing" is false for all four,
+each being followed directly by numbered prose. Left as four findings rather
+than a rule that happens to fit three.
+
+### 5. A document that opens on its deepest tier — 14 findings, 1 work
+
+`quadragesimo-anno.pt` comes out inverted: 43 headings at level 1 where the
+oracle reads 4, and its `I.`/`II.`/`III.` divisions at 2 and 3. The first
+heading in the document is a leaf (`A Encíclica « Rerum novarum ».`), and the
+`last_level is None` branch deliberately gives the first heading its styling
+rank rather than 1 — a trade the code documents (forcing 1 costs Ad Petri
+Cathedram a whole tier) but which here anchors the leaf tier at 1 and pushes
+everything above it down. It is the only document in the corpus where that trade
+comes out this badly, and it is worth re-reading that branch once class 1 is
+fixed, since both turn on the same `assigned` cache.
+
+### 6. The same heading, spelled differently — 8 findings, 2 works
+
+The heading is found and placed; only its text differs.
+`divino-afflante-spiritu.pt` stores `" Providentissimus Deus "` with spaces
+inside the quotes, which is the `<a>`-inside-a-heading spacing measured and
+refused in batch 11 (adding `a` to `_INLINE_TEXT_TAGS` takes validation failures
+from 72 to 171). `evangelium-vitae.en`'s three are character-level: a `?` where
+the page prints a curly quote, a dropped opening `"`, and a missing space after
+a colon — all three plausibly source encoding rather than parsing, and none read
+yet.
+
+### 7. Singletons — 6 findings, 5 works
+
+- `lumen-gentium.en` emits the Secretary General's signature line
+  (`+ PERICLE FELICI …`) as a heading; the oracle does not list it.
+- `pascendi-dominici-gregis.pt` emits its salutation (`Veneráveis Irmãos, saúde e
+bênção apostólica`) as one.
+- `laudato-si.en`'s two closing prayers are read at 3 and parsed at 1 — back
+  matter, where the walk restarts at the top tier by design.
+- `populorum.pt`'s `Conclusão` is read at 1 and parsed at 2.
+- `sacrosanctum-concilium.pt` places `Rito da Confirmação` before §71 where the
+  reader put it before §70 — the only POSITION finding in the corpus, and not
+  yet read at markup level.
+
+### What to do first
+
+**Class 1**, and nothing else until it lands: 181 of 265 findings, one
+mechanism, a stated hypothesis (branch-local `prelim`), and thirteen documents
+that verify it. Two other classes are waiting behind it — the `<strong>`
+widening in class 2, whose measured cost is entirely levelling damage, and
+`quadragesimo-anno.pt` in class 5, which turns on the same cache. Class 2's
+source defects (`mater.en`, `pacem.en`) can be filed as corrections at any time
+and are independent of all of it.
