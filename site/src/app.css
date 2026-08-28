@@ -1082,6 +1082,28 @@ html {
 	   measurement) evaluates against the `0px` here. */
 	--sticky-chrome-height: var(--reading-bar-height, 0px);
 	scroll-padding-top: calc(var(--sticky-chrome-height) + 1rem);
+
+	/*
+	 * THE SCROLLBAR'S LANE IS RESERVED WHETHER OR NOT THERE IS A SCROLLBAR IN
+	 * IT, because a page that does not scroll is otherwise a page laid out in
+	 * a viewport a scrollbar wider than every page that does — and that
+	 * difference reaches the reader as the whole site stepping sideways on
+	 * navigation: the centred reading column by half a scrollbar, the header's
+	 * end-packed controls by a whole one.
+	 *
+	 * `/scriptura` is the route that showed it, and the only one that could.
+	 * Seventy-three books as chips is the single index short enough to fit a
+	 * desktop viewport, so arriving there took the scrollbar away and every
+	 * route around it put it back. Its chapters never did, which is why the
+	 * shift looked like something about the landing page rather than about
+	 * the window.
+	 *
+	 * On a system with overlay scrollbars this reserves nothing, which is
+	 * correct rather than a shortcoming — there is no gutter there to be
+	 * inconsistent about. It also keeps a modal sheet from moving the page
+	 * under itself at the moment it takes the document's scroll away.
+	 */
+	scrollbar-gutter: stable;
 }
 
 body {
