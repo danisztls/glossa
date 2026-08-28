@@ -114,6 +114,7 @@ from common import (
     Fetcher,
     FetchPolicy,
     build_root,
+    captured_at,
     corrections_receipt,
     download_resumable,
     fold,
@@ -1962,7 +1963,10 @@ def main() -> int:
     overall_ok = True
     for lang in langs:
         state, fetcher = run_scrape(lang)
-        retrieved_at = datetime.now(UTC).strftime("%Y-%m-%d")
+        # See common/captured.py: a cache-only re-parse is not a retrieval.
+        retrieved_at = captured_at(RAW_ROOT / raw_name(lang)) or datetime.now(
+            UTC
+        ).strftime("%Y-%m-%d")
         write_outputs(lang, state, retrieved_at)
         ok, problems, refs_present = validate(state)
         print_summary(lang, state, ok, problems, refs_present)

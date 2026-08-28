@@ -59,7 +59,6 @@ from __future__ import annotations
 
 import argparse
 import html as ihtml
-import json
 import re
 import sys
 import unicodedata
@@ -80,6 +79,7 @@ from common import (
     FetchPolicy,
     book_form_pattern,
     build_root,
+    captured_at,
     corrections_receipt,
     download_resumable,
     fold,
@@ -3340,15 +3340,19 @@ def build_manifest(
     # original capture date when an existing manifest knows it; otherwise a
     # harmless parser change would falsely claim every raw page was fetched
     # again today, undermining the raw/works distinction.
-    previous_dates: dict[str, str] = {}
-    previous_manifest = BUILD_ROOT / cfg["work_id"] / "manifest.json"
-    if previous_manifest.exists():
-        old = json.loads(previous_manifest.read_text(encoding="utf-8"))
-        previous_dates = {
-            source["url"]: source["retrieved_at"]
-            for source in old.get("sources", [])
-            if "url" in source and "retrieved_at" in source
-        }
+    # Each page's own capture date, read off the page (common/captured.py).
+    # `fetched_pages` already pairs every URL with the file it was cached as,
+    # so this is a lookup and not a reconstruction. Until 2026-08-28 it came
+    # from the previous manifest instead, which meant a rebuild into an empty
+    # directory stamped every page as fetched today -- and, because the
+    # manifest carried one date for the whole work, that date was the last
+    # crawl session's rather than the page's.
+    cache_dir = RAW_ROOT / cfg["raw_dir"]
+    previous_dates: dict[str, str] = {
+        url: date
+        for url, name in fetched_pages
+        if (date := captured_at(cache_dir / name)) is not None
+    }
     today = datetime.now(UTC).strftime("%Y-%m-%d")
     notes = [
         (

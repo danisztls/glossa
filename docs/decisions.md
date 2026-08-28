@@ -100,6 +100,25 @@ latent defect into a loss. Each was fixed and then the rebuild was verified in f
 383 works, 1,850 files, zero differences outside the three timestamps, zero network
 requests, 16 seconds.
 
+**A date the source was asked on belongs to the page.** `retrieved_at` is the
+day this project made a request against someone else's server — the one fact in
+a manifest recording an action taken toward a third party rather than a
+computation over the result — and until 2026-08-28 it survived only in
+`build/<id>/manifest.json`, kept by four scrapers reading their own previous
+output and by the fifth (354 of 383 works) not at all. It now lives in
+`raw/<source>/captured-at.json`, written by `Fetcher` as it writes the page.
+Two things were wrong and both are fixed: it was regenerable only from a copy
+of itself, and it was per WORK, recording whichever crawl session last touched
+it rather than when the page was taken. The true per-page dates came from
+filesystem mtimes, which git does not preserve — one working tree held all
+6,328, and they corrected 354 works.
+
+**A normalised field is a hole a reproducibility check cannot see.** That the
+capture dates were being lost was invisible because the check excluded
+`retrieved_at`, on the strength of a README sentence claiming it recorded only
+when the parse ran. The sentence was backwards. A check can disprove a claim
+about a value; it cannot disprove a claim that the value does not matter.
+
 **A status the source answered is an input.** `translations` records what a missing
 sibling-language edition turned out to BE — a page shell with no translation, a
 measured 404 — and that is knowledge bought with requests against vatican.va, the same

@@ -10,6 +10,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from .absent import AbsentSources
+from .captured import record_capture
 from .files import read_bytes_or_none
 
 #: Statuses that mean the origin ANSWERED, and the answer is "no such page".
@@ -292,6 +293,13 @@ class Fetcher:
             path = self.cache_dir / cache_name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
+            # The capture date, written by the code that made the request, at
+            # the moment it made it. This is the only point where the answer is
+            # known for certain: a cache hit returns above and never gets here,
+            # so a re-parse cannot claim a retrieval that did not happen. See
+            # common/captured.py for why it sits beside the page and not in the
+            # manifest, which is where it used to live and get lost.
+            record_capture(path)
             # A page that used to 404 and now fetches is the one event that
             # clears a ledger entry.
             self.absent.forget(url)

@@ -240,6 +240,7 @@ from common import (
     OverrideDriftError,
     apply_overrides,
     build_root,
+    captured_at,
     corpus_dir,
     corrections_receipt,
     fold,
@@ -281,6 +282,12 @@ BUILD_ROOT = build_root()
 #: than a page fetched from them -- the same argument absent-sources.json is
 #: kept here by, and the reason a rebuilt `build/` still carries the field.
 TRANSLATIONS_CHECKED = load_translations_checked()
+
+#: `source url -> capture date`, read once. THIS SCRAPER NEVER PRESERVED THE
+#: DATE: unlike the other four it re-stamped `retrieved_at` with today on
+#: every `--overwrite`, so a re-parse claimed a retrieval that did not happen
+#: for 354 of the 383 works. See common/captured.py.
+
 CRAWL_LOCK_PATH = (
     RAW_ROOT / ".crawl.lock"
 )  # see acquire_crawl_lock/touch_crawl_lock below
@@ -5920,6 +5927,13 @@ def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
 
     ok, problems = validate_document(ref.slug, parse.state, structure)
     promulgated = parse_promulgation_date(ref.date_digits)
+    # From the page itself (common/captured.py). The parse-time stamp stands
+    # only for a page with no capture on file -- a genuinely new document. This
+    # scraper never preserved the date at all before 2026-08-28: every
+    # --overwrite claimed a retrieval that did not happen, for 354 works.
+    parse.retrieved_at = (
+        captured_at(RAW_ROOT / cache_name_for(ref, lang)) or parse.retrieved_at
+    )
     manifest = build_manifest(
         work_id,
         ref.document_kind,

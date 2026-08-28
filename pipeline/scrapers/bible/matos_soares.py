@@ -54,6 +54,7 @@ from common import (
     FetchPolicy,
     apply_verse_corrections,
     build_root,
+    captured_at,
     chapter_opening_letter,
     corrections_receipt,
     httpx_transport,
@@ -623,6 +624,11 @@ def book_payloads(books: list[BookResult]) -> dict[str, dict]:
     }
 
 
+#: The transcription this edition's VERSES come from; the apparatus is a
+#: second source, listed separately in the manifest.
+TEXT_SOURCE_URL = "https://www.liriocatolico.com.br/biblia_online/biblia_matos_soares/"
+
+
 def fetched_on() -> str:
     """The date the TEXT was fetched, which a re-run does not change.
 
@@ -631,6 +637,9 @@ def fetched_on() -> str:
     and stamping today would claim a retrieval that did not happen.
     `generated_at` already says when the parse ran.
     """
+    recorded = captured_at(raw_dir() / "index.html")
+    if recorded:
+        return recorded
     existing = work_dir() / "manifest.json"
     if existing.exists():
         try:
@@ -714,10 +723,7 @@ def write_manifest(
         "language": "pt",
         "edition": "1956 (revised from the original languages)",
         "sources": [
-            {
-                "url": "https://www.liriocatolico.com.br/biblia_online/biblia_matos_soares/",
-                "retrieved_at": retrieved_at,
-            },
+            {"url": TEXT_SOURCE_URL, "retrieved_at": retrieved_at},
             # The apparatus. Listed as a source because it is one: a reader
             # following provenance for a footnote must arrive here and not at
             # liriocatolico, which does not carry it.

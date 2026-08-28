@@ -58,6 +58,7 @@ from common import (
     Fetcher,
     FetchPolicy,
     build_root,
+    captured_at,
     raw_root,
     require_corpus,
     write_stamped_json,
@@ -303,7 +304,16 @@ def validate(
 
 
 def write_output(intros: dict[str, list[str]], *, generated_at: str) -> None:
-    today = datetime.now(UTC).date().isoformat()
+    # The ledger records when this page was actually fetched; today only
+    # for a source no capture is on file for. Before 2026-08-28 this stamped
+    # today unconditionally, so every re-parse claimed a retrieval that did
+    # not happen -- see common/captured.py.
+    # From the page itself (common/captured.py): the fetcher stamped it when
+    # it made the request, so a cache-only re-parse cannot move it.
+    today = (
+        captured_at(raw_dir() / cache_name(SOURCE_EDITION, "Gn", 1))
+        or datetime.now(UTC).date().isoformat()
+    )
 
     # Canonical order, per docs/corpus-schema.md's `books` field -- taken from
     # the CPDV's own book files rather than restated here. Alphabetical is the

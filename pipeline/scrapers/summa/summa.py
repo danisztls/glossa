@@ -90,6 +90,7 @@ from common import (
     Fetcher,
     FetchPolicy,
     build_root,
+    captured_at,
     corrections_receipt,
     load_corrections,
     raw_root,
@@ -912,7 +913,7 @@ def manifest_for(
     }
 
 
-def _retrieved_at(out_dir: Path, fetched: int) -> str:
+def _retrieved_at(out_dir: Path, fetched: int, lang: str) -> str:
     """When this edition's source was actually RETRIEVED.
 
     Not "when this ran". A re-parse serves every page from `raw/` and makes
@@ -929,6 +930,11 @@ def _retrieved_at(out_dir: Path, fetched: int) -> str:
     """
     if fetched:
         return datetime.now(UTC).strftime("%Y-%m-%d")
+    recorded = captured_at(
+        raw_root() / f"summa-{lang}" / ("summa.xml" if lang == "en" else "iopera.html")
+    )
+    if recorded:
+        return recorded
     try:
         previous = json.loads((out_dir / "manifest.json").read_text(encoding="utf-8"))
         sources = previous.get("sources") or []
@@ -944,7 +950,7 @@ def write_outputs(
 ) -> bool:
     stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     out_dir = build_root() / f"summa.{lang}"
-    retrieved_at = _retrieved_at(out_dir, fetched)
+    retrieved_at = _retrieved_at(out_dir, fetched, lang)
 
     manifest = manifest_for(lang, questions, retrieved_at, notes)
     applied = _EN_APPLIED if lang == "en" else []

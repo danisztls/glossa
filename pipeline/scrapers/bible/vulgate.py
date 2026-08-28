@@ -61,6 +61,7 @@ from common import (
     CorrectionDriftError,
     apply_verse_corrections,
     build_root,
+    captured_at,
     chapter_opening_letter,
     corrections_receipt,
     load_corrections,
@@ -451,7 +452,13 @@ def write_output(
     receipt: dict,
 ) -> None:
 
-    today = datetime.now(UTC).date().isoformat()
+    # The ledger records when this page was actually fetched; today only
+    # for a source no capture is on file for. Before 2026-08-28 this stamped
+    # today unconditionally, so every re-parse claimed a retrieval that did
+    # not happen -- see common/captured.py.
+    # From the page itself (common/captured.py): the fetcher stamped it when
+    # it made the request, so a cache-only re-parse cannot move it.
+    today = captured_at(raw_dir() / "index.htm") or datetime.now(UTC).date().isoformat()
 
     notes = (
         "Clementine Vulgate (Sixtus V / Clement VIII) as printed in the 1914 "

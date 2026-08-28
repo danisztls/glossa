@@ -78,6 +78,7 @@ from __future__ import annotations
 
 from .absent import AbsentSources
 from .book_forms import BOOK_FORMS_PATH, book_form_pattern, book_forms
+from .captured import captured_at, record_capture
 from .corrections import (
     CorrectionDriftError,
     apply_verse_corrections,
@@ -142,6 +143,7 @@ __all__ = [
     "book_form_pattern",
     "book_forms",
     "build_root",
+    "captured_at",
     "chapter_opening_letter",
     "corpus_dir",
     "corrections_receipt",
@@ -159,6 +161,7 @@ __all__ = [
     "raw_root",
     "read_bytes_or_none",
     "read_text_or_none",
+    "record_capture",
     "require_corpus",
     "roman_to_int",
     "urllib_transport",

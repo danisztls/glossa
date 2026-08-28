@@ -59,15 +59,32 @@ The project's stated insurance policy is that any capture regret is fixed by
 `raw/` is intact. When judging whether a deletion is safe, the question is never
 "is this corpus data" but _which of the two it is_.
 
-**A rebuild needs two inputs that live HERE, not in the corpus.**
-`pipeline/absent-sources.json` (URLs the source answered 404 for) and
-`pipeline/translations-checked.json` (what a missing sibling-language edition
-turned out to be, for 125 documents). The second was not a file until
-2026-08-27: it survived only by `vatican_docs.py` copying it off the
-`manifest.json` already on disk, so it protected a `--overwrite` re-parse and
-not a rebuild into an empty `build/`, which dropped all 125 entries with
-nothing reporting it. That is the shape of the bug to watch for — output that
-is only regenerable from a previous copy of itself.
+**Output that is only regenerable from a previous copy of itself is not
+regenerable.** This bit three times in one day, and it is the shape to watch
+for. Each was a fact the scrapers kept alive by reading their own last
+`manifest.json`, so it survived a re-parse over an existing corpus and
+evaporated on a rebuild into an empty `build/` — which is now the supported way
+to get a corpus at all:
+
+| what                                                     | where it lives now                             | scale         |
+| -------------------------------------------------------- | ---------------------------------------------- | ------------- |
+| definitive 404s                                          | `pipeline/absent-sources.json`                 | 746 URLs      |
+| what a missing sibling-language edition turned out to BE | `pipeline/translations-checked.json`           | 125 documents |
+| the day each page was fetched (`retrieved_at`)           | `raw/<source>/captured-at.json`, in the corpus | 6,328 pages   |
+
+The first two are knowledge derived where there is no page to sit beside, so
+they are tracked here. The third belongs to the page, so it sits in `raw/`,
+written by `Fetcher` at the moment it writes the file — the only point where
+the answer is certain, since a cache hit never reaches it. Those dates were
+recovered from filesystem mtimes, **which git does not preserve**; they were
+also finer than the manifests', which carried one date per work and had 354
+works claiming a retrieval days after the real fetch.
+
+**The check that misses this class is a normalised field.** The rebuild
+comparison excluded `retrieved_at` because the corpus README asserted it
+carried no information — the assertion was false, and no reproducibility check
+can disprove a claim that a value does not matter. Normalise `generated_at` and
+`applied_at`, and nothing else.
 
 **Deleting generated works is a decision for the person directing the work, not
 a judgment call to make mid-task.** An agent once removed 105 empty work

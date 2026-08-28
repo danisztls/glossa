@@ -72,6 +72,7 @@ from common import (
     FetchPolicy,
     apply_verse_corrections,
     build_root,
+    captured_at,
     chapter_opening_letter,
     corrections_receipt,
     load_corrections,
@@ -664,6 +665,9 @@ def retrieved_at() -> str:
     that it does not is a known limitation, and the safe direction to be wrong
     in -- an understated retrieval date is a citation that still resolves.
     """
+    recorded = captured_at(raw_dir() / cache_name(SOURCE_EDITION, "Gn", 1))
+    if recorded:
+        return recorded
     existing = work_dir() / "manifest.json"
     if existing.exists():
         try:
