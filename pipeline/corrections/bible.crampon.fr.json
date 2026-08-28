@@ -1,0 +1,86 @@
+[
+  {
+    "id": "bible.crampon.fr-exod-4-25-anchor",
+    "locator": {
+      "osis": "exod",
+      "chapter": 4,
+      "verse": 25
+    },
+    "field": "verse_anchor_html",
+    "from": "id=\"5-25\"",
+    "to": "id=\"4-25\"",
+    "reason": "Verse anchor misnumbered as chapter 5 for a verse whose text (Zipporah circumcising her son at the wayside lodging) is Exodus 4:25, sitting between the correctly-numbered anchors id=\"4-24\" and id=\"4-26\" -- a single mistyped digit, not an edition choice.",
+    "evidence": "raw/crampon/Exode.html: the anchor sequence reads ...4-24, 5-25, 4-26... with 5-25's own text continuing the same sentence 4-24 begins and 4-26 concludes.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "bible.crampon.fr-exod-16-36-anchor",
+    "locator": {
+      "osis": "exod",
+      "chapter": 16,
+      "verse": 36
+    },
+    "field": "verse_anchor_html",
+    "from": "id=\"1-36\"",
+    "to": "id=\"16-36\"",
+    "reason": "Verse anchor misnumbered as chapter 1 for Exodus 16's closing verse ('Le gomor est la dixième partie de l'épha'), sitting immediately before the chapter-17 nav marker -- a mistyped digit (16 -> 1), not an edition choice. Left uncorrected, this verse is filed under exod 1 and exod 16 is one verse short.",
+    "evidence": "raw/crampon/Exode.html: the anchor sits between id=\"16-35\" and <span id=\"CH17\">; bible.clementina.la's exod 16:36 reads 'Gomor autem decima pars est ephi', the same content.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "bible.crampon.fr-deut-32-49-anchor",
+    "locator": {
+      "osis": "deut",
+      "chapter": 32,
+      "verse": 49
+    },
+    "field": "verse_anchor_html",
+    "from": "id=\"1-49\"",
+    "to": "id=\"32-49\"",
+    "reason": "Verse anchor misnumbered as chapter 1 for Deuteronomy 32:49 ('Monte sur cette montagne d'Abarim...'), sitting between the correctly-numbered id=\"32-48\" and the following verse -- a mistyped digit, not an edition choice.",
+    "evidence": "raw/crampon/Deutéronome.html: the anchor sequence reads ...32-48, 1-49, 32-50...",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "bible.crampon.fr-dan-13-65-anchor",
+    "locator": {
+      "osis": "dan",
+      "chapter": 13,
+      "verse": 65
+    },
+    "field": "verse_anchor_html",
+    "from": "id=\"14-65\"",
+    "to": "id=\"13-65\"",
+    "reason": "Verse anchor misnumbered as chapter 14 for Susanna's closing verse ('Le roi Astyage ayant été réuni à ses pères...'), sitting between the correctly-numbered id=\"13-64\" and the genuine id=\"14-1\" (Bel and the Dragon's own opening, 'Or Daniel mangeait à la table du roi...') -- a mistyped digit, not an edition choice.",
+    "evidence": "raw/crampon/Daniel.html: anchor sequence ...13-64, 14-65, 14-1...; bible.clementina.la's dan 13:65 reads verbatim 'Et rex Astyages appositus est ad patres suos, et suscepit Cyrus Perses regnum eius', and its dan 14:1 reads 'Erat autem Daniel conviva regis...', matching the French at each anchor.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "bible.crampon.fr-ezra-4-24-anchor",
+    "locator": {
+      "osis": "ezra",
+      "chapter": 4,
+      "verse": 24
+    },
+    "field": "verse_anchor_html",
+    "from": "id=\"5-24\"",
+    "to": "id=\"4-24\"",
+    "reason": "Verse anchor misnumbered as chapter 5 for Ezra's chapter-4 closing verse ('Alors s'arrêta l'ouvrage de la maison de Dieu à Jérusalem...'), immediately followed by the chapter-5 nav marker -- a mistyped digit, not an edition choice.",
+    "evidence": "raw/crampon/Esdras.html: the anchor sits right before <span id=\"CH05\">; bible.clementina.la's ezra 4:24 reads verbatim 'Tunc intermissum est opus domus Domini in Ierusalem, et non fiebat usque ad annum secundum regni Darii regis Persarum', the same sentence.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "bible.crampon.fr-ps-120-1-leaked-ref",
+    "locator": {
+      "osis": "ps",
+      "chapter": 120,
+      "verse": 1
+    },
+    "field": "verse_html",
+    "from": " CXX, 1. <i>Cantique des montées</i>. — Ce titre se trouve au début de chacun des Psaumes cxx-cxxiv. Les exégètes modernes interprètent ce titre des pèlerinages que les Israélites faisaient à certaines époques à Jérusalem ; ils chantaient ces cantiques lorsqu’ils «&nbsp;montaient&nbsp;» à la Ville Sainte.&lt;/ref&gt;",
+    "to": "",
+    "reason": "A footnote's opening <ref> tag was lost in the source's own wikitext, so MediaWiki never converted this into a proper <sup class=\"reference\"> + footnote-list entry: the entire note body rendered as literal running prose in the verse, ending in the literal escaped artifact '&lt;/ref&gt;'. Removed rather than reconstructed as a note, since no marker was ever assigned to anchor it and inventing one would not be reproducing the source. 'Cantique des montées.' itself is kept -- it is this edition's ordinary running-text title for the Songs of Ascent, matching Ps 121's 'Cantique pour les montées.' printed the same way with no footnote at all.",
+    "evidence": "raw/crampon/Psaumes_5.html at id=\"120-1\": the literal text '&lt;/ref&gt;' (HTML-escaped) appears mid-verse, which is the unambiguous signature of an unclosed/lost wikitext <ref> opening tag.",
+    "added": "2026-08-28"
+  }
+]
