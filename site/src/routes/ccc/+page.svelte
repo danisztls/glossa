@@ -1,17 +1,36 @@
 <script lang="ts">
-	import { getCccStructure, getWork } from '$lib/corpus';
+	import { getCccStructure, getCompendiumStructure, getWork } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import StructureIndex from '$lib/components/StructureIndex.svelte';
-	import { indexSidebarItems } from '$lib/components/indexToc';
+	import { indexSidebarItems, siblingLink } from '$lib/components/indexToc';
+	import { pairDivisionsCached } from '$lib/toc-pairing';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
+	import type { StructureNode } from '$lib/types';
 
 	const lang = $derived(content.langFor('catechism'));
 	const tree = $derived(getCccStructure(lang));
 	const work = $derived(getWork(`ccc.${lang}`));
 	const sidebarItems = $derived(indexSidebarItems(tree, lang));
+
+	// The Compendium's own language, not this page's: the two works do not
+	// cover the same fourteen languages (`la` and `mg` have no Compendium,
+	// `hu`/`ro`/`sl`/`sv` no Catechism), so it resolves through the same
+	// fallback chain any other Compendium surface would use. The pairing
+	// itself is language-independent — every edition of both works reports
+	// the same spans — so a fallback edition gives the same answer.
+	const compendiumLang = $derived(content.langFor('compendium'));
+	const pairs = $derived(pairDivisionsCached(tree, getCompendiumStructure(compendiumLang)));
+	const sibling = $derived((node: StructureNode) =>
+		siblingLink(pairs.get(node), {
+			hrefBase: '/compendium/caput',
+			unit: 'Q',
+			abbrev: t('compendium.abbrev'),
+			workTitle: t('compendium.landing.title')
+		})
+	);
 </script>
 
 <svelte:head>
@@ -40,6 +59,7 @@
 			hrefBase="/catechismus/caput"
 			unit="¶"
 			noAddressLabel={t('ccc.noParagraphNumber')}
+			{sibling}
 		/>
 	</div>
 	<aside class="index-aside">

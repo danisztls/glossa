@@ -1,17 +1,32 @@
 <script lang="ts">
-	import { getCompendiumStructure, getWork } from '$lib/corpus';
+	import { getCccStructure, getCompendiumStructure, getWork } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import StructureIndex from '$lib/components/StructureIndex.svelte';
-	import { indexSidebarItems } from '$lib/components/indexToc';
+	import { indexSidebarItems, siblingLink } from '$lib/components/indexToc';
+	import { pairDivisionsCached } from '$lib/toc-pairing';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
+	import type { StructureNode } from '$lib/types';
 
 	let lang = $derived(content.langFor('compendium'));
 	let tree = $derived(getCompendiumStructure(lang));
 	let work = $derived(getWork(`compendium.${lang}`));
 	let sidebarItems = $derived(indexSidebarItems(tree, lang));
+
+	// The mirror of the Catechism index's own resolver — see there for why
+	// the companion work resolves its language separately from this page's.
+	let catechismLang = $derived(content.langFor('catechism'));
+	let pairs = $derived(pairDivisionsCached(tree, getCccStructure(catechismLang)));
+	let sibling = $derived((node: StructureNode) =>
+		siblingLink(pairs.get(node), {
+			hrefBase: '/catechismus/caput',
+			unit: '¶',
+			abbrev: t('ccc.abbrev'),
+			workTitle: t('ccc.landing.title')
+		})
+	);
 </script>
 
 <svelte:head>
@@ -40,6 +55,7 @@
 			hrefBase="/compendium/caput"
 			unit="Q"
 			noAddressLabel={t('compendium.noQuestionNumber')}
+			{sibling}
 		/>
 	</div>
 	<aside class="index-aside">

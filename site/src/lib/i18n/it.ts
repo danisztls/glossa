@@ -86,6 +86,8 @@ export const it: Dictionary = {
 	'compendium.prevQuestion': 'Domanda precedente',
 	'compendium.nextQuestion': 'Domanda successiva',
 	'compendium.condenses': 'Riassume CCC ¶¶',
+	'ccc.abbrev': 'CCC',
+	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Nessun numero di domanda in questo corpus',
 	'nav.summa': 'Somma',
 	'summa.landing.title': 'Somma teologica',

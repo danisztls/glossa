@@ -55,3 +55,39 @@ export function indexSidebarItems(tree: StructureNode[], lang: string): IndexSid
 			label: `${marker(node, lang) ?? ''} ${displayTitle(node, lang).title}`.trim()
 		}));
 }
+
+/**
+ * A row's link to the same division in the companion work — the Compendium
+ * from a Catechism row, the Catechism from a Compendium row.
+ *
+ * `label` is what the row shows and is abbreviated on purpose: the row
+ * already spends its width on a title and its own range, and the whole
+ * affordance is worth one glance. `title` carries the work's full name for
+ * the hover and the accessible name, because "Comp. Q251–294" is only
+ * legible to a reader who already knows which of the two books they are
+ * looking at.
+ */
+export interface SiblingLink {
+	href: string;
+	label: string;
+	title: string;
+}
+
+/**
+ * Build that link from the paired division, or nothing when the outlines
+ * do not pair here (`toc-pairing.ts` decides that; this only formats it).
+ */
+export function siblingLink(
+	paired: StructureNode | undefined,
+	opts: { hrefBase: string; unit: string; abbrev: string; workTitle: string }
+): SiblingLink | undefined {
+	if (!paired) return undefined;
+	const anchor = paired.paragraphs[0];
+	if (!Number.isFinite(anchor)) return undefined;
+	const range = rangeLabel(paired, opts.unit);
+	return {
+		href: `${opts.hrefBase}/${anchor}`,
+		label: `${opts.abbrev} ${range}`,
+		title: `${opts.workTitle} — ${range}`
+	};
+}

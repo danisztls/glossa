@@ -140,6 +140,8 @@ export const en: Dictionary = {
 	'compendium.prevQuestion': 'Previous question',
 	'compendium.nextQuestion': 'Next question',
 	'compendium.condenses': 'Condenses CCC ¶¶',
+	'ccc.abbrev': 'CCC',
+	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'No question number in this corpus',
 	'nav.summa': 'Summa',
 	'summa.landing.title': 'Summa Theologiae',

@@ -86,6 +86,8 @@ export const sl: Dictionary = {
 	'compendium.prevQuestion': 'Prejšnje vprašanje',
 	'compendium.nextQuestion': 'Naslednje vprašanje',
 	'compendium.condenses': 'Povzema KKC ¶¶',
+	'ccc.abbrev': 'KKC',
+	'compendium.abbrev': 'Komp.',
 	'compendium.noQuestionNumber': 'V tem korpusu ni številke vprašanja',
 	'nav.summa': 'Summa',
 	'summa.landing.title': 'Summa theologiae',

@@ -88,6 +88,8 @@ export const hu: Dictionary = {
 	'compendium.prevQuestion': 'Előző kérdés',
 	'compendium.nextQuestion': 'Következő kérdés',
 	'compendium.condenses': 'Összefoglalja: KEK ¶¶',
+	'ccc.abbrev': 'KEK',
+	'compendium.abbrev': 'Komp.',
 	'compendium.noQuestionNumber': 'Ebben a korpuszban nincs kérdésszám',
 	'nav.summa': 'Summa',
 	'summa.landing.title': 'Summa theologiae',

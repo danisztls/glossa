@@ -86,6 +86,8 @@ export const es: Dictionary = {
 	'compendium.prevQuestion': 'Pregunta anterior',
 	'compendium.nextQuestion': 'Pregunta siguiente',
 	'compendium.condenses': 'Resume CIC ¶¶',
+	'ccc.abbrev': 'CIC',
+	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Sin número de pregunta en este corpus',
 	'nav.summa': 'Suma',
 	'summa.landing.title': 'Suma Teológica',

@@ -13,7 +13,8 @@
 		indexDetailChildren,
 		indexOutlineChildren,
 		isIndexOutline,
-		rangeLabel
+		rangeLabel,
+		type SiblingLink
 	} from './indexToc';
 	import { marker } from './structureToc';
 
@@ -23,9 +24,20 @@
 		hrefBase: string;
 		unit: string;
 		noAddressLabel: string;
+		/**
+		 * This row's counterpart in the companion work, when the two outlines
+		 * pair here. The Catechism and the Compendium are one outline
+		 * published at two lengths (`toc-pairing.ts`), so a row can offer both
+		 * — but only the caller knows which work it is showing, so the
+		 * resolver is injected rather than reached for from here.
+		 *
+		 * Optional, and absent for every other caller: a work with no
+		 * companion passes nothing and the column does not appear.
+		 */
+		sibling?: (node: StructureNode) => SiblingLink | undefined;
 	}
 
-	let { tree, lang, hrefBase, unit, noAddressLabel }: Props = $props();
+	let { tree, lang, hrefBase, unit, noAddressLabel, sibling }: Props = $props();
 	let expanded = $state(new SvelteSet<string>());
 
 	function nodeKey(node: StructureNode): string {
@@ -48,6 +60,7 @@
 			{@const kids = indexOutlineChildren(node)}
 			{@const label = marker(node, lang)}
 			{@const isOpen = expanded.has(nodeKey(node))}
+			{@const other = sibling?.(node)}
 			<li
 				class={`kind-${node.kind}`}
 				id={depth === 0 && Number.isFinite(anchor) ? `toc-${anchor}` : undefined}
@@ -80,6 +93,14 @@
 						</span>
 					{/if}
 					<span class="range">{rangeLabel(node, unit)}</span>
+					<!-- After the range, not before it: the row's own address is what a
+					     reader scanning this index is looking for, and the companion work
+					     is the second question they ask. -->
+					{#if other}
+						<a class="sibling" href={other.href} title={other.title} aria-label={other.title}>
+							{other.label}
+						</a>
+					{/if}
 				</div>
 
 				{#if details.length > 0 && isOpen}
@@ -166,6 +187,25 @@
 	.toggle:focus-visible {
 		outline: 2px solid var(--color-focus-ring);
 		outline-offset: 1px;
+	}
+	/* Quiet by default and only accented on hover: it sits at the end of every
+	   row, so styling it as a full link would put a second column of blue down
+	   the page and compete with the titles, which are what the index is for. */
+	.sibling {
+		flex-shrink: 0;
+		font-family: var(--font-sans);
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
+		text-decoration: none;
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+		border-inline-start: 1px solid var(--color-border);
+		padding-inline-start: 0.5rem;
+	}
+	.sibling:hover,
+	.sibling:focus-visible {
+		color: var(--color-accent);
+		text-decoration: underline;
 	}
 	.range {
 		margin-inline-start: auto;

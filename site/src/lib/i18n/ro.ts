@@ -86,6 +86,8 @@ export const ro: Dictionary = {
 	'compendium.prevQuestion': 'Întrebarea precedentă',
 	'compendium.nextQuestion': 'Întrebarea următoare',
 	'compendium.condenses': 'Rezumă CBC ¶¶',
+	'ccc.abbrev': 'CBC',
+	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Fără număr de întrebare în acest corpus',
 	'nav.summa': 'Summa',
 	'summa.landing.title': 'Summa theologiae',

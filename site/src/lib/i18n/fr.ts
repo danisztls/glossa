@@ -86,6 +86,8 @@ export const fr: Dictionary = {
 	'compendium.prevQuestion': 'Question précédente',
 	'compendium.nextQuestion': 'Question suivante',
 	'compendium.condenses': 'Résume CEC ¶¶',
+	'ccc.abbrev': 'CEC',
+	'compendium.abbrev': 'Comp.',
 	'compendium.noQuestionNumber': 'Pas de numéro de question dans ce corpus',
 	'nav.summa': 'Somme',
 	'summa.landing.title': 'Somme théologique',

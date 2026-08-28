@@ -85,6 +85,8 @@ export const sv: Dictionary = {
 	'compendium.prevQuestion': 'Föregående fråga',
 	'compendium.nextQuestion': 'Nästa fråga',
 	'compendium.condenses': 'Sammanfattar KKK ¶¶',
+	'ccc.abbrev': 'KKK',
+	'compendium.abbrev': 'Komp.',
 	'compendium.noQuestionNumber': 'Inget frågenummer i detta korpus',
 	'nav.summa': 'Summa',
 	'summa.landing.title': 'Summa theologiae',
