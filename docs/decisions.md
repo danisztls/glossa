@@ -948,20 +948,92 @@ also the textbook signature of duplicated content. `app.html` now carries a stat
 assignment to `document.title` rather than to an appended element, so the route's own
 title overwrites it at hydration rather than being shadowed by it.
 
-That fixes the missing name, not the sameness. **The open option is to have
-`src/worker.ts` inject a per-address `<title>`, description and `<noscript>` line**, all
-derived from the address it has already parsed and the `corpus-routes.json` it already
-holds — no corpus text at the edge, and no extra invocation, since the invocation is spent
-the moment the request arrives. It would give `/catechismus/330` a name of its own without
-JavaScript, and let the `<noscript>` say what `llms.txt` says in prose: that the text
-renders in a browser, and that the source publisher is the place to take it from.
+That fixed the missing name, not the sameness. **The edge now writes the head**
+(2026-08-28): `src/worker.ts` runs an `HTMLRewriter` over the shell on every navigation
+and gives each address its own `<title>`, description, `og:title`/`og:description`,
+`<link rel="canonical">`, `og:url`, a `BreadcrumbList` in JSON-LD, and a `<noscript>` with
+real links. The two objections that held it back for two days were the right ones to raise
+and both have answers.
 
-Deliberately **not done yet**, because it costs two things worth deciding in the open
-rather than in a commit. It widens the edge worker's job past the line `wrangler.jsonc`
-draws for it — "not an application server and never reads or transforms corpus text" — and
-a title derived from an address is not corpus text but is not nothing either. And it adds
-`HTMLRewriter` work to every navigation, against a CPU limit that has never yet been the
-binding constraint and would want measuring before it is.
+**The boundary.** `wrangler.jsonc` says the worker "is not an application server and never
+reads or transforms corpus text", and it still doesn't. What it reads is a second
+generated file, `static/route-titles.json` — 62 KB of **names**: book names, document
+titles with their author and year, prayer titles, Summa question titles, and the paragraph
+spans of every titled division in the Catechism and the Compendium. A name is the imprint
+of a work, the same class of fact `sitemap.xml` already publishes an address for. No
+paragraph, answer or verse reaches the edge, and none may — the line is stated in the file
+that builds the table (`scripts/route-titles.mjs`) and again at `withHead`.
+
+**The cost.** Measured rather than guessed, since the objection asked for it: a local
+`wrangler dev` over 140 navigations reads 6.24 ms mean without the rewrite and 6.56 ms
+with it, against a 10 ms CPU limit that the asset subrequest already dominates. One extra
+subrequest per isolate for the titles table, and none per request.
+
+**Two files, two promises.** `corpus-routes.json` decides the STATUS and
+`route-titles.json` only the `<head>`, and they are read through separate module-global
+promises so that losing the second costs a name and never a page. The site was entirely
+serviceable with a generic head until this week; it would not be serviceable with
+addresses that stop resolving.
+
+**What guards it is a build assert, not a test.** `assertNamed` runs inside
+`sync-corpus.mjs` beside the older `assertCanonical`, and refuses a build where any address
+in `sitemapPaths` has no name of its own or shares a title with another. Today that is
+5,811 addresses, all named, all distinct. The check belongs there rather than in vitest
+because the failure is invisible everywhere a person looks: the page titles itself at
+hydration, so a browser shows the right thing whatever the table holds, and only the
+consumers that never render see the gap — none of which reports back. A work kind ingested
+before `shell-head.ts` learns its name now fails the sync instead of shipping 600 pages
+called `Glossa Catholica`.
+
+**`og:url` is written now, and its earlier absence is why it can be.** The tag was omitted
+from `app.html` precisely because one document answered every address, so the only value
+that file could carry was the site root — which would have retitled and relinked every
+deep-link preview to the home page. Per-address, the tag can name the address it is
+actually about. `app.html` still declares none, which is still right: the static file is
+not about any one address.
+
+**The canonical and the sitemap have one definition of the origin.** `SITE_ORIGIN` lives
+in `shell-head.ts` and `scripts/sitemap.mjs` re-exports it as `ORIGIN`. `<loc>` in the
+sitemap and `<link rel="canonical">` on the page are a claim and a confirmation about the
+same URL, and a crawler that finds them disagreeing resolves the disagreement against the
+site. It is fixed rather than read from `request.url` for two reasons found in testing: a
+request arriving over plain HTTP mints a canonical under `http://`, pointing at a URL the
+sitemap does not advertise; and a preview hostname would declare itself canonical, which
+is the duplicate the launch-time `Disallow: /` existed to prevent. The 404 head declares no
+canonical at all — a canonical link asserts that this address is the preferred spelling of
+a real resource, which is the opposite of what the status says.
+
+**The `<noscript>` is the half a sitemap cannot do.** `robots.txt` already states the
+problem: every cross-reference between texts is written by script, so the corpus has no
+link graph to a consumer that does not render. A sitemap says what exists; it cannot say
+what is near what. Each page now carries its parent index and its neighbouring addresses
+as real links, in a `<noscript>` and not a hidden element — content withheld from a
+rendering browser but served to a crawler is cloaking, whatever it was meant for.
+
+**A HEAD answered 404 on every canonical address**, found while probing production for
+this work (2026-08-28). `isNavigation` required `GET`, so a HEAD fell through to the asset
+binding, which has no file at `/catechismus/330`, and every address in the corpus answered
+404 to the HEAD of a URL it answered 200 to on GET. Nothing on this site issues one, which
+is why it went unseen for as long as the worker has existed; link checkers, several
+unfurlers, and crawlers probing before they fetch issue little else.
+
+**The reading routes were retitled to match** (`shell-head.ts`'s shapes, in the reader's
+language), because the edge writing one title and the route assigning another at hydration
+is a visible rearrangement on every load. Two were not merely different but wrong: the
+Bible chapter route suffixed with the EDITION's short title, at an address that is
+deliberately edition-free, so the title contradicted its own URL and changed when the
+reader switched edition; the Summa question route suffixed with the work's name where
+every other route names the site. Both now name the site, and the CCC, Compendium and
+Summa routes name the division or question they sit in — 2,865 Catechism addresses had
+shared one title but for a number.
+
+**Two generated files left the reader's install precache in the same pass.**
+`sw-policy.ts` takes everything in `static/` unless a list refuses it, and
+`corpus-routes.json` (27 KB, read only by the edge worker) and `reference-coverage.json`
+(12 KB, read only by `preflight-deploy.mjs`) had been precached since the partition
+existed. Neither is fetched by anything that runs in a browser. `INFRASTRUCTURE_FILES` is
+a third list beside `HOST_CONFIG_FILES` and `CRAWLER_FILES` because the reason differs
+again: those are read by a stranger's machine, these by ours.
 
 **A link to this site is unfurled, not searched, nearly everywhere it is pasted**
 (2026-08-26). The head above is read by search engines; what a chat client, a forum or a

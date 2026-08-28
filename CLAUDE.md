@@ -461,6 +461,66 @@ npm run deploy      # build -> preflight -> wrangler deploy
   it. `REFERENCE_COVERAGE=verbose npm run sync-corpus` prints what the grammar
   recognized nothing in, which is where coverage work starts.
 
+## The edge writes the head, from names and never from text
+
+Added 2026-08-28 (`docs/decisions.md` §The site). `ssr = false` means one document
+answers all 5,811 addresses, so everything a consumer that does not render learns
+comes from `src/worker.ts`, which now rewrites the shell's `<head>` per address.
+Five things about it will bite before the design will.
+
+**`static/route-titles.json` may hold NAMES and never TEXT.** It is the second
+generated file the worker reads (`scripts/route-titles.mjs` builds it beside the
+route manifest) and it carries book names, document titles with author and year,
+prayer and Summa question titles, and the paragraph spans of every titled
+division. That is the imprint of a work — the same class of fact `sitemap.xml`
+already publishes an address for — and it is what keeps `wrangler.jsonc`'s
+"never reads or transforms corpus text" true. A Catechism paragraph, a Compendium
+answer or a verse would make a better search snippet and must not go in.
+
+**Two files, because the failures differ.** `corpus-routes.json` decides the
+STATUS and `route-titles.json` only the `<head>`, read through separate
+module-global promises. Losing the second costs a name; losing the first would
+cost the address. Merging them into one fetch would make a missing title table
+able to take the site down, which is the wrong trade in an obvious direction.
+
+**`assertNamed` runs in the sync, not in vitest, and that is the point.** It
+refuses a build where any address in `sitemapPaths` has no name of its own or
+shares a title with another. The failure it catches is invisible everywhere a
+person looks — the page titles itself at hydration, so a browser is always
+right — and only consumers that never render see the gap, none of which reports
+back. A new work kind ingested before `shell-head.ts` learns its name fails the
+sync rather than shipping hundreds of pages called `Glossa Catholica`.
+
+**`titles.ts` and `inline-html.ts` import each other WITH the `.ts` extension**,
+like `route-manifest.ts` writes `./address.ts`, because `scripts/route-titles.mjs`
+imports `displayTitle` to normalize a heading exactly as the page does and Node's
+type-stripping loader will not resolve an extensionless relative specifier. Vite
+resolves it either way. Tidying the extension away breaks `npm run sync-corpus`
+with `ERR_MODULE_NOT_FOUND`, not the site, so nothing in the app notices.
+
+**A new file in `static/` is precached for every reader unless a list refuses
+it.** `sw-policy.ts` takes all of `files`, and `corpus-routes.json` (27 KB, edge
+only) and `reference-coverage.json` (12 KB, preflight only) had ridden along
+since the partition existed. `INFRASTRUCTURE_FILES` is the list for things served
+over HTTP to our own infrastructure, beside `CRAWLER_FILES` for things served to
+a stranger's machine. `route-titles.json` is in it, and needs its
+`run_worker_first` negation in `wrangler.jsonc` too or every crawler fetch of it
+is a billed invocation.
+
+**The reading routes' own `<svelte:head>` titles have to match the shapes in
+`shell-head.ts`**, in the reader's language — the edge writes one title and the
+route assigns another at hydration, and a mismatch is a visible rearrangement on
+every load. Two were wrong rather than merely different until 2026-08-28: the
+Bible chapter route suffixed with the EDITION's short title at an address that is
+deliberately edition-free, and the Summa question route suffixed with the work's
+name where every other route names the site.
+
+**`isNavigation` must cover every method a crawler uses.** It required `GET`
+until 2026-08-28, so a HEAD fell through to the asset binding — which has no file
+at any reader address — and every canonical address answered 404 to the HEAD of a
+URL it answered 200 to on GET. Nothing on this site issues one; link checkers,
+several unfurlers and crawlers probing before they fetch issue little else.
+
 ## Usage measurement: one beacon, three dashboard rules, and a shared vocabulary
 
 Added 2026-08-27 (`docs/decisions.md` §Usage measurement). The site now counts

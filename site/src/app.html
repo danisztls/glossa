@@ -30,9 +30,17 @@
 
 		     It is the site name and nothing else, deliberately: this document is
 		     served for every address, so the only honest title is the one true
-		     of all of them. Per-address titles for a consumer that does not
-		     render would have to come from the edge — see docs/decisions.md
-		     §The site, "What a crawler that does not render is told".
+		     of all of them.
+
+		     SINCE 2026-08-28 THE EDGE OVERWRITES IT per address, before this
+		     document leaves Cloudflare: `withHead` in src/worker.ts runs an
+		     HTMLRewriter over this `<title>` and sets the name of the address
+		     being served (src/lib/shell-head.ts). So what is written here is
+		     the value a consumer sees only when that rewrite did not happen —
+		     an address whose name the tables do not carry, or a build served
+		     without /route-titles.json. It is still the right value for that
+		     case, and it must stay true of every address for the same reason
+		     it always had to.
 
 		     Equal to `home.title` in src/lib/i18n/en.ts, which the root layout
 		     sets at hydration; src/lib/shell-meta.test.ts fails when they
@@ -41,10 +49,12 @@
 		<!-- The site is one SPA shell (`+layout.ts` sets `ssr = false`, and the
 		     build emits no per-route HTML), so every address is served this same
 		     document and a `<svelte:head>` description would not exist until
-		     hydration. This static one is therefore the only description a
-		     consumer that does not run JavaScript will ever see — every social
-		     unfurler, and every crawler that is not Google — which is why it
-		     describes the library rather than any one page.
+		     hydration. This static one describes the library rather than any one
+		     page, because it is the only sentence true of all 5,811 addresses.
+
+		     Rewritten per address at the edge like the `<title>` above, and a
+		     fallback for the same cases. `og:description` is rewritten with it,
+		     which is why the two are the same sentence here.
 
 		     It is the same sentence as `description` in
 		     static/manifest.webmanifest, which the install prompt shows. Two
@@ -62,17 +72,20 @@
 		     and it was absent, so that unfurl was the URL and nothing else.
 
 		     Like the `<title>` and the description above, these are STATIC and
-		     library-wide, because `ssr = false` means one document answers all
-		     5,812 canonical addresses. A per-address card would have to come
-		     from the edge — docs/decisions.md, "What a crawler that does not
-		     render is told" — and nothing here can stand in for it.
+		     library-wide here, because `ssr = false` means one document answers
+		     all 5,811 canonical addresses; `og:title` and `og:description` are
+		     rewritten per address at the edge (src/worker.ts), and these are the
+		     values a consumer sees when that did not happen.
 
-		     `og:url` IS DELIBERATELY ABSENT, and it is the one tag whose absence
-		     is load-bearing. Its job is to declare the canonical address of the
-		     thing being unfurled, and the only value this file could carry is
-		     the site root: every unfurl of /catechismus/330 would then title and
-		     link the home page instead. Omitted, an unfurler falls back to the
-		     URL it fetched, which is the correct one by construction.
+		     `og:url` IS DELIBERATELY ABSENT FROM THIS FILE, and the reason it
+		     was absent is the reason the edge can now write one. Its job is to
+		     declare the canonical address of the thing being unfurled, and the
+		     only value this file could carry is the site root: every unfurl of
+		     /catechismus/330 would then title and link the home page instead.
+		     Omitted, an unfurler falls back to the URL it fetched, which is
+		     correct by construction — and the edge, which knows the address,
+		     appends the real `og:url` and a matching `<link rel="canonical">`.
+		     Do not add one here: this file is not about any one address.
 
 		     `og:image` must be absolute — a relative path is unresolvable to a
 		     scraper that is not a browser — so the host is written out rather
