@@ -68,7 +68,6 @@ export const de: Dictionary = {
 	'bible.introduction': 'Einleitung',
 	'bible.introUnavailable': 'Noch keine Einleitung in dieser Sprache',
 	'bible.introSource': 'Die Einleitungen gehören nicht zum Schrifttext.',
-	'bible.illustrations': 'Illustrationen',
 	'bible.testament.ot': 'Altes Testament',
 	'bible.testament.nt': 'Neues Testament',
 	'ccc.prevParagraph': 'Zurück',
@@ -211,8 +210,16 @@ export const de: Dictionary = {
 		'Die Texte werden aus ihren veröffentlichten Quellen gesammelt, zu einem strukturierten Korpus verarbeitet und als statische Seiten ausgegeben. Korrekturen an Mängeln der Quelle werden einzeln verzeichnet, mit dem ursprünglichen Wortlaut, dem korrigierten und dem Grund — kein Text wird je stillschweigend geändert.',
 	'colophon.illustrationsTitle': 'Die Illustrationen',
 	'colophon.illustrationsBody':
-		'Die Bibel trägt Gustave Dorés Stiche für La Grande Bible de Tours, jeden bei dem Vers, den er darstellt. Sie sind gemeinfrei: die Platten wurden 1866 gestochen und Doré starb 1883, und die getreue fotografische Wiedergabe eines gemeinfreien Stichs begründet kein neues Urheberrecht. Wir nennen die Herkunft unserer Scans, weil wir für sie dankbar sind.',
-	'colophon.illustrationsScans': 'Scans bereitgestellt von',
+		'Die Bibel trägt Gustave Dorés Stiche für La Grande Bible de Tours, jeden bei dem Vers, den er darstellt. Sie sind der letzte und größte seiner Bibelzyklen, in Stahl gestochen und mit dem Text gedruckt statt am Ende des Bandes gesammelt.',
+	'colophon.countPlates': 'Stiche',
+	'colophon.countPlateChapters': 'illustrierte Kapitel',
+	'colophon.illustrationsAnchors':
+		'Jeder Stich brauchte eine Adresse, und die gedruckten Bildunterschriften allein waren nicht verlässlich genug. Für jeden wurden drei Lesungen genommen — die Unterschrift unter dem Stich selbst, eine unabhängige Abschrift und das Verzeichnis der Sammlung, die wir gescannt haben — und wo sie sich widersprachen, gab die Unterschrift den Ausschlag, denn sie ist, was der Stecher gestochen hat. Alle Lesungen bleiben erhalten, auch die unterlegenen.',
+	'colophon.illustrationsProcessing':
+		'Die Scans sind auf den Stich beschnitten, auf einen gemeinsamen Papierton ausgeglichen, in Grau überführt und neu kodiert; innerhalb des Bildes wird nichts verändert, retuschiert oder entfernt. Sie werden in zwei Breiten ausgeliefert, damit ein Telefon kein Bild für einen großen Schirm lädt, und erst geholt, wenn man bei ihnen angekommen ist.',
+	'colophon.illustrationsRights':
+		'Sie sind gemeinfrei. Die Platten wurden 1866 gestochen und Doré starb 1883, und die getreue fotografische Wiedergabe eines gemeinfreien Stichs begründet kein neues Urheberrecht. Wir nennen die Herkunft unserer Scans, weil wir dafür dankbar sind, nicht weil wir müssten.',
+	'plates.scansBy': 'Scans bereitgestellt von',
 	'colophon.typeTitle': 'Die Schrift',
 	'colophon.typeBody':
 		'Gesetzt in EB Garamond, Georg Duffners und Octavio Pardos Wiederbelebung der Typen, die Claude Garamont in den 1590er Jahren schnitt — jene humanistische Tradition, in der die Kirche seit der Renaissance druckt. Die Initialen sind Pirata One, eine gebrochene Schrift, deren Versalien in der Größe, die eine Initiale verlangt, lesbar bleiben. Beide stehen unter der SIL Open Font License und werden von dieser Seite ausgeliefert und nicht von Dritten, sodass das Lesen einer Seite von niemandes Server sonst etwas verlangt.',

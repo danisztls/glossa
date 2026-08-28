@@ -13,6 +13,21 @@
 	 * are recorded rather than derived here (every plate has its own crop, so
 	 * there is no ratio to assume).
 	 *
+	 * THE ATTRIBUTION IS A TOOLTIP, not a line under the picture. Genesis
+	 * carries 27 plates and a credit repeated 27 times down a reading column
+	 * is noise, while one said once at the foot of the chapter is a line the
+	 * reader meets long after the plate it refers to. A native `title` is the
+	 * whole mechanism: it costs no JavaScript, no overlay and no top layer,
+	 * and it is the affordance a reader already expects from a picture.
+	 *
+	 * WHAT IT DOES NOT DO IS TOUCH, and that is the honest limit of it — a
+	 * phone has no hover, so a phone reader sees the plate's title in the
+	 * caption and nothing else. That is why the colophon carries the full
+	 * statement rather than a summary of one, and why the engravings being
+	 * public domain matters here: the credit is courtesy, so a surface that
+	 * cannot always show it is a choice about presentation rather than a
+	 * defect in the site's rights position.
+	 *
 	 * IT HIDES ITSELF WHEN THE IMAGE DOES NOT ARRIVE, and that is not defensive
 	 * padding — it is the offline case, by design. The plates are enrichment
 	 * and are deliberately in no service-worker download wave (`sw-policy.ts`),
@@ -27,8 +42,10 @@
 
 	interface Props {
 		plate: Plate;
-		/** The collection's own credit line, said once per chapter rather than
-		 *  under every plate — passed in so this component needs no i18n. */
+		/** The collection's attribution, already composed and already
+		 *  localized — passed in rather than read, because no component in
+		 *  this directory imports the i18n store and this one is not the
+		 *  place to start. Newlines are honoured by the native tooltip. */
 		credit?: string;
 	}
 
@@ -49,14 +66,12 @@
 			width={plate.width}
 			height={plate.height}
 			alt={plate.title}
+			title={credit ? `${plate.title}\n${credit}` : plate.title}
 			loading="lazy"
 			decoding="async"
 			onerror={() => (failed = true)}
 		/>
-		<figcaption>
-			<span class="title">{plate.title}</span>
-			{#if credit}<span class="credit">{credit}</span>{/if}
-		</figcaption>
+		<figcaption>{plate.title}</figcaption>
 	</figure>
 {/if}
 
@@ -89,18 +104,8 @@
 		line-height: 1.4;
 		color: var(--color-text-muted);
 		text-align: center;
-	}
-
-	.title {
-		display: block;
 		font-variant-caps: small-caps;
 		letter-spacing: 0.04em;
-	}
-
-	.credit {
-		display: block;
-		margin-block-start: 0.15rem;
-		font-size: 0.9em;
 	}
 
 	/*

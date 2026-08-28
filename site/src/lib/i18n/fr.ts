@@ -68,7 +68,6 @@ export const fr: Dictionary = {
 	'bible.introduction': 'Introduction',
 	'bible.introUnavailable': 'Pas encore d’introduction dans cette langue',
 	'bible.introSource': 'Les introductions ne font pas partie du texte de l’Écriture.',
-	'bible.illustrations': 'Illustrations',
 	'bible.testament.ot': 'Ancien Testament',
 	'bible.testament.nt': 'Nouveau Testament',
 	'ccc.prevParagraph': 'Précédent',
@@ -210,8 +209,16 @@ export const fr: Dictionary = {
 		'Les textes sont recueillis auprès de leurs sources publiées, analysés en un corpus structuré, et rendus sous forme de pages statiques. Les corrections des défauts d’origine sont consignées une à une, avec la formulation d’origine, la formulation corrigée et la raison — aucun texte n’est jamais modifié en silence.',
 	'colophon.illustrationsTitle': 'Les illustrations',
 	'colophon.illustrationsBody':
-		'La Bible porte les gravures de Gustave Doré pour La Grande Bible de Tours, chacune placée au verset qu’elle représente. Elles sont dans le domaine public : les planches ont été gravées en 1866 et Doré est mort en 1883, et la reproduction photographique fidèle d’une gravure du domaine public ne crée aucun droit d’auteur nouveau. Nous disons d’où viennent nos numérisations parce que nous en sommes reconnaissants.',
-	'colophon.illustrationsScans': 'Numérisations fournies par',
+		'La Bible porte les gravures de Gustave Doré pour La Grande Bible de Tours, chacune placée au verset qu’elle représente. Elles sont le dernier et le plus vaste de ses cycles bibliques, gravées sur acier et imprimées avec le texte plutôt que rassemblées en fin de volume.',
+	'colophon.countPlates': 'gravures',
+	'colophon.countPlateChapters': 'chapitres illustrés',
+	'colophon.illustrationsAnchors':
+		'Chaque gravure devait recevoir une adresse, et les légendes imprimées seules ne suffisaient pas. Trois lectures ont été prises pour chacune — la légende sous la gravure elle-même, une transcription indépendante et l’index de la collection que nous avons numérisée — et, en cas de désaccord, la légende l’emporte, puisque c’est ce que le graveur a taillé. Toutes les lectures sont conservées, y compris celles qui ont perdu.',
+	'colophon.illustrationsProcessing':
+		'Les numérisations sont rognées jusqu’à la gravure, ramenées à un ton de papier commun, réduites au gris et réencodées ; rien à l’intérieur de l’image n’est modifié, retouché ni supprimé. Elles sont servies en deux largeurs, pour qu’un téléphone ne télécharge pas une image faite pour un grand écran, et ne sont demandées qu’une fois atteintes.',
+	'colophon.illustrationsRights':
+		'Elles sont dans le domaine public. Les planches ont été gravées en 1866 et Doré est mort en 1883, et la reproduction photographique fidèle d’une gravure du domaine public ne crée aucun droit d’auteur nouveau. Nous disons d’où viennent nos numérisations parce que nous en sommes reconnaissants, non par obligation.',
+	'plates.scansBy': 'Numérisations fournies par',
 	'colophon.typeTitle': 'Les caractères',
 	'colophon.typeBody':
 		'Composé en EB Garamond, la renaissance par Georg Duffner et Octavio Pardo des caractères que Claude Garamont grava dans les années 1590 — la tradition humaniste dans laquelle l’Église imprime depuis la Renaissance. Les lettrines sont en Pirata One, une gothique dont les capitales restent lisibles à la taille qu’exige une lettrine. Les deux sont sous licence SIL Open Font License et servies depuis ce site plutôt que par un tiers, de sorte que lire une page ne demande rien au serveur de personne d’autre.',

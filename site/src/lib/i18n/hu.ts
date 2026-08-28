@@ -70,7 +70,6 @@ export const hu: Dictionary = {
 	'bible.introduction': 'Bevezetés',
 	'bible.introUnavailable': 'Ezen a nyelven még nincs bevezetés',
 	'bible.introSource': 'A bevezetések nem részei a szentírási szövegnek.',
-	'bible.illustrations': 'Illusztrációk',
 	'bible.testament.ot': 'Ószövetség',
 	'bible.testament.nt': 'Újszövetség',
 	'ccc.prevParagraph': 'Előző',
@@ -214,8 +213,16 @@ export const hu: Dictionary = {
 		'A szövegeket a közzétett forrásaikból gyűjtjük össze, strukturált korpusszá dolgozzuk fel, és statikus oldalakként jelenítjük meg. A forráshibák javításait egyenként rögzítjük, az eredeti szöveggel, a javított szöveggel és az indoklással — egyetlen szöveget sem változtatunk meg csendben.',
 	'colophon.illustrationsTitle': 'Az illusztrációk',
 	'colophon.illustrationsBody':
-		'A Biblia Gustave Doré metszeteit hordozza a La Grande Bible de Tours számára, mindegyiket annál a versnél, amelyet ábrázol. Közkincsek: a lemezeket 1866-ban metszették, Doré 1883-ban halt meg, és egy közkincs metszet hű fényképi másolata nem keletkeztet új szerzői jogot. Megnevezzük, honnan valók a beolvasásaink, mert hálásak vagyunk értük.',
-	'colophon.illustrationsScans': 'A beolvasásokat rendelkezésre bocsátotta:',
+		'A Biblia Gustave Doré metszeteit hordozza a La Grande Bible de Tours számára, mindegyiket annál a versnél, amelyet ábrázol. Bibliai sorozatai közül ez az utolsó és a legnagyobb: acélba metszették, és a szöveggel együtt nyomtatták, nem a kötet végére gyűjtve.',
+	'colophon.countPlates': 'metszet',
+	'colophon.countPlateChapters': 'illusztrált fejezet',
+	'colophon.illustrationsAnchors':
+		'Minden metszetnek helyet kellett kapnia, és a nyomtatott képaláírások önmagukban nem voltak elég megbízhatók. Mindegyikről három olvasat készült — a metszet alatti aláírás, egy független átirat, és annak a gyűjteménynek a mutatója, amelyből beolvastuk —, és ahol eltértek, az aláírás döntött, mert azt véste a metsző. Minden olvasat megmarad, a vesztesek is.',
+	'colophon.illustrationsProcessing':
+		'A beolvasások a metszetig vannak vágva, közös papírtónusra kiegyenlítve, szürkére redukálva és újrakódolva; a képen belül semmit nem változtatunk, retusálunk vagy távolítunk el. Két szélességben szolgáljuk ki őket, hogy egy telefon ne töltsön le nagy képernyőre készült képet, és csak akkor kérjük le őket, amikor odaér az olvasó.',
+	'colophon.illustrationsRights':
+		'Közkincsek. A lemezeket 1866-ban metszették, Doré 1883-ban halt meg, és egy közkincs metszet hű fényképi másolata nem keletkeztet új szerzői jogot. Megnevezzük, honnan valók a beolvasásaink, mert hálásak vagyunk értük, nem mert kötelesek volnánk.',
+	'plates.scansBy': 'A beolvasásokat rendelkezésre bocsátotta:',
 	'colophon.typeTitle': 'A betűk',
 	'colophon.typeBody':
 		'EB Garamonddal szedve, amely Georg Duffner és Octavio Pardo felújítása azokról a betűkről, amelyeket Claude Garamont metszett az 1590-es években — abban a humanista hagyományban, amelyben az Egyház a reneszánsz óta nyomtat. A kezdőbetűk Pirata One betűvel készültek: ez egy gót betűtípus, amelynek nagybetűi olvashatók maradnak abban a méretben, amelyet az iniciálé megkíván. Mindkettő SIL Open Font License alatt áll, és erről az oldalról érkezik, nem harmadik féltől, így egy oldal elolvasása senki más kiszolgálójától nem kér semmit.',

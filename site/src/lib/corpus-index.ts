@@ -371,6 +371,10 @@ export interface PlateCredit {
 	reproduction: string;
 	provider: string;
 	provider_url: string;
+	/** How many plates reached the build, and how many chapters carry one.
+	 *  Counted by the sync from what it wrote, never typed into the copy. */
+	plates: number;
+	chapters: number;
 }
 
 /** Every illustration collection's credit, keyed by work id. Empty under

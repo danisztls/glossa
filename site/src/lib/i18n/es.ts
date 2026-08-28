@@ -68,7 +68,6 @@ export const es: Dictionary = {
 	'bible.introduction': 'Introducción',
 	'bible.introUnavailable': 'Todavía no hay introducción en esta lengua',
 	'bible.introSource': 'Las introducciones no forman parte del texto sagrado.',
-	'bible.illustrations': 'Ilustraciones',
 	'bible.testament.ot': 'Antiguo Testamento',
 	'bible.testament.nt': 'Nuevo Testamento',
 	'ccc.prevParagraph': 'Anterior',
@@ -209,8 +208,16 @@ export const es: Dictionary = {
 		'Los textos se recogen de sus fuentes publicadas, se analizan hasta formar un corpus estructurado y se presentan como páginas estáticas. Las correcciones de defectos de origen se registran una a una, con la redacción original, la corregida y el motivo: ningún texto se cambia jamás en silencio.',
 	'colophon.illustrationsTitle': 'Las ilustraciones',
 	'colophon.illustrationsBody':
-		'La Biblia lleva los grabados de Gustave Doré para La Grande Bible de Tours, cada uno junto al versículo que representa. Están en dominio público: las planchas se grabaron en 1866 y Doré murió en 1883, y la reproducción fotográfica fiel de un grabado en dominio público no genera un derecho de autor nuevo. Decimos de dónde vienen nuestras digitalizaciones porque se lo agradecemos.',
-	'colophon.illustrationsScans': 'Digitalizaciones facilitadas por',
+		'La Biblia lleva los grabados de Gustave Doré para La Grande Bible de Tours, cada uno junto al versículo que representa. Son el último y el mayor de sus ciclos bíblicos, grabados en acero e impresos con el texto, no reunidos al final del volumen.',
+	'colophon.countPlates': 'grabados',
+	'colophon.countPlateChapters': 'capítulos ilustrados',
+	'colophon.illustrationsAnchors':
+		'Cada grabado necesitaba una dirección, y los pies impresos por sí solos no bastaban. Se tomaron tres lecturas de cada uno — el pie bajo el propio grabado, una transcripción independiente y el índice de la colección que digitalizamos — y, donde discrepaban, se prefirió el pie, por ser lo que el grabador abrió en la plancha. Todas las lecturas quedan registradas, incluidas las que perdieron.',
+	'colophon.illustrationsProcessing':
+		'Las digitalizaciones se recortan hasta el grabado, se nivelan a un tono de papel común, se reducen a grises y se recodifican; nada dentro de la imagen se altera, retoca ni suprime. Se sirven en dos anchos, para que un teléfono no descargue una imagen hecha para una pantalla grande, y no se piden hasta que se llega a ellas.',
+	'colophon.illustrationsRights':
+		'Están en dominio público. Las planchas se grabaron en 1866 y Doré murió en 1883, y la reproducción fotográfica fiel de un grabado en dominio público no genera un derecho de autor nuevo. Decimos de dónde vienen nuestras digitalizaciones porque se lo agradecemos, no por obligación.',
+	'plates.scansBy': 'Digitalizaciones facilitadas por',
 	'colophon.typeTitle': 'La tipografía',
 	'colophon.typeBody':
 		'Compuesto en EB Garamond, el renacimiento que Georg Duffner y Octavio Pardo hicieron de los tipos que Claude Garamont grabó en la década de 1590, la tradición humanista en la que la Iglesia imprime desde el Renacimiento. Las iniciales son Pirata One, una letra gótica cuyas mayúsculas siguen siendo legibles al tamaño que exige una capitular. Ambas están licenciadas bajo la SIL Open Font License y se sirven desde este sitio y no desde un tercero, de modo que leer una página no pide nada al servidor de nadie más.',

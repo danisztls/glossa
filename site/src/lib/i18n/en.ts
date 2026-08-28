@@ -119,7 +119,6 @@ export const en: Dictionary = {
 	'bible.introduction': 'Introduction',
 	'bible.introUnavailable': 'No introduction in this language yet',
 	'bible.introSource': 'Introductions are not part of the scripture text.',
-	'bible.illustrations': 'Illustrations',
 	'bible.testament.ot': 'Old Testament',
 	'bible.testament.nt': 'New Testament',
 
@@ -297,8 +296,16 @@ export const en: Dictionary = {
 		'The texts are collected from their published sources, parsed into a structured corpus, and rendered as static pages. Corrections to source defects are recorded individually, with the original wording, the corrected wording, and the reason \u2014 no text is ever silently changed.',
 	'colophon.illustrationsTitle': 'The illustrations',
 	'colophon.illustrationsBody':
-		'The Bible carries Gustave Doré’s engravings for La Grande Bible de Tours, each one placed at the verse it depicts. They are in the public domain: the plates were cut in 1866 and Doré died in 1883, and a faithful photographic reproduction of a public-domain engraving carries no new copyright of its own. We say where our scans came from because we are grateful for them.',
-	'colophon.illustrationsScans': 'Scans provided by',
+		'The Bible carries Gustave Doré’s engravings for La Grande Bible de Tours, each one placed at the verse it depicts. They are the last and largest of his Bible cycles, cut in steel and printed with the text rather than gathered at the back.',
+	'colophon.countPlates': 'engravings',
+	'colophon.countPlateChapters': 'chapters illustrated',
+	'colophon.illustrationsAnchors':
+		'Each plate had to be given an address, and the printed captions alone were not enough to trust. Three readings were taken for every one — the caption under the plate itself, an independent transcription, and the index of the collection we scanned from — and where they disagreed the caption was preferred, since it is what the engraver cut. Every reading is kept, including the ones that lost.',
+	'colophon.illustrationsProcessing':
+		'The scans are cropped to the engraving, levelled to a common paper tone, reduced to grey and re-encoded; nothing within the image is altered, retouched or removed. They are served at two widths so a phone does not download a picture made for a desktop, and they are never fetched until you have scrolled to them.',
+	'colophon.illustrationsRights':
+		'They are in the public domain. The plates were cut in 1866 and Doré died in 1883, and a faithful photographic reproduction of a public-domain engraving carries no new copyright of its own. We name where our scans came from because we are grateful for them, not because we are obliged to.',
+	'plates.scansBy': 'Scans provided by',
 	'colophon.typeTitle': 'The type',
 	'colophon.typeBody':
 		'Set in EB Garamond, Georg Duffner and Octavio Pardo\u2019s revival of the types Claude Garamont cut in the 1590s \u2014 the humanist tradition the Church has printed in since the Renaissance. The opening initials are Pirata One, a blackletter whose capitals stay legible at the size a drop cap demands. Both are licensed under the SIL Open Font License and served from this site rather than from a third party, so reading a page asks nothing of anyone else\u2019s server.',

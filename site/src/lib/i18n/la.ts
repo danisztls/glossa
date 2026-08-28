@@ -96,7 +96,6 @@ export const la: Dictionary = {
 	'bible.introduction': 'Prooemium',
 	'bible.introUnavailable': 'Nondum est prooemium hac lingua',
 	'bible.introSource': 'Prooemia ad textum sacrum non pertinent.',
-	'bible.illustrations': 'Imagines',
 	'bible.testament.ot': 'Vetus Testamentum',
 	'bible.testament.nt': 'Novum Testamentum',
 	'ccc.prevParagraph': 'Prius',
@@ -248,8 +247,16 @@ export const la: Dictionary = {
 		'Textus e fontibus editis colliguntur, in corpus digestum rediguntur, et paginis stabilibus exhibentur. Emendationes mendorum in fonte singulae notantur, cum verbis pristinis, verbis emendatis et causa — nullus textus umquam tacite mutatur.',
 	'colophon.illustrationsTitle': 'De imaginibus',
 	'colophon.illustrationsBody':
-		'Biblia imagines fert quas Gustavus Doré in Bibliam Turonensem maiorem incidit, unamquamque ad versum quem exprimit positam. In publico sunt: laminae anno MDCCCLXVI incisae sunt et Doré anno MDCCCLXXXIII mortuus est, neque imaginis publicae fidelis photographica repetitio novum ius auctoris parit. Unde nostrae imagines electronicae venerint dicimus, quia gratias illis debemus.',
-	'colophon.illustrationsScans': 'Imagines electronicae praebitae a',
+		'Biblia imagines fert quas Gustavus Doré in Bibliam Turonensem maiorem incidit, unamquamque ad versum quem exprimit positam. Ultimus et amplissimus est ex eius cyclis biblicis, chalybe incisus et cum textu impressus, non in fine voluminis collectus.',
+	'colophon.countPlates': 'imagines',
+	'colophon.countPlateChapters': 'capita imaginibus ornata',
+	'colophon.illustrationsAnchors':
+		'Cuique imagini sedes danda erat, neque tituli impressi soli satis fidei habebant. Tres lectiones de singulis sumptae sunt — titulus sub ipsa imagine, transcriptio aliena, et index collectionis quam descripsimus — et ubi dissentiebant, titulus praelatus est, quippe qui a caelatore ipso incisus sit. Omnes lectiones servantur, etiam quae victae sunt.',
+	'colophon.illustrationsProcessing':
+		'Imagines ad ipsam picturam circumcisae sunt, ad communem chartae colorem aequatae, in cinereum redactae et denuo notatae; nihil intra picturam mutatur, retractatur aut tollitur. Duabus latitudinibus praebentur, ne telephonum imaginem amplo schemati factam trahat, neque petuntur priusquam ad eas perveneris.',
+	'colophon.illustrationsRights':
+		'In publico sunt. Laminae anno MDCCCLXVI incisae sunt et Doré anno MDCCCLXXXIII mortuus est, neque imaginis publicae fidelis photographica repetitio novum ius auctoris parit. Unde nostrae imagines venerint dicimus, quia gratias illis debemus, non quia cogimur.',
+	'plates.scansBy': 'Imagines electronicae praebitae a',
 	'colophon.typeTitle': 'De litterarum forma',
 	'colophon.typeBody':
 		'Litteris EB Garamond composita, quas Georgius Duffner et Octavius Pardo ex typis a Claudio Garamont circa annum 1590 caesis renovaverunt — ea traditione humanistica qua Ecclesia ab aetate litterarum renascentium imprimit. Litterae initiales sunt Pirata One, forma Gothica cuius capitales etiam ea magnitudine quam littera initialis poscit legi possunt. Utraeque sub licentia SIL Open Font License dantur et ex hac ipsa sede mittuntur, non ex aliena, ne pagina legenda quicquam ab alterius machina petat.',

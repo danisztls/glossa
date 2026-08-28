@@ -69,7 +69,6 @@ export const sl: Dictionary = {
 	'bible.introduction': 'Uvod',
 	'bible.introUnavailable': 'V tem jeziku uvoda še ni',
 	'bible.introSource': 'Uvodi niso del svetopisemskega besedila.',
-	'bible.illustrations': 'Ilustracije',
 	'bible.testament.ot': 'Stara zaveza',
 	'bible.testament.nt': 'Nova zaveza',
 	'ccc.prevParagraph': 'Nazaj',
@@ -210,8 +209,16 @@ export const sl: Dictionary = {
 		'Besedila zberemo iz njihovih objavljenih virov, jih razčlenimo v strukturiran korpus in izpišemo kot statične strani. Popravki napak v viru so zabeleženi vsak zase, z izvirnim besedilom, popravljenim besedilom in razlogom — nobeno besedilo ni nikoli spremenjeno na tihem.',
 	'colophon.illustrationsTitle': 'Ilustracije',
 	'colophon.illustrationsBody':
-		'Sveto pismo nosi grafike Gustava Doréja za La Grande Bible de Tours, vsako pri vrstici, ki jo upodablja. So v javni lasti: plošče so bile vrezane leta 1866, Doré pa je umrl leta 1883, in zvesta fotografska reprodukcija grafike v javni lasti ne ustvari nove avtorske pravice. Povemo, od kod so naši skeni, ker smo zanje hvaležni.',
-	'colophon.illustrationsScans': 'Skene je omogočil',
+		'Sveto pismo nosi grafike Gustava Doréja za La Grande Bible de Tours, vsako pri vrstici, ki jo upodablja. So zadnji in največji med njegovimi svetopisemskimi cikli: vrezane v jeklo in natisnjene z besedilom, ne zbrane na koncu knjige.',
+	'colophon.countPlates': 'grafik',
+	'colophon.countPlateChapters': 'ilustriranih poglavij',
+	'colophon.illustrationsAnchors':
+		'Vsaka grafika je morala dobiti naslov, sami natisnjeni podnapisi pa za to niso zadostovali. Za vsako so bila vzeta tri branja — podnapis pod grafiko samo, neodvisen prepis in kazalo zbirke, ki smo jo skenirali — in kjer so si nasprotovala, je obveljal podnapis, saj je to tisto, kar je vrezal graver. Vsa branja so ohranjena, tudi tista, ki so izgubila.',
+	'colophon.illustrationsProcessing':
+		'Skeni so obrezani do grafike, poravnani na skupen ton papirja, prevedeni v sivino in znova kodirani; znotraj slike ni nič spremenjeno, retuširano ali odstranjeno. Strežemo jih v dveh širinah, da telefon ne prenaša slike, narejene za velik zaslon, in jih ne zahtevamo, dokler ne pridete do njih.',
+	'colophon.illustrationsRights':
+		'So v javni lasti. Plošče so bile vrezane leta 1866, Doré pa je umrl leta 1883, in zvesta fotografska reprodukcija grafike v javni lasti ne ustvari nove avtorske pravice. Povemo, od kod so naši skeni, ker smo zanje hvaležni, ne ker bi morali.',
+	'plates.scansBy': 'Skene je omogočil',
 	'colophon.typeTitle': 'Črke',
 	'colophon.typeBody':
 		'Stavljeno v EB Garamond, obuditvi črk, ki jih je v devetdesetih letih 16. stoletja rezal Claude Garamont, izpod rok Georga Duffnerja in Octavia Parda — v humanistični tradiciji, v kateri Cerkev tiska že od renesanse. Začetnice so Pirata One, gotica, katere verzalke ostanejo berljive v velikosti, ki jo zahteva inicialka. Obe sta pod licenco SIL Open Font License in ju streže to spletišče, ne tretja oseba, tako da branje strani ne zahteva ničesar od strežnika kogar koli drugega.',

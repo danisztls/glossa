@@ -68,7 +68,6 @@ export const it: Dictionary = {
 	'bible.introduction': 'Introduzione',
 	'bible.introUnavailable': 'Ancora nessuna introduzione in questa lingua',
 	'bible.introSource': 'Le introduzioni non fanno parte del testo sacro.',
-	'bible.illustrations': 'Illustrazioni',
 	'bible.testament.ot': 'Antico Testamento',
 	'bible.testament.nt': 'Nuovo Testamento',
 	'ccc.prevParagraph': 'Precedente',
@@ -210,8 +209,16 @@ export const it: Dictionary = {
 		'I testi sono raccolti dalle loro fonti pubblicate, analizzati in un corpus strutturato e resi come pagine statiche. Le correzioni ai difetti d’origine sono registrate una per una, con la formulazione originale, quella corretta e la ragione — nessun testo viene mai cambiato in silenzio.',
 	'colophon.illustrationsTitle': 'Le illustrazioni',
 	'colophon.illustrationsBody':
-		'La Bibbia porta le incisioni di Gustave Doré per La Grande Bible de Tours, ciascuna posta al versetto che raffigura. Sono di pubblico dominio: le lastre furono incise nel 1866 e Doré morì nel 1883, e la riproduzione fotografica fedele di un’incisione di pubblico dominio non genera alcun nuovo diritto d’autore. Diciamo da dove vengono le nostre scansioni perché ne siamo grati.',
-	'colophon.illustrationsScans': 'Scansioni fornite da',
+		'La Bibbia porta le incisioni di Gustave Doré per La Grande Bible de Tours, ciascuna posta al versetto che raffigura. Sono l’ultimo e il più ampio dei suoi cicli biblici, incise su acciaio e stampate con il testo anziché raccolte in fondo al volume.',
+	'colophon.countPlates': 'incisioni',
+	'colophon.countPlateChapters': 'capitoli illustrati',
+	'colophon.illustrationsAnchors':
+		'Ogni incisione doveva ricevere un indirizzo, e le didascalie stampate da sole non bastavano. Per ciascuna sono state prese tre letture — la didascalia sotto l’incisione stessa, una trascrizione indipendente e l’indice della raccolta che abbiamo digitalizzato — e dove discordavano ha prevalso la didascalia, perché è ciò che l’incisore ha inciso. Tutte le letture restano registrate, comprese quelle perdenti.',
+	'colophon.illustrationsProcessing':
+		'Le scansioni sono ritagliate fino all’incisione, riportate a un tono di carta comune, ridotte al grigio e ricodificate; nulla all’interno dell’immagine è alterato, ritoccato o rimosso. Sono servite in due larghezze, perché un telefono non scarichi un’immagine fatta per uno schermo grande, e non vengono richieste finché non ci si arriva.',
+	'colophon.illustrationsRights':
+		'Sono di pubblico dominio. Le lastre furono incise nel 1866 e Doré morì nel 1883, e la riproduzione fotografica fedele di un’incisione di pubblico dominio non genera alcun nuovo diritto d’autore. Diciamo da dove vengono le nostre scansioni perché ne siamo grati, non perché siamo tenuti a farlo.',
+	'plates.scansBy': 'Scansioni fornite da',
 	'colophon.typeTitle': 'I caratteri',
 	'colophon.typeBody':
 		'Composto in EB Garamond, la rinascita a opera di Georg Duffner e Octavio Pardo dei caratteri che Claude Garamont incise negli anni 1590 — la tradizione umanistica in cui la Chiesa stampa fin dal Rinascimento. I capilettera sono in Pirata One, una gotica le cui maiuscole restano leggibili alla dimensione che un capolettera richiede. Entrambi sono sotto licenza SIL Open Font License e serviti da questo sito anziché da terzi, così che leggere una pagina non chieda nulla al server di nessun altro.',

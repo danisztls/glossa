@@ -68,7 +68,6 @@ export const sv: Dictionary = {
 	'bible.introduction': 'Inledning',
 	'bible.introUnavailable': 'Ingen inledning på detta språk ännu',
 	'bible.introSource': 'Inledningarna hör inte till bibeltexten.',
-	'bible.illustrations': 'Illustrationer',
 	'bible.testament.ot': 'Gamla testamentet',
 	'bible.testament.nt': 'Nya testamentet',
 	'ccc.prevParagraph': 'Föregående',
@@ -211,8 +210,16 @@ export const sv: Dictionary = {
 		'Texterna samlas in från sina publicerade källor, tolkas till ett strukturerat korpus och återges som statiska sidor. Rättelser av fel i källan antecknas var för sig, med den ursprungliga lydelsen, den rättade lydelsen och skälet — ingen text ändras någonsin i tysthet.',
 	'colophon.illustrationsTitle': 'Illustrationerna',
 	'colophon.illustrationsBody':
-		'Bibeln bär Gustave Dorés gravyrer till La Grande Bible de Tours, var och en placerad vid den vers den skildrar. De är fria: plåtarna graverades 1866 och Doré dog 1883, och en trogen fotografisk återgivning av en fri gravyr ger ingen ny upphovsrätt. Vi anger varifrån våra skanningar kommer därför att vi är tacksamma för dem.',
-	'colophon.illustrationsScans': 'Skanningar tillhandahållna av',
+		'Bibeln bär Gustave Dorés gravyrer till La Grande Bible de Tours, var och en placerad vid den vers den skildrar. De är den sista och största av hans bibelsviter, stuckna i stål och tryckta tillsammans med texten i stället för samlade sist i bandet.',
+	'colophon.countPlates': 'gravyrer',
+	'colophon.countPlateChapters': 'illustrerade kapitel',
+	'colophon.illustrationsAnchors':
+		'Varje gravyr måste ges en adress, och de tryckta bildtexterna räckte inte i sig. Tre läsningar togs för var och en — bildtexten under gravyren själv, en oberoende avskrift och registret till den samling vi skannade — och där de gick isär fick bildtexten företräde, eftersom det är den gravören skar. Alla läsningar bevaras, även de som förlorade.',
+	'colophon.illustrationsProcessing':
+		'Skanningarna är beskurna till gravyren, utjämnade till en gemensam papperston, förda till grått och omkodade; ingenting inuti bilden ändras, retuscheras eller tas bort. De levereras i två bredder, så att en telefon inte hämtar en bild gjord för en stor skärm, och de begärs inte förrän man kommit fram till dem.',
+	'colophon.illustrationsRights':
+		'De är fria. Plåtarna graverades 1866 och Doré dog 1883, och en trogen fotografisk återgivning av en fri gravyr ger ingen ny upphovsrätt. Vi anger varifrån våra skanningar kommer därför att vi är tacksamma för dem, inte därför att vi måste.',
+	'plates.scansBy': 'Skanningar tillhandahållna av',
 	'colophon.typeTitle': 'Typsnittet',
 	'colophon.typeBody':
 		'Satt med EB Garamond, Georg Duffners och Octavio Pardos återupplivande av de typer Claude Garamont skar på 1590-talet — den humanistiska tradition kyrkan har tryckt i sedan renässansen. Anfangerna är Pirata One, en frakturstil vars versaler förblir läsbara i den storlek en anfang kräver. Båda är licensierade under SIL Open Font License och levereras från den här sajten och inte från tredje part, så att läsa en sida begär ingenting av någon annans server.',

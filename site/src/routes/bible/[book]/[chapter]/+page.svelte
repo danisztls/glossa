@@ -361,10 +361,26 @@
 			: new Map();
 	});
 
-	/** Index tier, so it is in hand — the credit is printed only when a plate
-	 *  was actually drawn, never as a standing notice on 1,139 chapters that
-	 *  have none. */
-	const plateCredit = plateCredits[DORE_WORK_ID];
+	/**
+	 * The engravings' attribution, as the tooltip on each plate carries it.
+	 *
+	 * Composed HERE rather than in `Plate.svelte` because no component in
+	 * `$lib/components/` reads the i18n store — every one of them takes its
+	 * strings as props — and because the record is index tier, so it is
+	 * already in hand and costs nothing to read on a chapter with no plates.
+	 *
+	 * Two lines: the picture's own provenance, then whose scan this is. The
+	 * colophon says all of it at length; this is what a reader gets without
+	 * leaving the chapter.
+	 */
+	const plateCredit = $derived.by(() => {
+		const credit = plateCredits[DORE_WORK_ID];
+		if (!credit) return undefined;
+		return (
+			`${credit.artist}, ${credit.edition}\n` +
+			`${credit.reproduction} — ${t('plates.scansBy')} ${credit.provider}`
+		);
+	});
 
 	const documentCitations = $derived(getDocumentCitationsForChapter(data.osis, data.chapterN));
 
@@ -670,13 +686,13 @@
 					     is drawn before the first verse. `placePlates` keys those 0;
 					     none of the 241 land there today. -->
 					{#each chapterPlates.get(0) ?? [] as plate (plate.id)}
-						<Plate {plate} />
+						<Plate {plate} credit={plateCredit} />
 					{/each}
 					{#each current.chapter.verses as verse, i (verse.n)}
 						<!-- Before the verse, not after: an engraving is read as the
 						     scene the sentence under it describes. -->
 						{#each chapterPlates.get(verse.n) ?? [] as plate (plate.id)}
-							<Plate {plate} />
+							<Plate {plate} credit={plateCredit} />
 						{/each}
 						<!-- A heading can carry apparatus of its own: Lamentations 1
 						     opens with Jeremias's prologue, which the Douay-Rheims prints
@@ -728,16 +744,6 @@
 						</span>
 					{/each}
 				</div>
-				{#if plateCredit && chapterPlates.size > 0}
-					<!-- Once per chapter rather than under every plate: Genesis
-					     carries 27 of them, and a printed edition names its
-					     engraver on the title page, not beneath each picture.
-					     The colophon is where the full statement lives. -->
-					<p class="plate-credit">
-						{t('bible.illustrations')}: {plateCredit.artist}, {plateCredit.edition} —
-						<a href={plateCredit.provider_url} rel="noreferrer">{plateCredit.provider}</a>
-					</p>
-				{/if}
 			{/if}
 
 			{#if citedInRows.length > 0}
@@ -790,16 +796,6 @@
 
 	.copyright-notice {
 		margin: 0.15rem 0 0;
-	}
-
-	/* Set like the copyright notice below the text rather than like a caption:
-	   it is a statement about the chapter, not about any one picture. */
-	.plate-credit {
-		margin: 1.5rem 0 0;
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		line-height: 1.5;
-		color: var(--color-text-muted);
 	}
 
 	/* "Introduction", under the book's name — the counterpart of the chapter

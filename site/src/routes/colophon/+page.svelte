@@ -115,13 +115,34 @@
 
 	{#if collections.length > 0}
 		<h2>{t('colophon.illustrationsTitle')}</h2>
+		<!--
+			The prose sits OUTSIDE the loop and the credit inside it, which is
+			the split that will still be right if a second collection is ever
+			added: what is said here is about the pictures this site carries and
+			how they were handled, and it names Doré because he is who they are
+			by; what is said per collection is whose copy we have.
+
+			Three claims, in the order a reader checking our work would want
+			them: where each picture was placed and on what evidence, what was
+			done to the pixels, and on what footing we publish them at all. The
+			last is the load-bearing one, and it has the same shape as the
+			copyright section above — what the position is, and why it holds.
+		-->
 		<p>{t('colophon.illustrationsBody')}</p>
+		<p>{t('colophon.illustrationsAnchors')}</p>
+		<p>{t('colophon.illustrationsProcessing')}</p>
+		<p>{t('colophon.illustrationsRights')}</p>
 		{#each collections as collection (collection.title)}
+			<p class="counts">
+				{collection.plates}
+				{t('colophon.countPlates')} · {collection.chapters}
+				{t('colophon.countPlateChapters')}
+			</p>
 			<p class="credit">
 				<em>{collection.title}</em>. {collection.artist}, {collection.edition}.
 				{collection.reproduction}.
 				<br />
-				{t('colophon.illustrationsScans')}
+				{t('plates.scansBy')}
 				<a href={collection.provider_url} rel="external noopener" target="_blank"
 					>{collection.provider}</a
 				>

@@ -68,7 +68,6 @@ export const pl: Dictionary = {
 	'bible.introduction': 'Wprowadzenie',
 	'bible.introUnavailable': 'Brak jeszcze wprowadzenia w tym języku',
 	'bible.introSource': 'Wprowadzenia nie należą do tekstu Pisma.',
-	'bible.illustrations': 'Ilustracje',
 	'bible.testament.ot': 'Stary Testament',
 	'bible.testament.nt': 'Nowy Testament',
 	'ccc.prevParagraph': 'Poprzedni',
@@ -208,8 +207,16 @@ export const pl: Dictionary = {
 		'Teksty są zbierane z opublikowanych źródeł, przetwarzane w uporządkowany korpus i wyświetlane jako strony statyczne. Poprawki usterek źródłowych są odnotowywane pojedynczo, wraz z pierwotnym brzmieniem, poprawionym i uzasadnieniem — żaden tekst nie jest nigdy zmieniany po cichu.',
 	'colophon.illustrationsTitle': 'Ilustracje',
 	'colophon.illustrationsBody':
-		'Biblia niesie ryciny Gustave’a Doré do La Grande Bible de Tours, każdą przy wersecie, który przedstawia. Należą do domeny publicznej: płyty wykonano w 1866 roku, a Doré zmarł w 1883, wierna zaś fotograficzna reprodukcja ryciny z domeny publicznej nie tworzy nowego prawa autorskiego. Podajemy, skąd pochodzą nasze skany, ponieważ jesteśmy za nie wdzięczni.',
-	'colophon.illustrationsScans': 'Skany udostępnione przez',
+		'Biblia niesie ryciny Gustave’a Doré do La Grande Bible de Tours, każdą przy wersecie, który przedstawia. To ostatni i największy z jego cykli biblijnych, ryty w stali i drukowany wraz z tekstem, a nie zebrany na końcu tomu.',
+	'colophon.countPlates': 'ryciny',
+	'colophon.countPlateChapters': 'zilustrowane rozdziały',
+	'colophon.illustrationsAnchors':
+		'Każda rycina musiała otrzymać adres, a same drukowane podpisy nie wystarczały. Dla każdej wzięto trzy odczyty — podpis pod samą ryciną, niezależną transkrypcję oraz indeks zbioru, który zeskanowaliśmy — a tam, gdzie się rozchodziły, pierwszeństwo dano podpisowi, bo to on został wyryty. Wszystkie odczyty są zachowane, także te przegrane.',
+	'colophon.illustrationsProcessing':
+		'Skany są przycięte do samej ryciny, wyrównane do wspólnego tonu papieru, sprowadzone do szarości i przekodowane; niczego wewnątrz obrazu nie zmieniono, nie retuszowano ani nie usunięto. Podawane są w dwóch szerokościach, by telefon nie pobierał obrazu przeznaczonego na duży ekran, i nie są pobierane, dopóki się do nich nie dojdzie.',
+	'colophon.illustrationsRights':
+		'Należą do domeny publicznej. Płyty wykonano w 1866 roku, a Doré zmarł w 1883, wierna zaś fotograficzna reprodukcja ryciny z domeny publicznej nie tworzy nowego prawa autorskiego. Podajemy, skąd pochodzą nasze skany, ponieważ jesteśmy za nie wdzięczni, a nie dlatego, że musimy.',
+	'plates.scansBy': 'Skany udostępnione przez',
 	'colophon.typeTitle': 'Krój pisma',
 	'colophon.typeBody':
 		'Złożono krojem EB Garamond, odnowieniem przez Georga Duffnera i Octavia Parda czcionek, które Claude Garamont wyciął w latach dziewięćdziesiątych XVI wieku — tradycji humanistycznej, w której Kościół drukuje od czasów renesansu. Inicjały to Pirata One, gotyk, którego wersaliki pozostają czytelne w rozmiarze, jakiego wymaga inicjał. Oba są na licencji SIL Open Font License i serwowane z tej strony, a nie przez osoby trzecie, więc czytanie strony niczego nie wymaga od cudzego serwera.',

@@ -543,6 +543,26 @@ function corpusDateFor(workId) {
 const platesCredit = {};
 
 /**
+ * What the colophon prints about one collection: the manifest's own credit
+ * fields, plus what actually shipped.
+ *
+ * The counts are here rather than in the page's copy for the reason that
+ * route's docblock already gives about its work counts — a hand-typed number
+ * drifts from what the site serves, and this is the page whose whole job is
+ * to be believable.
+ */
+function creditRecord(manifest, plates, chapters) {
+	return {
+		title: manifest.title,
+		edition: manifest.edition,
+		copyright: manifest.copyright,
+		...manifest.credit,
+		plates,
+		chapters
+	};
+}
+
+/**
  * The Doré plates: a credit line for the index tier, the anchored list for
  * the content tier, and the images as ordinary build assets.
  *
@@ -566,14 +586,8 @@ const platesCredit = {};
  * needs the answer and nothing else, so the content file is a sixth the size.
  */
 function syncPlates(workId, workDir, manifest) {
-	platesCredit[workId] = {
-		title: manifest.title,
-		edition: manifest.edition,
-		copyright: manifest.copyright,
-		...manifest.credit
-	};
-
 	if (unpublishedIds.has(workId)) {
+		platesCredit[workId] = creditRecord(manifest, 0, 0);
 		console.warn(`[sync-corpus] ${workId}: DISABLED — plates withheld from the build`);
 		return;
 	}
@@ -623,6 +637,17 @@ function syncPlates(workId, workDir, manifest) {
 				`skipped: ${missing.slice(0, 8).join(', ')}${missing.length > 8 ? ', …' : ''}`
 		);
 	}
+
+	// Written HERE and not at the top of the function, because the counts the
+	// colophon prints have to be the number of plates that actually reached
+	// the build — not the number the corpus holds. A plate whose image failed
+	// to derive is skipped above, and a credit claiming it would be the one
+	// kind of error the colophon must not make.
+	platesCredit[workId] = creditRecord(
+		manifest,
+		plates.length,
+		new Set(plates.map((plate) => `${plate.osis} ${plate.chapter}`)).size
+	);
 
 	const relPath = `content/${workId}/plates.json`;
 	writeJson(path.join(destDir, relPath), plates);
