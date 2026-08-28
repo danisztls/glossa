@@ -128,7 +128,7 @@
 					popover="auto"
 					role="note"
 					ontoggle={card.onToggle}
-					class="floating-panel plate-credit">{credit}</span
+					class="panel-surface floating-panel plate-credit">{credit}</span
 				>
 				<!-- Print gets the credit unconditionally: a printed plate leaves
 				     this site entirely, and it is the one copy whose reader cannot

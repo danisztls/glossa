@@ -89,7 +89,7 @@
 	</button>
 	{#if menu.open}
 		<ul
-			class="menu-panel lang-panel"
+			class="panel-surface menu-panel lang-panel"
 			use:keepInViewport
 			role="menu"
 			aria-label={t('lang.label')}

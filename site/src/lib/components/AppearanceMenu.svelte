@@ -91,7 +91,7 @@
 	</button>
 	{#if menu.open}
 		<div
-			class="menu-panel appearance-panel"
+			class="panel-surface menu-panel appearance-panel"
 			use:keepInViewport
 			role="menu"
 			tabindex="-1"

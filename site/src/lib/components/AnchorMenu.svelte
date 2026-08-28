@@ -174,7 +174,7 @@
 	bind:this={card.panel}
 	popover="auto"
 	ontoggle={onToggle}
-	class="floating-panel anchor-menu-panel"
+	class="panel-surface floating-panel anchor-menu-panel"
 	data-link-preview="off"
 >
 	<ul

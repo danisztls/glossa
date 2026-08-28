@@ -158,3 +158,32 @@
 	font-size: 1.05rem;
 	margin-top: 0;
 }
+
+/*
+ * THE PANEL SURFACE — the ground a thing floating over the page is drawn on,
+ * and nothing about where it floats.
+ *
+ * `menus.css` used to state the same four declarations twice and say so:
+ * "`.menu-panel` below repeats four of the declarations and is deliberately
+ * NOT this", because the two families are genuinely different — one is
+ * measured against an arbitrary point in flowing prose by `floating.ts`, the
+ * other is positioned in CSS from its own trigger. That difference is real
+ * and stays where it was. What both of them ARE, along with the jump box and
+ * the chapter popover, is a bordered card with a shadow, and that is this.
+ *
+ * SO THE SPLIT IS SURFACE FROM PLACEMENT, which is the only split that holds:
+ * every panel on the site agrees about what it looks like and none of them
+ * agrees about where it goes. A consumer adds this class beside its own and
+ * keeps its positioning, sizing, scrolling and padding.
+ *
+ * `TocMenu`'s dialog deliberately does NOT adopt it. Its surface exists only
+ * above the sheet breakpoint — below that the same element IS the viewport,
+ * with no corner and no shadow to draw — and a class in the markup cannot say
+ * "only in this media query". Its rules stay in the query that owns them.
+ */
+.panel-surface {
+	background: var(--color-bg);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-panel);
+}

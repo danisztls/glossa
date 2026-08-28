@@ -446,7 +446,7 @@
 	onclose={onClose}
 	onclick={onDialogClick}
 >
-	<div class="panel">
+	<div class="panel panel-surface">
 		<form onsubmit={onSubmit}>
 			<!--
 				`aria-expanded` follows whether there is a list to expand INTO,
@@ -604,11 +604,10 @@
 		margin: 12vh auto auto;
 	}
 
+	/* A `.panel-surface` (styles/components.css) with room to breathe: this one
+	   holds an input and a result list rather than a row of menu items, and it
+	   is the only panel on the site a reader types into. */
 	.panel {
-		background: var(--color-bg);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-lg);
-		box-shadow: var(--shadow-panel);
 		padding: 1rem;
 	}
 

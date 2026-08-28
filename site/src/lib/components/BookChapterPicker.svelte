@@ -467,7 +467,7 @@
 	{@const present = chaptersInEdition(book.osis)}
 	<div
 		id={`chapters-${variant}-${book.osis}`}
-		class="chapters"
+		class="chapters panel-surface"
 		class:floating
 		class:flip={placement?.flip}
 		style={panelStyle(book)}
@@ -722,10 +722,14 @@
 		inset-inline-start: 0;
 		z-index: 20;
 		padding: var(--chapter-pad);
+		/* A `.panel-surface` (styles/components.css) on the ELEVATED ground
+		   rather than the page's, which is the one thing this panel does not
+		   share with the others: it hangs off a book chip that is itself
+		   elevated, and matching it reads as that button opening rather than
+		   as a card arriving over the page. Its corner was 0.35rem against
+		   every other panel's 0.5 until 2026-08-28, which was not a decision
+		   anyone made and is now the shared one. */
 		background: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-		box-shadow: var(--shadow-panel);
 		/* One gap MORE than the columns strictly need (n chips have n-1 gaps
 		   between them), as slack: it guarantees `auto-fit` resolves to
 		   exactly `--chapter-cols` tracks rather than losing the last one to

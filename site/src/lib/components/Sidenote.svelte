@@ -145,7 +145,7 @@
 	ontoggle={card.onToggle}
 	onpointerenter={card.onPointerEnter}
 	onpointerleave={card.onPointerLeave}
-	class="floating-panel note-popover">{@render gloss()}</span
+	class="panel-surface floating-panel note-popover">{@render gloss()}</span
 >
 
 <style>

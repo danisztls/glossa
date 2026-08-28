@@ -80,11 +80,13 @@
  * citation — see `LinkPreview`, which is a `manual` popover for exactly that
  * reason and no other.
  *
- * `.menu-panel` below repeats four of the declarations and is deliberately
- * NOT this. It is positioned in CSS from its own trigger rather than measured
- * against one, which `floating.ts`'s docblock draws as the real line between
- * the two families, and it carries its own scrolling, sizing and list reset
- * besides.
+ * `.menu-panel` below is deliberately NOT this. It is positioned in CSS from
+ * its own trigger rather than measured against one, which `floating.ts`'s
+ * docblock draws as the real line between the two families, and it carries
+ * its own scrolling, sizing and list reset besides. The four declarations it
+ * used to repeat here — the ground, the border, the corner and the shadow —
+ * are `.panel-surface` (styles/components.css) now, which both families and
+ * two components outside this file wear beside their own class.
  */
 .floating-panel {
 	position: fixed;
@@ -106,10 +108,6 @@
 	 * it is also the end state of a transition.
 	 */
 	visibility: hidden;
-	background: var(--color-bg);
-	border: 1px solid var(--color-border);
-	border-radius: var(--radius-lg);
-	box-shadow: var(--shadow-panel);
 	font-family: var(--font-sans);
 }
 
@@ -142,10 +140,6 @@
 	max-width: min(22rem, 90vw);
 	max-height: min(24rem, 70vh);
 	overflow-y: auto;
-	background: var(--color-bg);
-	border: 1px solid var(--color-border);
-	border-radius: var(--radius-lg);
-	box-shadow: var(--shadow-panel);
 	padding: 0.35rem;
 	list-style: none;
 	margin: 0;

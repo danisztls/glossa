@@ -182,7 +182,7 @@
 	ontoggle={card.onToggle}
 	onpointerenter={card.onPointerEnter}
 	onpointerleave={card.onPointerLeave}
-	class="floating-panel citation-popover">{@render source(false)}</span
+	class="panel-surface floating-panel citation-popover">{@render source(false)}</span
 >
 
 <style>

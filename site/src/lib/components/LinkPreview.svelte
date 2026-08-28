@@ -442,7 +442,7 @@
 	bind:this={overlayEl}
 	id={TOOLTIP_ID}
 	popover="manual"
-	class="floating-panel link-preview"
+	class="panel-surface floating-panel link-preview"
 	class:visible={coords !== undefined}
 	class:tappable={openedByTap}
 	role={openedByTap ? undefined : 'tooltip'}

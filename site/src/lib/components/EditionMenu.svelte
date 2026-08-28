@@ -271,7 +271,7 @@
 		</button>
 		{#if menu.open}
 			<ul
-				class="menu-panel"
+				class="panel-surface menu-panel"
 				use:keepInViewport
 				role="menu"
 				aria-label={t('edition.label')}
