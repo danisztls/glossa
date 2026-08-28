@@ -13,28 +13,40 @@
 	 * are recorded rather than derived here (every plate has its own crop, so
 	 * there is no ratio to assume).
 	 *
-	 * THE ATTRIBUTION IS THE CAPTION, EXPANDED. Genesis carries 27 plates and
-	 * a credit repeated 27 times down a reading column is noise, while one
-	 * said once at the foot of the chapter is a line the reader meets long
-	 * after the picture it refers to. So the caption is a disclosure: the
-	 * plate's title always, and whose engraving it is and whose scan when the
-	 * reader asks for it.
+	 * THE ATTRIBUTION IS THE CAPTION, AND OPENS OVER THE PAGE. Genesis carries
+	 * 27 plates and a credit repeated 27 times down a reading column is noise,
+	 * while one said once at the foot of the chapter is a line the reader
+	 * meets long after the picture it refers to. So the caption is the
+	 * control: the plate's title always, and whose engraving it is and whose
+	 * scan when the reader asks.
 	 *
-	 * `<details>` RATHER THAN A `$state` BOOLEAN, the same choice the document
-	 * route's inline table of contents makes and for the same reason: the
-	 * browser already owns this widget's keyboard handling, its ARIA, and
-	 * find-in-page (Chrome and Firefox open a closed one to reveal a match),
-	 * and none of that is worth reimplementing for a caption. It also means
-	 * the credit works with no JavaScript at all.
+	 * A CARD RATHER THAN AN EXPANDING CAPTION, and the reason is the one
+	 * `CitationDisclosure` already gives about the box it used to be: an
+	 * apparatus must not move the text. A `<details>` under the picture pushes
+	 * every verse below it down when it opens and pulls them back when it
+	 * closes, so a reader who taps a caption loses their place in the chapter
+	 * — and the plate is mid-passage, which is the worst position for that.
+	 * The popover is in the top layer and `position: fixed`; opening it costs
+	 * the page no layout at all. It is the same `.floating-panel` a citation
+	 * and a link preview appear in, which is the point: a reader who has
+	 * learned what a small box over the page means should not have to learn a
+	 * second one.
+	 *
+	 * NATIVE `popover`, DECLARATIVELY INVOKED. `popovertarget` is valid on
+	 * `<button>` and the trigger here is one, so the browser owns the open
+	 * state, light dismiss, Escape, the top layer and returning focus to the
+	 * caption. What is kept here is `aria-expanded`, which the reader's screen
+	 * reader is owed, and the anchor tracking, which is only worth a listener
+	 * while something is open.
 	 *
 	 * AND IT IS WHAT MAKES THE CREDIT REACHABLE ON A PHONE. The `title`
 	 * attribute below is a real tooltip on a pointer and nothing whatsoever on
 	 * touch — there is no hover to have — so on its own it left every phone
 	 * reader with the plate's name and no attribution. It stays because it
-	 * costs nothing and answers a desktop reader without a click; the
-	 * disclosure is what answers everyone else. Neither is load-bearing for
-	 * rights: the engravings are public domain and the credit is courtesy,
-	 * with the full statement on the colophon.
+	 * costs nothing and answers a mouse reader over the picture itself,
+	 * without a click; the card is what answers everyone else. Neither is
+	 * load-bearing for rights: the engravings are public domain and the credit
+	 * is courtesy, with the full statement on the colophon.
 	 *
 	 * IT HIDES ITSELF WHEN THE IMAGE DOES NOT ARRIVE, and that is not defensive
 	 * padding — it is the offline case, by design. The plates are enrichment
@@ -48,14 +60,16 @@
 	import { PLATE_SIZES } from '$lib/plates';
 	import { plateSrc, plateSrcset } from '$lib/plate-src';
 	import Icon from '$lib/components/Icon.svelte';
+	import { computePanelPosition, trackAnchor } from '$lib/floating';
 
 	interface Props {
 		plate: Plate;
 		/** The collection's attribution, already composed and already
-		 *  localized — passed in rather than read, because no component in
-		 *  this directory imports the i18n store and this one is not the
-		 *  place to start. Newlines are honoured in both surfaces: the native
-		 *  tooltip breaks on them, and the disclosure sets `pre-line`. */
+		 *  localized. Passed rather than read so this component needs no
+		 *  corpus and no language: the page that knows which collection a
+		 *  plate belongs to is the page that composes the line. Newlines are
+		 *  honoured in every surface — the native tooltip breaks on them, and
+		 *  the card and the print line set `pre-line`. */
 		credit?: string;
 	}
 
@@ -65,6 +79,51 @@
 	const src = $derived(plateSrc(plate.id));
 
 	let failed = $state(false);
+
+	// Per INSTANCE, which is per plate: a chapter renders up to 27 of these
+	// and each card needs an id of its own for `popovertarget` to name.
+	const uid = $props.id();
+
+	let trigger: HTMLElement | undefined = $state();
+	let panel: HTMLElement | undefined = $state();
+	/** Mirrors the popover's own state — for `aria-expanded`, and to decide
+	 *  whether tracking the anchor is worth a listener. */
+	let open = $state(false);
+
+	/**
+	 * PLACED IMPERATIVELY, for the ordering reason `NoteCard` sets out at
+	 * length: `toggle` fires AFTER the popover is shown, so a coordinate that
+	 * travelled back through Svelte's update cycle would leave one painted
+	 * frame at the card's static position. The card starts `visibility:
+	 * hidden` in CSS and is revealed here, in the same synchronous turn that
+	 * measures it. It cannot be measured earlier either — a closed popover is
+	 * `display: none`, and `getBoundingClientRect` on one is all zeroes.
+	 */
+	function place() {
+		if (!panel || !trigger) return;
+		const at = computePanelPosition(trigger.getBoundingClientRect(), panel.getBoundingClientRect());
+		panel.style.top = `${at.top}px`;
+		panel.style.left = `${at.left}px`;
+		panel.style.visibility = 'visible';
+	}
+
+	/**
+	 * The one thing native dismissal does not do is tell Svelte. Escape, a
+	 * light dismiss and another plate's card superseding this one all hide the
+	 * element without touching anything here, which would leave the caption's
+	 * `aria-expanded` reading `true` over a card nobody can see.
+	 */
+	function onToggle(e: ToggleEvent) {
+		open = e.newState === 'open';
+		if (open) place();
+		else if (panel) panel.style.visibility = 'hidden';
+	}
+
+	// Only while open. A component per plate means a chapter has dozens, and a
+	// scroll listener per rendered caption is the mistake `AnchorMenu` records
+	// not making. Tracking rather than dismissing because this card was opened
+	// on purpose — see `trackAnchor`.
+	$effect(() => (open ? trackAnchor(place) : undefined));
 </script>
 
 {#if src && !failed}
@@ -83,26 +142,40 @@
 		/>
 		<figcaption>
 			{#if credit}
-				<details>
-					<!-- The title IS the summary, so the control's accessible name is
-					     the plate's own name and `aria-expanded` — which the browser
-					     supplies — says the rest. A separate "show attribution" label
-					     would name the control something other than its visible text,
-					     which is the one thing a disclosure trigger must not do. -->
-					<summary>
-						<span class="title">{plate.title}</span>
-						<Icon name="info" class="hint" />
-					</summary>
-					<p class="credit">{credit}</p>
-				</details>
+				<!-- The title IS the control's content, so its accessible name is
+				     the plate's own name and `aria-expanded` says the rest. A
+				     separate "show attribution" label would name the button
+				     something other than its visible text, which is the one thing
+				     a disclosure trigger must not do. -->
+				<button
+					bind:this={trigger}
+					type="button"
+					class="caption-trigger"
+					popovertarget={uid}
+					aria-expanded={open}
+				>
+					<span class="title">{plate.title}</span>
+					<Icon name="info" class="hint" />
+				</button>
+				<!-- `role="note"` — ARIA's own word for content ancillary to the
+				     thing it hangs off, which a credit exactly is. Not `tooltip`,
+				     the role `LinkPreview`'s hover card carries: that one describes
+				     its anchor and is summoned rather than asked for. -->
+				<span
+					bind:this={panel}
+					id={uid}
+					popover="auto"
+					role="note"
+					ontoggle={onToggle}
+					class="floating-panel plate-credit">{credit}</span
+				>
 				<!-- Print gets the credit unconditionally: a printed plate leaves
 				     this site entirely, and it is the one copy whose reader cannot
-				     tap anything or follow a link to the colophon. Rendered
-				     separately rather than by opening the `<details>` in print,
-				     because a closed disclosure's contents are hidden by the user
-				     agent in a way no print stylesheet can reliably override.
+				     tap anything or follow a link to the colophon. A popover never
+				     prints — it is in the top layer and closed besides — so the
+				     line is rendered separately rather than coaxed out of the card.
 				     `aria-hidden` so it is not announced twice on screen. -->
-				<p class="credit-print" aria-hidden="true">{credit}</p>
+				<span class="credit-print" aria-hidden="true">{credit}</span>
 			{:else}
 				<span class="title">{plate.title}</span>
 			{/if}
@@ -146,43 +219,57 @@
 		letter-spacing: 0.04em;
 	}
 
-	/* Both markers, because the engines disagree about which one they draw,
-	   and a stray triangle beside a centred caption is the whole reason this
-	   reads as a caption rather than as a widget. */
-	summary {
-		list-style: none;
+	/* A button that has to read as a caption: no chrome, the caption's own
+	   colour and size, and the pointer only to say it does something. */
+	.caption-trigger {
+		appearance: none;
+		border: 0;
+		background: none;
+		padding: 0.4rem 0.2rem;
+		margin: 0;
+		font: inherit;
+		color: inherit;
 		cursor: pointer;
-		/* A caption-sized glyph is a small tap target, and touch is the reason
-		   this disclosure exists at all. Padding rather than a min-height so
-		   the row does not grow: the target extends into the whitespace the
-		   caption already sits in. */
-		padding-block: 0.4rem;
 	}
 
-	summary::-webkit-details-marker {
-		display: none;
-	}
-
-	summary :global(.hint) {
+	/* Padding above rather than a min-height, so the caption row does not grow:
+	   a caption-sized glyph is a small tap target, and touch is the reason this
+	   card exists at all, so the target extends into whitespace the figure
+	   already occupies. */
+	.caption-trigger :global(.hint) {
 		margin-inline-start: 0.35em;
 		vertical-align: -0.1em;
 		opacity: 0.55;
 	}
 
-	/* Focus lands on the summary, which is the whole caption row. */
-	summary:focus-visible {
+	.caption-trigger:focus-visible {
 		outline: 2px solid var(--color-focus-ring);
 		outline-offset: 2px;
 		border-radius: 2px;
 	}
 
-	.credit {
-		margin-block: 0.1rem 0;
-		font-size: 0.9em;
-		/* The credit is two lines separated by a newline in the string; the
-		   same string is the `title` above, where the break is native. */
+	/*
+	 * The card. Where it sits — fixed, the UA `[popover]` centring reset, no
+	 * `z-index` because the top layer decides — is `.floating-panel` in
+	 * app.css. Hidden until `place()` has measured it; see there for why that
+	 * has to be the stylesheet's starting point rather than the template's.
+	 *
+	 * CHROME SIZE, NOT CAPTION SIZE, the same fixed `rem` as the citation card
+	 * it borrows its look from: nothing around it now to grow with.
+	 */
+	.plate-credit {
+		visibility: hidden;
+		max-inline-size: min(24rem, calc(100vw - 1rem));
+		padding: 0.5rem 0.7rem;
+		font-size: 0.85rem;
+		line-height: 1.5;
+		color: var(--color-text);
+		text-align: start;
+		/* The credit is two lines separated by a newline in the string — the
+		   same string the image's `title` carries, where the break is native. */
 		white-space: pre-line;
 		text-wrap: pretty;
+		overflow-wrap: break-word;
 	}
 
 	.credit-print {
@@ -197,9 +284,9 @@
 	 *
 	 * Paper is white, so the blend has nothing to blend with and the
 	 * dark-theme dim would only waste ink; a plate broken across a page
-	 * boundary is worse than one moved to the next; and the disclosure
-	 * becomes a plain line of type, with the credit beneath it whether or not
-	 * the reader had it open on screen.
+	 * boundary is worse than one moved to the next; and the caption becomes a
+	 * plain line of type with the credit beneath it, since on paper there is
+	 * nothing to press.
 	 */
 	@media print {
 		.plate {
@@ -211,18 +298,18 @@
 			filter: none;
 		}
 
-		summary {
-			padding-block: 0;
+		.caption-trigger {
+			padding: 0;
 			cursor: auto;
 		}
 
-		summary :global(.hint) {
+		.caption-trigger :global(.hint) {
 			display: none;
 		}
 
 		.credit-print {
 			display: block;
-			margin-block: 0.1rem 0;
+			margin-block-start: 0.1rem;
 			font-size: 0.9em;
 			white-space: pre-line;
 		}
