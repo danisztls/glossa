@@ -62,7 +62,7 @@
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import SummaDivisions from '$lib/components/SummaDivisions.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
-	import { summaTitleParts } from '$lib/summa-titles';
+	import { summaQuestionLabel, summaTitleParts } from '$lib/summa-titles';
 	import { hrefFor, summaPartSlug } from '$lib/address';
 	import type { SummaArticle } from '$lib/types';
 	import type { PageData } from './$types';
@@ -224,10 +224,26 @@
 			page.url.pathname
 		);
 	});
+
+	/** ` \u00b7 The Existence of God`, or nothing under an edition that prints
+	 *  no question titles. */
+	function titleSuffix(): string {
+		const title = question?.title ? summaQuestionLabel(question.title) : '';
+		return title ? ` \u00b7 ${title}` : '';
+	}
 </script>
 
+<!--
+	The question's own title, and `home.title` after it rather than the work's:
+	this was the other route suffixing with something else, so a reader watching
+	the tab saw the site renamed on every Summa page.
+
+	Empty under `summa.la`, which prints no question titles at all
+	(`SummaQuestion.title`) — the label alone is then the whole title, which is
+	what the Latin edition itself offers.
+-->
 <svelte:head>
-	<title>{t('summa.question')} {data.n} — {t('summa.landing.title')}</title>
+	<title>{t('summa.question')} {data.n}{titleSuffix()} — {t('home.title')}</title>
 </svelte:head>
 
 <!--

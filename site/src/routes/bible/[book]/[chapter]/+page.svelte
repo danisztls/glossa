@@ -446,11 +446,24 @@
 	});
 </script>
 
+<!--
+	THE SITE'S NAME AND NOT THE EDITION'S, which is what this said until
+	2026-08-28 (`current?.work.short_title`, i.e. "Catholic Public Domain
+	Version"). The address is deliberately edition-free — which edition renders
+	here is the reader's standing preference, never the link's to decide (see
+	`hrefFor`) — so a title naming one contradicted the URL under it and changed
+	whenever the reader switched edition at an address that had not moved. It
+	was also the one route in the site that suffixed with anything but
+	`home.title`.
+
+	Kept in the shape the edge writes for the same address (`shell-head.ts`), so
+	the title does not visibly rearrange as the app boots over it.
+-->
 <svelte:head>
 	{#if introMode}
-		<title>{introBookName} — {t('bible.introduction')}</title>
+		<title>{introBookName}: {t('bible.introduction')} — {t('home.title')}</title>
 	{:else}
-		<title>{current?.book.name} {data.chapterN} — {current?.work.short_title}</title>
+		<title>{current?.book.name} {data.chapterN} — {t('home.title')}</title>
 	{/if}
 </svelte:head>
 

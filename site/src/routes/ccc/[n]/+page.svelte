@@ -141,10 +141,26 @@
 			.sort((a, b) => a.label.localeCompare(b.label));
 		return sources.length > 0 ? [{ key: data.n, label: `¶${data.n}`, sources }] : [];
 	});
+
+	/** ` \u00b7 Heaven and Earth`, or nothing where the paragraph sits in no
+	 *  titled division. The breadcrumb runs outermost-first, so its last node
+	 *  is the innermost one. */
+	function headingSuffix(): string {
+		const node = editions.current?.breadcrumb.at(-1);
+		const title = node && displayTitle(node, editions.lang).title;
+		return title ? ` \u00b7 ${title}` : '';
+	}
 </script>
 
+<!--
+	The innermost division, which is the most specific heading true of this
+	paragraph and the same one the edge writes into the shell before the app
+	loads (`innermost` in `shell-head.ts`). Without it 2,865 addresses shared
+	one title but for a number, which is legible in a tab and useless in a
+	history list, a bookmark or a search result.
+-->
 <svelte:head>
-	<title>CCC {data.n} — {t('home.title')}</title>
+	<title>CCC {data.n}{headingSuffix()} — {t('home.title')}</title>
 </svelte:head>
 
 {#snippet leftCell(paragraph: CccParagraph)}

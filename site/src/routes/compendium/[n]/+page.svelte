@@ -92,10 +92,20 @@
 			page.url.pathname
 		);
 	});
+
+	/** ` \u00b7 The Profession of Faith`, or nothing. The breadcrumb runs
+	 *  outermost-first, so its last node is the innermost one. */
+	function headingSuffix(): string {
+		const node = editions.current?.breadcrumb.at(-1);
+		const title = node && displayTitle(node, editions.lang).title;
+		return title ? ` \u00b7 ${title}` : '';
+	}
 </script>
 
+<!-- The innermost division, as on the CCC paragraph route and for the same
+     reason: 598 addresses otherwise share one title but for a number. -->
 <svelte:head>
-	<title>{t('compendium.question')} {data.n} — {t('home.title')}</title>
+	<title>{t('compendium.question')} {data.n}{headingSuffix()} — {t('home.title')}</title>
 </svelte:head>
 
 {#snippet sharedCccRefs(n: number)}
