@@ -23,7 +23,7 @@ export const fr: Dictionary = {
 	'home.continueReading': 'Reprendre la lecture',
 	'home.works': 'Bibliothèque',
 	'home.ccc.heading': 'Catéchisme et Abrégé',
-	'home.ccc.noCounterpart': 'Pas de correspondance dans l’autre ouvrage',
+	'ccc.noCounterpart': 'Pas de correspondance dans l’autre ouvrage',
 	'home.magisterium.mostRecent': 'Le plus récent',
 	'jumpbox.placeholder': 'Aller à… (p. ex. jean 3,16, ccc 1234)',
 	'jumpbox.short': 'Rechercher',

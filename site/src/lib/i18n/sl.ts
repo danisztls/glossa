@@ -23,7 +23,7 @@ export const sl: Dictionary = {
 	'home.continueReading': 'Nadaljujte branje',
 	'home.works': 'Knjižnica',
 	'home.ccc.heading': 'Katekizem in Kompendij',
-	'home.ccc.noCounterpart': 'Ni ustreznika v drugem delu',
+	'ccc.noCounterpart': 'Ni ustreznika v drugem delu',
 	'home.magisterium.mostRecent': 'Najnovejše',
 	'jumpbox.placeholder': 'Skoči na… (npr. janez 3,16, ccc 1234)',
 	'jumpbox.short': 'Iskanje',

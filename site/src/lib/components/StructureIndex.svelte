@@ -1,8 +1,17 @@
 <script lang="ts">
 	/**
-	 * Readable, expandable outline for the Catechism and Compendium indexes.
-	 * The two works share the same structure schema, so their landing pages
-	 * should share the same navigation treatment as well.
+	 * Readable, expandable outline for the Catechism and its Compendium.
+	 *
+	 * NO MAIN LINK. Every row offers both works and offers them alike: the
+	 * title is text, and the two chips beside it — `CCC ¶198–421`,
+	 * `Comp. Q36–95` — are the links. The two are one outline published at two
+	 * lengths (`toc-pairing.ts`), so linking the title to one of them and
+	 * badging the other answered a question the reader has not asked yet. It
+	 * is the treatment the home page arrived at independently, now shared.
+	 *
+	 * The same component draws both, at different depths: `maxDepth` stops the
+	 * recursion, so the home page shows parts and their sections while
+	 * `/catechismus` shows everything down to the 67 articles.
 	 */
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import { SvelteSet } from 'svelte/reactivity';
@@ -14,32 +23,42 @@
 		indexOutlineChildren,
 		isIndexOutline,
 		rangeLabel,
-		type SiblingLink
+		type RowLink
 	} from './indexToc';
 	import { marker } from './structureToc';
 
 	interface Props {
 		tree: StructureNode[];
 		lang: string;
-		/** A row's address, from the caller's `hrefFor` — never a base path to
-		 *  concatenate. See `structureToc.ts`'s `rowHref` for why. */
-		href: (n: number) => string;
-		unit: string;
-		noAddressLabel: string;
 		/**
-		 * This row's counterpart in the companion work, when the two outlines
-		 * pair here. The Catechism and the Compendium are one outline
-		 * published at two lengths (`toc-pairing.ts`), so a row can offer both
-		 * — but only the caller knows which work it is showing, so the
-		 * resolver is injected rather than reached for from here.
-		 *
-		 * Optional, and absent for every other caller: a work with no
-		 * companion passes nothing and the column does not appear.
+		 * What each work offers for this row, in a FIXED ORDER so the columns
+		 * line up down the page. A slot may be `undefined` — that work has no
+		 * counterpart here — and it is drawn as a placeholder rather than
+		 * closed up, so the column a reader is scanning stays where it was.
 		 */
-		sibling?: (node: StructureNode) => SiblingLink | undefined;
+		links: (node: StructureNode) => (RowLink | undefined)[];
+		/** Shown in an empty slot. */
+		noCounterpartLabel: string;
+		/** Outline levels to render: 1 is the top level alone, 2 adds its
+		 *  children. Everything, by default. */
+		maxDepth?: number;
+		/** Whether a row's unnumbered sub-headings are offered behind a
+		 *  disclosure. Off for an overview. */
+		subsections?: boolean;
+		/** The numbering the rendered tree is in, for those sub-headings'
+		 *  ranges. They belong to this tree, not to the companion work. */
+		unit?: string;
 	}
 
-	let { tree, lang, href, unit, noAddressLabel, sibling }: Props = $props();
+	let {
+		tree,
+		lang,
+		links,
+		noCounterpartLabel,
+		maxDepth = Number.POSITIVE_INFINITY,
+		subsections = true,
+		unit = ''
+	}: Props = $props();
 	let expanded = $state(new SvelteSet<string>());
 
 	function nodeKey(node: StructureNode): string {
@@ -58,11 +77,10 @@
 		{#each nodes as node (nodeKey(node))}
 			{@const dt = displayTitle(node, lang)}
 			{@const anchor = node.paragraphs[0]}
-			{@const details = indexDetailChildren(node)}
-			{@const kids = indexOutlineChildren(node)}
+			{@const details = subsections ? indexDetailChildren(node) : []}
+			{@const kids = depth + 1 < maxDepth ? indexOutlineChildren(node) : []}
 			{@const label = marker(node, lang)}
 			{@const isOpen = expanded.has(nodeKey(node))}
-			{@const other = sibling?.(node)}
 			<li
 				class={`kind-${node.kind}`}
 				id={depth === 0 && Number.isFinite(anchor) ? `toc-${anchor}` : undefined}
@@ -83,50 +101,42 @@
 						<span class="toggle-spacer" aria-hidden="true"></span>
 					{/if}
 
-					{#if Number.isFinite(anchor)}
-						<a class="row-title" href={href(anchor as number)}>
-							{#if label}<span class="kind-label">{label}</span>{/if}
-							{dt.title}
-						</a>
-					{:else}
-						<span class="row-title unlinked" title={noAddressLabel}>
-							{#if label}<span class="kind-label">{label}</span>{/if}
-							{dt.title}
-						</span>
-					{/if}
-					<span class="range">{rangeLabel(node, unit)}</span>
-					<!-- After the range, not before it: the row's own address is what a
-					     reader scanning this index is looking for, and the companion work
-					     is the second question they ask. -->
-					{#if other}
-						<a class="sibling" href={other.href} title={other.title} aria-label={other.title}>
-							{other.label}
-						</a>
-					{/if}
+					<!-- Text, not a link. Which of the two works a reader wants is the
+					     choice the chips are there to offer, and a title that quietly
+					     picked one for them would make the other look like a footnote. -->
+					<span class="row-title">
+						{#if label}<span class="kind-label">{label}</span>{/if}
+						{dt.title}
+					</span>
+
+					<div class="row-links">
+						{#each links(node) as link, slot (slot)}
+							{#if link}
+								<a class="row-link" href={link.href} title={link.title} aria-label={link.title}>
+									<span class="link-work">{link.work}</span>
+									<span class="link-range">{link.range}</span>
+								</a>
+							{:else}
+								<span class="row-link empty">{noCounterpartLabel}</span>
+							{/if}
+						{/each}
+					</div>
 				</div>
 
 				{#if details.length > 0 && isOpen}
 					<ul class="subs">
 						{#each details as sub (nodeKey(sub))}
 							{@const sdt = displayTitle(sub, lang)}
-							{@const subAnchor = sub.paragraphs[0]}
-							<!-- A subheading is context inside its parent reading unit. Keep
-							     its range visible, but send the reader to the enclosing
-							     chapter/section rather than back to one individual item. -->
-							{@const destination = Number.isFinite(anchor) ? anchor : subAnchor}
+							<!-- Context inside the row above, and deliberately not a link:
+							     a sub-heading has no address of its own, so the link it used
+							     to carry went exactly where the row's own did. The row now
+							     offers both works there. -->
 							<li>
-								{#if Number.isFinite(destination)}
-									<a href={href(destination as number)}>
-										{#if sdt.ordinal}<span class="kind-label">{sdt.ordinal}</span>{/if}
-										{sdt.title}
-									</a>
-								{:else}
-									<span class="unlinked" title={noAddressLabel}>
-										{#if sdt.ordinal}<span class="kind-label">{sdt.ordinal}</span>{/if}
-										{sdt.title}
-									</span>
-								{/if}
-								<span class="range">{rangeLabel(sub, unit)}</span>
+								<span class="sub-title">
+									{#if sdt.ordinal}<span class="kind-label">{sdt.ordinal}</span>{/if}
+									{sdt.title}
+								</span>
+								<span class="link-range">{rangeLabel(sub, unit)}</span>
 							</li>
 						{/each}
 					</ul>
@@ -190,39 +200,54 @@
 		outline: 2px solid var(--color-focus-ring);
 		outline-offset: 1px;
 	}
-	/* Quiet by default and only accented on hover: it sits at the end of every
-	   row, so styling it as a full link would put a second column of blue down
-	   the page and compete with the titles, which are what the index is for. */
-	.sibling {
-		flex-shrink: 0;
-		font-family: var(--font-sans);
-		font-size: 0.75rem;
-		color: var(--color-text-muted);
-		text-decoration: none;
-		font-variant-numeric: tabular-nums;
-		white-space: nowrap;
-		border-inline-start: 1px solid var(--color-border);
-		padding-inline-start: 0.5rem;
-	}
-	.sibling:hover,
-	.sibling:focus-visible {
-		color: var(--color-accent);
-		text-decoration: underline;
-	}
-	.range {
+	/* The two works, as chips — the visual language the home page's own
+	   version of this table arrived at, and the reason it reads as a choice
+	   rather than as a link with an annotation after it. Both slots get the
+	   identical treatment, which is the whole point. */
+	.row-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
 		margin-inline-start: auto;
 		flex-shrink: 0;
+	}
+	.row-link {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.3rem;
+		font-family: var(--font-sans);
 		font-size: 0.75rem;
+		text-decoration: none;
+		color: var(--color-text);
+		border: 1px solid var(--color-border);
+		border-radius: 0.3rem;
+		padding: 0.1rem 0.45rem;
+		white-space: nowrap;
+	}
+	a.row-link:hover,
+	a.row-link:focus-visible {
+		border-color: var(--color-accent);
+		color: var(--color-accent);
+	}
+	/* A row this work has no counterpart for. Dashed and muted, and still
+	   occupying its slot, so the column above and below it does not shift. */
+	.row-link.empty {
+		border-style: dashed;
 		color: var(--color-text-muted);
+	}
+	.link-range {
 		font-variant-numeric: tabular-nums;
+		color: var(--color-text-muted);
+	}
+	a.row-link:hover .link-range,
+	a.row-link:focus-visible .link-range {
+		color: inherit;
 	}
 	.row-title {
-		text-decoration: none;
 		font-family: var(--font-serif);
 	}
-	.unlinked {
-		text-decoration: underline dotted;
-		text-decoration-color: var(--color-border);
+	.sub-title {
+		font-family: var(--font-serif);
 	}
 	:global(.toc-level) > .kind-part > .row,
 	:global(.toc-level) > .kind-prologue > .row {
@@ -267,7 +292,21 @@
 		gap: 1rem;
 		padding: 0.2rem 0;
 	}
-	.subs a {
-		text-decoration: none;
+
+	/* Mobile: the chips wrap onto their own line under a long title rather
+	   than squeezing, and stack full-width so the tap target stays a
+	   comfortable size instead of shrinking to fit two per row. */
+	@media (max-width: 30rem) {
+		.row {
+			flex-wrap: wrap;
+		}
+		.row-links {
+			flex-basis: 100%;
+			margin-inline-start: 1.55rem;
+		}
+		.row-link {
+			flex: 1 1 auto;
+			justify-content: space-between;
+		}
 	}
 </style>

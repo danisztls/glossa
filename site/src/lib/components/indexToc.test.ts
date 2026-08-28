@@ -7,7 +7,7 @@ import {
 	indexSidebarItems,
 	isIndexOutline,
 	rangeLabel,
-	siblingLink
+	workLink
 } from './indexToc';
 import { hrefFor } from '../address';
 
@@ -60,10 +60,11 @@ describe('index outline', () => {
 	});
 });
 
-// The badge a Catechism row carries for the Compendium and vice versa. Its
-// address comes from `hrefFor` rather than a base path to concatenate: that
-// is what makes an address change one edit instead of a grep.
-describe('siblingLink', () => {
+// One work's chip on an index row. Its address comes from `hrefFor` via the
+// caller rather than a base path to concatenate, which is what lets an
+// article point into its chapter and a condensing run point at a question —
+// two different shapes the old single base path could not express.
+describe('workLink', () => {
 	const opts = {
 		href: (n: number) => hrefFor({ kind: 'compendiumChapter', n }),
 		unit: 'Q',
@@ -71,23 +72,30 @@ describe('siblingLink', () => {
 		workTitle: 'Compendium'
 	};
 
-	it('labels a span and addresses its first unit', () => {
-		expect(siblingLink([251, 294], opts)).toEqual({
+	it('names the work and its extent, and addresses the first unit', () => {
+		expect(workLink([251, 294], opts)).toEqual({
 			href: '/catechismus/compendium/caput/251',
-			label: 'Comp. Q251–294',
+			work: 'Comp.',
+			range: 'Q251–294',
 			title: 'Compendium — Q251–294'
 		});
 	});
 
 	it('drops the dash when the span is a single unit', () => {
-		expect(siblingLink([1, 1], opts)?.label).toBe('Comp. Q1');
+		expect(workLink([1, 1], opts)?.range).toBe('Q1');
 	});
 
-	// A row the companion work has no counterpart for, and a division whose
-	// own bounds the source never numbered. Both are "no badge", not a badge
-	// pointing nowhere.
+	// A row this work has no counterpart for, and a division whose own bounds
+	// the source never numbered. Both are "no chip", not a chip pointing
+	// nowhere — the index draws the empty slot itself.
 	it('offers nothing without a span, or without a lower bound', () => {
-		expect(siblingLink(undefined, opts)).toBeUndefined();
-		expect(siblingLink([null, 294], opts)).toBeUndefined();
+		expect(workLink(undefined, opts)).toBeUndefined();
+		expect(workLink([null, 294], opts)).toBeUndefined();
+	});
+
+	it('takes the address from the caller, not from a base path', () => {
+		expect(
+			workLink([39, 39], { ...opts, href: (n) => hrefFor({ kind: 'compendium', n }) })?.href
+		).toBe('/catechismus/compendium/39');
 	});
 });

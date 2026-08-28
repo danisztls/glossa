@@ -23,7 +23,7 @@ export const ar: Dictionary = {
 	'home.continueReading': 'متابعة القراءة',
 	'home.works': 'المكتبة',
 	'home.ccc.heading': 'التعليم المسيحي والموجز',
-	'home.ccc.noCounterpart': 'لا مقابل له في العمل الآخر',
+	'ccc.noCounterpart': 'لا مقابل له في العمل الآخر',
 	'home.magisterium.mostRecent': 'الأحدث',
 	'jumpbox.placeholder': 'انتقل إلى… (مثلاً يوحنا ٣:١٦، ccc 1234)',
 	'jumpbox.short': 'بحث',

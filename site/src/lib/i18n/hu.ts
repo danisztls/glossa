@@ -23,7 +23,7 @@ export const hu: Dictionary = {
 	'home.continueReading': 'Olvasás folytatása',
 	'home.works': 'Könyvtár',
 	'home.ccc.heading': 'Katekizmus és Kompendium',
-	'home.ccc.noCounterpart': 'Nincs megfelelője a másik műben',
+	'ccc.noCounterpart': 'Nincs megfelelője a másik műben',
 	'home.magisterium.mostRecent': 'Legújabb',
 	'jumpbox.placeholder': 'Ugrás… (pl. jános 3,16, ccc 1234)',
 	'jumpbox.short': 'Keresés',

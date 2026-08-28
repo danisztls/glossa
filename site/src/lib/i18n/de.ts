@@ -23,7 +23,7 @@ export const de: Dictionary = {
 	'home.continueReading': 'Weiterlesen',
 	'home.works': 'Bibliothek',
 	'home.ccc.heading': 'Katechismus und Kompendium',
-	'home.ccc.noCounterpart': 'Keine Entsprechung im anderen Werk',
+	'ccc.noCounterpart': 'Keine Entsprechung im anderen Werk',
 	'home.magisterium.mostRecent': 'Neuestes',
 	'jumpbox.placeholder': 'Springe zu… (z. B. johannes 3,16, ccc 1234)',
 	'jumpbox.short': 'Suchen',

@@ -23,7 +23,7 @@ export const sv: Dictionary = {
 	'home.continueReading': 'Fortsätt läsa',
 	'home.works': 'Bibliotek',
 	'home.ccc.heading': 'Katekesen och Kompendiet',
-	'home.ccc.noCounterpart': 'Ingen motsvarighet i det andra verket',
+	'ccc.noCounterpart': 'Ingen motsvarighet i det andra verket',
 	'home.magisterium.mostRecent': 'Senaste',
 	'jumpbox.placeholder': 'Gå till… (t.ex. joh 3:16, ccc 1234)',
 	'jumpbox.short': 'Sök',

@@ -23,7 +23,7 @@ export const pl: Dictionary = {
 	'home.continueReading': 'Czytaj dalej',
 	'home.works': 'Biblioteka',
 	'home.ccc.heading': 'Katechizm i Kompendium',
-	'home.ccc.noCounterpart': 'Brak odpowiednika w drugim dziele',
+	'ccc.noCounterpart': 'Brak odpowiednika w drugim dziele',
 	'home.magisterium.mostRecent': 'Najnowsze',
 	'jumpbox.placeholder': 'Przejdź do… (np. jan 3,16, ccc 1234)',
 	'jumpbox.short': 'Szukaj',

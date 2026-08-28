@@ -34,7 +34,7 @@ export const la: Dictionary = {
 	'home.continueReading': 'Perge legere',
 	'home.works': 'Bibliotheca',
 	'home.ccc.heading': 'Catechismus et Compendium',
-	'home.ccc.noCounterpart': 'Nihil respondens in altero opere',
+	'ccc.noCounterpart': 'Nihil respondens in altero opere',
 	'home.magisterium.mostRecent': 'Recentissima',
 	// `ioannes` and `ccc` are what the parser actually accepts, not a
 	// translation of the English example: the Clementine's own abbreviations

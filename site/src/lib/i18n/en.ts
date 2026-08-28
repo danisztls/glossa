@@ -28,7 +28,7 @@ export const en: Dictionary = {
 	// Home page's Catechism/Compendium section — see routes/+page.svelte's
 	// module docblock for why this is ONE table of contents, not two.
 	'home.ccc.heading': 'Catechism & Compendium',
-	'home.ccc.noCounterpart': 'No counterpart in the other work',
+	'ccc.noCounterpart': 'No counterpart in the other work',
 	'home.magisterium.mostRecent': 'Latest',
 	'jumpbox.placeholder': 'Jump to… (e.g. john 3:16, ccc 1234)',
 	'jumpbox.short': 'Search',

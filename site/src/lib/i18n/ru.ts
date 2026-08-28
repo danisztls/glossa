@@ -23,7 +23,7 @@ export const ru: Dictionary = {
 	'home.continueReading': 'Продолжить чтение',
 	'home.works': 'Библиотека',
 	'home.ccc.heading': 'Катехизис и Компендиум',
-	'home.ccc.noCounterpart': 'Нет соответствия в другом произведении',
+	'ccc.noCounterpart': 'Нет соответствия в другом произведении',
 	'home.magisterium.mostRecent': 'Последнее',
 	'jumpbox.placeholder': 'Перейти к… (напр. иоанн 3:16, ccc 1234)',
 	'jumpbox.short': 'Поиск',

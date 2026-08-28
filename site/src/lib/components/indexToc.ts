@@ -63,45 +63,57 @@ export function indexSidebarItems(tree: StructureNode[], lang: string): IndexSid
 }
 
 /**
- * A row's link to the same division in the companion work — the Compendium
- * from a Catechism row, the Catechism from a Compendium row.
+ * One work's offer on an index row: where it treats this division, and how
+ * much of it there is.
  *
- * `label` is what the row shows and is abbreviated on purpose: the row
- * already spends its width on a title and its own range, and the whole
- * affordance is worth one glance. `title` carries the work's full name for
- * the hover and the accessible name, because "Comp. Q251–294" is only
- * legible to a reader who already knows which of the two books they are
- * looking at.
+ * A row carries one of these PER WORK, presented alike — the Catechism and
+ * its Compendium are one outline at two lengths, and an index that linked the
+ * title to one of them and badged the other would be answering a question the
+ * reader has not asked yet. So the title is not a link and both works are.
+ *
+ * `work` and `range` are separate because they are read differently: the
+ * abbreviation says which book, the range says how much, and the range is set
+ * in tabular numerals so a column of them lines up. `title` carries the full
+ * name for the hover and the accessible name, since "Comp. Q251-294" is only
+ * legible to a reader who already knows which of the two books it names.
  */
-export interface SiblingLink {
+export interface RowLink {
 	href: string;
-	label: string;
+	/** The work's siglum — `CCC`, `Comp.` */
+	work: string;
+	/** Its extent in its OWN numbering — `¶198–421`, `Q36–95`. */
+	range: string;
+	/** `"Compendium — Q251–294"`, for the hover and the accessible name. */
 	title: string;
 }
 
 /**
- * Build that link from the companion work's span, or nothing when there is
- * none. This only formats: what the span IS comes from `toc-pairing.ts` for
- * the divisions the two outlines share, and from `condensation.ts` for the
- * Catechism articles they do not.
+ * Build that offer from a span, or nothing when the work has none here.
+ *
+ * This only formats. What the span IS comes from `toc-pairing.ts` for the
+ * divisions the two outlines share and from `condensation.ts` for the
+ * Catechism articles they do not, and WHERE IT POINTS comes from `href` —
+ * which differs between those two cases and is the caller's to know
+ * (`catechismRows.ts`).
  */
-export function siblingLink(
+export function workLink(
 	span: readonly [number | null, number | null] | undefined,
 	opts: {
-		/** The companion row's address, from `hrefFor`. */
+		/** The address of the span's first unit, from `hrefFor`. */
 		href: (n: number) => string;
 		unit: string;
 		abbrev: string;
 		workTitle: string;
 	}
-): SiblingLink | undefined {
+): RowLink | undefined {
 	if (!span) return undefined;
 	const [from, to] = span;
 	if (!Number.isFinite(from)) return undefined;
 	const range = runLabel(from as number, to, opts.unit);
 	return {
 		href: opts.href(from as number),
-		label: `${opts.abbrev} ${range}`,
+		work: opts.abbrev,
+		range,
 		title: `${opts.workTitle} — ${range}`
 	};
 }

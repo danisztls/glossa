@@ -33,13 +33,15 @@
 		listPrayerGroups
 	} from '$lib/corpus';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
+	import StructureIndex from '$lib/components/StructureIndex.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
-	import { rangeLabel as structureRangeLabel } from '$lib/components/indexToc';
+	import { catechismRowLinks } from '$lib/components/catechismRows';
+	import { pairDivisionsCached } from '$lib/toc-pairing';
 	import { displayTitle } from '$lib/titles';
 	import { formatPromulgated } from '$lib/dates';
 	import { listPositions, type ReadingPosition } from '$lib/reading-position';
 	import { t } from '$lib/i18n.svelte';
-	import type { CccNode, DocumentManifest, WorkType } from '$lib/types';
+	import type { DocumentManifest, StructureNode, WorkType } from '$lib/types';
 
 	const bibleWork = $derived.by(() => {
 		const id = content.workIdFor('bible');
@@ -68,45 +70,26 @@
 
 	// --- Catechism & Compendium: one shared table of contents ------------------
 	//
-	// The CCC and its Compendium are not presented as two parallel trees.
-	// The real corpus (checked against every `structure.json`, both `en` and
-	// `pt`) shows they share a top level: both split into exactly FOUR Parts
-	// of the same name, and both Parts split into exactly the same TWO
-	// Sections, in the same order — because the Compendium's own structure
-	// literally condenses the CCC's, part-by-part and section-by-section.
-	// That is not a coincidence to work around; it is the corpus telling us
-	// this is one table of contents wearing two bindings, so each row below
-	// offers two entry points (the full Catechism, the Compendium's shorter
-	// treatment) into the same doctrinal ground instead of forcing the
-	// reader to pick a tree first.
+	// The CCC and its Compendium are not two parallel trees. They are one
+	// outline published at two lengths — both split into the same four Parts
+	// and the same eight Sections, in the same order, because the Compendium's
+	// structure literally condenses the CCC's — so each row below offers two
+	// entry points into the same ground instead of making the reader pick a
+	// tree first.
 	//
-	// PAIRED BY ORDINAL POSITION, NEVER BY TITLE TEXT. The printed titles
-	// are close but not identical between the two works — different quote
-	// characters, different casing, the Compendium prints extra subtitle
-	// text where the CCC's own heading is a bare "SECTION TWO" — and they
-	// diverge again in Portuguese. Matching on title strings would be
-	// fragile and would break silently the moment either source's wording
-	// drifts. Position within the tree is the invariant that actually
-	// holds: "the Nth part" and "the Nth section of that part" name the same
-	// ground in either work by construction.
+	// THE SAME COMPONENT AND THE SAME RESOLVER `/catechismus` USES, at
+	// `maxDepth={2}`: parts and their sections here, everything down to the 67
+	// articles there. This section used to pair the two works itself, by
+	// ordinal position, in ~90 lines of markup written three times over — and
+	// that pairing predated `toc-pairing.ts`, which does the same thing across
+	// every division kind, refuses to pair when the counts disagree rather
+	// than zipping whatever it is given, and is checked over all 80 edition
+	// pairs on every sync.
 	//
-	// DEGRADE, DON'T ASSUME THE PARALLEL HOLDS. `pairByPosition` zips
-	// whatever length the two arrays actually are — not a hardcoded 4 or 8 —
-	// so a future edition, or a partial build missing one of the two works,
-	// produces a row with only the side that exists rather than a wrong
-	// pairing. The CCC's Prologue (¶1–25) is exactly this case TODAY: it has
-	// no Compendium counterpart, so it renders CCC-only rather than being
-	// paired with whatever the Compendium's first Part happens to be.
-	interface CccCompendiumRow {
-		ccc?: CccNode;
-		compendium?: CccNode;
-	}
-
-	function pairByPosition(cccNodes: CccNode[], compendiumNodes: CccNode[]): CccCompendiumRow[] {
-		const length = Math.max(cccNodes.length, compendiumNodes.length);
-		return Array.from({ length }, (_, i) => ({ ccc: cccNodes[i], compendium: compendiumNodes[i] }));
-	}
-
+	// Its one visible gain: the Prologue is no longer a row with an empty
+	// slot. Nothing STRUCTURALLY pairs it — the Compendium has no Prologue —
+	// but the condensation vote knows its ¶1-25 are what question 1 condenses,
+	// and `catechismRows.ts` falls back to that.
 	const cccLang = $derived(content.langFor('catechism'));
 	const compendiumLang = $derived(content.langFor('compendium'));
 
@@ -121,55 +104,27 @@
 	const prayerLang = $derived(content.langFor('prayer'));
 	const prayerGroups = $derived(prayerWork ? listPrayerGroups(prayerLang) : []);
 
-	// Gated on the work actually existing in this corpus — a partial build
-	// or the vitest fixtures may have one of the two and not the other; an
-	// absent work's tree degrades to `[]`, which flows through
-	// `pairByPosition` as "this side is always the shorter one," never a
-	// crash.
+	// Gated on the work actually existing in this corpus — a partial build or
+	// the vitest fixtures may have one of the two and not the other. An absent
+	// work's tree degrades to `[]`, which `pairDivisionsCached` reads as "no
+	// divisions to pair with" and every row then falls through to the
+	// condensation vote, never a crash.
 	const cccRoot = $derived(cccWork ? getCccStructure(cccLang) : []);
 	const compendiumRoot = $derived(compendiumWork ? getCompendiumStructure(compendiumLang) : []);
+	const pairs = $derived(pairDivisionsCached(cccRoot, compendiumRoot));
 
-	const cccPrologue = $derived(cccRoot.find((n) => n.kind === 'prologue'));
-	const partRows = $derived(
-		pairByPosition(
-			cccRoot.filter((n) => n.kind === 'part'),
-			compendiumRoot.filter((n) => n.kind === 'part')
-		)
+	const cccLinks = $derived((node: StructureNode) =>
+		catechismRowLinks(node, {
+			cccLang,
+			pairs,
+			labels: {
+				cccAbbrev: t('ccc.abbrev'),
+				cccTitle: t('ccc.landing.title'),
+				compendiumAbbrev: t('compendium.abbrev'),
+				compendiumTitle: t('compendium.landing.title')
+			}
+		})
 	);
-
-	/** Section-level pairing within one already-paired Part — the same
-	 *  position rule, one level down. */
-	function sectionRows(part: CccCompendiumRow): CccCompendiumRow[] {
-		return pairByPosition(
-			(part.ccc?.children ?? []).filter((n) => n.kind === 'section'),
-			(part.compendium?.children ?? []).filter((n) => n.kind === 'section')
-		);
-	}
-
-	/**
-	 * The row's own heading text. Prefers the CCC's title whenever the CCC
-	 * side of the pair exists: the CCC is the work being condensed, so its
-	 * title is the doctrinally primary one, and `displayTitle` already
-	 * normalizes its ALL-CAPS source casing to match the Compendium's
-	 * already-mixed-case titles — so both sides land in the same visual
-	 * register with no extra normalization needed here. Falls back to the
-	 * Compendium's own title only for a row with no CCC side at all (not
-	 * something today's corpus produces, but the pairing is positional and
-	 * must not assume that never changes).
-	 */
-	function rowTitleText(row: CccCompendiumRow): string | undefined {
-		if (row.ccc) return displayTitle(row.ccc, cccLang).title;
-		if (row.compendium) return displayTitle(row.compendium, compendiumLang).title;
-		return undefined;
-	}
-
-	// Wraps `indexToc.ts`'s shared formula (also used by the CCC/Compendium
-	// landing pages) rather than reimplementing it: this page's rows carry an
-	// optional CCC/Compendium side (`CccCompendiumRow`), so the wrapper only
-	// adds the `undefined`-node guard the shared version doesn't need.
-	function rangeLabel(node: CccNode | undefined, prefix: string): string | undefined {
-		return node ? structureRangeLabel(node, prefix) : undefined;
-	}
 
 	// --- Magisterium: grouped by pontiff/council --------------------------------
 	//
@@ -288,92 +243,19 @@
 		</section>
 	{/if}
 
-	{#if partRows.length > 0 || cccPrologue}
+	{#if cccRoot.length > 0}
 		<section aria-labelledby="ccc-heading">
 			<h2 id="ccc-heading">{t('home.ccc.heading')}</h2>
-			<ol class="ccc-toc" data-link-preview="off">
-				{#if cccPrologue}
-					{@const dt = displayTitle(cccPrologue, cccLang)}
-					{@const anchor = cccPrologue.paragraphs[0]}
-					<li class="ccc-row">
-						<div class="ccc-row-title">{dt.title}</div>
-						<div class="ccc-row-links">
-							{#if anchor != null && Number.isFinite(anchor)}
-								<a class="ccc-link" href={hrefFor({ kind: 'ccc', n: anchor })}>
-									{t('nav.ccc')} <span class="ccc-range">{rangeLabel(cccPrologue, '¶')}</span>
-								</a>
-							{/if}
-							<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
-						</div>
-					</li>
-				{/if}
-				{#each partRows as part, i (i)}
-					{@const title = rowTitleText(part)}
-					{@const cccAnchor = part.ccc?.paragraphs[0]}
-					{@const compendiumAnchor = part.compendium?.paragraphs[0]}
-					<li class="ccc-row ccc-row-part">
-						{#if title}<div class="ccc-row-title">{title}</div>{/if}
-						<div class="ccc-row-links">
-							{#if part.ccc && cccAnchor != null && Number.isFinite(cccAnchor)}
-								<a class="ccc-link" href={hrefFor({ kind: 'ccc', n: cccAnchor })}>
-									{t('nav.ccc')} <span class="ccc-range">{rangeLabel(part.ccc, '¶')}</span>
-								</a>
-							{:else}
-								<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
-							{/if}
-							{#if part.compendium && compendiumAnchor != null && Number.isFinite(compendiumAnchor)}
-								<a class="ccc-link" href={hrefFor({ kind: 'compendium', n: compendiumAnchor })}>
-									{t('nav.compendium')}
-									<span class="ccc-range">{rangeLabel(part.compendium, 'Q')}</span>
-								</a>
-							{:else}
-								<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
-							{/if}
-						</div>
-
-						{#if sectionRows(part).length > 0}
-							<ol class="ccc-sections">
-								{#each sectionRows(part) as section, j (j)}
-									{@const stitle = rowTitleText(section)}
-									{@const sCccAnchor = section.ccc?.paragraphs[0]}
-									{@const sCompendiumAnchor = section.compendium?.paragraphs[0]}
-									<li class="ccc-row ccc-row-section">
-										{#if stitle}<div class="ccc-row-title">{stitle}</div>{/if}
-										<div class="ccc-row-links">
-											{#if section.ccc && sCccAnchor != null && Number.isFinite(sCccAnchor)}
-												<a class="ccc-link" href={hrefFor({ kind: 'ccc', n: sCccAnchor })}>
-													{t('nav.ccc')}
-													<span class="ccc-range">{rangeLabel(section.ccc, '¶')}</span>
-												</a>
-											{:else}
-												<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
-											{/if}
-											{#if section.compendium && sCompendiumAnchor != null && Number.isFinite(sCompendiumAnchor)}
-												<a
-													class="ccc-link"
-													href={hrefFor({ kind: 'compendium', n: sCompendiumAnchor })}
-												>
-													{t('nav.compendium')}
-													<span class="ccc-range">{rangeLabel(section.compendium, 'Q')}</span>
-												</a>
-											{:else}
-												<span class="ccc-link ccc-link-empty">{t('home.ccc.noCounterpart')}</span>
-											{/if}
-										</div>
-									</li>
-								{/each}
-							</ol>
-						{/if}
-					</li>
-				{/each}
-			</ol>
-
-			{#if cccWork}
-				<p class="edition-note">{cccWork.title}</p>
-			{/if}
-			{#if compendiumWork}
-				<p class="edition-note">{compendiumWork.title}</p>
-			{/if}
+			<!-- Parts and their sections. `/catechismus` renders the identical
+			     table with no depth limit and the sub-heading disclosures on. -->
+			<StructureIndex
+				tree={cccRoot}
+				lang={cccLang}
+				links={cccLinks}
+				maxDepth={2}
+				subsections={false}
+				noCounterpartLabel={t('ccc.noCounterpart')}
+			/>
 		</section>
 	{/if}
 
@@ -478,90 +360,6 @@
 
 	/* --- Catechism & Compendium ------------------------------------------- */
 
-	.ccc-toc {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.ccc-row {
-		padding: 0.75rem 0;
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.ccc-row-part > .ccc-row-title {
-		font-size: 1.1rem;
-		font-weight: 700;
-	}
-
-	.ccc-row-title {
-		font-family: var(--font-serif);
-		color: var(--color-text);
-		margin-bottom: 0.4rem;
-	}
-
-	.ccc-row-links {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	/* Chip-styled links, same visual language as the Magisterium kind/count
-	   badges below and `documents/+page.svelte`'s `.doc-kind` — a small
-	   bordered tag reads as "pick one of these" more clearly than a bare
-	   inline link would when there are two of them side by side. */
-	.ccc-link {
-		display: inline-flex;
-		align-items: baseline;
-		gap: 0.3rem;
-		font-size: 0.85rem;
-		text-decoration: none;
-		color: var(--color-text);
-		border: 1px solid var(--color-border);
-		border-radius: 0.3rem;
-		padding: 0.2rem 0.55rem;
-	}
-
-	a.ccc-link:hover {
-		border-color: var(--color-accent);
-		color: var(--color-accent);
-	}
-
-	/* A row whose pairing has no counterpart on this side — the CCC's
-	   Prologue today, and degradation ground for anything similar in a
-	   future edition (see module docblock). Dashed border + muted text
-	   matches the site's existing convention for an intentionally-absent
-	   link (`ccc/+page.svelte`'s `.unlinked`). */
-	.ccc-link-empty {
-		border-style: dashed;
-		color: var(--color-text-muted);
-	}
-
-	.ccc-range {
-		font-variant-numeric: tabular-nums;
-		color: var(--color-text-muted);
-	}
-
-	.ccc-sections {
-		list-style: none;
-		margin: 0.6rem 0 0;
-		padding-inline-start: 1rem;
-		border-inline-start: 1px solid var(--color-border);
-	}
-
-	.ccc-row-section {
-		padding: 0.5rem 0;
-	}
-
-	.ccc-row-section:last-child {
-		border-bottom: none;
-	}
-
-	.ccc-row-section > .ccc-row-title {
-		font-size: 0.95rem;
-		font-weight: 600;
-	}
-
 	/* --- Magisterium -------------------------------------------------------- */
 
 	.magisterium-recent {
@@ -659,15 +457,5 @@
 		display: inline-block;
 		font-size: 0.9rem;
 		text-decoration: none;
-	}
-
-	/* Mobile: chip links wrap onto their own line under a long title rather
-	   than squeezing, and the two chips stack full-width so the tap target
-	   stays a comfortable size instead of shrinking to fit two per row. */
-	@media (max-width: 30rem) {
-		.ccc-link {
-			flex: 1 1 auto;
-			justify-content: space-between;
-		}
 	}
 </style>

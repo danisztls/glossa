@@ -23,7 +23,7 @@ export const ro: Dictionary = {
 	'home.continueReading': 'Continuați lectura',
 	'home.works': 'Bibliotecă',
 	'home.ccc.heading': 'Catehismul și Compendiul',
-	'home.ccc.noCounterpart': 'Fără corespondent în cealaltă lucrare',
+	'ccc.noCounterpart': 'Fără corespondent în cealaltă lucrare',
 	'home.magisterium.mostRecent': 'Cele mai recente',
 	'jumpbox.placeholder': 'Salt la… (ex. ioan 3,16, ccc 1234)',
 	'jumpbox.short': 'Caută',

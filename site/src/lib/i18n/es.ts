@@ -23,7 +23,7 @@ export const es: Dictionary = {
 	'home.continueReading': 'Seguir leyendo',
 	'home.works': 'Biblioteca',
 	'home.ccc.heading': 'Catecismo y Compendio',
-	'home.ccc.noCounterpart': 'Sin correspondencia en la otra obra',
+	'ccc.noCounterpart': 'Sin correspondencia en la otra obra',
 	'home.magisterium.mostRecent': 'Lo último',
 	'jumpbox.placeholder': 'Ir a… (p. ej. juan 3,16, ccc 1234)',
 	'jumpbox.short': 'Buscar',
