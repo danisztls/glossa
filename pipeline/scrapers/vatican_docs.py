@@ -3257,9 +3257,53 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
     # evidence is a run rather than a single block.
     if len([i for i in candidates if i > body_start]) < _ITALIC_HEADING_MIN_RUN:
         return []
+    candidates = [i for i in candidates if not _heads_nothing(blocks, i, candidates)]
     for i in candidates:
         blocks[i].is_heading = True
     return [blocks[i].text for i in candidates]
+
+
+def _heads_nothing(blocks: list[Block], i: int, candidates: list[int]) -> bool:
+    """Whether nothing after block `i` is content it could be the heading of.
+
+    THE DEFECT THIS FIXES: a document's closing dateline (`Given at Rome, at
+    St. Peter's, 1 May 1896, in the nineteenth year of Our Pontificate.`) is
+    printed in the same italics as its sub-headings, and where the document
+    HAS a run of those, the run rule admits the dateline with them. It then
+    surfaces in the reader's table of contents as a final entry with nothing
+    under it -- 16 works carried one when the description sweep's ToC oracles
+    first measured it, in four languages, so a vocabulary of closing formulas
+    is the wrong instrument.
+
+    What separates them is not the words but the position, in the same shape
+    `_opens_a_numbered_paragraph` uses at the other end of the document: a
+    heading is followed by the text it heads. The dateline is followed by the
+    signature and the horizontal rule, which are furniture the later stages
+    delete, and by nothing else. Candidates still to be promoted count as
+    headings here, or a document ending in two italic lines would keep the
+    first of them on the strength of the second."""
+    later = set(candidates)
+    for j in range(i + 1, len(blocks)):
+        blk = blocks[j]
+        if blk.is_heading or j in later:
+            continue
+        text = " ".join(blk.text.split())
+        if (
+            not has_words(text)
+            or _LANG_BAR_RE.match(text)
+            or _PAPAL_SIGNATURE_RE.match(fold(text))
+            or _PAGE_TRAILER_RE.match(fold(text))
+        ):
+            continue
+        return False
+    return True
+
+
+#: The publisher's notice at the very foot of a page, which three of the
+#: sixteen datelines sit above -- it is furniture in exactly the sense the
+#: signature is, and the only reason it needs naming here is that it is the
+#: one furniture block the promotion stage still sees as ordinary text.
+_PAGE_TRAILER_RE = re.compile(r"^COPYRIGHT\b")
 
 
 # The bar is `[ AR - BE - ... ]` in the old shell and a BARE `EN - FR - IT -
