@@ -45,7 +45,7 @@ CORPUS=${CORPUS_DIR:-$HOME/Dev/me/glossa-corpus}
 ### 1. Read the document
 
 ```sh
-cd $CORPUS/works/encyclical.<slug>.en
+cd $CORPUS/build/encyclical.<slug>.en
 
 jq 'length' sections.json                                  # how long is it
 jq -r '.[] | "\(.level)  before \u00a7\(.before)  \(.label // "")\(.title)"' structure.json
@@ -266,7 +266,7 @@ prose about that text and not a translated label. A work described only in
 Italian (the seven encyclicals with no English edition) has one entry, under
 `it`.
 
-**Not** into `$CORPUS/works/*/manifest.json`. Those are generated; a re-parse
+**Not** into `$CORPUS/build/*/manifest.json`. Those are generated; a re-parse
 rewrites them, and this project fixes parsers by re-parsing. `sync-corpus.mjs`
 merges `descriptions.json` into each manifest on the way into the site, so
 `manifest.description` is populated for every route that reads it and the
@@ -317,14 +317,14 @@ assuming it:
 
 ```sh
 # 1. snapshot every generated artifact
-cd $CORPUS/works
+cd $CORPUS/build
 find . -name 'structure.json' -o -name 'sections.json' | sort | xargs md5sum > /tmp/before.md5
 
 # 2. re-parse broadly (phase1 = the 16 Vatican II texts; phase2 --overwrite = everything)
 uv run pipeline/scrapers/vatican_docs.py phase1
 
 # 3. diff — anything changed that you did not intend to change is the finding
-cd $CORPUS/works
+cd $CORPUS/build
 find . -name 'structure.json' -o -name 'sections.json' | sort | xargs md5sum > /tmp/after.md5
 diff /tmp/before.md5 /tmp/after.md5
 ```

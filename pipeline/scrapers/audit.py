@@ -3,7 +3,7 @@
 # requires-python = ">=3.12"
 # dependencies = []
 # ///
-"""Corpus audits that compare `raw/` against `works/` -- the checks that ask
+"""Corpus audits that compare `raw/` against `build/` -- the checks that ask
 whether the parse still represents the page it came from.
 
 WHY THIS EXISTS. The project already has two oracles and neither can see a
@@ -245,7 +245,7 @@ def raw_pages(corpus: Path) -> dict[str, Path]:
 def measure(corpus: Path) -> list[dict]:
     rows = []
     for work_id, page in raw_pages(corpus).items():
-        work = corpus / "works" / work_id
+        work = common.build_root(corpus) / work_id
         if not (work / "sections.json").exists():
             # An untranslated-edition probe: fetched, found to be a stub, and
             # never parsed. Absence of a translation is legitimate and common
@@ -426,7 +426,7 @@ def check_numbering_flag(corpus: Path, work_id: str, oracle: dict) -> list[str]:
     is the ambiguity this field exists to remove."""
     problems = []
     declared = oracle.get("numbered", True)
-    sections = corpus / "works" / work_id / "sections.json"
+    sections = common.build_root(corpus) / work_id / "sections.json"
     has_sections = sections.exists() and bool(json.loads(sections.read_text()))
     if declared is False:
         stray = [
@@ -458,13 +458,13 @@ def report_toc(corpus: Path) -> int:
     failing = 0
     for work_id, oracle in sorted(oracles.items()):
         read = oracle["headings"]
-        structure = corpus / "works" / work_id / "structure.json"
+        structure = common.build_root(corpus) / work_id / "structure.json"
         if not structure.exists():
             print(f"{work_id}: oracle present but no structure.json")
             failing += 1
             continue
         manifest = json.loads(
-            (corpus / "works" / work_id / "manifest.json").read_text()
+            (common.build_root(corpus) / work_id / "manifest.json").read_text()
         )
         masthead = {
             re.sub(r"\s+", " ", (manifest.get(f) or "")).strip().casefold()
@@ -658,7 +658,7 @@ def language_groups(corpus: Path) -> dict[str, dict[str, Path]]:
     types only. The language is the last dot-component of the work id and
     may carry a region (`prayer.common.en-gb`)."""
     groups: dict[str, dict[str, Path]] = collections.defaultdict(dict)
-    for work in sorted((corpus / "works").iterdir()):
+    for work in sorted((common.build_root(corpus)).iterdir()):
         manifest = work / "manifest.json"
         if not work.is_dir() or not manifest.exists():
             continue

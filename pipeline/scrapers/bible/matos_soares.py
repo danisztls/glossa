@@ -53,13 +53,13 @@ from common import (
     Fetcher,
     FetchPolicy,
     apply_verse_corrections,
+    build_root,
     chapter_opening_letter,
     corrections_receipt,
     httpx_transport,
     load_corrections,
     raw_root,
     require_corpus,
-    works_root,
     write_stamped_json,
 )
 from matos_soares_apparatus import anchor_notes
@@ -85,7 +85,7 @@ def raw_dir() -> Path:
 
 def work_dir() -> Path:
     """This scraper's output directory inside the corpus checkout."""
-    return works_root() / WORK_ID
+    return build_root() / WORK_ID
 
 
 def books_dir() -> Path:

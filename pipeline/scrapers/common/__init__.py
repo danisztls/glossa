@@ -108,10 +108,10 @@ from .paths import (
     CORRECTIONS_DIR,
     OVERRIDES_DIR,
     TRANSLATIONS_CHECKED_PATH,
+    build_root,
     corpus_dir,
     raw_root,
     require_corpus,
-    works_root,
 )
 from .text import (
     CHAPTER_OPENING_PUNCT,
@@ -141,6 +141,7 @@ __all__ = [
     "apply_verse_corrections",
     "book_form_pattern",
     "book_forms",
+    "build_root",
     "chapter_opening_letter",
     "corpus_dir",
     "corrections_receipt",
@@ -161,7 +162,6 @@ __all__ = [
     "require_corpus",
     "roman_to_int",
     "urllib_transport",
-    "works_root",
     "write_if_changed",
     "write_stamped_json",
 ]

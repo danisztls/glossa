@@ -100,12 +100,12 @@ function workIdOf(lang) {
 }
 
 function workDir(lang) {
-	return path.join(CORPUS, 'works', workIdOf(lang));
+	return path.join(CORPUS, 'build', workIdOf(lang));
 }
 
 /** Every edition of the chosen work the corpus holds, in work-id order. */
 function editions() {
-	const works = path.join(CORPUS, 'works');
+	const works = path.join(CORPUS, 'build');
 	if (!existsSync(works)) {
 		console.error(`[book-forms-oracle] no corpus at ${works}; set CORPUS_DIR`);
 		process.exit(2);

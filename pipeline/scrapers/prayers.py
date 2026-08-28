@@ -125,17 +125,17 @@ from common import (
     Fetcher,
     FetchError,
     FetchPolicy,
+    build_root,
     load_corrections,
     raw_root,
     require_corpus,
-    works_root,
     write_stamped_json,
 )
 
 # The corpus is a separate, private repository (docs/decisions.md
 # §The corpus); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
 RAW_ROOT = raw_root()
-WORKS_ROOT = works_root()
+BUILD_ROOT = build_root()
 
 EN_RAW = RAW_ROOT / "compendium-en" / "archive_2005_compendium-ccc_en.html"
 PT_RAW = RAW_ROOT / "compendium-pt" / "archive_2005_compendium-ccc_po.html"
@@ -2347,7 +2347,7 @@ def write_outputs(
     varied: list[str] | None = None,
 ) -> None:
     cfg = LANG_CONFIG[lang]
-    out_dir = WORKS_ROOT / cfg["work_id"]
+    out_dir = BUILD_ROOT / cfg["work_id"]
     out_dir.mkdir(parents=True, exist_ok=True)
 
     attach_sources(prayers, lang)
@@ -2466,7 +2466,7 @@ def build_latin_manifest(prayers: list[Prayer], report: list[dict]) -> dict:
 
 
 def write_latin_outputs(prayers: list[Prayer], report: list[dict]) -> None:
-    out_dir = WORKS_ROOT / LATIN_WORK_ID
+    out_dir = BUILD_ROOT / LATIN_WORK_ID
     out_dir.mkdir(parents=True, exist_ok=True)
     attach_sources(prayers, "la")
     manifest = build_latin_manifest(prayers, report)
@@ -2597,7 +2597,7 @@ def run(lang: str) -> tuple[list[Prayer], list[dict]]:
 def write_regional_outputs(
     prayers: list[Prayer], applied_corrections: list[dict]
 ) -> None:
-    out_dir = WORKS_ROOT / REGIONAL_WORK_ID
+    out_dir = BUILD_ROOT / REGIONAL_WORK_ID
     out_dir.mkdir(parents=True, exist_ok=True)
     # "en", not a tag of its own: the UK wording is the second column of the
     # SAME English Compendium page, so its provenance is the English one.

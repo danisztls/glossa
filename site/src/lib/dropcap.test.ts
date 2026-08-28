@@ -285,7 +285,7 @@ describe('drop-cap font coverage', () => {
 	});
 
 	it('covers the openings the real corpus is known to contain', () => {
-		// Regression cases from a scan of corpus/works, which the fixtures are
+		// Regression cases from a scan of corpus/build, which the fixtures are
 		// too small to exercise.
 		for (const text of ['«Assim', '“And', 'Ódio', '(Em seguida) levantei', '- ACÇÃO DA IGREJA']) {
 			const { first } = splitDropCap(text);

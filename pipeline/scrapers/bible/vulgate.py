@@ -60,12 +60,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import (
     CorrectionDriftError,
     apply_verse_corrections,
+    build_root,
     chapter_opening_letter,
     corrections_receipt,
     load_corrections,
     raw_root,
     require_corpus,
-    works_root,
     write_stamped_json,
 )
 from sacredbible import Anomaly, Fetcher, parse_book, verse_text_faults
@@ -94,7 +94,7 @@ def raw_dir() -> Path:
 
 def work_dir() -> Path:
     """This scraper's output directory inside the corpus checkout."""
-    return works_root() / WORK_ID
+    return build_root() / WORK_ID
 
 
 # (osis, filename, display name) in the schema's canonical 73-book order.

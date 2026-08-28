@@ -55,7 +55,7 @@
  * `corpus.ts` import, no change to the "caller resolves the book token"
  * contract. Book-token recognition here is deliberately narrow — just the
  * real jump-box abbreviations and names these three books actually have in
- * both v1 editions (`corpus/works/*\/books/{ps,mal,joel}.json`'s `abbrevs`
+ * both v1 editions (`corpus/build/*\/books/{ps,mal,joel}.json`'s `abbrevs`
  * and `name`) plus their bare OSIS codes — not the full abbreviation
  * grammar `corpus.ts` and `refs.ts` own, since only these three books need
  * converting at all.
@@ -63,7 +63,7 @@
 
 import { toVulgateCandidates } from './versification';
 
-/** Real jump-box abbreviations and names for the three books this module converts (verified against `corpus/works/*\/books/{ps,mal,joel}.json`, both editions), normalized the same way `book` tokens are below. Bare OSIS codes are included since book resolution also matches those directly. */
+/** Real jump-box abbreviations and names for the three books this module converts (verified against `corpus/build/*\/books/{ps,mal,joel}.json`, both editions), normalized the same way `book` tokens are below. Bare OSIS codes are included since book resolution also matches those directly. */
 const DIVERGENT_BOOK_TOKENS: Record<string, string> = {
 	ps: 'ps',
 	psalm: 'ps',

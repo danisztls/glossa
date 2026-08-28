@@ -47,7 +47,7 @@ def validate(entry: dict, corpus: Path) -> list[str]:
     """
     problems = []
     work = entry.get("work", "")
-    if not (corpus / "works" / work / "manifest.json").exists():
+    if not (common.build_root(corpus) / work / "manifest.json").exists():
         problems.append(f"{work}: no such work in the corpus")
     description = (entry.get("description") or "").strip()
     if not description:

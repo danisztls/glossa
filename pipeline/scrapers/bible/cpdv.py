@@ -42,12 +42,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import (
     CorrectionDriftError,
     apply_verse_corrections,
+    build_root,
     chapter_opening_letter,
     corrections_receipt,
     load_corrections,
     raw_root,
     require_corpus,
-    works_root,
     write_stamped_json,
 )
 
@@ -76,7 +76,7 @@ def raw_dir() -> Path:
 
 def work_dir() -> Path:
     """This scraper's output directory inside the corpus checkout."""
-    return works_root() / WORK_ID
+    return build_root() / WORK_ID
 
 
 WORK_ID = "bible.cpdv.en"

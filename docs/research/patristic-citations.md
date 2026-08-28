@@ -1,6 +1,6 @@
 # The patristic citations, parsed
 
-Measured 2026-08-25 over every `citations[].text` in `works/`, by
+Measured 2026-08-25 over every `citations[].text` in `build/`, by
 `pipeline/scrapers/patristics.py`. No fetches; nothing here was ingested.
 
 This is the pass `docs/research/summa-and-fathers.md` §6 recommended in place

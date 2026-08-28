@@ -253,9 +253,9 @@ function compactRun(nums) {
 
 rmSync(destDir, { recursive: true, force: true });
 
-const worksSrc = path.join(corpusDir, 'works');
+const buildSrc = path.join(corpusDir, 'build');
 
-if (!existsSync(worksSrc)) {
+if (!existsSync(buildSrc)) {
 	// A fixture build must never inherit a real corpus's route manifest from a
 	// previous build. Without this, preflight would see a plausible work count
 	// beside fixture client assets and could approve exactly the deploy it is
@@ -266,7 +266,7 @@ if (!existsSync(worksSrc)) {
 	// keeps a fixture build from rewriting it: two fixture books cannot be
 	// allowed to record the rest of the corpus as withdrawn.
 	console.warn(
-		`[sync-corpus] No corpus found at ${worksSrc} -- corpus.ts will fall back to its bundled ` +
+		`[sync-corpus] No corpus found at ${buildSrc} -- corpus.ts will fall back to its bundled ` +
 			`fixtures. The corpus is a separate, private repository (docs/decisions.md, ` +
 			`2026-08-23): clone it beside this one as glossa-corpus/, or set CORPUS_DIR.`
 	);
@@ -274,7 +274,7 @@ if (!existsSync(worksSrc)) {
 }
 
 /*
- * A work IS its manifest: `corpus/works/<id>/manifest.json` is what every
+ * A work IS its manifest: `corpus/build/<id>/manifest.json` is what every
  * consumer below reads, so a directory without one is not a work no matter
  * what it is named. Deciding that here rather than mid-loop keeps the run
  * summary honest — this list is what gets counted and printed, and it used to
@@ -293,18 +293,18 @@ if (!existsSync(worksSrc)) {
  *    is the thing `CLAUDE.md` says must never happen ("a genuine failure belongs
  *    in the run summary, never silently absent from the corpus").
  */
-const workDirs = readdirSync(worksSrc, { withFileTypes: true })
+const workDirs = readdirSync(buildSrc, { withFileTypes: true })
 	.filter((e) => e.isDirectory())
 	.map((e) => e.name)
 	.filter((name) => !name.startsWith('.'))
 	.sort();
 
 const manifestless = workDirs.filter(
-	(name) => !existsSync(path.join(worksSrc, name, 'manifest.json'))
+	(name) => !existsSync(path.join(buildSrc, name, 'manifest.json'))
 );
 if (manifestless.length > 0) {
 	console.warn(
-		`[sync-corpus] WARNING: ${manifestless.length} director(ies) under ${worksSrc} have no ` +
+		`[sync-corpus] WARNING: ${manifestless.length} director(ies) under ${buildSrc} have no ` +
 			`manifest.json and were NOT built: ${manifestless.join(', ')}. A work without a manifest ` +
 			`is invisible to the site — if any of these is a real work, its scrape did not finish.`
 	);
@@ -356,7 +356,7 @@ const publishedDefeats = [];
  * Editorial descriptions — see `site/descriptions.json` for the format and
  * for why they are curated here instead of in the corpus.
  *
- * The short version: `corpus/works/*​/manifest.json` is generated output, and
+ * The short version: `corpus/build/*​/manifest.json` is generated output, and
  * this project fixes parse defects by re-parsing (CLAUDE.md's "re-parse,
  * never re-crawl"), so anything hand-written into a manifest survives only
  * until the next fix. Merging at sync time keeps the corpus purely generated
@@ -488,7 +488,7 @@ function mark(address, value, workId, lang) {
  * checkout at all, and the fixtures never are.
  *
  * SINCE 2026-08-27 IT ESSENTIALLY ALWAYS RETURNS UNDEFINED, and that is not a
- * regression to chase. `works/` is no longer tracked in the corpus repository
+ * regression to chase. `build/` (formerly `build/`) is not tracked in the corpus repository
  * (`docs/decisions.md` §The corpus), so there is no commit touching a work to
  * ask about. Kept rather than deleted because the call costs nothing, still
  * answers for anyone holding a pre-rewrite clone, and would answer again if
@@ -507,7 +507,7 @@ function corpusDateFor(workId) {
 	let date;
 	try {
 		date =
-			execFileSync('git', ['log', '-1', '--format=%cs', '--', `works/${workId}`], {
+			execFileSync('git', ['log', '-1', '--format=%cs', '--', `build/${workId}`], {
 				cwd: corpusDir,
 				encoding: 'utf8',
 				stdio: ['ignore', 'pipe', 'ignore']
@@ -520,7 +520,7 @@ function corpusDateFor(workId) {
 }
 
 for (const workId of workIds) {
-	const workDir = path.join(worksSrc, workId);
+	const workDir = path.join(buildSrc, workId);
 	const manifestPath = path.join(workDir, 'manifest.json');
 	// No existence check here: `workIds` is already filtered to directories that
 	// have a manifest, and the ones that don't were reported up there rather
@@ -1156,7 +1156,7 @@ writeJson(
 /**
  * CCC -> Bible cross-references, DERIVED here rather than read from the
  * corpus. `corpus/xrefs/ccc-bible.json` used to be a committed file built by
- * a separate Python parser; it is now computed from `corpus/works/` on every
+ * a separate Python parser; it is now computed from `corpus/build/` on every
  * build by the site's own citation grammar. See `build-xrefs.mjs` for why,
  * and docs/decisions.md §Parsing.
  */
@@ -1499,7 +1499,7 @@ const indexBytes = [
 	.reduce((sum, p) => sum + readFileSync(p).length, 0);
 
 console.log(
-	`[sync-corpus] Built corpus-data/ from ${worksSrc}: ${workIds.length} work(s), ` +
+	`[sync-corpus] Built corpus-data/ from ${buildSrc}: ${workIds.length} work(s), ` +
 		`${contentManifest.length} content file(s)${xrefsSynced ? `, plus ${xrefs.length} CCC and ${documentXrefs.length} document xref entries` : ''}. ` +
 		`Index tier: ${(indexBytes / 1000).toFixed(0)} KB raw. ` +
 		`Descriptions: ${describedWorks} read, ${translatedCount} translated across ` +

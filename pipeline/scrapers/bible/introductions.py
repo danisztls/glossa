@@ -57,9 +57,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import (
     Fetcher,
     FetchPolicy,
+    build_root,
     raw_root,
     require_corpus,
-    works_root,
     write_stamped_json,
 )
 
@@ -121,7 +121,7 @@ def raw_dir() -> Path:
 
 
 def work_dir() -> Path:
-    return works_root() / WORK_ID
+    return build_root() / WORK_ID
 
 
 def normalize(raw: str) -> list[str]:
@@ -205,7 +205,7 @@ def canonical_books() -> dict[str, dict]:
     copy here would be one more thing that can drift; the verse count is the
     mapping oracle's evidence (see `validate`). Empty when the CPDV is not in
     the corpus, which both callers handle."""
-    books_dir = works_root() / "bible.cpdv.en" / "books"
+    books_dir = build_root() / "bible.cpdv.en" / "books"
     out: dict[str, dict] = {}
     for path in sorted(books_dir.glob("*.json")):
         book = json.loads(path.read_text(encoding="utf-8"))

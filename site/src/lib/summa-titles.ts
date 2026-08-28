@@ -4,7 +4,7 @@
  * THE SOURCE IS NOT WRONG, SO THIS IS NOT A CORRECTION. CCEL's Dominican
  * Fathers edition prints every question title and every treatise heading in
  * full capitals -- `OF THE SIMPLICITY OF GOD (EIGHT ARTICLES)`,
- * `TREATISE ON THE ONE GOD (QQ[2]-26)` -- and `raw/`, `works/` and the index
+ * `TREATISE ON THE ONE GOD (QQ[2]-26)` -- and `raw/`, `build/` and the index
  * tier all carry them that way verbatim, which is where the record of what
  * the source said belongs. What a page renders is a separate question, and
  * shouting a heading at a reader is a typographic accident of the 1920s

@@ -26,21 +26,33 @@ every scraper creates its output with `parents=True` and would otherwise
 write a whole phantom corpus somewhere nobody looks. The site keeps its older
 behaviour of warning and falling back to fixtures.
 
-Inside the corpus repo, the old distinction still governs what may be deleted:
+Inside the corpus repo, **the directory names now carry the distinction** that
+governs what may be deleted, which is the whole reason they were renamed:
 
 | Path       | Value                                                                        | Rule                                |
 | ---------- | ---------------------------------------------------------------------------- | ----------------------------------- |
-| `works/`   | Parsed output. Rebuilt from cache in ~16s, zero network. **Untracked.**      | Safe to rebuild. Git holds no copy. |
+| `build/`   | Parsed output. Rebuilt from cache in ~16s, zero network. **Untracked.**      | Safe to rebuild. Git holds no copy. |
 | `oracles/` | Tables of contents read off the raw pages by hand. Nothing regenerates them. | Tracked. Treat like `raw/`.         |
 | `raw/`     | Every scraped source page. The **only** artifact that cost real fetches.     | Treat as write-once. Never delete.  |
 
-**`works/` left git on 2026-08-27** (`docs/decisions.md` §The corpus). It is no
-longer two copies with one of them in git; it is one copy plus the rebuild
-recipe in the corpus repo's `README.md`, which is now the only way back to it.
+**It was `works/`, tracked, until 2026-08-27** (`docs/decisions.md` §The corpus).
+Two changes with one point: three sibling directories whose names did not say
+which of them was derived is what made "is this corpus data" the wrong question
+to ask, and `build/` answers it before anyone asks. It is no longer two copies
+with one of them in git; it is one copy plus the rebuild recipe in the corpus
+repo's `README.md`, which is now the only way back to it.
+
 That recipe was broken when the change was made — six of its eight commands
-named pre-reorganisation paths, and it omitted four works entirely — so the
-rule is: **if you change what a scraper writes or where it lives, the recipe
-is part of the change.** Nothing fails when it rots.
+named pre-reorganisation paths, and it omitted four works entirely, so it built
+369 of 383 and reported nothing wrong. Hence the rule: **if you change what a
+scraper writes or where it lives, the recipe is part of the change.** Nothing
+fails when it rots.
+
+**Resolve the path through `common.build_root()`, never by hand.** It takes an
+optional corpus argument for the callers that are handed one (`audit.py`,
+`census.py`, `apply_sweep.py`), each of which used to rebuild `corpus / "works"`
+itself — eight literals that all had to be found by grep at rename time. The
+site's single construction is `buildSrc` in `scripts/sync-corpus.mjs`.
 
 The project's stated insurance policy is that any capture regret is fixed by
 **re-parsing, never re-crawling** (`docs/link-surface.md`). That only holds while
@@ -53,7 +65,7 @@ The project's stated insurance policy is that any capture regret is fixed by
 turned out to be, for 125 documents). The second was not a file until
 2026-08-27: it survived only by `vatican_docs.py` copying it off the
 `manifest.json` already on disk, so it protected a `--overwrite` re-parse and
-not a rebuild into an empty `works/`, which dropped all 125 entries with
+not a rebuild into an empty `build/`, which dropped all 125 entries with
 nothing reporting it. That is the shape of the bug to watch for — output that
 is only regenerable from a previous copy of itself.
 

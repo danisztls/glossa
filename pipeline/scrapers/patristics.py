@@ -69,7 +69,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from common import require_corpus, works_root
+from common import build_root, require_corpus
 
 # A Migne reference: the series, its volume (Arabic or Roman, sometimes with a
 # part -- `PG 7/1`), then the columns. `Migne, PL 54, 359` and `PL XVI, 342`
@@ -95,7 +95,7 @@ LEAD_RE = re.compile(r"^\s*(?:Cf\.|Cfr\.|cf\.|See|Veja|Vide|Ver)\s*", re.IGNOREC
 # Portuguese corpus prints all three.
 #
 # BUILT FROM WHAT IS THERE, not from a canon. Every pattern here was added
-# because a clause in `works/` matched nothing; the list is therefore exactly
+# because a clause in `build/` matched nothing; the list is therefore exactly
 # as long as the corpus makes it and no longer. `Iraeneus` is not a typo in
 # this file -- it is `vatii.ad-gentes.en` §8's spelling, and a name table that
 # only accepts correct spellings measures the corpus it wishes it had.
@@ -220,7 +220,7 @@ def citation_strings() -> list[tuple[str, int | None, str]]:
     docs/corpus-schema.md §CCC says the two fields mean -- `label` is the
     parenthesized inline form and carries the same locator."""
     out: list[tuple[str, int | None, str]] = []
-    for work_dir in sorted(works_root().iterdir()):
+    for work_dir in sorted(build_root().iterdir()):
         for name in ("paragraphs.json", "sections.json"):
             path = work_dir / name
             if not path.exists():

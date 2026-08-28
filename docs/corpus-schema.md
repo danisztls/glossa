@@ -543,7 +543,7 @@ CCC ¶ ↔ document section references (future, not yet built): turns a `citatio
 
 Two indexes share this shape: the Catechism's (`{ ccc, refs }`, above) and the magisterial documents' (`{ work, n, refs }`, where `work` is the document's edition-free slug and `n` a section number).
 
-**These are build artifacts, not corpus data.** `site/scripts/build-xrefs.mjs` produces it from `works/` on every build and writes it into the site's generated `corpus-data/index/`; nothing is committed and there is no `corpus/xrefs/`. It used to be a stored file built by a separate Python parser, which drifted from the one that renders the pages — see `decisions.md` §Parsing for why one derivation beats two.
+**These are build artifacts, not corpus data.** `site/scripts/build-xrefs.mjs` produces it from `build/` on every build and writes it into the site's generated `corpus-data/index/`; nothing is committed and there is no `corpus/xrefs/`. It used to be a stored file built by a separate Python parser, which drifted from the one that renders the pages — see `decisions.md` §Parsing for why one derivation beats two.
 
 An entry's `refs` are the union across every edition of the work, drawn from all three places a reference appears: numbered footnotes, the inline locators Portuguese prints in the sentence (`citations[].label`), and the body prose itself. References are edition-independent (OSIS + chapter + verse); the site resolves them against whichever Bible edition the reader has open. Psalm references use Vulgate numbering — conversion happens in the builder, so nothing downstream sees two conventions. A whole-chapter reference is `"verses": []` and is kept distinct from a verse-level reference to the same chapter.
 

@@ -193,7 +193,7 @@ def census(corpus: Path, work_id: str) -> dict:
     page = corpus / "raw" / "vatican-docs" / f"{family}__{slug}__{lang}.html"
     if not page.exists():
         raise SystemExit(f"no raw page for {work_id}: {page}")
-    work = corpus / "works" / work_id
+    work = common.build_root(corpus) / work_id
 
     body = body_region(page.read_text(encoding="utf-8", errors="replace"))
     # The parser marks footnote references and then stores the text WITHOUT

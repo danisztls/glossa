@@ -1,5 +1,5 @@
 /**
- * Scripture cross-reference index, derived from `corpus/works/` at build time.
+ * Scripture cross-reference index, derived from `corpus/build/` at build time.
  *
  * This used to be `corpus/xrefs/ccc-bible.json`, committed to the repository
  * and produced by `pipeline/build/xrefs.py` — a SECOND implementation of the

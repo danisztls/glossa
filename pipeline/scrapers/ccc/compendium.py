@@ -113,13 +113,13 @@ from common import (
     CorrectionDriftError,
     Fetcher,
     FetchPolicy,
+    build_root,
     corrections_receipt,
     download_resumable,
     fold,
     load_corrections,
     raw_root,
     require_corpus,
-    works_root,
     write_stamped_json,
 )
 
@@ -129,7 +129,7 @@ CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 # The corpus is a separate, private repository (docs/decisions.md
 # §The corpus); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
 RAW_ROOT = raw_root()
-WORKS_ROOT = works_root()
+BUILD_ROOT = build_root()
 
 DOCUMENTS_URL = "https://www.vatican.va/archive/compendium_ccc/documents/"
 
@@ -1790,7 +1790,7 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
 
 
 def write_outputs(lang: str, state: ScrapeState, retrieved_at: str) -> None:
-    out_dir = WORKS_ROOT / LANG_CONFIG[lang]["work_id"]
+    out_dir = BUILD_ROOT / LANG_CONFIG[lang]["work_id"]
     out_dir.mkdir(parents=True, exist_ok=True)
     for node in state.root_children:
         node.compute_span()

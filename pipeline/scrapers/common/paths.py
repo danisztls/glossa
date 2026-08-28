@@ -61,9 +61,27 @@ def raw_root() -> Path:
     return corpus_dir() / "raw"
 
 
-def works_root() -> Path:
-    """`works/` inside the corpus checkout -- every scraper's parsed output."""
-    return corpus_dir() / "works"
+def build_root(corpus: Path | None = None) -> Path:
+    """`build/` inside the corpus checkout -- every scraper's parsed output.
+
+    IT WAS `works/` AT THE TOP LEVEL UNTIL 2026-08-27, and the rename is the
+    point rather than a tidy-up. The corpus repository holds three things and
+    only one of them is derived: `raw/` is what someone else's server was
+    asked for, `oracles/` is what a person read off those pages by hand, and
+    this is output -- rebuilt from `raw/` in seconds, tracked by nothing, and
+    the only one of the three that a deletion cannot destroy. Three sibling
+    directories with names that did not say which was which is what made
+    "is this corpus data" the wrong question to be asking (CLAUDE.md); a
+    directory called `build/` answers it before anyone has to ask. It also
+    lets `.gitignore` say `build/` once, so a generated kind added later is
+    ignored by default rather than by someone remembering to add it.
+
+    `corpus` overrides the checkout for callers that were handed one --
+    `audit.py`, `census.py` and `apply_sweep.py` all take a corpus path as an
+    argument and each rebuilt `build_root(corpus)` by hand. That is the
+    duplication this module exists to prevent, and it is why the parameter is
+    here rather than each of them growing a second literal."""
+    return (corpus if corpus is not None else corpus_dir()) / "build"
 
 
 def require_corpus() -> Path:

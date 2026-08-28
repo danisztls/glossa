@@ -8,7 +8,7 @@ The CCC's own footnote apparatus is a near-perfect priority signal: it cites Vat
 
 ## 1. What does the CCC actually cite?
 
-Extracted every `citations[].text` from `corpus/works/ccc.en/paragraphs.json` (3,698 citation strings) and `ccc.pt/paragraphs.json` (3,601 citation strings) — 7,299 total, combined for counting since a document cited in one language edition is cited in the doctrine, not the language. (`corpus/works/compendium.{en,pt}/questions.json` carries **no** citation apparatus at all — only `ccc_refs`, a raw string pointing back into the CCC's own paragraph numbers, confirmed by `jq '[.[] | keys] | unique'` returning only `["answer_blocks","ccc_refs","n","question"]`. The Compendium contributes nothing to this signal.)
+Extracted every `citations[].text` from `corpus/build/ccc.en/paragraphs.json` (3,698 citation strings) and `ccc.pt/paragraphs.json` (3,601 citation strings) — 7,299 total, combined for counting since a document cited in one language edition is cited in the doctrine, not the language. (`corpus/build/compendium.{en,pt}/questions.json` carries **no** citation apparatus at all — only `ccc_refs`, a raw string pointing back into the CCC's own paragraph numbers, confirmed by `jq '[.[] | keys] | unique'` returning only `["answer_blocks","ccc_refs","n","question"]`. The Compendium contributes nothing to this signal.)
 
 ### (a) Vatican II documents — sigla occurrence counts (EN+PT combined)
 

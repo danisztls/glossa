@@ -71,12 +71,12 @@ from common import (
     Fetcher,
     FetchPolicy,
     apply_verse_corrections,
+    build_root,
     chapter_opening_letter,
     corrections_receipt,
     load_corrections,
     raw_root,
     require_corpus,
-    works_root,
     write_stamped_json,
 )
 
@@ -144,7 +144,7 @@ def raw_dir() -> Path:
 
 
 def work_dir() -> Path:
-    return works_root() / WORK_ID
+    return build_root() / WORK_ID
 
 
 # --------------------------------------------------------------------------
@@ -159,7 +159,7 @@ def oracle_books() -> dict[str, dict[int, list[int]]]:
     a skipped check rather than a pass -- an oracle that quietly is not there
     is worse than no oracle, since the run still says PASS.
     """
-    books_dir = works_root() / ORACLE_WORK_ID / "books"
+    books_dir = build_root() / ORACLE_WORK_ID / "books"
     if not books_dir.is_dir():
         return {}
     out: dict[str, dict[int, list[int]]] = {}
@@ -259,7 +259,7 @@ def canonical_order() -> dict[str, int]:
     Not restated here for the reason introductions.py gives: the 73-book order
     is settled in docs/corpus-schema.md and recorded per book file, and a
     second copy is one more thing that can drift."""
-    books_dir = works_root() / ORACLE_WORK_ID / "books"
+    books_dir = build_root() / ORACLE_WORK_ID / "books"
     if not books_dir.is_dir():
         return {}
     out: dict[str, int] = {}

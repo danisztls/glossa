@@ -96,12 +96,18 @@ def file_has_text(path: Path, text: str) -> bool:
 def write_if_changed(path: Path, text: str) -> bool:
     """Write `text` to `path` only when that is not already its content.
 
-    A re-parse rewrote every file in `works/` on every run -- 18.1 MB of
+    A re-parse rewrote every file in `build/` on every run -- 18.1 MB of
     sections.json and structure.json alone -- whether or not the parser had
-    changed its mind about a single byte. Now that `works/` is tracked in git
-    (docs/decisions.md §The corpus) the second cost is the one that bites: a
-    diff in which all 1,229 files look touched cannot show which document a
-    parser fix actually moved, which is the entire reason for tracking it.
+    changed its mind about a single byte.
+
+    THE REASON OUTLIVED THE ONE IT WAS WRITTEN FOR. This was argued from git:
+    the directory was tracked, and a diff in which all 1,229 files look
+    touched cannot show which document a parser fix actually moved. `build/`
+    stopped being tracked on 2026-08-27 (docs/decisions.md §The corpus), and
+    the guard is worth more rather than less -- `git status` is no longer
+    available to answer "what did this fix move", so the mtimes and the
+    directory comparison in the next function are what is left. Rewriting
+    everything unconditionally would destroy that too.
 
     A trade rather than a pure saving -- it reads on every document to skip a
     write on the unchanged ones. That is the right way round here, because the
@@ -142,8 +148,9 @@ def write_stamped_json(
     everything else matches, nothing is written and the work keeps the time it
     had -- so `generated_at` means "when this content was generated" rather
     than "when a run last touched the file", which is what it has to mean to
-    be worth reading in a git diff now that `works/` is tracked
-    (docs/decisions.md §The corpus).
+    be worth reading at all. It was written to be read in a git diff; with
+    `build/` untracked since 2026-08-27 it is read by `audit.py` and by
+    whoever is diffing two rebuilds, which needs the same property.
 
     ALL OR NOTHING across the work's files. Keeping an old stamp on a manifest
     while a sibling file changed underneath it would be a worse lie than the

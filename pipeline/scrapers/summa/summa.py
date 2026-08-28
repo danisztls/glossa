@@ -89,11 +89,11 @@ from common import (
     CorrectionDriftError,
     Fetcher,
     FetchPolicy,
+    build_root,
     corrections_receipt,
     load_corrections,
     raw_root,
     require_corpus,
-    works_root,
     write_stamped_json,
 )
 
@@ -943,7 +943,7 @@ def write_outputs(
     lang: str, questions: list[dict], structure: list[dict], notes: str, fetched: int
 ) -> bool:
     stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-    out_dir = works_root() / f"summa.{lang}"
+    out_dir = build_root() / f"summa.{lang}"
     retrieved_at = _retrieved_at(out_dir, fetched)
 
     manifest = manifest_for(lang, questions, retrieved_at, notes)

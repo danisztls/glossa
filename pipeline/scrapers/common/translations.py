@@ -23,11 +23,11 @@ def load_translations_checked(
 
     WHY THIS IS AN INPUT AND NOT AN OUTPUT. It was neither until 2026-08-27.
     The statuses were established by a post-hoc reconciliation pass over the
-    corpus, written into `works/*/manifest.json`, and kept alive only by
+    corpus, written into each work's `manifest.json`, and kept alive only by
     `vatican_docs.write_document_outputs` copying them off the manifest
     already on disk. That made them regenerable from nothing but a previous
-    copy of the output -- so a rebuild of `works/` into an empty directory
-    silently dropped all 125 of them, and untracking `works/` (2026-08-27,
+    copy of the output -- so a rebuild into an empty directory silently
+    dropped all 125 of them, and untracking the parsed corpus (2026-08-27,
     `docs/decisions.md` §The corpus) would have made the loss permanent.
     A status is a record of what the source ANSWERED, which is the same class
     of knowledge as `absent-sources.json` next door: measured against someone
@@ -37,7 +37,7 @@ def load_translations_checked(
     argument in `absent.py`: a list of what is missing is knowledge we
     derived rather than a page we fetched, so it belongs here, tracked and
     diffable in the public repository beside `corrections/` and `overrides/`,
-    rather than in the corpus repository whose `works/` is now output alone.
+    rather than in the corpus repository whose `build/` is now output alone.
 
     NOT WRITTEN BY ANY SCRAPER. Nothing here appends to this file: the pass
     that establishes a status is a separate, deliberate act (it costs

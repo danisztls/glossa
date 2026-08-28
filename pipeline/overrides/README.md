@@ -109,11 +109,11 @@ and the file still claims it is handled.
 
 ## Receipts
 
-A work with overrides gets `corpus/works/<id>/overrides-applied.json`. It is
+A work with overrides gets `corpus/build/<id>/overrides-applied.json`. It is
 written only when there are any, so
 
 ```sh
-ls corpus/works/*/overrides-applied.json
+ls corpus/build/*/overrides-applied.json
 ```
 
 is the census of where the parser gave up. Keep that list short.

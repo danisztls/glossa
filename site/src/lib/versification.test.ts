@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { isDivergentBook, resolveVulgate, toVulgateCandidates } from './versification';
 
 /**
- * Ground truth pulled from the real corpus (`corpus/works/bible.cpdv.en`),
+ * Ground truth pulled from the real corpus (`corpus/build/bible.cpdv.en`),
  * not textbook numbers — every value here was checked with `jq` against
  * the actual shipped Bible files as part of building this module (see
  * versification.ts's docblock for the measurement methodology). Used both

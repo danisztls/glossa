@@ -63,10 +63,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import (
     Fetcher,
     FetchPolicy,
+    build_root,
     load_corrections,
     raw_root,
     require_corpus,
-    works_root,
 )
 from vulgata_online import (
     BASE_URL,
@@ -211,7 +211,7 @@ def raw_dir() -> Path:
 
 
 def work_dir() -> Path:
-    return works_root() / WORK_ID
+    return build_root() / WORK_ID
 
 
 # --------------------------------------------------------------------------
@@ -307,7 +307,7 @@ def canonical_order() -> dict[str, int]:
     Not restated here for the reason introductions.py gives: the 73-book order
     is settled in docs/corpus-schema.md and recorded per book file, and a
     second copy is one more thing that can drift."""
-    books_dir = works_root() / ORACLE_WORK_ID / "books"
+    books_dir = build_root() / ORACLE_WORK_ID / "books"
     if not books_dir.is_dir():
         return {}
     out: dict[str, int] = {}
@@ -341,7 +341,7 @@ def abbrevs_for(osis: str, name: str, curated: list[str]) -> list[str]:
 
 def oracle_books() -> dict[str, dict[int, list[int]]]:
     """`osis -> {chapter: [verse numbers]}` for the shape oracle."""
-    books_dir = works_root() / ORACLE_WORK_ID / "books"
+    books_dir = build_root() / ORACLE_WORK_ID / "books"
     if not books_dir.is_dir():
         return {}
     out: dict[str, dict[int, list[int]]] = {}

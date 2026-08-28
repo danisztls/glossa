@@ -79,6 +79,7 @@ from common import (
     Fetcher,
     FetchPolicy,
     book_form_pattern,
+    build_root,
     corrections_receipt,
     download_resumable,
     fold,
@@ -87,7 +88,6 @@ from common import (
     raw_root,
     require_corpus,
     roman_to_int,
-    works_root,
     write_stamped_json,
 )
 
@@ -97,7 +97,7 @@ CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 # The corpus is a separate, private repository (docs/decisions.md
 # §The corpus); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
 RAW_ROOT = raw_root()
-WORKS_ROOT = works_root()
+BUILD_ROOT = build_root()
 
 EN_BASE = "https://www.vatican.va/archive/ENG0015/"
 EN_TOC_HREF = "_INDEX.HTM"
@@ -3341,7 +3341,7 @@ def build_manifest(
     # harmless parser change would falsely claim every raw page was fetched
     # again today, undermining the raw/works distinction.
     previous_dates: dict[str, str] = {}
-    previous_manifest = WORKS_ROOT / cfg["work_id"] / "manifest.json"
+    previous_manifest = BUILD_ROOT / cfg["work_id"] / "manifest.json"
     if previous_manifest.exists():
         old = json.loads(previous_manifest.read_text(encoding="utf-8"))
         previous_dates = {
@@ -3501,7 +3501,7 @@ def build_manifest(
 def write_outputs(
     lang: str, state: ScrapeState, fetched_pages: list[tuple[str, str]], sample: bool
 ) -> None:
-    out_dir = WORKS_ROOT / LANG_CONFIG[lang]["work_id"]
+    out_dir = BUILD_ROOT / LANG_CONFIG[lang]["work_id"]
     out_dir.mkdir(parents=True, exist_ok=True)
     for node in state.root_children:
         node.compute_span()

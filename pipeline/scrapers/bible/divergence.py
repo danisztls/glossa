@@ -7,7 +7,7 @@
 said why yet.
 
 A tool over already-written output, like `audit.py` and `census.py`: it makes
-no requests and writes no work. It reads the four editions out of `works/` and
+no requests and writes no work. It reads the four editions out of `build/` and
 answers one question -- which addresses name different amounts of text in
 different editions -- in the one form that is useful, which is a list a person
 has classified.
@@ -61,7 +61,7 @@ from pathlib import Path
 # here and why the import below it is not at the top of the file.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from common import require_corpus, works_root
+from common import build_root, require_corpus
 
 # The vernacular pair whose disagreement defines a row, then the two witnesses
 # reported beside it. EN and PT are what the reader actually chooses between
@@ -267,7 +267,7 @@ MAPPINGS: dict[tuple[str, int], str] = {
 
 def load(work_id: str) -> dict[tuple[str, int], dict[int, str]]:
     """Every chapter of one edition as `{(osis, n): {verse: text}}`."""
-    books = works_root() / work_id / "books"
+    books = build_root() / work_id / "books"
     out: dict[tuple[str, int], dict[int, str]] = {}
     for path in sorted(books.glob("*.json")):
         book = json.loads(path.read_text(encoding="utf-8"))
@@ -359,7 +359,7 @@ def main() -> int:
     # Canonical order comes from a manifest, not from sorting: `2thess` after
     # `sir` after `ps` is the Bible's order and no string comparison finds it.
     books = json.loads(
-        (works_root() / EDITIONS["pt"] / "manifest.json").read_text(encoding="utf-8")
+        (build_root() / EDITIONS["pt"] / "manifest.json").read_text(encoding="utf-8")
     )["books"]
 
     differing = {k for k in set(en) & set(pt) if en[k].keys() != pt[k].keys()} | (

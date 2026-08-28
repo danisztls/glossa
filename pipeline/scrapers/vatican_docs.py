@@ -159,7 +159,7 @@ Every fetched page (index pages and document pages alike) is cached under
 corpus/raw/vatican-docs/ and reused offline on re-run -- phase 2 in
 particular is designed to be interrupted and resumed: re-running the same
 command after a partial run only fetches what's still missing, and a
-document already written to corpus/works/ is left untouched (use
+document already written to corpus/build/ is left untouched (use
 --overwrite to force a re-parse of an already-written document from its
 cached raw HTML, no network needed).
 
@@ -239,6 +239,7 @@ from common import (
     FetchPolicy,
     OverrideDriftError,
     apply_overrides,
+    build_root,
     corpus_dir,
     corrections_receipt,
     fold,
@@ -273,12 +274,12 @@ SOURCE_ROOT = (
     Path(__file__).resolve().parents[2]
 )  # tracked source; follows this file's checkout
 RAW_ROOT = DATA_ROOT / "raw" / "vatican-docs"
-WORKS_ROOT = DATA_ROOT / "works"
+BUILD_ROOT = build_root()
 
 #: `work_id -> {lang: status record}`, read once. Lives in THIS checkout,
 #: not the corpus, because it is knowledge derived about the sources rather
 #: than a page fetched from them -- the same argument absent-sources.json is
-#: kept here by, and the reason a rebuilt `works/` still carries the field.
+#: kept here by, and the reason a rebuilt `build/` still carries the field.
 TRANSLATIONS_CHECKED = load_translations_checked()
 CRAWL_LOCK_PATH = (
     RAW_ROOT / ".crawl.lock"
@@ -1988,7 +1989,7 @@ def _gap_block(gap_html: str, marker_template: str) -> Block | None:
     A FULLY-BOLD GAP IS A HEADING, as of 2026-08-24. This used to be text
     only, on the grounds that promoting it "would change heading detection for
     the whole corpus, which is a separate decision needing its own
-    blast-radius measurement". That measurement is now cheap -- `works/` is
+    blast-radius measurement". That measurement is now cheap -- `build/` is
     tracked in the corpus repo, so a full re-parse's blast radius is `git
     status` there, and `audit.py toc` compares twelve hand-read tables of
     contents against the parse -- and the harm was not as small as it looked.
@@ -5638,7 +5639,7 @@ def write_document_outputs(
     sections: list[dict],
     overrides_applied: list[dict],
 ) -> None:
-    out_dir = WORKS_ROOT / work_id
+    out_dir = BUILD_ROOT / work_id
     out_dir.mkdir(parents=True, exist_ok=True)
     # build_manifest constructs a fresh dict every call, with no knowledge
     # of what was already on disk -- fine for every field it owns, but
@@ -5649,8 +5650,8 @@ def write_document_outputs(
     # manifest already on disk only as a fallback. That order is the fix for
     # 2026-08-27: reading the previous output was the ONLY way the field
     # survived, so it protected a --overwrite re-parse (which is what it was
-    # written for) and not a rebuild into an empty `works/`, which dropped
-    # all 125 records. Now that `works/` is untracked and a rebuild is the
+    # written for) and not a rebuild into an empty directory, which dropped
+    # all 125 records. Now that `build/` is untracked and a rebuild is the
     # supported way to get a corpus, the ledger is the record and the
     # carry-forward is the belt-and-braces -- see common/translations.py.
     raw_manifest = read_text_or_none(out_dir / "manifest.json")
@@ -5686,7 +5687,7 @@ def write_document_outputs(
     elif appendix_path.exists():
         appendix_path.unlink()
     # Written only when there are overrides, so the file's presence is itself
-    # the signal that this work needed hand-holding -- `ls corpus/works/*/
+    # the signal that this work needed hand-holding -- `ls corpus/build/*/
     # overrides-applied.json` is the census of where the parser gave up.
     if overrides_applied:
         files["overrides-applied.json"] = {
@@ -5774,7 +5775,7 @@ def fetch_for_parse(
         result["status"] = "no-url"
         return result, None
     work_id = f"{ref.family}.{ref.slug}.{lang}"
-    out_dir = WORKS_ROOT / work_id
+    out_dir = BUILD_ROOT / work_id
     if (out_dir / "sections.json").exists() and not overwrite:
         result["status"] = "already-written"
         return result, None
@@ -5833,7 +5834,7 @@ def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
     `pipeline/corrections/{work_id}.json` and `pipeline/overrides/{work_id}.json`;
     the only thing it writes is `works/{work_id}/`, which belongs to this
     document alone. No shared mutable state, so a parallel run and a serial
-    one produce the same bytes -- checked by diffing the whole `works/` tree
+    one produce the same bytes -- checked by diffing the whole `build/` tree
     between `--jobs 1` and `--jobs 16`.
 
     Keeps `scrape_one`'s contract of not raising for a parse defeat: a crash
@@ -5856,7 +5857,7 @@ def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
         # StubPageError's docstring). Bucketed with fetch-failed/no-pt-url
         # in reporting: a translation that does not exist, not a document
         # this scraper failed to read. Deliberately nothing is written to
-        # corpus/works/ -- writing an empty/degraded work here would be
+        # corpus/build/ -- writing an empty/degraded work here would be
         # exactly the "silent gap dressed as data" this project's posture
         # rules out, and it would also permanently wedge future re-runs
         # via the already-written short-circuit above.
@@ -6198,7 +6199,7 @@ def run_phase2(
     want_langs: tuple[str, ...] = DEFAULT_LANGS,
     fetch_only: bool = False,
 ) -> list[dict]:
-    """`overwrite` re-parses documents already written to corpus/works/ from
+    """`overwrite` re-parses documents already written to corpus/build/ from
     their CACHED raw HTML — the module docstring has promised this flag since
     the scraper was written, but it was never actually wired into argparse, so
     every parser fix so far had to be verified some other way. It costs no
@@ -6354,7 +6355,7 @@ def run_phase2(
 # --------------------------------------------------------------------------
 # Cross-language symmetry check (docs/decisions.md's "Language symmetry
 # principle" used as a QA oracle -- see this task's brief). Deliberately a
-# standalone pass over already-written corpus/works/ output, not folded
+# standalone pass over already-written corpus/build/ output, not folded
 # into parse_document/validate_document: it needs to see BOTH languages'
 # finished sections.json at once, which a single-document parse never has
 # in scope, and keeping it separate lets it re-run against output from an
@@ -6384,10 +6385,10 @@ def sections_from_results(results: list[dict]) -> dict[str, list[int]]:
 
 
 def check_language_symmetry(
-    works_root: Path = WORKS_ROOT, known: dict[str, list[int]] | None = None
+    works_dir: Path = BUILD_ROOT, known: dict[str, list[int]] | None = None
 ) -> tuple[bool, list[str]]:
     """For every (family, slug) written in more than one language under
-    works_root, checks that all of them carry the same set of section
+    `works_dir`, checks that all of them carry the same set of section
     numbers -- exactly the check that would have
     caught all three of this task's defects (Gravissimum Educationis EN:
     0 sections vs. PT's 12; Sacrosanctum Concilium: EN missing 87, PT
@@ -6430,7 +6431,7 @@ def check_language_symmetry(
 
     `known` is `work_id -> section numbers` for documents the caller has just
     parsed and still holds in memory. It is a CACHE, not a substitute for the
-    scan: the sweep over works_root still decides which pairs exist, so a run
+    scan: the sweep over `works_dir` still decides which pairs exist, so a run
     narrowed by --slugs or --pontiffs is still checked against the whole
     corpus rather than quietly against its own slice. All `known` changes is
     where the numbers come from for the documents this run produced -- which
@@ -6439,9 +6440,9 @@ def check_language_symmetry(
     Returns (ok, problems)."""
     known = known or {}
     by_pair: dict[tuple[str, str], dict[str, Path]] = {}
-    if not works_root.exists():
+    if not works_dir.exists():
         return True, []
-    for entry in sorted(works_root.iterdir()):
+    for entry in sorted(works_dir.iterdir()):
         if not entry.is_dir():
             continue
         m = _WORK_ID_RE.match(entry.name)
@@ -6501,7 +6502,7 @@ def check_language_symmetry(
 
 # --------------------------------------------------------------------------
 # Single-instance lock (phase1/phase2 -- both write into the shared
-# corpus/works/ tree and both make real network requests against
+# corpus/build/ tree and both make real network requests against
 # vatican.va's Crawl-delay: 2 commitment). Added after a real incident: an
 # operator's second invocation was launched believing a first one had died,
 # based on `ps` showing nothing -- but in the runtime this actually ran
@@ -6550,7 +6551,7 @@ def acquire_crawl_lock(lock_path: Path) -> None:
             raise LockHeld(
                 f"a crawl already appears to be running (pid {info.get('pid')}, last "
                 f"heartbeat {age:.0f}s ago; lock file {lock_path}). Not starting a second "
-                f"one -- it would race the same corpus/works/ output and double the request "
+                f"one -- it would race the same corpus/build/ output and double the request "
                 f"rate against vatican.va. If you are certain that process is dead (a "
                 f"heartbeat this recent should only happen on an active run -- see "
                 f"touch_crawl_lock), remove the lock file and retry."
@@ -6735,7 +6736,7 @@ def main() -> int:
     )
     sub.add_parser(
         "check-symmetry",
-        help="cross-language section-set check over already-written corpus/works/ (no fetches, no parsing)",
+        help="cross-language section-set check over already-written corpus/build/ (no fetches, no parsing)",
     )
 
     args = ap.parse_args()

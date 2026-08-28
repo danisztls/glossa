@@ -24,7 +24,7 @@ is the stated goal.
 
 ## 1. What the corpus already asks for — measured
 
-Measured 2026-08-23 over every `citations[].text` in `works/` (all
+Measured 2026-08-23 over every `citations[].text` in `build/` (all
 `paragraphs.json` and `sections.json`): **20,061 citation strings across 175
 works**. Classification is by regex over the verbatim strings, word-bounded
 (an early count was inflated by `Esth` matching the `S Th` siglum).

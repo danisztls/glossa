@@ -65,17 +65,26 @@ corrections' `from`/`to`, research notes arguing about verses) and is a differen
 A build is therefore no longer reproducible from a clone of this repository alone; that
 is the accepted cost.
 
-**`raw/` is write-once. `works/` is regenerable.** The project's whole insurance policy
+**`raw/` is write-once. `build/` is regenerable.** The project's whole insurance policy
 is that capture regret is fixed by **re-parsing, never re-crawling**, and that holds
 only while `raw/` is intact. When judging whether a deletion is safe the question is
 never "is this corpus data" but which of the two it is.
 
-**So `works/` is no longer tracked** (2026-08-27). It was, on the reasoning that a
+**The directories are named for that question now** (2026-08-27). They were `raw/`,
+`works/` and `oracles/` — three siblings whose names said what each held and not which
+was derived, so the distinction lived in prose and had to be recalled rather than read.
+`works/` became **`build/`**, and the word does the work the paragraph above was doing:
+`raw/` is what someone else's server was asked for, `oracles/` is what a person read off
+those pages by hand, `build/` is output. It also lets `.gitignore` say `build/` once, so
+a generated kind added later is ignored by default rather than by someone remembering to
+come back to it — the failure this whole entry is about, in miniature.
+
+**And it is no longer tracked** (same day). It was, on the reasoning that a
 byte-for-byte reproducible rebuild made the commit free and bought a diffable history
 across parser changes. What it bought was a history of OUTPUT — 42 of the repository's
 71 commits touched nothing else — over a repository that exists for the pages someone
 else's server was asked for and the readings a person made by hand. `raw/` and
-`oracles/` stay; `works/` is ignored, and the history carrying it was rewritten out.
+`oracles/` stay; `build/` is ignored, and the history carrying it was rewritten out.
 The pack fell from 182 MB to 137 MB, which is the smaller half of the point.
 
 **The precondition was a measurement, not the claim already in the README.** That
@@ -193,9 +202,11 @@ is otherwise made of. Related, and found the same afternoon: `IncompleteRead` is
 `http.client` exception that urllib does not wrap, so it used to escape past every caller
 that handles `FetchError` and past the retry loop that exists for it.
 
-**`works/` is tracked in git anyway**, though it is derived. Not for reproducibility —
-for **diffability**: the blast radius of a parser change is `git status` in the corpus
-repo, and nothing else answers "what did this fix actually move".
+**`works/` was tracked in git anyway**, though derived. Not for reproducibility — for
+**diffability**: the blast radius of a parser change was `git status` in the corpus repo,
+and nothing else answered "what did this fix actually move". ~~Reversed 2026-08-27~~ —
+see §The corpus above: what it bought was a history of output, and the diffability it
+paid for is now a rebuild-and-compare rather than a `git status`.
 
 **Someone else's server is a commitment, not a tuning parameter.** vatican.va's
 `Crawl-delay: 2` comes from its `robots.txt`; other hosts have their own self-chosen
