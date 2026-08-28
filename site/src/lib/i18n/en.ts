@@ -106,6 +106,14 @@ export const en: Dictionary = {
 	'edition.select': 'Choose edition',
 	'edition.current': 'Current edition',
 
+	// The only words the prev/next row at the foot of a reading page
+	// PRINTS, in every route and every language. What is being stepped
+	// through — a chapter, a question, a prayer — is named by the
+	// per-route strings below, which reach the reader as the link's
+	// `aria-label` and tooltip rather than as text; see UnitNav's
+	// docblock for why the visible half had to shrink.
+	'unitNav.previous': 'Previous',
+	'unitNav.next': 'Next',
 	'bible.prevChapter': 'Previous chapter',
 	'bible.nextChapter': 'Next chapter',
 	'bible.pickBook': 'Books & chapters',
@@ -122,8 +130,8 @@ export const en: Dictionary = {
 	'bible.testament.ot': 'Old Testament',
 	'bible.testament.nt': 'New Testament',
 
-	'ccc.prevParagraph': 'Previous',
-	'ccc.nextParagraph': 'Next',
+	'ccc.prevParagraph': 'Previous paragraph',
+	'ccc.nextParagraph': 'Next paragraph',
 	'ccc.inBrief': 'In Brief',
 	'ccc.landing.title': 'Catechism of the Catholic Church',
 	// The page's whole description: `/catechismus` indexes BOTH works, the

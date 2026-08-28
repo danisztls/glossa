@@ -220,13 +220,15 @@
 				ariaLabel="Question navigation"
 				prev={editions.current.prev && {
 					href: hrefFor({ kind: 'compendium', n: editions.current.prev.n }),
-					label: t('compendium.prevQuestion'),
-					detail: String(editions.current.prev.n)
+					label: t('unitNav.previous'),
+					detail: String(editions.current.prev.n),
+					full: `${t('compendium.prevQuestion')} ${editions.current.prev.n}`
 				}}
 				next={editions.current.next && {
 					href: hrefFor({ kind: 'compendium', n: editions.current.next.n }),
-					label: t('compendium.nextQuestion'),
-					detail: String(editions.current.next.n)
+					label: t('unitNav.next'),
+					detail: String(editions.current.next.n),
+					full: `${t('compendium.nextQuestion')} ${editions.current.next.n}`
 				}}
 			/>
 		</article>

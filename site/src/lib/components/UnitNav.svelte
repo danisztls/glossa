@@ -13,10 +13,31 @@
 	placeholder is load-bearing layout, not markup noise, and it now lives in
 	one place where that can be said once.
 
-	`detail` is the number or title printed after the label ("· ¶2461",
-	"· The Angelus"). Optional because the Bible has none: a chapter's
-	neighbour is named by the picker and the breadcrumb above, and repeating
-	"Genesis 2" here said nothing the reader did not just read.
+	THE VISIBLE LABEL IS ONE WORD -- "Next", "Zurück" -- and the same word on
+	every route, because the row it sits in cannot shrink. `.unit-nav` is a
+	flex row of two links that no longer say which of them is which, and
+	nothing in the stylesheet caps a page's horizontal scroll, so a label pair
+	wider than the viewport scrolled the whole document sideways rather than
+	looking cramped. Romanian's Compendium was the worst of them:
+	"Întrebarea precedentă" and "Întrebarea următoare" are 41 characters plus
+	two icons before the content column's own padding. The CCC route had
+	printed the bare word since it was written; this is the other four
+	catching up with it.
+
+	WHAT IS BEING STEPPED THROUGH still reaches the reader, as `full` -- the
+	whole phrase, "Next question 43", "Previous prayer · The Angelus" -- on
+	both `aria-label` and `title`. It is required rather than optional
+	because `aria-label` REPLACES a link's text for a screen reader: a `full`
+	that omitted the number would announce less than the visible row prints.
+	So the caller composes it out of the same per-route noun it used to print,
+	and those dictionary strings are now read by assistive technology and a
+	tooltip and nothing else.
+
+	`detail` is the number printed after the label ("· ¶2461"). Optional
+	because the Bible has none: a chapter's neighbour is named by the picker
+	and the breadcrumb above, and repeating "Genesis 2" here said nothing the
+	reader did not just read. The PRAYERS route dropped its title from here
+	for a harder reason -- see the `.detail` rule below.
 
 	The ARROWS ARE FIXED TO THE VISUAL EDGES, not to `prev`/`next`, and that is
 	deliberately not logical-property behaviour: an arrow pointing left means
@@ -53,10 +74,16 @@
 
 	export interface UnitNavLink {
 		href: string;
-		/** "Previous chapter", "Next question" — already translated. */
+		/** The one word printed — `t('unitNav.next')`. Same on every route. */
 		label: string;
-		/** The neighbour's own number or title, printed after a separator. */
+		/** The neighbour's own number, printed after a separator. */
 		detail?: string;
+		/**
+		 * The whole phrase, naming both what is stepped through and which one
+		 * — "Next question 43". Reaches `aria-label` and `title`, never the
+		 * page, and must include whatever `detail` prints.
+		 */
+		full: string;
 	}
 
 	interface Props {
@@ -71,7 +98,7 @@
 
 <nav class="unit-nav" aria-label={ariaLabel} data-link-preview="off">
 	{#if prev}
-		<a href={prev.href} rel="prev"
+		<a href={prev.href} rel="prev" aria-label={prev.full} title={prev.full}
 			><Icon name="arrow-left" class="unit-nav-arrow back" />{prev.label}{#if prev.detail}<span
 					class="detail">&nbsp;· {prev.detail}</span
 				>{/if}</a
@@ -81,7 +108,7 @@
 		<span></span>
 	{/if}
 	{#if next}
-		<a href={next.href} rel="next"
+		<a href={next.href} rel="next" aria-label={next.full} title={next.full}
 			>{next.label}{#if next.detail}<span class="detail">&nbsp;· {next.detail}</span>{/if}<Icon
 				name="arrow-right"
 				class="unit-nav-arrow onward"
@@ -92,9 +119,18 @@
 
 <style>
 	/* `.unit-nav` and its links are app.css's, shared with everything else that
-	   ends a reading page. Only the neighbour's own name is this component's,
-	   and only because a long prayer title should not push the arrow off the
-	   line.
+	   ends a reading page. Only the neighbour's own number is this
+	   component's.
+
+	   `nowrap` IS WHY THE PRAYER TITLE LEFT. A flex item cannot shrink below
+	   its min-content, and this rule makes the whole of `detail` one
+	   unbreakable word, so the Portuguese prayers route printed "Oração de
+	   «Adeus ao Altar», antes de deixar a Igreja após a liturgia" as 67
+	   characters that no viewport could contain and no label shortening could
+	   help. The title is now `full`'s business alone. What is left here is
+	   numbers, which is what the rule was always for: "¶1868" and "· 43" have
+	   nowhere to break anyway, and the point is that they do not break from
+	   the separator that introduces them.
 
 	   The separator's leading space is `&nbsp;` because Svelte trims the
 	   whitespace at the start of an element's children, and the plain space

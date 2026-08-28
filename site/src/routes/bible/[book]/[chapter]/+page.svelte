@@ -567,11 +567,13 @@
 				ariaLabel="Chapter navigation"
 				prev={prev && {
 					href: hrefFor({ kind: 'bible', osis: prev.osis, chapter: prev.chapter }),
-					label: t('bible.prevChapter')
+					label: t('unitNav.previous'),
+					full: t('bible.prevChapter')
 				}}
 				next={next && {
 					href: hrefFor({ kind: 'bible', osis: next.osis, chapter: next.chapter }),
-					label: t('bible.nextChapter')
+					label: t('unitNav.next'),
+					full: t('bible.nextChapter')
 				}}
 			/>
 		</article>
@@ -754,11 +756,13 @@
 				ariaLabel="Chapter navigation"
 				prev={prev && {
 					href: hrefFor({ kind: 'bible', osis: prev.osis, chapter: prev.chapter }),
-					label: t('bible.prevChapter')
+					label: t('unitNav.previous'),
+					full: t('bible.prevChapter')
 				}}
 				next={next && {
 					href: hrefFor({ kind: 'bible', osis: next.osis, chapter: next.chapter }),
-					label: t('bible.nextChapter')
+					label: t('unitNav.next'),
+					full: t('bible.nextChapter')
 				}}
 			/>
 		</article>

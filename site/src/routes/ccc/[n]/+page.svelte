@@ -355,13 +355,15 @@
 				ariaLabel="Paragraph navigation"
 				prev={editions.current.prev && {
 					href: hrefFor({ kind: 'ccc', n: editions.current.prev.n }),
-					label: t('ccc.prevParagraph'),
-					detail: `¶${editions.current.prev.n}`
+					label: t('unitNav.previous'),
+					detail: `¶${editions.current.prev.n}`,
+					full: `${t('ccc.prevParagraph')} ${editions.current.prev.n}`
 				}}
 				next={editions.current.next && {
 					href: hrefFor({ kind: 'ccc', n: editions.current.next.n }),
-					label: t('ccc.nextParagraph'),
-					detail: `¶${editions.current.next.n}`
+					label: t('unitNav.next'),
+					detail: `¶${editions.current.next.n}`,
+					full: `${t('ccc.nextParagraph')} ${editions.current.next.n}`
 				}}
 			/>
 		</article>

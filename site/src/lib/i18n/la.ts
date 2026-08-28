@@ -85,6 +85,8 @@ export const la: Dictionary = {
 	'edition.label': 'Editio',
 	'edition.select': 'Editionem elige',
 	'edition.current': 'Editio praesens',
+	'unitNav.previous': 'Prius',
+	'unitNav.next': 'Sequens',
 	'bible.prevChapter': 'Caput prius',
 	'bible.nextChapter': 'Caput sequens',
 	'bible.pickBook': 'Libri et capita',
@@ -98,8 +100,8 @@ export const la: Dictionary = {
 	'bible.introSource': 'Prooemia ad textum sacrum non pertinent.',
 	'bible.testament.ot': 'Vetus Testamentum',
 	'bible.testament.nt': 'Novum Testamentum',
-	'ccc.prevParagraph': 'Prius',
-	'ccc.nextParagraph': 'Sequens',
+	'ccc.prevParagraph': 'Paragraphus prior',
+	'ccc.nextParagraph': 'Paragraphus sequens',
 	// The Latin editio typica heads these sections `Compendium`, which is
 	// the name of another work in this corpus and of the tab beside this
 	// one. `Breviter` says the same thing and cannot be misread.

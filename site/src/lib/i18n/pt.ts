@@ -73,6 +73,8 @@ export const pt: Dictionary = {
 	'edition.select': 'Escolher edição',
 	'edition.current': 'Edição atual',
 
+	'unitNav.previous': 'Anterior',
+	'unitNav.next': 'Próximo',
 	'bible.prevChapter': 'Capítulo anterior',
 	'bible.nextChapter': 'Próximo capítulo',
 	'bible.pickBook': 'Livros e capítulos',
@@ -87,8 +89,8 @@ export const pt: Dictionary = {
 	'bible.testament.ot': 'Antigo Testamento',
 	'bible.testament.nt': 'Novo Testamento',
 
-	'ccc.prevParagraph': 'Anterior',
-	'ccc.nextParagraph': 'Próximo',
+	'ccc.prevParagraph': 'Parágrafo anterior',
+	'ccc.nextParagraph': 'Próximo parágrafo',
 	'ccc.inBrief': 'Resumindo',
 	'ccc.landing.title': 'Catecismo da Igreja Católica',
 	'ccc.landing.tagline':

@@ -571,13 +571,13 @@
 				ariaLabel="Prayer navigation"
 				prev={current.prev && {
 					href: hrefFor({ kind: 'prayer', slug: current.prev.slug }),
-					label: t('prayers.prevPrayer'),
-					detail: current.prev.title
+					label: t('unitNav.previous'),
+					full: `${t('prayers.prevPrayer')} · ${current.prev.title}`
 				}}
 				next={current.next && {
 					href: hrefFor({ kind: 'prayer', slug: current.next.slug }),
-					label: t('prayers.nextPrayer'),
-					detail: current.next.title
+					label: t('unitNav.next'),
+					full: `${t('prayers.nextPrayer')} · ${current.next.title}`
 				}}
 			/>
 		</div>

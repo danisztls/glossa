@@ -2533,10 +2533,20 @@ input {
  * shared here for the same reason as `.breadcrumb` just above. `margin-top`
  * is the one property that isn't actually uniform: the Bible chapter route
  * keeps 2.5rem instead of 2rem as a scoped override.
+ *
+ * `gap` and the `min-width: 0` below are what stop this row from scrolling
+ * the whole page sideways, and they are here rather than in UnitNav because
+ * the failure was never about one string being long. A flex item's default
+ * `min-width: auto` refuses to shrink below its own min-content, and no rule
+ * anywhere in this stylesheet caps horizontal overflow, so the two links
+ * simply pushed the document wider than the phone holding it. Shortening the
+ * labels (UnitNav's docblock) fixed the strings we knew about; this fixes the
+ * next one.
  */
 .unit-nav {
 	display: flex;
 	justify-content: space-between;
+	gap: 1rem;
 	margin-top: 2rem;
 	padding-top: 1rem;
 	border-top: 1px solid var(--color-border);
@@ -2544,6 +2554,7 @@ input {
 }
 
 .unit-nav a {
+	min-width: 0;
 	text-decoration: none;
 }
 

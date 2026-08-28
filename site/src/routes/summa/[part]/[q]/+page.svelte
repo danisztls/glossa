@@ -509,8 +509,9 @@
 						question: editions.current.prev.n,
 						article: null
 					}),
-					label: t('summa.prevQuestion'),
-					detail: String(editions.current.prev.n)
+					label: t('unitNav.previous'),
+					detail: String(editions.current.prev.n),
+					full: `${t('summa.prevQuestion')} ${editions.current.prev.n}`
 				}}
 				next={editions.current.next && {
 					href: hrefFor({
@@ -519,8 +520,9 @@
 						question: editions.current.next.n,
 						article: null
 					}),
-					label: t('summa.nextQuestion'),
-					detail: String(editions.current.next.n)
+					label: t('unitNav.next'),
+					detail: String(editions.current.next.n),
+					full: `${t('summa.nextQuestion')} ${editions.current.next.n}`
 				}}
 			/>
 		</article>
