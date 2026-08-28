@@ -998,17 +998,46 @@ interface SectionWords {
 	/** The section's own landing page. */
 	path: string;
 	titleKey: string;
+	/**
+	 * The dictionary key holding the siglum this work is CITED by, where one
+	 * exists -- read for every language for the same reason `titleKey` is.
+	 *
+	 * These are the forms a reader copies off a page rather than out of a
+	 * menu: `KKK 27` is what the Swedish Compendium prints beside every one of
+	 * its 577 reference lines, and `Comp.` is what this site's own sibling
+	 * links render on the Catechism index. A reader who is shown a form and
+	 * cannot type it back is the same defect as a form the box completes and
+	 * `parseRefs` then fails to resolve, in the other direction.
+	 *
+	 * ONE OF THEM IS A KNOWN COLLISION AND IS ADMITTED ANYWAY. Portuguese
+	 * cites the Catechism as `CIC` (*Catecismo da Igreja Catolica*), which
+	 * everywhere else is the *Codex Iuris Canonici*. The corpus holds no canon
+	 * law today (PLAN.md #10 has it as a future work), so `cic 27` has exactly
+	 * one thing it can mean and answering the Catechism is right. If the Code
+	 * is ever ingested this becomes the `SC`/`CA`/`AA` problem in
+	 * `refs-grammar.ts`, and the discriminator will have to be the reader's
+	 * language -- Portuguese means the Catechism, everyone else means the
+	 * Code. Recorded here so that is a decision rather than a rediscovery.
+	 */
+	abbrevKey?: string;
 	/** Fixed forms no dictionary supplies: URL segments and citation sigla. */
 	extra: string[];
 }
 
 const SECTIONS: SectionWords[] = [
 	{ kind: 'bible', path: '/scriptura', titleKey: 'nav.bible', extra: ['scriptura', 'biblia'] },
-	{ kind: 'ccc', path: '/catechismus', titleKey: 'nav.ccc', extra: ['catechismus', 'ccc', 'cec'] },
+	{
+		kind: 'ccc',
+		path: '/catechismus',
+		titleKey: 'nav.ccc',
+		abbrevKey: 'ccc.abbrev',
+		extra: ['catechismus', 'ccc', 'cec']
+	},
 	{
 		kind: 'compendium',
 		path: '/catechismus/compendium',
 		titleKey: 'nav.compendium',
+		abbrevKey: 'compendium.abbrev',
 		extra: ['compendium', 'comp']
 	},
 	{
@@ -1027,14 +1056,18 @@ const sectionForms: { form: string; section: SectionWords }[] = (() => {
 	const out: { form: string; section: SectionWords }[] = [];
 	const seen = new Set<string>();
 	const add = (raw: string, section: SectionWords) => {
-		const form = fold(raw).trim();
+		const form = sectionForm(raw);
 		if (!form || seen.has(`${form} ${section.path}`)) return;
 		seen.add(`${form} ${section.path}`);
 		out.push({ form, section });
 	};
 	for (const section of SECTIONS) {
 		for (const extra of section.extra) add(extra, section);
-		for (const lang of UI_LANGS) add(dictionaryFor(lang)[section.titleKey] ?? '', section);
+		for (const lang of UI_LANGS) {
+			const dict = dictionaryFor(lang);
+			add(dict[section.titleKey] ?? '', section);
+			if (section.abbrevKey) add(dict[section.abbrevKey] ?? '', section);
+		}
 	}
 	return out;
 })();
@@ -1045,6 +1078,26 @@ const sectionHaystack: FuzzyTarget[] = sectionForms.map(({ form }, index) => ({
 	text: form,
 	index
 }));
+
+/**
+ * A section keyword reduced to its letters and digits: `fold`, then every
+ * separator dropped.
+ *
+ * PUNCTUATION IS NOT MEANING HERE. A siglum is written with a full stop
+ * because it is an abbreviation -- `Comp.`, `Komp.`, `S. Th.` -- and no two
+ * section names in fourteen dictionaries are told apart by one. Matching the
+ * folded string directly made `comp. 1` find nothing while `comp 1` worked,
+ * and `ccc. 27` worked only because the REFERENCE grammar reads that one and
+ * tolerates the stop itself; the Compendium has no such rule and had only
+ * this tier.
+ *
+ * Applied to both sides, so it can only ever make the same pair match -- and
+ * it is deliberately NOT folded into `fold`, which `highlight.ts` reimplements
+ * per code point to keep an index map back to the original string.
+ */
+function sectionForm(raw: string): string {
+	return fold(raw).replace(/[^\p{L}\p{N}]+/gu, '');
+}
 
 /** A leading keyword and the number after it, either of which may be absent. */
 const KEYWORD_RE = /^([^\d]*?)\s*(\d{1,4})?\s*$/u;
@@ -1059,7 +1112,7 @@ const KEYWORD_RE = /^([^\d]*?)\s*(\d{1,4})?\s*$/u;
  * and mixing the two produces a list that reorders itself as the reader types.
  */
 function matchSections(text: string): { section: SectionWords; score: 0 | 1 | 2 }[] {
-	const needle = fold(text).trim();
+	const needle = sectionForm(text);
 	if (!needle) return [];
 	const best = new Map<SectionWords, 0 | 1 | 2>();
 	for (const { form, section } of sectionForms) {

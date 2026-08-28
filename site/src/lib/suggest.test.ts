@@ -138,6 +138,30 @@ describe('suggest', () => {
 			expect(hrefs('catecismo 27')[0]).toBe('/catechismus/27');
 		});
 
+		// The sigla each edition actually prints beside its references, read
+		// from the same fourteen dictionaries the names come from. A reader who
+		// is shown a form has to be able to type it back.
+		it('accepts the siglum a citation would use, in any language', () => {
+			for (const siglum of ['CCC', 'CIC', 'CCE', 'KKK', 'CEC', 'KEK', 'CBC', 'KKC', 'ККЦ']) {
+				expect(hrefs(`${siglum} 27`)[0]).toBe('/catechismus/27');
+			}
+			expect(hrefs('Comp. 1')[0]).toBe('/catechismus/compendium/1');
+			expect(hrefs('Komp. 1')[0]).toBe('/catechismus/compendium/1');
+			expect(hrefs('Комп. 1')[0]).toBe('/catechismus/compendium/1');
+		});
+
+		// A full stop is how an abbreviation is written, not a distinction
+		// between two of them: no two section names in fourteen dictionaries
+		// are told apart by one. `comp. 1` found nothing until 2026-08-28 while
+		// `comp 1` worked, and `ccc. 27` worked only because the reference
+		// grammar reads that one and tolerates the stop itself.
+		it('ignores the punctuation an abbreviation is written with', () => {
+			expect(hrefs('comp. 1')).toEqual(hrefs('comp 1'));
+			expect(hrefs('Comp. 1')).toEqual(hrefs('comp 1'));
+			expect(hrefs('ccc. 27')).toEqual(hrefs('ccc 27'));
+			expect(hrefs('s.th.')).toEqual(['/summa']);
+		});
+
 		it('offers the section’s landing page for a bare keyword', () => {
 			expect(hrefs('catech')).toEqual(['/catechismus']);
 			expect(hrefs('prayers')).toEqual(['/preces']);
