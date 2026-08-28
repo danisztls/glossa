@@ -89,7 +89,11 @@ export const LEDGER_VERSION = 2;
 
 /**
  * The share of already-known addresses that may change in one build before this
- * refuses to write.
+ * refuses to write — and, applied a second time by `sync-corpus.mjs`, the share
+ * of the ledger's own addresses that may WITHDRAW. That second use is not
+ * symmetry for its own sake: a run that loads no corpus at all changes nothing
+ * and withdraws everything, so the first test passes it and only the second
+ * stops it.
  *
  * Corpus work moves a handful of addresses; a re-parse of one work moves that
  * work's. What no legitimate change does is move a quarter of the corpus at

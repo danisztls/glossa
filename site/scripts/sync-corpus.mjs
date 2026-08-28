@@ -68,6 +68,7 @@ import {
 	mkdirSync,
 	readdirSync,
 	readFileSync,
+	statSync,
 	writeFileSync
 } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -105,6 +106,14 @@ import {
 const siteRoot = path.resolve(fileURLToPath(import.meta.url), '../..');
 const corpusDir = path.resolve(siteRoot, process.env.CORPUS_DIR ?? '../../glossa-corpus');
 const destDir = path.join(siteRoot, 'src/lib/corpus-data');
+
+/**
+ * The one directory under `destDir` that is RECONCILED rather than rebuilt,
+ * and the set of files this run wants in it. See the wipe below.
+ */
+const PLATES_DIR = 'plates';
+const platesDest = path.join(destDir, PLATES_DIR);
+const plateImages = new Set();
 const indexDir = path.join(destDir, 'index');
 const contentDir = path.join(destDir, 'content');
 // Public but address-only: the Cloudflare edge worker reads this before it
@@ -263,7 +272,39 @@ function compactRun(nums) {
 	return nums.length;
 }
 
-rmSync(destDir, { recursive: true, force: true });
+/*
+ * THE DESTINATION STARTS EMPTY, so that a content file whose work has been
+ * withdrawn cannot survive into a build.
+ *
+ * EXCEPT `plates/`, WHICH IS RECONCILED INSTEAD. It is 482 derived AVIFs,
+ * 103 MB, against ~2 MB for the whole rest of the index tier — the only thing
+ * here whose cost is its bytes rather than its parsing, and the only thing
+ * that does not change between two runs of a script that otherwise rebuilds
+ * everything from the corpus. Nothing derives these at sync time; `dore.py
+ * --derive` does, and only when it is run.
+ *
+ * BE HONEST ABOUT THE SAVING, because it is not what a profile first suggests.
+ * On a filesystem with copy-on-write reflinks and a warm page cache, copying
+ * all 482 costs about 0.17 s of a 5.4 s sync; a CPU profile taken on a cold
+ * cache attributed 1.5 s to `copyFile`, which is the same work costing what it
+ * costs when the bytes are actually read and written. So this is worth having
+ * for the cold case, for a filesystem that cannot reflink, and because it is
+ * work with no possible product — but it is NOT why `npm run dev` takes five
+ * seconds. Most of that is this script parsing the corpus, and the largest
+ * avoidable piece of it was `corpusDateFor`, not this.
+ *
+ * IT KEEPS THE WIPE'S GUARANTEE, which is the reason it can be skipped rather
+ * than merely made faster. An image is named `{plate_id}-{width}.avif`, so the
+ * name is the content's address: `syncPlates` copies whatever is missing or
+ * stale, records what it wants, and the prune after the work loop removes
+ * everything else — leaving the directory exactly as a wipe-and-refill would
+ * have left it, including when a plate is withdrawn, a collection disabled or
+ * a width dropped.
+ */
+for (const entry of existsSync(destDir) ? readdirSync(destDir) : []) {
+	if (entry === PLATES_DIR) continue;
+	rmSync(path.join(destDir, entry), { recursive: true, force: true });
+}
 
 const buildSrc = path.join(corpusDir, 'build');
 
@@ -274,6 +315,10 @@ if (!existsSync(buildSrc)) {
 	// meant to stop. This is generated site output, never corpus/raw.
 	rmSync(routeManifestPath, { force: true });
 	rmSync(sitemapPath, { force: true });
+	// And the images the wipe above spared. A fixture build has no plates.json
+	// to point at them, so they would render nowhere and ship anyway — 103 MB
+	// of build assets belonging to a corpus this build does not have.
+	rmSync(platesDest, { recursive: true, force: true });
 	// The lastmod ledger is deliberately NOT removed, and this exit is what
 	// keeps a fixture build from rewriting it: two fixture books cannot be
 	// allowed to record the rest of the corpus as withdrawn.
@@ -503,9 +548,12 @@ function mark(address, value, workId, lang) {
  * SINCE 2026-08-27 IT ESSENTIALLY ALWAYS RETURNS UNDEFINED, and that is not a
  * regression to chase. `build/` (formerly `build/`) is not tracked in the corpus repository
  * (`docs/decisions.md` §The corpus), so there is no commit touching a work to
- * ask about. Kept rather than deleted because the call costs nothing, still
- * answers for anyone holding a pre-rewrite clone, and would answer again if
- * the corpus were ever laid out differently. The ledger is the durable record:
+ * ask about. Kept rather than deleted because it still answers for anyone
+ * holding a pre-rewrite clone, and would answer again if the corpus were ever
+ * laid out differently — but NOT because it "costs nothing", which is what
+ * this said until it was measured at ~0.6-1.0 s of spawns per sync. What
+ * costs nothing is `corpusTracksBuild()` below, which answers for all 383 at
+ * once and is why this function usually returns before spawning anything. The ledger is the durable record:
  * every address it has already seen keeps its date, and only a NEWLY added
  * work loses its seed and is stamped with the build date instead -- which is
  * roughly right for a work that is new. Watch `resolveLastmod`'s `unseeded`
@@ -516,6 +564,7 @@ function mark(address, value, workId, lang) {
  */
 const corpusDates = new Map();
 function corpusDateFor(workId) {
+	if (!corpusTracksBuild()) return undefined;
 	if (corpusDates.has(workId)) return corpusDates.get(workId);
 	let date;
 	try {
@@ -530,6 +579,44 @@ function corpusDateFor(workId) {
 	}
 	corpusDates.set(workId, date);
 	return date;
+}
+
+/**
+ * Whether the corpus checkout has any history under `build/` at all — asked
+ * ONCE, and the reason the per-work probes above are usually never spawned.
+ *
+ * ONE `git log` COVERS EVERY PATH UNDER IT, so an empty answer here settles
+ * all 383: no commit touched `build/`, therefore none touched
+ * `build/<workId>`. In this corpus that is the standing answer — `build/` is
+ * in the corpus's `.gitignore`, and its history holds nothing under that name
+ * or under the `works/` it was renamed from.
+ *
+ * WHAT THIS FIXES IS A CLAIM, not only a cost. `corpusDateFor`'s docblock said
+ * the call "costs nothing" once `build/` stopped being tracked; measured, the
+ * 383 spawns were ~0.6-1.0 s of a 5.4 s sync — several times what copying all
+ * 103 MB of plate images costs, and the largest avoidable thing in this
+ * script. A process spawn is never free, and 383 of them all answering
+ * "nothing" is the shape worth looking for elsewhere.
+ *
+ * Kept rather than deleted, for the reason that docblock gives: a pre-rewrite
+ * clone still answers, and pays one extra spawn to find out.
+ */
+let buildTracked;
+function corpusTracksBuild() {
+	if (buildTracked === undefined) {
+		try {
+			buildTracked =
+				execFileSync('git', ['log', '-1', '--format=%cs', '--', 'build'], {
+					cwd: corpusDir,
+					encoding: 'utf8',
+					stdio: ['ignore', 'pipe', 'ignore']
+				}).trim() !== '';
+		} catch {
+			// Not a git checkout at all — the fixtures never are.
+			buildTracked = false;
+		}
+	}
+	return buildTracked;
 }
 
 /**
@@ -585,6 +672,33 @@ function creditRecord(manifest, plates, chapters) {
  * because that is the audit trail for an anchor decided by vote. The site
  * needs the answer and nothing else, so the content file is a sixth the size.
  */
+/**
+ * Whether `to` is already the copy of `from` that this sync would make.
+ *
+ * SIZE AND MTIME — `rsync --update`'s test, not a hash. Reading 103 MB to
+ * decide whether to write 103 MB saves nothing, and a checksum would be
+ * answering a question these files do not raise: they are derived output with
+ * one writer (`derive_images` in `pipeline/scrapers/dore/dore.py`), which
+ * stamps each with the moment it wrote it.
+ *
+ * THE DIRECTION IS THE WHOLE TEST, and it holds because `copyFileSync` does
+ * NOT preserve mtime: a copy is always newer than the source it was made
+ * from, and a re-derived source is newer than the copy that preceded it. What
+ * this cannot see is a source rewritten backwards in time at an identical
+ * byte count; nothing produces one, and the recovery is to delete
+ * `site/src/lib/corpus-data/plates/`, which the next sync refills.
+ */
+function isCopyOf(from, to) {
+	let dest;
+	try {
+		dest = statSync(to);
+	} catch {
+		return false;
+	}
+	const src = statSync(from);
+	return dest.size === src.size && dest.mtimeMs >= src.mtimeMs;
+}
+
 function syncPlates(workId, workDir, manifest) {
 	if (unpublishedIds.has(workId)) {
 		platesCredit[workId] = creditRecord(manifest, 0, 0);
@@ -656,21 +770,31 @@ function syncPlates(workId, workDir, manifest) {
 	const wanted = new Set(
 		plates.flatMap((plate) => PLATE_WIDTHS.map((w) => `${plate.id}-${w}.avif`))
 	);
-	const imagesDest = path.join(destDir, 'plates');
-	mkdirSync(imagesDest, { recursive: true });
-	let copied = 0;
+	mkdirSync(platesDest, { recursive: true });
+	let present = 0;
+	let written = 0;
 	for (const name of readdirSync(imagesDir).sort()) {
 		if (!wanted.has(name)) continue;
-		copyFileSync(path.join(imagesDir, name), path.join(imagesDest, name));
-		copied++;
+		present++;
+		// Recorded whether or not it is copied: this is what the prune below
+		// spares, and a file already correct is exactly as wanted as a fresh one.
+		plateImages.add(name);
+		const from = path.join(imagesDir, name);
+		const to = path.join(platesDest, name);
+		if (isCopyOf(from, to)) continue;
+		copyFileSync(from, to);
+		written++;
 	}
-	if (copied !== wanted.size) {
+	if (present !== wanted.size) {
 		console.warn(
-			`[sync-corpus] ${workId}: ${wanted.size - copied} of ${wanted.size} plate image(s) ` +
+			`[sync-corpus] ${workId}: ${wanted.size - present} of ${wanted.size} plate image(s) ` +
 				`missing from ${imagesDir}`
 		);
 	}
-	console.log(`[sync-corpus] ${workId}: ${plates.length} plates, ${copied} images`);
+	console.log(
+		`[sync-corpus] ${workId}: ${plates.length} plates, ${present} images ` +
+			`(${written} copied, ${present - written} already current)`
+	);
 }
 
 for (const workId of workIds) {
@@ -1182,6 +1306,31 @@ for (const workId of workIds) {
 	// glob-everything behaviour, which never filtered by work type either.
 }
 
+/*
+ * The other half of sparing `plates/` from the wipe, and what makes sparing it
+ * safe rather than merely fast: anything in there that no collection asked for
+ * on THIS run is removed now. A plate withdrawn from the corpus, a collection
+ * disabled in `unpublished.json`, a width dropped from `PLATE_WIDTHS` — each
+ * leaves the build exactly as it would have under a wipe, because the wanted
+ * set was rebuilt from the corpus either way.
+ *
+ * Nothing but wanted images is ever copied in (`sizes.json` stays behind in
+ * the corpus), so a name here that no collection claims is a leftover by
+ * definition — there is no third category to be careful of.
+ */
+if (existsSync(platesDest)) {
+	let stale = 0;
+	for (const name of readdirSync(platesDest)) {
+		if (plateImages.has(name)) continue;
+		rmSync(path.join(platesDest, name), { recursive: true, force: true });
+		stale++;
+	}
+	// No collection at all: the directory itself goes, rather than being left
+	// as an empty one for the content glob to find.
+	if (plateImages.size === 0) rmSync(platesDest, { recursive: true, force: true });
+	if (stale > 0) console.log(`[sync-corpus] plates: removed ${stale} image(s) nothing wants`);
+}
+
 if (publishedDefeats.length > 0) {
 	console.error(
 		`[sync-corpus] ${publishedDefeats.length} work(s) report a defeated parse in ` +
@@ -1675,14 +1824,45 @@ const lastmod = resolveLastmod({
 	const { total, added, changed, removed, unseeded, basis } = lastmod.stats;
 	const known = total - added;
 	const share = known === 0 ? 0 : changed / known;
-	if (share > CHANGE_CEILING && !process.argv.includes('--accept-lastmod')) {
+	/*
+	 * WITHDRAWAL NEEDS ITS OWN CEILING, and it is measured against what the
+	 * ledger HELD rather than against what this run found — because the run
+	 * this catches is the one that found nothing.
+	 *
+	 * The `changed` ceiling below cannot see it. A sync over a corpus that
+	 * yields zero works reports total 0, added 0, changed 0 and removed 5,804:
+	 * `known` is zero, `share` is zero, the check passes, and the ledger is
+	 * written empty. The NEXT ordinary sync then finds 5,804 addresses it has
+	 * never seen and stamps every one with today's date — which passes too,
+	 * since they are all `added`. Two clean runs, no error, and the site's
+	 * whole sitemap now claims the corpus changed today.
+	 *
+	 * It is not hypothetical: it happened on 2026-08-28, to a `CORPUS_DIR`
+	 * pointed at a directory of symlinks (which `readdirSync` does not count as
+	 * directories, so the work list came back empty). The only trace was a
+	 * 5,800-line diff in a tracked file that looks exactly like a regeneration.
+	 *
+	 * Seeding is still free: an absent or unreadable ledger holds nothing, so
+	 * `held` is zero and a first run adds everything without tripping this.
+	 */
+	const held = Object.keys(previousLedger).length;
+	const lost = held === 0 ? 0 : removed / held;
+	const ceiling = `${(CHANGE_CEILING * 100).toFixed(0)}%`;
+	const refusals = [];
+	if (share > CHANGE_CEILING) {
+		refusals.push(`${changed} of ${known} known addresses changed (${(share * 100).toFixed(1)}%)`);
+	}
+	if (lost > CHANGE_CEILING) {
+		refusals.push(`${removed} of ${held} ledger addresses withdrew (${(lost * 100).toFixed(1)}%)`);
+	}
+	if (refusals.length > 0 && !process.argv.includes('--accept-lastmod')) {
 		// Not a warning. A sitemap that claims a quarter of the corpus changed
 		// at once is how a crawler learns to stop believing the file, and the
-		// realistic cause is a change to what `mark()` covers rather than to the
-		// corpus. Re-run with --accept-lastmod once that is what you meant.
+		// realistic cause is a change to what `mark()` covers — or a corpus that
+		// did not load — rather than to the text. Re-run with --accept-lastmod
+		// once that is what you meant.
 		console.error(
-			`lastmod: ${changed} of ${known} known addresses changed ` +
-				`(${(share * 100).toFixed(1)}%, ceiling ${(CHANGE_CEILING * 100).toFixed(0)}%). ` +
+			`lastmod: ${refusals.join('; ')} — ceiling ${ceiling}. ` +
 				`Refusing to write. Re-run with --accept-lastmod if this is intended.`
 		);
 		process.exit(1);
