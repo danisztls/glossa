@@ -162,6 +162,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.centesimus-annus.pt": {
+			"pt": {
+				"text": "Carta encíclica de João Paulo II, no centenário da Rerum Novarum, que revê a doutrina social perante a queda dos regimes comunistas de 1989. Analisa o erro antropológico do socialismo, defende a propriedade privada e o destino universal dos bens, examina os limites do livre mercado perante necessidades sem poder de compra, e trata do Estado e da cultura, situando o homem como caminho da Igreja.",
+				"origin": "read"
+			}
+		},
 		"encyclical.christi-matri.en": {
 			"en": {
 				"text": "Paul VI asks the whole Church to pray the Rosary through October 1966 for peace, with war in eastern Asia and a nuclear arms race in view, invoking Mary as Queen of Peace. He presses the nations toward sincere negotiation, asks that 4 October — the anniversary of his appeal at the United Nations — be kept as a day of prayer, and closes with a Marian appeal for justice and a lasting peace.",
@@ -216,6 +222,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.dilexit-nos.pt": {
+			"pt": {
+				"text": "Carta encíclica de Francisco sobre o amor humano e divino do Coração de Jesus. Parte do sentido bíblico e espiritual do coração, passa pela devoção ao Coração de Cristo em místicos como Santa Margarida Maria, São Francisco de Sales e Santa Teresa do Menino Jesus, e termina pedindo que esse amor se prolongue no amor fraterno e na reparação, ligando o documento a Laudato si' e Fratelli tutti.",
+				"origin": "read"
+			}
+		},
 		"encyclical.diuturnum.en": {
 			"en": {
 				"text": "On the origin of civil power, written after a run of attacks on the lives of European rulers. Leo XIII rejects the doctrine that authority is merely delegated by popular will, traces the ruler's power to God through Scripture and the Fathers, bounds obedience by the higher duty to divine and natural law, recalls the Church's deference toward pagan and Christian rulers alike, and asks bishops to preach this against sedition.",
@@ -231,6 +243,12 @@
 		"encyclical.dives-in-misericordia.pt": {
 			"pt": {
 				"text": "Encíclica de João Paulo II sobre a misericórdia de Deus revelada por Cristo — «quem me vê, vê o Pai». Percorre a misericórdia no Antigo Testamento, a parábola do filho pródigo como sua imagem central, e o mistério pascal como sua plenitude. Considera as ameaças do mundo contemporâneo e conclui apelando à Igreja para invocar, pela oração, a misericórdia divina diante do mal que ameaça a humanidade.",
+				"origin": "read"
+			}
+		},
+		"encyclical.divini-illius-magistri.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XI sobre a educação cristã da juventude: a quem compete a missão de educar — Igreja, família e Estado, em harmonia —, o sujeito da educação, o homem decaído mas remido, contra o naturalismo pedagógico, a educação sexual e a co-educação, o ambiente que a envolve, e o fim e a forma da educação cristã, tendo Jesus Cristo por Mestre e Modelo.",
 				"origin": "read"
 			}
 		},
@@ -270,9 +288,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.dominum-et-vivificantem.pt": {
+			"pt": {
+				"text": "Carta encíclica de João Paulo II sobre o Espírito Santo, que dá continuidade às precedentes Redemptor Hominis e Dives in Misericordia. Em três partes, trata do Espírito dado pelo Pai e pelo Filho à Igreja, do Espírito que convence o mundo do pecado — incluindo o pecado contra o próprio Espírito Santo — e do Espírito que dá a vida, à luz do Jubileu do ano 2000.",
+				"origin": "read"
+			}
+		},
 		"encyclical.e-supremi.en": {
 			"en": {
 				"text": "Pius X's inaugural encyclical, taking the Apostle's phrase \"to restore all things in Christ\" as the whole programme of his pontificate. He reads his age's apostasy from God as a deep-rooted disease, makes the Church the way back to Christ, and asks bishops for holy priests, well-governed seminaries, patient religious instruction, and charity rather than bitterness toward those estranged.",
+				"origin": "read"
+			}
+		},
+		"encyclical.eccl-de-euch.en": {
+			"en": {
+				"text": "John Paul II's encyclical on the Eucharist as the mystery from which the Church draws her life. It traces the sacrament's institution at the Last Supper as the sacrifice of the Cross perpetuated, argues that the Eucharist both builds the Church and expresses her apostolicity and communion, addresses the dignity owed to its celebration, and closes by presenting Mary as “Woman of the Eucharist”.",
 				"origin": "read"
 			}
 		},
@@ -546,6 +576,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.magnae-dei-matris.en": {
+			"en": {
+				"text": "Leo XIII again calls the faithful to devote October to the Rosary of Mary, urging it as a remedy for an age of irreligious schooling, license of press and speech, and insult to Christ. He presents the Rosary as prayer joined to Christian living, a means of meditating the faith's chief mysteries with Mary as model of virtue, and renews the indulgences granted for its recitation.",
+				"origin": "read"
+			}
+		},
 		"encyclical.magni-nobis.en": {
 			"en": {
 				"text": "Leo XIII's 1889 letter approving the statutes of the newly founded Catholic University of America in Washington, D.C. It grants the university the right to confer academic degrees, including in philosophy, theology and canon law, names the Archbishop of Baltimore its chancellor, requires its course of studies be submitted to Rome for approval, and asks that no similar university be established without consulting the Holy See.",
@@ -618,6 +654,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.musicae-sacrae.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII sobre a música sacra na liturgia. Traça a sua história desde o Antigo Testamento até ao canto gregoriano e à polifonia, expõe os princípios que regem a arte religiosa, distingue a música litúrgica da religiosa e da popular, e trata do uso do latim, do órgão e de outros instrumentos, com recomendações aos bispos para promover coros, seminários e conselhos diocesanos de arte sacra.",
+				"origin": "read"
+			}
+		},
 		"encyclical.mysterium.en": {
 			"en": {
 				"text": "Mysterium Fidei, on the Holy Eucharist, written while the Council was still sitting to check opinions then circulating that would reduce the Real Presence to symbolism or put transignification in the place of transubstantiation. It reaffirms the Mass as both sacrifice and sacrament, defends Trent's language on Christ's substantial presence and the adoration due the Sacrament, and closes urging daily Mass and Eucharistic devotion.",
@@ -651,6 +693,12 @@
 		"encyclical.nos-es-muy-conocida.en": {
 			"en": {
 				"text": "Pius XI writes to Mexico's bishops during the country's anti-Catholic persecution, praising the fidelity of clergy and faithful and urging two remedies: holier priests, and lay Catholic Action organized to reach workers, peasants and indigenous Mexicans, students, and emigrants to the United States. It calls for pursuing social justice without violent upheaval, for civic engagement including voting, and entrusts Mexico to Our Lady of Guadalupe.",
+				"origin": "read"
+			}
+		},
+		"encyclical.octobri-mense.pt": {
+			"pt": {
+				"text": "Encíclica de Leão XIII que renova o convite anual à oração do mês de Outubro, recomendando o Santo Rosário como a forma de recorrer a Maria, medianeira de todas as graças, contra os males que afligem a Igreja. Recorda a origem do Rosário por São Domingos e une à oração a exortação à mortificação e à penitência, com esperança nos frutos da intercessão da Rainha do Rosário.",
 				"origin": "read"
 			}
 		},
@@ -783,6 +831,12 @@
 		"encyclical.redemptor-hominis.en": {
 			"en": {
 				"text": "John Paul II's first encyclical, opening his pontificate on the claim that Jesus Christ, the Redeemer of man, is the centre of the universe and of history. Taking up the inheritance of Vatican II, it turns to the man Redemption reaches — afraid of what his own progress has made, his rights honoured in letter or in spirit — and to the Church's answer in truth, in the Eucharist and Penance, and in service.",
+				"origin": "read"
+			}
+		},
+		"encyclical.redemptor-hominis.pt": {
+			"pt": {
+				"text": "Primeira encíclica de João Paulo II, que abre o seu pontificado situando Cristo Redentor como centro do cosmos e da história. Em quatro partes, recolhe a herança do Concílio Vaticano II, expõe as dimensões divina e humana da Redenção, examina a situação do homem contemporâneo entre progresso e ameaça aos seus direitos, e conclui sobre a missão da Igreja ao serviço da verdade e da vocação real dos cristãos.",
 				"origin": "read"
 			}
 		},
@@ -1006,6 +1060,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.vigilanti-cura.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XI aos bispos dos Estados Unidos, elogiando a «Legião da Decência» e tratando da moral cristã diante do cinema. Descreve o poder das imagens, aliadas ao som e à música, sobre grandes públicos em salas escuras, e propõe meios de vigilância: compromisso anual dos fiéis, boletins de classificação e juntas nacionais de bispos e leigos para fiscalizar a produção e a exibição de filmes.",
+				"origin": "read"
+			}
+		},
 		"vatii.ad-gentes.en": {
 			"en": {
 				"text": "Vatican II's decree on the Church's missionary activity, grounded in the Trinitarian missions of the Son and the Spirit. It treats mission work itself — witness, preaching, and the gathering of a Christian community — then the young particular churches it plants, the calling and training of missionaries, the planning of missionary work, and the cooperation owed by bishops, priests, religious, and laity.",
@@ -1033,6 +1093,12 @@
 		"vatii.christus-dominus.en": {
 			"en": {
 				"text": "Vatican II's decree on the pastoral office of bishops. It treats first their place in the college united with the pope — instituting the Synod of Bishops and calling for a reorganized Roman Curia — then the diocesan bishop's governance of his own particular church, in its boundaries, auxiliaries, curia, clergy and religious, and finally cooperation among bishops through episcopal conferences, ecclesiastical provinces, and inter-diocesan offices such as military vicariates.",
+				"origin": "read"
+			}
+		},
+		"vatii.christus-dominus.pt": {
+			"pt": {
+				"text": "Decreto do Concílio Vaticano II sobre o múnus pastoral dos Bispos na Igreja. Trata do papel dos Bispos na Igreja universal, com o Sínodo episcopal e a renovação da Cúria Romana; do Bispo na sua diocese, porção do Povo de Deus confiada a um pastor, e dos seus deveres de ensinar, santificar e reger; dos seus cooperadores; e das Conferências episcopais e da revisão das circunscrições.",
 				"origin": "read"
 			}
 		},
@@ -1159,6 +1225,12 @@
 		"vatii.presbyterorum-ordinis.en": {
 			"en": {
 				"text": "Vatican II's decree on the ministry and life of priests. It grounds the priesthood in Christ's own priestly office, then treats priests' ministry of preaching, sacraments and pastoral leadership, their relationships with bishops, fellow priests and the laity, and the vocation to holiness through obedience, celibacy and poverty, closing with an exhortation amid the difficulties of contemporary priestly life.",
+				"origin": "read"
+			}
+		},
+		"vatii.presbyterorum-ordinis.pt": {
+			"pt": {
+				"text": "Decreto do Concílio Vaticano II sobre o ministério e a vida dos sacerdotes. Trata da natureza do presbiterado na missão da Igreja, das funções dos presbíteros — pregação da palavra, sacramentos e cura pastoral — e das suas relações com os bispos, entre si e com os leigos; depois, da vida espiritual dos presbíteros, chamados à perfeição, com o celibato, a pobreza voluntária e a formação permanente.",
 				"origin": "read"
 			}
 		},

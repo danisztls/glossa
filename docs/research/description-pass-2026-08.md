@@ -21,8 +21,8 @@ fix. The corpus uses exactly two page shells: all 32 `vatii` works are the
 **Scope is 354 document works** (322 `encyclical`, 32 `vatii`), not the 339
 this file opened with. It moves as editions land, so it is measured rather
 than remembered — and `site/unpublished.json` withholds nothing today, so all
-354 are describable. **185 are described** and **178 carry a ToC oracle**;
-what remains is 169 works with no description and 176 with no oracle.
+354 are describable. **197 are described** and **190 carry a ToC oracle**;
+what remains is 157 works with no description and 164 with no oracle.
 
 **Batches 4 through 8 are not written up here.** They landed between
 2026-08-24 and 2026-08-26 and were recorded in their commit messages instead
@@ -977,3 +977,74 @@ acquire understanding" (Prov 4:5)`): the quotation is bold-italic and the
   Broken markup rather than wrong words, so it is the parser's business by
   `CLAUDE.md`'s rule and not a `corrections/` entry — but it is one document,
   and the class is worth a sweep before anyone writes code for it.
+
+## Batch 12 (12 works) — 2026-08-28
+
+`vatii.christus-dominus.pt`, `vatii.presbyterorum-ordinis.pt`,
+`encyclical.dilexit-nos.pt`, `encyclical.dominum-et-vivificantem.pt`,
+`encyclical.eccl-de-euch.en`, `encyclical.redemptor-hominis.pt`,
+`encyclical.centesimus-annus.pt`, `encyclical.divini-illius-magistri.pt`,
+`encyclical.vigilanti-cura.pt`, `encyclical.musicae-sacrae.pt`,
+`encyclical.octobri-mense.pt`, `encyclical.magnae-dei-matris.en`.
+
+**197 of 354 described, 190 oracles.** Eight of the twelve agree with the
+parse completely; the four that do not are all one of the two level classes
+below.
+
+### A second source misprint, filed
+
+`centesimus-annus.pt` heads its fourth chapter `IV. A PROPRIETADE PRIVADA E O
+DESTINO UNIVERSAL DOS BENS` — `PROPRIETADE` for `PROPRIEDADE`, a transposition
+that is not a Portuguese word. The correct value is fixed by the document
+rather than inferred: the page spells `propriedade` 22 times in its own body,
+the chapter is about private property, and the English sibling prints `PRIVATE
+PROPERTY AND THE UNIVERSAL DESTINATION OF MATERIAL GOODS` at the same
+position. Filed, re-parsed, one work changed and nothing else.
+
+### The tier collapse has a suspect: `<font size="2">`
+
+Three Portuguese Vatican II decrees read the same way. `christus-dominus.pt`
+prints three tiers — `<p align="center"><b>` for `PROÉMIO` and the chapters,
+the same centred bold **wrapped in `<font size="2">`** for the numbered
+subdivisions, and `<p align="left"><b><i>` for the 44 paragraph-topic
+headings — and the parse stores the last two as one level, flattening 44 of 61. `presbyterorum-ordinis.pt` is the same shape (12 differences), and
+`ad-gentes.pt` in batch 9 named the same wrapper as what defeats its `Art. N`
+merge. The English siblings do not show it because their old-shell pages
+distinguish the tiers with `<b>` against `<b><i>`, which the ranker already
+reads. **A font-size wrapper is a tier signal in this shell and the style rank
+does not see it** — that is the hypothesis to test first, and it is cheap to
+test because the three documents disagree with their oracles today.
+
+`divini-illius-magistri.pt` is the unnumbered variant of the same thing: two
+printed tiers, every one of its 42 headings stored at level 1.
+
+### Two chapter titles are missing from an unnumbered document's text
+
+`divini-illius-magistri.pt` has `A QUEM PERTENCE A EDUCAÇÃO` and `SUJEITO DA
+EDUCAÇÃO` in `structure.json` and in **neither** `appendix.json`'s blocks nor
+anywhere else in the stored text — verified by grep against both files, with
+`AMBIENTE DA EDUCAÇÃO`, which has the identical shape (a centred-bold major
+followed immediately by its own first lettered sub-heading), present. So it is
+not simply "a heading followed by a heading", and it is in the appendix
+grouping rather than in heading detection, which got both right. A reader of
+that work goes from `c) Divisão da matéria` into `A) Em geral` with no chapter
+title between them.
+
+### An italic-only heading with no run to join is dropped
+
+`vigilanti-cura.pt` prints `Perseverar no esforço iniciado e bem sucedido`
+between §14 and §15 in italics alone, where its 41 siblings are bold or
+bold-italic. `promote_italic_heading_run` needs three of a kind before it will
+promote any, so this one is discarded outright rather than demoted — the run
+rule's stated cost, paid here for one real heading. Recorded rather than
+fixed: the rule is what keeps salutations and datelines out, and one heading
+is not evidence against it.
+
+### The census's `kept` verdict can be a false positive
+
+Reading `dominum-et-vivificantem.pt`, its reader found `SOBRE O ESPÍRITO
+SANTO` — a masthead line — scored `kept`, because the verdict tests
+containment against the whole concatenated stored text and that phrase occurs
+inside §2's running prose. The block itself was dropped, correctly. Worth
+knowing before trusting a `kept` on a short heading-shaped string; `kept?`
+already exists for the prefix case and this is its sibling.

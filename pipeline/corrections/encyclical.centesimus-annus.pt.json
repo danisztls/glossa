@@ -1,0 +1,14 @@
+[
+  {
+    "id": "centesimus-annus.pt-chapter-4-proprietade",
+    "locator": {
+      "raw_substring": "<b>IV. A PROPRIETADE PRIVADA E O DESTINO UNIVERSAL DOS BENS</b>"
+    },
+    "field": "raw_text",
+    "from": "<b>IV. A PROPRIETADE PRIVADA E O DESTINO UNIVERSAL DOS BENS</b>",
+    "to": "<b>IV. A PROPRIEDADE PRIVADA E O DESTINO UNIVERSAL DOS BENS</b>",
+    "reason": "'PROPRIETADE' for 'PROPRIEDADE' in the fourth chapter's heading -- a transposition that is not a Portuguese word and cannot be meant here. The correct value is fixed by the document itself rather than inferred: the word is spelled 'propriedade' 22 times in this same page's body, the chapter it heads is about private property (SS30-43), and the English sibling prints 'PRIVATE PROPERTY AND THE UNIVERSAL DESTINATION OF MATERIAL GOODS' at the same position. The heading is the only occurrence of the misspelling on the page, and it reaches the reader verbatim as a structure node's title.",
+    "evidence": "corpus/raw/vatican-docs/encyclical__centesimus-annus__pt.html: '...<p align=\"center\"><b>IV. A PROPRIETADE PRIVADA E O DESTINO UNIVERSAL DOS BENS</b></p> <p>30. Na <i><a href=\"/content/leo-xiii/pt/encyclicals/...' -- against 'propriedade' throughout the body of the same page, and encyclical__centesimus-annus__en.html's 'PRIVATE PROPERTY AND THE UNIVERSAL DESTINATION OF MATERIAL GOODS'.",
+    "added": "2026-08-28"
+  }
+]
