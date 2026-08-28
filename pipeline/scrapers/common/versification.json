@@ -1,0 +1,70 @@
+{
+	"generated_by": "site/scripts/export-versification.mjs — do not edit; see src/lib/versification.ts",
+	"wholesale_divergent": [
+		"joel",
+		"mal",
+		"ps"
+	],
+	"late_merge": {
+		"2cor:13:14": {
+			"chapter": 13,
+			"verse": 13
+		},
+		"acts:7:57": {
+			"chapter": 7,
+			"verse": 56
+		},
+		"acts:7:58": {
+			"chapter": 7,
+			"verse": 57
+		},
+		"acts:7:59": {
+			"chapter": 7,
+			"verse": 58
+		},
+		"acts:7:60": {
+			"chapter": 7,
+			"verse": 59
+		},
+		"exod:40:34": {
+			"chapter": 40,
+			"verse": 32
+		},
+		"exod:40:35": {
+			"chapter": 40,
+			"verse": 33
+		},
+		"exod:40:36": {
+			"chapter": 40,
+			"verse": 34
+		},
+		"exod:40:37": {
+			"chapter": 40,
+			"verse": 35
+		},
+		"exod:40:38": {
+			"chapter": 40,
+			"verse": 36
+		},
+		"matt:17:24": {
+			"chapter": 17,
+			"verse": 23
+		},
+		"matt:17:25": {
+			"chapter": 17,
+			"verse": 24
+		},
+		"matt:17:26": {
+			"chapter": 17,
+			"verse": 25
+		},
+		"matt:17:27": {
+			"chapter": 17,
+			"verse": 26
+		},
+		"zech:2:14": {
+			"chapter": 2,
+			"verse": 10
+		}
+	}
+}

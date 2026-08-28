@@ -123,6 +123,11 @@ from .text import (
     roman_to_int,
 )
 from .translations import load_translations_checked
+from .versification import (
+    WholesaleDivergence,
+    is_wholesale_divergent,
+    to_vulgate,
+)
 
 __all__ = [
     "ABSENT_SOURCES_PATH",
@@ -138,6 +143,7 @@ __all__ = [
     "FetchPolicy",
     "Fetcher",
     "OverrideDriftError",
+    "WholesaleDivergence",
     "apply_overrides",
     "apply_verse_corrections",
     "book_form_pattern",
@@ -153,6 +159,7 @@ __all__ = [
     "fold",
     "fold_index",
     "httpx_transport",
+    "is_wholesale_divergent",
     "json_text",
     "load_corrections",
     "load_overrides",
@@ -164,6 +171,7 @@ __all__ = [
     "record_capture",
     "require_corpus",
     "roman_to_int",
+    "to_vulgate",
     "urllib_transport",
     "write_if_changed",
     "write_stamped_json",

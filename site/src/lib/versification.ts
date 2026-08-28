@@ -368,3 +368,30 @@ export function resolveVulgate(
 ): VulgateAddress | undefined {
 	return toVulgateCandidates(osis, chapter, verse).find((c) => exists(c.osis, c.chapter, c.verse));
 }
+
+/**
+ * The two divergence tables as plain data, for export to the pipeline.
+ *
+ * `site/scripts/export-versification.mjs` writes this to
+ * `pipeline/scrapers/common/versification.json` and
+ * `versification.test.ts` fails when the committed file falls behind —
+ * the same arrangement `BOOK_FORMS` has, and for the same reason: Python
+ * cannot import TypeScript, and a second hand-maintained copy of a table
+ * this exact would drift silently.
+ *
+ * ONLY THE TABLES CROSS OVER, never the mappers. `ps`, `mal` and `joel`
+ * diverge wholesale and are converted by FUNCTIONS above, which is algorithm
+ * rather than data; re-implementing them in Python is precisely the
+ * duplication that produced the `pipeline/build/` twin this module's
+ * `LATE_MERGE` comment records the deletion of. So the export names those
+ * three books and carries no rule for them, and the Python side refuses a
+ * reference into one rather than guessing at it.
+ */
+export const VERSIFICATION_TABLE = {
+	wholesale_divergent: Object.keys(DIVERGENT_MAPPERS).sort(),
+	late_merge: Object.fromEntries(
+		[...LATE_MERGE.entries()]
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map(([key, value]) => [key, value])
+	)
+};
