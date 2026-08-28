@@ -67,7 +67,7 @@
 	const NAV_ITEMS = [
 		{ href: '/scriptura', key: 'nav.bible' },
 		{ href: '/catechismus', key: 'nav.ccc' },
-		{ href: '/compendium', key: 'nav.compendium' },
+		{ href: '/catechismus/compendium', key: 'nav.compendium' },
 		// 28 prayers is not a fifth pillar alongside four works running to
 		// thousands of pages each — but a corpus nobody can find from the nav
 		// is a corpus nobody reads, so it gets the same one-click-away

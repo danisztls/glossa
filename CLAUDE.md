@@ -348,10 +348,12 @@ with a 404. `src/lib/route-manifest.ts` holds that grammar and is unit-tested.
 
 Canonical reader URLs are Latin and do not vary with interface language:
 `/scriptura/{osis}/{chapter}`, `/catechismus/{n}`, `/catechismus/caput/{n}`,
-`/compendium/{n}`, `/compendium/caput/{n}`, `/documenta/{slug}`,
-`/preces/{slug}`, `/colophon`. The English roots (`/bible`, `/ccc`,
-`/documents`, `/prayers`) deliberately resolve as invalid — there is no
-compatibility layer. Note the route directories under `src/routes/` are still
+`/catechismus/compendium/{n}`, `/catechismus/compendium/caput/{n}`,
+`/documenta/{slug}`, `/preces/{slug}`, `/colophon`. The English roots
+(`/bible`, `/ccc`, `/documents`, `/prayers`) deliberately resolve as invalid —
+there is no compatibility layer, and **`/compendium/{n}` joined them on
+2026-08-28** when the Compendium moved under the Catechism it condenses
+(`docs/decisions.md` §Addresses and editions). Note the route directories under `src/routes/` are still
 named in English, with the Latin ones as thin re-exports; the canonical name
 and the directory name do not match.
 

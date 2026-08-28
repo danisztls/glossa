@@ -1088,7 +1088,7 @@ function isChapterNode(node: StructureNode, kinds: readonly StructureNode['kind'
  *
  * The single-unit routes print the full trail because everything in it is
  * above the paragraph on the page. On `/catechismus/caput/[n]` and
- * `/compendium/caput/[n]` the chapter IS the page, so the articles and
+ * `/catechismus/compendium/caput/[n]` the chapter IS the page, so the articles and
  * subsections below it are not places the reader could go up to — they are
  * headings already printed in the body. Truncating at the chapter is what
  * keeps the crumb row a path to this page rather than a path through it.
@@ -1336,7 +1336,7 @@ export function getCompendiumChapterFor(lang: string, n: number): StructureNode 
 }
 
 /** The trail from root down to and including that unit, for
- *  `/compendium/caput/[n]`'s crumb row — the CCC's
+ *  `/catechismus/compendium/caput/[n]`'s crumb row — the CCC's
  *  `getCccChapterBreadcrumb`, over question numbers. */
 export function getCompendiumChapterBreadcrumb(lang: string, n: number): StructureNode[] {
 	return chapterTrailIn(getCompendiumBreadcrumb(lang, n), COMPENDIUM_CHAPTER_KINDS);
@@ -1417,7 +1417,7 @@ export async function getCompendiumQuestionAsync(
 }
 
 /**
- * Every question in an inclusive structural range, for `/compendium/caput/[n]`.
+ * Every question in an inclusive structural range, for `/catechismus/compendium/caput/[n]`.
  *
  * One fetch per 100-question span the range touches, not one per question —
  * see `getCccParagraphRangeAsync`, which this mirrors exactly, including the

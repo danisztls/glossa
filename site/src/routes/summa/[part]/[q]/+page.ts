@@ -13,7 +13,7 @@ export interface SummaQuestionByLang {
 
 /**
  * Every edition's copy of one question, for the same reason
- * `/compendium/[n]` embeds both languages: the URL is edition-free, the
+ * `/catechismus/compendium/[n]` embeds both languages: the URL is edition-free, the
  * edition comes from a stored preference applied client-side, and `load`
  * re-runs on navigation rather than when that preference changes. So the
  * component picks reactively from what is already here.

@@ -117,20 +117,25 @@ describe('parseHref', () => {
 		});
 	});
 
+	// Nested under the Catechism since 2026-08-28 -- the work is the
+	// Compendium OF the Catechism, and the two share an outline.
 	describe('compendium', () => {
 		it('parses a question link', () => {
-			expect(parseHref('/compendium/12')).toEqual({ kind: 'compendium', n: 12 });
+			expect(parseHref('/catechismus/compendium/12')).toEqual({ kind: 'compendium', n: 12 });
 		});
 
 		it('parses a whole-chapter link', () => {
-			expect(parseHref('/compendium/caput/1')).toEqual({
+			expect(parseHref('/catechismus/compendium/caput/1')).toEqual({
 				kind: 'compendiumChapter',
 				n: 1
 			});
 		});
 
+		// `compendium` is not digits, so the Catechism's own paragraph rule
+		// cannot claim the segment and the landing pages stay non-addresses.
 		it('does not treat the landing page as a question', () => {
-			expect(parseHref('/compendium')).toBeUndefined();
+			expect(parseHref('/catechismus/compendium')).toBeUndefined();
+			expect(parseHref('/catechismus/compendium/caput')).toBeUndefined();
 		});
 	});
 
@@ -203,8 +208,8 @@ describe('parseHref', () => {
 			'/catechismus/01234',
 			'/catechismus/0',
 			'/catechismus/caput/01',
-			'/compendium/007',
-			'/compendium/0',
+			'/catechismus/compendium/007',
+			'/catechismus/compendium/0',
 			'/scriptura/gen/00',
 			'/scriptura/gen/01'
 		])('declines %s', (href) => {
@@ -216,7 +221,7 @@ describe('parseHref', () => {
 		it.each([
 			'/scriptura',
 			'/catechismus',
-			'/compendium',
+			'/catechismus/compendium',
 			'/documenta',
 			'/preces',
 			'/colophon',
@@ -225,6 +230,11 @@ describe('parseHref', () => {
 			// The English route names resolve as invalid addresses site-wide
 			// (docs/decisions.md §Addresses and editions); nothing may resurrect them.
 			'/ccc/1213',
+			// Retired 2026-08-28 when the Compendium moved under the Catechism.
+			// There is no compatibility layer, so the old shape is as dead as
+			// the English ones.
+			'/compendium/12',
+			'/compendium/caput/1',
 			'/bible/exod/3#v12',
 			'/prayers/sub-tuum-praesidium',
 			'/documents/lumen-gentium',
@@ -276,8 +286,8 @@ describe('hrefFor / parseHref round trip', () => {
 		],
 		['/catechismus/1234', { kind: 'ccc', n: 1234 }],
 		['/catechismus/caput/27', { kind: 'cccChapter', n: 27 }],
-		['/compendium/12', { kind: 'compendium', n: 12 }],
-		['/compendium/caput/1', { kind: 'compendiumChapter', n: 1 }],
+		['/catechismus/compendium/12', { kind: 'compendium', n: 12 }],
+		['/catechismus/compendium/caput/1', { kind: 'compendiumChapter', n: 1 }],
 		['/documenta/lumen-gentium', { kind: 'document', slug: 'lumen-gentium' }],
 		['/documenta/lumen-gentium#s12', { kind: 'document', slug: 'lumen-gentium', n: 12 }],
 		['/summa/i/1', { kind: 'summa', part: 'i', question: 1, article: null }],

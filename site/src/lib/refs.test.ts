@@ -1264,7 +1264,9 @@ describe('refHref', () => {
 	});
 
 	it('links a Compendium segment without needing any corpus context', () => {
-		expect(refHref({ kind: 'compendium', n: 42, raw: '42' }, {})).toBe('/compendium/42');
+		expect(refHref({ kind: 'compendium', n: 42, raw: '42' }, {})).toBe(
+			'/catechismus/compendium/42'
+		);
 	});
 
 	it('never links a document segment with no ingested slug (DS 1514 must stay unlinked)', () => {

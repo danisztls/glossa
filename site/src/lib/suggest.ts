@@ -1007,7 +1007,7 @@ const SECTIONS: SectionWords[] = [
 	{ kind: 'ccc', path: '/catechismus', titleKey: 'nav.ccc', extra: ['catechismus', 'ccc', 'cec'] },
 	{
 		kind: 'compendium',
-		path: '/compendium',
+		path: '/catechismus/compendium',
 		titleKey: 'nav.compendium',
 		extra: ['compendium', 'comp']
 	},

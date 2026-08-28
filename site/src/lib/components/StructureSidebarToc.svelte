@@ -2,8 +2,8 @@
 	/**
 	 * Table of contents for the reading sidebar (`.reading-aside`, app.css),
 	 * shared by every route that has one: `/catechismus/[n]`,
-	 * `/catechismus/caput/[n]`, `/compendium/[n]`,
-	 * `/compendium/caput/[n]`, `/documenta/[slug]`.
+	 * `/catechismus/caput/[n]`, `/catechismus/compendium/[n]`,
+	 * `/catechismus/compendium/caput/[n]`, `/documenta/[slug]`.
 	 * All four walk the same node shape — `CccNode`/`StructureNode` are
 	 * literally the same type (`$lib/types.ts`) — parametrized by which
 	 * flattened structure, which routing scheme, and (CCC/Compendium only)
@@ -172,7 +172,7 @@
 		    The existing `ccc.tableOfContents`/`compendium.tableOfContents`/
 		    `document.tableOfContents` i18n keys already cover it. */
 		heading: string;
-		/** `/ccc`, `/compendium`, or `/documents/{slug}` — combined with a
+		/** `/ccc`, `/catechismus/compendium`, or `/documents/{slug}` — combined with a
 		    node's own first paragraph/question/section number to build its
 		    href. Unused, may be omitted, when `linkMode` is `"anchor"`. */
 		basePath?: string;
@@ -300,7 +300,7 @@
 					<!-- Null bounds: real structure the corpus knows about but no
 					     paragraph/question/section number addresses — text, not a
 					     link, same convention as `/ccc/+page.svelte`,
-					     `/compendium/+page.svelte` and `/documents/[slug]/+page.svelte`'s
+					     `/catechismus/compendium/+page.svelte` and `/documents/[slug]/+page.svelte`'s
 					     own tables of contents. -->
 					<span class="row-title unlinked" title="No section number in this corpus">
 						{#if label}<span class="kind-label">{label}</span>{/if}

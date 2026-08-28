@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * Prayer collection landing page — the `/compendium`/`/ccc` landing
+	 * Prayer collection landing page — the `/catechismus/compendium`/`/ccc` landing
 	 * pages' shape, not a `StructureSidebarToc` consumer: `structure.json`'s
 	 * ranges are `[null, null]` throughout (prayers address by `slug`, never
 	 * by number — docs/corpus-schema.md "Prayers"), so that component's
@@ -10,7 +10,7 @@
 	 * across 5 sections doesn't need a persistent sidebar tree to stay
 	 * navigable on one page.
 	 *
-	 * Reactive, not `+page.ts`-loaded, for the same reason `/compendium` is:
+	 * Reactive, not `+page.ts`-loaded, for the same reason `/catechismus/compendium` is:
 	 * `structure.json` + prayer metadata are both INDEX tier, already
 	 * eager-inlined for every language, so there's nothing to fetch here —
 	 * `content.langFor('prayer')` alone decides which language's copy to

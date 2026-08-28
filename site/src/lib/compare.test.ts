@@ -137,7 +137,7 @@ describe('withCompareParam', () => {
 		// `'1'` (the AUTO spelling) is a caller decision (`CompareStore.paramValue`),
 		// not something this pure URL helper knows about — it just writes
 		// whatever string it's handed.
-		const url = new URL('https://example.test/compendium/1');
+		const url = new URL('https://example.test/catechismus/compendium/1');
 		expect(withCompareParam(url, '1').searchParams.get('compare')).toBe('1');
 		expect(withCompareParam(url, 'ccc.pt').searchParams.get('compare')).toBe('ccc.pt');
 	});

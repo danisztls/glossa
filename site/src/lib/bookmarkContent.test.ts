@@ -27,7 +27,7 @@ describe('bookmarkGroup', () => {
 		expect([
 			at('/scriptura/gen/1').order,
 			at('/catechismus/1').order,
-			at('/compendium/1').order,
+			at('/catechismus/compendium/1').order,
 			at('/summa/i/1').order,
 			at('/preces/our-father').order,
 			at('/documenta/lumen-gentium').order

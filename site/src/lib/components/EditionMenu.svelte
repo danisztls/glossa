@@ -4,7 +4,7 @@
 	from the UI language switch, `LanguageMenu`; see content.svelte.ts).
 
 	Contextual by route: lists Bible editions under `/scriptura`, Catechism
-	editions under `/catechismus`, Compendium editions under `/compendium`, prayer
+	editions under `/catechismus`, Compendium editions under `/catechismus/compendium`, prayer
 	collection editions under `/preces` (same one-canonical-work-per-language
 	shape as the Compendium), this ONE document's editions under
 	`/documenta/{slug}`, and renders nothing anywhere else (`context()` below
@@ -70,7 +70,7 @@
 		if (pathname === '/catechismus' || pathname.startsWith('/catechismus/')) {
 			return { kind: 'type', type: 'catechism' };
 		}
-		if (pathname === '/compendium' || pathname.startsWith('/compendium/')) {
+		if (pathname === '/catechismus/compendium' || pathname.startsWith('/catechismus/compendium/')) {
 			return { kind: 'type', type: 'compendium' };
 		}
 		if (pathname === '/preces' || pathname.startsWith('/preces/')) {

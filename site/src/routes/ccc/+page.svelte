@@ -45,7 +45,7 @@
 				? condensingQuestionRun(from as number, to as number)
 				: undefined);
 		return siblingLink(span, {
-			hrefBase: '/compendium/caput',
+			hrefBase: '/catechismus/compendium/caput',
 			unit: 'Q',
 			abbrev: t('compendium.abbrev'),
 			workTitle: t('compendium.landing.title')

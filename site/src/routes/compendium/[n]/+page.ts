@@ -20,8 +20,8 @@ export interface CompendiumQuestionByLang {
 export const load: PageLoad = async ({ params }) => {
 	const n = Number(params.n);
 
-	// Compendium URLs stay edition-free (docs/decisions.md #2: `/compendium/1`,
-	// never `/compendium/en/1`) — the edition comes from a stored preference
+	// Compendium URLs stay edition-free (docs/decisions.md #2: `/catechismus/compendium/1`,
+	// never `/catechismus/compendium/en/1`) — the edition comes from a stored preference
 	// applied client-side, and this route renders only in the browser
 	// (`ssr = false`, `+layout.ts`) — but `load` only re-runs on navigation,
 	// not when a stored preference changes on its own, so reading it there
@@ -35,7 +35,7 @@ export const load: PageLoad = async ({ params }) => {
 	// `ccc/[n]/+page.ts`'s docblock on why, same reasoning here.
 	// `Partial<Record<…>>`, and not merely as a formality: both `continue`s
 	// below skip a language, so a key's absence is a real, reachable state —
-	// the same one `/ccc/[n]` and `/compendium/caput/[n]` already declare.
+	// the same one `/ccc/[n]` and `/catechismus/compendium/caput/[n]` already declare.
 	const byLang: Partial<Record<string, CompendiumQuestionByLang>> = {};
 	for (const lang of compendiumLangs()) {
 		const work = getWork(`compendium.${lang}`);

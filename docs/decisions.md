@@ -559,9 +559,23 @@ grammar built on "," reads none of its 62 references.
 **A canonical URL selects a reference; the reader's preference selects the edition.**
 So every reader URL is **edition-free** and Latin, and does not vary with interface
 language: `/scriptura/{osis}/{chapter}`, `/catechismus/{n}`, `/catechismus/caput/{n}`,
-`/compendium/{n}`, `/documenta/{slug}`, `/preces/{slug}`, `/signata`, `/colophon`. The
-English roots deliberately resolve as invalid; there is no compatibility layer. (Route
-directories under `src/routes/` are still named in English, with Latin re-exports.)
+`/catechismus/compendium/{n}`, `/documenta/{slug}`, `/preces/{slug}`, `/signata`,
+`/colophon`. The English roots deliberately resolve as invalid; there is no compatibility
+layer. (Route directories under `src/routes/` are still named in English, with Latin
+re-exports.)
+
+**The Compendium is addressed under the Catechism** (2026-08-28). It was `/compendium/{n}`
+until then, and the move is what the work is: the _Compendium Catechismi Catholicae
+Ecclesiae_, 598 questions over the same part/section/chapter outline the Catechism prints
+at length — which `site/src/lib/toc-pairing.ts` verifies structurally across all 18
+editions and `condensation.ts` corroborates from the questions' own `ccc_refs`. The
+rejected spelling was `/catechismus/ccc/{n}` and `/catechismus/cccc/{n}`: `CCCC` is not a
+siglum any edition prints (its only 12 occurrences in the corpus are Roman numerals inside
+papal dates, `MDCCCCXXXI`), the two differ by a repetition count rather than a glyph, and
+`compendium` is already the Latin word the initialism would abbreviate. The cost, accepted
+knowingly: every reader's saved Compendium bookmarks are dropped, because
+`bookmarks.svelte.ts` keys them by href and `load()` discards an href the current grammar
+rejects.
 
 **`src/lib/address.ts` is the only place a reader URL is written or read.** The grammar
 was known in six places and four unions described the same thing; serializing an address

@@ -5,7 +5,7 @@
 	 *
 	 * Index-tier only — no content fetch. `summaQuestionMetas` carries the
 	 * titles and article numbers precisely so this page costs nothing, the
-	 * same split `/compendium` and the CCC TOC already use.
+	 * same split `/catechismus/compendium` and the CCC TOC already use.
 	 *
 	 * Built from the READER'S edition, falling back the usual way, and the
 	 * consequence is visible rather than hidden: under Latin there are four

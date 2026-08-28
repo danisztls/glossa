@@ -185,7 +185,7 @@ describe('refKindFor', () => {
 	it('reads the family off the address', () => {
 		expect(refKindFor('/scriptura/gen/1')).toBe('scripture');
 		expect(refKindFor('/catechismus/2357')).toBe('ccc');
-		expect(refKindFor('/compendium/12')).toBe('ccc');
+		expect(refKindFor('/catechismus/compendium/12')).toBe('ccc');
 		expect(refKindFor('/documenta/lumen-gentium')).toBe('document');
 	});
 
@@ -200,6 +200,12 @@ describe('sectionFor', () => {
 		expect(sectionFor('/')).toBe('home');
 		expect(sectionFor('/scriptura/gen/1')).toBe('scriptura');
 		expect(sectionFor('/summa')).toBe('summa');
+		expect(sectionFor('/catechismus/1234')).toBe('catechismus');
+		// The Compendium is not its path's first segment; it keeps its own
+		// bucket anyway, or the series reads zero instead of erroring.
+		expect(sectionFor('/catechismus/compendium')).toBe('compendium');
+		expect(sectionFor('/catechismus/compendium/39')).toBe('compendium');
+		expect(sectionFor('/catechismus/compendium/caput/1')).toBe('compendium');
 		expect(sectionFor('/colophon')).toBe('colophon');
 		// The English roots deliberately resolve as invalid addresses; they are
 		// not a section, and must not become one by being counted as one.

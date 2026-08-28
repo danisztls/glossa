@@ -122,10 +122,16 @@ export function hrefFor(a: Address): string {
 			return `/catechismus/${a.n}`;
 		case 'cccChapter':
 			return `/catechismus/caput/${a.n}`;
+		// Nested under the Catechism because that is what the work is: the
+		// *Compendium Catechismi Catholicae Ecclesiae*, 598 questions over the
+		// same outline the Catechism prints at length (`toc-pairing.ts`). It
+		// was `/compendium/{n}` until 2026-08-28; there is no compatibility
+		// layer, so the old address is now invalid like every other retired
+		// one (docs/decisions.md §Addresses and editions).
 		case 'compendium':
-			return `/compendium/${a.n}`;
+			return `/catechismus/compendium/${a.n}`;
 		case 'compendiumChapter':
-			return `/compendium/caput/${a.n}`;
+			return `/catechismus/compendium/caput/${a.n}`;
 		case 'document':
 			return a.n === undefined ? `/documenta/${a.slug}` : `/documenta/${a.slug}#s${a.n}`;
 		case 'summa': {
@@ -148,8 +154,10 @@ const INTERNAL_BASE = 'https://glossa.internal.invalid';
 const BIBLE_RE = /^\/scriptura\/([a-z0-9]+)\/(\d+)$/;
 const CCC_CHAPTER_RE = /^\/catechismus\/caput\/(\d+)$/;
 const CCC_RE = /^\/catechismus\/(\d+)$/;
-const COMPENDIUM_CHAPTER_RE = /^\/compendium\/caput\/(\d+)$/;
-const COMPENDIUM_RE = /^\/compendium\/(\d+)$/;
+// Both are anchored, so neither can be reached by CCC_RE (which admits only
+// digits after `/catechismus/`) and the order these are tried in is free.
+const COMPENDIUM_CHAPTER_RE = /^\/catechismus\/compendium\/caput\/(\d+)$/;
+const COMPENDIUM_RE = /^\/catechismus\/compendium\/(\d+)$/;
 const DOCUMENT_RE = /^\/documenta\/([a-z0-9-]+)$/;
 const PRAYER_RE = /^\/preces\/([a-z0-9-]+)$/;
 const SUMMA_RE = /^\/summa\/([a-z-]+)\/(\d+)$/;
@@ -183,8 +191,9 @@ function canonicalNumber(segment: string, min: 0 | 1): number | undefined {
  * Read an address out of an href, or `undefined` for anything that is not one
  * -- nav chrome, an external URL, a legacy English path (`/ccc/1`,
  * `/prayers/x`, deliberately invalid site-wide -- docs/decisions.md
- * §Addresses and editions), a retired shape, or a stored value from a future version of
- * this grammar.
+ * §Addresses and editions), a retired shape (`/compendium/39`, which moved
+ * under `/catechismus/` on 2026-08-28), or a stored value from a future
+ * version of this grammar.
  *
  * `undefined` is always "not a place", never an error; see the module
  * docblock.

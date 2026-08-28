@@ -1,7 +1,7 @@
 /**
  * Compare-mode edition resolution, shared by the four CCC/Compendium reading
  * routes (paragraph, chapter, question, chapter — `/catechismus/[n]`,
- * `/catechismus/caput/[n]`, `/compendium/[n]`, `/compendium/caput/[n]`).
+ * `/catechismus/caput/[n]`, `/catechismus/compendium/[n]`, `/catechismus/compendium/caput/[n]`).
  * Given a page's `byLang` map — every language the corpus embeds for this
  * address — and the reader's preferred content language, work out which
  * language renders as the primary column and, if compare mode is on, which

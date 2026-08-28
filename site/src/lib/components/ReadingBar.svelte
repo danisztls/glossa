@@ -56,7 +56,7 @@
 	call differing only in where the array came from, so the bar builds it.
 
 	THE INDEX ROUTES CARRY THE SAME BAR WITH MOST OF IT ABSENT. `/scriptura`,
-	`/catechismus`, `/compendium` and `/summa` are tables of contents, and the
+	`/catechismus`, `/catechismus/compendium` and `/summa` are tables of contents, and the
 	one control in this row that still means something there is the edition
 	picker: which edition a reader is browsing decides which book list, which
 	chapter titles and which parts they see (the Summa has four under Latin

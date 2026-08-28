@@ -209,14 +209,27 @@ export function classifyDevice(width: number): string {
  *  against the per-family table `reference-coverage.mjs` prints. */
 export function refKindFor(pathname: string): string | undefined {
 	if (pathname.startsWith('/scriptura/')) return 'scripture';
-	if (pathname.startsWith('/catechismus/') || pathname.startsWith('/compendium/')) return 'ccc';
+	if (pathname.startsWith('/catechismus/')) return 'ccc';
 	if (pathname.startsWith('/documenta/')) return 'document';
 	return undefined;
 }
 
-/** The canonical section a path belongs to. */
+/**
+ * The canonical section a path belongs to.
+ *
+ * The Compendium is the one section that is NOT its path's first segment: it
+ * moved under `/catechismus/` on 2026-08-28, and it keeps its own bucket
+ * because which of the two works a reader is in is the thing the measurement
+ * is for. Folding it into `catechismus` would not error -- `compendium` is an
+ * enumerated value in `usage-schema.ts`, so the worker would go on accepting a
+ * bucket nothing ever sent again and the series would read zero from that day
+ * rather than reporting a fault (see CLAUDE.md on why that schema is one
+ * module read by both ends).
+ */
 export function sectionFor(pathname: string): string {
 	if (pathname === '/') return 'home';
+	if (pathname === '/catechismus/compendium' || pathname.startsWith('/catechismus/compendium/'))
+		return 'compendium';
 	const root = pathname.split('/')[1] ?? '';
 	const KNOWN = [
 		'scriptura',
