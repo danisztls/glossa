@@ -31,7 +31,13 @@
  */
 
 import type { StructureNode } from './types';
-import { parseInlineHtml, textRuns, withTextRuns, type InlineNode } from './inline-html';
+// `./inline-html.ts` WITH THE EXTENSION, like `route-manifest.ts` writes
+// `./address.ts` and for the same reason: `scripts/route-titles.mjs` imports
+// this module to normalize a heading exactly as the page does, and Node's
+// type-stripping loader will not resolve an extensionless relative specifier.
+// Vite resolves it either way, so the cost is one visible `.ts` here against a
+// second implementation of `displayTitle` in a build script.
+import { parseInlineHtml, textRuns, withTextRuns, type InlineNode } from './inline-html.ts';
 
 export interface DisplayTitle {
 	ordinal: string | null;

@@ -87,7 +87,8 @@ import { hrefFor } from '../src/lib/address.ts';
 import { buildCondensationMap } from '../src/lib/condensation.ts';
 import { PLATE_INTRINSIC_WIDTH, PLATE_WIDTHS } from '../src/lib/plates.ts';
 import { pairDivisions } from '../src/lib/toc-pairing.ts';
-import { sitemapXml } from './sitemap.mjs';
+import { assertNamed, buildRouteTitles } from './route-titles.mjs';
+import { sitemapPaths, sitemapXml } from './sitemap.mjs';
 import {
 	CHANGE_CEILING,
 	fingerprint,
@@ -120,6 +121,11 @@ const contentDir = path.join(destDir, 'content');
 // serves the SPA shell, so an existing citation receives 200 while a typo
 // remains a real 404. It is generated alongside corpus-data, never edited.
 const routeManifestPath = path.join(siteRoot, 'static/corpus-routes.json');
+// Names for those same addresses, read by the same worker in the same way and
+// kept in a second file on purpose: if this one fails to load the edge must
+// still answer 200 and 404 correctly, and separate files make that degradation
+// structural rather than a `try` somewhere. See scripts/route-titles.mjs.
+const routeTitlesPath = path.join(siteRoot, 'static/route-titles.json');
 // Derived from the same manifest, one line below where it is written. The
 // SPA shell means a crawler can otherwise reach the corpus only by rendering
 // the app and walking JavaScript-written links; see scripts/sitemap.mjs.
@@ -315,6 +321,7 @@ if (!existsSync(buildSrc)) {
 	// meant to stop. This is generated site output, never corpus/raw.
 	rmSync(routeManifestPath, { force: true });
 	rmSync(sitemapPath, { force: true });
+	rmSync(routeTitlesPath, { force: true });
 	// And the images the wipe above spared. A fixture build has no plates.json
 	// to point at them, so they would render nowhere and ship anyway — 103 MB
 	// of build assets belonging to a corpus this build does not have.
@@ -1809,6 +1816,21 @@ const routeManifest = {
 };
 
 writeJson(routeManifestPath, routeManifest);
+
+const routeTitles = buildRouteTitles({
+	manifests,
+	bibleIndex,
+	cccIndex,
+	compendiumIndex,
+	summaIndex,
+	prayerIndex
+});
+// Checked here rather than trusted, on the same terms as `assertCanonical`:
+// nothing a reader can see goes wrong when an address loses its name, because
+// the page titles itself at hydration. Only the consumers that never render
+// see it, and none of them reports back.
+assertNamed(sitemapPaths(routeManifest), routeManifest, routeTitles);
+writeJson(routeTitlesPath, routeTitles);
 
 // Per-address `<lastmod>`, resolved against the committed ledger: an address
 // whose text is byte-identical to the last build keeps the date it already had,

@@ -26,7 +26,7 @@
  * `escape_text_run` in `vatican_docs.py`.
  */
 
-import { parseStoredRef, type RefSegment } from './refs-grammar';
+import { parseStoredRef, type RefSegment } from './refs-grammar.ts';
 
 export type InlineNode =
 	| { kind: 'text'; text: string }
