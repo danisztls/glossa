@@ -1,5 +1,12 @@
 import { isCanonicalPath, type RouteManifest } from './lib/route-manifest';
-import { headFor, headHtml, noscriptHtml, SITE_ORIGIN, type RouteTitles } from './lib/shell-head';
+import {
+	headFor,
+	headHtml,
+	htmlAttrs,
+	noscriptHtml,
+	SITE_ORIGIN,
+	type RouteTitles
+} from './lib/shell-head';
 import { isLocalHost } from './lib/usage-device';
 import { MAX_BODY_BYTES, validatePayload } from './lib/usage-schema';
 import { pruneExpired, recordSession, type D1Database } from './lib/usage-store';
@@ -209,7 +216,15 @@ function withHead(
 ): Response {
 	const head = titles && headFor(pathname, manifest, titles);
 	if (!head) return response;
+	const attrs = htmlAttrs(head);
 	return new HTMLRewriter()
+		.on('html', {
+			element(element) {
+				if (!attrs) return;
+				element.setAttribute('lang', attrs.lang);
+				element.setAttribute('dir', attrs.dir);
+			}
+		})
 		.on('title', {
 			element(element) {
 				element.setInnerContent(head.title);

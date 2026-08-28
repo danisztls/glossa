@@ -150,6 +150,17 @@ describe('navigation', () => {
 		}
 	});
 
+	/** Seven chrome pages times fourteen interface languages. A reading address
+	 *  takes no prefix — it names a citation, not a page of interface. */
+	it('serves the language-prefixed chrome pages and nothing else under a prefix', async () => {
+		for (const path of ['/pt', '/ar/catechismus', '/la/summa', '/sv/colophon']) {
+			expect((await navigate(path)).status, path).toBe(200);
+		}
+		for (const path of ['/xx', '/xx/catechismus', '/pt/catechismus/330', '/pt/signata']) {
+			expect((await navigate(path)).status, path).toBe(404);
+		}
+	});
+
 	it('404s an address the grammar does not recognise at all', async () => {
 		expect((await navigate('/bible/gen/1')).status).toBe(404);
 		expect((await navigate('/compendium/45')).status).toBe(404);

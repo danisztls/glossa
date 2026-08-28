@@ -38,7 +38,8 @@
  */
 
 import { hrefFor } from '../src/lib/address.ts';
-import { isCanonicalPath } from '../src/lib/route-manifest.ts';
+import { CHROME_PATHS, isCanonicalPath } from '../src/lib/route-manifest.ts';
+import { UI_LANGS } from '../src/lib/ui-langs.ts';
 
 /**
  * @typedef {import('../src/lib/route-manifest.ts').RouteManifest} RouteManifest
@@ -51,21 +52,31 @@ import { SITE_ORIGIN as ORIGIN } from '../src/lib/shell-head.ts';
 const MAX_URLS = 50_000;
 
 /**
- * The static pages worth enumerating, in `STATIC_PATHS` order.
+ * The chrome pages, unprefixed and then once per interface language.
+ *
+ * `CHROME_PATHS` is the same list `route-manifest.ts` validates against and
+ * `shell-head.ts` builds heads from, so a page cannot be advertised here and
+ * 404 at the edge, nor be reachable and unadvertised.
+ *
+ * FOURTEEN TIMES SEVEN, AND THE SEVEN AGAIN: 105 URLs where there were 7.
+ * Each prefixed page is a genuinely different page — its every word is the
+ * interface — which is precisely what the reading addresses below are not, and
+ * why those take no prefix. The unprefixed path stays as the cluster's
+ * `x-default`: not a duplicate of the English one, but the address that
+ * negotiates, which is a page in its own right.
  *
  * `/signata` and `/404` are excluded on purpose, and for different reasons.
  * The bookmark library is real but its contents live in the reader's own
  * localStorage, so there is nothing there for anyone but that reader; `/404`
- * is a route that exists to render a status, not an address to visit.
+ * is a route that exists to render a status, not an address to visit. Neither
+ * takes a language prefix either — both are `noindex`, and a cluster of pages
+ * nobody may find is fourteen times nothing.
  */
 const STATIC_URLS = [
-	'/',
-	'/scriptura',
-	'/catechismus',
-	'/documenta',
-	'/summa',
-	'/preces',
-	'/colophon'
+	...CHROME_PATHS,
+	...UI_LANGS.flatMap((lang) =>
+		CHROME_PATHS.map((path) => (path === '/' ? `/${lang}` : `/${lang}${path}`))
+	)
 ];
 
 /**

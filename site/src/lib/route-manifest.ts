@@ -12,6 +12,7 @@
  */
 
 import { parseHref, summaPartFromSlug, summaPartSlug } from './address.ts';
+import { isUiLang } from './ui-langs.ts';
 
 // Re-exported because `scripts/sync-corpus.mjs` imports `summaPartSlug` from
 // here (it lays the Summa's content files out by part slug) and this module is
@@ -33,6 +34,48 @@ export interface RouteManifest {
 	prayers: string[];
 	/** Part slug -> question numbers, unioned across editions. */
 	summa: Record<string, number[]>;
+}
+
+/**
+ * The pages whose content IS the interface, in the order the sitemap lists them.
+ *
+ * These seven are the only addresses that take an interface-language prefix
+ * (`/pt/catechismus`), and the reason is the distinction the whole URL grammar
+ * rests on: a reading address names a citation, which is the same citation in
+ * every language and takes no prefix, while these name a page whose every word
+ * is the chrome. A Portuguese reader searching for the Catechism has nothing to
+ * match on this site otherwise — the reading pages are Latin addresses over
+ * text a crawler is served in English (`SITEMAP_LANGS`).
+ *
+ * `/signata` and `/404` are static too and are deliberately absent: both are
+ * `noindex`, so a language cluster would multiply pages nobody may find.
+ */
+export const CHROME_PATHS = [
+	'/',
+	'/scriptura',
+	'/catechismus',
+	'/documenta',
+	'/summa',
+	'/preces',
+	'/colophon'
+] as const;
+
+const CHROME_PATH_SET: ReadonlySet<string> = new Set(CHROME_PATHS);
+
+/**
+ * `/pt/catechismus` -> `{ lang: 'pt', path: '/catechismus' }`, else undefined.
+ *
+ * The bare path is NOT a language address and does not parse here: it
+ * negotiates (see `app.html`'s pre-paint block and `I18nStore`), which is a
+ * different thing from naming a language, and it is what `x-default` means in
+ * the cluster these form.
+ */
+export function parseChromePath(pathname: string): { lang: string; path: string } | undefined {
+	const slash = pathname.indexOf('/', 1);
+	const lang = pathname.slice(1, slash === -1 ? undefined : slash);
+	if (!isUiLang(lang)) return undefined;
+	const path = slash === -1 ? '/' : pathname.slice(slash);
+	return CHROME_PATH_SET.has(path) ? { lang, path } : undefined;
 }
 
 const STATIC_PATHS = new Set([
@@ -64,6 +107,7 @@ const STATIC_PATHS = new Set([
  */
 export function isCanonicalPath(pathname: string, manifest: RouteManifest): boolean {
 	if (STATIC_PATHS.has(pathname)) return true;
+	if (parseChromePath(pathname)) return true;
 
 	const address = parseHref(pathname);
 	if (!address) return false;

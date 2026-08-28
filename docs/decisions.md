@@ -871,7 +871,7 @@ navigations 429.
 
 **The zone has one rate limiting rule, and it lives in the Cloudflare dashboard**
 (2026-08-26). Every HTML navigation is a billed Worker invocation against the free plan's
-100,000/day, the sitemap advertises ~5,800 canonical addresses, and nothing bounds how
+100,000/day, the sitemap advertises ~6,000 canonical addresses, and nothing bounds how
 many times they are crawled. A rule in the WAF is the only lever that costs nothing to
 exercise: it runs before the Worker, and per Cloudflare's pricing "only requests that hit
 a Worker will count against your limits and your bill".
@@ -939,10 +939,10 @@ the AI-crawler controls and an accurate sitemap `lastmod`.
 
 **What a crawler that does not render is told — and what it is still not told**
 (2026-08-26). `ssr = false` means `%sveltekit.head%` is empty in the build, so the one
-document served for all 5,812 canonical addresses is the whole of what a non-rendering
+document served for all ~6,000 canonical addresses is the whole of what a non-rendering
 consumer receives. Until now that document had **no `<title>` at all** and one
 library-wide description, so every social unfurl, every chat preview and every crawler
-that is not Google saw an untitled, bodyless page — the same one, 5,812 times, which is
+that is not Google saw an untitled, bodyless page — the same one, ~6,000 times, which is
 also the textbook signature of duplicated content. `app.html` now carries a static
 `<title>`; it is safe there because Svelte compiles a `<title>` in `<svelte:head>` to an
 assignment to `document.title` rather than to an appended element, so the route's own
@@ -978,7 +978,7 @@ addresses that stop resolving.
 **What guards it is a build assert, not a test.** `assertNamed` runs inside
 `sync-corpus.mjs` beside the older `assertCanonical`, and refuses a build where any address
 in `sitemapPaths` has no name of its own or shares a title with another. Today that is
-5,811 addresses, all named, all distinct. The check belongs there rather than in vitest
+every address named and none sharing a title. The check belongs there rather than in vitest
 because the failure is invisible everywhere a person looks: the page titles itself at
 hydration, so a browser shows the right thing whatever the table holds, and only the
 consumers that never render see the gap — none of which reports back. A work kind ingested
@@ -1035,6 +1035,74 @@ existed. Neither is fetched by anything that runs in a browser. `INFRASTRUCTURE_
 a third list beside `HOST_CONFIG_FILES` and `CRAWLER_FILES` because the reason differs
 again: those are read by a stranger's machine, these by ours.
 
+**The interface has addresses; the corpus does not** (2026-08-28). Seven pages now answer
+under an interface-language prefix — `/pt/catechismus`, `/ar/summa`, `/la/preces` — and
+~5,800 reading addresses deliberately do not. The line between them is the one the whole
+URL grammar rests on. A reading address names a **citation**, which is the same citation
+in every language; which edition renders there is the reader's standing preference, and
+the canonical spelling is Latin precisely so that it does not vary. A chrome page has no
+citation in it at all: every word on `/catechismus` is the interface, so the Portuguese
+version is a genuinely different page rather than the same page relabelled.
+
+Prefixing the reading addresses was considered and refused, and the reason is worth
+keeping. Interface language is not content language: a Hungarian reader at
+`/hu/catechismus/330` would be shown the ENGLISH Catechism through
+`CONTENT_LANG_FALLBACK`, so `/hu/…` and `/en/…` would be byte-identical in the only part a
+crawler weighs and differ in the navigation labels. Publishing that as an `hreflang`
+alternate is a false claim of the same shape the `lastmod` ledger already refused to make
+one level down. It would also take 5,811 addresses to 81,368, force a `<sitemapindex>`,
+and contradict the "canonical reader URLs do not vary with interface language" rule that
+`hrefFor` exists to enforce. **The addressable-content-language question is untouched by
+this** and remains where §Languages leaves it.
+
+**Fifteen members per cluster, and every one of them declares the whole cluster.** Fourteen
+prefixed pages plus the unprefixed path, which is `x-default`. The unprefixed path is not
+"the English page" — it NEGOTIATES (`app.html`'s pre-paint block, then `I18nStore`), which
+is a different claim, and `x-default` is the tag for exactly that. `/en/catechismus` exists
+separately because pinning English is a different thing from negotiating and happening to
+get it. Each member self-canonicalizes: a prefixed page canonicalizing to the bare path
+would ask to be de-indexed, leaving a cluster of one and no purpose.
+
+**Not one new translated string was written.** `CHROME_KEYS` in `scripts/route-titles.mjs`
+maps each chrome page to keys the dictionaries already carry — `ccc.landing.title`,
+`bible.landing.tagline`, `colophon.lede` — so the head a Portuguese searcher matches on is
+the sentence the page then shows them. All fourteen dictionaries carry all seven, which a
+test asserts. The home page is the one exception, having no tagline: its description is
+composed from the five translated section names, which is both what the page is and what
+someone searching for any of those works would type. Inventing a `meta.description` key
+would have been thirteen sentences needing thirteen speakers, and CLAUDE.md's Malagasy note
+records what happens when that is guessed at.
+
+**`chromeNames` has no fallback to English, unlike `t()`.** A cluster whose Portuguese
+member is described in English tells a search engine the page is Portuguese and then shows
+it English, which is the one thing an `hreflang` set is checked for. A missing key fails
+the sync through `assertNamed` instead.
+
+**`assertNamed`'s distinctness check became per-language rather than global**, because a
+cluster's members share a title on purpose — it is the same page in fourteen languages,
+the one case where two addresses answering to one name is correct. So `/pt`'s seven titles
+must differ from each other and are free to equal `/en`'s, while every reading address
+stays in one bucket where a shared title is the defect it always was.
+
+**`UI_LANGS` moved to a plain `src/lib/ui-langs.ts`.** Three consumers now need `isUiLang`
+and none can import `i18n.svelte.ts`, which constructs its store at module scope and so
+reads `localStorage` and instantiates `$state` on import: the edge worker, the route
+grammar it shares with the client, and the build scripts. `i18n.svelte.ts` re-exports it,
+so the rule stands — use `isUiLang`/`UI_LANGS`, never a literal list.
+
+**Arriving at a prefixed page persists the language**, exactly as the switcher does, and
+the cost is stated rather than hidden: a reader who has chosen English and follows a shared
+`/pt/summa` link has their stored choice changed. The alternative is worse. Every link on
+the page that follows is unprefixed, so honouring the language for one page and dropping it
+would answer the search and then lose the reader on their first click. These addresses are
+entry points, not a parallel site — which is also why the internal link graph needs no
+prefix-awareness at all.
+
+**`dir` is why the edge writes `<html lang>` too.** An Arabic reader landing on
+`/ar/catechismus` would otherwise watch the page flip sides once the app boots.
+`app.html`'s pre-paint block reads the same path segment for the same reason; the edge
+rewrite is the copy that reaches a consumer which never runs it.
+
 **A link to this site is unfurled, not searched, nearly everywhere it is pasted**
 (2026-08-26). The head above is read by search engines; what a chat client, a forum or a
 social post reads is Open Graph, and there was none — so a pasted link rendered as the bare
@@ -1042,7 +1110,7 @@ URL. `app.html` now carries the tags and `static/og.png` the card they point at.
 
 Two of the tags are absent on purpose, and the absences are the decisions. **`og:url` is
 omitted**: its job is to name the canonical address of the thing being unfurled, and with
-one document answering all 5,812 addresses the only value this file could hold is the site
+one document answering all ~6,000 addresses the only value this file could hold is the site
 root — which would retitle and relink every deep-link preview to the home page. Omitted, an
 unfurler falls back to the URL it fetched, which is right by construction. **`og:locale` is
 omitted** for the same shape of reason: the interface language is a stored preference, not
@@ -1100,7 +1168,7 @@ the next one.
 The eight static pages carry no `lastmod` at all, deliberately: they are chrome, whose
 content changes with the app, and the ledger does not fingerprint the app. The **file**
 carries none either, and cannot — a sitemap's own date exists only inside a
-`<sitemapindex>`, and 5,812 URLs against a 50,000 cap do not warrant one. Cloudflare
+`<sitemapindex>`, and ~6,000 URLs against a 50,000 cap do not warrant one. Cloudflare
 serves it with a strong `ETag` and no `Last-Modified`; adding the latter would mean routing
 the file through the Worker that `run_worker_first` deliberately negates, at an invocation
 per fetch.

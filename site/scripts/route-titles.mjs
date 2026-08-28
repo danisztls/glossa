@@ -29,6 +29,8 @@
  */
 
 import { summaPartSlug } from '../src/lib/address.ts';
+import { CHROME_PATHS, parseChromePath } from '../src/lib/route-manifest.ts';
+import { UI_LANGS } from '../src/lib/ui-langs.ts';
 import { summaQuestionLabel } from '../src/lib/summa-titles.ts';
 import { SITE_NAME, headFor } from '../src/lib/shell-head.ts';
 import { displayTitle } from '../src/lib/titles.ts';
@@ -37,6 +39,9 @@ import { SITEMAP_LANGS } from './lastmod.mjs';
 /** Bumped when the shape changes, so a worker isolate holding an older file
  *  can decline it rather than read undefined fields. */
 export const ROUTE_TITLES_VERSION = 1;
+
+/** For the cluster exemption in `assertNamed`. */
+const CHROME_PATH_STRINGS = new Set(/** @type {readonly string[]} */ (CHROME_PATHS));
 
 /**
  * The language a crawler's copy of these names is read from.
@@ -110,6 +115,7 @@ function titledSpans(nodes, lang) {
  * @param {Record<string, any>} input.compendiumIndex lang -> { structure }
  * @param {Record<string, any>} input.summaIndex lang -> { questions }
  * @param {Record<string, any>} input.prayerIndex lang -> { prayers }
+ * @param {Record<string, Record<string, string>>} input.dictionaries lang -> strings
  */
 export function buildRouteTitles({
 	manifests,
@@ -117,10 +123,12 @@ export function buildRouteTitles({
 	cccIndex,
 	compendiumIndex,
 	summaIndex,
-	prayerIndex
+	prayerIndex,
+	dictionaries
 }) {
 	return {
 		version: ROUTE_TITLES_VERSION,
+		chrome: chromeNames(dictionaries),
 		books: bookNames(manifests, bibleIndex),
 		cccSpans: structureSpans(cccIndex),
 		compendiumSpans: structureSpans(compendiumIndex),
@@ -255,11 +263,24 @@ export function assertNamed(paths, manifest, titles) {
 	const byTitle = new Map();
 	for (const pathname of paths) {
 		const head = headFor(pathname, manifest, titles);
-		if (!head || (pathname !== '/' && head.title === SITE_NAME)) {
+		// A chrome page is one member of an `hreflang` cluster whose members
+		// SHARE a title on purpose — they are the same page in fourteen
+		// languages, the one case where two addresses answering to one name is
+		// correct rather than a defect. So distinctness is checked WITHIN a
+		// language and not across the cluster: `/pt`'s seven titles must differ
+		// from each other, and are free to equal `/en`'s. Every reading address
+		// is in one bucket together, where a shared title is what it always was.
+		const chrome = parseChromePath(pathname);
+		const inCluster = chrome || CHROME_PATH_STRINGS.has(pathname);
+		const bucket = inCluster ? `chrome:${chrome ? chrome.lang : 'x-default'}` : 'corpus';
+		// The home page IS the site's name, in every language it is offered in.
+		const isHome = pathname === '/' || (chrome && chrome.path === '/');
+		if (!head || (!isHome && head.title === SITE_NAME)) {
 			unnamed.push(pathname);
 			continue;
 		}
-		byTitle.set(head.title, [...(byTitle.get(head.title) ?? []), pathname]);
+		const key = `${bucket}\u0000${head.title}`;
+		byTitle.set(key, [...(byTitle.get(key) ?? []), pathname]);
 	}
 	if (unnamed.length) {
 		throw new Error(
@@ -277,4 +298,115 @@ export function assertNamed(paths, manifest, titles) {
 					.join('; ')}`
 		);
 	}
+}
+
+/**
+ * The keys each chrome page is named and described by, in `CHROME_PATHS` order.
+ *
+ * READ OUT OF THE DICTIONARIES RATHER THAN WRITTEN HERE, which is the whole
+ * reason this table can exist in fourteen languages at all: every string below
+ * is one a translator has already written for the page itself, so the head a
+ * Portuguese searcher matches on is the same sentence the page shows them. The
+ * alternative — a `meta.description` key per language — is thirteen new
+ * sentences that need thirteen speakers, and CLAUDE.md's Malagasy note is what
+ * happens when that is guessed at instead.
+ *
+ * `/` has no `description` key because it has no tagline: the home page's lede
+ * IS its list of works. So it is composed from the five section names, which
+ * are themselves translated, and which is what a reader searching for any one
+ * of those works would type.
+ */
+/** @type {Record<string, { title: string; description?: string }>} */
+const CHROME_KEYS = {
+	'/': { title: 'home.title' },
+	'/scriptura': { title: 'bible.landing.title', description: 'bible.landing.tagline' },
+	'/catechismus': { title: 'ccc.landing.title', description: 'ccc.landing.tagline' },
+	'/documenta': { title: 'nav.magisterium', description: 'document.library.tagline' },
+	'/summa': { title: 'summa.landing.title', description: 'summa.landing.tagline' },
+	'/preces': { title: 'prayers.landing.title', description: 'prayers.landing.tagline' },
+	'/colophon': { title: 'colophon.title', description: 'colophon.lede' }
+};
+
+/** The works named on the home page, for the one description with no key. */
+const HOME_SECTION_KEYS = [
+	'bible.landing.title',
+	'ccc.landing.title',
+	'summa.landing.title',
+	'nav.magisterium',
+	'prayers.landing.title'
+];
+
+/**
+ * Strip the markup a tagline may carry.
+ *
+ * `ccc.landing.tagline` sets two words in `<strong>` in every language, because
+ * on the page it introduces two works and names them. A `<meta>` content
+ * attribute is text, and a description reading `<strong>The Catechism</strong>`
+ * is what a search result would print.
+ */
+/** @param {unknown} text */
+function plain(text) {
+	return String(text)
+		.replace(/<[^>]*>/g, '')
+		.replace(/\s+/g, ' ')
+		.trim();
+}
+
+/**
+ * lang -> chrome path -> `[title, description]`, for all fourteen.
+ *
+ * NO FALLBACK TO ENGLISH HERE, unlike `t()` at runtime. A cluster whose
+ * Portuguese member is described in English is worse than no cluster: it tells
+ * a search engine the page is Portuguese and then shows it English, which is
+ * the one thing an `hreflang` set is checked for. A missing key is a build
+ * failure instead — `assertNamed` sees it as an unnamed address.
+ *
+ * @param {Record<string, Record<string, string>>} dictionaries lang -> strings
+ */
+function chromeNames(dictionaries) {
+	/** @type {Record<string, Record<string, [string, string]>>} */
+	const chrome = {};
+	for (const lang of UI_LANGS) {
+		const d = dictionaries[lang];
+		if (!d) continue;
+		const site = d['home.title'];
+		/** @type {Record<string, [string, string]>} */
+		const pages = {};
+		for (const path of CHROME_PATHS) {
+			const keys = CHROME_KEYS[path];
+			const name = d[keys.title];
+			if (!name) continue;
+			const description = keys.description
+				? plain(d[keys.description])
+				: HOME_SECTION_KEYS.map((key) => plain(d[key]))
+						.filter(Boolean)
+						.join(' · ');
+			if (!description) continue;
+			// The home page is titled the site's name alone: it is the one page
+			// where "<name> — <site name>" would print the same words twice.
+			pages[path] = [path === '/' ? site : `${name} — ${site}`, description];
+		}
+		chrome[lang] = pages;
+	}
+	return chrome;
+}
+
+/**
+ * Every interface dictionary, keyed by language.
+ *
+ * Dynamic imports because the list is `UI_LANGS` and has changed four times
+ * since 2026-08-24; fourteen static imports would be a fifteenth place to
+ * update. Each module exports one object named for its own tag
+ * (`src/lib/i18n/pt.ts` exports `pt`), and its only import is a type, which
+ * Node's loader erases — so nothing here reaches `i18n.svelte.ts` and its
+ * store.
+ */
+export async function readDictionaries() {
+	/** @type {Record<string, Record<string, string>>} */
+	const dictionaries = {};
+	for (const lang of UI_LANGS) {
+		const module = await import(`../src/lib/i18n/${lang}.ts`);
+		dictionaries[lang] = module[lang];
+	}
+	return dictionaries;
 }

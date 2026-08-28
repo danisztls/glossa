@@ -92,7 +92,8 @@ const HOST_CONFIG_FILES = ['/_headers', '/_redirects'];
 /**
  * Static files that exist for machines which are not this browser.
  *
- * `sitemap.xml` is the whole ~5,800-address citation space as XML — 394 KB
+ * `sitemap.xml` is the whole ~6,000-address citation space as XML — half a
+ * megabyte
  * that no part of the app ever fetches, and precaching it would spend a
  * reader's bandwidth at install on a file written for crawlers. `security.txt`
  * is small but is read the same way: by a researcher over HTTP, never by the

@@ -1,10 +1,10 @@
 /**
  * What one canonical address is called, for a consumer that does not render.
  *
- * `ssr = false` means the build emits one document for all ~5,800 addresses,
+ * `ssr = false` means the build emits one document for all ~6,000 addresses,
  * so everything a non-rendering consumer learns about a page has to come from
  * the edge. Until this module existed it learned the same title and the same
- * sentence 5,804 times — the textbook signature of duplicated content, and the
+ * sentence ~6,000 times — the textbook signature of duplicated content, and the
  * reason a pasted link unfurled as the site's name rather than the chapter's
  * (docs/decisions.md §The site).
  *
@@ -23,7 +23,8 @@
  */
 
 import { parseHref, summaPartFromSlug, type Address } from './address.ts';
-import type { RouteManifest } from './route-manifest.ts';
+import { CHROME_PATHS, parseChromePath, type RouteManifest } from './route-manifest.ts';
+import { isRtl, UI_LANGS, type UiLang } from './ui-langs.ts';
 
 /**
  * The site's name, and the tail of nearly every title.
@@ -68,6 +69,9 @@ export type TitledSpan = [number, number, string];
 
 export interface RouteTitles {
 	version: number;
+	/** lang -> chrome path -> `[title, description]`, from the interface's own
+	 *  dictionaries. See `CHROME_KEYS` in scripts/route-titles.mjs. */
+	chrome: Record<string, Record<string, [string, string]>>;
 	books: Record<string, string>;
 	cccSpans: TitledSpan[];
 	compendiumSpans: TitledSpan[];
@@ -100,6 +104,14 @@ export interface ShellHead {
 	 *  bookmark library, whose contents live in one reader's localStorage, and
 	 *  the 404 route. Both are deliberately absent from `sitemap.xml` too. */
 	noindex: boolean;
+	/** The document's own language, which is the path's where the path names
+	 *  one. `undefined` leaves `app.html`'s `lang="en"` alone — right for a
+	 *  reading address, whose text a crawler is served in English. */
+	lang?: UiLang;
+	/** The whole `hreflang` cluster, `x-default` included, for a page that has
+	 *  one. Empty for a reading address: those are not translated, they are one
+	 *  citation with an edition the reader chooses. */
+	alternates: { hreflang: string; href: string }[];
 	crumbs: Crumb[];
 	/** Where a consumer that does not run JavaScript can go from here. The
 	 *  cross-references between texts are written by script, so without these
@@ -228,6 +240,15 @@ export function headFor(
 	manifest: RouteManifest,
 	titles: RouteTitles
 ): ShellHead | undefined {
+	// A language-prefixed chrome page, and the bare page it is an alternate of,
+	// are the same head in different languages — so they are built together and
+	// differ only in which row of `titles.chrome` they read.
+	const prefixed = parseChromePath(pathname);
+	if (prefixed) return chromeHead(prefixed.path, prefixed.lang as UiLang, titles);
+	if ((CHROME_PATHS as readonly string[]).includes(pathname)) {
+		return chromeHead(pathname, undefined, titles);
+	}
+
 	const fixed = STATIC_HEADS[pathname];
 	if (fixed) {
 		return {
@@ -235,13 +256,63 @@ export function headFor(
 			description: fixed.description,
 			canonical: fixed.uncanonical ? null : pathname,
 			noindex: fixed.noindex ?? false,
-			crumbs: pathname === '/' ? [ROOT] : [ROOT, { name: fixed.title, href: pathname }],
-			links: pathname === '/' ? sectionLinks() : [ROOT]
+			alternates: [],
+			crumbs: [ROOT, { name: fixed.title, href: pathname }],
+			links: [ROOT]
 		};
 	}
 
 	const address = parseHref(pathname);
 	return address && bodyHead(address, pathname, manifest, titles);
+}
+
+/**
+ * One chrome page, in one interface language or in none.
+ *
+ * `lang` undefined is the UNPREFIXED path, and it is not "the English page":
+ * it negotiates (`app.html`'s pre-paint block, then `I18nStore`), which is a
+ * different claim and exactly what `x-default` names. It is described in
+ * English here because that is what a crawler — which does not negotiate —
+ * receives, and the same reason `SITEMAP_LANGS` reads the corpus in English.
+ *
+ * Every member of the cluster declares the whole cluster, itself included.
+ * That is not redundancy: an `hreflang` set is only honoured when the pages in
+ * it agree, and a page omitting its own entry is the commonest way the set is
+ * dropped. Each self-canonicalizes for the same reason — a prefixed page
+ * canonicalizing to the bare path would be asking to be de-indexed, which
+ * would leave the cluster with one member and no purpose.
+ */
+function chromeHead(
+	path: string,
+	lang: UiLang | undefined,
+	titles: RouteTitles
+): ShellHead | undefined {
+	const row = titles.chrome[lang ?? 'en'];
+	const entry = row?.[path];
+	if (!entry) return undefined;
+	const [title, description] = entry;
+	const canonical = lang ? chromeHref(lang, path) : path;
+	return {
+		title,
+		description,
+		canonical,
+		noindex: false,
+		lang,
+		alternates: [
+			...UI_LANGS.filter((tag) => titles.chrome[tag]?.[path]).map((tag) => ({
+				hreflang: tag,
+				href: chromeHref(tag, path)
+			})),
+			{ hreflang: 'x-default', href: path }
+		],
+		crumbs: path === '/' ? [ROOT] : [ROOT, { name: title, href: canonical }],
+		links: path === '/' ? sectionLinks() : [ROOT]
+	};
+}
+
+/** `('pt', '/')` -> `/pt`; `('pt', '/summa')` -> `/pt/summa`. */
+function chromeHref(lang: string, path: string): string {
+	return path === '/' ? `/${lang}` : `/${lang}${path}`;
 }
 
 /** The site's own sections, for the `<noscript>` on the home page: the six
@@ -277,6 +348,7 @@ function bodyHead(
 					: `${book}, chapter ${address.chapter}, in English, Latin and Portuguese, with the Catechism and the documents of the Church that cite it.`,
 				canonical: pathname,
 				noindex: false,
+				alternates: [],
 				crumbs: [ROOT, { name: SCRIPTURE, href: '/scriptura' }, { name, href: pathname }],
 				links: [
 					{ name: SCRIPTURE, href: '/scriptura' },
@@ -295,6 +367,7 @@ function bodyHead(
 				description: `Paragraph ${address.n} of the Catechism of the Catholic Church${where ? `, in “${where}”` : ''} — with its footnotes, its sources, and the Compendium beside it.`,
 				canonical: pathname,
 				noindex: false,
+				alternates: [],
 				crumbs: [
 					ROOT,
 					{ name: CATECHISM, href: '/catechismus' },
@@ -315,6 +388,7 @@ function bodyHead(
 				description: `“${clip(name, 90)}” in the Catechism of the Catholic Church, from paragraph ${address.n}.`,
 				canonical: pathname,
 				noindex: false,
+				alternates: [],
 				crumbs: [ROOT, { name: CATECHISM, href: '/catechismus' }, { name, href: pathname }],
 				links: [{ name: CATECHISM, href: '/catechismus' }]
 			};
@@ -329,6 +403,7 @@ function bodyHead(
 				description: `Question ${address.n} of the Compendium of the Catechism of the Catholic Church${where ? `, in “${clip(where, 70)}”` : ''}, with the paragraphs of the Catechism it condenses.`,
 				canonical: pathname,
 				noindex: false,
+				alternates: [],
 				crumbs: [ROOT, { name: CATECHISM, href: '/catechismus' }, { name: label, href: pathname }],
 				links: [
 					{ name: CATECHISM, href: '/catechismus' },
@@ -345,6 +420,7 @@ function bodyHead(
 				description: `“${clip(name, 90)}” in the Compendium of the Catechism of the Catholic Church, from question ${address.n}.`,
 				canonical: pathname,
 				noindex: false,
+				alternates: [],
 				crumbs: [ROOT, { name: CATECHISM, href: '/catechismus' }, { name, href: pathname }],
 				links: [{ name: CATECHISM, href: '/catechismus' }]
 			};
@@ -360,6 +436,7 @@ function bodyHead(
 				description: `${name}${imprint ? `, ${imprint}` : ''} — the full text, with every citation linked to the Scripture and the documents it names.`,
 				canonical: pathname,
 				noindex: false,
+				alternates: [],
 				crumbs: [ROOT, { name: MAGISTERIUM, href: '/documenta' }, { name, href: pathname }],
 				links: [{ name: MAGISTERIUM, href: '/documenta' }]
 			};
@@ -373,6 +450,7 @@ function bodyHead(
 				description: `${name}, in English, Latin and Portuguese, with its source.`,
 				canonical: pathname,
 				noindex: false,
+				alternates: [],
 				crumbs: [ROOT, { name: PRAYERS, href: '/preces' }, { name, href: pathname }],
 				links: [{ name: PRAYERS, href: '/preces' }]
 			};
@@ -389,6 +467,7 @@ function bodyHead(
 				description: `${SUMMA}, ${part} question ${address.question}${name ? `: ${name}` : ''} — every article, with its objections, its answer and its replies.`,
 				canonical: pathname,
 				noindex: false,
+				alternates: [],
 				crumbs: [ROOT, { name: SUMMA, href: '/summa' }, { name: label, href: pathname }],
 				links: [
 					{ name: SUMMA, href: '/summa' },
@@ -455,7 +534,7 @@ function jsonLd(value: unknown): string {
  *
  * `og:url` IS THE REVERSAL of the omission argued in docs/decisions.md, and
  * the reason it was omitted is the reason it can be written now. It was left
- * out because one document answered all 5,804 addresses, so the only value the
+ * out because one document answered all ~6,000 addresses, so the only value the
  * static file could carry was the site root — which would have retitled and
  * relinked every deep-link preview to the home page. The document is
  * per-address here, so the tag can name the address it is actually about.
@@ -473,6 +552,12 @@ export function headHtml(head: ShellHead, origin: string): string {
 	// `follow`, not `noindex, nofollow`: neither page is worth a result of its
 	// own, and both link into the corpus, which is.
 	if (head.noindex) parts.push('<meta name="robots" content="noindex, follow">');
+	for (const alternate of head.alternates) {
+		parts.push(
+			`<link rel="alternate" hreflang="${escapeHtml(alternate.hreflang)}" ` +
+				`href="${escapeHtml(`${origin}${alternate.href}`)}">`
+		);
+	}
 	parts.push(
 		`<script type="application/ld+json">${jsonLd({
 			'@context': 'https://schema.org',
@@ -494,7 +579,7 @@ export function headHtml(head: ShellHead, origin: string): string {
  * `robots.txt` already states the problem this solves: the site is one SPA
  * shell and every cross-reference between texts is written by script, so the
  * corpus has no link graph at all to a crawler that does not render, and
- * `sitemap.xml` is the only flat statement that these ~5,800 addresses exist.
+ * `sitemap.xml` is the only flat statement that these ~6,000 addresses exist.
  * A sitemap says what exists; it cannot say what is near what.
  *
  * A `<noscript>` and not a hidden `<div>`: content withheld from a rendering
@@ -512,4 +597,21 @@ export function noscriptHtml(head: ShellHead): string {
 		`Every text here is reproduced from its source publisher — see the ` +
 		`<a href="/colophon">colophon</a>.</p><ul>${items}</ul></nav></noscript>`
 	);
+}
+
+/**
+ * The `lang` and `dir` a language-prefixed page's `<html>` should carry.
+ *
+ * `undefined` where the path names no language, which leaves `app.html`'s
+ * `lang="en"` in place — right for a reading address, whose text a crawler is
+ * served in English.
+ *
+ * `dir` MATTERS MORE THAN `lang` HERE and is why this is worth doing at the
+ * edge rather than leaving to hydration: an Arabic reader arriving at
+ * `/ar/catechismus` would otherwise watch the whole page flip sides once the
+ * app boots. `app.html`'s pre-paint block reads the same path for the same
+ * reason; this is the copy that reaches a consumer which never runs it.
+ */
+export function htmlAttrs(head: ShellHead): { lang: string; dir: string } | undefined {
+	return head.lang ? { lang: head.lang, dir: isRtl(head.lang) ? 'rtl' : 'ltr' } : undefined;
 }

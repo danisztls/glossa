@@ -87,7 +87,7 @@ import { hrefFor } from '../src/lib/address.ts';
 import { buildCondensationMap } from '../src/lib/condensation.ts';
 import { PLATE_INTRINSIC_WIDTH, PLATE_WIDTHS } from '../src/lib/plates.ts';
 import { pairDivisions } from '../src/lib/toc-pairing.ts';
-import { assertNamed, buildRouteTitles } from './route-titles.mjs';
+import { assertNamed, buildRouteTitles, readDictionaries } from './route-titles.mjs';
 import { sitemapPaths, sitemapXml } from './sitemap.mjs';
 import {
 	CHANGE_CEILING,
@@ -1823,7 +1823,11 @@ const routeTitles = buildRouteTitles({
 	cccIndex,
 	compendiumIndex,
 	summaIndex,
-	prayerIndex
+	prayerIndex,
+	// The interface's own strings, for the seven chrome pages that take a
+	// language prefix. Read from the dictionaries so the head a searcher
+	// matches on is the sentence the page shows them — see CHROME_KEYS.
+	dictionaries: await readDictionaries()
 });
 // Checked here rather than trusted, on the same terms as `assertCanonical`:
 // nothing a reader can see goes wrong when an address loses its name, because

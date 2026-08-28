@@ -19,9 +19,20 @@ User-agent: *
 Disallow:
 
 # The site is one SPA shell: every address returns the same document, and the
-# cross-reference links between texts are written by JavaScript. So the corpus
-# is not discoverable by following links unless the crawler renders, and the
-# sitemap is the only flat statement of the ~5,800 canonical citations.
-# Generated from the same route manifest the edge worker validates against
-# (site/scripts/sitemap.mjs), so it cannot advertise an address that 404s.
+# cross-reference links between texts are written by JavaScript, so none of
+# them exists for a crawler that does not render. Two things answer that, and
+# they answer different halves of it. The sitemap is the flat statement that
+# these ~6,000 canonical citations exist -- generated from the same route
+# manifest the edge worker validates against (site/scripts/sitemap.mjs), so it
+# cannot advertise an address that 404s. It cannot say what is NEAR what, so
+# since 2026-08-28 the edge also writes a <noscript> into each page carrying
+# its parent index and its neighbouring addresses as real links
+# (site/src/lib/shell-head.ts).
+#
+# A page is served in the interface language its path names -- /pt/catechismus
+# is the Portuguese chrome -- and the unprefixed path negotiates. Every one of
+# those declares the whole cluster in <link rel="alternate" hreflang>, with the
+# unprefixed path as x-default. The READING addresses below them are not
+# translated and take no prefix: /catechismus/330 is the same citation whoever
+# reads it, and which edition renders there is the reader's own preference.
 Sitemap: https://glossacatholica.org/sitemap.xml

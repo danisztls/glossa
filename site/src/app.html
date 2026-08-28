@@ -6,7 +6,7 @@
 		<!-- The shell had NO `<title>` at all until now, which is a stronger
 		     statement than it looks: the head placeholder at the foot of this
 		     `<head>` interpolates to nothing in an SPA build, so every consumer
-		     that does not run JavaScript received an untitled document — 5,812
+		     that does not run JavaScript received an untitled document — ~6,000
 		     of them, identical, one per canonical address. A search result, a
 		     link unfurl or a chat preview then falls back to showing the URL.
 
@@ -50,7 +50,7 @@
 		     build emits no per-route HTML), so every address is served this same
 		     document and a `<svelte:head>` description would not exist until
 		     hydration. This static one describes the library rather than any one
-		     page, because it is the only sentence true of all 5,811 addresses.
+		     page, because it is the only sentence true of all ~6,000 addresses.
 
 		     Rewritten per address at the edge like the `<title>` above, and a
 		     fallback for the same cases. `og:description` is rewritten with it,
@@ -73,7 +73,7 @@
 
 		     Like the `<title>` and the description above, these are STATIC and
 		     library-wide here, because `ssr = false` means one document answers
-		     all 5,811 canonical addresses; `og:title` and `og:description` are
+		     all ~6,000 canonical addresses; `og:title` and `og:description` are
 		     rewritten per address at the edge (src/worker.ts), and these are the
 		     values a consumer sees when that did not happen.
 
@@ -242,6 +242,13 @@
 			// persists the result during hydration; this only keeps the outer
 			// document semantically correct before then.
 			//
+			// THE PATH WINS OVER BOTH. `/pt/catechismus` names its language, so
+			// there is nothing to negotiate and nothing to read out of storage —
+			// see CHROME_PATHS in src/lib/route-manifest.ts, and the layout under
+			// `[uilang=uilang]` which makes the store agree a moment later. No
+			// reading address can collide with this: they all begin with a Latin
+			// word, never a two-letter tag.
+			//
 			// `dir` matters more than `lang` does here, and is why this block is
 			// worth keeping in sync by hand: an Arabic reader whose direction is
 			// only set at hydration watches the whole page flip sides. Keep the
@@ -263,7 +270,8 @@
 					'ru',
 					'ar'
 				];
-				var l = localStorage.getItem('glossa:ui-lang');
+				var seg = location.pathname.split('/')[1];
+				var l = UI.indexOf(seg) !== -1 ? seg : localStorage.getItem('glossa:ui-lang');
 				if (UI.indexOf(l) === -1) {
 					var ls =
 						navigator.languages && navigator.languages.length

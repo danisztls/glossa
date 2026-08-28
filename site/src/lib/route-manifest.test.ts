@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isCanonicalPath, type RouteManifest } from './route-manifest';
+import { parseChromePath, isCanonicalPath, type RouteManifest } from './route-manifest';
 
 const manifest: RouteManifest = {
 	version: 1,
@@ -55,5 +55,37 @@ describe('isCanonicalPath', () => {
 		'/bible/gen/1'
 	])('rejects %s', (path) => {
 		expect(isCanonicalPath(path, manifest)).toBe(false);
+	});
+});
+
+describe('parseChromePath', () => {
+	it('reads an interface language off a chrome path', () => {
+		expect(parseChromePath('/pt/catechismus')).toEqual({ lang: 'pt', path: '/catechismus' });
+		expect(parseChromePath('/ar')).toEqual({ lang: 'ar', path: '/' });
+	});
+
+	/** The bare path is not a language address: it NEGOTIATES, which is a
+	 *  different claim and is what `x-default` names in the cluster. */
+	it('does not read the unprefixed path as a language', () => {
+		expect(parseChromePath('/catechismus')).toBeUndefined();
+		expect(parseChromePath('/')).toBeUndefined();
+	});
+
+	/** A reading address names a citation, the same citation in every language. */
+	it('refuses a reading address under a prefix', () => {
+		expect(parseChromePath('/pt/catechismus/330')).toBeUndefined();
+		expect(parseChromePath('/pt/scriptura/gen/1')).toBeUndefined();
+	});
+
+	/** Both are noindex, so a fourteen-language cluster of them is fourteen
+	 *  times nothing. */
+	it('refuses the two static pages that are nobody’s destination', () => {
+		expect(parseChromePath('/pt/signata')).toBeUndefined();
+		expect(parseChromePath('/pt/404')).toBeUndefined();
+	});
+
+	it('refuses a language the interface does not have', () => {
+		expect(parseChromePath('/xx/summa')).toBeUndefined();
+		expect(parseChromePath('/mg/summa')).toBeUndefined();
 	});
 });

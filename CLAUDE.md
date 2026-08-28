@@ -481,9 +481,53 @@ npm run deploy      # build -> preflight -> wrangler deploy
 ## The edge writes the head, from names and never from text
 
 Added 2026-08-28 (`docs/decisions.md` §The site). `ssr = false` means one document
-answers all 5,811 addresses, so everything a consumer that does not render learns
+answers all ~6,000 addresses, so everything a consumer that does not render learns
 comes from `src/worker.ts`, which now rewrites the shell's `<head>` per address.
 Five things about it will bite before the design will.
+
+**Seven pages take a language prefix and ~5,800 do not, and the line is not
+cosmetic.** `CHROME_PATHS` in `route-manifest.ts` lists them — `/`,
+`/scriptura`, `/catechismus`, `/documenta`, `/summa`, `/preces`, `/colophon` —
+and they are the pages whose every word IS the interface, so the Portuguese one
+is a different page rather than the same page relabelled. A reading address
+names a citation, the same citation in every language, and takes no prefix:
+`/pt/catechismus/330` is a 404 on purpose. Prefixing those would publish
+`/hu/catechismus/330` and `/en/catechismus/330` as `hreflang` alternates of each
+other while serving byte-identical English text through
+`CONTENT_LANG_FALLBACK` — see `docs/decisions.md` §The site.
+
+**A cluster is fifteen URLs, and the unprefixed one is not the English page.**
+Fourteen prefixed plus the bare path, which is `x-default` because it
+NEGOTIATES; `/en/summa` exists separately because pinning English is not the
+same as negotiating and happening to get it. Every member declares the whole
+cluster including itself, and every member self-canonicalizes — a prefixed page
+canonicalizing to the bare path asks to be de-indexed, which leaves a cluster of
+one.
+
+**The chrome heads are read out of the dictionaries, never written.**
+`CHROME_KEYS` in `scripts/route-titles.mjs` names the keys, all of which every
+one of the fourteen dictionaries already carries, so adding a chrome page means
+finding the key a translator has already written rather than commissioning
+fourteen new strings. `chromeNames` deliberately does NOT fall back to English
+the way `t()` does: a cluster whose Portuguese member is described in English is
+the one failure an `hreflang` set is checked for, so a missing key fails the
+sync instead.
+
+**`UI_LANGS` lives in `src/lib/ui-langs.ts`, a plain module.** `i18n.svelte.ts`
+constructs its store at module scope, so importing it reads `localStorage` and
+instantiates `$state` — impossible in the Worker and in Node, and three
+consumers now need `isUiLang` there (the edge, `route-manifest.ts`, the build
+scripts). `i18n.svelte.ts` re-exports everything, so the old rule is unchanged:
+use `isUiLang`/`UI_LANGS`, never a literal list. `src/params/uilang.ts` is the
+SvelteKit matcher over it, and without a matcher `[uilang]` would swallow every
+top-level path.
+
+**Arriving at `/pt/...` persists Portuguese**, exactly as the switcher does
+(`[uilang=uilang]/+layout.ts`). A reader who follows a shared link has their
+stored choice changed, which is the cost; the alternative loses them on the
+first click, because every link on the page is unprefixed. These are entry
+points, not a parallel site — which is why nothing in the app has to build
+prefixed hrefs.
 
 **`static/route-titles.json` may hold NAMES and never TEXT.** It is the second
 generated file the worker reads (`scripts/route-titles.mjs` builds it beside the

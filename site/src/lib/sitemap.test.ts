@@ -30,12 +30,24 @@ describe('sitemapPaths', () => {
 
 	it('covers every address in the manifest exactly once', () => {
 		const paths = sitemapPaths(manifest);
-		// 7 static + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
-		// + 2 compendium + 1 document + 1 prayer + 3 summa. Seven, not eight:
-		// the Compendium has no landing page of its own -- the Catechism's
-		// index presents both works (`CatechismIndex.svelte`).
-		expect(paths).toHaveLength(24);
+		// 105 chrome + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
+		// + 2 compendium + 1 document + 1 prayer + 3 summa.
+		//
+		// The chrome is SEVEN PAGES ONCE PLUS ONCE PER INTERFACE LANGUAGE
+		// (2026-08-28): seven unprefixed, which are the cluster's `x-default`,
+		// and seven under each of the fourteen tags in `UI_LANGS`. Seven and not
+		// eight because the Compendium has no landing page of its own -- the
+		// Catechism's index presents both works (`CatechismIndex.svelte`).
+		expect(paths).toHaveLength(105 + 17);
 		expect(new Set(paths).size).toBe(paths.length);
+	});
+
+	/** A reading address names a citation, which is the same citation in every
+	 *  language, so it is listed once and takes no prefix. */
+	it('prefixes the chrome pages and nothing else', () => {
+		const prefixed = sitemapPaths(manifest).filter((p) => /^\/(pt|ar|la)(\/|$)/.test(p));
+		expect(prefixed).toHaveLength(21);
+		expect(prefixed.filter((p) => p.split('/').length > 3)).toEqual([]);
 	});
 
 	it('lists a book introduction as chapter 0, like any other chapter', () => {
