@@ -228,7 +228,6 @@
 	 * a page.
 	 */
 	.note-popover {
-		visibility: hidden;
 		max-inline-size: min(26rem, calc(100vw - 1rem));
 		max-block-size: min(24rem, 60vh);
 		overflow-y: auto;

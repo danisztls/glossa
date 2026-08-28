@@ -45,7 +45,7 @@
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import { parseHref } from '$lib/address';
 	import { resolveBookmark } from '$lib/bookmarkContent';
-	import { computePanelPosition, trackAnchor } from '$lib/floating';
+	import { AnchoredPanel } from '$lib/floating.svelte';
 	import Icon from './Icon.svelte';
 	import type { Menu } from './menu.svelte';
 
@@ -61,8 +61,14 @@
 
 	let { menu, canonicalHref, navHref }: Props = $props();
 
-	let panelEl: HTMLElement | undefined = $state();
-	let coords: { top: number; left: number } | undefined = $state();
+	// The panel, its placement and the tracking that keeps it with a scrolling
+	// verse number are `AnchoredPanel`, shared with the popover a footnote
+	// marker opens and the card a plate's caption opens. The trigger is not
+	// this component's to bind — it is the unit number in `ReferenceNumber`,
+	// which hands it over through `Menu` — so the anchor is read as a getter.
+	// No id: nothing names this panel, because nothing can invoke it
+	// declaratively (see below).
+	const card = new AnchoredPanel('', () => menu.triggerEl);
 	/** Which copy button was pressed and how it went, so that button alone
 	 *  swaps its glyph. Cleared on a timer; the panel is free to be closed and
 	 *  reopened in the meantime, which discards it with the component. */
@@ -123,50 +129,27 @@
 	// only, and the trigger is deliberately a real `<a href>` (see
 	// `ReferenceNumber.svelte`), so the panel is shown from here instead.
 	//
-	// This reads `panelEl` and nothing else, so it runs once, on mount. The
-	// `:popover-open` guard is there for the day something reactive joins it:
-	// `showPopover()` on an already-open popover throws `InvalidStateError`.
-	$effect(() => {
-		if (panelEl && !panelEl.matches(':popover-open')) panelEl.showPopover();
-	});
+	// This reads `card.panel` and nothing else, so it runs once, on mount —
+	// and again if the binding arrives late. Nothing inside the row resizes
+	// the panel afterwards, so one placement is all it needs: every action is
+	// a fixed square, and the confirmation is a glyph swap rather than a line
+	// of text appearing under the row. That is what the icon-only
+	// confirmation buys, since a panel flipped above its anchor has its top
+	// edge moved by any height change at all.
+	$effect(() => card.show());
 
 	/**
-	 * The one thing native dismissal does NOT do: tell Svelte. Escape, a light
-	 * dismiss, and another popover superseding this one all hide the element
-	 * without touching `menu.open`, which would leave this component mounted
-	 * but invisible and the trigger's `aria-expanded` reading `true` over a
-	 * panel nobody can see. `toggle` is the one event every close path fires.
+	 * Placing the panel, revealing it and mirroring the browser's own state
+	 * are `AnchoredPanel`'s. What is this component's is the consequence: a
+	 * close by any route — Escape, a light dismiss, another popover
+	 * superseding this one — has to reach `menu.open`, or this component
+	 * stays mounted but invisible with the trigger's `aria-expanded` reading
+	 * `true` over a panel nobody can see.
 	 */
 	function onToggle(e: ToggleEvent) {
-		if (e.newState === 'closed') menu.close();
+		card.onToggle(e);
+		if (!card.open) menu.close();
 	}
-
-	function reposition() {
-		if (!panelEl || !menu.triggerEl) return;
-		coords = computePanelPosition(
-			menu.triggerEl.getBoundingClientRect(),
-			panelEl.getBoundingClientRect()
-		);
-	}
-
-	// Measured once the panel is in the DOM — its own size is the input, so
-	// this cannot run before it renders. Nothing inside the row resizes it
-	// afterwards: every action is a fixed square, and the confirmation is a
-	// glyph swap rather than a line of text appearing under the row. That is
-	// what the icon-only confirmation buys, since a panel flipped above its
-	// anchor has its top edge moved by any height change at all. `reposition`
-	// reads both `$state`s, so this tracks them and re-measures if either
-	// arrives late.
-	$effect(() => {
-		reposition();
-	});
-
-	// Unlike `LinkPreview`, which dismisses on scroll because a hover preview
-	// the reader never asked for should not follow them, this panel was opened
-	// deliberately: it tracks instead. The rAF coalescing and the capturing
-	// scroll listener that needs are `trackAnchor`'s, shared with the popover
-	// a footnote marker opens; what stays here is only what to re-measure.
-	$effect(() => trackAnchor(reposition));
 
 	$effect(() => () => clearTimeout(statusTimer));
 </script>
@@ -188,14 +171,11 @@
      (the icon has no text to attach one to — see `Icon.svelte`) and a `title`,
      which is what actually shows the name on hover. -->
 <div
-	bind:this={panelEl}
+	bind:this={card.panel}
 	popover="auto"
 	ontoggle={onToggle}
 	class="floating-panel anchor-menu-panel"
 	data-link-preview="off"
-	style:top={coords ? `${coords.top}px` : '0'}
-	style:left={coords ? `${coords.left}px` : '0'}
-	style:visibility={coords ? 'visible' : 'hidden'}
 >
 	<ul
 		class="anchor-menu-row"
@@ -259,13 +239,14 @@
 
 <style>
 	/*
-	 * Everything about WHERE this panel sits — fixed, the UA `[popover]`
-	 * centring reset, no `z-index` because the top layer decides — is
-	 * `.floating-panel` in app.css, shared with `LinkPreview` and with the
-	 * card a footnote marker opens. The trigger can be a verse number mid-line
-	 * or a paragraph number out in the margin at `-3.25rem`, so only measured
-	 * coordinates (`floating.ts`) can know whether the panel fits; all that is
-	 * left here is the room a row of icon buttons wants.
+	 * Everything about WHERE this panel sits — fixed, hidden until it has been
+	 * measured, the UA `[popover]` centring reset, no `z-index` because the
+	 * top layer decides — is `.floating-panel` in app.css, shared with
+	 * `LinkPreview` and with the card a footnote marker opens. The trigger can
+	 * be a verse number mid-line or a paragraph number out in the margin at
+	 * `-3.25rem`, so only measured coordinates (`floating.ts`) can know
+	 * whether the panel fits; all that is left here is the room a row of icon
+	 * buttons wants.
 	 */
 	.anchor-menu-panel {
 		padding: 0.3rem 0.35rem;

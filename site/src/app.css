@@ -2904,6 +2904,22 @@ input {
 	position: fixed;
 	inset: auto;
 	margin: 0;
+	/*
+	 * HIDDEN UNTIL IT HAS BEEN PLACED, which is the stylesheet's job and not
+	 * the template's. A popover cannot be measured before it is shown — a
+	 * closed one is `display: none` and reads as all zeroes — and `toggle`
+	 * fires AFTER it is shown, so there is one painted frame between the two
+	 * in which the panel sits at its static position, which for a marker
+	 * mid-paragraph is the middle of the sentence. `AnchoredPanel.place()`
+	 * (floating.svelte.ts) measures and reveals it in the same synchronous
+	 * turn, so that frame never exists; this is where it starts.
+	 *
+	 * Every `.floating-panel` on the site is positioned in JS — there is no
+	 * such thing as one CSS alone can place, since the anchors are arbitrary
+	 * points in flowing prose. `LinkPreview` restates it because for that one
+	 * it is also the end state of a transition.
+	 */
+	visibility: hidden;
 	background: var(--color-bg);
 	border: 1px solid var(--color-border);
 	border-radius: 0.5rem;

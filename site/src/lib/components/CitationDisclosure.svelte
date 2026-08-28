@@ -196,10 +196,9 @@
 	}
 
 	/*
-	 * The card. Where it sits — fixed, the UA `[popover]` centring reset, no
-	 * `z-index` because the top layer decides — is `.floating-panel` in
-	 * app.css. Hidden until `place()` has measured it; see there for why that
-	 * has to be the stylesheet's starting point rather than the template's.
+	 * The card. Where it sits — fixed, hidden until `AnchoredPanel` has
+	 * measured it, the UA `[popover]` centring reset, no `z-index` because the
+	 * top layer decides — is `.floating-panel` in app.css.
 	 *
 	 * CHROME SIZE, NOT READING SIZE — a fixed `rem`, the same as `.margin-note`
 	 * and the same as the preview card this borrows its look from. The
@@ -207,7 +206,6 @@
 	 * growing with the words around it. Nothing around it now.
 	 */
 	.citation-popover {
-		visibility: hidden;
 		max-inline-size: min(24rem, calc(100vw - 1rem));
 		padding: 0.5rem 0.7rem;
 		font-size: 0.85rem;
