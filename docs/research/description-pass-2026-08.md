@@ -1724,3 +1724,91 @@ measurement, and three parser changes had already landed this session.
   at raw level, and neither a defect. Compare the wave-13 table.
 - `quemadmodum.pt` opens five of its nine paragraphs with no `<p>` tag at all.
   No text was lost; recorded as a markup oddity, not a defect.
+
+## Wave 16 (24 works)
+
+21 of the 24 new oracles agree with the parse; 286 oracles now compared, 39
+disagreeing, and **no previously-agreeing work regressed**. All three
+disagreements are the same known defect, described below.
+
+### The wave-15 diagnosis of the italic-run defect was wrong, and the correction matters
+
+Wave 15 left this note: `promote_italic_heading_run`'s `body_start =
+numbered[0]` should be the first BODY paragraph rather than the first NUMBERED
+one. Three of this wave's works exercise it — `apostolico-seggio.en` loses
+"Italy Has Come to This", `custodi-di-quella-fede.en` loses "Deplorable
+Conditions in Italy", and `catholicae-ecclesiae.en` (wave 15) loses four — so
+it was measured properly before being taken.
+
+**It is not a slip. The guard is load-bearing, and removing it costs 26 works
+to gain 3.** A patched parser run over every oracle went from 39 disagreeing
+works to 65, and every one of the 26 new disagreements is a salutation promoted
+into the table of contents: 'Venerable Brethren, Health and Apostolic
+Benediction.' in twenty-one of them, 'To the Bishops of Poland.' and its kind in
+five.
+
+The reason is a shape the corpus is full of and the diagnosis had not accounted
+for: **these documents leave their opening section unnumbered.** The printed
+numbering starts at "2.", the parser promotes the preceding unnumbered block to
+§1, and `numbered[0]` is therefore the block that opens §2. Everything in §1 —
+including the addressee line and the apostolic greeting, both italic, both
+furniture — is "before body_start". The guard is what keeps them out.
+
+A shape-matching refinement was tried and rejected with numbers: admit a
+pre-body italic block only when its tag envelope equals the modal envelope of
+the run. It does not discriminate, because on these pages the salutation is
+printed in exactly the markup the headings are (`<font size="3"><i>`). It fixed
+`catholicae-ecclesiae.en` (4 findings to 1) and broke five other works.
+
+What actually separates 'Italy Has Come to This' from 'Venerable Brothers,
+Health and Apostolic Benediction.' is that one is a greeting, and every
+discriminator that works is lexical:
+
+| discriminator | fails on                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| markup shape  | all 26 — same envelope as the run                                                           |
+| ends with `.` | `aeterna-dei.en`, which prints no stop                                                      |
+| contains `,`  | real headings do too — `grande-munus.en`'s 'Cyril and Methodius, Missionaries to the Slavs' |
+
+So the fix is a salutation cue, in at least EN/PT/IT, and it is worth what it
+costs only alongside class 1. **Recorded here so the wave-15 note is not acted
+on as written.**
+
+### Corrections filed
+
+- **A masthead template with the typo baked in, on 30 pages.** 'ARCHBISHOPS,
+  BISHIOPS, AND OTHER LOCAL ORDINARIES' — the standing addressee formula of the
+  Pius XII-era English mirrors. The corpus settles it rather than we do: 30
+  pages print `BISHIOPS` and 4 print `BISHOPS` in the identical boilerplate
+  line, which is one bad copy of a shared template, not thirty typos. The line
+  is reader-visible — it is stored whole in `manifest.header` and rendered as
+  the document masthead. Filed as 30 one-entry corrections, since the layer is
+  per-work.
+- **`christi-nomen.en` lost 16 word spaces to its own reflow**, all inside its
+  four numbered paragraphs: 'the onetrue Church', 'holy ministerswho',
+  'the EasternChurches', 'should moveCatholic men'. Verified literal in the raw
+  HTML — no markup is involved, so this is the source and not the parser. One
+  entry carries a second defect in the same clause ('in these hard rimes' for
+  'times'), the r-for-t substitution this mirror's older texts show elsewhere.
+- Two single misprints in printed headings, both reader-visible in a table of
+  contents: `augustissimae-virginis-mariae.pt` §12 'Auspícios par a difusão'
+  (the page split _para_ after two letters), and `humani-generis.pt` '4 . Erros
+  subseqüentes' against its five siblings' tight '1.'–'6.'.
+
+Blast radius: 69 files across 33 works, 0 network fetches — 33 manifests, two
+`structure.json` (the two heading misprints), one `sections.json`
+(`christi-nomen.en`). Validation summary unchanged; none of the touched works
+failed.
+
+### Clean negatives
+
+- **`dilectissima-nobis.en` signs itself 'PIUS X'** where the document is Pius
+  XI's. A real source misprint, and deliberately not corrected: it sits in the
+  signature block, which the parser drops entirely, so it reaches no reader and
+  no stored field.
+- **The census `§` column is not `before`** for a heading whose own text starts
+  with a numeral: on `evangelii-praecones.pt`'s '1. Progressos' it shows the
+  numeral inside the heading. Read `before` off the raw page.
+- `dum-multa.en` prints two italic sub-headings and loses both — the run
+  threshold is 3, and two headings are not yet a convention. The oracle records
+  what the page prints; the disagreement is correct.
