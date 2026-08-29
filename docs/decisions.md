@@ -433,6 +433,14 @@ block-level; an emphasis tag leaves nothing behind. The substituted space was hi
 source defects behind a code rule, and stripping whitespace afterwards cannot work
 because this corpus prints spaced punctuation on purpose.
 
+**A fixed section count is only a fixed byte count while the alphabet is** (2026-08-29).
+`DOCUMENT_CHUNK_SIZE` was 50 on a measurement over a Latin-script corpus; the day the
+documents landed in ten languages, `caritas-in-veritate.ru` made a 202 KB chunk out of
+the same 50 sections its English edition fits in 108 KB, because Cyrillic and Arabic cost
+two UTF-8 bytes a letter. The stride is 25. Every chunking premise this project has had
+went stale the same way — recorded in a comment, correct when written, never re-measured
+— and the alphabet is the axis none of them had thought to state.
+
 ## Parsing
 
 **What the source states outranks what we infer.** vatican.va's markup carries no
@@ -870,6 +878,35 @@ a plausible-looking guess here freezes a word in capitals wherever it appears.
 `site/descriptions.json` carries `origin: "read" | "translated"` plus a `from` chain, so
 correcting a reading marks every translation of it stale by inspection. A fluent wrong
 summary is indistinguishable on the page from a real one.
+
+**The Magisterium is taken in every language the Holy See publishes it in and this
+parser can read — ten** (2026-08-29). `DEFAULT_LANGS` was English and Portuguese and had
+been read as a scope decision; it was a crawl-budget decision, made when reaching further
+would have meant ~2,400 requests against someone else's server for editions the site had
+no interface in. Both halves of that had since stopped being true. The interface reached
+fourteen languages, and — the part nobody had noticed — the pages were **already here**:
+1,571 of them cached by a `--fetch-only` sweep in August and 740 more (document,
+language) pairs recorded as definitive 404s, so the expansion from 354 editions to 1,237
+cost 369 new requests, every one of them for the two families that sweep never probed.
+The languages are the ones `DIVISIONS` has a division vocabulary for, which is a
+statement about what can be parsed rather than about what is worth having; the Vatican II
+mirror publishes six more (Swahili, Hungarian, Latvian, Czech, Byelorussian, Croatian)
+and they stay uncrawled rather than half-read.
+
+**Latin is a magisterial language and was the largest gap.** 163 Latin encyclicals sat in
+`raw/` unparsed for the want of one table: `CAPUT`/`PARS`/`SECTIO` and the ordinals,
+which was written from the twelve pages that actually print a division label rather than
+from the language. `PARS ALTERA` is the entry that would not have been guessed — Latin
+says "the other of two" where the other eight tables say "second", and reading it as
+anything else numbers Sacrosanctum Concilium 1, 3, 4.
+
+**Most of the Magisterium outside English prints no paragraph numbers, and that is the
+edition rather than a defeat.** 328 of the new editions store their whole text in
+`appendix.json` under the headings the source does print, and so have no citable address
+at all. The provision existed for eight editions and now describes the majority shape.
+What it costs is that the ceiling on a content file stops meaning anything for that kind:
+a file holding several addressable units is one a reader over-pays for, and a file
+holding none is simply the document.
 
 ## The site
 

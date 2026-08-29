@@ -250,6 +250,49 @@ decides _when_ something runs.
   filed only because the sole discriminator is cross-language and the parser
   reads one document at a time. See `pipeline/overrides/README.md`.
 
+## The Magisterium is ten languages, and most of them print no paragraph numbers
+
+Taken in on 2026-08-29 (`docs/decisions.md` §Languages). `vatican_docs.py` had
+fetched English and Portuguese for 272 documents and left `DEFAULT_LANGS` as
+the boundary of the corpus; it now holds **1,237 editions of 305 documents in
+ten languages** — en 264, it 238, la 199, pt 138, es 125, fr 118, de 79,
+pl 42, ar 24, ru 10. Five things about that will bite before the design will.
+
+- **The crawl was already paid for and nobody had noticed.** 1,571 of the
+  pages were under `raw/` before this started, put there by a `--fetch-only`
+  run in August, and another 740 (document, language) pairs were recorded in
+  `pipeline/absent-sources.json` as definitive 404s. The whole ten-language
+  expansion cost **369 new requests**, all of them for the two families the
+  earlier sweep never probed. `--fetch-only` is the reason: it is what lets a
+  crawl be an acquisition rather than a publishing decision, and the value of
+  that only showed up months later.
+- **Apostolic exhortations were fetched and never parsed.** `--exhortations`
+  is opt-in and no recipe passed it, so 33 documents sat in `raw/` with no
+  work directory, no address and nothing anywhere saying they were missing.
+  They are 236 editions now. If a family has a discovery function and a flag,
+  check the rebuild recipe passes the flag.
+- **`lt` is LATIN on the Vatican II mirror, `sw` is SWAHILI, and neither is
+  what the code looks like.** The archive mirror uses its own two-letter codes
+  — `po` Portuguese, `sp` Spanish, `ge` German, `lt` Latin, `lv` Latvian, `be`
+  Byelorussian — and `VATII_LANG_FROM_URL` reads them off **the index's own
+  link text**, which labels every link with the language's English name. Do
+  not guess them; the same `lt` trap is documented for `catechism_lt` above,
+  and guessing `sw` gives you Swedish.
+- **The new editions are mostly UNNUMBERED, which is a property of the
+  editions and not a parse failure.** 328 of them print no paragraph number
+  anywhere — 145 Italian, 134 Latin, 34 French — so their whole text is stored
+  under the headings the source does print, in `appendix.json`, and they have
+  no citable address at all. That is the same shape eight editions already
+  had; it is now the majority shape outside English. Read an empty
+  `sections.json` as an unnumbered edition, not an empty document.
+- **A stray numbered list is what defeats the parse, and there are 15 of
+  them.** An edition that prints no paragraph numbers but does print a
+  numbered list of decrees near the end gets read as a six-section document
+  whose §1 holds everything before the list. The signature is one section
+  holding over half the text; the fifteen are in `site/unpublished.json`, each
+  with its measured percentage, and each is switched off rather than shipped
+  because a reader cannot tell a swallowed document from a short one.
+
 ## The Catechism is eight editions in three page formats
 
 Ingested 2026-08-26 (`docs/decisions.md`, `docs/corpus-schema.md` §Catechism).
