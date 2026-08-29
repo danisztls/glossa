@@ -1662,6 +1662,35 @@ layout. The cell also had to become two — each column's notes are written in t
 edition's language, resolve against that edition's work id, and take their letters from
 that chapter's own run, none of which one shared snippet could carry.
 
+**A reader's aside shows what they are reading, so the Bible's shows chapters** (2026-08-29).
+The reading sidebar listed all 73 books at every Bible address — the only aside in the
+site that answered "what is in the library" where the others answer "what is in the thing
+you are reading", a document's aside being that document's outline. It did not fit
+either: 46 Old Testament books in three columns is 16 rows, the New Testament 9 more, and
+with both headings about 1,060px against the ~950px a 1080p viewport leaves that column,
+so it opened already scrolled on the commonest desktop there is. It now holds the current
+book's chapters, five to a row — half of the ten `MAX_CHAPTER_COLS` asks for, which is as
+much of "chapter numbers are read in tens" as 17rem allows — under one row naming the book,
+which opens the whole canon as a disclosure. The canon is not lost and not duplicated: the
+same `groups()` renders there, each chip still opening its floating chapter panel, and
+`/scriptura` is still the page that IS the full picker. The contents sheet
+(`variant="panel"`) deliberately keeps the flat list: a reader who summoned it asked for
+the list, where a reader on a chapter page asked for the chapter.
+
+**An argument that is only the chapter's own rubrics is not printed** (2026-08-29). Five
+of the six annotated editions write a chapter argument as prose about the chapter —
+Challoner's 1,307, and none of them matching anything else on the page. Matos Soares
+writes his as the chapter's rubrics joined with spaces: of the 1,279 chapters he gives one
+to, **1,131 are exactly the deepest-level headings of that chapter**, so the reader met
+"Principio. Primeiro dia da criação…" above the title and then "Principio." again as a
+rubric an inch below it. `chapterArgument` prints the stored summary unless it collapses
+to precisely those rubrics. The deepest level is what is compared, not every heading: a
+chapter may open with a part and a section title above its first rubric, and comparing
+against all of them recognises 644 of the 1,131. The 148 that do not match keep their
+argument, because they earn it — the Psalms carry a real title over rubrics that say
+something else. It is a display rule and NOT a correction: the source prints this, so the
+corpus keeps it; what changes is whether one screen shows the same words twice.
+
 **A plate opens over the page, and the argument for it is arithmetic rather than taste**
 (2026-08-28). `PLATE_SIZES` draws an engraving at 640 CSS px in the reading column and at
 about 390 on a phone, where `srcset` therefore hands the browser the 800px rendition — so

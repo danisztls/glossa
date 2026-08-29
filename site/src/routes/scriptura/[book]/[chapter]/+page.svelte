@@ -20,6 +20,7 @@
 	// it, and the heading is already doing the work of marking the opening.
 	import AnnotatedText from '$lib/components/AnnotatedText.svelte';
 	import { chapterNoteOffsets } from '$lib/sidenotes.svelte';
+	import { chapterArgument } from '$lib/chapter-argument';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
@@ -255,6 +256,11 @@
 		const to = Number(m[2]);
 		return to > from ? { from, to } : undefined;
 	});
+
+	/** What to print under the chapter number, which is the stored argument
+	    unless it merely reads out the chapter's own rubrics — see
+	    `chapterArgument`. */
+	const argument = $derived(current ? chapterArgument(current.chapter) : undefined);
 
 	/**
 	 * A direct verse link (`#v5`) is a highlight too, but it must be derived
@@ -663,14 +669,19 @@
 				     unlabelled paragraph because that is how the editions print it
 				     — the label exists only for assistive technology, which needs
 				     to be told this is apparatus rather than the chapter's opening
-				     words. In the edition's own language, never the reader's. -->
-				{#if current.chapter.summary}
+				     words. In the edition's own language, never the reader's.
+
+				     Not `current.chapter.summary` directly: Matos Soares writes his
+				     argument as the chapter's own rubrics joined together, so on
+				     1,131 of his 1,279 chapters this paragraph was the next screen
+				     of headings read out in advance. See `chapterArgument`. -->
+				{#if argument}
 					<p
 						class="chapter-argument"
 						lang={current.work.language}
 						aria-label={t('bible.chapterArgument')}
 					>
-						{current.chapter.summary}
+						{argument}
 					</p>
 				{/if}
 			{/if}

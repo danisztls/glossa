@@ -143,6 +143,27 @@
 		{ key: 'nt', books: books.filter((b) => b.order > OT_BOOK_COUNT) }
 	]);
 
+	/**
+	 * The book being read, when there is one — every `'sidebar'` instance has
+	 * one (the reading route always knows its chapter), and the landing route
+	 * has none.
+	 */
+	const currentBook = $derived(currentOsis ? books.find((b) => b.osis === currentOsis) : undefined);
+
+	/**
+	 * Whether the sidebar's book list is expanded, which is a different
+	 * question from `openOsis` and deliberately not folded into it: one is
+	 * "show me the canon", the other "show me this book's chapters".
+	 *
+	 * Closed on arrival, and closed again by a navigation (`afterNavigate`
+	 * below) — a reader who has just picked a book is in it, and leaving the
+	 * other 72 standing over its chapters answers nothing. Outside clicks and
+	 * Escape leave it alone, unlike the chapter panel: it is in flow, it
+	 * covers nothing, and Escape inside the contents sheet already means
+	 * something else (see `onWindowKeydown`).
+	 */
+	let booksOpen = $state(false);
+
 	// NOTHING IS OPEN UNTIL THE READER OPENS IT. This used to seed itself with
 	// `currentOsis`, so arriving at a chapter rendered the ToC with that
 	// book's chapter panel already floating over the page — a popover nobody
@@ -315,7 +336,10 @@
 	// opposite of what they asked for. `afterNavigate` also covers the ways
 	// out that aren't a click at all — Enter on a focused chapter, back and
 	// forward — and fires once on mount, where there is nothing open to close.
-	afterNavigate(closePanel);
+	afterNavigate(() => {
+		closePanel();
+		booksOpen = false;
+	});
 
 	// Out-of-flow panels don't dismiss by themselves the way an in-flow
 	// disclosure did, so this takes the same window-level outside-click and
@@ -463,8 +487,34 @@
 	{/each}
 {/snippet}
 
-{#snippet chapterPanel(book: CanonicalBook)}
+<!-- One book's chapters, wherever they are drawn: inside the floating panel a
+     book chip opens, and in flow in the sidebar for the book being read. Split
+     out when the second host arrived — the two differ in what surrounds the
+     grid and in nothing about the grid itself, and a copy would be two places
+     to remember that chapter 0 is a book's introduction. -->
+{#snippet chapterLinks(book: CanonicalBook)}
 	{@const present = chaptersInEdition(book.osis)}
+	{#each book.chapters as chapterN (chapterN)}
+		{#if present.has(chapterN)}
+			<a
+				href={hrefFor({ kind: 'bible', osis: book.osis, chapter: chapterN })}
+				class:current={book.osis === currentOsis && chapterN === currentChapter}
+				title={chapterN === 0 ? t('bible.introduction') : undefined}
+			>
+				{chapterN}
+			</a>
+		{:else}
+			<span
+				class="unavailable"
+				title={chapterN === 0 ? t('bible.introUnavailable') : t('bible.chapterUnavailable')}
+			>
+				{chapterN}
+			</span>
+		{/if}
+	{/each}
+{/snippet}
+
+{#snippet chapterPanel(book: CanonicalBook)}
 	<div
 		id={`chapters-${variant}-${book.osis}`}
 		class="chapters panel-surface"
@@ -476,30 +526,51 @@
 		data-link-preview="off"
 	>
 		<div class="chapters-nums">
-			{#each book.chapters as chapterN (chapterN)}
-				{#if present.has(chapterN)}
-					<a
-						href={hrefFor({ kind: 'bible', osis: book.osis, chapter: chapterN })}
-						class:current={book.osis === currentOsis && chapterN === currentChapter}
-						title={chapterN === 0 ? t('bible.introduction') : undefined}
-					>
-						{chapterN}
-					</a>
-				{:else}
-					<span
-						class="unavailable"
-						title={chapterN === 0 ? t('bible.introUnavailable') : t('bible.chapterUnavailable')}
-					>
-						{chapterN}
-					</span>
-				{/if}
-			{/each}
+			{@render chapterLinks(book)}
 		</div>
 	</div>
 {/snippet}
 
-{#if variant !== 'grid'}
-	<!-- Always open — see the docblock's "collapsible is ignored" note. -->
+<!-- THE SIDEBAR SHOWS THE BOOK BEING READ, AND THE CANON BEHIND A DISCLOSURE.
+     It showed all 73 books at once until 2026-08-29, which was the one aside
+     in the site that answered "what is in the library" where every other one
+     answers "what is in what you are reading" — a document's aside is that
+     document's outline. It also did not fit: 46 books in three columns is 16
+     rows, plus 9 for the New Testament and two headings, about 1,060px against
+     the ~950px a 1080p viewport leaves this column, so it opened scrolled on
+     the commonest desktop there is.
+
+     The disclosure is what the docblock's "collapsible is ignored" note
+     refused, and the reason it refused is gone with the change: a
+     `<summary>` here is no longer a disclosure wrapping the aside's whole
+     contents, it is one row inside them. It names the current book, so the
+     chapter grid under it needs no heading of its own, and it opens the same
+     `groups()` every other variant renders — including each chip's floating
+     chapter panel, which is why nothing about that machinery changes.
+
+     `'panel'` is deliberately not this. The reading bar's contents sheet is
+     summoned, fills a phone, and is dismissed — a reader opening it has asked
+     for the list, where a reader on the chapter page has asked for the
+     chapter. -->
+{#if variant === 'sidebar' && currentBook}
+	<div class="picker-body sidebar" data-link-preview="off">
+		<details class="book-switch" bind:open={booksOpen}>
+			<summary title={t('bible.pickBook')}>
+				<span class="book-switch-name">{bookName(currentBook)}</span>
+				<span class="book-switch-chevron" aria-hidden="true"></span>
+			</summary>
+			{@render groups()}
+		</details>
+		<div class="chapters-inline" role="group" aria-label={bookName(currentBook)}>
+			<div class="chapters-nums">
+				{@render chapterLinks(currentBook)}
+			</div>
+		</div>
+	</div>
+{:else if variant !== 'grid'}
+	<!-- Always open — see the docblock's "collapsible is ignored" note. This is
+	     `'panel'`, and a `'sidebar'` with no current book, which the reading
+	     route never renders. -->
 	<div
 		class="picker-body"
 		class:sidebar={variant === 'sidebar'}
@@ -551,6 +622,73 @@
 	/* The sidebar copy lives inside `.reading-aside`, already at 0.9rem
 	   (app.css) — no further size change needed here, only the layout
 	   changes below. */
+
+	/*
+	 * THE ROW THAT NAMES THE BOOK AND HOLDS THE CANON BEHIND IT.
+	 *
+	 * Set as the aside's own heading rather than as a control that looks like
+	 * one: it carries the book's name at the weight `.reading-aside`'s
+	 * headings take, and the chevron is the whole of what says it opens. That
+	 * is the opposite call from the book chips, which had their chevrons
+	 * removed as noise — there are 73 of those and one of this, and here the
+	 * marker is the only signal there is.
+	 *
+	 * `list-style: none` plus the `::-webkit-` line is what removes the
+	 * browser's own triangle (a `<summary>` is a list item), the same pair
+	 * `/documenta`'s `.toc-disclosure` uses for the same reason.
+	 */
+	.book-switch > summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		cursor: pointer;
+		list-style: none;
+		padding-block: 0.25rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.book-switch > summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.book-switch-name {
+		font-family: var(--font-sans);
+		font-size: 0.95rem;
+		font-weight: 600;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.book-switch > summary:hover .book-switch-name {
+		color: var(--color-accent);
+	}
+
+	/* A chevron drawn rather than fetched: two borders turned 45°, which
+	   points down closed and up open. The icon set is imported per-icon
+	   (`Icon.svelte`) and this is one shape used once. */
+	.book-switch-chevron {
+		flex: none;
+		inline-size: 0.45rem;
+		block-size: 0.45rem;
+		border-inline-end: 1.5px solid var(--color-text-muted);
+		border-block-end: 1.5px solid var(--color-text-muted);
+		transform: rotate(45deg) translate(-0.1rem, -0.1rem);
+		transition: transform 0.15s ease;
+	}
+
+	.book-switch[open] .book-switch-chevron {
+		transform: rotate(-135deg) translate(-0.15rem, -0.15rem);
+	}
+
+	/* The list under the open disclosure, set off from the row above it. The
+	   testaments' own spacing is `.testament + .testament`, which does not
+	   reach the first one. */
+	.book-switch[open] > .testament:first-of-type {
+		margin-top: 0.75rem;
+	}
 
 	.testament + .testament {
 		margin-top: 1.5rem;
@@ -710,13 +848,36 @@
 	   So the two rules are a pair: the panel resolves a real width against
 	   the viewport, and the grid inside it fills that width. Shared by both
 	   variants — only the POSITIONING properties below differ. */
-	.chapters {
-		/* Mirrors of the chip's minimum box, the grid gap and this panel's own
+	.chapters,
+	.chapters-inline {
+		/* Mirrors of the chip's minimum box, the grid gap and the panel's own
 		   padding, so the width arithmetic cannot drift from the thing it is
 		   sizing. Each is used by exactly one other rule below. */
 		--chapter-chip: 2rem;
 		--chapter-gap: 0.35rem;
 		--chapter-pad: 0.5rem;
+	}
+
+	/*
+	 * THE SIDEBAR'S OWN CHAPTER GRID — the same chips as the panel, in flow,
+	 * for the book being read.
+	 *
+	 * FIVE COLUMNS, WHICH IS HALF A TEN. `MAX_CHAPTER_COLS` asks for ten
+	 * because chapter numbers are read in tens — a row starting at 1, 11, 21
+	 * puts chapter 27 where the eye already expects it — and ten 2rem chips
+	 * want 23.5rem, against this column's 17rem. Five keeps every other row
+	 * starting on a multiple of ten, which is as much of that as the width
+	 * allows; seven, which is what `auto-fit` would give at the panel's chip
+	 * size, starts rows at 1, 8, 15, 22 and gives the eye nothing to count
+	 * with. The larger chip is how the count is set: `auto-fit` fits as many
+	 * as the width takes, so widening the floor is what takes one away.
+	 */
+	.chapters-inline {
+		--chapter-chip: 3rem;
+		margin-top: 0.6rem;
+	}
+
+	.chapters {
 		position: absolute;
 		top: calc(100% + 0.35rem);
 		inset-inline-start: 0;
@@ -819,7 +980,9 @@
 	}
 
 	.chapters a,
-	.chapters .unavailable {
+	.chapters .unavailable,
+	.chapters-inline a,
+	.chapters-inline .unavailable {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -831,12 +994,14 @@
 		font-variant-numeric: tabular-nums;
 	}
 
-	.chapters a.current {
+	.chapters a.current,
+	.chapters-inline a.current {
 		background: var(--color-accent);
 		color: var(--color-accent-contrast);
 	}
 
-	.chapters .unavailable {
+	.chapters .unavailable,
+	.chapters-inline .unavailable {
 		color: var(--color-text-muted);
 		opacity: 0.4;
 		cursor: default;
