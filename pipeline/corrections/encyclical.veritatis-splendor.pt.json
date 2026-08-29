@@ -1,0 +1,15 @@
+[
+  {
+    "id": "veritatis-splendor.pt-cap2-missing-raquo",
+    "locator": {
+      "section": 28,
+      "raw_substring": "DESTE MUNDO (<em>RM</em>"
+    },
+    "field": "raw_text",
+    "from": "DESTE MUNDO (<em>RM</em>",
+    "to": "DESTE MUNDO&raquo; (<em>RM</em>",
+    "reason": "The heading of CAPÍTULO II opens a quotation with « and never closes it. The correct value is not chosen but fixed by the document's own two sibling chapter headings, which close theirs with &raquo; in exactly this position, immediately before the parenthesised locus.",
+    "evidence": "raw/vatican-docs/encyclical__veritatis-splendor__pt.html: '<p align=\"center\"><b>CAP&Iacute;TULO II<br /> &laquo;N&Atilde;O VOS CONFORMEIS COM A MENTALIDADE DESTE MUNDO (<em>RM</em> 12, 2)</b></p>'. Against its siblings in the same file: '&laquo;MESTRE, QUE DEVO FAZER DE BOM...?&raquo; (<em>MT</em> 19, 16)' and '&laquo;PARA N&Atilde;O SE DESVIRTUAR A CRUZ DE CRISTO&raquo; (<em>1 COR</em> 1, 17)'. The French mirror prints the equivalent title closed as well. One occurrence in the page.",
+    "added": "2026-08-29"
+  }
+]
