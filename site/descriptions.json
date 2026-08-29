@@ -2008,6 +2008,198 @@
 				"origin": "read"
 			}
 		},
+		"exhortation.africae-munus.en": {
+			"en": {
+				"text": "Benedict XVI's post-synodal exhortation drawing on the 2009 Synod for Africa, addressed to the Church in Africa as salt of the earth and light of the world. It treats reconciliation, justice and peace across family, culture, governance, creation and interreligious dialogue, then the Church's own members from bishops to laity, and her apostolate in education, health care, media and the sacraments.",
+				"origin": "read"
+			}
+		},
+		"exhortation.catechesi-tradendae.en": {
+			"en": {
+				"text": "John Paul II's 1979 post-synodal exhortation on catechesis, drawing on the Synod of Bishops' 1977 assembly. It presents Christ as catechesis's one Teacher, traces the practice from the apostles and Fathers to the present, grounds its content in the Creed, and addresses the forming of children, youth and adults through homilies, catechisms and media, closing by charging bishops, priests, religious, parents and lay catechists with the task.",
+				"origin": "read"
+			}
+		},
+		"exhortation.christifideles-laici.en": {
+			"en": {
+				"text": "John Paul II's 1988 post-synodal exhortation on the vocation and mission of the lay faithful, structured around the gospel image of the labourers in the vineyard and the vine and its branches. It treats their dignity within the Church as communion, their ministries and associations, their co-responsibility for evangelization and the social order, the variety of vocations by age and state, and their ongoing formation.",
+				"origin": "read"
+			}
+		},
+		"exhortation.christus-vivit.en": {
+			"en": {
+				"text": "Francis's 2019 post-synodal exhortation addressed to young people and to the whole People of God, gathering the fruit of the Synod on Young People. It reads Scripture and Jesus's own youth as speaking directly to them, surveys their situation today — digital culture, migration, abuse — then turns to vocation, friendship with Christ, intergenerational roots, youth ministry and discernment.",
+				"origin": "read"
+			}
+		},
+		"exhortation.dilexi-te.en": {
+			"en": {
+				"text": "Leo XIV's first apostolic exhortation, completing a text Francis left unfinished at his death, on the Church's love for the poor. It traces the biblical ground of God's preferential care for them, gathers the patristic and monastic witnesses, reviews the social doctrine from Rerum Novarum onward, and closes on the Good Samaritan with an appeal to renew almsgiving and confront the structures that produce poverty.",
+				"origin": "read"
+			}
+		},
+		"exhortation.ecclesia-in-africa.en": {
+			"en": {
+				"text": "John Paul II's 1995 post-synodal exhortation on the Special Assembly for Africa of the Synod of Bishops, presenting the Church in Africa as a Family of God called to evangelize the continent. It treats inculturation of the Gospel, the African family, and witness through justice and peace — addressing AIDS, war, refugees, and international debt — closing with the Church's mission to carry that witness beyond Africa's own borders.",
+				"origin": "read"
+			}
+		},
+		"exhortation.ecclesia-in-america.en": {
+			"en": {
+				"text": "John Paul II's 1999 post-synodal exhortation following the Synod for America, calling the whole continent's Church to encounter the living Jesus Christ as the way to conversion, communion and solidarity. Six chapters address globalization, foreign debt, corruption, drugs, urbanization and ecological harm, discrimination against indigenous and Afro-descended peoples, and a new evangelization of culture, families and youth.",
+				"origin": "read"
+			}
+		},
+		"exhortation.ecclesia-in-asia.en": {
+			"en": {
+				"text": "John Paul II's exhortation drawn from the 1998 Special Assembly for Asia of the Synod of Bishops, proclaiming Jesus Christ the one Saviour to a continent of ancient religions. Seven chapters move from Asia's social and religious context through Christ and the Holy Spirit as gifts to Asia, proclamation and inculturation, communion and interreligious dialogue, to the Church's service of the poor and the sick.",
+				"origin": "read"
+			}
+		},
+		"exhortation.ecclesia-in-europa.en": {
+			"en": {
+				"text": "John Paul II's 2003 post-synodal exhortation, issued after the Second Special Assembly for Europe, addressing a continent losing its memory of Christ amid secularization, demographic decline and fear for the future. Reading the Book of Revelation as a message of hope, its six chapters call the Church to proclaim, celebrate and serve that hope through liturgy, ecumenism, marriage and family, and a Europe with Christian roots.",
+				"origin": "read"
+			}
+		},
+		"exhortation.ecclesia-in-medio-oriente.en": {
+			"en": {
+				"text": "Benedict XVI's post-synodal exhortation following the 2010 Special Assembly of the Synod of Bishops for the Middle East, on that region's Church living out communion and witness. It treats ecclesial communion, ecumenism and dialogue with Jews and Muslims amid emigration; then patriarchs, clergy, religious, laity, families and youth; then witness through Scripture, liturgy and catechesis, closing with an appeal to regional authorities for peace.",
+				"origin": "read"
+			}
+		},
+		"exhortation.ecclesia-in-oceania.en": {
+			"en": {
+				"text": "John Paul II's 2001 post-synodal exhortation on the Special Assembly for Oceania, structured around its own theme of walking, telling and living the way of Jesus Christ. Four chapters treat evangelization and inculturation across the Pacific's many peoples, ecumenism and interreligious dialogue, human rights, indigenous peoples and the environment, and sacramental and vocational life, closing with a prayer to Mary, Star of the Sea.",
+				"origin": "read"
+			}
+		},
+		"exhortation.evangelica-testificatio.en": {
+			"en": {
+				"text": "Paul VI's 1971 exhortation to men and women religious on renewing consecrated life in line with Vatican II. It surveys the forms religious life takes, contemplative and apostolic, the three evangelical counsels of chastity, poverty and obedience, and the community's life style and spiritual growth through prayer and liturgy, closing with an appeal for authentic renewal and a prayer to Mary.",
+				"origin": "read"
+			}
+		},
+		"exhortation.evangelii-gaudium.en": {
+			"en": {
+				"text": "Francis's programmatic exhortation launching his pontificate, calling the whole Church to a joy-filled missionary conversion. It diagnoses an “economy of exclusion” and the temptations of spiritual worldliness among pastoral workers, sets out how to prepare a homily and deepen catechesis, argues that evangelization carries an inescapable social dimension toward the poor and the common good, and closes by invoking Mary as Star of the new evangelization.",
+				"origin": "read"
+			}
+		},
+		"exhortation.evangelii-nuntiandi.en": {
+			"en": {
+				"text": "Paul VI's exhortation on evangelization, written after the 1975 Holy Year and the 1974 Synod of Bishops on the same theme. It defines evangelization against reducing it to preaching, catechesis or baptism alone, treats the evangelization of cultures and the witness of life as the Church's primary means, addresses the roles of laity, family and popular piety, and closes entrusting the task to Mary, Star of evangelization.",
+				"origin": "read"
+			}
+		},
+		"exhortation.familiaris-consortio.en": {
+			"en": {
+				"text": "John Paul II's exhortation following the 1980 Synod of Bishops, on the family's vocation in the modern world. It grounds marriage in God's plan of communion with his people, then unfolds the family's fourfold mission — forming a community of persons, serving life, building society and sharing the Church's life — closing with pastoral guidance for mixed marriages, irregular unions and the divorced and remarried.",
+				"origin": "read"
+			}
+		},
+		"exhortation.fummo-chiamati.en": {
+			"en": {
+				"text": "Benedict XV's apostolic exhortation of 28 July 1915, issued on the first anniversary of the outbreak of the First World War, pleading directly with the warring nations and their rulers to end \"this horrible slaughter.\" He appeals to their shared humanity and Christian brotherhood, urging them to settle their grievances through reason and equity rather than continued bloodshed, and promises the Church's prayers for a swift peace.",
+				"origin": "read"
+			}
+		},
+		"exhortation.gaudete-et-exsultate.en": {
+			"en": {
+				"text": "Francis's exhortation on the universal call to holiness, insisting it belongs not to the canonized but to “the saints next door” living ordinary life with love. It diagnoses two heresies that distort it, gnosticism and pelagianism, reads holiness through the Beatitudes and Matthew 25, names five everyday signs of it, and closes on spiritual combat, vigilance and discernment.",
+				"origin": "read"
+			}
+		},
+		"exhortation.gaudete-in-domino.en": {
+			"en": {
+				"text": "Paul VI's 1975 Holy Year exhortation on Christian joy. It traces joy's roots in creation, its announcement in the Old Testament, its fulfilment in the New and in the lives of the saints, and its offer to all regardless of circumstance. One chapter speaks directly to the young about the Church's perpetual renewal; the last frames the Holy Year pilgrimage as a Passover journey toward joy in the Holy Spirit.",
+				"origin": "read"
+			}
+		},
+		"exhortation.ideal-film.en": {
+			"en": {
+				"text": "Two 1955 addresses of Pius XII to representatives of the film industry, Italian producers first and then international theatre managers and distributors, on the moral power of cinema. He sketches what an ideal film would be: respectful of the spectator, sound in content — instructional, action and religious films, and the depiction of evil — and mindful of its effect on the family, the State and the Church.",
+				"origin": "read"
+			}
+		},
+		"exhortation.laudate-deum.en": {
+			"en": {
+				"text": "Francis's follow-up to Laudato Si', addressed to all people of good will on the climate crisis eight years on. It reviews the scientific evidence for global warming, criticizes the technocratic paradigm that treats unlimited technological power as good in itself, faults the weakness of multilateral climate diplomacy up to COP28 in Dubai, and closes with the spiritual motivations for caring for creation.",
+				"origin": "read"
+			}
+		},
+		"exhortation.marialis-cultus.en": {
+			"en": {
+				"text": "Paul VI's exhortation on rightly ordering devotion to the Blessed Virgin Mary, in three parts: her place in the renewed Roman liturgy following Vatican II, guidelines — biblical, liturgical, ecumenical and anthropological — for correcting exaggerated or diminished forms of Marian piety, and a defence of the Angelus and, at length, the Rosary as a Gospel-centred contemplative prayer.",
+				"origin": "read"
+			}
+		},
+		"exhortation.pastores-dabo-vobis.en": {
+			"en": {
+				"text": "John Paul II's post-synodal exhortation on the formation of priests, drawn from the 1990 Synod of Bishops. It examines the ministerial priesthood as configuration to Christ the Head and Shepherd, the priest's spiritual life, the discernment and promotion of vocations, and the human, spiritual, intellectual and pastoral formation of seminarians, closing with a programme for ongoing formation throughout a priest's life.",
+				"origin": "read"
+			}
+		},
+		"exhortation.pastores-gregis.en": {
+			"en": {
+				"text": "John Paul II's post-synodal exhortation on the office of Bishop, drawn from the 2001 Synod of Bishops. Seven chapters trace the Bishop as successor of the Apostles: his Trinitarian and collegial ministry, his own spiritual life, his preaching of the word, his sacramental governance, his pastoral leadership of clergy, religious and laity, and his response to justice, migration and the environment.",
+				"origin": "read"
+			}
+		},
+		"exhortation.querida-amazonia.en": {
+			"en": {
+				"text": "Francis's post-synodal reflection on the Amazon, built around four dreams for the region: social, cultural, ecological and ecclesial. He denounces the exploitation of indigenous peoples and the poor by mining and timber interests, calls for evangelization, liturgy and priestly formation inculturated in Amazonian ways, praises the women who have long sustained the faith where no priest reaches, and closes with a prayer to Mary.",
+				"origin": "read"
+			}
+		},
+		"exhortation.reconciliatio-et-paenitentia.en": {
+			"en": {
+				"text": "John Paul II's 1984 post-synodal exhortation on penance and reconciliation, written after the 1983 Synod of Bishops. Opening from the parable of the prodigal son, it treats sin as both personal and social rupture, reconciliation as God's initiative realized through the Church, and closes with pastoral guidance on dialogue, catechesis and the sacrament of penance, including the conditions for general absolution.",
+				"origin": "read"
+			}
+		},
+		"exhortation.redemptionis-donum.en": {
+			"en": {
+				"text": "John Paul II's 1984 exhortation to men and women religious, marking the Jubilee Year of the Redemption, on the meaning of consecration through the evangelical counsels. It reads vocation as Christ's redeeming love calling a person by name, and chastity, poverty and obedience as transforming the lust of the flesh, the lust of the eyes and the pride of life, closing with an appeal to witness placed under Mary's consecration.",
+				"origin": "read"
+			}
+		},
+		"exhortation.redemptoris-custos.en": {
+			"en": {
+				"text": "John Paul II's 1989 exhortation on Saint Joseph's person and mission in the life of Christ and the Church. It reads the Gospel portrait of Joseph as Mary's husband and guardian of the Incarnation through the infancy narratives — the espousal, Bethlehem, the circumcision, the Temple — then presents him as a just man, a model of work as love and of the interior life, and patron of the Church today.",
+				"origin": "read"
+			}
+		},
+		"exhortation.sacramentum-caritatis.en": {
+			"en": {
+				"text": "Benedict XVI's 2007 post-synodal exhortation, gathering the 2005 Synod of Bishops on the Eucharist into a three-part reflection on it as a mystery to be believed, celebrated and lived: its trinitarian and sacrificial roots, its bond with the other sacraments, the ars celebrandi and full participation in the Mass, and its demands for Sunday observance, social justice and priestly and lay eucharistic life.",
+				"origin": "read"
+			}
+		},
+		"exhortation.santateresa-delbambinogesu.en": {
+			"en": {
+				"text": "On Saint Thérèse of Lisieux and her “little way” of confidence, written for the 150th anniversary of her birth. Reading her own writings, Francis traces how she found holiness not through her merit but through trusting abandonment to God's mercy, and proposes her vocation — to be love in the heart of the Church — and her hidden missionary zeal as an answer to a self-absorbed age.",
+				"origin": "read"
+			}
+		},
+		"exhortation.signum-magnum.en": {
+			"en": {
+				"text": "Paul VI's apostolic exhortation on devotion to the Virgin Mary, issued for the feast of Our Lady of Fatima in 1967. Building on the Second Vatican Council's teaching that Mary is Mother of the Church, it sets out eight points urging the faithful to imitate her virtues — prayer, penance, fear of God — and closes by inviting a renewal of the Church's consecration to her Immaculate Heart.",
+				"origin": "read"
+			}
+		},
+		"exhortation.verbum-domini.en": {
+			"en": {
+				"text": "Benedict XVI's post-synodal exhortation on the Word of God, gathering the 2008 Synod of Bishops into three parts: the theology of divine revelation and its interpretation in the Church, the word's place in liturgy, catechesis and consecrated life, and the Church's mission to proclaim it to the world through culture, social commitment and interreligious dialogue.",
+				"origin": "read"
+			}
+		},
+		"exhortation.vita-consecrata.en": {
+			"en": {
+				"text": "John Paul II's post-synodal exhortation on the consecrated life, gathering the 1994 Synod's work. Three chapters trace it as confessio Trinitatis, rooted in the Transfiguration, as signum fraternitatis, a sign of communion within the Church, and as servitium caritatis, a mission of service through evangelization, work with the poor, education and dialogue, closing with an appeal on its unbounded generosity.",
+				"origin": "read"
+			}
+		},
 		"vatii.ad-gentes.en": {
 			"en": {
 				"text": "Vatican II's decree on the Church's missionary activity, grounded in the Trinitarian missions of the Son and the Spirit. It treats mission work itself — witness, preaching, and the gathering of a Christian community — then the young particular churches it plants, the calling and training of missionaries, the planning of missionary work, and the cooperation owed by bishops, priests, religious, and laity.",
