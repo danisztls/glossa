@@ -794,9 +794,11 @@
 		</article>
 
 		<!-- Hidden below 80rem (app.css), where `bookList` above stands in for
-	     it inside the reading bar's contents panel. `variant="sidebar"` packs
-	     the books into a denser grid than that panel's chips, since it has a
-	     17rem column rather than a phone's width to put them in; both hang
+	     it inside the reading bar's contents panel. Both variants abbreviate
+	     and tile; `variant="sidebar"` packs the same books tighter, since it
+	     is fitting all 73 into a 17rem column with no scrollbar where the
+	     panel is a scroll box already (BookChapterPicker's `.book-grid.panel`
+	     carries the arithmetic for both); both hang
 	     their open chapter panel off the viewport with `position: fixed`
 	     rather than `'grid'`'s `absolute` (BookChapterPicker's own docblock),
 	     because this sticky column and that panel's body are each their own

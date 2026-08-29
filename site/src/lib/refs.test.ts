@@ -7,7 +7,7 @@ import {
 	refHref,
 	type RefSegment
 } from './refs';
-import { bookAbbrev } from './refs-grammar';
+import { bookAbbrev, hasBookAbbrevs } from './refs-grammar';
 
 const CANON_OT =
 	`gen exod lev num deut josh judg ruth 1sam 2sam 1kgs 2kgs 1chr 2chr ezra neh tob jdt
@@ -1810,5 +1810,31 @@ describe('bookAbbrev', () => {
 
 	it('has no answer for something that is not a book', () => {
 		expect(bookAbbrev('nope', 'en')).toBeUndefined();
+	});
+});
+
+/**
+ * The predicate separates `bookAbbrev`'s two ways of having no answer, which
+ * a caller laying out a list has to tell apart: a missing BOOK is one chip
+ * falling back to its name, a missing TABLE is all 73 of them.
+ */
+describe('hasBookAbbrevs', () => {
+	it('is true for a language with a table, whatever its coverage', () => {
+		for (const lang of ['en', 'la', 'pt', 'it', 'es', 'fr', 'de', 'ar', 'pl', 'ru', 'mg']) {
+			expect(hasBookAbbrevs(lang), lang).toBe(true);
+		}
+		// `it` is one of the incomplete tables, and still has one.
+		expect(bookAbbrev('phlm', 'it')).toBeUndefined();
+		expect(hasBookAbbrevs('it')).toBe(true);
+	});
+
+	it('is false for a language with none, and for no language at all', () => {
+		expect(hasBookAbbrevs('hu')).toBe(false);
+		expect(hasBookAbbrevs('zz')).toBe(false);
+		expect(hasBookAbbrevs(undefined)).toBe(false);
+	});
+
+	it('reads a regional tag as its base language', () => {
+		expect(hasBookAbbrevs('en-GB')).toBe(true);
 	});
 });

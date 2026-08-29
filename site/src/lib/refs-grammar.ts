@@ -2377,6 +2377,22 @@ export function bookAbbrev(osis: string, lang?: string): string | undefined {
 	return abbrevIndexFor(tag).get(osis);
 }
 
+/**
+ * The FIRST of `bookAbbrev`'s two ways of having no answer, asked ahead of
+ * time: does this language abbreviate at all?
+ *
+ * It exists because the two failures want different handling from a caller
+ * laying out a list. A missing book is per-book and the full name fills the
+ * gap unnoticed; a missing TABLE is all 73 at once, which is not a fallback
+ * but a different list — and a layout sized for "Gn" is the wrong shape to
+ * put 73 full names in. `BookChapterPicker` asks this before choosing between
+ * a grid of narrow cells and a wrapped row of chips.
+ */
+export function hasBookAbbrevs(lang?: string): boolean {
+	const tag = lang?.toLowerCase().split('-')[0];
+	return !!tag && !!CONFIGS[tag];
+}
+
 // --------------------------------------------------------------------------
 // Documents named by TITLE rather than by siglum.
 //

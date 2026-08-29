@@ -77,12 +77,17 @@
 	 * for the two `fixed` ones. See `measurePlacement`.
 	 *
 	 * What separates `'panel'` from `'sidebar'` is only the BOOK list, not
-	 * the chapter panel: the sheet is as wide as the phone, so it keeps
-	 * `'grid'`'s wrapped chips with the books' full names, where the sidebar
-	 * has to fit 73 of them into a 17rem column. It does that by printing the
-	 * ABBREVIATION its edition's language uses rather than a name cut off with
-	 * an ellipsis — see `chipLabel`. The full name is still on the chip's
-	 * `title` and is the panel's own heading, so nothing is only abbreviated.
+	 * the chapter panel, and since 2026-08-29 it separates them by DENSITY
+	 * rather than by kind. Both print the ABBREVIATION their edition's
+	 * language uses and tile it into even cells — see `chipLabel` and
+	 * `abbreviated` — because both are controls a reader opened on the way
+	 * somewhere. The sidebar is the tighter of the two only because it is
+	 * fitting 73 books into a 17rem column with no scrollbar, which the sheet
+	 * does not have to do; `.book-grid.panel` is where that arithmetic is.
+	 * `'grid'` is the one that keeps the full names.
+	 *
+	 * The full name is still on the chip's `title` and is the chapter panel's
+	 * own heading, so nothing is only ever abbreviated.
 	 *
 	 * `collapsible` is ignored by both of those: each is already inside
 	 * something a reader opened — a persistent nav column, or a sheet summoned
@@ -102,7 +107,7 @@
 		listCanonicalBooks,
 		type CanonicalBook
 	} from '$lib/corpus';
-	import { bookAbbrev } from '$lib/refs-grammar';
+	import { bookAbbrev, hasBookAbbrevs } from '$lib/refs-grammar';
 	import { BOOK_GROUPS, type BookGroupKey } from '$lib/bible-groups';
 	import { t } from '$lib/i18n.svelte';
 	import { hrefFor } from '$lib/address';
@@ -170,6 +175,29 @@
 	 * being used.
 	 */
 	const grouped = $derived(variant === 'grid');
+
+	/**
+	 * WHICH VARIANTS PRINT ABBREVIATIONS: the two that are controls, not the
+	 * one that is an index. See `chipLabel` for what the label becomes and
+	 * `.book-grid.panel` for what the layout becomes with it.
+	 *
+	 * `'grid'` keeps the names because a reader is READING that list —
+	 * `/scriptura` and the home page are where someone looks up what the
+	 * corpus contains, and a table of contents that answers "Ct" has not
+	 * answered. The sidebar and the sheet are both something a reader opened
+	 * knowing where they are going, where the shorter label is the faster one
+	 * and the panel prints the name on arrival anyway.
+	 *
+	 * FALSE FOR A LANGUAGE WITH NO TABLE, and that is the reason this is a
+	 * flag rather than `variant !== 'grid'`. `bookAbbrev` falls back per book,
+	 * so a Káldi reader (`hu`, no table — `hasBookAbbrevs`) would get 73 full
+	 * names either way; what must not follow them is the narrow-celled grid
+	 * chosen for two-character labels, which would clip every one of them.
+	 * The sidebar's four columns are fixed and clip regardless — 17rem has no
+	 * other answer — but the sheet has the width to keep its wrapped list, so
+	 * it does.
+	 */
+	const abbreviated = $derived(variant !== 'grid' && hasBookAbbrevs(getWork(workId)?.language));
 
 	// Group names come from `t('bible.group.…')`, the same INTERFACE language
 	// as the `Old Testament` / `New Testament` headings they sit under — see
@@ -517,16 +545,21 @@
 	}
 
 	/**
-	 * What goes ON THE CHIP. The full name everywhere except the sidebar,
-	 * which gets the abbreviation this edition's language prints — "Gn",
-	 * "1 Sm", "Ct", "Ap".
+	 * What goes ON THE CHIP: the abbreviation this edition's language prints
+	 * — "Gn", "1 Sm", "Ct", "Ap" — wherever `abbreviated` says so, and the
+	 * full name everywhere else.
 	 *
-	 * ONLY THE SIDEBAR, because only the sidebar cannot afford the name. Its
-	 * cell is about 74px, of which 61 is text — eight or nine characters —
-	 * so "Deuteronômio" and "Cântico dos Cânticos" have been arriving cut in
-	 * half with an ellipsis, which is a worse abbreviation than the one the
-	 * language already has. The grid and the sheet have the room and keep the
-	 * name.
+	 * IT WAS THE SIDEBAR ALONE FOR A DAY, on the argument that only the
+	 * sidebar could not afford the name: its cell is about 74px, of which 61
+	 * is text, so "Deuteronômio" and "Cântico dos Cânticos" arrived cut in
+	 * half with an ellipsis — a worse abbreviation than the one the language
+	 * already has. True, and it named a constraint rather than the reason.
+	 * The contents sheet has more width (a 22rem card, or a phone's full
+	 * bleed) and still does better with the short form: 73 names of wildly
+	 * different lengths wrap into a ragged block about 28 rows tall, and the
+	 * same 73 abbreviations tile into four even columns and 19. A reader
+	 * opens that sheet to go somewhere, and an even grid is what can be
+	 * scanned. `'grid'` is the one that keeps the names — see `abbreviated`.
 	 *
 	 * NOT FROM THE EDITION'S OWN `abbrevs`, which look like the right source
 	 * and are not: they are lowercase MATCHING keys, they usually lead with
@@ -540,7 +573,7 @@
 	 * `aria-labelledby` that heading serves.
 	 */
 	function chipLabel(book: CanonicalBook): string {
-		if (variant !== 'sidebar') return bookName(book);
+		if (!abbreviated) return bookName(book);
 		return bookAbbrev(book.osis, getWork(workId)?.language) ?? bookName(book);
 	}
 
@@ -574,7 +607,11 @@
 />
 
 {#snippet bookList(list: CanonicalBook[])}
-	<ul class="book-grid" class:sidebar={variant === 'sidebar'}>
+	<ul
+		class="book-grid"
+		class:sidebar={variant === 'sidebar'}
+		class:panel={variant === 'panel' && abbreviated}
+	>
 		{#each list as book (book.osis)}
 			{@const isOpen = openOsis === book.osis}
 			<li class="book-item" class:open={isOpen}>
@@ -583,9 +620,10 @@
 					id={`book-btn-${variant}-${book.osis}`}
 					class="book-btn"
 					class:sidebar={variant === 'sidebar'}
+					class:panel={variant === 'panel' && abbreviated}
 					class:current={book.osis === currentOsis}
 					class:open={isOpen}
-					title={variant === 'sidebar' ? bookName(book) : undefined}
+					title={abbreviated || variant === 'sidebar' ? bookName(book) : undefined}
 					aria-current={book.osis === currentOsis ? 'true' : undefined}
 					aria-expanded={isOpen}
 					aria-controls={`chapters-${variant}-${book.osis}`}
@@ -863,6 +901,36 @@
 		gap: 0.2rem;
 	}
 
+	/*
+	 * THE CONTENTS SHEET TILES TOO, AND IS DELIBERATELY NOT AS TIGHT AS THE
+	 * SIDEBAR. Same labels (`abbreviated`), different arithmetic, because the
+	 * two are short of different things.
+	 *
+	 * The sidebar's compression exists to fit 73 books into the roughly 950px
+	 * a 1080p viewport leaves it, WITHOUT A SCROLLBAR — every px of chip and
+	 * gap it gave up bought a row. This panel has no such budget: it is a
+	 * scroll box by construction (`.sheet-body`, and a card capped at
+	 * `min(30rem, 70vh)`), so making its chips smaller would buy nothing and
+	 * cost a touch target. It is the one variant a finger uses.
+	 *
+	 * So the cell is bigger in both directions: 2.4rem tall (43px, against
+	 * the sidebar's 29 and comfortably over the 24 WCAG 2.5.8 asks) and about
+	 * 85px wide in the 22rem card against the sidebar's 74.
+	 *
+	 * `auto-fill` HERE AND A PINNED FOUR THERE, because unlike the 17rem
+	 * aside this renders at two quite different widths — a 22rem card above
+	 * 48rem, a phone's full bleed below it — and the right number of columns
+	 * differs. The 4rem floor is what the labels ask for: the longest first
+	 * form in any table is seven characters ("1 Thess"), which needs about
+	 * 53px of the cell's 70. It resolves to four columns from a 360px phone
+	 * through the card, and five on a wide phone.
+	 */
+	.book-grid.panel {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
+		gap: 0.35rem;
+	}
+
 	/* THE OPEN BOOK SHOWED ITS WHOLE NAME BY GROWING OUT OF ITS CELL until
 	   2026-08-29 — `max-content` with a `100%` floor, capped at
 	   `--aside-width`, and a `:nth-child(4n)` rule to send the last column's
@@ -975,6 +1043,36 @@
 		text-overflow: ellipsis;
 		display: block;
 		text-align: center;
+	}
+
+	/*
+	 * The sheet's chip: centred in a cell it fills, and truncating rather
+	 * than widening the track when the language's table has no form for this
+	 * book and the full name stands in.
+	 *
+	 * IT STAYS A FLEX BOX, unlike `.book-btn.sidebar`'s `display: block`.
+	 * That variant sizes itself from `line-height` because it is fighting for
+	 * whole pixels of column height and wants the box to be exactly the line;
+	 * here `min-height` is a real floor set by the finger rather than by the
+	 * text, so `align-items: center` from `.book-btn` is what should put the
+	 * label in the middle of it — which `display: block` would not do. The
+	 * ellipsis therefore has to go on the span, and with it `min-width: 0`,
+	 * without which a flex item refuses to shrink below its content and the
+	 * whole grid track widens instead of the label clipping.
+	 */
+	.book-btn.panel {
+		width: 100%;
+		justify-content: center;
+		min-height: 2.4rem;
+		padding-inline: 0.35rem;
+		text-align: center;
+	}
+
+	.book-btn.panel > span {
+		min-width: 0;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 
 	.book-btn.current {
