@@ -4,7 +4,11 @@
 # dependencies = []
 # ///
 """Vatican II documents, papal encyclicals, apostolic exhortations, and CDF
-documents -- English and Portuguese, from vatican.va.
+documents, from vatican.va -- in every language the Holy See publishes them in
+that this parser has a division vocabulary for (see `DIVISIONS`): ar, de, en,
+es, fr, it, la, pl, pt, ru. It read English and Portuguese alone until
+2026-08-29; `docs/decisions.md` §Languages has why that stopped being the
+boundary of the corpus.
 
 Generalizes ccc.py's EN-mirror parser (same IntraText-family template, same
 defensive posture toward sloppy/inconsistent HTML) to a much larger and more
@@ -143,7 +147,7 @@ exact shape):
   Apostolic exhortation index (per pontiff): .../content/{pontiff}/en/apost_exhortations.index.html
 
 Usage:
-  uv run pipeline/scrapers/vatican_docs.py phase1 [--lang en|pt|both] [--sample]
+  uv run pipeline/scrapers/vatican_docs.py phase1 [--lang all|both|LANGS] [--sample]
   uv run pipeline/scrapers/vatican_docs.py phase2 [--pontiffs leo-xiii,pius-x,...]
                                                    [--time-budget SECONDS]
                                                    [--limit N]
@@ -2514,6 +2518,43 @@ DIVISIONS: dict[str, Divisions] = {
             "السادس": 6, "السابع": 7, "الثامن": 8, "التاسع": 9, "العاشر": 10,
         },
     ),
+    "la": Divisions(
+        # Read off the 163 Latin pages already under `raw/`, not written from
+        # the language: twelve of them print a division label at all, and
+        # between them they print `CAPUT` (with a Roman numeral and with an
+        # ordinal), `PARS` and `SECTIO`. `ARTICULUS` is listed for symmetry
+        # with the other eight tables and matches nothing in the corpus today.
+        nouns={
+            "part": ("PARS",),
+            "section": ("SECTIO",),
+            "chapter": ("CAPUT",),
+            "article": ("ARTICULUS",),
+        },
+        # Three genders, because the nouns differ: `CAPUT` is neuter (`CAPUT
+        # PRIMUM`) and `PARS` feminine (`PARS PRIMA`). ALTER/ALTERA/ALTERUM
+        # is the one entry that is not a regular ordinal -- Latin says "the
+        # other of two" where the other languages say "second", and
+        # Sacrosanctum Concilium prints `PARS ALTERA` between `PARS PRIMA`
+        # and `PARS TERTIA`, so reading it as anything but 2 would leave that
+        # document numbered 1, 3, 4.
+        ordinals={
+            "PRIMUS": 1, "PRIMA": 1, "PRIMUM": 1,
+            "SECUNDUS": 2, "SECUNDA": 2, "SECUNDUM": 2,
+            "ALTER": 2, "ALTERA": 2, "ALTERUM": 2,
+            "TERTIUS": 3, "TERTIA": 3, "TERTIUM": 3,
+            "QUARTUS": 4, "QUARTA": 4, "QUARTUM": 4,
+            "QUINTUS": 5, "QUINTA": 5, "QUINTUM": 5,
+            "SEXTUS": 6, "SEXTA": 6, "SEXTUM": 6,
+            "SEPTIMUS": 7, "SEPTIMA": 7, "SEPTIMUM": 7,
+            "OCTAVUS": 8, "OCTAVA": 8, "OCTAVUM": 8,
+            "NONUS": 9, "NONA": 9, "NONUM": 9,
+            "DECIMUS": 10, "DECIMA": 10, "DECIMUM": 10,
+        },
+        # No Latin page prints the numeral first, and Latin word order is
+        # free enough that admitting the form would read ordinary prose as a
+        # label -- the same reason English sets this False.
+        numeral_first=False,
+    ),
 }
 
 # fmt: on
@@ -2534,9 +2575,12 @@ _FRONT_BACK_MATTER = frozenset(
     map(
         fold,
         (
-            # en / la
-            "PREFACE", "PROLOGUE", "PROEMIUM", "INTRODUCTION", "CONCLUSION",
+            # en
+            "PREFACE", "PROLOGUE", "INTRODUCTION", "CONCLUSION",
             "EPILOGUE", "APPENDIX", "BLESSING",
+            # la -- each one printed by a page under `raw/`
+            "PROOEMIUM", "PROEMIUM", "INTRODUCTIO", "CONCLUSIO", "EPILOGUS",
+            "BENEDICTIO",
             # pt
             "PREFÁCIO", "PROÉMIO", "PRÓLOGO", "INTRODUÇÃO", "CONCLUSÃO",
             "EPÍLOGO", "APÊNDICE",
@@ -4272,8 +4316,23 @@ VATII_KIND_MAP = {
 }
 
 _VATII_LINK_RE = re.compile(
-    r'href="documents/(vat-ii_(const|decl|decree)_(\d{8})_([a-z-]+)_(en|po)\.html)"'
+    r'href="documents/(vat-ii_(const|decl|decree)_(\d{8})_([a-z-]+)_([a-z]{2})\.html)"'
 )
+
+#: The archive mirror's own two-letter codes, read off the index's own link
+#: TEXT rather than guessed -- it labels every link with the language's
+#: English name, so the file is self-documenting and the guesses it defeats
+#: are real ones. `lt` is LATIN there, not Lithuanian (the same trap
+#: `ccc.py` documents for `catechism_lt`), `sw` is SWAHILI and not Swedish,
+#: `lv` is Latvian, `be` Byelorussian, `cs` Czech. Only the codes this
+#: parser has division labels for are mapped; the rest stay in
+#: `DocRef.lang_urls` under the mirror's own code, recording that the
+#: edition exists without claiming this scraper can read it.
+VATII_LANG_FROM_URL = {
+    "ar": "ar", "en": "en", "fr": "fr", "ge": "de",
+    "it": "it", "lt": "la", "po": "pt", "sp": "es",
+}  # fmt: skip
+VATII_LANG_TO_URL = {v: k for k, v in VATII_LANG_FROM_URL.items()}
 
 
 def discover_vatii(fetcher: Fetcher) -> tuple[list[DocRef], str | None]:
@@ -4467,13 +4526,15 @@ def discover_exhortations(
     return refs, notes
 
 
-#: The languages a phase2 run fetches unless told otherwise. Not "every
-#: language vatican.va publishes": the Holy See puts most encyclicals out in
-#: eight or nine, and crawling all of them for all 339 documents would be
-#: ~2,400 requests at the 2s Crawl-delay this project treats as a commitment,
-#: for editions in languages the site has no interface in. A run that wants
-#: more asks for it (`--langs`), which is how Magnifica Humanitas was taken in
-#: all nine.
+#: The languages a phase2 run fetches unless told otherwise. Deliberately not
+#: the ten the corpus now holds: this is the DEFAULT, and a default that
+#: crawls ten languages makes an unqualified `phase2` an expensive thing to
+#: type. The reason it was two was a crawl budget -- reaching further would
+#: have been ~2,400 requests at the 2s Crawl-delay this project treats as a
+#: commitment -- and that budget has since been spent: the pages are under
+#: `raw/` and the 404s are in `pipeline/absent-sources.json`, so the full run
+#: in the corpus README's rebuild recipe asks vatican.va for nothing at all.
+#: Name the languages there, not here.
 DEFAULT_LANGS = ("en", "pt")
 
 
@@ -6189,14 +6250,15 @@ def cache_name_for(ref: DocRef, lang: str) -> str:
 
 
 def url_lang_key(ref: DocRef, lang: str) -> str:
-    """The corpus/work-id language code is always "pt" (per this task's
-    schema instruction), but the Vatican II archive mirror's own URLs use
-    "po" for Portuguese (confirmed live from the index page: ..._po.html)
-    -- content/{pontiff}/... pages use "pt" directly. DocRef.lang_urls is
-    keyed by whatever the *source* used, so this translates the work-level
-    "pt" into the right dict key per family."""
-    if ref.family == "vatii" and lang == "pt":
-        return "po"
+    """The corpus/work-id language code is the standard tag, but the Vatican
+    II archive mirror's own URLs use its own: `po` for Portuguese, `sp` for
+    Spanish, `ge` for German and `lt` for Latin (see `VATII_LANG_FROM_URL`,
+    which reads them off the index's link text). The modern
+    content/{pontiff}/... pages use the standard tag directly.
+    DocRef.lang_urls is keyed by whatever the *source* used, so this
+    translates the work-level tag into the right dict key per family."""
+    if ref.family == "vatii":
+        return VATII_LANG_TO_URL.get(lang, lang)
     return lang
 
 
@@ -7158,7 +7220,13 @@ def main() -> int:
     p1 = sub.add_parser(
         "phase1", parents=[net, par], help="Vatican II, all 16 documents"
     )
-    p1.add_argument("--lang", choices=["en", "pt", "both"], default="both")
+    p1.add_argument(
+        "--lang",
+        default="both",
+        help="comma-separated language codes, or `both` (en,pt) or `all` "
+        "(every language the mirror publishes that this parser has division "
+        "labels for: " + ",".join(sorted(VATII_LANG_FROM_URL.values())) + ")",
+    )
     p1.add_argument(
         "--only", help="comma-separated slugs, for iterating on one document"
     )
@@ -7236,7 +7304,19 @@ def main() -> int:
 
     if args.cmd == "phase1":
         try:
-            langs = ["en", "pt"] if args.lang == "both" else [args.lang]
+            if args.lang == "both":
+                langs = ["en", "pt"]
+            elif args.lang == "all":
+                langs = sorted(VATII_LANG_FROM_URL.values())
+            else:
+                langs = [x.strip() for x in args.lang.split(",") if x.strip()]
+            unknown = [x for x in langs if x not in DIVISIONS]
+            if unknown:
+                print(
+                    f"ERROR: no division labels for {', '.join(unknown)}; "
+                    f"known: {', '.join(sorted(DIVISIONS))}"
+                )
+                return 1
             only = args.only.split(",") if args.only else None
             results = run_phase1(fetcher, langs, only, jobs=args.jobs)
         finally:

@@ -1,5 +1,12 @@
 [
   {
+    "url": "https://www.vatican.va/content/benedict-xv/ar/apost_exhortations/documents/hf_ben-xv_exh_19150728_fummo-chiamati.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__fummo-chiamati__ar.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/benedict-xv/ar/encyclicals/documents/hf_ben-xv_enc_01111914_ad-beatissimi-apostolorum.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -84,6 +91,13 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/benedict-xv/la/apost_exhortations/documents/hf_ben-xv_exh_19150728_fummo-chiamati.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__fummo-chiamati__la.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/benedict-xv/la/encyclicals/documents/hf_ben-xv_enc_06011921_sacra-propediem.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -95,6 +109,13 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__fausto-appetente-die__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/benedict-xv/pl/apost_exhortations/documents/hf_ben-xv_exh_19150728_fummo-chiamati.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__fummo-chiamati__pl.html",
     "note": ""
   },
   {
@@ -182,6 +203,13 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/benedict-xv/ru/apost_exhortations/documents/hf_ben-xv_exh_19150728_fummo-chiamati.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__fummo-chiamati__ru.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/benedict-xv/ru/encyclicals/documents/hf_ben-xv_enc_01111914_ad-beatissimi-apostolorum.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -266,10 +294,108 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/benedict-xvi/ar/apost_exhortations/documents/hf_ben-xvi_exh_20070222_sacramentum-caritatis.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__sacramentum-caritatis__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/benedict-xvi/ar/apost_exhortations/documents/hf_ben-xvi_exh_20100930_verbum-domini.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__verbum-domini__ar.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/benedict-xvi/ar/encyclicals/documents/hf_ben-xvi_enc_20051225_deus-caritas-est.html",
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__deus-caritas-est__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/benedict-xvi/la/apost_exhortations/documents/hf_ben-xvi_exh_20111119_africae-munus.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__africae-munus__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/benedict-xvi/la/apost_exhortations/documents/hf_ben-xvi_exh_20120914_ecclesia-in-medio-oriente.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-medio-oriente__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/benedict-xvi/ru/apost_exhortations/documents/hf_ben-xvi_exh_20111119_africae-munus.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__africae-munus__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/benedict-xvi/ru/apost_exhortations/documents/hf_ben-xvi_exh_20120914_ecclesia-in-medio-oriente.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-medio-oriente__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/francesco/la/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__evangelii-gaudium__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/francesco/la/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__christus-vivit__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/francesco/la/apost_exhortations/documents/papa-francesco_esortazione-ap_20200202_querida-amazonia.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__querida-amazonia__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/francesco/ru/apost_exhortations/documents/20231004-laudate-deum.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__laudate-deum__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/francesco/ru/apost_exhortations/documents/20231015-santateresa-delbambinogesu.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__santateresa-delbambinogesu__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/francesco/ru/apost_exhortations/documents/papa-francesco_esortazione-ap_20180319_gaudete-et-exsultate.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__gaudete-et-exsultate__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/francesco/ru/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__christus-vivit__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/francesco/ru/apost_exhortations/documents/papa-francesco_esortazione-ap_20200202_querida-amazonia.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__querida-amazonia__ru.html",
     "note": ""
   },
   {
@@ -298,6 +424,104 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "index__encyclicals__john-paul-i__it.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_02121984_reconciliatio-et-paenitentia.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__reconciliatio-et-paenitentia__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_06111999_ecclesia-in-asia.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-asia__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_14091995_ecclesia-in-africa.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-africa__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_15081989_redemptoris-custos.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__redemptoris-custos__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_16101979_catechesi-tradendae.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__catechesi-tradendae__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_19811122_familiaris-consortio.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__familiaris-consortio__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_20011122_ecclesia-in-oceania.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-oceania__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_20030628_ecclesia-in-europa.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-europa__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_20031016_pastores-gregis.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__pastores-gregis__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_22011999_ecclesia-in-america.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-america__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_25031984_redemptionis-donum.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__redemptionis-donum__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_25031992_pastores-dabo-vobis.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__pastores-dabo-vobis__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_25031996_vita-consecrata.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__vita-consecrata__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ar/apost_exhortations/documents/hf_jp-ii_exh_30121988_christifideles-laici.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__christifideles-laici__ar.html",
     "note": ""
   },
   {
@@ -385,10 +609,171 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/john-paul-ii/la/apost_exhortations/documents/hf_jp-ii_exh_06111999_ecclesia-in-asia.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-asia__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/la/apost_exhortations/documents/hf_jp-ii_exh_16101979_catechesi-tradendae.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__catechesi-tradendae__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/la/apost_exhortations/documents/hf_jp-ii_exh_20011122_ecclesia-in-oceania.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-oceania__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/la/apost_exhortations/documents/hf_jp-ii_exh_20030628_ecclesia-in-europa.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-europa__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/la/apost_exhortations/documents/hf_jp-ii_exh_22011999_ecclesia-in-america.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-america__la.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/john-paul-ii/la/encyclicals/documents/hf_jp-ii_enc_25031987_redemptoris-mater.html",
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__redemptoris-mater__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/pl/apost_exhortations/documents/hf_jp-ii_exh_06111999_ecclesia-in-asia.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-asia__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/pl/apost_exhortations/documents/hf_jp-ii_exh_20011122_ecclesia-in-oceania.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-oceania__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/pl/apost_exhortations/documents/hf_jp-ii_exh_20030628_ecclesia-in-europa.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-europa__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/pl/apost_exhortations/documents/hf_jp-ii_exh_22011999_ecclesia-in-america.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-america__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_02121984_reconciliatio-et-paenitentia.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__reconciliatio-et-paenitentia__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_06111999_ecclesia-in-asia.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-asia__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_14091995_ecclesia-in-africa.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-africa__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_15081989_redemptoris-custos.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__redemptoris-custos__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_16101979_catechesi-tradendae.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__catechesi-tradendae__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_19811122_familiaris-consortio.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__familiaris-consortio__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_20011122_ecclesia-in-oceania.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-oceania__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_20030628_ecclesia-in-europa.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-europa__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_20031016_pastores-gregis.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__pastores-gregis__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_22011999_ecclesia-in-america.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ecclesia-in-america__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_25031984_redemptionis-donum.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__redemptionis-donum__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_25031992_pastores-dabo-vobis.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__pastores-dabo-vobis__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_25031996_vita-consecrata.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__vita-consecrata__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/ru/apost_exhortations/documents/hf_jp-ii_exh_30121988_christifideles-laici.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__christifideles-laici__ru.html",
     "note": ""
   },
   {
@@ -1232,6 +1617,20 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/leo-xiii/ar/encyclicals/documents/hf_l-xiii_enc_29061896_satis-cognitum.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "encyclical__satis-cognitum__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/leo-xiii/ar/encyclicals/documents/hf_l-xiii_enc_30041902_quod-votis.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "encyclical__quod-votis__ar.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/leo-xiii/ar/encyclicals/documents/hf_l-xiii_enc_30081884_superiore-anno.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -1453,6 +1852,20 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__quum-diuturnum__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/leo-xiii/la/encyclicals/documents/hf_l-xiii_enc_29061896_satis-cognitum.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "encyclical__satis-cognitum__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/leo-xiii/la/encyclicals/documents/hf_l-xiii_enc_30041902_quod-votis.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "encyclical__quod-votis__la.html",
     "note": ""
   },
   {
@@ -2027,6 +2440,20 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__diuturnum__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/leo-xiii/pl/encyclicals/documents/hf_l-xiii_enc_29061896_satis-cognitum.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "encyclical__satis-cognitum__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/leo-xiii/pl/encyclicals/documents/hf_l-xiii_enc_30041902_quod-votis.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "encyclical__quod-votis__pl.html",
     "note": ""
   },
   {
@@ -2618,6 +3045,20 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/leo-xiii/ru/encyclicals/documents/hf_l-xiii_enc_29061896_satis-cognitum.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "encyclical__satis-cognitum__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/leo-xiii/ru/encyclicals/documents/hf_l-xiii_enc_30041902_quod-votis.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "encyclical__quod-votis__ru.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/leo-xiii/ru/encyclicals/documents/hf_l-xiii_enc_30081884_superiore-anno.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -2636,6 +3077,48 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__magnifica-humanitas__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/leo-xiv/ru/apost_exhortations/documents/20251004-dilexi-te.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__dilexi-te__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/ar/apost_exhortations/documents/hf_p-vi_exh_19670513_signum-magnum.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__signum-magnum__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/ar/apost_exhortations/documents/hf_p-vi_exh_19710629_evangelica-testificatio.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__evangelica-testificatio__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/ar/apost_exhortations/documents/hf_p-vi_exh_19740202_marialis-cultus.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__marialis-cultus__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/ar/apost_exhortations/documents/hf_p-vi_exh_19750509_gaudete-in-domino.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__gaudete-in-domino__ar.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/ar/apost_exhortations/documents/hf_p-vi_exh_19751208_evangelii-nuntiandi.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__evangelii-nuntiandi__ar.html",
     "note": ""
   },
   {
@@ -2688,6 +3171,41 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/paul-vi/pl/apost_exhortations/documents/hf_p-vi_exh_19670513_signum-magnum.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__signum-magnum__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/pl/apost_exhortations/documents/hf_p-vi_exh_19710629_evangelica-testificatio.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__evangelica-testificatio__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/pl/apost_exhortations/documents/hf_p-vi_exh_19740202_marialis-cultus.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__marialis-cultus__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/pl/apost_exhortations/documents/hf_p-vi_exh_19750509_gaudete-in-domino.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__gaudete-in-domino__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/pl/apost_exhortations/documents/hf_p-vi_exh_19751208_evangelii-nuntiandi.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__evangelii-nuntiandi__pl.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/paul-vi/pl/encyclicals/documents/hf_p-vi_enc_03091965_mysterium.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -2734,6 +3252,41 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__mense-maio__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/ru/apost_exhortations/documents/hf_p-vi_exh_19670513_signum-magnum.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__signum-magnum__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/ru/apost_exhortations/documents/hf_p-vi_exh_19710629_evangelica-testificatio.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__evangelica-testificatio__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/ru/apost_exhortations/documents/hf_p-vi_exh_19740202_marialis-cultus.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__marialis-cultus__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/ru/apost_exhortations/documents/hf_p-vi_exh_19750509_gaudete-in-domino.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__gaudete-in-domino__ru.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/paul-vi/ru/apost_exhortations/documents/hf_p-vi_exh_19751208_evangelii-nuntiandi.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__evangelii-nuntiandi__ru.html",
     "note": ""
   },
   {
@@ -4249,6 +4802,13 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/pius-xii/ar/apost_exhortations/documents/hf_p-xii_exh_25101955_ideal-film.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ideal-film__ar.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xii/ar/encyclicals/documents/hf_p-xii_enc_01051946_deiparae-virginis-mariae.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -4536,6 +5096,13 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/pius-xii/de/apost_exhortations/documents/hf_p-xii_exh_25101955_ideal-film.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ideal-film__de.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/pius-xii/de/encyclicals/documents/hf_p-xii_enc_15041949_redemptoris-nostri-cruciatus.html",
     "status": 404,
     "observed": "2026-08-25",
@@ -4561,6 +5128,13 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__redemptoris-nostri-cruciatus__fr.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xii/la/apost_exhortations/documents/hf_p-xii_exh_25101955_ideal-film.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ideal-film__la.html",
     "note": ""
   },
   {
@@ -4638,6 +5212,13 @@
     "status": 404,
     "observed": "2026-08-25",
     "context": "encyclical__divino-afflante-spiritu__la.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xii/pl/apost_exhortations/documents/hf_p-xii_exh_25101955_ideal-film.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ideal-film__pl.html",
     "note": ""
   },
   {
@@ -4933,6 +5514,13 @@
     "observed": "2026-08-23",
     "context": "encyclical__redemptoris-nostri-cruciatus__pt.html",
     "note": "no Portuguese translation published; the English edition of this encyclical exists and is in the corpus"
+  },
+  {
+    "url": "https://www.vatican.va/content/pius-xii/ru/apost_exhortations/documents/hf_p-xii_exh_25101955_ideal-film.html",
+    "status": 404,
+    "observed": "2026-08-29",
+    "context": "exhortation__ideal-film__ru.html",
+    "note": ""
   },
   {
     "url": "https://www.vatican.va/content/pius-xii/ru/encyclicals/documents/hf_p-xii_enc_01051946_deiparae-virginis-mariae.html",
