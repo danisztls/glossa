@@ -1510,8 +1510,20 @@ slack a centred pair left over, which bound at about 142% on a 100rem viewport a
 narrowed the gloss to about 7rem at the maximum; bound to the apparatus lane instead it no
 longer binds anywhere the notes are shown at all — narrowing the gloss on a 100rem
 viewport would take a 58rem reading column against a 56rem ceiling — so the same reader
-at the maximum now gets the full 13rem. It stays a ceiling because the lane can still be
+at the maximum now gets the full width. It stays a ceiling because the lane can still be
 squeezed, which is to say where the margin is not being used anyway.
+
+**And that width is the aside's, so the two margins are mirror images** (2026-08-29). The
+gloss column was 13rem and its gutter 4rem, on the reasoning that a gloss is subordinate
+to the text and reads as apparatus partly BY being a narrower column. It is marked as
+apparatus by three other things at once — the sans face, the smaller size, the muted
+colour — and what the width was doing instead was leaving 4.5rem of a 21.5rem lane empty
+beside an aside that fills its own, which the eye reads as the two sides not lining up.
+Both tokens now name the aside's: the gap is `--aside-gap` and the ceiling
+`--aside-width`, so 4.5 and 17 partition the lane exactly and the clamp binds at precisely
+its ceiling wherever the lane is full. The symmetry is written as that calculation rather
+than as a second copy of 17rem. Clearance is unaffected — 4.5rem clears the 3.25rem the
+unit number hangs in by more than the 4 it replaces.
 
 **The margin sets a gloss open until it stops being a gloss, and then it sets a preview**
 (2026-08-28). `.margin-note` was calibrated on the apparatus the site had: Challoner's
@@ -1519,18 +1531,22 @@ notes are 126 characters at the median and 343 at the ninetieth percentile, a ci
 source 26. The continental annotated editions print something else — Straubinger 248/814,
 Martini 361/1,051, single notes at 4,830 and 10,243 — and per chapter their apparatus
 comes to as many characters as the Scripture beside it (1.03 and 1.90 times the verse
-text at the median, 46 in the Song of Songs). The gloss column sets about 33 characters a
-line against the reading measure's 62.4, so parity of characters is already near twice
-the height, and `clear: inline-start` starts each note below wherever the last one ended.
+text at the median, 46 in the Song of Songs). The gloss column sets about 43 characters a
+line against the reading measure's 62.4, so parity of characters is already near half
+again the height, and `clear: inline-start` starts each note below wherever the last one
+ended.
 What that breaks is not the look of the page but the arrangement's premise: by the eighth
 verse the gloss is pages below the line that raises it, and a gloss BESIDE its line is
-the whole of why the margin exists. So a note past 130 characters is clamped to four
+the whole of why the margin exists. So a note past 170 characters is clamped to four
 lines, with "read more" under it — four after twelve and then six, each larger number
 having still run the gutter past the chapter, because a margin holds a remark and a gloss
 the reader must scroll past to reach the next one has stopped being one. A citation's
-source is still set whole (every one of the Catechism's 3,698), with 43% of Challoner's
-notes and 61% of Matos Soares's, against 26% of Straubinger's and 9% of Martini's — which
-is the asymmetry the clamp is for. The control sits tight under its own gloss and pushes
+source is still set whole (every one of the Catechism's 3,698), with 59% of Challoner's
+notes and 76% of Matos Soares's, against 35% of Straubinger's and 16% of Martini's —
+which is the asymmetry the clamp is for. The count is the four lines MEASURED and moves
+when they are remeasured: it was 130 against a 13rem column, and widening that column to
+the aside's 17rem without moving it would have printed "read more" under notes the four
+lines now set whole. The control sits tight under its own gloss and pushes
 the next one down, since notes stack in the gutter with nothing but `clear` between them
 and a control set evenly between two of them reads as belonging to the lower.
 

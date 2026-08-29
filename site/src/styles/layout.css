@@ -84,12 +84,9 @@
 	 * INLINE-START, so it does not fight `.reading-aside` for the end margin.
 	 * Held here rather than in the component because the width is a fact about
 	 * this layout, not about a note: it is the apparatus lane, gutter included,
-	 * and the component cannot see it. Narrower than the lane on purpose — a
-	 * gloss is subordinate to the text and reads as apparatus partly BY being
-	 * a narrower column. What that leaves over falls at the
-	 * PAGE-OUTER end of the lane, because the note hangs from the reading
-	 * column's edge: a 13rem gloss in a 21.5rem lane sits beside its text
-	 * rather than out at the edge of the page.
+	 * and the component cannot see it. The lane holds the gap and the note
+	 * exactly, with nothing over — 4.5rem and 17rem of a 21.5rem lane — which
+	 * is the same partition the end side makes of its own, in the other order.
 	 *
 	 * Only ever consumed above `sidenotes.svelte.ts`'s own 100rem query, which
 	 * is where the notes move into the margin at all. Below it they are a
@@ -104,8 +101,17 @@
 	 * setting and under it well before the maximum. The Bible pays 1.5rem of
 	 * displacement it does not need (its verse numbers are inline), which is
 	 * cheaper than a second token for the routes that do.
+	 *
+	 * IT IS `--aside-gap` RATHER THAN A NUMBER OF ITS OWN (2026-08-29), which
+	 * is what makes the two margins mirror images: the gloss column and the
+	 * navigation column are then the same width at the same distance from the
+	 * text, and each sits flush against the outer end of its lane. It was
+	 * 4rem, half a rem short, which put the notes half a rem inside the lane
+	 * the aside fills to the edge of — a difference nobody would name and the
+	 * eye reads as the two sides not lining up. Clearance is unaffected, since
+	 * 4.5 clears the 3.25rem number lane by more than the 4 it replaces.
 	 */
-	--sidenote-gap: 4rem;
+	--sidenote-gap: var(--aside-gap);
 
 	/*
 	 * THE TWO LANES EITHER SIDE OF THE TEXT, each holding its own gutter.
@@ -178,33 +184,53 @@
 	 * itself has, and for the same reason: a rail that does not bind until it
 	 * has to.
 	 *
+	 * THE CEILING IS THE ASIDE'S WIDTH, so the gloss column and the navigation
+	 * column are the same column on opposite sides of the text (2026-08-29).
+	 * With the gap above equal to `--aside-gap` too, the arithmetic closes
+	 * exactly: the lane is 21.5rem, the gap takes 4.5, and what is left is the
+	 * 17rem this caps at. The clamp therefore binds at precisely its ceiling
+	 * wherever the lane is full, which is not a coincidence to be tuned away —
+	 * it is the symmetry, written as a calculation rather than as a second
+	 * copy of 17rem.
+	 *
+	 * IT WAS 13rem, on the reasoning that a gloss is subordinate to the text
+	 * and reads as apparatus partly BY being a narrower column. The apparatus
+	 * is still marked as apparatus by three other things at once — the sans
+	 * face, the smaller size, the muted colour (`.margin-note` in
+	 * reading-chrome.css) — and none of them is the width. What the width was
+	 * doing instead was leaving 4.5rem of the lane empty against an aside that
+	 * fills its own.
+	 *
 	 * WITH THE ROOM BOUND TO THE LANE IT NO LONGER BINDS WHERE A READER CAN
 	 * REACH IT. Narrowing the gloss on a 100rem viewport would take a reading
 	 * column of 58rem against a 56rem ceiling, so the lane is full at every
 	 * setting `prefs.svelte.ts` offers from 100rem upward — and below 100rem
 	 * the notes are a disclosure inside the column and neither token is read.
 	 * It binds only where the lane has been squeezed, which is to say where
-	 * the margin is not being used anyway. Under the old slack arithmetic the
-	 * same reader at the 1.8 maximum got 7.1rem of gloss column; they now get
-	 * the full 13rem, because the end side is no longer holding slack the
-	 * notes could have had.
+	 * the margin is not being used anyway.
 	 *
 	 * The `0px` floor is a guard rather than a design: a negative length is
 	 * invalid, and an invalid `inline-size` falls back to `auto`, which would
 	 * put a full-measure note in the margin — the one failure this whole
 	 * calculation exists to prevent.
 	 */
-	--sidenote-width: clamp(0px, calc(var(--sidenote-room) - var(--sidenote-gap)), 13rem);
+	--sidenote-width: clamp(
+		0px,
+		calc(var(--sidenote-room) - var(--sidenote-gap)),
+		var(--aside-width)
+	);
 
 	/*
 	 * HOW MANY LINES OF A GLOSS THE MARGIN SETS BEFORE IT IS A PREVIEW — the
 	 * clamp `Sidenote.svelte` applies, and the same decision as
 	 * `MARGIN_CLAMP_CHARS` in `sidenotes.svelte.ts` written in the other unit.
-	 * 130 characters is about four lines of this column (13rem of 0.78rem sans
-	 * is near 33 characters a line), and the two numbers have to move
+	 * 170 characters is about four lines of this column (17rem of 0.78rem sans
+	 * is near 43 characters a line), and the two numbers have to move
 	 * together: the count decides whether the note renders a way to its rest,
 	 * the lines decide what the reader sees, and a clamp shorter than the
-	 * count cuts a note off with nothing under it to open.
+	 * count cuts a note off with nothing under it to open. It was 130 against
+	 * a 13rem column, and widening the column without moving it would have put
+	 * a "Read more" under notes the four lines now set whole.
 	 *
 	 * FOUR, AFTER TWELVE AND THEN SIX. A margin holds a remark; a gloss the
 	 * reader has to scroll past to reach the next one has stopped being one,

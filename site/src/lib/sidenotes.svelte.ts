@@ -75,7 +75,7 @@ class SidenoteRoom {
 	 * sized from what the reading columns leave over (`--margin-lane` in
 	 * `layout.css`, overridden for compare in `compare.css`), and two reading
 	 * columns plus the aside leave it very little — about 10rem of lane at
-	 * 100rem, against the 17rem a note wants at full width. A note floated
+	 * 100rem, against the 21.5rem a note wants at full width. A note floated
 	 * there would sit over the text rather than beside it.
 	 *
 	 * A COUNT, AND NOT THE `compare` PREFERENCE. That store says what the
@@ -189,9 +189,9 @@ export const sidenoteRoom = new SidenoteRoom();
  * single notes at 4,830 and 10,243. Per chapter their apparatus comes to as
  * many characters as the Scripture beside it — 1.03 and 1.90 times the verse
  * text at the median, 3.0 and 5.7 at the ninetieth percentile, 46 in the
- * Song of Songs — and the gloss column sets about 33 characters a line
+ * Song of Songs — and the gloss column sets about 43 characters a line
  * against the reading measure's 62.4, so parity of characters is already
- * something near twice the height.
+ * something near half again the height.
  *
  * WHAT THAT BREAKS IS THE ARRANGEMENT'S OWN PREMISE, not merely the look of
  * the page. `.margin-note` floats with `clear: inline-start`, so each note
@@ -200,19 +200,29 @@ export const sidenoteRoom = new SidenoteRoom();
  * its line is the whole of what the margin is for. Clamping is what keeps the
  * column anchored to the text rather than merely shorter.
  *
- * SO THE LONG ONES ARE CLAMPED AND THE READER IS GIVEN A WAY TO THE REST. 130
+ * SO THE LONG ONES ARE CLAMPED AND THE READER IS GIVEN A WAY TO THE REST. 170
  * characters is about four lines of the gloss column, which is
  * `--sidenote-clamp` in `layout.css`: the two numbers are one decision written
  * twice and have to move together. It is deliberately short — a margin holds a
  * remark, and a gloss the reader has to scroll past to reach the next one has
  * stopped being one. At four lines a citation's source is still set whole
- * (every one of the Catechism's 3,698), 43% of Challoner's notes and 61% of
- * Matos Soares's are, and the essayists are cut to an incipit: 26% of
- * Straubinger's notes set open, 9% of Martini's. It has come down twice —
- * twelve lines, then six — each time because the gutter column was still
- * running past the chapter it hangs beside.
+ * (every one of the Catechism's 3,698), 59% of Challoner's notes and 76% of
+ * Matos Soares's are, and the essayists are cut to an incipit: 35% of
+ * Straubinger's notes set open, 16% of Martini's.
+ *
+ * IT MOVED WITH THE COLUMN, NOT ON ITS OWN (2026-08-29, 130 → 170). The four
+ * LINES have not changed and are the decision; the count is only those lines
+ * measured, and the gloss column went from 13rem to the aside's 17rem when
+ * the two margins were made mirror images (`--sidenote-width`). Leaving the
+ * count where it was would have printed "Read more" under notes the four
+ * lines set whole — which is the failure this pair exists to prevent, arriving
+ * from the other side: a clamp shorter than the count cuts a note off with
+ * nothing under it to open, and a count shorter than the clamp offers a rest
+ * that is not there. The line count itself has come down twice — twelve, then
+ * six — each time because the gutter column was still running past the chapter
+ * it hangs beside.
  */
-export const MARGIN_CLAMP_CHARS = 130;
+export const MARGIN_CLAMP_CHARS = 170;
 
 /**
  * Whether a gloss this long is more than the margin will set open.
