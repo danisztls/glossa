@@ -1,0 +1,210 @@
+[
+  {
+    "id": "superiore-anno.en-afrench",
+    "locator": {
+      "section": 3,
+      "raw_substring": "of aFrench"
+    },
+    "field": "raw_text",
+    "from": "of aFrench",
+    "to": "of a French",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...ave confined it, has spread through the crowded shores of aFrench port, and thence to the neighbouring districts of Ital...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-amisfortune",
+    "locator": {
+      "section": 3,
+      "raw_substring": "since amisfortune,"
+    },
+    "field": "raw_text",
+    "from": "since amisfortune,",
+    "to": "since a misfortune,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...most powerful Virgin through the medium of the Rosary, since amisfortune, and not an imaginary one, is threatening-nay, rather i...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-farfrom",
+    "locator": {
+      "section": 3,
+      "raw_substring": "drive farfrom"
+    },
+    "field": "raw_text",
+    "from": "drive farfrom",
+    "to": "drive far from",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '... our prayers, may grant us the help they besought, and drive farfrom us the unclean plague. <f...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-graciouslyhearkening",
+    "locator": {
+      "section": 3,
+      "raw_substring": "she, graciouslyhearkening"
+    },
+    "field": "raw_text",
+    "from": "she, graciouslyhearkening",
+    "to": "she, graciously hearkening",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...spenser of saving, aiding, and protecting gifts - that she, graciouslyhearkening to our prayers, may grant us the help they besought, a...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-intercessionof",
+    "locator": {
+      "section": 3,
+      "raw_substring": "the intercessionof"
+    },
+    "field": "raw_text",
+    "from": "the intercessionof",
+    "to": "the intercession of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '... respect to Italy, it is now most necessary to implore the intercessionof the most powerful Virgin through the medium of the Ros...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-thedispenser",
+    "locator": {
+      "section": 3,
+      "raw_substring": "entitles thedispenser"
+    },
+    "field": "raw_text",
+    "from": "entitles thedispenser",
+    "to": "entitles the dispenser",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...e must fly - to her whom rightly and justly the Church entitles thedispenser of saving, aiding, and protecting gifts - that she, gr...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-usthe",
+    "locator": {
+      "section": 3,
+      "raw_substring": "among us.The"
+    },
+    "field": "raw_text",
+    "from": "among us.The",
+    "to": "among us. The",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...nd not an imaginary one, is threatening-nay, rather is among us.The Asiatic cholera, having, under God's will, crossed the...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-whichnature",
+    "locator": {
+      "section": 3,
+      "raw_substring": "within whichnature"
+    },
+    "field": "raw_text",
+    "from": "within whichnature",
+    "to": "within which nature",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...holera, having, under God's will, crossed the boundary within whichnature seemed to have confined it, has spread through the cro...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-localconfraternity",
+    "locator": {
+      "section": 4,
+      "raw_substring": "the localconfraternity"
+    },
+    "field": "raw_text",
+    "from": "the localconfraternity",
+    "to": "the local confraternity",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...ry Benediction. We desire that, wherever it be lawful, the localconfraternity of the Rosary should make a solemn procession through ...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-receivethe",
+    "locator": {
+      "section": 4,
+      "raw_substring": "will receivethe"
+    },
+    "field": "raw_text",
+    "from": "will receivethe",
+    "to": "will receive the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...e adoration of the faithful; after which those present will receivethe customary Benediction. We desire that, wherever it be ...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-streetsas",
+    "locator": {
+      "section": 4,
+      "raw_substring": "the streetsas"
+    },
+    "field": "raw_text",
+    "from": "the streetsas",
+    "to": "the streets as",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '... of the Rosary should make a solemn procession through the streetsas a public manifestation of religious devotion. </...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-heavenlygraces",
+    "locator": {
+      "section": 6,
+      "raw_substring": "His heavenlygraces,"
+    },
+    "field": "raw_text",
+    "from": "His heavenlygraces,",
+    "to": "His heavenly graces,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...f these efforts, especially if God, by the bestowal of His heavenlygraces, bring an added increase to the fields planted by Us an...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-ofwhich",
+    "locator": {
+      "section": 6,
+      "raw_substring": "piety ofwhich"
+    },
+    "field": "raw_text",
+    "from": "piety ofwhich",
+    "to": "piety of which",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...Apostolic authority with the same fervour of faith and piety ofwhich they gave most ample evidence last year. May our Heave...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-theresult",
+    "locator": {
+      "section": 6,
+      "raw_substring": "be theresult"
+    },
+    "field": "raw_text",
+    "from": "be theresult",
+    "to": "be the result",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...Venerable Brethren, that rich and abundant fruits will be theresult of these efforts, especially if God, by the bestowal o...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-theutterance",
+    "locator": {
+      "section": 6,
+      "raw_substring": "to theutterance"
+    },
+    "field": "raw_text",
+    "from": "to theutterance",
+    "to": "to the utterance",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '... certain that the faithful of Christendom will hearken to theutterance of Our Apostolic authority with the same fervour of fa...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "superiore-anno.en-yourzeal",
+    "locator": {
+      "section": 6,
+      "raw_substring": "by yourzeal."
+    },
+    "field": "raw_text",
+    "from": "by yourzeal.",
+    "to": "by your zeal.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__superiore-anno__en.html: '...added increase to the fields planted by Us and watered by yourzeal. We are certain that the faithful of Christendom will h...'. The rest of the English corpus writes these two words apart; this page prints 16 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

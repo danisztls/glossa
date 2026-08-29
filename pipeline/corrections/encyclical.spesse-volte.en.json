@@ -1,0 +1,1094 @@
+[
+  {
+    "id": "spesse-volte.en-dearchildren",
+    "locator": {
+      "section": 1,
+      "raw_substring": "Most DearChildren,"
+    },
+    "field": "raw_text",
+    "from": "Most DearChildren,",
+    "to": "Most Dear Children,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ergy and People of Italy. Venerable Brethren and Most DearChildren, Hea...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-honestmen",
+    "locator": {
+      "section": 2,
+      "raw_substring": "all honestmen,"
+    },
+    "field": "raw_text",
+    "from": "all honestmen,",
+    "to": "all honest men,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... and unjust rigour has called forth the reprobation of all honestmen, and to Our great sorrow We see that it includes and ma...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-institutionsthis",
+    "locator": {
+      "section": 2,
+      "raw_substring": "Catholic institutions.This"
+    },
+    "field": "raw_text",
+    "from": "Catholic institutions.This",
+    "to": "Catholic institutions. This",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...reed in various districts of the Peninsula, of so many Catholic institutions.This undeserved and unjust rigour has called forth the repr...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-whichfills",
+    "locator": {
+      "section": 2,
+      "raw_substring": "matter whichfills"
+    },
+    "field": "raw_text",
+    "from": "matter whichfills",
+    "to": "matter which fills",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...easant for Us again to have to speak upon so serious a matter whichfills Our soul with profound sadness. We allude to the suppr...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-hadin",
+    "locator": {
+      "section": 3,
+      "raw_substring": "they hadin"
+    },
+    "field": "raw_text",
+    "from": "they hadin",
+    "to": "they had in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...nd the religious end, both moral and charitable, which they hadin view. A ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-christiancharacter",
+    "locator": {
+      "section": 4,
+      "raw_substring": "and Christiancharacter;"
+    },
+    "field": "raw_text",
+    "from": "and Christiancharacter;",
+    "to": "and Christian character;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... to deprive all public institutions of their religious and Christiancharacter; dissident religions were favoured; and whilst the wide...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-effortswere",
+    "locator": {
+      "section": 4,
+      "raw_substring": "Persistent effortswere"
+    },
+    "field": "raw_text",
+    "from": "Persistent effortswere",
+    "to": "Persistent efforts were",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...the sacred ministry was shackled by unjust exceptions. Persistent effortswere made to deprive all public institutions of their relig...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-freedomof",
+    "locator": {
+      "section": 4,
+      "raw_substring": "the freedomof"
+    },
+    "field": "raw_text",
+    "from": "the freedomof",
+    "to": "the freedom of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...aken away; military service was imposed on the clergy; the freedomof the sacred ministry was shackled by unjust exceptions....'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-initaly",
+    "locator": {
+      "section": 4,
+      "raw_substring": "Church inItaly"
+    },
+    "field": "raw_text",
+    "from": "Church inItaly",
+    "to": "Church in Italy",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... downfall of the civil power of the Popes the Catholic Church inItaly was gradually robbed of her elements of life and actio...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-theitalian",
+    "locator": {
+      "section": 4,
+      "raw_substring": "of theItalian"
+    },
+    "field": "raw_text",
+    "from": "of theItalian",
+    "to": "of the Italian",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...on which was ever the glory, the stay and the strength of theItalian people. 5....'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-wasgiven",
+    "locator": {
+      "section": 4,
+      "raw_substring": "liberty wasgiven"
+    },
+    "field": "raw_text",
+    "from": "liberty wasgiven",
+    "to": "liberty was given",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ssident religions were favoured; and whilst the widest liberty wasgiven to the masonic sects, intolerance and odious repressio...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-andennoble",
+    "locator": {
+      "section": 5,
+      "raw_substring": "raise andennoble"
+    },
+    "field": "raw_text",
+    "from": "raise andennoble",
+    "to": "raise and ennoble",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...dation of all well ordered society. Religious feelings raise andennoble the soul and instil into it notions of justice and hon...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-publicpeace",
+    "locator": {
+      "section": 5,
+      "raw_substring": "the publicpeace-evils"
+    },
+    "field": "raw_text",
+    "from": "the publicpeace-evils",
+    "to": "the public peace-evils",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '..., dissension, depravity, strife and the disturbance of the publicpeace-evils which will find no certain or effective remedy in the ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-theprincipal",
+    "locator": {
+      "section": 5,
+      "raw_substring": "and theprincipal"
+    },
+    "field": "raw_text",
+    "from": "and theprincipal",
+    "to": "and the principal",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ion is a source of a nation's prosperity and greatness and theprincipal foundation of all well ordered society. Religious feel...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-andcorruption",
+    "locator": {
+      "section": 7,
+      "raw_substring": "mind andcorruption"
+    },
+    "field": "raw_text",
+    "from": "mind andcorruption",
+    "to": "mind and corruption",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...e maxims which have for their result perversion of the mind andcorruption of the heart. <font size=...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-energyfar",
+    "locator": {
+      "section": 7,
+      "raw_substring": "unabating energy.Far"
+    },
+    "field": "raw_text",
+    "from": "unabating energy.Far",
+    "to": "unabating energy. Far",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... mind, and the war against religion was continued with unabating energy.Far from any measure of redress being undertaken, a persis...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-madein",
+    "locator": {
+      "section": 7,
+      "raw_substring": "was madein"
+    },
+    "field": "raw_text",
+    "from": "was madein",
+    "to": "was made in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...sure of redress being undertaken, a persistent attempt was madein books and the daily papers, in schools and universitie...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-theprinciples",
+    "locator": {
+      "section": 7,
+      "raw_substring": "shatter theprinciples"
+    },
+    "field": "raw_text",
+    "from": "shatter theprinciples",
+    "to": "shatter the principles",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...r broadcast the seeds of irreligion and immorality, to shatter theprinciples which give birth in a people to morality and uprightne...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-thepublic",
+    "locator": {
+      "section": 7,
+      "raw_substring": "blind thepublic"
+    },
+    "field": "raw_text",
+    "from": "blind thepublic",
+    "to": "blind the public",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... not listened to. Paltry sectarian prejudice seemed to blind thepublic mind, and the war against religion was continued with ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-tospread",
+    "locator": {
+      "section": 7,
+      "raw_substring": "and tospread"
+    },
+    "field": "raw_text",
+    "from": "and tospread",
+    "to": "and to spread",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ch give birth in a people to morality and uprightness, and tospread the maxims which have for their result perversion of t...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-byevery",
+    "locator": {
+      "section": 8,
+      "raw_substring": "word, byevery"
+    },
+    "field": "raw_text",
+    "from": "word, byevery",
+    "to": "word, by every",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...by confraternities for mutual charity and prayer,-in a word, byevery peaceful and lawful means which was calculated to main...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-hadbecome",
+    "locator": {
+      "section": 8,
+      "raw_substring": "counsellor, hadbecome"
+    },
+    "field": "raw_text",
+    "from": "counsellor, hadbecome",
+    "to": "counsellor, had become",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ious spirit and relieve the misery which, ever an evil counsellor, hadbecome so deep and general through the shameful economic ,con...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-sayto",
+    "locator": {
+      "section": 8,
+      "raw_substring": "and sayto"
+    },
+    "field": "raw_text",
+    "from": "and sayto",
+    "to": "and say to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... thought the moment had come for Us to raise Our voice and sayto Italians: Religion and Society are in danger; it is ti...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-sreligious",
+    "locator": {
+      "section": 8,
+      "raw_substring": "a people'sreligious"
+    },
+    "field": "raw_text",
+    "from": "a people'sreligious",
+    "to": "a people's religious",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...eful and lawful means which was calculated to maintain a people'sreligious spirit and relieve the misery which, ever an evil coun...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-andblessings",
+    "locator": {
+      "section": 9,
+      "raw_substring": "gratitude andblessings"
+    },
+    "field": "raw_text",
+    "from": "gratitude andblessings",
+    "to": "gratitude and blessings",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...other charitable institutions which were welcomed with gratitude andblessings by the people, and which received the praise they so w...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-futurehundreds",
+    "locator": {
+      "section": 9,
+      "raw_substring": "near future.Hundreds"
+    },
+    "field": "raw_text",
+    "from": "near future.Hundreds",
+    "to": "near future. Hundreds",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...wed that we were able to hope for still happier in the near future.Hundreds of associations and committees arose in various parts ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-happyresults",
+    "locator": {
+      "section": 9,
+      "raw_substring": "such happyresults"
+    },
+    "field": "raw_text",
+    "from": "such happyresults",
+    "to": "such happy results",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... the clergy and of the faithful confided to your care, such happyresults followed that we were able to hope for still happier i...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-thesame",
+    "locator": {
+      "section": 9,
+      "raw_substring": "at thesame"
+    },
+    "field": "raw_text",
+    "from": "at thesame",
+    "to": "at the same",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ccording to their custom in the full light of day, and at thesame time kept themselves well within the limits of the law...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-thevisitation",
+    "locator": {
+      "section": 9,
+      "raw_substring": "object thevisitation"
+    },
+    "field": "raw_text",
+    "from": "object thevisitation",
+    "to": "object the visitation",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...on, and catechism classes, whilst others had for their object thevisitation of the sick, the protection of widows and orphans. The...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-throughthose",
+    "locator": {
+      "section": 9,
+      "raw_substring": "and throughthose"
+    },
+    "field": "raw_text",
+    "from": "and throughthose",
+    "to": "and through those",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...il. Through your generous efforts, Venerable Brethren, and throughthose of the clergy and of the faithful confided to your car...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-toconceal",
+    "locator": {
+      "section": 9,
+      "raw_substring": "nothing toconceal,"
+    },
+    "field": "raw_text",
+    "from": "nothing toconceal,",
+    "to": "nothing to conceal,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...his praiseworthy Christian activity, Catholics, having nothing toconceal, worked according to their custom in the full light of ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-whichby",
+    "locator": {
+      "section": 9,
+      "raw_substring": "Italy, whichby"
+    },
+    "field": "raw_text",
+    "from": "Italy, whichby",
+    "to": "Italy, which by",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... associations and committees arose in various parts of Italy, whichby their zeal established rural banks, cheap bakeries, ni...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-andcivil",
+    "locator": {
+      "section": 11,
+      "raw_substring": "riots andcivil"
+    },
+    "field": "raw_text",
+    "from": "riots andcivil",
+    "to": "riots and civil",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...k, however, that in seeking the secret causes of these riots andcivil strifes, those who have the direction of public affair...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-forso",
+    "locator": {
+      "section": 11,
+      "raw_substring": "widely, forso"
+    },
+    "field": "raw_text",
+    "from": "widely, forso",
+    "to": "widely, for so",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...hough natural fruit of the evil seed which had been so widely, forso long and with such impunity, scattered over the Penins...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-materialwell",
+    "locator": {
+      "section": 11,
+      "raw_substring": "the materialwell-being"
+    },
+    "field": "raw_text",
+    "from": "the materialwell-being",
+    "to": "the material well-being",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ples of justice, uprightness, and religion, from which the materialwell-being of a people flows. We thought that, at least, in searc...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-recognizethe",
+    "locator": {
+      "section": 11,
+      "raw_substring": "would recognizethe"
+    },
+    "field": "raw_text",
+    "from": "would recognizethe",
+    "to": "would recognize the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...trifes, those who have the direction of public affairs would recognizethe baneful though natural fruit of the evil seed which ha...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-sminds",
+    "locator": {
+      "section": 11,
+      "raw_substring": "in men'sminds"
+    },
+    "field": "raw_text",
+    "from": "in men'sminds",
+    "to": "in men's minds",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ho hold Catholic teaching in abhorrence and who excite in men'sminds all lawless desires by naturalism and scientific and p...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-socialorganization",
+    "locator": {
+      "section": 11,
+      "raw_substring": "of socialorganization"
+    },
+    "field": "raw_text",
+    "from": "of socialorganization",
+    "to": "of social organization",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...hey would again have recourse to those Christian rules of socialorganization by the aid of which nations, unless they wish to peris...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-theauthors",
+    "locator": {
+      "section": 11,
+      "raw_substring": "for theauthors"
+    },
+    "field": "raw_text",
+    "from": "for theauthors",
+    "to": "for the authors",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... people flows. We thought that, at least, in searching for theauthors and ringleaders of these riots, Ministers would be sur...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-andmore",
+    "locator": {
+      "section": 12,
+      "raw_substring": "astray andmore"
+    },
+    "field": "raw_text",
+    "from": "astray andmore",
+    "to": "astray and more",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ill-concealed pretext, in order to lead public opinion astray andmore easily to accomplish a long premeditated plan, people ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-thedoor",
+    "locator": {
+      "section": 12,
+      "raw_substring": "at thedoor"
+    },
+    "field": "raw_text",
+    "from": "at thedoor",
+    "to": "at the door",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...complish a long premeditated plan, people dared to lay at thedoor of Catholics the stupid charge of disturbing the peace...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-theregulations",
+    "locator": {
+      "section": 15,
+      "raw_substring": "at theregulations"
+    },
+    "field": "raw_text",
+    "from": "at theregulations",
+    "to": "at the regulations",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...measures strike at the foundations of justice and even at theregulations of existing laws. In virtue of these principles and re...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-respectedand",
+    "locator": {
+      "section": 16,
+      "raw_substring": "them respectedand"
+    },
+    "field": "raw_text",
+    "from": "them respectedand",
+    "to": "them respected and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '.... Our protection and your vigilance ought to have made them respectedand placed them above all suspicion. <p align...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-regardedas",
+    "locator": {
+      "section": 18,
+      "raw_substring": "therefore regardedas"
+    },
+    "field": "raw_text",
+    "from": "therefore regardedas",
+    "to": "therefore regarded as",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ed to the actual political situation in Italy, and are therefore regardedas subversive. Such an imputation is, however, founded on...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-weintend",
+    "locator": {
+      "section": 18,
+      "raw_substring": "But Weintend"
+    },
+    "field": "raw_text",
+    "from": "But Weintend",
+    "to": "But We intend",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...cism which they wish to inflict on these associations. But Weintend that this mistaken idea should be dissipated forever.<...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-whichhas",
+    "locator": {
+      "section": 18,
+      "raw_substring": "equivocation whichhas"
+    },
+    "field": "raw_text",
+    "from": "equivocation whichhas",
+    "to": "equivocation which has",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...versive. Such an imputation is, however, founded on an equivocation whichhas been invented, and is designedly maintained, by the en...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-againstthe",
+    "locator": {
+      "section": 19,
+      "raw_substring": "revolt againstthe"
+    },
+    "field": "raw_text",
+    "from": "revolt againstthe",
+    "to": "revolt against the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...tholics will have nothing to do with any conspiracy or revolt againstthe public authorities, to whom they render the obedience ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-religionitalian",
+    "locator": {
+      "section": 19,
+      "raw_substring": "their religion,Italian"
+    },
+    "field": "raw_text",
+    "from": "their religion,Italian",
+    "to": "their religion, Italian",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...n virtue of the well known and immutable principles of their religion,Italian Catholics will have nothing to do with any conspiracy ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-bytheir",
+    "locator": {
+      "section": 20,
+      "raw_substring": "it bytheir"
+    },
+    "field": "raw_text",
+    "from": "it bytheir",
+    "to": "it by their",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... without violating their most sacred duties, to uphold it bytheir adhesion and support. To expect the active co-operatio...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-indispensablecondition",
+    "locator": {
+      "section": 20,
+      "raw_substring": "are indispensablecondition"
+    },
+    "field": "raw_text",
+    "from": "are indispensablecondition",
+    "to": "are indispensable condition",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...sary independence and full and effective freedom which are indispensablecondition of the liberty and independence of the Catholic Church...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-thatteaching",
+    "locator": {
+      "section": 20,
+      "raw_substring": "to thatteaching,"
+    },
+    "field": "raw_text",
+    "from": "to thatteaching,",
+    "to": "to that teaching,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... On the contrary, they would have to act in opposition to thatteaching, and to depart from the line of conduct observed by the...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-thenecessary",
+    "locator": {
+      "section": 20,
+      "raw_substring": "Head thenecessary"
+    },
+    "field": "raw_text",
+    "from": "Head thenecessary",
+    "to": "Head the necessary",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...cannot renounce the desire to restore to their Supreme Head thenecessary independence and full and effective freedom which are ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-theywill",
+    "locator": {
+      "section": 20,
+      "raw_substring": "Papacy, theywill"
+    },
+    "field": "raw_text",
+    "from": "Papacy, theywill",
+    "to": "Papacy, they will",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...f anti-religious sectaries, aim at the downfall of the Papacy, theywill never be able, without violating their most sacred dut...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-willput",
+    "locator": {
+      "section": 20,
+      "raw_substring": "They willput"
+    },
+    "field": "raw_text",
+    "from": "They willput",
+    "to": "They will put",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...s are not to be changed either by threats or violence. They willput up with the present situation of affairs, but so long ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-andprosperity",
+    "locator": {
+      "section": 21,
+      "raw_substring": "unity andprosperity"
+    },
+    "field": "raw_text",
+    "from": "unity andprosperity",
+    "to": "unity and prosperity",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ense. They rest solely upon the idea that the destiny, unity andprosperity of the nation consist in the deeds that <font si...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-herhead",
+    "locator": {
+      "section": 21,
+      "raw_substring": "and herHead,"
+    },
+    "field": "raw_text",
+    "from": "and herHead,",
+    "to": "and her Head,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...se the people by rendering them obedient to the Church and herHead, by shielding them from the perils of socialism and ana...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-lawand",
+    "locator": {
+      "section": 21,
+      "raw_substring": "threaten lawand"
+    },
+    "field": "raw_text",
+    "from": "threaten lawand",
+    "to": "threaten law and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...their country and be confounded with the parties which threaten lawand order and the safety of the State? Such calumnies fall...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-andindependence",
+    "locator": {
+      "section": 23,
+      "raw_substring": "liberty andindependence"
+    },
+    "field": "raw_text",
+    "from": "liberty andindependence",
+    "to": "liberty and independence",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...the assurances given by the public authorities for the liberty andindependence of our Apostolic ministry. To what a point is Our libe...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-andmaterial",
+    "locator": {
+      "section": 23,
+      "raw_substring": "moral andmaterial"
+    },
+    "field": "raw_text",
+    "from": "moral andmaterial",
+    "to": "moral and material",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ving been deprived of the greatest part of the ancient moral andmaterial resources with which Christian ages had enriched the A...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-designsto",
+    "locator": {
+      "section": 23,
+      "raw_substring": "guilty designsto"
+    },
+    "field": "raw_text",
+    "from": "guilty designsto",
+    "to": "guilty designs to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ive solution of present difficulties, and endeavour by guilty designsto protract and increase their bitterness. It is to such ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-havebeen",
+    "locator": {
+      "section": 23,
+      "raw_substring": "part, havebeen"
+    },
+    "field": "raw_text",
+    "from": "part, havebeen",
+    "to": "part, have been",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... reduced. If certain events, in which Catholics had no part, havebeen sufficient to bring about the suppression of thousands...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-heartsto",
+    "locator": {
+      "section": 23,
+      "raw_substring": "no heartsto"
+    },
+    "field": "raw_text",
+    "from": "no heartsto",
+    "to": "no hearts to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...n who, urged on by the spirit of irreligion and having no heartsto feel for the evils and dangers which menace their coun...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-isthe",
+    "locator": {
+      "section": 23,
+      "raw_substring": "what isthe"
+    },
+    "field": "raw_text",
+    "from": "what isthe",
+    "to": "what is the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...te, every sensible and fair-minded man will understand what isthe value of the assurances given by the public authoritie...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-realand",
+    "locator": {
+      "section": 23,
+      "raw_substring": "every realand"
+    },
+    "field": "raw_text",
+    "from": "every realand",
+    "to": "every real and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...e evils and dangers which menace their country, reject every realand effective solution of present difficulties, and endeav...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-shouldbe",
+    "locator": {
+      "section": 23,
+      "raw_substring": "associations shouldbe"
+    },
+    "field": "raw_text",
+    "from": "associations shouldbe",
+    "to": "associations should be",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...s, that the rigorous measures aimed at useful Catholic associations shouldbe applied-measures which afflict Us profoundly for a hig...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-whichwe",
+    "locator": {
+      "section": 23,
+      "raw_substring": "to whichWe"
+    },
+    "field": "raw_text",
+    "from": "to whichWe",
+    "to": "to which We",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ight the painful, precarious, and intolerable position to whichWe have been reduced. If certain events, in which Catholi...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-aredivine",
+    "locator": {
+      "section": 24,
+      "raw_substring": "Both aredivine"
+    },
+    "field": "raw_text",
+    "from": "Both aredivine",
+    "to": "Both are divine",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...s of St. Ambrose &quot;Ubi Petrus, ibi Ecclesia.&quot; Both aredivine institutions which have outlived every outrage and att...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-inother",
+    "locator": {
+      "section": 24,
+      "raw_substring": "and inother"
+    },
+    "field": "raw_text",
+    "from": "and inother",
+    "to": "and in other",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...oint out this state of things to our children in Italy and inother nations. To all of them, however, we would say that if...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-isgreat",
+    "locator": {
+      "section": 24,
+      "raw_substring": "sorrow isgreat,"
+    },
+    "field": "raw_text",
+    "from": "sorrow isgreat,",
+    "to": "sorrow is great,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ons. To all of them, however, we would say that if Our sorrow isgreat, not less great is Our courage, nor less firm Our confi...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-thatprovidence",
+    "locator": {
+      "section": 24,
+      "raw_substring": "in thatProvidence"
+    },
+    "field": "raw_text",
+    "from": "in thatProvidence",
+    "to": "in that Providence",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ess great is Our courage, nor less firm Our confidence in thatProvidence which governs the world, which so constantly and lovin...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-thebeautiful",
+    "locator": {
+      "section": 24,
+      "raw_substring": "to thebeautiful"
+    },
+    "field": "raw_text",
+    "from": "to thebeautiful",
+    "to": "to the beautiful",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... and which identifies itself with the Papacy according to thebeautiful works of St. Ambrose &quot;Ubi Petrus, ibi Ecclesia.&q...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-watchesover",
+    "locator": {
+      "section": 24,
+      "raw_substring": "lovingly watchesover"
+    },
+    "field": "raw_text",
+    "from": "lovingly watchesover",
+    "to": "lovingly watches over",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...dence which governs the world, which so constantly and lovingly watchesover the Church and which identifies itself with the Papacy...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-evilsthat",
+    "locator": {
+      "section": 26,
+      "raw_substring": "the evilsthat,"
+    },
+    "field": "raw_text",
+    "from": "the evilsthat,",
+    "to": "the evils that,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... free you before God and man of all responsibility for the evilsthat, owing to the hindrances placed in the way of your past...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-itwill-1",
+    "locator": {
+      "section": 26,
+      "raw_substring": "powerless, itwill"
+    },
+    "field": "raw_text",
+    "from": "powerless, itwill",
+    "to": "powerless, it will",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...earth; and so, no matter how your toil may be rendered powerless, itwill serve to free you before God and man of all responsibi...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-itwill-2",
+    "locator": {
+      "section": 26,
+      "raw_substring": "future itwill"
+    },
+    "field": "raw_text",
+    "from": "future itwill",
+    "to": "future it will",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...ples, and especially of the people of Italy, so in the future itwill never fail in its great mission of defending and deman...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-onall",
+    "locator": {
+      "section": 26,
+      "raw_substring": "are onall"
+    },
+    "field": "raw_text",
+    "from": "are onall",
+    "to": "are on all",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...g souls from the errors and seductions with which they are onall sides surrounded, consoling the poor and the unfortuna...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-thatcharity",
+    "locator": {
+      "section": 26,
+      "raw_substring": "means thatcharity"
+    },
+    "field": "raw_text",
+    "from": "means thatcharity",
+    "to": "means that charity",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...unded, consoling the poor and the unfortunate by every means thatcharity can suggest. Whatever may be the trend of events and t...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-thethings",
+    "locator": {
+      "section": 26,
+      "raw_substring": "than thethings"
+    },
+    "field": "raw_text",
+    "from": "than thethings",
+    "to": "than the things",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...rs will not be in vain, for they have an object higher than thethings of earth; and so, no matter how your toil may be rende...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-uswith",
+    "locator": {
+      "section": 26,
+      "raw_substring": "assist Uswith"
+    },
+    "field": "raw_text",
+    "from": "assist Uswith",
+    "to": "assist Us with",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...le task We are sure that you, Venerable Brethren, will assist Uswith the effective co-operation of your zealous care as enl...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-andof",
+    "locator": {
+      "section": 27,
+      "raw_substring": "rights, andof"
+    },
+    "field": "raw_text",
+    "from": "rights, andof",
+    "to": "rights, and of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...l in its great mission of defending and demanding your rights, andof assisting you in your difficulties, with all the more ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-latertimes",
+    "locator": {
+      "section": 27,
+      "raw_substring": "these latertimes,"
+    },
+    "field": "raw_text",
+    "from": "these latertimes,",
+    "to": "these later times,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...d and oppressed. You have given, and especially during these latertimes, numerous evidences of self-sacrificing activity in wel...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-notlose",
+    "locator": {
+      "section": 27,
+      "raw_substring": "Do notlose"
+    },
+    "field": "raw_text",
+    "from": "Do notlose",
+    "to": "Do not lose",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '... evidences of self-sacrificing activity in well doing. Do notlose courage, but keeping rigorously, as in the past, withi...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-ofcatholic",
+    "locator": {
+      "section": 27,
+      "raw_substring": "safety ofCatholic"
+    },
+    "field": "raw_text",
+    "from": "safety ofCatholic",
+    "to": "safety of Catholic",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...mstances the Papacy was always the guide, defence, and safety ofCatholic peoples, and especially of the people of Italy, so in ...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spesse-volte.en-sameline",
+    "locator": {
+      "section": 27,
+      "raw_substring": "the sameline"
+    },
+    "field": "raw_text",
+    "from": "the sameline",
+    "to": "the same line",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spesse-volte__en.html: '...th, and in full submission to your pastors, follow out the sameline of action with genuine Christian enthusiasm. </p...'. The rest of the English corpus writes these two words apart; this page prints 83 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

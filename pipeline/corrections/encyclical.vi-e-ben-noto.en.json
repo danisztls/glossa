@@ -1,0 +1,54 @@
+[
+  {
+    "id": "vi-e-ben-noto.en-thedevotion",
+    "locator": {
+      "section": 1,
+      "raw_substring": "of thedevotion"
+    },
+    "field": "raw_text",
+    "from": "of thedevotion",
+    "to": "of the devotion",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__vi-e-ben-noto__en.html: '... to pay to Mary, during a whole month, a daily tribute of thedevotion so dear to it. In such pious rivalry Italy has not bee...'. The rest of the English corpus writes these two words apart; this page prints 4 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "vi-e-ben-noto.en-virginof",
+    "locator": {
+      "section": 1,
+      "raw_substring": "Glorious Virginof"
+    },
+    "field": "raw_text",
+    "from": "Glorious Virginof",
+    "to": "Glorious Virgin of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__vi-e-ben-noto__en.html: '...ow We place amid present dangers Our confidence in the Glorious Virginof the Holy Rosary, for the safety and prosperity of Chri...'. The rest of the English corpus writes these two words apart; this page prints 4 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "vi-e-ben-noto.en-capitalof",
+    "locator": {
+      "section": 2,
+      "raw_substring": "the capitalof"
+    },
+    "field": "raw_text",
+    "from": "the capitalof",
+    "to": "the capital of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__vi-e-ben-noto__en.html: '..., and in His providential designs appointed Rome to be the capitalof the Catholic world. On this account the Italian people...'. The rest of the English corpus writes these two words apart; this page prints 4 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "vi-e-ben-noto.en-nationand",
+    "locator": {
+      "section": 2,
+      "raw_substring": "no nationand"
+    },
+    "field": "raw_text",
+    "from": "no nationand",
+    "to": "no nation and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__vi-e-ben-noto__en.html: '...sus Christ. We have excepted from Our daily solicitude no nationand no people, mindful that Our Redeemer shed His precious...'. The rest of the English corpus writes these two words apart; this page prints 4 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

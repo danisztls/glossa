@@ -1,0 +1,392 @@
+[
+  {
+    "id": "urbanitatis-veteris.en-aremembrance",
+    "locator": {
+      "section": 1,
+      "raw_substring": "only aremembrance"
+    },
+    "field": "raw_text",
+    "from": "only aremembrance",
+    "to": "only a remembrance",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...and glory. In Our case there resides in Our spirit not only aremembrance joined with admiration but a real love, and that too f...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-followedin",
+    "locator": {
+      "section": 1,
+      "raw_substring": "been followedin"
+    },
+    "field": "raw_text",
+    "from": "been followedin",
+    "to": "been followed in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '... Doctor. For if those whose training and teaching have been followedin acquiring wisdom rightly receive a large part of the g...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-issufficiently",
+    "locator": {
+      "section": 1,
+      "raw_substring": "Greeks issufficiently"
+    },
+    "field": "raw_text",
+    "from": "Greeks issufficiently",
+    "to": "Greeks is sufficiently",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '... of nature alone. How much We value this wisdom of the Greeks issufficiently clear from the diligent and manifold solicitude exerci...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-longtime",
+    "locator": {
+      "section": 1,
+      "raw_substring": "a longtime"
+    },
+    "field": "raw_text",
+    "from": "a longtime",
+    "to": "a long time",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...ned with admiration but a real love, and that too from a longtime back. From Our youth We have ever admired Ionian and A...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-rolethat",
+    "locator": {
+      "section": 1,
+      "raw_substring": "influential rolethat"
+    },
+    "field": "raw_text",
+    "from": "influential rolethat",
+    "to": "influential role that",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...anding philosophers of your nation have played such an influential rolethat the human mind does not seem to have been able to prog...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-thedisciples",
+    "locator": {
+      "section": 1,
+      "raw_substring": "of thedisciples"
+    },
+    "field": "raw_text",
+    "from": "of thedisciples",
+    "to": "of the disciples",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...ed blessed Thomas Aquinas, easily the most outstanding of thedisciples and great followers of Aristotle. <p align...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-thehigh",
+    "locator": {
+      "section": 1,
+      "raw_substring": "from thehigh"
+    },
+    "field": "raw_text",
+    "from": "from thehigh",
+    "to": "from the high",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...ar from the diligent and manifold solicitude exercised from thehigh office of Our Pontificate in restoring and making know...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-theoutstanding",
+    "locator": {
+      "section": 1,
+      "raw_substring": "which theoutstanding"
+    },
+    "field": "raw_text",
+    "from": "which theoutstanding",
+    "to": "which the outstanding",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...hat science concerned with the search for the truth in which theoutstanding philosophers of your nation have played such an influe...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-wejudge",
+    "locator": {
+      "section": 1,
+      "raw_substring": "men, Wejudge"
+    },
+    "field": "raw_text",
+    "from": "men, Wejudge",
+    "to": "men, We judge",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...dom rightly receive a large part of the glory due wise men, Wejudge that your Aristotle certainly has received honor from ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-aidedand",
+    "locator": {
+      "section": 3,
+      "raw_substring": "they aidedand"
+    },
+    "field": "raw_text",
+    "from": "they aidedand",
+    "to": "they aided and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...ve birth and race, and frequently We recall how wisely they aidedand abetted the Christian Church as it progressed through ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-difficulttimes",
+    "locator": {
+      "section": 3,
+      "raw_substring": "and difficulttimes"
+    },
+    "field": "raw_text",
+    "from": "and difficulttimes",
+    "to": "and difficult times",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...ted the Christian Church as it progressed through hard and difficulttimes in those days. How bravely most of them, as Anacletus,...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-greeksand",
+    "locator": {
+      "section": 3,
+      "raw_substring": "which Greeksand"
+    },
+    "field": "raw_text",
+    "from": "which Greeksand",
+    "to": "which Greeks and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '... We refer to that ancient union, free from discord, by which Greeksand Latins were held together for their mutual profit when...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-griefand",
+    "locator": {
+      "section": 3,
+      "raw_substring": "without griefand"
+    },
+    "field": "raw_text",
+    "from": "without griefand",
+    "to": "without grief and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...uth, We scarcely ever recall the Popes of Greek origin without griefand longing because of the great loss brought about by the...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-theearth",
+    "locator": {
+      "section": 3,
+      "raw_substring": "of theearth"
+    },
+    "field": "raw_text",
+    "from": "of theearth",
+    "to": "of the earth",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...e held together for their mutual profit when that part of theearth which had produced Socrates and Plato often provided t...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-totell",
+    "locator": {
+      "section": 3,
+      "raw_substring": "Although, totell"
+    },
+    "field": "raw_text",
+    "from": "Although, totell",
+    "to": "Although, to tell",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...after accomplishing great labors, underwent martyrdom. Although, totell the truth, We scarcely ever recall the Popes of Greek ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-acollege",
+    "locator": {
+      "section": 4,
+      "raw_substring": "ago acollege"
+    },
+    "field": "raw_text",
+    "from": "ago acollege",
+    "to": "ago a college",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...ts of the mind. For this reason, We founded some years ago acollege at Athens in which Catholic youth might have the oppor...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-asfor",
+    "locator": {
+      "section": 4,
+      "raw_substring": "faith. Asfor"
+    },
+    "field": "raw_text",
+    "from": "faith. Asfor",
+    "to": "faith. As for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...e of their country with a love and zeal for their holy faith. Asfor Our part, We will be zealous to defend, preserve, and ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-beforethey",
+    "locator": {
+      "section": 4,
+      "raw_substring": "philosophy beforethey"
+    },
+    "field": "raw_text",
+    "from": "philosophy beforethey",
+    "to": "philosophy before they",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...not be permitted to come into contact with theology or philosophy beforethey have thoroughly learned their ancestral tongue and lit...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-enterpriseand",
+    "locator": {
+      "section": 4,
+      "raw_substring": "whole enterpriseand"
+    },
+    "field": "raw_text",
+    "from": "whole enterpriseand",
+    "to": "whole enterprise and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...her time in a letter, We will describe the plan of the whole enterpriseand the regulating principles of the institution. </...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-fullwell",
+    "locator": {
+      "section": 4,
+      "raw_substring": "know fullwell"
+    },
+    "field": "raw_text",
+    "from": "know fullwell",
+    "to": "know full well",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...in your midst with all possible labor and exertion. We know fullwell the great role played for the protection of morals, fo...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-givethemselves",
+    "locator": {
+      "section": 4,
+      "raw_substring": "to givethemselves"
+    },
+    "field": "raw_text",
+    "from": "to givethemselves",
+    "to": "to give themselves",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...ens in which Catholic youth might have the opportunity to givethemselves to letters and, in particular, learn the language whic...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-handsof",
+    "locator": {
+      "section": 4,
+      "raw_substring": "the handsof"
+    },
+    "field": "raw_text",
+    "from": "the handsof",
+    "to": "the hands of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...etters and, in particular, learn the language which at the handsof Homer and Demosthenes produced such splendor. Recently...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-laborscontinue",
+    "locator": {
+      "section": 4,
+      "raw_substring": "fruitful labors.Continue"
+    },
+    "field": "raw_text",
+    "from": "fruitful labors.Continue",
+    "to": "fruitful labors. Continue",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...ries, but rather be inspired to salutary vigilance, to fruitful labors.Continue to exercise your episcopal duty skillfully, as indeed ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-surewe",
+    "locator": {
+      "section": 4,
+      "raw_substring": "be sureWe"
+    },
+    "field": "raw_text",
+    "from": "be sureWe",
+    "to": "be sure We",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '... young clerics. You have Our agreement and consent; to be sureWe judge it most useful and most opportune that that hous...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-thecatholicism",
+    "locator": {
+      "section": 4,
+      "raw_substring": "strengthen theCatholicism"
+    },
+    "field": "raw_text",
+    "from": "strengthen theCatholicism",
+    "to": "strengthen the Catholicism",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '... Our part, We will be zealous to defend, preserve, and strengthen theCatholicism in your midst with all possible labor and exertion. We...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-thelatin",
+    "locator": {
+      "section": 4,
+      "raw_substring": "of theLatin"
+    },
+    "field": "raw_text",
+    "from": "of theLatin",
+    "to": "of the Latin",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...gestion to establish such a seminary for young clerics of theLatin rite, but of Greek birth, as well as other easterners ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-theprofession",
+    "locator": {
+      "section": 4,
+      "raw_substring": "what theprofession"
+    },
+    "field": "raw_text",
+    "from": "what theprofession",
+    "to": "what the profession",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...ys your sacred authority may everyday be more aware of what theprofession of the Catholic faith demands, and learn from your exa...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-therethey",
+    "locator": {
+      "section": 4,
+      "raw_substring": "things. Therethey"
+    },
+    "field": "raw_text",
+    "from": "things. Therethey",
+    "to": "things. There they",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...ve mentioned, be accessible also to students of sacred things. Therethey may give themselves over to the practice of more refin...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-unitethe",
+    "locator": {
+      "section": 4,
+      "raw_substring": "to unitethe"
+    },
+    "field": "raw_text",
+    "from": "to unitethe",
+    "to": "to unite the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '...he Catholic faith demands, and learn from your example to unitethe proper love of their country with a love and zeal for ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "urbanitatis-veteris.en-vocationand",
+    "locator": {
+      "section": 4,
+      "raw_substring": "their vocationand"
+    },
+    "field": "raw_text",
+    "from": "their vocationand",
+    "to": "their vocation and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__urbanitatis-veteris__en.html: '... By this means they will better protect the dignity of their vocationand will carry out more usefully their ministry. Therefore...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]
