@@ -379,6 +379,7 @@ def make_fetcher(recheck_absent: bool = False) -> Fetcher:
 # derived from the other's input.
 _INLINE_TEXT_TAGS = frozenset({"i", "em", "b", "strong", "sup"})
 _TEXT_TAG_RE = re.compile(r"<\s*(/?)\s*([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>")
+_EMPTY_ANCHOR_RE = re.compile(r"<\s*a\b[^>]*>\s*<\s*/\s*a\s*>", re.IGNORECASE)
 
 
 def strip_tags(s: str) -> str:
@@ -405,6 +406,17 @@ def strip_tags(s: str) -> str:
     def one(m: re.Match[str]) -> str:
         return "" if m.group(2).lower() in _INLINE_TEXT_TAGS else " "
 
+    # AN EMPTY ANCHOR SEPARATES NOTHING. `<a name="x"></a>` is a link target,
+    # not a run of text, and vatican.va plants one wherever its own printed
+    # table of contents points -- routinely INSIDE a word, because the anchor
+    # is named after the fragment it links (`L’<a name="uguale"></a>uguale
+    # dignità`, `nell’<a name="era_digitale"></a>era digitale`, both in
+    # `magnifica-humanitas.it`). Two tags, two spaces, one heading that no
+    # longer matches the heading the page prints. Dropped before the rule
+    # below, which is right about a REAL anchor and cannot tell an empty one
+    # apart. Only the empty pair qualifies: an anchor that ever held text is
+    # untouched.
+    s = _EMPTY_ANCHOR_RE.sub("", s)
     s = _TEXT_TAG_RE.sub(one, s)
     # Comments, doctypes and anything else angle-bracketed that isn't a tag:
     # unchanged behaviour, and never an emphasis run.
@@ -448,7 +460,14 @@ def narrow_html(marked_html: str, dropped: collections.Counter | None = None) ->
     become `<sup data-fn="n"></sup>` so the stored payload is one syntax
     rather than two. Unknown tags are dropped but their TEXT is kept, and
     counted into `dropped` for anomaly reporting -- logged, never silently
-    absent, the same posture as everything else in this scraper."""
+    absent, the same posture as everything else in this scraper.
+
+    EMPTY ANCHORS GO FIRST, and they have to go here as well as in
+    `strip_tags` or the round-trip invariant breaks: an unknown tag leaves a
+    space behind, so `Igreja."<a name="fnref3"></a>(3)` narrows with a space
+    the source does not print while the block's own text no longer has one.
+    Both sides read the same markup and must drop the same nothings."""
+    marked_html = _EMPTY_ANCHOR_RE.sub("", marked_html)
     out: list[str] = []
     pos = 0
     for m in _TAG_RE.finditer(marked_html):
@@ -3480,6 +3499,64 @@ def _skip_masthead_furniture(blocks: list[Block], end: int) -> int:
     return i
 
 
+_MASTHEAD_COLOUR_OPEN_RE = re.compile(
+    r"<\s*font\b[^>]*\bcolor\s*=\s*[\"\']?#663300", re.IGNORECASE
+)
+_FONT_CLOSE = "</font>"
+_EMPHASIS_TAG_RE = re.compile(r"<\s*(b|i|em|strong)\b", re.IGNORECASE)
+
+
+def in_masthead_colour(block_html: str) -> bool:
+    """Whether a block's every visible word sits inside the mirror's masthead
+    colour.
+
+    `#663300` is the brown vatican.va sets its own title block in, and it is
+    a boundary the PAGE states rather than one we infer -- the same kind of
+    evidence `_printed_masthead_end` prefers over the identity guess, and
+    needed for the same reason. The Portuguese mirror splits the masthead
+    across two centred paragraphs, the title and address block in one and the
+    document's descriptive subtitle (`SOBRE A RECITAÇÃO DO ROSÁRIO
+    ESPECIALMENTE NO MÊS DE OUTUBRO`) in the next; identity stops at the
+    second, because a subtitle names neither the document nor its author. The
+    English mirror prints the same two lines inside ONE paragraph separated
+    by `<br />`, which is the only reason identity ever sufficed.
+
+    So the colour is used to EXTEND a masthead already found by identity,
+    never to start one: a page's copyright line and dateline wear it too, and
+    they are nowhere near the front of the block stream.
+
+    READS `Block.raw`, NOT `Block.html`. `<font>` is not inline emphasis, so
+    narrowing drops it long before this runs -- asking `b.html` about the
+    colour returns False for every block on every page, silently, and the
+    whole rule becomes a no-op that still passes every test."""
+    open_at = _MASTHEAD_COLOUR_OPEN_RE.search(block_html)
+    if not open_at:
+        return False
+    close_at = block_html.lower().rfind(_FONT_CLOSE)
+    if close_at < open_at.end():
+        return False
+    # Nested `<font size="4">` runs inside the title line mean the colour's
+    # own close is not the first one, so the span is bounded by the LAST
+    # close rather than matched -- all that has to hold is that no visible
+    # word falls outside it.
+    outside = block_html[: open_at.start()] + block_html[close_at + len(_FONT_CLOSE) :]
+    if strip_tags(outside).strip():
+        return False
+    # AND IT CARRIES NO EMPHASIS AT ALL. The lines this rule exists to
+    # absorb are plain: a descriptive subtitle set in the masthead colour and
+    # nothing else, which is every one of the 24 Portuguese mirrors that
+    # print theirs in a second centred paragraph.
+    #
+    # Anything emphasised is declined, and deliberately so even though two
+    # pages lose by it. The colour is the mirror's, not the masthead's:
+    # `redemptoris-missio.en` sets its subtitle in bold AND `miranda-prorsus.en`
+    # sets `INTRODUCTION` in bold, both inside `#663300`, so no test over
+    # emphasis alone can take the first and leave the second. Declining both
+    # leaves those two exactly as they were; taking both would swallow a
+    # heading. That is the safe side of a boundary this signal cannot draw.
+    return not _EMPHASIS_TAG_RE.search(block_html)
+
+
 def extract_document_header(
     blocks: list[Block], slug: str, pontiff: str
 ) -> tuple[str, int]:
@@ -3528,6 +3605,8 @@ def extract_document_header(
     slug_words = [w for w in fold(slug.replace("-", " ")).split() if len(w) > 2]
     pont = fold(pontiff or "").strip()
     taken = 0
+    colour_run = False
+    extended = False
     kept: list[str] = []
     for i, b in enumerate(blocks):
         if end is not None and i >= end:
@@ -3539,8 +3618,25 @@ def extract_document_header(
         folded = fold(_LANG_BAR_PREFIX_RE.sub("", flat))
         names_doc = bool(slug_words) and all(w in folded for w in slug_words)
         names_author = bool(pont) and pont in folded
-        if end is None and not (bar_only or names_doc or names_author):
+        # `colour_run` is set by the LOOSER test: the masthead's own title
+        # line wears emphasis, so the strict one is false for exactly the
+        # block that starts the run it is meant to continue.
+        continues = colour_run and in_masthead_colour(b.raw)
+        named = bar_only or names_doc or names_author
+        # ONCE THE RUN IS BEING EXTENDED ON COLOUR, IT IS THE ONLY CREDENTIAL
+        # LEFT. Reaching one block further than identity would have reached
+        # puts identity itself in front of blocks it never used to see, and
+        # `miranda-prorsus.en` shows what that costs: its mirror runs the
+        # title and `<b>INTRODUCTION</b>` into one coloured paragraph, which
+        # names the document and so would be claimed whole -- swallowing the
+        # first heading of a 39-heading document. A block that fails the
+        # strict test ends the masthead here even when it names the document.
+        if end is None and extended and not continues:
             break
+        if end is None and not (named or continues):
+            break
+        extended = extended or (continues and not named)
+        colour_run = colour_run or bool(_MASTHEAD_COLOUR_OPEN_RE.search(b.raw))
         taken += 1
         if not bar_only:
             html = _LANG_BAR_PREFIX_RE.sub("", b.html).strip()
@@ -3897,6 +3993,74 @@ def find_paragraph_number_correction(
         if loc.get("section") == expected and c["from"] == str(cand):
             return c
     return None
+
+
+# Locators for markup the mirror broke, keyed by work. A repair here restores
+# a boundary the source lost; it never changes a word, which is what separates
+# it from `pipeline/corrections/` (CLAUDE.md: corrections are about PROSE,
+# broken markup is the parser's business -- the same posture `martini.py`
+# takes toward `<em<`, `<br<` and one `zem>`, with its locators in its
+# docstring).
+_MARKUP_REPAIRS: dict[str, tuple[tuple[str, str], ...]] = {
+    # militantis-ecclesiae.en prints nine sub-headings, each an italic run
+    # alone in its own `<p align="left">`. The tenth, "Modern Knowledge Serves
+    # the Faith", lost the paragraph break before it and sits at the tail of
+    # section 2's own `<p>`. The block walk therefore never sees a block to
+    # score, and the heading is absorbed into the section body -- it is
+    # missing from `structure.json` while its nine identically-styled peers
+    # are present, which is the tell.
+    #
+    # This is the whole class, not an example of it: scanning every numbered
+    # body paragraph in `raw/vatican-docs` for one ending in a stranded
+    # emphasis run (3-90 chars, no sentence-final punctuation, not a
+    # table-of-contents row) reports this and one `Heb <` in a Latin edition
+    # the corpus does not build. So there is nothing here for a general rule
+    # to earn, and a general rule would have to tell a heading from an
+    # emphasised closing phrase -- 56 of the 58 loose candidates are the
+    # latter.
+    "encyclical.militantis-ecclesiae.en": (
+        (
+            "penetrating debates. <i>Modern Knowledge Serves the Faith</i></p>",
+            (
+                "penetrating debates.</p>\n"
+                '<p align="left"><i>Modern Knowledge Serves the Faith</i></p>'
+            ),
+        ),
+    ),
+    # miranda-prorsus.en runs the masthead's title line and the document's
+    # first heading into ONE centred paragraph -- `<i><b>MIRANDA
+    # PRORSUS</b></i>`, three `<br />`s, then `<b>INTRODUCTION</b>`, with no
+    # paragraph break where the page plainly shows one. Every other heading
+    # in its 39 has its own `<p>`. Unrepaired it stores as a single node
+    # titled "MIRANDA PRORSUS INTRODUCTION", which is neither the masthead
+    # (so nothing skips it) nor the heading (so the reader is offered a
+    # division that does not exist).
+    "encyclical.miranda-prorsus.en": (
+        (
+            '<i><b>MIRANDA PRORSUS</b></i></font></font><font face="Times New Roman" size="3"><font color="#663300"><font size="+1"><br /> </font> <br /> <br /> <a name="INTRODUZIONE"><b>INTRODUCTION</b></a> </font> </font></p>',
+            '<i><b>MIRANDA PRORSUS</b></i></font></font></p>\n<p align="center"><font face="Times New Roman" size="3"><font color="#663300"><a name="INTRODUZIONE"><b>INTRODUCTION</b></a> </font> </font></p>',
+        ),
+    ),
+}
+
+
+def repair_markup(html_text: str, work_id: str) -> str:
+    """Restores block boundaries the mirror dropped, for the works in
+    `_MARKUP_REPAIRS`.
+
+    RAISES when a repair no longer matches, rather than skipping it. A repair
+    that silently stops applying is the failure this project keeps meeting
+    from the other direction -- a check that reads as "nothing wrong" because
+    it looked at nothing -- and the page it targets is in `raw/`, which is
+    write-once, so a miss means the locator was edited, not that the source
+    was fixed. `parse_and_write` calls this inside its try, so a stale
+    locator costs one document a `parse-error` in the run summary instead of
+    killing the crawl."""
+    for frm, to in _MARKUP_REPAIRS.get(work_id, ()):
+        if frm not in html_text:
+            raise ValueError(f"markup repair for {work_id} no longer matches: {frm!r}")
+        html_text = html_text.replace(frm, to, 1)
+    return html_text
 
 
 def apply_raw_text_corrections(
@@ -6020,6 +6184,7 @@ def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
     pre_seen: set[str] = set()
     html = apply_raw_text_corrections(html, corrections, pre_applied, pre_seen)
     try:
+        html = repair_markup(html, work_id)
         parse = parse_document(
             html, lang, corrections, url, ref.slug, ref.pontiff_or_council
         )
