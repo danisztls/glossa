@@ -34,6 +34,11 @@
 	 * so it takes the same outside-click/Escape handling as the header
 	 * menus.
 	 *
+	 * The panel opens OUT OF its chip: same top, same inline start, so it
+	 * covers the chip and its title lands where the chip's label was. That
+	 * is why the title is a button — the chip is still what closes the
+	 * panel, and a covered chip cannot be clicked.
+	 *
 	 * There are deliberately NO chevron indicators on the book buttons.
 	 * `aria-expanded` carries the state for assistive tech, and sighted
 	 * readers get it from the open panel itself plus the button's own active
@@ -167,35 +172,24 @@
 	const MARGIN_REM = 1;
 
 	/**
-	 * How far the panel OVERLAPS the button it hangs off, matching the grid
-	 * variant's own `top: calc(100% - 1px)` / `bottom: calc(100% - 1px)` —
-	 * mirrored here because the sidebar variant's `fixed` coordinates are
-	 * computed in JS rather than left to that CSS calc.
+	 * Floor on the panel's width.
 	 *
-	 * It was a 0.35rem GAP until 2026-08-29. A panel standing off its chip is
-	 * a card that arrived near it, and has to be related back to the chip by
-	 * eye; a panel sharing an edge with the chip is that chip opening, which
-	 * is what it is. One pixel and not zero because both boxes carry a 1px
-	 * border, and overlapping them exactly is the difference between one line
-	 * and a seam.
-	 */
-	const BUTTON_OVERLAP_PX = 1;
-
-	/**
-	 * Floor on the panel's width, in the ONE variant whose panel prints the
-	 * book's name (`chapterPanel` below). A 1-chapter book asks for a single
-	 * 2rem column, which is narrower than any book name in the corpus — and
-	 * `.chapters`' own comment defends that narrowness, correctly, for the
-	 * two variants that have no title to fit.
+	 * The panel opens FROM its chip — same top, same inline start (see
+	 * `measurePlacement`) — so it takes the chip's own width as a floor too,
+	 * measured rather than assumed: a panel narrower than the box it covers
+	 * would leave the chip sticking out either side of it, which is exactly
+	 * what a 1-chapter book does to a 15rem chip like Martini's "Seconda
+	 * lettera di Giovanni".
 	 *
-	 * Eight rem is about nineteen characters of the title's 0.8rem. The names
-	 * run past that (Martini's 1-chapter "Seconda lettera di Giovanni" is 27,
-	 * his 3-chapter "Seconda lettera ai Tessalonicesi" 32), which is why the
-	 * title wraps rather than truncates; the floor is what keeps that wrap to
-	 * two lines instead of one word each. Mirrored by `.chapters.titled`'s
-	 * `min-inline-size`, which is what applies if a measurement ever fails.
+	 * This constant is the other floor, the one the TITLE needs. Eight rem is
+	 * about nineteen characters of the title's size, and the names run past
+	 * that (27 for the Giovanni above, 32 for his "Seconda lettera ai
+	 * Tessalonicesi"), which is why the title wraps rather than truncates;
+	 * the floor is what keeps that wrap to two lines rather than one word
+	 * each. Mirrored by `.chapters`' `min-inline-size`, which is what applies
+	 * if a measurement ever fails.
 	 */
-	const MIN_TITLED_INLINE_REM = 8;
+	const MIN_INLINE_REM = 8;
 
 	/**
 	 * Floor on the panel's height. A book near the bottom of a short viewport
@@ -278,7 +272,7 @@
 		// between them) is slack against sub-pixel rounding — see
 		// `.chapters`' width comment.
 		const wanted = (cols * (CHIP_REM + GAP_REM) + 2 * PAD_REM) * rem + 2;
-		const floor = variant === 'sidebar' ? MIN_TITLED_INLINE_REM * rem : 0;
+		const floor = Math.max(MIN_INLINE_REM * rem, rect.width);
 		const inlinePx = Math.min(Math.max(wanted, floor), viewW - 2 * margin);
 
 		// Anchored to the button's inline start, slid back only as far as
@@ -292,8 +286,11 @@
 		// bound from the way `'grid'`'s does.
 		const leftPx = Math.max(margin, Math.min(rect.left, viewW - margin - inlinePx));
 
-		const below = viewH - rect.bottom - margin;
-		const above = rect.top - margin;
+		// The room is measured from the chip's OWN edges, not from below and
+		// above it, because the panel starts where the chip does: it opens
+		// downward from the chip's top, or upward from the chip's bottom.
+		const below = viewH - rect.top - margin;
+		const above = rect.bottom - margin;
 		const flip = below < above && below < MIN_BLOCK_REM * rem;
 		return {
 			inlinePx: Math.round(inlinePx),
@@ -301,8 +298,8 @@
 			leftPx: Math.round(leftPx),
 			blockPx: Math.round(Math.max(flip ? above : below, MIN_BLOCK_REM * rem)),
 			flip,
-			topPx: Math.round(rect.bottom - BUTTON_OVERLAP_PX),
-			bottomPx: Math.round(viewH - rect.top - BUTTON_OVERLAP_PX)
+			topPx: Math.round(rect.top),
+			bottomPx: Math.round(viewH - rect.bottom)
 		};
 	}
 
@@ -489,28 +486,33 @@
 
 {#snippet chapterPanel(book: CanonicalBook)}
 	{@const present = chaptersInEdition(book.osis)}
-	<!-- Titled in the sidebar and nowhere else: that is the one variant whose
-	     chips truncate, so it is the one whose panel has to say which book it
-	     belongs to. The name is the panel's accessible name either way — as a
-	     heading where it is printed, as an `aria-label` where the chip beside
-	     it already carries it in full. -->
-	{@const titled = variant === 'sidebar'}
 	{@const titleId = `chapters-title-${variant}-${book.osis}`}
 	<div
 		id={`chapters-${variant}-${book.osis}`}
 		class="chapters panel-surface"
 		class:floating
-		class:titled
 		class:flip={placement?.flip}
 		style={panelStyle(book)}
 		role="group"
-		aria-label={titled ? undefined : bookName(book)}
-		aria-labelledby={titled ? titleId : undefined}
+		aria-labelledby={titleId}
 		data-link-preview="off"
 	>
-		{#if titled}
-			<h4 id={titleId} class="chapters-title">{bookName(book)}</h4>
-		{/if}
+		<!-- The book's name, where the chip's own label was a moment ago —
+		     the panel covers the chip it opened from, so this heading is the
+		     only thing naming it, and putting it in the chip's place is what
+		     makes the panel read as that chip expanding.
+
+		     A BUTTON and not a bare heading, because the chip underneath is
+		     the thing that closes the panel and a covered chip cannot be
+		     clicked. Keyboard readers never lost it — focus stays on the
+		     chip, so Enter still toggles — but a pointer had nothing to
+		     press, and outside-click/Escape are the way out of a popover, not
+		     the way out of a disclosure you have just opened. -->
+		<h4 class="chapters-title">
+			<button type="button" id={titleId} onclick={() => toggleBook(book.osis)}>
+				{bookName(book)}
+			</button>
+		</h4>
 		<div class="chapters-nums">
 			{#each book.chapters as chapterN (chapterN)}
 				{#if present.has(chapterN)}
@@ -666,10 +668,11 @@
 	   growth the other way. It answered the right question (four columns
 	   truncate, and the book a reader has just opened is the one they may
 	   need to read) in the wrong place: a chip that changes width on click is
-	   a second thing moving, and the panel it opens is a better place to
-	   print a name than the chip is, since the panel has room for it.
+	   a second thing moving, and the panel that opens over it has room to
+	   print the name where the chip could only widen towards it.
 	   `.chapters-title` is where that name goes now, and this rule and its
-	   `nth-child` companion are gone rather than kept alongside it. */
+	   `nth-child` companion are gone rather than kept alongside it — with the
+	   panel covering the chip, a grown chip would not even be visible. */
 
 	/* Positioning context for the `absolute` `.chapters` panel in the `'grid'`
 	   variant. Irrelevant to `'sidebar'`'s `fixed` panel, which is positioned
@@ -781,7 +784,13 @@
 
 	/* Carries the open state that the chevrons used to. Filled rather than
 	   merely outlined so it reads as "this is the one the panel belongs to"
-	   even against `.current`'s accent border on a neighbouring book. */
+	   even against `.current`'s accent border on a neighbouring book.
+
+	   A reader sees this only for the frame between the click and the
+	   measurement, since the panel then covers the chip exactly — see
+	   `.chapters`' `top: 0`. It stays because the state is real whether or
+	   not something is painted over it, and because that frame is the one
+	   where a chip that had not visibly changed would read as a dead click. */
 	.book-btn.open {
 		background: var(--color-accent);
 		border-color: var(--color-accent);
@@ -792,9 +801,9 @@
 	   A 1-chapter book like 2/3 John renders narrow, not force-padded to some
 	   arbitrary floor, and no book ever exceeds the viewport width — which is
 	   what guarantees the start/end anchor math in the script always has at
-	   least one edge that fits. (The sidebar's panel does take a floor, and
-	   not an arbitrary one: it prints the book's name, and that name has to
-	   fit. See `MIN_TITLED_INLINE_REM`.)
+	   least one edge that fits. (It does take two floors, neither of them
+	   arbitrary: the panel prints the book's name, and it covers the chip it
+	   opened from. See `MIN_INLINE_REM`.)
 
 	   WIDTH COMES FROM THE SPACE AVAILABLE, not from a constant. The fixed
 	   `22rem` cap this replaces was the reason a 36-chapter book like Numbers
@@ -836,10 +845,11 @@
 		--chapter-gap: 0.35rem;
 		--chapter-pad: 0.5rem;
 		position: absolute;
-		/* Over the button's own bottom border rather than clear of it — see
-		   `BUTTON_OVERLAP_PX`, which is this number for the two variants
-		   whose coordinates are computed in JS. */
-		top: calc(100% - 1px);
+		/* ON the button, not under it: the panel's top-left corner is the
+		   chip's, so it opens out of the chip rather than beside it, and its
+		   title lands where the chip's label was. `measurePlacement` says the
+		   same thing in viewport coordinates for the two `fixed` variants. */
+		top: 0;
 		inset-inline-start: 0;
 		z-index: 20;
 		padding: var(--chapter-pad);
@@ -863,19 +873,17 @@
 			),
 			calc(100vw - 2rem)
 		);
+		/* `MIN_INLINE_REM`'s title floor, stated again for the one case the
+		   measurement cannot cover: a panel that got no `placement` at all.
+		   (The chip-width floor beside it has no CSS twin — nothing here can
+		   see the chip.) `min-inline-size` beats `inline-size` either way, so
+		   the two can only agree. */
+		min-inline-size: min(8rem, calc(100vw - 2rem));
 		/* Psalms is 150 chapters — 15 rows even at the full column count, far
 		   taller than a phone. Scroll inside the panel rather than run it off
 		   the bottom of the screen. */
 		max-block-size: 60vh;
 		overflow-y: auto;
-	}
-
-	/* The floor `MIN_TITLED_INLINE_REM` applies in JS, stated again here for
-	   the one case the measurement cannot cover: a panel that got no
-	   `placement` at all. `min-inline-size` beats `inline-size` either way,
-	   so the two can only agree. */
-	.chapters.titled {
-		min-inline-size: min(8rem, calc(100vw - 2rem));
 	}
 
 	/* Opens upward instead of downward, for a book low enough on the screen
@@ -886,7 +894,7 @@
 	   has no shared `100%` reference to offset from. */
 	.chapters.flip {
 		top: auto;
-		bottom: calc(100% - 1px);
+		bottom: 0;
 	}
 
 	/* `position: fixed` instead of `'grid'`'s `absolute`, and a viewport-
@@ -928,20 +936,20 @@
 	}
 
 	/*
-	 * THE BOOK'S NAME, WHERE THE CHIP CANNOT SAY IT.
+	 * THE PANEL'S TITLE IS THE CHIP'S LABEL, CONTINUED.
 	 *
-	 * Four columns of a 17rem aside truncate most names (`.book-btn.sidebar`),
-	 * so the panel is the only place the whole one fits — and a panel that
-	 * begins with the name reads as the chip it grew out of, which is what
-	 * the 1px overlap above is for. The other two variants print their names
-	 * on chips wide enough to set them, and a title there would restate a
-	 * button an inch away.
+	 * The panel covers the chip it opened from, so nothing else names the
+	 * book any more — and in the sidebar nothing else COULD, since four
+	 * columns of a 17rem aside truncate most names (`.book-btn.sidebar`).
+	 * Setting it in the accent is what the chip does when open, kept rather
+	 * than dropped: the panel takes over the chip's job of saying "this is
+	 * the book you are in", and it should look like it.
 	 *
 	 * IT WRAPS RATHER THAN TRUNCATES: a truncated title would be the defect
 	 * it exists to answer, one level down. Names run to 32 characters
 	 * (Martini's "Seconda lettera ai Tessalonicesi") against a panel whose
-	 * width is decided by the chapter grid below, so two lines are a normal
-	 * outcome and `MIN_TITLED_INLINE_REM` is what keeps them to two.
+	 * width is otherwise decided by the chapter grid below, so two lines are
+	 * a normal outcome and `MIN_INLINE_REM` is what keeps them to two.
 	 *
 	 * The rule under it is the panel's own, not a heading's underline: it
 	 * separates a name from the numbers it labels, which are the only other
@@ -951,9 +959,25 @@
 		margin: 0 0 0.4rem;
 		padding-block-end: 0.3rem;
 		border-block-end: 1px solid var(--color-border);
+	}
+
+	/* An unstyled button, because what closes the panel is the whole title
+	   line and not a target hidden inside it — the chip it replaced was
+	   clickable across its whole face too. `text-align: start` because a
+	   button centres its label by default and this one is a heading. */
+	.chapters-title button {
+		display: block;
+		inline-size: 100%;
+		padding: 0;
+		border: 0;
+		background: none;
+		font-family: inherit;
 		font-size: 0.85rem;
 		font-weight: 600;
 		line-height: 1.3;
+		text-align: start;
+		color: var(--color-accent);
+		cursor: pointer;
 	}
 
 	/* The chapter numbers. This used to be `.chapters` itself; it moved down

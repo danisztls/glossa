@@ -1734,28 +1734,34 @@ Cânticos" does not, which is fine while a reader is scanning: the chip carries 
 for that. The count is pinned rather than fitted because four is a decision about how tall
 the list may be, and `auto-fill` decides that from a floor it is not being told about.
 
-**The chapter panel is the chip opening, so it says the book's name and shares the chip's
-edge** (2026-08-29). The truncation four columns cost was first answered by growing the
-open cell to `max-content` — the right question in the wrong place. A chip that changes
-width on click is a second thing moving under the reader's cursor, and the panel it opens
-has far more room to print a name than the chip it grew from. So the growth rule and the
-`:nth-child(4n)` companion that turned the last column around are gone, and the panel
-carries an `.chapters-title` instead — in the sidebar and nowhere else, since that is the
-one variant whose chips truncate, and a title in the other two would restate a button an
-inch away. It is the panel's accessible name where it is printed and an `aria-label` where
-it is not.
+**The chapter panel opens OUT OF its chip, and takes over naming the book** (2026-08-29).
+The truncation four columns cost was first answered by growing the open cell to
+`max-content` — the right question in the wrong place. A chip that changes width on click
+is a second thing moving under the reader's cursor, and it was widening towards the very
+panel that had room to print the name properly. So the panel's top-left corner is now the
+chip's: it covers the chip, and `.chapters-title` sets the whole name where the chip's
+truncated label was a moment before. Nothing floats below anything, and the growth rule
+and the `:nth-child(4n)` companion that turned the last column around are both gone — with
+the chip covered, a grown chip would not be visible anyway.
 
-Two numbers come with it. The panel now OVERLAPS its chip by 1px rather than standing
-0.35rem off it: both boxes carry a 1px border, and overlapping them exactly is the
-difference between one line and a seam — a panel that shares an edge with the chip reads
-as that chip opening, where one standing clear of it is a card that arrived nearby and has
-to be related back by eye. And the sidebar's panel takes an 8rem floor on its width, which
-`.chapters`' own comment had until then rejected for the other two variants and still
-does: a 1-chapter book asks for one 2rem column, and no book name in the corpus is that
-narrow. The title wraps rather than truncates — a truncated title would be the defect it
-exists to answer, one level down — and names run to 32 characters (Martini's "Seconda
-lettera ai Tessalonicesi"), so the floor is what keeps that wrap to two lines rather than
-one word each.
+Three things follow from covering the chip rather than hanging off it. The title is a
+BUTTON: the chip is what closes the panel, and a covered chip cannot be clicked. (Keyboard
+readers never lost it — focus stays on the chip, so Enter still toggles — but a pointer had
+nothing to press, and outside-click and Escape are the way out of a popover, not the way
+out of a disclosure you just opened.) The panel's width takes the CHIP's width as a floor,
+measured rather than assumed, since a panel narrower than the box it covers leaves the chip
+sticking out either side — which is what a 1-chapter book would do to a 15rem chip like
+Martini's "Seconda lettera di Giovanni". And it takes a second, 8rem floor for the title,
+which `.chapters`' own comment had rejected as arbitrary and which is not: a 1-chapter book
+asks for one 2rem column and no book name in the corpus is that narrow. The title wraps
+rather than truncates — a truncated title would be the defect it exists to answer, one
+level down — and the names run to 32 characters ("Seconda lettera ai Tessalonicesi"), so
+the floor is what keeps that wrap to two lines rather than one word each.
+
+The accent fill on the open chip stays, though a reader sees it only for the frame between
+the click and the measurement: the state is real whether or not something is painted over
+it, and that frame is the one where a chip that had not visibly changed would read as a
+dead click.
 
 **An argument that is only the chapter's own rubrics is not printed** (2026-08-29). Five
 of the six annotated editions write a chapter argument as prose about the chapter —
