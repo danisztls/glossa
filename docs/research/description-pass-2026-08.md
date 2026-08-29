@@ -1985,3 +1985,162 @@ before dying; those files were kept on disk but treated as unattested and
 rewritten from the page by the restart, because a file whose author never
 reported cannot be vouched for. Note the trap for the coordinator: `git add
 oracles/toc` would have committed all four silently.
+
+## Wave 19 (13 works) — the sweep closes
+
+The last 13 magisterial documents. 12 of the 13 new oracles agree with the
+parse; 346 oracles now compared, 50 disagreeing, and **no previously-agreeing
+work regressed**. Every one of the 354 document works now carries a
+description, and 346 of them a hand-read table of contents.
+
+The wave found two defect classes that no previous wave could see, because both
+are invisible to a person reading one document at a time and only appear when
+the corpus is measured against itself.
+
+### Lost word spaces are not two documents. They are ninety-one
+
+Waves 16 and 18 filed corrections for `christi-nomen.en` (16 joins) and
+`spectata-fides.en` (9), each found by an agent reading the page and each
+described as a defect of "two Leo XIII English mirrors of the same vintage".
+Three of this wave's agents reported the same shape, one of them with roughly
+forty instances, which is what made the vintage explanation worth testing
+rather than repeating.
+
+`scratchpad/findmerges3.py` tests it. **The corpus is its own dictionary and
+its own grammar**, which is what makes the scan possible at all: no en_US word
+list survives contact with this vocabulary, so a merge is defined as a token
+occurring in exactly one English work that splits into two parts the rest of
+the corpus writes often — and whose BIGRAM the rest of the corpus actually
+writes. That last test is the whole difference between a working detector and
+a useless one. Without it the scan reported 1,472 candidates over 141 works and
+`lumen-gentium.en` came back with 27, every one of them a Latin citation word
+split at a plausible seam (`notis` → "not is", `textus` → "text us",
+`formam` → "form am"). English prose writes "the result" and "your zeal"
+constantly and writes "not is" never. With the bigram test `lumen-gentium.en`
+drops from 27 candidates to 1, `spe-salvi.en` to none, and the count falls to
+845 over 91 works.
+
+Two further detectors need no bigram at all, because no English word produces
+what they match: a case transition inside a token (`aFrench`, `etSpes`,
+`theItalian`) and a missing space after a full stop or comma (`us.The`,
+`energy.Far`).
+
+The two already-corrected works are the control, and they are also the warning:
+the scan finds **seven joins still standing in `christi-nomen.en`** after a
+careful hand pass caught sixteen. Reading for this defect does not find all of
+it. That is the argument for the scan, and against filing the rest by hand.
+
+Corrections filed for the four works in this wave, 134 entries:
+
+| work                     | entries |
+| ------------------------ | ------- |
+| `spesse-volte.en`        | 84      |
+| `urbanitatis-veteris.en` | 30      |
+| `superiore-anno.en`      | 16      |
+| `vi-e-ben-noto.en`       | 4       |
+
+Each entry is machine-generated and machine-checked: the `from` string must
+occur exactly once in the raw page — `apply_raw_text_corrections` replaces the
+first occurrence only — and must lie inside one text run rather than span a
+tag. Where a join occurs twice on a page (`itwill` in `spesse-volte.en`, both
+real) each occurrence gets its own entry, widened with surrounding words until
+it is unique. 134 filed, 134 applied, no residue.
+
+`superiore-anno.en` is the case worth keeping: its agent found 11 by reading
+and the scan found 11, and **they are not the same 11**. The scan misses a join
+whose first part is a single letter (`amisfortune`) or whose second part is
+rare (`localconfraternity`); the agent missed `farfrom`, `ofwhich`,
+`whichnature`, `heavenlygraces`, `thedispenser`. The union is 16, and neither
+method alone would have got there. `vi-e-ben-noto.en` is the same lesson
+stated the other way: its agent reported "no defects" and the scan found four.
+
+**What is left is measured and not taken.** 718 candidates across 87 works,
+14 of them carrying ten or more — `divinum-illud-munus.en` 100,
+`caritatis-studium.en` 94, `sapientiae-christianae.en` 88. That is a filing
+job, not a wave's between-work fix, and the residue at the low end is real
+compounds (`buildup`, `nonbelievers`) and Latin, which is why a count of one or
+two is noise and a count of ninety is the page.
+
+### The one oracle that disagrees, and the misprint its siblings settle
+
+`veritatis-splendor.pt` is the wave's single disagreement, and after the
+correction below it is **pure LEVEL** — 26 differences, not one heading missing
+or extra. The parser levels by nesting depth where the page levels by
+typography: the three banner sub-headings are printed in the same
+`<p align="center"><b>` as the CAPÍTULO headings above them, and the ~30
+bold-italic quote-headings are identically styled wherever they sit, yet parse
+at level 2 under a chapter and level 4 under a roman numeral. Same style, two
+different numbers, decided by the branch. That is the shape to watch for; it is
+a whole-document defect, not an oracle error, and it is recorded rather than
+taken.
+
+The correction it did earn: **CAPÍTULO II opens a quotation with « and never
+closes it.** The right value is not chosen but fixed by the document's own two
+sibling chapter headings, which close theirs with `&raquo;` in exactly that
+position, immediately before the parenthesised locus — and the French mirror
+prints the equivalent title closed. One occurrence; blast radius one work,
+three files.
+
+### 161 footnotes were stored with no text, and nothing reported it
+
+`vigilanti-cura.en`'s agent found both its footnotes stored as
+`{"marker": "1", "text": ""}` while the page prints them in full. Measuring
+that across the corpus: **161 empty citations in 29 works**, eight of which
+lose their entire apparatus.
+
+The failure is quiet by construction. `find_footnote_region_start` locates the
+region correctly in every case; it is `parse_footnote_entry` that returns
+`marker=None`, which the caller reads as a continuation of a previous entry —
+and where the FIRST entry already failed, there is no previous entry to
+continue, so every note in the list falls through to nothing. The marker is
+still recorded from the body, so the citation exists, points at an empty
+string, and no validation notices.
+
+The eight wholesale losses are **six different conventions**, not one:
+
+| work                           | notes | how the page prints them                                       |
+| ------------------------------ | ----- | -------------------------------------------------------------- |
+| `miranda-prorsus.en`           | 55    | `<table>`: marker in a `<sup>` in one `<td>`, text in the next |
+| `fidei-donum.en`               | 30    | one `<p>` holding the whole list, `<br />` between entries     |
+| `humanum-genus.pt`             | 16    | `<p> [N] text</p>`                                             |
+| `inscrutabili-dei-consilio.en` | 12    | `<p>N). text</p>`                                              |
+| `iucunda-sane.en`              | 8     | region not after the last `<hr>`                               |
+| `vigilanti-cura.en`            | 2     | `<a name="Nota%20N"></a>[N] text`                              |
+| `mense-maio.en`                | 2     | `<p>12. (1) Cf...`                                             |
+| `inter-mirifica.pt`            | 2     | no notes region on the page at all                             |
+
+**Two were taken**, because both are one regex on an existing dispatch and
+neither can collide with anything: `_FN_BARE_RE` already claims "N. " and
+"N ", and no prose opens a footnote with a bracket or a closing paren that is
+not its label. `_FN_BRACKET_RE` reads `[N] text` (`humanum-genus.pt`,
+`vigilanti-cura.en`) and `_FN_TRAILING_PAREN_RE` reads `N). text`
+(`inscrutabili-dei-consilio.en`). 161 empty citations → 132, two works cleared.
+
+The other four conventions are each a reader of their own — the table layout in
+particular — and are recorded rather than written. The count to watch is 132.
+
+### Blast radius
+
+One re-parse over the whole corpus, four passes, **0 network fetches**.
+21 files changed across exactly 7 works: the 4 correction targets and the 3
+footnote targets, `sections.json`/`appendix.json` plus each work's manifest and
+corrections-applied. Nothing else in 2,227 build files moved. A second, single-work
+pass for the `veritatis-splendor.pt` correction touched 3 files in that work
+and nothing else. `npm run
+sync-corpus` exits 0 with no coverage family moving by as much as 0.01%,
+`npm test` 1194/1194, ruff clean.
+
+### The sweep, closed
+
+**354 document works, 354 descriptions, 346 hand-read tables of contents**, over
+nineteen waves. 50 of the 346 oracles disagree with the parse, and that number
+is the sweep's real output: each one is a located, reproducible defect with a
+page to read it off, and none of them was visible from inside the code.
+
+What the last wave adds to the method is that **the two remaining detectors are
+statistical, not readerly**. Every earlier wave found defects by having an agent
+read a document; the merge scan and the empty-footnote census found theirs by
+comparing the corpus to itself, and both classes had been sitting in front of
+nineteen waves of careful readers without being seen — 718 joins still standing,
+132 citations still empty. A sweep that reads documents one at a time cannot
+find a defect whose evidence is the other 353.
