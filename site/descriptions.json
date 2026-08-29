@@ -54,9 +54,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.ad-apostolorum-principis.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII aos bispos e fiéis da China (1958), denunciando a «Associação patriótica» instituída pelo regime para afastar os católicos da Santa Sé sob pretexto de patriotismo, condenando a eleição e consagração de bispos sem mandato pontifício e exortando os perseguidos a permanecerem firmes na fé e em comunhão com Roma.",
+				"origin": "read"
+			}
+		},
 		"encyclical.ad-beatissimi-apostolorum.en": {
 			"en": {
 				"text": "Benedict XV's first encyclical, issued three months into the First World War, appeals for an end to the fighting and traces its underlying causes to a decline in mutual charity, contempt for authority, and class conflict between rich and poor, naming love of money as their deepest root. It also calls on Catholics to abandon factional labels and remain united with their bishops, then closes with a prayer for peace.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ad-catholici-sacerdotii.en": {
+			"en": {
+				"text": "Pius XI's 1935 encyclical to the bishops on the Catholic priesthood, written for the fifty-sixth anniversary of his own ordination. It expounds the priest's dignity and sacramental powers — above all to forgive sins and confect the Eucharist — then treats the piety, chastity, poverty and learning proper formation must instill, and how a true vocation, usually rooted in a Christian family, is discerned and nurtured in the seminary.",
 				"origin": "read"
 			}
 		},
@@ -120,6 +132,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.affari-vos.en": {
+			"en": {
+				"text": "Leo XIII writes to the bishops of Canada on the Manitoba School Question, after the province's legislature abolished Catholic separate schools. He insists that education without religion cannot form good Christians or honest citizens, urges Catholic Canadians to set aside party divisions and act in union, and counsels accepting whatever partial redress is available while continuing to press for full justice.",
+				"origin": "read"
+			}
+		},
 		"encyclical.anni-sacri.pt": {
 			"pt": {
 				"text": "Carta encíclica de Pio XII, escrita durante o Ano Santo de 1950, que convoca os fiéis a uma cruzada de orações pela renovação cristã dos costumes e pela concórdia entre os povos. Diante do ateísmo, das perseguições à Igreja e do risco de novos conflitos, o Papa pede orações públicas para o dia 26 de março, domingo da Paixão, unidas às suas na basílica de São Pedro.",
@@ -180,6 +198,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.caritatis.en": {
+			"en": {
+				"text": "Leo XIII's letter to the bishops of Poland, urging the Polish people to hold fast to the Catholic faith their ancestors defended. It calls for diligence in Christian marriage and education, rigorous seminary formation and study, and charity toward workers as in Rerum novarum, then addresses Poles under Russian rule, the house of Hapsburg, and the province of Gniezno-Poznan in turn.",
+				"origin": "read"
+			}
+		},
 		"encyclical.casti-connubii.en": {
 			"en": {
 				"text": "Pius XI's encyclical on Christian marriage, organized around St. Augustine's three blessings of wedlock — offspring, conjugal faith, and the sacrament — expounding each in turn before cataloguing the errors attacking them: contraception, abortion, eugenic sterilization, divorce, and the “false emancipation” of women, and closing with remedies for restoring marriage to the divine plan.",
@@ -213,6 +237,12 @@
 		"encyclical.communium-interpretes-dolorum.en": {
 			"en": {
 				"text": "An appeal for the month of May 1945, three weeks before the war in Europe ended: Pius XII asks the faithful, and children in particular, to pray to Mary for peace and for the renewal of Christian morals on which peace rests, and to pray for refugees, prisoners and the wounded — so that what follows the devastation may be a just peace and not one carrying the seed of future wars.",
+				"origin": "read"
+			}
+		},
+		"encyclical.communium-interpretes-dolorum.pt": {
+			"pt": {
+				"text": "Encíclica de Pio XII, publicada em plena Segunda Guerra Mundial, convocando os fiéis — sobretudo as crianças — a rezar durante o mês de maio, dedicado à Virgem, pelo fim do conflito e por uma paz fundada na justiça e na caridade, e não apenas na vingança. Lembra também os refugiados, os prisioneiros nos campos de concentração e os doentes da guerra.",
 				"origin": "read"
 			}
 		},
@@ -267,6 +297,12 @@
 		"encyclical.diuturni-temporis.en": {
 			"en": {
 				"text": "Leo XIII's encyclical on the Rosary, reviewing the annual Rosary letters he has issued since 1883 and the honors he has attached to the devotion — its October dedication, its place in the Roman Breviary, the invocation added to the Litany of Loreto — and surveying the indulgences it carries. It announces his intention to issue a “Constitution” setting out the rights and privileges of the Rosary Sodality.",
+				"origin": "read"
+			}
+		},
+		"encyclical.diuturni-temporis.pt": {
+			"pt": {
+				"text": "Carta encíclica de Leão XIII que resume os documentos pontifícios sobre o Rosário mariano publicados desde 1883, recordando a sua origem celeste, a instituição da festa e do mês de Outubro a ele consagrado, e o tesouro de indulgências concedido às Confrarias do Rosário; anuncia uma Constituição sobre os direitos e privilégios dessas Confrarias.",
 				"origin": "read"
 			}
 		},
@@ -420,15 +456,33 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.fidei-donum.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII sobre a situação das missões católicas, sobretudo na África: descreve as alegrias e dificuldades do apostolado missionário no continente, convoca toda a Igreja à cooperação e detalha o tríplice dever dos fiéis para com as missões — oração, caridade e fomento das vocações missionárias — antes de estender o apelo às missões de todo o mundo.",
+				"origin": "read"
+			}
+		},
 		"encyclical.fidentem-piumque-animum.en": {
 			"en": {
 				"text": "Leo XIII's encyclical on the Rosary, urging its recitation as a proven form of communal prayer. He explains Mary's role as mediatrix under Christ the one Mediator, the Rosary's power to nourish faith when it is daily exposed to attack, and its indulgences for the living and the dead, closing with an appeal to pray the Rosary throughout October for the reunion of separated Christians with the Church.",
 				"origin": "read"
 			}
 		},
+		"encyclical.fidentem-piumque-animum.pt": {
+			"pt": {
+				"text": "Carta encíclica de Leão XIII sobre o Rosário de Nossa Senhora, dada em Roma a 20 de setembro de 1896. Recomenda essa oração pela eficácia da perseverança e da união de muitos numa só súplica, expõe Maria como mediadora e mestra de fé e penitência, e apela à sua recitação, sobretudo em outubro, para alcançar a reunião dos cristãos dissidentes com a Igreja.",
+				"origin": "read"
+			}
+		},
 		"encyclical.fides-et-ratio.en": {
 			"en": {
 				"text": "John Paul II's 1998 encyclical on the relationship between faith and reason, opened by the image of ‘two wings’ lifting the human spirit toward truth. It traces their kinship in Scripture's wisdom literature, the Church's engagement with Greek philosophy, Aquinas's harmony of the two and their modern separation, then turns to the Magisterium's care for philosophy and to theology's present tasks, a century after Aeterni Patris.",
+				"origin": "read"
+			}
+		},
+		"encyclical.fides-et-ratio.pt": {
+			"pt": {
+				"text": "Carta encíclica de João Paulo II sobre a relação entre fé e razão — as duas asas pelas quais o espírito humano se eleva à contemplação da verdade, na imagem que abre o texto. Percorre o diálogo entre teologia e filosofia desde os Apóstolos até à reflexão contemporânea, sem canonizar nenhuma corrente filosófica, e termina apelando a teólogos e filósofos para recuperarem a dimensão metafísica da verdade.",
 				"origin": "read"
 			}
 		},
@@ -558,6 +612,18 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.in-ipso.en": {
+			"en": {
+				"text": "Leo XIII's encyclical to the bishops of Austria, urging them to hold annual episcopal conferences to coordinate their defense of the Church against anti-Catholic agitation, unite the faithful behind the hierarchy and the Roman Pontiff, strengthen seminary formation, encourage a Catholic press, and attend to the plight of workers as part of the social question.",
+				"origin": "read"
+			}
+		},
+		"encyclical.in-multiplicibus-curis.pt": {
+			"pt": {
+				"text": "Pio XII renova, pela segunda vez, o apelo a orações públicas pela paz na Palestina, lamentando a destruição de lugares sagrados e o sofrimento de refugiados na guerra em curso. Defende um estatuto internacional para Jerusalém e arredores, e garantias internacionais de livre acesso aos lugares santos e de liberdade de culto, concedendo a bênção apostólica.",
+				"origin": "read"
+			}
+		},
 		"encyclical.in-plurimis.en": {
 			"en": {
 				"text": "Leo XIII's letter to the bishops of Brazil, prompted by Brazil's abolition of slavery, arguing that slavery contradicts the natural and divine order and surveying the Church's campaign against it — patristic teaching on Christian equality, papal condemnations of the trade under Pius II, Paul III and Gregory XVI — before denouncing the overland slave trade still running in Africa and counselling the newly freed and their former masters.",
@@ -630,6 +696,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.laetitiae-sanctae.en": {
+			"en": {
+				"text": "Leo XIII commends devotion to the Rosary as a remedy for three evils weakening society: distaste for simple, laborious living, met by the Joyful Mysteries; repugnance to suffering, met by the Sorrowful Mysteries; and forgetfulness of the life to come, met by the Glorious Mysteries. He closes by praising the Confraternities of the Rosary and urging bishops to foster the devotion.",
+				"origin": "read"
+			}
+		},
 		"encyclical.laudato-si.en": {
 			"en": {
 				"text": "Francis's encyclical on ecology, taking its title from Saint Francis's Canticle of the Creatures. It diagnoses pollution, climate change, water scarcity, biodiversity loss and social breakdown as symptoms of one crisis rooted in a 'technocratic paradigm,' develops an 'integral ecology' linking care for nature to justice for the poor, and proposes lines of dialogue, education, and 'ecological conversion.'",
@@ -672,6 +744,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.lux-veritatis.it": {
+			"it": {
+				"text": "Enciclica di Pio XI per il XV centenario del Concilio di Efeso, che proclamò la maternità divina di Maria. Ripercorre la condanna dell'eresia di Nestorio e il ruolo decisivo di Celestino I nel confermare, prima ancora del Concilio, l'unità della persona divina in Cristo; ne trae il dogma della Theotókos e propone la Sacra Famiglia di Nazareth come modello per le famiglie cristiane.",
+				"origin": "read"
+			}
+		},
 		"encyclical.magnae-dei-matris.en": {
 			"en": {
 				"text": "Leo XIII again calls the faithful to devote October to the Rosary of Mary, urging it as a remedy for an age of irreligious schooling, license of press and speech, and insult to Christ. He presents the Rosary as prayer joined to Christian living, a means of meditating the faith's chief mysteries with Mary as model of virtue, and renews the indulgences granted for its recitation.",
@@ -681,6 +759,12 @@
 		"encyclical.magni-nobis.en": {
 			"en": {
 				"text": "Leo XIII's 1889 letter approving the statutes of the newly founded Catholic University of America in Washington, D.C. It grants the university the right to confer academic degrees, including in philosophy, theology and canon law, names the Archbishop of Baltimore its chancellor, requires its course of studies be submitted to Rome for approval, and asks that no similar university be established without consulting the Holy See.",
+				"origin": "read"
+			}
+		},
+		"encyclical.magnifica-humanitas.ar": {
+			"ar": {
+				"text": "رسالة بابويّة عامّة للبابا لاوُن الرّابع عشر (2026)، تتناول تعليم الكنيسة الاجتماعيّ في مواجهة تحوّلات الثّورة الرّقميّة والذّكاء الاصطناعيّ. تستعرض أسس هذا التّعليم ومبادئه منذ لاوُن الثّالث عشر، ثمّ تتوقّف عند وعود الذّكاء الاصطناعيّ ومخاطره على الحقيقة والعمل والحرّيّة، وتدعو، في مواجهة ”ثقافة القوّة“ والحروب الجديدة، إلى بناء ”حضارة المحبّة“ المتجذّرة في سرّ التّجسّد.",
 				"origin": "read"
 			}
 		},
@@ -708,6 +792,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.mater.pt": {
+			"pt": {
+				"text": "Carta encíclica de João XXIII, setenta anos após a Rerum Novarum, sobre a recente evolução da questão social à luz da doutrina cristã. Retoma os ensinamentos de Leão XIII, Pio XI e Pio XII sobre socialização, salário e propriedade privada, trata novos aspectos — agricultura, desigualdade entre nações e crescimento demográfico — e conclui com um apelo à renovação das relações humanas na verdade, na justiça e no amor.",
+				"origin": "read"
+			}
+		},
 		"encyclical.maximam-gravissimamque.en": {
 			"en": {
 				"text": "Settles the question of the Diocesan Associations, left open in France since the separation law of 1905. Reviewing the associations cultuelles that Pius X had condemned, Pius XI approves new statutes negotiated with the French government and examined by canonists and the Council of State, permits the dioceses to form associations under them, and repeats his predecessor's condemnation of the Lay Laws.",
@@ -717,6 +807,12 @@
 		"encyclical.mediator-dei.en": {
 			"en": {
 				"text": "The sacred liturgy as the public worship that the Church, united with Christ her divine Head, offers to God: the priesthood's role in the Eucharistic sacrifice, the laity's active yet real participation in it, the sacraments and sacramentals, the Divine Office and liturgical year, and pastoral counsel on sacred art, music and altar servers, warning against both careless innovation and an exaggerated antiquarian zeal for reviving ancient forms.",
+				"origin": "read"
+			}
+		},
+		"encyclical.mediator-dei.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII sobre a sagrada liturgia: trata da sua natureza como culto público e hierárquico da Igreja, do sacrifício eucarístico e da participação dos fiéis nele, da comunhão e adoração eucarísticas, do ofício divino e do ciclo do ano litúrgico, e encerra com diretrizes pastorais sobre outras formas de piedade e o espírito litúrgico a fomentar entre clero e povo.",
 				"origin": "read"
 			}
 		},
@@ -747,6 +843,12 @@
 		"encyclical.militantis-ecclesiae.en": {
 			"en": {
 				"text": "Leo XIII's encyclical marking the third centenary of St. Peter Canisius's death, addressed to the bishops of Austria, Germany and Switzerland. It holds up Canisius, second apostle of Germany after Boniface, as a model of uniting sound learning with the defense of the faith against the Reformation, and urges Catholic schools, the union of piety with study, and unity among Catholics.",
+				"origin": "read"
+			}
+		},
+		"encyclical.mirae-caritatis.en": {
+			"en": {
+				"text": "Leo XIII's encyclical on the Holy Eucharist, issued for the twenty-fifth anniversary of his pontificate. It presents the Eucharist as the source of the Church's supernatural life and the strengthening of faith, then as the bond of charity that remedies the social divisions of the age, and closes on the Eucharistic sacrifice of the Mass and its daily fruits for the world.",
 				"origin": "read"
 			}
 		},
@@ -828,6 +930,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.optatissima-pax.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII, de 18 de dezembro de 1947, convocando orações públicas pelo restabelecimento da paz social e mundial após a guerra, exortando à concórdia entre nações e classes sociais e pedindo especialmente as orações das crianças no Natal, com esmolas e obras de piedade, para aplacar a justiça divina.",
+				"origin": "read"
+			}
+		},
 		"encyclical.orientales-omnes-ecclesias.en": {
 			"en": {
 				"text": "Pius XII's encyclical marking the 350th anniversary of the Union of Brest, by which the Ruthenian Church entered communion with Rome. It traces that reunion's history — the negotiations of 1595–96, the martyrdom of Josaphat Kuntsevych, and Rome's steady defense of the Ruthenian rite against Latinization — before turning to the persecution then engulfing the Ruthenian Church and exhorting its bishops, priests, and faithful to constancy.",
@@ -873,6 +981,12 @@
 		"encyclical.pastoralis-officii.en": {
 			"en": {
 				"text": "Leo XIII's 1891 encyclical to the bishops of Germany and Austria-Hungary condemning dueling as a violation of divine and natural law. He reviews the Church's traditional penalties against duelists, refutes the excuses offered for the practice — that it vindicates injured honor, or that refusing a challenge invites the charge of cowardice — and rejects any exemption claimed for the military.",
+				"origin": "read"
+			}
+		},
+		"encyclical.pastoralis.en": {
+			"en": {
+				"text": "Leo XIII writes to the cardinals and bishops of Portugal following the Catholic Congress of Braga, urging annual episcopal conferences alongside the lay congresses, closer union among bishops, and diocesan and provincial synods leading toward a national council. He commends founding religious societies to train clergy and supply missionaries for Portugal's overseas territories, and restates that the Church strengthens rather than weakens civil authority.",
 				"origin": "read"
 			}
 		},
@@ -930,6 +1044,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.quae-ad-nos.en": {
+			"en": {
+				"text": "A brief pastoral letter to the Archbishop of Prague and the bishops of Bohemia and Moravia, prompted by growing defections from Catholic rites and practice in their dioceses. Leo XIII urges the bishops to hold a joint meeting, its resolutions subject to papal approval, to coordinate a common defense of the faith, and to root out the partisan rivalries splitting their own clergy that weaken the unity such a defense requires.",
+				"origin": "read"
+			}
+		},
 		"encyclical.quas-primas.en": {
 			"en": {
 				"text": "On the kingship of Christ over persons, families and states, gathering the scriptural, patristic and liturgical evidence for a dominion the age's anticlericalism had set out to deny. Closing the Holy Year of 1925, it institutes the feast of Christ the King on the last Sunday of October and joins to it the yearly renewal of the consecration of mankind to the Sacred Heart.",
@@ -951,6 +1071,12 @@
 		"encyclical.quod-apostolici-muneris.en": {
 			"en": {
 				"text": "On socialism, communism and nihilism, whose rise Leo XIII traces to the sixteenth-century revolt against the Catholic faith and to the philosophers' doctrine of unbridled liberty. It defends legitimate civil authority, the indissolubility of marriage and the family, and the natural right of private property against claims of absolute equality and common ownership, and asks bishops to keep workingmen out of the sect.",
+				"origin": "read"
+			}
+		},
+		"encyclical.quod-auctoritate.en": {
+			"en": {
+				"text": "Leo XIII's encyclical proclaiming an extraordinary Jubilee for 1886, urging the faithful to penance, prayer and devotion to the Rosary amid moral decline and dissension among the clergy, then granting a plenary indulgence on stated conditions — church visits, fasting, confession, Communion and almsgiving toward parish schools and seminaries — for Rome's citizens, the wider world, sailors and travellers alike.",
 				"origin": "read"
 			}
 		},
@@ -1058,6 +1184,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.sacerdotalis.pt": {
+			"pt": {
+				"text": "Carta encíclica de Paulo VI que reafirma a lei do celibato sacerdotal, respondendo às objeções levantadas após o Concílio Vaticano II. Expõe o significado cristológico, eclesiológico e escatológico do celibato consagrado, trata da formação e da vida espiritual dos sacerdotes, do problema das deserções e dispensas, e convida bispos, sacerdotes e fiéis a sustentar essa vocação.",
+				"origin": "read"
+			}
+		},
 		"encyclical.sacerdotii.en": {
 			"en": {
 				"text": "Written for the centenary of the death of St John Mary Vianney, holding up the Curé of Ars as the model of a priest: his poverty, chastity and obedience, his life of prayer and his devotion to the Eucharist and the Mass, and his zeal as preacher, catechist and confessor. It closes by asking bishops, the faithful and the young themselves to foster priestly vocations.",
@@ -1067,6 +1199,12 @@
 		"encyclical.sacra-propediem.en": {
 			"en": {
 				"text": "Benedict XV's encyclical for the seventh centenary of the Third Order of St. Francis, defending the true character of Francis of Assisi against Modernist reinterpretation and naming fraternal charity as the Tertiaries' distinguishing mark. It addresses the social unrest and class conflict of the age, calls the Third Order to carry the spirit of Christ into social life, and closes by granting indulgences for the centenary's Triduum.",
+				"origin": "read"
+			}
+		},
+		"encyclical.sacra-virginitas.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII sobre a virgindade e a castidade perfeita consagradas a Deus. Expõe a doutrina patrística sobre a excelência da virgindade em relação ao matrimônio, refuta os erros que a dizem nociva ao organismo ou menos santificante e apostólica que o casamento, trata da vigilância, do pudor e da devoção mariana necessários para vivê-la, e exorta a fomentar as vocações religiosas.",
 				"origin": "read"
 			}
 		},
@@ -1103,6 +1241,12 @@
 		"encyclical.slavorum-apostoli.en": {
 			"en": {
 				"text": "For the eleventh centenary of the death of St Methodius, presenting him with his brother Cyril as the apostles of the Slavs. It follows their lives and their peaceable missionary method — preaching and celebrating the liturgy in the language of the people they came to — and reads them as pioneers of what would later be called inculturation, who bound the Slav peoples into the Church's catholicity and into the common civilization of Christian Europe.",
+				"origin": "read"
+			}
+		},
+		"encyclical.slavorum-apostoli.pt": {
+			"pt": {
+				"text": "Carta encíclica de João Paulo II, publicada para o undécimo centenário da morte de são Metódio, sobre os santos Cirilo e Metódio, apóstolos dos eslavos: suas vidas, o método missionário de traduzir a Escritura e a liturgia para a língua eslava, o sentido católico da Igreja e o alcance do milênio cristão entre os povos eslavos, concluindo com uma oração pela herança da fé eslava.",
 				"origin": "read"
 			}
 		},
