@@ -787,11 +787,11 @@ export function cccChunkStartFor(n: number): number {
 }
 
 /** Must equal `DOCUMENT_CHUNK_SIZE` in scripts/sync-corpus.mjs, which is
- *  where the choice of 50 is argued. The two are separate literals because
+ *  where the choice of stride is argued. The two are separate literals because
  *  this module cannot import from a build script; `documentChunkLocation`
  *  returning `undefined` for a chunk the sync did write is what a mismatch
  *  would look like, and `corpus.test.ts` pins them together. */
-const DOCUMENT_CHUNK_SIZE = 50;
+const DOCUMENT_CHUNK_SIZE = 25;
 
 /** The fixed-range chunk a document SECTION number lives in — same pure
  *  function of `n` as `cccChunkStartFor`, applied to a different stride. */

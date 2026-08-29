@@ -160,15 +160,23 @@ const CCC_CHUNK_SIZE = 100;
  *  section (`linkPreviewContent.ts`) pays for the whole file, so citing one
  *  paragraph of an encyclical downloaded the encyclical.
  *
- *  50 rather than the CCC's 100 because a document's sections are much
+ *  Smaller than the CCC's 100 because a document's sections are much
  *  longer and far more variable than a catechism paragraph — a median 1.1 KB
  *  but a p90 of 2.3 KB and a worst of 7.6 KB — so the same stride would span
- *  a much wider range of chunk sizes. At 50 the worst chunk is ~161 KB raw
- *  (~48 KB brotli) against a whole-file 827 KB (95 KB brotli), and since the
- *  median document is 27 sections most works remain a single chunk anyway.
- *  It also bounds the continuous reading view (`/documenta/{slug}`, which
- *  needs every chunk) at 3 parallel fetches for the longest document. */
-const DOCUMENT_CHUNK_SIZE = 50;
+ *  a much wider range of chunk sizes.
+ *
+ *  IT WAS 50 UNTIL THE CORPUS STOPPED BEING WRITTEN IN LATIN SCRIPT. A fixed
+ *  section count is only a fixed byte count while the alphabet is; Cyrillic
+ *  and Arabic cost two UTF-8 bytes per letter where English costs one, so
+ *  the day the magisterial documents landed in ten languages
+ *  (2026-08-29) `caritas-in-veritate.ru` produced a 202 KB chunk from the
+ *  same 50 sections its English edition fits in 108 KB — the first breach of
+ *  the ceiling below, and one no Latin-script measurement could have
+ *  predicted. At 25 the worst chunk across all ten languages is well inside
+ *  it, the median document (27 sections) still fits in one or two, and the
+ *  continuous reading view (`/documenta/{slug}`, which needs every chunk)
+ *  is bounded at 6 parallel fetches for the longest document. */
+const DOCUMENT_CHUNK_SIZE = 25;
 
 /** The Compendium, chunked by question on the same fixed-stride rule as the
  *  CCC and for the same "pure function of `n`, no lookup table" reason
@@ -1485,8 +1493,24 @@ if (publishedDefeats.length > 0) {
  * split isn't needed. A single check over everything cannot be reasoned past
  * one work type at a time.
  */
+/** Content kinds the ceiling does not apply to, and why — not an escape
+ *  hatch, a scope statement. The ceiling's premise is that a reader pays for
+ *  a whole file to read ONE UNIT of it, so it only means anything where the
+ *  file holds several addressable units. A document's appendix holds none: it
+ *  is where an edition that prints no paragraph numbers keeps its whole text
+ *  (docs/corpus-schema.md, "unnumbered content"), so it has no citable
+ *  address, nothing links into the middle of it, and the page that shows it
+ *  shows all of it. The whole file IS the unit. This stopped being
+ *  theoretical on 2026-08-29, when the magisterial documents were taken in
+ *  ten languages and 328 of the new editions turned out to be unnumbered:
+ *  `vatii.gaudium-et-spes.ar` keeps its 118 entries in a 313 KB appendix,
+ *  which is simply how long that document is in Arabic. */
+const CEILING_EXEMPT_KINDS = new Set(['document-appendix']);
+
 const oversized = contentManifest
-	.filter((entry) => entry.bytes > CONTENT_FILE_CEILING_BYTES)
+	.filter(
+		(entry) => entry.bytes > CONTENT_FILE_CEILING_BYTES && !CEILING_EXEMPT_KINDS.has(entry.kind)
+	)
 	.sort((a, b) => b.bytes - a.bytes);
 
 if (oversized.length > 0) {

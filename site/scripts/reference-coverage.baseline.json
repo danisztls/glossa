@@ -34,9 +34,9 @@
 		"ccc": {
 			"citations": {
 				"total": 19533,
-				"linkable": 14846,
-				"recognized": 3268,
-				"nothing": 1419
+				"linkable": 15006,
+				"recognized": 3110,
+				"nothing": 1417
 			},
 			"prose": {
 				"blocks": 26088,
@@ -189,32 +189,132 @@
 		},
 		"encyclical": {
 			"citations": {
-				"total": 11808,
-				"linkable": 4252,
-				"recognized": 2486,
-				"nothing": 5070
+				"total": 32186,
+				"linkable": 11491,
+				"recognized": 5680,
+				"nothing": 15015
 			},
 			"prose": {
-				"blocks": 15725,
-				"scripture": 5016,
-				"document": 10,
+				"blocks": 34939,
+				"scripture": 18160,
+				"document": 207,
 				"stored": 0
 			},
 			"residue": [
 				{
-					"key": ". cf.",
-					"count": 155,
-					"example": ". Cf. Pius XI, Encyclical Letter QuadragesimoAnno, III, loc. cit., 228."
-				},
-				{
 					"key": "ibid.",
-					"count": 133,
+					"count": 280,
 					"example": "Ibid."
 				},
 				{
+					"key": ". cf.",
+					"count": 222,
+					"example": ". Cf. Pius XI, Encyclical Letter QuadragesimoAnno, III, loc. cit., 228."
+				},
+				{
 					"key": ". ibid.",
-					"count": 95,
+					"count": 176,
 					"example": ". Ibid.: loc. cit., 98."
+				},
+				{
+					"key": ". por.",
+					"count": 141,
+					"example": ". Por. np. LEON XIII, Enc. Arcanum divinae sapientiae (10 lutego 1880): Leonis XIII P.M. A"
+				},
+				{
+					"key": ". tamże",
+					"count": 114,
+					"example": ". Tamże, s. 98."
+				},
+				{
+					"key": "] cfr",
+					"count": 101,
+					"example": "] Cfr n. 16: l.c., 265. ["
+				},
+				{
+					"key": "] matth.",
+					"count": 94,
+					"example": "] Matth. XXIV, 6-7. ["
+				},
+				{
+					"key": "] ibid.",
+					"count": 80,
+					"example": "] Ibid. 14. ["
+				},
+				{
+					"key": "ibid. p.",
+					"count": 73,
+					"example": "Ibid. p. 618."
+				},
+				{
+					"key": "] ep.",
+					"count": 71,
+					"example": "] Ep., lib. 2, ep. 74, apud Migne, Patr. lat., t. 148, col. 425. ["
+				},
+				{
+					"key": "] i",
+					"count": 70,
+					"example": "] I Ioan. III, 23. ["
+				},
+				{
+					"key": "ibid. n.",
+					"count": 68,
+					"example": "Ibid., n. 14."
+				},
+				{
+					"key": "] s.",
+					"count": 63,
+					"example": "] S. Cypr. « Florentio cui et Puppiano ep. 66 (al. 69) ». ["
+				},
+				{
+					"key": "المرجع نفسه،",
+					"count": 62,
+					"example": "المرجع نفسه، 61."
+				},
+				{
+					"key": "] in",
+					"count": 61,
+					"example": "] In Epist. ad Ephes., III. ["
+				},
+				{
+					"key": "] cf.",
+					"count": 59,
+					"example": "] Cf. Brev. Rom. in festo SS. Nom. Iesu; die III intra octavam Concept. immac. B.M.V.; in "
+				},
+				{
+					"key": "i cor.",
+					"count": 52,
+					"example": "I Cor., II, 9"
+				},
+				{
+					"key": "خطاب البابا",
+					"count": 51,
+					"example": "خطاب البابا فرنسيس خلال اللقاء المسكوني وبين الأديان مع الشباب، سكوبيي - مقدونيا الشمالية "
+				},
+				{
+					"key": "] de",
+					"count": 50,
+					"example": "] De dono perseverantiae, c. 20, n. 53. ["
+				},
+				{
+					"key": "vgl. ebd.",
+					"count": 50,
+					"example": "Vgl. ebd., 10, 244."
+				},
+				{
+					"key": "archiv. secr.",
+					"count": 50,
+					"example": "Cf. Archiv. Secr. Vat., C.SS. Rituum, Processus, v. 227, p. 196."
+				},
+				{
+					"key": "ibíd.",
+					"count": 48,
+					"example": "Ibíd."
+				},
+				{
+					"key": "ibid. t.",
+					"count": 48,
+					"example": "Ibid. t. 227, p. 137."
 				},
 				{
 					"key": "id. epist.",
@@ -222,109 +322,150 @@
 					"example": "Id., Epist. ad Theophilum, 82, 2, 2."
 				},
 				{
-					"key": "ibid. p.",
+					"key": "conc. trid.",
 					"count": 44,
-					"example": "Ibid. p. 618."
+					"example": "Conc. Trid., sess.22, c.2."
+				}
+			]
+		},
+		"exhortation": {
+			"citations": {
+				"total": 34109,
+				"linkable": 10299,
+				"recognized": 5737,
+				"nothing": 18073
+			},
+			"prose": {
+				"blocks": 25385,
+				"scripture": 20826,
+				"document": 290,
+				"stored": 0
+			},
+			"residue": [
+				{
+					"key": "ibid.",
+					"count": 938,
+					"example": "Ibid."
 				},
 				{
-					"key": "id. in",
-					"count": 38,
-					"example": "ID., In octo libros Physicorum Aristotelis expositio, Lib. II, lectio 14."
+					"key": "r propositio",
+					"count": 589,
+					"example": "Cfr Propositio 2."
+				},
+				{
+					"key": "vgl. propositio",
+					"count": 421,
+					"example": "Vgl. Propositio 2."
+				},
+				{
+					"key": "por. propositio",
+					"count": 286,
+					"example": "Por. Propositio 2."
+				},
+				{
+					"key": "relatio finalis",
+					"count": 245,
+					"example": "Relatio finalis 2015, 5."
+				},
+				{
+					"key": "relatio synodi",
+					"count": 194,
+					"example": "Relatio Synodi 2014, 5."
+				},
+				{
+					"key": "ebd.",
+					"count": 173,
+					"example": "Ebd."
+				},
+				{
+					"key": "vgl. ebd.",
+					"count": 168,
+					"example": "Vgl. ebd."
+				},
+				{
+					"key": "r ibid.",
+					"count": 158,
+					"example": "Cfr ibid., n. 73."
+				},
+				{
+					"key": "ibid. n.",
+					"count": 155,
+					"example": "Ibid., n. 63."
+				},
+				{
+					"key": "ibíd.",
+					"count": 121,
+					"example": "Ibíd."
+				},
+				{
+					"key": "tamże.",
+					"count": 121,
+					"example": "Tamże."
+				},
+				{
+					"key": "نفس المرجع،",
+					"count": 120,
+					"example": "نفس المرجع، 63."
 				},
 				{
 					"key": "ibidem.",
-					"count": 31,
+					"count": 106,
 					"example": "Ibidem."
 				},
 				{
-					"key": "encyclical on",
-					"count": 29,
-					"example": "Encyclical, On the Condition of Workers, May 15, 1891, 3."
+					"key": "propositio 8.",
+					"count": 77,
+					"example": "Propositio 8."
 				},
 				{
-					"key": "pontifical council",
-					"count": 27,
-					"example": "Cf.Pontifical Council for Justice and Peace, Compendium of the Social Doctrine of the Chur"
+					"key": "propositio 4.",
+					"count": 73,
+					"example": "Cf. Propositio 4."
 				},
 				{
-					"key": "i cor.",
-					"count": 26,
-					"example": "I Cor., II, 9"
+					"key": "código de",
+					"count": 67,
+					"example": "Cf. Código de Derecho Canónico, cc. 1116. 1161-1165; Código de los Cánones de las Iglesias"
 				},
 				{
-					"key": "راجع المرجع",
-					"count": 26,
-					"example": "راجع المرجع نفسه، 11: أعمال الكرسيّ الرّسوليّ 58 (1966)، 1033-1034."
+					"key": "instrumentum laboris",
+					"count": 65,
+					"example": "Cf. Instrumentum laboris, \"Vocación y misión de los laicos en la Iglesia y en el mundo a l"
 				},
 				{
-					"key": "address to",
-					"count": 25,
-					"example": "Address to the Participants in the International Colloquium “Réparer L’Irréparable”, on th"
+					"key": "ср. предложение",
+					"count": 65,
+					"example": "Ср. Предложение 5."
 				},
 				{
-					"key": "ibid. v.",
-					"count": 25,
-					"example": "Cf. ibid., v. 227, p. 13i."
+					"key": "propositio 14.",
+					"count": 59,
+					"example": "Cf. Propositio 14."
 				},
 				{
-					"key": "conc. trid.",
-					"count": 24,
-					"example": "Conc. Trid., Sess. XXIV."
+					"key": "propositio 9.",
+					"count": 58,
+					"example": "Propositio 9."
 				},
 				{
-					"key": "letter to",
-					"count": 24,
-					"example": "Letter to the Min. Gen.of the Friars Minor, November25, 1898."
+					"key": "propositio 30.",
+					"count": 57,
+					"example": "Cf. Propositio 30."
 				},
 				{
-					"key": "roman missal",
-					"count": 24,
-					"example": "Cf. Roman Missal, prayer of the celebrant before communion."
+					"key": "] cfr",
+					"count": 57,
+					"example": "] cfr Propositio 1. ["
 				},
 				{
-					"key": "] mansi",
-					"count": 22,
-					"example": "] Mansi, Conciliorum Amplissima Collectio, IV, c. 1007; Schwartz, Acta Conciliorum Oecumen"
+					"key": "joão paulo",
+					"count": 56,
+					"example": "Cf. João Paulo II, Carta às Crianças (13 de Dezembro de 1994): L’Osservatore Romano (ed. p"
 				},
 				{
-					"key": "vita s.",
-					"count": 21,
-					"example": "Vita S. Bonifatii, auctore Willibaldo, ed. Levison (Hannoveras et Lipsiae, 1905), p. 21."
-				},
-				{
-					"key": "ibidem epist.",
-					"count": 21,
-					"example": "Cf. Ibidem, Epist. 51, 57, 58, 60, 68, 77, 80, 86, 87, 89."
-				},
-				{
-					"key": "ibid. t.",
-					"count": 21,
-					"example": "Cf. Ibid. t. 227, p.137."
-				},
-				{
-					"key": "s. tomás",
-					"count": 19,
-					"example": "S. Tomás de Aquino, Summa theologiæ, III, q. 73, a. 3c."
-				},
-				{
-					"key": "ib. c.",
-					"count": 19,
-					"example": "Ib., c. 19."
-				},
-				{
-					"key": "] de",
-					"count": 18,
-					"example": "] De dono perseverantiae, c. 20, n. 53. ["
-				},
-				{
-					"key": "francisco discurso",
-					"count": 18,
-					"example": "Francisco, Discurso aos participantes do Colóquio internacional “Réparer l´irréparable”, n"
-				},
-				{
-					"key": "code of",
-					"count": 18,
-					"example": "Cf. Code of Canon Law, Canon 844 §§ 3-4; Code of Canons of the Eastern Churches, Canon 671"
+					"key": "propositio 38.",
+					"count": 55,
+					"example": "Cf. Propositio 38."
 				}
 			]
 		},
@@ -360,18 +501,23 @@
 		},
 		"vatii": {
 			"citations": {
-				"total": 2305,
-				"linkable": 1329,
-				"recognized": 429,
-				"nothing": 547
+				"total": 4473,
+				"linkable": 2310,
+				"recognized": 1068,
+				"nothing": 1095
 			},
 			"prose": {
-				"blocks": 1250,
-				"scripture": 1097,
-				"document": 0,
+				"blocks": 4810,
+				"scripture": 5576,
+				"document": 21,
 				"stored": 0
 			},
 			"residue": [
+				{
+					"key": "] cf.",
+					"count": 200,
+					"example": "] Cf. Ibid., n. 12. ["
+				},
 				{
 					"key": "r. conc.",
 					"count": 36,
@@ -388,9 +534,24 @@
 					"example": "Cfr. S. Pio X, aloc. à Associação católica da juventude francesa acerca da piedade, ciénci"
 				},
 				{
+					"key": "] conc.",
+					"count": 31,
+					"example": "] Conc. Vat. I, Const. dogm. De fide cath., chap. 3, sur la foi: Denz. 1789 (3008). ["
+				},
+				{
 					"key": "pius xii",
-					"count": 20,
+					"count": 27,
 					"example": "cf. Pius XII, allocution to cardinals, Feb. 18, 1946: A.A.S. 38 (1946) pp. 101-102; Idem.,"
+				},
+				{
+					"key": "conc. vat.",
+					"count": 16,
+					"example": "Cf. CONC. VAT. II, Decr. De accommodata renovatione vitae religiosae, n. 8."
+				},
+				{
+					"key": "] ibid.",
+					"count": 15,
+					"example": "] Ibid. ["
 				},
 				{
 					"key": "r. pio",
@@ -398,9 +559,19 @@
 					"example": "Cfr. Pio XII, aloc. aos Párocos, etc., 6 fevereiro 1951: Discorsi e Radiomessaggi di S. S."
 				},
 				{
+					"key": "2 cor.",
+					"count": 11,
+					"example": "Cf. 2 Cor., 10, 8; 13, 10."
+				},
+				{
 					"key": "john xxiii",
 					"count": 10,
 					"example": "cf. John XXIII, apostolic constitution \"Humani Salutis,\" Dec. 25, 1961: A.A.S. 54 (1962) p"
+				},
+				{
+					"key": "i pt.",
+					"count": 9,
+					"example": "Cf. I Pt. 1,23."
 				},
 				{
 					"key": "decree \"on",
@@ -421,6 +592,11 @@
 					"key": "council of",
 					"count": 8,
 					"example": "cf. Council of Trent, fifth session, Decree De Reform., c. 2, Mansi 33, 30: 24th session, "
+				},
+				{
+					"key": "] messale",
+					"count": 8,
+					"example": "] Messale romano, dal prefazio della festa di Cristo Re. ["
 				},
 				{
 					"key": "pius xi",
@@ -448,54 +624,19 @@
 					"example": "Cf. Roman Pontifical Ordination of a Priest, preface. These words are already found in the"
 				},
 				{
+					"key": "1 cor.",
+					"count": 7,
+					"example": "Cf. 1 Cor., 11, 26."
+				},
+				{
+					"key": "leo xiii",
+					"count": 6,
+					"example": "cf. Leo XIII, allocution Jan. 28, 1894: Acts, 14 (1894) pp. 424- 425."
+				},
+				{
 					"key": "john xxiii's",
 					"count": 6,
 					"example": "cf. John XXIII's apostolic constitution, Humanae Salutis, Dec. 25, 1961: A.A.S. 54 (1962) "
-				},
-				{
-					"key": "r. paulo",
-					"count": 6,
-					"example": "Cfr. Paulo VI, Alocução aos Emin. Cardeais, Ex.mos Bispos e Rev.mos Prelados e outros ofic"
-				},
-				{
-					"key": "gasser ib.",
-					"count": 5,
-					"example": "Gasser, ib.: Mansi 1214 A."
-				},
-				{
-					"key": "] cf.",
-					"count": 5,
-					"example": "] Cf. St. Augustine, Tractatus in Ioannem, VI, n. 7. ["
-				},
-				{
-					"key": "decree \"pastoral",
-					"count": 4,
-					"example": "Cf. Decree, \"Pastoral Duties of Bishops in the Church,\" 35, 4."
-				},
-				{
-					"key": "conc. vat.",
-					"count": 4,
-					"example": "Conc. Vat. I, Const. dogm. Pastor Aesernus, 4: Denz. 1836 (3070) no. 26"
-				},
-				{
-					"key": "conc. florentinum",
-					"count": 4,
-					"example": "Conc. Florentinum, Decretum pro Graecis: Denz. 693 (1305)."
-				},
-				{
-					"key": "s. inácio",
-					"count": 4,
-					"example": "S. Inácio M., Philad., Praef., ed. Funk, I, p. 264."
-				},
-				{
-					"key": "r. missale",
-					"count": 4,
-					"example": "Cfr. Missale romanum, Prefácio da festa de Cristo Rei."
-				},
-				{
-					"key": "r. syn.",
-					"count": 4,
-					"example": "Cfr. Syn. Laodicen., an. 347/381, can. 29; S. Nicephorus CP., cap. 14; Syn. Duinen. Armeno"
 				}
 			]
 		}

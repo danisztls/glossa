@@ -59,5 +59,66 @@
 		"    \"reason\": \"Missing ~41% of its paragraphs to the source-HTML defect in docs/research/vatican-documents.md §7.1.\"",
 		"  }"
 	],
-	"works": {}
+	"works": {
+		"encyclical.acerbo-nimis.it": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 6 sections and §1 holds 78% of the 27 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"encyclical.ad-beatissimi-apostolorum.fr": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 15 sections and §1 holds 96% of the 42 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"encyclical.dives-in-misericordia.ar": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 3 sections and §2 holds 55% of the 26 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"encyclical.divini-illius-magistri.fr": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 64 sections and §1 holds 92% of the 94 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"encyclical.ecclesiam.fr": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 3 sections and §1 holds 98% of the 79 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"encyclical.firmissimam-constantiam.la": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 5 sections and §1 holds 73% of the 29 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"encyclical.immortale-dei.fr": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 27 sections and §1 holds 95% of the 58 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"exhortation.ideal-film.fr": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 2 sections and §1 holds 54% of the 64 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"exhortation.signum-magnum.en": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 8 sections and §1 holds 60% of the 29 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"vatii.christus-dominus.fr": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 9 sections and §3 holds 62% of the 45 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"vatii.gaudium-et-spes.fr": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 10 sections and §9 holds 74% of the 31 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"vatii.inter-mirifica.fr": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 2 sections and §23 holds 94% of the 22 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"vatii.lumen-gentium.ar": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 4 sections and §1 holds 97% of the 121 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"vatii.lumen-gentium.fr": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 4 sections and §1 holds 97% of the 207 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"vatii.unitatis-redintegratio.fr": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 4 sections and §2 holds 53% of the 29 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		}
+	}
 }
