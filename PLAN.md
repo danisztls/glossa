@@ -123,8 +123,9 @@ should probably get the same answer.
 
 ### Site wiring the five parsers imply
 
-- **`PsalmNumbering` is the literal `'vulgate'` and must widen to `'hebrew'`.**
-  `bible.crampon.fr` is the corpus's first Hebrew-numbered Psalter — the edition
+- **`PsalmNumbering` widened to `'hebrew'` on 2026-08-28, and the conversion
+  landed with it.** `bible.crampon.fr` is the corpus's first Hebrew-numbered
+  Psalter — the edition
   states its own policy in a footnote, "sauf quelques exceptions" — and stores
   what the source prints, because `common/versification.py`'s `to_vulgate`
   **deliberately refuses Psalms**: that mapper is an algorithm, lives only in
@@ -132,25 +133,69 @@ should probably get the same answer.
   deleted as drift. So the conversion belongs in `sync-corpus.mjs`, where the
   mapper is in scope and where the canonical-address content tier is actually
   built. No inverse mapper is needed: the existing forward `mapPsalm` turns the
-  source's Heb 9 (21 vv) + Heb 10 (18 vv) into Vulg 9 (39 vv) directly.
-- **`WORK_CONFIGS` gains two entries, on evidence stronger than the existing
-  ones.** `bible.straubinger.es` (1,008 four-Kingdoms citations across 489 files)
-  and `bible.martini.it` (447 across 295, in Roman `I.–IV. Reg.` and Arabic
-  `1.–4. Reg.`). Both print **modern** book titles while citing the old scheme in
-  their notes, so `II Reyes` / `II. Reg.` means 2 Samuel while the site's own
-  "2 Kings" means 2 Kings. Note the surface forms differ from the English
-  entries' — `numberedVariants` already emits Roman numerals, but the Italian
-  form carries a period (`I. Reg.`) and the bases are `Reyes` / `Reg`, so this is
-  not a copy of `CONFIG_EN_DOUAY`.
-- **`bible.kaldi.hu` needs the same look and has not had it.** Káldi prints
+  source's Heb 9 (21 vv) + Heb 10 (18 vv) into Vulg 9 (39 vv) directly. Done:
+  `toVulgateChapters` in `sync-corpus.mjs`, after which every seam matches the
+  Clementine, Malachi has its fourth chapter, and psalms differing in verse
+  count from the Clementine fell from 134 to 5. What is left is the FIELD NAME,
+  which says "Psalm" about an edition whose divergence is not confined to the
+  Psalter — 156 of its 294 diverging chapters lie outside `ps`/`mal`/`joel`.
+  Renaming it is a schema decision.
+- **`WORK_CONFIGS` gained two entries on 2026-08-28, and the diagnosis above
+  them was wrong in a way worth keeping.** This row read "1,008 four-Kingdoms
+  citations … so `II Reyes` means 2 Samuel while the site's own '2 Kings' means
+  2 Kings", i.e. that they were read as the wrong book. They were not: neither
+  language's table held `Reyes` or `Reg` **at all**, so 1,430 of them resolved
+  to nothing, and the only genuine misreadings were the 36 places Straubinger
+  writes the short `1 R`/`2 R` the Spanish table already knew. Adding a surface
+  form and re-pointing a scheme are two different repairs, and it took both.
+  **Which forms the scheme covers is itself a measurement**, made by reading
+  every Kings-family citation against the Clementine's real verse counts — a
+  citation is evidence only where one reading addresses a verse that does not
+  exist: `Reyes`/`Rey` 77–0 for Douay, `Reg` 13–4, and `R` **0–5 the other
+  way**. Straubinger writes `1 Sam.` and `1 R.` in one sentence; the short form
+  is modern and stays modern. Reading the counter-examples is what settled it,
+  and all five are source misprints, listed below.
+- **What the Italian entry actually needed was Roman-numeral chapters, and that
+  is the larger finding.** Martini's whole apparatus writes the chapter in Roman
+  ("`4. Reg. XVIII. 27.`", "`Matth. XVI. 18.`") — measured at roughly 10:1 over
+  Arabic across eight book families — and `parseChapterVerses` had refused Roman
+  loci in running prose since the pre-conciliar encyclicals needed them in
+  citations, because there "John XXIII" is a pope. It is now a per-WORK flag,
+  `proseRomanChapters`, on for `bible.martini.it` alone, with the existing
+  guards (an explicit separator, a verse-sized verse) untouched. Martini's notes
+  went from **26 resolved references to 840**.
+- **`bible.kaldi.hu` needed the look and does not need the entry.** Káldi prints
   Douay-style titles ("Királyok III. (I.) könyve"), which is suggestive and is
-  not evidence; the rule wants references measurably read wrong without an entry.
-- **The corpus README's rebuild recipe must name `capture.py` before the
-  parsers.** The new editions parse from `raw/` and do no fetching, so a rebuild
-  into an empty corpus now has two steps per edition, not one. `CLAUDE.md`
-  records that this recipe was already broken once, silently, and that "if you
-  change what a scraper writes or where it lives, the recipe is part of the
-  change".
+  not evidence. The measurement: the built edition has **no notes at all** — only
+  1,333 chapter summaries and 15 headings, and a scan of all 1,501 of those finds
+  **zero** citation-shaped tokens. Its apparatus is the unbuilt `jegyzet` layer
+  below. There is nothing yet for a book table to read, so `hu` gets no config
+  and no `WORK_CONFIGS` row; revisit both when the notes land.
+- **The corpus README's rebuild recipe now names the five parsers, and the claim
+  that it must name `capture.py` was wrong.** `raw/` is tracked, so a fresh clone
+  already has the pages and the rebuild is parse-only; `capture.py` is what
+  filled `raw/` once, and running it during a rebuild would re-ask the origin for
+  nothing. The README says so explicitly now, because the split is new here and
+  reads like a missing step. Verified 2026-08-29 against an empty `build/`: 389
+  works, 2,709 files, everything byte-identical to the previous tree apart from
+  `generated_at`/`applied_at` — and **two files that differed for a real
+  reason**, `bible.cpdv.en` and `bible.clementina.la`, which were stamping the
+  RUN date into `retrieved_at` because they asked the capture ledger for an
+  `index.htm` no crawl ever wrote. A verification run on the day of the change
+  cannot tell "preserved" from "re-stamped"; running it a day later is what
+  found this. Fixed with `source_captured_at`.
+- **The corrections layer's two shared rules now live in `common/`.** Four
+  appliers were each writing out "never apply an entry carrying a `resolution`"
+  and three were each writing out the full-run drift guard, once per scraper.
+  Both are `docs/decisions.md`'s policy rather than an edition's opinion, so
+  they are `filed()` and `require_all_applied()` in `common/corrections.py`,
+  with `FIELD_VERSE_NUMBER`/`FIELD_VERSE_DUPLICATE` naming the vocabulary. The
+  appliers themselves stay put — `kaldi.py`'s relabels a parsed chapter after
+  the fact, `straubinger.py`'s is consulted mid-parse and needs an `occurrence`
+  key, and they are not the same algorithm. **What is deliberately not unified
+  is which entries an applier owns**: `douay_rheims.py` partitions its file by
+  locator scope and `matos_soares.py` by the presence of a locator key, both of
+  which predate `field`. That is a schema question, not a refactor.
 
 ### Content captured and deliberately not built
 
@@ -180,6 +225,22 @@ should probably get the same answer.
   witnesses against it, which is the configuration that found all three Catechism
   defects. It also shows the reasoning was half right — Esther holds real loss
   _and_ real divergence at once, and only reading the text tells them apart.
+- **Five more source defects, each identified by its own sentence** (found
+  2026-08-28 by the Kings adjudication above, and the reason that measurement is
+  worth redoing after any table change). Straubinger's note at 1 Chr 25 writes
+  `III Reyes 4, 31` and then `II Reyes 4, 31` for the same verse, one note apart.
+  Martini's four each name a chapter of Kings and reach it with a numeral one off
+  the one he uses everywhere else: `I. Reg. VII. 28` for Solomon's lavers,
+  `2. Reg. XVII. 32` for Samaria's resettlement, `4. Reg. XX. 22` for Hezekiah's
+  parallel to Isaiah 39, `4. Reg. XXIV. 21` for Seraiah's death. All five are
+  wrong-address defects of exactly the class `pipeline/corrections/` exists for.
+- **Martini's apparatus cites in LATIN book forms the Italian table does not
+  hold.** With Roman chapters now read, the residue is the books: `Matth.`,
+  `Isai.`, `Psal.`, `Luc.`, `Marc.`, `Esod.` and their kin resolve to nothing,
+  and `2. Esd.` resolves to Ezra rather than Nehemiah because the Italian table
+  has no numbered Esdras forms where the English one does. This is the "run the
+  prose scan and read what resolves to nothing" pass CLAUDE.md describes, and
+  Martini is now its largest single target.
 - **Source defects observed and not yet filed.** `bible.kaldi.hu`'s Isaiah 7:14
   prints "Emmánnelnek" for "Emmánuelnek", corroborated by Matthew 1:23 quoting
   the same verse correctly. Martini drops 13 notes whose printed locator names a
