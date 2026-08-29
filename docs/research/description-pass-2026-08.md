@@ -1902,3 +1902,86 @@ work newly agrees and none regress.
   while every parse field — structure, sections, notes, every dataclass field —
   is byte-identical under the old and new parsers, and a repeat run is stable.
   No corpus text is affected.
+
+## Wave 18 (24 works)
+
+18 of the 23 new oracles agree with the parse; 333 oracles now compared, 49
+disagreeing, and **no previously-agreeing work regressed**. The wave was
+interrupted by a session limit that killed 22 of the 24 agents mid-task, and
+restarted; that is written up under "Losing a wave" below because it changes
+how the next one should be sized.
+
+### The wave-17 finding is worse than it was measured to be
+
+Wave 17 established that `promote_italic_heading_run`'s `body_start =
+numbered[0]` guard is load-bearing — removing it promotes 26 salutations —
+and that the cost of keeping it is one lost heading per affected document.
+**`omnibus-compertum.en` shows the cost compounds.**
+
+Its section 1 is unnumbered, so the printed numbering starts at "2." and
+`numbered[0]` is the block opening §2. The first italic heading sits before
+that and is therefore "pre-body", excluded from `candidates`. That leaves two
+body candidates against `_ITALIC_HEADING_MIN_RUN = 3`, the run test fails, and
+**all three headings are dropped, not one** — the two that were never pre-body
+included. The guard does not merely lose the pre-body heading; it can push a
+document under the threshold and lose every heading it has.
+
+`quam-religiosa.en` is the plain one-heading form of the same shape.
+`quum-diuturnum.en` looks like it but is not: it prints two italic
+sub-headings, two is below the threshold on its own merits, and the code
+comment beside `_ITALIC_HEADING_MIN_RUN` already cites that document by name
+for exactly this reason. Its oracle records what the page prints and the
+disagreement is correct.
+
+### Corrections filed
+
+- **`spectata-fides.en` lost nine word spaces**, the same reflow defect
+  `christi-nomen.en` carries — "very manyof your nation", "They do notin all
+  things", "from OurPredecessor". Two Leo XIII English mirrors of the same
+  vintage with the same damage; the evidence line in each entry says so, since
+  that is what makes it the page rather than the text.
+- **`sacerdotii.pt` prints U+201A where it means "é"**, ten times, and nowhere
+  else. A low quotation mark opens nothing there and the sentence has no verb
+  without it, so the correct value is fixed by grammar rather than chosen:
+  "o espírito de alguns ‚ batido pelas ondas" is _é batido_. A systematic
+  encoding fault, not ten typos.
+
+Blast radius: 6 files across the 2 works, `sections.json` only, 0 network
+fetches; both correction sets verified in the stored text with zero residue.
+
+### Findings recorded, not taken
+
+- **`pascendi-dominici-gregis.pt` is the largest single loss the sweep has
+  found.** An unnumbered edition whose five centred-bold top-level headings —
+  INTRODUÇÃO, the three PARTE labels, CONCLUSÃO — are dropped outright, so
+  Parts II and III and the Conclusion are swallowed into one 40,009-character
+  appendix block under the last surviving heading. Its salutation is promoted
+  to a heading in their place, and the eight surviving sub-headings then parse
+  one level shallow. Twelve divisions on the page, eight on the site.
+- `princeps.pt` drops `<strong>INTRODUÇÃO</strong>` while keeping its
+  identically-styled `<strong>I. A HIERARQUIA…</strong>` peers — the known
+  `<strong>` blindness, with the added detail that the roman-numeral headings
+  survive on a text pattern the bare word does not match.
+- `redemptoris-missio.pt` §283 is the `<strong>`/`<em>` class at its purest:
+  one heading written `<em><strong>` where the document's other 39 use
+  `<b><i>`, and the only one of the forty that is lost.
+
+### An oracle reproduced blind
+
+`pascendi-dominici-gregis.pt` already had a committed oracle from 2026-08-24.
+Its agent, told to distrust any file on disk and re-read the page, produced the
+same twelve headings with the same labels and levels. The re-read was reverted
+as cosmetic churn — but two independent readings of one page agreeing exactly
+is the strongest evidence yet that the procedure is reproducible, and it is
+worth more than the diff it would have made.
+
+### Losing a wave
+
+A session limit killed 22 of 24 agents mid-task. **An agent killed that way
+cannot be resumed** — `ListAgents` drops it, and only a cleanly-stopped agent
+keeps its context — so the loss is not just the results but every agent's setup
+reading, roughly 80k tokens apiece. Four had already written their oracle file
+before dying; those files were kept on disk but treated as unattested and
+rewritten from the page by the restart, because a file whose author never
+reported cannot be vouched for. Note the trap for the coordinator: `git add
+oracles/toc` would have committed all four silently.
