@@ -1368,3 +1368,177 @@ widening in class 2, whose measured cost is entirely levelling damage, and
 `quadragesimo-anno.pt` in class 5, which turns on the same cache. Class 2's
 source defects (`mater.en`, `pacem.en`) can be filed as corrections at any time
 and are independent of all of it.
+
+## Wave 13 (24 works) — 2026-08-28
+
+The sweep resumed at 24 works per wave rather than 12, stratified across
+pontificate as before: ten Leo XIII, eight Pius XII, two Pius XI, and one each
+of John XXIII, Paul VI, John Paul II and Leo XIV. `audit.py coverage` ran first
+and was clean — 354 works, median 99.2%, nothing under 95%.
+
+`encyclical.{ad-extremas,caritatis-studium,diuturni-temporis,fidentem-piumque-animum,in-amplissimo,militantis-ecclesiae,pastoralis-officii,providentissimus-deus,quod-anniversarius}.en`,
+`encyclical.iucunda-semper-expectatione.pt`,
+`encyclical.{ad-apostolorum-principis,meminisse-iuvat,musicae-sacrae,redemptoris-nostri-cruciatus}.en`,
+`encyclical.{anni-sacri,ecclesiae-fastos,fulgens-radiatur,ingruentium-malorum}.pt`,
+`encyclical.{acerba-animi,ingravescentibus-malis}.en`,
+`encyclical.{eccl-de-euch,grata-recordatio,christi-matri}.pt`,
+`encyclical.magnifica-humanitas.it`.
+
+**23 of the 24 oracles agree with the parse.** The corpus went from 190 ToC
+oracles to 214; the disagreeing count went 30 → 31 and the finding count
+265 → 273, and the whole of that movement is `magnifica-humanitas.it`'s eight.
+Nine of the twenty-four are `"headings": []`, which is what this genre of
+letter mostly is.
+
+### An English mirror printing no divisions is the source, not the parser
+
+Two agents reported it independently — `musicae-sacrae` (EN 0 headings against
+PT 29) and `fulgens-radiatur` (EN 0 against PT 6) — each having checked the raw
+English page and found no heading markup at all. It generalises, and the
+measurement is worth keeping because the next person to notice it will assume
+the opposite:
+
+**33 works have one edition with no divisions and a sibling with four or
+more, and 31 of the 33 are the English edition that is empty.** A crude scan
+over all 1,614 raw pages for short `<p>`s wholly inside `<b>`/`<i>` agrees
+edition by edition: the English mirrors carry 0–3 such paragraphs, which is
+the masthead, the signature and the copyright line, while their Portuguese
+siblings carry 6 to 61.
+
+| work                       |  EN |  PT |     | work                  |  EN |  PT |
+| -------------------------- | --: | --: | --- | --------------------- | --: | --: |
+| `quadragesimo-anno`        |   0 |  60 |     | `mediator-dei`        |   0 |  23 |
+| `divini-redemptoris`       |   0 |  59 |     | `mortalium-animos`    |   0 |  19 |
+| `divini-illius-magistri`   |   0 |  42 |     | `humani-generis`      |   0 |  12 |
+| `divino-afflante-spiritu`  |   0 |  39 |     | `ingruentium-malorum` |   0 |  10 |
+| `musicae-sacrae`           |   0 |  29 |     | `fulgens-radiatur`    |   0 |   6 |
+| `mystici-corporis-christi` |   0 |  28 |     | `apostolico-seggio`   |  12 |   0 |
+| `haurietis-aquas`          |   0 |  28 |     | `grata-recordatio`    |  11 |   0 |
+
+The two that run the other way are the check on the reading: they are the same
+phenomenon, not a counter-example, and their Portuguese pages were confirmed
+heading-free at raw level too. So this belongs beside the Bible's edition
+divergence in `docs/research/bible-edition-divergence.md`: **calling it a defect
+invites someone to "fix" a faithful parse of a faithful text.** It also means
+`audit.py balance`'s reasoning does not carry over to document structure — the
+CCC's eight editions can be compared division for division because they are
+eight typesettings of one text, and these are not.
+
+### Three parser fixes, measured together
+
+All three were decided on the in-process harness, then confirmed by a full
+`phase1` + `phase2 --overwrite`. **36 files changed across 34 works — 29
+`sections.json`, 5 `structure.json`, 2 `appendix.json`, none added or removed —
+zero network fetches, and the validation summary is byte-identical to the
+baseline (271 validated / 127 stub / 37 failed / 11 fetch-failed).** 1,188 site
+tests pass and preflight's reference-coverage comparison reports no family
+falling.
+
+**1. The masthead's subtitle was being read as the body's first line.** 25
+works opened section 1 with a line like `SOBRE A RECITAÇÃO DO ROSÁRIO
+ESPECIALMENTE NO MÊS DE OUTUBRO` — the document's own descriptive subtitle,
+printed as if it were prose. `extract_document_header` stops at the first block
+naming neither the document nor its author, and a subtitle names neither. The
+English mirrors were never affected because they print the same two lines
+inside ONE paragraph separated by `<br />`; the Portuguese ones use a second
+centred `<p>`, and that is the whole difference.
+
+The fix is a boundary **the page states** rather than one we infer, which is
+the precedence `_printed_masthead_end` already established: `#663300` is the
+brown vatican.va sets its masthead in, and a coloured block extends a masthead
+that identity has already started. Three things about it were learned the
+expensive way:
+
+- **It must read `Block.raw`, not `Block.html`.** `<font>` is not inline
+  emphasis, so narrowing drops it long before this runs. Asking `b.html`
+  returns False for every block on every page — a silent no-op that passes
+  every test.
+- **The run flag and the acceptance test are different tests.** The masthead's
+  own title line wears emphasis, so the strict test is false for exactly the
+  block that starts the run it is meant to continue.
+- **Once the run is being extended on colour, colour is the only credential
+  left.** Reaching one block further than identity would have reached puts
+  identity in front of blocks it never used to see. `miranda-prorsus.en` is
+  what that costs: its mirror runs the title and `<b>INTRODUCTION</b>` into one
+  coloured paragraph, which names the document, so identity claimed the whole
+  thing and swallowed the first heading of a 39-heading document.
+
+**And the colour is declined wherever the block is emphasised**, which loses
+two works that would otherwise have been fixed. `redemptoris-missio.en` sets
+its subtitle in bold and `miranda-prorsus.en` sets `INTRODUCTION` in bold, both
+inside `#663300`; no test over emphasis alone can take the first and leave the
+second. Declining both leaves those two exactly as they were. That is the safe
+side of a boundary this signal cannot draw, and it is recorded here so nobody
+re-derives the tempting version — `is_full_bold` was tried, and it takes the
+heading.
+
+**2. An empty anchor separated nothing, and put a space inside a word.**
+`<a name="x"></a>` is a link target, and vatican.va plants one wherever its own
+printed table of contents points — routinely inside a word, because the anchor
+is named after the fragment: `L’<a name="uguale"></a>uguale dignità`,
+`nell’<a name="era_digitale"></a>era digitale`. Two tags, two spaces, and a
+heading that no longer matches the heading the page prints. Found by
+`magnifica-humanitas.it`'s agent and confirmed at markup level.
+
+**It had to be dropped in `narrow_html` as well as `strip_tags`, and the
+round-trip check is what said so.** Fixing only `strip_tags` moved
+`divino-afflante-spiritu.pt` and `musicae-sacrae.pt` from `validated` to
+`validation-failed` with 26 mismatches between them — an unknown tag leaves a
+space behind, so `Igreja."<a name="fnref3"></a>(3)` narrowed with a space the
+source does not print while the block's own text no longer had one. Both sides
+read the same markup and must drop the same nothings.
+
+**3. Two mirrors lost a paragraph break, and it is the whole class.**
+`militantis-ecclesiae.en` prints nine sub-headings each alone in its own
+`<p align="left">`; the tenth, `Modern Knowledge Serves the Faith`, sits at
+the tail of section 2's paragraph and is absent from `structure.json` while
+its nine identically-styled peers are present. `miranda-prorsus.en` runs its
+title line and `INTRODUCTION` into one centred paragraph and stored them as a
+single node titled `MIRANDA PRORSUS INTRODUCTION` — neither the masthead (so
+nothing skipped it) nor the heading (so the reader was offered a division that
+does not exist).
+
+Both are **broken markup, not prose**, so they are repaired in code with their
+locators, the treatment `martini.py` gives `<em<` and `<br<` (CLAUDE.md). And
+the class was measured before it was named: scanning every raw page for a body
+paragraph ending in a stranded emphasis run reports these and one `Heb <` in a
+Latin edition the corpus does not build. 56 of the 58 loose candidates are an
+emphasised closing phrase — `¡Abrid las puertas a Cristo!`, `Magnificat!` — so
+a general rule would have to tell a heading from an exclamation, and there is
+nothing for it to earn.
+
+### `magnifica-humanitas.it`, and a level defect its siblings expose
+
+The Italian edition is the only one of the wave still disagreeing, at eight
+findings, and its agent read all of them at markup level. Two were the empty
+anchor above. One is the dateline — `Dato a Roma, presso San Pietro, il 15
+maggio…` is fully italicised on the page and the heading detector takes it, at
+`before: null`. The remaining five are a new shape worth stating:
+
+**A heading whose emphasis is interrupted by a style switch is levelled
+differently from its byte-identical siblings.** `Le <i>res novae</i> del nostro
+tempo` sets a Latin phrase roman against the surrounding italic; `Il canto
+della speranza: il <i>Magnificat</i>` does the same for a title. Both are read
+one tier off, and — this is the tell — so are the plain siblings around them,
+in the opposite direction. `Armi e IA` is byte-identical in markup to its four
+neighbours and parsed one level deeper than all of them, which is also the only
+place the parse invents a fourth tier in a document that has three.
+
+This is class 1 from the classification above, seen in a document where the
+oracle can be checked against two siblings rather than argued about: the
+English edition's oracle levels all of these the same way. It is more evidence
+for the branch-local `prelim` hypothesis, and a good regression case for it.
+
+### Clean negatives, recorded so nobody re-derives them
+
+- `musicae-sacrae.en` and `fulgens-radiatur.en` print no internal divisions.
+  Verified at raw level, twice, by different agents. See the table above.
+- `christi-matri.pt` prints no paragraph-number digits at all, yet the parser
+  assigns §1–§13 to its body paragraphs from the numbering it does carry — a
+  numbered work despite appearances, not a `"numbered": false` case.
+- `ad-extremas.en`, `acerba-animi.en`, `meminisse-iuvat.en`,
+  `ingravescentibus-malis.en`, `redemptoris-nostri-cruciatus.en`,
+  `quod-anniversarius.en`, `caritatis-studium.en`, `in-amplissimo.en` and
+  `anni-sacri.pt` are genuinely undivided numbered prose.
+- `eccl-de-euch.pt` §62's `kept?` block is the Portuguese hymn translation,
+  intact after the Latin original. Not a truncation.
