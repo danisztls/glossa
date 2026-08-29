@@ -1,0 +1,15 @@
+[
+  {
+    "id": "magnifica-humanitas.pl-4-res-novae-space",
+    "locator": {
+      "section": 4,
+      "raw_substring": "Rzeczy nowe</i>(res novae)"
+    },
+    "field": "raw_text",
+    "from": "<b><i>Rzeczy nowe</i>(res novae)",
+    "to": "<b><i>Rzeczy nowe </i>(res novae)",
+    "reason": "The body heading has lost the space before its parenthesised Latin gloss, so it reads 'Rzeczy nowe(res novae) naszych czasow'. The page settles the correct value itself: its own table-of-contents link to this heading, printed earlier on the same page, keeps the space.",
+    "evidence": "raw/vatican-docs/encyclical__magnifica-humanitas__pl.html: the body heading is '<b><i>Rzeczy nowe</i>(res novae)<i> naszych czas&oacute;w</i></b>' while the page's own contents entry for it is '<i>Rzeczy nowe </i>(res novae)<i> naszych czas&oacute;w</i>'. The heading is stored verbatim in structure.json, so the defect shows in the table of contents.",
+    "added": "2026-08-29"
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "longinqua.en-masthead-catholicismin",
+    "locator": {
+      "section": null,
+      "raw_substring": "CATHOLICISMIN THE"
+    },
+    "field": "raw_text",
+    "from": "CATHOLICISMIN THE",
+    "to": "CATHOLICISM IN THE",
+    "reason": "The masthead has lost the space between two words, so the subject line reads 'ON CATHOLICISMIN THE UNITED STATES'. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__longinqua__en.html: 'ENCYCLICAL OF POPE LEO XIII ON<br />CATHOLICISMIN THE<br />UNITED STATES'. The line is stored whole in manifest.header and rendered as the document masthead.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "longinqua.en-5-stray-stop",
+    "locator": {
+      "section": 5,
+      "raw_substring": "is .progressing and developing"
+    },
+    "field": "raw_text",
+    "from": "is .progressing and developing",
+    "to": "is progressing and developing",
+    "reason": "A full stop stranded inside a sentence, before a word that continues it. The clause is 'That your Republic is progressing and developing by giant strides is patent to all'; a stop there is not a sentence boundary and no word is missing around it.",
+    "evidence": "raw/vatican-docs/encyclical__longinqua__en.html, section 5: '5. That your Republic is .progressing and developing by giant strides is patent to all'.",
+    "added": "2026-08-29"
+  }
+]
