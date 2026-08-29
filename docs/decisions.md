@@ -511,9 +511,57 @@ just what is read, and "re-parse, never re-crawl" cannot recover a page nobody a
 for. `pipeline/rebuild.py` is
 the list, executable, with `--only`, `--list` and `--dry-run`; it derives what it can
 from the scrapers rather than restating it, which is what stops the fourth kind. It is
-deliberately not a build system: there is no dependency graph and no staleness
-comparison, because a cached `raw/` already makes a re-run fetch nothing and
-`write_stamped_json` already makes it write nothing it did not change.
+deliberately not a build system: there is no dependency graph between stages and
+nothing that rebuilds half of one, because a cached `raw/` already makes a re-run
+fetch nothing and `write_stamped_json` already makes it write nothing it did not
+change. It grew one staleness comparison the same day, opt-in and whole-stage; see
+the next entry.
+
+**A rebuild's cost is CPU, and `--changed-only` is what a parser's author spends
+instead** (2026-08-29). A full rebuild writes zero files and makes zero requests and
+still cost fifty seconds, all of it re-parsing, which is a poor price to pay dozens
+of times while one parser is being worked on. Three changes took it to nineteen, and
+the ordering of them matters more than the number.
+
+The enabling one is that **each stage now declares the work-id globs it writes, and
+those globs are a partition of `build/`** — 1,447 works, each claimed by exactly one
+stage, none twice and none unclaimed. That is what makes running stages concurrently
+safe rather than merely faster, and it is what keeps the `wrote` column honest under
+`--jobs`, since a snapshot of the whole corpus taken around one of four concurrent
+stages would credit it with the other three's writes. It also replaced four
+hand-written work counts in `--list` with measured ones.
+
+The second is that **the two document stages run `--offline` and take a lock per
+phase**. They are most of the work and were the only pair that could not overlap:
+both took `vatican_docs.py`'s single crawl lock, so twenty-seven seconds of a
+fifty-second rebuild ran with three of sixteen cores busy and then eight. The lock
+was right and the reason for it was two reasons wearing one name — doubling the
+request rate against vatican.va, and racing a work directory. An offline run retires
+the first, and the second is a race between two runs of the same phase, never
+between phase 1 and phase 2, which write disjoint families. `--offline` is also
+worth having on its own: this recipe has always claimed zero network and nothing
+enforced it, and `CLAUDE.md` records a supposedly-zero-network run that cost 36
+requests and 2m59s.
+
+The third is `--changed-only`, which skips a stage whose `code`, `data`, `corpus`
+and `outputs` fingerprints all match the last run of it that exited 0. **`code` is
+the script's real import closure**, read off its `import` statements and hashed by
+content — `bible/cpdv.py` reaches `bible/sacredbible.py` and all twelve modules of
+`common/` with nobody writing that down, and a new import counts the day it is
+written. A table would have been a second place to remember something, which is the
+shape of every rot listed in the entry above. `data` (everything non-Python under
+`pipeline/`) and `corpus` (`raw/`) are global rather than per stage: they change
+rarely, and a whole rebuild when one moves is cheaper than a wrong answer about
+which stage reads which. `outputs` is what refuses to skip over a `build/` someone
+deleted or half-wrote.
+
+It is opt-in, and stays opt-in. The default is still to run everything, for the same
+reason `--skip-written` is not the default: a run that skips something is only as
+good as its list of inputs, and the failure it risks is the silent stale answer this
+project keeps meeting. The list is also knowably incomplete — `uv` resolves each
+script's PEP 723 header at run time, so a `bs4` upgrade changes a parse without
+changing a byte in this repository, and `--force` exists for exactly that. A stage
+that exits nonzero is not recorded, so a broken parser is never skipped.
 
 **A sampled run reports and writes nothing** (2026-08-29). `--sample` parses a chosen
 slice — two books, one part, the Prologue and the article on Baptism — so what it

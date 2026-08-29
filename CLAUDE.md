@@ -56,10 +56,48 @@ land**: a new scraper is a `Stage` in `STAGES`, and anything a stage needs that
 a table can state should be derived from the scraper rather than typed here —
 `phase2`'s language list is `sorted(V.DIVISIONS)` for exactly that reason.
 
-    uv run pipeline/rebuild.py                 # ~50s, zero network, 0 files written
-    uv run pipeline/rebuild.py --list          # the stages and what each writes
-    uv run pipeline/rebuild.py --only bible    # a group, or named stages
-    uv run pipeline/rebuild.py --no-images     # skip dore's AVIF re-encode
+    uv run pipeline/rebuild.py                  # ~19s, zero network, 0 files written
+    uv run pipeline/rebuild.py --list           # the stages, their globs, their work counts
+    uv run pipeline/rebuild.py --only bible     # a group, or named stages
+    uv run pipeline/rebuild.py --no-images      # skip dore's AVIF re-encode
+    uv run pipeline/rebuild.py --changed-only   # only the stages whose inputs moved
+    uv run pipeline/rebuild.py --jobs 1         # one stage at a time, output streamed
+
+**It was ~50s and one stage at a time until 2026-08-29.** Three changes took
+that to ~19s, and the one worth knowing about is the third:
+
+- **Every stage declares the work-id globs it writes, and those globs are a
+  PARTITION of `build/`** — 1,447 works, each claimed by exactly one stage,
+  none twice and none by nobody, which is asserted by reading `--list` rather
+  than by a test. That is what makes running stages at once safe, and it is
+  also what makes the `wrote` column mean anything under `--jobs`: a snapshot
+  of the whole corpus taken around a stage running beside three others would
+  credit it with their writes.
+- **The two document stages now run `--offline` and take a lock per phase
+  rather than the one crawl lock.** They are most of the work — phase 1 keeps
+  three cores busy and phase 2 eight — and one after the other they left most
+  of a sixteen-core machine idle for twenty-seven seconds. `V.run_lock_path`
+  is where the argument is written down: a crawl's lock is about someone
+  else's server and cannot be narrowed, an offline parse's is about racing a
+  work directory and phase 1 and phase 2 do not share one.
+- **`--changed-only` skips a stage whose `code`, `data`, `corpus` and
+  `outputs` fingerprints all match the last run that exited 0.** THIS IS THE
+  ONE FOR ITERATING ON A PARSER: editing `bible/martini.py` runs one stage and
+  takes 2s, editing `vatican_docs.py` runs two and takes 18s, changing nothing
+  takes 0.5s. `code` is the script's real import closure, read off its
+  `import` statements and hashed by content, so `bible/cpdv.py` depends on
+  `bible/sacredbible.py` and on all twelve modules of `common/` without anyone
+  writing that down and a new import counts the day it is written. It is
+  OPT-IN, and stays opt-in for the same reason `--skip-written` is: a run that
+  skips something is only as good as its list of inputs, and this project's
+  standing failure mode is the silent stale answer. `--force` is the escape
+  hatch, and the input it exists for is the one the fingerprints cannot see —
+  a `bs4` or `httpx` upgrade changes a parse without changing a byte here.
+
+**A stage that exits nonzero is not recorded**, so the next `--changed-only`
+runs it again rather than skipping a parser that failed. The state lives in
+`<corpus>/.rebuild-state.json`, is untracked, and deleting it costs one full
+rebuild.
 
 **A run's exit code says whether it went worse than `pipeline/parse-baseline.json`,
 and nothing else.** It said nothing at all until 2026-08-29: `phase1` returned

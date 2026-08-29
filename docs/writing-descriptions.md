@@ -331,6 +331,10 @@ find . -name 'structure.json' -o -name 'sections.json' | sort | xargs md5sum > /
 #    DIVISIONS holds leaves those languages' editions at whatever the previous
 #    parser wrote, and they do not show up as changed because they were never
 #    re-read. That happened, and cost three Swahili editions.
+#
+#    Do NOT add --changed-only here either. It is the right flag for the edit
+#    loop and the wrong one for this check: it exists to skip stages, and what
+#    this measures is what a stage that ran would have written.
 uv run pipeline/rebuild.py --only documents
 
 # 3. diff — anything changed that you did not intend to change is the finding

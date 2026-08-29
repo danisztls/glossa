@@ -361,7 +361,7 @@ def decode_page(data: bytes) -> str:
     return data.decode("cp1252", errors="replace")
 
 
-def make_fetcher(recheck_absent: bool = False) -> Fetcher:
+def make_fetcher(recheck_absent: bool = False, offline: bool = False) -> Fetcher:
     """This scraper's fetcher: the shared skeleton, VATICAN_POLICY's conduct.
 
     The retry/absence behaviour that used to live in a local `Fetcher` class is
@@ -373,6 +373,7 @@ def make_fetcher(recheck_absent: bool = False) -> Fetcher:
         VATICAN_POLICY,
         decode=decode_page,
         recheck_absent=recheck_absent,
+        offline=offline,
     )
 
 
@@ -6956,6 +6957,7 @@ def run_phase1(
     jobs: int = 1,
     fetch_only: bool = False,
     skip_written: bool = False,
+    lock_path: Path = CRAWL_LOCK_PATH,
 ) -> list[dict]:
     refs, err = discover_vatii(fetcher)
     if err:
@@ -7009,7 +7011,7 @@ def run_phase1(
                         VATII_TITLES.get(slug, slug),
                         html,
                     )
-            touch_crawl_lock(CRAWL_LOCK_PATH)
+            touch_crawl_lock(lock_path)
             for tag, r in pool.collect():
                 report(tag, r)
         for tag, r in pool.collect(0):
@@ -7036,6 +7038,7 @@ def run_phase2(
     want_langs: tuple[str, ...] = DEFAULT_LANGS,
     fetch_only: bool = False,
     offered_only: bool = False,
+    lock_path: Path = CRAWL_LOCK_PATH,
 ) -> list[dict]:
     """`skip_written` leaves a document that already has a `sections.json`
     exactly as it is. It is what makes an interrupted crawl resumable without
@@ -7183,7 +7186,7 @@ def run_phase2(
                     return results
                 submit_doc(ref, quiet=False)
                 n_done += 1
-                touch_crawl_lock(CRAWL_LOCK_PATH)
+                touch_crawl_lock(lock_path)
                 drain()
             if include_exhortations:
                 drain(0)  # same grouping guarantee as above
@@ -7197,7 +7200,7 @@ def run_phase2(
                     ):
                         return results
                     submit_doc(ref, quiet=True)
-                    touch_crawl_lock(CRAWL_LOCK_PATH)
+                    touch_crawl_lock(lock_path)
                     drain()
         return results
     finally:
@@ -7400,16 +7403,25 @@ def _lock_heartbeat_age(lock_path: Path) -> tuple[float, dict]:
     return time.time() - heartbeat, info
 
 
-def acquire_crawl_lock(lock_path: Path) -> None:
+#: What a second holder of each lock would collide with. `acquire_crawl_lock`
+#: prints it, because "one is already running" is not by itself a reason, and
+#: the two reasons are not the same reason -- see `run_lock_path`.
+LOCK_STAKES = {
+    "crawl": "race the same corpus/build/ output and double the request rate "
+    "against vatican.va",
+    "parse": "race the same corpus/build/ output",
+}
+
+
+def acquire_crawl_lock(lock_path: Path, kind: str = "crawl") -> None:
     lock_path.parent.mkdir(parents=True, exist_ok=True)
     if lock_path.exists():
         age, info = _lock_heartbeat_age(lock_path)
         if age < LOCK_STALE_AFTER:
             raise LockHeld(
-                f"a crawl already appears to be running (pid {info.get('pid')}, last "
+                f"a {kind} already appears to be running (pid {info.get('pid')}, last "
                 f"heartbeat {age:.0f}s ago; lock file {lock_path}). Not starting a second "
-                f"one -- it would race the same corpus/build/ output and double the request "
-                f"rate against vatican.va. If you are certain that process is dead (a "
+                f"one -- it would {LOCK_STAKES[kind]}. If you are certain that process is dead (a "
                 f"heartbeat this recent should only happen on an active run -- see "
                 f"touch_crawl_lock), remove the lock file and retry."
             )
@@ -7440,6 +7452,37 @@ def touch_crawl_lock(lock_path: Path) -> None:
 
 def release_crawl_lock(lock_path: Path) -> None:
     lock_path.unlink(missing_ok=True)
+
+
+def run_lock_path(cmd: str, offline: bool) -> tuple[Path, str]:
+    """`(lock file, kind)` for this run. One lock per crawl, one per phase
+    offline.
+
+    A CRAWL TAKES ONE LOCK FOR THE WHOLE SCRAPER, because the larger of the
+    two things it protects is someone else's server: two sweeps at once double
+    the request rate against vatican.va whatever each is fetching, and
+    `robots.txt`'s `Crawl-delay: 2` is a commitment about our conduct rather
+    than a budget to spend twice (`docs/decisions.md`). That reason does not
+    care which documents the two runs overlap on, so neither does the lock.
+
+    AN OFFLINE RUN MAKES NO REQUEST, so that reason is gone and only the
+    second one is left -- two writers racing the same work directory. Phase 1
+    writes `vatii.*` and phase 2 writes `encyclical.*` and `exhortation.*`, so
+    what remains is a race between two runs of the SAME phase, never between
+    the two phases, and a lock per phase says exactly that and nothing more.
+    Neither writes `absent-sources.json` offline either, since only a live 404
+    records one.
+
+    This is what lets `rebuild.py` run the two document stages at once, which
+    is worth about eleven seconds of a fifty-second rebuild: phase 1 is 16
+    documents and holds three cores of sixteen busy, and phase 2 fills eight,
+    so run one after the other they leave most of the machine idle throughout.
+    Widening the lock again would be safe and would cost that back."""
+    return (
+        (RAW_ROOT / f".parse-{cmd}.lock", "parse")
+        if offline
+        else (RAW_ROOT / ".crawl.lock", "crawl")
+    )
 
 
 # --------------------------------------------------------------------------
@@ -7761,6 +7804,13 @@ def main() -> int:
         "run does by default and which costs 15s and zero requests",
     )
     par.add_argument(
+        "--offline",
+        action="store_true",
+        help="parse from the cached pages and make no request at all; a page "
+        "that is not cached is reported rather than fetched. What a rebuild "
+        "wants, and the flag that lets both phases run at once",
+    )
+    par.add_argument(
         "--jobs",
         "-j",
         type=int,
@@ -7857,11 +7907,15 @@ def main() -> int:
     args = ap.parse_args()
     # Fail before any directory is created; see common.require_corpus().
     require_corpus()
-    fetcher = make_fetcher(getattr(args, "recheck_absent", False))
+    fetcher = make_fetcher(
+        getattr(args, "recheck_absent", False), getattr(args, "offline", False)
+    )
 
+    lock_path = CRAWL_LOCK_PATH
     if args.cmd in ("phase1", "phase2"):
+        lock_path, lock_kind = run_lock_path(args.cmd, args.offline)
         try:
-            acquire_crawl_lock(CRAWL_LOCK_PATH)
+            acquire_crawl_lock(lock_path, lock_kind)
         except LockHeld as e:
             print(f"ERROR: {e}")
             return 1
@@ -7891,9 +7945,10 @@ def main() -> int:
                 jobs=args.jobs,
                 fetch_only=args.fetch_only,
                 skip_written=args.skip_written,
+                lock_path=lock_path,
             )
         finally:
-            release_crawl_lock(CRAWL_LOCK_PATH)
+            release_crawl_lock(lock_path)
         summarize(results)
         report_fetching(fetcher)
         ok = report_run(results, fetcher, args.accept_baseline)
@@ -7931,9 +7986,10 @@ def main() -> int:
                 want_langs=want_langs,
                 fetch_only=args.fetch_only,
                 offered_only=args.offered_only,
+                lock_path=lock_path,
             )
         finally:
-            release_crawl_lock(CRAWL_LOCK_PATH)
+            release_crawl_lock(lock_path)
         summarize(results)
         report_fetching(fetcher)
         if args.fetch_only:
