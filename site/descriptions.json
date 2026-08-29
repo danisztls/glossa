@@ -36,9 +36,21 @@
 		"A work with no entry simply has no description; nothing renders a placeholder."
 	],
 	"descriptions": {
+		"encyclical.acerba-animi.en": {
+			"en": {
+				"text": "Pius XI's 1932 encyclical to the bishops of Mexico on the continuing persecution of the Church there, reviewing the government's anti-Catholic constitutional laws and broken pledges, addressing whether seeking state permission for worship compromises Catholic principle, urging the faithful toward Catholic Action, and praising clergy and laity who suffered for the faith.",
+				"origin": "read"
+			}
+		},
 		"encyclical.acerbo-nimis.en": {
 			"en": {
 				"text": "Pius X's encyclical on the neglect of religious instruction, arguing that widespread ignorance of Christian doctrine — even among the educated — is the root of moral decline, and that teaching it is a pastor's first duty under the Council of Trent. It closes with six binding ordinances: weekly catechism for children, First Communion preparation, a parish Confraternity of Christian Doctrine, and adult instruction on holy days.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ad-apostolorum-principis.en": {
+			"en": {
+				"text": "Pius XII's 1958 encyclical to the bishops, clergy and faithful of China, condemning the government-sponsored “Patriotic Association” that claims authority over episcopal appointments and doctrine. He reaffirms the Roman Pontiff's exclusive right to appoint bishops, declares that consecration without papal mandate incurs automatic excommunication, and expresses solidarity with Catholics enduring persecution.",
 				"origin": "read"
 			}
 		},
@@ -51,6 +63,12 @@
 		"encyclical.ad-diem-illum-laetissimum.en": {
 			"en": {
 				"text": "Pius X marks the golden jubilee of the definition of the Immaculate Conception, urging renewed devotion to Mary as the surest way of restoring all things in Christ. He sets out her singular part in the work of redemption and her office as mediatrix of grace, calls the faithful to imitate her faith, hope and charity, and closes by proclaiming a jubilee indulgence with its conditions.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ad-extremas.en": {
+			"en": {
+				"text": "Addressed to the bishops of the East Indies, this 1893 letter recounts the settlement of the Portuguese patronato dispute that erected eight new dioceses under Goa's patriarchal see, and argues that a native clergy — not foreign missionaries alone — must be trained to secure the Church's future there. It closes appealing to European Catholics for funds to found and staff the needed seminaries.",
 				"origin": "read"
 			}
 		},
@@ -102,6 +120,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.anni-sacri.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII, escrita durante o Ano Santo de 1950, que convoca os fiéis a uma cruzada de orações pela renovação cristã dos costumes e pela concórdia entre os povos. Diante do ateísmo, das perseguições à Igreja e do risco de novos conflitos, o Papa pede orações públicas para o dia 26 de março, domingo da Paixão, unidas às suas na basílica de São Pedro.",
+				"origin": "read"
+			}
+		},
 		"encyclical.annus-iam-plenus.en": {
 			"en": {
 				"text": "Benedict XV renews, for a second Christmas, his appeal on behalf of the starving and disease-stricken children of Central Europe left destitute by the war. He asks that a collection be taken up on the feast of the Holy Innocents, or the preceding Sunday, for their relief, to be forwarded to him or to the Save the Children Fund, and pledges one hundred thousand lire of his own.",
@@ -150,6 +174,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.caritatis-studium.en": {
+			"en": {
+				"text": "Leo XIII's 1898 encyclical to the bishops of Scotland, recalling the nation's Catholic heritage and inviting Scottish Protestants back to unity with Rome. It argues that Scripture cannot be safely interpreted by private judgment alone but requires the Church's living magisterium, defends the perpetuity of the Eucharistic sacrifice, and urges Scottish Catholics to support Catholic education, naming Blairs College.",
+				"origin": "read"
+			}
+		},
 		"encyclical.casti-connubii.en": {
 			"en": {
 				"text": "Pius XI's encyclical on Christian marriage, organized around St. Augustine's three blessings of wedlock — offspring, conjugal faith, and the sacrament — expounding each in turn before cataloguing the errors attacking them: contraception, abortion, eugenic sterilization, divorce, and the “false emancipation” of women, and closing with remedies for restoring marriage to the divine plan.",
@@ -171,6 +201,12 @@
 		"encyclical.christi-matri.en": {
 			"en": {
 				"text": "Paul VI asks the whole Church to pray the Rosary through October 1966 for peace, with war in eastern Asia and a nuclear arms race in view, invoking Mary as Queen of Peace. He presses the nations toward sincere negotiation, asks that 4 October — the anniversary of his appeal at the United Nations — be kept as a day of prayer, and closes with a Marian appeal for justice and a lasting peace.",
+				"origin": "read"
+			}
+		},
+		"encyclical.christi-matri.pt": {
+			"pt": {
+				"text": "Convida os fiéis a rezarem o Rosário durante o mês de outubro para implorar o dom da paz, em meio à guerra e ao derramamento de sangue na Ásia oriental. Invoca a intercessão de Maria, Rainha da Paz e Mãe da Igreja, e institui o dia 4 de outubro, aniversário da viagem do Papa à ONU, como jornada de súplica pela paz.",
 				"origin": "read"
 			}
 		},
@@ -225,6 +261,12 @@
 		"encyclical.dilexit-nos.pt": {
 			"pt": {
 				"text": "Carta encíclica de Francisco sobre o amor humano e divino do Coração de Jesus. Parte do sentido bíblico e espiritual do coração, passa pela devoção ao Coração de Cristo em místicos como Santa Margarida Maria, São Francisco de Sales e Santa Teresa do Menino Jesus, e termina pedindo que esse amor se prolongue no amor fraterno e na reparação, ligando o documento a Laudato si' e Fratelli tutti.",
+				"origin": "read"
+			}
+		},
+		"encyclical.diuturni-temporis.en": {
+			"en": {
+				"text": "Leo XIII's encyclical on the Rosary, reviewing the annual Rosary letters he has issued since 1883 and the honors he has attached to the devotion — its October dedication, its place in the Roman Breviary, the invocation added to the Litany of Loreto — and surveying the indulgences it carries. It announces his intention to issue a “Constitution” setting out the rights and privileges of the Rosary Sodality.",
 				"origin": "read"
 			}
 		},
@@ -306,9 +348,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.eccl-de-euch.pt": {
+			"pt": {
+				"text": "Carta encíclica de João Paulo II sobre a Eucaristia na sua relação com a Igreja. Apresenta o sacrifício eucarístico como mistério de fé e memorial da paixão do Senhor, mostra como a Eucaristia edifica e manifesta a apostolicidade da Igreja através do sacerdócio ministerial, trata da comunhão eclesial e das condições para a concelebração, exorta ao decoro na celebração litúrgica e propõe Maria, «mulher eucarística», como modelo de fé eucarística.",
+				"origin": "read"
+			}
+		},
 		"encyclical.ecclesiae-fastos.en": {
 			"en": {
 				"text": "Pius XII's 1954 encyclical for the twelfth centenary of the martyrdom of St. Boniface, apostle of Germany. It recounts his mission from England under Rome's mandate, his preaching in Friesland, Thuringia, Franconia and Bavaria, the founding of Fulda as a house of prayer and learning, his reform of the Frankish church as papal legate, and his death at pagan hands — holding up his obedience to the Holy See as the model.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ecclesiae-fastos.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII aos bispos da Inglaterra, Alemanha, Áustria, Bélgica e Holanda, pelo décimo-segundo centenário do martírio de são Bonifácio. Narra a vida do apóstolo da Frísia e da Germânia — sua obediência à Sé Apostólica, o mosteiro de Fulda, o martírio entre os frísios — e propõe aos fiéis sua fidelidade romana e confiança na graça divina como exemplo.",
 				"origin": "read"
 			}
 		},
@@ -366,6 +420,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.fidentem-piumque-animum.en": {
+			"en": {
+				"text": "Leo XIII's encyclical on the Rosary, urging its recitation as a proven form of communal prayer. He explains Mary's role as mediatrix under Christ the one Mediator, the Rosary's power to nourish faith when it is daily exposed to attack, and its indulgences for the living and the dead, closing with an appeal to pray the Rosary throughout October for the reunion of separated Christians with the Church.",
+				"origin": "read"
+			}
+		},
 		"encyclical.fides-et-ratio.en": {
 			"en": {
 				"text": "John Paul II's 1998 encyclical on the relationship between faith and reason, opened by the image of ‘two wings’ lifting the human spirit toward truth. It traces their kinship in Scripture's wisdom literature, the Church's engagement with Greek philosophy, Aquinas's harmony of the two and their modern separation, then turns to the Magisterium's care for philosophy and to theology's present tasks, a century after Aeterni Patris.",
@@ -390,6 +450,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.fulgens-radiatur.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII pelo XIV centenário da morte de São Bento, patriarca dos monges do Ocidente: traça a figura histórica do santo, os benefícios de sua Regra e de sua Ordem para a Igreja e a civilização, e os ensinamentos da Regra beneditina para o mundo contemporâneo, encerrando com um apelo à restauração do mosteiro de Montecassino, destruído pela guerra.",
+				"origin": "read"
+			}
+		},
 		"encyclical.grande-munus.en": {
 			"en": {
 				"text": "An account of Sts Cyril and Methodius, the ninth-century brothers sent from Constantinople to the Slavs of Moravia: their formation, their commission from Rome, the charge that a liturgy in the Slavonic tongue broke with Church custom — answered and allowed in Rome — and their deaths. Leo XIII extends their feast to the universal Church on 5 July and asks their intercession for reconciliation with the East.",
@@ -399,6 +465,12 @@
 		"encyclical.grata-recordatio.en": {
 			"en": {
 				"text": "John XXIII on the October Rosary, recalling that Leo XIII and Pius XII had made the same appeal before him. He asks prayers for the missionaries about to leave for the foreign missions and for the centenary of the North American College, for rulers weighing the causes of international discord, against the errors of laicism and materialism, and for the coming Roman Synod and Ecumenical Council.",
+				"origin": "read"
+			}
+		},
+		"encyclical.grata-recordatio.pt": {
+			"pt": {
+				"text": "Primeira encíclica de João XXIII (26 de setembro de 1959), exortando os fiéis à reza do Rosário durante outubro, na linha do apelo de Leão XIII e de Pio XII à mesma devoção mariana. Pede orações pelas missões — recordando o envio de jovens missionários e o centenário do Colégio Americano do Norte — e pela paz, associando a intenção do próximo Sínodo de Roma e do Concílio Ecumênico.",
 				"origin": "read"
 			}
 		},
@@ -474,6 +546,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.in-amplissimo.en": {
+			"en": {
+				"text": "A jubilee letter to Cardinal Gibbons and the bishops of the United States marking the twenty-fifth year of Leo XIII's pontificate. He thanks them for their tribute, praises the flourishing growth of Catholicism under religious liberty in America, commends their work founding schools and seminaries and their missionary outreach to Black and Native American communities, and their generosity toward the needs of the Holy See.",
+				"origin": "read"
+			}
+		},
 		"encyclical.in-hac-tanta.en": {
 			"en": {
 				"text": "For the twelfth centenary of St Boniface's mission to Germany, written to the German hierarchy amid the disorder that followed the First World War. Benedict XV retraces Boniface's oath of fidelity to the Holy See, his correspondence with successive popes and his martyrdom, holds them up as the pattern of Germany's ancient union with Rome, urges its restoration, and grants indulgences for the centenary.",
@@ -489,6 +567,18 @@
 		"encyclical.in-praeclara-summorum.en": {
 			"en": {
 				"text": "Benedict XV's encyclical for the sixth centenary of Dante Alighieri's death, addressed to Catholic professors and students of literature. It presents Dante as a lifelong exemplar of Catholic faith whose Divine Comedy embodies Scripture, Christian philosophy and theology, and sound principles of civil government, and urges renewed devotion to his study against systems of education that exclude God.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ingravescentibus-malis.en": {
+			"en": {
+				"text": "Pius XI's 1937 encyclical urging renewed recitation of the Holy Rosary, especially through October, as recourse against the era's gravest dangers — class conflict, totalitarian statism, and above all Communism. He recommends daily family recitation before an image of Mary, gives thanks for his own recovered health through the intercession of St. Thérèse of Lisieux, and protests a public insult to the Virgin.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ingruentium-malorum.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII, publicada às vésperas do mês de outubro de 1951, que exorta os fiéis à recitação do terço mariano diante dos males do tempo — perseguições contra a Igreja e ameaças à inocência das crianças. Insiste no valor do terço rezado em família como escola de virtude cristã e força da Igreja, e pede orações pelos bispos e famílias perseguidos e encarcerados.",
 				"origin": "read"
 			}
 		},
@@ -513,6 +603,12 @@
 		"encyclical.iucunda-sane.en": {
 			"en": {
 				"text": "Written for the thirteenth centenary of the death of St Gregory the Great, holding up his pastoral government — restoring faith and discipline while Rome collapsed around him — as the pattern for an age in crisis of unbelief. Pius X traces how rationalism and a misapplied critical science wear faith away, insists that only a return to Christ can save society, and asks for careful formation of candidates for the priesthood.",
+				"origin": "read"
+			}
+		},
+		"encyclical.iucunda-semper-expectatione.pt": {
+			"pt": {
+				"text": "Carta encíclica de Leão XIII, mais uma das suas exortações anuais ao Rosário mariano no mês de Outubro. Percorre os mistérios gozosos, dolorosos e gloriosos e a oração vocal para mostrar como o Rosário funda a confiança em Maria, Mediadora da graça divina, e termina exortando os fiéis a intensificá-lo diante da perseguição moderna contra a Igreja e dos ultrajes públicos contra a pessoa de Cristo.",
 				"origin": "read"
 			}
 		},
@@ -594,6 +690,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.magnifica-humanitas.it": {
+			"it": {
+				"text": "Lettera enciclica di Leone XIV sulla custodia della persona umana nel tempo dell’intelligenza artificiale. Incorniciata dalle icone bibliche della torre di Babele e della ricostruzione di Gerusalemme guidata da Neemia, sostiene che l’IA non è un tema aggiuntivo per la Dottrina sociale ma una trasformazione che ne interpella le categorie, e tratta la dignità umana, la verità, il lavoro, la libertà e il posto dei sistemi autonomi in guerra.",
+				"origin": "read"
+			}
+		},
 		"encyclical.magnifica-humanitas.pt": {
 			"pt": {
 				"text": "Carta encíclica de Leão XIV sobre a inteligência artificial e a doutrina social da Igreja. Estruturada em torno de duas imagens bíblicas da construção comum — a Torre de Babel e a reconstrução de Jerusalém por Neemias —, sustenta que a IA não é mais um tema a tratar pela doutrina social, mas um desenvolvimento que desafia as suas próprias categorias, e aborda a dignidade humana e o bem comum, a verdade, o trabalho e a liberdade, e o lugar crescente dos sistemas autónomos na guerra.",
@@ -618,6 +720,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.meminisse-iuvat.en": {
+			"en": {
+				"text": "Pius XII's encyclical calling the Church to renewed prayer, especially through the intercession of the Virgin Mary, for Christians suffering persecution under regimes that deny the Church's rights, including dioceses left without a lawful bishop. It urges the faithful to join public prayer with a genuine renewal of Christian life, so that religious liberty and communion with the Holy See may be restored to persecuted peoples.",
+				"origin": "read"
+			}
+		},
 		"encyclical.mens-nostra.en": {
 			"en": {
 				"text": "Pius XI, on the golden jubilee of his ordination, urges wider practice of the Spiritual Exercises — retreats modeled on Christ's own withdrawals to the desert — as a remedy for the thoughtlessness of the age. He commends St. Ignatius of Loyola's method as foremost, presses their use among clergy, religious, laity and Catholic Action, and recommends a monthly day of recollection to preserve their fruit.",
@@ -636,6 +744,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.militantis-ecclesiae.en": {
+			"en": {
+				"text": "Leo XIII's encyclical marking the third centenary of St. Peter Canisius's death, addressed to the bishops of Austria, Germany and Switzerland. It holds up Canisius, second apostle of Germany after Boniface, as a model of uniting sound learning with the defense of the faith against the Reformation, and urges Catholic schools, the union of piety with study, and unity among Catholics.",
+				"origin": "read"
+			}
+		},
 		"encyclical.miserentissimus-redemptor.en": {
 			"en": {
 				"text": "Pius XI's encyclical on reparation to the Sacred Heart of Jesus, presented as completing the consecration he had established through Quas Primas and the feast of Christ the King. It grounds the duty of expiatory reparation in Christ's continuing sufferings within his Mystical Body, laments the era's apostasy and ingratitude toward the Sacred Heart, and decrees an annual Act of Reparation to be recited in every church.",
@@ -651,6 +765,12 @@
 		"encyclical.mortalium-animos.pt": {
 			"pt": {
 				"text": "Carta encíclica de Pio XI aos bispos católicos sobre a unidade verdadeira da religião, contra o movimento \"pancristão\" e seus congressos ecumênicos, que buscam uma fraternidade comum ignorando as diferenças doutrinárias. Pio XI ensina que só existe uma religião verdadeira, revelada por Deus e guardada pela Igreja Católica, e que a unidade dos cristãos só se dá pelo retorno dos dissidentes a essa única Igreja, em obediência ao Romano Pontífice.",
+				"origin": "read"
+			}
+		},
+		"encyclical.musicae-sacrae.en": {
+			"en": {
+				"text": "Pius XII's encyclical on sacred music, tracing its history from the early Church through Gregorian chant and polyphony and setting out the principles by which sacred music must be holy, artistic, and universal. It defends Gregorian chant's primacy while approving polyphony, the organ, and vernacular hymns, addresses missionary lands, and recommends choirs, seminary training, and diocesan councils of sacred art to bishops.",
 				"origin": "read"
 			}
 		},
@@ -750,6 +870,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.pastoralis-officii.en": {
+			"en": {
+				"text": "Leo XIII's 1891 encyclical to the bishops of Germany and Austria-Hungary condemning dueling as a violation of divine and natural law. He reviews the Church's traditional penalties against duelists, refutes the excuses offered for the practice — that it vindicates injured honor, or that refusing a challenge invites the charge of cowardice — and rejects any exemption claimed for the military.",
+				"origin": "read"
+			}
+		},
 		"encyclical.paterno-iam-diu.en": {
 			"en": {
 				"text": "An appeal for the starving and destitute children of central Europe after the First World War. Benedict XV commends the Save the Children societies formed to help them, directs bishops to order public prayers and to gather alms, food, medicine and clothing on the feast of the Holy Innocents, and pledges a hundred thousand lire of his own toward the relief.",
@@ -786,6 +912,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.providentissimus-deus.en": {
+			"en": {
+				"text": "Leo XIII's encyclical on the study of Holy Scripture, addressed to the bishops of the Catholic world. It commends Scripture's benefits, traces the Church's guardianship of the biblical text, and gives detailed instructions for teaching it in seminaries. Much of the letter defends the Bible's authority against rationalist criticism and physical science, insisting that divine inspiration excludes all error from the sacred writings.",
+				"origin": "read"
+			}
+		},
 		"encyclical.quadragesimo-anno.en": {
 			"en": {
 				"text": "Pius XI's encyclical for the fortieth anniversary of Leo XIII's On the Condition of Workers, treated under three headings: that encyclical's fruits, Catholic teaching on property's individual and social character and on just wages, and a verdict on the present economic order — wealth concentrated into an “economic dictatorship,” free competition's self-destruction, and Socialism's irreconcilability with Christianity — closing with a call to restore society through vocational guilds and reform of morals.",
@@ -807,6 +939,12 @@
 		"encyclical.quemadmodum.en": {
 			"en": {
 				"text": "Pius XII's post-war appeal to the bishops on behalf of the world's destitute children, millions of whom the conflict left without food, shelter, clothing, or care. He asks that a day of public prayer be set aside in every diocese and urges the faithful to support relief through prayer, almsgiving, and organized charitable works, warning that neglect now will breed sickness, vice, and delinquency in the next generation.",
+				"origin": "read"
+			}
+		},
+		"encyclical.quod-anniversarius.en": {
+			"en": {
+				"text": "Leo XIII's encyclical for his sacerdotal jubilee, the fiftieth anniversary of his ordination, giving thanks for the celebrations and recent canonizations and beatifications, and marking the occasion by decreeing the last Sunday of September 1888 as a day of solemn Mass for the dead throughout the Church, with a plenary indulgence for the relief of souls in purgatory.",
 				"origin": "read"
 			}
 		},
@@ -849,6 +987,12 @@
 		"encyclical.redemptoris-missio.en": {
 			"en": {
 				"text": "John Paul II reasserts the permanent validity of the Church's mandate to bring the Gospel to every people, twenty-five years after the Council's Ad Gentes and against currents that would narrow it. He grounds mission in Christ the one Savior, the Kingdom of God, and the Holy Spirit as its principal agent, then traces its paths — witness, proclamation, conversion, inculturation, dialogue, human development — closing on missionary spirituality.",
+				"origin": "read"
+			}
+		},
+		"encyclical.redemptoris-nostri-cruciatus.en": {
+			"en": {
+				"text": "Pius XII's encyclical on the Holy Places of Palestine in the aftermath of the 1948 war, appealing on behalf of refugees driven from their homes and for an internationally guaranteed status for Jerusalem and the sacred sites damaged by the fighting. It urges continued relief for exiles, protection and free pilgrim access to the Holy Places, and a just and lasting peace.",
 				"origin": "read"
 			}
 		},
