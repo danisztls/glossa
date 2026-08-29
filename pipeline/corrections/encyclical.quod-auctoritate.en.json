@@ -1,0 +1,80 @@
+[
+  {
+    "id": "quod-auctoritate.en-guardand",
+    "locator": {
+      "section": 4,
+      "raw_substring": "guardand"
+    },
+    "field": "raw_text",
+    "from": "guardand",
+    "to": "guard and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-auctoritate__en.html: '... will be prudent to put it in some sort under the safe guardand protection of a stable institution; you know well, ven...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-auctoritate.en-towhat",
+    "locator": {
+      "section": 4,
+      "raw_substring": "towhat"
+    },
+    "field": "raw_text",
+    "from": "towhat",
+    "to": "to what",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-auctoritate__en.html: '...stable institution; you know well, venerable brothers, towhat We allude; We mean that you should continue each one i...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-auctoritate.en-arein",
+    "locator": {
+      "section": 10,
+      "raw_substring": "arein"
+    },
+    "field": "raw_text",
+    "from": "arein",
+    "to": "are in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-auctoritate__en.html: '...iastical or lay, who are prevented either because they arein prison, or through infirmity, or any other good reason...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-auctoritate.en-evenin",
+    "locator": {
+      "section": 10,
+      "raw_substring": "evenin"
+    },
+    "field": "raw_text",
+    "from": "evenin",
+    "to": "even in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-auctoritate__en.html: '... laid down. In the case of regulars of either sex, and evenin the case of persons belonging to enclosed orders, and ...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-auctoritate.en-ortheir",
+    "locator": {
+      "section": 10,
+      "raw_substring": "ortheir"
+    },
+    "field": "raw_text",
+    "from": "ortheir",
+    "to": "or their",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-auctoritate__en.html: '...lers may obtain the indulgence upon their return home, ortheir arrival at some fixed station, by visiting six times t...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-auctoritate.en-amore",
+    "locator": {
+      "section": 11,
+      "raw_substring": "amore"
+    },
+    "field": "raw_text",
+    "from": "amore",
+    "to": "a more",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-auctoritate__en.html: '...e hope of eternal salvation, but also as an earnest of amore peaceful time. 12. As a pledge of...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "insignes.en-blessingsfor",
+    "locator": {
+      "section": 1,
+      "raw_substring": "blessings.For"
+    },
+    "field": "raw_text",
+    "from": "blessings.For",
+    "to": "blessings. For",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__insignes__en.html: '...ble time for &quot;.recollecting and celebrating these blessings.For you are now marking the thousandth year since your anc...'. The rest of the English corpus writes these two words apart; this page prints 2 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "insignes.en-torecall",
+    "locator": {
+      "section": 1,
+      "raw_substring": "torecall"
+    },
+    "field": "raw_text",
+    "from": "torecall",
+    "to": "to recall",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__insignes__en.html: '... Hungary. For your nation, beyond all others, is bound torecall the great abundance of benefits which it has received ...'. The rest of the English corpus writes these two words apart; this page prints 2 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

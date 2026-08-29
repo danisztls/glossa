@@ -1,0 +1,67 @@
+[
+  {
+    "id": "augustissimae-virginis-mariae.en-everyside",
+    "locator": {
+      "section": 12,
+      "raw_substring": "everyside."
+    },
+    "field": "raw_text",
+    "from": "everyside.",
+    "to": "every side.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__augustissimae-virginis-mariae__en.html: '... by your efforts fresh forces may be daily enrolled on everyside. Through you and those of your clergy who have care of ...'. The rest of the English corpus writes these two words apart; this page prints 5 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "augustissimae-virginis-mariae.en-prayerwas",
+    "locator": {
+      "section": 12,
+      "raw_substring": "prayerwas"
+    },
+    "field": "raw_text",
+    "from": "prayerwas",
+    "to": "prayer was",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__augustissimae-virginis-mariae__en.html: '... In ages long past this perennial stream of praise and prayerwas foretold in those inspired words with which Ozias in h...'. The rest of the English corpus writes these two words apart; this page prints 5 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "augustissimae-virginis-mariae.en-thatbeautiful",
+    "locator": {
+      "section": 12,
+      "raw_substring": "thatbeautiful"
+    },
+    "field": "raw_text",
+    "from": "thatbeautiful",
+    "to": "that beautiful",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__augustissimae-virginis-mariae__en.html: '...lvation. This We beg all the more earnestly as of late thatbeautiful devotion to our Blessed Mother, called &quot;the livin...'. The rest of the English corpus writes these two words apart; this page prints 5 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "augustissimae-virginis-mariae.en-thisday",
+    "locator": {
+      "section": 12,
+      "raw_substring": "thisday"
+    },
+    "field": "raw_text",
+    "from": "thisday",
+    "to": "this day",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__augustissimae-virginis-mariae__en.html: '...pon the earth... because He bath so magnified thy name thisday that thy praise shall not depart out of the mouth of m...'. The rest of the English corpus writes these two words apart; this page prints 5 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "augustissimae-virginis-mariae.en-thyear",
+    "locator": {
+      "section": 13,
+      "raw_substring": "20thyear"
+    },
+    "field": "raw_text",
+    "from": "20thyear",
+    "to": "20th year",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__augustissimae-virginis-mariae__en.html: '...s, in Rome, on the 12th day of September, 1897, in the 20thyear of Our Pontificate. ...'. The rest of the English corpus writes these two words apart; this page prints 5 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

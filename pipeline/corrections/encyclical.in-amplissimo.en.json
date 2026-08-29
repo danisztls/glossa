@@ -1,0 +1,93 @@
+[
+  {
+    "id": "in-amplissimo.en-factthat",
+    "locator": {
+      "section": 1,
+      "raw_substring": "factthat"
+    },
+    "field": "raw_text",
+    "from": "factthat",
+    "to": "fact that",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__in-amplissimo__en.html: '...stolic See, has reason to rejoice at the extraordinary factthat We are to be reckoned as the third in the long line of...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "in-amplissimo.en-ofnorth",
+    "locator": {
+      "section": 1,
+      "raw_substring": "ofNorth"
+    },
+    "field": "raw_text",
+    "from": "ofNorth",
+    "to": "of North",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__in-amplissimo__en.html: '... that of the bishops and faithful of the United States ofNorth America brings Us special joy, both on account of the ...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "in-amplissimo.en-weentertain",
+    "locator": {
+      "section": 1,
+      "raw_substring": "weentertain"
+    },
+    "field": "raw_text",
+    "from": "weentertain",
+    "to": "we entertain",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__in-amplissimo__en.html: '...ry prominence over many other, and of the special love weentertain for you. 2...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "in-amplissimo.en-whichgive",
+    "locator": {
+      "section": 1,
+      "raw_substring": "whichgive"
+    },
+    "field": "raw_text",
+    "from": "whichgive",
+    "to": "which give",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__in-amplissimo__en.html: '...ings Us special joy, both on account of the conditions whichgive your country prominence over many other, and of the sp...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "in-amplissimo.en-affectionfor",
+    "locator": {
+      "section": 6,
+      "raw_substring": "affectionfor"
+    },
+    "field": "raw_text",
+    "from": "affectionfor",
+    "to": "affection for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__in-amplissimo__en.html: '... reasons We wish to declare to you again and again Our affectionfor you. Let the Apostolic blessing, which We bestow most ...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "in-amplissimo.en-atoken",
+    "locator": {
+      "section": 6,
+      "raw_substring": "atoken"
+    },
+    "field": "raw_text",
+    "from": "atoken",
+    "to": "a token",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__in-amplissimo__en.html: '...n the flocks entrusted to each one of you, be taken as atoken of this affection and an augury of divine gifts.</font...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "in-amplissimo.en-lordupon",
+    "locator": {
+      "section": 6,
+      "raw_substring": "Lordupon"
+    },
+    "field": "raw_text",
+    "from": "Lordupon",
+    "to": "Lord upon",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__in-amplissimo__en.html: '...ostolic blessing, which We bestow most lovingly in the Lordupon you all and upon the flocks entrusted to each one of y...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

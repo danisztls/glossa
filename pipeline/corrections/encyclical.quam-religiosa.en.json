@@ -1,0 +1,67 @@
+[
+  {
+    "id": "quam-religiosa.en-clearlyand",
+    "locator": {
+      "section": 5,
+      "raw_substring": "clearlyand"
+    },
+    "field": "raw_text",
+    "from": "clearlyand",
+    "to": "clearly and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-religiosa__en.html: '...others, instruct the flock entrusted to your care more clearlyand fully, so they do not remain unaware of any part of th...'. The rest of the English corpus writes these two words apart; this page prints 5 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-religiosa.en-contraryto",
+    "locator": {
+      "section": 5,
+      "raw_substring": "contraryto"
+    },
+    "field": "raw_text",
+    "from": "contraryto",
+    "to": "contrary to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-religiosa__en.html: '... promise that civil marriage laws will contain nothing contraryto the teaching of the Church. <p align=\"lef...'. The rest of the English corpus writes these two words apart; this page prints 5 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-religiosa.en-makelaws",
+    "locator": {
+      "section": 5,
+      "raw_substring": "makelaws"
+    },
+    "field": "raw_text",
+    "from": "makelaws",
+    "to": "make laws",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-religiosa__en.html: '...ity and advice to influence those who are empowered to makelaws in Peru. Enter into their favor, so they consider the ...'. The rest of the English corpus writes these two words apart; this page prints 5 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-religiosa.en-unchangedthey",
+    "locator": {
+      "section": 5,
+      "raw_substring": "unchanged.They"
+    },
+    "field": "raw_text",
+    "from": "unchanged.They",
+    "to": "unchanged. They",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__quam-religiosa__en.html: '...se that they will not allow the recent decree to stand unchanged.They should also promise that civil marriage laws will cont...'. The rest of the English corpus writes these two words apart; this page prints 5 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-religiosa.en-youto",
+    "locator": {
+      "section": 5,
+      "raw_substring": "youto"
+    },
+    "field": "raw_text",
+    "from": "youto",
+    "to": "you to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-religiosa__en.html: '...ns the eternal salvation of many of them. We also want youto use your authority and advice to influence those who a...'. The rest of the English corpus writes these two words apart; this page prints 5 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

@@ -1,0 +1,119 @@
+[
+  {
+    "id": "quod-anniversarius.en-customof",
+    "locator": {
+      "section": 6,
+      "raw_substring": "customof"
+    },
+    "field": "raw_text",
+    "from": "customof",
+    "to": "custom of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-anniversarius__en.html: '...f the departed suffer, but We are also animated by the customof the Church, which, amidst the most joyous solemnities ...'. The rest of the English corpus writes these two words apart; this page prints 9 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-anniversarius.en-deliveredfrom",
+    "locator": {
+      "section": 6,
+      "raw_substring": "deliveredfrom"
+    },
+    "field": "raw_text",
+    "from": "deliveredfrom",
+    "to": "delivered from",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-anniversarius__en.html: '...nd salutary commemoration of the dead that they may be deliveredfrom their sins. 7. Therefore, since ...'. The rest of the English corpus writes these two words apart; this page prints 9 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-anniversarius.en-knowthat",
+    "locator": {
+      "section": 6,
+      "raw_substring": "knowthat"
+    },
+    "field": "raw_text",
+    "from": "knowthat",
+    "to": "know that",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-anniversarius__en.html: '...this both by the pious desires of Catholics to whom We knowthat Our resolution will be especially grateful, and by the...'. The rest of the English corpus writes these two words apart; this page prints 9 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-anniversarius.en-notto",
+    "locator": {
+      "section": 6,
+      "raw_substring": "notto"
+    },
+    "field": "raw_text",
+    "from": "notto",
+    "to": "not to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-anniversarius__en.html: '... amidst the most joyous solemnities of the year, fails notto make a holy and salutary commemoration of the dead tha...'. The rest of the English corpus writes these two words apart; this page prints 9 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-anniversarius.en-placein",
+    "locator": {
+      "section": 8,
+      "raw_substring": "placein"
+    },
+    "field": "raw_text",
+    "from": "placein",
+    "to": "place in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-anniversarius__en.html: '...p align=\"left\">8. We desire also that this should take placein the same manner in all parish and collegiate churches,...'. The rest of the English corpus writes these two words apart; this page prints 9 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-anniversarius.en-gainedby",
+    "locator": {
+      "section": 9,
+      "raw_substring": "gainedby"
+    },
+    "field": "raw_text",
+    "from": "gainedby",
+    "to": "gained by",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-anniversarius__en.html: '... by Our Apostolic authority a plenary indulgence to be gainedby such of the faithful, applicable to the dead, and the ...'. The rest of the English corpus writes these two words apart; this page prints 9 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-anniversarius.en-inpurgatory",
+    "locator": {
+      "section": 9,
+      "raw_substring": "inpurgatory."
+    },
+    "field": "raw_text",
+    "from": "inpurgatory.",
+    "to": "in purgatory.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-anniversarius__en.html: '...ke of the Bread of Angels for the benefit of the souls inpurgatory. We grant by Our Apostolic authority a plenary indulgen...'. The rest of the English corpus writes these two words apart; this page prints 9 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-anniversarius.en-thelord",
+    "locator": {
+      "section": 11,
+      "raw_substring": "theLord"
+    },
+    "field": "raw_text",
+    "from": "theLord",
+    "to": "the Lord",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-anniversarius__en.html: '...le, Venerable Brethren, We affectionately grant you in theLord as a pledge of celestial gifts, the Apostolic Benedict...'. The rest of the English corpus writes these two words apart; this page prints 9 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-anniversarius.en-toall",
+    "locator": {
+      "section": 11,
+      "raw_substring": "toall"
+    },
+    "field": "raw_text",
+    "from": "toall",
+    "to": "to all",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-anniversarius__en.html: '...celestial gifts, the Apostolic Benediction, to you and toall the clergy and people committed to your charge. ...'. The rest of the English corpus writes these two words apart; this page prints 9 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

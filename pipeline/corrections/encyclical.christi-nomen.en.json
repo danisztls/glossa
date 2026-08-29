@@ -1,44 +1,5 @@
 [
   {
-    "id": "christi-nomen.en-3-onetrue",
-    "locator": {
-      "section": 3,
-      "raw_substring": "the onetrue Church"
-    },
-    "field": "raw_text",
-    "from": "the onetrue Church",
-    "to": "the one true Church",
-    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
-    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...that the Eastern Christians who have seceded will return to the onetrue Church, it is necessary to provide them with an abundance of holy ...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
-    "added": "2026-08-29"
-  },
-  {
-    "id": "christi-nomen.en-3-ministerswho",
-    "locator": {
-      "section": 3,
-      "raw_substring": "holy ministerswho, endowed"
-    },
-    "field": "raw_text",
-    "from": "holy ministerswho, endowed",
-    "to": "holy ministers who, endowed",
-    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
-    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...hurch, it is necessary to provide them with an abundance of holy ministerswho, endowed with doctrine and piety, may persuade the others to accept ...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
-    "added": "2026-08-29"
-  },
-  {
-    "id": "christi-nomen.en-3-sacrededucation",
-    "locator": {
-      "section": 3,
-      "raw_substring": "for the sacrededucation"
-    },
-    "field": "raw_text",
-    "from": "for the sacrededucation",
-    "to": "for the sacred education",
-    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
-    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...enially. Therefore houses must be opened wherever expedient for the sacrededucation of the youth, a sufficient number of high schools should be...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
-    "added": "2026-08-29"
-  },
-  {
     "id": "christi-nomen.en-3-available-distributed",
     "locator": {
       "section": 3,
@@ -52,42 +13,16 @@
     "added": "2026-08-29"
   },
   {
-    "id": "christi-nomen.en-3-maythus",
+    "id": "christi-nomen.en-3-catholicstoward",
     "locator": {
       "section": 3,
-      "raw_substring": "rite maythus be supplied"
+      "raw_substring": "the Catholicstoward the Society"
     },
     "field": "raw_text",
-    "from": "rite maythus be supplied",
-    "to": "rite may thus be supplied",
+    "from": "the Catholicstoward the Society",
+    "to": "the Catholics toward the Society",
     "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
-    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...ted according to population. Their power of exercising each rite maythus be supplied with dignity. Genuine knowledge of religion, should be exte...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
-    "added": "2026-08-29"
-  },
-  {
-    "id": "christi-nomen.en-3-extendedto",
-    "locator": {
-      "section": 3,
-      "raw_substring": "be extendedto all"
-    },
-    "field": "raw_text",
-    "from": "be extendedto all",
-    "to": "be extended to all",
-    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
-    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...upplied with dignity. Genuine knowledge of religion, should be extendedto all by making the best literature available. You can easily und...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
-    "added": "2026-08-29"
-  },
-  {
-    "id": "christi-nomen.en-3-thecosts",
-    "locator": {
-      "section": 3,
-      "raw_substring": "understand thecosts"
-    },
-    "field": "raw_text",
-    "from": "understand thecosts",
-    "to": "understand the costs",
-    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
-    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...all by making the best literature available. You can easily understand thecosts of these and similar ventures. You also understand that the...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...ned, suffer any harm, We must insist that the generosity of the Catholicstoward the Society become greater. It is fitting that a similar concern also b...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
     "added": "2026-08-29"
   },
   {
@@ -104,6 +39,19 @@
     "added": "2026-08-29"
   },
   {
+    "id": "christi-nomen.en-3-extendedto",
+    "locator": {
+      "section": 3,
+      "raw_substring": "be extendedto all"
+    },
+    "field": "raw_text",
+    "from": "be extendedto all",
+    "to": "be extended to all",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...upplied with dignity. Genuine knowledge of religion, should be extendedto all by making the best literature available. You can easily und...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
     "id": "christi-nomen.en-3-inthese-rimes",
     "locator": {
       "section": 3,
@@ -117,16 +65,133 @@
     "added": "2026-08-29"
   },
   {
-    "id": "christi-nomen.en-3-catholicstoward",
+    "id": "christi-nomen.en-3-maythus",
     "locator": {
       "section": 3,
-      "raw_substring": "the Catholicstoward the Society"
+      "raw_substring": "rite maythus be supplied"
     },
     "field": "raw_text",
-    "from": "the Catholicstoward the Society",
-    "to": "the Catholics toward the Society",
+    "from": "rite maythus be supplied",
+    "to": "rite may thus be supplied",
     "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
-    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...ned, suffer any harm, We must insist that the generosity of the Catholicstoward the Society become greater. It is fitting that a similar concern also b...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...ted according to population. Their power of exercising each rite maythus be supplied with dignity. Genuine knowledge of religion, should be exte...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-3-ministerswho",
+    "locator": {
+      "section": 3,
+      "raw_substring": "holy ministerswho, endowed"
+    },
+    "field": "raw_text",
+    "from": "holy ministerswho, endowed",
+    "to": "holy ministers who, endowed",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...hurch, it is necessary to provide them with an abundance of holy ministerswho, endowed with doctrine and piety, may persuade the others to accept ...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-3-onetrue",
+    "locator": {
+      "section": 3,
+      "raw_substring": "the onetrue Church"
+    },
+    "field": "raw_text",
+    "from": "the onetrue Church",
+    "to": "the one true Church",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...that the Eastern Christians who have seceded will return to the onetrue Church, it is necessary to provide them with an abundance of holy ...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-3-sacrededucation",
+    "locator": {
+      "section": 3,
+      "raw_substring": "for the sacrededucation"
+    },
+    "field": "raw_text",
+    "from": "for the sacrededucation",
+    "to": "for the sacred education",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...enially. Therefore houses must be opened wherever expedient for the sacrededucation of the youth, a sufficient number of high schools should be...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-3-thecosts",
+    "locator": {
+      "section": 3,
+      "raw_substring": "understand thecosts"
+    },
+    "field": "raw_text",
+    "from": "understand thecosts",
+    "to": "understand the costs",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...all by making the best literature available. You can easily understand thecosts of these and similar ventures. You also understand that the...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-aresustained",
+    "locator": {
+      "section": 3,
+      "raw_substring": "aresustained,"
+    },
+    "field": "raw_text",
+    "from": "aresustained,",
+    "to": "are sustained,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...c missions, deprived in part of the aids by which they aresustained, suffer any harm, We must insist that the generosity of...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-justnow",
+    "locator": {
+      "section": 3,
+      "raw_substring": "justnow"
+    },
+    "field": "raw_text",
+    "from": "justnow",
+    "to": "just now",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...Society for the Propagation of the Faith which We have justnow praised. Its purpose is entirely consonant with what W...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-mindbut",
+    "locator": {
+      "section": 3,
+      "raw_substring": "mind.But"
+    },
+    "field": "raw_text",
+    "from": "mind.But",
+    "to": "mind. But",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...purpose is entirely consonant with what We now have in mind.But lest apostolic missions, deprived in part of the aids ...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-thedesired",
+    "locator": {
+      "section": 3,
+      "raw_substring": "thedesired"
+    },
+    "field": "raw_text",
+    "from": "thedesired",
+    "to": "the desired",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '... doctrine and piety, may persuade the others to accept thedesired unity. In addition, Catholic wisdom and life must be m...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-4-benefitswhich",
+    "locator": {
+      "section": 4,
+      "raw_substring": "the benefitswhich can now"
+    },
+    "field": "raw_text",
+    "from": "the benefitswhich can now",
+    "to": "the benefits which can now",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...ence, the abundance of spiritual gifts it has to offer, and the benefitswhich can now be rightly hoped for the Christian cause. It certainly shou...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
     "added": "2026-08-29"
   },
   {
@@ -169,19 +234,6 @@
     "added": "2026-08-29"
   },
   {
-    "id": "christi-nomen.en-4-benefitswhich",
-    "locator": {
-      "section": 4,
-      "raw_substring": "the benefitswhich can now"
-    },
-    "field": "raw_text",
-    "from": "the benefitswhich can now",
-    "to": "the benefits which can now",
-    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
-    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...ence, the abundance of spiritual gifts it has to offer, and the benefitswhich can now be rightly hoped for the Christian cause. It certainly shou...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
-    "added": "2026-08-29"
-  },
-  {
     "id": "christi-nomen.en-4-movecatholic",
     "locator": {
       "section": 4,
@@ -205,6 +257,45 @@
     "to": "nor so salutary for themselves",
     "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is the two words the page itself prints elsewhere; no text is added or removed, only the space restored.",
     "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...ic men to know that they can do nothing for Us so pleasing, nor sosalutary for themselves and the Church than to meet Our desires by contributing.Wit...'. This page prints 16 such joins across its four numbered paragraphs and its masthead ('EASTERNCHURCHES'); no other mirror of this text in the corpus does, so the damage belongs to this page's own reflow rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-blessingvenerable",
+    "locator": {
+      "section": 4,
+      "raw_substring": "blessing,Venerable"
+    },
+    "field": "raw_text",
+    "from": "blessing,Venerable",
+    "to": "blessing, Venerable",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...s and favor Our desires. As an auspice of His choicest blessing,Venerable Brethren, We most lovingly give Our Apostolic Blessing...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-contributingwith",
+    "locator": {
+      "section": 4,
+      "raw_substring": "contributing.With"
+    },
+    "field": "raw_text",
+    "from": "contributing.With",
+    "to": "contributing. With",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '... themselves and the Church than to meet Our desires by contributing.With their contributions We can accomplish what We have res...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "christi-nomen.en-notdoubt",
+    "locator": {
+      "section": 4,
+      "raw_substring": "notdoubt"
+    },
+    "field": "raw_text",
+    "from": "notdoubt",
+    "to": "not doubt",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__christi-nomen__en.html: '...e brothers, We particularly ask your assistance. We do notdoubt that you, who are so eager to support with Us the caus...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
     "added": "2026-08-29"
   }
 ]

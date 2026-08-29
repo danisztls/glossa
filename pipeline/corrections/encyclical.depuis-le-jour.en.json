@@ -1,12 +1,92 @@
 [
   {
     "id": "depuis-le-jour.en-aetemi-patris",
-    "locator": { "raw_substring": ">Aetemi Patris</a>" },
+    "locator": {
+      "raw_substring": ">Aetemi Patris</a>"
+    },
     "field": "raw_text",
     "from": ">Aetemi Patris</a>",
     "to": ">Aeterni Patris</a>",
     "reason": "'Aetemi' for 'Aeterni' -- the rn-read-as-m artifact, the same defect already filed against Ecclesiam Suam EN's 'Modem Bent of Mind' heading. The correct value is fixed by the page itself and needs no judgement: the visible text is the label of an anchor whose own href is '/content/leo-xiii/en/encyclicals/documents/hf_l-xiii_enc_04081879_aeterni-patris.html', so the page names the document correctly in the link it builds and misspells it in the words it prints. 'Aeterni Patris' is Leo XIII's own 1879 encyclical on the restoration of Christian philosophy, which this passage recommends by name to seminary teachers; 'Aetemi' is not a Latin word.",
     "evidence": "corpus/raw/vatican-docs/encyclical__depuis-le-jour__en.html: 'f=\"/content/leo-xiii/en/encyclicals/documents/hf_l-xiii_enc_04081879_aeterni-patris.html\">Aetemi Patris</a></i>,&quot; which we once again recommend to the attentive perusal of your semi'. 'Aetemi' appears exactly once on the page; 'Aeterni' appears exactly once, in that same anchor's href.",
     "added": "2026-08-24"
+  },
+  {
+    "id": "depuis-le-jour.en-prochristo",
+    "locator": {
+      "section": 54,
+      "raw_substring": "proChristo"
+    },
+    "field": "raw_text",
+    "from": "proChristo",
+    "to": "pro Christo",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__depuis-le-jour__en.html: '...esus Christ, Whose true ambassadors they are, &quot; proChristo legatione fungimur ,&quot;(36) to announce with aco...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "depuis-le-jour.en-virtuein",
+    "locator": {
+      "section": 54,
+      "raw_substring": "Virtuein"
+    },
+    "field": "raw_text",
+    "from": "Virtuein",
+    "to": "Virtue in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__depuis-le-jour__en.html: '...ience the eternal truths which are seldom fruitless of Virtuein men's souls. 55. Their ministry ...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "depuis-le-jour.en-andlive",
+    "locator": {
+      "section": 55,
+      "raw_substring": "andlive"
+    },
+    "field": "raw_text",
+    "from": "andlive",
+    "to": "and live",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__depuis-le-jour__en.html: '...ies where the people are absorbed in worldly interests andlive in forgetfulness of God and His holy religion.But the ...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "depuis-le-jour.en-gracewill",
+    "locator": {
+      "section": 55,
+      "raw_substring": "gracewill"
+    },
+    "field": "raw_text",
+    "from": "gracewill",
+    "to": "grace will",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__depuis-le-jour__en.html: '...unwearying influence of the priest fortified by Divine gracewill work, as it has already worked, prodigies of resurrect...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "depuis-le-jour.en-religionbut",
+    "locator": {
+      "section": 55,
+      "raw_substring": "religion.But"
+    },
+    "field": "raw_text",
+    "from": "religion.But",
+    "to": "religion. But",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__depuis-le-jour__en.html: '...interests andlive in forgetfulness of God and His holy religion.But the enlightened, charitable and unwearying influence o...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "depuis-le-jour.en-ofseptember",
+    "locator": {
+      "section": 56,
+      "raw_substring": "ofSeptember,"
+    },
+    "field": "raw_text",
+    "from": "ofSeptember,",
+    "to": "of September,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__depuis-le-jour__en.html: '...gn=\"left\"> Given at Rome, at St. Peter's, on the 8th ofSeptember, in the year 1899, the twenty-second of our Pontificate...'. The rest of the English corpus writes these two words apart; this page prints 6 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
   }
 ]

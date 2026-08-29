@@ -1,7 +1,10 @@
 [
   {
     "id": "quod-multum.en-1-ponfiffs",
-    "locator": { "section": 1, "raw_substring": "many Roman Ponfiffs are recorded" },
+    "locator": {
+      "section": 1,
+      "raw_substring": "many Roman Ponfiffs are recorded"
+    },
     "field": "raw_text",
     "from": "many Roman Ponfiffs are recorded",
     "to": "many Roman Pontiffs are recorded",
@@ -11,12 +14,67 @@
   },
   {
     "id": "quod-multum.en-6-nor-for-not",
-    "locator": { "section": 6, "raw_substring": "which is nor to be restricted by age" },
+    "locator": {
+      "section": 6,
+      "raw_substring": "which is nor to be restricted by age"
+    },
     "field": "raw_text",
     "from": "which is nor to be restricted by age",
     "to": "which is not to be restricted by age",
     "reason": "'is nor to be restricted' is ungrammatical, and the next sentence states the same thing positively -- 'No age is unfit for the kingdom of God' -- so the intended reading is 'not'. An r-for-t substitution, the same OCR class as the misprint above.",
     "evidence": "raw/vatican-docs/encyclical__quod-multum__en.html, section 6: 'To embrace religion is a most serious duty, which is nor to be restricted by age. No age is unfit for the kingdom of God.'",
     "added": "2026-08-28"
+  },
+  {
+    "id": "quod-multum.en-beenconsecrated",
+    "locator": {
+      "section": 13,
+      "raw_substring": "beenconsecrated"
+    },
+    "field": "raw_text",
+    "from": "beenconsecrated",
+    "to": "been consecrated",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-multum__en.html: '...ssed Virgin, Mother of God. The kingdom of Hungary has beenconsecrated to her and received its name from her. For the same re...'. The rest of the English corpus writes these two words apart; this page prints 4 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-multum.en-foryou",
+    "locator": {
+      "section": 13,
+      "raw_substring": "foryou,"
+    },
+    "field": "raw_text",
+    "from": "foryou,",
+    "to": "for you,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-multum__en.html: '...ey are for your honor or for your advantage, We desire foryou, and We pray that you obtain them with the assistance a...'. The rest of the English corpus writes these two words apart; this page prints 4 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-multum.en-thesethings",
+    "locator": {
+      "section": 13,
+      "raw_substring": "thesethings,"
+    },
+    "field": "raw_text",
+    "from": "thesethings,",
+    "to": "these things,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-multum__en.html: '...the future prosperity at home and glory abroad. All of thesethings, whether they are for your honor or for your advantage,...'. The rest of the English corpus writes these two words apart; this page prints 4 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quod-multum.en-venerablebrethren",
+    "locator": {
+      "section": 13,
+      "raw_substring": "venerablebrethren,"
+    },
+    "field": "raw_text",
+    "from": "venerablebrethren,",
+    "to": "venerable brethren,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quod-multum__en.html: '...y Our love, this is what We have to prescribe for you, venerablebrethren, and which We trust will be accepted by the whole natio...'. The rest of the English corpus writes these two words apart; this page prints 4 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
   }
 ]

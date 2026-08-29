@@ -1,0 +1,41 @@
+[
+  {
+    "id": "dum-multa.en-bishopsof",
+    "locator": {
+      "section": 1,
+      "raw_substring": "Bishopsof"
+    },
+    "field": "raw_text",
+    "from": "Bishopsof",
+    "to": "Bishops of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__dum-multa__en.html: '... Brothers, the Archbishop of Quito and the other Bishopsof Ecuador. <font size=\"...'. The rest of the English corpus writes these two words apart; this page prints 3 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "dum-multa.en-stillremain",
+    "locator": {
+      "section": 3,
+      "raw_substring": "stillremain"
+    },
+    "field": "raw_text",
+    "from": "stillremain",
+    "to": "still remain",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__dum-multa__en.html: '...ch of Ecuador through the abundance of His mercies. We stillremain your companion and share in your sorrows and supplicat...'. The rest of the English corpus writes these two words apart; this page prints 3 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "dum-multa.en-todefeat",
+    "locator": {
+      "section": 3,
+      "raw_substring": "todefeat."
+    },
+    "field": "raw_text",
+    "from": "todefeat.",
+    "to": "to defeat.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__dum-multa__en.html: '...cted and spurned rights of the Church without yielding todefeat. Teach the faithful entrusted to your care and educate ...'. The rest of the English corpus writes these two words apart; this page prints 3 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

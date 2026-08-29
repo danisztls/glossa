@@ -1,0 +1,15 @@
+[
+  {
+    "id": "perfectae-caritatis.en-cfrom",
+    "locator": {
+      "section": 15,
+      "raw_substring": "(cf.Rom."
+    },
+    "field": "raw_text",
+    "from": "(cf.Rom.",
+    "to": "(cf. Rom.",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/vatii__perfectae-caritatis__en.html: '...oded the hearts of its members through the Holy Spirit (cf.Rom. 5:5), rejoices because He is present among them (cf. M...'. The rest of the English corpus writes these two words apart; this page prints 1 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

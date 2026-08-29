@@ -11,5 +11,18 @@
     "reason": "'BISHIOPS' is not a word. The line is the standing addressee formula of the Pius XII-era English mastheads on this mirror, and the correct value is fixed by the mirror's own other pages rather than inferred.",
     "evidence": "raw/vatican-docs: 30 pages print 'ARCHBISHOPS, BISHIOPS, AND OTHER LOCAL ORDINARIES' and 4 print 'ARCHBISHOPS, BISHOPS, AND OTHER LOCAL ORDINARIES' in the same boilerplate line -- one bad copy of a shared template, not thirty independent typos. The line is reader-visible: it is stored whole in manifest.header and rendered as the document masthead.",
     "added": "2026-08-29"
+  },
+  {
+    "id": "summi-pontificatus.en-devoidof",
+    "locator": {
+      "section": 40,
+      "raw_substring": "devoidof"
+    },
+    "field": "raw_text",
+    "from": "devoidof",
+    "to": "devoid of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__summi-pontificatus__en.html: '...own the centuries, inspiring heroic charity in a world devoidof love and torn by hate: &quot;This is my commandment th...'. The rest of the English corpus writes these two words apart; this page prints 1 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
   }
 ]

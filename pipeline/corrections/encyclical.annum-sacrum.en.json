@@ -1,0 +1,93 @@
+[
+  {
+    "id": "annum-sacrum.en-fromit",
+    "locator": {
+      "section": 12,
+      "raw_substring": "fromit"
+    },
+    "field": "raw_text",
+    "from": "fromit",
+    "to": "from it",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__annum-sacrum__en.html: '...ht-the most Sacred Heart of Jesus, with a cross rising fromit and shining forth with dazzling splendor amidst flames...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "annum-sacrum.en-thatsacred",
+    "locator": {
+      "section": 12,
+      "raw_substring": "thatSacred"
+    },
+    "field": "raw_text",
+    "from": "thatSacred",
+    "to": "that Sacred",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__annum-sacrum__en.html: '...forth with dazzling splendor amidst flames of love. In thatSacred Heart all our hopes should be placed, and from it the ...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "annum-sacrum.en-victorythat",
+    "locator": {
+      "section": 12,
+      "raw_substring": "victorythat"
+    },
+    "field": "raw_text",
+    "from": "victorythat",
+    "to": "victory that",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__annum-sacrum__en.html: '...ecame at once the happy omen and cause of the glorious victorythat soon followed. And now, to-day, behold another blessed...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "annum-sacrum.en-besaid",
+    "locator": {
+      "section": 14,
+      "raw_substring": "besaid,"
+    },
+    "field": "raw_text",
+    "from": "besaid,",
+    "to": "be said,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__annum-sacrum__en.html: '...ipal church of every town and village, certain prayers besaid, and on each of these days there be added to the other ...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "annum-sacrum.en-litanyof",
+    "locator": {
+      "section": 14,
+      "raw_substring": "Litanyof"
+    },
+    "field": "raw_text",
+    "from": "Litanyof",
+    "to": "Litany of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__annum-sacrum__en.html: '... of these days there be added to the other prayers the Litanyof the Sacred Heart approved by Our authority. On the las...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "annum-sacrum.en-ofconsecration",
+    "locator": {
+      "section": 14,
+      "raw_substring": "ofconsecration"
+    },
+    "field": "raw_text",
+    "from": "ofconsecration",
+    "to": "of consecration",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__annum-sacrum__en.html: '...rt approved by Our authority. On the last day the form ofconsecration shall be recited which, Venerable Brethren, We sent to...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "annum-sacrum.en-thecoming",
+    "locator": {
+      "section": 14,
+      "raw_substring": "thecoming"
+    },
+    "field": "raw_text",
+    "from": "thecoming",
+    "to": "the coming",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__annum-sacrum__en.html: '...ns, We ordain that on the ninth, tenth and eleventh of thecoming month of June, in the principal c...'. The rest of the English corpus writes these two words apart; this page prints 7 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

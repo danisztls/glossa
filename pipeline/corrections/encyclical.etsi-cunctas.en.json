@@ -1,0 +1,106 @@
+[
+  {
+    "id": "etsi-cunctas.en-andlasting",
+    "locator": {
+      "section": 1,
+      "raw_substring": "andlasting"
+    },
+    "field": "raw_text",
+    "from": "andlasting",
+    "to": "and lasting",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__etsi-cunctas__en.html: '...s of Ireland so violently and constantly tried by long andlasting hardships. Their remarkable steadfastness in patient e...'. The rest of the English corpus writes these two words apart; this page prints 8 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "etsi-cunctas.en-considerationfor",
+    "locator": {
+      "section": 1,
+      "raw_substring": "considerationfor"
+    },
+    "field": "raw_text",
+    "from": "considerationfor",
+    "to": "consideration for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__etsi-cunctas__en.html: '...en moved with exceptional sympathy and the most kindly considerationfor the Catholics of Ireland so violently and constantly t...'. The rest of the English corpus writes these two words apart; this page prints 8 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "etsi-cunctas.en-embracewith",
+    "locator": {
+      "section": 1,
+      "raw_substring": "embracewith"
+    },
+    "field": "raw_text",
+    "from": "embracewith",
+    "to": "embrace with",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__etsi-cunctas__en.html: '...very part of the Lord's flock entrusted to our care we embracewith deep affection and love, nevertheless, our concern and...'. The rest of the English corpus writes these two words apart; this page prints 8 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "etsi-cunctas.en-hasalways",
+    "locator": {
+      "section": 1,
+      "raw_substring": "hasalways"
+    },
+    "field": "raw_text",
+    "from": "hasalways",
+    "to": "has always",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__etsi-cunctas__en.html: '...s. Their remarkable steadfastness in patient endurance hasalways aroused our deepest esteem, for no tribulation has eve...'. The rest of the English corpus writes these two words apart; this page prints 8 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "etsi-cunctas.en-havealways",
+    "locator": {
+      "section": 1,
+      "raw_substring": "havealways"
+    },
+    "field": "raw_text",
+    "from": "havealways",
+    "to": "have always",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__etsi-cunctas__en.html: '...en who have been struck by adversity. We, accordingly, havealways been moved with exceptional sympathy and the most kind...'. The rest of the English corpus writes these two words apart; this page prints 8 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "etsi-cunctas.en-outabove",
+    "locator": {
+      "section": 1,
+      "raw_substring": "outabove"
+    },
+    "field": "raw_text",
+    "from": "outabove",
+    "to": "out above",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__etsi-cunctas__en.html: '...on and love, nevertheless, our concern and thoughts go outabove all to those we see suffering misfortune. Truly, we ex...'. The rest of the English corpus writes these two words apart; this page prints 8 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "etsi-cunctas.en-todestroy",
+    "locator": {
+      "section": 1,
+      "raw_substring": "todestroy"
+    },
+    "field": "raw_text",
+    "from": "todestroy",
+    "to": "to destroy",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__etsi-cunctas__en.html: '... deepest esteem, for no tribulation has ever been able todestroy or diminish the faith that is the gift of their father...'. The rest of the English corpus writes these two words apart; this page prints 8 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "etsi-cunctas.en-lovefor",
+    "locator": {
+      "section": 4,
+      "raw_substring": "lovefor"
+    },
+    "field": "raw_text",
+    "from": "lovefor",
+    "to": "love for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__etsi-cunctas__en.html: '...ubt that it is more and more evident that our fatherly lovefor the Irish has never changed. They, to be sure, will be...'. The rest of the English corpus writes these two words apart; this page prints 8 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]
