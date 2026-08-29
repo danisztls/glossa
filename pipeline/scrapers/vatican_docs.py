@@ -247,6 +247,7 @@ from pathlib import Path
 # so this resolves regardless of the working directory. See common/__init__.py's
 # docblock for what does and does not belong there.
 from common import (
+    PARSE_BASELINE_PATH,
     Fetcher,
     FetchPolicy,
     OverrideDriftError,
@@ -257,6 +258,7 @@ from common import (
     corrections_receipt,
     fold,
     fold_index,
+    json_text,
     load_corrections,
     load_overrides,
     load_translations_checked,
@@ -7445,6 +7447,233 @@ def release_crawl_lock(lock_path: Path) -> None:
 # --------------------------------------------------------------------------
 
 
+# --------------------------------------------------------------------------
+# What a run's exit code means
+# --------------------------------------------------------------------------
+#
+# IT MEANT NOTHING UNTIL 2026-08-29, and had not for as long as the corpus has
+# been multilingual. `phase1` returned `ok and sym_ok` and `phase2` returned
+# `sym_ok` alone, so both hung on the cross-language symmetry check -- which is
+# chronically FAIL by design, because a missing or differently numbered
+# translation is legitimate and common, and CLAUDE.md accordingly tells you to
+# read the named documents rather than the verdict. Both subcommands therefore
+# exited 1 on every run they have ever had. Nothing was checking them, and the
+# rebuild recipe that drives them could not check them either.
+#
+# THE OBSTACLE IS THAT MOST FAILURE HERE IS THE CORPUS'S KNOWN STATE. A run
+# today reports 425 fetch-failures, 212 documents whose parse does not validate
+# and 67 pages that are stubs. Gating on "no document failed" would exit 1
+# forever and be exactly as useless. So the question a run can actually answer
+# is not "is the corpus clean" but "did this run go worse than what we had
+# already written down" -- the same shape as the site's reference-coverage
+# baseline, and for the same reason.
+#
+# THREE SOURCES SAY WHAT IS ALREADY KNOWN, and only the third is new:
+#
+#   - `pipeline/absent-sources.json` explains a `fetch-failed`. The origin
+#     answered 404 and we recorded it; a fetch-failure it does NOT explain is
+#     a transient the run should be loud about, which is what the module
+#     docstring has always promised and never delivered.
+#   - `pipeline/translations-checked.json` explains a `no-translation-stub`.
+#     The page is a CMS slot no translator filled. A page that parsed
+#     yesterday and reads as a stub today is not in there, and is a parser
+#     regression of the worst kind.
+#   - `pipeline/parse-baseline.json` explains the rest -- the statuses no
+#     ledger can speak for, because they are facts about our parse rather
+#     than about the source.
+#
+# WHAT THE BASELINE DOES NOT SEE, MEASURED RATHER THAN GUESSED AT. It records
+# a status and a problem COUNT, so it catches a document that breaks, one
+# whose failure changes kind, and one that accumulates problems. Two things
+# get past it, and the second is the larger:
+#
+#   - a document failing the same number of times for worse reasons. A
+#     baseline holding every problem string would churn on every reworded
+#     message and be abandoned, so this is deliberate.
+#   - ANYTHING `validate_document` DOES NOT CHECK. It reads section ranges,
+#     gaps and citation resolution -- it does not read `structure.json` at
+#     all. Tested by misspelling the Latin `CAPUT` label and re-running: every
+#     Latin document lost its chapter divisions, and this check reported no
+#     regression and exited 0. So the gate is a floor under the parse's
+#     ADDRESSES, not under its structure. `rebuild.py`'s `wrote` column sees
+#     that change, the division comparison in CLAUDE.md's "Work that spans
+#     languages" is the instrument for judging it, and neither is automatic.
+#
+# Both are reasons to read a diff, not reasons to trust a green run.
+
+
+#: Statuses that are not a problem at all. `no-url` says this document has no
+#: edition in this language and never claimed one; `already-written` appears
+#: only under --skip-written, where not looking is precisely what was asked.
+STATUS_OK = frozenset({"validated", "already-written", "no-url"})
+
+
+def _ledgered_absences() -> set[tuple[str, str]]:
+    """`(family.slug, lang)` that `translations-checked.json` accounts for.
+
+    The ledger is keyed by the work whose page named the sibling -- an entry
+    reads `work: encyclical.acerba-animi.en, lang: pt` -- so the base language
+    is dropped here. What is being asked is "does this document have a
+    recorded answer for this language", which no base language changes."""
+    return {
+        (work.rsplit(".", 1)[0], lang)
+        for work, by_lang in TRANSLATIONS_CHECKED.items()
+        for lang in by_lang
+    }
+
+
+LEDGERED_ABSENCES = _ledgered_absences()
+
+
+def result_work_id(r: dict) -> str:
+    """`family.slug.lang`, or `family.slug` for a `not-in-index` placeholder,
+    which is queued with no language at all."""
+    lang = r.get("lang")
+    return f"{r['family']}.{r['slug']}" + (f".{lang}" if lang else "")
+
+
+def problem_count(r: dict) -> int:
+    """How many distinct things this result reports wrong.
+
+    `validate_document` returns a list; a parse error or a drift is one thing
+    with a message. Zero would make "known" unfalsifiable, so a result with a
+    bad status and nothing to say still counts as one."""
+    problems = r.get("problems")
+    return len(problems) if problems else 1
+
+
+def accounted_by_ledger(r: dict, fetcher: Fetcher) -> bool:
+    """Whether a ledger next door already answers for this result."""
+    status = r["status"]
+    if status == "fetch-failed":
+        return r.get("url") in fetcher.absent.entries
+    if status == "no-translation-stub":
+        return (f"{r['family']}.{r['slug']}", r.get("lang")) in LEDGERED_ABSENCES
+    return False
+
+
+def load_parse_baseline(path: Path = PARSE_BASELINE_PATH) -> dict[str, dict]:
+    raw = read_text_or_none(path)
+    if not raw:
+        return {}
+    return json.loads(raw).get("works", {})
+
+
+def judge_run(
+    results: list[dict], fetcher: Fetcher, baseline: dict[str, dict]
+) -> tuple[list[str], list[str], dict[str, dict]]:
+    """`(regressions, improvements, entries)` for the works this run touched.
+
+    `entries` is what the baseline should hold for those works and nothing
+    else, so that a run over one pontificate can be accepted without erasing
+    what a full run recorded about the rest."""
+    regressions, improvements, entries = [], [], {}
+    for r in results:
+        work_id = result_work_id(r)
+        was = baseline.get(work_id)
+        if r["status"] in STATUS_OK or accounted_by_ledger(r, fetcher):
+            if was is not None:
+                improvements.append(
+                    f"{work_id}: was {was['status']}, now {r['status']}"
+                )
+            continue
+        now = {"status": r["status"], "problems": problem_count(r)}
+        entries[work_id] = now
+        if was is None:
+            regressions.append(f"{work_id}: {now['status']} ({now['problems']}), new")
+        elif was["status"] != now["status"]:
+            regressions.append(f"{work_id}: was {was['status']}, now {now['status']}")
+        elif now["problems"] > was["problems"]:
+            regressions.append(
+                f"{work_id}: {now['status']}, {was['problems']} -> {now['problems']} problems"
+            )
+        elif now["problems"] < was["problems"]:
+            improvements.append(
+                f"{work_id}: {now['status']}, {was['problems']} -> {now['problems']} problems"
+            )
+    return regressions, improvements, entries
+
+
+def report_run(results: list[dict], fetcher: Fetcher, accept: bool) -> bool:
+    """Print the verdict and return whether the run may exit 0.
+
+    `accept` rewrites the baseline for the works this run touched, which is
+    the deliberate act that says "this is the new known state" -- the same
+    contract as `npm run coverage:accept` on the site side, and for the same
+    reason: every regression this project has had was silent, and a floor
+    nobody can move is a floor everybody learns to ignore."""
+    baseline = load_parse_baseline()
+    regressions, improvements, entries = judge_run(results, fetcher, baseline)
+    touched = {result_work_id(r) for r in results}
+
+    print("\n=== against pipeline/parse-baseline.json ===")
+    print(f"  known problems, unchanged: {len(entries) - len(regressions)}")
+    if improvements:
+        print(f"  improved: {len(improvements)}")
+        for line in improvements[:20]:
+            print(f"    {line}")
+        if len(improvements) > 20:
+            print(f"    ... and {len(improvements) - 20} more")
+    if regressions:
+        print(f"  REGRESSIONS: {len(regressions)}")
+        for line in regressions:
+            print(f"    {line}")
+
+    if accept:
+        kept = {k: v for k, v in baseline.items() if k not in touched}
+        works = dict(sorted((kept | entries).items()))
+        PARSE_BASELINE_PATH.write_text(
+            json_text({"$comment": PARSE_BASELINE_COMMENT, "works": works}),
+            encoding="utf-8",
+        )
+        print(
+            f"  baseline accepted: {len(works)} work(s) "
+            f"({len(baseline)} before, {len(touched)} touched by this run)"
+        )
+        return True
+
+    if regressions:
+        print("\n  --accept-baseline records these as the new known state.")
+    return not regressions
+
+
+PARSE_BASELINE_COMMENT = [
+    "Every work vatican_docs.py is KNOWN to parse badly, with the status it",
+    "produces and how many problems it reports. This is a floor, not a target:",
+    "a run exits nonzero when a work fails that is not in here, when a work's",
+    "failure changes kind, or when one accumulates problems. It says nothing",
+    "about whether the corpus is good -- see docs/decisions.md, Parsing.",
+    "Written only by `--accept-baseline`, which is a deliberate act.",
+]
+
+
+def report_symmetry(checked: tuple[bool, list[str]]) -> None:
+    """Print the cross-language section-set comparison. Returns nothing,
+    because it decides nothing.
+
+    IT USED TO DECIDE THE EXIT CODE OF BOTH PHASES, and it is the wrong shape
+    for that in a way no threshold fixes. Two editions of one document
+    legitimately carry different section sets: a translation can be missing, a
+    nineteenth-century encyclical is numbered differently in each language it
+    was set in, and an edition that prints no paragraph numbers at all has no
+    sections to compare -- 328 of them do not. So the check reports a FAIL on
+    every run over the real corpus, which is why CLAUDE.md tells you to read
+    the named documents and not the verdict, and why for as long as it gated
+    the exit code the exit code said nothing.
+
+    It stays because it is a genuine oracle -- it caught three parser defects
+    that each looked plausible in one language alone. An oracle whose output
+    is a list of leads is read, not gated."""
+    _, problems = checked
+    print("\n=== cross-language symmetry ===")
+    print(
+        f"  {len(problems)} document(s) whose editions differ in their section "
+        "sets. A report, not a verdict: read the names."
+    )
+    for line in problems:
+        print(f"  - {line}")
+
+
 def summarize(results: list[dict]) -> None:
     from collections import Counter
 
@@ -7517,6 +7746,13 @@ def main() -> int:
 
     # Parsing only. Fetching is serial at any --jobs; see fetch_for_parse.
     par = argparse.ArgumentParser(add_help=False)
+    par.add_argument(
+        "--accept-baseline",
+        action="store_true",
+        help="record what this run found as the new known state in "
+        "pipeline/parse-baseline.json, for the works it touched and no "
+        "others. The deliberate act that moves the floor; review the diff",
+    )
     par.add_argument(
         "--skip-written",
         action="store_true",
@@ -7660,16 +7896,9 @@ def main() -> int:
             release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
         report_fetching(fetcher)
-        ok = all(r["status"] in ("validated", "already-written") for r in results)
-        sym_ok, sym_problems = check_language_symmetry(
-            known=sections_from_results(results)
-        )
-        print(
-            f"\n=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}"
-        )
-        for p in sym_problems:
-            print(f"  - {p}")
-        return 0 if (ok and sym_ok) else 1
+        ok = report_run(results, fetcher, args.accept_baseline)
+        report_symmetry(check_language_symmetry(known=sections_from_results(results)))
+        return 0 if ok else 1
 
     if args.cmd == "phase2":
         try:
@@ -7713,26 +7942,15 @@ def main() -> int:
             # it were this run's verdict. A fetch-only run succeeds when the
             # pages it could get are on disk.
             return 0
-        sym_ok, sym_problems = check_language_symmetry(
-            known=sections_from_results(results)
-        )
-        print(
-            f"\n=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}"
-        )
-        for p in sym_problems:
-            print(f"  - {p}")
-        return 0 if sym_ok else 1
+        ok = report_run(results, fetcher, args.accept_baseline)
+        report_symmetry(check_language_symmetry(known=sections_from_results(results)))
+        return 0 if ok else 1
 
     if args.cmd == "check-symmetry":
         # No `known` here by definition: this subcommand exists to check a
         # corpus produced by an earlier run, so every number comes off disk.
-        sym_ok, sym_problems = check_language_symmetry()
-        print(
-            f"=== cross-language symmetry check ===\nVALIDATION: {'PASS' if sym_ok else 'FAIL'}"
-        )
-        for p in sym_problems:
-            print(f"  - {p}")
-        return 0 if sym_ok else 1
+        report_symmetry(check_language_symmetry())
+        return 0
 
     if args.cmd == "discover-encyclicals":
         total = 0

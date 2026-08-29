@@ -1,0 +1,1256 @@
+{
+  "$comment": [
+    "Every work vatican_docs.py is KNOWN to parse badly, with the status it",
+    "produces and how many problems it reports. This is a floor, not a target:",
+    "a run exits nonzero when a work fails that is not in here, when a work's",
+    "failure changes kind, or when one accumulates problems. It says nothing",
+    "about whether the corpus is good -- see docs/decisions.md, Parsing.",
+    "Written only by `--accept-baseline`, which is a deliberate act."
+  ],
+  "works": {
+    "encyclical.acerbo-nimis.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.acerbo-nimis.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.ad-beatissimi-apostolorum.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.ad-caeli-reginam.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.ad-catholici-sacerdotii.es": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.ad-catholici-sacerdotii.fr": {
+      "status": "validation-failed",
+      "problems": 32
+    },
+    "encyclical.ad-petri.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.adiutricem.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.arcanum.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.arcanum.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.au-milieu-des-sollicitudes.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.caritas-in-veritate.ar": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.centesimus-annus.fr": {
+      "status": "validation-failed",
+      "problems": 44
+    },
+    "encyclical.centesimus-annus.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.centesimus-annus.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.centesimus-annus.pl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.deiparae-virginis-mariae.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.depuis-le-jour.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.deus-caritas-est.be": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.deus-caritas-est.hr": {
+      "status": "validation-failed",
+      "problems": 4
+    },
+    "encyclical.deus-caritas-est.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.deus-caritas-est.vi": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.dilexit-nos.be": {
+      "status": "validation-failed",
+      "problems": 131
+    },
+    "encyclical.dilexit-nos.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.diuturnum.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.diuturnum.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.dives-in-misericordia.ar": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.dives-in-misericordia.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.dives-in-misericordia.sk": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.divini-illius-magistri.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.divini-illius-magistri.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.divini-illius-magistri.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.divini-redemptoris.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.divini-redemptoris.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.divino-afflante-spiritu.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.divino-afflante-spiritu.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.divinum-illud-munus.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.dominum-et-vivificantem.de": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.dominum-et-vivificantem.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.eccl-de-euch.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.eccl-de-euch.hr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.eccl-de-euch.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.ecclesiam.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.ecclesiam.en": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "encyclical.ecclesiam.es": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.ecclesiam.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.editae-saepe.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.evangelii-praecones.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.evangelii-praecones.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.evangelium-vitae.fr": {
+      "status": "validation-failed",
+      "problems": 23
+    },
+    "encyclical.evangelium-vitae.la": {
+      "status": "validation-failed",
+      "problems": 11
+    },
+    "encyclical.evangelium-vitae.nl": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.fidei-donum.en": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.fides-et-ratio.ar": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.fides-et-ratio.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.fides-et-ratio.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.fides-et-ratio.la": {
+      "status": "validation-failed",
+      "problems": 43
+    },
+    "encyclical.firmissimam-constantiam.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.fratelli-tutti.de": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.fratelli-tutti.sl": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.fratelli-tutti.vi": {
+      "status": "validation-failed",
+      "problems": 180
+    },
+    "encyclical.humanae-vitae.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.humanae-vitae.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.humani-generis-redemptionem.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.humanum-genus.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.il-fermo-proposito.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.immortale-dei.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.in-hac-tanta.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.in-hac-tanta.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.inscrutabili-dei-consilio.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.insignes.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.iucunda-sane.en": {
+      "status": "validation-failed",
+      "problems": 6
+    },
+    "encyclical.iucunda-sane.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.iucunda-semper-expectatione.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.laborem-exercens.de": {
+      "status": "validation-failed",
+      "problems": 4
+    },
+    "encyclical.laborem-exercens.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.laborem-exercens.sk": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.laudato-si.ar": {
+      "status": "validation-failed",
+      "problems": 107
+    },
+    "encyclical.laudato-si.be": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.laudato-si.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.laudato-si.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.laudato-si.pl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.laudato-si.ru": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.le-pelerinage-de-lourdes.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.libertas.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.lumen-fidei.be": {
+      "status": "validation-failed",
+      "problems": 13
+    },
+    "encyclical.lumen-fidei.la": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.lumen-fidei.ru": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.magnifica-humanitas.pl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.mater.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.mater.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.mater.es": {
+      "status": "validation-failed",
+      "problems": 4
+    },
+    "encyclical.mater.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.mater.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.mediator-dei.pt": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.mens-nostra.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.mense-maio.en": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.musicae-sacrae.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.mysterium.fr": {
+      "status": "validation-failed",
+      "problems": 7
+    },
+    "encyclical.mystici-corporis-christi.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.mystici-corporis-christi.pt": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.pacem-dei-munus-pulcherrimum.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.pacem.de": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.pacem.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.pacem.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.pascendi-dominici-gregis.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.populorum.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.populorum.en": {
+      "status": "validation-failed",
+      "problems": 5
+    },
+    "encyclical.populorum.fr": {
+      "status": "validation-failed",
+      "problems": 10
+    },
+    "encyclical.populorum.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.providentissimus-deus.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.providentissimus-deus.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.quadragesimo-anno.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.quas-primas.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.redemptor-hominis.la": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.redemptor-hominis.sk": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.redemptoris-mater.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.redemptoris-mater.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.redemptoris-mater.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.redemptoris-missio.la": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.rerum-novarum.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.rerum-novarum.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.rerum-novarum.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.rerum-novarum.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.rerum-omnium-perturbationem.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.sacerdotalis.en": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "encyclical.sacerdotalis.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.sacerdotii.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.sacerdotii.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.sacra-propediem.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.sacra-propediem.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.sacra-virginitas.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.saeculo-exeunte-octavo.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.satis-cognitum.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.satis-cognitum.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.slavorum-apostoli.de": {
+      "status": "validation-failed",
+      "problems": 21
+    },
+    "encyclical.slavorum-apostoli.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.slavorum-apostoli.fr": {
+      "status": "validation-failed",
+      "problems": 20
+    },
+    "encyclical.spe-salvi.hu": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "encyclical.spe-salvi.nl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.spe-salvi.vi": {
+      "status": "validation-failed",
+      "problems": 25
+    },
+    "encyclical.spiritus-paraclitus.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.spiritus-paraclitus.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.ut-unum-sint.fi": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.ut-unum-sint.nl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.veritatis-splendor.en": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "encyclical.veritatis-splendor.it": {
+      "status": "validation-failed",
+      "problems": 66
+    },
+    "encyclical.veritatis-splendor.la": {
+      "status": "validation-failed",
+      "problems": 7
+    },
+    "encyclical.veritatis-splendor.pl": {
+      "status": "validation-failed",
+      "problems": 20
+    },
+    "exhortation.amoris-laetitia.ar": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.amoris-laetitia.be": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.amoris-laetitia.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.amoris-laetitia.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.amoris-laetitia.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.amoris-laetitia.vi": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.catechesi-tradendae.fr": {
+      "status": "validation-failed",
+      "problems": 44
+    },
+    "exhortation.christifideles-laici.de": {
+      "status": "validation-failed",
+      "problems": 59
+    },
+    "exhortation.christifideles-laici.fr": {
+      "status": "validation-failed",
+      "problems": 59
+    },
+    "exhortation.christifideles-laici.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.christifideles-laici.it": {
+      "status": "validation-failed",
+      "problems": 59
+    },
+    "exhortation.christifideles-laici.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.christus-vivit.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.dilexi-te.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.ecclesia-in-africa.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.ecclesia-in-africa.en": {
+      "status": "validation-failed",
+      "problems": 122
+    },
+    "exhortation.ecclesia-in-africa.la": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "exhortation.ecclesia-in-america.es": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "exhortation.ecclesia-in-asia.de": {
+      "status": "validation-failed",
+      "problems": 8
+    },
+    "exhortation.ecclesia-in-asia.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.ecclesia-in-europa.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.ecclesia-in-europa.hu": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "exhortation.ecclesia-in-medio-oriente.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "exhortation.evangelica-testificatio.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.evangelica-testificatio.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.evangelii-gaudium.be": {
+      "status": "validation-failed",
+      "problems": 20
+    },
+    "exhortation.evangelii-gaudium.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.evangelii-gaudium.nl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.evangelii-nuntiandi.en": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "exhortation.evangelii-nuntiandi.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.evangelii-nuntiandi.la": {
+      "status": "validation-failed",
+      "problems": 51
+    },
+    "exhortation.evangelii-nuntiandi.lv": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "exhortation.familiaris-consortio.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.familiaris-consortio.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.familiaris-consortio.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.gaudete-et-exsultate.ar": {
+      "status": "validation-failed",
+      "problems": 4
+    },
+    "exhortation.gaudete-et-exsultate.vi": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.gaudete-in-domino.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.gaudete-in-domino.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.ideal-film.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.marialis-cultus.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.marialis-cultus.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.marialis-cultus.es": {
+      "status": "validation-failed",
+      "problems": 4
+    },
+    "exhortation.marialis-cultus.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.pastores-dabo-vobis.es": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "exhortation.pastores-dabo-vobis.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.pastores-dabo-vobis.it": {
+      "status": "validation-failed",
+      "problems": 6
+    },
+    "exhortation.pastores-dabo-vobis.pl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.pastores-gregis.pt": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "exhortation.querida-amazonia.ar": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.reconciliatio-et-paenitentia.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.reconciliatio-et-paenitentia.pt": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "exhortation.redemptionis-donum.fr": {
+      "status": "validation-failed",
+      "problems": 17
+    },
+    "exhortation.redemptoris-custos.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.redemptoris-custos.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.sacramentum-caritatis.be": {
+      "status": "validation-failed",
+      "problems": 93
+    },
+    "exhortation.sacramentum-caritatis.hu": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "exhortation.verbum-domini.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.verbum-domini.ru": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.vita-consecrata.fr": {
+      "status": "validation-failed",
+      "problems": 4
+    },
+    "exhortation.vita-consecrata.it": {
+      "status": "validation-failed",
+      "problems": 4
+    },
+    "exhortation.vita-consecrata.pl": {
+      "status": "validation-failed",
+      "problems": 103
+    },
+    "exhortation.vita-consecrata.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.ad-gentes.be": {
+      "status": "validation-failed",
+      "problems": 37
+    },
+    "vatii.ad-gentes.cs": {
+      "status": "validation-failed",
+      "problems": 36
+    },
+    "vatii.ad-gentes.de": {
+      "status": "validation-failed",
+      "problems": 43
+    },
+    "vatii.ad-gentes.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.ad-gentes.it": {
+      "status": "validation-failed",
+      "problems": 39
+    },
+    "vatii.apostolicam-actuositatem.ar": {
+      "status": "validation-failed",
+      "problems": 7
+    },
+    "vatii.apostolicam-actuositatem.be": {
+      "status": "validation-failed",
+      "problems": 27
+    },
+    "vatii.apostolicam-actuositatem.cs": {
+      "status": "validation-failed",
+      "problems": 26
+    },
+    "vatii.apostolicam-actuositatem.de": {
+      "status": "validation-failed",
+      "problems": 23
+    },
+    "vatii.apostolicam-actuositatem.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.apostolicam-actuositatem.it": {
+      "status": "validation-failed",
+      "problems": 27
+    },
+    "vatii.christus-dominus.be": {
+      "status": "validation-failed",
+      "problems": 18
+    },
+    "vatii.christus-dominus.cs": {
+      "status": "validation-failed",
+      "problems": 6
+    },
+    "vatii.christus-dominus.de": {
+      "status": "validation-failed",
+      "problems": 16
+    },
+    "vatii.christus-dominus.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.christus-dominus.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.christus-dominus.hu": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "vatii.christus-dominus.it": {
+      "status": "validation-failed",
+      "problems": 18
+    },
+    "vatii.dei-verbum.ar": {
+      "status": "validation-failed",
+      "problems": 16
+    },
+    "vatii.dei-verbum.be": {
+      "status": "validation-failed",
+      "problems": 21
+    },
+    "vatii.dei-verbum.cs": {
+      "status": "validation-failed",
+      "problems": 18
+    },
+    "vatii.dei-verbum.de": {
+      "status": "validation-failed",
+      "problems": 24
+    },
+    "vatii.dei-verbum.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.dei-verbum.la": {
+      "status": "validation-failed",
+      "problems": 19
+    },
+    "vatii.dignitatis-humanae.be": {
+      "status": "validation-failed",
+      "problems": 9
+    },
+    "vatii.dignitatis-humanae.cs": {
+      "status": "validation-failed",
+      "problems": 9
+    },
+    "vatii.dignitatis-humanae.de": {
+      "status": "validation-failed",
+      "problems": 9
+    },
+    "vatii.dignitatis-humanae.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.dignitatis-humanae.it": {
+      "status": "validation-failed",
+      "problems": 10
+    },
+    "vatii.dignitatis-humanae.la": {
+      "status": "validation-failed",
+      "problems": 9
+    },
+    "vatii.gaudium-et-spes.ar": {
+      "status": "validation-failed",
+      "problems": 56
+    },
+    "vatii.gaudium-et-spes.be": {
+      "status": "validation-failed",
+      "problems": 59
+    },
+    "vatii.gaudium-et-spes.de": {
+      "status": "validation-failed",
+      "problems": 58
+    },
+    "vatii.gaudium-et-spes.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.gaudium-et-spes.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.gaudium-et-spes.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.gaudium-et-spes.it": {
+      "status": "validation-failed",
+      "problems": 13
+    },
+    "vatii.gaudium-et-spes.la": {
+      "status": "validation-failed",
+      "problems": 8
+    },
+    "vatii.gaudium-et-spes.sw": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.gravissimum-educationis.ar": {
+      "status": "validation-failed",
+      "problems": 13
+    },
+    "vatii.gravissimum-educationis.be": {
+      "status": "validation-failed",
+      "problems": 13
+    },
+    "vatii.gravissimum-educationis.cs": {
+      "status": "validation-failed",
+      "problems": 13
+    },
+    "vatii.gravissimum-educationis.de": {
+      "status": "validation-failed",
+      "problems": 13
+    },
+    "vatii.gravissimum-educationis.it": {
+      "status": "validation-failed",
+      "problems": 14
+    },
+    "vatii.gravissimum-educationis.la": {
+      "status": "validation-failed",
+      "problems": 14
+    },
+    "vatii.inter-mirifica.be": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.inter-mirifica.cs": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.inter-mirifica.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.inter-mirifica.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.inter-mirifica.la": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.inter-mirifica.pt": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.lumen-gentium.ar": {
+      "status": "validation-failed",
+      "problems": 4
+    },
+    "vatii.lumen-gentium.be": {
+      "status": "validation-failed",
+      "problems": 56
+    },
+    "vatii.lumen-gentium.de": {
+      "status": "validation-failed",
+      "problems": 53
+    },
+    "vatii.lumen-gentium.en": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.lumen-gentium.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.lumen-gentium.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.lumen-gentium.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.lumen-gentium.la": {
+      "status": "validation-failed",
+      "problems": 56
+    },
+    "vatii.lumen-gentium.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.nostra-aetate.be": {
+      "status": "validation-failed",
+      "problems": 5
+    },
+    "vatii.nostra-aetate.cs": {
+      "status": "validation-failed",
+      "problems": 5
+    },
+    "vatii.nostra-aetate.de": {
+      "status": "validation-failed",
+      "problems": 6
+    },
+    "vatii.nostra-aetate.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.nostra-aetate.he": {
+      "status": "validation-failed",
+      "problems": 5
+    },
+    "vatii.nostra-aetate.it": {
+      "status": "validation-failed",
+      "problems": 7
+    },
+    "vatii.nostra-aetate.la": {
+      "status": "validation-failed",
+      "problems": 7
+    },
+    "vatii.optatam-totius.be": {
+      "status": "validation-failed",
+      "problems": 20
+    },
+    "vatii.optatam-totius.cs": {
+      "status": "validation-failed",
+      "problems": 20
+    },
+    "vatii.optatam-totius.de": {
+      "status": "validation-failed",
+      "problems": 19
+    },
+    "vatii.optatam-totius.hu": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.optatam-totius.it": {
+      "status": "validation-failed",
+      "problems": 20
+    },
+    "vatii.orientalium-ecclesiarum.be": {
+      "status": "validation-failed",
+      "problems": 28
+    },
+    "vatii.orientalium-ecclesiarum.cs": {
+      "status": "validation-failed",
+      "problems": 27
+    },
+    "vatii.orientalium-ecclesiarum.de": {
+      "status": "validation-failed",
+      "problems": 27
+    },
+    "vatii.orientalium-ecclesiarum.it": {
+      "status": "validation-failed",
+      "problems": 27
+    },
+    "vatii.perfectae-caritatis.be": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.perfectae-caritatis.cs": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.perfectae-caritatis.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.perfectae-caritatis.it": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.presbyterorum-ordinis.be": {
+      "status": "validation-failed",
+      "problems": 22
+    },
+    "vatii.presbyterorum-ordinis.cs": {
+      "status": "validation-failed",
+      "problems": 22
+    },
+    "vatii.presbyterorum-ordinis.de": {
+      "status": "validation-failed",
+      "problems": 21
+    },
+    "vatii.presbyterorum-ordinis.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.presbyterorum-ordinis.it": {
+      "status": "validation-failed",
+      "problems": 23
+    },
+    "vatii.sacrosanctum-concilium.ar": {
+      "status": "validation-failed",
+      "problems": 20
+    },
+    "vatii.sacrosanctum-concilium.be": {
+      "status": "validation-failed",
+      "problems": 19
+    },
+    "vatii.sacrosanctum-concilium.cs": {
+      "status": "validation-failed",
+      "problems": 5
+    },
+    "vatii.sacrosanctum-concilium.de": {
+      "status": "validation-failed",
+      "problems": 17
+    },
+    "vatii.sacrosanctum-concilium.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.sacrosanctum-concilium.hu": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.sacrosanctum-concilium.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "vatii.sacrosanctum-concilium.la": {
+      "status": "validation-failed",
+      "problems": 19
+    },
+    "vatii.unitatis-redintegratio.be": {
+      "status": "validation-failed",
+      "problems": 11
+    },
+    "vatii.unitatis-redintegratio.cs": {
+      "status": "validation-failed",
+      "problems": 10
+    },
+    "vatii.unitatis-redintegratio.de": {
+      "status": "validation-failed",
+      "problems": 9
+    },
+    "vatii.unitatis-redintegratio.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "vatii.unitatis-redintegratio.hu": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "vatii.unitatis-redintegratio.it": {
+      "status": "validation-failed",
+      "problems": 11
+    }
+  }
+}

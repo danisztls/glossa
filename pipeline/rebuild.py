@@ -58,14 +58,19 @@ cached, which is what it must do to be unable to lose an edition. Adding `sw`
 cost 23 requests -- the three editions, and 20 definitive 404s now in
 `pipeline/absent-sources.json` and so never asked again.
 
-EXIT CODES, HONESTLY. `vatii` and `encyclicals` exit 1 on every run and have
-for as long as the cross-language symmetry check has existed, because both
-gate on it and it is chronically FAIL by design -- a missing or differently
-numbered translation is legitimate and common (`CLAUDE.md`), which is why the
-same file tells you to read the named documents and not the pass/fail. So this
-script reports each stage's status and does not pretend to a verdict the
-stages cannot give it: a nonzero exit here means at least one stage exited
-nonzero, which today it always will. The column worth reading is `wrote`.
+EXIT CODES. Every stage exits 0 on a clean run, and a nonzero one here means
+a stage said something went wrong. That was not true when this file was
+written: `vatii` and `encyclicals` exited 1 on every run they had ever had,
+because both gated on the cross-language symmetry check, which is chronically
+FAIL by design. They now gate on `pipeline/parse-baseline.json` instead --
+"did this run go worse than the state we wrote down" rather than "is the
+corpus perfect" -- and symmetry is printed as the report it always was.
+
+READ THE `wrote` COLUMN ANYWAY. The gate is a floor under the parse's
+ADDRESSES and not under its structure: `validate_document` never reads
+`structure.json`, so a change that silently rewrites every division in the
+corpus passes it. `wrote` is what shows you that a stage moved something, and
+it is the number to check after any parser change.
 """
 
 from __future__ import annotations

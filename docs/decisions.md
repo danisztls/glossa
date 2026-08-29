@@ -482,6 +482,22 @@ two, so "Ibid., 14." after "Rom. 10:17" cannot be assigned to a chapter or to a 
 without guessing which; the reverse citation index reads ibidem words, the Scripture
 cross-reference index does not.
 
+**A run's verdict is a baseline, because most failure here is the corpus's known
+state** (2026-08-29). `vatican_docs.py`'s two phases gated their exit code on the
+cross-language symmetry check, which is chronically FAIL by design — two editions of one
+document legitimately carry different section sets — so both had exited 1 on every run
+they had ever had, and nothing was reading them. Gating instead on "no document failed"
+would have been exactly as useless: a run reports 445 fetch failures, 212 documents whose
+parse does not validate and 67 stub pages. The answerable question is whether a run went
+worse than what was already written down, which is the shape the site's reference-coverage
+baseline already uses. Two existing ledgers answer first — `absent-sources.json` for a
+fetch failure the origin explained, `translations-checked.json` for a page that is a CMS
+slot nobody filled — and `pipeline/parse-baseline.json` holds the 311 works those cannot
+speak for, as a status and a problem count. Symmetry is now printed as the report it
+always was. The limit is stated where the code is: the baseline is a floor under the
+parse's addresses and not its structure, since `validate_document` never reads
+`structure.json`, and breaking a division label was measured to pass the gate untouched.
+
 **The rebuild recipe is a program** (2026-08-29). It was seventeen `sh` lines in
 `glossa-corpus/README.md`, which is the only way back to an untracked `build/` and
 which nothing executes, so nothing checked it. It rotted four times without once

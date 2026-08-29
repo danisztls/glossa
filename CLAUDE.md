@@ -61,12 +61,32 @@ a table can state should be derived from the scraper rather than typed here —
     uv run pipeline/rebuild.py --only bible    # a group, or named stages
     uv run pipeline/rebuild.py --no-images     # skip dore's AVIF re-encode
 
-**Its `wrote` column is the number worth reading, and its exit code is not.**
-`vatii` and `encyclicals` exit 1 on every run, because both gate on the
-cross-language symmetry check and that is chronically FAIL by design — a
-missing or differently numbered translation is legitimate and common. So the
-recipe as a whole has "failed" on every run it has ever had, which is why
-nothing was checking it.
+**A run's exit code says whether it went worse than `pipeline/parse-baseline.json`,
+and nothing else.** It said nothing at all until 2026-08-29: `phase1` returned
+`ok and sym_ok` and `phase2` returned `sym_ok` alone, so both hung on the
+cross-language symmetry check — which is chronically FAIL by design, because a
+missing or differently numbered translation is legitimate and common. Both
+subcommands had therefore exited 1 on every run they ever had, and so had the
+recipe, which is why nothing was checking it. Symmetry is now printed as the
+report CLAUDE.md always said to read it as, and the gate is a baseline of the
+311 works that are known to parse badly, in the same shape and for the same
+reason as the site's `reference-coverage.baseline.json`. `--accept-baseline`
+moves the floor, for the works a run touched and no others, so accepting after
+a one-pontificate run cannot erase what a full run recorded.
+
+**Two ledgers answer before the baseline does**, which is why it holds 311
+entries and not 823. A `fetch-failed` whose URL is in `absent-sources.json` is
+the origin's answer, not this run's failure; a `no-translation-stub` recorded
+in `translations-checked.json` is a CMS slot no translator filled. Anything
+those cannot explain lands in the baseline. A page that parsed yesterday and
+reads as a stub today is in none of the three, and fails.
+
+**The gate is a floor under the parse's ADDRESSES, not under its structure.**
+`validate_document` reads section ranges, gaps and citation resolution; it
+never opens `structure.json`. Misspelling the Latin `CAPUT` label and
+re-running loses every chapter division in every Latin document and the check
+reports nothing — measured, not assumed. `rebuild.py`'s `wrote` column is what
+sees that, and the cross-edition division comparison is what judges it.
 
 **Resolve the path through `common.build_root()`, never by hand.** It takes an
 optional corpus argument for the callers that are handed one (`audit.py`,
