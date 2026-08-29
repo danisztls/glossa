@@ -1641,3 +1641,86 @@ oracle was on disk when it ran.
   exist in it. The parser agrees; it is the source, not a gap.
 - `mediator-dei.pt` skips from §151 to §153 with no §152 on the page. Documented,
   not corrected: there is no missing text to restore.
+
+## Wave 15 (24 works) — 2026-08-28
+
+Eleven Leo XIII, eight Pius XII, two Pius XI, two John Paul II, one John XXIII.
+**22 of the 24 oracles agree with the parse.** The corpus now holds **262 ToC
+oracles** and **269 descriptions**; 36 works disagree, and no previously
+agreeing work regressed.
+
+`diuturni-temporis.pt` went from 6 findings to 0 — the oracle correction filed
+at the end of wave 14 only took effect once a fresh parse ran, which is worth
+remembering when a fix appears not to have worked.
+
+### Three OCR misprints filed
+
+Two in `quod-multum.en`, one in `inimica-vis.en`, all with a correct value
+fixed by the page rather than inferred:
+
+| locator             | prints                          | reads              | corroboration                       |
+| ------------------- | ------------------------------- | ------------------ | ----------------------------------- |
+| `quod-multum.en` §1 | `many Roman Ponfiffs`           | `Pontiffs`         | same page spells it correctly twice |
+| `quod-multum.en` §6 | `which is nor to be restricted` | `not`              | next sentence says it positively    |
+| `inimica-vis.en` §9 | `<i>Course o f Action</i>`      | `Course of Action` | its five sibling headings are clean |
+
+All three are single-character substitutions or a stray space — the ordinary
+signature of the OCR this mirror's older English texts came through. The
+re-parse moved exactly two files, which is what a correction's blast radius
+should look like.
+
+### An oracle that counted the addressee line as a heading
+
+`inimica-vis.en`'s oracle opened with `To the Bishops of Italy.` at level 1,
+and the audit duly reported it MISSING. It is the addressee formula, set in
+the same left-aligned italic as the five real headings — which is exactly why
+the agent took it for one. Two other agents in the same wave met the identical
+shape (`To the Catholic Missionaries in Africa.`,
+`To the Bishops of Spain…`) and correctly excluded both. Dropped from the
+oracle, and the work is now clean.
+
+**The rule is already in `writing-descriptions.md` and still cost a wave a
+finding**, so it is worth stating in the sharper form: identical styling to the
+headings is not evidence, because on these pages the addressee is _always_
+styled like them. Position is the evidence — it sits between the masthead and
+the first body paragraph.
+
+### An italic-heading defect with an exact diagnosis, not fixed
+
+`catholicae-ecclesiae.en` prints four italic-only sub-headings and the parser
+drops all four — not absorbed into a paragraph, discarded. The markup is
+byte-identical in shape to `non-mediocri.en`'s, which promotes five of the same
+thing, so the difference is not the markup:
+
+```
+non-mediocri.en       italic blocks at 2, 4, 6, 8, 10, 12, 14   promoted 5
+catholicae-ecclesiae  italic blocks at 2, 3, 5, 7, 10, 13       promoted 0
+```
+
+`promote_italic_heading_run` takes `body_start = numbered[0]`, the first block
+carrying a printed paragraph number, and a candidate before that point joins
+the run only if it opens a numbered paragraph. **`catholicae-ecclesiae.en`'s
+section 1 is unnumbered** — the page's first printed number is `2.` — so
+`body_start` lands past two of the four headings, leaving two in the body,
+below the run threshold of three, and the whole run collapses.
+
+So the bug is not the threshold. It is that `numbered[0]` is the first NUMBERED
+paragraph and the rule wants the first BODY paragraph, and those differ in
+every document whose opening section the source leaves unnumbered — a shape
+several manifests already record a note for. Not fixed here: it wants its own
+measurement, and three parser changes had already landed this session.
+
+### Clean negatives, recorded so nobody re-derives them
+
+- **The unnumbered-edition code path does tier detection.** An agent reported
+  that `miranda-prorsus.pt` came out flat because the appendix path "appears
+  not to do level detection at all". It does: of the 34 unnumbered editions
+  with structure nodes, `quadragesimo-anno.pt` has three levels,
+  `divini-illius-magistri.pt`, `vigilanti-cura.en` and `summa.en` two.
+  `miranda-prorsus` is flat for the ordinary reasons — `<strong>` invisibility
+  removing the tier markers, and the class 1 levelling collapse.
+- `paenitentiam.pt` prints 8 headings against its English sibling's 17, and
+  `laetitiae-sanctae.pt` 9 against 6 — divergence in both directions, verified
+  at raw level, and neither a defect. Compare the wave-13 table.
+- `quemadmodum.pt` opens five of its nine paragraphs with no `<p>` tag at all.
+  No text was lost; recorded as a markup oddity, not a defect.
