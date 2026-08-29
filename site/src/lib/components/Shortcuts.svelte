@@ -269,7 +269,7 @@
 
 <dialog
 	bind:this={helpDialog}
-	class="dialog-bare sheet"
+	class="dialog-bare sheet shortcuts-dialog"
 	aria-label={t('shortcuts.title')}
 	onclose={() => (helpOpen = false)}
 	onclick={onDialogClick}
@@ -373,6 +373,49 @@
 	@media (max-width: 640px) {
 		.shortcuts-trigger {
 			display: none;
+		}
+	}
+
+	/*
+	 * A CENTERED CARD, not the full-bleed sheet the shared chrome defaults to.
+	 * `TocMenu` makes the same departure and its style block explains the
+	 * mechanics; the difference here is that this panel anchors to nothing —
+	 * it answers a question about the whole page rather than standing in for a
+	 * sidebar — so it centres rather than tracking its trigger.
+	 *
+	 * `641px` is not an arbitrary number: it is exactly complementary to the
+	 * trigger's `max-width: 640px` above, so the button and the card appear
+	 * together. Written in the same unit for that reason — at a non-default
+	 * root size a `40rem` here would leave a band where a visible button opens
+	 * a full-screen sheet.
+	 *
+	 * THE CENTERING IS THE `<dialog>` UA RULE PUT BACK. A dialog is centred by
+	 * default through `inset: 0; margin: auto` over a `fit-content` size, and
+	 * `.sheet` overrides all three to fill the viewport. Restoring them is what
+	 * centres it — `margin: auto` alone would not, because an abs-positioned
+	 * box with `top`/`bottom` resolved and `block-size: auto` stretches instead,
+	 * and its auto margins then compute to zero.
+	 *
+	 * `max-block-size` bounds the flex column so `.sheet-body` still scrolls
+	 * rather than growing past the viewport — see the note on `.sheet` in
+	 * `styles/menus.css`, which is why the column starts on the dialog and not
+	 * on the panel. `overflow: hidden` is what makes the panel's square corners
+	 * take the radius.
+	 *
+	 * No `!important`: a scoped selector compiles to
+	 * `.shortcuts-dialog.svelte-hash`, which outranks the global single class.
+	 */
+	@media (min-width: 641px) {
+		.shortcuts-dialog {
+			inset: 0;
+			margin: auto;
+			inline-size: min(30rem, calc(100vw - 3rem));
+			block-size: fit-content;
+			max-block-size: min(34rem, 80vh);
+			border: 1px solid var(--color-border);
+			border-radius: var(--radius-lg);
+			box-shadow: var(--shadow-panel);
+			overflow: hidden;
 		}
 	}
 
