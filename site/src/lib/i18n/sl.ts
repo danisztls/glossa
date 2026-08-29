@@ -258,5 +258,9 @@ export const sl: Dictionary = {
 	'compare.versificationNote':
 		'Ti dve izdaji ponekod različno delita vrstice tega poglavja (besedilna različica, ne prevajalska odločitev) — ista številka vrstice ne označuje vedno istega stavka v obeh stolpcih.',
 	'compare.loading': 'Nalaganje drugega jezika…',
-	'ui.close': 'Zapri'
+	'ui.close': 'Zapri',
+	'shortcuts.title': 'Bližnjice na tipkovnici',
+	'shortcuts.betweenDocuments': 'Med dokumenti',
+	'shortcuts.withinDocument': 'Znotraj dokumenta',
+	'shortcuts.show': 'Pokaži ta seznam'
 };

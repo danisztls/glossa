@@ -76,6 +76,10 @@
 	import ArrowUp from '@lucide/svelte/icons/arrow-up';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
+	// The fourth of the set, drawn only by the shortcut sheet's keycaps: the
+	// vertical axis needs a mark for "down the page" and no control on the
+	// site had wanted one before.
+	import ArrowDown from '@lucide/svelte/icons/arrow-down';
 
 	const ICONS = {
 		search: Search,
@@ -103,7 +107,8 @@
 		'zoom-out': ZoomOut,
 		'arrow-up': ArrowUp,
 		'arrow-left': ArrowLeft,
-		'arrow-right': ArrowRight
+		'arrow-right': ArrowRight,
+		'arrow-down': ArrowDown
 	};
 
 	export type IconName = keyof typeof ICONS;

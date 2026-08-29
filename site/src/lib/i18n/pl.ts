@@ -256,5 +256,9 @@ export const pl: Dictionary = {
 	'compare.versificationNote':
 		'Te dwa wydania miejscami inaczej dzielą wersety tego rozdziału (to wariant tekstu, a nie decyzja tłumacza) — ten sam numer wersetu nie zawsze wskazuje to samo zdanie w obu kolumnach.',
 	'compare.loading': 'Wczytywanie drugiego języka…',
-	'ui.close': 'Zamknij'
+	'ui.close': 'Zamknij',
+	'shortcuts.title': 'Skróty klawiszowe',
+	'shortcuts.betweenDocuments': 'Między dokumentami',
+	'shortcuts.withinDocument': 'W dokumencie',
+	'shortcuts.show': 'Pokaż tę listę'
 };

@@ -251,5 +251,9 @@ export const ar: Dictionary = {
 	'compare.versificationNote':
 		'تقسم هاتان الطبعتان آيات هذا الفصل تقسيمًا مختلفًا في مواضع (وهو اختلاف في النصّ لا خيار في الترجمة) — فرقم الآية نفسه لا يشير دائمًا إلى الجملة نفسها في العمودين.',
 	'compare.loading': 'جارٍ تحميل اللغة الثانية…',
-	'ui.close': 'إغلاق'
+	'ui.close': 'إغلاق',
+	'shortcuts.title': 'اختصارات لوحة المفاتيح',
+	'shortcuts.betweenDocuments': 'بين الوثائق',
+	'shortcuts.withinDocument': 'داخل الوثيقة',
+	'shortcuts.show': 'عرض هذه القائمة'
 };

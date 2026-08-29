@@ -34,6 +34,7 @@
 	import { setFuzzyRanker, suggest } from '$lib/suggest';
 	import { highlight } from '$lib/highlight';
 	import { i18n, t } from '$lib/i18n.svelte';
+	import { isOverlayOpen, isTypingTarget } from '$lib/shortcuts';
 	import Icon from './Icon.svelte';
 
 	// CCC scope for jump-box resolution: a single content language for now
@@ -136,12 +137,6 @@
 		return `jump-option-${index}`;
 	}
 
-	function isTypingTarget(el: EventTarget | null): boolean {
-		if (!(el instanceof HTMLElement)) return false;
-		const tag = el.tagName;
-		return tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable;
-	}
-
 	/**
 	 * `showModal()`, not an `open` flag on the element: only the modal form
 	 * puts the dialog in the top layer, renders `::backdrop`, makes the rest
@@ -190,9 +185,18 @@
 		// the field (where focus always is) never reached the window handler
 		// that was supposed to act on it, and the box could only be dismissed
 		// by clicking the backdrop.
-		if (open) return;
+		// `open` alone was the guard until the shortcut sheet joined the three
+		// dialogs: `showModal()` leaves a window keydown firing, so every
+		// overlay has to be excluded, not only this component's own.
+		if (open || isOverlayOpen(document)) return;
+		// `/` on the printed symbol, `K` on the physical position, for the
+		// reason `shortcuts.ts` sets out at length: no position means "slash"
+		// across layouts, and no layout-mapped character means "the K key" on
+		// the two non-Latin interface languages this site publishes. Matching
+		// `e.key === 'k'` here meant Ctrl+K simply did not exist for a reader
+		// on a Cyrillic or Arabic layout, where it produces `л` and `ن`.
 		const isSlash = e.key === '/' && !isTypingTarget(e.target);
-		const isCtrlK = (e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey);
+		const isCtrlK = e.code === 'KeyK' && (e.metaKey || e.ctrlKey);
 		if (isSlash || isCtrlK) {
 			e.preventDefault();
 			openBox();

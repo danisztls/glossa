@@ -401,5 +401,9 @@ export const en: Dictionary = {
 	// viewport and this button is the only way out of it, so it says what it
 	// does rather than repeating the heading beside it. Named `ui.` because
 	// the second consumer proved it was never the table of contents' string.
-	'ui.close': 'Close'
+	'ui.close': 'Close',
+	'shortcuts.title': 'Keyboard shortcuts',
+	'shortcuts.betweenDocuments': 'Between documents',
+	'shortcuts.withinDocument': 'Within the document',
+	'shortcuts.show': 'Show this list'
 };

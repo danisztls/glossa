@@ -263,5 +263,9 @@ export const hu: Dictionary = {
 	'compare.versificationNote':
 		'Ez a két kiadás helyenként eltérően osztja fel e fejezet verseit (szövegváltozat, nem fordítói döntés) — ugyanaz a versszám nem mindig ugyanazt a mondatot jelöli a két hasábban.',
 	'compare.loading': 'A második nyelv betöltése…',
-	'ui.close': 'Bezárás'
+	'ui.close': 'Bezárás',
+	'shortcuts.title': 'Billentyűparancsok',
+	'shortcuts.betweenDocuments': 'Dokumentumok között',
+	'shortcuts.withinDocument': 'A dokumentumon belül',
+	'shortcuts.show': 'Lista megjelenítése'
 };

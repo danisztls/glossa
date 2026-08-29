@@ -258,5 +258,9 @@ export const fr: Dictionary = {
 	'compare.versificationNote':
 		'Ces deux éditions découpent par endroits les versets de ce chapitre différemment (une variante textuelle, non un choix de traduction) — le même numéro de verset ne marque pas toujours la même phrase dans les deux colonnes.',
 	'compare.loading': 'Chargement de la seconde langue…',
-	'ui.close': 'Fermer'
+	'ui.close': 'Fermer',
+	'shortcuts.title': 'Raccourcis clavier',
+	'shortcuts.betweenDocuments': 'Entre les documents',
+	'shortcuts.withinDocument': 'Dans le document',
+	'shortcuts.show': 'Afficher cette liste'
 };

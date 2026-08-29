@@ -301,5 +301,9 @@ export const la: Dictionary = {
 	'compare.versificationNote':
 		'Hae duae editiones versus huius capitis alicubi aliter dividunt (varietas textus, non consilium interpretis) — idem numerus versus non semper eandem sententiam in utraque columna signat.',
 	'compare.loading': 'Altera lingua legitur…',
-	'ui.close': 'Claude'
+	'ui.close': 'Claude',
+	'shortcuts.title': 'Compendia clavium',
+	'shortcuts.betweenDocuments': 'Inter documenta',
+	'shortcuts.withinDocument': 'Intra documentum',
+	'shortcuts.show': 'Hunc indicem ostendere'
 };

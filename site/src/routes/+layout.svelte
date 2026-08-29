@@ -22,6 +22,11 @@
 	import { version } from '$app/environment';
 	import UpdateBanner from '$lib/components/UpdateBanner.svelte';
 	import ToTopButton from '$lib/components/ToTopButton.svelte';
+	// Mounted once, globally, for the same reason `LinkPreview` is: it is a
+	// single window-level listener over whatever page is rendered, and every
+	// address it acts on is already in that page's markup (`rel="prev"`,
+	// `.reference-number`). No route registers anything.
+	import Shortcuts from '$lib/components/Shortcuts.svelte';
 
 	let { children } = $props();
 
@@ -388,6 +393,7 @@
 </div>
 
 <LinkPreview />
+<Shortcuts />
 <InstallHint />
 <UpdateBanner />
 <!-- Outside `.app-shell` with the other viewport-fixed overlays: it belongs to

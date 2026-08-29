@@ -260,5 +260,9 @@ export const sv: Dictionary = {
 	'compare.versificationNote':
 		'De här två utgåvorna delar in kapitlets verser olika på sina ställen (en textvariant, inte ett översättningsval) — samma versnummer markerar inte alltid samma mening i båda spalterna.',
 	'compare.loading': 'Läser in det andra språket…',
-	'ui.close': 'Stäng'
+	'ui.close': 'Stäng',
+	'shortcuts.title': 'Kortkommandon',
+	'shortcuts.betweenDocuments': 'Mellan dokument',
+	'shortcuts.withinDocument': 'I dokumentet',
+	'shortcuts.show': 'Visa den här listan'
 };

@@ -283,5 +283,9 @@ export const pt: Dictionary = {
 	'compare.versificationNote':
 		'Estas duas edições dividem os versículos deste capítulo de forma diferente em alguns pontos (uma variante textual, não uma escolha de tradução) — o mesmo número de versículo nem sempre assinala a mesma frase nas duas colunas.',
 	'compare.loading': 'A carregar o segundo idioma…',
-	'ui.close': 'Fechar'
+	'ui.close': 'Fechar',
+	'shortcuts.title': 'Atalhos de teclado',
+	'shortcuts.betweenDocuments': 'Entre documentos',
+	'shortcuts.withinDocument': 'Dentro do documento',
+	'shortcuts.show': 'Mostrar esta lista'
 };

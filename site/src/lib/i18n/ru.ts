@@ -256,5 +256,9 @@ export const ru: Dictionary = {
 	'compare.versificationNote':
 		'Эти два издания местами по-разному делят стихи этой главы (это разночтение текста, а не решение переводчика) — один и тот же номер стиха не всегда отмечает одно и то же предложение в обеих колонках.',
 	'compare.loading': 'Загрузка второго языка…',
-	'ui.close': 'Закрыть'
+	'ui.close': 'Закрыть',
+	'shortcuts.title': 'Сочетания клавиш',
+	'shortcuts.betweenDocuments': 'Между документами',
+	'shortcuts.withinDocument': 'Внутри документа',
+	'shortcuts.show': 'Показать этот список'
 };
