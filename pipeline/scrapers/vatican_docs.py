@@ -162,10 +162,18 @@ needs a real traceback.
 Every fetched page (index pages and document pages alike) is cached under
 corpus/raw/vatican-docs/ and reused offline on re-run -- phase 2 in
 particular is designed to be interrupted and resumed: re-running the same
-command after a partial run only fetches what's still missing, and a
-document already written to corpus/build/ is left untouched (use
---overwrite to force a re-parse of an already-written document from its
-cached raw HTML, no network needed).
+command after a partial run only fetches what's still missing.
+
+RE-RUNNING RE-PARSES, in both phases, from the cached raw HTML and with no
+network at all. `--skip-written` leaves a document that already has a
+`sections.json` alone, which is what a resumed crawl wants and what a parser
+fix must not have: it was the default here (as the absence of `--overwrite`)
+until 2026-08-29, while phase1 hardcoded the opposite, so the two halves of
+this one script disagreed about whether re-running means anything. The
+corpus README's rebuild recipe passes neither flag, and over a populated
+`build/` it therefore finished in 0.5s and left 1,409 works stale while
+reporting success. Re-parsing everything costs 15s of CPU and zero requests,
+which is not a saving worth a silent wrong answer.
 
 "What's still missing" has to include what is missing AT THE SOURCE, or the
 resumption is not free. Ten Pius XI/XII encyclicals have no Portuguese
@@ -6561,13 +6569,19 @@ def _result_base(ref: DocRef, lang: str, url: str | None) -> dict:
 
 
 def fetch_for_parse(
-    fetcher: Fetcher, ref: DocRef, lang: str, overwrite: bool
+    fetcher: Fetcher, ref: DocRef, lang: str, skip_written: bool
 ) -> tuple[dict | None, str | None]:
     """The serial half: everything up to and including the network.
 
     Returns `(result, None)` when the document is already finished -- no URL,
     already written, or the fetch failed -- and `(None, html)` when there is a
-    page to hand to `parse_and_write`. Exactly one of the two is not None."""
+    page to hand to `parse_and_write`. Exactly one of the two is not None.
+
+    `skip_written` is OFF by default and was the default until 2026-08-29, as
+    `--overwrite`'s absence. Re-parsing is the honest default because a
+    re-parse is what a parser fix needs and it costs nothing anyone is owed:
+    15s of CPU and, provably, zero requests. Skipping is the crawl's
+    optimisation, not the parser's, so it is now the thing you ask for."""
     url = ref.lang_urls.get(url_lang_key(ref, lang))
     result = _result_base(ref, lang, url)
     if url is None:
@@ -6575,7 +6589,7 @@ def fetch_for_parse(
         return result, None
     work_id = f"{ref.family}.{ref.slug}.{lang}"
     out_dir = BUILD_ROOT / work_id
-    if (out_dir / "sections.json").exists() and not overwrite:
+    if skip_written and (out_dir / "sections.json").exists():
         result["status"] = "already-written"
         return result, None
 
@@ -6875,7 +6889,7 @@ class OrderedParsePool:
 
 
 def scrape_one(
-    fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, overwrite: bool
+    fetcher: Fetcher, ref: DocRef, lang: str, title_hint: str, skip_written: bool
 ) -> dict:
     """Fetch then parse one document, serially. Returns a small result dict
     for progress/reporting; never raises.
@@ -6884,7 +6898,7 @@ def scrape_one(
     apart instead, so that parsing overlaps the crawl delay -- but this
     composition is the definition of what that overlap must produce, and the
     `--jobs 1` path still goes through it."""
-    early, html = fetch_for_parse(fetcher, ref, lang, overwrite)
+    early, html = fetch_for_parse(fetcher, ref, lang, skip_written)
     if early is not None:
         return early
     return parse_and_write(ref, lang, title_hint, html)
@@ -6939,6 +6953,7 @@ def run_phase1(
     only: list[str] | None,
     jobs: int = 1,
     fetch_only: bool = False,
+    skip_written: bool = False,
 ) -> list[dict]:
     refs, err = discover_vatii(fetcher)
     if err:
@@ -6980,7 +6995,7 @@ def run_phase1(
                 if fetch_only:
                     pool.submit_done((slug, lang), cache_page(fetcher, ref, lang))
                     continue
-                early, html = fetch_for_parse(fetcher, ref, lang, overwrite=True)
+                early, html = fetch_for_parse(fetcher, ref, lang, skip_written)
                 if early is not None:
                     pool.submit_done((slug, lang), early)
                 else:
@@ -7013,20 +7028,26 @@ def run_phase2(
     time_budget: float | None,
     limit: int | None,
     include_exhortations: bool,
-    overwrite: bool = False,
+    skip_written: bool = False,
     doc_slugs: list[str] | None = None,
     jobs: int = 1,
     want_langs: tuple[str, ...] = DEFAULT_LANGS,
     fetch_only: bool = False,
     offered_only: bool = False,
 ) -> list[dict]:
-    """`overwrite` re-parses documents already written to corpus/build/ from
-    their CACHED raw HTML — the module docstring has promised this flag since
-    the scraper was written, but it was never actually wired into argparse, so
-    every parser fix so far had to be verified some other way. It costs no
-    network: `scrape_one` reads corpus/raw/ and only falls through to a fetch
-    for a page that isn't cached, which for an already-written document never
-    happens.
+    """`skip_written` leaves a document that already has a `sections.json`
+    exactly as it is. It is what makes an interrupted crawl resumable without
+    re-reading what the last run finished, and that -- not staleness -- is the
+    only thing it is for.
+
+    It was the DEFAULT until 2026-08-29, with `--overwrite` to turn it off,
+    and phase1 hardcoded the opposite. Two subcommands of one script therefore
+    disagreed about whether a re-run means anything, and only one of them had
+    a flag to say so: running the corpus README's rebuild recipe over a
+    populated `build/` finished in 0.5s, printed `already-written` 1,409
+    times, exited 0, and left every work at whatever the previous parser
+    thought. A full re-parse is 15s and, measurably, zero requests, so the
+    saving was never worth the class of failure it created.
 
     `fetch_only` stops after `cache_page`: every requested language's page
     lands in corpus/raw/ and nothing is parsed, validated or written to
@@ -7115,7 +7136,7 @@ def run_phase2(
             if fetch_only:
                 pool.submit_done((idx, lang), cache_page(fetcher, ref, lang))
                 continue
-            early, html = fetch_for_parse(fetcher, ref, lang, overwrite)
+            early, html = fetch_for_parse(fetcher, ref, lang, skip_written)
             if early is not None:
                 pool.submit_done((idx, lang), early)
             else:
@@ -7458,11 +7479,11 @@ def summarize(results: list[dict]) -> None:
 def report_fetching(fetcher: Fetcher) -> None:
     """The run's network receipt, including what it did NOT have to ask.
 
-    The skipped count is the point: `--overwrite` is supposed to be a
-    zero-network re-parse, and printing only the fetches it made left the 36
-    requests it was making to permanently-absent URLs looking like normal
-    crawl traffic. A run that reports "0 fetches, 12 skipped" says plainly
-    which it was."""
+    The skipped count is the point: a re-parse over cached pages is supposed
+    to reach the network not at all, and printing only the fetches it made
+    left the 36 requests it was making to permanently-absent URLs looking like
+    normal crawl traffic. A run that reports "0 fetches, 12 skipped" says
+    plainly which it was."""
     absent = fetcher.absent
     print(
         f"\nnetwork fetches this run: {fetcher.network_fetches} "
@@ -7496,6 +7517,13 @@ def main() -> int:
 
     # Parsing only. Fetching is serial at any --jobs; see fetch_for_parse.
     par = argparse.ArgumentParser(add_help=False)
+    par.add_argument(
+        "--skip-written",
+        action="store_true",
+        help="leave a document that already has a sections.json alone. For "
+        "resuming an interrupted crawl; NOT for a re-parse, which is what a "
+        "run does by default and which costs 15s and zero requests",
+    )
     par.add_argument(
         "--jobs",
         "-j",
@@ -7549,11 +7577,6 @@ def main() -> int:
         "--exhortations",
         action="store_true",
         help="also crawl apostolic exhortations per pontificate",
-    )
-    p2.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="re-parse already-written documents from cached raw HTML (no network)",
     )
     p2.add_argument(
         "--slugs",
@@ -7626,7 +7649,12 @@ def main() -> int:
                 return 1
             only = args.only.split(",") if args.only else None
             results = run_phase1(
-                fetcher, langs, only, jobs=args.jobs, fetch_only=args.fetch_only
+                fetcher,
+                langs,
+                only,
+                jobs=args.jobs,
+                fetch_only=args.fetch_only,
+                skip_written=args.skip_written,
             )
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)
@@ -7668,7 +7696,7 @@ def main() -> int:
                 args.time_budget,
                 args.limit,
                 args.exhortations,
-                overwrite=args.overwrite,
+                skip_written=args.skip_written,
                 doc_slugs=doc_slugs,
                 jobs=args.jobs,
                 want_langs=want_langs,
