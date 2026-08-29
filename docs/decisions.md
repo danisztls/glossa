@@ -1240,6 +1240,77 @@ day. This stops the pathological case — the crawler that takes the whole budge
 minutes needs 83 requests/second — and nothing subtler. The levers that bound the total are
 the AI-crawler controls and an accurate sitemap `lastmod`.
 
+**The invocation model, priced** (2026-08-29). The question that keeps returning — "what
+happens if we are attacked, or simply found?" — has one answer per layer, and they were
+scattered across a wrangler comment, a dashboard rule and nobody's notes. Cloudflare's
+published limits, read on this date:
+
+|                                           | Workers Free         | Workers Paid                               |
+| ----------------------------------------- | -------------------- | ------------------------------------------ |
+| Static asset files **per Worker version** | 20,000               | 100,000                                    |
+| Individual asset file size                | 25 MiB               | 25 MiB                                     |
+| Requests                                  | 100,000/day          | 10M included/month, then $0.30/M           |
+| CPU time                                  | 10 ms per invocation | 30M CPU-ms/month, max 5 min per invocation |
+| Subrequests                               | 50/request           | 10,000/request                             |
+
+**An invocation is one inbound request that reaches the Worker, and nothing the Worker
+does internally multiplies it.** Cloudflare states it outright — "Cloudflare does not bill
+for subrequests you make from your Worker" — so the three tables `src/worker.ts` reads
+(`corpus-routes.json`, `route-titles.json`, `apparatus.json`) are free, whatever their
+number. They are read once per isolate and in one `Promise.all` with the shell, which buys
+latency and not money. **Requests to static assets are free and unlimited on both plans**,
+which is what makes the `run_worker_first` negation list the whole of the cost model:
+Cloudflare's own worked example is 15M requests a month with 80% static, billed at $5.00.
+
+**So the only thing that costs anything here is a navigation, and that is structural.**
+The Worker must run on every navigation to decide 200 against 404 from
+`corpus-routes.json` — that is what makes `/catechismus/9999` a real 404 rather than a
+soft one. The `<head>` rewrite and the apparatus ride along on an invocation that was
+already being spent; neither added one. It follows that there is nothing to reclaim by
+undoing them, and that the client cannot take this over: the client already computes the
+same predicate for its own 404 UI, but only the origin can set a status code, and serving
+200 with a "not found" page is the soft 404 this whole address grammar exists to avoid.
+
+**Workers Cache stays off, and the docs now say why more plainly than the comment does.**
+`site/wrangler.jsonc` sets `cache: { enabled: false }` because enabling it bills every
+request at the standard rate including the static asset requests that are otherwise free.
+Cloudflare's pricing page now states this directly: requests served from the Worker's cache
+are billed at the per-request rate, "including requests to static assets". Under the
+attack case it is therefore worse than neutral — it re-prices the ~2,240 assets of a cold
+visit that the negation list exists to keep free.
+
+**The file ceiling is purchasable, and an earlier reading of it here was wrong.** 20,000
+is per _Worker version_, not per account, and Workers Paid raises it to 100,000. It was
+briefly believed to be a hard wall that no plan lifts, which made the deployment file
+count look like a constraint on architecture. It is not one.
+
+**Which puts a real option back on the table: prerender one shell per canonical address.**
+`not_found_handling` is already `"404-page"`, so the asset platform already answers 404 for
+any path with no file. If every canonical address had a file, the platform alone would give
+exactly the Worker's semantics — canonical to a file at 200, everything else to a 404 —
+with no invocation at all, and the Worker would be left holding only `/a`. It needs no new
+logic: `headFor` / `headHtml` / `noscriptHtml` are pure functions of a path and the
+generated tables, so a postbuild pass calls the same three functions the edge calls and
+writes files instead of streaming a rewrite. The cost is ~5,957 files (14,198 total, 14% of
+the paid ceiling and 71% of the free one) at ~8 KB each, none of which Wrangler can dedupe
+because every one differs by design in its head.
+
+That is a partial reversal of the 2026-08-18 move to one SPA shell, and the reason differs
+enough to be worth stating: that decision retired ~5,700 pages that each carried the
+_text_, at a time when the file count was the binding constraint. These carry only a head.
+
+**The order is: subscribe first, prerender second, and they are not the same fix.**
+Workers Paid removes the outage — past 100,000/day the free plan answers 429 instead of
+serving the asset and the site goes dark until 00:00 UTC, whereas on Paid an overage is a
+bill. It also retires the 10 ms CPU limit, which is the one budget this year's edge work
+actually consumed (6.56 ms for the rewrite, ~1 ms more to parse `apparatus.json`, once per
+isolate). Prerendering is the different fix: it moves navigations from billed invocations
+to free static requests, so the bill stops varying with traffic at all. Paid alone bounds
+the damage of an attack to money; Paid plus prerendering bounds it to nothing.
+
+**Neither is done.** The site is on the free plan as of this date, and this section is the
+analysis rather than a record of a change.
+
 **What a crawler that does not render is told — and what it is still not told**
 (2026-08-26). `ssr = false` means `%sveltekit.head%` is empty in the build, so the one
 document served for all ~6,000 canonical addresses is the whole of what a non-rendering

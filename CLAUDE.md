@@ -709,7 +709,12 @@ npm run deploy      # build -> preflight -> wrangler deploy
   whole site goes dark until 00:00 UTC. A cold visitor filling the offline
   library was ~2,240 invocations, i.e. about fifty readers a day. Anything new
   added to `static/` still works if it is not negated there; it just silently
-  costs an invocation per request.
+  costs an invocation per request. **What each layer of that actually costs is
+  priced in `docs/decisions.md` §The site** (2026-08-29) — the free plan's
+  ceilings against the paid plan's, why subrequests and static assets are free,
+  why Workers Cache stays off, and the prerender option that would take
+  navigations off the meter entirely. Read it before optimising anything here by
+  guess.
 - **Preflight checks the corpus, not the page count.** `preflight-deploy.mjs`
   reads `corpus-routes.json` and refuses a build reporting fewer than 100 works
   or 100 content assets — that is what catches a fixture-backed build. The old
