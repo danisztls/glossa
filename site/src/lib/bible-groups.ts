@@ -42,18 +42,30 @@
  *   heads and in descriptive prose, and among our own sources only the modern
  *   Spanish and Portuguese *websites* print it as a heading.
  *
- * - **Hebrews sits outside the Pauline group**, which is CEI's arrangement
- *   ("Lettere Paoline" stops at Filèmone; "Altre Lettere" opens with Ebrei)
- *   and matches the Catechism's own grammar — §120 closes the Pauline series
- *   at Philemon and enumerates "epistula ad Hebraeos" separately, in all five
- *   editions we hold. IT IS THE MINORITY POSITION AND WORTH KNOWING AS SUCH:
- *   USCCB, the Jerusalem Bible and the Hungarian bishops' list all run Paul
- *   through Hebrews, and Trent calls it Paul's fourteenth outright. This is
- *   why the group is named for what it is not — "Other Letters", never
- *   "Non-Pauline Letters". A group of thirteen asserts nothing about
- *   authorship; a name would. Moving `heb` one line up in `BOOK_GROUPS` and
- *   renaming two label keys is the whole of the change if that call is
- *   revisited.
+ * - **Hebrews closes the Pauline group, which is fourteen**, and the seven
+ *   that follow are the Catholic Letters. This is the ONE PLACE THIS TABLE
+ *   DEPARTS FROM CEI, which stops "Lettere Paoline" at Filèmone and opens
+ *   "Altre Lettere" with Ebrei — and it departs from the Catechism's grammar
+ *   too, since §120 closes the Pauline series at Philemon and enumerates
+ *   "epistula ad Hebraeos" separately in all five editions we hold.
+ *
+ *   IT WAS 13/8 UNTIL THE NAMES WERE LOOKED FOR. Trent calls Hebrews Paul's
+ *   fourteenth outright; USCCB, the Jerusalem Bible, the Hungarian bishops'
+ *   list, the Jesuit Arabic Bible's own book order, and the Polish, Romanian
+ *   and Russian conventions all run Paul through Hebrews. But the decisive
+ *   fact was linguistic rather than doctrinal: a group of eight HAS NO NAME.
+ *   Every attested heading for the letters besides Paul's — `Epistolele
+ *   catolice`, `katoliška pisma`, `Соборные послания`, `Katolska breven`,
+ *   `الرسائل الجامعة`, `Listy powszechne` — is defined by the sources that
+ *   print it as SEVEN, excluding Hebrews. Naming a group of eight with one of
+ *   them would be false in each language, and the alternative was a heading
+ *   invented in six languages at once. 14/7 is the arrangement whose names
+ *   exist.
+ *
+ *   The Slovenian bishops' Jerusalem Bible is the interesting dissent: it
+ *   gives Hebrews an introduction of its own and then a separate one for the
+ *   seven `katoliška pisma` — Hebrews alone, a third answer nobody else gives
+ *   and one no nine-group scheme can express.
  *
  * - **Acts and Revelation keep headings of their own**, over one book each.
  *   CEI does this and so does the Hungarian list; Cassiodorus's arrangement at
@@ -84,7 +96,7 @@ export type BookGroupKey =
 	| 'gospels'
 	| 'acts'
 	| 'pauline'
-	| 'otherLetters'
+	| 'catholicLetters'
 	| 'revelation';
 
 export interface BookGroup {
@@ -167,13 +179,14 @@ export const BOOK_GROUPS: readonly BookGroup[] = [
 			'1tim',
 			'2tim',
 			'titus',
-			'phlm'
+			'phlm',
+			'heb'
 		]
 	},
 	{
-		key: 'otherLetters',
+		key: 'catholicLetters',
 		testament: 'nt',
-		osis: ['heb', 'jas', '1pet', '2pet', '1john', '2john', '3john', 'jude']
+		osis: ['jas', '1pet', '2pet', '1john', '2john', '3john', 'jude']
 	},
 	{ key: 'revelation', testament: 'nt', osis: ['rev'] }
 ];

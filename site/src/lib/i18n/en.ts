@@ -136,7 +136,7 @@ export const en: Dictionary = {
 	'bible.group.gospels': 'Gospels',
 	'bible.group.acts': 'Acts of the Apostles',
 	'bible.group.pauline': 'Pauline Letters',
-	'bible.group.otherLetters': 'Other Letters',
+	'bible.group.catholicLetters': 'Catholic Letters',
 	'bible.group.revelation': 'Revelation',
 
 	'ccc.prevParagraph': 'Previous paragraph',

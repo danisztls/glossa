@@ -79,7 +79,7 @@ export const de: Dictionary = {
 	'bible.group.gospels': 'Evangelien',
 	'bible.group.acts': 'Apostelgeschichte',
 	'bible.group.pauline': 'Paulusbriefe',
-	'bible.group.otherLetters': 'Weitere Briefe',
+	'bible.group.catholicLetters': 'Katholische Briefe',
 	'bible.group.revelation': 'Offenbarung',
 	'ccc.prevParagraph': 'Vorheriger Absatz',
 	'ccc.nextParagraph': 'Nächster Absatz',

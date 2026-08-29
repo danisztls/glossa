@@ -81,7 +81,7 @@ export const hu: Dictionary = {
 	'bible.group.gospels': 'Evangéliumok',
 	'bible.group.acts': 'Az Apostolok Cselekedetei',
 	'bible.group.pauline': 'Pál apostol levelei',
-	'bible.group.otherLetters': 'Egyéb levelek',
+	'bible.group.catholicLetters': 'Katolikus levelek',
 	'bible.group.revelation': 'Jelenések könyve',
 	'ccc.prevParagraph': 'Előző szakasz',
 	'ccc.nextParagraph': 'Következő szakasz',

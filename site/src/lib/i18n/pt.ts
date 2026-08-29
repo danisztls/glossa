@@ -95,7 +95,7 @@ export const pt: Dictionary = {
 	'bible.group.gospels': 'Evangelhos',
 	'bible.group.acts': 'Atos dos Apóstolos',
 	'bible.group.pauline': 'Cartas Paulinas',
-	'bible.group.otherLetters': 'Outras Cartas',
+	'bible.group.catholicLetters': 'Cartas Católicas',
 	'bible.group.revelation': 'Apocalipse',
 
 	'ccc.prevParagraph': 'Parágrafo anterior',

@@ -107,7 +107,7 @@ export const la: Dictionary = {
 	'bible.group.gospels': 'Evangelia',
 	'bible.group.acts': 'Actus Apostolorum',
 	'bible.group.pauline': 'Epistulae Paulinae',
-	'bible.group.otherLetters': 'Aliae epistulae',
+	'bible.group.catholicLetters': 'Epistulae catholicae',
 	'bible.group.revelation': 'Apocalypsis',
 	'ccc.prevParagraph': 'Paragraphus prior',
 	'ccc.nextParagraph': 'Paragraphus sequens',

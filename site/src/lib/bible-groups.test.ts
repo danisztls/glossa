@@ -24,7 +24,7 @@ const KEYS: BookGroupKey[] = [
 	'gospels',
 	'acts',
 	'pauline',
-	'otherLetters',
+	'catholicLetters',
 	'revelation'
 ];
 
@@ -85,7 +85,7 @@ describe('BOOK_GROUPS', () => {
 	 * one is a deliberate act with a failing test beside it rather than a
 	 * quiet edit to a long list of strings. Each is argued in `bible-groups.ts`.
 	 */
-	it('encodes the CEI 2008 scheme', () => {
+	it("encodes CEI 2008's scheme, and the one place it departs from it", () => {
 		const size = (key: BookGroupKey) => BOOK_GROUPS.find((g) => g.key === key)?.osis.length;
 		expect(size('pentateuch')).toBe(5);
 		expect(size('historical')).toBe(16);
@@ -96,12 +96,14 @@ describe('BOOK_GROUPS', () => {
 		// Their own groups, one book each.
 		expect(size('acts')).toBe(1);
 		expect(size('revelation')).toBe(1);
-		// Hebrews outside the Pauline group — the minority position, held on
-		// purpose. If this becomes 14/7, the names have to move with it.
-		expect(size('pauline')).toBe(13);
-		expect(size('otherLetters')).toBe(8);
-		expect(groupOf('heb')).toBe('otherLetters');
-		expect(groupOf('phlm')).toBe('pauline');
+		// Hebrews closes the Pauline fourteen, and the Catholic Letters are
+		// the seven — not because Trent settles the authorship question but
+		// because a group of eight has no name in any of the fourteen
+		// interface languages. See `bible-groups.ts`.
+		expect(size('pauline')).toBe(14);
+		expect(size('catholicLetters')).toBe(7);
+		expect(groupOf('heb')).toBe('pauline');
+		expect(groupOf('jas')).toBe('catholicLetters');
 	});
 
 	it('keeps the deuterocanonical books inside their groups, unmarked', () => {
@@ -117,23 +119,11 @@ describe('the group names in the dictionaries', () => {
 	});
 
 	/**
-	 * English is the one dictionary that must be complete: `t()` falls back to
-	 * it per key, so a group English has no name for renders as the raw key.
-	 * The other thirteen are checked for the opposite thing — see below.
-	 */
-	it('names every group in English', () => {
-		const en = dictionaryFor('en');
-		for (const key of GROUP_KEYS) expect(en[`bible.group.${key}`], key).toBeTruthy();
-	});
-
-	/**
-	 * A PARTIAL TRANSLATION IS A SUPPORTED STATE and this test says so
-	 * deliberately: it asserts that whatever a dictionary does carry is a real
-	 * group, never that it carries all nine. Six of the fourteen interface
-	 * languages have no sourced names yet, and an English fallback is the
-	 * honest answer for them — a heading invented to fill the table would look
-	 * translated without being it. What must never happen is a key for a group
-	 * that does not exist, which is always a typo and always unreachable.
+	 * The other direction from the test below, and not implied by it: a key
+	 * naming a group that does not exist is unreachable, always a typo, and
+	 * invisible — `t()` would happily hold it forever and nothing would render
+	 * it. Renaming a group without renaming its key in all fourteen is exactly
+	 * how one gets there.
 	 */
 	it('invents no group a dictionary could not render', () => {
 		const known = new Set(GROUP_KEYS.map((k) => `bible.group.${k}`));
@@ -144,14 +134,21 @@ describe('the group names in the dictionaries', () => {
 		}
 	});
 
-	it('translates a group that is translated at all into every one of its nine', () => {
+	/**
+	 * ALL FOURTEEN ARE COMPLETE, and this asserts it rather than allowing the
+	 * partial state `t()` would tolerate. The rule was "all nine or none" while
+	 * six languages were unsourced; it is "all nine" now that they are, and
+	 * tightening it is the point — a group added later must be named
+	 * everywhere before it ships, which is the same standard `chromeNames`
+	 * holds the `hreflang` cluster to. Both halves matter: an incomplete
+	 * dictionary renders one English heading among eight translated ones,
+	 * which reads as a bug rather than as a fallback.
+	 */
+	it('names every group in every interface language', () => {
 		for (const lang of UI_LANGS) {
 			const dict = dictionaryFor(lang);
-			const present = GROUP_KEYS.filter((k) => dict[`bible.group.${k}`]);
-			// All nine or none: a dictionary with four translated groups and
-			// five English ones inside a single column is worse than a column
-			// that is consistently English.
-			expect(present.length === 0 || present.length === GROUP_KEYS.length, lang).toBe(true);
+			for (const key of GROUP_KEYS)
+				expect(dict[`bible.group.${key}`], `${lang}.${key}`).toBeTruthy();
 		}
 	});
 });
