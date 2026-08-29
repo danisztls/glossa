@@ -41,6 +41,7 @@ const ARGV = process.argv.slice(2);
  *   daily: { day: string, n: number }[],
  *   days28: Row[], visits: Row[], age: Row[], entry: Row[], minutes: Row[],
  *   behind: Row[], swFail: Row[], missKind: Row[], missBook: Row[],
+ *   installPrompt: Row[],
  *   works: Row[], sections: Row[], refKinds: Row[],
  *   geo: GeoRow[]
  * }} Report
@@ -66,6 +67,8 @@ const DAYS = Number(option('days') ?? '30');
 const SHOW_ALL = flag('all');
 /** Rows in a breakdown below this are folded away unless `--all`. */
 const FLOOR = 5;
+/** Works listed before the section stops and counts the rest. */
+const WORKS_SHOWN = 25;
 /**
  * Retention window, in days. MUST equal `RETENTION_DAYS` in
  * `src/lib/usage-store.ts` — this script runs in plain Node and cannot import
@@ -179,12 +182,19 @@ function collect() {
 			`select miss_book as value, count(*) as n from session
 			 where day >= ${SINCE} and miss_book is not null group by 1 order by n desc limit 15`
 		),
+		// Null wherever the prompt was never offered, which is most sessions —
+		// so this is filtered like `swFail` and `missKind` rather than bucketed
+		// across every row. Its denominator is the offer, not the session.
+		installPrompt: query(
+			`select install_prompt as bucket, count(*) as n from session
+			 where day >= ${SINCE} and install_prompt is not null group by 1 order by n desc`
+		),
 		works: query(
 			`select t.value as value, count(*) as n,
 			        sum(case when s.refs != '0' then 1 else 0 end) as withRefs
 			 from session_tag t join session s on s.id = t.session_id
 			 where t.kind = 'work' and s.day >= ${SINCE}
-			 group by 1 order by n desc limit 25`
+			 group by 1 order by n desc`
 		),
 		sections: tagBreakdown('section'),
 		refKinds: tagBreakdown('refKind'),
@@ -253,6 +263,45 @@ export function render(data, opts = {}) {
 		if (hidden > 0) lines.push(`  (${hidden} row(s) below ${floor} not shown; --all)`);
 		return lines.join('\n') || '  —';
 	};
+
+	/**
+	 * `bar` for the works table, which carries a second column (the share of
+	 * that work's sessions that followed a citation out of it) and so cannot
+	 * use `bar` itself.
+	 *
+	 * IT MUST STILL PRINT THE HIDDEN COUNT, which is the whole reason this is
+	 * a named function rather than the inline map it was: below the floor the
+	 * section rendered as `—`, and `—` under "sessions that opened each" reads
+	 * as "nobody opened a work" rather than "nobody opened one five times".
+	 * The first thirty days of real data were exactly that case — twenty works
+	 * opened once each, a whole section silently blank, and the corpus-priority
+	 * signal this field exists for invisible in the only place it is printed.
+	 *
+	 * AND THE CAP BELONGS HERE, NOT IN THE QUERY. It was `limit 25` in the SQL,
+	 * which is invisible while the section only ever prints what it received —
+	 * and a lie the moment it prints a count of what it did not, since the
+	 * rows past the limit were never fetched to be counted. The work table is
+	 * bounded by the corpus at a few hundred rows, so the query reads them all
+	 * and the cap is applied where the dropped rows can still be reported.
+	 *
+	 * @param {Row[]} rows
+	 */
+	const workBar = (rows) => {
+		const above = SHOW_ALL ? rows : rows.filter((row) => row.n >= FLOOR);
+		const hidden = rows.length - above.length;
+		const visible = above.slice(0, WORKS_SHOWN);
+		const width = Math.max(0, ...visible.map((row) => String(row.value).length));
+		const lines = visible.map((row) => {
+			const label = String(row.value).padEnd(width);
+			return `  ${label}  ${String(row.n).padStart(6)}  refs ${pct(row.withRefs ?? 0, row.n).padStart(4)}`;
+		});
+		if (above.length > visible.length) {
+			lines.push(`  (…and ${above.length - visible.length} more)`);
+		}
+		if (hidden > 0) lines.push(`  (${hidden} row(s) below ${FLOOR} not shown; --all)`);
+		return lines.join('\n') || '  —';
+	};
+
 	const sessions = Number(data.totals.sessions ?? 0);
 	if (sessions === 0) {
 		return `\nNo sessions recorded in the last ${DAYS} day(s).\n`;
@@ -272,6 +321,30 @@ export function render(data, opts = {}) {
 				`  installed app  ${String(t.installed ?? 0).padStart(6)}  ${pct(t.installed, sessions).padStart(4)}`,
 				`  phone          ${String(t.phone ?? 0).padStart(6)}  ${pct(t.phone, sessions).padStart(4)}`,
 				`  compared       ${String(t.compared ?? 0).padStart(6)}  ${pct(t.compared, sessions).padStart(4)}`
+			].join('\n')
+		)
+	);
+
+	// The funnel behind REACH's first line. `install_prompt` was written by
+	// `InstallHint`, carried through the schema and stored in its own column
+	// from the day the measurement shipped, and printed nowhere — a number
+	// collected and never read, which is the failure this whole report exists
+	// to avoid rather than commit.
+	//
+	// AGAINST THE OFFER, NOT AGAINST THE SESSIONS, for the reason the jump-box
+	// miss is: 'accepted' as a share of everyone who visited says the prompt
+	// almost never lands, when the question asked of it is whether a reader who
+	// SAW it took it. The share of sessions that saw one at all is the first
+	// line. Floor 0, like the other diagnostics — the three buckets are a fixed
+	// vocabulary that names no reader, and an acceptance count is worth seeing
+	// at one.
+	const offered = data.installPrompt.reduce((sum, row) => sum + Number(row.n), 0);
+	out.push(
+		section(
+			'INSTALL — of the sessions that were offered it',
+			[
+				`  offered  ${String(offered).padStart(6)}  ${pct(offered, sessions).padStart(4)}`,
+				bar(data.installPrompt, offered, 0)
 			].join('\n')
 		)
 	);
@@ -307,19 +380,7 @@ export function render(data, opts = {}) {
 		)
 	);
 
-	out.push(
-		section(
-			'WORKS — sessions that opened each',
-			(SHOW_ALL ? data.works : data.works.filter((row) => row.n >= FLOOR))
-				.map((row) => {
-					const label = String(row.value).padEnd(
-						Math.max(...data.works.map((r) => String(r.value).length))
-					);
-					return `  ${label}  ${String(row.n).padStart(6)}  refs ${pct(row.withRefs ?? 0, row.n).padStart(4)}`;
-				})
-				.join('\n') || '  —'
-		)
-	);
+	out.push(section('WORKS — sessions that opened each', workBar(data.works)));
 
 	out.push(section('SECTIONS', bar(data.sections, sessions)));
 

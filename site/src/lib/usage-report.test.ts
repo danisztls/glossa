@@ -38,6 +38,11 @@ function data(overrides: Record<string, unknown> = {}) {
 		swFail: [{ bucket: 'quota', n: 3 }],
 		missKind: [{ bucket: 'unknown-book', n: 11 }],
 		missBook: [{ value: 'sir', n: 11 }],
+		installPrompt: [
+			{ bucket: 'shown', n: 40 },
+			{ bucket: 'dismissed', n: 9 },
+			{ bucket: 'accepted', n: 3 }
+		],
 		works: [
 			{ value: 'ccc.pt', n: 128, withRefs: 48 },
 			{ value: 'summa.la', n: 3, withRefs: 2 }
@@ -92,6 +97,22 @@ describe('render', () => {
 
 	it('names the books readers asked for and did not get', () => {
 		expect(render(data(), { days: 30 })).toContain('sir');
+	});
+
+	it('says a work list is suppressed rather than empty', () => {
+		// `—` under "sessions that opened each" reads as "nobody opened a work".
+		// The first month of real data was twenty works opened once each, and
+		// the section rendered blank with nothing to say `--all` would show it.
+		const quiet = render(data(), { days: 30, floor: 5 });
+		expect(quiet).toContain('1 row(s) below 5 not shown; --all');
+	});
+
+	it('reports the install prompt against the offer, not against every session', () => {
+		// 3 of 52 offers is 6%; 3 of 338 sessions would be 1% and would read as
+		// a prompt nobody takes rather than one most readers never see.
+		const out = render(data(), { days: 30 });
+		expect(out).toMatch(/offered\s+52\s+15%/);
+		expect(out).toMatch(/accepted\s+3\s+6%/);
 	});
 
 	it('surfaces silent service worker failures', () => {
