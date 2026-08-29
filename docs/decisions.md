@@ -908,6 +908,25 @@ What it costs is that the ceiling on a content file stops meaning anything for t
 a file holding several addressable units is one a reader over-pays for, and a file
 holding none is simply the document.
 
+**A language column with a hole in it is a claim about someone else's server, and it now
+has to be written down** (2026-08-29). `pipeline/translations-checked.json` existed for
+exactly this and held 125 records, all Portuguese encyclicals, while 619 pages sat under
+`raw/` carrying the same answer for nine languages — fetched in August, classified by the
+parser on every run since, reported in each run summary, and forgotten when the run ended.
+`pipeline/scrapers/record_translations.py` reads them off cache and writes them down; the
+file holds 629 records and cost no requests. It is a separate script rather than a flag on
+the scraper because a status is established deliberately, never as a side effect of a
+parse — a scraper that appends to its own input turns one bad run into a permanent record
+— and it writes nothing at all for a page that PARSES, because that would be a parse we
+lost dressed up as a translation that does not exist.
+
+**`pdf-only` is a fifth status, and the first one that does not mean absent.** Six
+editions exist and vatican.va publishes them as a PDF, which nothing here reads — the
+English _Amoris Laetitia_ among them. Filing that as `stub-page` would have been the
+convenient lie: it reads as "the Church never published this in English", when what it
+means is that we cannot read the format. The two absences point in opposite directions,
+one at the source and one at us, and only the second is ours to close.
+
 ## The site
 
 **One static SPA shell, not a prerender.** The static page was never the content

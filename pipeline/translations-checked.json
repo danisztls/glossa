@@ -8,10 +8,52 @@
   },
   {
     "work": "encyclical.acerbo-nimis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.acerbo-nimis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.acerbo-nimis.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.ad-apostolorum-principis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-apostolorum-principis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-apostolorum-principis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-beatissimi-apostolorum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-beatissimi-apostolorum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.ad-beatissimi-apostolorum.en",
@@ -19,6 +61,24 @@
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.ad-caeli-reginam.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-caeli-reginam.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-catholici-sacerdotii.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.ad-catholici-sacerdotii.en",
@@ -29,10 +89,40 @@
   },
   {
     "work": "encyclical.ad-diem-illum-laetissimum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-diem-illum-laetissimum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-diem-illum-laetissimum.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.ad-extremas.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-extremas.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-extremas.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.ad-extremas.en",
@@ -42,11 +132,107 @@
     "note": ""
   },
   {
+    "work": "encyclical.ad-petri.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-petri.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-salutem-humani.it",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-salutem-humani.it",
+    "lang": "en",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-salutem-humani.it",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-salutem-humani.it",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-salutem-humani.it",
+    "lang": "pt",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-sinarum-gentem.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-sinarum-gentem.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ad-sinarum-gentem.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.ad-sinarum-gentem.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.adiutricem.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.adiutricem.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.adiutricem.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.aeterna-dei.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.aeterna-dei.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.aeterni-patris.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.aeterni-patris.en",
@@ -57,10 +243,64 @@
   },
   {
     "work": "encyclical.affari-vos.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.affari-vos.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.affari-vos.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.affari-vos.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.anni-sacri.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.anni-sacri.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.annum-sacrum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.annum-sacrum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.annum-sacrum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.annum-sacrum.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.annum-sacrum.en",
@@ -71,10 +311,52 @@
   },
   {
     "work": "encyclical.annus-iam-plenus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.annus-iam-plenus.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.annus-iam-plenus.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.annus-iam-plenus.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.apostolico-seggio.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.apostolico-seggio.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.apostolico-seggio.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.arcanum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.arcanum.en",
@@ -85,10 +367,64 @@
   },
   {
     "work": "encyclical.au-milieu-des-sollicitudes.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.au-milieu-des-sollicitudes.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.au-milieu-des-sollicitudes.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.augustissimae-virginis-mariae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.augustissimae-virginis-mariae.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.augustissimae-virginis-mariae.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.augustissimae-virginis-mariae.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.auspicato-concessum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.auspicato-concessum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.auspicato-concessum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.auspicato-concessum.en",
@@ -96,6 +432,24 @@
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.auspicia-quaedam.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.auspicia-quaedam.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.auspicia-quaedam.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.caritate-christi-compulsi.en",
@@ -106,10 +460,52 @@
   },
   {
     "work": "encyclical.caritatis-studium.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.caritatis-studium.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.caritatis-studium.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.caritatis-studium.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.caritatis-studium.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.caritatis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.caritatis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.caritatis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.caritatis.en",
@@ -120,10 +516,34 @@
   },
   {
     "work": "encyclical.casti-connubii.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.casti-connubii.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.catholicae-ecclesiae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.catholicae-ecclesiae.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.catholicae-ecclesiae.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.catholicae-ecclesiae.en",
@@ -133,11 +553,71 @@
     "note": ""
   },
   {
+    "work": "encyclical.christi-matri.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.christi-nomen.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.christi-nomen.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.christi-nomen.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.christi-nomen.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.communium-interpretes-dolorum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.communium-interpretes-dolorum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.communium-interpretes-dolorum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.communium-rerum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.communium-rerum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.communium-rerum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.communium-rerum.en",
@@ -148,10 +628,40 @@
   },
   {
     "work": "encyclical.constanti-hungarorum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.constanti-hungarorum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.constanti-hungarorum.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.cum-multa.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.cum-multa.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.cum-multa.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.cum-multa.en",
@@ -162,6 +672,24 @@
   },
   {
     "work": "encyclical.custodi-di-quella-fede.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.custodi-di-quella-fede.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.custodi-di-quella-fede.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.custodi-di-quella-fede.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
@@ -169,10 +697,64 @@
   },
   {
     "work": "encyclical.datis-nuperrime.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.datis-nuperrime.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.datis-nuperrime.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.datis-nuperrime.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.deiparae-virginis-mariae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.deiparae-virginis-mariae.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.deiparae-virginis-mariae.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.depuis-le-jour.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.depuis-le-jour.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.depuis-le-jour.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.depuis-le-jour.en",
@@ -183,10 +765,46 @@
   },
   {
     "work": "encyclical.dilectissima-nobis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.dilectissima-nobis.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.diuturni-temporis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.diuturni-temporis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.diuturni-temporis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.diuturni-temporis.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.diuturnum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.diuturnum.en",
@@ -196,11 +814,83 @@
     "note": ""
   },
   {
+    "work": "encyclical.divini-illius-magistri.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.divini-redemptoris.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.divinum-illud-munus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.divinum-illud-munus.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.divinum-illud-munus.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.divinum-illud-munus.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.doctor-mellifluus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.doctor-mellifluus.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.doctor-mellifluus.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.dum-multa.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.dum-multa.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.dum-multa.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.dum-multa.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.dum-multa.en",
@@ -211,10 +901,88 @@
   },
   {
     "work": "encyclical.e-supremi.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.e-supremi.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.e-supremi.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.ecclesiae-fastos.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ecclesiae-fastos.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ecclesiae-fastos.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ecclesiam-dei.it",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ecclesiam-dei.it",
+    "lang": "en",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ecclesiam-dei.it",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ecclesiam-dei.it",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ecclesiam-dei.it",
+    "lang": "pt",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.editae-saepe.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.editae-saepe.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.editae-saepe.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.editae-saepe.en",
@@ -225,6 +993,24 @@
   },
   {
     "work": "encyclical.etsi-cunctas.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.etsi-cunctas.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.etsi-cunctas.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.etsi-cunctas.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
@@ -232,10 +1018,58 @@
   },
   {
     "work": "encyclical.etsi-nos.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.etsi-nos.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.etsi-nos.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.etsi-nos.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.evangelii-praecones.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.evangelii-praecones.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.exeunte-iam-anno.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.exeunte-iam-anno.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.exeunte-iam-anno.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.exeunte-iam-anno.en",
@@ -246,10 +1080,70 @@
   },
   {
     "work": "encyclical.fausto-appetente-die.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fausto-appetente-die.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fausto-appetente-die.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.fidei-donum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fidei-donum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fidentem-piumque-animum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fidentem-piumque-animum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fidentem-piumque-animum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fin-dal-principio.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fin-dal-principio.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fin-dal-principio.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.fin-dal-principio.en",
@@ -260,10 +1154,70 @@
   },
   {
     "work": "encyclical.firmissimam-constantiam.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.firmissimam-constantiam.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.firmissimam-constantiam.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.firmissimam-constantiam.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.fulgens-corona.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fulgens-corona.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fulgens-corona.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.fulgens-radiatur.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.grande-munus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.grande-munus.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.grande-munus.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.grande-munus.en",
@@ -271,6 +1225,36 @@
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.grata-recordatio.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.grata-recordatio.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.graves-de-communi-re.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.graves-de-communi-re.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.graves-de-communi-re.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.graves-de-communi-re.en",
@@ -281,10 +1265,52 @@
   },
   {
     "work": "encyclical.gravissimas.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.gravissimas.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.gravissimas.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.gravissimas.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.gravissimas.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.gravissimo-officii-munere.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.gravissimo-officii-munere.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.gravissimo-officii-munere.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.gravissimo-officii-munere.en",
@@ -294,11 +1320,65 @@
     "note": ""
   },
   {
+    "work": "encyclical.haurietis-aquas.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.humani-generis-redemptionem.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.humani-generis-redemptionem.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.humani-generis-redemptionem.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.humani-generis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.humanum-genus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.humanum-genus.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.iamdudum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.iamdudum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.iamdudum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.iamdudum.en",
@@ -309,6 +1389,24 @@
   },
   {
     "work": "encyclical.iampridem.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.iampridem.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.iampridem.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.iampridem.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
@@ -316,10 +1414,52 @@
   },
   {
     "work": "encyclical.il-fermo-proposito.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.il-fermo-proposito.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.il-fermo-proposito.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.immortale-dei.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-amplissimo.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-amplissimo.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-amplissimo.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-amplissimo.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.in-amplissimo.en",
@@ -330,10 +1470,46 @@
   },
   {
     "work": "encyclical.in-hac-tanta.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-hac-tanta.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-hac-tanta.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-hac-tanta.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.in-ipso.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-ipso.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-ipso.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.in-ipso.en",
@@ -343,11 +1519,59 @@
     "note": ""
   },
   {
+    "work": "encyclical.in-multiplicibus-curis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-multiplicibus-curis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-multiplicibus-curis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-plurimis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-plurimis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-plurimis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.in-plurimis.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.in-praeclara-summorum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.in-praeclara-summorum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.in-praeclara-summorum.en",
@@ -364,6 +1588,36 @@
     "note": "confirmed via explicit post-sweep retry: HTTP 404 on all 3 attempts, not a connection/timeout error"
   },
   {
+    "work": "encyclical.ingruentium-malorum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ingruentium-malorum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.inimica-vis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.inimica-vis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.inimica-vis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.inimica-vis.en",
     "lang": "pt",
     "status": "stub-page",
@@ -378,11 +1632,59 @@
     "note": "confirmed via explicit post-sweep retry: HTTP 404 on all 3 attempts, not a connection/timeout error"
   },
   {
+    "work": "encyclical.inscrutabili-dei-consilio.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.inscrutabili-dei-consilio.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.insignes.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.insignes.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.insignes.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.insignes.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.inter-graves.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.inter-graves.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.inter-graves.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.inter-graves.en",
@@ -393,6 +1695,24 @@
   },
   {
     "work": "encyclical.invicti-athletae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.invicti-athletae.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.invicti-athletae.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.invicti-athletae.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
@@ -400,10 +1720,58 @@
   },
   {
     "work": "encyclical.iucunda-sane.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.iucunda-sane.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.iucunda-sane.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.iucunda-semper-expectatione.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.iucunda-semper-expectatione.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.iucunda-semper-expectatione.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.lacrimabili-statu.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.lacrimabili-statu.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.lacrimabili-statu.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.lacrimabili-statu.en",
@@ -414,10 +1782,64 @@
   },
   {
     "work": "encyclical.laetamur-admodum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.laetamur-admodum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.laetamur-admodum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.laetamur-admodum.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.laetitiae-sanctae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.laetitiae-sanctae.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.laetitiae-sanctae.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.le-pelerinage-de-lourdes.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.le-pelerinage-de-lourdes.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.libertas.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.libertas.en",
@@ -428,10 +1850,46 @@
   },
   {
     "work": "encyclical.licet-multa.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.licet-multa.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.licet-multa.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.licet-multa.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.litteras-a-vobis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.litteras-a-vobis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.litteras-a-vobis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.litteras-a-vobis.en",
@@ -442,6 +1900,24 @@
   },
   {
     "work": "encyclical.longinqua.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.longinqua.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.longinqua.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.longinqua.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
@@ -449,10 +1925,96 @@
   },
   {
     "work": "encyclical.luctuosissimi-eventus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.luctuosissimi-eventus.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.luctuosissimi-eventus.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.luctuosissimi-eventus.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.lumen-fidei.en",
+    "lang": "ar",
+    "status": "pdf-only",
+    "checked_at": "2026-08-25",
+    "note": "the page's only text link is /content/dam/francesco/pdf/encyclicals/documents/papa-francesco_20130629_enciclica-lumen-fidei_ar.pdf"
+  },
+  {
+    "work": "encyclical.lumen-fidei.en",
+    "lang": "pl",
+    "status": "pdf-only",
+    "checked_at": "2026-08-25",
+    "note": "the page's only text link is /content/dam/francesco/encyclicals/documents/papa-francesco_20130629_enciclica-lumen-fidei_pl.pdf"
+  },
+  {
+    "work": "encyclical.lux-veritatis.it",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.lux-veritatis.it",
+    "lang": "en",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.lux-veritatis.it",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.magnae-dei-matris.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.magnae-dei-matris.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.magnae-dei-matris.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.magni-nobis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.magni-nobis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.magni-nobis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.magni-nobis.en",
@@ -463,10 +2025,70 @@
   },
   {
     "work": "encyclical.maximam-gravissimamque.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.maximam-gravissimamque.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.maximam-gravissimamque.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.maximam-gravissimamque.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.mediator-dei.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mediator-dei.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.meminisse-iuvat.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.meminisse-iuvat.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.meminisse-iuvat.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mens-nostra.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mens-nostra.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.mens-nostra.en",
@@ -476,11 +2098,83 @@
     "note": ""
   },
   {
+    "work": "encyclical.mense-maio.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mense-maio.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.militantis-ecclesiae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.militantis-ecclesiae.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.militantis-ecclesiae.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.militantis-ecclesiae.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.militantis-ecclesiae.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.mirabile-illud.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mirabile-illud.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mirabile-illud.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mirae-caritatis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mirae-caritatis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mirae-caritatis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.mirae-caritatis.en",
@@ -491,6 +2185,18 @@
   },
   {
     "work": "encyclical.miserentissimus-redemptor.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.miserentissimus-redemptor.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.miserentissimus-redemptor.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
@@ -498,10 +2204,58 @@
   },
   {
     "work": "encyclical.mit-brennender-sorge.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mit-brennender-sorge.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.mortalium-animos.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.mortalium-animos.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.musicae-sacrae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.musicae-sacrae.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.nobilissima-gallorum-gens.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.nobilissima-gallorum-gens.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.nobilissima-gallorum-gens.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.nobilissima-gallorum-gens.en",
@@ -516,6 +2270,24 @@
     "status": "not-found",
     "checked_at": "2026-08-16",
     "note": "confirmed via explicit post-sweep retry: HTTP 404 on all 3 attempts, not a connection/timeout error"
+  },
+  {
+    "work": "encyclical.non-mediocri.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.non-mediocri.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.non-mediocri.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.non-mediocri.en",
@@ -539,11 +2311,71 @@
     "note": "confirmed via explicit post-sweep retry: HTTP 404 on all 3 attempts, not a connection/timeout error"
   },
   {
+    "work": "encyclical.octobri-mense.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.octobri-mense.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.octobri-mense.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.officio-sanctissimo.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.officio-sanctissimo.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.officio-sanctissimo.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.officio-sanctissimo.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.omnibus-compertum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.omnibus-compertum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.omnibus-compertum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.omnibus-compertum.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.omnibus-compertum.en",
@@ -553,6 +2385,36 @@
     "note": ""
   },
   {
+    "work": "encyclical.optatissima-pax.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.optatissima-pax.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.orientales-omnes-ecclesias.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.orientales-omnes-ecclesias.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.orientales-omnes-ecclesias.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.orientales-omnes-ecclesias.en",
     "lang": "pt",
     "status": "stub-page",
@@ -560,11 +2422,101 @@
     "note": ""
   },
   {
+    "work": "encyclical.orientales.it",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.orientales.it",
+    "lang": "en",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.orientales.it",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.orientales.it",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.orientalis-ecclesiae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.orientalis-ecclesiae.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.orientalis-ecclesiae.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pacem-dei-munus-pulcherrimum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pacem-dei-munus-pulcherrimum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.pacem-dei-munus-pulcherrimum.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.paenitentiam.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.paenitentiam.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pascendi-dominici-gregis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pastoralis-officii.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pastoralis-officii.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pastoralis-officii.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.pastoralis-officii.en",
@@ -575,10 +2527,46 @@
   },
   {
     "work": "encyclical.pastoralis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pastoralis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pastoralis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pastoralis.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.paterna-caritas.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.paterna-caritas.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.paterna-caritas.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.paterna-caritas.en",
@@ -589,10 +2577,52 @@
   },
   {
     "work": "encyclical.paternae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.paternae.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.paternae.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.paternae.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.paternae.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.paterno-iam-diu.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.paterno-iam-diu.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.paterno-iam-diu.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.paterno-iam-diu.en",
@@ -603,10 +2633,52 @@
   },
   {
     "work": "encyclical.pergrata.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pergrata.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pergrata.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pergrata.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.permoti-nos.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.permoti-nos.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.permoti-nos.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.permoti-nos.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.permoti-nos.en",
@@ -617,10 +2689,58 @@
   },
   {
     "work": "encyclical.pieni-l-animo.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pieni-l-animo.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pieni-l-animo.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.pieni-l-animo.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.princeps.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.princeps.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.principi-apostolorum-petro.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.principi-apostolorum-petro.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.principi-apostolorum-petro.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.principi-apostolorum-petro.en",
@@ -631,10 +2751,52 @@
   },
   {
     "work": "encyclical.providentissimus-deus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.providentissimus-deus.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.quadragesimo-anno.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quadragesimo-anno.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quae-ad-nos.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quae-ad-nos.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quae-ad-nos.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quae-ad-nos.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.quae-ad-nos.en",
@@ -645,10 +2807,52 @@
   },
   {
     "work": "encyclical.quam-aerumnosa.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quam-aerumnosa.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quam-aerumnosa.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quam-aerumnosa.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.quam-religiosa.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quam-religiosa.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quam-religiosa.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quam-religiosa.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.quam-religiosa.en",
@@ -659,10 +2863,40 @@
   },
   {
     "work": "encyclical.quamquam-pluries.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quamquam-pluries.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quamquam-pluries.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.quarto-abeunte-saeculo.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quarto-abeunte-saeculo.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quarto-abeunte-saeculo.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.quarto-abeunte-saeculo.en",
@@ -673,10 +2907,76 @@
   },
   {
     "work": "encyclical.quas-primas.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quas-primas.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.quemadmodum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quemadmodum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quinquagesimo-ante-anno.it",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quinquagesimo-ante-anno.it",
+    "lang": "en",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quinquagesimo-ante-anno.it",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quinquagesimo-ante-anno.it",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quinquagesimo-ante-anno.it",
+    "lang": "pt",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-anniversarius.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-anniversarius.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-anniversarius.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.quod-anniversarius.en",
@@ -687,10 +2987,40 @@
   },
   {
     "work": "encyclical.quod-apostolici-muneris.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-apostolici-muneris.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-apostolici-muneris.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.quod-auctoritate.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-auctoritate.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-auctoritate.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.quod-auctoritate.en",
@@ -701,10 +3031,40 @@
   },
   {
     "work": "encyclical.quod-iam-diu.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-iam-diu.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-iam-diu.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.quod-multum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-multum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quod-multum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.quod-multum.en",
@@ -715,10 +3075,58 @@
   },
   {
     "work": "encyclical.quod-votis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "encyclical.quod-votis.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "encyclical.quod-votis.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "encyclical.quod-votis.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "encyclical.quod-votis.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.quum-diuturnum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quum-diuturnum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quum-diuturnum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.quum-diuturnum.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.quum-diuturnum.en",
@@ -736,6 +3144,30 @@
   },
   {
     "work": "encyclical.reputantibus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.reputantibus.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.reputantibus.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.reputantibus.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.reputantibus.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
@@ -749,11 +3181,65 @@
     "note": "confirmed via explicit post-sweep retry: HTTP 404 on all 3 attempts, not a connection/timeout error"
   },
   {
+    "work": "encyclical.rerum-novarum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.rerum-omnium-perturbationem.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.rerum-omnium-perturbationem.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.rerum-omnium-perturbationem.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.rerum-omnium-perturbationem.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.rerum-orientalium.it",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.rerum-orientalium.it",
+    "lang": "en",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.rerum-orientalium.it",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.rerum-orientalium.it",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.rerum-orientalium.it",
+    "lang": "pt",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.rite-expiatis.en",
@@ -763,11 +3249,95 @@
     "note": "confirmed via explicit post-sweep retry: HTTP 404 on all 3 attempts, not a connection/timeout error"
   },
   {
+    "work": "encyclical.sacerdotalis.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sacerdotii.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sacra-propediem.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sacra-propediem.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sacra-propediem.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
     "work": "encyclical.sacra-propediem.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.sacra-virginitas.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sacra-virginitas.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sacra-virginitas.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.saeculo-exeunte-octavo.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.saeculo-exeunte-octavo.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.saeculo-exeunte-octavo.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.saepe-nos.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.saepe-nos.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.saepe-nos.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.saepe-nos.en",
@@ -778,10 +3348,40 @@
   },
   {
     "work": "encyclical.sancta-dei-civitas.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sancta-dei-civitas.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sancta-dei-civitas.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sancta-dei-civitas.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.sapientiae-christianae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sapientiae-christianae.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.sapientiae-christianae.en",
@@ -792,10 +3392,70 @@
   },
   {
     "work": "encyclical.satis-cognitum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "encyclical.satis-cognitum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "encyclical.satis-cognitum.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.sempiternus-rex-christus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sempiternus-rex-christus.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sertum-laetitiae.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sertum-laetitiae.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.sertum-laetitiae.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.singulari-quadam.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.singulari-quadam.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.singulari-quadam.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.singulari-quadam.en",
@@ -806,10 +3466,46 @@
   },
   {
     "work": "encyclical.spectata-fides.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.spectata-fides.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.spectata-fides.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.spectata-fides.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.spesse-volte.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.spesse-volte.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.spesse-volte.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.spesse-volte.en",
@@ -820,10 +3516,118 @@
   },
   {
     "work": "encyclical.spiritus-paraclitus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.spiritus-paraclitus.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.spiritus-paraclitus.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.studiorum-ducem.it",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.studiorum-ducem.it",
+    "lang": "en",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.studiorum-ducem.it",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.studiorum-ducem.it",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.studiorum-ducem.it",
+    "lang": "pt",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.summi-maeroris.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.summi-maeroris.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.summi-maeroris.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.summi-pontificatus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.superiore-anno.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.superiore-anno.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.supremi-apostolatus-officio.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.tametsi-futura-prospicientibus.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.tametsi-futura-prospicientibus.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.tametsi-futura-prospicientibus.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.tametsi-futura-prospicientibus.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.tametsi-futura-prospicientibus.en",
@@ -834,10 +3638,46 @@
   },
   {
     "work": "encyclical.tribus-circiter.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.tribus-circiter.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.tribus-circiter.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.tribus-circiter.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.tribus-circiter.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.ubi-arcano-dei-consilio.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.ubi-arcano-dei-consilio.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.ubi-arcano-dei-consilio.en",
@@ -848,10 +3688,52 @@
   },
   {
     "work": "encyclical.une-fois-encore.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.une-fois-encore.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.une-fois-encore.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.une-fois-encore.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.urbanitatis-veteris.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.urbanitatis-veteris.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.urbanitatis-veteris.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.urbanitatis-veteris.en",
+    "lang": "it",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
   },
   {
     "work": "encyclical.urbanitatis-veteris.en",
@@ -862,6 +3744,18 @@
   },
   {
     "work": "encyclical.vehementer-nos.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.vehementer-nos.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.vehementer-nos.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
@@ -869,9 +3763,145 @@
   },
   {
     "work": "encyclical.vi-e-ben-noto.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.vi-e-ben-noto.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.vi-e-ben-noto.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.vi-e-ben-noto.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.vigilanti-cura.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-25"
+  },
+  {
+    "work": "exhortation.africae-munus.en",
+    "lang": "ar",
+    "status": "pdf-only",
+    "checked_at": "2026-08-29",
+    "note": "the page's only text link is /content/dam/benedict-xvi/pdf/apost_exhortations/documents/hf_ben-xvi_exh_20111119_africae-munus_ar.pdf"
+  },
+  {
+    "work": "exhortation.amoris-laetitia.it",
+    "lang": "en",
+    "status": "pdf-only",
+    "checked_at": "2026-08-24",
+    "note": "the page's only text link is /content/dam/francesco/pdf/apost_exhortations/documents/papa-francesco_esortazione-ap_20160319_amoris-laetitia_en.pdf"
+  },
+  {
+    "work": "exhortation.ecclesia-in-oceania.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "exhortation.evangelica-testificatio.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "exhortation.evangelica-testificatio.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "exhortation.evangelii-gaudium.en",
+    "lang": "ar",
+    "status": "pdf-only",
+    "checked_at": "2026-08-29",
+    "note": "the page's only text link is /content/dam/francesco/pdf/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium_ar.pdf"
+  },
+  {
+    "work": "exhortation.fummo-chiamati.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "exhortation.fummo-chiamati.en",
+    "lang": "pt",
+    "status": "stub-page",
+    "checked_at": "2026-08-24"
+  },
+  {
+    "work": "exhortation.gaudete-in-domino.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "exhortation.gaudete-in-domino.en",
+    "lang": "pt",
+    "status": "stub-page",
+    "checked_at": "2026-08-24"
+  },
+  {
+    "work": "exhortation.ideal-film.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "exhortation.ideal-film.en",
+    "lang": "pt",
+    "status": "stub-page",
+    "checked_at": "2026-08-24"
+  },
+  {
+    "work": "exhortation.redemptionis-donum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "exhortation.signum-magnum.en",
+    "lang": "de",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "exhortation.signum-magnum.en",
+    "lang": "es",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "exhortation.signum-magnum.en",
+    "lang": "fr",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "exhortation.verbum-domini.en",
+    "lang": "la",
+    "status": "pdf-only",
+    "checked_at": "2026-08-29",
+    "note": "the page's only text link is /content/dam/benedict-xvi/pdf/apost_exhortations/documents/hf_ben-xvi_exh_20100930_verbum-domini_lt.pdf"
+  },
+  {
+    "work": "exhortation.verbum-domini.en",
+    "lang": "pl",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
   }
 ]

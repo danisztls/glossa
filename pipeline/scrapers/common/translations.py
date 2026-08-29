@@ -21,6 +21,12 @@ def load_translations_checked(
     Bare absence on disk cannot be told apart from "never checked" without
     re-crawling, which is the whole reason the field is there.
 
+    `pdf-only` is the fifth status and the one that does NOT mean absent
+    (added 2026-08-29): the edition exists and vatican.va publishes it as a
+    PDF, so nothing here reads it. Six documents are in that state, and the
+    English `Amoris Laetitia` is one of them -- which is worth knowing before
+    reading a gap in a language table as the source's fault.
+
     WHY THIS IS AN INPUT AND NOT AN OUTPUT. It was neither until 2026-08-27.
     The statuses were established by a post-hoc reconciliation pass over the
     corpus, written into each work's `manifest.json`, and kept alive only by
@@ -44,6 +50,14 @@ def load_translations_checked(
     requests, or a scan of `raw/` for a cached stub), never a side effect of
     a parse. A run that has learned something new adds it here by hand, or by
     a tool that says so.
+
+    `pipeline/scrapers/record_translations.py` IS that tool, and it took the
+    file from 125 records to 629 on 2026-08-29 without one request. What it
+    added had been sitting in `raw/` since the August `--fetch-only` sweep:
+    504 answered questions that nothing could answer a second time without
+    asking vatican.va again. It imports the scraper's own `parse_document`
+    rather than re-testing for a stub, and it writes nothing at all for a
+    page that parses -- that is a parse we lost, and the opposite claim.
     """
     raw = read_text_or_none(path)
     if not raw:

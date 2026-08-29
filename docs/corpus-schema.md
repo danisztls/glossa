@@ -436,7 +436,7 @@ Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vatii` | `encyclical` |
   "translations": {
     // optional; present only when a sibling-language edition is known and NOT written as its own work — never present alongside a real sibling work, which is provenance enough on its own
     "pt": {
-      "status": "stub-page", // "stub-page" | "no-url" | "not-found" | "fetch-failed"
+      "status": "stub-page", // "stub-page" | "pdf-only" | "no-url" | "not-found" | "fetch-failed"
       "checked_at": "2026-08-16", // when this status was established, not necessarily today
       "note": "…", // optional, freeform; used e.g. to record that a retry reproduced the same result
     },
@@ -446,7 +446,8 @@ Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vatii` | `encyclical` |
 
 Absence of a sibling-language work (e.g. no `encyclical.rerum-novarum.pt` directory) is expected and common — coverage collapses for older pontificates (`vatican-documents.md` §2) — but bare absence on disk is provenance-free: it can't be told apart from "never checked" without re-crawling. `translations` on the surviving work closes that gap, recorded once the absent language's status is established, from whichever of these it turns out to be (checked from cache, no network needed once the crawl has already visited the URL once):
 
-- `"stub-page"`: a URL was fetched (200) but its content region carried no real translation, only vatican.va's page shell (see the scraper's `StubPageError`) — confirmed live to be the dominant case for pre-1960s Portuguese encyclical URLs.
+- `"stub-page"`: a URL was fetched (200) but its content region carried no real translation, only vatican.va's page shell (see the scraper's `StubPageError`) — confirmed live to be the dominant case for pre-1960s Portuguese encyclical URLs, and measured on 2026-08-29 as the dominant case full stop: 613 of the 619 raw document pages that produced no work are this, across nine languages, German (181), French (143) and Spanish (135) ahead of Portuguese. `pipeline/scrapers/record_translations.py` is what reads them off cache and writes them down.
+- `"pdf-only"`: the URL 200s, its content region is a shell exactly as above, and the page's own link to the document's text in **that language** is a PDF under `/content/dam/`. This is the one status that does not mean the edition is absent — it means vatican.va publishes it in a format nothing here reads, so the absence is ours rather than the source's. Six as of 2026-08-29, and the language suffix on the href is what makes it evidence: every page links its siblings' PDFs too, and the mirror's own codes apply, so Latin arrives as `_lt`.
 - `"no-url"`: no URL for that language could even be derived/discovered (distinct from a URL existing and failing).
 - `"not-found"`: a derived URL was attempted and consistently returned HTTP 404 across a full retry cycle (3 attempts with backoff) — a measured, repeatable absence, not a guess. Confirmed live for 10 Pius XI/XII-era documents: the original crawl recorded them as failed, and an explicit post-sweep retry (once concurrent crawling was no longer a politeness concern) reproduced the same 404 on every one of 10/10, with none resolving — i.e. the earlier failure was never transient flakiness for these, it was vatican.va correctly reporting "no such page."
 - `"fetch-failed"`: a URL was derived and a fetch was attempted but never resolved to a definite answer (connection/timeout error, not a clean 404) — genuinely transient network flakiness (the survey's ~1-in-6–8 Azure edge rate), worth a retry on a future crawl, unlike `"not-found"`.

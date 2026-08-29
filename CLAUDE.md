@@ -293,6 +293,48 @@ pl 42, ar 24, ru 10. Five things about that will bite before the design will.
   with its measured percentage, and each is switched off rather than shipped
   because a reader cannot tell a swallowed document from a short one.
 
+### "Do we have every language?" — answered on 2026-08-29, in the ledger
+
+The question got asked twice, and the answer was not written down anywhere the
+second asker could find it. It is now: `pipeline/translations-checked.json`
+holds **629 records**, up from 125, and `pipeline/scrapers/record_translations.py`
+is what put them there — **without one request**, because every answer was
+already sitting in `raw/`.
+
+- **619 raw document pages produced no work directory, and every one of them is
+  a page with no document on it.** Not a parse we lost: the tool runs the real
+  `parse_document` and records a status only where it raises `StubPageError`,
+  so a page that parses is printed as unexplained and nothing is written for
+  it. Zero were. 613 are `stub-page` — de 181, fr 143, es 135, it 23, en 8,
+  pt 8, ar 3, pl 2, la 1 — and vatican.va serves them **200, not 404**: the CMS
+  generates a URL slot per (document, language) whether or not a translator
+  ever filled it, and the page's own `EN - IT - LA - PT` bar is its statement
+  of which editions really exist.
+- **`pdf-only` is a fifth status and the only one that does not mean absent.**
+  Six editions exist and vatican.va publishes them as PDF, which nothing here
+  reads: `amoris-laetitia.en`, `verbum-domini.la`, `africae-munus.ar`,
+  `evangelii-gaudium.ar`, `lumen-fidei.ar`, `lumen-fidei.pl`. The **English
+  _Amoris Laetitia_** being one of them is worth knowing before reading a hole
+  in an English column as the source's fault. The evidence is a `/content/dam/`
+  href whose language suffix matches the page — every page links its siblings'
+  PDFs too — and the suffix uses the mirror's codes, so Latin arrives as `_lt`.
+- **So the exhortations are 236 of a possible 330**: 76 recorded 404s, 14
+  stubs, 4 PDF-only. Per language, of 33 documents: it 33, en 32, pt 30, fr 30,
+  es 30, de 28, pl 21, la 20, ar 8, ru 4. Nothing is missing that a re-crawl
+  would find.
+- **The ledger is an input, and the manifests catch up on the next parse.**
+  `write_document_outputs` reads it into `manifest.translations`, so the 504
+  new records reach `build/` when the works are next re-parsed and not before.
+  That is the design (`common/translations.py`), not a gap: the ledger is the
+  record and the manifest is a copy of it.
+- **Ten is our boundary, not vatican.va's, and it is a vocabulary and not a
+  wall.** Each document's own language switcher offers more — measured across
+  the 256 encyclicals and exhortations, `hu` in 32 documents, `zh_cn`/`zh_tw`
+  in 15 each, `be` in 15, `nl` in 10, `sl` and `vi` in 8. Read those as an
+  upper bound: a switcher entry is a link, and a link can lead to a stub. `hu`,
+  `sl` and `ro` are the interesting ones because they are already interface
+  languages with no content in them at all.
+
 ## The Catechism is eight editions in three page formats
 
 Ingested 2026-08-26 (`docs/decisions.md`, `docs/corpus-schema.md` §Catechism).
