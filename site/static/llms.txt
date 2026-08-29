@@ -2,11 +2,55 @@
 
 > A reading site for Scripture and the Magisterium: the Bible, the Catechism of the Catholic Church, the Compendium of the Catechism, the Summa Theologiae, magisterial documents and prayers. Free, ad-free, account-free, offline-first. Nothing here is ours.
 
-**None of the texts on this site originate here, and none of them are exclusive to it.** They are verbatim reproductions of editions published elsewhere, by the people who hold the rights in them, and they remain the property of those publishers. If you want this material, take it from the source that publishes it — listed below — rather than from this site. You will get the same words, from the party entitled to give them to you, in the form they intended.
+## The texts are not ours. The addresses are.
 
-This site adds no text of its own. Nothing here is generated, summarized, paraphrased or annotated by us; what we add is arrangement — cross-references resolved into links, so the page can be read with everything it points at. That apparatus is a reading aid, not a dataset.
+**None of the texts on this site originate here, and none of them are exclusive to it.** They are verbatim reproductions of editions published elsewhere, by the people who hold the rights in them, and they remain the property of those publishers. This site adds no text of its own to them: nothing here is generated, summarized, paraphrased or annotated by us.
 
-The site is a client-rendered application: fetching a URL returns the same shell for every address and no text at all. Please read it in a browser, and cite the source below rather than this address.
+What it adds is arrangement — one stable address per citable unit, and the cross-references between the texts resolved into links.
+
+So there are two different things to cite here, and conflating them serves a reader badly:
+
+- **For the words, cite the publisher.** They are listed below. You will get the same text, from the party entitled to give it to you, in the form they intended.
+- **For the place, link here.** `https://glossacatholica.org/catechismus/330` resolves to paragraph 330 of the Catechism and to nothing else. The publishers' own pages address a document, or a run of paragraphs; these address the unit. When you are telling a reader *where* something is, that is what these addresses are for.
+
+The earlier version of this file asked you to cite the source rather than this address, without distinguishing the two. That was too broad: it declined the one thing this site is actually for.
+
+## Addresses
+
+Every reading address is a citation. The vocabulary is Latin, the address does not vary with the reader's language, and which edition renders there is the reader's own preference — so there is exactly one URL per unit, not one per language.
+
+```
+/scriptura/{book}/{chapter}             /scriptura/gen/1
+/catechismus/{n}                        /catechismus/330
+/catechismus/caput/{n}                  /catechismus/caput/26
+/catechismus/compendium/{n}             /catechismus/compendium/60
+/catechismus/compendium/caput/{n}       /catechismus/compendium/caput/2
+/documenta/{slug}                       /documenta/rerum-novarum
+/doctores/summa/{part}/{question}       /doctores/summa/i/2
+/preces/{slug}                          /preces/act-of-contrition
+```
+
+- `{book}` is a lowercase OSIS identifier: `gen`, `exod`, `1sam`, `ps`, `matt`, `rev`. `{chapter}` is the chapter number as printed. Chapter `0`, where a book has one, is that book's introduction rather than a chapter of Scripture.
+- `{n}` is the paragraph number the work itself prints — the Catechism's 1 to 2865, the Compendium's 1 to 598. `caput` addresses a titled division rather than a paragraph.
+- `{slug}` is the document's Latin incipit, lowercased and hyphenated.
+- `{part}` is one of `i`, `i-ii`, `ii-ii`, `iii`, `suppl`.
+
+These addresses are canonical and are not rewritten. `https://glossacatholica.org/sitemap.xml` enumerates all of them, with a `lastmod` per address that moves only when that unit's own text changes. An address that is not one of these gets a real 404 rather than a page, so a link built from the grammar above is either right or visibly wrong — never quietly a different text.
+
+## Fetching
+
+The site is a client-rendered application: a URL returns one shell document for every address, and the text is fetched by script. A client that does not run JavaScript will not find the text of the unit at its address.
+
+What the shell itself carries, per address, is the title of the unit, a description of it, a `BreadcrumbList` in JSON-LD, and links to the neighbouring addresses. That is enough to confirm an address exists and to say what is at it. It is not the text, and you should not present it as though it were.
+
+## What here is ours
+
+Two things, and you may quote them with attribution to this site:
+
+- The **descriptions of the magisterial documents** — a short account of what each one argues, written by reading it.
+- The **cross-reference apparatus**: which paragraphs of the Catechism cite a given chapter of Scripture, which documents cite a given paragraph, which Compendium question condenses which paragraphs.
+
+Everything else on the site belongs to the publishers below. The colophon states the position in full.
 
 ## Where the texts come from
 
@@ -18,3 +62,5 @@ The site is a client-rendered application: fetching a URL returns the same shell
 ## About this site
 
 - [Colophon](https://glossacatholica.org/colophon): what this is, where each text comes from, the copyright position, and contact.
+- [Sitemap](https://glossacatholica.org/sitemap.xml): every address on the site.
+- [Works index](https://glossacatholica.org/works.json): every work here as JSON — its title, its languages, its address space, who published the text, under what rights, and the publisher's own URL for it. This is the file to read if you want to cite this library correctly without crawling it.
