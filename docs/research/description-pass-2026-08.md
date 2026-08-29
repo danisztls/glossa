@@ -1812,3 +1812,93 @@ failed.
 - `dum-multa.en` prints two italic sub-headings and loses both — the run
   threshold is 3, and two headings are not yet a convention. The oracle records
   what the page prints; the disagreement is correct.
+
+## Wave 17 (24 works)
+
+19 of the 24 new oracles agree with the parse; 310 oracles now compared, 44
+disagreeing, and **no previously-agreeing work regressed**. All five
+disagreements are the same finding, and it is the wave's real result.
+
+### Nine oracles of one document disagreed about a tier the page prints the same way
+
+_Magnifica Humanitas_ is now read in nine languages, 75 headings apiece,
+aligned heading-for-heading — the strongest oracle in the corpus, because a
+disagreement between two editions of the SAME text at the SAME locus cannot be
+translation divergence. Reading them side by side, they disagreed with each
+other about eight nodes: the four sub-headings under the Introduction and the
+four under the Conclusion.
+
+| edition    | Introduction | Conclusion |
+| ---------- | ------------ | ---------- |
+| es, pl, ar | 2 2 2 2      | 2 2 2 2    |
+| en, it, ru | 2 2 2 2      | 3 3 3 3    |
+| de         | 2 3 3 3      | 3 3 3 3    |
+| fr         | 2 3 3 3      | 2 3 3 2    |
+
+French's `2 3 3 2` cannot be read off any page — four headings printed
+identically do not alternate tiers — and a 3 sitting directly under a 1 breaks
+the contiguity rule the brief states. **These oracles were written from the
+parse rather than from the page**, which is the one failure the whole procedure
+exists to prevent; a `--derive`-shaped mistake survives because an oracle
+derived from the output cannot contradict the output. Five editions were
+repaired to `2` throughout, which is both the rule-conformant answer and what
+six of the nine already said.
+
+### The mechanism, measured
+
+Two agents reported this as "identical markup, different level". Checking the
+raw pages myself, it is subtler and worth stating exactly, because the obvious
+fix does nothing:
+
+**The headings look identical to a reader and differ in markup.** An `<a name>`
+anchor or a roman gloss set inside the italic run splits it in two, and
+`is_full_italic` — deliberately exact, see its docstring — reads a split run as
+not-italic. The style key flips, and the level walk reads the flip as a tier
+change. Polish is the clearest case: `<b><i>Rzeczy nowe</i>(res novae)<i>
+naszych czasów</i></b>` scores italic=0 where its three siblings score 1.
+
+Per edition, the four Introduction siblings score:
+
+|                        | markup shapes among the four siblings |
+| ---------------------- | ------------------------------------- |
+| es, ar                 | all identical                         |
+| en, it, fr, ru, de, pl | 2–3 distinct shapes, same appearance  |
+
+**Tolerating a parenthesised gap inside an emphasis run was tried and changes
+nothing** — 43 works / 325 findings before and after, byte for byte. The gloss
+is only one of the splitters and not the common one, and the level walk is
+where the tier is actually decided. That is class 1, and it stays there.
+
+### Taken: a signature set off by a comma is still a signature
+
+`drop_page_furniture` already drops a papal signature trailing the last
+numbered paragraph — the positional test is what lets a pope's name stand as a
+real heading inside a body. Its regex missed two forms: `LEÃO XIII, PAPA`
+(comma before `PAPA`) and `PIUS XII POPE` (the English mirrors' word). Both
+stood as childless top-level headings in a reader's table of contents.
+
+Measured before taking: exactly 2 nodes corpus-wide match the widened regex and
+not the old one, both childless, both `before: null`; over every oracle, one
+work newly agrees and none regress.
+
+### Corrections filed
+
+- `longinqua.en` prints `CATHOLICISMIN THE` in its masthead and `is
+.progressing` — a full stop stranded inside a sentence — in §5.
+- `magnifica-humanitas.pl` §4 loses the space before its Latin gloss. The page
+  settles it: its own contents entry for the same heading keeps the space.
+
+### Clean negatives
+
+- **`mirabile-illud.en` does not print `ARCHBISHIOPS`.** An agent reported it
+  as a source misprint; the string occurs 0 times in the raw page and is absent
+  from `manifest.header`. Read a reported misprint out of `raw/` before filing.
+- **`miranda-prorsus.en`'s lost `</p>` is fixed**, and the note in the wave
+  brief describing it as live is now stale — the wave-13 markup repair covers
+  it, and every heading the census finds is in `structure.json`.
+- An open oddity, recorded because it is unexplained rather than because it
+  matters: `haurietis-aquas.en` and `immortale-dei.pt` rewrote their
+  `manifest.json` and `corrections-applied.json` during this wave's re-parse
+  while every parse field — structure, sections, notes, every dataclass field —
+  is byte-identical under the old and new parsers, and a repeat run is stable.
+  No corpus text is affected.
