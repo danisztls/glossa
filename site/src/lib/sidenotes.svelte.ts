@@ -199,17 +199,19 @@ export const sidenoteRoom = new SidenoteRoom();
  * its line is the whole of what the margin is for. Clamping is what keeps the
  * column anchored to the text rather than merely shorter.
  *
- * SO THE LONG ONES ARE CLAMPED AND THE READER IS GIVEN A WAY TO THE REST. 200
- * characters is about six lines of the gloss column, which is
+ * SO THE LONG ONES ARE CLAMPED AND THE READER IS GIVEN A WAY TO THE REST. 130
+ * characters is about four lines of the gloss column, which is
  * `--sidenote-clamp` in `layout.css`: the two numbers are one decision written
  * twice and have to move together. It is deliberately short — a margin holds a
- * remark, and a gloss that has to be scrolled past to reach the next one has
- * stopped being one. At six lines the editions the margin was written for
- * still set most of their apparatus open (66% of Challoner's notes, 83% of
- * Matos Soares's, every citation in the Catechism) and the essayists set an
- * incipit (41% of Straubinger's notes open, 20% of Martini's).
+ * remark, and a gloss the reader has to scroll past to reach the next one has
+ * stopped being one. At four lines a citation's source is still set whole
+ * (every one of the Catechism's 3,698), 43% of Challoner's notes and 61% of
+ * Matos Soares's are, and the essayists are cut to an incipit: 26% of
+ * Straubinger's notes set open, 9% of Martini's. It has come down twice —
+ * twelve lines, then six — each time because the gutter column was still
+ * running past the chapter it hangs beside.
  */
-export const MARGIN_CLAMP_CHARS = 200;
+export const MARGIN_CLAMP_CHARS = 130;
 
 /**
  * Whether a gloss this long is more than the margin will set open.

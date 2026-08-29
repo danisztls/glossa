@@ -1492,12 +1492,15 @@ line against the reading measure's 62.4, so parity of characters is already near
 the height, and `clear: inline-start` starts each note below wherever the last one ended.
 What that breaks is not the look of the page but the arrangement's premise: by the eighth
 verse the gloss is pages below the line that raises it, and a gloss BESIDE its line is
-the whole of why the margin exists. So a note past 200 characters is clamped to six
-lines, with "read more" under it — six and not the twelve first tried, because a margin
-holds a remark, and a gloss the reader has to scroll past to reach the next one has stopped being
-one. Most of the apparatus the margin was written for still sets open — 66% of
-Challoner's notes, 83% of Matos Soares's, every citation in the Catechism — against 41%
-of Straubinger's and 20% of Martini's, which is the asymmetry the clamp is for.
+the whole of why the margin exists. So a note past 130 characters is clamped to four
+lines, with "read more" under it — four after twelve and then six, each larger number
+having still run the gutter past the chapter, because a margin holds a remark and a gloss
+the reader must scroll past to reach the next one has stopped being one. A citation's
+source is still set whole (every one of the Catechism's 3,698), with 43% of Challoner's
+notes and 61% of Matos Soares's, against 26% of Straubinger's and 9% of Martini's — which
+is the asymmetry the clamp is for. The control sits tight under its own gloss and pushes
+the next one down, since notes stack in the gutter with nothing but `clear` between them
+and a control set evenly between two of them reads as belonging to the lower.
 
 **Nothing about the marker changes, and that is the point.** A marker that opened a card
 for the long notes and lit the gutter for the short ones would be two controls printed as

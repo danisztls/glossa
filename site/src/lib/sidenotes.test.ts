@@ -72,12 +72,12 @@ describe('marginOverflows', () => {
 		text: 'x'.repeat(chars)
 	});
 
-	// The gloss the margin was written for: Challoner's median note is 126
-	// characters, a citation's source 26. Clamping those would be the change
-	// costing something and buying nothing.
+	// What the margin was written for: a citation's source is 26 characters and
+	// Challoner glosses a verse in a sentence. Clamping a remark would be the
+	// change costing something and buying nothing.
 	it('sets a remark-length gloss open', () => {
 		expect(marginOverflows(note(26))).toBe(false);
-		expect(marginOverflows(note(126))).toBe(false);
+		expect(marginOverflows(note(100))).toBe(false);
 	});
 
 	// And the one it was not: Straubinger's median note is 248 characters, its

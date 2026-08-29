@@ -17,7 +17,7 @@
 	 * arrangement both apparatuses use.
 	 *
 	 * AND WHERE THE GLOSS IS LONGER THAN THE MARGIN WILL HOLD, the margin sets
-	 * its first six lines and "read more" opens the whole of it in a modal.
+	 * its first four lines and "read more" opens the whole of it in a modal.
 	 * The continental annotated editions (Straubinger, Martini, Allioli) print
 	 * an apparatus as long as the Scripture it glosses, and a gutter column
 	 * taller than the chapter has stopped being beside anything —
@@ -109,7 +109,7 @@
 	const inMargin = $derived(sidenoteRoom.margin);
 
 	/**
-	 * WHETHER THE MARGIN SETS THIS GLOSS OPEN OR ONLY ITS FIRST SIX LINES.
+	 * WHETHER THE MARGIN SETS THIS GLOSS OPEN OR ONLY ITS FIRST FOUR LINES.
 	 *
 	 * The editions this arrangement was written for gloss a verse in a
 	 * sentence; Straubinger and Martini gloss one in an essay, and a chapter
@@ -407,7 +407,18 @@
 	 */
 	.margin-note-more {
 		display: block;
-		margin-block-start: 0.35rem;
+		/*
+		 * TIGHT TO ITS OWN NOTE AND CLEAR OF THE NEXT ONE, which is the whole
+		 * of these two numbers. Notes stack down the gutter with nothing but
+		 * `clear` between them, so a control set evenly between the gloss it
+		 * belongs to and the gloss below it reads as belonging to the wrong
+		 * one — and it is the only line in the column that could be mistaken
+		 * for either. The end margin is what the next note is pushed down by:
+		 * `.margin-note` floats, so it establishes its own formatting context
+		 * and this cannot collapse through it.
+		 */
+		margin-block-start: 0.1rem;
+		margin-block-end: 0.6rem;
 		padding: 0;
 		border: 0;
 		background: none;
