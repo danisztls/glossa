@@ -274,15 +274,24 @@ class UsageSession {
 	}
 
 	/** A content file was read — the single chokepoint `corpus.ts` already
-	 *  records `lastContentRead()` at, for the same reason it gives there. */
+	 *  records `lastContentRead()` at, for the same reason it gives there.
+	 *
+	 *  ALSO THE TIGHTER OF THE TWO COMPARE SAMPLES. Turning compare on loads a
+	 *  second edition, so this fires at the moment the feature is used, where
+	 *  `notePath` only sees it if the reader then navigates and `#payload`
+	 *  only if it is still on when the session ends. Compare is persisted, so
+	 *  the window the other two miss is narrow — on, read, off, without ever
+	 *  leaving the page — but it is the reader who tried the feature and put
+	 *  it away, which is the one this number is least able to afford losing. */
 	noteWork(workId: string): void {
 		if (!workId) return;
 		this.#works.add(workId);
 		const lang = contentLangOf(workId);
 		if (lang) this.#content.add(lang);
+		if (compare.active) this.#compared = true;
 	}
 
-	/** A route was entered. Also the sampling point for compare mode, which has
+	/** A route was entered. Also a sampling point for compare mode, which has
 	 *  no event of its own and is a preference rather than an action. */
 	notePath(pathname: string): void {
 		this.#sections.add(sectionFor(pathname));
