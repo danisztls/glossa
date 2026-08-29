@@ -5517,6 +5517,25 @@ def validate_document(
 ) -> tuple[bool, list[str]]:
     problems: list[str] = []
     sections = state.sections
+
+    # THE APPENDIX IS TEXT AND ITS CITATIONS ARE CITATIONS. Everything below
+    # this walks `state.sections`, so a document storing its text in
+    # `appendix.json` was checked by nothing at all -- and the unnumbered
+    # branch a few lines down returns `True, []` outright, so it did not even
+    # reach the per-section rules. `miranda-prorsus.en` stored all 55 of its
+    # footnotes as empty strings and validated clean, while the four smaller
+    # pages with the same defect were reported, purely because they happen to
+    # print paragraph numbers. Checked here, before that early return, so it
+    # covers both an unnumbered edition and a numbered one that also carries
+    # an appendix (Lumen Gentium's).
+    for i, entry in enumerate(state.appendix_out):
+        empty = [c["marker"] for c in entry.get("citations", []) if not c["text"]]
+        if empty:
+            where = entry.get("title") or f"entry {i}"
+            problems.append(
+                f"appendix {where!r}: citations with no resolved text: {empty}"
+            )
+
     if not sections:
         if state.appendix_out:
             # An UNNUMBERED EDITION, not a defeat. Eight editions in this
@@ -5528,7 +5547,7 @@ def validate_document(
             # source does print. There is nothing to number and nothing was
             # lost; what such a work does not have is a citable address, which
             # is a property of the edition rather than a fault in the parse.
-            return True, []
+            return not problems, problems
         return False, ["no sections captured at all"]
     numbers = sorted(sections)
     lo, hi = numbers[0], numbers[-1]
