@@ -1445,6 +1445,46 @@ def match_footnote_chapter_heading(text: str) -> int | None:
     return _resolve_num(m.group(1), "en")
 
 
+_FN_ROW_RE = re.compile(
+    r"<tr[^>]*>\s*<td[^>]*>(?P<label>.*?)</td>\s*<td[^>]*>(?P<text>.*?)</td>",
+    re.DOTALL | re.IGNORECASE,
+)
+_FN_ROW_MARKER_RE = re.compile(r"^\[?(\d{1,4}\*?)\]?\.?$")
+
+
+def build_footnote_table_rows(region_html: str) -> dict[str, str]:
+    """A footnote list laid out as a two-column TABLE: the marker in one
+    `<td>`, its text in the next.
+
+    Miranda Prorsus prints its notes this way in all three languages the
+    mirror carries, and nothing else in the corpus does -- measured over
+    every page's footnote region, 3 hits, all of them that one document.
+    Everything else here walks `<p>`/`<blockquote>`/`<center>` (see
+    `_BLOCK_RE`), so the rows were not blocks, the region yielded nothing
+    that opened an entry, and all 55 of the English edition's citations
+    stored their marker against an empty string. Its anchors are named
+    `Nota%20N`, which `_FN_DEF_ANCHOR_RE` does not match either, so the
+    anchor branch above did not catch it first.
+
+    Returns {} rather than a partial table unless most rows really do look
+    like numbered notes -- a page whose footnote region merely CONTAINS a
+    table (a layout wrapper, say) must fall through to the block walk
+    unharmed.
+    """
+    pairs: list[tuple[str, str]] = []
+    rows = 0
+    for m in _FN_ROW_RE.finditer(region_html):
+        rows += 1
+        label = strip_tags(m.group("label")).strip()
+        mm = _FN_ROW_MARKER_RE.match(label)
+        if not mm:
+            continue
+        pairs.append((mm.group(1), strip_tags(m.group("text")).strip()))
+    if rows < 3 or len(pairs) * 2 < rows:
+        return {}
+    return dict(pairs)
+
+
 def build_footnote_table(region_html: str) -> tuple[dict, dict]:
     """Parses a footnote region into {marker: text}. Also returns a
     SECOND, chapter-scoped table {(chapter_n_or_None, marker): text},
@@ -1483,6 +1523,9 @@ def build_footnote_table(region_html: str) -> tuple[dict, dict]:
     which keeps being returned and populated exactly as before."""
     if _FN_DEF_ANCHOR_RE.search(region_html):
         return build_footnote_table_anchor(region_html), {}
+    rows = build_footnote_table_rows(region_html)
+    if rows:
+        return rows, {}
     # No anchors at all: bare "N text" (vatii "NOTES") or "(N) text" (CDF) --
     # both confirmed one-entry-per-<p> in every document sampled.
     table: dict[str, str] = {}
@@ -1505,7 +1548,39 @@ def build_footnote_table(region_html: str) -> tuple[dict, dict]:
         table[marker] = text
         chapter_table[(current_chapter, marker)] = text
         last_marker = marker
+    if len(table) < 2:
+        # THE WHOLE LIST IN ONE BLOCK, entries separated by <br /> rather than
+        # by </p>. Fidei Donum EN prints all 30 that way, so the walk above
+        # sees a single block whose first entry it reads and whose other 29 it
+        # merges into that one as an unlabeled continuation: 30 of its 31
+        # citations stored a marker against an empty string.
+        #
+        # A FALLBACK and not a branch, because six other pages lay their list
+        # out the same way (Veritatis Splendor EN's 180, Redemptoris Mater
+        # EN's 147) and every one of them already resolves through the anchor
+        # table above -- splitting on <br /> unconditionally would take work
+        # away from a reader that is doing it correctly. Reached only when the
+        # block walk came back with nothing to speak of.
+        rows = build_footnote_table_breaks(region_html)
+        if len(rows) > len(table):
+            return rows, {(None, k): v for k, v in rows.items()}
     return table, chapter_table
+
+
+def build_footnote_table_breaks(region_html: str) -> dict[str, str]:
+    """A footnote list that lives inside ONE block, `<br />` between entries."""
+    table: dict[str, str] = {}
+    last: str | None = None
+    for inner in raw_blocks(region_html):
+        for part in re.split(r"<br\s*/?>", inner, flags=re.IGNORECASE):
+            marker, text = parse_footnote_entry(part)
+            if marker is None:
+                if last is not None and text:
+                    table[last] = (table[last] + " " + text).strip()
+                continue
+            table[marker] = text
+            last = marker
+    return table
 
 
 def build_chapter_scoped_star_table(region_html: str) -> dict[tuple[int, str], str]:

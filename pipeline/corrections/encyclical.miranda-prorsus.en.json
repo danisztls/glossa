@@ -1,0 +1,15 @@
+[
+  {
+    "id": "miranda-prorsus.en-note53-printed-as-54",
+    "locator": {
+      "section": null,
+      "raw_substring": "name=\"Nota%2053\""
+    },
+    "field": "raw_text",
+    "from": "<a name=\"Nota%2053\"><font size=\"-1\" face=\"courier new\"><sup>54</sup>",
+    "to": "<a name=\"Nota%2053\"><font size=\"-1\" face=\"courier new\"><sup>53</sup>",
+    "reason": "The footnote list prints '54' over two consecutive notes and never prints '53'. The correct value is not chosen but stated by the page itself: the row carries the anchor name 'Nota%2053', it sits between the notes printed 52 and 54, and the body's marker 53 is left pointing at nothing while marker 54 has two definitions. Only the printed numeral is amended; no note text is touched.",
+    "evidence": "raw/vatican-docs/encyclical__miranda-prorsus__en.html: '<tr> <td valign=\"top\"><a name=\"Nota%2053\"><font size=\"-1\" face=\"courier new\"><sup>54</sup></font></a></td> <td><i>Gal</i>. V, 9.</td> </tr>', immediately followed by '<a name=\"Nota%2054\">...<sup>54</sup>...Cfr. Adhortatio Apostolica, de televisione'. One occurrence in the page. The Portuguese edition of the same document numbers its 56 notes without this collision.",
+    "added": "2026-08-29"
+  }
+]
