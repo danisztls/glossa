@@ -929,7 +929,7 @@ one at the source and one at us, and only the second is ours to close.
 
 **A division vocabulary is a table, and asking a server for a language should
 cost what the language costs** (2026-08-29). Twelve Latin-script languages
-joined the Magisterium — 143 editions in cs, da, fi, hr, hu, lv, nl, ro, sk,
+joined the Magisterium — 139 editions in cs, da, fi, hr, hu, lv, nl, ro, sk,
 sl, sw, vi — and the two things that made it a day's work rather than a
 project are worth separating. The first is that `DIVISIONS` was already a data
 table: `_NUMERAL` reads `CAPUT III` with no vocabulary at all, so the cheapest

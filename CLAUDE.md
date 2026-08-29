@@ -341,8 +341,10 @@ Taken in on 2026-08-29, the same day the question above was answered.
 **`DIVISIONS` is a data table and a new language is a vocabulary entry**, which
 is what its own comment already said; the CLI's refusal to parse a language
 with no entry is a guard against producing one undivided blob, not a wall.
-The corpus now holds **143 more editions** in cs, da, fi, hr, hu, lv, nl, ro,
-sk, sl, sw and vi — 1,272 works to 1,411 — for **141 requests**.
+The corpus now holds **139 more editions** in cs, da, fi, hr, hu, lv, nl, ro,
+sk, sl, sw and vi — 1,272 works to 1,411 — for **141 requests**. 129 of them
+ship with readable text; the other ten are the switched-off parses below, and
+129 + 10 accounts for all 139 with nothing unexplained.
 
 - **The cheapest useful entry is the four nouns and nothing else**, because
   `_NUMERAL` already reads `CAPUT III` and `III CAPUT` with no vocabulary at
