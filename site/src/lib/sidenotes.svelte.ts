@@ -35,10 +35,11 @@ import { AnchoredPanel } from './floating.svelte';
  *
  * `MARGIN_QUERY` is deliberately wider than `.reading-layout`'s own 80rem
  * grid breakpoint. At exactly 80rem the reading column and the navigation
- * aside are the whole of the viewport — the pair is centred as a unit and
- * there is no slack on either side. The margin the notes occupy is that
- * slack, so it appears well after the aside does, and asking for it earlier
- * would push the notes over the text.
+ * aside are the whole of the viewport, and `--margin-lane` — the grid's first
+ * column, which is the margin the notes occupy — has collapsed to nothing to
+ * let them be. It opens as the viewport grows, so it appears well
+ * after the aside does, and asking for the notes earlier would push them over
+ * the text.
  *
  * INLINE-START, NOT INLINE-END: the end margin is where `.reading-aside`
  * already lives at these widths. The start margin is both the free one and
@@ -70,12 +71,12 @@ class SidenoteRoom {
 	 * something else — in practice zero or one, since the only claimant is
 	 * `CompareGrid` and a page compares or it does not.
 	 *
-	 * COMPARE MODE SPENDS THE SLACK THE NOTES LIVE IN. The margin is not a
-	 * fixed gutter; it is whatever is left over once `.reading-layout` has
-	 * centred its tracks, and two reading columns plus the aside consume all
-	 * of it — about 6.5rem either side at 100rem, against the 17rem a note
-	 * wants at full width. A note floated there would sit off the edge of the
-	 * viewport rather than beside its line.
+	 * COMPARE MODE SPENDS THE ROOM THE NOTES LIVE IN. The margin is a lane
+	 * sized from what the reading columns leave over (`--margin-lane` in
+	 * `layout.css`, overridden for compare in `compare.css`), and two reading
+	 * columns plus the aside leave it very little — about 10rem of lane at
+	 * 100rem, against the 17rem a note wants at full width. A note floated
+	 * there would sit over the text rather than beside it.
 	 *
 	 * A COUNT, AND NOT THE `compare` PREFERENCE. That store says what the
 	 * reader wants; it does not say whether this page could honour it, and a

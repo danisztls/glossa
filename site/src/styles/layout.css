@@ -42,9 +42,26 @@
  * `--aside-width` minus `--aside-gap` minus the page padding is exactly the
  * width past which it would start eating this track.
  *
- * The pair is centred as a UNIT: the reading column sits left of centre when
- * the aside is present. Centring the text and hanging the aside off the
- * right edge instead was tried and reads as two unrelated pages.
+ * THREE TRACKS, AND THE FIRST ONE IS USUALLY EMPTY. The margin the
+ * apparatus is set in (`--margin-lane`, below) is a column of the page
+ * whether or not a given route has anything to put in it, so it is declared
+ * as a track rather than left as whatever slack the centring happens to
+ * leave over. It is sized to `--aside-lane`, the aside and its gutter, which
+ * is exactly what puts the reading column on the page's own midline: 21.5rem
+ * of declared page either side of the text.
+ *
+ * IT WAS TWO TRACKS, CENTRED AS A UNIT, until 2026-08-29, and the cost was
+ * 10.75rem — half the aside and its gutter — of leftward offset on every
+ * reading page in the corpus, with the notes floated into unreserved slack
+ * on the side that had nothing declared. One side of the column had a
+ * column and the other had leftovers, which is both why the text read as
+ * off-centre and why it read as crowded: the aside stood 4.5rem from the
+ * text while 58rem of page went unused beyond it.
+ *
+ * This is NOT the arrangement that was tried and rejected — centring the
+ * text and hanging the aside off the right EDGE, which reads as two
+ * unrelated pages. The aside still sits `--aside-gap` from the text and the
+ * whole ensemble is still centred as a unit. Only the unit became symmetric.
  */
 .reading-layout {
 	--aside-width: 17rem;
@@ -66,10 +83,13 @@
 	 *
 	 * INLINE-START, so it does not fight `.reading-aside` for the end margin.
 	 * Held here rather than in the component because the width is a fact about
-	 * this layout, not about a note: it is the slack either side of a pair
-	 * centred as a unit, and the component cannot see how much of that there
-	 * is. Narrower than the aside on purpose — a gloss is subordinate to the
-	 * text and reads as apparatus partly BY being a narrower column.
+	 * this layout, not about a note: it is the apparatus lane, gutter included,
+	 * and the component cannot see it. Narrower than the lane on purpose — a
+	 * gloss is subordinate to the text and reads as apparatus partly BY being
+	 * a narrower column. What that leaves over falls at the
+	 * PAGE-OUTER end of the lane, because the note hangs from the reading
+	 * column's edge: a 13rem gloss in a 21.5rem lane sits beside its text
+	 * rather than out at the edge of the page.
 	 *
 	 * Only ever consumed above `sidenotes.svelte.ts`'s own 100rem query, which
 	 * is where the notes move into the margin at all. Below it they are a
@@ -88,47 +108,91 @@
 	--sidenote-gap: 4rem;
 
 	/*
-	 * HOW MUCH START MARGIN THERE ACTUALLY IS, which is not a constant and was
-	 * being treated as one.
+	 * THE TWO LANES EITHER SIDE OF THE TEXT, each holding its own gutter.
 	 *
-	 * The grid is centred (`justify-content: center`), so the slack either side
-	 * is half of whatever the two tracks and their gutter leave over — and the
-	 * page's own padding cancels out of that arithmetic exactly, which is why
-	 * none of it appears here. What does appear is `--content-width`, and that
-	 * is the whole problem: the reading column GROWS with the reader's size
-	 * setting, so the margin shrinks as the text grows, and a note displaced by
-	 * a fixed 15.5rem walked off the left edge of the viewport at the sizes
-	 * where the reader can least afford it. The 100rem query
-	 * (`sidenotes.svelte.ts`) cannot see any of this: a media query reads the
-	 * root font size, which `--reading-scale` does not touch.
+	 * A LANE AND NOT A TRACK PLUS A `gap`, because `column-gap` is one number
+	 * for every gutter in the grid and the apparatus lane has to be able to
+	 * vanish. With a shared gap a collapsed first track still gets its 4.5rem
+	 * gutter, so the pinch below would cost the reading measure 4.5rem that
+	 * the two-track layout never charged it. Carrying each gutter inside its
+	 * lane makes the collapse total: at zero the grid is precisely the two
+	 * tracks this replaced, to the pixel, which is what makes the degenerate
+	 * case safe rather than merely graceful. The aside pays for its own gutter
+	 * with a `margin-inline-start` below.
+	 */
+	--aside-lane: calc(var(--aside-width) + var(--aside-gap));
+
+	/*
+	 * THE APPARATUS LANE — the grid's first column, and the reason the reading
+	 * column lands on the page's own midline. Equal to `--aside-lane` when the
+	 * page can afford it, which is what makes the two sides symmetric.
 	 *
-	 * The 1rem is a scrollbar allowance. `100vw` includes the scrollbar and the
-	 * centring does not, so the true slack is half a scrollbar narrower than
-	 * this arithmetic thinks — half a rem, on the side the notes are on, at
-	 * exactly the sizes where there is nothing to spare. Systems with overlay
+	 * A CLAMP RATHER THAN A WIDTH, because it has to yield before the text
+	 * does and the grid cannot express that on its own: a fixed track does not
+	 * shrink at all, and a `minmax(0, …)` one would compete with the reading
+	 * column for free space rather than waiting for it — the track-sizing
+	 * algorithm hands free space to such tracks equally, so the text would
+	 * starve at exactly the widths this is meant to give way at. So the
+	 * priority is written here as arithmetic: what the reading column, the
+	 * aside's lane and the page's own `padding-inline: 1.25rem` need,
+	 * subtracted from the viewport, floored at zero and capped at the lane
+	 * opposite.
+	 *
+	 * It reaches zero only near the 1.8 reading scale on a viewport barely
+	 * past the 80rem breakpoint — where the reading column and the aside were
+	 * already the whole of the page. At the default setting it is full from
+	 * 76.2rem of viewport upward, which is everywhere the grid exists.
+	 *
+	 * The 1rem is a scrollbar allowance, and it matters more here than it did
+	 * to the slack it replaced: `100vw` includes the scrollbar and the grid
+	 * container does not, so a lane sized to the whole remainder would overflow
+	 * the page by a scrollbar's width at the pinch. Systems with overlay
 	 * scrollbars pay it for nothing, which is the cheaper of the two mistakes.
 	 */
-	--sidenote-room: calc(
-		(100vw - 1rem - var(--content-width) - var(--aside-width) - var(--aside-gap)) / 2
+	--margin-lane: clamp(
+		0px,
+		calc(100vw - 1rem - 2.5rem - var(--content-width) - var(--aside-lane)),
+		var(--aside-lane)
 	);
+
+	/*
+	 * HOW MUCH START MARGIN THERE ACTUALLY IS — now a reading of the lane
+	 * above rather than a second, independent computation of the same thing.
+	 * The lane IS the margin: nothing else is in it, and its gutter is part of
+	 * it.
+	 *
+	 * IT USED TO BE HALF THE SLACK a centred pair left over, which made it a
+	 * function of the viewport in the one direction that hurt: the reading
+	 * column GROWS with the reader's size setting, so the margin shrank as the
+	 * text grew and a note walked toward the left edge at exactly the sizes
+	 * where the reader could least afford it. Bound to the lane it is a flat
+	 * 21.5rem wherever the lane is full, and the ceiling below no longer binds
+	 * anywhere the notes are shown at all. The 100rem query
+	 * (`sidenotes.svelte.ts`) still cannot see any of this: a media query reads
+	 * the root font size, which `--reading-scale` does not touch.
+	 */
+	--sidenote-room: var(--margin-lane);
 
 	/*
 	 * SO THE WIDTH IS A CEILING, NOT A WIDTH — the same shape `--content-width`
 	 * itself has, and for the same reason: a rail that does not bind until it
 	 * has to.
 	 *
-	 * It binds at a reading scale of about 1.42 on a 100rem viewport, which is
-	 * where the column has grown enough to eat the 13rem the notes want. From
-	 * there the gloss column narrows rather than the page overflowing, down to
-	 * about 7.1rem at the 1.8 maximum — cramped for one of Challoner's
-	 * paragraphs, unremarkable for a citation, and it never binds at all on a
-	 * viewport wide enough to have the room (at 120rem the ceiling holds across
-	 * the whole range `prefs.svelte.ts` offers).
+	 * WITH THE ROOM BOUND TO THE LANE IT NO LONGER BINDS WHERE A READER CAN
+	 * REACH IT. Narrowing the gloss on a 100rem viewport would take a reading
+	 * column of 58rem against a 56rem ceiling, so the lane is full at every
+	 * setting `prefs.svelte.ts` offers from 100rem upward — and below 100rem
+	 * the notes are a disclosure inside the column and neither token is read.
+	 * It binds only where the lane has been squeezed, which is to say where
+	 * the margin is not being used anyway. Under the old slack arithmetic the
+	 * same reader at the 1.8 maximum got 7.1rem of gloss column; they now get
+	 * the full 13rem, because the end side is no longer holding slack the
+	 * notes could have had.
 	 *
 	 * The `0px` floor is a guard rather than a design: a negative length is
 	 * invalid, and an invalid `inline-size` falls back to `auto`, which would
 	 * put a full-measure note in the margin — the one failure this whole
-	 * calculation exists to prevent. It is unreachable above 100rem.
+	 * calculation exists to prevent.
 	 */
 	--sidenote-width: clamp(0px, calc(var(--sidenote-room) - var(--sidenote-gap)), 13rem);
 
@@ -234,20 +298,49 @@
 @media (min-width: 80rem) {
 	.reading-layout {
 		display: grid;
-		grid-template-columns: minmax(0, var(--content-width)) var(--aside-width);
+		grid-template-columns:
+			var(--margin-lane)
+			minmax(0, var(--content-width))
+			var(--aside-lane);
 		justify-content: center;
 		align-items: start;
-		gap: var(--aside-gap);
 		padding-inline: 1.25rem;
 	}
 
-	/* `.content-column` still owns the measure everywhere else it's used; in
-	   here the grid track is doing that job, so its own centring margins and
-	   side padding would only add a second, competing set of gutters. */
+	/*
+	 * BOTH CHILDREN ARE PLACED EXPLICITLY, which auto-placement could do for
+	 * neither once the apparatus lane went in front of them. Eleven of the
+	 * twelve routes using this grid put the reading column first in source
+	 * order; the twelfth (`/preces/{slug}`, whose short prayer TOC is worth
+	 * meeting first on a phone) puts the aside there. So auto-placement would
+	 * have filled the empty margin with the text on eleven of them and with
+	 * the sidebar on the last, silently, since every track is the right shape
+	 * to hold either.
+	 *
+	 * The row is explicit for `/preces` alone. Auto-placement's cursor never
+	 * moves backwards within a row, so an aside placed in column 3 followed by
+	 * a column-2 text would put the text on a second row; naming row 1 twice
+	 * here is what lets that route keep its source order and cost it no CSS of
+	 * its own.
+	 *
+	 * `.content-column` still owns the measure everywhere else it is used; in
+	 * here the grid track is doing that job, so its own centring margins and
+	 * side padding would only add a second, competing set of gutters.
+	 */
 	.reading-layout > .content-column {
+		grid-column: 2;
+		grid-row: 1;
 		max-width: none;
 		margin-inline: 0;
 		padding-inline: 0;
+	}
+
+	/* The gutter, paid from inside the lane — see `--aside-lane`. */
+	.reading-layout > .reading-aside,
+	.reading-layout > .index-aside {
+		grid-column: 3;
+		grid-row: 1;
+		margin-inline-start: var(--aside-gap);
 	}
 
 	/* Sticks alongside the text through a long chapter. `overflow-y: auto`

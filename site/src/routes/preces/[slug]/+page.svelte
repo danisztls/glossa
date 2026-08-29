@@ -675,18 +675,10 @@
 	}
 
 	/* Source order makes the mobile TOC useful; the shared reading-layout's
-	   grid puts it into its requested right sidebar from 80rem upward. */
-	@media (min-width: 80rem) {
-		.prayer-reading-layout > .content-column {
-			grid-column: 1;
-			grid-row: 1;
-		}
-
-		.prayer-reading-layout > .reading-aside {
-			grid-column: 2;
-			grid-row: 1;
-		}
-	}
+	   grid puts it into its requested right sidebar from 80rem upward. This
+	   route used to repeat that placement itself, in the two-track numbering —
+	   `layout.css` now places both children explicitly, row included, and says
+	   that this route is why the row is named. */
 
 	.prayer-mystery-name {
 		font-size: 1.05rem;

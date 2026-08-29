@@ -64,14 +64,15 @@
 		{/if}
 	</div>
 	<!--
-		AND NO SIDEBAR IN THE SECOND TRACK, deliberately. `.reading-layout` is
-		here for its geometry alone: above 80rem it centres the reading column
-		and the aside AS A UNIT (app.css), so a page laid out without it drew
-		its column half an aside-plus-gutter further along, and moving between
-		`/scriptura` and any chapter under it — which IS a `.reading-layout` —
-		slid the whole page sideways under the reader. The grid declares both
-		tracks whether or not anything occupies the second, so the column sits
-		where every other reading route puts it with no element here at all.
+		AND NO SIDEBAR IN THE THIRD TRACK, deliberately. `.reading-layout` is
+		here for its geometry alone: above 80rem it places the reading column
+		in the middle of three (app.css), so a page laid out without it drew
+		its column elsewhere, and moving between `/scriptura` and any chapter
+		under it — which IS a `.reading-layout` — slid the whole page sideways
+		under the reader. The grid declares all three tracks whether or not
+		anything occupies the apparatus track or the aside's, so the column
+		sits where every other reading route puts it with no element here at
+		all.
 
 		The three sibling indexes fill that track because each has a table of
 		contents worth carrying alongside a long scroll. This one has no such

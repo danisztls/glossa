@@ -1469,6 +1469,23 @@ it names is rendered by a shared component — no error, no unused-selector warn
 spacing that quietly changes. Pass a custom property the child reads
 (`--prose-block-gap`), or `:global()` the ancestor alone.
 
+**The reading page is three lanes, and the text sits on the page's midline** (2026-08-29).
+`.reading-layout` centred the reading column and the aside AS A UNIT, so the text ran
+10.75rem — half the aside plus its gutter — left of centre on every reading page, and the
+margin the apparatus is set in was whatever slack that centring happened to leave. One
+side of the column was a declared column and the other was leftovers, which is why the
+text read both as off-centre and as crowded: the aside stood 4.5rem away while 58rem of
+page went unused beyond it on a wide display. The grid now declares an apparatus lane in
+front of the text, the same width as the aside and its gutter, so both sides are 21.5rem
+and the column lands on the midline at every reading size. It is NOT the arrangement
+rejected earlier — centring the text and hanging the aside off the right edge, which reads
+as two unrelated pages — because the aside keeps its gutter and the ensemble is still
+centred as a unit; only the unit became symmetric. Each lane carries its own gutter rather
+than sharing a `column-gap`, because a gap is one number for every gutter in a grid: with
+one, a collapsed apparatus lane would still be charged 4.5rem and the reading measure
+would pay it. Carried inside the lane, the collapse is total, and the layout at its
+narrowest is exactly the two-track one it replaced.
+
 **A note goes in the margin where there is a margin and becomes a disclosure where there
 is not**, and the breakpoint is legible to the markup, not only to the stylesheet: a
 visible margin note is not a disclosure control, and `aria-expanded` on a button whose
@@ -1488,9 +1505,13 @@ reading column grows with the reader's size setting, so the margin shrinks as th
 grows and a fixed displacement walked off the left edge of the viewport at the sizes
 where the reader can least afford it. The 100rem query cannot see that — a media query
 reads the root font size, which `--reading-scale` does not touch — so the width is a
-ceiling CSS clamps against the real slack (`--sidenote-room`). It binds at about 142% on
-a 100rem viewport and narrows the gloss column from there — to about 7rem at the maximum —
-rather than overflowing.
+ceiling CSS clamps against the room there actually is (`--sidenote-room`). It was the
+slack a centred pair left over, which bound at about 142% on a 100rem viewport and
+narrowed the gloss to about 7rem at the maximum; bound to the apparatus lane instead it no
+longer binds anywhere the notes are shown at all — narrowing the gloss on a 100rem
+viewport would take a 58rem reading column against a 56rem ceiling — so the same reader
+at the maximum now gets the full 13rem. It stays a ceiling because the lane can still be
+squeezed, which is to say where the margin is not being used anyway.
 
 **The margin sets a gloss open until it stops being a gloss, and then it sets a preview**
 (2026-08-28). `.margin-note` was calibrated on the apparatus the site had: Challoner's
@@ -1546,10 +1567,10 @@ disclosure was rewritten to stop making, arriving by a different door. It is an 
 now — drawn outside the border box, following the radius, taking no space — which is what
 `.margin-note.highlighted` had already been reasoned into for the same arithmetic.
 
-**Compare mode spends the slack the notes live in, so it takes the margin back.** The
-margin is not a reserved gutter but whatever is left after `.reading-layout` centres its
-tracks — about 6.5rem either side at 100rem with two columns up, against the 17rem a
-note wants at full width. `CompareGrid` claims it while mounted; the reader's compare
+**Compare mode spends the room the notes live in, so it takes the margin back.** The
+margin is a lane sized from what the reading columns leave over, and two of them plus the
+aside leave it very little — about 10rem at 100rem with two columns up, against the 17rem
+a note wants at full width. `CompareGrid` claims it while mounted; the reader's compare
 _preference_ would be the wrong signal, since a work with one edition has it on and still
 reads in one column.
 
