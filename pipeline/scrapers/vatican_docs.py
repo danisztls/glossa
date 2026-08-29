@@ -377,9 +377,15 @@ def make_fetcher(recheck_absent: bool = False) -> Fetcher:
 # round-trip invariant `html_to_text(html) == text_marked` exact: both sides
 # must agree on every tag, and they only see the same tags because one is
 # derived from the other's input.
+#
+# Keeping this set in step with what `narrow_html` keeps is what holds the
+# round-trip invariant `html_to_text(html) == text_marked` exact: both sides
+# must agree on every tag, and they only see the same tags because one is
+# derived from the other's input.
 _INLINE_TEXT_TAGS = frozenset({"i", "em", "b", "strong", "sup"})
 _TEXT_TAG_RE = re.compile(r"<\s*(/?)\s*([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>")
 _EMPTY_ANCHOR_RE = re.compile(r"<\s*a\b[^>]*>\s*<\s*/\s*a\s*>", re.IGNORECASE)
+_COMMENT_RE = re.compile(r"<!--.*?(?:-->|$)", re.DOTALL)
 
 
 def strip_tags(s: str) -> str:
@@ -417,6 +423,16 @@ def strip_tags(s: str) -> str:
     # apart. Only the empty pair qualifies: an anchor that ever held text is
     # untouched.
     s = _EMPTY_ANCHOR_RE.sub("", s)
+    # A COMMENT IS NEVER TEXT, INCLUDING A COMMENT THAT WAS CUT IN HALF.
+    # The tag pass below removes a closed `<!-- … -->` as a side effect of
+    # matching `<`-to-`>`, and for years that was taken to be enough. It is
+    # not: the last footnote of a unit runs to the end of the footnote
+    # region, and vatican.va closes its body with `<!-- /TESTO -->`, so the
+    # region ends between the `<!--` and its `>`. The opener survives every
+    # rule and is stored as the last three characters of the citation --
+    # 87 works, every one of them the final footnote, none of them anything
+    # else. It is not source text and never was.
+    s = _COMMENT_RE.sub(" ", s)
     s = _TEXT_TAG_RE.sub(one, s)
     # Comments, doctypes and anything else angle-bracketed that isn't a tag:
     # unchanged behaviour, and never an emphasis run.

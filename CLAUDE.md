@@ -481,9 +481,17 @@ npm run deploy      # build -> preflight -> wrangler deploy
   alone. HTML was the only place they survived — the minifier already leaves
   zero in 85 JS files and 31 CSS — and the audit half exists because
   `vite.config.ts` names no `minify`, so that is a default rather than a
-  promise. It scans HTML, JS, CSS and XML and **deliberately not JSON**: 87
-  built corpus files carry a bare `<!--` as stored document text, so a JSON scan
-  would one day refuse a build over a source page. A vendor licence banner is
+  promise. It scans HTML, JS, CSS and XML and **deliberately not JSON**, though
+  the evidence first given for that was wrong and is worth knowing about: 87
+  built corpus files carried a bare `<!--` said to be stored document text, and
+  on 2026-08-28 all 87 turned out to be one parser defect — every one the LAST
+  footnote of its unit, where the region runs to the end of the page and
+  vatican.va closes its body with `<!-- /TESTO -->`, so the region ended between
+  the `<!--` and its `>`. A closed comment was already removed as a side effect
+  of matching `<`-to-`>`; a comment cut in half survived every rule. Fixed in
+  `strip_tags`. The scan still skips JSON, because a source page may one day
+  print a comment marker as text and refusing a build over it is the wrong
+  failure — but nothing in the corpus does today. A vendor licence banner is
   the realistic first failure; keep it and record it in the script's `ALLOWED`
   rather than deleting a copyright notice to quiet a build. `robots.txt`,
   `.well-known/security.txt`, the `fonts/OFL-*.txt` licences and `_headers`
