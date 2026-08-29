@@ -72,6 +72,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.ad-caeli-reginam.pt": {
+			"pt": {
+				"text": "Encíclica de Pio XII sobre a realeza de Nossa Senhora: percorre os testemunhos da tradição patrística, da liturgia e da arte, e os argumentos teológicos — a maternidade divina, a cooperação na redenção — que fundamentam o título de rainha. Institui a festa de Maria Rainha, a celebrar-se em 31 de maio com a renovação da consagração da humanidade ao seu coração imaculado, como penhor de paz.",
+				"origin": "read"
+			}
+		},
 		"encyclical.ad-catholici-sacerdotii.en": {
 			"en": {
 				"text": "Pius XI's 1935 encyclical to the bishops on the Catholic priesthood, written for the fifty-sixth anniversary of his own ordination. It expounds the priest's dignity and sacramental powers — above all to forgive sins and confect the Eucharist — then treats the piety, chastity, poverty and learning proper formation must instill, and how a true vocation, usually rooted in a Christian family, is discerned and nurtured in the seminary.",
@@ -105,6 +111,12 @@
 		"encyclical.ad-salutem-humani.it": {
 			"it": {
 				"text": "Lettera enciclica di Pio XI per il XV centenario della morte di sant'Agostino d'Ippona. Ripercorre la sua conversione, la dottrina della grazia contro manichei, donatisti e pelagiani, l'immagine delle due città tratta da «Della città di Dio», e l'opera di fondatore di vita religiosa, esortando i fedeli a venerarne le reliquie a Pavia e a pregare in vista del Congresso Eucaristico di Cartagine.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ad-sinarum-gentem.en": {
+			"en": {
+				"text": "Pius XII's 1954 encyclical to the bishops, clergy and faithful of China, written after the Apostolic Nuncio's expulsion and growing pressure on Chinese Catholics to make their Church independent of Rome in government, finances and doctrine. It insists that such independence is incompatible with the Church's divine constitution and its subjection to the Supreme Pontiff, defends the place of foreign missionaries, and urges perseverance under persecution.",
 				"origin": "read"
 			}
 		},
@@ -144,6 +156,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.anni-sacri.en": {
+			"en": {
+				"text": "Pius XII's Holy Year 1950 encyclical summoning a worldwide crusade of prayer against atheistic propaganda. It surveys an unsettled peace despite war's end, persecuted clergy, and a press that mocks religion and spreads vice, and calls on priests and Catholic Action to counter these evils, inviting the faithful to join him in prayer on Passion Sunday for a social order rebuilt on truth, justice, and charity.",
+				"origin": "read"
+			}
+		},
 		"encyclical.anni-sacri.pt": {
 			"pt": {
 				"text": "Carta encíclica de Pio XII, escrita durante o Ano Santo de 1950, que convoca os fiéis a uma cruzada de orações pela renovação cristã dos costumes e pela concórdia entre os povos. Diante do ateísmo, das perseguições à Igreja e do risco de novos conflitos, o Papa pede orações públicas para o dia 26 de março, domingo da Paixão, unidas às suas na basílica de São Pedro.",
@@ -162,6 +180,18 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.apostolico-seggio.en": {
+			"en": {
+				"text": "Leo XIII's encyclical to the bishops, clergy and people of Italy on Freemasonry's campaign against the Catholic religion there, tracing the sect's course from the overthrow of the Papal States to open irreligion, warning that abandoning the Christian faith exposes Italy to socialism and social ruin, and calling for renewed pastoral vigilance, popular resistance, and prayer to Mary and the Apostles Peter and Paul.",
+				"origin": "read"
+			}
+		},
+		"encyclical.apostolico-seggio.pt": {
+			"pt": {
+				"text": "Carta encíclica de Leão XIII aos bispos, ao clero e ao povo da Itália sobre a ação da Maçonaria contra a Igreja Católica no país — a supressão das ordens religiosas, a confiscação dos bens eclesiásticos, a laicização da família e do ensino — e um apelo à fidelidade religiosa e à oração como caminho para o verdadeiro bem-estar da Itália.",
+				"origin": "read"
+			}
+		},
 		"encyclical.arcanum.en": {
 			"en": {
 				"text": "Leo XIII's encyclical on Christian marriage: Christ raised it to a sacrament and restored the unity and indissolubility it had lost, so the Church holds authority over the marriages of the baptized. It argues against treating marriage as a merely civil contract subject to the state, sets out the evils that follow from divorce, and closes commending to the bishops those living outside a lawful bond.",
@@ -177,6 +207,12 @@
 		"encyclical.augustissimae-virginis-mariae.en": {
 			"en": {
 				"text": "Leo XIII's encyclical on the Confraternity of the Holy Rosary, written in his eighty-eighth year and framed as a dying father's repetition of Christ's “Behold, thy Mother.” It argues that the age's appetite for association is good in itself, that Catholics should meet it with sodalities rather than abandon it, and that the Rosary Society is the first of them — defending prayer to the saints as intercession rather than as a rival to prayer to God.",
+				"origin": "read"
+			}
+		},
+		"encyclical.augustissimae-virginis-mariae.pt": {
+			"pt": {
+				"text": "Carta encíclica de Leão XIII, de 1897, sobre o Rosário de Nossa Senhora, publicada por ocasião do mês de outubro. Recorda o lugar de Maria na Encarnação e na Redenção, recomenda a Confraria do Rosário e defende a eficácia da sua recitação em comum, a licitude da oração aos santos e a imitação dos anjos, e saúda a recente iniciativa do «Rosário perpétuo».",
 				"origin": "read"
 			}
 		},
@@ -264,6 +300,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.christi-nomen.en": {
+			"en": {
+				"text": "Leo XIII's appeal to the world's bishops for renewed support of the Society for the Propagation of the Faith and the Society for the Schools of the East, arguing that reuniting the Eastern Churches with Rome — the goal of his recent letter Praeclara — requires trained clergy, schools, and Catholic literature suited to their own traditions, all of which mission funding must sustain.",
+				"origin": "read"
+			}
+		},
 		"encyclical.communium-interpretes-dolorum.en": {
 			"en": {
 				"text": "An appeal for the month of May 1945, three weeks before the war in Europe ended: Pius XII asks the faithful, and children in particular, to pray to Mary for peace and for the renewal of Christian morals on which peace rests, and to pray for refugees, prisoners and the wounded — so that what follows the devastation may be a just peace and not one carrying the seed of future wars.",
@@ -282,15 +324,39 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.constanti-hungarorum.en": {
+			"en": {
+				"text": "Leo XIII writes to the bishops of Hungary amid recent state laws he judges hostile to the Church's rights and the Catholic faith. He urges fidelity to papal teaching, warns against the dangers of mixed marriages, and calls for annual meetings of Catholic laymen, a vigilant Catholic press, strong Catholic schools, and the revival of clergy and lay confraternities to safeguard religion.",
+				"origin": "read"
+			}
+		},
 		"encyclical.cum-multa.en": {
 			"en": {
 				"text": "Leo XIII to the bishops of Spain, where rival Catholic political factions had fractured the unity the country once showed the Church. He calls for full obedience to bishops, draws a line between religion and politics without divorcing the two, directs the clergy to stay clear of party strife, and places Catholic associations and the Catholic press under their bishops' direction as the way back to that lost concord.",
 				"origin": "read"
 			}
 		},
+		"encyclical.custodi-di-quella-fede.en": {
+			"en": {
+				"text": "Leo XIII's encyclical addressed to the Italian people, following up his 1884 Humanum genus, on Freemasonry's inroads into Italy since unification: its substitution of naturalism for the faith, its capture of schools and civic life, and its corruption of workers' and mutual-aid societies. He orders Catholics to leave masonic and affiliated societies, resist through their own press, schools and associations, and pray for the Church's deliverance.",
+				"origin": "read"
+			}
+		},
+		"encyclical.datis-nuperrime.en": {
+			"en": {
+				"text": "Pius XII's brief encyclical of 5 November 1956 lamenting the renewed Soviet crackdown in Hungary, days after his prior appeal for peace. He condemns the bloodshed and the violent overthrow of newly restored institutions, invokes Cain's cry of his brother's blood from Genesis 4:10 over the Hungarian dead, and calls all peoples to a justice-based peace while praying for those slain.",
+				"origin": "read"
+			}
+		},
 		"encyclical.deiparae-virginis-mariae.en": {
 			"en": {
 				"text": "Pius XII's letter to the bishops of the world, prompted by decades of petitions asking that the Blessed Virgin Mary's bodily Assumption into heaven be defined as a dogma of faith. Rather than defining it himself, the pope asks each bishop to report on the devotion of his clergy and people to the Assumption, and whether he judges the doctrine fit for solemn definition.",
+				"origin": "read"
+			}
+		},
+		"encyclical.deiparae-virginis-mariae.pt": {
+			"pt": {
+				"text": "Carta de Pio XII aos bispos, pedindo-lhes parecer sobre a oportunidade de definir como dogma de fé a assunção corporal da Bem-Aventurada Virgem Maria aos céus. Invoca as numerosas súplicas recebidas pela Sé Apostólica desde 1849 e o voto de quase duzentos padres do Concílio Vaticano, e pergunta a cada bispo que devoção o seu clero e povo tributam a esse mistério e se desejam vê-lo definido.",
 				"origin": "read"
 			}
 		},
@@ -309,6 +375,12 @@
 		"encyclical.deus-caritas-est.pt": {
 			"pt": {
 				"text": "Trata do amor cristão a partir de « Deus é amor » (1 Jo 4, 16): a primeira parte busca a unidade entre eros e agape na criação e na história da salvação, culminando no amor a Deus e ao próximo revelados em Jesus Cristo; a segunda volta-se para a caritas como prática da Igreja enquanto « comunidade de amor », discutindo justiça, caridade e seus responsáveis.",
+				"origin": "read"
+			}
+		},
+		"encyclical.dilectissima-nobis.en": {
+			"en": {
+				"text": "Pius XI's 1933 letter to the Spanish hierarchy denouncing the new Republic's laws on religious confessions and congregations — the dissolution of the Society of Jesus, the seizure of church property, and the laicizing of education — and urging clergy and faithful to prayer and to unity in Catholic Action.",
 				"origin": "read"
 			}
 		},
@@ -354,6 +426,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.divini-illius-magistri.en": {
+			"en": {
+				"text": "Pius XI's encyclical on the Christian education of youth. It sets out who holds the right and duty to educate — the Church by a supernatural title, the family by nature, and the State subordinately, for the common good — condemns pedagogical naturalism and mixed sex-education, and treats the family, the Church and a genuinely Christian school as the proper environment for education, with Christ as its teacher and model.",
+				"origin": "read"
+			}
+		},
 		"encyclical.divini-illius-magistri.pt": {
 			"pt": {
 				"text": "Carta encíclica de Pio XI sobre a educação cristã da juventude: a quem compete a missão de educar — Igreja, família e Estado, em harmonia —, o sujeito da educação, o homem decaído mas remido, contra o naturalismo pedagógico, a educação sexual e a co-educação, o ambiente que a envolve, e o fim e a forma da educação cristã, tendo Jesus Cristo por Mestre e Modelo.",
@@ -390,6 +468,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.doctor-mellifluus.en": {
+			"en": {
+				"text": "Pius XII's encyclical marking the eighth centenary of the death of St. Bernard of Clairvaux, 'the last of the Fathers.' It surveys his teaching drawn from Scripture and the Fathers, his eloquent style, his union of contemplative prayer with vigorous action defending papal authority and combating heresy, and his devotion to Christ and the Virgin Mary, commending him as a model of charity for the Church.",
+				"origin": "read"
+			}
+		},
 		"encyclical.doctor-mellifluus.pt": {
 			"pt": {
 				"text": "Carta encíclica de Pio XII pelo VIII centenário da morte de São Bernardo de Claraval, louvando o \"doutor melífluo\": sua doutrina extraída da Escritura e dos Padres, seu estilo suave e ardente, sua vida contemplativa unida à ação enérgica na defesa da autoridade pontifícia e da fé, seu amor a Cristo e devoção filial à Mãe de Deus — convidando todos a imitar suas virtudes.",
@@ -405,6 +489,12 @@
 		"encyclical.dominum-et-vivificantem.pt": {
 			"pt": {
 				"text": "Carta encíclica de João Paulo II sobre o Espírito Santo, que dá continuidade às precedentes Redemptor Hominis e Dives in Misericordia. Em três partes, trata do Espírito dado pelo Pai e pelo Filho à Igreja, do Espírito que convence o mundo do pecado — incluindo o pecado contra o próprio Espírito Santo — e do Espírito que dá a vida, à luz do Jubileu do ano 2000.",
+				"origin": "read"
+			}
+		},
+		"encyclical.dum-multa.en": {
+			"en": {
+				"text": "Leo XIII's brief encyclical to the Archbishop of Quito and the bishops of Ecuador, condemning that country's new civil marriage and divorce laws. It restates the Church's teaching that Christian marriage, raised by Christ to a sacrament, is indissoluble and falls under ecclesiastical rather than civil authority, and urges the bishops to persevere in defending the Church's rights despite the legislation already enacted.",
 				"origin": "read"
 			}
 		},
@@ -462,6 +552,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.etsi-cunctas.en": {
+			"en": {
+				"text": "Leo XIII's short letter to the bishops of Ireland, praising the Irish Catholics' steadfast endurance under hardship, defending his recent counsel and decree to them as meant in truth and justice rather than interference, and announcing gifts of vestments and sacred vessels sent to Ireland's cathedral churches.",
+				"origin": "read"
+			}
+		},
 		"encyclical.etsi-nos.en": {
 			"en": {
 				"text": "Leo XIII's encyclical to the bishops of Italy, confronting a “pernicious sect” exploiting the country's altered political condition to strip away its Christian institutions. Recalling Italy's historic debts to the papacy, it charges the bishops to rouse Catholic courage through associations, a sound press against hostile journalism, and rigorously formed seminaries, closing with an appeal to Mary and the saints.",
@@ -474,6 +570,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.evangelii-praecones.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII sobre o fomento das missões, no 25º aniversário da Rerum Ecclesiae de Pio XI. Revê os progressos e perseguições da causa missionária e traça normas para o missionário: erguer entre os povos evangelizados uma Igreja com hierarquia e clero nativos, apoiada por Ação Católica, escolas, imprensa e assistência sanitária e social.",
+				"origin": "read"
+			}
+		},
 		"encyclical.evangelium-vitae.en": {
 			"en": {
 				"text": "John Paul II on the value and inviolability of human life, setting the “Gospel of life” against what he calls a “culture of death”. Reading Genesis 4 as an image of violence against life, he surveys the threats from abortion to euthanasia, affirms “you shall not kill” as sacred and inviolable law, and calls for a new culture of life, closing with an appeal to Mary.",
@@ -483,6 +585,12 @@
 		"encyclical.evangelium-vitae.pt": {
 			"pt": {
 				"text": "Sobre o valor da vida humana e a sua inviolabilidade, diante das novas ameaças do aborto e da eutanásia: parte do grito do sangue de Abel e do eclipse do sentido da vida, percorre o mandamento «não matarás» perante a lei civil e a lei moral, e chama a uma nova cultura da vida, terminando com uma prece a Maria, Mãe dos viventes.",
+				"origin": "read"
+			}
+		},
+		"encyclical.exeunte-iam-anno.en": {
+			"en": {
+				"text": "Leo XIII's encyclical marking the close of the year in which he celebrated his golden priestly jubilee. Taking the widespread demonstrations of devotion as an occasion, he diagnoses an age corrupted by rationalism, materialism and the socialism and atheism they breed, and calls the faithful — the clergy above all, by example — back to self-denial, prayer and the imitation of Christ.",
 				"origin": "read"
 			}
 		},
@@ -534,6 +642,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.firmissimam-constantiam.en": {
+			"en": {
+				"text": "Pius XI's 1937 letter to the bishops of Mexico amid the persecution of the Church there, praising the clergy's and faithful's constancy under trial and urging two remedies: the holiness of priests and the disciplined formation of the laity through Catholic Action. It sets principles for the legitimate defense of religious liberty and closes commending Mexico to Our Lady of Guadalupe.",
+				"origin": "read"
+			}
+		},
 		"encyclical.fratelli-tutti.en": {
 			"en": {
 				"text": "On fraternity and social friendship, opening from St Francis of Assisi's love that crossed every border. It surveys a closed and throwaway world of nationalism and fear, reads the Good Samaritan as the call to an open society built on solidarity and the rights of peoples, and argues for a political charity against populism, for dialogue and forgiveness after conflict, against war and the death penalty, and for fraternity between religions.",
@@ -543,6 +657,18 @@
 		"encyclical.fratelli-tutti.pt": {
 			"pt": {
 				"text": "Carta encíclica de Francisco sobre a fraternidade e a amizade social, inspirada no apelo de São Francisco de Assis, de quem toma o título. Parte da parábola do bom samaritano para denunciar as sombras dum mundo fechado e propor a política melhor, o diálogo e a amizade social, e o papel das religiões ao serviço da fraternidade no mundo.",
+				"origin": "read"
+			}
+		},
+		"encyclical.fulgens-corona.en": {
+			"en": {
+				"text": "Pius XII's encyclical proclaiming a Marian Year to mark the centenary of Pius IX's 1854 definition of the Immaculate Conception. It recounts the dogma's proclamation, the Lourdes apparitions that seemed to confirm it, and its bond with the newly defined dogma of the Assumption, and calls the Church to a year of prayer for its own freedom and for peace among nations.",
+				"origin": "read"
+			}
+		},
+		"encyclical.fulgens-corona.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII que, no centenário da definição dogmática da Imaculada Conceição, expõe os fundamentos bíblicos e patrísticos dessa doutrina e proclama um Ano Mariano. Convoca os fiéis a peregrinações, orações e penitência por intenções como a juventude, a paz entre os povos e a união dos cristãos separados, sob a proteção da Virgem Maria.",
 				"origin": "read"
 			}
 		},
@@ -573,6 +699,18 @@
 		"encyclical.grata-recordatio.pt": {
 			"pt": {
 				"text": "Primeira encíclica de João XXIII (26 de setembro de 1959), exortando os fiéis à reza do Rosário durante outubro, na linha do apelo de Leão XIII e de Pio XII à mesma devoção mariana. Pede orações pelas missões — recordando o envio de jovens missionários e o centenário do Colégio Americano do Norte — e pela paz, associando a intenção do próximo Sínodo de Roma e do Concílio Ecumênico.",
+				"origin": "read"
+			}
+		},
+		"encyclical.graves-de-communi-re.en": {
+			"en": {
+				"text": "Leo XIII settles the name \"Christian Democracy\" for Catholic charitable action among the working classes, distinguishing it sharply from Social Democracy: it rests on faith, upholds private property and the distinctions of rank, and carries no political meaning or preference for one form of government over another. He urges bishops and Catholics to unite in this work, avoid partisan disputes, and combine material relief with religious and moral formation of the poor.",
+				"origin": "read"
+			}
+		},
+		"encyclical.gravissimas.en": {
+			"en": {
+				"text": "A letter to the Patriarch of Lisbon and the bishops of Portugal, commending their joint protest against the Portuguese government's decrees against religious orders. Leo XIII defends the right of religious institutes to exist and of the faithful to embrace that state of life, insists any conformity to civil law leave vows and novitiate intact, and calls on the bishops to unite Catholic forces in defending the Church's rights.",
 				"origin": "read"
 			}
 		},
@@ -615,6 +753,12 @@
 		"encyclical.humani-generis.en": {
 			"en": {
 				"text": "Pius XII's encyclical against the “new theology” and related errors he judges corrosive of Catholic doctrine, including dogmatic relativism and philosophical novelty threatening scholastic theology. It permits scholarly inquiry into the bodily evolution of man from pre-existing matter, while ruling polygenism incompatible with original sin, and defends the historical substance of Genesis's opening chapters against overly free reinterpretation.",
+				"origin": "read"
+			}
+		},
+		"encyclical.humani-generis.pt": {
+			"pt": {
+				"text": "Encíclica de Pio XII contra opiniões falsas que ameaçam a doutrina católica: evolucionismo panteísta, historicismo relativista e o desprezo pela teologia, pelo magistério, pela Escritura e pela filosofia escolástica entre alguns católicos. Admite discutir a origem do corpo humano a partir de matéria preexistente, mas rejeita o poligenismo, incompatível com o pecado original transmitido por geração a partir de um único Adão.",
 				"origin": "read"
 			}
 		},
