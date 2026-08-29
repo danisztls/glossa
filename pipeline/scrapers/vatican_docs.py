@@ -3809,7 +3809,10 @@ _PAPAL_SIGNATURE_RE = re.compile(
     r"(?:\s+PP\.?)?"
     r"(?:\s+[IVXLC]+)?"
     r"(?:\s+PP\.?)?"
-    r"(?:\s+PAPA)?\.?$"
+    # `PAPA` may be set off by a comma, and the English mirrors write `POPE`:
+    # `LEAO XIII, PAPA` and `PIUS XII POPE` both stood as childless top-level
+    # headings until this said so.
+    r"(?:\s*,?\s+(?:PAPA|POPE))?\.?$"
 )
 
 
