@@ -438,7 +438,7 @@
 			<ul class="book-grid" class:sidebar={variant === 'sidebar'}>
 				{#each group.books as book (book.osis)}
 					{@const isOpen = openOsis === book.osis}
-					<li class="book-item">
+					<li class="book-item" class:open={isOpen}>
 						<button
 							type="button"
 							id={`book-btn-${variant}-${book.osis}`}
@@ -598,16 +598,69 @@
 	   rather than a fixed column count: the aside is 17rem at most widths but
 	   wider layouts exist, and the right number of columns is whatever
 	   fits. */
+	/*
+	 * FOUR COLUMNS, AND THE COUNT IS PINNED RATHER THAN FITTED.
+	 *
+	 * It was `auto-fill` with a 4.5rem floor, which resolved to three in this
+	 * 17rem column — 25 rows for the 73 books. Four is 19 rows, and it is what
+	 * the names can stand: a cell is about 74px, of which 61 is text, or eight
+	 * to nine characters of the 0.8rem sans. "Gênesis", "Números", "Salmos"
+	 * and most of the New Testament set whole; "Deuteronômio" and "Cântico dos
+	 * Cânticos" truncate, which is what the open chip below exists to answer.
+	 *
+	 * PINNED because `:nth-child(4n)` below has to name the last column, and a
+	 * fitted count would make that rule right at one width and wrong at every
+	 * other. The two 4s are one number written twice and have to move
+	 * together. `minmax(0, 1fr)` rather than a floor: with the count fixed,
+	 * the floor's only remaining job would be to force an overflow.
+	 */
 	.book-grid.sidebar {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+		grid-template-columns: repeat(4, minmax(0, 1fr));
 		/* Tighter than the wrapped grid's 0.4rem, and tighter again since
 		   2026-08-29 — see `.book-btn.sidebar`, which is where the whole
-		   arithmetic of making 73 books fit a screen is written down. The
-		   4.5rem floor is what holds this at three columns: dropping it to
-		   4rem would fit four and save six rows, at the price of truncating
-		   "Deuteronômio" to about five characters. */
+		   arithmetic of making 73 books fit a screen is written down. */
 		gap: 0.2rem;
+	}
+
+	/*
+	 * THE OPEN BOOK SHOWS ITS WHOLE NAME, by growing out of its cell.
+	 *
+	 * Truncation is the price of four columns and is fine while a reader is
+	 * scanning — but the chip they have just opened is the one they may need
+	 * to read, and "Cântico do…" over an open chapter panel says less than the
+	 * panel below it does. So the open cell alone is sized to its content.
+	 *
+	 * IT GROWS OVER ITS NEIGHBOURS AND NOT PAST THEM: `inline-size:
+	 * max-content` with a `100%` floor keeps a short name exactly where it
+	 * was, and `--aside-width` caps the long ones at the column they live in,
+	 * so nothing can reach the edge of an aside that is its own scroll
+	 * container and turn into a horizontal scrollbar. The chip is opaque
+	 * (`.book-btn.open` is the accent fill), and `z-index` is what puts it
+	 * over the neighbour it covers — without it a chip in column 1 would paint
+	 * UNDER column 2, which comes later in the DOM.
+	 *
+	 * NOTHING MOVES, which is the same promise the chapter panel keeps by
+	 * being out of flow: `justify-self` and a width change re-place one grid
+	 * item inside its own cell and leave every track where it was, so the
+	 * book a reader was aiming at does not shift under the cursor.
+	 *
+	 * The last column grows the other way for the obvious reason — there is
+	 * nothing to its end but the edge — and `justify-self: end` is the whole
+	 * mechanism: the cell's end edge is what the box is aligned to, so the
+	 * extra width appears at the start.
+	 */
+	.book-grid.sidebar > .book-item.open {
+		justify-self: start;
+		inline-size: max-content;
+		min-inline-size: 100%;
+		max-inline-size: var(--aside-width, 17rem);
+		/* `.book-item` is already `position: relative` — see below. */
+		z-index: 1;
+	}
+
+	.book-grid.sidebar > .book-item.open:nth-child(4n) {
+		justify-self: end;
 	}
 
 	/* Positioning context for the `absolute` `.chapters` panel in the `'grid'`
@@ -701,7 +754,7 @@
 	.book-btn.sidebar {
 		width: 100%;
 		justify-content: center;
-		padding: 0.15rem 0.3rem;
+		padding: 0.15rem 0.25rem;
 		font-size: 0.8rem;
 		line-height: 1.55;
 		min-height: 1.6rem;

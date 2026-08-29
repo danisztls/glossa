@@ -1674,6 +1674,20 @@ rather than a `min-height` floor's, which is also what stops `display: block` fr
 the label high in its own box. Removing the scrollbar gives the chips back the ~15px it
 occupied, which is a character and a half of every truncated name.
 
+**And the chips narrowed to four columns, with the open one growing out of its cell.**
+Three columns was `auto-fill`'s answer to a 4.5rem floor; four is 19 rows for the 73 books
+against 25, at about 74px a cell — 62 of them text, or nine characters of this sans. Most
+of the canon still sets whole and "Cântico dos Cânticos" does not, which is fine while a
+reader is scanning and not fine for the book they have just opened, so the open cell alone
+is sized to its content: `max-content` with a `100%` floor, capped at `--aside-width` so a
+long name cannot reach the edge of a scroll container and turn into a horizontal
+scrollbar, and `z-index` to paint over the neighbour it covers rather than under it.
+Nothing moves — re-aligning one grid item inside its own cell leaves every track where it
+was, which is the promise the out-of-flow chapter panel already makes. The column count is
+pinned rather than fitted BECAUSE of that growth: `:nth-child(4n)` has to name the last
+column, which grows the other way, and a fitted count would make that rule right at one
+width and wrong at every other.
+
 **An argument that is only the chapter's own rubrics is not printed** (2026-08-29). Five
 of the six annotated editions write a chapter argument as prose about the chapter —
 Challoner's 1,307, and none of them matching anything else on the page. Matos Soares
