@@ -1816,7 +1816,7 @@ they agree. This is their record.**
    and (
      cf.client.bot
      or http.request.method ne "POST"
-     or any(http.request.headers["sec-fetch-site"][*] ne "same-origin")
+     or not any(http.request.headers["origin"][*] eq "https://glossacatholica.org")
    )
    ```
 
@@ -1824,6 +1824,27 @@ they agree. This is their record.**
    would miss `/a?x=1`. `eq`, not `wildcard` — with no `*` the two are the same match,
    and on a path this short a later "fix" to `r"/a*"` would swallow every route
    beginning with `a`.
+
+   **The third clause tested `sec-fetch-site` with `any(… ne "same-origin")` until
+   2026-08-29, and it never fired.** A header that is absent is an EMPTY ARRAY,
+   `any()` over an empty array is false, and so a request carrying no
+   fetch-metadata at all read as "not non-same-origin" and was allowed: `curl -X POST`
+   with no headers reached the worker, which is how it was found. The shape to write is
+   `not any(… eq …)`, never `any(… ne …)` — the first treats absence as failure, the
+   second as consent, and every header test on an open endpoint wants the first.
+
+   **And the field had to change with it**, because failing closed is only safe on a
+   header every genuine sender actually sets. `Origin` is attached by the Fetch spec to
+   every request whose method is not `GET` or `HEAD`, so every `sendBeacon` POST carries
+   it in any browser that has `sendBeacon` at all; `Sec-Fetch-Site` arrived in Safari
+   only at 16.4, so tightening THAT clause would have silently stopped counting readers
+   on iPhones that cannot pass iOS 16.3 — an undercount biased toward older devices,
+   invisible in the report, and indistinguishable from those readers not existing.
+
+   Verified by hand after the change, which is the only check there is: no `Origin` and
+   a foreign `Origin` both answer 403, the site's own `Origin` answers 204, and a real
+   browser session still lands a row. A rule that blocked forgeries and readers alike
+   would look identical from outside.
 
 2. **The zone's single rate limiting rule already covers `/a`**, because it excludes
    three static prefixes and verified bots, and `/a` is none of them:
