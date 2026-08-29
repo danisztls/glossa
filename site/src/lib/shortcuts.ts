@@ -75,19 +75,33 @@ export interface ShortcutContext {
 const INLINE_START = ['KeyA', 'KeyH', 'ArrowLeft'];
 /** Keys on the visual RIGHT. */
 const INLINE_END = ['KeyD', 'KeyL', 'ArrowRight'];
-/** Keys pointing UP the page. `ArrowUp` is absent on purpose: see below. */
-const BLOCK_START = ['KeyW', 'KeyK'];
-/** Keys pointing DOWN the page. `ArrowDown` is absent for the same reason. */
-const BLOCK_END = ['KeyS', 'KeyJ'];
+/** Keys pointing UP the page. */
+const BLOCK_START = ['KeyW', 'KeyK', 'ArrowUp'];
+/** Keys pointing DOWN the page. */
+const BLOCK_END = ['KeyS', 'KeyJ', 'ArrowDown'];
 
 /**
  * Which action a keystroke asks for, or `null` for "not ours, leave it".
  *
- * THE VERTICAL AXIS HAS NO ARROW SYNONYM, and that asymmetry is the point
- * rather than an omission: `ArrowUp`/`ArrowDown` are how every reader scrolls,
- * and a reading site that takes them has broken the most-used key on the page
- * to save one keystroke on the least-used. The horizontal arrows are free
- * because a page that does not scroll sideways has no use for them.
+ * BOTH AXES TAKE THEIR ARROWS, and the vertical pair is the one with a cost:
+ * `ArrowUp`/`ArrowDown` are also how a reader scrolls, so on a page carrying
+ * reference numbers they now step the cursor instead of nudging the viewport.
+ * Three things keep that from being a loss of control, and all three have to
+ * stay true if this is edited:
+ *
+ *   - `Space`, `PageUp`/`PageDown`, `Home`/`End` are untouched and still
+ *     scroll — see the last test in `shortcuts.test.ts`, which pins that.
+ *   - A step that finds nothing returns `null` here or from
+ *     `neighbourIndex`, `Shortcuts.svelte` then does not `preventDefault`,
+ *     and the arrow scrolls exactly as it used to. So the keys go back to
+ *     scrolling past the last number and before the first, and on every page
+ *     with no numbers at all (the home page, the section indexes, the
+ *     colophon).
+ *   - Focusing a number scrolls it into view, so the viewport still follows
+ *     the reader down the page; what changes is the size of the step.
+ *
+ * The horizontal arrows carry none of that, because a page that does not
+ * scroll sideways had no use for them.
  */
 export function resolveShortcut(e: KeyStroke, ctx: ShortcutContext): ShortcutAction | null {
 	// Mid-composition keystrokes belong to the IME, which has not decided what

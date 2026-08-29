@@ -429,7 +429,6 @@
 >
 	<Icon name="search" />
 	<span class="trigger-text" aria-hidden="true">{t('jumpbox.short')}</span>
-	<kbd aria-hidden="true">/</kbd>
 </button>
 
 <!--
@@ -562,22 +561,17 @@
 		font-size: 0.9rem;
 	}
 
-	.trigger kbd {
-		font-family: var(--font-sans);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-		padding: 0 0.35rem;
-		font-size: 0.75rem;
-	}
-
 	/* The label is short enough now to survive most widths, but on a phone the
 	   header still has five controls competing for one row — collapse to the
 	   icon alone there, which conveys "search" on its own and keeps the same
-	   activation target. The `/` hint goes too: there is no physical keyboard
-	   to press it on. */
+	   activation target.
+
+	   THIS USED TO HIDE A `/` HINT HERE TOO. The hint is gone from every width
+	   now, and `Shortcuts.svelte`'s trigger says why: a row can afford to name
+	   one key, and the key worth naming is the one whose control is otherwise
+	   invisible. `/` still opens this box. */
 	@media (max-width: 640px) {
-		.trigger-text,
-		.trigger kbd {
+		.trigger-text {
 			display: none;
 		}
 

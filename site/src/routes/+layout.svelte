@@ -22,10 +22,13 @@
 	import { version } from '$app/environment';
 	import UpdateBanner from '$lib/components/UpdateBanner.svelte';
 	import ToTopButton from '$lib/components/ToTopButton.svelte';
-	// Mounted once, globally, for the same reason `LinkPreview` is: it is a
-	// single window-level listener over whatever page is rendered, and every
-	// address it acts on is already in that page's markup (`rel="prev"`,
-	// `.reference-number`). No route registers anything.
+	// Renders its own trigger AND its sheet AND the one window-level keydown
+	// listener behind both, exactly as `JumpBox` does — which is why it sits in
+	// the control row rather than with the overlays below: a modal dialog is in
+	// the top layer, so where it is written decides nothing but where the
+	// BUTTON lands. Every address it acts on is already in the rendered page's
+	// markup (`rel="prev"`, `.reference-number`), so no route registers
+	// anything.
 	import Shortcuts from '$lib/components/Shortcuts.svelte';
 
 	let { children } = $props();
@@ -294,6 +297,7 @@
 				</a>
 				<LanguageMenu />
 				<AppearanceMenu />
+				<Shortcuts />
 				<!-- Renders nothing unless the browser has actually offered an
 				     install, so on most visits the row is unchanged. -->
 				<InstallButton />
@@ -393,7 +397,6 @@
 </div>
 
 <LinkPreview />
-<Shortcuts />
 <InstallHint />
 <UpdateBanner />
 <!-- Outside `.app-shell` with the other viewport-fixed overlays: it belongs to

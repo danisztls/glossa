@@ -48,10 +48,10 @@ describe('resolveShortcut', () => {
 	});
 
 	it('reads the vertical axis as movement within one document', () => {
-		for (const code of ['KeyW', 'KeyK']) {
+		for (const code of ['KeyW', 'KeyK', 'ArrowUp']) {
 			expect(resolveShortcut(stroke({ code }), ctx())).toBe('previousReference');
 		}
-		for (const code of ['KeyS', 'KeyJ']) {
+		for (const code of ['KeyS', 'KeyJ', 'ArrowDown']) {
 			expect(resolveShortcut(stroke({ code }), ctx())).toBe('nextReference');
 		}
 	});
@@ -96,9 +96,13 @@ describe('resolveShortcut', () => {
 		expect(resolveShortcut(stroke({ code: 'ArrowLeft', altKey: true }), ctx())).toBeNull();
 	});
 
-	it('leaves the vertical arrows alone, which are how the page scrolls', () => {
-		expect(resolveShortcut(stroke({ code: 'ArrowUp' }), ctx())).toBeNull();
-		expect(resolveShortcut(stroke({ code: 'ArrowDown' }), ctx())).toBeNull();
+	it('leaves the reader every other way of scrolling', () => {
+		// The vertical arrows now step the cursor, so these are what is left to
+		// move the viewport with — and taking any of them would leave a reader
+		// on a page of numbers with no way to scroll at all.
+		for (const code of ['Space', 'PageUp', 'PageDown', 'Home', 'End']) {
+			expect(resolveShortcut(stroke({ code }), ctx()), code).toBeNull();
+		}
 	});
 
 	it('stands aside while the reader is typing or an overlay is up', () => {
@@ -113,8 +117,8 @@ describe('resolveShortcut', () => {
 		expect(resolveShortcut(stroke({ code: 'KeyS', isComposing: true }), ctx())).toBeNull();
 	});
 
-	it('claims nothing else', () => {
-		for (const code of ['KeyB', 'KeyC', 'KeyT', 'Space', 'PageDown', 'Home', 'End']) {
+	it('claims no letter outside the two clusters', () => {
+		for (const code of ['KeyB', 'KeyC', 'KeyT', 'KeyG', 'KeyN', 'KeyP']) {
 			expect(resolveShortcut(stroke({ code }), ctx()), code).toBeNull();
 		}
 	});

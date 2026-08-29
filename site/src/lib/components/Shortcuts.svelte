@@ -39,11 +39,16 @@
 
 	## The sheet
 
-	`?` draws the CLUSTERS rather than listing letters, because a row printing
+	It DRAWS THE CLUSTERS rather than listing letters, because a row printing
 	"W A S D" beside keycaps reading ص ش س ي teaches nothing. The shape is what
 	a reader recognises, and `navigator.keyboard.getLayoutMap()` relabels it
 	with their own keycaps where the browser has it. See `readKeycaps` for the
 	one thing that must never happen to that reading.
+
+	Two ways in, and the button is the load-bearing one: a shortcut nobody can
+	find is dead code, and `?` is only discoverable to a reader who already
+	suspects there is something to discover. The header trigger is what makes
+	the eight keys findable at all.
 
 	It is the fourth dialog on the site and wears the shell and sheet chrome
 	the other three share (`.dialog-bare`, `.sheet`, `.sheet-*` in
@@ -237,6 +242,31 @@
 
 <svelte:window onkeydown={onWindowKeydown} />
 
+<!--
+	THE BUTTON PRINTS THE KEY, not a keyboard glyph, because the two are the
+	same control and naming it twice would teach the reader two things to
+	remember instead of one. It is also what replaced the `/` hint `JumpBox`
+	used to carry in the header: one control saying which key opens it was a
+	convention the row could only afford once, and it is worth more on the
+	shortcut sheet — `/` announced a key for a control the reader can already
+	see and click, where `?` is the only visible way to the ones they cannot.
+
+	Hidden below 640px on `JumpBox`'s reasoning and at its breakpoint: there is
+	no physical keyboard to press any of this on, and a sheet describing eight
+	keys is worse than no sheet at all on a phone.
+-->
+<button
+	type="button"
+	class="menu-trigger shortcuts-trigger"
+	aria-haspopup="dialog"
+	aria-expanded={helpOpen}
+	aria-label={t('shortcuts.title')}
+	title={t('shortcuts.title')}
+	onclick={openHelp}
+>
+	<span aria-hidden="true">?</span>
+</button>
+
 <dialog
 	bind:this={helpDialog}
 	class="dialog-bare sheet"
@@ -301,6 +331,13 @@
 					</li>
 					<li>
 						<span class="keys">
+							<kbd class="key plain"><Icon name="arrow-up" class="key-arrow" /></kbd>
+							<kbd class="key plain"><Icon name="arrow-down" class="key-arrow" /></kbd>
+						</span>
+						<span>{t('shortcuts.withinDocument')}</span>
+					</li>
+					<li>
+						<span class="keys">
 							<kbd class="key plain"><span class="cap">/</span></kbd>
 							<kbd class="key plain wide"><span class="cap">Ctrl K</span></kbd>
 						</span>
@@ -319,6 +356,26 @@
 </dialog>
 
 <style>
+	/*
+	 * `?` is a character where the row's other controls are icons, so it has to
+	 * be sized rather than inherited: `.menu-trigger` centres a 1.25rem drawing,
+	 * and a glyph at the body size sits smaller and lower than the marks beside
+	 * it. `line-height: 1` is what stops the descender space from pushing it off
+	 * the row's optical centre.
+	 */
+	.shortcuts-trigger span {
+		font-family: var(--font-sans);
+		font-size: 1rem;
+		font-weight: 650;
+		line-height: 1;
+	}
+
+	@media (max-width: 640px) {
+		.shortcuts-trigger {
+			display: none;
+		}
+	}
+
 	.shortcuts-body {
 		display: flex;
 		flex-direction: column;
