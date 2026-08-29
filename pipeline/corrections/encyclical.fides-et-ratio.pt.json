@@ -1,0 +1,14 @@
+[
+  {
+    "id": "fides-et-ratio.pt-preamble-psalm-brackets",
+    "locator": {
+      "raw_substring": "<i>Sal </i>2726, 8-9; 6362, 2-3;"
+    },
+    "field": "raw_text",
+    "from": "<i>Sal </i>2726, 8-9; 6362, 2-3;",
+    "to": "<i>Sal </i>27 [26], 8-9; 63 [62], 2-3;",
+    "reason": "The brackets of the dual Hebrew/Vulgate psalm numbering were lost in this mirror, running the two numbers of one reference together: 'Sal 2726, 8-9' is not a psalm and 'Sal 6362, 2-3' is not a psalm. The correct value is fixed by the document rather than inferred -- six sibling editions of the same encyclical print the same clause with the brackets intact, and the reading is a citation apparatus rather than prose, so nothing about the sense is being decided here. Left uncorrected it also costs two links: the grammar reads '2726' as a chapter number and resolves to nothing.",
+    "evidence": "raw/vatican-docs/encyclical__fides-et-ratio__pt.html, the preamble paragraph before INTRODUÇÃO: '(cf. <i>Ex </i>33, 18; <i>Sal </i>2726, 8-9; 6362, 2-3; <i>Jo </i>14, 8; <i>1 Jo </i> 3, 2)'. The siblings at the same clause: de 'Ps 27 [26], 8-9; Ps 63 [62], 2-3'; es 'Sal 27 [26], 8-9; 63 [62], 2-3'; fr 'Ps 27 [26], 8-9; 63 [62], 2-3'; it 'Sal 27 [26], 8-9; 63 [62], 2-3'; la 'Ps 27[26],8-9; 63[62],2-3'; pl 'Ps 27 [26]'. The English edition prints the Hebrew numbering alone, 'Ps 27:8-9; 63:2-3', which corroborates the first number of each pair.",
+    "added": "2026-08-28"
+  }
+]
