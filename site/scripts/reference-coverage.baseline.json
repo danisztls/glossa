@@ -9,8 +9,8 @@
 				"nothing": 0
 			},
 			"prose": {
-				"blocks": 4931,
-				"scripture": 435,
+				"blocks": 83383,
+				"scripture": 20596,
 				"document": 0,
 				"stored": 0
 			},
@@ -181,7 +181,7 @@
 			},
 			"prose": {
 				"blocks": 12199,
-				"scripture": 1501,
+				"scripture": 1502,
 				"document": 0,
 				"stored": 0
 			},
@@ -190,13 +190,13 @@
 		"encyclical": {
 			"citations": {
 				"total": 11808,
-				"linkable": 4251,
-				"recognized": 2487,
+				"linkable": 4252,
+				"recognized": 2486,
 				"nothing": 5070
 			},
 			"prose": {
-				"blocks": 15753,
-				"scripture": 5022,
+				"blocks": 15725,
+				"scripture": 5016,
 				"document": 10,
 				"stored": 0
 			},
@@ -208,7 +208,7 @@
 				},
 				{
 					"key": "ibid.",
-					"count": 132,
+					"count": 133,
 					"example": "Ibid."
 				},
 				{
@@ -254,7 +254,7 @@
 				{
 					"key": "راجع المرجع",
 					"count": 26,
-					"example": "راجع المرجع نفسه ، 11: أعمال الكرسيّ الرّسوليّ 58 (1966)، 1033-1034."
+					"example": "راجع المرجع نفسه، 11: أعمال الكرسيّ الرّسوليّ 58 (1966)، 1033-1034."
 				},
 				{
 					"key": "address to",
@@ -393,11 +393,6 @@
 					"example": "cf. Pius XII, allocution to cardinals, Feb. 18, 1946: A.A.S. 38 (1946) pp. 101-102; Idem.,"
 				},
 				{
-					"key": "decree \"",
-					"count": 12,
-					"example": "Decree \" Unitates Redintegratio \" 1."
-				},
-				{
 					"key": "r. pio",
 					"count": 12,
 					"example": "Cfr. Pio XII, aloc. aos Párocos, etc., 6 fevereiro 1951: Discorsi e Radiomessaggi di S. S."
@@ -406,6 +401,11 @@
 					"key": "john xxiii",
 					"count": 10,
 					"example": "cf. John XXIII, apostolic constitution \"Humani Salutis,\" Dec. 25, 1961: A.A.S. 54 (1962) p"
+				},
+				{
+					"key": "decree \"on",
+					"count": 8,
+					"example": "Cf. decree, \"On Oriental Churches\" 30."
 				},
 				{
 					"key": "first vatican",
@@ -468,6 +468,11 @@
 					"example": "] Cf. St. Augustine, Tractatus in Ioannem, VI, n. 7. ["
 				},
 				{
+					"key": "decree \"pastoral",
+					"count": 4,
+					"example": "Cf. Decree, \"Pastoral Duties of Bishops in the Church,\" 35, 4."
+				},
+				{
 					"key": "conc. vat.",
 					"count": 4,
 					"example": "Conc. Vat. I, Const. dogm. Pastor Aesernus, 4: Denz. 1836 (3070) no. 26"
@@ -491,11 +496,6 @@
 					"key": "r. syn.",
 					"count": 4,
 					"example": "Cfr. Syn. Laodicen., an. 347/381, can. 29; S. Nicephorus CP., cap. 14; Syn. Duinen. Armeno"
-				},
-				{
-					"key": "breviarium romanum",
-					"count": 3,
-					"example": "Breviarium Romanum, Ant. O, Vésperas do dia 23 de Dez."
 				}
 			]
 		}

@@ -512,7 +512,7 @@ const ROMAN: Record<number, string> = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV' };
 function numberedVariants(
 	byN: Record<number, string>,
 	bases: string[],
-	opts: { lTypo?: boolean; unspaced?: boolean } = {}
+	opts: { lTypo?: boolean; unspaced?: boolean; numDot?: boolean } = {}
 ): Record<string, string[]> {
 	const out: Record<string, string[]> = {};
 	for (const [nStr, osis] of Object.entries(byN)) {
@@ -521,6 +521,16 @@ function numberedVariants(
 		for (const base of bases) {
 			variants.push(`${n} ${base}`, `${ROMAN[n]} ${base}`);
 			if (opts.unspaced) variants.push(`${n}${base}`);
+			// "4. Reg.", "I. Reg." — the book's NUMBER carries its own
+			// abbreviating full stop. Martini prints it that way 316 times
+			// against 21 without; nothing else in the corpus does, which is
+			// why it is opt-in rather than universal. The glued form
+			// ("IV.Reg.") is three instances of the same edition losing a
+			// space and needs `unspaced` as well, since that is what it is.
+			if (opts.numDot) {
+				variants.push(`${n}. ${base}`, `${ROMAN[n]}. ${base}`);
+				if (opts.unspaced) variants.push(`${n}.${base}`, `${ROMAN[n]}.${base}`);
+			}
 			// "l" (lowercase L) for the digit "1" is a recurring transcription
 			// artifact in the EN corpus (observed: "l Cor", "l Pt", "l Tim") —
 			// visually confusable with "1" in some renderings.
@@ -532,6 +542,23 @@ function numberedVariants(
 		// `3 Kings` and `1 Kings` and the second call must not erase the first.
 		(out[osis] ??= []).push(...variants);
 	}
+	return out;
+}
+
+/**
+ * Combine tables that share osis keys, keeping every form.
+ *
+ * `numberedVariants` accumulates across the numbers of ONE call (see its
+ * comment on `push` rather than assign), but two calls produce two objects,
+ * and spreading both into one literal makes the second's `1kgs` REPLACE the
+ * first's instead of extending it — silently, and only for a family named
+ * twice. That is exactly what a book cited under two conventions in one work
+ * requires, so it is a function rather than a warning.
+ */
+function mergeVariants(...tables: Record<string, string[]>[]): Record<string, string[]> {
+	const out: Record<string, string[]> = {};
+	for (const table of tables)
+		for (const [osis, variants] of Object.entries(table)) (out[osis] ??= []).push(...variants);
 	return out;
 }
 
@@ -568,6 +595,91 @@ const KINGS_DOUAY = numberedVariants(
 	{ 1: '1sam', 2: '2sam', 3: '1kgs', 4: '2kgs' },
 	KINGS_BASES,
 	KINGS_NUMBER_OPTS
+);
+
+/**
+ * THE SAME COLLISION IN SPANISH AND ITALIAN — and in both, only for the
+ * SPELLED-OUT form. The short one is a second convention in the same book.
+ *
+ * `bible.straubinger.es` and `bible.martini.it` both print modern book
+ * titles ("1 Reyes", "Primo libro dei Re") and then cite the four Kingdoms
+ * in their notes: 990 `I`-`IV Reyes` and 440 `I.`-`IV. Reg.`, measured
+ * 2026-08-28 over the parsed editions. So both belong in `WORK_CONFIGS` for
+ * the reason `summa.en` does.
+ *
+ * The four-Kingdoms scheme was not, however, what was WRONG with them.
+ * Neither language's table held `Reyes` or `Reg` at all, so those 1,430
+ * citations resolved to NOTHING rather than to the wrong book. Adding a
+ * surface form and re-pointing a scheme are two different repairs and this
+ * needed both — the forms belong in the language tables, which answer for
+ * every work in their language (neither appears in any other work of its
+ * language: checked across ccc, compendium and every encyclical in both),
+ * and the scheme belongs in `WORK_CONFIGS`, which answers for one work.
+ *
+ * WHICH FORMS THE SCHEME COVERS IS ITSELF MEASURED, and the measurement is
+ * what keeps `R` and `Re` out of it. Reading every Kings-family citation in
+ * each edition against the Clementine's real verse counts — a citation is
+ * evidence only where one of the two readings addresses a verse that does
+ * not exist — gives:
+ *
+ *   es `Reyes`/`Rey`   77 decided:  77 Douay,  0 modern   (1 misprint, below)
+ *   es `R`              5 decided:   0 Douay,  5 modern
+ *   it `Reg`           17 decided:  13 Douay,  4 modern   (4 misprints, below)
+ *
+ * Straubinger writes Samuel as `1 Sam.` and 1 Kings as `1 R.` in the SAME
+ * sentence (the note at Acts 13:22), and his five decisive `R` citations are
+ * Solomon's dedication prayer, Jezebel and Ahaziah at Megiddo — modern, every
+ * one. So `R` keeps its modern reading and only the spelled-out form flips.
+ *
+ * The five counter-examples on the other side are source misprints, not a
+ * second convention, and each is identifiable from its own sentence: the
+ * Spanish one writes `III Reyes 4, 31` and then `II Reyes 4, 31` for the same
+ * verse in one note (1 Chr 25), and the four Italian ones name Solomon's
+ * lavers, Samaria's resettlement, Hezekiah's parallel in Isaiah 39 and
+ * Seraiah's death — all in Kings, all reached by a numeral one off the one
+ * Martini uses everywhere else. They are candidates for `pipeline/corrections/`.
+ *
+ * Both MODERN tables carry all four numbers, exactly as `KINGS_MODERN` does:
+ * `3` and `4` are unambiguous under either scheme, so a Spanish or Italian
+ * work that has not opted in still reads `III Reyes` as 1 Kings rather than
+ * as nothing.
+ */
+const FOUR_KINGDOMS_MODERN = { 1: '1kgs', 2: '2kgs', 3: '1kgs', 4: '2kgs' };
+const FOUR_KINGDOMS_DOUAY = { 1: '1sam', 2: '2sam', 3: '1kgs', 4: '2kgs' };
+
+// Straubinger's spelled-out form takes the scheme; his short `1 R.` does not
+// and stays modern in both tables, which is why each is a `mergeVariants` of
+// two calls rather than one call over three bases. The two tables must span
+// the SAME surface forms for `remapBookVariants` to swap them cleanly, so
+// the short form appears in both — identically.
+const KINGS_ES_SPELLED = ['Reyes', 'Rey'];
+const KINGS_ES_SHORT = ['R'];
+const KINGS_ES_OPTS = { lTypo: true, unspaced: true };
+const KINGS_ES_MODERN = mergeVariants(
+	numberedVariants(FOUR_KINGDOMS_MODERN, KINGS_ES_SPELLED, KINGS_ES_OPTS),
+	numberedVariants(FOUR_KINGDOMS_MODERN, KINGS_ES_SHORT, KINGS_ES_OPTS)
+);
+const KINGS_ES_DOUAY = mergeVariants(
+	numberedVariants(FOUR_KINGDOMS_DOUAY, KINGS_ES_SPELLED, KINGS_ES_OPTS),
+	numberedVariants(FOUR_KINGDOMS_MODERN, KINGS_ES_SHORT, KINGS_ES_OPTS)
+);
+
+// The same split in Italian. `Reg` is Martini's Latin form for a book he
+// titles "Re" in the text itself, and `numDot` his printing convention for
+// its number (see `numberedVariants`); `Re` is the modern Italian name and
+// keeps the modern reading, so that the one Italian work citing the four
+// Kingdoms cannot re-point a form it never prints.
+const KINGS_IT_SPELLED = ['Reg'];
+const KINGS_IT_SHORT = ['Re'];
+const KINGS_IT_OPTS = { lTypo: true, unspaced: true, numDot: true };
+const KINGS_IT_SHORT_OPTS = { lTypo: true, unspaced: true };
+const KINGS_IT_MODERN = mergeVariants(
+	numberedVariants(FOUR_KINGDOMS_MODERN, KINGS_IT_SPELLED, KINGS_IT_OPTS),
+	numberedVariants(FOUR_KINGDOMS_MODERN, KINGS_IT_SHORT, KINGS_IT_SHORT_OPTS)
+);
+const KINGS_IT_DOUAY = mergeVariants(
+	numberedVariants(FOUR_KINGDOMS_DOUAY, KINGS_IT_SPELLED, KINGS_IT_OPTS),
+	numberedVariants(FOUR_KINGDOMS_MODERN, KINGS_IT_SHORT, KINGS_IT_SHORT_OPTS)
 );
 
 /**
@@ -983,7 +1095,7 @@ const BOOK_VARIANTS_ES: Record<string, string[]> = {
 	jas: ['St'],
 	rev: ['Ap'],
 	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['S'], { lTypo: true }),
-	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['R'], { lTypo: true }),
+	...KINGS_ES_MODERN,
 	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Cro'], { lTypo: true, unspaced: true }),
 	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['M'], { lTypo: true }),
 	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Co', 'Cor'], { lTypo: true, unspaced: true }),
@@ -1117,7 +1229,7 @@ const BOOK_VARIANTS_IT: Record<string, string[]> = {
 	jude: ['Gd'],
 	rev: ['Ap'],
 	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sam'], { lTypo: true, unspaced: true }),
-	...numberedVariants({ 1: '1kgs', 2: '2kgs' }, ['Re'], { lTypo: true, unspaced: true }),
+	...KINGS_IT_MODERN,
 	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Cr'], { lTypo: true, unspaced: true }),
 	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Mac'], { lTypo: true, unspaced: true }),
 	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor'], { lTypo: true, unspaced: true }),
@@ -1895,6 +2007,24 @@ interface LangConfig {
 	/** Marks that delimit one citation clause from the next. ";" everywhere;
 	 * PT adds ":" (see `CONFIG_PT`). */
 	clauseSepRe: RegExp;
+	/**
+	 * Read a Roman-numeral CHAPTER in running prose as well as in a stored
+	 * citation ("Matth. XVI. 18." in a footnote, not in a `citations` array).
+	 *
+	 * Off everywhere but `bible.martini.it`, and the docblock on
+	 * `parseChapterVerses` says why it has to stay that way: in prose "John
+	 * XXIII" is a pope far more often than a chapter. It is a per-WORK
+	 * property rather than a per-language one because it describes how one
+	 * edition's printer set numerals, not how a language cites — Martini
+	 * writes the chapter in Roman ~10 times for every once he writes it in
+	 * Arabic (measured over eight book families, 2026-08-28), and no other
+	 * Italian work in the corpus does it at all.
+	 *
+	 * The guards that make it safe are already in `parseChapterVerses` and
+	 * are not relaxed here: a Roman chapter must be followed by an explicit
+	 * separator and a verse, and that verse must be verse-sized (`MAX_VERSE`).
+	 */
+	proseRomanChapters?: boolean;
 }
 
 function escapeRe(s: string): string {
@@ -2015,6 +2145,29 @@ const CONFIG_PL = romanceConfig(BOOK_VARIANTS_PL, DOCUMENT_SIGLA_SERIES_ONLY);
 const CONFIG_RU = romanceConfig(BOOK_VARIANTS_RU, DOCUMENT_SIGLA_SERIES_ONLY);
 
 /**
+ * Spanish and Italian read by a work that numbers the books of Kings the
+ * Douay way — see `KINGS_ES_MODERN`/`KINGS_IT_MODERN` for the evidence and
+ * for why each needed a table widening as well as this remap.
+ *
+ * Like `CONFIG_EN_DOUAY`, identical to the language's own config in every
+ * other respect: the sigla, the marks and the other seventy books are the
+ * same table, because the convention is a naming difference and not a
+ * dialect. `CONFIG_IT_MARTINI` is the one exception, and it is not about
+ * naming at all — see `proseRomanChapters`.
+ */
+const CONFIG_ES_DOUAY = romanceConfig(
+	remapBookVariants(BOOK_VARIANTS_ES, KINGS_ES_MODERN, KINGS_ES_DOUAY),
+	DOCUMENT_SIGLA_ES
+);
+const CONFIG_IT_MARTINI: LangConfig = {
+	...romanceConfig(
+		remapBookVariants(BOOK_VARIANTS_IT, KINGS_IT_MODERN, KINGS_IT_DOUAY),
+		DOCUMENT_SIGLA_IT
+	),
+	proseRomanChapters: true
+};
+
+/**
  * Arabic is the one config whose MARKS differ rather than only its tables.
  * Its chapter/verse separator is the Arabic comma U+060C ("تكوين 11، 1-9"),
  * and its clause separator the Arabic semicolon U+061B, both of which are
@@ -2113,7 +2266,9 @@ const WORK_CONFIGS: Record<string, LangConfig> = {
 	'bible.douay-rheims.en': CONFIG_EN_DOUAY,
 	'summa.en': CONFIG_EN_DOUAY,
 	'encyclical.aeterni-patris.en': CONFIG_EN_DOUAY,
-	'encyclical.diuturnum.en': CONFIG_EN_DOUAY
+	'encyclical.diuturnum.en': CONFIG_EN_DOUAY,
+	'bible.straubinger.es': CONFIG_ES_DOUAY,
+	'bible.martini.it': CONFIG_IT_MARTINI
 };
 
 function configFor(lang?: string, work?: string): LangConfig {
@@ -3266,7 +3421,7 @@ export function linkifyProse(text: string, opts?: RefsOpts): RefSegment[] {
 		if (precededByFalseLead(text.slice(0, bm.matchStart), bm.osis)) continue;
 		const spaceAfter = /^ */.exec(text.slice(bm.matchEnd))![0];
 		const afterBook = bm.matchEnd + spaceAfter.length;
-		const cv = parseRefNumbers(text.slice(afterBook), cfg, bm.osis);
+		const cv = parseRefNumbers(text.slice(afterBook), cfg, bm.osis, cfg.proseRomanChapters);
 		if (cv.chapter === null || cv.chapter > MAX_CHAPTER[bm.osis]) continue;
 		const end = afterBook + cv.consumed;
 		hits.push({
