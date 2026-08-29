@@ -780,6 +780,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.iampridem.en": {
+			"en": {
+				"text": "Leo XIII's encyclical to the archbishops and bishops of Prussia on relations between the Holy See and Germany after years of hostile legislation. It praises German Catholics' fidelity under those laws, restates the Church's right to govern its seminaries and inner life, addresses relations with civil authority, and encourages missionary work in Germany's colonies before closing with an exhortation to unity and loyalty to Rome.",
+				"origin": "read"
+			}
+		},
 		"encyclical.il-fermo-proposito.en": {
 			"en": {
 				"text": "Written to the Italian bishops to organise the lay Catholic works — what came to be called Catholic Action — under the single aim of restoring all things in Christ. Pius X defines the movement's scope, ties its social work to Rerum Novarum, prescribes a Popular Union to hold it together, repeats the ban on direct participation in politics, and subordinates every such work to the bishops.",
@@ -816,6 +822,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.in-multiplicibus-curis.en": {
+			"en": {
+				"text": "Pius XII's appeal, amid the 1948 war in Palestine, for prayer for peace and for the safety of the Holy Places. He recounts his efforts at impartial mediation and aid to refugees, recalls the call to prayer he made in his recent encyclical Auspicia Quaedam, and proposes giving Jerusalem an international status guaranteeing free access to its sanctuaries and freedom of worship there.",
+				"origin": "read"
+			}
+		},
 		"encyclical.in-multiplicibus-curis.pt": {
 			"pt": {
 				"text": "Pio XII renova, pela segunda vez, o apelo a orações públicas pela paz na Palestina, lamentando a destruição de lugares sagrados e o sofrimento de refugiados na guerra em curso. Defende um estatuto internacional para Jerusalém e arredores, e garantias internacionais de livre acesso aos lugares santos e de liberdade de culto, concedendo a bênção apostólica.",
@@ -837,6 +849,12 @@
 		"encyclical.ingravescentibus-malis.en": {
 			"en": {
 				"text": "Pius XI's 1937 encyclical urging renewed recitation of the Holy Rosary, especially through October, as recourse against the era's gravest dangers — class conflict, totalitarian statism, and above all Communism. He recommends daily family recitation before an image of Mary, gives thanks for his own recovered health through the intercession of St. Thérèse of Lisieux, and protests a public insult to the Virgin.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ingruentium-malorum.en": {
+			"en": {
+				"text": "Pius XII's appeal for the annual month of the Rosary, written amid the post-war persecution of the Church and threats to the innocence of children. He urges the faithful to renew their trust in Mary through the Rosary, commends its daily recitation within the family as the safeguard of the Christian home, and asks prayers for bishops and others imprisoned or exiled for the faith.",
 				"origin": "read"
 			}
 		},
@@ -864,9 +882,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.inscrutabili-dei-consilio.pt": {
+			"pt": {
+				"text": "Primeira encíclica de Leão XIII, sobre os males que assolam a sociedade moderna — a rejeição da autoridade da Igreja e do Pontífice Romano —, sua causa e seus remédios: a caridade fraterna, o respeito à autoridade eclesiástica, a restauração do Poder Temporal dos Papas, a fidelidade à Santa Sé Apostólica, a reforma do lar cristão e a reforma dos costumes públicos.",
+				"origin": "read"
+			}
+		},
 		"encyclical.insignes.en": {
 			"en": {
 				"text": "Leo XIII's 1896 encyclical to the bishops of Hungary, marking the thousandth anniversary of the Magyar settlement that founded the nation. Recalling the country's conversion under Prince Géza and St. Stephen, the royal crown sent by Sylvester II, and the Church's aid through crises — Innocent XI at Vienna and Buda, Gregory XIII's Roman college — it exhorts Hungarians to renewed Catholic fidelity amid the age's growing religious indifference.",
+				"origin": "read"
+			}
+		},
+		"encyclical.inter-graves.en": {
+			"en": {
+				"text": "Leo XIII's response to the bishops of Peru after their provincial synod, commending their zeal and setting out four priorities for their pastoral work: seminary education grounded in Thomistic philosophy, careful selection of parish priests, missionary outreach to unconverted peoples, and a Catholic press to counter false opinions. Invokes Saints Turibius and Rose of Lima as patrons of the country.",
 				"origin": "read"
 			}
 		},
@@ -879,6 +909,12 @@
 		"encyclical.iucunda-sane.en": {
 			"en": {
 				"text": "Written for the thirteenth centenary of the death of St Gregory the Great, holding up his pastoral government — restoring faith and discipline while Rome collapsed around him — as the pattern for an age in crisis of unbelief. Pius X traces how rationalism and a misapplied critical science wear faith away, insists that only a return to Christ can save society, and asks for careful formation of candidates for the priesthood.",
+				"origin": "read"
+			}
+		},
+		"encyclical.iucunda-semper-expectatione.en": {
+			"en": {
+				"text": "Leo XIII's annual October encyclical urging renewed devotion to the Rosary as the Church's chief recourse amid the tribulations afflicting her liberty and rights. It traces Mary's role as mediatrix through the Joyful and Sorrowful mysteries, then denounces recent blasphemous theatrical mockery of Christ in Italy and calls Catholics to prayer and reparation.",
 				"origin": "read"
 			}
 		},
@@ -906,6 +942,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.laetamur-admodum.en": {
+			"en": {
+				"text": "Pius XII's 1956 follow-up to his earlier appeal for prayer, giving thanks that Cardinals Wyszyński and Mindszenty have been freed and restored to their sees in Poland and Hungary, and renewing his call for prayers for peace as war threatens in the Middle East.",
+				"origin": "read"
+			}
+		},
 		"encyclical.laetitiae-sanctae.en": {
 			"en": {
 				"text": "Leo XIII commends devotion to the Rosary as a remedy for three evils weakening society: distaste for simple, laborious living, met by the Joyful Mysteries; repugnance to suffering, met by the Sorrowful Mysteries; and forgetfulness of the life to come, met by the Glorious Mysteries. He closes by praising the Confraternities of the Rosary and urging bishops to foster the devotion.",
@@ -930,6 +972,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.le-pelerinage-de-lourdes.en": {
+			"en": {
+				"text": "Pius XII's 1957 letter to the bishops of France marking the centenary of the apparitions at Lourdes, recalling Mary's appearances to Bernadette and her threefold call to penance. Reading the pilgrimage's crowds and its sick as a rebuke to a self-satisfied, materialist age, it urges conversion of heart as the one foundation on which any lasting social or political peace can be built.",
+				"origin": "read"
+			}
+		},
 		"encyclical.le-pelerinage-de-lourdes.pt": {
 			"pt": {
 				"text": "Carta encíclica de Pio XII ao episcopado da França, por ocasião do centenário das aparições de Nossa Senhora em Lourdes. Situa Lourdes na tradição mariana francesa e relembra os laços entre a Santa Sé e o santuário desde Pio IX. Extrai das aparições lições espirituais — conversão pessoal e penitência, renovação cristã da sociedade, predileção de Maria pelos pequenos e enfermos — como programa para o ano jubilar.",
@@ -945,6 +993,24 @@
 		"encyclical.licet-multa.en": {
 			"en": {
 				"text": "Leo XIII's encyclical to the Belgian bishops on preserving Catholic unity amid disputes over how far Catholic doctrine should govern the forms of civil law and government. He urges charity in controversy, rebukes attacks on fellow Catholics — naming the accusations against Cardinal Deschamps — and directs scholars to follow St. Thomas Aquinas as the model for philosophy and theology, renewing his call for Thomistic teaching at Louvain.",
+				"origin": "read"
+			}
+		},
+		"encyclical.litteras-a-vobis.en": {
+			"en": {
+				"text": "Leo XIII's encyclical to the archbishops and bishops of Brazil, occasioned by the recent enlargement of the country's episcopal hierarchy, on strengthening the clergy and the faithful: forming priests in well-run seminaries, subjecting religious orders to the bishops' authority, and providing the laity with catechesis, Catholic schools and societies, and a Catholic press.",
+				"origin": "read"
+			}
+		},
+		"encyclical.longinqua.en": {
+			"en": {
+				"text": "Leo XIII's letter to the bishops of the United States, marking the centenary of Columbus's discovery and the growth of American Catholicism since its first bishop. It commends the Church's freedom under American law but warns against treating the separation of Church and State there as universally desirable, and takes up Catholic education, workers' associations, the Catholic press, and outreach to non-Catholics, Native Americans and African Americans.",
+				"origin": "read"
+			}
+		},
+		"encyclical.luctuosissimi-eventus.en": {
+			"en": {
+				"text": "Pius XII's brief appeal, issued at the height of the 1956 Hungarian Revolution, urging bishops worldwide and their flocks to unite in prayer for Hungary and the rest of Eastern Europe, then suffering violent repression and religious persecution under atheistic communism. He calls especially on the young to join the entreaty, invokes the Virgin Mary's intercession, and remembers the region's bishops held in prison, custody, or exile.",
 				"origin": "read"
 			}
 		},
@@ -972,6 +1038,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.magnae-dei-matris.pt": {
+			"pt": {
+				"text": "Carta encíclica de Leão XIII sobre o Rosário de Nossa Senhora, exortando os fiéis a praticá-lo com fervor redobrado no mês de outubro como remédio contra a incredulidade e a corrupção dos costumes do tempo. Recorda a vitória histórica do Rosário sobre os albigenses, propõe os seus mistérios como exemplo de vida cristã e da Sagrada Família, e liga a exortação ao próprio jubileu episcopal do papa, renovando as indulgências concedidas à prática.",
+				"origin": "read"
+			}
+		},
 		"encyclical.magni-nobis.en": {
 			"en": {
 				"text": "Leo XIII's 1889 letter approving the statutes of the newly founded Catholic University of America in Washington, D.C. It grants the university the right to confer academic degrees, including in philosophy, theology and canon law, names the Archbishop of Baltimore its chancellor, requires its course of studies be submitted to Rome for approval, and asks that no similar university be established without consulting the Holy See.",
@@ -984,9 +1056,27 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.magnifica-humanitas.de": {
+			"de": {
+				"text": "Zum 135. Jahrestag von Rerum novarum entwickelt der Text die Soziallehre der Kirche für das Zeitalter der Künstlichen Intelligenz weiter: die Grundprinzipien Gemeinwohl, allgemeine Bestimmung der Güter, Subsidiarität, Solidarität und soziale Gerechtigkeit, dann Wahrheit, Arbeit und Freiheit im digitalen Wandel sowie Krieg, KI-Waffen und die Kultur der Macht, der die Zivilisation der Liebe entgegengesetzt wird; er schließt mit einem marianischen Aufruf zu Gebet und Hoffnung.",
+				"origin": "read"
+			}
+		},
 		"encyclical.magnifica-humanitas.en": {
 			"en": {
 				"text": "Leo XIV's encyclical on artificial intelligence and the social doctrine of the Church. Framed by two biblical images of collective building — the Tower of Babel and Nehemiah's rebuilding of Jerusalem — it argues that AI is not one more subject for social doctrine to address but a development that challenges its categories from within, and takes up human dignity and the common good, truth, work and freedom, and the growing place of autonomous systems in war.",
+				"origin": "read"
+			}
+		},
+		"encyclical.magnifica-humanitas.es": {
+			"es": {
+				"text": "Carta encíclica de León XIV sobre la custodia de la persona humana en el tiempo de la inteligencia artificial. Enmarcada por dos imágenes bíblicas de construcción colectiva —la torre de Babel y la reconstrucción de Jerusalén por Nehemías—, sostiene que la IA no es un tema añadido a la Doctrina social sino una transformación que interpela sus categorías desde dentro, y trata la dignidad humana, la verdad, el trabajo, la libertad y el lugar creciente de los sistemas autónomos en la guerra.",
+				"origin": "read"
+			}
+		},
+		"encyclical.magnifica-humanitas.fr": {
+			"fr": {
+				"text": "Sur la protection de la personne humaine à l'ère de l'intelligence artificielle. En cinq chapitres, l'encyclique retrace l'évolution de la Doctrine sociale de l'Église depuis Léon XIII, en expose les fondements — dignité, bien commun, subsidiarité, solidarité —, puis examine les répercussions du numérique sur la vérité, le travail et la liberté, la banalisation de la guerre, et appelle à bâtir la civilisation de l'amour.",
 				"origin": "read"
 			}
 		},
@@ -996,9 +1086,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.magnifica-humanitas.pl": {
+			"pl": {
+				"text": "Encyklika Leona XIV o trosce o osobę ludzką w dobie sztucznej inteligencji. Osadzając to zagadnienie w rozwoju nauki społecznej Kościoła od Leona XIII po dziś, omawia godność osoby ludzkiej, zasady dobra wspólnego, pomocniczości i solidarności wobec przemiany cyfrowej, godność pracy i wolność zagrożoną uzależnieniem, oraz niebezpieczeństwo wojny prowadzonej przy użyciu sztucznej inteligencji, wzywając do budowania „cywilizacji miłości” w miejsce „kultury potęgi”.",
+				"origin": "read"
+			}
+		},
 		"encyclical.magnifica-humanitas.pt": {
 			"pt": {
 				"text": "Carta encíclica de Leão XIV sobre a inteligência artificial e a doutrina social da Igreja. Estruturada em torno de duas imagens bíblicas da construção comum — a Torre de Babel e a reconstrução de Jerusalém por Neemias —, sustenta que a IA não é mais um tema a tratar pela doutrina social, mas um desenvolvimento que desafia as suas próprias categorias, e aborda a dignidade humana e o bem comum, a verdade, o trabalho e a liberdade, e o lugar crescente dos sistemas autónomos na guerra.",
+				"origin": "read"
+			}
+		},
+		"encyclical.magnifica-humanitas.ru": {
+			"ru": {
+				"text": "Энциклика Льва XIV о защите человеческой личности в эпоху искусственного интеллекта. Опираясь на историю социального учения Церкви от Льва XIII до наших дней и на его принципы — общее благо, субсидиарность, солидарность, — она рассматривает вызовы ИИ для истины, труда, свободы и семьи, критикует трансгуманизм и культуру мощи и призывает созидать цивилизацию любви.",
 				"origin": "read"
 			}
 		},
@@ -1068,9 +1170,27 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.mirabile-illud.en": {
+			"en": {
+				"text": "Pius XII's encyclical calling Catholics to a crusade of prayer for world peace, urging public supplications, an Immaculate Conception midnight Mass broadcast by radio, and prayers through the Christmas novena, invoking Mary's intercession against the era's wars, hatreds and persecution of the Church.",
+				"origin": "read"
+			}
+		},
+		"encyclical.mirabile-illud.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII, escrita em meio a temores de um novo conflito mundial, pedindo aos bispos orações públicas pela paz e pela concórdia entre os povos, com súplicas especiais na véspera da festa da Imaculada Conceição e durante a novena do Natal.",
+				"origin": "read"
+			}
+		},
 		"encyclical.mirae-caritatis.en": {
 			"en": {
 				"text": "Leo XIII's encyclical on the Holy Eucharist, issued for the twenty-fifth anniversary of his pontificate. It presents the Eucharist as the source of the Church's supernatural life and the strengthening of faith, then as the bond of charity that remedies the social divisions of the age, and closes on the Eucharistic sacrifice of the Mass and its daily fruits for the world.",
+				"origin": "read"
+			}
+		},
+		"encyclical.miranda-prorsus.en": {
+			"en": {
+				"text": "Pius XII's encyclical on the motion picture, radio and television industries, extending Vigilanti Cura's principles on film to broadcasting. It explains why these arts concern the Church, sets out the freedoms and duties of directors, distributors, actors and public authorities, and gives bishops detailed instructions for guiding Catholics, including parents, clergy and national offices, toward their right use.",
 				"origin": "read"
 			}
 		},
@@ -1146,6 +1266,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.non-abbiamo-bisogno.en": {
+			"en": {
+				"text": "Pius XI's protest against the Fascist government's 1931 suppression of Catholic Action's youth and university associations in Italy. He defends Catholic Action as lay collaboration with the bishops, not politics, rejects charges that it serves a 'foreign power,' and insists that the Christian education of youth belongs to the Church by divine mandate, not to a state claiming exclusive command over the young.",
+				"origin": "read"
+			}
+		},
 		"encyclical.non-mediocri.en": {
 			"en": {
 				"text": "Leo XIII's 1893 letter to the bishops of Spain announcing the foundation of a Roman college for Spanish clerics. Recalling Spain's earlier renown for theological and literary learning, he laments how seminaries and universities were uprooted by the upheavals following the French Revolution, and establishes a Roman residence for Spanish students, in a building once belonging to the Dukes of Altemps, under the oversight of the Archbishops of Toledo and Seville.",
@@ -1158,9 +1284,27 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.nova-impendet.en": {
+			"en": {
+				"text": "Pius XI's brief appeal amid the Great Depression on the unemployment and want afflicting workers and, above all, their children. He calls the Church to a 'Crusade of charity' — alms and prayer gathered through the bishops — to relieve the destitute, and asks that solemn tridua be held before the feast of Christ the King to implore peace from the God of Mercies.",
+				"origin": "read"
+			}
+		},
+		"encyclical.octobri-mense.en": {
+			"en": {
+				"text": "Leo XIII's annual encyclical urging the faithful to pray the Rosary throughout October, recommending it as Mary's own weapon against the Church's enemies — recalling how Saint Dominic used it against the Albigensian heresy — and calling for prayer joined to penance, so that intercession through the Mother of God might win the Church's deliverance from persecution and error.",
+				"origin": "read"
+			}
+		},
 		"encyclical.octobri-mense.pt": {
 			"pt": {
 				"text": "Encíclica de Leão XIII que renova o convite anual à oração do mês de Outubro, recomendando o Santo Rosário como a forma de recorrer a Maria, medianeira de todas as graças, contra os males que afligem a Igreja. Recorda a origem do Rosário por São Domingos e une à oração a exortação à mortificação e à penitência, com esperança nos frutos da intercessão da Rainha do Rosário.",
+				"origin": "read"
+			}
+		},
+		"encyclical.officio-sanctissimo.en": {
+			"en": {
+				"text": "Leo XIII's 1887 encyclical to the archbishops and bishops of Bavaria, recalling the region's Catholic history from Severinus and St. Boniface and urging renewed care for the training of clergy, grounded in Thomistic philosophy and theology, against rationalist error and Freemasonry. It reviews the concordat between the Holy See and Bavaria and calls for vigilance in defending the Church's rights and liberty.",
 				"origin": "read"
 			}
 		},
