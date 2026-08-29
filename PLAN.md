@@ -252,6 +252,42 @@ should probably get the same answer.
   digitisation rather than on rights. A reader in any of the three currently gets
   English scripture under their own chrome with no explanation.
 
+## The document structure trees — populations measured 2026-08-29
+
+`docs/research/document-structure-defects.md` has recorded since 2026-08-16 that `structure.json` is unreliable for most of the corpus, and its §2 is still the largest open item. Reading the 32 English apostolic exhortations for a ToC oracle put **numbers on the individual failure modes** for the first time — §6–§14 of that note. Nothing is fixed; what follows is what a fix would have to cover, and what it would cost to get wrong.
+
+**Why it matters, in the order a reader meets it.** Three of these are visible on the page rather than in the tree:
+
+- **18 works open §1 with a wall of their own table of contents** — `sacramentum-caritatis.hu` prepends 60 of its own headings to its first paragraph, `africae-munus.en` 37, `africae-munus.es` 31. The document's opening sentence is below the fold.
+- **`ecclesia-in-america.en` stores a heading titled `W` followed by a paragraph beginning "e thank you, Lord Jesus,"** — a drop cap read as a division. 11 nodes in 5 works; the Croatian pair break a chapter opening rather than a closing prayer.
+- **`santateresa-delbambinogesu.en` is missing three of its four chapter headings from the build entirely** — present in `raw/` once each, absent from `sections.json` and `structure.json` both. It is the only confirmed text loss found, and no count check sees it because `sections.json` still totals 53.
+
+Everything else is the tree, which is what the sidebar contents renders, what a per-division reading view (§3 of the research note) would split on, and what `static/route-titles.json` publishes as each division's paragraph span — so a wrong tree is served to consumers that never render the page.
+
+**The populations.** Each measured across all 1,447 works, not inferred from the 32 read:
+
+| Defect                                                       | Works     | How it was measured                                         |
+| ------------------------------------------------------------ | --------- | ----------------------------------------------------------- |
+| Index caption survives as a node and adopts the opening      | 44        | a structure title matching `INDEX`/`ÍNDICE`/`INHALT`/…      |
+| Papal signature stored as a heading                          | 92        | a title matching `PAULUS P. P. VI`, `LEONE PP. XIII`, …     |
+| Leaked ToC entries left in §1's body                         | 18        | §1's text contains 2+ titles of later headings              |
+| A ToC printed _after_ the body, never a dedup candidate      | 15        | 2+ duplicated titles whose surplus copy has `before: null`  |
+| ToC entries promoted to headings (44 nodes)                  | 6         | a title still ending in its target's span, `[31]`, `[1-6]`  |
+| Drop cap read as a heading (11 nodes)                        | 5         | a title that is one stray letter                            |
+| First of two adjacent pre-body headings swallowed            | 6         | oracle `MISSING` at `before=1`, then read on the raw page   |
+| Closing block nested a tier too deep                         | 10        | 3+ nodes after the last level-1, >1 tier below its siblings |
+| Tiers flattened — **3 confirmed, 25 strong, 157 candidates** | see below | census markup column, one document at a time                |
+
+**Two numbers deliberately not given.** The tier-flattening population is the important one and the least knowable: 157 works have 40+ headings and only two levels, but a long document with two _genuine_ tiers looks identical from outside, and only the census's markup column separates them. The tighter signal is total collapse — **25 works carry 25+ headings with every one at level 1**, including `sacrosanctum-concilium.hu` (130) and three editions each of `evangelii-nuntiandi` (91) and `christifideles-laici` (74). Separately, the promoted-prayer-stanza defect has **2 confirmed and no population**, because the obvious test ("an address-less heading that is a full sentence") returns 67 works of which most are correct: Latin, French and Italian end a real heading with a full stop by convention.
+
+**What to do first, and the caveat that reading the exhortations added.** §2's recommendation stands — compare structure trees across languages rather than section sets, turning a manual audit into a ranked worklist. The caveat is that **the oracle ranks but does not adjudicate.** `evangelii-nuntiandi` reads exactly like §2's `fratelli-tutti` case — de/es/fr/it/lv at 91 headings, hr 100, pt 89, and **en at 1** — and it is not a parse failure: the English mirror contains six bold runs in the whole document, all furniture, and the Italian edition's part titles appear on it in no form at all. It is an unstructured rendering of the same text. So the cross-language pass produces candidates and the raw page decides, which is the same directional reading `CLAUDE.md` already prescribes for the CCC's divisions. `evangelii-nuntiandi.la` (7) and `.hu` (8) want that check before anyone calls them damaged.
+
+**The single highest-value fix** is the tier discriminator, because three readers working independently named the same rule: `<p align="left"><b><i>…</i></b></p>` is the middle tier and `<p align="left"><i>…</i></p>` is the tier below it, and the parser treats them as one. That is one predicate, and it is the difference between a two-level tree and a usable one in `ecclesia-in-oceania.en` (19 headings), `gaudete-et-exsultate.en` (30) and `familiaris-consortio.en`.
+
+**Dependencies and sizing.** Nothing here gates anything else, and nothing here is blocked. Every item is a change to `vatican_docs.py`, which parses ~450 documents across several page templates, so each one costs the blast-radius measurement in `docs/writing-descriptions.md` — snapshot, `rebuild.py --only documents`, diff — and that procedure is now cheap (~18s) rather than the thing to avoid. **The 378 ToC oracles are the regression suite this work has been missing**: `audit.py toc` reports 72 disagreements today, so a fix that is right lowers that number and a fix that overreaches raises it, which no previous structure fix could check. Sizing per item is an estimate and not measured: the drop cap, the index caption and the trailing ToC look like a predicate apiece; the tier discriminator is one predicate plus a re-levelling pass; `santateresa`'s unemphasised headings are a detector change whose blast radius is genuinely unknown, because loosening the emphasis requirement is exactly what would start reading ordinary prose as headings.
+
+**One filing, not a parser change.** `exhortation.redemptionis-donum.en`'s heading before §7 reads `Religious Profession Is a "Fuller Expression"of Baptismal Consecration` — no space after the quotation mark, `&quot;of Baptismal` in the source. A source defect with a known correct value, which is what `pipeline/corrections/` is for. Two others were left alone as reader-invisible: `christifideles-laici.en` prints "Lay Faithtul" and `"Criteria of Ecclesiality"for Lay Groups`.
+
 ## Sequencing and recommendation
 
 Nothing here gates anything else; order is a priority argument, not a dependency one.
@@ -262,19 +298,21 @@ Nothing here gates anything else; order is a priority argument, not a dependency
 - **#14 is decided and goes first**, ahead of everything above it. It is the only row that needs no engineering at all — one dictionary — and it closes the `UI_LANGS`/`ContentLang` gap at the one place where the corpus already holds a whole work the interface cannot dress.
 - **#11 is the big one now, and it is a schema problem wearing a scraping costume.** Do not start it by writing a scraper. The four decisions in `docs/research/haydock.md` are the work; the crawl is 22 minutes. Read `docs/research/patristic-citations.md` first: Haydock is a catena of the same Fathers this corpus already cites, and the measurement there — 69% of 734 patristic works cited exactly once — is the clearest statement of why the value in a catena is the attributions rather than the texts.
 - **#15 is the only row whose research is finished and whose work is eleven independent pieces.** Deferred deliberately on 2026-08-28, the day the survey landed — the point of `docs/research/bible-texts.md` §One Bible per interface language is that the investigation does not have to be redone to start. Each language is one scraper against a named source with a measured markup shape, shippable alone, so this row can be picked up an hour at a time rather than needing a clear run. Start with German (`vulgata.info` is a MediaWiki carrying Latin, German and Allioli's notes in parallel) or French (`fr.wikisource`, 100 % proofread, verse anchors already in the markup); leave Romanian last, since it needs a versification survey before it needs a parser
+- **The structure trees now have a regression suite, which is what changed on 2026-08-29.** Fixing them was never blocked on analysis — `docs/research/document-structure-defects.md` has described the problem since 2026-08-16 — it was blocked on being unable to tell a fix from a regression, since a parser change touches ~450 documents and nothing measured the tree. 378 ToC oracles read off the raw pages by hand now do: `audit.py toc` reports 72 disagreements, a number a correct fix lowers and an overreaching one raises. Three of the defects are visible to a reader today, which is the argument for placing it above everything that adds coverage rather than repairing it.
 
 **Recommended order** (the first two are decided, 2026-08-27; the rest is still a priority argument):
 
 1. **#14 Malagasy chrome** — one dictionary, no engineering, and the corpus already holds the work it dresses.
 2. **#13's easy picks** — Indonesian, Lithuanian, Belarusian: the PDF extraction path proved on the three editions that extract clean, with Russian and then the CCC's Arabic and Chinese behind it.
-3. **#9's reader-facing disclosure** — what the 2026-08-25 tier left behind, and a decision more than a task. Alongside it, the 101 unread silent-case candidates: reading them is the only way to find another Acts 14, and there is no tool left to write for it.
-4. **#12's Summa half** — the cheapest row on this list and the only one that adds no corpus at all: 8,763 references already resolve forward and reverse nowhere. Its Compendium half went first instead, on 2026-08-28, because answering that half's design question turned out to be the work rather than a prerequisite to it — "condenses" is not "cites", so it got an index and a sentence of its own rather than a row in `CitedBy`. What is left of #12 is the Summa, the prayers, and the Bible-notes decision, which still belongs with #3's.
-5. **#15's first languages** — German and French, the two best-structured sources in the survey; the remaining six follow one at a time, and Spanish's rights question closes itself on 1 Jan 2027. Deferred, not declined
-6. **#13's remainder** — Russian, then the CCC's Arabic and Chinese, once the extraction path from step 2 exists and the normalization layer has somewhere to grow.
-7. **#11 Haydock** — the largest and most interesting addition, once its schema is settled.
-8. **#2 search** — the largest unscoped item; needs a prototype before it can be planned.
-9. **#1 Latin for the document families** — scoped below.
-10. **#5 `related` / #6 Appendix B** — lowest urgency; each still needs a research pass in `docs/research/` style before implementation is scopeable.
+3. **The structure trees' three reader-visible defects** — the leaked contents opening §1 (18 works), the drop cap read as a heading (5), and `santateresa-delbambinogesu.en`'s three lost headings. Then the tier discriminator, the one fix three independent readings agree on.
+4. **#9's reader-facing disclosure** — what the 2026-08-25 tier left behind, and a decision more than a task. Alongside it, the 101 unread silent-case candidates: reading them is the only way to find another Acts 14, and there is no tool left to write for it.
+5. **#12's Summa half** — the cheapest row on this list and the only one that adds no corpus at all: 8,763 references already resolve forward and reverse nowhere. Its Compendium half went first instead, on 2026-08-28, because answering that half's design question turned out to be the work rather than a prerequisite to it — "condenses" is not "cites", so it got an index and a sentence of its own rather than a row in `CitedBy`. What is left of #12 is the Summa, the prayers, and the Bible-notes decision, which still belongs with #3's.
+6. **#15's first languages** — German and French, the two best-structured sources in the survey; the remaining six follow one at a time, and Spanish's rights question closes itself on 1 Jan 2027. Deferred, not declined
+7. **#13's remainder** — Russian, then the CCC's Arabic and Chinese, once the extraction path from step 2 exists and the normalization layer has somewhere to grow.
+8. **#11 Haydock** — the largest and most interesting addition, once its schema is settled.
+9. **#2 search** — the largest unscoped item; needs a prototype before it can be planned.
+10. **#1 Latin for the document families** — scoped below.
+11. **#5 `related` / #6 Appendix B** — lowest urgency; each still needs a research pass in `docs/research/` style before implementation is scopeable.
 
 ## Latin — the document families
 
