@@ -1690,19 +1690,35 @@ rather than a `min-height` floor's, which is also what stops `display: block` fr
 the label high in its own box. Removing the scrollbar gives the chips back the ~15px it
 occupied, which is a character and a half of every truncated name.
 
-**And the chips narrowed to four columns, with the open one growing out of its cell.**
-Three columns was `auto-fill`'s answer to a 4.5rem floor; four is 19 rows for the 73 books
-against 25, at about 74px a cell — 62 of them text, or nine characters of this sans. Most
-of the canon still sets whole and "Cântico dos Cânticos" does not, which is fine while a
-reader is scanning and not fine for the book they have just opened, so the open cell alone
-is sized to its content: `max-content` with a `100%` floor, capped at `--aside-width` so a
-long name cannot reach the edge of a scroll container and turn into a horizontal
-scrollbar, and `z-index` to paint over the neighbour it covers rather than under it.
-Nothing moves — re-aligning one grid item inside its own cell leaves every track where it
-was, which is the promise the out-of-flow chapter panel already makes. The column count is
-pinned rather than fitted BECAUSE of that growth: `:nth-child(4n)` has to name the last
-column, which grows the other way, and a fitted count would make that rule right at one
-width and wrong at every other.
+**And the chips narrowed to four columns.** Three was `auto-fill`'s answer to a 4.5rem
+floor; four is 19 rows for the 73 books against 25, at about 74px a cell — 62 of them
+text, or nine characters of this sans. Most of the canon still sets whole and "Cântico dos
+Cânticos" does not, which is fine while a reader is scanning: the chip carries a `title`
+for that. The count is pinned rather than fitted because four is a decision about how tall
+the list may be, and `auto-fill` decides that from a floor it is not being told about.
+
+**The chapter panel is the chip opening, so it says the book's name and shares the chip's
+edge** (2026-08-29). The truncation four columns cost was first answered by growing the
+open cell to `max-content` — the right question in the wrong place. A chip that changes
+width on click is a second thing moving under the reader's cursor, and the panel it opens
+has far more room to print a name than the chip it grew from. So the growth rule and the
+`:nth-child(4n)` companion that turned the last column around are gone, and the panel
+carries an `.chapters-title` instead — in the sidebar and nowhere else, since that is the
+one variant whose chips truncate, and a title in the other two would restate a button an
+inch away. It is the panel's accessible name where it is printed and an `aria-label` where
+it is not.
+
+Two numbers come with it. The panel now OVERLAPS its chip by 1px rather than standing
+0.35rem off it: both boxes carry a 1px border, and overlapping them exactly is the
+difference between one line and a seam — a panel that shares an edge with the chip reads
+as that chip opening, where one standing clear of it is a card that arrived nearby and has
+to be related back by eye. And the sidebar's panel takes an 8rem floor on its width, which
+`.chapters`' own comment had until then rejected for the other two variants and still
+does: a 1-chapter book asks for one 2rem column, and no book name in the corpus is that
+narrow. The title wraps rather than truncates — a truncated title would be the defect it
+exists to answer, one level down — and names run to 32 characters (Martini's "Seconda
+lettera ai Tessalonicesi"), so the floor is what keeps that wrap to two lines rather than
+one word each.
 
 **An argument that is only the chapter's own rubrics is not printed** (2026-08-29). Five
 of the six annotated editions write a chapter argument as prose about the chapter —

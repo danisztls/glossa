@@ -167,12 +167,35 @@
 	const MARGIN_REM = 1;
 
 	/**
-	 * Gap kept between the panel and the button it hangs off, matching the
-	 * grid variant's own `top: calc(100% + 0.35rem)` / `bottom: calc(100% +
-	 * 0.35rem)` — mirrored here because the sidebar variant's `fixed`
-	 * coordinates are computed in JS rather than left to that CSS calc.
+	 * How far the panel OVERLAPS the button it hangs off, matching the grid
+	 * variant's own `top: calc(100% - 1px)` / `bottom: calc(100% - 1px)` —
+	 * mirrored here because the sidebar variant's `fixed` coordinates are
+	 * computed in JS rather than left to that CSS calc.
+	 *
+	 * It was a 0.35rem GAP until 2026-08-29. A panel standing off its chip is
+	 * a card that arrived near it, and has to be related back to the chip by
+	 * eye; a panel sharing an edge with the chip is that chip opening, which
+	 * is what it is. One pixel and not zero because both boxes carry a 1px
+	 * border, and overlapping them exactly is the difference between one line
+	 * and a seam.
 	 */
-	const BUTTON_GAP_REM = 0.35;
+	const BUTTON_OVERLAP_PX = 1;
+
+	/**
+	 * Floor on the panel's width, in the ONE variant whose panel prints the
+	 * book's name (`chapterPanel` below). A 1-chapter book asks for a single
+	 * 2rem column, which is narrower than any book name in the corpus — and
+	 * `.chapters`' own comment defends that narrowness, correctly, for the
+	 * two variants that have no title to fit.
+	 *
+	 * Eight rem is about nineteen characters of the title's 0.8rem. The names
+	 * run past that (Martini's 1-chapter "Seconda lettera di Giovanni" is 27,
+	 * his 3-chapter "Seconda lettera ai Tessalonicesi" 32), which is why the
+	 * title wraps rather than truncates; the floor is what keeps that wrap to
+	 * two lines instead of one word each. Mirrored by `.chapters.titled`'s
+	 * `min-inline-size`, which is what applies if a measurement ever fails.
+	 */
+	const MIN_TITLED_INLINE_REM = 8;
 
 	/**
 	 * Floor on the panel's height. A book near the bottom of a short viewport
@@ -247,7 +270,6 @@
 		const viewW = root.clientWidth;
 		const viewH = root.clientHeight;
 		const margin = MARGIN_REM * rem;
-		const gap = BUTTON_GAP_REM * rem;
 		const rect = item.getBoundingClientRect();
 		const cols = Math.min(MAX_CHAPTER_COLS, chapterCount(osis));
 
@@ -256,7 +278,8 @@
 		// between them) is slack against sub-pixel rounding — see
 		// `.chapters`' width comment.
 		const wanted = (cols * (CHIP_REM + GAP_REM) + 2 * PAD_REM) * rem + 2;
-		const inlinePx = Math.min(wanted, viewW - 2 * margin);
+		const floor = variant === 'sidebar' ? MIN_TITLED_INLINE_REM * rem : 0;
+		const inlinePx = Math.min(Math.max(wanted, floor), viewW - 2 * margin);
 
 		// Anchored to the button's inline start, slid back only as far as
 		// staying inside the margin requires — which is nothing at all for
@@ -278,8 +301,8 @@
 			leftPx: Math.round(leftPx),
 			blockPx: Math.round(Math.max(flip ? above : below, MIN_BLOCK_REM * rem)),
 			flip,
-			topPx: Math.round(rect.bottom + gap),
-			bottomPx: Math.round(viewH - rect.top + gap)
+			topPx: Math.round(rect.bottom - BUTTON_OVERLAP_PX),
+			bottomPx: Math.round(viewH - rect.top - BUTTON_OVERLAP_PX)
 		};
 	}
 
@@ -446,6 +469,7 @@
 							class:sidebar={variant === 'sidebar'}
 							class:current={book.osis === currentOsis}
 							class:open={isOpen}
+							title={variant === 'sidebar' ? bookName(book) : undefined}
 							aria-current={book.osis === currentOsis ? 'true' : undefined}
 							aria-expanded={isOpen}
 							aria-controls={`chapters-${variant}-${book.osis}`}
@@ -465,16 +489,28 @@
 
 {#snippet chapterPanel(book: CanonicalBook)}
 	{@const present = chaptersInEdition(book.osis)}
+	<!-- Titled in the sidebar and nowhere else: that is the one variant whose
+	     chips truncate, so it is the one whose panel has to say which book it
+	     belongs to. The name is the panel's accessible name either way — as a
+	     heading where it is printed, as an `aria-label` where the chip beside
+	     it already carries it in full. -->
+	{@const titled = variant === 'sidebar'}
+	{@const titleId = `chapters-title-${variant}-${book.osis}`}
 	<div
 		id={`chapters-${variant}-${book.osis}`}
 		class="chapters panel-surface"
 		class:floating
+		class:titled
 		class:flip={placement?.flip}
 		style={panelStyle(book)}
 		role="group"
-		aria-label={bookName(book)}
+		aria-label={titled ? undefined : bookName(book)}
+		aria-labelledby={titled ? titleId : undefined}
 		data-link-preview="off"
 	>
+		{#if titled}
+			<h4 id={titleId} class="chapters-title">{bookName(book)}</h4>
+		{/if}
 		<div class="chapters-nums">
 			{#each book.chapters as chapterN (chapterN)}
 				{#if present.has(chapterN)}
@@ -606,13 +642,14 @@
 	 * the names can stand: a cell is about 74px, of which 61 is text, or eight
 	 * to nine characters of the 0.8rem sans. "Gênesis", "Números", "Salmos"
 	 * and most of the New Testament set whole; "Deuteronômio" and "Cântico dos
-	 * Cânticos" truncate, which is what the open chip below exists to answer.
+	 * Cânticos" truncate, which the chip's `title` answers while a reader is
+	 * scanning and `.chapters-title` answers for the book they open.
 	 *
-	 * PINNED because `:nth-child(4n)` below has to name the last column, and a
-	 * fitted count would make that rule right at one width and wrong at every
-	 * other. The two 4s are one number written twice and have to move
-	 * together. `minmax(0, 1fr)` rather than a floor: with the count fixed,
-	 * the floor's only remaining job would be to force an overflow.
+	 * PINNED rather than fitted because four is a decision about how tall the
+	 * list may be, and `auto-fill` decides that from a floor it is not being
+	 * told about — it answered three here, for 25 rows. `minmax(0, 1fr)` and
+	 * no floor: with the count fixed, a floor's only remaining job would be
+	 * to force an overflow.
 	 */
 	.book-grid.sidebar {
 		display: grid;
@@ -623,45 +660,16 @@
 		gap: 0.2rem;
 	}
 
-	/*
-	 * THE OPEN BOOK SHOWS ITS WHOLE NAME, by growing out of its cell.
-	 *
-	 * Truncation is the price of four columns and is fine while a reader is
-	 * scanning — but the chip they have just opened is the one they may need
-	 * to read, and "Cântico do…" over an open chapter panel says less than the
-	 * panel below it does. So the open cell alone is sized to its content.
-	 *
-	 * IT GROWS OVER ITS NEIGHBOURS AND NOT PAST THEM: `inline-size:
-	 * max-content` with a `100%` floor keeps a short name exactly where it
-	 * was, and `--aside-width` caps the long ones at the column they live in,
-	 * so nothing can reach the edge of an aside that is its own scroll
-	 * container and turn into a horizontal scrollbar. The chip is opaque
-	 * (`.book-btn.open` is the accent fill), and `z-index` is what puts it
-	 * over the neighbour it covers — without it a chip in column 1 would paint
-	 * UNDER column 2, which comes later in the DOM.
-	 *
-	 * NOTHING MOVES, which is the same promise the chapter panel keeps by
-	 * being out of flow: `justify-self` and a width change re-place one grid
-	 * item inside its own cell and leave every track where it was, so the
-	 * book a reader was aiming at does not shift under the cursor.
-	 *
-	 * The last column grows the other way for the obvious reason — there is
-	 * nothing to its end but the edge — and `justify-self: end` is the whole
-	 * mechanism: the cell's end edge is what the box is aligned to, so the
-	 * extra width appears at the start.
-	 */
-	.book-grid.sidebar > .book-item.open {
-		justify-self: start;
-		inline-size: max-content;
-		min-inline-size: 100%;
-		max-inline-size: var(--aside-width, 17rem);
-		/* `.book-item` is already `position: relative` — see below. */
-		z-index: 1;
-	}
-
-	.book-grid.sidebar > .book-item.open:nth-child(4n) {
-		justify-self: end;
-	}
+	/* THE OPEN BOOK SHOWED ITS WHOLE NAME BY GROWING OUT OF ITS CELL until
+	   2026-08-29 — `max-content` with a `100%` floor, capped at
+	   `--aside-width`, and a `:nth-child(4n)` rule to send the last column's
+	   growth the other way. It answered the right question (four columns
+	   truncate, and the book a reader has just opened is the one they may
+	   need to read) in the wrong place: a chip that changes width on click is
+	   a second thing moving, and the panel it opens is a better place to
+	   print a name than the chip is, since the panel has room for it.
+	   `.chapters-title` is where that name goes now, and this rule and its
+	   `nth-child` companion are gone rather than kept alongside it. */
 
 	/* Positioning context for the `absolute` `.chapters` panel in the `'grid'`
 	   variant. Irrelevant to `'sidebar'`'s `fixed` panel, which is positioned
@@ -784,7 +792,9 @@
 	   A 1-chapter book like 2/3 John renders narrow, not force-padded to some
 	   arbitrary floor, and no book ever exceeds the viewport width — which is
 	   what guarantees the start/end anchor math in the script always has at
-	   least one edge that fits.
+	   least one edge that fits. (The sidebar's panel does take a floor, and
+	   not an arbitrary one: it prints the book's name, and that name has to
+	   fit. See `MIN_TITLED_INLINE_REM`.)
 
 	   WIDTH COMES FROM THE SPACE AVAILABLE, not from a constant. The fixed
 	   `22rem` cap this replaces was the reason a 36-chapter book like Numbers
@@ -826,7 +836,10 @@
 		--chapter-gap: 0.35rem;
 		--chapter-pad: 0.5rem;
 		position: absolute;
-		top: calc(100% + 0.35rem);
+		/* Over the button's own bottom border rather than clear of it — see
+		   `BUTTON_OVERLAP_PX`, which is this number for the two variants
+		   whose coordinates are computed in JS. */
+		top: calc(100% - 1px);
 		inset-inline-start: 0;
 		z-index: 20;
 		padding: var(--chapter-pad);
@@ -857,6 +870,14 @@
 		overflow-y: auto;
 	}
 
+	/* The floor `MIN_TITLED_INLINE_REM` applies in JS, stated again here for
+	   the one case the measurement cannot cover: a panel that got no
+	   `placement` at all. `min-inline-size` beats `inline-size` either way,
+	   so the two can only agree. */
+	.chapters.titled {
+		min-inline-size: min(8rem, calc(100vw - 2rem));
+	}
+
 	/* Opens upward instead of downward, for a book low enough on the screen
 	   that there is more room above it than below. Which way round is
 	   `measurePlacement`'s call — this is only the two anchors, and only
@@ -865,7 +886,7 @@
 	   has no shared `100%` reference to offset from. */
 	.chapters.flip {
 		top: auto;
-		bottom: calc(100% + 0.35rem);
+		bottom: calc(100% - 1px);
 	}
 
 	/* `position: fixed` instead of `'grid'`'s `absolute`, and a viewport-
@@ -906,11 +927,39 @@
 		z-index: 50;
 	}
 
+	/*
+	 * THE BOOK'S NAME, WHERE THE CHIP CANNOT SAY IT.
+	 *
+	 * Four columns of a 17rem aside truncate most names (`.book-btn.sidebar`),
+	 * so the panel is the only place the whole one fits — and a panel that
+	 * begins with the name reads as the chip it grew out of, which is what
+	 * the 1px overlap above is for. The other two variants print their names
+	 * on chips wide enough to set them, and a title there would restate a
+	 * button an inch away.
+	 *
+	 * IT WRAPS RATHER THAN TRUNCATES: a truncated title would be the defect
+	 * it exists to answer, one level down. Names run to 32 characters
+	 * (Martini's "Seconda lettera ai Tessalonicesi") against a panel whose
+	 * width is decided by the chapter grid below, so two lines are a normal
+	 * outcome and `MIN_TITLED_INLINE_REM` is what keeps them to two.
+	 *
+	 * The rule under it is the panel's own, not a heading's underline: it
+	 * separates a name from the numbers it labels, which are the only other
+	 * thing in the box.
+	 */
+	.chapters-title {
+		margin: 0 0 0.4rem;
+		padding-block-end: 0.3rem;
+		border-block-end: 1px solid var(--color-border);
+		font-size: 0.85rem;
+		font-weight: 600;
+		line-height: 1.3;
+	}
+
 	/* The chapter numbers. This used to be `.chapters` itself; it moved down
-	   a level when the panel briefly had a heading in the sidebar variant, so
-	   the heading wasn't laid out as if it were a chapter chip. Now shared
-	   unchanged by both variants — the button each panel hangs off already
-	   says which book it belongs to, so neither needs to restate it.
+	   a level when the panel first had a heading, so the heading wasn't laid
+	   out as if it were a chapter chip — which is again the reason it is a
+	   level down, now that `.chapters-title` above is back.
 
 	   A GRID rather than the wrapped flex row it was, because a wrapped row
 	   only lines its chips up by accident — as soon as one chip is wider than
