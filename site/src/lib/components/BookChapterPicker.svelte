@@ -564,6 +564,18 @@
 		margin: 0 0 0.5rem;
 	}
 
+	/* The other two numbers in `.book-btn.sidebar`'s arithmetic: about 20px of
+	   the list's height is the space around these two headings, and only this
+	   variant is short of it. `/scriptura`'s grid and the contents sheet have
+	   the room and keep the looser setting. */
+	.picker-body.sidebar .testament + .testament {
+		margin-top: 1rem;
+	}
+
+	.picker-body.sidebar .testament h3 {
+		margin-bottom: 0.35rem;
+	}
+
 	.book-grid {
 		list-style: none;
 		margin: 0;
@@ -589,7 +601,13 @@
 	.book-grid.sidebar {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
-		gap: 0.25rem;
+		/* Tighter than the wrapped grid's 0.4rem, and tighter again since
+		   2026-08-29 — see `.book-btn.sidebar`, which is where the whole
+		   arithmetic of making 73 books fit a screen is written down. The
+		   4.5rem floor is what holds this at three columns: dropping it to
+		   4rem would fit four and save six rows, at the price of truncating
+		   "Deuteronômio" to about five characters. */
+		gap: 0.2rem;
 	}
 
 	/* Positioning context for the `absolute` `.chapters` panel in the `'grid'`
@@ -640,16 +658,53 @@
 		color: var(--color-accent);
 	}
 
-	/* Fills its grid cell and centres, rather than the full-width row this
-	   was when the sidebar list ran vertically. Long names (1 Thessalonians)
-	   are clipped rather than allowed to widen the whole track — the button
-	   carries a `title` for the full name. */
+	/*
+	 * Fills its grid cell and centres, rather than the full-width row this
+	 * was when the sidebar list ran vertically. Long names (1 Thessalonians)
+	 * are clipped rather than allowed to widen the whole track — the button
+	 * carries a `title` for the full name.
+	 *
+	 * COMPACT BECAUSE THE COLUMN IS 950px AND THE LIST WAS 1,060 (2026-08-29).
+	 * 46 Old Testament books in three columns is 16 rows and the New Testament
+	 * 9 more; at the 1.9rem chip and 0.25rem gap this carried, that plus two
+	 * headings came to about 1,060px against the roughly 950 a 1080p viewport
+	 * leaves `.reading-aside` (`100vh` less the chrome and 3rem, layout.css).
+	 * So the aside opened already scrolled on the commonest desktop there is,
+	 * and a scrollbar down a table of contents reads as more of it hidden than
+	 * there is. Five numbers came down together — this chip's block padding
+	 * and height, the grid's gap, and the two around a testament's heading —
+	 * taking the row pitch from about 39px to 33 and the list to about 905,
+	 * which fits with room rather than only just.
+	 *
+	 * (Every px here is at a 1rem of 18: `base.css` lifts the root to 112.5%
+	 * of the browser's own default. A reader who has raised that default gets
+	 * proportionally more of everything, this column included, and may scroll
+	 * again — which is the right outcome, since it is their setting.)
+	 *
+	 * WHAT DID NOT COME DOWN IS THE TEXT: 0.8rem is unchanged, and the height
+	 * is now the line box's rather than a floor's. `display: block` centres
+	 * nothing vertically, so a `min-height` above the content's own height
+	 * seats the label high in its chip — already true at 1.9rem, which put
+	 * 34.2px of box around a 30px line, and tightening the padding alone
+	 * would only have made it plainer. Sizing the box from `line-height`
+	 * instead puts the label in the middle of it by construction, and
+	 * `min-height` stays a floor rather than the height: 1.6rem is 28.8px,
+	 * comfortably over the 24px minimum target size WCAG 2.5.8 asks for, and
+	 * this variant is desktop-only anyway (`.reading-aside` is hidden below
+	 * 80rem).
+	 *
+	 * IT ALSO WIDENS THE CHIPS, which is the second thing a scrollbar was
+	 * costing: an aside that no longer scrolls has no scrollbar in it, and
+	 * that is about 15px of the 306 this column has — a character and a half
+	 * of every truncated name, given back for nothing.
+	 */
 	.book-btn.sidebar {
 		width: 100%;
 		justify-content: center;
-		padding: 0.3rem 0.35rem;
+		padding: 0.15rem 0.3rem;
 		font-size: 0.8rem;
-		min-height: 1.9rem;
+		line-height: 1.55;
+		min-height: 1.6rem;
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;

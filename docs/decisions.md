@@ -1662,6 +1662,18 @@ layout. The cell also had to become two — each column's notes are written in t
 edition's language, resolve against that edition's work id, and take their letters from
 that chapter's own run, none of which one shared snippet could carry.
 
+**The Bible sidebar's chips are sized to the screen they have to fit** (2026-08-29). 46
+Old Testament books in three columns is 16 rows and the New Testament 9 more; at the
+1.9rem chip and 0.25rem gap the aside carried, that plus two testament headings came to
+about 1,060px against the ~960 a 1080p viewport leaves `.reading-aside`, so the table of
+contents opened already scrolled on the commonest desktop there is. Five numbers came down
+together — the chip's block padding and height, the grid's gap, and the space either side
+of a testament's heading — for a row pitch of 33px against 39 and a list of about 910. The
+TEXT did not come down: 0.8rem is unchanged, and the chip's height is now its line box's
+rather than a `min-height` floor's, which is also what stops `display: block` from seating
+the label high in its own box. Removing the scrollbar gives the chips back the ~15px it
+occupied, which is a character and a half of every truncated name.
+
 **An argument that is only the chapter's own rubrics is not printed** (2026-08-29). Five
 of the six annotated editions write a chapter argument as prose about the chapter —
 Challoner's 1,307, and none of them matching anything else on the page. Matos Soares
