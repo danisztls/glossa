@@ -1,0 +1,15 @@
+[
+  {
+    "id": "humani-generis.pt-heading-4-stray-space",
+    "locator": {
+      "section": null,
+      "raw_substring": "<i><b>4 . Erros subseq&uuml;entes"
+    },
+    "field": "raw_text",
+    "from": "<i><b>4 . Erros subseq&uuml;entes",
+    "to": "<i><b>4. Erros subseq&uuml;entes",
+    "reason": "A stray space before the full stop of a heading's own number. The five sibling headings in the same series print the number tight against the stop, so the correct value is fixed by the document's own convention rather than by ours.",
+    "evidence": "raw/vatican-docs/encyclical__humani-generis__pt.html prints '1.', '2.', '3.', '5.' and '6.' in the identical '<i><b>N. Title' shape and '4 .' once. The heading is stored verbatim in structure.json, so the stray space shows in the table of contents.",
+    "added": "2026-08-29"
+  }
+]

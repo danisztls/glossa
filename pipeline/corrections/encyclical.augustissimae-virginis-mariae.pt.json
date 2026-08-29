@@ -1,0 +1,15 @@
+[
+  {
+    "id": "augustissimae-virginis-mariae.pt-12-par-a",
+    "locator": {
+      "section": 12,
+      "raw_substring": "Ausp&iacute;cios par a difus&atilde;o da confraria"
+    },
+    "field": "raw_text",
+    "from": "Ausp&iacute;cios par a difus&atilde;o da confraria",
+    "to": "Ausp&iacute;cios para a difus&atilde;o da confraria",
+    "reason": "'par a' is not Portuguese here: the phrase needs the preposition 'para' followed by the article 'a'. The page has split 'para' after two letters, leaving 'par' plus a stray 'a' that then reads as the article. No word is added -- the missing letter is restored and the space moved back one position.",
+    "evidence": "raw/vatican-docs/encyclical__augustissimae-virginis-mariae__pt.html: '<b><i>Ausp&iacute;cios par a difus&atilde;o da confraria </i></b>'. This is one of the document's seven printed headings, so the defect is reader-visible in the table of contents.",
+    "added": "2026-08-29"
+  }
+]

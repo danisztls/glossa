@@ -1,0 +1,15 @@
+[
+  {
+    "id": "optatissima-pax.en-masthead-bishiops",
+    "locator": {
+      "section": null,
+      "raw_substring": "ARCHBISHOPS, BISHIOPS"
+    },
+    "field": "raw_text",
+    "from": "<br /> ARCHBISHOPS, BISHIOPS",
+    "to": "<br /> ARCHBISHOPS, BISHOPS",
+    "reason": "'BISHIOPS' is not a word. The line is the standing addressee formula of the Pius XII-era English mastheads on this mirror, and the correct value is fixed by the mirror's own other pages rather than inferred.",
+    "evidence": "raw/vatican-docs: 30 pages print 'ARCHBISHOPS, BISHIOPS, AND OTHER LOCAL ORDINARIES' and 4 print 'ARCHBISHOPS, BISHOPS, AND OTHER LOCAL ORDINARIES' in the same boilerplate line -- one bad copy of a shared template, not thirty independent typos. The line is reader-visible: it is stored whole in manifest.header and rendered as the document masthead.",
+    "added": "2026-08-29"
+  }
+]
