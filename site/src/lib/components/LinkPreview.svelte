@@ -438,6 +438,16 @@
 	under a long-press "open in new tab", and announces itself as a link — none
 	of which a synthetic click handler would have given us.
 -->
+<!-- The card has to SAY it is a way through, or the second tap is a thing the
+     reader has to guess at — but it says so at the end of the text it is
+     about rather than in a bordered row of its own. Floated to the end of the
+     last line, it reads as a quiet trailing marker instead of a second target
+     competing with the passage; the whole card is the tap target either way,
+     which is what lets the label be this small. No arrow: the word carries
+     the meaning, and small caps in the link colour are already saying
+     "affordance" without a glyph pointing off the edge of the card. -->
+{#snippet openMarker()}<span class="link-preview-open">{t('ref.preview.open')}</span>{/snippet}
+
 <div
 	bind:this={overlayEl}
 	id={TOOLTIP_ID}
@@ -452,14 +462,10 @@
 		<a class="link-preview-content link-preview-link" href={tapHref}>
 			{#if phase === 'shown' && resolved}
 				<p class="link-preview-title">{resolved.title}</p>
-				<p class="link-preview-body">{resolved.body}</p>
+				<p class="link-preview-body">{resolved.body}{@render openMarker()}</p>
 			{:else if phase === 'loading'}
-				<p class="link-preview-body">{t('ref.tooltip.loading')}</p>
+				<p class="link-preview-body">{t('ref.tooltip.loading')}{@render openMarker()}</p>
 			{/if}
-			<!-- The card has to SAY it is a way through, or the second tap is a
-			     thing the reader has to guess at. Decorative arrow only — the
-			     word carries the meaning. -->
-			<p class="link-preview-open">{t('ref.preview.open')} <span aria-hidden="true">→</span></p>
 		</a>
 	{:else}
 		<div class="link-preview-content" aria-live="polite">
@@ -545,6 +551,9 @@
 		margin: 0;
 		color: var(--color-text);
 		overflow-wrap: break-word;
+		/* Contains the floated "Open" marker, so a card whose last line has no
+		   room for it grows rather than letting the marker hang out of the box. */
+		display: flow-root;
 	}
 
 	/* Tap card only. `pointer-events` goes back to `auto` on exactly the
@@ -569,12 +578,28 @@
 		border-radius: inherit;
 	}
 
+	/* Floated rather than given a row of its own: placed after all of the
+	   paragraph's text, a float lands on the last line it occurs in, at that
+	   line's end — which is where a trailing marker belongs, and it costs the
+	   card no height at all when the line has room. Logical `inline-end`, so it
+	   follows the direction of the text it trails. */
 	.link-preview-open {
-		margin: 0.5rem 0 0;
-		padding-top: 0.4rem;
-		border-top: 1px solid var(--color-border);
+		float: inline-end;
+		/* A float's top aligns with the top of the line box it lands in, so a
+		   label this much smaller than the body would ride high against the
+		   last line. The block nudge is half the difference between the two
+		   boxes, which centres it on that line. */
+		margin-block-start: 0.24rem;
+		margin-inline-start: 0.75rem;
 		color: var(--color-link);
+		font-size: 0.66rem;
 		font-weight: 600;
-		font-size: 0.8rem;
+		/* Uppercased in CSS and not in the dictionaries: the fourteen strings
+		   stay sentence case for every other consumer, and a locale whose
+		   script has no case (ar) is left alone by the property rather than
+		   having a shouting translation written for it. */
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		white-space: nowrap;
 	}
 </style>
