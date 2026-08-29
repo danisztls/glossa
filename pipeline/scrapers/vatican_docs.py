@@ -1195,6 +1195,18 @@ _FN_ANCHOR_DEF_RE = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 _FN_PAREN_RE = re.compile(r"^\s*\((\d{1,4}\*?)\)\.?\s*")
+_FN_BRACKET_RE = re.compile(r"^\s*\[(\d{1,4}\*?)\]\.?\s*")
+_FN_TRAILING_PAREN_RE = re.compile(r"^\s*(\d{1,4}\*?)\)\.?\s*")
+# Two more label shapes, each the whole apparatus of the pages that print
+# it. `[N] text` is Humanum Genus PT (16 notes) and Vigilanti Cura EN (2);
+# `N). text` is Inscrutabili Dei Consilio EN (12). Both regions are found
+# correctly -- the last <hr> -- and every entry then fell through all four
+# branches to `marker=None`, which the caller reads as a continuation of a
+# previous entry that does not exist, so all 30 notes stored their marker
+# with empty text and nothing anywhere reported it. Neither shape can
+# collide with a note whose text opens with a numeral: `_FN_BARE_RE`
+# already claims "N. " and "N ", and these two require a bracket or a
+# closing paren that no prose puts there.
 _FN_BARE_RE = re.compile(r"^\s*(\d{1,4})(?:\.+\s*|\s+)")
 # The superscript-label form, matched before tags are stripped -- see
 # `parse_footnote_entry`. Deliberately anchored and digits-only: a note
@@ -1243,6 +1255,12 @@ def parse_footnote_entry(raw_inner_html: str) -> tuple[str | None, str]:
         return m.group(1), strip_tags(raw_inner_html[m.end() :]).strip()
     stripped = strip_tags(raw_inner_html)
     m = _FN_PAREN_RE.match(stripped)
+    if m:
+        return m.group(1), stripped[m.end() :].strip()
+    m = _FN_BRACKET_RE.match(stripped)
+    if m:
+        return m.group(1), stripped[m.end() :].strip()
+    m = _FN_TRAILING_PAREN_RE.match(stripped)
     if m:
         return m.group(1), stripped[m.end() :].strip()
     m = _FN_BARE_RE.match(stripped)
