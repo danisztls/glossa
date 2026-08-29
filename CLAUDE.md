@@ -473,15 +473,37 @@ npm run deploy      # build -> preflight -> wrangler deploy
   it. `REFERENCE_COVERAGE=verbose npm run sync-corpus` prints what the grammar
   recognized nothing in, which is where coverage work starts.
 
-- **`postbuild` strips comments from the built HTML and then refuses a build
-  that still ships one.** `src/app.html` is the most heavily commented file in
+- **`postbuild` minifies the built HTML and then refuses a build that still
+  ships a comment.** `src/app.html` is the most heavily commented file in
   the repository AND the one document served at every address, so its notes were
   7,383 bytes of `index.html`'s 15,063 (49%) on every cold visit;
-  `scripts/strip-comments.mjs` removes them from `build/` and leaves `src/`
-  alone. HTML was the only place they survived — the minifier already leaves
-  zero in 85 JS files and 31 CSS — and the audit half exists because
-  `vite.config.ts` names no `minify`, so that is a default rather than a
-  promise. It scans HTML, JS, CSS and XML and **deliberately not JSON**, though
+  `scripts/minify-build.mjs` removes them from `build/` and leaves `src/`
+  alone. **Nothing upstream does this and nothing will**: SvelteKit does not
+  minify HTML at all (`build.minify` covers only what Vite itself emits;
+  sveltejs/kit#568 has been open since 2021), and no Vite hook even sees the
+  file — `adapter-static` writes `index.html` in the adapt phase, long after
+  `transformIndexHtml`, and `offline.html` is copied verbatim out of `static/`.
+  So a postbuild pass is the shape, and `html-minifier-terser` is the engine
+  every wrapper in the ecosystem uses under the hood. Do not reach for
+  `sveltekit-html-minifier`: its `adapt` loops over `builder.prerendered.pages`,
+  and with `prerender.entries: []` this build has none — `index.html` is the
+  adapter FALLBACK — so it would minify nothing here, silently.
+- **The pass read HTML as one syntax for as long as it existed, and that hid
+  the larger half.** It stripped `<!--` comments and deliberately stepped around
+  `<script>`/`<style>`, since `<!--` opens nothing in JavaScript and reaching in
+  would truncate the app. True, and the wrong conclusion: the boot script is
+  where most of `app.html`'s commentary lives, so `index.html` went on shipping
+  3,916 bytes of inline JavaScript at authoring width — 48% of the document —
+  and the audit could not see it either, because it read `.html` as markup and
+  `.js` as a program and had no notion that a `.html` file CONTAINS a program.
+  Fixed 2026-08-28 by handing the parse to the dep and teaching `commentsIn` to
+  read a page as the two or three syntaxes it is. `index.html` 16,260 → 5,020
+  bytes, `offline.html` 2,968 → 1,618.
+- The audit half exists because `vite.config.ts` names no `minify`, so that is
+  a default rather than a promise. **It is a scan and not a
+  re-minify-and-compare**, which would be tautological — drop `minifyJS` and
+  unminified output is still a fixed point of the same options. It scans
+  HTML, JS, CSS and XML and **deliberately not JSON**, though
   the evidence first given for that was wrong and is worth knowing about: 87
   built corpus files carried a bare `<!--` said to be stored document text, and
   on 2026-08-28 all 87 turned out to be one parser defect — every one the LAST

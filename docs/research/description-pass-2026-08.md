@@ -1569,7 +1569,7 @@ cut in half. Fixed there, and the count is now zero.
 
 **This makes a claim in `CLAUDE.md` false, and the note has been corrected.**
 Those 87 files were cited as evidence that stored corpus text carries comment
-markers, which is why `strip-comments.mjs` skips JSON. It does not carry them
+markers, which is why `minify-build.mjs` skips JSON. It does not carry them
 and never did. The scan still skips JSON — a source page may one day print a
 comment marker as text, and refusing a build over it is the wrong failure —
 but the reason is now a hypothetical rather than a miscounted fact.
