@@ -1542,3 +1542,102 @@ for the branch-local `prelim` hypothesis, and a good regression case for it.
   `anni-sacri.pt` are genuinely undivided numbered prose.
 - `eccl-de-euch.pt` §62's `kept?` block is the Portuguese hymn translation,
   intact after the Latin original. Not a truncation.
+
+## Wave 14 (24 works) — 2026-08-28
+
+Same shape as wave 13: ten Leo XIII, seven Pius XII, two Pius XI, two John
+Paul II, one each of John XXIII, Paul VI and Leo XIV. **21 of the 24 oracles
+agree with the parse**, and the three that do not each carry a diagnosis read
+at markup level by the agent that wrote them. The corpus now holds **238 ToC
+oracles** and **245 descriptions**; 34 works disagree.
+
+Two of the wave's works are `"numbered": false` editions (`quae-ad-nos.en`,
+`lux-veritatis.it`) and were briefed as such, which is the first time that
+path was exercised deliberately rather than discovered.
+
+### The 87 stray comment markers are one parser defect, not source text
+
+`in-multiplicibus-curis.pt` stored its only footnote as
+`AAS 40(1948), p.171. <!--`. The raw page prints it cleanly; the marker is the
+opening of vatican.va's own `<!-- /TESTO -->`, which closes the page body.
+
+**All 87 occurrences in the corpus are the LAST footnote of their unit, and
+every one ends in the marker.** The footnote region runs to the end of the
+page, so it ends between the `<!--` and its `>`; `strip_tags` removed a CLOSED
+comment as a side effect of matching `<`-to-`>` and had no rule at all for one
+cut in half. Fixed there, and the count is now zero.
+
+**This makes a claim in `CLAUDE.md` false, and the note has been corrected.**
+Those 87 files were cited as evidence that stored corpus text carries comment
+markers, which is why `strip-comments.mjs` skips JSON. It does not carry them
+and never did. The scan still skips JSON — a source page may one day print a
+comment marker as text, and refusing a build over it is the wrong failure —
+but the reason is now a hypothetical rather than a miscounted fact.
+
+### An anchor marks up a phrase; it does not separate two
+
+Batch 11 recorded that "`<a>` inside a heading spaces the words it links — and
+the fix is not here". It is here now. vatican.va links the title of a document
+it names, mid-heading and mid-clause, and `<a>` was the one inline tag in
+neither text path's keep-set, so the two tags became two spaces:
+`mater.pt` printed `A época da encíclica " Rerum Novarum "` for a heading whose
+page shows no space at all.
+
+**`strip_tags` AND `narrow_html` both had to change**, which is the same lesson
+the empty-anchor fix taught one commit earlier: the round-trip check compares
+the two, so fixing one side turns a spacing defect into a validation failure.
+Measured: **106 files across 102 works**, one oracle better
+(`divino-afflante-spiritu.pt` 19 → 18) and none worse.
+
+### `phase1` + `phase2 --overwrite` is not a full re-parse, and the recipe says so
+
+Fourteen works are outside `DEFAULT_LANGS` — seven Italian-only encyclicals and
+the seven non-English/Portuguese editions of Magnifica Humanitas — so two
+commands leave them at whatever the last run wrote. Six of the 87 comment
+markers survived the first "full" re-parse for exactly this reason and read as
+six unfixed cases rather than six stale files.
+
+The corpus README's rebuild recipe already carries all four commands and warns
+about this at length. The lesson is only that a blast-radius measurement has to
+use the recipe rather than the two commands one remembers.
+
+### Two candidates measured and NOT taken
+
+**Widening bold detection to `<strong>`.** `mater.pt` sharpened the case: it is
+not only levelling damage, as batch 10 recorded, but a lost top-level division —
+`QUARTA PARTE` is printed `<strong>` where its three sibling Parts use `<b>`,
+so the Part vanishes and its subtitle is left stranded a tier down. Widening
+clears `pascendi-dominici-gregis.pt` outright (7 findings → 0) and recovers
+`mater.pt`'s Part. It also takes `pacem.pt` from 1 finding to 9: recovering that
+document's `INTRODUÇÃO` shifts its modal level offset, so one finding becomes an
+OFFSET row plus eight LEVEL rows. That is class 1, and the widening stays behind
+it. The class is 303 heading-shaped paragraphs across 25 pages.
+
+**A general rule for a heading stranded at a paragraph's tail.** Rejected in
+wave 13 and re-confirmed: 56 of the 58 loose candidates are an emphasised
+closing phrase.
+
+### An oracle corrected, and how it was caught
+
+`diuturni-temporis.pt`'s oracle recorded every `before` one too high, and its
+agent reported the work as agreeing with the parse. Reading the raw page
+settles it in one pass — the six headings are each followed by a paragraph the
+page prints as `1.` through `6.`, so `before` is 1–6 and the parser was right.
+The agent had also reported that the page prints no inline paragraph numbers,
+which is false. **An agent's "audit.py toc reports no disagreement" is worth
+re-running rather than believing**, since the audit only agrees with whatever
+oracle was on disk when it ran.
+
+### Findings recorded, not acted on
+
+- `ad-apostolorum-principis.pt` is the one work of the 25 the masthead-subtitle
+  fix does not reach, and it is a variant rather than a miss: its mirror sets
+  that paragraph in no colour at all, so the signal the fix reads is absent.
+- `magnifica-humanitas.ar` prints its chapter openings as three centred lines
+  and the parser folds two into a node and spins the third off as its own, where
+  `.en` and `.it` merge all three. Six findings, all at `before` 90 and 131.
+- The Arabic edition's sub-headings are genuinely one flat tier — it never
+  italicises a heading, so the tier its siblings mark with bold-italic does not
+  exist in it. The parser agrees; it is the source, not a gap.
+- `mediator-dei.pt` skips from §151 to §153 with no §152 on the page. Documented,
+  not corrected: there is no missing text to restore.
