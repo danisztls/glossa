@@ -1,0 +1,22 @@
+[
+  {
+    "id": "quod-multum.en-1-ponfiffs",
+    "locator": { "section": 1, "raw_substring": "many Roman Ponfiffs are recorded" },
+    "field": "raw_text",
+    "from": "many Roman Ponfiffs are recorded",
+    "to": "many Roman Pontiffs are recorded",
+    "reason": "'Ponfiffs' is not a word, and the correct value is fixed by the page itself rather than inferred: the same page spells 'Pontiffs' correctly twice elsewhere, and the sentence names a span of them ('From Callistus III to Innocent XI'). An f-for-t substitution is the ordinary signature of the OCR this mirror's older texts came through.",
+    "evidence": "raw/vatican-docs/encyclical__quod-multum__en.html: '...From Callistus III to Innocent XI, many Roman Ponfiffs are recorded whose names deserve to be honored...'. The page prints 'Pontiffs' 2 times and 'Ponfiffs' once.",
+    "added": "2026-08-28"
+  },
+  {
+    "id": "quod-multum.en-6-nor-for-not",
+    "locator": { "section": 6, "raw_substring": "which is nor to be restricted by age" },
+    "field": "raw_text",
+    "from": "which is nor to be restricted by age",
+    "to": "which is not to be restricted by age",
+    "reason": "'is nor to be restricted' is ungrammatical, and the next sentence states the same thing positively -- 'No age is unfit for the kingdom of God' -- so the intended reading is 'not'. An r-for-t substitution, the same OCR class as the misprint above.",
+    "evidence": "raw/vatican-docs/encyclical__quod-multum__en.html, section 6: 'To embrace religion is a most serious duty, which is nor to be restricted by age. No age is unfit for the kingdom of God.'",
+    "added": "2026-08-28"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "inimica-vis.en-heading-course-of-action",
+    "locator": { "section": 9, "raw_substring": "<i>Course o f Action</i>" },
+    "field": "raw_text",
+    "from": "<i>Course o f Action</i>",
+    "to": "<i>Course of Action</i>",
+    "reason": "A space inside the word 'of', splitting it as 'o f'. Not an edition choice and not a word: the same page writes 'of' correctly throughout, and the heading it disfigures reaches the reader verbatim as a structure node's title. The stray space is the ordinary signature of the OCR this mirror's older texts came through, the same class as quod-multum.en's 'Ponfiffs'.",
+    "evidence": "raw/vatican-docs/encyclical__inimica-vis__en.html, the heading before section 9: '<p align=\"left\"><i>Course o f Action</i></p> <p align=\"left\">9. But in the pre...'. Its five sibling headings on the same page are set identically and are all correctly spelled.",
+    "added": "2026-08-28"
+  }
+]
