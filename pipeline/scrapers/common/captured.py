@@ -66,6 +66,28 @@ def captured_at(page: Path) -> str | None:
     return load_captured(source_dir).get(str(Path(*rel.parts[1:])))
 
 
+def source_captured_at(source_dir: Path) -> str | None:
+    """The day a whole crawl was taken: the earliest date recorded under it.
+
+    For a manifest `sources[]` entry that names a SITE rather than one page,
+    which is what a Bible edition's does -- one URL standing for 73 fetched
+    book pages. `captured_at` cannot answer it, because the URL named is
+    usually an index the crawl read links off and never wrote to `raw/`.
+
+    THAT GAP WAS STAMPING THE RUN DATE. `cpdv.py` and `vulgate.py` asked for
+    `index.htm`, which is not on disk and not in the ledger, and fell through
+    to `datetime.now()` -- so `bible.cpdv.en` claimed a 2026-08-14 capture on
+    the day the mtimes were recovered and a 2026-08-29 one the next morning,
+    for the same untouched pages. It hid because the recovery run and the
+    rebuild that verified it happened on the same day; a rebuild the following
+    day is what surfaced it. Earliest rather than latest because a crawl is
+    dated by when it was taken, and a `--refresh` of one page does not
+    re-date the other seventy-two.
+    """
+    dates = load_captured(source_dir).values()
+    return min(dates) if dates else None
+
+
 def record_capture(page: Path, when: str | None = None) -> None:
     """Note that `page` was fetched today (or on `when`).
 

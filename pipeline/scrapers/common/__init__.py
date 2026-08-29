@@ -78,12 +78,16 @@ from __future__ import annotations
 
 from .absent import AbsentSources
 from .book_forms import BOOK_FORMS_PATH, book_form_pattern, book_forms
-from .captured import captured_at, record_capture
+from .captured import captured_at, record_capture, source_captured_at
 from .corrections import (
+    FIELD_VERSE_DUPLICATE,
+    FIELD_VERSE_NUMBER,
     CorrectionDriftError,
     apply_verse_corrections,
     corrections_receipt,
+    filed,
     load_corrections,
+    require_all_applied,
 )
 from .fetch import (
     DEFINITIVE_ABSENCE,
@@ -137,6 +141,8 @@ __all__ = [
     "CORRECTIONS_DIR",
     "DEFINITIVE_ABSENCE",
     "DORE_ANCHORS_PATH",
+    "FIELD_VERSE_DUPLICATE",
+    "FIELD_VERSE_NUMBER",
     "OVERRIDES_DIR",
     "TRANSLATIONS_CHECKED_PATH",
     "AbsentSources",
@@ -157,6 +163,7 @@ __all__ = [
     "corrections_receipt",
     "download_resumable",
     "file_has_text",
+    "filed",
     "filed_work_ids",
     "fold",
     "fold_index",
@@ -171,8 +178,10 @@ __all__ = [
     "read_bytes_or_none",
     "read_text_or_none",
     "record_capture",
+    "require_all_applied",
     "require_corpus",
     "roman_to_int",
+    "source_captured_at",
     "to_vulgate",
     "urllib_transport",
     "write_if_changed",

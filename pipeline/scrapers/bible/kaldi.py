@@ -114,11 +114,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from common import (
+    FIELD_VERSE_DUPLICATE,
+    FIELD_VERSE_NUMBER,
     CorrectionDriftError,
     build_root,
     captured_at,
+    filed,
     load_corrections,
     raw_root,
+    require_all_applied,
     require_corpus,
     write_stamped_json,
 )
@@ -575,9 +579,7 @@ def apply_verse_number_corrections(
 ) -> list[dict]:
     applied: list[dict] = []
     seen_ids: set[str] = set()
-    for c in corrections:
-        if c.get("field") != "verse_number" or c.get("resolution"):
-            continue
+    for c in filed(corrections, FIELD_VERSE_NUMBER):
         loc = c["locator"]
         book = books.get(loc["osis"])
         if book is None:
@@ -600,17 +602,9 @@ def apply_verse_number_corrections(
         seen_ids.add(c["id"])
 
     if full_run:
-        missing = [
-            c["id"]
-            for c in corrections
-            if c.get("field") == "verse_number"
-            and not c.get("resolution")
-            and c["id"] not in seen_ids
-        ]
-        if missing:
-            raise CorrectionDriftError(
-                f"verse-number correction(s) never matched during full run: {missing}"
-            )
+        require_all_applied(
+            corrections, seen_ids, field=FIELD_VERSE_NUMBER, source="raw/kaldi/"
+        )
     return applied
 
 
@@ -628,9 +622,7 @@ def apply_verse_duplicate_corrections(
     """
     applied: list[dict] = []
     seen_ids: set[str] = set()
-    for c in corrections:
-        if c.get("field") != "verse_duplicate" or c.get("resolution"):
-            continue
+    for c in filed(corrections, FIELD_VERSE_DUPLICATE):
         loc = c["locator"]
         book = books.get(loc["osis"])
         if book is None:
@@ -654,17 +646,9 @@ def apply_verse_duplicate_corrections(
         seen_ids.add(c["id"])
 
     if full_run:
-        missing = [
-            c["id"]
-            for c in corrections
-            if c.get("field") == "verse_duplicate"
-            and not c.get("resolution")
-            and c["id"] not in seen_ids
-        ]
-        if missing:
-            raise CorrectionDriftError(
-                f"verse-duplicate correction(s) never matched during full run: {missing}"
-            )
+        require_all_applied(
+            corrections, seen_ids, field=FIELD_VERSE_DUPLICATE, source="raw/kaldi/"
+        )
     return applied
 
 

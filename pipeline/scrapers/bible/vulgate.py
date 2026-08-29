@@ -61,12 +61,12 @@ from common import (
     CorrectionDriftError,
     apply_verse_corrections,
     build_root,
-    captured_at,
     chapter_opening_letter,
     corrections_receipt,
     load_corrections,
     raw_root,
     require_corpus,
+    source_captured_at,
     write_stamped_json,
 )
 from sacredbible import Anomaly, Fetcher, parse_book, verse_text_faults
@@ -452,13 +452,17 @@ def write_output(
     receipt: dict,
 ) -> None:
 
-    # The ledger records when this page was actually fetched; today only
-    # for a source no capture is on file for. Before 2026-08-28 this stamped
-    # today unconditionally, so every re-parse claimed a retrieval that did
-    # not happen -- see common/captured.py.
-    # From the page itself (common/captured.py): the fetcher stamped it when
-    # it made the request, so a cache-only re-parse cannot move it.
-    today = captured_at(raw_dir() / "index.htm") or datetime.now(UTC).date().isoformat()
+    # The ledger records when these pages were actually fetched; today only
+    # for a source no capture is on file for at all. Before 2026-08-28 this
+    # stamped today unconditionally, so every re-parse claimed a retrieval
+    # that did not happen -- see common/captured.py.
+    #
+    # `source_captured_at`, not `captured_at`: the URL this manifest names is
+    # the site index, which the crawl read book links off and never wrote to
+    # `raw/`. Asking the ledger for a page that is not in it returned None and
+    # fell straight through to today, which is the same defect one layer down
+    # and went unnoticed for a day.
+    today = source_captured_at(raw_dir()) or datetime.now(UTC).date().isoformat()
 
     notes = (
         "Clementine Vulgate (Sixtus V / Clement VIII) as printed in the 1914 "

@@ -130,13 +130,16 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from common import (
+    FIELD_VERSE_NUMBER,
     CorrectionDriftError,
     build_root,
     captured_at,
     chapter_opening_letter,
     corrections_receipt,
+    filed,
     load_corrections,
     raw_root,
+    require_all_applied,
     require_corpus,
     write_stamped_json,
 )
@@ -346,9 +349,7 @@ def build_verse_fixes(
     filed corrections rather than hand-maintained, so the table and its
     evidence live in exactly one place."""
     fixes: dict[tuple[str, int], dict[tuple[str, int], tuple[str, str]]] = {}
-    for c in corrections:
-        if c.get("field") != "verse_number" or c.get("resolution"):
-            continue
+    for c in filed(corrections, FIELD_VERSE_NUMBER):
         loc = c["locator"]
         key = (loc["osis"], loc["chapter"])
         occ = loc.get("occurrence", 1)
@@ -370,19 +371,9 @@ def apply_verse_number_corrections(
     into `applied_ids` as it goes, since (osis, chapter) here maps to a
     document scanned once, not a mutable dict a correction can probe ahead of
     time -- so this runs once, at the end, rather than per entry."""
-    missing = [
-        c["id"]
-        for c in corrections
-        if c.get("field") == "verse_number"
-        and not c.get("resolution")
-        and c["id"] not in applied_ids
-    ]
-    if missing:
-        raise CorrectionDriftError(
-            f"verse-number correction(s) never matched during the run: {missing} "
-            "(source drift -- re-verify against raw/straubinger/ and update or "
-            "remove the entry)"
-        )
+    require_all_applied(
+        corrections, applied_ids, field=FIELD_VERSE_NUMBER, source="raw/straubinger/"
+    )
 
 
 # Phantom verse elements: not verses at all, but a broken continuation of an

@@ -27,6 +27,78 @@ class CorrectionDriftError(RuntimeError):
     """
 
 
+# --------------------------------------------------------------------------
+# The `field` vocabulary, and the two rules every applier shares.
+#
+# A corrections file holds entries for more than one KIND of defect -- the
+# corpus files twenty-odd `field` values today, and one Bible edition's file
+# carries both a wrong verse text and a wrong verse NUMBER. Each kind wants a
+# different applier, so every applier has to answer the same two questions
+# first: which entries are mine, and did all of mine actually apply.
+#
+# Both answers were being written out by hand, four times and three times
+# respectively, once per applier -- `kaldi.py` twice, `straubinger.py` once,
+# and `apply_verse_corrections` below. They are here because neither answer is
+# an edition's to give: "never apply an entry carrying a `resolution`" and
+# "an entry that matched nothing on a full run is drift" are both
+# docs/decisions.md's source-defect corrections policy, in the same way the
+# locator shape is docs/corpus-schema.md's. What stays with each scraper is
+# the applier itself, which knows what its own parse looks like.
+#
+# Note what is NOT here: which entries an applier owns is answered by `field`
+# for the verse-number appliers, but `douay_rheims.py` partitions its file by
+# locator SCOPE and `matos_soares.py` by the presence of a locator key. Those
+# are older and predate the field, and unifying them is a schema question
+# rather than a refactor -- see pipeline/corrections/README.md.
+# --------------------------------------------------------------------------
+
+FIELD_VERSE_NUMBER = "verse_number"
+FIELD_VERSE_DUPLICATE = "verse_duplicate"
+
+
+def filed(corrections: Iterable[dict], field: str | None = None) -> list[dict]:
+    """The entries a run may actually apply, optionally of one `field`.
+
+    An entry carrying a `resolution` is documented-but-not-applied: a defect
+    with no known correct value gets recorded, never invented
+    (docs/decisions.md SS Corrections and overrides). Passing `field=None`
+    keeps every kind, which is what an applier that owns a whole file wants.
+    """
+    return [
+        c
+        for c in corrections
+        if not c.get("resolution") and (field is None or c.get("field") == field)
+    ]
+
+
+def require_all_applied(
+    corrections: Iterable[dict],
+    applied_ids: set[str],
+    *,
+    field: str | None = None,
+    source: str,
+) -> None:
+    """Fail unless every filed entry matched something during a full run.
+
+    The only check that catches a correction which has quietly stopped
+    applying while still claiming, by its presence, to be handling a defect.
+    Callers pass `full_run` themselves and simply skip this on a sample,
+    where a correction aimed at a book the sample never built is out of
+    scope rather than drift.
+
+    `source` names the `raw/` directory to re-verify against, because that is
+    the first thing the person reading the traceback has to go and open.
+    """
+    missing = [c["id"] for c in filed(corrections, field) if c["id"] not in applied_ids]
+    if missing:
+        kind = f"{field} " if field else ""
+        raise CorrectionDriftError(
+            f"{kind}correction(s) never matched during full run: {missing} "
+            f"(source drift -- re-verify against {source} and update or "
+            "remove the entry)"
+        )
+
+
 def corrections_receipt(
     work_id: str,
     applied: list[dict],
@@ -99,9 +171,7 @@ def apply_verse_corrections(
 
     applied: list[dict] = []
     seen: set[str] = set()
-    for c in corrections:
-        if c.get("resolution"):
-            continue  # documented non-defect / unresolved -- never applied
+    for c in filed(corrections):
         loc = c["locator"]
         key = (loc["osis"], loc["chapter"], loc["verse"])
         if (loc["osis"], loc["chapter"]) not in present_chapters:
@@ -118,15 +188,7 @@ def apply_verse_corrections(
         seen.add(c["id"])
 
     if full_run:
-        missing = [
-            c["id"]
-            for c in corrections
-            if not c.get("resolution") and c["id"] not in seen
-        ]
-        if missing:
-            raise CorrectionDriftError(
-                f"correction entries never matched during full run: {missing}"
-            )
+        require_all_applied(corrections, seen, source="the corpus's raw/")
     return applied, seen
 
 
