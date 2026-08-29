@@ -68,6 +68,15 @@
 	// way) — every book/chapter link goes straight to the reading page, so
 	// there is nothing left for this section to add beyond the picker and a
 	// quiet edition note.
+	//
+	// "THE IDENTICAL WAY" NOW BUYS MORE THAN IT DID (2026-08-29). The default
+	// `'grid'` variant groups the books into the nine named groups of
+	// `bible-groups.ts`, so this section gained them too, and it is taller
+	// than the bare wrapped grid it used to be. That is the promise above
+	// being kept rather than a side effect: a reader who meets the Bible here
+	// and a reader who meets it at `/scriptura` should not be looking at two
+	// different tables of contents. If this section ever has to be the short
+	// one, the split is a prop on the component — not a second layout here.
 
 	// --- Catechism & Compendium: one shared table of contents ------------------
 	//

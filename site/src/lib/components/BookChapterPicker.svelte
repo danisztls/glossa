@@ -93,6 +93,7 @@
 	 */
 	import { afterNavigate } from '$app/navigation';
 	import { getBook, hasIntroForWork, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
+	import { BOOK_GROUPS, type BookGroupKey } from '$lib/bible-groups';
 	import { t } from '$lib/i18n.svelte';
 	import { hrefFor } from '$lib/address';
 
@@ -147,6 +148,67 @@
 		{ key: 'ot', books: books.filter((b) => b.order <= OT_BOOK_COUNT) },
 		{ key: 'nt', books: books.filter((b) => b.order > OT_BOOK_COUNT) }
 	]);
+
+	/**
+	 * THE BOOK GROUPS ARE A `'grid'` FEATURE and deliberately not a universal
+	 * one. Nine headings is nine more rows, and the sidebar's whole arithmetic
+	 * is getting 73 books into a column without a scroll (see
+	 * `.book-btn.sidebar`); the contents sheet is a thing a reader opened to
+	 * jump somewhere, where a taller list is a worse answer to the same
+	 * question. `/scriptura`'s standalone grid is the one place with both the
+	 * room and the reason: it is an index being read rather than a control
+	 * being used.
+	 */
+	const grouped = $derived(variant === 'grid');
+
+	// Group names come from `t('bible.group.…')`, the same INTERFACE language
+	// as the `Old Testament` / `New Testament` headings they sit under — see
+	// `bible-groups.ts` on why a group name is the site's word and not the
+	// edition's. No `lang` attribute on the heading, for the same reason:
+	// `<html lang>` already declares it.
+
+	/**
+	 * The groups of one testament, each carrying only the books this corpus
+	 * actually has.
+	 *
+	 * A group with none is dropped rather than printed empty: the book list is
+	 * the union over the editions present, and the test fixtures hold two
+	 * books, so most groups are empty under vitest and would otherwise render
+	 * as nine bare headings.
+	 *
+	 * ANYTHING `BOOK_GROUPS` DOES NOT CLASSIFY IS RENDERED ANYWAY, under no
+	 * heading, at the end of its testament. `bible-groups.test.ts` asserts the
+	 * table covers the canon, so this should never fire — but the failure it
+	 * guards against is a book silently disappearing from the Bible's table of
+	 * contents, which is the one outcome here that nothing else would report.
+	 */
+	function groupsOf(
+		testament: 'ot' | 'nt'
+	): { key: BookGroupKey | undefined; books: CanonicalBook[] }[] {
+		const byOsis = new Map(books.map((b) => [b.osis, b]));
+		const groups = BOOK_GROUPS.filter((g) => g.testament === testament).map((g) => ({
+			key: g.key as BookGroupKey | undefined,
+			books: g.osis.map((osis) => byOsis.get(osis)).filter((b) => b !== undefined)
+		}));
+		const claimed = new Set(groups.flatMap((g) => g.books.map((b) => b.osis)));
+		const inTestament =
+			testament === 'ot'
+				? (b: CanonicalBook) => b.order <= OT_BOOK_COUNT
+				: (b: CanonicalBook) => b.order > OT_BOOK_COUNT;
+		const unclassified = books.filter((b) => inTestament(b) && !claimed.has(b.osis));
+		return [...groups, { key: undefined, books: unclassified }].filter((g) => g.books.length > 0);
+	}
+
+	/**
+	 * Computed ONCE, not per render and not `$derived`. Both inputs are
+	 * constants — `BOOK_GROUPS` is a literal and `books` is the module-level
+	 * `listCanonicalBooks()` above — so nothing here can change after load,
+	 * and calling `groupsOf` from the `{#each}` expression instead would
+	 * rebuild a 73-entry map twice on every keystroke that opens or closes a
+	 * chapter panel. Only the NAMES vary at runtime, with the edition, and
+	 * they are `$derived` above.
+	 */
+	const bookGroups = { ot: groupsOf('ot'), nt: groupsOf('nt') };
 
 	// NOTHING IS OPEN UNTIL THE READER OPENS IT. This used to seed itself with
 	// `currentOsis`, so arriving at a chapter rendered the ToC with that
@@ -473,35 +535,56 @@
 	onscrollcapture={onWindowScroll}
 />
 
+{#snippet bookList(list: CanonicalBook[])}
+	<ul class="book-grid" class:sidebar={variant === 'sidebar'}>
+		{#each list as book (book.osis)}
+			{@const isOpen = openOsis === book.osis}
+			<li class="book-item" class:open={isOpen}>
+				<button
+					type="button"
+					id={`book-btn-${variant}-${book.osis}`}
+					class="book-btn"
+					class:sidebar={variant === 'sidebar'}
+					class:current={book.osis === currentOsis}
+					class:open={isOpen}
+					title={variant === 'sidebar' ? bookName(book) : undefined}
+					aria-current={book.osis === currentOsis ? 'true' : undefined}
+					aria-expanded={isOpen}
+					aria-controls={`chapters-${variant}-${book.osis}`}
+					onclick={() => toggleBook(book.osis)}
+				>
+					<span>{bookName(book)}</span>
+				</button>
+				{#if isOpen}
+					{@render chapterPanel(book)}
+				{/if}
+			</li>
+		{/each}
+	</ul>
+{/snippet}
+
 {#snippet groups()}
 	{#each testaments as group (group.key)}
 		<section class="testament">
 			<h3 class="label-micro">{t(`bible.testament.${group.key}`)}</h3>
-			<ul class="book-grid" class:sidebar={variant === 'sidebar'}>
-				{#each group.books as book (book.osis)}
-					{@const isOpen = openOsis === book.osis}
-					<li class="book-item" class:open={isOpen}>
-						<button
-							type="button"
-							id={`book-btn-${variant}-${book.osis}`}
-							class="book-btn"
-							class:sidebar={variant === 'sidebar'}
-							class:current={book.osis === currentOsis}
-							class:open={isOpen}
-							title={variant === 'sidebar' ? bookName(book) : undefined}
-							aria-current={book.osis === currentOsis ? 'true' : undefined}
-							aria-expanded={isOpen}
-							aria-controls={`chapters-${variant}-${book.osis}`}
-							onclick={() => toggleBook(book.osis)}
-						>
-							<span>{bookName(book)}</span>
-						</button>
-						{#if isOpen}
-							{@render chapterPanel(book)}
-						{/if}
-					</li>
-				{/each}
-			</ul>
+			{#if grouped}
+				<!-- The groups flow as blocks rather than stacking as full-width
+				     bands, because two of the nine hold a single book: a heading
+				     over one chip wastes a whole row of a band, and costs nothing
+				     in a column that is only as tall as its own contents. -->
+				<div class="book-groups">
+					{#each bookGroups[group.key as 'ot' | 'nt'] as sub (sub.key ?? '·')}
+						<section class="book-group">
+							{#if sub.key}
+								<h4>{t(`bible.group.${sub.key}`)}</h4>
+							{/if}
+							{@render bookList(sub.books)}
+						</section>
+					{/each}
+				</div>
+			{:else}
+				{@render bookList(group.books)}
+			{/if}
 		</section>
 	{/each}
 {/snippet}
@@ -622,6 +705,59 @@
 	   picker's own. */
 	.testament h3 {
 		margin: 0 0 0.5rem;
+	}
+
+	/*
+	 * THE NINE GROUPS AS COLUMNS, NOT BANDS (`'grid'` variant only — see
+	 * `grouped`).
+	 *
+	 * `columns` rather than grid or flex, because the groups are wildly
+	 * uneven — 18 books in the prophets, one in Acts — and this is the one
+	 * layout that packs a short block under a tall one instead of leaving the
+	 * row's height as whitespace. It also keeps every group whole: a heading
+	 * and its chips are one `<section>`, and `break-inside: avoid` stops a
+	 * column boundary from stranding "Acts of the Apostles" at the foot of one
+	 * column and its single chip at the head of the next.
+	 *
+	 * The trade is that `columns` fills top-to-bottom before left-to-right, so
+	 * the reading order down a column is the canonical order and the eye
+	 * returns to the top for the next — which is how a printed table of
+	 * contents in columns already reads.
+	 */
+	.book-groups {
+		columns: 18rem auto;
+		column-gap: 1.75rem;
+	}
+
+	.book-group {
+		break-inside: avoid;
+		/* `columns` gives no row gap; the margin under each block is what
+		   separates a group from the one below it in the same column. The
+		   first has none so the list starts flush under the testament. */
+		margin-block-end: 1.1rem;
+	}
+
+	/*
+	 * NOT `.label-micro`, which is what the testament above it wears. Two
+	 * reasons, and the second is the one that decided it:
+	 *
+	 * The group is a division INSIDE the testament and has to read as
+	 * subordinate to it; identical styling would make the page look like it
+	 * had eleven equal headings rather than two with nine beneath them.
+	 *
+	 * And `.label-micro` uppercases, which these should not be: a group name is
+	 * longer than the two words a testament heading is ("Livres poétiques et
+	 * sapientiaux", "Az Apostolok Cselekedetei"), and uppercase at that length
+	 * reads as shouting rather than as a label. It is also a transform applied
+	 * across fourteen interface languages and several scripts, which is a
+	 * thing to opt into rather than inherit.
+	 */
+	.book-group h4 {
+		margin: 0 0 0.4rem;
+		font-family: var(--font-serif);
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--color-text-muted);
 	}
 
 	/* The other two numbers in `.book-btn.sidebar`'s arithmetic: about 20px of

@@ -75,12 +75,22 @@
 		all.
 
 		The three sibling indexes fill that track because each has a table of
-		contents worth carrying alongside a long scroll. This one has no such
-		tree — the corpus knows no grouping of books finer than the testament
-		(`CanonicalBook` is an order and nothing else) — and the two rows that
-		amounts to were offered here until 2026-08-28: a jump to the New
-		Testament, on the one index short enough to need no jumping. A sidebar
-		with nothing to navigate is furniture, so this track stays empty.
+		contents worth carrying alongside a long scroll. This one had no such
+		tree until 2026-08-29 — the corpus knows no grouping of books finer
+		than the testament (`CanonicalBook` is an order and nothing else) — and
+		the two rows that amounted to were offered here until 2026-08-28: a
+		jump to the New Testament, on the one index short enough to need no
+		jumping. A sidebar with nothing to navigate is furniture, so this track
+		stayed empty.
+
+		IT STAYS EMPTY, but the reason has changed and is now a judgment rather
+		than a fact. `bible-groups.ts` gives the picker nine named groups, so
+		there are nine rows to offer where there were two. What there still is
+		not is a long scroll to escape: the grouped grid is the same 73 chips
+		it always was, laid out in columns, and every group heading is already
+		on the screen with its books under it. A sidebar duplicating headings
+		the reader can see is still furniture. If the groups ever gain
+		descriptions and the page becomes a scroll, that is when this changes.
 	-->
 </div>
 
