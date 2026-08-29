@@ -368,21 +368,24 @@ def make_fetcher(recheck_absent: bool = False) -> Fetcher:
 
 
 # The tags that mark up a RUN OF TEXT rather than separate two of them, and
-# so leave no space behind when removed. Exactly the set `narrow_html` keeps
-# as inline emphasis (`_HTML_ALLOWED_SIMPLE` plus a bare `<sup>`); `br` and
-# `blockquote` survive narrowing too but ARE separators and stay a space,
-# as does every tag narrowing drops.
+# so leave no space behind when removed. `_HTML_ALLOWED_SIMPLE` plus a bare
+# `<sup>` plus `<a>`; `br` and `blockquote` survive narrowing too but ARE
+# separators and stay a space, as does every tag narrowing drops.
+#
+# `<a>` IS INLINE, and was the one tag in this set narrowing does not keep.
+# An anchor marks up a phrase inside a sentence -- vatican.va links the title
+# of a document it names, mid-heading and mid-clause -- so removing it must
+# leave nothing behind, exactly as removing `<i>` does. Two spaces where the
+# page prints none is how `mater.pt`'s heading came out as
+# `A época da encíclica " Rerum Novarum "`. `narrow_html` has to agree (it
+# emits "" for `a` for the same reason), or the round-trip check fails: the
+# two sides read the same markup and must drop the same nothings.
 #
 # Keeping this set in step with what `narrow_html` keeps is what holds the
 # round-trip invariant `html_to_text(html) == text_marked` exact: both sides
 # must agree on every tag, and they only see the same tags because one is
 # derived from the other's input.
-#
-# Keeping this set in step with what `narrow_html` keeps is what holds the
-# round-trip invariant `html_to_text(html) == text_marked` exact: both sides
-# must agree on every tag, and they only see the same tags because one is
-# derived from the other's input.
-_INLINE_TEXT_TAGS = frozenset({"i", "em", "b", "strong", "sup"})
+_INLINE_TEXT_TAGS = frozenset({"i", "em", "b", "strong", "sup", "a"})
 _TEXT_TAG_RE = re.compile(r"<\s*(/?)\s*([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>")
 _EMPTY_ANCHOR_RE = re.compile(r"<\s*a\b[^>]*>\s*<\s*/\s*a\s*>", re.IGNORECASE)
 _COMMENT_RE = re.compile(r"<!--.*?(?:-->|$)", re.DOTALL)
@@ -506,6 +509,12 @@ def narrow_html(marked_html: str, dropped: collections.Counter | None = None) ->
             # exactly as dropping it would. The renderer tells the two apart
             # by the data-fn attribute, which only marker elements carry.
             out.append("</sup>" if closing else "<sup>")
+        elif name == "a":
+            # Inline, and dropped without a space -- see `_INLINE_TEXT_TAGS`.
+            # The href itself is not kept: a stored link to vatican.va is a
+            # pointer out of the corpus, and the reference grammar makes its
+            # own links from the text.
+            pass
         elif name == "span":
             # Not allowlisted. `span[lang]` looked like semantics worth keeping
             # until its values were read: all 486 occurrences are lang="pt"
