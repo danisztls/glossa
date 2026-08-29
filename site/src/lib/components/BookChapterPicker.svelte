@@ -79,7 +79,10 @@
 	 * What separates `'panel'` from `'sidebar'` is only the BOOK list, not
 	 * the chapter panel: the sheet is as wide as the phone, so it keeps
 	 * `'grid'`'s wrapped chips with the books' full names, where the sidebar
-	 * has to compress 73 of them into a 17rem column of truncated cells.
+	 * has to fit 73 of them into a 17rem column. It does that by printing the
+	 * ABBREVIATION its edition's language uses rather than a name cut off with
+	 * an ellipsis — see `chipLabel`. The full name is still on the chip's
+	 * `title` and is the panel's own heading, so nothing is only abbreviated.
 	 *
 	 * `collapsible` is ignored by both of those: each is already inside
 	 * something a reader opened — a persistent nav column, or a sheet summoned
@@ -92,7 +95,14 @@
 	 * page after the fact.
 	 */
 	import { afterNavigate } from '$app/navigation';
-	import { getBook, hasIntroForWork, listCanonicalBooks, type CanonicalBook } from '$lib/corpus';
+	import {
+		getBook,
+		getWork,
+		hasIntroForWork,
+		listCanonicalBooks,
+		type CanonicalBook
+	} from '$lib/corpus';
+	import { bookAbbrev } from '$lib/refs-grammar';
 	import { BOOK_GROUPS, type BookGroupKey } from '$lib/bible-groups';
 	import { t } from '$lib/i18n.svelte';
 	import { hrefFor } from '$lib/address';
@@ -506,6 +516,34 @@
 		return book.namesByWorkId[workId] ?? Object.values(book.namesByWorkId)[0] ?? book.osis;
 	}
 
+	/**
+	 * What goes ON THE CHIP. The full name everywhere except the sidebar,
+	 * which gets the abbreviation this edition's language prints — "Gn",
+	 * "1 Sm", "Ct", "Ap".
+	 *
+	 * ONLY THE SIDEBAR, because only the sidebar cannot afford the name. Its
+	 * cell is about 74px, of which 61 is text — eight or nine characters —
+	 * so "Deuteronômio" and "Cântico dos Cânticos" have been arriving cut in
+	 * half with an ellipsis, which is a worse abbreviation than the one the
+	 * language already has. The grid and the sheet have the room and keep the
+	 * name.
+	 *
+	 * NOT FROM THE EDITION'S OWN `abbrevs`, which look like the right source
+	 * and are not: they are lowercase MATCHING keys, they usually lead with
+	 * the osis code itself (`["gen", "gn"]`), 3 to 12 books per edition have
+	 * no alternative to it at all, and the Káldi Bible's are the string
+	 * "jegyzet" for all 73 — a scraper defect, filed separately, and a
+	 * reminder that this field was never a display surface.
+	 *
+	 * The name is still reachable in three places, which is what makes
+	 * abbreviating safe: the chip's `title`, the panel's own heading, and the
+	 * `aria-labelledby` that heading serves.
+	 */
+	function chipLabel(book: CanonicalBook): string {
+		if (variant !== 'sidebar') return bookName(book);
+		return bookAbbrev(book.osis, getWork(workId)?.language) ?? bookName(book);
+	}
+
 	/** Chapter numbers this specific edition actually has for a book — may be a
 	 * subset of the canonical union (both v1 editions are 73/73 complete, but
 	 * this must not assume that stays true). */
@@ -553,7 +591,7 @@
 					aria-controls={`chapters-${variant}-${book.osis}`}
 					onclick={() => toggleBook(book.osis)}
 				>
-					<span>{bookName(book)}</span>
+					<span>{chipLabel(book)}</span>
 				</button>
 				{#if isOpen}
 					{@render chapterPanel(book)}
@@ -798,12 +836,17 @@
 	 * FOUR COLUMNS, AND THE COUNT IS PINNED RATHER THAN FITTED.
 	 *
 	 * It was `auto-fill` with a 4.5rem floor, which resolved to three in this
-	 * 17rem column — 25 rows for the 73 books. Four is 19 rows, and it is what
-	 * the names can stand: a cell is about 74px, of which 61 is text, or eight
-	 * to nine characters of the 0.8rem sans. "Gênesis", "Números", "Salmos"
-	 * and most of the New Testament set whole; "Deuteronômio" and "Cântico dos
-	 * Cânticos" truncate, which the chip's `title` answers while a reader is
-	 * scanning and `.chapters-title` answers for the book they open.
+	 * 17rem column — 25 rows for the 73 books. Four is 19 rows, and a cell is
+	 * about 74px, of which 61 is text, or eight to nine characters of the
+	 * 0.8rem sans.
+	 *
+	 * THAT BUDGET USED TO DECIDE WHICH NAMES SURVIVED — "Gênesis" and "Salmos"
+	 * set whole, "Deuteronômio" and "Cântico dos Cânticos" arrived cut off —
+	 * and it no longer has to, because this variant prints the language's own
+	 * abbreviation instead (`chipLabel`). "Gn" and "Ct" are two characters.
+	 * The `text-overflow: ellipsis` below stays all the same: four languages'
+	 * tables do not cover every book, and those chips still fall back to the
+	 * full name.
 	 *
 	 * PINNED rather than fitted because four is a decision about how tall the
 	 * list may be, and `auto-fill` decides that from a floor it is not being

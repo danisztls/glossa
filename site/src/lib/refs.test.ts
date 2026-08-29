@@ -7,6 +7,14 @@ import {
 	refHref,
 	type RefSegment
 } from './refs';
+import { bookAbbrev } from './refs-grammar';
+
+const CANON_OT =
+	`gen exod lev num deut josh judg ruth 1sam 2sam 1kgs 2kgs 1chr 2chr ezra neh tob jdt
+	esth 1macc 2macc job ps prov eccl song wis sir isa jer lam bar ezek dan hos joel amos obad
+	jonah mic nah hab zeph hag zech mal`.split(/\s+/);
+const CANON_NT = `matt mark luke john acts rom 1cor 2cor gal eph phil col 1thess 2thess 1tim 2tim
+	titus phlm heb jas 1pet 2pet 1john 2john 3john jude rev`.split(/\s+/);
 
 /**
  * `refHref`'s divergent-book tests (Psalms/Malachi/Joel) below need Bible
@@ -1744,5 +1752,63 @@ describe('expandIbidem', () => {
 	it('leaves an ordinary citation alone', () => {
 		expect(expandIbidem('Cf. Acts 2:41.', 'LG')).toBeNull();
 		expect(expandIbidem('Ibiza, 4.', 'LG')).toBeNull();
+	});
+});
+
+/**
+ * `bookAbbrev` exists for the reading sidebar, whose cells are eight or nine
+ * characters wide — see `chipLabel` in `BookChapterPicker.svelte`. What it
+ * must never do is answer in the wrong language, which is why it is separate
+ * from `grammarSurface` rather than a view over it.
+ */
+describe('bookAbbrev', () => {
+	it('gives the short form the language itself prints', () => {
+		expect(bookAbbrev('gen', 'la')).toBe('Gn');
+		expect(bookAbbrev('song', 'la')).toBe('Ct');
+		expect(bookAbbrev('rev', 'la')).toBe('Apc');
+		expect(bookAbbrev('sir', 'la')).toBe('Eccli');
+		expect(bookAbbrev('rev', 'pt')).toBe('Ap');
+		expect(bookAbbrev('1john', 'pt')).toBe('1 Jo');
+		expect(bookAbbrev('song', 'de')).toBe('Hld');
+	});
+
+	it('answers for all 73 books in the three complete tables', () => {
+		for (const lang of ['en', 'la', 'pt']) {
+			for (const osis of [...CANON_OT, ...CANON_NT]) {
+				expect(bookAbbrev(osis, lang), `${lang}.${osis}`).toBeTruthy();
+			}
+		}
+	});
+
+	/**
+	 * The derived tables are built from citations, so a book the Catechism
+	 * never cites is absent. That is the caller's cue to print the full name,
+	 * and it is nearly free: the missing books are also the short-named ones.
+	 */
+	it('returns undefined for a book its language never cites', () => {
+		expect(bookAbbrev('phlm', 'it')).toBeUndefined();
+		expect(bookAbbrev('ruth', 'fr')).toBeUndefined();
+	});
+
+	/**
+	 * THE IMPORTANT ONE. `configFor` ends in `?? CONFIG_EN`, which is right for
+	 * parsing a citation and wrong for labelling a book: an English "Song" over
+	 * a Hungarian book list abbreviates nothing the reader can see. Hungarian
+	 * is the live case — the Káldi Bible is in the corpus and `hu` has no
+	 * grammar table.
+	 */
+	it('never falls back to another language', () => {
+		expect(bookAbbrev('gen', 'hu')).toBeUndefined();
+		expect(bookAbbrev('song', 'hu')).toBeUndefined();
+		expect(bookAbbrev('gen', undefined)).toBeUndefined();
+		expect(bookAbbrev('gen', 'zz')).toBeUndefined();
+	});
+
+	it('reads a regional tag as its base language', () => {
+		expect(bookAbbrev('gen', 'en-GB')).toBe(bookAbbrev('gen', 'en'));
+	});
+
+	it('has no answer for something that is not a book', () => {
+		expect(bookAbbrev('nope', 'en')).toBeUndefined();
 	});
 });

@@ -2323,6 +2323,60 @@ export function grammarSurface(lang?: string, work?: string): GrammarSurface {
 	};
 }
 
+/**
+ * `osis -> the abbreviation this language PRINTS`, per language, built once on
+ * first ask.
+ *
+ * The tables are ordered shortest-and-most-canonical first (`gen: ['Gn',
+ * 'Gen', 'Genesis']`) because that is the order the matcher wants, and it is
+ * also the order a display wants, so the first variant seen for a book is the
+ * one to show. `variantToOsis` preserves that order, so no second table is
+ * needed and none may be added: an abbreviation the picker shows and the
+ * parser does not read would be a form that exists nowhere but our own chrome.
+ */
+const abbrevIndexes = new Map<string, ReadonlyMap<string, string>>();
+
+function abbrevIndexFor(tag: string): ReadonlyMap<string, string> {
+	let index = abbrevIndexes.get(tag);
+	if (!index) {
+		const out = new Map<string, string>();
+		for (const [variant, osis] of CONFIGS[tag].variantToOsis) {
+			if (!out.has(osis)) out.set(osis, variant);
+		}
+		abbrevIndexes.set(tag, (index = out));
+	}
+	return index;
+}
+
+/**
+ * How `lang` abbreviates one book, or `undefined` when it has no answer.
+ *
+ * TWO WAYS OF HAVING NO ANSWER, AND NEITHER FALLS BACK TO ENGLISH — which is
+ * the whole reason this is not `grammarSurface(lang)`, whose `configFor` ends
+ * in `?? CONFIG_EN`. An English abbreviation is a correct answer to "what
+ * might this citation be" and a wrong one to "what is this book called here":
+ * `Song` over a Hungarian book list is not an abbreviation of anything the
+ * reader is looking at.
+ *
+ *  - The language has no table (`hu` today, and every interface language that
+ *    is not one of the eleven). Ten of the corpus's twelve content languages
+ *    have one, but the Káldi Bible's does not.
+ *  - The table has no form for this book. The derived tables are built from
+ *    citations, so a book the Catechism never cites is simply absent — 7 books
+ *    missing in Italian, 8 in Spanish and French, 11 in German. That is close
+ *    to free here: the absent ones are the rarely-cited books, which are also
+ *    Ruth, Baruch, Obadiah, Nahum, Habakkuk, Haggai, Philemon and Jude, whose
+ *    names are short enough to need no abbreviating.
+ *
+ * The caller's fallback is therefore the book's own name, which is where it
+ * started. `la`, `pt` and `en` answer for all 73.
+ */
+export function bookAbbrev(osis: string, lang?: string): string | undefined {
+	const tag = lang?.toLowerCase().split('-')[0];
+	if (!tag || !CONFIGS[tag]) return undefined;
+	return abbrevIndexFor(tag).get(osis);
+}
+
 // --------------------------------------------------------------------------
 // Documents named by TITLE rather than by siglum.
 //
