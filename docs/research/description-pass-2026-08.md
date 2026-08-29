@@ -2144,3 +2144,120 @@ comparing the corpus to itself, and both classes had been sitting in front of
 nineteen waves of careful readers without being seen — 718 joins still standing,
 132 citations still empty. A sweep that reads documents one at a time cannot
 find a defect whose evidence is the other 353.
+
+## After the sweep: closing the two classes it opened — 2026-08-29
+
+Wave 19 ended with two defect classes measured but not fixed: 718 lost word
+spaces across 87 works, and 132 citations stored as empty strings across 27.
+Both are now closed or bounded, in the order the measurement recommended.
+
+### The check for empty footnotes existed, and could not see the worst case
+
+`validate_document` has reported "citations with no resolved text" all along.
+It fired for `fidei-donum.en`, `iucunda-sane.en`, `mense-maio.en` and
+`satis-cognitum.en`. It never fired for `miranda-prorsus.en`, which was 55 of
+the 132 — the largest single loss in the corpus.
+
+Two reasons, and the second is the interesting one. Every rule in the function
+walks `state.sections`, so an appendix was checked by nothing; and the
+unnumbered-edition branch **returns `True, []` outright**, so such a document
+did not reach the per-section rules at all. `miranda-prorsus.en` stores its
+text in `appendix.json` because it prints no paragraph numbers, and that alone
+made it exempt from the check written for exactly its defect. The four smaller
+pages with the same defect were reported purely because they happen to print
+paragraph numbers.
+
+The appendix's citations are now checked before that early return, so it covers
+both an unnumbered edition and a numbered one that also carries an appendix.
+**0 build files changed** — the guard was the whole change — and two works began
+reporting that never had: `miranda-prorsus.en` and `divini-illius-magistri.pt`.
+
+This is the same shape as the `numbered: false` oracles: a per-section
+assumption that an unnumbered edition falls silently outside.
+
+### The other half is that `VALIDATION: FAIL` is chronic
+
+36 works fail every run, and 64 of those complaints are this one string. A
+check that always fails reports nothing, which is why four true positives sat
+in the output unread for as long as they did. Worth a decision — an allowlist
+that must shrink, or a gate — but not one to take mid-task.
+
+### Lost word spaces: 652 filed, and the scan now reports none
+
+`pipeline/scrapers/find-lost-spaces.py` is the wave-19 detector, sharpened
+twice and kept. Two filters were added because the tail could not be filed
+without them, and each is a statement about the sources rather than a threshold:
+
+- **hunspell has to reject the joined token.** `buildup`, `influx`,
+  `nonbelievers` and `premoral` are real words whose split happens to be a
+  common bigram, and no amount of corpus evidence distinguishes them. A
+  dictionary does.
+- **only body prose is scanned, never the citation apparatus.** `conversionis`,
+  `sentire`, `artis` and `foras` are Latin quoted inline; the corpus holds four
+  whole works in Latin, which is enough to say which words those are.
+
+Together these took the count from 718 across 87 works to 663 across 58 without
+touching the concentrated works at all — the mark of a filter removing noise
+rather than evidence.
+
+**A lost hyphen is not a lost space**, and that is the rule the tail turned on.
+`nonCatholic`, `selfgiving`, `presentday` and `goodfor-nothing` are real joins,
+but restoring a SPACE to any of them writes something the source did not say.
+The scan defers a pair the corpus more often hyphenates — comparing the two
+counts, not merely finding one hyphen, because some page writes "love-for" once
+against 301 plain "love for". 24 candidates are deferred as having no known
+correct value and filed nowhere, which is what `docs/decisions.md` asks for.
+
+Five more the automatic tests could not settle are named in a table in the
+script with a reason each (`didst`; `Augustin` in a citation; `good-for-nothing`;
+`High Priest` or `High priest`, whose case is not ours to choose), and one the
+Latin test over-caught is forced back (`amore` really is "a more" in
+_Quod Auctoritate_).
+
+| filed              | works | entries |
+| ------------------ | ----- | ------- |
+| wave 19            | 4     | 138     |
+| concentrated (≥10) | 14    | 565     |
+| tail, after review | 26    | 87      |
+
+**652 entries, 652 applied, and the scan now reports 0 candidates across all
+232 English works.** Every generated `to` differs from its `from` by exactly one
+added space and nothing else — that invariant is checked before filing, and it
+is what makes a machine-generated correction safe. Blast radius: exactly the
+targeted works, twice, 0 network fetches, no coverage family moving 0.01%.
+
+Two process notes worth keeping. The generator **overwrote** six files that
+already held hand-filed corrections before anyone noticed — `christi-nomen.en`
+lost its sixteen — so it now merges on `from` and never rewrites. And the
+`from` string must be widened until unique: a join inside a phrase the document
+repeats ("of the HolyGhost", four times) needs more than two words of context,
+and a `from` that matches twice is one `apply_raw_text_corrections` cannot place.
+
+### Empty footnotes: 132 → 48
+
+Two readers, both measured before they were written:
+
+- **A two-column table**, marker in one `<td>` and text in the next.
+  `miranda-prorsus` prints its notes that way in all three languages the mirror
+  carries and **nothing else in the corpus does** — measured over every page's
+  footnote region, 3 hits, all one document. Everything else walks
+  `<p>`/`<blockquote>`/`<center>`, so the rows were never blocks.
+- **The whole list inside one block**, `<br />` between entries. `fidei-donum.en`
+  prints all 30 that way. This one is a **fallback and not a branch**: six other
+  pages lay their list out identically (Veritatis Splendor EN's 180,
+  Redemptoris Mater EN's 147) and every one already resolves through the anchor
+  table, so splitting unconditionally would take work away from a reader that is
+  doing it correctly. It runs only when the block walk came back with nothing.
+
+84 notes recovered. The residue in each is a source defect, not a parser gap:
+`miranda-prorsus.en` prints `<sup>54</sup>` in the row anchored `Nota%2053`, so
+two rows claim 54 and none claims 53 — corrected, since the page states the
+right value three ways over (the anchor name, the position between 52 and 54,
+and marker 53 in the body having no other definition). `fidei-donum.en`'s list
+skips 12 entirely, which has no known correct value and stays documented.
+
+What remains is 48 empty citations in 26 works, and the four conventions behind
+the wholesale ones are now three: `iucunda-sane.en` (8, region not after the
+last `<hr>`), `mense-maio.en` (2) with `populorum.en` (6) sharing the
+"_The Pope Speaks_" preamble template, and `inter-mirifica.pt` (2), whose page
+prints no notes region at all.
