@@ -1,0 +1,132 @@
+[
+  {
+    "id": "sacerdotii.pt-6-e-for-low-quote-1",
+    "locator": {
+      "section": 6,
+      "raw_substring": "esp&iacute;rito de alguns ‚ "
+    },
+    "field": "raw_text",
+    "from": "esp&iacute;rito de alguns ‚ ",
+    "to": "esp&iacute;rito de alguns &eacute; ",
+    "reason": "The mirror prints U+201A (a low single quotation mark) where the Portuguese verb 'é' belongs. A quotation mark opens nothing here and the sentence has no verb without it; the correct value is fixed by the grammar of the sentence, not chosen. A systematic encoding fault, not a typo: the same substitution occurs ten times in this document and in no other position.",
+    "evidence": "raw/vatican-docs/encyclical__sacerdotii__pt.html: '...ute;rio, e nos queixamos de que o esp&iacute;rito de alguns ‚ batido pelas ondas deste mundo e entibiado pelo cansa&cced...'",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sacerdotii.pt-10-e-for-low-quote-2",
+    "locator": {
+      "section": 10,
+      "raw_substring": "Jo&atilde;o Maria Vianney ‚ "
+    },
+    "field": "raw_text",
+    "from": "Jo&atilde;o Maria Vianney ‚ ",
+    "to": "Jo&atilde;o Maria Vianney &eacute; ",
+    "reason": "The mirror prints U+201A (a low single quotation mark) where the Portuguese verb 'é' belongs. A quotation mark opens nothing here and the sentence has no verb without it; the correct value is fixed by the grammar of the sentence, not chosen. A systematic encoding fault, not a typo: the same substitution occurs ten times in this document and in no other position.",
+    "evidence": "raw/vatican-docs/encyclical__sacerdotii__pt.html: '...l</b></i></p> \n<p>10. Falar de s. Jo&atilde;o Maria Vianney ‚ evocar a figura de um padre excepcionalmente mortificado q...'",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sacerdotii.pt-16-e-for-low-quote-3",
+    "locator": {
+      "section": 16,
+      "raw_substring": "palavra de s. Tom&aacute;s‚ "
+    },
+    "field": "raw_text",
+    "from": "palavra de s. Tom&aacute;s‚ ",
+    "to": "palavra de s. Tom&aacute;s &eacute; ",
+    "reason": "The mirror prints U+201A (a low single quotation mark) where the Portuguese verb 'é' belongs. A quotation mark opens nothing here and the sentence has no verb without it; the correct value is fixed by the grammar of the sentence, not chosen. A systematic encoding fault, not a typo: the same substitution occurs ten times in this document and in no other position.",
+    "evidence": "raw/vatican-docs/encyclical__sacerdotii__pt.html: '...iva liberdade e sensualidade. E a palavra de s. Tom&aacute;s‚ para eles cheia de verdade: &quot;&Eacute; por vezes mais ...'",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sacerdotii.pt-17-e-for-low-quote-4",
+    "locator": {
+      "section": 17,
+      "raw_substring": "este caminho, o que custa ‚ "
+    },
+    "field": "raw_text",
+    "from": "este caminho, o que custa ‚ ",
+    "to": "este caminho, o que custa &eacute; ",
+    "reason": "The mirror prints U+201A (a low single quotation mark) where the Portuguese verb 'é' belongs. A quotation mark opens nothing here and the sentence has no verb without it; the correct value is fixed by the grammar of the sentence, not chosen. A systematic encoding fault, not a typo: the same substitution occurs ten times in this document and in no other position.",
+    "evidence": "raw/vatican-docs/encyclical__sacerdotii__pt.html: '... que alguma vez os conheceram... Neste caminho, o que custa ‚ o primeiro passo&quot;.<a name=\"_ftnref34\" title=\"\" href=\"...'",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sacerdotii.pt-None-e-for-low-quote-5",
+    "locator": {
+      "section": null,
+      "raw_substring": "&quot;O sacerd&oacute;cio ‚ "
+    },
+    "field": "raw_text",
+    "from": "&quot;O sacerd&oacute;cio ‚ ",
+    "to": "&quot;O sacerd&oacute;cio &eacute; ",
+    "reason": "The mirror prints U+201A (a low single quotation mark) where the Portuguese verb 'é' belongs. A quotation mark opens nothing here and the sentence has no verb without it; the correct value is fixed by the grammar of the sentence, not chosen. A systematic encoding fault, not a typo: the same substitution occurs ten times in this document and in no other position.",
+    "evidence": "raw/vatican-docs/encyclical__sacerdotii__pt.html: '...nto cura d'Ars, quando exclamava: &quot;O sacerd&oacute;cio ‚ o amor do Cora&ccedil;&atilde;o de Jesus!&quot;<a name=\"_f...'",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sacerdotii.pt-25-e-for-low-quote-6",
+    "locator": {
+      "section": 25,
+      "raw_substring": "s escutemo-lo, porque ele ‚ "
+    },
+    "field": "raw_text",
+    "from": "s escutemo-lo, porque ele ‚ ",
+    "to": "s escutemo-lo, porque ele &eacute; ",
+    "reason": "The mirror prints U+201A (a low single quotation mark) where the Portuguese verb 'é' belongs. A quotation mark opens nothing here and the sentence has no verb without it; the correct value is fixed by the grammar of the sentence, not chosen. A systematic encoding fault, not a typo: the same substitution occurs ten times in this document and in no other position.",
+    "evidence": "raw/vatican-docs/encyclical__sacerdotii__pt.html: '...itle=\"\" href=\"#_ftn44\">[44]</a> Mas escutemo-lo, porque ele ‚ incans&aacute;vel, quando fala das alegrias e dos benef&ia...'",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sacerdotii.pt-26-e-for-low-quote-7",
+    "locator": {
+      "section": 26,
+      "raw_substring": "eacute;rio. Mas para isso ‚ "
+    },
+    "field": "raw_text",
+    "from": "eacute;rio. Mas para isso ‚ ",
+    "to": "eacute;rio. Mas para isso &eacute; ",
+    "reason": "The mirror prints U+201A (a low single quotation mark) where the Portuguese verb 'é' belongs. A quotation mark opens nothing here and the sentence has no verb without it; the correct value is fixed by the grammar of the sentence, not chosen. A systematic encoding fault, not a typo: the same substitution occurs ten times in this document and in no other position.",
+    "evidence": "raw/vatican-docs/encyclical__sacerdotii__pt.html: '...trema dos trabalhos do seu minist&eacute;rio. Mas para isso ‚ necess&aacute;ria uma f&eacute; viva, como a que animava J...'",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sacerdotii.pt-34-e-for-low-quote-8",
+    "locator": {
+      "section": 34,
+      "raw_substring": "&ccedil;&atilde;o do Pai; ‚ "
+    },
+    "field": "raw_text",
+    "from": "&ccedil;&atilde;o do Pai; ‚ ",
+    "to": "&ccedil;&atilde;o do Pai; &eacute; ",
+    "reason": "The mirror prints U+201A (a low single quotation mark) where the Portuguese verb 'é' belongs. A quotation mark opens nothing here and the sentence has no verb without it; the correct value is fixed by the grammar of the sentence, not chosen. A systematic encoding fault, not a typo: the same substitution occurs ten times in this document and in no other position.",
+    "evidence": "raw/vatican-docs/encyclical__sacerdotii__pt.html: '...dil;&atilde;o do mundo e glorifica&ccedil;&atilde;o do Pai; ‚ ali que os crist&atilde;os reunidos oferecem ao Pai celest...'",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sacerdotii.pt-56-e-for-low-quote-9",
+    "locator": {
+      "section": 56,
+      "raw_substring": "os homens e que o pecador ‚ "
+    },
+    "field": "raw_text",
+    "from": "os homens e que o pecador ‚ ",
+    "to": "os homens e que o pecador &eacute; ",
+    "reason": "The mirror prints U+201A (a low single quotation mark) where the Portuguese verb 'é' belongs. A quotation mark opens nothing here and the sentence has no verb without it; the correct value is fixed by the grammar of the sentence, not chosen. A systematic encoding fault, not a typo: the same substitution occurs ten times in this document and in no other position.",
+    "evidence": "raw/vatican-docs/encyclical__sacerdotii__pt.html: '...divina triunfa da mal&iacute;cia dos homens e que o pecador ‚ reconciliado com Deus. Recordemos, igualmente, que nosso p...'",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sacerdotii.pt-66-e-for-low-quote-10",
+    "locator": {
+      "section": 66,
+      "raw_substring": "rcuss&atilde;o espiritual ‚ "
+    },
+    "field": "raw_text",
+    "from": "rcuss&atilde;o espiritual ‚ ",
+    "to": "rcuss&atilde;o espiritual &eacute; ",
+    "reason": "The mirror prints U+201A (a low single quotation mark) where the Portuguese verb 'é' belongs. A quotation mark opens nothing here and the sentence has no verb without it; the correct value is fixed by the grammar of the sentence, not chosen. A systematic encoding fault, not a typo: the same substitution occurs ten times in this document and in no other position.",
+    "evidence": "raw/vatican-docs/encyclical__sacerdotii__pt.html: '...penit&ecirc;ncia, cuja imensa repercuss&atilde;o espiritual ‚ bem conhecida desde h&aacute; um s&eacute;culo. Na verdade...'",
+    "added": "2026-08-29"
+  }
+]

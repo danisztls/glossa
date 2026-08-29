@@ -1,0 +1,119 @@
+[
+  {
+    "id": "spectata-fides.en-5-manyof",
+    "locator": {
+      "section": 5,
+      "raw_substring": "very manyof your nation"
+    },
+    "field": "raw_text",
+    "from": "very manyof your nation",
+    "to": "very many of your nation",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is simply the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spectata-fides__en.html: '...try of Great Britain We know that, besides yourselves, very manyof your nation are not a little anxious about religious education. Th...'. This page prints nine such joins across its seven numbered paragraphs; the same defect shape appears on encyclical__christi-nomen__en.html, another Leo XIII English mirror of the same vintage, so it belongs to how these pages were reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spectata-fides.en-5-notin",
+    "locator": {
+      "section": 5,
+      "raw_substring": "They do notin all things"
+    },
+    "field": "raw_text",
+    "from": "They do notin all things",
+    "to": "They do not in all things",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is simply the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spectata-fides__en.html: '...on are not a little anxious about religious education. They do notin all things agree with Us; nevertheless they see how important, fo...'. This page prints nine such joins across its seven numbered paragraphs; the same defect shape appears on encyclical__christi-nomen__en.html, another Leo XIII English mirror of the same vintage, so it belongs to how these pages were reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spectata-fides.en-5-sakeboth",
+    "locator": {
+      "section": 5,
+      "raw_substring": "for the sakeboth of society"
+    },
+    "field": "raw_text",
+    "from": "for the sakeboth of society",
+    "to": "for the sake both of society",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is simply the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spectata-fides__en.html: '...gs agree with Us; nevertheless they see how important, for the sakeboth of society and of men individually, is the preservation of that C...'. This page prints nine such joins across its seven numbered paragraphs; the same defect shape appears on encyclical__christi-nomen__en.html, another Leo XIII English mirror of the same vintage, so it belongs to how these pages were reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spectata-fides.en-5-christianwisdom",
+    "locator": {
+      "section": 5,
+      "raw_substring": "that Christianwisdom which"
+    },
+    "field": "raw_text",
+    "from": "that Christianwisdom which",
+    "to": "that Christian wisdom which",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is simply the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spectata-fides__en.html: '...ociety and of men individually, is the preservation of that Christianwisdom which your forefathers received through St. Augustine, from ...'. This page prints nine such joins across its seven numbered paragraphs; the same defect shape appears on encyclical__christi-nomen__en.html, another Leo XIII English mirror of the same vintage, so it belongs to how these pages were reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spectata-fides.en-5-ourpredecessor",
+    "locator": {
+      "section": 5,
+      "raw_substring": "from OurPredecessor"
+    },
+    "field": "raw_text",
+    "from": "from OurPredecessor",
+    "to": "from Our Predecessor",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is simply the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spectata-fides__en.html: '...which your forefathers received through St. Augustine, from OurPredecessor, Gregory the Great: which</font><font size=\"3\">wisdom ...'. This page prints nine such joins across its seven numbered paragraphs; the same defect shape appears on encyclical__christi-nomen__en.html, another Leo XIII English mirror of the same vintage, so it belongs to how these pages were reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spectata-fides.en-6-carepress",
+    "locator": {
+      "section": 6,
+      "raw_substring": "chief care;press onward"
+    },
+    "field": "raw_text",
+    "from": "chief care;press onward",
+    "to": "chief care; press onward",
+    "reason": "The page has lost the space after a comma or semicolon. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__spectata-fides__en.html: '...herefore, Venerable Brethren, in making the young your chief care;press onward in every way your episcopal work; and cultivate with a...'. This page prints nine such joins across its seven numbered paragraphs; the same defect shape appears on encyclical__christi-nomen__en.html, another Leo XIII English mirror of the same vintage, so it belongs to how these pages were reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spectata-fides.en-6-andhopefulness",
+    "locator": {
+      "section": 6,
+      "raw_substring": "alacrity andhopefulness"
+    },
+    "field": "raw_text",
+    "from": "alacrity andhopefulness",
+    "to": "alacrity and hopefulness",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is simply the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spectata-fides__en.html: '...d in every way your episcopal work; and cultivate with alacrity andhopefulness whatever good seeds you find: for God, Who is rich in ...'. This page prints nine such joins across its seven numbered paragraphs; the same defect shape appears on encyclical__christi-nomen__en.html, another Leo XIII English mirror of the same vintage, so it belongs to how these pages were reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spectata-fides.en-6-willgive",
+    "locator": {
+      "section": 6,
+      "raw_substring": "mercy willgive the increase"
+    },
+    "field": "raw_text",
+    "from": "mercy willgive the increase",
+    "to": "mercy will give the increase",
+    "reason": "The page has lost the space between two words. Both words are ordinary and the join is not a compound in English, so the correct value is simply the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__spectata-fides__en.html: '... whatever good seeds you find: for God, Who is rich in mercy willgive the increase.</font> </p> \n<p align=\"left\"><font size=\"3\">7. As a p...'. This page prints nine such joins across its seven numbered paragraphs; the same defect shape appears on encyclical__christi-nomen__en.html, another Leo XIII English mirror of the same vintage, so it belongs to how these pages were reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "spectata-fides.en-7-1885the",
+    "locator": {
+      "section": 7,
+      "raw_substring": "the year 1885,the eighth year"
+    },
+    "field": "raw_text",
+    "from": "the year 1885,the eighth year",
+    "to": "the year 1885, the eighth year",
+    "reason": "The page has lost the space after a comma or semicolon. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__spectata-fides__en.html: '... Rome, at St. Peter's, on the 27th day of November, in the year 1885,the eighth year of Our Pontificate.</i></font><font face=\"Arial\" size=...'. This page prints nine such joins across its seven numbered paragraphs; the same defect shape appears on encyclical__christi-nomen__en.html, another Leo XIII English mirror of the same vintage, so it belongs to how these pages were reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]
