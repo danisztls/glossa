@@ -1758,6 +1758,16 @@ rather than truncates — a truncated title would be the defect it exists to ans
 level down — and the names run to 32 characters ("Seconda lettera ai Tessalonicesi"), so
 the floor is what keeps that wrap to two lines rather than one word each.
 
+**And the chip outranks the viewport margin**, which is the same rule stated as a clamp.
+The panel keeps 1rem of clearance from the edge of the screen; the contents sheet insets
+its book grid by 14px on a phone, which is inside that, so clamping to the margin alone
+pushed the panel 4px to the right of the chip it had opened from and left a stripe of
+accent fill showing down the chip's edge. Covering the chip is the design, so the panel may
+never begin after the chip begins or end before the chip ends, in either coordinate space,
+and the margin is what applies in the slack between those. The width ceiling yields the
+same way — `inlinePx` is never less than the chip is wide, which is what makes those two
+clamps satisfiable at once.
+
 The accent fill on the open chip stays, though a reader sees it only for the frame between
 the click and the measurement: the state is real whether or not something is painted over
 it, and that frame is the one where a chip that had not visibly changed would read as a

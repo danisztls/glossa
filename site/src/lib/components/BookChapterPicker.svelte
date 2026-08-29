@@ -273,18 +273,40 @@
 		// `.chapters`' width comment.
 		const wanted = (cols * (CHIP_REM + GAP_REM) + 2 * PAD_REM) * rem + 2;
 		const floor = Math.max(MIN_INLINE_REM * rem, rect.width);
-		const inlinePx = Math.min(Math.max(wanted, floor), viewW - 2 * margin);
+		// The viewport ceiling yields to the chip's width rather than the
+		// other way round, so `inlinePx >= rect.width` holds unconditionally
+		// — which is what the two clamps below rely on to be satisfiable at
+		// once. A chip wider than the viewport less its margins is the only
+		// case this changes, and there the margin is the wrong thing to keep.
+		const inlinePx = Math.min(Math.max(wanted, floor), Math.max(viewW - 2 * margin, rect.width));
 
 		// Anchored to the button's inline start, slid back only as far as
 		// staying inside the margin requires — which is nothing at all for
 		// most books, and the whole panel width for one opened from the far
 		// right of a phone.
-		const offsetPx = Math.min(0, viewW - margin - inlinePx - rect.left);
+		const offsetPx = Math.max(
+			rect.width - inlinePx,
+			Math.min(0, viewW - margin - inlinePx - rect.left)
+		);
 		// Same idea, but as an absolute viewport coordinate rather than an
 		// offset from the button: clamped on both edges, since a `fixed`
 		// panel has no containing block of its own to inherit a safe left
 		// bound from the way `'grid'`'s does.
-		const leftPx = Math.max(margin, Math.min(rect.left, viewW - margin - inlinePx));
+		//
+		// THE CHIP OUTRANKS THE MARGIN, in both of these. `MARGIN_REM` is
+		// clearance from the viewport's edge, and a chip can sit closer to
+		// that edge than the clearance asks for — the contents sheet insets
+		// its book grid by 14px on a phone, inside this 18px. Clamping to the
+		// margin alone then pushed the panel 4px to the RIGHT of the chip it
+		// had opened from, and left a 4px stripe of accent fill showing down
+		// the chip's edge. A panel that covers its chip is the whole design
+		// (see `top: 0` in `.chapters`), so it may never begin after the chip
+		// begins, nor end before the chip ends; the margin is what applies in
+		// the slack between those.
+		const leftPx = Math.min(
+			rect.left,
+			Math.max(rect.right - inlinePx, margin, Math.min(rect.left, viewW - margin - inlinePx))
+		);
 
 		// The room is measured from the chip's OWN edges, not from below and
 		// above it, because the panel starts where the chip does: it opens
