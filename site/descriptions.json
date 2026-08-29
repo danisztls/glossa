@@ -1308,6 +1308,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.omnibus-compertum.en": {
+			"en": {
+				"text": "Leo XIII's short letter to the Greek Melchite Patriarch, archbishops, and bishops of Antioch, prompted by disagreements among them that had recently been settled in Rome. Recalling his past support for the Melchite church, he sets out three requests to consolidate the peace: that the patriarch's rights and prerogatives be respected, that disputed questions be referred first to the patriarch and then to the Holy See, and that a plenary council be convened to legislate discipline.",
+				"origin": "read"
+			}
+		},
 		"encyclical.optatissima-pax.en": {
 			"en": {
 				"text": "Pius XII on the social unrest that followed the Second World War: economic ruin has left workers idle while agitators incite class hatred and rioting in place of relief. Rejecting both rancor and the pursuit of private profit as remedies, he calls for reconciliation through Christian charity and prescribes public prayers — especially by children at the Christmas crib — for peace and for the relief of the needy.",
@@ -1326,9 +1332,27 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.orientales.it": {
+			"it": {
+				"text": "Pio XII scrive ai Patriarchi, Arcivescovi e Vescovi delle Chiese Orientali in comunione con Roma per condividere il dolore delle persecuzioni contro i cristiani di rito orientale, denunciando la condanna a morte del vescovo di Nicopoli Eugenio Bossikoff in Bulgaria e le sofferenze dei fedeli romeni e ucraini, ed esortando tutti alla preghiera e alla penitenza per l'unità e la libertà della Chiesa.",
+				"origin": "read"
+			}
+		},
+		"encyclical.orientales.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII aos patriarcas, primazes, arcebispos e bispos das Igrejas orientais, denunciando as perseguições que atingem os fiéis de rito oriental — bispos mortos ou dispersos, templos profanados, cristãos presos ou em campos de concentração — na Bulgária, Romênia, Ucrânia e outras regiões. Louva a firmeza dos perseguidos, pede orações públicas e penitência, e apela pela libertação dos presos e pela unidade da Igreja.",
+				"origin": "read"
+			}
+		},
 		"encyclical.orientalis-ecclesiae.en": {
 			"en": {
 				"text": "For the fifteenth centenary of St Cyril of Alexandria, recounting his defence of the unity of Christ's person against Nestorius, his deference to the Apostolic See through the Council of Ephesus, and his patient reconciliation with the Antiochene bishops — which Pius XII holds up as the model for reunion with the separated Christians of the East, the modern Nestorians and those who do not receive Chalcedon.",
+				"origin": "read"
+			}
+		},
+		"encyclical.orientalis-ecclesiae.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII pelo décimo quinto centenário da morte de são Cirilo de Alexandria, exaltando sua defesa da fé contra o nestorianismo, sua caridade para com os que erraram e sua união com a Sé Apostólica, e exortando os irmãos orientais separados à reconciliação com Roma.",
 				"origin": "read"
 			}
 		},
@@ -1368,6 +1392,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.pascendi-dominici-gregis.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio X contra o modernismo, descrito como sistema de erros enraizado no agnosticismo filosófico. Expõe sucessivamente o modernista como filósofo, crente, teólogo, historiador e crítico, apologista e reformador, mostrando a coerência interna dessas doutrinas; investiga as causas de sua difusão na Igreja e prescreve remédios — o estudo da filosofia escolástica, a vigilância episcopal sobre as publicações e a censura eclesiástica.",
+				"origin": "read"
+			}
+		},
 		"encyclical.pastoralis-officii.en": {
 			"en": {
 				"text": "Leo XIII's 1891 encyclical to the bishops of Germany and Austria-Hungary condemning dueling as a violation of divine and natural law. He reviews the Church's traditional penalties against duelists, refutes the excuses offered for the practice — that it vindicates injured honor, or that refusing a challenge invites the charge of cowardice — and rejects any exemption claimed for the military.",
@@ -1386,9 +1416,27 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.paternae.en": {
+			"en": {
+				"text": "Leo XIII's encyclical to the bishops of Brazil, urging them to build dedicated seminaries — never mixed with lay students — to shield future priests from worldly influence, and taking up three further concerns: a disciplined Catholic press, cautious and disinterested participation by Catholics in public office, and diocesan funds, religious houses and bequests to support a Church now stripped of state subsidy.",
+				"origin": "read"
+			}
+		},
 		"encyclical.paterno-iam-diu.en": {
 			"en": {
 				"text": "An appeal for the starving and destitute children of central Europe after the First World War. Benedict XV commends the Save the Children societies formed to help them, directs bishops to order public prayers and to gather alms, food, medicine and clothing on the feast of the Holy Innocents, and pledges a hundred thousand lire of his own toward the relief.",
+				"origin": "read"
+			}
+		},
+		"encyclical.pergrata.en": {
+			"en": {
+				"text": "Leo XIII's letter to the bishops of Portugal, occasioned by a recent agreement between the Holy See and the Portuguese crown, on the condition of the Church there: the decline of clergy and religious orders, the need for concord between ecclesiastical and civil authority, the shortage of priests and the importance of seminaries and priestly example, and the corrupting effect of the popular press.",
+				"origin": "read"
+			}
+		},
+		"encyclical.permoti-nos.en": {
+			"en": {
+				"text": "Leo XIII's 1895 letter to the bishops of Belgium on the social question dividing Belgian Catholics, whose earlier unity — evident in a recent schools debate — has given way to factional discord. He urges them to convene a congress on shared goals: religion's flourishing, harmony between Church and state, better schools, and stronger trade societies, closing with an appeal for just relations between workers and employers.",
 				"origin": "read"
 			}
 		},
@@ -1413,6 +1461,12 @@
 		"encyclical.princeps.en": {
 			"en": {
 				"text": "Princeps Pastorum, on the missions forty years after Benedict XV's Maximum Illud. John XXIII treats the formation of a native clergy — local hierarchies, seminaries that form men in holiness, a missiology fitted to the mind of each people while guarding unity against ultranationalism — then the apostolate of the laity through Catholic Action, catechists and the Christian school, closing with an appeal for vocations and for perseverance under persecution.",
+				"origin": "read"
+			}
+		},
+		"encyclical.princeps.pt": {
+			"pt": {
+				"text": "Carta encíclica de João XXIII sobre as missões católicas, publicada quarenta anos depois da Maximum illud de Bento XV. Trata do desenvolvimento da hierarquia e do clero local nos territórios de missão, da formação espiritual e cultural do clero nativo, e do papel do laicato — catequistas, Ação Católica, escolas — no apostolado missionário, encerrando com uma palavra de encorajamento aos missionários perseguidos.",
 				"origin": "read"
 			}
 		},
@@ -1452,6 +1506,24 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.quam-religiosa.en": {
+			"en": {
+				"text": "Written to the bishops of Peru after a new national law introduced civil marriage for mixed unions, in defiance of Church authority. Reasserts that the marriage of Christians is a sacrament governed by the Church alone, citing the Tridentine decree Tametsi as already in force there, and calls on the bishops to instruct the faithful and press lawmakers to bring the country's marriage legislation back into line with Catholic teaching.",
+				"origin": "read"
+			}
+		},
+		"encyclical.quamquam-pluries.en": {
+			"en": {
+				"text": "Leo XIII's encyclical on devotion to Saint Joseph, prescribing that a prayer to him be added to the October recitation of the Rosary. It explains why Joseph, spouse of Mary and reputed father of Christ, was proclaimed Patron of the Church, presents him as a model for every state of life — especially for labourers — and urges the poor to trust his example rather than sedition.",
+				"origin": "read"
+			}
+		},
+		"encyclical.quarto-abeunte-saeculo.en": {
+			"en": {
+				"text": "Leo XIII's encyclical marking the fourth centenary of Columbus's discovery of America (1892), addressed to the bishops of Spain, Italy and the two Americas. It presents Columbus's voyage as driven above all by Catholic faith and the desire to carry the Gospel to new peoples, tracing his own letters and prayers as evidence, and decrees a solemn Mass of the Most Holy Trinity on October 12 to mark the anniversary.",
+				"origin": "read"
+			}
+		},
 		"encyclical.quas-primas.en": {
 			"en": {
 				"text": "On the kingship of Christ over persons, families and states, gathering the scriptural, patristic and liturgical evidence for a dominion the age's anticlericalism had set out to deny. Closing the Holy Year of 1925, it institutes the feast of Christ the King on the last Sunday of October and joins to it the yearly renewal of the consecration of mankind to the Sacred Heart.",
@@ -1467,6 +1539,12 @@
 		"encyclical.quemadmodum.pt": {
 			"pt": {
 				"text": "Encíclica de Pio XII sobre a assistência às crianças indigentes no pós-guerra. Descreve a multidão de crianças órfãs, famintas e sem-teto deixadas pelo conflito mundial, recorda o cuidado constante da Igreja pela infância desde Cristo e apela aos bispos e fiéis para que redobrem a caridade e criem novas iniciativas em seu socorro.",
+				"origin": "read"
+			}
+		},
+		"encyclical.quinquagesimo-ante-anno.it": {
+			"it": {
+				"text": "Enciclica di Pio XI che chiude l'Anno Santo straordinario indetto per il cinquantesimo anniversario della sua ordinazione sacerdotale, tracciando un bilancio dei benefici ricevuti durante l'anno giubilare: la Conciliazione con l'Italia mediante i Patti Lateranensi, i concordati con Portogallo, Romania e Prussia, e i segni di vicinanza delle Chiese orientali. Proroga infine l'indulgenza plenaria a tutto giugno 1930.",
 				"origin": "read"
 			}
 		},
@@ -1506,6 +1584,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.quum-diuturnum.en": {
+			"en": {
+				"text": "Leo XIII's letter to the bishops of Latin America convoking a plenary council of all their sees to meet in Rome, to safeguard the unity of Church discipline and foster morals worthy of the Catholic faith across the continent. He explains why a general meeting serves their shared interests and why Rome, rather than an American city, was chosen as its site.",
+				"origin": "read"
+			}
+		},
 		"encyclical.redemptor-hominis.en": {
 			"en": {
 				"text": "John Paul II's first encyclical, opening his pontificate on the claim that Jesus Christ, the Redeemer of man, is the centre of the universe and of history. Taking up the inheritance of Vatican II, it turns to the man Redemption reaches — afraid of what his own progress has made, his rights honoured in letter or in spirit — and to the Church's answer in truth, in the Eucharist and Penance, and in service.",
@@ -1536,9 +1620,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.redemptoris-missio.pt": {
+			"pt": {
+				"text": "Carta encíclica de João Paulo II sobre a validade permanente do mandato missionário da Igreja, escrita porque a missão universal confiada por Cristo continua ainda no início. Percorre o fundamento cristológico e pneumatológico da missão, os vastos horizontes ainda abertos à evangelização ad gentes, os caminhos concretos — testemunho, primeiro anúncio, conversão, formação de Igrejas locais, inculturação, diálogo inter-religioso, promoção humana e caridade —, os responsáveis por essa tarefa, a cooperação que ela exige e a espiritualidade própria do missionário.",
+				"origin": "read"
+			}
+		},
 		"encyclical.redemptoris-nostri-cruciatus.en": {
 			"en": {
 				"text": "Pius XII's encyclical on the Holy Places of Palestine in the aftermath of the 1948 war, appealing on behalf of refugees driven from their homes and for an internationally guaranteed status for Jerusalem and the sacred sites damaged by the fighting. It urges continued relief for exiles, protection and free pilgrim access to the Holy Places, and a just and lasting peace.",
+				"origin": "read"
+			}
+		},
+		"encyclical.reputantibus.en": {
+			"en": {
+				"text": "Leo XIII's encyclical to the bishops of Bohemia and Moravia on the language dispute dividing Bohemian Catholics along Czech and German lines. He declines to settle the political question, holding only that preserving one's ancestral tongue must not harm the common good, and urges the clergy especially to model a charity above language and race, so that faith unites what tongues divide.",
 				"origin": "read"
 			}
 		},
@@ -1616,9 +1712,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.sacerdotii.pt": {
+			"pt": {
+				"text": "Carta encíclica de João XXIII por ocasião do centenário da morte de São João Maria Vianney, o cura d'Ars, proposto como modelo de vida sacerdotal. Divide-se em três partes que percorrem, a partir do seu exemplo, a ascese sacerdotal (pobreza, castidade e obediência), a oração e o culto eucarístico, e o zelo pastoral no ensino, na pregação e no confessionário.",
+				"origin": "read"
+			}
+		},
 		"encyclical.sacra-propediem.en": {
 			"en": {
 				"text": "Benedict XV's encyclical for the seventh centenary of the Third Order of St. Francis, defending the true character of Francis of Assisi against Modernist reinterpretation and naming fraternal charity as the Tertiaries' distinguishing mark. It addresses the social unrest and class conflict of the age, calls the Third Order to carry the spirit of Christ into social life, and closes by granting indulgences for the centenary's Triduum.",
+				"origin": "read"
+			}
+		},
+		"encyclical.sacra-virginitas.en": {
+			"en": {
+				"text": "Pius XII's encyclical on consecrated virginity, grounding its superiority over marriage in the words of Christ and the Fathers, refuting claims that chastity harms human nature or that marriage serves sanctity and the apostolate equally well, defending clerical celibacy, and urging vigilance, prayer and devotion to Mary as its safeguards.",
 				"origin": "read"
 			}
 		},
@@ -1631,6 +1739,18 @@
 		"encyclical.saeculo-exeunte-octavo.en": {
 			"en": {
 				"text": "Written to the bishops of Portugal for the eighth centenary of Portuguese independence, recalling how papal protection of the medieval kingdom bound its history to the spread of the faith through its missions. Pius XII asks for renewed recruitment and training of missionaries for the African and Asian territories, invokes Francis Xavier and John de Brito as patrons, and appeals to clergy and Catholic Action to sustain that work.",
+				"origin": "read"
+			}
+		},
+		"encyclical.saeculo-exeunte-octavo.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII ao episcopado português, por ocasião do VIII centenário da fundação de Portugal e do III de sua restauração. Recorda os laços históricos entre a Santa Sé e a nação e detém-se sobretudo na atividade missionária portuguesa: a escassez de missionários nas dioceses da África portuguesa, a formação de vocações e do clero autóctone, e um apelo final a uma cruzada de orações, filhos e ajuda para as missões.",
+				"origin": "read"
+			}
+		},
+		"encyclical.saepe-nos.en": {
+			"en": {
+				"text": "Leo XIII's 1888 encyclical to the bishops of Ireland, defending the Holy See's decree condemning Boycotting and the Plan of Campaign as methods incompatible with Christian obedience and charity. He answers the charge that Rome is indifferent to Ireland's cause, insists the decree was foreseen in his own earlier counsels, and urges the clergy to lead the people toward lawful means and away from violence.",
 				"origin": "read"
 			}
 		},
@@ -1652,9 +1772,27 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.sempiternus-rex-christus.en": {
+			"en": {
+				"text": "Pius XII's 1951 encyclical marking the fifteenth centenary of the Council of Chalcedon. It recounts the Eutychian heresy, the 'Robber Synod' of Ephesus, and St. Leo the Great's intervention leading to Chalcedon's definition that Christ has two true and perfect natures, divine and human, united without confusion in one person, and calls Eastern Christians separated from Rome back to that faith and to papal primacy.",
+				"origin": "read"
+			}
+		},
+		"encyclical.sempiternus-rex-christus.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII pelo XV centenário do concílio ecumênico de Calcedônia (451), que narra a heresia de Êutiques e o \"latrocínio\" de Éfeso, expõe a carta de Leão Magno a Flaviano e a definição das duas naturezas — divina e humana — unidas na única pessoa de Cristo, e apela aos cristãos orientais a permanecerem fiéis a essa fé.",
+				"origin": "read"
+			}
+		},
 		"encyclical.sertum-laetitiae.en": {
 			"en": {
 				"text": "Written to the American hierarchy for the hundred-and-fiftieth anniversary of its establishment, recalling the growth of the Church in the United States from John Carroll's appointment as its first bishop to its present schools, missions and lay associations. It then warns against materialism in education and the breakdown of marriage, and asks for a just settlement of the labour question.",
+				"origin": "read"
+			}
+		},
+		"encyclical.sertum-laetitiae.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII ao episcopado dos Estados Unidos por ocasião do 150º aniversário da constituição da hierarquia eclesiástica no país, iniciada com João Carroll como primeiro bispo de Baltimore. Percorre o florescimento da Igreja americana, os efeitos nocivos do divórcio sobre a vida doméstica, a formação científica do clero e a questão social à luz de Rerum Novarum e Quadragesimo Anno, terminando num apelo à concórdia.",
 				"origin": "read"
 			}
 		},
@@ -1697,6 +1835,12 @@
 		"encyclical.spe-salvi.pt": {
 			"pt": {
 				"text": "Carta encíclica de Bento XVI sobre a esperança cristã, partindo de «Spe salvi facti sumus» (Rm 8,24) para mostrar que a fé é uma esperança performativa, não mera informação. Percorre a Escritura e a Igreja primitiva, critica a redução moderna da esperança ao progresso material, e indica três «lugares» onde ela se aprende e exerce: a oração, o agir e sofrer, e o Juízo. Termina invocando Maria, estrela da esperança.",
+				"origin": "read"
+			}
+		},
+		"encyclical.spectata-fides.en": {
+			"en": {
+				"text": "Leo XIII's encyclical to the bishops of England, replying to their report on Catholic schools. It praises the clergy and laity's sacrifices to fund Christian education, commends the Voluntary schools established in France, Belgium, America and the British colonies, and urges continued vigilance in raising children in the faith, recalling England's Catholic heritage from Saint Augustine and Gregory the Great.",
 				"origin": "read"
 			}
 		},
