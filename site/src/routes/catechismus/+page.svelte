@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LegacyPage from '../ccc/+page.svelte';
+	import CatechismIndex from '$lib/components/CatechismIndex.svelte';
 </script>
 
-<LegacyPage />
+<CatechismIndex />

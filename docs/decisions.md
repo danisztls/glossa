@@ -575,8 +575,19 @@ So every reader URL is **edition-free** and Latin, and does not vary with interf
 language: `/scriptura/{osis}/{chapter}`, `/catechismus/{n}`, `/catechismus/caput/{n}`,
 `/catechismus/compendium/{n}`, `/documenta/{slug}`, `/doctores/summa/{part}/{question}`,
 `/preces/{slug}`, `/signata`, `/colophon`. The English roots deliberately resolve as
-invalid; there is no compatibility layer. (Route directories under `src/routes/` are still
-named in English, with Latin re-exports.)
+invalid; there is no compatibility layer.
+
+**The route tree is that grammar and not a translation of it** (2026-08-29). The
+directories under `src/routes/` were named in English with the Latin ones as thin
+re-exports, which left `/ccc/1` answering 404 at the edge — `isCanonicalPath` has never
+counted it — and then rendering Catechism ¶1 anyway, because the client router still
+carried a `ccc/[n]` route to match. Eleven such routes existed, advertised by no sitemap
+and emitted by no `hrefFor`. The implementations now live at the canonical paths and the
+English directories are gone, so a legacy path is invalid in the app for the same reason
+it is invalid at the edge, and the eighteen re-export files (each casting its `data`
+through `unknown`, since a shim's generated `$types` cannot see through the re-export)
+went with them. `/doctores/summa` was already the precedent: nothing was left at `/summa`
+when it moved.
 
 **The Compendium is addressed under the Catechism** (2026-08-28). It was `/compendium/{n}`
 until then, and the move is what the work is: the _Compendium Catechismi Catholicae

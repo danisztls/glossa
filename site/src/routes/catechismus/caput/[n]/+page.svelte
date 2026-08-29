@@ -1,10 +1,552 @@
 <script lang="ts">
-	import LegacyPage from '../../../ccc/chapter/[n]/+page.svelte';
-	import type { CccChapterLangData } from '../../../ccc/chapter/[n]/+page';
+	/**
+	 * A whole CCC chapter in one page — the destination of the
+	 * "read the full chapter" link on `/catechismus/[n]`.
+	 *
+	 * Continuous prose rather than the single-paragraph route's card: no
+	 * per-paragraph headings, no prev/next paragraph nav, just the text with
+	 * its numbers set in the margin, which is how the Catechism is actually
+	 * printed and how anyone reading more than one paragraph at a time wants
+	 * it. Each paragraph keeps an `id` so `/catechismus/caput/27#p31` addresses a
+	 * specific paragraph within the chapter, and so the link back from a
+	 * single paragraph can land the reader where they already were.
+	 */
+	import { page } from '$app/state';
+	import {
+		compareColumnLabel,
+		flattenCccStructure,
+		getCccStructure,
+		getCompendiumStructure
+	} from '$lib/corpus';
+	import { pairDivisionsCached, pairedAnchor } from '$lib/toc-pairing';
+	import { runLabel } from '$lib/components/indexToc';
+	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import ProseBlocks from '$lib/components/ProseBlocks.svelte';
+	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
+	import { bookmarks } from '$lib/bookmarks.svelte';
+	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
+	import HeadingText from '$lib/components/HeadingText.svelte';
+	import { OUTLINE_KINDS } from '$lib/components/structureToc';
+	import CompareField from '$lib/components/CompareField.svelte';
+	import CompareCopyrightField from '$lib/components/CompareCopyrightField.svelte';
+	import CompareGrid from '$lib/components/CompareGrid.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
+	import { alignByNumber } from '$lib/compare';
+	import {
+		adoptCompareFromUrl,
+		chooseComparisonEdition,
+		toggleCompare
+	} from '$lib/compare-nav.svelte';
+	import { useEditionCompare } from '$lib/edition-compare.svelte';
+	import { useScrollSpy } from '$lib/scroll-spy.svelte';
+	import { setPosition } from '$lib/reading-position';
+	import { content } from '$lib/content.svelte';
+	import { hrefFor } from '$lib/address';
+	import { displayTitle } from '$lib/titles';
+	import { t } from '$lib/i18n.svelte';
+	import type { CccNode, CccParagraph, StructureNode } from '$lib/types';
+	import type { PageData } from './$types';
 
-	type LegacyData = { n: number; byLang: Partial<Record<string, CccChapterLangData>> };
-	let { data }: { data: unknown } = $props();
-	const legacyData = $derived(data as LegacyData);
+	let { data }: { data: PageData } = $props();
+
+	// `useEditionCompare` picks which embedded language is active from
+	// `content.langFor`, reactively, and resolves compare mode's second
+	// edition against it — see that module's docblock for the shared
+	// reasoning (why this is free of any fetch, the `availableLangs[0]`
+	// fallback, why an absent language is skipped rather than indexed blind,
+	// work id vs. bare language tag).
+	const editions = useEditionCompare(
+		() => data.byLang,
+		() => content.langFor('catechism')
+	);
+
+	/** This edition's work id, passed to every surface that linkifies its
+	 *  text. No Catechism edition is in `refs-grammar.ts`'s `WORK_CONFIGS`
+	 *  today, so it changes nothing here — it is passed so the axis is
+	 *  reachable from every reading surface rather than only from the two
+	 *  that need it now. */
+	const workId = $derived(editions.current?.work.id);
+	const heading = $derived(
+		editions.current ? displayTitle(editions.current.chapter, editions.lang) : undefined
+	);
+	const structure = $derived(flattenCccStructure(editions.lang));
+
+	// The Compendium's parallel chapter. STRUCTURAL, not a citation: the two
+	// works publish one outline at two lengths and every part, section and
+	// chapter pairs exactly (`toc-pairing.ts`). The Compendium resolves its
+	// own language, since the two works do not cover the same set.
+	const compendiumChapter = $derived.by(() => {
+		const chapter = editions.current?.chapter;
+		if (!chapter) return undefined;
+		const pairs = pairDivisionsCached(
+			getCccStructure(editions.lang),
+			getCompendiumStructure(content.langFor('compendium'))
+		);
+		const paired = pairs.get(chapter);
+		const anchor = pairedAnchor(chapter, pairs);
+		if (paired === undefined || anchor === undefined) return undefined;
+		return {
+			href: hrefFor({ kind: 'compendiumChapter', n: anchor }),
+			label: runLabel(anchor, paired.paragraphs[1], 'Q')
+		};
+	});
+
+	/**
+	 * Compare mode, paragraph by paragraph across the whole chapter.
+	 *
+	 * Chapter BOUNDARIES can genuinely diverge between EN and PT
+	 * (docs/decisions.md: "the vatican.va editions genuinely diverge in a few
+	 * article groupings" — ccc.pt has 480 structure nodes to ccc.en's 396),
+	 * so the chapter this URL names may cover a different paragraph RANGE in
+	 * each language even though both chapters open at the same paragraph
+	 * number `n`. `alignByNumber` already does the right thing about that
+	 * without any special-casing here: a paragraph only one language's
+	 * chapter reaches renders as a row with a gap on the other side, exactly
+	 * like a genuine missing-translation gap would.
+	 */
+
+	// BROWSER-ONLY side effect — see `bible/[book]/[chapter]/+page.svelte`'s
+	// `citedRange` docblock and `compare-pref.svelte.ts`'s `syncFromUrl`.
+	/**
+	 * Which paragraph the reader has scrolled to. This view is a whole
+	 * chapter on one page, so the sidebar's position cannot come from the
+	 * URL — `currentN` was the chapter's FIRST paragraph, fixed, which meant
+	 * the table of contents marked the chapter's opening no matter how far
+	 * into it the reader had read.
+	 *
+	 * Fed the `id="p{n}"` anchors the paragraphs already carry for `#p{n}`
+	 * deep links, so the spy cannot disagree with the page. Browser-only —
+	 * `useScrollSpy` runs inside `$effect` — so the initial render is
+	 * unaffected, and falls back to the chapter's first paragraph before the
+	 * first measurement.
+	 */
+	const spy = useScrollSpy(() =>
+		(editions.current?.paragraphs ?? []).map((p) => [`p${p.n}`, p.n] as const)
+	);
+
+	adoptCompareFromUrl();
+
+	/** This chapter's canonical address. Derived at script scope rather than
+	 *  from the `from` const in the template, because the sticky bar's
+	 *  toolbar snippet is declared outside that block. */
+	const chapterHref = $derived.by(() => {
+		// A chapter is addressed by its FIRST paragraph number, which the
+		// structure type allows to be null; no number, no address.
+		const from = editions.current?.chapter.paragraphs[0];
+		return from == null ? '' : hrefFor({ kind: 'cccChapter', n: from });
+	});
+
+	/**
+	 * The chapter's own inner headings, keyed by the paragraph each one opens
+	 * at, so the continuous body can print them where the source does.
+	 *
+	 * Without them this view ran a whole chapter — 113 paragraphs, for the
+	 * first chapter of the Decalogue — as one undivided column, with the ten
+	 * commandments' own headings nowhere on the page.
+	 *
+	 * ARTICLES AND SUBS, but not `in-brief`: an "in brief" is a summary box
+	 * that the paragraphs inside it already render as one (`.para.in-brief`),
+	 * so printing its heading too would label a box that is already visibly a
+	 * box. The rest are the CCC's own printed divisions — the numbered
+	 * articles and, under them, the roman-numeral subsections and "Paragraph
+	 * N." headings. This is deliberately DEEPER than the sidebar's floor,
+	 * which stops at `article`: 3 to 37 headings per chapter is a page that
+	 * reads like the printed book, while the same depth in a 17rem column
+	 * would bury the row telling the reader where they are.
+	 *
+	 * A LIST per paragraph, not one heading: an article and its first
+	 * subsection legitimately open on the same paragraph (13 chapters have at
+	 * least one such pair), and both must print, outermost first — which is
+	 * the order this depth-first walk already produces.
+	 *
+	 * Keyed by first paragraph rather than by index, because the two editions'
+	 * chapter boundaries genuinely diverge (see the compare docblock above) —
+	 * a paragraph number is the one address both languages agree on.
+	 */
+	const innerHeadings = $derived.by(() => {
+		const byParagraph = new Map<number, CccNode[]>();
+		const walk = (nodes: CccNode[]) => {
+			for (const node of nodes) {
+				const at = node.paragraphs[0];
+				if ((node.kind === 'article' || node.kind === 'sub') && Number.isFinite(at)) {
+					const key = at as number;
+					byParagraph.set(key, [...(byParagraph.get(key) ?? []), node]);
+				}
+				walk(node.children ?? []);
+			}
+		};
+		walk(editions.current?.chapter.children ?? []);
+		return byParagraph;
+	});
+
+	/**
+	 * Where a sidebar row lands once this route has loaded. Article rows get
+	 * the heading `innerHeadings` prints above their first paragraph;
+	 * everything at chapter level and above is the page top already, so it
+	 * gets no fragment at all. (Subs get a heading too, but no sidebar row
+	 * points at one — `OUTLINE_KINDS` stops at `article`.)
+	 */
+	function anchorFor(node: StructureNode): string | undefined {
+		if (node.kind !== 'article') return undefined;
+		const at = node.paragraphs[0];
+		return Number.isFinite(at) ? `s${at}` : undefined;
+	}
+
+	const compareRows = $derived(
+		editions.current && editions.secondary
+			? alignByNumber(editions.current.paragraphs, editions.secondary.paragraphs)
+			: []
+	);
+
+	// Scroll the reader to the paragraph they arrived from. SvelteKit restores
+	// a `#hash` on navigation, but arriving here from `/catechismus/31`'s footer link
+	// there is no hash to restore — the link carries the paragraph as the
+	// hash precisely so this works, and this effect covers the case where the
+	// element only exists after the language-dependent render.
+	$effect(() => {
+		if (editions.current) setPosition(editions.current.work.id, headingText(), page.url.pathname);
+	});
+
+	function headingText(): string {
+		if (!editions.current) return '';
+		const dt = displayTitle(editions.current.chapter, editions.lang);
+		return dt.ordinal ? `${dt.ordinal} ${dt.title}` : dt.title;
+	}
 </script>
 
-<LegacyPage data={legacyData} />
+<svelte:head>
+	<title>{headingText()} — {t('home.title')}</title>
+</svelte:head>
+
+{#snippet leftCell(paragraph: CccParagraph)}
+	<div class="para" class:in-brief={paragraph.in_brief}>
+		<div class="para-text">
+			<ProseBlocks unit={paragraph} lang={editions.lang} work={workId} />
+		</div>
+	</div>
+{/snippet}
+
+{#snippet rightCell(paragraph: CccParagraph)}
+	<div class="para" class:in-brief={paragraph.in_brief}>
+		<div class="para-text">
+			<ProseBlocks
+				unit={paragraph}
+				lang={editions.secondaryLang ?? editions.lang}
+				work={editions.secondaryWorkId ?? workId}
+			/>
+		</div>
+	</div>
+{/snippet}
+
+<!-- The chapter's heading, ordinal and title kept apart so the ordinal can be
+     set in its own face. Written once and rendered three times: the plain
+     heading, and each column of the compare header, where the title is
+     translated and the two therefore always differ. -->
+{#snippet chapterTitle(t: ReturnType<typeof displayTitle>)}
+	<h1>
+		{#if t.ordinal}<span class="ordinal">{t.ordinal}</span>{/if}
+		{t.title}
+	</h1>
+{/snippet}
+
+{#if editions.current && heading}
+	{@const from = editions.current.chapter.paragraphs[0]}
+	{@const to = editions.current.chapter.paragraphs[1]}
+	<!-- One list, two places: the desktop sidebar below and the reading bar's
+	     narrow-screen panel (`TocMenu`). Declared inside this block rather
+	     than at the top of the file because `from` is a `{@const}` of it. -->
+	{#snippet tocList()}
+		<StructureSidebarToc
+			{structure}
+			currentN={spy.current ?? from ?? undefined}
+			lang={editions.lang}
+			heading={t('ccc.tableOfContents')}
+			routeHref={(n) => hrefFor({ kind: 'cccChapter', n })}
+			outlineKinds={OUTLINE_KINDS}
+			{anchorFor}
+		/>
+	{/snippet}
+	<div class="reading-layout" class:compare={editions.compareActive}>
+		<article class="content-column">
+			<div class="breadcrumb-row">
+				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
+					<a href="/catechismus">{t('nav.ccc')}</a>
+					<!-- The chapter's ancestors, ending in the chapter itself: this
+					     page is a whole chapter, so the trail stops where the page
+					     begins (`getCccChapterBreadcrumb`). Ancestors link to their
+					     own opening paragraph, exactly as on `/catechismus/[n]`; the
+					     last crumb is this page and so is text, not a link. -->
+					{#each editions.current.breadcrumb as node, i (node.title)}
+						{@const dt = displayTitle(node, editions.lang)}
+						{@const from = node.paragraphs[0]}
+						{@const here = i === editions.current.breadcrumb.length - 1}
+						<span class="sep">›</span>
+						<!-- A structure node's paragraph bounds are nullable (`CccNode`), and
+						     a node with no lower bound names no address — so it renders as
+						     a crumb without a link rather than as `/catechismus/null`. -->
+						<a
+							href={here || from === null ? undefined : hrefFor({ kind: 'ccc', n: from })}
+							aria-current={here ? 'page' : undefined}
+						>
+							{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}
+							{dt.title}
+						</a>
+					{/each}
+				</nav>
+			</div>
+
+			<!-- Edition, comparison, bookmark and print, in that order and in both
+			     modes — see `ReadingBar`. Everything it carries used to be spread
+			     across the breadcrumb row, the title row and the site header. -->
+			<ReadingBar
+				toc={{ label: t('ccc.tableOfContents'), content: tocList }}
+				bookmarkHref={chapterHref}
+				canCompare={editions.others.length > 0}
+				compareActive={editions.compareActive}
+				onToggleCompare={toggleCompare}
+				comparison={{
+					editions: editions.others.map((e) => e.work),
+					current: editions.secondaryWorkId,
+					onselect: chooseComparisonEdition
+				}}
+			/>
+
+			{#if editions.compareActive && editions.secondary}
+				<!-- Compare mode's WHOLE header, merged into one two-column block —
+				     same reasoning as `documents/[slug]` and the Bible chapter
+				     route: heading, range, copyright notice and edition picker all
+				     differ by edition. `showHeader={false}` below drops
+				     `CompareGrid`'s own label row in favour of this one. The
+				     bookmark/compare-toggle controls are up in `.breadcrumb-row`
+				     now, not repeated here. -->
+				{@const secondaryHeading = displayTitle(
+					editions.secondary.chapter,
+					editions.secondaryLang ?? editions.lang
+				)}
+				{@const secondaryFrom = editions.secondary.chapter.paragraphs[0]}
+				{@const secondaryTo = editions.secondary.chapter.paragraphs[1]}
+				<!-- One row per field (`.compare-unit-header`, app.css). The chapter
+				     TITLE is translated and always splits; the RANGE beneath it is a
+				     pair of paragraph numbers, which the CCC's EN/PT symmetry
+				     guarantee (CLAUDE.md) says match — so it collapses, and on the
+				     rare chapter where it doesn't, the split is itself the finding. -->
+				<div class="compare-unit-header">
+					<CompareField
+						leftLang={editions.current.work.language}
+						rightLang={editions.secondary.work.language}
+						leftTag={compareColumnLabel(editions.current.work)}
+						rightTag={compareColumnLabel(editions.secondary.work)}
+					>
+						{#snippet left()}{@render chapterTitle(heading)}{/snippet}
+						{#snippet right()}{@render chapterTitle(secondaryHeading)}{/snippet}
+					</CompareField>
+
+					<CompareField shared={from === secondaryFrom && to === secondaryTo}>
+						{#snippet left()}<p class="range">¶{from}–{to}</p>{/snippet}
+						{#snippet right()}<p class="range">¶{secondaryFrom}–{secondaryTo}</p>{/snippet}
+					</CompareField>
+
+					<CompareCopyrightField left={editions.current.work} right={editions.secondary.work} />
+				</div>
+			{:else}
+				{@render chapterTitle(heading)}
+				<p class="range">¶{from}–{to}</p>
+
+				<p class="copyright-notice"><CopyrightNotice manifest={editions.current.work} /></p>
+			{/if}
+
+			<!-- Set below the header rather than in it: it is a way OUT of this
+			     chapter, so it belongs with the navigation the page ends with
+			     rather than with the title it opens on. Shown in compare mode
+			     too — the Compendium is not a third column, it is one link. -->
+			{#if compendiumChapter}
+				<p class="condensed-in">
+					{t('ccc.condensedIn')}:
+					<a href={compendiumChapter.href}>{compendiumChapter.label}</a>
+				</p>
+			{/if}
+
+			{#if editions.compareActive && editions.secondary}
+				<CompareGrid
+					rows={compareRows}
+					leftLang={editions.current.work.language}
+					rightLang={editions.secondary.work.language}
+					leftLabel={compareColumnLabel(editions.current.work)}
+					rightLabel={compareColumnLabel(editions.secondary.work)}
+					left={leftCell}
+					right={rightCell}
+					unit={(n) => ({
+						href: hrefFor({ kind: 'ccc', n }),
+						canonicalHref: hrefFor({ kind: 'ccc', n }),
+						label: `CCC ${n}`,
+						anchorId: `p${n}`
+					})}
+				/>
+			{:else}
+				<div class="reading-text ccc-body chapter-body" lang={editions.current.work.language}>
+					{#each editions.current.paragraphs as paragraph, i (paragraph.n)}
+						{#each innerHeadings.get(paragraph.n) ?? [] as heading, h (heading.kind + heading.title)}
+							{@const dt = displayTitle(heading, editions.lang)}
+							<!-- `id` on the first heading of the run only: they share a
+							     paragraph, so they would share an anchor, and it is the
+							     outermost one a table-of-contents row addresses. -->
+							{#if heading.kind === 'article'}
+								<h2 class="inner-heading" id={h === 0 ? `s${paragraph.n}` : undefined}>
+									{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}<HeadingText
+										title={dt.title}
+										node={heading}
+										lang={editions.lang}
+										work={workId}
+									/>
+								</h2>
+							{:else}
+								<h3 class="inner-heading sub-heading" id={h === 0 ? `s${paragraph.n}` : undefined}>
+									{#if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}<HeadingText
+										title={dt.title}
+										node={heading}
+										lang={editions.lang}
+										work={workId}
+									/>
+								</h3>
+							{/if}
+						{/each}
+						<section
+							class="para"
+							id={`p${paragraph.n}`}
+							class:in-brief={paragraph.in_brief}
+							class:unit-bookmarked={bookmarks.has(hrefFor({ kind: 'ccc', n: paragraph.n }))}
+						>
+							<!-- The number is a link back to the paragraph's own page: this
+						     view is for reading, that one for citing and cross-linking,
+						     and a reader who wants the second from inside the first
+						     should not have to go back through the TOC. That page is also
+						     the paragraph's canonical address, so the popover bookmarks
+						     and copies exactly what the number already pointed at. -->
+							<ReferenceNumber
+								n={paragraph.n}
+								href={hrefFor({ kind: 'ccc', n: paragraph.n })}
+								canonicalHref={hrefFor({ kind: 'ccc', n: paragraph.n })}
+								label={`CCC ${paragraph.n}`}
+								placement="margin"
+							/>
+							<!-- Opening paragraph only, and never on an "in brief" summary
+						     block. The component does the splitting: `::first-letter`
+						     used to do this job here, and could not stop swallowing the
+						     opening `«` — which four of the PT catechism's twenty
+						     chapters begin with (see app.css). -->
+							<div class="para-text">
+								<ProseBlocks
+									unit={paragraph}
+									lang={editions.lang}
+									work={workId}
+									dropCap={i === 0 && !paragraph.in_brief}
+								/>
+							</div>
+						</section>
+					{/each}
+				</div>
+			{/if}
+		</article>
+
+		<!-- Same treatment as `/catechismus/[n]` — hidden below 80rem, where the
+	     reading bar's panel carries the same list, and omitted entirely in
+	     compare mode (see app.css's `.reading-layout.compare` docblock).
+	     `from`, in the snippet above, is this language's actual matched
+	     chapter start (`getCccChapterFor`, +page.ts), not the URL's `n`,
+	     which may fall mid-chapter in a language whose tree diverges from the
+	     one `n` was minted against. -->
+		<aside class="reading-aside">
+			{@render tocList()}
+		</aside>
+	</div>
+{/if}
+
+<style>
+	h1 {
+		font-family: var(--font-serif);
+		margin: 0 0 0.25rem;
+	}
+
+	/* The chapter's number, set as the identifier it is while the heading
+	   beside it keeps the text face. */
+	h1 .ordinal {
+		font-family: var(--font-sans);
+		color: var(--color-text-muted);
+		margin-inline-end: 0.35em;
+	}
+
+	.range {
+		margin: 0 0 0.5rem;
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Quiet, and the same weight as `.related` on the single-paragraph route:
+	   an aside about where else this text lives, not part of the chapter. */
+	.condensed-in {
+		margin: 0.35rem 0 0;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+	}
+	.condensed-in a {
+		color: var(--color-text-muted);
+	}
+
+	.copyright-notice {
+		margin: 0 0 2rem;
+	}
+
+	/* The chapter's own inner headings, printed inside its continuous body
+	   where the source prints them. Set well below the chapter's `h1` in
+	   weight and size — these are divisions WITHIN the page, not second titles
+	   for it — and given generous space above so each reads as a break in the
+	   column rather than as a bolded first line of the paragraph beneath it. */
+	.inner-heading {
+		font-family: var(--font-serif);
+		font-size: max(var(--font-size-min), 1.05em);
+		font-weight: 600;
+		margin: 2.25rem 0 1rem;
+	}
+
+	/* A subsection inside an article ("I. The Desire for God"). Same face,
+	   one step down in size and space, so the article it sits under still
+	   reads as the larger division. */
+	.sub-heading {
+		font-size: max(var(--font-size-min), 0.95em);
+		margin: 1.75rem 0 0.75rem;
+	}
+
+	/* Never above the chapter's opening paragraph: the `h1` is already right
+	   there, and the gap would read as a missing heading rather than as
+	   space. Applies to a run of headings sharing that paragraph too — only
+	   the first of them is the element's first child. */
+	.inner-heading:first-child {
+		margin-top: 0;
+	}
+
+	/* A sub immediately under the article it belongs to: the article heading
+	   has already opened the space, and a second full gap between the two
+	   reads as a missing paragraph. */
+	.inner-heading + .sub-heading {
+		margin-top: 0.75rem;
+	}
+
+	/* Paragraph numbers hang in the left margin where there's room for them,
+	   the way the printed Catechism sets them. Below that width there is no
+	   margin to hang into, so they fall back to sitting above the text (see
+	   the media query) rather than eating into the measure. */
+	.para {
+		position: relative;
+		margin-bottom: 1.1rem;
+	}
+
+	/* "In brief" summary blocks are set apart in the printed text too; without
+	   this they read as just more prose in a wall of it. */
+	.para.in-brief .para-text {
+		border-inline-start: 2px solid var(--color-border);
+		padding-inline-start: 0.9rem;
+		font-size: max(var(--font-size-min), 0.95em);
+		color: var(--color-text-muted);
+	}
+</style>

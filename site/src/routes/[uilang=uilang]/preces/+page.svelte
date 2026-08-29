@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LandingPage from '../../prayers/+page.svelte';
+	import LandingPage from '../../preces/+page.svelte';
 </script>
 
 <LandingPage />

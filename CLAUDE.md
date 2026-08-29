@@ -388,9 +388,20 @@ Summa moved under `/doctores`, the shelf for the Fathers and Doctors of the
 Church (`docs/decisions.md` §Addresses and editions). **`/doctores` is not in
 the nav**, deliberately: the Summa is awaiting a quality pass and the shelf holds
 nothing else yet, so nothing in the reading interface links to it. Restoring the
-entry is one line in `+layout.svelte`, where the comment says so. Note the route directories under `src/routes/` are still
-named in English, with the Latin ones as thin re-exports; the canonical name
-and the directory name do not match.
+entry is one line in `+layout.svelte`, where the comment says so.
+
+**The directory under `src/routes/` now IS the canonical path** (2026-08-29). It was
+named in English with a Latin re-export beside it, and the cost was not
+untidiness: a legacy path got a 404 from the worker and then rendered the real
+page anyway, because `ccc/[n]` was still a route the client router could match.
+Eleven of those existed. `bible/`, `ccc/`, `compendium/`, `documents/` and
+`prayers/` are gone, the implementations sit at `scriptura/`, `catechismus/`,
+`catechismus/compendium/`, `documenta/` and `preces/`, and the only re-exports
+left are the eight under `[uilang=uilang]/`, which mount a landing page at a
+second address on purpose. **Nothing outside the route tree changed** — no
+consumer of the address grammar (`address.ts`, `route-manifest.ts`,
+`shell-head.ts`, `worker.ts`, the sitemap) ever knew a directory name, which is
+both why the mismatch survived a year and why removing it was safe.
 
 ```sh
 cd site

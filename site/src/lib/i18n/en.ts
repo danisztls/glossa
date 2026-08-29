@@ -143,7 +143,7 @@ export const en: Dictionary = {
 	'ccc.tableOfContents': 'Table of Contents',
 	'ccc.related': 'See also',
 
-	// Compendium of the CCC — routes/compendium/** is the consumer.
+	// Compendium of the CCC — routes/catechismus/compendium/** is the consumer.
 	'compendium.landing.title': 'Compendium of the Catechism',
 	'compendium.landing.tagline':
 		'Questions and answers summarizing the Catechism of the Catholic Church.',
@@ -202,14 +202,14 @@ export const en: Dictionary = {
 	'index.showSubsections': 'Show subsections',
 	'index.hideSubsections': 'Hide subsections',
 
-	// Common Prayers (docs/corpus-schema.md §Prayers) — routes/prayers/**
+	// Common Prayers (docs/corpus-schema.md §Prayers) — routes/preces/**
 	// is the consumer, plus the home page's compact Prayers section.
 	'prayers.landing.title': 'Common Prayers',
 	'prayers.landing.tagline': 'Prayers with the Latin text alongside.',
 	'prayers.tableOfContents': 'Table of Contents',
 	'prayers.prevPrayer': 'Previous prayer',
 	'prayers.nextPrayer': 'Next prayer',
-	// The Rosary reader's own chrome — routes/prayers/[slug] renders the
+	// The Rosary reader's own chrome — routes/preces/[slug] renders the
 	// source's directions as a how-to and marks the set whose weekday it is
 	// (`PrayerGroupEntry.days`). The weekday itself is never named: the
 	// heading says "today" and the set's own printed name says which.
@@ -250,7 +250,7 @@ export const en: Dictionary = {
 	'bookmark.unavailable': 'Not in the edition you are reading',
 
 	// Documents (encyclicals, conciliar constitutions/decrees/declarations,
-	// docs/corpus-schema.md §Documents) — routes/documents/** is the
+	// docs/corpus-schema.md §Documents) — routes/documenta/** is the
 	// consumer, plus the home page's Magisterium group.
 	'document.library.tagline':
 		'Encyclicals, conciliar constitutions, decrees, and declarations of the Magisterium.',

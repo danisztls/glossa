@@ -87,7 +87,7 @@ designed to build correctly from whatever
 subset of works is actually present — gaps degrade gracefully rather than
 failing the build (see `getAdjacentCccParagraphNumber`,
 `getAdjacentChapterAcrossBooks`, and the `related`-link resolution in
-`routes/ccc/[n]/+page.svelte`) — this matters for the encyclicals/conciliar
+`routes/catechismus/[n]/+page.svelte`) — this matters for the encyclicals/conciliar
 documents work now underway (`../docs/corpus-schema.md` §Documents), which
 will ship works incrementally rather than all at once.
 

@@ -124,7 +124,7 @@ export const es: Dictionary = {
 	'prayers.tableOfContents': 'Índice',
 	'prayers.prevPrayer': 'Oración anterior',
 	'prayers.nextPrayer': 'Oración siguiente',
-	// The Rosary reader's own chrome — routes/prayers/[slug] renders the
+	// The Rosary reader's own chrome — routes/preces/[slug] renders the
 	// source's directions as a how-to and marks the set whose weekday it is
 	// (`PrayerGroupEntry.days`). The weekday itself is never named: the
 	// heading says "today" and the set's own printed name says which.
