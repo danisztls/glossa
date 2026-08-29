@@ -189,14 +189,14 @@
 		},
 		"encyclical": {
 			"citations": {
-				"total": 35512,
-				"linkable": 12656,
-				"recognized": 6306,
-				"nothing": 16550
+				"total": 35573,
+				"linkable": 12673,
+				"recognized": 6342,
+				"nothing": 16558
 			},
 			"prose": {
-				"blocks": 39706,
-				"scripture": 20120,
+				"blocks": 39798,
+				"scripture": 20121,
 				"document": 290,
 				"stored": 0
 			},
@@ -243,7 +243,7 @@
 				},
 				{
 					"key": "] ibid.",
-					"count": 80,
+					"count": 81,
 					"example": "] Ibid. 14. ["
 				},
 				{
@@ -277,14 +277,14 @@
 					"example": "المرجع نفسه، 61."
 				},
 				{
+					"key": "] cf.",
+					"count": 62,
+					"example": "] Cf. Brev. Rom. in festo SS. Nom. Iesu; die III intra octavam Concept. immac. B.M.V.; in "
+				},
+				{
 					"key": "] in",
 					"count": 61,
 					"example": "] In Epist. ad Ephes., III. ["
-				},
-				{
-					"key": "] cf.",
-					"count": 59,
-					"example": "] Cf. Brev. Rom. in festo SS. Nom. Iesu; die III intra octavam Concept. immac. B.M.V.; in "
 				},
 				{
 					"key": ". \"katolinen",
@@ -330,21 +330,21 @@
 		},
 		"exhortation": {
 			"citations": {
-				"total": 37300,
-				"linkable": 11006,
-				"recognized": 6210,
-				"nothing": 20084
+				"total": 37916,
+				"linkable": 11142,
+				"recognized": 6299,
+				"nothing": 20475
 			},
 			"prose": {
-				"blocks": 30462,
-				"scripture": 22392,
+				"blocks": 30966,
+				"scripture": 22564,
 				"document": 302,
 				"stored": 0
 			},
 			"residue": [
 				{
 					"key": "ibid.",
-					"count": 968,
+					"count": 981,
 					"example": "Ibid."
 				},
 				{
@@ -359,18 +359,18 @@
 				},
 				{
 					"key": "relatio finalis",
-					"count": 371,
+					"count": 412,
 					"example": "Relatio finalis 2015, 5."
+				},
+				{
+					"key": "relatio synodi",
+					"count": 288,
+					"example": "Relatio Synodi 2014, 5."
 				},
 				{
 					"key": "por. propositio",
 					"count": 286,
 					"example": "Por. Propositio 2."
-				},
-				{
-					"key": "relatio synodi",
-					"count": 258,
-					"example": "Relatio Synodi 2014, 5."
 				},
 				{
 					"key": "ebd.",
@@ -414,12 +414,12 @@
 				},
 				{
 					"key": "propositio 8.",
-					"count": 77,
+					"count": 80,
 					"example": "Propositio 8."
 				},
 				{
 					"key": "propositio 4.",
-					"count": 74,
+					"count": 75,
 					"example": "Cf. Propositio 4."
 				},
 				{
@@ -443,29 +443,29 @@
 					"example": "Ср. Предложение 5."
 				},
 				{
+					"key": "propositio 9.",
+					"count": 61,
+					"example": "Propositio 9."
+				},
+				{
+					"key": "propositio 14.",
+					"count": 60,
+					"example": "Cf. Propositio 14."
+				},
+				{
+					"key": "taz. ilivyotangulia",
+					"count": 60,
+					"example": "Taz. ilivyotangulia, 63."
+				},
+				{
 					"key": "vö. propositio",
 					"count": 60,
 					"example": "Vö. Propositio 2."
 				},
 				{
-					"key": "propositio 14.",
-					"count": 59,
-					"example": "Cf. Propositio 14."
-				},
-				{
-					"key": "propositio 9.",
-					"count": 58,
-					"example": "Propositio 9."
-				},
-				{
 					"key": "propositio 30.",
-					"count": 58,
+					"count": 59,
 					"example": "Cf. Propositio 30."
-				},
-				{
-					"key": "] cfr",
-					"count": 57,
-					"example": "] cfr Propositio 1. ["
 				}
 			]
 		},

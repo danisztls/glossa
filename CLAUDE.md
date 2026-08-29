@@ -39,14 +39,34 @@ governs what may be deleted, which is the whole reason they were renamed:
 Two changes with one point: three sibling directories whose names did not say
 which of them was derived is what made "is this corpus data" the wrong question
 to ask, and `build/` answers it before anyone asks. It is no longer two copies
-with one of them in git; it is one copy plus the rebuild recipe in the corpus
-repo's `README.md`, which is now the only way back to it.
+with one of them in git; it is one copy plus the rebuild recipe, which is now
+the only way back to it.
 
-That recipe was broken when the change was made — six of its eight commands
-named pre-reorganisation paths, and it omitted four works entirely, so it built
-369 of 383 and reported nothing wrong. Hence the rule: **if you change what a
-scraper writes or where it lives, the recipe is part of the change.** Nothing
-fails when it rots.
+**The recipe is `pipeline/rebuild.py`, and it is a program** (2026-08-29). It
+was a seventeen-line `sh` block in the corpus repo's `README.md`, and the rule
+attached to it was: if you change what a scraper writes or where it lives, the
+recipe is part of the change, because nothing fails when it rots. It rotted
+four times under that rule, each time silently — six of eight commands naming
+pre-reorganisation paths, so a rebuild produced 369 of 383 works; `dore.py`
+omitted, so a rebuild produced a Bible with no illustrations; `--exhortations`
+never passed, so 33 documents had no work directory; and a `--langs` list one
+language short of `DIVISIONS`, so phase 2 had never once asked for a Swahili
+edition and the three that exist were neither captured nor parsed. **The rule is unchanged and now has somewhere to
+land**: a new scraper is a `Stage` in `STAGES`, and anything a stage needs that
+a table can state should be derived from the scraper rather than typed here —
+`phase2`'s language list is `sorted(V.DIVISIONS)` for exactly that reason.
+
+    uv run pipeline/rebuild.py                 # ~50s, zero network, 0 files written
+    uv run pipeline/rebuild.py --list          # the stages and what each writes
+    uv run pipeline/rebuild.py --only bible    # a group, or named stages
+    uv run pipeline/rebuild.py --no-images     # skip dore's AVIF re-encode
+
+**Its `wrote` column is the number worth reading, and its exit code is not.**
+`vatii` and `encyclicals` exit 1 on every run, because both gate on the
+cross-language symmetry check and that is chronically FAIL by design — a
+missing or differently numbered translation is legitimate and common. So the
+recipe as a whole has "failed" on every run it has ever had, which is why
+nothing was checking it.
 
 **Resolve the path through `common.build_root()`, never by hand.** It takes an
 optional corpus argument for the callers that are handed one (`audit.py`,

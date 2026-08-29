@@ -482,6 +482,23 @@ two, so "Ibid., 14." after "Rom. 10:17" cannot be assigned to a chapter or to a 
 without guessing which; the reverse citation index reads ibidem words, the Scripture
 cross-reference index does not.
 
+**The rebuild recipe is a program** (2026-08-29). It was seventeen `sh` lines in
+`glossa-corpus/README.md`, which is the only way back to an untracked `build/` and
+which nothing executes, so nothing checked it. It rotted four times without once
+failing: pre-reorganisation paths that built 369 of 383 works, a missing `dore.py`
+that left the Bible with no illustrations, an unpassed `--exhortations` that left 33
+documents with no work directory, and — found on the day it was replaced — a
+hand-written `--langs` list one language short of `DIVISIONS`, which meant phase 2 had
+never once asked vatican.va for a Swahili edition of anything and the three that exist
+were neither captured nor parsed — a hand-written list decides what is captured, not
+just what is read, and "re-parse, never re-crawl" cannot recover a page nobody asked
+for. `pipeline/rebuild.py` is
+the list, executable, with `--only`, `--list` and `--dry-run`; it derives what it can
+from the scrapers rather than restating it, which is what stops the fourth kind. It is
+deliberately not a build system: there is no dependency graph and no staleness
+comparison, because a cached `raw/` already makes a re-run fetch nothing and
+`write_stamped_json` already makes it write nothing it did not change.
+
 **A sampled run reports and writes nothing** (2026-08-29). `--sample` parses a chosen
 slice — two books, one part, the Prologue and the article on Baptism — so what it
 produces is a fraction of a work by construction. Seven of the eight scrapers that

@@ -326,14 +326,12 @@ assuming it:
 cd $CORPUS/build
 find . -name 'structure.json' -o -name 'sections.json' | sort | xargs md5sum > /tmp/before.md5
 
-# 2. re-parse EVERYTHING, which is the two vatican_docs lines of the rebuild
-#    recipe in glossa-corpus/README.md -- copy them from there rather than
-#    from memory. `phase1` alone is the 16 Vatican II texts; a `phase2` whose
-#    --langs list is short of the recipe's leaves those languages' editions
-#    at whatever the previous parser wrote, and they do not show up as
-#    changed because they were never re-read.
-uv run pipeline/scrapers/vatican_docs.py phase1 --lang all
-uv run pipeline/scrapers/vatican_docs.py phase2 --exhortations --offered-only --langs <the recipe's list>
+# 2. re-parse every document, in every language the parser can read. Do NOT
+#    hand-write the two vatican_docs commands: a --langs list short of what
+#    DIVISIONS holds leaves those languages' editions at whatever the previous
+#    parser wrote, and they do not show up as changed because they were never
+#    re-read. That happened, and cost three Swahili editions.
+uv run pipeline/rebuild.py --only documents
 
 # 3. diff — anything changed that you did not intend to change is the finding
 cd $CORPUS/build
