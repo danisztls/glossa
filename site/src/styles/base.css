@@ -87,6 +87,84 @@ html {
 	 * under itself at the moment it takes the document's scroll away.
 	 */
 	scrollbar-gutter: stable;
+
+	/*
+	 * AND THE LANE IS THE SITE'S, not the browser's. Left alone, the one
+	 * permanent furniture on the page is also the only neutral grey in it —
+	 * Chromium's dark track is #383838 against a ground of #161313, which is
+	 * warm — so the scrollbar reads as something the window put there rather
+	 * than as part of the page.
+	 *
+	 * TRACK FIRST: `transparent` lets `body`'s background through, so the lane
+	 * is page-coloured in all six palettes without naming a colour for any of
+	 * them. THUMB SECOND, from `--color-scrollbar` rather than from
+	 * `--color-accent` itself: it IS the accent on paper, and a mix of it at
+	 * night, for reasons that belong to the palettes and are written out
+	 * beside the token in `tokens.css`.
+	 *
+	 * The property INHERITS, so this is every scrollport on the site and not
+	 * just the document's — the menu panels, the chapter grid, the sidenotes.
+	 */
+	scrollbar-color: var(--color-scrollbar) transparent;
+}
+
+/*
+ * AND CHROMIUM GETS THE SAME THUMB BY THE OTHER ROUTE, for one reason:
+ * `scrollbar-color` names a resting colour and nothing else. The browser
+ * derives the hover and pressed shades from it itself, and Chromium's
+ * derivation LIGHTENS — so on paper the thumb went pale at the one moment
+ * the reader had hold of it, and no property above can say otherwise.
+ *
+ * `::-webkit-scrollbar` can, and the two are mutually exclusive by design:
+ * Chromium ignores the pseudo-elements while `scrollbar-color` is set to
+ * anything but `auto`, which is why the reset inside this block is not
+ * redundant. Firefox never enters it — it does not know the selector, so
+ * the `@supports` test is false there and it keeps the declaration above,
+ * with its own (darkening) derivation.
+ *
+ * THE NUMBERS REPRODUCE WHAT `scrollbar-color` DREW, rather than restyling
+ * the scrollbar: Chromium renders that thumb as 9px centred in a 15px
+ * track, so a 3px transparent border with `background-clip: content-box`
+ * lands on the same pixels — measured against a screenshot of both, at
+ * 188–196 of 200 either way. `background-color` and not the `background`
+ * shorthand in the two state rules, because the shorthand would reset the
+ * clip and give back the full-width thumb.
+ *
+ * Two costs, both accepted rather than overlooked: the 15px is now ours on
+ * every platform instead of the system's (17px on Windows), and a styled
+ * WebKit scrollbar is never an overlay one, so macOS gets a permanent
+ * scrollbar. The second is what this site already asked for a paragraph
+ * above, where a pixel of overflow guarantees one.
+ */
+@supports selector(::-webkit-scrollbar) {
+	html {
+		scrollbar-color: auto;
+	}
+
+	::-webkit-scrollbar {
+		width: 15px;
+		height: 15px;
+	}
+
+	::-webkit-scrollbar-track,
+	::-webkit-scrollbar-corner {
+		background: transparent;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: var(--color-scrollbar);
+		background-clip: content-box;
+		border: 3px solid transparent;
+		border-radius: 8px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background-color: var(--color-scrollbar-hover);
+	}
+
+	::-webkit-scrollbar-thumb:active {
+		background-color: var(--color-scrollbar-active);
+	}
 }
 
 body {
@@ -101,7 +179,36 @@ body {
 	   Stating the same floor here directly, on the element the viewport
 	   actually scrolls, keeps body from ever coming out shorter than the
 	   sidebar it contains. */
-	min-height: 100vh;
+	/*
+	 * AND THE 1px IS WHAT PUTS A SCROLLBAR ON EVERY PAGE, which is a
+	 * different job from the floor above and the reason this is a `calc`
+	 * rather than a round number.
+	 *
+	 * The gutter reserved on `html` above stops the site stepping sideways,
+	 * but a reserved lane with nothing in it is still a lane: the header's
+	 * band and rule, and the footer's rule, stop a scrollbar's width short of
+	 * the window on exactly the routes short enough not to scroll, and the
+	 * empty gutter beside them reads as a notch. Nothing in the document can
+	 * fill it — the gutter lies between `html`'s padding edge and its border
+	 * edge, so a descendant that overflows into it is clipped at the padding
+	 * box (a negative margin, an absolutely positioned `::after`, and
+	 * `overflow-x: clip` were each tried against Chromium and each stopped at
+	 * the same pixel). The ONLY thing that paints there is `html`'s own
+	 * background, which is one colour for the whole height and so can match
+	 * the chrome band or the page ground but never both.
+	 *
+	 * So the lane is kept full instead of painted: one pixel of overflow is
+	 * one real scrollbar, on every route, and the chrome then meets the same
+	 * thing everywhere. The cost is a page that can be scrolled by a pixel;
+	 * the alternative was a permanent notch on the short routes.
+	 *
+	 * `scrollbar-gutter: stable` stays above rather than becoming redundant.
+	 * It is what still holds the space in the one state this cannot reach —
+	 * a `showModal()` sheet, where the document's scroll is taken away with
+	 * the overflow still there — and on a system with overlay scrollbars both
+	 * rules are no-ops together.
+	 */
+	min-height: calc(100vh + 1px);
 	background: var(--color-bg);
 	color: var(--color-text);
 	font-family: var(--font-sans);

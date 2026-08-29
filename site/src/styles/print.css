@@ -25,6 +25,11 @@
 
 	html,
 	body {
+		/* `100vh` is the PAGE box in print, so the screen rule's
+		   `calc(100vh + 1px)` — one pixel of deliberate overflow, there to
+		   guarantee a scrollbar — would spill onto a blank second sheet at the
+		   end of every print. Nothing here needs a floor at all. */
+		min-height: 0;
 		color-scheme: light;
 		background: #fff !important;
 		color: #000 !important;

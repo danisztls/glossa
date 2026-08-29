@@ -270,6 +270,40 @@
 	 */
 	--color-bg-chrome: var(--color-bg-elevated);
 
+	/*
+	 * THE SCROLLBAR'S THUMB, and the second token here that is the accent
+	 * with one palette's exception written into it (`base.css` sets it on
+	 * `html`, whence it inherits to every scrollport on the site).
+	 *
+	 * It is the accent pulled a little toward the ground — a LITTLE on paper,
+	 * further at night — and the two numbers are not a hedge. The scrollbar
+	 * is permanent (`base.css` guarantees one on every route) and its thumb
+	 * fills the whole track on the routes too short to scroll, so whatever
+	 * the accent is, this spends far more of it, in a straighter line, than
+	 * the type ever does. Light and sepia's #8f2119 is a deep red already
+	 * chosen to sit on paper and survives that at nearly full strength;
+	 * dark's #ff2f27 is chosen to carry a word at a time against near-black,
+	 * and a column the length of the text is not a word.
+	 *
+	 * One percentage for both was the first attempt and is the trap: mixing
+	 * toward the ground LIGHTENS on paper and DARKENS at night, so the same
+	 * number moves the two palettes in opposite directions — 60% left light
+	 * mode a dusty #bc7a75 on white while dark barely noticed.
+	 */
+	--color-scrollbar: color-mix(in srgb, var(--color-accent) 85%, var(--color-bg));
+
+	/* Touching it moves it TOWARD the accent and then past it, and neither
+	   needs a per-palette number the way the resting colour did: hover is the
+	   accent itself, which is more than the resting mix in every palette by
+	   construction; pressed mixes in a seventh of the TEXT colour, which
+	   darkens on paper and lightens at night — in both directions, further
+	   from the ground. Chromium derives its own hover shade from the resting
+	   one and LIGHTENS it, which on paper washed the thumb out at the one
+	   moment the reader was actually holding it; that is what `base.css`
+	   takes the `::-webkit-scrollbar` path for. */
+	--color-scrollbar-hover: var(--color-accent);
+	--color-scrollbar-active: color-mix(in srgb, var(--color-accent) 85%, var(--color-text));
+
 	/* Light theme (default) */
 	--color-bg: #ffffff;
 	--color-bg-elevated: #f6f5f1;
@@ -380,6 +414,7 @@
 		--color-accent: #ff2f27;
 		--color-accent-contrast: #161313;
 		--color-link: #ff2f27;
+		--color-scrollbar: color-mix(in srgb, var(--color-accent) 60%, var(--color-bg));
 		--color-initial: #df1212;
 		--color-apparatus: #8fa8e8;
 		--color-focus-ring: #8fa8e8;
@@ -400,6 +435,7 @@
 	--color-accent: #ff2f27;
 	--color-accent-contrast: #161313;
 	--color-link: #ff2f27;
+	--color-scrollbar: color-mix(in srgb, var(--color-accent) 60%, var(--color-bg));
 	--color-initial: #df1212;
 	--color-apparatus: #8fa8e8;
 	--color-focus-ring: #8fa8e8;
