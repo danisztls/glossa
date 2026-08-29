@@ -88,6 +88,7 @@ from common import (
     raw_root,
     require_corpus,
     roman_to_int,
+    sample_run_writes_nothing,
     write_stamped_json,
 )
 
@@ -3332,7 +3333,6 @@ def build_manifest(
     lang: str,
     state: ScrapeState,
     fetched_pages: list[tuple[str, str]],
-    sample: bool,
     generated_at: str,
 ) -> dict:
     cfg = LANG_CONFIG[lang]
@@ -3454,11 +3454,6 @@ def build_manifest(
             "declines the same table in its own appendix. raw/ keeps every word, so a "
             "later schema for unnumbered matter recovers it by re-parsing."
         )
-    if sample:
-        notes.insert(
-            0,
-            "SAMPLE RUN -- partial corpus, for review only. Not the full 1-2865 crawl.",
-        )
     # THE MIRROR'S OWN TABLE OF CONTENTS GOES FIRST. `sources[0]` is what the
     # site links to as "the page this text came from" (site/src/lib/copyright.ts),
     # and the crawl's first CONTENT page is a poor answer: EN's is "__P1.HTM",
@@ -3505,6 +3500,8 @@ def build_manifest(
 def write_outputs(
     lang: str, state: ScrapeState, fetched_pages: list[tuple[str, str]], sample: bool
 ) -> None:
+    if sample_run_writes_nothing(sample):
+        return
     out_dir = BUILD_ROOT / LANG_CONFIG[lang]["work_id"]
     out_dir.mkdir(parents=True, exist_ok=True)
     for node in state.root_children:
@@ -3512,7 +3509,7 @@ def write_outputs(
     structure = [n.to_dict() for n in state.root_children]
     paragraphs = [state.paragraphs[n].to_dict() for n in sorted(state.paragraphs)]
     generated_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-    manifest = build_manifest(lang, state, fetched_pages, sample, generated_at)
+    manifest = build_manifest(lang, state, fetched_pages, generated_at)
 
     write_stamped_json(
         out_dir,

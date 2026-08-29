@@ -61,6 +61,7 @@ from common import (
     load_corrections,
     raw_root,
     require_corpus,
+    sample_run_writes_nothing,
     write_stamped_json,
 )
 from matos_soares_apparatus import anchor_notes
@@ -666,6 +667,8 @@ def write_manifest(
     apparatus: dict[str, int],
     generated_at: str,
 ) -> None:
+    if sample_run_writes_nothing(sample):
+        return
     retrieved_at = fetched_on()
     note_count = apparatus["notes"]
     anchored_count = apparatus["anchored"]
@@ -709,12 +712,6 @@ def write_manifest(
         "as a knowingly self-resolving exposure until the work enters the public "
         "domain on 1 Jan 2028."
     )
-    if sample:
-        notes = (
-            "SAMPLE RUN (--sample): partial corpus, not the full 73-book crawl. "
-            + notes
-        )
-
     manifest = {
         "id": "bible.matos-soares.pt",
         "type": "bible",
@@ -1048,11 +1045,6 @@ def main() -> int:
             print(f"  - {p}")
     else:
         print("\nVALIDATION PASSED")
-
-    if args.sample:
-        print(
-            "\nSample run complete. Full crawl NOT executed -- rerun without --sample after review."
-        )
 
     return 0 if ok else 1
 

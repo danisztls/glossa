@@ -78,6 +78,7 @@ from common import (
     load_corrections,
     raw_root,
     require_corpus,
+    sample_run_writes_nothing,
     write_stamped_json,
 )
 
@@ -688,6 +689,8 @@ def write_output(
     receipt: dict,
     generated_at: str,
 ) -> None:
+    if sample_run_writes_nothing(sample):
+        return
     retrieved = retrieved_at()
 
     notes = (
@@ -710,12 +713,6 @@ def write_output(
         "notes are a dated apparatus of eighteenth-century controversy, not "
         "neutral commentary; see docs/decisions.md §Posture."
     )
-    if sample:
-        notes = (
-            "SAMPLE RUN for review only -- Philemon (complete) and John "
-            "(chapters 1-3 only). Not the full 73-book corpus. " + notes
-        )
-
     manifest = {
         "id": WORK_ID,
         "type": "bible",
@@ -853,7 +850,8 @@ def main() -> int:
         receipt=receipt,
         generated_at=generated_at,
     )
-    print(f"\nWrote {len(book_docs)} book file(s) to {work_dir()}")
+    if not args.sample:
+        print(f"\nWrote {len(book_docs)} book file(s) to {work_dir()}")
 
     return 0 if ok else 1
 

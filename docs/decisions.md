@@ -482,6 +482,21 @@ two, so "Ibid., 14." after "Rom. 10:17" cannot be assigned to a chapter or to a 
 without guessing which; the reverse citation index reads ibidem words, the Scripture
 cross-reference index does not.
 
+**A sampled run reports and writes nothing** (2026-08-29). `--sample` parses a chosen
+slice — two books, one part, the Prologue and the article on Baptism — so what it
+produces is a fraction of a work by construction. Seven of the eight scrapers that
+have the flag wrote that fraction into the work's real directory under `build/`,
+marked only by a `SAMPLE RUN — partial corpus, for review only` line in
+`manifest.notes` that nothing downstream reads: a sampled `ccc.en` replaced
+`paragraphs.json` with two article slices and would have passed preflight, whose
+floor counts works and not their size, and a sampled Bible left two fresh book files
+beside seventy-one the previous run had written — a state no full run can produce.
+`matos_soares.py` printed "Full crawl NOT executed" at the end of a run that had just
+overwritten the manifest. `summa.py` alone was right, and the rule is now stated once
+in `common.sample_run_writes_nothing` rather than in each scraper: the protocol exists
+to learn what a full crawl would cost before spending it, which wants a report and not
+an artifact.
+
 **One grammar.** The citation grammar lives once, in TypeScript
 (`site/src/lib/refs-grammar.ts`), and every index is **derived at build and never
 committed** — a committed index is an interpretation living next to the sources, free to

@@ -104,6 +104,7 @@ from .files import (
     json_text,
     read_bytes_or_none,
     read_text_or_none,
+    sample_run_writes_nothing,
     write_if_changed,
     write_stamped_json,
 )
@@ -181,6 +182,7 @@ __all__ = [
     "require_all_applied",
     "require_corpus",
     "roman_to_int",
+    "sample_run_writes_nothing",
     "source_captured_at",
     "to_vulgate",
     "urllib_transport",

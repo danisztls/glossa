@@ -48,6 +48,7 @@ from common import (
     load_corrections,
     raw_root,
     require_corpus,
+    sample_run_writes_nothing,
     source_captured_at,
     write_stamped_json,
 )
@@ -362,6 +363,8 @@ def write_output(
     generated_at: str,
     receipt: dict,
 ) -> None:
+    if sample_run_writes_nothing(sample):
+        return
 
     # The ledger records when these pages were actually fetched; today only
     # for a source no capture is on file for at all. Before 2026-08-28 this
@@ -384,12 +387,6 @@ def write_output(
         "eccentricities (e.g. John 1:1 Latin word order; Matt 1:25 'yet' for "
         "donec)."
     )
-    if sample:
-        notes = (
-            "SAMPLE RUN for review only — contains Philemon (complete) and "
-            "John (chapters 1-3 only). Not the full 73-book corpus. " + notes
-        )
-
     manifest = {
         "id": "bible.cpdv.en",
         "type": "bible",
@@ -488,7 +485,8 @@ def main() -> int:
         generated_at=generated_at,
         receipt=receipt,
     )
-    print(f"\nWrote {len(book_docs)} book file(s) to {work_dir()}")
+    if not args.sample:
+        print(f"\nWrote {len(book_docs)} book file(s) to {work_dir()}")
 
     return 0 if ok else 1
 

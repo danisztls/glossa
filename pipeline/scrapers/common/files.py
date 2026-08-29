@@ -93,6 +93,36 @@ def file_has_text(path: Path, text: str) -> bool:
         return False
 
 
+def sample_run_writes_nothing(sample: bool) -> bool:
+    """True on a `--sample` run, after saying so. Call it and return.
+
+    THE WRITE IS THE PART A SAMPLE MUST NOT DO. `--sample` parses a chosen
+    slice -- two books, one part, the Prologue and the article on Baptism --
+    so its output is a fraction of the work by construction, and every
+    scraper that had the flag wrote that fraction into the work's real
+    directory under `build/`. Seven of them did, marking it only with a
+    `SAMPLE RUN -- partial corpus, for review only` line in `manifest.notes`
+    that nothing downstream reads: not `sync-corpus.mjs`, not
+    `preflight-deploy.mjs`, whose floor is a count of works and not their
+    size. So a sampled CCC replaced `paragraphs.json` with two article slices
+    and would have shipped, and a sampled Bible left 2 fresh book files beside
+    71 the previous run wrote, which is a state no full run can produce.
+    `matos_soares.py` then printed "Full crawl NOT executed" at the end of a
+    run that had just overwritten the manifest.
+
+    `summa.py` alone had it right, and its wording is kept here verbatim: a
+    sample is something you READ, and then you run the real thing. The point
+    of the protocol (`docs/decisions.md`) is to learn what a full crawl would
+    cost before spending it, which needs a report and not an artifact.
+
+    Here rather than in each scraper because the flag is per-source and the
+    rule is not, and because the seven that got it wrong each got it wrong
+    separately."""
+    if sample:
+        print("(--sample: nothing written; review, then run without it)")
+    return sample
+
+
 def write_if_changed(path: Path, text: str) -> bool:
     """Write `text` to `path` only when that is not already its content.
 

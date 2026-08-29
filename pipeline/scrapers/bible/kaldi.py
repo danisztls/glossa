@@ -124,6 +124,7 @@ from common import (
     raw_root,
     require_all_applied,
     require_corpus,
+    sample_run_writes_nothing,
     write_stamped_json,
 )
 
@@ -821,17 +822,13 @@ def write_output(
     ps9_10_dropped: int,
     sir_prologue_dropped: int,
 ) -> None:
+    if sample_run_writes_nothing(sample):
+        return
     today = (
         captured_at(raw_dir() / "tartalom.html") or datetime.now(UTC).date().isoformat()
     )
 
     notes = build_notes(xrefs_stripped, ps9_10_dropped, sir_prologue_dropped)
-    if sample:
-        notes = (
-            "SAMPLE RUN for review only -- Genesis and Philemon. Not the "
-            "full 73-book corpus. " + notes
-        )
-
     manifest = {
         "id": WORK_ID,
         "type": "bible",
@@ -985,9 +982,11 @@ def main() -> int:
         ps9_10_dropped=ps9_10_dropped,
         sir_prologue_dropped=sir_prologue_dropped,
     )
-    print(
-        f"\nWrote {len(books_out)} book file(s) to {work_dir()}, {total_verses} verses total"
-    )
+    if not args.sample:
+        print(
+            f"\nWrote {len(books_out)} book file(s) to {work_dir()}, "
+            f"{total_verses} verses total"
+        )
 
     return 0 if ok else 1
 
