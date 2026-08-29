@@ -24,7 +24,7 @@ class PassThroughRewriter {
 }
 (globalThis as Record<string, unknown>).HTMLRewriter = PassThroughRewriter;
 
-const { default: worker, isNavigation } = await import('./worker');
+const { default: worker, isPageMethod, wantsHtml } = await import('./worker');
 
 /**
  * Enough of a corpus for the edge to have an opinion about an address. The
@@ -88,22 +88,28 @@ function navigate(path: string, method = 'GET'): Promise<Response> {
 	);
 }
 
-describe('isNavigation', () => {
+describe('request classification', () => {
 	it('accepts HEAD as well as GET', () => {
 		for (const method of ['GET', 'HEAD']) {
-			const request = new Request('https://glossacatholica.org/catechismus/330', {
-				method,
-				headers: { accept: 'text/html' }
-			});
-			expect(isNavigation(request), method).toBe(true);
+			const request = new Request('https://glossacatholica.org/catechismus/330', { method });
+			expect(isPageMethod(request), method).toBe(true);
 		}
 	});
 
-	it('ignores a request that is not asking for a page', () => {
-		const asset = new Request('https://glossacatholica.org/og.png', {
-			headers: { accept: 'image/png' }
-		});
-		expect(isNavigation(asset)).toBe(false);
+	/** `wantsHtml` answers for the CLIENT and never for the address, which is
+	 *  the whole of the fix below: a wildcard `Accept` and an absent one both
+	 *  mean the client named nothing, not that the URL does not exist. */
+	it('reads text/html out of an Accept header and nothing more', () => {
+		const accepts = (accept?: string) =>
+			wantsHtml(
+				new Request('https://glossacatholica.org/scriptura', {
+					headers: accept === undefined ? {} : { accept }
+				})
+			);
+		expect(accepts('text/html,application/xhtml+xml')).toBe(true);
+		expect(accepts('*/*')).toBe(false);
+		expect(accepts('image/png')).toBe(false);
+		expect(accepts(undefined)).toBe(false);
 	});
 });
 
@@ -184,6 +190,48 @@ describe('navigation', () => {
 	it('serves every address unchanged when the titles table cannot be read', async () => {
 		expect((await navigate('/catechismus/330')).status).toBe(200);
 		expect((await navigate('/catechismus/9999')).status).toBe(404);
+	});
+
+	/**
+	 * THE SAME REGRESSION IN ITS SECOND FORM, and it shipped: the worker read
+	 * the `Accept` header to decide whether a URL EXISTED. A client sending a
+	 * wildcard `Accept`, or none at all, fell through to the asset binding —
+	 * which has a file at `/` and at no other address — so the whole corpus
+	 * answered 404 to curl, to crawlers, and to whatever Google fetched
+	 * `/scriptura` and `/documenta` with while reporting them as not found. `/`
+	 * answering 200 throughout is what made it look like a routing problem
+	 * rather than a header one.
+	 */
+	it('answers a canonical address whatever the client accepts', async () => {
+		const accepts = ['text/html,application/xhtml+xml', '*/*', 'image/avif,image/webp,*/*', ''];
+		for (const path of ['/', '/scriptura', '/documenta', '/catechismus/330', '/pt/preces']) {
+			for (const accept of accepts) {
+				const response = await worker.fetch(
+					new Request(`https://glossacatholica.org${path}`, {
+						headers: accept ? { accept } : {}
+					}),
+					env,
+					ctx
+				);
+				expect(response.status, `${path} <- ${accept || '(no accept)'}`).toBe(200);
+			}
+		}
+	});
+
+	/** And the other side of it: a path naming no address still belongs to the
+	 *  asset binding unless the client wanted a page, so a file in `static/`
+	 *  that nothing negated in `wrangler.jsonc` keeps being served. */
+	it('leaves a non-address path to the asset binding when no page was asked for', async () => {
+		for (const accept of ['*/*', 'image/png', '']) {
+			const response = await worker.fetch(
+				new Request('https://glossacatholica.org/og.png', {
+					headers: accept ? { accept } : {}
+				}),
+				env,
+				ctx
+			);
+			expect(await response.text(), accept || '(no accept)').toBe('no such asset');
+		}
 	});
 
 	it('leaves anything that is not a navigation to the asset binding', async () => {

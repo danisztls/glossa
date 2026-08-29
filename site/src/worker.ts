@@ -148,7 +148,7 @@ function getTitles(request: Request, assets: AssetFetcher): Promise<RouteTitles 
 }
 
 /**
- * Whether this request is asking for a page rather than a file.
+ * Whether this method could be asking for a page at all.
  *
  * HEAD COUNTS, and it was excluded until 2026-08-28 — `method === 'GET'`
  * alone. A HEAD then fell through to the asset binding, which has no file at
@@ -162,11 +162,32 @@ function getTitles(request: Request, assets: AssetFetcher): Promise<RouteTitles 
  * with the shell's headers and a null body on its own, and `notFoundShell`
  * passes that null body through unaltered.
  */
-export function isNavigation(request: Request): boolean {
-	return (
-		(request.method === 'GET' || request.method === 'HEAD') &&
-		request.headers.get('accept')?.includes('text/html') === true
-	);
+export function isPageMethod(request: Request): boolean {
+	return request.method === 'GET' || request.method === 'HEAD';
+}
+
+/**
+ * Whether the client named HTML in its `Accept`.
+ *
+ * IT DOES NOT DECIDE WHETHER AN ADDRESS EXISTS. Folding it together with the
+ * method into one `isNavigation` test that did is the same defect as the HEAD
+ * one above, found the same way and one day later — Search Console reporting
+ * `/scriptura` and `/documenta` as 404 while `/` was 200. A request carrying
+ * a wildcard `Accept`, or no `Accept` at all, failed that test, fell through to the
+ * asset binding, and got a real 404 at every path but `/`, which is the one
+ * path this build emits a file for. So **every canonical address in the corpus
+ * answered 404 to any client that did not think to ask for HTML** — curl with
+ * no flags, several crawlers, and whatever Google fetched these pages with.
+ * A browser always asks, which is why nothing a person does could see it.
+ *
+ * EXISTENCE IS A PROPERTY OF THE URL, and `isCanonicalPath` is the authority
+ * on it without reading a single header. So `fetch` below consults the
+ * manifest first and reaches for this only to settle what a path naming NO
+ * address should get: the app's own not-found UI for a client that wanted a
+ * page, and the asset binding's own answer for one that wanted a file.
+ */
+export function wantsHtml(request: Request): boolean {
+	return request.headers.get('accept')?.includes('text/html') === true;
 }
 
 /** Fetch the SPA shell without changing the reader-visible address. */
@@ -264,7 +285,7 @@ export default {
 				? handleBeacon(request, env, ctx)
 				: new Response(null, { status: 405 });
 		}
-		if (!isNavigation(request)) return env.ASSETS.fetch(request);
+		if (!isPageMethod(request)) return env.ASSETS.fetch(request);
 		const url = new URL(request.url);
 		// The public route grammar has no trailing slash. `run_worker_first`
 		// means this needs to happen here rather than relying on the asset
@@ -277,11 +298,20 @@ export default {
 		const manifest = await getManifest(request, env.ASSETS);
 		if (!manifest) return env.ASSETS.fetch(request);
 
-		// Both tables are read together and neither blocks the other: the
-		// manifest decides the STATUS and the titles only the `<head>`, so a
-		// missing titles file costs a name and never a page.
-		const titles = await getTitles(request, env.ASSETS);
 		const canonical = isCanonicalPath(url.pathname, manifest);
+		// A path that names no address, asked for by a client that did not ask for
+		// a page: that is a request for a FILE, and the asset binding owns it. It
+		// is also the only thing keeping a new file in `static/` that nobody
+		// negated in `wrangler.jsonc` served rather than answered with the app's
+		// 404 — which CLAUDE.md promises still works and merely costs an
+		// invocation. A canonical path never reaches this line, so no address
+		// depends on an `Accept` header.
+		if (!canonical && !wantsHtml(request)) return env.ASSETS.fetch(request);
+
+		// The two tables are read apart and neither blocks the other: the manifest
+		// decides the STATUS and the titles only the `<head>`, so a missing titles
+		// file costs a name and never a page.
+		const titles = await getTitles(request, env.ASSETS);
 		const shell = await (canonical
 			? env.ASSETS.fetch(shellRequest(request))
 			: notFoundShell(request, env.ASSETS));

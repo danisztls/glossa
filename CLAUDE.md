@@ -622,11 +622,24 @@ Bible chapter route suffixed with the EDITION's short title at an address that i
 deliberately edition-free, and the Summa question route suffixed with the work's
 name where every other route names the site.
 
-**`isNavigation` must cover every method a crawler uses.** It required `GET`
-until 2026-08-28, so a HEAD fell through to the asset binding — which has no file
-at any reader address — and every canonical address answered 404 to the HEAD of a
-URL it answered 200 to on GET. Nothing on this site issues one; link checkers,
-several unfurlers and crawlers probing before they fetch issue little else.
+**Existence is a property of the URL, and the worker must never read a request
+header to decide it.** That rule has been broken twice in the same predicate,
+and each time every canonical address in the corpus answered 404 to a client
+that was not a browser. `isNavigation` required `GET` until 2026-08-28, so a
+HEAD fell through to the asset binding — which has no file at any reader address
+— and every address answered 404 to the HEAD of a URL it answered 200 to on GET.
+It then required `Accept: text/html` until 2026-08-29, so `curl` with no flags,
+several crawlers and whatever Google fetches with got a real 404 at every path
+except `/` — the one path this build does emit a file for, which is why it
+surfaced in Search Console as `/scriptura` and `/documenta` "not found" while
+`/` was fine, and read as a routing problem rather than a header one. The
+predicate is now three: `isPageMethod` (GET or HEAD) gates the worker,
+**`isCanonicalPath` alone decides the status**, and `wantsHtml` is consulted
+only to settle what a path naming NO address gets — the app's own 404 UI for a
+client that wanted a page, the asset binding's answer for one that wanted a
+file, which is what keeps an un-negated file in `static/` served rather than
+404ed. A browser always sends both a GET and an `Accept`, so neither bug is
+reachable by hand; check the edge with `curl` and no headers at all.
 
 ## Usage measurement: one beacon, three dashboard rules, and a shared vocabulary
 
