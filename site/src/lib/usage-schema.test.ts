@@ -83,7 +83,9 @@ describe('vocabularies', () => {
 				'sl',
 				'sv',
 				'sw',
-				'vi'
+				'vi',
+				'be',
+				'he'
 			].sort()
 		);
 	});

@@ -2354,8 +2354,14 @@ def _compile_labels(spec: Divisions) -> list[tuple[str, re.Pattern]]:
     # since the cheapest useful entry is nouns alone (`_NUMERAL` already
     # covers `CAPUT III` and `III CAPUT` with no vocabulary at all).
     tail = f"{_NUMERAL}|{after}" if after else _NUMERAL
+    # `\.?` because a noun can be printed abbreviated, with its full stop
+    # between it and the number: Byelorussian heads a Vatican II article
+    # `Арт. 1` where Czech spells it `ARTIKUL 1`. Whitespace is still
+    # required, so this admits no form that was not already a label -- prose
+    # never writes "PART. II".
     pats = [
-        (kind, re.compile(rf"^(?:{noun})\s+({tail})\b")) for kind, noun in nouns.items()
+        (kind, re.compile(rf"^(?:{noun})\.?\s+({tail})\b"))
+        for kind, noun in nouns.items()
     ]
     if spec.numeral_first:
         pats += [
@@ -2673,6 +2679,38 @@ DIVISIONS: dict[str, Divisions] = {
     "sk": Divisions(nouns={}, ordinals={}),
     "fi": Divisions(nouns={}, ordinals={}),
     "ro": Divisions(nouns={}, ordinals={}),
+    # ------------------------------------------------------------------
+    # The four non-Latin scripts added 2026-08-29, on the same method again.
+    # Cyrillic and Hebrew ask NO code question -- `ru` and `ar` had already
+    # settled that -- so what these cost is a table and, for Hebrew alone, a
+    # URL code (see `MODERN_LANG_TO_URL`). Chinese and Japanese remain out,
+    # and they are the ones that genuinely are a code question.
+    # ------------------------------------------------------------------
+    "be": Divisions(
+        # 63 `РАЗДЗЕЛ`, 31 `АРТ.`, 2 `ЧАСТКА` over 31 pages, all noun-first.
+        # `АРТ.` is the abbreviation Byelorussian heads a Vatican II article
+        # with, where Czech spells `ARTIKUL` -- it is the reason the noun
+        # pattern learned to step over a full stop.
+        #
+        # `ПАР` scored 101 and is NOT here: it is `Пар.` for "параўн." (cf.)
+        # opening a footnote, the most common word in the apparatus and not a
+        # division at all. Counting without reading would have made every
+        # footnote in Byelorussian a chapter heading.
+        nouns={
+            "part": ("ЧАСТКА",),
+            "chapter": ("РАЗДЗЕЛ",),
+            "article": ("АРТ",),
+        },
+        ordinals={},
+        numeral_first=False,
+    ),
+    # Three more with no division label on any page fetched: Ukrainian (3
+    # pages), Mongolian (1) and Hebrew (2). Hebrew scored twice on `חלק` and
+    # three times on `סעיף`, and neither survived reading -- two pages is not
+    # evidence of a vocabulary, and `nostra-aetate` heads nothing.
+    "uk": Divisions(nouns={}, ordinals={}),
+    "mn": Divisions(nouns={}, ordinals={}),
+    "he": Divisions(nouns={}, ordinals={}),
 }
 
 # fmt: on
@@ -2746,6 +2784,10 @@ _FRONT_BACK_MATTER = frozenset(
             "JOHDANTO", "LOPUKSI",
             # ro
             "INTRODUCERE", "CONCLUZIE",
+            # be -- 11/9/6/1/1 as standalone headings over 31 pages
+            "УСТУП", "ЗАКАНЧЭННЕ", "УВОДЗІНЫ", "ЗАКЛЮЧЭННЕ", "ДАДАТАК",
+            # he
+            "סיכום",
         ),
     )
 )  # fmt: skip
@@ -4477,15 +4519,15 @@ _VATII_LINK_RE = re.compile(
 #: documents (en, be, cs, fr, ge, hu, it, lt, lv, po, sp, sw), `ar` eight,
 #: `hr` and `he` one each.
 VATII_LANG_FROM_URL = {
-    "ar": "ar", "cs": "cs", "en": "en", "fr": "fr", "ge": "de",
-    "hr": "hr", "hu": "hu", "it": "it", "lt": "la", "lv": "lv",
-    "po": "pt", "sp": "es", "sw": "sw",
+    "ar": "ar", "be": "be", "cs": "cs", "en": "en", "fr": "fr",
+    "ge": "de", "he": "he", "hr": "hr", "hu": "hu", "it": "it",
+    "lt": "la", "lv": "lv", "po": "pt", "sp": "es", "sw": "sw",
 }  # fmt: skip
-#: Offered by the index and deliberately unmapped: `be` Byelorussian (16
-#: documents) and `he` Hebrew (1). Both are a `DIVISIONS` table away, and
-#: the table is the only thing missing -- Russian and Arabic already prove a
-#: non-Latin script needs no code. The codes are recorded here so the next
-#: person reads them off this line instead of the index again.
+#: Every code the index offers is now mapped. `be` and `he` were the last two
+#: and they arrived on 2026-08-29 for different reasons: Byelorussian needed
+#: nothing but a `DIVISIONS` table, because `ru` already proves Cyrillic asks
+#: no code question; Hebrew needed `MODERN_LANG_TO_URL` below, because the
+#: two mirrors spell it differently and only one of them was translatable.
 VATII_LANG_TO_URL = {v: k for k, v in VATII_LANG_FROM_URL.items()}
 
 
@@ -4711,7 +4753,11 @@ def translation_url_for(ref: DocRef, lang: str) -> str | None:
         return None
     if ref.family == "vatii":
         return None  # discovered directly from the index, not derived
-    return base.replace(f"/{ref.base_lang}/", f"/{lang}/", 1)
+    # The URL code, not the work tag -- they are the same for every language
+    # but Hebrew, which the modern CMS spells `iw`. Substituting the tag
+    # produced `/he/`, which 404s, and the document that offers Hebrew is the
+    # only one in the corpus that could ever have shown it.
+    return base.replace(f"/{ref.base_lang}/", f"/{url_lang_key(ref, lang)}/", 1)
 
 
 #: Every modern-shell page carries a language switcher naming its document's
@@ -6448,17 +6494,34 @@ def cache_name_for(ref: DocRef, lang: str) -> str:
     return f"{ref.family}__{ref.slug}__{lang}.html"
 
 
+#: The modern `content/{pontiff}/{lang}/...` pages use the standard tag for
+#: every language but one. Read off the switcher of the one document that
+#: offers Hebrew (`exhortation.ecclesia-in-medio-oriente`), which links
+#: `/content/benedict-xvi/iw/apost_exhortations/...`; the corpus stores the
+#: work as `.he`, the tag `ContentLang` and `<html lang>` both want.
+MODERN_LANG_TO_URL = {"he": "iw"}
+
+
 def url_lang_key(ref: DocRef, lang: str) -> str:
     """The corpus/work-id language code is the standard tag, but the Vatican
     II archive mirror's own URLs use its own: `po` for Portuguese, `sp` for
     Spanish, `ge` for German and `lt` for Latin (see `VATII_LANG_FROM_URL`,
     which reads them off the index's link text). The modern
     content/{pontiff}/... pages use the standard tag directly.
+    THE MODERN CMS HAS ITS OWN EXCEPTION, and it is exactly one: Hebrew is
+    `iw` there -- the deprecated ISO 639-1 code, retired in 1989 and still
+    what Java and Google emitted for decades -- while the Vatican II archive
+    mirror spells the same language `he`. So a language can need a different
+    code in each of the two families AND in the work id, which is why this is
+    a lookup per family rather than a single table. Byelorussian is the
+    counter-example that makes the shape clear: `be` on both mirrors, nothing
+    to translate, nothing to write here.
+
     DocRef.lang_urls is keyed by whatever the *source* used, so this
     translates the work-level tag into the right dict key per family."""
     if ref.family == "vatii":
         return VATII_LANG_TO_URL.get(lang, lang)
-    return lang
+    return MODERN_LANG_TO_URL.get(lang, lang)
 
 
 # --------------------------------------------------------------------------
@@ -7027,11 +7090,19 @@ def run_phase2(
         for lang in want_langs:
             if lang == ref.base_lang:
                 continue
-            if offered is not None and lang not in offered:
+            # Against the URL code, not the work tag. The switcher prints
+            # what the SOURCE calls the language, and for Hebrew those differ
+            # (`iw` there, `he` here) -- comparing the two directly skipped
+            # the one document that offers Hebrew at all.
+            if offered is not None and url_lang_key(ref, lang) not in offered:
                 continue
             url = translation_url_for(ref, lang)
             if url:
-                ref.lang_urls[lang] = url
+                # Keyed by the SOURCE's code, which is what `lang_urls` means
+                # and what every reader of it (`cache_page`, `fetch_for_parse`)
+                # looks up through `url_lang_key`. Storing the work tag here
+                # was invisible while the two always matched.
+                ref.lang_urls[url_lang_key(ref, lang)] = url
                 langs.append(lang)
         awaiting[idx] = {
             "slug": ref.slug,

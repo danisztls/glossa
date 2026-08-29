@@ -499,7 +499,9 @@ const LANGUAGE_NAMES: Record<string, string> = {
 	nl: 'Nederlands',
 	sk: 'Slovenčina',
 	sw: 'Kiswahili',
-	vi: 'Tiếng Việt'
+	vi: 'Tiếng Việt',
+	be: 'Беларуская',
+	he: 'עברית'
 };
 
 /**

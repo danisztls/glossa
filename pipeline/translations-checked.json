@@ -715,6 +715,12 @@
   },
   {
     "work": "encyclical.datis-nuperrime.en",
+    "lang": "hu",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "encyclical.datis-nuperrime.en",
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-16",
@@ -1176,6 +1182,26 @@
     "status": "stub-page",
     "checked_at": "2026-08-16",
     "note": ""
+  },
+  {
+    "work": "encyclical.fratelli-tutti.en",
+    "lang": "mn",
+    "status": "stub-page",
+    "checked_at": "2026-08-29"
+  },
+  {
+    "work": "encyclical.fratelli-tutti.en",
+    "lang": "nl",
+    "status": "pdf-only",
+    "checked_at": "2026-08-29",
+    "note": "the page's only text link is /content/dam/francesco/pdf/encyclicals/documents/papa-francesco_20201003_enciclica-fratelli-tutti_nl.pdf"
+  },
+  {
+    "work": "encyclical.fratelli-tutti.en",
+    "lang": "uk",
+    "status": "pdf-only",
+    "checked_at": "2026-08-29",
+    "note": "the page's only text link is /content/dam/francesco/pdf/encyclicals/documents/papa-francesco_20201003_enciclica-fratelli-tutti_uk.pdf"
   },
   {
     "work": "encyclical.fulgens-corona.en",
@@ -1822,6 +1848,13 @@
     "lang": "fr",
     "status": "stub-page",
     "checked_at": "2026-08-25"
+  },
+  {
+    "work": "encyclical.laudato-si.en",
+    "lang": "uk",
+    "status": "pdf-only",
+    "checked_at": "2026-08-29",
+    "note": "the page's only text link is /content/dam/francesco/pdf/encyclicals/documents/papa-francesco_20150524_enciclica-laudato-si_uk.pdf"
   },
   {
     "work": "encyclical.le-pelerinage-de-lourdes.en",
@@ -3866,6 +3899,13 @@
     "lang": "pt",
     "status": "stub-page",
     "checked_at": "2026-08-24"
+  },
+  {
+    "work": "exhortation.laudate-deum.en",
+    "lang": "uk",
+    "status": "pdf-only",
+    "checked_at": "2026-08-29",
+    "note": "the page's only text link is /content/dam/francesco/pdf/apost_exhortations/documents/20231004-laudate-deum_uk.pdf"
   },
   {
     "work": "exhortation.redemptionis-donum.en",

@@ -388,6 +388,30 @@ ship with readable text; the other ten are the switched-off parses below, and
   numeral between two markers and `_NUMERAL` has no CJK digits. Russian and
   Arabic already prove a non-Latin script needs no code, only a table.
 
+**That last bullet was tested the same day and was half wrong.** Byelorussian
+needed no code — `be` on both mirrors, a table, 31 editions. **Hebrew needed
+three lines, and none of them were about the script.** vatican.va's modern CMS
+spells Hebrew `iw`, the ISO code retired in 1989, while the Vatican II archive
+mirror spells it `he`; the corpus stores `.he`, so one language now takes a
+different code in each of the two families and in the work id. That broke
+`url_lang_key` (translated for `vatii` only), `translation_url_for`
+(substituted the work tag into the path, producing a `/he/` that 404s) and
+`--offered-only` itself (compared the work tag against a switcher that prints
+`iw`). All three were invisible while every language's two codes matched, and
+all three sit on the ONE document in the corpus that offers Hebrew. The fix is
+`MODERN_LANG_TO_URL`, and the rule it encodes is that `lang_urls` is keyed by
+what the SOURCE calls the language, never by what we call it.
+
+**Ukrainian and Mongolian are switcher entries that lead nowhere.** All four
+of their pages are the 200-with-no-document shell, now recorded as `stub-page`
+— which is why they have a `DIVISIONS` entry and no editions, and why a
+switcher count is an upper bound after all.
+
+**`Пар.` is the Byelorussian near-miss worth remembering.** It scored 101, more
+than any real division noun in the language, and it is `параўн.` — "cf." — the
+first word of a footnote. Counting without reading would have made every
+footnote in Byelorussian a chapter heading.
+
 ## The Catechism is eight editions in three page formats
 
 Ingested 2026-08-26 (`docs/decisions.md`, `docs/corpus-schema.md` §Catechism).

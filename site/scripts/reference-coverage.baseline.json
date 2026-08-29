@@ -189,15 +189,15 @@
 		},
 		"encyclical": {
 			"citations": {
-				"total": 34991,
-				"linkable": 12520,
-				"recognized": 6193,
-				"nothing": 16278
+				"total": 35512,
+				"linkable": 12656,
+				"recognized": 6306,
+				"nothing": 16550
 			},
 			"prose": {
-				"blocks": 38715,
-				"scripture": 20118,
-				"document": 258,
+				"blocks": 39706,
+				"scripture": 20120,
+				"document": 290,
 				"stored": 0
 			},
 			"residue": [
@@ -317,28 +317,28 @@
 					"example": "Cf. Archiv. Secr. Vat., C.SS. Rituum, Processus, v. 227, p. 196."
 				},
 				{
+					"key": "romano guardini",
+					"count": 49,
+					"example": "Romano Guardini, Religiöse Gestalten in Dostojewskijs Werk, Mainz/Paderborn 1989, S. 236f."
+				},
+				{
 					"key": "ibíd.",
 					"count": 48,
 					"example": "Ibíd."
-				},
-				{
-					"key": "ibid. t.",
-					"count": 48,
-					"example": "Ibid. t. 227, p. 137."
 				}
 			]
 		},
 		"exhortation": {
 			"citations": {
-				"total": 36319,
-				"linkable": 10797,
-				"recognized": 6109,
-				"nothing": 19413
+				"total": 37300,
+				"linkable": 11006,
+				"recognized": 6210,
+				"nothing": 20084
 			},
 			"prose": {
-				"blocks": 28922,
+				"blocks": 30462,
 				"scripture": 22392,
-				"document": 300,
+				"document": 302,
 				"stored": 0
 			},
 			"residue": [
@@ -359,7 +359,7 @@
 				},
 				{
 					"key": "relatio finalis",
-					"count": 332,
+					"count": 371,
 					"example": "Relatio finalis 2015, 5."
 				},
 				{
@@ -369,7 +369,7 @@
 				},
 				{
 					"key": "relatio synodi",
-					"count": 227,
+					"count": 258,
 					"example": "Relatio Synodi 2014, 5."
 				},
 				{
@@ -507,9 +507,9 @@
 				"nothing": 1985
 			},
 			"prose": {
-				"blocks": 6969,
-				"scripture": 6987,
-				"document": 871,
+				"blocks": 7612,
+				"scripture": 6995,
+				"document": 950,
 				"stored": 0
 			},
 			"residue": [

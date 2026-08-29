@@ -953,6 +953,19 @@ anyone counting without reading. The same posture explains what is NOT here:
 Byelorussian and Hebrew are a table away and were left, and Chinese is the
 only one that is a code question rather than a vocabulary one.
 
+**Byelorussian and Hebrew followed hours later, and Hebrew is the exception
+that names the rule.** 33 more editions — 31 Byelorussian, 2 Hebrew. Cyrillic
+and a right-to-left script cost a table and nothing else, exactly as `ru` and
+`ar` predicted. What Hebrew cost was a URL code: vatican.va's modern CMS calls
+it `iw`, the ISO 639-1 code retired in 1989, while the Vatican II archive
+mirror calls it `he`, and the corpus stores `.he`. So a language can take three
+different codes — one per source family, one in the work id — and the scraper
+had been assuming two of the three were always equal. The assumption was
+invisible for every other language and wrong for exactly one document. The
+lesson is not about Hebrew: it is that `lang_urls` is keyed by what the SOURCE
+calls a language, and any code that writes into it with our own tag is a bug
+waiting for the first language where the two disagree.
+
 ## The site
 
 **One static SPA shell, not a prerender.** The static page was never the content

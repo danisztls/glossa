@@ -108,7 +108,9 @@ export const SETS = {
 		'nl',
 		'sk',
 		'sw',
-		'vi'
+		'vi',
+		'be',
+		'he'
 	],
 	/** Top-level sections visited, by canonical (Latin) route root. */
 	section: [
