@@ -195,40 +195,39 @@ export const fr: Dictionary = {
 		'Conçu pour continuer à fonctionner hors ligne une fois que vous l’avez visité, afin qu’une mauvaise connexion ne soit pas un obstacle à la lecture.',
 	'colophon.textsTitle': 'Les textes',
 	'colophon.textsBody':
-		'Chaque texte provient d’une source nommée, et chaque ouvrage consigne son édition, sa page d’origine et la date à laquelle il a été récupéré. L’Écriture utilise des traductions du domaine public ; le Catéchisme, l’Abrégé et les documents du Magistère proviennent des textes publiés par le Saint-Siège lui-même. Nous les reproduisons sans les altérer — et là où notre copie d’un ouvrage s’est révélée incomplète, nous la laissons hors du site plutôt que de vous montrer un texte avec des lacunes que vous ne pouvez pas voir.',
+		'Chaque texte provient d’une source nommée, et chaque ouvrage consigne son édition, sa page d’origine et la date à laquelle il a été récupéré. L’Écriture utilise des traductions du domaine public ; le Catéchisme, l’Abrégé et les documents du Magistère proviennent des textes publiés par le Saint-Siège lui-même.',
+	'colophon.textsFidelity':
+		'Le texte n’est jamais abrégé, jamais paraphrasé, jamais réécrit, et jamais placé à côté d’une publicité. Nous réparons bien les défauts manifestes — un mot tombé, une citation abîmée, un balisage qui a avalé un paragraphe — toujours vers ce que la source elle-même imprime, jamais vers ce que nous pensons qu’elle devrait dire.',
 	'colophon.countBible': 'éditions de la Bible',
 	'colophon.countDocuments': 'documents du Magistère',
 	'colophon.copyrightTitle': 'Droit d’auteur',
 	'colophon.copyrightBody1':
-		'Le Catéchisme, l’Abrégé et les documents du Magistère sont la propriété de leurs ayants droit — principalement la Libreria Editrice Vaticana et le Dicastère pour la Communication. Nous les reproduisons ici sans avoir demandé d’autorisation préalable. Nous le disons franchement plutôt que de le laisser découvrir : c’est un choix délibéré, non un oubli.',
+		'Le Catéchisme, l’Abrégé et les documents du Magistère sont la propriété de leurs ayants droit — principalement la Libreria Editrice Vaticana et le Dicastère pour la Communication.',
 	'colophon.copyrightBody2':
-		'Nous faisons ce choix parce que ces textes sont l’enseignement de l’Église, adressé à tous, et parce que la préoccupation exprimée par les ayants droit est l’intégrité du texte. Aussi le texte n’est-il jamais abrégé, jamais paraphrasé, jamais réécrit, et jamais placé à côté d’une publicité. Nous réparons bien les défauts manifestes des pages publiées — un mot tombé, une citation abîmée, un balisage qui a avalé un paragraphe — toujours vers ce que la source elle-même imprime, jamais vers ce que nous pourrions penser qu’elle devrait dire. Nous ne changeons pas son sens, ne substituons pas notre propre formulation, et n’annotons ni ne commentons. Chaque correction est consignée à part, avec l’original, le remplacement et la raison ; rien n’est jamais modifié en silence. Chaque ouvrage affiche la mention de droits de son ayant droit, dans ses propres termes, et renvoie à la page dont il a été tiré.',
+		'Chaque ouvrage affiche la mention de droits de son ayant droit, dans ses propres termes, et renvoie à la page dont il a été tiré.',
 	'colophon.copyrightBody3':
-		'Si vous détenez des droits sur un texte présent ici et préférez qu’il ne soit pas publié, écrivez-nous et nous le retirerons sans délai. Sans discussion, et sans qu’il soit besoin d’impliquer quiconque d’autre au préalable.',
+		'Si vous détenez des droits sur un texte présent ici et préférez qu’il ne soit pas publié, écrivez-nous.',
 	'colophon.contactTitle': 'Contact',
 	'colophon.contactBody': 'Pour tout, y compris ce qui précède :',
 	'colophon.contactPending':
 		'Aucune adresse de contact n’a encore été fixée. Ce site ne devrait pas être rendu public tant qu’il n’en a pas une — l’engagement ci-dessus n’a pas de sens sans un moyen de nous joindre.',
-	'colophon.buildTitle': 'Comment il est fait',
-	'colophon.buildBody':
-		'Les textes sont recueillis auprès de leurs sources publiées, analysés en un corpus structuré, et rendus sous forme de pages statiques. Les corrections des défauts d’origine sont consignées une à une, avec la formulation d’origine, la formulation corrigée et la raison — aucun texte n’est jamais modifié en silence.',
 	'colophon.illustrationsTitle': 'Les illustrations',
 	'colophon.illustrationsBody':
-		'La Bible porte les gravures de Gustave Doré pour La Grande Bible de Tours, chacune placée au verset qu’elle représente. Elles sont le dernier et le plus vaste de ses cycles bibliques, gravées sur acier et imprimées avec le texte plutôt que rassemblées en fin de volume.',
+		'La Bible porte les gravures de Gustave Doré, chacune placée au verset qu’elle représente — le dernier et le plus vaste de ses cycles bibliques, gravé sur bois d’après ses dessins et imprimé avec le texte plutôt que rassemblé en fin de volume.',
+	'colophon.illustrationsRights':
+		'Elles sont dans le domaine public, comme le montrent les dates ci-dessous, et la reproduction photographique fidèle d’une gravure du domaine public ne crée aucun droit d’auteur nouveau.',
 	'colophon.countPlates': 'gravures',
 	'colophon.countPlateChapters': 'chapitres illustrés',
-	'colophon.illustrationsAnchors':
-		'Chaque gravure devait recevoir une adresse, et les légendes imprimées seules ne suffisaient pas. Trois lectures ont été prises pour chacune — la légende sous la gravure elle-même, une transcription indépendante et l’index de la collection que nous avons numérisée — et, en cas de désaccord, la légende l’emporte, puisque c’est ce que le graveur a taillé. Toutes les lectures sont conservées, y compris celles qui ont perdu.',
-	'colophon.illustrationsProcessing':
-		'Les numérisations sont rognées jusqu’à la gravure, ramenées à un ton de papier commun, réduites au gris et réencodées ; rien à l’intérieur de l’image n’est modifié, retouché ni supprimé. Elles sont servies en deux largeurs, pour qu’un téléphone ne télécharge pas une image faite pour un grand écran, et ne sont demandées qu’une fois atteintes.',
-	'colophon.illustrationsRights':
-		'Elles sont dans le domaine public. Les planches ont été gravées en 1866 et Doré est mort en 1883, et la reproduction photographique fidèle d’une gravure du domaine public ne crée aucun droit d’auteur nouveau. Nous disons d’où viennent nos numérisations parce que nous en sommes reconnaissants, non par obligation.',
 	'plates.scansBy': 'Numérisations fournies par',
 	'plates.enlarge': 'Agrandir {title}',
 	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'Les caractères',
 	'colophon.typeBody':
-		'Composé en EB Garamond, la renaissance par Georg Duffner et Octavio Pardo des caractères que Claude Garamont grava dans les années 1590 — la tradition humaniste dans laquelle l’Église imprime depuis la Renaissance. Les lettrines sont en Pirata One, une gothique dont les capitales restent lisibles à la taille qu’exige une lettrine. Les deux sont sous licence SIL Open Font License et servies depuis ce site plutôt que par un tiers, de sorte que lire une page ne demande rien au serveur de personne d’autre.',
+		'Composé en EB Garamond, la renaissance par Georg Duffner et Octavio Pardo des caractères que Claude Garamont grava dans les années 1590 — la tradition humaniste dans laquelle l’Église imprime depuis la Renaissance. Son cyrillique est de la même main mais ne ressuscite rien : aucun Garamond cyrillique n’a jamais été gravé, et le russe est donc composé dans une forme dessinée pour tenir auprès du reste.',
+	'colophon.typeArabic':
+		'L’arabe lui échappe entièrement et se compose en Amiri — la renaissance par Khaled Hosny du naskh gravé pour l’imprimerie de Boulaq au Caire en 1905, choisie selon le même raisonnement que la police du texte : un type de livre historique précis plutôt qu’un dessin contemporain.',
+	'colophon.typeInitials':
+		'Les lettrines sont en Pirata One, une gothique dont les capitales restent lisibles à la taille qu’exige une lettrine, et — pour le russe — en Ponomar, qui reproduit le caractère slavon de l’Imprimerie synodale. Ponomar ne compose que la lettrine et jamais le texte : une encyclique moderne composée entièrement en caractère synodal dirait d’elle quelque chose de faux. Toutes sont sous licence SIL Open Font License et servies depuis ce site plutôt que par un tiers, de sorte que lire une page ne demande rien au serveur de personne d’autre.',
 	'refs.citedIn': 'Cité dans',
 	'bible.cccAbbrev': 'CEC',
 	'bible.wholeChapter': 'Ce chapitre',

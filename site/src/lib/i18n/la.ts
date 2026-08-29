@@ -233,40 +233,39 @@ export const la: Dictionary = {
 		'Ita facta ut sine rete legi possit postquam semel adisti, ne infirma coniunctio lectioni obstet.',
 	'colophon.textsTitle': 'De textibus',
 	'colophon.textsBody':
-		'Omnis textus e fonte nominato venit, et omne opus editionem suam, paginam fontis et diem quo haustus est memorat. Scriptura translationibus utitur quae iuris publici sunt; Catechismus, Compendium et documenta Magisterii ex ipsis Sanctae Sedis editis textibus veniunt. Eos integros reddimus — et ubi exemplar nostrum mancum esse apparuit, opus omittimus potius quam textum tibi cum lacunis quas videre non possis exhibeamus.',
+		'Omnis textus e fonte nominato venit, et omne opus editionem suam, paginam fontis et diem quo haustus est memorat. Scriptura translationibus utitur quae iuris publici sunt; Catechismus, Compendium et documenta Magisterii ex ipsis Sanctae Sedis editis textibus veniunt.',
+	'colophon.textsFidelity':
+		'Textus numquam breviatur, numquam aliis verbis redditur, numquam rescribitur, numquam iuxta praeconia ponitur. Menda tamen aperta emendamus — verbum omissum, locus male allatus, nota quae paragraphum absorpsit — semper ad id quod fons ipse imprimit, numquam ad id quod nos imprimendum esse putamus.',
 	'colophon.countBible': 'editiones Scripturae',
 	'colophon.countDocuments': 'documenta Magisterii',
 	'colophon.copyrightTitle': 'Iura auctorum',
 	'colophon.copyrightBody1':
-		'Catechismus, Compendium et documenta Magisterii eorum sunt qui iura in eis tenent — praecipue Librariae Editricis Vaticanae et Dicasterii pro Communicatione. Hic eos reddimus venia non prius petita. Id aperte dicimus ne quis id ipse deprehendat: consilio factum est, non incuria.',
+		'Catechismus, Compendium et documenta Magisterii eorum sunt qui iura in eis tenent — praecipue Librariae Editricis Vaticanae et Dicasterii pro Communicatione.',
 	'colophon.copyrightBody2':
-		'Hoc consilium capimus quia hi textus doctrina Ecclesiae sunt, ad omnes missa, et quia id quod ii qui iura tenent curare se dixerunt integritas textus est. Textus igitur numquam breviatur, numquam aliis verbis redditur, numquam rescribitur, numquam iuxta praeconia ponitur. Menda tamen aperta in paginis editis emendamus — verbum omissum, locus male allatus, nota quae paragraphum absorpsit — semper ad id quod fons ipse imprimit, numquam ad id quod nos imprimendum esse putemus. Sententiam non mutamus, verba nostra non substituimus, nihil adnotamus neque iudicamus. Omnis emendatio seorsum notatur, cum verbis pristinis, verbis novis et causa; nihil umquam tacite mutatur. Omne opus notam eius qui ius tenet, ipsius verbis, exhibet, et ad paginam unde sumptum est ducit.',
+		'Omne opus notam eius qui ius tenet, ipsius verbis, exhibet, et ad paginam unde sumptum est ducit.',
 	'colophon.copyrightBody3':
-		'Si quis ius in textu aliquo hic posito tenet et eum publicari non vult, ad nos scribat et statim tollemus. Sine controversia, nec opus est ut quemquam alium prius adhibeat.',
+		'Si quis ius in textu aliquo hic posito tenet et eum publicari non vult, ad nos scribat.',
 	'colophon.contactTitle': 'Quomodo nos adeas',
 	'colophon.contactBody': 'De quacumque re, etiam de superioribus:',
 	'colophon.contactPending':
 		'Inscriptio nondum constituta est. Haec sedes in publicum edi non debet priusquam eam habeat — quod supra promittitur sine via nos adeundi nihil valet.',
-	'colophon.buildTitle': 'Quomodo facta sit',
-	'colophon.buildBody':
-		'Textus e fontibus editis colliguntur, in corpus digestum rediguntur, et paginis stabilibus exhibentur. Emendationes mendorum in fonte singulae notantur, cum verbis pristinis, verbis emendatis et causa — nullus textus umquam tacite mutatur.',
 	'colophon.illustrationsTitle': 'De imaginibus',
 	'colophon.illustrationsBody':
-		'Biblia imagines fert quas Gustavus Doré in Bibliam Turonensem maiorem incidit, unamquamque ad versum quem exprimit positam. Ultimus et amplissimus est ex eius cyclis biblicis, chalybe incisus et cum textu impressus, non in fine voluminis collectus.',
+		'Biblia imagines Gustavi Doré fert, unamquamque ad versum quem exprimit positam — ultimus et amplissimus ex eius cyclis biblicis, ex ipsius adumbrationibus in ligno incisus et cum textu impressus, non in fine voluminis collectus.',
+	'colophon.illustrationsRights':
+		'In publico sunt, ut anni infra scripti ostendunt, neque imaginis publicae fidelis photographica repetitio novum ius auctoris parit.',
 	'colophon.countPlates': 'imagines',
 	'colophon.countPlateChapters': 'capita imaginibus ornata',
-	'colophon.illustrationsAnchors':
-		'Cuique imagini sedes danda erat, neque tituli impressi soli satis fidei habebant. Tres lectiones de singulis sumptae sunt — titulus sub ipsa imagine, transcriptio aliena, et index collectionis quam descripsimus — et ubi dissentiebant, titulus praelatus est, quippe qui a caelatore ipso incisus sit. Omnes lectiones servantur, etiam quae victae sunt.',
-	'colophon.illustrationsProcessing':
-		'Imagines ad ipsam picturam circumcisae sunt, ad communem chartae colorem aequatae, in cinereum redactae et denuo notatae; nihil intra picturam mutatur, retractatur aut tollitur. Duabus latitudinibus praebentur, ne telephonum imaginem amplo schemati factam trahat, neque petuntur priusquam ad eas perveneris.',
-	'colophon.illustrationsRights':
-		'In publico sunt. Laminae anno MDCCCLXVI incisae sunt et Doré anno MDCCCLXXXIII mortuus est, neque imaginis publicae fidelis photographica repetitio novum ius auctoris parit. Unde nostrae imagines venerint dicimus, quia gratias illis debemus, non quia cogimur.',
 	'plates.scansBy': 'Imagines electronicae praebitae a',
 	'plates.enlarge': 'Amplifica {title}',
 	'plates.zoom': 'Amplificatio',
 	'colophon.typeTitle': 'De litterarum forma',
 	'colophon.typeBody':
-		'Litteris EB Garamond composita, quas Georgius Duffner et Octavius Pardo ex typis a Claudio Garamont circa annum 1590 caesis renovaverunt — ea traditione humanistica qua Ecclesia ab aetate litterarum renascentium imprimit. Litterae initiales sunt Pirata One, forma Gothica cuius capitales etiam ea magnitudine quam littera initialis poscit legi possunt. Utraeque sub licentia SIL Open Font License dantur et ex hac ipsa sede mittuntur, non ex aliena, ne pagina legenda quicquam ab alterius machina petat.',
+		'Litteris EB Garamond composita, quas Georgius Duffner et Octavius Pardo ex typis a Claudio Garamont circa annum 1590 caesis renovaverunt — ea traditione humanistica qua Ecclesia ab aetate litterarum renascentium imprimit. Litterae eius Cyrillicae ab iisdem manibus sunt, nihil tamen renovant: Garamont Cyrillicus numquam caesus est, ideoque textus Russicus forma nova exprimitur, quae ceteris apte adstet.',
+	'colophon.typeArabic':
+		'Arabica prorsus extra eius fines iacet et litteris Amiri exprimitur — quibus Khaled Hosny naskh illud renovavit quod anno 1905 officinae Bulaquensi Cairi caesum est, eadem ratione electis qua littera textus: certus typus librarius historicus, non nova nostrae aetatis descriptio.',
+	'colophon.typeInitials':
+		'Litterae initiales sunt Pirata One, forma Gothica cuius capitales etiam ea magnitudine quam littera initialis poscit legi possunt, et — pro Russicis — Ponomar, quae typum Slavonicum ecclesiasticum Officinae Synodalis refert. Ponomar litteram initialem tantum, numquam textum, componit: encyclica nostrae aetatis tota typo Synodali composita falsum aliquid de se diceret. Omnes sub licentia SIL Open Font License dantur et ex hac ipsa sede mittuntur, non ex aliena, ne pagina legenda quicquam ab alterius machina petat.',
 	'refs.citedIn': 'Ubi affertur',
 	// The Latin editio typica is `Catechismus Catholicae Ecclesiae`, so the
 	// siglum is CCE — as in French. `refparse.ts` still reads only `ccc`;

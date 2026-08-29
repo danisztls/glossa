@@ -196,40 +196,39 @@ export const sv: Dictionary = {
 		'Byggd för att fortsätta fungera offline när du väl har besökt den, så att en dålig uppkoppling inte behöver vara ett hinder för läsningen.',
 	'colophon.textsTitle': 'Texterna',
 	'colophon.textsBody':
-		'Varje text kommer från en namngiven källa, och varje verk anger sin utgåva, sin källsida och datumet då den hämtades. Skriften använder översättningar i public domain; katekesen, kompendiet och läroämbetets dokument kommer från Heliga stolens egna publicerade texter. Vi återger dem oförändrade — och där vår kopia av ett verk har visat sig ofullständig utelämnar vi det från sajten hellre än att visa dig en text med luckor du inte kan se.',
+		'Varje text kommer från en namngiven källa, och varje verk anger sin utgåva, sin källsida och datumet då den hämtades. Skriften använder översättningar i public domain; katekesen, kompendiet och läroämbetets dokument kommer från Heliga stolens egna publicerade texter.',
+	'colophon.textsFidelity':
+		'Texten förkortas aldrig, parafraseras aldrig, skrivs aldrig om och placeras aldrig intill reklam. Däremot rättar vi uppenbara fel — ett bortfallet ord, en förvanskad hänvisning, en uppmärkning som svalt ett stycke — alltid mot vad källan själv trycker, aldrig mot vad vi tycker att den borde säga.',
 	'colophon.countBible': 'bibelutgåvor',
 	'colophon.countDocuments': 'dokument från läroämbetet',
 	'colophon.copyrightTitle': 'Upphovsrätt',
 	'colophon.copyrightBody1':
-		'Katekesen, kompendiet och läroämbetets dokument tillhör sina rättighetshavare — främst Libreria Editrice Vaticana och Dikasteriet för kommunikation. Vi återger dem här utan att först ha bett om tillstånd. Vi säger det rent ut i stället för att låta det upptäckas: det är ett medvetet val, inte ett förbiseende.',
+		'Katekesen, kompendiet och läroämbetets dokument tillhör sina rättighetshavare — främst Libreria Editrice Vaticana och Dikasteriet för kommunikation.',
 	'colophon.copyrightBody2':
-		'Vi gör det valet därför att dessa texter är kyrkans lära, riktad till alla, och därför att den oro rättighetshavarna har uttalat gäller textens integritet. Alltså förkortas texten aldrig, parafraseras aldrig, skrivs aldrig om och placeras aldrig intill reklam. Däremot rättar vi uppenbara fel i de publicerade sidorna — ett bortfallet ord, en förvanskad hänvisning, en uppmärkning som svalt ett stycke — alltid mot vad källan själv trycker, aldrig mot vad vi skulle kunna tycka att den borde säga. Vi ändrar inte dess mening, sätter inte våra egna formuleringar i dess ställe och varken kommenterar eller förser den med noter. Varje rättelse antecknas för sig, med originalet, ersättningen och skälet; ingenting ändras någonsin i tysthet. Varje verk visar sin rättighetshavares egen upphovsrättsnotis, med deras ordalydelse, och länkar till sidan den hämtades från.',
+		'Varje verk visar sin rättighetshavares egen upphovsrättsnotis, med deras ordalydelse, och länkar till sidan den hämtades från.',
 	'colophon.copyrightBody3':
-		'Om du innehar rättigheter till någon text här och hellre ser att den inte publiceras, skriv till oss så tar vi bort den omgående. Utan diskussion, och utan att någon annan först behöver blandas in.',
+		'Om du innehar rättigheter till någon text här och hellre ser att den inte publiceras, skriv till oss.',
 	'colophon.contactTitle': 'Kontakt',
 	'colophon.contactBody': 'För vad som helst, även det ovanstående:',
 	'colophon.contactPending':
 		'Någon kontaktadress har ännu inte bestämts. Den här sajten bör inte göras offentlig förrän den har en — löftet ovan betyder ingenting utan ett sätt att nå oss.',
-	'colophon.buildTitle': 'Hur den blir till',
-	'colophon.buildBody':
-		'Texterna samlas in från sina publicerade källor, tolkas till ett strukturerat korpus och återges som statiska sidor. Rättelser av fel i källan antecknas var för sig, med den ursprungliga lydelsen, den rättade lydelsen och skälet — ingen text ändras någonsin i tysthet.',
 	'colophon.illustrationsTitle': 'Illustrationerna',
 	'colophon.illustrationsBody':
-		'Bibeln bär Gustave Dorés gravyrer till La Grande Bible de Tours, var och en placerad vid den vers den skildrar. De är den sista och största av hans bibelsviter, stuckna i stål och tryckta tillsammans med texten i stället för samlade sist i bandet.',
+		'Bibeln bär Gustave Dorés gravyrer, var och en placerad vid den vers den skildrar — den sista och största av hans bibelsviter, skuren i trä efter hans teckningar och tryckt tillsammans med texten i stället för samlad sist i bandet.',
+	'colophon.illustrationsRights':
+		'De är fria, vilket årtalen nedan visar, och en trogen fotografisk återgivning av en fri gravyr ger ingen ny upphovsrätt.',
 	'colophon.countPlates': 'gravyrer',
 	'colophon.countPlateChapters': 'illustrerade kapitel',
-	'colophon.illustrationsAnchors':
-		'Varje gravyr måste ges en adress, och de tryckta bildtexterna räckte inte i sig. Tre läsningar togs för var och en — bildtexten under gravyren själv, en oberoende avskrift och registret till den samling vi skannade — och där de gick isär fick bildtexten företräde, eftersom det är den gravören skar. Alla läsningar bevaras, även de som förlorade.',
-	'colophon.illustrationsProcessing':
-		'Skanningarna är beskurna till gravyren, utjämnade till en gemensam papperston, förda till grått och omkodade; ingenting inuti bilden ändras, retuscheras eller tas bort. De levereras i två bredder, så att en telefon inte hämtar en bild gjord för en stor skärm, och de begärs inte förrän man kommit fram till dem.',
-	'colophon.illustrationsRights':
-		'De är fria. Plåtarna graverades 1866 och Doré dog 1883, och en trogen fotografisk återgivning av en fri gravyr ger ingen ny upphovsrätt. Vi anger varifrån våra skanningar kommer därför att vi är tacksamma för dem, inte därför att vi måste.',
 	'plates.scansBy': 'Skanningar tillhandahållna av',
 	'plates.enlarge': 'Förstora {title}',
 	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'Typsnittet',
 	'colophon.typeBody':
-		'Satt med EB Garamond, Georg Duffners och Octavio Pardos återupplivande av de typer Claude Garamont skar på 1590-talet — den humanistiska tradition kyrkan har tryckt i sedan renässansen. Anfangerna är Pirata One, en frakturstil vars versaler förblir läsbara i den storlek en anfang kräver. Båda är licensierade under SIL Open Font License och levereras från den här sajten och inte från tredje part, så att läsa en sida begär ingenting av någon annans server.',
+		'Satt med EB Garamond, Georg Duffners och Octavio Pardos återupplivande av de typer Claude Garamont skar på 1590-talet — den humanistiska tradition kyrkan har tryckt i sedan renässansen. Dess kyrilliska är av samma händer men återupplivar ingenting: någon kyrillisk Garamond har aldrig skurits, så ryskan sätts i en form ritad för att stå bredvid de övriga.',
+	'colophon.typeArabic':
+		'Arabiskan ligger helt utanför den och sätts med Amiri — Khaled Hosnys återupplivande av den naskh som skars för Bulaqtryckeriet i Kairo 1905, vald efter samma resonemang som brödtexten: en bestämd historisk boktyp och inte en samtida teckning.',
+	'colophon.typeInitials':
+		'Anfangerna är Pirata One, en frakturstil vars versaler förblir läsbara i den storlek en anfang kräver, och — för ryskan — Ponomar, som återger Synodaltryckeriets kyrkslaviska stil. Ponomar sätter anfangen och aldrig texten: en modern encyklika satt helt i synodalstil skulle säga något osant om sig själv. Alla är licensierade under SIL Open Font License och levereras från den här sajten och inte från tredje part, så att läsa en sida begär ingenting av någon annans server.',
 	'refs.citedIn': 'Citeras i',
 	'bible.cccAbbrev': 'KKK',
 	'bible.wholeChapter': 'Detta kapitel',

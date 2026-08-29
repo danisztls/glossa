@@ -218,40 +218,39 @@ export const pt: Dictionary = {
 		'Feito para continuar a funcionar sem liga\u00e7\u00e3o depois da primeira visita, para que uma liga\u00e7\u00e3o fraca n\u00e3o tenha de impedir a leitura.',
 	'colophon.textsTitle': 'Os textos',
 	'colophon.textsBody':
-		'Cada texto prov\u00e9m de uma fonte identificada, e cada obra indica a sua edi\u00e7\u00e3o, a p\u00e1gina de origem e a data em que foi obtida. As Escrituras usam tradu\u00e7\u00f5es de dom\u00ednio p\u00fablico; o Catecismo, o Compêndio e os documentos do Magist\u00e9rio prov\u00eam dos textos publicados pela Santa S\u00e9. Reproduzimo-los sem altera\u00e7\u00f5es \u2014 e quando a nossa c\u00f3pia de uma obra ficou incompleta, deixamo-la fora do site, em vez de lhe mostrar um texto com falhas que n\u00e3o consegue ver.',
+		'Cada texto provém de uma fonte identificada, e cada obra indica a sua edição, a página de origem e a data em que foi obtida. As Escrituras usam traduções de domínio público; o Catecismo, o Compêndio e os documentos do Magistério provêm dos textos publicados pela Santa Sé.',
+	'colophon.textsFidelity':
+		'O texto nunca é abreviado, nunca parafraseado, nunca reescrito e nunca colocado junto a publicidade. Corrigimos defeitos evidentes — uma palavra em falta, uma referência truncada, marcação que engoliu um parágrafo — sempre no sentido do que a própria fonte imprime, nunca no sentido do que julgamos que deveria dizer.',
 	'colophon.countBible': 'edi\u00e7\u00f5es b\u00edblicas',
 	'colophon.countDocuments': 'documentos do Magist\u00e9rio',
 	'colophon.copyrightTitle': 'Direitos de autor',
 	'colophon.copyrightBody1':
-		'O Catecismo, o Compêndio e os documentos do Magist\u00e9rio pertencem aos seus titulares de direitos \u2014 principalmente a Libreria Editrice Vaticana e o Dicast\u00e9rio para a Comunica\u00e7\u00e3o. Reproduzimo-los aqui sem ter pedido autoriza\u00e7\u00e3o pr\u00e9via. Dizemo-lo com clareza em vez de o deixar por descobrir: \u00e9 uma escolha deliberada, n\u00e3o um descuido.',
+		'O Catecismo, o Compêndio e os documentos do Magistério pertencem aos seus titulares de direitos — principalmente a Libreria Editrice Vaticana e o Dicastério para a Comunicação.',
 	'colophon.copyrightBody2':
-		'Fazemos essa escolha porque estes textos s\u00e3o o ensino da Igreja, dirigido a todos, e porque a preocupa\u00e7\u00e3o manifestada pelos titulares de direitos \u00e9 a integridade do texto. Por isso o texto nunca \u00e9 abreviado, nunca parafraseado, nunca reescrito e nunca colocado junto a publicidade. Corrigimos defeitos evidentes das p\u00e1ginas publicadas \u2014 uma palavra em falta, uma refer\u00eancia truncada, marca\u00e7\u00e3o que engoliu um par\u00e1grafo \u2014 sempre no sentido do que a pr\u00f3pria fonte imprime, nunca no sentido do que julgamos que deveria dizer. N\u00e3o alteramos o seu significado, n\u00e3o substitu\u00edmos as suas palavras pelas nossas e n\u00e3o anotamos nem comentamos. Cada corre\u00e7\u00e3o \u00e9 registada em separado, com o original, a substitui\u00e7\u00e3o e o motivo; nada \u00e9 alterado em sil\u00eancio. Cada obra apresenta o aviso de direitos do seu titular, nas palavras dele, e liga \u00e0 p\u00e1gina de onde foi retirada.',
+		'Cada obra apresenta o aviso de direitos do seu titular, nas palavras dele, e liga à página de onde foi retirada.',
 	'colophon.copyrightBody3':
-		'Se detiver direitos sobre algum texto aqui presente e preferir que n\u00e3o seja publicado, escreva-nos e retiramo-lo prontamente. Sem discuss\u00e3o, e sem necessidade de envolver mais ningu\u00e9m.',
+		'Se detiver direitos sobre algum texto aqui presente e preferir que não seja publicado, escreva-nos.',
 	'colophon.contactTitle': 'Contacto',
 	'colophon.contactBody': 'Para qualquer assunto, incluindo o acima:',
 	'colophon.contactPending':
 		'Ainda n\u00e3o foi definido um endere\u00e7o de contacto. Este site n\u00e3o deve ser tornado p\u00fablico enquanto n\u00e3o o tiver \u2014 o compromisso acima n\u00e3o tem sentido sem uma forma de nos contactar.',
-	'colophon.buildTitle': 'Como \u00e9 feito',
-	'colophon.buildBody':
-		'Os textos s\u00e3o recolhidos das suas fontes publicadas, analisados para um corpus estruturado e apresentados como p\u00e1ginas est\u00e1ticas. As corre\u00e7\u00f5es a defeitos das fontes s\u00e3o registadas uma a uma, com a reda\u00e7\u00e3o original, a corrigida e o motivo \u2014 nenhum texto \u00e9 alterado em sil\u00eancio.',
 	'colophon.illustrationsTitle': 'As ilustrações',
 	'colophon.illustrationsBody':
-		'A Bíblia traz as gravuras de Gustave Doré para La Grande Bible de Tours, cada uma junto ao versículo que representa. São o último e o maior dos seus ciclos bíblicos, gravadas em aço e impressas com o texto, não reunidas no fim do volume.',
+		'A Bíblia traz as gravuras de Gustave Doré, cada uma junto ao versículo que representa — o último e o maior dos seus ciclos bíblicos, gravado em madeira a partir dos seus desenhos e impresso com o texto, não reunido no fim do volume.',
+	'colophon.illustrationsRights':
+		'Estão em domínio público, como mostram as datas abaixo, e a reprodução fotográfica fiel de uma gravura em domínio público não gera direito de autor novo.',
 	'colophon.countPlates': 'gravuras',
 	'colophon.countPlateChapters': 'capítulos ilustrados',
-	'colophon.illustrationsAnchors':
-		'Cada gravura precisava de um endereço, e as legendas impressas por si só não bastavam. Foram tomadas três leituras de cada uma — a legenda sob a própria gravura, uma transcrição independente e o índice da coleção que digitalizámos — e, onde discordavam, preferiu-se a legenda, por ser o que o gravador abriu na chapa. Todas as leituras ficam registadas, inclusive as vencidas.',
-	'colophon.illustrationsProcessing':
-		'As digitalizações são recortadas até à gravura, niveladas a um tom de papel comum, reduzidas a cinzentos e recodificadas; nada dentro da imagem é alterado, retocado ou removido. São servidas em duas larguras, para que um telemóvel não descarregue uma imagem feita para um ecrã grande, e só são buscadas quando se chega a elas.',
-	'colophon.illustrationsRights':
-		'Estão em domínio público. As chapas foram gravadas em 1866 e Doré morreu em 1883, e a reprodução fotográfica fiel de uma gravura em domínio público não gera direito de autor novo. Dizemos de onde vieram as nossas digitalizações porque lhes somos gratos, não por obrigação.',
 	'plates.scansBy': 'Digitalizações fornecidas por',
 	'plates.enlarge': 'Ampliar {title}',
 	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'Os tipos',
 	'colophon.typeBody':
-		'Composto em EB Garamond, o renascimento por Georg Duffner e Octavio Pardo dos tipos que Claude Garamont gravou na d\u00e9cada de 1590 \u2014 a tradi\u00e7\u00e3o humanista em que a Igreja imprime desde o Renascimento. As iniciais s\u00e3o Pirata One, uma letra g\u00f3tica cujas mai\u00fasculas permanecem leg\u00edveis no tamanho que uma capitular exige. Ambas as fontes t\u00eam licen\u00e7a SIL Open Font License e s\u00e3o servidas a partir deste s\u00edtio e n\u00e3o de terceiros, de modo que ler uma p\u00e1gina nada exige do servidor de outrem.',
+		'Composto em EB Garamond, o renascimento por Georg Duffner e Octavio Pardo dos tipos que Claude Garamont gravou na década de 1590 — a tradição humanista em que a Igreja imprime desde o Renascimento. O seu cirílico é das mesmas mãos, mas não renasce de nada: nunca se gravou um Garamond cirílico, pelo que o russo é composto numa forma desenhada para conviver com o resto.',
+	'colophon.typeArabic':
+		'O árabe fica-lhe inteiramente fora do alcance e é composto em Amiri — o renascimento por Khaled Hosny do naskh gravado para a imprensa de Bulaq, no Cairo, em 1905, escolhido pelo mesmo raciocínio que a letra do texto: um tipo de livro histórico preciso e não um desenho contemporâneo.',
+	'colophon.typeInitials':
+		'As iniciais são Pirata One, uma letra gótica cujas maiúsculas permanecem legíveis no tamanho que uma capitular exige, e — para o russo — Ponomar, que reproduz o tipo eslavo eclesiástico da Imprensa Sinodal. Ponomar compõe a inicial e nunca o texto: uma encíclica moderna composta inteiramente em tipo sinodal diria algo falso sobre o que ela é. Todas têm licença SIL Open Font License e são servidas a partir deste sítio e não de terceiros, de modo que ler uma página nada exige do servidor de outrem.',
 	'refs.citedIn': 'Citado em',
 	'bible.cccAbbrev': 'CIC',
 	'bible.wholeChapter': 'Este capítulo',

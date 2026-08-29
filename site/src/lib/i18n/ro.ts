@@ -197,40 +197,39 @@ export const ro: Dictionary = {
 		'Construit ca să funcționeze offline după ce l-ați vizitat o dată, astfel încât o conexiune slabă să nu fie o piedică în calea lecturii.',
 	'colophon.textsTitle': 'Textele',
 	'colophon.textsBody':
-		'Fiecare text provine dintr-o sursă numită, iar fiecare lucrare își consemnează ediția, pagina-sursă și data preluării. Scriptura folosește traduceri din domeniul public; Catehismul, Compendiul și documentele magisteriale provin din textele publicate de însuși Sfântul Scaun. Le reproducem nealterate — iar acolo unde copia noastră a unei lucrări s-a dovedit incompletă, o lăsăm în afara sitului în loc să vă arătăm un text cu lipsuri pe care nu le puteți vedea.',
+		'Fiecare text provine dintr-o sursă numită, iar fiecare lucrare își consemnează ediția, pagina-sursă și data preluării. Scriptura folosește traduceri din domeniul public; Catehismul, Compendiul și documentele magisteriale provin din textele publicate de însuși Sfântul Scaun.',
+	'colophon.textsFidelity':
+		'Textul nu este niciodată prescurtat, niciodată parafrazat, niciodată rescris și niciodată așezat lângă publicitate. În schimb, reparăm defectele evidente — un cuvânt căzut, o trimitere stâlcită, un marcaj care a înghițit un paragraf — întotdeauna către ceea ce tipărește sursa însăși, niciodată către ceea ce credem noi că ar trebui să spună.',
 	'colophon.countBible': 'ediții biblice',
 	'colophon.countDocuments': 'documente magisteriale',
 	'colophon.copyrightTitle': 'Drepturi de autor',
 	'colophon.copyrightBody1':
-		'Catehismul, Compendiul și documentele magisteriale sunt proprietatea deținătorilor lor de drepturi — în principal Libreria Editrice Vaticana și Dicasterul pentru Comunicare. Le reproducem aici fără să fi cerut mai întâi permisiunea. O spunem deschis, în loc să lăsăm lucrul să fie descoperit: este o alegere deliberată, nu o scăpare.',
+		'Catehismul, Compendiul și documentele magisteriale sunt proprietatea deținătorilor lor de drepturi — în principal Libreria Editrice Vaticana și Dicasterul pentru Comunicare.',
 	'colophon.copyrightBody2':
-		'Facem această alegere pentru că aceste texte sunt învățătura Bisericii, adresată tuturor, și pentru că grija exprimată de deținătorii de drepturi este integritatea textului. De aceea textul nu este niciodată prescurtat, niciodată parafrazat, niciodată rescris și niciodată așezat lângă publicitate. În schimb, reparăm defectele evidente ale paginilor publicate — un cuvânt căzut, o trimitere stâlcită, un marcaj care a înghițit un paragraf — întotdeauna către ceea ce tipărește sursa însăși, niciodată către ceea ce am crede noi că ar trebui să spună. Nu îi schimbăm sensul, nu punem în loc formulările noastre și nu adnotăm, nici nu comentăm. Fiecare corectură este consemnată separat, cu originalul, înlocuirea și motivul; nimic nu este schimbat vreodată în tăcere. Fiecare lucrare afișează nota de copyright a deținătorului ei de drepturi, în formularea lui, și trimite la pagina de unde a fost preluată.',
+		'Fiecare lucrare afișează nota de copyright a deținătorului ei de drepturi, în formularea lui, și trimite la pagina de unde a fost preluată.',
 	'colophon.copyrightBody3':
-		'Dacă dețineți drepturi asupra vreunui text de aici și ați prefera să nu fie publicat, scrieți-ne și îl vom retrage îndată. Fără discuții și fără să fie nevoie să implicați mai întâi pe altcineva.',
+		'Dacă dețineți drepturi asupra vreunui text de aici și ați prefera să nu fie publicat, scrieți-ne.',
 	'colophon.contactTitle': 'Contact',
 	'colophon.contactBody': 'Pentru orice, inclusiv pentru cele de mai sus:',
 	'colophon.contactPending':
 		'O adresă de contact nu a fost încă stabilită. Acest sit nu ar trebui făcut public până când nu are una — angajamentul de mai sus nu înseamnă nimic fără o cale de a ne fi scris.',
-	'colophon.buildTitle': 'Cum este făcut',
-	'colophon.buildBody':
-		'Textele sunt adunate din sursele lor publicate, prelucrate într-un corpus structurat și redate ca pagini statice. Corecturile aduse defectelor sursei sunt consemnate una câte una, cu formularea originală, cea corectată și motivul — niciun text nu este vreodată schimbat în tăcere.',
 	'colophon.illustrationsTitle': 'Ilustrațiile',
 	'colophon.illustrationsBody':
-		'Biblia poartă gravurile lui Gustave Doré pentru La Grande Bible de Tours, fiecare așezată la versetul pe care îl înfățișează. Sunt ultimul și cel mai întins dintre ciclurile lui biblice, gravate în oțel și tipărite împreună cu textul, nu adunate la sfârșitul volumului.',
+		'Biblia poartă gravurile lui Gustave Doré, fiecare așezată la versetul pe care îl înfățișează — ultimul și cel mai întins dintre ciclurile lui biblice, gravat în lemn după desenele sale și tipărit împreună cu textul, nu adunat la sfârșitul volumului.',
+	'colophon.illustrationsRights':
+		'Sunt în domeniul public, după cum arată datele de mai jos, iar reproducerea fotografică fidelă a unei gravuri din domeniul public nu naște un drept de autor nou.',
 	'colophon.countPlates': 'gravuri',
 	'colophon.countPlateChapters': 'capitole ilustrate',
-	'colophon.illustrationsAnchors':
-		'Fiecare gravură trebuia să primească o adresă, iar legendele tipărite singure nu erau de ajuns. Pentru fiecare s-au luat trei lecțiuni — legenda de sub gravura însăși, o transcriere independentă și indicele colecției pe care am scanat-o — iar acolo unde se contraziceau a fost preferată legenda, fiindcă ea este ceea ce a gravat gravorul. Toate lecțiunile se păstrează, inclusiv cele care au pierdut.',
-	'colophon.illustrationsProcessing':
-		'Scanările sunt decupate până la gravură, aduse la un ton comun al hârtiei, reduse la gri și recodificate; nimic dinăuntrul imaginii nu este modificat, retușat sau înlăturat. Sunt servite în două lățimi, ca un telefon să nu descarce o imagine făcută pentru un ecran mare, și nu sunt cerute până nu ajungi la ele.',
-	'colophon.illustrationsRights':
-		'Sunt în domeniul public. Plăcile au fost gravate în 1866, iar Doré a murit în 1883, și reproducerea fotografică fidelă a unei gravuri din domeniul public nu naște un drept de autor nou. Spunem de unde vin scanările noastre fiindcă le suntem recunoscători, nu fiindcă am fi obligați.',
 	'plates.scansBy': 'Scanări puse la dispoziție de',
 	'plates.enlarge': 'Mărește {title}',
 	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'Litera',
 	'colophon.typeBody':
-		'Cules cu EB Garamond, reînvierea de către Georg Duffner și Octavio Pardo a caracterelor tăiate de Claude Garamont în anii 1590 — tradiția umanistă în care Biserica tipărește încă din Renaștere. Inițialele sunt Pirata One, o literă gotică ale cărei majuscule rămân lizibile la mărimea pe care o cere o inițială. Amândouă sunt licențiate sub SIL Open Font License și sunt servite de pe acest sit, nu de la terți, așa încât citirea unei pagini nu cere nimic de la serverul nimănui altcuiva.',
+		'Cules cu EB Garamond, reînvierea de către Georg Duffner și Octavio Pardo a caracterelor tăiate de Claude Garamont în anii 1590 — tradiția umanistă în care Biserica tipărește încă din Renaștere. Chirilica sa vine din aceleași mâini, dar nu reînvie nimic: un Garamond chirilic nu a fost tăiat niciodată, așa că rusa este culeasă într-o formă desenată ca să stea alături de restul.',
+	'colophon.typeArabic':
+		'Araba îi rămâne cu totul în afara puterii și este culeasă cu Amiri — reînvierea de către Khaled Hosny a naskh-ului tăiat pentru tipografia din Bulaq, la Cairo, în 1905, aleasă după același raționament ca litera textului: un anume caracter de carte istoric, nu un desen contemporan.',
+	'colophon.typeInitials':
+		'Inițialele sunt Pirata One, o literă gotică ale cărei majuscule rămân lizibile la mărimea pe care o cere o inițială, iar — pentru rusă — Ponomar, care reproduce litera slavonă bisericească a Tipografiei Sinodale. Ponomar culege inițiala și niciodată textul: o enciclică modernă culeasă în întregime cu literă sinodală ar spune despre sine ceva neadevărat. Toate sunt licențiate sub SIL Open Font License și sunt servite de pe acest sit, nu de la terți, așa încât citirea unei pagini nu cere nimic de la serverul nimănui altcuiva.',
 	'refs.citedIn': 'Citat în',
 	'bible.cccAbbrev': 'CBC',
 	'bible.wholeChapter': 'Acest capitol',

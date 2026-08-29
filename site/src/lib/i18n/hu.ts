@@ -199,40 +199,39 @@ export const hu: Dictionary = {
 		'Úgy készült, hogy egyetlen látogatás után kapcsolat nélkül is működjön, így a gyenge internet ne legyen akadálya az olvasásnak.',
 	'colophon.textsTitle': 'A szövegek',
 	'colophon.textsBody':
-		'Minden szöveg megnevezett forrásból származik, és minden mű rögzíti a kiadását, a forrásoldalát és a letöltés dátumát. A Szentírás közkincsű fordításokat használ; a Katekizmus, a Kompendium és a tanítóhivatali dokumentumok a Szentszék saját közzétett szövegeiből valók. Változtatás nélkül közöljük őket — és ahol a másolatunk hiányosnak bizonyult, inkább kihagyjuk a művet az oldalról, mintsem olyan szöveget mutassunk, amelynek hiányait nem látja.',
+		'Minden szöveg megnevezett forrásból származik, és minden mű rögzíti a kiadását, a forrásoldalát és a letöltés dátumát. A Szentírás közkincsű fordításokat használ; a Katekizmus, a Kompendium és a tanítóhivatali dokumentumok a Szentszék saját közzétett szövegeiből valók.',
+	'colophon.textsFidelity':
+		'A szöveget soha nem rövidítjük, soha nem fogalmazzuk át, soha nem írjuk újra, és soha nem helyezzük reklám mellé. A nyilvánvaló hibákat viszont kijavítjuk — egy kiesett szót, egy elrontott hivatkozást, egy bekezdést elnyelő jelölést — mindig afelé, amit maga a forrás nyomtat, soha nem afelé, amit szerintünk mondania kellene.',
 	'colophon.countBible': 'bibliakiadás',
 	'colophon.countDocuments': 'tanítóhivatali dokumentum',
 	'colophon.copyrightTitle': 'Szerzői jog',
 	'colophon.copyrightBody1':
-		'A Katekizmus, a Kompendium és a tanítóhivatali dokumentumok a jogtulajdonosaik tulajdonát képezik — elsősorban a Libreria Editrice Vaticanáét és a Kommunikációs Dikasztériumét. Anélkül közöljük őket itt, hogy előzetesen engedélyt kértünk volna. Ezt nyíltan kimondjuk, ahelyett hogy felfedezésre hagynánk: ez tudatos döntés, nem mulasztás.',
+		'A Katekizmus, a Kompendium és a tanítóhivatali dokumentumok a jogtulajdonosaik tulajdonát képezik — elsősorban a Libreria Editrice Vaticanáét és a Kommunikációs Dikasztériumét.',
 	'colophon.copyrightBody2':
-		'Azért döntünk így, mert ezek a szövegek az Egyház tanítása, amely mindenkinek szól, és mert a jogtulajdonosok által megfogalmazott aggodalom a szöveg sértetlenségére vonatkozik. Ezért a szöveget soha nem rövidítjük, soha nem fogalmazzuk át, soha nem írjuk újra, és soha nem helyezzük reklám mellé. A közzétett oldalak nyilvánvaló hibáit viszont kijavítjuk — egy kiesett szót, egy elrontott hivatkozást, egy bekezdést elnyelő jelölést — mindig afelé, amit maga a forrás nyomtat, soha nem afelé, amit szerintünk mondania kellene. Nem változtatjuk meg az értelmét, nem tesszük a helyébe a saját megfogalmazásunkat, és nem látjuk el jegyzettel vagy kommentárral. Minden javítást külön rögzítünk, az eredetivel, a javítással és az indokkal együtt; semmit sem változtatunk meg csendben. Minden mű megjeleníti a jogtulajdonosa saját szerzői jogi közleményét, az ő szavaival, és hivatkozik arra az oldalra, ahonnan származik.',
+		'Minden mű megjeleníti a jogtulajdonosa saját szerzői jogi közleményét, az ő szavaival, és hivatkozik arra az oldalra, ahonnan származik.',
 	'colophon.copyrightBody3':
-		'Ha Ön jogot birtokol az itt közölt szövegek bármelyikén, és inkább nem szeretné, hogy megjelenjen, írjon nekünk, és haladéktalanul eltávolítjuk. Vita nélkül, és anélkül, hogy előbb bárki mást be kellene vonni.',
+		'Ha Ön jogot birtokol az itt közölt szövegek bármelyikén, és inkább nem szeretné, hogy megjelenjen, írjon nekünk.',
 	'colophon.contactTitle': 'Kapcsolat',
 	'colophon.contactBody': 'Bármiről, a fentieket is beleértve:',
 	'colophon.contactPending':
 		'Kapcsolattartási cím még nincs megadva. Ezt az oldalt addig nem szabad nyilvánossá tenni, amíg nincs — a fenti vállalás nem sokat ér, ha nincs mód elérni minket.',
-	'colophon.buildTitle': 'Hogyan készül',
-	'colophon.buildBody':
-		'A szövegeket a közzétett forrásaikból gyűjtjük össze, strukturált korpusszá dolgozzuk fel, és statikus oldalakként jelenítjük meg. A forráshibák javításait egyenként rögzítjük, az eredeti szöveggel, a javított szöveggel és az indoklással — egyetlen szöveget sem változtatunk meg csendben.',
 	'colophon.illustrationsTitle': 'Az illusztrációk',
 	'colophon.illustrationsBody':
-		'A Biblia Gustave Doré metszeteit hordozza a La Grande Bible de Tours számára, mindegyiket annál a versnél, amelyet ábrázol. Bibliai sorozatai közül ez az utolsó és a legnagyobb: acélba metszették, és a szöveggel együtt nyomtatták, nem a kötet végére gyűjtve.',
+		'A Biblia Gustave Doré metszeteit hordozza, mindegyiket annál a versnél, amelyet ábrázol — bibliai sorozatai közül az utolsó és a legnagyobb: rajzai nyomán fába metszették, és a szöveggel együtt nyomtatták, nem a kötet végére gyűjtve.',
+	'colophon.illustrationsRights':
+		'Közkincsek, amint az alábbi évszámok mutatják, és egy közkincs metszet hű fényképi másolata nem keletkeztet új szerzői jogot.',
 	'colophon.countPlates': 'metszet',
 	'colophon.countPlateChapters': 'illusztrált fejezet',
-	'colophon.illustrationsAnchors':
-		'Minden metszetnek helyet kellett kapnia, és a nyomtatott képaláírások önmagukban nem voltak elég megbízhatók. Mindegyikről három olvasat készült — a metszet alatti aláírás, egy független átirat, és annak a gyűjteménynek a mutatója, amelyből beolvastuk —, és ahol eltértek, az aláírás döntött, mert azt véste a metsző. Minden olvasat megmarad, a vesztesek is.',
-	'colophon.illustrationsProcessing':
-		'A beolvasások a metszetig vannak vágva, közös papírtónusra kiegyenlítve, szürkére redukálva és újrakódolva; a képen belül semmit nem változtatunk, retusálunk vagy távolítunk el. Két szélességben szolgáljuk ki őket, hogy egy telefon ne töltsön le nagy képernyőre készült képet, és csak akkor kérjük le őket, amikor odaér az olvasó.',
-	'colophon.illustrationsRights':
-		'Közkincsek. A lemezeket 1866-ban metszették, Doré 1883-ban halt meg, és egy közkincs metszet hű fényképi másolata nem keletkeztet új szerzői jogot. Megnevezzük, honnan valók a beolvasásaink, mert hálásak vagyunk értük, nem mert kötelesek volnánk.',
 	'plates.scansBy': 'A beolvasásokat rendelkezésre bocsátotta:',
 	'plates.enlarge': '{title} nagyítása',
 	'plates.zoom': 'Nagyítás',
 	'colophon.typeTitle': 'A betűk',
 	'colophon.typeBody':
-		'EB Garamonddal szedve, amely Georg Duffner és Octavio Pardo felújítása azokról a betűkről, amelyeket Claude Garamont metszett az 1590-es években — abban a humanista hagyományban, amelyben az Egyház a reneszánsz óta nyomtat. A kezdőbetűk Pirata One betűvel készültek: ez egy gót betűtípus, amelynek nagybetűi olvashatók maradnak abban a méretben, amelyet az iniciálé megkíván. Mindkettő SIL Open Font License alatt áll, és erről az oldalról érkezik, nem harmadik féltől, így egy oldal elolvasása senki más kiszolgálójától nem kér semmit.',
+		'EB Garamonddal szedve, amely Georg Duffner és Octavio Pardo felújítása azokról a betűkről, amelyeket Claude Garamont metszett az 1590-es években — abban a humanista hagyományban, amelyben az Egyház a reneszánsz óta nyomtat. Cirill betűi ugyanattól a kéztől valók, de nem újítanak fel semmit: cirill Garamont soha nem metszettek, így az orosz szöveg olyan formával van szedve, amelyet a többi mellé rajzoltak.',
+	'colophon.typeArabic':
+		'Az arab teljesen kívül esik rajta, és Amiri betűvel van szedve — Khaled Hosny felújítása arról a naszh írásról, amelyet 1905-ben a kairói Búlák nyomdának metszettek; ugyanazzal a megfontolással választva, mint a kenyérbetűt: egy meghatározott történeti könyvbetű, nem pedig mai rajz.',
+	'colophon.typeInitials':
+		'A kezdőbetűk Pirata One betűvel készültek: ez egy gót betűtípus, amelynek nagybetűi olvashatók maradnak abban a méretben, amelyet az iniciálé megkíván — az oroszhoz pedig Ponomar, amely a Szinodális Nyomda egyházi szláv betűjét adja vissza. A Ponomar csak az iniciálét szedi, a szöveget soha: egy mai enciklika végig szinodális betűvel szedve valótlant állítana önmagáról. Mind SIL Open Font License alatt áll, és erről az oldalról érkezik, nem harmadik féltől, így egy oldal elolvasása senki más kiszolgálójától nem kér semmit.',
 	'refs.citedIn': 'Idézi',
 	'bible.cccAbbrev': 'KEK',
 	'bible.wholeChapter': 'Ez a fejezet',

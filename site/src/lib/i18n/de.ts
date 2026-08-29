@@ -196,40 +196,39 @@ export const de: Dictionary = {
 		'So gebaut, dass sie nach einem Besuch offline weiterarbeitet, damit eine schlechte Verbindung kein Hindernis fürs Lesen ist.',
 	'colophon.textsTitle': 'Die Texte',
 	'colophon.textsBody':
-		'Jeder Text stammt aus einer benannten Quelle, und jedes Werk verzeichnet seine Ausgabe, seine Quellseite und das Datum des Abrufs. Die Schrift verwendet gemeinfreie Übersetzungen; Katechismus, Kompendium und die lehramtlichen Dokumente stammen aus den vom Heiligen Stuhl selbst veröffentlichten Texten. Wir geben sie unverändert wieder — und wo sich unsere Kopie eines Werkes als unvollständig erwiesen hat, lassen wir es von der Seite weg, statt Ihnen einen Text mit Lücken zu zeigen, die Sie nicht sehen können.',
+		'Jeder Text stammt aus einer benannten Quelle, und jedes Werk verzeichnet seine Ausgabe, seine Quellseite und das Datum des Abrufs. Die Schrift verwendet gemeinfreie Übersetzungen; Katechismus, Kompendium und die lehramtlichen Dokumente stammen aus den vom Heiligen Stuhl selbst veröffentlichten Texten.',
+	'colophon.textsFidelity':
+		'Der Text wird nie gekürzt, nie umschrieben, nie neu geschrieben und nie neben Werbung gestellt. Offensichtliche Mängel bessern wir sehr wohl aus — ein ausgefallenes Wort, eine verstümmelte Zitatangabe, ein Markup, das einen Absatz verschluckt hat — stets hin zu dem, was die Quelle selbst druckt, nie hin zu dem, was wir für richtig halten.',
 	'colophon.countBible': 'Bibelausgaben',
 	'colophon.countDocuments': 'lehramtliche Dokumente',
 	'colophon.copyrightTitle': 'Urheberrecht',
 	'colophon.copyrightBody1':
-		'Der Katechismus, das Kompendium und die lehramtlichen Dokumente sind Eigentum ihrer Rechteinhaber — vor allem der Libreria Editrice Vaticana und des Dikasteriums für die Kommunikation. Wir geben sie hier wieder, ohne vorher um Erlaubnis gefragt zu haben. Wir sagen das offen, statt es entdecken zu lassen: Das ist eine bewusste Entscheidung, kein Versehen.',
+		'Der Katechismus, das Kompendium und die lehramtlichen Dokumente sind Eigentum ihrer Rechteinhaber — vor allem der Libreria Editrice Vaticana und des Dikasteriums für die Kommunikation.',
 	'colophon.copyrightBody2':
-		'Wir treffen diese Entscheidung, weil diese Texte die Lehre der Kirche sind, an alle gerichtet, und weil das von den Rechteinhabern geäußerte Anliegen die Unversehrtheit des Textes ist. Deshalb wird der Text nie gekürzt, nie umschrieben, nie neu geschrieben und nie neben Werbung gestellt. Offensichtliche Mängel der veröffentlichten Seiten bessern wir sehr wohl aus — ein ausgefallenes Wort, eine verstümmelte Zitatangabe, ein Markup, das einen Absatz verschluckt hat — stets hin zu dem, was die Quelle selbst druckt, nie hin zu dem, was wir für richtig halten könnten. Wir ändern ihren Sinn nicht, setzen keine eigene Formulierung an ihre Stelle und kommentieren nicht. Jede Korrektur wird einzeln verzeichnet, mit dem Original, dem Ersatz und dem Grund; nichts wird je stillschweigend geändert. Jedes Werk zeigt den Urheberrechtsvermerk seines Rechteinhabers in dessen Wortlaut und verweist auf die Seite, von der es stammt.',
+		'Jedes Werk zeigt den Urheberrechtsvermerk seines Rechteinhabers in dessen Wortlaut und verweist auf die Seite, von der es stammt.',
 	'colophon.copyrightBody3':
-		'Wenn Sie Rechte an einem Text hier halten und lieber nicht möchten, dass er veröffentlicht wird, schreiben Sie uns, und wir nehmen ihn umgehend herunter. Ohne Diskussion und ohne dass zuvor jemand anderes eingeschaltet werden müsste.',
+		'Wenn Sie Rechte an einem Text hier halten und lieber nicht möchten, dass er veröffentlicht wird, schreiben Sie uns.',
 	'colophon.contactTitle': 'Kontakt',
 	'colophon.contactBody': 'Für alles, auch für das Obige:',
 	'colophon.contactPending':
 		'Eine Kontaktadresse ist noch nicht festgelegt. Diese Seite sollte nicht öffentlich gemacht werden, bevor es eine gibt — die obige Zusage ist ohne einen Weg, uns zu erreichen, nicht viel wert.',
-	'colophon.buildTitle': 'Wie sie entsteht',
-	'colophon.buildBody':
-		'Die Texte werden aus ihren veröffentlichten Quellen gesammelt, zu einem strukturierten Korpus verarbeitet und als statische Seiten ausgegeben. Korrekturen an Mängeln der Quelle werden einzeln verzeichnet, mit dem ursprünglichen Wortlaut, dem korrigierten und dem Grund — kein Text wird je stillschweigend geändert.',
 	'colophon.illustrationsTitle': 'Die Illustrationen',
 	'colophon.illustrationsBody':
-		'Die Bibel trägt Gustave Dorés Stiche für La Grande Bible de Tours, jeden bei dem Vers, den er darstellt. Sie sind der letzte und größte seiner Bibelzyklen, in Stahl gestochen und mit dem Text gedruckt statt am Ende des Bandes gesammelt.',
+		'Die Bibel trägt Gustave Dorés Stiche, jeden bei dem Vers, den er darstellt — der letzte und größte seiner Bibelzyklen, nach seinen Zeichnungen in Holz geschnitten und mit dem Text gedruckt statt am Ende des Bandes gesammelt.',
+	'colophon.illustrationsRights':
+		'Sie sind gemeinfrei, wie die Daten unten zeigen, und die getreue fotografische Wiedergabe eines gemeinfreien Stichs begründet kein neues Urheberrecht.',
 	'colophon.countPlates': 'Stiche',
 	'colophon.countPlateChapters': 'illustrierte Kapitel',
-	'colophon.illustrationsAnchors':
-		'Jeder Stich brauchte eine Adresse, und die gedruckten Bildunterschriften allein waren nicht verlässlich genug. Für jeden wurden drei Lesungen genommen — die Unterschrift unter dem Stich selbst, eine unabhängige Abschrift und das Verzeichnis der Sammlung, die wir gescannt haben — und wo sie sich widersprachen, gab die Unterschrift den Ausschlag, denn sie ist, was der Stecher gestochen hat. Alle Lesungen bleiben erhalten, auch die unterlegenen.',
-	'colophon.illustrationsProcessing':
-		'Die Scans sind auf den Stich beschnitten, auf einen gemeinsamen Papierton ausgeglichen, in Grau überführt und neu kodiert; innerhalb des Bildes wird nichts verändert, retuschiert oder entfernt. Sie werden in zwei Breiten ausgeliefert, damit ein Telefon kein Bild für einen großen Schirm lädt, und erst geholt, wenn man bei ihnen angekommen ist.',
-	'colophon.illustrationsRights':
-		'Sie sind gemeinfrei. Die Platten wurden 1866 gestochen und Doré starb 1883, und die getreue fotografische Wiedergabe eines gemeinfreien Stichs begründet kein neues Urheberrecht. Wir nennen die Herkunft unserer Scans, weil wir dafür dankbar sind, nicht weil wir müssten.',
 	'plates.scansBy': 'Scans bereitgestellt von',
 	'plates.enlarge': '{title} vergrößern',
 	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'Die Schrift',
 	'colophon.typeBody':
-		'Gesetzt in EB Garamond, Georg Duffners und Octavio Pardos Wiederbelebung der Typen, die Claude Garamont in den 1590er Jahren schnitt — jene humanistische Tradition, in der die Kirche seit der Renaissance druckt. Die Initialen sind Pirata One, eine gebrochene Schrift, deren Versalien in der Größe, die eine Initiale verlangt, lesbar bleiben. Beide stehen unter der SIL Open Font License und werden von dieser Seite ausgeliefert und nicht von Dritten, sodass das Lesen einer Seite von niemandes Server sonst etwas verlangt.',
+		'Gesetzt in EB Garamond, Georg Duffners und Octavio Pardos Wiederbelebung der Typen, die Claude Garamont in den 1590er Jahren schnitt — jene humanistische Tradition, in der die Kirche seit der Renaissance druckt. Ihr Kyrillisch stammt von denselben Händen, belebt aber nichts wieder: Ein kyrillischer Garamond wurde nie geschnitten, also steht das Russische in einer Form, die eigens dazu gezeichnet wurde, neben dem Übrigen zu bestehen.',
+	'colophon.typeArabic':
+		'Das Arabische liegt ganz außerhalb ihrer Reichweite und steht in Amiri — Khaled Hosnys Wiederbelebung des Nas-chī, das 1905 für die Bulaq-Presse in Kairo geschnitten wurde, gewählt nach derselben Überlegung wie die Textschrift: eine bestimmte historische Buchtype statt einer zeitgenössischen Zeichnung.',
+	'colophon.typeInitials':
+		'Die Initialen sind Pirata One, eine gebrochene Schrift, deren Versalien in der Größe, die eine Initiale verlangt, lesbar bleiben, und — für das Russische — Ponomar, die die kirchenslawische Type der Synodaldruckerei wiedergibt. Ponomar setzt die Initiale und nie den Text: Eine moderne Enzyklika, durchgehend in Synodaltype gesetzt, würde etwas Unwahres über sie sagen. Alle stehen unter der SIL Open Font License und werden von dieser Seite ausgeliefert und nicht von Dritten, sodass das Lesen einer Seite von niemandes Server sonst etwas verlangt.',
 	'refs.citedIn': 'Zitiert in',
 	'bible.cccAbbrev': 'KKK',
 	'bible.wholeChapter': 'Dieses Kapitel',

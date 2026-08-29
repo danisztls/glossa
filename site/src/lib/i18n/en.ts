@@ -296,34 +296,35 @@ export const en: Dictionary = {
 		'Built to keep working offline once you have visited it, so a poor connection need not be a barrier to reading.',
 	'colophon.textsTitle': 'The texts',
 	'colophon.textsBody':
-		'Every text comes from a named source, and every work records its edition, its source page and the date it was retrieved. Scripture uses public-domain translations; the Catechism, the Compendium and the magisterial documents come from the Holy See\u2019s own published texts. We reproduce them unaltered \u2014 and where our copy of a work has turned out incomplete, we leave it out of the site rather than show you a text with gaps you cannot see.',
+		'Every text comes from a named source, and every work records its edition, its source page and the date it was retrieved. Scripture uses public-domain translations; the Catechism, the Compendium and the magisterial documents come from the Holy See\u2019s own published texts.',
+	'colophon.textsFidelity':
+		'The text is never abridged, never paraphrased, never rewritten, and never placed beside advertising. We do repair plain defects \u2014 a dropped word, a mangled citation, markup that swallowed a paragraph \u2014 always toward what the source itself prints, never toward what we think it should say.',
 	'colophon.countBible': 'Bible editions',
 	'colophon.countDocuments': 'magisterial documents',
 	'colophon.copyrightTitle': 'Copyright',
 	'colophon.copyrightBody1':
-		'The Catechism, the Compendium and the magisterial documents are the property of their rights holders \u2014 principally the Libreria Editrice Vaticana and the Dicastery for Communication. We reproduce them here without having asked permission first. We say so plainly rather than leave it to be discovered: this is a deliberate choice, not an oversight.',
+		'The Catechism, the Compendium and the magisterial documents are the property of their rights holders \u2014 principally the Libreria Editrice Vaticana and the Dicastery for Communication.',
 	'colophon.copyrightBody2':
-		'We make that choice because these texts are the Church\u2019s teaching, addressed to everyone, and because the concern rights holders have stated is the integrity of the text. So the text is never abridged, never paraphrased, never rewritten, and never placed beside advertising. We do repair plain defects in the published pages \u2014 a dropped word, a mangled citation, markup that swallowed a paragraph \u2014 always toward what the source itself prints, never toward what we might think it should say. We do not change its meaning, do not substitute our own wording, and do not annotate or editorialise. Every correction is recorded on its own, with the original, the replacement and the reason; nothing is ever changed silently. Each work displays its rights holder\u2019s own copyright notice, in their wording, and links to the page it was taken from.',
+		'Each work displays its rights holder\u2019s own copyright notice, in their wording, and links to the page it was taken from.',
 	'colophon.copyrightBody3':
-		'If you hold rights in any text here and would rather it were not published, write to us and we will take it down promptly. No argument, and no need to involve anyone else first.',
+		'If you hold rights in any text here and would rather it were not published, write to us.',
 	'colophon.contactTitle': 'Contact',
 	'colophon.contactBody': 'For anything at all, including the above:',
 	'colophon.contactPending':
 		'A contact address has not been set yet. This site should not be made public until it has one \u2014 the commitment above is not meaningful without a way to reach us.',
-	'colophon.buildTitle': 'How it is made',
-	'colophon.buildBody':
-		'The texts are collected from their published sources, parsed into a structured corpus, and rendered as static pages. Corrections to source defects are recorded individually, with the original wording, the corrected wording, and the reason \u2014 no text is ever silently changed.',
 	'colophon.illustrationsTitle': 'The illustrations',
+	// Deliberately does NOT name the collection, its publisher or any date:
+	// the credit line under this section is generated from the collection's
+	// own manifest and already prints the title, the artist with his dates,
+	// the 1866 edition and the modern reproduction. Prose that repeated them
+	// would be a second, hand-typed copy of a generated fact — the thing the
+	// credit exists to prevent.
 	'colophon.illustrationsBody':
-		'The Bible carries Gustave Doré’s engravings for La Grande Bible de Tours, each one placed at the verse it depicts. They are the last and largest of his Bible cycles, cut in steel and printed with the text rather than gathered at the back.',
+		'The Bible carries Gustave Doré’s engravings, each one placed at the verse it depicts — the last and largest of his Bible cycles, cut in wood from his drawings and printed with the text rather than gathered at the back.',
+	'colophon.illustrationsRights':
+		'They are in the public domain, as the dates below show, and a faithful photographic reproduction of a public-domain engraving carries no new copyright of its own.',
 	'colophon.countPlates': 'engravings',
 	'colophon.countPlateChapters': 'chapters illustrated',
-	'colophon.illustrationsAnchors':
-		'Each plate had to be given an address, and the printed captions alone were not enough to trust. Three readings were taken for every one — the caption under the plate itself, an independent transcription, and the index of the collection we scanned from — and where they disagreed the caption was preferred, since it is what the engraver cut. Every reading is kept, including the ones that lost.',
-	'colophon.illustrationsProcessing':
-		'The scans are cropped to the engraving, levelled to a common paper tone, reduced to grey and re-encoded; nothing within the image is altered, retouched or removed. They are served at two widths so a phone does not download a picture made for a desktop, and they are never fetched until you have scrolled to them.',
-	'colophon.illustrationsRights':
-		'They are in the public domain. The plates were cut in 1866 and Doré died in 1883, and a faithful photographic reproduction of a public-domain engraving carries no new copyright of its own. We name where our scans came from because we are grateful for them, not because we are obliged to.',
 	'plates.scansBy': 'Scans provided by',
 	// The picture in the reading column is a control that opens it over the
 	// page, and `{title}` is the plate's own name — so the label names the
@@ -335,7 +336,11 @@ export const en: Dictionary = {
 	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'The type',
 	'colophon.typeBody':
-		'Set in EB Garamond, Georg Duffner and Octavio Pardo\u2019s revival of the types Claude Garamont cut in the 1590s \u2014 the humanist tradition the Church has printed in since the Renaissance. The opening initials are Pirata One, a blackletter whose capitals stay legible at the size a drop cap demands. Both are licensed under the SIL Open Font License and served from this site rather than from a third party, so reading a page asks nothing of anyone else\u2019s server.',
+		'Set in EB Garamond, Georg Duffner and Octavio Pardo\u2019s revival of the types Claude Garamont cut in the 1590s \u2014 the humanist tradition the Church has printed in since the Renaissance. Its Cyrillic is by the same hands but revives nothing: no Garamond Cyrillic was ever cut, so the Russian is set in a form drawn to sit beside the rest.',
+	'colophon.typeArabic':
+		'Arabic is beyond it altogether, and is set in Amiri \u2014 Khaled Hosny\u2019s revival of the naskh cut for the Bulaq press in Cairo in 1905, chosen on the same reasoning as the text face: a particular historical book type rather than a contemporary drawing.',
+	'colophon.typeInitials':
+		'The opening initials are Pirata One, a blackletter whose capitals stay legible at the size a drop cap demands, and \u2014 for the Russian \u2014 Ponomar, which reproduces the Church Slavonic type of the Synodal Press. Ponomar sets the initial and never the text: a modern encyclical set throughout in Synodal type would say something untrue about what it is. All are licensed under the SIL Open Font License and served from this site rather than from a third party, so reading a page asks nothing of anyone else\u2019s server.',
 	// One panel for every work that cites a verse — the Catechism and the
 	// magisterial documents together, so the verse is named once and
 	// everything citing it sits beside it. Each entry carries its own

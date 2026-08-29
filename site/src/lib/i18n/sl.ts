@@ -195,40 +195,39 @@ export const sl: Dictionary = {
 		'Zgrajeno tako, da po enem obisku deluje tudi brez povezave, da slaba povezava ne bi bila ovira za branje.',
 	'colophon.textsTitle': 'Besedila',
 	'colophon.textsBody':
-		'Vsako besedilo prihaja iz imenovanega vira, vsako delo pa beleži svojo izdajo, izvorno stran in datum prevzema. Sveto pismo uporablja prevode v javni lasti; katekizem, kompendij in dokumenti učiteljstva prihajajo iz besedil, ki jih je objavil Sveti sedež sam. Objavljamo jih nespremenjena — in kjer se je naš izvod nekega dela izkazal za nepopolnega, ga raje izpustimo, kakor da bi vam pokazali besedilo z vrzelmi, ki jih ne morete videti.',
+		'Vsako besedilo prihaja iz imenovanega vira, vsako delo pa beleži svojo izdajo, izvorno stran in datum prevzema. Sveto pismo uporablja prevode v javni lasti; katekizem, kompendij in dokumenti učiteljstva prihajajo iz besedil, ki jih je objavil Sveti sedež sam.',
+	'colophon.textsFidelity':
+		'Besedilo nikoli ni okrajšano, nikoli parafrazirano, nikoli na novo napisano in nikoli postavljeno ob oglas. Očitne napake pa popravljamo — izpadlo besedo, popačeno navedbo, oznake, ki so požrle odstavek — vselej v smeri tega, kar vir sam tiska, nikoli v smeri tega, kar bi po našem mnenju moralo pisati.',
 	'colophon.countBible': 'svetopisemskih izdaj',
 	'colophon.countDocuments': 'dokumentov učiteljstva',
 	'colophon.copyrightTitle': 'Avtorske pravice',
 	'colophon.copyrightBody1':
-		'Katekizem, kompendij in dokumenti učiteljstva so last svojih imetnikov pravic — predvsem Libreria Editrice Vaticana in Dikasterija za komunikacijo. Objavljamo jih tu, ne da bi prej prosili za dovoljenje. To povemo naravnost, namesto da bi prepustili odkritju: to je premišljena odločitev, ne spregled.',
+		'Katekizem, kompendij in dokumenti učiteljstva so last svojih imetnikov pravic — predvsem Libreria Editrice Vaticana in Dikasterija za komunikacijo.',
 	'colophon.copyrightBody2':
-		'To odločitev sprejemamo, ker so ta besedila nauk Cerkve, namenjen vsem, in ker je skrb, ki so jo izrekli imetniki pravic, celovitost besedila. Zato besedilo nikoli ni okrajšano, nikoli parafrazirano, nikoli na novo napisano in nikoli postavljeno ob oglas. Očitne napake objavljenih strani pa popravljamo — izpadlo besedo, popačeno navedbo, oznake, ki so požrle odstavek — vselej v smeri tega, kar vir sam tiska, nikoli v smeri tega, kar bi po našem mnenju moralo pisati. Ne spreminjamo pomena, ne postavljamo na njegovo mesto svojih besed in ne dodajamo opomb ali komentarja. Vsak popravek je zabeležen posebej, z izvirnikom, nadomestilom in razlogom; nič ni nikoli spremenjeno na tihem. Vsako delo prikazuje avtorskopravno obvestilo svojega imetnika pravic, v njegovem besedilu, in se sklicuje na stran, s katere je bilo vzeto.',
+		'Vsako delo prikazuje avtorskopravno obvestilo svojega imetnika pravic, v njegovem besedilu, in se sklicuje na stran, s katere je bilo vzeto.',
 	'colophon.copyrightBody3':
-		'Če imate pravice na katerem koli besedilu tukaj in bi raje videli, da ni objavljeno, nam pišite in ga bomo nemudoma umaknili. Brez ugovarjanja in ne da bi bilo treba prej vključiti kogar koli drugega.',
+		'Če imate pravice na katerem koli besedilu tukaj in bi raje videli, da ni objavljeno, nam pišite.',
 	'colophon.contactTitle': 'Stik',
 	'colophon.contactBody': 'Za kar koli, tudi za zgornje:',
 	'colophon.contactPending':
 		'Naslov za stik še ni določen. To spletišče ne bi smelo postati javno, dokler ga nima — zgornja zaveza brez poti do nas ne pomeni nič.',
-	'colophon.buildTitle': 'Kako nastaja',
-	'colophon.buildBody':
-		'Besedila zberemo iz njihovih objavljenih virov, jih razčlenimo v strukturiran korpus in izpišemo kot statične strani. Popravki napak v viru so zabeleženi vsak zase, z izvirnim besedilom, popravljenim besedilom in razlogom — nobeno besedilo ni nikoli spremenjeno na tihem.',
 	'colophon.illustrationsTitle': 'Ilustracije',
 	'colophon.illustrationsBody':
-		'Sveto pismo nosi grafike Gustava Doréja za La Grande Bible de Tours, vsako pri vrstici, ki jo upodablja. So zadnji in največji med njegovimi svetopisemskimi cikli: vrezane v jeklo in natisnjene z besedilom, ne zbrane na koncu knjige.',
+		'Sveto pismo nosi grafike Gustava Doréja, vsako pri vrstici, ki jo upodablja — zadnji in največji med njegovimi svetopisemskimi cikli: po njegovih risbah vrezan v les in natisnjen z besedilom, ne zbran na koncu knjige.',
+	'colophon.illustrationsRights':
+		'So v javni lasti, kakor kažejo letnice spodaj, in zvesta fotografska reprodukcija grafike v javni lasti ne ustvari nove avtorske pravice.',
 	'colophon.countPlates': 'grafik',
 	'colophon.countPlateChapters': 'ilustriranih poglavij',
-	'colophon.illustrationsAnchors':
-		'Vsaka grafika je morala dobiti naslov, sami natisnjeni podnapisi pa za to niso zadostovali. Za vsako so bila vzeta tri branja — podnapis pod grafiko samo, neodvisen prepis in kazalo zbirke, ki smo jo skenirali — in kjer so si nasprotovala, je obveljal podnapis, saj je to tisto, kar je vrezal graver. Vsa branja so ohranjena, tudi tista, ki so izgubila.',
-	'colophon.illustrationsProcessing':
-		'Skeni so obrezani do grafike, poravnani na skupen ton papirja, prevedeni v sivino in znova kodirani; znotraj slike ni nič spremenjeno, retuširano ali odstranjeno. Strežemo jih v dveh širinah, da telefon ne prenaša slike, narejene za velik zaslon, in jih ne zahtevamo, dokler ne pridete do njih.',
-	'colophon.illustrationsRights':
-		'So v javni lasti. Plošče so bile vrezane leta 1866, Doré pa je umrl leta 1883, in zvesta fotografska reprodukcija grafike v javni lasti ne ustvari nove avtorske pravice. Povemo, od kod so naši skeni, ker smo zanje hvaležni, ne ker bi morali.',
 	'plates.scansBy': 'Skene je omogočil',
 	'plates.enlarge': 'Povečaj {title}',
 	'plates.zoom': 'Povečava',
 	'colophon.typeTitle': 'Črke',
 	'colophon.typeBody':
-		'Stavljeno v EB Garamond, obuditvi črk, ki jih je v devetdesetih letih 16. stoletja rezal Claude Garamont, izpod rok Georga Duffnerja in Octavia Parda — v humanistični tradiciji, v kateri Cerkev tiska že od renesanse. Začetnice so Pirata One, gotica, katere verzalke ostanejo berljive v velikosti, ki jo zahteva inicialka. Obe sta pod licenco SIL Open Font License in ju streže to spletišče, ne tretja oseba, tako da branje strani ne zahteva ničesar od strežnika kogar koli drugega.',
+		'Stavljeno v EB Garamond, obuditvi črk, ki jih je v devetdesetih letih 16. stoletja rezal Claude Garamont, izpod rok Georga Duffnerja in Octavia Parda — v humanistični tradiciji, v kateri Cerkev tiska že od renesanse. Njegova cirilica je izpod istih rok, a ne obuja ničesar: cirilskega Garamonda ni nikoli nihče rezal, zato je ruščina stavljena v obliki, narisani tako, da stoji ob boku ostalemu.',
+	'colophon.typeArabic':
+		'Arabščina mu je povsem nedosegljiva in je stavljena v Amiri — Khaled Hosny je z njo obudil naskh, rezan za tiskarno Bulaq v Kairu leta 1905; izbran je po istem premisleku kot črka besedila: določena zgodovinska knjižna črka in ne sodobna risba.',
+	'colophon.typeInitials':
+		'Začetnice so Pirata One, gotica, katere verzalke ostanejo berljive v velikosti, ki jo zahteva inicialka, za ruščino pa Ponomar, ki povzema cerkvenoslovansko črko Sinodalne tiskarne. Ponomar stavi inicialko in nikoli besedila: sodobna okrožnica, v celoti stavljena v sinodalni črki, bi o sebi povedala nekaj neresničnega. Vse so pod licenco SIL Open Font License in jih streže to spletišče, ne tretja oseba, tako da branje strani ne zahteva ničesar od strežnika kogar koli drugega.',
 	'refs.citedIn': 'Navedeno v',
 	'bible.cccAbbrev': 'KKC',
 	'bible.wholeChapter': 'To poglavje',

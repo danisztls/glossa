@@ -24,6 +24,3 @@
  * so it reads to someone with no Latin as well as it does to someone with it.
  */
 export const CONTACT_EMAIL: string | null = 'curator@glossacatholica.org';
-
-/** Where the source lives, for the "how this was built" section. */
-export const REPOSITORY_URL: string | null = null;

@@ -194,40 +194,39 @@ export const es: Dictionary = {
 		'Construido para seguir funcionando sin conexión una vez lo hayas visitado, de modo que una mala conexión no sea un obstáculo para leer.',
 	'colophon.textsTitle': 'Los textos',
 	'colophon.textsBody':
-		'Cada texto procede de una fuente identificada, y cada obra registra su edición, su página de origen y la fecha en que fue recuperada. La Escritura usa traducciones de dominio público; el Catecismo, el Compendio y los documentos magisteriales provienen de los textos publicados por la propia Santa Sede. Los reproducimos sin alterarlos, y allí donde nuestra copia de una obra ha resultado incompleta, la dejamos fuera del sitio en lugar de mostrarte un texto con lagunas que no puedes ver.',
+		'Cada texto procede de una fuente identificada, y cada obra registra su edición, su página de origen y la fecha en que fue recuperada. La Escritura usa traducciones de dominio público; el Catecismo, el Compendio y los documentos magisteriales provienen de los textos publicados por la propia Santa Sede.',
+	'colophon.textsFidelity':
+		'El texto nunca se abrevia, nunca se parafrasea, nunca se reescribe y nunca se coloca junto a publicidad. Sí reparamos defectos evidentes —una palabra caída, una cita estropeada, un marcado que se tragó un párrafo—, siempre hacia lo que la propia fuente imprime, nunca hacia lo que nosotros creamos que debería decir.',
 	'colophon.countBible': 'ediciones de la Biblia',
 	'colophon.countDocuments': 'documentos magisteriales',
 	'colophon.copyrightTitle': 'Derechos de autor',
 	'colophon.copyrightBody1':
-		'El Catecismo, el Compendio y los documentos magisteriales son propiedad de sus titulares de derechos, principalmente la Libreria Editrice Vaticana y el Dicasterio para la Comunicación. Los reproducimos aquí sin haber pedido permiso antes. Lo decimos con claridad en lugar de dejar que se descubra: es una decisión deliberada, no un descuido.',
+		'El Catecismo, el Compendio y los documentos magisteriales son propiedad de sus titulares de derechos, principalmente la Libreria Editrice Vaticana y el Dicasterio para la Comunicación.',
 	'colophon.copyrightBody2':
-		'Tomamos esa decisión porque estos textos son la enseñanza de la Iglesia, dirigida a todos, y porque la preocupación que los titulares de derechos han expresado es la integridad del texto. Así que el texto nunca se abrevia, nunca se parafrasea, nunca se reescribe y nunca se coloca junto a publicidad. Sí reparamos defectos evidentes de las páginas publicadas —una palabra caída, una cita estropeada, un marcado que se tragó un párrafo—, siempre hacia lo que la propia fuente imprime, nunca hacia lo que nosotros creamos que debería decir. No cambiamos su sentido, no sustituimos su redacción por la nuestra y no anotamos ni editorializamos. Cada corrección queda registrada por separado, con el original, el reemplazo y el motivo; nada se cambia jamás en silencio. Cada obra muestra el aviso de derechos de su titular, con las palabras de este, y enlaza a la página de la que fue tomada.',
+		'Cada obra muestra el aviso de derechos de su titular, con las palabras de este, y enlaza a la página de la que fue tomada.',
 	'colophon.copyrightBody3':
-		'Si posees derechos sobre algún texto de aquí y prefieres que no se publique, escríbenos y lo retiraremos sin demora. Sin discusión, y sin necesidad de involucrar antes a nadie más.',
+		'Si posees derechos sobre algún texto de aquí y prefieres que no se publique, escríbenos.',
 	'colophon.contactTitle': 'Contacto',
 	'colophon.contactBody': 'Para cualquier cosa, incluido lo anterior:',
 	'colophon.contactPending':
 		'Todavía no se ha fijado una dirección de contacto. Este sitio no debería hacerse público hasta tenerla: el compromiso anterior no significa nada sin un modo de localizarnos.',
-	'colophon.buildTitle': 'Cómo está hecho',
-	'colophon.buildBody':
-		'Los textos se recogen de sus fuentes publicadas, se analizan hasta formar un corpus estructurado y se presentan como páginas estáticas. Las correcciones de defectos de origen se registran una a una, con la redacción original, la corregida y el motivo: ningún texto se cambia jamás en silencio.',
 	'colophon.illustrationsTitle': 'Las ilustraciones',
 	'colophon.illustrationsBody':
-		'La Biblia lleva los grabados de Gustave Doré para La Grande Bible de Tours, cada uno junto al versículo que representa. Son el último y el mayor de sus ciclos bíblicos, grabados en acero e impresos con el texto, no reunidos al final del volumen.',
+		'La Biblia lleva los grabados de Gustave Doré, cada uno junto al versículo que representa: el último y el mayor de sus ciclos bíblicos, grabado en madera a partir de sus dibujos e impreso con el texto, no reunido al final del volumen.',
+	'colophon.illustrationsRights':
+		'Están en dominio público, como muestran las fechas de abajo, y la reproducción fotográfica fiel de un grabado en dominio público no genera un derecho de autor nuevo.',
 	'colophon.countPlates': 'grabados',
 	'colophon.countPlateChapters': 'capítulos ilustrados',
-	'colophon.illustrationsAnchors':
-		'Cada grabado necesitaba una dirección, y los pies impresos por sí solos no bastaban. Se tomaron tres lecturas de cada uno — el pie bajo el propio grabado, una transcripción independiente y el índice de la colección que digitalizamos — y, donde discrepaban, se prefirió el pie, por ser lo que el grabador abrió en la plancha. Todas las lecturas quedan registradas, incluidas las que perdieron.',
-	'colophon.illustrationsProcessing':
-		'Las digitalizaciones se recortan hasta el grabado, se nivelan a un tono de papel común, se reducen a grises y se recodifican; nada dentro de la imagen se altera, retoca ni suprime. Se sirven en dos anchos, para que un teléfono no descargue una imagen hecha para una pantalla grande, y no se piden hasta que se llega a ellas.',
-	'colophon.illustrationsRights':
-		'Están en dominio público. Las planchas se grabaron en 1866 y Doré murió en 1883, y la reproducción fotográfica fiel de un grabado en dominio público no genera un derecho de autor nuevo. Decimos de dónde vienen nuestras digitalizaciones porque se lo agradecemos, no por obligación.',
 	'plates.scansBy': 'Digitalizaciones facilitadas por',
 	'plates.enlarge': 'Ampliar {title}',
 	'plates.zoom': 'Zoom',
 	'colophon.typeTitle': 'La tipografía',
 	'colophon.typeBody':
-		'Compuesto en EB Garamond, el renacimiento que Georg Duffner y Octavio Pardo hicieron de los tipos que Claude Garamont grabó en la década de 1590, la tradición humanista en la que la Iglesia imprime desde el Renacimiento. Las iniciales son Pirata One, una letra gótica cuyas mayúsculas siguen siendo legibles al tamaño que exige una capitular. Ambas están licenciadas bajo la SIL Open Font License y se sirven desde este sitio y no desde un tercero, de modo que leer una página no pide nada al servidor de nadie más.',
+		'Compuesto en EB Garamond, el renacimiento que Georg Duffner y Octavio Pardo hicieron de los tipos que Claude Garamont grabó en la década de 1590, la tradición humanista en la que la Iglesia imprime desde el Renacimiento. Su cirílico es de las mismas manos, pero no revive nada: nunca se grabó un Garamond cirílico, así que el ruso se compone en una forma dibujada para convivir con el resto.',
+	'colophon.typeArabic':
+		'El árabe queda del todo fuera de su alcance y se compone en Amiri: el renacimiento por Khaled Hosny del nasj grabado para la imprenta de Bulaq en El Cairo en 1905, elegido con el mismo razonamiento que la letra del texto, un tipo de libro histórico concreto y no un dibujo contemporáneo.',
+	'colophon.typeInitials':
+		'Las iniciales son Pirata One, una letra gótica cuyas mayúsculas siguen siendo legibles al tamaño que exige una capitular, y —para el ruso— Ponomar, que reproduce el tipo eslavo eclesiástico de la Imprenta Sinodal. Ponomar compone la inicial y nunca el texto: una encíclica moderna compuesta entera en tipo sinodal diría algo falso sobre lo que es. Todas están licenciadas bajo la SIL Open Font License y se sirven desde este sitio y no desde un tercero, de modo que leer una página no pide nada al servidor de nadie más.',
 	'refs.citedIn': 'Citado en',
 	'bible.cccAbbrev': 'CIC',
 	'bible.wholeChapter': 'Este capítulo',

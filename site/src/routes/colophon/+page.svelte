@@ -5,9 +5,8 @@
 	 * docs/research/copyright.md §5 lists this page as part of the adopted
 	 * posture, not as documentation of it: hosting Church-owned texts
 	 * without prior permission is a coherent position only if the position
-	 * is stated openly, with a contact address, and with a standing
-	 * commitment to comply promptly if a rights holder writes. Absent this
-	 * page, the same act is just an unexplained omission. That is why
+	 * is stated openly, with a contact address a rights holder can write to.
+	 * Absent this page, the same act is just an unexplained omission. That is why
 	 * PLAN.md ranks a page of prose above features that took far longer.
 	 *
 	 * Written as plain statements in the first person plural, and not
@@ -20,7 +19,7 @@
 	 */
 	import { isUnpublished, listDocuments, listWorks } from '$lib/corpus';
 	import { plateCredits } from '$lib/corpus-index';
-	import { CONTACT_EMAIL, REPOSITORY_URL } from '$lib/colophon';
+	import { CONTACT_EMAIL } from '$lib/colophon';
 	import { t } from '$lib/i18n.svelte';
 
 	const works = listWorks();
@@ -76,61 +75,36 @@
 
 	<h2 class="label-micro">{t('colophon.textsTitle')}</h2>
 	<p>{t('colophon.textsBody')}</p>
+	<!--
+		What is done to a text, said where a reader meets the texts rather
+		than in the copyright section below. It reads there as a concession to
+		a rights holder; it is really a statement about the edition, and the
+		reader is the one it is owed to.
+	-->
+	<p>{t('colophon.textsFidelity')}</p>
 	<p class="counts">
 		{bibleEditions}
 		{t('colophon.countBible')} · {documentCount}
 		{t('colophon.countDocuments')}
 	</p>
 
-	<h2 class="label-micro">{t('colophon.copyrightTitle')}</h2>
-	<!--
-		The load-bearing paragraphs. Three claims, in this order because it is
-		the order a rights holder would want them: what we did, what we did
-		not do, and what we will do if asked.
-	-->
-	<p>{t('colophon.copyrightBody1')}</p>
-	<p>{t('colophon.copyrightBody2')}</p>
-	<p><strong>{t('colophon.copyrightBody3')}</strong></p>
-
-	<h2 class="label-micro">{t('colophon.contactTitle')}</h2>
-	{#if CONTACT_EMAIL}
-		<p>
-			{t('colophon.contactBody')}
-			<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-		</p>
-	{:else}
-		<!--
-			Deliberately visible rather than silently absent — see
-			`$lib/colophon.ts`. The whole page is premised on being reachable;
-			shipping it unreachable would be worse than not shipping it.
-		-->
-		<p class="pending">{t('colophon.contactPending')}</p>
-	{/if}
-
-	<h2 class="label-micro">{t('colophon.buildTitle')}</h2>
-	<p>{t('colophon.buildBody')}</p>
-	{#if REPOSITORY_URL}
-		<p><a href={REPOSITORY_URL} rel="external noopener" target="_blank">{REPOSITORY_URL}</a></p>
-	{/if}
-
 	{#if collections.length > 0}
 		<h2 class="label-micro">{t('colophon.illustrationsTitle')}</h2>
 		<!--
 			The prose sits OUTSIDE the loop and the credit inside it, which is
 			the split that will still be right if a second collection is ever
-			added: what is said here is about the pictures this site carries and
-			how they were handled, and it names Doré because he is who they are
-			by; what is said per collection is whose copy we have.
+			added: what is said here is about the pictures this site carries,
+			and it names Doré because he is who they are by; what is said per
+			collection is whose copy we have.
 
-			Three claims, in the order a reader checking our work would want
-			them: where each picture was placed and on what evidence, what was
-			done to the pixels, and on what footing we publish them at all. The
-			last is the load-bearing one, and it has the same shape as the
-			copyright section above — what the position is, and why it holds.
+			Two claims: what the pictures are, and on what footing we publish
+			them at all. The second is the load-bearing one, and it has the
+			same shape as the copyright section below — what the position is,
+			and why it holds. Neither names a date, because the credit line
+			at the foot of the section is generated from the collection's own
+			manifest and prints them all.
 		-->
 		<p>{t('colophon.illustrationsBody')}</p>
-		<p>{t('colophon.illustrationsAnchors')}</p>
-		<p>{t('colophon.illustrationsProcessing')}</p>
 		<p>{t('colophon.illustrationsRights')}</p>
 		{#each collections as collection (collection.title)}
 			<p class="counts">
@@ -150,12 +124,50 @@
 		{/each}
 	{/if}
 
-	<!-- Both faces are OFL, which requires the copyright notice and licence to
-	     travel with them; the licence texts ship as static/fonts/OFL-*.txt and
-	     this is the human-readable half of that obligation. It also belongs on
-	     a colophon in the older sense of the word. -->
+	<!-- Every face here is OFL, which requires the copyright notice and licence
+	     to travel with them; the licence texts ship as static/fonts/OFL-*.txt
+	     and this is the human-readable half of that obligation. It also belongs
+	     on a colophon in the older sense of the word. Three paragraphs, and the
+	     split is by JOB rather than by face — the text face and its Cyrillic,
+	     the Arabic the text face cannot reach, then both display faces and the
+	     licence all four share. A paragraph per face would be five keys in
+	     fourteen dictionaries to say four things. Source Sans 3 sets the chrome
+	     and is deliberately not named: it is our furniture, not the book. -->
 	<h2 class="label-micro">{t('colophon.typeTitle')}</h2>
 	<p>{t('colophon.typeBody')}</p>
+	<p>{t('colophon.typeArabic')}</p>
+	<p>{t('colophon.typeInitials')}</p>
+
+	<!--
+		Last, and deliberately. The page opens with what a reader came for —
+		what this is, the texts, the pictures, the type — and closes with the
+		two sections addressed to someone else: whoever holds rights in a text
+		here, and how to reach us. Ordered that way, the copyright statement
+		reads as the standing position it is rather than as the site's
+		apology for existing.
+
+		Three claims, in the order a rights holder would want them: whose the
+		texts are, what each work shows of theirs, and where to write.
+	-->
+	<h2 class="label-micro">{t('colophon.copyrightTitle')}</h2>
+	<p>{t('colophon.copyrightBody1')}</p>
+	<p>{t('colophon.copyrightBody2')}</p>
+	<p><strong>{t('colophon.copyrightBody3')}</strong></p>
+
+	<h2 class="label-micro">{t('colophon.contactTitle')}</h2>
+	{#if CONTACT_EMAIL}
+		<p>
+			{t('colophon.contactBody')}
+			<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+		</p>
+	{:else}
+		<!--
+			Deliberately visible rather than silently absent — see
+			`$lib/colophon.ts`. The whole page is premised on being reachable;
+			shipping it unreachable would be worse than not shipping it.
+		-->
+		<p class="pending">{t('colophon.contactPending')}</p>
+	{/if}
 </article>
 
 <style>

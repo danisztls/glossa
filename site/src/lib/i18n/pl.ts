@@ -193,40 +193,39 @@ export const pl: Dictionary = {
 		'Zbudowana tak, by po odwiedzeniu działała dalej bez połączenia, aby słabe łącze nie było przeszkodą w czytaniu.',
 	'colophon.textsTitle': 'Teksty',
 	'colophon.textsBody':
-		'Każdy tekst pochodzi z wskazanego źródła, a każde dzieło odnotowuje swoje wydanie, stronę źródłową i datę pobrania. Pismo Święte korzysta z przekładów w domenie publicznej; Katechizm, Kompendium i dokumenty Magisterium pochodzą z tekstów opublikowanych przez samą Stolicę Apostolską. Odtwarzamy je bez zmian — a tam, gdzie nasza kopia dzieła okazała się niepełna, pomijamy je na stronie, zamiast pokazywać tekst z lukami, których nie widać.',
+		'Każdy tekst pochodzi z wskazanego źródła, a każde dzieło odnotowuje swoje wydanie, stronę źródłową i datę pobrania. Pismo Święte korzysta z przekładów w domenie publicznej; Katechizm, Kompendium i dokumenty Magisterium pochodzą z tekstów opublikowanych przez samą Stolicę Apostolską.',
+	'colophon.textsFidelity':
+		'Tekst nigdy nie jest skracany, nigdy parafrazowany, nigdy przepisywany i nigdy nie sąsiaduje z reklamą. Naprawiamy natomiast oczywiste usterki — zgubione słowo, zniekształcony odsyłacz, znaczniki, które połknęły akapit — zawsze w stronę tego, co drukuje samo źródło, nigdy w stronę tego, co naszym zdaniem powinno tam być.',
 	'colophon.countBible': 'wydania Biblii',
 	'colophon.countDocuments': 'dokumenty Magisterium',
 	'colophon.copyrightTitle': 'Prawa autorskie',
 	'colophon.copyrightBody1':
-		'Katechizm, Kompendium i dokumenty Magisterium są własnością podmiotów praw autorskich — głównie Libreria Editrice Vaticana i Dykasterii ds. Komunikacji. Odtwarzamy je tutaj, nie pytając wcześniej o zgodę. Mówimy to wprost, zamiast pozwolić to odkryć: jest to decyzja świadoma, a nie przeoczenie.',
+		'Katechizm, Kompendium i dokumenty Magisterium są własnością podmiotów praw autorskich — głównie Libreria Editrice Vaticana i Dykasterii ds. Komunikacji.',
 	'colophon.copyrightBody2':
-		'Podejmujemy tę decyzję, ponieważ teksty te są nauczaniem Kościoła skierowanym do wszystkich, a troską wyrażaną przez podmioty praw jest nienaruszalność tekstu. Dlatego tekst nigdy nie jest skracany, nigdy parafrazowany, nigdy przepisywany i nigdy nie sąsiaduje z reklamą. Naprawiamy natomiast oczywiste usterki opublikowanych stron — zgubione słowo, zniekształcony odsyłacz, znaczniki, które połknęły akapit — zawsze w stronę tego, co drukuje samo źródło, nigdy w stronę tego, co naszym zdaniem powinno tam być. Nie zmieniamy sensu, nie zastępujemy sformułowań własnymi, nie opatrujemy komentarzem. Każda poprawka jest odnotowana osobno, wraz z oryginałem, zamiennikiem i uzasadnieniem; nic nigdy nie jest zmieniane po cichu. Każde dzieło wyświetla notę praw autorskich swojego podmiotu, jego własnymi słowami, i odsyła do strony, z której zostało wzięte.',
+		'Każde dzieło wyświetla notę praw autorskich swojego podmiotu, jego własnymi słowami, i odsyła do strony, z której zostało wzięte.',
 	'colophon.copyrightBody3':
-		'Jeśli posiadasz prawa do któregokolwiek z tekstów i wolisz, by nie był publikowany, napisz do nas, a niezwłocznie go usuniemy. Bez dyskusji i bez potrzeby angażowania wpierw kogokolwiek innego.',
+		'Jeśli posiadasz prawa do któregokolwiek z tekstów i wolisz, by nie był publikowany, napisz do nas.',
 	'colophon.contactTitle': 'Kontakt',
 	'colophon.contactBody': 'W każdej sprawie, także w powyższej:',
 	'colophon.contactPending':
 		'Adres kontaktowy nie został jeszcze ustalony. Ta strona nie powinna być publiczna, dopóki go nie ma — powyższe zobowiązanie nic nie znaczy bez sposobu, by się z nami skontaktować.',
-	'colophon.buildTitle': 'Jak to powstaje',
-	'colophon.buildBody':
-		'Teksty są zbierane z opublikowanych źródeł, przetwarzane w uporządkowany korpus i wyświetlane jako strony statyczne. Poprawki usterek źródłowych są odnotowywane pojedynczo, wraz z pierwotnym brzmieniem, poprawionym i uzasadnieniem — żaden tekst nie jest nigdy zmieniany po cichu.',
 	'colophon.illustrationsTitle': 'Ilustracje',
 	'colophon.illustrationsBody':
-		'Biblia niesie ryciny Gustave’a Doré do La Grande Bible de Tours, każdą przy wersecie, który przedstawia. To ostatni i największy z jego cykli biblijnych, ryty w stali i drukowany wraz z tekstem, a nie zebrany na końcu tomu.',
+		'Biblia niesie ryciny Gustave’a Doré, każdą przy wersecie, który przedstawia — ostatni i największy z jego cykli biblijnych, rytowany w drewnie według jego rysunków i drukowany wraz z tekstem, a nie zebrany na końcu tomu.',
+	'colophon.illustrationsRights':
+		'Należą do domeny publicznej, jak pokazują daty poniżej, a wierna fotograficzna reprodukcja ryciny z domeny publicznej nie tworzy nowego prawa autorskiego.',
 	'colophon.countPlates': 'ryciny',
 	'colophon.countPlateChapters': 'zilustrowane rozdziały',
-	'colophon.illustrationsAnchors':
-		'Każda rycina musiała otrzymać adres, a same drukowane podpisy nie wystarczały. Dla każdej wzięto trzy odczyty — podpis pod samą ryciną, niezależną transkrypcję oraz indeks zbioru, który zeskanowaliśmy — a tam, gdzie się rozchodziły, pierwszeństwo dano podpisowi, bo to on został wyryty. Wszystkie odczyty są zachowane, także te przegrane.',
-	'colophon.illustrationsProcessing':
-		'Skany są przycięte do samej ryciny, wyrównane do wspólnego tonu papieru, sprowadzone do szarości i przekodowane; niczego wewnątrz obrazu nie zmieniono, nie retuszowano ani nie usunięto. Podawane są w dwóch szerokościach, by telefon nie pobierał obrazu przeznaczonego na duży ekran, i nie są pobierane, dopóki się do nich nie dojdzie.',
-	'colophon.illustrationsRights':
-		'Należą do domeny publicznej. Płyty wykonano w 1866 roku, a Doré zmarł w 1883, wierna zaś fotograficzna reprodukcja ryciny z domeny publicznej nie tworzy nowego prawa autorskiego. Podajemy, skąd pochodzą nasze skany, ponieważ jesteśmy za nie wdzięczni, a nie dlatego, że musimy.',
 	'plates.scansBy': 'Skany udostępnione przez',
 	'plates.enlarge': 'Powiększ {title}',
 	'plates.zoom': 'Powiększenie',
 	'colophon.typeTitle': 'Krój pisma',
 	'colophon.typeBody':
-		'Złożono krojem EB Garamond, odnowieniem przez Georga Duffnera i Octavia Parda czcionek, które Claude Garamont wyciął w latach dziewięćdziesiątych XVI wieku — tradycji humanistycznej, w której Kościół drukuje od czasów renesansu. Inicjały to Pirata One, gotyk, którego wersaliki pozostają czytelne w rozmiarze, jakiego wymaga inicjał. Oba są na licencji SIL Open Font License i serwowane z tej strony, a nie przez osoby trzecie, więc czytanie strony niczego nie wymaga od cudzego serwera.',
+		'Złożono krojem EB Garamond, odnowieniem przez Georga Duffnera i Octavia Parda czcionek, które Claude Garamont wyciął w latach dziewięćdziesiątych XVI wieku — tradycji humanistycznej, w której Kościół drukuje od czasów renesansu. Jego cyrylica wyszła spod tych samych rąk, ale niczego nie wskrzesza: cyrylickiego Garamonda nigdy nie wycięto, więc rosyjski składany jest formą narysowaną tak, by stanęła obok reszty.',
+	'colophon.typeArabic':
+		'Arabski jest całkowicie poza jego zasięgiem i składany jest krojem Amiri — odnowieniem przez Khaleda Hosny’ego naschi wyciętego dla drukarni Bulaq w Kairze w 1905 roku, wybranym z tego samego powodu co krój tekstowy: konkretny historyczny krój książkowy, a nie współczesny rysunek.',
+	'colophon.typeInitials':
+		'Inicjały to Pirata One, gotyk, którego wersaliki pozostają czytelne w rozmiarze, jakiego wymaga inicjał, oraz — dla rosyjskiego — Ponomar, odtwarzający cerkiewnosłowiański krój Drukarni Synodalnej. Ponomar składa inicjał, nigdy tekst: nowoczesna encyklika złożona w całości krojem synodalnym mówiłaby o sobie nieprawdę. Wszystkie są na licencji SIL Open Font License i serwowane z tej strony, a nie przez osoby trzecie, więc czytanie strony niczego nie wymaga od cudzego serwera.',
 	'refs.citedIn': 'Cytowane w',
 	'bible.cccAbbrev': 'KKK',
 	'bible.wholeChapter': 'Ten rozdział',
