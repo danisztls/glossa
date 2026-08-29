@@ -72,6 +72,10 @@
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 3 sections and §2 holds 55% of the 26 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
 		},
+		"encyclical.dives-in-misericordia.sk": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 1 section and §15 holds 100% of the 90 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
 		"encyclical.divini-illius-magistri.fr": {
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 64 sections and §1 holds 92% of the 94 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
@@ -88,17 +92,37 @@
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 27 sections and §1 holds 95% of the 58 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
 		},
+		"encyclical.laborem-exercens.sk": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 1 section and §27 holds 100% of the 115 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"exhortation.evangelii-nuntiandi.lv": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 5 sections and §1974 holds 96% of the 89 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
 		"exhortation.ideal-film.fr": {
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 2 sections and §1 holds 54% of the 64 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"exhortation.pastores-dabo-vobis.hu": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 2 sections and §1 holds 98% of the 276 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
 		},
 		"exhortation.signum-magnum.en": {
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 8 sections and §1 holds 60% of the 29 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
 		},
+		"vatii.christus-dominus.cs": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 9 sections and §1 holds 59% of the 40 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
 		"vatii.christus-dominus.fr": {
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 9 sections and §3 holds 62% of the 45 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"vatii.christus-dominus.hu": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 3 sections and §26 holds 91% of the 48 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
 		},
 		"vatii.gaudium-et-spes.fr": {
 			"date": "2026-08-29",
@@ -116,9 +140,25 @@
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 4 sections and §1 holds 97% of the 207 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
 		},
+		"vatii.optatam-totius.hu": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 1 section and §22 holds 100% of the 39 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"vatii.presbyterorum-ordinis.hu": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 1 section and §1 holds 100% of the 83 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"vatii.sacrosanctum-concilium.cs": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 9 sections and §1 holds 64% of the 32 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
 		"vatii.unitatis-redintegratio.fr": {
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 4 sections and §2 holds 53% of the 29 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"vatii.unitatis-redintegratio.hu": {
+			"date": "2026-08-29",
+			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 2 sections and §7 holds 80% of the 23 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
 		}
 	}
 }

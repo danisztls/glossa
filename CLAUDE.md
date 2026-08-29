@@ -335,6 +335,57 @@ already sitting in `raw/`.
   `sl` and `ro` are the interesting ones because they are already interface
   languages with no content in them at all.
 
+### Twelve more languages, and the answer to "hard constraint or table?"
+
+Taken in on 2026-08-29, the same day the question above was answered.
+**`DIVISIONS` is a data table and a new language is a vocabulary entry**, which
+is what its own comment already said; the CLI's refusal to parse a language
+with no entry is a guard against producing one undivided blob, not a wall.
+The corpus now holds **143 more editions** in cs, da, fi, hr, hu, lv, nl, ro,
+sk, sl, sw and vi — 1,272 works to 1,411 — for **141 requests**.
+
+- **The cheapest useful entry is the four nouns and nothing else**, because
+  `_NUMERAL` already reads `CAPUT III` and `III CAPUT` with no vocabulary at
+  all. Ordinals are needed only where the language spells a division number
+  out as a word, and not one of the twelve does.
+- **That entry was a latent bug until this day.** With `ordinals` empty,
+  `_alt` returned `""` and the compiled pattern became `(…|)` — an alternation
+  with an empty branch, matching zero characters after the noun, so ordinary
+  prose opening with the word "part" read as a division. It was waiting
+  precisely where the next language would land. Fixed in `_compile_labels`.
+- **`--offered-only` is why the crawl was 141 requests and not 2,816.** Every
+  modern-shell page prints a language switcher naming its document's other
+  editions, and measured over all 1,736 encyclical and exhortation pages it is
+  on every one and is EXACT rather than generous — `signum-magnum` lists
+  en/it/la/pt and omits the de/es/fr URLs that answer 200 with an empty shell.
+  The flag falls back to asking when the base page is not cached, so it can
+  only save requests, never lose an edition.
+- **Five of the twelve print no division label at all**, and their entry is an
+  empty `nouns` rather than one written from a dictionary — Swahili (16 pages,
+  all Vatican II, which head divisions with a bare Roman numeral), Croatian,
+  Slovak, Finnish, Romanian. **The check is what earned the empty entries**:
+  Danish `DEL` scored 31 and every one is the prose phrase "del i"; Croatian
+  `DIO` scored 3 and all three sit inside "vidio"; Finnish `LUKU` scored 1 and
+  it is "the 17th chapter of John" in a sentence. A candidate noun is proposed
+  and then READ, never counted and believed.
+- **The English fallback reads these languages correctly, which is not what
+  the `1 Joh` case would predict.** Every surface it resolves was checked:
+  `Jn`→John and `1 Jn`→1 John in Hungarian, `Joh`/`Lc`/`Mc`/`Gn` in Dutch,
+  `Mt`/`Lk` in Czech and Slovenian, `Taz. Mk` in Swahili. Nothing mis-links.
+  What is missing is coverage, not correctness — Hungarian `Zsolt` (Psalms)
+  and its like are simply not read, which is what `book-forms-oracle.mjs
+--derive` is for and has not been run for these yet.
+- **Ten damaged parses are switched off** in `site/unpublished.json`, found by
+  the same measure as the last wave: one section holding over half the text.
+  Slovak `dives-in-misericordia` and `laborem-exercens` are single sections
+  holding 100%.
+- **What is deliberately still out: the non-Latin scripts.** `be`
+  (Byelorussian, 16 Vatican II documents) and `he` (Hebrew, 1) are mapped in
+  `VATII_LANG_FROM_URL`'s comment and nowhere else; Chinese is the only one
+  that is a code question rather than a table — `第一章` interleaves the
+  numeral between two markers and `_NUMERAL` has no CJK digits. Russian and
+  Arabic already prove a non-Latin script needs no code, only a table.
+
 ## The Catechism is eight editions in three page formats
 
 Ingested 2026-08-26 (`docs/decisions.md`, `docs/corpus-schema.md` §Catechism).

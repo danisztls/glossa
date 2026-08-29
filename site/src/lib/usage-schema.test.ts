@@ -54,23 +54,36 @@ describe('vocabularies', () => {
 		// four times (CLAUDE.md, "Work that spans languages"), and deriving one
 		// from the other is the specific mistake that document warns against.
 		// Adding a content language should mean editing this line on purpose.
+		// Fifteen until 2026-08-29, when the Latin-script Magisterium landed
+		// nine more (cs, da, fi, hr, lv, nl, sk, sw, vi) and hu/ro/sl gained
+		// their first documents. `sv` is still the other direction: an
+		// interface language whose only content is the Compendium.
 		expect([...SETS.content].sort()).toEqual(
 			[
 				'ar',
+				'cs',
+				'da',
 				'de',
 				'en',
 				'es',
+				'fi',
 				'fr',
+				'hr',
 				'hu',
 				'it',
 				'la',
+				'lv',
 				'mg',
+				'nl',
 				'pl',
 				'pt',
 				'ro',
 				'ru',
+				'sk',
 				'sl',
-				'sv'
+				'sv',
+				'sw',
+				'vi'
 			].sort()
 		);
 	});

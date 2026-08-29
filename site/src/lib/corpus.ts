@@ -490,7 +490,16 @@ const LANGUAGE_NAMES: Record<string, string> = {
 	hu: 'Magyar',
 	ro: 'Română',
 	sl: 'Slovenščina',
-	sv: 'Svenska'
+	sv: 'Svenska',
+	cs: 'Čeština',
+	da: 'Dansk',
+	fi: 'Suomi',
+	hr: 'Hrvatski',
+	lv: 'Latviešu',
+	nl: 'Nederlands',
+	sk: 'Slovenčina',
+	sw: 'Kiswahili',
+	vi: 'Tiếng Việt'
 };
 
 /**

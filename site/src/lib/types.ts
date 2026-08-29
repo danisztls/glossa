@@ -76,7 +76,16 @@ export type ContentLang =
 	| 'hu'
 	| 'ro'
 	| 'sl'
-	| 'sv';
+	| 'sv'
+	| 'cs'
+	| 'da'
+	| 'fi'
+	| 'hr'
+	| 'lv'
+	| 'nl'
+	| 'sk'
+	| 'sw'
+	| 'vi';
 
 interface WorkManifestBase {
 	id: string;

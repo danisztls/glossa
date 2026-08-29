@@ -2345,9 +2345,17 @@ def _compile_labels(spec: Divisions) -> list[tuple[str, re.Pattern]]:
     after = _alt({**spec.ordinals, **spec.cardinals})
     before = _alt(spec.ordinals)
     nouns = {k: _alt(v) for k, v in spec.nouns.items()}
+    # `|{after}` only when there IS one. A language whose table spells no
+    # numbers out leaves `after` empty, and `({_NUMERAL}|)` is an alternation
+    # with an empty branch: it matches zero characters after the noun, so
+    # "RESZ szo a mondatban" -- ordinary prose opening with the word "part" --
+    # reads as a division whose number is None. Latent for as long as every
+    # table had ordinals, and waiting precisely where the next language lands,
+    # since the cheapest useful entry is nouns alone (`_NUMERAL` already
+    # covers `CAPUT III` and `III CAPUT` with no vocabulary at all).
+    tail = f"{_NUMERAL}|{after}" if after else _NUMERAL
     pats = [
-        (kind, re.compile(rf"^(?:{noun})\s+({_NUMERAL}|{after})\b"))
-        for kind, noun in nouns.items()
+        (kind, re.compile(rf"^(?:{noun})\s+({tail})\b")) for kind, noun in nouns.items()
     ]
     if spec.numeral_first:
         pats += [
@@ -2555,6 +2563,116 @@ DIVISIONS: dict[str, Divisions] = {
         # label -- the same reason English sets this False.
         numeral_first=False,
     ),
+    # ------------------------------------------------------------------
+    # The twelve Latin-script languages added 2026-08-29, all of them read
+    # off the 141 pages fetched that day and NONE of them written from the
+    # language. The method is the one the Latin entry above used: collect
+    # every short block from every page of one language, count the word that
+    # leads a numbered heading, then propose a candidate noun and check
+    # whether the pages print it. Five of the twelve print no division noun
+    # at all, and that is recorded as an empty `nouns` rather than filled in
+    # from a dictionary -- a table written from the language is a table
+    # nothing measured, and the parser has other ways to find a heading.
+    #
+    # WHAT THE CHECK CAUGHT, and why the empty entries are not laziness:
+    # Danish `DEL` scored 31 and every one is the preposition phrase "del i"
+    # ("part in"); Croatian `DIO` scored 3 and all three are inside "vidio";
+    # Finnish `LUKU` scored 1 and it is "the 17th chapter of John" in prose.
+    # Slovenian `DEL` behaves like the Croatian case, which is why `sl` is
+    # noun-first only -- `V DEL` would otherwise match inside "VIDEL".
+    # ------------------------------------------------------------------
+    "hu": Divisions(
+        # 51 numbered `FEJEZET`, 12 `RÉSZ`, 6 `CIKKELY`, 1 `SZAKASZ`, over
+        # 48 pages. Hungarian puts the numeral first and prints the ordinal
+        # period with it ("I. FEJEZET", "3. FEJEZET"), which is what `infix`
+        # is for; no page spells a division number out as a word.
+        nouns={
+            "part": ("RÉSZ",),
+            "section": ("SZAKASZ",),
+            "chapter": ("FEJEZET",),
+            "article": ("CIKKELY",),
+        },
+        ordinals={},
+        # A space is REQUIRED here, unlike the default `\s*`. Without it the
+        # numeral-first pattern matches INSIDE a word -- the trap Slovenian
+        # and Croatian fall into above -- and Hungarian is one of the two
+        # languages that actually needs the form.
+        infix=r"\.?\s+",
+    ),
+    "lv": Divisions(
+        # 57 `NODAĻA`, 7 `SADAĻA`, 7 `PANTS`, 4 `DAĻA` over 20 pages, all
+        # numeral-first with the ordinal period. `NOD` is the same word
+        # abbreviated, printed that way through most of Laudato si'; it is a
+        # second spelling exactly as Portuguese lists SECÇÃO and SEÇÃO.
+        # `DAĻA` cannot swallow `NODAĻA` or `SADAĻA`, because the pattern
+        # anchors the noun at the start of what follows the numeral.
+        nouns={
+            "part": ("DAĻA",),
+            "section": ("SADAĻA",),
+            "chapter": ("NODAĻA", "NOD"),
+            "article": ("PANTS",),
+        },
+        ordinals={},
+        infix=r"\.?\s+",
+    ),
+    "cs": Divisions(
+        # 105 `KAPITOLA`, 14 `ODDÍL`, 6 `ARTIKUL`, 2 `ČÁST`, 1 `ČLÁNEK` over
+        # 17 pages, every one noun-first ("KAPITOLA 1") and not one the other
+        # way round -- hence `numeral_first=False`. `ARTIKUL` and `ČLÁNEK`
+        # are the same tier spelled two ways across the mirror's editions.
+        nouns={
+            "part": ("ČÁST",),
+            "section": ("ODDÍL",),
+            "chapter": ("KAPITOLA",),
+            "article": ("ARTIKUL", "ČLÁNEK"),
+        },
+        ordinals={},
+        numeral_first=False,
+    ),
+    "nl": Divisions(
+        # 20 `HOOFDSTUK` and 6 `DEEL` over 10 pages, noun-first. `DEEL` is an
+        # ordinary Dutch noun too, so it is read only after the noun-first
+        # anchor, never as `VI DEEL`.
+        nouns={"part": ("DEEL",), "chapter": ("HOOFDSTUK",)},
+        ordinals={},
+        numeral_first=False,
+    ),
+    "sl": Divisions(
+        # 3 `POGLAVJE` and 1 `DEL` over 8 pages. Thin, and deliberately
+        # noun-first only: see the `VIDEL` note above.
+        nouns={"part": ("DEL",), "chapter": ("POGLAVJE",)},
+        ordinals={},
+        numeral_first=False,
+    ),
+    "vi": Divisions(
+        # 26 `CHƯƠNG` and 3 `PHẦN` over 8 pages, noun-first. `ĐIỀU` and `MỤC`
+        # scored too and both were rejected on reading them: `ĐIỀU` is the
+        # ordinary noun opening a numbered paragraph ("149. Điều..."), not a
+        # division label.
+        nouns={"part": ("PHẦN",), "chapter": ("CHƯƠNG",)},
+        ordinals={},
+        numeral_first=False,
+    ),
+    "da": Divisions(
+        # 3 pages, and `KAPITEL 1` is the only division label any of them
+        # prints. `DEL` scored 31 and is prose in every one.
+        nouns={"chapter": ("KAPITEL",)},
+        ordinals={},
+        numeral_first=False,
+    ),
+    # The five that print NO division label on any page fetched: Swahili
+    # (16 pages, all Vatican II, which head their divisions with a bare Roman
+    # numeral and a title), Croatian (5), Slovak (3), Finnish (2), Romanian
+    # (1). An empty `nouns` compiles to no patterns at all, so `match_label`
+    # answers None for them and the levelling walk reads their typography --
+    # which is what it already does for the 151 Latin pages that print no
+    # label either. Filling these in from a dictionary would be the one thing
+    # every other entry here was careful not to do.
+    "sw": Divisions(nouns={}, ordinals={}),
+    "hr": Divisions(nouns={}, ordinals={}),
+    "sk": Divisions(nouns={}, ordinals={}),
+    "fi": Divisions(nouns={}, ordinals={}),
+    "ro": Divisions(nouns={}, ordinals={}),
 }
 
 # fmt: on
@@ -2602,6 +2720,32 @@ _FRONT_BACK_MATTER = frozenset(
             "ПРЕДИСЛОВИЕ", "ВВЕДЕНИЕ", "ЗАКЛЮЧЕНИЕ", "ПРИЛОЖЕНИЕ",
             # ar
             "المقدمة", "الخاتمة", "تمهيد", "الملحق",
+            # The twelve added 2026-08-29, each COUNTED as a standalone
+            # heading on the pages fetched that day rather than translated
+            # in: hu 71/46/15/2/1, cs 22/18/10/2, sw 28/9, lv 17/8/1/1,
+            # hr 9/4, nl 8/6, da 3/2, vi 2/2/1, fi 2/1, ro 1/1, sl 1, sk 1.
+            # hu
+            "BEVEZETÉS", "BEFEJEZÉS", "ELŐSZÓ", "ZÁRSZÓ", "FÜGGELÉK",
+            # lv
+            "IEVADS", "NOBEIGUMS", "PRIEKŠVĀRDS", "PIELIKUMS",
+            # cs
+            "PŘEDMLUVA", "ÚVOD", "ZÁVĚR", "DODATEK",
+            # sk -- ÚVOD is the same word and is listed once, above
+            "ZÁVER",
+            # sw
+            "UTANGULIZI", "HITIMISHO",
+            # nl
+            "INLEIDING", "SLOT",
+            # sl and hr -- UVOD is shared between them
+            "UVOD", "ZAKLJUČAK",
+            # da
+            "INDLEDNING", "AFSLUTNING",
+            # vi
+            "DẪN NHẬP", "KẾT LUẬN", "NHẬP ĐỀ",
+            # fi
+            "JOHDANTO", "LOPUKSI",
+            # ro
+            "INTRODUCERE", "CONCLUZIE",
         ),
     )
 )  # fmt: skip
@@ -4324,14 +4468,24 @@ _VATII_LINK_RE = re.compile(
 #: English name, so the file is self-documenting and the guesses it defeats
 #: are real ones. `lt` is LATIN there, not Lithuanian (the same trap
 #: `ccc.py` documents for `catechism_lt`), `sw` is SWAHILI and not Swedish,
-#: `lv` is Latvian, `be` Byelorussian, `cs` Czech. Only the codes this
-#: parser has division labels for are mapped; the rest stay in
-#: `DocRef.lang_urls` under the mirror's own code, recording that the
-#: edition exists without claiming this scraper can read it.
+#: `lv` is Latvian, `be` Byelorussian, `cs` Czech, `hr` Croatian, `he`
+#: Hebrew. Only the codes this parser has division labels for are mapped;
+#: the rest stay in `DocRef.lang_urls` under the mirror's own code, recording
+#: that the edition exists without claiming this scraper can read it.
+#:
+#: Counted off the index on 2026-08-29: twelve codes carry all sixteen
+#: documents (en, be, cs, fr, ge, hu, it, lt, lv, po, sp, sw), `ar` eight,
+#: `hr` and `he` one each.
 VATII_LANG_FROM_URL = {
-    "ar": "ar", "en": "en", "fr": "fr", "ge": "de",
-    "it": "it", "lt": "la", "po": "pt", "sp": "es",
+    "ar": "ar", "cs": "cs", "en": "en", "fr": "fr", "ge": "de",
+    "hr": "hr", "hu": "hu", "it": "it", "lt": "la", "lv": "lv",
+    "po": "pt", "sp": "es", "sw": "sw",
 }  # fmt: skip
+#: Offered by the index and deliberately unmapped: `be` Byelorussian (16
+#: documents) and `he` Hebrew (1). Both are a `DIVISIONS` table away, and
+#: the table is the only thing missing -- Russian and Arabic already prove a
+#: non-Latin script needs no code. The codes are recorded here so the next
+#: person reads them off this line instead of the index again.
 VATII_LANG_TO_URL = {v: k for k, v in VATII_LANG_FROM_URL.items()}
 
 
@@ -4558,6 +4712,51 @@ def translation_url_for(ref: DocRef, lang: str) -> str | None:
     if ref.family == "vatii":
         return None  # discovered directly from the index, not derived
     return base.replace(f"/{ref.base_lang}/", f"/{lang}/", 1)
+
+
+#: Every modern-shell page carries a language switcher naming its document's
+#: other editions, and it links them by full path. Measured over all 1,736
+#: encyclical and exhortation pages in `raw/`: 1,736 of them print one, and
+#: it is EXACT rather than generous -- `signum-magnum` lists en, it, la, pt
+#: and omits the de/es/fr URLs that answer 200 with an empty shell.
+_SWITCHER_RE = re.compile(
+    r'href="/content/[a-z0-9-]+/([a-z_]{2,5})/'
+    r'(?:encyclicals|apost_exhortations)/documents/[^"]+"'
+)
+
+
+def offered_languages(ref: DocRef) -> set[str] | None:
+    """The languages this document's own switcher names, from cache, or None.
+
+    WHY THIS IS WORTH A FUNCTION. `translation_url_for` derives a URL by
+    substituting the language into a path, and the URL is derivable whether or
+    not anyone ever wrote that translation -- which is correct, and is how the
+    corpus learned that most of them 404. But it makes the cost of ASKING
+    about a new language the whole document count: eleven Latin-script
+    languages across 256 documents is 2,816 requests to someone else's server
+    at two seconds apiece, of which 2,740 would be 404s.
+
+    The switcher already knows. Reading it off the base-language page we hold
+    turns that crawl into 76 requests with almost no 404s, and `robots.txt`'s
+    `Crawl-delay: 2` is a commitment about our conduct rather than a budget
+    (`docs/decisions.md`), so a cheaper way to ask the same question is worth
+    having.
+
+    None means "cannot say" -- no cached base page -- and the caller must then
+    fall back to deriving, because a filter that fails closed would silently
+    stop crawling. Never let this decide that a language is ABSENT; it decides
+    only whether a request is worth making."""
+    base = ref.lang_urls.get(ref.base_lang)
+    if base is None:
+        return None
+    cached = RAW_ROOT / cache_name_for(ref, ref.base_lang)
+    html = read_text_or_none(cached)
+    if html is None:
+        return None
+    found = set(_SWITCHER_RE.findall(html))
+    # A page always links itself; a page linking nothing else is a switcher
+    # this regex did not recognise, not a document with no translations.
+    return found if found - {ref.base_lang} else None
 
 
 # --------------------------------------------------------------------------
@@ -6672,7 +6871,11 @@ VATII_TITLES = {
 
 
 def run_phase1(
-    fetcher: Fetcher, langs: list[str], only: list[str] | None, jobs: int = 1
+    fetcher: Fetcher,
+    langs: list[str],
+    only: list[str] | None,
+    jobs: int = 1,
+    fetch_only: bool = False,
 ) -> list[dict]:
     refs, err = discover_vatii(fetcher)
     if err:
@@ -6705,6 +6908,15 @@ def run_phase1(
                 )
                 continue
             for lang in langs:
+                # Same separation `cache_page` argues for on the phase-2 side:
+                # a language's pages can be acquired before this parser has a
+                # `DIVISIONS` table to read them with, and Swahili is the case
+                # that needs it -- the mirror is the ONLY place it appears, so
+                # there is nothing to derive a table from until the pages are
+                # on disk.
+                if fetch_only:
+                    pool.submit_done((slug, lang), cache_page(fetcher, ref, lang))
+                    continue
                 early, html = fetch_for_parse(fetcher, ref, lang, overwrite=True)
                 if early is not None:
                     pool.submit_done((slug, lang), early)
@@ -6743,6 +6955,7 @@ def run_phase2(
     jobs: int = 1,
     want_langs: tuple[str, ...] = DEFAULT_LANGS,
     fetch_only: bool = False,
+    offered_only: bool = False,
 ) -> list[dict]:
     """`overwrite` re-parses documents already written to corpus/build/ from
     their CACHED raw HTML — the module docstring has promised this flag since
@@ -6808,8 +7021,13 @@ def run_phase2(
         idx = n_submitted
         n_submitted += 1
         langs = [ref.base_lang] if ref.base_lang in want_langs else []
+        # None when the base page is not cached, and then every language is
+        # attempted exactly as before -- see `offered_languages`.
+        offered = offered_languages(ref) if offered_only else None
         for lang in want_langs:
             if lang == ref.base_lang:
+                continue
+            if offered is not None and lang not in offered:
                 continue
             url = translation_url_for(ref, lang)
             if url:
@@ -7230,6 +7448,13 @@ def main() -> int:
     p1.add_argument(
         "--only", help="comma-separated slugs, for iterating on one document"
     )
+    p1.add_argument(
+        "--fetch-only",
+        action="store_true",
+        help="cache each language's page under corpus/raw/ and stop -- no "
+        "parsing, nothing written to build/. Accepts any language code the "
+        "mirror publishes, since nothing reads the text",
+    )
 
     p2 = sub.add_parser(
         "phase2",
@@ -7279,6 +7504,15 @@ def main() -> int:
         "parsing, no works/ written. Accepts any language code, since "
         "nothing reads the text",
     )
+    p2.add_argument(
+        "--offered-only",
+        action="store_true",
+        help="skip a language the document's own switcher does not name, "
+        "read off the base-language page already in corpus/raw/. Turns "
+        "'probe eleven new languages across 256 documents' from 2,816 "
+        "requests into 76. Falls back to asking when the base page is not "
+        "cached, so it can only save requests, never lose an edition",
+    )
 
     sub.add_parser(
         "discover-encyclicals",
@@ -7310,7 +7544,9 @@ def main() -> int:
                 langs = sorted(VATII_LANG_FROM_URL.values())
             else:
                 langs = [x.strip() for x in args.lang.split(",") if x.strip()]
-            unknown = [x for x in langs if x not in DIVISIONS]
+            unknown = (
+                [] if args.fetch_only else [x for x in langs if x not in DIVISIONS]
+            )
             if unknown:
                 print(
                     f"ERROR: no division labels for {', '.join(unknown)}; "
@@ -7318,7 +7554,9 @@ def main() -> int:
                 )
                 return 1
             only = args.only.split(",") if args.only else None
-            results = run_phase1(fetcher, langs, only, jobs=args.jobs)
+            results = run_phase1(
+                fetcher, langs, only, jobs=args.jobs, fetch_only=args.fetch_only
+            )
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)
         summarize(results)
@@ -7364,6 +7602,7 @@ def main() -> int:
                 jobs=args.jobs,
                 want_langs=want_langs,
                 fetch_only=args.fetch_only,
+                offered_only=args.offered_only,
             )
         finally:
             release_crawl_lock(CRAWL_LOCK_PATH)

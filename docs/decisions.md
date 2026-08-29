@@ -927,6 +927,32 @@ convenient lie: it reads as "the Church never published this in English", when w
 means is that we cannot read the format. The two absences point in opposite directions,
 one at the source and one at us, and only the second is ours to close.
 
+**A division vocabulary is a table, and asking a server for a language should
+cost what the language costs** (2026-08-29). Twelve Latin-script languages
+joined the Magisterium — 143 editions in cs, da, fi, hr, hu, lv, nl, ro, sk,
+sl, sw, vi — and the two things that made it a day's work rather than a
+project are worth separating. The first is that `DIVISIONS` was already a data
+table: `_NUMERAL` reads `CAPUT III` with no vocabulary at all, so the cheapest
+useful entry is the nouns, and five of the twelve print no division noun and
+got an empty entry. The second is `--offered-only`. Deriving a translation's
+URL by substitution is right and is how the corpus learned that most of them
+404, but it makes the price of ASKING about a new language the whole document
+count: 2,816 requests for eleven languages, 2,740 of them 404s. Every page
+already carries a switcher naming its document's real editions, and reading it
+off the copy in `raw/` turns that into 76. `robots.txt`'s `Crawl-delay: 2` is
+a commitment about our conduct, not a budget to spend down, so a cheaper way
+to ask the same question is not an optimisation.
+
+**A table written from the language is a table nothing measured.** Every one
+of the twelve entries was read off the pages fetched that day, and the reading
+is what kept three languages honest: Danish `DEL` scored 31 and is the
+preposition phrase "del i" in every one, Croatian `DIO` scored 3 and all three
+are inside "vidio", Finnish `LUKU` scored 1 and it is John's seventeenth
+chapter named in a sentence. Each would have looked like a division noun to
+anyone counting without reading. The same posture explains what is NOT here:
+Byelorussian and Hebrew are a table away and were left, and Chinese is the
+only one that is a code question rather than a vocabulary one.
+
 ## The site
 
 **One static SPA shell, not a prerender.** The static page was never the content

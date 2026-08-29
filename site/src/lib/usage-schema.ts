@@ -99,7 +99,16 @@ export const SETS = {
 		'hu',
 		'ro',
 		'sl',
-		'sv'
+		'sv',
+		'cs',
+		'da',
+		'fi',
+		'hr',
+		'lv',
+		'nl',
+		'sk',
+		'sw',
+		'vi'
 	],
 	/** Top-level sections visited, by canonical (Latin) route root. */
 	section: [

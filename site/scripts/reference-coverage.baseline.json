@@ -189,21 +189,21 @@
 		},
 		"encyclical": {
 			"citations": {
-				"total": 32186,
-				"linkable": 11491,
-				"recognized": 5680,
-				"nothing": 15015
+				"total": 34991,
+				"linkable": 12520,
+				"recognized": 6193,
+				"nothing": 16278
 			},
 			"prose": {
-				"blocks": 34939,
-				"scripture": 18160,
-				"document": 207,
+				"blocks": 38715,
+				"scripture": 20118,
+				"document": 258,
 				"stored": 0
 			},
 			"residue": [
 				{
 					"key": "ibid.",
-					"count": 280,
+					"count": 304,
 					"example": "Ibid."
 				},
 				{
@@ -232,6 +232,11 @@
 					"example": "] Cfr n. 16: l.c., 265. ["
 				},
 				{
+					"key": ". vert.",
+					"count": 99,
+					"example": ". Vert. dogmaattinen konstituutio Katolisesta uskosta (Dei Filius), III."
+				},
+				{
 					"key": "] matth.",
 					"count": 94,
 					"example": "] Matth. XXIV, 6-7. ["
@@ -258,7 +263,7 @@
 				},
 				{
 					"key": "ibid. n.",
-					"count": 68,
+					"count": 69,
 					"example": "Ibid., n. 14."
 				},
 				{
@@ -280,6 +285,11 @@
 					"key": "] cf.",
 					"count": 59,
 					"example": "] Cf. Brev. Rom. in festo SS. Nom. Iesu; die III intra octavam Concept. immac. B.M.V.; in "
+				},
+				{
+					"key": ". \"katolinen",
+					"count": 53,
+					"example": ". \"Katolinen kirkko ja kristittyjen ykseys\", 1."
 				},
 				{
 					"key": "i cor.",
@@ -315,36 +325,26 @@
 					"key": "ibid. t.",
 					"count": 48,
 					"example": "Ibid. t. 227, p. 137."
-				},
-				{
-					"key": "id. epist.",
-					"count": 46,
-					"example": "Id., Epist. ad Theophilum, 82, 2, 2."
-				},
-				{
-					"key": "conc. trid.",
-					"count": 44,
-					"example": "Conc. Trid., sess.22, c.2."
 				}
 			]
 		},
 		"exhortation": {
 			"citations": {
-				"total": 34109,
-				"linkable": 10299,
-				"recognized": 5737,
-				"nothing": 18073
+				"total": 36319,
+				"linkable": 10797,
+				"recognized": 6109,
+				"nothing": 19413
 			},
 			"prose": {
-				"blocks": 25385,
-				"scripture": 20826,
-				"document": 290,
+				"blocks": 28922,
+				"scripture": 22392,
+				"document": 300,
 				"stored": 0
 			},
 			"residue": [
 				{
 					"key": "ibid.",
-					"count": 938,
+					"count": 968,
 					"example": "Ibid."
 				},
 				{
@@ -358,18 +358,18 @@
 					"example": "Vgl. Propositio 2."
 				},
 				{
+					"key": "relatio finalis",
+					"count": 332,
+					"example": "Relatio finalis 2015, 5."
+				},
+				{
 					"key": "por. propositio",
 					"count": 286,
 					"example": "Por. Propositio 2."
 				},
 				{
-					"key": "relatio finalis",
-					"count": 245,
-					"example": "Relatio finalis 2015, 5."
-				},
-				{
 					"key": "relatio synodi",
-					"count": 194,
+					"count": 227,
 					"example": "Relatio Synodi 2014, 5."
 				},
 				{
@@ -419,8 +419,13 @@
 				},
 				{
 					"key": "propositio 4.",
-					"count": 73,
+					"count": 74,
 					"example": "Cf. Propositio 4."
+				},
+				{
+					"key": "prav tam",
+					"count": 70,
+					"example": "Prav tam, 63."
 				},
 				{
 					"key": "código de",
@@ -438,6 +443,11 @@
 					"example": "Ср. Предложение 5."
 				},
 				{
+					"key": "vö. propositio",
+					"count": 60,
+					"example": "Vö. Propositio 2."
+				},
+				{
 					"key": "propositio 14.",
 					"count": 59,
 					"example": "Cf. Propositio 14."
@@ -449,23 +459,13 @@
 				},
 				{
 					"key": "propositio 30.",
-					"count": 57,
+					"count": 58,
 					"example": "Cf. Propositio 30."
 				},
 				{
 					"key": "] cfr",
 					"count": 57,
 					"example": "] cfr Propositio 1. ["
-				},
-				{
-					"key": "joão paulo",
-					"count": 56,
-					"example": "Cf. João Paulo II, Carta às Crianças (13 de Dezembro de 1994): L’Osservatore Romano (ed. p"
-				},
-				{
-					"key": "propositio 38.",
-					"count": 55,
-					"example": "Cf. Propositio 38."
 				}
 			]
 		},
@@ -501,15 +501,15 @@
 		},
 		"vatii": {
 			"citations": {
-				"total": 4473,
-				"linkable": 2310,
-				"recognized": 1068,
-				"nothing": 1095
+				"total": 6626,
+				"linkable": 3046,
+				"recognized": 1595,
+				"nothing": 1985
 			},
 			"prose": {
-				"blocks": 4810,
-				"scripture": 5576,
-				"document": 21,
+				"blocks": 6969,
+				"scripture": 6987,
+				"document": 871,
 				"stored": 0
 			},
 			"residue": [
@@ -519,9 +519,39 @@
 					"example": "] Cf. Ibid., n. 12. ["
 				},
 				{
+					"key": "sal. vatikāna",
+					"count": 46,
+					"example": "Sal. Vatikāna II koncils, Dogm. konst., 2."
+				},
+				{
+					"key": "sal. 1",
+					"count": 46,
+					"example": "Sal. 1 Pēt 1, 23."
+				},
+				{
+					"key": "sal. ef",
+					"count": 37,
+					"example": "Sal. Ef 1, 10."
+				},
+				{
+					"key": "taz. efe",
+					"count": 37,
+					"example": "Taz. Efe 1:10."
+				},
+				{
 					"key": "r. conc.",
 					"count": 36,
 					"example": "Cfr. Conc. Vat. II, ibid., n.° 36-38."
+				},
+				{
+					"key": "sal. jņ",
+					"count": 35,
+					"example": "Sal. Jņ 11, 52."
+				},
+				{
+					"key": "taz. yn",
+					"count": 34,
+					"example": "Taz. Yn 11:52."
 				},
 				{
 					"key": "second vatican",
@@ -534,9 +564,39 @@
 					"example": "Cfr. S. Pio X, aloc. à Associação católica da juventude francesa acerca da piedade, ciénci"
 				},
 				{
+					"key": "sal. 2",
+					"count": 33,
+					"example": "Sal. 2 Kor 5, 19."
+				},
+				{
+					"key": "taz. 2kor",
+					"count": 32,
+					"example": "Taz. 2Kor 5:19."
+				},
+				{
 					"key": "] conc.",
 					"count": 31,
 					"example": "] Conc. Vat. I, Const. dogm. De fide cath., chap. 3, sur la foi: Denz. 1789 (3008). ["
+				},
+				{
+					"key": "taz. conc.",
+					"count": 30,
+					"example": "Taz. Conc. Vat.I, Const. dogm.I, de Ecclesia Christi, Pastor aeternus, c. 3. Denz. 1828 (3"
+				},
+				{
+					"key": "sal. apd",
+					"count": 28,
+					"example": "Sal. Apd 1, 8."
+				},
+				{
+					"key": "taz. 1kor",
+					"count": 28,
+					"example": "Taz. 1Kor 9:16."
+				},
+				{
+					"key": "taz. mdo",
+					"count": 27,
+					"example": "Taz. Mdo 1:8."
 				},
 				{
 					"key": "pius xii",
@@ -544,9 +604,29 @@
 					"example": "cf. Pius XII, allocution to cardinals, Feb. 18, 1946: A.A.S. 38 (1946) pp. 101-102; Idem.,"
 				},
 				{
+					"key": "taz. rum",
+					"count": 22,
+					"example": "Taz. Rum 12:6."
+				},
+				{
+					"key": "missale romanum",
+					"count": 22,
+					"example": "Missale romanum, Utangulizi wa Sherehe ya Yesu Kristo Mfalme."
+				},
+				{
 					"key": "conc. vat.",
-					"count": 16,
+					"count": 21,
 					"example": "Cf. CONC. VAT. II, Decr. De accommodata renovatione vitae religiosae, n. 8."
+				},
+				{
+					"key": "taz. mt.",
+					"count": 21,
+					"example": "Taz. Mt. Thomas, In I Ethic., Lec. 1."
+				},
+				{
+					"key": "sal. sv.",
+					"count": 19,
+					"example": "Sal. sv. Akvīnas Toms, I Ethic., lect. 1."
 				},
 				{
 					"key": "] ibid.",
@@ -554,89 +634,9 @@
 					"example": "] Ibid. ["
 				},
 				{
-					"key": "r. pio",
+					"key": "sal. turpat",
 					"count": 12,
-					"example": "Cfr. Pio XII, aloc. aos Párocos, etc., 6 fevereiro 1951: Discorsi e Radiomessaggi di S. S."
-				},
-				{
-					"key": "2 cor.",
-					"count": 11,
-					"example": "Cf. 2 Cor., 10, 8; 13, 10."
-				},
-				{
-					"key": "john xxiii",
-					"count": 10,
-					"example": "cf. John XXIII, apostolic constitution \"Humani Salutis,\" Dec. 25, 1961: A.A.S. 54 (1962) p"
-				},
-				{
-					"key": "i pt.",
-					"count": 9,
-					"example": "Cf. I Pt. 1,23."
-				},
-				{
-					"key": "decree \"on",
-					"count": 8,
-					"example": "Cf. decree, \"On Oriental Churches\" 30."
-				},
-				{
-					"key": "first vatican",
-					"count": 8,
-					"example": "cf. First Vatican Council, fourth session, part 1 of Dogmatic Constitution on the Church o"
-				},
-				{
-					"key": "paul vi's",
-					"count": 8,
-					"example": "cf. Paul VI's motu proprio, Apostolica Sollicitudo, Sept. 15, 1965."
-				},
-				{
-					"key": "council of",
-					"count": 8,
-					"example": "cf. Council of Trent, fifth session, Decree De Reform., c. 2, Mansi 33, 30: 24th session, "
-				},
-				{
-					"key": "] messale",
-					"count": 8,
-					"example": "] Messale romano, dal prefazio della festa di Cristo Re. ["
-				},
-				{
-					"key": "pius xi",
-					"count": 7,
-					"example": "cf. Pius XI, letter \"Quae Nobis\" to Cardinal Bertram, Nov. 13, 1928: A.A.S. 20 (1928) p. 3"
-				},
-				{
-					"key": "r. leão",
-					"count": 7,
-					"example": "Cfr. Leão XIII, aloc. 28 janeiro 1894: Acta, 14 (1894), p. 424-425."
-				},
-				{
-					"key": "pius xii's",
-					"count": 7,
-					"example": "cf. Pius XII's allocution of Dec. 8, 1950: A.A.S. 43 (1951) p. 28; also cf. Paul VI's allo"
-				},
-				{
-					"key": "r. cod.",
-					"count": 7,
-					"example": "Cfr. Cod. Iur. Can., c. 227."
-				},
-				{
-					"key": "roman pontifical",
-					"count": 7,
-					"example": "Cf. Roman Pontifical Ordination of a Priest, preface. These words are already found in the"
-				},
-				{
-					"key": "1 cor.",
-					"count": 7,
-					"example": "Cf. 1 Cor., 11, 26."
-				},
-				{
-					"key": "leo xiii",
-					"count": 6,
-					"example": "cf. Leo XIII, allocution Jan. 28, 1894: Acts, 14 (1894) pp. 424- 425."
-				},
-				{
-					"key": "john xxiii's",
-					"count": 6,
-					"example": "cf. John XXIII's apostolic constitution, Humanae Salutis, Dec. 25, 1961: A.A.S. 54 (1962) "
+					"example": "Sal. turpat, 23, 36."
 				}
 			]
 		}
