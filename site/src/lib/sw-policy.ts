@@ -104,11 +104,24 @@ const HOST_CONFIG_FILES = ['/_headers', '/_redirects'];
  *
  * Kept separate from HOST_CONFIG_FILES because the reason differs: those two
  * are deploy-time configuration the host itself consumes and never serves,
- * these are served, just never to the app. (`robots.txt` and `llms.txt` are
- * arguably the same category and ARE still precached — a few KB each,
- * predating this list, and left alone rather than changed in passing.)
+ * these are served, just never to the app.
+ *
+ * `robots.txt` and `llms.txt` were the noted exception — "arguably the same
+ * category", a few KB each, left alone rather than changed in passing. They
+ * joined the list on 2026-08-29, when `llms.txt` stopped being a disclaimer and
+ * became the machine-readable statement of the address grammar, and `works.json`
+ * arrived beside it as the imprint of every work. Neither is fetched by
+ * anything that runs in a browser, and together they are no longer a rounding
+ * error on a reader's install.
  */
-const CRAWLER_FILES = ['/sitemap.xml', '/.well-known/security.txt', '/og.png'];
+const CRAWLER_FILES = [
+	'/sitemap.xml',
+	'/.well-known/security.txt',
+	'/og.png',
+	'/robots.txt',
+	'/llms.txt',
+	'/works.json'
+];
 
 /**
  * Static files served over HTTP to this project's own infrastructure.
@@ -128,8 +141,20 @@ const CRAWLER_FILES = ['/sitemap.xml', '/.well-known/security.txt', '/og.png'];
  * that reader will never read. Found 2026-08-28 while adding a third file of
  * the same kind (`route-titles.json`), which is what made the category worth
  * naming rather than fixing one file quietly.
+ *
+ * AND `route-titles.json` WAS THEN LEFT OUT OF IT — negated in
+ * `wrangler.jsonc` so it costs no invocation, and precached all the same, 62 KB
+ * per reader for a table only the edge reads. The list it prompted did not
+ * include it for a day. It is here now, with `apparatus.json`, which is the
+ * same thing again and five times the size: three files, one worker, no
+ * browser.
  */
-const INFRASTRUCTURE_FILES = ['/corpus-routes.json', '/reference-coverage.json'];
+const INFRASTRUCTURE_FILES = [
+	'/corpus-routes.json',
+	'/reference-coverage.json',
+	'/route-titles.json',
+	'/apparatus.json'
+];
 
 /** Raster image extensions that belong in the content cache rather than the
  *  install precache. Deliberately excludes `.svg` (the favicon is one, and the

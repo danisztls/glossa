@@ -88,8 +88,9 @@ import { buildCondensationMap } from '../src/lib/condensation.ts';
 import { PLATE_INTRINSIC_WIDTH, PLATE_WIDTHS } from '../src/lib/plates.ts';
 import { pairDivisions } from '../src/lib/toc-pairing.ts';
 import { isDivergentBook, toVulgateCandidates } from '../src/lib/versification.ts';
+import { assertApparatus, buildApparatus, buildWorks } from './apparatus.mjs';
 import { assertNamed, buildRouteTitles, readDictionaries } from './route-titles.mjs';
-import { sitemapPaths, sitemapXml } from './sitemap.mjs';
+import { ORIGIN, sitemapPaths, sitemapXml } from './sitemap.mjs';
 import {
 	CHANGE_CEILING,
 	fingerprint,
@@ -127,6 +128,14 @@ const routeManifestPath = path.join(siteRoot, 'static/corpus-routes.json');
 // still answer 200 and 404 correctly, and separate files make that degradation
 // structural rather than a `try` somewhere. See scripts/route-titles.mjs.
 const routeTitlesPath = path.join(siteRoot, 'static/route-titles.json');
+// A THIRD file for the same worker, on the same reasoning one step further:
+// this one holds the descriptions and the cross-references, so losing it costs
+// a description and some links on a page that still resolves and still names
+// itself. Three severities, three files. See scripts/apparatus.mjs.
+const apparatusPath = path.join(siteRoot, 'static/apparatus.json');
+// Read by nobody here. It is published for the machines that come asking what
+// this library holds and who to cite for it, and `static/llms.txt` points at it.
+const worksPath = path.join(siteRoot, 'static/works.json');
 // Derived from the same manifest, one line below where it is written. The
 // SPA shell means a crawler can otherwise reach the corpus only by rendering
 // the app and walking JavaScript-written links; see scripts/sitemap.mjs.
@@ -419,6 +428,8 @@ if (!existsSync(buildSrc)) {
 	rmSync(routeManifestPath, { force: true });
 	rmSync(sitemapPath, { force: true });
 	rmSync(routeTitlesPath, { force: true });
+	rmSync(apparatusPath, { force: true });
+	rmSync(worksPath, { force: true });
 	// And the images the wipe above spared. A fixture build has no plates.json
 	// to point at them, so they would render nowhere and ship anyway — 103 MB
 	// of build assets belonging to a corpus this build does not have.
@@ -1985,6 +1996,30 @@ const routeTitles = buildRouteTitles({
 // see it, and none of them reports back.
 assertNamed(sitemapPaths(routeManifest), routeManifest, routeTitles);
 writeJson(routeTitlesPath, routeTitles);
+
+// The descriptions and the cross-reference apparatus: the two things on this
+// site that are ours rather than reproduced, in the form the edge can serve
+// them and in the form a machine can read them. Built from the indexes above
+// rather than re-derived, so neither file can describe a corpus this build did
+// not produce.
+const apparatus = buildApparatus({
+	manifests,
+	descriptions,
+	xrefs,
+	documentXrefs,
+	cccCompendium: condensation.map,
+	cccCitations: citationXrefs.ccc
+});
+const works = buildWorks({ manifests, descriptions, origin: ORIGIN });
+assertApparatus(apparatus, works);
+writeJson(apparatusPath, apparatus);
+writeJson(worksPath, works);
+console.log(
+	`[sync-corpus] apparatus: ${Object.keys(apparatus.descriptions).length} document description(s), ` +
+		`${Object.keys(apparatus.bible).length} Bible chapters and ${Object.keys(apparatus.ccc).length} ` +
+		`Catechism paragraphs with an apparatus (${(byteLength(apparatus) / 1024).toFixed(0)} KB); ` +
+		`works.json lists ${works.works.length} work(s) (${(byteLength(works) / 1024).toFixed(0)} KB)`
+);
 
 // Per-address `<lastmod>`, resolved against the committed ledger: an address
 // whose text is byte-identical to the last build keeps the date it already had,

@@ -137,6 +137,8 @@
 			"!/service-worker.js",
 			"!/corpus-routes.json",
 			"!/route-titles.json",
+			"!/apparatus.json",
+			"!/works.json",
 			"!/reference-coverage.json",
 			"!/offline.html",
 			"!/sitemap.xml",

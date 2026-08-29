@@ -16,6 +16,7 @@ import {
 	SITE_NAME,
 	type RouteTitles
 } from './shell-head';
+import type { Apparatus } from './apparatus';
 import type { RouteManifest } from './route-manifest';
 
 const read = (p: string) => readFileSync(path.join(process.cwd(), p), 'utf8');
@@ -289,6 +290,27 @@ describe('clip', () => {
 
 const ORIGIN = 'https://glossacatholica.org';
 
+/** One node of the emitted `@graph`, by `@type`. The graph is the unit of
+ *  assertion here rather than the script block, because which node carries
+ *  which fact is exactly what the shape is for. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function graphNodes(html: string): any[] {
+	const block = /<script type="application\/ld\+json">(.*?)<\/script>/s.exec(html)?.[1];
+	return block ? JSON.parse(block.replace(/\\u003c/g, '<'))['@graph'] : [];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function graphNode(html: string, type: string): any {
+	return graphNodes(html).find((node) => node['@type'] === type);
+}
+
+/** By `@id` rather than by `@type`: the unit and the work are both a
+ *  `CreativeWork`, and which is which is exactly what the id says. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function graphById(html: string, suffix: string): any {
+	return graphNodes(html).find((node) => String(node['@id']).endsWith(suffix));
+}
+
 describe('headHtml', () => {
 	const html = headHtml(head('/catechismus/330')!, ORIGIN);
 
@@ -311,16 +333,28 @@ describe('headHtml', () => {
 	});
 
 	it('emits the breadcrumb as parseable JSON-LD with absolute items', () => {
-		const json = /<script type="application\/ld\+json">(.*?)<\/script>/s.exec(html)?.[1];
-		expect(json, 'no JSON-LD block emitted').toBeDefined();
-		const crumbs = JSON.parse(json!.replace(/\\u003c/g, '<'));
-		expect(crumbs['@type']).toBe('BreadcrumbList');
+		const crumbs = graphNode(html, 'BreadcrumbList');
+		expect(crumbs, 'no BreadcrumbList in the graph').toBeDefined();
 		expect(crumbs.itemListElement.map((i: { item: string }) => i.item)).toEqual([
 			'https://glossacatholica.org/',
 			'https://glossacatholica.org/catechismus',
 			'https://glossacatholica.org/catechismus/330'
 		]);
 		expect(crumbs.itemListElement.map((i: { position: number }) => i.position)).toEqual([1, 2, 3]);
+	});
+
+	/**
+	 * ONE SCRIPT AND ONE GRAPH. An `@id` reference resolves only against nodes
+	 * in the same page's graph, so a publisher defined once on `/` and pointed
+	 * at from ~6,000 addresses would be a reference to nothing everywhere but
+	 * the home page. This is the test that fails if the graph is ever split.
+	 */
+	it('emits exactly one JSON-LD block, as a graph', () => {
+		const blocks = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)];
+		expect(blocks).toHaveLength(1);
+		const parsed = JSON.parse(blocks[0][1].replace(/\\u003c/g, '<'));
+		expect(parsed['@context']).toBe('https://schema.org');
+		expect(Array.isArray(parsed['@graph'])).toBe(true);
 	});
 
 	/** A `</script>` sequence ends the element wherever it appears, quoted or
@@ -493,5 +527,176 @@ describe('the chrome table the build actually ships', () => {
 				expect(description, lang).not.toMatch(/[<>]/);
 			}
 		}
+	});
+});
+
+/**
+ * A fixture apparatus over the fixture corpus.
+ *
+ * Small enough to enumerate, and shaped like the real one in the two ways that
+ * matter: a document with a description, and a Catechism paragraph whose
+ * apparatus points three different ways at once.
+ */
+const apparatus: Apparatus = {
+	version: 1,
+	works: {
+		ccc: {
+			name: 'Catechism of the Catholic Church',
+			publisher: 'Libreria Editrice Vaticana',
+			notice: 'Copyright © Libreria Editrice Vaticana',
+			source: 'https://www.vatican.va/archive/ENG0015/_INDEX.HTM'
+		},
+		document: {
+			name: 'Documents of the Magisterium',
+			publisher: 'Libreria Editrice Vaticana',
+			notice: 'Copyright © Libreria Editrice Vaticana',
+			source: null
+		},
+		bible: {
+			name: 'Sacred Scripture',
+			publisher: null,
+			notice: 'Entire text is in the public domain. No copyright.',
+			source: 'https://sacredbible.org/catholic/index.htm'
+		},
+		compendium: { name: 'Compendium', publisher: null, notice: null, source: null },
+		summa: { name: 'Summa Theologiae', publisher: null, notice: null, source: null },
+		prayer: { name: 'Common Prayers', publisher: null, notice: null, source: null }
+	},
+	descriptions: {
+		'rerum-novarum':
+			'On the condition of labor amid industrial upheaval, addressing what the document itself calls the rights and duties of capital and labor. It refutes the socialist proposal to abolish private property, grounds ownership in natural and paternal right, and sets out duties binding workers and employers alike.'
+	},
+	imprint: {
+		'rerum-novarum': [
+			'Leo XIII',
+			'1891-05-15',
+			'https://www.vatican.va/content/leo-xiii/en/encyclicals/documents/rerum-novarum.html'
+		]
+	},
+	bible: { 'gen.1': { ccc: [330], docs: ['rerum-novarum'] } },
+	ccc: { '330': { bible: ['gen.1'], docs: ['rerum-novarum'], comp: [45] } },
+	compendium: { '45': [[330, 331]] },
+	docs: { 'rerum-novarum': { bible: ['gen.1'] } }
+};
+
+describe('the apparatus', () => {
+	const withApparatus = (p: string) => headFor(p, manifest, titles, apparatus)!;
+
+	/**
+	 * The description is the one kind of running text the edge may serve,
+	 * because it is the one kind nobody else holds rights in. Before this it
+	 * was a template naming the document and saying nothing about it, on all
+	 * 272 document addresses.
+	 */
+	it('describes a document with the prose written about it', () => {
+		const head = withApparatus('/documenta/rerum-novarum');
+		expect(head.description).toContain('industrial upheaval');
+		expect(head.description).not.toContain('the full text, with every citation');
+		expect(head.prose).toBe(apparatus.descriptions['rerum-novarum']);
+	});
+
+	/** 160 characters is what a result page prints; the `<noscript>` has no
+	 *  such limit and gets the whole of it. */
+	it('clips the description and never the prose', () => {
+		const head = withApparatus('/documenta/rerum-novarum');
+		expect(head.description.length).toBeLessThanOrEqual(156);
+		expect(head.prose!.length).toBeGreaterThan(head.description.length);
+		expect(noscriptHtml(head)).toContain('industrial upheaval');
+	});
+
+	/**
+	 * The link graph the sitemap cannot state. A sitemap says what exists; it
+	 * cannot say what is near what, and every cross-reference on this site is
+	 * written by script.
+	 */
+	it('links a paragraph to what it cites and to what condenses it', () => {
+		const hrefs = withApparatus('/catechismus/330').links.map((l) => l.href);
+		expect(hrefs).toContain('/scriptura/gen/1');
+		expect(hrefs).toContain('/catechismus/compendium/45');
+		expect(hrefs).toContain('/documenta/rerum-novarum');
+		// The structural links are not displaced by the apparatus.
+		expect(hrefs).toContain('/catechismus');
+	});
+
+	/** The direction no other index in the corpus holds: a chapter of Scripture
+	 *  naming the paragraphs that cite it. */
+	/** A document is a whole work, not a unit of one: no neighbours, no parent
+	 *  but the collection. Without its own apparatus it is a page with one
+	 *  link, which is what all 272 of them were. */
+	it('links a document to the Scripture it cites', () => {
+		const hrefs = withApparatus('/documenta/rerum-novarum').links.map((l) => l.href);
+		expect(hrefs).toContain('/scriptura/gen/1');
+	});
+
+	/**
+	 * A budget per kind of link, not one total. Filling a single budget in
+	 * source order gave Genesis 1 eight Catechism paragraphs and pushed out
+	 * every document that cites it — the page linked into one work and not the
+	 * other, which is the opposite of what an apparatus is for.
+	 */
+	it('never lets one kind of link starve another', () => {
+		const links = withApparatus('/scriptura/gen/1').links;
+		expect(links.some((l) => l.href.startsWith('/catechismus/'))).toBe(true);
+		expect(links.some((l) => l.href.startsWith('/documenta/'))).toBe(true);
+	});
+
+	it('links a chapter of Scripture to its citers', () => {
+		const hrefs = withApparatus('/scriptura/gen/1').links.map((l) => l.href);
+		expect(hrefs).toContain('/catechismus/330');
+		expect(hrefs).toContain('/documenta/rerum-novarum');
+	});
+
+	it('names the apparatus links from the titles table, never from the address', () => {
+		const names = withApparatus('/catechismus/330').links.map((l) => l.name);
+		expect(names).toContain('Genesis 1');
+		expect(names).toContain('Rerum Novarum');
+	});
+
+	/**
+	 * The whole point of the structured data. The site publishes the page; the
+	 * publisher published the text, and this is where that is said in a form a
+	 * parser reads.
+	 */
+	it('attributes the text to its publisher and never to this site', () => {
+		const html = headHtml(withApparatus('/catechismus/330'), ORIGIN);
+		const work = graphById(html, '#work');
+		expect(work.publisher.name).toBe('Libreria Editrice Vaticana');
+		expect(work.copyrightHolder.name).toBe('Libreria Editrice Vaticana');
+		expect(JSON.stringify(work)).not.toContain('Glossa Catholica');
+	});
+
+	it('carries a document’s own author, date and source', () => {
+		const html = headHtml(withApparatus('/documenta/rerum-novarum'), ORIGIN);
+		const unit = graphById(html, '#text');
+		expect(unit.author.name).toBe('Leo XIII');
+		expect(unit.datePublished).toBe('1891-05-15');
+		expect(unit.isBasedOn).toContain('vatican.va');
+	});
+
+	/**
+	 * `isBasedOn` states derivation; `sameAs` would assert that this page and
+	 * the publisher's are the same work, which concentrates authority on the
+	 * publisher. The choice is deliberate and this is what would catch it
+	 * changing by accident.
+	 */
+	it('states derivation rather than identity', () => {
+		const html = headHtml(withApparatus('/catechismus/330'), ORIGIN);
+		expect(html).toContain('isBasedOn');
+		expect(html).not.toContain('sameAs');
+	});
+
+	/**
+	 * The third file is the least critical of the three the worker reads, and
+	 * this is the assertion that keeps it so: with no apparatus at all, every
+	 * address still has a name, a canonical and a way onward.
+	 */
+	it('degrades to the structural head when the table is missing', () => {
+		const without = headFor('/catechismus/330', manifest, titles)!;
+		expect(without.title).toBe(withApparatus('/catechismus/330').title);
+		expect(without.canonical).toBe('/catechismus/330');
+		expect(without.links.map((l) => l.href)).toContain('/catechismus');
+		expect(without.prose).toBeUndefined();
+		expect(without.work).toBeUndefined();
+		expect(() => headHtml(without, ORIGIN)).not.toThrow();
 	});
 });

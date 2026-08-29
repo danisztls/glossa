@@ -170,13 +170,14 @@ function structureSpans(index) {
 }
 
 /**
- * Slug -> `[title, author, year]`, the three facts a document's masthead
- * prints. `pontiff_or_council` and `promulgated` are absent on nothing in the
- * corpus today, but a `''` costs one byte and spares the edge a branch.
+ * Document slug -> the work ids that are editions of it, slug order.
+ *
+ * Exported because `apparatus.mjs` needs exactly this grouping and the id
+ * pattern is the kind of thing that drifts the moment it is written twice.
  *
  * @param {Record<string, any>} manifests
  */
-function documentNames(manifests) {
+export function documentSlugIds(manifests) {
 	/** @type {Map<string, string[]>} */
 	const bySlug = new Map();
 	for (const [id, manifest] of Object.entries(manifests)) {
@@ -185,12 +186,35 @@ function documentNames(manifests) {
 		if (!slug) continue;
 		bySlug.set(slug, [...(bySlug.get(slug) ?? []), id]);
 	}
+	return new Map([...bySlug].sort(([a], [b]) => a.localeCompare(b)));
+}
+
+/**
+ * The edition of a document a crawler is served — the same choice
+ * `documentNames` makes about the same slug, so the name, the description and
+ * the imprint on one page all come off one manifest.
+ *
+ * @param {Record<string, any>} manifests
+ * @param {string[]} ids
+ */
+export function servedEdition(manifests, ids) {
+	const lang = servedLang(ids.map((id) => manifests[id].language));
+	return ids.filter((candidate) => manifests[candidate].language === lang).sort()[0];
+}
+
+/**
+ * Slug -> `[title, author, year]`, the three facts a document's masthead
+ * prints. `pontiff_or_council` and `promulgated` are absent on nothing in the
+ * corpus today, but a `''` costs one byte and spares the edge a branch.
+ *
+ * @param {Record<string, any>} manifests
+ */
+function documentNames(manifests) {
+	const bySlug = documentSlugIds(manifests);
 	/** @type {Record<string, [string, string, string]>} */
 	const documents = {};
-	for (const [slug, ids] of [...bySlug].sort(([a], [b]) => a.localeCompare(b))) {
-		const lang = servedLang(ids.map((id) => manifests[id].language));
-		const id = ids.filter((candidate) => manifests[candidate].language === lang).sort()[0];
-		const manifest = manifests[id];
+	for (const [slug, ids] of bySlug) {
+		const manifest = manifests[servedEdition(manifests, ids)];
 		documents[slug] = [
 			manifest.short_title || manifest.title || slug,
 			manifest.pontiff_or_council || '',

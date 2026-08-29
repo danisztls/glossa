@@ -84,7 +84,12 @@ describe('partitionAssets', () => {
 		'/.well-known/security.txt',
 		'/og.png',
 		'/corpus-routes.json',
-		'/reference-coverage.json'
+		'/reference-coverage.json',
+		'/route-titles.json',
+		'/apparatus.json',
+		'/works.json',
+		'/robots.txt',
+		'/llms.txt'
 	];
 	const contentAssets = [
 		asset({ url: '_app/immutable/assets/ccc.hash.json' }),
@@ -156,6 +161,24 @@ describe('partitionAssets', () => {
 	it('drops the files only the edge worker and the deploy read', () => {
 		expect(partition.shellUrls.has('/corpus-routes.json')).toBe(false);
 		expect(partition.shellUrls.has('/reference-coverage.json')).toBe(false);
+		// `route-titles.json` was NOT in the list the day the list was written
+		// to hold it — negated in `wrangler.jsonc`, so it cost no invocation,
+		// and precached all the same at 62 KB a reader. `apparatus.json` is the
+		// same file five times over.
+		expect(partition.shellUrls.has('/route-titles.json')).toBe(false);
+		expect(partition.shellUrls.has('/apparatus.json')).toBe(false);
+	});
+
+	/**
+	 * Written for a stranger's machine and never for this one. `llms.txt` was
+	 * left precached as "a few KB" until it became the statement of the address
+	 * grammar; `works.json` is a quarter of a megabyte of imprint that no
+	 * module names.
+	 */
+	it('drops the files written for crawlers', () => {
+		expect(partition.shellUrls.has('/works.json')).toBe(false);
+		expect(partition.shellUrls.has('/llms.txt')).toBe(false);
+		expect(partition.shellUrls.has('/robots.txt')).toBe(false);
 	});
 
 	it('precaches the boot document', () => {

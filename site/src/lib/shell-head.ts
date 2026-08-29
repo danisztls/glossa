@@ -23,6 +23,7 @@
  */
 
 import { parseHref, summaPartFromSlug, type Address } from './address.ts';
+import { relatedLinks, type Apparatus, type WorkImprint } from './apparatus.ts';
 import { CHROME_PATHS, parseChromePath, type RouteManifest } from './route-manifest.ts';
 import { isRtl, UI_LANGS, type UiLang } from './ui-langs.ts';
 
@@ -118,6 +119,29 @@ export interface ShellHead {
 	 *  the corpus has no link graph at all and `sitemap.xml` is the only way
 	 *  in — see `static/robots.txt`, which says so. */
 	links: Crumb[];
+	/**
+	 * The prose THIS SITE wrote about the thing at this address.
+	 *
+	 * Today that is the editorial description of a magisterial document and
+	 * nothing else. It is the one kind of running text the edge may serve,
+	 * because it is the one kind nobody else holds rights in — see
+	 * `apparatus.ts`. It is rendered into the `<noscript>`, so the page a
+	 * reader sees is unchanged and the page a crawler reads is not empty.
+	 */
+	prose?: string;
+	/** The work this address is a unit of, for the structured data. Absent
+	 *  where the imprint table could not be read. */
+	work?: WorkImprint & { href: string };
+	/** The unit itself. `position` where the work numbers its units, which is
+	 *  every work here except the documents and the prayers. */
+	unit?: { name: string; position?: number };
+	/** Set for a document, which is authored and dated in its own right rather
+	 *  than inheriting its collection's imprint. */
+	author?: string;
+	datePublished?: string;
+	/** The publisher's own address for this text — the URL to cite for the
+	 *  words, as `llms.txt` puts it. */
+	source?: string;
 }
 
 /** The English names of the works, for the crawler-facing language. */
@@ -243,7 +267,8 @@ function neighbours(
 export function headFor(
 	pathname: string,
 	manifest: RouteManifest,
-	titles: RouteTitles
+	titles: RouteTitles,
+	apparatus?: Apparatus
 ): ShellHead | undefined {
 	// A language-prefixed chrome page, and the bare page it is an alternate of,
 	// are the same head in different languages — so they are built together and
@@ -268,7 +293,114 @@ export function headFor(
 	}
 
 	const address = parseHref(pathname);
-	return address && bodyHead(address, pathname, manifest, titles);
+	if (!address) return undefined;
+	const head = bodyHead(address, pathname, manifest, titles);
+	return head && decorate(head, address, titles, apparatus);
+}
+
+/**
+ * Add to a structural head everything that comes from the apparatus.
+ *
+ * Separate from `bodyHead` rather than threaded through its eight cases, and
+ * that is not only brevity: every field this adds is optional and every one of
+ * them is absent when the table could not be read, so keeping the two apart
+ * makes "what the page has without the apparatus" a thing you can still read
+ * off `bodyHead` alone.
+ */
+function decorate(
+	head: ShellHead,
+	address: Address,
+	titles: RouteTitles,
+	apparatus: Apparatus | undefined
+): ShellHead {
+	const decorated: ShellHead = {
+		...head,
+		links: [...head.links, ...relatedLinks(address, apparatus, titles)],
+		...imprintFor(address, apparatus)
+	};
+
+	// A document is the one address whose description we actually wrote. Using
+	// it costs nothing a template was saying better: `clip` cuts on a word
+	// boundary at the length a result page prints, and the whole of it goes to
+	// the `<noscript>` where there is no such limit.
+	const prose = address.kind === 'document' ? apparatus?.descriptions[address.slug] : undefined;
+	if (prose) {
+		decorated.prose = prose;
+		decorated.description = clip(prose, 155);
+	}
+	return decorated;
+}
+
+/**
+ * The publisher, the rights notice and the source URL for one address.
+ *
+ * READ FROM THE MANIFESTS AND NEVER WRITTEN HERE. Every value comes from the
+ * corpus manifest of the edition a crawler is served, so a work whose rights
+ * position changes at the source changes here on the next sync rather than
+ * when someone remembers a constant. A field the manifest leaves empty stays
+ * `null`: an imprint is a claim about somebody else's property and a guess at
+ * one is worse than a gap.
+ */
+function imprintFor(
+	address: Address,
+	apparatus: Apparatus | undefined
+): Pick<ShellHead, 'work' | 'unit' | 'author' | 'datePublished' | 'source'> {
+	if (!apparatus) return {};
+	const kind = WORK_OF[address.kind];
+	const imprint = apparatus.works[kind.key];
+	if (!imprint) return {};
+	const work = { ...imprint, href: kind.href };
+
+	if (address.kind === 'document') {
+		const [author, promulgated, source] = apparatus.imprint[address.slug] ?? ['', '', ''];
+		return {
+			work,
+			unit: { name: work.name },
+			...(author ? { author } : {}),
+			...(promulgated ? { datePublished: promulgated } : {}),
+			// The document's own page at the publisher, which is finer than the
+			// collection's and is the URL a citation should carry.
+			...(source ? { source } : {})
+		};
+	}
+
+	return {
+		work,
+		unit: unitOf(address),
+		...(imprint.source ? { source: imprint.source } : {})
+	};
+}
+
+/** Which work each address kind is a unit of. `compendium` points at
+ *  `/catechismus` because the Compendium has no index of its own — the
+ *  Catechism's page presents both, a row at a time. */
+const WORK_OF: Record<Address['kind'], { key: string; href: string }> = {
+	bible: { key: 'bible', href: '/scriptura' },
+	ccc: { key: 'ccc', href: '/catechismus' },
+	cccChapter: { key: 'ccc', href: '/catechismus' },
+	compendium: { key: 'compendium', href: '/catechismus' },
+	compendiumChapter: { key: 'compendium', href: '/catechismus' },
+	document: { key: 'document', href: '/documenta' },
+	prayer: { key: 'prayer', href: '/preces' },
+	summa: { key: 'summa', href: '/doctores/summa' }
+};
+
+/** The unit a page renders, named as the work itself numbers it. */
+function unitOf(address: Address): { name: string; position?: number } | undefined {
+	switch (address.kind) {
+		case 'bible':
+			return address.chapter === 0
+				? undefined
+				: { name: `Chapter ${address.chapter}`, position: address.chapter };
+		case 'ccc':
+			return { name: `Paragraph ${address.n}`, position: address.n };
+		case 'compendium':
+			return { name: `Question ${address.n}`, position: address.n };
+		case 'summa':
+			return { name: `Question ${address.question}`, position: address.question };
+		default:
+			return undefined;
+	}
 }
 
 /**
@@ -576,19 +708,97 @@ export function headHtml(head: ShellHead, origin: string): string {
 				`href="${escapeHtml(`${origin}${alternate.href}`)}">`
 		);
 	}
-	parts.push(
-		`<script type="application/ld+json">${jsonLd({
-			'@context': 'https://schema.org',
+	parts.push(`<script type="application/ld+json">${jsonLd(graphFor(head, origin))}</script>`);
+	return parts.join('');
+}
+
+/**
+ * The structured data for one address, as a single `@graph`.
+ *
+ * WHAT IT IS FOR IS ATTRIBUTION, NOT A RICH RESULT. None of these types earns
+ * one — `BreadcrumbList` is the only node here a result page draws, and it was
+ * the only node here until the rest was added. What the rest does is state, in
+ * a form a parser reads, the thing the colophon and `llms.txt` state in prose:
+ * the text belongs to its publisher, this site published the address.
+ *
+ * ONE SCRIPT AND ONE GRAPH, because an `@id` reference only resolves against
+ * nodes in the SAME page's graph. Defining the publisher once on `/` and
+ * pointing at it from the other ~6,000 addresses would read, everywhere but
+ * the home page, as a reference to nothing.
+ *
+ * `isBasedOn` AND NOT `sameAs`, deliberately. `sameAs` would assert that this
+ * page and the publisher's are the same work, which is a coherence signal that
+ * tends to concentrate authority on the publisher; `isBasedOn` states the
+ * derivation, which is what is actually true and all that needs saying. It is
+ * a one-word change if that trade is ever worth making the other way.
+ */
+function graphFor(head: ShellHead, origin: string): unknown {
+	const url = head.canonical === null ? null : `${origin}${head.canonical}`;
+	const nodes: Record<string, unknown>[] = [
+		{
 			'@type': 'BreadcrumbList',
+			...(url ? { '@id': `${url}#breadcrumb` } : {}),
 			itemListElement: head.crumbs.map((crumb, i) => ({
 				'@type': 'ListItem',
 				position: i + 1,
 				name: crumb.name,
 				item: `${origin}${crumb.href}`
 			}))
-		})}</script>`
-	);
-	return parts.join('');
+		}
+	];
+
+	// The 404 head declares no canonical, and every node below is addressed by
+	// one. A page that is not a resource gets the breadcrumb alone.
+	if (!url) return { '@context': 'https://schema.org', '@graph': nodes };
+
+	const unitId = head.unit ? `${url}#text` : undefined;
+	const workId = head.work ? `${origin}${head.work.href}#work` : undefined;
+
+	nodes.push({
+		'@type': 'WebPage',
+		'@id': url,
+		url,
+		name: head.title,
+		description: head.description,
+		isPartOf: {
+			'@type': 'WebSite',
+			'@id': `${origin}/#website`,
+			name: SITE_NAME,
+			url: `${origin}/`
+		},
+		breadcrumb: { '@id': `${url}#breadcrumb` },
+		...(unitId ? { mainEntity: { '@id': unitId } } : {})
+	});
+
+	if (unitId && head.unit) {
+		nodes.push({
+			'@type': 'CreativeWork',
+			'@id': unitId,
+			name: head.unit.name,
+			...(head.unit.position === undefined ? {} : { position: head.unit.position }),
+			...(head.author ? { author: { '@type': 'Person', name: head.author } } : {}),
+			...(head.datePublished ? { datePublished: head.datePublished } : {}),
+			...(head.source ? { isBasedOn: head.source } : {}),
+			...(workId ? { isPartOf: { '@id': workId } } : {})
+		});
+	}
+
+	if (workId && head.work) {
+		const publisher = head.work.publisher
+			? { '@type': 'Organization', name: head.work.publisher }
+			: undefined;
+		nodes.push({
+			'@type': 'CreativeWork',
+			'@id': workId,
+			name: head.work.name,
+			url: `${origin}${head.work.href}`,
+			...(publisher ? { publisher, copyrightHolder: publisher } : {}),
+			...(head.work.notice ? { copyrightNotice: head.work.notice } : {}),
+			...(head.work.source ? { isBasedOn: head.work.source } : {})
+		});
+	}
+
+	return { '@context': 'https://schema.org', '@graph': nodes };
 }
 
 /**
@@ -605,12 +815,15 @@ export function headHtml(head: ShellHead, origin: string): string {
  * `<noscript>` is the element that means precisely this and is read as such.
  */
 export function noscriptHtml(head: ShellHead): string {
-	if (!head.links.length) return '';
+	if (!head.links.length && !head.prose) return '';
+	// Outside the `<nav>`: it is the page's own text, not a way out of it.
+	const prose = head.prose ? `<p>${escapeHtml(head.prose)}</p>` : '';
+	if (!head.links.length) return `<noscript>${prose}</noscript>`;
 	const items = head.links
 		.map((link) => `<li><a href="${escapeHtml(link.href)}">${escapeHtml(link.name)}</a></li>`)
 		.join('');
 	return (
-		`<noscript><nav aria-label="${escapeHtml(head.title)}"><p>` +
+		`<noscript>${prose}<nav aria-label="${escapeHtml(head.title)}"><p>` +
 		`${escapeHtml(SITE_NAME)} renders in a browser with JavaScript enabled. ` +
 		`Every text here is reproduced from its source publisher — see the ` +
 		`<a href="/colophon">colophon</a>.</p><ul>${items}</ul></nav></noscript>`

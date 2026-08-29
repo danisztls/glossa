@@ -1,3 +1,4 @@
+import type { Apparatus } from './lib/apparatus';
 import { isCanonicalPath, type RouteManifest } from './lib/route-manifest';
 import {
 	headFor,
@@ -107,6 +108,7 @@ async function handleBeacon(request: Request, env: Env, ctx: ExecutionContext): 
 
 let manifestPromise: Promise<RouteManifest | undefined> | undefined;
 let titlesPromise: Promise<RouteTitles | undefined> | undefined;
+let apparatusPromise: Promise<Apparatus | undefined> | undefined;
 
 /**
  * Read one generated JSON asset, once per isolate.
@@ -145,6 +147,20 @@ function getManifest(request: Request, assets: AssetFetcher): Promise<RouteManif
  */
 function getTitles(request: Request, assets: AssetFetcher): Promise<RouteTitles | undefined> {
 	return (titlesPromise ??= readAsset<RouteTitles>('/route-titles.json', request, assets));
+}
+
+/**
+ * The descriptions and the cross-references: what this site wrote.
+ *
+ * A THIRD FILE AND A THIRD PROMISE, on the reasoning that split the first two
+ * and one step further along. This table is the largest and the least
+ * critical: losing `corpus-routes.json` costs the address, losing
+ * `route-titles.json` costs the name, and losing this costs a description and
+ * some links on a page that still resolves and still says what it is. Reading
+ * them apart is what keeps those three failures three different sizes.
+ */
+function getApparatus(request: Request, assets: AssetFetcher): Promise<Apparatus | undefined> {
+	return (apparatusPromise ??= readAsset<Apparatus>('/apparatus.json', request, assets));
 }
 
 /**
@@ -233,9 +249,10 @@ function withHead(
 	response: Response,
 	pathname: string,
 	manifest: RouteManifest,
-	titles: RouteTitles | undefined
+	titles: RouteTitles | undefined,
+	apparatus: Apparatus | undefined
 ): Response {
-	const head = titles && headFor(pathname, manifest, titles);
+	const head = titles && headFor(pathname, manifest, titles, apparatus);
 	if (!head) return response;
 	const attrs = htmlAttrs(head);
 	return new HTMLRewriter()
@@ -308,16 +325,22 @@ export default {
 		// depends on an `Accept` header.
 		if (!canonical && !wantsHtml(request)) return env.ASSETS.fetch(request);
 
-		// The two tables are read apart and neither blocks the other: the manifest
-		// decides the STATUS and the titles only the `<head>`, so a missing titles
-		// file costs a name and never a page.
-		const titles = await getTitles(request, env.ASSETS);
-		const shell = await (canonical
-			? env.ASSETS.fetch(shellRequest(request))
-			: notFoundShell(request, env.ASSETS));
+		// The three tables are read apart and none blocks another: the manifest
+		// decides the STATUS, the titles only the `<head>`, the apparatus only the
+		// description and the links. A missing titles file costs a name and never
+		// a page; a missing apparatus costs less again.
+		//
+		// Together rather than in sequence, and with the shell: they are three
+		// subrequests on the FIRST navigation an isolate serves and none on any
+		// after it, so the only thing serialising them would buy is latency.
+		const [titles, apparatus, shell] = await Promise.all([
+			getTitles(request, env.ASSETS),
+			getApparatus(request, env.ASSETS),
+			canonical ? env.ASSETS.fetch(shellRequest(request)) : notFoundShell(request, env.ASSETS)
+		]);
 		// A 404 is titled too — it is the one page whose name a crawler reads
 		// and acts on — and `/404` is where `STATIC_HEADS` keeps that name.
-		return withHead(shell, canonical ? url.pathname : '/404', manifest, titles);
+		return withHead(shell, canonical ? url.pathname : '/404', manifest, titles, apparatus);
 	},
 
 	/**

@@ -18,6 +18,8 @@ node_modules
 /static/corpus-routes.json
 /static/reference-coverage.json
 /static/route-titles.json
+/static/apparatus.json
+/static/works.json
 
 # Also generated, and for the same reason kept out of the tree: sitemap.xml is
 # derived from the route manifest by the same sync pass, and security.txt's

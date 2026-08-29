@@ -693,10 +693,12 @@ npm run deploy      # build -> preflight -> wrangler deploy
 - **Deploys are not sandboxed** — `wrangler` needs the Cloudflare API, which the
   sandbox blocks. Same for `git commit` (GPG).
 - **The file count is no longer the thing to watch.** Cloudflare still caps a
-  deployment at 20,000 files, but the SPA-shell build is **~2,910 files / 110 MB**,
-  of which exactly two are HTML (`index.html` and the offline fallback) — down
-  from ~5,700 when every unit had its own page (`docs/decisions.md`,
-  2026-08-18). The bulk is now immutable, content-hashed corpus JSON, which
+  deployment at 20,000 files, but the SPA-shell build is **8,241 files**, of
+  which exactly two are HTML (`index.html` and the offline fallback) — down
+  from ~5,700 HTML pages when every unit had its own (`docs/decisions.md`,
+  2026-08-18). It read ~2,910 here until 2026-08-29; the corpus tripled it, not
+  the app, and `npm run preflight` prints the real number and its share of the
+  cap on every deploy. Read that line rather than this one. The bulk is now immutable, content-hashed corpus JSON, which
   Wrangler dedupes by content hash, so a redeploy that changes no corpus data
   uploads very little.
 - **What IS worth watching is `run_worker_first` in `wrangler.jsonc`.** It must
@@ -841,6 +843,70 @@ module-global promises. Losing the second costs a name; losing the first would
 cost the address. Merging them into one fetch would make a missing title table
 able to take the site down, which is the wrong trade in an obvious direction.
 
+**Three files since 2026-08-29, and the third is the one that may hold prose.**
+`static/apparatus.json` (303 KB) carries the editorial description of each
+magisterial document and the cross-reference apparatus; `src/lib/apparatus.ts`
+declares it and `scripts/apparatus.mjs` builds it. It reads through a third
+module-global promise for the reason that split the first two, one step further
+along: losing it costs a description and some links on a page that still
+resolves and still names itself.
+
+- **It is the exception to "names, never text", and the exception is precise.**
+  A description is prose written HERE, by reading a document — the one kind of
+  running text on this site nobody else holds rights in, which is why `llms.txt`
+  now offers it for quotation with attribution. The rule that stays absolute is
+  the one it was really about: a Catechism paragraph, a Compendium answer or a
+  verse belongs to its publisher and reaches the edge in neither file, ever.
+- **The links are stored as bare numbers and slugs and named from
+  `route-titles.json`.** Storing the names twice is how two tables come to
+  disagree, and the second one is always the one nobody re-reads.
+- **A budget per KIND of link, not one total.** Filling a single cap in source
+  order gave Genesis 1 eight Catechism paragraphs and pushed out every document
+  citing it — the page linked into one work and not the other, which is the
+  opposite of what an apparatus is for. `PER_KIND` is exported from
+  `apparatus.ts` and imported by the builder, because the two numbers existed
+  separately for one afternoon (8 stored, 4 rendered) and half the table was
+  shipped and parsed at the edge for nothing.
+- **`static/works.json` (246 KB) is the other half and nothing here reads it.**
+  305 works with title, languages, address space, publisher, rights and the
+  publisher's own URL, built in the same pass, published because `llms.txt`
+  points at it as the file to read instead of crawling ~6,000 addresses.
+
+**`static/llms.txt` asks to be cited now, and used to ask not to be.** It said
+"cite the source below rather than this address", which a compliant client obeys
+— so the file was declining the one thing the site is for. It now draws the
+distinction it was missing: **cite the publisher for the words, link here for the
+locus**, because vatican.va addresses a document or a run of paragraphs and
+`/catechismus/330` addresses the paragraph. It also documents the address grammar
+in full, so a client can construct a citation URL without fetching anything, and
+one paragraph records the reversal on purpose — a model trained on the old file
+carries the old instruction. Keep the rights position exactly as strong when
+editing it; what changed is where the citation points, not who owns the text.
+
+**The structured data is attribution and NOT a rich result.** `headHtml` emits
+one `@graph` — `BreadcrumbList`, `WebPage`, the unit, the work — and only the
+breadcrumb has ever drawn anything in a result page. What the rest does is state
+in a form a parser reads what the colophon states in prose: the publisher's name
+and rights notice come off the corpus manifests, never off a constant here, and
+this site appears nowhere in the work node. Two choices in it are deliberate and
+both are tested: **one script and one graph**, because an `@id` reference
+resolves only against nodes in the same page's graph, so a publisher defined once
+on `/` would be a reference to nothing on the other ~6,000 addresses; and
+**`isBasedOn` and never `sameAs`**, because `sameAs` asserts the two pages are the
+same work, which concentrates authority on the publisher. No Wikidata ids and no
+`inLanguage`: both would have been guesses, and a guessed imprint is worse than a
+gap.
+
+**None of this costs an invocation, and knowing why is what keeps it true.**
+`env.ASSETS.fetch()` from inside the worker is a SUBREQUEST, not an invocation —
+three of them on the first navigation an isolate serves and none on any after it,
+now issued in one `Promise.all` with the shell. The two new files are negated in
+`run_worker_first`, so a crawler fetching `works.json` reaches the asset binding
+directly. What the third table does cost is CPU on that first navigation:
+`apparatus.json` parses in ~1 ms against a 10 ms limit that the rewrite already
+spent 6.56 ms of. That is the number to re-measure with `wrangler dev` if the
+table grows, and the reason its size is worth caring about at all.
+
 **`assertNamed` runs in the sync, not in vitest, and that is the point.** It
 refuses a build where any address in `sitemapPaths` has no name of its own or
 shares a title with another. The failure it catches is invisible everywhere a
@@ -861,9 +927,20 @@ it.** `sw-policy.ts` takes all of `files`, and `corpus-routes.json` (27 KB, edge
 only) and `reference-coverage.json` (12 KB, preflight only) had ridden along
 since the partition existed. `INFRASTRUCTURE_FILES` is the list for things served
 over HTTP to our own infrastructure, beside `CRAWLER_FILES` for things served to
-a stranger's machine. `route-titles.json` is in it, and needs its
-`run_worker_first` negation in `wrangler.jsonc` too or every crawler fetch of it
-is a billed invocation.
+a stranger's machine. Every one of them also needs its `run_worker_first`
+negation in `wrangler.jsonc`, or a crawler's fetch of it is a billed invocation.
+
+**Two lists, and a file has to be put on one — saying it belongs there does
+nothing.** This document asserted for a day that `route-titles.json` was in
+`INFRASTRUCTURE_FILES`. It was not: it had its `wrangler.jsonc` negation, so it
+cost no invocation, and it was precached into every reader's install all the
+same — 78 KB of a table only the edge reads, in the list that exists because
+adding it is what made the category worth naming. Fixed on 2026-08-29 with
+`apparatus.json`, and `sw-policy.test.ts` now names all five files rather than
+the two the list started with. **The negation and the precache list are separate
+mistakes with separate symptoms**: miss the negation and it costs invocations,
+miss the list and it costs every reader bandwidth, and neither failure says
+anything.
 
 **The reading routes' own `<svelte:head>` titles have to match the shapes in
 `shell-head.ts`**, in the reader's language — the edge writes one title and the
