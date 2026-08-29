@@ -1,0 +1,197 @@
+[
+  {
+    "id": "octobri-mense.en-allthe",
+    "locator": {
+      "section": 12,
+      "raw_substring": "Allthe"
+    },
+    "field": "raw_text",
+    "from": "Allthe",
+    "to": "All the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '..., the mystic garland so pleasing to her of the Rosary. Allthe privileges and indulgences We have herein before conce...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-andratified",
+    "locator": {
+      "section": 12,
+      "raw_substring": "andratified."
+    },
+    "field": "raw_text",
+    "from": "andratified.",
+    "to": "and ratified.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...dulgences We have herein before conceded are confirmed andratified. (15) 13. H...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-christianflock",
+    "locator": {
+      "section": 12,
+      "raw_substring": "Christianflock,"
+    },
+    "field": "raw_text",
+    "from": "Christianflock,",
+    "to": "Christian flock,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...Mother of God, and your charity and solicitude for the Christianflock, are full of abundant promise: Our heart is full of des...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-inanticipation",
+    "locator": {
+      "section": 12,
+      "raw_substring": "inanticipation."
+    },
+    "field": "raw_text",
+    "from": "inanticipation.",
+    "to": "in anticipation.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...ght forth; already We enjoy them deeply and abundantly inanticipation. At your exhortation and under your direction, therefor...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-tomary",
+    "locator": {
+      "section": 12,
+      "raw_substring": "toMary"
+    },
+    "field": "raw_text",
+    "from": "toMary",
+    "to": "to Mary",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...ch, on many occasions, the devotion of Catholic people toMary has brought forth; already We enjoy them deeply and ab...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-andmost",
+    "locator": {
+      "section": 13,
+      "raw_substring": "andmost"
+    },
+    "field": "raw_text",
+    "from": "andmost",
+    "to": "and most",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...ffered injury, but have derived, in all time, numerous andmost precious benefits. <font ...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-andnations",
+    "locator": {
+      "section": 13,
+      "raw_substring": "andnations"
+    },
+    "field": "raw_text",
+    "from": "andnations",
+    "to": "and nations",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...rest interests, from the exercise of which individuals andnations have never suffered injury, but have derived, in all t...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-christianteaching",
+    "locator": {
+      "section": 13,
+      "raw_substring": "Christianteaching"
+    },
+    "field": "raw_text",
+    "from": "Christianteaching",
+    "to": "Christian teaching",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...on that the nations plunged in error may return to the Christianteaching and precepts, in which is the foundation of the public...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-fromher",
+    "locator": {
+      "section": 13,
+      "raw_substring": "fromher"
+    },
+    "field": "raw_text",
+    "from": "fromher",
+    "to": "from her",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...ary. Through her may all the faithful strive to obtain fromher Divine Son that the nations plunged in error may retur...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-onevoice",
+    "locator": {
+      "section": 13,
+      "raw_substring": "onevoice"
+    },
+    "field": "raw_text",
+    "from": "onevoice",
+    "to": "one voice",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...of pious people uniting their praises and prayers with onevoice and heart at every moment of the day, saluting Mary, i...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-therestoration",
+    "locator": {
+      "section": 13,
+      "raw_substring": "therestoration"
+    },
+    "field": "raw_text",
+    "from": "therestoration",
+    "to": "the restoration",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...ly endeavour for that most desirable of all blessings, therestoration of the liberty of our Mother, the Church, and the tran...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-thesource",
+    "locator": {
+      "section": 13,
+      "raw_substring": "thesource"
+    },
+    "field": "raw_text",
+    "from": "thesource",
+    "to": "the source",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...s, in which is the foundation of the public safety and thesource Of peace and true happiness. Through her may <fo...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-andgreater",
+    "locator": {
+      "section": 14,
+      "raw_substring": "andgreater"
+    },
+    "field": "raw_text",
+    "from": "andgreater",
+    "to": "and greater",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...ary, We pray Almighty God to grant you heavenly gifts, andgreater and more abundant strength, and aid to accomplish the ...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-uponthe",
+    "locator": {
+      "section": 14,
+      "raw_substring": "uponthe"
+    },
+    "field": "raw_text",
+    "from": "uponthe",
+    "to": "upon the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...a pledge of which We most lovingly bestow upon you and uponthe clergy and people committed to your care, the Apostoli...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "octobri-mense.en-yourpastoral",
+    "locator": {
+      "section": 14,
+      "raw_substring": "yourpastoral"
+    },
+    "field": "raw_text",
+    "from": "yourpastoral",
+    "to": "your pastoral",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__octobri-mense__en.html: '...abundant strength, and aid to accomplish the charge of yourpastoral office. As a pledge of which We most lovingly bestow u...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

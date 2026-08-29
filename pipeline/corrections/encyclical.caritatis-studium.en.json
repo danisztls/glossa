@@ -1,0 +1,1224 @@
+[
+  {
+    "id": "caritatis-studium.en-andgrace",
+    "locator": {
+      "section": 1,
+      "raw_substring": "andgrace"
+    },
+    "field": "raw_text",
+    "from": "andgrace",
+    "to": "and grace",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...hich Our most sacred office entails, and by the spirit andgrace of the most loving Saviour of men, Whom We unworthily ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-aredeprived",
+    "locator": {
+      "section": 1,
+      "raw_substring": "aredeprived"
+    },
+    "field": "raw_text",
+    "from": "aredeprived",
+    "to": "are deprived",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ay We deplore more deeply the unhappy lot of those who aredeprived of the fullness of the Christian Faith. Wherefore move...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-beovercome",
+    "locator": {
+      "section": 1,
+      "raw_substring": "beovercome"
+    },
+    "field": "raw_text",
+    "from": "beovercome",
+    "to": "be overcome",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...pose by the magnitude of the difficulties which cannot beovercome by human power alone. &quot;We preach Christ crucified...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-byall",
+    "locator": {
+      "section": 1,
+      "raw_substring": "byall"
+    },
+    "field": "raw_text",
+    "from": "byall",
+    "to": "by all",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...vine origin and authority that it can be distinguished byall beholders: &quot;And in the last days the mountain of ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-goodshepherd",
+    "locator": {
+      "section": 1,
+      "raw_substring": "GoodShepherd"
+    },
+    "field": "raw_text",
+    "from": "GoodShepherd",
+    "to": "Good Shepherd",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... cease Our efforts to bring back to the embrace of the GoodShepherd those whom manifold error causes to stand aloof from t...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-lordshall",
+    "locator": {
+      "section": 1,
+      "raw_substring": "Lordshall"
+    },
+    "field": "raw_text",
+    "from": "Lordshall",
+    "to": "Lord shall",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...;And in the last days the mountain of the house of the Lordshall be prepared on the top of mountains and shall be exalt...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thecommunion",
+    "locator": {
+      "section": 1,
+      "raw_substring": "thecommunion"
+    },
+    "field": "raw_text",
+    "from": "thecommunion",
+    "to": "the communion",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ring them to agree at last to restore together with Us thecommunion of the one and the same faith. A momentous work, and o...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thehills",
+    "locator": {
+      "section": 1,
+      "raw_substring": "thehills&quot;"
+    },
+    "field": "raw_text",
+    "from": "thehills&quot;",
+    "to": "the hills&quot;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...red on the top of mountains and shall be exalted above thehills&quot; (Is. ii. 2). <font size=\"3...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-themountains",
+    "locator": {
+      "section": 1,
+      "raw_substring": "themountains"
+    },
+    "field": "raw_text",
+    "from": "themountains",
+    "to": "the mountains",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...admonishing all nations to lift up &quot;their eyes to themountains whence help shall come&quot; (Ps. cxx.). For indeed th...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-theweakness",
+    "locator": {
+      "section": 1,
+      "raw_substring": "theweakness"
+    },
+    "field": "raw_text",
+    "from": "theweakness",
+    "to": "the weakness",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ower alone. &quot;We preach Christ crucified . . . and theweakness of God is stronger than men&quot; (1 Cor. i. 23-25). I...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-haveconstantly",
+    "locator": {
+      "section": 2,
+      "raw_substring": "haveconstantly"
+    },
+    "field": "raw_text",
+    "from": "haveconstantly",
+    "to": "have constantly",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ation, Venerable Brethren, and that of your clergy, We haveconstantly sought to promote the welfare of your nation, which is...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-itsplace",
+    "locator": {
+      "section": 2,
+      "raw_substring": "itsplace"
+    },
+    "field": "raw_text",
+    "from": "itsplace",
+    "to": "its place",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ar to the Holy See, and in a special manner to Us, has itsplace in Our care and solicitude. We love to recall the fact...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thatthe",
+    "locator": {
+      "section": 2,
+      "raw_substring": "thatthe"
+    },
+    "field": "raw_text",
+    "from": "thatthe",
+    "to": "that the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...he truth. And now that We are so far advanced in years thatthe end cannot be delayed much longer, We have thought it ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-twentyyears",
+    "locator": {
+      "section": 2,
+      "raw_substring": "twentyyears"
+    },
+    "field": "raw_text",
+    "from": "twentyyears",
+    "to": "twenty years",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...e and solicitude. We love to recall the fact that over twentyyears ago the first act of Our Apostolic Ministry was perfor...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-youvenerable",
+    "locator": {
+      "section": 2,
+      "raw_substring": "you,Venerable"
+    },
+    "field": "raw_text",
+    "from": "you,Venerable",
+    "to": "you, Venerable",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...elayed much longer, We have thought it meet to address you,Venerable Brethren, and thus give your nati...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-againstit",
+    "locator": {
+      "section": 3,
+      "raw_substring": "againstit?'"
+    },
+    "field": "raw_text",
+    "from": "againstit?'",
+    "to": "against it?'",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ild my Church, and the gates of hell shall not prevail againstit?' Therefore in the faith of Peter there is nothing wanti...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-apostolicsee",
+    "locator": {
+      "section": 3,
+      "raw_substring": "ApostolicSee."
+    },
+    "field": "raw_text",
+    "from": "ApostolicSee.",
+    "to": "Apostolic See.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...hem of what they owe to the Catholic Church and to the ApostolicSee. We speak of what you already know. As your ancient Ann...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-frommy",
+    "locator": {
+      "section": 3,
+      "raw_substring": "frommy"
+    },
+    "field": "raw_text",
+    "from": "frommy",
+    "to": "from my",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...eter? Thither, thither I must repair, that going forth frommy country, from my kindred, and from my father's house, ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-hisfellow",
+    "locator": {
+      "section": 3,
+      "raw_substring": "hisfellow-countrymen,"
+    },
+    "field": "raw_text",
+    "from": "hisfellow-countrymen,",
+    "to": "his fellow-countrymen,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...iff he returned home, preached the true Roman faith to hisfellow-countrymen, and founded the Church of Galloway about two hundred y...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-inabundance",
+    "locator": {
+      "section": 3,
+      "raw_substring": "inabundance"
+    },
+    "field": "raw_text",
+    "from": "inabundance",
+    "to": "in abundance",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...e, and when at the Tomb of the Apostles he had imbibed inabundance Catholic truth at its very source and fountainhead, by...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-inpoint",
+    "locator": {
+      "section": 3,
+      "raw_substring": "inpoint"
+    },
+    "field": "raw_text",
+    "from": "inpoint",
+    "to": "in point",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...om, who, though she occupied the most exalted position inpoint of worldly dignity, sought only i...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-landof",
+    "locator": {
+      "section": 3,
+      "raw_substring": "landof"
+    },
+    "field": "raw_text",
+    "from": "landof",
+    "to": "land of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... kindred, and from my father's house, I may see in the landof the Vision the will of the Lord and be protected by Hi...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-muchof",
+    "locator": {
+      "section": 3,
+      "raw_substring": "muchof"
+    },
+    "field": "raw_text",
+    "from": "muchof",
+    "to": "much of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...to whose virtue and illustrious deeds Scotland owes so muchof her renown. Surely your fellow-countrymen will not tak...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-ofyour",
+    "locator": {
+      "section": 3,
+      "raw_substring": "ofyour"
+    },
+    "field": "raw_text",
+    "from": "ofyour",
+    "to": "of your",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ost pleasing to Us to revert to the great achievements ofyour forefathers on behalf of Catholicism, and also to allu...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-peoplesof",
+    "locator": {
+      "section": 3,
+      "raw_substring": "peoplesof"
+    },
+    "field": "raw_text",
+    "from": "peoplesof",
+    "to": "peoples of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...majority of the Scottish people, as well as many other peoplesof Europe, of that Catholic Faith which they had glorious...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thewhole",
+    "locator": {
+      "section": 3,
+      "raw_substring": "thewhole"
+    },
+    "field": "raw_text",
+    "from": "thewhole",
+    "to": "the whole",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ret, a light and ornament not only of Scotland, but of thewhole of Christendom, who, though she occupied the most exal...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thisrock",
+    "locator": {
+      "section": 3,
+      "raw_substring": "thisrock"
+    },
+    "field": "raw_text",
+    "from": "thisrock",
+    "to": "this rock",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ul? Was it not said to Peter: `Thou are Peter and upon thisrock I will build my Church, and the gates of hell shall no...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thiswas",
+    "locator": {
+      "section": 3,
+      "raw_substring": "thiswas"
+    },
+    "field": "raw_text",
+    "from": "thiswas",
+    "to": "this was",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... landed in England. This was the faith of St. Columba; thiswas the faith kept so religiously and preached so zealousl...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-wemention",
+    "locator": {
+      "section": 3,
+      "raw_substring": "Wemention"
+    },
+    "field": "raw_text",
+    "from": "Wemention",
+    "to": "We mention",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...na, was rendered famous by their eminent virtues. Need Wemention Queen Margaret, a light and ornament not only of Scotl...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-yearsbefore",
+    "locator": {
+      "section": 3,
+      "raw_substring": "yearsbefore"
+    },
+    "field": "raw_text",
+    "from": "yearsbefore",
+    "to": "years before",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '..., and founded the Church of Galloway about two hundred yearsbefore St. Augustine landed in England. This was the faith of...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-andopinions",
+    "locator": {
+      "section": 4,
+      "raw_substring": "andopinions,"
+    },
+    "field": "raw_text",
+    "from": "andopinions,",
+    "to": "and opinions,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...cepted by not a few. We also perceive that false views andopinions, which effectively prevent the perception of truth, are...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-astime",
+    "locator": {
+      "section": 4,
+      "raw_substring": "astime"
+    },
+    "field": "raw_text",
+    "from": "astime",
+    "to": "as time",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...hat Catholics are more liberally and kindly dealt with astime goes on, that Catholic doctrines are no longer publicl...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-consideredby",
+    "locator": {
+      "section": 4,
+      "raw_substring": "consideredby"
+    },
+    "field": "raw_text",
+    "from": "consideredby",
+    "to": "considered by",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... formerly the case, but on the contrary are favourably consideredby many, and accepted by not a few. We also perceive that...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-leadus",
+    "locator": {
+      "section": 4,
+      "raw_substring": "leadUs"
+    },
+    "field": "raw_text",
+    "from": "leadUs",
+    "to": "lead Us",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...l never be restored? There are indeed some signs which leadUs to hope that, by the grace of God, a brighter religiou...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thatan",
+    "locator": {
+      "section": 4,
+      "raw_substring": "thatan"
+    },
+    "field": "raw_text",
+    "from": "thatan",
+    "to": "that an",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... search after truth spread more, for there is no doubt thatan accurate knowledge of the Catholic Religion, drawn fro...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-tosuppose",
+    "locator": {
+      "section": 4,
+      "raw_substring": "tosuppose"
+    },
+    "field": "raw_text",
+    "from": "tosuppose",
+    "to": "to suppose",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... minds of the vast majority of your countrymen. Are we tosuppose that it will never be restored? There are indeed some ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-addressedthe",
+    "locator": {
+      "section": 5,
+      "raw_substring": "addressedthe"
+    },
+    "field": "raw_text",
+    "from": "addressedthe",
+    "to": "addressed the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ort while ago an Encyclical Letter in which We gravely addressedthe Bishops of the Catholic world and diligently admonishe...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-allauthority",
+    "locator": {
+      "section": 5,
+      "raw_substring": "allauthority"
+    },
+    "field": "raw_text",
+    "from": "allauthority",
+    "to": "all authority",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ity, pervert to such a degree, that they either refuse allauthority to Holy Writ, or at least seriously curtail and minimi...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-andcontempt",
+    "locator": {
+      "section": 5,
+      "raw_substring": "andcontempt"
+    },
+    "field": "raw_text",
+    "from": "andcontempt",
+    "to": "and contempt",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...te desire of superciliously inquiring into everything, andcontempt for antiquity, pervert to such a degree, that they eit...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-aremany",
+    "locator": {
+      "section": 5,
+      "raw_substring": "aremany"
+    },
+    "field": "raw_text",
+    "from": "aremany",
+    "to": "are many",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...For owing to the restlessness of modern thought, there aremany whom the inordinate desire of superciliously inquiring...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-butall",
+    "locator": {
+      "section": 5,
+      "raw_substring": "butall"
+    },
+    "field": "raw_text",
+    "from": "butall",
+    "to": "but all",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...sserted as known . . . let nothing be rashly asserted, butall things cautiously and modestly examined&quot; (in Gen....'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-dothey",
+    "locator": {
+      "section": 5,
+      "raw_substring": "dothey"
+    },
+    "field": "raw_text",
+    "from": "dothey",
+    "to": "do they",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ure the works of God by our own puny intelligence; nor dothey sufficiently heed St. Augustine's warning: &quot;Honou...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-inspiredwritings",
+    "locator": {
+      "section": 5,
+      "raw_substring": "InspiredWritings"
+    },
+    "field": "raw_text",
+    "from": "InspiredWritings",
+    "to": "Inspired Writings",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ic Church and from the Catholic Church alone. If these InspiredWritings have passed unscathed through the many and dangerous v...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-noless",
+    "locator": {
+      "section": 5,
+      "raw_substring": "noless"
+    },
+    "field": "raw_text",
+    "from": "noless",
+    "to": "no less",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... and of Innocent I, the Roman Pontiff. At a later time noless watchfulness was shown, as we know, by Eugenius IV and...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-ofcenturies",
+    "locator": {
+      "section": 5,
+      "raw_substring": "ofcenturies,"
+    },
+    "field": "raw_text",
+    "from": "ofcenturies,",
+    "to": "of centuries,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... unscathed through the many and dangerous vicissitudes ofcenturies, such a blessing is to be attributed to her never-faili...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-oftrent",
+    "locator": {
+      "section": 5,
+      "raw_substring": "ofTrent."
+    },
+    "field": "raw_text",
+    "from": "ofTrent.",
+    "to": "of Trent.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...s shown, as we know, by Eugenius IV and by the Council ofTrent. We Ourselves, not unmindful of the necessities of the ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-theintegrity",
+    "locator": {
+      "section": 5,
+      "raw_substring": "theintegrity"
+    },
+    "field": "raw_text",
+    "from": "theintegrity",
+    "to": "the integrity",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '.... History attests that in the early ages of the Church theintegrity of the Scriptures was preserved by the ever-memorable ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thesemen",
+    "locator": {
+      "section": 5,
+      "raw_substring": "Thesemen,"
+    },
+    "field": "raw_text",
+    "from": "Thesemen,",
+    "to": "These men,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...y Writ, or at least seriously curtail and minimize it. Thesemen, puffed up by an exaggerated estimate of their own know...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thethird",
+    "locator": {
+      "section": 5,
+      "raw_substring": "theThird"
+    },
+    "field": "raw_text",
+    "from": "theThird",
+    "to": "the Third",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...iptures was preserved by the ever-memorable efforts of theThird Synod at Carthage and of Innocent I, the Roman Pontiff...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-tocomprehend",
+    "locator": {
+      "section": 5,
+      "raw_substring": "tocomprehend.&quot;"
+    },
+    "field": "raw_text",
+    "from": "tocomprehend.&quot;",
+    "to": "to comprehend.&quot;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ht to be admonished . . . that they must pray in order tocomprehend.&quot; (Doct. Chr. lib. iii., c. 37, n. 56.) &quot;Lest anyth...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-tounderstand",
+    "locator": {
+      "section": 5,
+      "raw_substring": "tounderstand&quot;"
+    },
+    "field": "raw_text",
+    "from": "tounderstand&quot;",
+    "to": "to understand&quot;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...s Word though not understood, reverently wait in order tounderstand&quot; (in Ps. 146, n. 12). &quot;Those who study the Venerab...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-venerablescriptures",
+    "locator": {
+      "section": 5,
+      "raw_substring": "VenerableScriptures"
+    },
+    "field": "raw_text",
+    "from": "VenerableScriptures",
+    "to": "Venerable Scriptures",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...d&quot; (in Ps. 146, n. 12). &quot;Those who study the VenerableScriptures ought to be admonished . . . that they must pray in or...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-vigilanceand",
+    "locator": {
+      "section": 5,
+      "raw_substring": "vigilanceand"
+    },
+    "field": "raw_text",
+    "from": "vigilanceand",
+    "to": "vigilance and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ch a blessing is to be attributed to her never-failing vigilanceand unceasing care. History attests that in the early ages...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-committedto",
+    "locator": {
+      "section": 6,
+      "raw_substring": "committedto"
+    },
+    "field": "raw_text",
+    "from": "committedto",
+    "to": "committed to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...(Mark xvi. 15.) But the supreme teaching authority was committedto one, on whom, as on its foundation, the Church must re...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-everycreature",
+    "locator": {
+      "section": 6,
+      "raw_substring": "everycreature.&quot;"
+    },
+    "field": "raw_text",
+    "from": "everycreature.&quot;",
+    "to": "every creature.&quot;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... &quot;Going into the whole world preach the Gospel to everycreature.&quot; (Mark xvi. 15.) But the supreme teaching authority was...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-hegave",
+    "locator": {
+      "section": 6,
+      "raw_substring": "Hegave"
+    },
+    "field": "raw_text",
+    "from": "Hegave",
+    "to": "He gave",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... its foundation, the Church must rest. For Christ when Hegave the keys to Peter, gave him at the same time the power...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-hisapostles",
+    "locator": {
+      "section": 6,
+      "raw_substring": "HisApostles"
+    },
+    "field": "raw_text",
+    "from": "HisApostles",
+    "to": "His Apostles",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...e sense of the Scriptures in safety, when He laid upon HisApostles as His primary and most momentous injunction, not to d...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-hisheavenly",
+    "locator": {
+      "section": 6,
+      "raw_substring": "HisHeavenly"
+    },
+    "field": "raw_text",
+    "from": "HisHeavenly",
+    "to": "His Heavenly",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...lead them by speech to the knowledge and profession of HisHeavenly doctrine: &quot;Going into the whole world preach the ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-livingvoice",
+    "locator": {
+      "section": 6,
+      "raw_substring": "livingvoice,"
+    },
+    "field": "raw_text",
+    "from": "livingvoice,",
+    "to": "living voice,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...among the multitude, but to teach all nations with the livingvoice, and to lead them by speech to the knowledge and profes...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-ofholy",
+    "locator": {
+      "section": 6,
+      "raw_substring": "ofHoly"
+    },
+    "field": "raw_text",
+    "from": "ofHoly",
+    "to": "of Holy",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...wholesome doctrines, give an authoritative explanation ofHoly Writ, and which being directed and safeguarded by Chri...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-ofscripture",
+    "locator": {
+      "section": 6,
+      "raw_substring": "ofScripture."
+    },
+    "field": "raw_text",
+    "from": "ofScripture.",
+    "to": "of Scripture.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ows that they must also learn from it the true meaning ofScripture. 7. It is ea...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-themselvesto",
+    "locator": {
+      "section": 6,
+      "raw_substring": "themselvesto"
+    },
+    "field": "raw_text",
+    "from": "themselvesto",
+    "to": "themselves to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...s primary and most momentous injunction, not to devote themselvesto writing, nor to spreading the volumes of the Old Testa...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thybrethren",
+    "locator": {
+      "section": 6,
+      "raw_substring": "thyBrethren&quot;"
+    },
+    "field": "raw_text",
+    "from": "thyBrethren&quot;",
+    "to": "thy Brethren&quot;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...th the &quot;ministry of the word:&quot; &quot;Confirm thyBrethren&quot; (Luke xxii. 32). And since the faithful must learn fro...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-whoplaced",
+    "locator": {
+      "section": 6,
+      "raw_substring": "Whoplaced"
+    },
+    "field": "raw_text",
+    "from": "Whoplaced",
+    "to": "Who placed",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ffectively through His Only-begotten Son Jesus Christ, Whoplaced the true sense of the Scriptures in safety, when He la...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-whowere",
+    "locator": {
+      "section": 6,
+      "raw_substring": "whowere"
+    },
+    "field": "raw_text",
+    "from": "whowere",
+    "to": "who were",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...r, gave him at the same time the power to govern those whowere charged with the &quot;ministry of the word:&quot; &qu...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-takenplace",
+    "locator": {
+      "section": 8,
+      "raw_substring": "takenplace"
+    },
+    "field": "raw_text",
+    "from": "takenplace",
+    "to": "taken place",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...hat We have just stated is proven by what has actually takenplace since, of all the sects, deprived as they are of the C...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-andabsolute",
+    "locator": {
+      "section": 9,
+      "raw_substring": "andabsolute"
+    },
+    "field": "raw_text",
+    "from": "andabsolute",
+    "to": "and absolute",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... to them, if they were once more united to us? Perfect andabsolute truth would everywhere shine forth, together with the ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-giftswhich",
+    "locator": {
+      "section": 9,
+      "raw_substring": "giftswhich"
+    },
+    "field": "raw_text",
+    "from": "giftswhich",
+    "to": "gifts which",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... everywhere shine forth, together with the inestimable giftswhich were forfeited by separation. The...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-hisown",
+    "locator": {
+      "section": 9,
+      "raw_substring": "Hisown:"
+    },
+    "field": "raw_text",
+    "from": "Hisown:",
+    "to": "His own:",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...mmanded to obey by the Author of faith as if they were Hisown: &quot;He who heareth you heareth me; he who despiseth ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-strivingfor",
+    "locator": {
+      "section": 9,
+      "raw_substring": "strivingfor,"
+    },
+    "field": "raw_text",
+    "from": "strivingfor,",
+    "to": "striving for,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...st holy example. But how can they obtain what they are strivingfor, if they do not allow themselves to be taught heavenly ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-sustenanceof",
+    "locator": {
+      "section": 9,
+      "raw_substring": "sustenanceof"
+    },
+    "field": "raw_text",
+    "from": "sustenanceof",
+    "to": "sustenance of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ey do not seek the nourishment of their souls, and the sustenanceof all virtue, from him whom the Supreme Pastor of souls ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-theirforefathers",
+    "locator": {
+      "section": 9,
+      "raw_substring": "theirforefathers"
+    },
+    "field": "raw_text",
+    "from": "theirforefathers",
+    "to": "their forefathers",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ng the whole Scottish people, restored to the faith of theirforefathers &quot;in spirit and in truth.&quot; What incalculable ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-toimitate",
+    "locator": {
+      "section": 9,
+      "raw_substring": "toimitate"
+    },
+    "field": "raw_text",
+    "from": "toimitate",
+    "to": "to imitate",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...me of Christ, and strive to ascertain His doctrine and toimitate His most holy example. But how can they obtain what th...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-toimpart",
+    "locator": {
+      "section": 9,
+      "raw_substring": "toimpart"
+    },
+    "field": "raw_text",
+    "from": "toimpart",
+    "to": "to impart",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...od may move their minds to what is good, and vouchsafe toimpart to them the most powerful impulses of His grace. May t...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-whoseprecepts",
+    "locator": {
+      "section": 9,
+      "raw_substring": "whoseprecepts"
+    },
+    "field": "raw_text",
+    "from": "whoseprecepts",
+    "to": "whose precepts",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...Christ Himself; if they do not give heed to the Church whoseprecepts they are commanded to obey by the Author of faith as i...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-abolishedreligion",
+    "locator": {
+      "section": 10,
+      "raw_substring": "abolished,Religion"
+    },
+    "field": "raw_text",
+    "from": "abolished,Religion",
+    "to": "abolished, Religion",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...y called a &quot;thing Divine.&quot; If Sacrifices are abolished,Religion can neither exist nor be conceived. The Evangelical La...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-afterhis",
+    "locator": {
+      "section": 10,
+      "raw_substring": "afterHis"
+    },
+    "field": "raw_text",
+    "from": "afterHis",
+    "to": "after His",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ld Covenant long before the Birth of Jesus Christ; and afterHis Ascension, the same Sacrifice is continued by the Euch...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-forfrom",
+    "locator": {
+      "section": 10,
+      "raw_substring": "&quot;Forfrom"
+    },
+    "field": "raw_text",
+    "from": "&quot;Forfrom",
+    "to": "&quot;For from",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...but the very Sacrifice flows from the death of Christ: &quot;Forfrom the rising of the sun even to the going down, my name ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-godis",
+    "locator": {
+      "section": 10,
+      "raw_substring": "Godis"
+    },
+    "field": "raw_text",
+    "from": "Godis",
+    "to": "God is",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...und in the submissive and reverent acknowledgment that Godis the Supreme Lord of all things, by Whose power we and ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-notinferior",
+    "locator": {
+      "section": 10,
+      "raw_substring": "notinferior,"
+    },
+    "field": "raw_text",
+    "from": "notinferior,",
+    "to": "not inferior,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...neither exist nor be conceived. The Evangelical Law is notinferior, but superior, to the Old Law. It brings to perfection ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-ofdivine",
+    "locator": {
+      "section": 10,
+      "raw_substring": "ofDivine"
+    },
+    "field": "raw_text",
+    "from": "ofDivine",
+    "to": "of Divine",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ence of Religion implies Sacrifice. For the perfection ofDivine Worship is found in the submissive and reverent acknow...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-religionmust",
+    "locator": {
+      "section": 10,
+      "raw_substring": "Religionmust"
+    },
+    "field": "raw_text",
+    "from": "Religionmust",
+    "to": "Religion must",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...des that of the Cross in the Eucharistic Sacrifice. As Religionmust ever be accompanied by a sacrificial rite, it was the ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thegentiles",
+    "locator": {
+      "section": 10,
+      "raw_substring": "theGentiles,"
+    },
+    "field": "raw_text",
+    "from": "theGentiles,",
+    "to": "the Gentiles,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...the sun even to the going down, my name is great among theGentiles, and in every place there is sacrifice, and there is of...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thereality",
+    "locator": {
+      "section": 10,
+      "raw_substring": "thereality"
+    },
+    "field": "raw_text",
+    "from": "thereality",
+    "to": "the reality",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...erefore, who reject this doctrine, as if it diminished thereality and efficacy of the Sacrifice which Christ offered on ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-theredeemer",
+    "locator": {
+      "section": 10,
+      "raw_substring": "theRedeemer"
+    },
+    "field": "raw_text",
+    "from": "theRedeemer",
+    "to": "the Redeemer",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ed by a sacrificial rite, it was the Divine counsel of theRedeemer that the Sacrifice of the Cross should be perpetuated....'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thesacrifices",
+    "locator": {
+      "section": 10,
+      "raw_substring": "thesacrifices"
+    },
+    "field": "raw_text",
+    "from": "thesacrifices",
+    "to": "the sacrifices",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...egun. But the Sacrifice of the Cross was prefigured by thesacrifices of the Old Covenant long before the Birth of Jesus Chr...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-andsupplications",
+    "locator": {
+      "section": 11,
+      "raw_substring": "andsupplications"
+    },
+    "field": "raw_text",
+    "from": "andsupplications",
+    "to": "and supplications",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...all upon them first of all constantly to offer prayers andsupplications to God, Who alone can give the necessary light to the ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-divinemercy",
+    "locator": {
+      "section": 11,
+      "raw_substring": "Divinemercy"
+    },
+    "field": "raw_text",
+    "from": "Divinemercy",
+    "to": "Divine mercy",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...them show themselves worthy of the truth which through Divinemercy they possess, and let them recommend the faith which t...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-mostpowerful",
+    "locator": {
+      "section": 11,
+      "raw_substring": "mostpowerful,"
+    },
+    "field": "raw_text",
+    "from": "mostpowerful,",
+    "to": "most powerful,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ir wills as He pleases. And furthermore, as example is mostpowerful, let them show themselves worthy of the truth which thr...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-seeyour",
+    "locator": {
+      "section": 11,
+      "raw_substring": "seeyour"
+    },
+    "field": "raw_text",
+    "from": "seeyour",
+    "to": "see your",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...quot;So let your light shine before men, that they may seeyour good works&quot; (Matth. v., 16). Let them at the same...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-accordingto",
+    "locator": {
+      "section": 12,
+      "raw_substring": "accordingto"
+    },
+    "field": "raw_text",
+    "from": "accordingto",
+    "to": "according to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...hole of Scotland, priests will be trained and educated accordingto the needs of the present time. <p align=\"l...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-andcompleted",
+    "locator": {
+      "section": 12,
+      "raw_substring": "andcompleted"
+    },
+    "field": "raw_text",
+    "from": "andcompleted",
+    "to": "and completed",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...neglect, but should be sustained by a similar charity, andcompleted as soon as possible. This will be tantamount to making...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-thatfor",
+    "locator": {
+      "section": 12,
+      "raw_substring": "thatfor"
+    },
+    "field": "raw_text",
+    "from": "thatfor",
+    "to": "that for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '... possible. This will be tantamount to making provision thatfor nearly the whole of Scotland, priests will be trained ...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "caritatis-studium.en-welovingly",
+    "locator": {
+      "section": 14,
+      "raw_substring": "Welovingly"
+    },
+    "field": "raw_text",
+    "from": "Welovingly",
+    "to": "We lovingly",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__caritatis-studium__en.html: '...ivine grace, and as a token of Our fatherly affection, Welovingly impart to you, in the Lord, Venerable brethren, to you...'. The rest of the English corpus writes these two words apart; this page prints 94 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

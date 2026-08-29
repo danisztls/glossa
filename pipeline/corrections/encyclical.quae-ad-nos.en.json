@@ -1,0 +1,197 @@
+[
+  {
+    "id": "quae-ad-nos.en-acommon",
+    "locator": {
+      "section": null,
+      "raw_substring": "acommon"
+    },
+    "field": "raw_text",
+    "from": "acommon",
+    "to": "a common",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '.... However, since the danger is a common one, and it is acommon fatherland which calls for defense, We think that the ...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-andmoravia",
+    "locator": {
+      "section": null,
+      "raw_substring": "andMoravia"
+    },
+    "field": "raw_text",
+    "from": "andMoravia",
+    "to": "and Moravia",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...fore it is Our wish that all of you Bishops of Bohemia andMoravia hold a meeting as soon as possible to deliberate conce...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-defenseof",
+    "locator": {
+      "section": null,
+      "raw_substring": "defenseof"
+    },
+    "field": "raw_text",
+    "from": "defenseof",
+    "to": "defense of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...eting as soon as possible to deliberate concerning the defenseof the faith among your countrymen. Naturally you will se...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-holyclergy",
+    "locator": {
+      "section": null,
+      "raw_substring": "holyclergy"
+    },
+    "field": "raw_text",
+    "from": "holyclergy",
+    "to": "holy clergy",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...o extirpate totally the partisan zeal which causes the holyclergy among you to be split apart; this divides and enervate...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-natureof",
+    "locator": {
+      "section": null,
+      "raw_substring": "natureof"
+    },
+    "field": "raw_text",
+    "from": "natureof",
+    "to": "nature of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...your countrymen. Naturally you will see to it that the natureof the deliberations and decisions which take place be re...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-ourlove",
+    "locator": {
+      "section": null,
+      "raw_substring": "Ourlove"
+    },
+    "field": "raw_text",
+    "from": "Ourlove",
+    "to": "Our love",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...divine grace be with you in these tasks. As a token of Ourlove receive the Apostolic Blessing which We most lovingly ...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-thatyou",
+    "locator": {
+      "section": null,
+      "raw_substring": "thatyou"
+    },
+    "field": "raw_text",
+    "from": "thatyou",
+    "to": "that you",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...go by without commending to you again most strenuously thatyou take care to extirpate totally the partisan zeal which...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-thedeparture",
+    "locator": {
+      "section": null,
+      "raw_substring": "thedeparture"
+    },
+    "field": "raw_text",
+    "from": "thedeparture",
+    "to": "the departure",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '... daily come to Us about the state of your dioceses and thedeparture of large numbers from the rites and practices of Catho...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-thefaith",
+    "locator": {
+      "section": null,
+      "raw_substring": "thefaith."
+    },
+    "field": "raw_text",
+    "from": "thefaith.",
+    "to": "the faith.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '... is greatly needed, now especially, for the defense of thefaith. May the aid of divine grace be with you in these tasks...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-tolet",
+    "locator": {
+      "section": null,
+      "raw_substring": "tolet"
+    },
+    "field": "raw_text",
+    "from": "tolet",
+    "to": "to let",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...ed by the apostolic approval. Moreover, We do not wish tolet this opportunity go by without commending to you again...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-toprevent",
+    "locator": {
+      "section": null,
+      "raw_substring": "toprevent"
+    },
+    "field": "raw_text",
+    "from": "toprevent",
+    "to": "to prevent",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...pair the misfortunes of the flock entrusted to you and toprevent losses from becoming worse with each day. If the enemi...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-useevery",
+    "locator": {
+      "section": null,
+      "raw_substring": "useevery"
+    },
+    "field": "raw_text",
+    "from": "useevery",
+    "to": "use every",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...hrist wished to be Pastors, must not be idle; you must useevery available means to defend your flock. However, the mag...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-usgreat",
+    "locator": {
+      "section": null,
+      "raw_substring": "Usgreat"
+    },
+    "field": "raw_text",
+    "from": "Usgreat",
+    "to": "Us great",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...bers from the rites and practices of Catholicism cause Usgreat sorrow and grief. Certainly We do not doubt that you s...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-yourdioceses",
+    "locator": {
+      "section": null,
+      "raw_substring": "yourdioceses"
+    },
+    "field": "raw_text",
+    "from": "yourdioceses",
+    "to": "your dioceses",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '...goad the willing. We know, to be sure, that not all of yourdioceses are in the same circumstances with regard to the secur...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quae-ad-nos.en-yourflock",
+    "locator": {
+      "section": null,
+      "raw_substring": "yourflock,"
+    },
+    "field": "raw_text",
+    "from": "yourflock,",
+    "to": "your flock,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quae-ad-nos__en.html: '... nor money, and strain with all their might to destroy yourflock, you, whom Christ wished to be Pastors, must not be idl...'. The rest of the English corpus writes these two words apart; this page prints 15 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

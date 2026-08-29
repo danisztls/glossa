@@ -1,0 +1,1445 @@
+[
+  {
+    "id": "divinum-illud-munus.en-apostlesand",
+    "locator": {
+      "section": 2,
+      "raw_substring": "Apostlesand"
+    },
+    "field": "raw_text",
+    "from": "Apostlesand",
+    "to": "Apostles and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...gently carrying on His office, entrusted by Him to the Apostlesand chiefly to Peter, &quot;whose dignity faileth not, eve...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-hiselection",
+    "locator": {
+      "section": 2,
+      "raw_substring": "hisElection)."
+    },
+    "field": "raw_text",
+    "from": "hisElection).",
+    "to": "his Election).",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... (St. Leo the Great, Sermon ii., On the Anniversary of hisElection). In pursuance of this object We have endeavoured to dir...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-oursouls",
+    "locator": {
+      "section": 2,
+      "raw_substring": "ourSouls,"
+    },
+    "field": "raw_text",
+    "from": "ourSouls,",
+    "to": "our Souls,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... Our Saviour, the Prince of Pastors, and the Bishop of ourSouls, by diligently carrying on His office, entrusted by Him...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-andall",
+    "locator": {
+      "section": 3,
+      "raw_substring": "Andall"
+    },
+    "field": "raw_text",
+    "from": "Andall",
+    "to": "And all",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ut to commemorate His coming, or His external mission. Andall this has been wisely ordained, lest from distinguishin...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-andsacraments",
+    "locator": {
+      "section": 3,
+      "raw_substring": "andsacraments"
+    },
+    "field": "raw_text",
+    "from": "andsacraments",
+    "to": "and sacraments",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... Father, Son, and Holy Ghost; blessings, sacred rites, andsacraments are either accompanied or concluded by the invocation ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-arecelebrated",
+    "locator": {
+      "section": 3,
+      "raw_substring": "arecelebrated"
+    },
+    "field": "raw_text",
+    "from": "arecelebrated",
+    "to": "are celebrated",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...e separate mysteries connected with the Incarnate Word arecelebrated on certain fixed days, yet there is no special feast o...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-blessedtrinity-1",
+    "locator": {
+      "section": 3,
+      "raw_substring": "honour of the BlessedTrinity."
+    },
+    "field": "raw_text",
+    "from": "honour of the BlessedTrinity.",
+    "to": "honour of the Blessed Trinity.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... ofGod, and to Christ Himself, finally redounds to the honour of the BlessedTrinity. In prayers addressed to one Person, there is also ment...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-blessedtrinity-2",
+    "locator": {
+      "section": 3,
+      "raw_substring": "invocation of the BlessedTrinity."
+    },
+    "field": "raw_text",
+    "from": "invocation of the BlessedTrinity.",
+    "to": "invocation of the Blessed Trinity.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...dsacraments are either accompanied or concluded by the invocation of the BlessedTrinity. This was already foreshadowed by the Apostle in those ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-forof",
+    "locator": {
+      "section": 3,
+      "raw_substring": "&quot;Forof"
+    },
+    "field": "raw_text",
+    "from": "&quot;Forof",
+    "to": "&quot;For of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...as already foreshadowed by the Apostle in those words: &quot;Forof Him, and by Him, and in Him, are all things: to Him be...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-holyghost-1",
+    "locator": {
+      "section": 3,
+      "raw_substring": "honour the HolyGhost"
+    },
+    "field": "raw_text",
+    "from": "honour the HolyGhost",
+    "to": "honour the Holy Ghost",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...st was instituted in the earliest times, not simply to honour the HolyGhost in Himself, but to commemorate His coming, or His exte...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-holyghost-2",
+    "locator": {
+      "section": 3,
+      "raw_substring": "HolyGhost."
+    },
+    "field": "raw_text",
+    "from": "HolyGhost.",
+    "to": "Holy Ghost.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...therefore, as it were, through the special gift of the HolyGhost. On this point St. Augustine writes: &quot;This manner ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-holyghost-3",
+    "locator": {
+      "section": 3,
+      "raw_substring": "HolyGhost&quot;"
+    },
+    "field": "raw_text",
+    "from": "HolyGhost&quot;",
+    "to": "Holy Ghost&quot;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... &quot;We have not so much as heard whether there be a HolyGhost&quot; (Acts xix., 2). At least there are certainly many who ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-holyghost-4",
+    "locator": {
+      "section": 3,
+      "raw_substring": "HolyGhost;"
+    },
+    "field": "raw_text",
+    "from": "HolyGhost;",
+    "to": "Holy Ghost;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...cite us to acquire daily a clearer knowledge about the HolyGhost; for, as the Angelic Doctor says, &quot;the lover is no...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-inall-1",
+    "locator": {
+      "section": 3,
+      "raw_substring": "Himself, finally"
+    },
+    "field": "raw_text",
+    "from": "Himself, finally",
+    "to": "Himself, fin ally",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... saints and angels, to the Mother ofGod, and to Christ Himself, finally redounds to the honour of the BlessedTrinity. In praye...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-inall-2",
+    "locator": {
+      "section": 3,
+      "raw_substring": "things finally"
+    },
+    "field": "raw_text",
+    "from": "things finally",
+    "to": "things fin ally",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... cause of all things, since, as the will and all other things finally rest in their end, so He, who is the Divine Goodness a...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-inall-3",
+    "locator": {
+      "section": 3,
+      "raw_substring": "God inall"
+    },
+    "field": "raw_text",
+    "from": "God inall",
+    "to": "God in all",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ited to his most loving and beloved friend, and enjoys God inall fulness and sweetness. Now this wonderful union, which...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-inunity",
+    "locator": {
+      "section": 3,
+      "raw_substring": "inUnity.&quot;"
+    },
+    "field": "raw_text",
+    "from": "inUnity.&quot;",
+    "to": "in Unity.&quot;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...h, that we should adore one God in Trinity and Trinity inUnity.&quot; Therefore Our predecessor Innocent XII, absolutely ref...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-menshould",
+    "locator": {
+      "section": 3,
+      "raw_substring": "menshould"
+    },
+    "field": "raw_text",
+    "from": "menshould",
+    "to": "men should",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... wisely ordained, lest from distinguishing the Persons menshould be led to distinguish the Divine Essence. Moreover the...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-moredangerous",
+    "locator": {
+      "section": 3,
+      "raw_substring": "moredangerous"
+    },
+    "field": "raw_text",
+    "from": "moredangerous",
+    "to": "more dangerous",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...modesty, for, as St. Augustine saith, nowhere else are moredangerous errors made, or is research more difficult, or discove...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-morefruitful",
+    "locator": {
+      "section": 3,
+      "raw_substring": "morefruitful&quot;"
+    },
+    "field": "raw_text",
+    "from": "morefruitful&quot;",
+    "to": "more fruitful&quot;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...rors made, or is research more difficult, or discovery morefruitful&quot; (Summ. Th. la., q. xxxi. De Trin. 1 L, c. 3). The dang...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-ofnature",
+    "locator": {
+      "section": 3,
+      "raw_substring": "ofNature:"
+    },
+    "field": "raw_text",
+    "from": "ofNature:",
+    "to": "of Nature:",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...y signifying both the Trinity of Persons and the Unity ofNature: for as this is one and the same in <font size=\"...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-ofpentecost",
+    "locator": {
+      "section": 3,
+      "raw_substring": "ofPentecost"
+    },
+    "field": "raw_text",
+    "from": "ofPentecost",
+    "to": "of Pentecost",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...cording to His Divine Nature alone. And even the Feast ofPentecost was instituted in the earliest times, not simply to ho...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-orderto",
+    "locator": {
+      "section": 3,
+      "raw_substring": "orderto"
+    },
+    "field": "raw_text",
+    "from": "orderto",
+    "to": "order to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...istinguish the Divine Essence. Moreover the Church, in orderto preserve in her children the purity of faith, institut...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-theothers",
+    "locator": {
+      "section": 3,
+      "raw_substring": "theothers;"
+    },
+    "field": "raw_text",
+    "from": "theothers;",
+    "to": "the others;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...yers addressed to one Person, there is also mention of theothers; in the litanies after the individual Persons have been...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-theword",
+    "locator": {
+      "section": 3,
+      "raw_substring": "theWord"
+    },
+    "field": "raw_text",
+    "from": "theWord",
+    "to": "the Word",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ain fixed days, yet there is no special feast on which theWord is honoured according to His Divine Nature alone. And ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-withthe-1",
+    "locator": {
+      "section": 3,
+      "raw_substring": "conclude withthe"
+    },
+    "field": "raw_text",
+    "from": "conclude withthe",
+    "to": "conclude with the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ommon invocation of all is added: all psalms and hymns conclude withthe doxology to the Father, Son, and Holy Ghost; blessings...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-withthe-2",
+    "locator": {
+      "section": 3,
+      "raw_substring": "united withthe"
+    },
+    "field": "raw_text",
+    "from": "united withthe",
+    "to": "united with the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...dent merits, at the first moment of its existence, was united withthe Word of God, by so intimate a personal union, that He,...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-alsothe",
+    "locator": {
+      "section": 4,
+      "raw_substring": "alsothe"
+    },
+    "field": "raw_text",
+    "from": "alsothe",
+    "to": "also the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ot only was the conception of Christ accomplished, but alsothe sanctification of His soul, which, in Holy Scripture, ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-andknowledge",
+    "locator": {
+      "section": 4,
+      "raw_substring": "andknowledge,"
+    },
+    "field": "raw_text",
+    "from": "andknowledge,",
+    "to": "and knowledge,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...nner possible; in Him were all the treasures of wisdom andknowledge, graces gratis datae , virtues, and all other gif...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-andthis-1",
+    "locator": {
+      "section": 4,
+      "raw_substring": "20). Andthis"
+    },
+    "field": "raw_text",
+    "from": "20). Andthis",
+    "to": "20). And this",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...eived in her is of the Holy Ghost&quot; (Matt. i., 18, 20). Andthis is rightly attributed to Him who is the love of the Fa...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-andthis-2",
+    "locator": {
+      "section": 4,
+      "raw_substring": "love. Andthis"
+    },
+    "field": "raw_text",
+    "from": "love. Andthis",
+    "to": "love. And this",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...eternal, primal Love, and nothing is more lovable than love. Andthis all the more because He has overwhelmed us with the gr...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-blessedvirgin",
+    "locator": {
+      "section": 4,
+      "raw_substring": "BlessedVirgin:"
+    },
+    "field": "raw_text",
+    "from": "BlessedVirgin:",
+    "to": "Blessed Virgin:",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... the Holy Ghost, so that the Gospels thus speak of the BlessedVirgin: &quot;She was found with child of the Holy Ghost,&quot...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-caneven-1",
+    "locator": {
+      "section": 4,
+      "raw_substring": "href=\"/etc/designs/vaticanevents/library/clientlibs.min.4893fd704498c9447a67fcf97ac7fbfc.css\""
+    },
+    "field": "raw_text",
+    "from": "href=\"/etc/designs/vaticanevents/library/clientlibs.min.4893fd704498c9447a67fcf97ac7fbfc.css\"",
+    "to": "href=\"/etc/designs/vatican events/library/clientlibs.min.4893fd704498c9447a67fcf97ac7fbfc.css\"",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...1e78ef0f2.css\" type=\"text/css\"> <link rel=\"stylesheet\" href=\"/etc/des...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-caneven-2",
+    "locator": {
+      "section": 4,
+      "raw_substring": "src=\"/etc/designs/vaticanevents/library/clientlibs.min.462e7d1f2f7e05231a7d7f9f8f68e6aa.js\""
+    },
+    "field": "raw_text",
+    "from": "src=\"/etc/designs/vaticanevents/library/clientlibs.min.462e7d1f2f7e05231a7d7f9f8f68e6aa.js\"",
+    "to": "src=\"/etc/designs/vatican events/library/clientlibs.min.462e7d1f2f7e05231a7d7f9f8f68e6aa.js\"",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...d7d21ab4b.js\"> <script type=\"text/javascript\" src=\"/etc/des...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-caneven-3",
+    "locator": {
+      "section": 4,
+      "raw_substring": "sublime caneven"
+    },
+    "field": "raw_text",
+    "from": "sublime caneven",
+    "to": "sublime can even",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...perfections shines forth so brightly that nothing more sublime caneven be imagined, nothing else could have been more salutar...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-highestof",
+    "locator": {
+      "section": 4,
+      "raw_substring": "highestof"
+    },
+    "field": "raw_text",
+    "from": "highestof",
+    "to": "highest of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...of our race. Among the external operations of God, the highestof all is the mystery of the Incarnation of the Word, in ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-lovedthe",
+    "locator": {
+      "section": 4,
+      "raw_substring": "lovedthe"
+    },
+    "field": "raw_text",
+    "from": "lovedthe",
+    "to": "loved the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...of God towards man, as St. John tells us: &quot;God so lovedthe world as to give His only begotten Son&quot; (John iii...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-mostefficacious",
+    "locator": {
+      "section": 4,
+      "raw_substring": "mostefficacious"
+    },
+    "field": "raw_text",
+    "from": "mostefficacious",
+    "to": "most efficacious",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ed the absolute fullness of grace, in the greatest and mostefficacious manner possible; in Him were all the treasures of wisd...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-noone",
+    "locator": {
+      "section": 4,
+      "raw_substring": "noone"
+    },
+    "field": "raw_text",
+    "from": "noone",
+    "to": "no one",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ut spot to God&quot; (Heb. ix., 14). Considering this, noone can be surprised that all the gifts of the Holy Ghost ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-ofman-1",
+    "locator": {
+      "section": 4,
+      "raw_substring": "ofMan,"
+    },
+    "field": "raw_text",
+    "from": "ofMan,",
+    "to": "of Man,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...so intimate a personal union, that He, who was the Son ofMan, was also the Son of God, and He who was the Son of God...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-ofman-2",
+    "locator": {
+      "section": 4,
+      "raw_substring": "ofMan&quot;"
+    },
+    "field": "raw_text",
+    "from": "ofMan&quot;",
+    "to": "of Man&quot;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...of God, and He who was the Son of God was also the Son ofMan&quot; (Enchir., c. xl. St. Th., 3a., q. xxxii., a. 1). By th...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-racenow",
+    "locator": {
+      "section": 4,
+      "raw_substring": "race.Now"
+    },
+    "field": "raw_text",
+    "from": "race.Now",
+    "to": "race. Now",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...othing else could have been more salutary to the human race.Now this work, although belonging to the whole Trinity, is...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thatwhich",
+    "locator": {
+      "section": 4,
+      "raw_substring": "&quot;thatwhich"
+    },
+    "field": "raw_text",
+    "from": "&quot;thatwhich",
+    "to": "&quot;that which",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...;She was found with child of the Holy Ghost,&quot; and &quot;thatwhich is conceived in her is of the Holy Ghost&quot; (Matt. ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-theprophecies",
+    "locator": {
+      "section": 4,
+      "raw_substring": "theprophecies"
+    },
+    "field": "raw_text",
+    "from": "theprophecies",
+    "to": "the prophecies",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...is datae , virtues, and all other gifts foretold in theprophecies of Isaias (Is. iv., I; xi., 23),...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thisdignity",
+    "locator": {
+      "section": 4,
+      "raw_substring": "thisdignity"
+    },
+    "field": "raw_text",
+    "from": "thisdignity",
+    "to": "this dignity",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...hereby elevated to a personal union with the Word; and thisdignity is given, not on account of any merits, but entirely a...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-wasborn",
+    "locator": {
+      "section": 4,
+      "raw_substring": "wasborn"
+    },
+    "field": "raw_text",
+    "from": "wasborn",
+    "to": "was born",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...t. Augustine writes: &quot;This manner in which Christ wasborn of the Holy Ghost, indicates to us the grace of God, b...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-askthe",
+    "locator": {
+      "section": 5,
+      "raw_substring": "askthe"
+    },
+    "field": "raw_text",
+    "from": "askthe",
+    "to": "ask the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ngth to preserve and increase the Church. &quot;I will askthe Father, and He will give you another Paraclete, that H...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-doctrineand",
+    "locator": {
+      "section": 5,
+      "raw_substring": "doctrineand"
+    },
+    "field": "raw_text",
+    "from": "doctrineand",
+    "to": "doctrine and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... her to foster daily more and more the germs of divine doctrineand to make them fruitful for the welfare of the peoples. ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thatthis",
+    "locator": {
+      "section": 5,
+      "raw_substring": "thatthis"
+    },
+    "field": "raw_text",
+    "from": "thatthis",
+    "to": "that this",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... which the Church was established, absolutely requires thatthis office should be continued for all time, the Holy Ghos...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-welfareof",
+    "locator": {
+      "section": 5,
+      "raw_substring": "welfareof"
+    },
+    "field": "raw_text",
+    "from": "welfareof",
+    "to": "welfare of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...fruitful for the welfare of the peoples. And since the welfareof the peoples, for which the Church was established, abs...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-youfor",
+    "locator": {
+      "section": 5,
+      "raw_substring": "youfor"
+    },
+    "field": "raw_text",
+    "from": "youfor",
+    "to": "you for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ill give you another Paraclete, that He may abide with youfor ever, the Spirit of Truth&quot; (john xiv., 16, 17).</...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-afterchrist",
+    "locator": {
+      "section": 7,
+      "raw_substring": "afterChrist's"
+    },
+    "field": "raw_text",
+    "from": "afterChrist's",
+    "to": "after Christ's",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...r &quot;that giving or sending forth of the Holy Ghost afterChrist's glorification was to be such as had never been before;...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-butif",
+    "locator": {
+      "section": 7,
+      "raw_substring": "Butif"
+    },
+    "field": "raw_text",
+    "from": "Butif",
+    "to": "But if",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ntly&quot; (St. Leo the Great, Hom. iii., de Pentec.). Butif they also were numbered among the children of God, the...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-forthmore",
+    "locator": {
+      "section": 7,
+      "raw_substring": "forthmore"
+    },
+    "field": "raw_text",
+    "from": "forthmore",
+    "to": "forth more",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...o begin to dwell in the saints, but by pouring Himself forthmore abundantly; crowning, not beginning His gifts; not com...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-likethat",
+    "locator": {
+      "section": 7,
+      "raw_substring": "likethat"
+    },
+    "field": "raw_text",
+    "from": "likethat",
+    "to": "like that",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...mbered among the children of God, they were in a state likethat of servants, for &quot;as long as the heir is a child ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-livingwater",
+    "locator": {
+      "section": 7,
+      "raw_substring": "livingwater&quot;;"
+    },
+    "field": "raw_text",
+    "from": "livingwater&quot;;",
+    "to": "living water&quot;;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...Scripture saith, out of his midst shall flow rivers of livingwater&quot;; to which testimony the Evangelist adds the explanation...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-moreabundant",
+    "locator": {
+      "section": 7,
+      "raw_substring": "moreabundant,"
+    },
+    "field": "raw_text",
+    "from": "moreabundant,",
+    "to": "more abundant,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... communication of the Holy Ghost after Christ was much moreabundant, just as the price surpasses in value the earnest and t...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-notgiven",
+    "locator": {
+      "section": 7,
+      "raw_substring": "notgiven,"
+    },
+    "field": "raw_text",
+    "from": "notgiven,",
+    "to": "not given,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...erefore St. John declares: &quot;As yet the Spirit was notgiven, because Jesus was not yet glorified&quot; (John vii., ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-nothingfrom",
+    "locator": {
+      "section": 7,
+      "raw_substring": "nothingfrom"
+    },
+    "field": "raw_text",
+    "from": "nothingfrom",
+    "to": "nothing from",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... for &quot;as long as the heir is a child he differeth nothingfrom a servant, but is under tutors and governors&quot; (Ga...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-nowthis",
+    "locator": {
+      "section": 7,
+      "raw_substring": "&quot;Nowthis"
+    },
+    "field": "raw_text",
+    "from": "&quot;Nowthis",
+    "to": "&quot;Now this",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...o which testimony the Evangelist adds the explanation: &quot;Nowthis He said of the Spirit which they should receive who be...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-onpentecost",
+    "locator": {
+      "section": 7,
+      "raw_substring": "onPentecost"
+    },
+    "field": "raw_text",
+    "from": "onPentecost",
+    "to": "on Pentecost",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '..., Zachary, John the Baptist, Simeon, and Anna; so that onPentecost the Holy Ghost did not communicate Himself in such a w...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-scripturesconcerning",
+    "locator": {
+      "section": 7,
+      "raw_substring": "Scripturesconcerning"
+    },
+    "field": "raw_text",
+    "from": "Scripturesconcerning",
+    "to": "Scriptures concerning",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...st, the Holy Ghost resided by grace, as we read in the Scripturesconcerning the prophets, Zachary, John the Baptist, Simeon, and A...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thenfor",
+    "locator": {
+      "section": 7,
+      "raw_substring": "thenfor"
+    },
+    "field": "raw_text",
+    "from": "thenfor",
+    "to": "then for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ost did not communicate Himself in such a way &quot;as thenfor the first time to begin to dwell in the saints, but by...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-therehad",
+    "locator": {
+      "section": 7,
+      "raw_substring": "therehad"
+    },
+    "field": "raw_text",
+    "from": "therehad",
+    "to": "there had",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...tion was to be such as had never been before; not that therehad been none before, but it had not been of the same kind...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-wasto",
+    "locator": {
+      "section": 7,
+      "raw_substring": "wasto"
+    },
+    "field": "raw_text",
+    "from": "wasto",
+    "to": "was to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...as their justice derived from the merits of Christ who wasto come, but the communication of the Holy Ghost after Ch...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-adornedwith",
+    "locator": {
+      "section": 8,
+      "raw_substring": "adornedwith"
+    },
+    "field": "raw_text",
+    "from": "adornedwith",
+    "to": "adorned with",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...so that rank and dignity whence he had fallen, and was adornedwith still more abundant graces. No one can express the gre...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-morenoble",
+    "locator": {
+      "section": 8,
+      "raw_substring": "morenoble"
+    },
+    "field": "raw_text",
+    "from": "morenoble",
+    "to": "more noble",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...This spiritual generation proceeds from love in a much morenoble manner than the natural: namely, from the untreated Lo...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thespirit",
+    "locator": {
+      "section": 8,
+      "raw_substring": "&quot;TheSpirit"
+    },
+    "field": "raw_text",
+    "from": "&quot;TheSpirit",
+    "to": "&quot;The Spirit",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... fills our hearts with the sweetness of paternal love: &quot;TheSpirit Himself giveth testimony to our spirit that we are the...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-workof",
+    "locator": {
+      "section": 8,
+      "raw_substring": "workof"
+    },
+    "field": "raw_text",
+    "from": "workof",
+    "to": "work of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ndant graces. No one can express the greatness of this workof divine grace in the souls of men. Wherefore, both in H...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-anexceedingly",
+    "locator": {
+      "section": 9,
+      "raw_substring": "anexceedingly"
+    },
+    "field": "raw_text",
+    "from": "anexceedingly",
+    "to": "an exceedingly",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...these words and admonitions are uttered in the soul in anexceedingly secret manner, they are sometimes aptly compared in Ho...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-eternalsalvation",
+    "locator": {
+      "section": 9,
+      "raw_substring": "eternalsalvation."
+    },
+    "field": "raw_text",
+    "from": "eternalsalvation.",
+    "to": "eternal salvation.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... beginning of a good life, no progress, no arriving at eternalsalvation. And since these words and admonitions are uttered in t...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-excitedin",
+    "locator": {
+      "section": 9,
+      "raw_substring": "excitedin"
+    },
+    "field": "raw_text",
+    "from": "excitedin",
+    "to": "excited in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... warnings and invitations, which from time to time are excitedin our minds and hearts by the inspiration of the Holy Gh...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-giftsare",
+    "locator": {
+      "section": 9,
+      "raw_substring": "giftsare"
+    },
+    "field": "raw_text",
+    "from": "giftsare",
+    "to": "gifts are",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ii., a. 2. St. Aug. de Trin., xv., c. 19). Among these giftsare those secret warnings and invitations, which from time...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-ismore",
+    "locator": {
+      "section": 9,
+      "raw_substring": "ismore"
+    },
+    "field": "raw_text",
+    "from": "ismore",
+    "to": "is more",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...n man, not only as in inanimate things, but because he ismore fully known and loved by him, since even by nature we ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-manyother",
+    "locator": {
+      "section": 9,
+      "raw_substring": "manyother"
+    },
+    "field": "raw_text",
+    "from": "manyother",
+    "to": "many other",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...e with that, through the gift which is the Holy Ghost, manyother special gifts are distributed among the members of Chr...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-orthe",
+    "locator": {
+      "section": 9,
+      "raw_substring": "orthe"
+    },
+    "field": "raw_text",
+    "from": "orthe",
+    "to": "or the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...e temple of God, does not expressly mention the Father orthe Son, or the Holy Ghost: &quot;Know ye not that your me...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-soulas",
+    "locator": {
+      "section": 9,
+      "raw_substring": "soulas"
+    },
+    "field": "raw_text",
+    "from": "soulas",
+    "to": "soul as",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...r the good. Moreover, God by grace resides in the just soulas in a temple, in a most intimate and peculiar manner. F...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-spiritis",
+    "locator": {
+      "section": 9,
+      "raw_substring": "Spiritis"
+    },
+    "field": "raw_text",
+    "from": "Spiritis",
+    "to": "Spirit is",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ed in only by the just. In harmony with this, the same Spiritis called Holy, for He, the first and supreme Love, moves...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-templeof",
+    "locator": {
+      "section": 9,
+      "raw_substring": "templeof"
+    },
+    "field": "raw_text",
+    "from": "templeof",
+    "to": "temple of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...oly Ghost: &quot;Know ye not that your members are the templeof the Holy Ghost, who is in you, whom you have from God?...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thanthe",
+    "locator": {
+      "section": 9,
+      "raw_substring": "thanthe"
+    },
+    "field": "raw_text",
+    "from": "thanthe",
+    "to": "than the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...by which the soul adheres most closely to God, more so thanthe friend is united to his most loving and beloved friend...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thatunion",
+    "locator": {
+      "section": 9,
+      "raw_substring": "thatunion"
+    },
+    "field": "raw_text",
+    "from": "thatunion",
+    "to": "that union",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... most intimate and peculiar manner. From this proceeds thatunion of affection by which the soul adheres most closely to...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-themovements",
+    "locator": {
+      "section": 9,
+      "raw_substring": "themovements"
+    },
+    "field": "raw_text",
+    "from": "themovements",
+    "to": "the movements",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...a coming breeze, and the Angelic Doctor likens them to themovements of the heart which are wholly hidden in the living bod...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-themto",
+    "locator": {
+      "section": 9,
+      "raw_substring": "themto"
+    },
+    "field": "raw_text",
+    "from": "themto",
+    "to": "them to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... He, the first and supreme Love, moves souls and leads themto sanctity, which ultimately consists in the love of God...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thesethere",
+    "locator": {
+      "section": 9,
+      "raw_substring": "thesethere"
+    },
+    "field": "raw_text",
+    "from": "thesethere",
+    "to": "these there",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...d hearts by the inspiration of the Holy Ghost. Without thesethere is no beginning of a good life, no progress, no arrivi...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-whenthe",
+    "locator": {
+      "section": 9,
+      "raw_substring": "&quot;whenthe"
+    },
+    "field": "raw_text",
+    "from": "&quot;whenthe",
+    "to": "&quot;when the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... in the souls of the just. For, as St. Thomas teaches, &quot;whenthe Holy Ghost proceedeth as love, He proceedeth in the ch...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-whichgod",
+    "locator": {
+      "section": 9,
+      "raw_substring": "whichGod"
+    },
+    "field": "raw_text",
+    "from": "whichGod",
+    "to": "which God",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...quot; differing only in degree or state from that with whichGod beatifies the saints in heaven, although it is most ce...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-amystery",
+    "locator": {
+      "section": 10,
+      "raw_substring": "amystery"
+    },
+    "field": "raw_text",
+    "from": "amystery",
+    "to": "a mystery",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...light.&quot; We urge this, not only because it affects amystery by which we are directly guided to eternal life, and w...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-divinemysteries",
+    "locator": {
+      "section": 10,
+      "raw_substring": "divinemysteries."
+    },
+    "field": "raw_text",
+    "from": "divinemysteries.",
+    "to": "divine mysteries.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...gerous folly of those who rashly endeavour to pry into divinemysteries. What should be chiefly dwelt upon and clearly explaine...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-firstplace",
+    "locator": {
+      "section": 10,
+      "raw_substring": "firstplace"
+    },
+    "field": "raw_text",
+    "from": "firstplace",
+    "to": "first place",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ove has a twofold and most conspicuous utility. In the firstplace it will excite us to acquire daily a clearer knowledge...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-inlike",
+    "locator": {
+      "section": 10,
+      "raw_substring": "inlike"
+    },
+    "field": "raw_text",
+    "from": "inlike",
+    "to": "in like",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...hether they have received the Holy Ghost, might answer inlike manner: &quot;We have not so much as heard whether the...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-intoall",
+    "locator": {
+      "section": 10,
+      "raw_substring": "intoall"
+    },
+    "field": "raw_text",
+    "from": "intoall",
+    "to": "into all",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...dge of the beloved, but striveth to inquire intimately intoall that appertains to the beloved, and thus to penetrate ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-lovethe",
+    "locator": {
+      "section": 10,
+      "raw_substring": "lovethe"
+    },
+    "field": "raw_text",
+    "from": "lovethe",
+    "to": "love the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...econd place, love, because He is God: &quot;Thou shalt lovethe Lord thy God with thy whole heart, and with thy whole ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-musttherefore",
+    "locator": {
+      "section": 10,
+      "raw_substring": "musttherefore"
+    },
+    "field": "raw_text",
+    "from": "musttherefore",
+    "to": "must therefore",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...hich we are directly guided to eternal life, and which musttherefore be firmly believed; but also because the more clearly ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-rememberthat",
+    "locator": {
+      "section": 10,
+      "raw_substring": "rememberthat"
+    },
+    "field": "raw_text",
+    "from": "rememberthat",
+    "to": "remember that",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...re all preachers and those having care of souls should rememberthat it is their duty to instruct their people more diligen...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-themultitude",
+    "locator": {
+      "section": 10,
+      "raw_substring": "themultitude"
+    },
+    "field": "raw_text",
+    "from": "themultitude",
+    "to": "the multitude",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... should be chiefly dwelt upon and clearly explained is themultitude and greatness of the benefits which have been bestowed...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-theprofound",
+    "locator": {
+      "section": 10,
+      "raw_substring": "theprofound"
+    },
+    "field": "raw_text",
+    "from": "theprofound",
+    "to": "the profound",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... Ghost, Who is the Love of God, that He searcheth even theprofound things of God&quot; (1 Cor. ii., 10; Summ. Theol., la....'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thesubstantial",
+    "locator": {
+      "section": 10,
+      "raw_substring": "thesubstantial,"
+    },
+    "field": "raw_text",
+    "from": "thesubstantial,",
+    "to": "the substantial,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...; (Deut. vi., 5). He is also to be loved because He is thesubstantial, eternal, primal Love, and nothing is more lovable than...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thywhole",
+    "locator": {
+      "section": 10,
+      "raw_substring": "thywhole"
+    },
+    "field": "raw_text",
+    "from": "thywhole",
+    "to": "thy whole",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...ith thy whole heart, and with thy whole soul, and with thywhole strength&quot; (Deut. vi., 5). He is also to be loved ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-inwisdom",
+    "locator": {
+      "section": 11,
+      "raw_substring": "inwisdom,"
+    },
+    "field": "raw_text",
+    "from": "inwisdom,",
+    "to": "in wisdom,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...s protection and His help. The more a man is deficient inwisdom, weak in strength, borne down with trouble, prone to si...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-theforgiveness",
+    "locator": {
+      "section": 11,
+      "raw_substring": "theforgiveness"
+    },
+    "field": "raw_text",
+    "from": "theforgiveness",
+    "to": "the forgiveness",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...and holiness. And chiefly that first requisite of man, theforgiveness of sins, must be sought for from...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-themore",
+    "locator": {
+      "section": 11,
+      "raw_substring": "themore"
+    },
+    "field": "raw_text",
+    "from": "themore",
+    "to": "the more",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...th, borne down with trouble, prone to sin, so ought he themore to fly to Him who is the never-ceasing fount of light,...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-bearabundant",
+    "locator": {
+      "section": 12,
+      "raw_substring": "bearabundant"
+    },
+    "field": "raw_text",
+    "from": "bearabundant",
+    "to": "bear abundant",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...iefly by means of your zeal and earnestness, they will bearabundant fruit among Christian peoples. We Ourselves shall neve...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-inwhatever",
+    "locator": {
+      "section": 12,
+      "raw_substring": "inwhatever"
+    },
+    "field": "raw_text",
+    "from": "inwhatever",
+    "to": "in whatever",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...rds so important an end; and it is even Our intention, inwhatever ways may appear suitable, to further cultivate and ext...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-nodoubt",
+    "locator": {
+      "section": 12,
+      "raw_substring": "nodoubt"
+    },
+    "field": "raw_text",
+    "from": "nodoubt",
+    "to": "no doubt",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...order to stimulate devotion to the Holy Ghost. We have nodoubt that, chiefly by means of your zeal and earnestness, t...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thisadmirable",
+    "locator": {
+      "section": 12,
+      "raw_substring": "thisadmirable"
+    },
+    "field": "raw_text",
+    "from": "thisadmirable",
+    "to": "this admirable",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...s may appear suitable, to further cultivate and extend thisadmirable work of piety. Meanwhile, as two years ago, in Our Let...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-atyour",
+    "locator": {
+      "section": 14,
+      "raw_substring": "atyour"
+    },
+    "field": "raw_text",
+    "from": "atyour",
+    "to": "at your",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '... then, Venerable Brethren, your prayers with Ours, and atyour exhortation let all Christian peoples add their prayer...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-becreated",
+    "locator": {
+      "section": 14,
+      "raw_substring": "becreated,"
+    },
+    "field": "raw_text",
+    "from": "becreated,",
+    "to": "be created,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...s of David: &quot;Send forth Thy Spirit and they shall becreated, and Thou shalt renew the face of the earth&quot; (Ps. ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-thepowerful",
+    "locator": {
+      "section": 14,
+      "raw_substring": "thepowerful"
+    },
+    "field": "raw_text",
+    "from": "thepowerful",
+    "to": "the powerful",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...all Christian peoples add their prayers also, invoking thepowerful and ever-acceptable intercession of the Blessed Virgin...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-wasof",
+    "locator": {
+      "section": 14,
+      "raw_substring": "wasof"
+    },
+    "field": "raw_text",
+    "from": "wasof",
+    "to": "was of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...led His Spouse. The intercession of the Blessed Virgin wasof great avail both in the mystery of the Incarnation and...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-wellthe",
+    "locator": {
+      "section": 14,
+      "raw_substring": "wellthe"
+    },
+    "field": "raw_text",
+    "from": "wellthe",
+    "to": "well the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...cceptable intercession of the Blessed Virgin. You know wellthe intimate and wonderful relations existing between her ...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "divinum-illud-munus.en-withher",
+    "locator": {
+      "section": 14,
+      "raw_substring": "withher"
+    },
+    "field": "raw_text",
+    "from": "withher",
+    "to": "with her",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__divinum-illud-munus__en.html: '...e Apostles. May she continue to strengthen our prayers withher suffrages, that, in the midst of all the stress and tr...'. The rest of the English corpus writes these two words apart; this page prints 100 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

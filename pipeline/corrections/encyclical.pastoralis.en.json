@@ -1,0 +1,301 @@
+[
+  {
+    "id": "pastoralis.en-congressof",
+    "locator": {
+      "section": 3,
+      "raw_substring": "Congressof"
+    },
+    "field": "raw_text",
+    "from": "Congressof",
+    "to": "Congress of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...n, of the truth which was perfectly appreciated at the Congressof Braga, that it has come to pass that the faith itself ...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-indanger",
+    "locator": {
+      "section": 3,
+      "raw_substring": "indanger,"
+    },
+    "field": "raw_text",
+    "from": "indanger,",
+    "to": "in danger,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...t has come to pass that the faith itself is among many indanger, and that every effort must be made, that, through igno...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-madeagainst",
+    "locator": {
+      "section": 3,
+      "raw_substring": "madeagainst"
+    },
+    "field": "raw_text",
+    "from": "madeagainst",
+    "to": "made against",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '... plentiful sweetness of perfect fruits. Strife must be madeagainst the attempts of the enemies of truth, lest the evil st...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-orindifference",
+    "locator": {
+      "section": 3,
+      "raw_substring": "orindifference,"
+    },
+    "field": "raw_text",
+    "from": "orindifference,",
+    "to": "or indifference,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...hat every effort must be made, that, through ignorance orindifference, it should not fall and fail from souls, but rather tha...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-practiceof",
+    "locator": {
+      "section": 3,
+      "raw_substring": "practiceof"
+    },
+    "field": "raw_text",
+    "from": "practiceof",
+    "to": "practice of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...in hearts and should bring forth in good works and the practiceof virtue a glad and plentiful sweetness of perfect fruit...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-shouldtake",
+    "locator": {
+      "section": 3,
+      "raw_substring": "shouldtake"
+    },
+    "field": "raw_text",
+    "from": "shouldtake",
+    "to": "should take",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...hould not fall and fail from souls, but rather that it shouldtake deep root in hearts and should bring forth in good wor...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-betweenthe",
+    "locator": {
+      "section": 4,
+      "raw_substring": "betweenthe"
+    },
+    "field": "raw_text",
+    "from": "betweenthe",
+    "to": "between the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...nd more suitably attended to if day by day the concord betweenthe Bishops is strengthened, and if their work is made mor...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-didnot",
+    "locator": {
+      "section": 4,
+      "raw_substring": "didnot"
+    },
+    "field": "raw_text",
+    "from": "didnot",
+    "to": "did not",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...nience of a stricter bond of union between the Bishops didnot escape the prudence of those who met at Braga. Wherefo...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-fartherand",
+    "locator": {
+      "section": 4,
+      "raw_substring": "fartherand"
+    },
+    "field": "raw_text",
+    "from": "fartherand",
+    "to": "farther and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...rements of separate dioceses, and for those that reach fartherand rise higher, with which the prosperity and the weal of...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-suchdecisions",
+    "locator": {
+      "section": 4,
+      "raw_substring": "suchdecisions"
+    },
+    "field": "raw_text",
+    "from": "suchdecisions",
+    "to": "such decisions",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...s of clergy and laity, in taking counsel and in making suchdecisions as shall seem to align best with the common good, both...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-thefounding",
+    "locator": {
+      "section": 4,
+      "raw_substring": "thefounding"
+    },
+    "field": "raw_text",
+    "from": "thefounding",
+    "to": "the founding",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...gress were the most gratifying to Us which recommended thefounding of such a bond, through which the faithful look for am...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-theparticular",
+    "locator": {
+      "section": 4,
+      "raw_substring": "theparticular"
+    },
+    "field": "raw_text",
+    "from": "theparticular",
+    "to": "the particular",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...hall seem to align best with the common good, both for theparticular requirements of separate dioceses, and for those that ...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-willbe",
+    "locator": {
+      "section": 4,
+      "raw_substring": "willbe"
+    },
+    "field": "raw_text",
+    "from": "willbe",
+    "to": "will be",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '..., as We have said, demand your care and your industry, willbe more fully and more suitably attended to if day by day...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-ofsalvation",
+    "locator": {
+      "section": 6,
+      "raw_substring": "ofsalvation"
+    },
+    "field": "raw_text",
+    "from": "ofsalvation",
+    "to": "of salvation",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...ce of all time testifies) have fulfilled this ministry ofsalvation no less gladly than laboriously, will be able to suppl...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-whichthey",
+    "locator": {
+      "section": 6,
+      "raw_substring": "whichthey"
+    },
+    "field": "raw_text",
+    "from": "whichthey",
+    "to": "which they",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '... zeal. For the rule and discipline of the societies to whichthey belong, as well as the virtue of each trained in const...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-doesit",
+    "locator": {
+      "section": 9,
+      "raw_substring": "doesit"
+    },
+    "field": "raw_text",
+    "from": "doesit",
+    "to": "does it",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '... doctrine is applicable to all nations, most specially doesit affect the Portuguese, among whom the influence of the...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-intraining",
+    "locator": {
+      "section": 9,
+      "raw_substring": "intraining"
+    },
+    "field": "raw_text",
+    "from": "intraining",
+    "to": "in training",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...ese, among whom the influence of the Catholic religion intraining the character and disposition of men, in fostering the...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-ofscience",
+    "locator": {
+      "section": 9,
+      "raw_substring": "ofscience,"
+    },
+    "field": "raw_text",
+    "from": "ofscience,",
+    "to": "of science,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...acter and disposition of men, in fostering the studies ofscience, letters, and arts, in kindling the soul to every civic...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-commendedto",
+    "locator": {
+      "section": 12,
+      "raw_substring": "commendedto"
+    },
+    "field": "raw_text",
+    "from": "commendedto",
+    "to": "commended to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...stancy of spirit to set your hands to the work we have commendedto you. Thus will it be your high praise and just congrat...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-sowell",
+    "locator": {
+      "section": 12,
+      "raw_substring": "sowell,"
+    },
+    "field": "raw_text",
+    "from": "sowell,",
+    "to": "so well,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...to deserve most nobly of the religion which you uphold sowell, and of your country and your race, for whom you, no le...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-faithfulentrusted",
+    "locator": {
+      "section": 13,
+      "raw_substring": "faithfulentrusted"
+    },
+    "field": "raw_text",
+    "from": "faithfulentrusted",
+    "to": "faithful entrusted",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...f Our fatherly affection, to you and to the clergy and faithfulentrusted to your care. <font size=...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-inwitness",
+    "locator": {
+      "section": 13,
+      "raw_substring": "inwitness"
+    },
+    "field": "raw_text",
+    "from": "inwitness",
+    "to": "in witness",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '... grant lovingly in the Lord the Apostolic Benediction, inwitness of Our fatherly affection, to you and to the clergy an...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis.en-tofavour",
+    "locator": {
+      "section": 13,
+      "raw_substring": "tofavour"
+    },
+    "field": "raw_text",
+    "from": "tofavour",
+    "to": "to favour",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis__en.html: '...ing God to fill you with His good gifts and graciously tofavour your designs, We grant lovingly in the Lord the Aposto...'. The rest of the English corpus writes these two words apart; this page prints 23 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

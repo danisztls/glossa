@@ -1,0 +1,392 @@
+[
+  {
+    "id": "quam-aerumnosa.en-andteaching",
+    "locator": {
+      "section": 3,
+      "raw_substring": "andteaching"
+    },
+    "field": "raw_text",
+    "from": "andteaching",
+    "to": "and teaching",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...herd, and at the same time calling to mind the charity andteaching of the Eternal Father, We considered it to be Our duty...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-aspossible",
+    "locator": {
+      "section": 3,
+      "raw_substring": "aspossible."
+    },
+    "field": "raw_text",
+    "from": "aspossible.",
+    "to": "as possible.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...ening of the material distress of the emigrants as far aspossible. Moreover, as the principal cause of the growing ill la...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-bediscussed",
+    "locator": {
+      "section": 3,
+      "raw_substring": "bediscussed,"
+    },
+    "field": "raw_text",
+    "from": "bediscussed,",
+    "to": "be discussed,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...in the Sacred Council of Propaganda this matter should bediscussed, and We issued commands that when the remedies had been...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-careof",
+    "locator": {
+      "section": 3,
+      "raw_substring": "careof"
+    },
+    "field": "raw_text",
+    "from": "careof",
+    "to": "care of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...f Priests in the Episcopal See of Placentia, under the careof the Venerable Brother John Baptist, Bishop of Placenti...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-dutiesand",
+    "locator": {
+      "section": 3,
+      "raw_substring": "dutiesand"
+    },
+    "field": "raw_text",
+    "from": "dutiesand",
+    "to": "duties and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...imulated by Christ's love, might be practiced in those dutiesand that discipline by which they might well and worthily ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-hopethat",
+    "locator": {
+      "section": 3,
+      "raw_substring": "hopethat"
+    },
+    "field": "raw_text",
+    "from": "hopethat",
+    "to": "hope that",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...more zealous for their benefit, and We had the certain hopethat your zeal and assistance would never be wanting to Us....'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-ofsouls",
+    "locator": {
+      "section": 3,
+      "raw_substring": "ofsouls"
+    },
+    "field": "raw_text",
+    "from": "ofsouls",
+    "to": "of souls",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '... same time carefully considered, namely, the salvation ofsouls and the lessening of the material distress of the emig...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-ourletter",
+    "locator": {
+      "section": 3,
+      "raw_substring": "Ourletter"
+    },
+    "field": "raw_text",
+    "from": "Ourletter",
+    "to": "Our letter",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...more convenient accomplishment of this, We founded, by Ourletter of December 15th, last year, sealed by the seal of the...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-smission",
+    "locator": {
+      "section": 3,
+      "raw_substring": "Christ'smission"
+    },
+    "field": "raw_text",
+    "from": "Christ'smission",
+    "to": "Christ's mission",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...iscipline by which they might well and worthily fulfil Christ'smission among the scattered sons of Italy, and become fit disp...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-somany",
+    "locator": {
+      "section": 3,
+      "raw_substring": "somany"
+    },
+    "field": "raw_text",
+    "from": "somany",
+    "to": "so many",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...ings with care, and sorrowing over the wretchedness of somany men, whom We saw to be wandering like sheep on steep a...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-teachthe",
+    "locator": {
+      "section": 3,
+      "raw_substring": "teachthe"
+    },
+    "field": "raw_text",
+    "from": "teachthe",
+    "to": "teach the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...ts to console their countrymen in their own tongue, to teachthe faith and the obligations of the Christian life, which...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-thatthese",
+    "locator": {
+      "section": 3,
+      "raw_substring": "thatthese"
+    },
+    "field": "raw_text",
+    "from": "thatthese",
+    "to": "that these",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...as the principal cause of the growing ill lay in this, thatthese unhappy men were without the help of a priestly minist...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-thegreater",
+    "locator": {
+      "section": 3,
+      "raw_substring": "thegreater"
+    },
+    "field": "raw_text",
+    "from": "thegreater",
+    "to": "the greater",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...nce their salvation and their good. And We did so with thegreater goodwill because the love for men who spring from the ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-therising",
+    "locator": {
+      "section": 3,
+      "raw_substring": "therising"
+    },
+    "field": "raw_text",
+    "from": "therising",
+    "to": "the rising",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...inister to them the saving sacraments, to spread among therising generation religion and charity - in fine to help all ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-tothat",
+    "locator": {
+      "section": 3,
+      "raw_substring": "tothat"
+    },
+    "field": "raw_text",
+    "from": "tothat",
+    "to": "to that",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '... given and increased, We determined to send from Italy tothat land many priests to console their countrymen in their...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-andwill",
+    "locator": {
+      "section": 4,
+      "raw_substring": "andwill"
+    },
+    "field": "raw_text",
+    "from": "andwill",
+    "to": "and will",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...these will be received by you with fatherly affection, andwill obtain the necessary faculties for the sacred ministry...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-decideall",
+    "locator": {
+      "section": 4,
+      "raw_substring": "decide.All"
+    },
+    "field": "raw_text",
+    "from": "decide.All",
+    "to": "decide. All",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...aces this can be done, it will be for your prudence to decide.All these things which We considered to be a duty of our A...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-havecommanded",
+    "locator": {
+      "section": 4,
+      "raw_substring": "havecommanded"
+    },
+    "field": "raw_text",
+    "from": "havecommanded",
+    "to": "have commanded",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...ch We considered to be a duty of our Apostolic care We havecommanded to be made known to you by this letter. But if any one...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-inwhat",
+    "locator": {
+      "section": 4,
+      "raw_substring": "inwhat"
+    },
+    "field": "raw_text",
+    "from": "inwhat",
+    "to": "in what",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...ts and arrange touring missions. But on what system or inwhat special places this can be done, it will be for your p...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-itnor",
+    "locator": {
+      "section": 4,
+      "raw_substring": "it.Nor"
+    },
+    "field": "raw_text",
+    "from": "it.Nor",
+    "to": "it. Nor",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '... of the Apostolic ministry as far as there is need for it.Nor do We daubs that these will be received by you with fa...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-ofbrethren",
+    "locator": {
+      "section": 4,
+      "raw_substring": "ofbrethren"
+    },
+    "field": "raw_text",
+    "from": "ofbrethren",
+    "to": "of brethren",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...s own instinct and judgment or from the united counsel ofbrethren - anything in addition which We may do for the comfort...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-ofthese",
+    "locator": {
+      "section": 4,
+      "raw_substring": "ofthese"
+    },
+    "field": "raw_text",
+    "from": "ofthese",
+    "to": "of these",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...in addition which We may do for the comfort and profit ofthese men, you will be doing a favour to Us if you make it k...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-sacredcouncil",
+    "locator": {
+      "section": 4,
+      "raw_substring": "SacredCouncil"
+    },
+    "field": "raw_text",
+    "from": "SacredCouncil",
+    "to": "Sacred Council",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...ll be doing a favour to Us if you make it known to the SacredCouncil of Propaganda. <font size...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-seminaryfor",
+    "locator": {
+      "section": 4,
+      "raw_substring": "seminaryfor"
+    },
+    "field": "raw_text",
+    "from": "seminaryfor",
+    "to": "seminary for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...ents of this college, which We wish to be considered a seminaryfor God's ministers for the assistance of Italians dwellin...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-thebeginning",
+    "locator": {
+      "section": 4,
+      "raw_substring": "thebeginning"
+    },
+    "field": "raw_text",
+    "from": "thebeginning",
+    "to": "the beginning",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '... give their best aid in the holy warfare. In truth, in thebeginning their help will not be so large as the needs of the oc...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-toappoint",
+    "locator": {
+      "section": 4,
+      "raw_substring": "toappoint"
+    },
+    "field": "raw_text",
+    "from": "toappoint",
+    "to": "to appoint",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...ble, from the numbers and necessities of the faithful, toappoint priests in separate remote districts for the cure of s...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-tofulfil",
+    "locator": {
+      "section": 4,
+      "raw_substring": "tofulfil"
+    },
+    "field": "raw_text",
+    "from": "tofulfil",
+    "to": "to fulfil",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...ests they may go forth, under your pastoral authority, tofulfil all the duties of the Apostolic ministry as far as the...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-weconsider",
+    "locator": {
+      "section": 4,
+      "raw_substring": "Weconsider"
+    },
+    "field": "raw_text",
+    "from": "Weconsider",
+    "to": "We consider",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...rate remote districts for the cure of souls. Wherefore Weconsider it the wisest course that, in the dioceses where the I...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-wedesire",
+    "locator": {
+      "section": 4,
+      "raw_substring": "Wedesire"
+    },
+    "field": "raw_text",
+    "from": "Wedesire",
+    "to": "We desire",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '...rs for the assistance of Italians dwelling in America, Wedesire youths born of Italian parents even in your country to...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "quam-aerumnosa.en-youvenerable",
+    "locator": {
+      "section": 5,
+      "raw_substring": "you,Venerable"
+    },
+    "field": "raw_text",
+    "from": "you,Venerable",
+    "to": "you, Venerable",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__quam-aerumnosa__en.html: '... Blessing as a pledge of Our most devoted affection to you,Venerable Brethren, and to all the Clergy and Faithful whom you ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

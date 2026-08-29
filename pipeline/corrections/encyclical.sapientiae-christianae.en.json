@@ -1,0 +1,1159 @@
+[
+  {
+    "id": "sapientiae-christianae.en-chieflyof",
+    "locator": {
+      "section": 36,
+      "raw_substring": "chieflyof"
+    },
+    "field": "raw_text",
+    "from": "chieflyof",
+    "to": "chiefly of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...e characteristic of those who are set over others, and chieflyof rulers of the State, whose duty it is to exercise the ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-goodof",
+    "locator": {
+      "section": 36,
+      "raw_substring": "goodof"
+    },
+    "field": "raw_text",
+    "from": "goodof",
+    "to": "good of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...font size=\"3\">general good and that which concerns the goodof individuals. This latter is shown forth in the case of...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-whilethe",
+    "locator": {
+      "section": 36,
+      "raw_substring": "whilethe"
+    },
+    "field": "raw_text",
+    "from": "whilethe",
+    "to": "while the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...of right reason in the direction of their own conduct; whilethe former is the characteristic of those who are set over...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-whollyin",
+    "locator": {
+      "section": 36,
+      "raw_substring": "whollyin"
+    },
+    "field": "raw_text",
+    "from": "whollyin",
+    "to": "wholly in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... prudence of private individuals would seem to consist whollyin carrying out faithfully the orders issued by lawful au...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-whoobey",
+    "locator": {
+      "section": 36,
+      "raw_substring": "whoobey"
+    },
+    "field": "raw_text",
+    "from": "whoobey",
+    "to": "who obey",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...s latter is shown forth in the case of private persons whoobey the prompting of right reason in the direction of thei...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-arenevertheless",
+    "locator": {
+      "section": 37,
+      "raw_substring": "arenevertheless"
+    },
+    "field": "raw_text",
+    "from": "arenevertheless",
+    "to": "are nevertheless",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ugh they attain not to the summit of pontifical power, arenevertheless truly princes in the ecclesiastical hierarchy; and as ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-beled",
+    "locator": {
+      "section": 37,
+      "raw_substring": "beled"
+    },
+    "field": "raw_text",
+    "from": "beled",
+    "to": "be led",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...thy manner, lest, justly reproving what is wrong, they beled by pride into greater wrong. They are to be warned aga...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-byhim",
+    "locator": {
+      "section": 37,
+      "raw_substring": "byhim"
+    },
+    "field": "raw_text",
+    "from": "byhim",
+    "to": "by him",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...regard to personal conduct or in reference to opinions byhim entertained about points of doctrine; but no private p...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-evenwhen",
+    "locator": {
+      "section": 37,
+      "raw_substring": "evenwhen"
+    },
+    "field": "raw_text",
+    "from": "evenwhen",
+    "to": "even when",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...eriors should not be smitten by the sword of the word, evenwhen they are rightly judged to have deserved censure.&quot...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-hischarge",
+    "locator": {
+      "section": 37,
+      "raw_substring": "hischarge"
+    },
+    "field": "raw_text",
+    "from": "hischarge",
+    "to": "his charge",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ntiff embraces diverse and multiform things, for it is hischarge not only to rule the Church, but generally so to regul...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-inmind",
+    "locator": {
+      "section": 37,
+      "raw_substring": "inmind"
+    },
+    "field": "raw_text",
+    "from": "inmind",
+    "to": "in mind",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...arge of His lambs and of His sheep. Let every one bear inmind that most wise teaching of Gregory the Great: &quot;Su...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-modeof",
+    "locator": {
+      "section": 37,
+      "raw_substring": "modeof"
+    },
+    "field": "raw_text",
+    "from": "modeof",
+    "to": "mode of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...rry out their decisions. Every one has to regulate his modeof conduct according to this constitution of the Church, ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-ofthem",
+    "locator": {
+      "section": 37,
+      "raw_substring": "ofthem"
+    },
+    "field": "raw_text",
+    "from": "ofthem",
+    "to": "of them",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...inces in the ecclesiastical hierarchy; and as each one ofthem administers a particular church, they are &quot;as mas...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-ordershould",
+    "locator": {
+      "section": 37,
+      "raw_substring": "ordershould"
+    },
+    "field": "raw_text",
+    "from": "ordershould",
+    "to": "order should",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...\"> 37. The like disposition and the same ordershould prevail in the Christian society by so much the more t...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-politicalprudence",
+    "locator": {
+      "section": 37,
+      "raw_substring": "politicalprudence"
+    },
+    "field": "raw_text",
+    "from": "politicalprudence",
+    "to": "political prudence",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... in the Christian society by so much the more that the politicalprudence of the Pontiff embraces diverse and multiform things, ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-scopeto",
+    "locator": {
+      "section": 37,
+      "raw_substring": "scopeto"
+    },
+    "field": "raw_text",
+    "from": "scopeto",
+    "to": "scope to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... prelates, indeed, one or other there may be affording scopeto criticism either in regard to personal conduct or in r...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-sharetheir",
+    "locator": {
+      "section": 37,
+      "raw_substring": "sharetheir"
+    },
+    "field": "raw_text",
+    "from": "sharetheir",
+    "to": "share their",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...fice,&quot;(36) and they have members of the clergy to sharetheir duties and carry out their decisions. Every one has to...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-soshould",
+    "locator": {
+      "section": 37,
+      "raw_substring": "soshould"
+    },
+    "field": "raw_text",
+    "from": "soshould",
+    "to": "so should",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... the bishops ought to be united with the apostolic see soshould the members of the clergy and the laity live in close ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-submissionthe",
+    "locator": {
+      "section": 37,
+      "raw_substring": "submission.The"
+    },
+    "field": "raw_text",
+    "from": "submission.The",
+    "to": "submission. The",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...h the fear of God, ought not to refuse them respectful submission.The actions of superiors should not be smitten by the swor...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theirbishops",
+    "locator": {
+      "section": 37,
+      "raw_substring": "theirbishops."
+    },
+    "field": "raw_text",
+    "from": "theirbishops.",
+    "to": "their bishops.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...s of the clergy and the laity live in close union with theirbishops. Among the prelates, indeed, one or other there may be ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-thepower",
+    "locator": {
+      "section": 37,
+      "raw_substring": "thepower"
+    },
+    "field": "raw_text",
+    "from": "thepower",
+    "to": "the power",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...to this constitution of the Church, which it is not in thepower of any man to change. Consequently, just as in the exe...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-tohimself",
+    "locator": {
+      "section": 37,
+      "raw_substring": "tohimself"
+    },
+    "field": "raw_text",
+    "from": "tohimself",
+    "to": "to himself",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...points of doctrine; but no private person may arrogate tohimself the office of judge which Christ our Lord has bestowed...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-bearthe",
+    "locator": {
+      "section": 38,
+      "raw_substring": "bearthe"
+    },
+    "field": "raw_text",
+    "from": "bearthe",
+    "to": "bear the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...s account the sins of Christians are much greater, and bearthe stamp of more shameful and criminal ingratitude.</font...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-butlittle",
+    "locator": {
+      "section": 38,
+      "raw_substring": "butlittle"
+    },
+    "field": "raw_text",
+    "from": "butlittle",
+    "to": "but little",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...\"> 38. However, all endeavors will avail butlittle unless our life be regulated conformably with the disc...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-concerningthe",
+    "locator": {
+      "section": 38,
+      "raw_substring": "concerningthe"
+    },
+    "field": "raw_text",
+    "from": "concerningthe",
+    "to": "concerning the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...rtues. Let us call to mind what holy Scripture records concerningthe Jewish nation: &quot;As long as they sinned not in the...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-thechristian-1",
+    "locator": {
+      "section": 38,
+      "raw_substring": "of theChristian"
+    },
+    "field": "raw_text",
+    "from": "of theChristian",
+    "to": "of the Christian",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... our life be regulated conformably with the discipline of theChristian virtues. Let us call to mind what holy Scripture recor...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-thechristian-2",
+    "locator": {
+      "section": 38,
+      "raw_substring": "because theChristian"
+    },
+    "field": "raw_text",
+    "from": "because theChristian",
+    "to": "because the Christian",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...had not enjoined that men should love one another, but because theChristian precept of loving each other in that manner was truly ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theirhistory",
+    "locator": {
+      "section": 38,
+      "raw_substring": "theirhistory"
+    },
+    "field": "raw_text",
+    "from": "theirhistory",
+    "to": "their history",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...lance to the Christian people, and the vicissitudes of theirhistory in olden times have often foreshadowed the truth that ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theyhad",
+    "locator": {
+      "section": 38,
+      "raw_substring": "theyhad"
+    },
+    "field": "raw_text",
+    "from": "theyhad",
+    "to": "they had",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...em: for their God hateth iniquity. And even . . . when theyhad revolted from the way that God had given them to walk ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-weredestroyed",
+    "locator": {
+      "section": 38,
+      "raw_substring": "weredestroyed"
+    },
+    "field": "raw_text",
+    "from": "weredestroyed",
+    "to": "were destroyed",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... the way that God had given them to walk therein, they weredestroyed in battles by many nations.&quot;(38) Now, the nation ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-fearlest",
+    "locator": {
+      "section": 39,
+      "raw_substring": "fearlest"
+    },
+    "field": "raw_text",
+    "from": "fearlest",
+    "to": "fear lest",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...l purposes and crafty schemes, there will be ground to fearlest the very foundations nature has laid for States to res...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-fromchristian",
+    "locator": {
+      "section": 39,
+      "raw_substring": "fromChristian"
+    },
+    "field": "raw_text",
+    "from": "fromChristian",
+    "to": "from Christian",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...edness of men; but in the case of nations falling away fromChristian virtue there is not a like ground of assurance, &quot;...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-goodevil",
+    "locator": {
+      "section": 39,
+      "raw_substring": "goodevil,&quot;"
+    },
+    "field": "raw_text",
+    "from": "goodevil,&quot;",
+    "to": "good evil,&quot;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ng themselves wise when they call &quot;evil good, and goodevil,&quot; and &quot;put darkness in the place of light, and ligh...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-makethnations",
+    "locator": {
+      "section": 39,
+      "raw_substring": "makethnations"
+    },
+    "field": "raw_text",
+    "from": "makethnations",
+    "to": "maketh nations",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...there is not a like ground of assurance, &quot;for sin makethnations miserable.&quot;(39) If every bygone age has experienc...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-ofmodern",
+    "locator": {
+      "section": 39,
+      "raw_substring": "ofmodern"
+    },
+    "field": "raw_text",
+    "from": "ofmodern",
+    "to": "of modern",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...st punishments are already menacing, and the condition ofmodern States tends to confirm this belief, since we perceive...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-onthat",
+    "locator": {
+      "section": 39,
+      "raw_substring": "onthat"
+    },
+    "field": "raw_text",
+    "from": "onthat",
+    "to": "on that",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...umber of men, having rejected the Christian faith, are onthat account justly incurring the penalty of their pride, s...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-placeof",
+    "locator": {
+      "section": 39,
+      "raw_substring": "placeof"
+    },
+    "field": "raw_text",
+    "from": "placeof",
+    "to": "place of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...t;put darkness in the place of light, and light in the placeof darkness.&quot;(40) It is therefore necessary that God...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-shouldthose",
+    "locator": {
+      "section": 39,
+      "raw_substring": "shouldthose"
+    },
+    "field": "raw_text",
+    "from": "shouldthose",
+    "to": "should those",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...intestine disorders, and not one entirely exempt. But, shouldthose leagued together in wickedness hurry onward in the roa...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-signswhich",
+    "locator": {
+      "section": 39,
+      "raw_substring": "signswhich"
+    },
+    "field": "raw_text",
+    "from": "signswhich",
+    "to": "signs which",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ore should not our own? There are, in truth, very many signswhich proclaim that just punishments are already menacing, a...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theirpassions",
+    "locator": {
+      "section": 39,
+      "raw_substring": "theirpassions"
+    },
+    "field": "raw_text",
+    "from": "theirpassions",
+    "to": "their passions",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...incurring the penalty of their pride, since blinded by theirpassions they search in vain for truth, laying hold on the fals...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-utterlydestroyed",
+    "locator": {
+      "section": 39,
+      "raw_substring": "utterlydestroyed."
+    },
+    "field": "raw_text",
+    "from": "utterlydestroyed.",
+    "to": "utterly destroyed.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...foundations nature has laid for States to rest upon be utterlydestroyed. Nor can such misgivings be removed by any mere human e...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-embracedand",
+    "locator": {
+      "section": 40,
+      "raw_substring": "embracedand"
+    },
+    "field": "raw_text",
+    "from": "embracedand",
+    "to": "embraced and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...tion, for it binds intimately to God those whom it has embracedand with loving tenderness, causes them to draw their life...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-himby",
+    "locator": {
+      "section": 40,
+      "raw_substring": "Himby"
+    },
+    "field": "raw_text",
+    "from": "Himby",
+    "to": "Him by",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ers that they might be of one heart and of one mind in Himby charity, as He Himself and His Father are one by their...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-hisbrother",
+    "locator": {
+      "section": 40,
+      "raw_substring": "hisbrother.&quot;(42)"
+    },
+    "field": "raw_text",
+    "from": "hisbrother.&quot;(42)",
+    "to": "his brother.&quot;(42)",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...nt we have from God, that he who loveth God, love also hisbrother.&quot;(42) &quot;If any man say I love God, and he hateth his bro...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-hisdisciples",
+    "locator": {
+      "section": 40,
+      "raw_substring": "Hisdisciples"
+    },
+    "field": "raw_text",
+    "from": "Hisdisciples",
+    "to": "His disciples",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...r and with which He Himself loves men, He obtained for Hisdisciples and followers that they might be of one heart and of o...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-lifeis",
+    "locator": {
+      "section": 40,
+      "raw_substring": "lifeis"
+    },
+    "field": "raw_text",
+    "from": "lifeis",
+    "to": "life is",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... merciful God, so that the virtues whereby a Christian lifeis perfected may be reawakened. It is, however, urgent be...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-maintainedtherefore",
+    "locator": {
+      "section": 40,
+      "raw_substring": "maintained.Therefore"
+    },
+    "field": "raw_text",
+    "from": "maintained.Therefore",
+    "to": "maintained. Therefore",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...es exist not or remain barren, should be quickened and maintained.Therefore is it that the Apostle Paul, after having exhorted the...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-natureitself",
+    "locator": {
+      "section": 40,
+      "raw_substring": "natureitself,"
+    },
+    "field": "raw_text",
+    "from": "natureitself,",
+    "to": "nature itself,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...led new, not in the sense that a previous law, or even natureitself, had not enjoined that men should love one another, but...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-thebond",
+    "locator": {
+      "section": 40,
+      "raw_substring": "thebond"
+    },
+    "field": "raw_text",
+    "from": "thebond",
+    "to": "the bond",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...e bond of perfection.&quot;(41) Yea, truly, charity is thebond of perfection, for it binds intimately to God those wh...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theother",
+    "locator": {
+      "section": 40,
+      "raw_substring": "theother"
+    },
+    "field": "raw_text",
+    "from": "theother",
+    "to": "the other",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...foundation of the Christian life, and apart from which theother virtues exist not or remain barren, should be quickene...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-thiscommandment",
+    "locator": {
+      "section": 40,
+      "raw_substring": "&quot;Thiscommandment"
+    },
+    "field": "raw_text",
+    "from": "&quot;Thiscommandment",
+    "to": "&quot;This commandment",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...r in themselves the impress of His image and likeness. &quot;Thiscommandment we have from God, that he who loveth God, love also hi...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-toflee",
+    "locator": {
+      "section": 40,
+      "raw_substring": "toflee"
+    },
+    "field": "raw_text",
+    "from": "toflee",
+    "to": "to flee",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...the Apostle Paul, after having exhorted the Colossians toflee all vice and cultivate all virtue, adds: &quot;Above a...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-withgod",
+    "locator": {
+      "section": 40,
+      "raw_substring": "withGod,"
+    },
+    "field": "raw_text",
+    "from": "withGod,",
+    "to": "with God,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...rness, causes them to draw their life from God, to act withGod, to refer all to God. Howbeit, the love of God should n...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-devoteourselves",
+    "locator": {
+      "section": 41,
+      "raw_substring": "devoteourselves"
+    },
+    "field": "raw_text",
+    "from": "devoteourselves",
+    "to": "devote ourselves",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...nd fortitude it has produced. Why, then, should we not devoteourselves to imitate the examples set by our <font size=\"...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-ifthere",
+    "locator": {
+      "section": 41,
+      "raw_substring": "ifthere"
+    },
+    "field": "raw_text",
+    "from": "ifthere",
+    "to": "if there",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ld be imbued with new life. Let dissensions therefore, ifthere be any, wholly cease; let those strifes which waste th...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-menare",
+    "locator": {
+      "section": 41,
+      "raw_substring": "menare"
+    },
+    "field": "raw_text",
+    "from": "menare",
+    "to": "men are",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ent motives for the practice of charity. Since impious menare bent on giving fresh impulse to their hatred against J...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-ofchristians",
+    "locator": {
+      "section": 41,
+      "raw_substring": "ofChristians,"
+    },
+    "field": "raw_text",
+    "from": "ofChristians,",
+    "to": "of Christians,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...mport of that precept has been implanted in the breast ofChristians, and what abundant fruits of concord, mutual benevolenc...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-thevery",
+    "locator": {
+      "section": 41,
+      "raw_substring": "thevery"
+    },
+    "field": "raw_text",
+    "from": "thevery",
+    "to": "the very",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ont size=\"3\">41. No one is unaware how deeply and from thevery beginning the import of that precept has been implante...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-thoseengaged",
+    "locator": {
+      "section": 41,
+      "raw_substring": "thoseengaged"
+    },
+    "field": "raw_text",
+    "from": "thoseengaged",
+    "to": "those engaged",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...y cease; let those strifes which waste the strength of thoseengaged in the fight, without any advantage resulting to relig...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-allshould",
+    "locator": {
+      "section": 42,
+      "raw_substring": "allshould"
+    },
+    "field": "raw_text",
+    "from": "allshould",
+    "to": "all should",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...sly followed, where time and circumstances demand, yet allshould be intimately persuaded that the minds of children are...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-authorityto",
+    "locator": {
+      "section": 42,
+      "raw_substring": "authorityto"
+    },
+    "field": "raw_text",
+    "from": "authorityto",
+    "to": "authority to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '..., and to strive manfully to have and to hold exclusive authorityto direct the education of their offspring, as is fitting...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-christiandiscipline",
+    "locator": {
+      "section": 42,
+      "raw_substring": "Christiandiscipline"
+    },
+    "field": "raw_text",
+    "from": "Christiandiscipline",
+    "to": "Christian discipline",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ered. Whence it is that they who would break away from Christiandiscipline are working to corrupt family life, and to destroy it ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-giftof",
+    "locator": {
+      "section": 42,
+      "raw_substring": "giftof"
+    },
+    "field": "raw_text",
+    "from": "giftof",
+    "to": "gift of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ch God vouch - safed the privilege of transmitting the giftof life. It is, then, incumbent on parents to strain ever...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-littleones",
+    "locator": {
+      "section": 42,
+      "raw_substring": "littleones"
+    },
+    "field": "raw_text",
+    "from": "littleones",
+    "to": "little ones",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...-added of shaping and directing the education of their littleones to the end for which God vouch - safed the privilege o...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-offsuch",
+    "locator": {
+      "section": 42,
+      "raw_substring": "offsuch"
+    },
+    "field": "raw_text",
+    "from": "offsuch",
+    "to": "off such",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...en, incumbent on parents to strain every nerve to ward offsuch an outrage, and to strive manfully to have and to hold...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-ofyouth",
+    "locator": {
+      "section": 42,
+      "raw_substring": "ofyouth"
+    },
+    "field": "raw_text",
+    "from": "ofyouth",
+    "to": "of youth",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ng in the poison of impiety. Where the right education ofyouth is concerned, no amount of trouble or labor can be und...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-rootand",
+    "locator": {
+      "section": 42,
+      "raw_substring": "rootand"
+    },
+    "field": "raw_text",
+    "from": "rootand",
+    "to": "root and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ing to corrupt family life, and to destroy it utterly, rootand branch. From such an unholy purpose they allow not the...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-statesis",
+    "locator": {
+      "section": 42,
+      "raw_substring": "Statesis"
+    },
+    "field": "raw_text",
+    "from": "Statesis",
+    "to": "States is",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...thin the circle of family life that the destiny of the Statesis fostered. Whence it is that they who would break away ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theirchildren",
+    "locator": {
+      "section": 42,
+      "raw_substring": "theirchildren."
+    },
+    "field": "raw_text",
+    "from": "theirchildren.",
+    "to": "their children.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...e solicitous without failing for the right training of theirchildren. The family may be regarded as the cradle of civil soci...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theirearly",
+    "locator": {
+      "section": 42,
+      "raw_substring": "theirearly"
+    },
+    "field": "raw_text",
+    "from": "theirearly",
+    "to": "their early",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...t> training they receive at home. If in theirearly years they find within the walls of their homes the ru...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theirright",
+    "locator": {
+      "section": 42,
+      "raw_substring": "theirright"
+    },
+    "field": "raw_text",
+    "from": "theirright",
+    "to": "their right",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...g cruel outrage on the parents. These hold from nature theirright of training the children to whom they have given birth...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theobligation",
+    "locator": {
+      "section": 42,
+      "raw_substring": "theobligation"
+    },
+    "field": "raw_text",
+    "from": "theobligation",
+    "to": "the obligation",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ining the children to whom they have given birth, with theobligation super-added of shaping and directing the education of ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theseprecepts",
+    "locator": {
+      "section": 42,
+      "raw_substring": "theseprecepts,"
+    },
+    "field": "raw_text",
+    "from": "theseprecepts,",
+    "to": "these precepts,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ds of families to govern their households according to theseprecepts, and to be solicitous without failing for the right tra...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-turnedaside",
+    "locator": {
+      "section": 42,
+      "raw_substring": "turnedaside"
+    },
+    "field": "raw_text",
+    "from": "turnedaside",
+    "to": "turned aside",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...such an unholy purpose they allow not themselves to be turnedaside by the reflection that it cannot, even in any degree, ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-uprightlife",
+    "locator": {
+      "section": 42,
+      "raw_substring": "uprightlife"
+    },
+    "field": "raw_text",
+    "from": "uprightlife",
+    "to": "upright life",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ey find within the walls of their homes the rule of an uprightlife and the discipline of Christian virtues, the future we...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-willin",
+    "locator": {
+      "section": 42,
+      "raw_substring": "willin"
+    },
+    "field": "raw_text",
+    "from": "willin",
+    "to": "will in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ne of Christian virtues, the future welfare of society willin great measure be guaranteed. <p align=\"left...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-confesshim",
+    "locator": {
+      "section": 43,
+      "raw_substring": "confessHim"
+    },
+    "field": "raw_text",
+    "from": "confessHim",
+    "to": "confess Him",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...e His Father in heaven those who shall have refused to confessHim on earth.&quot;(44) As for Ourselves and you all, neve...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-forjesus",
+    "locator": {
+      "section": 43,
+      "raw_substring": "forJesus"
+    },
+    "field": "raw_text",
+    "from": "forJesus",
+    "to": "for Jesus",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... life. On the other hand, to refrain from doing battle forJesus Christ amounts to fighting against Him; He Himself ass...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-hewill",
+    "locator": {
+      "section": 43,
+      "raw_substring": "&quot;Hewill"
+    },
+    "field": "raw_text",
+    "from": "&quot;Hewill",
+    "to": "&quot;He will",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...amounts to fighting against Him; He Himself assures us &quot;Hewill deny before His Father in heaven those who shall have ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-itrests",
+    "locator": {
+      "section": 43,
+      "raw_substring": "Itrests"
+    },
+    "field": "raw_text",
+    "from": "Itrests",
+    "to": "It rests",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... ought chiefly nowadays to follow, or mainly to avoid. Itrests with you, venerable brothers, to take measures that Ou...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-longas",
+    "locator": {
+      "section": 43,
+      "raw_substring": "longas"
+    },
+    "field": "raw_text",
+    "from": "longas",
+    "to": "long as",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...(44) As for Ourselves and you all, never assuredly, so longas life lasts, shall We allow Our authority, Our counsels...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-ofjanuary",
+    "locator": {
+      "section": 43,
+      "raw_substring": "ofJanuary,"
+    },
+    "field": "raw_text",
+    "from": "ofJanuary,",
+    "to": "of January,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ize=\"3\"> Given at St. Peter's in Rome, the tenth day ofJanuary, 1890, the twelfth year of Our pontificate. . ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-thateach",
+    "locator": {
+      "section": 43,
+      "raw_substring": "thateach"
+    },
+    "field": "raw_text",
+    "from": "thateach",
+    "to": "that each",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...u will afford aid by the authority of your example, so thateach one of the faithful may make more strenuous endeavor, ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-thelabors",
+    "locator": {
+      "section": 43,
+      "raw_substring": "thelabors"
+    },
+    "field": "raw_text",
+    "from": "thelabors",
+    "to": "the labors",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ily endured; and that a sublime reward is in store for thelabors of a Christian life. On the other hand, to refrain fro...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-theseduties",
+    "locator": {
+      "section": 43,
+      "raw_substring": "theseduties"
+    },
+    "field": "raw_text",
+    "from": "theseduties",
+    "to": "these duties",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...chings set forth in this Our letter. The observance of theseduties cannot be troublesome or onerous, for the yoke of Jesu...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-thosematters",
+    "locator": {
+      "section": 43,
+      "raw_substring": "thosematters"
+    },
+    "field": "raw_text",
+    "from": "thosematters",
+    "to": "those matters",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...font size=\"3\">43. And now We seem to have touched upon thosematters which Catholics ought chiefly nowadays to follow, or m...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-topractice",
+    "locator": {
+      "section": 43,
+      "raw_substring": "topractice"
+    },
+    "field": "raw_text",
+    "from": "topractice",
+    "to": "to practice",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... one and all may understand how urgent it is to reduce topractice the teachings set forth in this Our letter. The observ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-venerablebrothers",
+    "locator": {
+      "section": 43,
+      "raw_substring": "venerablebrothers,"
+    },
+    "field": "raw_text",
+    "from": "venerablebrothers,",
+    "to": "venerable brothers,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '... gifts, and of Our loving kindness in the Lord to you, venerablebrothers, to your clergy and to all your people, We accord the a...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "sapientiae-christianae.en-worthyof",
+    "locator": {
+      "section": 43,
+      "raw_substring": "worthyof"
+    },
+    "field": "raw_text",
+    "from": "worthyof",
+    "to": "worthy of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__sapientiae-christianae__en.html: '...ed the warning, that matters of the highest moment and worthyof all honor are at stake, for the safeguarding of which ...'. The rest of the English corpus writes these two words apart; this page prints 88 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

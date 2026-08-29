@@ -1,0 +1,392 @@
+[
+  {
+    "id": "catholicae-ecclesiae.en-freedominsofar",
+    "locator": {
+      "section": 1,
+      "raw_substring": "freedom.Insofar"
+    },
+    "field": "raw_text",
+    "from": "freedom.Insofar",
+    "to": "freedom. Insofar",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...f the slaves and showed Himself the strong champion of freedom.Insofar as time and circumstances allowed, He gradually and mo...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-fromhim",
+    "locator": {
+      "section": 1,
+      "raw_substring": "FromHim"
+    },
+    "field": "raw_text",
+    "from": "FromHim",
+    "to": "From Him",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '... the fraternal necessity which unites the whole world. FromHim we recall that everybody has sprung from the same sour...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-theapostles",
+    "locator": {
+      "section": 1,
+      "raw_substring": "theapostles,"
+    },
+    "field": "raw_text",
+    "from": "theapostles,",
+    "to": "the apostles,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...eachings of its Founder who, by His words and those of theapostles, taught men the fraternal necessity which unites the wh...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-beenconfirmed",
+    "locator": {
+      "section": 2,
+      "raw_substring": "beenconfirmed"
+    },
+    "field": "raw_text",
+    "from": "beenconfirmed",
+    "to": "been confirmed",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...y, and sold like cattle. These eyewitness reports have beenconfirmed by recent explorers to equatorial Africa, arousing Our...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-foreignland",
+    "locator": {
+      "section": 2,
+      "raw_substring": "foreignland,"
+    },
+    "field": "raw_text",
+    "from": "foreignland,",
+    "to": "foreign land,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '... villages! Bound and beaten, they are transported to a foreignland, put on display, and sold like cattle. These eyewitness...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-helpthose",
+    "locator": {
+      "section": 2,
+      "raw_substring": "helpthose"
+    },
+    "field": "raw_text",
+    "from": "helpthose",
+    "to": "help those",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...explorers to equatorial Africa, arousing Our desire to helpthose wretched men and to alleviate their lamentable conditi...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-manydifficulties",
+    "locator": {
+      "section": 2,
+      "raw_substring": "manydifficulties"
+    },
+    "field": "raw_text",
+    "from": "manydifficulties",
+    "to": "many difficulties",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...sistence they would use to defend the Negro cause, how manydifficulties oppress these slaves. Therefore, with the occasion onc...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-ofeurope",
+    "locator": {
+      "section": 2,
+      "raw_substring": "ofEurope"
+    },
+    "field": "raw_text",
+    "from": "ofEurope",
+    "to": "of Europe",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...delegated the task of going to the principal countries ofEurope to Our beloved son Charles Martial Cardinal Lavigerie,...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-ofprivate",
+    "locator": {
+      "section": 2,
+      "raw_substring": "ofprivate"
+    },
+    "field": "raw_text",
+    "from": "ofprivate",
+    "to": "of private",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...tatives of European leaders, and more recently a group ofprivate citizens met in Paris for the same purpose. They clear...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-racetherefore",
+    "locator": {
+      "section": 2,
+      "raw_substring": "race.Therefore,"
+    },
+    "field": "raw_text",
+    "from": "race.Therefore,",
+    "to": "race. Therefore,",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...line the leaders and citizens to assist this miserable race.Therefore, We should feel grateful to Christ our Lord, the most l...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-reasonwe",
+    "locator": {
+      "section": 2,
+      "raw_substring": "reasonWe"
+    },
+    "field": "raw_text",
+    "from": "reasonWe",
+    "to": "reason We",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '... and to alleviate their lamentable condition. For this reasonWe have immediately delegated the task of going to the pr...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-redeemerof",
+    "locator": {
+      "section": 2,
+      "raw_substring": "Redeemerof"
+    },
+    "field": "raw_text",
+    "from": "Redeemerof",
+    "to": "Redeemer of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...ould feel grateful to Christ our Lord, the most loving Redeemerof all nations. He in His goodness did not allow Our effo...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-thedeliberations",
+    "locator": {
+      "section": 2,
+      "raw_substring": "thedeliberations"
+    },
+    "field": "raw_text",
+    "from": "thedeliberations",
+    "to": "the deliberations",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...y pray that almighty God might give a happy outcome to thedeliberations they have begun. <font siz...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-thismatter",
+    "locator": {
+      "section": 2,
+      "raw_substring": "thismatter."
+    },
+    "field": "raw_text",
+    "from": "thismatter.",
+    "to": "this matter.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...e and thank the leaders of Europe for their efforts in thismatter. We strenuously pray that almighty God might give a hap...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-arethe",
+    "locator": {
+      "section": 3,
+      "raw_substring": "arethe"
+    },
+    "field": "raw_text",
+    "from": "arethe",
+    "to": "are the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '... can become co-heirs with Us of the kingdom of God. We arethe more concerned about this because those who have recei...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-divinetruth",
+    "locator": {
+      "section": 3,
+      "raw_substring": "divinetruth,"
+    },
+    "field": "raw_text",
+    "from": "divinetruth,",
+    "to": "divine truth,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...g in darkness and blind superstition with the light of divinetruth, by which they can become co-heirs with Us of the kingd...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-havealso",
+    "locator": {
+      "section": 3,
+      "raw_substring": "havealso"
+    },
+    "field": "raw_text",
+    "from": "havealso",
+    "to": "have also",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '... about this because those who have received this light havealso shaken off the yoke of human slavery. Wherever Christi...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-lawsare",
+    "locator": {
+      "section": 3,
+      "raw_substring": "lawsare"
+    },
+    "field": "raw_text",
+    "from": "lawsare",
+    "to": "laws are",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '... yoke of human slavery. Wherever Christian customs and lawsare in force, wherever religion establishes that men serve...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-beestablished",
+    "locator": {
+      "section": 4,
+      "raw_substring": "beestablished"
+    },
+    "field": "raw_text",
+    "from": "beestablished",
+    "to": "be established",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...e the money among the missions which now exist or will beestablished primarily to eliminate slavery in Africa. The money co...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-councilwill",
+    "locator": {
+      "section": 4,
+      "raw_substring": "Councilwill"
+    },
+    "field": "raw_text",
+    "from": "Councilwill",
+    "to": "Council will",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...e given to sustain and help those missions. The Sacred Councilwill divide the rest of the money among those missions whic...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-fromthose",
+    "locator": {
+      "section": 4,
+      "raw_substring": "fromthose"
+    },
+    "field": "raw_text",
+    "from": "fromthose",
+    "to": "from those",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...arily to eliminate slavery in Africa. The money coming fromthose countries which have their own Catholic missions to fr...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-greatestneed",
+    "locator": {
+      "section": 4,
+      "raw_substring": "greatestneed,"
+    },
+    "field": "raw_text",
+    "from": "greatestneed,",
+    "to": "greatest need,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '... rest of the money among those missions which show the greatestneed, according to its discretion. We are confident that God...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-specialassistance",
+    "locator": {
+      "section": 4,
+      "raw_substring": "specialassistance"
+    },
+    "field": "raw_text",
+    "from": "specialassistance",
+    "to": "special assistance",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...her, should strive to complete this matter. Timely and specialassistance should be given by the faithful to abolish the blemish...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-wementioned",
+    "locator": {
+      "section": 4,
+      "raw_substring": "Wementioned,"
+    },
+    "field": "raw_text",
+    "from": "Wementioned,",
+    "to": "We mentioned,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...ave their own Catholic missions to free the slaves, as Wementioned, will be given to sustain and help those missions. The ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-toprovide",
+    "locator": {
+      "section": 5,
+      "raw_substring": "toprovide"
+    },
+    "field": "raw_text",
+    "from": "toprovide",
+    "to": "to provide",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...ny others of similar scope. A great outlay is required toprovide for the education of missionaries, long journeys, cons...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-iscelebrated",
+    "locator": {
+      "section": 6,
+      "raw_substring": "iscelebrated,"
+    },
+    "field": "raw_text",
+    "from": "iscelebrated,",
+    "to": "is celebrated,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...ree that every year, wherever the Epiphany of the Lord iscelebrated, on that day a collection should be taken up to help in...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-projectwe",
+    "locator": {
+      "section": 6,
+      "raw_substring": "projectWe"
+    },
+    "field": "raw_text",
+    "from": "projectWe",
+    "to": "project We",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...hat day a collection should be taken up to help in the projectWe have just outlined. We have chosen this day in prefere...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-thelight",
+    "locator": {
+      "section": 6,
+      "raw_substring": "thelight"
+    },
+    "field": "raw_text",
+    "from": "thelight",
+    "to": "the light",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...he love and prayers of the faithful, who have received thelight of truth. In a new testimony of praise, We pray that H...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-thenations",
+    "locator": {
+      "section": 6,
+      "raw_substring": "thenations,"
+    },
+    "field": "raw_text",
+    "from": "thenations,",
+    "to": "the nations,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...at is the day the Son of God first revealed Himself to thenations, when He showed Himself to the Magi. They were called &...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "catholicae-ecclesiae.en-yearof",
+    "locator": {
+      "section": 6,
+      "raw_substring": "yearof"
+    },
+    "field": "raw_text",
+    "from": "yearof",
+    "to": "year of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__catholicae-ecclesiae__en.html: '...t St. Peter's, on November 20, 1890, in the thirteenth yearof Our pontificate. <fo...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

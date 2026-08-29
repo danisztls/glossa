@@ -1,0 +1,353 @@
+[
+  {
+    "id": "diuturni-temporis.en-anencyclical",
+    "locator": {
+      "section": 2,
+      "raw_substring": "anEncyclical"
+    },
+    "field": "raw_text",
+    "from": "anEncyclical",
+    "to": "an Encyclical",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...ans, by publishing every year since September 1, 1883, anEncyclical Letter on this subject, besides frequently issuing Dec...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-apowerful",
+    "locator": {
+      "section": 2,
+      "raw_substring": "apowerful"
+    },
+    "field": "raw_text",
+    "from": "apowerful",
+    "to": "a powerful",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...n an increase of devotion to the Blessed Virgin, as in apowerful citadel, and We have never ceased to encourage the con...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-bestimulated",
+    "locator": {
+      "section": 2,
+      "raw_substring": "bestimulated"
+    },
+    "field": "raw_text",
+    "from": "bestimulated",
+    "to": "be stimulated",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...till more clearly, and the fervour of the faithful may bestimulated to the devout and constant use of this pious practice....'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-formof",
+    "locator": {
+      "section": 2,
+      "raw_substring": "formof"
+    },
+    "field": "raw_text",
+    "from": "formof",
+    "to": "form of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...ocument, in which Our earnest desire and zeal for this formof devotion to Mary may appear still...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-iswell",
+    "locator": {
+      "section": 2,
+      "raw_substring": "iswell"
+    },
+    "field": "raw_text",
+    "from": "iswell",
+    "to": "is well",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...n this subject, besides frequently issuing Decrees, as iswell known. And now, since God in His merciful Providence h...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-ourwork",
+    "locator": {
+      "section": 2,
+      "raw_substring": "ourwork"
+    },
+    "field": "raw_text",
+    "from": "ourwork",
+    "to": "our work",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...for the promotion of his form of prayer, We will crown ourwork by yet a new document, in which Our earnest desire and...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-therosary",
+    "locator": {
+      "section": 2,
+      "raw_substring": "theRosary"
+    },
+    "field": "raw_text",
+    "from": "theRosary",
+    "to": "the Rosary",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '... We have never ceased to encourage the constant use of theRosary among Christians, by publishing every year since Septe...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-beconvinced",
+    "locator": {
+      "section": 3,
+      "raw_substring": "beconvinced"
+    },
+    "field": "raw_text",
+    "from": "beconvinced",
+    "to": "be convinced",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...fore, by a constant desire that Christians should ever beconvinced of the efficacy and dignity of the Rosary of Our Lady,...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-eternallife",
+    "locator": {
+      "section": 3,
+      "raw_substring": "eternallife."
+    },
+    "field": "raw_text",
+    "from": "eternallife.",
+    "to": "eternal life.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...st powerful and particularly efficacious for attaining eternallife. For besides the special excellence of the prayers, it ...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-ofprayer",
+    "locator": {
+      "section": 3,
+      "raw_substring": "ofprayer"
+    },
+    "field": "raw_text",
+    "from": "ofprayer",
+    "to": "of prayer",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...ord's Prayer, joined to meditation, and that this form ofprayer was most powerful and particularly efficacious for att...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-powerfulprotection",
+    "locator": {
+      "section": 3,
+      "raw_substring": "powerfulprotection"
+    },
+    "field": "raw_text",
+    "from": "powerfulprotection",
+    "to": "powerful protection",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...es the special excellence of the prayers, it affords a powerfulprotection to faith and conspicuous models of virtue in the myste...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-proposedfor",
+    "locator": {
+      "section": 3,
+      "raw_substring": "proposedfor"
+    },
+    "field": "raw_text",
+    "from": "proposedfor",
+    "to": "proposed for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...aith and conspicuous models of virtue in the mysteries proposedfor contemplation. We showed also how easy the devotion is...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-toexperience",
+    "locator": {
+      "section": 3,
+      "raw_substring": "toexperience"
+    },
+    "field": "raw_text",
+    "from": "toexperience",
+    "to": "to experience",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...areth, and that therefore Christendom had never failed toexperience its salutary effects. <fo...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-benedictxiii",
+    "locator": {
+      "section": 4,
+      "raw_substring": "BenedictXIII."
+    },
+    "field": "raw_text",
+    "from": "BenedictXIII.",
+    "to": "Benedict XIII.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...ogy, and Clement XI. extended to the Universal Church. BenedictXIII. inserted the feast in the Roman Breviary, and We, ours...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-finallywe",
+    "locator": {
+      "section": 4,
+      "raw_substring": "Finallywe"
+    },
+    "field": "raw_text",
+    "from": "Finallywe",
+    "to": "Finally we",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...ecrating to this devotion the entire month of October. Finallywe ordered the addition to the Litany of Loreto of the in...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-happymemory",
+    "locator": {
+      "section": 4,
+      "raw_substring": "happymemory,"
+    },
+    "field": "raw_text",
+    "from": "happymemory,",
+    "to": "happy memory,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '... the footsteps of our predecessors. Pope Sixtus V., of happymemory, approved the ancient custom of reciting the Rosary; Gr...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-thesecond",
+    "locator": {
+      "section": 4,
+      "raw_substring": "thesecond"
+    },
+    "field": "raw_text",
+    "from": "thesecond",
+    "to": "the second",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...d be celebrated in the Universal Church as a double of thesecond class, consecrating to this devotion the entire month ...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-withits",
+    "locator": {
+      "section": 4,
+      "raw_substring": "withits"
+    },
+    "field": "raw_text",
+    "from": "withits",
+    "to": "with its",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...fection for this devotion commanded that the solemnity withits office should be celebrated in the Universal Church as...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-greatlyto",
+    "locator": {
+      "section": 5,
+      "raw_substring": "greatlyto"
+    },
+    "field": "raw_text",
+    "from": "greatlyto",
+    "to": "greatly to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...sures of indulgences attached to it. It is evident how greatlyto the advantage of all who are solicitous for their</fon...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-ofobtaining",
+    "locator": {
+      "section": 5,
+      "raw_substring": "ofobtaining"
+    },
+    "field": "raw_text",
+    "from": "ofobtaining",
+    "to": "of obtaining",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '... the obtaining of these benefits. For it is a question ofobtaining either totally or partially a remission of the debt of...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-tomen",
+    "locator": {
+      "section": 5,
+      "raw_substring": "tomen:"
+    },
+    "field": "raw_text",
+    "from": "tomen:",
+    "to": "to men:",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '... the Book of Wisdom: &quot;She is an infinite treasure tomen: which they that use become the friends of God&quot; (W...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-aidedby",
+    "locator": {
+      "section": 7,
+      "raw_substring": "aidedby"
+    },
+    "field": "raw_text",
+    "from": "aidedby",
+    "to": "aided by",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...ir piety, so that in the last hour of life they may be aidedby her assistance and sweetly rest in her embrace. This b...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-andindulgences",
+    "locator": {
+      "section": 7,
+      "raw_substring": "andindulgences"
+    },
+    "field": "raw_text",
+    "from": "andindulgences",
+    "to": "and indulgences",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...t;Constitution&quot; concerning the rights, privileges andindulgences which are enjoyed by the members of the Rosary Sodalit...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-anearnest",
+    "locator": {
+      "section": 7,
+      "raw_substring": "anearnest"
+    },
+    "field": "raw_text",
+    "from": "anearnest",
+    "to": "an earnest",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '... God through the Queen of the most Holy Rosary, and as anearnest and pledge of Divine Blessings, Venerable Brethren, to...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-faithfuland",
+    "locator": {
+      "section": 7,
+      "raw_substring": "faithfuland"
+    },
+    "field": "raw_text",
+    "from": "faithfuland",
+    "to": "faithful and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '... God, and at the same time an encouragement to all the faithfuland a reward of their piety, so that in the last hour of l...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-mostaugust",
+    "locator": {
+      "section": 7,
+      "raw_substring": "mostaugust"
+    },
+    "field": "raw_text",
+    "from": "mostaugust",
+    "to": "most august",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...n&quot; We intend to be a testimony of Our love to the mostaugust Mother of God, and at the same time an encouragement t...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "diuturni-temporis.en-thepublication",
+    "locator": {
+      "section": 7,
+      "raw_substring": "thepublication"
+    },
+    "field": "raw_text",
+    "from": "thepublication",
+    "to": "the publication",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__diuturni-temporis__en.html: '...n carrying out what We have long contemplated, namely, thepublication of a &quot;Constitution&quot; concerning the rights, p...'. The rest of the English corpus writes these two words apart; this page prints 27 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

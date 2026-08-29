@@ -1,0 +1,392 @@
+[
+  {
+    "id": "permoti-nos.en-andduties",
+    "locator": {
+      "section": 5,
+      "raw_substring": "andduties"
+    },
+    "field": "raw_text",
+    "from": "andduties",
+    "to": "and duties",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '... last analysis, it has a broad reference to the rights andduties of all classes. Furthermore, when we apply the evangel...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-ofjustice",
+    "locator": {
+      "section": 5,
+      "raw_substring": "ofjustice"
+    },
+    "field": "raw_text",
+    "from": "ofjustice",
+    "to": "of justice",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '... Furthermore, when we apply the evangelical principles ofjustice and charity to this question and to the conduct of lif...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-ofworkers",
+    "locator": {
+      "section": 5,
+      "raw_substring": "ofworkers"
+    },
+    "field": "raw_text",
+    "from": "ofworkers",
+    "to": "of workers",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '... be added certain conditions of business and industry, ofworkers and owners which are specifically peculiar to Belgium....'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-religionand",
+    "locator": {
+      "section": 5,
+      "raw_substring": "religionand"
+    },
+    "field": "raw_text",
+    "from": "religionand",
+    "to": "religion and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '... external goods, but it is preeminently concerned with religionand morals. It is also directly connected with the civil c...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-thelaws",
+    "locator": {
+      "section": 5,
+      "raw_substring": "thelaws,"
+    },
+    "field": "raw_text",
+    "from": "thelaws,",
+    "to": "the laws,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...also directly connected with the civil constitution of thelaws, so that in the last analysis, it has a broad reference...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-theseconsiderations",
+    "locator": {
+      "section": 5,
+      "raw_substring": "theseconsiderations"
+    },
+    "field": "raw_text",
+    "from": "theseconsiderations",
+    "to": "these considerations",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...f private individuals are necessarily affected. And to theseconsiderations must be added certain conditions of business and indus...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-apower",
+    "locator": {
+      "section": 6,
+      "raw_substring": "apower"
+    },
+    "field": "raw_text",
+    "from": "apower",
+    "to": "a power",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...gion excels in its own function and spreads its power, apower which brings safety to civil, domestic, and economic a...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-awonderful",
+    "locator": {
+      "section": 6,
+      "raw_substring": "awonderful"
+    },
+    "field": "raw_text",
+    "from": "awonderful",
+    "to": "a wonderful",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...y to civil, domestic, and economic affairs as well, in awonderful way; 2) that by uniting public authority and freedom i...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-commongood",
+    "locator": {
+      "section": 6,
+      "raw_substring": "commongood,"
+    },
+    "field": "raw_text",
+    "from": "commongood,",
+    "to": "common good,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '... those goals which are seen quite truly to lead to the commongood, in preference to their own personal opinions and inter...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-eachone",
+    "locator": {
+      "section": 6,
+      "raw_substring": "eachone"
+    },
+    "field": "raw_text",
+    "from": "eachone",
+    "to": "each one",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...e less laborious and less dangerous for you to decide, eachone of you in your own diocese, on remedies and stabilizin...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-everywhereto",
+    "locator": {
+      "section": 6,
+      "raw_substring": "everywhereto"
+    },
+    "field": "raw_text",
+    "from": "everywhereto",
+    "to": "everywhere to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...ar as possible along the same paths should be observed everywhereto be one and the same action. Consequently this action s...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-forand",
+    "locator": {
+      "section": 6,
+      "raw_substring": "forand"
+    },
+    "field": "raw_text",
+    "from": "forand",
+    "to": "for and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...tive. To facilitate this, Catholics must urgently wish forand pursue only those goals which are seen quite truly to ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-thecongress",
+    "locator": {
+      "section": 6,
+      "raw_substring": "thecongress,"
+    },
+    "field": "raw_text",
+    "from": "thecongress,",
+    "to": "the congress,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...he present affair. In this way after the conclusion of thecongress, it will be less laborious and less dangerous for you t...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-bethe",
+    "locator": {
+      "section": 7,
+      "raw_substring": "bethe"
+    },
+    "field": "raw_text",
+    "from": "bethe",
+    "to": "be the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...constituents of the common good whose acquisition must bethe goal of our efforts. From this good comes real allevia...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-christianwisdom",
+    "locator": {
+      "section": 7,
+      "raw_substring": "Christianwisdom"
+    },
+    "field": "raw_text",
+    "from": "Christianwisdom",
+    "to": "Christian wisdom",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...t in loving with greater zeal the order taught by this Christianwisdom and in strengthening it by their example, the outcome ...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-ifcatholics",
+    "locator": {
+      "section": 7,
+      "raw_substring": "IfCatholics"
+    },
+    "field": "raw_text",
+    "from": "IfCatholics",
+    "to": "If Catholics",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...life and from it too derives merits for heavenly life. IfCatholics persist in loving with greater zeal the order taught b...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-nocatholic",
+    "locator": {
+      "section": 7,
+      "raw_substring": "noCatholic"
+    },
+    "field": "raw_text",
+    "from": "noCatholic",
+    "to": "no Catholic",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...seek the protection and guidance of the Church. Surely noCatholic who truly loves his religion and his country will refu...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-thecondition",
+    "locator": {
+      "section": 7,
+      "raw_substring": "thecondition"
+    },
+    "field": "raw_text",
+    "from": "thecondition",
+    "to": "the condition",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...forts. From this good comes real alleviation to solace thecondition of mortal life and from it too derives merits for heav...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-thepath",
+    "locator": {
+      "section": 7,
+      "raw_substring": "thepath,"
+    },
+    "field": "raw_text",
+    "from": "thepath,",
+    "to": "the path,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...ome to pass. When this happens, those who strayed from thepath, deceived either by wrong opinion or by false appearanc...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-togreater",
+    "locator": {
+      "section": 7,
+      "raw_substring": "togreater"
+    },
+    "field": "raw_text",
+    "from": "togreater",
+    "to": "to greater",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...e every improvement contributes to stability and leads togreater benefits if it is introduced gradually and moderately....'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-andcare",
+    "locator": {
+      "section": 9,
+      "raw_substring": "andcare,"
+    },
+    "field": "raw_text",
+    "from": "andcare,",
+    "to": "and care,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...mbraced the noble Belgian nation with Our special love andcare, and Belgium in turn, enlivened by the ancestral religi...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-andcommands",
+    "locator": {
+      "section": 9,
+      "raw_substring": "andcommands"
+    },
+    "field": "raw_text",
+    "from": "andcommands",
+    "to": "and commands",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...l receive and carry out religiously these exhortations andcommands with a will equal to Our purpose in issuing them.</fon...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-thatour",
+    "locator": {
+      "section": 9,
+      "raw_substring": "thatOur"
+    },
+    "field": "raw_text",
+    "from": "thatOur",
+    "to": "that Our",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...bedience and loving devotion. So there is little doubt thatOur Catholic sons will receive and carry out religiously t...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-againstthis",
+    "locator": {
+      "section": 11,
+      "raw_substring": "againstthis"
+    },
+    "field": "raw_text",
+    "from": "againstthis",
+    "to": "against this",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...idence. Our voice has been raised often and vehemently againstthis great calamity, as the commands a...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-ofevangelical",
+    "locator": {
+      "section": 11,
+      "raw_substring": "ofevangelical"
+    },
+    "field": "raw_text",
+    "from": "ofevangelical",
+    "to": "of evangelical",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...uman laws into confusion and to destroy the good works ofevangelical providence. Our voice has been raised often and veheme...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-theirplans",
+    "locator": {
+      "section": 11,
+      "raw_substring": "theirplans"
+    },
+    "field": "raw_text",
+    "from": "theirplans",
+    "to": "their plans",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...ther act in the closest concert in order to oppose all theirplans and strength to the wickedness of Socialism, which ver...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-apostolicblessing",
+    "locator": {
+      "section": 12,
+      "raw_substring": "Apostolicblessing."
+    },
+    "field": "raw_text",
+    "from": "Apostolicblessing.",
+    "to": "Apostolic blessing.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...es and to the clergy and people of each one of you the Apostolicblessing. Given i...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-inthese",
+    "locator": {
+      "section": 12,
+      "raw_substring": "inthese"
+    },
+    "field": "raw_text",
+    "from": "inthese",
+    "to": "in these",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...for Us to be willing to rest Our trust and expectation inthese matters on your deliberation and ingenuity in particul...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-whilewe",
+    "locator": {
+      "section": 12,
+      "raw_substring": "whileWe"
+    },
+    "field": "raw_text",
+    "from": "whileWe",
+    "to": "while We",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '...r deliberation and ingenuity in particular. Therefore, whileWe beseech for you the ample helps of divine aid, We most...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "permoti-nos.en-youyourselves",
+    "locator": {
+      "section": 12,
+      "raw_substring": "youyourselves"
+    },
+    "field": "raw_text",
+    "from": "youyourselves",
+    "to": "you yourselves",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__permoti-nos__en.html: '... ample helps of divine aid, We most lovingly impart to youyourselves and to the clergy and people of each one of you the Ap...'. The rest of the English corpus writes these two words apart; this page prints 30 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

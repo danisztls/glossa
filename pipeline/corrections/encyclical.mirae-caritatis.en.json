@@ -1,0 +1,418 @@
+[
+  {
+    "id": "mirae-caritatis.en-andwonderful",
+    "locator": {
+      "section": 18,
+      "raw_substring": "andwonderful"
+    },
+    "field": "raw_text",
+    "from": "andwonderful",
+    "to": "and wonderful",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...ich is no mere empty commemoration thereof, but a true andwonderful though bloodless and mystical renewal of it. <p s...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-canobtain",
+    "locator": {
+      "section": 18,
+      "raw_substring": "canobtain"
+    },
+    "field": "raw_text",
+    "from": "canobtain",
+    "to": "can obtain",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...hat most abundantly, the demands of God's justice, and canobtain the plenteous gifts of His clemency. And Christ has wi...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-fromthis",
+    "locator": {
+      "section": 18,
+      "raw_substring": "fromthis"
+    },
+    "field": "raw_text",
+    "from": "fromthis",
+    "to": "from this",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '... is another twofold fruit which we may and must derive fromthis great Sacrifice. The heart is saddened when it conside...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-greatpart",
+    "locator": {
+      "section": 18,
+      "raw_substring": "greatpart"
+    },
+    "field": "raw_text",
+    "from": "greatpart",
+    "to": "great part",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '... inundated the world. It is not too much to say that a greatpart of the human race seems to be calling down upon itself...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-mencan",
+    "locator": {
+      "section": 18,
+      "raw_substring": "mencan"
+    },
+    "field": "raw_text",
+    "from": "mencan",
+    "to": "men can",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...only in virtue of the death which Christ suffered that mencan satisfy, and that most abundantly, the demands of God'...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-ofwickedness",
+    "locator": {
+      "section": 18,
+      "raw_substring": "ofwickedness,"
+    },
+    "field": "raw_text",
+    "from": "ofwickedness,",
+    "to": "of wickedness,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '.... The heart is saddened when it considers what a flood ofwickedness, the result - as We have said - of forgetfulness and co...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-theeucharist",
+    "locator": {
+      "section": 18,
+      "raw_substring": "theEucharist,"
+    },
+    "field": "raw_text",
+    "from": "theEucharist,",
+    "to": "the Eucharist,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '..., alike for expiation and impetration, should abide in theEucharist, which is no mere empty commemoration thereof, but a tr...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-thissacrifice",
+    "locator": {
+      "section": 18,
+      "raw_substring": "thisSacrifice."
+    },
+    "field": "raw_text",
+    "from": "thisSacrifice.",
+    "to": "this Sacrifice.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...uch blessings are to be sought principally by means of thisSacrifice. For it is only in virtue of the death which Christ suf...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-allages",
+    "locator": {
+      "section": 19,
+      "raw_substring": "allages."
+    },
+    "field": "raw_text",
+    "from": "allages.",
+    "to": "all ages.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...by the authority of the Fathers and of the holy men in allages. For the soul, like the body, needs frequent nourishmen...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-andexample",
+    "locator": {
+      "section": 19,
+      "raw_substring": "andexample"
+    },
+    "field": "raw_text",
+    "from": "andexample",
+    "to": "and example",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...and perseverance therein. To this end the exhortations andexample of all those who occupy a prominent position will powe...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-andrevered",
+    "locator": {
+      "section": 19,
+      "raw_substring": "andrevered,"
+    },
+    "field": "raw_text",
+    "from": "andrevered,",
+    "to": "and revered,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...s, may be better understood and more worthily honoured andrevered, even by those who already take their part in the relig...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-andtheir",
+    "locator": {
+      "section": 19,
+      "raw_substring": "andtheir"
+    },
+    "field": "raw_text",
+    "from": "andtheir",
+    "to": "and their",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...e prejudices, those vain fears to which so many yield, andtheir specious excuses from abstaining from the Eucharist, m...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-beeverywhere",
+    "locator": {
+      "section": 19,
+      "raw_substring": "beeverywhere"
+    },
+    "field": "raw_text",
+    "from": "beeverywhere",
+    "to": "be everywhere",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...st be that the frequent reception of the Eucharist may beeverywhere revived among Catholic peoples. For this is the lesson...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-befurther",
+    "locator": {
+      "section": 19,
+      "raw_substring": "befurther"
+    },
+    "field": "raw_text",
+    "from": "befurther",
+    "to": "be further",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...rto been done; for there remain many things which must befurther developed or begun anew, to the end that this most div...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-beomitted",
+    "locator": {
+      "section": 19,
+      "raw_substring": "beomitted"
+    },
+    "field": "raw_text",
+    "from": "beomitted",
+    "to": "be omitted",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...holy and salutary practices of some kind; nothing must beomitted which a prudent piety may suggest as suitable. But the...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-butneither",
+    "locator": {
+      "section": 19,
+      "raw_substring": "Butneither"
+    },
+    "field": "raw_text",
+    "from": "Butneither",
+    "to": "But neither",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...the blasphemies and insults of which it is the object. Butneither We nor you, Venerable Brethren, can allow ourselves to...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-carryingout",
+    "locator": {
+      "section": 19,
+      "raw_substring": "carryingout"
+    },
+    "field": "raw_text",
+    "from": "carryingout",
+    "to": "carrying out",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...e confraternities instituted either with the object of carryingout the Eucharistic ritual with greater splendour, or for ...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-forpriests",
+    "locator": {
+      "section": 19,
+      "raw_substring": "Forpriests,"
+    },
+    "field": "raw_text",
+    "from": "Forpriests,",
+    "to": "For priests,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...ially the resourceful and diligent zeal of the clergy. Forpriests, to whom Christ our Redeemer entrusted the office of co...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-heartsof",
+    "locator": {
+      "section": 19,
+      "raw_substring": "heartsof"
+    },
+    "field": "raw_text",
+    "from": "heartsof",
+    "to": "hearts of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...ucharist has, as it seems, begun to show itself in the heartsof the faithful; a fact which encourages us to hope for b...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-holyeucharist",
+    "locator": {
+      "section": 19,
+      "raw_substring": "holyEucharist"
+    },
+    "field": "raw_text",
+    "from": "holyEucharist",
+    "to": "holy Eucharist",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...ul, like the body, needs frequent nourishment; and the holyEucharist provides that food which is best adapted to the suppor...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-istaught",
+    "locator": {
+      "section": 19,
+      "raw_substring": "istaught"
+    },
+    "field": "raw_text",
+    "from": "istaught",
+    "to": "is taught",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...d among Catholic peoples. For this is the lesson which istaught us by the example, already referred to, of the primiti...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-joyto",
+    "locator": {
+      "section": 19,
+      "raw_substring": "joyto"
+    },
+    "field": "raw_text",
+    "from": "joyto",
+    "to": "joy to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...ladly acknowledge that it has been a cause of no small joyto us that during these last years a renewal of love and ...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-lifeaccordingly",
+    "locator": {
+      "section": 19,
+      "raw_substring": "life.Accordingly"
+    },
+    "field": "raw_text",
+    "from": "life.Accordingly",
+    "to": "life. Accordingly",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '... that food which is best adapted to the support of its life.Accordingly all hostile prejudices, those vain fears to which so m...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-ofmaking",
+    "locator": {
+      "section": 19,
+      "raw_substring": "ofmaking"
+    },
+    "field": "raw_text",
+    "from": "ofmaking",
+    "to": "of making",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...nerable Sacrament by day and night, or for the purpose ofmaking reparation for the blasphemies and insults of which it...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-satisfiedwith",
+    "locator": {
+      "section": 19,
+      "raw_substring": "satisfiedwith"
+    },
+    "field": "raw_text",
+    "from": "satisfiedwith",
+    "to": "satisfied with",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...r you, Venerable Brethren, can allow ourselves to rest satisfiedwith what has hitherto been done; for there remain many thi...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-specialmention",
+    "locator": {
+      "section": 19,
+      "raw_substring": "specialmention"
+    },
+    "field": "raw_text",
+    "from": "specialmention",
+    "to": "special mention",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...ts which an inventive piety has devised; and worthy of specialmention are the confraternities instituted either with the obj...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-thedecrees",
+    "locator": {
+      "section": 19,
+      "raw_substring": "thedecrees"
+    },
+    "field": "raw_text",
+    "from": "thedecrees",
+    "to": "the decrees",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...mple, already referred to, of the primitive Church, by thedecrees of Councils, by the authority of the Fathers and of th...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-thehearts",
+    "locator": {
+      "section": 19,
+      "raw_substring": "thehearts"
+    },
+    "field": "raw_text",
+    "from": "thehearts",
+    "to": "the hearts",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...he glory of his Eucharist, and by inviting and drawing thehearts of men to the health-giving springs of this great Sacr...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-thesacrament",
+    "locator": {
+      "section": 19,
+      "raw_substring": "theSacrament"
+    },
+    "field": "raw_text",
+    "from": "theSacrament",
+    "to": "the Sacrament",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...hese last years a renewal of love and devotion towards theSacrament of the Eucharist has, as it seems, begun to show itsel...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-thisgreatest",
+    "locator": {
+      "section": 19,
+      "raw_substring": "thisgreatest"
+    },
+    "field": "raw_text",
+    "from": "thisgreatest",
+    "to": "this greatest",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '... begun anew, to the end that this most divine of gifts thisgreatest of mysteries, may be better understood and more worthi...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-accordancewith",
+    "locator": {
+      "section": 20,
+      "raw_substring": "accordancewith"
+    },
+    "field": "raw_text",
+    "from": "accordancewith",
+    "to": "accordance with",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...le=\"text-align: left;\">20. May God grant that thus, in accordancewith Our earnest desire, the excellent fruits of the Euchar...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "mirae-caritatis.en-bestowon",
+    "locator": {
+      "section": 21,
+      "raw_substring": "bestowon"
+    },
+    "field": "raw_text",
+    "from": "bestowon",
+    "to": "bestow on",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__mirae-caritatis__en.html: '...lity and as a pledge of our own charity, most lovingly bestowon each of you, and on the clergy and flock committed to ...'. The rest of the English corpus writes these two words apart; this page prints 32 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

@@ -1,0 +1,574 @@
+[
+  {
+    "id": "fidentem-piumque-animum.en-experiencedthis",
+    "locator": {
+      "section": 2,
+      "raw_substring": "experiencedthis"
+    },
+    "field": "raw_text",
+    "from": "experiencedthis",
+    "to": "experienced this",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...nd salutary for souls. We ourselves have most strongly experiencedthis - and Our heart rejoices to recall it - when at certai...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-greatcrowds",
+    "locator": {
+      "section": 2,
+      "raw_substring": "greatcrowds"
+    },
+    "field": "raw_text",
+    "from": "greatcrowds",
+    "to": "great crowds",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...ve been present in the Vatican basilica, surrounded by greatcrowds of all classes, who united with Us in mind, voice, and...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-havefrom",
+    "locator": {
+      "section": 2,
+      "raw_substring": "havefrom"
+    },
+    "field": "raw_text",
+    "from": "havefrom",
+    "to": "have from",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...acy of public prayer, We, among other decrees which we havefrom time to time issued concerning the Rosary, have spoken...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-heavenconsidering",
+    "locator": {
+      "section": 2,
+      "raw_substring": "heaven.Considering"
+    },
+    "field": "raw_text",
+    "from": "heaven.Considering",
+    "to": "heaven. Considering",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...sings of domestic peace, the foretaste of the peace of heaven.Considering the efficacy of public prayer, We, among other decrees...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-isour",
+    "locator": {
+      "section": 2,
+      "raw_substring": "isOur"
+    },
+    "field": "raw_text",
+    "from": "isOur",
+    "to": "is Our",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...sued concerning the Rosary, have spoken thus: &quot;It isOur desire that in the principal church of each diocese it...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-tothem",
+    "locator": {
+      "section": 2,
+      "raw_substring": "tothem"
+    },
+    "field": "raw_text",
+    "from": "tothem",
+    "to": "to them",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...loving mother surrounded by her children, distributing tothem the blessings of domestic peace, the foretaste of the ...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-wasever",
+    "locator": {
+      "section": 2,
+      "raw_substring": "wasever"
+    },
+    "field": "raw_text",
+    "from": "wasever",
+    "to": "was ever",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '... She, delighted at this faithful and unanimous homage, wasever near them like a loving mother surrounded by her child...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-wealso",
+    "locator": {
+      "section": 2,
+      "raw_substring": "Wealso"
+    },
+    "field": "raw_text",
+    "from": "Wealso",
+    "to": "We also",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...). Let this be constantly and devoutly carried out. Wealso see with joy the custom extended on other solemn occas...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-whichis",
+    "locator": {
+      "section": 2,
+      "raw_substring": "whichis"
+    },
+    "field": "raw_text",
+    "from": "whichis",
+    "to": "which is",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...rimages to venerated shrines, the growing frequency of whichis to be commended. This association of prayer and praise...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-aclaim",
+    "locator": {
+      "section": 3,
+      "raw_substring": "aclaim"
+    },
+    "field": "raw_text",
+    "from": "aclaim",
+    "to": "a claim",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...both Testaments; but especially has the Blessed Virgin aclaim to the glory of this title. For no single individual c...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-becalled",
+    "locator": {
+      "section": 3,
+      "raw_substring": "becalled"
+    },
+    "field": "raw_text",
+    "from": "becalled",
+    "to": "be called",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...s, there is no reason why certain others should not becalled in a certain way mediators between God and man, that i...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-christjesus",
+    "locator": {
+      "section": 3,
+      "raw_substring": "ChristJesus,"
+    },
+    "field": "raw_text",
+    "from": "ChristJesus,",
+    "to": "Christ Jesus,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...avenly Father: One Mediator of God and men, the man ChristJesus, who gave Himself a redemption for all (1 Tim. ii. ...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-faras",
+    "locator": {
+      "section": 3,
+      "raw_substring": "faras"
+    },
+    "field": "raw_text",
+    "from": "faras",
+    "to": "far as",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...y mediators between God and man, that is to say, in so faras they co-operate by predisposing and ministering in the...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-manwith",
+    "locator": {
+      "section": 3,
+      "raw_substring": "manwith"
+    },
+    "field": "raw_text",
+    "from": "manwith",
+    "to": "man with",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...ed or ever will contribute so much towards reconciling manwith God. She offered to mankind, hastening to eternal ruin...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-thename",
+    "locator": {
+      "section": 3,
+      "raw_substring": "thename"
+    },
+    "field": "raw_text",
+    "from": "thename",
+    "to": "the name",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...ection of the Blessed Virgin is excessive? Undoubtedly thename and attributes of the absolute Mediator belong to no o...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-theprophets",
+    "locator": {
+      "section": 3,
+      "raw_substring": "theprophets"
+    },
+    "field": "raw_text",
+    "from": "theprophets",
+    "to": "the prophets",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...xxvi., articles 1, 2). Such are the angels and saints, theprophets and priests of both Testaments; but especially has the...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-befull",
+    "locator": {
+      "section": 4,
+      "raw_substring": "befull"
+    },
+    "field": "raw_text",
+    "from": "befull",
+    "to": "be full",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...t at the right hand of the Father. And since faith, to befull and sufficient, must display itself, - for with the he...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-bywhich",
+    "locator": {
+      "section": 4,
+      "raw_substring": "bywhich"
+    },
+    "field": "raw_text",
+    "from": "bywhich",
+    "to": "by which",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...precious gem, producing now the blossoms of all virtue bywhich we are pleasing to God, and hereafter to bring forth f...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-faithis",
+    "locator": {
+      "section": 4,
+      "raw_substring": "faithis"
+    },
+    "field": "raw_text",
+    "from": "faithis",
+    "to": "faith is",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...and others. All know the value and merit of faith. For faithis just like a most precious gem, producing now the bloss...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-fruitsof",
+    "locator": {
+      "section": 4,
+      "raw_substring": "fruitsof"
+    },
+    "field": "raw_text",
+    "from": "fruitsof",
+    "to": "fruits of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...se of the rosary, which is capable of producing worthy fruitsof penance, especially by the remembrance of the sufferin...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-hismother",
+    "locator": {
+      "section": 4,
+      "raw_substring": "HisMother."
+    },
+    "field": "raw_text",
+    "from": "HisMother.",
+    "to": "His Mother.",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...lly by the remembrance of the sufferings of Christ and HisMother. 5. To those...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-isgrowing",
+    "locator": {
+      "section": 4,
+      "raw_substring": "isgrowing"
+    },
+    "field": "raw_text",
+    "from": "isgrowing",
+    "to": "is growing",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...n one is necessary and salutary. It is true the Church isgrowing more indulgent towards her children in this matter, bu...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-lastfor",
+    "locator": {
+      "section": 4,
+      "raw_substring": "lastfor"
+    },
+    "field": "raw_text",
+    "from": "lastfor",
+    "to": "last for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '... to God, and hereafter to bring forth fruits that will lastfor ever: for to know Thee is perfect justice, and to k...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-mustunderstand",
+    "locator": {
+      "section": 4,
+      "raw_substring": "mustunderstand"
+    },
+    "field": "raw_text",
+    "from": "mustunderstand",
+    "to": "must understand",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...ndulgent towards her children in this matter, but they mustunderstand they are bound to take all care to make up for this ma...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-ofsins",
+    "locator": {
+      "section": 4,
+      "raw_substring": "ofsins;"
+    },
+    "field": "raw_text",
+    "from": "ofsins;",
+    "to": "of sins;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...t watchful Father; in the future life, the forgiveness ofsins; in the mysteries of the august Trinity, the Incarnatio...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-ourfaith",
+    "locator": {
+      "section": 4,
+      "raw_substring": "ourfaith"
+    },
+    "field": "raw_text",
+    "from": "ourfaith",
+    "to": "our faith",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...is intermingled, we are enabled to express and profess ourfaith in God, our most watchful Father; in the future life, ...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-postulatesamong",
+    "locator": {
+      "section": 4,
+      "raw_substring": "postulates.Among"
+    },
+    "field": "raw_text",
+    "from": "postulates.Among",
+    "to": "postulates. Among",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...ecting the duties of those virtues which faith rightly postulates.Among them is the virtue of penance, and one part of this is...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-sohave",
+    "locator": {
+      "section": 4,
+      "raw_substring": "sohave"
+    },
+    "field": "raw_text",
+    "from": "sohave",
+    "to": "so have",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...confession is made unto salvation (Rom. x., 10), - sohave we also in the Rosary an excellent means unto this, fo...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-vocalprayers",
+    "locator": {
+      "section": 4,
+      "raw_substring": "vocalprayers"
+    },
+    "field": "raw_text",
+    "from": "vocalprayers",
+    "to": "vocal prayers",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '... the Rosary an excellent means unto this, for by those vocalprayers with which it is intermingled, we are enabled to expre...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-whichfor",
+    "locator": {
+      "section": 4,
+      "raw_substring": "whichfor"
+    },
+    "field": "raw_text",
+    "from": "whichfor",
+    "to": "which for",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...virtue of penance, and one part of this is abstinence, whichfor more reasons than one is necessary and salutary. It is...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-efficaciousto",
+    "locator": {
+      "section": 5,
+      "raw_substring": "efficaciousto"
+    },
+    "field": "raw_text",
+    "from": "efficaciousto",
+    "to": "efficacious to",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...and Ourselves. These favours will certainly prove most efficaciousto both the dying and the departed, being bestowed as it ...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-ourpredecessors",
+    "locator": {
+      "section": 5,
+      "raw_substring": "ourPredecessors"
+    },
+    "field": "raw_text",
+    "from": "ourPredecessors",
+    "to": "our Predecessors",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '... has been richly endowed with such indulgences by both ourPredecessors and Ourselves. These favours will certainly prove most...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-andconcerning",
+    "locator": {
+      "section": 6,
+      "raw_substring": "Andconcerning"
+    },
+    "field": "raw_text",
+    "from": "Andconcerning",
+    "to": "And concerning",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...he poured forth prayer and supplication to His Father. Andconcerning the efficacious prayer of His most holy Mother for the...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-andrecommend",
+    "locator": {
+      "section": 6,
+      "raw_substring": "andrecommend"
+    },
+    "field": "raw_text",
+    "from": "andrecommend",
+    "to": "and recommend",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...ions, Venerable Brethren, move us incessantly to extol andrecommend to Catholic peoples this excellent and most salutary f...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-describedthe",
+    "locator": {
+      "section": 6,
+      "raw_substring": "describedthe"
+    },
+    "field": "raw_text",
+    "from": "describedthe",
+    "to": "described the",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...king testimony in the Acts of the Apostles. Therein is describedthe first assembly of the Disciples, expecting with earnes...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-devotionyet",
+    "locator": {
+      "section": 6,
+      "raw_substring": "devotion.Yet"
+    },
+    "field": "raw_text",
+    "from": "devotion.Yet",
+    "to": "devotion. Yet",
+    "reason": "The page has lost the space after a full stop or comma. Nothing is added or removed, only the space restored.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...holic peoples this excellent and most salutary form of devotion.Yet another very urgent reason, of which we have often spo...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-infaith",
+    "locator": {
+      "section": 6,
+      "raw_substring": "infaith"
+    },
+    "field": "raw_text",
+    "from": "infaith",
+    "to": "in faith",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...s, for in order that His disciples might be one infaith and charity, he poured forth prayer and supplication t...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-inprayer",
+    "locator": {
+      "section": 6,
+      "raw_substring": "inprayer"
+    },
+    "field": "raw_text",
+    "from": "inprayer",
+    "to": "in prayer",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...indicated: All these were persevering with one mind inprayer with Mary the Mother of Jesus (Acts i., 14). Where...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-lettersand",
+    "locator": {
+      "section": 6,
+      "raw_substring": "Lettersand"
+    },
+    "field": "raw_text",
+    "from": "Lettersand",
+    "to": "Letters and",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...y urgent reason, of which we have often spoken both in Lettersand Allocutions, encourages us to do this. For that earnes...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-nascentchurch",
+    "locator": {
+      "section": 6,
+      "raw_substring": "nascentchurch"
+    },
+    "field": "raw_text",
+    "from": "nascentchurch",
+    "to": "nascent church",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...he Mother of Jesus (Acts i., 14). Wherefore as the nascentchurch rightly joined itself in prayer w...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-ofreconciliation",
+    "locator": {
+      "section": 6,
+      "raw_substring": "ofreconciliation"
+    },
+    "field": "raw_text",
+    "from": "ofreconciliation",
+    "to": "of reconciliation",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '... from the Divine Heart of Jesus, of fostering the work ofreconciliation among those who are separated from Us daily urges Us m...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-themin",
+    "locator": {
+      "section": 6,
+      "raw_substring": "themin"
+    },
+    "field": "raw_text",
+    "from": "themin",
+    "to": "them in",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '... the Holy Spirit. And the presence of Mary united with themin prayer is specially indicated: All these were perse...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-thepromised",
+    "locator": {
+      "section": 6,
+      "raw_substring": "thepromised"
+    },
+    "field": "raw_text",
+    "from": "thepromised",
+    "to": "the promised",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '... the Disciples, expecting with earnest hope and prayer thepromised fullness of the Holy Spirit. And the presence of Mary ...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "fidentem-piumque-animum.en-mostlovingly",
+    "locator": {
+      "section": 7,
+      "raw_substring": "mostlovingly"
+    },
+    "field": "raw_text",
+    "from": "mostlovingly",
+    "to": "most lovingly",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__fidentem-piumque-animum__en.html: '...s a pledge of the Divine Favours and Our affection, We mostlovingly impart to You, your clergy and People, the Apostolic B...'. The rest of the English corpus writes these two words apart; this page prints 44 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

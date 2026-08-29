@@ -1,0 +1,145 @@
+[
+  {
+    "id": "gravissimas.en-fulfillmentof",
+    "locator": {
+      "section": 1,
+      "raw_substring": "fulfillmentof"
+    },
+    "field": "raw_text",
+    "from": "fulfillmentof",
+    "to": "fulfillment of",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '...e joint letter, eminent and full of dignity, which, in fulfillmentof your pastoral duty and your reverence for your Ruler, ...'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "gravissimas.en-inmany",
+    "locator": {
+      "section": 1,
+      "raw_substring": "inmany"
+    },
+    "field": "raw_text",
+    "from": "inmany",
+    "to": "in many",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '...ily on account of the war declared on religious orders inmany areas, the joint letter, eminent and full of dignity, ...'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "gravissimas.en-religiouscongregations",
+    "locator": {
+      "section": 1,
+      "raw_substring": "religiouscongregations"
+    },
+    "field": "raw_text",
+    "from": "religiouscongregations",
+    "to": "religious congregations",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '...ng to Us than to see you promptly unite both to defend religiouscongregations and to support their needs and usefulness. Therefore n...'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "gravissimas.en-thepraise",
+    "locator": {
+      "section": 1,
+      "raw_substring": "thepraise"
+    },
+    "field": "raw_text",
+    "from": "thepraise",
+    "to": "the praise",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '...an to approve your zeal and to honor your efforts with thepraise they deserve. <font size=\"...'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "gravissimas.en-toyour",
+    "locator": {
+      "section": 1,
+      "raw_substring": "toyour"
+    },
+    "field": "raw_text",
+    "from": "toyour",
+    "to": "to your",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '...y and your reverence for your Ruler, you recently sent toyour Faithful King, was an extraordinary consolation to Us....'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "gravissimas.en-itfrom",
+    "locator": {
+      "section": 2,
+      "raw_substring": "itfrom"
+    },
+    "field": "raw_text",
+    "from": "itfrom",
+    "to": "it from",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '... state of not a few outstanding benefits which flow to itfrom religious institutes, as the authors of these decrees ...'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "gravissimas.en-oflife",
+    "locator": {
+      "section": 2,
+      "raw_substring": "oflife;"
+    },
+    "field": "raw_text",
+    "from": "oflife;",
+    "to": "of life;",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '...ch and to the rights of the faithful to choose a state oflife; they deprive the state of not a few outstanding benefi...'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "gravissimas.en-therights",
+    "locator": {
+      "section": 2,
+      "raw_substring": "therights"
+    },
+    "field": "raw_text",
+    "from": "therights",
+    "to": "the rights",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '...s societies. For it is clear that they are contrary to therights of the Church and to the rights of the faithful to cho...'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "gravissimas.en-civilsociety",
+    "locator": {
+      "section": 5,
+      "raw_substring": "civilsociety,"
+    },
+    "field": "raw_text",
+    "from": "civilsociety,",
+    "to": "civil society,",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '...refore to strenuously defend the cause of religion and civilsociety, which will only have a favorable outcome if you indica...'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "gravissimas.en-toexert",
+    "locator": {
+      "section": 5,
+      "raw_substring": "toexert"
+    },
+    "field": "raw_text",
+    "from": "toexert",
+    "to": "to exert",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '...r and proper method of acting in public. Continue also toexert every effort to unite and increase Catholic forces and...'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "gravissimas.en-benevolencewe",
+    "locator": {
+      "section": 6,
+      "raw_substring": "benevolencewe"
+    },
+    "field": "raw_text",
+    "from": "benevolencewe",
+    "to": "benevolence we",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__gravissimas__en.html: '...s a token of divine assistance and in testimony of our benevolencewe lovingly bestow on you, Venerable Brothers, and all th...'. The rest of the English corpus writes these two words apart; this page prints 11 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]

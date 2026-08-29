@@ -1,0 +1,184 @@
+[
+  {
+    "id": "pastoralis-officii.en-bypublic",
+    "locator": {
+      "section": 6,
+      "raw_substring": "bypublic"
+    },
+    "field": "raw_text",
+    "from": "bypublic",
+    "to": "by public",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...age of many, legislators have felt bound to repress it bypublic authority and published penalties. What is so perverse...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-theapproval",
+    "locator": {
+      "section": 6,
+      "raw_substring": "theapproval"
+    },
+    "field": "raw_text",
+    "from": "theapproval",
+    "to": "the approval",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...ss of dueling is so evident, that in our time, despite theapproval and patronage of many, legislators have felt bound to ...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-thusit",
+    "locator": {
+      "section": 6,
+      "raw_substring": "Thusit"
+    },
+    "field": "raw_text",
+    "from": "Thusit",
+    "to": "Thus it",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...h the guilty and see to it that the laws are enforced. Thusit happens that frequently duels are fought and go unpuni...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-whoseduty",
+    "locator": {
+      "section": 6,
+      "raw_substring": "whoseduty"
+    },
+    "field": "raw_text",
+    "from": "whoseduty",
+    "to": "whose duty",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '... often happens with the knowledge and silence of those whoseduty it is to punish the guilty and see to it that the laws...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-aimat",
+    "locator": {
+      "section": 7,
+      "raw_substring": "aimat"
+    },
+    "field": "raw_text",
+    "from": "aimat",
+    "to": "aim at",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...vantage? Assuredly, the incentives to military courage aimat better preparing the state against the enemy. Can this...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-anddisgraceful",
+    "locator": {
+      "section": 7,
+      "raw_substring": "anddisgraceful"
+    },
+    "field": "raw_text",
+    "from": "anddisgraceful",
+    "to": "and disgraceful",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...litary valor. Now, in the first place, honorable deeds anddisgraceful acts are essentially different; in no way can they be ...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-inpublic",
+    "locator": {
+      "section": 7,
+      "raw_substring": "inpublic"
+    },
+    "field": "raw_text",
+    "from": "inpublic",
+    "to": "in public",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '... a concession for the military would have to be sought inpublic benefit which could never be so great so as to silence...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-theindividual",
+    "locator": {
+      "section": 7,
+      "raw_substring": "theindividual"
+    },
+    "field": "raw_text",
+    "from": "theindividual",
+    "to": "the individual",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...tom that by its very nature causes the death of one of theindividual parties of the country's defense whenever dissension a...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-thesoldiers",
+    "locator": {
+      "section": 7,
+      "raw_substring": "thesoldiers"
+    },
+    "field": "raw_text",
+    "from": "thesoldiers",
+    "to": "the soldiers",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...the country's defense whenever dissension arises among thesoldiers for which, indeed, occasions are by no means rare?</fo...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-totheir",
+    "locator": {
+      "section": 7,
+      "raw_substring": "totheir"
+    },
+    "field": "raw_text",
+    "from": "totheir",
+    "to": "to their",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...e essentially different; in no way can they be changed totheir opposites by the different status of persons. Indeed, ...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-whothink",
+    "locator": {
+      "section": 7,
+      "raw_substring": "whothink"
+    },
+    "field": "raw_text",
+    "from": "whothink",
+    "to": "who think",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '... and unworthy of a sensible man is the belief of those whothink that civilians are to be prevented from these contests...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-andforeign",
+    "locator": {
+      "section": 8,
+      "raw_substring": "andforeign"
+    },
+    "field": "raw_text",
+    "from": "andforeign",
+    "to": "and foreign",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...does not repudiate the base remnants of an uncouth age andforeign barbarism that we know as the custom of dueling?</font...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-morecivilized",
+    "locator": {
+      "section": 8,
+      "raw_substring": "morecivilized"
+    },
+    "field": "raw_text",
+    "from": "morecivilized",
+    "to": "more civilized",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...w age which boasts of far excelling previous ages in a morecivilized culture and refinement of manners is wont to consider ...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  },
+  {
+    "id": "pastoralis-officii.en-thecharacter",
+    "locator": {
+      "section": 8,
+      "raw_substring": "thecharacter"
+    },
+    "field": "raw_text",
+    "from": "thecharacter",
+    "to": "the character",
+    "reason": "The page has lost the space between two words. Both are ordinary words and the join is not a compound, so the correct value is the two words with the space restored; no text is added or removed.",
+    "evidence": "raw/vatican-docs/encyclical__pastoralis-officii__en.html: '...ittle value and too often reject whatever differs from thecharacter of the new elegance. Why is it that in its great zeal ...'. The rest of the English corpus writes these two words apart; this page prints 14 such joins, so the defect belongs to how the mirror was reflowed rather than to the text.",
+    "added": "2026-08-29"
+  }
+]
