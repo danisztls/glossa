@@ -1844,6 +1844,12 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.spesse-volte.en": {
+			"en": {
+				"text": "Leo XIII's protest against the Italian government's suppression of Catholic charitable and social associations after the 1898 riots, tracing anti-clerical measures back to the loss of the Papal States. He rebuts charges that Catholics threaten public order, explains their deliberate abstention from politics in favor of social and charitable works, and urges bishops and the faithful to persevere undeterred.",
+				"origin": "read"
+			}
+		},
 		"encyclical.spiritus-paraclitus.en": {
 			"en": {
 				"text": "On St Jerome as the model and teacher of scriptural study, for the fifteenth centenary of his death: his life, his defence of the full divine inspiration and inerrancy of Scripture against those who would limit it, his rules for the literal and the spiritual senses, and his insistence that clergy, religious and laity alike read Scripture daily and find in it the person of Christ.",
@@ -1856,15 +1862,57 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.summi-maeroris.en": {
+			"en": {
+				"text": "Pius XII's 1950 Holy Year encyclical calling for public prayers and works of penance to implore peace among nations. He warns of the ruin modern weapons could unleash, denounces regimes that persecute the Church's ministers, schools and worship, and answers the charge that the Holy See itself desires conflict, urging bishops to lead the faithful toward a concord grounded in Christian truth, justice and charity rather than force.",
+				"origin": "read"
+			}
+		},
+		"encyclical.summi-maeroris.pt": {
+			"pt": {
+				"text": "Carta encíclica de Pio XII, no Ano Santo de 1950, renovando o pedido de orações públicas pela paz e pela concórdia entre os povos, diante das tensões internacionais e dos horrores das armas modernas. Denuncia a perseguição da Igreja e de seus institutos educativos em vários países e ensina que a paz verdadeira só se funda na verdade, na justiça e na caridade cristãs.",
+				"origin": "read"
+			}
+		},
 		"encyclical.summi-pontificatus.en": {
 			"en": {
 				"text": "Pius XII's first encyclical, issued weeks into the Second World War, on the unity of the human family under Christ the King. It names two errors eroding that unity: forgetting mankind's common origin and equal dignity, and divorcing civil authority from God's law so that the State becomes its own supreme end. Written in what it calls an Hour of Darkness, it appeals for a return to unity through the Church.",
 				"origin": "read"
 			}
 		},
+		"encyclical.summi-pontificatus.pt": {
+			"pt": {
+				"text": "Primeira encíclica de Pio XII, publicada nos primeiros meses da Segunda Guerra Mundial e citando o sofrimento da Polônia. Sob o signo de Cristo-Rei, denuncia o esquecimento da lei da caridade entre os povos e a negação da dependência do direito humano em relação ao divino, defende os direitos da família e da consciência diante do Estado totalitário, e convoca os leigos ao apostolado nessa 'hora das trevas'.",
+				"origin": "read"
+			}
+		},
+		"encyclical.superiore-anno.en": {
+			"en": {
+				"text": "Leo XIII renews his call, made the previous year, for the faithful to pray the Rosary throughout October, invoking Mary's aid amid the Church's trials and an advancing cholera epidemic reaching Italy from France. He decrees the daily recitation of five decades with the Litany in parish and public churches from 1 October to 2 November, permits postponement for rural areas, and grants indulgences, including a plenary indulgence, to those who take part.",
+				"origin": "read"
+			}
+		},
+		"encyclical.superiore-anno.pt": {
+			"pt": {
+				"text": "Carta encíclica de Leão XIII que renova, para o mês de Outubro de 1884, o apelo do ano anterior à recitação do Rosário, invocando a proteção de Maria diante das dificuldades da Igreja e de uma epidemia de peste que ameaçava a Itália. Prescreve orações, ladainhas e procissões nas paróquias e renova as indulgências concedidas, com dispensa para quem trabalha no campo.",
+				"origin": "read"
+			}
+		},
 		"encyclical.supremi-apostolatus-officio.en": {
 			"en": {
 				"text": "Leo XIII's first encyclical on the Rosary, commending it as a defense of the Church against the errors and dangers of the age. Recalling the precedent of St. Dominic and the victory over the Turks attributed to Mary's intercession in the sixteenth century, he asks that the Rosary and the Litany of Loreto be recited publicly throughout October in every parish church, and grants indulgences to those who take part.",
+				"origin": "read"
+			}
+		},
+		"encyclical.supremi-apostolatus-officio.pt": {
+			"pt": {
+				"text": "Carta encíclica de Leão XIII, publicada às vésperas de outubro de 1883, sobre o Rosário de Nossa Senhora. Recorda intervenções marianas na história da Igreja, como a vitória de Lepanto sobre os turcos, e institui que, de 1 de outubro a 2 de novembro, se recite nas igrejas paroquiais ao menos cinco dezenas do Rosário com as Ladainhas Lauretanas, concedendo indulgências aos fiéis participantes.",
+				"origin": "read"
+			}
+		},
+		"encyclical.tametsi-futura-prospicientibus.en": {
+			"en": {
+				"text": "Leo XIII's encyclical urging the nations to return to Christ as the world enters a new century, structured around Christ's threefold claim to be the Way, the Truth, and the Life: obedience to his law and grace, submission of the intellect to his teaching against a purely rational morality, and the supernatural life sustained by faith through the Church, without which society falls into strife, secularism, and unrest.",
 				"origin": "read"
 			}
 		},
@@ -1886,9 +1934,21 @@
 				"origin": "read"
 			}
 		},
+		"encyclical.urbanitatis-veteris.en": {
+			"en": {
+				"text": "Leo XIII's encyclical to the Latin-rite bishops of Greece, praising Greek civilization, philosophy and the Church's Greek Fathers and Doctors, and recalling the popes of Greek origin. Responding to the bishops' request, he approves founding a seminary at Athens for Greek-rite Latin clergy and other Greek-speaking easterners, and recalls past papal support for Greece, expressing hope for a restored union between the Greek East and Rome.",
+				"origin": "read"
+			}
+		},
 		"encyclical.ut-unum-sint.en": {
 			"en": {
 				"text": "John Paul II's 1995 encyclical on ecumenism, tracing the Catholic Church's own commitment to Christian unity through renewal, prayer, and dialogue with the Eastern and Western churches and ecclesial communities. Its final chapter, \"Quanta est nobis via?\", includes his invitation to other Christian leaders to help him find a way of exercising the papacy's ministry of unity that serves reconciliation rather than division.",
+				"origin": "read"
+			}
+		},
+		"encyclical.ut-unum-sint.pt": {
+			"pt": {
+				"text": "Carta encíclica de João Paulo II sobre o empenho ecuménico da Igreja Católica. Trata o desígnio divino de unidade, os frutos já colhidos do diálogo com outras Igrejas e Comunidades eclesiais do Oriente e do Ocidente, e o caminho que ainda falta percorrer — incluindo o ministério de unidade do Bispo de Roma, que o Papa oferece à reflexão comum como serviço à plena comunhão dos cristãos.",
 				"origin": "read"
 			}
 		},
@@ -1921,6 +1981,24 @@
 		"encyclical.veritatis-splendor.en": {
 			"en": {
 				"text": "John Paul II's encyclical to the bishops on the foundations of Catholic moral theology, written amid dissent from the Church's moral teaching. Framed by Christ's dialogue with the rich young man — “Teacher, what good must I do to have eternal life?” — it treats freedom's dependence on truth and God's law, conscience, the moral act, and intrinsically evil acts, closing with an appeal to Mary, Mother of Mercy.",
+				"origin": "read"
+			}
+		},
+		"encyclical.veritatis-splendor.pt": {
+			"pt": {
+				"text": "Carta encíclica de João Paulo II (1993) aos bispos, sobre os fundamentos da teologia moral. Parte do diálogo de Jesus com o jovem rico para examinar a relação entre liberdade e lei, consciência e verdade, opção fundamental e comportamentos concretos, defendendo a existência de actos intrinsecamente maus e de normas morais universais e imutáveis, e a responsabilidade dos pastores e teólogos na nova evangelização.",
+				"origin": "read"
+			}
+		},
+		"encyclical.vi-e-ben-noto.en": {
+			"en": {
+				"text": "Leo XIII's brief encyclical to the bishops of Italy, urging renewed devotion to Our Lady of the Rosary during October in response to the spread of religious indifference and open attacks on faith and morals in Italy, especially in Rome. He raises the Feast of the Rosary to a double of the second class and asks that the faithful pray for the Church, the Apostolic See and the liberty of the Roman Pontiff.",
+				"origin": "read"
+			}
+		},
+		"encyclical.vigilanti-cura.en": {
+			"en": {
+				"text": "Pius XI's encyclical on the motion picture, praising the American bishops' \"Legion of Decency\" pledge campaign against indecent films and extending it worldwide. He describes the cinema's unmatched power to reach the multitudes through vivid, effortless imagery, warns that bad films corrupt morals while good ones can elevate them, and directs every country's bishops to set up a national reviewing office, annual pledges, and parish-hall screenings of approved films.",
 				"origin": "read"
 			}
 		},
