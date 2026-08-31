@@ -27,9 +27,29 @@
  */
 
 :root {
+	/*
+	 * NAMED FACES FIRST, THEN A SYSTEM LADDER, THEN A GENERIC. Each entry is a
+	 * script EB Garamond does not carry, resolved per glyph: Amiri sets the
+	 * Arabic editions, and the two Hebrew families set the two Hebrew ones
+	 * (vatii.nostra-aetate.he and exhortation.ecclesia-in-medio-oriente.he)
+	 * plus the Hebrew chrome added on 2026-08-31.
+	 *
+	 * Hebrew is NOT vendored the way Amiri is, and that is a considered
+	 * difference rather than an omission. Amiri is 109 KB of self-hosted file
+	 * because Arabic is a reading language here — 24 editions, one of them
+	 * 250k characters — and the way Naskh is set is part of reading it. Hebrew
+	 * is two documents and a menu, and every desktop and mobile system ships a
+	 * competent Hebrew serif; naming the good ones costs nothing and falls to
+	 * the generic below if none is present. Revisit if Hebrew ever becomes a
+	 * reading language here, and vendor Frank Ruhl Libre (SIL OFL) if so.
+	 *
+	 * Order matters only within a script: a Latin glyph is answered by EB
+	 * Garamond before anything below it can be consulted, which is why adding
+	 * families here cannot change how Latin is set.
+	 */
 	--font-serif:
-		'EB Garamond Variable', 'Amiri', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
-		serif;
+		'EB Garamond Variable', 'Amiri', 'Frank Ruhl Libre', 'David Libre', 'Iowan Old Style',
+		'Palatino Linotype', Palatino, Georgia, serif;
 	/* Two call sites, and only two: the `.drop-cap-letter` rule near the bottom
 	   of this file, and the wordmark (`components/Wordmark.svelte`). Both are single
 	   large glyphs or a short display lockup in the one weight the subset

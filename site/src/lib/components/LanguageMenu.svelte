@@ -66,7 +66,18 @@
 		{ code: 'sl', short: 'SL', label: 'Slovenščina' },
 		{ code: 'sv', short: 'SV', label: 'Svenska' },
 		{ code: 'ru', short: 'RU', label: 'Русский' },
-		{ code: 'ar', short: 'AR', label: 'العربية' }
+		{ code: 'nl', short: 'NL', label: 'Nederlands' },
+		{ code: 'da', short: 'DA', label: 'Dansk' },
+		{ code: 'cs', short: 'CS', label: 'Čeština' },
+		{ code: 'sk', short: 'SK', label: 'Slovenčina' },
+		{ code: 'hr', short: 'HR', label: 'Hrvatski' },
+		{ code: 'fi', short: 'FI', label: 'Suomi' },
+		{ code: 'lv', short: 'LV', label: 'Latviešu' },
+		{ code: 'sw', short: 'SW', label: 'Kiswahili' },
+		{ code: 'vi', short: 'VI', label: 'Tiếng Việt' },
+		{ code: 'be', short: 'BE', label: 'Беларуская' },
+		{ code: 'ar', short: 'AR', label: 'العربية' },
+		{ code: 'he', short: 'HE', label: 'עברית' }
 	];
 
 	const menu = new Menu();

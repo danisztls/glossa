@@ -154,7 +154,18 @@ export const UI_TAGS = [
 	'sl',
 	'sv',
 	'ru',
-	'ar'
+	'nl',
+	'da',
+	'cs',
+	'sk',
+	'hr',
+	'fi',
+	'lv',
+	'sw',
+	'vi',
+	'be',
+	'ar',
+	'he'
 ] as const;
 
 /**

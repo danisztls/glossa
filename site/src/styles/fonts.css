@@ -291,12 +291,25 @@
  *               distinction this face exists to draw, so there is nothing
  *               here for it to be excluded from.
  *
- * No greek, no vietnamese, no cyrillic-ext — nothing in the fifteen
- * dictionaries reaches them YET, and the qualifier is now load-bearing: the
- * interface list is growing toward the corpus and past it (see ui-langs.ts),
- * and Vietnamese and Byelorussian chrome would each reach a subset declared
- * for the text face and not for this one. Check this inventory when adding a
- * language, not after someone reports tofu. The sidebar tables of contents do set corpus
+ * TWO GAPS ARE NOW REAL RATHER THAN THEORETICAL, and both were opened by the
+ * eleven interface languages added on 2026-08-31 (see ui-langs.ts):
+ *
+ *   vietnamese  Vietnamese chrome sets `Đọc tiếp`, `Ngũ Thư`, `Khải Huyền` —
+ *               U+1EA0-1EF9, which `latin-ext` does not cover. EB Garamond
+ *               declares this subset; Source Sans 3 does not, so the chrome
+ *               falls through `--font-sans` to the text face for those
+ *               glyphs. One word in a serif inside a sans row, not tofu —
+ *               the same bet this file already takes on sidebar titles, and
+ *               the same cheap fix if it ever looks wrong.
+ *   hebrew      No face here at all, deliberately. Hebrew resolves through
+ *               `--font-serif`'s chain to a system family; the argument is
+ *               written out beside that token in tokens.css.
+ *
+ * `greek-ext` and `cyrillic-ext` remain genuinely unreached: Byelorussian
+ * spells `Біблія` and `Пяцікніжжа` inside the plain `cyrillic` range, and its
+ * ў (U+045E) is there too. CHECK THIS INVENTORY WHEN ADDING A LANGUAGE, not
+ * after someone reports tofu — the chrome's glyph inventory is countable, so
+ * there is no excuse for finding out from a reader. The sidebar tables of contents do set corpus
  * titles in this face, and those are NOT countable, so the omission is a
  * real bet: a Vietnamese name in a heading finds no `@font-face` here and
  * falls to EB Garamond through `--font-sans`'s own chain. One word in the

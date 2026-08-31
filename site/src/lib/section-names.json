@@ -141,6 +141,86 @@
 			"nav.prayers": "Молитвы",
 			"nav.summa": "Сумма"
 		},
+		"nl": {
+			"nav.bible": "Bijbel",
+			"nav.ccc": "Catechismus",
+			"nav.compendium": "Compendium",
+			"nav.magisterium": "Leergezag",
+			"nav.prayers": "Gebeden",
+			"nav.summa": "Summa"
+		},
+		"da": {
+			"nav.bible": "Bibelen",
+			"nav.ccc": "Katekismus",
+			"nav.compendium": "Kompendium",
+			"nav.magisterium": "Læreembedet",
+			"nav.prayers": "Bønner",
+			"nav.summa": "Summa"
+		},
+		"cs": {
+			"nav.bible": "Bible",
+			"nav.ccc": "Katechismus",
+			"nav.compendium": "Kompendium",
+			"nav.magisterium": "Učitelský úřad",
+			"nav.prayers": "Modlitby",
+			"nav.summa": "Summa"
+		},
+		"sk": {
+			"nav.bible": "Biblia",
+			"nav.ccc": "Katechizmus",
+			"nav.compendium": "Kompendium",
+			"nav.magisterium": "Magistérium",
+			"nav.prayers": "Modlitby",
+			"nav.summa": "Suma"
+		},
+		"hr": {
+			"nav.bible": "Biblija",
+			"nav.ccc": "Katekizam",
+			"nav.compendium": "Kompendij",
+			"nav.magisterium": "Učiteljstvo",
+			"nav.prayers": "Molitve",
+			"nav.summa": "Suma"
+		},
+		"fi": {
+			"nav.bible": "Raamattu",
+			"nav.ccc": "Katekismus",
+			"nav.compendium": "Kompendium",
+			"nav.magisterium": "Opetusvirka",
+			"nav.prayers": "Rukoukset",
+			"nav.summa": "Summa"
+		},
+		"lv": {
+			"nav.bible": "Bībele",
+			"nav.ccc": "Katehisms",
+			"nav.compendium": "Kompendijs",
+			"nav.magisterium": "Maģistērijs",
+			"nav.prayers": "Lūgšanas",
+			"nav.summa": "Summa"
+		},
+		"sw": {
+			"nav.bible": "Biblia",
+			"nav.ccc": "Katekisimu",
+			"nav.compendium": "Muhtasari",
+			"nav.magisterium": "Mafundisho ya Kanisa",
+			"nav.prayers": "Sala",
+			"nav.summa": "Summa"
+		},
+		"vi": {
+			"nav.bible": "Kinh Thánh",
+			"nav.ccc": "Giáo lý",
+			"nav.compendium": "Bản Toát yếu",
+			"nav.magisterium": "Huấn quyền",
+			"nav.prayers": "Kinh nguyện",
+			"nav.summa": "Summa"
+		},
+		"be": {
+			"nav.bible": "Біблія",
+			"nav.ccc": "Катэхізіс",
+			"nav.compendium": "Кампендыум",
+			"nav.magisterium": "Настаўніцтва Касцёла",
+			"nav.prayers": "Малітвы",
+			"nav.summa": "Сума"
+		},
 		"ar": {
 			"nav.bible": "الكتاب المقدّس",
 			"nav.ccc": "التعليم المسيحي",
@@ -150,6 +230,14 @@
 			"nav.magisterium": "تعليم الكنيسة",
 			"nav.prayers": "الصلوات",
 			"nav.summa": "الخلاصة"
+		},
+		"he": {
+			"nav.bible": "כתבי הקודש",
+			"nav.ccc": "קטכיזם",
+			"nav.compendium": "תקציר",
+			"nav.magisterium": "המגיסטריום",
+			"nav.prayers": "תפילות",
+			"nav.summa": "סומה"
 		}
 	}
 }

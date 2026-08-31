@@ -84,13 +84,13 @@ describe('parseChromePath', () => {
 		expect(parseChromePath('/pt/404')).toBeUndefined();
 	});
 
-	// `sw` is the second case and the interesting one: Swahili is a CONTENT
-	// language with 19 editions in the corpus and no dictionary, so it is a
-	// real tag that is nonetheless not an interface language. It was `mg`
-	// until Malagasy became one (2026-08-31); the assertion is about the two
-	// lists being separate, so it needs a tag that is still only on one.
+	// `is` is the second case: a well-formed language tag that is simply not
+	// an interface language. It was `mg`, then `sw`, and the interface list
+	// grew into both within one day — it is a superset of the corpus now, so
+	// the counterexample can no longer be a content language at all. Icelandic
+	// is on no list here and on no plan.
 	it('refuses a language the interface does not have', () => {
 		expect(parseChromePath('/xx/doctores')).toBeUndefined();
-		expect(parseChromePath('/sw/doctores')).toBeUndefined();
+		expect(parseChromePath('/is/doctores')).toBeUndefined();
 	});
 });

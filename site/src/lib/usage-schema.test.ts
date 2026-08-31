@@ -166,9 +166,10 @@ describe('validatePayload', () => {
 	});
 
 	it('rejects an interface language it does not know', () => {
-		// A content language with no dictionary — `sw` has 19 editions in the
-		// corpus. Was `mg` until Malagasy gained one (2026-08-31).
-		expect(validatePayload({ ...good(), ui: 'sw' })).toBeUndefined();
+		// A well-formed tag that is not an interface language. It cannot be a
+		// content language any more — `UI_LANGS` is a superset of those since
+		// 2026-08-31 — so it is one this project has no plans for.
+		expect(validatePayload({ ...good(), ui: 'is' })).toBeUndefined();
 		expect(validatePayload({ ...good(), ui: 'tlh' })).toBeUndefined();
 	});
 

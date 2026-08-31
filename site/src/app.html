@@ -252,7 +252,10 @@
 			// `dir` matters more than `lang` does here, and is why this block is
 			// worth keeping in sync by hand: an Arabic reader whose direction is
 			// only set at hydration watches the whole page flip sides. Keep the
-			// list below equal to UI_LANGS and RTL_LANGS in src/lib/i18n.svelte.ts.
+			// lists below equal to UI_LANGS and RTL_LANGS in src/lib/ui-langs.ts.
+			// Hebrew is why RTL is a list: it was `l === 'ar'` until 2026-08-31,
+			// so a second right-to-left language would have painted the whole
+			// page left-to-right and flipped it at hydration.
 			try {
 				var UI = [
 					'en',
@@ -269,8 +272,20 @@
 					'sl',
 					'sv',
 					'ru',
-					'ar'
+					'nl',
+					'da',
+					'cs',
+					'sk',
+					'hr',
+					'fi',
+					'lv',
+					'sw',
+					'vi',
+					'be',
+					'ar',
+					'he'
 				];
+				var RTL = ['ar', 'he'];
 				var seg = location.pathname.split('/')[1];
 				var l = UI.indexOf(seg) !== -1 ? seg : localStorage.getItem('glossa:ui-lang');
 				if (UI.indexOf(l) === -1) {
@@ -288,7 +303,7 @@
 					}
 				}
 				document.documentElement.lang = l;
-				document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+				document.documentElement.dir = RTL.indexOf(l) !== -1 ? 'rtl' : 'ltr';
 			} catch (e) {}
 		</script>
 		%sveltekit.head%

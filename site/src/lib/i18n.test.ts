@@ -9,12 +9,17 @@ describe('detectUiLang', () => {
 		expect(detectUiLang(['en-GB', 'pt-PT'])).toBe('en');
 	});
 
+	// PICK A LANGUAGE THIS PROJECT HAS NO PLANS FOR. Every earlier choice here
+	// was overtaken by the interface list growing into it — `sw-KE` stood here
+	// until Swahili became an interface language on 2026-08-31, and `ko` in the
+	// test below has the same fate coming. Icelandic and Estonian are neither
+	// corpus languages nor on any reach list.
 	it('skips unsupported preferences in favour of a later supported one', () => {
-		expect(detectUiLang(['sw-KE', 'pt-PT', 'en-US'])).toBe('pt');
+		expect(detectUiLang(['is-IS', 'pt-PT', 'en-US'])).toBe('pt');
 	});
 
 	it('falls back to English when there is no supported browser language', () => {
-		expect(detectUiLang(['ja-JP', 'ko-KR'])).toBe('en');
+		expect(detectUiLang(['is-IS', 'et-EE'])).toBe('en');
 		expect(detectUiLang([])).toBe('en');
 		expect(detectUiLang(undefined)).toBe('en');
 	});
@@ -86,8 +91,13 @@ describe('UI_LANGS and the dictionaries', () => {
 		}
 	});
 
-	it('marks Arabic, and only Arabic, as right to left', () => {
-		expect(UI_LANGS.filter(isRtl)).toEqual(['ar']);
+	// Hebrew joined Arabic on 2026-08-31. The assertion is deliberately the
+	// whole set rather than a membership check: `app.html` carries its own
+	// copy of this list for the pre-paint `dir`, and the failure mode of a
+	// missed entry there is a page that paints one way and flips at
+	// hydration.
+	it('marks Arabic and Hebrew, and only those, as right to left', () => {
+		expect(UI_LANGS.filter(isRtl)).toEqual(['ar', 'he']);
 	});
 
 	// app.html negotiates the language a second time, before hydration and

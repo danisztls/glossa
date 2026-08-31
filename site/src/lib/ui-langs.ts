@@ -78,7 +78,18 @@ export const UI_LANGS = [
 	'sl',
 	'sv',
 	'ru',
-	'ar'
+	'nl',
+	'da',
+	'cs',
+	'sk',
+	'hr',
+	'fi',
+	'lv',
+	'sw',
+	'vi',
+	'be',
+	'ar',
+	'he'
 ] as const;
 
 export type UiLang = (typeof UI_LANGS)[number];
@@ -95,7 +106,7 @@ export function isUiLang(tag: string): tag is UiLang {
  * would be an awkward dependency for a question whose answer is one entry
  * long and changes about once a decade.
  */
-export const RTL_LANGS: readonly UiLang[] = ['ar'];
+export const RTL_LANGS: readonly UiLang[] = ['ar', 'he'];
 
 export function isRtl(lang: UiLang): boolean {
 	return RTL_LANGS.includes(lang);
