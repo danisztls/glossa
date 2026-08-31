@@ -116,3 +116,59 @@
 .reading-text[lang='ar'] {
 	line-height: 1.9;
 }
+
+/* ---------------------------------------------------------------------------
+   SCRIPTS NO WEBFONT HERE COVERS, AND NONE EVER WILL
+
+   Han, Hangul, Devanagari and Malayalam are megabytes even subset, so the
+   reach languages added on 2026-08-31 (see ui-langs.ts) are set in the
+   reader's own system faces instead. This is the same move `--font-serif`
+   already makes for Arabic by naming Amiri, one step further: there the face
+   is vendored because Arabic is a READING language here, and here it is not —
+   these are chrome-only languages whose whole glyph inventory is a menu and a
+   handful of labels.
+
+   Scoped by `:lang()` rather than added to `--font-sans` itself, because a
+   family named in the global chain is consulted for every glyph the faces
+   above it decline, on every page, for every reader. `:lang()` matches on the
+   computed language inherited from `<html lang>`, which `applyDocumentLang`
+   sets, so one rule covers the whole chrome and costs nobody else anything.
+
+   TWO THINGS ABOUT THE VALUE ARE LOAD-BEARING, and both were wrong in the
+   first draft:
+
+   Source Sans STAYS FIRST. Font fallback is per glyph and left to right, and
+   every one of these system faces carries Latin too — usually drawn to fill a
+   full-width em. Putting the CJK family first would hand it `Glossa
+   Catholica` and every numeral, which is how a Chinese interface ends up with
+   Latin that sits wrong beside itself. Source Sans first means Latin is
+   answered before the question reaches them, and Han is answered after.
+
+   The tail is spelled out rather than written `var(--font-sans)`. A custom
+   property that references itself is a cycle, and CSS resolves a cycle to
+   guaranteed-invalid rather than to the outer value — `:root` and `:lang(zh)`
+   both match `<html>`, so the self-reference would not have inherited
+   anything, it would have unset the font for the whole page. */
+:lang(zh) {
+	--font-sans:
+		'Source Sans 3 Variable', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+		'Noto Sans CJK SC', 'Source Han Sans SC', var(--font-serif);
+}
+
+:lang(ko) {
+	--font-sans:
+		'Source Sans 3 Variable', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR',
+		'Source Han Sans KR', var(--font-serif);
+}
+
+:lang(hi) {
+	--font-sans:
+		'Source Sans 3 Variable', 'Noto Sans Devanagari', 'Nirmala UI', 'Kohinoor Devanagari', 'Mangal',
+		var(--font-serif);
+}
+
+:lang(ml) {
+	--font-sans:
+		'Source Sans 3 Variable', 'Noto Sans Malayalam', 'Malayalam Sangam MN', 'Kartika',
+		var(--font-serif);
+}

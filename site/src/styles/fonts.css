@@ -276,9 +276,10 @@
  *
  * THREE SUBSETS, and unlike the text face's six the interface dictionaries
  * decide them outright: the chrome's strings are `src/lib/i18n/*.ts`, so its
- * glyph inventory is countable rather than estimated. Across all fifteen
- * (Malagasy joined on 2026-08-31 and added nothing — it is written in plain
- * Latin with no diacritics at all):
+ * glyph inventory is countable rather than estimated. Across all thirty-four
+ * — the count trebled on 2026-08-31, and the SUBSETS did not move, because
+ * the scripts that arrived with it are the four no webfont here covers
+ * (see the `:lang()` block at the foot of direction.css):
  *
  *   latin       every language — Swedish included, whose å ä ö are all
  *               Latin-1 Supplement, so it added nothing outside this file.

@@ -31,20 +31,20 @@ describe('sitemapPaths', () => {
 
 	it('covers every address in the manifest exactly once', () => {
 		const paths = sitemapPaths(manifest);
-		// 216 chrome + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
+		// 280 chrome + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
 		// + 2 compendium + 1 document + 1 prayer + 3 summa.
 		//
 		// The chrome is EIGHT PAGES ONCE PLUS ONCE PER INTERFACE LANGUAGE
 		// (2026-08-28): eight unprefixed, which are the cluster's `x-default`,
-		// and eight under each of the TWENTY-SIX tags in `UI_LANGS` — fourteen
-		// until 2026-08-31, when Malagasy and the eleven other content
-		// languages with no interface gained one, which is why this number
-		// moves whenever that list does. It was seven
+		// and eight under each of the THIRTY-FOUR tags in `UI_LANGS` — fourteen
+		// until 2026-08-31, when the twelve content languages with no chrome
+		// gained one and eight reach languages were added on top, which is why
+		// this number moves whenever that list does. It was seven
 		// until the Summa moved under `/doctores` the same day, which added the
 		// shelf and its one work and took nothing away. Still no Compendium
 		// landing page -- the Catechism's index presents both works
 		// (`CatechismIndex.svelte`).
-		expect(paths).toHaveLength(216 + 17);
+		expect(paths).toHaveLength(280 + 17);
 		expect(new Set(paths).size).toBe(paths.length);
 	});
 

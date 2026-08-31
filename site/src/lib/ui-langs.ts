@@ -88,6 +88,14 @@ export const UI_LANGS = [
 	'sw',
 	'vi',
 	'be',
+	'tl',
+	'id',
+	'ig',
+	'uk',
+	'zh',
+	'ko',
+	'ml',
+	'hi',
 	'ar',
 	'he'
 ] as const;

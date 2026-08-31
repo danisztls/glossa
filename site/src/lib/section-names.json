@@ -221,6 +221,70 @@
 			"nav.prayers": "Малітвы",
 			"nav.summa": "Сума"
 		},
+		"tl": {
+			"nav.bible": "Bibliya",
+			"nav.ccc": "Katesismo",
+			"nav.compendium": "Kompendyo",
+			"nav.magisterium": "Magisterium",
+			"nav.prayers": "Mga Panalangin",
+			"nav.summa": "Summa"
+		},
+		"id": {
+			"nav.bible": "Alkitab",
+			"nav.ccc": "Katekismus",
+			"nav.compendium": "Kompendium",
+			"nav.magisterium": "Magisterium",
+			"nav.prayers": "Doa",
+			"nav.summa": "Summa"
+		},
+		"ig": {
+			"nav.bible": "Baịbụl",
+			"nav.ccc": "Katakizim",
+			"nav.compendium": "Nchịkọta",
+			"nav.magisterium": "Nkuzi Chọọchị",
+			"nav.prayers": "Ekpere",
+			"nav.summa": "Summa"
+		},
+		"uk": {
+			"nav.bible": "Біблія",
+			"nav.ccc": "Катехизм",
+			"nav.compendium": "Компендіум",
+			"nav.magisterium": "Учительство Церкви",
+			"nav.prayers": "Молитви",
+			"nav.summa": "Сума"
+		},
+		"zh": {
+			"nav.bible": "圣经",
+			"nav.ccc": "教理",
+			"nav.compendium": "简编",
+			"nav.magisterium": "训导权",
+			"nav.prayers": "祈祷文",
+			"nav.summa": "神学大全"
+		},
+		"ko": {
+			"nav.bible": "성경",
+			"nav.ccc": "교리서",
+			"nav.compendium": "요약",
+			"nav.magisterium": "교도권",
+			"nav.prayers": "기도문",
+			"nav.summa": "신학대전"
+		},
+		"ml": {
+			"nav.bible": "ബൈബിൾ",
+			"nav.ccc": "മതബോധനം",
+			"nav.compendium": "സംഗ്രഹം",
+			"nav.magisterium": "സഭയുടെ പ്രബോധനാധികാരം",
+			"nav.prayers": "പ്രാർഥനകൾ",
+			"nav.summa": "സുമ്മ"
+		},
+		"hi": {
+			"nav.bible": "बाइबिल",
+			"nav.ccc": "धर्मशिक्षा",
+			"nav.compendium": "संक्षेप",
+			"nav.magisterium": "कलीसिया का शिक्षण",
+			"nav.prayers": "प्रार्थनाएँ",
+			"nav.summa": "सुम्मा"
+		},
 		"ar": {
 			"nav.bible": "الكتاب المقدّس",
 			"nav.ccc": "التعليم المسيحي",

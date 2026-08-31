@@ -34,7 +34,7 @@
 	// current one: a reader who has landed on the wrong interface language
 	// needs to recognize their language in the list, and "Portuguese" is no
 	// help to someone who only reads Portuguese. That was worth stating with
-	// two entries and is the whole usability of the control at fifteen.
+	// two entries and is the whole usability of the control at thirty-four.
 	//
 	// Order matches `UI_LANGS` (ui-langs.ts), which is not alphabetical:
 	// English, Portuguese and Latin lead because they are what the corpus is
@@ -76,6 +76,14 @@
 		{ code: 'sw', short: 'SW', label: 'Kiswahili' },
 		{ code: 'vi', short: 'VI', label: 'Tiếng Việt' },
 		{ code: 'be', short: 'BE', label: 'Беларуская' },
+		{ code: 'tl', short: 'TL', label: 'Tagalog' },
+		{ code: 'id', short: 'ID', label: 'Bahasa Indonesia' },
+		{ code: 'ig', short: 'IG', label: 'Igbo' },
+		{ code: 'uk', short: 'UK', label: 'Українська' },
+		{ code: 'zh', short: 'ZH', label: '中文' },
+		{ code: 'ko', short: 'KO', label: '한국어' },
+		{ code: 'ml', short: 'ML', label: 'മലയാളം' },
+		{ code: 'hi', short: 'HI', label: 'हिन्दी' },
 		{ code: 'ar', short: 'AR', label: 'العربية' },
 		{ code: 'he', short: 'HE', label: 'עברית' }
 	];
@@ -175,10 +183,14 @@
 	 * The count is what turned this from preference into a defect. Ten rows sat
 	 * just inside the panel's `max-height: min(24rem, 70vh)`; fourteen do not,
 	 * so the language a reader wants can be below the fold of a menu whose
-	 * whole job is to be looked at once. Two columns absorbed that, and at
-	 * fifteen (Malagasy, 2026-08-31) they still do — but the headroom is not
-	 * unlimited, and a list heading for thirty-odd wants grouping or a filter
-	 * rather than a third column.
+	 * whole job is to be looked at once. Two columns absorbed fourteen.
+	 *
+	 * THEY DO NOT ABSORB THIRTY-FOUR (2026-08-31), and this is now a scrolling
+	 * panel, which is the state the two-column layout was introduced to end.
+	 * `auto-fit` will take a third column where there is width for one, so a
+	 * desktop reader is served; a phone is not. The real answer is a filter
+	 * box or grouping by script, and it is deliberately not attempted here —
+	 * this control needs designing at the new size rather than patching.
 	 *
 	 * `auto-fit` rather than a hard `repeat(2, …)`: the panel is capped at
 	 * `90vw`, so on a narrow phone there is not room for two columns of names,
