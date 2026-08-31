@@ -56,13 +56,49 @@
 	--prose-char-advance: 0.3787;
 }
 
-:not(:root)[lang='ru'] {
+/*
+ * THE ADVANCE IS A PROPERTY OF THE SCRIPT, so the selector has to name every
+ * language written in it — which for a year it did not. `ru` was the only
+ * Cyrillic edition in the corpus when this was written; there are now 31
+ * Byelorussian works and Ukrainian chrome, and all of them were being set at
+ * the LATIN figure, delivering about 54 characters to a column tuned for 62.
+ * Read this list as "the Cyrillic languages the corpus holds", not as a list
+ * of works, and add to it whenever a Cyrillic language is ingested.
+ */
+:not(:root)[lang='ru'],
+:not(:root)[lang='be'],
+:not(:root)[lang='uk'] {
 	--prose-char-advance: 0.4331;
 }
 
+/*
+ * The right-to-left scripts. KEEP THIS SELECTOR IN STEP WITH `RTL_LANGS` in
+ * ui-langs.ts — the two answer the same question about different halves of
+ * the page, `RTL_LANGS` for the chrome and this for a text region that
+ * declares its own `lang`.
+ *
+ * Hebrew was missing here until 2026-08-31, and it was not a hypothetical:
+ * `vatii.nostra-aetate.he` and `exhortation.ecclesia-in-medio-oriente.he`
+ * have been in the corpus since the Hebrew capture, and both were rendering
+ * left to right, because `:not(:root)[lang]` above defaults them to `ltr`.
+ * The bug was invisible to everyone who does not read Hebrew, which is
+ * everyone working here — the same shape as the Malagasy edition naming
+ * itself `mg` in the edition menu.
+ */
 :not(:root)[lang='ar'] {
 	direction: rtl;
 	--prose-char-advance: 0.4774;
+}
+
+/*
+ * No advance figure of its own: unlike Arabic, whose 0.4774 was measured over
+ * a 250k-character edition, the two Hebrew works are short and a figure read
+ * off them would be noise. The Latin default inherited from the block above
+ * is the honest placeholder until there is enough Hebrew to measure, and it
+ * errs toward a narrower column rather than a wider one.
+ */
+:not(:root)[lang='he'] {
+	direction: rtl;
 }
 
 /*
