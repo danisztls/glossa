@@ -48,9 +48,9 @@ describe('detectUiLang', () => {
 });
 
 describe('UI_LANGS and the dictionaries', () => {
-	it('has a dictionary for every interface language', () => {
+	it('has a dictionary for every interface language', async () => {
 		for (const lang of UI_LANGS) {
-			expect(Object.keys(dictionaryFor(lang)).length).toBeGreaterThan(0);
+			expect(Object.keys(await dictionaryFor(lang)).length).toBeGreaterThan(0);
 		}
 	});
 
@@ -58,10 +58,10 @@ describe('UI_LANGS and the dictionaries', () => {
 	// on purpose, so a partial translation is a supported state. What must
 	// hold is that no translation invents a key English does not have, since
 	// such a key is unreachable and always a typo.
-	it('declares no key English does not have', () => {
-		const known = new Set(Object.keys(dictionaryFor('en')));
+	it('declares no key English does not have', async () => {
+		const known = new Set(Object.keys(await dictionaryFor('en')));
 		for (const lang of UI_LANGS) {
-			for (const key of Object.keys(dictionaryFor(lang))) {
+			for (const key of Object.keys(await dictionaryFor(lang))) {
 				expect(known, `${lang}: ${key}`).toContain(key);
 			}
 		}
@@ -71,16 +71,16 @@ describe('UI_LANGS and the dictionaries', () => {
 	// so a translation that drops or misspells one silently loses the word it
 	// stood for — a sentence with no language name in it, or a plate's control
 	// labelled "Enlarge" with nothing said about which plate.
-	it('keeps each placeholder wherever English has one', () => {
+	it('keeps each placeholder wherever English has one', async () => {
 		const placeholders: Record<string, string> = {
 			'summa.titleFromEdition': '{lang}',
 			'summa.noEditionInYourLanguage': '{lang}',
 			'plates.enlarge': '{title}'
 		};
 		for (const [key, placeholder] of Object.entries(placeholders)) {
-			expect(dictionaryFor('en')[key], `en: ${key}`).toContain(placeholder);
+			expect((await dictionaryFor('en'))[key], `en: ${key}`).toContain(placeholder);
 			for (const lang of UI_LANGS) {
-				const value = dictionaryFor(lang)[key];
+				const value = (await dictionaryFor(lang))[key];
 				if (value !== undefined) expect(value, `${lang}: ${key}`).toContain(placeholder);
 			}
 		}

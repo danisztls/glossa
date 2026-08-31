@@ -8,20 +8,20 @@ const EN = 'bible.cpdv.en';
 const PT = 'bible.matos-soares.pt';
 const LA = 'bible.clementina.la';
 
-beforeEach(() => {
-	i18n.set('en');
+beforeEach(async () => {
+	await i18n.set('en');
 	content.set('bible', null);
 	content.set('catechism', null);
 });
 
 describe('edition override lifecycle', () => {
-	it('follows the UI language when the reader has picked nothing', () => {
+	it('follows the UI language when the reader has picked nothing', async () => {
 		expect(content.workIdFor('bible')).toBe(EN);
-		i18n.set('pt');
+		await i18n.set('pt');
 		expect(content.workIdFor('bible')).toBe(PT);
 	});
 
-	it('honours an explicit pick under the language it was made in', () => {
+	it('honours an explicit pick under the language it was made in', async () => {
 		content.set('bible', LA);
 		expect(content.workIdFor('bible')).toBe(LA);
 		expect(content.langFor('bible')).toBe('la');
@@ -31,15 +31,15 @@ describe('edition override lifecycle', () => {
 	// An override is stamped with the UI language it was made under and goes
 	// dormant while the interface is elsewhere — it is not deleted, so
 	// returning to that language revives it.
-	it('puts an override in a UI language to sleep while the interface is elsewhere', () => {
-		i18n.set('pt');
+	it('puts an override in a UI language to sleep while the interface is elsewhere', async () => {
+		await i18n.set('pt');
 		content.set('bible', PT);
 		expect(content.workIdFor('bible')).toBe(PT);
 
-		i18n.set('en');
+		await i18n.set('en');
 		expect(content.workIdFor('bible')).toBe(EN); // dormant — the EN default wins
 
-		i18n.set('pt');
+		await i18n.set('pt');
 		expect(content.workIdFor('bible')).toBe(PT); // and it wakes up again
 	});
 
@@ -48,21 +48,21 @@ describe('edition override lifecycle', () => {
 	// their mind about Latin". Latin is a UI language now (2026-08-24), which
 	// is a better answer to the same problem, so the exemption is gone and a
 	// Latin pick sleeps and wakes exactly like a Portuguese one.
-	it('treats a Latin override like every other, since Latin became a UI language', () => {
-		i18n.set('pt');
+	it('treats a Latin override like every other, since Latin became a UI language', async () => {
+		await i18n.set('pt');
 		content.set('bible', LA);
 		expect(content.workIdFor('bible')).toBe(LA);
 
-		i18n.set('en');
+		await i18n.set('en');
 		expect(content.workIdFor('bible')).toBe(EN);
-		i18n.set('pt');
+		await i18n.set('pt');
 		expect(content.workIdFor('bible')).toBe(LA);
 	});
 
 	// And the reader who wants Latin no longer needs an override to keep it:
 	// the interface language carries it, for the Bible and for the Summa.
-	it('gives a Latin interface the Latin editions with no override at all', () => {
-		i18n.set('la');
+	it('gives a Latin interface the Latin editions with no override at all', async () => {
+		await i18n.set('la');
 		expect(content.workIdFor('bible')).toBe(LA);
 		expect(content.langFor('bible')).toBe('la');
 		expect(content.langFor('summa')).toBe('la');
@@ -71,12 +71,12 @@ describe('edition override lifecycle', () => {
 	// The Catechism has no Latin edition in the corpus, so a Latin reader
 	// falls through `CONTENT_LANG_FALLBACK` to English like a Portuguese
 	// reader falls through it for the Summa.
-	it('falls back to English for a work the corpus has no Latin edition of', () => {
-		i18n.set('la');
+	it('falls back to English for a work the corpus has no Latin edition of', async () => {
+		await i18n.set('la');
 		expect(content.workIdFor('catechism')).toBe('ccc.en');
 	});
 
-	it('still lets the reader leave Latin explicitly', () => {
+	it('still lets the reader leave Latin explicitly', async () => {
 		content.set('bible', LA);
 		content.set('bible', PT);
 		expect(content.workIdFor('bible')).toBe(PT);

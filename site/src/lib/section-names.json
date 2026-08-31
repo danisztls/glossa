@@ -1,0 +1,155 @@
+{
+	"generated_by": "site/scripts/export-section-names.mjs — do not edit; see src/lib/i18n/*.ts",
+	"names": {
+		"en": {
+			"nav.bible": "Bible",
+			"nav.ccc": "Catechism",
+			"ccc.abbrev": "CCC",
+			"nav.compendium": "Compendium",
+			"compendium.abbrev": "Comp.",
+			"nav.magisterium": "Magisterium",
+			"nav.prayers": "Prayers",
+			"nav.summa": "Summa"
+		},
+		"pt": {
+			"nav.bible": "Bíblia",
+			"nav.ccc": "Catecismo",
+			"ccc.abbrev": "CIC",
+			"nav.compendium": "Compêndio",
+			"compendium.abbrev": "Comp.",
+			"nav.magisterium": "Magistério",
+			"nav.prayers": "Orações",
+			"nav.summa": "Suma"
+		},
+		"la": {
+			"nav.bible": "Scriptura",
+			"nav.ccc": "Catechismus",
+			"ccc.abbrev": "CCE",
+			"nav.compendium": "Compendium",
+			"compendium.abbrev": "Comp.",
+			"nav.magisterium": "Magisterium",
+			"nav.prayers": "Preces",
+			"nav.summa": "Summa"
+		},
+		"de": {
+			"nav.bible": "Bibel",
+			"nav.ccc": "Katechismus",
+			"ccc.abbrev": "KKK",
+			"nav.compendium": "Kompendium",
+			"compendium.abbrev": "Komp.",
+			"nav.magisterium": "Lehramt",
+			"nav.prayers": "Gebete",
+			"nav.summa": "Summa"
+		},
+		"es": {
+			"nav.bible": "Biblia",
+			"nav.ccc": "Catecismo",
+			"ccc.abbrev": "CIC",
+			"nav.compendium": "Compendio",
+			"compendium.abbrev": "Comp.",
+			"nav.magisterium": "Magisterio",
+			"nav.prayers": "Oraciones",
+			"nav.summa": "Suma"
+		},
+		"fr": {
+			"nav.bible": "Bible",
+			"nav.ccc": "Catéchisme",
+			"ccc.abbrev": "CEC",
+			"nav.compendium": "Abrégé",
+			"compendium.abbrev": "Comp.",
+			"nav.magisterium": "Magistère",
+			"nav.prayers": "Prières",
+			"nav.summa": "Somme"
+		},
+		"it": {
+			"nav.bible": "Bibbia",
+			"nav.ccc": "Catechismo",
+			"ccc.abbrev": "CCC",
+			"nav.compendium": "Compendio",
+			"compendium.abbrev": "Comp.",
+			"nav.magisterium": "Magistero",
+			"nav.prayers": "Preghiere",
+			"nav.summa": "Somma"
+		},
+		"mg": {
+			"nav.bible": "Baiboly",
+			"nav.ccc": "Katesizy",
+			"ccc.abbrev": "CCC",
+			"nav.compendium": "Famintinana",
+			"compendium.abbrev": "Famint.",
+			"nav.magisterium": "Fampianaran’ny Fiangonana",
+			"nav.prayers": "Vavaka",
+			"nav.summa": "Somà"
+		},
+		"hu": {
+			"nav.bible": "Szentírás",
+			"nav.ccc": "Katekizmus",
+			"ccc.abbrev": "KEK",
+			"nav.compendium": "Kompendium",
+			"compendium.abbrev": "Komp.",
+			"nav.magisterium": "Tanítóhivatal",
+			"nav.prayers": "Imádságok",
+			"nav.summa": "Summa"
+		},
+		"pl": {
+			"nav.bible": "Biblia",
+			"nav.ccc": "Katechizm",
+			"ccc.abbrev": "KKK",
+			"nav.compendium": "Kompendium",
+			"compendium.abbrev": "Komp.",
+			"nav.magisterium": "Magisterium",
+			"nav.prayers": "Modlitwy",
+			"nav.summa": "Suma"
+		},
+		"ro": {
+			"nav.bible": "Biblia",
+			"nav.ccc": "Catehism",
+			"ccc.abbrev": "CBC",
+			"nav.compendium": "Compendiu",
+			"compendium.abbrev": "Comp.",
+			"nav.magisterium": "Magisteriu",
+			"nav.prayers": "Rugăciuni",
+			"nav.summa": "Summa"
+		},
+		"sl": {
+			"nav.bible": "Sveto pismo",
+			"nav.ccc": "Katekizem",
+			"ccc.abbrev": "KKC",
+			"nav.compendium": "Kompendij",
+			"compendium.abbrev": "Komp.",
+			"nav.magisterium": "Učiteljstvo",
+			"nav.prayers": "Molitve",
+			"nav.summa": "Summa"
+		},
+		"sv": {
+			"nav.bible": "Bibeln",
+			"nav.ccc": "Katekesen",
+			"ccc.abbrev": "KKK",
+			"nav.compendium": "Kompendiet",
+			"compendium.abbrev": "Komp.",
+			"nav.magisterium": "Läroämbetet",
+			"nav.prayers": "Böner",
+			"nav.summa": "Summa"
+		},
+		"ru": {
+			"nav.bible": "Библия",
+			"nav.ccc": "Катехизис",
+			"ccc.abbrev": "ККЦ",
+			"nav.compendium": "Компендиум",
+			"compendium.abbrev": "Комп.",
+			"nav.magisterium": "Учительство",
+			"nav.prayers": "Молитвы",
+			"nav.summa": "Сумма"
+		},
+		"ar": {
+			"nav.bible": "الكتاب المقدّس",
+			"nav.ccc": "التعليم المسيحي",
+			"ccc.abbrev": "التعليم المسيحي",
+			"nav.compendium": "الموجز",
+			"compendium.abbrev": "المختصر",
+			"nav.magisterium": "تعليم الكنيسة",
+			"nav.prayers": "الصلوات",
+			"nav.summa": "الخلاصة"
+		}
+	}
+}

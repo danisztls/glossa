@@ -166,7 +166,9 @@ describe('validatePayload', () => {
 	});
 
 	it('rejects an interface language it does not know', () => {
-		expect(validatePayload({ ...good(), ui: 'mg' })).toBeUndefined();
+		// A content language with no dictionary — `sw` has 19 editions in the
+		// corpus. Was `mg` until Malagasy gained one (2026-08-31).
+		expect(validatePayload({ ...good(), ui: 'sw' })).toBeUndefined();
 		expect(validatePayload({ ...good(), ui: 'tlh' })).toBeUndefined();
 	});
 

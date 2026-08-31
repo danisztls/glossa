@@ -17,9 +17,20 @@
  */
 
 import fuzzysort from 'fuzzysort';
-import { beforeEach, describe, expect, it } from 'vitest';
-import { dictionaryFor, i18n } from './i18n.svelte';
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { dictionaryFor, i18n, loadedDictionary } from './i18n.svelte';
 import { resetSuggestCaches, setFuzzyRanker, suggest } from './suggest';
+
+/**
+ * `suggest` labels a row through `tr`, which reads only the dictionaries that
+ * are RESIDENT (see `loadedDictionary` in i18n.svelte.ts) — English always is,
+ * and in the app the reader's own has been awaited before anything renders.
+ * A test naming any other language has to say so, or it would assert against
+ * English and pass for the wrong reason.
+ */
+beforeAll(async () => {
+	await Promise.all([dictionaryFor('la'), dictionaryFor('pt'), dictionaryFor('sv')]);
+});
 
 /** The caches are keyed by language, and `t()` reads the store — so a test
  *  that switches language must not see the previous one's rows. */
@@ -251,7 +262,7 @@ describe('suggest', () => {
 				// Whatever Latin calls the Catechism — read from the dictionary
 				// rather than spelled here, so this asserts the wiring and not a
 				// translation somebody may revise.
-				dictionaryFor('la')['nav.ccc']
+				loadedDictionary('la')!['nav.ccc']
 			);
 		});
 

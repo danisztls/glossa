@@ -276,7 +276,9 @@
  *
  * THREE SUBSETS, and unlike the text face's six the interface dictionaries
  * decide them outright: the chrome's strings are `src/lib/i18n/*.ts`, so its
- * glyph inventory is countable rather than estimated. Across all fourteen:
+ * glyph inventory is countable rather than estimated. Across all fifteen
+ * (Malagasy joined on 2026-08-31 and added nothing — it is written in plain
+ * Latin with no diacritics at all):
  *
  *   latin       every language — Swedish included, whose å ä ö are all
  *               Latin-1 Supplement, so it added nothing outside this file.
@@ -289,8 +291,12 @@
  *               distinction this face exists to draw, so there is nothing
  *               here for it to be excluded from.
  *
- * No greek, no vietnamese, no cyrillic-ext — nothing in the fourteen
- * dictionaries reaches them. The sidebar tables of contents do set corpus
+ * No greek, no vietnamese, no cyrillic-ext — nothing in the fifteen
+ * dictionaries reaches them YET, and the qualifier is now load-bearing: the
+ * interface list is growing toward the corpus and past it (see ui-langs.ts),
+ * and Vietnamese and Byelorussian chrome would each reach a subset declared
+ * for the text face and not for this one. Check this inventory when adding a
+ * language, not after someone reports tofu. The sidebar tables of contents do set corpus
  * titles in this face, and those are NOT countable, so the omission is a
  * real bet: a Vietnamese name in a heading finds no `@font-face` here and
  * falls to EB Garamond through `--font-sans`'s own chain. One word in the

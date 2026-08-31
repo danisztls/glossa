@@ -34,12 +34,18 @@
 	// current one: a reader who has landed on the wrong interface language
 	// needs to recognize their language in the list, and "Portuguese" is no
 	// help to someone who only reads Portuguese. That was worth stating with
-	// two entries and is the whole usability of the control with fourteen.
+	// two entries and is the whole usability of the control at fifteen.
 	//
-	// Order matches `UI_LANGS` (i18n.svelte.ts), which is not alphabetical:
+	// Order matches `UI_LANGS` (ui-langs.ts), which is not alphabetical:
 	// English, Portuguese and Latin lead because they are what the corpus is
 	// in, and the rest follow by their own names — which is why Magyar sits
-	// between Italiano and Polski rather than where `hu` would sort.
+	// between Malagasy and Polski rather than where `hu` would sort.
+	//
+	// THIS ARRAY IS THE ONE COPY OF `UI_LANGS` NO TEST GUARDS, and it is the
+	// one whose omission is invisible: a language missing here is still
+	// reachable by URL and by browser negotiation, so everything works except
+	// that nobody can find it. Deriving it from `UI_LANGS` + `LANGUAGE_NAMES`
+	// is the obvious fix and is worth doing before this list grows further.
 	//
 	// `Latina` is the label rather than `Lingua Latina` for the same reason
 	// `Deutsch` is not `Deutsche Sprache` — and it is what `corpus.ts`'s
@@ -53,6 +59,7 @@
 		{ code: 'es', short: 'ES', label: 'Español' },
 		{ code: 'fr', short: 'FR', label: 'Français' },
 		{ code: 'it', short: 'IT', label: 'Italiano' },
+		{ code: 'mg', short: 'MG', label: 'Malagasy' },
 		{ code: 'hu', short: 'HU', label: 'Magyar' },
 		{ code: 'pl', short: 'PL', label: 'Polski' },
 		{ code: 'ro', short: 'RO', label: 'Română' },
@@ -66,8 +73,13 @@
 
 	const current = $derived(OPTIONS.find((o) => o.code === i18n.lang) ?? OPTIONS[0]);
 
-	function choose(code: UiLang) {
-		i18n.set(code);
+	// Awaited because `i18n.set` fetches the language's dictionary first (see
+	// i18n.svelte.ts): the menu closes once the interface can actually be in
+	// the language the reader picked, rather than closing onto English and
+	// changing under them a moment later. The chunk is ~15 KB and usually
+	// resolves within the click's own frame.
+	async function choose(code: UiLang) {
+		await i18n.set(code);
 		menu.closeAndRefocus();
 	}
 </script>
@@ -152,8 +164,10 @@
 	 * The count is what turned this from preference into a defect. Ten rows sat
 	 * just inside the panel's `max-height: min(24rem, 70vh)`; fourteen do not,
 	 * so the language a reader wants can be below the fold of a menu whose
-	 * whole job is to be looked at once. Two columns of seven fit with room to
-	 * spare, and the panel stops scrolling.
+	 * whole job is to be looked at once. Two columns absorbed that, and at
+	 * fifteen (Malagasy, 2026-08-31) they still do — but the headroom is not
+	 * unlimited, and a list heading for thirty-odd wants grouping or a filter
+	 * rather than a third column.
 	 *
 	 * `auto-fit` rather than a hard `repeat(2, …)`: the panel is capped at
 	 * `90vw`, so on a narrow phone there is not room for two columns of names,

@@ -47,20 +47,23 @@ const DEFAULT_LANG: UiLang = 'en';
 
 export type Dictionary = Record<string, string>;
 
-import { ar } from './i18n/ar';
-import { de } from './i18n/de';
+/**
+ * ENGLISH IS THE ONLY DICTIONARY IN THE BOOT CHUNK, and every other one is a
+ * chunk of its own, fetched when a reader actually chooses that language.
+ *
+ * It was fourteen static imports until 2026-08-31, which compiled to ONE
+ * 215 KB (65 KB gzipped) chunk that `nodes/0.js` — the root layout, and so
+ * every route — imported synchronously. Every reader downloaded all fourteen
+ * to read one. That was tolerable at fourteen and is not at thirty-odd: the
+ * list is now a superset of the corpus plus a reach tier, and the cost of a
+ * language has to be paid by the reader who picks it, not by everyone. This
+ * is the same accounting `JumpBox` does for `fuzzysort` (7.5 KB, lazily
+ * imported on open) and the content tier does for the corpus itself.
+ *
+ * English stays static because `t()` falls back to it key by key and must be
+ * able to do so synchronously, on the first render, before any await.
+ */
 import { en } from './i18n/en';
-import { es } from './i18n/es';
-import { fr } from './i18n/fr';
-import { hu } from './i18n/hu';
-import { it } from './i18n/it';
-import { la } from './i18n/la';
-import { pl } from './i18n/pl';
-import { pt } from './i18n/pt';
-import { ro } from './i18n/ro';
-import { ru } from './i18n/ru';
-import { sl } from './i18n/sl';
-import { sv } from './i18n/sv';
 
 /**
  * One module per language under `./i18n/`. A dictionary need not be complete
@@ -68,27 +71,66 @@ import { sv } from './i18n/sv';
  * chrome translated and a long colophon still in English, which is better
  * than shipping it with a machine translation of a page about how carefully
  * this site handles other people's words.
+ *
+ * `import.meta.glob` and not a hand-written map of `() => import(...)`: the
+ * glob is the idiom already used for the content tier (`content-urls.ts`,
+ * `corpus-assets.ts`), it is statically analyzable so Vite emits one chunk per
+ * file, and — the part that matters for maintenance — a new dictionary is
+ * picked up by dropping the file in. This module is therefore NOT one of the
+ * places a new interface language has to be added, and there is no list here
+ * to drift from `UI_LANGS`.
+ *
+ * A template literal (`import(\`./i18n/${lang}.ts\`)`) would defeat this: Vite
+ * cannot analyze it, and would fold every dictionary back into one graph.
  */
-const dictionaries: Record<UiLang, Dictionary> = {
-	en,
-	pt,
-	la,
-	de,
-	es,
-	fr,
-	it,
-	hu,
-	pl,
-	ro,
-	sl,
-	sv,
-	ru,
-	ar
-};
+const loaders = import.meta.glob<Record<string, Dictionary>>('./i18n/*.ts');
 
-/** One language's dictionary. Exported for the tests that check them all. */
-export function dictionaryFor(lang: UiLang): Dictionary {
-	return dictionaries[lang];
+function loaderFor(lang: UiLang): () => Promise<Record<string, Dictionary>> {
+	const found = loaders[`./i18n/${lang}.ts`];
+	if (!found) throw new Error(`no dictionary module for ${lang}`);
+	return found;
+}
+
+/**
+ * The dictionaries resolved so far, English always among them. Never evicted:
+ * a reader who switches back and forth is not worth a second request, and the
+ * whole set is a few dozen KB even if someone visits every language.
+ */
+const loaded: Partial<Record<UiLang, Dictionary>> = $state({ en });
+
+async function ensure(lang: UiLang): Promise<void> {
+	if (loaded[lang]) return;
+	const module = await loaderFor(lang)();
+	loaded[lang] = module[lang];
+}
+
+/**
+ * One language's dictionary, loading it if it is not resident yet.
+ *
+ * Exported for the tests that check them all, and it POPULATES the cache
+ * rather than merely reading past it — so a test (or any caller) that awaits a
+ * language has also made it available to the synchronous `loadedDictionary`
+ * below. Without that, `suggest.ts` would answer in English for a language a
+ * test had just asked about, which is a confusing way to discover that the
+ * suggester reads only what is resident.
+ */
+export async function dictionaryFor(lang: UiLang): Promise<Dictionary> {
+	await ensure(lang);
+	return loaded[lang]!;
+}
+
+/**
+ * One language's dictionary IF IT IS ALREADY RESIDENT, without fetching.
+ *
+ * For the callers that run inside a render and cannot await — `suggest.ts`'s
+ * `tr` is the only one — and whose answer is always the reader's own language
+ * or English, both of which are resident by the time anything renders. It
+ * returns `undefined` rather than fetching on purpose: a synchronous miss that
+ * falls back to English is correct, whereas a fetch started from a render
+ * would be a request nobody is waiting for.
+ */
+export function loadedDictionary(lang: UiLang): Dictionary | undefined {
+	return loaded[lang];
 }
 
 function readStored(): UiLang | null {
@@ -142,15 +184,37 @@ function initialLang(): UiLang {
 class I18nStore {
 	lang: UiLang = $state(initialLang());
 
+	/**
+	 * Resolves once the INITIAL language's dictionary is in `loaded`.
+	 *
+	 * `routes/+layout.ts` awaits this, which is what stops a Portuguese reader
+	 * seeing a frame of English chrome on a cold load. It is a property rather
+	 * than a call because the negotiation has already happened — `initialLang`
+	 * runs at module scope, before the layout's `load` — so this reuses that
+	 * answer instead of racing a second one against it.
+	 */
+	readonly ready: Promise<void>;
+
 	constructor() {
 		// app.html already ran the same negotiation before first paint, but
 		// only for the two attributes it can set from a script; re-applying
 		// here keeps the store the single authority on what the document says
 		// it is, including after a language whose script it did not know.
 		applyDocumentLang(this.lang);
+		this.ready = ensure(this.lang);
 	}
 
-	set(lang: UiLang) {
+	/**
+	 * ASYNC SINCE 2026-08-31, and the await is load-bearing in one place that
+	 * does not look like it needs one: `routes/[uilang=uilang]/+layout.ts`
+	 * calls this from `load` precisely so the first paint is already in the
+	 * right language. Assigning `lang` before its dictionary has resolved
+	 * would paint English and swap — the exact flash that route exists to
+	 * avoid — so the dictionary is fetched FIRST and the language assigned
+	 * after, which also means no render ever observes a half-applied switch.
+	 */
+	async set(lang: UiLang): Promise<void> {
+		await ensure(lang);
 		this.lang = lang;
 		writeStoredString(STORAGE_KEY, lang);
 		applyDocumentLang(lang);
@@ -161,8 +225,15 @@ class I18nStore {
 		return isRtl(this.lang);
 	}
 
+	/**
+	 * Synchronous, and stays synchronous: it only ever reads what is already
+	 * resolved and never triggers a fetch. A language whose dictionary has not
+	 * arrived yet therefore degrades to English key by key — the same
+	 * behaviour a partial translation already had, which is why this needed no
+	 * new fallback. `ready` is what keeps that from being visible on load.
+	 */
 	t(key: string): string {
-		return dictionaries[this.lang][key] ?? dictionaries.en[key] ?? key;
+		return loaded[this.lang]?.[key] ?? en[key] ?? key;
 	}
 }
 

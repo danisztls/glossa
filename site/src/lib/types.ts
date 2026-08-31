@@ -53,13 +53,23 @@ export type WorkType =
  * AND IT BROKE AGAIN THE NEXT DAY, exactly as that paragraph said it would.
  * The Catechism landed in the eight languages vatican.va publishes it as
  * HTML (2026-08-26), of which `mg` — Malagasy — was not a content language
- * and is not an interface language. Fifteen content tags now, fourteen
- * interface ones. A Malagasy reader has the whole Catechism, 2,865
- * paragraphs, inside English chrome; by the rule the four Compendium
- * languages established, that is a dictionary owed, and it is owed to a
- * language nobody here reads. Until someone who does writes it, English
- * chrome around Malagasy content is the honest state and the fallback chain
- * is what makes it navigable.
+ * and was not an interface language: a Malagasy reader had the whole
+ * Catechism, 2,865 paragraphs, inside English chrome.
+ *
+ * THAT DEBT WAS PAID ON 2026-08-31, and paying it inverted the relationship
+ * this docblock spent a year describing. Malagasy turned out to be one of
+ * TWELVE content languages with no dictionary — Byelorussian had 31 editions
+ * to Swedish's one — so the interface list was not lagging the corpus by a
+ * language, it was tracking something else entirely: who had happened to
+ * write a dictionary. `UI_LANGS` is now a SUPERSET of this union, plus a
+ * reach tier of languages the corpus holds nothing in.
+ *
+ * The rule that survives is the one that matters: NOTHING MAY BE WRITTEN THAT
+ * ASSUMES ONE SET IS THE OTHER. It just needs reading in the new direction —
+ * an interface language is no longer evidence of content, and the next
+ * ingestion in a language nobody has written a dictionary for will separate
+ * them again from this side. `CONTENT_LANG_FALLBACK` is what carries a reader
+ * across the gap either way.
  */
 export type ContentLang =
 	| 'en'

@@ -125,10 +125,10 @@ describe('the group names in the dictionaries', () => {
 	 * it. Renaming a group without renaming its key in all fourteen is exactly
 	 * how one gets there.
 	 */
-	it('invents no group a dictionary could not render', () => {
+	it('invents no group a dictionary could not render', async () => {
 		const known = new Set(GROUP_KEYS.map((k) => `bible.group.${k}`));
 		for (const lang of UI_LANGS) {
-			for (const key of Object.keys(dictionaryFor(lang))) {
+			for (const key of Object.keys(await dictionaryFor(lang))) {
 				if (key.startsWith('bible.group.')) expect(known, `${lang}: ${key}`).toContain(key);
 			}
 		}
@@ -144,9 +144,9 @@ describe('the group names in the dictionaries', () => {
 	 * dictionary renders one English heading among eight translated ones,
 	 * which reads as a bug rather than as a fallback.
 	 */
-	it('names every group in every interface language', () => {
+	it('names every group in every interface language', async () => {
 		for (const lang of UI_LANGS) {
-			const dict = dictionaryFor(lang);
+			const dict = await dictionaryFor(lang);
 			for (const key of GROUP_KEYS)
 				expect(dict[`bible.group.${key}`], `${lang}.${key}`).toBeTruthy();
 		}

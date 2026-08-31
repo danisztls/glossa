@@ -13,50 +13,56 @@
  */
 
 /**
- * The languages the INTERFACE is available in — fourteen tags against
- * `ContentLang`'s fifteen in types.ts, and the gap is `mg`. Inequality is
- * the normal state of these two lists, not a defect in either: they held the
- * same ten on 2026-08-24, separated the next day when the Compendium's ten
- * editions brought in four languages with no dictionary, drew level again
- * when those dictionaries were written, and separated once more on
- * 2026-08-26 when the Catechism landed Malagasy. It will keep moving that
- * way, a language at a time. Do not derive one list from the other.
+ * The languages the INTERFACE is available in.
  *
- * LATIN WAS THE ONE CONTENT LANGUAGE THIS LIST DELIBERATELY EXCLUDED, on the
- * grounds that it is a language readers want the TEXT in and nobody wants
- * the chrome in. That was an assumption about readers, not a fact about the
- * corpus, and it does not survive contact with what this site is: the
+ * Read this list and `ContentLang` in types.ts as two answers to two
+ * questions — what the chrome is written in, and what the corpus holds — and
+ * never derive one from the other. They have equalized and separated four
+ * times since 2026-08-24, each time because one of them moved on its own
+ * schedule: a content language arrives when someone ingests a text, an
+ * interface language when someone writes a dictionary.
+ *
+ * MALAGASY IS WHY THAT RULE FINALLY COST SOMETHING, and closing it on
+ * 2026-08-31 is what this list records. `ccc.mg` — the whole Catechism, 2,865
+ * paragraphs — had been in the corpus since 2026-08-26 with its readers
+ * inside English chrome, and it was not alone: ELEVEN other content languages
+ * had no dictionary either, several of them larger. Byelorussian had 31
+ * editions and no chrome while Swedish had one edition and a complete
+ * dictionary, which is the clearest statement of what the old list actually
+ * tracked — who happened to write a dictionary, not what the corpus is in.
+ *
+ * So the rule now runs the other way: THE INTERFACE IS A SUPERSET OF THE
+ * CORPUS. A content language is owed a dictionary, and the debt is paid here
+ * rather than argued about in a comment. What that does NOT mean is that the
+ * two lists may be conflated — this one is deliberately wider, because of:
+ *
+ * THE REACH TIER: interface languages the corpus has no content in at all.
+ * They were already here by accident — the seven that arrived with Magnifica
+ * Humanitas are languages the corpus holds exactly one work in — and they are
+ * here on purpose now, chosen by Catholic population rather than by what has
+ * been ingested. The Philippines is the third-largest Catholic country in the
+ * world and Tagalog was the only top-ten language with no interface. A reader
+ * in one of these gets their own chrome and English content through
+ * `CONTENT_LANG_FALLBACK`, which is the honest state of it: the alternative
+ * is not better content, it is the same content behind a language they do not
+ * read.
+ *
+ * Latin sits in neither camp and is the reason the old exclusion was wrong:
+ * it was left out on the grounds that nobody wants the chrome in it, which
+ * was an assumption about readers rather than a fact about the corpus. The
  * canonical URLs are Latin, the Summa's division names are Latin in every
- * dictionary here, and a reader who came for the Clementine and the Corpus
- * Thomisticum is the last reader who needs `Caput sequens` glossed. So the
- * asymmetry is gone, and with it the special case it was holding up in
- * `content.svelte.ts` (see `#stillApplies` there, and docs/decisions.md).
+ * dictionary here, and a reader who came for the Clementine is the last
+ * reader who needs `Caput sequens` glossed.
  *
- * The seven added earlier on 2026-08-24 point the other way — they are
- * interface languages the corpus has almost no content in. Magnifica
- * Humanitas is published in all nine and is, so far, the only work that is;
- * a reader who picks Italian gets Italian chrome and, for every other work,
- * the English text through `CONTENT_LANG_FALLBACK`. That is the honest state
- * of it rather than a defect to hide: the alternative is a reader who can
- * read the encyclical in their own language having to navigate to it in
- * someone else's. Latin is the opposite case and the reason it belongs here
- * — the corpus carries two whole works in it.
- *
- * HUNGARIAN, ROMANIAN, SLOVENIAN AND SWEDISH ARE NEITHER CASE. They arrived
- * as content languages with a whole work each — the Compendium, all 598
- * questions — and a reader who came for it was reading it inside English
- * chrome, which is the one combination this list should never leave standing:
- * not a language the corpus barely reaches (the Magnifica Humanitas seven),
- * where English chrome around English content is at least consistent, but a
- * complete work in the reader's own language wrapped in someone else's
- * interface. Russian is the remaining asymmetry and points the other way: a
- * dictionary since Magnifica Humanitas, and a Compendium that exists only as
- * a PDF nothing parses.
+ * A DICTIONARY NEED NOT BE COMPLETE (`t()` falls back to English key by key),
+ * so adding a language here is not a promise of 245 translated strings. It is
+ * a promise of the chrome — `CHROME_KEYS` in scripts/route-titles.mjs is the
+ * part the build actually enforces, because an unnamed chrome page breaks the
+ * `hreflang` cluster.
  *
  * Ordered as a reader scanning the language menu would want them, which is
  * not the order they were added: English, Portuguese and Latin first because
- * they are what the corpus is in, then the rest by their own names.
- */
+ * they are what the corpus is in, then the rest by their own names. */
 export const UI_LANGS = [
 	'en',
 	'pt',
@@ -65,6 +71,7 @@ export const UI_LANGS = [
 	'es',
 	'fr',
 	'it',
+	'mg',
 	'hu',
 	'pl',
 	'ro',

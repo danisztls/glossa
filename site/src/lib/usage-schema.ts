@@ -147,6 +147,7 @@ export const UI_TAGS = [
 	'es',
 	'fr',
 	'it',
+	'mg',
 	'hu',
 	'pl',
 	'ro',

@@ -20,10 +20,16 @@ import { isUiLang } from '$lib/ui-langs';
  * `app.html`'s pre-paint block reads the same path for `<html lang>` and
  * `dir`, which is the half that has to happen even earlier — an Arabic reader
  * whose direction flips after hydration watches the whole page change sides.
+ *
+ * AWAITED since the dictionaries went lazy (2026-08-31). `i18n.set` now
+ * fetches the language's dictionary before it applies it, and the whole point
+ * of doing this in `load` is that the first paint is already right — so
+ * dropping the await would reintroduce exactly the flash this comment
+ * promises is absent, in the one place nobody would look for it.
  */
-export function load({ params }: { params: { uilang: string } }) {
+export async function load({ params }: { params: { uilang: string } }) {
 	// The matcher has already answered this; the guard is for the type, and
 	// costs an array scan on a navigation that is doing a great deal more.
-	if (isUiLang(params.uilang)) i18n.set(params.uilang);
+	if (isUiLang(params.uilang)) await i18n.set(params.uilang);
 	return {};
 }

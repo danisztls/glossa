@@ -77,7 +77,8 @@ import {
 	baseLang,
 	contentLangChain
 } from './corpus';
-import { dictionaryFor, i18n, isUiLang, UI_LANGS } from './i18n.svelte';
+import { i18n, isUiLang, loadedDictionary, UI_LANGS } from './i18n.svelte';
+import sectionNamesTable from './section-names.json';
 import { normalizeBookToken, parseReference } from './refparse';
 import { grammarSurface } from './refs-grammar';
 import { summaQuestionLabel } from './summa-titles';
@@ -281,8 +282,14 @@ function words(folded: string): string[] {
  */
 function tr(key: string, lang: string): string {
 	const tag = baseLang(lang);
-	const dict = isUiLang(tag) ? dictionaryFor(tag) : undefined;
-	return dict?.[key] ?? dictionaryFor('en')[key] ?? key;
+	// `loadedDictionary` and not `dictionaryFor`: the latter is async since the
+	// dictionaries went lazy, and this is called from a render. It needs no
+	// await — the only language it is ever asked for is the reader's own,
+	// which `+layout.ts` awaited before the first render, and English, which
+	// is never not resident. A language somehow not yet loaded degrades to
+	// English here, exactly as `t()` does.
+	const dict = isUiLang(tag) ? loadedDictionary(tag) : undefined;
+	return dict?.[key] ?? loadedDictionary('en')?.[key] ?? key;
 }
 
 interface Scored extends Suggestion {
@@ -1060,8 +1067,22 @@ const SECTIONS: SectionWords[] = [
 	}
 ];
 
-/** Folded forms -> section, built once: fourteen dictionaries do not change at
- *  runtime. */
+/** The generated section-name table, by language (see that file's own note and
+ *  `scripts/export-section-names.mjs`). */
+const SECTION_NAMES: Record<string, Record<string, string>> = sectionNamesTable.names;
+
+/**
+ * Folded forms -> section, built once: the names do not change at runtime.
+ *
+ * READ OFF A GENERATED TABLE RATHER THAN THE DICTIONARIES THEMSELVES, and the
+ * reason is the whole of why that table exists. This module is reached from
+ * `+layout.svelte` through `JumpBox`, so it is on every route's boot path;
+ * calling `dictionaryFor` here for each of `UI_LANGS` would import every
+ * dictionary eagerly and undo the split `i18n.svelte.ts` describes — silently,
+ * because the feature would keep working perfectly. `section-names.json` is
+ * the eight keys this loop actually wants, ~4 KB against ~215 KB, kept honest
+ * by `section-names.test.ts`.
+ */
 const sectionForms: { form: string; section: SectionWords }[] = (() => {
 	const out: { form: string; section: SectionWords }[] = [];
 	const seen = new Set<string>();
@@ -1074,9 +1095,9 @@ const sectionForms: { form: string; section: SectionWords }[] = (() => {
 	for (const section of SECTIONS) {
 		for (const extra of section.extra) add(extra, section);
 		for (const lang of UI_LANGS) {
-			const dict = dictionaryFor(lang);
-			add(dict[section.titleKey] ?? '', section);
-			if (section.abbrevKey) add(dict[section.abbrevKey] ?? '', section);
+			const row = SECTION_NAMES[lang] ?? {};
+			add(row[section.titleKey] ?? '', section);
+			if (section.abbrevKey) add(row[section.abbrevKey] ?? '', section);
 		}
 	}
 	return out;
