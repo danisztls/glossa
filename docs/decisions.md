@@ -2101,7 +2101,7 @@ the list went flat and reverse-chronological.
   click, which is the promise a subtractive facet has to keep. Getting this wrong is not a
   cosmetic error — a term reading 34 that yields 2 on click is a lie the reader can see.
 - **A subject that reaches 0 is dropped from the panel, not greyed out.** One selection
-  zeroes most of a 54-term vocabulary, and eighteen dead rows would hide the thirty that
+  zeroes most of a 58-term vocabulary, and eighteen dead rows would hide the thirty that
   still narrow; a disabled row is only worth showing where it is one of a few. A selected
   term counts as live whatever its number, so filtering can never make a filter
   unreachable, and the order is the corpus-wide one throughout — options drop out, they
@@ -2129,9 +2129,59 @@ where the useful terms live. The head held terms that partitioned nothing: `cent
 and `anniversary` say what OCCASIONED a document rather than what it treats, and
 `Vatican II` (23) and `synod` (22) restate the author and kind facets sitting directly
 above them. `saints` survived the same cut because commemorating a saint IS a subject,
-where the occasion words around it are not. What is left is 54 terms between 4 and 42
+where the occasion words around it are not. What is left is 58 terms between 3 and 42
 documents apiece, listed in the file's own `vocabulary` array, with the sync refusing
 anything outside it.
+
+**The head was cut a second time the same day**, and the pass is worth recording because it
+separated two terms that looked alike from a distance. `errors condemned` (37) went and
+`Church and State` (42) stayed. Frequency is not the test — 42 of 271 is 15%, and `education`,
+`social doctrine` and `saints` all sit in the same band — so what decides it is whether the
+term names what a document DOES or what it is about, the same distinction that removed
+`centenary`. Nearly every magisterial text rejects something, and `errors condemned` had duly
+attached itself to `spe-salvi`, `mysterium`, `providentissimus-deus` and `fratelli-tutti`
+alongside `pascendi` and `humani-generis`. The measurable form of that is a FLAT
+co-occurrence profile: nothing above 8, spread evenly over theology, saints, family,
+Christology and social doctrine, because a mode attaches to documents about everything.
+`Church and State` concentrates instead — `persecution` 13, `religious liberty` 3 of 6,
+`education` 10 — since its 42 documents are one question asked from `vehementer-nos` and
+`mit-brennender-sorge` to `dignitatis-humanae`, and that question is genuinely most of what
+the Leonine and interwar corpus is about. The documents that really are anti-error lose
+nothing: each keeps the error it names, `Freemasonry`, `communism`, `socialism`, `philosophy`,
+`Thomism`, `Christian unity`. No document was left untagged by the cut.
+
+**And the head-cut rule itself is weaker than it was, because the facet subtracts now.** The
+original argument against a 40-document term was that it is not an answer, which was true
+while the values within a facet OR-ed: adding it to anything only flooded the list. Under AND
+a broad term is the best FIRST click — `Church and State` meets `education` at 10 documents
+and `marriage` at 5 — so size is no longer evidence against a term, and only the
+mode-versus-subject test is left doing work.
+
+**What took `errors condemned`'s place is the errors themselves**, and that is the shape the
+vocabulary already had: `communism`, `socialism` and `Freemasonry` were named errors from the
+start. Five more were derived by scanning the 263 English descriptions and then reading every
+hit — `rationalism` (6), `naturalism` (5), `modernism` (4), `atheism` (4), `materialism` (3).
+They are not five words for one thing: 22 assignments over 17 documents, largest pairwise
+intersection 2. And they close a real gap, since a mode term had been standing in for the
+subject — `pascendi-dominici-gregis`, the systematic condemnation of Modernism, carried
+philosophy, seminaries, Scripture and Thomism and nothing that named it.
+
+**The rejected candidates are the more useful half of that scan.** The ancient heresies are
+not subjects in this corpus: Arianism, Americanism, Jansenism, Gallicanism, Manichaeism,
+Donatism, pantheism, positivism, evolutionism and immanentism appear in none of the 263
+descriptions, and Pelagianism, Nestorianism and Monophysitism in one or two apiece — always
+inside a document commemorating the Father who fought them, `aeterna-dei` for Leo the Great,
+`orientalis-ecclesiae` for Cyril, `ad-salutem-humani` for Augustine, where the subject is the
+saint and `saints` already holds it. The corpus runs Leo XIII to Francis and the errors it
+treats are that period's. Two near-misses are worth recording for the method rather than the
+result: `gnosticism` scored 3 and is 1, because the other two hits were the string
+`agnosticism` inside `pascendi` and `communium-rerum`; and `secularism` scored 5 and is 2,
+because `tametsi-futura-prospicientibus` lists it among the consequences of unbelief,
+`grata-recordatio` among a Rosary letter's prayer intentions, and `sancta-dei-civitas` as
+background to an appeal for missions. It stays out on a second ground as well — the documents
+that would carry it are the separation-law encyclicals, which `Church and State` and
+`persecution` already hold. Counting a word proposes a candidate; reading the sentence is what
+decides it.
 
 - **The 35 region names were the closest call.** `Mexico` and `Hungary` are real subjects
   and a reader does want them. They are dropped from the FACET and not from the site: every
@@ -2150,8 +2200,8 @@ anything outside it.
   real corpus that caught the first of them, not a test.
 - **What the open vocabulary could not do is translate**, and the closed one still does not.
   Every coinage would have been fourteen inventions rather than fourteen lookups — the cost
-  `route-titles.mjs`'s `CHROME_KEYS` warns about, paid per tagged document. A closed 54-term
-  list could carry an i18n key each, the way `document_kind` does; that is 756 strings and
+  `route-titles.mjs`'s `CHROME_KEYS` warns about, paid per tagged document. A closed 58-term
+  list could carry an i18n key each, the way `document_kind` does; that is 812 strings and
   nobody has asked for them. The terms render verbatim and only the panel is translated.
 
 **Three things about that file fail the sync rather than warning.** A tag outside the

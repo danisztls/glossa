@@ -233,17 +233,25 @@
 		selectedTags = [];
 	}
 
-	/* The three predicates, kept apart so a facet's counts can be taken
-	   against everything EXCEPT itself — see `DocumentFilters`'s docblock on
-	   why that is the count worth showing. An empty selection matches
-	   everything, which is what makes the unfiltered page fall out of the
-	   same code rather than needing a branch. */
+	/* The three predicates, kept apart so each facet's counts can be taken
+	   against the pool its own semantics need — see `tagFacets` below and
+	   `DocumentFilters`'s docblock. An empty selection matches everything, which
+	   is what makes the unfiltered page fall out of the same code rather than
+	   needing a branch.
+
+	   AUTHOR AND KIND ADD, SUBJECT SUBTRACTS, and the asymmetry is the arity of
+	   the field rather than an inconsistency to tidy away. A document has
+	   exactly one author and exactly one kind, so AND-ing two of either is an
+	   empty list by construction and the only thing a second choice can mean is
+	   "and these as well". A document carries three subjects on average, so a
+	   second subject has the other reading available — the documents about BOTH
+	   — and that is the one a reader narrowing 272 titles is asking for. Note
+	   `every` needs no empty-selection branch, unlike the two above it. */
 	const byAuthor = (row: Row) =>
 		selectedAuthors.length === 0 || selectedAuthors.includes(row.manifest.pontiff_or_council);
 	const byKind = (row: Row) =>
 		selectedKinds.length === 0 || selectedKinds.includes(row.manifest.document_kind);
-	const byTag = (row: Row) =>
-		selectedTags.length === 0 || selectedTags.some((tag) => row.tagKeys.includes(tag));
+	const byTag = (row: Row) => selectedTags.every((tag) => row.tagKeys.includes(tag));
 	/* The fourth axis. `matchesQuery` returns true on an empty query, so this
 	   needs no branch of its own — and it is AND-ed with the facets like any
 	   other, because a reader who has typed a word and chosen an author means
@@ -325,9 +333,16 @@
 		return labels;
 	});
 
+	/* The one facet counted against the FULLY filtered set, itself included,
+	   because it is the one that AND-s: a term's count here is exactly the
+	   number of documents left if you add it, which is what a subtractive facet
+	   has to promise, and a term sharing no document with the current selection
+	   reads 0. The other two exclude themselves for the mirror-image reason —
+	   adding a second author only ever widens, so counting one against the
+	   authors already chosen would print 0 beside every one of them. */
 	const tagFacets = $derived(
 		buildFacet(
-			rows.filter((row) => byAuthor(row) && byKind(row) && bySearch(row)),
+			visible,
 			(row) => row.tagKeys,
 			(key) => tagLabels.get(key) ?? key,
 			([ka, a], [kb, b]) => b - a || ka.localeCompare(kb)

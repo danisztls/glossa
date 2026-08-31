@@ -33,15 +33,25 @@
 	 * `aria-pressed` toggle needs no id and no label element, which removes
 	 * the collision rather than working around it.
 	 *
-	 * ## The counts are computed against the OTHER facets, not against this one
+	 * ## Author and kind ADD, subject SUBTRACTS
 	 *
-	 * `facets` arrives already reduced that way (see the route). A count
-	 * beside "Pius XII" says how many documents remain if you add him to the
-	 * authors you have already chosen — so within one facet the numbers add
-	 * up, and a value that would empty the list reads 0 rather than looking
-	 * available. Counting against the fully filtered set instead would show 0
-	 * beside every author but the one already selected, which is true and
-	 * useless.
+	 * A document has one author and one kind, so a second choice in either can
+	 * only mean "and these as well" — AND-ing them is an empty list by
+	 * construction. A document carries several subjects, so a second subject has
+	 * the other reading available, the documents about BOTH, and that is the one
+	 * a reader narrowing 272 titles wants. The route holds the predicates; two
+	 * things here follow from them.
+	 *
+	 * ## Which is why the counts come from two different pools
+	 *
+	 * `facets` arrives already reduced (see the route). An author or a kind is
+	 * counted against the OTHER facets, so its number says how many documents
+	 * remain if you add it to what is already chosen and the column adds up;
+	 * counting those against the fully filtered set would print 0 beside every
+	 * author but the selected one, which is true and useless. A subject is
+	 * counted against everything, itself included: its number is exactly what
+	 * survives the click, and a term sharing no document with the current
+	 * selection reads 0 — which `liveTags` then drops rather than greys.
 	 *
 	 * ## The search box is the panel's first control, and it is not a facet
 	 *
@@ -52,13 +62,12 @@
 	 * WITH afterwards, not instead.
 	 *
 	 * It also carries the weight the subject facet used to. That vocabulary
-	 * was open and 232 terms wide for a day; it is a curated 53 now
+	 * was open and 232 terms wide for a day; it is a curated 58 now
 	 * (`site/document-tags.json`), and the terms cut from it — every region
 	 * name, every occasion word — are still reachable here, because all of
 	 * them are in the descriptions this box reads. `VISIBLE_TAGS` is what is
-	 * left of the tail problem, and at 53 it is a convenience rather than a
-	 * necessity: a selected term stays visible past the cut, because a filter
-	 * you cannot see is a filter you cannot turn off.
+	 * left of the tail problem: a selected term stays visible past the cut,
+	 * because a filter you cannot see is a filter you cannot turn off.
 	 */
 	import { t } from '$lib/i18n.svelte';
 
@@ -94,15 +103,28 @@
 			query.trim() !== ''
 	);
 
+	/** The terms still worth clicking. Subject subtracts, so a count of 0 means
+	 *  the term shares no document with what is already chosen and the row could
+	 *  only ever be greyed out — and one selection zeroes most of a 58-term
+	 *  vocabulary, so eighteen dead rows would hide the handful that still
+	 *  narrow. A selected term is always live, so filtering can never make a
+	 *  filter unreachable. Order is untouched: options drop out, they never move
+	 *  past one another. */
+	const liveTags = $derived(
+		tags.filter((tag) => tag.count > 0 || selected.tags.includes(tag.value))
+	);
+
 	const shownTags = $derived.by(() => {
-		if (tagsExpanded) return tags;
-		const head = tags.slice(0, VISIBLE_TAGS);
+		if (tagsExpanded) return liveTags;
+		const head = liveTags.slice(0, VISIBLE_TAGS);
 		// A selected term below the cut stays on screen — see the docblock.
-		const missing = tags.filter((tag) => selected.tags.includes(tag.value) && !head.includes(tag));
+		const missing = liveTags.filter(
+			(tag) => selected.tags.includes(tag.value) && !head.includes(tag)
+		);
 		return [...head, ...missing];
 	});
 
-	const tagsHidden = $derived(tags.length - shownTags.length);
+	const tagsHidden = $derived(liveTags.length - shownTags.length);
 </script>
 
 <div class="doc-filters">
@@ -158,7 +180,7 @@
 	{@render facetList(t('document.filter.author'), 'authors', authors, selected.authors)}
 	{@render facetList(t('document.filter.kind'), 'kinds', kinds, selected.kinds)}
 
-	{#if tags.length > 0}
+	{#if liveTags.length > 0}
 		<section class="facet">
 			<h3>{t('document.filter.subject')}</h3>
 			<ul>
@@ -170,7 +192,6 @@
 							class="facet-option"
 							class:on={isOn}
 							aria-pressed={isOn}
-							disabled={item.count === 0 && !isOn}
 							onclick={() => onToggle('tags', item.value)}
 						>
 							<span class="facet-label">{item.label}</span>

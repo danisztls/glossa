@@ -805,7 +805,7 @@ reverse-chronological. Seven things about it will bite before the design will.
   back**: the subject counts are taken against the FULLY filtered set, itself included,
   so a term's number is exactly what survives the click (the other two exclude themselves,
   or every unselected author would read 0); and `liveTags` drops the terms that reach 0
-  rather than greying them, because one selection zeroes most of a 54-term vocabulary and
+  rather than greying them, because one selection zeroes most of a 58-term vocabulary and
   eighteen dead rows would hide the ~30 that still narrow. A selected term is always live,
   so filtering can never make a filter unreachable.
 - **The search reads a document's WHOLE metadata** — title, author, kind, description,
@@ -819,7 +819,7 @@ reverse-chronological. Seven things about it will bite before the design will.
   visible reason for being there. `highlight` was already the jump box's; `matchesQuery`
   is new beside it, and AND-s its tokens where `highlight` ORs them (marking is generous,
   filtering is strict). A test pins the agreement.
-- **`site/document-tags.json` is the subject vocabulary and it is CLOSED** — 54 terms in
+- **`site/document-tags.json` is the subject vocabulary and it is CLOSED** — 58 terms in
   its own `vocabulary` array, keyed by document SLUG rather than work id (a tag is about
   the document; every edition of Rerum Novarum is about labour — the one difference from
   `descriptions.json` beside it). `sync-corpus.mjs` **exits 1** on a tag outside the list,
@@ -834,6 +834,32 @@ reverse-chronological. Seven things about it will bite before the design will.
   that was the closest call: they are dropped from the FACET and not from the site,
   because every one of them is in the description the search box reads. Read the facet as
   the axes worth BROWSING and the search as everything else.
+- **A second head cut took `errors condemned` (37) and kept `Church and State` (42), and the
+  test that separated them was not frequency.** A term is too generic when it names what a
+  document DOES rather than what it is about — the `centenary` failure. Nearly every
+  magisterial text rejects something, so `errors condemned` had reached `spe-salvi`,
+  `mysterium`, `providentissimus-deus` and `fratelli-tutti` alongside `pascendi`, and its
+  co-occurrence was FLAT across the whole vocabulary (nothing above 8, spread over theology,
+  saints, family, Christology, social doctrine). That flatness is the signature to look for:
+  a real subject concentrates, and this one does — `persecution` 13, `education` 10, half of
+  `religious liberty` — because its 42 are one question asked across seventy years, and the
+  anti-error documents keep the error they actually name (`Freemasonry`, `communism`,
+  `socialism`, `Thomism`). **Size alone condemns nothing now that subjects subtract**: a
+  broad term is the best first click, meeting `education` at 10 documents and `marriage` at
+  5, which is exactly what the old additive semantics could not do.
+- **What replaced `errors condemned` is the errors themselves**, which is the same shape
+  `communism`, `socialism` and `Freemasonry` already had: `rationalism` (6), `naturalism`
+  (5), `modernism` (4), `atheism` (4), `materialism` (3), derived from the English
+  descriptions and then READ. They fill a real hole — `pascendi-dominici-gregis` carried
+  philosophy, seminaries, Scripture and Thomism and nothing naming Modernism — and they
+  barely overlap, 22 assignments over 17 documents with a largest pairwise intersection of 2. **The half worth remembering is what failed.** The ANCIENT heresies are not subjects
+  here: Arianism, Americanism, Jansenism, Gallicanism, Manichaeism, Donatism, pantheism and
+  positivism score ZERO across 263 descriptions, and Pelagianism, Nestorianism and
+  Monophysitism one or two apiece — always inside a document commemorating the Father who
+  fought them, where the subject is the saint. This corpus runs Leo XIII to Francis.
+  `gnosticism` scored 3 and is 1 (the other two are the string `agnosticism`), and
+  `secularism` scored 5 and is 2. **Counting a word proposes a candidate; reading the
+  sentence is what decides it** — the `Пар.` lesson, in another family.
 - **Merging a term into another is a semantic act, not a bookkeeping one**, and four of
   the first cut's merges were wrong in the same way: `technology` into `ecology` filed the
   AI encyclical under ecology, `devotion` into `saints` made the Holy Spirit encyclical a
@@ -842,7 +868,7 @@ reverse-chronological. Seven things about it will bite before the design will.
   Marian. Each was defensible on the commonest document carrying the term and wrong on the
   rest. **Check the merge against every document it touches, not against the archetype.**
 - **The terms are NOT translated and render verbatim.** A closed list could carry an i18n
-  key each, the way `document_kind` does in `document-labels.ts`, but 54 terms is 756
+  key each, the way `document_kind` does in `document-labels.ts`, but 58 terms is 812
   strings across the fourteen dictionaries and nobody has asked for them.
 - **`DocumentFilters.svelte` is rendered TWICE on the page** — the aside above 80rem, a
   `<details>` above the list below it — which is why its options are `aria-pressed`
