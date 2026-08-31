@@ -1597,6 +1597,115 @@ const translatedCount = Object.values(translatedDescriptions).reduce(
 );
 
 /**
+ * Subject tags for the magisterial documents — see `site/document-tags.json`
+ * for the format, for why they are curated here rather than in the corpus, and
+ * for why the vocabulary is open.
+ *
+ * ONE FILE, KEYED BY SLUG, FETCHED BY `/documenta` AND BY NOTHING ELSE. It is
+ * ~20 KB, which is small enough that eager-inlining it into `manifests.json`
+ * would have been defensible on size — and wrong on the rule `corpus-index.ts`
+ * states: the boot index answers "does this address exist", and a tag answers
+ * neither existence nor address. One page wants it, so it is fetched by that
+ * page, exactly like the translated descriptions written above.
+ *
+ * NOT ON THE MANIFEST, which is the other thing that would have worked. A tag
+ * belongs to the DOCUMENT and a manifest belongs to an edition, so merging it
+ * in would write the same five strings into all ten editions of Laudato Si'
+ * and into the index every reader downloads before the first paint.
+ *
+ * FOUR HARD FAILURES, none of them cosmetic:
+ *
+ *   - A tag outside `vocabulary`. THE LIST IS CLOSED (2026-08-31): 53 terms,
+ *     cut down from an open 232 whose head did not partition anything and
+ *     whose tail was one document apiece. An unlisted term is either a typo or
+ *     a synonym of a listed one, and a synonym splits a term's documents in
+ *     two with neither half findable. Widening the facet is a deliberate act —
+ *     add the term to `vocabulary` in the same commit and say why.
+ *   - A slug naming no document in this build. That is the residue of a
+ *     renamed work, and the tags filed against the old name are lost the
+ *     moment it is renamed — silently, because a filter that offers one fewer
+ *     term looks exactly like a corpus that has one fewer document. Unlike
+ *     `descriptions.json`, whose missing file is merely cosmetic, this one is
+ *     checked because its failure is invisible on the page.
+ *   - Two terms in `vocabulary` differing only in case. The panel matches
+ *     case-insensitively, so `Labour` and `labour` are one facet with two
+ *     labels, and which label a reader sees depends on which sorted first.
+ *   - A tag that is empty or padded. Both make a facet nobody can name.
+ *
+ * A vocabulary term NO document carries is only a warning. It is the ordinary
+ * state while a term is being introduced, and an empty facet row is visible on
+ * the page in a way a missing one is not.
+ *
+ * A missing FILE is not an error, on the same terms as the descriptions: a
+ * corpus nobody has tagged yet is a perfectly good corpus, and `/documenta`
+ * renders its author and type facets and simply offers no tag facet.
+ */
+const documentTagsPath = path.join(siteRoot, 'document-tags.json');
+const documentTagsFile = existsSync(documentTagsPath) ? readJson(documentTagsPath) : {};
+const documentTags = documentTagsFile.tags ?? {};
+const tagVocabulary = documentTagsFile.vocabulary ?? [];
+{
+	const known = new Set(
+		Object.values(manifests)
+			.filter((manifest) => manifest.type === 'document')
+			.map((manifest) => manifest.id.split('.')[1])
+	);
+	const unknown = Object.keys(documentTags).filter((slug) => !known.has(slug));
+	const byLower = new Map();
+	const malformed = [];
+	for (const term of tagVocabulary) {
+		if (typeof term !== 'string' || term === '' || term !== term.trim()) {
+			malformed.push(`vocabulary: ${JSON.stringify(term)}`);
+			continue;
+		}
+		const key = term.toLowerCase();
+		if (!byLower.has(key)) byLower.set(key, new Set());
+		byLower.get(key).add(term);
+	}
+	const allowed = new Set(tagVocabulary);
+	const offVocabulary = [];
+	const used = new Set();
+	for (const [slug, tags] of Object.entries(documentTags)) {
+		for (const tag of tags) {
+			if (typeof tag !== 'string' || tag === '' || tag !== tag.trim()) {
+				malformed.push(`${slug}: ${JSON.stringify(tag)}`);
+				continue;
+			}
+			if (allowed.has(tag)) used.add(tag);
+			else offVocabulary.push(`${slug}: ${JSON.stringify(tag)}`);
+		}
+	}
+	const unusedTerms = tagVocabulary.filter((term) => !used.has(term));
+	if (unusedTerms.length > 0) {
+		console.warn(
+			`[sync-corpus] document-tags.json: ${unusedTerms.length} vocabulary term(s) on no ` +
+				`document: ${unusedTerms.join(', ')}`
+		);
+	}
+	const collisions = [...byLower.values()].filter((forms) => forms.size > 1);
+	const problems = [
+		offVocabulary.length
+			? `${offVocabulary.length} tag(s) outside the vocabulary: ${offVocabulary.join('; ')}`
+			: '',
+		unknown.length ? `${unknown.length} slug(s) naming no document: ${unknown.join(', ')}` : '',
+		collisions.length
+			? `${collisions.length} vocabulary term(s) differing only in case: ${collisions.map((forms) => [...forms].join(' / ')).join('; ')}`
+			: '',
+		malformed.length ? `${malformed.length} malformed tag(s): ${malformed.join('; ')}` : ''
+	].filter(Boolean);
+	if (problems.length > 0) {
+		console.error(`[sync-corpus] document-tags.json is inconsistent with this build:`);
+		for (const problem of problems) console.error(`  - ${problem}`);
+		process.exit(1);
+	}
+	if (Object.keys(documentTags).length > 0) {
+		writeJson(path.join(indexDir, 'document-tags.json'), documentTags);
+	}
+}
+const taggedDocuments = Object.keys(documentTags).length;
+const distinctTags = tagVocabulary.length;
+
+/**
  * NUMBERING IS COMPACTED HERE, ON THE WAY OUT, and not where each index is
  * built. `compactRun`'s docblock covers what the encoding is and why it is
  * allowed; this is why it happens at the write.
@@ -2132,5 +2241,6 @@ console.log(
 		`Index tier: ${(indexBytes / 1000).toFixed(0)} KB raw. ` +
 		`Descriptions: ${describedWorks} read, ${translatedCount} translated across ` +
 		`${Object.keys(translatedDescriptions).length} language file(s). ` +
+		`Tags: ${taggedDocuments} document(s), ${distinctTags} distinct term(s). ` +
 		`Works: ${registeredWorkIds.join(', ')}`
 );

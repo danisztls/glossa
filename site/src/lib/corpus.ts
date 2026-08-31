@@ -183,6 +183,7 @@ import {
 	bibleChapterLocation,
 	manifests,
 	translatedDescriptionsLocation,
+	documentTagsLocation,
 	prayerContentLocation,
 	prayerMetasByLang,
 	prayerStructures,
@@ -951,6 +952,27 @@ export async function loadTranslatedDescriptions(lang: string): Promise<Record<s
 	const location = translatedDescriptionsLocation(lang);
 	if (!location) return {};
 	return readContent<Record<string, string>>(location);
+}
+
+/**
+ * Subject tags for the magisterial documents, as `document slug -> [tag, …]`.
+ *
+ * Keyed by slug rather than work id for the reason the translations above are:
+ * a tag is about the DOCUMENT, so it serves whichever edition a reader is
+ * shown. Written from the tracked `site/document-tags.json`, whose docblock
+ * carries the rules for editing it.
+ *
+ * One request, for every document at once, issued only by `/documenta` —
+ * which is the whole point of it not being in the boot index (see
+ * `documentTagsLocation`). `{}` for a corpus nothing is tagged in and under
+ * fixtures, both of which are ordinary states: the filter panel then offers
+ * its author and type facets and no tag facet.
+ */
+export async function loadDocumentTags(): Promise<Record<string, string[]>> {
+	if (!USE_REAL_CORPUS) return {};
+	const location = documentTagsLocation();
+	if (!location) return {};
+	return readContent<Record<string, string[]>>(location);
 }
 
 /**

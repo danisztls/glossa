@@ -778,6 +778,60 @@ npm run deploy      # build -> preflight -> wrangler deploy
   keep their comments on purpose — in each the comment is the file's substance,
   and `_headers` is never served at all.
 
+## `/documenta` filters, and the one editorial file behind them
+
+Replaced the pontificate table of contents on 2026-08-31 (`docs/decisions.md` §The site).
+272 documents is past what a list of anchors helps with, so the aside is now a **search box
+over a facet panel** — author, kind and subject — and the list is flat and
+reverse-chronological. Six things about it will bite before the design will.
+
+- **The search reads a document's WHOLE metadata** — title, author, kind, description,
+  tags — and is AND-ed with the three facets. It sits at the head of the panel because it
+  is the coarse instrument, and because it is what makes the small subject vocabulary
+  safe (below).
+- **Matching and marking are one function, in `src/lib/highlight.ts`.** `matchesQuery`
+  and `highlight` share a fold and the same `occurrences` tiers, so a row is on the list
+  exactly when the highlighter has something to draw on it. Write a matcher separately
+  and it drifts within a week, in the direction only a reader notices: a result with no
+  visible reason for being there. `highlight` was already the jump box's; `matchesQuery`
+  is new beside it, and AND-s its tokens where `highlight` ORs them (marking is generous,
+  filtering is strict). A test pins the agreement.
+- **`site/document-tags.json` is the subject vocabulary and it is CLOSED** — 54 terms in
+  its own `vocabulary` array, keyed by document SLUG rather than work id (a tag is about
+  the document; every edition of Rerum Novarum is about labour — the one difference from
+  `descriptions.json` beside it). `sync-corpus.mjs` **exits 1** on a tag outside the list,
+  on a slug naming no document in the build, on two terms differing only in case, and on
+  an empty or padded tag. A term on no document is a warning only. A missing FILE is fine;
+  the page then offers no subject facet.
+- **It was OPEN and 232 terms wide for one day, and both ends of that were useless.** The
+  tail was 46 terms on one document apiece; a facet row that narrows 272 documents to one
+  is a worse way of reaching it than its title. The head held words that partition
+  nothing — `centenary` and `anniversary` say what OCCASIONED a document, `Vatican II` and
+  `synod` restate the author and kind facets above them. **35 region names went too**, and
+  that was the closest call: they are dropped from the FACET and not from the site,
+  because every one of them is in the description the search box reads. Read the facet as
+  the axes worth BROWSING and the search as everything else.
+- **Merging a term into another is a semantic act, not a bookkeeping one**, and four of
+  the first cut's merges were wrong in the same way: `technology` into `ecology` filed the
+  AI encyclical under ecology, `devotion` into `saints` made the Holy Spirit encyclical a
+  saint's letter, `preaching` into `priesthood` made Dei Verbum a document about the
+  clergy, `consecration` into `Marian devotion` made the consecration to the Sacred Heart
+  Marian. Each was defensible on the commonest document carrying the term and wrong on the
+  rest. **Check the merge against every document it touches, not against the archetype.**
+- **The terms are NOT translated and render verbatim.** A closed list could carry an i18n
+  key each, the way `document_kind` does in `document-labels.ts`, but 54 terms is 756
+  strings across the fourteen dictionaries and nobody has asked for them.
+- **`DocumentFilters.svelte` is rendered TWICE on the page** — the aside above 80rem, a
+  `<details>` above the list below it — which is why its options are `aria-pressed`
+  buttons and not checkboxes, and why the search text is a PROP rather than local state.
+  Two checkbox facets are two elements claiming one `id`, and two independent search
+  boxes are one control that forgets what it was told when the viewport changes.
+
+**The filters are deliberately not in the URL.** Nothing in this app reads or writes the
+client-side URL, and `?auctor=` would be the first query string in a system whose sitemap,
+route manifest, worker and usage beacon all model paths and nothing else. Adding it is a
+change to four things, not one.
+
 ## The edge writes the head, from names and never from text
 
 Added 2026-08-28 (`docs/decisions.md` §The site). `ssr = false` means one document

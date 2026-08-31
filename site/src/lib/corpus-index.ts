@@ -424,6 +424,18 @@ const realDescriptionUrls = import.meta.glob('./corpus-data/index/descriptions.*
 	import: 'default'
 }) as Record<string, string>;
 
+// Subject tags for the magisterial documents: `index/document-tags.json`,
+// `slug -> [tag, …]`, written by `sync-corpus.mjs` from the tracked
+// `site/document-tags.json`. A URL and not an eager inline for the reason
+// stated at the head of this file: `/documenta`'s filter panel is the only
+// thing that wants it, and a tag answers neither "does this address exist"
+// nor "where does it live", which is what the boot index is for.
+const realDocumentTagUrls = import.meta.glob('./corpus-data/index/document-tags.json', {
+	eager: true,
+	query: '?url',
+	import: 'default'
+}) as Record<string, string>;
+
 /**
  * True once corpus-data/ has been synced from a real corpus checkout —
  * except under vitest, which always uses the fixtures.
@@ -882,6 +894,17 @@ export interface ContentLocation {
 export function translatedDescriptionsLocation(lang: string): ContentLocation | undefined {
 	const relPath = `index/descriptions.${lang}.json`;
 	const url = realDescriptionUrls[`./corpus-data/${relPath}`];
+	return url ? { relPath, url } : undefined;
+}
+
+/**
+ * Where the document subject tags live, or undefined when nothing in this
+ * corpus is tagged — which is not an error: `/documenta` then offers its
+ * author and type facets and no tag facet. See `site/document-tags.json`.
+ */
+export function documentTagsLocation(): ContentLocation | undefined {
+	const relPath = 'index/document-tags.json';
+	const url = realDocumentTagUrls[`./corpus-data/${relPath}`];
 	return url ? { relPath, url } : undefined;
 }
 

@@ -263,6 +263,36 @@ export const en: Dictionary = {
 	// consumer, plus the home page's Magisterium group.
 	'document.library.tagline':
 		'Encyclicals, conciliar constitutions, decrees, and declarations of the Magisterium.',
+	// The `/documenta` filter panel (that route's `+page.svelte`). It replaced
+	// the pontificate table of contents on 2026-08-31: 272 documents is past
+	// what a list of anchors helps with, and the three facets a reader
+	// actually narrows by are who wrote it, what kind of document it is, and
+	// what it is about.
+	//
+	// THE SUBJECT TERMS THEMSELVES ARE NOT HERE AND CANNOT BE. They are an
+	// open vocabulary written per document in `site/document-tags.json`, so
+	// each new coinage would be fourteen inventions rather than fourteen
+	// lookups — the cost `route-titles.mjs`'s CHROME_KEYS docblock warns
+	// about, paid every time someone tags a document. They render verbatim in
+	// the language they were written in; only the panel around them is
+	// translated.
+	//
+	// `filter.results` names the count for a screen reader; the count itself
+	// is rendered as digits, which need no translation and no plural rule.
+	'document.filter.heading': 'Filter',
+	'document.filter.author': 'Author',
+	'document.filter.kind': 'Type',
+	'document.filter.subject': 'Subject',
+	// The box at the head of the panel. It reads title, author, kind,
+	// description and tags together, so it is 'search documents' and not
+	// 'search titles' — and it is what makes the 53-term subject facet
+	// safe to have cut down from 232 (site/document-tags.json).
+	'document.filter.search': 'Search documents',
+	'document.filter.showAll': 'Show all',
+	'document.filter.showFewer': 'Show fewer',
+	'document.filter.clear': 'Clear',
+	'document.filter.results': 'Documents shown',
+	'document.filter.noResults': 'No document matches these filters.',
 	'document.tableOfContents': 'Table of Contents',
 	'document.startReading': 'Start reading',
 	'document.readFullDocument': 'Read the full document',

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { highlight, type HighlightSegment } from './highlight';
+import { highlight, matchesQuery, type HighlightSegment } from './highlight';
 import { fold } from './suggest';
 
 /** The marked runs, in order — what a reader actually sees emphasized. */
@@ -152,5 +152,58 @@ describe('highlight', () => {
 				expect(marks(segments).join('')).toBe(text);
 			});
 		}
+	});
+});
+
+describe('matchesQuery', () => {
+	const row = [
+		'Rerum Novarum',
+		'Leo XIII',
+		'Encyclical',
+		'On the condition of labour.',
+		'labour'
+	].join('\n');
+
+	it('matches every token, not just one', () => {
+		expect(matchesQuery(row, 'leo labour')).toBe(true);
+		expect(matchesQuery(row, 'leo eucharist')).toBe(false);
+	});
+
+	it('is insensitive to case and to diacritics both ways round', () => {
+		expect(matchesQuery('Thérèse of Lisieux', 'therese')).toBe(true);
+		expect(matchesQuery('Therese of Lisieux', 'Thérèse')).toBe(true);
+	});
+
+	it('matches everything on an empty or punctuation-only query', () => {
+		expect(matchesQuery(row, '')).toBe(true);
+		expect(matchesQuery(row, '   ')).toBe(true);
+		expect(matchesQuery(row, '—')).toBe(true);
+	});
+
+	// The property the docblock claims: a row is a result exactly when the
+	// highlighter has something to draw on it. Asserted rather than assumed,
+	// because the two would drift silently and only in the direction a reader
+	// notices — a result with nothing marked on it.
+	it('agrees with highlight: a match always leaves something to mark', () => {
+		for (const query of ['leo', 'labour', 'novarum', 'condition', 'rerum nov']) {
+			expect(matchesQuery(row, query), query).toBe(true);
+			expect(
+				highlight(row, query).some((segment) => segment.hit),
+				query
+			).toBe(true);
+		}
+	});
+
+	// A field separator must not let a token run across two fields: the author
+	// ends and the kind begins, and "xiiiencyclical" is not a thing anyone typed.
+	it('does not match across the newline that separates two fields', () => {
+		expect(matchesQuery('Leo XIII\nEncyclical', 'xiiiencyclical')).toBe(false);
+	});
+
+	// Below four characters an interior hit is noise — the same gate `highlight`
+	// applies, which is the whole reason this lives beside it.
+	it('declines a short token that only appears inside a word', () => {
+		expect(matchesQuery('Ingravescentibus', 'rav')).toBe(false);
+		expect(matchesQuery('Ingravescentibus', 'gravescent')).toBe(true);
 	});
 });

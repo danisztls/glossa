@@ -188,6 +188,16 @@ export const pt: Dictionary = {
 
 	'document.library.tagline':
 		'Encíclicas, constituições conciliares, decretos e declarações do Magistério.',
+	'document.filter.heading': 'Filtros',
+	'document.filter.author': 'Autor',
+	'document.filter.kind': 'Tipo',
+	'document.filter.subject': 'Assunto',
+	'document.filter.search': 'Buscar documentos',
+	'document.filter.showAll': 'Ver todos',
+	'document.filter.showFewer': 'Ver menos',
+	'document.filter.clear': 'Limpar',
+	'document.filter.results': 'Documentos exibidos',
+	'document.filter.noResults': 'Nenhum documento corresponde a estes filtros.',
 	'document.tableOfContents': 'Índice',
 	'document.startReading': 'Começar a leitura',
 	'document.readFullDocument': 'Ler o documento completo',

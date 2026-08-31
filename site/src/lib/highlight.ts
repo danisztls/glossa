@@ -229,3 +229,34 @@ export function highlight(
 	if (cursor < text.length) segments.push({ text: text.slice(cursor), hit: false });
 	return segments;
 }
+
+/**
+ * Whether `text` answers `query` — every token found, not merely one.
+ *
+ * `/documenta`'s search box is the caller (that route's `+page.svelte`), and
+ * it exists here rather than there so that MATCHING AND MARKING CANNOT
+ * DISAGREE. They run the same fold and the same `occurrences` tiers, so a
+ * document is on the results list exactly when the highlighter has something
+ * to draw on it — which is the property that makes a filtered list legible:
+ * every row can show why it is a row. A matcher written separately would
+ * drift within a week, and the drift is invisible in the direction that
+ * matters (a row that matched on a rule the marker does not implement looks,
+ * to a reader, like a result arriving for no reason).
+ *
+ * AND across tokens, though `highlight` ORs them. Marking is generous because
+ * an unmarked span costs nothing; filtering is strict because two words typed
+ * into a search box are a narrowing, not a widening — "leo labour" means both.
+ *
+ * An empty query matches everything, so a caller can apply it unconditionally.
+ * The `loose` subsequence pass is deliberately NOT consulted: it is a last
+ * resort for explaining a row the fuzzy ranker already chose, and as a filter
+ * over 272 documents it would match nearly all of them.
+ */
+export function matchesQuery(text: string, query: string): boolean {
+	const tokens = foldWithMap(query)
+		.folded.split(/[^\p{L}\p{N}]+/u)
+		.filter(Boolean);
+	if (tokens.length === 0) return true;
+	const { folded } = foldWithMap(text);
+	return tokens.every((token) => occurrences(folded, token).length > 0);
+}

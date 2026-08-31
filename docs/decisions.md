@@ -2072,6 +2072,96 @@ testing them.
 **Do not drive the site with browser automation to check UI changes.** The person
 directing the work does that verification themselves.
 
+**`/documenta` is a filtered list and not a table of contents, since 2026-08-31.** It
+grouped 272 documents into twelve collapsible pontificates with a sidebar of anchors into
+them — the right shape for the sixteen Vatican II texts it was written for, and it
+survived the encyclicals landing behind them without being reconsidered. What an anchor
+list cannot express is the question a reader actually arrives with, which is rarely "what
+did Leo XIII write" alone: it is some conjunction of who wrote it, what kind of document
+it is, and what it is about. So the aside became a facet panel over those three axes and
+the list went flat and reverse-chronological.
+
+- **Within a facet the values are OR-ed and across facets AND-ed**, which is what a
+  faceted list means everywhere else. The counts beside each value are taken against the
+  OTHER facets rather than against the fully filtered set: a number beside "Pius XII" says
+  what remains if you add him to the authors already chosen, so within one facet the
+  numbers add up. Counting against the filtered set shows 0 beside every author but the
+  one selected — true, and useless.
+- **The filters are not in the URL, and that is a decision rather than an omission.**
+  Nothing in this app reads or writes the client-side URL: the address grammar is
+  pathname-only, `worker.ts` decides a page's status from the pathname alone, and the
+  sitemap, the route manifest and the usage beacon all model paths and nothing else. A
+  shareable `?auctor=` would be the first query string in the system and would want
+  modelling in all four before it earned its keep. A filter here is a way of looking at
+  one page, not a place.
+- **The panel is rendered twice** — in the aside above 80rem and inside a `<details>`
+  above the list below it, the handover `.toc-inline` already makes on `/documenta/{slug}`
+  — which is why its options are `aria-pressed` buttons rather than checkboxes. Two
+  instances of a checkbox facet are two elements claiming one `id`, and a `<label for>`
+  then points at whichever the parser saw first, so a tap on the mobile panel would toggle
+  a control in the hidden desktop one.
+
+**The subject vocabulary is CLOSED, and it was open for exactly one day.** It began as 232
+free-form terms written per document, and both ends of that distribution were useless in
+their own way. The tail was 46 terms carrying one document each — `dueling`, `Dante`,
+`Amazon`, `Fatima` — and a facet row that narrows 272 documents to one is a worse way of
+reaching that document than its own title, while making the panel unreadable at the size
+where the useful terms live. The head held terms that partitioned nothing: `centenary` (35)
+and `anniversary` say what OCCASIONED a document rather than what it treats, and
+`Vatican II` (23) and `synod` (22) restate the author and kind facets sitting directly
+above them. `saints` survived the same cut because commemorating a saint IS a subject,
+where the occasion words around it are not. What is left is 54 terms between 4 and 42
+documents apiece, listed in the file's own `vocabulary` array, with the sync refusing
+anything outside it.
+
+- **The 35 region names were the closest call.** `Mexico` and `Hungary` are real subjects
+  and a reader does want them. They are dropped from the FACET and not from the site: every
+  one is in the document's description, which the search box reads. That is the whole
+  argument for cutting hard — a facet row is for BROWSING an axis, and the search is for
+  everything else.
+- **Merging one term into another is a semantic act and it is easy to get wrong.** Four of
+  the first cut's merges were wrong in the same shape: each was right about the commonest
+  document carrying the term and wrong about the rest. `technology` into `ecology` filed
+  the artificial-intelligence encyclical under ecology and left the only document on that
+  subject unreachable by it; `devotion` into `saints` made the encyclical on the Holy
+  Spirit a saint's letter; `preaching` into `priesthood` made Dei Verbum a document about
+  the clergy; `consecration` into `Marian devotion` made the consecration of the human race
+  to the Sacred Heart a Marian document. The rule that follows is to check a merge against
+  every document it touches rather than against the archetype, and it was a probe over the
+  real corpus that caught the first of them, not a test.
+- **What the open vocabulary could not do is translate**, and the closed one still does not.
+  Every coinage would have been fourteen inventions rather than fourteen lookups — the cost
+  `route-titles.mjs`'s `CHROME_KEYS` warns about, paid per tagged document. A closed 54-term
+  list could carry an i18n key each, the way `document_kind` does; that is 756 strings and
+  nobody has asked for them. The terms render verbatim and only the panel is translated.
+
+**Three things about that file fail the sync rather than warning.** A tag outside the
+vocabulary — a typo, or a synonym of a listed term, which splits a term's documents in two
+with neither half findable. A slug naming no document in the build, which is the residue of
+a renamed work whose tags are lost silently otherwise, because a filter offering one fewer
+term looks exactly like a corpus holding one fewer document. And two vocabulary terms
+differing only in case, which the panel matches as one facet with two labels. A term on no
+document is a warning only: that is the ordinary state while one is being introduced, and an
+empty facet row is visible in a way a missing one is not. A missing FILE is still not an
+error, on the same terms as `descriptions.json`.
+
+**The search box is what made the cut safe, and it is one function with the highlighter.**
+`/documenta` searches title, author, kind, description and tags together, AND-ed with the
+facets. `matchesQuery` lives in `src/lib/highlight.ts` beside the `highlight` the jump box
+already used, sharing its fold and its `occurrences` tiers, so a document is on the results
+list exactly when the highlighter has something to mark on it — every row can show why it
+is a row. A matcher written separately would drift, and the drift is invisible in the one
+direction that matters: a result arriving for no reason a reader can see. It AND-s its
+tokens where `highlight` ORs them, because marking is generous (an unmarked span costs
+nothing) and filtering is strict (two words typed into a box are a narrowing).
+
+**The tags ship as one fetched file and not in the boot index**, on the rule
+`corpus-index.ts` states: the index every reader downloads before the first paint answers
+"does this address exist", and a tag answers neither existence nor address. One page wants
+it, so that page fetches it — the same arrangement the translated descriptions have. Nor is
+it merged onto the manifests, which would write the same strings into all ten editions of
+Laudato Si' and put them in the index after all.
+
 ## Usage measurement
 
 **Nothing measured usage until 2026-08-27, and the reason it had to change is the
