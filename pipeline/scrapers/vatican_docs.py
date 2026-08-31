@@ -4630,6 +4630,34 @@ def _index_links(
 FALLBACK_INDEX_LANGS = ("it",)
 
 
+#: Encyclicals vatican.va's own index lists TWICE, under two slugs: the
+#: duplicate slug mapped to the one to keep.
+#:
+#: `nos-es-muy-conocida` is Firmissimam Constantiam (Pius XI, 28 March 1937,
+#: on the religious situation in Mexico) published a second time under its
+#: Spanish incipit, with the date written the other way round --
+#: `hf_p-xi_enc_19370328_firmissimam-constantiam` and
+#: `hf_p-xi_enc_28031937_nos-es-muy-conocida`. Both are on the Pius XI index,
+#: both answer 200, and the second page's own masthead reads FIRMISSIMAM
+#: CONSTANTIAM: the parses were byte-identical, 39 sections and 29,655
+#: characters apiece. Latin is what this corpus addresses a document by, so
+#: the Latin-titled slug is the one that stays.
+#:
+#: This is the ONLY duplicate in the corpus -- checked 2026-08-31 by hashing
+#: every work's `sections.json` and `appendix.json` across all 1,411 works,
+#: which found this pair and nothing else. So it is a table of one, and a
+#: table rather than a special case because the origin index is the thing
+#: producing it and it can produce another.
+#:
+#: The duplicate is dropped at DISCOVERY rather than deleted afterwards,
+#: because it is not a parse defect: both pages are real, both were fetched,
+#: and `raw/encyclical__nos-es-muy-conocida__en.html` stays as the evidence.
+#: What is wrong is only that the same document was given two addresses.
+INDEX_DUPLICATE_SLUGS = {
+    "nos-es-muy-conocida": "firmissimam-constantiam",
+}
+
+
 def _encyclical_refs_from_index(
     fetcher: Fetcher, pontiff_slug: str, display_name: str, lang: str
 ) -> tuple[dict[str, DocRef], list[str]]:
@@ -4654,6 +4682,12 @@ def _encyclical_refs_from_index(
             )
             continue
         date8, slug = parsed
+        if slug in INDEX_DUPLICATE_SLUGS:
+            notes.append(
+                f"{pontiff_slug}: {lang} index lists {slug!r}, a second address for "
+                f"{INDEX_DUPLICATE_SLUGS[slug]!r} -- skipped (INDEX_DUPLICATE_SLUGS)"
+            )
+            continue
         url = (
             f"https://www.vatican.va/content/{pontiff_slug}/{lang}"
             f"/encyclicals/documents/{fname}.html"

@@ -205,7 +205,11 @@
 			"persecution",
 			"Catholic Action",
 			"religious liberty",
-			"priesthood"
+			"priesthood",
+			"laity",
+			"social doctrine",
+			"indigenous peoples",
+			"migrants"
 		],
 		"fratelli-tutti": [
 			"social doctrine",
@@ -361,14 +365,6 @@
 			"Church and State"
 		],
 		"non-mediocri": ["seminaries", "education", "priesthood"],
-		"nos-es-muy-conocida": [
-			"persecution",
-			"Catholic Action",
-			"social doctrine",
-			"laity",
-			"indigenous peoples",
-			"migrants"
-		],
 		"nostra-aetate": ["interreligious dialogue", "human dignity"],
 		"nova-impendet": ["labour", "poverty", "youth", "peace"],
 		"octobri-mense": ["Rosary", "Marian devotion", "penance", "persecution"],

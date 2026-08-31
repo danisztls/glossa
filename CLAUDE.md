@@ -305,6 +305,17 @@ decides _when_ something runs.
 - Expect ~1-in-6-to-8 transient failures (Azure edge flakiness, no 403s, no
   CAPTCHA). Retry with backoff; a genuine failure belongs in the run summary,
   never silently absent from the corpus.
+- **The Pius XI index lists one encyclical twice**, and the corpus takes it once.
+  `hf_p-xi_enc_19370328_firmissimam-constantiam` and
+  `hf_p-xi_enc_28031937_nos-es-muy-conocida` are the same document at two addresses —
+  the Latin incipit against the Spanish one, the date written the other way round in
+  each — and the parses were byte-identical. `INDEX_DUPLICATE_SLUGS` in
+  `vatican_docs.py` drops the Spanish-titled slug at DISCOVERY, which is the shape to
+  copy: both pages are real and both were fetched, so `raw/` keeps the second one as
+  evidence and only the second address goes. It is the only duplicate in the corpus
+  (checked 2026-08-31 by hashing every work's `sections.json` and `appendix.json`), and
+  it is a table anyway, because what produced it was the origin's index rather than
+  anything here.
 - Source defects go through `pipeline/corrections/` with locator, exact
   before/after, reason and evidence — never a code special-case, and never
   invented text. A defect with no known correct value gets documented, not
@@ -783,8 +794,20 @@ npm run deploy      # build -> preflight -> wrangler deploy
 Replaced the pontificate table of contents on 2026-08-31 (`docs/decisions.md` §The site).
 272 documents is past what a list of anchors helps with, so the aside is now a **search box
 over a facet panel** — author, kind and subject — and the list is flat and
-reverse-chronological. Six things about it will bite before the design will.
+reverse-chronological. Seven things about it will bite before the design will.
 
+- **Author and kind ADD, subject SUBTRACTS, and that asymmetry is the field's arity.**
+  A document has exactly one author and exactly one kind, so AND-ing two of either is an
+  empty list by construction and a second choice can only mean "and these as well". A
+  document carries three subjects on average, so a second subject has the other reading
+  available — the documents about BOTH — and that is what narrowing 272 titles asks for.
+  **Two consequences, and both are the parts that break if someone flips the predicate
+  back**: the subject counts are taken against the FULLY filtered set, itself included,
+  so a term's number is exactly what survives the click (the other two exclude themselves,
+  or every unselected author would read 0); and `liveTags` drops the terms that reach 0
+  rather than greying them, because one selection zeroes most of a 54-term vocabulary and
+  eighteen dead rows would hide the ~30 that still narrow. A selected term is always live,
+  so filtering can never make a filter unreachable.
 - **The search reads a document's WHOLE metadata** — title, author, kind, description,
   tags — and is AND-ed with the three facets. It sits at the head of the panel because it
   is the coarse instrument, and because it is what makes the small subject vocabulary

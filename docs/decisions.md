@@ -2081,12 +2081,31 @@ did Leo XIII write" alone: it is some conjunction of who wrote it, what kind of 
 it is, and what it is about. So the aside became a facet panel over those three axes and
 the list went flat and reverse-chronological.
 
-- **Within a facet the values are OR-ed and across facets AND-ed**, which is what a
-  faceted list means everywhere else. The counts beside each value are taken against the
-  OTHER facets rather than against the fully filtered set: a number beside "Pius XII" says
-  what remains if you add him to the authors already chosen, so within one facet the
-  numbers add up. Counting against the filtered set shows 0 beside every author but the
-  one selected — true, and useless.
+- **Across facets the values are AND-ed; within one it depends on the field's arity.**
+  Author and kind OR, subject ANDs. The uniform rule was OR everywhere, which is what a
+  faceted list means elsewhere, and it is right for the two single-valued fields — a
+  document has exactly one author and exactly one kind, so AND-ing two of either is an
+  empty list by construction and the only reading a second choice can carry is "and these
+  as well". A subject is multi-valued: a document carries three on average, and picking
+  _peace_ and then _poverty_ has an obvious second reading, the nine documents about both.
+  Between "31 documents ∪ 25" and "9 ∩", only one of the two is narrowing, and narrowing
+  is the whole reason the panel replaced an anchor list. Measured before the change:
+  a first subject leaves 25 to 39 of the other 53 terms still co-occurring, so the facet
+  does not collapse to a dead end after one click.
+- **So the counts come from two pools, and the difference is not an inconsistency.** An
+  author or a kind is counted against the OTHER facets: a number beside "Pius XII" says
+  what remains if you add him to the authors already chosen, so within that facet the
+  numbers add up, and counting against the fully filtered set would show 0 beside every
+  author but the selected one — true, and useless. A subject is counted against
+  everything, itself included, because it AND-s: its number is exactly what survives the
+  click, which is the promise a subtractive facet has to keep. Getting this wrong is not a
+  cosmetic error — a term reading 34 that yields 2 on click is a lie the reader can see.
+- **A subject that reaches 0 is dropped from the panel, not greyed out.** One selection
+  zeroes most of a 54-term vocabulary, and eighteen dead rows would hide the thirty that
+  still narrow; a disabled row is only worth showing where it is one of a few. A selected
+  term counts as live whatever its number, so filtering can never make a filter
+  unreachable, and the order is the corpus-wide one throughout — options drop out, they
+  never move past one another under the cursor.
 - **The filters are not in the URL, and that is a decision rather than an omission.**
   Nothing in this app reads or writes the client-side URL: the address grammar is
   pathname-only, `worker.ts` decides a page's status from the pathname alone, and the
@@ -2377,6 +2396,27 @@ where it exists, otherwise the language it does exist in. Discovery consults the
 index per pontificate for anything English does not list; measured, Italian is the only
 language that reaches a document English does not. This is not a "crawl more languages"
 switch: the language a document arrives in is whichever one it exists in.
+
+**One encyclical is on that index twice, and the corpus takes it once.** Pius XI's
+_Firmissimam Constantiam_ (28 March 1937, on the religious situation in Mexico) is
+published by vatican.va under two slugs — `hf_p-xi_enc_19370328_firmissimam-constantiam`
+and `hf_p-xi_enc_28031937_nos-es-muy-conocida`, the Latin incipit against the Spanish one,
+with the date written the other way round in each. Both are linked from the Pius XI index,
+both answer 200, and the second page's own masthead reads FIRMISSIMAM CONSTANTIAM: the two
+parses were byte-identical, 39 sections and 29,655 characters apiece. The corpus addresses
+documents by their Latin title, so the Latin-titled slug is the one that stays, with the
+Spanish one dropped at discovery by `INDEX_DUPLICATE_SLUGS` in `vatican_docs.py`.
+
+Three things about that decision are the reusable part. **It is dropped at discovery, not
+deleted afterwards**, because it is not a parse defect — both pages are real and both were
+fetched, so `raw/encyclical__nos-es-muy-conocida__en.html` stays as the evidence and only
+the second _address_ goes. **It is a table rather than a special case**, because what
+produces it is the origin's index, and an index that did this once can do it again.
+And **it is the only one**: checked 2026-08-31 by hashing every work's `sections.json` and
+`appendix.json` across all 1,446 works, which found this pair and nothing else. (The one
+other exact match is `ad-gentes.la` and `presbyterorum-ordinis.la` sharing a _Patrum
+subsignationes_ appendix, which is correct — the same fathers signed both decrees on the
+same day.)
 
 **Translations beyond that are fetched, not published, by default.** Every encyclical is
 held in `raw/` in the nine interface languages plus Latin; acquiring sources and deciding

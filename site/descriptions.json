@@ -644,7 +644,7 @@
 		},
 		"encyclical.firmissimam-constantiam.en": {
 			"en": {
-				"text": "Pius XI's 1937 letter to the bishops of Mexico amid the persecution of the Church there, praising the clergy's and faithful's constancy under trial and urging two remedies: the holiness of priests and the disciplined formation of the laity through Catholic Action. It sets principles for the legitimate defense of religious liberty and closes commending Mexico to Our Lady of Guadalupe.",
+				"text": "Pius XI's 1937 letter to the bishops of Mexico amid the persecution of the Church there, praising the constancy of clergy and faithful under trial and urging two remedies: the holiness of priests, and the laity formed and organized through Catholic Action to reach workers, peasants and indigenous Mexicans, students, and emigrants to the United States. It sets principles for the legitimate defense of religious liberty, calls for social justice pursued without violent upheaval and for civic engagement including voting, and closes commending Mexico to Our Lady of Guadalupe.",
 				"origin": "read"
 			}
 		},
@@ -1275,12 +1275,6 @@
 		"encyclical.non-mediocri.en": {
 			"en": {
 				"text": "Leo XIII's 1893 letter to the bishops of Spain announcing the foundation of a Roman college for Spanish clerics. Recalling Spain's earlier renown for theological and literary learning, he laments how seminaries and universities were uprooted by the upheavals following the French Revolution, and establishes a Roman residence for Spanish students, in a building once belonging to the Dukes of Altemps, under the oversight of the Archbishops of Toledo and Seville.",
-				"origin": "read"
-			}
-		},
-		"encyclical.nos-es-muy-conocida.en": {
-			"en": {
-				"text": "Pius XI writes to Mexico's bishops during the country's anti-Catholic persecution, praising the fidelity of clergy and faithful and urging two remedies: holier priests, and lay Catholic Action organized to reach workers, peasants and indigenous Mexicans, students, and emigrants to the United States. It calls for pursuing social justice without violent upheaval, for civic engagement including voting, and entrusts Mexico to Our Lady of Guadalupe.",
 				"origin": "read"
 			}
 		},
