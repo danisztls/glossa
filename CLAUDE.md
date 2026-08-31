@@ -1451,46 +1451,88 @@ are **edition divergence, not defects** — see `docs/research/bible-edition-div
 for the four kinds and why calling them defects invites someone to "fix" a
 faithful text.
 
-**The interface languages and the content languages are two different sets**,
-fourteen tags against fifteen as of 2026-08-26. `UiLang` in
-`site/src/lib/i18n.svelte.ts` is the nine Magnifica Humanitas is published in,
-plus Latin, plus `hu`, `ro`, `sl` and `sv` (use `isUiLang`/`UI_LANGS`, never a
-literal list — `app.css` and `app.html` each keep a copy by necessity and say
-so; a test asserts `app.html`'s copy against `UI_LANGS`); `ContentLang` in
-`types.ts` is those fourteen plus `mg`. **Do not derive one from the other**:
-they equalized at ten on 2026-08-24, separated the next day when the
-Compendium's ten editions landed four texts with no dictionary, equalized at
-fourteen the day after when the dictionaries were written, and separated again
-on 2026-08-26 when the Catechism landed Malagasy — which nobody working here
-reads, so the dictionary it is owed is not one of us to write.
+**The interface languages are now a SUPERSET of the content languages** —
+thirty-four tags against twenty-six, as of 2026-08-31. It was the other way
+around for a year, and the flip is the thing to understand before touching
+either list. `UI_LANGS` lives in `site/src/lib/ui-langs.ts` and `ContentLang`
+in `types.ts` (use `isUiLang`/`UI_LANGS`, never a literal list — `app.html` and
+`usage-schema.ts` each keep a copy by necessity and say so, and a test asserts
+both against `UI_LANGS`).
+
+**Still do not derive one from the other.** The lists equalized and separated
+four times in eight days for their own reasons, and the rule survives the flip
+— it just reads in the other direction now: an interface language is no longer
+evidence that the corpus holds anything, and the next ingestion in a language
+nobody has written a dictionary for separates them again from the other side.
+
+**What the old list actually tracked was who had written a dictionary.** The
+gap was never `mg` alone: TWELVE content languages had no chrome, and
+Byelorussian had 31 editions against Swedish's one complete dictionary. Closing
+it is what made the interface a superset. On top of that sit eight **reach
+languages** — `tl zh ko id uk ig ml hi` — chosen by Catholic population rather
+than by what has been ingested, because the Philippines is the third-largest
+Catholic country in the world and Tagalog had no interface. A reader in one of
+those gets their own chrome and English content through
+`CONTENT_LANG_FALLBACK`; the alternative is not better content, it is the same
+content behind a language they do not read.
+
+**A dictionary need not be complete, so adding a language is not a promise of
+245 strings.** `t()` falls back to English key by key. What the build actually
+enforces is `CHROME_KEYS` (`scripts/route-titles.mjs`) — `assertNamed` throws
+on an unnamed chrome page, because that breaks the `hreflang` cluster — and
+`bible-groups.test.ts`, which demands all nine group names rather than
+tolerating a partial set. The long colophon prose is deliberately omitted from
+every new dictionary: it is the page explaining how carefully this site handles
+other people's words, and a machine translation of it is the one page whose
+form would contradict its content.
+
+**Adding a language means five places, and only four of them are guarded.**
+`ui-langs.ts` (plus `RTL_LANGS` if it is right to left), the dictionary itself,
+`app.html`'s pre-paint copy, `usage-schema.ts`'s `UI_TAGS` — and
+`LanguageMenu.svelte`'s `OPTIONS`, which **no test guards**: a language missing
+there is still reachable by URL and by negotiation, so everything works except
+that nobody can find it. It is redundant (every `short` is the uppercased code,
+every label is already in `LANGUAGE_NAMES`) and should be derived. The
+dictionary file itself needs no registration — `i18n.svelte.ts` globs the
+directory.
+
+**A counterexample in a test will be overtaken.** Four tests used "a language
+the interface does not have" as an assertion, spelled `mg`, then `sw`, then
+`ko`. The interface grew into all three within a day. They are Icelandic and
+Estonian now, and the comments say why: it can no longer be a content language
+at all.
 
 **A content language that is not an interface language has exactly one place
 to go wrong, and nothing checks it.** `LANGUAGE_NAMES` in `corpus.ts` names
 each content language in its own language for the edition menu and the compare
 columns; it is keyed on `ContentLang`, and an unnamed tag falls through to the
 tag itself. So `ccc.mg` shipped offering itself as "mg" — the type union gained
-the language, that table did not, and no build, test or type error saw it,
-because the one surface that would have made it obvious (the language switch)
-is the surface `mg` is deliberately absent from. Adding a content language
-means adding a line there in the same commit.
+the language, that table did not, and no build, test or type error saw it.
+Adding a content language means adding a line there in the same commit. (That
+class of failure is now rarer but not gone: the table is complete today, and
+the reach languages are deliberately absent from it because they are not
+content languages.)
 
-Coverage, not the count, is what decides whether a language belongs in
-`UI_LANGS`. The four newest each have a **whole work** in them — the
-Compendium, all 598 questions — so their readers were reading a finished text
-inside English chrome; the seven that came with Magnifica Humanitas are
-interface languages the corpus has one work in, so a reader in any of them
-gets English content nearly everywhere through `CONTENT_LANG_FALLBACK`, which
-is at least consistent. Russian is the case in the other direction — chrome
-since Magnifica Humanitas, and a Compendium that exists only as a PDF nothing
-parses. Latin is the opposite again: two whole works, and the chrome arrived
-last (`docs/decisions.md` §Languages). Latin's promotion deleted a special
-case rather than adding one: `content.svelte.ts`'s `#stillApplies` used to
-keep an override forever when its language was not a UI language, and now
-every override sleeps and wakes on the UI language it was made under.
+**Coverage, not the count, is what decides whether a language belongs in
+`UI_LANGS`** — and since 2026-08-31 the answer for a content language is always
+yes. Russian remains the case pointing the other way: chrome since Magnifica
+Humanitas, and a Compendium that exists only as a PDF nothing parses. Latin's
+promotion deleted a special case rather than adding one: `content.svelte.ts`'s
+`#stillApplies` used to keep an override forever when its language was not a UI
+language, and now every override sleeps and wakes on the UI language it was
+made under.
 
 **Direction is a property of the text, not of the reader.** `<html dir>`
 follows the interface language; content regions get theirs from the `lang`
-they already declare, via two rules at the foot of `app.css`. Write CSS in
+they already declare, in `src/styles/direction.css` (imported last by
+`app.css`, deliberately). **Both halves are hand-maintained lists and both
+were wrong for Hebrew**: `direction.css` keyed RTL off a literal `[lang='ar']`,
+so the two Hebrew editions shipped left-to-right, and `app.html`'s pre-paint
+block said `l === 'ar'`, which would have painted the page the wrong way and
+flipped it at hydration. Keep both in step with `RTL_LANGS`. The same file's
+`--prose-char-advance` is a property of the SCRIPT and had the same shape of
+bug — keyed to `ru` alone while 31 Byelorussian editions used the Latin
+measure. Write CSS in
 logical properties (`margin-inline-start`, not `margin-left`) — the stylesheet
 is entirely logical and the components are now too.
 
