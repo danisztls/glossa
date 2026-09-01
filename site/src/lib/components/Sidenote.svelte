@@ -84,9 +84,41 @@
 		    exactly that reason. Dropping it reads two of his notes into the
 		    wrong book. */
 		work?: string;
+		/** Whether the VERSE is marking the words this note quotes, in which case
+		    the panel must not print them again — see the header. The parent sets
+		    it exactly when `splitLemma` located them, so it is false for every
+		    unanchored note, which has no place in the text to be marked at, and
+		    for the editions that refuse (`lemma.ts`). */
+		lemmaMarked?: boolean;
+		/** Whether this note is open, reported UPWARD so the verse can light the
+		    words it is about while it is.
+		 *
+		 *  A BINDING AND NOT A SHARED STORE, which was the first shape and the
+		 *  wrong one. The pairing is between one unit and its own notes — the
+		 *  parent already knows which run of text holds which note's lemma — so a
+		 *  page-wide field would have been a singleton standing in for something
+		 *  local, and would have needed a key the two components agreed on to
+		 *  address it by. `sidenoteRoom` in particular is the MARGIN's object,
+		 *  and this has nothing to do with the margin: it is the same question
+		 *  answered in the text.
+		 *
+		 *  At most one is true at a time, which comes free rather than by
+		 *  policing: a card is a `popover="auto"`, so opening one dismisses the
+		 *  last, and a dialog is modal.
+		 *
+		 *  NO FALLBACK, AND THAT IS NOT A STYLE CHOICE. `$bindable(false)` throws
+		 *  `props_invalid_value` the moment a parent binds a slot that is still
+		 *  undefined, which is every note on the page before its first effect
+		 *  has run: `AnnotatedText` binds `openNotes[i]` out of a deliberately
+		 *  SPARSE array, since only marker positions are ever written. Svelte
+		 *  refuses a fallback plus an undefined binding because it cannot tell
+		 *  which of the two the parent meant. So the third state is real and is
+		 *  named — `undefined` is "this note has not reported yet", which reads
+		 *  as not open, which is what it is. */
+		open?: boolean;
 	}
 
-	let { label, note, lang, work }: Props = $props();
+	let { label, note, lang, work, lemmaMarked = false, open = $bindable() }: Props = $props();
 
 	/**
 	 * A GLOSS NAMES OTHER PLACES IN THE BOOK, and that is most of what a gloss
@@ -125,12 +157,42 @@
 	/** The whole gloss, for a note the marker declines to card. Shared with
 	    `CommentaryGloss`, which opens the same dialog for the same reason. */
 	const full = new NoteDialog();
+
+	/**
+	 * AN OPEN NOTE SAYS SO UPWARD, so the verse can light the words it is about.
+	 *
+	 * The card and the dialog are one state to the parent: what it is asking is
+	 * whether this note is being read, not which shape happens to be holding it.
+	 *
+	 * WRITTEN WITHOUT READING, which is what keeps it out of `claim()`'s trap —
+	 * an effect that reads the state it sets re-enters until Svelte gives up
+	 * with `effect_update_depth_exceeded`. Assigning a `$bindable` reads
+	 * nothing.
+	 */
+	$effect(() => {
+		open = card.open || full.rendered;
+	});
+
+	/* And a note leaving the page takes its highlight with it, which the effect
+	   above cannot do: it reports `false` on CLOSING, and a note destroyed while
+	   open never closes. `NoteCard`'s constructor carries the same pair for the
+	   card's own teardown, and for the same reason. */
+	$effect(() => () => {
+		open = false;
+	});
 </script>
 
+<!-- THE HEADWORD IS PRINTED ONLY WHERE THE VERSE IS NOT MARKING IT. A lemma
+     quotes the words the note glosses, and the note opens FROM those words —
+     so repeating them at the head of the card answers a question the reader
+     cannot have, and spends the first line of every note saying what the mark
+     they just pressed already said. Where `splitLemma` cannot locate them it
+     is printed exactly as before, which is most of Martini and none of
+     Challoner (`lemma.ts`). -->
 {#snippet gloss()}
 	{#if note}
-		{#if note.lemma}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span class="sidenote-text"
-			><InlineNodes {nodes} {hrefFor} /></span
+		{#if note.lemma && !lemmaMarked}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span
+			class="sidenote-text"><InlineNodes {nodes} {hrefFor} /></span
 		>
 	{:else}
 		<span class="sidenote-text sidenote-missing">{t('bible.noteMissing')}</span>

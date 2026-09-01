@@ -35,6 +35,16 @@
 	in an essay too — and an edition's own notes left the gutter after this one
 	did. The margin now holds a citation's source and nothing else.
 
+	AND ITS NOTES KEEP THEIR LEMMAS, WHERE AN EDITION'S NO LONGER DO. `Sidenote`
+	stopped printing a headword on 2026-09-01 and the verse marks the words
+	instead (`lemma.ts`), which cannot be done here for two independent reasons.
+	The mark is at the END of the verse, not after the words a note quotes, so
+	there is nothing to match backwards from — locating the lemma would mean
+	searching, and a search finds the wrong occurrence of any phrase a verse
+	repeats. And a card holds the verse's WHOLE apparatus, up to twenty-nine
+	notes: there the lemma is what divides one authority's remark from the next,
+	which is a job no mark in the verse can do.
+
 	THE LABEL AT THE HEAD OF EACH NOTE IS THE ATTRIBUTION, NOT A LETTER.
 	`Sidenote` letters its notes a, b, c down the chapter (`noteLetter`), and a
 	second lettered run would print two different "a"s with nothing to say which

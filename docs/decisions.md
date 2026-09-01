@@ -1950,6 +1950,39 @@ under the line that raised it, in the shape `.margin-note` printed in. Rendering
 for the short notes would print most of the apparatus and drop the essays, which is the
 worse half of both answers.
 
+**A headword is set twice on paper and once on a screen, so the verse marks it and the
+note stops repeating it** (2026-09-01). A lemma quotes the words a note glosses, and a
+printed annotated Bible prints it in the verse and again at the head of the note, because
+the note is at the foot of the page and the reader looking at it has lost their place.
+On screen the note is anchored to its own marker — it opens FROM the words — so the second
+copy answers a question the reader cannot have, and spends the first line of every note
+saying what the mark they just pressed already said. Marking the first copy says the same
+thing where the reader is already looking, in the wash `.citation-marker.highlighted`
+already uses for "this is the one you asked about". It is also what the margin note's
+highlight used to say across the page, now that there is no margin copy to pair a marker
+with.
+
+**The words are found by matching backwards from the marker, and refusing is a first-class
+answer.** The marker is where the source set it, so the words are the run immediately
+before it; a search would find the wrong occurrence of any phrase a verse repeats. That
+matches 1,805 of the Douay-Rheims's 1,909 lemmas and 1,377 of Matos Soares's 1,743 — and
+**none of Martini's 18,658**, which is the measurement the design is built around rather
+than a shortfall in it. His notes are verse-level, with every marker at position 0, and his
+lemma is a catchword printing its own elision (`E... diede... il nome di cielo.`): a
+discontinuous quotation is not a span of anything. So the note keeps its headword wherever
+the verse could not mark it, carried by the presence or absence of a single prop, and no
+note can quietly lose one. Dropping the headword unconditionally would have deleted 18,658
+of the corpus's 22,310. Allioli, Straubinger and Crampon print no lemma at all, and a
+commentary keeps its lemmas for its own two reasons: its mark sits at the end of the verse
+with nothing to match backwards from, and its card holds a whole catena, where the lemma is
+what divides one authority's remark from the next.
+
+**On paper the mark is permanent, because nothing there opens.** A screen shows the words
+only while their note is open; print has no open state, so a printed chapter would
+otherwise carry notes that had lost their headwords and verses that never said which words
+each one was about. It is a dotted underline rather than the wash — what a printed
+apparatus does, and not something to ask of a sheet of paper.
+
 **An apparatus must not move the text, and that includes the apparatus saying "this
 one".** The highlight lit on a marker was a background plus `padding-inline`, which is
 inline size a superscript in running text did not have: clicking a note re-broke its line

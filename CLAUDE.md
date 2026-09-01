@@ -862,6 +862,75 @@ page to pair with. Three things about what STAYED:
 - **A COMMENTARY STILL PRINTS NOTHING**, unchanged rather than overlooked:
   `CommentaryGloss` renders its card only when the mark does not open a dialog.
 
+**THE VERSE MARKS THE LEMMA NOW, AND THE NOTE STOPPED REPEATING IT** (2026-09-01).
+A headword quotes the words a note glosses, and a printed page sets it twice
+because the note is at the foot of the page; on screen the note opens FROM those
+words, so the copy at the head of the card was answering a question the reader
+cannot have. `src/lib/lemma.ts`'s `splitLemma` locates them and `AnnotatedText`
+wraps them, `sidenoteRoom.highlighted` lights them while the note is open, and
+`Sidenote` prints its headword only when the verse could not. Five things.
+
+- **THE ANCHOR IS THE MARKER, MATCHED BACKWARDS, NEVER A SEARCH.** The words are
+  the run immediately before the token, because that is where the source set it.
+  A search would find the wrong occurrence of any phrase a verse repeats and
+  would then have to decide what to do about the ones it found twice; matching
+  backwards has ONE candidate by construction and is either right or refused.
+- **THE COMPARISON IGNORES EVERYTHING THAT CARRIES NO WORDS** — case,
+  diacritics, punctuation and whitespace — because that is where a transcribing
+  editor differs from the verse: `Perto estás de mim` against a verse that opens
+  a parenthesis inside it, `Por que`/`Porque`, `first born`/`firstborn`. The
+  answer is still an exact OFFSET, which is what `fold`'s index map is for: it
+  was a length-preserving fold until the punctuation went, and `at[i]` is what
+  buys the offset back. It also makes the `ELIDED` guard load-bearing —
+  `E... diede...` folds to `ediede` once the dots are gone, and would match
+  across any words at all.
+- **FUZZY MATCHING WAS TRIED AND BOUGHT NOTHING.** A bounded edit distance (one
+  edit per twelve characters) over the candidate tail recovers **zero** further
+  headwords in either edition: what is left is not near-misses but places where
+  the note does not quote the verse — `Let - human`, `A star fall`,
+  `Now Alcimus` against `Now one Alcimus`. Loosening past the characters that
+  carry no words only buys the power to mark a span the note never named.
+- **MEASURED PER EDITION, AND THE THIRD IS ZERO**: `bible.douay-rheims.en`
+  1,805 of 1,909 (95%), `bible.matos-soares.pt` 1,377 of 1,743 (79%),
+  `bible.martini.it` **0 of 18,658**. Martini's notes are VERSE-level — every
+  marker sits at position 0, so there is nothing before it — and his lemma is a
+  catchword with the elision printed in (`E... diede... il nome di cielo.`),
+  which names a discontinuous quotation and so is not a span of anything.
+  Allioli (37,790 notes), Straubinger (13,079) and Crampon (8,854) print no
+  lemma at all.
+- **SO REFUSING IS A FIRST-CLASS OUTCOME AND THE PANEL KEEPS THE HEADWORD.**
+  `lemmaMarked` is true exactly when the words were located, and it is what
+  suppresses the headword — one prop, so the two can never disagree and no note
+  can quietly lose its headword. A design that dropped the
+  headword unconditionally would have deleted 18,658 of the corpus's 22,310.
+- **`CommentaryGloss` KEEPS ITS LEMMAS, for two independent reasons.** Its mark
+  is at the END of the verse, so there is nothing to match backwards from; and
+  its card holds the verse's whole apparatus, up to twenty-nine notes, where the
+  lemma is what divides one authority's remark from the next.
+
+**THE OPEN STATE IS A BINDING, NOT A FIELD ON `sidenoteRoom`.** It was one for
+an hour, on the argument that "which note has the reader named" is one question
+whether the answer lights a gutter copy or a phrase in a verse. True, and the
+wrong conclusion: `sidenoteRoom` is the MARGIN's object — whether the viewport
+has room for a gutter copy, and which copy was clicked — and a verse with its
+own notes is local to one unit. A page-wide field there is a singleton standing
+in for something local, and it needs a key the parent and the child agree on to
+address it by. `AnnotatedText` binds `Sidenote`'s `open` instead, and the
+pairing runs on the PIECE INDEX alone: the text run at `i` ends with the lemma
+of the marker at `i + 1`. `sidenoteRoom.highlighted` keeps its one writer.
+
+**AND THAT BINDING MUST DECLARE NO FALLBACK.** `open = $bindable(false)` threw
+`props_invalid_value` on every annotated chapter at hydration: `openNotes` is a
+deliberately SPARSE array — only marker positions are ever written — so a parent
+binds a slot that is still `undefined`, and Svelte refuses a fallback plus an
+undefined binding because it cannot tell which of the two was meant. `$bindable()`
+with no argument is the fix, and the third state is real rather than tolerated:
+`undefined` is "this note has not reported yet", which reads as not open, which
+is what it is. Filling the array to length ahead of the bindings is the other
+fix and a worse one — an effect writing state derived from `pieces` on every
+unit, to close a hole that already reads correctly. It is a RUNTIME error, so
+nothing in `npm test`, `npm run check` or the build sees it.
+
 **A 44px tap target on a mouse is a bug, and the dagger is where it showed.**
 `.note-trigger::after` grows the mark to the accessibility floor as a
 POSITIONED overlay, which paints above the inline content around it and

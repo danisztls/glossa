@@ -87,11 +87,20 @@ class SidenoteRoom {
 	 * Which margin note the reader last named, by the id of the `NoteCard`
 	 * that owns it — or nothing, which is the resting state.
 	 *
-	 * AT MOST ONE, because the question it answers is "which of these is the
-	 * one I just clicked". A column of notes beside a densely-annotated
-	 * paragraph is exactly where a marker and its note stop being obviously
-	 * paired: they are separated by the whole width of the gutter, with other
-	 * notes stacked between. Lighting two would answer nothing.
+	 * ONE WRITER, `CitationDisclosure`, and it is the margin's business alone.
+	 * The question it answers is "which of these is the one I just clicked": a
+	 * column of sources beside a densely-cited paragraph is exactly where a
+	 * marker and its note stop being obviously paired, since they are separated
+	 * by the whole width of the gutter with others stacked between. AT MOST
+	 * ONE, because lighting two would answer nothing.
+	 *
+	 * IT IS NOT WHERE AN OPEN BIBLE NOTE LIGHTS ITS LEMMA, though that is the
+	 * same pairing question asked inside the text, and it lived here for an
+	 * hour. This object is the MARGIN's — whether there is room for a gutter
+	 * copy, and which copy was clicked — and a verse and its own notes are
+	 * local to one unit, so a field here would have been a page-wide singleton
+	 * standing in for something local, addressed by a key two components had to
+	 * agree on. `AnnotatedText` binds `Sidenote`'s `open` instead.
 	 *
 	 * HELD HERE RATHER THAN IN THE NOTE because only one note can hold it and
 	 * a note cannot know that on its own — the same reason `#claims` is here.
