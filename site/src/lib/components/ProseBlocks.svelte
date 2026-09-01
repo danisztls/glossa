@@ -39,8 +39,8 @@
 		lang: string;
 		/** Corpus work id of the text being read, when the caller knows it. Only
 		    the few works listed in `refs-grammar.ts`'s `WORK_CONFIGS` read
-		    differently for it — English works that number the books of Kings
-		    the Douay way — and passing nothing reads the work as its language
+		    differently for it — works of the Douay tradition, which name the
+		    books of Kings its way and number the Psalter the Vulgate's — and passing nothing reads the work as its language
 		    reads. */
 		work?: string;
 		/** Set an illuminated initial on the opening block. The caller decides — it is the one that knows this unit opens a chapter or a document, which this component cannot see. */
@@ -136,7 +136,7 @@
 	}
 
 	function hrefFor(seg: RefSegment): string | undefined {
-		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang });
+		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang, work });
 	}
 </script>
 

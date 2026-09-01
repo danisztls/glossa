@@ -36,8 +36,8 @@
 		lang?: string;
 		/** Corpus work id of the text being read, when the caller knows it. Only
 		    the few works listed in `refs-grammar.ts`'s `WORK_CONFIGS` read
-		    differently for it — English works that number the books of Kings
-		    the Douay way — and passing nothing reads the work as its language
+		    differently for it — works of the Douay tradition, which name the
+		    books of Kings its way and number the Psalter the Vulgate's — and passing nothing reads the work as its language
 		    reads. */
 		work?: string;
 		class?: string;
@@ -64,7 +64,7 @@
 <span class={className}>
 	{#each segments as seg, i (i)}
 		{#if seg.kind === 'text'}{seg.text}{:else}
-			{@const href = refHref(seg, { bibleWorkId, lang: effectiveLang })}
+			{@const href = refHref(seg, { bibleWorkId, lang: effectiveLang, work })}
 			{#if href}
 				<a class="ref-link" {href}>{seg.raw}</a>
 			{:else}

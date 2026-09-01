@@ -26,6 +26,7 @@
  */
 
 import {
+	citesVulgateNumbering,
 	expandIbidem,
 	linkifyProse,
 	normalizeCitationSpacing,
@@ -62,18 +63,26 @@ import { toVulgateCandidates } from '../src/lib/versification.ts';
  *   - A verse range can straddle a split point, so verses are mapped
  *     individually and regrouped by the chapter they land in.
  *
- * Applied unconditionally, with no "is this a divergent book" gate:
- * `toVulgateCandidates` is the identity for any address it has no data for,
- * and a no-op cannot turn a correct address into a wrong one. The gate used
- * to exist and was a bug — it skipped the late-merge chapters (Matthew 17,
- * Acts 7, Exodus 40, Zechariah 2, 2 Corinthians 13), emitting e.g. Acts 7:60
- * into a corpus whose Acts 7 ends at 59.
+ * Applied unconditionally across BOOKS, with no "is this a divergent book"
+ * gate: `toVulgateCandidates` is the identity for any address it has no data
+ * for, and a no-op cannot turn a correct address into a wrong one. The gate
+ * used to exist and was a bug — it skipped the late-merge chapters (Matthew
+ * 17, Acts 7, Exodus 40, Zechariah 2, 2 Corinthians 13), emitting e.g. Acts
+ * 7:60 into a corpus whose Acts 7 ends at 59.
+ *
+ * Across WORKS it is conditional, and has to be: a work of the Douay
+ * tradition already cites in the numbering being converted to, so converting
+ * moves each of its psalm references a psalm down. `refAddress` makes the
+ * same exception off the same flag — this is the half of "the builder must
+ * pass the same work the page passes" that versification needs.
  */
 /**
  * @param {ScriptureRef} ref
+ * @param {boolean} alreadyVulgate
  * @returns {ScriptureRef[]}
  */
-function toVulgateRefs(ref) {
+function toVulgateRefs(ref, alreadyVulgate) {
+	if (alreadyVulgate) return [ref];
 	if (ref.verses.length === 0) {
 		return toVulgateCandidates(ref.osis, ref.chapter).map((c) => ({
 			osis: ref.osis,
@@ -204,11 +213,12 @@ export function blockProse(block) {
 function refsForUnit(unit, lang, work) {
 	/** @type {ScriptureRef[]} */
 	const out = [];
+	const alreadyVulgate = citesVulgateNumbering(lang, work);
 	for (const citation of unit.citations ?? []) {
 		const raw = citation.label ?? citation.text;
 		if (!raw) continue;
 		for (const seg of parseRefs(normalizeCitationSpacing(raw), { lang, work })) {
-			if (seg.kind === 'scripture') out.push(...toVulgateRefs(seg));
+			if (seg.kind === 'scripture') out.push(...toVulgateRefs(seg, alreadyVulgate));
 		}
 	}
 	// The BODY too, not just the apparatus. A reference the text names in its
@@ -220,7 +230,7 @@ function refsForUnit(unit, lang, work) {
 	for (const block of unit.blocks ?? []) {
 		const prose = blockProse(block);
 		for (const seg of linkifyProse(prose, { lang, work })) {
-			if (seg.kind === 'scripture') out.push(...toVulgateRefs(seg));
+			if (seg.kind === 'scripture') out.push(...toVulgateRefs(seg, alreadyVulgate));
 		}
 	}
 	return out;

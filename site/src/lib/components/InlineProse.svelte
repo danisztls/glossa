@@ -24,7 +24,7 @@
 	);
 
 	function hrefFor(seg: RefSegment): string | undefined {
-		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang });
+		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang, work });
 	}
 </script>
 

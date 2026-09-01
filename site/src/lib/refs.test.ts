@@ -7,7 +7,7 @@ import {
 	refHref,
 	type RefSegment
 } from './refs';
-import { bookAbbrev, hasBookAbbrevs } from './refs-grammar';
+import { bookAbbrev, citesVulgateNumbering, hasBookAbbrevs } from './refs-grammar';
 
 const CANON_OT =
 	`gen exod lev num deut josh judg ruth 1sam 2sam 1kgs 2kgs 1chr 2chr ezra neh tob jdt
@@ -59,11 +59,19 @@ const { mockBibleBooks } = vi.hoisted(() => {
 				name: 'Psalms',
 				abbrevs: ['ps', 'psalm', 'psalms'],
 				order: 23,
+				// 10, 102 and 103 are here for the Vulgate-numbering works below:
+				// 102/103 are the pair Haydock's `Ps. ciii. 3` lands between, and
+				// Vulg Ps 10 (8 verses, against Hebrew Ps 10's 18) is what makes
+				// the residue case fail to exist rather than resolve wrongly.
+				// Real CPDV counts throughout.
 				chapters: makeChapters({
 					1: 6,
 					9: 39,
+					10: 8,
 					21: 32,
 					50: 21,
+					102: 22,
+					103: 35,
 					113: 26,
 					114: 9,
 					115: 10,
@@ -1640,6 +1648,96 @@ describe('refHref', () => {
 					{ bibleWorkId: 'bible.nonexistent' }
 				)
 			).toBeUndefined();
+		});
+	});
+
+	/**
+	 * The other side of the same conversion: a work that ALREADY cites in
+	 * Vulgate numbering must not be converted, or every psalm reference it
+	 * prints in the shifted range lands a psalm low.
+	 *
+	 * `Ps. ciii. 3` is the citation that found this — Calmet on Genesis 1:6,
+	 * glossing the firmament that divides the waters, and Vulgate Ps 103:3 is
+	 * "Who coverest the higher rooms thereof with water". Converted, it reached
+	 * Ps 102:3, "Who forgiveth all thy iniquities".
+	 */
+	describe('works that already cite in Vulgate numbering', () => {
+		const PS_CIII: RefSegment = {
+			kind: 'scripture',
+			osis: 'ps',
+			chapter: 103,
+			verses: [3],
+			raw: 'Ps. ciii. 3'
+		};
+
+		it("leaves Haydock's psalm citation where he wrote it", () => {
+			expect(
+				refHref(PS_CIII, {
+					bibleWorkId: 'bible.cpdv.en',
+					lang: 'en',
+					work: 'commentary.haydock.en'
+				})
+			).toBe('/scriptura/ps/103#v3');
+		});
+
+		it('still converts the same segment when no work is named — the Catechism default', () => {
+			expect(refHref(PS_CIII, { bibleWorkId: 'bible.cpdv.en', lang: 'en' })).toBe(
+				'/scriptura/ps/102#v3'
+			);
+		});
+
+		it.each([
+			['summa.en', 'en'],
+			['bible.douay-rheims.en', 'en'],
+			['bible.straubinger.es', 'es'],
+			['bible.martini.it', 'it']
+		])('opts %s out of conversion too', (work, lang) => {
+			expect(refHref(PS_CIII, { bibleWorkId: 'bible.cpdv.en', lang, work })).toBe(
+				'/scriptura/ps/103#v3'
+			);
+		});
+
+		it('does not shift a verse RANGE either', () => {
+			expect(
+				refHref(
+					{ kind: 'scripture', osis: 'ps', chapter: 103, verses: [3, 4, 5], raw: 'Ps. ciii. 3-5' },
+					{ bibleWorkId: 'bible.cpdv.en', lang: 'en', work: 'commentary.haydock.en' }
+				)
+			).toBe('/scriptura/ps/103?v=3-5#v3');
+		});
+
+		it('degrades to a chapter-only link for the residue, rather than resolving it elsewhere', () => {
+			// Haydock's six Hebrew-numbered citations, e.g. "Ps. x. 16" for the
+			// second half of the merged Vulgate Ps 9, written beside a gloss on the
+			// Hebrew text. Vulgate Ps 10 stops at verse 8, so the verse cannot
+			// resolve — and a chapter link is the documented answer to that, not a
+			// silent hop to whatever the other numbering would have reached.
+			expect(
+				refHref(
+					{ kind: 'scripture', osis: 'ps', chapter: 10, verses: [16], raw: 'Ps. x. 16' },
+					{ bibleWorkId: 'bible.cpdv.en', lang: 'en', work: 'commentary.haydock.en' }
+				)
+			).toBe('/scriptura/ps/10');
+		});
+
+		it('leaves a non-divergent book alone under either reading', () => {
+			const seg: RefSegment = {
+				kind: 'scripture',
+				osis: 'john',
+				chapter: 3,
+				verses: [16],
+				raw: 'Jn 3:16'
+			};
+			expect(
+				refHref(seg, { bibleWorkId: 'bible.cpdv.en', lang: 'en', work: 'commentary.haydock.en' })
+			).toBe(refHref(seg, { bibleWorkId: 'bible.cpdv.en', lang: 'en' }));
+		});
+
+		it('reads the flag off the work, never off the language', () => {
+			expect(citesVulgateNumbering('en', 'commentary.haydock.en')).toBe(true);
+			expect(citesVulgateNumbering('en')).toBe(false);
+			expect(citesVulgateNumbering('en', 'ccc.en')).toBe(false);
+			expect(citesVulgateNumbering('it')).toBe(false);
 		});
 	});
 });

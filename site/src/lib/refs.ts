@@ -26,8 +26,8 @@ import {
 	workIdToEdition
 } from './corpus';
 import { hrefFor, summaPartSlug, type Address } from './address';
-import { setDocumentTitleSource, type RefSegment } from './refs-grammar';
-import { isDivergentBook, resolveVulgate } from './versification';
+import { citesVulgateNumbering, setDocumentTitleSource, type RefSegment } from './refs-grammar';
+import { isDivergentBook, resolveVulgate, type VulgateAddress } from './versification';
 
 export * from './refs-grammar';
 
@@ -88,7 +88,7 @@ function firstLocusSection(locus: string | null): number | undefined {
  */
 export function refAddress(
 	seg: RefSegment,
-	ctx: { bibleWorkId?: string; lang?: string }
+	ctx: { bibleWorkId?: string; lang?: string; work?: string }
 ): Address | undefined {
 	if (seg.kind === 'ccc') return { kind: 'ccc', n: seg.n };
 	if (seg.kind === 'compendium') return { kind: 'compendium', n: seg.n };
@@ -189,15 +189,29 @@ export function refAddress(
 	// module has no data for, conversion is the identity, and a no-op can
 	// never turn a correct address into a wrong one (see
 	// `toVulgateCandidates`' docblock, which says exactly this).
+	//
+	// UNCONDITIONAL ACROSS BOOKS, NOT ACROSS WORKS. The safety argument above
+	// covers the books the module has no data for; it says nothing about a work
+	// that already cites in the numbering being converted TO. A work of the
+	// Douay tradition does, and for it every psalm citation in the shifted range
+	// lands a psalm low — Haydock's `Ps. ciii. 3` reached Ps 102:3. Those works
+	// declare `vulgateNumbering` on their config, measured rather than assumed
+	// (see `refs-grammar.ts` for the per-work counts and for the residue this
+	// trades away), and their references are checked for existence and never
+	// moved. The default stays conversion, which is what the Catechism needs.
+	const resolve = citesVulgateNumbering(ctx.lang, ctx.work)
+		? (osis: string, chapter: number, verse?: number) =>
+				exists(osis, chapter, verse) ? { osis, chapter, verse } : undefined
+		: (osis: string, chapter: number, verse?: number) =>
+				resolveVulgate(osis, chapter, verse, exists);
+
 	let chapterN = seg.chapter;
 	let anchorVerse: number | undefined;
 
 	{
 		const firstVerse = seg.verses[0];
 		const withVerse =
-			firstVerse !== undefined
-				? resolveVulgate(seg.osis, seg.chapter, firstVerse, exists)
-				: undefined;
+			firstVerse !== undefined ? resolve(seg.osis, seg.chapter, firstVerse) : undefined;
 		if (withVerse) {
 			chapterN = withVerse.chapter;
 			anchorVerse = withVerse.verse;
@@ -206,7 +220,7 @@ export function refAddress(
 			// edition even after conversion (a malformed source citation, of
 			// which the CCC has a documented handful) — fall back to placing
 			// the chapter alone rather than emitting a dead anchor.
-			const chapterOnly = resolveVulgate(seg.osis, seg.chapter, undefined, exists);
+			const chapterOnly = resolve(seg.osis, seg.chapter, undefined);
 			if (!chapterOnly) return undefined; // the chapter doesn't exist in this edition at all
 			chapterN = chapterOnly.chapter;
 		}
@@ -230,7 +244,7 @@ export function refAddress(
 	 */
 	const extent =
 		anchorVerse !== undefined && seg.verses.length > 1
-			? verseExtent(seg.osis, seg.chapter, seg.verses, chapterN, exists)
+			? verseExtent(seg.osis, seg.chapter, seg.verses, chapterN, resolve)
 			: undefined;
 
 	// Edition-free (docs/decisions.md #2, which the Bible now follows too).
@@ -263,17 +277,19 @@ export function refAddress(
  *  only the spelling of it. */
 export function refHref(
 	seg: RefSegment,
-	ctx: { bibleWorkId?: string; lang?: string }
+	ctx: { bibleWorkId?: string; lang?: string; work?: string }
 ): string | undefined {
 	const address = refAddress(seg, ctx);
 	return address && hrefFor(address);
 }
 
 /**
- * The `{from, to}` span of a verse list, CONVERTED to Vulgate numbering and
- * clamped to verses that actually exist in the reader's edition.
+ * The `{from, to}` span of a verse list, put through the caller's `resolve`
+ * (conversion, or the identity for a work that already cites in Vulgate
+ * numbering) and clamped to verses that actually exist in the reader's
+ * edition.
  *
- * Every verse is converted individually rather than the span's endpoints
+ * Every verse is resolved individually rather than the span's endpoints
  * being offset by whatever the anchor moved: the late-merge tables
  * (`versification.ts`) shift a chapter's tail but not its head, so a range
  * straddling the merge point moves by different amounts at each end. "Mt
@@ -300,11 +316,11 @@ function verseExtent(
 	sourceChapter: number,
 	verses: number[],
 	chapterN: number,
-	exists: (osis: string, chapterN: number, verseN?: number) => boolean
+	resolve: (osis: string, chapter: number, verse?: number) => VulgateAddress | undefined
 ): { from: number; to: number } | undefined {
 	const present: number[] = [];
 	for (const v of verses) {
-		const resolved = resolveVulgate(osis, sourceChapter, v, exists);
+		const resolved = resolve(osis, sourceChapter, v);
 		if (resolved?.verse !== undefined && resolved.chapter === chapterN)
 			present.push(resolved.verse);
 	}

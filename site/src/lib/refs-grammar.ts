@@ -352,11 +352,14 @@ export interface RefsOpts {
 	 *
 	 * Optional, and almost always ignorable: the grammar's axis is content
 	 * language, and this is consulted only for the handful of works listed in
-	 * `WORK_CONFIGS`, whose own text contradicts their language's book table.
-	 * Today all of them are English works numbering the books of Kings the
-	 * Douay way, where `1 Kings` means 1 Samuel. Passing nothing reads such a
-	 * work as its language reads — which is what happened until 2026-08-26,
-	 * and what left 52 references pointing one book off.
+	 * `WORK_CONFIGS`, whose own citations contradict what their language's
+	 * tables would read. All of them belong to the Douay tradition, and it
+	 * shows up on two axes: the books of KINGS, where `1 Kings` means 1 Samuel
+	 * (English, Spanish and Italian works — passing nothing reads such a work
+	 * as its language reads, which is what happened until 2026-08-26 and what
+	 * left 52 references pointing one book off), and the PSALTER, where the
+	 * numbering is already the corpus's own and must not be converted a second
+	 * time (`vulgateNumbering`, which is what `Ps. ciii. 3` needed).
 	 */
 	work?: string;
 	/**
@@ -2034,6 +2037,47 @@ interface LangConfig {
 	 * (`MAX_VERSE`).
 	 */
 	proseRomanChapters?: boolean | 'lowercase';
+	/**
+	 * This work's scripture citations are already in the corpus's own VULGATE
+	 * numbering, so the Hebrew->Vulgate conversion must not be applied to them.
+	 *
+	 * `refs.ts` converts every citation unconditionally, because the Catechism
+	 * — the apparatus the converter was written for — cites the Masoretic
+	 * numbering its own editions print. A work of the Douay tradition does the
+	 * opposite, and converting its references moves each one a psalm down:
+	 * Haydock's `Ps. ciii. 3` ("the heavens are often represented as a tent
+	 * spread out", Calmet at Gen. 1:6) resolved to Ps 102:3, "Who forgiveth all
+	 * thy iniquities", instead of Ps 103:3, "Who coverest the higher rooms
+	 * thereof with water".
+	 *
+	 * MEASURED, not inferred from the tradition. A psalm citation decides the
+	 * question when it exists under exactly one of the two numberings — Vulgate
+	 * Ps 9 runs to 39 verses where Hebrew Ps 9 stops at 21, and the wholesale
+	 * -1 shift between them puts most of the Psalter's tail out of range one way
+	 * or the other. Counting those over each work's whole stored text:
+	 *
+	 *   commentary.haydock.en   148 Vulgate-only :   6 Hebrew-only
+	 *   summa.en                135 :   1
+	 *   bible.straubinger.es    467 :   1
+	 *   bible.martini.it         65 :  11
+	 *   bible.douay-rheims.en     2 :   0   (Challoner's notes cite little)
+	 *   ccc.en                    0 :  18   — the counter-case, left converting
+	 *   ccc.pt                    0 :  36
+	 *
+	 * The residue is real and is not noise: Haydock's six are places where he is
+	 * discussing the Hebrew text and follows its numbering into the citation
+	 * ("Ps. x. 16" for the second half of the merged Vulgate Ps 9, beside a
+	 * gloss on the Hebrew). Those six now link to a chapter rather than a verse.
+	 * That is the trade this flag makes, and it is the one the corpus's own
+	 * under-linking-beats-a-wrong-link principle asks for at 148 against 6.
+	 *
+	 * NOT the same fact as the manifest's `psalm_numbering`, which describes an
+	 * edition's own stored TEXT and is consumed by `sync-corpus.mjs` before the
+	 * site sees it (see `types.ts`). This describes the citation strings a work
+	 * PRINTS, which is a property of how it cites and belongs beside the Kings
+	 * convention above — same works, same evidence, same table.
+	 */
+	vulgateNumbering?: boolean;
 }
 
 function escapeRe(s: string): string {
@@ -2094,14 +2138,20 @@ const CONFIG_EN = buildConfig(BOOK_VARIANTS_EN, DOCUMENT_SIGLA_EN, ':', true, tr
  * neighbours do, and the sigla, the marks and the other seventy books are
  * the same table.
  */
-const CONFIG_EN_DOUAY = buildConfig(
-	remapBookVariants(BOOK_VARIANTS_EN, KINGS_MODERN, KINGS_DOUAY),
-	DOCUMENT_SIGLA_EN,
-	':',
-	true,
-	true,
-	[',']
-);
+const CONFIG_EN_DOUAY: LangConfig = {
+	...buildConfig(
+		remapBookVariants(BOOK_VARIANTS_EN, KINGS_MODERN, KINGS_DOUAY),
+		DOCUMENT_SIGLA_EN,
+		':',
+		true,
+		true,
+		[',']
+	),
+	// A work that says "1 Kings" for 1 Samuel numbers the Psalter the same
+	// way, and both halves are one fact about one tradition. Vacuous for the
+	// two encyclicals on this config — neither cites a psalm by verse at all.
+	vulgateNumbering: true
+};
 // Fourth argument stays `false`: PT never uses a bare SPACE as a
 // chapter/verse separator, so `allowBareSeparators` (which would enable both
 // " " and ".") is still the wrong knob for it. What PT does drift to is "."
@@ -2164,16 +2214,20 @@ const CONFIG_RU = romanceConfig(BOOK_VARIANTS_RU, DOCUMENT_SIGLA_SERIES_ONLY);
  * dialect. `CONFIG_IT_MARTINI` is the one exception, and it is not about
  * naming at all — see `proseRomanChapters`.
  */
-const CONFIG_ES_DOUAY = romanceConfig(
-	remapBookVariants(BOOK_VARIANTS_ES, KINGS_ES_MODERN, KINGS_ES_DOUAY),
-	DOCUMENT_SIGLA_ES
-);
+const CONFIG_ES_DOUAY: LangConfig = {
+	...romanceConfig(
+		remapBookVariants(BOOK_VARIANTS_ES, KINGS_ES_MODERN, KINGS_ES_DOUAY),
+		DOCUMENT_SIGLA_ES
+	),
+	vulgateNumbering: true
+};
 const CONFIG_IT_MARTINI: LangConfig = {
 	...romanceConfig(
 		remapBookVariants(BOOK_VARIANTS_IT, KINGS_IT_MODERN, KINGS_IT_DOUAY),
 		DOCUMENT_SIGLA_IT
 	),
-	proseRomanChapters: true
+	proseRomanChapters: true,
+	vulgateNumbering: true
 };
 
 /**
@@ -2220,7 +2274,8 @@ const CONFIG_EN_HAYDOCK: LangConfig = {
 		// verse after it, which is why "Cf. Ez 36." keeps its period.
 		[',', '.']
 	),
-	proseRomanChapters: 'lowercase'
+	proseRomanChapters: 'lowercase',
+	vulgateNumbering: true
 };
 
 /**
@@ -2339,6 +2394,21 @@ function configFor(lang?: string, work?: string): LangConfig {
 	if (!lang) return CONFIG_EN;
 	const tag = lang.toLowerCase();
 	return CONFIGS[tag.split('-')[0]] ?? CONFIG_EN;
+}
+
+/**
+ * Whether a work's scripture citations are already Vulgate-numbered, and so
+ * must NOT be run through the Hebrew->Vulgate conversion.
+ *
+ * Lives here rather than in `refs.ts` because it is a property of how a work
+ * cites, which is what a `LangConfig` is — see `vulgateNumbering`. Exported
+ * because `refs.ts` holds the corpus half and never sees a config; the build
+ * scripts (`build-xrefs.mjs`, `reference-coverage.mjs`) reach it through
+ * `refHref`, which takes the same `work` they already thread for the book
+ * tables.
+ */
+export function citesVulgateNumbering(lang?: string, work?: string): boolean {
+	return configFor(lang, work).vulgateNumbering === true;
 }
 
 /**
