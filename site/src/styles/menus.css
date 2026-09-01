@@ -269,23 +269,65 @@
 }
 
 /* Sized and coloured like `/documenta`'s `.doc-search`, which is the site's
-   other search box and the one a reader will have met first. */
+   other search box and the one a reader will have met first. At REST; the two
+   part company on focus, and the reason is below. */
 .menu-filter {
 	inline-size: 100%;
 	box-sizing: border-box;
 	flex: none;
-	padding-block: 0.3rem;
+	padding-block: 0.4rem;
 	padding-inline: 0.45rem;
 	font: inherit;
 	font-size: 0.85rem;
+	/*
+	 * STATED BECAUSE `font: inherit` ABOVE DOES NOT LEAVE IT A RATIO. The
+	 * shorthand takes the parent's COMPUTED `line-height`, which a browser
+	 * has already resolved to a length — 24px, from `body`'s 1.5 at the
+	 * body's own 1rem — so the `font-size` on the line above does not
+	 * rescale it. The field came out 1.5 line-heights of the BODY tall
+	 * rather than of itself: a 24.4px line box where the rule reads as
+	 * 1.5 x 0.85rem = 20.4px, i.e. ~3.6px of leading nobody asked for, and
+	 * the placeholder sitting 1.7px above the field's centre inside it.
+	 * Measured off a screenshot against Source Sans 3's own metrics (cap
+	 * 660/1000, ascender 722, `g` -234); the `.menu-item` buttons beside it
+	 * are the control, and they centre to within 0.35px because a button
+	 * inherits the RATIO in the ordinary way and rescales it.
+	 *
+	 * `padding-block` is 0.4rem rather than 0.3 to hold the field at the
+	 * height it already had — 2.075rem against 2.1 — so this moves the text
+	 * and not the panel.
+	 */
+	line-height: 1.5;
 	color: var(--color-text);
 	background: var(--color-bg-elevated);
 	border: 1px solid var(--color-border);
 	border-radius: var(--radius-md);
 }
 
+/*
+ * THE FOCUS INDICATOR IS IN THE BORDER HERE, which is `JumpBox`'s exception to
+ * the global ring and for exactly its reason: all three filtered menus focus
+ * this input the moment the panel opens, so the ring is the panel's RESTING
+ * state rather than a response to anything the reader did — and an offset
+ * rectangle drawn around an already-bordered rounded field stacks into a
+ * double frame that reads as an OS dialog rather than as part of the page.
+ * Doubled twice over while this rule reddened the border underneath it: one
+ * focus event, two indicators, two hues, 2px apart.
+ *
+ * So it is RELOCATED and not removed — ultramarine border plus a soft halo of
+ * the same colour, 8.49:1 against the field on light. `.doc-search` keeps the
+ * global ring and this is not a divergence from it: that box is never
+ * autofocused, so there the ring really is a response to a click.
+ *
+ * The transparent outline is not decoration. `forced-colors` paints an
+ * `outline` in the system focus colour, so high-contrast mode keeps a real
+ * ring even where the halo below is dropped.
+ */
 .menu-filter:focus-visible {
-	border-color: var(--color-accent);
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+	border-color: var(--color-apparatus);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
 }
 
 /*
