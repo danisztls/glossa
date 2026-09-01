@@ -863,6 +863,8 @@
 									lang={entry.work.language}
 									work={entry.work.id}
 									title={entry.work.short_title || entry.work.title}
+									osis={data.osis}
+									chapter={data.chapterN}
 								/>{/each}
 						</span>
 					{/each}

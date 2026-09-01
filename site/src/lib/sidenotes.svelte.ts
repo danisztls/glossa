@@ -244,6 +244,38 @@ export function marginOverflows(note: { lemma?: string; text?: string } | undefi
 }
 
 /**
+ * How much apparatus a floating card holds before it stops being one.
+ *
+ * THE THRESHOLD IS THE CARD'S OWN ARITHMETIC, not a taste. `.note-popover`
+ * caps at 26rem by 32rem, and its own docblock does the width: 26rem of
+ * 0.85rem sans is about 62 characters a line, which is `--measure-cpl`. The
+ * height gives 24 lines at `line-height: 1.5`, so a full card is roughly
+ * 1,490 characters. 900 keeps the commonest card at about three fifths of
+ * that — comfortably short of the scroll — and hands everything longer to a
+ * dialog, which is the site's shape for a panel that has stopped being
+ * anchored to anything (`.note-dialog`, and `.dialog-bare` before it).
+ *
+ * WHAT IT COSTS, MEASURED ACROSS THE CORPUS. It moves 9.3% of Haydock's
+ * annotated verses to a modal, 8.2% of Martini's notes, 4.4% of
+ * Straubinger's, 0.7% of Allioli's, 0.3% of Challoner's and none of Matos
+ * Soares's. That distribution is the argument for a threshold rather than a
+ * per-apparatus rule: what decides is how long THIS note is, and the same
+ * edition prints both a phrase and an essay.
+ *
+ * IT IS NOT `MARGIN_CLAMP_CHARS`, and the two must not be merged. That one
+ * asks how much a 17rem gutter column sets before a float outruns the line
+ * that raised it; this one asks how much a card holds before it covers the
+ * text it points at. Different columns, different questions, and the answers
+ * are five times apart.
+ */
+export const CARD_MAX_CHARS = 900;
+
+/** Whether an apparatus this long wants a dialog rather than a card. */
+export function overflowsCard(chars: number): boolean {
+	return chars > CARD_MAX_CHARS;
+}
+
+/**
  * The mark a COMMENTARY is anchored by, and the reason it is a symbol.
  *
  * The edition's own notes letter themselves a, b, c down the chapter
@@ -387,9 +419,17 @@ export class NoteCard extends AnchoredPanel {
 	 */
 	#marginCopy: boolean;
 
-	constructor(id: string, options: { margin?: boolean } = {}) {
+	/**
+	 * Whether THIS note is too long for a card — read as a thunk, not stored
+	 * as a flag, because the answer is a `$derived` in the component and a
+	 * note is a prop that can change under the same card.
+	 */
+	#tooLong: (() => boolean) | undefined;
+
+	constructor(id: string, options: { margin?: boolean; modal?: () => boolean } = {}) {
 		super(id);
 		this.#marginCopy = options.margin ?? true;
+		this.#tooLong = options.modal;
 		$effect(() => () => {
 			this.#cancel();
 			sidenoteRoom.unhighlight(this.id);
@@ -400,6 +440,27 @@ export class NoteCard extends AnchoredPanel {
 	 *  there, whatever the viewport is doing. */
 	get #inMargin(): boolean {
 		return this.#marginCopy && sidenoteRoom.margin;
+	}
+
+	/**
+	 * Whether the marker opens a DIALOG instead of this card.
+	 *
+	 * A card is a shape for a paragraph: anchored beside the mark that raised
+	 * it, sized by what is in it, dismissed by looking away. Past a certain
+	 * length it stops being any of those — it covers the verse it points at,
+	 * and it scrolls, which is a card pretending to be a page. The site
+	 * already had the answer for a panel that has stopped being anchored to
+	 * anything, and it was already reachable from a long note in the margin:
+	 * the "read more" dialog. This is the same dialog, reached from the
+	 * marker, for a reader with no margin to read the head of the note in.
+	 *
+	 * FALSE WHEREVER THERE IS A MARGIN COPY, because there the marker is not a
+	 * disclosure at all — the note is already beside the line and a click
+	 * lights it (`onClick`). The way to a long note's whole text there is the
+	 * ellipsis at the end of the clamped copy, which is the same dialog again.
+	 */
+	get asModal(): boolean {
+		return !this.#inMargin && (this.#tooLong?.() ?? false);
 	}
 
 	/** Whether this is the note the reader named in the margin. False wherever
@@ -421,7 +482,7 @@ export class NoteCard extends AnchoredPanel {
 	 * popover before anything here saw it.
 	 */
 	get popovertarget(): string | undefined {
-		return this.#inMargin ? undefined : this.id;
+		return this.#inMargin || this.asModal ? undefined : this.id;
 	}
 
 	/** `aria-expanded` only where activating the marker really does expand
@@ -466,7 +527,7 @@ export class NoteCard extends AnchoredPanel {
 	 * passed, which is the one thing the gutter cannot answer on its own.
 	 */
 	onPointerEnter = () => {
-		if (!canHover() || this.#inMargin) return;
+		if (!canHover() || this.#inMargin || this.asModal) return;
 		this.#closeTimer = clear(this.#closeTimer);
 		if (this.open || this.#openTimer !== undefined) return;
 		this.#openTimer = setTimeout(() => {
@@ -501,6 +562,9 @@ export class NoteCard extends AnchoredPanel {
 	 * any more (`onPointerEnter`), so there is otherwise nothing to close.
 	 */
 	onClick = () => {
+		// Never reached for a modal note either: `asModal` is false wherever
+		// there is a margin, so this returns before it could matter, and the
+		// component's own handler owns the `<dialog>`.
 		if (!this.#inMargin) return;
 		sidenoteRoom.highlighted = this.lit ? undefined : this.id;
 		this.hide();

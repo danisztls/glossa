@@ -277,6 +277,104 @@ export function inlineText(nodes: InlineNode[]): string {
 }
 
 /**
+ * A parsed gloss cut in two at `max` characters of text — what the margin
+ * sets open, and what it holds back.
+ *
+ * WHY THE TAIL COMES BACK RATHER THAN BEING DROPPED. Clamping used to be pure
+ * CSS (`-webkit-line-clamp`), which keeps the whole note in the document and
+ * merely stops painting it — so a printed page could restore it with one
+ * declaration, and `print.css` did. A truncation that threw the tail away
+ * would lose it on paper outright, where there is no card to open. So the cut
+ * is made here and BOTH halves are rendered, the tail hidden; the ellipsis
+ * button between them is what the CSS clamp could never be, because a
+ * browser's own ellipsis is painted rather than built and cannot be pressed.
+ *
+ * CUT ON A WORD, NEVER MID-WORD, and never inside a `ref` or a `marker`:
+ * half a link points nowhere and half a footnote marker is not one, so an
+ * atomic node that will not fit goes whole to the tail. An `emphasis` is not
+ * atomic — it is a span of the sentence, and a sentence is exactly what this
+ * is cutting — so it is split and reopened on the other side.
+ */
+export function splitNodes(
+	nodes: InlineNode[],
+	max: number
+): { head: InlineNode[]; tail: InlineNode[] } {
+	if (max <= 0) return { head: [], tail: nodes };
+	let left = max;
+	let spent = false;
+	const head: InlineNode[] = [];
+	const tail: InlineNode[] = [];
+
+	const walk = (ns: InlineNode[], h: InlineNode[], t: InlineNode[]) => {
+		for (const node of ns) {
+			if (spent) {
+				t.push(node);
+				continue;
+			}
+			if (node.kind === 'text') {
+				if (node.text.length <= left) {
+					h.push(node);
+					left -= node.text.length;
+					continue;
+				}
+				const cut = wordBoundary(node.text, left);
+				if (cut > 0) h.push({ kind: 'text', text: node.text.slice(0, cut) });
+				const rest = node.text.slice(cut);
+				if (rest) t.push({ kind: 'text', text: rest });
+				spent = true;
+				continue;
+			}
+			if (node.kind === 'break') {
+				h.push(node);
+				left -= 1;
+				continue;
+			}
+			const len = inlineText([node]).length;
+			if (len <= left) {
+				h.push(node);
+				left -= len;
+				continue;
+			}
+			if (node.kind === 'emphasis') {
+				const hc: InlineNode[] = [];
+				const tc: InlineNode[] = [];
+				walk(node.children, hc, tc);
+				if (hc.length) h.push({ ...node, children: hc });
+				if (tc.length) t.push({ ...node, children: tc });
+				continue;
+			}
+			spent = true;
+			t.push(node);
+		}
+	};
+	walk(nodes, head, tail);
+	return { head: trimTrailingSpace(head), tail };
+}
+
+/**
+ * The last space at or before `limit`, or `limit` itself when backing up to
+ * one would throw away more than half of what was allowed — a note whose
+ * opening is one very long word (a Greek quotation, a URL) is better cut
+ * mid-word than reduced to nothing.
+ */
+function wordBoundary(text: string, limit: number): number {
+	const at = text.lastIndexOf(' ', limit);
+	return at > limit / 2 ? at : limit;
+}
+
+/** Trailing white space off the head, so the ellipsis sits tight against the
+ *  last word. The tail keeps its own leading space, so nothing is lost. */
+function trimTrailingSpace(nodes: InlineNode[]): InlineNode[] {
+	const last = nodes[nodes.length - 1];
+	if (!last || last.kind !== 'text') return nodes;
+	const trimmed = last.text.replace(/\s+$/, '');
+	if (trimmed === last.text) return nodes;
+	const out = nodes.slice(0, -1);
+	if (trimmed) out.push({ kind: 'text', text: trimmed });
+	return out;
+}
+
+/**
  * Reference links found across the WHOLE block's text, not run by run.
  *
  * WHY THIS EXISTS. vatican.va italicises the book name of a Scripture

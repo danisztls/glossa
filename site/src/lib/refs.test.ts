@@ -1026,6 +1026,90 @@ describe('linkifyProse', () => {
 
 // Every string below is one the corpus actually prints, with the work and
 // unit it comes from named. The rules were derived from those strings.
+/*
+ * `RefsOpts.sameChapter` — a commentary naming the verses beside the one it
+ * annotates, with no book and no chapter, because both are the page the
+ * reader is on. The whole difficulty is that `v.` is also the Roman five, and
+ * what separates the two readings is never the number after it.
+ *
+ * The counts below are measured over the 45,747 notes of
+ * `commentary.haydock.en`: 2,753 admitted, 593 refused.
+ */
+describe('linkifyProse — same-chapter verses, added 2026-09-01', () => {
+	const opts = {
+		lang: 'en',
+		work: 'commentary.haydock.en',
+		sameChapter: { osis: 'gen', chapter: 1 }
+	};
+	const versesOf = (text: string) =>
+		linkifyProse(text, opts)
+			.filter((s) => s.kind === 'scripture')
+			.map((s) => `${s.osis} ${s.chapter}:${s.verses.join(',')}`);
+
+	it('does nothing at all unless the caller names an address', () => {
+		expect(linkifyProse('to enjoy himself. v. 13.', { lang: 'en' })).toEqual([
+			{ kind: 'text', text: 'to enjoy himself. v. 13.' }
+		]);
+	});
+
+	it('reads a bare verse as one of this chapter', () => {
+		expect(versesOf('perhaps, as literally, to enjoy himself. v. 13.')).toEqual(['gen 1:13']);
+		expect(versesOf('and is here chiefly meant. See ver. 5.')).toEqual(['gen 1:5']);
+	});
+
+	it('reads the list and the range the source prints', () => {
+		expect(versesOf('done frequently by posterity also, v. 3. 12. 14.')).toEqual(['gen 1:3,12,14']);
+		expect(versesOf('rescued the less guilty multitude, v. 9, 23.')).toEqual(['gen 1:9,23']);
+		expect(versesOf('very equivocal. v. 24 and 34.')).toEqual(['gen 1:24,34']);
+		expect(versesOf('the whole passage, v. 15-17, is late.')).toEqual(['gen 1:15,16,17']);
+	});
+
+	/*
+	 * The `.` separator is the source's and it is the dangerous one:
+	 * `parseVerseList` chains on `.` for its own good reasons, and reusing it
+	 * here takes the `2` that opens the NEXT reference's book name. A real
+	 * continuation always carries a full stop of its own; `2 Par.` does not.
+	 */
+	it('does not eat the book number of the reference after it', () => {
+		expect(versesOf('falling on his knees, v. 54. 2 Par. vi. 13.')).toEqual(['gen 1:54']);
+	});
+
+	/*
+	 * The collision, in its four shapes — a book abbreviation, an authority
+	 * whose numeral is a chapter, a Roman chapter spelled out before it, and a
+	 * locus continued with "and". Every one of them is `v.` meaning five.
+	 */
+	it('refuses a "v." that is a Roman chapter', () => {
+		expect(versesOf('at Nobe. Wisd. v. 1.')).toEqual([]);
+		expect(versesOf('is very just. Calmet v. 17.')).toEqual([]);
+		expect(versesOf('as in S. Matt. c. xxiv. v. 40, and elsewhere')).toEqual([]);
+		expect(versesOf('now enlarged. 2 Mac. iv. 27. and v. 5.')).toEqual(['2macc 4:27']);
+	});
+
+	// "See" is the one capitalised word let through, because it is a verb of
+	// the surrounding prose and can never be naming a work. 75 references.
+	it('lets "See" through', () => {
+		expect(versesOf('he shall contaminate him. See v. 11.')).toEqual(['gen 1:11']);
+	});
+
+	/*
+	 * THE BARE RUN IS NOT LINKABLE, and this pins the decision rather than the
+	 * code. Genesis 1:1 ends "...out of pre-existing matter. 21. 27.", which
+	 * really is verses 21 and 27 of that chapter — and of the 154 notes ending
+	 * in a run of bare numbers it is the ONLY one. The rest are patristic and
+	 * juridical loci whose work title happens to end in a period: "S. Aug. ep.
+	 * 119. 16.", "Grot. Jur. ii. 21. 4.", "Bible de Vence Max. 9. 5. 2." Under
+	 * the tightest filter that admits Genesis 1:1 — an ordinary prose word
+	 * before the run — six of the seven survivors are still wrong. Nothing in
+	 * the string distinguishes "matter." from "Prolegom.", so the reference
+	 * stays text.
+	 */
+	it('leaves a run of bare numbers alone', () => {
+		expect(versesOf('the forming of a thing out of pre-existing matter. 21. 27.')).toEqual([]);
+		expect(versesOf('on the day of Pentecost. S. Aug. ep. 119. 16.')).toEqual([]);
+	});
+});
+
 describe('linkifyProse — document sigla, added 2026-08-26', () => {
 	it('reads a siglum with a locus inside a bracket, in each edition that prints one there', () => {
 		const cases: [string, string, string, string | null][] = [

@@ -378,6 +378,23 @@ export interface RefsOpts {
 	 * work that genuinely prints them; until one is ingested, nothing does.
 	 */
 	cccParagraphRefs?: boolean;
+	/**
+	 * `linkifyProse` only: read `v. 12` / `ver. 5. 8` as verses of THIS
+	 * chapter, which is the address the prose is hanging off.
+	 *
+	 * Opt-in for the reason `cccParagraphRefs` is, and unlike it this one has
+	 * a text that really prints them. A commentary annotates one verse at a
+	 * time, so it cites its neighbours the way a printed apparatus does —
+	 * with no book and no chapter, because both are the page the reader is on.
+	 * Haydock writes 2,753 of them, and until this existed every one was inert
+	 * text at the exact point it was pointing somewhere.
+	 *
+	 * IT IS THE CALLER'S ADDRESS, NEVER A GUESS. Nothing here can infer the
+	 * chapter from the prose; the caller passes the one it is rendering
+	 * beside, which for a commentary is the verse's own address. A caller with
+	 * no such address must not set this, and then the scan does not run.
+	 */
+	sameChapter?: { osis: string; chapter: number };
 }
 
 // --------------------------------------------------------------------------
@@ -3121,6 +3138,68 @@ function precededByCf(prefix: string): boolean {
 	return /\bcf\.?\s*$/i.test(prefix);
 }
 
+/**
+ * `v. 12`, `ver. 5. 8`, `vv. 3, 10`, `v. 15-17` — a verse of the chapter the
+ * prose is hanging off, named the way a printed apparatus names one.
+ *
+ * THE `.` SEPARATOR IS THE SOURCE'S AND IT IS THE DANGEROUS ONE. Haydock
+ * chains a verse list with full stops — `v. 19. 22.`, `v. 20. 22. 32.` — and
+ * `parseVerseList` already chains on `.` for the same reason, so reusing it
+ * looks right and is not: at `v. 54. 2 Par. vi. 13` it takes the `2` that
+ * opens the NEXT reference's book name and reads verse 2 of this chapter.
+ * The `.`-chained continuation therefore has to be followed by a full stop of
+ * its own, which `2 Par.` is not and every real continuation is. `,`, `&` and
+ * `and` need no such guard: a book number is never written `54, 2 Par.`
+ */
+const SAME_CHAPTER_RE =
+	/(?<![\p{L}\p{N}])(?:vv|ver|vers|v)\.\s*(\d{1,3}(?:\s*[-–—‑]\s*\d{1,3})?(?:(?:\s*[,&]\s*|\s+and\s+)\d{1,3}(?:\s*[-–—‑]\s*\d{1,3})?|\.\s+\d{1,3}(?=\.))*)/giu;
+
+/**
+ * A `v.` that is a Roman FIVE rather than the word "verse", refused by what
+ * stands in front of it.
+ *
+ * The collision is total — the same two characters, in the same position, in
+ * the same kind of citation — and nothing after them tells the two apart,
+ * since a chapter five is followed by a verse number exactly as "verse" is.
+ * What separates them is the token BEFORE: `Wisd. v. 1`, `Ezec. v. 2`,
+ * `1 K. v. 23`, `Calmet v. 6` and `S. Matt. c. xxiv. v. 40` are all a
+ * chapter, and every one of them is preceded by a capitalised word or a Roman
+ * numeral. `and` joins the same class from the other side — `2 Mac. iv. 27.
+ * and v. 5` continues the locus before it.
+ *
+ * MEASURED, NOT REASONED. Over Haydock's 45,747 notes the guard refuses 593
+ * of 3,346 candidates and admits 2,753; reading a random 35 of the admitted
+ * found no wrong link, and reading the refused found the classes above. `See`
+ * is the one capitalised word let through, because it is a verb of the
+ * surrounding prose and can never be naming a work — 75 references, all of
+ * them "See v. 11" and all correct.
+ *
+ * A `v.` that scan 2 already read as part of a longer locus never reaches
+ * here at all: the merge drops any hit overlapping one that starts earlier.
+ */
+const SAME_CHAPTER_LEAD_RE = /(?:^|[\s(])([\p{L}]+)\.?\s*$/u;
+const LOWER_ROMAN_RE = /^[ivxlcdm]+$/i;
+
+function sameChapterFalseLead(prefix: string): boolean {
+	const m = SAME_CHAPTER_LEAD_RE.exec(prefix);
+	if (!m || m[1] === 'See') return false;
+	return LOWER_ROMAN_RE.test(m[1]) || m[1] === 'and' || /^\p{Lu}/u.test(m[1]);
+}
+
+/** The verses `SAME_CHAPTER_RE` matched, ranges expanded, sorted and deduplicated. */
+function sameChapterVerses(list: string): number[] {
+	const out: number[] = [];
+	for (const part of list.split(/\s*[,&.]\s*|\s+and\s+/)) {
+		const m = /^(\d{1,3})(?:\s*[-–—‑]\s*(\d{1,3}))?$/.exec(part.trim());
+		if (!m) continue;
+		const from = Number(m[1]);
+		const to = m[2] ? Number(m[2]) : from;
+		if (to < from) return [];
+		for (let v = from; v <= to; v++) out.push(v);
+	}
+	return [...new Set(out)].sort((a, b) => a - b);
+}
+
 function textSeg(text: string): RefSegment {
 	return { kind: 'text', text };
 }
@@ -3705,6 +3784,25 @@ export function linkifyProse(text: string, opts?: RefsOpts): RefSegment[] {
 				}
 			]
 		});
+	}
+
+	// --- 4. Verses of the chapter this prose hangs off --------------------
+	// Opt-in; see `RefsOpts.sameChapter` for why, and `SAME_CHAPTER_RE` /
+	// `sameChapterFalseLead` for what the grammar admits and refuses.
+	if (opts?.sameChapter) {
+		const { osis, chapter } = opts.sameChapter;
+		SAME_CHAPTER_RE.lastIndex = 0;
+		let vm: RegExpExecArray | null;
+		while ((vm = SAME_CHAPTER_RE.exec(text))) {
+			if (sameChapterFalseLead(text.slice(0, vm.index))) continue;
+			const verses = sameChapterVerses(vm[1]);
+			if (verses.length === 0 || verses[0] < 1 || verses[verses.length - 1] > MAX_VERSE) continue;
+			hits.push({
+				start: vm.index,
+				end: vm.index + vm[0].length,
+				segs: [{ kind: 'scripture', osis, chapter, verses, raw: vm[0] }]
+			});
+		}
 	}
 
 	// --- Merge, earliest first, dropping anything that overlaps a kept hit -

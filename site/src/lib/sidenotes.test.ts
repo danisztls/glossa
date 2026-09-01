@@ -5,7 +5,9 @@ import {
 	COMMENTARY_MARKER,
 	marginOverflows,
 	MARGIN_CLAMP_CHARS,
-	noteLetter
+	noteLetter,
+	overflowsCard,
+	CARD_MAX_CHARS
 } from './sidenotes.svelte';
 
 describe('noteLetter', () => {
@@ -100,6 +102,38 @@ describe('marginOverflows', () => {
 	// message for; there is nothing to clamp and nothing to disclose.
 	it('has nothing to say about a note that is not there', () => {
 		expect(marginOverflows(undefined)).toBe(false);
+	});
+});
+
+describe('overflowsCard', () => {
+	// The two thresholds answer different questions about different columns and
+	// must not converge: the margin asks how much a 17rem gutter sets before a
+	// float outruns the line that raised it, the card how much fits before a
+	// panel covers the text it points at. Five times apart, and a change that
+	// made them equal would silently turn every clamped margin note into a
+	// modal.
+	it('is far above the margin clamp', () => {
+		expect(CARD_MAX_CHARS).toBeGreaterThan(MARGIN_CLAMP_CHARS * 4);
+	});
+
+	// A card is a shape for a paragraph. Challoner's median note is 146
+	// characters and his ninety-ninth percentile 728; Haydock's median
+	// annotated verse is 245.
+	it('cards a paragraph', () => {
+		expect(overflowsCard(146)).toBe(false);
+		expect(overflowsCard(728)).toBe(false);
+	});
+
+	// And not for an essay: Straubinger's longest note is 4,830 characters,
+	// Martini's 10,243 and Haydock's fullest verse 14,433.
+	it('sends an essay to the dialog', () => {
+		expect(overflowsCard(4830)).toBe(true);
+		expect(overflowsCard(14433)).toBe(true);
+	});
+
+	it('is inclusive at the boundary', () => {
+		expect(overflowsCard(CARD_MAX_CHARS)).toBe(false);
+		expect(overflowsCard(CARD_MAX_CHARS + 1)).toBe(true);
 	});
 });
 

@@ -738,6 +738,89 @@ that safe is the other one: **not one of 20,814 records has an odd number of
 underscores overall**, so a merge begun always closes, and the anomaly reported
 is for the record that would prove the measurement stale.
 
+**HAYDOCK NAMES HIS NEIGHBOURS WITH NO BOOK AND NO CHAPTER, and reading that
+cost one opt-in and one refusal.** `v. 12`, `ver. 5. 8`, `vv. 3, 10` — an
+apparatus annotates one verse at a time, so the page IS the chapter and a
+printed catena says so by leaving it out. `RefsOpts.sameChapter` is the opt-in
+(`CommentaryGloss` passes the verse's own address; nothing else passes it at
+all) and it adds **2,745 links, a 31% rise on the work's whole apparatus**.
+Four things about it:
+
+- **`v.` is also the Roman FIVE, and nothing after it tells the two apart** —
+  a chapter five is followed by a verse number exactly as "verse" is. What
+  separates them is the token BEFORE: `Wisd. v. 1`, `Ezec. v. 2`, `1 K. v. 23`,
+  `Calmet v. 6`, `S. Matt. c. xxiv. v. 40` are every one a chapter, and every
+  one is preceded by a capitalised word, a Roman numeral, or `and` continuing
+  the locus before it. `sameChapterFalseLead` refuses those 593 and admits
+  2,753. `See` is the one capitalised word let through — a verb of the
+  surrounding prose, never a work's name, 75 references.
+- **A `v.` inside a longer locus never reaches the guard**: `linkifyProse`'s
+  merge drops any hit overlapping one that started earlier, so scan 2 wins
+  wherever it read the book.
+- **`parseVerseList` cannot be reused, and reusing it eats the next
+  reference's book number.** It chains a list on `.` for its own good reasons;
+  at `v. 54. 2 Par. vi. 13` that takes the `2` of `2 Par.` as verse 2. A real
+  `.`-chained continuation always carries a full stop of its own, which is the
+  guard `SAME_CHAPTER_RE` encodes.
+- **THE BARE RUN — `21. 27.` — IS NOT LINKABLE, and that is the measurement,
+  not a shrug.** Genesis 1:1 ends "…out of pre-existing matter. 21. 27.", which
+  really is verses 21 and 27. Of the 154 notes ending in a run of bare numbers
+  it is **the only one**: the rest are patristic and juridical loci whose work
+  title happens to end in a period — `S. Aug. ep. 119. 16.`, `Grot. Jur. ii.
+
+21. 4.`, `Bible de Vence Max. 9. 5. 2.`, `Josep. Ant. 1. 6.`Under the
+  tightest filter that still admits Genesis 1:1 (an ordinary prose word before
+  the run) six of the seven survivors are still wrong. Nothing in the string
+  distinguishes`matter.`from`Prolegom.`, so it stays text.
+
+**The coverage meter had to be taught the same address, and the gate is
+`family === 'commentary'`.** `reference-coverage.mjs` buckets prose as bare
+strings, so it read 2,745 fewer references than the page drew until
+`addUnits` started tracking the osis and chapter down its walk. A Bible
+edition's own `notes` have the identical file shape and identical recursion
+and must NOT be read that way — `Sidenote` passes no address, and Challoner's
+`v.` is far more often a Roman five. That is the "the build side has to pass
+what the page passes" rule arriving from the counting side rather than the
+linking side.
+
+**WHAT THE MARKER OPENS IS DECIDED BY LENGTH, NOT BY APPARATUS.**
+`CARD_MAX_CHARS` is 900 and `overflowsCard` is the whole rule: under it a
+floating card, over it `.note-dialog`. The number is the card's own arithmetic
+— `.note-popover` caps at 26rem x 32rem, which is about 62 characters over 24
+lines, so ~1,490 — and 900 keeps a card at three fifths of that, short of the
+scroll. It moves 9.3% of Haydock's annotated verses, 8.2% of Martini's notes,
+4.4% of Straubinger's, 0.7% of Allioli's, 0.3% of Challoner's and none of
+Matos Soares's, which is the argument for a threshold rather than a
+per-apparatus rule: the same edition prints both a phrase and an essay. It is
+NOT `MARGIN_CLAMP_CHARS` and the two must not converge — that one asks what a
+17rem gutter sets before a float outruns its line, this one what a panel holds
+before it covers the text it points at. A test pins them four times apart.
+
+**The margin's clamp is a cut in the NODE TREE now, and the tail is kept.**
+`-webkit-line-clamp` was replaced on 2026-09-01 because a UA ellipsis is
+painted rather than built: it is not an element, cannot carry a handler and
+cannot be named, so the way to the rest of the note had to be a separate
+"Read more" line under it — a line of the gutter spent on two words for every
+clamped note, in exactly the editions that clamp most of them. `splitNodes`
+makes the cut and the ellipsis between the halves is a real button.
+**`.note-tail` is `display: none`, NOT dropped**, because that is the one
+property the CSS clamp had that was worth keeping: `print.css` turns it back
+on, and paper opens nothing. `splitNodes` never cuts through a `ref` or a
+`marker` — half a link points nowhere — and splits an `emphasis`, which is a
+span of the sentence being cut.
+
+**A 44px tap target on a mouse is a bug, and the dagger is where it showed.**
+`.note-trigger::after` grows the mark to the accessibility floor as a
+POSITIONED overlay, which paints above the inline content around it and
+reaches ~18px each way from a 7px glyph. A commentary's mark sits at the END
+of a verse, so the NEXT verse's number was inside it: clicking the number
+opened the note. It is `@media (pointer: coarse)` now — a mouse is already
+pointing at a single pixel and has `:hover` to confirm it — and
+`.reference-number.inline` takes `position: relative` so that where the two
+targets genuinely must overlap (a phone, four pixels apart) tree order settles
+it in favour of the address. Same trick, same reason, as
+`.reference-number.gutter` and its divider.
+
 **Nothing is fetched until it is switched on.** `commentary.svelte.ts` is
 `xrefs.svelte.ts`'s shape — a `$state` holder read inside a `$derived` — and
 deliberately NOT part of `scriptura/[book]/[chapter]/+page.ts`'s

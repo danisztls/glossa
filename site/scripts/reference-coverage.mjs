@@ -79,7 +79,8 @@ const RESIDUE_BUCKETS = 25;
 const NOT_CONTENT = new Set(['manifest.json', 'corrections-applied.json', 'abbreviations.json']);
 
 /**
- * @typedef {{ lang: string, work?: string, citations: string[], prose: string[], stored: number }} Pending
+ * @typedef {{ text: string, sameChapter?: { osis: string, chapter: number } }} ProseText
+ * @typedef {{ lang: string, work?: string, citations: string[], prose: ProseText[], stored: number }} Pending
  * @typedef {{ key: string, count: number, example: string }} ResidueBucket
  * @typedef {{
  *   citations: { total: number, linkable: number, recognized: number, nothing: number },
@@ -145,6 +146,23 @@ export class CoverageMeter {
 	 */
 	addUnits(family, lang, data, work) {
 		const bucket = this.#bucket(family, lang, work);
+		/*
+		 * THE ADDRESS A COMMENTARY'S NOTE HANGS OFF, tracked down the walk
+		 * because `RefsOpts.sameChapter` needs it and nothing in the note's own
+		 * text says it. A commentary names its neighbours with no book and no
+		 * chapter — `v. 12` — so this meter reads 2,745 fewer references than
+		 * the page draws unless it carries the same address the page passes.
+		 *
+		 * `family === 'commentary'` GATES IT, and the gate is the whole safety
+		 * of it: a Bible edition's own `notes` have exactly this file shape and
+		 * exactly this recursion, and `Sidenote` does NOT pass `sameChapter`
+		 * for them — Challoner's `v. 12` is far more often a Roman five. A
+		 * meter that read the two apparatuses differently from the page is the
+		 * failure `prose.document` was added to catch, in the other direction.
+		 */
+		const addressed = family === 'commentary';
+		/** @type {{ osis?: string, chapter?: number }} */
+		const at = {};
 		/** @param {any} node */
 		const walk = (node) => {
 			if (Array.isArray(node)) {
@@ -152,6 +170,10 @@ export class CoverageMeter {
 				return;
 			}
 			if (!node || typeof node !== 'object') return;
+			if (addressed) {
+				if (typeof node.osis === 'string') at.osis = node.osis;
+				if (typeof node.n === 'number' && Array.isArray(node.verses)) at.chapter = node.n;
+			}
 			if (Array.isArray(node.citations)) {
 				// `label ?? text`: the field the renderer shows (build-xrefs.mjs).
 				for (const c of node.citations) bucket.citations.push(c.label ?? c.text ?? '');
@@ -177,15 +199,17 @@ export class CoverageMeter {
 				if (!Array.isArray(list)) continue;
 				for (const block of list) {
 					if (!block || typeof block !== 'object') continue;
-					bucket.prose.push(blockProse(block));
+					bucket.prose.push({ text: blockProse(block) });
 					if (block.html) bucket.stored += (block.html.match(/<a data-ref=/g) ?? []).length;
 				}
 			}
-			if (typeof node.question === 'string') bucket.prose.push(node.question);
+			if (typeof node.question === 'string') bucket.prose.push({ text: node.question });
 			if (Array.isArray(node.notes)) {
+				const sameChapter =
+					addressed && at.osis && at.chapter ? { osis: at.osis, chapter: at.chapter } : undefined;
 				for (const note of node.notes) {
 					if (note && typeof note === 'object' && typeof note.text === 'string') {
-						bucket.prose.push(note.text);
+						bucket.prose.push({ text: note.text, ...(sameChapter ? { sameChapter } : {}) });
 					}
 				}
 			}
@@ -243,8 +267,8 @@ export class CoverageMeter {
 				}
 				counts.prose.blocks += prose.length;
 				counts.prose.stored += stored;
-				for (const text of prose) {
-					for (const seg of linkifyProse(text, { lang, work })) {
+				for (const { text, sameChapter } of prose) {
+					for (const seg of linkifyProse(text, { lang, work, sameChapter })) {
 						if (seg.kind === 'scripture') counts.prose.scripture++;
 						else if (seg.kind === 'document') counts.prose.document++;
 					}

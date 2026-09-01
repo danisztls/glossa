@@ -92,6 +92,33 @@ describe('CoverageMeter — the prose surfaces that are not `blocks`', () => {
 		// The VERSE is not counted — it is the text, not an apparatus over it.
 		expect(families.bible.prose.scripture).toBe(1);
 	});
+
+	/*
+	 * A commentary names its neighbours with no book and no chapter, because
+	 * both are the page the reader is on. The meter has to carry the address
+	 * the PAGE carries or it reads 2,745 fewer references than are drawn —
+	 * and the same file shape under `bible` must not be read that way, since
+	 * `Sidenote` passes no address and Challoner's `v.` is far more often a
+	 * Roman five.
+	 */
+	it("reads a commentary's bare verse numbers against its own address", () => {
+		const unit = () => ({
+			osis: 'gen',
+			chapters: [
+				{
+					n: 1,
+					verses: [{ verse: 4, notes: [{ text: 'as he had said, v. 3. and again v. 10.' }] }]
+				}
+			]
+		});
+		const commentary = new CoverageMeter();
+		commentary.addUnits('commentary', 'en', unit(), 'commentary.haydock.en');
+		expect(commentary.report().families.commentary.prose.scripture).toBe(2);
+
+		const bible = new CoverageMeter();
+		bible.addUnits('bible', 'en', unit(), 'bible.douay-rheims.en');
+		expect(bible.report().families.bible.prose.scripture).toBe(0);
+	});
 });
 
 describe('compareCoverage', () => {

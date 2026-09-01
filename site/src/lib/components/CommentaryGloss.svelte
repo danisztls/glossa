@@ -38,10 +38,14 @@
 	opinion they are about to read, where "d" tells them nothing. An
 	unattributed note is the compiler's own and carries no label.
 
-	NOTHING IS CLAMPED IN HERE. The card scrolls (`.note-popover`), which is the
-	answer `Sidenote` already gives for Martini's 10,243-character glosses; the
-	clamp exists to keep a float from outrunning its verse, and there is no
-	float.
+	NOTHING IS CLAMPED IN HERE, BUT THE LONG VERSES GET A DIALOG. There is no
+	float to keep in check, so no clamp; what there IS is a card that stops
+	being one. Haydock annotates a verse at 245 characters in the median and
+	14,433 at his worst, and past `CARD_MAX_CHARS` a panel anchored beside the
+	mark covers the verse it points at and scrolls — a card pretending to be a
+	page. Those open `.note-dialog` instead, which is the same panel `Sidenote`
+	opens from a clamped note's ellipsis, for the same reason and by the same
+	measure. It moves 9.3% of the annotated verses.
 -->
 <script lang="ts">
 	import { linkifyProse } from '$lib/refs-grammar';
@@ -50,8 +54,9 @@
 	import { refHref } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
-	import { COMMENTARY_MARKER, NoteCard } from '$lib/sidenotes.svelte';
+	import { COMMENTARY_MARKER, NoteCard, NoteDialog, overflowsCard } from '$lib/sidenotes.svelte';
 	import type { CommentaryNote } from '$lib/types';
+	import Icon from './Icon.svelte';
 	import InlineNodes from './InlineNodes.svelte';
 
 	interface Props {
@@ -73,15 +78,39 @@
 		    its switch with the same string, which is what ties the mark to the
 		    control that turned it on. */
 		title: string;
+		/** The ADDRESS these notes hang off — the book and chapter of the verse
+		    the mark sits at the end of. It is what lets `linkifyProse` read
+		    Haydock's `v. 12` as a verse of this chapter; see
+		    `RefsOpts.sameChapter`, and note that nothing in the prose could
+		    have said which chapter it meant. */
+		osis: string;
+		chapter: number;
 	}
 
-	let { notes, lang, work, title }: Props = $props();
+	let { notes, lang, work, title, osis, chapter }: Props = $props();
 
 	const label = $derived(`${t('apparatus.commentary')}: ${title}`);
 
+	/** Whether this verse's whole apparatus is past what a card holds — see
+	 *  `CARD_MAX_CHARS`. Counted over every note beside the verse, because they
+	 *  are one card: the mark names the verse, not a note. */
+	const long = $derived(
+		overflowsCard(
+			notes.reduce(
+				(n, note) =>
+					n + (note.lemma?.length ?? 0) + note.text.length + (note.attribution?.length ?? 0),
+				0
+			)
+		)
+	);
+
 	// See `CitationDisclosure` on why this is a bare top-level declaration.
 	const uid = $props.id();
-	const card = new NoteCard(uid, { margin: false });
+	const card = new NoteCard(uid, { margin: false, modal: () => long });
+
+	/** The apparatus of a heavily-annotated verse, centred over the page rather
+	    than anchored beside its mark. `Sidenote`'s dialog, verbatim. */
+	const full = new NoteDialog();
 
 	function hrefFor(seg: RefSegment): string | undefined {
 		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang, work });
@@ -102,7 +131,9 @@
 		const source = note.text_marked
 			? parseInlineMarked(note.text_marked)
 			: plainTextNodes(note.text);
-		return linkifyInline(source, (text: string) => linkifyProse(text, { lang, work }));
+		return linkifyInline(source, (text: string) =>
+			linkifyProse(text, { lang, work, sameChapter: { osis, chapter } })
+		);
 	}
 </script>
 
@@ -117,42 +148,31 @@
      of a sentence, a card the size of the thing it explains. This card holds a
      whole verse's commentary, so a mouse merely CROSSING the mark on its way
      down the page would raise a panel over the text being read. The card is
-     opened deliberately or not at all; `card.onClick` still stands down,
-     because with no margin copy `popovertarget` is set and the browser's own
-     invoker does the work. -->
+     opened deliberately or not at all. For a SHORT verse that is the browser's
+     own invoker doing the work through `popovertarget`, and `card.onClick`
+     stands down; for a long one `popovertarget` is absent and the click opens
+     the dialog below instead. -->
 <sup class="note-marker commentary-marker">
 	<button
 		bind:this={card.trigger}
 		type="button"
 		class="note-trigger"
 		popovertarget={card.popovertarget}
-		aria-expanded={card.expanded}
+		aria-haspopup={card.asModal ? 'dialog' : undefined}
+		aria-expanded={card.asModal ? full.rendered : card.expanded}
 		aria-label={label}
-		onclick={card.onClick}
+		onclick={card.asModal ? () => full.open() : card.onClick}
 	>
 		{COMMENTARY_MARKER}
 	</button>
 </sup>
 
-<!-- THE CARD, which is the whole apparatus. It carries no pointer handlers
-     either: nothing here opens on hover, so there is no hover claim that
-     entering the panel has to keep alive. Dismissal is the popover's own — a
-     click outside, Escape, or the mark again.
-
-     `role="note"` for `CitationDisclosure`'s reason: ARIA's own word for
-     content ancillary to the text it hangs off, and not `tooltip`, which must
-     hold nothing interactive where this holds the verses the notes name.
-     `lang` because a commentary is written in its own work's language and the
-     card sits in the top layer, outside every `lang` the page has declared. -->
-<span
-	bind:this={card.panel}
-	id={card.id}
-	popover="auto"
-	role="note"
-	{lang}
-	ontoggle={card.onToggle}
-	class="panel-surface floating-panel note-popover"
->
+<!-- THE VERSE'S WHOLE APPARATUS, written once and rendered into whichever of
+     the two panels below is holding it. A snippet rather than a component:
+     the two differ only in what surrounds them, and a second copy of this
+     `{#each}` is exactly the kind of divergence nobody notices, since only
+     one of the two is on the screen at a time. -->
+{#snippet catena()}
 	{#each notes as note, i (i)}
 		<div class="commentary-item">
 			{#if note.lemma}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span class="sidenote-text"
@@ -167,7 +187,63 @@
 				</ol>{/if}
 		</div>
 	{/each}
-</span>
+{/snippet}
+
+{#if card.asModal}
+	<!-- A VERSE WHOSE APPARATUS OUTGREW THE CARD. `Sidenote`'s dialog, class for
+	     class (`.note-dialog` in `reading-chrome.css`, where it moved when this
+	     became its second caller): empty until opened, no `role="dialog"` or
+	     `aria-modal` because `showModal()` carries both, and `lang` because the
+	     top layer sits outside every `lang` the page has declared. -->
+	<dialog
+		bind:this={full.el}
+		class="dialog-bare note-dialog"
+		{lang}
+		aria-label={label}
+		onclose={full.onClose}
+		onclick={full.onClick}
+	>
+		{#if full.rendered}
+			<div class="sheet-panel panel-surface note-dialog-panel">
+				<div class="sheet-body note-dialog-body">
+					<button
+						type="button"
+						class="sheet-close note-dialog-close"
+						aria-label={t('ui.close')}
+						title={t('ui.close')}
+						onclick={full.close}
+					>
+						<Icon name="x" />
+					</button>
+					{@render catena()}
+				</div>
+			</div>
+		{/if}
+	</dialog>
+{:else}
+	<!-- THE CARD. It carries no pointer handlers either: nothing here opens on
+	     hover, so there is no hover claim that entering the panel has to keep
+	     alive. Dismissal is the popover's own — a click outside, Escape, or the
+	     mark again.
+
+	     `role="note"` for `CitationDisclosure`'s reason: ARIA's own word for
+	     content ancillary to the text it hangs off, and not `tooltip`, which
+	     must hold nothing interactive where this holds the verses the notes
+	     name. `lang` because a commentary is written in its own work's language
+	     and the card sits in the top layer, outside every `lang` the page has
+	     declared. -->
+	<span
+		bind:this={card.panel}
+		id={card.id}
+		popover="auto"
+		role="note"
+		{lang}
+		ontoggle={card.onToggle}
+		class="panel-surface floating-panel note-popover"
+	>
+		{@render catena()}
+	</span>
+{/if}
 
 <style>
 	/*

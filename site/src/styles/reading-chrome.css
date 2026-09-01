@@ -344,16 +344,37 @@
 	position: relative;
 }
 
-.note-trigger::after {
-	/* 44x44 CSS px is the accessibility floor for a touch target, and the
-	   glyph is nowhere near it. Grown as an overlay rather than by padding
-	   so the marker keeps its typographic position in the line. */
-	content: '';
-	position: absolute;
-	inset: 50% 50% 50% 50%;
-	min-width: 44px;
-	min-height: 44px;
-	transform: translate(-50%, -50%);
+/*
+ * THE TAP TARGET, AND IT IS FOR FINGERS ONLY.
+ *
+ * 44x44 CSS px is the accessibility floor for a touch target and the glyph is
+ * nowhere near it, so it is grown as an overlay rather than by padding — that
+ * way the marker keeps its typographic position in the line.
+ *
+ * `pointer: coarse` IS NEW AND IT IS A BUG FIX, not a refinement. The overlay
+ * is a positioned box, so it paints above the ordinary inline content around
+ * it, and 44px centred on a 7px mark reaches about 18px each way — far enough
+ * to cover whatever the mark is standing next to. A commentary's dagger sits
+ * at the END of a verse, which puts the NEXT verse's number inside it: a click
+ * on the number opened the note instead, and a mouse merely passing near the
+ * mark raised its card over the text. A mouse does not need the floor; it is
+ * already pointing at a single pixel, and `:hover` tells it what it has. So
+ * the overlay exists exactly where the imprecision it corrects is real.
+ *
+ * The other half of the same collision is in `ReferenceNumber`, which makes
+ * the number a positioned box too so that where the two targets genuinely
+ * must overlap — a phone, four pixels apart — tree order settles it in favour
+ * of the address.
+ */
+@media (pointer: coarse) {
+	.note-trigger::after {
+		content: '';
+		position: absolute;
+		inset: 50% 50% 50% 50%;
+		min-width: 44px;
+		min-height: 44px;
+		transform: translate(-50%, -50%);
+	}
 }
 
 .note-trigger:hover,
@@ -569,4 +590,80 @@
 	line-height: 1.5;
 	color: var(--color-text-muted);
 	overflow-wrap: break-word;
+}
+
+/*
+ * A NOTE IN FULL, CENTRED OVER THE PAGE — the panel BOTH apparatuses open for
+ * a gloss past the shape that was going to hold it. `Sidenote` opens it from
+ * the ellipsis at the end of a clamped margin note and from a marker whose
+ * gloss outruns a card; `CommentaryGloss` opens it from its dagger for the
+ * same second reason. It was scoped to `Sidenote.svelte` while it had one
+ * user, and a class name borrowed across a Svelte component boundary is
+ * silently unstyled rather than an error — the failure this move prevents is
+ * an unstyled `<dialog>` that still opens, which looks like a bug in the
+ * dialog rather than in the stylesheet.
+ *
+ * Straubinger's longest note is 4,830 characters, Martini's 10,243 and
+ * Haydock's 14,201 — a card anchored beside a marker is a shape for a
+ * paragraph, and one holding an essay would cover the text it glosses while
+ * pointing at it. So it is the shape the site already uses for a panel that
+ * has stopped being anchored to anything: `.dialog-bare` for the shell and
+ * the `.sheet-*` parts for the chrome (`menus.css`), as the plate viewer and
+ * the tables of contents do.
+ *
+ * `[open]` is not decoration: a closed `<dialog>` is `display: none` from the
+ * UA stylesheet, and a bare `display: flex` here would override it and leave
+ * the panel on the page permanently — `.sheet`'s own note, and the same trap.
+ * The flex column has to start on the dialog because `.sheet-panel` is a flex
+ * item that bounds `.sheet-body`'s scroll box.
+ *
+ * SIZED, NOT PLACED. A modal `<dialog>` is centred by the UA's own
+ * `margin: auto`; what this decides is only how much of the viewport a note
+ * may take, and it is a reading measure rather than the widest box that fits.
+ */
+.note-dialog[open] {
+	display: flex;
+	flex-direction: column;
+	inline-size: min(42rem, calc(100vw - 4rem));
+	max-block-size: min(36rem, 82vh);
+}
+
+/* `.sheet-panel` brings the opaque ground; the surface and its corners are
+   `.panel-surface`'s, clipped here so the head does not square them. */
+.note-dialog-panel {
+	overflow: hidden;
+}
+
+/*
+ * THE WAY OUT, SET INTO THE TEXT RATHER THAN OVER IT. `.sheet-close` is sized
+ * for a thumb in a panel that fills a phone; here it is one control in a
+ * corner the prose flows around, so it comes down to the two lines it
+ * actually sits beside. Floated rather than absolute, which is what keeps it
+ * out of the text instead of on top of it: an absolute button in the padding
+ * would be crossed by the first line the moment a note opened with a long
+ * word, and reserving a column for it would spend on every line what only two
+ * lines are next to.
+ */
+.note-dialog-close {
+	float: inline-end;
+	inline-size: 2rem;
+	block-size: 2rem;
+	margin-inline-start: 0.6rem;
+	margin-block-end: 0.2rem;
+}
+
+/*
+ * STILL SANS, STILL MUTED, and set at the size the rest of the site reads
+ * apparatus at rather than at the margin's 0.78rem — the column's type is
+ * small because the column is narrow, and neither is true here. What must not
+ * change is that it is apparatus: a note filling the page in the serif face
+ * at the reading size would be a text of its own, which is the one thing this
+ * may never look like (docs/decisions.md §Posture).
+ */
+.note-dialog-body {
+	padding: 0.9rem 1.1rem 1.2rem;
+	font-family: var(--font-sans);
+	font-size: 0.92rem;
+	line-height: 1.65;
+	color: var(--color-text-muted);
 }

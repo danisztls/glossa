@@ -139,7 +139,19 @@
 		color: var(--color-accent);
 	}
 
+	/*
+	 * `position: relative` IS LOAD-BEARING, for the reason `.gutter` gives
+	 * below and against a different neighbour. A note marker's tap target is a
+	 * positioned overlay 44px across (`.note-trigger::after`), and a
+	 * commentary's dagger is set at the END of a verse — which puts this
+	 * number, the first thing in the NEXT verse, inside it. Positioned boxes
+	 * paint above unpositioned ones whatever the tree says, so the overlay took
+	 * the click and the number was inert: pressing a verse number opened the
+	 * note beside it. Positioning the number puts the two in the same layer,
+	 * where tree order decides, and the number comes later.
+	 */
 	.reference-number.inline {
+		position: relative;
 		display: inline-block;
 		vertical-align: super;
 		margin-inline-end: 0.22em;
