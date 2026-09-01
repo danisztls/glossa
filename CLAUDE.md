@@ -1142,6 +1142,18 @@ an 86% cut.** Four things about it:
   other language — so no reader's language predicts it. It stays purely on
   demand, and the cost of being wrong is one quotation in a fallback face, once,
   for a reader who met their first Greek while offline.
+- **`la` IS ABSENT FROM THE TABLE, and the reason generalises: a language in the
+  universal tail cannot be given a script.** `en` and `la` end every row in
+  `CONTENT_LANG_FALLBACK`, so both are in every reader's chain by construction —
+  and `la` was in the font table for one commit, which meant every reader on
+  earth warmed 315 KB of `latin-ext` and the whole partition bought nothing for
+  eighteen of the thirty-four languages. It was there for `ǽ` (U+01FD), 19
+  glyphs in Latin liturgical text; an English reader's automatic fill takes 28
+  KB of Latin, so it was eleven times the font of the content it set. Measured
+  after removing it: **18 of 34 languages warm nothing at all** and stay at the
+  157 KB precache, and the worst case is Belarusian at 632 KB — its own Cyrillic
+  plus the `latin-ext` its Polish neighbour row pulls in, which is the only
+  place one fallback row moves a second script onto a reader.
 - **`ig` takes the `vietnamese` subset and not `latin-ext`**, which looks like a
   typo and is not: Igbo's dots-below vowels are `ị ọ ụ` (U+1ECB, U+1ECD,
   U+1EE5), in Latin Extended Additional, which the subsetter files under

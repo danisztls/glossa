@@ -206,10 +206,12 @@ const CORE_FONTS = ['-latin-wght-', 'pirata-one-dropcap', 'ponomar-dropcap-latin
  * survives: a deferred font is fetched on demand, stored on first read, and
  * outlives every deploy — the same terms the corpus itself is cached on. The
  * install precache drops from 1,118 KB of fonts to 157 KB, an 86% cut, and
- * what a reader adds back is bounded by their own languages: 413 KB for
- * Arabic, 315 for the `latin-ext` languages, 160 for the Cyrillic ones, 21
- * for Vietnamese, 13 for Hebrew, nothing at all for English, Italian,
- * Spanish, Portuguese, German, French and the rest of the plain-`latin` set.
+ * what a reader adds back is bounded by their own CHAIN — which is the word
+ * that matters, see the `la` paragraph below: 413 KB for Arabic, 315 for the
+ * `latin-ext` languages, 160 for the Cyrillic ones, 21 for Vietnamese, 13 for
+ * Hebrew, and nothing at all for English, Italian, Spanish, Portuguese,
+ * German, French, Dutch, Danish, Finnish, Swedish, Latin and the rest of the
+ * plain-`latin` set.
  *
  * ON DEMAND IS NOT ENOUGH ON ITS OWN, which is the other half. A reader who
  * fills the offline library and then loses the network needs the faces for
@@ -249,13 +251,23 @@ type FontScript = keyof typeof DEFERRED_FONTS;
  * its chrome inside `latin`, Swedish's `å ä ö` included (they are Latin-1
  * Supplement, which the `latin` subset carries).
  *
- * THE TWO ENTRIES THAT ARE NOT OBVIOUS:
+ * `la` IS DELIBERATELY ABSENT, and it is the entry that has to be argued
+ * because `fonts.css` names `ǽ` (U+01FD) in Latin liturgical text as the very
+ * reason `latin-ext` is declared. It was here for one commit, and the effect
+ * was to undo this whole partition: `en` and `la` are the tail of EVERY row in
+ * `CONTENT_LANG_FALLBACK`, so `la` is in every reader's chain by construction,
+ * so keying 315 KB of `latin-ext` to it warmed that 315 KB for every reader on
+ * earth — the precise thing deferring the faces was meant to stop. Measured:
+ * an English reader's automatic fill takes 28 KB of Latin (the prayers; Latin
+ * has no Compendium and the elected Catechism is English), so it was eleven
+ * times the font of the content it existed to set. The 19 glyphs fetch on
+ * demand and are then kept forever, exactly like `greek` above, and the only
+ * reader who ever sees a fallback serif is one who met their first `ǽ` while
+ * offline. THE GENERAL RULE THIS BOUGHT: a language in the universal tail
+ * cannot be given a script here, because the tail is not a preference.
  *
- *   `la` takes `latin-ext` for `ǽ` (U+01FD), which Latin liturgical text
- *   prints 19 times in this corpus — the same glyph `fonts.css` names as the
- *   reason that subset is declared at all.
- *
- *   `ig` takes `vietnamese` rather than `latin-ext`, and it is not a mistake.
+ * `ig` takes `vietnamese` rather than `latin-ext`, and that one is not a
+ * mistake either.
  *   Igbo's dots-below vowels are `ị ọ ụ` (U+1ECB, U+1ECD, U+1EE5), which live
  *   in Latin Extended Additional — the block Google's subsetter files under
  *   `vietnamese` (U+1EA0-1EF9). `latin-ext` does not reach them. It takes both
@@ -275,7 +287,6 @@ const LANG_FONT_SCRIPTS: Record<string, readonly FontScript[]> = {
 	be: ['cyrillic'],
 	vi: ['latin-ext', 'vietnamese'],
 	ig: ['latin-ext', 'vietnamese'],
-	la: ['latin-ext'],
 	pl: ['latin-ext'],
 	cs: ['latin-ext'],
 	sk: ['latin-ext'],
@@ -641,6 +652,15 @@ const WAVE_FOR_KIND: Readonly<Record<string, WaveId>> = {
 	plates: 'essentials',
 	'ccc-chunk': 'catechism',
 	'bible-chapters': 'scripture',
+	// A commentary rides the wave of the work it annotates, which is
+	// `scripture` today and would follow `annotates` if one were ever written
+	// on something else. It is NOT a wave of its own: a reader filling
+	// Scripture offline and finding the apparatus missing has the same
+	// half-library problem `document-structure` is in `magisterium` to avoid,
+	// one work over. `scripture` is outside `AUTOMATIC_WAVES`, so this is only
+	// ever downloaded by a reader who asked — which is the right default for
+	// the largest body of text the corpus holds.
+	'commentary-chapters': 'scripture',
 	'document-chunk': 'magisterium',
 	'document-appendix': 'magisterium',
 	// The outline, ~1.2 KB, beside the text it indexes. In `magisterium` and

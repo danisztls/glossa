@@ -295,11 +295,23 @@ export function listEditions(type: WorkType): WorkManifest[] {
  *     not exist: Czech readers under forty follow Slovak markedly less well
  *     than the other way round, and `cs: ['sk', …]` would move exactly one
  *     document out of English for them.
+ *   - `be: ['pl', …]`, and it is the row here chosen AGAINST the closer
+ *     language rather than for it. Byelorussian and Russian are nearly
+ *     mutually intelligible and Belarus is thoroughly Russophone, so `ru`
+ *     is what a reader-in-general would want — but it moves TWO works out
+ *     of English, because Russian's ten are almost a subset of
+ *     Byelorussian's thirty-one. Polish moves twenty-eight, and the
+ *     readership this table is about is Belarusian CATHOLICS, whose church
+ *     is historically and demographically Polish-facing: the Latin-rite
+ *     population concentrates around Grodno, and Polish has been its
+ *     catechetical language for centuries. A row that buys two documents is
+ *     not a claim about a readership, it is a rounding error with an
+ *     opinion attached.
  *
  * ONE NEIGHBOUR PER ROW AT MOST, deliberately. A longer row reads as a
  * ranking of languages by how close they are, which is an argument nobody
  * wins and which the corpus cannot settle; one neighbour is a claim about a
- * specific readership, and each of the five above is defensible on its own.
+ * specific readership, and each of the six above is defensible on its own.
  * The rows that name none are not gaps — a German, Polish, Slovenian,
  * Swedish or Russian reader who cannot have their own language is better
  * served by English than by a language they are being guessed into.
@@ -310,23 +322,41 @@ export function listEditions(type: WorkType): WorkManifest[] {
  * — it is the second-largest corpus here, so it "wins" for Dutch, Danish,
  * Croatian, Finnish and Hebrew alike, none of whose readers read it. The
  * readership question is asked first and the count only chooses among the
- * languages that survive it. Measured 2026-08-31, the five rows move 19, 33,
- * 53, 134, 110, 90, 45 and 15 works respectively; `it: ['es', …]` moves two,
+ * languages that survive it. Measured 2026-08-31, the rows move 19, 33,
+ * 53, 134, 110, 90, 45, 15 and 28 works respectively; `it: ['es', …]` moves two,
  * and is kept because an Italian reader has 240 works and the row is a
  * rounding error either way.
  *
- * ELEVEN CONTENT LANGUAGES DELIBERATELY HAVE NO ROW — `nl`, `da`, `cs`, `hr`,
- * `fi`, `lv`, `sw`, `vi`, `be`, `he` and the eight reach languages beside
- * them. Three near-misses are worth recording so they are not re-proposed:
+ * NO ROW UNLOCKS ANYTHING, WHICH IS WHAT MAKES THE READERSHIP TEST DECISIVE.
+ * Measured across every candidate weighed on 2026-08-31: not one work a
+ * neighbour holds is absent from English or Latin, so a row never decides
+ * whether a reader can reach an address — only which language they meet it
+ * in. There is no access benefit to weigh against guessing a readership
+ * wrong, and that asymmetry is why the bar for a row is a claim someone can
+ * defend rather than a number that looks large.
+ *
+ * NINE CONTENT LANGUAGES DELIBERATELY HAVE NO ROW — `nl`, `da`, `cs`, `hr`,
+ * `fi`, `lv`, `sw`, `vi`, `he` and the eight reach languages beside them.
+ * Three near-misses are worth recording so they are not re-proposed:
  *
  *   - `da: ['sv', …]` and `fi: ['sv', …]`. Written Danish and Swedish are
  *     close, and Swedish is co-official in Finland. Both fail on the same
  *     fact: Danish and Finnish readers' English is stronger than their
  *     Swedish, and Swedish here is one work — the Compendium.
- *   - `uk: ['ru', …]` and `lv: ['ru', …]`. Both would move real work out of
- *     English (10 and 9). Neither is a language its readership wants to be
- *     guessed into, which is the readership test failing in the one direction
- *     a size ranking cannot see.
+ *   - `uk: ['ru', …]` and `lv: ['ru', …]`. Both move real work out of English
+ *     (10 and 9) and both unlock nothing, per the paragraph above. They are
+ *     rejected for DIFFERENT reasons, and only one of them is about politics.
+ *     Ukrainian Catholics are overwhelmingly the Greek Catholic Church, which
+ *     the Soviet state liquidated in 1946 and forcibly absorbed into the
+ *     Moscow Patriarchate until 1989; routing that readership's magisterium
+ *     through Russian is not an awkward default but close to the inverse of
+ *     what the row would mean. Latvian is the ordinary kind of near-miss:
+ *     Latgale is both the Catholic region and the Russian-speaking one, so
+ *     the row was true of readers over fifty and is getting less true every
+ *     year — Russian left the schools entirely in 2025, Latvian is Baltic and
+ *     shares no intelligibility with Russian at all, and `lv` already carries
+ *     19 works of its own. A fallback row should encode a durable fact about
+ *     a readership; this one has a direction and it points away.
  *   - `nl: ['de', …]`, `vi: ['fr', …]` and `sw: ['fr', …]` are the three that
  *     would also ELECT A DIFFERENT CATECHISM (see below). None survives the
  *     readership test: Dutch readers have the highest English proficiency
@@ -366,7 +396,8 @@ export const CONTENT_LANG_FALLBACK: Readonly<Record<string, readonly string[]>> 
 	ro: ['it', 'en', 'la'],
 	sl: ['en', 'la'],
 	sv: ['en', 'la'],
-	sk: ['cs', 'en', 'la']
+	sk: ['cs', 'en', 'la'],
+	be: ['pl', 'en', 'la']
 };
 
 /** The tail every row ends in, and what an unlisted language falls back to. */

@@ -490,6 +490,26 @@ describe('planWaves', () => {
 		expect(waves['other'].automatic).toBe(false);
 	});
 
+	/**
+	 * A commentary rides the wave of the work it annotates. Two properties,
+	 * and the second is the one worth a test: it lands in `scripture` rather
+	 * than in `other` (a kind nobody mapped is a whole work type that never
+	 * downloads), and `scripture` is not automatic — so the largest body of
+	 * text in the corpus can never enter a reader's offline fill uninvited.
+	 */
+	it('plans a commentary into `scripture`, which nobody is given uninvited', () => {
+		const haydock = entry({
+			workId: 'commentary.haydock.en',
+			kind: 'commentary-chapters',
+			lang: 'en',
+			path: '/haydock-john.json'
+		});
+		const waves = Object.fromEntries(planWaves([haydock], { langs: ['en'] }).map((w) => [w.id, w]));
+		expect(waves['scripture'].assets.map((a) => a.workId)).toEqual(['commentary.haydock.en']);
+		expect(waves['other'].assets).toEqual([]);
+		expect(waves['scripture'].automatic).toBe(false);
+	});
+
 	it('reports byte totals per wave, so a UI can price a download before it starts', () => {
 		const waves = byId(['en']);
 		for (const wave of Object.values(waves)) {
@@ -762,24 +782,39 @@ describe('the font partition', () => {
 	});
 
 	describe('fontsForLangs', () => {
-		it('gives a Latin-script reader nothing to warm', () => {
-			expect(fontsForLangs(FONTS, ['en', 'la'])).not.toEqual([]); // `la` takes latin-ext
-			expect(fontsForLangs(FONTS, ['en'])).toEqual([]);
-			expect(fontsForLangs(FONTS, ['it', 'es', 'en'])).toEqual([]);
+		// THE REGRESSION TEST FOR THE UNIVERSAL TAIL. `en` and `la` end every
+		// row in `CONTENT_LANG_FALLBACK`, so they are in every reader's chain
+		// by construction; a script keyed to either warms it for everyone and
+		// silently undoes the partition. `la` was in the table for one commit
+		// and cost every reader on earth 315 KB of `latin-ext`.
+		it('warms nothing for a chain that is only the universal tail', () => {
+			expect(fontsForLangs(FONTS, ['en', 'la'])).toEqual([]);
+			expect(fontsForLangs(FONTS, ['it', 'es', 'en', 'la'])).toEqual([]);
+			expect(fontsForLangs(FONTS, ['de', 'en', 'la'])).toEqual([]);
 		});
 
 		it('warms Amiri for Arabic and nothing else', () => {
 			const paths = fontsForLangs(FONTS, ['ar', 'fr', 'en', 'la']).map((f) => f.path);
 			expect(paths.filter((p) => p.includes('amiri'))).toHaveLength(4);
 			expect(paths.some((p) => p.includes('hebrew'))).toBe(false);
-			// `la` is in an Arabic reader's chain and takes latin-ext with it.
-			expect(paths.some((p) => p.includes('latin-ext'))).toBe(true);
+			expect(paths.some((p) => p.includes('latin-ext'))).toBe(false);
 		});
 
 		it('warms Frank Ruhl Libre for Hebrew', () => {
 			const paths = fontsForLangs(FONTS, ['he', 'en', 'la']).map((f) => f.path);
 			expect(paths.filter((p) => p.includes('frank-ruhl-libre'))).toHaveLength(2);
 			expect(paths.some((p) => p.includes('amiri'))).toBe(false);
+		});
+
+		// A Belarusian reader's chain names Polish since 2026-08-31, and Polish
+		// is a `latin-ext` language — so the neighbour row has a font cost, and
+		// it is the only place in this table where one row moves another
+		// script onto a reader. Not a defect: a reader sent to Polish text
+		// needs the face that sets it.
+		it("takes the neighbour row's script too", () => {
+			const paths = fontsForLangs(FONTS, ['be', 'pl', 'en', 'la']).map((f) => f.path);
+			expect(paths.some((p) => p.includes('cyrillic'))).toBe(true);
+			expect(paths.some((p) => p.includes('latin-ext'))).toBe(true);
 		});
 
 		it('warms both Cyrillic subsets and the Cyrillic dropcap', () => {
