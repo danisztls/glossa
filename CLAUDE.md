@@ -336,6 +336,41 @@ decides _when_ something runs.
   table nothing to choose on. A stale key fails silently — the manufactured title is only reached when
   the table misses — so a full `--exhortations` run with no filter reports keys that
   matched no discovered document.
+- **A PAGE'S OWN LINKED TABLE OF CONTENTS OUTRANKS EVERY OTHER LEVEL SIGNAL, and
+  it is on 81 of 2,080 raw pages rather than the three `extract_toc_outline` was
+  written for.** The docstring said three until 2026-09-01, measured over a raw
+  corpus a quarter of today's size; nothing re-ran the count when the
+  ten-language expansion quadrupled it, so a mechanism described as an override
+  for two documents had quietly become the outline of a twentieth of the corpus.
+  **Re-measure it when the corpus grows** — that number is the blast radius of
+  everything in the function. Three defects it was hiding, all fixed that day and
+  all worth knowing as shapes:
+  - **The depth cue can be STRUCTURAL rather than typographic.** `querida-amazonia.pt`
+    emphasises nothing at all and nests its sub-entries in a `<blockquote>`, so all 37
+    entries read as one level and the four chapters became siblings of their own
+    sections — the reported symptom. A `<blockquote>` is the one indent that is
+    RELATIVE, so it sets a FLOOR of one below the last entry outside it and never a
+    tier of its own: `verbum-domini.en` wraps most of a chapter's sections and forgets
+    one, and a third tier read off the wrapper alone would file fifteen sections under
+    the sibling the source missed. 14 pages gained real structure; `magnifica-humanitas.de`
+    moved onto the exact level counts its es/fr/ru siblings already had.
+  - **The outline's own TITLE is not part of the document.** `INDEX`, `ÍNDICE`,
+    `Tartalomjegyzék` sit outside the run of links that detects the outline, so the
+    span began one paragraph late and left the word behind as a heading —
+    `verbum-domini.en` opened with a level-3 node called INDEX. `_TOC_TITLE_WORDS` is a
+    CLOSED table of 14 spellings, because the paragraph above an outline is as often the
+    document's own name (`CASTI CONNUBII`), its first division (`PRVI DIO`) or a rule of
+    underscores, and absorbing one of those loses a heading the document really prints.
+  - **A `[9-14]` on an entry is an annotation, not a title.** It only ever mattered where
+    the outline and the body also disagree: `Comunidade`/`Comunidades cheias de vida`
+    drops the fuzzy match to 0.84 against a 0.90 threshold entirely on those eight
+    characters, so the entry took no TOC level and nested one tier too deep.
+- **`--slugs` naming only exhortations parsed nothing and exited 0**, until 2026-09-01.
+  `run_phase2` filtered a pontificate's encyclicals and then `continue`d past the whole
+  iteration when none survived — so `--slugs querida-amazonia` never reached Francis's
+  exhortations, where the document actually lives. It is the recommended way to check a
+  parser fix on one document, and it was answering "clean run" to a run that parsed
+  nothing.
 - Source defects go through `pipeline/corrections/` with locator, exact
   before/after, reason and evidence — never a code special-case, and never
   invented text. A defect with no known correct value gets documented, not

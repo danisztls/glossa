@@ -3149,6 +3149,76 @@ _TOC_PARA_RE = re.compile(
 )
 _BR_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
 _MARGIN_LEFT_RE = re.compile(r"margin-left:\s*(\d+)", re.IGNORECASE)
+_BLOCKQUOTE_RE = re.compile(r"<(/?)blockquote(?=[\s>])", re.IGNORECASE)
+# The paragraph range a TOC entry annotates itself with -- `Injustiça e crime
+# [9-14]`. It is printed in the outline and nowhere else, so it is not part of
+# the title and is stripped before the entry is matched to its body heading.
+# Left on, it is the whole of what defeated `querida-amazonia.pt`'s
+# `Comunidade cheias de vida [91-98]`: the outline drops the plural the body
+# prints, so the prefix rules miss and the fuzzy ratio falls to 0.84 against a
+# threshold of 0.90 -- entirely on the eight characters of the annotation.
+_TOC_RANGE_RE = re.compile(r"\s*\[\s*\d+\s*(?:[-\u2013\u2014]\s*\d+\s*)?\]\s*$")
+# What a page calls its own table of contents, casefolded. A CLOSED table
+# and not a pattern, because the paragraph above an outline is as often the
+# document's title (`CASTI CONNUBII`, `DOMINUM ET VIVIFICANTEM`), its first
+# division (`PRVI DIO`) or a rule of underscores, and absorbing one of those
+# loses a heading the document really prints. Measured over the 81 raw pages
+# that carry a linked outline: 35 print a title above it, and these are all
+# of them.
+_TOC_TITLE_WORDS = frozenset(
+    {
+        "index",
+        "index rerum",
+        "indice",
+        "índice",
+        "inhalt",
+        "inhaltsverzeichnis",
+        "table",
+        "table des matières",
+        "sommaire",
+        "spis treści",
+        "spis rzeczy",
+        "spis rozdziałów",
+        "tartalomjegyzék",
+        "faharasa",
+    }
+)
+
+
+def is_toc_title(text: str) -> bool:
+    """Whether a printed line is the heading a page puts over its own table
+    of contents -- `INDEX`, `ÍNDICE`, `Tartalomjegyzék`.
+
+    It is not part of the outline and it is not part of the document, so it
+    belongs to neither consumer: `toc_link_span` takes it out of the body
+    with the rest of the outline, and `extract_toc_outline` steps over it
+    rather than reading it as an entry. Left in the body it becomes a
+    heading of its own -- `verbum-domini.en` opened with a level-3 node
+    called INDEX, `sacramentum-caritatis.it` with a level-4 INDICE."""
+    return _norm_heading(text).strip(" .:") in _TOC_TITLE_WORDS
+
+
+def _in_blockquote(body_html: str, span_start: int, pos: int) -> bool:
+    """Whether the paragraph at `pos` sits inside a <blockquote> opened
+    within the table of contents at `span_start`.
+
+    A table of contents indents its sub-entries, and the three ways it can
+    say so are the same statement in three syntaxes: a `margin-left` style,
+    a run of `&nbsp;`, or nesting the lines in a <blockquote>. Only the
+    first two were read until 2026-09-01, and the third is what
+    `querida-amazonia.pt` uses and nothing else about that page does --
+    its outline is emphasised nowhere, so every entry read as one level and
+    the four chapters became siblings of their own sections.
+
+    Counted from the span rather than from the top of the document, because
+    the body of a document is full of quotations and a <blockquote> left
+    open above the outline would indent all of it. Depth is not reported:
+    one level of nesting is the whole signal, since the level scheme below
+    has one tier for "indented" and no more."""
+    depth = 0
+    for m in _BLOCKQUOTE_RE.finditer(body_html, span_start, pos):
+        depth += -1 if m.group(1) else 1
+    return depth > 0
 
 
 def toc_link_span(body_html: str) -> tuple[int, int] | None:
@@ -3202,6 +3272,7 @@ def toc_link_span(body_html: str) -> tuple[int, int] | None:
         if para.end() > start and para.start() < end:
             start = min(start, para.start())
             end = max(end, para.end())
+    start = _extend_toc_head(body_html, start)
     end = _extend_toc_tail(body_html, end)
     for para in _TOC_PARA_RE.finditer(body_html[start:end]):
         if match_para_num(para.group(2)):
@@ -3222,6 +3293,34 @@ def _printed_lines_from(body_html: str, pos: int) -> set[str]:
             if text:
                 lines.add(text)
     return lines
+
+
+def _extend_toc_head(body_html: str, start: int) -> int:
+    """Grow a table-of-contents span backward over the heading that titles
+    it, where the page prints one.
+
+    The outline's own title sits OUTSIDE the run of links that detects it,
+    so the span begins one paragraph too late and leaves `ÍNDICE` behind as
+    the document's first heading -- which is what the reader then sees at
+    the head of the text and again at the head of the table of contents.
+
+    Only blank paragraphs may be crossed on the way, and only a line in
+    `_TOC_TITLE_WORDS` is absorbed. Anything else stops the walk at once:
+    `deus-caritas-est.hr` prints `PRVI DIO` immediately above its outline
+    and `casti-connubii.hu` the encyclical's own name, and both are
+    headings the document keeps."""
+    heads = [para for para in _TOC_PARA_RE.finditer(body_html) if para.end() <= start]
+    prev = start
+    for para in reversed(heads):
+        if _norm_heading(strip_tags(body_html[para.end() : prev])):
+            break  # real text between this paragraph and the span
+        text = strip_tags(para.group(2))
+        if is_toc_title(text):
+            return para.start()
+        if _norm_heading(text):
+            break  # a heading of the document's own
+        prev = para.start()
+    return start
 
 
 def _extend_toc_tail(body_html: str, end: int) -> int:
@@ -3293,15 +3392,24 @@ def extract_toc_outline(body_html: str) -> list[tuple[str, int]]:
     page ships one, it outranks anything inferred from the body, and the
     inference should defer to it rather than average with it.
 
-    HOW WIDESPREAD, measured over all 466 pages in corpus/raw/vatican-docs:
-    exactly three carry a linked TOC -- magnifica-humanitas in both
-    languages (82 entries each, complete) and divini-redemptoris.pt (7
-    entries, top level only). Nothing else has one. So this is not a general
-    replacement for the style heuristics; it is an override that fires on
-    the documents that earned it, and its blast radius is those three pages.
-    The count is worth re-measuring as new documents arrive: Magnifica
-    Humanitas (2026) is the newest encyclical in the corpus and the only one
-    produced with this markup, so the modern template may well keep it.
+    HOW WIDESPREAD -- **81 pages of 2,080**, re-measured 2026-09-01. It read
+    "exactly three" here, over a raw corpus of 466 pages, and the ten-language
+    expansion of 2026-08-29 quadrupled the corpus without anyone re-running
+    the count. So this stopped being "an override that fires on the documents
+    that earned it" some time ago and nothing said so: it is now the level
+    signal for a twentieth of the raw pages, and every defect in it is a
+    document-shaped defect rather than a two-document one. RE-MEASURE THE
+    COUNT WHEN THE CORPUS GROWS -- the scan is `toc_link_span` over every file
+    in `raw/vatican-docs`, and the reason the number matters is that it is the
+    blast radius of everything below it.
+
+    The families are worth knowing apart, because they fail differently: the
+    modern CMS pages (magnifica-humanitas, querida-amazonia, gaudete-et-
+    exsultate, evangelii-gaudium, verbum-domini, sacramentum-caritatis) print
+    a rich outline and mark its depth by emphasis, indentation or nesting, and
+    the archive mirror's Hungarian and Polish editions print a flat list of
+    links with no depth cue at all -- correctly read as one level, not as a
+    failure to find three.
 
     DETECTION. A TOC entry is an in-page link whose target is defined LATER
     in the document. That forward direction is the whole discriminator, and
@@ -3317,6 +3425,11 @@ def extract_toc_outline(body_html: str) -> list[tuple[str, int]]:
         bold                   -> 1   (INTRODUCTION, CHAPTER TWO)
         italic, or indented    -> 3   (sub-section titles)
         neither                -> 2   (section titles)
+
+    plus one structural cue that is not typography at all: a <blockquote>
+    around a run of entries, which sets a FLOOR of one below the last entry
+    outside it rather than naming a tier. See the comment at the emit below
+    for why it is the one relative signal of the four.
 
     Both languages agree on the scheme without using the same cues: the
     English TOC indents its level-3 entries by eight &nbsp; AND italicises
@@ -3335,12 +3448,14 @@ def extract_toc_outline(body_html: str) -> list[tuple[str, int]]:
         return []
     span_start, span_end = span
     entries: list[tuple[str, int]] = []
+    last_unquoted = 0
     for para in _TOC_PARA_RE.finditer(body_html):
         if para.end() <= span_start or para.start() >= span_end:
             continue
         attrs, inner = para.group(1), para.group(2)
         margin = _MARGIN_LEFT_RE.search(attrs)
         para_indented = bool(margin) and int(margin.group(1)) > 0
+        quoted = _in_blockquote(body_html, span_start, para.start())
         # One entry per printed LINE, not per link. The two languages break
         # their entries differently -- the English page puts <br> between the
         # anchors, the Portuguese one puts it INSIDE them -- and neither
@@ -3370,16 +3485,30 @@ def extract_toc_outline(body_html: str) -> list[tuple[str, int]]:
             )
             bold_open = max(0, bold_open + delta_b)
             italic_open = max(0, italic_open + delta_i)
-            title = strip_tags(line)
-            if len(title) < _TOC_MIN_TITLE_CHARS:
+            title = _TOC_RANGE_RE.sub("", strip_tags(line)).strip()
+            if len(title) < _TOC_MIN_TITLE_CHARS or is_toc_title(title):
                 continue
             indent = len(re.findall(r"&nbsp;|&#160;|\xa0", line.split("<a")[0]))
             deeper = (
                 is_full_italic(balanced_i) or para_indented or indent >= _TOC_INDENT_MIN
             )
-            entries.append(
-                (title, 1 if is_full_bold(balanced_b) else (3 if deeper else 2))
-            )
+            level = 1 if is_full_bold(balanced_b) else (3 if deeper else 2)
+            # A <blockquote> is the one indent that is RELATIVE. The other two
+            # cues name an absolute tier -- italic is the sub-section style
+            # wherever it appears -- but nesting only says "below the line
+            # above me", so it is read as a floor under the typographic level
+            # rather than as a tier of its own. Both halves are load-bearing.
+            # `querida-amazonia.pt` emphasises nothing at all, so its chapters
+            # and their sections both read 2 and the floor is what separates
+            # them; `verbum-domini.en` bolds its chapters and wraps most of
+            # their sections in a <blockquote> but not all of them -- so a
+            # third tier read off the wrapper alone would put fifteen sections
+            # under the one sibling the source forgot to wrap.
+            if quoted:
+                level = max(level, last_unquoted + 1)
+            else:
+                last_unquoted = level
+            entries.append((title, level))
 
     # No entry may sit more than one level below the one before it. The
     # three levels above are read off typography a human compositor applied
@@ -7179,7 +7308,16 @@ def run_phase2(
     is a whole pontificate, which for Leo XIII is dozens of encyclicals — far
     more re-parsing than checking one parser fix needs, and the per-document
     review workflow (read a document, describe it, report what the parse got
-    wrong) wants exactly one document at a time."""
+    wrong) wants exactly one document at a time.
+
+    It claimed that and did neither half of it for exhortations, until
+    2026-09-01. Filtering a pontificate's encyclicals to nothing `continue`d
+    past the exhortation discovery below, so `--slugs querida-amazonia` parsed
+    NO document and exited 0; and the exhortation loop never read `doc_slugs`
+    at all, so once that was fixed the same flag parsed all 33 of them. Both
+    are the flag's own failure mode, and the first is the worse one: the
+    instrument for checking a parser fix answered "clean run" to a run that
+    checked nothing."""
     start = time.monotonic()
     results: list[dict] = []
     candidates = (
@@ -7284,16 +7422,20 @@ def run_phase2(
             refs, notes = discover_encyclicals(fetcher, slug, display)
             for note in notes:
                 print(f"  [discover] {note}")
+            # A pontificate with no encyclicals to run is not a pontificate to
+            # skip: the exhortations below are discovered separately and are
+            # most of what `--slugs` is used to reach. Both of these were a
+            # `continue` over the whole iteration until 2026-09-01, so
+            # `--slugs querida-amazonia` filtered Francis's encyclicals to
+            # nothing, never reached his exhortations, parsed no document at
+            # all and exited 0 -- which is the silent stale answer this
+            # project's checks exist to refuse.
             if not refs:
-                print(
-                    f"{slug}: 0 encyclicals discovered (index missing or empty) -- skipping"
-                )
-                continue
+                print(f"{slug}: 0 encyclicals discovered (index missing or empty)")
             if doc_slugs is not None:
                 refs = [r for r in refs if r.slug in doc_slugs]
-                if not refs:
-                    continue
-            print(f"{slug}: {len(refs)} encyclicals discovered")
+            if refs:
+                print(f"{slug}: {len(refs)} encyclicals discovered")
             for ref in refs:
                 if time_budget is not None and time.monotonic() - start > time_budget:
                     print(f"time budget reached mid-pontificate ({slug}); stopping")
@@ -7310,6 +7452,8 @@ def run_phase2(
                 exh_refs, exh_notes = discover_exhortations(fetcher, slug, display)
                 for note in exh_notes:
                     print(f"  [discover-exh] {note}")
+                if doc_slugs is not None:
+                    exh_refs = [r for r in exh_refs if r.slug in doc_slugs]
                 for ref in exh_refs:
                     if (
                         time_budget is not None
