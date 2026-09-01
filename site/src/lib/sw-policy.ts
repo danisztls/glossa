@@ -148,6 +148,14 @@ const CRAWLER_FILES = [
  * include it for a day. It is here now, with `apparatus.json`, which is the
  * same thing again and five times the size: three files, one worker, no
  * browser.
+ *
+ * `apparatus.json` is read by BOTH since 2026-08-31, when `llms.txt` started
+ * naming it: the edge reads it to write a head, and a stranger reads it because
+ * the descriptions and the cross-references are the two things on this site
+ * that are ours to offer. It stays here rather than moving, because the two
+ * lists do the same thing — refuse the precache — and only this one is also
+ * true. What a crawler-facing file additionally needs is its `run_worker_first`
+ * negation, which this one has had since it shipped.
  */
 const INFRASTRUCTURE_FILES = [
 	'/corpus-routes.json',
