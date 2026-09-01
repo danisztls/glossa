@@ -1,10 +1,17 @@
 # Haydock's commentary: a work type the corpus does not have
 
 Measured 2026-08-25 against `vulgata.online`, the host the Douay-Rheims was
-taken from. **Nothing here is implemented.** This is the research pass that
-should have accompanied the Douay-Rheims ingestion and did not — the findings
-below existed only in a conversation until now, which is the reason the
-document exists at all.
+taken from. This is the research pass that should have accompanied the
+Douay-Rheims ingestion and did not — the findings below existed only in a
+conversation until then, which is the reason the document exists at all.
+
+**Ingested 2026-09-01 as `commentary.haydock.en`.** The four open decisions at
+the foot of this note are answered there; `docs/decisions.md` §Addresses and
+editions holds the reasoning, `docs/corpus-schema.md` §Commentary the shape,
+and `CLAUDE.md` the things that will bite. What is kept here is the
+measurement, plus — under "What the crawl changed" — the three claims below
+that the full crawl contradicted, because a research note that is quietly
+corrected teaches nothing about how far to trust the next one.
 
 The George Leo Haydock Bible (1811, revised 1859) is the Douay-Rheims
 Challoner text with a vastly larger apparatus attached. On this host it is
@@ -115,27 +122,58 @@ Public domain on age: Haydock died 1849 and the revised edition is 1859. The
 same position as `bible.douay-rheims.en`, and unlike Matos Soares (PD 1 Jan
 2028 — `docs/research/copyright.md`). No new exposure.
 
-## What has to be decided before any of this is scraped
+## How each of the four was decided
 
-In order:
+In the order this note posed them:
 
-1. **The schema for a commentary work.** How a note addresses Scripture (an
-   OSIS book, chapter and verse, presumably reusing `ScriptureRef`), how
-   attribution is stored (a field, not a suffix left inside the text), and
-   whether a commentary carries structure of its own or is purely an index
-   onto another work's addresses.
-2. **How the reader reaches it.** A commentary is not an edition, so it does
-   not belong in the edition menu. `Sidenote.svelte` renders the apparatus of
-   the edition being read; 24,000 notes from five centuries of commentators is
-   a different reading surface, and designing it as "more sidenotes" is
-   probably wrong.
-3. **Payload granularity**, per above.
-4. **Whether attribution is parsed or preserved.** Splitting "… Witham" into a
-   field is an editorial act on someone else's text. It is also the whole
-   value of the catena. The `pipeline/corrections/` vs `pipeline/overrides/`
-   distinction does not cover this — it is neither a source defect nor a
-   derivation defect, but a structural claim about what the trailing token
-   means, and it will be wrong somewhere.
+1. **The schema.** Purely an index onto another work's addresses — a
+   commentary contributes no route, no sitemap entry and no title table, and
+   its manifest names the work it `annotates`. `bible-intro` was the near
+   precedent and stops one step short, since an introduction is chapter 0 and
+   that is an address.
+2. **How the reader reaches it.** An apparatus selector: a panel of switches
+   in the reading bar choosing what is set beside the text, the edition's own
+   notes included. This note's guess that "more sidenotes" was probably wrong
+   was half right — the notes DO go in the margin, but they carry no marker in
+   the running text and are labelled by their author rather than lettered,
+   because a lemma quoting Challoner cannot be anchored in an edition that is
+   not Challoner.
+3. **Payload granularity** was answered three days after this note was
+   written, by somebody else's problem — see below.
+4. **Attribution is parsed**, against a closed vocabulary derived from the
+   crawl and then read, with the residue reported by `--attributions` and an
+   unmatched tail left in the text. The concern was right that it "will be
+   wrong somewhere"; what makes that affordable is that being wrong here costs
+   a missing field rather than an altered sentence.
+
+## What the crawl changed
+
+Three claims above were measured on ten chapters and did not survive 1,334.
+
+- **"The largest body of text the corpus would hold" was already false when
+  it was written, and became more so.** `bible.allioli.de` (37,790 notes) and
+  `bible.martini.it` (18,722) landed on 2026-08-28, three days after this
+  note. Haydock is large, not exceptional.
+- **"Payload granularity becomes a real design question" — it did not.** The
+  same two editions forced `sync-corpus.mjs` to pack Bible chapters by SIZE
+  rather than by a fixed stride, explicitly so "an edition ingested later with
+  a heavier apparatus is handled without anyone re-measuring." Haydock is that
+  edition, and it needed no new scheme: its heaviest chapter is Psalm 118 at
+  59 KB against a 150 KB pack target.
+- **"~24,000 notes" counted RECORDS, and a record is a verse.** Each holds
+  that verse's whole commentary as several attributed paragraphs, so the note
+  count at the stored granularity is roughly double. Apocalypse 20 was
+  described here as "1 note for 15 verses"; it is one record of 14,082
+  characters holding three paragraphs and sixteen sub-notes.
+
+**And one convention this note flagged in a single line turned out to be a
+sub-apparatus.** The "inline `_(#1)_` back-reference, which needs adjudication
+before parsing rather than after" is an anchor into `__Notes:__` blocks
+appended after the body — Haydock footnoting his own paragraphs with the Greek
+and Latin behind a rendering. Every anchor is printed `#1` and every block
+defines `#1`; they pair by POSITION, sixteen of each in Apocalypse 20:2.
+Reading the digit as a marker would have collapsed fifteen notes into one,
+silently. The line was right that it needed adjudicating first.
 
 ## Related
 

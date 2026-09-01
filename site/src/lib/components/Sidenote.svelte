@@ -361,16 +361,6 @@
 		overflow-wrap: break-word;
 	}
 
-	.sidenote-lemma {
-		font-weight: 600;
-		color: var(--color-text);
-		/* The lemma is the edition's own words quoted back — the printed
-		   apparatus sets it apart from the gloss and so does this. The
-		   separator is ours: the source's own colon was dropped at ingestion
-		   as the apparatus's punctuation rather than either half's text. */
-		padding-inline-end: 0.35em;
-	}
-
 	.sidenote-missing {
 		font-style: italic;
 	}

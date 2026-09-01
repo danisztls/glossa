@@ -413,3 +413,25 @@
 .sidebar-toc-list li {
 	margin: 0.1rem 0;
 }
+
+/*
+ * THE WORDS A NOTE GLOSSES, quoted back at its head.
+ *
+ * Global rather than scoped for the reason `.margin-note` above it is, and it
+ * arrived here the day a second component needed it: `Sidenote` sets an
+ * edition's own footnote and `CommentaryGloss` sets a commentary's, and both
+ * open on a lemma because both apparatus traditions print one. A class name
+ * borrowed across a component boundary in Svelte is silently unstyled, not an
+ * error, so the copy that would otherwise be made here is the bug this
+ * prevents rather than the tidiness it buys.
+ *
+ * The lemma is the edition's own words quoted back — the printed apparatus
+ * sets it apart from the gloss and so does this. The separator is ours: the
+ * source's own colon was dropped at ingestion as the apparatus's punctuation
+ * rather than either half's text.
+ */
+.sidenote-lemma {
+	font-weight: 600;
+	color: var(--color-text);
+	padding-inline-end: 0.35em;
+}

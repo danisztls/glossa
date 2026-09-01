@@ -85,6 +85,12 @@ phase 1 keeps three cores busy and phase 2 eight. Both now run `--offline`,
 which makes the recipe's zero-network promise enforced rather than asserted
 and narrows the lock to one per phase; see `V.run_lock_path`.
 
+THE PARTITION IS ABOUT WRITES, AND ONE STAGE READS ANOTHER'S. `haydock` is a
+commentary on `bible.douay-rheims.en` and takes both its crawl plan and its
+validation oracle from that edition's parsed output, so it is the first stage
+here with a `needs`. `waves` is what honours it; everything else in `STAGES`
+still depends on nothing but `raw/`.
+
 PHASE 2'S LANGUAGES ARE DERIVED, NOT WRITTEN DOWN. The README's line carried
 a hand-maintained 25-code `--langs` list, and on 2026-08-29 that list was
 short: `sw` had been added to `DIVISIONS` hours earlier for the Vatican II
@@ -186,6 +192,13 @@ class Stage:
     #: --derive re-encodes 482 AVIFs from 241 masters and takes minutes where
     #: every other stage takes seconds.
     heavy: tuple[str, ...] = field(default_factory=tuple)
+    #: Stage names whose OUTPUT this one reads. Empty for all but `haydock`;
+    #: see WHY THE STAGES CAN OVERLAP above for why this had to exist at all,
+    #: and `waves` for what it does to the schedule. A dependency that is not
+    #: in this run is not waited for -- `--only haydock` is a legitimate thing
+    #: to ask for over a corpus that already holds the annotated edition, and
+    #: the scraper itself dies with the path it tried when it does not.
+    needs: tuple[str, ...] = field(default_factory=tuple)
 
     def argv(self, *, images: bool) -> list[str]:
         args = list(self.args) + (list(self.heavy) if images else [])
@@ -227,6 +240,17 @@ STAGES: tuple[Stage, ...] = (
         "bible/introductions.py",
         ("--offline",),
         ("bible-intro.*",),
+    ),
+    # The one stage that reads another's output: Haydock's notes address the
+    # Douay-Rheims, so that edition's chapter and verse numbering is both the
+    # crawl plan and the validation oracle (`haydock.py`'s `chapter_plan`).
+    Stage(
+        "haydock",
+        "bible",
+        "bible/haydock.py",
+        ("--offline",),
+        ("commentary.haydock.*",),
+        needs=("douay-rheims",),
     ),
     Stage("allioli", "bible", "bible/allioli.py", outputs=("bible.allioli.*",)),
     Stage("martini", "bible", "bible/martini.py", outputs=("bible.martini.*",)),
@@ -502,6 +526,47 @@ def plan(stages: list[Stage], state: dict[str, dict]) -> list[Stage]:
     )
 
 
+def waves(order: list[Stage]) -> list[list[Stage]]:
+    """`order`, split so a stage runs only after the stages it `needs`.
+
+    THE PARTITION MAKES CONCURRENT WRITES SAFE AND SAYS NOTHING ABOUT READS,
+    which is the gap this closes. Every stage writes work directories no other
+    stage names, so two running at once cannot race a file; but `haydock`
+    READS `bible.douay-rheims.en` to know which chapters exist, and a pool
+    started in longest-first order is perfectly capable of running it before
+    the edition it reads has been written. That failure would not be a crash
+    -- the scraper would find no corpus and die with the path it tried, on a
+    run where the path was about to be correct.
+
+    A dependency OUTSIDE this run is not waited for. `--only haydock` over a
+    corpus that already holds the Douay-Rheims is an ordinary thing to ask
+    for, and so is a `--changed-only` run where the annotated edition is
+    unchanged and therefore not in `todo`.
+
+    Waves rather than a full dependency-aware scheduler because there is one
+    edge. If a second ever appears, this still holds; if a tenth does, the
+    right answer is futures per stage rather than a barrier per wave, and the
+    cost of being wrong about that today is one stage's idle time.
+    """
+    selected = {s.name for s in order}
+    remaining = list(order)
+    done: set[str] = set()
+    out: list[list[Stage]] = []
+    while remaining:
+        ready = [
+            s for s in remaining if all(n in done or n not in selected for n in s.needs)
+        ]
+        if not ready:
+            cycle = ", ".join(sorted(s.name for s in remaining))
+            raise SystemExit(
+                f"rebuild: stages depend on each other in a cycle: {cycle}"
+            )
+        out.append(ready)
+        done.update(s.name for s in ready)
+        remaining = [s for s in remaining if s not in ready]
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -642,12 +707,17 @@ def main() -> int:
     order = plan(todo, state) if capture else todo
     if capture:
         with ThreadPoolExecutor(max_workers=min(args.jobs, len(order))) as pool:
-            for r in pool.map(run, order):
-                results[r.stage.name] = r
+            for wave in waves(order):
+                for r in pool.map(run, wave):
+                    results[r.stage.name] = r
     else:
-        for stage in order:
-            r = run(stage)
-            results[r.stage.name] = r
+        # Flattened rather than recipe order: `--jobs 1` has to honour the
+        # same edges, and a recipe order that happens to satisfy them today is
+        # a thing the next insertion silently breaks.
+        for wave in waves(order):
+            for stage in wave:
+                r = run(stage)
+                results[r.stage.name] = r
 
     # A stage that failed must not record its fingerprint, or the next
     # --changed-only run would skip a broken parser.

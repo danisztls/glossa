@@ -832,6 +832,52 @@ all of them: `prayer.common.en-gb` shipped a receipt for a defect in `glory-be`,
 it does not contain. A receipt exists to be checked against its own file, and naming a
 change that is not there is the one thing it cannot do.
 
+**A commentary is a work with no address, and the reader's preference selects the
+apparatus** (2026-09-01, `commentary.haydock.en`). The rule at the head of this section —
+a canonical URL selects a reference, the reader's preference selects the edition — now
+runs one notch further. Haydock wrote an apparatus ON the Douay-Rheims rather than a
+translation of it, and vatican-style "which edition" has no answer for that: `HAY` ships
+footnotes and no verses, so every consumer of `type: 'bible'` would be handed a text with
+nothing in it. It is its own work type, its units name `{osis, chapter, verse}` of the
+work its manifest `annotates`, and it contributes no route, no sitemap entry and nothing
+to `route-titles.json`. `bible-intro` is the near precedent and stops one step short: an
+introduction is chapter 0, which is an address.
+
+**So the apparatus is a set and not a choice, which is why it could not join
+`content.svelte.ts`.** Every other edition-shaped preference resolves to exactly one work
+— `Override` holds one `workId`, `CompareStore.target` one id or `AUTO`. A reader can
+have Challoner's notes and Haydock's catena beside the same verse, and that is the
+arrangement this site is named for. `apparatus-prefs.svelte.ts` stores a set, the control
+is a panel of `menuitemcheckbox` switches rather than a menu of radio items, and it sits
+outside `.reading-bar-editions` so that wrapper's three controls keep reading as one
+phrase.
+
+**The two defaults are opposite on purpose.** An edition's own notes are ON, because the
+reader who chose the Douay-Rheims chose Challoner's apparatus — it is what distinguishes
+it from the four other English texts. A commentary is OFF, because it is the largest body
+of text in the corpus and nobody opening a chapter asked for it; switching it on is what
+causes it to be fetched at all. What is stored is therefore the DIFFERENCE from the
+default and not the state: store the state and a reader who has never touched the panel is
+indistinguishable from one who switched everything off, and the next work ingested arrives
+silently switched off for the first of them.
+
+**A commentary note carries no marker in the text, and is labelled by its author.** It
+cannot carry one: its lemma quotes the wording of the edition it was written on, and the
+reader may be on the Clementine Vulgate with none of those words in front of them. Two
+lettered runs a hand's width apart in one margin would print two different "a"s with
+nothing to say which belonged to which, so the label is "Calmet" — which needs no second
+vocabulary, collides with nothing, and tells the reader whose opinion they are about to
+read where a letter tells them nothing.
+
+**Attribution is parsed into a field, and the vocabulary is closed.** That was the open
+question the research note would not answer, because splitting "… Witham" off the end of
+someone else's sentence is an editorial act and is also the whole value of a catena. It is
+settled by the standard this project already holds a source defect to: the vocabulary is
+derived and then READ, a tail outside it stays in the text with no field rather than being
+guessed at, and `--attributions` reports the residue. Taking whatever capitalised run ends
+a paragraph reads "Mauduit here represents the word:" as an author, which is the `Пар.`
+lesson in another family.
+
 ## Languages
 
 **Content language follows UI language**, with a per-work-type override as the escape

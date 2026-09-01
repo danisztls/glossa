@@ -30,6 +30,9 @@ export const pt: Dictionary = {
 	'jumpbox.suggestions': 'Sugestões',
 
 	'appearance.label': 'Aparência',
+	'apparatus.label': 'Aparato',
+	'apparatus.editionNotes': 'Notas desta edição',
+	'apparatus.commentary': 'Comentário',
 	'darkMode.label': 'Modo escuro',
 	// 'Auto', not 'Automático': see the note in the English dictionary — the
 	// three share one segmented control, and 'AUTOMÁTICO' set uppercase is

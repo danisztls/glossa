@@ -60,6 +60,14 @@ export const en: Dictionary = {
 	// full-width segmented control inside a ~13rem panel, set uppercase at
 	// 0.68rem, so a long word in any language pushes the panel wider.
 	'appearance.label': 'Appearance',
+	// The panel choosing what is set BESIDE the text — an edition's own
+	// footnotes, and any commentary written on it. "Apparatus" is the word the
+	// trade uses and the word this site's own prose uses throughout
+	// (docs/decisions.md); "Notes" would have been plainer and would also have
+	// been wrong for the half of the panel that is a separate work.
+	'apparatus.label': 'Apparatus',
+	'apparatus.editionNotes': "This edition's notes",
+	'apparatus.commentary': 'Commentary',
 	'darkMode.label': 'Dark mode',
 	'darkMode.auto': 'Auto',
 	'darkMode.on': 'On',

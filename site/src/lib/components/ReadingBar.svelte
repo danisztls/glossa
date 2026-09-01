@@ -83,6 +83,7 @@
 	import EditionMenu from './EditionMenu.svelte';
 	import TocMenu from './TocMenu.svelte';
 	import ComparisonEditionMenu from './ComparisonEditionMenu.svelte';
+	import ApparatusMenu from './ApparatusMenu.svelte';
 	import type { WorkManifest } from '$lib/types';
 	import CompareToggle from './CompareToggle.svelte';
 	import BookmarkButton from './BookmarkButton.svelte';
@@ -103,6 +104,15 @@
 		 *  work that can carry two editions in the same language, so its
 		 *  picker has something to disambiguate. */
 		editionStyle?: boolean;
+	}
+
+	/** What `ApparatusMenu` offers at this address. `edition` is the work whose
+	 *  own footnotes are the first row, absent where the reader's edition
+	 *  prints none; `commentaries` are the separate works written on it. Both
+	 *  empty means the trigger is not rendered at all. */
+	export interface ApparatusChoices {
+		edition?: { workId: string; title: string };
+		commentaries: WorkManifest[];
 	}
 
 	/** The work's table of contents, for the routes whose sidebar is hidden at
@@ -154,6 +164,14 @@
 		 *  page-level action where the page IS scripture and a non-sequitur
 		 *  in the bar of a Summa article or an encyclical. */
 		randomVerse?: boolean;
+		/** What is set BESIDE the text at this address: the edition's own notes
+		 *  and any commentary written on it (`ApparatusMenu`). Omitted wherever
+		 *  there is nothing to choose between, which is every route but
+		 *  scripture today — and omitted there too at an address no apparatus
+		 *  reaches, on the same "hide, don't disable" posture `canCompare`
+		 *  takes. An object rather than loose props for the reason `comparison`
+		 *  is one: the pair is meaningless apart. */
+		apparatus?: ApparatusChoices;
 	}
 
 	let {
@@ -164,7 +182,8 @@
 		compareActive = false,
 		onToggleCompare,
 		comparison,
-		randomVerse = false
+		randomVerse = false,
+		apparatus
 	}: Props = $props();
 
 	/**
@@ -201,6 +220,13 @@
 	{/if}
 	{#if randomVerse}
 		<RandomVerseButton />
+	{/if}
+	<!-- Ahead of the edition trio and outside its wrapper: the apparatus is a
+	     property of the text, so it belongs with the text-level controls, and
+	     `.reading-bar-editions` is `nowrap` precisely so its three read as one
+	     phrase that a fourth control would break. -->
+	{#if apparatus && (apparatus.edition || apparatus.commentaries.length > 0)}
+		<ApparatusMenu edition={apparatus.edition} commentaries={apparatus.commentaries} />
 	{/if}
 	<div class="reading-bar-editions">
 		<EditionMenu />

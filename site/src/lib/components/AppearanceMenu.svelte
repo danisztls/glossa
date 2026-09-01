@@ -224,12 +224,6 @@
 		--control-height: 1.7rem;
 	}
 
-	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.2rem;
-	}
-
 	/* Every row's title, the two switches' own labels included: they all name
 	   a setting of the same rank, so they are all set alike — `.label-micro`
 	   (styles/components.css), which is that setting site-wide. At this size
@@ -237,26 +231,9 @@
 	   which is why the shared label is uppercase in the first place. It ran a
 	   step smaller here (0.68rem) than everywhere else, which was not a
 	   decision anyone made. */
-	.field-label {
-		padding-inline: 0.2rem;
-		font-weight: 500;
-		line-height: 1.2;
-	}
-
 	/* Even spacing between the fields, and no rule between the theme rows and
 	   the size stepper: a divider would have made one of the gaps larger than
 	   the others, which is the imbalance it was meant to organize. */
-	.field + .field {
-		margin-block-start: 0.55rem;
-	}
-
-	.field-control {
-		display: flex;
-		align-items: center;
-		gap: 0.4rem;
-		height: var(--control-height);
-	}
-
 	/* One control, three cells: a single bordered box divided by hairlines,
 	   rather than three separate buttons, so the group reads as "pick one of
 	   these" the way a radio set should. */
@@ -298,74 +275,15 @@
 		color: var(--color-accent-contrast);
 	}
 
-	.switch-btn {
-		display: inline-flex;
-		align-items: center;
-		height: 100%;
-		padding: 0;
-		border: 0;
-		background: transparent;
-		cursor: pointer;
-	}
-
 	/* Dimmed whole, rather than by recolouring the label: the label sits
 	   outside the button now, and is already muted. */
-	.switch-btn:disabled {
-		opacity: 0.55;
-		cursor: not-allowed;
-	}
-
 	/* Drawn rather than a checkbox: `appearance: none` on a real one would
 	   need the same box anyway, and the button already carries the state via
 	   `role="menuitemcheckbox"` + `aria-checked`. Decorative, so no ARIA. */
-	.switch {
-		position: relative;
-		display: block;
-		width: 2.4rem;
-		height: 1.4rem;
-		border: 1px solid var(--color-border);
-		border-radius: 999px;
-		background: var(--color-bg-elevated);
-		transition: background-color 120ms ease;
-	}
-
-	.switch::after {
-		content: '';
-		position: absolute;
-		inset-block-start: 0.15rem;
-		inset-inline-start: 0.15rem;
-		width: 1rem;
-		height: 1rem;
-		border-radius: 50%;
-		background: var(--color-text-muted);
-		transition:
-			translate 120ms ease,
-			background-color 120ms ease;
-	}
-
-	.switch.on {
-		background: var(--color-accent);
-		border-color: var(--color-accent);
-	}
-
-	.switch.on::after {
-		background: var(--color-accent-contrast);
-		/* Logical, so the knob still travels toward the switch's "on" end
-		   under an RTL interface language. Width less knob less both insets. */
-		translate: 1rem 0;
-	}
-
 	/* No wrapping: the row has a fixed height, so a second line would spill
 	   out of it. If a translation ever outgrows the space the panel widens
 	   (up to `.menu-panel`'s max-width) instead, which is the visible
 	   failure rather than the silent one. */
-	.note {
-		font-size: 0.7rem;
-		line-height: 1.2;
-		white-space: nowrap;
-		color: var(--color-text-muted);
-	}
-
 	/* Laid out like the segmented control above it — the two ends of a
 	   full-width bar with the reading between them — so the panel's two
 	   multi-part controls have the same silhouette. */

@@ -199,9 +199,12 @@ pipeline/scrapers/
                      `book_forms.json` there is GENERATED from the site's
                      grammar (see below) -- never edit it by hand.
   bible/             cpdv, vulgate, matos_soares, and the sacredbible page
-                     format the first two share; douay_rheims and
-                     introductions, and the vulgata_online API format THOSE
-                     two share (the only scrapers here reading JSON, not HTML)
+                     format the first two share; douay_rheims, introductions
+                     and haydock, and the vulgata_online API format THOSE
+                     three share (the only scrapers here reading JSON, not
+                     HTML). `haydock.py` writes a COMMENTARY, not a Bible --
+                     it lives here because it reads the same host and
+                     annotates the edition beside it.
   ccc/               ccc, compendium
   summa/             the Summa, EN from CCEL + LA from Corpus Thomisticum
   dore/              Doré's 241 engravings: `plates.py` is the image
@@ -592,6 +595,76 @@ Neither is a gap to be filled later. Both are properties of the sources, and
 `validate` asserts the shape rather than symmetry — but the cross-language
 oracle still runs over the parts both editions carry, and it is the check
 that found three articles whose body the English edition omits.
+
+## Haydock is a commentary, and a commentary has no address
+
+Ingested 2026-09-01 (`docs/decisions.md` §Addresses and editions,
+`docs/corpus-schema.md` §Commentary). `commentary.haydock.en` is the first
+`type: 'commentary'` work: its units ADDRESS `bible.douay-rheims.en` rather
+than containing text, because vulgata.online's `HAY` ships `fn` records and no
+`vs` at all — Haydock wrote an apparatus on the Challoner text, not a
+translation of it. Six things will bite before the design will.
+
+- **It contributes no route, no sitemap entry and no `route-titles.json`
+  name**, so none of the address-grammar machinery had to learn about it —
+  `hrefFor`, `isCanonicalPath`, `WORK_OF` and `assertNamed` are all untouched.
+  That is the cheap fork of the two `docs/research/haydock.md` left open, and
+  it is the one the corpus already had a shape for.
+- **`sync-corpus.mjs`'s type chain has NO fallback**, which is the silent
+  failure to know about if a second commentary or any new work type arrives:
+  an unhandled `manifest.type` registers its manifest and emits no content, no
+  routes and no error. The work then exists in `listWorks()`, renders nowhere,
+  and 404s nowhere either. The branch to copy is `if (manifest.type ===
+'commentary')`.
+- **The content path shape is the Bible's on purpose** —
+  `content/{workId}/books/{osis}/{start}-{end}.json`, packed by the same
+  `BIBLE_CHAPTER_CHUNK_TARGET_BYTES`. `bibleChapterLocations` in
+  `corpus-index.ts` therefore reads both with one regex and one map, and
+  `bibleChapterChunkFor` is keyed by work id and makes no claim about type.
+  The name is the Bible's because that is what it was built for; do not add a
+  second lookup. Measured worst case is Psalm 118 at 59 KB against a 150 KB
+  pack target and a 200 KB hard ceiling.
+- **`rebuild.py` has a dependency edge now, and it is the first.** `haydock`
+  reads `bible.douay-rheims.en` out of `build/` for both its crawl plan and
+  its validation oracle, so `Stage.needs` and `waves` exist. Everything else
+  in `STAGES` still depends on nothing but `raw/`, and the outputs partition
+  is still about WRITES — it never said anything about reads, which is the gap
+  that closed.
+- **A book cannot be walked to its first empty chapter here.** That is
+  `douay_rheims.py`'s rule and it inverts: a chapter Haydock did not annotate
+  answers `[]` exactly as a chapter past the end does, so a walk truncates the
+  book at its first unannotated chapter with nothing to say it had. The plan
+  is read off the annotated edition, and one chapter past each book's end is
+  still probed so the plan is checked rather than trusted.
+- **The source's sub-note markers are ALL `#1` and pair by POSITION.** A
+  record's body carries `_(#1)_` anchors and `__Notes:__` blocks are appended
+  after it, one per anchor, in anchor order; Apocalypse 20:2 has sixteen of
+  each. Reading the digit as a marker silently collapses fifteen notes into
+  one. `validate` asserts the two counts agree, and `number_anchors`
+  renumbers on the way out.
+
+**One `fn` record is one VERSE, not one note** — it holds that verse's whole
+commentary as blank-line-separated paragraphs, and each paragraph is one
+authority's remark. That is why the stored unit is the paragraph: filing the
+record whole puts fourteen thousand characters under a single attribution.
+69% of notes close with an authority from a CLOSED vocabulary; a tail outside
+it stays in the text with no `attribution`, and `--attributions` reports the
+residue so the vocabulary can be widened by reading rather than by counting.
+
+**The reader's preference selects the apparatus, and it is a SET.**
+`apparatus-prefs.svelte.ts` cannot reuse `content.svelte.ts` — `Override`
+holds one `workId` and a reader can have two apparatuses beside one verse.
+Edition notes default ON and a commentary defaults OFF, so what is stored is
+the difference from the default rather than the state; storing the state makes
+"never touched the panel" and "switched everything off" the same value, and
+the next work ingested arrives silently off for the first of them.
+
+**Nothing is fetched until it is switched on.** `commentary.svelte.ts` is
+`xrefs.svelte.ts`'s shape — a `$state` holder read inside a `$derived` — and
+deliberately NOT part of `scriptura/[book]/[chapter]/+page.ts`'s
+`listBibleWorks()` loop, which eagerly loads every edition of a chapter.
+`commentary-chapters` is in the `scripture` wave, which is outside
+`AUTOMATIC_WAVES`, so it can never enter an offline fill uninvited.
 
 ## Corpus data must never be inlined into the bundle
 

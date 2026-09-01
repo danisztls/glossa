@@ -45,6 +45,23 @@ export interface WorkImprint {
 	notice: string | null;
 	/** Where that publisher publishes it — the URL to cite for the words. */
 	source: string | null;
+	/**
+	 * `copyright.status` off the served edition's manifest.
+	 *
+	 * Added 2026-09-01 with the first work kind whose every edition is public
+	 * domain. `assertApparatus` refuses a kind with "no rights position at
+	 * all", which until then meant a publisher or a notice — and a public
+	 * domain work has neither by definition, so the check could not tell a
+	 * kind that states its rights from one that forgot to. Saying "public
+	 * domain" IS a rights position, and it is the one the commentary has.
+	 *
+	 * OPTIONAL because this type declares the READER's copy of a file that is
+	 * already deployed: an `apparatus.json` built before this field existed
+	 * carries no `rights`, and the edge has to read it without throwing until
+	 * the next deploy replaces it. Every file the current builder writes has
+	 * one.
+	 */
+	rights?: string | null;
 }
 
 export interface Apparatus {

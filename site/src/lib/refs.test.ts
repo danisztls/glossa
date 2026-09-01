@@ -1179,6 +1179,41 @@ describe('the Douay book names the English Summa cites in', () => {
 		expect(osisOf({ lang: 'en', work: 'summa.en' })).toBe('1sam');
 	});
 
+	it("reads Haydock's bare `K.` as Kings, and the Douay way", () => {
+		// The form no other English work prints, and the one Haydock almost
+		// always uses: `1 K.` 298 times, `2 K.` 320, `3 K.` 315, `4 K.` 402,
+		// against four spelled-out `Kings`. Without the widened base they match
+		// nothing at all — an apparatus of 24,000 notes that links nowhere.
+		const osisOf = (text: string, work?: string) =>
+			linkifyProse(text, { lang: 'en', work }).find((s) => s.kind === 'scripture')?.osis;
+		const HAYDOCK = 'commentary.haydock.en';
+		// Saul's body on the walls of Bethsan — 1 Samuel 31:10, not 1 Kings.
+		expect(osisOf('1 K. xxxi. 10.', HAYDOCK)).toBe('1sam');
+		// David made king at Hebron after Isboseth's death — 2 Samuel 5.
+		expect(osisOf('2 K. v. 3.', HAYDOCK)).toBe('2sam');
+		// The two that read the same either way, which is the corroboration.
+		expect(osisOf('3 K. i. 7.', HAYDOCK)).toBe('1kgs');
+		expect(osisOf('4 K. xii. 20.', HAYDOCK)).toBe('2kgs');
+		// And the base stays Haydock's: no other English work gains it, or
+		// every "1 K" in the corpus would become a citation.
+		expect(osisOf('1 K. xxxi. 10.')).toBeUndefined();
+		expect(osisOf('1 K. xxxi. 10.', 'summa.en')).toBeUndefined();
+	});
+
+	it('reads a Roman chapter in Haydock, as it does in Martini', () => {
+		// How the edition's printer set numerals, not how English cites — and
+		// without it an English config reads almost none of him, since he
+		// writes `Gen. iii. 8` throughout. The guards are unrelaxed: a Roman
+		// chapter still needs an explicit separator and a verse-sized verse.
+		const osisOf = (text: string, work?: string) =>
+			linkifyProse(text, { lang: 'en', work }).find((s) => s.kind === 'scripture');
+		const found = osisOf('See Gen. iii. 8.', 'commentary.haydock.en');
+		expect(found?.osis).toBe('gen');
+		expect(found?.chapter).toBe(3);
+		// Not for English at large: `ccc.en` prints no Roman chapters.
+		expect(osisOf('See Gen. iii. 8.')).toBeUndefined();
+	});
+
 	it('overrides the work for citation strings too, not only prose', () => {
 		// Aeterni Patris cites "the God of all knowledge" — 1 Samuel 2:3 — as
 		// "1 Kings 2:3", in a numbered footnote rather than in the body.

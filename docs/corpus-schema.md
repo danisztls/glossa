@@ -21,6 +21,9 @@ glossa-corpus/               # a separate PRIVATE repository, sibling of this on
     bible.clementina.la/
       manifest.json
       books/…
+    commentary.haydock.en/
+      manifest.json
+      books/…                       # notes ADDRESSING bible.douay-rheims.en, no verses
     ccc.en/
       manifest.json
       structure.json
@@ -55,14 +58,14 @@ stored — see "Cross-references" below.
 
 ## Work IDs
 
-`{corpus}.{edition}.{lang}` for Bibles (`bible.cpdv.en`, `bible.matos-soares.pt`); `ccc.{lang}` for the Catechism; `compendium.{lang}` for the Compendium; `prayer.{slug}.{lang}` for prayer collections (currently one: `prayer.common.{lang}`, combining the Compendium's Appendix A, three already-cached CCC texts, and the Litany of Loreto — see "Prayers" below; `{slug}` leaves room for a later, larger collection to ship as its own work rather than growing `common` without bound); `{family}.{slug}.{lang}` for documents (encyclicals, conciliar texts, curial documents) — e.g. `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `cdf.dominus-iesus.en`.
+`{corpus}.{edition}.{lang}` for Bibles (`bible.cpdv.en`, `bible.matos-soares.pt`); `ccc.{lang}` for the Catechism; `compendium.{lang}` for the Compendium; `prayer.{slug}.{lang}` for prayer collections (currently one: `prayer.common.{lang}`, combining the Compendium's Appendix A, three already-cached CCC texts, and the Litany of Loreto — see "Prayers" below; `{slug}` leaves room for a later, larger collection to ship as its own work rather than growing `common` without bound); `{family}.{slug}.{lang}` for documents (encyclicals, conciliar texts, curial documents) — e.g. `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `cdf.dominus-iesus.en`; `commentary.{slug}.{lang}` for a commentary on another work (`commentary.haydock.en` — see "Commentary" below).
 
 ## manifest.json (all works)
 
 ```jsonc
 {
   "id": "bible.cpdv.en",
-  "type": "bible", // "bible" | "catechism" | "compendium" | "prayer" | "document"
+  "type": "bible", // "bible" | "bible-intro" | "catechism" | "compendium" | "prayer" | "summa" | "document" | "commentary"
   "title": "Catholic Public Domain Version",
   "short_title": "CPDV",
   "language": "en", // BCP 47
@@ -83,6 +86,8 @@ stored — see "Cross-references" below.
   // bible-only:
   "psalm_numbering": "vulgate", // all three editions use Vulgate/Septuagint numbering
   "books": ["gen", "exod", "…"], // the 73 lowercase OSIS codes in this work's canonical order
+  // commentary-only, and REQUIRED there:
+  "annotates": "bible.douay-rheims.en", // the work whose addresses this one's units name
 }
 ```
 
@@ -165,6 +170,80 @@ Manifest carries `books` (OSIS codes with an introduction, canonical order) and 
 
 - `blocks[].text` is plain text on the same terms as verse text above: markup dropped, emphasis a documented v1 loss recoverable from `raw/`.
 - A book may legitimately have none. Challoner prints one preface for both volumes of Kings and both of Paralipomenon, so `bible-intro.en` covers 71 of 73 books, and `/scriptura/2kgs/0` is correctly not an address at all.
+
+## Commentary — `commentary.{slug}.{lang}/books/{osis}.json`
+
+**Added 2026-09-01 with `commentary.haydock.en`,** the corpus's first work whose units
+_address_ Scripture rather than containing it. `type: "commentary"`.
+
+```jsonc
+{
+  "osis": "john",
+  "order": 50,
+  "chapters": [
+    {
+      "n": 1,
+      "verses": [
+        {
+          "verse": 2,
+          "notes": [
+            {
+              "lemma": "The same was in the beginning with God", // optional
+              "text": "In the text is only, \"this was in the beginning;\" but the sense…",
+              "attribution": "Witham", // optional — see below
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+```
+
+**A commentary has no address space of its own, and that is the definition rather than a
+simplification.** Its every unit names a `{osis, chapter, verse}` of the work its manifest
+`annotates`, so it is reachable at that verse's address and nowhere else — no
+`Address.kind`, no route, no sitemap entry, nothing in `route-titles.json`. `bible-intro`
+is the near precedent and stops one step short: an introduction is addressed as chapter 0,
+which is an address, and a commentary note is not addressed at all. The manifest's
+`annotates` field is what makes the reference resolvable, and it is required.
+
+**Every `{osis, chapter, verse}` must exist in the annotated work.** A note naming a verse
+that is not there addresses nothing and renders beside nothing, which is invisible on the
+page — so it is the scraper's one fatal check, not a report.
+
+**`attribution` is the field the work exists for.** A catena's value is that the tradition's
+voices are _named_: about half of Haydock's paragraphs close with the authority the remark
+is drawn from (Calmet, Worthington, Witham, Menochius, Berthier, Bristow, the Fathers
+directly), and leaving that as the last word of a sentence would make it invisible to
+everything but a reader. It is matched against a **closed vocabulary**, and a tail that is
+not in it stays in `text` with the field absent — the same class-vs-instance discipline
+`pipeline/overrides/README.md` states, and for the same reason: a rule that takes whatever
+capitalised run ends a paragraph reads "Mauduit here represents the word:" as an author.
+The stored value is the vocabulary's spelling, not the page's, because the source prints
+"Calmet" and "Calmet." interchangeably.
+
+**One note is one paragraph, and the source's own unit is the verse.** `HAY` ships exactly
+one record per annotated verse, holding that verse's whole commentary as blank-line
+separated paragraphs, and each paragraph is one authority's remark. Storing the record
+whole would file fourteen thousand characters under a single attribution — Apocalypse 20:2
+is one such record — so the paragraph is the unit and the verse is the key.
+
+**A note may carry its own apparatus**, and it is the ordinary `Annotated` shape one level
+down: `text_marked` with `⟦N⟧` tokens and a `notes` array of `{marker, text}`, on exactly
+the terms §An annotated edition states. Haydock uses it for philological sub-notes — the
+Greek and Latin behind a rendering. **The source numbers every one of them `1` and pairs
+them by POSITION**, so the *n*th `_(#1)_` anchor in a record belongs to the *n*th
+`__Notes:__` block appended after it; reading the digit as a marker collapses Apocalypse
+20:2's sixteen sub-notes into one. They are renumbered per paragraph on the way out, so the
+stored unit satisfies the schema's "unique within its unit" rule like any other.
+
+**`lemma` is Challoner's convention, one work over.** A paragraph opens by quoting the
+words it glosses, set in italics by the source, and it is promoted to a field for the reason
+§An annotated edition already gives. The validator reports how many lemmas are found in the
+verse they gloss but does **not** fail on a miss: Haydock quotes loosely where Challoner
+quotes exactly — eliding with "&c.", modernising a spelling, quoting the Latin where the
+verse prints English — so a mismatch is a lead rather than a verdict.
 
 ## Canonical book order (73 books, lowercase OSIS)
 

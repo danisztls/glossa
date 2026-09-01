@@ -127,6 +127,8 @@ import type {
 	CccParagraph,
 	Chapter,
 	Citer,
+	CommentaryChapter,
+	CommentaryNote,
 	CompendiumQuestion,
 	DocumentManifest,
 	DocumentAppendixUnit,
@@ -181,6 +183,7 @@ import {
 	summaStructures,
 	type SummaQuestionMeta,
 	bibleChapterLocation,
+	commentaryChapters,
 	manifests,
 	translatedDescriptionsLocation,
 	documentTagsLocation,
@@ -376,7 +379,7 @@ export function listEditions(type: WorkType): WorkManifest[] {
  *
  * KEYED ON CONTENT LANGUAGE, of which there are twenty-six (see `ContentLang`
  * in types.ts) — all of them interface languages since the superset flip, and
- * sixteen of them without a row. An unlisted tag gets the tail alone, so a
+ * fifteen of them without a row. An unlisted tag gets the tail alone, so a
  * language ingested before its row is written degrades to the old global
  * behaviour rather than to nothing.
  */
@@ -1128,6 +1131,70 @@ export async function getChapter(
 	const chapter = chunk.find((c) => c.n === chapterN);
 	if (!chapter) return undefined;
 	return { book, chapter };
+}
+
+// --- Commentary ------------------------------------------------------------
+//
+// A commentary work (`commentary.haydock.en`) holds notes that ADDRESS another
+// work's verses and contains no text of its own — docs/corpus-schema.md
+// §Commentary. Everything here is keyed by the address of the ANNOTATED work,
+// because that is the only address a commentary note has.
+
+/**
+ * The commentaries that have anything to say at one address, in id order.
+ *
+ * Synchronous, off the index tier, because this is what decides whether the
+ * apparatus panel offers a work at all — a control that appears only after a
+ * fetch has landed is a control that moves under the reader's cursor.
+ *
+ * `annotatedWorkId` is matched rather than assumed: a commentary written on
+ * the Douay-Rheims must not offer itself beside the Clementine Vulgate, whose
+ * words its lemmas do not quote. That is the same judgment
+ * `docs/decisions.md` records for Challoner's notes and the CPDV — attaching
+ * an apparatus to a translation it was not written on is an editorial act —
+ * and it is why this takes a work id and not a language.
+ */
+export function commentariesAt(
+	annotatedWorkId: string,
+	osis: string,
+	chapterN: number
+): WorkManifest[] {
+	return Object.entries(commentaryChapters)
+		.filter(
+			([, work]) =>
+				work.annotates === annotatedWorkId && (work.books[osis] ?? []).includes(chapterN)
+		)
+		.map(([workId]) => manifests[workId])
+		.filter((work): work is WorkManifest => Boolean(work) && !isUnpublished(work.id))
+		.sort((a, b) => a.id.localeCompare(b.id));
+}
+
+/** Every commentary in the corpus, whether or not it reaches any given address. */
+export function listCommentaries(): WorkManifest[] {
+	return listEditions('commentary');
+}
+
+/**
+ * One chapter's commentary, keyed by the verse of the annotated work.
+ *
+ * COARSE FETCH, NARROW RETURN, exactly as `getChapter` above: the chunk holds
+ * a size-packed run of chapters and this returns the one asked for, as a map
+ * the renderer can index by verse number without scanning. `Map` rather than
+ * the stored array because a reading page asks it once per verse — 176 times
+ * in Psalm 118 — and a linear find per verse is quadratic over a chapter.
+ */
+export async function getCommentaryChapter(
+	workId: string,
+	osis: string,
+	chapterN: number
+): Promise<Map<number, CommentaryNote[]>> {
+	const chunk = await fetchTier<CommentaryChapter[]>(
+		[],
+		bibleChapterLocation(workId, osis, chapterN),
+		[]
+	);
+	const chapter = chunk.find((c) => c.n === chapterN);
+	return new Map((chapter?.verses ?? []).map((entry) => [entry.verse, entry.notes]));
 }
 
 // --- Structure trees (shared: CCC and Compendium) -------------------------

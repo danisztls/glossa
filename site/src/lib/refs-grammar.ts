@@ -2011,20 +2011,29 @@ interface LangConfig {
 	 * Read a Roman-numeral CHAPTER in running prose as well as in a stored
 	 * citation ("Matth. XVI. 18." in a footnote, not in a `citations` array).
 	 *
-	 * Off everywhere but `bible.martini.it`, and the docblock on
-	 * `parseChapterVerses` says why it has to stay that way: in prose "John
-	 * XXIII" is a pope far more often than a chapter. It is a per-WORK
-	 * property rather than a per-language one because it describes how one
-	 * edition's printer set numerals, not how a language cites — Martini
-	 * writes the chapter in Roman ~10 times for every once he writes it in
-	 * Arabic (measured over eight book families, 2026-08-28), and no other
-	 * Italian work in the corpus does it at all.
+	 * Off everywhere but `bible.martini.it` and `commentary.haydock.en`, and
+	 * the docblock on `parseChapterVerses` says why it has to stay that way:
+	 * in prose "John XXIII" is a pope far more often than a chapter. It is a
+	 * per-WORK property rather than a per-language one because it describes
+	 * how one edition's printer set numerals, not how a language cites —
+	 * Martini writes the chapter in Roman ~10 times for every once he writes
+	 * it in Arabic (measured over eight book families, 2026-08-28), and no
+	 * other Italian work in the corpus does it at all.
+	 *
+	 * `'lowercase'` IS A DIFFERENT PRINTER, NOT A LOOSER SETTING. Haydock sets
+	 * his in lower case (`Gen. iii. 8`, `1 K. xxxi. 10`) where Martini sets
+	 * his in upper, and the two cannot be folded into one case-insensitive
+	 * match because the two readings of `l` genuinely differ: `romanToInt`
+	 * reads a trailing `L` as `I`, which is the older archives' OCR of `1` and
+	 * would turn Haydock's Genesis 50 into Genesis 1. See
+	 * `lowercaseRomanToInt`.
 	 *
 	 * The guards that make it safe are already in `parseChapterVerses` and
-	 * are not relaxed here: a Roman chapter must be followed by an explicit
-	 * separator and a verse, and that verse must be verse-sized (`MAX_VERSE`).
+	 * are not relaxed for either: a Roman chapter must be followed by an
+	 * explicit separator and a verse, and that verse must be verse-sized
+	 * (`MAX_VERSE`).
 	 */
-	proseRomanChapters?: boolean;
+	proseRomanChapters?: boolean | 'lowercase';
 }
 
 function escapeRe(s: string): string {
@@ -2168,6 +2177,53 @@ const CONFIG_IT_MARTINI: LangConfig = {
 };
 
 /**
+ * Haydock: Douay Kings, a bare `K.` for the base, and LOWERCASE Roman chapters.
+ *
+ * THE ONLY CONFIG THAT NEEDED A WIDENED TABLE AS WELL AS A REMAP IN ENGLISH,
+ * and it is what makes the difference between an apparatus that links and one
+ * that does not. `KINGS_BASES` is `Kings`/`Kgs`/`Kg`, and Haydock writes
+ * neither: measured over the whole crawl he prints `1 K.` 298 times, `2 K.`
+ * 320, `3 K.` 315 and `4 K.` 402, against four instances of `Kings` spelled
+ * out. Without the base those 1,335 references match nothing at all; with the
+ * base and without the Douay remap, the 618 first- and second-Kings ones would
+ * every one resolve to the wrong book.
+ *
+ * The convention is settled by the verses the notes name, not by the count:
+ * `1 K. xxxi. 10` anchors Saul's body hung on the walls of Bethsan, which is
+ * 1 Samuel 31:10; `2 K. v.` anchors David made king at Hebron after the death
+ * of Isboseth, 2 Samuel 5; `2 K. xv. 24` anchors Sadoc with the ark as David
+ * flees Absalom, 2 Samuel 15:24. Each is the Douay reading and none of them is
+ * the modern one.
+ *
+ * `proseRomanChapters` for the same reason `CONFIG_IT_MARTINI` has it and with
+ * the same guards unrelaxed: it is how the edition's printer set numerals, not
+ * how a language cites. Haydock writes `Gen. iii. 8` and `Ps. xviii. 11`
+ * throughout, and an English config without this reads almost none of him.
+ */
+const KINGS_EN_HAYDOCK = numberedVariants(FOUR_KINGDOMS_DOUAY, [...KINGS_BASES, 'K'], {
+	...KINGS_NUMBER_OPTS,
+	numDot: true
+});
+const CONFIG_EN_HAYDOCK: LangConfig = {
+	...buildConfig(
+		remapBookVariants(BOOK_VARIANTS_EN, KINGS_MODERN, KINGS_EN_HAYDOCK),
+		DOCUMENT_SIGLA_EN,
+		':',
+		true,
+		true,
+		// `.` as well as `,`, and it is what the roman half actually needed:
+		// Haydock writes `Gen. iii. 8`, and `allowBareSeparators`' own
+		// `.`-branch requires a DIGIT immediately after the mark, so a
+		// Roman chapter followed by ". 8" fell through it. `,` covers the
+		// `Gen. iii, 8` he also prints. Neither can swallow a sentence's full
+		// stop: `parseChapterVerses` returns nothing for a separator with no
+		// verse after it, which is why "Cf. Ez 36." keeps its period.
+		[',', '.']
+	),
+	proseRomanChapters: 'lowercase'
+};
+
+/**
  * Arabic is the one config whose MARKS differ rather than only its tables.
  * Its chapter/verse separator is the Arabic comma U+060C ("تكوين 11، 1-9"),
  * and its clause separator the Arabic semicolon U+061B, both of which are
@@ -2268,7 +2324,11 @@ const WORK_CONFIGS: Record<string, LangConfig> = {
 	'encyclical.aeterni-patris.en': CONFIG_EN_DOUAY,
 	'encyclical.diuturnum.en': CONFIG_EN_DOUAY,
 	'bible.straubinger.es': CONFIG_ES_DOUAY,
-	'bible.martini.it': CONFIG_IT_MARTINI
+	'bible.martini.it': CONFIG_IT_MARTINI,
+	// 1,335 references, and the only entry that widens the table as well as
+	// remapping it — see `CONFIG_EN_HAYDOCK` for the counts and for the three
+	// verses that settle the convention.
+	'commentary.haydock.en': CONFIG_EN_HAYDOCK
 };
 
 function configFor(lang?: string, work?: string): LangConfig {
@@ -2654,6 +2714,34 @@ function strictRomanToInt(token: string): number | null {
 	return romanToInt(token);
 }
 
+/**
+ * The same, for an edition that sets its Roman chapters in LOWERCASE.
+ *
+ * IT CANNOT GO THROUGH `romanToInt`, and that is the whole reason it exists.
+ * That function reads a trailing `L` as `I`, because `l` is the older
+ * archives' OCR of `1` — a rule that is right where it lives and destructive
+ * here: Haydock writes `Gen. l. 20` for Genesis 50, and the fudge would make
+ * it Genesis 1. A chapter numeral has a case-sensitive reading and an OCR
+ * reading, and this position wants the first.
+ *
+ * Otherwise strict, exactly as `strictRomanToInt` is: a stray lowercase
+ * letter after a book name is far more likely to be a word than a damaged
+ * numeral, and the caller's guards (an explicit separator, a verse, and a
+ * verse-sized one) are what make admitting it safe at all.
+ */
+function lowercaseRomanToInt(token: string): number | null {
+	const values: Record<string, number> = { i: 1, v: 5, x: 10, l: 50, c: 100 };
+	let total = 0;
+	let previous = 0;
+	for (let i = token.length - 1; i >= 0; i--) {
+		const value = values[token[i]];
+		if (value === undefined) return null;
+		total += value < previous ? -value : value;
+		previous = Math.max(previous, value);
+	}
+	return total > 0 ? total : null;
+}
+
 /** No chapter of any book runs past Psalm 118's 176 verses. A "verse" beyond
  *  that after a Roman-numeral chapter is a year or a page — "John XXIII,
  *  1962" — and the guard that keeps a pope from becoming a Gospel. */
@@ -2675,7 +2763,7 @@ const MAX_VERSE = 176;
 function parseChapterVerses(
 	s: string,
 	cfg: LangConfig,
-	romanChapters = false
+	romanChapters: boolean | 'lowercase' = false
 ): { chapter: number | null; verses: number[]; consumed: number } {
 	const none = { chapter: null, verses: [], consumed: 0 };
 	let chapter: number | null = null;
@@ -2686,8 +2774,13 @@ function parseChapterVerses(
 		chapter = Number(m[1]);
 		pos = m[0].length;
 	} else if (romanChapters) {
-		const rm = /^[IVXLC]{1,7}(?![\p{L}])/u.exec(s);
-		const value = rm ? strictRomanToInt(rm[0]) : null;
+		// `'lowercase'` is one edition's printer, not a second convention: see
+		// `LangConfig.proseRomanChapters`. The two branches stay separate
+		// rather than one case-insensitive regex, because the two readings of
+		// `l` genuinely differ — see `lowercaseRomanToInt`.
+		const lower = romanChapters === 'lowercase';
+		const rm = (lower ? /^[ivxlc]{1,7}(?![\p{L}])/u : /^[IVXLC]{1,7}(?![\p{L}])/u).exec(s);
+		const value = rm ? (lower ? lowercaseRomanToInt(rm[0]) : strictRomanToInt(rm[0])) : null;
 		if (rm && value !== null) {
 			chapter = value;
 			pos = rm[0].length;
@@ -2745,7 +2838,7 @@ function parseRefNumbers(
 	s: string,
 	cfg: LangConfig,
 	osis: string,
-	romanChapters = false
+	romanChapters: boolean | 'lowercase' = false
 ): { chapter: number | null; verses: number[]; consumed: number } {
 	// A mark between the book abbreviation and its locus separates those two,
 	// not the locus's chapter from its verse, so discard it before the normal

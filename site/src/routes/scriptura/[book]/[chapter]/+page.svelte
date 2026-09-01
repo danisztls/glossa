@@ -43,7 +43,11 @@
 		toggleCompare
 	} from '$lib/compare-nav.svelte';
 	import { t } from '$lib/i18n.svelte';
-	import type { Verse } from '$lib/types';
+	import { commentariesAt } from '$lib/corpus';
+	import { notesFor } from '$lib/commentary.svelte';
+	import { apparatusPrefs } from '$lib/apparatus-prefs.svelte';
+	import CommentaryGloss from '$lib/components/CommentaryGloss.svelte';
+	import type { CommentaryNote, Verse, WorkManifest } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -211,6 +215,66 @@
 	const secondaryNoteOffsets = $derived(
 		secondary ? chapterNoteOffsets(secondary.chapter) : new Map<string, number>()
 	);
+
+	/**
+	 * The apparatus available at this address, and what the reader has asked
+	 * for of it.
+	 *
+	 * `commentariesAt` is synchronous, off the index tier, so the panel's rows
+	 * are settled before the page paints — a control that appears after a fetch
+	 * lands is one that moves under the reader's cursor. It is keyed on the
+	 * edition being read and not on its language: a commentary written on the
+	 * Douay-Rheims must not offer itself beside the Clementine, whose words its
+	 * lemmas do not quote.
+	 */
+	const commentaries = $derived(
+		current ? commentariesAt(current.work.id, data.osis, data.chapterN) : []
+	);
+	/** Whether the edition's own footnotes are set. Default on; see
+	 *  `apparatus-prefs.svelte.ts` for why the two defaults differ. */
+	const editionNotesOn = $derived(apparatusPrefs.editionNotesEnabled(current?.work.id));
+	/**
+	 * Whether this chapter carries any of the edition's own notes.
+	 *
+	 * The panel offers the switch only where there is something to switch: four
+	 * of the corpus's nine editions print no apparatus at all, and a control
+	 * that toggles nothing is worse than an absent one — the reader flips it,
+	 * nothing changes, and they are left wondering what they broke. Asked per
+	 * CHAPTER rather than per edition because a heading can carry a note too,
+	 * which is why both arrays are counted.
+	 */
+	const chapterHasNotes = $derived(
+		(current?.chapter.verses ?? []).some((v) => (v.notes?.length ?? 0) > 0) ||
+			(current?.chapter.headings ?? []).some((h) => (h.notes?.length ?? 0) > 0)
+	);
+	/**
+	 * The commentary notes to set beside each verse, keyed by verse number.
+	 *
+	 * MERGED ACROSS EVERY ENABLED COMMENTARY, because the lane is one column
+	 * and the reader asked for a catena rather than for one commentator: the
+	 * notes of two commentaries on one verse belong beside that verse in the
+	 * order the works are listed, which is what a printed catena does. Each
+	 * note carries its own work id so the grammar reads its citations under the
+	 * right book table.
+	 *
+	 * SUPPRESSED WHILE COMPARING, and not by an accident of layout: compare
+	 * mode spends the room the notes live in (docs/decisions.md — two reading
+	 * columns plus the aside leave about 10rem of a 17rem lane), so the
+	 * apparatus lane is already taken back there. Fetching a commentary to set
+	 * it where there is nowhere to set it would be a megabyte for nothing.
+	 */
+	const commentaryByVerse = $derived.by(() => {
+		const merged = new Map<number, { work: WorkManifest; notes: CommentaryNote[] }[]>();
+		if (compareActive || !current) return merged;
+		for (const work of commentaries) {
+			if (!apparatusPrefs.commentaryEnabled(work.id)) continue;
+			for (const [verse, notes] of notesFor(work.id, data.osis, data.chapterN)) {
+				if (notes.length === 0) continue;
+				merged.set(verse, [...(merged.get(verse) ?? []), { work, notes }]);
+			}
+		}
+		return merged;
+	});
 
 	/**
 	 * The passage a citation pointed at, as `?v=1-7`.
@@ -626,6 +690,12 @@
 					onselect: chooseComparisonEdition,
 					editionStyle: true
 				}}
+				apparatus={current && {
+					edition: chapterHasNotes
+						? { workId: current.work.id, title: current.work.short_title }
+						: undefined,
+					commentaries
+				}}
 			/>
 			{#if compareActive && secondary}
 				<!-- Compare mode's WHOLE header is per-edition, merged into one
@@ -739,8 +809,8 @@
 							>
 								<AnnotatedText
 									text={heading.text}
-									textMarked={heading.text_marked}
-									notes={heading.notes}
+									textMarked={editionNotesOn ? heading.text_marked : undefined}
+									notes={editionNotesOn ? heading.notes : undefined}
 									lang={current.work.language}
 									work={current.work.id}
 									noteOffset={noteOffsets.get(`h${verse.n}.${hi}`) ?? 0}
@@ -762,13 +832,17 @@
 								emphasized={isHighlighted(verse.n)}
 							/><AnnotatedText
 								text={verse.text}
-								textMarked={verse.text_marked}
-								notes={verse.notes}
+								textMarked={editionNotesOn ? verse.text_marked : undefined}
+								notes={editionNotesOn ? verse.notes : undefined}
 								lang={current.work.language}
 								work={current.work.id}
 								dropCap={i === 0 && headingsBefore(verse.n).length === 0}
 								noteOffset={noteOffsets.get(`v${verse.n}`) ?? 0}
-							/>
+							/>{#each commentaryByVerse.get(verse.n) ?? [] as entry (entry.work.id)}<CommentaryGloss
+									notes={entry.notes}
+									lang={entry.work.language}
+									work={entry.work.id}
+								/>{/each}
 						</span>
 					{/each}
 				</div>

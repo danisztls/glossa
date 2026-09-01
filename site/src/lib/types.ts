@@ -23,7 +23,14 @@ export interface Copyright {
 }
 
 export type WorkType =
-	'bible' | 'bible-intro' | 'catechism' | 'compendium' | 'document' | 'prayer' | 'summa';
+	| 'bible'
+	| 'bible-intro'
+	| 'catechism'
+	| 'commentary'
+	| 'compendium'
+	| 'document'
+	| 'prayer'
+	| 'summa';
 
 /**
  * Bare language subtag the corpus ships content in (see `baseLang` in
@@ -315,10 +322,33 @@ export interface DocumentManifest extends WorkManifestBase {
 	description?: string;
 }
 
+/**
+ * A commentary ON another work (`commentary.haydock.en`). NOT `type: 'bible'`,
+ * for the reason `BibleIntroManifest` states one stronger: this work has no
+ * verses at all — the source ships notes and nothing else — so every consumer
+ * of `'bible'` (the edition menu, `compare.ts`'s alignment by verse number,
+ * `PREFERRED_EDITION`, the versification oracle) would be handed a translation
+ * with no text in it.
+ *
+ * It also has no address of its own. `bible-intro` is the near precedent and
+ * stops one step short: an introduction is addressed as chapter 0, and a
+ * commentary note is addressed only by the verse it names in `annotates`.
+ */
+export interface CommentaryManifest extends WorkManifestBase {
+	type: 'commentary';
+	/** The work whose addresses this one's units name. Required: without it a
+	 *  note resolves against nothing. */
+	annotates: string;
+	psalm_numbering: PsalmNumbering;
+	/** Lowercase OSIS codes this commentary reaches, canonical order. */
+	books: string[];
+}
+
 export type WorkManifest =
 	| BibleManifest
 	| BibleIntroManifest
 	| CatechismManifest
+	| CommentaryManifest
 	| CompendiumManifest
 	| DocumentManifest
 	| PrayerManifest
@@ -405,6 +435,50 @@ export interface Chapter {
 	summary?: string;
 	/** Section headings the source prints inside the chapter, if any. */
 	headings?: ChapterHeading[];
+}
+
+/**
+ * One authority's remark on one verse — the unit of a commentary work.
+ *
+ * `Annotated` because a commentary note may carry its OWN apparatus: Haydock
+ * footnotes his own paragraphs with the Greek and Latin behind a rendering,
+ * and that nests the `text_marked`/`notes` shape one level down on exactly the
+ * terms every other unit uses.
+ *
+ * IT CARRIES NO `marker`, unlike `VerseNote`, and the absence is the design.
+ * A `VerseNote` is anchored by a token inside its edition's own text; a
+ * commentary is not part of the text it comments on — its lemma quotes the
+ * annotated edition's wording, which the reader may not even have on screen —
+ * so it hangs beside the verse and is named by its author instead.
+ */
+export interface CommentaryNote extends Annotated {
+	/** The words the note glosses, as the source quotes them. */
+	lemma?: string;
+	/**
+	 * The authority the remark is drawn from, where the source names one:
+	 * "Calmet", "Worthington", "Witham". Matched against a closed vocabulary
+	 * in the pipeline and omitted rather than guessed — see
+	 * docs/corpus-schema.md §Commentary. This is what makes the work a catena
+	 * rather than an anonymous gloss, and it is the note's printed label.
+	 */
+	attribution?: string;
+}
+
+export interface CommentaryVerse {
+	/** Verse of the annotated work these notes are about. */
+	verse: number;
+	notes: CommentaryNote[];
+}
+
+export interface CommentaryChapter {
+	n: number;
+	verses: CommentaryVerse[];
+}
+
+export interface CommentaryBook {
+	osis: string;
+	order: number;
+	chapters: CommentaryChapter[];
 }
 
 export interface BibleBook {

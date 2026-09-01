@@ -581,6 +581,14 @@ const bibleIntroIndex = {}; // lang -> { books: [osis, …] } -- EXISTENCE only,
 // `chapterVerses` map, and `versification.ts`. Chapter 0 is an address the
 // reader can navigate to; it is not a verse-bearing chapter, and keeping the
 // two registries apart is what stops it becoming citable by accident.
+const commentaryIndex = {}; // workId -> { annotates, books: [{ osis, chapters: [n, …] }] }
+// EXISTENCE only, and deliberately coarser than `bibleIndex`: this tier answers
+// "does this chapter have commentary at all", which is what decides whether the
+// apparatus panel offers the work at an address. It is NOT the verse list --
+// nothing on the page needs to know which verses are annotated until the
+// reader has actually asked for the commentary, and at that point the chunk
+// itself says. A commentary is the largest body of text the corpus holds per
+// work, so anything eager about it is charged to every route.
 const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
 const cccEditions = []; // [{ lang, work, paragraphs }] -- input to the xref pass
 const documentEditions = []; // [{ slug, lang, work, sections }] -- ditto, per document edition
@@ -1143,6 +1151,80 @@ for (const workId of workIds) {
 			relPath,
 			bytes: byteLength(intros)
 		});
+		continue;
+	}
+
+	// A commentary ON another work (docs/corpus-schema.md §Commentary:
+	// `commentary.{slug}.{lang}`). Branches on `manifest.type`, like the two
+	// above and for the same reason.
+	//
+	// IT CALLS `mark()` NOWHERE, AND THAT IS THE WHOLE SHAPE OF THE TYPE. Its
+	// units address the work named in `annotates` and have no address of
+	// their own: a Haydock note is reachable at the verse it comments on and
+	// nowhere else, so it contributes no route, no sitemap entry and nothing
+	// to `route-titles.json`. `bible-intro` above is the near precedent and
+	// stops one step short -- an introduction is chapter 0, which IS an
+	// address. Marking a commentary's verses would be the reverse of the
+	// chapter-0 mistake that section warns about: it would publish ~24,000
+	// addresses that render nothing of their own.
+	if (manifest.type === 'commentary') {
+		const booksDir = path.join(workDir, 'books');
+		const books = [];
+		for (const file of readdirSync(booksDir).sort()) {
+			if (!file.endsWith('.json')) continue;
+			const book = readJson(path.join(booksDir, file));
+			const ordered = [...book.chapters].sort((a, b) => a.n - b.n);
+			books.push({
+				osis: book.osis,
+				order: book.order,
+				chapters: ordered.map((c) => c.n)
+			});
+
+			// Packed by SIZE on exactly `BIBLE_CHAPTER_CHUNK_TARGET_BYTES` and
+			// into the same path shape, so `bibleChapterLocations` in
+			// `corpus-index.ts` reads both with one regex and one lookup. The
+			// packing matters MORE here than it does for an edition: a
+			// commentary's weight per chapter varies by an order of magnitude
+			// (Apocalypse 20 is one 14 KB note; Psalm 118 is 144 of them),
+			// which is precisely the case a fixed stride cannot serve and the
+			// reason the stride became a size in the first place.
+			const emit = (chunk) => {
+				if (chunk.length === 0) return;
+				const start = chunk[0].n;
+				const end = chunk[chunk.length - 1].n;
+				const chunkName = `${String(start).padStart(4, '0')}-${String(end).padStart(4, '0')}`;
+				const relPath = `content/${workId}/books/${book.osis}/${chunkName}.json`;
+				writeJson(path.join(destDir, relPath), chunk);
+				contentManifest.push({
+					workId,
+					kind: 'commentary-chapters',
+					relPath,
+					bytes: byteLength(chunk)
+				});
+			};
+			let pack = [];
+			let packBytes = 0;
+			for (const chapter of ordered) {
+				const size = byteLength(chapter);
+				if (pack.length > 0 && packBytes + size > BIBLE_CHAPTER_CHUNK_TARGET_BYTES) {
+					emit(pack);
+					pack = [];
+					packBytes = 0;
+				}
+				pack.push(chapter);
+				packBytes += size;
+			}
+			emit(pack);
+		}
+		books.sort((a, b) => a.order - b.order);
+		if (!manifest.annotates) {
+			console.error(
+				`[sync-corpus] ${workId}: a commentary must name the work it \`annotates\`; ` +
+					'without it every note addresses nothing'
+			);
+			process.exit(1);
+		}
+		commentaryIndex[workId] = { annotates: manifest.annotates, books };
 		continue;
 	}
 
@@ -1743,6 +1825,13 @@ writeJson(
 );
 writeJson(path.join(indexDir, 'bible-intro-index.json'), bibleIntroIndex);
 writeJson(
+	path.join(indexDir, 'commentary-index.json'),
+	mapValues(commentaryIndex, (work) => ({
+		...work,
+		books: work.books.map((book) => ({ ...book, chapters: compactRun(book.chapters) }))
+	}))
+);
+writeJson(
 	path.join(indexDir, 'ccc-index.json'),
 	mapValues(cccIndex, (v) => ({ ...v, paragraphNumbers: compactRun(v.paragraphNumbers) }))
 );
@@ -2223,6 +2312,7 @@ const indexBytes = [
 	'manifests.json',
 	'bible-index.json',
 	'bible-intro-index.json',
+	'commentary-index.json',
 	'ccc-index.json',
 	'compendium-index.json',
 	'summa-index.json',

@@ -80,6 +80,11 @@
 	// vertical axis needs a mark for "down the page" and no control on the
 	// site had wanted one before.
 	import ArrowDown from '@lucide/svelte/icons/arrow-down';
+	// A page with a pen laid across it: notes written ON a text, which is what
+	// the panel it opens chooses between. `book-open` is the reading surface
+	// itself and is already taken; `message-square-quote` draws a speech
+	// bubble, and an apparatus is not someone talking.
+	import NotebookPen from '@lucide/svelte/icons/notebook-pen';
 
 	const ICONS = {
 		search: Search,
@@ -108,7 +113,8 @@
 		'arrow-up': ArrowUp,
 		'arrow-left': ArrowLeft,
 		'arrow-right': ArrowRight,
-		'arrow-down': ArrowDown
+		'arrow-down': ArrowDown,
+		'notebook-pen': NotebookPen
 	};
 
 	export type IconName = keyof typeof ICONS;

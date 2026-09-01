@@ -366,3 +366,92 @@
 	overscroll-behavior: contain;
 	padding: 0.6rem 0.75rem 1rem;
 }
+
+/*
+ * A PANEL'S ROWS: one label over one full-height control, and the drawn
+ * switch that is the commonest of those controls.
+ *
+ * Global for the reason the primitive above is: two components render this
+ * shape now -- `AppearanceMenu` (dark mode, sepia, OLED, monochrome, reading
+ * size) and `ApparatusMenu` (which apparatus is set beside the text) -- and
+ * Svelte's per-component scoping has no way to share a block, so the
+ * alternative is two copies of it that drift. They were `AppearanceMenu`'s
+ * own until 2026-09-01, which meant the second panel to reuse the class
+ * names rendered with none of the styles and nothing said so: an unknown
+ * class is not an error in CSS or in Svelte.
+ *
+ * `--control-height` is declared by each PANEL rather than here, because it
+ * is the panel's decision how tall its rows are; these rules only agree to
+ * honour it.
+ */
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+}
+.field-label {
+	padding-inline: 0.2rem;
+	font-weight: 500;
+	line-height: 1.2;
+}
+.field + .field {
+	margin-block-start: 0.55rem;
+}
+.field-control {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	height: var(--control-height);
+}
+.switch-btn {
+	display: inline-flex;
+	align-items: center;
+	height: 100%;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+}
+.switch-btn:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+.switch {
+	position: relative;
+	display: block;
+	width: 2.4rem;
+	height: 1.4rem;
+	border: 1px solid var(--color-border);
+	border-radius: 999px;
+	background: var(--color-bg-elevated);
+	transition: background-color 120ms ease;
+}
+.switch::after {
+	content: '';
+	position: absolute;
+	inset-block-start: 0.15rem;
+	inset-inline-start: 0.15rem;
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+	background: var(--color-text-muted);
+	transition:
+		translate 120ms ease,
+		background-color 120ms ease;
+}
+.switch.on {
+	background: var(--color-accent);
+	border-color: var(--color-accent);
+}
+.switch.on::after {
+	background: var(--color-accent-contrast);
+	/* Logical, so the knob still travels toward the switch's "on" end
+	   under an RTL interface language. Width less knob less both insets. */
+	translate: 1rem 0;
+}
+.note {
+	font-size: 0.7rem;
+	line-height: 1.2;
+	white-space: nowrap;
+	color: var(--color-text-muted);
+}

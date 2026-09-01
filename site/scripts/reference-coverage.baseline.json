@@ -34,8 +34,8 @@
 		"ccc": {
 			"citations": {
 				"total": 19533,
-				"linkable": 15006,
-				"recognized": 3110,
+				"linkable": 15036,
+				"recognized": 3080,
 				"nothing": 1417
 			},
 			"prose": {
@@ -172,6 +172,21 @@
 				}
 			]
 		},
+		"commentary": {
+			"citations": {
+				"total": 0,
+				"linkable": 0,
+				"recognized": 0,
+				"nothing": 0
+			},
+			"prose": {
+				"blocks": 45845,
+				"scripture": 8746,
+				"document": 0,
+				"stored": 0
+			},
+			"residue": []
+		},
 		"compendium": {
 			"citations": {
 				"total": 5949,
@@ -190,9 +205,9 @@
 		"encyclical": {
 			"citations": {
 				"total": 35573,
-				"linkable": 12673,
-				"recognized": 6342,
-				"nothing": 16558
+				"linkable": 13033,
+				"recognized": 6232,
+				"nothing": 16308
 			},
 			"prose": {
 				"blocks": 39759,
@@ -208,18 +223,18 @@
 				},
 				{
 					"key": ". cf.",
-					"count": 222,
+					"count": 198,
 					"example": ". Cf. Pius XI, Encyclical Letter QuadragesimoAnno, III, loc. cit., 228."
 				},
 				{
 					"key": ". ibid.",
-					"count": 176,
+					"count": 175,
 					"example": ". Ibid.: loc. cit., 98."
 				},
 				{
 					"key": ". por.",
-					"count": 141,
-					"example": ". Por. np. LEON XIII, Enc. Arcanum divinae sapientiae (10 lutego 1880): Leonis XIII P.M. A"
+					"count": 126,
+					"example": ". Por. tamże, s. 109 n."
 				},
 				{
 					"key": ". tamże",
@@ -227,13 +242,8 @@
 					"example": ". Tamże, s. 98."
 				},
 				{
-					"key": "] cfr",
-					"count": 101,
-					"example": "] Cfr n. 16: l.c., 265. ["
-				},
-				{
 					"key": ". vert.",
-					"count": 99,
+					"count": 98,
 					"example": ". Vert. dogmaattinen konstituutio Katolisesta uskosta (Dei Filius), III."
 				},
 				{
@@ -245,6 +255,11 @@
 					"key": "] ibid.",
 					"count": 81,
 					"example": "] Ibid. 14. ["
+				},
+				{
+					"key": "] cfr",
+					"count": 76,
+					"example": "] Cfr n. 16: l.c., 265. ["
 				},
 				{
 					"key": "ibid. p.",
@@ -331,9 +346,9 @@
 		"exhortation": {
 			"citations": {
 				"total": 37916,
-				"linkable": 11142,
-				"recognized": 6299,
-				"nothing": 20475
+				"linkable": 11181,
+				"recognized": 6258,
+				"nothing": 20477
 			},
 			"prose": {
 				"blocks": 30966,
@@ -502,9 +517,9 @@
 		"vatii": {
 			"citations": {
 				"total": 6626,
-				"linkable": 3046,
-				"recognized": 1595,
-				"nothing": 1985
+				"linkable": 3317,
+				"recognized": 1344,
+				"nothing": 1965
 			},
 			"prose": {
 				"blocks": 7612,
@@ -515,7 +530,7 @@
 			"residue": [
 				{
 					"key": "] cf.",
-					"count": 200,
+					"count": 199,
 					"example": "] Cf. Ibid., n. 12. ["
 				},
 				{
@@ -600,7 +615,7 @@
 				},
 				{
 					"key": "pius xii",
-					"count": 27,
+					"count": 26,
 					"example": "cf. Pius XII, allocution to cardinals, Feb. 18, 1946: A.A.S. 38 (1946) pp. 101-102; Idem.,"
 				},
 				{

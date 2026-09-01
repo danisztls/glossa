@@ -60,7 +60,8 @@ function imprintOf(manifests, ids, name) {
 		name,
 		publisher: manifest?.copyright?.holder ?? null,
 		notice: manifest?.copyright?.notice ?? null,
-		source: manifest?.sources?.[0]?.url ?? null
+		source: manifest?.sources?.[0]?.url ?? null,
+		rights: manifest?.copyright?.status ?? null
 	};
 }
 
@@ -160,6 +161,13 @@ export function buildApparatus({
 			),
 			summa: imprintOf(manifests, idsOfType(manifests, 'summa'), 'Summa Theologiae'),
 			prayer: imprintOf(manifests, idsOfType(manifests, 'prayer'), 'Common Prayers'),
+			// Its own imprint, not the annotated edition's, though the two are
+			// read at one address. A commentary is a separate work with a
+			// separate author and a separate rights position — Haydock died in
+			// 1849 and Challoner in 1781 — and folding it into the Bible's
+			// imprint would credit the translation for words it does not
+			// contain.
+			commentary: imprintOf(manifests, idsOfType(manifests, 'commentary'), 'Commentary'),
 			// The collection, not a work: each document carries its own source
 			// URL in `imprint` above, which is finer and is what a citation wants.
 			// The publisher is read off a served edition all the same, so a change
@@ -206,7 +214,15 @@ export function buildWorks({ manifests, descriptions, origin }) {
 		catechism: '/catechismus/{n}',
 		compendium: '/catechismus/compendium/{n}',
 		summa: '/doctores/summa/{part}/{question}',
-		prayer: '/preces/{slug}'
+		prayer: '/preces/{slug}',
+		// THE ADDRESS OF THE WORK IT ANNOTATES, because a commentary has none
+		// of its own (docs/corpus-schema.md §Commentary). That is not a gap in
+		// this table: `works.json` exists so a machine can read what is here
+		// without crawling ~6,000 pages, and the true answer to "where do I
+		// find Haydock" is "at the verse he comments on". A reader following
+		// this address gets the verse and, having asked for the apparatus, the
+		// note beside it.
+		commentary: '/scriptura/{book}/{chapter}'
 	};
 
 	for (const [type, address] of Object.entries(ADDRESSES)) {
@@ -266,7 +282,11 @@ export function assertApparatus(apparatus, works) {
 	if (!Object.keys(apparatus.descriptions).length) problems.push('no document has a description');
 	if (!Object.keys(apparatus.docs).length) problems.push('no document cites Scripture');
 	for (const [kind, imprint] of Object.entries(apparatus.works)) {
-		if (!imprint.publisher && !imprint.notice) problems.push(`${kind}: no rights position at all`);
+		// A public-domain kind has no publisher and no notice BY DEFINITION,
+		// which this check could not distinguish from a kind whose imprint was
+		// never wired up. `rights` is what tells them apart.
+		if (!imprint.publisher && !imprint.notice && !imprint.rights)
+			problems.push(`${kind}: no rights position at all`);
 	}
 	if (!works.works.length) problems.push('works.json lists nothing');
 	if (problems.length) {

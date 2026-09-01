@@ -226,6 +226,16 @@ interface BibleIndexFile {
 interface BibleIntroIndexFile {
 	[lang: string]: { books: string[] };
 }
+/** `workId -> { annotates, books }` — which chapters a commentary reaches, and
+ *  which work its notes address. Existence only: the notes themselves are
+ *  content tier, and nothing on a page needs to know WHICH verses are
+ *  annotated until the reader has asked for the commentary at all. */
+interface CommentaryIndexFile {
+	[workId: string]: {
+		annotates: string;
+		books: { osis: string; order: number; chapters: CompactRun }[];
+	};
+}
 interface CccIndexFile {
 	[lang: string]: {
 		structure: CccNode[];
@@ -316,6 +326,11 @@ const realIndexBibleIntro = import.meta.glob('./corpus-data/index/bible-intro-in
 	eager: true,
 	import: 'default'
 }) as Record<string, BibleIntroIndexFile>;
+
+const realIndexCommentary = import.meta.glob('./corpus-data/index/commentary-index.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, CommentaryIndexFile>;
 
 const realIndexCcc = import.meta.glob('./corpus-data/index/ccc-index.json', {
 	eager: true,
@@ -523,6 +538,36 @@ export const bibleIntroBooks: Record<string, string[]> = USE_REAL_CORPUS
 			Object.entries(single(realIndexBibleIntro) ?? {}).map(([lang, v]) => [lang, v.books])
 		)
 	: { en: (fixtureBibleIntroEn as BibleIntro[]).map((entry) => entry.osis) };
+
+/**
+ * Which chapters each commentary reaches, and what it annotates.
+ *
+ * `workId -> annotates -> osis -> chapter numbers`. This is what decides
+ * whether the apparatus panel offers a commentary at an address at all, so it
+ * has to be synchronous and therefore index tier — but it is deliberately the
+ * COARSEST thing that answers that question. A verse list would be ~24,000
+ * numbers in the boot chunk of every route, to save one fetch on the pages
+ * where the reader has already asked for the commentary.
+ *
+ * Empty under fixtures. The corpus holds one commentary and the four Bible
+ * fixtures are not the work it annotates, so a fixture entry would assert a
+ * relation the fixture corpus does not have; the tests that need one build it
+ * themselves.
+ */
+export const commentaryChapters: Record<
+	string,
+	{ annotates: string; books: Record<string, number[]> }
+> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexCommentary) ?? {}).map(([workId, work]) => [
+				workId,
+				{
+					annotates: work.annotates,
+					books: Object.fromEntries(work.books.map((book) => [book.osis, expandRun(book.chapters)]))
+				}
+			])
+		)
+	: {};
 
 export const cccStructures: Record<string, CccNode[]> = USE_REAL_CORPUS
 	? Object.fromEntries(
@@ -843,6 +888,15 @@ export function compendiumChunkStartFor(n: number): number {
  * carried both ends of their range. Bounded on both sides deliberately — a
  * chapter past the end of a book must return undefined rather than the last
  * chunk, which is what a nearest-start search would give.
+ */
+/**
+ * ALSO SERVES COMMENTARY WORKS, and that is why `sync-corpus.mjs` writes them
+ * into `content/{workId}/books/{osis}/{start}-{end}.json` rather than a path
+ * shape of their own. A commentary is chunked over the same axis, by the same
+ * size target, and a second regex plus a second three-level map to read it
+ * would be this module's one lookup written twice. The name is the Bible's
+ * because the Bible is what it was built for; the key is a work id and it
+ * makes no claim about the work's type.
  */
 export function bibleChapterChunkFor(
 	workId: string,

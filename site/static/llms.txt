@@ -1,6 +1,6 @@
 # Glossa Catholica
 
-> A reading site for Scripture and the Magisterium: the Bible, the Catechism of the Catholic Church, the Compendium of the Catechism, the Summa Theologiae, magisterial documents and prayers. Free, ad-free, account-free, offline-first. Nothing here is ours.
+> A reading site for Scripture and the Magisterium: the Bible, the Catechism of the Catholic Church, the Compendium of the Catechism, the Summa Theologiae, magisterial documents, prayers, and Haydock's commentary on the Douay-Rheims. Free, ad-free, account-free, offline-first. Nothing here is ours.
 
 ## The texts are not ours. The addresses are.
 
