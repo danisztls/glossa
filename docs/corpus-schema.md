@@ -208,6 +208,16 @@ is the near precedent and stops one step short: an introduction is addressed as 
 which is an address, and a commentary note is not addressed at all. The manifest's
 `annotates` field is what makes the reference resolvable, and it is required.
 
+**`subsumes_notes` says the commentary already contains the annotated edition's own
+apparatus.** Optional, and true for `commentary.haydock.en`: Haydock published Challoner's
+text with Challoner's notes absorbed into the catena, so 1,399 of the Douay-Rheims's 1,916
+notes appear again here (1,249 of them at ≥0.9 similarity on the same verse) and 1,300
+paragraphs are signed "Challoner". It is a fact about the WORK and belongs to the corpus
+for the same reason `annotates` does — the interface cannot measure it. What the site does
+with it is turn one default around rather than suppress anything, because the overlap is
+73% and not 100%: 517 of Challoner's notes are not in this capture. Absent means no claim,
+which is the right default for a commentary written on a text nobody else annotated.
+
 **Every `{osis, chapter, verse}` must exist in the annotated work.** A note naming a verse
 that is not there addresses nothing and renders beside nothing, which is invisible on the
 page — so it is the scraper's one fatal check, not a report.

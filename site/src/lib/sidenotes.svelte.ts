@@ -1,4 +1,4 @@
-import { untrack } from 'svelte';
+import { tick, untrack } from 'svelte';
 import { canHover, HOVER_OPEN_MS, HOVER_CLOSE_MS } from './floating';
 import { AnchoredPanel } from './floating.svelte';
 
@@ -244,6 +244,82 @@ export function marginOverflows(note: { lemma?: string; text?: string } | undefi
 }
 
 /**
+ * The mark a COMMENTARY is anchored by, and the reason it is a symbol.
+ *
+ * The edition's own notes letter themselves a, b, c down the chapter
+ * (`noteLetter`); a commentary cannot join that run, because it is a separate
+ * work and the reader may have two of them beside one verse. A symbol says
+ * "there is an apparatus here" without claiming a place in anyone's sequence,
+ * which is what a printed annotated Bible uses it for.
+ *
+ * THE DAGGER, AND IT COST A FONT FILE TO GET. `†` is not in either text
+ * family's `latin` subset: Google files U+2020 under `latin-ext`, so a page
+ * carrying one dagger would pull 158 KB of Source Sans 3 it needs for nothing
+ * else — and pull it for the English reader too, since a commentary is
+ * switched on rather than implied by a language. `fonts.css` declares a
+ * 1.1 KB face subset to this one glyph, under its own family, and
+ * `.commentary-marker` names it ahead of `--font-sans`. `‡`, `※` and `⁂` are
+ * not reachable at any price: checked with fontTools across every file in
+ * both `@fontsource-variable` packages, Google's subsets do not carry them at
+ * all, so a second mark would need a different source font rather than a
+ * different range.
+ *
+ * ONE MARK PER COMMENTARY WORK, NOT PER NOTE. Haydock's median verse carries
+ * two notes and his longest twenty-nine, and a row of identical daggers says
+ * nothing a single one does not. The mark names the apparatus; the notes
+ * behind it are what it points at — all of them, in one card, since the mark
+ * is the only way to them at any width (`NoteCard`'s `margin: false`). A
+ * second commentary would print a second dagger beside the first,
+ * distinguished by its label and not by its glyph — worth revisiting when
+ * there is a second, and not before.
+ */
+export const COMMENTARY_MARKER = '\u2020';
+
+/**
+ * The whole of a note the column could only set the head of.
+ *
+ * BOTH APPARATUSES CLAMP NOW, so the dialog they open is one object rather
+ * than two copies of six lines — `Sidenote` for an edition's own gloss,
+ * `CommentaryGloss` for a commentary's. It is `NoteCard`'s argument one shape
+ * further down: a `.svelte.ts` module can hold reactive state on a
+ * component's behalf while each component keeps its own markup, its own ARIA
+ * and its own content, and what is genuinely identical here is only the
+ * open-and-close dance.
+ *
+ * `rendered` IS NOT `el.open`, AND THE ORDER MATTERS. A closed `<dialog>` is
+ * `display: none`, so nothing inside is reachable, focusable or announced —
+ * but it is still rendered, and a chapter of Straubinger holds forty of these
+ * each carrying its gloss a second time. So the contents are gated on this
+ * flag, and `tick()` sits between setting it and `showModal()` so the panel
+ * has its content before it is centred.
+ *
+ * NO `$effect` HERE, unlike `NoteCard`, so this may be constructed anywhere.
+ */
+export class NoteDialog {
+	el: HTMLDialogElement | undefined = $state();
+	rendered: boolean = $state(false);
+
+	async open() {
+		this.rendered = true;
+		await tick();
+		if (this.el && !this.el.open) this.el.showModal();
+	}
+
+	close = () => this.el?.close();
+
+	onClose = () => {
+		this.rendered = false;
+	};
+
+	/* A click that lands on the dialog ITSELF is a click on the backdrop:
+	   `.dialog-bare` is transparent and has no padding, so every visible pixel
+	   belongs to the panel inside it. `TocMenu`'s test, and its reason. */
+	onClick = (e: MouseEvent) => {
+		if (e.target === this.el) this.el?.close();
+	};
+}
+
+/**
  * One note of an apparatus, as a thing the reader can open — the behaviour
  * `CitationDisclosure` and `Sidenote` now share entirely.
  *
@@ -295,19 +371,42 @@ export class NoteCard extends AnchoredPanel {
 	#openTimer: ReturnType<typeof setTimeout> | undefined;
 	#closeTimer: ReturnType<typeof setTimeout> | undefined;
 
-	constructor(id: string) {
+	/**
+	 * Whether this note ALSO appears in the margin, which every gate below
+	 * turns on.
+	 *
+	 * Two of the three apparatuses set a copy beside the line when there is
+	 * room, so their marker means one thing above the breakpoint and another
+	 * below it. A COMMENTARY SETS NO COPY AT ANY WIDTH: Haydock annotates
+	 * 20,814 verses and a chapter of him runs to 52,496 characters, so a
+	 * gutter column of it stopped being apparatus beside a text and became a
+	 * text with Scripture in the margin. Its mark therefore opens the card
+	 * everywhere, and every question below — does a click open something, does
+	 * the pointer, is `aria-expanded` a claim we can keep, is there a note in
+	 * the gutter to light — has the same answer at every width.
+	 */
+	#marginCopy: boolean;
+
+	constructor(id: string, options: { margin?: boolean } = {}) {
 		super(id);
+		this.#marginCopy = options.margin ?? true;
 		$effect(() => () => {
 			this.#cancel();
 			sidenoteRoom.unhighlight(this.id);
 		});
 	}
 
+	/** The margin, as this card sees it: false for a note that has no copy
+	 *  there, whatever the viewport is doing. */
+	get #inMargin(): boolean {
+		return this.#marginCopy && sidenoteRoom.margin;
+	}
+
 	/** Whether this is the note the reader named in the margin. False wherever
 	 *  there is no margin, so the state cannot survive a viewport narrowing
 	 *  into a highlight on something the reader cannot see. */
 	get lit(): boolean {
-		return sidenoteRoom.margin && sidenoteRoom.highlighted === this.id;
+		return this.#inMargin && sidenoteRoom.highlighted === this.id;
 	}
 
 	/**
@@ -322,7 +421,7 @@ export class NoteCard extends AnchoredPanel {
 	 * popover before anything here saw it.
 	 */
 	get popovertarget(): string | undefined {
-		return sidenoteRoom.margin ? undefined : this.id;
+		return this.#inMargin ? undefined : this.id;
 	}
 
 	/** `aria-expanded` only where activating the marker really does expand
@@ -330,7 +429,7 @@ export class NoteCard extends AnchoredPanel {
 	 *  the reading order behind it -- and a control claiming a state its
 	 *  activation cannot change is worse than one claiming none. */
 	get expanded(): boolean | undefined {
-		return sidenoteRoom.margin ? undefined : this.open;
+		return this.#inMargin ? undefined : this.open;
 	}
 
 	/**
@@ -367,7 +466,7 @@ export class NoteCard extends AnchoredPanel {
 	 * passed, which is the one thing the gutter cannot answer on its own.
 	 */
 	onPointerEnter = () => {
-		if (!canHover() || sidenoteRoom.margin) return;
+		if (!canHover() || this.#inMargin) return;
 		this.#closeTimer = clear(this.#closeTimer);
 		if (this.open || this.#openTimer !== undefined) return;
 		this.#openTimer = setTimeout(() => {
@@ -402,7 +501,7 @@ export class NoteCard extends AnchoredPanel {
 	 * any more (`onPointerEnter`), so there is otherwise nothing to close.
 	 */
 	onClick = () => {
-		if (!sidenoteRoom.margin) return;
+		if (!this.#inMargin) return;
 		sidenoteRoom.highlighted = this.lit ? undefined : this.id;
 		this.hide();
 	};

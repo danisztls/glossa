@@ -619,3 +619,59 @@
 	src: url('/fonts/ponomar-dropcap-latin.woff2') format('woff2');
 	unicode-range: U+0041-005A, U+00C0-00D6, U+00D8-00DE;
 }
+
+/*
+ * THE REFERENCE MARK, AS ITS OWN FACE, because the glyph a commentary is
+ * anchored by is in the wrong subset and there is no other way to reach it
+ * cheaply.
+ *
+ * `†` (U+2020) is what a printed apparatus marks an unnumbered note with, and
+ * it is the mark `CommentaryGloss` sets at the end of an annotated verse. It
+ * is NOT in either text family's `latin` subset. Google files it under
+ * `latin-ext` — the range declared above says so, and the glyph really is in
+ * that file — so a page carrying one dagger downloads 158 KB of Source Sans 3
+ * it needs for nothing else, and does it for the English reader too, since a
+ * commentary is switched on rather than implied by a language. That is the
+ * exact shape `sw-policy.ts`'s `DEFERRED_FONTS` exists to stop, arriving from
+ * the other side: there the cost was a script nobody read, here it is one
+ * glyph.
+ *
+ * SO IT IS SUBSET TO THE MARK AND GIVEN ITS OWN FAMILY, which is what the two
+ * drop-cap faces above already do and for the same reason. A separate family
+ * rather than a fourth `unicode-range` on 'Source Sans 3 Variable': two faces
+ * of one family whose ranges overlap on U+2020 resolve by declaration order,
+ * which is a rule this file would then depend on silently. Named for what it
+ * is, so nothing else reaches for it by accident.
+ *
+ * `‡`, `※` and `⁂` are NOT here and cannot be: Google's subsets do not carry
+ * them at all — checked with fontTools across every file in both
+ * `@fontsource-variable` packages — so a second mark would need a different
+ * source font, not a different range. One commentary needs one mark; see
+ * `COMMENTARY_MARKER`.
+ *
+ * 1.1 KB, precached with the core faces (`CORE_FONTS`) rather than deferred:
+ * at this size the round trip costs more than the bytes, and a reader who has
+ * filled the offline library and switched a commentary on must not meet a
+ * tofu box where the mark should be.
+ *
+ * Regenerate with:
+ *   uv run --with "fonttools[woff]" pyftsubset \
+ *     node_modules/@fontsource-variable/source-sans-3/files/source-sans-3-latin-ext-wght-normal.woff2 \
+ *     --output-file=static/fonts/source-sans-3-marks.woff2 --flavor=woff2 \
+ *     --layout-features='' --no-hinting --desubroutinize --unicodes='U+2020'
+ *
+ * `font-display: block` for `Pirata One Subset`'s reason one size down: the
+ * mark is a single glyph in the accent colour sitting at the end of a verse,
+ * and swapping it in late moves the last word of the line. Blocking on 1.1 KB
+ * that is already in the precache is not a wait anyone can see.
+ */
+@font-face {
+	font-family: 'Source Sans 3 Marks';
+	font-style: normal;
+	/* The variable axis survives the subset, which is what `.commentary-marker`
+	   needs — it sets the mark at 600 to hold its own beside the text. */
+	font-weight: 200 900;
+	font-display: block;
+	src: url('/fonts/source-sans-3-marks.woff2') format('woff2-variations');
+	unicode-range: U+2020;
+}

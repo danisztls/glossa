@@ -39,8 +39,10 @@
 
 	interface Props {
 		/** The edition being read, whose own notes are the first row. Omitted
-		    where the reader's edition carries none, which is most of them. */
-		edition?: { workId: string; title: string };
+		    where the reader's edition carries none, which is most of them.
+		    `subsumed` says an enabled commentary already reproduces them, which
+		    is what turned this row off without the reader touching it. */
+		edition?: { workId: string; title: string; subsumed: boolean };
 		/** Commentaries with something to say at THIS address — see
 		    `commentariesAt`. Empty is an ordinary state and, with no annotated
 		    edition either, is what makes the whole trigger disappear. */
@@ -77,7 +79,7 @@
 			onkeydown={menu.onPanelKeydown}
 		>
 			{#if edition}
-				{@const on = apparatusPrefs.editionNotesEnabled(edition.workId)}
+				{@const on = apparatusPrefs.editionNotesEnabled(edition.workId, edition.subsumed)}
 				<div class="field" role="none">
 					<span class="field-label label-micro">{t('apparatus.editionNotes')}</span>
 					<div class="field-control" role="none">
@@ -87,12 +89,22 @@
 							aria-checked={on}
 							aria-label={edition.title}
 							class="switch-btn"
-							onclick={() => apparatusPrefs.setEditionNotes(edition.workId, !on)}
+							onclick={() => apparatusPrefs.setEditionNotes(edition.workId, !on, edition.subsumed)}
 						>
 							<span class="switch" class:on></span>
 						</button>
 						<span class="note">{edition.title}</span>
 					</div>
+					<!-- WHY THE ROW IS OFF WHEN NOBODY TURNED IT OFF. A commentary
+					     that reproduces the edition's apparatus flips this default,
+					     and a switch that moves on its own with no reason given is
+					     the worst kind: the reader who notices their footnotes have
+					     gone has nothing to read. It stays a switch rather than
+					     becoming disabled text — the overlap is 73%, so there are
+					     real notes behind it, and the reader is allowed both. -->
+					{#if edition.subsumed}
+						<p class="note apparatus-reason">{t('apparatus.inCommentary')}</p>
+					{/if}
 				</div>
 			{/if}
 
@@ -134,5 +146,14 @@
 	.apparatus-panel {
 		padding: 0.4rem;
 		--control-height: 1.7rem;
+	}
+
+	/* Under the row it explains, indented to the switch's own text so it reads
+	   as belonging to that control and not to the panel. */
+	.apparatus-reason {
+		margin: 0.15rem 0 0;
+		padding-inline-start: 2.6rem;
+		max-inline-size: 14rem;
+		text-wrap: pretty;
 	}
 </style>

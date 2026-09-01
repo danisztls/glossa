@@ -340,6 +340,24 @@ export interface CommentaryManifest extends WorkManifestBase {
 	 *  note resolves against nothing. */
 	annotates: string;
 	psalm_numbering: PsalmNumbering;
+	/**
+	 * Whether this commentary already contains the annotated edition's own
+	 * apparatus, so that showing both prints most of one of them twice.
+	 *
+	 * A PROPERTY OF THE WORK, WHICH IS WHY IT IS IN THE MANIFEST. Haydock
+	 * published Challoner's text with Challoner's notes absorbed into the
+	 * catena, and the corpus can measure that where the interface cannot:
+	 * 1,399 of the Douay-Rheims's 1,916 notes appear again in Haydock, 1,300
+	 * of his paragraphs signed "Challoner" by name. `haydock.py` writes it and
+	 * says so.
+	 *
+	 * WHAT THE SITE DOES WITH IT IS CHANGE A DEFAULT AND NOTHING MORE. The
+	 * overlap is 73%, not 100% — 517 of Challoner's notes are not in the
+	 * capture — so the edition's own apparatus is switched off rather than
+	 * suppressed, and the panel still offers it. See
+	 * `apparatus-prefs.svelte.ts`.
+	 */
+	subsumes_notes?: boolean;
 	/** Lowercase OSIS codes this commentary reaches, canonical order. */
 	books: string[];
 }

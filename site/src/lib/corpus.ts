@@ -1147,23 +1147,32 @@ export async function getChapter(
  * apparatus panel offers a work at all — a control that appears only after a
  * fetch has landed is a control that moves under the reader's cursor.
  *
- * `annotatedWorkId` is matched rather than assumed: a commentary written on
- * the Douay-Rheims must not offer itself beside the Clementine Vulgate, whose
- * words its lemmas do not quote. That is the same judgment
- * `docs/decisions.md` records for Challoner's notes and the CPDV — attaching
- * an apparatus to a translation it was not written on is an editorial act —
- * and it is why this takes a work id and not a language.
+ * IT TAKES AN ADDRESS AND NOT AN EDITION, and it took an edition for a day.
+ * The argument for gating was `docs/decisions.md`'s on Challoner and the CPDV:
+ * attaching an apparatus to a translation it was not written on is an
+ * editorial act. That argument is about a note the reader cannot tell apart
+ * from the edition's own — Challoner's notes ship INSIDE `bible.douay-rheims`
+ * and would have read as the CPDV's if copied there. It does not reach here,
+ * because nothing about this apparatus is silent: it is a separate work with
+ * its own name, switched on by the reader in a panel that names it, opened
+ * from a mark of its own, and set in a card that carries its own `lang`.
+ *
+ * WHAT MADE THE GATE UNNECESSARY IS THE ANCHOR. A commentary keyed to a lemma
+ * really would be undisplayable beside another edition — the words it quotes
+ * are not there. Keyed to the VERSE, it asks only that the address exist, and
+ * every edition in this corpus is versified the same way (`psalm_numbering`,
+ * canonically Vulgate). So the gate was refusing the reader of the Clementine
+ * a commentary on the Latin she is reading, to protect her from a confusion
+ * the design had already ruled out.
+ *
+ * `manifest.annotates` is still the field that matters and is still read —
+ * just not here. `subsumes_notes` is asked against it, because "this
+ * commentary already contains the edition's own notes" is only true of the
+ * edition it was written on.
  */
-export function commentariesAt(
-	annotatedWorkId: string,
-	osis: string,
-	chapterN: number
-): WorkManifest[] {
+export function commentariesAt(osis: string, chapterN: number): WorkManifest[] {
 	return Object.entries(commentaryChapters)
-		.filter(
-			([, work]) =>
-				work.annotates === annotatedWorkId && (work.books[osis] ?? []).includes(chapterN)
-		)
+		.filter(([, work]) => (work.books[osis] ?? []).includes(chapterN))
 		.map(([workId]) => manifests[workId])
 		.filter((work): work is WorkManifest => Boolean(work) && !isUnpublished(work.id))
 		.sort((a, b) => a.id.localeCompare(b.id));

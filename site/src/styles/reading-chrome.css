@@ -249,10 +249,59 @@
 }
 
 /*
- * Both markers, in one rule, because they must not diverge — `.note-marker`
- * is otherwise scoped to `Sidenote.svelte`, whose own docblock records that
- * it copies `.citation-marker` deliberately so that a reader who has learned
- * one raised mark has learned both.
+ * A RAISED MARK IN RUNNING TEXT: `Sidenote`'s letter and `CommentaryGloss`'s
+ * dagger, in one rule because they must not diverge. Superscript, in the sans
+ * face so that even at this size it does not read as part of the serif text
+ * it interrupts, and neither lettered nor numbered in a way that could be
+ * taken for a verse number — see `noteLetter` and `COMMENTARY_MARKER`.
+ *
+ * SUPERSCRIPTED BY `vertical-align`, NOT BY THE GLYPH. The dagger was set on
+ * the baseline for an afternoon, on the reasoning inherited from the asterisk
+ * it replaced: an asterisk is drawn high in its own em box and raising it
+ * again puts it above the ascenders. A dagger is not — it is drawn from the
+ * baseline to the cap line like a letter — so left alone it sits IN the line
+ * of text rather than over it, and reads as a character of the verse. It
+ * takes the same `super` every other mark on the page takes.
+ *
+ * SIZED AND COLOURED AS `.citation-marker` (app.css), which is the other
+ * small raised mark the reader meets in running text. The two open
+ * different things — a source, a gloss — but that is a difference the
+ * opened thing makes and not one the mark should: a reader who has
+ * learned what a raised accent letter means in the Catechism should not
+ * have to learn a second mark to read the Bible. The clamp is that rule's
+ * too, and it earns its keep here: a marker set purely in `em` shrinks
+ * with the text around it and these sit inside verses, which is the
+ * smallest type on the page.
+ *
+ * Its lit state is below, shared with `.citation-marker` for the same reason
+ * the rest of this rule is: the marks must not diverge.
+ *
+ * GLOBAL, AND THAT IS LOAD-BEARING RATHER THAN TIDY. It was scoped to
+ * `Sidenote.svelte` while it had one user; a Svelte component that borrows a
+ * class name it did not declare gets no styles and no error, so the copy that
+ * would otherwise be made in `CommentaryGloss.svelte` is the bug this
+ * prevents — and it is the exact bug that would be invisible, since an
+ * unstyled `<sup>` still renders a mark.
+ */
+.note-marker {
+	font-family: var(--font-sans);
+	font-size: max(var(--font-size-min), 0.7em);
+	font-weight: 600;
+	line-height: 0;
+	color: var(--color-accent);
+	/* The source sets the marker immediately after the words it glosses,
+	   with no space (docs/corpus-schema.md) — so the only separation is
+	   this, and a full space would misrepresent the printed page. */
+	padding-inline-start: 0.08em;
+	vertical-align: super;
+}
+
+/*
+ * THE MARK THE READER JUST NAMED — the two marks that have a copy in the
+ * margin to pair with, and only those two. A commentary's dagger is absent on
+ * purpose: it sets nothing in the gutter at any width, so there is nothing
+ * across the page to pair it with and a click on it opens its card instead
+ * (`NoteCard`'s `margin: false`).
  *
  * AND AN OUTLINE, NOT PADDING, which is `.margin-note.highlighted`'s reason
  * one step further on. The marker sits INSIDE running text, so padding on it
@@ -270,6 +319,46 @@
 	background: color-mix(in srgb, var(--color-accent) 18%, transparent);
 	outline: 0.15em solid color-mix(in srgb, var(--color-accent) 18%, transparent);
 	border-radius: var(--radius-sm);
+}
+
+/*
+ * A MARK IN RUNNING TEXT THAT IS ALSO A CONTROL — the button inside
+ * `.note-marker` and inside `.commentary-marker`, which own the typography
+ * while this owns only the fact that it can be pressed.
+ *
+ * Global for the reason everything else in this block is: it was scoped to
+ * `Sidenote.svelte` until a second apparatus needed the identical reset, and
+ * a class name borrowed across a Svelte component boundary is silently
+ * unstyled rather than an error — the two marks would have drifted apart
+ * without anything reporting it.
+ */
+.note-trigger {
+	font: inherit;
+	color: inherit;
+	background: none;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+	/* A tap target this small needs the padding back somewhere it cannot
+	   affect the line box — see `.note-trigger::after`. */
+	position: relative;
+}
+
+.note-trigger::after {
+	/* 44x44 CSS px is the accessibility floor for a touch target, and the
+	   glyph is nowhere near it. Grown as an overlay rather than by padding
+	   so the marker keeps its typographic position in the line. */
+	content: '';
+	position: absolute;
+	inset: 50% 50% 50% 50%;
+	min-width: 44px;
+	min-height: 44px;
+	transform: translate(-50%, -50%);
+}
+
+.note-trigger:hover,
+.note-trigger:focus-visible {
+	text-decoration: underline;
 }
 
 /*
@@ -434,4 +523,50 @@
 	font-weight: 600;
 	color: var(--color-text);
 	padding-inline-end: 0.35em;
+}
+
+/*
+ * The card, where there is no margin to set the apparatus in. Where it sits is
+ * `.floating-panel` (menus.css); what is here is what a NOTE needs and a
+ * citation does not. `Sidenote` opens one holding a gloss and
+ * `CommentaryGloss` one holding a verse's whole commentary — global for the
+ * reason the block above it is, and it moved here the same day.
+ *
+ * ONE RULE FOR BOTH, AND THE SIZE COMES FROM THE CONTENT. There was a second
+ * rule for a commentary's card, on the reasoning that it holds more; that is
+ * a fact about a particular verse, not about the apparatus it belongs to, and
+ * the widest Martini gloss (10,243 characters) is the same problem as the
+ * fullest Haydock verse (14,427) while a one-line Challoner note is neither.
+ * A popover is `width: fit-content; height: fit-content` from the UA sheet,
+ * so a card is already exactly as big as what is in it and these two
+ * declarations are CEILINGS rather than sizes — a citation's 26 characters
+ * still open a card the size of a phrase.
+ *
+ * SO THE CEILINGS ARE SET BY THE WORST CONTENT AND NOT BY THE COMMONEST. The
+ * width is a reading measure and stays where it was: 26rem of 0.85rem sans is
+ * about 62 characters a line, which is `--measure-cpl` — the same number the
+ * reading column is built on, and widening it would make the apparatus set
+ * looser than the Scripture. The height is what actually varies with content,
+ * and it is the one that moved, 24rem to 32rem: the cap's job is to stop a
+ * card covering the verse it points at, not to stop it holding what it holds,
+ * and at the old figure everything past a paragraph scrolled in a box a third
+ * the height of the screen. `computePanelPosition` pins a panel taller than
+ * the viewport rather than letting it run off. It is also why nothing inside
+ * is clamped: the clamp protects the margin's floats, and there are none
+ * here.
+ *
+ * The three signals that keep apparatus from reading as Scripture — sans,
+ * smaller, muted — are the same ones `.margin-note` carries, because any one
+ * of them alone is the kind of difference a reader stops seeing after a page.
+ */
+.note-popover {
+	max-inline-size: min(26rem, calc(100vw - 1rem));
+	max-block-size: min(32rem, 70vh);
+	overflow-y: auto;
+	padding: 0.5rem 0.7rem;
+	font-size: 0.85rem;
+	font-style: normal;
+	line-height: 1.5;
+	color: var(--color-text-muted);
+	overflow-wrap: break-word;
 }

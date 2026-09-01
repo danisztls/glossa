@@ -861,13 +861,46 @@ default and not the state: store the state and a reader who has never touched th
 indistinguishable from one who switched everything off, and the next work ingested arrives
 silently switched off for the first of them.
 
-**A commentary note carries no marker in the text, and is labelled by its author.** It
-cannot carry one: its lemma quotes the wording of the edition it was written on, and the
-reader may be on the Clementine Vulgate with none of those words in front of them. Two
-lettered runs a hand's width apart in one margin would print two different "a"s with
-nothing to say which belonged to which, so the label is "Calmet" — which needs no second
-vocabulary, collides with nothing, and tells the reader whose opinion they are about to
-read where a letter tells them nothing.
+**A commentary is anchored to the VERSE, by one mark, and each note is labelled by its
+author.** It cannot be anchored the way a footnote is: a footnote has a token inside the
+edition's own text, and a commentary has none to be given. The obvious substitute is the
+lemma, and it was measured before it was rejected — of 45,824 notes only 27,201 carry one
+and 25,078 of those quote the Douay verbatim, so a lemma-matched token would anchor 55% of
+the apparatus and only on the one edition whose words it quotes. A marker run with holes
+in it is worse than no run. A verse is something every edition has, so one dagger sits at
+the end of the verse and opens the whole of that verse's commentary; inside, each note is
+labelled "Calmet", which needs no second vocabulary and tells the reader whose opinion
+they are about to read where a letter tells them nothing. Two lettered runs a hand's width
+apart would have printed two different "a"s with nothing to say which belonged to which.
+
+**Verse anchoring is also what let the commentary be offered at EVERY edition.** The first
+version gated it to the work its manifest `annotates`, on this section's own rule that
+attaching an apparatus to a translation it was not written on is an editorial act. That
+rule is about a note the reader cannot tell apart from the edition's own — Challoner's
+notes ship inside `bible.douay-rheims`, and copying them to the CPDV would have read as
+the CPDV's. Nothing about this apparatus is silent: it is a separate work, named in the
+panel that switches it on, opened from its own mark, set in a card carrying its own
+`lang`. So the gate was refusing the reader of the Clementine a commentary on the Latin in
+front of her, to prevent a confusion the design had already ruled out.
+
+**It sets nothing in the margin, at any width, which is where the _Glossa Ordinaria_
+arrangement stops.** That arrangement assumes an apparatus smaller than the text it hangs
+on; Haydock annotates 20,814 verses and a chapter of him runs to 4,690 characters at the
+median against 52,496 at its worst, so the gutter column was neither beside the text nor
+bounded by it — and below the breakpoint, in the flow, it made the Scripture an
+interruption in the commentary. The mark opens a card instead, at every width. This is not
+a retreat from the arrangement the site is named for: an edition's own notes and a
+citation's source still take the margin, because those are remarks and this is a book.
+
+**The one thing a second apparatus must not do is print the first one twice.** Haydock
+published Challoner's text with Challoner's notes absorbed into his catena: 1,399 of the
+Douay-Rheims's 1,916 notes appear again in it, 1,300 paragraphs signed "Challoner" by
+name. That is a fact about the WORK, so it is stated in the corpus
+(`CommentaryManifest.subsumes_notes`) rather than inferred by the interface, and what the
+interface does with it is turn ONE default around — enabling the commentary switches the
+edition's own notes off. Nothing is suppressed: the overlap is 73% and not 100%, so 517 of
+Challoner's notes are only reachable that way, and the panel keeps the switch and says why
+it moved.
 
 **Attribution is parsed into a field, and the vocabulary is closed.** That was the open
 question the research note would not answer, because splitting "… Witham" off the end of

@@ -67,6 +67,30 @@ describe('switching', () => {
 		expect(apparatusPrefs.commentaryEnabled(COMMENTARY)).toBe(true);
 	});
 
+	// Haydock reproduces 1,399 of the Douay-Rheims's 1,916 notes, so with both
+	// on the reader met most of Challoner twice. The commentary's manifest says
+	// so and this turns the default around; nothing is suppressed.
+	it('turns the edition off by default once a commentary contains it', () => {
+		expect(apparatusPrefs.editionNotesEnabled(EDITION, true)).toBe(false);
+		expect(apparatusPrefs.editionNotesEnabled(EDITION, false)).toBe(true);
+	});
+
+	// The reader is still allowed both — the overlap is 73%, not 100%.
+	it('lets the reader put a subsumed edition back on', () => {
+		apparatusPrefs.setEditionNotes(EDITION, true, true);
+		expect(apparatusPrefs.editionNotesEnabled(EDITION, true)).toBe(true);
+	});
+
+	// The invariant the whole store rests on: what is stored is the difference
+	// from the default. A choice made under one default must not survive as a
+	// silent override of the other, so switching the commentary off has to
+	// leave the edition's notes back on rather than off.
+	it('stores the difference from whichever default was in force', () => {
+		apparatusPrefs.setEditionNotes(EDITION, false, true);
+		expect(apparatusPrefs.editionNotesEnabled(EDITION, true)).toBe(false);
+		expect(apparatusPrefs.editionNotesEnabled(EDITION, false)).toBe(true);
+	});
+
 	it('is idempotent, so a stored list cannot grow a duplicate', () => {
 		apparatusPrefs.setCommentary(COMMENTARY, true);
 		apparatusPrefs.setCommentary(COMMENTARY, true);

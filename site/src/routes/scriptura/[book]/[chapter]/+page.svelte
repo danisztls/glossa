@@ -223,16 +223,36 @@
 	 * `commentariesAt` is synchronous, off the index tier, so the panel's rows
 	 * are settled before the page paints — a control that appears after a fetch
 	 * lands is one that moves under the reader's cursor. It is keyed on the
-	 * edition being read and not on its language: a commentary written on the
-	 * Douay-Rheims must not offer itself beside the Clementine, whose words its
-	 * lemmas do not quote.
+	 * ADDRESS and not on the edition, so the same commentary is offered
+	 * whichever text the reader has open; `commentariesAt` says at length why
+	 * the anchor is what made that safe.
 	 */
-	const commentaries = $derived(
-		current ? commentariesAt(current.work.id, data.osis, data.chapterN) : []
+	const commentaries = $derived(commentariesAt(data.osis, data.chapterN));
+	/**
+	 * Whether an enabled commentary already CONTAINS the edition's own notes,
+	 * which is what makes the edition's default flip to off.
+	 *
+	 * `annotates` IS CHECKED HERE and nowhere else. `commentariesAt` offers a
+	 * commentary at any edition of the address, because a verse anchor asks
+	 * nothing of the text beside it — but "this already contains the edition's
+	 * notes" is a claim about ONE edition, the one the commentary was written
+	 * on. Haydock absorbs Challoner's notes and says nothing whatever about
+	 * Straubinger's. See `CommentaryManifest.subsumes_notes`.
+	 */
+	const notesSubsumed = $derived(
+		commentaries.some(
+			(work) =>
+				work.type === 'commentary' &&
+				work.subsumes_notes === true &&
+				work.annotates === current?.work.id &&
+				apparatusPrefs.commentaryEnabled(work.id)
+		)
 	);
-	/** Whether the edition's own footnotes are set. Default on; see
-	 *  `apparatus-prefs.svelte.ts` for why the two defaults differ. */
-	const editionNotesOn = $derived(apparatusPrefs.editionNotesEnabled(current?.work.id));
+	/** Whether the edition's own footnotes are set. Default on, unless a
+	 *  commentary that reproduces them is; see `apparatus-prefs.svelte.ts`. */
+	const editionNotesOn = $derived(
+		apparatusPrefs.editionNotesEnabled(current?.work.id, notesSubsumed)
+	);
 	/**
 	 * Whether this chapter carries any of the edition's own notes.
 	 *
@@ -692,7 +712,7 @@
 				}}
 				apparatus={current && {
 					edition: chapterHasNotes
-						? { workId: current.work.id, title: current.work.short_title }
+						? { workId: current.work.id, title: current.work.short_title, subsumed: notesSubsumed }
 						: undefined,
 					commentaries
 				}}
@@ -842,6 +862,7 @@
 									notes={entry.notes}
 									lang={entry.work.language}
 									work={entry.work.id}
+									title={entry.work.short_title || entry.work.title}
 								/>{/each}
 						</span>
 					{/each}

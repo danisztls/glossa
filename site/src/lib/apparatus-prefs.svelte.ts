@@ -46,9 +46,9 @@ import { readStoredJson, writeStoredJson } from './storage';
 const STORAGE_KEY = 'glossa:apparatus';
 
 interface Stored {
-	/** Editions whose OWN notes the reader has switched off. Default: on. */
+	/** Apparatus the reader switched OFF against a default of on. */
 	off: string[];
-	/** Commentaries the reader has switched on. Default: off. */
+	/** Apparatus the reader switched ON against a default of off. */
 	on: string[];
 }
 
@@ -65,10 +65,29 @@ class ApparatusStore {
 	 * reader who picks the Douay-Rheims has picked Challoner's apparatus,
 	 * because that is what distinguishes it from the four other English texts;
 	 * turning them off is a deliberate act and so is what gets stored.
+	 *
+	 * EXCEPT WHERE A COMMENTARY ALREADY CONTAINS THEM, which is `subsumed`.
+	 * Haydock published Challoner's text with Challoner's notes absorbed into
+	 * his catena, so with both apparatuses on a reader met 1,399 of the
+	 * Douay-Rheims's 1,916 notes twice, a hand's width apart, one of the two
+	 * signed "Challoner". The manifest states the fact
+	 * (`CommentaryManifest.subsumes_notes`); this decides only what to do
+	 * about it, and what it does is flip the DEFAULT rather than suppress
+	 * anything. The overlap is 73% and not 100%, so the 517 notes Haydock does
+	 * not carry are one switch away and the panel still offers them.
+	 *
+	 * WHICH IS WHY THE DEFAULT HAS TO BE AN ARGUMENT AND NOT A CONSTANT. This
+	 * store's whole invariant is that it holds the DIFFERENCE from the
+	 * default, so a default that moves needs both lists: `off` is what the
+	 * reader switched off against a default of on, `on` what they switched on
+	 * against a default of off. An edition id and a commentary id never
+	 * collide, so the two lists carry both kinds without ambiguity.
 	 */
-	editionNotesEnabled(workId: string | undefined): boolean {
+	editionNotesEnabled(workId: string | undefined, subsumed = false): boolean {
 		if (!workId) return true;
-		return !this.#state.off.includes(workId);
+		if (this.#state.off.includes(workId)) return false;
+		if (this.#state.on.includes(workId)) return true;
+		return !subsumed;
 	}
 
 	/**
@@ -82,10 +101,13 @@ class ApparatusStore {
 		return this.#state.on.includes(workId);
 	}
 
-	setEditionNotes(workId: string, enabled: boolean) {
+	/** `subsumed` is the same flag `editionNotesEnabled` takes, and it has to be
+	 *  passed here too: what gets stored is the difference from the default, so
+	 *  which list the id belongs in depends on which way the default points. */
+	setEditionNotes(workId: string, enabled: boolean, subsumed = false) {
 		this.#write({
-			...this.#state,
-			off: withMembership(this.#state.off, workId, !enabled)
+			off: withMembership(this.#state.off, workId, !subsumed && !enabled),
+			on: withMembership(this.#state.on, workId, subsumed && enabled)
 		});
 	}
 

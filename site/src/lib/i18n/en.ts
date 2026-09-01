@@ -68,6 +68,7 @@ export const en: Dictionary = {
 	'apparatus.label': 'Apparatus',
 	'apparatus.editionNotes': "This edition's notes",
 	'apparatus.commentary': 'Commentary',
+	'apparatus.inCommentary': 'Included in the commentary above.',
 	'darkMode.label': 'Dark mode',
 	'darkMode.auto': 'Auto',
 	'darkMode.on': 'On',

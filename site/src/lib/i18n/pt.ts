@@ -33,6 +33,7 @@ export const pt: Dictionary = {
 	'apparatus.label': 'Aparato',
 	'apparatus.editionNotes': 'Notas desta edição',
 	'apparatus.commentary': 'Comentário',
+	'apparatus.inCommentary': 'Incluídas no comentário acima.',
 	'darkMode.label': 'Modo escuro',
 	// 'Auto', not 'Automático': see the note in the English dictionary — the
 	// three share one segmented control, and 'AUTOMÁTICO' set uppercase is

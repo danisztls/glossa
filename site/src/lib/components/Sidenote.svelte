@@ -45,9 +45,8 @@
 	 * indented within it. Challoner's commentary is not Scripture and must not
 	 * be able to be read as though it were.
 	 */
-	import { tick } from 'svelte';
 	import type { VerseNote } from '$lib/types';
-	import { marginOverflows, NoteCard, sidenoteRoom } from '$lib/sidenotes.svelte';
+	import { marginOverflows, NoteCard, NoteDialog, sidenoteRoom } from '$lib/sidenotes.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { linkifyInline, plainTextNodes } from '$lib/inline-html';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
@@ -131,25 +130,9 @@
 	const uid = $props.id();
 	const card = new NoteCard(uid);
 
-	/** The whole gloss, for a note the margin could only set the head of. */
-	let full: HTMLDialogElement | undefined = $state();
-	/** Whether the dialog's contents are rendered — see the markup on why they
-	 *  are not rendered until they are wanted, and why `tick()` is between the
-	 *  two halves of opening it. */
-	let fullOpen = $state(false);
-
-	async function openFull() {
-		fullOpen = true;
-		await tick();
-		if (full && !full.open) full.showModal();
-	}
-
-	/* A click that lands on the dialog ITSELF is a click on the backdrop:
-	   `.dialog-bare` is transparent and has no padding, so every visible pixel
-	   belongs to the panel inside it. `TocMenu`'s test, and its reason. */
-	function onDialogClick(e: MouseEvent) {
-		if (e.target === full) full.close();
-	}
+	/** The whole gloss, for a note the margin could only set the head of —
+	    shared with `CommentaryGloss`, which clamps for the same reason. */
+	const full = new NoteDialog();
 </script>
 
 {#snippet gloss()}
@@ -184,13 +167,13 @@
 {#if inMargin}
 	<small class="margin-note" class:highlighted={card.lit} {lang}
 		><span class="margin-note-label" aria-hidden="true">{label}</span>{#if clamped}<span
-				class="margin-note-body clamped">{@render gloss()}</span
+				class="note-clamped">{@render gloss()}</span
 			><button
 				type="button"
-				class="margin-note-more"
+				class="note-more"
 				aria-haspopup="dialog"
-				aria-expanded={fullOpen}
-				onclick={openFull}>{t('bible.readMore')}</button
+				aria-expanded={full.rendered}
+				onclick={() => full.open()}>{t('bible.readMore')}</button
 			>{:else}{@render gloss()}{/if}</small
 	>
 
@@ -211,14 +194,14 @@
 	     card beside it says so. -->
 	{#if clamped}
 		<dialog
-			bind:this={full}
+			bind:this={full.el}
 			class="dialog-bare note-dialog"
 			{lang}
 			aria-label={`${t('bible.note')} ${label}`}
-			onclose={() => (fullOpen = false)}
-			onclick={onDialogClick}
+			onclose={full.onClose}
+			onclick={full.onClick}
 		>
-			{#if fullOpen}
+			{#if full.rendered}
 				<!-- NO HEAD BAR. The panel holds one gloss and nothing else, so a
 				     head here would carry a title naming what the reader just
 				     pressed and a rule under it dividing that from nothing — a
@@ -240,7 +223,7 @@
 							class="sheet-close note-dialog-close"
 							aria-label={t('ui.close')}
 							title={t('ui.close')}
-							onclick={() => full?.close()}
+							onclick={full.close}
 						>
 							<Icon name="x" />
 						</button>
@@ -272,116 +255,36 @@
 
 <style>
 	/*
-	 * The reference. Superscript, in the sans face so that even at this size
-	 * it does not read as part of the serif text it interrupts, and lettered
-	 * rather than numbered so it cannot be taken for a verse number — see
-	 * `noteLetter`.
+	 * THE CLAMP, THE WAY TO THE REST OF A CLAMPED NOTE, AND THE PANEL IT OPENS.
 	 *
-	 * SIZED AND COLOURED AS `.citation-marker` (app.css), which is the other
-	 * small raised mark the reader meets in running text. The two open
-	 * different things — a source, a gloss — but that is a difference the
-	 * opened thing makes and not one the mark should: a reader who has
-	 * learned what a raised accent letter means in the Catechism should not
-	 * have to learn a second mark to read the Bible. The clamp is that rule's
-	 * too, and it earns its keep here: a marker set purely in `em` shrinks
-	 * with the text around it and these sit inside verses, which is the
-	 * smallest type on the page.
+	 * SCOPED, AND IT WAS GLOBAL FOR A DAY. `CommentaryGloss` clamped in the
+	 * margin too while it had a margin form; it has none now — a commentary
+	 * opens a card at every width — so this apparatus is the only one that
+	 * clamps anything and the rules come home. What genuinely has two owners
+	 * stayed in `reading-chrome.css`: `.note-marker`, `.note-trigger` and
+	 * `.note-popover`, each of which the commentary's mark and card use
+	 * unchanged.
 	 *
-	 * Its lit state is app.css's, shared with `.citation-marker` for the same
-	 * reason the rest of this rule copies one: the two marks must not diverge.
+	 * A citation's source is 26 characters and has nothing to clamp, so this
+	 * was never `CitationDisclosure`'s either.
 	 */
-	.note-marker {
-		font-family: var(--font-sans);
-		font-size: max(var(--font-size-min), 0.7em);
-		font-weight: 600;
-		line-height: 0;
-		color: var(--color-accent);
-		/* The source sets the marker immediately after the words it glosses,
-		   with no space (docs/corpus-schema.md) — so the only separation is
-		   this, and a full space would misrepresent the printed page. */
-		padding-inline-start: 0.08em;
-		vertical-align: super;
-	}
-
-	.note-trigger {
-		font: inherit;
-		color: inherit;
-		background: none;
-		border: 0;
-		padding: 0;
-		cursor: pointer;
-		/* A tap target this small needs the padding back somewhere it cannot
-		   affect the line box — see `.note-trigger::after`. */
-		position: relative;
-	}
-
-	.note-trigger::after {
-		/* 44x44 CSS px is the accessibility floor for a touch target, and the
-		   glyph is nowhere near it. Grown as an overlay rather than by padding
-		   so the marker keeps its typographic position in the line. */
-		content: '';
-		position: absolute;
-		inset: 50% 50% 50% 50%;
-		min-width: 44px;
-		min-height: 44px;
-		transform: translate(-50%, -50%);
-	}
-
-	.note-trigger:hover,
-	.note-trigger:focus-visible {
-		text-decoration: underline;
-	}
 
 	/*
-	 * The card, where there is no margin to set the gloss in. Where it sits is
-	 * `.floating-panel` (app.css); what is here is what a GLOSS needs and a
-	 * citation does not.
+	 * `line-clamp` rather than a height and a fade, because it ends the note on
+	 * an ellipsis at the end of a real line: the reader is told the note
+	 * continues by the same mark a printed text would use, and the button below
+	 * says where it continues. A masked fade says only that something is cut off,
+	 * and says it in a way that a page in sepia or dark reads as a gradient
+	 * rather than as an edge.
 	 *
-	 * IT SCROLLS RATHER THAN GROWING. A citation is a phrase and its card is
-	 * whatever size the phrase is; a Challoner note runs to a paragraph, and
-	 * on the phone this exists for, a card free to grow would cover the verse
-	 * it belongs to. `computePanelPosition` pins a panel taller than the
-	 * viewport rather than letting it run off, so the cap is what keeps the
-	 * card beside its line instead of over the whole page.
-	 *
-	 * The three signals that keep a gloss from reading as Scripture — sans,
-	 * smaller, muted — are the same ones `.margin-note` carries, because any
-	 * one of them alone is the kind of difference a reader stops seeing after
-	 * a page.
+	 * THE LINE COUNT IS THE MARGIN'S, because the margin is the only place either
+	 * apparatus clamps: a card scrolls, so there is nothing in one for a clamp to
+	 * protect. `--sidenote-clamp` has to agree with the character count that
+	 * decided to render this class at all — a count under the clamp offers a rest
+	 * that is not there, and a clamp under the count cuts a note off with nothing
+	 * under it to open.
 	 */
-	.note-popover {
-		max-inline-size: min(26rem, calc(100vw - 1rem));
-		max-block-size: min(24rem, 60vh);
-		overflow-y: auto;
-		padding: 0.5rem 0.7rem;
-		font-size: 0.85rem;
-		font-style: normal;
-		line-height: 1.5;
-		color: var(--color-text-muted);
-		overflow-wrap: break-word;
-	}
-
-	.sidenote-missing {
-		font-style: italic;
-	}
-
-	/*
-	 * THE CLAMP, where a gloss runs past what the margin can hold beside its
-	 * own line — `marginOverflows` for why, and `--sidenote-clamp` for the
-	 * line count, which is `MARGIN_CLAMP_CHARS` expressed in the other unit.
-	 *
-	 * `line-clamp` rather than a height and a fade, because it ends the note
-	 * on an ellipsis at the end of a real line: the reader is told the gloss
-	 * continues by the same mark a printed text would use, and the button
-	 * below says where it continues. A masked fade says only that something is
-	 * cut off, and says it in a way that a page in sepia or dark reads as a
-	 * gradient rather than as an edge.
-	 *
-	 * Scoped rather than global, unlike `.margin-note` itself: a citation's
-	 * source is 26 characters and has nothing to clamp, so this is one
-	 * apparatus's and not both's.
-	 */
-	.margin-note-body.clamped {
+	.note-clamped {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: var(--sidenote-clamp);
@@ -390,22 +293,22 @@
 	}
 
 	/*
-	 * The rest of the gloss, and the reason the clamp costs the reader
-	 * nothing. Two words rather than an ellipsis or a chevron: the note above
-	 * it already ends in an ellipsis, and a second one would name the
-	 * truncation twice without ever naming the remedy.
+	 * The rest of the note, and the reason the clamp costs the reader nothing.
+	 * Two words rather than an ellipsis or a chevron: the note above it already
+	 * ends in an ellipsis, and a second one would name the truncation twice
+	 * without ever naming the remedy.
 	 */
-	.margin-note-more {
+	.note-more {
 		display: block;
 		/*
-		 * TIGHT TO ITS OWN NOTE AND CLEAR OF THE NEXT ONE, which is the whole
-		 * of these two numbers. Notes stack down the gutter with nothing but
-		 * `clear` between them, so a control set evenly between the gloss it
-		 * belongs to and the gloss below it reads as belonging to the wrong
-		 * one — and it is the only line in the column that could be mistaken
-		 * for either. The end margin is what the next note is pushed down by:
-		 * `.margin-note` floats, so it establishes its own formatting context
-		 * and this cannot collapse through it.
+		 * TIGHT TO ITS OWN NOTE AND CLEAR OF THE NEXT ONE, which is the whole of
+		 * these two numbers. Notes stack down the gutter with nothing but `clear`
+		 * between them, so a control set evenly between the note it belongs to and
+		 * the note below it reads as belonging to the wrong one — and it is the
+		 * only line in the column that could be mistaken for either. The end
+		 * margin is what the next note is pushed down by: `.margin-note` floats,
+		 * so it establishes its own formatting context and this cannot collapse
+		 * through it.
 		 */
 		margin-block-start: 0.1rem;
 		margin-block-end: 0.6rem;
@@ -418,30 +321,29 @@
 		cursor: pointer;
 	}
 
-	.margin-note-more:hover,
-	.margin-note-more:focus-visible {
+	.note-more:hover,
+	.note-more:focus-visible {
 		text-decoration: underline;
 	}
 
 	/*
-	 * THE GLOSS IN FULL, CENTRED OVER THE PAGE. Straubinger's longest note is
-	 * 4,830 characters and Martini's 10,243 — a card anchored beside a marker
-	 * is a shape for a paragraph, and one holding an essay would cover the
-	 * text it glosses while pointing at it. So it is the shape the site
+	 * THE NOTE IN FULL, CENTRED OVER THE PAGE. Straubinger's longest note is
+	 * 4,830 characters, Martini's 10,243 and Haydock's 14,201 — a card anchored
+	 * beside a marker is a shape for a paragraph, and one holding an essay would
+	 * cover the text it glosses while pointing at it. So it is the shape the site
 	 * already uses for a panel that has stopped being anchored to anything:
 	 * `.dialog-bare` for the shell and the `.sheet-*` parts for the chrome
 	 * (`menus.css`), as the plate viewer and the tables of contents do.
 	 *
-	 * `[open]` is not decoration: a closed `<dialog>` is `display: none` from
-	 * the UA stylesheet, and a bare `display: flex` here would override it and
-	 * leave the panel on the page permanently — `.sheet`'s own note, and the
-	 * same trap. The flex column has to start on the dialog because
-	 * `.sheet-panel` is a flex item that bounds `.sheet-body`'s scroll box.
+	 * `[open]` is not decoration: a closed `<dialog>` is `display: none` from the
+	 * UA stylesheet, and a bare `display: flex` here would override it and leave
+	 * the panel on the page permanently — `.sheet`'s own note, and the same trap.
+	 * The flex column has to start on the dialog because `.sheet-panel` is a flex
+	 * item that bounds `.sheet-body`'s scroll box.
 	 *
 	 * SIZED, NOT PLACED. A modal `<dialog>` is centred by the UA's own
-	 * `margin: auto`; what this decides is only how much of the viewport a
-	 * gloss may take, and it is a reading measure rather than the widest box
-	 * that fits.
+	 * `margin: auto`; what this decides is only how much of the viewport a note
+	 * may take, and it is a reading measure rather than the widest box that fits.
 	 */
 	.note-dialog[open] {
 		display: flex;
@@ -457,14 +359,14 @@
 	}
 
 	/*
-	 * THE WAY OUT, SET INTO THE TEXT RATHER THAN OVER IT. `.sheet-close` is
-	 * sized for a thumb in a panel that fills a phone; here it is one control
-	 * in a corner the prose flows around, so it comes down to the two lines it
-	 * actually sits beside. Floated rather than absolute, which is what keeps
-	 * it out of the text instead of on top of it: an absolute button in the
-	 * padding would be crossed by the first line the moment a gloss opened
-	 * with a long word, and reserving a column for it would spend on every
-	 * line what only two lines are next to.
+	 * THE WAY OUT, SET INTO THE TEXT RATHER THAN OVER IT. `.sheet-close` is sized
+	 * for a thumb in a panel that fills a phone; here it is one control in a
+	 * corner the prose flows around, so it comes down to the two lines it
+	 * actually sits beside. Floated rather than absolute, which is what keeps it
+	 * out of the text instead of on top of it: an absolute button in the padding
+	 * would be crossed by the first line the moment a note opened with a long
+	 * word, and reserving a column for it would spend on every line what only two
+	 * lines are next to.
 	 */
 	.note-dialog-close {
 		float: inline-end;
@@ -477,10 +379,10 @@
 	/*
 	 * STILL SANS, STILL MUTED, and set at the size the rest of the site reads
 	 * apparatus at rather than at the margin's 0.78rem — the column's type is
-	 * small because the column is narrow, and neither is true here. What must
-	 * not change is that it is a gloss: a note filling the page in the serif
-	 * face at the reading size would be a text of its own, which is the one
-	 * thing this apparatus may never look like (docs/decisions.md §Posture).
+	 * small because the column is narrow, and neither is true here. What must not
+	 * change is that it is apparatus: a note filling the page in the serif face
+	 * at the reading size would be a text of its own, which is the one thing this
+	 * may never look like (docs/decisions.md §Posture).
 	 */
 	.note-dialog-body {
 		padding: 0.9rem 1.1rem 1.2rem;
@@ -488,5 +390,9 @@
 		font-size: 0.92rem;
 		line-height: 1.65;
 		color: var(--color-text-muted);
+	}
+
+	.sidenote-missing {
+		font-style: italic;
 	}
 </style>

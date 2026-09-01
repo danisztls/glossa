@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import {
 	assetsForWork,
 	contentPath,
+	CORE_FONTS,
 	fontsForLangs,
 	isDeferredFont,
 	naturalCompare,
@@ -725,8 +726,7 @@ describe('the font partition', () => {
 	// through is precached — the safe direction, and the silent one.
 	it('classifies every vendored face', () => {
 		const unclassified = FONTS.filter(
-			(path) =>
-				!isDeferredFont(path) && !/-latin-wght-|pirata-one-dropcap|ponomar-dropcap-latin/.test(path)
+			(path) => !isDeferredFont(path) && !CORE_FONTS.some((fragment) => path.includes(fragment))
 		);
 		expect(unclassified).toEqual([]);
 	});

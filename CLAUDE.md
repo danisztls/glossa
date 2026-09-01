@@ -659,6 +659,85 @@ the difference from the default rather than the state; storing the state makes
 "never touched the panel" and "switched everything off" the same value, and
 the next work ingested arrives silently off for the first of them.
 
+**The mark is anchored to the VERSE, and getting a dagger to draw cost a font
+file.** The obvious anchor is the lemma and it fails twice: of 45,824 notes only
+27,201 carry a lemma at all and 25,078 of those quote the Douay verbatim, so a
+lemma-matched token would anchor 55% of the apparatus and only on
+`bible.douay-rheims.en`. A marker run with holes is worse than none, so the mark
+names the verse, which every edition has. **`†` is NOT in either text family's
+`latin` subset** — Google files U+2020 under `latin-ext`, so one dagger would
+pull 158 KB of Source Sans 3 for a reader who needs it for nothing else, and
+would pull it for the English reader too, since a commentary is switched on
+rather than implied by a language. `static/fonts/source-sans-3-marks.woff2` is
+1.1 KB subset to that single codepoint under its own family, precached with the
+core faces, and `fonts.css` records the `pyftsubset` line that made it — the
+same shape the two drop-cap faces already had. **`‡`, `※` and `⁂` are not
+reachable at any price**: checked with fontTools across every file in both
+`@fontsource-variable` packages, Google's subsets do not carry them, so a second
+mark needs a different source font and not a different range.
+`sidenotes.test.ts` pins the codepoint against `fonts.css`'s `unicode-range`,
+because a mark and a face that disagree render in a system font and nothing
+fails.
+
+**IT SETS NOTHING IN THE MARGIN, AT ANY WIDTH — the mark opens a card and that
+is the only way in.** It had a gutter form for a day, on the premise this site
+is named for: the gloss beside the line it belongs to. That premise assumes an
+apparatus SMALLER than the text it hangs on, and this one is not — Haydock
+annotates 20,814 verses, a chapter runs to 4,690 characters at the median and
+52,496 at its worst, and the column was neither beside the text nor bounded by
+it. `.margin-note` was written for Challoner at the length of a sentence.
+`NoteCard` learned `{ margin: false }` for it, and every gate in the class now
+reads `#inMargin` rather than `sidenoteRoom.margin`: with no margin copy a click
+always opens, `aria-expanded` is always a claim we can keep, and there is never
+a note in the gutter to light. That also deleted the clamp, the "read more", the
+dialog and `commentaryChars` — a card scrolls, so there is nothing in one for a
+clamp to protect — and returned that CSS to `Sidenote.svelte`, which owns it
+alone again. What stayed global in `reading-chrome.css` is what genuinely has
+two owners: `.note-marker`, `.note-trigger`, `.note-popover`.
+
+**The dagger is superscripted by `vertical-align`, not by the glyph**, and it
+took a wrong turn first. The asterisk it replaced is drawn high in its own em
+box, so raising it again put it above the ascenders and it was set on the
+baseline; a dagger is drawn baseline-to-cap like a letter, so on the baseline it
+sits IN the line and reads as a character of the verse. `.commentary-marker` now
+overrides `.note-marker` in exactly two declarations — the face that draws
+U+2020, and a hair more lead-in, because a footnote marker follows a word and
+this one follows a full stop.
+
+**A COMMENTARY IS OFFERED AT EVERY EDITION OF ITS ADDRESS, and the gate that was
+there for a day was answering the wrong question.** `commentariesAt` took a work
+id, on `docs/decisions.md`'s argument about Challoner and the CPDV: attaching an
+apparatus to a translation it was not written on is an editorial act. That
+argument is about a note the reader cannot tell apart from the edition's own —
+Challoner's notes ship INSIDE `bible.douay-rheims`. Nothing here is silent: a
+separate work, named in the panel that switches it on, opened from its own mark,
+set in a card with its own `lang`. What made the gate unnecessary is the ANCHOR:
+keyed to a lemma it really would be undisplayable beside another edition, since
+the words it quotes are not there; keyed to the VERSE it asks only that the
+address exist, and every edition here is versified the same way. `annotates` is
+still read — by `subsumes_notes`, which is a claim about one edition only.
+
+**HAYDOCK CONTAINS CHALLONER, so both apparatuses on printed most of one of them
+twice.** Measured over the built corpus: 1,399 of the Douay-Rheims's 1,916 notes
+appear again in the catena (1,249 at >=0.9 similarity) and 1,300 paragraphs are
+signed "Challoner". `CommentaryManifest.subsumes_notes` states it — a property
+of the WORK, written by `haydock.py` — and the site reads it to flip ONE default:
+`editionNotesEnabled(workId, subsumed)`. **Nothing is suppressed**, because the
+overlap is 73% and not 100% and 517 of Challoner's notes are not in the capture;
+the panel keeps the switch and says why it moved. That is also why the store's
+`off`/`on` lists both carry edition ids now: it holds the difference from the
+default, so a default that moves needs both directions.
+
+**A blank line is not always a paragraph break, and 20 records prove it.**
+Haydock quotes two phrases of a verse in one italic run and the transcription
+prints a blank line inside it, so `_Give his only begotten Son ⏎⏎ God sent not
+his Son into the world._` (John 3:17) split into two chunks with one underscore
+each — neither a lemma, and `strip_emphasis` left the orphan `_` in the reader's
+text. `split_paragraphs` rejoins while the run is open. The count that makes
+that safe is the other one: **not one of 20,814 records has an odd number of
+underscores overall**, so a merge begun always closes, and the anomaly reported
+is for the record that would prove the measurement stale.
+
 **Nothing is fetched until it is switched on.** `commentary.svelte.ts` is
 `xrefs.svelte.ts`'s shape — a `$state` holder read inside a `$derived` — and
 deliberately NOT part of `scriptura/[book]/[chapter]/+page.ts`'s

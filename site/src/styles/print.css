@@ -147,6 +147,7 @@
 	 * It lands as the block the narrow breakpoint already gives it, which is
 	 * the same answer for the same reason: the note goes under the line that
 	 * raised it, set off by a rule rather than by position.
+	 *
 	 */
 	.margin-note {
 		float: none !important;
@@ -165,7 +166,7 @@
 	 * (the rule above has already put the note in the flow), which is the only
 	 * thing the clamp was protecting.
 	 */
-	.margin-note-body.clamped {
+	.note-clamped {
 		display: block !important;
 		overflow: visible !important;
 		-webkit-line-clamp: none !important;
@@ -174,7 +175,7 @@
 
 	/* And with the whole note printed, the way to the rest of it is an
 	   instruction to press something that is not there. */
-	.margin-note-more {
+	.note-more {
 		display: none !important;
 	}
 

@@ -1,35 +1,47 @@
 <!--
-	One verse's commentary, set in the apparatus lane beside the verse.
+	One verse's commentary, behind a mark at the end of that verse.
 
 	WHY THIS IS NOT `Sidenote`, AND WHY IT IS NOT A PROP ON IT. `Sidenote` is
-	built around a marker: it renders a `<sup>` into the running text, and every
-	behaviour it has — the card it opens, the highlight pairing note to number,
-	the `aria-expanded` that would be a lie if the note were already visible —
-	is about the relation between that mark and its gloss. A commentary has no
-	mark, and cannot have one. Its lemma quotes the wording of the edition it
-	was written on, which is not necessarily the edition on screen: Haydock
-	glosses Challoner, and a reader on the Clementine Vulgate has none of those
-	words in front of them to hang a token from. So the note is anchored to the
-	VERSE and named by its author, which is how a catena is set in print and the
-	one arrangement that survives being shown beside a text it does not quote.
+	built around the source's OWN marker: a token inside the edition's text says
+	where each note belongs, and the component is one note. Neither holds here.
+	A commentary has no token and can never be given one — its lemma quotes the
+	wording of the edition it was written on, which is not necessarily the
+	edition on screen. And the unit is the VERSE rather than the note: Haydock's
+	median annotated verse carries two remarks and his longest twenty-nine, all
+	of them about the same line, so they are one card and one mark.
 
-	THE LABEL IS THE ATTRIBUTION, NOT A LETTER, and that is what keeps the two
-	apparatuses apart in one lane. `Sidenote` letters its notes a, b, c down the
-	chapter (`noteLetter`), and a second lettered run beside it would print two
-	different "a"s a hand's width apart with nothing to say which belonged to
-	which. Naming the commentator instead needs no second vocabulary, collides
-	with nothing, and is the more informative label anyway — "Calmet" tells the
-	reader whose opinion they are about to read, where "d" tells them nothing.
-	An unattributed note is the compiler's own and carries no label.
+	THE MARK IS ANCHORED TO THE VERSE, and that is measured rather than chosen.
+	Of 45,824 notes only 27,201 carry a lemma at all and 25,078 of those quote
+	the Douay verbatim, so a lemma-matched token would anchor 55% of the
+	apparatus and only on one edition; a marker run with holes in it is worse
+	than no run, because the reader learns to look for a mark and then meets
+	notes that have none. A verse is something every edition has. See
+	`COMMENTARY_MARKER` for why a dagger and what it cost to get one.
 
-	AND IT IS A BLOCK BELOW THE MARGIN BREAKPOINT RATHER THAN A DISCLOSURE.
-	`Sidenote`'s fallback is a card, because there is a marker to open it from
-	and because a gloss appearing in the flow would move the verse the reader
-	just clicked in. Neither holds here: there is no marker, and the commentary
-	is on for the whole page or off for it — the reader asked for it in the
-	panel before the page rendered, so nothing moves under them while they read.
-	What that costs is height on a phone, which is the honest price of having
-	asked for a commentary on a phone.
+	IT SETS NOTHING IN THE MARGIN, AT ANY WIDTH, and that is the whole shape of
+	this component. It had a gutter form for a day, on the premise the site is
+	named for — the gloss beside the line it belongs to. That premise assumes an
+	apparatus SMALLER than the text it hangs on, and this one is not: Haydock
+	annotates 20,814 verses, a chapter of him runs to 4,690 characters at the
+	median and 52,496 at its worst, and the column was neither beside the text
+	nor bounded by it. `.margin-note` was written for Challoner at the length of
+	a sentence. So the mark opens a card, everywhere, which is what
+	`NoteCard`'s `margin: false` says: no margin copy, so a click always opens,
+	`aria-expanded` is always a claim we can keep, and there is never a note in
+	the gutter to light.
+
+	THE LABEL AT THE HEAD OF EACH NOTE IS THE ATTRIBUTION, NOT A LETTER.
+	`Sidenote` letters its notes a, b, c down the chapter (`noteLetter`), and a
+	second lettered run would print two different "a"s with nothing to say which
+	belonged to which. Naming the commentator instead collides with nothing and
+	is the more informative label anyway — "Calmet" tells the reader whose
+	opinion they are about to read, where "d" tells them nothing. An
+	unattributed note is the compiler's own and carries no label.
+
+	NOTHING IS CLAMPED IN HERE. The card scrolls (`.note-popover`), which is the
+	answer `Sidenote` already gives for Martini's 10,243-character glosses; the
+	clamp exists to keep a float from outrunning its verse, and there is no
+	float.
 -->
 <script lang="ts">
 	import { linkifyProse } from '$lib/refs-grammar';
@@ -37,7 +49,8 @@
 	import { linkifyInline, parseInlineMarked, plainTextNodes } from '$lib/inline-html';
 	import { refHref } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
-	import { sidenoteRoom } from '$lib/sidenotes.svelte';
+	import { t } from '$lib/i18n.svelte';
+	import { COMMENTARY_MARKER, NoteCard } from '$lib/sidenotes.svelte';
 	import type { CommentaryNote } from '$lib/types';
 	import InlineNodes from './InlineNodes.svelte';
 
@@ -45,19 +58,30 @@
 		/** This verse's notes, in the order the source prints them. */
 		notes: CommentaryNote[];
 		/** The COMMENTARY's language, not the edition's — a note is written in
-		    the language of the work that carries it. Set on the element so
-		    `direction.css` resolves script direction from the text. */
+		    the language of the work that carries it, and since a commentary is
+		    now offered beside any edition the two often differ. Set on the
+		    element so `direction.css` resolves script direction from the text. */
 		lang: string;
 		/** The COMMENTARY's work id, which the grammar needs for the same reason
 		    `Sidenote` needs the edition's: Haydock quotes the Douay nomenclature
 		    throughout, where "3 Kings" is 1 Kings, so his citations resolve
 		    under his own work's config and not under the edition beside him. */
 		work: string;
+		/** What the commentary is CALLED, for the mark's own label. The mark is
+		    the same dagger whichever commentary raised it, so the name is the
+		    only thing telling a reader what is behind it. `ApparatusMenu` labels
+		    its switch with the same string, which is what ties the mark to the
+		    control that turned it on. */
+		title: string;
 	}
 
-	let { notes, lang, work }: Props = $props();
+	let { notes, lang, work, title }: Props = $props();
 
-	const inMargin = $derived(sidenoteRoom.margin);
+	const label = $derived(`${t('apparatus.commentary')}: ${title}`);
+
+	// See `CitationDisclosure` on why this is a bare top-level declaration.
+	const uid = $props.id();
+	const card = new NoteCard(uid, { margin: false });
 
 	function hrefFor(seg: RefSegment): string | undefined {
 		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang });
@@ -70,7 +94,7 @@
 	 * rendering, so `text_marked` carries `⟦N⟧` tokens over a `notes` array —
 	 * the ordinary `Annotated` shape, one level down. The marker renders as a
 	 * plain superscript rather than a control: a disclosure inside a note that
-	 * is already a disclosure is two things to open for one thing to read, and
+	 * is already inside a card is two things to open for one thing to read, and
 	 * the sub-notes are short enough to set under the note they belong to.
 	 * Position is what the numeral is for, so it is kept.
 	 */
@@ -82,41 +106,122 @@
 	}
 </script>
 
-{#snippet body(note: CommentaryNote)}
-	{#if note.lemma}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span class="sidenote-text"
-		><InlineNodes nodes={nodesOf(note)} {hrefFor}>
-			{#snippet marker(m: string)}<sup class="commentary-submarker">{m}</sup>{/snippet}
-		</InlineNodes></span
-	>{#if note.attribution}<span class="commentary-attribution">{note.attribution}</span
-		>{/if}{#if note.notes?.length}<ol class="commentary-subnotes">
-			{#each note.notes as sub (sub.marker)}<li value={Number(sub.marker)}>{sub.text}</li>{/each}
-		</ol>{/if}
-{/snippet}
+<!-- THE MARK, at the end of the verse rather than inside it, because it names
+     the verse and not a place in it. `.note-marker` is the shared rule every
+     raised mark on this page uses; `.commentary-marker` adds only the face
+     that draws the dagger.
 
-{#each notes as note, i (i)}
-	{#if inMargin}
-		<small class="margin-note commentary-note" {lang}>{@render body(note)}</small>
-	{:else}
-		<aside class="commentary-block" {lang}>{@render body(note)}</aside>
-	{/if}
-{/each}
+     NO POINTER HANDLERS, WHICH IS THE ONE PLACE THIS DIVERGES FROM `Sidenote`
+     AND `CitationDisclosure`. `NoteCard` opens on the pointer resting, and
+     that is right for what those two hold — a source of 26 characters, a gloss
+     of a sentence, a card the size of the thing it explains. This card holds a
+     whole verse's commentary, so a mouse merely CROSSING the mark on its way
+     down the page would raise a panel over the text being read. The card is
+     opened deliberately or not at all; `card.onClick` still stands down,
+     because with no margin copy `popovertarget` is set and the browser's own
+     invoker does the work. -->
+<sup class="note-marker commentary-marker">
+	<button
+		bind:this={card.trigger}
+		type="button"
+		class="note-trigger"
+		popovertarget={card.popovertarget}
+		aria-expanded={card.expanded}
+		aria-label={label}
+		onclick={card.onClick}
+	>
+		{COMMENTARY_MARKER}
+	</button>
+</sup>
+
+<!-- THE CARD, which is the whole apparatus. It carries no pointer handlers
+     either: nothing here opens on hover, so there is no hover claim that
+     entering the panel has to keep alive. Dismissal is the popover's own — a
+     click outside, Escape, or the mark again.
+
+     `role="note"` for `CitationDisclosure`'s reason: ARIA's own word for
+     content ancillary to the text it hangs off, and not `tooltip`, which must
+     hold nothing interactive where this holds the verses the notes name.
+     `lang` because a commentary is written in its own work's language and the
+     card sits in the top layer, outside every `lang` the page has declared. -->
+<span
+	bind:this={card.panel}
+	id={card.id}
+	popover="auto"
+	role="note"
+	{lang}
+	ontoggle={card.onToggle}
+	class="panel-surface floating-panel note-popover"
+>
+	{#each notes as note, i (i)}
+		<div class="commentary-item">
+			{#if note.lemma}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span class="sidenote-text"
+				><InlineNodes nodes={nodesOf(note)} {hrefFor}>
+					{#snippet marker(m: string)}<sup class="commentary-submarker">{m}</sup>{/snippet}
+				</InlineNodes></span
+			>{#if note.attribution}<span class="commentary-attribution">{note.attribution}</span
+				>{/if}{#if note.notes?.length}<ol class="commentary-subnotes">
+					{#each note.notes as sub (sub.marker)}<li value={Number(sub.marker)}>
+							{sub.text}
+						</li>{/each}
+				</ol>{/if}
+		</div>
+	{/each}
+</span>
 
 <style>
 	/*
-	 * THE ATTRIBUTION IS SET AS A CLOSING LINE, not as a heading over the note.
-	 * It is where the source puts it, and it reads as the signature it is —
-	 * the remark first, then whose it is, which is the order a reader wants
-	 * them in and the order every printed catena uses.
+	 * THE FACE, AND NOTHING ELSE. Everything about how this mark is set — the
+	 * superscript, the sans face, the size floor, the accent colour — is
+	 * `.note-marker` in `reading-chrome.css`, shared so the page's three raised
+	 * marks cannot drift apart. What is left here is that U+2020 is not in the
+	 * `latin` subset, so the dagger needs the 1.1 KB face `fonts.css` declares
+	 * for it or it falls through to whatever the reader's system draws.
+	 *
+	 * The extra hair of space is the one measurable difference: `.note-marker`
+	 * sets 0.08em because the source puts a footnote marker immediately after
+	 * the words it glosses, and this mark follows a full stop instead.
+	 */
+	.commentary-marker {
+		font-family: 'Source Sans 3 Marks', var(--font-sans);
+		padding-inline-start: 0.15em;
+	}
+
+	/*
+	 * ONE VERSE'S NOTES, SET APART FROM EACH OTHER INSIDE ONE CARD. A rule
+	 * rather than white space alone, because these are DIFFERENT AUTHORITIES:
+	 * a catena sets Calmet under Witham, and two remarks running together with
+	 * nothing between them read as one long note by whoever signed the second.
+	 */
+	.commentary-item + .commentary-item {
+		margin-block-start: 0.5em;
+		padding-block-start: 0.5em;
+		border-block-start: 1px solid var(--color-border);
+	}
+
+	/*
+	 * THE ATTRIBUTION RUNS ON FROM THE REMARK, and that is a space decision
+	 * before it is a typographic one. Set as a closing block it cost every note
+	 * a line of its own to carry one word, and a catena is many short notes —
+	 * Haydock's median is 113 characters — so that line was being paid over and
+	 * over down a card the reader is scrolling.
+	 *
+	 * It still reads as the signature it is: the remark first, then whose it
+	 * is, which is the order every printed catena uses. What says so now is the
+	 * dash and the italic rather than the line break.
+	 *
+	 * THE SPACE BEFORE THE DASH IS IN THE `content`, and the one after it is a
+	 * NO-BREAK space. The markup deliberately carries no whitespace around this
+	 * span, so the ::before is the only place a break opportunity can come
+	 * from: the leading space lets "— Witham" move to the next line whole, and
+	 * the nbsp stops the line ending on a dangling dash.
 	 */
 	.commentary-attribution {
-		display: block;
-		margin-block-start: 0.25em;
 		font-style: italic;
-		text-align: end;
 	}
 
 	.commentary-attribution::before {
-		content: '— ';
+		content: ' —\a0';
 	}
 
 	/* Smaller again than the note it hangs under, because it is apparatus over
@@ -132,25 +237,5 @@
 		font-size: 0.7em;
 		vertical-align: super;
 		line-height: 0;
-	}
-
-	/*
-	 * BELOW THE MARGIN BREAKPOINT, and the rule is inherited rather than
-	 * restated: `.margin-note` in `reading-chrome.css` already says what
-	 * apparatus looks like on this site — the sans face, the smaller size, the
-	 * muted colour, three signals at once. What a block cannot inherit is the
-	 * float and its displacement, so this sets only the things that differ:
-	 * it sits in the flow, indented from the reading measure by a rule on the
-	 * start edge, which is what keeps it from reading as another paragraph of
-	 * the verse it follows.
-	 */
-	.commentary-block {
-		margin-block: 0.5rem;
-		padding-inline-start: 0.9rem;
-		border-inline-start: 2px solid var(--color-border);
-		font-family: var(--font-sans);
-		font-size: 0.82rem;
-		line-height: 1.5;
-		color: var(--color-text-muted);
 	}
 </style>

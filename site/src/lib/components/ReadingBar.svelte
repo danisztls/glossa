@@ -111,7 +111,14 @@
 	 *  prints none; `commentaries` are the separate works written on it. Both
 	 *  empty means the trigger is not rendered at all. */
 	export interface ApparatusChoices {
-		edition?: { workId: string; title: string };
+		edition?: {
+			workId: string;
+			title: string;
+			/** Whether an enabled commentary already contains these notes, which
+			    is what makes their default off rather than on. See
+			    `CommentaryManifest.subsumes_notes`. */
+			subsumed: boolean;
+		};
 		commentaries: WorkManifest[];
 	}
 

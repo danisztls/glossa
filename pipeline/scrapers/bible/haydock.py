@@ -37,6 +37,18 @@ FOUR THINGS ABOUT THE SOURCE FORMAT WILL BITE BEFORE THE SCHEMA WILL.
     fourteen-thousand-character block with one attribution at the end of it.
     So the unit here is the PARAGRAPH, and each is one authority's remark.
 
+  - **A BLANK LINE IS NOT ALWAYS A PARAGRAPH BREAK, because a lemma may span
+    one.** Haydock quotes two phrases of a verse in a single italic run and
+    the transcription prints the break inside it, so `_Give his only begotten
+    Son \n\n God sent not his Son into the world._` (John 3:17) splits into
+    two chunks with one underscore each. Neither is then a lemma -- the
+    opening one is a paragraph consisting of nothing but an unterminated
+    emphasis, which `strip_emphasis` leaves as a literal `_` in the reader's
+    text, and the note it belonged to loses its lemma. `split_paragraphs`
+    rejoins while the run is open. It is 20 records of 20,814, and the count
+    that makes the rule safe is the other one: NOT ONE record's body has an
+    odd number of underscores overall, so the merge always closes.
+
   - **`__Notes:__` blocks pair with `_(#1)_` anchors BY POSITION, never by
     number.** Every anchor in the body is `_(#1)_` and every trailing block
     defines `#1`; Apocalypse 20:2 carries sixteen of each. Reading the digit
@@ -467,9 +479,18 @@ def parse_record(
 
     notes: list[dict] = []
     consumed = 0
-    for paragraph in re.split(r"\n\s*\n", body):
-        if not paragraph.strip():
-            continue
+    paragraphs, unclosed = split_paragraphs(body)
+    if unclosed:
+        anomalies.append(
+            Anomaly(
+                osis,
+                chapter,
+                f"v{verse}: the body ends inside an emphasis run, so its last "
+                "paragraphs were merged into one; the source's underscores do "
+                "not pair",
+            )
+        )
+    for paragraph in paragraphs:
         lemma, _ = split_note(paragraph)
         used = len(ANCHOR_RE.findall(paragraph))
         mine = definitions[consumed : consumed + used]
@@ -503,6 +524,38 @@ def parse_record(
         notes.append(note)
 
     return notes, anomalies
+
+
+def split_paragraphs(body: str) -> tuple[list[str], bool]:
+    """A record's paragraphs, with a lemma that spans a blank line kept whole.
+
+    The blank line is the source's paragraph break everywhere except inside an
+    emphasis run, and there it is a line break inside a quotation -- Haydock
+    cites two phrases of a verse as one lemma and the transcription sets the
+    break between them. Splitting there costs the note its lemma AND leaves a
+    bare `_` in the reader's text, because `strip_emphasis` pairs delimiters
+    and an orphan has nothing to pair with.
+
+    THE TEST IS PARITY AND THAT IS ENOUGH HERE, rather than a real emphasis
+    parse: `_` is this format's only italic delimiter, an anchor is `_(#1)_`
+    and so contributes two, and `__Notes:__` has already been split off by the
+    caller. Measured over all 20,814 records, 20 have a chunk that opens a run
+    it does not close and NONE has a body whose underscores do not pair
+    overall -- so a merge begun always ends, and the flag returned is for the
+    record that would prove that measurement stale.
+    """
+    out: list[str] = []
+    pending = ""
+    for chunk in re.split(r"\n\s*\n", body):
+        if not chunk.strip():
+            continue
+        pending = f"{pending}\n\n{chunk}" if pending else chunk
+        if pending.count("_") % 2 == 0:
+            out.append(pending)
+            pending = ""
+    if pending:
+        out.append(pending)
+    return out, bool(pending)
 
 
 def number_anchors(text: str) -> str:
@@ -915,6 +968,20 @@ def write_output(
         "language": "en",
         "edition": "Revised edition, 1859",
         "annotates": ANNOTATES_WORK_ID,
+        # HAYDOCK'S CATENA INCLUDES CHALLONER'S OWN NOTES, and a reader with
+        # both apparatuses on sees most of one of them twice. Measured
+        # 2026-09-01 over the built corpus: 1,399 of the Douay-Rheims's 1,916
+        # notes appear again here (>=0.75 similar on the same verse, 1,249 of
+        # them at >=0.9), and 1,300 paragraphs are attributed to Challoner by
+        # name. It is a property of the WORK -- Haydock published Challoner's
+        # text with Challoner's notes absorbed into the catena -- so it is
+        # stated here rather than inferred by the reader's interface, which
+        # only reads it to decide a default.
+        #
+        # NOT A LICENCE TO DROP EITHER COPY. The overlap is 73% and not 100%:
+        # 517 of Challoner's notes are NOT in this capture, so a reader who
+        # wants them can still switch the edition's own apparatus back on.
+        "subsumes_notes": True,
         "sources": [
             {"url": BASE_URL + "/bible/Gn.1?ed=HAY", "retrieved_at": retrieved_at()}
         ],
