@@ -86,3 +86,36 @@ describe('edition override lifecycle', () => {
 		expect(content.workIdFor('bible')).toBe(EN);
 	});
 });
+
+/**
+ * `/catechismus` and the home page's Catechism section both resolve through
+ * ONE language, and it is not `langFor` of either work — see
+ * `catechismPairLang`. These pin both halves of that: the language that has a
+ * work keeps it, and the language that has neither gets a fallback rather
+ * than a blank page.
+ */
+describe('the Catechism/Compendium pair language', () => {
+	it("takes the reader's own language when it carries either work", async () => {
+		await i18n.set('pt');
+		expect(content.catechismPairLang()).toBe('pt');
+	});
+
+	// THE REGRESSION. This returned `i18n.lang` outright until 2026-08-31, so
+	// a language carrying neither work resolved to itself, `getWork` answered
+	// undefined for both columns, and the page rendered nothing at all — with
+	// no edition menu on it, because that is guarded on the same manifest.
+	// Twenty-two of the thirty-four interface languages were in that state.
+	it('falls through the content chain when it carries neither', async () => {
+		await i18n.set('he');
+		expect(content.catechismPairLang()).toBe('en');
+	});
+
+	// An explicit pick still wins outright — the chain is only consulted when
+	// the reader has not chosen.
+	it('prefers an explicit choice over the chain', async () => {
+		await i18n.set('he');
+		content.set('catechism', 'ccc.pt');
+		expect(content.catechismPairLang()).toBe('pt');
+		content.set('catechism', null);
+	});
+});

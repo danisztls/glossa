@@ -166,28 +166,177 @@ const INFRASTRUCTURE_FILES = [
 
 /**
  * Raster image extensions that belong in the content cache rather than the
- * install precache. Deliberately excludes `.svg` (the favicon is one, and the
- * document head asks for it before anything else) and every font format.
+ * install precache. Deliberately excludes `.svg` — the favicon is one, and the
+ * document head asks for it before anything else.
  *
- * EXCLUDING FONTS IS WHAT MAKES THEM EAGER, and it is the one place this
- * project's font accounting has two answers. `fonts.css` says declaring a
- * subset is "close to free" because `unicode-range` means the browser fetches
- * a file only when a character in its range is on the page — true over HTTP,
- * and false the moment this service worker installs, because everything in
- * `static/` that is not refused here is precached whole. Measured 2026-08-31:
- * 1,117 KB of woff2, of which 412 KB is Amiri, downloaded by every reader
- * including the ones who never meet an Arabic character.
- *
- * That is deliberate and it is the offline library's price: a reader who
- * installs the app and then loses the network needs the faces for whatever
- * they open, and a font fetched lazily is a font that is not there. What it
- * means for anyone adding a face is that the `unicode-range` argument buys
- * nothing here — the SIZE is the whole cost, paid by everyone, once. Frank
- * Ruhl Libre is 13 KB and was worth it on those terms; a CJK face would be
- * megabytes on the same terms, which is the real reason direction.css routes
- * those scripts to system families instead.
+ * FONTS ARE NOT HERE AND ARE NOT EAGER EITHER; they are partitioned by SCRIPT
+ * a few lines down, which is a third answer to a question this file has now
+ * given three of. See `DEFERRED_FONTS`.
  */
 const DEFERRED_MEDIA = ['.webp', '.png', '.jpg', '.jpeg', '.avif'];
+
+/**
+ * The faces every reader gets, whatever they read: the two text families'
+ * `latin` subsets and the two display faces.
+ *
+ * `-latin-wght-` is what separates these from `-latin-ext-wght-`, and the
+ * hyphen on the right is the whole of that separation — drop it and the
+ * `latin-ext` subsets match here too, which is the one typo in this block
+ * that would silently restore the old behaviour rather than break anything.
+ *
+ * The display faces are small and unconditional: `pirata-one-dropcap` sets the
+ * wordmark in the header of every route, and `ponomar-dropcap-latin` is the
+ * initial the reading pages open with.
+ */
+const CORE_FONTS = ['-latin-wght-', 'pirata-one-dropcap', 'ponomar-dropcap-latin'];
+
+/**
+ * Every other face, by the script it serves.
+ *
+ * WHY THIS EXISTS. `fonts.css` says declaring a subset is "close to free"
+ * because `unicode-range` means a browser fetches a file only when a character
+ * in its range is actually on the page. That is true over HTTP and it was
+ * false the moment this service worker installed: everything in `static/` that
+ * the precache does not refuse is downloaded whole at install. Measured
+ * 2026-08-31: 1,118 KB of woff2 for EVERY reader, of which 413 KB is Amiri and
+ * 315 KB is the two `latin-ext` subsets — paid in full by an English reader who
+ * will never render an Arabic character or a Polish one.
+ *
+ * So the faces move to the content tier, where the browser's own laziness
+ * survives: a deferred font is fetched on demand, stored on first read, and
+ * outlives every deploy — the same terms the corpus itself is cached on. The
+ * install precache drops from 1,118 KB of fonts to 157 KB, an 86% cut, and
+ * what a reader adds back is bounded by their own languages: 413 KB for
+ * Arabic, 315 for the `latin-ext` languages, 160 for the Cyrillic ones, 21
+ * for Vietnamese, 13 for Hebrew, nothing at all for English, Italian,
+ * Spanish, Portuguese, German, French and the rest of the plain-`latin` set.
+ *
+ * ON DEMAND IS NOT ENOUGH ON ITS OWN, which is the other half. A reader who
+ * fills the offline library and then loses the network needs the faces for
+ * what they downloaded, and a font nobody has rendered yet has never been
+ * fetched. That is what `fontsForLangs` is for: every message the client sends
+ * this worker already carries `contentLangChain(readerLang())` (see
+ * `sw.svelte.ts`), so the worker can warm exactly the scripts the reader's own
+ * languages need, and nothing else.
+ *
+ * `greek` is the one bucket no language claims, and that is correct rather
+ * than an omission: Greek here is an APPARATUS script, a patristic quotation
+ * inside an edition in some other language, so no reader's language predicts
+ * it. It is fetched the first time one is rendered and kept forever after.
+ * The cost of being wrong about it is one quotation in a fallback face on one
+ * page, once, and only for a reader who met their first Greek quotation while
+ * offline.
+ */
+const DEFERRED_FONTS = {
+	'latin-ext': ['-latin-ext-wght-'],
+	cyrillic: ['-cyrillic-wght-', '-cyrillic-ext-wght-', 'ponomar-dropcap-cyrillic'],
+	greek: ['-greek-wght-'],
+	vietnamese: ['-vietnamese-wght-'],
+	arabic: ['amiri-arabic-'],
+	hebrew: ['frank-ruhl-libre-hebrew-']
+} as const satisfies Record<string, readonly string[]>;
+
+type FontScript = keyof typeof DEFERRED_FONTS;
+
+/**
+ * Which of those buckets a language actually needs — keyed on the BARE
+ * language, since that is what `contentLangChain` produces.
+ *
+ * Only the languages that need something beyond `CORE_FONTS` appear; an
+ * unlisted language warms nothing, which is the right answer for English,
+ * Italian, Spanish, Portuguese, German, French, Dutch, Danish, Finnish,
+ * Swedish, Indonesian, Tagalog and Swahili alike — every one of them spells
+ * its chrome inside `latin`, Swedish's `å ä ö` included (they are Latin-1
+ * Supplement, which the `latin` subset carries).
+ *
+ * THE TWO ENTRIES THAT ARE NOT OBVIOUS:
+ *
+ *   `la` takes `latin-ext` for `ǽ` (U+01FD), which Latin liturgical text
+ *   prints 19 times in this corpus — the same glyph `fonts.css` names as the
+ *   reason that subset is declared at all.
+ *
+ *   `ig` takes `vietnamese` rather than `latin-ext`, and it is not a mistake.
+ *   Igbo's dots-below vowels are `ị ọ ụ` (U+1ECB, U+1ECD, U+1EE5), which live
+ *   in Latin Extended Additional — the block Google's subsetter files under
+ *   `vietnamese` (U+1EA0-1EF9). `latin-ext` does not reach them. It takes both
+ *   because its `ṅ` and its chrome's Latin-Extended-A punctuation do.
+ *
+ * CHECK THIS TABLE WHEN ADDING A LANGUAGE, beside the glyph inventory in
+ * `fonts.css` that answers the same question for the online path. A language
+ * missing here still renders correctly online — the browser fetches what it
+ * needs — and is missing its face only offline, which is exactly the failure
+ * this project keeps describing as the one nobody reports.
+ */
+const LANG_FONT_SCRIPTS: Record<string, readonly FontScript[]> = {
+	ar: ['arabic'],
+	he: ['hebrew'],
+	ru: ['cyrillic'],
+	uk: ['cyrillic'],
+	be: ['cyrillic'],
+	vi: ['latin-ext', 'vietnamese'],
+	ig: ['latin-ext', 'vietnamese'],
+	la: ['latin-ext'],
+	pl: ['latin-ext'],
+	cs: ['latin-ext'],
+	sk: ['latin-ext'],
+	hr: ['latin-ext'],
+	sl: ['latin-ext'],
+	hu: ['latin-ext'],
+	ro: ['latin-ext'],
+	lv: ['latin-ext'],
+	mg: ['latin-ext']
+};
+
+/** Every fragment in `DEFERRED_FONTS`, flattened once. */
+const DEFERRED_FONT_FRAGMENTS: readonly string[] = Object.values(DEFERRED_FONTS).flat();
+
+/** A font file, by extension — the only thing this partition needs to know
+ *  about the shape of a static asset. */
+function isFont(path: string): boolean {
+	return path.endsWith('.woff2') || path.endsWith('.woff');
+}
+
+/**
+ * Whether a `static/` URL is a face the install pass should NOT take.
+ *
+ * A font that matches no bucket is precached, not deferred — the default is
+ * the safe direction. Adding a face with an unrecognized name costs a reader
+ * its bytes at install; forgetting to precache one costs them tofu offline,
+ * and only them.
+ */
+export function isDeferredFont(path: string): boolean {
+	if (!isFont(path)) return false;
+	if (CORE_FONTS.some((fragment) => path.includes(fragment))) return false;
+	return DEFERRED_FONT_FRAGMENTS.some((fragment) => path.includes(fragment));
+}
+
+/**
+ * The deferred faces `langs` need, as cacheable assets.
+ *
+ * `bytes` is 0 because nothing prices this: the tally the worker reports is
+ * the reader's LIBRARY, and folding a few hundred KB of typography into "the
+ * Catechism is 4.1 MB" would make that number answer a question nobody asked.
+ * The faces are warmed unconditionally for the same reason they are not
+ * priced — they are the reader's own language, they are bounded by this
+ * table, and the largest any one language can pull is Arabic's 413 KB.
+ */
+export function fontsForLangs(
+	files: readonly string[],
+	langs: readonly string[]
+): { path: string; bytes: number }[] {
+	const scripts = new Set<FontScript>();
+	for (const lang of langs) {
+		for (const script of LANG_FONT_SCRIPTS[lang.toLowerCase().split('-')[0] ?? ''] ?? []) {
+			scripts.add(script);
+		}
+	}
+	if (!scripts.size) return [];
+
+	const fragments = [...scripts].flatMap((script) => DEFERRED_FONTS[script]);
+	return files
+		.filter((url) => isFont(url) && fragments.some((fragment) => url.includes(fragment)))
+		.map((path) => ({ path, bytes: 0 }));
+}
 
 export interface PartitionInput {
 	/** `$service-worker`'s `build` — EVERY emitted build asset, corpus JSON
@@ -276,6 +425,14 @@ export function partitionAssets(input: PartitionInput): AssetPartition {
 	for (const url of build) {
 		if (isDeferred(url)) contentUrls.add(contentPath(url, baseHref));
 	}
+	// Fonts arrive through `files`, not `build`, so they never reach the test
+	// above — `isDeferred` requires `/immutable/` and a font is not
+	// content-hashed. They join the same tier by the same reasoning all the
+	// same: fetched on demand, stored on first read, outliving deploys. See
+	// `DEFERRED_FONTS`.
+	for (const url of files) {
+		if (isDeferredFont(contentPath(url, baseHref))) contentUrls.add(contentPath(url, baseHref));
+	}
 
 	const shellDocumentUrl = `${base}/`;
 	const offlineFallbackUrl = `${base}/offline.html`;
@@ -286,7 +443,7 @@ export function partitionAssets(input: PartitionInput): AssetPartition {
 			(url) =>
 				![...HOST_CONFIG_FILES, ...CRAWLER_FILES, ...INFRASTRUCTURE_FILES].some((name) =>
 					url.endsWith(name)
-				)
+				) && !isDeferredFont(contentPath(url, baseHref))
 		),
 		shellDocumentUrl
 	];

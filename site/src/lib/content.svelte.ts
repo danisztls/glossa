@@ -37,6 +37,7 @@
 import { i18n } from './i18n.svelte';
 import {
 	baseLang,
+	contentLangChain,
 	defaultDocumentWorkId,
 	defaultWorkId,
 	getDocumentGroup,
@@ -168,13 +169,48 @@ class ContentStore {
 	 * they did not ask for, next to one they did.
 	 *
 	 * So it reads the reader's EXPLICIT choice, from whichever of the two they
-	 * have one for, and falls back to the interface language rather than to an
-	 * edition. Picking a language on that page writes an override for each work
-	 * that HAS one and clears the other (`EditionMenu`), which is what keeps the
-	 * two in step and what makes reading either of them here equivalent.
+	 * have one for. Picking a language on that page writes an override for each
+	 * work that HAS one and clears the other (`EditionMenu`), which is what
+	 * keeps the two in step and what makes reading either of them here
+	 * equivalent.
+	 *
+	 * WITH NO OVERRIDE IT WALKS `contentLangChain`, AND FOR TWO DAYS IT DID
+	 * NOT — it answered `i18n.lang` outright, which is a language the pair may
+	 * not exist in. `/catechismus` then rendered NOTHING: `getWork('ccc.pl')`
+	 * and `getWork('compendium.pl')` are both undefined, so `columns` was
+	 * empty, `tree` was empty, and `work` being undefined took the `ReadingBar`
+	 * with it — a blank page with no edition menu on it, which is the one
+	 * shape a reader cannot recover from, since the control that would have
+	 * let them pick a language is the control that is missing. Twelve
+	 * languages carry one of the two works; the interface has thirty-four, so
+	 * TWENTY-TWO of them saw the blank page, `pl`, `ru` and `ar` included from
+	 * the day this method was written.
+	 *
+	 * The chain is what the rest of the corpus already resolves through
+	 * (`editionInLang`), so this is the same answer arrived at the same way —
+	 * and it keeps the reason the method exists at all, because the chain
+	 * stops at the reader's OWN language whenever that language has either
+	 * work. A Hungarian reader still gets `hu` and a Compendium alone, never
+	 * an English Catechism beside it; a Hebrew reader gets `en`, which is a
+	 * fallback rather than a mismatch, because their language has neither.
+	 *
+	 * It asks both works per candidate rather than resolving each separately.
+	 * That is the whole difference between this and `langFor`, and it is
+	 * deliberate: one language for the page, chosen as the first one that can
+	 * supply the page at all.
 	 */
 	catechismPairLang(): string {
-		return this.overrideLangFor('catechism') ?? this.overrideLangFor('compendium') ?? i18n.lang;
+		const chosen = this.overrideLangFor('catechism') ?? this.overrideLangFor('compendium');
+		if (chosen) return chosen;
+		for (const candidate of contentLangChain(i18n.lang)) {
+			if (this.#hasEditionIn('catechism', candidate)) return candidate;
+			if (this.#hasEditionIn('compendium', candidate)) return candidate;
+		}
+		return i18n.lang;
+	}
+
+	#hasEditionIn(type: WorkTypeKey, lang: string): boolean {
+		return listEditions(type).some((w) => baseLang(w.language) === lang);
 	}
 
 	/** The bare language of an EXPLICIT override for `type`, or undefined when

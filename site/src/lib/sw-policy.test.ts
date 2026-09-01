@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import {
 	assetsForWork,
 	contentPath,
+	fontsForLangs,
+	isDeferredFont,
 	naturalCompare,
 	partitionAssets,
 	planWaves,
@@ -676,5 +678,137 @@ describe('the kinds the sync actually writes', () => {
 		);
 		const other = planned.find((w) => w.id === 'other')!;
 		expect(other.assets.map((a) => a.kind)).toEqual([]);
+	});
+});
+
+/**
+ * The font partition (`DEFERRED_FONTS`).
+ *
+ * These read the REAL `static/fonts/` directory rather than a fixture list,
+ * because the failure this partition has is a face nobody classified: a new
+ * `@font-face` is added, its file matches no fragment, and it silently keeps
+ * the old behaviour of being precached for every reader on earth. A fixture
+ * cannot notice a file it was not told about.
+ */
+describe('the font partition', () => {
+	const FONT_DIR = new URL('../../static/fonts/', import.meta.url);
+	const FONTS = readdirSync(FONT_DIR)
+		.filter((name) => name.endsWith('.woff2'))
+		.map((name) => `/fonts/${name}`);
+
+	it('finds fonts to classify at all', () => {
+		expect(FONTS.length).toBeGreaterThan(20);
+	});
+
+	// The whole partition in one assertion: every face is either core or
+	// deferred, and the set that is neither must be empty. A face that falls
+	// through is precached — the safe direction, and the silent one.
+	it('classifies every vendored face', () => {
+		const unclassified = FONTS.filter(
+			(path) =>
+				!isDeferredFont(path) && !/-latin-wght-|pirata-one-dropcap|ponomar-dropcap-latin/.test(path)
+		);
+		expect(unclassified).toEqual([]);
+	});
+
+	// `-latin-wght-` against `-latin-ext-wght-`: the one typo in `CORE_FONTS`
+	// that would restore the old behaviour rather than break anything.
+	it('does not mistake latin-ext for latin', () => {
+		expect(isDeferredFont('/fonts/eb-garamond-latin-wght-normal.woff2')).toBe(false);
+		expect(isDeferredFont('/fonts/eb-garamond-latin-ext-wght-normal.woff2')).toBe(true);
+		expect(isDeferredFont('/fonts/source-sans-3-latin-wght-italic.woff2')).toBe(false);
+		expect(isDeferredFont('/fonts/source-sans-3-latin-ext-wght-italic.woff2')).toBe(true);
+	});
+
+	it('leaves the two display faces alone but defers the Cyrillic dropcap', () => {
+		expect(isDeferredFont('/fonts/pirata-one-dropcap.woff2')).toBe(false);
+		expect(isDeferredFont('/fonts/ponomar-dropcap-latin.woff2')).toBe(false);
+		expect(isDeferredFont('/fonts/ponomar-dropcap-cyrillic.woff2')).toBe(true);
+	});
+
+	it('is not fooled by a non-font asset whose name contains a script', () => {
+		expect(isDeferredFont('/fonts/OFL-EBGaramond.txt')).toBe(false);
+		expect(isDeferredFont('/_app/immutable/assets/cyrillic.hash.json')).toBe(false);
+	});
+
+	it('keeps deferred faces out of the precache and in the content tier', () => {
+		const partition = partitionAssets({
+			build: [],
+			files: [
+				'/fonts/eb-garamond-latin-wght-normal.woff2',
+				'/fonts/amiri-arabic-400-normal.woff2',
+				'/offline.html'
+			],
+			base: '',
+			contentAssets: [],
+			baseHref: BASE_HREF
+		});
+		expect(partition.shellUrls.has('/fonts/eb-garamond-latin-wght-normal.woff2')).toBe(true);
+		expect(partition.shellUrls.has('/fonts/amiri-arabic-400-normal.woff2')).toBe(false);
+		expect(partition.contentUrls.has('/fonts/amiri-arabic-400-normal.woff2')).toBe(true);
+		// And a deferred face routes as content, which is what makes it
+		// survive a deploy instead of being wiped with the shell.
+		expect(
+			routeFor(
+				{
+					method: 'GET',
+					sameOrigin: true,
+					pathname: '/fonts/amiri-arabic-400-normal.woff2',
+					mode: 'no-cors'
+				},
+				partition
+			)
+		).toBe('content');
+	});
+
+	describe('fontsForLangs', () => {
+		it('gives a Latin-script reader nothing to warm', () => {
+			expect(fontsForLangs(FONTS, ['en', 'la'])).not.toEqual([]); // `la` takes latin-ext
+			expect(fontsForLangs(FONTS, ['en'])).toEqual([]);
+			expect(fontsForLangs(FONTS, ['it', 'es', 'en'])).toEqual([]);
+		});
+
+		it('warms Amiri for Arabic and nothing else', () => {
+			const paths = fontsForLangs(FONTS, ['ar', 'fr', 'en', 'la']).map((f) => f.path);
+			expect(paths.filter((p) => p.includes('amiri'))).toHaveLength(4);
+			expect(paths.some((p) => p.includes('hebrew'))).toBe(false);
+			// `la` is in an Arabic reader's chain and takes latin-ext with it.
+			expect(paths.some((p) => p.includes('latin-ext'))).toBe(true);
+		});
+
+		it('warms Frank Ruhl Libre for Hebrew', () => {
+			const paths = fontsForLangs(FONTS, ['he', 'en', 'la']).map((f) => f.path);
+			expect(paths.filter((p) => p.includes('frank-ruhl-libre'))).toHaveLength(2);
+			expect(paths.some((p) => p.includes('amiri'))).toBe(false);
+		});
+
+		it('warms both Cyrillic subsets and the Cyrillic dropcap', () => {
+			const paths = fontsForLangs(FONTS, ['be']).map((f) => f.path);
+			expect(paths.some((p) => p.includes('cyrillic-ext'))).toBe(true);
+			expect(paths.some((p) => p.includes('ponomar-dropcap-cyrillic'))).toBe(true);
+		});
+
+		// Igbo's ị ọ ụ are U+1ECB/1ECD/1EE5 — Latin Extended Additional, which
+		// the subsetter files under `vietnamese`, not under `latin-ext`.
+		it('gives Igbo the vietnamese subset, which is where its dots-below live', () => {
+			const paths = fontsForLangs(FONTS, ['ig']).map((f) => f.path);
+			expect(paths.some((p) => p.includes('vietnamese'))).toBe(true);
+		});
+
+		// Nothing warms Greek: it is an apparatus script, so no reader's
+		// language predicts it and it stays purely on demand.
+		it('never warms Greek, whatever the reader reads', () => {
+			const langs = ['en', 'la', 'pt', 'ar', 'he', 'ru', 'be', 'uk', 'vi', 'ig', 'pl', 'hu'];
+			expect(fontsForLangs(FONTS, langs).some((f) => f.path.includes('greek'))).toBe(false);
+		});
+
+		it('reads a regional tag by its base language', () => {
+			expect(fontsForLangs(FONTS, ['ru-RU'])).toEqual(fontsForLangs(FONTS, ['ru']));
+		});
+
+		it('only ever returns fonts', () => {
+			const paths = fontsForLangs([...FONTS, '/works.json'], ['ar']).map((f) => f.path);
+			expect(paths.every((p) => p.endsWith('.woff2'))).toBe(true);
+		});
 	});
 });

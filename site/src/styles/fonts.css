@@ -52,6 +52,18 @@
  * 347k is on disk. The ranges below are copied verbatim from the package's
  * `wght.css` / `wght-italic.css` — do not hand-edit them.
  *
+ * THAT SENTENCE WAS HALF TRUE FOR AS LONG AS THERE HAS BEEN A SERVICE WORKER,
+ * and the correction belongs here rather than only where it was made. The
+ * browser's laziness is real over HTTP and the install precache overrode it:
+ * everything in `static/` that a list did not refuse was downloaded whole, so
+ * every reader took all 1,118 KB of woff2 on this page whatever they read.
+ * `DEFERRED_FONTS` in `src/lib/sw-policy.ts` is where that was fixed on
+ * 2026-08-31, by partitioning the faces by SCRIPT and warming back only the
+ * ones a reader's own languages need. What it means for anyone adding a face
+ * is that "close to free" is now true on both paths — but a new file has to be
+ * classified in that table, and a face that matches nothing there is precached
+ * for everyone, silently, exactly as before.
+ *
  * One family name covers both styles and the whole 400-800 axis; `font-weight:
  * 400 800` on each block is what makes a variable font work through the
  * `@font-face` route.

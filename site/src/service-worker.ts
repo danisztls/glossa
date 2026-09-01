@@ -48,6 +48,7 @@ import { base, build, files, version } from '$service-worker';
 import { listContentAssets } from '$lib/corpus-assets';
 import {
 	assetsForWork,
+	fontsForLangs,
 	partitionAssets,
 	planWaves,
 	routeFor,
@@ -428,6 +429,26 @@ sw.addEventListener('message', (event) => {
 	if (data.type === 'CLEAR_CONTENT') {
 		event.waitUntil(caches.delete(CONTENT_CACHE));
 		return;
+	}
+
+	// Every cache message carries the reader's language chain (`sw.svelte.ts`
+	// sends it with all of them, because the worker cannot read localStorage),
+	// which is the only chance this worker gets to know which scripts the
+	// reader actually reads in. The faces for those scripts are no longer
+	// precached — see `DEFERRED_FONTS` — so this is what puts them on the
+	// device before the network goes away. Cheap and idempotent: `cacheAssets`
+	// skips what the cache already holds, and the table bounds the largest
+	// possible pull at Arabic's 413 KB.
+	if (data.langs?.length) {
+		// Read off the PARTITION, not off `files`: the partition's paths have
+		// been through `contentPath`, and a cache key that differs from the
+		// routing key by a base prefix stores a face the fetch handler will
+		// never find — the exact silent mismatch this module's docblock is
+		// about.
+		const faces = fontsForLangs([...partition.contentUrls], data.langs);
+		if (faces.length) {
+			event.waitUntil(cacheAssets(env, { cacheName: CONTENT_CACHE, assets: faces }));
+		}
 	}
 
 	if (data.type === 'CACHE_CONTENT' && data.workId) {

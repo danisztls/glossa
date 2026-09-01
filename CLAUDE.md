@@ -1067,6 +1067,46 @@ mistakes with separate symptoms**: miss the negation and it costs invocations,
 miss the list and it costs every reader bandwidth, and neither failure says
 anything.
 
+**Fonts are precached by SCRIPT, not wholesale, and the two halves of that
+answer live in different files.** `fonts.css` says declaring a `unicode-range`
+subset is "close to free" because a browser fetches a face only when a
+character in its range is on the page. True over HTTP, and false the moment the
+service worker installed: everything in `static/` a list did not refuse was
+downloaded whole, so **every reader took all 1,118 KB of woff2** — 413 KB of it
+Amiri, 315 KB the two `latin-ext` subsets — including the English reader who
+will never render an Arabic character or a Polish one. Fixed 2026-08-31.
+`DEFERRED_FONTS` in `sw-policy.ts` puts every face but the core Latin four in
+the CONTENT tier, where the browser's own laziness survives — fetched on
+demand, stored on first read, outliving deploys. **The precache drops to 157 KB,
+an 86% cut.** Four things about it:
+
+- **On demand is not enough on its own**, which is why `fontsForLangs` exists.
+  A reader who fills the offline library and then loses the network needs the
+  faces for what they downloaded, and a font nobody has rendered yet has never
+  been fetched. Every message the client sends the worker already carries
+  `contentLangChain(readerLang())` — the worker cannot read `localStorage` —
+  so it warms exactly the scripts the reader's own languages need. Arabic adds
+  back 413 KB, the `latin-ext` languages 315, the Cyrillic ones 160,
+  Vietnamese 21, Hebrew 13, and English, Italian, Spanish, Portuguese, German,
+  French, Dutch, Danish, Finnish, Swedish, Indonesian, Tagalog and Swahili
+  nothing at all.
+- **`greek` is the bucket no language claims, and that is correct.** Greek here
+  is an APPARATUS script — a patristic quotation inside an edition in some
+  other language — so no reader's language predicts it. It stays purely on
+  demand, and the cost of being wrong is one quotation in a fallback face, once,
+  for a reader who met their first Greek while offline.
+- **`ig` takes the `vietnamese` subset and not `latin-ext`**, which looks like a
+  typo and is not: Igbo's dots-below vowels are `ị ọ ụ` (U+1ECB, U+1ECD,
+  U+1EE5), in Latin Extended Additional, which the subsetter files under
+  `vietnamese` (U+1EA0-1EF9). `latin-ext` does not reach them. And `la` takes
+  `latin-ext` for `ǽ`, which Latin liturgical text prints 19 times here.
+- **A face matching no bucket is PRECACHED**, silently, exactly as before — the
+  safe direction, and the quiet one. `sw-policy.test.ts` reads the real
+  `static/fonts/` directory rather than a fixture list for that reason: a
+  fixture cannot notice a file nobody told it about. `CORE_FONTS` matches
+  `-latin-wght-` with the trailing hyphen, and dropping it silently restores
+  the old behaviour by matching `-latin-ext-wght-` too.
+
 **The reading routes' own `<svelte:head>` titles have to match the shapes in
 `shell-head.ts`**, in the reader's language — the edge writes one title and the
 route assigns another at hydration, and a mismatch is a visible rearrangement on
@@ -1544,6 +1584,26 @@ the interface does not have" as an assertion, spelled `mg`, then `sw`, then
 `ko`. The interface grew into all three within a day. They are Icelandic and
 Estonian now, and the comments say why: it can no longer be a content language
 at all.
+
+**THE FLIP HAS A COST AND IT SHIPPED AS A BLANK PAGE.** `/catechismus` and the
+home page's Catechism section resolve through ONE language rather than one per
+work — `content.catechismPairLang()`, so that a Hungarian reader gets their
+Hungarian Compendium and no English Catechism beside it. It answered
+`i18n.lang` outright, which is a language the pair may not exist in: with
+neither `ccc.he` nor `compendium.he`, `columns` was empty, the tree was empty,
+and `work` being undefined took the `ReadingBar` with it — **a blank page with
+no edition menu on it**, which is the one shape a reader cannot recover from,
+because the control that would let them pick a language is the control that is
+missing. Twelve languages carry one of the two works and the interface has
+thirty-four, so **twenty-two of them saw it**, `pl`, `ru` and `ar` included from
+the day the method was written on 2026-08-28. It walks `contentLangChain` now,
+which is what the rest of the corpus already resolves through, and it keeps the
+reason the method exists: the chain stops at the reader's OWN language whenever
+that language has either work. **The general lesson is the one the superset flip
+makes routine** — an interface language is no longer evidence the corpus holds
+anything, so any resolver that reads `i18n.lang` as a CONTENT language is now
+wrong for two thirds of the list. `catechismPairLang` was the only one;
+everything else already went through `editionInLang`.
 
 **A content language that is not an interface language has exactly one place
 to go wrong, and nothing checks it.** `LANGUAGE_NAMES` in `corpus.ts` names
