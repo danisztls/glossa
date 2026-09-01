@@ -255,7 +255,7 @@ def _reading_order(line: Line) -> tuple[int, float, float]:
 
 
 def merge_runs(
-    lines: list[Line], *, y_tol: float = 2.0, gap: float = 12.0
+    lines: list[Line], *, y_tol: float = 2.0, gap_ratio: float = 1.8
 ) -> list[Line]:
     """Rejoin fragments MuPDF split at a font change.
 
@@ -267,7 +267,13 @@ def merge_runs(
     this row a heading?) is wrong on the fragments.
 
     Two fragments join when they sit on the same baseline within `y_tol` and
-    are separated by less than `gap` points.
+    are separated by less than `gap_ratio` times the type size. Proportional
+    because the gap that has to be crossed is a typographic distance: the
+    Indonesian sets its questions with a HANGING INDENT, the number at the
+    margin and the text 14pt further in at 12pt type, so a fixed 12pt gap left
+    every question number stranded on its own and the question was never
+    recognised at all. 1.8em clears that and stays far below the hundreds of
+    points that separate a folio from a running head.
 
     **SPLIT THE COLUMNS BEFORE CALLING THIS, never after.** The gap test
     cannot be trusted to keep a margin note out of a body line: in the
@@ -290,7 +296,8 @@ def merge_runs(
         row = sorted(row, key=lambda ln: ln.x0)
         run = [row[0]]
         for line in row[1:]:
-            if line.x0 - run[-1].x1 <= gap:
+            allowed = gap_ratio * (line.size or run[-1].size or 10.0)
+            if line.x0 - run[-1].x1 <= allowed:
                 run.append(line)
             else:
                 out.append(_fuse(run))

@@ -109,10 +109,10 @@ class PdfEdition:
     #: only -- its 109 sheets are 218 pages, and read as sheets its running
     #: heads come out as `26 ... 27` and half its questions vanish.
     two_up: bool = False
-    #: Fraction of the page height at the head and the foot that holds
-    #: furniture rather than text: the folio, and the running head, which in
-    #: these books REPEATS THE DIVISION NAMES and so matches the heading table
-    #: on every single page if it is not excluded.
+    #: Fraction of the page height at the HEAD that holds furniture rather
+    #: than text: the folio, and the running head, which in these books
+    #: REPEATS THE DIVISION NAMES and so matches the heading table on every
+    #: single page if it is not excluded.
     #:
     #: Position rather than font size, though size looks like the better
     #: signal and was tried first: the Lithuanian sets its running head at 9pt
@@ -121,6 +121,14 @@ class PdfEdition:
     #: them. Where a thing is printed is a fact about the page; how big it is
     #: happens to correlate.
     furniture_strip: float = 0.09
+    #: The same at the FOOT, and zero by default because both editions read so
+    #: far put every piece of furniture at the top. It was symmetric with the
+    #: head for one revision, and the cost was silent: the Indonesian runs its
+    #: text to within a tenth of the page bottom, so a 0.10 foot strip cut the
+    #: last line off any answer that reached it -- Q44 ended mid-phrase, at
+    #: "misteri Tritunggal yang Amat" with "Kudus" on the discarded line. An
+    #: edition that prints its folio at the foot sets this; none does yet.
+    foot_strip: float = 0.0
 
 
 #: The four, in the order they were brought in. Only Lithuanian is wired up
@@ -128,12 +136,33 @@ class PdfEdition:
 #: is written down where the next person will look for it.
 PDF_EDITIONS: dict[str, PdfEdition] = {
     "lt": PdfEdition(backend="mupdf"),
+    # MuPDF is not a preference here, it is the only reader that gives the
+    # Indonesian text at all. This file still carries the ITALIAN original as
+    # invisible text, and poppler emits it: page 19 comes out as "1. Qual e il
+    # disegno di Dio per l'uomo?" woven through "Apa rencana Allah untuk
+    # manusia?". Nothing in the file declares that layer hidden -- there is no
+    # optional-content group -- so a reader either honours the render mode or
+    # it does not.
+    #
+    # Its running head sits at 9.2% of the page against Lithuanian's 6.8%, and
+    # it reads "Bagian Satu", which is exactly what the part pattern matches;
+    # left in, every page opened Part One again.
+    "id": PdfEdition(backend="mupdf", furniture_strip=0.10),
 }
 
 
 #: A question opens with its number and a period. Shared by all four; the
 #: editions differ in how far the number is indented, never in its shape.
-QUESTION_RE = re.compile(r"^\s*(\d{1,3})\.\s+(\S.*)$", re.DOTALL)
+#:
+#: THE SPACE AFTER THE PERIOD IS OPTIONAL, and that is not laxity. The
+#: Indonesian sets the number and the text as separate runs a couple of points
+#: apart -- narrower than the space threshold in `common/pdf._join`, so they
+#: are concatenated as `100.Dalam` -- and requiring whitespace lost 34
+#: questions. The Spanish HTML edition prints four the same way (Q523, Q530),
+#: so this is the source's habit rather than this reader's artefact. What
+#: replaces the space as a guard is the class of the following character: it
+#: must not be a digit, or "2.5" would open question 2.
+QUESTION_RE = re.compile(r"^\s*(\d{1,3})\.\s*([^\d\s].*)$", re.DOTALL)
 
 #: A cross-reference run is digits and the punctuation that joins or ranges
 #: them, and must START with a digit -- which is what keeps a line-break
@@ -141,6 +170,18 @@ QUESTION_RE = re.compile(r"^\s*(\d{1,3})\.\s+(\S.*)$", re.DOTALL)
 #: reference. It looked like a harmless empty match and put a bare "-" in
 #: `ccc_refs` for five questions.
 MARGIN_REF_RE = re.compile(r"^\d[\d,;:.‐‑–—\s-]*$")
+
+
+#: A division heading is its label and nothing else -- the division's name is
+#: printed on the line beneath it, which `_heading_title` collects. The bound
+#: exists because `match_label` is anchored at the start of the line and so
+#: matches a SENTENCE that opens with the same words: the Indonesian preface
+#: introduces the work part by part ("Bagian Satu berjudul 'Pengakuan Iman',
+#: berisi sintesis dari lex credendi..."), and each of those paragraphs opened
+#: a fresh Part One, which put the whole preface inside the work and cost it
+#: its first three questions. Four words clears every label in the fourteen
+#: editions -- Romanian's "PARTEA A DOUA" is the longest at three.
+MAX_HEADING_WORDS = 4
 
 
 @dataclass
@@ -175,6 +216,16 @@ def read_edition(path: Path, ed: PdfEdition) -> list[PdfPage]:
     return pages
 
 
+def _label_of(line: Line, match_label) -> tuple[str, int | None] | None:
+    """The division this line heads, or None if it merely mentions one."""
+    stripped = line.text.strip()
+    if QUESTION_RE.match(line.text):
+        return None
+    if len(stripped.split()) > MAX_HEADING_WORDS:
+        return None
+    return match_label(stripped)
+
+
 def _numbered_range(pages: list[PdfPage], match_label) -> list[PdfPage]:
     """Only the pages from the first question to the last.
 
@@ -198,10 +249,8 @@ def _numbered_range(pages: list[PdfPage], match_label) -> list[PdfPage]:
     first = None
     for i, page in enumerate(pages):
         for line in page.body:
-            if QUESTION_RE.match(line.text):
-                continue
-            label = match_label(line.text.strip())
-            if label is not None and label == ("part", 1):
+            label = _label_of(line, match_label)
+            if label == ("part", 1):
                 first = i
                 break
         if first is not None:
@@ -225,7 +274,8 @@ def _numbered_range(pages: list[PdfPage], match_label) -> list[PdfPage]:
 
 
 def _in_furniture(line: Line, height: float, ed: PdfEdition) -> bool:
-    lo, hi = height * ed.furniture_strip, height * (1 - ed.furniture_strip)
+    lo = height * ed.furniture_strip
+    hi = height * (1 - ed.foot_strip) if ed.foot_strip else float("inf")
     return not (lo < line.baseline < hi)
 
 
@@ -280,7 +330,7 @@ def process_pdf_body(pages: list[PdfPage], cfg: dict, state) -> None:
         headings = [
             ln
             for ln in lines
-            if id(ln) not in starts and match_label(ln.text.strip()) is not None
+            if id(ln) not in starts and _label_of(ln, match_label) is not None
         ]
         # A PAGE WITH NEITHER A QUESTION NOR A HEADING IS A PLATE, not the
         # continuation of the answer above it. The Compendium interleaves
@@ -298,8 +348,8 @@ def process_pdf_body(pages: list[PdfPage], cfg: dict, state) -> None:
         i = 0
         while i < len(lines):
             line = lines[i]
-            label = match_label(line.text.strip())
-            if label is not None and not QUESTION_RE.match(line.text):
+            label = _label_of(line, match_label)
+            if label is not None:
                 kind, n = label
                 flush()
                 title, i = _heading_title(lines, i)
@@ -308,7 +358,13 @@ def process_pdf_body(pages: list[PdfPage], cfg: dict, state) -> None:
             m = QUESTION_RE.match(line.text) if id(line) in starts else None
             if m:
                 flush()
-                state.start_question(int(m.group(1)), m.group(2).strip())
+                # Collapse internal whitespace the same way the HTML path
+                # gets it for free: a run of spaces between two fragments is
+                # typography, not text, and `validate` rejects a stored
+                # double space.
+                state.start_question(
+                    int(m.group(1)), re.sub(r"\s+", " ", m.group(2)).strip()
+                )
                 refs = _refs_for(page, line, questions, headings)
                 if refs:
                     state.set_refs(refs)
@@ -424,6 +480,10 @@ def _refs_for(
 #: verbatim into `notice`, which is free text. Nothing is dropped and no
 #: schema moves.
 PDF_COPYRIGHT: dict[str, str] = {
+    "id": (
+        "© Copyright 2005 - Libreria Editrice Vaticana; "
+        "© 2009 Konferensi Waligereja Indonesia dan Penerbit Kanisius"
+    ),
     "lt": (
         "© Copyright 2005 - Libreria Editrice Vaticana; "
         "© Lietuvos Vyskupų Konferencija, 2007"

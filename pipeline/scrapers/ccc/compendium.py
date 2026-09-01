@@ -1209,6 +1209,11 @@ _LT_ORDINALS = {
     "PENKTAS": 5,
 }
 
+#: Indonesian counts with cardinals rather than ordinals -- "Bagian Satu" is
+#: "Part One", not "First Part" -- and the numeral does not decline, so one
+#: list serves all three divisions.
+_ID_ORDINALS = {"SATU": 1, "DUA": 2, "TIGA": 3, "EMPAT": 4, "LIMA": 5}
+
 _ORDINAL_LABELS: dict[str, tuple[dict[str, int], list[tuple[str, str]]]] = {
     "en": (
         _EN_ORDINALS,
@@ -1295,6 +1300,14 @@ _ORDINAL_LABELS: dict[str, tuple[dict[str, int], list[tuple[str, str]]]] = {
             ("part", r"^(PRVI|DRUGI|TRETJI|CETRTI|PETI)\s+DEL\b"),
             ("section", r"^(PRVI|DRUGI|TRETJI|CETRTI|PETI)\s+ODDELEK\b"),
             ("chapter", r"^(PRVO|DRUGO|TRETJE|CETRTO|PETO)\s+POGLAVJE\b"),
+        ],
+    ),
+    "id": (
+        _ID_ORDINALS,
+        [
+            ("part", r"^BAGIAN\s+(SATU|DUA|TIGA|EMPAT|LIMA)\b"),
+            ("section", r"^SEKSI\s+(SATU|DUA|TIGA|EMPAT|LIMA)\b"),
+            ("chapter", r"^BAB\s+(SATU|DUA|TIGA|EMPAT|LIMA)\b"),
         ],
     ),
     # Lithuanian is the first PDF edition, and the first whose divisions are
@@ -1517,6 +1530,20 @@ LANG_CONFIG = {
         "short_title": "Lilla katekesen",
     },
     # ---- the PDF editions -------------------------------------------------
+    "id": {
+        "pdf": PDF_EDITIONS["id"],
+        "notes": (
+            (
+                "Published as a PDF by the Indonesian Bishops' Conference and Penerbit "
+                "Kanisius, not as HTML on vatican.va. Read with MuPDF, which is not a "
+                "preference: the file still carries the Italian original as invisible "
+                "text and poppler emits it interleaved with the Indonesian."
+            ),
+        ),
+        "title": "Kompendium Katekismus Gereja Katolik",
+        "short_title": "Kompendium",
+        "edition": "2009, Konferensi Waligereja Indonesia (PDF)",
+    },
     # No `start`/`end`: those bound a region of HTML, and a PDF has no
     # markup to find them in. The body is bounded instead by the question
     # numbers themselves -- everything before Q1 is front matter and

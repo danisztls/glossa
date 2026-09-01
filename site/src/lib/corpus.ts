@@ -589,6 +589,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
 	vi: 'Tiếng Việt',
 	be: 'Беларуская',
 	he: 'עברית',
+	id: 'Bahasa Indonesia',
 	lt: 'Lietuvių'
 };
 
@@ -1148,34 +1149,44 @@ export async function getChapter(
  * apparatus panel offers a work at all — a control that appears only after a
  * fetch has landed is a control that moves under the reader's cursor.
  *
- * IT TAKES AN ADDRESS AND NOT AN EDITION, and it took an edition for a day.
- * The argument for gating was `docs/decisions.md`'s on Challoner and the CPDV:
- * attaching an apparatus to a translation it was not written on is an
- * editorial act. That argument is about a note the reader cannot tell apart
- * from the edition's own — Challoner's notes ship INSIDE `bible.douay-rheims`
- * and would have read as the CPDV's if copied there. It does not reach here,
- * because nothing about this apparatus is silent: it is a separate work with
- * its own name, switched on by the reader in a panel that names it, opened
- * from a mark of its own, and set in a card that carries its own `lang`.
+ * IT TAKES AN EDITION AS WELL AS AN ADDRESS, and the reason is the ANCHOR —
+ * which is the same reason it did NOT for the week in between, read the other
+ * way round. The gate was dropped on the argument that a verse anchor asks
+ * nothing of the text beside it: every edition here is versified alike, so a
+ * mark at the end of a verse means the same thing beside the Clementine as
+ * beside the Douay, and nothing about the apparatus is silent — a separate
+ * work, named in the panel that switches it on, opened from its own mark, set
+ * in a card with its own `lang`. That held exactly as long as the mark named
+ * the verse.
  *
- * WHAT MADE THE GATE UNNECESSARY IS THE ANCHOR. A commentary keyed to a lemma
- * really would be undisplayable beside another edition — the words it quotes
- * are not there. Keyed to the VERSE, it asks only that the address exist, and
- * every edition in this corpus is versified the same way (`psalm_numbering`,
- * canonically Vulgate). So the gate was refusing the reader of the Clementine
- * a commentary on the Latin she is reading, to protect her from a confusion
- * the design had already ruled out.
+ * IT NAMES THE WORDS NOW (`commentary-anchors.ts`), and a lemma quotes ONE
+ * text: 24,805 of Haydock's notes are placed by matching his headword against
+ * `bible.douay-rheims.en`, and beside any other edition every one of them would
+ * find nothing. That was written down as the hypothetical this function did not
+ * have to worry about; it is the actual arrangement now. So the commentary is
+ * offered at the edition it annotates, which is what `manifest.annotates` has
+ * said all along.
  *
- * `manifest.annotates` is still the field that matters and is still read —
- * just not here. `subsumes_notes` is asked against it, because "this
- * commentary already contains the edition's own notes" is only true of the
- * edition it was written on.
+ * WHAT IT COSTS IS REAL AND IS NOT A DEFECT: a reader of the Clementine or the
+ * CPDV is no longer offered Haydock. The alternative is a marker run with holes
+ * — half the apparatus in the text on one edition and all of it heaped at the
+ * end of the verse on the others — which is a worse answer than either.
+ *
+ * `subsumes_notes` is still asked against `annotates` separately, because
+ * "this commentary already contains the edition's own notes" is a narrower
+ * claim than "this commentary belongs beside this edition".
  */
-export function commentariesAt(osis: string, chapterN: number): WorkManifest[] {
+export function commentariesAt(
+	osis: string,
+	chapterN: number,
+	workId: string | undefined
+): WorkManifest[] {
+	if (!workId) return [];
 	return Object.entries(commentaryChapters)
 		.filter(([, work]) => (work.books[osis] ?? []).includes(chapterN))
-		.map(([workId]) => manifests[workId])
+		.map(([id]) => manifests[id])
 		.filter((work): work is WorkManifest => Boolean(work) && !isUnpublished(work.id))
+		.filter((work) => work.type === 'commentary' && work.annotates === workId)
 		.sort((a, b) => a.id.localeCompare(b.id));
 }
 

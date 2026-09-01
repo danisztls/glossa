@@ -105,6 +105,7 @@ export type ContentLang =
 	| 'vi'
 	| 'be'
 	| 'he'
+	| 'id'
 	| 'lt';
 
 interface WorkManifestBase {
