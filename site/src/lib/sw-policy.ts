@@ -156,9 +156,29 @@ const INFRASTRUCTURE_FILES = [
 	'/apparatus.json'
 ];
 
-/** Raster image extensions that belong in the content cache rather than the
- *  install precache. Deliberately excludes `.svg` (the favicon is one, and the
- *  document head asks for it before anything else) and every font format. */
+/**
+ * Raster image extensions that belong in the content cache rather than the
+ * install precache. Deliberately excludes `.svg` (the favicon is one, and the
+ * document head asks for it before anything else) and every font format.
+ *
+ * EXCLUDING FONTS IS WHAT MAKES THEM EAGER, and it is the one place this
+ * project's font accounting has two answers. `fonts.css` says declaring a
+ * subset is "close to free" because `unicode-range` means the browser fetches
+ * a file only when a character in its range is on the page — true over HTTP,
+ * and false the moment this service worker installs, because everything in
+ * `static/` that is not refused here is precached whole. Measured 2026-08-31:
+ * 1,117 KB of woff2, of which 412 KB is Amiri, downloaded by every reader
+ * including the ones who never meet an Arabic character.
+ *
+ * That is deliberate and it is the offline library's price: a reader who
+ * installs the app and then loses the network needs the faces for whatever
+ * they open, and a font fetched lazily is a font that is not there. What it
+ * means for anyone adding a face is that the `unicode-range` argument buys
+ * nothing here — the SIZE is the whole cost, paid by everyone, once. Frank
+ * Ruhl Libre is 13 KB and was worth it on those terms; a CJK face would be
+ * megabytes on the same terms, which is the real reason direction.css routes
+ * those scripts to system families instead.
+ */
 const DEFERRED_MEDIA = ['.webp', '.png', '.jpg', '.jpeg', '.avif'];
 
 export interface PartitionInput {

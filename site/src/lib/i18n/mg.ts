@@ -28,6 +28,14 @@
  * enough about to print to a reader who would know better. Filling those in
  * is welcome; guessing at them is not.
  *
+ * TRANSLATION CONFIDENCE: LOW. Written by an LLM with no native reader in
+ * the loop, and this is one of the five languages where that is most
+ * likely to show — only the terms read off `ccc.mg` above are grounded,
+ * and the rest of this file is not. Treat every string here as a proposal.
+ * Correcting one is a one-line change and needs no permission; because
+ * `t()` falls back to English per key, DELETING a doubtful line is also a
+ * valid fix and strictly better than leaving a wrong one standing.
+ *
  * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
  * their own language on purpose and are not translated here.
  */

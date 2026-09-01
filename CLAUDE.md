@@ -1486,6 +1486,32 @@ every new dictionary: it is the page explaining how carefully this site handles
 other people's words, and a machine translation of it is the one page whose
 form would contradict its content.
 
+**TWENTY OF THE THIRTY-FOUR DICTIONARIES HAVE NEVER BEEN READ BY A NATIVE
+SPEAKER**, and that is the single most important thing to know about them. Every
+language added on 2026-08-31 was translated by an LLM in one sitting. The
+exposure is bounded on purpose — each is ~45 chrome keys, not the full 245, and
+the long colophon prose is omitted so it falls back to English — but bounded is
+not the same as verified. Each dictionary states its own tier in its header:
+
+- **Grounded**: `mg`'s core terms alone, read off `ccc.mg`'s own manifest and
+  division headings (`Katesizin'ny Fiangonana Katôlika`, `Toko`, `Fizarana`,
+  `Sampana`). The corpus is the authority for how a language's Catholic usage
+  actually names things, and it is the first place to look when adding another.
+- **Medium** (`fi lv sw vi be zh ko tl id uk`): conventional chrome vocabulary,
+  likely right; the longer taglines are what to check first.
+- **Low** (`he ig ml hi`, and `mg` outside its grounded terms): each is a
+  minority or liturgically specific register where the obvious dictionary word
+  is often not the one the Church uses. Malayalam is Syro-Malabar and
+  Syro-Malankara usage; Hindi competes with better-known Hindu and Protestant
+  words for the same concepts; Igbo carries dots below and tone that a generator
+  drops silently.
+
+**Deleting a doubtful string is a valid fix, and a better one than leaving it.**
+`t()` falls back to English key by key, so a removed line renders in English
+rather than breaking — which means correcting these needs no coordination and no
+permission. The two keys that cannot simply be deleted are anything in
+`CHROME_KEYS` and the nine `bible.group.*`; both fail the build instead.
+
 **Adding a language means five places, and only four of them are guarded.**
 `ui-langs.ts` (plus `RTL_LANGS` if it is right to left), the dictionary itself,
 `app.html`'s pre-paint copy, `usage-schema.ts`'s `UI_TAGS` — and

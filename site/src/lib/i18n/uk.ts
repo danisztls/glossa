@@ -18,6 +18,11 @@
  * carefully this site handles other people's words, and a machine translation
  * of it would be the one page whose form contradicts its content.
  *
+ * TRANSLATION CONFIDENCE: MEDIUM. Written by an LLM with no native reader
+ * in the loop. The chrome vocabulary here is conventional and is likely
+ * right; the longer taglines are what to check first. Deleting a doubtful
+ * line is a valid fix — English fills the gap per key.
+ *
  * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
  * their own language on purpose and are not translated here.
  */

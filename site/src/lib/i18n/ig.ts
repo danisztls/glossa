@@ -18,6 +18,15 @@
  * carefully this site handles other people's words, and a machine translation
  * of it would be the one page whose form contradicts its content.
  *
+ * TRANSLATION CONFIDENCE: LOW. Written by an LLM with no native reader in
+ * the loop, and this is one of the five languages where that is most
+ * likely to show — Igbo orthography carries dots below and tone marks that
+ * a generator drops silently, and Catholic usage is regional. Treat every
+ * string here as a proposal. Correcting one is a one-line change and needs
+ * no permission; because `t()` falls back to English per key, DELETING a
+ * doubtful line is also a valid fix and strictly better than leaving a
+ * wrong one standing.
+ *
  * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
  * their own language on purpose and are not translated here.
  */

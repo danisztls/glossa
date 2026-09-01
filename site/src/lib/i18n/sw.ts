@@ -17,6 +17,11 @@
  * here is the chrome -- including every key `CHROME_KEYS` requires, since an
  * unnamed chrome page fails the sync rather than falling back.
  *
+ * TRANSLATION CONFIDENCE: MEDIUM. Written by an LLM with no native reader
+ * in the loop. The chrome vocabulary here is conventional and is likely
+ * right; the longer taglines are what to check first. Deleting a doubtful
+ * line is a valid fix — English fills the gap per key.
+ *
  * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
  * their own language on purpose and are not translated here.
  */

@@ -17,6 +17,15 @@
  * here is the chrome -- including every key `CHROME_KEYS` requires, since an
  * unnamed chrome page fails the sync rather than falling back.
  *
+ * TRANSLATION CONFIDENCE: LOW. Written by an LLM with no native reader in
+ * the loop, and this is one of the five languages where that is most
+ * likely to show — Hebrew Catholic terminology is a small, specific
+ * register, and the obvious dictionary word is often not the one the
+ * Church uses. Treat every string here as a proposal. Correcting one is a
+ * one-line change and needs no permission; because `t()` falls back to
+ * English per key, DELETING a doubtful line is also a valid fix and
+ * strictly better than leaving a wrong one standing.
+ *
  * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
  * their own language on purpose and are not translated here.
  */
