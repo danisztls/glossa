@@ -470,30 +470,79 @@ def body_column(lines: list[Line], *, quantile: float = 0.5) -> tuple[float, flo
     )
 
 
-def body_columns(lines: list[Line]) -> dict[int, tuple[float, float]]:
-    """The body band per page parity, because a printed book mirrors.
+#: How many measured bands to keep as the layouts a page may snap to.
+#:
+#: TWO, because a book has two, and raising it makes things worse rather than
+#: better -- measured, against the instinct that more fidelity per page must
+#: help. At eight the Lithuanian kept 438 of its 598 cross-references against
+#: 574 at two: a page whose own measurement puts the right edge a few points
+#: wide swallows the margin column into the body, and forcing every page onto
+#: one of the two real layouts is what prevents that. The wander is noise, not
+#: signal.
+ANCHOR_BANDS = 2
+
+
+def body_columns(
+    lines: list[Line], *, min_lines: int = 12
+) -> dict[int, tuple[float, float]]:
+    """The body band of each page, keyed by page.
 
     These editions set a wider OUTER margin, so the text block itself shifts
     between recto and verso -- measured on the Lithuanian Compendium, the body
-    runs 51->319 on odd pages and 31->299 on even ones, a 20pt swing. Taking
-    one band for the whole book therefore describes neither half, and taking
-    it per page is noisy on a page with few lines.
+    runs 51->319 on odd pages and 31->299 on even ones, a 20pt swing. One band
+    for the whole book therefore describes neither half.
+
+    PER PAGE RATHER THAN PER PARITY, though parity is the obvious shortcut and
+    was the first attempt. Which parity a recto falls on depends on how many
+    leaves of front matter the edition happens to print, so it is a fact about
+    a particular file and not about the format: the Byelorussian's body runs
+    28->337 on its EVEN pages where the Lithuanian's runs 31->299, and reading
+    it through the Lithuanian's parity put a third of its cross-references
+    inside the running text and called ordinary body lines margin. A page has
+    dozens of lines to derive its own band from, so there is no reason to
+    borrow one. Pages too sparse to measure -- a plate, a part title -- fall
+    back to the commonest band in the book, which costs nothing because they
+    carry no references anyway.
 
     This is also what makes the cross-reference column self-locating: the
     margin is whatever lies outside the band, so nothing has to declare which
-    side it is on, and an edition that mirrors the other way needs no entry.
+    side it is on.
     """
-    return {
-        parity: body_column([ln for ln in lines if ln.page % 2 == parity])
-        for parity in (0, 1)
-    }
+    measured: dict[int, tuple[float, float]] = {}
+    for page in sorted({ln.page for ln in lines}):
+        on_page = [ln for ln in lines if ln.page == page]
+        if len(on_page) >= min_lines:
+            measured[page] = body_column(on_page)
+    pages = {ln.page for ln in lines}
+    if not measured:
+        return dict.fromkeys(pages, body_column(lines))
+
+    # A book sets its text block in exactly two positions, recto and verso, so
+    # take the two commonest measurements as those and SNAP every page to
+    # whichever it is nearer. Measuring each page and believing it outright is
+    # what this replaced: a page carrying a heading and a few lines measures a
+    # band describing only those lines, and on the Lithuanian that cost 24
+    # questions and half the structure tree. Snapping keeps the robustness of
+    # measuring per page without letting a thin page invent a layout.
+    counts: dict[tuple[float, float], int] = {}
+    for band in measured.values():
+        counts[band] = counts.get(band, 0) + 1
+    anchors = sorted(counts, key=lambda b: counts[b], reverse=True)[:ANCHOR_BANDS]
+
+    def snap(band: tuple[float, float]) -> tuple[float, float]:
+        return min(anchors, key=lambda a: abs(a[0] - band[0]) + abs(a[1] - band[1]))
+
+    bands = {page: snap(band) for page, band in measured.items()}
+    for page in pages - set(bands):
+        bands[page] = anchors[0]
+    return bands
 
 
 def in_margin(
     line: Line, bands: dict[int, tuple[float, float]], *, tol: float = 4.0
 ) -> bool:
     """Whether a line sits outside its page's body band, i.e. in the margin."""
-    left, right = bands[line.page % 2]
+    left, right = bands[line.page]
     return line.x1 <= left - tol or line.x0 >= right + tol
 
 

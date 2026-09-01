@@ -500,10 +500,18 @@ class Question:
 
 
 class ScrapeState:
-    def __init__(self, refs_after: bool = False):
+    def __init__(self, refs_after: bool = False, from_markup: bool = True):
         #: Whether this edition prints the reference line after the answer
         #: rather than after the question -- see LANG_CONFIG's `refs_after`.
         self.refs_after = refs_after
+        #: False for the editions read from a PDF. The only thing that turns
+        #: on it is the leftover-markup check in `validate`, which looks for
+        #: an angle bracket in stored text as evidence that `strip_tags`
+        #: missed a tag. A PDF has no tags to miss, so the bracket can only be
+        #: the source's own punctuation -- the Byelorussian marks an elision
+        #: inside a quotation as `<...>` where other editions print `[...]`,
+        #: and that is text to keep, not markup to have removed.
+        self.from_markup = from_markup
         self.corrections: list[dict] = []
         self.corrections_applied: list[dict] = []
         self.stack: list[Node] = []
@@ -1209,6 +1217,23 @@ _LT_ORDINALS = {
     "PENKTAS": 5,
 }
 
+#: Byelorussian declines its ordinal to the division noun: ЧАСТКА and ГЛАВА
+#: are feminine, РАЗДЗЕЛ masculine. Written in the folded form `label_matcher`
+#: compares against, which is why ЧАЦВЁРТАЯ appears here as ЧАЦВЕРТАЯ -- `fold`
+#: strips the diaeresis from Ё.
+_BE_ORDINALS = {
+    "ПЕРШАЯ": 1,
+    "ПЕРШЫ": 1,
+    "ДРУГАЯ": 2,
+    "ДРУГІ": 2,
+    "ТРЭЦЯЯ": 3,
+    "ТРЭЦІ": 3,
+    "ЧАЦВЕРТАЯ": 4,
+    "ЧАЦВЕРТЫ": 4,
+    "ПЯТАЯ": 5,
+    "ПЯТЫ": 5,
+}
+
 #: Indonesian counts with cardinals rather than ordinals -- "Bagian Satu" is
 #: "Part One", not "First Part" -- and the numeral does not decline, so one
 #: list serves all three divisions.
@@ -1300,6 +1325,14 @@ _ORDINAL_LABELS: dict[str, tuple[dict[str, int], list[tuple[str, str]]]] = {
             ("part", r"^(PRVI|DRUGI|TRETJI|CETRTI|PETI)\s+DEL\b"),
             ("section", r"^(PRVI|DRUGI|TRETJI|CETRTI|PETI)\s+ODDELEK\b"),
             ("chapter", r"^(PRVO|DRUGO|TRETJE|CETRTO|PETO)\s+POGLAVJE\b"),
+        ],
+    ),
+    "be": (
+        _BE_ORDINALS,
+        [
+            ("part", r"^ЧАСТКА\s+(ПЕРШАЯ|ДРУГАЯ|ТРЭЦЯЯ|ЧАЦВЕРТАЯ|ПЯТАЯ)\b"),
+            ("section", r"^РАЗДЗЕЛ\s+(ПЕРШЫ|ДРУГІ|ТРЭЦІ|ЧАЦВЕРТЫ|ПЯТЫ)\b"),
+            ("chapter", r"^ГЛАВА\s+(ПЕРШАЯ|ДРУГАЯ|ТРЭЦЯЯ|ЧАЦВЕРТАЯ|ПЯТАЯ)\b"),
         ],
     ),
     "id": (
@@ -1530,6 +1563,20 @@ LANG_CONFIG = {
         "short_title": "Lilla katekesen",
     },
     # ---- the PDF editions -------------------------------------------------
+    "be": {
+        "pdf": PDF_EDITIONS["be"],
+        "notes": (
+            (
+                "Published as a PDF by the Conference of Catholic Bishops in Belarus, "
+                "not as HTML on vatican.va. One glyph in its embedded fonts has no "
+                "mapping and both readers report it as unknown; the font's own charset "
+                "names it `hyphenminus`, so it is restored as U+002D rather than guessed."
+            ),
+        ),
+        "title": "Кампендый Катэхізіса Каталіцкага Касцёла",
+        "short_title": "Кампендый",
+        "edition": "2010, Канферэнцыя Каталіцкіх Біскупаў у Беларусі (PDF)",
+    },
     "id": {
         "pdf": PDF_EDITIONS["id"],
         "notes": (
@@ -1679,7 +1726,7 @@ def run_scrape_pdf(lang: str, cfg: dict, fetcher: Fetcher) -> ScrapeState:
     if not path.is_file():
         raise SystemExit(f"{path} is not in the corpus; run `--capture {lang}` first")
     pages = read_edition(path, cfg["pdf"])
-    state = ScrapeState(refs_after=cfg["refs_after"])
+    state = ScrapeState(refs_after=cfg["refs_after"], from_markup=False)
     state.corrections = load_corrections(cfg["work_id"])
     # Corrections against extracted text are not wired up yet; none is filed
     # for a PDF edition, and `require_all_applied` in `validate` is what will
@@ -1831,7 +1878,7 @@ def validate(state: ScrapeState) -> tuple[bool, list[str], int]:
             if b.attribution:
                 texts.append(b.attribution)
         for t in texts:
-            if "<" in t or ">" in t:
+            if state.from_markup and ("<" in t or ">" in t):
                 problems.append(f"question {n}: leftover markup")
             if "�" in t:
                 problems.append(f"question {n}: replacement character present")

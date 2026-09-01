@@ -148,6 +148,14 @@ PDF_EDITIONS: dict[str, PdfEdition] = {
     # it reads "Bagian Satu", which is exactly what the part pattern matches;
     # left in, every page opened Part One again.
     "id": PdfEdition(backend="mupdf", furniture_strip=0.10),
+    # ONE GLYPH IN ITS FONTS HAS NO USABLE MAPPING, and the two readers
+    # disagree about how to say so: poppler writes U+0018 in the body face and
+    # `%` in the italic, MuPDF writes U+FFFD in both -- 2,818 of them, 1,422
+    # ending a line and 1,396 inside one. The replacement is not a guess. The
+    # embedded Type1C charset names the glyph `hyphenminus`, so it is U+002D,
+    # and once it is that the line-final ones are ordinary soft hyphens that
+    # `dehyphenate` closes up and the rest are ordinary dashes.
+    "be": PdfEdition(backend="mupdf", furniture_strip=0.085, glyphs={"\ufffd": "-"}),
 }
 
 
@@ -480,6 +488,10 @@ def _refs_for(
 #: verbatim into `notice`, which is free text. Nothing is dropped and no
 #: schema moves.
 PDF_COPYRIGHT: dict[str, str] = {
+    "be": (
+        "© Copyright 2005 — Libreria Editrice Vaticana; "
+        "© Канферэнцыя Каталіцкіх Біскупаў у Беларусі, 2010"
+    ),
     "id": (
         "© Copyright 2005 - Libreria Editrice Vaticana; "
         "© 2009 Konferensi Waligereja Indonesia dan Penerbit Kanisius"

@@ -113,7 +113,8 @@
  * three-line arithmetic and the phone breakpoint below both stay correct
  * without a second set of constants.
  */
-:not(:root)[lang='ru'] .drop-cap-letter {
+:not(:root)[lang='ru'] .drop-cap-letter,
+:not(:root)[lang='be'] .drop-cap-letter {
 	font-family: 'Ponomar Dropcap', var(--font-serif);
 }
 
